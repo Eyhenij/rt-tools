@@ -8,5 +8,7 @@ export * from './tokens/custom-storage.token';
 export * from './tokens/local-storage.token';
 export * from './tokens/session-storage.token';
 
+export * from './storage.factory';
+export * from './in-memory-storage.service';
 export * from './storage.service';
 export * from './json-converter';
