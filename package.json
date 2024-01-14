@@ -1,13 +1,15 @@
 {
     "name": "rt-tools",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "scripts": {
         "ng": "ng",
         "start": "ng serve",
         "build": "ng build",
         "watch": "ng build --watch --configuration development",
-        "test": "ng test"
+        "test": "ng test",
+        "packagr:util": "ng-packagr -p ./projects/util/ng-package.json"
     },
+    "private": false,
     "dependencies": {
         "@angular/animations": "^17.0.0",
         "@angular/common": "^17.0.0",
@@ -34,5 +36,10 @@
         "karma-jasmine-html-reporter": "~2.1.0",
         "ng-packagr": "^17.0.0",
         "typescript": "~5.2.2"
-    }
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Eyhenij/rt-tools"
+    },
+    "keywords": ["Angular", "Tools"]
 }

@@ -1,5 +1,5 @@
 {
-    "name": "util",
+    "name": "rt-tools",
     "version": "0.0.1",
     "peerDependencies": {
         "@angular/common": "^17.0.0",
