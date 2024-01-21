@@ -4,9 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 
 import { BaseStoreService } from './base-store.service';
-import { IAction } from './interfaces/action.interface';
-import { IBaseAsyncStoreService, ISetPropertiesConfig } from './interfaces/async-store-service.interface';
-import { IStateBase } from './interfaces/state-base.interface';
+import { IAction, IBaseAsyncStoreService, ISetPropertiesConfig, IStateBase } from './interfaces';
 import { ModelStatus } from './enums';
 import { BASE_INITIAL_STATE } from './constants';
 
@@ -15,11 +13,7 @@ export abstract class BaseAsyncStoreService<
     STORE_TYPE extends IStateBase.Async,
     MSG_TYPE extends string,
     ACTION_TYPE extends IAction<MSG_TYPE>,
-> extends BaseStoreService<
-    STORE_TYPE,
-    MSG_TYPE,
-    ACTION_TYPE
-> implements IBaseAsyncStoreService {
+> extends BaseStoreService<STORE_TYPE, MSG_TYPE, ACTION_TYPE> implements IBaseAsyncStoreService {
 
     // ================================
     // Selectors
@@ -41,8 +35,8 @@ export abstract class BaseAsyncStoreService<
             ...BASE_INITIAL_STATE.ASYNC
         }));
 
-        this.loading = computed(() => !!this.select('loading'));
-        this.fetching = computed(() => !!this.select('fetching'));
+        this.loading = computed(() => !!this.select('loading')());
+        this.fetching = computed(() => !!this.select('fetching')());
         this.pending = computed<boolean>(() => this.loading() || this.fetching());
         this.requestStatus = computed(() => this.select('requestStatus')() || ModelStatus.Init);
         this.loadingStatus = computed(() => this.select('loadingStatus')() || ModelStatus.Init);
