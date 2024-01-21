@@ -1,5 +1,5 @@
 /**
- * Indicates if the parameters are equal
+ * Indicates if the arguments are equal
  *
  * @param f first parameter to compare
  * @param s second parameter to compare
