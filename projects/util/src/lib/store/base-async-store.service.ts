@@ -5,10 +5,10 @@ import { Observable, throwError } from 'rxjs';
 
 import { BaseStoreService } from './base-store.service';
 import { IAction } from './interfaces/action.interface';
-import { IBaseAsyncStoreService, ISetPropertiesConfig } from './interfaces/async-store-service.model';
-import { IStateBase } from './interfaces/entities-state.model';
-import { ModelStatus } from './enums/async-state-status.enum';
-import { BASE_INITIAL_STATE } from './constants/base-initial-state.const';
+import { IBaseAsyncStoreService, ISetPropertiesConfig } from './interfaces/async-store-service.interface';
+import { IStateBase } from './interfaces/state-base.interface';
+import { ModelStatus } from './enums';
+import { BASE_INITIAL_STATE } from './constants';
 
 
 export abstract class BaseAsyncStoreService<

@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Signal } from '@angular/core';
 
 import { Observable } from 'rxjs';
-import { ModelStatus } from '../enums/async-state-status.enum';
+import { ModelStatus } from '../enums';
 
 
 export interface ISetPropertiesConfig {
