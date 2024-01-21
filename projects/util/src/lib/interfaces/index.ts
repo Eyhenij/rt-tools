@@ -1,3 +1,4 @@
+export * from './dictionary.interface';
 export * from './intersection.type';
 export * from './modified.type';
 export * from './nullable.type';

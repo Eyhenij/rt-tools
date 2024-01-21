@@ -2,7 +2,7 @@ import { computed, Signal, signal, WritableSignal } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { MessageBus } from '../services';
 import { Nullable } from '../interfaces';
-import { IAction } from './interfaces/action.interface';
+import { IAction } from './interfaces';
 
 
 export abstract class BaseStoreService<

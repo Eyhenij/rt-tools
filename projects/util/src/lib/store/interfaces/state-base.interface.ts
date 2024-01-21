@@ -1,5 +1,5 @@
-import { Nullable, Primitive } from '../../interfaces';
-import { ModelStatus } from '../enums/async-state-status.enum';
+import { IDictionary, Nullable, Primitive } from '../../interfaces';
+import { ModelStatus } from '../enums';
 
 
 export namespace IStateBase {
@@ -29,6 +29,6 @@ export namespace IStateBase {
         pageModel: PAGE_MODEL_TYPE;
         sortModel: Nullable<SORT_MODEL_TYPE>;
         searchTerm: Nullable<string>;
-        params: { [key: string]: Primitive };
+        params: IDictionary<Primitive>;
     }
 }

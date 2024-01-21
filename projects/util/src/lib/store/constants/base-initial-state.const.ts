@@ -1,5 +1,5 @@
-import { IStateBase } from '../interfaces/entities-state.model';
-import { ModelStatus } from '../enums/async-state-status.enum';
+import { IStateBase } from '../interfaces';
+import { ModelStatus } from '../enums';
 
 
 export namespace BASE_INITIAL_STATE {
