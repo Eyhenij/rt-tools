@@ -8,3 +8,4 @@ export * from './lib/pipes';
 export * from './lib/services';
 export * from './lib/storage';
 export * from './lib/tokens';
+export * from './lib/store';
