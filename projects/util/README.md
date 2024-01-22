@@ -21,6 +21,14 @@
 * ```typescript
   Primitive
   ```
+* Makes selected props from a record optional
+```typescript
+  Optional
+  ```
+* Get the union type of all the values in an object, array or array-like type
+```typescript
+  ValuesType
+  ```
 
 
 ## Functions
