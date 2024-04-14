@@ -6,22 +6,22 @@ import { IAction } from './interfaces';
 
 
 export abstract class BaseStoreService<
-    STORE_TYPE extends object,
+    STATE_TYPE extends object,
     MSG_TYPE extends string,
     ACTION_TYPE extends IAction<MSG_TYPE>,
 > {
-    readonly #store: WritableSignal<STORE_TYPE> = signal({} as STORE_TYPE);
-    protected readonly store: Signal<STORE_TYPE> = this.#store.asReadonly();
+    readonly #store: WritableSignal<STATE_TYPE> = signal({} as STATE_TYPE);
+    protected readonly store: Signal<STATE_TYPE> = this.#store.asReadonly();
 
     readonly #msgBus: MessageBus<ACTION_TYPE, MSG_TYPE> = new MessageBus<ACTION_TYPE, MSG_TYPE>();
     readonly #subscriptions: Set<Subscription> = new Set<Subscription>();
 
-    protected patchState(callbackFn: (state: STORE_TYPE) => STORE_TYPE): void {
-        this.#store.update((currState: STORE_TYPE) => callbackFn(currState));
+    protected patchState(callbackFn: (state: STATE_TYPE) => STATE_TYPE): void {
+        this.#store.update((currState: STATE_TYPE) => callbackFn(currState));
     }
 
-    protected select<K extends keyof STORE_TYPE>(key: K): Signal<Nullable<STORE_TYPE[K]>> {
-        let selector: Signal<Nullable<STORE_TYPE[K]>> = signal(null);
+    protected select<K extends keyof STATE_TYPE>(key: K): Signal<Nullable<STATE_TYPE[K]>> {
+        let selector: Signal<Nullable<STATE_TYPE[K]>> = signal(null);
 
         if (this.store() && Object.prototype.hasOwnProperty.call(this.store(), key)) {
             selector = computed(() => this.store()![key]);
