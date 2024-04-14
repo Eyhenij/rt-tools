@@ -12,6 +12,7 @@
     "private": false,
     "dependencies": {
         "@angular/animations": "^17.0.0",
+        "@angular/cdk": "^17.3.4",
         "@angular/common": "^17.0.0",
         "@angular/compiler": "^17.0.0",
         "@angular/core": "^17.0.0",
@@ -41,5 +42,8 @@
         "type": "git",
         "url": "https://github.com/Eyhenij/rt-tools"
     },
-    "keywords": ["Angular", "Tools"]
+    "keywords": [
+        "Angular",
+        "Tools"
+    ]
 }

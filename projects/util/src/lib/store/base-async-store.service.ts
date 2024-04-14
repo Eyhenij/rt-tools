@@ -10,10 +10,10 @@ import { BASE_INITIAL_STATE } from './constants';
 
 
 export abstract class BaseAsyncStoreService<
-    STORE_TYPE extends IStateBase.Async,
+    STATE_TYPE extends IStateBase.Async,
     MSG_TYPE extends string,
     ACTION_TYPE extends IAction<MSG_TYPE>,
-> extends BaseStoreService<STORE_TYPE, MSG_TYPE, ACTION_TYPE> implements IBaseAsyncStoreService {
+> extends BaseStoreService<STATE_TYPE, MSG_TYPE, ACTION_TYPE> implements IBaseAsyncStoreService {
 
     // ================================
     // Selectors
@@ -30,8 +30,8 @@ export abstract class BaseAsyncStoreService<
 
     protected constructor() {
         super();
-        this.patchState((store: STORE_TYPE): STORE_TYPE => ({
-            ...store,
+        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
+            ...state,
             ...BASE_INITIAL_STATE.ASYNC
         }));
 
@@ -61,8 +61,8 @@ export abstract class BaseAsyncStoreService<
     }
 
     public resetAsyncState(): void {
-        this.patchState((store: STORE_TYPE): STORE_TYPE => ({
-            ...store,
+        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
+            ...state,
             ...BASE_INITIAL_STATE.ASYNC
         }));
     }
@@ -72,8 +72,8 @@ export abstract class BaseAsyncStoreService<
     // ================================
 
     public startLoading(): void {
-        this.patchState((store: STORE_TYPE): STORE_TYPE => ({
-            ...store,
+        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
+            ...state,
             loading: true,
             requestStatus: ModelStatus.Pending,
             loadingStatus: ModelStatus.Pending
@@ -81,8 +81,8 @@ export abstract class BaseAsyncStoreService<
     }
 
     public setLoadingSuccess(): void {
-        this.patchState((store: STORE_TYPE): STORE_TYPE => ({
-            ...store,
+        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
+            ...state,
             loading: false,
             requestStatus: ModelStatus.Success,
             loadingStatus: ModelStatus.Success
@@ -93,8 +93,8 @@ export abstract class BaseAsyncStoreService<
         error: HttpErrorResponse,
         config: ISetPropertiesConfig = { showNotification: true }
     ): Observable<never> {
-        this.patchState((store: STORE_TYPE): STORE_TYPE => ({
-            ...store,
+        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
+            ...state,
             loading: false,
             requestStatus: ModelStatus.Error,
             loadingStatus: ModelStatus.Error
@@ -110,8 +110,8 @@ export abstract class BaseAsyncStoreService<
         error: HttpErrorResponse,
         config: ISetPropertiesConfig = { showNotification: true }
     ): void {
-        this.patchState((store: STORE_TYPE): STORE_TYPE => ({
-            ...store,
+        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
+            ...state,
             loading: false,
             requestStatus: ModelStatus.Error,
             loadingStatus: ModelStatus.Error
@@ -129,8 +129,8 @@ export abstract class BaseAsyncStoreService<
     // ================================
 
     public startFetching(): void {
-        this.patchState((store: STORE_TYPE): STORE_TYPE => ({
-            ...store,
+        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
+            ...state,
             fetching: true,
             requestStatus: ModelStatus.Pending,
             fetchingStatus: ModelStatus.Pending
@@ -138,7 +138,7 @@ export abstract class BaseAsyncStoreService<
     }
 
     public setFetchingSuccess(): void {
-        this.patchState((store: STORE_TYPE): STORE_TYPE => ({
+        this.patchState((store: STATE_TYPE): STATE_TYPE => ({
             ...store,
             fetching: false,
             requestStatus: ModelStatus.Success,
@@ -150,8 +150,8 @@ export abstract class BaseAsyncStoreService<
         error: HttpErrorResponse,
         config: ISetPropertiesConfig = { showNotification: true }
     ): Observable<never> {
-        this.patchState((store: STORE_TYPE): STORE_TYPE => ({
-            ...store,
+        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
+            ...state,
             fetching: false,
             requestStatus: ModelStatus.Error,
             fetchingStatus: ModelStatus.Error
@@ -167,8 +167,8 @@ export abstract class BaseAsyncStoreService<
         error: HttpErrorResponse,
         config: ISetPropertiesConfig = { showNotification: true }
     ): void {
-        this.patchState((store: STORE_TYPE): STORE_TYPE => ({
-            ...store,
+        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
+            ...state,
             fetching: false,
             requestStatus: ModelStatus.Error,
             fetchingStatus: ModelStatus.Error
@@ -186,24 +186,24 @@ export abstract class BaseAsyncStoreService<
     // ================================
 
     public resetUpsertStatus(): void {
-        this.patchState((store: STORE_TYPE): STORE_TYPE => ({
-            ...store,
+        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
+            ...state,
             requestStatus: ModelStatus.Init,
             upsertStatus: ModelStatus.Init
         }));
     }
 
     public startUpsert(): void {
-        this.patchState((store: STORE_TYPE): STORE_TYPE => ({
-            ...store,
+        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
+            ...state,
             requestStatus: ModelStatus.Pending,
             upsertStatus: ModelStatus.Pending
         }));
     }
 
     public setUpsertSuccess(): void {
-        this.patchState((store: STORE_TYPE): STORE_TYPE => ({
-            ...store,
+        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
+            ...state,
             requestStatus: ModelStatus.Success,
             upsertStatus: ModelStatus.Success
         }));
@@ -213,8 +213,8 @@ export abstract class BaseAsyncStoreService<
         error: HttpErrorResponse,
         config: ISetPropertiesConfig = { showNotification: true }
     ): Observable<never> {
-        this.patchState((store: STORE_TYPE): STORE_TYPE => ({
-            ...store,
+        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
+            ...state,
             requestStatus: ModelStatus.Error,
             upsertStatus: ModelStatus.Error
         }));
@@ -229,8 +229,8 @@ export abstract class BaseAsyncStoreService<
         error: HttpErrorResponse,
         config: ISetPropertiesConfig = { showNotification: true }
     ): void {
-        this.patchState((store: STORE_TYPE): STORE_TYPE => ({
-            ...store,
+        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
+            ...state,
             requestStatus: ModelStatus.Error,
             upsertStatus: ModelStatus.Error
         }));
@@ -247,24 +247,24 @@ export abstract class BaseAsyncStoreService<
     // ================================
 
     public resetDeleteStatus(): void {
-        this.patchState((store: STORE_TYPE): STORE_TYPE => ({
-            ...store,
+        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
+            ...state,
             requestStatus: ModelStatus.Init,
             deleteStatus: ModelStatus.Init
         }));
     }
 
     public startDelete(): void {
-        this.patchState((store: STORE_TYPE): STORE_TYPE => ({
-            ...store,
+        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
+            ...state,
             requestStatus: ModelStatus.Pending,
             deleteStatus: ModelStatus.Pending
         }));
     }
 
     public setDeleteSuccess(): void {
-        this.patchState((store: STORE_TYPE): STORE_TYPE => ({
-            ...store,
+        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
+            ...state,
             requestStatus: ModelStatus.Success,
             deleteStatus: ModelStatus.Success
         }));
@@ -274,8 +274,8 @@ export abstract class BaseAsyncStoreService<
         error: HttpErrorResponse,
         config: ISetPropertiesConfig = { showNotification: true }
     ): Observable<never> {
-        this.patchState((store: STORE_TYPE): STORE_TYPE => ({
-            ...store,
+        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
+            ...state,
             requestStatus: ModelStatus.Error,
             deleteStatus: ModelStatus.Error
         }));
@@ -290,8 +290,8 @@ export abstract class BaseAsyncStoreService<
         error: HttpErrorResponse,
         config: ISetPropertiesConfig = { showNotification: true }
     ): void {
-        this.patchState((store: STORE_TYPE): STORE_TYPE => ({
-            ...store,
+        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
+            ...state,
             requestStatus: ModelStatus.Error,
             deleteStatus: ModelStatus.Error
         }));
