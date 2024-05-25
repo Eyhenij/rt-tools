@@ -1,14 +1,14 @@
 {
     "name": "rt-tools",
-    "version": "0.0.14",
+    "version": "0.1.0",
     "license": "MIT",
     "author": "Yauheni Krumin",
     "peerDependencies": {
-        "@angular/common": "^17.1.3",
-        "@angular/core": "^17.1.3"
+        "@angular/common": "18.0.0",
+        "@angular/core": "18.0.0"
     },
     "dependencies": {
-        "tslib": "^2.6.2"
+        "tslib": "2.6.2"
     },
     "sideEffects": false
 }
