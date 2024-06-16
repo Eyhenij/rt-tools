@@ -1,5 +1,5 @@
 # Set of utility types and functions for TypeScript
-Package uses Angular Signals. You have to use Angular 16+ to use this package.
+Package uses Angular Signals (Angular 16+).
 
 ## Interfaces & Types
 
