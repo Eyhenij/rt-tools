@@ -6,10 +6,6 @@
         "declaration": true,
         "declarationMap": true,
         "inlineSources": true,
-        "paths": {
-            "@tecforce/angular-ui-kit/*": ["projects/tecforce/angular-ui-kit/*"],
-            "@tecforce/angular-ui-kit": ["projects/tecforce/angular-ui-kit"]
-        }
     },
     "exclude": [
         "**/*.spec.ts"

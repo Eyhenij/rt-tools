@@ -7,7 +7,9 @@
         "build": "ng build",
         "watch": "ng build --watch --configuration development",
         "test": "ng test",
-        "packagr:util": "ng-packagr -p ./projects/util/ng-package.json && cd ./dist/util && npm pack && npm publish"
+        "packagr:util": "ng-packagr -p ./projects/util/ng-package.json && cd ./dist/util && npm pack && npm publish",
+        "storybook": "ng run util:storybook",
+        "build-storybook": "ng run util:build-storybook"
     },
     "private": false,
     "license": "MIT",
@@ -29,7 +31,15 @@
         "@angular-devkit/build-angular": "^18.0.4",
         "@angular/cli": "^18.0.4",
         "@angular/compiler-cli": "^18.0.3",
+        "@chromatic-com/storybook": "^1.5.0",
+        "@storybook/addon-essentials": "^8.1.9",
+        "@storybook/addon-interactions": "^8.1.9",
+        "@storybook/addon-links": "^8.1.9",
+        "@storybook/angular": "^8.1.9",
+        "@storybook/blocks": "^8.1.9",
+        "@storybook/test": "^8.1.9",
         "ng-packagr": "^18.0.0",
+        "storybook": "^8.1.9",
         "typescript": "^5.4.5"
     },
     "repository": {
