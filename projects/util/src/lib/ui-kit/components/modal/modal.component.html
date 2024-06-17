@@ -1,0 +1,139 @@
+@if (data.title) {
+    <div class="title" mat-dialog-title>
+        @if (data.icon) {
+            <h2>
+                <mat-icon [ngStyle]="data.icon.style">
+                    {{ data.icon.value }}
+                </mat-icon>
+            </h2>
+        }
+
+        <h1>{{ data.title }}</h1>
+    </div>
+}
+
+<mat-dialog-content>
+    @if (data.text) {
+        <div class="text" [innerHTML]="data.text | sanitize"></div>
+    }
+
+    @if (data.confirmation) {
+        <div class="confirmation" [innerHTML]="data.confirmation | sanitize"></div>
+    }
+
+    @if (data.input) {
+        <div class="input-label">{{ data.input.label }}</div>
+
+        <mat-form-field [appearance]="'outline'">
+            <input matInput type="text" autocomplete="off" [formControl]="control!" />
+        </mat-form-field>
+    }
+
+    @if (data.textArea) {
+        <mat-form-field>
+            <textarea matInput [formControl]="control!" [placeholder]="data.textArea.placeholder"></textarea>
+        </mat-form-field>
+    }
+
+    @if (data.select) {
+        <mat-form-field class="cm-select">
+            @if (data.select.label) {
+                <mat-label>{{ data.select.label }}</mat-label>
+            }
+            <mat-select required [formControl]="selectControl!">
+                <mat-option>--</mat-option>
+                @for (option of data.select.value; track option?.name ?? option) {
+                    <mat-option [value]="option?.value">
+                        {{ option?.name }}
+                    </mat-option>
+                }
+            </mat-select>
+            @if (data.select.hint && selectControl?.hasError('required')) {
+                <mat-error>{{ data.select.hint }}</mat-error>
+            }
+        </mat-form-field>
+    }
+
+    @if (data?.component) {
+        <ng-container *ngComponentOutlet="data.component"></ng-container>
+    }
+</mat-dialog-content>
+
+<mat-dialog-actions [attr.align]="data.buttonsAlign">
+    @for (button of data.buttons; track button.text) {
+        @switch (button.appearance) {
+            @case ('raised') {
+                <button
+                    mat-flat-button
+                    type="button"
+                    [ngClass]="button.className"
+                    [color]="button.color"
+                    [disabled]="button.validateSelect && (selectControl?.invalid || control?.invalid)"
+                    [ngStyle]="button.style"
+                    (click)="onClose(button)">
+                    {{ button.text }}
+                </button>
+            }
+
+            @case ('flat') {
+                <button
+                    mat-flat-button
+                    type="button"
+                    [color]="button.color"
+                    [disabled]="button.validateSelect && (selectControl?.invalid || control?.invalid)"
+                    [ngStyle]="button.style"
+                    (click)="onClose(button)">
+                    {{ button.text }}
+                </button>
+            }
+
+            @case ('stroked') {
+                <button
+                    mat-stroked-button
+                    type="button"
+                    [color]="button.color"
+                    [disabled]="button.validateSelect && (selectControl?.invalid || control?.invalid)"
+                    [ngStyle]="button.style"
+                    (click)="onClose(button)">
+                    {{ button.text }}
+                </button>
+            }
+
+            @case ('fab') {
+                <button
+                    mat-fab
+                    type="button"
+                    [color]="button.color"
+                    [disabled]="button.validateSelect && (selectControl?.invalid || control?.invalid)"
+                    [ngStyle]="button.style"
+                    (click)="onClose(button)">
+                    {{ button.text }}
+                </button>
+            }
+
+            @case ('mini-fab') {
+                <button
+                    mat-mini-fab
+                    type="button"
+                    [color]="button.color"
+                    [disabled]="button.validateSelect && (selectControl?.invalid || control?.invalid)"
+                    [ngStyle]="button.style"
+                    (click)="onClose(button)">
+                    {{ button.text }}
+                </button>
+            }
+
+            @default {
+                <button
+                    mat-button
+                    type="button"
+                    [color]="button.color"
+                    [disabled]="button.validateSelect && (selectControl?.invalid || control?.invalid)"
+                    [ngStyle]="button.style"
+                    (click)="onClose(button)">
+                    {{ button.text }}
+                </button>
+            }
+        }
+    }
+</mat-dialog-actions>

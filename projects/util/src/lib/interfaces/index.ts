@@ -7,3 +7,6 @@ export * from './primitive.type';
 export * from './mapper.interface';
 export * from './optional.type';
 export * from './values.type';
+
+// ui
+export * from './modal-data.interface';
