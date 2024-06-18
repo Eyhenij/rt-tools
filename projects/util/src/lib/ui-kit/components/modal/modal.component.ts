@@ -9,11 +9,11 @@ import { MatSelectModule } from '@angular/material/select';
 
 import { SanitizePipe } from '../../../pipes';
 import { checkIsMatchingValues } from '../../../validators';
-import { ModalButton, ModalData } from '../../../interfaces';
+import { IModal } from '../../../interfaces';
 
 @Component({
     standalone: true,
-    selector: 'cc-modal',
+    selector: 'rtui-modal',
     templateUrl: './modal.component.html',
     styleUrls: ['./modal.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,13 +35,13 @@ import { ModalButton, ModalData } from '../../../interfaces';
     ],
 })
 export class ModalComponent<T> implements OnInit {
-    public readonly data: ModalData<T> = inject(MAT_DIALOG_DATA);
+    public readonly data: IModal.Data<T> = inject(MAT_DIALOG_DATA);
     readonly #dialogRef: MatDialogRef<ModalComponent<T>> = inject(MatDialogRef<ModalComponent<T>>);
 
     public control: FormControl | undefined;
     public selectControl: FormControl | undefined;
 
-    public onClose(button: ModalButton<T>): void {
+    public onClose(button: IModal.Button<T>): void {
         this.#dialogRef.close({
             value: Boolean(this.data.select) && button.assignSelectedValue ? this.selectControl?.value : button.value,
             message: Boolean(this.control) ? this.control?.value : null,
