@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
@@ -11,7 +11,7 @@ import { ModalData } from '../../../interfaces';
     selector: 'open-modal-button',
     template: `<button mat-flat-button type="button" (click)="onClick()">Open Modal</button>`,
     styleUrls: ['./open-modal-button.css'],
-    host: { class: 'matx-theme' },
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [CommonModule, MatButton, MatIcon],
     providers: [ModalService],
 })

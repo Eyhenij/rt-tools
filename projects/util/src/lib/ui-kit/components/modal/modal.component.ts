@@ -16,7 +16,7 @@ import { ModalButton, ModalData } from '../../../interfaces';
     selector: 'cc-modal',
     templateUrl: './modal.component.html',
     styleUrls: ['./modal.component.scss'],
-    host: { class: 'matx-theme' },
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         NgStyle,
         NgClass,
@@ -33,7 +33,6 @@ import { ModalButton, ModalData } from '../../../interfaces';
         MatDialogActions,
         MatButtonModule,
     ],
-    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModalComponent<T> implements OnInit {
     public readonly data: ModalData<T> = inject(MAT_DIALOG_DATA);
