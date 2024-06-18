@@ -25,3 +25,8 @@ $mat-theme: mat.define-theme(
 html {
     @include mat.all-component-themes($mat-theme);
 }
+
+// For correct displaying modal height in storybook
+.mat-mdc-dialog-container {
+    max-height: 100vh;
+}

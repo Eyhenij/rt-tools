@@ -4,7 +4,7 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
 import { ModalService } from '../../components';
-import { ModalData } from '../../../interfaces';
+import { IModal } from '../../../interfaces';
 
 @Component({
     standalone: true,
@@ -24,7 +24,7 @@ export class OpenModalButtonComponent {
     @Input() text: string = 'Title example';
 
     public onClick(): void {
-        const data: ModalData<boolean> = {
+        const data: IModal.Data<boolean> = {
             title: this.title,
             text: this.text,
             buttonsAlign: 'end',

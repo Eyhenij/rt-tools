@@ -5,7 +5,7 @@ import { Observable, ReplaySubject, share } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { ModalComponent } from './modal.component';
-import { ModalData, ModalDataAnswer, ConfirmResponse, ConfirmResponsePredicate, Nullable } from '../../../interfaces';
+import { IModal, Nullable } from '../../../interfaces';
 import { MODAL_WINDOW_SIZE_ENUM } from '../../../enums';
 
 @Injectable()
@@ -17,11 +17,11 @@ export class ModalService {
         closeOnNavigation: true,
     };
 
-    public confirm<T>(data: ModalData<T>, config?: MatDialogConfig): Observable<Nullable<ModalDataAnswer<T>>> {
-        const dialogRef: MatDialogRef<ModalComponent<T>, ModalDataAnswer<T>> = this.#dialogRef.open<
+    public confirm<T>(data: IModal.Data<T>, config?: MatDialogConfig): Observable<Nullable<IModal.DataAnswer<T>>> {
+        const dialogRef: MatDialogRef<ModalComponent<T>, IModal.DataAnswer<T>> = this.#dialogRef.open<
             ModalComponent<T>,
-            ModalData<T>,
-            ModalDataAnswer<T>
+            IModal.Data<T>,
+            IModal.DataAnswer<T>
         >(ModalComponent, {
             ...this.#defaultConfig,
             ...config,
@@ -31,10 +31,10 @@ export class ModalService {
         return dialogRef.afterClosed();
     }
 
-    public with<T>(data: ModalData<T>, config?: MatDialogConfig): ConfirmResponse<T> {
+    public with<T>(data: IModal.Data<T>, config?: MatDialogConfig): IModal.ConfirmResponse<T> {
         /** Replacement for deprecated multicasting operators (https://github.com/ReactiveX/rxjs/issues/6452) */
-        const subject$: ReplaySubject<Nullable<ModalDataAnswer<T>>> = new ReplaySubject<Nullable<ModalDataAnswer<T>>>(1);
-        const result$: Observable<Nullable<ModalDataAnswer<T>>> = this.confirm(data, config).pipe(
+        const subject$: ReplaySubject<Nullable<IModal.DataAnswer<T>>> = new ReplaySubject<Nullable<IModal.DataAnswer<T>>>(1);
+        const result$: Observable<Nullable<IModal.DataAnswer<T>>> = this.confirm(data, config).pipe(
             share({
                 connector: () => subject$,
                 resetOnError: false,
@@ -43,19 +43,19 @@ export class ModalService {
             })
         );
 
-        const defaultCancel: ConfirmResponsePredicate<T> = (answer: Nullable<ModalDataAnswer<T>>) =>
+        const defaultCancel: IModal.ConfirmResponsePredicate<T> = (answer: Nullable<IModal.DataAnswer<T>>) =>
             !(Boolean(answer) && Boolean(answer?.value));
 
-        const defaultConfirm: ConfirmResponsePredicate<T> = (answer: Nullable<ModalDataAnswer<T>>) =>
+        const defaultConfirm: IModal.ConfirmResponsePredicate<T> = (answer: Nullable<IModal.DataAnswer<T>>) =>
             Boolean(answer) && Boolean(answer?.value);
 
         return {
-            onCancel: (cancel: ConfirmResponsePredicate<T> = defaultCancel) =>
-                result$.pipe(filter((answer: Nullable<ModalDataAnswer<T>>) => cancel(answer))),
-            onConfirm: (confirm: ConfirmResponsePredicate<T> = defaultConfirm) =>
-                result$.pipe(filter((answer: Nullable<ModalDataAnswer<T>>) => confirm(answer))),
-            on: (predicate: ConfirmResponsePredicate<T>) =>
-                result$.pipe(filter((answer: Nullable<ModalDataAnswer<T>>) => predicate(answer))),
+            onCancel: (cancel: IModal.ConfirmResponsePredicate<T> = defaultCancel) =>
+                result$.pipe(filter((answer: Nullable<IModal.DataAnswer<T>>) => cancel(answer))),
+            onConfirm: (confirm: IModal.ConfirmResponsePredicate<T> = defaultConfirm) =>
+                result$.pipe(filter((answer: Nullable<IModal.DataAnswer<T>>) => confirm(answer))),
+            on: (predicate: IModal.ConfirmResponsePredicate<T>) =>
+                result$.pipe(filter((answer: Nullable<IModal.DataAnswer<T>>) => predicate(answer))),
         };
     }
 }
