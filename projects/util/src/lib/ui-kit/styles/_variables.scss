@@ -1,0 +1,31 @@
+/* Material Theme */
+$main-theme: light;
+
+/* Base */
+$avalon-color: var(--clr-avalon);
+$base-accent: var(--clr-base-accent);
+
+/* Device Definitions */
+$device-xl: 1920px; // 120rem
+$device-lg: 1280px; // 80rem
+$device-md: 960px; // 60rem
+$device-sm: 720px; // 45rem
+$device-xs: 600px; // 37.5rem
+
+/* Fonts */
+$base-fonts: var(--font-default);
+$base-font-weight: 400;
+$base-font-size: 1rem;
+$base-text-color: var(--clr-txt);
+
+/* Colors */
+$clr-red-100: #eb5055;
+$clr-red-10: #fdedee;
+
+$clr-green-100: #00b894;
+$clr-green-10: #e5f8f4;
+
+/* Components */
+$side-panel-dynamic-clr: var(--clr-base-accent);
+$pagination-dynamic-clr: var(--clr-base-accent);
+$text-highlight-color: #0077bf;
