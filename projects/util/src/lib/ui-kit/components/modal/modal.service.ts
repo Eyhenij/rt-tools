@@ -6,13 +6,13 @@ import { filter } from 'rxjs/operators';
 
 import { ModalComponent } from './modal.component';
 import { ModalData, ModalDataAnswer, ConfirmResponse, ConfirmResponsePredicate, Nullable } from '../../../interfaces';
-import { MODAL_WINDOW_WITH_SIZE_ENUM } from '../../../enums';
+import { MODAL_WINDOW_SIZE_ENUM } from '../../../enums';
 
 @Injectable()
 export class ModalService {
     readonly #dialogRef: MatDialog = inject(MatDialog);
     readonly #defaultConfig: MatDialogConfig = {
-        width: MODAL_WINDOW_WITH_SIZE_ENUM.MD,
+        width: MODAL_WINDOW_SIZE_ENUM.MD,
         autoFocus: false,
         closeOnNavigation: true,
     };
