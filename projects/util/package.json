@@ -3,7 +3,7 @@
     "version": "0.1.2",
     "license": "MIT",
     "author": "Yauheni Krumin",
-    "dependencies": {
+    "allowedNonPeerDependencies": {
         "@angular/common": "^18.0.3",
         "@angular/core": "^18.0.3",
         "@angular/material": "^18.0.3",
