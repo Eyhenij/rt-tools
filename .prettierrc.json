@@ -1,0 +1,47 @@
+{
+  "base": "./",
+  "plugins": ["prettier-plugin-organize-attributes", "@trivago/prettier-plugin-sort-imports"],
+  "printWidth": 140,
+  "tabWidth": 4,
+  "semi": true,
+  "singleQuote": true,
+  "quoteProps": "as-needed",
+  "trailingComma": "es5",
+  "bracketSpacing": true,
+  "arrowParens": "always",
+  "htmlWhitespaceSensitivity": "ignore",
+  "bracketSameLine": true,
+  "endOfLine": "lf",
+  "embeddedLanguageFormatting": "auto",
+  "importOrder": [
+    "^@angular/(.*)$",
+    "^rxjs",
+    "^ng",
+    "<THIRD_PARTY_MODULES>",
+    "^@core",
+    "^@api",
+    "^@data-access",
+    "^@common/components",
+    "^@common/util",
+    "^@modules",
+    "^[./]"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "attributeGroups": ["$ANGULAR_STRUCTURAL_DIRECTIVE", "$DEFAULT", "$ANGULAR_INPUT", "$ANGULAR_TWO_WAY_BINDING", "$ANGULAR_OUTPUT"],
+  "importOrderParserPlugins": ["typescript", "classProperties", "[\"decorators\", { \"decoratorsBeforeExport\": true }]"],
+  "overrides": [
+    {
+      "files": "*.json",
+      "options": {
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": "*.svg",
+      "options": {
+        "parser": "html"
+      }
+    }
+  ]
+}
