@@ -55,7 +55,7 @@
     }
 
     @if (data?.component) {
-        <ng-container *ngComponentOutlet="data.component"></ng-container>
+        <ng-container *ngComponentOutlet="data!.component!" />
     }
 </mat-dialog-content>
 

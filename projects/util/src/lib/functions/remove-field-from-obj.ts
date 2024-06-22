@@ -3,7 +3,8 @@ export function removeFieldFromObject<T extends object, K extends string>(obj: T
     const result: T = { ...obj };
 
     if (key in obj) {
-        delete result[key as string];
+        // delete result[key as string];
+        delete (result as any)[key];
     }
 
     return result;

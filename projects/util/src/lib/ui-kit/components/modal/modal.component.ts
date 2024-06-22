@@ -7,9 +7,9 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
+import { IModal } from '../../../interfaces';
 import { SanitizePipe } from '../../../pipes';
 import { checkIsMatchingValues } from '../../../validators';
-import { IModal } from '../../../interfaces';
 
 @Component({
     standalone: true,

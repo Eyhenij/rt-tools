@@ -10,13 +10,7 @@ export namespace IModal {
         text: string;
         color?: ThemePalette;
         value: Nullable<T>;
-        appearance?:
-            | 'standard'
-            | 'raised'
-            | 'flat'
-            | 'stroked'
-            | 'fab'
-            | 'mini-fab';
+        appearance?: 'standard' | 'raised' | 'flat' | 'stroked' | 'fab' | 'mini-fab';
         validateSelect?: boolean;
         assignSelectedValue?: boolean;
         style?: { [className: string]: string };
@@ -27,6 +21,7 @@ export namespace IModal {
         buttonsAlign: 'start' | 'center' | 'end';
         buttons: Array<Button<T>>;
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         component?: Type<any>;
         icon?: Icon;
         title?: string;
@@ -49,37 +44,29 @@ export namespace IModal {
         message: string;
     }
 
-    export interface Icon {
-        value: string;
-        style?: { [className: string]: string };
-    }
-
-    export interface Select<T> {
-        value: Array<NameValueType<string, T>>;
-        label?: string;
-        hint?: string;
-    }
-
-    export interface NameValueType<N = string, V = string> {
-        name: N;
-        value: V;
-    }
-
-    export type ConfirmResponsePredicate<T> = (
-        answer: Nullable<IModal.DataAnswer<T>>,
-    ) => boolean;
+    export type ConfirmResponsePredicate<T> = (answer: Nullable<IModal.DataAnswer<T>>) => boolean;
 
     export interface ConfirmResponse<T> {
-        on(
-            predicate: ConfirmResponsePredicate<T>,
-        ): Observable<Nullable<IModal.DataAnswer<T>>>;
+        on(predicate: ConfirmResponsePredicate<T>): Observable<Nullable<IModal.DataAnswer<T>>>;
 
-        onCancel(
-            cancel?: ConfirmResponsePredicate<T>,
-        ): Observable<Nullable<IModal.DataAnswer<T>>>;
+        onCancel(cancel?: ConfirmResponsePredicate<T>): Observable<Nullable<IModal.DataAnswer<T>>>;
 
-        onConfirm(
-            confirm?: ConfirmResponsePredicate<T>,
-        ): Observable<Nullable<IModal.DataAnswer<T>>>;
+        onConfirm(confirm?: ConfirmResponsePredicate<T>): Observable<Nullable<IModal.DataAnswer<T>>>;
     }
+}
+
+export interface Icon {
+    value: string;
+    style?: { [className: string]: string };
+}
+
+export interface Select<T> {
+    value: Array<NameValueType<string, T>>;
+    label?: string;
+    hint?: string;
+}
+
+export interface NameValueType<N = string, V = string> {
+    name: N;
+    value: V;
 }

@@ -1,0 +1,11 @@
+# Ignore artifacts:
+build
+coverage
+karma.conf.js
+package.json
+package-lock.json
+README.md
+tsconfig.app.json
+tsconfig.json
+tsconfig.spec.json
+angular.json
