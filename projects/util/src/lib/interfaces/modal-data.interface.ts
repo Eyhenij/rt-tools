@@ -1,4 +1,4 @@
-import { ComponentType } from '@angular/cdk/overlay';
+import { Type } from '@angular/core';
 import { ThemePalette } from '@angular/material/core';
 
 import { Observable } from 'rxjs';
@@ -10,7 +10,13 @@ export namespace IModal {
         text: string;
         color?: ThemePalette;
         value: Nullable<T>;
-        appearance?: 'standard' | 'raised' | 'flat' | 'stroked' | 'fab' | 'mini-fab';
+        appearance?:
+            | 'standard'
+            | 'raised'
+            | 'flat'
+            | 'stroked'
+            | 'fab'
+            | 'mini-fab';
         validateSelect?: boolean;
         assignSelectedValue?: boolean;
         style?: { [className: string]: string };
@@ -18,13 +24,14 @@ export namespace IModal {
     }
 
     export interface Data<T> {
+        buttonsAlign: 'start' | 'center' | 'end';
+        buttons: Array<Button<T>>;
+
+        component?: Type<any>;
         icon?: Icon;
         title?: string;
         text?: string;
         confirmation?: string;
-        component?: ComponentType<any>;
-        buttonsAlign: 'start' | 'center' | 'end';
-        buttons: Array<Button<T>>;
         input?: {
             label: string;
             placeholder: string;
@@ -58,13 +65,21 @@ export namespace IModal {
         value: V;
     }
 
-    export type ConfirmResponsePredicate<T> = (answer: Nullable<IModal.DataAnswer<T>>) => boolean;
+    export type ConfirmResponsePredicate<T> = (
+        answer: Nullable<IModal.DataAnswer<T>>,
+    ) => boolean;
 
     export interface ConfirmResponse<T> {
-        on(predicate: ConfirmResponsePredicate<T>): Observable<Nullable<IModal.DataAnswer<T>>>;
+        on(
+            predicate: ConfirmResponsePredicate<T>,
+        ): Observable<Nullable<IModal.DataAnswer<T>>>;
 
-        onCancel(cancel?: ConfirmResponsePredicate<T>): Observable<Nullable<IModal.DataAnswer<T>>>;
+        onCancel(
+            cancel?: ConfirmResponsePredicate<T>,
+        ): Observable<Nullable<IModal.DataAnswer<T>>>;
 
-        onConfirm(confirm?: ConfirmResponsePredicate<T>): Observable<Nullable<IModal.DataAnswer<T>>>;
+        onConfirm(
+            confirm?: ConfirmResponsePredicate<T>,
+        ): Observable<Nullable<IModal.DataAnswer<T>>>;
     }
 }
