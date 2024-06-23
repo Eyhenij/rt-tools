@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 
-
 @Injectable()
 export class InMemoryStorageService implements Storage {
     readonly #storage: Map<string, string> = new Map<string, string>();

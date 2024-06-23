@@ -1,10 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Nullable } from '../interfaces';
 
+import { Nullable } from '../interfaces';
 
 @Pipe({
     standalone: true,
-    name: 'breakString'
+    name: 'breakString',
 })
 export class BreakStringPipe implements PipeTransform {
     public transform(value: Nullable<string>): string {

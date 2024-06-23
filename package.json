@@ -15,11 +15,20 @@
         "build-storybook": "ng run util:build-storybook"
     },
     "private": false,
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Eyhenij/rt-tools"
+    },
+    "keywords": [
+        "Angular",
+        "Tools"
+    ],
     "license": "MIT",
     "workspaces": [
         "projects/util"
     ],
     "devDependencies": {
+        "@angular-builders/jest": "18.0.0",
         "@angular-devkit/build-angular": "18.0.5",
         "@angular-eslint/builder": "18.0.1",
         "@angular-eslint/eslint-plugin": "18.0.1",
@@ -29,6 +38,7 @@
         "@angular/cli": "18.0.5",
         "@angular/compiler-cli": "18.0.4",
         "@chromatic-com/storybook": "1.5.0",
+        "@eslint/eslintrc": "^3.1.0",
         "@eslint/js": "9.5.0",
         "@storybook/addon-essentials": "8.1.10",
         "@storybook/addon-interactions": "8.1.10",
@@ -36,7 +46,8 @@
         "@storybook/angular": "8.1.10",
         "@storybook/blocks": "8.1.10",
         "@storybook/test": "8.1.10",
-        "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+        "@trivago/prettier-plugin-sort-imports": "4.3.0",
+        "@types/jest": "29.5.12",
         "@typescript-eslint/eslint-plugin": "7.13.1",
         "@typescript-eslint/parser": "7.13.1",
         "eslint": "8.57.0",
@@ -46,6 +57,9 @@
         "eslint-plugin-rxjs": "5.0.3",
         "eslint-plugin-rxjs-angular": "2.0.1",
         "globals": "15.6.0",
+        "jest": "29.7.0",
+        "jest-preset-angular": "14.1.1",
+        "ng-mocks": "^14.13.0",
         "ng-packagr": "18.0.0",
         "prettier": "3.3.2",
         "prettier-eslint": "16.3.0",
@@ -53,12 +67,8 @@
         "storybook": "8.1.10",
         "typescript": "5.4.5"
     },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/Eyhenij/rt-tools"
-    },
-    "keywords": [
-        "Angular",
-        "Tools"
-    ]
+    "lint-staged": {
+        "**/src/**/*.{js,ts}": "eslint --fix",
+        "**/src/**/*.{js,ts,json,mdx,md,html,scss,css}": "prettier --write"
+    }
 }

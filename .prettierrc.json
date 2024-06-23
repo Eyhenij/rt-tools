@@ -18,12 +18,6 @@
     "^rxjs",
     "^ng",
     "<THIRD_PARTY_MODULES>",
-    "^@core",
-    "^@api",
-    "^@data-access",
-    "^@common/components",
-    "^@common/util",
-    "^@modules",
     "^[./]"
   ],
   "importOrderSeparation": true,

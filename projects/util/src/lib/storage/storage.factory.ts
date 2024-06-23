@@ -1,8 +1,8 @@
 import { inject } from '@angular/core';
+
+import { Nullable } from '../interfaces';
 import { PlatformService } from '../services';
 import { InMemoryStorageService } from './in-memory-storage.service';
-import { Nullable } from '../interfaces';
-
 
 export function localStorageFactory(): Nullable<Storage> {
     return inject(PlatformService).isPlatformBrowser ? localStorage : null;

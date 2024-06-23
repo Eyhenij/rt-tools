@@ -10,7 +10,6 @@ export function isEqual<T>(f: T, s: T): boolean {
     return s1 === s2;
 }
 
-
 /**
  * Indicates if the content of two arrays is identical
  *
@@ -36,7 +35,8 @@ export function areArraysEqual<T>(f: T[], s: T[]): boolean {
             }
         }
 
-        if ((typeof valueF === 'object' && valueF != null) && (typeof valueS === 'object' && valueS != null)) {
+        if (typeof valueF === 'object' && valueF != null && typeof valueS === 'object' && valueS != null) {
+            // eslint-disable-next-line @typescript-eslint/no-use-before-define
             if (!areObjectsEqual(valueF, valueS)) {
                 return false;
             }
@@ -47,7 +47,6 @@ export function areArraysEqual<T>(f: T[], s: T[]): boolean {
 
     return true;
 }
-
 
 /**
  * Indicates if the content of two objects is identical
@@ -66,7 +65,7 @@ export function areObjectsEqual<T>(f: T, s: T): boolean {
     }
 
     /** If one of the objects is null or undefined - no need to compare */
-    if ((typeof f === 'object' && f != null) && (typeof s === 'object' && s != null)) {
+    if (typeof f === 'object' && f != null && typeof s === 'object' && s != null) {
         const keysF: string[] = Object.keys(f);
         const keysS: string[] = Object.keys(s);
 

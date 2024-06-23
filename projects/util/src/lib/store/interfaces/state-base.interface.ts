@@ -1,7 +1,6 @@
 import { IDictionary, Nullable, Primitive } from '../../interfaces';
 import { ModelStatus } from '../enums';
 
-
 export namespace IStateBase {
     export interface Async {
         /** @description Indicates status of the first request for getting list of Entities */
@@ -20,11 +19,7 @@ export namespace IStateBase {
         deleteStatus: ModelStatus;
     }
 
-    export interface List<
-        ENTITY_TYPE extends object,
-        PAGE_MODEL_TYPE extends object,
-        SORT_MODEL_TYPE extends object,
-    > extends Async {
+    export interface List<ENTITY_TYPE extends object, PAGE_MODEL_TYPE extends object, SORT_MODEL_TYPE extends object> extends Async {
         entities: ENTITY_TYPE[];
         pageModel: PAGE_MODEL_TYPE;
         sortModel: Nullable<SORT_MODEL_TYPE>;

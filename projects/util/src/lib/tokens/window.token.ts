@@ -1,6 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { inject, InjectionToken } from '@angular/core';
-
+import { InjectionToken, inject } from '@angular/core';
 
 export const WINDOW: InjectionToken<Window> = new InjectionToken<Window>('An injection token for global window object', {
     factory: (): Window => {
@@ -11,5 +10,5 @@ export const WINDOW: InjectionToken<Window> = new InjectionToken<Window>('An inj
         }
 
         return defaultView;
-    }
+    },
 });

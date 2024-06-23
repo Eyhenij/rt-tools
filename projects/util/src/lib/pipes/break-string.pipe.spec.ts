@@ -1,6 +1,5 @@
 import { BreakStringPipe } from './break-string.pipe';
 
-
 describe(BreakStringPipe.name, () => {
     const pipe: BreakStringPipe = new BreakStringPipe();
 

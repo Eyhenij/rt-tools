@@ -1,20 +1,21 @@
-import { computed, Signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Signal, computed } from '@angular/core';
 
 import { Observable, throwError } from 'rxjs';
 
 import { BaseStoreService } from './base-store.service';
-import { IAction, IBaseAsyncStoreService, ISetPropertiesConfig, IStateBase } from './interfaces';
-import { ModelStatus } from './enums';
 import { BASE_INITIAL_STATE } from './constants';
-
+import { ModelStatus } from './enums';
+import { IAction, IBaseAsyncStoreService, ISetPropertiesConfig, IStateBase } from './interfaces';
 
 export abstract class BaseAsyncStoreService<
-    STATE_TYPE extends IStateBase.Async,
-    MSG_TYPE extends string,
-    ACTION_TYPE extends IAction<MSG_TYPE>,
-> extends BaseStoreService<STATE_TYPE, MSG_TYPE, ACTION_TYPE> implements IBaseAsyncStoreService {
-
+        STATE_TYPE extends IStateBase.Async,
+        MSG_TYPE extends string,
+        ACTION_TYPE extends IAction<MSG_TYPE>,
+    >
+    extends BaseStoreService<STATE_TYPE, MSG_TYPE, ACTION_TYPE>
+    implements IBaseAsyncStoreService
+{
     // ================================
     // Selectors
     // ================================
@@ -30,10 +31,12 @@ export abstract class BaseAsyncStoreService<
 
     protected constructor() {
         super();
-        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
-            ...state,
-            ...BASE_INITIAL_STATE.ASYNC
-        }));
+        this.patchState(
+            (state: STATE_TYPE): STATE_TYPE => ({
+                ...state,
+                ...BASE_INITIAL_STATE.ASYNC,
+            })
+        );
 
         this.loading = computed(() => !!this.select('loading')());
         this.fetching = computed(() => !!this.select('fetching')());
@@ -61,10 +64,12 @@ export abstract class BaseAsyncStoreService<
     }
 
     public resetAsyncState(): void {
-        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
-            ...state,
-            ...BASE_INITIAL_STATE.ASYNC
-        }));
+        this.patchState(
+            (state: STATE_TYPE): STATE_TYPE => ({
+                ...state,
+                ...BASE_INITIAL_STATE.ASYNC,
+            })
+        );
     }
 
     // ================================
@@ -72,33 +77,36 @@ export abstract class BaseAsyncStoreService<
     // ================================
 
     public startLoading(): void {
-        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
-            ...state,
-            loading: true,
-            requestStatus: ModelStatus.Pending,
-            loadingStatus: ModelStatus.Pending
-        }));
+        this.patchState(
+            (state: STATE_TYPE): STATE_TYPE => ({
+                ...state,
+                loading: true,
+                requestStatus: ModelStatus.Pending,
+                loadingStatus: ModelStatus.Pending,
+            })
+        );
     }
 
     public setLoadingSuccess(): void {
-        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
-            ...state,
-            loading: false,
-            requestStatus: ModelStatus.Success,
-            loadingStatus: ModelStatus.Success
-        }));
+        this.patchState(
+            (state: STATE_TYPE): STATE_TYPE => ({
+                ...state,
+                loading: false,
+                requestStatus: ModelStatus.Success,
+                loadingStatus: ModelStatus.Success,
+            })
+        );
     }
 
-    public setLoadingFailure(
-        error: HttpErrorResponse,
-        config: ISetPropertiesConfig = { showNotification: true }
-    ): Observable<never> {
-        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
-            ...state,
-            loading: false,
-            requestStatus: ModelStatus.Error,
-            loadingStatus: ModelStatus.Error
-        }));
+    public setLoadingFailure(error: HttpErrorResponse, config: ISetPropertiesConfig = { showNotification: true }): Observable<never> {
+        this.patchState(
+            (state: STATE_TYPE): STATE_TYPE => ({
+                ...state,
+                loading: false,
+                requestStatus: ModelStatus.Error,
+                loadingStatus: ModelStatus.Error,
+            })
+        );
 
         if (config.showNotification) {
             this.handleError(error);
@@ -106,16 +114,15 @@ export abstract class BaseAsyncStoreService<
         return throwError(() => error);
     }
 
-    public setLoadingFailureVoid(
-        error: HttpErrorResponse,
-        config: ISetPropertiesConfig = { showNotification: true }
-    ): void {
-        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
-            ...state,
-            loading: false,
-            requestStatus: ModelStatus.Error,
-            loadingStatus: ModelStatus.Error
-        }));
+    public setLoadingFailureVoid(error: HttpErrorResponse, config: ISetPropertiesConfig = { showNotification: true }): void {
+        this.patchState(
+            (state: STATE_TYPE): STATE_TYPE => ({
+                ...state,
+                loading: false,
+                requestStatus: ModelStatus.Error,
+                loadingStatus: ModelStatus.Error,
+            })
+        );
 
         if (config.showNotification) {
             this.handleError(error);
@@ -129,33 +136,36 @@ export abstract class BaseAsyncStoreService<
     // ================================
 
     public startFetching(): void {
-        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
-            ...state,
-            fetching: true,
-            requestStatus: ModelStatus.Pending,
-            fetchingStatus: ModelStatus.Pending
-        }));
+        this.patchState(
+            (state: STATE_TYPE): STATE_TYPE => ({
+                ...state,
+                fetching: true,
+                requestStatus: ModelStatus.Pending,
+                fetchingStatus: ModelStatus.Pending,
+            })
+        );
     }
 
     public setFetchingSuccess(): void {
-        this.patchState((store: STATE_TYPE): STATE_TYPE => ({
-            ...store,
-            fetching: false,
-            requestStatus: ModelStatus.Success,
-            fetchingStatus: ModelStatus.Success
-        }));
+        this.patchState(
+            (store: STATE_TYPE): STATE_TYPE => ({
+                ...store,
+                fetching: false,
+                requestStatus: ModelStatus.Success,
+                fetchingStatus: ModelStatus.Success,
+            })
+        );
     }
 
-    public setFetchingFailure(
-        error: HttpErrorResponse,
-        config: ISetPropertiesConfig = { showNotification: true }
-    ): Observable<never> {
-        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
-            ...state,
-            fetching: false,
-            requestStatus: ModelStatus.Error,
-            fetchingStatus: ModelStatus.Error
-        }));
+    public setFetchingFailure(error: HttpErrorResponse, config: ISetPropertiesConfig = { showNotification: true }): Observable<never> {
+        this.patchState(
+            (state: STATE_TYPE): STATE_TYPE => ({
+                ...state,
+                fetching: false,
+                requestStatus: ModelStatus.Error,
+                fetchingStatus: ModelStatus.Error,
+            })
+        );
 
         if (config.showNotification) {
             this.handleError(error);
@@ -163,16 +173,15 @@ export abstract class BaseAsyncStoreService<
         return throwError(() => error);
     }
 
-    public setFetchingFailureVoid(
-        error: HttpErrorResponse,
-        config: ISetPropertiesConfig = { showNotification: true }
-    ): void {
-        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
-            ...state,
-            fetching: false,
-            requestStatus: ModelStatus.Error,
-            fetchingStatus: ModelStatus.Error
-        }));
+    public setFetchingFailureVoid(error: HttpErrorResponse, config: ISetPropertiesConfig = { showNotification: true }): void {
+        this.patchState(
+            (state: STATE_TYPE): STATE_TYPE => ({
+                ...state,
+                fetching: false,
+                requestStatus: ModelStatus.Error,
+                fetchingStatus: ModelStatus.Error,
+            })
+        );
 
         if (config.showNotification) {
             this.handleError(error);
@@ -186,38 +195,43 @@ export abstract class BaseAsyncStoreService<
     // ================================
 
     public resetUpsertStatus(): void {
-        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
-            ...state,
-            requestStatus: ModelStatus.Init,
-            upsertStatus: ModelStatus.Init
-        }));
+        this.patchState(
+            (state: STATE_TYPE): STATE_TYPE => ({
+                ...state,
+                requestStatus: ModelStatus.Init,
+                upsertStatus: ModelStatus.Init,
+            })
+        );
     }
 
     public startUpsert(): void {
-        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
-            ...state,
-            requestStatus: ModelStatus.Pending,
-            upsertStatus: ModelStatus.Pending
-        }));
+        this.patchState(
+            (state: STATE_TYPE): STATE_TYPE => ({
+                ...state,
+                requestStatus: ModelStatus.Pending,
+                upsertStatus: ModelStatus.Pending,
+            })
+        );
     }
 
     public setUpsertSuccess(): void {
-        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
-            ...state,
-            requestStatus: ModelStatus.Success,
-            upsertStatus: ModelStatus.Success
-        }));
+        this.patchState(
+            (state: STATE_TYPE): STATE_TYPE => ({
+                ...state,
+                requestStatus: ModelStatus.Success,
+                upsertStatus: ModelStatus.Success,
+            })
+        );
     }
 
-    public setUpsertFailure(
-        error: HttpErrorResponse,
-        config: ISetPropertiesConfig = { showNotification: true }
-    ): Observable<never> {
-        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
-            ...state,
-            requestStatus: ModelStatus.Error,
-            upsertStatus: ModelStatus.Error
-        }));
+    public setUpsertFailure(error: HttpErrorResponse, config: ISetPropertiesConfig = { showNotification: true }): Observable<never> {
+        this.patchState(
+            (state: STATE_TYPE): STATE_TYPE => ({
+                ...state,
+                requestStatus: ModelStatus.Error,
+                upsertStatus: ModelStatus.Error,
+            })
+        );
 
         if (config.showNotification) {
             this.handleError(error);
@@ -225,15 +239,14 @@ export abstract class BaseAsyncStoreService<
         return throwError(() => error);
     }
 
-    public setUpsertFailureVoid(
-        error: HttpErrorResponse,
-        config: ISetPropertiesConfig = { showNotification: true }
-    ): void {
-        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
-            ...state,
-            requestStatus: ModelStatus.Error,
-            upsertStatus: ModelStatus.Error
-        }));
+    public setUpsertFailureVoid(error: HttpErrorResponse, config: ISetPropertiesConfig = { showNotification: true }): void {
+        this.patchState(
+            (state: STATE_TYPE): STATE_TYPE => ({
+                ...state,
+                requestStatus: ModelStatus.Error,
+                upsertStatus: ModelStatus.Error,
+            })
+        );
 
         if (config.showNotification) {
             this.handleError(error);
@@ -247,38 +260,43 @@ export abstract class BaseAsyncStoreService<
     // ================================
 
     public resetDeleteStatus(): void {
-        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
-            ...state,
-            requestStatus: ModelStatus.Init,
-            deleteStatus: ModelStatus.Init
-        }));
+        this.patchState(
+            (state: STATE_TYPE): STATE_TYPE => ({
+                ...state,
+                requestStatus: ModelStatus.Init,
+                deleteStatus: ModelStatus.Init,
+            })
+        );
     }
 
     public startDelete(): void {
-        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
-            ...state,
-            requestStatus: ModelStatus.Pending,
-            deleteStatus: ModelStatus.Pending
-        }));
+        this.patchState(
+            (state: STATE_TYPE): STATE_TYPE => ({
+                ...state,
+                requestStatus: ModelStatus.Pending,
+                deleteStatus: ModelStatus.Pending,
+            })
+        );
     }
 
     public setDeleteSuccess(): void {
-        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
-            ...state,
-            requestStatus: ModelStatus.Success,
-            deleteStatus: ModelStatus.Success
-        }));
+        this.patchState(
+            (state: STATE_TYPE): STATE_TYPE => ({
+                ...state,
+                requestStatus: ModelStatus.Success,
+                deleteStatus: ModelStatus.Success,
+            })
+        );
     }
 
-    public setDeleteFailure(
-        error: HttpErrorResponse,
-        config: ISetPropertiesConfig = { showNotification: true }
-    ): Observable<never> {
-        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
-            ...state,
-            requestStatus: ModelStatus.Error,
-            deleteStatus: ModelStatus.Error
-        }));
+    public setDeleteFailure(error: HttpErrorResponse, config: ISetPropertiesConfig = { showNotification: true }): Observable<never> {
+        this.patchState(
+            (state: STATE_TYPE): STATE_TYPE => ({
+                ...state,
+                requestStatus: ModelStatus.Error,
+                deleteStatus: ModelStatus.Error,
+            })
+        );
 
         if (config.showNotification) {
             this.handleError(error);
@@ -286,15 +304,14 @@ export abstract class BaseAsyncStoreService<
         return throwError(() => error);
     }
 
-    public setDeleteFailureVoid(
-        error: HttpErrorResponse,
-        config: ISetPropertiesConfig = { showNotification: true }
-    ): void {
-        this.patchState((state: STATE_TYPE): STATE_TYPE => ({
-            ...state,
-            requestStatus: ModelStatus.Error,
-            deleteStatus: ModelStatus.Error
-        }));
+    public setDeleteFailureVoid(error: HttpErrorResponse, config: ISetPropertiesConfig = { showNotification: true }): void {
+        this.patchState(
+            (state: STATE_TYPE): STATE_TYPE => ({
+                ...state,
+                requestStatus: ModelStatus.Error,
+                deleteStatus: ModelStatus.Error,
+            })
+        );
 
         if (config.showNotification) {
             this.handleError(error);

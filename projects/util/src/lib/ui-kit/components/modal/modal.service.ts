@@ -4,9 +4,9 @@ import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dial
 import { Observable, ReplaySubject, share } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
-import { ModalComponent } from './modal.component';
-import { IModal, Nullable } from '../../../interfaces';
 import { MODAL_WINDOW_SIZE_ENUM } from '../../../enums';
+import { IModal, Nullable } from '../../../interfaces';
+import { ModalComponent } from './modal.component';
 
 @Injectable()
 export class ModalService {
