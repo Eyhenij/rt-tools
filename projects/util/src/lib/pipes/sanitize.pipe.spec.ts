@@ -1,7 +1,7 @@
-import { SanitizePipe } from './sanitize.pipe';
 import { TestBed } from '@angular/core/testing';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
+import { SanitizePipe } from './sanitize.pipe';
 
 describe(SanitizePipe.name, () => {
     let pipe: SanitizePipe;

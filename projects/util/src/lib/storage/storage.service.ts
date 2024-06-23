@@ -1,18 +1,14 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
-import { PlatformService } from '../services';
 import { Nullable } from '../interfaces';
-
+import { PlatformService } from '../services';
 import { STORAGE_TYPES_ENUM, StorageType } from './enums/storage-types.enum';
 import { IStorageConfig } from './interfaces/storage-config';
-
+import { JsonConverter } from './json-converter';
+import { CUSTOM_STORAGE } from './tokens/custom-storage.token';
+import { IN_MEMORY_STORAGE } from './tokens/in-memory-storage.token';
 import { LOCAL_STORAGE } from './tokens/local-storage.token';
 import { SESSION_STORAGE } from './tokens/session-storage.token';
-import { IN_MEMORY_STORAGE } from './tokens/in-memory-storage.token';
-import { CUSTOM_STORAGE } from './tokens/custom-storage.token';
-
-import { JsonConverter } from './json-converter';
-
 
 const defaultStorageConfig: IStorageConfig = {
     ctx: STORAGE_TYPES_ENUM.LOCAL,
@@ -34,6 +30,7 @@ export class StorageService {
         return fullConfig.converter?.convertFrom(item) ?? item ?? null;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public setItem(key: string, data: any, config?: Partial<IStorageConfig>): void {
         const fullConfig: IStorageConfig = { ...defaultStorageConfig, ...config };
         const parsedValue: string = fullConfig.converter?.convertTo(data) ?? data;
@@ -44,13 +41,8 @@ export class StorageService {
         return Object.prototype.hasOwnProperty.call(this.#storage(ctx), key);
     }
 
-    public onHasKey<T>(
-        key: string,
-        onHas: (value: Nullable<T>) => void,
-        onHasNot?: () => void,
-        config?: Partial<IStorageConfig>,
-    ): void {
-        const fullConfig: IStorageConfig = { ...defaultStorageConfig, ...config }
+    public onHasKey<T>(key: string, onHas: (value: Nullable<T>) => void, onHasNot?: () => void, config?: Partial<IStorageConfig>): void {
+        const fullConfig: IStorageConfig = { ...defaultStorageConfig, ...config };
 
         if (this.hasKey(key, fullConfig.ctx)) {
             onHas(this.getItem<T>(key, fullConfig));

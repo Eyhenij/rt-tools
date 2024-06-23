@@ -39,8 +39,8 @@
                     "options": {
                         "eslintConfig": "eslint.config.js",
                         "lintFilePatterns": [
-                            "src/**/*.ts",
-                            "src/**/*.html"
+                            "projects/util/src/**/*.ts",
+                            "projects/util/src/**/*.html"
                         ]
                     }
                 },

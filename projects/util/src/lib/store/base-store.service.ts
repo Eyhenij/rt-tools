@@ -1,15 +1,12 @@
-import { computed, Signal, signal, WritableSignal } from '@angular/core';
+import { Signal, WritableSignal, computed, signal } from '@angular/core';
+
 import { Observable, Subscription } from 'rxjs';
-import { MessageBus } from '../services';
+
 import { Nullable } from '../interfaces';
+import { MessageBus } from '../services';
 import { IAction } from './interfaces';
 
-
-export abstract class BaseStoreService<
-    STATE_TYPE extends object,
-    MSG_TYPE extends string,
-    ACTION_TYPE extends IAction<MSG_TYPE>,
-> {
+export abstract class BaseStoreService<STATE_TYPE extends object, MSG_TYPE extends string, ACTION_TYPE extends IAction<MSG_TYPE>> {
     readonly #store: WritableSignal<STATE_TYPE> = signal({} as STATE_TYPE);
     protected readonly store: Signal<STATE_TYPE> = this.#store.asReadonly();
 
@@ -24,7 +21,7 @@ export abstract class BaseStoreService<
         let selector: Signal<Nullable<STATE_TYPE[K]>> = signal(null);
 
         if (this.store() && Object.prototype.hasOwnProperty.call(this.store(), key)) {
-            selector = computed(() => this.store()![key]);
+            selector = computed(() => this.store()[key]);
         }
 
         return selector;

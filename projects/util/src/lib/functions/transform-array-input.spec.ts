@@ -1,6 +1,5 @@
 import { transformArrayInput } from './transform-array-input';
 
-
 fdescribe(`${transformArrayInput.name} function`, () => {
     describe('should return the transformed array', () => {
         it('when a valid array is provided', () => {

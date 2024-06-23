@@ -1,7 +1,6 @@
 import { Observable, Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
-
 export interface MessageBusEvent<T = string> {
     readonly type: T;
 }

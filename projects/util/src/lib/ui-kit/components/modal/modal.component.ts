@@ -58,7 +58,7 @@ export class ModalComponent<T> implements OnInit {
         }
 
         if (Boolean(this.data.input)) {
-            this.control = new FormControl(null, [Validators.required, checkIsMatchingValues(this.data.input?.sample!)]);
+            this.control = new FormControl(null, [Validators.required, checkIsMatchingValues(this.data.input!.sample)]);
         }
     }
 }
