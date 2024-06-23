@@ -190,6 +190,14 @@ export default [
         },
     },
     {
+        files: ['**/*.spec.ts'],
+        languageOptions: {
+            globals: {
+                ...globals.jest,
+            },
+        },
+    },
+    {
         ignores: ['**/node_modules/**', '**/dist/**', '**/tmp/**', '**/coverage/**', '**/.angular/**'],
     },
 ];

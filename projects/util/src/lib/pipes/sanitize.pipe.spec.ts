@@ -9,12 +9,24 @@ describe(SanitizePipe.name, () => {
 
     const testString: string = '<div>some text<script>alert("some text")</script></div>';
 
+    const setup: (sanitizer: unknown) => SanitizePipe = (sanitizer: unknown): SanitizePipe => {
+        return TestBed.configureTestingModule({
+            providers: [
+                {
+                    provide: DomSanitizer,
+                    useValue: sanitizer,
+                },
+                SanitizePipe,
+            ],
+        }).inject(SanitizePipe);
+    };
+
     beforeEach(() => {
-        sanitizer = TestBed.inject<DomSanitizer>(DomSanitizer);
-        pipe = new SanitizePipe(sanitizer);
+        sanitizer = {
+            bypassSecurityTrustHtml: jest.fn(() => testString as SafeHtml),
+        } as unknown as DomSanitizer;
 
-        spyOn(sanitizer, 'bypassSecurityTrustHtml').and.returnValue(testString as SafeHtml);
-
+        pipe = setup(sanitizer);
         pipe.transform(testString);
     });
 

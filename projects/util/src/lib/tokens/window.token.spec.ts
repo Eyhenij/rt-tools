@@ -6,7 +6,7 @@ import { WINDOW } from './window.token';
 describe('WINDOW', () => {
     describe('when window object is available', () => {
         const window: Window = {} as unknown as Window;
-        const documentRef: any = {
+        const documentRef: unknown = {
             defaultView: window,
         };
         let injectedWindow: Window;
@@ -25,7 +25,7 @@ describe('WINDOW', () => {
     });
 
     describe('when window object is not available', () => {
-        const documentRef: any = {};
+        const documentRef: unknown = {};
 
         beforeEach(() => {
             TestBed.configureTestingModule({
