@@ -15,6 +15,14 @@
         "build-storybook": "ng run util:build-storybook"
     },
     "private": false,
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Eyhenij/rt-tools"
+    },
+    "keywords": [
+        "Angular",
+        "Tools"
+    ],
     "license": "MIT",
     "workspaces": [
         "projects/util"
@@ -29,6 +37,7 @@
         "@angular/cli": "18.0.5",
         "@angular/compiler-cli": "18.0.4",
         "@chromatic-com/storybook": "1.5.0",
+        "@eslint/eslintrc": "^3.1.0",
         "@eslint/js": "9.5.0",
         "@storybook/addon-essentials": "8.1.10",
         "@storybook/addon-interactions": "8.1.10",
@@ -53,12 +62,8 @@
         "storybook": "8.1.10",
         "typescript": "5.4.5"
     },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/Eyhenij/rt-tools"
-    },
-    "keywords": [
-        "Angular",
-        "Tools"
-    ]
+    "lint-staged": {
+        "**/src/**/*.{js,ts}": "eslint --fix",
+        "**/src/**/*.{js,ts,json,mdx,md,html,scss,css}": "prettier --write"
+    }
 }
