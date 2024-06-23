@@ -17,7 +17,6 @@ export default [
             '@typescript-eslint': ts,
             '@angular-eslint': ng,
             rxjs,
-            // import: esImport,
         },
         languageOptions: {
             parser: tsParser,
@@ -30,17 +29,14 @@ export default [
                 ecmaVersion: 2022,
                 createDefaultProgram: true,
                 warnOnUnsupportedTypeScriptVersion: true,
-                projectFolderIgnoreList: ['**/node_modules/**', '**/tmp/**', '**/dist/**'],
+                projectFolderIgnoreList: ['**/node_modules/**', '**/dist/**', '**/tmp/**', '**/coverage/**', '**/.angular/**'],
                 sourceType: 'module',
             },
         },
         rules: {
             ...js.configs.recommended.rules,
-            // ...ts.configs['recommended-requiring-type-checking'].rules,
             ...ts.configs.recommended.rules,
-            // ...ts.configs['stylistic-type-checked'].rules,
             ...ng.configs.recommended.rules,
-            // ...esImport.configs.errors.rules,
             ...rxjs.configs.recommended.rules,
 
             '@angular-eslint/directive-selector': [
@@ -192,5 +188,16 @@ export default [
             ...ngTemplate.configs.recommended.rules,
             ...ngTemplate.configs.accessibility.rules,
         },
+    },
+    {
+        files: ['**/*.spec.ts'],
+        languageOptions: {
+            globals: {
+                ...globals.jest,
+            },
+        },
+    },
+    {
+        ignores: ['**/node_modules/**', '**/dist/**', '**/tmp/**', '**/coverage/**', '**/.angular/**'],
     },
 ];

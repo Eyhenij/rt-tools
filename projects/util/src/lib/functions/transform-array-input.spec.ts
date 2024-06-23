@@ -1,7 +1,6 @@
 import { transformArrayInput } from './transform-array-input';
 
-
-fdescribe(`${transformArrayInput.name} function`, () => {
+describe(`${transformArrayInput.name} function`, () => {
     describe('should return the transformed array', () => {
         it('when a valid array is provided', () => {
             const inputArray: number[] = [1, 2, 3];
@@ -24,7 +23,7 @@ fdescribe(`${transformArrayInput.name} function`, () => {
         });
 
         it('when a non-array (js object) value is provided', () => {
-            const inputArray: { [key: string]: any } = { test: 'test' };
+            const inputArray: { [key: string]: unknown } = { test: 'test' };
             const result: unknown[] = transformArrayInput(inputArray);
             expect(result).toEqual([]);
         });

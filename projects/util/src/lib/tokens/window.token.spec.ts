@@ -1,19 +1,19 @@
 import { DOCUMENT } from '@angular/common';
 import { TestBed } from '@angular/core/testing';
-import { WINDOW } from './window.token';
 
+import { WINDOW } from './window.token';
 
 describe('WINDOW', () => {
     describe('when window object is available', () => {
-        const window: Window = ({} as unknown) as Window;
-        const documentRef: any = {
-            defaultView: window
+        const window: Window = {} as unknown as Window;
+        const documentRef: unknown = {
+            defaultView: window,
         };
         let injectedWindow: Window;
 
         beforeEach(() => {
             TestBed.configureTestingModule({
-                providers: [{ provide: DOCUMENT, useValue: documentRef }]
+                providers: [{ provide: DOCUMENT, useValue: documentRef }],
             });
 
             injectedWindow = TestBed.inject(WINDOW);
@@ -25,11 +25,11 @@ describe('WINDOW', () => {
     });
 
     describe('when window object is not available', () => {
-        const documentRef: any = {};
+        const documentRef: unknown = {};
 
         beforeEach(() => {
             TestBed.configureTestingModule({
-                providers: [{ provide: DOCUMENT, useValue: documentRef }]
+                providers: [{ provide: DOCUMENT, useValue: documentRef }],
             });
         });
 

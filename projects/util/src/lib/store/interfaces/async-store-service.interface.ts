@@ -2,15 +2,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Signal } from '@angular/core';
 
 import { Observable } from 'rxjs';
-import { ModelStatus } from '../enums';
 
+import { ModelStatus } from '../enums';
 
 export interface ISetPropertiesConfig {
     showNotification?: boolean;
 }
 
 export interface IBaseAsyncStoreService {
-
     // ================================
     // region Selectors
     // ================================
@@ -70,23 +69,23 @@ export interface IBaseAsyncStoreService {
     // region Upsert Actions
     // ================================
 
-	/** @description Resets status for create/update requests */
-	resetUpsertStatus(): void;
-	startUpsert(): void;
-	setUpsertSuccess(): void;
-	setUpsertFailure(error: HttpErrorResponse, config: ISetPropertiesConfig): Observable<never>;
-	setUpsertFailureVoid(error: HttpErrorResponse, config: ISetPropertiesConfig): void;
+    /** @description Resets status for create/update requests */
+    resetUpsertStatus(): void;
+    startUpsert(): void;
+    setUpsertSuccess(): void;
+    setUpsertFailure(error: HttpErrorResponse, config: ISetPropertiesConfig): Observable<never>;
+    setUpsertFailureVoid(error: HttpErrorResponse, config: ISetPropertiesConfig): void;
     // endregion
 
     // ================================
     // region Delete Actions
     // ================================
 
-	/** @description Resets status for delete requests */
-	resetDeleteStatus(): void;
-	startDelete(): void;
-	setDeleteSuccess(): void;
-	setDeleteFailure(error: HttpErrorResponse, config: ISetPropertiesConfig): Observable<never>;
-	setDeleteFailureVoid(error: HttpErrorResponse, config: ISetPropertiesConfig): void;
+    /** @description Resets status for delete requests */
+    resetDeleteStatus(): void;
+    startDelete(): void;
+    setDeleteSuccess(): void;
+    setDeleteFailure(error: HttpErrorResponse, config: ISetPropertiesConfig): Observable<never>;
+    setDeleteFailureVoid(error: HttpErrorResponse, config: ISetPropertiesConfig): void;
     // endregion
 }

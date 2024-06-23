@@ -1,15 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
-import { ModalService } from '../../components';
 import { IModal } from '../../../interfaces';
+import { ModalService } from '../../components';
 
 @Component({
     standalone: true,
-    selector: 'open-modal-button',
-    template: `<button mat-flat-button type="button" (click)="onClick()">Open Modal</button>`,
+    selector: 'app-open-modal-button',
+    template: '<button mat-flat-button type="button" (click)="onClick()">Open Modal</button>',
     styleUrls: ['./open-modal-button.css'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [CommonModule, MatButton, MatIcon],
@@ -18,10 +18,10 @@ import { IModal } from '../../../interfaces';
 export class OpenModalButtonComponent {
     readonly #modalsService: ModalService = inject(ModalService);
 
-    @Input() icon: string = 'info';
-    @Input() iconColor: string = 'blue';
-    @Input() title: string = 'Content example';
-    @Input() text: string = 'Title example';
+    @Input() public icon: string = 'info';
+    @Input() public iconColor: string = 'blue';
+    @Input() public title: string = 'Content example';
+    @Input() public text: string = 'Title example';
 
     public onClick(): void {
         const data: IModal.Data<boolean> = {
@@ -44,8 +44,8 @@ export class OpenModalButtonComponent {
                     ['font-size']: '2rem',
                     ['color']: this.iconColor,
                 },
-            }
+            },
         };
         this.#modalsService.with(data).onConfirm();
-    };
+    }
 }

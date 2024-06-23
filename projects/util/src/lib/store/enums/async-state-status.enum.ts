@@ -9,5 +9,5 @@ export enum ModelStatus {
     Init,
     Pending,
     Success,
-    Error
+    Error,
 }

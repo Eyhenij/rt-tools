@@ -25,12 +25,18 @@
                     "defaultConfiguration": "production"
                 },
                 "test": {
-                    "builder": "@angular-devkit/build-angular:karma",
+                    "builder": "@angular-builders/jest:run",
                     "options": {
-                        "tsConfig": "projects/util/tsconfig.spec.json",
-                        "polyfills": [
-                            "zone.js",
-                            "zone.js/testing"
+                        "tsConfig": "tsconfig.spec.json"
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-eslint/builder:lint",
+                    "options": {
+                        "eslintConfig": "eslint.config.js",
+                        "lintFilePatterns": [
+                            "projects/util/src/**/*.ts",
+                            "projects/util/src/**/*.html"
                         ]
                     }
                 },
