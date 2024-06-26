@@ -8,7 +8,7 @@ import { generateClass, parseMods, setMods } from './bem.utils';
     standalone: true,
 })
 export class BlockDirective implements OnChanges {
-    @Input() public mod?: string | string[] | ModsObject;
+    @Input() public rtMod?: string | string[] | ModsObject;
     #mods: ModsObject = {};
     #modSerialized: string = '';
 
@@ -24,10 +24,10 @@ export class BlockDirective implements OnChanges {
     }
 
     public ngOnChanges(): void {
-        if (JSON.stringify(this.mod) !== this.#modSerialized && !this.elem) {
-            this.#modSerialized = JSON.stringify(this.mod);
+        if (JSON.stringify(this.rtMod) !== this.#modSerialized && !this.elem) {
+            this.#modSerialized = JSON.stringify(this.rtMod);
 
-            let mods: string | string[] | ModsObject | undefined = this.mod;
+            let mods: string | string[] | ModsObject | undefined = this.rtMod;
 
             const { renderer, element, name } = this;
 
