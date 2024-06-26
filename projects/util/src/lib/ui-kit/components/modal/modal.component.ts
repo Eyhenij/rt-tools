@@ -1,5 +1,5 @@
 import { NgClass, NgComponentOutlet, NgStyle } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, OnInit, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
@@ -7,6 +7,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
+import { BlockDirective, ElemDirective } from '../../../bem';
 import { IModal } from '../../../interfaces';
 import { SanitizePipe } from '../../../pipes';
 import { checkIsMatchingValues } from '../../../validators';
@@ -17,6 +18,7 @@ import { checkIsMatchingValues } from '../../../validators';
     templateUrl: './modal.component.html',
     styleUrls: ['./modal.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    host: { class: 'rtui-modal' },
     imports: [
         NgStyle,
         NgClass,
@@ -32,6 +34,8 @@ import { checkIsMatchingValues } from '../../../validators';
         MatSelectModule,
         MatDialogActions,
         MatButtonModule,
+        BlockDirective,
+        ElemDirective,
     ],
 })
 export class ModalComponent<T> implements OnInit {
@@ -41,11 +45,13 @@ export class ModalComponent<T> implements OnInit {
     public control: FormControl | undefined;
     public selectControl: FormControl | undefined;
 
-    public onClose(button: IModal.Button<T>): void {
-        this.#dialogRef.close({
-            value: Boolean(this.data.select) && button.assignSelectedValue ? this.selectControl?.value : button.value,
-            message: Boolean(this.control) ? this.control?.value : null,
-        });
+    public readonly bemBlock: string = 'rtui-modal';
+
+    @HostBinding('class')
+    public get hostClasses(): Record<string, boolean> {
+        return {
+            [this.bemBlock]: true,
+        };
     }
 
     public ngOnInit(): void {
@@ -60,5 +66,12 @@ export class ModalComponent<T> implements OnInit {
         if (Boolean(this.data.input)) {
             this.control = new FormControl(null, [Validators.required, checkIsMatchingValues(this.data.input!.sample)]);
         }
+    }
+
+    public onClose(button: IModal.Button<T>): void {
+        this.#dialogRef.close({
+            value: Boolean(this.data.select) && button.assignSelectedValue ? this.selectControl?.value : button.value,
+            message: Boolean(this.control) ? this.control?.value : null,
+        });
     }
 }

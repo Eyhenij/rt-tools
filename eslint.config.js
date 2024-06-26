@@ -43,7 +43,7 @@ export default [
                 'error',
                 {
                     type: 'attribute',
-                    prefix: 'rtui',
+                    prefix: ['rtui', 'rt'],
                     style: 'camelCase',
                 },
             ],
