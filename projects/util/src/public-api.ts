@@ -12,3 +12,4 @@ export * from './lib/store';
 export * from './lib/validators';
 export * from './lib/enums';
 export * from './lib/ui-kit/components';
+export * from './lib/bem';
