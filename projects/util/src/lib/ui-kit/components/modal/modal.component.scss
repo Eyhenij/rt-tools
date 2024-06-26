@@ -20,16 +20,22 @@
         }
     }
 
-    .title {
-        h1 {
-            font-size: 1.25rem;
-            color: var(--clr-txt);
-            font-weight: 400;
+    .rtui-modal {
+        &__title {
+            h1 {
+                font-size: 1.25rem;
+                color: var(--clr-txt);
+                font-weight: 400;
+            }
+
+            h1,
+            h2 {
+                text-align: center;
+            }
         }
 
-        h1,
-        h2 {
-            text-align: center;
+        &__cm-select {
+            margin-top: 1rem;
         }
     }
 
@@ -59,10 +65,6 @@
 
             textarea {
                 resize: none;
-            }
-
-            &.cm-select {
-                margin-top: 1rem;
             }
         }
     }
