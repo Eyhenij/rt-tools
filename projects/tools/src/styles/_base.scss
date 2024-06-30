@@ -1,0 +1,13 @@
+:root {
+    --rt-scrollable-height: 100%;
+    --rt-scrollable-width: 100%;
+    --rt-scrollable-display: flex;
+    --rt-scrollable-flex-direction: column;
+
+    --rt-scrollable-content-display: flex;
+    --rt-scrollable-content-flex-grow: 1;
+
+    --rt-scrollable-header-padding: 0.5rem 1rem;
+
+    --rt-scrollable-footer-padding: 1rem;
+}

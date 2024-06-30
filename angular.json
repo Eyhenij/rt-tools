@@ -3,23 +3,29 @@
     "version": 1,
     "newProjectRoot": "projects",
     "projects": {
-        "util": {
+        "@rt/tools": {
             "projectType": "library",
-            "root": "projects/util",
-            "sourceRoot": "projects/util/src",
-            "prefix": "lib",
+            "schematics": {
+                "@schematics/angular:component": {
+                    "style": "scss",
+                    "changeDetection": "OnPush"
+                }
+            },
+            "root": "projects/tools",
+            "sourceRoot": "projects/tools/src",
+            "prefix": "rt",
             "architect": {
                 "build": {
                     "builder": "@angular-devkit/build-angular:ng-packagr",
                     "options": {
-                        "project": "projects/util/ng-package.json"
+                        "project": "projects/tools/ng-package.json"
                     },
                     "configurations": {
                         "production": {
-                            "tsConfig": "projects/util/tsconfig.lib.prod.json"
+                            "tsConfig": "projects/tools/tsconfig.lib.prod.json"
                         },
                         "development": {
-                            "tsConfig": "projects/util/tsconfig.lib.json"
+                            "tsConfig": "projects/tools/tsconfig.lib.json"
                         }
                     },
                     "defaultConfiguration": "production"
@@ -35,32 +41,32 @@
                     "options": {
                         "eslintConfig": "eslint.config.js",
                         "lintFilePatterns": [
-                            "projects/util/src/**/*.ts",
-                            "projects/util/src/**/*.html"
+                            "projects/tools/src/**/*.ts",
+                            "projects/tools/src/**/*.html"
                         ]
                     }
                 },
                 "storybook": {
                     "builder": "@storybook/angular:start-storybook",
                     "options": {
-                        "configDir": "projects/util/.storybook",
-                        "browserTarget": "util:build",
+                        "configDir": "projects/tools/.storybook",
+                        "browserTarget": "@rt/tools:build",
                         "compodoc": false,
                         "port": 6006,
                         "styles": [
-                            "projects/util/src/lib/ui-kit/styles/styles.scss"
+                            "projects/tools/.storybook/storybook.scss"
                         ]
                     }
                 },
                 "build-storybook": {
                     "builder": "@storybook/angular:build-storybook",
                     "options": {
-                        "configDir": "projects/util/.storybook",
-                        "browserTarget": "util:build",
+                        "configDir": "projects/tools/.storybook",
+                        "browserTarget": "@rt/tools:build",
                         "compodoc": false,
                         "outputDir": "storybook-static",
                         "styles": [
-                            "projects/util/src/lib/ui-kit/styles/styles.scss"
+                            "@rt-tools/src/lib/ui-kit/styles/styles.scss"
                         ]
                     }
                 }
