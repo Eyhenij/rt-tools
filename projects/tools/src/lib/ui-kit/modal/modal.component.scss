@@ -1,0 +1,71 @@
+@use '../../../styles/variables' as vars;
+
+:host {
+    ::ng-deep {
+        .highlighted {
+            color: vars.$text-highlight-color;
+        }
+
+        .--highlighted {
+            display: inline;
+            font-weight: bold;
+            color: var(--clr-black);
+        }
+
+        .--warn {
+            display: inline;
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--clr-red-100);
+        }
+    }
+
+    .rtui-modal {
+        &__title {
+            h1 {
+                font-size: 1.25rem;
+                color: var(--clr-txt);
+                font-weight: 400;
+            }
+
+            h1,
+            h2 {
+                text-align: center;
+            }
+        }
+
+        &__cm-select {
+            margin-top: 1rem;
+        }
+    }
+
+    .mat-icon {
+        width: auto;
+        height: auto;
+    }
+
+    .mdc-dialog__title::before {
+        height: 100%;
+    }
+
+    mat-dialog-content {
+        padding: 1rem 1.5rem;
+        color: var(--clr-gray);
+        font-size: 0.8rem;
+        text-align: center;
+
+        .input-label {
+            font-weight: bold;
+            text-align: left;
+            padding-top: 1.5rem;
+        }
+
+        mat-form-field {
+            width: 100%;
+
+            textarea {
+                resize: none;
+            }
+        }
+    }
+}

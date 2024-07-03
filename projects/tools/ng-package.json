@@ -1,0 +1,10 @@
+{
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/tools",
+  "deleteDestPath": true,
+  "inlineStyleLanguage": "scss",
+  "assets": ["src/styles", "src/**/*.scss"],
+  "lib": {
+    "entryFile": "src/public-api.ts"
+  }
+}

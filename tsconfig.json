@@ -2,6 +2,7 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
+        "baseUrl": "./",
         "outDir": "./dist/out-tsc",
         "strict": true,
         "noImplicitOverride": true,
@@ -25,17 +26,14 @@
         "lib": [
             "ES2022",
             "dom"
-        ],
-        "paths": {
-          "util": [
-            "./dist/util"
-          ]
-        }
+        ]
     },
     "angularCompilerOptions": {
         "enableI18nLegacyMessageIdFormat": false,
         "strictInjectionParameters": true,
         "strictInputAccessModifiers": true,
-        "strictTemplates": true
-    }
+        "strictTemplates": true,
+        "compilationMode": "partial"
+    },
+    "exclude": ["node_modules", "dist"]
 }
