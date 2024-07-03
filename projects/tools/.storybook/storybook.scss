@@ -1,0 +1,36 @@
+@use '@angular/material' as mat;
+
+//@use '../src/lib/ui-kit/styles/styles.scss';
+
+@use '../src/styles/base';
+@use '../src/styles/variables' as vars;
+@use '../src/styles/mixin' as mixins;
+
+@include mat.core();
+
+$mat-theme: mat.define-theme(
+    (
+        color: (
+            theme-type: vars.$main-theme,
+            primary: mat.$violet-palette,
+        ),
+        typography: (
+            plain-family: var(--font-default),
+            bold-weight: 900,
+            medium-weight: 500,
+            regular-weight: 400,
+        ),
+        density: (
+            scale: -1,
+        ),
+    )
+);
+
+html {
+    @include mat.all-component-themes($mat-theme);
+}
+
+// For correct displaying modal height in storybook
+.mat-mdc-dialog-container {
+    max-height: 100vh;
+}
