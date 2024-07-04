@@ -8,7 +8,7 @@ import { generateClass, parseMods, setMods } from './bem.utils';
     standalone: true,
 })
 export class ElemDirective implements OnChanges {
-    @Input() public rtMod?: string | string[] | ModsObject;
+    @Input() public rtMod?: string | string[] | (string | false)[] | ModsObject;
     public blockName: string;
     #mods: ModsObject = {};
     #modSerialized: string = '';
@@ -28,7 +28,7 @@ export class ElemDirective implements OnChanges {
         if (JSON.stringify(this.rtMod) !== this.#modSerialized) {
             this.#modSerialized = JSON.stringify(this.rtMod);
 
-            let mods: string | string[] | ModsObject | undefined = this.rtMod;
+            let mods: string | string[] | (string | false)[] | ModsObject | undefined = this.rtMod;
 
             const { renderer, element, blockName, name } = this;
 

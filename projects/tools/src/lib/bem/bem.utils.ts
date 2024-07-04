@@ -52,7 +52,7 @@ export function generateClass(blockName: string, elemName?: string, modName?: st
     return cls;
 }
 
-export function parseMods(mods?: string | string[] | ModsObject): ModsObject {
+export function parseMods(mods?: string | string[] | (string | false)[] | ModsObject): ModsObject {
     if (typeof mods === 'string') {
         mods = mods.split(/\s+/);
     }
@@ -60,8 +60,10 @@ export function parseMods(mods?: string | string[] | ModsObject): ModsObject {
     if (Array.isArray(mods)) {
         const modsObj: ModsObject = {};
 
-        mods.forEach((key: string) => {
-            modsObj[key] = true;
+        mods.forEach((key: string | false) => {
+            if (key) {
+                modsObj[key] = true;
+            }
         });
         mods = modsObj;
     } else if (typeof mods !== 'object') {
