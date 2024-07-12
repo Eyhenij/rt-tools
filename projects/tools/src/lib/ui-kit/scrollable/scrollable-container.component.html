@@ -1,13 +1,19 @@
-<ng-container rtBlock="c-scrollable">
-    <div rtElem="header">
-        <ng-content select="[header]" />
-    </div>
+<ng-container rtBlock="c-scrollable" [style.background-color]="backgroundColor()">
+    @if (headerTpl()) {
+        <div rtElem="header" [style.background-color]="backgroundColor()">
+            <ng-container *ngTemplateOutlet="headerTpl() ?? null" />
+        </div>
+    }
 
-    <div rtElem="content">
-        <ng-content select="[content]" />
-    </div>
+    @if (contentTpl()) {
+        <div rtElem="content" [style.background-color]="backgroundColor()">
+            <ng-container *ngTemplateOutlet="contentTpl() ?? null" />
+        </div>
+    }
 
-    <div rtElem="footer">
-        <ng-content select="[footer]" />
-    </div>
+    @if (footerTpl()) {
+        <div rtElem="footer" [style.background-color]="backgroundColor()">
+            <ng-container *ngTemplateOutlet="footerTpl() ?? null" />
+        </div>
+    }
 </ng-container>
