@@ -25,3 +25,16 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+
+## Using RtIconOutlinedDirective
+1. Add to the app header in the index.html:
+    <head>
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block"
+            rel="stylesheet" />
+    </head>
+2. Add to the app.component:
+    readonly #matIconReg: MatIconRegistry = inject(MatIconRegistry);
+    this.#matIconReg.setDefaultFontSetClass('material-symbols-outlined');
+3. Add the directive to the each mat-icon
