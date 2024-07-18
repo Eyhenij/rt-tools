@@ -1,13 +1,20 @@
 :root {
+    --clr-white: #ffffff;
+
     --rt-scrollable-height: 100%;
     --rt-scrollable-width: 100%;
     --rt-scrollable-display: flex;
     --rt-scrollable-flex-direction: column;
+    --rt-scrollable-background-color: var(--clr-white);
+
+    --rt-scrollable-header-padding: 0.5rem 1rem;
+    --rt-scrollable-header-background-color: var(--clr-white);
 
     --rt-scrollable-content-display: flex;
     --rt-scrollable-content-flex-grow: 1;
-
-    --rt-scrollable-header-padding: 0.5rem 1rem;
+    --rt-scrollable-content-padding: 1rem;
+    --rt-scrollable-content-background-color: var(--clr-white);
 
     --rt-scrollable-footer-padding: 1rem;
+    --rt-scrollable-footer-background-color: var(--clr-white);
 }

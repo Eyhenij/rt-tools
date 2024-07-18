@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Directive, InputSignal, Signal, TemplateRef, contentChild, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Directive, Signal, TemplateRef, contentChild } from '@angular/core';
 
 import { BlockDirective, ElemDirective } from '../../bem';
 import { Nullable } from '../../util';
@@ -40,5 +40,4 @@ export class RtuiScrollableContainerComponent {
     public readonly footerTpl: Signal<Nullable<TemplateRef<any>>> = contentChild(RtuiScrollableContainerFooterDirective, {
         read: TemplateRef,
     });
-    public backgroundColor: InputSignal<Nullable<string>> = input();
 }

@@ -5,19 +5,25 @@
     display: var(--rt-scrollable-display);
     flex-direction: var(--rt-scrollable-flex-direction);
 
-    .c-scrollable {
+    .rtui-scrollable {
+        background-color: var(--rt-scrollable-background-color);
+
         &__header {
             padding: var(--rt-scrollable-header-padding);
+            background-color: var(--rt-scrollable-header-background-color);
         }
 
         &__content {
             display: var(--rt-scrollable-content-display);
             flex-grow: var(--rt-scrollable-content-flex-grow);
+            padding: var(--rt-scrollable-content-padding);
+            background-color: var(--rt-scrollable-content-background-color);
             overflow: auto;
         }
 
         &__footer {
             padding: var(--rt-scrollable-footer-padding);
+            background-color: var(--rt-scrollable-footer-background-color);
         }
     }
 }
