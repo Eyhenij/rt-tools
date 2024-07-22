@@ -1,0 +1,45 @@
+@if (item()) {
+    <ng-container *ngTemplateOutlet="listElemTpl; context: { $implicit: item() }" />
+}
+
+<ng-template #listElemTpl let-item>
+    @if (item?.link) {
+        <mat-list-item rtBlock="rtui-side-menu-sub-item" [activated]="menuRef.activeMenuIds().includes(item.id)" (click)="onClickSubMenu(item)">
+            @if (item?.icon) {
+                <mat-icon matListItemIcon rtElem="icon">{{ item.icon }}</mat-icon>
+            }
+
+            @if (item?.name) {
+                <div rtBlock="rtui-side-menu-sub-item-title">
+                    <div rtElem="text">{{ item.name }}</div>
+
+                    @if (item?.iconButton?.icon) {
+                        <div rtElem="button">
+                            <mat-icon (click)="$event.stopPropagation(); onClickSubMenuAdditional(item.iconButton?.data)">{{ item.iconButton.icon }}</mat-icon>
+                        </div>
+                    }
+                </div>
+            }
+        </mat-list-item>
+    } @else if (item?.submenu) {
+        <mat-expansion-panel #panel [expanded]="menuRef.activeMenuIds().includes(item.id)" rtBlock="rtui-side-menu-expand-sub-item">
+            <mat-expansion-panel-header rtBlock="rtui-side-menu-expand-sub-item-header" [rtMod]="{ activated: menuRef.activeMenuIds().includes(item.id) }">
+                @if (item?.icon) {
+                    <mat-icon matListItemIcon rtElem="icon">{{ item.icon }}</mat-icon>
+                }
+
+                @if (item?.name) {
+                    <div matListItemTitle rtElem="title">{{ item.name }}</div>
+                }
+            </mat-expansion-panel-header>
+
+            @if (panel?.expanded) {
+                <mat-nav-list>
+                    @for (item of item?.submenu; track i; let i = $index) {
+                        <ng-container *ngTemplateOutlet="listElemTpl; context: { $implicit: item }" />
+                    }
+                </mat-nav-list>
+            }
+        </mat-expansion-panel>
+    }
+</ng-template>
