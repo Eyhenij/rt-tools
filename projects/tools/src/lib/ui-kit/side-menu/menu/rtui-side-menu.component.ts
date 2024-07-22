@@ -123,6 +123,7 @@ export class RtuiSideMenuComponent {
     }
 
     public onBackToMainMenu(): void {
+        this.selectedItem.set(null);
         this.selectedSubMenu.set(null);
     }
 
@@ -138,6 +139,7 @@ export class RtuiSideMenuComponent {
     }
 
     public closeSubMenu(): void {
+        this.selectedItem.set(null);
         this.selectedSubMenu.set(null);
         this.subMenuRef()?.close().then();
     }
