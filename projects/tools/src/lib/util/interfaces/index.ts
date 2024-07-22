@@ -10,3 +10,4 @@ export * from './values.type';
 
 // ui
 export * from './modal-data.interface';
+export * from './side-menu.interface';

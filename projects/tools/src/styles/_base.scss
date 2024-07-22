@@ -1,6 +1,9 @@
 :root {
     --clr-white: #ffffff;
+    --clr-black-20: #e0e0e0;
+    --clr-black-60: #747474;
 
+    // Scrollable
     --rt-scrollable-height: 100%;
     --rt-scrollable-width: 100%;
     --rt-scrollable-display: flex;
@@ -17,4 +20,14 @@
 
     --rt-scrollable-footer-padding: 1rem;
     --rt-scrollable-footer-background-color: var(--clr-white);
+
+    // Side menu
+    --rt-side-menu-width: 5.5rem;
+    --rt-side-sub-menu-width: 15rem;
+    --rt-side-menu-sub-item-width: 13.75rem;
+
+    --rt-side-menu-mobile-button-top: 1.25rem;
+    --rt-side-menu-mobile-button-left: 1.25rem;
+    --rt-side-menu-mobile-button-padding: 0.5rem;
+    --rt-side-menu-mobile-button-z-index: 1;
 }

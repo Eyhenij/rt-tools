@@ -1,0 +1,84 @@
+:host {
+    &::ng-deep {
+        // Set expansion panel header padding
+        .mat-expansion-indicator {
+            padding: 0 1.5rem 0 1.5rem;
+        }
+
+        // Set expansion panel body padding
+        .mat-expansion-panel-body {
+            padding: 0 0 0 1rem;
+        }
+
+        // Set expansion panel transparent container
+        --mat-expansion-container-background-color: transparent;
+
+        // Set permanent expansion header height
+        --mat-expansion-header-expanded-state-height: var(--mat-expansion-header-collapsed-state-height);
+    }
+
+    .rtui-side-menu-sub-item {
+        min-width: var(--rt-side-menu-sub-item-width);
+        max-width: var(--rt-side-menu-sub-item-width);
+
+        .rtui-side-menu-sub-item-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            &__text {
+                font-size: 0.75rem;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+            }
+
+            &__button {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-left: 0.5rem;
+                border-radius: 50%;
+                cursor: pointer;
+                border: 1.5px solid transparent;
+
+                &:hover {
+                    border-color: var(--clr-black-60);
+                }
+            }
+        }
+    }
+
+    .rtui-side-menu-expand-sub-item {
+        min-width: var(--rt-side-menu-sub-item-width);
+        padding: 0;
+        box-shadow: none;
+        // Set expand sub item header border like menu item border
+        border-radius: 1.35rem;
+
+        .rtui-side-menu-expand-sub-item-header {
+            width: var(--rt-side-menu-sub-item-width);
+            padding: 0;
+
+            &--activated {
+                background-color: var(--mat-list-active-indicator-color);
+            }
+
+            &__icon {
+                margin-inline-start: var(--mat-list-list-item-leading-icon-start-space);
+                margin-inline-end: var(--mat-list-list-item-leading-icon-end-space);
+                color: var(--mdc-list-list-item-leading-icon-color);
+            }
+
+            &__title {
+                font-size: 0.75rem;
+            }
+
+            &:hover {
+                .rtui-side-menu-expand-sub-item-header__icon {
+                    color: var(--mdc-list-list-item-hover-leading-icon-color);
+                }
+            }
+        }
+    }
+}

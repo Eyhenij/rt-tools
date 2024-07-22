@@ -1,0 +1,115 @@
+@if (isMobile()) {
+    <rtui-scrollable rtBlock="rtui-mobile-side-menu">
+        @if (headerTpl()) {
+            <ng-container *rtuiScrollableHeader>
+                <ng-container *ngTemplateOutlet="headerTpl() ?? null" />
+            </ng-container>
+        }
+
+        @if (menuItems().length) {
+            <ng-container *rtuiScrollableContent>
+                <mat-nav-list rtElem="list" [rtMod]="{ expandable: selectedSubMenu() }">
+                    @if (selectedSubMenu()) {
+                        <rtui-side-menu-sub-item
+                            [item]="backToMainMenuButton()"
+                            (clickSubMenuAction)="onBackToMainMenu()" />
+
+                        @for (item of selectedSubMenu(); track i; let i = $index) {
+                            <rtui-side-menu-sub-item
+                                [item]="item"
+                                (clickSubMenuAction)="onClickSubMenu($event)"
+                                (clickSubMenuAdditionalAction)="clickSubMenuAdditional($event)" />
+                        }
+                    } @else {
+                        @for (item of menuItems(); track i; let i = $index) {
+                            <mat-list-item rtBlock="rtui-mobile-side-menu-item" [activated]="selectedItem() === item || (!selectedItem() && activeMenuIds().includes(item.id))" (click)="onClickMenu(item)">
+                                @if (item?.icon) {
+                                    <mat-icon matListItemIcon rtElem="icon">{{ item.icon }}</mat-icon>
+                                }
+
+                                @if (item?.name) {
+                                    <div rtBlock="rtui-mobile-side-menu-item-title">
+                                        <div rtElem="text">{{ item.name }}</div>
+
+                                        @if (item?.iconButton?.icon) {
+                                            <div rtElem="button">
+                                                <mat-icon>{{ item.iconButton?.icon }}</mat-icon>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </mat-list-item>
+                        }
+                    }
+                </mat-nav-list>
+            </ng-container>
+        }
+
+        @if (footerTpl()) {
+            <ng-container *rtuiScrollableFooter>
+                <ng-container *ngTemplateOutlet="footerTpl() ?? null" />
+            </ng-container>
+        }
+    </rtui-scrollable>
+} @else {
+    <rtui-scrollable rtBlock="rtui-side-menu">
+        @if (headerTpl()) {
+            <ng-container *rtuiScrollableHeader>
+                <ng-container *ngTemplateOutlet="headerTpl() ?? null" />
+            </ng-container>
+        }
+
+        @if (menuItems().length) {
+            <ng-container *rtuiScrollableContent>
+                <mat-nav-list rtElem="list">
+                    @for (item of menuItems(); track i; let i = $index) {
+                        <div rtBlock="rtui-side-menu-item" (mouseenter)="toggleSubMenu(item)" (click)="onClickMenu(item)">
+                            @if (item?.icon) {
+                                <mat-list-item rtBlock="rtui-side-menu-item-button" [activated]="selectedItem() === item || (!selectedItem() && activeMenuIds().includes(item.id))">
+                                    <div rtElem="icon">
+                                        <mat-icon>{{ item.icon }}</mat-icon>
+                                    </div>
+                                </mat-list-item>
+                            }
+
+                            @if (item?.name) {
+                                <div rtElem="title">{{ item.name }}</div>
+                            }
+                        </div>
+                    }
+                </mat-nav-list>
+            </ng-container>
+        }
+
+        @if (footerTpl()) {
+            <ng-container *rtuiScrollableFooter>
+                <ng-container *ngTemplateOutlet="footerTpl() ?? null" />
+            </ng-container>
+        }
+    </rtui-scrollable>
+
+    <mat-drawer-container
+        rtBlock="rtui-sub-side-menu"
+        [rtMod]="{ opened: subMenuRef()?.opened }"
+        [hasBackdrop]="true"
+        (backdropClick)="closeSubMenu()">
+        <mat-drawer
+            rtBlock="rtui-sub-side-menu-content"
+            mode="side"
+            position="start"
+            (mouseleave)="toggleSubMenu()" >
+            <rtui-scrollable>
+                <ng-container *rtuiScrollableContent>
+                    <mat-nav-list rtElem="list">
+                        @for (item of selectedSubMenu(); track i; let i = $index) {
+                            <rtui-side-menu-sub-item
+                                [item]="item"
+                                (clickSubMenuAction)="onClickSubMenu($event)"
+                                (clickSubMenuAdditionalAction)="clickSubMenuAdditional($event)" />
+                        }
+                    </mat-nav-list>
+                </ng-container>
+            </rtui-scrollable>
+        </mat-drawer>
+    </mat-drawer-container>
+}
