@@ -1,0 +1,27 @@
+<rtui-side-menu rtBlock="side-menu-wrapper" [isMobile]="isMobile" [menuItems]="menuItems" [activeMenuIds]="activeMenuIds" (closeMobileMenuAction)="closeMobileMenu()">
+    <ng-container *rtuiSideMenuHeader>
+        <a rtElem="header" (click)="closeMobileMenu()">
+            <mat-icon
+                rtElem="icon"
+                matTooltip="Header"
+                matTooltipPosition="above"
+                (click)="closeMobileMenu()" >
+                info
+            </mat-icon>
+        </a>
+    </ng-container>
+
+    <ng-container *rtuiSideMenuFooter>
+        <div rtBlock="footer">
+            <mat-icon
+                rtElem="icon"
+                matTooltip="Settings"
+                matTooltipPosition="above"
+                (click)="closeMobileMenu()" >
+                person
+            </mat-icon>
+
+            <button class="c-button c-button--basic" mat-button color="accent" (click)="logout()">Logout</button>
+        </div>
+    </ng-container>
+</rtui-side-menu>

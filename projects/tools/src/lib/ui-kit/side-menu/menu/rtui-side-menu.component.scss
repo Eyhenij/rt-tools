@@ -1,0 +1,114 @@
+:host {
+    // Hide drawer mask
+    --mat-sidenav-scrim-color: transparent;
+
+    .rtui-mobile-side-menu {
+        width: var(--rt-side-sub-menu-width);
+
+        &__list {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+
+            &--expandable {
+                width: fit-content;
+            }
+
+            .rtui-mobile-side-menu-item {
+                .rtui-mobile-side-menu-item-title {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+
+                    &__text {
+                        font-size: 0.75rem;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        overflow: hidden;
+                    }
+
+                    &__button {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        margin-left: 0.5rem;
+                        border-radius: 50%;
+                    }
+                }
+            }
+
+            .rtui-mobile-side-menu-item + .rtui-mobile-side-menu-item {
+                margin-top: 0.5rem;
+            }
+        }
+    }
+
+    .rtui-side-menu {
+        width: var(--rt-side-menu-width);
+
+        &__list {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+
+            .rtui-side-menu-item {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+                width: 100%;
+
+                .rtui-side-menu-item-button {
+                    padding: 0;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    &__icon {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                }
+
+                &__title {
+                    font-size: 0.75rem;
+                    text-align: center
+                }
+            }
+
+            .rtui-side-menu-item + .rtui-side-menu-item {
+                margin-top: 0.5rem;
+            }
+        }
+    }
+
+    .rtui-sub-side-menu {
+        position: fixed;
+        top: 0;
+        left: var(--rt-side-menu-width);
+        width: 0;
+        height: 100%;
+        background-color: transparent;
+
+        &--opened {
+            width: 100%;
+        }
+
+        .rtui-sub-side-menu-content {
+            width: var(--rt-side-sub-menu-width);
+            height: 100%;
+            border-left: 1px solid var(--clr-black-20);
+            box-shadow:
+                14px 0 28px rgba(0, 0, 0, 0.25),
+                10px 0 10px rgba(0, 0, 0, 0.22);
+
+            &__list {
+                width: 100%;
+                min-width: fit-content;
+            }
+        }
+    }
+}

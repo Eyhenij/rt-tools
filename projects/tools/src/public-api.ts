@@ -10,6 +10,7 @@ export * from './lib/store';
 // ui-kit
 export * from './lib/ui-kit/modal';
 export * from './lib/ui-kit/scrollable';
+export * from './lib/ui-kit/side-menu';
 
 // utils
 export * from './lib/util';
