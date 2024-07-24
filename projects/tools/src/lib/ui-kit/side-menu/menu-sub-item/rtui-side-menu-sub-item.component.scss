@@ -18,8 +18,8 @@
     }
 
     .rtui-side-menu-sub-item {
-        min-width: var(--rt-side-menu-sub-item-width);
-        max-width: var(--rt-side-menu-sub-item-width);
+        min-width: var(--rt-side-menu-sub-menu-item-width);
+        max-width: var(--rt-side-menu-sub-menu-item-width);
 
         .rtui-side-menu-sub-item-title {
             display: flex;
@@ -27,7 +27,7 @@
             align-items: center;
 
             &__text {
-                font-size: 0.75rem;
+                font-size: var(--rt-side-menu-sub-menu-item-title);
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 overflow: hidden;
@@ -50,14 +50,14 @@
     }
 
     .rtui-side-menu-expand-sub-item {
-        min-width: var(--rt-side-menu-sub-item-width);
+        min-width: var(--rt-side-menu-sub-menu-item-width);
         padding: 0;
         box-shadow: none;
         // Set expand sub item header border like menu item border
         border-radius: 1.35rem;
 
         .rtui-side-menu-expand-sub-item-header {
-            width: var(--rt-side-menu-sub-item-width);
+            width: var(--rt-side-menu-sub-menu-item-width);
             padding: 0;
 
             &--activated {
@@ -71,7 +71,7 @@
             }
 
             &__title {
-                font-size: 0.75rem;
+                font-size: var(--rt-side-menu-sub-menu-item-title);
             }
 
             &:hover {
