@@ -8,38 +8,42 @@
 
         @if (menuItems().length) {
             <ng-container *rtuiScrollableContent>
-                <mat-nav-list rtElem="list" [rtMod]="{ expandable: selectedSubMenu() }">
+                <mat-nav-list rtBlock="rtui-mobile-side-menu-list" [rtMod]="{ expandable: selectedSubMenu() }">
                     @if (selectedSubMenu()) {
-                        <rtui-side-menu-sub-item
-                            [item]="backToMainMenuButton()"
-                            (clickSubMenuAction)="onBackToMainMenu()" />
-
-                        @for (item of selectedSubMenu(); track i; let i = $index) {
+                        <div rtElem="sub">
                             <rtui-side-menu-sub-item
-                                [item]="item"
-                                (clickSubMenuAction)="onClickSubMenu($event)"
-                                (clickSubMenuAdditionalAction)="clickSubMenuAdditional($event)" />
-                        }
+                                [item]="backToMainMenuButton()"
+                                (clickSubMenuAction)="onBackToMainMenu()" />
+
+                            @for (item of selectedSubMenu(); track i; let i = $index) {
+                                <rtui-side-menu-sub-item
+                                    [item]="item"
+                                    (clickSubMenuAction)="onClickSubMenu($event)"
+                                    (clickSubMenuAdditionalAction)="clickSubMenuAdditional($event)" />
+                            }
+                        </div>
                     } @else {
-                        @for (item of menuItems(); track i; let i = $index) {
-                            <mat-list-item rtBlock="rtui-mobile-side-menu-item" [activated]="selectedItem() === item || (!selectedItem() && activeMenuIds().includes(item.id))" (click)="onClickMenu(item)">
-                                @if (item?.icon) {
-                                    <mat-icon matListItemIcon rtElem="icon">{{ item.icon }}</mat-icon>
-                                }
+                        <div rtBlock="rtui-mobile-side-menu-list-main">
+                            @for (item of menuItems(); track i; let i = $index) {
+                                <mat-list-item rtBlock="rtui-mobile-side-menu-item" [activated]="selectedItem() === item || (!selectedItem() && activeMenuIds().includes(item.id))" (click)="onClickMenu(item)">
+                                    @if (item?.icon) {
+                                        <mat-icon matListItemIcon rtElem="icon">{{ item.icon }}</mat-icon>
+                                    }
 
-                                @if (item?.name) {
-                                    <div rtBlock="rtui-mobile-side-menu-item-title">
-                                        <div rtElem="text">{{ item.name }}</div>
+                                    @if (item?.name) {
+                                        <div rtBlock="rtui-mobile-side-menu-item-title">
+                                            <div rtElem="text">{{ item.name }}</div>
 
-                                        @if (item?.iconButton?.icon) {
-                                            <div rtElem="button">
-                                                <mat-icon>{{ item.iconButton?.icon }}</mat-icon>
-                                            </div>
-                                        }
-                                    </div>
-                                }
-                            </mat-list-item>
-                        }
+                                            @if (item?.iconButton?.icon) {
+                                                <div rtBlock="rtui-mobile-side-menu-item-title-button">
+                                                    <mat-icon rtElem="icon">{{ item.iconButton?.icon }}</mat-icon>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                </mat-list-item>
+                            }
+                        </div>
                     }
                 </mat-nav-list>
             </ng-container>

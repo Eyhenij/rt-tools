@@ -96,6 +96,7 @@ export class RtuiSideMenuComponent {
     });
 
     public readonly closeMobileMenuAction: OutputEmitterRef<void> = output<void>();
+    public readonly clickSubMenuAction: OutputEmitterRef<ISideMenu.Item> = output<ISideMenu.Item>();
     public readonly clickSubMenuAdditionalAction: OutputEmitterRef<any> = output<any>();
 
     public onClickMenu(item?: ISideMenu.Item): void {
@@ -114,9 +115,9 @@ export class RtuiSideMenuComponent {
         }
     }
 
-    public onClickSubMenu(item?: ISideMenu.Item): void {
+    public onClickSubMenu(item: ISideMenu.Item): void {
         if (item?.link) {
-            void this.#router.navigate([item.link]);
+            this.clickSubMenuAction.emit(item)
             this.closeSubMenu();
             this.closeMobileMenu();
         }
