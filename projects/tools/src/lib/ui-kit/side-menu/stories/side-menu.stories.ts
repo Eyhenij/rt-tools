@@ -53,11 +53,11 @@ MobileView.args = {
 export const ActiveMenu = Template.bind({});
 ActiveMenu.args = {
     isMobile: false,
-    activeMenuIds: [1, 3],
+    activeMenuIds: [24, 26, 29, 33, 35],
 };
 
 export const MobileActiveMenu = Template.bind({});
 MobileActiveMenu.args = {
     isMobile: true,
-    activeMenuIds: [1, 3],
+    activeMenuIds: [24, 26, 29, 33, 35],
 };

@@ -1,8 +1,4 @@
 :host {
-    //
-    --mdc-list-list-item-one-line-container-height: 2rem;
-    --mat-expansion-header-collapsed-state-height: 2rem;
-
     // Hide drawer mask
     --mat-sidenav-scrim-color: transparent;
 
@@ -91,6 +87,8 @@
                     display: flex;
                     justify-content: center;
                     align-items: center;
+                    height: var(--rt-side-menu-item-height);
+                    width: var(--rt-side-menu-item-width);
 
                     &__icon {
                         display: flex;
@@ -101,7 +99,8 @@
 
                 &__title {
                     font-size: 0.75rem;
-                    text-align: center
+                    text-align: center;
+                    line-height: 1.1;
                 }
             }
 
