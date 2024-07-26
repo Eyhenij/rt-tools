@@ -98,14 +98,14 @@
                 }
 
                 &__title {
-                    font-size: 0.75rem;
-                    text-align: center;
-                    line-height: 1.1;
+                    font-size: var(--rt-side-menu-item-font-size);
+                    text-align: var(--rt-side-menu-item-text-align);
+                    line-height: var(--rt-side-menu-item-line-height);
                 }
             }
 
             .rtui-side-menu-item + .rtui-side-menu-item {
-                margin-top: 0.5rem;
+                margin-top: var(--rt-side-menu-margin-top-between-items);
             }
         }
     }

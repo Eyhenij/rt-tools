@@ -8,6 +8,7 @@ import {
     OutputEmitterRef,
     Signal,
     TemplateRef,
+    Type,
     WritableSignal,
     booleanAttribute,
     computed,
@@ -77,7 +78,7 @@ export class RtuiSideMenuFooterDirective {}
 export class RtuiSideMenuComponent {
     readonly #router: Router = inject(Router);
 
-    public readonly headerTpl: Signal<Nullable<TemplateRef<any>>> = contentChild(RtuiSideMenuHeaderDirective, {
+    public readonly headerTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiSideMenuHeaderDirective, {
         read: TemplateRef,
     });
     public readonly footerTpl: Signal<Nullable<TemplateRef<any>>> = contentChild(RtuiSideMenuFooterDirective, {
