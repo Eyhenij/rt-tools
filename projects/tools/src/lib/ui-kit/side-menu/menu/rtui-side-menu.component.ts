@@ -15,7 +15,7 @@ import {
     input,
     output,
     signal,
-    viewChild,
+    viewChild, computed,
 } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatListItem, MatListItemIcon, MatNavList } from '@angular/material/list';
@@ -29,7 +29,7 @@ import {
     RtuiScrollableContainerFooterDirective,
     RtuiScrollableContainerHeaderDirective
 } from '../../scrollable';
-import { Nullable, transformArrayInput } from '../../../util';
+import { Nullable, RtScrollToElementDirective, transformArrayInput } from '../../../util';
 import { RtuiSideMenuSubItemComponent } from '../menu-sub-item/rtui-side-menu-sub-item.component';
 import { ISideMenu } from '../../../util/interfaces/side-menu.interface';
 
@@ -70,6 +70,7 @@ export class RtuiSideMenuFooterDirective {}
         // components
         RtuiScrollableContainerComponent,
         RtuiSideMenuSubItemComponent,
+        RtScrollToElementDirective,
     ],
 })
 export class RtuiSideMenuComponent {
@@ -93,6 +94,10 @@ export class RtuiSideMenuComponent {
     });
     public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
         transform: booleanAttribute,
+    });
+
+    public activeMenuId: Signal<number | string> = computed(() => {
+        return this.activeMenuIds()?.length ? this.activeMenuIds()[this.activeMenuIds()?.length -1] : '';
     });
 
     public readonly closeMobileMenuAction: OutputEmitterRef<void> = output<void>();

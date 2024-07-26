@@ -4,7 +4,7 @@
 
 <ng-template #listElemTpl let-item>
     @if (item?.link) {
-        <mat-list-item rtBlock="rtui-side-menu-sub-item" [activated]="menuRef.activeMenuIds().includes(item.id)" (click)="onClickSubMenu(item)">
+        <mat-list-item [id]="item.id" rtBlock="rtui-side-menu-sub-item" [activated]="menuRef.activeMenuIds().includes(item.id)" (click)="onClickSubMenu(item)">
             @if (item?.icon) {
                 <mat-icon matListItemIcon rtElem="icon">{{ item.icon }}</mat-icon>
             }
@@ -14,8 +14,8 @@
                     <div rtElem="text">{{ item.name }}</div>
 
                     @if (item?.iconButton?.icon) {
-                        <div rtElem="button">
-                            <mat-icon (click)="$event.stopPropagation(); onClickSubMenuAdditional(item.iconButton?.data)">{{ item.iconButton.icon }}</mat-icon>
+                        <div rtBlock="rtui-side-menu-sub-item-title-button">
+                            <mat-icon rtElem="icon" (click)="$event.stopPropagation(); onClickSubMenuAdditional(item.iconButton?.data)">{{ item.iconButton.icon }}</mat-icon>
                         </div>
                     }
                 </div>

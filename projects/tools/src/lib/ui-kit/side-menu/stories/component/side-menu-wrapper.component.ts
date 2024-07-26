@@ -52,7 +52,7 @@ export const MENU_ITEMS: Readonly<ISideMenu.Item[]> = Object.freeze([
     {
         id: 24,
         icon: 'question_mark',
-        name: 'Test',
+        name: 'Test long name',
         iconButton: { icon: 'arrow_forward' },
         submenu: [
             { id: 25, icon: 'info', name: 'Link1', link: '/test/1' },
@@ -62,7 +62,7 @@ export const MENU_ITEMS: Readonly<ISideMenu.Item[]> = Object.freeze([
                 name: 'Level 1',
                 submenu: [
                     { id: 27, name: 'Item 1', link: '/test/level1/1', iconButton: { icon: 'add', data: 'data' } },
-                    { id: 28, name: 'Item 2', link: '/test/level1/2' },
+                    { id: 28, name: 'Item 2', link: '/test/level1/2', iconButton: { icon: 'edit', data: 'data' } },
                     {
                         id: 29,
                         icon: 'folder',

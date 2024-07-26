@@ -10,7 +10,7 @@
             <ng-container *rtuiScrollableContent>
                 <mat-nav-list rtBlock="rtui-mobile-side-menu-list" [rtMod]="{ expandable: selectedSubMenu() }">
                     @if (selectedSubMenu()) {
-                        <div rtElem="sub">
+                        <div rtElem="sub" [rtScrollToElement]="activeMenuId()">
                             <rtui-side-menu-sub-item
                                 [item]="backToMainMenuButton()"
                                 (clickSubMenuAction)="onBackToMainMenu()" />
@@ -104,14 +104,16 @@
             (mouseleave)="toggleSubMenu()" >
             <rtui-scrollable>
                 <ng-container *rtuiScrollableContent>
-                    <mat-nav-list rtElem="list">
-                        @for (item of selectedSubMenu(); track i; let i = $index) {
-                            <rtui-side-menu-sub-item
-                                [item]="item"
-                                (clickSubMenuAction)="onClickSubMenu($event)"
-                                (clickSubMenuAdditionalAction)="clickSubMenuAdditional($event)" />
-                        }
-                    </mat-nav-list>
+                    @if (subMenuRef()?.opened && selectedSubMenu()?.length) {
+                        <mat-nav-list rtElem="list" [rtScrollToElement]="activeMenuId()">
+                            @for (item of selectedSubMenu(); track i; let i = $index) {
+                                <rtui-side-menu-sub-item
+                                    [item]="item"
+                                    (clickSubMenuAction)="onClickSubMenu($event)"
+                                    (clickSubMenuAdditionalAction)="clickSubMenuAdditional($event)" />
+                            }
+                        </mat-nav-list>
+                    }
                 </ng-container>
             </rtui-scrollable>
         </mat-drawer>
