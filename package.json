@@ -1,6 +1,6 @@
 {
     "name": "@rt/tools",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "type": "module",
     "scripts": {
         "ng": "ng",
@@ -11,7 +11,8 @@
         "prettier": "npx prettier --write ./projects/tools",
         "packagr:tools": "ng-packagr -p ./projects/tools/ng-package.json && cd ./dist/tools && npm pack && npm publish",
         "storybook": "ng run @rt/tools:storybook",
-        "build-storybook": "ng run @rt/tools:build-storybook"
+        "build-storybook": "ng run @rt/tools:build-storybook",
+        "prepare": "husky"
     },
     "private": false,
     "repository": {

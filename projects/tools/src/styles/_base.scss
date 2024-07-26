@@ -23,8 +23,13 @@
 
     // Side menu
     --rt-side-menu-width: 5.5rem;
+    --rt-side-menu-margin-top-between-items: 0.75rem;
+
     --rt-side-menu-item-width: 3.5rem;
     --rt-side-menu-item-height: 2rem;
+    --rt-side-menu-item-font-size: 0.75rem;
+    --rt-side-menu-item-text-align: center;
+    --rt-side-menu-item-line-height: 1.1;
 
     --rt-mobile-side-menu-item-icon-size: 1.5rem;
     --rt-mobile-side-menu-item-title-size: 0.75rem;
@@ -38,4 +43,7 @@
     --rt-side-menu-mobile-button-left: 1.25rem;
     --rt-side-menu-mobile-button-padding: 0.5rem;
     --rt-side-menu-mobile-button-z-index: 1;
+    --rt-side-menu-mobile-button-background-color: var(--mat-list-active-indicator-color);
+    --rt-side-menu-mobile-button-box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.12),
+        0 1px 18px 0 rgba(0, 0, 0, 0.14);
 }

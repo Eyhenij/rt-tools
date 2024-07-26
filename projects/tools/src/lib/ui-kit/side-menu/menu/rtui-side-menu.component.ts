@@ -8,14 +8,16 @@ import {
     OutputEmitterRef,
     Signal,
     TemplateRef,
+    Type,
     WritableSignal,
     booleanAttribute,
+    computed,
     contentChild,
     inject,
     input,
     output,
     signal,
-    viewChild, computed,
+    viewChild,
 } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatListItem, MatListItemIcon, MatNavList } from '@angular/material/list';
@@ -23,15 +25,15 @@ import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { Router, RouterOutlet } from '@angular/router';
 
 import { BlockDirective, ElemDirective } from '../../../bem';
+import { Nullable, RtScrollToElementDirective, transformArrayInput } from '../../../util';
+import { ISideMenu } from '../../../util/interfaces/side-menu.interface';
 import {
     RtuiScrollableContainerComponent,
     RtuiScrollableContainerContentDirective,
     RtuiScrollableContainerFooterDirective,
-    RtuiScrollableContainerHeaderDirective
+    RtuiScrollableContainerHeaderDirective,
 } from '../../scrollable';
-import { Nullable, RtScrollToElementDirective, transformArrayInput } from '../../../util';
 import { RtuiSideMenuSubItemComponent } from '../menu-sub-item/rtui-side-menu-sub-item.component';
-import { ISideMenu } from '../../../util/interfaces/side-menu.interface';
 
 @Directive({
     standalone: true,
@@ -76,7 +78,7 @@ export class RtuiSideMenuFooterDirective {}
 export class RtuiSideMenuComponent {
     readonly #router: Router = inject(Router);
 
-    public readonly headerTpl: Signal<Nullable<TemplateRef<any>>> = contentChild(RtuiSideMenuHeaderDirective, {
+    public readonly headerTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiSideMenuHeaderDirective, {
         read: TemplateRef,
     });
     public readonly footerTpl: Signal<Nullable<TemplateRef<any>>> = contentChild(RtuiSideMenuFooterDirective, {
@@ -97,7 +99,7 @@ export class RtuiSideMenuComponent {
     });
 
     public activeMenuId: Signal<number | string> = computed(() => {
-        return this.activeMenuIds()?.length ? this.activeMenuIds()[this.activeMenuIds()?.length -1] : '';
+        return this.activeMenuIds()?.length ? this.activeMenuIds()[this.activeMenuIds()?.length - 1] : '';
     });
 
     public readonly closeMobileMenuAction: OutputEmitterRef<void> = output<void>();
@@ -122,7 +124,7 @@ export class RtuiSideMenuComponent {
 
     public onClickSubMenu(item: ISideMenu.Item): void {
         if (item?.link) {
-            this.clickSubMenuAction.emit(item)
+            this.clickSubMenuAction.emit(item);
             this.closeSubMenu();
             this.closeMobileMenu();
         }

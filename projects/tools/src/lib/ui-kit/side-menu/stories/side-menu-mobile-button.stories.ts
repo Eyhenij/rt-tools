@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from '@storybook/angular';
+
 import { RtuiSideMenuMobileButtonComponent } from '../menu-mobile-button/rtui-side-menu-mobile-button.component';
 
 const meta: Meta<RtuiSideMenuMobileButtonComponent> = {

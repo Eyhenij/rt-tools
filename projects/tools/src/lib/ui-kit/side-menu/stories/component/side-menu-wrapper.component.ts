@@ -3,13 +3,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import {
-    RtuiSideMenuComponent,
-    RtuiSideMenuFooterDirective,
-    RtuiSideMenuHeaderDirective
-} from '../../menu/rtui-side-menu.component';
+
 import { BlockDirective, ElemDirective } from '../../../../bem';
 import { ISideMenu } from '../../../../util';
+import { RtuiSideMenuComponent, RtuiSideMenuFooterDirective, RtuiSideMenuHeaderDirective } from '../../menu/rtui-side-menu.component';
 
 export const MENU_ITEMS: Readonly<ISideMenu.Item[]> = Object.freeze([
     {

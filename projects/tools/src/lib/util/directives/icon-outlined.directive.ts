@@ -9,8 +9,6 @@ export class RtIconOutlinedDirective {
 
     @HostBinding('style.fontVariationSettings')
     get fontVariationSettings(): string {
-        return this.rtIconOutlinedDirective()
-            ? "'FILL' 0, 'wght' 700, 'GRAD' 0, 'opsz' 48"
-            : "'FILL' 1, 'wght' 700, 'GRAD' 0, 'opsz' 48";
+        return this.rtIconOutlinedDirective() ? "'FILL' 0, 'wght' 700, 'GRAD' 0, 'opsz' 48" : "'FILL' 1, 'wght' 700, 'GRAD' 0, 'opsz' 48";
     }
 }

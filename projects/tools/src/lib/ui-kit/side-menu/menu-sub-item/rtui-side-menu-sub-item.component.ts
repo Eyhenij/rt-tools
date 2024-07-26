@@ -4,9 +4,9 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIcon } from '@angular/material/icon';
 import { MatListItem, MatListItemIcon, MatListItemTitle, MatNavList } from '@angular/material/list';
 
-import { RtuiSideMenuComponent } from '../menu/rtui-side-menu.component';
 import { BlockDirective, ElemDirective } from '../../../bem';
 import { ISideMenu } from '../../../util/interfaces/side-menu.interface';
+import { RtuiSideMenuComponent } from '../menu/rtui-side-menu.component';
 
 @Component({
     standalone: true,

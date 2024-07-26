@@ -1,4 +1,4 @@
-import { afterRender, Directive, input, InputSignal } from '@angular/core';
+import { Directive, InputSignal, afterRender, input } from '@angular/core';
 
 import { Nullable } from '../interfaces';
 

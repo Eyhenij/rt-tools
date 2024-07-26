@@ -9,6 +9,7 @@ import {
     output,
 } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
+
 import { Nullable } from '../../../util';
 
 @Component({

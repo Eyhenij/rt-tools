@@ -11,9 +11,7 @@
                 <mat-nav-list rtBlock="rtui-mobile-side-menu-list" [rtMod]="{ expandable: selectedSubMenu() }">
                     @if (selectedSubMenu()) {
                         <div rtElem="sub" [rtScrollToElement]="activeMenuId()">
-                            <rtui-side-menu-sub-item
-                                [item]="backToMainMenuButton()"
-                                (clickSubMenuAction)="onBackToMainMenu()" />
+                            <rtui-side-menu-sub-item [item]="backToMainMenuButton()" (clickSubMenuAction)="onBackToMainMenu()" />
 
                             @for (item of selectedSubMenu(); track i; let i = $index) {
                                 <rtui-side-menu-sub-item
@@ -25,7 +23,10 @@
                     } @else {
                         <div rtBlock="rtui-mobile-side-menu-list-main">
                             @for (item of menuItems(); track i; let i = $index) {
-                                <mat-list-item rtBlock="rtui-mobile-side-menu-item" [activated]="selectedItem() === item || (!selectedItem() && activeMenuIds().includes(item.id))" (click)="onClickMenu(item)">
+                                <mat-list-item
+                                    rtBlock="rtui-mobile-side-menu-item"
+                                    [activated]="selectedItem() === item || (!selectedItem() && activeMenuIds().includes(item.id))"
+                                    (click)="onClickMenu(item)">
                                     @if (item?.icon) {
                                         <mat-icon matListItemIcon rtElem="icon">{{ item.icon }}</mat-icon>
                                     }
@@ -69,7 +70,9 @@
                     @for (item of menuItems(); track i; let i = $index) {
                         <div rtBlock="rtui-side-menu-item" (mouseenter)="toggleSubMenu(item)" (click)="onClickMenu(item)">
                             @if (item?.icon) {
-                                <mat-list-item rtBlock="rtui-side-menu-item-button" [activated]="selectedItem() === item || (!selectedItem() && activeMenuIds().includes(item.id))">
+                                <mat-list-item
+                                    rtBlock="rtui-side-menu-item-button"
+                                    [activated]="selectedItem() === item || (!selectedItem() && activeMenuIds().includes(item.id))">
                                     <div rtElem="icon">
                                         <mat-icon>{{ item.icon }}</mat-icon>
                                     </div>
@@ -97,11 +100,7 @@
         [rtMod]="{ opened: subMenuRef()?.opened }"
         [hasBackdrop]="true"
         (backdropClick)="closeSubMenu()">
-        <mat-drawer
-            rtBlock="rtui-sub-side-menu-content"
-            mode="side"
-            position="start"
-            (mouseleave)="toggleSubMenu()" >
+        <mat-drawer rtBlock="rtui-sub-side-menu-content" mode="side" position="start" (mouseleave)="toggleSubMenu()">
             <rtui-scrollable>
                 <ng-container *rtuiScrollableContent>
                     @if (subMenuRef()?.opened && selectedSubMenu()?.length) {
