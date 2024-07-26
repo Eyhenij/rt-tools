@@ -1,4 +1,6 @@
 export namespace ISideMenu {
+    export type ItemData = string | number | object;
+
     export interface Item {
         id: string | number;
 
@@ -8,7 +10,7 @@ export namespace ISideMenu {
         submenu?: Item[];
         iconButton?: {
             icon: string;
-            data?: any;
+            data?: ItemData;
         };
     }
 }

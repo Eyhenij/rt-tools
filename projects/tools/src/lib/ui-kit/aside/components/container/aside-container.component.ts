@@ -1,0 +1,119 @@
+import { CdkTrapFocus } from '@angular/cdk/a11y';
+import { NgTemplateOutlet } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    Directive,
+    InputSignal,
+    InputSignalWithTransform,
+    OutputEmitterRef,
+    Signal,
+    TemplateRef,
+    Type,
+    booleanAttribute,
+    contentChild,
+    input,
+    output,
+} from '@angular/core';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
+import { RouterLink } from '@angular/router';
+
+import { BlockDirective, ElemDirective } from '../../../../bem';
+import { AsideButtonsType, IAside, Nullable, transformArrayInput } from '../../../../util';
+import {
+    RtuiScrollableContainerComponent,
+    RtuiScrollableContainerContentDirective,
+    RtuiScrollableContainerFooterDirective,
+    RtuiScrollableContainerHeaderDirective,
+} from '../../../scrollable';
+import { RtuiSpinnerComponent } from '../../../spinner';
+import { AsideErrorBoxComponent } from '../error-notification/aside-error-box.component';
+
+@Directive({
+    standalone: true,
+    selector: '[rtuiAsideHeader]',
+})
+export class RtuiAsideContainerHeaderDirective {}
+
+@Component({
+    standalone: true,
+    selector: 'rtui-aside-container',
+    templateUrl: './aside-container.component.html',
+    styleUrls: ['./aside-container.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        RouterLink,
+        NgTemplateOutlet,
+
+        // material
+        MatIcon,
+        CdkTrapFocus,
+        MatIconButton,
+        MatTooltip,
+        MatButton,
+
+        // standalone components
+        AsideErrorBoxComponent,
+        RtuiSpinnerComponent,
+        RtuiScrollableContainerComponent,
+        RtuiScrollableContainerHeaderDirective,
+        RtuiScrollableContainerContentDirective,
+        RtuiScrollableContainerFooterDirective,
+
+        // bem
+        BlockDirective,
+        ElemDirective,
+    ],
+    host: {
+        class: 'c-aside',
+    },
+})
+export class RtuiAsideContainerComponent {
+    public title: InputSignal<Nullable<string>> = input<Nullable<string>>(null);
+    public isMobile: InputSignalWithTransform<Nullable<boolean>, boolean> = input.required<Nullable<boolean>, boolean>({
+        transform: booleanAttribute,
+    });
+    public isSubmitButtonDisabled: InputSignalWithTransform<boolean, boolean> = input.required<boolean, boolean>({
+        transform: booleanAttribute,
+    });
+    public pending: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
+    public isRequestErrorShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
+    public headerActionsButtons: InputSignalWithTransform<IAside.HeaderActionButton[], IAside.HeaderActionButton[]> = input<
+        IAside.HeaderActionButton[],
+        IAside.HeaderActionButton[]
+    >([], {
+        transform: (value: IAside.HeaderActionButton[]) => transformArrayInput(value),
+    });
+
+    public requestError: InputSignal<Nullable<HttpErrorResponse>> = input<Nullable<HttpErrorResponse>>(null);
+    public submitButtonTitle: InputSignal<string> = input<string>('Save');
+    public cancelButtonTitle: InputSignal<string> = input<string>('Discard Changes');
+    public submitButtonTooltip: InputSignal<string> = input<string>('');
+
+    public readonly submitAction: OutputEmitterRef<void> = output<void>();
+    public readonly cancelAction: OutputEmitterRef<void> = output<void>();
+    public readonly headerAction: OutputEmitterRef<AsideButtonsType> = output<AsideButtonsType>();
+
+    public readonly headerTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiAsideContainerHeaderDirective, {
+        read: TemplateRef,
+    });
+
+    public onSubmit(): void {
+        this.submitAction.emit();
+    }
+
+    public onCancel(): void {
+        this.cancelAction.emit();
+    }
+
+    public onHeaderActionClick(buttonName: AsideButtonsType): void {
+        this.headerAction.emit(buttonName);
+    }
+}

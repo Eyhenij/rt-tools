@@ -1,0 +1,16 @@
+<div rtBlock="aside-error-box">
+    <div rtElem="title">Request Error</div>
+
+    <button
+        type="button"
+        rtBlock="aside-error-box-button"
+        class="c-button c-button--txt-base--size-sm"
+        [class.--complete]="isErrorCopied()"
+        (click)="onCopyToClipboard()">
+        @if (isErrorCopied()) {
+            <mat-icon rtElem="icon">done</mat-icon>
+        }
+
+        <div rtElem="title">{{ isErrorCopied() ? 'Copied' : 'Copy error info' }}</div>
+    </button>
+</div>

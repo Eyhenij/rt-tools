@@ -34,13 +34,13 @@ export class RtuiSideMenuSubItemComponent {
     public item: InputSignal<ISideMenu.Item> = input.required<ISideMenu.Item>();
 
     public readonly clickSubMenuAction: OutputEmitterRef<ISideMenu.Item> = output<ISideMenu.Item>();
-    public readonly clickSubMenuAdditionalAction: OutputEmitterRef<any> = output<any>();
+    public readonly clickSubMenuAdditionalAction: OutputEmitterRef<ISideMenu.ItemData> = output<ISideMenu.ItemData>();
 
     public onClickSubMenu(item: ISideMenu.Item): void {
         this.clickSubMenuAction.emit(item);
     }
 
-    public onClickSubMenuAdditional(data: any): void {
+    public onClickSubMenuAdditional(data: ISideMenu.ItemData): void {
         this.clickSubMenuAdditionalAction.emit(data);
     }
 }

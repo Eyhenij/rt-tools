@@ -1,0 +1,115 @@
+<rtui-aside-container
+    [isMobile]="false"
+    [pending]="false"
+    [isSubmitButtonDisabled]="saveButtonDisabled"
+    [submitButtonTitle]="'Create'"
+    [submitButtonTooltip]="'Please, fill all required fields'"
+    [cancelButtonTitle]="'Cancel'"
+    [headerActionsButtons]="headerActionsButtons()"
+    [isRequestErrorShown]="!!requestError()"
+    [requestError]="requestError()"
+    (submitAction)="create()"
+    (cancelAction)="cancel()">
+    <ng-container *rtuiAsideHeader>
+        <div rtBlock="header-title">
+            <div rtElem="descr">Description</div>
+            <div rtElem="txt">Create User</div>
+        </div>
+    </ng-container>
+    <form rtBlock="c-form" [formGroup]="form">
+        <mat-tab-group (selectedIndexChange)="selectedTabIndex.set($event)">
+            <!-- Main form -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <div rtBlock="tab-label" matTooltip="Main form" matTooltipPosition="above">
+                        <mat-icon [style.color]="form.invalid ? 'red' : ''">info</mat-icon>
+                    </div>
+                </ng-template>
+
+                <ng-template matTabContent>
+                    <div rtElem="item">
+                        <div rtElem="controls">
+                            <!-- Name -->
+                            <div rtElem="control-item">
+                                <mat-form-field [appearance]="appearance">
+                                    <mat-label>Name</mat-label>
+
+                                    <input formControlName="name" matInput type="text" autocomplete="off" />
+
+                                    @if (form.controls.name.errors?.required) {
+                                        <mat-error>Name is required</mat-error>
+                                    }
+                                </mat-form-field>
+                            </div>
+
+                            <!-- Email -->
+                            <div rtElem="control-item">
+                                <mat-form-field [appearance]="appearance">
+                                    <mat-label>Email</mat-label>
+
+                                    <input formControlName="email" matInput type="text" autocomplete="off" />
+
+                                    @if (form.controls.name.errors?.required) {
+                                        <mat-error>Email is required</mat-error>
+                                    }
+                                </mat-form-field>
+                            </div>
+
+                            <!-- Status -->
+                            <div rtElem="control-item">
+                                <mat-form-field [appearance]="appearance">
+                                    <mat-label>User status</mat-label>
+
+                                    <mat-select formControlName="statuses">
+                                        @for (status of asideRef?.data?.statuses; track status) {
+                                            <mat-option [value]="status">
+                                                {{ status }}
+                                            </mat-option>
+                                        } @empty {
+                                            <mat-option [value]="null">No statuses available</mat-option>
+                                        }
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </mat-tab>
+
+            <!-- Tab Example -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <div rtBlock="tab-label" matTooltip="Tab example" matTooltipPosition="above">
+                        <mat-icon>local_offer</mat-icon>
+
+                        <span rtBlock="icon-badge" matBadgeOverlap="false" [matBadge]="33"></span>
+                    </div>
+                </ng-template>
+
+                <ng-template matTabContent>
+                    <div rtElem="item">
+                        <div rtElem="controls">
+                            <!-- Description -->
+                            <div rtElem="control-item">
+                                <mat-form-field [appearance]="appearance">
+                                    <mat-label>Description</mat-label>
+
+                                    <input formControlName="description" matInput type="text" autocomplete="off" />
+                                </mat-form-field>
+                            </div>
+
+                            <!-- Description 1 -->
+                            <div rtElem="control-item">
+                                <mat-form-field [appearance]="appearance">
+                                    <mat-label>Description 1</mat-label>
+
+                                    <input formControlName="description1" matInput type="text" autocomplete="off" />
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </mat-tab>
+        </mat-tab-group>
+    </form>
+</rtui-aside-container>
