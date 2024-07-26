@@ -11,6 +11,9 @@ export * from './lib/store';
 export * from './lib/ui-kit/modal';
 export * from './lib/ui-kit/scrollable';
 export * from './lib/ui-kit/side-menu';
+export * from './lib/ui-kit/spinner';
+export * from './lib/ui-kit/aside';
+export * from './lib/ui-kit/buttons';
 
 // utils
 export * from './lib/util';

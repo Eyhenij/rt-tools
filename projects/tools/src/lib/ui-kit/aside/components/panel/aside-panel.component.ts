@@ -3,7 +3,7 @@ import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { PortalModule } from '@angular/cdk/portal';
 import { AsyncPipe } from '@angular/common';
-import { Component, HostBinding, Inject, Injector, ViewEncapsulation } from '@angular/core';
+import { Component, HostBinding, Injector, ViewEncapsulation, inject } from '@angular/core';
 
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -35,27 +35,23 @@ import { ASIDE_REF, AsidePositions, AsideRef } from '../../../../util';
     ],
 })
 export class RtuiAsidePanelComponent {
-    @HostBinding('@aside') private _state: string = `enter-${this.asideRef.position}`;
+    readonly #asideRef: AsideRef<object, object> = inject(ASIDE_REF);
+    readonly #breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
 
-    public portal: ComponentPortal<unknown>;
-    public position: AsidePositions;
-    public isSmall$: Observable<boolean>;
+    @HostBinding('@aside') private _state: string = `enter-${this.#asideRef.position}`;
 
-    constructor(
-        @Inject(ASIDE_REF) private readonly asideRef: AsideRef<object, object>,
-        private readonly breakpointObserver: BreakpointObserver
-    ) {
-        this.portal = this.#createPortal(asideRef);
-        this.position = this.asideRef.position;
-        this.isSmall$ = this.breakpointObserver.observe(['(max-width: 1023px)']).pipe(map((result: BreakpointState) => result.matches));
-    }
+    public portal: ComponentPortal<unknown> = this.#createPortal(this.#asideRef);
+    public position: AsidePositions = this.#asideRef.position;
+    public isSmall$: Observable<boolean> = this.#breakpointObserver
+        .observe(['(max-width: 1023px)'])
+        .pipe(map((result: BreakpointState) => result.matches));
 
     public close(): void {
-        this.asideRef.close();
+        this.#asideRef.close();
     }
 
     public startExitAnimation(): void {
-        this._state = `exit-${this.asideRef.position}`;
+        this._state = `exit-${this.#asideRef.position}`;
     }
 
     #createPortal<D, R>(asideRef: AsideRef<D, R>): ComponentPortal<unknown> {
