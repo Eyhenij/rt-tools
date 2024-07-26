@@ -17,7 +17,7 @@
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true,
   "attributeGroups": ["$ANGULAR_STRUCTURAL_DIRECTIVE", "$DEFAULT", "$ANGULAR_INPUT", "$ANGULAR_TWO_WAY_BINDING", "$ANGULAR_OUTPUT"],
-  "importOrderParserPlugins": ["typescript", "decorators-legacy"],
+  "importOrderParserPlugins": ["typescript", "classProperties", "decorators-legacy"],
   "overrides": [
     {
       "files": "*.json",

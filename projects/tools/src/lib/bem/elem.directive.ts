@@ -1,7 +1,8 @@
 import { Attribute, Directive, ElementRef, Input, OnChanges, Renderer2 } from '@angular/core';
+
 import { ModsObject } from './bem.types';
-import { BlockDirective } from './block.directive';
 import { generateClass, parseMods, setMods } from './bem.utils';
+import { BlockDirective } from './block.directive';
 
 @Directive({
     selector: '[rtElem]',
@@ -17,7 +18,7 @@ export class ElemDirective implements OnChanges {
         public readonly element: ElementRef,
         public readonly renderer: Renderer2,
         @Attribute('rtElem') public readonly name: string,
-        private readonly rtBlock: BlockDirective,
+        private readonly rtBlock: BlockDirective
     ) {
         this.blockName = rtBlock.name;
 
