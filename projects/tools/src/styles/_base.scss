@@ -1,7 +1,53 @@
 :root {
     --clr-white: #ffffff;
+    --clr-gray-5: #f5f6f8;
+    --clr-black-15: #eeeeee;
     --clr-black-20: #e0e0e0;
+    --clr-black-40: #a3a3a3;
     --clr-black-60: #747474;
+    --clr-black-100: #181818;
+    --clr-red-10: #fdedee;
+    --clr-red-40: #f7b9bb;
+    --clr-red-60: #f39699;
+    --clr-red-100: #eb5055;
+    --clr-blue-40: #b3ceef;
+    --clr-blue-100: #4284d7;
+    --clr-green-10: #e5f8f4;
+    --clr-green-60: #46c4c0;
+    --clr-base-accent: #0d1c2b;
+
+    // Aside
+    --rt-aside-width: 33.75rem;
+    --rt-aside-box-shadow: 0 0 1rem 0 rgba(#000, 0.1);
+    --rt-aside-background-color: var(--clr-white);
+    --rt-aside-header-padding: 2rem;
+    --rt-aside-content-padding: 0 2rem;
+    --rt-aside-footer-padding: 2rem;
+
+    --rt-aside-tab-indicator-width: 6rem;
+    --rt-aside-tab-badge-color: var(--mdc-filled-button-container-color);
+    --rt-aside-tab-badge-color-incorrect: var(--clr-red-100);
+
+    --rt-aside-header-back-button-margin-right: 0.5rem;
+    --rt-aside-header-title-font-size: 1.5rem;
+    --rt-aside-header-title-line-height: 1.1;
+    --rt-aside-header-title-font-weight: 600;
+    --rt-aside-header-description-font-size: 1rem;
+    --rt-aside-header-description-margin-bottom: 0.5rem;
+    --rt-aside-header-description-color: var(--clr-black-60);
+    --rt-aside-header-action-button-margin-left: 0.75rem;
+
+    --rt-aside-footer-margin-left-betwen-buttons: 1rem;
+
+    --rt-aside-error-box-height: 2rem;
+    --rt-aside-error-box-padding: 0.5rem;
+    --rt-aside-error-box-margin: 2rem 0 2rem 0;
+    --rt-aside-error-box-border: 1px solid var(--clr-red-60);
+    --rt-aside-error-box-border-radius: 0.375rem;
+    --rt-aside-error-box-title-font-size: 1rem;
+    --rt-aside-error-box-title-font-color: var(--clr-red-60);
+    --rt-aside-error-box-button-font-size: 1rem;
+    --rt-aside-error-box-button-font-color: var(--clr-black-100);
 
     // Scrollable
     --rt-scrollable-height: 100%;
@@ -32,12 +78,12 @@
     --rt-side-menu-item-line-height: 1.1;
 
     --rt-mobile-side-menu-item-icon-size: 1.5rem;
-    --rt-mobile-side-menu-item-title-size: 0.75rem;
+    --rt-mobile-side-menu-item-title-font-size: 0.75rem;
     --rt-mobile-side-menu-item-additional-icon-size: 1rem;
 
     --rt-side-menu-sub-menu-width: 15rem;
     --rt-side-menu-sub-menu-item-width: 13.75rem;
-    --rt-side-menu-sub-menu-item-title: 1rem;
+    --rt-side-menu-sub-menu-item-title-font-size: 1rem;
 
     --rt-side-menu-mobile-button-top: 1.25rem;
     --rt-side-menu-mobile-button-left: 1.25rem;
