@@ -29,7 +29,6 @@ export default [
                 ecmaVersion: 2022,
                 createDefaultProgram: true,
                 warnOnUnsupportedTypeScriptVersion: true,
-                projectFolderIgnoreList: ['**/node_modules/**', '**/dist/**', '**/tmp/**', '**/coverage/**', '**/.angular/**'],
                 sourceType: 'module',
             },
         },
