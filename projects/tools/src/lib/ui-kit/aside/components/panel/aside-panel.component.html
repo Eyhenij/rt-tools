@@ -1,0 +1,7 @@
+<div
+    class="c-aside"
+    [class.position-left]="position === 'left'"
+    [class.position-right]="position === 'right'"
+    [class.full-screen]="isSmall$ | async">
+    <ng-container *cdkPortalOutlet="portal" />
+</div>

@@ -27,7 +27,7 @@
             align-items: center;
 
             &__text {
-                font-size: var(--rt-side-menu-sub-menu-item-title);
+                font-size: var(--rt-side-menu-sub-menu-item-title-font-size);
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 overflow: hidden;
@@ -79,7 +79,7 @@
             }
 
             &__title {
-                font-size: var(--rt-side-menu-sub-menu-item-title);
+                font-size: var(--rt-side-menu-sub-menu-item-title-font-size);
             }
 
             &:hover {

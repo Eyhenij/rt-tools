@@ -46,13 +46,13 @@ Default.args = {
     isMobile: false,
 };
 
-export const MobileView = Template.bind({});
-MobileView.args = {
+export const Mobile = Template.bind({});
+Mobile.args = {
     isMobile: true,
 };
 
-export const ActiveMenu = Template.bind({});
-ActiveMenu.args = {
+export const DefaultActiveMenu = Template.bind({});
+DefaultActiveMenu.args = {
     isMobile: false,
     activeMenuIds: [24, 26, 29, 33, 35],
 };

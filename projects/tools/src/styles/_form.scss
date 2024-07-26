@@ -1,0 +1,83 @@
+@use './mixin' as *;
+
+// FORM
+.c-form {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex: 1 1 100%;
+
+    &__title {
+        font-size: 1.5rem;
+        line-height: 1.1;
+        font-weight: 600;
+    }
+
+    &__title-descr {
+        margin-top: 0.75rem;
+        font-size: 1rem;
+        color: var(--clr-black-60);
+    }
+
+    &__item {
+        width: 100%;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    * + &__item {
+        margin-top: 2rem;
+    }
+
+    &__controls {
+        position: relative;
+        width: 100%;
+
+        display: flex;
+        flex-direction: column;
+
+        margin-top: 2rem;
+    }
+
+    &__control-item {
+        width: 100%;
+
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+
+        & > mat-form-field {
+            width: 100%;
+        }
+
+        &--align {
+            &--center {
+                justify-content: center;
+            }
+        }
+    }
+
+    &__control-item + &__control-item {
+        margin-top: 0.75rem;
+    }
+
+    &__control-sub-item {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    &__control-sub-item + &__control-sub-item {
+        margin-left: 2rem;
+    }
+
+    @media all and (max-width: 1023px) {
+        padding-bottom: 1.5rem;
+    }
+} // c-form

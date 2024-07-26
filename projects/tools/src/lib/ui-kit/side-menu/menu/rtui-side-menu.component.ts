@@ -81,7 +81,7 @@ export class RtuiSideMenuComponent {
     public readonly headerTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiSideMenuHeaderDirective, {
         read: TemplateRef,
     });
-    public readonly footerTpl: Signal<Nullable<TemplateRef<any>>> = contentChild(RtuiSideMenuFooterDirective, {
+    public readonly footerTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiSideMenuFooterDirective, {
         read: TemplateRef,
     });
     public readonly subMenuRef: Signal<Nullable<MatDrawer>> = viewChild(MatDrawer);
@@ -104,7 +104,7 @@ export class RtuiSideMenuComponent {
 
     public readonly closeMobileMenuAction: OutputEmitterRef<void> = output<void>();
     public readonly clickSubMenuAction: OutputEmitterRef<ISideMenu.Item> = output<ISideMenu.Item>();
-    public readonly clickSubMenuAdditionalAction: OutputEmitterRef<any> = output<any>();
+    public readonly clickSubMenuAdditionalAction: OutputEmitterRef<ISideMenu.ItemData> = output<ISideMenu.ItemData>();
 
     public onClickMenu(item?: ISideMenu.Item): void {
         this.selectedItem.set(item);
@@ -158,7 +158,7 @@ export class RtuiSideMenuComponent {
         }
     }
 
-    public clickSubMenuAdditional(data: any): void {
+    public clickSubMenuAdditional(data: ISideMenu.ItemData): void {
         this.clickSubMenuAdditionalAction.emit(data);
     }
 

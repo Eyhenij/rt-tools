@@ -1,0 +1,86 @@
+@if (pending()) {
+    <rtui-spinner [showBackground]="true" />
+}
+
+<rtui-scrollable cdkTrapFocus [cdkTrapFocusAutoCapture]="true">
+    <ng-container *rtuiScrollableHeader>
+        <div rtBlock="c-aside-header">
+            <div rtElem="title-wrapper">
+                <div rtElem="title">
+                    <button
+                        rtBlock="header-back-button"
+                        aria-label="Icon-button"
+                        mat-icon-button
+                        matTooltip="Go back"
+                        matTooltipClass="custom-tooltip"
+                        matTooltipPosition="below"
+                        [matTooltipDisabled]="isMobile()"
+                        [disableRipple]="true"
+                        (click)="onCancel()">
+                        <mat-icon>arrow_back</mat-icon>
+                    </button>
+
+                    @if (headerTpl()) {
+                        <ng-container *ngTemplateOutlet="headerTpl() ?? null" />
+                    } @else {
+                        {{ title() }}
+                    }
+                </div>
+
+                <div rtElem="actions">
+                    @if (headerActionsButtons()?.length) {
+                        @for (button of headerActionsButtons(); track button) {
+                            <button
+                                rtElem="action-btn"
+                                aria-label="Icon-button"
+                                mat-icon-button
+                                matTooltipClass="custom-tooltip"
+                                matTooltipPosition="left"
+                                [matTooltip]="button.tooltip"
+                                [matTooltipDisabled]="isMobile()"
+                                [disableRipple]="true"
+                                [disabled]="button?.disabled"
+                                (click)="onHeaderActionClick(button.name)">
+                                <mat-icon [style.color]="button.color">{{ button.icon }}</mat-icon>
+                            </button>
+                        }
+                    }
+                </div>
+            </div>
+
+            @if (isRequestErrorShown()) {
+                <rtui-aside-error-box [error]="requestError()" />
+            }
+        </div>
+    </ng-container>
+
+    <ng-container *rtuiScrollableContent>
+        <div rtBlock="c-aside-content">
+            <ng-content />
+        </div>
+    </ng-container>
+
+    <ng-container *rtuiScrollableFooter>
+        <div rtBlock="c-aside-footer">
+            <div rtBlock="c-aside-footer-btn">
+                <button cdkFocusInitial mat-button type="button" (click)="onCancel()">
+                    {{ cancelButtonTitle() }}
+                </button>
+            </div>
+
+            <div rtBlock="c-aside-footer-btn">
+                <button
+                    mat-flat-button
+                    type="button"
+                    matTooltipClass="custom-tooltip"
+                    matTooltipPosition="left"
+                    [matTooltip]="submitButtonTooltip()"
+                    [matTooltipDisabled]="!isSubmitButtonDisabled() || isMobile()"
+                    [disabled]="isSubmitButtonDisabled()"
+                    (click)="onSubmit()">
+                    <div rtElem="title">{{ submitButtonTitle() }}</div>
+                </button>
+            </div>
+        </div>
+    </ng-container>
+</rtui-scrollable>
