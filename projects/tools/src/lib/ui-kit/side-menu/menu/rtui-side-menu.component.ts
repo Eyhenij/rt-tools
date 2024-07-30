@@ -97,6 +97,9 @@ export class RtuiSideMenuComponent {
     public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
         transform: booleanAttribute,
     });
+    public isSubMenuXScrollEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+        transform: booleanAttribute,
+    });
 
     public activeMenuId: Signal<number | string> = computed(() => {
         return this.activeMenuIds()?.length ? this.activeMenuIds()[this.activeMenuIds()?.length - 1] : '';
