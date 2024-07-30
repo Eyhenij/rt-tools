@@ -1,5 +1,6 @@
-import { Directive, InputSignal, afterRender, input } from '@angular/core';
+import { Directive, InputSignal, InputSignalWithTransform, effect, input } from '@angular/core';
 
+import { transformArrayInput } from '../functions';
 import { Nullable } from '../interfaces';
 
 @Directive({
@@ -8,18 +9,21 @@ import { Nullable } from '../interfaces';
 })
 export class RtScrollToElementDirective {
     public rtScrollToElement: InputSignal<string | number> = input.required<string | number>();
+    public elements: InputSignalWithTransform<unknown[], unknown[]> = input.required<unknown[], unknown[]>({
+        transform: (value: unknown[]) => transformArrayInput(value),
+    });
 
     constructor() {
-        afterRender(() => {
-            this.#scrollToTarget();
+        effect(() => {
+            if (this.elements()?.length && this.rtScrollToElement()) {
+                this.#scrollToTarget();
+            }
         });
     }
 
     #scrollToTarget(): void {
-        if (this.rtScrollToElement()) {
-            const targetId: string | number = this.rtScrollToElement();
-            const targetElement: Nullable<HTMLElement> = document.getElementById(targetId.toString());
-            targetElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        const targetId: string | number = this.rtScrollToElement();
+        const targetElement: Nullable<HTMLElement> = document.getElementById(targetId.toString());
+        targetElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 }
