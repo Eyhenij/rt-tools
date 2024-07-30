@@ -136,6 +136,7 @@ export class SideMenuWrapperComponent {
     public menuItems: typeof MENU_ITEMS = [...MENU_ITEMS];
     public activeMenuIds: Array<number | string> = [];
     public isMobile: boolean = false;
+    public isSubMenuXScrollEnabled: boolean = true;
 
     public closeMobileMenu(): void {
         console.log('CloseMobileMenuAction');

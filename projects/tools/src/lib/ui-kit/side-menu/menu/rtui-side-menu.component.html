@@ -8,14 +8,15 @@
 
         @if (menuItems().length) {
             <ng-container *rtuiScrollableContent>
-                <mat-nav-list rtBlock="rtui-mobile-side-menu-list" [rtMod]="{ expandable: selectedSubMenu() }">
-                    @if (selectedSubMenu()) {
-                        <div rtElem="sub" [rtScrollToElement]="activeMenuId()">
-                            <rtui-side-menu-sub-item [item]="backToMainMenuButton()" (clickSubMenuAction)="onBackToMainMenu()" />
+                <mat-nav-list rtBlock="rtui-mobile-side-menu-list" [rtMod]="{ scrollable: selectedSubMenu()?.length && isSubMenuXScrollEnabled() }">
+                    @if (selectedSubMenu()?.length) {
+                        <div rtElem="sub" [rtScrollToElement]="activeMenuId()" [elements]="selectedSubMenu() ?? []">
+                            <rtui-side-menu-sub-item [item]="backToMainMenuButton()" [isSubMenuXScrollEnabled]="isSubMenuXScrollEnabled()" (clickSubMenuAction)="onBackToMainMenu()" />
 
                             @for (item of selectedSubMenu(); track i; let i = $index) {
                                 <rtui-side-menu-sub-item
                                     [item]="item"
+                                    [isSubMenuXScrollEnabled]="isSubMenuXScrollEnabled()"
                                     (clickSubMenuAction)="onClickSubMenu($event)"
                                     (clickSubMenuAdditionalAction)="clickSubMenuAdditional($event)" />
                             }
@@ -104,10 +105,11 @@
             <rtui-scrollable>
                 <ng-container *rtuiScrollableContent>
                     @if (subMenuRef()?.opened && selectedSubMenu()?.length) {
-                        <mat-nav-list rtElem="list" [rtScrollToElement]="activeMenuId()">
+                        <mat-nav-list rtElem="list" [rtMod]="{ scrollable: isSubMenuXScrollEnabled() }" [rtScrollToElement]="activeMenuId()" [elements]="selectedSubMenu() ?? []">
                             @for (item of selectedSubMenu(); track i; let i = $index) {
                                 <rtui-side-menu-sub-item
                                     [item]="item"
+                                    [isSubMenuXScrollEnabled]="isSubMenuXScrollEnabled()"
                                     (clickSubMenuAction)="onClickSubMenu($event)"
                                     (clickSubMenuAdditionalAction)="clickSubMenuAdditional($event)" />
                             }

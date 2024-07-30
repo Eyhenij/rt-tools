@@ -33,6 +33,7 @@ export default {
     argTypes: {
         isMobile: { control: 'boolean' },
         currentUrl: { control: 'text' },
+        isSubMenuXScrollEnabled: { control: 'boolean' },
     },
 } as Meta;
 
@@ -44,21 +45,25 @@ const Template: StoryFn<SideMenuWrapperComponent> = (args) => ({
 export const Default = Template.bind({});
 Default.args = {
     isMobile: false,
+    isSubMenuXScrollEnabled: true,
 };
 
 export const Mobile = Template.bind({});
 Mobile.args = {
     isMobile: true,
+    isSubMenuXScrollEnabled: true,
 };
 
 export const DefaultActiveMenu = Template.bind({});
 DefaultActiveMenu.args = {
     isMobile: false,
     activeMenuIds: [24, 26, 29, 33, 35],
+    isSubMenuXScrollEnabled: true,
 };
 
 export const MobileActiveMenu = Template.bind({});
 MobileActiveMenu.args = {
     isMobile: true,
     activeMenuIds: [24, 26, 29, 33, 35],
+    isSubMenuXScrollEnabled: true,
 };

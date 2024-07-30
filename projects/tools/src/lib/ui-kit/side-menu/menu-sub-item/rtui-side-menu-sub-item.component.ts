@@ -1,5 +1,15 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, InputSignal, OutputEmitterRef, inject, input, output } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    InputSignal,
+    InputSignalWithTransform,
+    OutputEmitterRef,
+    booleanAttribute,
+    inject,
+    input,
+    output,
+} from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIcon } from '@angular/material/icon';
 import { MatListItem, MatListItemIcon, MatListItemTitle, MatNavList } from '@angular/material/list';
@@ -32,6 +42,9 @@ export class RtuiSideMenuSubItemComponent {
     public readonly menuRef: RtuiSideMenuComponent = inject(RtuiSideMenuComponent);
 
     public item: InputSignal<ISideMenu.Item> = input.required<ISideMenu.Item>();
+    public isSubMenuXScrollEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
 
     public readonly clickSubMenuAction: OutputEmitterRef<ISideMenu.Item> = output<ISideMenu.Item>();
     public readonly clickSubMenuAdditionalAction: OutputEmitterRef<ISideMenu.ItemData> = output<ISideMenu.ItemData>();
