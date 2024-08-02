@@ -30,6 +30,7 @@ import {
     RtuiScrollableContainerHeaderDirective,
 } from '../../../scrollable';
 import { RtuiSpinnerComponent } from '../../../spinner';
+import { RtuiToolbarCenterDirective, RtuiToolbarComponent, RtuiToolbarLeftDirective, RtuiToolbarRightDirective } from '../../../toolbar';
 import { AsideErrorBoxComponent } from '../error-notification/aside-error-box.component';
 
 @Directive({
@@ -59,9 +60,15 @@ export class RtuiAsideContainerHeaderDirective {}
         AsideErrorBoxComponent,
         RtuiSpinnerComponent,
         RtuiScrollableContainerComponent,
+        RtuiToolbarComponent,
+
+        // directives
         RtuiScrollableContainerHeaderDirective,
         RtuiScrollableContainerContentDirective,
         RtuiScrollableContainerFooterDirective,
+        RtuiToolbarLeftDirective,
+        RtuiToolbarCenterDirective,
+        RtuiToolbarRightDirective,
 
         // bem
         BlockDirective,
