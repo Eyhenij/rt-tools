@@ -85,6 +85,16 @@
     --rt-side-menu-sub-menu-item-width: 13.75rem;
     --rt-side-menu-sub-menu-item-title-font-size: 0.85rem;
 
+    // Toolbar
+    --rt-toolbar-body-background-color: transparent;
+    --rt-toolbar-body-height-mobile: 3rem;
+    --rt-toolbar-body-height: 3rem;
+    --rt-toolbar-body-padding: 0 1rem;
+
+    --rt-toolbar-border-bottom-style: solid;
+    --rt-toolbar-border-bottom-width: 1px;
+    --rt-toolbar-border-bottom-color: var(--clr-black-20);
+
     // Buttons
     // round
     --rt-round-icon-button-width: 1.5rem;

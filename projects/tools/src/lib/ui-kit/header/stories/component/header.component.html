@@ -1,0 +1,29 @@
+<rtui-header [isMobile]="isMobile" (openMobileMenuAction)="openMobileMenu()">
+    <ng-container *rtuiHeaderCenter>
+        @if (isTabs) {
+            <mat-tab-group>
+                <mat-tab label="First Tab"></mat-tab>
+                <mat-tab label="Second Tab"></mat-tab>
+                <mat-tab label="Third Tab"></mat-tab>
+            </mat-tab-group>
+        } @else {
+            <div rtBlock="action">{{ title }}</div>
+        }
+    </ng-container>
+
+    <ng-container *rtuiHeaderRight>
+        <button mat-icon-button rtBlock="action">
+            <mat-icon>info</mat-icon>
+        </button>
+
+        <button mat-icon-button rtBlock="action">
+            <mat-icon>person</mat-icon>
+        </button>
+
+        <button mat-icon-button rtBlock="action">
+            <mat-icon>settings</mat-icon>
+        </button>
+    </ng-container>
+</rtui-header>
+
+<div rtBlock="content">{{ content }}</div>
