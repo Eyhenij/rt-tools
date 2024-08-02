@@ -14,6 +14,8 @@ export * from './lib/ui-kit/side-menu';
 export * from './lib/ui-kit/spinner';
 export * from './lib/ui-kit/aside';
 export * from './lib/ui-kit/buttons';
+export * from './lib/ui-kit/toolbar';
+export * from './lib/ui-kit/header';
 
 // utils
 export * from './lib/util';

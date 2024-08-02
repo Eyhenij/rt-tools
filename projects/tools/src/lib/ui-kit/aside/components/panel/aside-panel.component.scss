@@ -57,52 +57,37 @@
 .c-aside-header {
     padding: var(--rt-aside-header-padding);
 
-    &__title-wrapper {
+    .title {
         height: 100%;
-        width: 100%;
-
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        margin-left: var(--rt-aside-header-title-margin-left);
 
-    &__title {
-        height: 100%;
-
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-
-        font-size: var(--rt-aside-header-title-font-size);
-        line-height: var(--rt-aside-header-title-line-height);
-        font-weight: var(--rt-aside-header-title-font-weight);
-
-        .header-back-button {
-            margin-right: var(--rt-aside-header-back-button-margin-right);
+        &__descr {
+            margin-bottom: var(--rt-aside-header-description-margin-bottom);
+            font-size: var(--rt-aside-header-description-font-size);
+            color: var(--rt-aside-header-description-color);
         }
 
-        .header-title {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
+        &__txt {
+            font-size: var(--rt-aside-header-title-font-size);
+            line-height: var(--rt-aside-header-title-line-height);
+            font-weight: var(--rt-aside-header-title-font-weight);
+        }
 
-            &__txt {
-                font-size: var(--rt-aside-header-title-font-size);
-                line-height: var(--rt-aside-header-title-line-height);
-                font-weight: var(--rt-aside-header-title-font-weight);
-            }
-
-            &__descr {
-                margin-bottom: var(--rt-aside-header-description-margin-bottom);
-                font-size: var(--rt-aside-header-description-font-size);
-                color: var(--rt-aside-header-description-color);
-            }
+        &__addition {
+            margin-top: var(--rt-aside-header-addition-margin-top);
+            font-size: var(--rt-aside-header-addition-font-size);
+            color: var(--rt-aside-header-addition-color);
         }
     }
 
-    &__action-btn {
-        margin-left: var(--rt-aside-header-action-button-margin-left);
+    .actions {
+        &__action {
+            margin-left: var(--rt-aside-header-action-button-margin-left);
+        }
     }
 } // c-aside-header
 

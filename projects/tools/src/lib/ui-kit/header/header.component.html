@@ -1,0 +1,25 @@
+<rtui-toolbar>
+    <ng-container *rtuiToolbarLeft>
+        @if (isMobile() && isMobileMenuButtonShown()) {
+            <button mat-icon-button rtBlock="mobile-menu-button" (click)="openSideMenu()">
+                <mat-icon>menu</mat-icon>
+            </button>
+        }
+
+        @if (leftHeaderTpl()) {
+            <ng-template *ngTemplateOutlet="leftHeaderTpl() ?? null" />
+        }
+    </ng-container>
+
+    @if (centerHeaderTpl()) {
+        <ng-container *rtuiToolbarCenter>
+            <ng-template *ngTemplateOutlet="centerHeaderTpl() ?? null" />
+        </ng-container>
+    }
+
+    @if (rightHeaderTpl()) {
+        <ng-container *rtuiToolbarRight>
+            <ng-template *ngTemplateOutlet="rightHeaderTpl() ?? null" />
+        </ng-container>
+    }
+</rtui-toolbar>
