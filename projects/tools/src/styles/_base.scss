@@ -28,13 +28,19 @@
     --rt-aside-tab-badge-color: var(--mdc-filled-button-container-color);
     --rt-aside-tab-badge-color-incorrect: var(--clr-red-100);
 
-    --rt-aside-header-back-button-margin-right: 0.5rem;
+    --rt-aside-header-title-margin-left: 0.5rem;
     --rt-aside-header-title-font-size: 1.5rem;
     --rt-aside-header-title-line-height: 1.1;
     --rt-aside-header-title-font-weight: 600;
+
     --rt-aside-header-description-font-size: 1rem;
-    --rt-aside-header-description-margin-bottom: 0.5rem;
+    --rt-aside-header-description-margin-bottom: 0.25rem;
     --rt-aside-header-description-color: var(--clr-black-60);
+
+    --rt-aside-header-addition-font-size: 1rem;
+    --rt-aside-header-addition-margin-top: 0.25rem;
+    --rt-aside-header-addition-color: var(--clr-black-60);
+
     --rt-aside-header-action-button-margin-left: 0.75rem;
 
     --rt-aside-footer-margin-left-betwen-buttons: 1rem;
@@ -84,6 +90,16 @@
     --rt-side-menu-sub-menu-width: 15rem;
     --rt-side-menu-sub-menu-item-width: 13.75rem;
     --rt-side-menu-sub-menu-item-title-font-size: 0.85rem;
+
+    // Toolbar
+    --rt-toolbar-body-background-color: transparent;
+    --rt-toolbar-body-height-mobile: 3rem;
+    --rt-toolbar-body-height: 3rem;
+    --rt-toolbar-body-padding: 0 1rem;
+
+    --rt-toolbar-border-bottom-style: solid;
+    --rt-toolbar-border-bottom-width: 1px;
+    --rt-toolbar-border-bottom-color: var(--clr-black-20);
 
     // Buttons
     // round

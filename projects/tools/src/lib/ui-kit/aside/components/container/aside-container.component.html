@@ -5,10 +5,9 @@
 <rtui-scrollable cdkTrapFocus [cdkTrapFocusAutoCapture]="true">
     <ng-container *rtuiScrollableHeader>
         <div rtBlock="c-aside-header">
-            <div rtElem="title-wrapper">
-                <div rtElem="title">
+            <rtui-toolbar>
+                <ng-container *rtuiToolbarLeft>
                     <button
-                        rtBlock="header-back-button"
                         aria-label="Icon-button"
                         mat-icon-button
                         matTooltip="Go back"
@@ -19,34 +18,40 @@
                         (click)="onCancel()">
                         <mat-icon>arrow_back</mat-icon>
                     </button>
+                </ng-container>
 
-                    @if (headerTpl()) {
-                        <ng-container *ngTemplateOutlet="headerTpl() ?? null" />
-                    } @else {
-                        {{ title() }}
-                    }
-                </div>
-
-                <div rtElem="actions">
-                    @if (headerActionsButtons()?.length) {
-                        @for (button of headerActionsButtons(); track button) {
-                            <button
-                                rtElem="action-btn"
-                                aria-label="Icon-button"
-                                mat-icon-button
-                                matTooltipClass="custom-tooltip"
-                                matTooltipPosition="left"
-                                [matTooltip]="button.tooltip"
-                                [matTooltipDisabled]="isMobile()"
-                                [disableRipple]="true"
-                                [disabled]="button?.disabled"
-                                (click)="onHeaderActionClick(button.name)">
-                                <mat-icon [style.color]="button.color">{{ button.icon }}</mat-icon>
-                            </button>
+                <ng-container *rtuiToolbarCenter>
+                    <div rtBlock="title">
+                        @if (headerTpl()) {
+                            <ng-container *ngTemplateOutlet="headerTpl() ?? null" />
+                        } @else {
+                            {{ title() }}
                         }
-                    }
-                </div>
-            </div>
+                    </div>
+                </ng-container>
+
+                <ng-container *rtuiToolbarRight>
+                    <div rtBlock="actions">
+                        @if (headerActionsButtons()?.length) {
+                            @for (button of headerActionsButtons(); track button) {
+                                <button
+                                    rtElem="action"
+                                    aria-label="Icon-button"
+                                    mat-icon-button
+                                    matTooltipClass="custom-tooltip"
+                                    matTooltipPosition="left"
+                                    [matTooltip]="button.tooltip"
+                                    [matTooltipDisabled]="isMobile()"
+                                    [disableRipple]="true"
+                                    [disabled]="button?.disabled"
+                                    (click)="onHeaderActionClick(button.name)">
+                                    <mat-icon [style.color]="button.color">{{ button.icon }}</mat-icon>
+                                </button>
+                            }
+                        }
+                    </div>
+                </ng-container>
+            </rtui-toolbar>
 
             @if (isRequestErrorShown()) {
                 <rtui-aside-error-box [error]="requestError()" />
