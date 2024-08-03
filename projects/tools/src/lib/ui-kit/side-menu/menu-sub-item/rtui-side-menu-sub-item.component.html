@@ -29,7 +29,11 @@
             }
         </mat-list-item>
     } @else if (item?.submenu?.length) {
-        <mat-expansion-panel #panel rtBlock="rtui-side-menu-expand-sub-item" [rtMod]="{ fixed: isSubMenuXScrollEnabled() }" [expanded]="menuRef.activeMenuIds().includes(item.id)">
+        <mat-expansion-panel
+            #panel
+            rtBlock="rtui-side-menu-expand-sub-item"
+            [rtMod]="{ fixed: isSubMenuXScrollEnabled() }"
+            [expanded]="menuRef.activeMenuIds().includes(item.id)">
             <mat-expansion-panel-header
                 rtBlock="rtui-side-menu-expand-sub-item-header"
                 [rtMod]="{ activated: menuRef.activeMenuIds().includes(item.id) }">

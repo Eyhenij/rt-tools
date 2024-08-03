@@ -112,13 +112,12 @@
     padding: var(--rt-aside-footer-padding);
 
     .c-aside-footer-btn {
-
         &__title {
             text-transform: uppercase;
         }
     }
 
-    .c-aside-footer-btn +.c-aside-footer-btn {
+    .c-aside-footer-btn + .c-aside-footer-btn {
         margin-left: var(--rt-aside-footer-margin-left-betwen-buttons);
     }
 } // c-aside-footer

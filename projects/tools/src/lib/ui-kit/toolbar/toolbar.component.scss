@@ -1,5 +1,5 @@
-@use '../../../styles/variables' as vars;
-@use '../../../styles/mixin' as mixins;
+@use '../../../styles/base/variables' as vars;
+@use '../../../styles/base/mixin' as mixins;
 
 :host {
     // set mat toolbar height
@@ -9,7 +9,7 @@
     --mat-tab-header-divider-height: 0;
 
     &::ng-deep {
-        .mat-mdc-tab-group{
+        .mat-mdc-tab-group {
             height: 100%;
 
             .mat-mdc-tab-header {
@@ -31,15 +31,17 @@
     }
 
     .toolbar {
-        position: sticky;
-        top: 0;
-
         --mat-toolbar-standard-height: var(--rt-toolbar-body-height-mobile);
         min-height: var(--rt-toolbar-body-height-mobile);
         height: var(--rt-toolbar-body-height-mobile);
 
         padding: var(--rt-toolbar-body-padding);
         background-color: transparent;
+
+        &--sticky {
+            position: sticky;
+            top: 0;
+        }
 
         @include mixins.media-breakpoint-up(vars.$device-sm) {
             --mat-toolbar-standard-height: var(--rt-toolbar-body-height);
@@ -52,8 +54,6 @@
             position: relative;
 
             display: flex;
-            justify-content: space-between;
-            align-items: center;
             width: 100%;
             height: 100%;
 
@@ -69,7 +69,7 @@
                 }
 
                 &--center {
-                    flex-grow: 1;
+                    width: 100%;
                     overflow: hidden;
                 }
 

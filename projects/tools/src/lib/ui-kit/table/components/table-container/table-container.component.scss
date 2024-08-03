@@ -1,0 +1,38 @@
+:host {
+    width: 100%;
+    overflow: hidden;
+    --rt-toolbar-body-padding: 0;
+    --rt-toolbar-border-bottom-color: transparent;
+
+    // M3 redefined variables
+    --mdc-fab-small-container-shape: 50%;
+    --mat-fab-small-hover-state-layer-opacity: 0;
+    --mat-fab-small-pressed-state-layer-opacity: 0;
+    --mat-fab-small-focus-state-layer-opacity: 0;
+
+    .c-table-wrapper {
+        &__actions {
+        }
+
+        &__action {
+            &-item {
+                & + & {
+                    margin: var(--rt-table-wrapper-action-items-margin);
+                }
+            }
+        }
+
+        &__search {
+            margin: var(--rt-table-wrapper-search-margin);
+        }
+
+        &__content {
+            width: 100%;
+            overflow: auto;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+        }
+    }
+}

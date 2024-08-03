@@ -1,0 +1,36 @@
+<ng-container rtBlock="copy-box">
+    <ng-content select="[prefix]" />
+
+    <div
+        #titleTpl
+        rtElem="title"
+        matTooltipClass="custom-tooltip"
+        matTooltipPosition="above"
+        [rtMod]="{ align: column().align }"
+        [matTooltip]="column().tooltip ?? cellValue()"
+        [matTooltipDisabled]="!isTitleCollapsed() || isMobile()">
+        @if (isTitleArray()) {
+            <ng-content />
+        } @else {
+            {{ cellValue() }}
+        }
+    </div>
+
+    <ng-content select="[suffix]" />
+
+    @if (isCopyButtonShown() && cellValue()) {
+        <button
+            type="button"
+            rtElem="button"
+            class="c-button c-button--txt-base--size-sm icon-button--fs-18"
+            matTooltipPosition="above"
+            [rtMod]="{
+                complete: isCopied(),
+            }"
+            [matTooltip]="isCopied() ? 'Copied!' : 'Copy'"
+            [matTooltipDisabled]="isMobile()"
+            (click)="onCopyToClipboard(); $event.stopPropagation()">
+            <mat-icon>{{ isCopied() ? 'done' : 'content_copy' }}</mat-icon>
+        </button>
+    }
+</ng-container>

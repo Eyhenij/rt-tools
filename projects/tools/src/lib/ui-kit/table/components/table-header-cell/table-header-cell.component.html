@@ -1,0 +1,23 @@
+<ng-container rtBlock="header-cell">
+    <ng-content select="[prefix]" />
+
+    <div>{{ headerModel().label }}</div>
+
+    <ng-content select="[suffix]" />
+
+    <div rtElem="icons" [rtMod]="{ active: active() }">
+        <div
+            rtElem="icon"
+            [rtMod]="{
+                active: active() && sortOrderType.DESC === sortModel().sortDirection?.toLowerCase(),
+                first: true,
+            }"></div>
+
+        <div
+            rtElem="icon"
+            [rtMod]="{
+                active: active() && sortOrderType.ASC === sortModel().sortDirection?.toLowerCase(),
+                second: true,
+            }"></div>
+    </div>
+</ng-container>
