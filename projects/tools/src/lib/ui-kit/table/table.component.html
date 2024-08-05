@@ -13,11 +13,11 @@
         <thead>
             <tr>
                 @for (column of columns(); track column.propName) {
-                    <th rtElem="cell" [style.width.%]="100 / columns().length">
+                    <th rtElem="cell" [style.width.%]="100 / columns().length" [style.pointer-events]="column?.sorting ? 'auto' : 'none'">
                         <rtui-table-header-cell
                             [headerModel]="column.header"
-                            [currentSortPropertyName]="sortModel().propertyName"
-                            [sortModel]="column.sorting"
+                            [currentSortPropertyName]="sortModel()?.propertyName"
+                            [sortModel]="column?.sorting"
                             (sortChange)="sortChange($event)" />
                     </th>
                 }

@@ -9,12 +9,11 @@ import { RtuiTableComponent } from '../../table.component';
 import { LIST_SORT_ORDER_ENUM } from '../../util/list-sort-order.enum';
 import { PageModel, SortModel } from '../../util/lists.interface';
 import { ITable } from '../../util/table-column.interface';
-import { COLUMNS } from '../constants';
-import { createPersonList } from '../mocks';
 import { Person } from '../types';
 
 @Component({
     standalone: true,
+    selector: 'app-test-table-component',
     templateUrl: './test-table-component.html',
     styleUrls: ['./test-table-component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,17 +35,16 @@ import { Person } from '../types';
     providers: [],
 })
 export default class TestTableComponent {
-    protected readonly data: Person[] = createPersonList(20);
-    protected readonly columns: ITable.Column<Person>[] = COLUMNS;
-    protected readonly pageModel: PageModel = {
+    public isMobile: boolean = false;
+    public data: Person[] = [];
+    public columns: ITable.Column<Person>[] = [];
+    public pageModel: PageModel = {
         pageNumber: 1,
         pageSize: 10,
-        totalCount: this.data.length,
+        totalCount: 0,
     };
-    protected readonly sortModel: SortModel<keyof Person> = {
+    public sortModel: SortModel<keyof Person> = {
         propertyName: 'id',
         sortDirection: LIST_SORT_ORDER_ENUM.ASC,
     };
-
-    public isMobile: boolean = false;
 }

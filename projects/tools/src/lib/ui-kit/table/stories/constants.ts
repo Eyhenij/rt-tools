@@ -1,5 +1,5 @@
 import { LIST_SORT_ORDER_ENUM } from '../util/list-sort-order.enum';
-import { ITable, TABLE_COLUMN_TYPES_ENUM } from '../util/table-column.interface';
+import { ITable, TABLE_COLUMN_TYPES_ENUM, TEXT_CELL_COLOR_ENUM } from '../util/table-column.interface';
 import { Person, ResponsiblePerson } from './types';
 
 export const COLUMNS: Array<ITable.Column<Person>> = [
@@ -11,12 +11,16 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
         header: {
             align: 'left',
             label: 'ID',
+            icon: {
+                glyph: 'priority_high',
+                color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
+                placement: 'left',
+            },
         },
         sorting: {
             propertyName: 'id',
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,
         },
-        width: '50px',
     },
     {
         align: 'left',
@@ -26,6 +30,11 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
         header: {
             align: 'left',
             label: 'Name',
+            icon: {
+                glyph: 'info',
+                color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
+                placement: 'right',
+            },
         },
         sorting: {
             propertyName: 'name',
@@ -41,6 +50,11 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
         header: {
             align: 'left',
             label: 'Email',
+            icon: {
+                glyph: 'email',
+                color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
+                placement: 'left',
+            },
         },
         sorting: {
             propertyName: 'email',
@@ -71,6 +85,11 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
         header: {
             align: 'left',
             label: 'Sex',
+            icon: {
+                glyph: 'wc',
+                color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
+                placement: 'left',
+            },
         },
         sorting: {
             propertyName: 'sex',
