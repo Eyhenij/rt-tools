@@ -2,36 +2,13 @@
 @use '../../../styles/base/mixin' as mixins;
 
 :host {
-    // set mat toolbar height
-    --mat-toolbar-standard-height: var(--rt-toolbar-body-height);
-
-    // change mat tab group styles
+    // hide mat tab group border bottom styles
     --mat-tab-header-divider-height: 0;
-
-    &::ng-deep {
-        .mat-mdc-tab-group {
-            height: 100%;
-
-            .mat-mdc-tab-header {
-                height: 100%;
-
-                .mat-mdc-tab-label-container {
-                    min-width: 3rem;
-
-                    .mat-mdc-tab-labels {
-                        height: 100%;
-
-                        .mdc-tab {
-                            height: 100%;
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     .toolbar {
         --mat-toolbar-standard-height: var(--rt-toolbar-body-height-mobile);
+        --mdc-secondary-navigation-tab-container-height: var(--rt-toolbar-body-height-mobile-body-height);
+
         min-height: var(--rt-toolbar-body-height-mobile);
         height: var(--rt-toolbar-body-height-mobile);
 
@@ -45,6 +22,7 @@
 
         @include mixins.media-breakpoint-up(vars.$device-sm) {
             --mat-toolbar-standard-height: var(--rt-toolbar-body-height);
+            --mdc-secondary-navigation-tab-container-height: var(--rt-toolbar-body-height);
 
             height: var(--rt-toolbar-body-height);
             min-height: var(--rt-toolbar-body-height);
