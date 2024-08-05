@@ -101,6 +101,14 @@
     justify-content: flex-start;
 
     padding: var(--rt-aside-content-padding);
+
+    // Change mat tab group styles
+    .mat-mdc-tab-header {
+        top: 0;
+        z-index: 1000;
+        position: sticky;
+        background: var(--clr-white);
+    }
 } // c-aside-content
 
 // ASIDE FOOTER
