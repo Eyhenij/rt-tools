@@ -13,15 +13,15 @@
                     [rtMod]="{ scrollable: selectedSubMenu()?.length && isSubMenuXScrollEnabled() }">
                     @if (selectedSubMenu()?.length) {
                         <div rtElem="sub" [rtScrollToElement]="activeMenuId()" [elements]="selectedSubMenu() ?? []">
-                            <rtui-side-menu-sub-item
-                                [item]="backToMainMenuButton()"
-                                [isSubMenuXScrollEnabled]="isSubMenuXScrollEnabled()"
-                                (clickSubMenuAction)="onBackToMainMenu()" />
+                            <rtui-side-menu-sub-item [item]="backToMainMenuButton()" (clickSubMenuAction)="onBackToMainMenu()" />
 
                             @for (item of selectedSubMenu(); track i; let i = $index) {
                                 <rtui-side-menu-sub-item
                                     [item]="item"
                                     [isSubMenuXScrollEnabled]="isSubMenuXScrollEnabled()"
+                                    [isSubMenuIconsOutlined]="isSubMenuIconsOutlined()"
+                                    [isSubMenuButtonIconsOutlined]="isSubMenuButtonIconsOutlined()"
+                                    [isSubMenuTooltipsShown]="isSubMenuTooltipsShown()"
                                     (clickSubMenuAction)="onClickSubMenu($event)"
                                     (clickSubMenuAdditionalAction)="clickSubMenuAdditional($event)" />
                             }
@@ -34,7 +34,9 @@
                                     [activated]="selectedItem() === item || (!selectedItem() && activeMenuIds().includes(item.id))"
                                     (click)="onClickMenu(item)">
                                     @if (item?.icon) {
-                                        <mat-icon matListItemIcon rtElem="icon">{{ item.icon }}</mat-icon>
+                                        <mat-icon matListItemIcon rtElem="icon" [rtIconOutlinedDirective]="isMainMenuIconsOutlined()">
+                                            {{ item.icon }}
+                                        </mat-icon>
                                     }
 
                                     @if (item?.name) {
@@ -80,7 +82,7 @@
                                     rtBlock="rtui-side-menu-item-button"
                                     [activated]="selectedItem() === item || (!selectedItem() && activeMenuIds().includes(item.id))">
                                     <div rtElem="icon">
-                                        <mat-icon>{{ item.icon }}</mat-icon>
+                                        <mat-icon [rtIconOutlinedDirective]="isMainMenuIconsOutlined()">{{ item.icon }}</mat-icon>
                                     </div>
                                 </mat-list-item>
                             }
@@ -119,6 +121,9 @@
                                 <rtui-side-menu-sub-item
                                     [item]="item"
                                     [isSubMenuXScrollEnabled]="isSubMenuXScrollEnabled()"
+                                    [isSubMenuIconsOutlined]="isSubMenuIconsOutlined()"
+                                    [isSubMenuButtonIconsOutlined]="isSubMenuButtonIconsOutlined()"
+                                    [isSubMenuTooltipsShown]="isSubMenuTooltipsShown()"
                                     (clickSubMenuAction)="onClickSubMenu($event)"
                                     (clickSubMenuAdditionalAction)="clickSubMenuAdditional($event)" />
                             }

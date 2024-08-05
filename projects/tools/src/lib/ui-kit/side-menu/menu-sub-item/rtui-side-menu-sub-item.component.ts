@@ -13,8 +13,10 @@ import {
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIcon } from '@angular/material/icon';
 import { MatListItem, MatListItemIcon, MatListItemTitle, MatNavList } from '@angular/material/list';
+import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective } from '../../../bem';
+import { RtHideTooltipDirective, RtIconOutlinedDirective } from '../../../util';
 import { ISideMenu } from '../../../util/interfaces/side-menu.interface';
 import { RtuiSideMenuComponent } from '../menu/rtui-side-menu.component';
 
@@ -32,10 +34,13 @@ import { RtuiSideMenuComponent } from '../menu/rtui-side-menu.component';
         MatListItemIcon,
         MatListItemTitle,
         MatExpansionModule,
+        MatTooltip,
 
         // directives
         BlockDirective,
         ElemDirective,
+        RtIconOutlinedDirective,
+        RtHideTooltipDirective,
     ],
 })
 export class RtuiSideMenuSubItemComponent {
@@ -43,6 +48,15 @@ export class RtuiSideMenuSubItemComponent {
 
     public item: InputSignal<ISideMenu.Item> = input.required<ISideMenu.Item>();
     public isSubMenuXScrollEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
+    public isSubMenuIconsOutlined: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
+    public isSubMenuButtonIconsOutlined: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
+    public isSubMenuTooltipsShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
 

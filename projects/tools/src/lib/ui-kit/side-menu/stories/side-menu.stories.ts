@@ -1,69 +1,63 @@
-import { NgTemplateOutlet } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { Meta, StoryFn, moduleMetadata } from '@storybook/angular';
+import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 
-import { BlockDirective, ElemDirective } from '../../../bem';
-import { RtuiSideMenuComponent, RtuiSideMenuFooterDirective, RtuiSideMenuHeaderDirective } from '../menu/rtui-side-menu.component';
 import { SideMenuWrapperComponent } from './component/side-menu-wrapper.component';
 
 export default {
-    title: 'Components/SideMenuWrapper',
+    title: 'Components/SideMenu',
     component: SideMenuWrapperComponent,
     decorators: [
         moduleMetadata({
-            imports: [
-                BrowserAnimationsModule,
-                NgTemplateOutlet,
-                MatButtonModule,
-                MatIconModule,
-                MatTooltipModule,
-                RtuiSideMenuComponent,
-                RtuiSideMenuFooterDirective,
-                RtuiSideMenuHeaderDirective,
-                BlockDirective,
-                ElemDirective,
-                SideMenuWrapperComponent,
-            ],
+            imports: [BrowserAnimationsModule],
         }),
     ],
-    argTypes: {
-        isMobile: { control: 'boolean' },
-        currentUrl: { control: 'text' },
-        isSubMenuXScrollEnabled: { control: 'boolean' },
+} as Meta<SideMenuWrapperComponent>;
+
+type Story = StoryObj<SideMenuWrapperComponent>;
+
+export const Default: Story = {
+    args: {
+        isMobile: false,
+        isSubMenuXScrollEnabled: true,
+        isMainMenuIconsOutlined: false,
+        isSubMenuIconsOutlined: false,
+        isSubMenuButtonIconsOutlined: false,
+        isSubMenuTooltipsShown: false,
     },
-} as Meta;
-
-const Template: StoryFn<SideMenuWrapperComponent> = (args) => ({
-    component: SideMenuWrapperComponent,
-    props: args,
-});
-
-export const Default = Template.bind({});
-Default.args = {
-    isMobile: false,
-    isSubMenuXScrollEnabled: true,
 };
 
-export const Mobile = Template.bind({});
-Mobile.args = {
-    isMobile: true,
-    isSubMenuXScrollEnabled: true,
+export const Mobile: Story = {
+    args: {
+        isMobile: true,
+        isSubMenuXScrollEnabled: true,
+        isMainMenuIconsOutlined: false,
+        isSubMenuIconsOutlined: false,
+        isSubMenuButtonIconsOutlined: false,
+        isSubMenuTooltipsShown: false,
+    },
 };
 
-export const DefaultActiveMenu = Template.bind({});
-DefaultActiveMenu.args = {
-    isMobile: false,
-    activeMenuIds: [24, 26, 29, 33, 35],
-    isSubMenuXScrollEnabled: true,
+export const DefaultActiveMenu: Story = {
+    args: {
+        isMobile: false,
+        activeMenuIds: [24, 26, 29, 33, 35],
+        isSubMenuXScrollEnabled: true,
+        isMainMenuIconsOutlined: false,
+        isSubMenuIconsOutlined: false,
+        isSubMenuButtonIconsOutlined: false,
+        isSubMenuTooltipsShown: false,
+    },
 };
 
-export const MobileActiveMenu = Template.bind({});
-MobileActiveMenu.args = {
-    isMobile: true,
-    activeMenuIds: [24, 26, 29, 33, 35],
-    isSubMenuXScrollEnabled: true,
+export const MobileActiveMenu: Story = {
+    args: {
+        isMobile: true,
+        activeMenuIds: [24, 26, 29, 33, 35],
+        isSubMenuXScrollEnabled: true,
+        isMainMenuIconsOutlined: false,
+        isSubMenuIconsOutlined: false,
+        isSubMenuButtonIconsOutlined: false,
+        isSubMenuTooltipsShown: false,
+    },
 };
