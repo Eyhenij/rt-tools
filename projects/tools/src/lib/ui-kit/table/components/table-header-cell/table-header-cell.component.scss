@@ -5,6 +5,22 @@
     cursor: pointer;
 
     .header-cell {
+        &_label {
+            &--align {
+                &--left {
+                    text-align: left;
+                }
+
+                &--center {
+                    text-align: center;
+                }
+
+                &--right {
+                    text-align: right;
+                }
+            }
+        }
+
         &__icons {
             display: flex;
             flex-direction: column;

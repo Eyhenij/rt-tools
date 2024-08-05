@@ -1,23 +1,35 @@
 <ng-container rtBlock="header-cell">
-    <ng-content select="[prefix]" />
+    @if (headerModel()?.icon?.placement === 'left') {
+        <mat-icon [style.color]="headerModel().icon.color">{{ headerModel().icon.glyph }}</mat-icon>
+    }
 
-    <div>{{ headerModel().label }}</div>
+    <div
+        rtElem="label"
+        [matTooltip]="headerModel()?.tooltip ?? ''"
+        [rtMod]="{ align: headerModel().align }"
+        [ngClass]="headerModel()?.className">
+        {{ headerModel().label }}
+    </div>
 
-    <ng-content select="[suffix]" />
+    @if (headerModel()?.icon?.placement === 'right') {
+        <mat-icon [style.color]="headerModel().icon.color">{{ headerModel().icon.glyph }}</mat-icon>
+    }
 
-    <div rtElem="icons" [rtMod]="{ active: active() }">
-        <div
-            rtElem="icon"
-            [rtMod]="{
+    @if (sortModel()) {
+        <div rtElem="icons" [rtMod]="{ active: active() }">
+            <div
+                rtElem="icon"
+                [rtMod]="{
                 active: active() && sortOrderType.DESC === sortModel().sortDirection?.toLowerCase(),
                 first: true,
             }"></div>
 
-        <div
-            rtElem="icon"
-            [rtMod]="{
+            <div
+                rtElem="icon"
+                [rtMod]="{
                 active: active() && sortOrderType.ASC === sortModel().sortDirection?.toLowerCase(),
                 second: true,
             }"></div>
-    </div>
+        </div>
+    }
 </ng-container>

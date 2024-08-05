@@ -1,4 +1,3 @@
-import { ListSortOrderType } from './list-sort-order.enum';
 import { SortModel } from './lists.interface';
 
 export enum TABLE_COLUMN_TYPES_ENUM {
@@ -52,7 +51,6 @@ export namespace ITable {
         href?: string;
         className?: string;
         tooltip?: string;
-        // @ts-ignore
         transform?: (value: any) => string;
     }
 
@@ -67,6 +65,7 @@ export namespace ITable {
 
         className?: string;
         tooltip?: string;
+        icon?: Icon;
     }
 
     export interface Icon {

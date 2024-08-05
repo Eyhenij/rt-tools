@@ -1,4 +1,4 @@
-<ng-container rtBlock="c-table-wrapper">
+<ng-container rtBlock="table-wrapper">
     <rtui-scrollable>
         <ng-container *rtuiScrollableHeader>
             <rtui-toolbar>
@@ -6,24 +6,26 @@
                     <div rtElem="actions">
                         <ng-content select="[table-actions]" />
 
-                        <div rtElem="action-item">
-                            <button
-                                mat-mini-fab
-                                type="button"
-                                aria-label="Icon-button for table refresh"
-                                class="c-button c-button--fab"
-                                matTooltip="Refresh"
-                                matTooltipPosition="below"
-                                [matTooltipDisabled]="isMobile()"
-                                (click)="onRefresh()">
-                                <mat-icon>sync</mat-icon>
-                            </button>
-                        </div>
+                        @if (isRefreshButtonShown()) {
+                            <div rtElem="action-item">
+                                <button
+                                    mat-mini-fab
+                                    type="button"
+                                    aria-label="Icon-button for table refresh"
+                                    class="c-button c-button--fab"
+                                    matTooltip="Refresh"
+                                    matTooltipPosition="below"
+                                    [matTooltipDisabled]="isMobile()"
+                                    (click)="onRefresh()">
+                                    <mat-icon>sync</mat-icon>
+                                </button>
+                            </div>
+                        }
                     </div>
 
                     @if ((isPlaceholderShown() && searchControl.value) || !isPlaceholderShown() || searchControl.dirty) {
                         <div rtElem="search">
-                            <mat-form-field subscriptSizing="dynamic" [appearance]="appearance()">
+                            <mat-form-field subscriptSizing="dynamic" [appearance]="appearance()" [style.width.%]="100">
                                 <input matInput placeholder="Search..." type="text" [formControl]="searchControl" />
 
                                 <mat-icon matPrefix>search</mat-icon>
@@ -48,14 +50,10 @@
                     </div>
                 }
             } @else {
-                <div rtBlock="c-placeholder">
-                    <div rtElem="icon">
-                        <mat-icon>search</mat-icon>
-                    </div>
+                <div rtElem="placeholder">
+                    <mat-icon rtElem="placeholder-icon">{{ placeholderIcon() }}</mat-icon>
 
-                    <div rtElem="content">
-                        <div rtElem="title">No Data Found</div>
-                    </div>
+                    <div rtElem="placeholder-title">{{ placeholderTitle() }}</div>
                 </div>
             }
         </ng-container>

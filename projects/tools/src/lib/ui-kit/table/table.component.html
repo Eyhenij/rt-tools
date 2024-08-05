@@ -13,7 +13,7 @@
         <thead>
             <tr>
                 @for (column of columns(); track column.propName) {
-                    <th rtElem="cell" [style.width.%]="8">
+                    <th rtElem="cell" [style.width.%]="100 / columns().length">
                         <rtui-table-header-cell
                             [headerModel]="column.header"
                             [currentSortPropertyName]="sortModel().propertyName"
@@ -29,7 +29,7 @@
                 <tr rtElem="row">
                     @for (column of columns(); track column.propName) {
                         <td rtElem="cell">
-                            <rtui-table-cell [row]="row" [column]="column" [isMobile]="isMobile()" />
+                            <rtui-table-base-cell [row]="row" [column]="column" [isMobile]="isMobile()" />
                         </td>
                     }
                 </tr>

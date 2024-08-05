@@ -72,7 +72,7 @@ export class RtuiTableContainerComponent implements OnInit {
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
 
     public appearance: InputSignal<MatFormFieldAppearance> = input.required();
-    public isMobile: InputSignalWithTransform<Nullable<boolean>, boolean> = input.required<Nullable<boolean>, boolean>({
+    public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
         transform: booleanAttribute,
     });
     public loading: InputSignalWithTransform<boolean, boolean> = input.required<boolean, boolean>({
@@ -91,9 +91,12 @@ export class RtuiTableContainerComponent implements OnInit {
         transform: booleanAttribute,
     });
     public pageModel: InputSignal<PageModel> = input.required();
-    public searchTerm: InputSignalWithTransform<Nullable<string>, string> = input<Nullable<string>, string>('', {
+    public searchTerm: InputSignalWithTransform<Nullable<string>, Nullable<string>> = input<Nullable<string>, Nullable<string>>('', {
         transform: (value: Nullable<string>) => (isString(value) ? value.trim() : ''),
     });
+
+    public placeholderIcon: InputSignal<string> = input<string>('search');
+    public placeholderTitle: InputSignal<string> = input<string>('No Data Found');
 
     public readonly pageModelChange: OutputEmitterRef<Partial<PageModel>> = output<Partial<PageModel>>();
     public readonly searchChange: OutputEmitterRef<Nullable<string>> = output<Nullable<string>>();

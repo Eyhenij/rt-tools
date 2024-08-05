@@ -8,19 +8,14 @@
 
     position: relative;
 
-    //height: 100%;
-    //width: 100%;
-    //display: table;
-    //table-layout: fixed;
-
-    .copy-box {
+    .base-cell {
         &__title {
-            padding: 0.5rem 0.5rem 0.5rem 0;
+            padding: var(--rt-table-base-cell-padding);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
 
-            &:hover + .copy-box__button {
+            &:hover + .base-cell__copy-button {
                 visibility: visible;
             }
 
@@ -39,26 +34,26 @@
             }
         }
 
-        &__button {
+        &__copy-button {
             visibility: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
+            width: var(--rt-table-base-cell-copy-button-size);
+            height: var(--rt-table-base-cell-copy-button-size);
             padding: 0;
-            margin-left: 0.25rem;
-            width: 1rem;
-            height: 1rem;
 
             &:hover {
                 visibility: visible;
             }
 
             &--complete {
-                color: var(--clr-avalon);
-                background-color: transparent;
+                color: var(--clr-green-60);
                 cursor: not-allowed;
             }
+        }
+
+        &__copy-icon {
+            width: var(--rt-table-base-cell-copy-button-size);
+            height: var(--rt-table-base-cell-copy-button-size);
+            font-size: var(--rt-table-base-cell-copy-button-size);
         }
     }
 }

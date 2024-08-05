@@ -114,7 +114,10 @@
 
     // Table
     --rt-table-wrapper-action-items-margin: 0 0 0 1.5rem;
+    --rt-table-wrapper-search-width: 16.5rem;
     --rt-table-wrapper-search-margin: 0 0 0 1.5rem;
+    --rt-table-wrapper-placeholder-icon-size: 3rem;
+    --rt-table-wrapper-placeholder-title-size: 2rem;
 
     --rt-table-header-cell-padding: 0;
     --rt-table-header-cell-background-color: var(--clr-white);
@@ -151,4 +154,7 @@
     --rt-table-cell-icon-font-size: 1.5rem;
     --rt-table-cell-icon-font-weight: 600;
     --rt-table-cell-icon-line-height: 1.2;
+
+    --rt-table-base-cell-padding: 0.5rem 0.5rem 0.5rem 0;
+    --rt-table-base-cell-copy-button-size: 1rem;
 }

@@ -1,9 +1,7 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import {
-    AfterContentChecked,
     ChangeDetectionStrategy,
     Component,
-    ElementRef,
     HostBinding,
     HostListener,
     InputSignal,
@@ -15,7 +13,6 @@ import {
     inject,
     input,
     signal,
-    viewChild,
 } from '@angular/core';
 import { MatIconButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -23,41 +20,43 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 import { BlockDirective, ElemDirective, ModDirective } from '../../../../bem';
-import { Nullable, isNumber, isString } from '../../../../util';
+import { Nullable, RtHideTooltipDirective, RtIconOutlinedDirective, isNumber, isString } from '../../../../util';
 import { ITable } from '../../util/table-column.interface';
 
 @Component({
     standalone: true,
-    selector: 'rtui-table-cell',
-    templateUrl: './table-cell.component.html',
-    styleUrls: ['./table-cell.component.scss'],
-    imports: [MatIcon, MatIconButton, MatMiniFabButton, MatTooltip, BlockDirective, ElemDirective, ModDirective],
+    selector: 'rtui-table-base-cell',
+    templateUrl: './table-base-cell.component.html',
+    styleUrls: ['./table-base-cell.component.scss'],
+    imports: [
+        MatIcon,
+        MatIconButton,
+        MatMiniFabButton,
+        MatTooltip,
+
+        // directives
+        BlockDirective,
+        ElemDirective,
+        ModDirective,
+        RtIconOutlinedDirective,
+        RtHideTooltipDirective,
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TableCellComponent<T> implements AfterContentChecked {
+export class TableBaseCellComponent<T> {
     readonly #clipboard: Clipboard = inject(Clipboard);
     readonly #sanitizer: DomSanitizer = inject(DomSanitizer);
 
-    protected readonly cellValue: Signal<T[keyof T]> = computed(() => this.row()[this.column().propName]);
-    protected readonly isTitleCollapsed: WritableSignal<boolean> = signal(false);
+    protected readonly cellValue: Signal<T[keyof T]> = computed(() => {
+        const transform: ((value: any) => string) | undefined = this.column()?.transform;
+        return transform ? (transform(this.row()[this.column().propName]) as T[keyof T]) : this.row()[this.column().propName];
+    });
     protected readonly isMouseOver: WritableSignal<boolean> = signal(false);
     protected readonly isCopied: WritableSignal<boolean> = signal(false);
 
-    protected readonly titleTplRef: Signal<ElementRef<HTMLElement>> = viewChild.required<ElementRef<HTMLElement>>('titleTpl');
-
     public row: InputSignal<T> = input.required();
     public column: InputSignal<ITable.Column<T>> = input.required();
-    public isMobile: InputSignalWithTransform<Nullable<boolean>, boolean> = input.required<Nullable<boolean>, boolean>({
-        transform: booleanAttribute,
-    });
-    // TODO: get rid of this
-    public isTitleArray: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(null, {
-        transform: booleanAttribute,
-    });
-    public breakTitle: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(null, {
-        transform: booleanAttribute,
-    });
-    public isCopyButtonShown: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(true, {
+    public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
         transform: booleanAttribute,
     });
 
@@ -79,24 +78,6 @@ export class TableCellComponent<T> implements AfterContentChecked {
     @HostListener('mouseover')
     public onMouseOver(): void {
         this.isMouseOver.set(true);
-    }
-
-    public ngAfterContentChecked(): void {
-        setTimeout(() => {
-            this.checkEllipsis();
-        }, 500);
-    }
-
-    public checkEllipsis(): void {
-        const element: HTMLElement = this.titleTplRef()?.nativeElement;
-
-        if (element) {
-            const titleWidth: number = element.offsetWidth;
-            const textWidth: number = element.scrollWidth;
-            if (textWidth > titleWidth) {
-                this.isTitleCollapsed.set(true);
-            }
-        }
     }
 
     public onCopyToClipboard(): void {

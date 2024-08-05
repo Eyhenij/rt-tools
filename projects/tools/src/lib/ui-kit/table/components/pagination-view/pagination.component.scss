@@ -7,33 +7,31 @@
 
     display: block;
 
-    .c-pagination {
-        &__container {
-            display: flex;
-            flex-direction: row;
-            justify-content: flex-start;
-            align-items: center;
+    .container {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
 
-            min-height: 3rem;
-            position: relative;
+        min-height: 3rem;
+        position: relative;
 
-            color: vars.$pagination-dynamic-clr;
-            font-size: mixins.rem(14);
-            font-weight: normal;
+        color: vars.$pagination-dynamic-clr;
+        font-size: mixins.rem(14);
+        font-weight: normal;
 
-            .c-pagination__paging + .c-pagination__size-toggle {
-                margin-left: 3rem;
-            }
+        .container__paging + .container__size-toggle {
+            margin-left: 3rem;
+        }
 
-            @include mixins.media-breakpoint-down(vars.$device-md) {
-                flex-direction: column;
-                justify-content: center;
-                align-items: flex-start;
+        @include mixins.media-breakpoint-down(vars.$device-md) {
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
 
-                .c-pagination__paging + .c-pagination__size-toggle {
-                    margin-left: 0;
-                    margin-top: 1rem;
-                }
+            .container__paging + .container__size-toggle {
+                margin-left: 0;
+                margin-top: 1rem;
             }
         }
 
