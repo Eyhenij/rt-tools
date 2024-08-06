@@ -20,16 +20,16 @@
             <div
                 rtElem="icon"
                 [rtMod]="{
-                active: active() && sortOrderType.DESC === sortModel().sortDirection?.toLowerCase(),
-                first: true,
-            }"></div>
+                    active: active() && sortOrderType.DESC === sortModel().sortDirection?.toLowerCase(),
+                    first: true,
+                }"></div>
 
             <div
                 rtElem="icon"
                 [rtMod]="{
-                active: active() && sortOrderType.ASC === sortModel().sortDirection?.toLowerCase(),
-                second: true,
-            }"></div>
+                    active: active() && sortOrderType.ASC === sortModel().sortDirection?.toLowerCase(),
+                    second: true,
+                }"></div>
         </div>
     }
 </ng-container>

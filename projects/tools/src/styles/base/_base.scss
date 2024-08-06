@@ -112,6 +112,14 @@
     --rt-round-icon-button-box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.12), 0 1px 18px 0 rgba(0, 0, 0, 0.14);
     --rt-round-icon-button-icon-size: 1.25rem;
 
+    // clear-button
+    --rt-clear-button-margin: 0 0.5rem 0 0;
+    --rt-clear-button-padding: 0.1rem;
+    --rt-clear-button-background-color: var(--clr-black-20);
+    --rt-clear-button-icon-size: 1rem;
+    --rt-clear-button-icon-color: var(--clr-black-60);
+    --rt-clear-button-icon-on-hover-color: var(--clr-black-100);
+
     // Table
     --rt-table-wrapper-action-items-margin: 0 0 0 1.5rem;
     --rt-table-wrapper-search-width: 16.5rem;

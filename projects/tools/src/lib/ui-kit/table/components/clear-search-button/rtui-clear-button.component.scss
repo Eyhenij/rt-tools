@@ -1,11 +1,4 @@
 :host {
-    --rt-clear-button-margin: 0 0.5rem 0 0;
-    --rt-clear-button-padding: 0.1rem;
-    --rt-clear-button-background-color: var(--clr-black-20);
-    --rt-clear-button-icon-size: 1rem;
-    --rt-clear-button-icon-color: var(--clr-black-60);
-    --rt-clear-button-icon-on-hover-color: var(--clr-black-100);
-
     .clear-button {
         display: flex;
         justify-content: center;
