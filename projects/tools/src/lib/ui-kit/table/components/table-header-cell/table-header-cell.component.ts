@@ -72,7 +72,7 @@ export class RtuiTableHeaderCellComponent<SORT_PROPERTY> {
     }
 
     #getNextSortOrder(sortPropertyName: SORT_PROPERTY): ListSortOrderType {
-        if (sortPropertyName === LIST_SORT_ORDER_ENUM.ASC) {
+        if (sortPropertyName === this.currentSortPropertyName()) {
             return LIST_SORT_ORDER_ENUM.DESC;
         }
 

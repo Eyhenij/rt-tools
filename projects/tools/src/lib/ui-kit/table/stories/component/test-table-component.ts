@@ -36,6 +36,9 @@ import { Person } from '../types';
 })
 export default class TestTableComponent {
     public isMobile: boolean = false;
+    public loading: boolean = false;
+    public fetching: boolean = false;
+    public searchTerm: string = '';
     public data: Person[] = [];
     public columns: ITable.Column<Person>[] = [];
     public pageModel: PageModel = {

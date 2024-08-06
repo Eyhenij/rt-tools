@@ -22,6 +22,8 @@ type Story = StoryObj<TestTableComponent>;
 export const ManyColumns: Story = {
     args: {
         isMobile: false,
+        loading: false,
+        fetching: false,
         data: createPersonList(20),
         columns: COLUMNS,
         pageModel: {
@@ -33,12 +35,15 @@ export const ManyColumns: Story = {
             propertyName: 'id',
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,
         },
+        searchTerm: 'fgddfg',
     },
 };
 
 export const FewColumns: Story = {
     args: {
         isMobile: false,
+        loading: false,
+        fetching: false,
         data: createPersonList(20),
         columns: COLUMNS.slice(0, 2),
         pageModel: {
@@ -50,12 +55,15 @@ export const FewColumns: Story = {
             propertyName: 'id',
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,
         },
+        searchTerm: '',
     },
 };
 
 export const FewItems: Story = {
     args: {
         isMobile: false,
+        loading: false,
+        fetching: false,
         data: createPersonList(5),
         columns: COLUMNS.slice(0, 5),
         pageModel: {
@@ -67,12 +75,15 @@ export const FewItems: Story = {
             propertyName: 'id',
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,
         },
+        searchTerm: '',
     },
 };
 
 export const NoItems: Story = {
     args: {
         isMobile: false,
+        loading: false,
+        fetching: false,
         data: [],
         columns: COLUMNS.slice(0, 5),
         pageModel: {
@@ -84,5 +95,6 @@ export const NoItems: Story = {
             propertyName: 'id',
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,
         },
+        searchTerm: '',
     },
 };

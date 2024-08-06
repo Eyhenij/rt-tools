@@ -44,11 +44,13 @@ import { ITable } from './util/table-column.interface';
         BlockDirective,
         ElemDirective,
 
-        // Ui-kit
-        RtuiToolbarComponent,
+        // Directives
         RtuiToolbarLeftDirective,
         RtuiToolbarCenterDirective,
         RtuiToolbarRightDirective,
+
+        // Ui-kit
+        RtuiToolbarComponent,
         RtuiTableContainerComponent,
         RtuiTableHeaderCellComponent,
         TableBaseCellComponent,
@@ -76,14 +78,14 @@ export class RtuiTableComponent<ENTITY_TYPE> implements OnInit {
     });
     public appearance: InputSignal<MatFormFieldAppearance> = input.required();
     public pageModel: InputSignal<PageModel> = input.required();
-    public sortModel: InputSignal<SortModel<keyof ENTITY_TYPE>> = input.required();
+    public sortModel: InputSignal<Nullable<SortModel<keyof ENTITY_TYPE>>> = input.required();
+    public searchTerm: InputSignal<Nullable<string>> = input.required();
 
     public readonly sortChangeAction: OutputEmitterRef<SortModel<keyof ENTITY_TYPE>> = output<SortModel<keyof ENTITY_TYPE>>();
     public readonly pageModelChangeAction: OutputEmitterRef<Partial<PageModel>> = output<Partial<PageModel>>();
     public readonly searchChangeAction: OutputEmitterRef<Nullable<string>> = output<Nullable<string>>();
     public readonly refreshAction: OutputEmitterRef<void> = output<void>();
 
-    public readonly searchTerm: WritableSignal<Nullable<string>> = signal(null);
     public readonly activeRowIndex: WritableSignal<Nullable<number>> = signal(null);
 
     public ngOnInit(): void {
