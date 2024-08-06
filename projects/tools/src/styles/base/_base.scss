@@ -66,6 +66,7 @@
     --rt-scrollable-header-background-color: var(--clr-white);
 
     --rt-scrollable-content-display: flex;
+    --rt-scrollable-content-flex-direction: column;
     --rt-scrollable-content-flex-grow: 1;
     --rt-scrollable-content-padding: 1rem;
     --rt-scrollable-content-background-color: var(--clr-white);
@@ -108,7 +109,60 @@
     --rt-round-icon-button-padding: 0.25rem;
     --rt-round-icon-button-z-index: 1;
     --rt-round-icon-button-background-color: var(--mat-list-active-indicator-color);
-    --rt-round-icon-button-box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.12),
-        0 1px 18px 0 rgba(0, 0, 0, 0.14);
+    --rt-round-icon-button-box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.12), 0 1px 18px 0 rgba(0, 0, 0, 0.14);
     --rt-round-icon-button-icon-size: 1.25rem;
+
+    // clear-button
+    --rt-clear-button-margin: 0 0.5rem 0 0;
+    --rt-clear-button-padding: 0.1rem;
+    --rt-clear-button-background-color: var(--clr-black-20);
+    --rt-clear-button-icon-size: 1rem;
+    --rt-clear-button-icon-color: var(--clr-black-60);
+    --rt-clear-button-icon-on-hover-color: var(--clr-black-100);
+
+    // Table
+    --rt-table-wrapper-action-items-margin: 0 0 0 1.5rem;
+    --rt-table-wrapper-search-width: 16.5rem;
+    --rt-table-wrapper-search-margin: 0 0 0 1.5rem;
+    --rt-table-wrapper-placeholder-icon-size: 3rem;
+    --rt-table-wrapper-placeholder-title-size: 2rem;
+
+    --rt-table-header-cell-padding: 0;
+    --rt-table-header-cell-background-color: var(--clr-white);
+    --rt-table-header-cell-border-bottom: 1px solid var(--clr-black-20);
+    --rt-table-header-cell-font-size: 1rem;
+    --rt-table-header-cell-font-weight: 600;
+    --rt-table-header-cell-line-height: 1.2;
+    --rt-table-header-cell-text-align: left;
+
+    --rt-table-header-cell-icon-size: 1.5rem;
+    --rt-table-header-cell-icon-color: var(--clr-black-60);
+    --rt-table-header-cell-icon-on-hover-color: var(--clr-white);
+    --rt-table-header-cell-icon-active-color: var(--clr-white);
+    --rt-table-header-cell-icon-margin: 0 0 0 1rem;
+    --rt-table-header-cell-icon-font-size: 1.5rem;
+    --rt-table-header-cell-icon-font-weight: 600;
+    --rt-table-header-cell-icon-line-height: 1.2;
+
+    --rt-table-row-height: 3rem;
+    --rt-table-row-color: var(--clr-txt);
+    --rt-table-row-border-bottom: 1px solid var(--clr-black-20);
+    --rt-table-row-hover-border-bottom: 1px solid var(--clr-blue-100);
+    --rt-table-row-hover-transition: 0.2s;
+    --rt-table-row-active-border-bottom: 1px solid var(--clr-blue-100);
+
+    --rt-table-cell-color: var(--clr-white);
+    --rt-table-cell-font-weight: normal;
+    --rt-table-cell-padding: 0.625rem;
+
+    --rt-table-cell-icon-size: 1.5rem;
+    --rt-table-cell-icon-color: var(--clr-black-60);
+    --rt-table-cell-icon-on-hover-color: var(--clr-black-100);
+    --rt-table-cell-icon-margin: 0.5rem;
+    --rt-table-cell-icon-font-size: 1.5rem;
+    --rt-table-cell-icon-font-weight: 600;
+    --rt-table-cell-icon-line-height: 1.2;
+
+    --rt-table-base-cell-padding: 0.5rem 0.5rem 0.5rem 0;
+    --rt-table-base-cell-copy-button-size: 1rem;
 }

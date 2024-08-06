@@ -11,16 +11,28 @@
             [activated]="menuRef.activeMenuIds().includes(item.id)"
             (click)="onClickSubMenu(item)">
             @if (item?.icon) {
-                <mat-icon matListItemIcon rtElem="icon">{{ item.icon }}</mat-icon>
+                <mat-icon matListItemIcon rtElem="icon" [rtIconOutlinedDirective]="isSubMenuIconsOutlined()">{{ item.icon }}</mat-icon>
             }
 
             @if (item?.name) {
                 <div rtBlock="rtui-side-menu-sub-item-title">
-                    <div rtElem="text">{{ item.name }}</div>
+                    <div
+                        #title
+                        rtElem="text"
+                        matTooltipPosition="above"
+                        [matTooltip]="item.name"
+                        [matTooltipDisabled]="!isSubMenuTooltipsShown()"
+                        [rtHideTooltipDirective]="title"
+                        [isTooltipShown]="isSubMenuTooltipsShown()">
+                        {{ item.name }}
+                    </div>
 
                     @if (item?.iconButton?.icon) {
                         <div rtBlock="rtui-side-menu-sub-item-title-button">
-                            <mat-icon rtElem="icon" (click)="onClickSubMenuAdditional(item.iconButton?.data); $event.stopPropagation()">
+                            <mat-icon
+                                rtElem="icon"
+                                [rtIconOutlinedDirective]="isSubMenuButtonIconsOutlined()"
+                                (click)="onClickSubMenuAdditional(item.iconButton?.data); $event.stopPropagation()">
                                 {{ item.iconButton.icon }}
                             </mat-icon>
                         </div>
@@ -29,16 +41,30 @@
             }
         </mat-list-item>
     } @else if (item?.submenu?.length) {
-        <mat-expansion-panel #panel rtBlock="rtui-side-menu-expand-sub-item" [rtMod]="{ fixed: isSubMenuXScrollEnabled() }" [expanded]="menuRef.activeMenuIds().includes(item.id)">
+        <mat-expansion-panel
+            #panel
+            rtBlock="rtui-side-menu-expand-sub-item"
+            [rtMod]="{ fixed: isSubMenuXScrollEnabled() }"
+            [expanded]="menuRef.activeMenuIds().includes(item.id)">
             <mat-expansion-panel-header
                 rtBlock="rtui-side-menu-expand-sub-item-header"
                 [rtMod]="{ activated: menuRef.activeMenuIds().includes(item.id) }">
                 @if (item?.icon) {
-                    <mat-icon matListItemIcon rtElem="icon">{{ item.icon }}</mat-icon>
+                    <mat-icon matListItemIcon rtElem="icon" [rtIconOutlinedDirective]="isSubMenuIconsOutlined()">{{ item.icon }}</mat-icon>
                 }
 
                 @if (item?.name) {
-                    <div matListItemTitle rtElem="title">{{ item.name }}</div>
+                    <div
+                        #headerTitle
+                        matListItemTitle
+                        rtElem="title"
+                        matTooltipPosition="above"
+                        [matTooltip]="item.name"
+                        [matTooltipDisabled]="!isSubMenuTooltipsShown()"
+                        [rtHideTooltipDirective]="headerTitle"
+                        [isTooltipShown]="isSubMenuTooltipsShown()">
+                        {{ item.name }}
+                    </div>
                 }
             </mat-expansion-panel-header>
 

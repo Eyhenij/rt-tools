@@ -1,5 +1,5 @@
 @if ((leftToolTpl() || centerToolTpl() || rightToolTpl()) && isVisibleToolbar()) {
-    <mat-toolbar rtBlock="toolbar">
+    <mat-toolbar rtBlock="toolbar" [rtMod]="{ sticky: sticky() }">
         <div rtBlock="bars">
             @if (leftToolTpl()) {
                 <div rtElem="bar" rtMod="left">
@@ -7,11 +7,9 @@
                 </div>
             }
 
-            @if (centerToolTpl()) {
-                <div rtElem="bar" rtMod="center">
-                    <ng-template *ngTemplateOutlet="centerToolTpl() ?? null" />
-                </div>
-            }
+            <div rtElem="bar" rtMod="center">
+                <ng-template *ngTemplateOutlet="centerToolTpl() ?? null" />
+            </div>
 
             @if (rightToolTpl()) {
                 <div rtElem="bar" rtMod="right">

@@ -1,5 +1,9 @@
-@forward 'base';
-@forward 'form';
-@forward 'button';
-@forward 'variables' as vars-*;
-@forward 'mixin' as mixins-*;
+// Base
+@forward 'base/variables' as vars-*;
+@forward 'base/mixin' as mixins-*;
+@forward 'base/base';
+
+// Components
+@forward 'components/form';
+@forward 'components/button';
+@forward 'components/table';

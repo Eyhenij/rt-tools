@@ -1,0 +1,11 @@
+@if (isButtonShown()) {
+    <button
+        rtBlock="clear-button"
+        [matTooltip]="tooltip()"
+        [matTooltipPosition]="tooltipPosition()"
+        [matTooltipDisabled]="isMobile()"
+        (keydown)="onKeydown()"
+        (click)="onClick()">
+        <mat-icon rtElem="icon">close</mat-icon>
+    </button>
+}

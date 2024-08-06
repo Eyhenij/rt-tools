@@ -1,5 +1,16 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Directive, Signal, TemplateRef, Type, contentChild, input } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    Directive,
+    InputSignalWithTransform,
+    Signal,
+    TemplateRef,
+    Type,
+    booleanAttribute,
+    contentChild,
+    input,
+} from '@angular/core';
 import { MatToolbar } from '@angular/material/toolbar';
 
 import { BlockDirective, ElemDirective } from '../../bem';
@@ -42,5 +53,8 @@ export class RtuiToolbarComponent {
     });
     public readonly rightToolTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiToolbarRightDirective, {
         read: TemplateRef,
+    });
+    public sticky: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(false, {
+        transform: booleanAttribute,
     });
 }

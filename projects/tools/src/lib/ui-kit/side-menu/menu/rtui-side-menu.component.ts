@@ -25,7 +25,7 @@ import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { Router, RouterOutlet } from '@angular/router';
 
 import { BlockDirective, ElemDirective } from '../../../bem';
-import { Nullable, RtScrollToElementDirective, transformArrayInput } from '../../../util';
+import { Nullable, RtIconOutlinedDirective, RtScrollToElementDirective, transformArrayInput } from '../../../util';
 import { ISideMenu } from '../../../util/interfaces/side-menu.interface';
 import {
     RtuiScrollableContainerComponent,
@@ -68,11 +68,12 @@ export class RtuiSideMenuFooterDirective {}
         RtuiScrollableContainerHeaderDirective,
         RtuiScrollableContainerContentDirective,
         RtuiScrollableContainerFooterDirective,
+        RtScrollToElementDirective,
+        RtIconOutlinedDirective,
 
         // components
         RtuiScrollableContainerComponent,
         RtuiSideMenuSubItemComponent,
-        RtScrollToElementDirective,
     ],
 })
 export class RtuiSideMenuComponent {
@@ -98,6 +99,18 @@ export class RtuiSideMenuComponent {
         transform: booleanAttribute,
     });
     public isSubMenuXScrollEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+        transform: booleanAttribute,
+    });
+    public isMainMenuIconsOutlined: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
+    public isSubMenuIconsOutlined: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
+    public isSubMenuButtonIconsOutlined: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
+    public isSubMenuTooltipsShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
 
