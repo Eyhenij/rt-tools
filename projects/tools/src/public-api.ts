@@ -16,6 +16,7 @@ export * from './lib/ui-kit/aside';
 export * from './lib/ui-kit/buttons';
 export * from './lib/ui-kit/toolbar';
 export * from './lib/ui-kit/header';
+export * from './lib/ui-kit/table';
 
 // utils
 export * from './lib/util';

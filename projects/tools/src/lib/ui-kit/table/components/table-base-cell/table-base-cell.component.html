@@ -1,6 +1,8 @@
 <ng-container rtBlock="base-cell">
     @if (column()?.icon?.placement === 'left') {
-        <mat-icon [style.color]="column().icon.color">{{ column().icon.glyph }}</mat-icon>
+        <mat-icon rtElem="prefix" [rtIconOutlinedDirective]="!!column().icon?.outlined" [style.color]="column().icon?.color">
+            {{ column().icon?.glyph }}
+        </mat-icon>
     }
 
     <div
@@ -11,13 +13,15 @@
         [rtHideTooltipDirective]="titleTpl"
         [isTooltipShown]="!isMobile()"
         [rtMod]="{ align: column().align }"
-        [matTooltip]="column().tooltip ?? cellValue()"
+        [matTooltip]="column()?.tooltip ?? tooltipValue()"
         [matTooltipDisabled]="isMobile()">
         {{ cellValue() }}
     </div>
 
     @if (column()?.icon?.placement === 'right') {
-        <mat-icon [style.color]="column().icon.color">{{ column().icon.glyph }}</mat-icon>
+        <mat-icon rtElem="suffix" [rtIconOutlinedDirective]="!!column().icon?.outlined" [style.color]="column().icon?.color">
+            {{ column().icon?.glyph }}
+        </mat-icon>
     }
 
     @if (column().copyable && cellValue()) {
@@ -26,9 +30,7 @@
             rtElem="copy-button"
             class="c-button c-button--txt-base"
             matTooltipPosition="above"
-            [rtMod]="{
-                complete: isCopied(),
-            }"
+            [rtMod]="[isCopied() && 'complete', isMouseOver() && 'visible']"
             [matTooltip]="isCopied() ? 'Copied!' : 'Copy'"
             [matTooltipDisabled]="isMobile()"
             (click)="onCopyToClipboard(); $event.stopPropagation()">

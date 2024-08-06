@@ -21,6 +21,12 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
             propertyName: 'id',
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,
         },
+        width: '100px',
+        icon: {
+            glyph: 'priority_high',
+            color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
+            placement: 'right',
+        },
     },
     {
         align: 'left',
@@ -41,6 +47,11 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,
         },
         width: '150px',
+        icon: {
+            glyph: 'priority_high',
+            color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
+            placement: 'right',
+        },
     },
     {
         align: 'left',
@@ -61,6 +72,11 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,
         },
         width: '200px',
+        icon: {
+            glyph: 'priority_high',
+            color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
+            placement: 'left',
+        },
     },
     {
         align: 'right',
@@ -75,7 +91,11 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
             propertyName: 'age',
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,
         },
-        width: '50px',
+        icon: {
+            glyph: 'priority_high',
+            color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
+            placement: 'left',
+        },
     },
     {
         align: 'left',

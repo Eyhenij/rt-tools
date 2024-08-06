@@ -75,5 +75,6 @@ export namespace ITable {
         tooltip?: string;
         visible?: boolean;
         placement?: 'left' | 'right';
+        outlined?: boolean;
     }
 }
