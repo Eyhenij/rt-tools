@@ -1,5 +1,5 @@
-@use './mixin' as mixins;
-@use './variables' as vars;
+@use '../base/mixin' as mixins;
+@use '../base/variables' as vars;
 
 button {
     line-height: 1;

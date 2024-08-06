@@ -1,0 +1,115 @@
+@use '../../../../../styles/base/variables' as vars;
+@use '../../../../../styles/base/mixin' as mixins;
+
+:host {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    .container {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+
+        min-height: 3rem;
+        position: relative;
+
+        color: vars.$pagination-dynamic-clr;
+        font-size: mixins.rem(14);
+        font-weight: normal;
+
+        .container__paging + .container__size-toggle {
+            margin-left: 3rem;
+        }
+
+        @include mixins.media-breakpoint-down(vars.$device-md) {
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+
+            .container__paging + .container__size-toggle {
+                margin-left: 0;
+                margin-top: 1rem;
+            }
+        }
+
+        &__paging {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+
+            &-item {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+
+                position: relative;
+                height: 100%;
+
+                min-width: 1.5rem;
+                padding: 0 0.4rem;
+
+                background-color: transparent;
+                cursor: pointer;
+
+                svg {
+                    fill: vars.$pagination-dynamic-clr;
+                }
+
+                &:hover:not(.divider) {
+                    color: var(--clr-avalon);
+
+                    svg {
+                        fill: var(--clr-avalon);
+                    }
+                }
+
+                &--active {
+                    color: var(--clr-avalon);
+                    cursor: default;
+                    pointer-events: none;
+                }
+
+                &--disabled {
+                    cursor: default;
+                    pointer-events: none;
+
+                    svg {
+                        fill-opacity: 0.3;
+                    }
+                }
+
+                &--divider {
+                    cursor: default;
+                    pointer-events: none;
+                }
+            }
+        }
+
+        &__size-toggle {
+            .page-size-toggle {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+
+                &__title {
+                    margin-right: 0.75rem;
+                }
+
+                &__selector {
+                    width: auto;
+                    min-width: 3rem;
+                }
+
+                @include mixins.media-breakpoint-down(vars.$device-md) {
+                    padding: 0 0.4rem;
+                }
+            }
+        }
+    }
+}

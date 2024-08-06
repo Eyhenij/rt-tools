@@ -1,0 +1,23 @@
+:host {
+    .clear-button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: none;
+        border-radius: 50%;
+        margin: var(--rt-clear-button-margin);
+        padding: var(--rt-clear-button-padding);
+        background-color: var(--rt-clear-button-background-color);
+
+        &__icon {
+            width: var(--rt-clear-button-icon-size);
+            height: var(--rt-clear-button-icon-size);
+            font-size: var(--rt-clear-button-icon-size);
+            color: var(--rt-clear-button-icon-color);
+
+            &:hover {
+                color: var(--clr-black-100);
+            }
+        }
+    }
+}

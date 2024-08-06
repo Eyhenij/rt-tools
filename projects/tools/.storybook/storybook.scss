@@ -1,12 +1,9 @@
 @use '@angular/material' as mat;
 
-//@use '../src/lib/ui-kit/styles/styles.scss';
+@use '../src/styles/main';
 
-@use '../src/styles/base';
-@use '../src/styles/button';
-@use '../src/styles/form';
-@use '../src/styles/variables' as vars;
-@use '../src/styles/mixin' as mixins;
+@use '../src/styles/base/variables' as vars;
+@use '../src/styles/base/mixin' as mixins;
 
 @include mat.core();
 
@@ -28,8 +25,13 @@ $mat-theme: mat.define-theme(
     )
 );
 
+:root {
+    --font-default: Roboto, 'Helvetica Neue', sans-serif;
+}
+
 html {
     @include mat.all-component-themes($mat-theme);
+    font-family: var(--font-default);
 }
 
 // For correct displaying modal height in storybook

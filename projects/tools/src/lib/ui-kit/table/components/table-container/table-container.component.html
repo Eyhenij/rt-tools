@@ -1,0 +1,61 @@
+<ng-container rtBlock="table-wrapper">
+    <rtui-scrollable>
+        <ng-container *rtuiScrollableHeader>
+            <rtui-toolbar>
+                <ng-container *rtuiToolbarRight>
+                    <div rtElem="actions">
+                        <ng-content select="[table-actions]" />
+
+                        @if (isRefreshButtonShown()) {
+                            <div rtElem="action-item">
+                                <button
+                                    mat-mini-fab
+                                    type="button"
+                                    aria-label="Icon-button for table refresh"
+                                    class="c-button c-button--fab"
+                                    matTooltip="Refresh"
+                                    matTooltipPosition="below"
+                                    [matTooltipDisabled]="isMobile()"
+                                    (click)="onRefresh()">
+                                    <mat-icon>sync</mat-icon>
+                                </button>
+                            </div>
+                        }
+                    </div>
+
+                    @if ((isPlaceholderShown() && searchControl.value) || !isPlaceholderShown() || searchControl.dirty) {
+                        <div rtElem="search">
+                            <mat-form-field subscriptSizing="dynamic" [appearance]="appearance()" [style.width.%]="100">
+                                <input matInput placeholder="Search..." type="text" [formControl]="searchControl" />
+
+                                <mat-icon matPrefix>search</mat-icon>
+
+                                <rtui-clear-button matSuffix [isButtonShown]="!!searchControl.value" (clickAction)="onClearSearch()" />
+                            </mat-form-field>
+                        </div>
+                    }
+                </ng-container>
+            </rtui-toolbar>
+        </ng-container>
+
+        <ng-container *rtuiScrollableContent>
+            @if (!isPlaceholderShown() || pageModel()?.totalCount) {
+                <div rtElem="content">
+                    <ng-content />
+                </div>
+
+                @if (isPaginationShown()) {
+                    <div rtElem="pagination">
+                        <rtui-pagination [currentPageModel]="pageModel()" (pageModelChange)="onPageModelChange($event)" />
+                    </div>
+                }
+            } @else {
+                <div rtElem="placeholder">
+                    <mat-icon rtElem="placeholder-icon">{{ placeholderIcon() }}</mat-icon>
+
+                    <div rtElem="placeholder-title">{{ placeholderTitle() }}</div>
+                </div>
+            }
+        </ng-container>
+    </rtui-scrollable>
+</ng-container>

@@ -56,10 +56,15 @@ export const MENU_ITEMS: Readonly<ISideMenu.Item[]> = Object.freeze([
             {
                 id: 26,
                 icon: 'folder',
-                name: 'Level 1',
+                name: 'Level 1 Lorem Ipsum is simply dummy text of the printing and typesetting industry',
                 submenu: [
                     { id: 27, name: 'Item 1', link: '/test/level1/1', iconButton: { icon: 'add', data: 'data' } },
-                    { id: 28, name: 'Item 2', link: '/test/level1/2', iconButton: { icon: 'edit', data: 'data' } },
+                    {
+                        id: 28,
+                        name: 'Item 2 Lorem Ipsum is simply dummy text of the printing and typesetting industry',
+                        link: '/test/level1/2',
+                        iconButton: { icon: 'edit', data: 'data' },
+                    },
                     {
                         id: 29,
                         icon: 'folder',
@@ -67,11 +72,15 @@ export const MENU_ITEMS: Readonly<ISideMenu.Item[]> = Object.freeze([
                         submenu: [
                             {
                                 id: 30,
-                                name: 'Item 1',
+                                name: 'Item 1 Lorem Ipsum is simply dummy text of the printing and typesetting industry',
                                 link: '/test/level1/level2/1',
                                 iconButton: { icon: 'add', data: 'data' },
                             },
-                            { id: 31, name: 'Item 2', link: '/test/level1/level2/2' },
+                            {
+                                id: 31,
+                                name: 'Item 2 Lorem Ipsum is simply dummy text of the printing and typesetting industry',
+                                link: '/test/level1/level2/2',
+                            },
                             {
                                 id: 32,
                                 icon: 'info',
@@ -82,7 +91,7 @@ export const MENU_ITEMS: Readonly<ISideMenu.Item[]> = Object.freeze([
                             {
                                 id: 33,
                                 icon: 'folder',
-                                name: 'Level 3',
+                                name: 'Level 3 Lorem Ipsum is simply dummy text of the printing and typesetting industry',
                                 submenu: [
                                     {
                                         id: 34,
@@ -90,7 +99,11 @@ export const MENU_ITEMS: Readonly<ISideMenu.Item[]> = Object.freeze([
                                         link: '/test/level1/level2/level3/1',
                                         iconButton: { icon: 'add', data: 'data' },
                                     },
-                                    { id: 35, name: 'Item 2', link: '/test/level1/level2/level3/2' },
+                                    {
+                                        id: 35,
+                                        name: 'Item 2 Lorem Ipsum is simply dummy text of the printing and typesetting industry',
+                                        link: '/test/level1/level2/level3/2',
+                                    },
                                 ],
                             },
                         ],
@@ -108,7 +121,7 @@ export const MENU_ITEMS: Readonly<ISideMenu.Item[]> = Object.freeze([
 
 @Component({
     standalone: true,
-    selector: 'side-menu-wrapper',
+    selector: 'app-side-menu-wrapper',
     templateUrl: './side-menu-wrapper.component.html',
     styleUrls: ['./side-menu-wrapper.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -137,12 +150,16 @@ export class SideMenuWrapperComponent {
     public activeMenuIds: Array<number | string> = [];
     public isMobile: boolean = false;
     public isSubMenuXScrollEnabled: boolean = true;
+    public isMainMenuIconsOutlined: boolean = false;
+    public isSubMenuIconsOutlined: boolean = false;
+    public isSubMenuButtonIconsOutlined: boolean = false;
+    public isSubMenuTooltipsShown: boolean = false;
 
     public closeMobileMenu(): void {
-        console.log('CloseMobileMenuAction');
+        return;
     }
 
     public logout(): void {
-        console.log('LogOutAction');
+        return;
     }
 }

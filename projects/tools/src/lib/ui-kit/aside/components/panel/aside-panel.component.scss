@@ -101,6 +101,14 @@
     justify-content: flex-start;
 
     padding: var(--rt-aside-content-padding);
+
+    // Change mat tab group styles
+    .mat-mdc-tab-header {
+        top: 0;
+        z-index: 1000;
+        position: sticky;
+        background: var(--clr-white);
+    }
 } // c-aside-content
 
 // ASIDE FOOTER
@@ -112,13 +120,12 @@
     padding: var(--rt-aside-footer-padding);
 
     .c-aside-footer-btn {
-
         &__title {
             text-transform: uppercase;
         }
     }
 
-    .c-aside-footer-btn +.c-aside-footer-btn {
+    .c-aside-footer-btn + .c-aside-footer-btn {
         margin-left: var(--rt-aside-footer-margin-left-betwen-buttons);
     }
 } // c-aside-footer
