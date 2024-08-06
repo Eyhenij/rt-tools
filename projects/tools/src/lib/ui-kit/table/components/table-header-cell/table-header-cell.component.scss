@@ -4,7 +4,7 @@
     align-items: center;
     cursor: pointer;
 
-    .label {
+    .header-cell-label {
         flex-grow: 1;
         display: flex;
         align-items: center;
@@ -37,7 +37,7 @@
         }
     }
 
-    .icons {
+    .header-cell-icons {
         display: flex;
         flex-direction: column;
         justify-content: center;

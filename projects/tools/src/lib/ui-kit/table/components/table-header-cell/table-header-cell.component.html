@@ -1,4 +1,4 @@
-<div rtBlock="label" [rtMod]="{ align: headerModel().align }">
+<div rtBlock="header-cell-label" [rtMod]="{ align: headerModel().align }">
     @if (headerModel()?.icon?.placement === 'left') {
         <mat-icon rtElem="prefix" [rtIconOutlinedDirective]="!!headerModel().icon?.outlined" [style.color]="headerModel().icon?.color">
             {{ headerModel().icon?.glyph }}
@@ -17,7 +17,7 @@
 </div>
 
 @if (sortModel()) {
-    <div rtBlock="icons" [rtMod]="{ active: active() }">
+    <div rtBlock="header-cell-icons" [rtMod]="{ active: active() }">
         <div
             rtElem="icon"
             [rtMod]="{
