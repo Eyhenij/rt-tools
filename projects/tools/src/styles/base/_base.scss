@@ -164,5 +164,8 @@
     --rt-table-cell-icon-line-height: 1.2;
 
     --rt-table-base-cell-padding: 0.5rem 0.5rem 0.5rem 0;
-    --rt-table-base-cell-copy-button-size: 1rem;
+    --rt-table-base-cell-copy-button-position-right: 0.25rem;
+    --rt-table-base-cell-copy-button-padding: 0.25rem;
+    --rt-table-base-cell-copy-button-background-color: var(--mdc-fab-small-container-color);
+    --rt-table-base-cell-copy-button-icon-size: 1rem;
 }

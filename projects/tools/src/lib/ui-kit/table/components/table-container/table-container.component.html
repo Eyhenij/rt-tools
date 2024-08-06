@@ -17,7 +17,7 @@
                                     matTooltipPosition="below"
                                     [matTooltipDisabled]="isMobile()"
                                     (click)="onRefresh()">
-                                    <mat-icon>sync</mat-icon>
+                                    <mat-icon [rtIconOutlinedDirective]="isActionsIconsOutlined()">sync</mat-icon>
                                 </button>
                             </div>
                         }
@@ -28,7 +28,7 @@
                             <mat-form-field subscriptSizing="dynamic" [appearance]="appearance()" [style.width.%]="100">
                                 <input matInput placeholder="Search..." type="text" [formControl]="searchControl" />
 
-                                <mat-icon matPrefix>search</mat-icon>
+                                <mat-icon matPrefix [rtIconOutlinedDirective]="true">search</mat-icon>
 
                                 <rtui-clear-button matSuffix [isButtonShown]="!!searchControl.value" (clickAction)="onClearSearch()" />
                             </mat-form-field>
@@ -51,7 +51,7 @@
                 }
             } @else {
                 <div rtElem="placeholder">
-                    <mat-icon rtElem="placeholder-icon">{{ placeholderIcon() }}</mat-icon>
+                    <mat-icon rtElem="placeholder-icon" [rtIconOutlinedDirective]="true">{{ placeholderIcon() }}</mat-icon>
 
                     <div rtElem="placeholder-title">{{ placeholderTitle() }}</div>
                 </div>

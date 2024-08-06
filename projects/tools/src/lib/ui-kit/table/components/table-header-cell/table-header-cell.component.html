@@ -1,35 +1,35 @@
-<ng-container rtBlock="header-cell">
+<div rtBlock="header-cell-label" [rtMod]="{ align: headerModel().align }">
     @if (headerModel()?.icon?.placement === 'left') {
-        <mat-icon [style.color]="headerModel().icon.color">{{ headerModel().icon.glyph }}</mat-icon>
+        <mat-icon rtElem="prefix" [rtIconOutlinedDirective]="!!headerModel().icon?.outlined" [style.color]="headerModel().icon?.color">
+            {{ headerModel().icon?.glyph }}
+        </mat-icon>
     }
 
-    <div
-        rtElem="label"
-        [matTooltip]="headerModel()?.tooltip ?? ''"
-        [rtMod]="{ align: headerModel().align }"
-        [ngClass]="headerModel()?.className">
+    <div rtElem="text" [matTooltip]="headerModel()?.tooltip ?? ''" [ngClass]="headerModel()?.className">
         {{ headerModel().label }}
     </div>
 
     @if (headerModel()?.icon?.placement === 'right') {
-        <mat-icon [style.color]="headerModel().icon.color">{{ headerModel().icon.glyph }}</mat-icon>
+        <mat-icon rtElem="suffix" [rtIconOutlinedDirective]="!!headerModel().icon?.outlined" [style.color]="headerModel().icon?.color">
+            {{ headerModel().icon?.glyph }}
+        </mat-icon>
     }
+</div>
 
-    @if (sortModel()) {
-        <div rtElem="icons" [rtMod]="{ active: active() }">
-            <div
-                rtElem="icon"
-                [rtMod]="{
-                    active: active() && sortOrderType.DESC === sortModel().sortDirection?.toLowerCase(),
-                    first: true,
-                }"></div>
+@if (sortModel()) {
+    <div rtBlock="header-cell-icons" [rtMod]="{ active: active() }">
+        <div
+            rtElem="icon"
+            [rtMod]="{
+                active: active() && sortOrderType.DESC === sortModel()?.sortDirection?.toLowerCase(),
+                first: true,
+            }"></div>
 
-            <div
-                rtElem="icon"
-                [rtMod]="{
-                    active: active() && sortOrderType.ASC === sortModel().sortDirection?.toLowerCase(),
-                    second: true,
-                }"></div>
-        </div>
-    }
-</ng-container>
+        <div
+            rtElem="icon"
+            [rtMod]="{
+                active: active() && sortOrderType.ASC === sortModel()?.sortDirection?.toLowerCase(),
+                second: true,
+            }"></div>
+    </div>
+}

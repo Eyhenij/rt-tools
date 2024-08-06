@@ -18,7 +18,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 import { BlockDirective, ElemDirective, ModDirective } from '../../../../bem';
-import { Nullable } from '../../../../util';
+import { Nullable, RtIconOutlinedDirective } from '../../../../util';
 import { LIST_SORT_ORDER_ENUM, ListSortOrderType } from '../../util/list-sort-order.enum';
 import { SortModel } from '../../util/lists.interface';
 import { ITable } from '../../util/table-column.interface';
@@ -28,7 +28,17 @@ import { ITable } from '../../util/table-column.interface';
     selector: 'rtui-table-header-cell',
     templateUrl: './table-header-cell.component.html',
     styleUrls: ['./table-header-cell.component.scss'],
-    imports: [MatIcon, MatIconButton, MatTooltip, MatMiniFabButton, BlockDirective, ElemDirective, ModDirective, NgClass],
+    imports: [
+        MatIcon,
+        MatIconButton,
+        MatTooltip,
+        MatMiniFabButton,
+        BlockDirective,
+        ElemDirective,
+        ModDirective,
+        NgClass,
+        RtIconOutlinedDirective,
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RtuiTableHeaderCellComponent<SORT_PROPERTY> {

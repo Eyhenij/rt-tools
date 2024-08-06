@@ -51,6 +51,9 @@ export class TableBaseCellComponent<T> {
         const transform: ((value: any) => string) | undefined = this.column()?.transform;
         return transform ? (transform(this.row()[this.column().propName]) as T[keyof T]) : this.row()[this.column().propName];
     });
+    protected readonly tooltipValue: Signal<string> = computed(() => {
+        return this.cellValue() as string;
+    });
     protected readonly isMouseOver: WritableSignal<boolean> = signal(false);
     protected readonly isCopied: WritableSignal<boolean> = signal(false);
 
@@ -78,6 +81,11 @@ export class TableBaseCellComponent<T> {
     @HostListener('mouseover')
     public onMouseOver(): void {
         this.isMouseOver.set(true);
+    }
+
+    @HostListener('mouseout')
+    public onMouseOut(): void {
+        this.isMouseOver.set(false);
     }
 
     public onCopyToClipboard(): void {
