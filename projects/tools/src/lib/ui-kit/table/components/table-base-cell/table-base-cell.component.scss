@@ -3,21 +3,18 @@
     width: 100%;
 
     display: flex;
-    justify-content: flex-start;
     align-items: center;
+    gap: 0.5rem;
 
     position: relative;
 
     .base-cell {
         &__title {
+            flex-grow: 1;
             padding: var(--rt-table-base-cell-padding);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-
-            &:hover + .base-cell__copy-button {
-                visibility: visible;
-            }
 
             &--align {
                 &--left {
@@ -34,26 +31,37 @@
             }
         }
 
+        &__prefix,
+        &__suffix {
+            width: fit-content;
+            min-width: fit-content;
+        }
+
         &__copy-button {
+            position: absolute;
+            right: var(--rt-table-base-cell-copy-button-position-right);
             visibility: hidden;
-            width: var(--rt-table-base-cell-copy-button-size);
-            height: var(--rt-table-base-cell-copy-button-size);
-            padding: 0;
+            padding: var(--rt-table-base-cell-copy-button-padding);
+            background-color: var(--rt-table-base-cell-copy-button-background-color);
 
             &:hover {
-                visibility: visible;
+                background-color: var(--rt-table-base-cell-copy-button-background-color);
             }
 
             &--complete {
                 color: var(--clr-green-60);
                 cursor: not-allowed;
             }
+
+            &--visible {
+                visibility: visible;
+            }
         }
 
         &__copy-icon {
-            width: var(--rt-table-base-cell-copy-button-size);
-            height: var(--rt-table-base-cell-copy-button-size);
-            font-size: var(--rt-table-base-cell-copy-button-size);
+            width: var(--rt-table-base-cell-copy-button-icon-size);
+            height: var(--rt-table-base-cell-copy-button-icon-size);
+            font-size: var(--rt-table-base-cell-copy-button-icon-size);
         }
     }
 }

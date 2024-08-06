@@ -40,7 +40,7 @@ export const FewColumns: Story = {
     args: {
         isMobile: false,
         data: createPersonList(20),
-        columns: COLUMNS.slice(0, 5),
+        columns: COLUMNS.slice(0, 2),
         pageModel: {
             pageNumber: 1,
             pageSize: 10,
@@ -62,6 +62,23 @@ export const FewItems: Story = {
             pageNumber: 1,
             pageSize: 10,
             totalCount: 5,
+        },
+        sortModel: {
+            propertyName: 'id',
+            sortDirection: LIST_SORT_ORDER_ENUM.ASC,
+        },
+    },
+};
+
+export const NoItems: Story = {
+    args: {
+        isMobile: false,
+        data: [],
+        columns: COLUMNS.slice(0, 5),
+        pageModel: {
+            pageNumber: 1,
+            pageSize: 10,
+            totalCount: 0,
         },
         sortModel: {
             propertyName: 'id',

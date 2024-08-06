@@ -22,7 +22,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import { BlockDirective, ElemDirective, ModDirective } from '../../../../bem';
-import { Nullable, isString } from '../../../../util';
+import { Nullable, RtIconOutlinedDirective, isString } from '../../../../util';
 import { RtuiHeaderCenterDirective } from '../../../header';
 import {
     RtuiScrollableContainerComponent,
@@ -55,24 +55,28 @@ import { PaginationComponent } from '../pagination-view/pagination.component';
         // Standalone components
         PaginationComponent,
         RtuiClearButtonComponent,
+        RtuiToolbarComponent,
+        RtuiScrollableContainerComponent,
 
         // Bem
         BlockDirective,
         ElemDirective,
         ModDirective,
-        RtuiToolbarComponent,
+
+        // Directives
         RtuiToolbarRightDirective,
         RtuiHeaderCenterDirective,
-        RtuiScrollableContainerComponent,
         RtuiScrollableContainerContentDirective,
         RtuiScrollableContainerHeaderDirective,
+        RtIconOutlinedDirective,
     ],
 })
 export class RtuiTableContainerComponent implements OnInit {
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
 
     public appearance: InputSignal<MatFormFieldAppearance> = input.required();
-    public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
+    public pageModel: InputSignal<PageModel> = input.required();
+    public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input.required<Nullable<boolean>, Nullable<boolean>>({
         transform: booleanAttribute,
     });
     public loading: InputSignalWithTransform<boolean, boolean> = input.required<boolean, boolean>({
@@ -90,7 +94,9 @@ export class RtuiTableContainerComponent implements OnInit {
     public isRefreshButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
-    public pageModel: InputSignal<PageModel> = input.required();
+    public isActionsIconsOutlined: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+        transform: booleanAttribute,
+    });
     public searchTerm: InputSignalWithTransform<Nullable<string>, Nullable<string>> = input<Nullable<string>, Nullable<string>>('', {
         transform: (value: Nullable<string>) => (isString(value) ? value.trim() : ''),
     });

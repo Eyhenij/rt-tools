@@ -4,36 +4,51 @@
     align-items: center;
     cursor: pointer;
 
-    .header-cell {
-        &_label {
-            &--align {
-                &--left {
-                    text-align: left;
-                }
+    .label {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
 
-                &--center {
-                    text-align: center;
-                }
+        &--align {
+            &--left {
+                justify-content: flex-start;
+            }
 
-                &--right {
-                    text-align: right;
-                }
+            &--center {
+                justify-content: center;
+            }
+
+            &--right {
+                justify-content: flex-end;
             }
         }
 
-        &__icons {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin: var(--rt-table-header-cell-icon-margin);
+        &__text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-            visibility: hidden;
+        &__prefix,
+        &__suffix {
+            width: fit-content;
+            min-width: fit-content;
+        }
+    }
 
-            &:hover,
-            &--active {
-                visibility: visible;
-            }
+    .icons {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: var(--rt-table-header-cell-icon-margin);
+
+        visibility: hidden;
+
+        &:hover,
+        &--active {
+            visibility: visible;
         }
 
         &__icon {

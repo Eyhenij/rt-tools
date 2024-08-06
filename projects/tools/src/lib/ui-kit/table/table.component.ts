@@ -78,7 +78,7 @@ export class RtuiTableComponent<ENTITY_TYPE> implements OnInit {
     public pageModel: InputSignal<PageModel> = input.required();
     public sortModel: InputSignal<SortModel<keyof ENTITY_TYPE>> = input.required();
 
-    public readonly sortChangeAction: OutputEmitterRef<SortModel<ENTITY_TYPE>> = output<SortModel<ENTITY_TYPE>>();
+    public readonly sortChangeAction: OutputEmitterRef<SortModel<keyof ENTITY_TYPE>> = output<SortModel<keyof ENTITY_TYPE>>();
     public readonly pageModelChangeAction: OutputEmitterRef<Partial<PageModel>> = output<Partial<PageModel>>();
     public readonly searchChangeAction: OutputEmitterRef<Nullable<string>> = output<Nullable<string>>();
     public readonly refreshAction: OutputEmitterRef<void> = output<void>();
@@ -94,8 +94,8 @@ export class RtuiTableComponent<ENTITY_TYPE> implements OnInit {
         this.searchChangeAction.emit(value);
     }
 
-    public sortChange(sortModel: SortModel<ENTITY_TYPE>): void {
-        this.sortChangeAction.emit(sortModel);
+    public sortChange(sortModel: SortModel<keyof ENTITY_TYPE | undefined>): void {
+        this.sortChangeAction.emit(sortModel as SortModel<keyof ENTITY_TYPE>);
     }
 
     public pageModelChange(pageModel: Partial<PageModel>): void {
