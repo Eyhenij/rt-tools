@@ -31,8 +31,6 @@ export interface FilterModel<M> {
     value: string | number | boolean;
 }
 
-// export type FilterModel<T, R> = Array<FilterItemModel<T, R> | null>;
-
 export enum FILTER_OPERATOR_TYPE_ENUM {
     EQUALS = 'equals',
     STARTS_WITH = 'startsWith',
