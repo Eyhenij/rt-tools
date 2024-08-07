@@ -29,6 +29,7 @@ import {
     RtuiScrollableContainerContentDirective,
     RtuiScrollableContainerHeaderDirective,
 } from '../../../scrollable';
+import { RtuiSpinnerComponent } from '../../../spinner';
 import { RtuiToolbarComponent, RtuiToolbarRightDirective } from '../../../toolbar';
 import { PageModel } from '../../util/lists.interface';
 import { RtuiClearButtonComponent } from '../clear-search-button/rtui-clear-button.component';
@@ -57,6 +58,7 @@ import { PaginationComponent } from '../pagination-view/pagination.component';
         RtuiClearButtonComponent,
         RtuiToolbarComponent,
         RtuiScrollableContainerComponent,
+        RtuiSpinnerComponent,
 
         // Bem
         BlockDirective,
