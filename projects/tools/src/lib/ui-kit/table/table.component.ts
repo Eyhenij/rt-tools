@@ -4,7 +4,6 @@ import {
     Component,
     InputSignal,
     InputSignalWithTransform,
-    OnInit,
     OutputEmitterRef,
     WritableSignal,
     booleanAttribute,
@@ -56,7 +55,7 @@ import { ITable } from './util/table-column.interface';
         TableBaseCellComponent,
     ],
 })
-export class RtuiTableComponent<ENTITY_TYPE> implements OnInit {
+export class RtuiTableComponent<ENTITY_TYPE> {
     public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
         transform: booleanAttribute,
     });
@@ -87,10 +86,6 @@ export class RtuiTableComponent<ENTITY_TYPE> implements OnInit {
     public readonly refreshAction: OutputEmitterRef<void> = output<void>();
 
     public readonly activeRowIndex: WritableSignal<Nullable<number>> = signal(null);
-
-    public ngOnInit(): void {
-        return;
-    }
 
     public searchChange(value: Nullable<string>): void {
         this.searchChangeAction.emit(value);

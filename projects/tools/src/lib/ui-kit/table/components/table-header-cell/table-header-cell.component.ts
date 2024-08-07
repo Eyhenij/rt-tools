@@ -5,11 +5,13 @@ import {
     HostBinding,
     HostListener,
     InputSignal,
+    InputSignalWithTransform,
     OutputEmitterRef,
     Signal,
     computed,
     inject,
     input,
+    numberAttribute,
     output,
 } from '@angular/core';
 import { MatIconButton, MatMiniFabButton } from '@angular/material/button';
@@ -29,31 +31,38 @@ import { ITable } from '../../util/table-column.interface';
     templateUrl: './table-header-cell.component.html',
     styleUrls: ['./table-header-cell.component.scss'],
     imports: [
+        NgClass,
+
+        // Material
         MatIcon,
         MatIconButton,
         MatTooltip,
         MatMiniFabButton,
+
+        // Bem
         BlockDirective,
         ElemDirective,
         ModDirective,
-        NgClass,
+
+        // Directives
         RtIconOutlinedDirective,
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RtuiTableHeaderCellComponent<SORT_PROPERTY> {
     readonly #sanitizer: DomSanitizer = inject(DomSanitizer);
+    protected readonly sortOrderType: typeof LIST_SORT_ORDER_ENUM = LIST_SORT_ORDER_ENUM;
 
     public headerModel: InputSignal<ITable.Header> = input.required<ITable.Header>();
     public currentSortPropertyName: InputSignal<SORT_PROPERTY> = input.required<SORT_PROPERTY>();
     public sortModel: InputSignal<Nullable<SortModel<SORT_PROPERTY>>> = input.required<Nullable<SortModel<SORT_PROPERTY>>>();
-    public headerDataEllipsisMaxLines: InputSignal<number> = input<number>(1);
-
-    public active: Signal<boolean> = computed(() => this.currentSortPropertyName() === this.sortModel()?.propertyName);
+    public headerDataEllipsisMaxLines: InputSignalWithTransform<number, number> = input<number, number>(1, {
+        transform: numberAttribute,
+    });
 
     public readonly sortChange: OutputEmitterRef<SortModel<SORT_PROPERTY>> = output<SortModel<SORT_PROPERTY>>();
 
-    public readonly sortOrderType: typeof LIST_SORT_ORDER_ENUM = LIST_SORT_ORDER_ENUM;
+    public readonly active: Signal<boolean> = computed(() => this.currentSortPropertyName() === this.sortModel()?.propertyName);
 
     @HostBinding('style')
     private get style(): SafeStyle {
@@ -62,17 +71,18 @@ export class RtuiTableHeaderCellComponent<SORT_PROPERTY> {
 
     @HostListener('click')
     private handleClick(): void {
-        const sortPropertyName: SORT_PROPERTY | undefined = this.sortModel()?.propertyName;
+        const sortPropertyName: Nullable<SORT_PROPERTY> = this.sortModel()?.propertyName;
+
         if (sortPropertyName) {
             this.sortChange.emit({
                 propertyName: sortPropertyName,
-                sortDirection: this.#getNextSortOrder(sortPropertyName),
+                sortDirection: this.#getNextSortOrder(this.sortModel()?.sortDirection),
             });
         }
     }
 
-    #getNextSortOrder(sortPropertyName: SORT_PROPERTY): ListSortOrderType {
-        if (sortPropertyName === this.currentSortPropertyName()) {
+    #getNextSortOrder(sortOrder?: ListSortOrderType): ListSortOrderType {
+        if (sortOrder === LIST_SORT_ORDER_ENUM.ASC) {
             return LIST_SORT_ORDER_ENUM.DESC;
         }
 
