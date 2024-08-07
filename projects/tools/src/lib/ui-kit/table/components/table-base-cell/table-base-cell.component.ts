@@ -43,17 +43,15 @@ import { ITable } from '../../util/table-column.interface';
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TableBaseCellComponent<T> {
+export class TableBaseCellComponent<T = { [key: string]: unknown }> {
     readonly #clipboard: Clipboard = inject(Clipboard);
     readonly #sanitizer: DomSanitizer = inject(DomSanitizer);
 
-    protected readonly cellValue: Signal<T[keyof T]> = computed(() => {
-        const transform: ((value: any) => string) | undefined = this.column()?.transform;
-        return transform ? (transform(this.row()[this.column().propName]) as T[keyof T]) : this.row()[this.column().propName];
+    protected readonly cellValue: Signal<T[keyof T] | string | number> = computed(() => {
+        const transformFn: Nullable<(value: T[keyof T]) => string | number> = this.column()?.transform;
+        return transformFn ? transformFn(this.row()[this.column().propName]) : this.row()[this.column().propName];
     });
-    protected readonly tooltipValue: Signal<string> = computed(() => {
-        return this.cellValue() as string;
-    });
+    protected readonly tooltipValue: Signal<string> = computed(() => this.#covertCellValueToString(this.cellValue()));
     protected readonly isMouseOver: WritableSignal<boolean> = signal(false);
     protected readonly isCopied: WritableSignal<boolean> = signal(false);
 
@@ -90,16 +88,19 @@ export class TableBaseCellComponent<T> {
 
     public onCopyToClipboard(): void {
         if (this.column().copyable) {
-            if (isString(this.cellValue())) {
-                this.#clipboard.copy(this.cellValue() as string);
-            } else if (isNumber(this.cellValue())) {
-                this.#clipboard.copy((this.cellValue() as number).toString());
-            } else {
-                this.#clipboard.copy(JSON.stringify(this.cellValue()));
-            }
-
+            this.#clipboard.copy(this.#covertCellValueToString(this.cellValue()));
             this.isCopied.set(true);
             setTimeout(() => this.isCopied.set(false), 2000);
+        }
+    }
+
+    #covertCellValueToString(value: T[keyof T] | string | number): string {
+        if (isString(value)) {
+            return value;
+        } else if (isNumber(value)) {
+            return value.toString();
+        } else {
+            return JSON.stringify(value);
         }
     }
 }

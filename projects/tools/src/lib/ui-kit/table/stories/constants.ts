@@ -178,7 +178,10 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
             align: 'left',
             label: 'Responsible Person',
         },
-        transform: (value: ResponsiblePerson) => `${value.name.firstname} ${value.name.lastname}`,
+        transform: (value: Person[keyof Person]): string => {
+            const name: { firstname: string; lastname: string } = (value as ResponsiblePerson).name;
+            return `${name.firstname} ${name.lastname}`;
+        },
         width: '200px',
     },
 ];

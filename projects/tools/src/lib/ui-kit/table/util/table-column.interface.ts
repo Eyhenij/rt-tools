@@ -33,14 +33,14 @@ export namespace ITable {
         | TABLE_COLUMN_TYPES_ENUM.TEXT
         | TABLE_COLUMN_TYPES_ENUM.CURRENCY;
 
-    export interface Column<T> {
+    export interface Column<T = { [key: string]: unknown }> {
         align: 'right' | 'left' | 'center';
         propName: keyof T;
         type: Type;
         copyable: boolean;
         header: Header;
 
-        sorting?: SortModel<keyof T>;
+        sorting?: SortModel<Extract<keyof T, string>>;
         filtering?: boolean;
         filteringMultiple?: boolean;
 
@@ -51,7 +51,7 @@ export namespace ITable {
         href?: string;
         className?: string;
         tooltip?: string;
-        transform?: (value: any) => string;
+        transform?: (value: T[keyof T]) => string | number;
     }
 
     export interface ColumnFilter {

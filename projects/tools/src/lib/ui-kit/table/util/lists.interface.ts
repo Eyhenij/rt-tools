@@ -1,13 +1,13 @@
 import { ListSortOrderType } from './list-sort-order.enum';
 
-export interface ListState<T, M> {
+export interface ListState<T = string, M = object> {
     pageModel: PageModel;
     sortModel: SortModel<T>;
     filterModel: M;
     searchTerm: string;
 }
 
-export interface SortModel<T> {
+export interface SortModel<T = string> {
     propertyName: T;
     sortDirection: ListSortOrderType;
 }
@@ -25,7 +25,7 @@ export interface PageModel {
     startIndex?: number;
 }
 
-export interface FilterModel<M> {
+export interface FilterModel<M = string> {
     operatorType: FilterOperatorType;
     propertyName: M;
     value: string | number | boolean;
