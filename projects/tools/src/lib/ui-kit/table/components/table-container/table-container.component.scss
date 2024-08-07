@@ -12,6 +12,12 @@
     --mat-fab-small-pressed-state-layer-opacity: 0;
     --mat-fab-small-focus-state-layer-opacity: 0;
 
+    --rt-scrollable-header-padding: 1rem 0 0 0;
+    --rt-scrollable-content-padding: 1rem 0 0 0;
+    --rt-scrollable-background-color: transparent;
+    --rt-scrollable-header-background-color: transparent;
+    --rt-scrollable-content-background-color: transparent;
+
     .table-wrapper {
         &__actions {
         }
