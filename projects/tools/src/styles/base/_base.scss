@@ -121,24 +121,32 @@
     --rt-clear-button-icon-on-hover-color: var(--clr-black-100);
 
     // Table
+    --rt-table-header-z-index: 2;
+    --rt-table-header-font-size: 0.875rem;
+    --rt-table-boady-font-size: 0.875rem;
+
     --rt-table-wrapper-action-items-margin: 0 0 0 1.5rem;
     --rt-table-wrapper-search-width: 16.5rem;
     --rt-table-wrapper-search-margin: 0 0 0 1.5rem;
     --rt-table-wrapper-placeholder-icon-size: 3rem;
     --rt-table-wrapper-placeholder-title-size: 2rem;
 
-    --rt-table-header-cell-padding: 0;
+    --rt-table-header-background-color: var(--mdc-filled-text-field-container-color);
+
+    --rt-table-header-cell-padding: 0.625rem 0 0.625rem 0.625rem;
+    --rt-table-header-cell-last-child-padding: 0.625rem;
     --rt-table-header-cell-background-color: var(--clr-white);
     --rt-table-header-cell-border-bottom: 1px solid var(--clr-black-20);
+    --rt-table-header-cell-text-color: var(--clr-txt);
     --rt-table-header-cell-font-size: 1rem;
-    --rt-table-header-cell-font-weight: 600;
+    --rt-table-header-cell-font-weight: 500;
     --rt-table-header-cell-line-height: 1.2;
     --rt-table-header-cell-text-align: left;
 
     --rt-table-header-cell-icon-size: 1.5rem;
-    --rt-table-header-cell-icon-color: var(--clr-black-60);
-    --rt-table-header-cell-icon-on-hover-color: var(--clr-white);
-    --rt-table-header-cell-icon-active-color: var(--clr-white);
+    --rt-table-header-cell-icon-color: var(--clr-white);
+    --rt-table-header-cell-icon-on-hover-color: var(--clr-black-60);
+    --rt-table-header-cell-icon-active-color: var(--clr-black-60);
     --rt-table-header-cell-icon-margin: 0 0 0 1rem;
     --rt-table-header-cell-icon-font-size: 1.5rem;
     --rt-table-header-cell-icon-font-weight: 600;
