@@ -47,9 +47,9 @@ export const FewColumns: Story = {
         data: createPersonList(20),
         columns: COLUMNS.slice(0, 2),
         pageModel: {
-            pageNumber: 1,
+            pageNumber: 2,
             pageSize: 10,
-            totalCount: 20,
+            totalCount: 100,
         },
         sortModel: {
             propertyName: 'id',

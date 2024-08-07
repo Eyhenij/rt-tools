@@ -1,5 +1,5 @@
 @if (currentPageModel().totalCount > pageSizes[0]) {
-    <div rtBlock="container">
+    <div rtBlock="rtui-pagination">
         <div rtElem="paging">
             <div
                 rtElem="paging-item"
@@ -35,7 +35,7 @@
                 rtElem="paging-item"
                 role="button"
                 tabindex="3"
-                [class.c-pagination__paging-item--disabled]="!currentPageModel().hasNext"
+                [class.rtui-pagination__paging-item--disabled]="!currentPageModel().hasNext"
                 (click)="onClick(currentPageModel().pageNumber + 1)"
                 (keydown)="onClick(currentPageModel().pageNumber + 1)">
                 <svg width="5" height="8" viewBox="0 0 5 8" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -1,3 +1,6 @@
+@use '../../../../../styles/base/variables' as vars;
+@use '../../../../../styles/base/mixin' as mixins;
+
 :host {
     width: 100%;
     overflow: hidden;
@@ -19,20 +22,24 @@
     --rt-scrollable-content-background-color: transparent;
 
     .table-wrapper {
-        &__actions {
-        }
+        &__toolbar {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: var(--rt-table-wrapper-toolbar-gap);
 
-        &__action {
-            &-item {
-                & + & {
-                    margin: var(--rt-table-wrapper-action-items-margin);
-                }
+            &-actions {
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                margin-right: var(--rt-table-wrapper-toolbar-actions-margin-right);
+                gap: var(--rt-table-wrapper-toolbar-actions-gap);
             }
-        }
 
-        &__search {
-            width: var(--rt-table-wrapper-search-width);
-            margin: var(--rt-table-wrapper-search-margin);
+            &-search {
+                width: var(--rt-table-wrapper-toolbar-search-width);
+            }
         }
 
         &__content {
@@ -45,13 +52,13 @@
         }
 
         &__placeholder {
-            width: 100%;
-            height: 100vh;
+            width: var(--rt-table-wrapper-placeholder-width);
+            height: var(--rt-table-wrapper-placeholder-height);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 0.5rem;
+            gap: var(--rt-table-wrapper-placeholder-gap);
 
             &-icon {
                 width: var(--rt-table-wrapper-placeholder-icon-size);
@@ -61,6 +68,31 @@
 
             &-title {
                 font-size: var(--rt-table-wrapper-placeholder-title-size);
+            }
+        }
+    }
+
+    @include mixins.media-breakpoint-down(vars.$device-sm) {
+        --rt-toolbar-body-height-mobile: 6rem;
+        --rt-toolbar-body-height: 6rem;
+
+        .table-wrapper {
+            &__toolbar {
+                min-width: 100vw;
+                display: grid;
+                grid-template-columns: 100%;
+                grid-gap: var(--rt-table-wrapper-toolbar-gap);
+
+                &-actions {
+                    grid-row: 2;
+                    justify-content: center;
+                }
+
+                &-search {
+                    width: 100%;
+                    grid-row: 1;
+                    justify-content: center;
+                }
             }
         }
     }

@@ -7,4 +7,18 @@
     [appearance]="'fill'"
     [searchTerm]="searchTerm"
     [pageModel]="pageModel"
-    [sortModel]="sortModel" />
+    [sortModel]="sortModel"
+    (sortChangeAction)="sortChange($event)">
+    <ng-container table-actions>
+        <button
+            mat-mini-fab
+            type="button"
+            aria-label="Icon-button for table refresh"
+            class="c-button c-button--fab"
+            matTooltip="Refresh"
+            matTooltipPosition="below"
+            [matTooltipDisabled]="isMobile">
+            <mat-icon [rtIconOutlinedDirective]="true">info</mat-icon>
+        </button>
+    </ng-container>
+</rtui-table>

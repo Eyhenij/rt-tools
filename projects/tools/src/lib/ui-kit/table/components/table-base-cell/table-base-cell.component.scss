@@ -4,17 +4,29 @@
 
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--rt-table-base-cell-gap);
 
     position: relative;
 
     .base-cell {
+        &__prefix {
+            width: var(--rt-table-base-cell-prefix-icon-size);
+            height: var(--rt-table-base-cell-prefix-icon-size);
+            font-size: var(--rt-table-base-cell-prefix-icon-size);
+        }
+
         &__title {
-            flex-grow: 1;
-            padding: var(--rt-table-base-cell-padding);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            width: 100%;
+            display: table;
+            table-layout: fixed;
+
+            &-text {
+                width: 100%;
+                padding: var(--rt-table-base-cell-title-padding);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
 
             &--align {
                 &--left {
@@ -29,6 +41,12 @@
                     text-align: right;
                 }
             }
+        }
+
+        &__suffix {
+            width: var(--rt-table-base-cell-suffix-icon-size);
+            height: var(--rt-table-base-cell-suffix-icon-size);
+            font-size: var(--rt-table-base-cell-suffix-icon-size);
         }
 
         &__prefix,

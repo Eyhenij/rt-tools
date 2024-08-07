@@ -16,6 +16,8 @@
     --clr-green-60: #46c4c0;
     --clr-base-accent: #0d1c2b;
 
+    --clr-txt: rgba(0, 0, 0, 0.87);
+
     // Aside
     --rt-aside-width: 33.75rem;
     --rt-aside-box-shadow: 0 0 1rem 0 rgba(#000, 0.1);
@@ -121,20 +123,22 @@
     --rt-clear-button-icon-on-hover-color: var(--clr-black-100);
 
     // Table
-    --rt-table-header-z-index: 2;
-    --rt-table-header-font-size: 0.875rem;
-    --rt-table-boady-font-size: 0.875rem;
-
-    --rt-table-wrapper-action-items-margin: 0 0 0 1.5rem;
-    --rt-table-wrapper-search-width: 16.5rem;
-    --rt-table-wrapper-search-margin: 0 0 0 1.5rem;
+    --rt-table-wrapper-toolbar-gap: 1rem;
+    --rt-table-wrapper-toolbar-actions-gap: 0.5rem;
+    --rt-table-wrapper-toolbar-search-width: 16.5rem;
+    --rt-table-wrapper-placeholder-width: 100%;
+    --rt-table-wrapper-placeholder-height: 100vh;
+    --rt-table-wrapper-placeholder-gap: 1rem;
     --rt-table-wrapper-placeholder-icon-size: 3rem;
     --rt-table-wrapper-placeholder-title-size: 2rem;
 
     --rt-table-header-background-color: var(--mdc-filled-text-field-container-color);
+    --rt-table-header-z-index: 2;
+    --rt-table-header-font-size: 0.875rem;
+
+    --rt-table-boady-font-size: 0.875rem;
 
     --rt-table-header-cell-padding: 0.625rem 0 0.625rem 0.625rem;
-    --rt-table-header-cell-last-child-padding: 0.625rem;
     --rt-table-header-cell-background-color: var(--clr-white);
     --rt-table-header-cell-border-bottom: 1px solid var(--clr-black-20);
     --rt-table-header-cell-text-color: var(--clr-txt);
@@ -142,15 +146,16 @@
     --rt-table-header-cell-font-weight: 500;
     --rt-table-header-cell-line-height: 1.2;
     --rt-table-header-cell-text-align: left;
+    --rt-table-header-cell-gap: 0.5rem;
 
-    --rt-table-header-cell-icon-size: 1.5rem;
     --rt-table-header-cell-icon-color: var(--clr-white);
-    --rt-table-header-cell-icon-on-hover-color: var(--clr-black-60);
     --rt-table-header-cell-icon-active-color: var(--clr-black-60);
     --rt-table-header-cell-icon-margin: 0 0 0 1rem;
-    --rt-table-header-cell-icon-font-size: 1.5rem;
-    --rt-table-header-cell-icon-font-weight: 600;
-    --rt-table-header-cell-icon-line-height: 1.2;
+    --rt-table-header-cell-prefix-icon-size: 1.5rem;
+    --rt-table-header-cell-suffix-icon-size: 1.5rem;
+    --rt-table-header-cell-content-padding: 0 0.625rem 0 0;
+    --rt-table-header-cell-content-border-right: 1px solid var(--clr-black-40);
+    --rt-table-header-cell-last-child-padding: 0.625rem 0 0.625rem 0.625rem;
 
     --rt-table-row-height: 3rem;
     --rt-table-row-color: var(--clr-txt);
@@ -159,21 +164,26 @@
     --rt-table-row-hover-transition: 0.2s;
     --rt-table-row-active-border-bottom: 1px solid var(--clr-blue-100);
 
-    --rt-table-cell-color: var(--clr-white);
-    --rt-table-cell-font-weight: normal;
-    --rt-table-cell-padding: 0.625rem;
-
-    --rt-table-cell-icon-size: 1.5rem;
-    --rt-table-cell-icon-color: var(--clr-black-60);
-    --rt-table-cell-icon-on-hover-color: var(--clr-black-100);
-    --rt-table-cell-icon-margin: 0.5rem;
-    --rt-table-cell-icon-font-size: 1.5rem;
-    --rt-table-cell-icon-font-weight: 600;
-    --rt-table-cell-icon-line-height: 1.2;
-
-    --rt-table-base-cell-padding: 0.5rem 0.5rem 0.5rem 0;
+    --rt-table-base-cell-prefix-icon-size: 1.5rem;
+    --rt-table-base-cell-suffix-icon-size: 1.5rem;
+    --rt-table-base-cell-padding: 0.625rem;
+    --rt-table-base-cell-gap: 0.5rem;
+    --rt-table-base-cell-title-padding: 0.5rem 0.5rem 0.5rem 0;
     --rt-table-base-cell-copy-button-position-right: 0.25rem;
     --rt-table-base-cell-copy-button-padding: 0.25rem;
     --rt-table-base-cell-copy-button-background-color: var(--mdc-fab-small-container-color);
     --rt-table-base-cell-copy-button-icon-size: 1rem;
+
+    --rt-table-pagination-min-height: 3rem;
+    --rt-table-pagination-min-height-mobile: 5.5rem;
+    --rt-table-pagination-gap: 2rem;
+    --rt-table-pagination-gap-mobile: 1rem;
+    --rt-table-pagination-font-size: 0.875rem;
+    --rt-table-pagination-font-weight: normal;
+    --rt-table-pagination-font-color: var(--clr-txt);
+    --rt-table-pagination-paging-gap: 0.5rem;
+    --rt-table-pagination-paging-item-size: 2rem;
+    --rt-table-pagination-paging-item-border: 1px solid var(--clr-black-40);
+    --rt-table-pagination-size-toggle-gap: 0.75rem;
+    --rt-table-pagination-size-toggle-selector-min-width: 3rem;
 }

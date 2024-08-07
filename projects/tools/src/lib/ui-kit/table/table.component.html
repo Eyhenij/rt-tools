@@ -9,14 +9,21 @@
     (refreshAction)="refresh()"
     (pageModelChange)="pageModelChange($event)"
     (searchChange)="searchChange($event)">
+    <ng-container table-actions>
+        <ng-content select="[table-actions]" />
+    </ng-container>
+
     <table rtBlock="c-table">
         <thead>
             <tr>
-                @for (column of columns(); track column.propName) {
+                @for (column of columns(); track column.propName; let i = $index) {
                     <th rtElem="cell" [style.width.%]="100 / columns().length" [style.pointer-events]="column?.sorting ? 'auto' : 'none'">
                         <rtui-table-header-cell
+                            rtElem="cell-content"
+                            [rtMod]="{ separated: columns()?.length && i !== columns().length - 1 }"
                             [headerModel]="column.header"
                             [currentSortPropertyName]="sortModel()?.propertyName"
+                            [currentSortDirection]="sortModel()?.sortDirection"
                             [sortModel]="column?.sorting"
                             (sortChange)="sortChange($event)" />
                     </th>

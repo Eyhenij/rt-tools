@@ -1,6 +1,10 @@
-import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { MatMiniFabButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 
+import { BlockDirective, ElemDirective } from '../../../../bem';
+import { RtIconOutlinedDirective } from '../../../../util';
 import { RtuiTableComponent } from '../../table.component';
 import { LIST_SORT_ORDER_ENUM } from '../../util/list-sort-order.enum';
 import { PageModel, SortModel } from '../../util/lists.interface';
@@ -14,10 +18,18 @@ import { Person } from '../types';
     styleUrls: ['./test-table-component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        NgTemplateOutlet,
+        // material
+        MatIcon,
+        MatMiniFabButton,
+        MatTooltip,
 
         // components
         RtuiTableComponent,
+
+        // directives
+        RtIconOutlinedDirective,
+        BlockDirective,
+        ElemDirective,
     ],
     providers: [],
 })
@@ -37,4 +49,8 @@ export default class TestTableComponent {
         propertyName: 'id',
         sortDirection: LIST_SORT_ORDER_ENUM.ASC,
     };
+
+    public sortChange(sortModel: SortModel<keyof Person>): SortModel<keyof Person> {
+        return sortModel;
+    }
 }
