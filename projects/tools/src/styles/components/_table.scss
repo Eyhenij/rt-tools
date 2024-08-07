@@ -7,29 +7,29 @@
 
     border-collapse: collapse;
 
-    font-size: mixins.rem(14);
-
     overflow-x: scroll;
     overflow-y: scroll;
 
     thead {
         position: sticky;
         top: 0;
-        z-index: 2;
+        z-index: var(--rt-table-header-z-index);
+        font-size: var(--rt-table-header-font-size);
 
         tr {
             th {
-                background-color: var(--clr-base-accent);
+                background-color: var(--rt-table-header-background-color);
 
                 &:hover {
-                    background-color: color-mix(in srgb, var(--clr-base-accent), var(--clr-white) 30%);
+                    background-color: color-mix(in srgb, var(--rt-table-header-background-color), var(--clr-white) 30%);
                 }
             }
         }
     }
 
     tbody {
-        background: var(--clr-white);
+        font-size: var(--rt-table-boady-font-size);
+        background: transparent;
     }
 
     // modify
@@ -43,36 +43,43 @@
 
 // ROW
 .c-table__row {
-    height: mixins.rem(50);
-    color: var(--clr-txt);
-    border-bottom: 1px solid var(--clr-black-20);
+    height: var(--rt-table-row-height);
+    color: var(--rt-table-row-color);
+    border-bottom: var(--rt-table-row-border-bottom);
 
     &:not(:hover) {
         //
     }
 
     &:hover {
-        border-bottom: 1px solid var(--clr-blue-100);
-        transition: 0.2s;
+        border-bottom: var(--rt-table-row-hover-border-bottom);
+        transition: var(--rt-table-row-hover-transition);
     }
 
     &--active {
-        border-bottom: 1px solid var(--clr-blue-100);
+        border-bottom: var(--rt-table-row-active-border-bottom);
     }
 }
 
 // CELL
 th.c-table__cell {
-    color: var(--clr-white);
-    font-weight: normal;
-    text-align: left;
+    width: fit-content;
+    height: 100%;
+    padding: var(--rt-table-header-cell-padding);
+    color: var(--rt-table-header-cell-text-color);
+    font-size: var(--rt-table-header-cell-font-size);
+    font-weight: var(--rt-table-header-cell-font-weight);
+    text-align: var(--rt-table-header-cell-text-align);
+    line-height: var(--rt-table-header-cell-line-height);
+    border-bottom: var(--rt-table-header-cell-border-bottom);
+    background-color: var(--rt-table-header-cell-background-color);
 }
 
-.c-table__cell {
+td.c-table__cell {
     width: fit-content;
     height: 100%;
 
-    padding: mixins.rem(10);
+    padding: var(--rt-table-cell-padding);
 
     &--grid {
         height: 100%;

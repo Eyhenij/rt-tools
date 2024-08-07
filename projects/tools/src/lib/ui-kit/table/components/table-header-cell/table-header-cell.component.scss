@@ -4,6 +4,10 @@
     align-items: center;
     cursor: pointer;
 
+    // TODO: use css variables and remove from last element
+    padding-right: 0.625rem;
+    border-right: 1px solid var(--clr-black-40);
+
     .header-cell-label {
         flex-grow: 1;
         display: flex;

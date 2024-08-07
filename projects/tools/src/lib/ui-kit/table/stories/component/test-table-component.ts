@@ -1,10 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatTab, MatTabGroup } from '@angular/material/tabs';
 
-import { BlockDirective, ElemDirective } from '../../../../bem';
 import { RtuiTableComponent } from '../../table.component';
 import { LIST_SORT_ORDER_ENUM } from '../../util/list-sort-order.enum';
 import { PageModel, SortModel } from '../../util/lists.interface';
@@ -19,15 +15,6 @@ import { Person } from '../types';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         NgTemplateOutlet,
-        MatButton,
-        MatIcon,
-        MatIconButton,
-        MatTabGroup,
-        MatTab,
-
-        // directives
-        BlockDirective,
-        ElemDirective,
 
         // components
         RtuiTableComponent,
