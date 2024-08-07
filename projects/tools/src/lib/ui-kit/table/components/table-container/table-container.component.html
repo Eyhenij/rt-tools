@@ -11,7 +11,9 @@
                     <ng-container *rtuiToolbarRight>
                         <div rtElem="toolbar">
                             <div rtElem="toolbar-actions">
-                                <ng-content select="[table-actions]" />
+                                @if (toolbarActionsTpl()) {
+                                    <ng-template *ngTemplateOutlet="toolbarActionsTpl() ?? null" />
+                                }
 
                                 @if (isRefreshButtonShown()) {
                                     <button

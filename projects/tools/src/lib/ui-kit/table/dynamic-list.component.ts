@@ -2,11 +2,16 @@ import { NgTemplateOutlet } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
+    Directive,
     InputSignal,
     InputSignalWithTransform,
     OutputEmitterRef,
+    Signal,
+    TemplateRef,
+    Type,
     WritableSignal,
     booleanAttribute,
+    contentChild,
     input,
     output,
     signal,
@@ -21,10 +26,16 @@ import { Nullable, transformArrayInput } from '../../util';
 import { RtuiToolbarCenterDirective, RtuiToolbarComponent, RtuiToolbarLeftDirective, RtuiToolbarRightDirective } from '../toolbar';
 import { RtuiTableComponent } from './components';
 import { TableBaseCellComponent } from './components/table-base-cell/table-base-cell.component';
-import { RtuiTableContainerComponent } from './components/table-container/table-container.component';
+import { RtuiTableContainerComponent, RtuiTableToolbarActionsDirective } from './components/table-container/table-container.component';
 import { RtuiTableHeaderCellComponent } from './components/table-header-cell/table-header-cell.component';
 import { PageModel, SortModel } from './util/lists.interface';
 import { ITable } from './util/table-column.interface';
+
+@Directive({
+    standalone: true,
+    selector: '[rtuiDynamicListToolbarActionsDirective]',
+})
+export class RtuiDynamicListToolbarActionsDirective {}
 
 @Component({
     standalone: true,
@@ -55,6 +66,7 @@ import { ITable } from './util/table-column.interface';
         RtuiTableHeaderCellComponent,
         TableBaseCellComponent,
         RtuiTableComponent,
+        RtuiTableToolbarActionsDirective,
     ],
 })
 export class RtuiDynamicListComponent<ENTITY_TYPE = { [key: string]: unknown }> {
@@ -87,6 +99,10 @@ export class RtuiDynamicListComponent<ENTITY_TYPE = { [key: string]: unknown }> 
     public readonly pageModelChangeAction: OutputEmitterRef<Partial<PageModel>> = output<Partial<PageModel>>();
     public readonly searchChangeAction: OutputEmitterRef<Nullable<string>> = output<Nullable<string>>();
     public readonly refreshAction: OutputEmitterRef<void> = output<void>();
+
+    public readonly toolbarActionsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiDynamicListToolbarActionsDirective, {
+        read: TemplateRef,
+    });
 
     public readonly activeRowIndex: WritableSignal<Nullable<number>> = signal(null);
 

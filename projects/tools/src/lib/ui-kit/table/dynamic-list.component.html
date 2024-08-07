@@ -9,9 +9,11 @@
     (refreshAction)="refresh()"
     (pageModelChange)="pageModelChange($event)"
     (searchChange)="searchChange($event)">
-    <ng-container table-actions>
-        <ng-content select="[table-actions]" />
-    </ng-container>
+    @if (toolbarActionsTpl()) {
+        <ng-container *rtuiTableToolbarActionsDirective>
+            <ng-template *ngTemplateOutlet="toolbarActionsTpl() ?? null" />
+        </ng-container>
+    }
 
     <rtui-table
         [isMobile]="isMobile()"
