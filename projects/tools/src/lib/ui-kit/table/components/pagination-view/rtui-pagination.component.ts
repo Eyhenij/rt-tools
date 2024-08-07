@@ -25,12 +25,12 @@ import { PageModel } from '../../util/lists.interface';
 @Component({
     standalone: true,
     selector: 'rtui-pagination',
-    templateUrl: './pagination.component.html',
-    styleUrls: ['./pagination.component.scss'],
+    templateUrl: './rtui-pagination.component.html',
+    styleUrls: ['./rtui-pagination.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [NgClass, ReactiveFormsModule, BlockDirective, ElemDirective],
 })
-export class PaginationComponent implements OnInit {
+export class RtuiPaginationComponent implements OnInit {
     readonly #injector: Injector = inject(Injector);
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #fb: FormBuilder = inject(FormBuilder);

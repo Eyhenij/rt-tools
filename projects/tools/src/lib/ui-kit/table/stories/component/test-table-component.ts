@@ -5,7 +5,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
 import { RtIconOutlinedDirective } from '../../../../util';
-import { RtuiTableComponent } from '../../table.component';
+import { RtuiDynamicListComponent } from '../../dynamic-list.component';
 import { LIST_SORT_ORDER_ENUM } from '../../util/list-sort-order.enum';
 import { PageModel, SortModel } from '../../util/lists.interface';
 import { ITable } from '../../util/table-column.interface';
@@ -24,7 +24,7 @@ import { Person } from '../types';
         MatTooltip,
 
         // components
-        RtuiTableComponent,
+        RtuiDynamicListComponent,
 
         // directives
         RtIconOutlinedDirective,

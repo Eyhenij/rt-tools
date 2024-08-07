@@ -33,7 +33,7 @@ import { RtuiSpinnerComponent } from '../../../spinner';
 import { RtuiToolbarComponent, RtuiToolbarRightDirective } from '../../../toolbar';
 import { PageModel } from '../../util/lists.interface';
 import { RtuiClearButtonComponent } from '../clear-search-button/rtui-clear-button.component';
-import { PaginationComponent } from '../pagination-view/pagination.component';
+import { RtuiPaginationComponent } from '../pagination-view/rtui-pagination.component';
 
 @Component({
     standalone: true,
@@ -54,7 +54,7 @@ import { PaginationComponent } from '../pagination-view/pagination.component';
         MatTooltip,
 
         // Standalone components
-        PaginationComponent,
+        RtuiPaginationComponent,
         RtuiClearButtonComponent,
         RtuiToolbarComponent,
         RtuiScrollableContainerComponent,
