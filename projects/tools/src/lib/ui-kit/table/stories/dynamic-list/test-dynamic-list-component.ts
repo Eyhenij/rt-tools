@@ -13,9 +13,9 @@ import { Person } from '../types';
 
 @Component({
     standalone: true,
-    selector: 'app-test-table-component',
-    templateUrl: './test-table-component.html',
-    styleUrls: ['./test-table-component.scss'],
+    selector: 'app-test-dynamic-list-component',
+    templateUrl: './test-dynamic-list-component.html',
+    styleUrls: ['./test-dynamic-list-component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // material
@@ -34,7 +34,7 @@ import { Person } from '../types';
     ],
     providers: [],
 })
-export default class TestTableComponent {
+export default class TestDynamicListComponent {
     public isMobile: boolean = false;
     public loading: boolean = false;
     public fetching: boolean = false;

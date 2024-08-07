@@ -2,22 +2,22 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 
-import { LIST_SORT_ORDER_ENUM } from '../util/list-sort-order.enum';
-import TestTableComponent from './component/test-table-component';
-import { COLUMNS } from './constants';
-import { createPersonList } from './mocks';
+import { LIST_SORT_ORDER_ENUM } from '../../util/list-sort-order.enum';
+import { COLUMNS } from '../constants';
+import TestDynamicListComponent from '../dynamic-list/test-dynamic-list-component';
+import { createPersonList } from '../mocks';
 
 export default {
-    title: 'Components/Table',
-    component: TestTableComponent,
+    title: 'Components/DynamicList',
+    component: TestDynamicListComponent,
     decorators: [
         moduleMetadata({
             imports: [BrowserAnimationsModule],
         }),
     ],
-} as Meta<TestTableComponent>;
+} as Meta<TestDynamicListComponent>;
 
-type Story = StoryObj<TestTableComponent>;
+type Story = StoryObj<TestDynamicListComponent>;
 
 export const ManyColumns: Story = {
     args: {
