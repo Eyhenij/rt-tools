@@ -55,7 +55,7 @@ import { ITable } from './util/table-column.interface';
         TableBaseCellComponent,
     ],
 })
-export class RtuiTableComponent<ENTITY_TYPE> {
+export class RtuiTableComponent<ENTITY_TYPE = { [key: string]: unknown }> {
     public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
         transform: booleanAttribute,
     });
@@ -77,10 +77,11 @@ export class RtuiTableComponent<ENTITY_TYPE> {
     });
     public appearance: InputSignal<MatFormFieldAppearance> = input.required();
     public pageModel: InputSignal<PageModel> = input.required();
-    public sortModel: InputSignal<Nullable<SortModel<keyof ENTITY_TYPE>>> = input.required();
+    public sortModel: InputSignal<Nullable<SortModel<Extract<keyof ENTITY_TYPE, string>>>> = input.required();
     public searchTerm: InputSignal<Nullable<string>> = input.required();
 
-    public readonly sortChangeAction: OutputEmitterRef<SortModel<keyof ENTITY_TYPE>> = output<SortModel<keyof ENTITY_TYPE>>();
+    public readonly sortChangeAction: OutputEmitterRef<SortModel<Extract<keyof ENTITY_TYPE, string>>> =
+        output<SortModel<Extract<keyof ENTITY_TYPE, string>>>();
     public readonly pageModelChangeAction: OutputEmitterRef<Partial<PageModel>> = output<Partial<PageModel>>();
     public readonly searchChangeAction: OutputEmitterRef<Nullable<string>> = output<Nullable<string>>();
     public readonly refreshAction: OutputEmitterRef<void> = output<void>();
@@ -91,8 +92,8 @@ export class RtuiTableComponent<ENTITY_TYPE> {
         this.searchChangeAction.emit(value);
     }
 
-    public sortChange(sortModel: SortModel<keyof ENTITY_TYPE | undefined>): void {
-        this.sortChangeAction.emit(sortModel as SortModel<keyof ENTITY_TYPE>);
+    public sortChange(sortModel: SortModel<Extract<keyof ENTITY_TYPE, string>>): void {
+        this.sortChangeAction.emit(sortModel);
     }
 
     public pageModelChange(pageModel: Partial<PageModel>): void {
