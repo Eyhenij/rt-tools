@@ -55,6 +55,7 @@ export class RtuiTableHeaderCellComponent<SORT_PROPERTY = string> {
 
     public headerModel: InputSignal<ITable.Header> = input.required<ITable.Header>();
     public currentSortPropertyName: InputSignal<SORT_PROPERTY> = input.required<SORT_PROPERTY>();
+    public currentSortDirection: InputSignal<Nullable<ListSortOrderType>> = input.required<Nullable<ListSortOrderType>>();
     public sortModel: InputSignal<Nullable<SortModel<SORT_PROPERTY>>> = input.required<Nullable<SortModel<SORT_PROPERTY>>>();
     public headerDataEllipsisMaxLines: InputSignalWithTransform<number, number> = input<number, number>(1, {
         transform: numberAttribute,
@@ -76,13 +77,16 @@ export class RtuiTableHeaderCellComponent<SORT_PROPERTY = string> {
         if (sortPropertyName) {
             this.sortChange.emit({
                 propertyName: sortPropertyName,
-                sortDirection: this.#getNextSortOrder(this.sortModel()?.sortDirection),
+                sortDirection: this.getNextSortOrder(),
             });
         }
     }
 
-    #getNextSortOrder(sortOrder?: ListSortOrderType): ListSortOrderType {
-        if (sortOrder === LIST_SORT_ORDER_ENUM.ASC) {
+    private getNextSortOrder(): ListSortOrderType {
+        if (
+            this.sortModel()?.propertyName === this.currentSortPropertyName() &&
+            this.sortModel()?.sortDirection === this.currentSortDirection()
+        ) {
             return LIST_SORT_ORDER_ENUM.DESC;
         }
 

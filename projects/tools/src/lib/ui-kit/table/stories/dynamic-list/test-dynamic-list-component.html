@@ -1,0 +1,35 @@
+<rtui-dynamic-list
+    [isMobile]="isMobile"
+    [columns]="columns"
+    [entities]="data"
+    [loading]="loading"
+    [fetching]="fetching"
+    [appearance]="'fill'"
+    [searchTerm]="searchTerm"
+    [pageModel]="pageModel"
+    [sortModel]="sortModel"
+    (sortChangeAction)="sortChange($event)">
+    <ng-container *rtuiDynamicListToolbarActionsDirective>
+        <button
+            mat-mini-fab
+            type="button"
+            aria-label="Icon-button for table refresh"
+            class="c-button c-button--fab"
+            matTooltip="Refresh"
+            matTooltipPosition="below"
+            [matTooltipDisabled]="isMobile">
+            <mat-icon [rtIconOutlinedDirective]="true">person</mat-icon>
+        </button>
+
+        <button
+            mat-mini-fab
+            type="button"
+            aria-label="Icon-button for table refresh"
+            class="c-button c-button--fab"
+            matTooltip="Refresh"
+            matTooltipPosition="below"
+            [matTooltipDisabled]="isMobile">
+            <mat-icon [rtIconOutlinedDirective]="true">info</mat-icon>
+        </button>
+    </ng-container>
+</rtui-dynamic-list>

@@ -5,17 +5,18 @@
         </mat-icon>
     }
 
-    <div
-        #titleTpl
-        rtElem="title"
-        matTooltipClass="custom-tooltip"
-        matTooltipPosition="above"
-        [rtHideTooltipDirective]="titleTpl"
-        [isTooltipShown]="!isMobile()"
-        [rtMod]="{ align: column().align }"
-        [matTooltip]="column()?.tooltip ?? tooltipValue()"
-        [matTooltipDisabled]="isMobile()">
-        {{ cellValue() }}
+    <div rtElem="title" [rtMod]="{ align: column().align }">
+        <div
+            #titleTpl
+            rtElem="title-text"
+            matTooltipClass="custom-tooltip"
+            matTooltipPosition="above"
+            [rtHideTooltipDirective]="titleTpl"
+            [isTooltipShown]="!isMobile()"
+            [matTooltip]="column()?.tooltip ?? tooltipValue()"
+            [matTooltipDisabled]="isMobile()">
+            {{ cellValue() }}
+        </div>
     </div>
 
     @if (column()?.icon?.placement === 'right') {
