@@ -20,14 +20,6 @@
             th {
                 background-color: var(--rt-table-header-background-color);
 
-                .c-table__cell-content {
-                    padding: var(--rt-table-header-cell-content-padding);
-
-                    &--separated {
-                        border-right: var(--rt-table-header-cell-content-border-right);
-                    }
-                }
-
                 &:hover {
                     background-color: color-mix(in srgb, var(--rt-table-header-background-color), var(--clr-white) 30%);
                 }
@@ -66,8 +58,11 @@ th.c-table__cell {
     width: fit-content;
     height: 100%;
 
-    padding: var(--rt-table-header-cell-padding);
+    position: relative;
 
+    pointer-events: none;
+
+    padding: var(--rt-table-header-cell-padding);
     color: var(--rt-table-header-cell-text-color);
     font-size: var(--rt-table-header-cell-font-size);
     font-weight: var(--rt-table-header-cell-font-weight);
@@ -75,6 +70,22 @@ th.c-table__cell {
     line-height: var(--rt-table-header-cell-line-height);
     border-bottom: var(--rt-table-header-cell-border-bottom);
     background-color: var(--rt-table-header-cell-background-color);
+
+    &--sortable {
+        pointer-events: auto;
+    }
+
+    &:not(:last-child) {
+        &::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 25%;
+            height: 50%;
+            border-right: var(--rt-table-header-cell-border-right);
+            pointer-events: none;
+        }
+    }
 }
 
 td.c-table__cell {
@@ -84,7 +95,7 @@ td.c-table__cell {
     padding: var(--rt-table-base-cell-padding);
 
     &:last-child {
-        padding: var(--rt-table-header-cell-last-child-padding);
+        padding: var(--rt-table-base-cell-last-child-padding);
     }
 }
 // CELL ACTIONS

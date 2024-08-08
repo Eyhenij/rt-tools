@@ -7,7 +7,9 @@ import {
     InputSignal,
     OnInit,
     OutputEmitterRef,
+    Signal,
     WritableSignal,
+    computed,
     effect,
     inject,
     input,
@@ -42,8 +44,10 @@ export class RtuiPaginationComponent implements OnInit {
     public control: FormControl<number> = this.#fb.nonNullable.control(DEFAULT_PAGE_SIZE);
     public numbers: Array<number | string> = [];
     public readonly divider: string = '...';
-    public readonly pageSizes: Readonly<number[]> = Object.freeze([10, 20, 40, 50]);
     public readonly previousPageModel: WritableSignal<Nullable<PageModel>> = signal(null);
+    public readonly pageSizes: Signal<number[]> = computed(() => {
+        return [10, 20, 40, 50].filter((el: number) => el <= this.currentPageModel()?.totalCount);
+    });
 
     public ngOnInit(): void {
         this.numbers = this.#fillArray();

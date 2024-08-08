@@ -30,6 +30,8 @@ export const ManyColumns: Story = {
             pageNumber: 1,
             pageSize: 10,
             totalCount: 20,
+            hasPrev: false,
+            hasNext: true,
         },
         sortModel: {
             propertyName: 'id',
@@ -50,6 +52,8 @@ export const FewColumns: Story = {
             pageNumber: 2,
             pageSize: 10,
             totalCount: 100,
+            hasPrev: true,
+            hasNext: true,
         },
         sortModel: {
             propertyName: 'id',

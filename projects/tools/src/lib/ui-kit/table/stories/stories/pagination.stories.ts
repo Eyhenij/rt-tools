@@ -16,12 +16,14 @@ export default {
 
 type Story = StoryObj<TestPaginationComponent>;
 
-export const ManyColumns: Story = {
+export const Pagination: Story = {
     args: {
         pageModel: {
             pageNumber: 1,
             pageSize: 10,
-            totalCount: 20,
+            totalCount: 100,
+            hasPrev: false,
+            hasNext: true,
         },
     },
 };
