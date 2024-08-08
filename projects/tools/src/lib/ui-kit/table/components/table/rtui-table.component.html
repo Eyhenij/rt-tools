@@ -16,11 +16,38 @@
 
     <tbody>
         @for (row of entities(); track i; let i = $index) {
-            <tr rtElem="row">
+            <tr
+                rtElem="row"
+                [rtMod]="{ clickable: !!rowActionsTpl() }"
+                (click)="rowActionsTpl() ? onRowClick(row) : $event.stopPropagation()">
                 @for (column of columns(); track column.propName) {
                     <td rtElem="cell">
                         <rtui-table-base-cell [row]="row" [column]="column" [isMobile]="isMobile()" />
                     </td>
+                }
+
+                @if (rowActionsTpl()) {
+                    <div rtElem="actions">
+                        <div rtElem="actions-mask"></div>
+
+                        <button
+                            rtElem="actions-action"
+                            aria-label="Icon-button with a menu"
+                            mat-icon-button
+                            [rtMod]="{ active: i === activeRowIndex() }"
+                            [disableRipple]="true"
+                            [matMenuTriggerFor]="menuAddressBook"
+                            [class.active]="i === activeRowIndex()"
+                            (menuOpened)="onMenuOpen(i)"
+                            (menuClosed)="onMenuClose()"
+                            (click)="$event.stopPropagation()">
+                            <mat-icon [rtIconOutlinedDirective]="true">more_vert</mat-icon>
+                        </button>
+
+                        <mat-menu #menuAddressBook="matMenu" xPosition="before">
+                            <ng-template *ngTemplateOutlet="rowActionsTpl() ?? null" />
+                        </mat-menu>
+                    </div>
                 }
             </tr>
         }

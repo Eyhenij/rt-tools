@@ -124,7 +124,7 @@
 
     // Table
     --rt-table-wrapper-toolbar-gap: 1rem;
-    --rt-table-wrapper-toolbar-actions-gap: 0.5rem;
+    --rt-table-wrapper-toolbar-actions-gap: 1rem;
     --rt-table-wrapper-toolbar-search-width: 16.5rem;
     --rt-table-wrapper-placeholder-width: 100%;
     --rt-table-wrapper-placeholder-height: 100vh;
@@ -148,8 +148,8 @@
     --rt-table-header-cell-text-align: left;
     --rt-table-header-cell-gap: 0.5rem;
 
-    --rt-table-header-cell-icon-color: var(--clr-white);
-    --rt-table-header-cell-icon-active-color: var(--clr-black-60);
+    --rt-table-header-cell-icon-color: var(--clr-black-40);
+    --rt-table-header-cell-icon-active-color: var(--clr-black-100);
     --rt-table-header-cell-icon-margin: 0 0 0 1rem;
     --rt-table-header-cell-prefix-icon-size: 1.5rem;
     --rt-table-header-cell-suffix-icon-size: 1.5rem;
@@ -171,7 +171,6 @@
     --rt-table-base-cell-copy-button-padding: 0.25rem;
     --rt-table-base-cell-copy-button-background-color: var(--mdc-fab-small-container-color);
     --rt-table-base-cell-copy-button-icon-size: 1rem;
-    --rt-table-base-cell-last-child-padding: 0.625rem 0 0.625rem 0.625rem;
 
     --rt-table-pagination-min-height: 3rem;
     --rt-table-pagination-min-height-mobile: 5.5rem;
@@ -182,7 +181,7 @@
     --rt-table-pagination-font-color: var(--clr-txt);
     --rt-table-pagination-paging-gap: 0.5rem;
     --rt-table-pagination-paging-item-height: 2rem;
-    --rt-table-pagination-paging-item-min-width: 1.5rem;
+    --rt-table-pagination-paging-item-min-width: 2rem;
     --rt-table-pagination-paging-item-padding: 0 0.25rem;
     --rt-table-pagination-paging-item-border: 1px solid var(--clr-black-40);
     --rt-table-pagination-size-toggle-gap: 0.75rem;

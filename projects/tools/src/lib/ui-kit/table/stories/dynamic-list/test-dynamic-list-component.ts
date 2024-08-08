@@ -1,11 +1,16 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { MatMenuItem } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
 import { RtIconOutlinedDirective } from '../../../../util';
-import { RtuiDynamicListComponent, RtuiDynamicListToolbarActionsDirective } from '../../dynamic-list.component';
+import {
+    RtuiDynamicListComponent,
+    RtuiDynamicListRowActionsDirective,
+    RtuiDynamicListToolbarActionsDirective,
+} from '../../dynamic-list.component';
 import { LIST_SORT_ORDER_ENUM } from '../../util/list-sort-order.enum';
 import { PageModel, SortModel } from '../../util/lists.interface';
 import { ITable } from '../../util/table-column.interface';
@@ -22,6 +27,7 @@ import { Person } from '../types';
         MatIcon,
         MatMiniFabButton,
         MatTooltip,
+        MatMenuItem,
 
         // components
         RtuiDynamicListComponent,
@@ -31,6 +37,7 @@ import { Person } from '../types';
         BlockDirective,
         ElemDirective,
         RtuiDynamicListToolbarActionsDirective,
+        RtuiDynamicListRowActionsDirective,
     ],
     providers: [],
 })
@@ -51,7 +58,7 @@ export default class TestDynamicListComponent {
         sortDirection: LIST_SORT_ORDER_ENUM.ASC,
     };
 
-    public sortChange(sortModel: SortModel<keyof Person>): SortModel<keyof Person> {
-        return sortModel;
+    public sortChange(sortModel: SortModel<keyof Person>): void {
+        this.sortModel = sortModel;
     }
 }

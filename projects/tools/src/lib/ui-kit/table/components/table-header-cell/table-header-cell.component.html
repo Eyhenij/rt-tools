@@ -21,14 +21,14 @@
         <div
             rtElem="icon"
             [rtMod]="{
-                active: active() && sortOrderType.DESC === sortModel()?.sortDirection?.toLowerCase(),
+                active: active() && sortOrderType.DESC === currentSortDirection()?.toLowerCase(),
                 first: true,
             }"></div>
 
         <div
             rtElem="icon"
             [rtMod]="{
-                active: active() && sortOrderType.ASC === sortModel()?.sortDirection?.toLowerCase(),
+                active: active() && sortOrderType.ASC === currentSortDirection()?.toLowerCase(),
                 second: true,
             }"></div>
     </div>

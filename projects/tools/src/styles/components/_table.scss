@@ -1,6 +1,3 @@
-@use '../base/mixin' as mixins;
-@use '../base/variables' as vars;
-
 // TABLE
 .c-table {
     width: 100%;
@@ -39,9 +36,7 @@
     color: var(--rt-table-row-color);
     border-bottom: var(--rt-table-row-border-bottom);
 
-    &:not(:hover) {
-        //
-    }
+    position: relative;
 
     &:hover {
         border-bottom: var(--rt-table-row-hover-border-bottom);
@@ -50,6 +45,20 @@
 
     &--active {
         border-bottom: var(--rt-table-row-active-border-bottom);
+    }
+
+    &--clickable {
+        cursor: pointer;
+    }
+
+    &:not(:has(:hover)) {
+        .c-table__actions {
+            visibility: hidden;
+
+            &:has(.c-table__actions-action--active) {
+                visibility: visible;
+            }
+        }
     }
 }
 
@@ -93,19 +102,38 @@ td.c-table__cell {
     height: 100%;
 
     padding: var(--rt-table-base-cell-padding);
-
-    &:last-child {
-        padding: var(--rt-table-base-cell-last-child-padding);
-    }
 }
-// CELL ACTIONS
+
+// ROW ACTIONS
 .c-table__actions {
     width: 100%;
     height: 100%;
 
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
+    position: absolute;
+    right: 0;
+    top: 0;
 
-    padding: 0 mixins.rem(10);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    pointer-events: none;
+
+    &-mask {
+        position: absolute;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        background: inherit;
+        backdrop-filter: blur(4px);
+        mask-image: linear-gradient(to right, transparent 0, var(--clr-black-100) 100%);
+        pointer-events: none;
+    }
+
+    &-action {
+        position: sticky;
+        right: 0.5rem;
+        background-color: var(--clr-gray-5);
+        pointer-events: auto;
+    }
 }
