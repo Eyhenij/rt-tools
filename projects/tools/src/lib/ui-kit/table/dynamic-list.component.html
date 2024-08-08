@@ -1,0 +1,24 @@
+<rtui-table-container
+    [loading]="loading()"
+    [fetching]="fetching()"
+    [isMobile]="isMobile()"
+    [pageModel]="pageModel()"
+    [isPlaceholderShown]="!entities()?.length"
+    [appearance]="appearance()"
+    [searchTerm]="searchTerm()"
+    (refreshAction)="refresh()"
+    (pageModelChange)="pageModelChange($event)"
+    (searchChange)="searchChange($event)">
+    @if (toolbarActionsTpl()) {
+        <ng-container *rtuiTableToolbarActionsDirective>
+            <ng-template *ngTemplateOutlet="toolbarActionsTpl() ?? null" />
+        </ng-container>
+    }
+
+    <rtui-table
+        [isMobile]="isMobile()"
+        [entities]="entities()"
+        [columns]="columns()"
+        [sortModel]="sortModel()"
+        (sortChangeAction)="sortChange($event)" />
+</rtui-table-container>

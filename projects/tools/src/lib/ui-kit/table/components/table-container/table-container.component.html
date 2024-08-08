@@ -9,11 +9,13 @@
             <ng-container *rtuiScrollableHeader>
                 <rtui-toolbar>
                     <ng-container *rtuiToolbarRight>
-                        <div rtElem="actions">
-                            <ng-content select="[table-actions]" />
+                        <div rtElem="toolbar">
+                            <div rtElem="toolbar-actions">
+                                @if (toolbarActionsTpl()) {
+                                    <ng-template *ngTemplateOutlet="toolbarActionsTpl() ?? null" />
+                                }
 
-                            @if (isRefreshButtonShown()) {
-                                <div rtElem="action-item">
+                                @if (isRefreshButtonShown()) {
                                     <button
                                         mat-mini-fab
                                         type="button"
@@ -25,21 +27,24 @@
                                         (click)="onRefresh()">
                                         <mat-icon [rtIconOutlinedDirective]="isActionsIconsOutlined()">sync</mat-icon>
                                     </button>
+                                }
+                            </div>
+
+                            @if ((isPlaceholderShown() && searchControl.value) || !isPlaceholderShown() || searchControl.dirty) {
+                                <div rtElem="toolbar-search">
+                                    <mat-form-field subscriptSizing="dynamic" [appearance]="appearance()" [style.width.%]="100">
+                                        <input matInput placeholder="Search..." type="text" [formControl]="searchControl" />
+
+                                        <mat-icon matPrefix [rtIconOutlinedDirective]="true">search</mat-icon>
+
+                                        <rtui-clear-button
+                                            matSuffix
+                                            [isButtonShown]="!!searchControl.value"
+                                            (clickAction)="onClearSearch()" />
+                                    </mat-form-field>
                                 </div>
                             }
                         </div>
-
-                        @if ((isPlaceholderShown() && searchControl.value) || !isPlaceholderShown() || searchControl.dirty) {
-                            <div rtElem="search">
-                                <mat-form-field subscriptSizing="dynamic" [appearance]="appearance()" [style.width.%]="100">
-                                    <input matInput placeholder="Search..." type="text" [formControl]="searchControl" />
-
-                                    <mat-icon matPrefix [rtIconOutlinedDirective]="true">search</mat-icon>
-
-                                    <rtui-clear-button matSuffix [isButtonShown]="!!searchControl.value" (clickAction)="onClearSearch()" />
-                                </mat-form-field>
-                            </div>
-                        }
                     </ng-container>
                 </rtui-toolbar>
             </ng-container>

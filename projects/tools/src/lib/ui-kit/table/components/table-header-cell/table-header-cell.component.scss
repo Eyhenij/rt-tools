@@ -4,15 +4,17 @@
     align-items: center;
     cursor: pointer;
 
-    // TODO: use css variables and remove from last element
-    padding-right: 0.625rem;
-    border-right: 1px solid var(--clr-black-40);
+    &:hover {
+        .header-cell-icons {
+            visibility: visible;
+        }
+    }
 
     .header-cell-label {
         flex-grow: 1;
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: var(--rt-table-header-cell-gap);
 
         &--align {
             &--left {
@@ -28,10 +30,22 @@
             }
         }
 
+        &__prefix {
+            width: var(--rt-table-header-cell-prefix-icon-size);
+            height: var(--rt-table-header-cell-prefix-icon-size);
+            font-size: var(--rt-table-header-cell-prefix-icon-size);
+        }
+
         &__text {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+
+        &__suffix {
+            width: var(--rt-table-header-cell-suffix-icon-size);
+            height: var(--rt-table-header-cell-suffix-icon-size);
+            font-size: var(--rt-table-header-cell-suffix-icon-size);
         }
 
         &__prefix,
@@ -50,7 +64,6 @@
 
         visibility: hidden;
 
-        &:hover,
         &--active {
             visibility: visible;
         }
@@ -61,10 +74,6 @@
             border-left: 3px solid transparent;
             border-right: 3px solid transparent;
             border-bottom: 5.2px solid var(--rt-table-header-cell-icon-color);
-
-            &--first {
-                //
-            }
 
             &--second {
                 margin-top: 2px;

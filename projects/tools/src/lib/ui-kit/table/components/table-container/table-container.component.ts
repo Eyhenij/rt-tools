@@ -1,12 +1,18 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
     DestroyRef,
+    Directive,
     InputSignal,
     InputSignalWithTransform,
     OnInit,
     OutputEmitterRef,
+    Signal,
+    TemplateRef,
+    Type,
     booleanAttribute,
+    contentChild,
     inject,
     input,
     output,
@@ -33,7 +39,13 @@ import { RtuiSpinnerComponent } from '../../../spinner';
 import { RtuiToolbarComponent, RtuiToolbarRightDirective } from '../../../toolbar';
 import { PageModel } from '../../util/lists.interface';
 import { RtuiClearButtonComponent } from '../clear-search-button/rtui-clear-button.component';
-import { PaginationComponent } from '../pagination-view/pagination.component';
+import { RtuiPaginationComponent } from '../pagination-view/rtui-pagination.component';
+
+@Directive({
+    standalone: true,
+    selector: '[rtuiTableToolbarActionsDirective]',
+})
+export class RtuiTableToolbarActionsDirective {}
 
 @Component({
     standalone: true,
@@ -43,6 +55,7 @@ import { PaginationComponent } from '../pagination-view/pagination.component';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         ReactiveFormsModule,
+        NgTemplateOutlet,
 
         // Material
         MatIcon,
@@ -54,7 +67,7 @@ import { PaginationComponent } from '../pagination-view/pagination.component';
         MatTooltip,
 
         // Standalone components
-        PaginationComponent,
+        RtuiPaginationComponent,
         RtuiClearButtonComponent,
         RtuiToolbarComponent,
         RtuiScrollableContainerComponent,
@@ -109,6 +122,10 @@ export class RtuiTableContainerComponent implements OnInit {
     public readonly pageModelChange: OutputEmitterRef<Partial<PageModel>> = output<Partial<PageModel>>();
     public readonly searchChange: OutputEmitterRef<Nullable<string>> = output<Nullable<string>>();
     public readonly refreshAction: OutputEmitterRef<void> = output<void>();
+
+    public readonly toolbarActionsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiTableToolbarActionsDirective, {
+        read: TemplateRef,
+    });
 
     public readonly searchControl: FormControl<Nullable<string>> = new FormControl(null);
 

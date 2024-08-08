@@ -7,7 +7,9 @@ import {
     InputSignal,
     OnInit,
     OutputEmitterRef,
+    Signal,
     WritableSignal,
+    computed,
     effect,
     inject,
     input,
@@ -25,12 +27,12 @@ import { PageModel } from '../../util/lists.interface';
 @Component({
     standalone: true,
     selector: 'rtui-pagination',
-    templateUrl: './pagination.component.html',
-    styleUrls: ['./pagination.component.scss'],
+    templateUrl: './rtui-pagination.component.html',
+    styleUrls: ['./rtui-pagination.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [NgClass, ReactiveFormsModule, BlockDirective, ElemDirective],
 })
-export class PaginationComponent implements OnInit {
+export class RtuiPaginationComponent implements OnInit {
     readonly #injector: Injector = inject(Injector);
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #fb: FormBuilder = inject(FormBuilder);
@@ -42,8 +44,10 @@ export class PaginationComponent implements OnInit {
     public control: FormControl<number> = this.#fb.nonNullable.control(DEFAULT_PAGE_SIZE);
     public numbers: Array<number | string> = [];
     public readonly divider: string = '...';
-    public readonly pageSizes: Readonly<number[]> = Object.freeze([10, 20, 40, 50]);
     public readonly previousPageModel: WritableSignal<Nullable<PageModel>> = signal(null);
+    public readonly pageSizes: Signal<number[]> = computed(() => {
+        return [10, 20, 40, 50].filter((el: number) => el <= this.currentPageModel()?.totalCount);
+    });
 
     public ngOnInit(): void {
         this.numbers = this.#fillArray();

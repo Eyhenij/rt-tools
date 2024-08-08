@@ -1,9 +1,8 @@
-import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { RtuiTableComponent } from '../../table.component';
+import { RtuiTableComponent } from '../../components';
 import { LIST_SORT_ORDER_ENUM } from '../../util/list-sort-order.enum';
-import { PageModel, SortModel } from '../../util/lists.interface';
+import { SortModel } from '../../util/lists.interface';
 import { ITable } from '../../util/table-column.interface';
 import { Person } from '../types';
 
@@ -14,8 +13,6 @@ import { Person } from '../types';
     styleUrls: ['./test-table-component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        NgTemplateOutlet,
-
         // components
         RtuiTableComponent,
     ],
@@ -23,18 +20,14 @@ import { Person } from '../types';
 })
 export default class TestTableComponent {
     public isMobile: boolean = false;
-    public loading: boolean = false;
-    public fetching: boolean = false;
-    public searchTerm: string = '';
     public data: Person[] = [];
     public columns: ITable.Column<Person>[] = [];
-    public pageModel: PageModel = {
-        pageNumber: 1,
-        pageSize: 10,
-        totalCount: 0,
-    };
     public sortModel: SortModel<keyof Person> = {
         propertyName: 'id',
         sortDirection: LIST_SORT_ORDER_ENUM.ASC,
     };
+
+    public sortChange(sortModel: SortModel<keyof Person>): SortModel<keyof Person> {
+        return sortModel;
+    }
 }

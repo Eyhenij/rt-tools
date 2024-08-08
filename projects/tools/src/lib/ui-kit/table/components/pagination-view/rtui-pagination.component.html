@@ -1,0 +1,66 @@
+@if (currentPageModel().totalCount > pageSizes()[0]) {
+    <div rtBlock="paging">
+        <div
+            rtElem="item"
+            role="button"
+            tabindex="0"
+            [rtMod]="{ enabled: currentPageModel()?.hasPrev }"
+            [class.c-pagination__paging-item--disabled]="!currentPageModel().hasPrev"
+            (click)="onClick(currentPageModel().pageNumber - 1)"
+            (keydown)="onClick(currentPageModel().pageNumber - 1)">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15.5 8.5H0.5" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                <path
+                    d="M5.5 3.5L0.5 8.5L5.5 13.5"
+                    stroke="currentColor"
+                    stroke-miterlimit="10"
+                    stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </div>
+
+        @for (number of numbers; track $index) {
+            <div
+                rtElem="item"
+                role="button"
+                tabindex="1"
+                [rtMod]="{
+                    active: currentPageModel().pageNumber === number,
+                    divider: number === divider,
+                    enabled: number !== divider && currentPageModel().pageNumber !== number,
+                }"
+                (click)="onClick(number)"
+                (keydown)="onClick(number)">
+                <span>{{ number }}</span>
+            </div>
+        }
+
+        <div
+            rtElem="item"
+            role="button"
+            tabindex="3"
+            [rtMod]="{ enabled: currentPageModel()?.hasNext }"
+            (click)="onClick(currentPageModel().pageNumber + 1)"
+            (keydown)="onClick(currentPageModel().pageNumber + 1)">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0.5 8.5H15.5" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                <path
+                    d="M10.5 3.5L15.5 8.5L10.5 13.5"
+                    stroke="currentColor"
+                    stroke-miterlimit="10"
+                    stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </div>
+    </div>
+
+    <div rtBlock="page-size-toggle">
+        <div rtElem="title">Items per page:</div>
+
+        <select rtElem="selector" [formControl]="control">
+            @for (size of pageSizes(); track $index) {
+                <option [value]="size">{{ size }}</option>
+            }
+        </select>
+    </div>
+}
