@@ -84,6 +84,19 @@ export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown
     public fetching: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
+    public isSelectorShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
+    public isAllEntitiesSelected: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
+    public keyExp: InputSignal<NonNullable<KEY>> = input('id' as NonNullable<KEY>);
+    public selectedEntitiesKeys: InputSignalWithTransform<ENTITY_TYPE[KEY][], ENTITY_TYPE[KEY][]> = input<
+        ENTITY_TYPE[KEY][],
+        ENTITY_TYPE[KEY][]
+    >([], {
+        transform: (value: ENTITY_TYPE[KEY][]) => transformArrayInput(value),
+    });
 
     public entities: InputSignalWithTransform<ENTITY_TYPE[], ENTITY_TYPE[]> = input.required<ENTITY_TYPE[], ENTITY_TYPE[]>({
         transform: (value: ENTITY_TYPE[]) => transformArrayInput(value),
@@ -108,6 +121,12 @@ export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown
     public readonly searchChange: OutputEmitterRef<Nullable<string>> = output<Nullable<string>>();
     public readonly refresh: OutputEmitterRef<void> = output<void>();
     public readonly rowClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
+    public readonly toggleEntity: OutputEmitterRef<{ key: ENTITY_TYPE[KEY]; checked: boolean }> = output<{
+        key: ENTITY_TYPE[KEY];
+        checked: boolean;
+    }>();
+    public readonly toggleExistingEntities: OutputEmitterRef<boolean> = output<boolean>();
+    public readonly toggleAllEntities: OutputEmitterRef<boolean> = output<boolean>();
 
     public readonly toolbarActionsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiDynamicListToolbarActionsDirective, {
         read: TemplateRef,
@@ -134,5 +153,17 @@ export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown
 
     public onRowClick(row: ENTITY_TYPE): void {
         this.rowClick.emit(row);
+    }
+
+    public onToggleEntity(value: { key: ENTITY_TYPE[KEY]; checked: boolean }): void {
+        this.toggleEntity.emit(value);
+    }
+
+    public onToggleExistingEntities(checked: boolean): void {
+        this.toggleExistingEntities.emit(checked);
+    }
+
+    public onToggleAllEntities(checked: boolean): void {
+        this.toggleAllEntities.emit(checked);
     }
 }

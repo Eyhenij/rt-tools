@@ -8,9 +8,22 @@
         <rtui-scrollable>
             <ng-container *rtuiScrollableHeader>
                 <rtui-toolbar>
+                    @if (isSelectorShown() && !isPlaceholderShown()) {
+                        <ng-container *rtuiToolbarLeft>
+                            <div rtElem="selector">
+                                <mat-checkbox
+                                    [checked]="isAllEntitiesSelected()"
+                                    (click)="$event.stopPropagation()"
+                                    (change)="onToggleAllEntities($event.checked)">
+                                    <div rtElem="selector-label">Select all</div>
+                                </mat-checkbox>
+                            </div>
+                        </ng-container>
+                    }
+
                     <ng-container *rtuiToolbarRight>
                         <div rtElem="toolbar">
-                            <div rtElem="toolbar-actions">
+                            <div rtElem="toolbar-actions" [rtMod]="{ end: isSelectorShown() }">
                                 @if (toolbarActionsTpl()) {
                                     <ng-template *ngTemplateOutlet="toolbarActionsTpl() ?? null" />
                                 }

@@ -24,6 +24,15 @@
     --rt-scrollable-content-background-color: transparent;
 
     .table-wrapper {
+        &__selector {
+            margin-left: var(--rt-table-wrapper-selector-margin-right);
+
+            &-label {
+                &:hover {
+                    color: var(--rt-table-wrapper-selector-label-hover-color);
+                }
+            }
+        }
         &__toolbar {
             width: 100%;
             display: flex;
@@ -76,10 +85,15 @@
     }
 
     @include mixins.media-breakpoint-down(vars.$device-sm) {
-        --rt-toolbar-body-height-mobile: 6rem;
-        --rt-toolbar-body-height: 6rem;
+        --rt-toolbar-body-height-mobile: 6.5rem;
+        --rt-toolbar-body-height: 6.5rem;
 
         .table-wrapper {
+            &__selector {
+                position: absolute;
+                bottom: 0;
+            }
+
             &__toolbar {
                 min-width: 100vw;
                 display: grid;
@@ -89,6 +103,11 @@
                 &-actions {
                     grid-row: 2;
                     justify-content: center;
+
+                    &--end {
+                        justify-content: flex-end;
+                        margin-left: var(--rt-table-wrapper-toolbar-mobile-margin-left);
+                    }
                 }
 
                 &-search {

@@ -44,9 +44,12 @@ export default class TestDynamicListComponent {
     public isMobile: boolean = false;
     public loading: boolean = false;
     public fetching: boolean = false;
+    public isSelectorShown: boolean = true;
+    public isAllEntitiesSelected: boolean = false;
     public searchTerm: string = '';
     public data: Person[] = [];
     public columns: ITable.Column<Person>[] = [];
+    public selectedEntitiesKeys: number[] = [];
     public pageModel: PageModel = {
         pageNumber: 1,
         pageSize: 10,
@@ -82,5 +85,37 @@ export default class TestDynamicListComponent {
     public onDelete(event: any): void {
         // eslint-disable-next-line no-console
         console.warn('Delete', event);
+    }
+
+    public onToggleEntity(value: { key: number; checked: boolean }): void {
+        const updatedList: number[] = [];
+        this.selectedEntitiesKeys.forEach((el: number) => updatedList.push(el));
+        this.selectedEntitiesKeys = [];
+
+        if (value.checked) {
+            updatedList.push(value.key);
+        } else {
+            const index: number = updatedList.indexOf(value.key);
+            updatedList.splice(index, 1);
+        }
+
+        this.selectedEntitiesKeys = updatedList;
+    }
+
+    public onToggleExistingEntities(checked: boolean): void {
+        this.selectedEntitiesKeys = [];
+
+        if (checked) {
+            this.data.forEach((el: Person) => {
+                this.selectedEntitiesKeys.push(el.id);
+            });
+        } else {
+            this.isAllEntitiesSelected = false;
+        }
+    }
+
+    public onToggleAllEntities(checked: boolean): void {
+        this.isAllEntitiesSelected = checked;
+        this.onToggleExistingEntities(checked);
     }
 }
