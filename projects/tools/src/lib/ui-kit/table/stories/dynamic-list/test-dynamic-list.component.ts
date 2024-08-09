@@ -19,8 +19,8 @@ import { Person } from '../types';
 @Component({
     standalone: true,
     selector: 'app-test-dynamic-list-component',
-    templateUrl: './test-dynamic-list-component.html',
-    styleUrls: ['./test-dynamic-list-component.scss'],
+    templateUrl: './test-dynamic-list.component.html',
+    styleUrls: ['./test-dynamic-list.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // material
@@ -60,5 +60,17 @@ export default class TestDynamicListComponent {
 
     public sortChange(sortModel: SortModel<keyof Person>): void {
         this.sortModel = sortModel;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public onEdit(event: any): void {
+        // eslint-disable-next-line no-console
+        console.warn('Edit', event);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public onDelete(event: any): void {
+        // eslint-disable-next-line no-console
+        console.warn('Delete', event);
     }
 }
