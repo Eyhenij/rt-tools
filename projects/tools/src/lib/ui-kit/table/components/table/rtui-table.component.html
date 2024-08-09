@@ -23,17 +23,13 @@
                 }"
                 (click)="onRowClick(row)">
                 @for (column of columns(); track column.propName) {
-                    <td rtElem="cell">
+                    <td rtElem="cell" [rtMod]="{ copyable: column?.copyable }">
                         <rtui-table-base-cell [row]="row" [column]="column" [isMobile]="isMobile()" />
                     </td>
                 }
 
                 @if (rowActionsTpl()) {
-                    <div
-                        rtBlock="c-table-actions"
-                        [rtMod]="{
-                            active: activeRowIndex() === i,
-                        }">
+                    <div rtBlock="c-table-actions" [rtMod]="{ hidden: activeRowIndex() !== i }">
                         <div rtElem="container">
                             <button
                                 rtElem="action"

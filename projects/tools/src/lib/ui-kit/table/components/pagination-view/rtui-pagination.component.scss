@@ -15,6 +15,7 @@
     color: var(--rt-table-pagination-font-color);
     font-size: var(--rt-table-pagination-font-size);
     font-weight: var(--rt-table-pagination-font-weight);
+    line-height: var(--rt-table-pagination-font-line-height);
 
     @include mixins.media-breakpoint-up(vars.$device-md) {
         .paging,
@@ -53,7 +54,7 @@
 
             padding: var(--rt-table-pagination-paging-item-padding);
             border: var(--rt-table-pagination-paging-item-border);
-            border-radius: 30%;
+            border-radius: var(--rt-table-pagination-paging-item-border-radius);
 
             background-color: transparent;
             cursor: default;
@@ -65,17 +66,17 @@
             }
 
             svg {
-                fill-opacity: 0.3;
+                fill-opacity: var(--rt-table-pagination-paging-item-disabled-svg-opacity);
             }
 
             &:hover:not(.divider) {
-                color: var(--clr-white);
-                background-color: var(--clr-black-20);
+                color: var(--rt-table-pagination-paging-item-hover-color);
+                background-color: var(--rt-table-pagination-paging-item-hover-background-color);
             }
 
             &--active {
-                color: var(--clr-white);
-                background-color: var(--clr-black-20);
+                color: var(--rt-table-pagination-paging-item-active-color);
+                background-color: var(--rt-table-pagination-paging-item-active-background-color);
             }
 
             &--enabled {
@@ -106,10 +107,17 @@
             width: auto;
             min-width: var(--rt-table-pagination-size-toggle-selector-min-width);
             height: var(--rt-table-pagination-size-toggle-selector-height);
+
             border: var(--rt-table-pagination-paging-item-border);
-            border-radius: 20%;
+            border-radius: var(--rt-table-pagination-paging-item-border-radius);
+
             background-color: transparent;
             cursor: pointer;
+
+            color: var(--rt-table-pagination-font-color);
+            font-size: var(--rt-table-pagination-font-size);
+            font-weight: var(--rt-table-pagination-font-weight);
+            line-height: var(--rt-table-pagination-font-line-height);
         }
     }
 }

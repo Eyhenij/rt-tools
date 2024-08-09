@@ -1,6 +1,7 @@
 :root {
     --clr-white: #ffffff;
     --clr-gray-5: #f5f6f8;
+    --clr-gray-15: #d1d1d1;
     --clr-black-15: #eeeeee;
     --clr-black-20: #e0e0e0;
     --clr-black-40: #a3a3a3;
@@ -168,6 +169,7 @@
     --rt-table-base-cell-prefix-icon-size: 1.5rem;
     --rt-table-base-cell-suffix-icon-size: 1.5rem;
     --rt-table-base-cell-padding: 0.625rem;
+    --rt-table-base-cell-last-child-padding: 0.625rem 4rem 0.625rem 0.625rem;
     --rt-table-base-cell-gap: 0.5rem;
     --rt-table-base-cell-title-padding: 0.5rem 0.5rem 0.5rem 0;
     --rt-table-base-cell-copy-button-position-right: 0.25rem;
@@ -179,12 +181,19 @@
     --rt-table-pagination-margin: 0.5rem 0;
     --rt-table-pagination-gap-mobile: 1rem;
     --rt-table-pagination-font-size: 0.875rem;
-    --rt-table-pagination-font-weight: normal;
-    --rt-table-pagination-font-color: var(--clr-txt);
+    --rt-table-pagination-font-weight: 400;
+    --rt-table-pagination-font-color: var(--clr-black-60);
+    --rt-table-pagination-font-line-height: 1rem;
     --rt-table-pagination-paging-gap: 0.5rem;
     --rt-table-pagination-paging-mobile-margin: 0.5rem 0 0 0;
     --rt-table-pagination-paging-item-padding: 0.5rem;
-    --rt-table-pagination-paging-item-border: 1px solid var(--clr-black-40);
+    --rt-table-pagination-paging-item-border: 1px solid var(--clr-gray-15);
+    --rt-table-pagination-paging-item-border-radius: 0.75rem;
+    --rt-table-pagination-paging-item-active-color: var(--clr-white);
+    --rt-table-pagination-paging-item-hover-color: var(--clr-white);
+    --rt-table-pagination-paging-item-active-background-color: var(--clr-black-60);
+    --rt-table-pagination-paging-item-hover-background-color: var(--clr-black-60);
+    --rt-table-pagination-paging-item-disabled-svg-opacity: 0.3;
     --rt-table-pagination-size-toggle-gap: 0.75rem;
     --rt-table-pagination-size-toggle-selector-min-width: 3rem;
     --rt-table-pagination-size-toggle-selector-height: 2rem;

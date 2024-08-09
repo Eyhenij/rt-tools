@@ -40,11 +40,6 @@
     position: relative;
     pointer-events: none;
 
-    &:hover {
-        border-bottom: var(--rt-table-row-hover-border-bottom);
-        transition: var(--rt-table-row-hover-transition);
-    }
-
     &--active {
         border-bottom: var(--rt-table-row-active-border-bottom);
     }
@@ -54,13 +49,10 @@
         pointer-events: auto;
     }
 
-    &:not(:hover) {
-        .c-table-actions {
-            visibility: hidden;
-        }
-    }
-
     &:hover {
+        border-bottom: var(--rt-table-row-hover-border-bottom);
+        transition: var(--rt-table-row-hover-transition);
+
         .c-table-actions {
             visibility: visible;
         }
@@ -107,6 +99,12 @@ td.c-table__cell {
     height: 100%;
 
     padding: var(--rt-table-base-cell-padding);
+
+    &--copyable {
+        &:last-of-type {
+            padding: var(--rt-table-base-cell-last-child-padding);
+        }
+    }
 }
 
 // ROW ACTIONS
@@ -151,7 +149,7 @@ td.c-table__cell {
         pointer-events: auto;
     }
 
-    &--active {
-        visibility: visible;
+    &--hidden {
+        visibility: hidden;
     }
 }

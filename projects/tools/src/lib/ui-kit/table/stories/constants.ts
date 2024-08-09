@@ -52,8 +52,6 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
             color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
             placement: 'right',
         },
-        width: '300px',
-        minWidth: '200px',
     },
     {
         align: 'left',
