@@ -124,8 +124,11 @@
     --rt-clear-button-icon-on-hover-color: var(--clr-black-100);
 
     // Table
+    --rt-table-wrapper-selector-margin-right: 0.65rem;
+    --rt-table-wrapper-selector-label-hover-color: var(--clr-green-60);
     --rt-table-wrapper-toolbar-gap: 1rem;
     --rt-table-wrapper-toolbar-actions-gap: 1rem;
+    --rt-table-wrapper-toolbar-mobile-margin-left: 8rem;
     --rt-table-wrapper-toolbar-search-width: 16.5rem;
     --rt-table-wrapper-placeholder-width: 100%;
     --rt-table-wrapper-placeholder-height: 100vh;

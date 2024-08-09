@@ -4,8 +4,11 @@
     [isMobile]="isMobile()"
     [pageModel]="pageModel()"
     [isPlaceholderShown]="!entities()?.length"
+    [isSelectorShown]="isSelectorShown()"
+    [isAllEntitiesSelected]="isAllEntitiesSelected()"
     [appearance]="appearance()"
     [searchTerm]="searchTerm()"
+    (toggleAllEntities)="onToggleAllEntities($event)"
     (refreshAction)="onRefresh()"
     (pageModelChange)="onPageModelChange($event)"
     (searchChange)="onSearchChange($event)">
@@ -16,10 +19,15 @@
     }
 
     <rtui-table
+        [keyExp]="keyExp()"
         [isMobile]="isMobile()"
+        [isSelectorShown]="isSelectorShown()"
         [entities]="entities()"
         [columns]="columns()"
+        [selectedEntitiesKeys]="selectedEntitiesKeys()"
         [currentSortModel]="currentSortModel()"
+        (toggleEntity)="onToggleEntity($event)"
+        (toggleExistingEntities)="onToggleExistingEntities($event)"
         (rowClick)="onRowClick($event)"
         (sortChange)="onSortChange($event)">
         @if (rowActionsTpl()) {
