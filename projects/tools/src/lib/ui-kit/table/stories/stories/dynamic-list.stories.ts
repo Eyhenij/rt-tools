@@ -4,7 +4,7 @@ import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 
 import { LIST_SORT_ORDER_ENUM } from '../../util/list-sort-order.enum';
 import { COLUMNS } from '../constants';
-import TestDynamicListComponent from '../dynamic-list/test-dynamic-list-component';
+import TestDynamicListComponent from '../dynamic-list/test-dynamic-list.component';
 import { createPersonList } from '../mocks';
 
 export default {
@@ -33,7 +33,7 @@ export const ManyColumns: Story = {
             hasPrev: false,
             hasNext: true,
         },
-        sortModel: {
+        currentSortModel: {
             propertyName: 'id',
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,
         },
@@ -49,13 +49,13 @@ export const FewColumns: Story = {
         data: createPersonList(20),
         columns: COLUMNS.slice(0, 2),
         pageModel: {
-            pageNumber: 2,
+            pageNumber: 1,
             pageSize: 10,
-            totalCount: 100,
+            totalCount: 20,
             hasPrev: true,
             hasNext: true,
         },
-        sortModel: {
+        currentSortModel: {
             propertyName: 'id',
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,
         },
@@ -75,7 +75,7 @@ export const FewItems: Story = {
             pageSize: 10,
             totalCount: 5,
         },
-        sortModel: {
+        currentSortModel: {
             propertyName: 'id',
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,
         },
@@ -95,7 +95,7 @@ export const NoItems: Story = {
             pageSize: 10,
             totalCount: 0,
         },
-        sortModel: {
+        currentSortModel: {
             propertyName: 'id',
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,
         },

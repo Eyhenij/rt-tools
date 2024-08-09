@@ -4,11 +4,11 @@
     display: flex;
     flex-direction: column;
     margin: -1rem;
-    background-color: cadetblue;
     position: relative;
 
     .pagination {
         position: absolute;
-        bottom: 0;
+        top: 0;
+        padding: 0 0.5rem;
     }
 }

@@ -1,6 +1,6 @@
 import { ListSortOrderType } from './list-sort-order.enum';
 
-export interface ListState<T = string, M = object> {
+export interface ListState<T extends string, M extends object> {
     pageModel: PageModel;
     sortModel: SortModel<T>;
     filterModel: M;

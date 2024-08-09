@@ -26,6 +26,8 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
             color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
             placement: 'right',
         },
+        width: '300px',
+        minWidth: '200px',
     },
     {
         align: 'left',
@@ -50,7 +52,6 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
             color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
             placement: 'right',
         },
-        minWidth: '100px',
     },
     {
         align: 'left',
@@ -75,7 +76,8 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
             color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
             placement: 'left',
         },
-        minWidth: '100px',
+        width: '300px',
+        minWidth: '200px',
     },
     {
         align: 'right',
@@ -90,6 +92,8 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
             propertyName: 'age',
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,
         },
+        width: '150px',
+        minWidth: '100px',
     },
     {
         align: 'left',
@@ -109,6 +113,8 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
             propertyName: 'sex',
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,
         },
+        width: '150px',
+        minWidth: '100px',
     },
     {
         align: 'left',
@@ -119,6 +125,8 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
             align: 'left',
             label: 'Bio',
         },
+        width: '200px',
+        minWidth: '150px',
     },
     {
         align: 'right',
@@ -133,6 +141,8 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
             propertyName: 'bill',
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,
         },
+        width: '150px',
+        minWidth: '100px',
     },
     {
         align: 'left',
@@ -147,6 +157,8 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
             propertyName: 'birthdate',
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,
         },
+        width: '150px',
+        minWidth: '100px',
     },
     {
         align: 'left',
@@ -157,6 +169,8 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
             align: 'left',
             label: 'Items',
         },
+        width: '300px',
+        minWidth: '200px',
     },
     {
         align: 'left',
@@ -171,5 +185,7 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
             const name: { firstname: string; lastname: string } = (value as ResponsiblePerson).name;
             return `${name.firstname} ${name.lastname}`;
         },
+        width: '150px',
+        minWidth: '100px',
     },
 ];

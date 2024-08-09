@@ -1,6 +1,3 @@
-@use '../base/mixin' as mixins;
-@use '../base/variables' as vars;
-
 // TABLE
 .c-table {
     width: 100%;
@@ -38,18 +35,27 @@
     height: var(--rt-table-row-height);
     color: var(--rt-table-row-color);
     border-bottom: var(--rt-table-row-border-bottom);
+    background-color: var(--rt-table-row-background-color);
 
-    &:not(:hover) {
-        //
+    position: relative;
+    pointer-events: none;
+
+    &--active {
+        border-bottom: var(--rt-table-row-active-border-bottom);
+    }
+
+    &--clickable {
+        cursor: pointer;
+        pointer-events: auto;
     }
 
     &:hover {
         border-bottom: var(--rt-table-row-hover-border-bottom);
         transition: var(--rt-table-row-hover-transition);
-    }
 
-    &--active {
-        border-bottom: var(--rt-table-row-active-border-bottom);
+        .c-table-actions {
+            visibility: visible;
+        }
     }
 }
 
@@ -94,18 +100,56 @@ td.c-table__cell {
 
     padding: var(--rt-table-base-cell-padding);
 
-    &:last-child {
-        padding: var(--rt-table-base-cell-last-child-padding);
+    &--copyable {
+        &:last-of-type {
+            padding: var(--rt-table-base-cell-last-child-padding);
+        }
     }
 }
-// CELL ACTIONS
-.c-table__actions {
+
+// ROW ACTIONS
+.c-table-actions {
     width: 100%;
     height: 100%;
 
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
+    position: absolute;
+    right: 0;
+    top: 0;
 
-    padding: 0 mixins.rem(10);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    pointer-events: none;
+
+    &__container {
+        position: sticky;
+
+        right: 0;
+        width: 4rem;
+        height: calc(100% - 1px);
+
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+
+        background: linear-gradient(
+            to right,
+            rgba(var(--rt-table-row-actions-background-color-rgb), 0) 0%,
+            rgba(var(--rt-table-row-actions-background-color-rgb), 0.7) 10%,
+            rgba(var(--rt-table-row-actions-background-color-rgb), 1) 20%,
+            rgba(var(--rt-table-row-actions-background-color-rgb), 1) 100%
+        );
+        pointer-events: none;
+    }
+
+    &__action {
+        position: sticky;
+        right: 0.5rem;
+        pointer-events: auto;
+    }
+
+    &--hidden {
+        visibility: hidden;
+    }
 }
