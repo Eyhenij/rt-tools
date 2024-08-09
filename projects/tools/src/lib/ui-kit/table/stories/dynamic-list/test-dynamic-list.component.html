@@ -7,15 +7,17 @@
     [appearance]="'fill'"
     [searchTerm]="searchTerm"
     [pageModel]="pageModel"
-    [sortModel]="sortModel"
-    (sortChangeAction)="sortChange($event)">
+    [currentSortModel]="currentSortModel"
+    (sortChange)="onSortChange($event)"
+    (pageModelChange)="onPageModelChange($event)"
+    (rowClick)="onRowClick($event)">
     <ng-container *rtuiDynamicListToolbarActionsDirective>
         <button
             mat-mini-fab
             type="button"
-            aria-label="Icon-button for table refresh"
+            aria-label="Icon-button for create customer action"
             class="c-button c-button--fab"
-            matTooltip="Refresh"
+            matTooltip="Create Customer"
             matTooltipPosition="below"
             [matTooltipDisabled]="isMobile">
             <mat-icon [rtIconOutlinedDirective]="true">person</mat-icon>
@@ -24,12 +26,22 @@
         <button
             mat-mini-fab
             type="button"
-            aria-label="Icon-button for table refresh"
+            aria-label="Icon-button for opening information dialog"
             class="c-button c-button--fab"
-            matTooltip="Refresh"
+            matTooltip="Info"
             matTooltipPosition="below"
             [matTooltipDisabled]="isMobile">
             <mat-icon [rtIconOutlinedDirective]="true">info</mat-icon>
+        </button>
+    </ng-container>
+
+    <ng-container *rtuiDynamicListRowActionsDirective>
+        <button mat-menu-item (click)="onEdit($event)">
+            <span>Edit</span>
+        </button>
+
+        <button mat-menu-item (click)="onDelete($event)">
+            <span>Delete</span>
         </button>
     </ng-container>
 </rtui-dynamic-list>

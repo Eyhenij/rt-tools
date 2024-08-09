@@ -5,10 +5,9 @@
                 <th rtElem="cell" [rtMod]="{ sortable: column?.sorting }">
                     <rtui-table-header-cell
                         [headerModel]="column.header"
-                        [currentSortPropertyName]="sortModel()?.propertyName"
-                        [currentSortDirection]="sortModel()?.sortDirection"
                         [sortModel]="column?.sorting"
-                        (sortChange)="sortChange($event)" />
+                        [currentSortModel]="currentSortModel()"
+                        (sortChange)="onSortChange($event)" />
                 </th>
             }
         </tr>
@@ -16,11 +15,39 @@
 
     <tbody>
         @for (row of entities(); track i; let i = $index) {
-            <tr rtElem="row">
+            <tr
+                rtElem="row"
+                [rtMod]="{
+                    clickable: !!rowActionsTpl(),
+                    active: activeRowIndex() === i,
+                }"
+                (click)="onRowClick(row)">
                 @for (column of columns(); track column.propName) {
-                    <td rtElem="cell">
+                    <td rtElem="cell" [rtMod]="{ copyable: column?.copyable }">
                         <rtui-table-base-cell [row]="row" [column]="column" [isMobile]="isMobile()" />
                     </td>
+                }
+
+                @if (rowActionsTpl()) {
+                    <div rtBlock="c-table-actions" [rtMod]="{ hidden: activeRowIndex() !== i }">
+                        <div rtElem="container">
+                            <button
+                                rtElem="action"
+                                aria-label="Icon-button for a context menu"
+                                mat-icon-button
+                                [disableRipple]="true"
+                                [matMenuTriggerFor]="menuTpl"
+                                (menuOpened)="onMenuOpen(i)"
+                                (menuClosed)="onMenuClose()"
+                                (click)="$event.stopPropagation()">
+                                <mat-icon [rtIconOutlinedDirective]="true">more_vert</mat-icon>
+                            </button>
+                        </div>
+
+                        <mat-menu #menuTpl="matMenu" xPosition="before">
+                            <ng-template *ngTemplateOutlet="rowActionsTpl() ?? null" />
+                        </mat-menu>
+                    </div>
                 }
             </tr>
         }

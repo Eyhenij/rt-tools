@@ -5,64 +5,78 @@
     width: 100%;
     height: 100%;
 
+    position: relative;
+
     display: flex;
-    flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-
     gap: var(--rt-table-pagination-gap);
-
-    min-height: var(--rt-table-pagination-min-height);
-    position: relative;
 
     color: var(--rt-table-pagination-font-color);
     font-size: var(--rt-table-pagination-font-size);
     font-weight: var(--rt-table-pagination-font-weight);
+    line-height: var(--rt-table-pagination-font-line-height);
+
+    @include mixins.media-breakpoint-up(vars.$device-md) {
+        .paging,
+        .page-size-toggle {
+            margin: var(--rt-table-pagination-margin);
+        }
+    }
 
     @include mixins.media-breakpoint-down(vars.$device-md) {
         flex-direction: column;
         justify-content: center;
         align-items: flex-start;
-        min-height: var(--rt-table-pagination-min-height-mobile);
         gap: var(--rt-table-pagination-gap-mobile);
+
+        .paging {
+            margin: var(--rt-table-pagination-paging-mobile-margin);
+        }
+
+        .page-size-toggle {
+            margin: var(--rt-table-pagination-toggle-selector-mobile-margin);
+        }
     }
 
     .paging {
         display: flex;
-        flex-direction: row;
         justify-content: center;
         align-items: center;
         gap: var(--rt-table-pagination-paging-gap);
 
         &__item {
             display: flex;
-            flex-direction: row;
             justify-content: center;
             align-items: center;
 
             position: relative;
 
-            height: var(--rt-table-pagination-paging-item-height);
-            min-width: var(--rt-table-pagination-paging-item-min-width);
             padding: var(--rt-table-pagination-paging-item-padding);
             border: var(--rt-table-pagination-paging-item-border);
-            border-radius: 30%;
+            border-radius: var(--rt-table-pagination-paging-item-border-radius);
 
             background-color: transparent;
             cursor: default;
             pointer-events: none;
 
+            &-label {
+                min-width: 1rem;
+                text-align: center;
+            }
+
             svg {
-                fill-opacity: 0.3;
+                fill-opacity: var(--rt-table-pagination-paging-item-disabled-svg-opacity);
             }
 
             &:hover:not(.divider) {
-                color: var(--clr-green-60);
+                color: var(--rt-table-pagination-paging-item-hover-color);
+                background-color: var(--rt-table-pagination-paging-item-hover-background-color);
             }
 
             &--active {
-                color: var(--clr-green-60);
-                background-color: var(--clr-black-20);
+                color: var(--rt-table-pagination-paging-item-active-color);
+                background-color: var(--rt-table-pagination-paging-item-active-background-color);
             }
 
             &--enabled {
@@ -87,17 +101,23 @@
         flex-direction: row;
         justify-content: center;
         align-items: center;
-
         gap: var(--rt-table-pagination-size-toggle-gap);
 
         &__selector {
             width: auto;
             min-width: var(--rt-table-pagination-size-toggle-selector-min-width);
-            height: var(--rt-table-pagination-paging-item-height);
+            height: var(--rt-table-pagination-size-toggle-selector-height);
+
             border: var(--rt-table-pagination-paging-item-border);
-            border-radius: 20%;
+            border-radius: var(--rt-table-pagination-paging-item-border-radius);
+
             background-color: transparent;
             cursor: pointer;
+
+            color: var(--rt-table-pagination-font-color);
+            font-size: var(--rt-table-pagination-font-size);
+            font-weight: var(--rt-table-pagination-font-weight);
+            line-height: var(--rt-table-pagination-font-line-height);
         }
     }
 }

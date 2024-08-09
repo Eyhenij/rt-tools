@@ -8,7 +8,7 @@
             [class.c-pagination__paging-item--disabled]="!currentPageModel().hasPrev"
             (click)="onClick(currentPageModel().pageNumber - 1)"
             (keydown)="onClick(currentPageModel().pageNumber - 1)">
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M15.5 8.5H0.5" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                 <path
                     d="M5.5 3.5L0.5 8.5L5.5 13.5"
@@ -31,7 +31,7 @@
                 }"
                 (click)="onClick(number)"
                 (keydown)="onClick(number)">
-                <span>{{ number }}</span>
+                <span rtElem="item-label">{{ number }}</span>
             </div>
         }
 
@@ -42,7 +42,7 @@
             [rtMod]="{ enabled: currentPageModel()?.hasNext }"
             (click)="onClick(currentPageModel().pageNumber + 1)"
             (keydown)="onClick(currentPageModel().pageNumber + 1)">
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0.5 8.5H15.5" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                 <path
                     d="M10.5 3.5L15.5 8.5L10.5 13.5"
