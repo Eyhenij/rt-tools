@@ -19,15 +19,15 @@
             </svg>
         </div>
 
-        @for (number of numbers; track $index) {
+        @for (number of numbers(); track $index) {
             <div
                 rtElem="item"
                 role="button"
                 tabindex="1"
                 [rtMod]="{
                     active: currentPageModel().pageNumber === number,
-                    divider: number === divider,
-                    enabled: number !== divider && currentPageModel().pageNumber !== number,
+                    divider: number === divider(),
+                    enabled: number !== divider() && currentPageModel().pageNumber !== number,
                 }"
                 (click)="onClick(number)"
                 (keydown)="onClick(number)">

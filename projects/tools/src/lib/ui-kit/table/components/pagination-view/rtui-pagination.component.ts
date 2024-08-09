@@ -42,15 +42,15 @@ export class RtuiPaginationComponent implements OnInit {
     public readonly pageModelChange: OutputEmitterRef<Partial<PageModel>> = output<Partial<PageModel>>();
 
     public control: FormControl<number> = this.#fb.nonNullable.control(DEFAULT_PAGE_SIZE);
-    public numbers: Array<number | string> = [];
-    public readonly divider: string = '...';
+    public readonly divider: Signal<string> = signal('...');
+    public readonly numbers: WritableSignal<Array<number | string>> = signal([]);
     public readonly previousPageModel: WritableSignal<Nullable<PageModel>> = signal(null);
     public readonly pageSizes: Signal<number[]> = computed(() => {
         return [10, 20, 40, 50].filter((el: number) => el <= this.currentPageModel()?.totalCount);
     });
 
     public ngOnInit(): void {
-        this.numbers = this.#fillArray();
+        this.numbers.set(this.#fillArray());
         this.control.patchValue(this.currentPageModel()?.pageSize ?? DEFAULT_PAGE_SIZE, { emitEvent: false });
 
         this.control.valueChanges.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((value: number) => {
@@ -60,7 +60,7 @@ export class RtuiPaginationComponent implements OnInit {
         effect(
             () => {
                 if (Boolean(this.currentPageModel()) && Boolean(this.previousPageModel())) {
-                    this.numbers = this.#fillArray();
+                    this.numbers.set(this.#fillArray());
                 }
                 this.previousPageModel.set(this.currentPageModel());
             },
@@ -103,29 +103,29 @@ export class RtuiPaginationComponent implements OnInit {
             return result;
         } else {
             if (current < 3 || current > total - 2) {
-                return result.slice(0, 3).concat(this.divider, ...result.slice(total - 3, total));
+                return result.slice(0, 3).concat(this.divider(), ...result.slice(total - 3, total));
             }
 
             if (current === 3) {
-                return result.slice(0, 4).concat(this.divider, ...result.slice(total - 2, total));
+                return result.slice(0, 4).concat(this.divider(), ...result.slice(total - 2, total));
             }
 
             if (current === 4) {
-                return result.slice(0, 5).concat(this.divider, ...result.slice(total - 1, total));
+                return result.slice(0, 5).concat(this.divider(), ...result.slice(total - 1, total));
             }
 
             if (current > 4 && current <= total - 4) {
                 return result
                     .slice(0, 1)
-                    .concat(this.divider, current - 1, current, current + 1, this.divider, ...result.slice(total - 1, total));
+                    .concat(this.divider(), current - 1, current, current + 1, this.divider(), ...result.slice(total - 1, total));
             }
 
             if (current === total - 3) {
-                return result.slice(0, 1).concat(this.divider, ...result.slice(total - 5, total));
+                return result.slice(0, 1).concat(this.divider(), ...result.slice(total - 5, total));
             }
 
             if (current === total - 2) {
-                return result.slice(0, 2).concat(this.divider, ...result.slice(total - 4, total));
+                return result.slice(0, 2).concat(this.divider(), ...result.slice(total - 4, total));
             }
 
             return [];
