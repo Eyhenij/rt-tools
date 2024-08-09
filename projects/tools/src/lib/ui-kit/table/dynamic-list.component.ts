@@ -74,7 +74,7 @@ export class RtuiDynamicListRowActionsDirective {}
         RtuiTableComponent,
     ],
 })
-export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown>, KEY = Extract<keyof ENTITY_TYPE, string>> {
+export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown>, KEY extends Extract<keyof ENTITY_TYPE, string>> {
     public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
         transform: booleanAttribute,
     });
