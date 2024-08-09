@@ -35,6 +35,7 @@
     height: var(--rt-table-row-height);
     color: var(--rt-table-row-color);
     border-bottom: var(--rt-table-row-border-bottom);
+    background-color: var(--rt-table-row-background-color);
 
     position: relative;
     pointer-events: none;
@@ -53,13 +54,15 @@
         pointer-events: auto;
     }
 
-    &:not(:has(:hover)) {
-        .c-table__actions {
+    &:not(:hover) {
+        .c-table-actions {
             visibility: hidden;
+        }
+    }
 
-            &:has(.c-table__actions-action--active) {
-                visibility: visible;
-            }
+    &:hover {
+        .c-table-actions {
+            visibility: visible;
         }
     }
 }
@@ -107,7 +110,7 @@ td.c-table__cell {
 }
 
 // ROW ACTIONS
-.c-table__actions {
+.c-table-actions {
     width: 100%;
     height: 100%;
 
@@ -121,21 +124,34 @@ td.c-table__cell {
 
     pointer-events: none;
 
-    &-mask {
-        position: absolute;
+    &__container {
+        position: sticky;
+
         right: 0;
-        width: 100%;
-        height: 100%;
-        background: inherit;
-        backdrop-filter: blur(4px);
-        mask-image: linear-gradient(to right, transparent 0, var(--clr-black-100) 100%);
+        width: 4rem;
+        height: calc(100% - 1px);
+
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+
+        background: linear-gradient(
+            to right,
+            rgba(var(--rt-table-row-actions-background-color-rgb), 0) 0%,
+            rgba(var(--rt-table-row-actions-background-color-rgb), 0.7) 10%,
+            rgba(var(--rt-table-row-actions-background-color-rgb), 1) 20%,
+            rgba(var(--rt-table-row-actions-background-color-rgb), 1) 100%
+        );
         pointer-events: none;
     }
 
-    &-action {
+    &__action {
         position: sticky;
         right: 0.5rem;
-        background-color: var(--clr-gray-5);
         pointer-events: auto;
+    }
+
+    &--active {
+        visibility: visible;
     }
 }

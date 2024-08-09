@@ -15,7 +15,13 @@
 
     <tbody>
         @for (row of entities(); track i; let i = $index) {
-            <tr rtElem="row" [rtMod]="{ clickable: !!rowActionsTpl() }" (click)="onRowClick(row)">
+            <tr
+                rtElem="row"
+                [rtMod]="{
+                    clickable: !!rowActionsTpl(),
+                    active: activeRowIndex() === i,
+                }"
+                (click)="onRowClick(row)">
                 @for (column of columns(); track column.propName) {
                     <td rtElem="cell">
                         <rtui-table-base-cell [row]="row" [column]="column" [isMobile]="isMobile()" />
@@ -23,24 +29,26 @@
                 }
 
                 @if (rowActionsTpl()) {
-                    <div rtElem="actions">
-                        <div rtElem="actions-mask"></div>
+                    <div
+                        rtBlock="c-table-actions"
+                        [rtMod]="{
+                            active: activeRowIndex() === i,
+                        }">
+                        <div rtElem="container">
+                            <button
+                                rtElem="action"
+                                aria-label="Icon-button for a context menu"
+                                mat-icon-button
+                                [disableRipple]="true"
+                                [matMenuTriggerFor]="menuTpl"
+                                (menuOpened)="onMenuOpen(i)"
+                                (menuClosed)="onMenuClose()"
+                                (click)="$event.stopPropagation()">
+                                <mat-icon [rtIconOutlinedDirective]="true">more_vert</mat-icon>
+                            </button>
+                        </div>
 
-                        <button
-                            rtElem="actions-action"
-                            aria-label="Icon-button with a menu"
-                            mat-icon-button
-                            [rtMod]="{ active: i === activeRowIndex() }"
-                            [disableRipple]="true"
-                            [matMenuTriggerFor]="menuAddressBook"
-                            [class.active]="i === activeRowIndex()"
-                            (menuOpened)="onMenuOpen(i)"
-                            (menuClosed)="onMenuClose()"
-                            (click)="$event.stopPropagation()">
-                            <mat-icon [rtIconOutlinedDirective]="true">more_vert</mat-icon>
-                        </button>
-
-                        <mat-menu #menuAddressBook="matMenu" xPosition="before">
+                        <mat-menu #menuTpl="matMenu" xPosition="before">
                             <ng-template *ngTemplateOutlet="rowActionsTpl() ?? null" />
                         </mat-menu>
                     </div>

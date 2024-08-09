@@ -157,10 +157,13 @@
 
     --rt-table-row-height: 3rem;
     --rt-table-row-color: var(--clr-txt);
+    --rt-table-row-background-color: transparent;
     --rt-table-row-border-bottom: 1px solid var(--clr-black-20);
     --rt-table-row-hover-border-bottom: 1px solid var(--clr-blue-100);
     --rt-table-row-hover-transition: 0.2s;
     --rt-table-row-active-border-bottom: 1px solid var(--clr-blue-100);
+
+    --rt-table-row-actions-background-color-rgb: 255, 255, 255;
 
     --rt-table-base-cell-prefix-icon-size: 1.5rem;
     --rt-table-base-cell-suffix-icon-size: 1.5rem;
