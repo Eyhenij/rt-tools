@@ -20,6 +20,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatMiniFabButton } from '@angular/material/button';
+import { MatCheckbox } from '@angular/material/checkbox';
 import { MatFormField, MatFormFieldAppearance, MatPrefix, MatSuffix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
@@ -36,7 +37,7 @@ import {
     RtuiScrollableContainerHeaderDirective,
 } from '../../../scrollable';
 import { RtuiSpinnerComponent } from '../../../spinner';
-import { RtuiToolbarComponent, RtuiToolbarRightDirective } from '../../../toolbar';
+import { RtuiToolbarComponent, RtuiToolbarLeftDirective, RtuiToolbarRightDirective } from '../../../toolbar';
 import { PageModel } from '../../util/lists.interface';
 import { RtuiClearButtonComponent } from '../clear-search-button/rtui-clear-button.component';
 import { RtuiPaginationComponent } from '../pagination-view/rtui-pagination.component';
@@ -65,6 +66,7 @@ export class RtuiTableToolbarActionsDirective {}
         MatSuffix,
         MatMiniFabButton,
         MatTooltip,
+        MatCheckbox,
 
         // Standalone components
         RtuiPaginationComponent,
@@ -84,6 +86,7 @@ export class RtuiTableToolbarActionsDirective {}
         RtuiScrollableContainerContentDirective,
         RtuiScrollableContainerHeaderDirective,
         RtIconOutlinedDirective,
+        RtuiToolbarLeftDirective,
     ],
 })
 export class RtuiTableContainerComponent implements OnInit {
@@ -112,6 +115,12 @@ export class RtuiTableContainerComponent implements OnInit {
     public isActionsIconsOutlined: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
+    public isSelectorShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
+    public isAllEntitiesSelected: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
     public searchTerm: InputSignalWithTransform<Nullable<string>, Nullable<string>> = input<Nullable<string>, Nullable<string>>('', {
         transform: (value: Nullable<string>) => (isString(value) ? value.trim() : ''),
     });
@@ -122,6 +131,7 @@ export class RtuiTableContainerComponent implements OnInit {
     public readonly pageModelChange: OutputEmitterRef<Partial<PageModel>> = output<Partial<PageModel>>();
     public readonly searchChange: OutputEmitterRef<Nullable<string>> = output<Nullable<string>>();
     public readonly refreshAction: OutputEmitterRef<void> = output<void>();
+    public readonly toggleAllEntities: OutputEmitterRef<boolean> = output<boolean>();
 
     public readonly toolbarActionsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiTableToolbarActionsDirective, {
         read: TemplateRef,
@@ -161,5 +171,9 @@ export class RtuiTableContainerComponent implements OnInit {
         }
 
         this.refreshAction.emit();
+    }
+
+    public onToggleAllEntities(checked: boolean): void {
+        this.toggleAllEntities.emit(checked);
     }
 }

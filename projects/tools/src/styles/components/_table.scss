@@ -18,7 +18,9 @@
                 background-color: var(--rt-table-header-background-color);
 
                 &:hover {
-                    background-color: color-mix(in srgb, var(--rt-table-header-background-color), var(--clr-white) 30%);
+                    &:not(.c-table__cell--selectable) {
+                        background-color: color-mix(in srgb, var(--rt-table-header-background-color), var(--clr-white) 30%);
+                    }
                 }
             }
         }
@@ -38,7 +40,6 @@
     background-color: var(--rt-table-row-background-color);
 
     position: relative;
-    pointer-events: none;
 
     &--active {
         border-bottom: var(--rt-table-row-active-border-bottom);
@@ -46,7 +47,6 @@
 
     &--clickable {
         cursor: pointer;
-        pointer-events: auto;
     }
 
     &:hover {
@@ -77,11 +77,12 @@ th.c-table__cell {
     border-bottom: var(--rt-table-header-cell-border-bottom);
     background-color: var(--rt-table-header-cell-background-color);
 
-    &--sortable {
+    &--sortable,
+    &--selectable {
         pointer-events: auto;
     }
 
-    &:not(:last-child) {
+    &:not(:last-child):not(&--selectable) {
         &::after {
             content: '';
             position: absolute;
