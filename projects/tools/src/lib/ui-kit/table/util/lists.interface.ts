@@ -7,7 +7,7 @@ export interface ListState<T extends string, M extends object> {
     searchTerm: string;
 }
 
-export interface SortModel<T extends string> {
+export interface SortModel<T = string> {
     propertyName: T;
     sortDirection: ListSortOrderType;
 }

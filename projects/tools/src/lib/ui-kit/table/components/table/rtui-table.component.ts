@@ -58,7 +58,10 @@ export class RtuiTableRowActionsDirective {}
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RtuiTableComponent<ENTITY_TYPE extends Record<string, unknown>, KEY extends Extract<keyof ENTITY_TYPE, string>> {
+export class RtuiTableComponent<
+    ENTITY_TYPE extends Record<string, unknown>,
+    SORT_PROPERTY = NonNullable<Extract<keyof ENTITY_TYPE, string>>,
+> {
     public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
         transform: booleanAttribute,
     });
@@ -71,10 +74,10 @@ export class RtuiTableComponent<ENTITY_TYPE extends Record<string, unknown>, KEY
     >({
         transform: (value: Array<ITable.Column<ENTITY_TYPE>>) => transformArrayInput(value),
     });
-    public sortModel: InputSignal<Nullable<SortModel<KEY>>> = input.required();
+    public currentSortModel: InputSignal<Nullable<SortModel<SORT_PROPERTY>>> = input.required();
 
-    public readonly rowClickAction: OutputEmitterRef<ENTITY_TYPE> = output<ENTITY_TYPE>();
-    public readonly sortChangeAction: OutputEmitterRef<SortModel<KEY>> = output<SortModel<KEY>>();
+    public readonly rowClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
+    public readonly sortChange: OutputEmitterRef<SortModel<SORT_PROPERTY>> = output<SortModel<SORT_PROPERTY>>();
 
     public readonly rowActionsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiTableRowActionsDirective, {
         read: TemplateRef,
@@ -82,8 +85,8 @@ export class RtuiTableComponent<ENTITY_TYPE extends Record<string, unknown>, KEY
 
     public readonly activeRowIndex: WritableSignal<Nullable<number>> = signal(null);
 
-    public sortChange(sortModel: SortModel<KEY>): void {
-        this.sortChangeAction.emit(sortModel);
+    public onSortChange(sortModel: SortModel<SORT_PROPERTY>): void {
+        this.sortChange.emit(sortModel);
     }
 
     public onMenuOpen(index: number): void {
@@ -94,7 +97,7 @@ export class RtuiTableComponent<ENTITY_TYPE extends Record<string, unknown>, KEY
         this.activeRowIndex.set(null);
     }
 
-    public onRowClick(row: ENTITY_TYPE): void {
-        this.rowClickAction.emit(row);
+    public onRowClick(row: NonNullable<ENTITY_TYPE>): void {
+        this.rowClick.emit(row);
     }
 }

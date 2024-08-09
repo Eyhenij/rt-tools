@@ -74,7 +74,7 @@ export class RtuiDynamicListRowActionsDirective {}
         RtuiTableComponent,
     ],
 })
-export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown>> {
+export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown>, KEY = Extract<keyof ENTITY_TYPE, string>> {
     public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
         transform: booleanAttribute,
     });
@@ -85,26 +85,29 @@ export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown
         transform: booleanAttribute,
     });
 
-    public entities: InputSignalWithTransform<ENTITY_TYPE[], ENTITY_TYPE[]> = input<ENTITY_TYPE[], ENTITY_TYPE[]>([], {
+    public entities: InputSignalWithTransform<ENTITY_TYPE[], ENTITY_TYPE[]> = input.required<ENTITY_TYPE[], ENTITY_TYPE[]>({
         transform: (value: ENTITY_TYPE[]) => transformArrayInput(value),
     });
-    public columns: InputSignalWithTransform<Array<ITable.Column<ENTITY_TYPE>>, Array<ITable.Column<ENTITY_TYPE>>> = input<
+    public columns: InputSignalWithTransform<Array<ITable.Column<ENTITY_TYPE>>, Array<ITable.Column<ENTITY_TYPE>>> = input.required<
         Array<ITable.Column<ENTITY_TYPE>>,
         Array<ITable.Column<ENTITY_TYPE>>
-    >([], {
+    >({
         transform: (value: Array<ITable.Column<ENTITY_TYPE>>) => transformArrayInput(value),
     });
-    public appearance: InputSignal<MatFormFieldAppearance> = input.required();
-    public pageModel: InputSignal<PageModel> = input.required();
-    public sortModel: InputSignal<Nullable<SortModel<Extract<keyof ENTITY_TYPE, string>>>> = input.required();
-    public searchTerm: InputSignal<Nullable<string>> = input.required();
 
-    public readonly sortChangeAction: OutputEmitterRef<SortModel<Extract<keyof ENTITY_TYPE, string>>> =
-        output<SortModel<Extract<keyof ENTITY_TYPE, string>>>();
-    public readonly pageModelChangeAction: OutputEmitterRef<Partial<PageModel>> = output<Partial<PageModel>>();
-    public readonly searchChangeAction: OutputEmitterRef<Nullable<string>> = output<Nullable<string>>();
-    public readonly refreshAction: OutputEmitterRef<void> = output<void>();
-    public readonly rowClickAction: OutputEmitterRef<ENTITY_TYPE> = output<ENTITY_TYPE>();
+    public pageModel: InputSignal<PageModel> = input.required();
+    public searchTerm: InputSignal<Nullable<string>> = input.required();
+    public currentSortModel: InputSignal<Nullable<SortModel<NonNullable<KEY>>>> = input.required();
+
+    public appearance: InputSignal<MatFormFieldAppearance> = input.required({
+        transform: (value: MatFormFieldAppearance) => (value === 'fill' ? 'fill' : 'outline'),
+    });
+
+    public readonly sortChange: OutputEmitterRef<SortModel<NonNullable<KEY>>> = output<SortModel<NonNullable<KEY>>>();
+    public readonly pageModelChange: OutputEmitterRef<Partial<PageModel>> = output<Partial<PageModel>>();
+    public readonly searchChange: OutputEmitterRef<Nullable<string>> = output<Nullable<string>>();
+    public readonly refresh: OutputEmitterRef<void> = output<void>();
+    public readonly rowClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
 
     public readonly toolbarActionsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiDynamicListToolbarActionsDirective, {
         read: TemplateRef,
@@ -113,23 +116,23 @@ export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown
         read: TemplateRef,
     });
 
-    public searchChange(value: Nullable<string>): void {
-        this.searchChangeAction.emit(value);
+    public onSearchChange(value: Nullable<string>): void {
+        this.searchChange.emit(value);
     }
 
-    public sortChange(sortModel: SortModel<Extract<keyof ENTITY_TYPE, string>>): void {
-        this.sortChangeAction.emit(sortModel);
+    public onSortChange(sortModel: SortModel<NonNullable<KEY>>): void {
+        this.sortChange.emit(sortModel);
     }
 
-    public pageModelChange(pageModel: Partial<PageModel>): void {
-        this.pageModelChangeAction.emit(pageModel);
+    public onPageModelChange(pageModel: Partial<PageModel>): void {
+        this.pageModelChange.emit(pageModel);
     }
 
-    public refresh(): void {
-        this.refreshAction.emit();
+    public onRefresh(): void {
+        this.refresh.emit();
     }
 
     public onRowClick(row: ENTITY_TYPE): void {
-        this.rowClickAction.emit(row);
+        this.rowClick.emit(row);
     }
 }

@@ -7,8 +7,10 @@
     [appearance]="'fill'"
     [searchTerm]="searchTerm"
     [pageModel]="pageModel"
-    [sortModel]="sortModel"
-    (sortChangeAction)="sortChange($event)">
+    [currentSortModel]="currentSortModel"
+    (sortChange)="onSortChange($event)"
+    (pageModelChange)="onPageModelChange($event)"
+    (rowClick)="onRowClick($event)">
     <ng-container *rtuiDynamicListToolbarActionsDirective>
         <button
             mat-mini-fab

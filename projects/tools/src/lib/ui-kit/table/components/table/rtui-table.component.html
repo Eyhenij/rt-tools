@@ -5,10 +5,9 @@
                 <th rtElem="cell" [rtMod]="{ sortable: column?.sorting }">
                     <rtui-table-header-cell
                         [headerModel]="column.header"
-                        [currentSortPropertyName]="sortModel()?.propertyName"
-                        [currentSortDirection]="sortModel()?.sortDirection"
                         [sortModel]="column?.sorting"
-                        (sortChange)="sortChange($event)" />
+                        [currentSortModel]="currentSortModel()"
+                        (sortChange)="onSortChange($event)" />
                 </th>
             }
         </tr>
@@ -16,10 +15,7 @@
 
     <tbody>
         @for (row of entities(); track i; let i = $index) {
-            <tr
-                rtElem="row"
-                [rtMod]="{ clickable: !!rowActionsTpl() }"
-                (click)="rowActionsTpl() ? onRowClick(row) : $event.stopPropagation()">
+            <tr rtElem="row" [rtMod]="{ clickable: !!rowActionsTpl() }" (click)="onRowClick(row)">
                 @for (column of columns(); track column.propName) {
                     <td rtElem="cell">
                         <rtui-table-base-cell [row]="row" [column]="column" [isMobile]="isMobile()" />

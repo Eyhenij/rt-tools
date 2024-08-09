@@ -51,22 +51,27 @@ import { ITable } from '../../util/table-column.interface';
 })
 export class RtuiTableHeaderCellComponent<
     ENTITY_TYPE extends Record<string, unknown>,
-    SORT_PROPERTY extends Extract<keyof ENTITY_TYPE, string>,
+    SORT_PROPERTY = NonNullable<Extract<keyof ENTITY_TYPE, string>>,
 > {
     readonly #sanitizer: DomSanitizer = inject(DomSanitizer);
-    protected readonly sortOrderType: typeof LIST_SORT_ORDER_ENUM = LIST_SORT_ORDER_ENUM;
+    protected readonly sortOrderTypes: typeof LIST_SORT_ORDER_ENUM = LIST_SORT_ORDER_ENUM;
 
     public headerModel: InputSignal<ITable.Header> = input.required<ITable.Header>();
-    public currentSortPropertyName: InputSignal<SORT_PROPERTY> = input.required<SORT_PROPERTY>();
-    public currentSortDirection: InputSignal<Nullable<ListSortOrderType>> = input.required<Nullable<ListSortOrderType>>();
     public sortModel: InputSignal<Nullable<SortModel<SORT_PROPERTY>>> = input.required<Nullable<SortModel<SORT_PROPERTY>>>();
+    public currentSortModel: InputSignal<Nullable<SortModel<SORT_PROPERTY>>> = input.required<Nullable<SortModel<SORT_PROPERTY>>>();
     public headerDataEllipsisMaxLines: InputSignalWithTransform<number, number> = input<number, number>(1, {
         transform: numberAttribute,
     });
 
     public readonly sortChange: OutputEmitterRef<SortModel<SORT_PROPERTY>> = output<SortModel<SORT_PROPERTY>>();
 
-    public readonly active: Signal<boolean> = computed(() => this.currentSortPropertyName() === this.sortModel()?.propertyName);
+    public readonly active: Signal<boolean> = computed(() => {
+        return (
+            !!this.currentSortModel()?.propertyName &&
+            !!this.sortModel()?.propertyName &&
+            this.currentSortModel()?.propertyName === this.sortModel()?.propertyName
+        );
+    });
 
     @HostBinding('style')
     private get style(): SafeStyle {
@@ -86,10 +91,7 @@ export class RtuiTableHeaderCellComponent<
     }
 
     private getNextSortOrder(): ListSortOrderType {
-        if (
-            this.sortModel()?.propertyName === this.currentSortPropertyName() &&
-            this.sortModel()?.sortDirection === this.currentSortDirection()
-        ) {
+        if (this.currentSortModel()?.sortDirection?.toLowerCase() === LIST_SORT_ORDER_ENUM.ASC) {
             return LIST_SORT_ORDER_ENUM.DESC;
         }
 

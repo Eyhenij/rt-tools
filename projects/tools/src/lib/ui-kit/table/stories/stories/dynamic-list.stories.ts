@@ -33,7 +33,7 @@ export const ManyColumns: Story = {
             hasPrev: false,
             hasNext: true,
         },
-        sortModel: {
+        currentSortModel: {
             propertyName: 'id',
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,
         },
@@ -55,7 +55,7 @@ export const FewColumns: Story = {
             hasPrev: true,
             hasNext: true,
         },
-        sortModel: {
+        currentSortModel: {
             propertyName: 'id',
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,
         },
@@ -75,7 +75,7 @@ export const FewItems: Story = {
             pageSize: 10,
             totalCount: 5,
         },
-        sortModel: {
+        currentSortModel: {
             propertyName: 'id',
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,
         },
@@ -95,7 +95,7 @@ export const NoItems: Story = {
             pageSize: 10,
             totalCount: 0,
         },
-        sortModel: {
+        currentSortModel: {
             propertyName: 'id',
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,
         },

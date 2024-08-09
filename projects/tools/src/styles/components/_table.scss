@@ -37,6 +37,7 @@
     border-bottom: var(--rt-table-row-border-bottom);
 
     position: relative;
+    pointer-events: none;
 
     &:hover {
         border-bottom: var(--rt-table-row-hover-border-bottom);
@@ -49,6 +50,7 @@
 
     &--clickable {
         cursor: pointer;
+        pointer-events: auto;
     }
 
     &:not(:has(:hover)) {
