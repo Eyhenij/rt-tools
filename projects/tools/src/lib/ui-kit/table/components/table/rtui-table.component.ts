@@ -58,10 +58,7 @@ export class RtuiTableRowActionsDirective {}
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RtuiTableComponent<
-    ENTITY_TYPE extends Record<string, unknown>,
-    SORT_PROPERTY = NonNullable<Extract<keyof ENTITY_TYPE, string>>,
-> {
+export class RtuiTableComponent<ENTITY_TYPE extends Record<string, unknown>, SORT_PROPERTY extends Extract<keyof ENTITY_TYPE, string>> {
     public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
         transform: booleanAttribute,
     });
@@ -85,8 +82,9 @@ export class RtuiTableComponent<
 
     public readonly activeRowIndex: WritableSignal<Nullable<number>> = signal(null);
 
-    public onSortChange(sortModel: SortModel<SORT_PROPERTY>): void {
-        this.sortChange.emit(sortModel);
+    public onSortChange(sortModel: SortModel<string>): void {
+        // TODO: add type guard
+        this.sortChange.emit(sortModel as SortModel<SORT_PROPERTY>);
     }
 
     public onMenuOpen(index: number): void {

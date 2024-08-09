@@ -49,21 +49,18 @@ import { ITable } from '../../util/table-column.interface';
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RtuiTableHeaderCellComponent<
-    ENTITY_TYPE extends Record<string, unknown>,
-    SORT_PROPERTY = NonNullable<Extract<keyof ENTITY_TYPE, string>>,
-> {
+export class RtuiTableHeaderCellComponent {
     readonly #sanitizer: DomSanitizer = inject(DomSanitizer);
     protected readonly sortOrderTypes: typeof LIST_SORT_ORDER_ENUM = LIST_SORT_ORDER_ENUM;
 
     public headerModel: InputSignal<ITable.Header> = input.required<ITable.Header>();
-    public sortModel: InputSignal<Nullable<SortModel<SORT_PROPERTY>>> = input.required<Nullable<SortModel<SORT_PROPERTY>>>();
-    public currentSortModel: InputSignal<Nullable<SortModel<SORT_PROPERTY>>> = input.required<Nullable<SortModel<SORT_PROPERTY>>>();
+    public sortModel: InputSignal<Nullable<SortModel<string>>> = input.required<Nullable<SortModel<string>>>();
+    public currentSortModel: InputSignal<Nullable<SortModel<string>>> = input.required<Nullable<SortModel<string>>>();
     public headerDataEllipsisMaxLines: InputSignalWithTransform<number, number> = input<number, number>(1, {
         transform: numberAttribute,
     });
 
-    public readonly sortChange: OutputEmitterRef<SortModel<SORT_PROPERTY>> = output<SortModel<SORT_PROPERTY>>();
+    public readonly sortChange: OutputEmitterRef<SortModel<string>> = output<SortModel<string>>();
 
     public readonly active: Signal<boolean> = computed(() => {
         return (
@@ -80,7 +77,7 @@ export class RtuiTableHeaderCellComponent<
 
     @HostListener('click')
     private handleClick(): void {
-        const sortPropertyName: Nullable<SORT_PROPERTY> = this.sortModel()?.propertyName;
+        const sortPropertyName: Nullable<string> = this.sortModel()?.propertyName;
 
         if (sortPropertyName) {
             this.sortChange.emit({
