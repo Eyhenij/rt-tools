@@ -58,24 +58,23 @@ export class RtuiTableRowActionsDirective {}
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RtuiTableComponent<ENTITY_TYPE = { [key: string]: unknown }> {
+export class RtuiTableComponent<ENTITY_TYPE extends Record<string, unknown>, KEY extends Extract<keyof ENTITY_TYPE, string>> {
     public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
         transform: booleanAttribute,
     });
-    public entities: InputSignalWithTransform<ENTITY_TYPE[], ENTITY_TYPE[]> = input<ENTITY_TYPE[], ENTITY_TYPE[]>([], {
+    public entities: InputSignalWithTransform<ENTITY_TYPE[], ENTITY_TYPE[]> = input.required<ENTITY_TYPE[], ENTITY_TYPE[]>({
         transform: (value: ENTITY_TYPE[]) => transformArrayInput(value),
     });
-    public columns: InputSignalWithTransform<Array<ITable.Column<ENTITY_TYPE>>, Array<ITable.Column<ENTITY_TYPE>>> = input<
+    public columns: InputSignalWithTransform<Array<ITable.Column<ENTITY_TYPE>>, Array<ITable.Column<ENTITY_TYPE>>> = input.required<
         Array<ITable.Column<ENTITY_TYPE>>,
         Array<ITable.Column<ENTITY_TYPE>>
-    >([], {
+    >({
         transform: (value: Array<ITable.Column<ENTITY_TYPE>>) => transformArrayInput(value),
     });
-    public sortModel: InputSignal<Nullable<SortModel<Extract<keyof ENTITY_TYPE, string>>>> = input.required();
+    public sortModel: InputSignal<Nullable<SortModel<KEY>>> = input.required();
 
     public readonly rowClickAction: OutputEmitterRef<ENTITY_TYPE> = output<ENTITY_TYPE>();
-    public readonly sortChangeAction: OutputEmitterRef<SortModel<Extract<keyof ENTITY_TYPE, string>>> =
-        output<SortModel<Extract<keyof ENTITY_TYPE, string>>>();
+    public readonly sortChangeAction: OutputEmitterRef<SortModel<KEY>> = output<SortModel<KEY>>();
 
     public readonly rowActionsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiTableRowActionsDirective, {
         read: TemplateRef,
@@ -83,7 +82,7 @@ export class RtuiTableComponent<ENTITY_TYPE = { [key: string]: unknown }> {
 
     public readonly activeRowIndex: WritableSignal<Nullable<number>> = signal(null);
 
-    public sortChange(sortModel: SortModel<Extract<keyof ENTITY_TYPE, string>>): void {
+    public sortChange(sortModel: SortModel<KEY>): void {
         this.sortChangeAction.emit(sortModel);
     }
 

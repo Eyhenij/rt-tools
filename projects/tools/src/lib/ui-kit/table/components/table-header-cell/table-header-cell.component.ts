@@ -49,7 +49,10 @@ import { ITable } from '../../util/table-column.interface';
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RtuiTableHeaderCellComponent<SORT_PROPERTY = string> {
+export class RtuiTableHeaderCellComponent<
+    ENTITY_TYPE extends Record<string, unknown>,
+    SORT_PROPERTY extends Extract<keyof ENTITY_TYPE, string>,
+> {
     readonly #sanitizer: DomSanitizer = inject(DomSanitizer);
     protected readonly sortOrderType: typeof LIST_SORT_ORDER_ENUM = LIST_SORT_ORDER_ENUM;
 

@@ -20,7 +20,7 @@
         [entities]="entities()"
         [columns]="columns()"
         [sortModel]="sortModel()"
-        (rowClicAction)="onRowClick($event)"
+        (rowClickAction)="onRowClick($event)"
         (sortChangeAction)="sortChange($event)">
         @if (rowActionsTpl()) {
             <ng-container *rtuiTabletRowActionsDirective>
