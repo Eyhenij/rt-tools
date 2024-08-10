@@ -12,3 +12,5 @@ export * from './storage.factory';
 export * from './in-memory-storage.service';
 export * from './storage.service';
 export * from './json-converter';
+
+export * from './providers';

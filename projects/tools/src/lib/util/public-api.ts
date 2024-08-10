@@ -7,3 +7,5 @@ export * from './tokens';
 export * from './validators';
 export * from './enums';
 export * from './directives';
+
+export * from './providers';
