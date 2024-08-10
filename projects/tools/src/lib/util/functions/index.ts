@@ -2,6 +2,7 @@ export * from './date-string-to-date';
 export * from './is-date-valid';
 export * from './is-equal';
 export * from './is-number';
+export * from './is-record';
 export * from './is-string';
 export * from './is-today';
 export * from './remove-field-from-obj';
