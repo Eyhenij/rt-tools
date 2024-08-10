@@ -5,21 +5,21 @@ export interface MessageBusEvent<T = string> {
     readonly type: T;
 }
 
-export class MessageBus<T extends MessageBusEvent<M>, M> {
-    #eventSource: Subject<T> = new Subject<T>();
+export class MessageBus<M> {
+    readonly #eventSource: Subject<MessageBusEvent<M>> = new Subject<MessageBusEvent<M>>();
 
-    public emit(event: T): void {
+    public emit(event: MessageBusEvent<M>): void {
         this.#eventSource.next(event);
     }
 
-    public onEmit(): Observable<T> {
+    public onEmit(): Observable<MessageBusEvent<M>> {
         return this.#eventSource.asObservable();
     }
 
-    public ofType(eventType: M): Observable<T> {
+    public ofType(eventType: M): Observable<MessageBusEvent<M>> {
         return this.onEmit().pipe(
-            filter((event: T): boolean => event.type === eventType),
-            map((event: T) => event)
+            filter((event: MessageBusEvent<M>): event is MessageBusEvent<M> => event.type === eventType),
+            map((event: MessageBusEvent<M>) => event)
         );
     }
 }
