@@ -74,7 +74,7 @@ export const FewItems: Story = {
         isMobile: false,
         loading: false,
         fetching: false,
-        isSelectorShown: false,
+        isSelectorShown: true,
         isAllEntitiesSelected: false,
         data: createPersonList(5),
         columns: COLUMNS.slice(0, 5),
