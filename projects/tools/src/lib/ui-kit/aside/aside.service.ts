@@ -14,6 +14,19 @@ export class RtAsideService {
     readonly #overlay: Overlay = inject(Overlay);
     readonly #router: Router = inject(Router);
 
+    /**
+     * Opens an aside panel with a specified component, position, and data.
+     *
+     * @template COMPONENT - The type of the component to display in the aside panel.
+     * @template DATA - The type of the data to pass to the component.
+     * @template ANSWER - The type of the response expected from the aside panel.
+     *
+     * @param component - The component to render inside the aside panel.
+     * @param position - The position (left or right) where the aside panel should appear.
+     * @param data - The data to pass to the component in the aside panel.
+     *
+     * @returns An observable that emits the response from the aside panel when it is closed.
+     */
     public Open<COMPONENT = null, DATA = null, ANSWER = null>(
         component: ComponentType<COMPONENT>,
         position: AsidePositions,
@@ -46,6 +59,13 @@ export class RtAsideService {
         return answer ? answer.asObservable() : of(null);
     }
 
+    /**
+     * Creates an `OverlayConfig` object to configure the overlay's position, scroll behavior, and backdrop.
+     *
+     * @param position - The position (left or right) where the aside panel should appear.
+     *
+     * @returns An `OverlayConfig` object with the specified settings.
+     */
     #createOverlayConfig(position: AsidePositions): OverlayConfig {
         const config: Partial<OverlayConfig> = {
             width: 'auto',
@@ -63,11 +83,28 @@ export class RtAsideService {
         return new OverlayConfig(config);
     }
 
+    /**
+     * Creates and returns an `OverlayRef` object that represents the overlay to be displayed.
+     *
+     * @param position - The position (left or right) where the aside panel should appear.
+     *
+     * @returns An `OverlayRef` object that manages the overlay's lifecycle.
+     */
     #createOverlay(position: AsidePositions): OverlayRef {
         const overlayConfig: OverlayConfig = this.#createOverlayConfig(position);
         return this.#overlay.create(overlayConfig);
     }
 
+    /**
+     * Creates a `ComponentPortal` for the `RtuiAsidePanelComponent`, injecting the `AsideRef` instance.
+     *
+     * @template D - The type of data passed to the aside component.
+     * @template R - The type of the response expected from the aside component.
+     *
+     * @param asideRef - The `AsideRef` instance containing the data and component for the aside panel.
+     *
+     * @returns A `ComponentPortal` that can be attached to an overlay.
+     */
     #createPortal<D, R>(asideRef: AsideRef<D, R>): ComponentPortal<RtuiAsidePanelComponent> {
         const injector: Injector = Injector.create({
             providers: [
