@@ -6,48 +6,28 @@ import { Observable, throwError } from 'rxjs';
 import { BaseStoreService } from './base-store.service';
 import { BASE_INITIAL_STATE } from './constants/base-initial-state.const';
 import { ModelStatus } from './enums/async-state-status.enum';
-import { IAction } from './interfaces/action.interface';
 import { IBaseAsyncStoreService, ISetPropertiesConfig } from './interfaces/async-store-service.interface';
 import { IStateBase } from './interfaces/state-base.interface';
 
-export abstract class BaseAsyncStoreService<
-        STATE_TYPE extends IStateBase.Async,
-        MSG_TYPE extends string,
-        ACTION_TYPE extends IAction<MSG_TYPE>,
-    >
-    extends BaseStoreService<STATE_TYPE, MSG_TYPE, ACTION_TYPE>
+export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async, MSG_TYPE extends string>
+    extends BaseStoreService<STATE_TYPE, MSG_TYPE>
     implements IBaseAsyncStoreService
 {
     // ================================
     // Selectors
     // ================================
 
-    public readonly loading: Signal<boolean>;
-    public readonly fetching: Signal<boolean>;
-    public readonly pending: Signal<boolean>;
-    public readonly requestStatus: Signal<ModelStatus>;
-    public readonly loadingStatus: Signal<ModelStatus>;
-    public readonly fetchingStatus: Signal<ModelStatus>;
-    public readonly upsertStatus: Signal<ModelStatus>;
-    public readonly deleteStatus: Signal<ModelStatus>;
+    public readonly loading: Signal<boolean> = computed(() => this.store().loading);
+    public readonly fetching: Signal<boolean> = computed(() => this.store().fetching);
+    public readonly pending: Signal<boolean> = computed(() => this.loading() || this.fetching());
+    public readonly requestStatus: Signal<ModelStatus> = computed(() => this.store().requestStatus || ModelStatus.Init);
+    public readonly loadingStatus: Signal<ModelStatus> = computed(() => this.store().loadingStatus || ModelStatus.Init);
+    public readonly fetchingStatus: Signal<ModelStatus> = computed(() => this.store().fetchingStatus || ModelStatus.Init);
+    public readonly upsertStatus: Signal<ModelStatus> = computed(() => this.store().upsertStatus || ModelStatus.Init);
+    public readonly deleteStatus: Signal<ModelStatus> = computed(() => this.store().deleteStatus || ModelStatus.Init);
 
     protected constructor() {
         super();
-        this.patchState(
-            (state: STATE_TYPE): STATE_TYPE => ({
-                ...state,
-                ...BASE_INITIAL_STATE.ASYNC,
-            })
-        );
-
-        this.loading = computed(() => !!this.select('loading')());
-        this.fetching = computed(() => !!this.select('fetching')());
-        this.pending = computed<boolean>(() => this.loading() || this.fetching());
-        this.requestStatus = computed(() => this.select('requestStatus')() || ModelStatus.Init);
-        this.loadingStatus = computed(() => this.select('loadingStatus')() || ModelStatus.Init);
-        this.fetchingStatus = computed(() => this.select('fetchingStatus')() || ModelStatus.Init);
-        this.upsertStatus = computed(() => this.select('upsertStatus')() || ModelStatus.Init);
-        this.deleteStatus = computed(() => this.select('deleteStatus')() || ModelStatus.Init);
     }
 
     // ================================
