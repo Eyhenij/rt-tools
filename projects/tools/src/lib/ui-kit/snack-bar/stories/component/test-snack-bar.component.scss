@@ -1,0 +1,24 @@
+:host {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: -1rem;
+
+    .content {
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .action {
+        button {
+            width: 8rem;
+        }
+
+        button + button {
+            margin-left: 1rem;
+        }
+    }
+}
