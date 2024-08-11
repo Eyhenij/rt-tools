@@ -9,9 +9,9 @@ import { RtuiHeaderCenterDirective, RtuiHeaderComponent, RtuiHeaderRightDirectiv
 
 @Component({
     standalone: true,
-    selector: 'header',
-    templateUrl: './header.component.html',
-    styleUrls: ['./header.component.scss'],
+    selector: 'app-header',
+    templateUrl: './test-header.component.html',
+    styleUrls: ['./test-header.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         NgTemplateOutlet,
@@ -32,13 +32,14 @@ import { RtuiHeaderCenterDirective, RtuiHeaderComponent, RtuiHeaderRightDirectiv
     ],
     providers: [],
 })
-export class HeaderComponent {
+export class TestHeaderComponent {
     public isMobile: boolean = false;
     public isTabs: boolean = false;
     public title: string = '';
     public content: string = '';
 
     public openMobileMenu(): void {
+        // eslint-disable-next-line no-console
         console.log('OpenMobileMenuAction');
     }
 }
