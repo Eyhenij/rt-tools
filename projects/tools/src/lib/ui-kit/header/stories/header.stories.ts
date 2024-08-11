@@ -2,19 +2,19 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 
-import { HeaderComponent } from './component/header.component';
+import { TestHeaderComponent } from './component/test-header.component';
 
 export default {
     title: 'Components/Header',
-    component: HeaderComponent,
+    component: TestHeaderComponent,
     decorators: [
         moduleMetadata({
             imports: [BrowserAnimationsModule],
         }),
     ],
-} as Meta<HeaderComponent>;
+} as Meta<TestHeaderComponent>;
 
-type Story = StoryObj<HeaderComponent>;
+type Story = StoryObj<TestHeaderComponent>;
 
 export const Header: Story = {
     args: {
