@@ -5,6 +5,7 @@ export type Person = {
     name: string;
     email: string;
     age: number;
+    status: Status;
     sex: SexType;
     bio: string;
     bill: number;
@@ -20,3 +21,5 @@ export type ResponsiblePerson = {
         lastname: string;
     };
 };
+
+export type Status = 'active' | 'inactive' | 'invited' | 'deleted';
