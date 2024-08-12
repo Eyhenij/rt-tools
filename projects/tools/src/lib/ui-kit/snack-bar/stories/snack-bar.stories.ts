@@ -5,7 +5,7 @@ import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { TestSnackBarComponent } from './component/test-snack-bar.component';
 
 export default {
-    title: 'Components/Snack Bar',
+    title: 'Components/SnackBar',
     component: TestSnackBarComponent,
     decorators: [
         moduleMetadata({
@@ -16,6 +16,50 @@ export default {
 
 type Story = StoryObj<TestSnackBarComponent>;
 
-export const DefaultSnackBar: Story = {
-    args: {},
+export const SnackBarDefault: Story = {
+    args: {
+        action: '',
+        defaultMessage: 'Default Snack Bar opened',
+        successMessage: 'Success Snack Bar opened',
+        errorMessage: 'Error Snack Bar opened',
+        warningMessage: 'Warning Snack Bar opened',
+    },
+};
+
+export const SnackBarWithActions: Story = {
+    args: {
+        action: 'Action button title',
+        defaultMessage: 'Default Snack Bar opened',
+        successMessage: 'Success Snack Bar opened',
+        errorMessage: 'Error Snack Bar opened',
+        warningMessage: 'Warning Snack Bar opened',
+    },
+};
+
+export const SnackBarWithLongTitles: Story = {
+    args: {
+        action: '',
+        defaultMessage:
+            'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s',
+        successMessage:
+            'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s',
+        errorMessage:
+            'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s',
+        warningMessage:
+            'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s',
+    },
+};
+
+export const SnackBarWithLongTitlesAndActions: Story = {
+    args: {
+        action: 'Action button title',
+        defaultMessage:
+            'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s',
+        successMessage:
+            'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s',
+        errorMessage:
+            'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s',
+        warningMessage:
+            'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s',
+    },
 };

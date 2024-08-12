@@ -1,44 +1,44 @@
+::ng-deep {
+    .snack-bar-success {
+        --mdc-snackbar-container-color: var(--rt-snack-bar-success-background-color);
+        --mdc-snackbar-supporting-text-color: var(--rt-snack-bar-success-text-color);
+        --rt-snack-bar-action-color: var(--rt-snack-bar-success-action-color);
+        --rt-snack-bar-close-button-color: var(--rt-snack-bar-success-close-button-color);
+    }
+
+    .snack-bar-warning {
+        --mdc-snackbar-container-color: var(--rt-snack-bar-warning-background-color);
+        --mdc-snackbar-supporting-text-color: var(--rt-snack-bar-warning-text-color);
+        --rt-snack-bar-action-color: var(--rt-snack-bar-warning-action-color);
+        --rt-snack-bar-close-button-color: var(--rt-snack-bar-warning-close-button-color);
+    }
+
+    .snack-bar-danger {
+        --mdc-snackbar-container-color: var(--rt-snack-bar-danger-background-color);
+        --mdc-snackbar-supporting-text-color: var(--clr-white);
+        --rt-snack-bar-action-color: var(--rt-snack-bar-danger-action-color);
+        --rt-snack-bar-close-button-color: var(--rt-snack-bar-danger-close-button-color);
+    }
+}
+
 :host {
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    .close-wrapper {
-        padding: 0.25rem;
-        display: flex;
-        cursor: pointer;
-    }
-
-    .close-icon {
-        color: var(--clr-white);
-    }
-
-    .action-button {
-        margin: 0 0.25rem;
-        color: #8ab4f8;
-        position: relative;
-
-        &:before {
-            content: '';
-            display: block;
-            opacity: 0;
-            position: absolute;
-            transition-duration: 0.15s;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: -1;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            top: 0;
-            background-color: #4285f4;
-            border-radius: 4px;
-            transform: scale(0);
-            transition-property: transform, opacity;
+    .rt-snack-bar {
+        &__action-button {
+            position: relative;
+            height: 100%;
+            padding: var(--rt-snack-bar-action-padding);
+            margin: var(--rt-snack-bar-action-margin);
+            color: var(--rt-snack-bar-action-color);
         }
 
-        &:hover:before {
-            transform: scale(1);
-            opacity: 0.25;
+        &__close-button {
+            &-icon {
+                color: var(--rt-snack-bar-close-button-color);
+            }
         }
     }
 }

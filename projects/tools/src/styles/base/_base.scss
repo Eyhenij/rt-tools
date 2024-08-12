@@ -6,22 +6,50 @@
     --clr-black-20: #e0e0e0;
     --clr-black-40: #a3a3a3;
     --clr-black-60: #747474;
+    --clr-black-80: #323033;
     --clr-black-100: #181818;
     --clr-red-10: #fdedee;
     --clr-red-40: #f7b9bb;
     --clr-red-60: #f39699;
     --clr-red-100: #eb5055;
+    --clr-orange-80: #ee7a34;
     --clr-blue-40: #b3ceef;
+    --clr-blue-80: #4285f4;
     --clr-blue-100: #4284d7;
     --clr-green-10: #e5f8f4;
     --clr-green-60: #46c4c0;
+    --clr-green-80: #00b894;
     --clr-base-accent: #0d1c2b;
 
     --clr-txt: rgba(0, 0, 0, 0.87);
 
-    //--mdc-snackbar-supporting-text-color: ;
-    //--mdc-snackbar-container-color: ;
-    --mdc-snackbar-container-shape: 8px;
+    // SnackBar
+    --mdc-snackbar-container-color: var(--rt-snack-bar-default-background-color);
+    --mdc-snackbar-supporting-text-color: var(--clr-white);
+    --mdc-snackbar-container-shape: 0.5rem;
+
+    --rt-snack-bar-default-background-color: var(--clr-black-80);
+    --rt-snack-bar-success-background-color: var(--clr-green-80);
+    --rt-snack-bar-warning-background-color: var(--clr-orange-80);
+    --rt-snack-bar-danger-background-color: var(--clr-red-100);
+
+    --rt-snack-bar-action-padding: 0.5rem;
+    --rt-snack-bar-action-margin: 0 0.25rem;
+    --rt-snack-bar-action-color: var(--clr-blue-80);
+    --rt-snack-bar-action-background-color: var(--clr-blue-100);
+    --rt-snack-bar-success-action-color: var(--clr-black-80);
+    --rt-snack-bar-warning-action-color: var(--clr-black-80);
+    --rt-snack-bar-danger-action-color: var(--clr-black-80);
+
+    --rt-snack-bar-close-button-color: var(--clr-white);
+    --rt-snack-bar-success-close-button-color: var(--clr-white);
+    --rt-snack-bar-warning-close-button-color: var(--clr-white);
+    --rt-snack-bar-danger-close-button-color: var(--clr-white);
+
+    --rt-snack-bar-default-text-color: var(--clr-white);
+    --rt-snack-bar-success-text-color: var(--clr-white);
+    --rt-snack-bar-warning-text-color: var(--clr-white);
+    --rt-snack-bar-danger-text-color: var(--clr-white);
 
     // Aside
     --rt-aside-width: 33.75rem;

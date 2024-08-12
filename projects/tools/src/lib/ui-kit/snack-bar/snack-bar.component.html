@@ -1,9 +1,11 @@
-{{ data.message }}
+<ng-container rtBlock="rt-snack-bar">
+    <div rtElem="content">{{ data.message }}</div>
 
-@if (data.action) {
-    <button class="action-button" mat-button (click)="dismiss()">{{ data.action }}</button>
-}
+    @if (data.action) {
+        <button rtElem="action-button" mat-button (click)="dismiss()">{{ data.action }}</button>
+    }
 
-<button color="accent" mat-icon-button type="button" (click)="close()">
-    <mat-icon class="close-icon">close</mat-icon>
-</button>
+    <button rtElem="close-button" color="accent" mat-icon-button type="button" (click)="close()">
+        <mat-icon rtElem="close-button-icon">close</mat-icon>
+    </button>
+</ng-container>

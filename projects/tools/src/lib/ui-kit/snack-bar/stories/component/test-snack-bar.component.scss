@@ -5,6 +5,8 @@
     flex-direction: column;
     margin: -1rem;
 
+    --rt-toolbar-body-height: 3.25rem;
+
     .content {
         flex-grow: 1;
         display: flex;
@@ -13,6 +15,8 @@
     }
 
     .action {
+        margin-left: 1rem;
+
         button {
             width: 8rem;
         }

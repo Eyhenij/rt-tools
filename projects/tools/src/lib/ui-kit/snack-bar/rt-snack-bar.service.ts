@@ -2,12 +2,12 @@ import { Injectable, inject } from '@angular/core';
 import { MatSnackBar, MatSnackBarConfig, MatSnackBarRef } from '@angular/material/snack-bar';
 
 import { Nullable } from '../../util';
-import { SnackBarComponent } from './snack-bar.compontent';
+import { RtuiSnackBarComponent } from './snack-bar.compontent';
 
 @Injectable({
     providedIn: 'root',
 })
-export class SnackBarService {
+export class RtSnackBarService {
     readonly #snackBar: MatSnackBar = inject(MatSnackBar);
     private readonly defaultConfig: Readonly<MatSnackBarConfig> = {
         duration: 5000000,
@@ -17,8 +17,8 @@ export class SnackBarService {
         message: string,
         action: Nullable<string> = null,
         config: MatSnackBarConfig = this.defaultConfig
-    ): MatSnackBarRef<SnackBarComponent> {
-        return this.#snackBar.openFromComponent(SnackBarComponent, {
+    ): MatSnackBarRef<RtuiSnackBarComponent> {
+        return this.#snackBar.openFromComponent(RtuiSnackBarComponent, {
             ...config,
             data: { message, action },
         });
@@ -28,9 +28,9 @@ export class SnackBarService {
         message: string,
         action: Nullable<string> = null,
         config: MatSnackBarConfig = { ...this.defaultConfig, panelClass: 'snack-bar-warning' }
-    ): MatSnackBarRef<SnackBarComponent> {
+    ): MatSnackBarRef<RtuiSnackBarComponent> {
         config = { ...config, panelClass: 'snack-bar-warning' };
-        return this.#snackBar.openFromComponent(SnackBarComponent, {
+        return this.#snackBar.openFromComponent(RtuiSnackBarComponent, {
             ...config,
             data: { message, action },
         });
@@ -40,9 +40,9 @@ export class SnackBarService {
         message: string,
         action: Nullable<string> = null,
         config: MatSnackBarConfig = { ...this.defaultConfig, panelClass: 'snack-bar-danger' }
-    ): MatSnackBarRef<SnackBarComponent> {
+    ): MatSnackBarRef<RtuiSnackBarComponent> {
         config = { ...config, panelClass: 'snack-bar-danger' };
-        return this.#snackBar.openFromComponent(SnackBarComponent, {
+        return this.#snackBar.openFromComponent(RtuiSnackBarComponent, {
             ...config,
             data: { message, action },
         });
@@ -52,9 +52,9 @@ export class SnackBarService {
         message: string,
         action: Nullable<string> = null,
         config: MatSnackBarConfig = { ...this.defaultConfig }
-    ): MatSnackBarRef<SnackBarComponent> {
+    ): MatSnackBarRef<RtuiSnackBarComponent> {
         config = { ...config, panelClass: 'snack-bar-success' };
-        return this.#snackBar.openFromComponent(SnackBarComponent, {
+        return this.#snackBar.openFromComponent(RtuiSnackBarComponent, {
             ...config,
             data: { message, action },
         });
