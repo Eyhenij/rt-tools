@@ -28,6 +28,11 @@
     --mdc-snackbar-supporting-text-color: var(--clr-white);
     --mdc-snackbar-container-shape: 0.5rem;
 
+    --rt-snack-bar-content-gap: 1rem;
+    --rt-snack-bar-message-line-clamp: 5;
+    --rt-snack-bar-icon-color: var(--clr-white);
+    --rt-snack-bar-icon-size: 2rem;
+
     --rt-snack-bar-default-background-color: var(--clr-black-80);
     --rt-snack-bar-success-background-color: var(--clr-green-80);
     --rt-snack-bar-warning-background-color: var(--clr-orange-80);
@@ -50,6 +55,8 @@
     --rt-snack-bar-success-text-color: var(--clr-white);
     --rt-snack-bar-warning-text-color: var(--clr-white);
     --rt-snack-bar-danger-text-color: var(--clr-white);
+
+    --rt-snack-bar-progress-height: 0.5rem;
 
     // Aside
     --rt-aside-width: 33.75rem;

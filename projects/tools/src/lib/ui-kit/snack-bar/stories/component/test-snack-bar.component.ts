@@ -38,6 +38,8 @@ import { RtSnackBarService } from '../../rt-snack-bar.service';
 export class TestSnackBarComponent {
     readonly #snackBarService: RtSnackBarService = inject(RtSnackBarService);
 
+    public isDurationShownFalse: boolean = false;
+    public isColoredBackground: boolean = false;
     public action: string = 'Test Action';
     public defaultMessage: string = 'Default Snack Bar opened';
     public successMessage: string = 'Success Snack Bar opened';
@@ -47,28 +49,28 @@ export class TestSnackBarComponent {
     public verticalPosition: MatSnackBarVerticalPosition = 'bottom';
 
     public openDefault(): void {
-        this.#snackBarService.default(this.defaultMessage, this.action, {
+        this.#snackBarService.default(this.defaultMessage, this.action, this.isDurationShownFalse, {
             horizontalPosition: this.horizontalPosition,
             verticalPosition: this.verticalPosition,
         });
     }
 
     public openSuccess(): void {
-        this.#snackBarService.success(this.successMessage, this.action, {
+        this.#snackBarService.success(this.successMessage, this.action, 'check', this.isDurationShownFalse, this.isColoredBackground, {
             horizontalPosition: this.horizontalPosition,
             verticalPosition: this.verticalPosition,
         });
     }
 
     public openError(): void {
-        this.#snackBarService.danger(this.errorMessage, this.action, {
+        this.#snackBarService.danger(this.errorMessage, this.action, 'warning', this.isDurationShownFalse, this.isColoredBackground, {
             horizontalPosition: this.horizontalPosition,
             verticalPosition: this.verticalPosition,
         });
     }
 
     public openWarning(): void {
-        this.#snackBarService.warning(this.warningMessage, this.action, {
+        this.#snackBarService.warning(this.warningMessage, this.action, 'warning', this.isDurationShownFalse, this.isColoredBackground, {
             horizontalPosition: this.horizontalPosition,
             verticalPosition: this.verticalPosition,
         });

@@ -1,5 +1,13 @@
 <ng-container rtBlock="rt-snack-bar">
-    <div rtElem="content">{{ data.message }}</div>
+    <div rtElem="content">
+        @if (data?.icon) {
+            <div rtElem="content-icon-wrapper">
+                <mat-icon rtElem="content-icon" [rtIconOutlinedDirective]="false">{{ data.icon }}</mat-icon>
+            </div>
+        }
+
+        <div rtElem="content-message">{{ data.message }}</div>
+    </div>
 
     @if (data.action) {
         <button rtElem="action-button" mat-button (click)="dismiss()">{{ data.action }}</button>
@@ -8,4 +16,13 @@
     <button rtElem="close-button" color="accent" mat-icon-button type="button" (click)="close()">
         <mat-icon rtElem="close-button-icon">close</mat-icon>
     </button>
+
+    @if (data?.duration) {
+        <div
+            rtElem="progress"
+            [@progressDecreaseAnimation]="{
+                value: isInitAnimation() ? 'start' : 'end',
+                params: { time: data.duration + 'ms' },
+            }"></div>
+    }
 </ng-container>

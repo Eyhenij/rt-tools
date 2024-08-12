@@ -8,5 +8,8 @@ export namespace ISnackBar {
     export interface Data {
         message: string;
         action?: string;
+        icon?: string;
+        duration?: number;
+        isDurationShown?: boolean;
     }
 }
