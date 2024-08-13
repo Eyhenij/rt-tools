@@ -1,13 +1,35 @@
+@use '../../../../../styles/base/variables' as vars;
+@use '../../../../../styles/base/mixin' as mixins;
+
+$clear-button: (
+    host: (
+        margin: 0 0.5rem 0 0,
+        padding: 0.1rem,
+        background-color: var(--clr-black-20),
+    ),
+    icon: (
+        size: 1rem,
+        color: var(--clr-black-60),
+        hover-color: var(--clr-black-100),
+    ),
+);
+
 :host {
-    .clear-button {
+    @each $element, $elements in $clear-button {
+        @each $style-token, $value in $elements {
+            #{mixins.generateCssVar(vars.$styles-prefix, 'clear-button', #{$element}, #{$style-token})}: #{$value};
+        }
+    }
+
+    .rtui-clear-button {
         display: flex;
         justify-content: center;
         align-items: center;
         border: none;
         border-radius: 50%;
-        margin: var(--rt-clear-button-margin);
-        padding: var(--rt-clear-button-padding);
-        background-color: var(--rt-clear-button-background-color);
+        margin: var(--rt-clear-button-host-margin);
+        padding: var(--rt-clear-button-host-padding);
+        background-color: var(--rt-clear-button-host-background-color);
 
         &__icon {
             width: var(--rt-clear-button-icon-size);
@@ -16,7 +38,7 @@
             color: var(--rt-clear-button-icon-color);
 
             &:hover {
-                color: var(--clr-black-100);
+                color: var(--rt-clear-button-icon-hover-color);
             }
         }
     }

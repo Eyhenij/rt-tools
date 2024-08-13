@@ -1,16 +1,38 @@
 @use '../../../styles/base/variables' as vars;
 @use '../../../styles/base/mixin' as mixins;
 
+$toolbar: (
+    body: (
+        height: 3rem,
+        padding: 0 1rem,
+        background-color: transparent,
+    ),
+    body-mobile: (
+        height: 3rem,
+    ),
+    bars: (
+        border-bottom-style: solid,
+        border-bottom-width: 1px,
+        border-bottom-color: var(--clr-black-20),
+    ),
+);
+
 :host {
+    @each $element, $elements in $toolbar {
+        @each $style-token, $value in $elements {
+            #{mixins.generateCssVar(vars.$styles-prefix, 'toolbar', #{$element}, #{$style-token})}: #{$value};
+        }
+    }
+
     // hide mat tab group border bottom styles
     --mat-tab-header-divider-height: 0;
 
     .toolbar {
-        --mat-toolbar-standard-height: var(--rt-toolbar-body-height-mobile);
-        --mdc-secondary-navigation-tab-container-height: var(--rt-toolbar-body-height-mobile-body-height);
+        --mat-toolbar-standard-height: var(--rt-toolbar-body-mobile-height);
+        --mdc-secondary-navigation-tab-container-height: var(--rt-toolbar-body-mobile-height);
 
-        min-height: var(--rt-toolbar-body-height-mobile);
-        height: var(--rt-toolbar-body-height-mobile);
+        min-height: var(--rt-toolbar-body-mobile-height);
+        height: var(--rt-toolbar-body-mobile-height);
 
         padding: var(--rt-toolbar-body-padding);
         background-color: transparent;
@@ -37,9 +59,9 @@
 
             background-color: var(--rt-toolbar-body-background-color);
 
-            border-bottom-style: var(--rt-toolbar-border-bottom-style);
-            border-bottom-width: var(--rt-toolbar-border-bottom-width);
-            border-bottom-color: var(--rt-toolbar-border-bottom-color);
+            border-bottom-style: var(--rt-toolbar-bars-border-bottom-style);
+            border-bottom-width: var(--rt-toolbar-bars-border-bottom-width);
+            border-bottom-color: var(--rt-toolbar-bars-border-bottom-color);
 
             &__bar {
                 &--left {

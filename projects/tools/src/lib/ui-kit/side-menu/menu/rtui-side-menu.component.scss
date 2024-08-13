@@ -1,4 +1,39 @@
+@use '../../../../styles/base/variables' as vars;
+@use '../../../../styles/base/mixin' as mixins;
+
+$side-menu: (
+    base: (
+        width: 5.5rem,
+        margin-top-between-items: 0.75rem,
+    ),
+    item: (
+        width: 3.5rem,
+        height: 2rem,
+        font-size: 0.75rem,
+        text-align: center,
+        line-height: 1.1,
+    ),
+    mobile-item: (
+        icon-size: 1.5rem,
+        title-font-size: 0.75rem,
+        additional-icon-size: 1rem,
+    ),
+    sub-menu: (
+        width: 15rem,
+    ),
+    sub-menu-item: (
+        width: 13.75rem,
+        title-font-size: 0.85rem,
+    ),
+);
+
 :host {
+    @each $element, $elements in $side-menu {
+        @each $style-token, $value in $elements {
+            #{mixins.generateCssVar(vars.$styles-prefix, 'side-menu', #{$element}, #{$style-token})}: #{$value};
+        }
+    }
+
     // Hide drawer mask
     --mat-sidenav-scrim-color: transparent;
 
@@ -25,9 +60,9 @@
 
                 .rtui-mobile-side-menu-item {
                     &__icon {
-                        width: var(--rt-mobile-side-menu-item-icon-size);
-                        height: var(--rt-mobile-side-menu-item-icon-size);
-                        font-size: var(--rt-mobile-side-menu-item-icon-size);
+                        width: var(--rt-side-menu-mobile-item-icon-size);
+                        height: var(--rt-side-menu-mobile-item-icon-size);
+                        font-size: var(--rt-side-menu-mobile-item-icon-size);
                     }
 
                     .rtui-mobile-side-menu-item-title {
@@ -50,9 +85,9 @@
                             border-radius: 50%;
 
                             &__icon {
-                                width: var(--rt-mobile-side-menu-item-additional-icon-size);
-                                height: var(--rt-mobile-side-menu-item-additional-icon-size);
-                                font-size: var(--rt-mobile-side-menu-item-additional-icon-size);
+                                width: var(--rt-side-menu-mobile-item-additional-icon-size);
+                                height: var(--rt-side-menu-mobile-item-additional-icon-size);
+                                font-size: var(--rt-side-menu-mobile-item-additional-icon-size);
                             }
                         }
                     }
@@ -66,7 +101,7 @@
     }
 
     .rtui-side-menu {
-        width: var(--rt-side-menu-width);
+        width: var(--rt-side-menu-base-width);
 
         &__list {
             display: flex;
@@ -105,7 +140,7 @@
             }
 
             .rtui-side-menu-item + .rtui-side-menu-item {
-                margin-top: var(--rt-side-menu-margin-top-between-items);
+                margin-top: var(--rt-side-menu-base-margin-top-between-items);
             }
         }
     }
@@ -113,7 +148,7 @@
     .rtui-sub-side-menu {
         position: fixed;
         top: 0;
-        left: var(--rt-side-menu-width);
+        left: var(--rt-side-menu-base-width);
         width: 0;
         height: 100%;
         background-color: transparent;
