@@ -19,7 +19,7 @@ export * from './lib/ui-kit/header';
 export * from './lib/ui-kit/table';
 export * from './lib/ui-kit/providers';
 export * from './lib/ui-kit/snack-bar';
-export * from './lib/ui-kit/anumation';
+export * from './lib/ui-kit/animation';
 
 // utils
 export * from './lib/util';

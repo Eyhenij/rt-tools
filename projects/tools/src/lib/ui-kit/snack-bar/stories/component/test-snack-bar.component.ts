@@ -33,12 +33,11 @@ import { RtSnackBarService } from '../../rt-snack-bar.service';
         RtuiToolbarCenterDirective,
         RtuiToolbarLeftDirective,
     ],
-    providers: [],
 })
 export class TestSnackBarComponent {
     readonly #snackBarService: RtSnackBarService = inject(RtSnackBarService);
 
-    public isDurationShownFalse: boolean = false;
+    public isProgressBarShown: boolean = false;
     public isColoredBackground: boolean = false;
     public action: string = 'Test Action';
     public defaultMessage: string = 'Default Snack Bar opened';
@@ -49,30 +48,42 @@ export class TestSnackBarComponent {
     public verticalPosition: MatSnackBarVerticalPosition = 'bottom';
 
     public openDefault(): void {
-        this.#snackBarService.default(this.defaultMessage, this.action, this.isDurationShownFalse, {
+        this.#snackBarService.default(this.defaultMessage, {
             horizontalPosition: this.horizontalPosition,
             verticalPosition: this.verticalPosition,
+            action: this.action,
+            isProgressBarShown: this.isProgressBarShown,
+            isColoredBackground: this.isColoredBackground,
         });
     }
 
     public openSuccess(): void {
-        this.#snackBarService.success(this.successMessage, this.action, 'check', this.isDurationShownFalse, this.isColoredBackground, {
+        this.#snackBarService.success(this.successMessage, {
             horizontalPosition: this.horizontalPosition,
             verticalPosition: this.verticalPosition,
+            action: this.action,
+            isProgressBarShown: this.isProgressBarShown,
+            isColoredBackground: this.isColoredBackground,
         });
     }
 
     public openError(): void {
-        this.#snackBarService.danger(this.errorMessage, this.action, 'warning', this.isDurationShownFalse, this.isColoredBackground, {
+        this.#snackBarService.danger(this.errorMessage, {
             horizontalPosition: this.horizontalPosition,
             verticalPosition: this.verticalPosition,
+            action: this.action,
+            isProgressBarShown: this.isProgressBarShown,
+            isColoredBackground: this.isColoredBackground,
         });
     }
 
     public openWarning(): void {
-        this.#snackBarService.warning(this.warningMessage, this.action, 'warning', this.isDurationShownFalse, this.isColoredBackground, {
+        this.#snackBarService.warning(this.warningMessage, {
             horizontalPosition: this.horizontalPosition,
             verticalPosition: this.verticalPosition,
+            action: this.action,
+            isProgressBarShown: this.isProgressBarShown,
+            isColoredBackground: this.isColoredBackground,
         });
     }
 }

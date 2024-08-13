@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { MatSnackBar, MatSnackBarConfig, MatSnackBarRef } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 
-import { Nullable } from '../../util';
+import { IRtSnackBar } from './snack-bar-config.interface';
 import { RtuiSnackBarComponent } from './snack-bar.compontent';
 
 @Injectable({
@@ -9,82 +9,43 @@ import { RtuiSnackBarComponent } from './snack-bar.compontent';
 })
 export class RtSnackBarService {
     readonly #snackBar: MatSnackBar = inject(MatSnackBar);
-    private readonly defaultConfig: Readonly<MatSnackBarConfig> = {
+    private readonly defaultConfig: Readonly<IRtSnackBar.Config> = {
         duration: 5000,
+        isColoredBackground: false,
     };
 
-    public default(
-        message: string,
-        action: Nullable<string> = null,
-        isDurationShown: boolean = false,
-        config: MatSnackBarConfig = this.defaultConfig
-    ): MatSnackBarRef<RtuiSnackBarComponent> {
+    public default(message: string, config: IRtSnackBar.Config = {}): MatSnackBarRef<RtuiSnackBarComponent> {
+        const fullConfig: IRtSnackBar.Config = { ...this.defaultConfig, ...config };
         return this.#snackBar.openFromComponent(RtuiSnackBarComponent, {
-            ...config,
-            data: { message, action, duration: isDurationShown ? (config?.duration ?? this.defaultConfig.duration) : 0, isDurationShown },
+            ...fullConfig,
+            data: { message, ...fullConfig },
         });
     }
 
-    public warning(
-        message: string,
-        action: Nullable<string> = null,
-        icon: Nullable<string> = null,
-        isDurationShown: boolean = false,
-        isColoredBackground: boolean = false,
-        config: MatSnackBarConfig = { ...this.defaultConfig, panelClass: 'snack-bar-warning' }
-    ): MatSnackBarRef<RtuiSnackBarComponent> {
-        config = { ...config, panelClass: isColoredBackground ? 'snack-bar-warning-colored' : 'snack-bar-warning' };
+    public warning(message: string, config: IRtSnackBar.Config = {}): MatSnackBarRef<RtuiSnackBarComponent> {
+        const fullConfig: IRtSnackBar.Config = { ...this.defaultConfig, ...config };
         return this.#snackBar.openFromComponent(RtuiSnackBarComponent, {
-            ...config,
-            data: {
-                message,
-                action,
-                icon,
-                duration: isDurationShown ? (config?.duration ?? this.defaultConfig.duration) : 0,
-                isDurationShown,
-            },
+            ...fullConfig,
+            panelClass: config.isColoredBackground ? 'snack-bar-warning-colored' : 'snack-bar-warning',
+            data: { message, ...fullConfig, icon: config.icon || 'warning' },
         });
     }
 
-    public danger(
-        message: string,
-        action: Nullable<string> = null,
-        icon: Nullable<string> = null,
-        isDurationShown: boolean = false,
-        isColoredBackground: boolean = false,
-        config: MatSnackBarConfig = { ...this.defaultConfig, panelClass: 'snack-bar-danger' }
-    ): MatSnackBarRef<RtuiSnackBarComponent> {
-        config = { ...config, panelClass: isColoredBackground ? 'snack-bar-danger-colored' : 'snack-bar-danger' };
+    public danger(message: string, config: IRtSnackBar.Config = {}): MatSnackBarRef<RtuiSnackBarComponent> {
+        const fullConfig: IRtSnackBar.Config = { ...this.defaultConfig, ...config };
         return this.#snackBar.openFromComponent(RtuiSnackBarComponent, {
-            ...config,
-            data: {
-                message,
-                action,
-                icon,
-                duration: isDurationShown ? (config?.duration ?? this.defaultConfig.duration) : 0,
-                isDurationShown,
-            },
+            ...fullConfig,
+            panelClass: config.isColoredBackground ? 'snack-bar-danger-colored' : 'snack-bar-danger',
+            data: { message, ...fullConfig, icon: config.icon || 'error' },
         });
     }
 
-    public success(
-        message: string,
-        action: Nullable<string> = null,
-        icon: Nullable<string> = null,
-        isDurationShown: boolean = false,
-        isColoredBackground: boolean = false,
-        config: MatSnackBarConfig = { ...this.defaultConfig }
-    ): MatSnackBarRef<RtuiSnackBarComponent> {
-        config = { ...config, panelClass: isColoredBackground ? 'snack-bar-success-colored' : 'snack-bar-success' };
+    public success(message: string, config: IRtSnackBar.Config = {}): MatSnackBarRef<RtuiSnackBarComponent> {
+        const fullConfig: IRtSnackBar.Config = { ...this.defaultConfig, ...config };
         return this.#snackBar.openFromComponent(RtuiSnackBarComponent, {
-            ...config,
-            data: {
-                message,
-                action,
-                icon,
-                duration: isDurationShown ? (config?.duration ?? this.defaultConfig.duration) : 0,
-                isDurationShown,
-            },
+            ...fullConfig,
+            panelClass: config.isColoredBackground ? 'snack-bar-success-colored' : 'snack-bar-success',
+            data: { message, ...fullConfig, icon: config.icon || 'check' },
         });
     }
 

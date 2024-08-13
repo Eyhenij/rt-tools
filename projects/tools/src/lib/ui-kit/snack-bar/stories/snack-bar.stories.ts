@@ -4,6 +4,27 @@ import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 
 import { TestSnackBarComponent } from './component/test-snack-bar.component';
 
+const longMsg: string =
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+
+const defaultArgs: {
+    isProgressBarShown: boolean;
+    isColoredBackground: boolean;
+    action: string;
+    defaultMessage: string;
+    successMessage: string;
+    errorMessage: string;
+    warningMessage: string;
+} = {
+    isProgressBarShown: false,
+    isColoredBackground: false,
+    action: '',
+    defaultMessage: 'Default Snack Bar opened',
+    successMessage: 'Success Snack Bar opened',
+    errorMessage: 'Error Snack Bar opened',
+    warningMessage: 'Warning Snack Bar opened',
+};
+
 export default {
     title: 'Components/SnackBar',
     component: TestSnackBarComponent,
@@ -17,81 +38,47 @@ export default {
 type Story = StoryObj<TestSnackBarComponent>;
 
 export const SnackBarDefault: Story = {
-    args: {
-        isDurationShownFalse: false,
-        isColoredBackground: false,
-        action: '',
-        defaultMessage: 'Default Snack Bar opened',
-        successMessage: 'Success Snack Bar opened',
-        errorMessage: 'Error Snack Bar opened',
-        warningMessage: 'Warning Snack Bar opened',
-    },
+    args: { ...defaultArgs },
 };
 
 export const SnackBarColored: Story = {
     args: {
-        isDurationShownFalse: false,
+        ...defaultArgs,
         isColoredBackground: true,
-        action: '',
-        defaultMessage: 'Default Snack Bar opened',
-        successMessage: 'Success Snack Bar opened',
-        errorMessage: 'Error Snack Bar opened',
-        warningMessage: 'Warning Snack Bar opened',
     },
 };
 
 export const SnackBarWithProgressBar: Story = {
     args: {
-        isDurationShownFalse: true,
-        isColoredBackground: false,
-        action: '',
-        defaultMessage: 'Default Snack Bar opened',
-        successMessage: 'Success Snack Bar opened',
-        errorMessage: 'Error Snack Bar opened',
-        warningMessage: 'Warning Snack Bar opened',
+        ...defaultArgs,
+        isProgressBarShown: true,
     },
 };
 
 export const SnackBarWithActions: Story = {
     args: {
-        isDurationShownFalse: false,
-        isColoredBackground: false,
+        ...defaultArgs,
         action: 'Action button title',
-        defaultMessage: 'Default Snack Bar opened',
-        successMessage: 'Success Snack Bar opened',
-        errorMessage: 'Error Snack Bar opened',
-        warningMessage: 'Warning Snack Bar opened',
     },
 };
 
 export const SnackBarWithLongTitles: Story = {
     args: {
-        isDurationShownFalse: false,
-        isColoredBackground: false,
-        action: '',
-        defaultMessage:
-            'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s',
-        successMessage:
-            'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s',
-        errorMessage:
-            'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s',
-        warningMessage:
-            'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s',
+        ...defaultArgs,
+        defaultMessage: longMsg,
+        successMessage: longMsg,
+        errorMessage: longMsg,
+        warningMessage: longMsg,
     },
 };
 
 export const SnackBarWithLongTitlesAndActions: Story = {
     args: {
-        isDurationShownFalse: false,
-        isColoredBackground: false,
+        ...defaultArgs,
         action: 'Action button title',
-        defaultMessage:
-            'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s',
-        successMessage:
-            'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s',
-        errorMessage:
-            'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s',
-        warningMessage:
-            'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s',
+        defaultMessage: longMsg,
+        successMessage: longMsg,
+        errorMessage: longMsg,
+        warningMessage: longMsg,
     },
 };

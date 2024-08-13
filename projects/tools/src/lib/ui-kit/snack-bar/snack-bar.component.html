@@ -1,6 +1,6 @@
 <ng-container rtBlock="rt-snack-bar">
     <div rtElem="content">
-        @if (data?.icon) {
+        @if (data.icon) {
             <div rtElem="content-icon-wrapper">
                 <mat-icon rtElem="content-icon" [rtIconOutlinedDirective]="false">{{ data.icon }}</mat-icon>
             </div>
@@ -17,7 +17,7 @@
         <mat-icon rtElem="close-button-icon">close</mat-icon>
     </button>
 
-    @if (data?.duration) {
+    @if (data.isProgressBarShown && data.duration) {
         <div
             rtElem="progress"
             [@progressDecreaseAnimation]="{
