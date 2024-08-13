@@ -48,6 +48,7 @@ export namespace ITable {
         minWidth?: string;
 
         icon?: Icon;
+        iconTransform?: (value: T[keyof T]) => string;
         href?: string;
         className?: string;
         tooltip?: string;

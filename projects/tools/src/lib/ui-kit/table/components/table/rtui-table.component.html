@@ -28,10 +28,10 @@
             <tr
                 rtElem="row"
                 [rtMod]="{
-                    clickable: !!rowActionsTpl(),
+                    clickable: isTableRowsClickable(),
                     active: activeRowIndex() === i,
                 }"
-                (click)="onRowClick(row)">
+                (click)="isTableRowsClickable() ? onRowClick(row) : $event.stopPropagation()">
                 @if (isSelectorShown()) {
                     <td rtElem="cell">
                         <mat-checkbox
@@ -64,7 +64,7 @@
                         </div>
 
                         <mat-menu #menuTpl="matMenu" xPosition="before">
-                            <ng-template *ngTemplateOutlet="rowActionsTpl() ?? null" />
+                            <ng-template *ngTemplateOutlet="rowActionsTpl() || null; context: { $implicit: row }" />
                         </mat-menu>
                     </div>
                 }

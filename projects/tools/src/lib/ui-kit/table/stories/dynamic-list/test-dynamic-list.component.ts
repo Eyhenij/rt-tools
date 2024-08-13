@@ -46,6 +46,7 @@ export default class TestDynamicListComponent {
     public fetching: boolean = false;
     public isSelectorShown: boolean = true;
     public isAllEntitiesSelected: boolean = false;
+    public isTableRowsClickable: boolean = false;
     public searchTerm: string = '';
     public data: Person[] = [];
     public columns: ITable.Column<Person>[] = [];
@@ -75,16 +76,14 @@ export default class TestDynamicListComponent {
         console.warn('Row Click', row);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public onEdit(event: any): void {
+    public onEdit(row: Person): void {
         // eslint-disable-next-line no-console
-        console.warn('Edit', event);
+        console.warn('Edit', row);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public onDelete(event: any): void {
+    public onDelete(row: Person): void {
         // eslint-disable-next-line no-console
-        console.warn('Delete', event);
+        console.warn('Delete', row);
     }
 
     public onToggleEntity(value: { key: number; checked: boolean }): void {

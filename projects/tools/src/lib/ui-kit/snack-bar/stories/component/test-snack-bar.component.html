@@ -1,5 +1,26 @@
 <div rtBlock="content">
     <rtui-toolbar>
+        <ng-container *rtuiToolbarLeft>
+            <mat-form-field subscriptSizing="dynamic">
+                <mat-label>Horizontal position</mat-label>
+                <mat-select [(value)]="horizontalPosition">
+                    <mat-option value="start">Start</mat-option>
+                    <mat-option value="center">Center</mat-option>
+                    <mat-option value="end">End</mat-option>
+                    <mat-option value="left">Left</mat-option>
+                    <mat-option value="right">Right</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field subscriptSizing="dynamic">
+                <mat-label>Vertical position</mat-label>
+                <mat-select [(value)]="verticalPosition">
+                    <mat-option value="top">Top</mat-option>
+                    <mat-option value="bottom">Bottom</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </ng-container>
+
         <ng-container *rtuiToolbarCenter>
             <div rtBlock="action">
                 <button mat-flat-button type="button" (click)="openDefault()">Open Default</button>

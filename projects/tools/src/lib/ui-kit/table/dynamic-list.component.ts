@@ -84,6 +84,9 @@ export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown
     public fetching: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
+    public isTableRowsClickable: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
     public isSelectorShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
@@ -131,9 +134,12 @@ export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown
     public readonly toolbarActionsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiDynamicListToolbarActionsDirective, {
         read: TemplateRef,
     });
-    public readonly rowActionsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiDynamicListRowActionsDirective, {
-        read: TemplateRef,
-    });
+    public readonly rowActionsTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>> = contentChild(
+        RtuiDynamicListRowActionsDirective,
+        {
+            read: TemplateRef,
+        }
+    );
 
     public onSearchChange(value: Nullable<string>): void {
         this.searchChange.emit(value);

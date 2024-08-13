@@ -1,6 +1,6 @@
 <ng-container rtBlock="base-cell">
     @if (column()?.icon?.placement === 'left') {
-        <mat-icon rtElem="prefix" [rtIconOutlinedDirective]="!!column().icon?.outlined" [style.color]="column().icon?.color">
+        <mat-icon rtElem="prefix" [rtIconOutlinedDirective]="!!column().icon?.outlined" [style]="cellIconStyle()">
             {{ column().icon?.glyph }}
         </mat-icon>
     }
@@ -20,7 +20,7 @@
     </div>
 
     @if (column()?.icon?.placement === 'right') {
-        <mat-icon rtElem="suffix" [rtIconOutlinedDirective]="!!column().icon?.outlined" [style.color]="column().icon?.color">
+        <mat-icon rtElem="suffix" [rtIconOutlinedDirective]="!!column().icon?.outlined" [style]="cellIconStyle()">
             {{ column().icon?.glyph }}
         </mat-icon>
     }

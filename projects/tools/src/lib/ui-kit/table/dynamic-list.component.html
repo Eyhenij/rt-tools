@@ -14,7 +14,7 @@
     (searchChange)="onSearchChange($event)">
     @if (toolbarActionsTpl()) {
         <ng-container *rtuiTableToolbarActionsDirective>
-            <ng-template *ngTemplateOutlet="toolbarActionsTpl() ?? null" />
+            <ng-template *ngTemplateOutlet="toolbarActionsTpl() || null" />
         </ng-container>
     }
 
@@ -22,6 +22,7 @@
         [keyExp]="keyExp()"
         [isMobile]="isMobile()"
         [isSelectorShown]="isSelectorShown()"
+        [isTableRowsClickable]="isTableRowsClickable()"
         [entities]="entities()"
         [columns]="columns()"
         [selectedEntitiesKeys]="selectedEntitiesKeys()"
@@ -31,8 +32,8 @@
         (rowClick)="onRowClick($event)"
         (sortChange)="onSortChange($event)">
         @if (rowActionsTpl()) {
-            <ng-container *rtuiTabletRowActionsDirective>
-                <ng-template *ngTemplateOutlet="rowActionsTpl() ?? null" />
+            <ng-container *rtuiTabletRowActionsDirective="let row">
+                <ng-template *ngTemplateOutlet="rowActionsTpl() || null; context: { $implicit: row }" />
             </ng-container>
         }
     </rtui-table>
