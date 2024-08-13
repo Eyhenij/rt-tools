@@ -51,6 +51,10 @@ export class TableBaseCellComponent<T = { [key: string]: unknown }> {
         const transformFn: Nullable<(value: T[keyof T]) => string | number> = this.column()?.transform;
         return transformFn ? transformFn(this.row()[this.column().propName]) : this.row()[this.column().propName];
     });
+    protected readonly cellIconStyle: Signal<SafeStyle | undefined> = computed(() => {
+        const transformFn: ((value: T[keyof T]) => string) | undefined = this.column()?.iconTransform;
+        return transformFn ? this.#sanitizer.bypassSecurityTrustStyle(transformFn(this.row()[this.column().propName])) : undefined;
+    });
     protected readonly tooltipValue: Signal<string> = computed(() => this.#covertCellValueToString(this.cellValue()));
     protected readonly isMouseOver: WritableSignal<boolean> = signal(false);
     protected readonly isCopied: WritableSignal<boolean> = signal(false);

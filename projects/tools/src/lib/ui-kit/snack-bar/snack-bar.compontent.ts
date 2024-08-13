@@ -1,9 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { AnimationBuilder, AnimationFactory, AnimationPlayer, animate, style } from '@angular/animations';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, Signal, afterNextRender, inject, viewChild } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar';
 
-import { ISnackBar } from './snack-bar-config.interface';
+import { BlockDirective, ElemDirective } from '../../bem';
+import { Nullable, RtIconOutlinedDirective } from '../../util';
+import { IRtSnackBar } from './snack-bar-config.interface';
 
 @Component({
     standalone: true,
@@ -11,11 +14,34 @@ import { ISnackBar } from './snack-bar-config.interface';
     templateUrl: './snack-bar.component.html',
     styleUrls: ['./snack-bar.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatButton, MatIconButton, MatIcon],
+    imports: [MatButton, MatIconButton, MatIcon, ElemDirective, BlockDirective, RtIconOutlinedDirective],
 })
-export class SnackBarComponent {
-    public readonly data: ISnackBar.Data = inject(MAT_SNACK_BAR_DATA);
-    readonly #snackBarRef: MatSnackBarRef<SnackBarComponent> = inject(MatSnackBarRef<SnackBarComponent>);
+export class RtuiSnackBarComponent {
+    public readonly data: IRtSnackBar.Data = inject(MAT_SNACK_BAR_DATA);
+    readonly #snackBarRef: MatSnackBarRef<RtuiSnackBarComponent> = inject(MatSnackBarRef<RtuiSnackBarComponent>);
+    readonly #animationBuilder: AnimationBuilder = inject(AnimationBuilder);
+
+    public player: AnimationPlayer | undefined;
+
+    public readonly progressTplRef: Signal<Nullable<ElementRef<HTMLElement>>> = viewChild<ElementRef<HTMLElement>>('progressTpl');
+
+    constructor() {
+        afterNextRender(() => {
+            if (this.data.isProgressBarShown && this.data.duration) {
+                this.#startAnimation();
+            }
+        });
+    }
+
+    @HostListener('mouseover')
+    public onMouseOver(): void {
+        this.#pauseAnimation();
+    }
+
+    @HostListener('mouseout')
+    public onMouseOut(): void {
+        this.#resumeAnimation();
+    }
 
     public dismiss(): void {
         this.#snackBarRef.dismissWithAction();
@@ -23,5 +49,31 @@ export class SnackBarComponent {
 
     public close(): void {
         this.#snackBarRef.dismiss();
+    }
+
+    #startAnimation(): void {
+        const element: HTMLElement | undefined = this.progressTplRef()?.nativeElement;
+
+        if (element) {
+            const factory: AnimationFactory = this.#animationBuilder.build([
+                style({ width: '100%' }),
+                animate('{{ time }}', style({ width: '0' })),
+            ]);
+
+            this.player = factory.create(element, { params: { time: this.data.duration + 'ms' } });
+            this.player.onDone(() => {
+                this.close();
+                this.player?.destroy();
+            });
+            this.player.play();
+        }
+    }
+
+    #pauseAnimation(): void {
+        this.player?.pause();
+    }
+
+    #resumeAnimation(): void {
+        this.player?.play();
     }
 }

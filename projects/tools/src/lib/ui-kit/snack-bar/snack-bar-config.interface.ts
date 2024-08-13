@@ -1,12 +1,16 @@
 import { MatSnackBarConfig } from '@angular/material/snack-bar';
 
-export namespace ISnackBar {
-    export interface Config extends Data {
-        config?: MatSnackBarConfig;
+import { Nullable } from '../../util';
+
+export namespace IRtSnackBar {
+    export interface Config extends MatSnackBarConfig {
+        icon?: Nullable<string>;
+        isColoredBackground?: boolean;
+        action?: Nullable<string>;
+        isProgressBarShown?: boolean;
     }
 
-    export interface Data {
+    export interface Data extends Config {
         message: string;
-        action?: string;
     }
 }

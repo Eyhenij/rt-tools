@@ -8,7 +8,6 @@ import {
     OutputEmitterRef,
     Signal,
     TemplateRef,
-    Type,
     WritableSignal,
     booleanAttribute,
     contentChild,
@@ -71,6 +70,9 @@ export class RtuiTableComponent<
     public isSelectorShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
+    public isTableRowsClickable: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
     public keyExp: InputSignal<NonNullable<KEY>> = input('id' as NonNullable<KEY>);
     public selectedEntitiesKeys: InputSignalWithTransform<ENTITY_TYPE[KEY][], ENTITY_TYPE[KEY][]> = input<
         ENTITY_TYPE[KEY][],
@@ -98,7 +100,7 @@ export class RtuiTableComponent<
     }>();
     public readonly toggleExistingEntities: OutputEmitterRef<boolean> = output<boolean>();
 
-    public readonly rowActionsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiTableRowActionsDirective, {
+    public readonly rowActionsTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>> = contentChild(RtuiTableRowActionsDirective, {
         read: TemplateRef,
     });
 

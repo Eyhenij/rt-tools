@@ -8,6 +8,7 @@
     [fetching]="fetching"
     [isSelectorShown]="isSelectorShown"
     [isAllEntitiesSelected]="isAllEntitiesSelected"
+    [isTableRowsClickable]="isTableRowsClickable"
     [appearance]="'fill'"
     [searchTerm]="searchTerm"
     [pageModel]="pageModel"
@@ -42,12 +43,12 @@
         </button>
     </ng-container>
 
-    <ng-container *rtuiDynamicListRowActionsDirective>
-        <button mat-menu-item (click)="onEdit($event)">
+    <ng-container *rtuiDynamicListRowActionsDirective="let row">
+        <button mat-menu-item (click)="onEdit(row)">
             <span>Edit</span>
         </button>
 
-        <button mat-menu-item (click)="onDelete($event)">
+        <button mat-menu-item (click)="onDelete(row)">
             <span>Delete</span>
         </button>
     </ng-container>

@@ -26,8 +26,8 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
             color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
             placement: 'right',
         },
-        width: '300px',
-        minWidth: '200px',
+        width: '100px',
+        minWidth: '100px',
     },
     {
         align: 'left',
@@ -52,6 +52,11 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
             color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
             placement: 'right',
         },
+        iconTransform: (): string => {
+            return 'font-size: 1rem; width: 1rem; height: 1rem';
+        },
+        width: '100px',
+        minWidth: '100px',
     },
     {
         align: 'left',
@@ -78,6 +83,51 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
         },
         width: '300px',
         minWidth: '200px',
+    },
+    {
+        align: 'left',
+        propName: 'status',
+        type: TABLE_COLUMN_TYPES_ENUM.TEXT,
+        copyable: false,
+        header: {
+            align: 'left',
+            label: 'Status',
+        },
+        sorting: {
+            propertyName: 'status',
+            sortDirection: LIST_SORT_ORDER_ENUM.ASC,
+        },
+        icon: {
+            glyph: 'circle',
+            color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
+            placement: 'left',
+        },
+        iconTransform: (value: Person[keyof Person]): string => {
+            let style: string = '';
+
+            switch (value) {
+                case 'active':
+                    style = 'color: green;';
+                    break;
+                case 'inactive':
+                    style = 'color: orange;';
+                    break;
+                case 'invited':
+                    style = 'color: lightblue;';
+                    break;
+                case 'deleted':
+                    style = 'color: red;';
+                    break;
+                default:
+                    style = `color: ${TEXT_CELL_COLOR_ENUM.NEUTRAL}`;
+                    break;
+            }
+
+            style += 'font-size: 0.5rem; width: 0.5rem; height: 0.5rem';
+
+            return style;
+        },
+        minWidth: '100px',
     },
     {
         align: 'right',
