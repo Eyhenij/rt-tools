@@ -18,11 +18,6 @@
     </button>
 
     @if (data.isProgressBarShown && data.duration) {
-        <div
-            rtElem="progress"
-            [@progressDecreaseAnimation]="{
-                value: isInitAnimation() ? 'start' : 'end',
-                params: { time: data.duration + 'ms' },
-            }"></div>
+        <div #progressTpl rtElem="progress"></div>
     }
 </ng-container>
