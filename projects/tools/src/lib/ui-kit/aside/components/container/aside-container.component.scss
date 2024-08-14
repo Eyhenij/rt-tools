@@ -6,8 +6,10 @@
     // TODO: fix styles affect x-scroll
     --rt-scrollable-content-flex-direction: row;
 
-    --rt-toolbar-body-height: 5rem;
-    --rt-toolbar-body-height-mobile: 5rem;
-    --rt-toolbar-body-padding: 0;
-    --rt-toolbar-border-bottom-width: 0;
+    rtui-toolbar {
+        --rt-toolbar-body-height: 5rem;
+        --rt-toolbar-body-mobile-height: 5rem;
+        --rt-toolbar-body-padding: 0;
+        --rt-toolbar-bars-border-bottom-width: 0;
+    }
 }

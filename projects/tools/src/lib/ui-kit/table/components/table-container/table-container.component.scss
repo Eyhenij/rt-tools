@@ -1,6 +1,34 @@
 @use '../../../../../styles/base/variables' as vars;
 @use '../../../../../styles/base/mixin' as mixins;
 
+$table-container: (
+    selector: (
+        margin-right: 0.65rem,
+    ),
+    selector-label-hover: (
+        color: var(--clr-green-60),
+    ),
+    toolbar: (
+        gap: 1rem,
+    ),
+    toolbar-mobile: (
+        margin-left: 8rem,
+    ),
+    toolbar-actions: (
+        gap: 1rem,
+    ),
+    toolbar-search: (
+        width: 16.5rem,
+    ),
+    placeholder: (
+        width: 100%,
+        height: 100vh,
+        gap: 1rem,
+        icon-size: 3rem,
+        title-size: 2rem,
+    ),
+);
+
 :host {
     width: 100%;
     position: relative;
@@ -8,8 +36,10 @@
     overflow: hidden;
 
     // set rt-toolbar styles
-    --rt-toolbar-body-padding: 0;
-    --rt-toolbar-border-bottom-color: transparent;
+    rtui-toolbar {
+        --rt-toolbar-body-padding: 0;
+        --rt-toolbar-bars-border-bottom-width: 0;
+    }
 
     // M3 redefined variables
     --mdc-fab-small-container-shape: 50%;
@@ -23,13 +53,19 @@
     --rt-scrollable-header-background-color: transparent;
     --rt-scrollable-content-background-color: transparent;
 
-    .table-wrapper {
+    @each $element, $elements in $table-container {
+        @each $style-token, $value in $elements {
+            #{mixins.generateCssVar(vars.$styles-prefix, 'table-container', #{$element}, #{$style-token})}: #{$value};
+        }
+    }
+
+    .table-container {
         &__selector {
-            margin-left: var(--rt-table-wrapper-selector-margin-right);
+            margin-left: var(--rt-table-container-selector-margin-right);
 
             &-label {
                 &:hover {
-                    color: var(--rt-table-wrapper-selector-label-hover-color);
+                    color: var(--rt-table-container-selector-label-hover-color);
                 }
             }
         }
@@ -38,18 +74,17 @@
             display: flex;
             justify-content: flex-end;
             align-items: center;
-            gap: var(--rt-table-wrapper-toolbar-gap);
+            gap: var(--rt-table-container-toolbar-gap);
 
             &-actions {
                 display: flex;
                 align-items: center;
                 justify-content: flex-end;
-                margin-right: var(--rt-table-wrapper-toolbar-actions-margin-right);
-                gap: var(--rt-table-wrapper-toolbar-actions-gap);
+                gap: var(--rt-table-container-toolbar-actions-gap);
             }
 
             &-search {
-                width: var(--rt-table-wrapper-toolbar-search-width);
+                width: var(--rt-table-container-toolbar-search-width);
             }
         }
 
@@ -64,31 +99,33 @@
         }
 
         &__placeholder {
-            width: var(--rt-table-wrapper-placeholder-width);
-            height: var(--rt-table-wrapper-placeholder-height);
+            width: var(--rt-table-container-placeholder-width);
+            height: var(--rt-table-container-placeholder-height);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: var(--rt-table-wrapper-placeholder-gap);
+            gap: var(--rt-table-container-placeholder-gap);
 
             &-icon {
-                width: var(--rt-table-wrapper-placeholder-icon-size);
-                height: var(--rt-table-wrapper-placeholder-icon-size);
-                font-size: var(--rt-table-wrapper-placeholder-icon-size);
+                width: var(--rt-table-container-placeholder-icon-size);
+                height: var(--rt-table-container-placeholder-icon-size);
+                font-size: var(--rt-table-container-placeholder-icon-size);
             }
 
             &-title {
-                font-size: var(--rt-table-wrapper-placeholder-title-size);
+                font-size: var(--rt-table-container-placeholder-title-size);
             }
         }
     }
 
     @include mixins.media-breakpoint-down(vars.$device-sm) {
-        --rt-toolbar-body-height-mobile: 6.5rem;
-        --rt-toolbar-body-height: 6.5rem;
+        rtui-toolbar {
+            --rt-toolbar-body-height: 6.5rem;
+            --rt-toolbar-body-mobile-height: 6.5rem;
+        }
 
-        .table-wrapper {
+        .table-container {
             &__selector {
                 position: absolute;
                 bottom: 0;
@@ -98,7 +135,7 @@
                 min-width: 100vw;
                 display: grid;
                 grid-template-columns: 100%;
-                grid-gap: var(--rt-table-wrapper-toolbar-gap);
+                grid-gap: var(--rt-table-container-toolbar-gap);
 
                 &-actions {
                     grid-row: 2;
@@ -106,7 +143,7 @@
 
                     &--end {
                         justify-content: flex-end;
-                        margin-left: var(--rt-table-wrapper-toolbar-mobile-margin-left);
+                        margin-left: var(--rt-table-container-toolbar-mobile-margin-left);
                     }
                 }
 

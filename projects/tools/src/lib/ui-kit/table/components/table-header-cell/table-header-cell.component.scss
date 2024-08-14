@@ -1,8 +1,36 @@
+@use '../../../../../styles/base/mixin' as mixins;
+@use '../../../../../styles/base/variables' as vars;
+
+$header-cell: (
+    label: (
+        gap: 0.5rem,
+    ),
+    prefix: (
+        icon-size: 1.5rem,
+    ),
+    suffix: (
+        icon-size: 1.5rem,
+    ),
+    icon: (
+        margin: 0 0 0 1rem,
+        color: var(--clr-black-40),
+    ),
+    icon-active: (
+        color: var(--clr-black-100),
+    ),
+);
+
 :host {
     display: flex;
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
+
+    @each $element, $elements in $header-cell {
+        @each $style-token, $value in $elements {
+            #{mixins.generateCssVar(vars.$styles-prefix, 'table-header-cell', #{$element}, #{$style-token})}: #{$value};
+        }
+    }
 
     &:hover {
         .header-cell-icons {
@@ -14,7 +42,7 @@
         flex-grow: 1;
         display: flex;
         align-items: center;
-        gap: var(--rt-table-header-cell-gap);
+        gap: var(--rt-table-header-cell-label-gap);
 
         &--align {
             &--left {

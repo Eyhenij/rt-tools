@@ -1,6 +1,52 @@
 @use '../../../../../styles/base/variables' as vars;
 @use '../../../../../styles/base/mixin' as mixins;
 
+$pagination: (
+    host: (
+        gap: 2rem,
+        margin: 0.5rem 0,
+        color: var(--clr-black-60),
+        font-size: 0.875rem,
+        font-weight: 400,
+        line-height: 1rem,
+    ),
+    host-mobile: (
+        gap: 1rem,
+    ),
+    paging: (
+        gap: 0.5rem,
+    ),
+    paging-mobile: (
+        margin: 0.5rem 0 0 0,
+    ),
+    paging-item: (
+        padding: 0.5rem,
+        border: 1px solid var(--clr-gray-15),
+        border-radius: 0.75rem,
+    ),
+    paging-item-hover: (
+        color: var(--clr-white),
+        background-color: var(--clr-black-60),
+    ),
+    paging-item-active: (
+        color: var(--clr-white),
+        background-color: var(--clr-black-60),
+    ),
+    paging-item-disabled-svg: (
+        opacity: 0.3,
+    ),
+    size-toggle: (
+        gap: 0.75rem,
+    ),
+    size-toggle-selector: (
+        min-width: 3rem,
+        height: 2rem,
+    ),
+    size-toggle-selector-mobile: (
+        margin: 0 0 0.5rem 0,
+    ),
+);
+
 :host {
     width: 100%;
     height: 100%;
@@ -10,17 +56,23 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    gap: var(--rt-table-pagination-gap);
+    gap: var(--rt-table-pagination-host-gap);
 
-    color: var(--rt-table-pagination-font-color);
-    font-size: var(--rt-table-pagination-font-size);
-    font-weight: var(--rt-table-pagination-font-weight);
-    line-height: var(--rt-table-pagination-font-line-height);
+    color: var(--rt-table-pagination-host-color);
+    font-size: var(--rt-table-pagination-host-font-size);
+    font-weight: var(--rt-table-pagination-host-font-weight);
+    line-height: var(--rt-table-pagination-host-line-height);
+
+    @each $element, $elements in $pagination {
+        @each $style-token, $value in $elements {
+            #{mixins.generateCssVar(vars.$styles-prefix, 'table-pagination', #{$element}, #{$style-token})}: #{$value};
+        }
+    }
 
     @include mixins.media-breakpoint-up(vars.$device-md) {
         .paging,
         .page-size-toggle {
-            margin: var(--rt-table-pagination-margin);
+            margin: var(--rt-table-pagination-host-margin);
         }
     }
 
@@ -28,14 +80,14 @@
         flex-direction: column;
         justify-content: center;
         align-items: flex-start;
-        gap: var(--rt-table-pagination-gap-mobile);
+        gap: var(--rt-table-pagination-host-mobile-gap);
 
         .paging {
             margin: var(--rt-table-pagination-paging-mobile-margin);
         }
 
         .page-size-toggle {
-            margin: var(--rt-table-pagination-toggle-selector-mobile-margin);
+            margin: var(--rt-table-pagination-size-toggle-selector-mobile-margin);
         }
     }
 
@@ -114,10 +166,10 @@
             background-color: transparent;
             cursor: pointer;
 
-            color: var(--rt-table-pagination-font-color);
-            font-size: var(--rt-table-pagination-font-size);
-            font-weight: var(--rt-table-pagination-font-weight);
-            line-height: var(--rt-table-pagination-font-line-height);
+            color: var(--rt-table-pagination-host-color);
+            font-size: var(--rt-table-pagination-host-font-size);
+            font-weight: var(--rt-table-pagination-host-font-weight);
+            line-height: var(--rt-table-pagination-host-line-height);
         }
     }
 }
