@@ -1,3 +1,75 @@
+@use '../../../../../styles/base/mixin' as mixins;
+@use '../../../../../styles/base/variables' as vars;
+
+$aside: (
+    host: (
+        width: 33.75rem,
+        box-shadow: 0 0 1rem 0 rgba(#000, 0.1),
+        background-color: var(--clr-white-100),
+    ),
+    header: (
+        padding: 2rem,
+    ),
+    header-title: (
+        margin-left: 0.5rem,
+        font-size: 1.5rem,
+        line-height: 1.1,
+        font-weight: 600,
+    ),
+    header-description: (
+        font-size: 1rem,
+        margin-bottom: 0.25rem,
+        color: var(--clr-black-60),
+    ),
+    header-addition: (
+        font-size: 1rem,
+        margin-top: 0.25rem,
+        color: var(--clr-black-60),
+    ),
+    header-action-button: (
+        margin-left: 0.75rem,
+    ),
+    content: (
+        padding: 0 2rem,
+    ),
+    footer: (
+        padding: 2rem,
+        margin-left-betwen-buttons: 1rem,
+    ),
+    error-box: (
+        height: 2rem,
+        padding: 0.5rem,
+        margin: 2rem 0 2rem 0,
+        border: 1px solid var(--clr-red-60),
+        border-radius: 0.375rem,
+    ),
+    error-box-title: (
+        font-size: 1rem,
+        font-color: var(--clr-red-60),
+    ),
+    error-box-button: (
+        font-size: 1rem,
+        font-color: var(--clr-black-100),
+    ),
+    tab-indicator: (
+        width: 6rem,
+    ),
+    tab-badge: (
+        color: var(--mdc-filled-button-container-color),
+    ),
+    tab-badge-incorrect: (
+        color: var(--clr-red-100),
+    ),
+);
+
+:root {
+    @each $element, $elements in $aside {
+        @each $style-token, $value in $elements {
+            #{mixins.generateCssVar('aside', #{$element}, #{$style-token})}: #{$value};
+        }
+    }
+}
+
 .cdk-overlay-container,
 .cdk-overlay-pane {
     z-index: 9999;
@@ -28,7 +100,7 @@
 .icon-badge.--incorrect,
 .title-badge.--incorrect {
     .mat-badge-content {
-        background-color: var(--rt-aside-tab-badge-color-incorrect);
+        background-color: var(--rt-aside-tab-badge-incorrect-color);
     }
 }
 
@@ -37,19 +109,18 @@
     position: relative;
     height: 100vh;
     max-height: 100vh;
-    width: var(--rt-aside-width);
+    width: var(--rt-aside-host-width);
 
-    box-shadow: var(--rt-aside-box-shadow);
-    background-color: var(--rt-aside-background-color);
+    box-shadow: var(--rt-aside-host-box-shadow);
+    background-color: var(--rt-aside-host-background-color);
 
     // TAB GROUP
     .mdc-tab-indicator__content.mdc-tab-indicator__content--underline {
         width: var(--rt-aside-tab-indicator-width);
     }
 
-    @media all and (max-width: 1023px) {
+    @include mixins.media-breakpoint-down(vars.$device-sm) {
         width: 100vw;
-        background-color: var(--rt-aside-background-color);
     }
 } // c-aside
 
@@ -107,7 +178,7 @@
         top: 0;
         z-index: 1000;
         position: sticky;
-        background: var(--clr-white);
+        background: var(--clr-white-100);
     }
 } // c-aside-content
 

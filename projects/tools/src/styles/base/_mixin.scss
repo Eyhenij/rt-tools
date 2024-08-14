@@ -1,9 +1,16 @@
 @use 'sass:math';
+@use './variables' as vars;
+
+// css clr var generator
+// #{generateCssVar(red, 100)}: #eb5055;
+@function generateCssClrVar($color, $saturate) {
+    @return --#{vars.$styles-clr-prefix}-#{$color}-#{$saturate};
+}
 
 // css var generator
-// #{generateCssVar('rt', 'table-base-cell', 'suffix', 'icon-size')}: '1rem';
-@function generateCssVar($prefix, $component-name, $element, $style-token) {
-    @return --#{$prefix}-#{$component-name}-#{$element}-#{$style-token};
+// #{generateCssVar(table-base-cell, suffix-icon, size)}: 1rem;
+@function generateCssVar($component-name, $element, $style-token) {
+    @return --#{vars.$styles-prefix}-#{$component-name}-#{$element}-#{$style-token};
 }
 
 // px to rem

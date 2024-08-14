@@ -1,5 +1,4 @@
 @use '../../../../../styles/base/mixin' as mixins;
-@use '../../../../../styles/base/variables' as vars;
 
 $header-cell: (
     label: (
@@ -28,7 +27,7 @@ $header-cell: (
 
     @each $element, $elements in $header-cell {
         @each $style-token, $value in $elements {
-            #{mixins.generateCssVar(vars.$styles-prefix, 'table-header-cell', #{$element}, #{$style-token})}: #{$value};
+            #{mixins.generateCssVar('table-header-cell', #{$element}, #{$style-token})}: #{$value};
         }
     }
 

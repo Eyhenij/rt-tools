@@ -1,121 +1,16 @@
+@use './mixin' as mixins;
+@import './palette';
+
 :root {
-    --clr-white: #ffffff;
-    --clr-gray-5: #f5f6f8;
-    --clr-gray-15: #d1d1d1;
-    --clr-black-15: #eeeeee;
-    --clr-black-20: #e0e0e0;
-    --clr-black-40: #a3a3a3;
-    --clr-black-60: #747474;
-    --clr-black-80: #323033;
-    --clr-black-100: #181818;
-    --clr-red-10: #fdedee;
-    --clr-red-40: #f7b9bb;
-    --clr-red-60: #f39699;
-    --clr-red-100: #eb5055;
-    --clr-orange-80: #ee7a34;
-    --clr-blue-40: #b3ceef;
-    --clr-blue-80: #4285f4;
-    --clr-blue-100: #4284d7;
-    --clr-green-10: #e5f8f4;
-    --clr-green-60: #46c4c0;
-    --clr-green-80: #00b894;
+    @each $family, $set in $palette {
+        @each $saturate, $clr in $set {
+            #{mixins.generateCssClrVar($family, $saturate)}: #{$clr};
+        }
+    }
+
     --clr-base-accent: #0d1c2b;
-
     --clr-txt: rgba(0, 0, 0, 0.87);
-    --clr-rgb: 255, 255, 255;
-
-    // SnackBar
-    --mdc-snackbar-container-color: var(--rt-snack-bar-default-background-color);
-    --mdc-snackbar-supporting-text-color: var(--clr-white);
-    --mdc-snackbar-container-shape: 0.5rem;
-
-    --rt-snack-bar-content-gap: 1rem;
-    --rt-snack-bar-message-line-clamp: 5;
-    --rt-snack-bar-icon-color: var(--clr-white);
-    --rt-snack-bar-icon-size: 2rem;
-
-    --rt-snack-bar-default-background-color: var(--clr-black-80);
-    --rt-snack-bar-success-background-color: var(--clr-green-80);
-    --rt-snack-bar-warning-background-color: var(--clr-orange-80);
-    --rt-snack-bar-danger-background-color: var(--clr-red-100);
-
-    --rt-snack-bar-action-padding: 0.5rem;
-    --rt-snack-bar-action-margin: 0 0.25rem;
-    --rt-snack-bar-action-color: var(--clr-blue-80);
-    --rt-snack-bar-action-background-color: var(--clr-blue-100);
-    --rt-snack-bar-success-action-color: var(--clr-black-80);
-    --rt-snack-bar-warning-action-color: var(--clr-black-80);
-    --rt-snack-bar-danger-action-color: var(--clr-black-80);
-
-    --rt-snack-bar-close-button-color: var(--clr-white);
-    --rt-snack-bar-success-close-button-color: var(--clr-white);
-    --rt-snack-bar-warning-close-button-color: var(--clr-white);
-    --rt-snack-bar-danger-close-button-color: var(--clr-white);
-
-    --rt-snack-bar-default-text-color: var(--clr-white);
-    --rt-snack-bar-success-text-color: var(--clr-white);
-    --rt-snack-bar-warning-text-color: var(--clr-white);
-    --rt-snack-bar-danger-text-color: var(--clr-white);
-
-    --rt-snack-bar-progress-height: 0.5rem;
-
-    // Aside
-    --rt-aside-width: 33.75rem;
-    --rt-aside-box-shadow: 0 0 1rem 0 rgba(#000, 0.1);
-    --rt-aside-background-color: var(--clr-white);
-    --rt-aside-header-padding: 2rem;
-    --rt-aside-content-padding: 0 2rem;
-    --rt-aside-footer-padding: 2rem;
-
-    --rt-aside-tab-indicator-width: 6rem;
-    --rt-aside-tab-badge-color: var(--mdc-filled-button-container-color);
-    --rt-aside-tab-badge-color-incorrect: var(--clr-red-100);
-
-    --rt-aside-header-title-margin-left: 0.5rem;
-    --rt-aside-header-title-font-size: 1.5rem;
-    --rt-aside-header-title-line-height: 1.1;
-    --rt-aside-header-title-font-weight: 600;
-
-    --rt-aside-header-description-font-size: 1rem;
-    --rt-aside-header-description-margin-bottom: 0.25rem;
-    --rt-aside-header-description-color: var(--clr-black-60);
-
-    --rt-aside-header-addition-font-size: 1rem;
-    --rt-aside-header-addition-margin-top: 0.25rem;
-    --rt-aside-header-addition-color: var(--clr-black-60);
-
-    --rt-aside-header-action-button-margin-left: 0.75rem;
-
-    --rt-aside-footer-margin-left-betwen-buttons: 1rem;
-
-    --rt-aside-error-box-height: 2rem;
-    --rt-aside-error-box-padding: 0.5rem;
-    --rt-aside-error-box-margin: 2rem 0 2rem 0;
-    --rt-aside-error-box-border: 1px solid var(--clr-red-60);
-    --rt-aside-error-box-border-radius: 0.375rem;
-    --rt-aside-error-box-title-font-size: 1rem;
-    --rt-aside-error-box-title-font-color: var(--clr-red-60);
-    --rt-aside-error-box-button-font-size: 1rem;
-    --rt-aside-error-box-button-font-color: var(--clr-black-100);
-
-    // Scrollable
-    --rt-scrollable-height: 100%;
-    --rt-scrollable-width: 100%;
-    --rt-scrollable-display: flex;
-    --rt-scrollable-flex-direction: column;
-    --rt-scrollable-background-color: var(--clr-white);
-
-    --rt-scrollable-header-padding: 0.5rem 1rem;
-    --rt-scrollable-header-background-color: var(--clr-white);
-
-    --rt-scrollable-content-display: flex;
-    --rt-scrollable-content-flex-direction: column;
-    --rt-scrollable-content-flex-grow: 1;
-    --rt-scrollable-content-padding: 1rem;
-    --rt-scrollable-content-background-color: var(--clr-white);
-
-    --rt-scrollable-footer-padding: 1rem;
-    --rt-scrollable-footer-background-color: var(--clr-white);
+    --clr-white-rgb: 255, 255, 255;
 
     // Buttons
     --rt-button-box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.12), 0 1px 18px 0 rgba(0, 0, 0, 0.14);

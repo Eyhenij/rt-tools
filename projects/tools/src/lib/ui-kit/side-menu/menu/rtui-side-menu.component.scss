@@ -1,4 +1,3 @@
-@use '../../../../styles/base/variables' as vars;
 @use '../../../../styles/base/mixin' as mixins;
 
 $side-menu: (
@@ -30,7 +29,7 @@ $side-menu: (
 :host {
     @each $element, $elements in $side-menu {
         @each $style-token, $value in $elements {
-            #{mixins.generateCssVar(vars.$styles-prefix, 'side-menu', #{$element}, #{$style-token})}: #{$value};
+            #{mixins.generateCssVar('side-menu', #{$element}, #{$style-token})}: #{$value};
         }
     }
 

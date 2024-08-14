@@ -1,8 +1,12 @@
 :host {
-    // Set menu paddings
-    --rt-scrollable-header-padding: 1rem;
-    --rt-scrollable-content-padding: 0.5rem;
-    --rt-scrollable-footer-padding: 1rem;
+    &::ng-deep {
+        // Set menu paddings
+        rtui-scrollable {
+            --rt-scrollable-header-padding: 1rem;
+            --rt-scrollable-content-padding: 0.5rem;
+            --rt-scrollable-footer-padding: 1rem;
+        }
+    }
 
     display: flex;
     width: fit-content;

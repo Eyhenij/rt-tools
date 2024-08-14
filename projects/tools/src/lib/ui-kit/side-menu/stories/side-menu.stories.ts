@@ -2,19 +2,19 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 
-import { SideMenuWrapperComponent } from './component/side-menu-wrapper.component';
+import { TestSideMenuWrapperComponent } from './component/test-side-menu-wrapper.component';
 
 export default {
     title: 'Components/SideMenu',
-    component: SideMenuWrapperComponent,
+    component: TestSideMenuWrapperComponent,
     decorators: [
         moduleMetadata({
             imports: [BrowserAnimationsModule],
         }),
     ],
-} as Meta<SideMenuWrapperComponent>;
+} as Meta<TestSideMenuWrapperComponent>;
 
-type Story = StoryObj<SideMenuWrapperComponent>;
+type Story = StoryObj<TestSideMenuWrapperComponent>;
 
 export const Default: Story = {
     args: {

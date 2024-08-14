@@ -56,15 +56,12 @@ export class RtuiSnackBarComponent {
 
         if (element) {
             const factory: AnimationFactory = this.#animationBuilder.build([
-                style({ width: '100%' }),
-                animate('{{ time }}', style({ width: '0' })),
+                style({ width: '100%', 'clip-path': 'polygon(0 0, 100% 0, 100% 100%, 0 100%)' }),
+                animate('{{ time }} linear', style({ width: '0', 'clip-path': 'polygon(0 0, 0 0, 0 100%, 0 100%)' })),
             ]);
 
             this.player = factory.create(element, { params: { time: this.data.duration + 'ms' } });
-            this.player.onDone(() => {
-                this.close();
-                this.player?.destroy();
-            });
+            this.player.onDone(() => this.close());
             this.player.play();
         }
     }

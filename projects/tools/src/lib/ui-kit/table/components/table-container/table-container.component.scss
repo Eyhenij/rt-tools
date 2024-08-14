@@ -41,21 +41,23 @@ $table-container: (
         --rt-toolbar-bars-border-bottom-width: 0;
     }
 
+    rtui-scrollable {
+        --rt-scrollable-header-padding: 1rem 0 0 0;
+        --rt-scrollable-content-padding: 1rem 0 0 0;
+        --rt-scrollable-host-background-color: transparent;
+        --rt-scrollable-header-background-color: transparent;
+        --rt-scrollable-content-background-color: transparent;
+    }
+
     // M3 redefined variables
     --mdc-fab-small-container-shape: 50%;
     --mat-fab-small-hover-state-layer-opacity: 0;
     --mat-fab-small-pressed-state-layer-opacity: 0;
     --mat-fab-small-focus-state-layer-opacity: 0;
 
-    --rt-scrollable-header-padding: 1rem 0 0 0;
-    --rt-scrollable-content-padding: 1rem 0 0 0;
-    --rt-scrollable-background-color: transparent;
-    --rt-scrollable-header-background-color: transparent;
-    --rt-scrollable-content-background-color: transparent;
-
     @each $element, $elements in $table-container {
         @each $style-token, $value in $elements {
-            #{mixins.generateCssVar(vars.$styles-prefix, 'table-container', #{$element}, #{$style-token})}: #{$value};
+            #{mixins.generateCssVar('table-container', #{$element}, #{$style-token})}: #{$value};
         }
     }
 

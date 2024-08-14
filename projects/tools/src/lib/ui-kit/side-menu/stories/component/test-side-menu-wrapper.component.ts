@@ -122,8 +122,8 @@ export const MENU_ITEMS: Readonly<ISideMenu.Item[]> = Object.freeze([
 @Component({
     standalone: true,
     selector: 'app-side-menu-wrapper',
-    templateUrl: './side-menu-wrapper.component.html',
-    styleUrls: ['./side-menu-wrapper.component.scss'],
+    templateUrl: './test-side-menu-wrapper.component.html',
+    styleUrls: ['./test-side-menu-wrapper.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         NgTemplateOutlet,
@@ -145,7 +145,7 @@ export const MENU_ITEMS: Readonly<ISideMenu.Item[]> = Object.freeze([
     ],
     providers: [],
 })
-export class SideMenuWrapperComponent {
+export class TestSideMenuWrapperComponent {
     public menuItems: typeof MENU_ITEMS = [...MENU_ITEMS];
     public activeMenuIds: Array<number | string> = [];
     public isMobile: boolean = false;
