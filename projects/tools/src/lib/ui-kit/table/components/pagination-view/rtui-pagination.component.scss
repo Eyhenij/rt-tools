@@ -25,11 +25,11 @@ $pagination: (
         border-radius: 0.75rem,
     ),
     paging-item-hover: (
-        color: var(--clr-white),
+        color: var(--clr-white-100),
         background-color: var(--clr-black-60),
     ),
     paging-item-active: (
-        color: var(--clr-white),
+        color: var(--clr-white-100),
         background-color: var(--clr-black-60),
     ),
     paging-item-disabled-svg: (
@@ -65,7 +65,7 @@ $pagination: (
 
     @each $element, $elements in $pagination {
         @each $style-token, $value in $elements {
-            #{mixins.generateCssVar(vars.$styles-prefix, 'table-pagination', #{$element}, #{$style-token})}: #{$value};
+            #{mixins.generateCssVar('table-pagination', #{$element}, #{$style-token})}: #{$value};
         }
     }
 

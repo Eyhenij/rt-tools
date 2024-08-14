@@ -1,6 +1,115 @@
 @use '../base/mixin' as mixins;
 @use '../base/variables' as vars;
 
+$button: (
+    base: (
+        color: var(--clr-black-100),
+        font-family: var(--font-default),
+    ),
+    fab: (
+        color: var(--clr-base-accent),
+    ),
+    fab-hover: (
+        color: var(--clr-green-60),
+    ),
+    text-hover: (
+        background: var(--clr-black-15),
+    ),
+    text-focus: (
+        background: var(--clr-black-20),
+    ),
+    text-active: (
+        background: var(--clr-black-30),
+    ),
+    text-base: (
+        color: var(--clr-base-accent),
+    ),
+    text-base-hover: (
+        color: var(--clr-green-60),
+    ),
+    text-gray: (
+        color: var(--clr-black-60),
+    ),
+    text-gray-hover: (
+        color: var(--clr-blue-60),
+    ),
+    text-blue: (
+        color: var(--clr-blue-100),
+    ),
+    text-blue-hover: (
+        color: var(--clr-black-100),
+    ),
+    fill-base: (
+        background-color: var(--clr-base-accent),
+        color: var(--clr-white-100),
+    ),
+    fill-blue: (
+        background-color: var(--clr-blue-10),
+        color: var(--clr-blue-100),
+    ),
+    fill-gray: (
+        background-color: var(--clr-gray-5),
+        color: var(--clr-black-40),
+    ),
+    fill-black: (
+        background-color: var(--clr-black-100),
+        color: var(--clr-white-100),
+    ),
+    fill-green: (
+        border: 1px solid darken(vars.$clr-green-80, 10%),
+        color: var(--clr-white-100),
+        background-color: var(--clr-green-80),
+    ),
+    fill-green-hover: (
+        background-color: darken(vars.$clr-green-80, 10%),
+    ),
+    fill-green-light: (
+        border-color: darken(vars.$clr-green-10, 10%),
+        color: var(--clr-green-100),
+        background-color: var(--clr-green-10),
+    ),
+    fill-green-light-hover: (
+        background-color: darken(vars.$clr-green-10, 10%),
+    ),
+    fill-red: (
+        border: 1px solid darken(vars.$clr-red-100, 10%),
+        color: var(--clr-white-100),
+        background-color: vars.$clr-red-100,
+    ),
+    fill-red-hover: (
+        background-color: darken(vars.$clr-red-100, 10%),
+    ),
+    fill-red-light: (
+        border-color: darken(vars.$clr-red-10, 10%),
+        color: var(--clr-red-100),
+        background-color: var(--clr-red-10),
+    ),
+    fill-red-light-hover: (
+        background-color: darken(vars.$clr-red-10, 10%),
+    ),
+    outline: (
+        border: 1px solid var(--clr-blue-40),
+    ),
+    outline-blue: (
+        color: var(--clr-blue-100),
+    ),
+    outline-base: (
+        color: var(--clr-base-accent),
+    ),
+    disabled: (
+        background-color: var(--clr-gray-5),
+        color: var(--clr-black-40),
+    ),
+);
+
+:root {
+    @each $element, $elements in $button {
+        @each $style-token, $value in $elements {
+            #{mixins.generateCssVar('button', #{$element}, #{$style-token})}: #{$value};
+        }
+    }
+}
+
 button {
     line-height: 1;
     cursor: pointer;
@@ -9,26 +118,26 @@ button {
 .c-button {
     display: inline-flex;
     align-items: center;
-    font-family: var(--font-default);
+    font-family: var(--rt-button-base-font-family);
     line-height: 1;
     position: relative;
     justify-content: center;
     font-size: 1rem;
-    color: var(--clr-black-100);
+    color: var(--rt-button-base-font-color);
     transition: all 0.15s linear;
 
     //FAB
     &[class*='--fab'] {
         border: 0;
         background-color: transparent;
-        color: var(--clr-base-accent);
+        color: var(--rt-button-fab-color);
 
         &:hover {
-            color: var(--clr-green-60);
+            color: var(--rt-button-fab-hover-color);
 
             svg {
                 g {
-                    fill: var(--clr-green-60);
+                    fill: var(--rt-button-fab-hover-color);
                 }
             }
         }
@@ -43,57 +152,57 @@ button {
         border-radius: 5px;
 
         &:hover {
-            background: var(--clr-black-15);
+            background: var(--rt-button-text-hover-background);
         }
 
         &:focus {
-            background: var(--clr-black-20);
+            background: var(--rt-button-text-focus-background);
         }
 
         &:active {
-            background: var(--clr-black-30);
+            background: var(--rt-button-text-active-background);
         }
 
         &[class*='base'] {
-            color: var(--clr-base-accent);
+            color: var(--rt-button-text-base-color);
 
             &:hover {
-                color: var(--clr-green-60);
+                color: var(--rt-button-text-base-hover-color);
 
                 svg {
                     g {
-                        fill: var(--clr-green-60);
+                        fill: var(--rt-button-text-base-hover-color);
                     }
                 }
             }
         }
 
         &[class*='gray'] {
-            color: var(--clr-black-60);
+            color: var(--rt-button-text-gray-color);
 
             &:hover {
-                color: var(--clr-blue-60);
+                color: var(--rt-button-text-gray-hover-color);
 
                 svg {
                     g {
-                        fill: var(--clr-blue-60);
+                        fill: var(--rt-button-text-gray-hover-color);
                     }
                 }
             }
         }
 
         &[class*='blue'] {
-            color: var(--clr-blue-100);
+            color: var(--rt-button-text-blue-color);
 
             .c-circle {
-                border-color: var(--clr-blue-100);
+                border-color: var(--rt-button-text-blue-color);
             }
 
             &:hover {
-                color: var(--clr-black-100);
+                color: var(--rt-button-text-blue-hover-color);
 
                 .c-circle {
-                    border-color: var(--clr-black-100);
+                    border-color: var(--rt-button-text-blue-hover-color);
                 }
             }
         }
@@ -107,65 +216,65 @@ button {
         border-radius: mixins.rem(6);
 
         &[class*='base'] {
-            background-color: var(--clr-base-accent);
-            color: var(--clr-white);
+            background-color: var(--rt-button-fill-base-background-color);
+            color: var(--rt-button-fill-base-color);
         }
 
         &[class*='blue'] {
-            background-color: var(--clr-blue-10);
-            color: var(--clr-blue-100);
+            background-color: var(--rt-button-fill-blue-background-color);
+            color: var(--rt-button-fill-blue-color);
         }
 
         &[class*='gray'] {
-            background-color: var(--clr-gray-5);
-            color: var(--clr-black-40);
+            background-color: var(--rt-button-fill-gray-background-color);
+            color: var(--rt-button-fill-gray-color);
         }
 
         &[class*='black'] {
-            background-color: var(--clr-black-100);
-            color: var(--clr-white);
+            background-color: var(--rt-button-fill-black-background-color);
+            color: var(--rt-button-fill-black-color);
         }
 
         &[class*='green'] {
-            border: 1px solid darken(vars.$clr-green-100, 10%);
+            border: var(--rt-button-fill-green-border);
             border-radius: 2px;
-            color: var(--clr-white);
+            color: var(--rt-button-fill-green-color);
             box-shadow: 0 2px 4px rgba(24, 24, 24, 0.1);
-            background-color: vars.$clr-green-100;
+            background-color: var(--rt-button-fill-green-background-color);
 
             &:hover {
-                background-color: darken(vars.$clr-green-100, 10%);
+                background-color: var(--rt-button-fill-green-hover-background-color);
             }
 
             &[class*='-light'] {
-                border-color: darken(vars.$clr-green-10, 10%);
-                color: var(--clr-green-100);
-                background-color: var(--clr-green-10);
+                border-color: var(--rt-button-fill-green-light-border-color);
+                color: var(--rt-button-fill-green-light-color);
+                background-color: var(--rt-button-fill-green-light-background-color);
 
                 &:hover {
-                    background-color: darken(vars.$clr-green-10, 10%);
+                    background-color: var(--rt-button-fill-green-light-hover-background-color);
                 }
             }
         }
 
         &[class*='red'] {
-            border: 1px solid darken(vars.$clr-red-100, 10%);
+            border: var(--rt-button-fill-red-border);
             border-radius: 2px;
-            color: var(--clr-white);
+            color: var(--rt-button-fill-red-color);
             box-shadow: 0 2px 4px rgba(24, 24, 24, 0.1);
-            background-color: vars.$clr-red-100;
+            background-color: var(--rt-button-fill-red-background-color);
 
             &:hover {
-                background-color: darken(vars.$clr-red-100, 10%);
+                background-color: var(--rt-button-fill-red-hover-background-color);
             }
 
             &[class*='-light'] {
-                border-color: darken(vars.$clr-red-10, 10%);
-                color: var(--clr-red-100);
-                background-color: var(--clr-red-10);
+                border-color: var(--rt-button-fill-red-light-border-color);
+                color: var(--rt-button-fill-red-light-color);
+                background-color: var(--rt-button-fill-red-light-background-color);
 
                 &:hover {
-                    background-color: darken(vars.$clr-red-10, 10%);
+                    background-color: var(--rt-button-fill-red-light-hover-background-color);
                 }
             }
         }
@@ -175,16 +284,16 @@ button {
 
     // OUTLINE
     &[class*='--outline-'] {
-        border: 1px solid var(--clr-blue-40);
+        border: var(--rt-button-outline-border);
         border-radius: mixins.rem(40);
         background-color: transparent;
 
         &[class*='blue'] {
-            color: var(--clr-blue-100);
+            color: var(--rt-button-outline-blue-color);
         }
 
         &[class*='base'] {
-            color: var(--clr-base-accent);
+            color: var(--rt-button-outline-base-color);
         }
     }
 
@@ -245,8 +354,8 @@ button {
 
     // DISABLED
     &[class*='--disabled'] {
-        background-color: var(--clr-gray-5) !important;
-        color: var(--clr-black-40) !important;
+        background-color: var(--rt-button-disabled-background-color) !important;
+        color: var(--rt-button-disabled-color) !important;
         cursor: not-allowed !important;
     }
 

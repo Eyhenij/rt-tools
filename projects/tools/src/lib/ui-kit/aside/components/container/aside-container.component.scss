@@ -1,10 +1,11 @@
 :host {
-    --rt-scrollable-header-padding: 0;
-    --rt-scrollable-content-padding: 0;
-    --rt-scrollable-footer-padding: 0;
-
-    // TODO: fix styles affect x-scroll
-    --rt-scrollable-content-flex-direction: row;
+    rtui-scrollable {
+        --rt-scrollable-header-padding: 0;
+        --rt-scrollable-content-padding: 0;
+        --rt-scrollable-footer-padding: 0;
+        // TODO: fix styles affect x-scroll
+        --rt-scrollable-content-flex-direction: row;
+    }
 
     rtui-toolbar {
         --rt-toolbar-body-height: 5rem;

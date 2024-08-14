@@ -1,5 +1,4 @@
 @use '../../../../../styles/base/mixin' as mixins;
-@use '../../../../../styles/base/variables' as vars;
 
 $base-cell: (
     host: (
@@ -35,7 +34,7 @@ $base-cell: (
 
     @each $element, $elements in $base-cell {
         @each $style-token, $value in $elements {
-            #{mixins.generateCssVar(vars.$styles-prefix, 'table-base-cell', #{$element}, #{$style-token})}: #{$value};
+            #{mixins.generateCssVar('table-base-cell', #{$element}, #{$style-token})}: #{$value};
         }
     }
 

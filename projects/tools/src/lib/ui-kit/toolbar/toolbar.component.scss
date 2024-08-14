@@ -20,7 +20,7 @@ $toolbar: (
 :host {
     @each $element, $elements in $toolbar {
         @each $style-token, $value in $elements {
-            #{mixins.generateCssVar(vars.$styles-prefix, 'toolbar', #{$element}, #{$style-token})}: #{$value};
+            #{mixins.generateCssVar('toolbar', #{$element}, #{$style-token})}: #{$value};
         }
     }
 

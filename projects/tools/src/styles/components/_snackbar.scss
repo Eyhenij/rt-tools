@@ -1,32 +1,103 @@
+@use '../base/mixin' as mixins;
+
+$snack-bar: (
+    default: (
+        background-color: var(--clr-black-80),
+    ),
+    success: (
+        background-color: var(--clr-green-80),
+    ),
+    success-text: (
+        color: var(--clr-white-100),
+    ),
+    success-action: (
+        color: var(--clr-black-80),
+    ),
+    success-close-button: (
+        color: var(--clr-white-100),
+    ),
+    warning: (
+        background-color: var(--clr-orange-80),
+    ),
+    warning-text: (
+        color: var(--clr-white-100),
+    ),
+    warning-action: (
+        color: var(--clr-black-80),
+    ),
+    warning-close-button: (
+        color: var(--clr-white-100),
+    ),
+    danger: (
+        background-color: var(--clr-red-100),
+    ),
+    danger-text: (
+        color: var(--clr-white-100),
+    ),
+    danger-action: (
+        color: var(--clr-black-80),
+    ),
+    danger-close-button: (
+        color: var(--clr-white-100),
+    ),
+);
+
+:root {
+    @each $element, $elements in $snack-bar {
+        @each $style-token, $value in $elements {
+            #{mixins.generateCssVar('snack-bar', #{$element}, #{$style-token})}: #{$value};
+        }
+    }
+
+    --mdc-snackbar-container-color: var(--rt-snack-bar-default-background-color);
+    --mdc-snackbar-supporting-text-color: var(--clr-white-100);
+    --mdc-snackbar-container-shape: 0.5rem;
+}
+
 .snack-bar-success-colored {
     --mdc-snackbar-container-color: var(--rt-snack-bar-success-background-color);
     --mdc-snackbar-supporting-text-color: var(--rt-snack-bar-success-text-color);
-    --rt-snack-bar-action-color: var(--rt-snack-bar-success-action-color);
-    --rt-snack-bar-close-button-color: var(--rt-snack-bar-success-close-button-color);
+
+    rtui-snack-bar {
+        --rt-snack-bar-action-color: var(--rt-snack-bar-success-action-color);
+        --rt-snack-bar-close-button-color: var(--rt-snack-bar-success-close-button-color);
+    }
 }
 
 .snack-bar-warning-colored {
     --mdc-snackbar-container-color: var(--rt-snack-bar-warning-background-color);
     --mdc-snackbar-supporting-text-color: var(--rt-snack-bar-warning-text-color);
-    --rt-snack-bar-action-color: var(--rt-snack-bar-warning-action-color);
-    --rt-snack-bar-close-button-color: var(--rt-snack-bar-warning-close-button-color);
+
+    rtui-snack-bar {
+        --rt-snack-bar-action-color: var(--rt-snack-bar-warning-action-color);
+        --rt-snack-bar-close-button-color: var(--rt-snack-bar-warning-close-button-color);
+    }
 }
 
 .snack-bar-danger-colored {
     --mdc-snackbar-container-color: var(--rt-snack-bar-danger-background-color);
-    --mdc-snackbar-supporting-text-color: var(--clr-white);
-    --rt-snack-bar-action-color: var(--rt-snack-bar-danger-action-color);
-    --rt-snack-bar-close-button-color: var(--rt-snack-bar-danger-close-button-color);
+    --mdc-snackbar-supporting-text-color: var(--rt-snack-bar-danger-text-color);
+
+    rtui-snack-bar {
+        --rt-snack-bar-action-color: var(--rt-snack-bar-danger-action-color);
+        --rt-snack-bar-close-button-color: var(--rt-snack-bar-danger-close-button-color);
+    }
 }
 
 .snack-bar-success {
-    --rt-snack-bar-icon-color: var(--rt-snack-bar-success-background-color);
+    rtui-snack-bar {
+        --rt-snack-bar-icon-color: var(--rt-snack-bar-success-background-color);
+    }
 }
 
 .snack-bar-warning {
-    --rt-snack-bar-icon-color: var(--rt-snack-bar-warning-background-color);
+    rtui-snack-bar {
+        --rt-snack-bar-icon-color: var(--rt-snack-bar-warning-background-color);
+    }
 }
 
 .snack-bar-danger {
-    --rt-snack-bar-icon-color: var(--rt-snack-bar-danger-background-color);
+    rtui-snack-bar {
+        --rt-snack-bar-icon-color: var(--rt-snack-bar-danger-background-color);
+    }
 }
