@@ -1,9 +1,42 @@
+@use '../../../styles/base/mixin' as mixins;
+
+$snack-bar: (
+    content: (
+        gap: 1rem,
+    ),
+    icon: (
+        size: 2rem,
+        color: var(--clr-white-100),
+    ),
+    message: (
+        line-clamp: 5,
+    ),
+    action: (
+        padding: 0.5rem,
+        margin: 0 0.25rem,
+        color: var(--clr-blue-80),
+        background-color: var(--clr-blue-100),
+    ),
+    progress: (
+        height: 0.5rem,
+    ),
+    close-button: (
+        color: var(--clr-white-100),
+    ),
+);
+
 :host {
     height: 100%;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    @each $element, $elements in $snack-bar {
+        @each $style-token, $value in $elements {
+            #{mixins.generateCssVar('snack-bar', #{$element}, #{$style-token})}: #{$value};
+        }
+    }
 
     .rt-snack-bar {
         &__content {
@@ -61,6 +94,7 @@
             width: 100%;
             background-color: var(--mdc-filled-button-container-color);
             border-bottom-left-radius: var(--mdc-snackbar-container-shape);
+            border-bottom-right-radius: var(--mdc-snackbar-container-shape);
         }
     }
 }

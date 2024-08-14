@@ -1,6 +1,7 @@
 /* Material Theme */
 $main-theme: light;
 
+$styles-clr-prefix: 'clr';
 $styles-prefix: 'rt';
 
 /* Base */
@@ -24,7 +25,7 @@ $base-text-color: var(--clr-txt);
 $clr-red-100: #eb5055;
 $clr-red-10: #fdedee;
 
-$clr-green-100: #00b894;
+$clr-green-80: #00b894;
 $clr-green-10: #e5f8f4;
 
 /* Components */

@@ -1,4 +1,3 @@
-@use '../../../../styles/base/variables' as vars;
 @use '../../../../styles/base/mixin' as mixins;
 
 $round-icon-button: (
@@ -16,7 +15,7 @@ $round-icon-button: (
 :host {
     @each $element, $elements in $round-icon-button {
         @each $style-token, $value in $elements {
-            #{mixins.generateCssVar(vars.$styles-prefix, 'round-icon-button', #{$element}, #{$style-token})}: #{$value};
+            #{mixins.generateCssVar('round-icon-button', #{$element}, #{$style-token})}: #{$value};
         }
     }
 
