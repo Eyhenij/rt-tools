@@ -5,7 +5,9 @@
     flex-direction: column;
     margin: -1rem;
 
-    --rt-toolbar-body-height: 3.25rem;
+    rtui-toolbar {
+        --rt-toolbar-body-height: 3.25rem;
+    }
 
     .content {
         flex-grow: 1;

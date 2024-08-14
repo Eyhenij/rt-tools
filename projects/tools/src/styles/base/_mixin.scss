@@ -1,5 +1,11 @@
 @use 'sass:math';
 
+// css var generator
+// #{generateCssVar('rt', 'table-base-cell', 'suffix', 'icon-size')}: '1rem';
+@function generateCssVar($prefix, $component-name, $element, $style-token) {
+    @return --#{$prefix}-#{$component-name}-#{$element}-#{$style-token};
+}
+
 // px to rem
 // font-size: rem(16);
 $browser-context: 16;

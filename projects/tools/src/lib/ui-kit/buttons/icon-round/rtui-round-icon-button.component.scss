@@ -1,12 +1,33 @@
+@use '../../../../styles/base/variables' as vars;
+@use '../../../../styles/base/mixin' as mixins;
+
+$round-icon-button: (
+    host: (
+        size: 1.5rem,
+        padding: 0.25rem,
+        z-index: 1,
+        background-color: var(--mat-list-active-indicator-color),
+    ),
+    icon: (
+        size: 1.25rem,
+    ),
+);
+
 :host {
+    @each $element, $elements in $round-icon-button {
+        @each $style-token, $value in $elements {
+            #{mixins.generateCssVar(vars.$styles-prefix, 'round-icon-button', #{$element}, #{$style-token})}: #{$value};
+        }
+    }
+
     .round-icon-button {
         display: flex;
         justify-content: center;
         align-items: center;
-        width: var(--rt-round-icon-button-width);
-        height: var(--rt-round-icon-button-height);
-        padding: var(--rt-round-icon-button-padding);
-        z-index: var(--rt-round-icon-button-z-index);
+        width: var(--rt-round-icon-button-host-size);
+        height: var(--rt-round-icon-button-host-size);
+        padding: var(--rt-round-icon-button-host-padding);
+        z-index: var(--rt-round-icon-button-host-z-index);
         border-radius: 50%;
         cursor: pointer;
 
@@ -17,8 +38,8 @@
         }
 
         &:hover {
-            background-color: var(--rt-round-icon-button-background-color);
-            box-shadow: var(--rt-round-icon-button-box-shadow);
+            background-color: var(--rt-round-icon-button-host-background-color);
+            box-shadow: var(--rt-button-box-shadow);
         }
     }
 }
