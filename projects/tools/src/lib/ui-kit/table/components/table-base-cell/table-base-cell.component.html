@@ -35,7 +35,7 @@
             [matTooltip]="isCopied() ? 'Copied!' : 'Copy'"
             [matTooltipDisabled]="isMobile()"
             (click)="onCopyToClipboard(); $event.stopPropagation()">
-            <mat-icon rtElem="copy-icon" [rtIconOutlinedDirective]="isCopied()">{{ isCopied() ? 'done' : 'content_copy' }}</mat-icon>
+            <mat-icon rtElem="copy-icon" [rtIconOutlinedDirective]="true">{{ isCopied() ? 'done' : 'content_copy' }}</mat-icon>
         </button>
     }
 </ng-container>

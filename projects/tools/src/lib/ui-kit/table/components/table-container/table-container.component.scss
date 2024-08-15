@@ -5,8 +5,11 @@ $table-container: (
     selector: (
         margin-right: 0.65rem,
     ),
+    selector-label: (
+        color: var(--clr-black-60),
+    ),
     selector-label-hover: (
-        color: var(--clr-green-60),
+        color: var(--clr-black-100),
     ),
     toolbar: (
         gap: 1rem,
@@ -18,7 +21,7 @@ $table-container: (
         gap: 1rem,
     ),
     toolbar-search: (
-        width: 16.5rem,
+        width: 22rem,
     ),
     placeholder: (
         width: 100%,
@@ -66,6 +69,8 @@ $table-container: (
             margin-left: var(--rt-table-container-selector-margin-right);
 
             &-label {
+                color: var(--rt-table-container-selector-label-color);
+
                 &:hover {
                     color: var(--rt-table-container-selector-label-hover-color);
                 }

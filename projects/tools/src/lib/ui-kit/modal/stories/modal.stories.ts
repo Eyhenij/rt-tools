@@ -1,17 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/angular';
 import { fn } from '@storybook/test';
 
-import { OpenModalButtonComponent } from './open-modal-button.component';
+import { TestModalComponent } from './test-modal.component';
 
-const meta: Meta<OpenModalButtonComponent> = {
+const meta: Meta<TestModalComponent> = {
     title: 'Components/Modal',
-    component: OpenModalButtonComponent,
+    component: TestModalComponent,
     argTypes: {},
     args: { onClick: fn() },
 };
 
 export default meta;
-type Story = StoryObj<OpenModalButtonComponent>;
+type Story = StoryObj<TestModalComponent>;
 
 export const Modal: Story = {
     args: {

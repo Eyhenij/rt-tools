@@ -13,6 +13,16 @@
     @return --#{vars.$styles-prefix}-#{$component-name}-#{$element}-#{$style-token};
 }
 
+// convert hex to rgb values
+// #{convert-hex-to-rgb-values(#ab2727)}: 171, 39, 39;
+@function convert-hex-to-rgb-values($hex) {
+    $r: red($hex);
+    $g: green($hex);
+    $b: blue($hex);
+
+    @return $r + ', ' + $g + ', ' + $b;
+}
+
 // px to rem
 // font-size: rem(16);
 $browser-context: 16;

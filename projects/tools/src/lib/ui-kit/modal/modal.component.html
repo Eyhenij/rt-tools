@@ -23,7 +23,7 @@
         }
 
         @if (data.input) {
-            <div rtElem="input-label">{{ data.input.label }}</div>
+            <div rtElem="input">{{ data.input.label }}</div>
 
             <mat-form-field [appearance]="'outline'">
                 <input matInput type="text" autocomplete="off" [formControl]="control!" />
@@ -31,13 +31,13 @@
         }
 
         @if (data.textArea) {
-            <mat-form-field>
+            <mat-form-field rtElem="textarea">
                 <textarea matInput [formControl]="control!" [placeholder]="data.textArea.placeholder"></textarea>
             </mat-form-field>
         }
 
         @if (data.select) {
-            <mat-form-field class="cm-select" rtElem="cm-select">
+            <mat-form-field rtElem="select">
                 @if (data.select.label) {
                     <mat-label>{{ data.select.label }}</mat-label>
                 }

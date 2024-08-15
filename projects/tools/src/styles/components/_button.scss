@@ -7,10 +7,10 @@ $button: (
         font-family: var(--font-default),
     ),
     fab: (
-        color: var(--clr-base-accent),
+        color: var(--clr-black-60),
     ),
     fab-hover: (
-        color: var(--clr-green-60),
+        color: var(--clr-black-100),
     ),
     text-hover: (
         background: var(--clr-black-15),
@@ -22,10 +22,10 @@ $button: (
         background: var(--clr-black-30),
     ),
     text-base: (
-        color: var(--clr-base-accent),
+        color: var(--clr-black-60),
     ),
     text-base-hover: (
-        color: var(--clr-green-60),
+        color: var(--clr-black-100),
     ),
     text-gray: (
         color: var(--clr-black-60),
@@ -40,7 +40,7 @@ $button: (
         color: var(--clr-black-100),
     ),
     fill-base: (
-        background-color: var(--clr-base-accent),
+        background-color: var(--clr-black-100),
         color: var(--clr-white-100),
     ),
     fill-blue: (
@@ -94,7 +94,7 @@ $button: (
         color: var(--clr-blue-100),
     ),
     outline-base: (
-        color: var(--clr-base-accent),
+        color: var(--clr-black-100),
     ),
     disabled: (
         background-color: var(--clr-gray-5),
@@ -123,7 +123,7 @@ button {
     position: relative;
     justify-content: center;
     font-size: 1rem;
-    color: var(--rt-button-base-font-color);
+    color: var(--rt-button-base-color);
     transition: all 0.15s linear;
 
     //FAB

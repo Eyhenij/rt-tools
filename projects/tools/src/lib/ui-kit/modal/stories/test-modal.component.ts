@@ -14,7 +14,7 @@ import { IModal } from '../modal.types';
     imports: [CommonModule, MatButton, MatIcon],
     providers: [RtModalService],
 })
-export class OpenModalButtonComponent {
+export class TestModalComponent {
     readonly #modalsService: RtModalService = inject(RtModalService);
 
     @Input() public icon: string = 'info';
@@ -34,8 +34,10 @@ export class OpenModalButtonComponent {
                     appearance: 'flat',
                     color: 'primary',
                     value: true,
+                    validateSelect: true,
                 },
             ],
+            input: { label: 'To confirm, type in "Test" in the box bellow', placeholder: '', sample: 'Test' },
             icon: {
                 value: this.icon,
                 style: {
