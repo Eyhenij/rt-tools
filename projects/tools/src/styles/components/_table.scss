@@ -39,6 +39,9 @@ $table: (
     base-cell-wrapper-last-child: (
         padding: 0.625rem 4rem 0.625rem 0.625rem,
     ),
+    actions-container: (
+        background-color: var(--clr-white-100),
+    ),
 );
 
 :root {
@@ -187,10 +190,10 @@ td.c-table__cell {
 
         background: linear-gradient(
             to right,
-            rgba(var(--clr-white-rgb), 0) 0%,
-            rgba(var(--clr-white-rgb), 0.7) 10%,
-            rgba(var(--clr-white-rgb), 1) 20%,
-            rgba(var(--clr-white-rgb), 1) 100%
+            transparent 0%,
+            color-mix(in srgb, var(--rt-table-actions-container-background-color) 30%, var(--clr-white-100)) 10%,
+            var(--rt-table-actions-container-background-color) 20%,
+            var(--rt-table-actions-container-background-color) 100%
         );
         pointer-events: none;
     }

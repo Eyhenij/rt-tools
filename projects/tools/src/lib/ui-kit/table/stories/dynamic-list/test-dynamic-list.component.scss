@@ -4,4 +4,6 @@
     display: flex;
     flex-direction: column;
     margin: -1rem;
+
+    --rt-table-actions-container-background-color: var(--mat-sidenav-container-background-color);
 }
