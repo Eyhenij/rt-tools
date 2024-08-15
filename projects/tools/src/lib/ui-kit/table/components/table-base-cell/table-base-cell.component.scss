@@ -16,9 +16,11 @@ $base-cell: (
     copy-button: (
         position-right: 0.25rem,
         padding: 0.25rem,
-        complete-color: var(--clr-green-60),
         background-color: var(--mdc-fab-small-container-color),
         icon-size: 1rem,
+    ),
+    copy-button-complete: (
+        color: var(--clr-black-100),
     ),
 );
 
@@ -92,13 +94,20 @@ $base-cell: (
             padding: var(--rt-table-base-cell-copy-button-padding);
             background-color: var(--rt-table-base-cell-copy-button-background-color);
 
-            &:hover {
+            &:hover,
+            &:focus,
+            &:active {
                 background-color: var(--rt-table-base-cell-copy-button-background-color);
             }
 
             &--complete {
-                color: var(--rt-table-base-cell-copy-button-complete-color);
                 cursor: not-allowed;
+
+                &:hover,
+                &:focus,
+                &:active {
+                    color: var(--rt-table-base-cell-copy-button-complete-color);
+                }
             }
 
             &--visible {

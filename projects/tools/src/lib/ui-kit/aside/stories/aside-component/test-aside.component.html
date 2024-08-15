@@ -10,12 +10,10 @@
     [requestError]="requestError()"
     (submitAction)="create()"
     (cancelAction)="cancel()">
-    <ng-container *rtuiAsideHeader>
-        <div rtBlock="title">
-            <div rtElem="descr">Description</div>
-            <div rtElem="txt">Create User</div>
-            <div rtElem="addition">Create User</div>
-        </div>
+    <ng-container *rtuiAsideHeader rtBlock="title">
+        <div rtElem="descr">Description It is a long established fact that a reader will</div>
+        <div rtElem="txt">Title It is a long established fact that a reader will</div>
+        <div rtElem="addition">Addition It is a long established fact that a reader will</div>
     </ng-container>
     <form rtBlock="c-form" [formGroup]="form">
         <mat-tab-group (selectedIndexChange)="selectedTabIndex.set($event)">

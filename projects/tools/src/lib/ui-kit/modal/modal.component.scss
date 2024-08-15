@@ -1,31 +1,69 @@
 @use '../../../styles/base/variables' as vars;
+@use '../../../styles/base/mixin' as mixins;
+
+$modal: (
+    title: (
+        font-size: 1.25rem,
+        color: var(--clr-txt),
+        font-weight: 400,
+    ),
+    content: (
+        padding: 1rem 1.5rem,
+        color: var(--clr-black-80),
+        font-size: 0.8rem,
+        text-align: center,
+    ),
+    input: (
+        margin-top: 1.5rem,
+        font-weight: 600,
+        text-align: left,
+    ),
+    textarea: (
+        margin-top: 1.5rem,
+    ),
+    select: (
+        margin-top: 1.5rem,
+    ),
+    text-highlited: (
+        font-weight: 600,
+        color: var(--clr-black-100),
+    ),
+    text-warn: (
+        display: inline,
+        font-size: 1rem,
+        font-weight: 600,
+        color: var(--clr-red-100),
+    ),
+);
 
 :host {
-    ::ng-deep {
-        .highlighted {
-            color: vars.$text-highlight-color;
+    @each $element, $elements in $modal {
+        @each $style-token, $value in $elements {
+            #{mixins.generateCssVar('modal', #{$element}, #{$style-token})}: #{$value};
         }
+    }
 
+    ::ng-deep {
         .--highlighted {
             display: inline;
-            font-weight: bold;
-            color: var(--clr-black);
+            font-weight: var(--rt-modal-text-highlited-font-weight);
+            color: var(--rt-modal-text-highlited-color);
         }
 
         .--warn {
             display: inline;
-            font-size: 1rem;
-            font-weight: bold;
-            color: var(--clr-red-100);
+            font-size: var(--rt-modal-text-warn-font-size);
+            font-weight: var(--rt-modal-text-warn-font-weight);
+            color: var(--rt-modal-text-warn-color);
         }
     }
 
     .rtui-modal {
         &__title {
             h1 {
-                font-size: 1.25rem;
-                color: var(--clr-txt);
-                font-weight: 400;
+                font-size: var(--rt-modal-title-font-size);
+                color: var(--rt-modal-title-color);
+                font-weight: var(--rt-modal-title-font-weight);
             }
 
             h1,
@@ -34,8 +72,18 @@
             }
         }
 
-        &__cm-select {
-            margin-top: 1rem;
+        &__input {
+            margin-top: var(--rt-modal-input-margin-top);
+            font-weight: var(--rt-modal-input-font-weight);
+            text-align: var(--rt-modal-input-text-align);
+        }
+
+        &__textarea {
+            margin-top: var(--rt-modal-textarea-margin-top);
+        }
+
+        &__select {
+            margin-top: var(--rt-modal-select-margin-top);
         }
     }
 
@@ -49,16 +97,10 @@
     }
 
     mat-dialog-content {
-        padding: 1rem 1.5rem;
-        color: var(--clr-gray);
-        font-size: 0.8rem;
-        text-align: center;
-
-        .input-label {
-            font-weight: bold;
-            text-align: left;
-            padding-top: 1.5rem;
-        }
+        padding: var(--rt-modal-content-padding);
+        color: var(--rt-modal-content-color);
+        font-size: var(--rt-modal-content-font-size);
+        text-align: var(--rt-modal-content-text-align);
 
         mat-form-field {
             width: 100%;

@@ -10,8 +10,10 @@ $aside: (
     header: (
         padding: 2rem,
     ),
+    header-back-button: (
+        margin-right: 1rem,
+    ),
     header-title: (
-        margin-left: 0.5rem,
         font-size: 1.5rem,
         line-height: 1.1,
         font-weight: 600,
@@ -25,6 +27,9 @@ $aside: (
         font-size: 1rem,
         margin-top: 0.25rem,
         color: var(--clr-black-60),
+    ),
+    header-actions: (
+        margin-left: 1rem,
     ),
     header-action-button: (
         margin-left: 0.75rem,
@@ -128,13 +133,17 @@ $aside: (
 .c-aside-header {
     padding: var(--rt-aside-header-padding);
 
+    .back-button {
+        margin-right: var(--rt-aside-header-back-button-margin-right);
+    }
+
     .title {
         height: 100%;
+        width: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: flex-start;
-        margin-left: var(--rt-aside-header-title-margin-left);
 
         &__descr {
             margin-bottom: var(--rt-aside-header-description-margin-bottom);
@@ -153,9 +162,20 @@ $aside: (
             font-size: var(--rt-aside-header-addition-font-size);
             color: var(--rt-aside-header-addition-color);
         }
+
+        &__descr,
+        &__txt,
+        &__addition {
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     }
 
     .actions {
+        margin-left: var(--rt-aside-header-actions-margin-left);
+
         &__action {
             margin-left: var(--rt-aside-header-action-button-margin-left);
         }
