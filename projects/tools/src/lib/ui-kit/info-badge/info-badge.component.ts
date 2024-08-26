@@ -16,6 +16,7 @@ import {
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
+import { BlockDirective, ElemDirective } from '../../bem';
 import { Nullable } from '../../util';
 import { IInfoBadgeSizeType } from './badge-info-enum';
 import { ICON_SIDE_ENUM, IconSideType } from './stories/utils/enum/Icon-side.enum';
@@ -23,7 +24,7 @@ import { ICON_SIDE_ENUM, IconSideType } from './stories/utils/enum/Icon-side.enu
 @Component({
     selector: 'rtui-info-badge',
     standalone: true,
-    imports: [MatTooltip, NgClass, MatIcon, NgStyle],
+    imports: [MatTooltip, NgClass, MatIcon, NgStyle, BlockDirective, ElemDirective],
     templateUrl: './info-badge.component.html',
     styleUrl: './info-badge.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
