@@ -15,6 +15,15 @@ $toolbar: (
         border-bottom-width: 1px,
         border-bottom-color: var(--clr-black-20),
     ),
+    bars-left: (
+        width: fit-content,
+    ),
+    bars-center: (
+        width: 100%,
+    ),
+    bars-right: (
+        width: fit-content,
+    ),
 );
 
 :host {
@@ -65,16 +74,16 @@ $toolbar: (
 
             &__bar {
                 &--left {
-                    width: fit-content;
+                    width: var(--rt-toolbar-bars-left-width);
                 }
 
                 &--center {
-                    width: 100%;
+                    width: var(--rt-toolbar-bars-center-width);
                     overflow: hidden;
                 }
 
                 &--right {
-                    width: fit-content;
+                    width: var(--rt-toolbar-bars-center-right);
                 }
 
                 &--left,

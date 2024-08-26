@@ -3,11 +3,13 @@
         <tr>
             @if (isSelectorShown()) {
                 <th rtElem="cell" rtMod="selectable">
-                    <mat-checkbox
-                        [checked]="selectedEntitiesKeys().length === entities().length"
-                        [indeterminate]="!!selectedEntitiesKeys().length && selectedEntitiesKeys().length < entities().length"
-                        (click)="$event.stopPropagation()"
-                        (change)="onToggleExistingEntities($event.checked)"></mat-checkbox>
+                    @if (isMultiSelect()) {
+                        <mat-checkbox
+                            [checked]="selectedEntitiesKeys().length === entities().length"
+                            [indeterminate]="!!selectedEntitiesKeys().length && selectedEntitiesKeys().length < entities().length"
+                            (click)="$event.stopPropagation()"
+                            (change)="onToggleExistingEntities($event.checked)" />
+                    }
                 </th>
             }
 
@@ -34,10 +36,17 @@
                 (click)="isTableRowsClickable() ? onRowClick(row) : $event.stopPropagation()">
                 @if (isSelectorShown()) {
                     <td rtElem="cell">
-                        <mat-checkbox
-                            [checked]="selectedEntitiesKeys().includes(row[keyExp()])"
-                            (click)="$event.stopPropagation()"
-                            (change)="onToggleEntity(row[keyExp()], $event.checked)"></mat-checkbox>
+                        @if (isMultiSelect()) {
+                            <mat-checkbox
+                                [checked]="selectedEntitiesKeys().includes(row[keyExp()])"
+                                (click)="$event.stopPropagation()"
+                                (change)="onToggleEntity(row[keyExp()], $event.checked)" />
+                        } @else {
+                            <mat-radio-button
+                                [checked]="selectedEntitiesKeys().includes(row[keyExp()])"
+                                (click)="$event.stopPropagation()"
+                                (change)="onToggleEntity(row[keyExp()], true)" />
+                        }
                     </td>
                 }
 
