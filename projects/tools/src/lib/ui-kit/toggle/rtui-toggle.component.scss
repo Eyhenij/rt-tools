@@ -1,0 +1,172 @@
+@use '../../../styles/base/mixin' as mixins;
+
+$toggle: (
+    container: (
+        display: flex,
+        align-items: center,
+        justify-content: space-between,
+        gap: 1rem,
+    ),
+    container-disabled: (
+        opacity: 0.6,
+    ),
+    toggle: (
+        border-radius: 6.25rem,
+        background-color: var(--clr-gray-5),
+        box-shadow: inset 0 0 0.125rem 0.0625rem rgba(0, 0, 0, 0.05),
+    ),
+    toggle-check: (
+        box-shadow: inset 0 0 0 1.25rem var(--clr-black-80),
+    ),
+    toggle-switch: (
+        border-radius: 2.25rem,
+        background-color: var(--clr-white-100),
+        box-shadow: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.2),
+    ),
+    toggle-track: (
+        background-color: var(--clr-gray-10),
+        border-radius: 2.5rem,
+        border: 0.0625rem solid var(--clr-gray-15),
+    ),
+    label: (
+        color: var(--clr-black-60),
+    ),
+    label-active: (
+        color: var(--clr-black-100),
+    ),
+    label-hover: (
+        color: var(--clr-black-100),
+        cursor: pointer,
+    ),
+);
+
+:host {
+    @each $element, $elements in $toggle {
+        @each $style-token, $value in $elements {
+            #{mixins.generateCssVar('toggle', #{$element}, #{$style-token})}: #{$value};
+        }
+    }
+
+    .rtui-toggle-container {
+        display: var(--rt-toggle-container-display);
+        align-items: var(--rt-toggle-container-align-items);
+        justify-content: var(--rt-toggle-container-justify-content);
+        gap: var(--rt-toggle-container-gap);
+
+        &--disabled {
+            opacity: var(--rt-toggle-container-disabled-opacity);
+
+            .rtui-toggle,
+            .rtui-toggle-container__label {
+                pointer-events: none;
+            }
+        }
+
+        &__label {
+            color: var(--rt-toggle-label-color);
+
+            &:hover {
+                color: var(--rt-toggle-label-hover-color);
+                cursor: pointer;
+            }
+
+            &--active {
+                color: var(--rt-toggle-label-active-color);
+            }
+        }
+
+        .rtui-toggle {
+            position: relative;
+            width: 3.125rem;
+            min-width: 3.125rem;
+            height: 1.875rem;
+            border-radius: var(--rt-toggle-toggle-border-radius);
+            background-color: var(--rt-toggle-toggle-background-color);
+            overflow: hidden;
+            box-shadow: var(--rt-toggle-toggle-box-shadow);
+            cursor: pointer;
+
+            b {
+                display: block;
+            }
+
+            &__check {
+                display: none;
+
+                &:checked ~ .rtui-toggle__track {
+                    box-shadow: var(--rt-toggle-toggle-check-box-shadow);
+                }
+
+                &:checked ~ .rtui-toggle__switch {
+                    right: 0.125rem;
+                    left: 1.375rem;
+                    transition: 0.35s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+                    transition-property: left, right;
+                    transition-delay: 0.05s, 0s;
+                }
+            }
+
+            &__switch {
+                position: absolute;
+                left: 0.125rem;
+                top: 0.125rem;
+                bottom: 0.125rem;
+                right: 1.375rem;
+                background-color: var(--rt-toggle-toggle-switch-background-color);
+                border-radius: var(--rt-toggle-toggle-switch-border-radius);
+                z-index: 1;
+                transition: 0.35s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+                transition-property: left, right;
+                transition-delay: 0s, 0.05s;
+                box-shadow: var(--rt-toggle-toggle-switch-box-shadow);
+            }
+
+            &__track {
+                position: absolute;
+                left: 0;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                transition: 0.35s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+                background-color: var(--rt-toggle-toggle-track-background-color);
+                border-radius: var(--rt-toggle-toggle-track-border-radius);
+                border: var(--rt-toggle-toggle-track-border);
+            }
+
+            // modify
+            &--md {
+                width: 3rem;
+                min-width: 3rem;
+                height: 1.5rem;
+
+                .rtui-toggle {
+                    &__switch {
+                        right: 1.625rem;
+                    }
+                }
+
+                .rtui-toggle__check:checked ~ .rtui-toggle__switch {
+                    left: 1.625rem;
+                    right: 0.125rem;
+                }
+            }
+
+            &--sm {
+                width: 1.5rem;
+                min-width: 1.5rem;
+                height: 0.875rem;
+
+                .rtui-toggle {
+                    &__switch {
+                        right: 0.75rem;
+                    }
+                }
+
+                .rtui-toggle__check:checked ~ .rtui-toggle__switch {
+                    left: 0.75rem;
+                    right: 0.125rem;
+                }
+            }
+        }
+    }
+}
