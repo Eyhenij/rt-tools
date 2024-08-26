@@ -1,0 +1,12 @@
+<div
+    class="c-info-badge"
+    matTooltip="{{ text() }}"
+    matTooltipClass="custom-tooltip"
+    matTooltipPosition="above"
+    [ngClass]="badgeClass"
+    [matTooltipDisabled]="!isTitleCollapsed() || isMobile()">
+    <div class="c-info-badge__content" #content>{{ text() }}</div>
+    @if (glyph()) {
+        <mat-icon [ngStyle]="iconStyles">{{ glyph() }}</mat-icon>
+    }
+</div>
