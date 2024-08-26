@@ -22,6 +22,7 @@ import { filter } from 'rxjs/operators';
 
 import { BlockDirective, ElemDirective } from '../../bem';
 import { BreakpointService, Nullable } from '../../util';
+import { ToggleSizeType } from './toggle-size.type.enum';
 
 @Component({
     standalone: true,
@@ -56,7 +57,7 @@ export class RtuiToggleComponent implements OnInit, ControlValueAccessor {
 
     public label: InputSignal<Nullable<string>> = input();
     public tooltip: InputSignal<string> = input('');
-    public size: InputSignal<Nullable<'sm' | 'md'>> = input<Nullable<'sm' | 'md'>>();
+    public size: InputSignal<Nullable<ToggleSizeType>> = input<Nullable<ToggleSizeType>>();
     public tooltipPosition: InputSignal<TooltipPosition> = input<TooltipPosition>('above');
     public disabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
