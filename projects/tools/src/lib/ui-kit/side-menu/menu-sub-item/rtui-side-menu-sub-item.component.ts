@@ -60,14 +60,20 @@ export class RtuiSideMenuSubItemComponent {
         transform: booleanAttribute,
     });
 
-    public readonly clickSubMenuAction: OutputEmitterRef<ISideMenu.Item> = output<ISideMenu.Item>();
-    public readonly clickSubMenuAdditionalAction: OutputEmitterRef<ISideMenu.ItemData> = output<ISideMenu.ItemData>();
+    public readonly clickSubMenuAction: OutputEmitterRef<{ item: ISideMenu.Item; event: MouseEvent }> = output<{
+        item: ISideMenu.Item;
+        event: MouseEvent;
+    }>();
+    public readonly clickSubMenuAdditionalAction: OutputEmitterRef<{ data: ISideMenu.ItemData; event: MouseEvent }> = output<{
+        data: ISideMenu.ItemData;
+        event: MouseEvent;
+    }>();
 
-    public onClickSubMenu(item: ISideMenu.Item): void {
-        this.clickSubMenuAction.emit(item);
+    public onClickSubMenu(item: ISideMenu.Item, event: MouseEvent): void {
+        this.clickSubMenuAction.emit({ item, event });
     }
 
-    public onClickSubMenuAdditional(data: ISideMenu.ItemData): void {
-        this.clickSubMenuAdditionalAction.emit(data);
+    public onClickSubMenuAdditional(data: ISideMenu.ItemData, event: MouseEvent): void {
+        this.clickSubMenuAdditionalAction.emit({ data, event });
     }
 }

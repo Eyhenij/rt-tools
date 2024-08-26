@@ -25,7 +25,7 @@ import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { Router, RouterOutlet } from '@angular/router';
 
 import { BlockDirective, ElemDirective } from '../../../bem';
-import { Nullable, RtIconOutlinedDirective, RtScrollToElementDirective, transformArrayInput } from '../../../util';
+import { Nullable, RtIconOutlinedDirective, RtScrollToElementDirective, WINDOW, transformArrayInput } from '../../../util';
 import { ISideMenu } from '../../../util/interfaces/side-menu.interface';
 import {
     RtuiScrollableContainerComponent,
@@ -78,6 +78,7 @@ export class RtuiSideMenuFooterDirective {}
 })
 export class RtuiSideMenuComponent {
     readonly #router: Router = inject(Router);
+    readonly #windowRef: Window = inject(WINDOW);
 
     public readonly headerTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiSideMenuHeaderDirective, {
         read: TemplateRef,
@@ -119,10 +120,16 @@ export class RtuiSideMenuComponent {
     });
 
     public readonly closeMobileMenuAction: OutputEmitterRef<void> = output<void>();
-    public readonly clickSubMenuAction: OutputEmitterRef<ISideMenu.Item> = output<ISideMenu.Item>();
-    public readonly clickSubMenuAdditionalAction: OutputEmitterRef<ISideMenu.ItemData> = output<ISideMenu.ItemData>();
+    public readonly clickSubMenuAction: OutputEmitterRef<{ item: ISideMenu.Item; event: MouseEvent }> = output<{
+        item: ISideMenu.Item;
+        event: MouseEvent;
+    }>();
+    public readonly clickSubMenuAdditionalAction: OutputEmitterRef<{ data: ISideMenu.ItemData; event: MouseEvent }> = output<{
+        data: ISideMenu.ItemData;
+        event: MouseEvent;
+    }>();
 
-    public onClickMenu(item?: ISideMenu.Item): void {
+    public onClickMenu(item: ISideMenu.Item, event: MouseEvent): void {
         this.selectedItem.set(item);
 
         if (item?.submenu) {
@@ -133,14 +140,19 @@ export class RtuiSideMenuComponent {
         }
 
         if (item?.link) {
-            void this.#router.navigate([item.link]);
+            if (event?.ctrlKey || event?.metaKey) {
+                this.#windowRef.open(item.link);
+            } else {
+                void this.#router.navigate([item.link]);
+            }
+
             this.closeMobileMenu();
         }
     }
 
-    public onClickSubMenu(item: ISideMenu.Item): void {
+    public onClickSubMenu({ item, event }: { item: ISideMenu.Item; event: MouseEvent }): void {
         if (item?.link) {
-            this.clickSubMenuAction.emit(item);
+            this.clickSubMenuAction.emit({ item, event });
             this.closeSubMenu();
             this.closeMobileMenu();
         }
@@ -174,8 +186,8 @@ export class RtuiSideMenuComponent {
         }
     }
 
-    public clickSubMenuAdditional(data: ISideMenu.ItemData): void {
-        this.clickSubMenuAdditionalAction.emit(data);
+    public clickSubMenuAdditional({ data, event }: { data: ISideMenu.ItemData; event: MouseEvent }): void {
+        this.clickSubMenuAdditionalAction.emit({ data, event });
     }
 
     #openSubMenu(): void {
