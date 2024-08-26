@@ -18,7 +18,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective } from '../../bem';
 import { Nullable } from '../../util';
-import { IInfoBadgeSizeType } from './badge-info-enum';
+import { IInfoBadgeSizeType, INFO_BADGE_SIZE_ENUM } from './badge-info-enum';
 import { ICON_SIDE_ENUM, IconSideType } from './stories/utils/enum/Icon-side.enum';
 
 @Component({
@@ -43,9 +43,9 @@ export class InfoBadgeComponent implements AfterContentChecked {
 
     public get badgeClass(): { [key: string]: boolean | string } {
         return {
-            'size-l': this.size() === 'l',
-            'size-m': this.size() === 'm',
-            'size-s': this.size() === 's',
+            'size-l': this.size() === INFO_BADGE_SIZE_ENUM.LARGE,
+            'size-m': this.size() === INFO_BADGE_SIZE_ENUM.MEDIUM,
+            'size-s': this.size() === INFO_BADGE_SIZE_ENUM.SMALL,
             bold: this.isFontBold(),
         };
     }
