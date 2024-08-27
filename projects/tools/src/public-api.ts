@@ -20,6 +20,7 @@ export * from './lib/ui-kit/table';
 export * from './lib/ui-kit/providers';
 export * from './lib/ui-kit/snack-bar';
 export * from './lib/ui-kit/animation';
+export * from './lib/ui-kit/info-badge';
 
 // utils
 export * from './lib/util';
