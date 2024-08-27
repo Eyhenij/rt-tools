@@ -18,6 +18,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { MatTooltip, TooltipPosition } from '@angular/material/tooltip';
 
+import { noop } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { BlockDirective, ElemDirective } from '../../bem';
@@ -68,9 +69,8 @@ export class RtuiToggleComponent implements OnInit, ControlValueAccessor {
 
     public readonly isMobile: Signal<Nullable<boolean>> = this.#breakpointService.isMobile;
 
-    // eslint-disable-next-line
-    #onTouched: () => void = () => {};
-    #onChanged: (value: boolean) => void = () => {};
+    #onTouched: () => void = () => noop;
+    #onChanged: (value: boolean) => void = () => noop;
 
     public ngOnInit(): void {
         this.formControl.valueChanges
@@ -81,6 +81,13 @@ export class RtuiToggleComponent implements OnInit, ControlValueAccessor {
             .subscribe((value: boolean) => {
                 this.#onChanged(value);
             });
+
+        this.formControl.statusChanges
+            .pipe(
+                filter(() => typeof this.#onTouched === 'function'),
+                takeUntilDestroyed(this.#destroyRef)
+            )
+            .subscribe(() => this.#onTouched());
 
         effect(
             () => {

@@ -13,7 +13,6 @@ import {
     booleanAttribute,
     computed,
     contentChild,
-    inject,
     input,
     output,
     signal,
@@ -22,10 +21,9 @@ import {
 import { MatIcon } from '@angular/material/icon';
 import { MatListItem, MatListItemIcon, MatNavList } from '@angular/material/list';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
-import { Router, RouterOutlet } from '@angular/router';
 
 import { BlockDirective, ElemDirective } from '../../../bem';
-import { Nullable, RtIconOutlinedDirective, RtScrollToElementDirective, WINDOW, transformArrayInput } from '../../../util';
+import { Nullable, RtIconOutlinedDirective, RtNavigationDirective, RtScrollToElementDirective, transformArrayInput } from '../../../util';
 import { ISideMenu } from '../../../util/interfaces/side-menu.interface';
 import {
     RtuiScrollableContainerComponent,
@@ -55,7 +53,6 @@ export class RtuiSideMenuFooterDirective {}
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         NgTemplateOutlet,
-        RouterOutlet,
         MatSidenavModule,
         MatIcon,
         MatListItem,
@@ -70,6 +67,7 @@ export class RtuiSideMenuFooterDirective {}
         RtuiScrollableContainerFooterDirective,
         RtScrollToElementDirective,
         RtIconOutlinedDirective,
+        RtNavigationDirective,
 
         // components
         RtuiScrollableContainerComponent,
@@ -77,9 +75,6 @@ export class RtuiSideMenuFooterDirective {}
     ],
 })
 export class RtuiSideMenuComponent {
-    readonly #router: Router = inject(Router);
-    readonly #windowRef: Window = inject(WINDOW);
-
     public readonly headerTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiSideMenuHeaderDirective, {
         read: TemplateRef,
     });
@@ -129,7 +124,7 @@ export class RtuiSideMenuComponent {
         event: MouseEvent;
     }>();
 
-    public onClickMenu(item: ISideMenu.Item, event: MouseEvent): void {
+    public onClickMenu(item: ISideMenu.Item): void {
         this.selectedItem.set(item);
 
         if (item?.submenu) {
@@ -140,12 +135,6 @@ export class RtuiSideMenuComponent {
         }
 
         if (item?.link) {
-            if (event?.ctrlKey || event?.metaKey) {
-                this.#windowRef.open(item.link);
-            } else {
-                void this.#router.navigate([item.link]);
-            }
-
             this.closeMobileMenu();
         }
     }
