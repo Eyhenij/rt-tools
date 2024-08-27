@@ -31,6 +31,7 @@
                             @for (item of menuItems(); track i; let i = $index) {
                                 <mat-list-item
                                     rtBlock="rtui-mobile-side-menu-item"
+                                    [rtNavigationDirective]="item?.link"
                                     [activated]="selectedItem() === item || (!selectedItem() && activeMenuIds().includes(item.id))"
                                     (click)="onClickMenu(item)">
                                     @if (item?.icon) {
@@ -76,7 +77,11 @@
             <ng-container *rtuiScrollableContent>
                 <mat-nav-list rtElem="list">
                     @for (item of menuItems(); track i; let i = $index) {
-                        <div rtBlock="rtui-side-menu-item" (mouseenter)="toggleSubMenu(item)" (click)="onClickMenu(item)">
+                        <a
+                            rtBlock="rtui-side-menu-item"
+                            [rtNavigationDirective]="item?.link"
+                            (mouseenter)="toggleSubMenu(item)"
+                            (click)="onClickMenu(item)">
                             @if (item?.icon) {
                                 <mat-list-item
                                     rtBlock="rtui-side-menu-item-button"
@@ -90,7 +95,7 @@
                             @if (item?.name) {
                                 <div rtElem="title">{{ item.name }}</div>
                             }
-                        </div>
+                        </a>
                     }
                 </mat-nav-list>
             </ng-container>

@@ -11,12 +11,14 @@
                     @if (isSelectorShown() && !isPlaceholderShown()) {
                         <ng-container *rtuiToolbarLeft>
                             <div rtElem="selector">
-                                <mat-checkbox
-                                    [checked]="isAllEntitiesSelected()"
-                                    (click)="$event.stopPropagation()"
-                                    (change)="onToggleAllEntities($event.checked)">
-                                    <div rtElem="selector-label">Select all</div>
-                                </mat-checkbox>
+                                @if (isMultiSelect()) {
+                                    <mat-checkbox
+                                        [checked]="isAllEntitiesSelected()"
+                                        (click)="$event.stopPropagation()"
+                                        (change)="onToggleAllEntities($event.checked)">
+                                        <div rtElem="selector-label">Select all</div>
+                                    </mat-checkbox>
+                                }
                             </div>
                         </ng-container>
                     }

@@ -45,6 +45,7 @@ export default class TestDynamicListComponent {
     public loading: boolean = false;
     public fetching: boolean = false;
     public isSelectorShown: boolean = true;
+    public isMultiSelect: boolean = true;
     public isAllEntitiesSelected: boolean = false;
     public isTableRowsClickable: boolean = false;
     public searchTerm: string = '';
@@ -87,18 +88,26 @@ export default class TestDynamicListComponent {
     }
 
     public onToggleEntity(value: { key: number; checked: boolean }): void {
-        const updatedList: number[] = [];
-        this.selectedEntitiesKeys.forEach((el: number) => updatedList.push(el));
-        this.selectedEntitiesKeys = [];
+        if (this.isMultiSelect) {
+            const updatedList: number[] = [];
+            this.selectedEntitiesKeys.forEach((el: number) => updatedList.push(el));
+            this.selectedEntitiesKeys = [];
 
-        if (value.checked) {
-            updatedList.push(value.key);
+            if (value.checked) {
+                updatedList.push(value.key);
+            } else {
+                const index: number = updatedList.indexOf(value.key);
+                updatedList.splice(index, 1);
+            }
+
+            this.selectedEntitiesKeys = updatedList;
         } else {
-            const index: number = updatedList.indexOf(value.key);
-            updatedList.splice(index, 1);
+            this.selectedEntitiesKeys = [];
+            this.selectedEntitiesKeys = [value.key];
         }
 
-        this.selectedEntitiesKeys = updatedList;
+        // eslint-disable-next-line no-console
+        console.warn('Selected Entities: ', this.selectedEntitiesKeys);
     }
 
     public onToggleExistingEntities(checked: boolean): void {

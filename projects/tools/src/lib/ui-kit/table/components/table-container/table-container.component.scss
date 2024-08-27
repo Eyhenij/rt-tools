@@ -130,6 +130,8 @@ $table-container: (
         rtui-toolbar {
             --rt-toolbar-body-height: 6.5rem;
             --rt-toolbar-body-mobile-height: 6.5rem;
+            --rt-toolbar-bars-center-width: 0;
+            --rt-toolbar-bars-center-right: 100%;
         }
 
         .table-container {
@@ -139,17 +141,16 @@ $table-container: (
             }
 
             &__toolbar {
-                min-width: 100vw;
                 display: grid;
                 grid-template-columns: 100%;
                 grid-gap: var(--rt-table-container-toolbar-gap);
 
                 &-actions {
                     grid-row: 2;
-                    justify-content: center;
+                    justify-self: center;
 
                     &--end {
-                        justify-content: flex-end;
+                        justify-self: end;
                         margin-left: var(--rt-table-container-toolbar-mobile-margin-left);
                     }
                 }
