@@ -137,7 +137,7 @@ $aside: (
         margin-right: var(--rt-aside-header-back-button-margin-right);
     }
 
-    .title {
+    .c-aside-title {
         height: 100%;
         width: 100%;
         display: flex;
@@ -173,7 +173,7 @@ $aside: (
         }
     }
 
-    .actions {
+    .c-aside-actions {
         margin-left: var(--rt-aside-header-actions-margin-left);
 
         &__action {
