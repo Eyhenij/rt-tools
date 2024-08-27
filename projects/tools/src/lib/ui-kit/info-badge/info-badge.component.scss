@@ -1,0 +1,62 @@
+:host {
+    border-radius: 9999px;
+    display: block;
+    line-height: normal;
+    max-width: fit-content;
+
+    // default values
+    background-color: #005cbb;
+    color: #ffffff;
+
+    .c-info-badge {
+        display: flex;
+        gap: 0.15rem;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        line-height: normal;
+
+        &__content {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    .size-l {
+        font-size: 1.125rem;
+        padding: 0.3rem 0.65rem;
+
+        .mat-icon {
+            font-size: 1.5rem;
+        }
+    }
+
+    .size-m {
+        font-size: 0.875rem;
+        padding: 0.22rem 0.65rem;
+
+        .mat-icon {
+            font-size: 1.05rem;
+        }
+    }
+
+    .size-s {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.65rem;
+        letter-spacing: 0.025rem;
+
+        .mat-icon {
+            font-size: 0.75rem;
+        }
+    }
+
+    .mat-icon {
+        height: unset;
+        width: unset;
+    }
+
+    .bold {
+        font-weight: 700;
+    }
+}

@@ -1,0 +1,11 @@
+.block {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    &__container {
+        border: 1px grey dashed;
+        max-width: 200px;
+        padding: 5px;
+    }
+}
