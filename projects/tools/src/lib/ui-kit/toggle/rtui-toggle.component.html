@@ -1,0 +1,18 @@
+<label
+    rtBlock="rtui-toggle-container"
+    [rtMod]="{ disabled: disabled() }"
+    [matTooltipPosition]="tooltipPosition()"
+    [matTooltip]="tooltip()"
+    [matTooltipDisabled]="!tooltip() || isMobile() || tooltipDisabled()">
+    <div rtBlock="rtui-toggle" rtMod="{{ size() }}">
+        <input type="checkbox" rtElem="check" [formControl]="formControl" />
+
+        <b rtElem="switch"></b>
+
+        <b rtElem="track"></b>
+    </div>
+
+    @if (label()) {
+        <div rtElem="label" [rtMod]="{ active: formControl.value }">{{ label() }}</div>
+    }
+</label>

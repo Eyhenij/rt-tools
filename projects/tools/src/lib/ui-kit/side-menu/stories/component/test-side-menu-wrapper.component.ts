@@ -156,10 +156,22 @@ export class TestSideMenuWrapperComponent {
     public isSubMenuTooltipsShown: boolean = false;
 
     public closeMobileMenu(): void {
-        return;
+        // eslint-disable-next-line no-console
+        console.log('Close mobile menu action');
     }
 
     public logout(): void {
-        return;
+        // eslint-disable-next-line no-console
+        console.log('Logout action');
+    }
+
+    public onClickSubMenu({ item, event }: { item: ISideMenu.Item; event: MouseEvent }): void {
+        // eslint-disable-next-line no-console
+        console.log('sub menu action: ', { item, event });
+    }
+
+    public onClickSubMenuAdditional({ data, event }: { data: ISideMenu.ItemData; event: MouseEvent }): void {
+        // eslint-disable-next-line no-console
+        console.log('sub menu additional action: ', { data, event });
     }
 }

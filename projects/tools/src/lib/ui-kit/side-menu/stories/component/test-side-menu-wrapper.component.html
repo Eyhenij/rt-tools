@@ -8,6 +8,8 @@
     [isSubMenuIconsOutlined]="isSubMenuIconsOutlined"
     [isSubMenuButtonIconsOutlined]="isSubMenuButtonIconsOutlined"
     [isSubMenuTooltipsShown]="isSubMenuTooltipsShown"
+    (clickSubMenuAction)="onClickSubMenu($event)"
+    (clickSubMenuAdditionalAction)="onClickSubMenuAdditional($event)"
     (closeMobileMenuAction)="closeMobileMenu()">
     <ng-container *rtuiSideMenuHeader>
         <a rtElem="header" (click)="closeMobileMenu()">

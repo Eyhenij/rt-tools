@@ -19,6 +19,7 @@ import { MatIconButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatRadioButton } from '@angular/material/radio';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
 import { Nullable, RtIconOutlinedDirective, transformArrayInput } from '../../../../util';
@@ -47,6 +48,7 @@ export class RtuiTableRowActionsDirective {}
         MatMenu,
         MatMenuItem,
         MatCheckbox,
+        MatRadioButton,
 
         // directives
         BlockDirective,
@@ -68,6 +70,9 @@ export class RtuiTableComponent<
         transform: booleanAttribute,
     });
     public isSelectorShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
+    public isMultiSelect: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
     public isTableRowsClickable: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {

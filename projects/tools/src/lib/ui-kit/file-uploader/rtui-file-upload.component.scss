@@ -1,0 +1,73 @@
+@use '../../../styles/base/mixin' as mixins;
+
+$file-upload: (
+    host: (
+        width: 100%,
+        max-width: 20rem,
+        height: 100%,
+        max-height: 20rem,
+        display: flex,
+        flex-direction: column,
+        justify-content: center,
+        align-items: center,
+        gap: 1rem,
+        padding: 1rem,
+        border: 2px dashed var(--clr-black-20),
+        border-radius: 1rem,
+    ),
+    host-dragged: (
+        border-color: var(--mdc-text-button-label-text-color),
+    ),
+    icon: (
+        size: 2rem,
+        color: var(--clr-black-100),
+    ),
+    title: (
+        font-size: 1rem,
+        color: var(--clr-text),
+    ),
+);
+
+:host {
+    @each $element, $elements in $file-upload {
+        @each $style-token, $value in $elements {
+            #{mixins.generateCssVar('file-upload', #{$element}, #{$style-token})}: #{$value};
+        }
+    }
+
+    width: var(--rt-file-upload-host-width);
+    max-width: var(--rt-file-upload-host-max-width);
+    height: var(--rt-file-upload-host-height);
+    max-height: var(--rt-file-upload-host-max-height);
+    display: var(--rt-file-upload-host-display);
+    flex-direction: var(--rt-file-upload-host-flex-direction);
+    justify-content: var(--rt-file-upload-host-justify-content);
+    align-items: var(--rt-file-upload-host-align-items);
+    gap: var(--rt-file-upload-host-gap);
+    padding: var(--rt-file-upload-host-padding);
+    border: var(--rt-file-upload-host-border);
+    border-radius: var(--rt-file-upload-host-border-radius);
+    transition: border-color 0.3s ease-in-out;
+
+    &.--dragged {
+        border-color: var(--rt-file-upload-host-dragged-border-color);
+    }
+
+    input[type='file'] {
+        display: none;
+    }
+
+    .file-upload {
+        &__icon {
+            width: var(--rt-file-upload-icon-size);
+            height: var(--rt-file-upload-icon-size);
+            font-size: var(--rt-file-upload-icon-size);
+            color: var(--rt-file-upload-icon-color);
+        }
+
+        &__title {
+            font-size: var(--rt-file-upload-title-font-size);
+            color: var(--rt-file-upload-title-color);
+        }
+    }
+}

@@ -9,7 +9,7 @@
             [rtMod]="{ fixed: isSubMenuXScrollEnabled() }"
             [id]="item.id"
             [activated]="menuRef.activeMenuIds().includes(item.id)"
-            (click)="onClickSubMenu(item)">
+            (click)="onClickSubMenu(item, $event)">
             @if (item?.icon) {
                 <mat-icon matListItemIcon rtElem="icon" [rtIconOutlinedDirective]="isSubMenuIconsOutlined()">{{ item.icon }}</mat-icon>
             }
@@ -32,7 +32,7 @@
                             <mat-icon
                                 rtElem="icon"
                                 [rtIconOutlinedDirective]="isSubMenuButtonIconsOutlined()"
-                                (click)="onClickSubMenuAdditional(item.iconButton?.data); $event.stopPropagation()">
+                                (click)="onClickSubMenuAdditional(item.iconButton?.data, $event); $event.stopPropagation()">
                                 {{ item.iconButton.icon }}
                             </mat-icon>
                         </div>
