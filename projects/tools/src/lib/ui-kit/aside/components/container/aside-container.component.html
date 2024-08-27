@@ -22,7 +22,7 @@
                 </ng-container>
 
                 <ng-container *rtuiToolbarCenter>
-                    <div rtBlock="title">
+                    <div rtBlock="c-aside-title">
                         @if (headerTpl()) {
                             <ng-container *ngTemplateOutlet="headerTpl() ?? null" />
                         } @else {
@@ -32,7 +32,7 @@
                 </ng-container>
 
                 <ng-container *rtuiToolbarRight>
-                    <div rtBlock="actions">
+                    <div rtBlock="c-aside-actions">
                         @if (headerActionsButtons()?.length) {
                             @for (button of headerActionsButtons(); track button) {
                                 <button
