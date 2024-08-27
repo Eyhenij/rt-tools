@@ -1,4 +1,4 @@
-function darkenHexColor(hex: string, percent: number): string {
+export function darkenHexColor(hex: string, percent: number): string {
     /**
      * returns a darkened color depending on the color and percentage
      */

@@ -1,8 +1,8 @@
 <div
     rtBlock="c-info-badge"
-    matTooltip="{{ text() }}"
     matTooltipClass="custom-tooltip"
     matTooltipPosition="above"
+    [matTooltip]="text()"
     [ngClass]="badgeClass"
     [matTooltipDisabled]="!isTitleCollapsed() || isMobile()">
     <div rtElem="content" #content>{{ text() }}</div>

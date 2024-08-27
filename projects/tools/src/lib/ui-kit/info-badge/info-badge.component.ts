@@ -18,8 +18,9 @@ import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective } from '../../bem';
 import { Nullable } from '../../util';
+import { POSITION_ENUM } from '../../util/enums/position.enum';
 import { IInfoBadgeSizeType, INFO_BADGE_SIZE_ENUM } from './badge-info-enum';
-import { ICON_SIDE_ENUM, IconSideType } from './stories/utils/enum/Icon-side.enum';
+import { IconSideType } from './icon-side.type';
 
 @Component({
     selector: 'rtui-info-badge',
@@ -33,7 +34,7 @@ export class InfoBadgeComponent implements AfterContentChecked {
     public size: InputSignal<IInfoBadgeSizeType> = input.required();
     public text: InputSignal<string> = input.required();
     public glyph: InputSignal<string> = input('');
-    public iconSide: InputSignal<IconSideType> = input<IconSideType>(ICON_SIDE_ENUM.RIGHT);
+    public iconSide: InputSignal<IconSideType> = input<IconSideType>(POSITION_ENUM.RIGHT);
     public isFontBold: InputSignal<boolean> = input(false);
     public isMobile: InputSignalWithTransform<Nullable<boolean>, boolean> = input.required<Nullable<boolean>, boolean>({
         transform: booleanAttribute,
@@ -52,7 +53,7 @@ export class InfoBadgeComponent implements AfterContentChecked {
 
     public get iconStyles(): { [key: string]: string } {
         return {
-            order: this.iconSide() === ICON_SIDE_ENUM.LEFT ? '-1' : '0',
+            order: this.iconSide() === POSITION_ENUM.LEFT ? '-1' : '0',
             'min-width': 'fit-content',
         };
     }

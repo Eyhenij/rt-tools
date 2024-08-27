@@ -6,12 +6,13 @@ import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatSelect } from '@angular/material/select';
 
 import { ElemDirective } from '../../../../../bem';
+import { POSITION_ENUM } from '../../../../../util/enums/position.enum';
 import { INFO_BADGE_SIZE_ENUM } from '../../../badge-info-enum';
+import { IconSideType } from '../../../icon-side.type';
+import { INFO_BADGE_TYPE_ENUM } from '../../../info-badge-types.enum';
 import { InfoBadgeComponent } from '../../../info-badge.component';
 import { TestInfoBadgeDirective } from '../../directives/test-info-badge.directive';
-import { ICON_SIDE_ENUM, IconSideType } from '../../utils/enum/Icon-side.enum';
 import { InfoBadgePropertyType } from '../../utils/enum/info-badge-property.enum';
-import { INFO_BADGE_TYPE_ENUM } from '../../utils/enum/info-badge-types.enum';
 
 @Component({
     selector: 'rtui-test-info-badge',
@@ -40,11 +41,11 @@ export class TestInfoBadgeComponent {
 
     public isFontBold: boolean = false;
     public isWithIcon: string = '';
-    public iconSide: IconSideType = ICON_SIDE_ENUM.RIGHT;
+    public iconSide: IconSideType = POSITION_ENUM.RIGHT;
 
     public readonly badgeSizes: typeof INFO_BADGE_SIZE_ENUM = INFO_BADGE_SIZE_ENUM;
     public readonly badgeTypes: typeof INFO_BADGE_TYPE_ENUM = INFO_BADGE_TYPE_ENUM;
-    public readonly iconSides: typeof ICON_SIDE_ENUM = ICON_SIDE_ENUM;
+    public readonly positions: typeof POSITION_ENUM = POSITION_ENUM;
 
     public toggleFontBold(): void {
         this.isFontBold = !this.isFontBold;
@@ -55,6 +56,6 @@ export class TestInfoBadgeComponent {
     }
 
     public toggleIconLocation(): void {
-        this.iconSide = this.iconSide == ICON_SIDE_ENUM.RIGHT ? ICON_SIDE_ENUM.LEFT : ICON_SIDE_ENUM.RIGHT;
+        this.iconSide = this.iconSide == POSITION_ENUM.RIGHT ? POSITION_ENUM.LEFT : POSITION_ENUM.RIGHT;
     }
 }

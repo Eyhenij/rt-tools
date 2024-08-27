@@ -1,8 +1,8 @@
 import { Directive, HostBinding, InputSignal, OnInit, inject, input } from '@angular/core';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
-import { getColorBasedOnBackground } from '../utils/calculate-text-color-based-on-back';
-import { InfoBadgeType } from '../utils/enum/info-badge-types.enum';
+import { getColorBasedOnBackground } from '../../calculate-text-color-based-on-back';
+import { InfoBadgeType } from '../../info-badge-types.enum';
 
 @Directive({
     selector: '[rtTestInfoBadge]',
@@ -16,6 +16,8 @@ export class TestInfoBadgeDirective implements OnInit {
 
     public ngOnInit(): void {
         /**
+         * The directive is needed to determine color of the badge depending on project color palette.
+         * In project, you can use:
          *  if (this.#platformService.isPlatformBrowser) {
          *             this.infoBadgeColors = {
          *                 success: this.#document.body.computedStyleMap().get('--clr-cell-success').toString(),

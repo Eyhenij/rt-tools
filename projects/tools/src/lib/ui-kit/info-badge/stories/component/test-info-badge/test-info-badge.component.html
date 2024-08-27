@@ -33,8 +33,8 @@
 
             @if (isWithIcon) {
                 <mat-radio-group aria-label="Select an option" [ngModel]="iconSide" (ngModelChange)="toggleIconLocation()">
-                    <mat-radio-button [value]="iconSides.LEFT">Left</mat-radio-button>
-                    <mat-radio-button [value]="iconSides.RIGHT">Right</mat-radio-button>
+                    <mat-radio-button [value]="positions.LEFT">Left</mat-radio-button>
+                    <mat-radio-button [value]="positions.RIGHT">Right</mat-radio-button>
                 </mat-radio-group>
             }
         }
@@ -57,7 +57,7 @@
                     [size]="badgeSizes.MEDIUM"
                     [isMobile]="false"
                     [glyph]="isWithIcon"
-                    [iconSide]="iconSides.RIGHT" />
+                    [iconSide]="positions.RIGHT" />
             </div>
         }
     }
