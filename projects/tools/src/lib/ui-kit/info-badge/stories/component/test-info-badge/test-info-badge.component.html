@@ -1,0 +1,64 @@
+<div class="block">
+    @switch (property()) {
+        @case ('color') {
+            <rtui-info-badge rtTestInfoBadge [type]="badgeTypes.SUCCESS" [text]="text()" [size]="badgeSizes.MEDIUM" [isMobile]="false" />
+
+            <rtui-info-badge rtTestInfoBadge [type]="badgeTypes.DISABLED" [text]="text()" [size]="badgeSizes.MEDIUM" [isMobile]="false" />
+
+            <rtui-info-badge rtTestInfoBadge [type]="badgeTypes.INFO" [text]="text()" [size]="badgeSizes.MEDIUM" [isMobile]="false" />
+
+            <rtui-info-badge rtTestInfoBadge [type]="badgeTypes.WARNING" [text]="text()" [size]="badgeSizes.MEDIUM" [isMobile]="false" />
+
+            <rtui-info-badge rtTestInfoBadge [type]="badgeTypes.PRIMARY" [text]="text()" [size]="badgeSizes.MEDIUM" [isMobile]="false" />
+        }
+        @case ('size') {
+            <rtui-info-badge rtTestInfoBadge [type]="badgeTypes.SUCCESS" [text]="text()" [size]="badgeSizes.SMALL" [isMobile]="false" />
+
+            <rtui-info-badge rtTestInfoBadge [type]="badgeTypes.DISABLED" [text]="text()" [size]="badgeSizes.MEDIUM" [isMobile]="false" />
+
+            <rtui-info-badge rtTestInfoBadge [type]="badgeTypes.INFO" [text]="text()" [size]="badgeSizes.LARGE" [isMobile]="false" />
+        }
+        @case ('icon') {
+            <rtui-info-badge
+                rtTestInfoBadge
+                [type]="badgeTypes.SUCCESS"
+                [text]="text()"
+                [size]="badgeSizes.MEDIUM"
+                [isMobile]="false"
+                [isFontBold]="isFontBold"
+                [glyph]="isWithIcon"
+                [iconSide]="iconSide" />
+
+            <mat-checkbox [ngModel]="isWithIcon" (click)="$event.stopPropagation()" (change)="toggleWithIcon()">With icon</mat-checkbox>
+
+            @if (isWithIcon) {
+                <mat-radio-group aria-label="Select an option" [ngModel]="iconSide" (ngModelChange)="toggleIconLocation()">
+                    <mat-radio-button [value]="positions.LEFT">Left</mat-radio-button>
+                    <mat-radio-button [value]="positions.RIGHT">Right</mat-radio-button>
+                </mat-radio-group>
+            }
+        }
+        @case ('bold') {
+            <rtui-info-badge
+                rtTestInfoBadge
+                [type]="badgeTypes.SUCCESS"
+                [text]="text()"
+                [size]="badgeSizes.MEDIUM"
+                [isMobile]="false"
+                [isFontBold]="isFontBold" />
+            <mat-checkbox [ngModel]="isFontBold" (click)="$event.stopPropagation()" (change)="toggleFontBold()">Font is bold</mat-checkbox>
+        }
+        @case ('ellipsis') {
+            <div class="block__container">
+                <rtui-info-badge
+                    rtTestInfoBadge
+                    [type]="badgeTypes.SUCCESS"
+                    [text]="textLengthy()"
+                    [size]="badgeSizes.MEDIUM"
+                    [isMobile]="false"
+                    [glyph]="isWithIcon"
+                    [iconSide]="positions.RIGHT" />
+            </div>
+        }
+    }
+</div>
