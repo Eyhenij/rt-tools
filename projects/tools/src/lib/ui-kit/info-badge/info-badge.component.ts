@@ -30,7 +30,7 @@ import { IconSideType } from './icon-side.type';
     styleUrl: './info-badge.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InfoBadgeComponent implements AfterContentChecked {
+export class RtuiInfoBadgeComponent implements AfterContentChecked {
     public size: InputSignal<IInfoBadgeSizeType> = input.required();
     public text: InputSignal<string> = input.required();
     public glyph: InputSignal<string> = input('');
