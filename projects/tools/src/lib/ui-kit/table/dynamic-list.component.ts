@@ -24,10 +24,20 @@ import { Nullable, transformArrayInput } from '../../util';
 import { RtuiToolbarCenterDirective, RtuiToolbarComponent, RtuiToolbarLeftDirective, RtuiToolbarRightDirective } from '../toolbar';
 import { RtuiTableComponent, RtuiTableRowActionsDirective } from './components';
 import { TableBaseCellComponent } from './components/table-base-cell/table-base-cell.component';
-import { RtuiTableContainerComponent, RtuiTableToolbarActionsDirective } from './components/table-container/table-container.component';
+import {
+    RtuiTableContainerComponent,
+    RtuiTableToolbarActionsDirective,
+    RtuiTableToolbarSelectorsDirective,
+} from './components/table-container/table-container.component';
 import { RtuiTableHeaderCellComponent } from './components/table-header-cell/table-header-cell.component';
 import { PageModel, SortModel } from './util/lists.interface';
 import { ITable } from './util/table-column.interface';
+
+@Directive({
+    standalone: true,
+    selector: '[rtuiDynamicListToolbarSelectorsDirective]',
+})
+export class RtuiDynamicListToolbarSelectorsDirective {}
 
 @Directive({
     standalone: true,
@@ -65,6 +75,7 @@ export class RtuiDynamicListRowActionsDirective {}
         RtuiToolbarRightDirective,
         RtuiTableToolbarActionsDirective,
         RtuiTableRowActionsDirective,
+        RtuiTableToolbarSelectorsDirective,
 
         // Ui-kit
         RtuiToolbarComponent,
@@ -87,7 +98,7 @@ export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown
     public isTableRowsClickable: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
-    public isSelectorShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+    public isSelectorsShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
     public isMultiSelect: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
@@ -134,6 +145,12 @@ export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown
     public readonly toggleExistingEntities: OutputEmitterRef<boolean> = output<boolean>();
     public readonly toggleAllEntities: OutputEmitterRef<boolean> = output<boolean>();
 
+    public readonly toolbarSelectorsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(
+        RtuiDynamicListToolbarSelectorsDirective,
+        {
+            read: TemplateRef,
+        }
+    );
     public readonly toolbarActionsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiDynamicListToolbarActionsDirective, {
         read: TemplateRef,
     });

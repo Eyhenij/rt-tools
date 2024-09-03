@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenuItem } from '@angular/material/menu';
@@ -6,10 +7,12 @@ import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
 import { RtIconOutlinedDirective } from '../../../../util';
+import { RtuiToggleComponent } from '../../../toggle';
 import {
     RtuiDynamicListComponent,
     RtuiDynamicListRowActionsDirective,
     RtuiDynamicListToolbarActionsDirective,
+    RtuiDynamicListToolbarSelectorsDirective,
 } from '../../dynamic-list.component';
 import { LIST_SORT_ORDER_ENUM } from '../../util/list-sort-order.enum';
 import { PageModel, SortModel } from '../../util/lists.interface';
@@ -37,6 +40,9 @@ import { Person } from '../types';
         ElemDirective,
         RtuiDynamicListToolbarActionsDirective,
         RtuiDynamicListRowActionsDirective,
+        RtuiToggleComponent,
+        FormsModule,
+        RtuiDynamicListToolbarSelectorsDirective,
     ],
     providers: [],
 })
@@ -44,7 +50,7 @@ export default class TestDynamicListComponent {
     public isMobile: boolean = false;
     public loading: boolean = false;
     public fetching: boolean = false;
-    public isSelectorShown: boolean = true;
+    public isSelectorsShown: boolean = true;
     public isMultiSelect: boolean = true;
     public isAllEntitiesSelected: boolean = false;
     public isTableRowsClickable: boolean = false;

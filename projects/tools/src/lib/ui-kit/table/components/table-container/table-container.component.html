@@ -8,24 +8,47 @@
         <rtui-scrollable>
             <ng-container *rtuiScrollableHeader>
                 <rtui-toolbar>
-                    @if (isSelectorShown() && !isPlaceholderShown()) {
+                    @if (isSelectorsShown() && !isPlaceholderShown()) {
                         <ng-container *rtuiToolbarLeft>
-                            <div rtElem="selector">
-                                @if (isMultiSelect()) {
-                                    <mat-checkbox
-                                        [checked]="isAllEntitiesSelected()"
-                                        (click)="$event.stopPropagation()"
-                                        (change)="onToggleAllEntities($event.checked)">
-                                        <div rtElem="selector-label">Select all</div>
-                                    </mat-checkbox>
-                                }
-                            </div>
+                            @if (isSmallTablet()) {
+                                <div rtElem="selectors">
+                                    @if (isMultiSelect()) {
+                                        <mat-checkbox
+                                            [checked]="isAllEntitiesSelected()"
+                                            (click)="$event.stopPropagation()"
+                                            (change)="onToggleAllEntities($event.checked)">
+                                            <div rtElem="selectors-label">Select all</div>
+                                        </mat-checkbox>
+                                    }
+
+                                    @if (toolbarSelectorsTpl()) {
+                                        <ng-template *ngTemplateOutlet="toolbarSelectorsTpl() ?? null" />
+                                    }
+                                </div>
+                            }
                         </ng-container>
                     }
 
                     <ng-container *rtuiToolbarRight>
                         <div rtElem="toolbar">
-                            <div rtElem="toolbar-actions" [rtMod]="{ end: isSelectorShown() }">
+                            <div rtElem="toolbar-actions" [rtMod]="{ end: isSelectorsShown() }">
+                                @if (isSelectorsShown() && !isSmallTablet()) {
+                                    <div rtElem="selectors">
+                                        @if (isMultiSelect()) {
+                                            <mat-checkbox
+                                                [checked]="isAllEntitiesSelected()"
+                                                (click)="$event.stopPropagation()"
+                                                (change)="onToggleAllEntities($event.checked)">
+                                                <div rtElem="selectors-label">Select all</div>
+                                            </mat-checkbox>
+                                        }
+
+                                        @if (toolbarSelectorsTpl()) {
+                                            <ng-template *ngTemplateOutlet="toolbarSelectorsTpl() ?? null" />
+                                        }
+                                    </div>
+                                }
+
                                 @if (toolbarActionsTpl()) {
                                     <ng-template *ngTemplateOutlet="toolbarActionsTpl() ?? null" />
                                 }

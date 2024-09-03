@@ -6,7 +6,7 @@
     [selectedEntitiesKeys]="selectedEntitiesKeys"
     [loading]="loading"
     [fetching]="fetching"
-    [isSelectorShown]="isSelectorShown"
+    [isSelectorsShown]="isSelectorsShown"
     [isMultiSelect]="isMultiSelect"
     [isAllEntitiesSelected]="isAllEntitiesSelected"
     [isTableRowsClickable]="isTableRowsClickable"
@@ -20,6 +20,10 @@
     (sortChange)="onSortChange($event)"
     (pageModelChange)="onPageModelChange($event)"
     (rowClick)="onRowClick($event)">
+    <ng-container *rtuiDynamicListToolbarSelectorsDirective>
+        <rtui-toggle [ngModel]="false" [label]="'Enable'" />
+    </ng-container>
+
     <ng-container *rtuiDynamicListToolbarActionsDirective>
         <button
             mat-mini-fab

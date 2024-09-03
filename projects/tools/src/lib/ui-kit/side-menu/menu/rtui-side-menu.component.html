@@ -13,11 +13,15 @@
                     [rtMod]="{ scrollable: selectedSubMenu()?.length && isSubMenuXScrollEnabled() }">
                     @if (selectedSubMenu()?.length) {
                         <div rtElem="sub" [rtScrollToElement]="activeMenuId()" [elements]="selectedSubMenu() ?? []">
-                            <rtui-side-menu-sub-item [item]="backToMainMenuButton()" (clickSubMenuAction)="onBackToMainMenu()" />
+                            <rtui-side-menu-sub-item
+                                [item]="backToMainMenuButton()"
+                                [isMobile]="isMobile()"
+                                (clickSubMenuAction)="onBackToMainMenu()" />
 
                             @for (item of selectedSubMenu(); track i; let i = $index) {
                                 <rtui-side-menu-sub-item
                                     [item]="item"
+                                    [isMobile]="isMobile()"
                                     [isSubMenuXScrollEnabled]="isSubMenuXScrollEnabled()"
                                     [isSubMenuIconsOutlined]="isSubMenuIconsOutlined()"
                                     [isSubMenuButtonIconsOutlined]="isSubMenuButtonIconsOutlined()"
@@ -125,6 +129,7 @@
                             @for (item of selectedSubMenu(); track i; let i = $index) {
                                 <rtui-side-menu-sub-item
                                     [item]="item"
+                                    [isMobile]="isMobile()"
                                     [isSubMenuXScrollEnabled]="isSubMenuXScrollEnabled()"
                                     [isSubMenuIconsOutlined]="isSubMenuIconsOutlined()"
                                     [isSubMenuButtonIconsOutlined]="isSubMenuButtonIconsOutlined()"
