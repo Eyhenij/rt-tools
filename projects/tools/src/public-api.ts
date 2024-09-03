@@ -22,6 +22,7 @@ export * from './lib/ui-kit/snack-bar';
 export * from './lib/ui-kit/animation';
 export * from './lib/ui-kit/info-badge';
 export * from './lib/ui-kit/toggle';
+export * from './lib/ui-kit/file-uploader';
 
 // utils
 export * from './lib/util';

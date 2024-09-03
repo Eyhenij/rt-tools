@@ -3,7 +3,7 @@
 
     <div rtElem="title">Drag and drop your file here or</div>
 
-    <input #uploadInput type="file" (change)="onFileSelect($event)" />
+    <input #uploadInput hidden type="file" (change)="onFileSelect($event)" />
 
     <button rtBlock="c-button" mat-button color="accent" (click)="uploadInput.click()">Choose file</button>
 </ng-container>
