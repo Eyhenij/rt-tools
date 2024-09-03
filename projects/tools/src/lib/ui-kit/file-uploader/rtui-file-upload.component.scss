@@ -53,10 +53,6 @@ $file-upload: (
         border-color: var(--rt-file-upload-host-dragged-border-color);
     }
 
-    input[type='file'] {
-        display: none;
-    }
-
     .file-upload {
         &__icon {
             width: var(--rt-file-upload-icon-size);

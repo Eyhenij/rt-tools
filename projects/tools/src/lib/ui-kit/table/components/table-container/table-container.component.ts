@@ -29,7 +29,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 import { BlockDirective, ElemDirective, ModDirective } from '../../../../bem';
-import { Nullable, RtIconOutlinedDirective, isString } from '../../../../util';
+import { BreakpointService, Nullable, RtIconOutlinedDirective, isString } from '../../../../util';
 import { RtuiHeaderCenterDirective } from '../../../header';
 import {
     RtuiScrollableContainerComponent,
@@ -41,6 +41,12 @@ import { RtuiToolbarComponent, RtuiToolbarLeftDirective, RtuiToolbarRightDirecti
 import { PageModel } from '../../util/lists.interface';
 import { RtuiClearButtonComponent } from '../clear-search-button/rtui-clear-button.component';
 import { RtuiPaginationComponent } from '../pagination-view/rtui-pagination.component';
+
+@Directive({
+    standalone: true,
+    selector: '[rtuiTableToolbarSelectorsDirective]',
+})
+export class RtuiTableToolbarSelectorsDirective {}
 
 @Directive({
     standalone: true,
@@ -88,9 +94,11 @@ export class RtuiTableToolbarActionsDirective {}
         RtIconOutlinedDirective,
         RtuiToolbarLeftDirective,
     ],
+    providers: [BreakpointService],
 })
 export class RtuiTableContainerComponent implements OnInit {
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
+    readonly #breakpointService: BreakpointService = inject(BreakpointService);
 
     public appearance: InputSignal<MatFormFieldAppearance> = input.required();
     public pageModel: InputSignal<PageModel> = input.required();
@@ -115,7 +123,7 @@ export class RtuiTableContainerComponent implements OnInit {
     public isActionsIconsOutlined: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
-    public isSelectorShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+    public isSelectorsShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
     public isMultiSelect: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
@@ -131,11 +139,16 @@ export class RtuiTableContainerComponent implements OnInit {
     public placeholderIcon: InputSignal<string> = input<string>('search');
     public placeholderTitle: InputSignal<string> = input<string>('No Data Found');
 
+    public readonly isSmallTablet: Signal<Nullable<boolean>> = this.#breakpointService.isSmallTablet;
+
     public readonly pageModelChange: OutputEmitterRef<Partial<PageModel>> = output<Partial<PageModel>>();
     public readonly searchChange: OutputEmitterRef<Nullable<string>> = output<Nullable<string>>();
     public readonly refreshAction: OutputEmitterRef<void> = output<void>();
     public readonly toggleAllEntities: OutputEmitterRef<boolean> = output<boolean>();
 
+    public readonly toolbarSelectorsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiTableToolbarSelectorsDirective, {
+        read: TemplateRef,
+    });
     public readonly toolbarActionsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiTableToolbarActionsDirective, {
         read: TemplateRef,
     });

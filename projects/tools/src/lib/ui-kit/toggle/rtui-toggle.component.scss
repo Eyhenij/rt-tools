@@ -30,6 +30,7 @@ $toggle: (
     ),
     label: (
         color: var(--clr-black-60),
+        font-size: 0.875rem,
     ),
     label-active: (
         color: var(--clr-black-100),
@@ -64,6 +65,7 @@ $toggle: (
 
         &__label {
             color: var(--rt-toggle-label-color);
+            font-size: var(--rt-toggle-label-font-size);
 
             &:hover {
                 color: var(--rt-toggle-label-hover-color);

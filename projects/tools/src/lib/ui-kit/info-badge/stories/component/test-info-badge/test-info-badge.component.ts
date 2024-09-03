@@ -10,7 +10,7 @@ import { POSITION_ENUM } from '../../../../../util/enums/position.enum';
 import { INFO_BADGE_SIZE_ENUM } from '../../../badge-info-enum';
 import { IconSideType } from '../../../icon-side.type';
 import { INFO_BADGE_TYPE_ENUM } from '../../../info-badge-types.enum';
-import { InfoBadgeComponent } from '../../../info-badge.component';
+import { RtuiInfoBadgeComponent } from '../../../info-badge.component';
 import { TestInfoBadgeDirective } from '../../directives/test-info-badge.directive';
 import { InfoBadgePropertyType } from '../../utils/enum/info-badge-property.enum';
 
@@ -18,7 +18,7 @@ import { InfoBadgePropertyType } from '../../utils/enum/info-badge-property.enum
     selector: 'rtui-test-info-badge',
     standalone: true,
     imports: [
-        InfoBadgeComponent,
+        RtuiInfoBadgeComponent,
         TestInfoBadgeDirective,
         ElemDirective,
         MatCheckbox,
