@@ -4,7 +4,7 @@
     [isMobile]="isMobile()"
     [pageModel]="pageModel()"
     [isPlaceholderShown]="!entities()?.length"
-    [isSelectorShown]="isSelectorShown()"
+    [isSelectorsShown]="isSelectorsShown()"
     [isMultiSelect]="isMultiSelect()"
     [isAllEntitiesSelected]="isAllEntitiesSelected()"
     [appearance]="appearance()"
@@ -13,6 +13,12 @@
     (refreshAction)="onRefresh()"
     (pageModelChange)="onPageModelChange($event)"
     (searchChange)="onSearchChange($event)">
+    @if (toolbarSelectorsTpl()) {
+        <ng-container *rtuiTableToolbarSelectorsDirective>
+            <ng-template *ngTemplateOutlet="toolbarSelectorsTpl() || null" />
+        </ng-container>
+    }
+
     @if (toolbarActionsTpl()) {
         <ng-container *rtuiTableToolbarActionsDirective>
             <ng-template *ngTemplateOutlet="toolbarActionsTpl() || null" />
@@ -22,7 +28,7 @@
     <rtui-table
         [keyExp]="keyExp()"
         [isMobile]="isMobile()"
-        [isSelectorShown]="isSelectorShown()"
+        [isSelectorShown]="isSelectorsShown()"
         [isMultiSelect]="isMultiSelect()"
         [isTableRowsClickable]="isTableRowsClickable()"
         [entities]="entities()"

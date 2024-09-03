@@ -2,8 +2,8 @@
 @use '../../../../../styles/base/mixin' as mixins;
 
 $table-container: (
-    selector: (
-        margin-right: 0.65rem,
+    selectors: (
+        margin: 0 0.65rem,
     ),
     selector-label: (
         color: var(--clr-black-60),
@@ -13,9 +13,6 @@ $table-container: (
     ),
     toolbar: (
         gap: 1rem,
-    ),
-    toolbar-mobile: (
-        margin-left: 8rem,
     ),
     toolbar-actions: (
         gap: 1rem,
@@ -65,8 +62,14 @@ $table-container: (
     }
 
     .table-container {
-        &__selector {
-            margin-left: var(--rt-table-container-selector-margin-right);
+        &__selectors {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            flex-grow: 1;
+            width: 100%;
+            margin: var(--rt-table-container-selectors-margin);
+            gap: var(--rt-table-container-toolbar-actions-gap);
 
             &-label {
                 color: var(--rt-table-container-selector-label-color);
@@ -76,6 +79,7 @@ $table-container: (
                 }
             }
         }
+
         &__toolbar {
             width: 100%;
             display: flex;
@@ -131,27 +135,19 @@ $table-container: (
             --rt-toolbar-body-height: 6.5rem;
             --rt-toolbar-body-mobile-height: 6.5rem;
             --rt-toolbar-bars-center-width: 0;
-            --rt-toolbar-bars-center-right: 100%;
+            --rt-toolbar-bars-right-width: 100%;
         }
 
         .table-container {
-            &__selector {
-                position: absolute;
-                bottom: 0;
-            }
-
             &__toolbar {
-                display: grid;
-                grid-template-columns: 100%;
-                grid-gap: var(--rt-table-container-toolbar-gap);
+                flex-direction: column-reverse;
 
                 &-actions {
-                    grid-row: 2;
-                    justify-self: center;
+                    width: 100%;
+                    justify-content: center;
 
                     &--end {
-                        justify-self: end;
-                        margin-left: var(--rt-table-container-toolbar-mobile-margin-left);
+                        justify-content: flex-end;
                     }
                 }
 
