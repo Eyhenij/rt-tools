@@ -13,6 +13,13 @@ export default {
             imports: [BrowserAnimationsModule],
         }),
     ],
+    argTypes: {
+        size: {
+            type: 'string',
+            options: [TOGGLE_SIZE_TYPE_ENUM.MD, TOGGLE_SIZE_TYPE_ENUM.SM, 'fat'],
+            control: { type: 'select' },
+        },
+    },
 } as Meta<TestToggleComponent>;
 
 type Story = StoryObj<TestToggleComponent>;
