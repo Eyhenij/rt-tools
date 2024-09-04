@@ -13,7 +13,7 @@ import {
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIcon } from '@angular/material/icon';
 import { MatListItem, MatListItemIcon, MatListItemTitle, MatNavList } from '@angular/material/list';
-import { MatTooltip } from '@angular/material/tooltip';
+import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective } from '../../../bem';
 import { Nullable, RtHideTooltipDirective, RtIconOutlinedDirective } from '../../../util';
@@ -41,6 +41,14 @@ import { RtuiSideMenuComponent } from '../menu/rtui-side-menu.component';
         ElemDirective,
         RtIconOutlinedDirective,
         RtHideTooltipDirective,
+    ],
+    providers: [
+        {
+            provide: MAT_TOOLTIP_DEFAULT_OPTIONS,
+            useValue: {
+                disableTooltipInteractivity: true,
+            },
+        },
     ],
 })
 export class RtuiSideMenuSubItemComponent {

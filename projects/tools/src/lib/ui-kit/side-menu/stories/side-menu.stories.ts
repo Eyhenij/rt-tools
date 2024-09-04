@@ -23,7 +23,7 @@ export const Default: Story = {
         isMainMenuIconsOutlined: false,
         isSubMenuIconsOutlined: false,
         isSubMenuButtonIconsOutlined: false,
-        isSubMenuTooltipsShown: false,
+        isSubMenuTooltipsShown: true,
     },
 };
 
@@ -34,7 +34,7 @@ export const Mobile: Story = {
         isMainMenuIconsOutlined: false,
         isSubMenuIconsOutlined: false,
         isSubMenuButtonIconsOutlined: false,
-        isSubMenuTooltipsShown: false,
+        isSubMenuTooltipsShown: true,
     },
 };
 
@@ -46,7 +46,7 @@ export const DefaultActiveMenu: Story = {
         isMainMenuIconsOutlined: false,
         isSubMenuIconsOutlined: false,
         isSubMenuButtonIconsOutlined: false,
-        isSubMenuTooltipsShown: false,
+        isSubMenuTooltipsShown: true,
     },
 };
 
@@ -58,6 +58,6 @@ export const MobileActiveMenu: Story = {
         isMainMenuIconsOutlined: false,
         isSubMenuIconsOutlined: false,
         isSubMenuButtonIconsOutlined: false,
-        isSubMenuTooltipsShown: false,
+        isSubMenuTooltipsShown: true,
     },
 };
