@@ -1,10 +1,11 @@
 <table rtBlock="c-table">
     <thead>
         <tr>
-            @if (isSelectorShown()) {
+            @if (isSelectorsShown()) {
                 <th rtElem="cell" rtMod="selectable">
                     @if (isMultiSelect()) {
                         <mat-checkbox
+                            [disabled]="isSelectorsColumnDisabled()"
                             [checked]="selectedEntitiesKeys().length === entities().length"
                             [indeterminate]="!!selectedEntitiesKeys().length && selectedEntitiesKeys().length < entities().length"
                             (click)="$event.stopPropagation()"
@@ -34,15 +35,17 @@
                     active: activeRowIndex() === i,
                 }"
                 (click)="isTableRowsClickable() ? onRowClick(row) : $event.stopPropagation()">
-                @if (isSelectorShown()) {
+                @if (isSelectorsShown()) {
                     <td rtElem="cell">
                         @if (isMultiSelect()) {
                             <mat-checkbox
+                                [disabled]="isSelectorsColumnDisabled()"
                                 [checked]="selectedEntitiesKeys().includes(row[keyExp()])"
                                 (click)="$event.stopPropagation()"
                                 (change)="onToggleEntity(row[keyExp()], $event.checked)" />
                         } @else {
                             <mat-radio-button
+                                [disabled]="isSelectorsColumnDisabled()"
                                 [checked]="selectedEntitiesKeys().includes(row[keyExp()])"
                                 (click)="$event.stopPropagation()"
                                 (change)="onToggleEntity(row[keyExp()], true)" />

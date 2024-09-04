@@ -7,6 +7,7 @@
     [loading]="loading"
     [fetching]="fetching"
     [isSelectorsShown]="isSelectorsShown"
+    [isSelectorsColumnDisabled]="isSelectorsColumnDisabled"
     [isMultiSelect]="isMultiSelect"
     [isAllEntitiesSelected]="isAllEntitiesSelected"
     [isTableRowsClickable]="isTableRowsClickable"
@@ -21,7 +22,7 @@
     (pageModelChange)="onPageModelChange($event)"
     (rowClick)="onRowClick($event)">
     <ng-container *rtuiDynamicListToolbarSelectorsDirective>
-        <rtui-toggle [ngModel]="false" [label]="'Enable'" />
+        <rtui-toggle label="Example selector" [ngModel]="false" />
     </ng-container>
 
     <ng-container *rtuiDynamicListToolbarActionsDirective>

@@ -51,6 +51,7 @@ export default class TestDynamicListComponent {
     public loading: boolean = false;
     public fetching: boolean = false;
     public isSelectorsShown: boolean = true;
+    public isSelectorsColumnDisabled: boolean = false;
     public isMultiSelect: boolean = true;
     public isAllEntitiesSelected: boolean = false;
     public isTableRowsClickable: boolean = false;
