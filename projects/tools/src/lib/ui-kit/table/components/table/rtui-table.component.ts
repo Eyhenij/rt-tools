@@ -33,6 +33,12 @@ import { RtuiTableHeaderCellComponent } from '../table-header-cell/table-header-
 })
 export class RtuiTableRowActionsDirective {}
 
+@Directive({
+    standalone: true,
+    selector: '[rtuiTableAdditionalRowActionsDirective]',
+})
+export class RtuiTableAdditionalRowActionsDirective {}
+
 @Component({
     standalone: true,
     selector: 'rtui-table',
@@ -111,6 +117,12 @@ export class RtuiTableComponent<
     public readonly rowActionsTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>> = contentChild(RtuiTableRowActionsDirective, {
         read: TemplateRef,
     });
+    public readonly additionalRowActionsTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>> = contentChild(
+        RtuiTableAdditionalRowActionsDirective,
+        {
+            read: TemplateRef,
+        }
+    );
 
     public readonly activeRowIndex: WritableSignal<Nullable<number>> = signal(null);
 

@@ -59,25 +59,31 @@
                     </td>
                 }
 
-                @if (rowActionsTpl()) {
+                @if (rowActionsTpl() || additionalRowActionsTpl()) {
                     <div rtBlock="c-table-actions" [rtMod]="{ hidden: activeRowIndex() !== i }">
                         <div rtElem="container">
-                            <button
-                                rtElem="action"
-                                aria-label="Icon-button for a context menu"
-                                mat-icon-button
-                                [disableRipple]="true"
-                                [matMenuTriggerFor]="menuTpl"
-                                (menuOpened)="onMenuOpen(i)"
-                                (menuClosed)="onMenuClose()"
-                                (click)="$event.stopPropagation()">
-                                <mat-icon [rtIconOutlinedDirective]="true">more_vert</mat-icon>
-                            </button>
-                        </div>
+                            @if (additionalRowActionsTpl()) {
+                                <ng-template *ngTemplateOutlet="additionalRowActionsTpl() || null; context: { $implicit: row }" />
+                            }
 
-                        <mat-menu #menuTpl="matMenu" xPosition="before">
-                            <ng-template *ngTemplateOutlet="rowActionsTpl() || null; context: { $implicit: row }" />
-                        </mat-menu>
+                            @if (rowActionsTpl()) {
+                                <button
+                                    rtElem="action"
+                                    aria-label="Icon-button for a context menu"
+                                    mat-icon-button
+                                    [disableRipple]="true"
+                                    [matMenuTriggerFor]="menuTpl"
+                                    (menuOpened)="onMenuOpen(i)"
+                                    (menuClosed)="onMenuClose()"
+                                    (click)="$event.stopPropagation()">
+                                    <mat-icon [rtIconOutlinedDirective]="true">more_vert</mat-icon>
+                                </button>
+
+                                <mat-menu #menuTpl="matMenu" xPosition="before">
+                                    <ng-template *ngTemplateOutlet="rowActionsTpl() || null; context: { $implicit: row }" />
+                                </mat-menu>
+                            }
+                        </div>
                     </div>
                 }
             </tr>

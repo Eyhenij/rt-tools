@@ -40,6 +40,12 @@
         (toggleExistingEntities)="onToggleExistingEntities($event)"
         (rowClick)="onRowClick($event)"
         (sortChange)="onSortChange($event)">
+        @if (additionalRowActionsTpl()) {
+            <ng-container *rtuiTableAdditionalRowActionsDirective="let row">
+                <ng-template *ngTemplateOutlet="additionalRowActionsTpl() || null; context: { $implicit: row }" />
+            </ng-container>
+        }
+
         @if (rowActionsTpl()) {
             <ng-container *rtuiTabletRowActionsDirective="let row">
                 <ng-template *ngTemplateOutlet="rowActionsTpl() || null; context: { $implicit: row }" />

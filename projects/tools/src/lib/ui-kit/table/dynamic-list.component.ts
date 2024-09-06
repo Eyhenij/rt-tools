@@ -22,7 +22,7 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { BlockDirective, ElemDirective } from '../../bem';
 import { Nullable, transformArrayInput } from '../../util';
 import { RtuiToolbarCenterDirective, RtuiToolbarComponent, RtuiToolbarLeftDirective, RtuiToolbarRightDirective } from '../toolbar';
-import { RtuiTableComponent, RtuiTableRowActionsDirective } from './components';
+import { RtuiTableAdditionalRowActionsDirective, RtuiTableComponent, RtuiTableRowActionsDirective } from './components';
 import { TableBaseCellComponent } from './components/table-base-cell/table-base-cell.component';
 import {
     RtuiTableContainerComponent,
@@ -51,6 +51,12 @@ export class RtuiDynamicListToolbarActionsDirective {}
 })
 export class RtuiDynamicListRowActionsDirective {}
 
+@Directive({
+    standalone: true,
+    selector: '[rtuiDynamicListRowAdditionalActionsDirective]',
+})
+export class RtuiDynamicListRowAdditionalActionsDirective {}
+
 @Component({
     standalone: true,
     selector: 'rtui-dynamic-list',
@@ -76,6 +82,7 @@ export class RtuiDynamicListRowActionsDirective {}
         RtuiTableToolbarActionsDirective,
         RtuiTableRowActionsDirective,
         RtuiTableToolbarSelectorsDirective,
+        RtuiTableAdditionalRowActionsDirective,
 
         // Ui-kit
         RtuiToolbarComponent,
@@ -159,6 +166,12 @@ export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown
     });
     public readonly rowActionsTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>> = contentChild(
         RtuiDynamicListRowActionsDirective,
+        {
+            read: TemplateRef,
+        }
+    );
+    public readonly additionalRowActionsTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>> = contentChild(
+        RtuiDynamicListRowAdditionalActionsDirective,
         {
             read: TemplateRef,
         }
