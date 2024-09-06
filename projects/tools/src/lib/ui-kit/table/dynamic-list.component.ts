@@ -22,7 +22,7 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { BlockDirective, ElemDirective } from '../../bem';
 import { Nullable, transformArrayInput } from '../../util';
 import { RtuiToolbarCenterDirective, RtuiToolbarComponent, RtuiToolbarLeftDirective, RtuiToolbarRightDirective } from '../toolbar';
-import { RtuiTableComponent, RtuiTableRowActionsDirective } from './components';
+import { RtuiTableAdditionalRowActionsDirective, RtuiTableComponent, RtuiTableRowActionsDirective } from './components';
 import { TableBaseCellComponent } from './components/table-base-cell/table-base-cell.component';
 import {
     RtuiTableContainerComponent,
@@ -33,23 +33,33 @@ import { RtuiTableHeaderCellComponent } from './components/table-header-cell/tab
 import { PageModel, SortModel } from './util/lists.interface';
 import { ITable } from './util/table-column.interface';
 
+/** Directive for selectors of the toolbar located on the left side */
 @Directive({
     standalone: true,
     selector: '[rtuiDynamicListToolbarSelectorsDirective]',
 })
 export class RtuiDynamicListToolbarSelectorsDirective {}
 
+/** Directive for actions of the toolbar located on the right side */
 @Directive({
     standalone: true,
     selector: '[rtuiDynamicListToolbarActionsDirective]',
 })
 export class RtuiDynamicListToolbarActionsDirective {}
 
+/** Directive for row actions located inside a row menu button */
 @Directive({
     standalone: true,
     selector: '[rtuiDynamicListRowActionsDirective]',
 })
 export class RtuiDynamicListRowActionsDirective {}
+
+/** Directive for row actions located outside a row menu button */
+@Directive({
+    standalone: true,
+    selector: '[rtuiDynamicListRowAdditionalActionsDirective]',
+})
+export class RtuiDynamicListRowAdditionalActionsDirective {}
 
 @Component({
     standalone: true,
@@ -76,6 +86,7 @@ export class RtuiDynamicListRowActionsDirective {}
         RtuiTableToolbarActionsDirective,
         RtuiTableRowActionsDirective,
         RtuiTableToolbarSelectorsDirective,
+        RtuiTableAdditionalRowActionsDirective,
 
         // Ui-kit
         RtuiToolbarComponent,
@@ -159,6 +170,12 @@ export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown
     });
     public readonly rowActionsTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>> = contentChild(
         RtuiDynamicListRowActionsDirective,
+        {
+            read: TemplateRef,
+        }
+    );
+    public readonly additionalRowActionsTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>> = contentChild(
+        RtuiDynamicListRowAdditionalActionsDirective,
         {
             read: TemplateRef,
         }
