@@ -64,7 +64,11 @@ export class RtuiModalComponent<T> implements OnInit {
         }
 
         if (Boolean(this.data.input)) {
-            this.control = new FormControl(null, [Validators.required, checkIsMatchingValues(this.data.input!.sample)]);
+            this.control = new FormControl(this.data.input?.value, Validators.required);
+
+            if (this.data.input?.sample) {
+                this.control.addValidators(checkIsMatchingValues(this.data.input.sample));
+            }
         }
     }
 

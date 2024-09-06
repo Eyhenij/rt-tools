@@ -1,4 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/angular';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { fn } from '@storybook/test';
 
 import { TestModalComponent } from './test-modal.component';
@@ -6,8 +8,13 @@ import { TestModalComponent } from './test-modal.component';
 const meta: Meta<TestModalComponent> = {
     title: 'Components/Modal',
     component: TestModalComponent,
+    decorators: [
+        moduleMetadata({
+            imports: [BrowserAnimationsModule],
+        }),
+    ],
     argTypes: {},
-    args: { onClick: fn() },
+    args: { onOpenInfo: fn(), onOpenWithInput: fn(), onOpenWithConfirmedInput: fn() },
 };
 
 export default meta;

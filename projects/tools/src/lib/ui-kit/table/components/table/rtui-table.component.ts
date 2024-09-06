@@ -27,11 +27,19 @@ import { ITable, SortModel } from '../../util';
 import { TableBaseCellComponent } from '../table-base-cell/table-base-cell.component';
 import { RtuiTableHeaderCellComponent } from '../table-header-cell/table-header-cell.component';
 
+/** Directive for row actions located inside a row menu button */
 @Directive({
     standalone: true,
     selector: '[rtuiTabletRowActionsDirective]',
 })
 export class RtuiTableRowActionsDirective {}
+
+/** Directive for row actions located outside a row menu button */
+@Directive({
+    standalone: true,
+    selector: '[rtuiTableAdditionalRowActionsDirective]',
+})
+export class RtuiTableAdditionalRowActionsDirective {}
 
 @Component({
     standalone: true,
@@ -111,6 +119,12 @@ export class RtuiTableComponent<
     public readonly rowActionsTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>> = contentChild(RtuiTableRowActionsDirective, {
         read: TemplateRef,
     });
+    public readonly additionalRowActionsTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>> = contentChild(
+        RtuiTableAdditionalRowActionsDirective,
+        {
+            read: TemplateRef,
+        }
+    );
 
     public readonly activeRowIndex: WritableSignal<Nullable<number>> = signal(null);
 

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatMiniFabButton } from '@angular/material/button';
+import { MatIconButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenuItem } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -11,6 +11,7 @@ import { RtuiToggleComponent } from '../../../toggle';
 import {
     RtuiDynamicListComponent,
     RtuiDynamicListRowActionsDirective,
+    RtuiDynamicListRowAdditionalActionsDirective,
     RtuiDynamicListToolbarActionsDirective,
     RtuiDynamicListToolbarSelectorsDirective,
 } from '../../dynamic-list.component';
@@ -25,14 +26,18 @@ import { Person } from '../types';
     templateUrl: './test-dynamic-list.component.html',
     styleUrls: ['./test-dynamic-list.component.scss'],
     imports: [
+        FormsModule,
+
         // material
         MatIcon,
         MatMiniFabButton,
         MatTooltip,
         MatMenuItem,
+        MatIconButton,
 
         // components
         RtuiDynamicListComponent,
+        RtuiToggleComponent,
 
         // directives
         RtIconOutlinedDirective,
@@ -40,9 +45,8 @@ import { Person } from '../types';
         ElemDirective,
         RtuiDynamicListToolbarActionsDirective,
         RtuiDynamicListRowActionsDirective,
-        RtuiToggleComponent,
-        FormsModule,
         RtuiDynamicListToolbarSelectorsDirective,
+        RtuiDynamicListRowAdditionalActionsDirective,
     ],
     providers: [],
 })
@@ -92,6 +96,16 @@ export default class TestDynamicListComponent {
     public onDelete(row: Person): void {
         // eslint-disable-next-line no-console
         console.warn('Delete', row);
+    }
+
+    public onInfo(row: Person): void {
+        // eslint-disable-next-line no-console
+        console.warn('Info', row);
+    }
+
+    public onOpenNewTab(row: Person): void {
+        // eslint-disable-next-line no-console
+        console.warn('Open new tab', row);
     }
 
     public onToggleEntity(value: { key: number; checked: boolean }): void {

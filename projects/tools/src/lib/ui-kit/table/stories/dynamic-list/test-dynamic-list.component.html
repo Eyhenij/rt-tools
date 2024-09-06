@@ -49,6 +49,26 @@
         </button>
     </ng-container>
 
+    <ng-container *rtuiDynamicListRowAdditionalActionsDirective="let row">
+        <button
+            rtBlock="c-table-actions__action"
+            aria-label="Icon-button"
+            mat-icon-button
+            [disableRipple]="true"
+            (click)="onInfo(row); $event.stopPropagation()">
+            <mat-icon [rtIconOutlinedDirective]="true">info</mat-icon>
+        </button>
+
+        <button
+            rtBlock="c-table-actions__action"
+            aria-label="Icon-button"
+            mat-icon-button
+            [disableRipple]="true"
+            (click)="onOpenNewTab(row); $event.stopPropagation()">
+            <mat-icon [rtIconOutlinedDirective]="true">open_in_new</mat-icon>
+        </button>
+    </ng-container>
+
     <ng-container *rtuiDynamicListRowActionsDirective="let row">
         <button mat-menu-item (click)="onEdit(row)">
             <span>Edit</span>

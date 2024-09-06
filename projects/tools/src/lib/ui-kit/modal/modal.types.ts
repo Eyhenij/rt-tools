@@ -31,7 +31,8 @@ export namespace IModal {
         input?: {
             label: string;
             placeholder: string;
-            sample: string;
+            value: string;
+            sample?: string;
         };
         textArea?: {
             value: string;

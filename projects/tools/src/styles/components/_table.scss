@@ -181,12 +181,14 @@ td.c-table__cell {
         position: sticky;
 
         right: 0;
-        width: 4rem;
+        width: fit-content;
         height: calc(100% - 1px);
 
         display: flex;
         justify-content: flex-end;
         align-items: center;
+        gap: 0.25rem;
+        padding: 0 0.25rem 0 1.25rem;
 
         background: linear-gradient(
             to right,
@@ -200,7 +202,6 @@ td.c-table__cell {
 
     &__action {
         position: sticky;
-        right: 0.5rem;
         pointer-events: auto;
     }
 
