@@ -27,12 +27,14 @@ import { ITable, SortModel } from '../../util';
 import { TableBaseCellComponent } from '../table-base-cell/table-base-cell.component';
 import { RtuiTableHeaderCellComponent } from '../table-header-cell/table-header-cell.component';
 
+/** Directive for row actions located inside a row menu button */
 @Directive({
     standalone: true,
     selector: '[rtuiTabletRowActionsDirective]',
 })
 export class RtuiTableRowActionsDirective {}
 
+/** Directive for row actions located outside a row menu button */
 @Directive({
     standalone: true,
     selector: '[rtuiTableAdditionalRowActionsDirective]',

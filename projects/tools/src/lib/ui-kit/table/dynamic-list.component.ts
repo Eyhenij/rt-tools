@@ -33,24 +33,28 @@ import { RtuiTableHeaderCellComponent } from './components/table-header-cell/tab
 import { PageModel, SortModel } from './util/lists.interface';
 import { ITable } from './util/table-column.interface';
 
+/** Directive for selectors of the toolbar located on the left side */
 @Directive({
     standalone: true,
     selector: '[rtuiDynamicListToolbarSelectorsDirective]',
 })
 export class RtuiDynamicListToolbarSelectorsDirective {}
 
+/** Directive for actions of the toolbar located on the right side */
 @Directive({
     standalone: true,
     selector: '[rtuiDynamicListToolbarActionsDirective]',
 })
 export class RtuiDynamicListToolbarActionsDirective {}
 
+/** Directive for row actions located inside a row menu button */
 @Directive({
     standalone: true,
     selector: '[rtuiDynamicListRowActionsDirective]',
 })
 export class RtuiDynamicListRowActionsDirective {}
 
+/** Directive for row actions located outside a row menu button */
 @Directive({
     standalone: true,
     selector: '[rtuiDynamicListRowAdditionalActionsDirective]',
