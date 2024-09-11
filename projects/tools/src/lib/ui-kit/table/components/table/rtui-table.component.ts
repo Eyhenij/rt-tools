@@ -23,9 +23,26 @@ import { MatRadioButton } from '@angular/material/radio';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
 import { Nullable, RtIconOutlinedDirective, transformArrayInput } from '../../../../util';
-import { ITable, SortModel } from '../../util';
+import { ITable, SortModel, TABLE_COLUMN_TYPES_ENUM } from '../../util';
 import { TableBaseCellComponent } from '../table-base-cell/table-base-cell.component';
 import { RtuiTableHeaderCellComponent } from '../table-header-cell/table-header-cell.component';
+
+/** Directive for custom table cells */
+@Directive({
+    standalone: true,
+    selector: '[rtuiCustomTableCellsDirective]',
+})
+export class RtuiCustomTableCellsDirective<ENTITY_TYPE> {
+    public cellsTemplates: InputSignal<{
+        [K in keyof ENTITY_TYPE]: TemplateRef<{ $implicit: ENTITY_TYPE }>;
+    }> = input.required({
+        alias: 'rtuiCustomTableCellsDirective',
+    });
+
+    public getTemplateByPropName(propName: keyof ENTITY_TYPE): TemplateRef<{ $implicit: ENTITY_TYPE }> {
+        return this.cellsTemplates()[propName];
+    }
+}
 
 /** Directive for row actions located inside a row menu button */
 @Directive({
@@ -74,6 +91,8 @@ export class RtuiTableComponent<
     SORT_PROPERTY extends Extract<keyof ENTITY_TYPE, string>,
     KEY extends Extract<keyof ENTITY_TYPE, string>,
 > {
+    protected readonly columnTypes: typeof TABLE_COLUMN_TYPES_ENUM = TABLE_COLUMN_TYPES_ENUM;
+
     public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
         transform: booleanAttribute,
     });
@@ -116,10 +135,18 @@ export class RtuiTableComponent<
     }>();
     public readonly toggleExistingEntities: OutputEmitterRef<boolean> = output<boolean>();
 
-    public readonly rowActionsTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>> = contentChild(RtuiTableRowActionsDirective, {
+    public readonly customCellsTpl: Signal<Nullable<RtuiCustomTableCellsDirective<ENTITY_TYPE>>> =
+        contentChild(RtuiCustomTableCellsDirective);
+    public readonly rowActionsTpl: Signal<
+        Nullable<
+            TemplateRef<{
+                $implicit: ENTITY_TYPE;
+            }>
+        >
+    > = contentChild(RtuiTableRowActionsDirective, {
         read: TemplateRef,
     });
-    public readonly additionalRowActionsTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>> = contentChild(
+    public readonly additionalRowActionsTpl: Signal<Nullable<TemplateRef<RtuiTableAdditionalRowActionsDirective>>> = contentChild(
         RtuiTableAdditionalRowActionsDirective,
         {
             read: TemplateRef,

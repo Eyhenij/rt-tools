@@ -12,6 +12,8 @@ export type Person = {
     birthdate: number;
     items: string[];
     responsible: ResponsiblePerson;
+    button: string;
+    image: string;
 };
 
 export type ResponsiblePerson = {

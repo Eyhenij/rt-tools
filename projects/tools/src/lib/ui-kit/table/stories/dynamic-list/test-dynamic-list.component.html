@@ -49,6 +49,25 @@
         </button>
     </ng-container>
 
+    <ng-container *rtuiDynamicListCustomTableCellsDirective="{ button: buttonTemplate, image: imageTemplate }" />
+
+    <ng-template #buttonTemplate let-row>
+        <button
+            mat-mini-fab
+            type="button"
+            aria-label="Icon-button"
+            class="c-button c-button--fab"
+            matTooltipPosition="below"
+            [matTooltip]="row.button"
+            [matTooltipDisabled]="isMobile">
+            <mat-icon [rtIconOutlinedDirective]="true">{{ row.button }}</mat-icon>
+        </button>
+    </ng-template>
+
+    <ng-template #imageTemplate let-row>
+        <img alt="image" [src]="row.image" />
+    </ng-template>
+
     <ng-container *rtuiDynamicListRowAdditionalActionsDirective="let row">
         <button
             rtBlock="c-table-actions__action"
