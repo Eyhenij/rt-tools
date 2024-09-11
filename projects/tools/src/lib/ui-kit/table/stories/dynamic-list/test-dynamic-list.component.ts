@@ -8,8 +8,10 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { BlockDirective, ElemDirective } from '../../../../bem';
 import { RtIconOutlinedDirective } from '../../../../util';
 import { RtuiToggleComponent } from '../../../toggle';
+import { RtuiCustomTableCellsDirective } from '../../components';
 import {
     RtuiDynamicListComponent,
+    RtuiDynamicListCustomTableCellsDirective,
     RtuiDynamicListRowActionsDirective,
     RtuiDynamicListRowAdditionalActionsDirective,
     RtuiDynamicListToolbarActionsDirective,
@@ -47,6 +49,8 @@ import { Person } from '../types';
         RtuiDynamicListRowActionsDirective,
         RtuiDynamicListToolbarSelectorsDirective,
         RtuiDynamicListRowAdditionalActionsDirective,
+        RtuiDynamicListCustomTableCellsDirective,
+        RtuiCustomTableCellsDirective,
     ],
     providers: [],
 })

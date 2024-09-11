@@ -55,7 +55,20 @@
 
                 @for (column of columns(); track column.propName) {
                     <td rtElem="cell" [rtMod]="{ copyable: column?.copyable }">
-                        <rtui-table-base-cell [row]="row" [column]="column" [isMobile]="isMobile()" />
+                        @switch (column?.type) {
+                            @case (columnTypes.CUSTOM) {
+                                @if (customCellsTpl() && customCellsTpl()?.getTemplateByPropName(column.propName)) {
+                                    <ng-template
+                                        *ngTemplateOutlet="
+                                            customCellsTpl()?.getTemplateByPropName(column.propName) || null;
+                                            context: { $implicit: row }
+                                        " />
+                                }
+                            }
+                            @default {
+                                <rtui-table-base-cell [row]="row" [column]="column" [isMobile]="isMobile()" />
+                            }
+                        }
                     </td>
                 }
 
