@@ -7,6 +7,7 @@ export enum TABLE_COLUMN_TYPES_ENUM {
     BOOLEAN = 'boolean',
     TEXT = 'text',
     CURRENCY = 'currency',
+    CUSTOM = 'custom',
 }
 
 export enum TEXT_CELL_COLOR_ENUM {
@@ -31,7 +32,8 @@ export namespace ITable {
         | TABLE_COLUMN_TYPES_ENUM.ARRAY
         | TABLE_COLUMN_TYPES_ENUM.BOOLEAN
         | TABLE_COLUMN_TYPES_ENUM.TEXT
-        | TABLE_COLUMN_TYPES_ENUM.CURRENCY;
+        | TABLE_COLUMN_TYPES_ENUM.CURRENCY
+        | TABLE_COLUMN_TYPES_ENUM.CUSTOM;
 
     export interface Column<T = Record<string, unknown>> {
         align: 'right' | 'left' | 'center';

@@ -23,6 +23,8 @@ export const createPerson: () => Person = (): Person => {
             id: faker.string.uuid(),
             name: { firstname: faker.person.firstName(), lastname: faker.person.lastName() },
         },
+        button: faker.helpers.arrayElement(['add', 'clear', 'person', 'save']),
+        image: faker.image.url({ width: 100, height: 40 }),
     };
 };
 

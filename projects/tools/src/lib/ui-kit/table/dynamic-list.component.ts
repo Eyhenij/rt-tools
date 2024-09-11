@@ -22,7 +22,12 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { BlockDirective, ElemDirective } from '../../bem';
 import { Nullable, transformArrayInput } from '../../util';
 import { RtuiToolbarCenterDirective, RtuiToolbarComponent, RtuiToolbarLeftDirective, RtuiToolbarRightDirective } from '../toolbar';
-import { RtuiTableAdditionalRowActionsDirective, RtuiTableComponent, RtuiTableRowActionsDirective } from './components';
+import {
+    RtuiCustomTableCellsDirective,
+    RtuiTableAdditionalRowActionsDirective,
+    RtuiTableComponent,
+    RtuiTableRowActionsDirective,
+} from './components';
 import { TableBaseCellComponent } from './components/table-base-cell/table-base-cell.component';
 import {
     RtuiTableContainerComponent,
@@ -46,6 +51,17 @@ export class RtuiDynamicListToolbarSelectorsDirective {}
     selector: '[rtuiDynamicListToolbarActionsDirective]',
 })
 export class RtuiDynamicListToolbarActionsDirective {}
+
+/** Directive for custom table cells */
+@Directive({
+    standalone: true,
+    selector: '[rtuiDynamicListCustomTableCellsDirective]',
+})
+export class RtuiDynamicListCustomTableCellsDirective<ENTITY_TYPE> {
+    public cellsTemplates: InputSignal<{ [K in keyof ENTITY_TYPE]: TemplateRef<{ $implicit: ENTITY_TYPE }> }> = input.required({
+        alias: 'rtuiDynamicListCustomTableCellsDirective',
+    });
+}
 
 /** Directive for row actions located inside a row menu button */
 @Directive({
@@ -94,6 +110,7 @@ export class RtuiDynamicListRowAdditionalActionsDirective {}
         RtuiTableHeaderCellComponent,
         TableBaseCellComponent,
         RtuiTableComponent,
+        RtuiCustomTableCellsDirective,
     ],
 })
 export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown>, KEY extends Extract<keyof ENTITY_TYPE, string>> {
@@ -168,6 +185,9 @@ export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown
     public readonly toolbarActionsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiDynamicListToolbarActionsDirective, {
         read: TemplateRef,
     });
+    public readonly customCellsTpl: Signal<Nullable<RtuiDynamicListCustomTableCellsDirective<{ $implicit: ENTITY_TYPE }>>> = contentChild(
+        RtuiDynamicListCustomTableCellsDirective
+    );
     public readonly rowActionsTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>> = contentChild(
         RtuiDynamicListRowActionsDirective,
         {
