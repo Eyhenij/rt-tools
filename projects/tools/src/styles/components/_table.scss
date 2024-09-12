@@ -8,6 +8,7 @@ $table: (
     ),
     body: (
         font-size: 0.875rem,
+        background-color: transparent,
     ),
     row: (
         height: 3rem,
@@ -38,6 +39,9 @@ $table: (
     ),
     base-cell-wrapper-last-child: (
         padding: 0.625rem 4rem 0.625rem 0.625rem,
+    ),
+    actions: (
+        z-index: 1,
     ),
     actions-container: (
         background-color: var(--clr-white-100),
@@ -82,7 +86,7 @@ $table: (
 
     tbody {
         font-size: var(--rt-table-body-font-size);
-        background: transparent;
+        background-color: var(--rt-table-body-background-color);
     }
 }
 
@@ -170,6 +174,7 @@ td.c-table__cell {
     position: absolute;
     right: 0;
     top: 0;
+    z-index: var(--rt-table-actions-z-index);
 
     display: flex;
     justify-content: flex-end;
@@ -193,7 +198,8 @@ td.c-table__cell {
         background: linear-gradient(
             to right,
             transparent 0%,
-            color-mix(in srgb, var(--rt-table-actions-container-background-color) 30%, var(--clr-white-100)) 10%,
+            color-mix(in srgb, var(--rt-table-actions-container-background-color) 30%, var(--rt-table-actions-container-background-color))
+                10%,
             var(--rt-table-actions-container-background-color) 20%,
             var(--rt-table-actions-container-background-color) 100%
         );
