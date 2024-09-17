@@ -180,6 +180,8 @@ td.c-table__cell {
     justify-content: flex-end;
     align-items: center;
 
+    overflow: hidden;
+
     pointer-events: none;
 
     &__container {
