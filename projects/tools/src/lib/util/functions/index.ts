@@ -10,3 +10,4 @@ export * from './safe-comparator';
 export * from './sorters';
 export * from './stringify-http-like-params';
 export * from './transform-array-input';
+export * from './transform-string-input';
