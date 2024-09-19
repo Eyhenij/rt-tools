@@ -1,6 +1,6 @@
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
-import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
+import { Meta, StoryObj, applicationConfig } from '@storybook/angular';
 
 import { TOGGLE_SIZE_TYPE_ENUM } from '../toggle-size.type.enum';
 import { TestToggleComponent } from './component/test-toggle.component';
@@ -9,8 +9,8 @@ export default {
     title: 'Components/Toggle',
     component: TestToggleComponent,
     decorators: [
-        moduleMetadata({
-            imports: [BrowserAnimationsModule],
+        applicationConfig({
+            providers: [provideAnimations()],
         }),
     ],
     argTypes: {

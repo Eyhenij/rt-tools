@@ -1,6 +1,6 @@
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
-import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
+import { Meta, StoryObj, applicationConfig } from '@storybook/angular';
 
 import { LIST_SORT_ORDER_ENUM } from '../../util/list-sort-order.enum';
 import { COLUMNS } from '../constants';
@@ -11,8 +11,8 @@ export default {
     title: 'Components/DynamicList',
     component: TestDynamicListComponent,
     decorators: [
-        moduleMetadata({
-            imports: [BrowserAnimationsModule],
+        applicationConfig({
+            providers: [provideAnimations()],
         }),
     ],
 } as Meta<TestDynamicListComponent>;
@@ -85,13 +85,13 @@ export const FewItems: Story = {
         isMultiSelect: true,
         isAllEntitiesSelected: false,
         isTableRowsClickable: true,
-        data: createPersonList(5),
+        data: createPersonList(11),
         columns: COLUMNS.slice(0, 5),
         selectedEntitiesKeys: [],
         pageModel: {
             pageNumber: 1,
-            pageSize: 10,
-            totalCount: 5,
+            pageSize: 20,
+            totalCount: 12,
         },
         currentSortModel: {
             propertyName: 'id',
