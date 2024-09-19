@@ -1,5 +1,6 @@
 import { Provider } from '@angular/core';
 
+import { RtSnackBarService } from '../ui-kit/snack-bar';
 import { BreakpointService, PlatformService } from './services';
 
 /**
@@ -23,5 +24,5 @@ import { BreakpointService, PlatformService } from './services';
  * @publicApi
  */
 export function provideRtUtils(): Provider[] {
-    return [BreakpointService, PlatformService];
+    return [BreakpointService, PlatformService, RtSnackBarService];
 }

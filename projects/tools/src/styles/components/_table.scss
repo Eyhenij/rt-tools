@@ -180,8 +180,6 @@ td.c-table__cell {
     justify-content: flex-end;
     align-items: center;
 
-    overflow: hidden;
-
     pointer-events: none;
 
     &__container {
@@ -196,6 +194,8 @@ td.c-table__cell {
         align-items: center;
         gap: 0.25rem;
         padding: 0 0.25rem 0 1.25rem;
+
+        overflow: hidden;
 
         background: linear-gradient(
             to right,
