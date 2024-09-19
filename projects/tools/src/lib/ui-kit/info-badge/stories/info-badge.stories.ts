@@ -1,6 +1,6 @@
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
-import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
+import { Meta, StoryObj, applicationConfig } from '@storybook/angular';
 
 import { TestInfoBadgeComponent } from './component/test-info-badge/test-info-badge.component';
 import { INFO_BADGE_PROPERTY_ENUM } from './utils/enum/info-badge-property.enum';
@@ -9,8 +9,8 @@ export default {
     title: 'Components/InfoBadge',
     component: TestInfoBadgeComponent,
     decorators: [
-        moduleMetadata({
-            imports: [BrowserAnimationsModule],
+        applicationConfig({
+            providers: [provideAnimations()],
         }),
     ],
 } as Meta<TestInfoBadgeComponent>;

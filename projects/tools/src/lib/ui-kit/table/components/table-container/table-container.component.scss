@@ -11,11 +11,14 @@ $table-container: (
     selector-label-hover: (
         color: var(--clr-black-100),
     ),
-    toolbar: (
+    toolbar-mobile: (
         gap: 1rem,
     ),
     toolbar-actions: (
         gap: 1rem,
+    ),
+    toolbar-actions-last-child: (
+        margin-right: 1rem,
     ),
     toolbar-search: (
         width: 22rem,
@@ -88,13 +91,16 @@ $table-container: (
             display: flex;
             justify-content: flex-end;
             align-items: center;
-            gap: var(--rt-table-container-toolbar-gap);
 
             &-actions {
                 display: flex;
                 align-items: center;
                 justify-content: flex-end;
                 gap: var(--rt-table-container-toolbar-actions-gap);
+
+                > :last-child {
+                    margin-right: var(--rt-table-container-toolbar-actions-last-child-margin-right);
+                }
             }
 
             &-search {
@@ -135,6 +141,8 @@ $table-container: (
     }
 
     @include mixins.media-breakpoint-down(vars.$device-sm) {
+        --rt-table-container-toolbar-actions-last-child-margin-right: 0;
+
         rtui-toolbar {
             --rt-toolbar-body-height: 6.5rem;
             --rt-toolbar-body-mobile-height: 6.5rem;
@@ -145,19 +153,16 @@ $table-container: (
         .table-container {
             &__toolbar {
                 flex-direction: column-reverse;
+                gap: var(--rt-table-container-toolbar-mobile-gap);
 
                 &-actions {
                     width: 100%;
                     justify-content: center;
 
                     &--end {
-                        justify-content: flex-end;
+                        --rt-table-container-toolbar-actions-last-child-margin-right: 1rem;
 
-                        button {
-                            &:last-child {
-                                margin-right: 0.5rem;
-                            }
-                        }
+                        justify-content: flex-end;
                     }
                 }
 

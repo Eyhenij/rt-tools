@@ -1,6 +1,6 @@
-import { MatIconModule } from '@angular/material/icon';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
-import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
+import { Meta, StoryObj, applicationConfig } from '@storybook/angular';
 
 import { RtuiRoundIconButtonComponent } from '../icon-round/rtui-round-icon-button.component';
 
@@ -8,8 +8,8 @@ export default {
     title: 'Components/RoundIconButton',
     component: RtuiRoundIconButtonComponent,
     decorators: [
-        moduleMetadata({
-            imports: [MatIconModule],
+        applicationConfig({
+            providers: [provideAnimations()],
         }),
     ],
 } as Meta<RtuiRoundIconButtonComponent>;

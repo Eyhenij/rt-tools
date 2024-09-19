@@ -46,7 +46,7 @@ export class RtuiPaginationComponent implements OnInit {
     public readonly numbers: WritableSignal<Array<number | string>> = signal([]);
     public readonly previousPageModel: WritableSignal<Nullable<PageModel>> = signal(null);
     public readonly pageSizes: Signal<number[]> = computed(() => {
-        return [10, 20, 40, 50].filter((el: number) => el <= this.currentPageModel()?.totalCount);
+        return [10, 20, 40, 50].filter((el: number) => el / 2 <= this.currentPageModel()?.totalCount);
     });
 
     public ngOnInit(): void {
