@@ -1,6 +1,6 @@
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
-import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
+import { Meta, StoryObj, applicationConfig } from '@storybook/angular';
 
 import TestPaginationComponent from '../pagination/test-pagination-component';
 
@@ -8,8 +8,8 @@ export default {
     title: 'Components/Pagination',
     component: TestPaginationComponent,
     decorators: [
-        moduleMetadata({
-            imports: [BrowserAnimationsModule],
+        applicationConfig({
+            providers: [provideAnimations()],
         }),
     ],
 } as Meta<TestPaginationComponent>;

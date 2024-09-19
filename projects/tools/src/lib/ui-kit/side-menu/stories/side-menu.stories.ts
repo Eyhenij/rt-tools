@@ -1,6 +1,6 @@
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
-import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
+import { Meta, StoryObj, applicationConfig } from '@storybook/angular';
 
 import { TestSideMenuWrapperComponent } from './component/test-side-menu-wrapper.component';
 
@@ -8,8 +8,8 @@ export default {
     title: 'Components/SideMenu',
     component: TestSideMenuWrapperComponent,
     decorators: [
-        moduleMetadata({
-            imports: [BrowserAnimationsModule],
+        applicationConfig({
+            providers: [provideAnimations()],
         }),
     ],
 } as Meta<TestSideMenuWrapperComponent>;
