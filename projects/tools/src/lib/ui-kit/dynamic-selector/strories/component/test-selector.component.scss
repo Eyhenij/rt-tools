@@ -1,0 +1,16 @@
+:host {
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    margin: -1rem;
+
+    rtui-dynamic-selector {
+        width: 100%;
+        max-width: 30rem;
+        padding: 1rem;
+    }
+}

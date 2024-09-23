@@ -11,3 +11,4 @@ export * from './sorters';
 export * from './stringify-http-like-params';
 export * from './transform-array-input';
 export * from './transform-string-input';
+export * from './is-entity-in-array-by-key';

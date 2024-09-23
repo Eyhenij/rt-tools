@@ -1,0 +1,156 @@
+<form [formGroup]="form">
+    <ng-container rtBlock="rtui-dynamic-selector">
+        @if (!entitiesToSelect()?.length && !selectedEntities().length) {
+            <rtui-dynamic-selector-placeholder
+                description="There are no available items to choose"
+                icon="warning"
+                [isButtonShow]="false"
+                [isIconOutlined]="true" />
+        } @else {
+            @for (entity of selectedEntities(); track entity[displayExp()]) {
+                <div rtElem="item">
+                    <span
+                        #titleTpl
+                        rtElem="item-title"
+                        matTooltipPosition="above"
+                        [rtHideTooltipDirective]="titleTpl"
+                        [isTooltipShown]="!isMobile()"
+                        [matTooltip]="
+                            useNameBreaking()
+                                ? (entity[displayExp()] | entityToString | breakString)
+                                : (entity[displayExp()] | entityToString)
+                        "
+                        [matTooltipDisabled]="isMobile()">
+                        @if (useNameBreaking()) {
+                            {{ entity[displayExp()] | entityToString | breakString }}
+                        } @else {
+                            {{ entity[displayExp()] }}
+                        }
+                    </span>
+
+                    <div rtElem="item-controls">
+                        @if (additionalControlTpl()) {
+                            <ng-container *ngTemplateOutlet="additionalControlTpl() || null; context: { $implicit: entity }" />
+                        }
+
+                        @if (isDeleteButtonShown()) {
+                            <div rtElem="item-control">
+                                <button
+                                    mat-icon-button
+                                    type="button"
+                                    rtElem="item-control-button"
+                                    rtMod="active"
+                                    matTooltip="Remove the Item from the List"
+                                    matTooltipPosition="left"
+                                    [matTooltipDisabled]="isMobile()"
+                                    [disabled]="readonlyEntitiesKeys().includes(entity[keyExp()])"
+                                    (click)="toggleEntity(entity[keyExp()])">
+                                    <mat-icon rtElem="item-control-icon" [rtIconOutlinedDirective]="true">delete</mat-icon>
+                                </button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            @if (entitiesToSelect()?.length || !isLocalSearch()) {
+                @if (isPlaceholderShown()) {
+                    <rtui-dynamic-selector-placeholder
+                        [icon]="placeholderIcon()"
+                        [description]="placeholderDescription()"
+                        [buttonTitle]="buttonTitle()"
+                        [disabled]="disabled()"
+                        [isIconOutlined]="isPlaceholderIconOutlined()"
+                        (submitAction)="showSelectionControl($event)" />
+                } @else {
+                    <div rtElem="actions">
+                        <button
+                            #trigger="cdkOverlayOrigin"
+                            cdkOverlayOrigin
+                            type="button"
+                            class="c-button c-button--txt-base--size-sm"
+                            [class.--disabled]="disabled()"
+                            [disabled]="disabled()"
+                            (click)="showSelectionControl(trigger)">
+                            {{ buttonTitle() }}
+                        </button>
+
+                        <ng-template [ngTemplateOutlet]="listActionsTpl" />
+                    </div>
+                }
+
+                @if (selectedOverlayTrigger) {
+                    <ng-template
+                        rtEscapeKey
+                        cdkConnectedOverlay
+                        cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                        [cdkConnectedOverlayHasBackdrop]="true"
+                        [cdkConnectedOverlayOpen]="isSelectionControlShown()"
+                        [cdkConnectedOverlayDisableClose]="true"
+                        [cdkConnectedOverlayOrigin]="selectedOverlayTrigger"
+                        [cdkConnectedOverlayPositions]="connectedOverlayPositions"
+                        (backdropClick)="hideSelectionControl()"
+                        (escapeKeyAction)="hideSelectionControl()">
+                        <rtui-multi-selector-popup
+                            [navigateButtonTitle]="navigateButtonTitle()"
+                            [navigateLink]="navigateLink()"
+                            [entitiesToSelect]="entitiesToSelect()"
+                            [appearance]="appearance()"
+                            [keyExp]="keyExp()"
+                            [displayExp]="displayExp()"
+                            [isMobile]="isMobile()"
+                            [isSingleSelection]="isSingleSelection()"
+                            [loading]="loading()"
+                            [fetching]="fetching()"
+                            [useNameBreaking]="useNameBreaking()"
+                            [searchTerm]="searchTerm()"
+                            [isLazyLoad]="isLazyLoad()"
+                            [isLocalSearch]="isLocalSearch()"
+                            [isMultiToggleShown]="isMultiToggleShown()"
+                            (searchAction)="search($event)"
+                            (scrollAction)="scroll()"
+                            (temporarySelectAction)="setTemporarySelection($event)"
+                            (closeAction)="hideSelectionControl()"
+                            (submitAction)="select($event)" />
+                    </ng-template>
+                }
+            } @else {
+                <div rtElem="actions">
+                    <ng-template [ngTemplateOutlet]="listActionsTpl" />
+                </div>
+            }
+        }
+    </ng-container>
+</form>
+
+<ng-template #listActionsTpl>
+    <div rtBlock="rtui-dynamic-selector-list-actions">
+        <button
+            mat-icon-button
+            type="button"
+            rtElem="item"
+            matTooltip="Reset to initial list"
+            matTooltipClass="custom-tooltip"
+            matTooltipPosition="left"
+            [rtMod]="{ active: !isResetButtonDisable() || !disabled() }"
+            [disabled]="isResetButtonDisable() || disabled()"
+            [matTooltipDisabled]="isMobile()"
+            (click)="resetToInitialState()">
+            <mat-icon rtElem="item-icon" [rtMod]="{ disabled: isResetButtonDisable() }" [rtIconOutlinedDirective]="true">refresh</mat-icon>
+        </button>
+
+        <button
+            mat-icon-button
+            type="button"
+            rtElem="item"
+            matTooltip="Clear list"
+            matTooltipClass="custom-tooltip"
+            matTooltipPosition="above"
+            [rtMod]="{ active: !disabled() }"
+            [matTooltipDisabled]="isMobile()"
+            [disabled]="disabled()"
+            (click)="clearList()">
+            <mat-icon rtElem="item-icon" [rtIconOutlinedDirective]="true">delete_forever</mat-icon>
+        </button>
+    </div>
+</ng-template>
