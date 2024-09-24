@@ -11,7 +11,7 @@
     [entities]="entities"
     [isSingleSelection]="isSingleMode"
     [readonlyEntitiesKeys]="hasReadonly ? readonlyEntitiesKeys : []"
-    [buttonTitle]="form.value?.length ? 'Add' : 'Choose'"
+    [buttonTitle]="form.value?.length ? (isSingleMode ? 'Change' : 'Add') : 'Choose'"
     [isPlaceholderShown]="!form.value?.length"
     [placeholderIcon]="'person'"
     [isMultiToggleShown]="isMultiToggleShown">

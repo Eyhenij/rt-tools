@@ -1,0 +1,10 @@
+<rtui-dynamic-input
+    inputLabel="Email"
+    inputPlaceholder="example@example.com"
+    placeholderDescription="Add Emails"
+    placeholderIcon="email"
+    [formControl]="form"
+    [isMobile]="isMobile"
+    [isSingleSelection]="isSingleSelection"
+    [buttonTitle]="form.value?.length ? 'Add one more email' : 'Add email'"
+    [isPlaceholderShown]="!form.value?.length" />

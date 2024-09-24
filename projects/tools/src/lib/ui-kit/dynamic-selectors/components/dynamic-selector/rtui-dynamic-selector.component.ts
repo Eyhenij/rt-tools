@@ -36,7 +36,6 @@ import {
     Validator,
 } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
-import { MatFormFieldAppearance } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
@@ -57,6 +56,8 @@ import {
     sortByAlphabet,
     transformArrayInput,
 } from '../../../../util';
+import { RtuiDynamicSelectorListActionsComponent } from '../actions/rtui-dynamic-selector-list-actions.component';
+import { RtuiDynamicSelectorsDirective } from '../dynamic-selectors-directive';
 import { RtuiMultiSelectorPopupComponent } from '../multi-selector-popup/rtui-multi-selector-popup.component';
 import { RtuiDynamicSelectorPlaceholderComponent } from '../placeholder/rtui-dynamic-selector-placeholder.component';
 
@@ -102,6 +103,7 @@ export class RtuiDynamicSelectorAdditionalControlDirective {}
         // components
         RtuiMultiSelectorPopupComponent,
         RtuiDynamicSelectorPlaceholderComponent,
+        RtuiDynamicSelectorListActionsComponent,
     ],
     providers: [
         {
@@ -117,6 +119,7 @@ export class RtuiDynamicSelectorAdditionalControlDirective {}
     ],
 })
 export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>, KEY extends Extract<keyof ENTITY, string>>
+    extends RtuiDynamicSelectorsDirective
     implements ControlValueAccessor, Validator, OnInit
 {
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
@@ -132,10 +135,6 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     /** Target element for overlay selector */
     public selectedOverlayTrigger: Nullable<CdkOverlayOrigin> = null;
 
-    /** Indicates is mobile view */
-    public isMobile: InputSignal<boolean> = input.required<boolean>();
-    /** Selections control button title */
-    public buttonTitle: InputSignal<string> = input.required();
     /** A model's field which should be used for http-requests */
     public keyExp: InputSignal<KEY> = input.required();
     /** A model's field which should be shown in ui */
@@ -144,8 +143,6 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     public entities: InputSignalWithTransform<ENTITY[], ENTITY[]> = input.required<ENTITY[], ENTITY[]>({
         transform: (value: unknown) => transformArrayInput(value),
     });
-    /** Indicates if only one option can be chosen */
-    public isSingleSelection: InputSignal<boolean> = input(false);
     /** Navigation button title for popup actions */
     public navigateButtonTitle: InputSignal<string> = input<string>('');
     /** Navigation button link for popup actions */
@@ -154,20 +151,8 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     public readonlyEntitiesKeys: InputSignalWithTransform<ENTITY[KEY][], ENTITY[KEY][]> = input<ENTITY[KEY][], ENTITY[KEY][]>([], {
         transform: (value: ENTITY[KEY][]) => transformArrayInput(value),
     });
-    /** Indicates is selector disabled */
-    public disabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
-        transform: booleanAttribute,
-    });
-    /** Indicates is BreakStringPipe used */
-    public useNameBreaking: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
-        transform: booleanAttribute,
-    });
     /** Indicates is placeholder shown */
     public isPlaceholderShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
-        transform: booleanAttribute,
-    });
-    /** Indicates is placeholder icon is outlined */
-    public isPlaceholderIconOutlined: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
     /** Indicates that a list of entities is being loading */
@@ -190,22 +175,12 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     public isLocalSearch: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
-    /** Indicates is delete entity button from the selected list shown */
-    public isDeleteButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
-        transform: booleanAttribute,
-    });
     /** Indicates is change multi select mode toggle shown */
     public isMultiToggleShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
     /** Init search term value */
     public searchTerm: InputSignal<string> = input('');
-    /** Placeholder icon */
-    public placeholderIcon: InputSignal<string> = input('');
-    /** Placeholder description */
-    public placeholderDescription: InputSignal<string> = input('');
-    /** Material elements appearance */
-    public appearance: InputSignal<MatFormFieldAppearance> = input<MatFormFieldAppearance>('fill');
     /** Indicates that an additional control has been changed */
     public additionalControlChanged: InputSignal<boolean> = input(false);
 
@@ -220,7 +195,7 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
 
     readonly #entities: WritableSignal<ENTITY[]> = signal([]);
     readonly #autocompleteControlValue: WritableSignal<string> = signal('');
-    /** Entities ids are previously selected */
+    /** Initial entities ids */
     readonly #initialEntityIds: WritableSignal<Array<ENTITY[KEY]>> = signal([]);
     /** Current selected entities ids */
     readonly #selectedEntityIds: WritableSignal<Array<ENTITY[KEY]>> = signal([]);
@@ -230,7 +205,7 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     });
     public readonly isSelectionControlShown: WritableSignal<boolean> = signal(false);
     /** Indicates reset changes button is disabled */
-    public readonly isResetButtonDisable: Signal<boolean> = computed(() => {
+    public readonly isResetButtonDisabled: Signal<boolean> = computed(() => {
         return areArraysEqual(this.#selectedEntityIds().sort(), this.#initialEntityIds().sort()) && !this.additionalControlChanged();
     });
     /** Entities can be chosen, except previously selected */
@@ -392,7 +367,7 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     }
 
     /** Reset list of selected entities ids to init value */
-    public resetToInitialState(): void {
+    public resetList(): void {
         this.#selectedEntityIds.set([...this.#initialEntityIds()]);
         this.resetAction.emit();
     }

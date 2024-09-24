@@ -2,7 +2,6 @@ import { CdkOverlayOrigin } from '@angular/cdk/overlay';
 import {
     ChangeDetectionStrategy,
     Component,
-    InputSignal,
     InputSignalWithTransform,
     OutputEmitterRef,
     booleanAttribute,
@@ -13,7 +12,7 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
-import { RtIconOutlinedDirective } from '../../../../util';
+import { RtIconOutlinedDirective, transformStringInput } from '../../../../util';
 
 @Component({
     standalone: true,
@@ -24,10 +23,18 @@ import { RtIconOutlinedDirective } from '../../../../util';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RtuiDynamicSelectorPlaceholderComponent {
-    public icon: InputSignal<string> = input('');
-    public description: InputSignal<string> = input('');
-    public isButtonShow: InputSignal<boolean> = input(true);
-    public buttonTitle: InputSignal<string> = input('Add');
+    public icon: InputSignalWithTransform<string, string> = input<string, string>('', {
+        transform: transformStringInput,
+    });
+    public description: InputSignalWithTransform<string, string> = input<string, string>('', {
+        transform: transformStringInput,
+    });
+    public buttonTitle: InputSignalWithTransform<string, string> = input<string, string>('Add', {
+        transform: transformStringInput,
+    });
+    public isButtonShow: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+        transform: booleanAttribute,
+    });
     public disabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });

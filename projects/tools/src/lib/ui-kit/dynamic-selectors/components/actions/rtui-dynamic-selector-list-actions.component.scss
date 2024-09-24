@@ -1,0 +1,45 @@
+@use '../../../../../styles/base/mixin' as mixins;
+
+$dynamic-selector-list-actions: (
+    host: (
+        padding-right: 1rem,
+    ),
+    item-icon: (
+        size: 1.125rem,
+    ),
+    item-active: (
+        color: var(--clr-red-100),
+    ),
+);
+
+:host {
+    @each $element, $elements in $dynamic-selector-list-actions {
+        @each $style-token, $value in $elements {
+            #{mixins.generateCssVar('dynamic-selector-list-actions', #{$element}, #{$style-token})}: #{$value};
+        }
+    }
+
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    padding-right: var(--rt-dynamic-selector-list-actions-padding-right);
+
+    .rtui-dynamic-selector-list-actions {
+        display: flex;
+        align-items: center;
+        margin-left: auto;
+        padding-right: var(--rt-dynamic-selector-list-actions-padding-right);
+
+        &__item {
+            &--active {
+                color: var(--rt-dynamic-selector-list-actions-item-active-color);
+            }
+
+            &-icon {
+                width: var(--rt-dynamic-selector-list-actions-item-icon-size);
+                height: var(--rt-dynamic-selector-list-actions-item-icon-size);
+                font-size: var(--rt-dynamic-selector-list-actions-item-icon-size);
+            }
+        }
+    }
+}

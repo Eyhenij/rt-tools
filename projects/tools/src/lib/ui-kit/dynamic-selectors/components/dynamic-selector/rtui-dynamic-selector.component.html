@@ -124,33 +124,10 @@
 </form>
 
 <ng-template #listActionsTpl>
-    <div rtBlock="rtui-dynamic-selector-list-actions">
-        <button
-            mat-icon-button
-            type="button"
-            rtElem="item"
-            matTooltip="Reset to initial list"
-            matTooltipClass="custom-tooltip"
-            matTooltipPosition="left"
-            [rtMod]="{ active: !isResetButtonDisable() || !disabled() }"
-            [disabled]="isResetButtonDisable() || disabled()"
-            [matTooltipDisabled]="isMobile()"
-            (click)="resetToInitialState()">
-            <mat-icon rtElem="item-icon" [rtMod]="{ disabled: isResetButtonDisable() }" [rtIconOutlinedDirective]="true">refresh</mat-icon>
-        </button>
-
-        <button
-            mat-icon-button
-            type="button"
-            rtElem="item"
-            matTooltip="Clear list"
-            matTooltipClass="custom-tooltip"
-            matTooltipPosition="above"
-            [rtMod]="{ active: !disabled() }"
-            [matTooltipDisabled]="isMobile()"
-            [disabled]="disabled()"
-            (click)="clearList()">
-            <mat-icon rtElem="item-icon" [rtIconOutlinedDirective]="true">delete_forever</mat-icon>
-        </button>
-    </div>
+    <rtui-dynamic-selector-list-actions
+        [isMobile]="isMobile()"
+        [disabled]="disabled()"
+        [isResetButtonDisabled]="isResetButtonDisabled()"
+        (resetAction)="resetList()"
+        (clearAction)="clearList()" />
 </ng-template>
