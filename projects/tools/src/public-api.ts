@@ -23,7 +23,7 @@ export * from './lib/ui-kit/animation';
 export * from './lib/ui-kit/info-badge';
 export * from './lib/ui-kit/toggle';
 export * from './lib/ui-kit/file-uploader';
-export * from './lib/ui-kit/dynamic-selector';
+export * from './lib/ui-kit/dynamic-selectors';
 
 // utils
 export * from './lib/util';
