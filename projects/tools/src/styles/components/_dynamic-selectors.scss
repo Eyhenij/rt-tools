@@ -22,15 +22,6 @@ $dynamic-selector: (
     item-control-icon: (
         size: 1.125rem,
     ),
-    list-actions: (
-        padding-right: 1rem,
-    ),
-    list-actions-item-icon: (
-        size: 1.125rem,
-    ),
-    list-actions-item-active: (
-        color: var(--clr-red-100),
-    ),
 );
 
 :root {
@@ -93,24 +84,5 @@ $dynamic-selector: (
     &__actions {
         display: flex;
         align-items: center;
-
-        .rtui-dynamic-selector-list-actions {
-            display: flex;
-            align-items: center;
-            margin-left: auto;
-            padding-right: var(--rt-dynamic-selector-list-actions-padding-right);
-
-            &__item {
-                &--active {
-                    color: var(--rt-dynamic-selector-list-actions-item-active-color);
-                }
-
-                &-icon {
-                    width: var(--rt-dynamic-selector-list-actions-item-icon-size);
-                    height: var(--rt-dynamic-selector-list-actions-item-icon-size);
-                    font-size: var(--rt-dynamic-selector-list-actions-item-icon-size);
-                }
-            }
-        }
     }
 }

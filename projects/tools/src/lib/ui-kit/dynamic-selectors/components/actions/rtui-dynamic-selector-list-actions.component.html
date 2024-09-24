@@ -1,0 +1,29 @@
+<ng-container rtBlock="rtui-dynamic-selector-list-actions">
+    <button
+        mat-icon-button
+        type="button"
+        rtElem="item"
+        matTooltip="Reset to initial list"
+        matTooltipClass="custom-tooltip"
+        matTooltipPosition="left"
+        [rtMod]="{ active: !isResetButtonDisabled() && !disabled() }"
+        [disabled]="isResetButtonDisabled() || disabled()"
+        [matTooltipDisabled]="isMobile()"
+        (click)="onReset()">
+        <mat-icon rtElem="item-icon" [rtIconOutlinedDirective]="true">refresh</mat-icon>
+    </button>
+
+    <button
+        mat-icon-button
+        type="button"
+        rtElem="item"
+        matTooltip="Clear list"
+        matTooltipClass="custom-tooltip"
+        matTooltipPosition="above"
+        [rtMod]="{ active: !disabled() && !isClearButtonDisabled() }"
+        [matTooltipDisabled]="isMobile()"
+        [disabled]="disabled() || isClearButtonDisabled()"
+        (click)="onClear()">
+        <mat-icon rtElem="item-icon" [rtIconOutlinedDirective]="true">delete_forever</mat-icon>
+    </button>
+</ng-container>

@@ -96,7 +96,7 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
     protected readonly oSTypes: typeof OSTypes = OSTypes;
 
     /** Indicates is mobile view */
-    public isMobile: InputSignalWithTransform<Nullable<boolean>, boolean> = input.required<Nullable<boolean>, boolean>({
+    public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input.required<Nullable<boolean>, Nullable<boolean>>({
         transform: booleanAttribute,
     });
     public entitiesToSelect: InputSignalWithTransform<ENTITY[], ENTITY[]> = input.required<ENTITY[], ENTITY[]>({

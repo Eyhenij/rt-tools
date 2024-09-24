@@ -1,0 +1,67 @@
+<form [formGroup]="form">
+    <ng-container rtBlock="rtui-dynamic-selector">
+        @if (isPlaceholderShown()) {
+            <rtui-dynamic-selector-placeholder
+                [icon]="placeholderIcon()"
+                [description]="placeholderDescription()"
+                [buttonTitle]="buttonTitle()"
+                [isIconOutlined]="isPlaceholderIconOutlined()"
+                (submitAction)="hidePlaceholder()" />
+        } @else {
+            @for (entity of form.value.control ?? []; track entity) {
+                <div rtElem="item">
+                    <span>
+                        @if (useNameBreaking()) {
+                            {{ entity | breakString }}
+                        } @else {
+                            {{ entity }}
+                        }
+                    </span>
+
+                    <div rtElem="item-control">
+                        <button
+                            mat-icon-button
+                            type="button"
+                            rtElem="item-control-button"
+                            rtMod="active"
+                            matTooltip="Remove the Item from the List"
+                            matTooltipPosition="left"
+                            [matTooltipDisabled]="isMobile()"
+                            (click)="toggleEntity(entity)">
+                            <mat-icon rtElem="item-control-icon" [rtIconOutlinedDirective]="true">delete</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            }
+
+            @if (isInputControlShown()) {
+                <mat-form-field [appearance]="appearance()" [style.width.%]="100">
+                    <mat-label>{{ inputLabel() }}</mat-label>
+
+                    <input
+                        matInput
+                        type="text"
+                        formControlName="controlForUi"
+                        [placeholder]="inputPlaceholder()"
+                        (keydown.enter)="onAddEntity()"
+                        (focusout)="onAddEntity()" />
+                </mat-form-field>
+            }
+
+            <div rtElem="actions">
+                @if (!isInputControlShown() && !isSingleSelection()) {
+                    <button type="button" class="c-button c-button--txt-base--size-sm" (click)="showSelectionControl()">
+                        {{ buttonTitle() }}
+                    </button>
+                }
+
+                <rtui-dynamic-selector-list-actions
+                    [isMobile]="isMobile()"
+                    [isResetButtonDisabled]="isResetButtonDisabled()"
+                    [isClearButtonDisabled]="!form.controls.control.value?.length"
+                    (resetAction)="resetList()"
+                    (clearAction)="clearList()" />
+            </div>
+        }
+    </ng-container>
+</form>
