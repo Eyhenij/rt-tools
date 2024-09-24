@@ -1,0 +1,45 @@
+<rtui-dynamic-selector
+    placeholderDescription="Choose Users"
+    keyExp="id"
+    displayExp="name"
+    navigateButtonTitle="Nav button"
+    navigateLink="link"
+    [formControl]="form"
+    [isMobile]="isMobile"
+    [loading]="loading"
+    [fetching]="fetching"
+    [entities]="entities"
+    [isSingleSelection]="isSingleMode"
+    [readonlyEntitiesKeys]="hasReadonly ? readonlyEntitiesKeys : []"
+    [buttonTitle]="form.value?.length ? 'Add' : 'Choose'"
+    [isPlaceholderShown]="!form.value?.length"
+    [placeholderIcon]="'person'"
+    [isMultiToggleShown]="isMultiToggleShown">
+    @if (isAdditionalControlShown) {
+        <ng-container *rtuiDynamicSelectorAdditionalControlDirective="let entity">
+            <div rtBlock="rtui-dynamic-selector__item-control">
+                <button
+                    mat-icon-button
+                    type="button"
+                    matTooltip="Info"
+                    matTooltipPosition="left"
+                    [matTooltipDisabled]="isMobile"
+                    (click)="onAdditionalControlClick(entity)">
+                    <mat-icon rtBlock="rtui-dynamic-selector__item-control-icon" [rtIconOutlinedDirective]="true">info</mat-icon>
+                </button>
+            </div>
+
+            <div rtBlock="rtui-dynamic-selector__item-control">
+                <button
+                    mat-icon-button
+                    type="button"
+                    matTooltip="Reset to initial list"
+                    matTooltipPosition="left"
+                    [matTooltipDisabled]="isMobile"
+                    (click)="onAdditionalControlClick(entity)">
+                    <mat-icon rtBlock="rtui-dynamic-selector__item-control-icon" [rtIconOutlinedDirective]="true">star</mat-icon>
+                </button>
+            </div>
+        </ng-container>
+    }
+</rtui-dynamic-selector>

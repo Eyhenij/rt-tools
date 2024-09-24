@@ -69,8 +69,8 @@ export class RtuiToggleComponent implements OnInit, ControlValueAccessor {
 
     public readonly isMobile: Signal<Nullable<boolean>> = this.#breakpointService.isMobile;
 
-    #onTouched: () => void = () => noop;
-    #onChanged: (value: boolean) => void = () => noop;
+    #onTouched: () => void = noop;
+    #onChanged: (value: boolean) => void = noop;
 
     public ngOnInit(): void {
         this.formControl.valueChanges

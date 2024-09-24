@@ -8,5 +8,6 @@ export * from './validators';
 export * from './enums';
 export * from './directives';
 export * from './helpers';
+export * from './const';
 
 export * from './providers';
