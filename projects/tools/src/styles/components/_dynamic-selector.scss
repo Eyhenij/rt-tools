@@ -1,0 +1,116 @@
+@use '../base/mixin' as mixins;
+
+$dynamic-selector: (
+    item: (
+        height: 3rem,
+        background-color: var(--mat-option-selected-state-layer-color),
+        border-radius: 0.3125rem,
+        margin-bottom: 0.5rem,
+        padding: 0 1rem,
+    ),
+    item-control: (
+        padding: 0 0.25rem 0 0.25rem,
+        border-right: 1px solid var(--clr-black-30),
+    ),
+    item-control-last-child: (
+        padding: 0 0 0 0.25rem,
+        border-right: none,
+    ),
+    item-control-button-active: (
+        color: var(--clr-red-100),
+    ),
+    item-control-icon: (
+        size: 1.125rem,
+    ),
+    list-actions: (
+        padding-right: 1rem,
+    ),
+    list-actions-item-icon: (
+        size: 1.125rem,
+    ),
+    list-actions-item-active: (
+        color: var(--clr-red-100),
+    ),
+);
+
+:root {
+    @each $element, $elements in $dynamic-selector {
+        @each $style-token, $value in $elements {
+            #{mixins.generateCssVar('dynamic-selector', #{$element}, #{$style-token})}: #{$value};
+        }
+    }
+}
+
+.rtui-dynamic-selector {
+    &__item {
+        height: var(--rt-dynamic-selector-item-height);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        background-color: var(--rt-dynamic-selector-item-background-color);
+        border-radius: var(--rt-dynamic-selector-item-border-radius);
+        margin-bottom: var(--rt-dynamic-selector-item-margin-bottom);
+        padding: var(--rt-dynamic-selector-item-padding);
+
+        &-title {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        &-controls {
+            display: flex;
+            align-items: center;
+        }
+
+        &-control {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: var(--rt-dynamic-selector-item-control-padding);
+            border-right: var(--rt-dynamic-selector-item-control-border-right);
+
+            &:last-child {
+                padding: var(--rt-dynamic-selector-item-control-last-child-padding);
+                border-right: var(--rt-dynamic-selector-item-control-last-child-border-right);
+            }
+
+            &-button {
+                &--active {
+                    color: var(--rt-dynamic-selector-item-control-button-active-color);
+                }
+            }
+
+            &-icon {
+                width: var(--rt-dynamic-selector-item-control-icon-size);
+                height: var(--rt-dynamic-selector-item-control-icon-size);
+                font-size: var(--rt-dynamic-selector-item-control-icon-size);
+            }
+        }
+    }
+
+    &__actions {
+        display: flex;
+        align-items: center;
+
+        .rtui-dynamic-selector-list-actions {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+            padding-right: var(--rt-dynamic-selector-list-actions-padding-right);
+
+            &__item {
+                &--active {
+                    color: var(--rt-dynamic-selector-list-actions-item-active-color);
+                }
+
+                &-icon {
+                    width: var(--rt-dynamic-selector-list-actions-item-icon-size);
+                    height: var(--rt-dynamic-selector-list-actions-item-icon-size);
+                    font-size: var(--rt-dynamic-selector-list-actions-item-icon-size);
+                }
+            }
+        }
+    }
+}

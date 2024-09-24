@@ -1,0 +1,24 @@
+<ng-container rtBlock="rtui-dynamic-selector-placeholder">
+    @if (icon()) {
+        <mat-icon rtElem="icon" [rtMod]="{ warn: !isButtonShow() }" [rtIconOutlinedDirective]="isIconOutlined()">{{ icon() }}</mat-icon>
+    }
+
+    @if (description()) {
+        <div rtElem="description">{{ description() }}</div>
+    }
+
+    @if (isButtonShow()) {
+        <button
+            #trigger="cdkOverlayOrigin"
+            cdkOverlayOrigin
+            mat-flat-button
+            type="button"
+            rtBlock="c-button"
+            [disabled]="disabled()"
+            (click)="onSubmit(trigger)">
+            <mat-icon [rtIconOutlinedDirective]="false">add</mat-icon>
+
+            {{ buttonTitle() }}
+        </button>
+    }
+</ng-container>

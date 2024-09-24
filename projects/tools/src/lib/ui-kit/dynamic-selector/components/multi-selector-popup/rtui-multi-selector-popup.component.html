@@ -1,0 +1,153 @@
+<div
+    rtBlock="rtui-multi-selector-header"
+    [rtMod]="{ simple: isSingleSelection() || !filteredEntities().length || filteredEntities().length <= 1 }">
+    <mat-form-field subscriptSizing="dynamic" [appearance]="appearance()">
+        <input #searchInputTpl matInput placeholder="Search..." type="text" [formControl]="searchControl" />
+
+        <mat-icon matPrefix [rtIconOutlinedDirective]="false">search</mat-icon>
+
+        <rtui-clear-button matSuffix [isButtonShown]="!!searchControl.value" (clickAction)="onClearSearch()" />
+    </mat-form-field>
+
+    @if (!isSingleSelection() && filteredEntities().length > 1 && !loading()) {
+        <div rtElem="controls">
+            @if (isMultiToggleShown()) {
+                <div rtElem="controls-item" rtMod="first">
+                    <rtui-toggle label="Multi selection" [ngModel]="this.isMultiSelection()" (ngModelChange)="toggleMultiSelection()" />
+
+                    @if (!isMobile()) {
+                        <mat-icon
+                            rtElem="controls-item-icon"
+                            matTooltipPosition="above"
+                            [rtIconOutlinedDirective]="true"
+                            [matTooltip]="
+                                isMacOS() ? 'Also for multi selection use COMMAND button' : 'Also for multi selection use CTRL button'
+                            ">
+                            info
+                        </mat-icon>
+                    }
+
+                    @if (isMobile()) {
+                        <div rtElem="controls-item-info">
+                            {{ isMacOS() ? 'Also for multi selection use COMMAND button' : 'Also for multi selection use CTRL button' }}
+                        </div>
+                    }
+                </div>
+            }
+
+            <div rtElem="controls-item" rtMod="last">
+                <mat-checkbox
+                    [checked]="isAllSelected()"
+                    [indeterminate]="!isAllSelected() && selectionControl.value.length > 0"
+                    (change)="toggleSelectAll($event.checked)">
+                    <div rtElem="controls-item-title">Select all</div>
+                </mat-checkbox>
+            </div>
+        </div>
+    }
+</div>
+
+@if ((filteredEntities()?.length || selectedEntities().length) && !loading()) {
+    <div rtBlock="rtui-multi-selector-options" rtScrollDirective [active]="!!isLazyLoad() && !fetching()" (scrollAction)="scroll()">
+        @if (searchControl.value && selectedEntities()) {
+            @for (entity of selectedEntities(); track entity[displayExp()]; let i = $index) {
+                @if (isSingleSelection()) {
+                    <mat-radio-button
+                        rtElem="item"
+                        [rtMod]="{ separated: i === selectedEntities().length - 1 }"
+                        [checked]="selectionControl.value.includes(entity[keyExp()])"
+                        (change)="onToggleSingleItem(entity, !selectionControl.value.includes(entity[keyExp()]))">
+                        <div rtElem="item-title">
+                            @if (useNameBreaking()) {
+                                {{ entity[displayExp()] | entityToString | breakString }}
+                            } @else {
+                                {{ entity[displayExp()] }}
+                            }
+                        </div>
+                    </mat-radio-button>
+                } @else {
+                    <mat-checkbox
+                        rtElem="item"
+                        [rtMod]="{ separated: i === selectedEntities().length - 1 }"
+                        [checked]="selectionControl.value.includes(entity[keyExp()])"
+                        (click)="onToggleItem($event, entity, !selectionControl.value.includes(entity[keyExp()]))">
+                        <div rtElem="item-title">
+                            @if (useNameBreaking()) {
+                                {{ entity[displayExp()] | entityToString | breakString }}
+                            } @else {
+                                {{ entity[displayExp()] }}
+                            }
+                        </div>
+                    </mat-checkbox>
+                }
+            }
+        }
+
+        @if (filteredEntities()) {
+            @for (entity of filteredEntities(); track entity[displayExp()]) {
+                @if (isSingleSelection()) {
+                    <mat-radio-button
+                        rtElem="item"
+                        [checked]="selectionControl.value.includes(entity[keyExp()])"
+                        (change)="onToggleSingleItem(entity, !selectionControl.value.includes(entity[keyExp()]))">
+                        <div rtElem="item-title">
+                            @if (useNameBreaking()) {
+                                {{ entity[displayExp()] | entityToString | breakString }}
+                            } @else {
+                                {{ entity[displayExp()] }}
+                            }
+                        </div>
+                    </mat-radio-button>
+                } @else {
+                    <mat-checkbox
+                        rtElem="item"
+                        [checked]="selectionControl.value.includes(entity[keyExp()])"
+                        (click)="onToggleItem($event, entity, !selectionControl.value.includes(entity[keyExp()]))">
+                        <div rtElem="item-title">
+                            @if (useNameBreaking()) {
+                                {{ entity[displayExp()] | entityToString | breakString }}
+                            } @else {
+                                {{ entity[displayExp()] }}
+                            }
+                        </div>
+                    </mat-checkbox>
+                }
+            }
+        }
+
+        @if (fetching()) {
+            <div rtElem="loader">
+                <mat-spinner [diameter]="20" />
+            </div>
+        }
+    </div>
+} @else {
+    <div rtBlock="rtui-multi-selector-placeholder">
+        @if (loading()) {
+            <rtui-spinner />
+        } @else {
+            <mat-icon rtElem="icon" [rtIconOutlinedDirective]="false">search</mat-icon>
+
+            <div rtElem="title">No Results</div>
+        }
+    </div>
+}
+
+<div rtBlock="rtui-multi-selector-footer" [rtMod]="{ full: !!navigateLink() && !!navigateButtonTitle() }">
+    @if (navigateLink() && navigateButtonTitle()) {
+        <a rtElem="nav-action" [routerLink]="navigateLink()">{{ navigateButtonTitle() }}</a>
+    }
+
+    <div rtElem="base-actions">
+        <button mat-button type="button" rtBlock="c-button" (click)="onClose()">Cancel</button>
+
+        <button
+            mat-flat-button
+            type="button"
+            rtBlock="c-button"
+            [disabled]="!selectionControl.value?.length || loading()"
+            (click)="onSubmit()">
+            SUBMIT
+        </button>
+    </div>
+</div>
