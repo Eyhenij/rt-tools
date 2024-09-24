@@ -16,28 +16,30 @@
     [placeholderIcon]="'person'"
     [isMultiToggleShown]="isMultiToggleShown">
     @if (isAdditionalControlShown) {
-        <ng-container *rtuiDynamicSelectorAdditionalControlDirective="let entity">
-            <div rtBlock="rtui-dynamic-selector__item-control">
+        <ng-container *rtuiDynamicSelectorAdditionalControlDirective="let entity" rtBlock="rtui-dynamic-selector">
+            <div rtElem="item-control">
                 <button
                     mat-icon-button
                     type="button"
+                    rtElem="item-control-button"
                     matTooltip="Info"
                     matTooltipPosition="left"
                     [matTooltipDisabled]="isMobile"
                     (click)="onAdditionalControlClick(entity)">
-                    <mat-icon rtBlock="rtui-dynamic-selector__item-control-icon" [rtIconOutlinedDirective]="true">info</mat-icon>
+                    <mat-icon [rtIconOutlinedDirective]="true">info</mat-icon>
                 </button>
             </div>
 
-            <div rtBlock="rtui-dynamic-selector__item-control">
+            <div rtElem="item-control">
                 <button
                     mat-icon-button
                     type="button"
+                    rtElem="item-control-button"
                     matTooltip="Reset to initial list"
                     matTooltipPosition="left"
                     [matTooltipDisabled]="isMobile"
                     (click)="onAdditionalControlClick(entity)">
-                    <mat-icon rtBlock="rtui-dynamic-selector__item-control-icon" [rtIconOutlinedDirective]="true">star</mat-icon>
+                    <mat-icon [rtIconOutlinedDirective]="true">star</mat-icon>
                 </button>
             </div>
         </ng-container>
