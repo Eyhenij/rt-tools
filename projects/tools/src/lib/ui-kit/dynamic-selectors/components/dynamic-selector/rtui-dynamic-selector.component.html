@@ -7,51 +7,23 @@
                 [isButtonShow]="false"
                 [isIconOutlined]="true" />
         } @else {
-            @for (entity of selectedEntities(); track entity[displayExp()]) {
-                <div rtElem="item">
-                    <span
-                        #titleTpl
-                        rtElem="item-title"
-                        matTooltipPosition="above"
-                        [rtHideTooltipDirective]="titleTpl"
-                        [isTooltipShown]="!isMobile()"
-                        [matTooltip]="
-                            useNameBreaking()
-                                ? (entity[displayExp()] | entityToString | breakString)
-                                : (entity[displayExp()] | entityToString)
-                        "
-                        [matTooltipDisabled]="isMobile()">
-                        @if (useNameBreaking()) {
-                            {{ entity[displayExp()] | entityToString | breakString }}
-                        } @else {
-                            {{ entity[displayExp()] }}
-                        }
-                    </span>
-
-                    <div rtElem="item-controls">
-                        @if (additionalControlTpl()) {
-                            <ng-container *ngTemplateOutlet="additionalControlTpl() || null; context: { $implicit: entity }" />
-                        }
-
-                        @if (isDeleteButtonShown()) {
-                            <div rtElem="item-control">
-                                <button
-                                    mat-icon-button
-                                    type="button"
-                                    rtElem="item-control-button"
-                                    matTooltip="Remove the Item from the List"
-                                    matTooltipPosition="left"
-                                    [rtMod]="{ active: !readonlyEntitiesKeys().includes(entity[keyExp()]) }"
-                                    [matTooltipDisabled]="isMobile()"
-                                    [disabled]="readonlyEntitiesKeys().includes(entity[keyExp()])"
-                                    (click)="toggleEntity(entity[keyExp()])">
-                                    <mat-icon [rtIconOutlinedDirective]="true">delete</mat-icon>
-                                </button>
-                            </div>
-                        }
-                    </div>
-                </div>
-            }
+            <rtui-dynamic-selector-selected-list
+                [isMobile]="isMobile()"
+                [keyExp]="keyExp()"
+                [displayExp]="displayExp()"
+                [selectedEntities]="selectedEntities()"
+                [readonlyEntitiesKeys]="readonlyEntitiesKeys()"
+                [isListDraggable]="isListDraggable()"
+                [useNameBreaking]="useNameBreaking()"
+                [isDeleteButtonShown]="isDeleteButtonShown()"
+                (dropAction)="onDrop($event)"
+                (toggleAction)="toggleEntity($event)">
+                @if (additionalControlTpl()) {
+                    <ng-container *rtuiDynamicSelectorItemAdditionalControlDirective="let entity">
+                        <ng-template *ngTemplateOutlet="additionalControlTpl() || null; context: { $implicit: entity }" />
+                    </ng-container>
+                }
+            </rtui-dynamic-selector-selected-list>
 
             @if (entitiesToSelect()?.length || !isLocalSearch()) {
                 @if (isPlaceholderShown()) {
