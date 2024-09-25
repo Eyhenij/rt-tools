@@ -22,7 +22,7 @@ $dynamic-selector-list-actions: (
     display: flex;
     align-items: center;
     margin-left: auto;
-    padding-right: var(--rt-dynamic-selector-list-actions-padding-right);
+    padding-right: var(--rt-dynamic-selector-list-actions-host-padding-right);
 
     .rtui-dynamic-selector-list-actions {
         display: flex;

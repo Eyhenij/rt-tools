@@ -68,15 +68,17 @@ $dynamic-selector: (
             }
 
             &-button {
-                &--active {
-                    color: var(--rt-dynamic-selector-item-control-button-active-color);
+                .mat-icon {
+                    width: var(--rt-dynamic-selector-item-control-icon-size);
+                    height: var(--rt-dynamic-selector-item-control-icon-size);
+                    font-size: var(--rt-dynamic-selector-item-control-icon-size);
                 }
-            }
 
-            &-icon {
-                width: var(--rt-dynamic-selector-item-control-icon-size);
-                height: var(--rt-dynamic-selector-item-control-icon-size);
-                font-size: var(--rt-dynamic-selector-item-control-icon-size);
+                &--active {
+                    .mat-icon {
+                        color: var(--rt-dynamic-selector-item-control-button-active-color);
+                    }
+                }
             }
         }
     }
