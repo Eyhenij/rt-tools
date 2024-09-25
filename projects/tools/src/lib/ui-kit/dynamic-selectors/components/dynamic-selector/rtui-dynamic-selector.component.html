@@ -39,13 +39,13 @@
                                     mat-icon-button
                                     type="button"
                                     rtElem="item-control-button"
-                                    rtMod="active"
                                     matTooltip="Remove the Item from the List"
                                     matTooltipPosition="left"
+                                    [rtMod]="{ active: !readonlyEntitiesKeys().includes(entity[keyExp()]) }"
                                     [matTooltipDisabled]="isMobile()"
                                     [disabled]="readonlyEntitiesKeys().includes(entity[keyExp()])"
                                     (click)="toggleEntity(entity[keyExp()])">
-                                    <mat-icon rtElem="item-control-icon" [rtIconOutlinedDirective]="true">delete</mat-icon>
+                                    <mat-icon [rtIconOutlinedDirective]="true">delete</mat-icon>
                                 </button>
                             </div>
                         }

@@ -8,13 +8,16 @@ $dynamic-selector-placeholder: (
         gap: 1rem,
     ),
     icon: (
-        size: 2rem,
+        size: 4rem,
+        color: var(--clr-black-80),
     ),
     icon-warn: (
         color: var(--clr-orange-70),
     ),
     description: (
-        font-size: 1.5rem,
+        font-size: 1rem,
+        line-height: 1.25rem,
+        color: var(--clr-black-60),
     ),
 );
 
@@ -40,6 +43,7 @@ $dynamic-selector-placeholder: (
             width: var(--rt-dynamic-selector-placeholder-icon-size);
             height: var(--rt-dynamic-selector-placeholder-icon-size);
             font-size: var(--rt-dynamic-selector-placeholder-icon-size);
+            color: var(--rt-dynamic-selector-placeholder-icon-color);
 
             &--warn {
                 color: var(--rt-dynamic-selector-placeholder-icon-warn-color);
@@ -48,6 +52,8 @@ $dynamic-selector-placeholder: (
 
         &__description {
             font-size: var(--rt-dynamic-selector-placeholder-description-font-size);
+            line-height: var(--rt-dynamic-selector-placeholder-description-line-height);
+            color: var(--rt-dynamic-selector-placeholder-description-color);
         }
     }
 }
