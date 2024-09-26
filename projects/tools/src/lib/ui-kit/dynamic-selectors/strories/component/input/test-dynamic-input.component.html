@@ -5,6 +5,37 @@
     placeholderIcon="email"
     [formControl]="form"
     [isMobile]="isMobile"
+    [isListDraggable]="isListDraggable"
     [isSingleSelection]="isSingleSelection"
     [buttonTitle]="form.value?.length ? 'Add one more email' : 'Add email'"
-    [isPlaceholderShown]="!form.value?.length" />
+    [isPlaceholderShown]="!form.value?.length">
+    @if (isAdditionalControlShown) {
+        <ng-container *rtuiDynamicInputAdditionalControlDirective="let entity" rtBlock="rtui-dynamic-selector">
+            <div rtElem="item-control">
+                <button
+                    mat-icon-button
+                    type="button"
+                    rtElem="item-control-button"
+                    matTooltip="Info"
+                    matTooltipPosition="left"
+                    [matTooltipDisabled]="isMobile"
+                    (click)="onAdditionalControlClick(entity)">
+                    <mat-icon [rtIconOutlinedDirective]="true">info</mat-icon>
+                </button>
+            </div>
+
+            <div rtElem="item-control">
+                <button
+                    mat-icon-button
+                    type="button"
+                    rtElem="item-control-button"
+                    matTooltip="Reset to initial list"
+                    matTooltipPosition="left"
+                    [matTooltipDisabled]="isMobile"
+                    (click)="onAdditionalControlClick(entity)">
+                    <mat-icon [rtIconOutlinedDirective]="true">star</mat-icon>
+                </button>
+            </div>
+        </ng-container>
+    }
+</rtui-dynamic-input>

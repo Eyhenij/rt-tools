@@ -21,7 +21,7 @@ export const createPerson: () => Person = (): Person => {
 
     return {
         id: faker.number.int(),
-        name: `${faker.person.firstName(gender)} ${faker.person.lastName(gender)} ${faker.person.middleName(gender)} ${faker.person.middleName(gender)} ${faker.person.middleName(gender)}`,
+        name: `${faker.person.firstName(gender)}`,
     };
 };
 
@@ -56,6 +56,7 @@ export class TestSelectorComponent implements OnInit {
 
     public form: FormControl = new FormControl([]);
 
+    public isListDraggable: boolean = false;
     public isMobile: boolean = false;
     public loading: boolean = false;
     public fetching: boolean = false;

@@ -22,6 +22,9 @@ $dynamic-selector: (
     item-control-icon: (
         size: 1.125rem,
     ),
+    item-drag-preview: (
+        box-shadow: 0 0.5rem 1rem 0 var(--clr-black-60),
+    ),
 );
 
 :root {
@@ -43,6 +46,10 @@ $dynamic-selector: (
         border-radius: var(--rt-dynamic-selector-item-border-radius);
         margin-bottom: var(--rt-dynamic-selector-item-margin-bottom);
         padding: var(--rt-dynamic-selector-item-padding);
+
+        &--draggable {
+            cursor: move;
+        }
 
         &-title {
             white-space: nowrap;

@@ -1,0 +1,47 @@
+<ng-container rtBlock="rtui-dynamic-selector">
+    <div rtElem="list" cdkDropList (cdkDropListDropped)="onDrop($event)">
+        @for (entity of selectedEntities(); track entity[displayExp()]) {
+            <div cdkDrag rtElem="item" [rtMod]="{ draggable: isListDraggable() }" [cdkDragDisabled]="!isListDraggable()">
+                <span
+                    #titleTpl
+                    rtElem="item-title"
+                    matTooltipPosition="above"
+                    [rtHideTooltipDirective]="titleTpl"
+                    [isTooltipShown]="!isMobile()"
+                    [matTooltip]="
+                        useNameBreaking() ? (entity[displayExp()] | entityToString | breakString) : (entity[displayExp()] | entityToString)
+                    "
+                    [matTooltipDisabled]="isMobile()">
+                    @if (useNameBreaking()) {
+                        {{ entity[displayExp()] | entityToString | breakString }}
+                    } @else {
+                        {{ entity[displayExp()] }}
+                    }
+                </span>
+
+                <div rtElem="item-controls">
+                    @if (additionalControlTpl()) {
+                        <ng-container *ngTemplateOutlet="additionalControlTpl() || null; context: { $implicit: entity }" />
+                    }
+
+                    @if (isDeleteButtonShown()) {
+                        <div rtElem="item-control">
+                            <button
+                                mat-icon-button
+                                type="button"
+                                rtElem="item-control-button"
+                                matTooltip="Remove the Item from the List"
+                                matTooltipPosition="left"
+                                [rtMod]="{ active: !readonlyEntitiesKeys().includes(entity[keyExp()]) }"
+                                [matTooltipDisabled]="isMobile()"
+                                [disabled]="readonlyEntitiesKeys().includes(entity[keyExp()])"
+                                (click)="onToggle(entity[keyExp()])">
+                                <mat-icon [rtIconOutlinedDirective]="true">delete</mat-icon>
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</ng-container>

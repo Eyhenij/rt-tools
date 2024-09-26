@@ -1,16 +1,23 @@
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { NgTemplateOutlet } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
     DestroyRef,
+    Directive,
     InputSignalWithTransform,
     ModelSignal,
     OnInit,
+    Signal,
+    TemplateRef,
     WritableSignal,
+    contentChild,
     forwardRef,
     inject,
     input,
     model,
     signal,
+    untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -33,15 +40,34 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { noop } from 'rxjs';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 
-import { RtuiDynamicSelectorListActionsComponent, RtuiDynamicSelectorPlaceholderComponent } from '../.';
+import {
+    RtuiDynamicSelectorItemAdditionalControlDirective,
+    RtuiDynamicSelectorListActionsComponent,
+    RtuiDynamicSelectorPlaceholderComponent,
+    RtuiDynamicSelectorSelectedListComponent,
+} from '../.';
 import { BlockDirective, ElemDirective } from '../../../../bem';
-import { BreakStringPipe, Nullable, RtIconOutlinedDirective, areArraysEqual, transformStringInput } from '../../../../util';
+import {
+    BreakStringPipe,
+    Nullable,
+    RtIconOutlinedDirective,
+    areArraysEqual,
+    transformArrayInput,
+    transformStringInput,
+} from '../../../../util';
 import { RtuiDynamicSelectorsDirective } from '../dynamic-selectors-directive';
 
 interface FormModel {
     control: FormControl<string[]>;
     controlForUi: FormControl<Nullable<string>>;
 }
+
+/** Directive for row actions located outside a row menu button */
+@Directive({
+    standalone: true,
+    selector: '[rtuiDynamicInputAdditionalControlDirective]',
+})
+export class RtuiDynamicInputAdditionalControlDirective {}
 
 @Component({
     standalone: true,
@@ -50,6 +76,7 @@ interface FormModel {
     styleUrls: ['./rtui-dynamic-input.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        NgTemplateOutlet,
         ReactiveFormsModule,
         MatIconButton,
         MatTooltip,
@@ -65,10 +92,12 @@ interface FormModel {
         BlockDirective,
         ElemDirective,
         RtIconOutlinedDirective,
+        RtuiDynamicSelectorItemAdditionalControlDirective,
 
         // components
         RtuiDynamicSelectorPlaceholderComponent,
         RtuiDynamicSelectorListActionsComponent,
+        RtuiDynamicSelectorSelectedListComponent,
     ],
     providers: [
         {
@@ -102,7 +131,13 @@ export class RtuiDynamicInputComponent extends RtuiDynamicSelectorsDirective imp
     public inputPlaceholder: InputSignalWithTransform<string, string> = input<string, string>('', {
         transform: transformStringInput,
     });
+    /** Entity keys that can't be changed */
+    public readonlyEntitiesKeys: InputSignalWithTransform<string[], string[]> = input<string[], string[]>([], {
+        transform: (value: string[]) => transformArrayInput(value),
+    });
 
+    /** Array of selected entities */
+    public readonly selectedEntities: WritableSignal<Array<{ id: string }>> = signal([]);
     /** Indicates is input control shown */
     public readonly isInputControlShown: WritableSignal<boolean> = signal(false);
     /** Indicates reset changes button is disabled */
@@ -110,6 +145,14 @@ export class RtuiDynamicInputComponent extends RtuiDynamicSelectorsDirective imp
 
     /** Initial entities */
     readonly #initialEntities: WritableSignal<string[]> = signal([]);
+
+    /** Additional control for entity */
+    public readonly additionalControlTpl: Signal<Nullable<TemplateRef<{ $implicit: string }>>> = contentChild(
+        RtuiDynamicInputAdditionalControlDirective,
+        {
+            read: TemplateRef,
+        }
+    );
 
     #onTouched: () => void = noop;
     #onChanged: (value: string[]) => void = noop;
@@ -124,6 +167,7 @@ export class RtuiDynamicInputComponent extends RtuiDynamicSelectorsDirective imp
             .subscribe((value: string[]): void => {
                 this.#onChanged(value);
                 this.#setResetListButtonState(value);
+                this.selectedEntities.set(value.map((el: string) => ({ id: el })));
             });
 
         this.form.controls.control.statusChanges
@@ -144,6 +188,7 @@ export class RtuiDynamicInputComponent extends RtuiDynamicSelectorsDirective imp
                 this.hideSelectionControl();
                 this.form.controls.control.setValue(value, { emitEvent: false });
                 this.#initialEntities.set(value);
+                this.selectedEntities.set(value.map((el: string) => ({ id: el })));
                 this.#setResetListButtonState(value);
             } else {
                 this.showSelectionControl();
@@ -218,8 +263,15 @@ export class RtuiDynamicInputComponent extends RtuiDynamicSelectorsDirective imp
         }
     }
 
+    /** Proceed move items in list */
+    public onDrop(event: CdkDragDrop<Array<{ id: string }>>): void {
+        const updatedList: Array<{ id: string }> = untracked(() => this.selectedEntities());
+        moveItemInArray(updatedList, event.previousIndex, event.currentIndex);
+        this.form.controls.control.patchValue(updatedList.map((el: { id: string }) => el.id));
+    }
+
     /** Set reset list button state */
     #setResetListButtonState(value: string[]): void {
-        this.isResetButtonDisabled.set(areArraysEqual(this.#initialEntities().sort(), value));
+        this.isResetButtonDisabled.set(areArraysEqual(this.#initialEntities(), value));
     }
 }

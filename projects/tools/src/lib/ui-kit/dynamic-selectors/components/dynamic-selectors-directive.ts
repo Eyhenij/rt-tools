@@ -23,6 +23,7 @@ export abstract class RtuiDynamicSelectorsDirective {
     public disabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
+    /** Indicates is break string pipe used */
     public useNameBreaking: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
@@ -31,6 +32,10 @@ export abstract class RtuiDynamicSelectorsDirective {
     });
     /** Indicates is delete entity button from the selected list shown */
     public isDeleteButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+        transform: booleanAttribute,
+    });
+    /** Indicates is list of items draggable */
+    public isListDraggable: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
     /** Placeholder icon */

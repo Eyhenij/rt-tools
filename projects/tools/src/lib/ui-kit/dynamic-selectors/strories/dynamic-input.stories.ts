@@ -17,9 +17,20 @@ export default {
 
 type Story = StoryObj<TestDynamicInputComponent>;
 
-export const DynamicInput: Story = {
+export const Input: Story = {
     args: {
         isMobile: false,
         isSingleSelection: false,
+        isListDraggable: false,
+        isAdditionalControlShown: false,
+    },
+};
+
+export const InputWithAdditional: Story = {
+    args: {
+        isMobile: false,
+        isSingleSelection: false,
+        isListDraggable: false,
+        isAdditionalControlShown: true,
     },
 };
