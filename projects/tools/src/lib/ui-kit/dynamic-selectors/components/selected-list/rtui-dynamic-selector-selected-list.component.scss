@@ -17,4 +17,5 @@
     box-sizing: border-box;
     border-radius: var(--rt-dynamic-selector-item-border-radius);
     box-shadow: var(--rt-dynamic-selector-item-drag-preview-box-shadow);
+    background: var(--mat-option-selected-state-layer-color);
 }
