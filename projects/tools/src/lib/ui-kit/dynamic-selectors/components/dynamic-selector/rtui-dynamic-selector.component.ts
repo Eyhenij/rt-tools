@@ -1,3 +1,4 @@
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedPosition } from '@angular/cdk/overlay';
 import { NgTemplateOutlet } from '@angular/common';
 import {
@@ -22,6 +23,7 @@ import {
     input,
     output,
     signal,
+    untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -60,6 +62,10 @@ import { RtuiDynamicSelectorListActionsComponent } from '../actions/rtui-dynamic
 import { RtuiDynamicSelectorsDirective } from '../dynamic-selectors-directive';
 import { RtuiMultiSelectorPopupComponent } from '../multi-selector-popup/rtui-multi-selector-popup.component';
 import { RtuiDynamicSelectorPlaceholderComponent } from '../placeholder/rtui-dynamic-selector-placeholder.component';
+import {
+    RtuiDynamicSelectorItemAdditionalControlDirective,
+    RtuiDynamicSelectorSelectedListComponent,
+} from '../selected-list/rtui-dynamic-selector-selected-list.component';
 
 interface FormModel {
     autocompleteControl: FormControl<Nullable<string>>;
@@ -99,11 +105,13 @@ export class RtuiDynamicSelectorAdditionalControlDirective {}
         RtIconOutlinedDirective,
         RtHideTooltipDirective,
         RtEscapeKeyDirective,
+        RtuiDynamicSelectorItemAdditionalControlDirective,
 
         // components
         RtuiMultiSelectorPopupComponent,
         RtuiDynamicSelectorPlaceholderComponent,
         RtuiDynamicSelectorListActionsComponent,
+        RtuiDynamicSelectorSelectedListComponent,
     ],
     providers: [
         {
@@ -193,6 +201,7 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     /** Output reset list to initial value action */
     public readonly resetAction: OutputEmitterRef<void> = output<void>();
 
+    /** List of entities for local processing */
     readonly #entities: WritableSignal<ENTITY[]> = signal([]);
     readonly #autocompleteControlValue: WritableSignal<string> = signal('');
     /** Initial entities ids */
@@ -201,14 +210,16 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     readonly #selectedEntityIds: WritableSignal<Array<ENTITY[KEY]>> = signal([]);
     /** Current selected entities */
     public readonly selectedEntities: Signal<ENTITY[]> = computed(() => {
-        return this.entities().filter((el: ENTITY) => this.#selectedEntityIds().includes(el[this.keyExp()]));
+        return this.#selectedEntityIds()
+            .map((id: ENTITY[KEY]) => this.entities().find((el: ENTITY) => id === el[this.keyExp()]))
+            .filter((el: Nullable<ENTITY>): el is ENTITY => !!el);
     });
     public readonly isSelectionControlShown: WritableSignal<boolean> = signal(false);
     /** Indicates reset changes button is disabled */
     public readonly isResetButtonDisabled: Signal<boolean> = computed(() => {
-        return areArraysEqual(this.#selectedEntityIds().sort(), this.#initialEntityIds().sort()) && !this.additionalControlChanged();
+        return areArraysEqual(this.#selectedEntityIds(), this.#initialEntityIds()) && !this.additionalControlChanged();
     });
-    /** Entities can be chosen, except previously selected */
+    /** Entities can be chosen, except selected on init */
     public readonly entitiesToSelect: Signal<ENTITY[]> = computed(() => {
         return this.#entities()
             .filter((entity: ENTITY) => !checkIsEntityInArrayByKey<ENTITY, KEY>(this.selectedEntities(), entity, this.keyExp()))
@@ -388,20 +399,33 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
         }
     }
 
+    /** Scroll action, needed for lazy load mode */
     public scroll(): void {
         this.scrollAction.emit();
     }
 
+    /** Search action */
     public search(searchTerm: string): void {
         this.searchAction.emit(searchTerm);
     }
 
+    /** Set temporary selection, needed for lazy load mode */
     public setTemporarySelection(values: ENTITY[]): void {
         this.temporarySelectAction.emit(values);
     }
 
+    /** Proceed move items in list */
+    public onDrop(event: CdkDragDrop<ENTITY[]>): void {
+        const updatedList: ENTITY[] = untracked(() => this.selectedEntities());
+        moveItemInArray(updatedList, event.previousIndex, event.currentIndex);
+        this.#entities.set(updatedList);
+        // this.#changeControlValue(updatedList.map((el: ENTITY) => el[this.keyExp()]));
+        this.#selectedEntityIds.set(updatedList.map((el: ENTITY) => el[this.keyExp()]));
+    }
+
     // ––––––––––––– Private Methods –––––––––––––––
 
+    /** Emit change control action */
     #changeControlValue(selectedEntityIds: Array<ENTITY[KEY]>): void {
         if (Array.isArray(selectedEntityIds) && typeof this.#onChanged === 'function') {
             this.#onChanged(selectedEntityIds);

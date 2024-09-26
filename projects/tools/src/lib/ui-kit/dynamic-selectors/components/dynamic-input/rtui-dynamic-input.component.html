@@ -8,31 +8,23 @@
                 [isIconOutlined]="isPlaceholderIconOutlined()"
                 (submitAction)="hidePlaceholder()" />
         } @else {
-            @for (entity of form.value.control ?? []; track entity) {
-                <div rtElem="item">
-                    <span>
-                        @if (useNameBreaking()) {
-                            {{ entity | breakString }}
-                        } @else {
-                            {{ entity }}
-                        }
-                    </span>
-
-                    <div rtElem="item-control">
-                        <button
-                            mat-icon-button
-                            type="button"
-                            rtElem="item-control-button"
-                            rtMod="active"
-                            matTooltip="Remove the Item from the List"
-                            matTooltipPosition="left"
-                            [matTooltipDisabled]="isMobile()"
-                            (click)="toggleEntity(entity)">
-                            <mat-icon rtElem="item-control-icon" [rtIconOutlinedDirective]="true">delete</mat-icon>
-                        </button>
-                    </div>
-                </div>
-            }
+            <rtui-dynamic-selector-selected-list
+                keyExp="id"
+                displayExp="id"
+                [isMobile]="isMobile()"
+                [selectedEntities]="selectedEntities()"
+                [readonlyEntitiesKeys]="readonlyEntitiesKeys()"
+                [isListDraggable]="isListDraggable()"
+                [useNameBreaking]="useNameBreaking()"
+                [isDeleteButtonShown]="isDeleteButtonShown()"
+                (dropAction)="onDrop($event)"
+                (toggleAction)="toggleEntity($event)">
+                @if (additionalControlTpl()) {
+                    <ng-container *rtuiDynamicSelectorItemAdditionalControlDirective="let entity">
+                        <ng-template *ngTemplateOutlet="additionalControlTpl() || null; context: { $implicit: entity }" />
+                    </ng-container>
+                }
+            </rtui-dynamic-selector-selected-list>
 
             @if (isInputControlShown()) {
                 <mat-form-field [appearance]="appearance()" [style.width.%]="100">
