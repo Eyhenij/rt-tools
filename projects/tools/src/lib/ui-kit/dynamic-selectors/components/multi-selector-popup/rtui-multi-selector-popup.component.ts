@@ -85,6 +85,7 @@ import { RtuiToggleComponent } from '../../../toggle';
         RtuiSpinnerComponent,
         EntityToStringPipe,
     ],
+    providers: [DeviceDetectorService],
 })
 export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unknown>, KEY extends Extract<keyof ENTITY, string>>
     implements OnInit, AfterViewInit
