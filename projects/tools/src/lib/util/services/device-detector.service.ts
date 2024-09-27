@@ -1,4 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+
+import { Nullable } from '../interfaces';
+import { NAVIGATOR, WINDOW } from '../tokens';
+import { PlatformService } from './platform.service';
 
 export namespace OSTypes {
     export const WINDOWS: string = 'Windows';
@@ -9,16 +13,31 @@ export namespace OSTypes {
     export const UNKNOWN: string = 'Unknown';
 }
 
-const userAgent: string = navigator?.userAgent;
-
 @Injectable()
 export class DeviceDetectorService {
+    readonly #windowRef: Window = inject(WINDOW);
+    readonly #navigatorRef: Navigator = inject(NAVIGATOR);
+    readonly #platformService: PlatformService = inject(PlatformService);
+
+    public userAgent: Nullable<string> = null;
+
+    constructor() {
+        if (
+            this.#platformService.isPlatformBrowser &&
+            typeof this.#windowRef !== 'undefined' &&
+            typeof this.#navigatorRef !== 'undefined' &&
+            this.#navigatorRef?.userAgent
+        ) {
+            this.userAgent = this.#navigatorRef.userAgent;
+        }
+    }
+
     public isMobile(): boolean {
-        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+        return this.userAgent ? /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(this.userAgent) : false;
     }
 
     public isTablet(): boolean {
-        return /iPad|Android|Tablet/i.test(userAgent);
+        return this.userAgent ? /iPad|Android|Tablet/i.test(this.userAgent) : false;
     }
 
     public isDesktop(): boolean {
@@ -28,15 +47,15 @@ export class DeviceDetectorService {
     public getOS(): string {
         let os: string;
 
-        if (/Windows/i.test(userAgent)) {
+        if (this.userAgent && /Windows/i.test(this.userAgent)) {
             os = OSTypes.WINDOWS;
-        } else if (/Macintosh|Mac OS/i.test(userAgent)) {
+        } else if (this.userAgent && /Macintosh|Mac OS/i.test(this.userAgent)) {
             os = OSTypes.MAC_OS;
-        } else if (/Linux/i.test(userAgent)) {
+        } else if (this.userAgent && /Linux/i.test(this.userAgent)) {
             os = OSTypes.LINUX;
-        } else if (/Android/i.test(userAgent)) {
+        } else if (this.userAgent && /Android/i.test(this.userAgent)) {
             os = OSTypes.ANDROID;
-        } else if (/iOS/i.test(userAgent)) {
+        } else if (this.userAgent && /iOS/i.test(this.userAgent)) {
             os = OSTypes.IOS;
         } else {
             os = OSTypes.UNKNOWN;
