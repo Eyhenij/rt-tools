@@ -9,11 +9,9 @@ export namespace OSTypes {
     export const UNKNOWN: string = 'Unknown';
 }
 
-const userAgent: string = navigator.userAgent;
+const userAgent: string = navigator?.userAgent;
 
-@Injectable({
-    providedIn: 'root',
-})
+@Injectable()
 export class DeviceDetectorService {
     public isMobile(): boolean {
         return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
@@ -28,7 +26,7 @@ export class DeviceDetectorService {
     }
 
     public getOS(): string {
-        let os: string = '';
+        let os: string;
 
         if (/Windows/i.test(userAgent)) {
             os = OSTypes.WINDOWS;

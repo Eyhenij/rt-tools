@@ -419,7 +419,6 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
         const updatedList: ENTITY[] = untracked(() => this.selectedEntities());
         moveItemInArray(updatedList, event.previousIndex, event.currentIndex);
         this.#entities.set(updatedList);
-        // this.#changeControlValue(updatedList.map((el: ENTITY) => el[this.keyExp()]));
         this.#selectedEntityIds.set(updatedList.map((el: ENTITY) => el[this.keyExp()]));
     }
 
