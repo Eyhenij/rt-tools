@@ -215,9 +215,13 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
             .filter((el: Nullable<ENTITY>): el is ENTITY => !!el);
     });
     public readonly isSelectionControlShown: WritableSignal<boolean> = signal(false);
-    /** Indicates reset changes button is disabled */
+    /** Indicates reset selected button is disabled */
     public readonly isResetButtonDisabled: Signal<boolean> = computed(() => {
         return areArraysEqual(this.#selectedEntityIds(), this.#initialEntityIds()) && !this.additionalControlChanged();
+    });
+    /** Indicates clear selected button is disabled */
+    public readonly isClearButtonDisabled: Signal<boolean> = computed(() => {
+        return areArraysEqual(this.#selectedEntityIds(), this.readonlyEntitiesKeys()) && !this.additionalControlChanged();
     });
     /** Entities can be chosen, except selected on init */
     public readonly entitiesToSelect: Signal<ENTITY[]> = computed(() => {
@@ -370,11 +374,9 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
 
     /** Clear list of selected entities ids */
     public clearList(): void {
-        this.#selectedEntityIds.set(
-            this.entities()
-                .filter((el: ENTITY) => this.readonlyEntitiesKeys().includes(el[this.keyExp()]))
-                .map((el: ENTITY) => el[this.keyExp()])
-        );
+        this.#selectedEntityIds.update((list: ENTITY[KEY][]) => {
+            return list.filter((el: ENTITY[KEY]) => this.readonlyEntitiesKeys().includes(el));
+        });
     }
 
     /** Reset list of selected entities ids to init value */
