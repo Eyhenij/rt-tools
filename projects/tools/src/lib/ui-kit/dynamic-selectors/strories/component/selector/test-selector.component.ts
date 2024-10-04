@@ -7,25 +7,26 @@ import { MatTooltip } from '@angular/material/tooltip';
 
 import { faker } from '@faker-js/faker';
 
-import { BlockDirective, ElemDirective } from '../../../../bem';
-import { RtIconOutlinedDirective } from '../../../../util';
-import { RtuiDynamicSelectorAdditionalControlDirective, RtuiDynamicSelectorComponent } from '../../components';
+import { BlockDirective, ElemDirective } from '../../../../../bem';
+import { RtIconOutlinedDirective } from '../../../../../util';
+import { RtuiDynamicSelectorAdditionalControlDirective, RtuiDynamicSelectorComponent } from '../../../components';
 
 export type Person = {
     id: number;
     name: string;
 };
 
-export const createPerson: () => Person = (): Person => {
+export const createPerson: (index: number) => Person = (index: number): Person => {
     const gender: 'male' | 'female' = faker.number.int({ min: 0, max: 1 }) ? 'male' : 'female';
 
     return {
-        id: faker.number.int(),
-        name: `${faker.person.firstName(gender)}`,
+        id: index,
+        name: `${faker.person.firstName(gender)} ${faker.person.lastName(gender)}`,
     };
 };
 
-export const createPersonList: (size: number) => Person[] = (size: number) => Array.from({ length: size }, createPerson);
+export const createPersonList: (size: number) => Person[] = (size: number) =>
+    Array.from({ length: size }, (_: number, index: number) => createPerson(index + 1));
 
 export const listOfPersons: Person[] = createPersonList(15);
 
@@ -65,10 +66,10 @@ export class TestSelectorComponent implements OnInit {
     public hasReadonly: boolean = false;
     public isSingleMode: boolean = false;
     public entities: Person[] = [];
-    public readonlyEntitiesKeys: number[] = [listOfPersons[1].id];
+    public readonlyEntitiesKeys: number[] = [1, 3, 5];
 
     public ngOnInit(): void {
-        this.form.patchValue(listOfPersons.slice(1, 4).map((el: Person) => el.id));
+        this.form.patchValue(listOfPersons.slice(0, 5).map((el: Person) => el.id));
 
         this.form.valueChanges.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((value: number[]) => {
             // eslint-disable-next-line no-console
