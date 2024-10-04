@@ -4,7 +4,7 @@ import { Routes, provideRouter } from '@angular/router';
 import { Meta, StoryObj, applicationConfig } from '@storybook/angular';
 
 import { PlatformService } from '../../../util';
-import { TestSelectorComponent, listOfPersons } from './component/test-selector.component';
+import { TestSelectorComponent, listOfPersons } from './component/selector/test-selector.component';
 
 const routes: Routes = [
     {
