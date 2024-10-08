@@ -12,6 +12,7 @@ $modal: (
         color: var(--clr-black-80),
         font-size: 0.8rem,
         text-align: center,
+        word-wrap: break-word,
     ),
     input: (
         margin-top: 1.5rem,
@@ -101,6 +102,7 @@ $modal: (
         color: var(--rt-modal-content-color);
         font-size: var(--rt-modal-content-font-size);
         text-align: var(--rt-modal-content-text-align);
+        word-wrap: var(--rt-modal-content-word-wrap);
 
         mat-form-field {
             width: 100%;

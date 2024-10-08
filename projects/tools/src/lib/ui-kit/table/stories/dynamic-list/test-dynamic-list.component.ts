@@ -58,6 +58,7 @@ export default class TestDynamicListComponent {
     public isMobile: boolean = false;
     public loading: boolean = false;
     public fetching: boolean = false;
+    public isRefreshButtonShown: boolean = true;
     public isSelectorsShown: boolean = true;
     public isSelectorsColumnDisabled: boolean = false;
     public isMultiSelect: boolean = true;
