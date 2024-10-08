@@ -93,6 +93,11 @@ export default class TestDynamicListComponent {
         console.warn('Row Click', row);
     }
 
+    public onRowDoubleClick(row: Person): void {
+        // eslint-disable-next-line no-console
+        console.warn('Row Double Click', row);
+    }
+
     public onEdit(row: Person): void {
         // eslint-disable-next-line no-console
         console.warn('Edit', row);

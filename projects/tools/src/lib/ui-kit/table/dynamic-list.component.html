@@ -41,6 +41,7 @@
         (toggleEntity)="onToggleEntity($event)"
         (toggleExistingEntities)="onToggleExistingEntities($event)"
         (rowClick)="onRowClick($event)"
+        (rowDoubleClick)="onRowDoubleClick($event)"
         (sortChange)="onSortChange($event)">
         @if (customCellsTpl() && customCellsTpl()?.cellsTemplates()) {
             <ng-container *rtuiCustomTableCellsDirective="customCellsTpl()?.cellsTemplates()!" />

@@ -21,6 +21,7 @@
     (toggleAllEntities)="onToggleAllEntities($event)"
     (sortChange)="onSortChange($event)"
     (pageModelChange)="onPageModelChange($event)"
+    (rowDoubleClick)="onRowDoubleClick($event)"
     (rowClick)="onRowClick($event)">
     <ng-container *rtuiDynamicListToolbarSelectorsDirective>
         <rtui-toggle label="Example selector" [ngModel]="false" />
