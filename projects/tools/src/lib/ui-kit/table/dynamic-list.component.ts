@@ -126,6 +126,15 @@ export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown
     public isTableRowsClickable: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
+    public isPaginationShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+        transform: booleanAttribute,
+    });
+    public isRefreshButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+        transform: booleanAttribute,
+    });
+    public isActionsIconsOutlined: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+        transform: booleanAttribute,
+    });
     public isSelectorsShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
