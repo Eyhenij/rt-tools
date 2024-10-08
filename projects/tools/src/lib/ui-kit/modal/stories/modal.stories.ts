@@ -20,7 +20,16 @@ const meta: Meta<TestModalComponent> = {
 export default meta;
 type Story = StoryObj<TestModalComponent>;
 
-export const Modal: Story = {
+export const Small: Story = {
+    args: {
+        icon: 'warning',
+        iconColor: '#F2994A',
+        title: 'The standard Lorem Ipsum passage, used since the 1500s',
+        text: 'The standard Lorem Ipsum passage, used since the 1500s <div class="--highlighted">"TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest"</div> written by Cicero in 45 BC <div class="--warn">1914 translation by H. Rackham</div>',
+    },
+};
+
+export const Big: Story = {
     args: {
         icon: 'warning',
         iconColor: '#F2994A',
