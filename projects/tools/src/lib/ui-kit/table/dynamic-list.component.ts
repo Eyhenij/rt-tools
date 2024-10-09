@@ -178,6 +178,7 @@ export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown
     public readonly searchChange: OutputEmitterRef<Nullable<string>> = output<Nullable<string>>();
     public readonly refresh: OutputEmitterRef<void> = output<void>();
     public readonly rowClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
+    public readonly rowDoubleClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
     public readonly toggleEntity: OutputEmitterRef<{ key: ENTITY_TYPE[KEY]; checked: boolean }> = output<{
         key: ENTITY_TYPE[KEY];
         checked: boolean;
@@ -228,6 +229,10 @@ export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown
 
     public onRowClick(row: ENTITY_TYPE): void {
         this.rowClick.emit(row);
+    }
+
+    public onRowDoubleClick(row: ENTITY_TYPE): void {
+        this.rowDoubleClick.emit(row);
     }
 
     public onToggleEntity(value: { key: ENTITY_TYPE[KEY]; checked: boolean }): void {

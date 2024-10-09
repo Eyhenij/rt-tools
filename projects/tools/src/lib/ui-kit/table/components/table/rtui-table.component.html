@@ -34,6 +34,7 @@
                     clickable: isTableRowsClickable(),
                     active: activeRowIndex() === i,
                 }"
+                (dblclick)="isTableRowsClickable() ? onRowDoubleClick(row) : $event.stopPropagation()"
                 (click)="isTableRowsClickable() ? onRowClick(row) : $event.stopPropagation()">
                 @if (isSelectorsShown()) {
                     <td rtElem="cell">
