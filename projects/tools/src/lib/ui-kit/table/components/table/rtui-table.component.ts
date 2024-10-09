@@ -128,6 +128,7 @@ export class RtuiTableComponent<
     public currentSortModel: InputSignal<Nullable<SortModel<SORT_PROPERTY>>> = input.required();
 
     public readonly rowClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
+    public readonly rowDoubleClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
     public readonly sortChange: OutputEmitterRef<SortModel<SORT_PROPERTY>> = output<SortModel<SORT_PROPERTY>>();
     public readonly toggleEntity: OutputEmitterRef<{ key: ENTITY_TYPE[KEY]; checked: boolean }> = output<{
         key: ENTITY_TYPE[KEY];
@@ -170,6 +171,10 @@ export class RtuiTableComponent<
 
     public onRowClick(row: NonNullable<ENTITY_TYPE>): void {
         this.rowClick.emit(row);
+    }
+
+    public onRowDoubleClick(row: NonNullable<ENTITY_TYPE>): void {
+        this.rowDoubleClick.emit(row);
     }
 
     public onToggleEntity(key: ENTITY_TYPE[KEY], checked: boolean): void {
