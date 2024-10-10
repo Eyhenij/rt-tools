@@ -17,12 +17,13 @@
             @if (item?.name) {
                 <div rtBlock="rtui-side-menu-sub-item-title">
                     <div
-                        #title
+                        #titleTpl
                         rtElem="text"
                         matTooltipPosition="above"
                         [matTooltip]="item.name"
                         [matTooltipDisabled]="!isSubMenuTooltipsShown() || isMobile()"
-                        [rtHideTooltipDirective]="title">
+                        [rtHideTooltipDirective]="titleTpl"
+                        [isTooltipShown]="isSubMenuTooltipsShown() && !isMobile()">
                         {{ item.name }}
                     </div>
 
@@ -54,13 +55,14 @@
 
                 @if (item?.name) {
                     <div
-                        #headerTitle
+                        #headerTitleTpl
                         matListItemTitle
                         rtElem="title"
                         matTooltipPosition="above"
                         [matTooltip]="item.name"
                         [matTooltipDisabled]="!isSubMenuTooltipsShown() || isMobile()"
-                        [rtHideTooltipDirective]="headerTitle">
+                        [rtHideTooltipDirective]="headerTitleTpl"
+                        [isTooltipShown]="isSubMenuTooltipsShown() && !isMobile()">
                         {{ item.name }}
                     </div>
                 }
