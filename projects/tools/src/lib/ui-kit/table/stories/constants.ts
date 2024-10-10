@@ -79,8 +79,8 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
         iconTransform: (): string => {
             return 'font-size: 1rem; width: 1rem; height: 1rem';
         },
-        width: '100px',
-        minWidth: '100px',
+        width: '200px',
+        minWidth: '200px',
     },
     {
         align: 'left',

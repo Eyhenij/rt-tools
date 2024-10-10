@@ -22,8 +22,7 @@
                         matTooltipPosition="above"
                         [matTooltip]="item.name"
                         [matTooltipDisabled]="!isSubMenuTooltipsShown() || isMobile()"
-                        [rtHideTooltipDirective]="title"
-                        [isTooltipShown]="isSubMenuTooltipsShown() && !isMobile()">
+                        [rtHideTooltipDirective]="title">
                         {{ item.name }}
                     </div>
 
@@ -61,8 +60,7 @@
                         matTooltipPosition="above"
                         [matTooltip]="item.name"
                         [matTooltipDisabled]="!isSubMenuTooltipsShown() || isMobile()"
-                        [rtHideTooltipDirective]="headerTitle"
-                        [isTooltipShown]="isSubMenuTooltipsShown() && !isMobile()">
+                        [rtHideTooltipDirective]="headerTitle">
                         {{ item.name }}
                     </div>
                 }
