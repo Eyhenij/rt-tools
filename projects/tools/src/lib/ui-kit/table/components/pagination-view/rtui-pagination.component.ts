@@ -42,27 +42,37 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
     readonly #fb: FormBuilder = inject(FormBuilder);
     readonly #windowRef: Window = inject(WINDOW);
 
+    /** Current Page Model */
     public currentPageModel: InputSignal<PageModel> = input.required();
 
+    /** Output action when Page Model changed */
     public readonly pageModelChange: OutputEmitterRef<Partial<PageModel>> = output<Partial<PageModel>>();
 
+    /** Form control for selected page size */
     public control: FormControl<number> = this.#fb.nonNullable.control(DEFAULT_PAGE_SIZE);
     public readonly divider: Signal<string> = signal('...');
+    /** Page size options */
     public readonly pageSizes: Signal<number[]> = computed(() => {
         return [10, 20, 40, 50].filter((el: number) => el / 2 <= this.currentPageModel()?.totalCount);
     });
+    /** Array of current page numbers */
     public readonly numbers: WritableSignal<Array<number | string>> = signal([]);
+    /** Page Model for compare */
     public readonly previousPageModel: WritableSignal<Nullable<PageModel>> = signal(null);
+    /** Value of full content width */
     public readonly minContentFitWidth: WritableSignal<number> = signal(0);
+    /** Indicates is content clipped */
     public readonly isContentClipped: WritableSignal<boolean> = signal(false);
 
+    /** Container template ref */
     public readonly containerRef: Signal<Nullable<ElementRef<HTMLElement>>> = viewChild<ElementRef<HTMLElement>>('containerRef');
 
+    /** Set 'isContentClipped' when widow resize */
     @HostListener('window:resize', ['$event'])
     public onResize(): void {
-        if (this.isContentClipped() && this.#windowRef?.innerWidth && this.minContentFitWidth() < this.#windowRef.innerWidth) {
+        if (this.isContentClipped() && this.#windowRef?.innerWidth && this.minContentFitWidth() + 36 < this.#windowRef.innerWidth) {
             this.isContentClipped.set(false);
-        } else if (!this.isContentClipped() && this.#windowRef.innerWidth && this.minContentFitWidth() > this.#windowRef.innerWidth) {
+        } else if (!this.isContentClipped() && this.#windowRef.innerWidth && this.minContentFitWidth() + 36 > this.#windowRef.innerWidth) {
             this.isContentClipped.set(true);
         }
         this.#setMinContentFitWidth();
@@ -76,6 +86,7 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
             this.changePageSize(value);
         });
 
+        /** Update Page Model */
         effect(
             () => {
                 if (Boolean(this.currentPageModel()) && Boolean(this.previousPageModel())) {
@@ -88,6 +99,7 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
         );
     }
 
+    /** Set 'isContentClipped' on init */
     public ngAfterViewInit(): void {
         const currentContainerWidth: Nullable<number> = this.containerRef()?.nativeElement?.scrollWidth;
 
@@ -97,6 +109,7 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
         }
     }
 
+    /** Action for change Page Model */
     public changePageSize(pageSize: number): void {
         const current_total: number = Math.ceil(this.currentPageModel().totalCount / pageSize);
         const previous_total: number = Math.ceil(this.currentPageModel().totalCount / this.currentPageModel().pageSize);
@@ -107,6 +120,7 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
         this.pageModelChange.emit({ pageNumber: current_total - correction, pageSize });
     }
 
+    /** Action for select page */
     public onClick(pageNumber: string | number): void {
         if (isNumber(pageNumber)) {
             if (!this.currentPageModel().hasNext && this.currentPageModel().pageNumber <= pageNumber) {
@@ -121,6 +135,7 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
         }
     }
 
+    /** Fill the array width current page numbers */
     #fillArray(): Array<number | string> {
         const current: number = this.currentPageModel().pageNumber;
         const total: number = Math.ceil(this.currentPageModel().totalCount / this.currentPageModel().pageSize);
@@ -161,6 +176,7 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
         }
     }
 
+    /** Set 'isContentClipped' when content changed */
     #setMinContentFitWidth(): void {
         const currentContainerWidth: Nullable<number> = this.containerRef()?.nativeElement?.scrollWidth;
 
