@@ -1,8 +1,7 @@
-@use '../../../../../styles/base/variables' as vars;
 @use '../../../../../styles/base/mixin' as mixins;
 
 $pagination: (
-    host: (
+    container: (
         gap: 2rem,
         margin: 0.5rem 0,
         color: var(--clr-black-60),
@@ -10,7 +9,7 @@ $pagination: (
         font-weight: 400,
         line-height: 1rem,
     ),
-    host-mobile: (
+    container-mobile: (
         gap: 1rem,
     ),
     paging: (
@@ -48,20 +47,9 @@ $pagination: (
 );
 
 :host {
-    width: 100%;
+    width: fit-content;
     height: 100%;
-
-    position: relative;
-
     display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: var(--rt-table-pagination-host-gap);
-
-    color: var(--rt-table-pagination-host-color);
-    font-size: var(--rt-table-pagination-host-font-size);
-    font-weight: var(--rt-table-pagination-host-font-weight);
-    line-height: var(--rt-table-pagination-host-line-height);
 
     @each $element, $elements in $pagination {
         @each $style-token, $value in $elements {
@@ -69,107 +57,120 @@ $pagination: (
         }
     }
 
-    @include mixins.media-breakpoint-up(vars.$device-md) {
-        .paging,
-        .page-size-toggle {
-            margin: var(--rt-table-pagination-host-margin);
-        }
-    }
+    .pagination-container {
+        position: relative;
 
-    @include mixins.media-breakpoint-down(vars.$device-md) {
-        flex-direction: column;
-        justify-content: center;
-        align-items: flex-start;
-        gap: var(--rt-table-pagination-host-mobile-gap);
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: var(--rt-table-pagination-container-gap);
+
+        color: var(--rt-table-pagination-container-color);
+        font-size: var(--rt-table-pagination-container-font-size);
+        font-weight: var(--rt-table-pagination-container-font-weight);
+        line-height: var(--rt-table-pagination-container-line-height);
+
+        &--clipped {
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: var(--rt-table-pagination-container-mobile-gap);
+        }
 
         .paging {
-            margin: var(--rt-table-pagination-paging-mobile-margin);
-        }
-
-        .page-size-toggle {
-            margin: var(--rt-table-pagination-size-toggle-selector-mobile-margin);
-        }
-    }
-
-    .paging {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: var(--rt-table-pagination-paging-gap);
-
-        &__item {
             display: flex;
             justify-content: center;
             align-items: center;
+            gap: var(--rt-table-pagination-paging-gap);
+            margin: var(--rt-table-pagination-containert-margin);
 
-            position: relative;
-
-            padding: var(--rt-table-pagination-paging-item-padding);
-            border: var(--rt-table-pagination-paging-item-border);
-            border-radius: var(--rt-table-pagination-paging-item-border-radius);
-
-            background-color: transparent;
-            cursor: default;
-            pointer-events: none;
-
-            &-label {
-                min-width: 1rem;
-                text-align: center;
+            &--clipped {
+                margin: var(--rt-table-pagination-paging-mobile-margin);
             }
 
-            svg {
-                fill-opacity: var(--rt-table-pagination-paging-item-disabled-svg-opacity);
-            }
+            &__item {
+                display: flex;
+                justify-content: center;
+                align-items: center;
 
-            &:hover:not(.divider) {
-                color: var(--rt-table-pagination-paging-item-hover-color);
-                background-color: var(--rt-table-pagination-paging-item-hover-background-color);
-            }
+                position: relative;
 
-            &--active {
-                color: var(--rt-table-pagination-paging-item-active-color);
-                background-color: var(--rt-table-pagination-paging-item-active-background-color);
-            }
+                padding: var(--rt-table-pagination-paging-item-padding);
+                border: var(--rt-table-pagination-paging-item-border);
+                border-radius: var(--rt-table-pagination-paging-item-border-radius);
 
-            &--enabled {
-                cursor: pointer;
-                pointer-events: auto;
-
-                svg {
-                    fill-opacity: 1;
-                }
-            }
-
-            &--divider {
+                background-color: transparent;
                 cursor: default;
                 pointer-events: none;
-                border: none;
+
+                &-label {
+                    min-width: 1rem;
+                    text-align: center;
+                }
+
+                svg {
+                    fill-opacity: var(--rt-table-pagination-paging-item-disabled-svg-opacity);
+                }
+
+                &:hover:not(.divider) {
+                    color: var(--rt-table-pagination-paging-item-hover-color);
+                    background-color: var(--rt-table-pagination-paging-item-hover-background-color);
+                }
+
+                &--active {
+                    color: var(--rt-table-pagination-paging-item-active-color);
+                    background-color: var(--rt-table-pagination-paging-item-active-background-color);
+                }
+
+                &--enabled {
+                    cursor: pointer;
+                    pointer-events: auto;
+
+                    svg {
+                        fill-opacity: 1;
+                    }
+                }
+
+                &--divider {
+                    cursor: default;
+                    pointer-events: none;
+                    border: none;
+                }
             }
         }
-    }
 
-    .page-size-toggle {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        gap: var(--rt-table-pagination-size-toggle-gap);
+        .page-size-toggle {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: var(--rt-table-pagination-size-toggle-gap);
+            margin: var(--rt-table-pagination-container-margin);
 
-        &__selector {
-            width: auto;
-            min-width: var(--rt-table-pagination-size-toggle-selector-min-width);
-            height: var(--rt-table-pagination-size-toggle-selector-height);
+            &--clipped {
+                margin: var(--rt-table-pagination-size-toggle-selector-mobile-margin);
+            }
 
-            border: var(--rt-table-pagination-paging-item-border);
-            border-radius: var(--rt-table-pagination-paging-item-border-radius);
+            &__title {
+                white-space: nowrap;
+            }
 
-            background-color: transparent;
-            cursor: pointer;
+            &__selector {
+                width: auto;
+                min-width: var(--rt-table-pagination-size-toggle-selector-min-width);
+                height: var(--rt-table-pagination-size-toggle-selector-height);
 
-            color: var(--rt-table-pagination-host-color);
-            font-size: var(--rt-table-pagination-host-font-size);
-            font-weight: var(--rt-table-pagination-host-font-weight);
-            line-height: var(--rt-table-pagination-host-line-height);
+                border: var(--rt-table-pagination-paging-item-border);
+                border-radius: var(--rt-table-pagination-paging-item-border-radius);
+
+                background-color: transparent;
+                cursor: pointer;
+
+                color: var(--rt-table-pagination-container-color);
+                font-size: var(--rt-table-pagination-container-font-size);
+                font-weight: var(--rt-table-pagination-container-font-weight);
+                line-height: var(--rt-table-pagination-container-line-height);
+            }
         }
     }
 }

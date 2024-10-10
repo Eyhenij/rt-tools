@@ -24,7 +24,7 @@ export const ManyColumns: Story = {
         isMobile: false,
         loading: false,
         fetching: false,
-        isRefreshButtonShown: false,
+        isRefreshButtonShown: true,
         isSelectorsShown: true,
         isSelectorsColumnDisabled: false,
         isMultiSelect: true,

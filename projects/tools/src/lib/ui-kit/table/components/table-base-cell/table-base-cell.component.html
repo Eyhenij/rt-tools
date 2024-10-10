@@ -12,7 +12,6 @@
             matTooltipClass="custom-tooltip"
             matTooltipPosition="above"
             [rtHideTooltipDirective]="titleTpl"
-            [isTooltipShown]="!isMobile()"
             [matTooltip]="column()?.tooltip ?? tooltipValue()"
             [matTooltipDisabled]="isMobile()">
             {{ cellValue() }}

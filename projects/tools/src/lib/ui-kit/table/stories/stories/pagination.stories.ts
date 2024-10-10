@@ -21,7 +21,7 @@ export const Pagination: Story = {
         pageModel: {
             pageNumber: 1,
             pageSize: 10,
-            totalCount: 100,
+            totalCount: 10000,
             hasPrev: false,
             hasNext: true,
         },

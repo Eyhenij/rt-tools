@@ -7,7 +7,6 @@
                     rtElem="item-title"
                     matTooltipPosition="above"
                     [rtHideTooltipDirective]="titleTpl"
-                    [isTooltipShown]="!isMobile()"
                     [matTooltip]="
                         useNameBreaking() ? (entity[displayExp()] | entityToString | breakString) : (entity[displayExp()] | entityToString)
                     "

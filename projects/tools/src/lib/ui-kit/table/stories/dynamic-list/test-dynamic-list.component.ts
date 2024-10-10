@@ -20,6 +20,7 @@ import {
 import { LIST_SORT_ORDER_ENUM } from '../../util/list-sort-order.enum';
 import { PageModel, SortModel } from '../../util/lists.interface';
 import { ITable } from '../../util/table-column.interface';
+import { createPersonList } from '../mocks';
 import { Person } from '../types';
 
 @Component({
@@ -77,6 +78,10 @@ export default class TestDynamicListComponent {
         propertyName: 'id',
         sortDirection: LIST_SORT_ORDER_ENUM.ASC,
     };
+
+    public onRefresh(): void {
+        this.data = createPersonList(20);
+    }
 
     public onSortChange(sortModel: SortModel<NonNullable<keyof Person>>): void {
         this.currentSortModel = sortModel;
