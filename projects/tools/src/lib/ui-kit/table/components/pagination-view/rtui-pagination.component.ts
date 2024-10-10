@@ -1,8 +1,11 @@
 import { NgClass } from '@angular/common';
 import {
+    AfterViewInit,
     ChangeDetectionStrategy,
     Component,
     DestroyRef,
+    ElementRef,
+    HostListener,
     Injector,
     InputSignal,
     OnInit,
@@ -15,12 +18,13 @@ import {
     input,
     output,
     signal,
+    viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
-import { Nullable, isNumber } from '../../../../util';
+import { Nullable, WINDOW, isNumber } from '../../../../util';
 import { DEFAULT_PAGE_SIZE } from '../../util/default-pagination';
 import { PageModel } from '../../util/lists.interface';
 
@@ -32,10 +36,11 @@ import { PageModel } from '../../util/lists.interface';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [NgClass, ReactiveFormsModule, BlockDirective, ElemDirective],
 })
-export class RtuiPaginationComponent implements OnInit {
+export class RtuiPaginationComponent implements OnInit, AfterViewInit {
     readonly #injector: Injector = inject(Injector);
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #fb: FormBuilder = inject(FormBuilder);
+    readonly #windowRef: Window = inject(WINDOW);
 
     public currentPageModel: InputSignal<PageModel> = input.required();
 
@@ -43,11 +48,25 @@ export class RtuiPaginationComponent implements OnInit {
 
     public control: FormControl<number> = this.#fb.nonNullable.control(DEFAULT_PAGE_SIZE);
     public readonly divider: Signal<string> = signal('...');
-    public readonly numbers: WritableSignal<Array<number | string>> = signal([]);
-    public readonly previousPageModel: WritableSignal<Nullable<PageModel>> = signal(null);
     public readonly pageSizes: Signal<number[]> = computed(() => {
         return [10, 20, 40, 50].filter((el: number) => el / 2 <= this.currentPageModel()?.totalCount);
     });
+    public readonly numbers: WritableSignal<Array<number | string>> = signal([]);
+    public readonly previousPageModel: WritableSignal<Nullable<PageModel>> = signal(null);
+    public readonly minContentFitWidth: WritableSignal<number> = signal(0);
+    public readonly isContentClipped: WritableSignal<boolean> = signal(false);
+
+    public readonly containerRef: Signal<Nullable<ElementRef<HTMLElement>>> = viewChild<ElementRef<HTMLElement>>('containerRef');
+
+    @HostListener('window:resize', ['$event'])
+    public onResize(): void {
+        if (this.isContentClipped() && this.#windowRef?.innerWidth && this.minContentFitWidth() < this.#windowRef.innerWidth) {
+            this.isContentClipped.set(false);
+        } else if (!this.isContentClipped() && this.#windowRef.innerWidth && this.minContentFitWidth() > this.#windowRef.innerWidth) {
+            this.isContentClipped.set(true);
+        }
+        this.#setMinContentFitWidth();
+    }
 
     public ngOnInit(): void {
         this.numbers.set(this.#fillArray());
@@ -61,11 +80,21 @@ export class RtuiPaginationComponent implements OnInit {
             () => {
                 if (Boolean(this.currentPageModel()) && Boolean(this.previousPageModel())) {
                     this.numbers.set(this.#fillArray());
+                    this.#setMinContentFitWidth();
                 }
                 this.previousPageModel.set(this.currentPageModel());
             },
             { injector: this.#injector, allowSignalWrites: true }
         );
+    }
+
+    public ngAfterViewInit(): void {
+        const currentContainerWidth: Nullable<number> = this.containerRef()?.nativeElement?.scrollWidth;
+
+        if (currentContainerWidth && this.#windowRef?.innerWidth) {
+            this.minContentFitWidth.set(currentContainerWidth);
+            this.isContentClipped.set(currentContainerWidth > this.#windowRef.innerWidth);
+        }
     }
 
     public changePageSize(pageSize: number): void {
@@ -129,6 +158,14 @@ export class RtuiPaginationComponent implements OnInit {
             }
 
             return [];
+        }
+    }
+
+    #setMinContentFitWidth(): void {
+        const currentContainerWidth: Nullable<number> = this.containerRef()?.nativeElement?.scrollWidth;
+
+        if (currentContainerWidth && this.minContentFitWidth() && this.minContentFitWidth() < currentContainerWidth) {
+            this.minContentFitWidth.set(currentContainerWidth);
         }
     }
 }
