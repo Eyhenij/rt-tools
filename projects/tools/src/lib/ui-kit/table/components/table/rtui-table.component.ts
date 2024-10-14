@@ -11,6 +11,7 @@ import {
     WritableSignal,
     booleanAttribute,
     contentChild,
+    inject,
     input,
     output,
     signal,
@@ -24,6 +25,7 @@ import { MatRadioButton } from '@angular/material/radio';
 import { BlockDirective, ElemDirective } from '../../../../bem';
 import { Nullable, RtIconOutlinedDirective, transformArrayInput } from '../../../../util';
 import { ITable, SortModel, TABLE_COLUMN_TYPES_ENUM } from '../../util';
+import { RtTableConfigService } from '../../util/table-config.service';
 import { TableBaseCellComponent } from '../table-base-cell/table-base-cell.component';
 import { RtuiTableHeaderCellComponent } from '../table-header-cell/table-header-cell.component';
 
@@ -91,6 +93,8 @@ export class RtuiTableComponent<
     SORT_PROPERTY extends Extract<keyof ENTITY_TYPE, string>,
     KEY extends Extract<keyof ENTITY_TYPE, string>,
 > {
+    readonly #tableConfigService: RtTableConfigService<ENTITY_TYPE> = inject(RtTableConfigService);
+
     protected readonly columnTypes: typeof TABLE_COLUMN_TYPES_ENUM = TABLE_COLUMN_TYPES_ENUM;
 
     public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
@@ -119,12 +123,6 @@ export class RtuiTableComponent<
     public entities: InputSignalWithTransform<ENTITY_TYPE[], ENTITY_TYPE[]> = input.required<ENTITY_TYPE[], ENTITY_TYPE[]>({
         transform: (value: ENTITY_TYPE[]) => transformArrayInput(value),
     });
-    public columns: InputSignalWithTransform<Array<ITable.Column<ENTITY_TYPE>>, Array<ITable.Column<ENTITY_TYPE>>> = input.required<
-        Array<ITable.Column<ENTITY_TYPE>>,
-        Array<ITable.Column<ENTITY_TYPE>>
-    >({
-        transform: (value: Array<ITable.Column<ENTITY_TYPE>>) => transformArrayInput(value),
-    });
     public currentSortModel: InputSignal<Nullable<SortModel<SORT_PROPERTY>>> = input.required();
 
     public readonly rowClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
@@ -135,6 +133,8 @@ export class RtuiTableComponent<
         checked: boolean;
     }>();
     public readonly toggleExistingEntities: OutputEmitterRef<boolean> = output<boolean>();
+
+    public columns: Signal<Array<ITable.Column<ENTITY_TYPE>>> = this.#tableConfigService.tableConfig;
 
     public readonly customCellsTpl: Signal<Nullable<RtuiCustomTableCellsDirective<ENTITY_TYPE>>> =
         contentChild(RtuiCustomTableCellsDirective);

@@ -6,6 +6,7 @@
 export * from './lib/bem';
 export * from './lib/storage';
 export * from './lib/store';
+export * from './lib/idb-storage';
 
 // ui-kit
 export * from './lib/ui-kit/modal';

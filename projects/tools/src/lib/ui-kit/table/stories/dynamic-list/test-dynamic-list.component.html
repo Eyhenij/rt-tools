@@ -1,7 +1,6 @@
 <rtui-dynamic-list
     [keyExp]="'id'"
     [isMobile]="isMobile"
-    [columns]="columns"
     [entities]="data"
     [selectedEntitiesKeys]="selectedEntitiesKeys"
     [loading]="loading"
@@ -25,7 +24,7 @@
     (rowDoubleClick)="onRowDoubleClick($event)"
     (rowClick)="onRowClick($event)">
     <ng-container *rtuiDynamicListToolbarSelectorsDirective>
-        <rtui-toggle label="Example selector" [ngModel]="false" />
+        <rtui-toggle label="Hide IDs" [ngModel]="isIdsColumnHidden()" (ngModelChange)="hideIdColumn($event)" />
     </ng-container>
 
     <ng-container *rtuiDynamicListToolbarActionsDirective>

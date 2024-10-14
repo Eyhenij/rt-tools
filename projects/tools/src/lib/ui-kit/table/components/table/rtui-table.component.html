@@ -15,13 +15,15 @@
             }
 
             @for (column of columns(); track column.propName; let i = $index) {
-                <th rtElem="cell" [rtMod]="{ sortable: column?.sorting }">
-                    <rtui-table-header-cell
-                        [headerModel]="column.header"
-                        [sortModel]="column?.sorting"
-                        [currentSortModel]="currentSortModel()"
-                        (sortChange)="onSortChange($event)" />
-                </th>
+                @if (!column?.hidden) {
+                    <th rtElem="cell" [rtMod]="{ sortable: column?.sorting }">
+                        <rtui-table-header-cell
+                            [headerModel]="column.header"
+                            [sortModel]="column?.sorting"
+                            [currentSortModel]="currentSortModel()"
+                            (sortChange)="onSortChange($event)" />
+                    </th>
+                }
             }
         </tr>
     </thead>
@@ -55,22 +57,24 @@
                 }
 
                 @for (column of columns(); track column.propName) {
-                    <td rtElem="cell" [rtMod]="{ copyable: column?.copyable }">
-                        @switch (column?.type) {
-                            @case (columnTypes.CUSTOM) {
-                                @if (customCellsTpl() && customCellsTpl()?.getTemplateByPropName(column.propName)) {
-                                    <ng-template
-                                        *ngTemplateOutlet="
-                                            customCellsTpl()?.getTemplateByPropName(column.propName) || null;
-                                            context: { $implicit: row }
-                                        " />
+                    @if (!column?.hidden) {
+                        <td rtElem="cell" [rtMod]="{ copyable: column?.copyable }">
+                            @switch (column?.type) {
+                                @case (columnTypes.CUSTOM) {
+                                    @if (customCellsTpl() && customCellsTpl()?.getTemplateByPropName(column.propName)) {
+                                        <ng-template
+                                            *ngTemplateOutlet="
+                                                customCellsTpl()?.getTemplateByPropName(column.propName) || null;
+                                                context: { $implicit: row }
+                                            " />
+                                    }
+                                }
+                                @default {
+                                    <rtui-table-base-cell [row]="row" [column]="column" [isMobile]="isMobile()" />
                                 }
                             }
-                            @default {
-                                <rtui-table-base-cell [row]="row" [column]="column" [isMobile]="isMobile()" />
-                            }
-                        }
-                    </td>
+                        </td>
+                    }
                 }
 
                 @if (rowActionsTpl() || additionalRowActionsTpl()) {

@@ -55,6 +55,11 @@ export namespace ITable {
         className?: string;
         tooltip?: string;
         transform?: (value: T[keyof T]) => string | number;
+
+        // Additional config for IDB service
+        orderIndex?: number;
+        hidden?: boolean;
+        fixed?: boolean;
     }
 
     export interface ColumnFilter {
