@@ -25,11 +25,11 @@
                         type="button"
                         aria-label="Icon-button for visibility indication"
                         rtElem="item-control-button"
-                        matTooltip="{{ entity.hidden ? 'Show' : 'Hide' }}"
+                        matTooltip="{{ entity.hidden ? 'Hidden, click to show' : 'Shown, click to hide' }}"
                         matTooltipPosition="left"
                         [matTooltipDisabled]="isMobile()"
                         (click)="visibilityChange(entity)">
-                        <mat-icon [rtIconOutlinedDirective]="true">{{ entity.hidden ? 'visibility' : 'visibility_off' }}</mat-icon>
+                        <mat-icon [rtIconOutlinedDirective]="true">{{ entity.hidden ? 'visibility_off' : 'visibility' }}</mat-icon>
                     </button>
                 </div>
             </ng-container>
