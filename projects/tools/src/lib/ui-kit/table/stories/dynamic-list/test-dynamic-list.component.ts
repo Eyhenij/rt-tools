@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, Signal, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -6,6 +6,7 @@ import { MatMenuItem } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
+import { IDBStorageService } from '../../../../idb-storage';
 import { RtIconOutlinedDirective } from '../../../../util';
 import { RtuiToggleComponent } from '../../../toggle';
 import { RtuiCustomTableCellsDirective } from '../../components';
@@ -20,6 +21,8 @@ import {
 import { LIST_SORT_ORDER_ENUM } from '../../util/list-sort-order.enum';
 import { PageModel, SortModel } from '../../util/lists.interface';
 import { ITable } from '../../util/table-column.interface';
+import { RtTableConfigService } from '../../util/table-config.service';
+import { COLUMNS } from '../constants';
 import { createPersonList } from '../mocks';
 import { Person } from '../types';
 
@@ -53,9 +56,11 @@ import { Person } from '../types';
         RtuiDynamicListCustomTableCellsDirective,
         RtuiCustomTableCellsDirective,
     ],
-    providers: [],
+    providers: [IDBStorageService, RtTableConfigService],
 })
-export default class TestDynamicListComponent {
+export default class TestDynamicListComponent implements OnInit {
+    readonly #tableConfigService: RtTableConfigService<Person> = inject(RtTableConfigService);
+
     public isMobile: boolean = false;
     public loading: boolean = false;
     public fetching: boolean = false;
@@ -67,7 +72,6 @@ export default class TestDynamicListComponent {
     public isTableRowsClickable: boolean = false;
     public searchTerm: string = '';
     public data: Person[] = [];
-    public columns: ITable.Column<Person>[] = [];
     public selectedEntitiesKeys: number[] = [];
     public pageModel: PageModel = {
         pageNumber: 1,
@@ -78,6 +82,22 @@ export default class TestDynamicListComponent {
         propertyName: 'id',
         sortDirection: LIST_SORT_ORDER_ENUM.ASC,
     };
+    public storageKey: string = 'dynamicListManyItemsKey';
+
+    public isIdsColumnHidden: Signal<boolean> = computed(() => {
+        return !!this.#tableConfigService.tableConfig()[0]?.hidden;
+    });
+
+    public ngOnInit(): void {
+        this.#tableConfigService.initConfig(this.storageKey, COLUMNS);
+    }
+
+    public hideIdColumn(value: boolean): void {
+        const updatedConfig: ITable.Column<Person>[] = COLUMNS.map((el: ITable.Column<Person>) => {
+            return el.propName === 'id' ? { ...el, hidden: value } : el;
+        });
+        this.#tableConfigService.updateConfig(this.storageKey, updatedConfig);
+    }
 
     public onRefresh(): void {
         this.data = createPersonList(20);

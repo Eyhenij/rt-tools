@@ -36,7 +36,6 @@ import {
 } from './components/table-container/table-container.component';
 import { RtuiTableHeaderCellComponent } from './components/table-header-cell/table-header-cell.component';
 import { PageModel, SortModel } from './util/lists.interface';
-import { ITable } from './util/table-column.interface';
 
 /** Directive for selectors of the toolbar located on the left side */
 @Directive({
@@ -157,12 +156,6 @@ export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown
 
     public entities: InputSignalWithTransform<ENTITY_TYPE[], ENTITY_TYPE[]> = input.required<ENTITY_TYPE[], ENTITY_TYPE[]>({
         transform: (value: ENTITY_TYPE[]) => transformArrayInput(value),
-    });
-    public columns: InputSignalWithTransform<Array<ITable.Column<ENTITY_TYPE>>, Array<ITable.Column<ENTITY_TYPE>>> = input.required<
-        Array<ITable.Column<ENTITY_TYPE>>,
-        Array<ITable.Column<ENTITY_TYPE>>
-    >({
-        transform: (value: Array<ITable.Column<ENTITY_TYPE>>) => transformArrayInput(value),
     });
 
     public pageModel: InputSignal<PageModel> = input.required();

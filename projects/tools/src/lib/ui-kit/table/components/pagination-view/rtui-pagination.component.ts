@@ -53,7 +53,9 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
     public readonly divider: Signal<string> = signal('...');
     /** Page size options */
     public readonly pageSizes: Signal<number[]> = computed(() => {
-        return [10, 20, 40, 50].filter((el: number) => el / 2 <= this.currentPageModel()?.totalCount);
+        return [10, 20, 40, 50].filter(
+            (el: number) => el / 2 <= this.currentPageModel()?.totalCount || el === this.currentPageModel()?.pageSize
+        );
     });
     /** Array of current page numbers */
     public readonly numbers: WritableSignal<Array<number | string>> = signal([]);
