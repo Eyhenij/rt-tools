@@ -1,4 +1,4 @@
-import { Component, OnInit, Signal, computed, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -83,10 +83,6 @@ export default class TestDynamicListComponent implements OnInit {
         sortDirection: LIST_SORT_ORDER_ENUM.ASC,
     };
     public storageKey: string = 'dynamicListManyItemsKey';
-
-    public isIdsColumnHidden: Signal<boolean> = computed(() => {
-        return !!this.#tableConfigService.tableConfig()[0]?.hidden;
-    });
 
     public ngOnInit(): void {
         this.#tableConfigService.initConfig(this.storageKey, COLUMNS);

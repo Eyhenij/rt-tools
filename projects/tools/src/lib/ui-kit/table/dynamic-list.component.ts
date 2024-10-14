@@ -20,7 +20,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatToolbar } from '@angular/material/toolbar';
 
 import { BlockDirective, ElemDirective } from '../../bem';
-import { Nullable, transformArrayInput } from '../../util';
+import { Nullable, transformArrayInput, transformStringInput } from '../../util';
 import { RtuiToolbarCenterDirective, RtuiToolbarComponent, RtuiToolbarLeftDirective, RtuiToolbarRightDirective } from '../toolbar';
 import {
     RtuiCustomTableCellsDirective,
@@ -113,6 +113,10 @@ export class RtuiDynamicListRowAdditionalActionsDirective {}
     ],
 })
 export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown>, KEY extends Extract<keyof ENTITY_TYPE, string>> {
+    /** Table config storage key */
+    public tableConfigStorageKey: InputSignalWithTransform<string, string> = input.required<string, string>({
+        transform: transformStringInput,
+    });
     public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
         transform: booleanAttribute,
     });

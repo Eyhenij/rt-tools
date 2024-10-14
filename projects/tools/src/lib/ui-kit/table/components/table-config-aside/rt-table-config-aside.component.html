@@ -1,0 +1,38 @@
+<rtui-aside-container
+    [isMobile]="isMobile()"
+    [pending]="false"
+    [isSubmitButtonDisabled]="!isVisibilityChanged() && !isOrderChanged()"
+    (submitAction)="save()"
+    (cancelAction)="cancel()">
+    <ng-container *rtuiAsideHeader rtBlock="c-aside-title">
+        <div rtElem="txt">Edit table configuration</div>
+        <div rtElem="addition">Change columns visibility and order</div>
+    </ng-container>
+    <form rtBlock="c-form">
+        <rtui-dynamic-selector
+            keyExp="propName"
+            displayExp="displayName"
+            [formControl]="form"
+            [entities]="selectedColumns()"
+            [isMobile]="isMobile()"
+            [isSelectionAvailable]="false"
+            [isDeleteButtonShown]="false"
+            [isListDraggable]="true">
+            <ng-container *rtuiDynamicSelectorAdditionalControlDirective="let entity" rtBlock="rtui-dynamic-selector">
+                <div rtElem="item-control">
+                    <button
+                        mat-icon-button
+                        type="button"
+                        aria-label="Icon-button for visibility indication"
+                        rtElem="item-control-button"
+                        matTooltip="{{ entity.hidden ? 'Show' : 'Hide' }}"
+                        matTooltipPosition="left"
+                        [matTooltipDisabled]="isMobile()"
+                        (click)="visibilityChange(entity)">
+                        <mat-icon [rtIconOutlinedDirective]="true">{{ entity.hidden ? 'visibility' : 'visibility_off' }}</mat-icon>
+                    </button>
+                </div>
+            </ng-container>
+        </rtui-dynamic-selector>
+    </form>
+</rtui-aside-container>
