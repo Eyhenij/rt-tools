@@ -3,7 +3,6 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { Meta, StoryObj, applicationConfig } from '@storybook/angular';
 
 import { LIST_SORT_ORDER_ENUM } from '../../util/list-sort-order.enum';
-import { COLUMNS } from '../constants';
 import TestDynamicListComponent from '../dynamic-list/test-dynamic-list.component';
 import { createPersonList } from '../mocks';
 
@@ -19,7 +18,7 @@ export default {
 
 type Story = StoryObj<TestDynamicListComponent>;
 
-export const ManyColumns: Story = {
+export const ManyItems: Story = {
     args: {
         isMobile: false,
         loading: false,
@@ -31,7 +30,6 @@ export const ManyColumns: Story = {
         isAllEntitiesSelected: false,
         isTableRowsClickable: true,
         data: createPersonList(20),
-        columns: COLUMNS,
         selectedEntitiesKeys: [],
         pageModel: {
             pageNumber: 1,
@@ -48,35 +46,6 @@ export const ManyColumns: Story = {
     },
 };
 
-export const FewColumns: Story = {
-    args: {
-        isMobile: false,
-        loading: false,
-        fetching: false,
-        isRefreshButtonShown: true,
-        isSelectorsShown: true,
-        isSelectorsColumnDisabled: false,
-        isMultiSelect: true,
-        isAllEntitiesSelected: false,
-        isTableRowsClickable: true,
-        data: createPersonList(20),
-        columns: COLUMNS.slice(0, 2),
-        selectedEntitiesKeys: [],
-        pageModel: {
-            pageNumber: 1,
-            pageSize: 10,
-            totalCount: 20,
-            hasPrev: true,
-            hasNext: true,
-        },
-        currentSortModel: {
-            propertyName: 'id',
-            sortDirection: LIST_SORT_ORDER_ENUM.ASC,
-        },
-        searchTerm: '',
-    },
-};
-
 export const FewItems: Story = {
     args: {
         isMobile: false,
@@ -89,7 +58,6 @@ export const FewItems: Story = {
         isAllEntitiesSelected: false,
         isTableRowsClickable: true,
         data: createPersonList(11),
-        columns: COLUMNS.slice(0, 5),
         selectedEntitiesKeys: [],
         pageModel: {
             pageNumber: 1,
@@ -116,7 +84,6 @@ export const NoItems: Story = {
         isAllEntitiesSelected: false,
         isTableRowsClickable: true,
         data: [],
-        columns: COLUMNS.slice(0, 5),
         selectedEntitiesKeys: [],
         pageModel: {
             pageNumber: 1,
