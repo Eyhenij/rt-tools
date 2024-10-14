@@ -25,7 +25,7 @@
                 }
             </rtui-dynamic-selector-selected-list>
 
-            @if (entitiesToSelect()?.length || !isLocalSearch()) {
+            @if ((entitiesToSelect()?.length || !isLocalSearch()) && isSelectionAvailable()) {
                 @if (isPlaceholderShown()) {
                     <rtui-dynamic-selector-placeholder
                         [icon]="placeholderIcon()"
@@ -86,7 +86,7 @@
                             (submitAction)="select($event)" />
                     </ng-template>
                 }
-            } @else {
+            } @else if (isSelectionAvailable()) {
                 <div rtElem="actions">
                     <ng-template [ngTemplateOutlet]="listActionsTpl" />
                 </div>

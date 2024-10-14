@@ -7,13 +7,13 @@ import { Nullable, transformStringInput } from '../../../util';
     standalone: true,
 })
 export abstract class RtuiDynamicSelectorsDirective {
-    /** Selections control button title */
-    public buttonTitle: InputSignalWithTransform<string, string> = input.required<string, string>({
-        transform: transformStringInput,
-    });
     /** Indicates if mobile view */
     public isMobile: InputSignalWithTransform<Nullable<boolean>, boolean> = input.required<Nullable<boolean>, boolean>({
         transform: booleanAttribute,
+    });
+    /** Selections control button title */
+    public buttonTitle: InputSignalWithTransform<string, string> = input<string, string>('Add', {
+        transform: transformStringInput,
     });
     /** Indicates if only one option can be chosen */
     public isSingleSelection: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
