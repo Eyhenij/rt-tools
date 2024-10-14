@@ -159,6 +159,10 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     public readonlyEntitiesKeys: InputSignalWithTransform<ENTITY[KEY][], ENTITY[KEY][]> = input<ENTITY[KEY][], ENTITY[KEY][]>([], {
         transform: (value: ENTITY[KEY][]) => transformArrayInput(value),
     });
+    /** Indicates is selection available */
+    public isSelectionAvailable: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+        transform: booleanAttribute,
+    });
     /** Indicates is placeholder shown */
     public isPlaceholderShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,

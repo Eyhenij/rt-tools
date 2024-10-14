@@ -35,7 +35,7 @@ export namespace ITable {
         | TABLE_COLUMN_TYPES_ENUM.CURRENCY
         | TABLE_COLUMN_TYPES_ENUM.CUSTOM;
 
-    export interface Column<T = Record<string, unknown>> {
+    export interface Column<T = Record<string, unknown>> extends Record<string, unknown> {
         align: 'right' | 'left' | 'center';
         propName: keyof T;
         type: Type;
@@ -56,7 +56,8 @@ export namespace ITable {
         tooltip?: string;
         transform?: (value: T[keyof T]) => string | number;
 
-        // Additional config for IDB service
+        // Additional properties for table configuration service
+        displayName?: string;
         orderIndex?: number;
         hidden?: boolean;
         fixed?: boolean;

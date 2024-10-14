@@ -21,22 +21,31 @@ export class RtTableConfigService<ENTITY_TYPE> {
             .pipe(take(1), takeUntilDestroyed(this.#destroyRef))
             .subscribe((savedConfig: Nullable<Partial<ITable.Column<ENTITY_TYPE>>> | Nullable<Partial<ITable.Column<ENTITY_TYPE>>[]>) => {
                 if (savedConfig && Array.isArray(savedConfig)) {
-                    const updatedConfig: Array<ITable.Column<ENTITY_TYPE>> = savedConfig.map((el: Partial<ITable.Column<ENTITY_TYPE>>) => {
-                        const oldConfigIem: Nullable<ITable.Column<ENTITY_TYPE>> = config.find(
-                            (item: ITable.Column<ENTITY_TYPE>) => el.propName === item.propName
-                        );
-                        return {
-                            ...(oldConfigIem as ITable.Column<ENTITY_TYPE>),
-                            propName: el.propName as keyof ENTITY_TYPE,
-                            width: el?.width ?? 'auto',
-                            orderIndex: el?.orderIndex ?? 0,
-                            hidden: !!el?.hidden,
-                            fixed: !!el?.fixed,
-                        };
-                    });
+                    const updatedConfig: Array<ITable.Column<ENTITY_TYPE> & { orderIndex: number }> = savedConfig.map(
+                        (el: Partial<ITable.Column<ENTITY_TYPE> & { orderIndex: number }>) => {
+                            const oldConfigIem: Nullable<ITable.Column<ENTITY_TYPE>> = config.find(
+                                (item: ITable.Column<ENTITY_TYPE>) => el.propName === item.propName
+                            );
+                            return {
+                                ...(oldConfigIem as ITable.Column<ENTITY_TYPE>),
+                                displayName: oldConfigIem?.header?.label,
+                                propName: el.propName as keyof ENTITY_TYPE,
+                                width: el?.width ?? 'auto',
+                                orderIndex: el?.orderIndex ?? 0,
+                                hidden: !!el?.hidden,
+                                fixed: !!el?.fixed,
+                            };
+                        }
+                    );
                     this.#tableConfig.set(updatedConfig);
                 } else {
-                    this.#tableConfig.set(config);
+                    this.#tableConfig.set(
+                        config.map((el: ITable.Column<ENTITY_TYPE>, index: number) => ({
+                            ...el,
+                            orderIndex: index,
+                            displayName: el.header.label,
+                        }))
+                    );
                 }
             });
     }

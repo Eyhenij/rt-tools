@@ -66,6 +66,20 @@
                                         <mat-icon [rtIconOutlinedDirective]="isActionsIconsOutlined()">sync</mat-icon>
                                     </button>
                                 }
+
+                                @if (isTableConfigButtonShown()) {
+                                    <button
+                                        mat-mini-fab
+                                        type="button"
+                                        aria-label="Icon-button for table config"
+                                        class="c-button c-button--fab"
+                                        matTooltip="Table configuration"
+                                        matTooltipPosition="below"
+                                        [matTooltipDisabled]="isMobile()"
+                                        (click)="onOpenConfigAside()">
+                                        <mat-icon [rtIconOutlinedDirective]="isActionsIconsOutlined()">view_column</mat-icon>
+                                    </button>
+                                }
                             </div>
 
                             @if ((isPlaceholderShown() && searchControl.value) || !isPlaceholderShown() || searchControl.dirty) {

@@ -26,10 +26,11 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
 
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
 
 import { BlockDirective, ElemDirective, ModDirective } from '../../../../bem';
-import { BreakpointService, Nullable, RtIconOutlinedDirective, isString } from '../../../../util';
+import { BreakpointService, Nullable, RtIconOutlinedDirective, isString, transformStringInput } from '../../../../util';
+import { RtAsideService } from '../../../aside';
 import { RtuiHeaderCenterDirective } from '../../../header';
 import {
     RtuiScrollableContainerComponent,
@@ -38,9 +39,11 @@ import {
 } from '../../../scrollable';
 import { RtuiSpinnerComponent } from '../../../spinner';
 import { RtuiToolbarComponent, RtuiToolbarLeftDirective, RtuiToolbarRightDirective } from '../../../toolbar';
+import { ITable, RtTableConfigService } from '../../util';
 import { PageModel } from '../../util/lists.interface';
 import { RtuiClearButtonComponent } from '../clear-search-button/rtui-clear-button.component';
 import { RtuiPaginationComponent } from '../pagination-view/rtui-pagination.component';
+import { RtTableConfigAsideComponent } from '../table-config-aside/rt-table-config-aside.component';
 
 @Directive({
     standalone: true,
@@ -94,13 +97,19 @@ export class RtuiTableToolbarActionsDirective {}
         RtIconOutlinedDirective,
         RtuiToolbarLeftDirective,
     ],
-    providers: [BreakpointService],
+    providers: [BreakpointService, RtAsideService],
 })
-export class RtuiTableContainerComponent implements OnInit {
+export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #breakpointService: BreakpointService = inject(BreakpointService);
+    readonly #asideService: RtAsideService = inject(RtAsideService);
+    readonly #tableConfigService: RtTableConfigService<ENTITY_TYPE> = inject(RtTableConfigService);
 
     public appearance: InputSignal<MatFormFieldAppearance> = input.required();
+    /** Table config storage key */
+    public tableConfigStorageKey: InputSignalWithTransform<string, string> = input.required<string, string>({
+        transform: transformStringInput,
+    });
     public pageModel: InputSignal<PageModel> = input.required();
     public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input.required<Nullable<boolean>, Nullable<boolean>>({
         transform: booleanAttribute,
@@ -118,6 +127,9 @@ export class RtuiTableContainerComponent implements OnInit {
         transform: booleanAttribute,
     });
     public isRefreshButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+        transform: booleanAttribute,
+    });
+    public isTableConfigButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
     public isActionsIconsOutlined: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
@@ -191,5 +203,18 @@ export class RtuiTableContainerComponent implements OnInit {
 
     public onToggleAllEntities(checked: boolean): void {
         this.toggleAllEntities.emit(checked);
+    }
+
+    public onOpenConfigAside(): void {
+        this.#asideService
+            .Open<RtTableConfigAsideComponent<ENTITY_TYPE>, ITable.Column<ENTITY_TYPE>[], ITable.Column<ENTITY_TYPE>[]>(
+                RtTableConfigAsideComponent,
+                'right',
+                this.#tableConfigService.tableConfig()
+            )
+            .pipe(filter(Boolean), takeUntilDestroyed(this.#destroyRef))
+            .subscribe((value: ITable.Column<ENTITY_TYPE>[]) => {
+                this.#tableConfigService.updateConfig(this.tableConfigStorageKey(), value);
+            });
     }
 }
