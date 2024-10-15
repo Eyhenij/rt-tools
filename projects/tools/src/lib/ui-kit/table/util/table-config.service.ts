@@ -28,7 +28,7 @@ export class RtTableConfigService<ENTITY_TYPE> {
                             );
                             return {
                                 ...(oldConfigIem as ITable.Column<ENTITY_TYPE>),
-                                displayName: oldConfigIem?.header?.label,
+                                displayName: oldConfigIem?.header?.label?.length ? oldConfigIem.header.label : el?.propName?.toString(),
                                 propName: el.propName as keyof ENTITY_TYPE,
                                 width: el?.width ?? 'auto',
                                 orderIndex: el?.orderIndex ?? 0,
@@ -43,7 +43,7 @@ export class RtTableConfigService<ENTITY_TYPE> {
                         config.map((el: ITable.Column<ENTITY_TYPE>, index: number) => ({
                             ...el,
                             orderIndex: index,
-                            displayName: el.header.label,
+                            displayName: el?.header?.label?.length ? el.header.label : el.propName.toString(),
                         }))
                     );
                 }
@@ -52,6 +52,7 @@ export class RtTableConfigService<ENTITY_TYPE> {
 
     public updateConfig(storageKey: string, config: Array<ITable.Column<ENTITY_TYPE>>): void {
         const idbConfig: Array<Partial<ITable.Column<ENTITY_TYPE>>> = config.map((el: ITable.Column<ENTITY_TYPE>) => ({
+            displayName: el.header.label ?? el.propName,
             propName: el.propName,
             width: el?.width ?? 'auto',
             orderIndex: el?.orderIndex ?? 0,

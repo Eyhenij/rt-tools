@@ -5,6 +5,21 @@ import { Person, ResponsiblePerson } from './types';
 export const COLUMNS: Array<ITable.Column<Person>> = [
     {
         align: 'left',
+        propName: 'userIcon' as keyof Person,
+        type: TABLE_COLUMN_TYPES_ENUM.TEXT,
+        copyable: false,
+        header: {
+            align: 'left',
+            label: '',
+        },
+        icon: {
+            glyph: 'priority_high',
+            color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
+            placement: 'left',
+        },
+    },
+    {
+        align: 'left',
         propName: 'id',
         type: TABLE_COLUMN_TYPES_ENUM.TEXT,
         copyable: true,

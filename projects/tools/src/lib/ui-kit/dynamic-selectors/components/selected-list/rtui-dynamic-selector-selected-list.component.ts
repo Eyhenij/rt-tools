@@ -1,5 +1,5 @@
 import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
-import { NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet, TitleCasePipe } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
@@ -41,19 +41,24 @@ export class RtuiDynamicSelectorItemAdditionalControlDirective {}
     templateUrl: './rtui-dynamic-selector-selected-list.component.html',
     styleUrls: ['./rtui-dynamic-selector-selected-list.component.scss'],
     imports: [
+        MatIconButton,
         MatIcon,
         MatButton,
-        RtIconOutlinedDirective,
-        BlockDirective,
-        ElemDirective,
+        MatTooltip,
         CdkDropList,
         CdkDrag,
+        NgTemplateOutlet,
+
+        // directives
+        RtIconOutlinedDirective,
+        RtHideTooltipDirective,
+        BlockDirective,
+        ElemDirective,
+
+        // pipes
         EntityToStringPipe,
         BreakStringPipe,
-        MatTooltip,
-        RtHideTooltipDirective,
-        MatIconButton,
-        NgTemplateOutlet,
+        TitleCasePipe,
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -80,6 +85,10 @@ export class RtuiDynamicSelectorSelectedListComponent<ENTITY extends Record<stri
     });
     /** Indicates is break string pipe used */
     public useNameBreaking: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
+    /** Indicates is title case pipe used */
+    public useTitleCase: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
     /** Indicates is delete entity button from the selected list shown */
