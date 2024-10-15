@@ -52,7 +52,7 @@ export class RtTableConfigService<ENTITY_TYPE> {
 
     public updateConfig(storageKey: string, config: Array<ITable.Column<ENTITY_TYPE>>): void {
         const idbConfig: Array<Partial<ITable.Column<ENTITY_TYPE>>> = config.map((el: ITable.Column<ENTITY_TYPE>) => ({
-            displayName: el.header.label ?? el.propName,
+            displayName: el.header.label ?? el.propName.toString(),
             propName: el.propName,
             width: el?.width ?? 'auto',
             orderIndex: el?.orderIndex ?? 0,
