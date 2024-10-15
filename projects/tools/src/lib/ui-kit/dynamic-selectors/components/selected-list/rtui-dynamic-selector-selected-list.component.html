@@ -13,9 +13,13 @@
                     "
                     [matTooltipDisabled]="isMobile()">
                     @if (useNameBreaking()) {
-                        {{ entity[displayExp()] | entityToString | breakString }}
+                        {{
+                            useTitleCase()
+                                ? (entity[displayExp()] | entityToString | breakString | titlecase)
+                                : (entity[displayExp()] | entityToString | breakString)
+                        }}
                     } @else {
-                        {{ entity[displayExp()] }}
+                        {{ useTitleCase() ? (entity[displayExp()] | entityToString | titlecase) : entity[displayExp()] }}
                     }
                 </span>
 
