@@ -1,9 +1,10 @@
-import { NgTemplateOutlet } from '@angular/common';
+import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
     DestroyRef,
     Directive,
+    Injector,
     InputSignal,
     InputSignalWithTransform,
     OnInit,
@@ -13,6 +14,7 @@ import {
     Type,
     booleanAttribute,
     contentChild,
+    effect,
     inject,
     input,
     output,
@@ -25,11 +27,20 @@ import { MatFormField, MatFormFieldAppearance, MatPrefix, MatSuffix } from '@ang
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
+import { DomSanitizer } from '@angular/platform-browser';
 
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
 
 import { BlockDirective, ElemDirective, ModDirective } from '../../../../bem';
-import { BreakpointService, Nullable, RtIconOutlinedDirective, isString, transformStringInput } from '../../../../util';
+import {
+    BreakpointService,
+    Nullable,
+    PlatformService,
+    RtIconOutlinedDirective,
+    WINDOW,
+    isString,
+    transformStringInput,
+} from '../../../../util';
 import { RtAsideService } from '../../../aside';
 import { RtuiHeaderCenterDirective } from '../../../header';
 import {
@@ -97,13 +108,20 @@ export class RtuiTableToolbarActionsDirective {}
         RtIconOutlinedDirective,
         RtuiToolbarLeftDirective,
     ],
-    providers: [BreakpointService, RtAsideService],
+    providers: [BreakpointService, RtAsideService, PlatformService],
 })
 export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
+    readonly #documentRef: Document = inject(DOCUMENT);
+    readonly #windowRef: Window = inject(WINDOW);
+    readonly #platformService: PlatformService = inject(PlatformService);
+    readonly #sanitizer: DomSanitizer = inject(DomSanitizer);
+    readonly #injector: Injector = inject(Injector);
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #breakpointService: BreakpointService = inject(BreakpointService);
     readonly #asideService: RtAsideService = inject(RtAsideService);
     readonly #tableConfigService: RtTableConfigService<ENTITY_TYPE> = inject(RtTableConfigService);
+
+    readonly #style: Nullable<CSSStyleDeclaration> = this.#documentRef?.documentElement?.style;
 
     public appearance: InputSignal<MatFormFieldAppearance> = input.required();
     /** Table config storage key */
@@ -152,6 +170,7 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     public placeholderTitle: InputSignal<string> = input<string>('No Data Found');
 
     public readonly isSmallTablet: Signal<Nullable<boolean>> = this.#breakpointService.isSmallTablet;
+    public readonly tableConfig: Signal<ITable.Config.Data<ENTITY_TYPE>> = this.#tableConfigService.tableConfig;
 
     public readonly pageModelChange: OutputEmitterRef<Partial<PageModel>> = output<Partial<PageModel>>();
     public readonly searchChange: OutputEmitterRef<Nullable<string>> = output<Nullable<string>>();
@@ -168,6 +187,16 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     public readonly searchControl: FormControl<Nullable<string>> = new FormControl(null);
 
     public ngOnInit(): void {
+        /** Set scrollbar initial styles by config */
+        effect(
+            () => {
+                if (this.tableConfig().columns.length) {
+                    this.#setScrollbarsVisibility();
+                }
+            },
+            { injector: this.#injector, allowSignalWrites: true }
+        );
+
         this.searchControl.patchValue(this.searchTerm(), { emitEvent: false });
 
         this.searchControl.valueChanges
@@ -207,14 +236,29 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
 
     public onOpenConfigAside(): void {
         this.#asideService
-            .Open<RtTableConfigAsideComponent<ENTITY_TYPE>, ITable.Column<ENTITY_TYPE>[], ITable.Column<ENTITY_TYPE>[]>(
+            .Open<RtTableConfigAsideComponent<ENTITY_TYPE>, ITable.Config.Data<ENTITY_TYPE>, ITable.Config.Data<ENTITY_TYPE>>(
                 RtTableConfigAsideComponent,
                 'right',
-                this.#tableConfigService.tableConfig()
+                this.tableConfig()
             )
             .pipe(filter(Boolean), takeUntilDestroyed(this.#destroyRef))
-            .subscribe((value: ITable.Column<ENTITY_TYPE>[]) => {
+            .subscribe((value: ITable.Config.Data<ENTITY_TYPE>) => {
+                /** Save updated table config */
                 this.#tableConfigService.updateConfig(this.tableConfigStorageKey(), value);
+                this.#setScrollbarsVisibility();
             });
+    }
+
+    /** Set scrollbar styles by config */
+    #setScrollbarsVisibility(): void {
+        const vertical: string = this.tableConfig().isVerticalScrollbarShown ? '12px' : '0';
+        const horizontal: string = this.tableConfig().isHorizontalScrollbarShown ? '12px' : '0';
+
+        if (this.#platformService?.isPlatformBrowser && this.#windowRef && this.#style) {
+            const safeVerticalValue: Nullable<string> = this.#sanitizer.sanitize(0, vertical);
+            const safeHorizontalValue: Nullable<string> = this.#sanitizer.sanitize(0, horizontal);
+            this.#style.setProperty('--rt-table-container-content-scrollbar-vertical-width', safeVerticalValue);
+            this.#style.setProperty('--rt-table-container-content-scrollbar-horizontal-height', safeHorizontalValue);
+        }
     }
 }

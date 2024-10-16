@@ -41,6 +41,22 @@ $table-container: (
     display: flex;
     overflow: hidden;
 
+    // initial table container scrollbar styles
+    ::-webkit-scrollbar-track:hover {
+        border: 1px solid var(--clr-gray-10);
+    }
+    ::-webkit-scrollbar-thumb {
+        background: var(--clr-gray-20);
+        border: 3px solid transparent;
+        border-radius: 6px;
+        background-clip: content-box;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--clr-black-40);
+        border: 2px solid transparent;
+        background-clip: content-box;
+    }
+
     // set rt-toolbar styles
     rtui-toolbar {
         --rt-toolbar-body-padding: 0;
@@ -115,7 +131,8 @@ $table-container: (
             padding: var(--rt-table-container-content-padding);
 
             &::-webkit-scrollbar {
-                display: none;
+                width: var(--rt-table-container-content-scrollbar-vertical-width);
+                height: var(--rt-table-container-content-scrollbar-horizontal-height);
             }
         }
 

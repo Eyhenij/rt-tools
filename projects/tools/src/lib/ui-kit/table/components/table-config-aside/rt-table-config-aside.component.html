@@ -1,40 +1,63 @@
 <rtui-aside-container
     [isMobile]="isMobile()"
     [pending]="false"
-    [isSubmitButtonDisabled]="!isVisibilityChanged() && !isOrderChanged()"
+    [isSubmitButtonDisabled]="!isVisibilityChanged() && !isOrderChanged() && !form.dirty"
     (submitAction)="save()"
     (cancelAction)="cancel()">
     <ng-container *rtuiAsideHeader rtBlock="c-aside-title">
         <div rtElem="txt">Edit table configuration</div>
-        <div rtElem="addition">Change columns visibility and order</div>
+        <div rtElem="addition">Change columns visibility and order, show(hide) scrollbar</div>
     </ng-container>
-    <form rtBlock="c-form">
-        <rtui-dynamic-selector
-            keyExp="propName"
-            displayExp="displayName"
-            [formControl]="form"
-            [entities]="selectedColumns()"
-            [isMobile]="isMobile()"
-            [useNameBreaking]="true"
-            [useTitleCase]="true"
-            [isSelectionAvailable]="false"
-            [isDeleteButtonShown]="false"
-            [isListDraggable]="true">
-            <ng-container *rtuiDynamicSelectorAdditionalControlDirective="let entity" rtBlock="rtui-dynamic-selector">
-                <div rtElem="item-control">
-                    <button
-                        mat-icon-button
-                        type="button"
-                        aria-label="Icon-button for visibility indication"
-                        rtElem="item-control-button"
-                        matTooltip="{{ entity.hidden ? 'Hidden, click to show' : 'Shown, click to hide' }}"
-                        matTooltipPosition="left"
-                        [matTooltipDisabled]="isMobile()"
-                        (click)="visibilityChange(entity)">
-                        <mat-icon [rtIconOutlinedDirective]="true">{{ entity.hidden ? 'visibility_off' : 'visibility' }}</mat-icon>
-                    </button>
+    <form rtBlock="c-form" [formGroup]="form">
+        <div rtElem="item">
+            <div rtElem="controls">
+                <!-- Vertical scrollbar -->
+                <div rtElem="control-item">
+                    <rtui-toggle formControlName="isVerticalScrollbarShown" label="Vertical scrollbar shown" />
                 </div>
-            </ng-container>
-        </rtui-dynamic-selector>
+            </div>
+
+            <div rtElem="controls">
+                <!-- Horizontal scrollbar -->
+                <div rtElem="control-item">
+                    <rtui-toggle formControlName="isHorizontalScrollbarShown" label="Horizontal scrollbar shown" />
+                </div>
+            </div>
+
+            <div rtElem="controls">
+                <!-- Columns config -->
+                <div rtElem="control-item">
+                    <rtui-dynamic-selector
+                        keyExp="propName"
+                        displayExp="displayName"
+                        formControlName="columns"
+                        [entities]="selectedColumns()"
+                        [isMobile]="isMobile()"
+                        [useNameBreaking]="true"
+                        [useTitleCase]="true"
+                        [isSelectionAvailable]="false"
+                        [isDeleteButtonShown]="false"
+                        [isListDraggable]="true">
+                        <ng-container *rtuiDynamicSelectorAdditionalControlDirective="let entity" rtBlock="rtui-dynamic-selector">
+                            <div rtElem="item-control">
+                                <button
+                                    mat-icon-button
+                                    type="button"
+                                    aria-label="Icon-button for visibility indication"
+                                    rtElem="item-control-button"
+                                    matTooltip="{{ entity.hidden ? 'Hidden, click to show' : 'Shown, click to hide' }}"
+                                    matTooltipPosition="left"
+                                    [matTooltipDisabled]="isMobile()"
+                                    (click)="visibilityChange(entity)">
+                                    <mat-icon [rtIconOutlinedDirective]="true">
+                                        {{ entity.hidden ? 'visibility_off' : 'visibility' }}
+                                    </mat-icon>
+                                </button>
+                            </div>
+                        </ng-container>
+                    </rtui-dynamic-selector>
+                </div>
+            </div>
+        </div>
     </form>
 </rtui-aside-container>
