@@ -20,7 +20,6 @@ import {
 } from '../../dynamic-list.component';
 import { LIST_SORT_ORDER_ENUM } from '../../util/list-sort-order.enum';
 import { PageModel, SortModel } from '../../util/lists.interface';
-import { ITable } from '../../util/table-column.interface';
 import { RtTableConfigService } from '../../util/table-config.service';
 import { COLUMNS } from '../constants';
 import { createPersonList } from '../mocks';
@@ -86,13 +85,6 @@ export default class TestDynamicListComponent implements OnInit {
 
     public ngOnInit(): void {
         this.#tableConfigService.initConfig(this.storageKey, COLUMNS);
-    }
-
-    public hideIdColumn(value: boolean): void {
-        const updatedConfig: ITable.Column<Person>[] = COLUMNS.map((el: ITable.Column<Person>) => {
-            return el.propName === 'id' ? { ...el, hidden: value } : el;
-        });
-        this.#tableConfigService.updateConfig(this.storageKey, updatedConfig);
     }
 
     public onRefresh(): void {

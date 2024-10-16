@@ -1,3 +1,5 @@
+import { FormControl } from '@angular/forms';
+
 import { SortModel } from './lists.interface';
 
 export enum TABLE_COLUMN_TYPES_ENUM {
@@ -85,5 +87,19 @@ export namespace ITable {
         visible?: boolean;
         placement?: 'left' | 'right';
         outlined?: boolean;
+    }
+
+    export namespace Config {
+        export interface Data<T> {
+            isVerticalScrollbarShown: boolean;
+            isHorizontalScrollbarShown: boolean;
+            columns: Array<ITable.Column<T>>;
+        }
+
+        export interface Form<T> {
+            isVerticalScrollbarShown: FormControl<boolean>;
+            isHorizontalScrollbarShown: FormControl<boolean>;
+            columns: FormControl<(keyof T)[]>;
+        }
     }
 }
