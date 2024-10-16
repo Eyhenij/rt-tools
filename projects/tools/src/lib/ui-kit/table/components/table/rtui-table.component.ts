@@ -10,6 +10,7 @@ import {
     TemplateRef,
     WritableSignal,
     booleanAttribute,
+    computed,
     contentChild,
     inject,
     input,
@@ -134,7 +135,9 @@ export class RtuiTableComponent<
     }>();
     public readonly toggleExistingEntities: OutputEmitterRef<boolean> = output<boolean>();
 
-    public columns: Signal<Array<ITable.Column<ENTITY_TYPE>>> = this.#tableConfigService.tableConfig;
+    public columns: Signal<Array<ITable.Column<ENTITY_TYPE>>> = computed(() => {
+        return this.#tableConfigService.tableConfig().columns;
+    });
 
     public readonly customCellsTpl: Signal<Nullable<RtuiCustomTableCellsDirective<ENTITY_TYPE>>> =
         contentChild(RtuiCustomTableCellsDirective);

@@ -54,6 +54,10 @@ $table: (
             #{mixins.generateCssVar('table', #{$element}, #{$style-token})}: #{$value};
         }
     }
+
+    // initial table container scrollbar styles
+    --rt-table-container-content-scrollbar-vertical-width: 0;
+    --rt-table-container-content-scrollbar-horizontal-height: 12px;
 }
 
 // TABLE
