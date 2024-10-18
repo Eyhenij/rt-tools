@@ -10,13 +10,15 @@
     [isRefreshButtonShown]="isRefreshButtonShown()"
     [isTableConfigButtonShown]="isTableConfigButtonShown()"
     [isMultiSelect]="isMultiSelect()"
+    [isSelectAllSelectorShown]="isSelectAllSelectorShown()"
     [isAllEntitiesSelected]="isAllEntitiesSelected()"
+    [isAllEntitiesIndeterminate]="!!selectedEntities()?.length"
     [appearance]="appearance()"
     [searchTerm]="searchTerm()"
-    (toggleAllEntities)="onToggleAllEntities($event)"
     (refreshAction)="onRefresh()"
     (pageModelChange)="onPageModelChange($event)"
-    (searchChange)="onSearchChange($event)">
+    (searchChange)="onSearchChange($event)"
+    (toggleAllEntities)="onToggleAllEntities($event)">
     @if (toolbarSelectorsTpl()) {
         <ng-container *rtuiTableToolbarSelectorsDirective>
             <ng-template *ngTemplateOutlet="toolbarSelectorsTpl() || null" />
@@ -37,13 +39,10 @@
         [isMultiSelect]="isMultiSelect()"
         [isTableRowsClickable]="isTableRowsClickable()"
         [entities]="entities()"
-        [selectedEntitiesKeys]="selectedEntitiesKeys()"
         [currentSortModel]="currentSortModel()"
-        (toggleEntity)="onToggleEntity($event)"
-        (toggleExistingEntities)="onToggleExistingEntities($event)"
+        (sortChange)="onSortChange($event)"
         (rowClick)="onRowClick($event)"
-        (rowDoubleClick)="onRowDoubleClick($event)"
-        (sortChange)="onSortChange($event)">
+        (rowDoubleClick)="onRowDoubleClick($event)">
         @if (customCellsTpl() && customCellsTpl()?.cellsTemplates()) {
             <ng-container *rtuiCustomTableCellsDirective="customCellsTpl()?.cellsTemplates()!" />
         }
