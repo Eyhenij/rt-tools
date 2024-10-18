@@ -3,8 +3,10 @@ import {
     ChangeDetectionStrategy,
     Component,
     Directive,
+    Injector,
     InputSignal,
     InputSignalWithTransform,
+    OnInit,
     OutputEmitterRef,
     Signal,
     TemplateRef,
@@ -16,7 +18,9 @@ import {
     input,
     output,
     signal,
+    untracked,
 } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatIcon } from '@angular/material/icon';
@@ -25,7 +29,7 @@ import { MatRadioButton } from '@angular/material/radio';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
 import { Nullable, RtIconOutlinedDirective, transformArrayInput } from '../../../../util';
-import { ITable, SortModel, TABLE_COLUMN_TYPES_ENUM } from '../../util';
+import { ITable, RtTableStoreService, SortModel, TABLE_COLUMN_TYPES_ENUM } from '../../util';
 import { RtTableConfigService } from '../../util/table-config.service';
 import { TableBaseCellComponent } from '../table-base-cell/table-base-cell.component';
 import { RtuiTableHeaderCellComponent } from '../table-header-cell/table-header-cell.component';
@@ -93,12 +97,19 @@ export class RtuiTableComponent<
     ENTITY_TYPE extends Record<string, unknown>,
     SORT_PROPERTY extends Extract<keyof ENTITY_TYPE, string>,
     KEY extends Extract<keyof ENTITY_TYPE, string>,
-> {
+> implements OnInit
+{
+    readonly #injector: Injector = inject(Injector);
     readonly #tableConfigService: RtTableConfigService<ENTITY_TYPE> = inject(RtTableConfigService);
+    readonly #tableStoreService: RtTableStoreService<ENTITY_TYPE, KEY> = inject(RtTableStoreService);
 
     protected readonly columnTypes: typeof TABLE_COLUMN_TYPES_ENUM = TABLE_COLUMN_TYPES_ENUM;
 
-    public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
+    public entities: InputSignalWithTransform<ENTITY_TYPE[], ENTITY_TYPE[]> = input.required<ENTITY_TYPE[], ENTITY_TYPE[]>({
+        transform: (value: ENTITY_TYPE[]) => transformArrayInput(value),
+    });
+    public currentSortModel: InputSignal<Nullable<SortModel<SORT_PROPERTY>>> = input.required();
+    public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input.required<Nullable<boolean>, Nullable<boolean>>({
         transform: booleanAttribute,
     });
     public isSelectorsShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
@@ -114,30 +125,10 @@ export class RtuiTableComponent<
         transform: booleanAttribute,
     });
     public keyExp: InputSignal<NonNullable<KEY>> = input('id' as NonNullable<KEY>);
-    public selectedEntitiesKeys: InputSignalWithTransform<ENTITY_TYPE[KEY][], ENTITY_TYPE[KEY][]> = input<
-        ENTITY_TYPE[KEY][],
-        ENTITY_TYPE[KEY][]
-    >([], {
-        transform: (value: ENTITY_TYPE[KEY][]) => transformArrayInput(value),
-    });
 
-    public entities: InputSignalWithTransform<ENTITY_TYPE[], ENTITY_TYPE[]> = input.required<ENTITY_TYPE[], ENTITY_TYPE[]>({
-        transform: (value: ENTITY_TYPE[]) => transformArrayInput(value),
-    });
-    public currentSortModel: InputSignal<Nullable<SortModel<SORT_PROPERTY>>> = input.required();
-
+    public readonly sortChange: OutputEmitterRef<SortModel<SORT_PROPERTY>> = output<SortModel<SORT_PROPERTY>>();
     public readonly rowClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
     public readonly rowDoubleClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
-    public readonly sortChange: OutputEmitterRef<SortModel<SORT_PROPERTY>> = output<SortModel<SORT_PROPERTY>>();
-    public readonly toggleEntity: OutputEmitterRef<{ key: ENTITY_TYPE[KEY]; checked: boolean }> = output<{
-        key: ENTITY_TYPE[KEY];
-        checked: boolean;
-    }>();
-    public readonly toggleExistingEntities: OutputEmitterRef<boolean> = output<boolean>();
-
-    public columns: Signal<Array<ITable.Column<ENTITY_TYPE>>> = computed(() => {
-        return this.#tableConfigService.tableConfig().columns;
-    });
 
     public readonly customCellsTpl: Signal<Nullable<RtuiCustomTableCellsDirective<ENTITY_TYPE>>> =
         contentChild(RtuiCustomTableCellsDirective);
@@ -157,7 +148,23 @@ export class RtuiTableComponent<
         }
     );
 
+    public columns: Signal<Array<ITable.Column<ENTITY_TYPE>>> = computed(() => {
+        return this.#tableConfigService.tableConfig().columns;
+    });
+    public readonly selectedEntitiesIds: Signal<ENTITY_TYPE[KEY][]> = this.#tableStoreService.selectedEntitiesIds;
+    public readonly isExistingEntitiesSelected: Signal<boolean> = this.#tableStoreService.isExistingEntitiesSelected;
+    public readonly isExistingEntitiesIndeterminate: Signal<boolean> = this.#tableStoreService.isExistingEntitiesIndeterminate;
     public readonly activeRowIndex: WritableSignal<Nullable<number>> = signal(null);
+
+    public ngOnInit(): void {
+        /** Update selectors state when after list of entities change */
+        toObservable(this.entities, { injector: this.#injector })
+            .pipe()
+            .subscribe((list: ENTITY_TYPE[]) => {
+                this.#tableStoreService.setAllEntitiesState(list);
+                this.#tableStoreService.setExistingEntitiesState(list);
+            });
+    }
 
     public onSortChange(sortModel: SortModel<string>): void {
         // TODO: add type guard
@@ -180,11 +187,18 @@ export class RtuiTableComponent<
         this.rowDoubleClick.emit(row);
     }
 
-    public onToggleEntity(key: ENTITY_TYPE[KEY], checked: boolean): void {
-        this.toggleEntity.emit({ key, checked });
+    public onToggleEntity(entity: ENTITY_TYPE, checked: boolean): void {
+        this.#tableStoreService.toggleEntity(
+            untracked(() => this.entities()),
+            entity,
+            checked
+        );
     }
 
     public onToggleExistingEntities(checked: boolean): void {
-        this.toggleExistingEntities.emit(checked);
+        this.#tableStoreService.toggleExistingEntities(
+            untracked(() => this.entities()),
+            checked
+        );
     }
 }

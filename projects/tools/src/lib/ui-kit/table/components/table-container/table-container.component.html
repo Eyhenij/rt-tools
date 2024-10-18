@@ -12,9 +12,10 @@
                         <ng-container *rtuiToolbarLeft>
                             @if (isSmallTablet()) {
                                 <div rtElem="selectors">
-                                    @if (isMultiSelect()) {
+                                    @if (isMultiSelect() && isSelectAllSelectorShown()) {
                                         <mat-checkbox
                                             [checked]="isAllEntitiesSelected()"
+                                            [indeterminate]="!isAllEntitiesSelected() && isAllEntitiesIndeterminate()"
                                             (click)="$event.stopPropagation()"
                                             (change)="onToggleAllEntities($event.checked)">
                                             <div rtElem="selectors-label">Select all</div>
@@ -34,9 +35,10 @@
                             <div rtElem="toolbar-actions" [rtMod]="{ end: isSelectorsShown() }">
                                 @if (isSelectorsShown() && !isSmallTablet()) {
                                     <div rtElem="selectors">
-                                        @if (isMultiSelect()) {
+                                        @if (isMultiSelect() && isSelectAllSelectorShown()) {
                                             <mat-checkbox
                                                 [checked]="isAllEntitiesSelected()"
+                                                [indeterminate]="!isAllEntitiesSelected() && isAllEntitiesIndeterminate()"
                                                 (click)="$event.stopPropagation()"
                                                 (change)="onToggleAllEntities($event.checked)">
                                                 <div rtElem="selectors-label">Select all</div>

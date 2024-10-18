@@ -6,8 +6,8 @@
                     @if (isMultiSelect()) {
                         <mat-checkbox
                             [disabled]="isSelectorsColumnDisabled()"
-                            [checked]="selectedEntitiesKeys().length === entities().length"
-                            [indeterminate]="!!selectedEntitiesKeys().length && selectedEntitiesKeys().length < entities().length"
+                            [checked]="isExistingEntitiesSelected()"
+                            [indeterminate]="isExistingEntitiesIndeterminate() && !isExistingEntitiesSelected()"
                             (click)="$event.stopPropagation()"
                             (change)="onToggleExistingEntities($event.checked)" />
                     }
@@ -43,15 +43,17 @@
                         @if (isMultiSelect()) {
                             <mat-checkbox
                                 [disabled]="isSelectorsColumnDisabled()"
-                                [checked]="selectedEntitiesKeys().includes(row[keyExp()])"
+                                [checked]="selectedEntitiesIds().includes(row[keyExp()])"
                                 (click)="$event.stopPropagation()"
-                                (change)="onToggleEntity(row[keyExp()], $event.checked)" />
+                                (dblclick)="$event.stopPropagation()"
+                                (change)="onToggleEntity(row, $event.checked)" />
                         } @else {
                             <mat-radio-button
                                 [disabled]="isSelectorsColumnDisabled()"
-                                [checked]="selectedEntitiesKeys().includes(row[keyExp()])"
+                                [checked]="selectedEntitiesIds().includes(row[keyExp()])"
                                 (click)="$event.stopPropagation()"
-                                (change)="onToggleEntity(row[keyExp()], true)" />
+                                (dblclick)="$event.stopPropagation()"
+                                (change)="onToggleEntity(row, true)" />
                         }
                     </td>
                 }
