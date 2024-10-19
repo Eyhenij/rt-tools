@@ -209,13 +209,11 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
             .pipe(
                 debounceTime(500),
                 distinctUntilChanged(),
-                map((value: Nullable<string>) => (!!value ? value.trim() : value)),
+                map((value: Nullable<string>) => (isString(value) ? value.trim() : null)),
                 takeUntilDestroyed(this.#destroyRef)
             )
             .subscribe((value: Nullable<string>) => {
-                if (value !== null) {
-                    this.searchChange.emit(value);
-                }
+                this.searchChange.emit(value);
             });
     }
 
@@ -225,7 +223,6 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
 
     public onClearSearch(): void {
         this.searchControl.patchValue(null);
-        this.searchChange.emit('');
     }
 
     public onRefresh(): void {
