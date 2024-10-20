@@ -156,10 +156,16 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     public isSelectorsShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
+    public isSelectAllSelectorShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
     public isMultiSelect: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
     public isAllEntitiesSelected: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
+    public isAllEntitiesIndeterminate: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
     public searchTerm: InputSignalWithTransform<Nullable<string>, Nullable<string>> = input<Nullable<string>, Nullable<string>>('', {
@@ -203,13 +209,11 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
             .pipe(
                 debounceTime(500),
                 distinctUntilChanged(),
-                map((value: Nullable<string>) => (!!value ? value.trim() : value)),
+                map((value: Nullable<string>) => (isString(value) ? value.trim() : null)),
                 takeUntilDestroyed(this.#destroyRef)
             )
             .subscribe((value: Nullable<string>) => {
-                if (value !== null) {
-                    this.searchChange.emit(value);
-                }
+                this.searchChange.emit(value);
             });
     }
 
@@ -219,7 +223,6 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
 
     public onClearSearch(): void {
         this.searchControl.patchValue(null);
-        this.searchChange.emit('');
     }
 
     public onRefresh(): void {

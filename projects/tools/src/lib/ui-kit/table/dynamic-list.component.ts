@@ -11,8 +11,10 @@ import {
     Type,
     booleanAttribute,
     contentChild,
+    inject,
     input,
     output,
+    untracked,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
@@ -35,6 +37,7 @@ import {
     RtuiTableToolbarSelectorsDirective,
 } from './components/table-container/table-container.component';
 import { RtuiTableHeaderCellComponent } from './components/table-header-cell/table-header-cell.component';
+import { RtTableStoreService } from './util';
 import { PageModel, SortModel } from './util/lists.interface';
 
 /** Directive for selectors of the toolbar located on the left side */
@@ -113,11 +116,16 @@ export class RtuiDynamicListRowAdditionalActionsDirective {}
     ],
 })
 export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown>, KEY extends Extract<keyof ENTITY_TYPE, string>> {
+    readonly #tableStoreService: RtTableStoreService<ENTITY_TYPE, KEY> = inject(RtTableStoreService);
+
+    public entities: InputSignalWithTransform<ENTITY_TYPE[], ENTITY_TYPE[]> = input.required<ENTITY_TYPE[], ENTITY_TYPE[]>({
+        transform: (value: ENTITY_TYPE[]) => transformArrayInput(value),
+    });
     /** Table config storage key */
     public tableConfigStorageKey: InputSignalWithTransform<string, string> = input.required<string, string>({
         transform: transformStringInput,
     });
-    public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
+    public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input.required<Nullable<boolean>, Nullable<boolean>>({
         transform: booleanAttribute,
     });
     public loading: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
@@ -144,26 +152,16 @@ export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown
     public isSelectorsShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
+    public isSelectAllSelectorShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
     public isSelectorsColumnDisabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
     public isMultiSelect: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
-    public isAllEntitiesSelected: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
-        transform: booleanAttribute,
-    });
     public keyExp: InputSignal<NonNullable<KEY>> = input('id' as NonNullable<KEY>);
-    public selectedEntitiesKeys: InputSignalWithTransform<ENTITY_TYPE[KEY][], ENTITY_TYPE[KEY][]> = input<
-        ENTITY_TYPE[KEY][],
-        ENTITY_TYPE[KEY][]
-    >([], {
-        transform: (value: ENTITY_TYPE[KEY][]) => transformArrayInput(value),
-    });
-
-    public entities: InputSignalWithTransform<ENTITY_TYPE[], ENTITY_TYPE[]> = input.required<ENTITY_TYPE[], ENTITY_TYPE[]>({
-        transform: (value: ENTITY_TYPE[]) => transformArrayInput(value),
-    });
 
     public pageModel: InputSignal<PageModel> = input.required();
     public searchTerm: InputSignal<Nullable<string>> = input.required();
@@ -179,12 +177,6 @@ export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown
     public readonly refresh: OutputEmitterRef<void> = output<void>();
     public readonly rowClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
     public readonly rowDoubleClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
-    public readonly toggleEntity: OutputEmitterRef<{ key: ENTITY_TYPE[KEY]; checked: boolean }> = output<{
-        key: ENTITY_TYPE[KEY];
-        checked: boolean;
-    }>();
-    public readonly toggleExistingEntities: OutputEmitterRef<boolean> = output<boolean>();
-    public readonly toggleAllEntities: OutputEmitterRef<boolean> = output<boolean>();
 
     public readonly toolbarSelectorsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(
         RtuiDynamicListToolbarSelectorsDirective,
@@ -211,6 +203,9 @@ export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown
         }
     );
 
+    public readonly selectedEntities: Signal<ENTITY_TYPE[]> = this.#tableStoreService.selectedEntities;
+    public readonly isAllEntitiesSelected: Signal<boolean> = this.#tableStoreService.isAllEntitiesSelected;
+
     public onSearchChange(value: Nullable<string>): void {
         this.searchChange.emit(value);
     }
@@ -235,15 +230,10 @@ export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown
         this.rowDoubleClick.emit(row);
     }
 
-    public onToggleEntity(value: { key: ENTITY_TYPE[KEY]; checked: boolean }): void {
-        this.toggleEntity.emit(value);
-    }
-
-    public onToggleExistingEntities(checked: boolean): void {
-        this.toggleExistingEntities.emit(checked);
-    }
-
     public onToggleAllEntities(checked: boolean): void {
-        this.toggleAllEntities.emit(checked);
+        this.#tableStoreService.toggleAll(
+            untracked(() => this.entities()),
+            checked
+        );
     }
 }

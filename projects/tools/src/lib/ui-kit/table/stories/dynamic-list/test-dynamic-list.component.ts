@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, Injector, OnInit, effect, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -18,6 +18,7 @@ import {
     RtuiDynamicListToolbarActionsDirective,
     RtuiDynamicListToolbarSelectorsDirective,
 } from '../../dynamic-list.component';
+import { RtTableStoreService } from '../../util';
 import { LIST_SORT_ORDER_ENUM } from '../../util/list-sort-order.enum';
 import { PageModel, SortModel } from '../../util/lists.interface';
 import { RtTableConfigService } from '../../util/table-config.service';
@@ -55,23 +56,24 @@ import { Person } from '../types';
         RtuiDynamicListCustomTableCellsDirective,
         RtuiCustomTableCellsDirective,
     ],
-    providers: [IDBStorageService, RtTableConfigService],
+    providers: [IDBStorageService, RtTableConfigService, RtTableStoreService],
 })
 export default class TestDynamicListComponent implements OnInit {
+    readonly #injector: Injector = inject(Injector);
     readonly #tableConfigService: RtTableConfigService<Person> = inject(RtTableConfigService);
+    readonly #tableStoreService: RtTableStoreService<Person, 'id'> = inject(RtTableStoreService);
 
     public isMobile: boolean = false;
     public loading: boolean = false;
     public fetching: boolean = false;
     public isRefreshButtonShown: boolean = true;
     public isSelectorsShown: boolean = true;
+    public isSelectAllSelectorShown: boolean = true;
     public isSelectorsColumnDisabled: boolean = false;
     public isMultiSelect: boolean = true;
-    public isAllEntitiesSelected: boolean = false;
     public isTableRowsClickable: boolean = false;
     public searchTerm: string = '';
     public data: Person[] = [];
-    public selectedEntitiesKeys: number[] = [];
     public pageModel: PageModel = {
         pageNumber: 1,
         pageSize: 10,
@@ -85,6 +87,16 @@ export default class TestDynamicListComponent implements OnInit {
 
     public ngOnInit(): void {
         this.#tableConfigService.initConfig(this.storageKey, COLUMNS);
+
+        effect(
+            () => {
+                if (this.#tableStoreService.selectedEntities()) {
+                    // eslint-disable-next-line no-console
+                    console.warn(this.#tableStoreService.selectedEntities());
+                }
+            },
+            { injector: this.#injector, allowSignalWrites: true }
+        );
     }
 
     public onRefresh(): void {
@@ -129,45 +141,5 @@ export default class TestDynamicListComponent implements OnInit {
     public onOpenNewTab(row: Person): void {
         // eslint-disable-next-line no-console
         console.warn('Open new tab', row);
-    }
-
-    public onToggleEntity(value: { key: number; checked: boolean }): void {
-        if (this.isMultiSelect) {
-            const updatedList: number[] = [];
-            this.selectedEntitiesKeys.forEach((el: number) => updatedList.push(el));
-            this.selectedEntitiesKeys = [];
-
-            if (value.checked) {
-                updatedList.push(value.key);
-            } else {
-                const index: number = updatedList.indexOf(value.key);
-                updatedList.splice(index, 1);
-            }
-
-            this.selectedEntitiesKeys = updatedList;
-        } else {
-            this.selectedEntitiesKeys = [];
-            this.selectedEntitiesKeys = [value.key];
-        }
-
-        // eslint-disable-next-line no-console
-        console.warn('Selected Entities: ', this.selectedEntitiesKeys);
-    }
-
-    public onToggleExistingEntities(checked: boolean): void {
-        this.selectedEntitiesKeys = [];
-
-        if (checked) {
-            this.data.forEach((el: Person) => {
-                this.selectedEntitiesKeys.push(el.id);
-            });
-        } else {
-            this.isAllEntitiesSelected = false;
-        }
-    }
-
-    public onToggleAllEntities(checked: boolean): void {
-        this.isAllEntitiesSelected = checked;
-        this.onToggleExistingEntities(checked);
     }
 }
