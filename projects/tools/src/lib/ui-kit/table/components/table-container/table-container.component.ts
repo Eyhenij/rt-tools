@@ -12,12 +12,14 @@ import {
     Signal,
     TemplateRef,
     Type,
+    WritableSignal,
     booleanAttribute,
     contentChild,
     effect,
     inject,
     input,
     output,
+    signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -153,15 +155,6 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     public isActionsIconsOutlined: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
-    public isSelectorsShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
-        transform: booleanAttribute,
-    });
-    public isMultiSelect: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
-        transform: booleanAttribute,
-    });
-    public isAllEntitiesSelected: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
-        transform: booleanAttribute,
-    });
     public searchTerm: InputSignalWithTransform<Nullable<string>, Nullable<string>> = input<Nullable<string>, Nullable<string>>('', {
         transform: (value: Nullable<string>) => (isString(value) ? value.trim() : ''),
     });
@@ -175,7 +168,6 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     public readonly pageModelChange: OutputEmitterRef<Partial<PageModel>> = output<Partial<PageModel>>();
     public readonly searchChange: OutputEmitterRef<Nullable<string>> = output<Nullable<string>>();
     public readonly refreshAction: OutputEmitterRef<void> = output<void>();
-    public readonly toggleAllEntities: OutputEmitterRef<boolean> = output<boolean>();
 
     public readonly toolbarSelectorsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiTableToolbarSelectorsDirective, {
         read: TemplateRef,
@@ -183,6 +175,12 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     public readonly toolbarActionsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiTableToolbarActionsDirective, {
         read: TemplateRef,
     });
+
+    public readonly isMultiSelect: WritableSignal<boolean> = signal(true);
+    public readonly isSelectAllSelectorShown: WritableSignal<boolean> = signal(true);
+    public readonly isAllEntitiesSelected: WritableSignal<boolean> = signal(false);
+    public readonly isAllEntitiesIndeterminate: WritableSignal<boolean> = signal(false);
+    public readonly selectedEntitiesCount: WritableSignal<number> = signal(0);
 
     public readonly searchControl: FormControl<Nullable<string>> = new FormControl(null);
 
@@ -213,6 +211,8 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
             });
     }
 
+    public onToggleAllEntities: (checked: boolean) => void = (): void => {};
+
     public onPageModelChange(pageModel: Partial<PageModel>): void {
         this.pageModelChange.emit(pageModel);
     }
@@ -228,10 +228,6 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
         }
 
         this.refreshAction.emit();
-    }
-
-    public onToggleAllEntities(checked: boolean): void {
-        this.toggleAllEntities.emit(checked);
     }
 
     public onOpenConfigAside(): void {
