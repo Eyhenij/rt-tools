@@ -101,25 +101,10 @@ export class RtuiTableComponent<
     public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
         transform: booleanAttribute,
     });
-    public isSelectorsShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
-        transform: booleanAttribute,
-    });
-    public isSelectorsColumnDisabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
-        transform: booleanAttribute,
-    });
-    public isMultiSelect: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
-        transform: booleanAttribute,
-    });
     public isTableRowsClickable: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
     public keyExp: InputSignal<NonNullable<KEY>> = input('id' as NonNullable<KEY>);
-    public selectedEntitiesKeys: InputSignalWithTransform<ENTITY_TYPE[KEY][], ENTITY_TYPE[KEY][]> = input<
-        ENTITY_TYPE[KEY][],
-        ENTITY_TYPE[KEY][]
-    >([], {
-        transform: (value: ENTITY_TYPE[KEY][]) => transformArrayInput(value),
-    });
 
     public entities: InputSignalWithTransform<ENTITY_TYPE[], ENTITY_TYPE[]> = input.required<ENTITY_TYPE[], ENTITY_TYPE[]>({
         transform: (value: ENTITY_TYPE[]) => transformArrayInput(value),
@@ -129,11 +114,6 @@ export class RtuiTableComponent<
     public readonly rowClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
     public readonly rowDoubleClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
     public readonly sortChange: OutputEmitterRef<SortModel<SORT_PROPERTY>> = output<SortModel<SORT_PROPERTY>>();
-    public readonly toggleEntity: OutputEmitterRef<{ key: ENTITY_TYPE[KEY]; checked: boolean }> = output<{
-        key: ENTITY_TYPE[KEY];
-        checked: boolean;
-    }>();
-    public readonly toggleExistingEntities: OutputEmitterRef<boolean> = output<boolean>();
 
     public columns: Signal<Array<ITable.Column<ENTITY_TYPE>>> = computed(() => {
         return this.#tableConfigService.tableConfig().columns;
@@ -157,6 +137,12 @@ export class RtuiTableComponent<
         }
     );
 
+    public readonly selectedEntitiesIds: WritableSignal<ENTITY_TYPE[KEY][]> = signal([]);
+    public readonly isExistingEntitiesSelected: WritableSignal<boolean> = signal(false);
+    public readonly isExistingEntitiesIndeterminate: WritableSignal<boolean> = signal(false);
+    public readonly isMultiSelect: WritableSignal<boolean> = signal(true);
+    public readonly isSelectorsColumnShown: WritableSignal<boolean> = signal(false);
+    public readonly isSelectorsColumnDisabled: WritableSignal<boolean> = signal(false);
     public readonly activeRowIndex: WritableSignal<Nullable<number>> = signal(null);
 
     public onSortChange(sortModel: SortModel<string>): void {
@@ -180,11 +166,6 @@ export class RtuiTableComponent<
         this.rowDoubleClick.emit(row);
     }
 
-    public onToggleEntity(key: ENTITY_TYPE[KEY], checked: boolean): void {
-        this.toggleEntity.emit({ key, checked });
-    }
-
-    public onToggleExistingEntities(checked: boolean): void {
-        this.toggleExistingEntities.emit(checked);
-    }
+    public onToggleEntity: (entity: ENTITY_TYPE, checked: boolean) => void = (): void => {};
+    public onToggleExistingEntities: (checked: boolean) => void = (): void => {};
 }
