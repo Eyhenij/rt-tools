@@ -1,1 +1,10 @@
-<rtui-table [isMobile]="isMobile" [entities]="data" [currentSortModel]="sortModel" (sortChange)="sortChange($event)" />
+<rtui-table
+    rtTableSelectorsDirective
+    [isMultiSelect]="isMultiSelect"
+    [isSelectorColumnShown]="isSelectorsColumnShown"
+    [isSelectorsColumnDisabled]="isSelectorsColumnDisabled"
+    [isMobile]="isMobile"
+    [entities]="data"
+    [selectedEntitiesKeys]="selectedEntitiesIds"
+    [currentSortModel]="sortModel"
+    (sortChange)="sortChange($event)" />
