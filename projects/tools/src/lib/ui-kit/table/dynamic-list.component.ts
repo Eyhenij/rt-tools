@@ -13,6 +13,7 @@ import {
     contentChild,
     input,
     output,
+    viewChild,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
@@ -112,98 +113,101 @@ export class RtuiDynamicListRowAdditionalActionsDirective {}
         RtuiCustomTableCellsDirective,
     ],
 })
-export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown>, KEY extends Extract<keyof ENTITY_TYPE, string>> {
+export class RtuiDynamicListComponent<
+    ENTITY_TYPE extends Record<string, unknown>,
+    SORT_PROPERTY extends Extract<keyof ENTITY_TYPE, string>,
+    KEY extends Extract<keyof ENTITY_TYPE, string>,
+> {
     /** Table config storage key */
     public tableConfigStorageKey: InputSignalWithTransform<string, string> = input.required<string, string>({
         transform: transformStringInput,
     });
+    /** Indicates is mobile view */
     public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
         transform: booleanAttribute,
     });
+    /** Indicates is loading in progress */
     public loading: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
+    /** Indicates is fetching in progress */
     public fetching: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
+    /** Indicates is table rows clickable */
     public isTableRowsClickable: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
+    /** Indicates is pagination shown */
     public isPaginationShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
+    /** Indicates is refresh button shown */
     public isRefreshButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
+    /** Indicates is table config button shown */
     public isTableConfigButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
-    public isActionsIconsOutlined: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+    /** Indicates is toolbar buttons outlined */
+    public isToolbarActionsIconsOutlined: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
-    public isSelectorsShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
-        transform: booleanAttribute,
-    });
-    public isSelectorsColumnDisabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
-        transform: booleanAttribute,
-    });
-    public isMultiSelect: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
-        transform: booleanAttribute,
-    });
-    public isAllEntitiesSelected: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
-        transform: booleanAttribute,
-    });
+    /** Key of ENTITY_TYPE for compare entities */
     public keyExp: InputSignal<NonNullable<KEY>> = input('id' as NonNullable<KEY>);
-    public selectedEntitiesKeys: InputSignalWithTransform<ENTITY_TYPE[KEY][], ENTITY_TYPE[KEY][]> = input<
-        ENTITY_TYPE[KEY][],
-        ENTITY_TYPE[KEY][]
-    >([], {
-        transform: (value: ENTITY_TYPE[KEY][]) => transformArrayInput(value),
-    });
-
+    /** List of entities */
     public entities: InputSignalWithTransform<ENTITY_TYPE[], ENTITY_TYPE[]> = input.required<ENTITY_TYPE[], ENTITY_TYPE[]>({
         transform: (value: ENTITY_TYPE[]) => transformArrayInput(value),
     });
 
+    /** Current page model from store */
     public pageModel: InputSignal<PageModel> = input.required();
+    /** Current search term from store */
     public searchTerm: InputSignal<Nullable<string>> = input.required();
+    /** Current sort model from store */
     public currentSortModel: InputSignal<Nullable<SortModel<NonNullable<KEY>>>> = input.required();
 
     public appearance: InputSignal<MatFormFieldAppearance> = input.required({
         transform: (value: MatFormFieldAppearance) => (value === 'fill' ? 'fill' : 'outline'),
     });
 
+    /** Sort model change output action */
     public readonly sortChange: OutputEmitterRef<SortModel<NonNullable<KEY>>> = output<SortModel<NonNullable<KEY>>>();
+    /** Page model change output action */
     public readonly pageModelChange: OutputEmitterRef<Partial<PageModel>> = output<Partial<PageModel>>();
+    /** Search change output action */
     public readonly searchChange: OutputEmitterRef<Nullable<string>> = output<Nullable<string>>();
+    /** Refresh output action */
     public readonly refresh: OutputEmitterRef<void> = output<void>();
+    /** Row click output action */
     public readonly rowClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
+    /** Row doubleClick output action */
     public readonly rowDoubleClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
-    public readonly toggleEntity: OutputEmitterRef<{ key: ENTITY_TYPE[KEY]; checked: boolean }> = output<{
-        key: ENTITY_TYPE[KEY];
-        checked: boolean;
-    }>();
-    public readonly toggleExistingEntities: OutputEmitterRef<boolean> = output<boolean>();
-    public readonly toggleAllEntities: OutputEmitterRef<boolean> = output<boolean>();
 
+    /** Toolbar selectors template */
     public readonly toolbarSelectorsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(
         RtuiDynamicListToolbarSelectorsDirective,
         {
             read: TemplateRef,
         }
     );
+    /** Toolbar actions template */
     public readonly toolbarActionsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiDynamicListToolbarActionsDirective, {
         read: TemplateRef,
     });
+    /** Custom cells template */
     public readonly customCellsTpl: Signal<Nullable<RtuiDynamicListCustomTableCellsDirective<{ $implicit: ENTITY_TYPE }>>> = contentChild(
         RtuiDynamicListCustomTableCellsDirective
     );
+    /** Row actions template */
     public readonly rowActionsTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>> = contentChild(
         RtuiDynamicListRowActionsDirective,
         {
             read: TemplateRef,
         }
     );
+    /** Additional row actions template */
     public readonly additionalRowActionsTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>> = contentChild(
         RtuiDynamicListRowAdditionalActionsDirective,
         {
@@ -211,39 +215,40 @@ export class RtuiDynamicListComponent<ENTITY_TYPE extends Record<string, unknown
         }
     );
 
+    /** Table container for selectors directive */
+    public readonly tableContainerTpl: Signal<Nullable<RtuiTableContainerComponent<ENTITY_TYPE>>> =
+        viewChild<RtuiTableContainerComponent<ENTITY_TYPE>>(RtuiTableContainerComponent);
+    /** Table selector for selectors directive */
+    public readonly tableTpl: Signal<Nullable<RtuiTableComponent<ENTITY_TYPE, SORT_PROPERTY, KEY>>> =
+        viewChild<RtuiTableComponent<ENTITY_TYPE, SORT_PROPERTY, KEY>>(RtuiTableComponent);
+
+    /** Search change output action */
     public onSearchChange(value: Nullable<string>): void {
         this.searchChange.emit(value);
     }
 
+    /** Sort change output action */
     public onSortChange(sortModel: SortModel<NonNullable<KEY>>): void {
         this.sortChange.emit(sortModel);
     }
 
+    /** Page model change output action */
     public onPageModelChange(pageModel: Partial<PageModel>): void {
         this.pageModelChange.emit(pageModel);
     }
 
+    /** Refresh output action */
     public onRefresh(): void {
         this.refresh.emit();
     }
 
+    /** Row click output action */
     public onRowClick(row: ENTITY_TYPE): void {
         this.rowClick.emit(row);
     }
 
+    /** Row doubleClick output action */
     public onRowDoubleClick(row: ENTITY_TYPE): void {
         this.rowDoubleClick.emit(row);
-    }
-
-    public onToggleEntity(value: { key: ENTITY_TYPE[KEY]; checked: boolean }): void {
-        this.toggleEntity.emit(value);
-    }
-
-    public onToggleExistingEntities(checked: boolean): void {
-        this.toggleExistingEntities.emit(checked);
-    }
-
-    public onToggleAllEntities(checked: boolean): void {
-        this.toggleAllEntities.emit(checked);
     }
 }

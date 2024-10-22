@@ -12,12 +12,14 @@ import {
     Signal,
     TemplateRef,
     Type,
+    WritableSignal,
     booleanAttribute,
     contentChild,
     effect,
     inject,
     input,
     output,
+    signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -128,62 +130,84 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     public tableConfigStorageKey: InputSignalWithTransform<string, string> = input.required<string, string>({
         transform: transformStringInput,
     });
+    /** Current page model from store */
     public pageModel: InputSignal<PageModel> = input.required();
+    /** Indicates is mobile view */
     public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input.required<Nullable<boolean>, Nullable<boolean>>({
         transform: booleanAttribute,
     });
+    /** Indicates is loading in progress */
     public loading: InputSignalWithTransform<boolean, boolean> = input.required<boolean, boolean>({
         transform: booleanAttribute,
     });
+    /** Indicates is fetching in progress */
     public fetching: InputSignalWithTransform<boolean, boolean> = input.required<boolean, boolean>({
         transform: booleanAttribute,
     });
+    /** Indicates is placeholder shown */
     public isPlaceholderShown: InputSignalWithTransform<boolean, boolean> = input.required<boolean, boolean>({
         transform: booleanAttribute,
     });
+    /** Indicates is pagination shown */
     public isPaginationShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
+    /** Indicates is refresh button shown */
     public isRefreshButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
+    /** Indicates is table config button shown */
     public isTableConfigButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
-    public isActionsIconsOutlined: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+    /** Indicates is toolbar buttons outlined */
+    public isToolbarActionsIconsOutlined: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
-    public isSelectorsShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
-        transform: booleanAttribute,
-    });
-    public isMultiSelect: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
-        transform: booleanAttribute,
-    });
-    public isAllEntitiesSelected: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
-        transform: booleanAttribute,
-    });
+    /** Current search term from store */
     public searchTerm: InputSignalWithTransform<Nullable<string>, Nullable<string>> = input<Nullable<string>, Nullable<string>>('', {
         transform: (value: Nullable<string>) => (isString(value) ? value.trim() : ''),
     });
 
+    /** Current placeholder icon */
     public placeholderIcon: InputSignal<string> = input<string>('search');
+    /** Current placeholder title */
     public placeholderTitle: InputSignal<string> = input<string>('No Data Found');
 
+    /** Indicates is small tablet view */
     public readonly isSmallTablet: Signal<Nullable<boolean>> = this.#breakpointService.isSmallTablet;
+    /** Config for table */
     public readonly tableConfig: Signal<ITable.Config.Data<ENTITY_TYPE>> = this.#tableConfigService.tableConfig;
 
+    /** Page model change output action */
     public readonly pageModelChange: OutputEmitterRef<Partial<PageModel>> = output<Partial<PageModel>>();
+    /** Search change output action */
     public readonly searchChange: OutputEmitterRef<Nullable<string>> = output<Nullable<string>>();
+    /** Refresh output action */
     public readonly refreshAction: OutputEmitterRef<void> = output<void>();
-    public readonly toggleAllEntities: OutputEmitterRef<boolean> = output<boolean>();
 
+    /** Toolbar selectors template */
     public readonly toolbarSelectorsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiTableToolbarSelectorsDirective, {
         read: TemplateRef,
     });
+    /** Toolbar actions template */
     public readonly toolbarActionsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiTableToolbarActionsDirective, {
         read: TemplateRef,
     });
 
+    /** Fields specified by the directive */
+    /** Indicates is multiselect mod enabled */
+    public readonly isMultiSelect: WritableSignal<boolean> = signal(true);
+    /** Indicates is 'Select All' selector shown */
+    public readonly isSelectAllSelectorShown: WritableSignal<boolean> = signal(true);
+    /** Indicates is all entities selected */
+    public readonly isAllEntitiesSelected: WritableSignal<boolean> = signal(false);
+    /** Indicates is all entities indeterminate */
+    public readonly isAllEntitiesIndeterminate: WritableSignal<boolean> = signal(false);
+    /** Current selected entities count */
+    public readonly selectedEntitiesCount: WritableSignal<number> = signal(0);
+
+    /** Control for search */
     public readonly searchControl: FormControl<Nullable<string>> = new FormControl(null);
 
     public ngOnInit(): void {
@@ -213,15 +237,18 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
             });
     }
 
+    /** Page model change output action */
     public onPageModelChange(pageModel: Partial<PageModel>): void {
         this.pageModelChange.emit(pageModel);
     }
 
+    /** Clear search control and search change output action */
     public onClearSearch(): void {
         this.searchControl.patchValue(null);
         this.searchChange.emit('');
     }
 
+    /** Refresh output action */
     public onRefresh(): void {
         if (!this.isPaginationShown()) {
             this.onClearSearch();
@@ -230,10 +257,7 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
         this.refreshAction.emit();
     }
 
-    public onToggleAllEntities(checked: boolean): void {
-        this.toggleAllEntities.emit(checked);
-    }
-
+    /** Open table config aside */
     public onOpenConfigAside(): void {
         this.#asideService
             .Open<RtTableConfigAsideComponent<ENTITY_TYPE>, ITable.Config.Data<ENTITY_TYPE>, ITable.Config.Data<ENTITY_TYPE>>(
@@ -248,6 +272,9 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
                 this.#setScrollbarsVisibility();
             });
     }
+
+    /** Empty method, set in selectors directive */
+    public onToggleAllEntities: (checked: boolean) => void = (): void => {};
 
     /** Set scrollbar styles by config */
     #setScrollbarsVisibility(): void {

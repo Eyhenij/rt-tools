@@ -98,49 +98,40 @@ export class RtuiTableComponent<
 
     protected readonly columnTypes: typeof TABLE_COLUMN_TYPES_ENUM = TABLE_COLUMN_TYPES_ENUM;
 
+    /** Indicates is mobile view */
     public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
         transform: booleanAttribute,
     });
-    public isSelectorsShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
-        transform: booleanAttribute,
-    });
-    public isSelectorsColumnDisabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
-        transform: booleanAttribute,
-    });
-    public isMultiSelect: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
-        transform: booleanAttribute,
-    });
+    /** Indicates is table rows clickable */
     public isTableRowsClickable: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
+    /** Key of ENTITY_TYPE for compare entities */
     public keyExp: InputSignal<NonNullable<KEY>> = input('id' as NonNullable<KEY>);
-    public selectedEntitiesKeys: InputSignalWithTransform<ENTITY_TYPE[KEY][], ENTITY_TYPE[KEY][]> = input<
-        ENTITY_TYPE[KEY][],
-        ENTITY_TYPE[KEY][]
-    >([], {
-        transform: (value: ENTITY_TYPE[KEY][]) => transformArrayInput(value),
-    });
 
+    /** List of entities */
     public entities: InputSignalWithTransform<ENTITY_TYPE[], ENTITY_TYPE[]> = input.required<ENTITY_TYPE[], ENTITY_TYPE[]>({
         transform: (value: ENTITY_TYPE[]) => transformArrayInput(value),
     });
+    /** Current page model from store */
     public currentSortModel: InputSignal<Nullable<SortModel<SORT_PROPERTY>>> = input.required();
 
+    /** Row click output action */
     public readonly rowClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
+    /** Row doubleClick output action */
     public readonly rowDoubleClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
+    /** Sort change output action */
     public readonly sortChange: OutputEmitterRef<SortModel<SORT_PROPERTY>> = output<SortModel<SORT_PROPERTY>>();
-    public readonly toggleEntity: OutputEmitterRef<{ key: ENTITY_TYPE[KEY]; checked: boolean }> = output<{
-        key: ENTITY_TYPE[KEY];
-        checked: boolean;
-    }>();
-    public readonly toggleExistingEntities: OutputEmitterRef<boolean> = output<boolean>();
 
+    /** Columns config for table */
     public columns: Signal<Array<ITable.Column<ENTITY_TYPE>>> = computed(() => {
         return this.#tableConfigService.tableConfig().columns;
     });
 
+    /** Custom cells template */
     public readonly customCellsTpl: Signal<Nullable<RtuiCustomTableCellsDirective<ENTITY_TYPE>>> =
         contentChild(RtuiCustomTableCellsDirective);
+    /** Row actions template */
     public readonly rowActionsTpl: Signal<
         Nullable<
             TemplateRef<{
@@ -150,6 +141,7 @@ export class RtuiTableComponent<
     > = contentChild(RtuiTableRowActionsDirective, {
         read: TemplateRef,
     });
+    /** Additional row actions template */
     public readonly additionalRowActionsTpl: Signal<Nullable<TemplateRef<RtuiTableAdditionalRowActionsDirective>>> = contentChild(
         RtuiTableAdditionalRowActionsDirective,
         {
@@ -157,34 +149,49 @@ export class RtuiTableComponent<
         }
     );
 
+    /** Fields specified by the directive */
+    /** List of selected entities ids */
+    public readonly selectedEntitiesIds: WritableSignal<ENTITY_TYPE[KEY][]> = signal([]);
+    /** Indicates is all page entities selected */
+    public readonly isPageEntitiesSelected: WritableSignal<boolean> = signal(false);
+    /** Indicates is some page entities selected */
+    public readonly isPageEntitiesIndeterminate: WritableSignal<boolean> = signal(false);
+    /** Indicates is multiselect mod enabled */
+    public readonly isMultiSelect: WritableSignal<boolean> = signal(true);
+    /** Indicates is selectors column shown */
+    public readonly isSelectorsColumnShown: WritableSignal<boolean> = signal(false);
+    /** Indicates is selectors column disabled */
+    public readonly isSelectorsColumnDisabled: WritableSignal<boolean> = signal(false);
+    /** Current row index */
     public readonly activeRowIndex: WritableSignal<Nullable<number>> = signal(null);
 
+    /** Sort change output action */
     public onSortChange(sortModel: SortModel<string>): void {
         // TODO: add type guard
         this.sortChange.emit(sortModel as SortModel<SORT_PROPERTY>);
     }
 
+    /** Open row actions menu */
     public onMenuOpen(index: number): void {
         this.activeRowIndex.set(index);
     }
 
+    /** Close row actions menu */
     public onMenuClose(): void {
         this.activeRowIndex.set(null);
     }
 
+    /** Row click output action */
     public onRowClick(row: NonNullable<ENTITY_TYPE>): void {
         this.rowClick.emit(row);
     }
 
+    /** Row doubleClick output action */
     public onRowDoubleClick(row: NonNullable<ENTITY_TYPE>): void {
         this.rowDoubleClick.emit(row);
     }
 
-    public onToggleEntity(key: ENTITY_TYPE[KEY], checked: boolean): void {
-        this.toggleEntity.emit({ key, checked });
-    }
-
-    public onToggleExistingEntities(checked: boolean): void {
-        this.toggleExistingEntities.emit(checked);
-    }
+    /** Empty methods set in selectors directive */
+    public onToggleEntity: (entity: ENTITY_TYPE, checked: boolean) => void = (): void => {};
+    public onTogglePageEntities: (checked: boolean) => void = (): void => {};
 }

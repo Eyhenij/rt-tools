@@ -5,6 +5,10 @@ import { Meta, StoryObj, applicationConfig } from '@storybook/angular';
 import { LIST_SORT_ORDER_ENUM } from '../../util/list-sort-order.enum';
 import TestDynamicListComponent from '../dynamic-list/test-dynamic-list.component';
 import { createPersonList } from '../mocks';
+import { Person } from '../types';
+
+const data: Person[] = createPersonList(20);
+const selectedEntitiesIds: number[] = [data[0].id, data[3].id];
 
 export default {
     title: 'Components/DynamicList',
@@ -23,14 +27,13 @@ export const ManyItems: Story = {
         isMobile: false,
         loading: false,
         fetching: false,
-        isRefreshButtonShown: true,
-        isSelectorsShown: true,
-        isSelectorsColumnDisabled: false,
         isMultiSelect: true,
-        isAllEntitiesSelected: false,
+        isSelectAllSelectorShown: true,
+        isSelectorsColumnDisabled: false,
+        isRefreshButtonShown: true,
         isTableRowsClickable: true,
-        data: createPersonList(20),
-        selectedEntitiesKeys: [],
+        data: data,
+        selectedEntitiesIds: selectedEntitiesIds,
         pageModel: {
             pageNumber: 1,
             pageSize: 10,
@@ -58,7 +61,7 @@ export const FewItems: Story = {
         isAllEntitiesSelected: false,
         isTableRowsClickable: true,
         data: createPersonList(11),
-        selectedEntitiesKeys: [],
+        selectedEntitiesIds: [],
         pageModel: {
             pageNumber: 1,
             pageSize: 20,
@@ -84,7 +87,7 @@ export const NoItems: Story = {
         isAllEntitiesSelected: false,
         isTableRowsClickable: true,
         data: [],
-        selectedEntitiesKeys: [],
+        selectedEntitiesIds: [],
         pageModel: {
             pageNumber: 1,
             pageSize: 10,
