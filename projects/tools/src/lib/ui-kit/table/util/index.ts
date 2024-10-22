@@ -11,3 +11,4 @@ export * from './table-config.service';
 
 // directives
 export * from './dynamic-list-selectors.directive';
+export * from './table-selectors.directive';

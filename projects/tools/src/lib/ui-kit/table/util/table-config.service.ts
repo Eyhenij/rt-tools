@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { take } from 'rxjs/operators';
 
 import { IDBStorageService } from '../../../idb-storage';
-import { Nullable } from '../../../util';
+import { Nullable, areArraysEqual } from '../../../util';
 import { ITable } from './index';
 
 @Injectable()
@@ -35,7 +35,7 @@ export class RtTableConfigService<ENTITY_TYPE> {
                         columns: Array<Partial<ITable.Column<ENTITY_TYPE>>>;
                     }>
                 ) => {
-                    if (savedConfig?.columns) {
+                    if (savedConfig?.columns && this.#checkIsSavedConfigConsistent(config, savedConfig.columns)) {
                         const updatedColumns: Array<ITable.Column<ENTITY_TYPE> & { orderIndex: number }> = savedConfig?.columns.map(
                             (el: Partial<ITable.Column<ENTITY_TYPE> & { orderIndex: number }>) => {
                                 const oldConfigIem: Nullable<ITable.Column<ENTITY_TYPE>> = config.find(
@@ -90,5 +90,20 @@ export class RtTableConfigService<ENTITY_TYPE> {
 
     public deleteConfig(storageKey: string): void {
         this.#iDBStorageService.remove(storageKey).pipe(take(1), takeUntilDestroyed(this.#destroyRef)).subscribe();
+    }
+
+    #checkIsSavedConfigConsistent(
+        defaultConfig: Array<ITable.Column<ENTITY_TYPE>>,
+        savedConfig: Array<Partial<ITable.Column<ENTITY_TYPE>>>
+    ): boolean {
+        return (
+            !!defaultConfig?.length &&
+            !!savedConfig?.length &&
+            defaultConfig.length === savedConfig.length &&
+            areArraysEqual(
+                defaultConfig.map((el: ITable.Column<ENTITY_TYPE>) => el.propName).sort(),
+                savedConfig.map((el: Partial<ITable.Column<ENTITY_TYPE>>) => el.propName).sort()
+            )
+        );
     }
 }

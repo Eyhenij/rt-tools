@@ -200,6 +200,8 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     public readonly isMultiSelect: WritableSignal<boolean> = signal(true);
     /** Indicates is 'Select All' selector shown */
     public readonly isSelectAllSelectorShown: WritableSignal<boolean> = signal(true);
+    /** Indicates is 'Select All' selector disabled */
+    public readonly isSelectAllSelectorDisabled: WritableSignal<boolean> = signal(false);
     /** Indicates is all entities selected */
     public readonly isAllEntitiesSelected: WritableSignal<boolean> = signal(false);
     /** Indicates is all entities indeterminate */
