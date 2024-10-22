@@ -11,6 +11,10 @@ $table-container: (
     selector-label-hover: (
         color: var(--clr-black-100),
     ),
+    selector-counter: (
+        color: var(--clr-black-60),
+        font-size: 0.875rem,
+    ),
     toolbar-mobile: (
         gap: 1rem,
     ),
@@ -99,6 +103,11 @@ $table-container: (
                 &:hover {
                     color: var(--rt-table-container-selector-label-hover-color);
                 }
+            }
+
+            &-counter {
+                font-size: var(--rt-table-container-selector-counter-font-size);
+                color: var(--rt-table-container-selector-counter-color);
             }
         }
 

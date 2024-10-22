@@ -1,15 +1,14 @@
 <table rtBlock="c-table">
     <thead>
         <tr>
-            @if (isSelectorsShown()) {
-                <th rtElem="cell" rtMod="selectable">
+            @if (isSelectorsColumnShown()) {
+                <th rtElem="cell" rtMod="selectable" (click)="$event.stopPropagation()" (dblclick)="$event.stopPropagation()">
                     @if (isMultiSelect()) {
                         <mat-checkbox
                             [disabled]="isSelectorsColumnDisabled()"
-                            [checked]="selectedEntitiesKeys().length === entities().length"
-                            [indeterminate]="!!selectedEntitiesKeys().length && selectedEntitiesKeys().length < entities().length"
-                            (click)="$event.stopPropagation()"
-                            (change)="onToggleExistingEntities($event.checked)" />
+                            [checked]="isPageEntitiesSelected()"
+                            [indeterminate]="isPageEntitiesIndeterminate() && !isPageEntitiesSelected()"
+                            (change)="onTogglePageEntities($event.checked)" />
                     }
                 </th>
             }
@@ -38,20 +37,18 @@
                 }"
                 (dblclick)="isTableRowsClickable() ? onRowDoubleClick(row) : $event.stopPropagation()"
                 (click)="isTableRowsClickable() ? onRowClick(row) : $event.stopPropagation()">
-                @if (isSelectorsShown()) {
-                    <td rtElem="cell">
+                @if (isSelectorsColumnShown()) {
+                    <td rtElem="cell" (click)="$event.stopPropagation()" (dblclick)="$event.stopPropagation()">
                         @if (isMultiSelect()) {
                             <mat-checkbox
                                 [disabled]="isSelectorsColumnDisabled()"
-                                [checked]="selectedEntitiesKeys().includes(row[keyExp()])"
-                                (click)="$event.stopPropagation()"
-                                (change)="onToggleEntity(row[keyExp()], $event.checked)" />
+                                [checked]="selectedEntitiesIds().includes(row[keyExp()])"
+                                (change)="onToggleEntity(row, $event.checked)" />
                         } @else {
                             <mat-radio-button
                                 [disabled]="isSelectorsColumnDisabled()"
-                                [checked]="selectedEntitiesKeys().includes(row[keyExp()])"
-                                (click)="$event.stopPropagation()"
-                                (change)="onToggleEntity(row[keyExp()], true)" />
+                                [checked]="selectedEntitiesIds().includes(row[keyExp()])"
+                                (change)="onToggleEntity(row, true)" />
                         }
                     </td>
                 }
