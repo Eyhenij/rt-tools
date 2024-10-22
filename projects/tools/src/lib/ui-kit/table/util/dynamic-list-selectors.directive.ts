@@ -137,8 +137,7 @@ export class RtDynamicListSelectorsDirective<
             () => {
                 /** Set 'onToggleAllEntities' method in TableContainerComponent  */
                 if (this.#dynamicListRef.tableContainerTpl()?.onToggleAllEntities) {
-                    // @ts-expect-error eslint-disable-next-line
-                    this.#dynamicListRef.tableContainerTpl().onToggleAllEntities = (checked: boolean): void =>
+                    this.#dynamicListRef.tableContainerTpl()!.onToggleAllEntities = (checked: boolean): void =>
                         this.toggleAllEntities(checked);
                 }
             },
@@ -198,12 +197,10 @@ export class RtDynamicListSelectorsDirective<
                 if (this.#dynamicListRef.tableTpl()) {
                     this.#dynamicListRef.tableTpl()?.isSelectorsColumnShown.set(true);
 
-                    // @ts-expect-error eslint-disable-next-line
-                    this.#dynamicListRef.tableTpl().onToggleEntity = (entity: ENTITY_TYPE, checked: boolean): void =>
+                    this.#dynamicListRef.tableTpl()!.onToggleEntity = (entity: ENTITY_TYPE, checked: boolean): void =>
                         this.toggleEntity(entity, checked);
 
-                    // @ts-expect-error eslint-disable-next-line
-                    this.#dynamicListRef.tableTpl().onTogglePageEntities = (checked: boolean): void => this.togglePageEntities(checked);
+                    this.#dynamicListRef.tableTpl()!.onTogglePageEntities = (checked: boolean): void => this.togglePageEntities(checked);
                 }
             },
             { injector: this.#injector, allowSignalWrites: true }
