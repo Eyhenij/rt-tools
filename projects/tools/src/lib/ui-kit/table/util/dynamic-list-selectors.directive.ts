@@ -17,28 +17,26 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 
 import { filter, switchMap, take } from 'rxjs/operators';
 
-import { transformArrayInput } from '../../../util';
 import { RtuiDynamicListComponent } from '../dynamic-list.component';
+import { RtCommonSelectorsDirective } from './common-selectors.directive';
 
 @Directive({
     standalone: true,
     selector: 'rtui-dynamic-list[rtDynamicListSelectorsDirective]',
 })
 export class RtDynamicListSelectorsDirective<
-    ENTITY_TYPE extends Record<string, unknown>,
-    SORT_PROPERTY extends Extract<keyof ENTITY_TYPE, string>,
-    KEY extends Extract<keyof ENTITY_TYPE, string>,
-> implements OnInit
+        ENTITY_TYPE extends Record<string, unknown>,
+        SORT_PROPERTY extends Extract<keyof ENTITY_TYPE, string>,
+        KEY extends Extract<keyof ENTITY_TYPE, string>,
+    >
+    extends RtCommonSelectorsDirective<ENTITY_TYPE, KEY>
+    implements OnInit
 {
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #injector: Injector = inject(Injector);
     readonly #dynamicListRef: RtuiDynamicListComponent<ENTITY_TYPE, SORT_PROPERTY, KEY> =
         inject<RtuiDynamicListComponent<ENTITY_TYPE, SORT_PROPERTY, KEY>>(RtuiDynamicListComponent);
 
-    /** Indicates is multiselect available */
-    public isMultiSelect: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
-        transform: booleanAttribute,
-    });
     /** Indicates is multiselect extended mod available (use selected and excluded lists) */
     public isMultiSelectExtendedMod: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
@@ -46,17 +44,6 @@ export class RtDynamicListSelectorsDirective<
     /** Indicates is 'Select all' checkbox shown  */
     public isSelectAllSelectorShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
-    });
-    /** Indicates is selectors column disabled */
-    public isSelectorsColumnDisabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
-        transform: booleanAttribute,
-    });
-    /** Selected entities Ids on init */
-    public selectedEntitiesKeys: InputSignalWithTransform<ENTITY_TYPE[KEY][], ENTITY_TYPE[KEY][]> = input<
-        ENTITY_TYPE[KEY][],
-        ENTITY_TYPE[KEY][]
-    >([], {
-        transform: (value: ENTITY_TYPE[KEY][]) => transformArrayInput(value),
     });
 
     /** List of selected entities for processing */
@@ -72,10 +59,6 @@ export class RtDynamicListSelectorsDirective<
     /** Indicates is multi select extended mod enabled  for processing */
     #isMultiSelectExtendedModEnabled: WritableSignal<boolean> = signal(false);
 
-    /** Key of ENTITY_TYPE for compare entities */
-    public readonly keyExp: WritableSignal<NonNullable<KEY>> = signal('id' as NonNullable<KEY>);
-    /** Current list of entities */
-    public readonly entities: WritableSignal<ENTITY_TYPE[]> = signal([]);
     /** List of selected entities */
     public readonly selectedEntities: Signal<ENTITY_TYPE[]> = this.#selectedEntities.asReadonly();
     /** List of excluded entities */
@@ -108,7 +91,7 @@ export class RtDynamicListSelectorsDirective<
                 this.entities.set(list);
 
                 if (this.isMultiSelectExtendedModEnabled()) {
-                    this.#selectedEntities.update((selected: ENTITY_TYPE[]) => this.#addPageEntitiesToListExcludeDuplicates(selected));
+                    this.#selectedEntities.update((selected: ENTITY_TYPE[]) => this.addPageEntitiesToListExcludeDuplicates(selected));
                     this.#isPageEntitiesSelected.set(!this.excludedEntities().length);
                     this.#isAllEntitiesSelected.set(!this.excludedEntities().length);
                 }
@@ -186,6 +169,19 @@ export class RtDynamicListSelectorsDirective<
             { injector: this.#injector, allowSignalWrites: true }
         );
 
+        effect(
+            () => {
+                /** Set 'isSelectAllSelectorDisabled' indicator state in TableContainerComponent  */
+                if (
+                    this.#dynamicListRef?.tableContainerTpl() &&
+                    this.#dynamicListRef?.tableContainerTpl()?.isSelectAllSelectorDisabled() !== this.isSelectorsColumnDisabled()
+                ) {
+                    this.#dynamicListRef?.tableContainerTpl()?.isSelectAllSelectorDisabled.set(this.isSelectorsColumnDisabled());
+                }
+            },
+            { injector: this.#injector, allowSignalWrites: true }
+        );
+
         /** Table config */
         effect(
             () => {
@@ -252,29 +248,29 @@ export class RtDynamicListSelectorsDirective<
 
         if (checked) {
             /** Add page entities to selected list */
-            this.#selectedEntities.update((selected: ENTITY_TYPE[]) => this.#addPageEntitiesToListExcludeDuplicates(selected));
+            this.#selectedEntities.update((selected: ENTITY_TYPE[]) => this.addPageEntitiesToListExcludeDuplicates(selected));
 
             /** Remove page entities from excluded list */
             if (this.isMultiSelectExtendedModEnabled()) {
-                this.#excludedEntities.update((selected: ENTITY_TYPE[]) => this.#removePageEntitiesFromList(selected));
+                this.#excludedEntities.update((selected: ENTITY_TYPE[]) => this.removePageEntitiesFromList(selected));
 
                 /** Set 'isAllEntitiesSelected' indicator state */
                 this.#isAllEntitiesSelected.set(!this.excludedEntities()?.length);
             }
         } else {
             /** Remove page entities from selected list */
-            this.#selectedEntities.update((selected: ENTITY_TYPE[]) => this.#removePageEntitiesFromList(selected));
+            this.#selectedEntities.update((selected: ENTITY_TYPE[]) => this.removePageEntitiesFromList(selected));
 
             /** Add page entities to excluded list */
             if (this.isMultiSelectExtendedModEnabled()) {
-                this.#excludedEntities.update((selected: ENTITY_TYPE[]) => this.#addPageEntitiesToListExcludeDuplicates(selected));
+                this.#excludedEntities.update((selected: ENTITY_TYPE[]) => this.addPageEntitiesToListExcludeDuplicates(selected));
             }
             /** Set 'isAllEntitiesSelected' indicator state */
             this.#isAllEntitiesSelected.set(false);
         }
 
         /** Set 'isPageEntitiesIndeterminate' indicator state */
-        this.#isPageEntitiesIndeterminate.set(this.#isOneExistOnPage());
+        this.#isPageEntitiesIndeterminate.set(this.isOneExistOnPage(this.selectedEntitiesIds()));
     }
 
     /** Change selected and excluded lists and set is existing selected and is all selected states */
@@ -326,11 +322,11 @@ export class RtDynamicListSelectorsDirective<
 
         /** Set 'isPageEntitiesSelected' and 'isPageEntitiesIndeterminate' indicators states */
         if (updatedSelectedList?.length) {
-            this.#isPageEntitiesSelected.set(this.#isAllExistOnPage());
+            this.#isPageEntitiesSelected.set(this.isAllExistOnPage(this.selectedEntitiesIds()));
             this.#isPageEntitiesIndeterminate.set(true);
         } else {
             this.#isPageEntitiesSelected.set(false);
-            this.#isPageEntitiesIndeterminate.set(this.#isOneExistOnPage());
+            this.#isPageEntitiesIndeterminate.set(this.isOneExistOnPage(this.selectedEntitiesIds()));
         }
     }
 
@@ -349,30 +345,7 @@ export class RtDynamicListSelectorsDirective<
 
     /** Set is existing selected and indeterminate state */
     public setExistingEntitiesState(): void {
-        this.#isPageEntitiesSelected.set(this.#isAllExistOnPage());
-        this.#isPageEntitiesIndeterminate.set(this.#isOneExistOnPage());
-    }
-
-    /** Add page entities to list exclude duplicates */
-    #addPageEntitiesToListExcludeDuplicates(list: ENTITY_TYPE[]): ENTITY_TYPE[] {
-        return [...list, ...this.entities()].filter((el: ENTITY_TYPE, index: number, self: ENTITY_TYPE[]) => {
-            return index === self.findIndex((_: ENTITY_TYPE) => _[this.keyExp()] === el[this.keyExp()]);
-        });
-    }
-
-    /** Remove page entities from list */
-    #removePageEntitiesFromList(list: ENTITY_TYPE[]): ENTITY_TYPE[] {
-        const removedEntitiesIds: ENTITY_TYPE[KEY][] = this.entities().map((el: ENTITY_TYPE) => el[this.keyExp()]);
-        return list.filter((el: ENTITY_TYPE) => !removedEntitiesIds.includes(el[this.keyExp()]));
-    }
-
-    /** Check is one of page entities exist in selected entities */
-    #isOneExistOnPage(): boolean {
-        return !!this.entities().find((el: ENTITY_TYPE) => this.selectedEntitiesIds().includes(el[this.keyExp()]));
-    }
-
-    /** Check is all page entities exist in selected entities */
-    #isAllExistOnPage(): boolean {
-        return !this.entities().find((el: ENTITY_TYPE) => !this.selectedEntitiesIds().includes(el[this.keyExp()]));
+        this.#isPageEntitiesSelected.set(this.isAllExistOnPage(this.selectedEntitiesIds()));
+        this.#isPageEntitiesIndeterminate.set(this.isOneExistOnPage(this.selectedEntitiesIds()));
     }
 }

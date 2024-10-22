@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/cor
 
 import { IDBStorageService } from '../../../../idb-storage';
 import { RtuiTableComponent } from '../../components';
+import { RtTableSelectorsDirective } from '../../util';
 import { LIST_SORT_ORDER_ENUM } from '../../util/list-sort-order.enum';
 import { SortModel } from '../../util/lists.interface';
-import { ITable } from '../../util/table-column.interface';
 import { RtTableConfigService } from '../../util/table-config.service';
 import { COLUMNS } from '../constants';
 import { Person } from '../types';
@@ -18,15 +18,19 @@ import { Person } from '../types';
     imports: [
         // components
         RtuiTableComponent,
+        RtTableSelectorsDirective,
     ],
     providers: [IDBStorageService, RtTableConfigService],
 })
 export default class TestTableComponent implements OnInit {
     readonly #tableConfigService: RtTableConfigService<Person> = inject(RtTableConfigService);
 
+    public isMultiSelect: boolean = true;
+    public isSelectorsColumnShown: boolean = true;
+    public isSelectorsColumnDisabled: boolean = false;
     public isMobile: boolean = false;
     public data: Person[] = [];
-    public columns: ITable.Column<Person>[] = [];
+    public selectedEntitiesIds: number[] = [];
     public sortModel: SortModel<keyof Person> = {
         propertyName: 'id',
         sortDirection: LIST_SORT_ORDER_ENUM.ASC,

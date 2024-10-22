@@ -16,6 +16,7 @@
                                         <mat-checkbox
                                             [checked]="isAllEntitiesSelected()"
                                             [indeterminate]="!isAllEntitiesSelected() && isAllEntitiesIndeterminate()"
+                                            [disabled]="isSelectAllSelectorDisabled()"
                                             (click)="$event.stopPropagation()"
                                             (change)="onToggleAllEntities($event.checked)">
                                             <div rtElem="selectors-label">Select all</div>
@@ -40,6 +41,8 @@
                                         @if (isMultiSelect()) {
                                             <mat-checkbox
                                                 [checked]="isAllEntitiesSelected()"
+                                                [indeterminate]="!isAllEntitiesSelected() && isAllEntitiesIndeterminate()"
+                                                [disabled]="isSelectAllSelectorDisabled()"
                                                 (click)="$event.stopPropagation()"
                                                 (change)="onToggleAllEntities($event.checked)">
                                                 <div rtElem="selectors-label">Select all</div>
