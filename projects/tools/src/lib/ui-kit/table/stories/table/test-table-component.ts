@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Injector, OnInit, Signal, effect, inject, viewChild } from '@angular/core';
 
 import { IDBStorageService } from '../../../../idb-storage';
+import { Nullable } from '../../../../util';
 import { RtuiTableComponent } from '../../components';
 import { RtTableSelectorsDirective } from '../../util';
 import { LIST_SORT_ORDER_ENUM } from '../../util/list-sort-order.enum';
@@ -24,6 +25,7 @@ import { Person } from '../types';
 })
 export default class TestTableComponent implements OnInit {
     readonly #tableConfigService: RtTableConfigService<Person> = inject(RtTableConfigService);
+    readonly #injector: Injector = inject(Injector);
 
     public isMultiSelect: boolean = true;
     public isSelectorsColumnShown: boolean = true;
@@ -37,8 +39,21 @@ export default class TestTableComponent implements OnInit {
     };
     public storageKey: string = 'tableManyItemsKey';
 
+    public readonly dynamicListTpl: Signal<Nullable<RtTableSelectorsDirective<Person, keyof Person, 'id'>>> =
+        viewChild<RtTableSelectorsDirective<Person, keyof Person, 'id'>>(RtTableSelectorsDirective);
+
     public ngOnInit(): void {
         this.#tableConfigService.initConfig(this.storageKey, COLUMNS);
+
+        effect(
+            () => {
+                if (this.dynamicListTpl()?.selectedEntities()) {
+                    // eslint-disable-next-line no-console
+                    console.warn('selectedEntities:', this.dynamicListTpl()?.selectedEntities());
+                }
+            },
+            { injector: this.#injector, allowSignalWrites: true }
+        );
     }
 
     public sortChange(sortModel: SortModel<keyof Person>): SortModel<keyof Person> {
