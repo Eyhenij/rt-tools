@@ -7,8 +7,8 @@ import TestDynamicListComponent from '../dynamic-list/test-dynamic-list.componen
 import { createPersonList } from '../mocks';
 import { Person } from '../types';
 
-const data: Person[] = createPersonList(20);
-const selectedEntitiesIds: number[] = [data[0].id, data[3].id];
+const manyItems: Person[] = createPersonList(20);
+const fewItems: Person[] = createPersonList(11);
 
 export default {
     title: 'Components/DynamicList',
@@ -32,8 +32,8 @@ export const ManyItems: Story = {
         isSelectorsColumnDisabled: false,
         isRefreshButtonShown: true,
         isTableRowsClickable: true,
-        data: data,
-        selectedEntitiesIds: selectedEntitiesIds,
+        data: manyItems,
+        selectedEntitiesIds: [manyItems[0].id, manyItems[3].id],
         pageModel: {
             pageNumber: 1,
             pageSize: 10,
@@ -57,11 +57,11 @@ export const FewItems: Story = {
         isRefreshButtonShown: true,
         isSelectorsShown: true,
         isSelectorsColumnDisabled: false,
-        isMultiSelect: true,
+        isMultiSelect: false,
         isAllEntitiesSelected: false,
         isTableRowsClickable: true,
-        data: createPersonList(11),
-        selectedEntitiesIds: [],
+        data: fewItems,
+        selectedEntitiesIds: [fewItems[1].id],
         pageModel: {
             pageNumber: 1,
             pageSize: 20,
