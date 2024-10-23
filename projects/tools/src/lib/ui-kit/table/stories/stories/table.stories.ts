@@ -7,8 +7,8 @@ import { createPersonList } from '../mocks';
 import TestTableComponent from '../table/test-table-component';
 import { Person } from '../types';
 
-const data: Person[] = createPersonList(20);
-const selectedEntitiesIds: number[] = [data[0].id, data[3].id];
+const manyItems: Person[] = createPersonList(20);
+const fewItems: Person[] = createPersonList(11);
 
 export default {
     title: 'Components/Table',
@@ -28,8 +28,8 @@ export const ManyItems: Story = {
         isSelectorsColumnShown: true,
         isSelectorsColumnDisabled: false,
         isMobile: false,
-        data: data,
-        selectedEntitiesIds,
+        data: manyItems,
+        selectedEntitiesIds: [manyItems[0].id, manyItems[3].id],
         sortModel: {
             propertyName: 'id',
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,
@@ -39,11 +39,12 @@ export const ManyItems: Story = {
 
 export const FewItems: Story = {
     args: {
-        isMultiSelect: true,
+        isMultiSelect: false,
         isSelectorsColumnShown: true,
         isSelectorsColumnDisabled: false,
         isMobile: false,
-        data: createPersonList(5),
+        data: fewItems,
+        selectedEntitiesIds: [fewItems[1].id],
         sortModel: {
             propertyName: 'id',
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,

@@ -136,6 +136,12 @@ export class RtTableSelectorsDirective<
 
     /** Change selected and excluded lists and set is existing selected and is all selected states */
     public toggleEntity(entity: ENTITY_TYPE, checked: boolean): void {
+        /** Set one entity in selected list if not multi select mod */
+        if (!this.isMultiSelect()) {
+            this.#selectedEntities.set([entity]);
+            return;
+        }
+
         const updatedSelectedList: ENTITY_TYPE[] = [];
 
         /** Fill updatedSelectedList  */

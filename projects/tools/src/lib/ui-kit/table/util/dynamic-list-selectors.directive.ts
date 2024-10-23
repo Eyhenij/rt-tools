@@ -91,10 +91,15 @@ export class RtDynamicListSelectorsDirective<
                 this.entities.set(list);
 
                 if (this.isMultiSelectExtendedModEnabled()) {
-                    this.#selectedEntities.update((selected: ENTITY_TYPE[]) => this.addPageEntitiesToListExcludeDuplicates(selected));
-                    this.#isPageEntitiesSelected.set(!this.excludedEntities().length);
+                    this.#selectedEntities.update((selected: ENTITY_TYPE[]) => {
+                        return this.addPageEntitiesToListExcludeDuplicates(selected).filter(
+                            (el: ENTITY_TYPE) => !this.excludedEntitiesIds().includes(el[this.keyExp()])
+                        );
+                    });
                     this.#isAllEntitiesSelected.set(!this.excludedEntities().length);
                 }
+
+                this.setExistingEntitiesState();
             });
 
         /** Set initial selected entities */
@@ -272,6 +277,12 @@ export class RtDynamicListSelectorsDirective<
 
     /** Change selected and excluded lists and set is existing selected and is all selected states */
     public toggleEntity(entity: ENTITY_TYPE, checked: boolean): void {
+        /** Set one entity in selected list if not multi select mod */
+        if (!this.isMultiSelect()) {
+            this.#selectedEntities.set([entity]);
+            return;
+        }
+
         const updatedSelectedList: ENTITY_TYPE[] = [];
         const updatedExcludedList: ENTITY_TYPE[] = [];
 
