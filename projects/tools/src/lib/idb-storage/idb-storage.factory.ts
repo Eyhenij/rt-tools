@@ -6,6 +6,6 @@ import { IDBStorageService } from './idb-storage-service';
  *
  * @returns a new instance of IDBStorageService
  */
-export function iDBStorageService(): IDBStorageService<Record<string, unknown>> {
+export function iDBStorageFactory(): IDBStorageService<Record<string, unknown>> {
     return new IDBStorageService();
 }

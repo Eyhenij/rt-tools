@@ -1,6 +1,7 @@
 import { Provider } from '@angular/core';
 
-import { iDBStorageService } from './idb-storage.factory';
+import { IDBStorageService } from './idb-storage-service';
+import { iDBStorageFactory } from './idb-storage.factory';
 import { IDB_STORAGE_SERVICE_TOKEN } from './token/idb-storage.token';
 
 /**
@@ -17,7 +18,7 @@ import { IDB_STORAGE_SERVICE_TOKEN } from './token/idb-storage.token';
  * ```typescript
  * bootstrapApplication(RootComponent, {
  *   providers: [
- *     provideRtStorage()
+ *     provideRtIDBStorage()
  *   ]
  * });
  * ```
@@ -28,7 +29,8 @@ export function provideRtIDBStorage(): Provider[] {
     return [
         {
             provide: IDB_STORAGE_SERVICE_TOKEN,
-            useFactory: iDBStorageService,
+            useFactory: iDBStorageFactory,
         },
+        IDBStorageService,
     ];
 }
