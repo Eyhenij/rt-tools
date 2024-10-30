@@ -2,7 +2,15 @@
 
 $dynamic-selector-list-actions: (
     host: (
-        padding-right: 1rem,
+        padding-right: 0.25rem,
+    ),
+    control: (
+        padding: 0 0.25rem 0 0.25rem,
+        border-right: none,
+    ),
+    control-last-child: (
+        padding: 0 0 0 0.25rem,
+        border-right: none,
     ),
     item-icon: (
         size: 1.125rem,
@@ -29,6 +37,16 @@ $dynamic-selector-list-actions: (
         align-items: center;
         margin-left: auto;
         padding-right: var(--rt-dynamic-selector-list-actions-padding-right);
+
+        &__control {
+            padding: var(--rt-dynamic-selector-list-actions-control-padding);
+            border-right: var(--rt-dynamic-selector-list-actions-control-border-right);
+
+            &:last-child {
+                padding: var(--rt-dynamic-selector-item-control-last-child-padding);
+                border-right: var(--rt-dynamic-selector-item-control-last-child-border-right);
+            }
+        }
 
         &__item {
             &--active {
