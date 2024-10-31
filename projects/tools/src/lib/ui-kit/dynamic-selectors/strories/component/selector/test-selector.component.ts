@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, WritableSignal, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
@@ -68,6 +68,8 @@ export class TestSelectorComponent implements OnInit {
     public entities: Person[] = [];
     public readonlyEntitiesKeys: number[] = [1, 3, 5];
 
+    public chosenEntities: WritableSignal<Person[]> = signal(listOfPersons.slice(0, 5));
+
     public ngOnInit(): void {
         this.form.patchValue(listOfPersons.slice(0, 5).map((el: Person) => el.id));
 
@@ -79,6 +81,13 @@ export class TestSelectorComponent implements OnInit {
 
     public onAdditionalControlClick(entity: Person): void {
         // eslint-disable-next-line no-console
-        console.log('Selection changed: ', entity);
+        console.log('Additional control action: ', entity);
+    }
+
+    public onSelectionChange(list: Person[]): void {
+        // eslint-disable-next-line no-console
+        console.log('Model signal: ', this.chosenEntities());
+        // eslint-disable-next-line no-console
+        console.log('list from event:', list);
     }
 }
