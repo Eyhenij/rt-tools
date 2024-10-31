@@ -9,6 +9,7 @@ import {
     Injector,
     InputSignal,
     InputSignalWithTransform,
+    ModelSignal,
     OnInit,
     OutputEmitterRef,
     Signal,
@@ -21,6 +22,7 @@ import {
     forwardRef,
     inject,
     input,
+    model,
     output,
     signal,
     untracked,
@@ -159,6 +161,8 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     public readonlyEntitiesKeys: InputSignalWithTransform<ENTITY[KEY][], ENTITY[KEY][]> = input<ENTITY[KEY][], ENTITY[KEY][]>([], {
         transform: (value: ENTITY[KEY][]) => transformArrayInput(value),
     });
+    /** Selected entities */
+    public chosenEntities: ModelSignal<ENTITY[]> = model<ENTITY[]>([]);
     /** Indicates is selection available */
     public isSelectionAvailable: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
@@ -204,6 +208,8 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     public readonly temporarySelectAction: OutputEmitterRef<ENTITY[]> = output<ENTITY[]>();
     /** Output reset list to initial value action */
     public readonly resetAction: OutputEmitterRef<void> = output<void>();
+    /** Output selection change action */
+    public readonly selectionChangeAction: OutputEmitterRef<ENTITY[]> = output<ENTITY[]>();
 
     /** List of entities for local processing */
     readonly #entities: WritableSignal<ENTITY[]> = signal([]);
@@ -275,6 +281,13 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
                 this.#onTouched();
             });
 
+        /** Set list of selected entities */
+        if (this.chosenEntities()?.length) {
+            const list: ENTITY[KEY][] = this.chosenEntities().map((entity: ENTITY) => entity[this.keyExp()]);
+            this.#selectedEntityIds.set(list);
+            this.#initialEntityIds.set(list);
+        }
+
         /** Set list of selected entities ids for compare */
         effect(
             () => {
@@ -285,6 +298,8 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
                 if (!areArraysEqual(this.#selectedEntityIdsForCompare, selectedEntityIds) && this.#isFormInit) {
                     this.#selectedEntityIdsForCompare = selectedEntityIds;
                     this.#changeControlValue(selectedEntityIds);
+                    this.chosenEntities.set(untracked(() => this.selectedEntities()));
+                    this.selectionChangeAction.emit(this.chosenEntities());
                 } else if (!this.#isFormInit && this.#entities().length) {
                     this.#selectedEntityIdsForCompare = selectedEntityIds;
                     this.#isFormInit = true;
