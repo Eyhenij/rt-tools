@@ -8,12 +8,10 @@ $dynamic-selector: (
         margin-bottom: 0.5rem,
         padding: 0 0.25rem 0 1rem,
     ),
-    item-controls: (
-        gap: 0,
-    ),
     item-control: (
         padding: 0 0.25rem 0 0.25rem,
         border-right: 1px solid var(--clr-black-30),
+        gap: 0.5rem,
     ),
     item-control-last-child: (
         padding: 0 0 0 0.25rem,
@@ -50,6 +48,10 @@ $dynamic-selector: (
         margin-bottom: var(--rt-dynamic-selector-item-margin-bottom);
         padding: var(--rt-dynamic-selector-item-padding);
 
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
         &--draggable {
             cursor: move;
         }
@@ -63,13 +65,13 @@ $dynamic-selector: (
         &-controls {
             display: flex;
             align-items: center;
-            gap: var(--rt-dynamic-selector-item-controls-gap);
         }
 
         &-control {
             display: flex;
             justify-content: center;
             align-items: center;
+            gap: var(--rt-dynamic-selector-item-control-gap);
             padding: var(--rt-dynamic-selector-item-control-padding);
             border-right: var(--rt-dynamic-selector-item-control-border-right);
 

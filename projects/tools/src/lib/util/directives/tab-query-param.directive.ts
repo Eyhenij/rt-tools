@@ -36,6 +36,7 @@ export abstract class RtTabQueryParamDirective implements OnInit {
             },
             queryParamsHandling: 'merge',
         });
+        this.#setTabIndex(index);
     }
 
     #setTabIndex(index: number): void {
