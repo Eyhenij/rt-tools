@@ -28,7 +28,7 @@ export const createPerson: (index: number) => Person = (index: number): Person =
 export const createPersonList: (size: number) => Person[] = (size: number) =>
     Array.from({ length: size }, (_: number, index: number) => createPerson(index + 1));
 
-export const listOfPersons: Person[] = createPersonList(15);
+export const listOfPersons: Person[] = createPersonList(20);
 
 @Component({
     standalone: true,
@@ -89,5 +89,11 @@ export class TestSelectorComponent implements OnInit {
         console.log('Model signal: ', this.chosenEntities());
         // eslint-disable-next-line no-console
         console.log('list from event:', list);
+    }
+
+    public changePreset(): void {
+        const from: number = faker.number.int({ min: 0, max: 10 });
+        const to: number = faker.number.int({ min: from + 1, max: 19 });
+        this.chosenEntities.set(listOfPersons.slice(from, to));
     }
 }

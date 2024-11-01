@@ -286,12 +286,20 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
                 this.#onTouched();
             });
 
-        /** Set list of selected entities */
-        if (this.chosenEntities()?.length) {
-            const list: ENTITY[KEY][] = this.chosenEntities().map((entity: ENTITY) => entity[this.keyExp()]);
-            this.#selectedEntityIds.set(list);
-            this.#initialEntityIds.set(list);
-        }
+        /** Set list of selected entities if parent use ModelSignal instead of FormControl */
+        effect(
+            () => {
+                if (this.chosenEntities()?.length) {
+                    const chosenListIds: ENTITY[KEY][] = this.chosenEntities().map((entity: ENTITY) => entity[this.keyExp()]);
+
+                    if (!areArraysEqual(chosenListIds.sort(), this.#selectedEntityIds().sort())) {
+                        this.#selectedEntityIds.set(chosenListIds);
+                        this.#initialEntityIds.set(chosenListIds);
+                    }
+                }
+            },
+            { injector: this.#injector, allowSignalWrites: true }
+        );
 
         /** Set list of selected entities ids for compare */
         effect(
