@@ -224,7 +224,12 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
             .map((id: ENTITY[KEY]) => this.entities().find((el: ENTITY) => id === el[this.keyExp()]))
             .filter((el: Nullable<ENTITY>): el is ENTITY => !!el);
     });
+    /** Indicates is popup selector visible */
     public readonly isSelectionControlShown: WritableSignal<boolean> = signal(false);
+    /** Indicates is no data */
+    public readonly isNoDataPlaceholderShown: Signal<boolean> = computed(() => {
+        return !this.entitiesToSelect()?.length && !this.selectedEntities().length && !this.searchTerm();
+    });
     /** Indicates reset selected button is disabled */
     public readonly isResetButtonDisabled: Signal<boolean> = computed(() => {
         return areArraysEqual(this.#selectedEntityIds(), this.#initialEntityIds()) && !this.additionalControlChanged();

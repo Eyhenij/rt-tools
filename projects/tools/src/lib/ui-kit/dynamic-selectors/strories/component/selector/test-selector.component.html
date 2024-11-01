@@ -21,6 +21,8 @@
     @if (isAdditionalControlShown) {
         <ng-container *rtuiDynamicSelectorAdditionalControlDirective="let entity" rtBlock="rtui-dynamic-selector">
             <div rtElem="item-control">
+                <div rtElem="item-control-label">Label</div>
+
                 <button
                     mat-icon-button
                     type="button"
