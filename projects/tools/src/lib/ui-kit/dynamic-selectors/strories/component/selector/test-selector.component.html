@@ -50,3 +50,14 @@
         </ng-container>
     }
 </rtui-dynamic-selector>
+
+<button
+    mat-icon-button
+    type="button"
+    class="preset-button"
+    matTooltip="Change preset"
+    matTooltipPosition="right"
+    [matTooltipDisabled]="isMobile"
+    (click)="changePreset()">
+    <mat-icon [rtIconOutlinedDirective]="true">refresh</mat-icon>
+</button>
