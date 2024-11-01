@@ -1,6 +1,6 @@
 <form [formGroup]="form">
     <ng-container rtBlock="rtui-dynamic-selector">
-        @if (!entitiesToSelect()?.length && !selectedEntities().length) {
+        @if (isNoDataPlaceholderShown()) {
             <rtui-dynamic-selector-placeholder
                 description="There are no available items to choose"
                 icon="warning"
