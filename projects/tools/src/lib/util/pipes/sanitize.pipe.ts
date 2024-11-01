@@ -4,6 +4,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 @Pipe({
     standalone: true,
     name: 'sanitize',
+    pure: true,
 })
 export class SanitizePipe implements PipeTransform {
     readonly #sanitizer: DomSanitizer = inject(DomSanitizer);
