@@ -1,18 +1,23 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
+import { DASH } from '../const';
+import { isNumber, isString } from '../functions';
+
 @Pipe({
     standalone: true,
     name: 'entityToString',
+    pure: true,
 })
 export class EntityToStringPipe implements PipeTransform {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public transform(value: any): string {
-        if (typeof value === 'string') {
+    public transform<T>(value: T): string {
+        if (isString(value)) {
             return value;
-        } else if (typeof value === 'number') {
-            return value.toString();
-        } else {
-            return '';
         }
+
+        if (isNumber(value)) {
+            return value.toString();
+        }
+
+        return DASH;
     }
 }
