@@ -104,11 +104,11 @@ export class RtuiDynamicSelectorSelectedListComponent<ENTITY extends Record<stri
         }
     );
 
-    public readonly toggleAction: OutputEmitterRef<ENTITY[KEY]> = output<ENTITY[KEY]>();
+    public readonly deleteFromSelectedAction: OutputEmitterRef<ENTITY[KEY]> = output<ENTITY[KEY]>();
     public readonly dropAction: OutputEmitterRef<CdkDragDrop<ENTITY[]>> = output<CdkDragDrop<ENTITY[]>>();
 
-    public onToggle(value: ENTITY[KEY]): void {
-        this.toggleAction.emit(value);
+    public onDelete(value: ENTITY[KEY]): void {
+        this.deleteFromSelectedAction.emit(value);
     }
 
     public onDrop(event: CdkDragDrop<ENTITY[]>): void {

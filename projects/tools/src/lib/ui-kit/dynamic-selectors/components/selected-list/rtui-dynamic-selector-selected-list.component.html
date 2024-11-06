@@ -39,7 +39,7 @@
                                 [rtMod]="{ active: !readonlyEntitiesKeys().includes(entity[keyExp()]) }"
                                 [matTooltipDisabled]="isMobile()"
                                 [disabled]="readonlyEntitiesKeys().includes(entity[keyExp()])"
-                                (click)="onToggle(entity[keyExp()])">
+                                (click)="onDelete(entity[keyExp()])">
                                 <mat-icon [rtIconOutlinedDirective]="true">delete</mat-icon>
                             </button>
                         </div>
