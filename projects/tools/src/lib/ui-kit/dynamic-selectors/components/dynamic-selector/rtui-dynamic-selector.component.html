@@ -18,7 +18,7 @@
                 [useTitleCase]="useTitleCase()"
                 [isDeleteButtonShown]="isDeleteButtonShown()"
                 (dropAction)="onDrop($event)"
-                (toggleAction)="toggleEntity($event)">
+                (deleteFromSelectedAction)="toggleEntity($event)">
                 @if (additionalControlTpl()) {
                     <ng-container *rtuiDynamicSelectorItemAdditionalControlDirective="let entity">
                         <ng-template *ngTemplateOutlet="additionalControlTpl() || null; context: { $implicit: entity }" />
