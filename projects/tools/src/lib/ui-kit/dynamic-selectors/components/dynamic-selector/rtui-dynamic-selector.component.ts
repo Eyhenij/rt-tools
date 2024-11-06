@@ -290,11 +290,14 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
         effect(
             () => {
                 if (this.chosenEntities()?.length) {
-                    const chosenListIds: ENTITY[KEY][] = this.chosenEntities().map((entity: ENTITY) => entity[this.keyExp()]);
+                    const chosenListIds: ReadonlyArray<ENTITY[KEY]> = this.chosenEntities().map((entity: ENTITY) => entity[this.keyExp()]);
+                    const selectedEntityIds: ReadonlyArray<ENTITY[KEY]> = this.#selectedEntityIds();
+                    const chosenListIdsForCompare: ENTITY[KEY][] = [...chosenListIds].sort();
+                    const selectedEntityIdsForCompare: ENTITY[KEY][] = [...selectedEntityIds].sort();
 
-                    if (!areArraysEqual(chosenListIds.sort(), this.#selectedEntityIds().sort())) {
-                        this.#selectedEntityIds.set(chosenListIds);
-                        this.#initialEntityIds.set(chosenListIds);
+                    if (!areArraysEqual(chosenListIdsForCompare, selectedEntityIdsForCompare)) {
+                        this.#selectedEntityIds.set([...chosenListIds]);
+                        this.#initialEntityIds.set([...chosenListIds]);
                     }
                 }
             },
@@ -384,11 +387,11 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
             return;
         }
 
-        const isParentAlreadySelected: boolean = !!this.selectedEntities().find((selectedEntity: ENTITY) => {
+        const isRemoveSelected: boolean = !!this.selectedEntities().find((selectedEntity: ENTITY) => {
             return selectedEntity[this.keyExp()] === keyValue;
         });
 
-        if (isParentAlreadySelected) {
+        if (isRemoveSelected) {
             this.#selectedEntityIds.update((selectedEntityIds: ENTITY[KEY][]) => {
                 return selectedEntityIds.filter((id: ENTITY[KEY]) => {
                     return id !== keyValue;
