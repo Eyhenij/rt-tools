@@ -4,3 +4,6 @@ export * from './entity-to-string.pipe';
 export * from './empty-to-dash.pipe';
 export * from './equal.pipe';
 export * from './equal-chain.pipe';
+export * from './not-equal.pipe';
+export * from './not-equal-chain.pipe';
+export * from './ternary.pipe';
