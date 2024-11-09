@@ -14,3 +14,4 @@ export * from './transform-string-input';
 export * from './is-entity-in-array-by-key';
 export * from './is-nil';
 export * from './empty-to-dash';
+export * from './is-email';
