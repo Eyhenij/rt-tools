@@ -142,10 +142,6 @@ $aside: (
 .c-aside-header {
     padding: var(--rt-aside-header-padding);
 
-    &--mobile {
-        padding: var(--rt-aside-header-mobile-padding);
-    }
-
     .back-button {
         margin-right: var(--rt-aside-header-back-button-margin-right);
     }
@@ -193,6 +189,10 @@ $aside: (
             margin-left: var(--rt-aside-header-action-button-margin-left);
         }
     }
+
+    @include mixins.media-breakpoint-down(vars.$device-xs) {
+        padding: var(--rt-aside-header-mobile-padding);
+    }
 } // c-aside-header
 
 .c-aside-content {
@@ -206,16 +206,16 @@ $aside: (
 
     padding: var(--rt-aside-content-padding);
 
-    &--mobile {
-        padding: var(--rt-aside-content-mobile-padding);
-    }
-
     // Change mat tab group styles
     .mat-mdc-tab-header {
         top: 0;
         z-index: 1000;
         position: sticky;
         background: var(--clr-white-100);
+    }
+
+    @include mixins.media-breakpoint-down(vars.$device-xs) {
+        padding: var(--rt-aside-content-mobile-padding);
     }
 } // c-aside-content
 
@@ -227,10 +227,6 @@ $aside: (
 
     padding: var(--rt-aside-footer-padding);
 
-    &--mobile {
-        padding: var(--rt-aside-footer-mobile-padding);
-    }
-
     .c-aside-footer-btn {
         &__title {
             text-transform: uppercase;
@@ -239,5 +235,9 @@ $aside: (
 
     .c-aside-footer-btn + .c-aside-footer-btn {
         margin-left: var(--rt-aside-footer-margin-left-betwen-buttons);
+    }
+
+    @include mixins.media-breakpoint-down(vars.$device-xs) {
+        padding: var(--rt-aside-footer-mobile-padding);
     }
 } // c-aside-footer

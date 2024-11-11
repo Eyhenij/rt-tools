@@ -1,6 +1,6 @@
 @if (currentPageModel().totalCount > pageSizes()[0]) {
-    <div #containerRef rtBlock="pagination-container" [rtMod]="{ clipped: isContentClipped() }">
-        <div rtBlock="paging" [rtMod]="{ clipped: isContentClipped() }">
+    <div #containerRef rtBlock="pagination-container" [rtMod]="{ clipped: isContentClipped() && !isMobile() }">
+        <div rtBlock="paging" [rtMod]="{ clipped: isContentClipped() && !isMobile() }">
             <div
                 rtElem="item"
                 role="button"
@@ -20,20 +20,26 @@
                 </svg>
             </div>
 
-            @for (number of numbers(); track $index) {
-                <div
-                    rtElem="item"
-                    role="button"
-                    tabindex="1"
-                    [rtMod]="{
-                        active: currentPageModel().pageNumber === number,
-                        divider: number === divider(),
-                        enabled: number !== divider() && currentPageModel().pageNumber !== number,
-                    }"
-                    (click)="onClick(number)"
-                    (keydown)="onClick(number)">
-                    <span rtElem="item-label">{{ number }}</span>
+            @if (isMobile()) {
+                <div rtElem="item" rtMod="active" role="button" tabindex="1">
+                    <span rtElem="item-label">{{ currentPageModel().pageNumber }}</span>
                 </div>
+            } @else {
+                @for (number of numbers(); track $index) {
+                    <div
+                        rtElem="item"
+                        role="button"
+                        tabindex="1"
+                        [rtMod]="{
+                            active: currentPageModel().pageNumber === number,
+                            divider: number === divider(),
+                            enabled: number !== divider() && currentPageModel().pageNumber !== number,
+                        }"
+                        (click)="onClick(number)"
+                        (keydown)="onClick(number)">
+                        <span rtElem="item-label">{{ number }}</span>
+                    </div>
+                }
             }
 
             <div
@@ -55,8 +61,10 @@
             </div>
         </div>
 
-        <div rtBlock="page-size-toggle" [rtMod]="{ clipped: isContentClipped() }">
-            <div rtElem="title">Items per page:</div>
+        <div rtBlock="page-size-toggle" [rtMod]="{ clipped: isContentClipped() && !isMobile() }">
+            @if (!isMobile()) {
+                <div rtElem="title">Items per page:</div>
+            }
 
             <select rtElem="selector" [formControl]="control">
                 @for (size of pageSizes(); track $index) {

@@ -4,7 +4,7 @@
 
 <rtui-scrollable cdkTrapFocus [cdkTrapFocusAutoCapture]="true">
     <ng-container *rtuiScrollableHeader>
-        <div rtBlock="c-aside-header" [rtMod]="{ mobile: isMobile() }">
+        <div rtBlock="c-aside-header">
             <rtui-toolbar>
                 <ng-container *rtuiToolbarLeft>
                     <button
@@ -61,13 +61,13 @@
     </ng-container>
 
     <ng-container *rtuiScrollableContent>
-        <div rtBlock="c-aside-content" [rtMod]="{ mobile: isMobile() }">
+        <div rtBlock="c-aside-content">
             <ng-content />
         </div>
     </ng-container>
 
     <ng-container *rtuiScrollableFooter>
-        <div rtBlock="c-aside-footer" [rtMod]="{ mobile: isMobile() }">
+        <div rtBlock="c-aside-footer">
             <div rtBlock="c-aside-footer-btn">
                 <button cdkFocusInitial mat-button type="button" (click)="onCancel()">
                     {{ cancelButtonTitle() }}

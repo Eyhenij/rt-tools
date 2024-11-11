@@ -20,6 +20,7 @@ import { PageModel } from '../../util';
     providers: [],
 })
 export default class TestPaginationComponent {
+    public isMobile: boolean = false;
     public pageModel: PageModel = {
         pageNumber: 1,
         pageSize: 10,

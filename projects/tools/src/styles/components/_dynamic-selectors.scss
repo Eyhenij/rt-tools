@@ -99,6 +99,10 @@ $dynamic-selector: (
             }
 
             &-button {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
                 .mat-icon {
                     width: var(--rt-dynamic-selector-item-control-icon-size);
                     height: var(--rt-dynamic-selector-item-control-icon-size);
