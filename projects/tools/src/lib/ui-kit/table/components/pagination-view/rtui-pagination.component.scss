@@ -1,4 +1,5 @@
 @use '../../../../../styles/base/mixin' as mixins;
+@use '../../../../../styles/base/variables' as vars;
 
 $pagination: (
     container: (
@@ -77,12 +78,17 @@ $pagination: (
             gap: var(--rt-table-pagination-container-mobile-gap);
         }
 
+        &--mobile {
+            width: 100%;
+            justify-content: space-between;
+        }
+
         .paging {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: var(--rt-table-pagination-paging-gap);
-            margin: var(--rt-table-pagination-containert-margin);
+            margin: var(--rt-table-pagination-container-margin);
 
             &--clipped {
                 margin: var(--rt-table-pagination-paging-mobile-margin);
@@ -171,6 +177,15 @@ $pagination: (
                 font-weight: var(--rt-table-pagination-container-font-weight);
                 line-height: var(--rt-table-pagination-container-line-height);
             }
+        }
+    }
+
+    @include mixins.media-breakpoint-down(vars.$device-xs) {
+        width: 100%;
+
+        .pagination-container {
+            width: 100%;
+            justify-content: space-between;
         }
     }
 }

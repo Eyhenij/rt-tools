@@ -8,10 +8,12 @@ import {
     HostListener,
     Injector,
     InputSignal,
+    InputSignalWithTransform,
     OnInit,
     OutputEmitterRef,
     Signal,
     WritableSignal,
+    booleanAttribute,
     computed,
     effect,
     inject,
@@ -44,6 +46,10 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
 
     /** Current Page Model */
     public currentPageModel: InputSignal<PageModel> = input.required();
+    /** Indicates is mobile view */
+    public isMobile: InputSignalWithTransform<Nullable<boolean>, boolean> = input.required<Nullable<boolean>, boolean>({
+        transform: booleanAttribute,
+    });
 
     /** Output action when Page Model changed */
     public readonly pageModelChange: OutputEmitterRef<Partial<PageModel>> = output<Partial<PageModel>>();
