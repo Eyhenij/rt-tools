@@ -8,6 +8,14 @@ $dynamic-selector: (
         margin-bottom: 0.5rem,
         padding: 0 0.25rem 0 1rem,
     ),
+    item-draggable: (
+        padding: 0 0.25rem 0 0.25rem,
+    ),
+    item-mover: (
+        padding: 0 0.25rem 0 0,
+        border-right: 1px solid var(--clr-black-30),
+        margin-right: 0.75rem,
+    ),
     item-control: (
         padding: 0 0.25rem 0 0.25rem,
         border-right: 1px solid var(--clr-black-30),
@@ -40,7 +48,7 @@ $dynamic-selector: (
     &__item {
         height: var(--rt-dynamic-selector-item-height);
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-start;
         align-items: center;
 
         background-color: var(--rt-dynamic-selector-item-background-color);
@@ -53,7 +61,16 @@ $dynamic-selector: (
         }
 
         &--draggable {
-            cursor: move;
+            padding: var(--rt-dynamic-selector-item-draggable-padding);
+        }
+
+        &-mover {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: var(--rt-dynamic-selector-item-mover-padding);
+            border-right: var(--rt-dynamic-selector-item-mover-border-right);
+            margin-right: var(--rt-dynamic-selector-item-mover-margin-right);
         }
 
         &-title {
@@ -65,6 +82,7 @@ $dynamic-selector: (
         &-controls {
             display: flex;
             align-items: center;
+            margin-left: auto;
         }
 
         &-control {
@@ -91,6 +109,10 @@ $dynamic-selector: (
                     .mat-icon {
                         color: var(--rt-dynamic-selector-item-control-button-active-color);
                     }
+                }
+
+                &--draggable {
+                    cursor: move;
                 }
             }
         }
