@@ -10,6 +10,9 @@ $aside: (
     header: (
         padding: 2rem,
     ),
+    header-mobile: (
+        padding: 1rem,
+    ),
     header-back-button: (
         margin-right: 1rem,
     ),
@@ -37,9 +40,15 @@ $aside: (
     content: (
         padding: 0 2rem,
     ),
+    content-mobile: (
+        padding: 0 1rem,
+    ),
     footer: (
         padding: 2rem,
         margin-left-betwen-buttons: 1rem,
+    ),
+    footer-mobile: (
+        padding: 1rem,
     ),
     error-box: (
         height: 2rem,
@@ -124,7 +133,7 @@ $aside: (
         width: var(--rt-aside-tab-indicator-width);
     }
 
-    @include mixins.media-breakpoint-down(vars.$device-sm) {
+    @include mixins.media-breakpoint-down(vars.$device-xs) {
         width: 100vw;
     }
 } // c-aside
@@ -132,6 +141,10 @@ $aside: (
 // ASIDE HEADER
 .c-aside-header {
     padding: var(--rt-aside-header-padding);
+
+    &--mobile {
+        padding: var(--rt-aside-header-mobile-padding);
+    }
 
     .back-button {
         margin-right: var(--rt-aside-header-back-button-margin-right);
@@ -193,6 +206,10 @@ $aside: (
 
     padding: var(--rt-aside-content-padding);
 
+    &--mobile {
+        padding: var(--rt-aside-content-mobile-padding);
+    }
+
     // Change mat tab group styles
     .mat-mdc-tab-header {
         top: 0;
@@ -209,6 +226,10 @@ $aside: (
     align-items: center;
 
     padding: var(--rt-aside-footer-padding);
+
+    &--mobile {
+        padding: var(--rt-aside-footer-mobile-padding);
+    }
 
     .c-aside-footer-btn {
         &__title {
