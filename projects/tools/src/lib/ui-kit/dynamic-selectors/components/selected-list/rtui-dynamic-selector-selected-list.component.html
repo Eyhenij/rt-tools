@@ -2,6 +2,25 @@
     <div rtElem="list" cdkDropList (cdkDropListDropped)="onDrop($event)">
         @for (entity of selectedEntities(); track entity[displayExp()]) {
             <div cdkDrag rtElem="item" [rtMod]="{ draggable: isListDraggable() }" [cdkDragDisabled]="!isListDraggable()">
+                @if (isListDraggable()) {
+                    <div rtElem="item-mover">
+                        <div rtElem="item-control">
+                            <button
+                                cdkDragHandle
+                                mat-icon-button
+                                type="button"
+                                rtElem="item-control-button"
+                                rtMod="draggable"
+                                matTooltip="Hold button to drag"
+                                matTooltipPosition="right"
+                                [matTooltipDisabled]="isMobile()"
+                                (click)="onDelete(entity[keyExp()])">
+                                <mat-icon [rtIconOutlinedDirective]="true">open_with</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                }
+
                 <span
                     #titleTpl
                     rtElem="item-title"

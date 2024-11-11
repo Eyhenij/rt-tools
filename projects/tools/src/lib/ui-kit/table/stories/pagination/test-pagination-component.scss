@@ -8,8 +8,9 @@
     overflow: hidden;
 
     .pagination {
+        width: 100%;
         position: absolute;
         top: 0;
-        padding: 0 0.5rem;
+        left: 0;
     }
 }

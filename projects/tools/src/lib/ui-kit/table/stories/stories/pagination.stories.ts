@@ -18,6 +18,7 @@ type Story = StoryObj<TestPaginationComponent>;
 
 export const Pagination: Story = {
     args: {
+        isMobile: false,
         pageModel: {
             pageNumber: 1,
             pageSize: 10,

@@ -1,4 +1,4 @@
-import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList } from '@angular/cdk/drag-drop';
 import { NgTemplateOutlet, TitleCasePipe } from '@angular/common';
 import {
     ChangeDetectionStrategy,
@@ -41,13 +41,18 @@ export class RtuiDynamicSelectorItemAdditionalControlDirective {}
     templateUrl: './rtui-dynamic-selector-selected-list.component.html',
     styleUrls: ['./rtui-dynamic-selector-selected-list.component.scss'],
     imports: [
+        NgTemplateOutlet,
+
+        // material
         MatIconButton,
         MatIcon,
         MatButton,
         MatTooltip,
+
+        // drag and drop
         CdkDropList,
         CdkDrag,
-        NgTemplateOutlet,
+        CdkDragHandle,
 
         // directives
         RtIconOutlinedDirective,
