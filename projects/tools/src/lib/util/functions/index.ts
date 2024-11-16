@@ -15,3 +15,7 @@ export * from './is-entity-in-array-by-key';
 export * from './is-nil';
 export * from './empty-to-dash';
 export * from './is-email';
+export * from './is-empty.function';
+export * from './is-empty-string';
+export * from './is-empty-array';
+export * from './is-empty-object';
