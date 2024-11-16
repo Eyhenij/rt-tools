@@ -12,16 +12,16 @@ export abstract class BaseStoreService<STATE_TYPE extends object, MSG_TYPE exten
     readonly #msgBus: MessageBus<MSG_TYPE> = new MessageBus<MSG_TYPE>();
     readonly #subscriptions: Set<Subscription> = new Set<Subscription>();
 
-    protected patchState(callbackFn: (state: STATE_TYPE) => STATE_TYPE): void {
-        this.#store.update((currState: STATE_TYPE) => callbackFn(currState));
-    }
-
-    protected dispatch(event: IAction<MSG_TYPE>): void {
+    public dispatch(event: IAction<MSG_TYPE>): void {
         this.#msgBus.emit(event);
     }
 
     protected onDispatch(msg: MSG_TYPE): Observable<IAction<MSG_TYPE>> {
         return this.#msgBus.ofType(msg);
+    }
+
+    protected patchState(callbackFn: (state: STATE_TYPE) => STATE_TYPE): void {
+        this.#store.update((currState: STATE_TYPE) => callbackFn(currState));
     }
 
     protected unsubscribe(): void {
