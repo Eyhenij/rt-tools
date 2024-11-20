@@ -34,5 +34,11 @@ export default {
         ],
         'no-invalid-position-at-import-rule': null,
         'prettier/prettier': true,
+        'selector-pseudo-class-no-unknown': [
+            true,
+            {
+                ignorePseudoClasses: ['host'],
+            },
+        ],
     },
 };
