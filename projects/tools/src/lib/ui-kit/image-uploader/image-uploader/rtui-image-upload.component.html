@@ -1,0 +1,54 @@
+@if (loading()) {
+    <rtui-spinner />
+} @else if (originalImage()) {
+    <div rtBlock="rtui-image-cropper">
+        <image-cropper
+            alignImage="center"
+            [allowMoveImage]="true"
+            [maintainAspectRatio]="false"
+            [imageFile]="originalImage()"
+            (imageCropped)="onImageCropped($event)" />
+
+        @if (isActionsShown()) {
+            <div rtElem="actions">
+                <button rtBlock="c-button" mat-button color="accent" (click)="onCancel()">Cancel</button>
+                <button mat-flat-button (click)="onApply()">Apply</button>
+            </div>
+        }
+    </div>
+} @else {
+    <input #uploadInput hidden type="file" accept=".jpg,.jpeg,.png" (change)="onFileSelect($event)" />
+
+    @if (imageUrl()) {
+        <div rtBlock="rtui-image-container">
+            <img
+                rtElem="image"
+                role="button"
+                tabindex="0"
+                alt="img"
+                matTooltipClass="custom-tooltip"
+                [matTooltip]="tooltip()"
+                [matTooltipPosition]="tooltipPosition()"
+                [matTooltipDisabled]="isMobile() || !tooltip() || !isActive() || isTooltipDisabled()"
+                [rtMod]="{ active: isActive() }"
+                [src]="imageUrl()"
+                (click)="uploadInput.click()"
+                (keydown.enter)="uploadInput.click()" />
+
+            @if (isSaveButtonShown()) {
+                <button
+                    rtElem="action"
+                    mat-icon-button
+                    aria-label="Download image"
+                    matTooltip="Download image"
+                    matTooltipPosition="above"
+                    [matTooltipDisabled]="isMobile()"
+                    (click)="onDownloadImage()">
+                    <mat-icon [rtIconOutlinedDirective]="false">download</mat-icon>
+                </button>
+            }
+        </div>
+    } @else {
+        <rtui-file-upload (uploadFile)="onFileUpload($event)" />
+    }
+}
