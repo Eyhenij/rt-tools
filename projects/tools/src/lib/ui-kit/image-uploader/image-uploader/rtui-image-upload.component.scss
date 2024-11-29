@@ -1,0 +1,93 @@
+@use '../../../../styles/base/mixin' as mixins;
+
+$image-upload: (
+    host: (
+        width: 100%,
+        min-width: 100%,
+        max-width: 100%,
+        height: 100%,
+        min-height: 15rem,
+        max-height: 100%,
+        display: flex,
+        justify-content: center,
+        align-items: center,
+    ),
+    image-cropper: (
+        padding: 0.25rem,
+    ),
+    image-cropper-actions: (
+        display: flex,
+        justify-content: flex-end,
+        gap: 0.5rem,
+        margin-top: 0.5rem,
+    ),
+    image-container: (
+        position: relative,
+        padding: 0.5rem,
+    ),
+    image-container-image: (
+        position: relative,
+        height: 100%,
+        max-height: 15rem,
+        object-fit: contain,
+    ),
+);
+
+:host {
+    @each $element, $elements in $image-upload {
+        @each $style-token, $value in $elements {
+            #{mixins.generateCssVar('image-upload', #{$element}, #{$style-token})}: #{$value};
+        }
+    }
+
+    width: var(--rt-image-upload-host-width);
+    min-width: var(--rt-image-upload-host-min-height);
+    max-width: var(--rt-image-upload-host-max-width);
+    height: var(--rt-image-upload-host-height);
+    min-height: var(--rt-image-upload-host-min-height);
+    max-height: var(--rt-image-upload-host-max-height);
+    display: var(--rt-image-upload-host-display);
+    justify-content: var(--rt-image-upload-host-justify-content);
+    align-items: var(--rt-image-upload-host-align-items);
+
+    .rtui-image-cropper {
+        padding: var(--rt-image-upload-image-cropper-padding);
+
+        &__actions {
+            display: var(--rt-image-upload-image-cropper-actions-display);
+            justify-content: var(--rt-image-upload-image-cropper-actions-justify-content);
+            gap: var(--rt-image-upload-image-cropper-actions-gap);
+            margin-top: var(--rt-image-upload-image-cropper-actions-justify-margin-top);
+        }
+    }
+
+    .rtui-image-container {
+        position: var(--rt-image-upload-image-container-position);
+        padding: var(--rt-image-upload-image-container-padding);
+
+        &__image {
+            position: var(--rt-image-upload-image-container-image-position);
+            height: var(--rt-image-upload-image-container-image-height);
+            max-height: var(--rt-image-upload-image-container-image-max-height);
+            object-fit: var(--rt-image-upload-image-container-image-object-fit);
+            pointer-events: none;
+
+            &--active {
+                pointer-events: initial;
+                cursor: pointer;
+
+                &:hover {
+                    opacity: 0.6;
+                }
+            }
+        }
+
+        &__action {
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 999;
+            backdrop-filter: blur(1.25rem);
+        }
+    }
+}
