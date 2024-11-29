@@ -86,5 +86,8 @@
     "lint-staged": {
         "**/src/**/*.{js,ts}": "eslint --fix",
         "**/src/**/*.{js,ts,json,mdx,md,html,scss,css}": "prettier . --write"
+    },
+    "dependencies": {
+        "ngx-image-cropper": "^9.0.0"
     }
 }

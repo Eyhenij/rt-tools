@@ -25,6 +25,7 @@ export * from './lib/ui-kit/info-badge';
 export * from './lib/ui-kit/toggle';
 export * from './lib/ui-kit/file-uploader';
 export * from './lib/ui-kit/dynamic-selectors';
+export * from './lib/ui-kit/image-uploader';
 
 // utils
 export * from './lib/util';
