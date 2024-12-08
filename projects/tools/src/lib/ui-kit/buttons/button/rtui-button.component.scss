@@ -1,0 +1,382 @@
+@use '../../../../styles/base/mixin' as mixins;
+@use '../../../../styles/base/variables' as vars;
+
+$round-icon-button: (
+    host: (
+        size: 1.5rem,
+        padding: 0.25rem,
+        z-index: 1,
+        background-color: var(--mat-list-active-indicator-color),
+    ),
+    icon: (
+        size: 1.25rem,
+    ),
+);
+
+$padding-top: 0 !default;
+$padding-bottom: 0 !default;
+$padding-left-right: 0.8em !default;
+
+$space-between-text-and-icon: 0.65em !default;
+
+$empty-padding-top-bottom: 0 !default;
+$empty-padding-left-right: 1.3rem !default;
+$_empty_button_padding: 0 !default;
+
+$margin-left: 0 !default;
+$margin-right: 0 !default;
+$margin-top: 0 !default;
+$margin-bottom: 0 !default;
+
+$border-width: 0 !default;
+$border-color: #8999ac !default;
+$border-radius: 0.2em !default;
+
+$icon-size: 1.3em !default;
+
+$icon-margin-left: 0 !default;
+$icon-margin-right: 0 !default;
+$icon-margin-top: 0 !default;
+$icon-margin-bottom: 0 !default;
+
+$animation-speed: 0.4s;
+$disabled-bg-color: rgba(#adbbcc, 0.4) !default;
+$transition-animation-timing: cubic-bezier(0.46, 1.11, 0.47, 1.26);
+
+@mixin button-hover-mx($color) {
+    &:active:not(:disabled) {
+        background-color: $color;
+        box-shadow: 0 2px 15px 0 rgba($color, 0.5);
+    }
+
+    &:hover:not(:disabled):not(:active) {
+        background-color: $color;
+    }
+}
+
+@mixin mx-default-style() {
+    display: inline-flex;
+    align-items: center;
+    margin: $margin-top $margin-right $margin-bottom $margin-left;
+    cursor: pointer;
+    border-width: $border-width;
+    border-style: solid;
+    border-color: $border-color;
+    border-radius: $border-radius;
+    font-weight: 400;
+    outline: none;
+    padding-left: 0.65em;
+    padding-right: 0.65em;
+    vertical-align: middle;
+
+    &:active {
+        outline: none;
+    }
+
+    &:focus {
+        outline: 0.4rem solid rgba(#8796fe, 0.5);
+    }
+
+    &--full-width {
+        width: 100%;
+    }
+
+    &__wrapper {
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        gap: $space-between-text-and-icon;
+        position: relative;
+        align-items: center;
+        justify-content: center;
+        &--has-content {
+            padding-right: $padding-left-right;
+            padding-left: $padding-left-right;
+        }
+    }
+
+    &__label {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        &:empty {
+            display: none;
+        }
+
+        &--is-animated {
+            animation: slideToRightContent $animation-speed $transition-animation-timing;
+        }
+        &--icon-position--right#{&} {
+            &--is-animated {
+                animation: slideToLeftContent $animation-speed $transition-animation-timing;
+            }
+        }
+    }
+
+    &__wrapper--icon-position--right {
+        flex-direction: row-reverse;
+    }
+
+    &__icon {
+        fill: currentColor;
+        box-sizing: content-box;
+
+        &--size {
+            @include mixins.use-icon-size;
+        }
+    }
+
+    &__icon-wrapper {
+        display: flex;
+        align-items: center;
+
+        &--icon-position--left {
+            margin-left: -$padding-left-right;
+        }
+
+        &--icon-position--right {
+            margin-right: -$padding-left-right;
+        }
+
+        &:not(&--has-content) {
+            margin-left: revert;
+            margin-right: revert;
+        }
+
+        &--is-animated {
+            animation: fadeIn $animation-speed both;
+            animation-delay: 0.2s;
+        }
+    }
+
+    &--size {
+        @include mixins.use-size;
+    }
+
+    color: vars.$text-color;
+    background-color: vars.$primary500;
+    transition:
+        background-color 0.2s ease-out,
+        color 0.2s ease-out,
+        border-color 0.2s ease-out;
+
+    @include button-hover-mx(vars.$primary400);
+
+    &:disabled {
+        color: vars.$text-color-disabled;
+        background-color: $disabled-bg-color;
+        cursor: unset;
+    }
+
+    &__neutral {
+        box-shadow: inset 0 0 0 1px vars.$neutral500;
+        color: vars.$neutral500;
+        background-color: transparent;
+
+        &:disabled {
+            background-color: transparent;
+            box-shadow: inset 0 0 0 1px rgba(vars.$neutral300, 0.4);
+        }
+
+        &:active:not(:disabled) {
+            background-color: rgba(vars.$neutral300, 0.2);
+            box-shadow: inset 0 0 0 1px vars.$neutral700;
+            color: vars.$neutral700;
+        }
+
+        &:hover:not(:disabled):not(:active) {
+            background-color: rgba(vars.$neutral300, 0.1);
+            box-shadow: inset 0 0 0 1px vars.$neutral700;
+            color: vars.$neutral700;
+        }
+    }
+
+    &--inverted#{&}__neutral {
+        box-shadow: inset 0 0 0 1px vars.$neutral200;
+        color: vars.$neutral200;
+        background-color: transparent;
+
+        &:disabled {
+            background-color: transparent;
+            box-shadow: inset 0 0 0 1px rgba(vars.$neutral300, 0.4);
+            color: rgba(vars.$neutral300, 0.4);
+        }
+
+        &:active:not(:disabled) {
+            background-color: rgba(vars.$neutral100, 0.2);
+            box-shadow: inset 0 0 0 1px vars.$neutral100;
+            color: vars.$neutral100;
+        }
+
+        &:hover:not(:disabled):not(:active) {
+            background-color: rgba(vars.$neutral100, 0.1);
+            box-shadow: inset 0 0 0 1px vars.$neutral100;
+            color: vars.$neutral100;
+        }
+    }
+
+    &__success {
+        color: vars.$text-color;
+        background-color: vars.$success500;
+
+        @include button-hover-mx(vars.$success400);
+    }
+
+    &__danger {
+        color: vars.$text-color;
+        background-color: vars.$danger500;
+
+        @include button-hover-mx(vars.$danger400);
+    }
+
+    &__tertiary {
+        color: vars.$primary500;
+        box-shadow: none;
+        border: none;
+        background-color: transparent;
+        text-decoration: underline;
+
+        &:disabled {
+            box-shadow: none;
+            border: none;
+            background-color: transparent;
+            text-decoration: none;
+        }
+
+        &:active:not(:disabled),
+        &:hover:not(:disabled):not(:active) {
+            color: vars.$primary400;
+            box-shadow: none;
+            border: none;
+            background-color: transparent;
+            text-decoration: none;
+        }
+    }
+
+    &--inverted#{&}__tertiary {
+        color: vars.$primary200;
+        box-shadow: none;
+        border: none;
+        background-color: transparent;
+        text-decoration: underline;
+
+        &:disabled {
+            box-shadow: none;
+            border: none;
+            background-color: transparent;
+            text-decoration: none;
+            color: vars.$neutral400;
+        }
+
+        &:hover:not(:disabled):not(:active),
+        &:active:not(:disabled) {
+            color: vars.$primary300;
+            box-shadow: none;
+            border: none;
+            background-color: transparent;
+            text-decoration: none;
+        }
+    }
+}
+
+:host {
+    @each $element, $elements in $round-icon-button {
+        @each $style-token, $value in $elements {
+            #{mixins.generateCssVar('button', #{$element}, #{$style-token})}: #{$value};
+        }
+    }
+
+    //&:hover {
+    //    background-color: var(--rt-button-host-background-color);
+    //    box-shadow: var(--rt-button-box-shadow);
+    //}
+}
+
+.rtui-button {
+    display: inline-flex;
+    align-items: center;
+    margin: $margin-top $margin-right $margin-bottom $margin-left;
+    cursor: pointer;
+    border-width: $border-width;
+    border-style: solid;
+    border-color: $border-color;
+    border-radius: $border-radius;
+    font-weight: 400;
+    outline: none;
+    padding-left: 0.65em;
+    padding-right: 0.65em;
+    vertical-align: middle;
+
+    @include mx-default-style();
+}
+
+//.rtui-button {
+//    display: flex;
+//    justify-content: center;
+//    align-items: center;
+//    width: var(--rt-button-host-size);
+//    height: var(--rt-button-host-size);
+//    padding: var(--rt-button-host-padding);
+//    z-index: var(--rt-button-host-z-index);
+//    border-radius: 50%;
+//    cursor: pointer;
+//
+//    &:active {
+//        outline: none;
+//    }
+//
+//    &:focus {
+//        outline: 0.5rem solid rgba(#8796fe, 0.5);
+//    }
+//
+//    &--full-width {
+//        width: 100%;
+//    }
+//
+//    &__wrapper {
+//        margin-left: auto;
+//        margin-right: auto;
+//        display: flex;
+//        gap: $space-between-text-and-icon;
+//        position: relative;
+//        align-items: center;
+//        justify-content: center;
+//
+//        &--icon-position {
+//
+//        }
+//    }
+//
+//    &__icon-wrapper {
+//
+//    }
+//
+//    &__icon {
+//        width: var(--rt-button-icon-size);
+//        height: var(--rt-button-icon-size);
+//        font-size: var(--rt-button-icon-size);
+//
+//        &--size {
+//
+//        }
+//    }
+//
+//    &__label {
+//        text-overflow: ellipsis;
+//        white-space: nowrap;
+//
+//        &:empty {
+//            display: none;
+//        }
+//
+//        &--is-animated {
+//            animation: slideToRightContent $animation-speed $transition-animation-timing;
+//        }
+//
+//        &--icon-position--right#{&} {
+//            &--is-animated {
+//                animation: slideToLeftContent $animation-speed $transition-animation-timing;
+//            }
+//        }
+//    }
+//}

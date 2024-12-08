@@ -1,5 +1,6 @@
 @use 'sass:math';
 @use './variables' as vars;
+@use 'default-variables' as default;
 
 // css clr var generator
 // #{generateCssVar(red, 100)}: #eb5055;
@@ -49,4 +50,317 @@ $browser-context: 16;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+$font-size-scale: (
+    xsmall: 1rem,
+    small: 1.2rem,
+    normal: 1.6rem,
+    large: 2rem,
+    xlarge: 2.4rem,
+    xxlarge: 2.8rem,
+) !default;
+
+$min-height-scale: (
+    xsmall: 2.8rem,
+    small: 3.6rem,
+    normal: 4.8rem,
+    large: 6rem,
+    xlarge: 6.4rem,
+    xxlarge: 6.8rem,
+) !default;
+
+$line-heights-map: (
+    xsmall: 1rem,
+    small: 1.6rem,
+    normal: 2rem,
+    large: 3.2rem,
+    xlarge: 4rem,
+    xxlarge: 6.4rem,
+) !default;
+
+$icon-size-scale: (
+    xsmall: 1.2rem,
+    small: 1.6rem,
+    normal: 2rem,
+    large: 2.6rem,
+    xlarge: 3.2rem,
+    xxlarge: 7.6rem,
+) !default;
+
+$round-button-size-scale: (
+    xsmall: 2rem,
+    small: 2.8rem,
+    normal: 3.6rem,
+    large: 4.2rem,
+    xlarge: 6rem,
+    xxlarge: 6.8rem,
+) !default;
+
+$round-button-icon-size-scale: (
+    xsmall: 1.2rem,
+    small: 2rem,
+    normal: 2.4rem,
+    large: 2.8rem,
+    xlarge: 4rem,
+    xxlarge: 7.6rem,
+) !default;
+
+@mixin item-size-mx($size: normal) {
+    @if map-has-key($font-size-scale, $size) {
+        font-size: map-get($font-size-scale, $size);
+    }
+    @if map-has-key($line-heights-map, $size) {
+        line-height: map-get($line-heights-map, $size);
+    }
+    @if map-has-key($min-height-scale, $size) {
+        min-height: map-get($min-height-scale, $size);
+        min-width: map-get($min-height-scale, $size);
+    }
+}
+
+@mixin use-size {
+    &--xsmall {
+        @include item-size-mx(xsmall);
+    }
+
+    &--small {
+        @include item-size-mx(small);
+    }
+
+    &--normal {
+        @include item-size-mx();
+    }
+
+    &--large {
+        @include item-size-mx(large);
+    }
+
+    &--xlarge {
+        @include item-size-mx(xlarge);
+    }
+}
+
+@mixin round-button-size-mx($size: normal) {
+    @if map-has-key($round-button-size-scale, $size) {
+        min-height: map-get($round-button-size-scale, $size);
+        min-width: map-get($round-button-size-scale, $size);
+    }
+}
+
+@mixin use-round-button-size {
+    &--xsmall {
+        @include round-button-size-mx(xsmall);
+    }
+
+    &--small {
+        @include round-button-size-mx(small);
+    }
+
+    &--normal {
+        @include round-button-size-mx();
+    }
+
+    &--large {
+        @include round-button-size-mx(large);
+    }
+
+    &--xlarge {
+        @include round-button-size-mx(xlarge);
+    }
+}
+
+@mixin round-button-icon-size-mx($size: normal) {
+    @if map-has-key($round-button-icon-size-scale, $size) {
+        height: map-get($round-button-icon-size-scale, $size);
+        width: map-get($round-button-icon-size-scale, $size);
+    }
+}
+
+@mixin use-round-button-icon-size {
+    &--xsmall {
+        @include round-button-icon-size-mx(xsmall);
+    }
+
+    &--small {
+        @include round-button-icon-size-mx(small);
+    }
+
+    &--normal {
+        @include round-button-icon-size-mx();
+    }
+
+    &--large {
+        @include round-button-icon-size-mx(large);
+    }
+
+    &--xlarge {
+        @include round-button-icon-size-mx(xlarge);
+    }
+}
+
+@mixin item-font-size($size: normal) {
+    @if map-has-key($font-size-scale, $size) {
+        font-size: map-get($font-size-scale, $size);
+    }
+}
+
+@mixin use-font-size {
+    &--xsmall {
+        @include item-font-size(xsmall);
+    }
+
+    &--small {
+        @include item-font-size(small);
+    }
+
+    &--normal {
+        @include item-font-size();
+    }
+
+    &--large {
+        @include item-font-size(large);
+    }
+
+    &--xlarge {
+        @include item-font-size(xlarge);
+    }
+}
+
+@mixin icon-size-mx($size: normal) {
+    @if map-has-key($icon-size-scale, $size) {
+        height: map-get($icon-size-scale, $size);
+        width: map-get($icon-size-scale, $size);
+    }
+}
+
+@mixin min-height-mx($size: normal) {
+    @if map-has-key($min-height-scale, $size) {
+        min-height: map-get($min-height-scale, $size);
+    }
+}
+
+@mixin use-icon-size {
+    &--xsmall {
+        @include icon-size-mx(xsmall);
+    }
+
+    &--small {
+        @include icon-size-mx(small);
+    }
+
+    &--normal {
+        @include icon-size-mx();
+    }
+
+    &--large {
+        @include icon-size-mx(large);
+    }
+
+    &--xlarge {
+        @include icon-size-mx(xlarge);
+    }
+}
+
+@mixin use-min-height-size {
+    &--xsmall {
+        @include min-height-mx(xsmall);
+    }
+
+    &--small {
+        @include min-height-mx(small);
+    }
+
+    &--normal {
+        @include min-height-mx();
+    }
+
+    &--large {
+        @include min-height-mx(large);
+    }
+
+    &--xlarge {
+        @include min-height-mx(xlarge);
+    }
+}
+
+@mixin multiline-ellipsis($lineCount: 1) {
+    @if $lineCount == 1 {
+        display: block;
+        white-space: nowrap;
+    } @else {
+        display: -webkit-box;
+        white-space: normal;
+    }
+
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: $lineCount;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@mixin custom-scrollbar(
+    $size: default.$custom-scrollbar-width,
+    $color: default.$custom-scrollbar-color,
+    $hoverColor: default.$custom-scrollbar-hover-color
+) {
+    &::-webkit-scrollbar-track {
+        width: $size;
+        height: $size;
+        -webkit-box-shadow: none;
+        background-color: transparent;
+    }
+
+    &::-webkit-scrollbar {
+        width: $size;
+        height: $size;
+        background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        width: $size;
+        height: $size;
+        border-radius: math.div($size, 2);
+        background-color: $color;
+
+        &:hover {
+            background-color: $hoverColor;
+        }
+    }
+}
+
+@mixin header-font {
+    font-family: default.$header-font-family;
+    font-weight: default.$header-font-weight;
+}
+
+@mixin link($text-decoration: default.$link-text-decoration, $link-text-color: default.$link-text-color) {
+    text-decoration: $text-decoration;
+    color: $link-text-color;
+}
+
+$form-field-gap-scale: (
+    small: 2rem,
+    normal: 2.4rem,
+    large: 3.2rem,
+) !default;
+
+@mixin form-field-gap-mx($size: normal) {
+    @if map-has-key($form-field-gap-scale, $size) {
+        gap: map-get($form-field-gap-scale, $size);
+    }
+}
+
+@mixin use-form-field-gap {
+    &--small {
+        @include form-field-gap-mx(small);
+    }
+
+    &--normal {
+        @include form-field-gap-mx(normal);
+    }
+
+    &--large {
+        @include form-field-gap-mx(large);
+    }
 }

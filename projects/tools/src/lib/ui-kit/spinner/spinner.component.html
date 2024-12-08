@@ -1,5 +1,5 @@
-<div class="c-spinner c-spinner__container" [class.c-spinner__container--bgr-color]="showBackground()">
-    <div class="c-spinner__wrapper" [class.c-spinner__wrapper--bgr-color]="showBox()">
+<div rtBlock="c-spinner" rtElem="container" [rtMod]="{ bgrColor: showBackground() }">
+    <div rtElem="wrapper" [rtMod]="{ bgrColor: showBox() }">
         <mat-spinner [diameter]="diameter()" />
     </div>
 </div>

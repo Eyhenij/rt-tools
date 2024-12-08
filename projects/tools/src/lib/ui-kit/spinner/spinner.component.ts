@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component, InputSignalWithTransform, booleanAttribute, input, numberAttribute } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
+import { ElemDirective } from '../../bem';
+
 @Component({
     standalone: true,
     selector: 'rtui-spinner',
     templateUrl: './spinner.component.html',
     styleUrls: ['./spinner.component.scss'],
-    imports: [MatProgressSpinnerModule],
+    imports: [MatProgressSpinnerModule, ElemDirective],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RtuiSpinnerComponent {

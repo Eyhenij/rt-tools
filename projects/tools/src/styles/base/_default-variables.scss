@@ -1,0 +1,77 @@
+@use 'sass:color';
+
+// Палитра цветов
+
+$primary700: #00234d !default;
+$primary600: #092e5c !default;
+$primary500: #1d508f !default;
+$primary400: #4287db !default;
+$primary300: #80b9ff !default;
+$primary200: #cce3ff !default;
+$primary100: #e6f1ff !default;
+
+$neutral700: #1c2e45 !default;
+$neutral600: #394a5e !default;
+$neutral500: #546478 !default;
+$neutral400: #8999ac !default;
+$neutral300: #adbbcc !default;
+$neutral200: #d8dee6 !default;
+$neutral100: #e6ecf2 !default;
+$neutral50: #f3f6f9 !default;
+
+$success500: #6e7832 !default;
+$success400: #849c0e !default;
+$success300: #a3c44f !default;
+$success200: #d0e667 !default;
+$success100: #eeff99 !default;
+
+$warning500: #b88f09 !default;
+$warning400: #d9ae21 !default;
+$warning300: #f8cd46 !default;
+$warning200: #ffea8f !default;
+$warning100: #fff5b5 !default;
+
+$danger500: #bf2726 !default;
+$danger400: #da4341 !default;
+$danger300: #f26e6d !default;
+$danger200: #f29291 !default;
+$danger100: #ffc0bf !default;
+
+$accent1: #8796fe !default;
+$accent2: #14b6ea !default;
+$accent3: #c05fa2 !default;
+
+$white: #ffffff !default;
+
+$text-color: $white !default;
+$text-color-disabled: $neutral400 !default;
+
+// Размер иконок
+$icon-size: 1.3em !default;
+
+// Шрифт
+$font-dir: '../fonts' !default;
+$default-font-family: 'IBMPlexSans', sans-serif;
+$default-header-font-family: $default-font-family;
+$font-weight-thin: 100 !default;
+$font-weight-extra-light: 200 !default;
+$font-weight-light: 300 !default;
+$font-weight-normal: 400 !default;
+$font-weight-medium: 500 !default;
+$font-weight-semi-bold: 600 !default;
+$font-weight-bold: 700 !default;
+$font-weight-black: 900 !default;
+$font-family: $default-font-family !default;
+$header-font-family: $default-header-font-family !default;
+$header-font-weight: $font-weight-medium !default;
+$font-size: 10px !default;
+$line-height: 1.333 !default;
+
+// Кастомный скроллбар
+$custom-scrollbar-width: 5px !default;
+$custom-scrollbar-color: $neutral300 !default;
+$custom-scrollbar-hover-color: $neutral400 !default;
+
+// оформление ссылок
+$link-text-decoration: none !default;
+$link-text-color: $primary400 !default;

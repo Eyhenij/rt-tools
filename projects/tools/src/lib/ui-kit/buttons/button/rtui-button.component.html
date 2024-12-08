@@ -1,0 +1,15 @@
+<div rtBlock="rtui-button" rtElem="wrapper" [rtMod]="{ iconPosition: iconPosition(), hasContent: true }">
+    @if (!!glyph() || isLoading()) {
+        <div rtElem="icon-wrapper" [rtMod]="{ iconPosition: iconPosition(), isAnimated: isLoading(), hasContent: true }">
+            @if (isLoading()) {
+                <rtui-spinner rtElem="icon" />
+            } @else if (!!glyph()) {
+                <rtui-icon rtElem="icon" [glyph]="glyph() || ''" [rotate]="iconRotate()" [rtMod]="{ size: size() }" />
+            }
+        </div>
+    }
+
+    <div rtElem="label" [rtMod]="{ isAnimated: isLoading() }">
+        <ng-content />
+    </div>
+</div>
