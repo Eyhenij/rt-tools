@@ -6,7 +6,6 @@ import { Pipe, PipeTransform } from '@angular/core';
  *  {a: {b: true}} | equalChain:'a':'b':true => true
  */
 @Pipe({
-    standalone: true,
     name: 'equalChain',
 })
 export class EqualChainPipe implements PipeTransform {

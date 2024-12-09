@@ -1,10 +1,9 @@
-import { Directive, InputSignal, InputSignalWithTransform, effect, input } from '@angular/core';
+import { Directive, effect, input, InputSignal, InputSignalWithTransform } from '@angular/core';
 
 import { transformArrayInput } from '../functions';
 import { Nullable } from '../interfaces';
 
 @Directive({
-    standalone: true,
     selector: '[rtScrollToElement]',
 })
 export class RtScrollToElementDirective {

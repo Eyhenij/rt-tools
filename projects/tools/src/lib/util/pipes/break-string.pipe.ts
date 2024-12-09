@@ -5,7 +5,6 @@ import { isNil, isString } from '../functions';
 import { Nullable } from '../interfaces/nullable.type';
 
 @Pipe({
-    standalone: true,
     name: 'breakString',
 })
 export class BreakStringPipe implements PipeTransform {

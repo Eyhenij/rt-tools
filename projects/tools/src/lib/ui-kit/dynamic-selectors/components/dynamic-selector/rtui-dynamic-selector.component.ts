@@ -2,30 +2,30 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedPosition } from '@angular/cdk/overlay';
 import { NgTemplateOutlet } from '@angular/common';
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
-    DestroyRef,
-    Directive,
-    Injector,
-    InputSignal,
-    InputSignalWithTransform,
-    ModelSignal,
-    OnInit,
-    OutputEmitterRef,
-    Signal,
-    TemplateRef,
-    WritableSignal,
-    booleanAttribute,
     computed,
     contentChild,
+    DestroyRef,
+    Directive,
     effect,
     forwardRef,
     inject,
+    Injector,
     input,
+    InputSignal,
+    InputSignalWithTransform,
     model,
+    ModelSignal,
+    OnInit,
     output,
+    OutputEmitterRef,
+    Signal,
     signal,
+    TemplateRef,
     untracked,
+    WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -42,21 +42,20 @@ import {
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-
 import { noop } from 'rxjs';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
 import {
+    areArraysEqual,
     BreakStringPipe,
+    checkIsEntityInArrayByKey,
     EntityToStringPipe,
     Nullable,
     OVERLAY_POSITIONS,
     RtEscapeKeyDirective,
     RtHideTooltipDirective,
     RtIconOutlinedDirective,
-    areArraysEqual,
-    checkIsEntityInArrayByKey,
     sortByAlphabet,
     transformArrayInput,
 } from '../../../../util';
@@ -75,13 +74,11 @@ interface FormModel {
 
 /** Directive for row actions located outside a row menu button */
 @Directive({
-    standalone: true,
     selector: '[rtuiDynamicSelectorAdditionalControlDirective]',
 })
 export class RtuiDynamicSelectorAdditionalControlDirective {}
 
 @Component({
-    standalone: true,
     selector: 'rtui-dynamic-selector',
     templateUrl: './rtui-dynamic-selector.component.html',
     styleUrls: ['./rtui-dynamic-selector.component.scss'],
@@ -301,7 +298,7 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
                     }
                 }
             },
-            { injector: this.#injector, allowSignalWrites: true }
+            { injector: this.#injector }
         );
 
         /** Set list of selected entities ids for compare */
@@ -321,7 +318,7 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
                     this.#isFormInit = true;
                 }
             },
-            { injector: this.#injector, allowSignalWrites: true }
+            { injector: this.#injector }
         );
 
         /** Set list of values */
@@ -333,7 +330,7 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
                     }
                 }
             },
-            { injector: this.#injector, allowSignalWrites: true }
+            { injector: this.#injector }
         );
     }
 

@@ -1,14 +1,14 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
-    InputSignal,
-    InputSignalWithTransform,
-    OutputEmitterRef,
-    booleanAttribute,
     inject,
     input,
+    InputSignal,
+    InputSignalWithTransform,
     output,
+    OutputEmitterRef,
 } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIcon } from '@angular/material/icon';
@@ -21,7 +21,6 @@ import { ISideMenu } from '../../../util/interfaces/side-menu.interface';
 import { RtuiSideMenuComponent } from '../menu/rtui-side-menu.component';
 
 @Component({
-    standalone: true,
     selector: 'rtui-side-menu-sub-item',
     templateUrl: './rtui-side-menu-sub-item.component.html',
     styleUrls: ['./rtui-side-menu-sub-item.component.scss'],

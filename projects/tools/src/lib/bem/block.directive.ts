@@ -5,7 +5,6 @@ import { generateClass, parseMods, setMods } from './bem.utils';
 
 @Directive({
     selector: '[rtBlock]',
-    standalone: true,
 })
 export class BlockDirective implements OnChanges {
     @Input() public rtMod?: string | string[] | (string | false)[] | ModsObject;

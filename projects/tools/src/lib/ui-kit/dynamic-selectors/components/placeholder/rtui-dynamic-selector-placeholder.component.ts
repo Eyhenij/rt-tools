@@ -1,12 +1,12 @@
 import { CdkOverlayOrigin } from '@angular/cdk/overlay';
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
-    InputSignalWithTransform,
-    OutputEmitterRef,
-    booleanAttribute,
     input,
+    InputSignalWithTransform,
     output,
+    OutputEmitterRef,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -15,7 +15,6 @@ import { BlockDirective, ElemDirective } from '../../../../bem';
 import { RtIconOutlinedDirective, transformStringInput } from '../../../../util';
 
 @Component({
-    standalone: true,
     selector: 'rtui-dynamic-selector-placeholder',
     templateUrl: './rtui-dynamic-selector-placeholder.component.html',
     styleUrls: ['./rtui-dynamic-selector-placeholder.component.scss'],

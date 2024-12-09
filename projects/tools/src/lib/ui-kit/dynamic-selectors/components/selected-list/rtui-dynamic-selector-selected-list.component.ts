@@ -1,18 +1,18 @@
 import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList } from '@angular/cdk/drag-drop';
 import { NgTemplateOutlet, TitleCasePipe } from '@angular/common';
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    contentChild,
     Directive,
+    input,
     InputSignal,
     InputSignalWithTransform,
+    output,
     OutputEmitterRef,
     Signal,
     TemplateRef,
-    booleanAttribute,
-    contentChild,
-    input,
-    output,
 } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -30,13 +30,11 @@ import {
 
 /** Directive for row actions located outside a row menu button */
 @Directive({
-    standalone: true,
     selector: '[rtuiDynamicSelectorItemAdditionalControlDirective]',
 })
 export class RtuiDynamicSelectorItemAdditionalControlDirective {}
 
 @Component({
-    standalone: true,
     selector: 'rtui-dynamic-selector-selected-list',
     templateUrl: './rtui-dynamic-selector-selected-list.component.html',
     styleUrls: ['./rtui-dynamic-selector-selected-list.component.scss'],

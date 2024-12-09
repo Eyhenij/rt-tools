@@ -1,11 +1,9 @@
-import { Directive, InputSignal, InputSignalWithTransform, booleanAttribute, input } from '@angular/core';
+import { booleanAttribute, Directive, input, InputSignal, InputSignalWithTransform } from '@angular/core';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
 
 import { Nullable, transformStringInput } from '../../../util';
 
-@Directive({
-    standalone: true,
-})
+@Directive()
 export abstract class RtuiDynamicSelectorsDirective {
     /** Indicates if mobile view */
     public isMobile: InputSignalWithTransform<Nullable<boolean>, boolean> = input.required<Nullable<boolean>, boolean>({

@@ -1,37 +1,36 @@
 import { NgClass } from '@angular/common';
 import {
     AfterViewInit,
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    computed,
     DestroyRef,
+    effect,
     ElementRef,
     HostListener,
+    inject,
     Injector,
+    input,
     InputSignal,
     InputSignalWithTransform,
     OnInit,
+    output,
     OutputEmitterRef,
     Signal,
-    WritableSignal,
-    booleanAttribute,
-    computed,
-    effect,
-    inject,
-    input,
-    output,
     signal,
     viewChild,
+    WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
-import { Nullable, WINDOW, isNumber } from '../../../../util';
+import { isNumber, Nullable, WINDOW } from '../../../../util';
 import { DEFAULT_PAGE_SIZE } from '../../util/default-pagination';
 import { PageModel } from '../../util/lists.interface';
 
 @Component({
-    standalone: true,
     selector: 'rtui-pagination',
     templateUrl: './rtui-pagination.component.html',
     styleUrls: ['./rtui-pagination.component.scss'],
@@ -103,7 +102,7 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
                 }
                 this.previousPageModel.set(this.currentPageModel());
             },
-            { injector: this.#injector, allowSignalWrites: true }
+            { injector: this.#injector }
         );
     }
 

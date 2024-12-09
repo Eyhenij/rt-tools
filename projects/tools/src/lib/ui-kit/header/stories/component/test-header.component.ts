@@ -8,7 +8,6 @@ import { BlockDirective, ElemDirective } from '../../../../bem';
 import { RtuiHeaderCenterDirective, RtuiHeaderComponent, RtuiHeaderRightDirective } from '../../header.component';
 
 @Component({
-    standalone: true,
     selector: 'app-header',
     templateUrl: './test-header.component.html',
     styleUrls: ['./test-header.component.scss'],

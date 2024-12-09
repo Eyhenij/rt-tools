@@ -11,7 +11,6 @@ import { RtuiToolbarCenterDirective, RtuiToolbarComponent, RtuiToolbarLeftDirect
 import { RtSnackBarService } from '../../rt-snack-bar.service';
 
 @Component({
-    standalone: true,
     selector: 'app-test-snack-bar',
     templateUrl: './test-snack-bar.component.html',
     styleUrls: ['./test-snack-bar.component.scss'],

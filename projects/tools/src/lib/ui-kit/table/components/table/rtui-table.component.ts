@@ -1,21 +1,21 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
-    Directive,
-    InputSignal,
-    InputSignalWithTransform,
-    OutputEmitterRef,
-    Signal,
-    TemplateRef,
-    WritableSignal,
-    booleanAttribute,
     computed,
     contentChild,
+    Directive,
     inject,
     input,
+    InputSignal,
+    InputSignalWithTransform,
     output,
+    OutputEmitterRef,
+    Signal,
     signal,
+    TemplateRef,
+    WritableSignal,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -32,7 +32,6 @@ import { RtuiTableHeaderCellComponent } from '../table-header-cell/table-header-
 
 /** Directive for custom table cells */
 @Directive({
-    standalone: true,
     selector: '[rtuiCustomTableCellsDirective]',
 })
 export class RtuiCustomTableCellsDirective<ENTITY_TYPE> {
@@ -49,20 +48,17 @@ export class RtuiCustomTableCellsDirective<ENTITY_TYPE> {
 
 /** Directive for row actions located inside a row menu button */
 @Directive({
-    standalone: true,
     selector: '[rtuiTabletRowActionsDirective]',
 })
 export class RtuiTableRowActionsDirective {}
 
 /** Directive for row actions located outside a row menu button */
 @Directive({
-    standalone: true,
     selector: '[rtuiTableAdditionalRowActionsDirective]',
 })
 export class RtuiTableAdditionalRowActionsDirective {}
 
 @Component({
-    standalone: true,
     selector: 'rtui-table',
     templateUrl: './rtui-table.component.html',
     styleUrls: ['./rtui-table.component.scss'],

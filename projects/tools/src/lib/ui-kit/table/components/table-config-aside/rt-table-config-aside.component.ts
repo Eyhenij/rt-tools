@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, Signal, WritableSignal, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, Signal, signal, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
@@ -6,14 +6,13 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
-import { ASIDE_REF, AsideRef, BreakpointService, Nullable, RtIconOutlinedDirective, areArraysEqual } from '../../../../util';
+import { areArraysEqual, ASIDE_REF, AsideRef, BreakpointService, Nullable, RtIconOutlinedDirective } from '../../../../util';
 import { RtuiAsideContainerComponent, RtuiAsideContainerHeaderDirective } from '../../../aside';
 import { RtuiDynamicSelectorAdditionalControlDirective, RtuiDynamicSelectorComponent } from '../../../dynamic-selectors';
 import { RtuiToggleComponent } from '../../../toggle';
 import { ITable } from '../../util';
 
 @Component({
-    standalone: true,
     selector: 'rtui-test-aside',
     templateUrl: './rt-table-config-aside.component.html',
     styleUrls: ['./rt-table-config-aside.component.scss'],

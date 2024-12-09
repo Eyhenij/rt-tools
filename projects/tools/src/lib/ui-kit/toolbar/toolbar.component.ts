@@ -1,15 +1,15 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    contentChild,
     Directive,
+    input,
     InputSignalWithTransform,
     Signal,
     TemplateRef,
     Type,
-    booleanAttribute,
-    contentChild,
-    input,
 } from '@angular/core';
 import { MatToolbar } from '@angular/material/toolbar';
 
@@ -17,25 +17,21 @@ import { BlockDirective, ElemDirective } from '../../bem';
 import { Nullable } from '../../util';
 
 @Directive({
-    standalone: true,
     selector: '[rtuiToolbarLeft]',
 })
 export class RtuiToolbarLeftDirective {}
 
 @Directive({
-    standalone: true,
     selector: '[rtuiToolbarCenter]',
 })
 export class RtuiToolbarCenterDirective {}
 
 @Directive({
-    standalone: true,
     selector: '[rtuiToolbarRight]',
 })
 export class RtuiToolbarRightDirective {}
 
 @Component({
-    standalone: true,
     selector: 'rtui-toolbar',
     templateUrl: './toolbar.component.html',
     styleUrls: ['./toolbar.component.scss'],

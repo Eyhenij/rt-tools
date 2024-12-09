@@ -1,22 +1,21 @@
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    input,
     InputSignal,
     InputSignalWithTransform,
-    OutputEmitterRef,
-    booleanAttribute,
-    input,
     output,
+    OutputEmitterRef,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip, TooltipPosition } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
-import { Nullable, isString } from '../../../../util';
+import { isString, Nullable } from '../../../../util';
 
 @Component({
-    standalone: true,
     selector: 'rtui-clear-button',
     templateUrl: './rtui-clear-button.component.html',
     styleUrls: ['./rtui-clear-button.component.scss'],
@@ -42,7 +41,7 @@ export class RtuiClearButtonComponent {
         transform: booleanAttribute,
     });
     public tooltip: InputSignalWithTransform<Nullable<string>, string> = input<Nullable<string>, string>(null, {
-        transform: (value: Nullable<string>) => (isString(value) ? value!.trim() : ''),
+        transform: (value: Nullable<string>) => (isString(value) ? value.trim() : ''),
     });
     public tooltipPosition: InputSignal<TooltipPosition> = input(this.#defaultTooltipPosition);
 

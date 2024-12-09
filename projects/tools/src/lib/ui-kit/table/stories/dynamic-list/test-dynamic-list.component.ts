@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, Signal, effect, inject, viewChild } from '@angular/core';
+import { Component, effect, inject, Injector, OnInit, Signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -27,7 +27,6 @@ import { createPersonList } from '../mocks';
 import { Person } from '../types';
 
 @Component({
-    standalone: true,
     selector: 'app-test-dynamic-list-component',
     templateUrl: './test-dynamic-list.component.html',
     styleUrls: ['./test-dynamic-list.component.scss'],
@@ -101,7 +100,7 @@ export default class TestDynamicListComponent implements OnInit {
                     console.warn('selectedEntities:', this.dynamicListTpl()?.selectedEntities());
                 }
             },
-            { injector: this.#injector, allowSignalWrites: true }
+            { injector: this.#injector }
         );
 
         effect(
@@ -111,7 +110,7 @@ export default class TestDynamicListComponent implements OnInit {
                     console.warn('excludedEntities:', this.dynamicListTpl()?.excludedEntities());
                 }
             },
-            { injector: this.#injector, allowSignalWrites: true }
+            { injector: this.#injector }
         );
     }
 

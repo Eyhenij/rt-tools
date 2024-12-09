@@ -5,7 +5,6 @@ import { RtuiPaginationComponent } from '../../components';
 import { PageModel } from '../../util';
 
 @Component({
-    standalone: true,
     selector: 'app-test-pagination-component',
     templateUrl: './test-pagination-component.html',
     styleUrls: ['./test-pagination-component.scss'],
