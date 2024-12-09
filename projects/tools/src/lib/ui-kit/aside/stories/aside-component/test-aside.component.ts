@@ -4,11 +4,11 @@ import {
     ChangeDetectorRef,
     Component,
     DestroyRef,
+    inject,
     OnInit,
     Signal,
-    WritableSignal,
-    inject,
     signal,
+    WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -25,7 +25,6 @@ import { ASIDE_BUTTONS_ENUM, ASIDE_REF, AsideRef, IAside, Nullable } from '../..
 import { RtuiAsideContainerComponent, RtuiAsideContainerHeaderDirective } from '../../components/container/aside-container.component';
 
 @Component({
-    standalone: true,
     selector: 'rtui-test-aside',
     templateUrl: './test-aside.component.html',
     styleUrls: ['./test-aside.component.scss'],

@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, InputSignalWithTransform, booleanAttribute, input, numberAttribute } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, input, InputSignalWithTransform, numberAttribute } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
-    standalone: true,
     selector: 'rtui-spinner',
     templateUrl: './spinner.component.html',
     styleUrls: ['./spinner.component.scss'],

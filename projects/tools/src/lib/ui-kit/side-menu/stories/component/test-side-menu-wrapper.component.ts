@@ -120,7 +120,6 @@ export const MENU_ITEMS: Readonly<ISideMenu.Item[]> = Object.freeze([
 ]);
 
 @Component({
-    standalone: true,
     selector: 'app-side-menu-wrapper',
     templateUrl: './test-side-menu-wrapper.component.html',
     styleUrls: ['./test-side-menu-wrapper.component.scss'],

@@ -3,21 +3,21 @@ import { NgTemplateOutlet } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
+    contentChild,
     DestroyRef,
     Directive,
-    InputSignalWithTransform,
-    ModelSignal,
-    OnInit,
-    Signal,
-    TemplateRef,
-    WritableSignal,
-    contentChild,
     forwardRef,
     inject,
     input,
+    InputSignalWithTransform,
     model,
+    ModelSignal,
+    OnInit,
+    Signal,
     signal,
+    TemplateRef,
     untracked,
+    WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -36,25 +36,24 @@ import { MatFormField } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput, MatLabel } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
-
 import { noop } from 'rxjs';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 
+import { BlockDirective, ElemDirective } from '../../../../bem';
+import {
+    areArraysEqual,
+    BreakStringPipe,
+    Nullable,
+    RtIconOutlinedDirective,
+    transformArrayInput,
+    transformStringInput,
+} from '../../../../util';
 import {
     RtuiDynamicSelectorItemAdditionalControlDirective,
     RtuiDynamicSelectorListActionsComponent,
     RtuiDynamicSelectorPlaceholderComponent,
     RtuiDynamicSelectorSelectedListComponent,
 } from '../.';
-import { BlockDirective, ElemDirective } from '../../../../bem';
-import {
-    BreakStringPipe,
-    Nullable,
-    RtIconOutlinedDirective,
-    areArraysEqual,
-    transformArrayInput,
-    transformStringInput,
-} from '../../../../util';
 import { RtuiDynamicSelectorsDirective } from '../dynamic-selectors-directive';
 
 interface FormModel {
@@ -64,13 +63,11 @@ interface FormModel {
 
 /** Directive for row actions located outside a row menu button */
 @Directive({
-    standalone: true,
     selector: '[rtuiDynamicInputAdditionalControlDirective]',
 })
 export class RtuiDynamicInputAdditionalControlDirective {}
 
 @Component({
-    standalone: true,
     selector: 'rtui-dynamic-input',
     templateUrl: './rtui-dynamic-input.component.html',
     styleUrls: ['./rtui-dynamic-input.component.scss'],

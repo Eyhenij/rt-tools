@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, WritableSignal, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-
 import { faker } from '@faker-js/faker';
 
 import { BlockDirective, ElemDirective } from '../../../../../bem';
@@ -31,7 +30,6 @@ export const createPersonList: (size: number) => Person[] = (size: number) =>
 export const listOfPersons: Person[] = createPersonList(20);
 
 @Component({
-    standalone: true,
     selector: 'app-selector',
     templateUrl: './test-selector.component.html',
     styleUrls: ['./test-selector.component.scss'],

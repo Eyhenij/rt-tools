@@ -3,7 +3,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { isEmail } from '../functions';
 
 @Pipe({
-    standalone: true,
     name: 'isEmail',
 })
 export class IsEmailPipe implements PipeTransform {

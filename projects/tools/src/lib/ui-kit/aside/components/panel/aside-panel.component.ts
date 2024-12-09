@@ -3,15 +3,13 @@ import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { PortalModule } from '@angular/cdk/portal';
 import { AsyncPipe } from '@angular/common';
-import { Component, HostBinding, Injector, ViewEncapsulation, inject } from '@angular/core';
-
+import { Component, HostBinding, inject, Injector, ViewEncapsulation } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ASIDE_REF, AsidePositions, AsideRef } from '../../../../util';
 
 @Component({
-    standalone: true,
     selector: 'rtui-aside-panel',
     templateUrl: './aside-panel.component.html',
     styleUrls: ['./aside-panel.component.scss'],

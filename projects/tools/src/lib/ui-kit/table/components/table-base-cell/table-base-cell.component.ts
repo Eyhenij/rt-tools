@@ -1,18 +1,18 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    computed,
     HostBinding,
     HostListener,
+    inject,
+    input,
     InputSignal,
     InputSignalWithTransform,
     Signal,
-    WritableSignal,
-    booleanAttribute,
-    computed,
-    inject,
-    input,
     signal,
+    WritableSignal,
 } from '@angular/core';
 import { MatIconButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -20,11 +20,10 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 import { BlockDirective, ElemDirective, ModDirective } from '../../../../bem';
-import { Nullable, RtHideTooltipDirective, RtIconOutlinedDirective, isNumber, isString } from '../../../../util';
+import { isNumber, isString, Nullable, RtHideTooltipDirective, RtIconOutlinedDirective } from '../../../../util';
 import { ITable } from '../../util/table-column.interface';
 
 @Component({
-    standalone: true,
     selector: 'rtui-table-base-cell',
     templateUrl: './table-base-cell.component.html',
     styleUrls: ['./table-base-cell.component.scss'],

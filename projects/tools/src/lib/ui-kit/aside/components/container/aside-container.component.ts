@@ -2,19 +2,19 @@ import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { NgTemplateOutlet } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    contentChild,
     Directive,
+    input,
     InputSignal,
     InputSignalWithTransform,
+    output,
     OutputEmitterRef,
     Signal,
     TemplateRef,
     Type,
-    booleanAttribute,
-    contentChild,
-    input,
-    output,
 } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -34,13 +34,11 @@ import { RtuiToolbarCenterDirective, RtuiToolbarComponent, RtuiToolbarLeftDirect
 import { AsideErrorBoxComponent } from '../error-notification/aside-error-box.component';
 
 @Directive({
-    standalone: true,
     selector: '[rtuiAsideHeader]',
 })
 export class RtuiAsideContainerHeaderDirective {}
 
 @Component({
-    standalone: true,
     selector: 'rtui-aside-container',
     templateUrl: './aside-container.component.html',
     styleUrls: ['./aside-container.component.scss'],

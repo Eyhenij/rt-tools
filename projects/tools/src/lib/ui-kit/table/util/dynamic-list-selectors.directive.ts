@@ -1,27 +1,25 @@
 import {
+    booleanAttribute,
+    computed,
     DestroyRef,
     Directive,
+    effect,
+    inject,
     Injector,
+    input,
     InputSignalWithTransform,
     OnInit,
     Signal,
-    WritableSignal,
-    booleanAttribute,
-    computed,
-    effect,
-    inject,
-    input,
     signal,
+    WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-
 import { filter, switchMap, take } from 'rxjs/operators';
 
 import { RtuiDynamicListComponent } from '../dynamic-list.component';
 import { RtCommonSelectorsDirective } from './common-selectors.directive';
 
 @Directive({
-    standalone: true,
     selector: 'rtui-dynamic-list[rtDynamicListSelectorsDirective]',
 })
 export class RtDynamicListSelectorsDirective<
@@ -134,7 +132,7 @@ export class RtDynamicListSelectorsDirective<
                     this.#dynamicListRef?.tableTpl()?.isPageEntitiesIndeterminate.set(this.isPageEntitiesIndeterminate());
                 }
             },
-            { injector: this.#injector, allowSignalWrites: true }
+            { injector: this.#injector }
         );
 
         /** Table container config */
@@ -146,7 +144,7 @@ export class RtDynamicListSelectorsDirective<
                         this.toggleAllEntities(checked);
                 }
             },
-            { injector: this.#injector, allowSignalWrites: true }
+            { injector: this.#injector }
         );
         effect(
             () => {
@@ -158,7 +156,7 @@ export class RtDynamicListSelectorsDirective<
                     this.#dynamicListRef?.tableContainerTpl()?.isMultiSelect.set(this.isMultiSelect());
                 }
             },
-            { injector: this.#injector, allowSignalWrites: true }
+            { injector: this.#injector }
         );
         effect(
             () => {
@@ -170,7 +168,7 @@ export class RtDynamicListSelectorsDirective<
                     this.#dynamicListRef?.tableContainerTpl()?.isSelectAllSelectorShown.set(this.isSelectAllSelectorShown());
                 }
             },
-            { injector: this.#injector, allowSignalWrites: true }
+            { injector: this.#injector }
         );
 
         effect(
@@ -183,7 +181,7 @@ export class RtDynamicListSelectorsDirective<
                     this.#dynamicListRef?.tableContainerTpl()?.isSelectAllSelectorDisabled.set(this.isSelectorsColumnDisabled());
                 }
             },
-            { injector: this.#injector, allowSignalWrites: true }
+            { injector: this.#injector }
         );
 
         /** Table config */
@@ -194,7 +192,7 @@ export class RtDynamicListSelectorsDirective<
                     this.#dynamicListRef?.tableTpl()?.isMultiSelect.set(this.isMultiSelect());
                 }
             },
-            { injector: this.#injector, allowSignalWrites: true }
+            { injector: this.#injector }
         );
         effect(
             () => {
@@ -208,7 +206,7 @@ export class RtDynamicListSelectorsDirective<
                     this.#dynamicListRef.tableTpl()!.onTogglePageEntities = (checked: boolean): void => this.togglePageEntities(checked);
                 }
             },
-            { injector: this.#injector, allowSignalWrites: true }
+            { injector: this.#injector }
         );
         effect(
             () => {
@@ -220,7 +218,7 @@ export class RtDynamicListSelectorsDirective<
                     this.#dynamicListRef?.tableTpl()?.isSelectorsColumnDisabled.set(this.isSelectorsColumnDisabled());
                 }
             },
-            { injector: this.#injector, allowSignalWrites: true }
+            { injector: this.#injector }
         );
     }
 

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Injector, OnInit, Signal, effect, inject, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, Injector, OnInit, Signal, viewChild } from '@angular/core';
 
 import { IDBStorageService } from '../../../../idb-storage';
 import { Nullable } from '../../../../util';
@@ -11,7 +11,6 @@ import { COLUMNS } from '../constants';
 import { Person } from '../types';
 
 @Component({
-    standalone: true,
     selector: 'app-test-table-component',
     templateUrl: './test-table-component.html',
     styleUrls: ['./test-table-component.scss'],
@@ -52,7 +51,7 @@ export default class TestTableComponent implements OnInit {
                     console.warn('selectedEntities:', this.dynamicListTpl()?.selectedEntities());
                 }
             },
-            { injector: this.#injector, allowSignalWrites: true }
+            { injector: this.#injector }
         );
     }
 

@@ -4,7 +4,6 @@ import { DASH } from '../const';
 import { isNumber, isString } from '../functions';
 
 @Pipe({
-    standalone: true,
     name: 'entityToString',
     pure: true,
 })

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
@@ -7,7 +7,6 @@ import { RtModalService } from '../modal.service';
 import { IModal } from '../modal.types';
 
 @Component({
-    standalone: true,
     selector: 'app-test-modal',
     templateUrl: './test-modal.component.html',
     styleUrls: ['./test-modal.component.scss'],

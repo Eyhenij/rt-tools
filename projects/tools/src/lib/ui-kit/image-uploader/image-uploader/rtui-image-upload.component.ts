@@ -1,23 +1,22 @@
 import { DOCUMENT } from '@angular/common';
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
-    InputSignal,
-    InputSignalWithTransform,
-    ModelSignal,
-    OutputEmitterRef,
-    WritableSignal,
-    booleanAttribute,
     inject,
     input,
+    InputSignal,
+    InputSignalWithTransform,
     model,
+    ModelSignal,
     output,
+    OutputEmitterRef,
     signal,
+    WritableSignal,
 } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip, TooltipPosition } from '@angular/material/tooltip';
-
 import { ImageCroppedEvent, ImageCropperComponent } from 'ngx-image-cropper';
 
 import { BlockDirective, ElemDirective } from '../../../bem';
@@ -26,7 +25,6 @@ import { RtuiFileUploadComponent } from '../../file-uploader';
 import { RtuiSpinnerComponent } from '../../spinner';
 
 @Component({
-    standalone: true,
     selector: 'rtui-image-upload',
     templateUrl: './rtui-image-upload.component.html',
     styleUrls: ['./rtui-image-upload.component.scss'],

@@ -1,4 +1,4 @@
-import { Directive, HostBinding, InputSignal, OnInit, inject, input } from '@angular/core';
+import { Directive, HostBinding, inject, input, InputSignal, OnInit } from '@angular/core';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 import { getColorBasedOnBackground } from '../../calculate-text-color-based-on-back';
@@ -6,7 +6,6 @@ import { InfoBadgeType } from '../../info-badge-types.enum';
 
 @Directive({
     selector: '[rtTestInfoBadge]',
-    standalone: true,
 })
 export class TestInfoBadgeDirective implements OnInit {
     readonly #sanitizer: DomSanitizer = inject(DomSanitizer);

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, InputSignal, OutputEmitterRef, WritableSignal, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, InputSignal, output, OutputEmitterRef, signal, WritableSignal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
@@ -6,7 +6,6 @@ import { BlockDirective, ElemDirective } from '../../bem';
 import { RtIconOutlinedDirective } from '../../util';
 
 @Component({
-    standalone: true,
     selector: 'rtui-file-upload',
     templateUrl: './rtui-file-upload.component.html',
     styleUrls: ['./rtui-file-upload.component.scss'],

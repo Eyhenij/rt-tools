@@ -1,25 +1,25 @@
 import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    contentChild,
     DestroyRef,
     Directive,
+    effect,
+    inject,
     Injector,
+    input,
     InputSignal,
     InputSignalWithTransform,
     OnInit,
+    output,
     OutputEmitterRef,
     Signal,
+    signal,
     TemplateRef,
     Type,
     WritableSignal,
-    booleanAttribute,
-    contentChild,
-    effect,
-    inject,
-    input,
-    output,
-    signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -30,18 +30,17 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
-
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
 
 import { BlockDirective, ElemDirective, ModDirective } from '../../../../bem';
 import {
     BreakpointService,
+    isString,
     Nullable,
     PlatformService,
     RtIconOutlinedDirective,
-    WINDOW,
-    isString,
     transformStringInput,
+    WINDOW,
 } from '../../../../util';
 import { RtAsideService } from '../../../aside';
 import { RtuiHeaderCenterDirective } from '../../../header';
@@ -59,19 +58,16 @@ import { RtuiPaginationComponent } from '../pagination-view/rtui-pagination.comp
 import { RtTableConfigAsideComponent } from '../table-config-aside/rt-table-config-aside.component';
 
 @Directive({
-    standalone: true,
     selector: '[rtuiTableToolbarSelectorsDirective]',
 })
 export class RtuiTableToolbarSelectorsDirective {}
 
 @Directive({
-    standalone: true,
     selector: '[rtuiTableToolbarActionsDirective]',
 })
 export class RtuiTableToolbarActionsDirective {}
 
 @Component({
-    standalone: true,
     selector: 'rtui-table-container',
     templateUrl: './table-container.component.html',
     styleUrls: ['./table-container.component.scss'],
@@ -220,7 +216,7 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
                     this.#setScrollbarsVisibility();
                 }
             },
-            { injector: this.#injector, allowSignalWrites: true }
+            { injector: this.#injector }
         );
 
         this.searchControl.patchValue(this.searchTerm(), { emitEvent: false });

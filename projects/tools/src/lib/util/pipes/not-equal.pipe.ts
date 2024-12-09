@@ -16,7 +16,6 @@ import { Pipe, PipeTransform } from '@angular/core';
  * ```
  */
 @Pipe({
-    standalone: true,
     name: 'notEqual',
 })
 export class NotEqualPipe implements PipeTransform {

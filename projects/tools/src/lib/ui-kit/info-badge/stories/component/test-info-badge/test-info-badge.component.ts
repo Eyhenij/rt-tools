@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, InputSignal, Signal, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, InputSignal, Signal, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatOption } from '@angular/material/autocomplete';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -9,14 +9,13 @@ import { ElemDirective } from '../../../../../bem';
 import { POSITION_ENUM } from '../../../../../util/enums/position.enum';
 import { INFO_BADGE_SIZE_ENUM } from '../../../badge-info-enum';
 import { IconSideType } from '../../../icon-side.type';
-import { INFO_BADGE_TYPE_ENUM } from '../../../info-badge-types.enum';
 import { RtuiInfoBadgeComponent } from '../../../info-badge.component';
+import { INFO_BADGE_TYPE_ENUM } from '../../../info-badge-types.enum';
 import { TestInfoBadgeDirective } from '../../directives/test-info-badge.directive';
 import { InfoBadgePropertyType } from '../../utils/enum/info-badge-property.enum';
 
 @Component({
     selector: 'rtui-test-info-badge',
-    standalone: true,
     imports: [
         RtuiInfoBadgeComponent,
         TestInfoBadgeDirective,

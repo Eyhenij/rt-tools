@@ -1,17 +1,17 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    contentChild,
     Directive,
+    input,
     InputSignalWithTransform,
+    output,
     OutputEmitterRef,
     Signal,
     TemplateRef,
     Type,
-    booleanAttribute,
-    contentChild,
-    input,
-    output,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -22,25 +22,21 @@ import { Nullable } from '../../util';
 import { RtuiToolbarCenterDirective, RtuiToolbarComponent, RtuiToolbarLeftDirective, RtuiToolbarRightDirective } from '../toolbar';
 
 @Directive({
-    standalone: true,
     selector: '[rtuiHeaderLeft]',
 })
 export class RtuiHeaderLeftDirective {}
 
 @Directive({
-    standalone: true,
     selector: '[rtuiHeaderCenter]',
 })
 export class RtuiHeaderCenterDirective {}
 
 @Directive({
-    standalone: true,
     selector: '[rtuiHeaderRight]',
 })
 export class RtuiHeaderRightDirective {}
 
 @Component({
-    standalone: true,
     selector: 'rtui-header',
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.scss'],

@@ -2,17 +2,17 @@ import { NgClass } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
+    computed,
     HostBinding,
     HostListener,
-    InputSignal,
-    InputSignalWithTransform,
-    OutputEmitterRef,
-    Signal,
-    computed,
     inject,
     input,
+    InputSignal,
+    InputSignalWithTransform,
     numberAttribute,
     output,
+    OutputEmitterRef,
+    Signal,
 } from '@angular/core';
 import { MatIconButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -26,7 +26,6 @@ import { SortModel } from '../../util/lists.interface';
 import { ITable } from '../../util/table-column.interface';
 
 @Component({
-    standalone: true,
     selector: 'rtui-table-header-cell',
     templateUrl: './table-header-cell.component.html',
     styleUrls: ['./table-header-cell.component.scss'],

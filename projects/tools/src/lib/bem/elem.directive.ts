@@ -6,7 +6,6 @@ import { BlockDirective } from './block.directive';
 
 @Directive({
     selector: '[rtElem]',
-    standalone: true,
 })
 export class ElemDirective implements OnChanges {
     @Input() public rtMod?: string | string[] | (string | false)[] | ModsObject;

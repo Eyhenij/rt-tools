@@ -1,7 +1,6 @@
-import { Directive, HostBinding, InputSignalWithTransform, booleanAttribute, input } from '@angular/core';
+import { booleanAttribute, Directive, HostBinding, input, InputSignalWithTransform } from '@angular/core';
 
 @Directive({
-    standalone: true,
     selector: '[rtIconOutlinedDirective]',
 })
 export class RtIconOutlinedDirective {

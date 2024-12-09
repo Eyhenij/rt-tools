@@ -1,12 +1,9 @@
-import { DestroyRef, Directive, OnInit, Signal, WritableSignal, inject, signal } from '@angular/core';
+import { DestroyRef, Directive, inject, OnInit, Signal, signal, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-
 import { filter, map, take } from 'rxjs/operators';
 
-@Directive({
-    standalone: true,
-})
+@Directive()
 export abstract class RtTabQueryParamDirective implements OnInit {
     readonly #router: Router = inject(Router);
     readonly #route: ActivatedRoute = inject(ActivatedRoute);

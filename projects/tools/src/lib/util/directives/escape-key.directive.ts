@@ -1,7 +1,6 @@
-import { Directive, HostListener, OutputEmitterRef, output } from '@angular/core';
+import { Directive, HostListener, output, OutputEmitterRef } from '@angular/core';
 
 @Directive({
-    standalone: true,
     selector: '[rtEscapeKey]',
 })
 export class RtEscapeKeyDirective {

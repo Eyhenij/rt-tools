@@ -1,6 +1,6 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, InputSignal, WritableSignal, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, InputSignal, signal, WritableSignal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
@@ -8,7 +8,6 @@ import { BlockDirective, ElemDirective } from '../../../../bem';
 import { Nullable } from '../../../../util';
 
 @Component({
-    standalone: true,
     selector: 'rtui-aside-error-box',
     templateUrl: './aside-error-box.component.html',
     styleUrls: ['./aside-error-box.component.scss'],

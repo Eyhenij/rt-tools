@@ -1,22 +1,22 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
-    Directive,
-    InputSignal,
-    InputSignalWithTransform,
-    OutputEmitterRef,
-    Signal,
-    TemplateRef,
-    Type,
-    WritableSignal,
-    booleanAttribute,
     computed,
     contentChild,
+    Directive,
     input,
+    InputSignal,
+    InputSignalWithTransform,
     output,
+    OutputEmitterRef,
+    Signal,
     signal,
+    TemplateRef,
+    Type,
     viewChild,
+    WritableSignal,
 } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatListItem, MatListItemIcon, MatNavList } from '@angular/material/list';
@@ -34,19 +34,16 @@ import {
 import { RtuiSideMenuSubItemComponent } from '../menu-sub-item/rtui-side-menu-sub-item.component';
 
 @Directive({
-    standalone: true,
     selector: '[rtuiSideMenuHeader]',
 })
 export class RtuiSideMenuHeaderDirective {}
 
 @Directive({
-    standalone: true,
     selector: '[rtuiSideMenuFooter]',
 })
 export class RtuiSideMenuFooterDirective {}
 
 @Component({
-    standalone: true,
     selector: 'rtui-side-menu',
     templateUrl: './rtui-side-menu.component.html',
     styleUrls: ['./rtui-side-menu.component.scss'],

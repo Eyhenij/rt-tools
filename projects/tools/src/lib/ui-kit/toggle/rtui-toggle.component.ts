@@ -1,23 +1,22 @@
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
     DestroyRef,
+    effect,
+    forwardRef,
+    inject,
     Injector,
+    input,
     InputSignal,
     InputSignalWithTransform,
     OnInit,
     Signal,
-    booleanAttribute,
-    effect,
-    forwardRef,
-    inject,
-    input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { MatTooltip, TooltipPosition } from '@angular/material/tooltip';
-
 import { noop } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
@@ -26,7 +25,6 @@ import { BreakpointService, Nullable } from '../../util';
 import { TOGGLE_SIZE_TYPE_ENUM, ToggleSizeType } from './toggle-size.type.enum';
 
 @Component({
-    standalone: true,
     selector: 'rtui-toggle',
     templateUrl: './rtui-toggle.component.html',
     styleUrls: ['./rtui-toggle.component.scss'],

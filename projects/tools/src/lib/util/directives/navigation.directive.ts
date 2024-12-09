@@ -1,4 +1,4 @@
-import { Directive, HostListener, InputSignal, inject, input } from '@angular/core';
+import { Directive, HostListener, inject, input, InputSignal } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { Nullable } from '../interfaces';
@@ -6,7 +6,6 @@ import { PlatformService } from '../services';
 import { WINDOW } from '../tokens';
 
 @Directive({
-    standalone: true,
     selector: '[rtNavigationDirective]',
     providers: [PlatformService],
 })

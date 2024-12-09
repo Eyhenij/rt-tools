@@ -1,8 +1,7 @@
-import { AfterViewInit, Directive, InputSignal, InputSignalWithTransform, booleanAttribute, effect, inject, input } from '@angular/core';
+import { AfterViewInit, booleanAttribute, Directive, effect, inject, input, InputSignal, InputSignalWithTransform } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 
 @Directive({
-    standalone: true,
     selector: '[rtHideTooltipDirective]',
 })
 export class RtHideTooltipDirective implements AfterViewInit {
