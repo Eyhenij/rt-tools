@@ -8,6 +8,7 @@ import html from 'eslint-plugin-html';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import rxjs from 'eslint-plugin-rxjs';
 import globals from 'globals';
+import simpleImportSort from 'eslint-plugin-simple-import-sort';
 
 export default [
     eslintPluginPrettierRecommended,
@@ -17,6 +18,7 @@ export default [
             '@typescript-eslint': ts,
             '@angular-eslint': ng,
             rxjs,
+            'simple-import-sort': simpleImportSort,
         },
         languageOptions: {
             parser: tsParser,
@@ -129,7 +131,6 @@ export default [
                     arrayDestructuring: true,
                 },
             ],
-            '@typescript-eslint/type-annotation-spacing': ['error'],
             '@typescript-eslint/member-ordering': [
                 'error',
                 {
@@ -172,6 +173,8 @@ export default [
             'rxjs/no-unsafe-first': ['error'],
             'rxjs/no-implicit-any-catch': 'off',
             'rxjs/no-sharereplay': 'off',
+            'simple-import-sort/imports': ['error'],
+            'simple-import-sort/exports': ['error'],
         },
     },
     {
