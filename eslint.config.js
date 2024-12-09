@@ -129,7 +129,6 @@ export default [
                     arrayDestructuring: true,
                 },
             ],
-            '@typescript-eslint/type-annotation-spacing': ['error'],
             '@typescript-eslint/member-ordering': [
                 'error',
                 {

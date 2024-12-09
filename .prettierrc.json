@@ -1,6 +1,6 @@
 {
   "base": "./",
-  "plugins": ["prettier-plugin-organize-attributes", "@trivago/prettier-plugin-sort-imports"],
+  "plugins": ["prettier-plugin-organize-attributes"],
   "printWidth": 140,
   "tabWidth": 4,
   "semi": true,
