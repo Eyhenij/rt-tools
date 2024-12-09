@@ -3,7 +3,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { emptyToDash } from '../functions';
 
 @Pipe({
-    standalone: true,
     name: 'emptyToDash',
     pure: true,
 })

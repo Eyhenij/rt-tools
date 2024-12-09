@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RtuiFileUploadComponent } from '../../rtui-file-upload.component';
 
 @Component({
-    standalone: true,
     selector: 'app-file-upload',
     templateUrl: './test-file-upload.component.html',
     styleUrls: ['./test-file-upload.component.scss'],

@@ -1,5 +1,5 @@
 import { NgClass, NgComponentOutlet, NgStyle } from '@angular/common';
-import { ChangeDetectionStrategy, Component, HostBinding, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, inject, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -13,7 +13,6 @@ import { checkIsMatchingValues } from '../../util/validators/comparison.validato
 import { IModal } from './modal.types';
 
 @Component({
-    standalone: true,
     selector: 'rtui-modal',
     templateUrl: './modal.component.html',
     styleUrls: ['./modal.component.scss'],

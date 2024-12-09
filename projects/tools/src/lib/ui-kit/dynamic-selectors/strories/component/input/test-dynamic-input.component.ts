@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-
 import { faker } from '@faker-js/faker';
 
 import { BlockDirective, ElemDirective } from '../../../../../bem';
@@ -18,7 +17,6 @@ export const createEmail: () => string = (): string => {
 export const createEmailsList: (size: number) => string[] = (size: number) => Array.from({ length: size }, createEmail);
 
 @Component({
-    standalone: true,
     selector: 'app-dynamic-input',
     templateUrl: './test-dynamic-input.component.html',
     styleUrls: ['./test-dynamic-input.component.scss'],

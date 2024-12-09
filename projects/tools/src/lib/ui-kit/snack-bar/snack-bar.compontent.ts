@@ -1,5 +1,5 @@
-import { AnimationBuilder, AnimationFactory, AnimationPlayer, animate, style } from '@angular/animations';
-import { ChangeDetectionStrategy, Component, ElementRef, HostListener, Signal, afterNextRender, inject, viewChild } from '@angular/core';
+import { animate, AnimationBuilder, AnimationFactory, AnimationPlayer, style } from '@angular/animations';
+import { afterNextRender, ChangeDetectionStrategy, Component, ElementRef, HostListener, inject, Signal, viewChild } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar';
@@ -9,7 +9,6 @@ import { Nullable, RtIconOutlinedDirective } from '../../util';
 import { IRtSnackBar } from './snack-bar-config.interface';
 
 @Component({
-    standalone: true,
     selector: 'rtui-snack-bar',
     templateUrl: './snack-bar.component.html',
     styleUrls: ['./snack-bar.component.scss'],

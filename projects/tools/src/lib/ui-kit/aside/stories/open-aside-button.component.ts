@@ -8,7 +8,6 @@ import { RtAsideService } from '../aside.service';
 import { TestAsideComponent } from './aside-component/test-aside.component';
 
 @Component({
-    standalone: true,
     selector: 'rtui-open-aside-button',
     template: '<button mat-flat-button type="button" (click)="onClick()">Open Aside</button>',
     changeDetection: ChangeDetectionStrategy.OnPush,

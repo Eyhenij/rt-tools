@@ -1,10 +1,9 @@
-import { Directive, InputSignal, OnDestroy, OnInit, OutputEmitterRef, inject, input, output } from '@angular/core';
+import { Directive, inject, input, InputSignal, OnDestroy, OnInit, output, OutputEmitterRef } from '@angular/core';
 
 import { PlatformService } from '../services';
 import { WINDOW } from '../tokens';
 
 @Directive({
-    standalone: true,
     selector: '[rtScrollDirective]',
 })
 export class RtScrollDirective implements OnInit, OnDestroy {

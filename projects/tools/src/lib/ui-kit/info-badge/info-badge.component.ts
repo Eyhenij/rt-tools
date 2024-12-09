@@ -1,17 +1,17 @@
 import { NgClass, NgStyle } from '@angular/common';
 import {
     AfterContentChecked,
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     ElementRef,
+    input,
     InputSignal,
     InputSignalWithTransform,
     Signal,
-    WritableSignal,
-    booleanAttribute,
-    input,
     signal,
     viewChild,
+    WritableSignal,
 } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -24,7 +24,6 @@ import { IconSideType } from './icon-side.type';
 
 @Component({
     selector: 'rtui-info-badge',
-    standalone: true,
     imports: [MatTooltip, NgClass, MatIcon, NgStyle, BlockDirective, ElemDirective],
     templateUrl: './info-badge.component.html',
     styleUrl: './info-badge.component.scss',

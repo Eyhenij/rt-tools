@@ -16,7 +16,6 @@ import { Pipe, PipeTransform } from '@angular/core';
  * ```
  */
 @Pipe({
-    standalone: true,
     name: 'equal',
 })
 export class EqualPipe implements PipeTransform {

@@ -7,7 +7,6 @@ import { RtuiToggleComponent } from '../../rtui-toggle.component';
 import { TOGGLE_SIZE_TYPE_ENUM, ToggleSizeType } from '../../toggle-size.type.enum';
 
 @Component({
-    standalone: true,
     selector: 'app-toggle',
     templateUrl: './test-toggle.component.html',
     styleUrls: ['./test-toggle.component.scss'],

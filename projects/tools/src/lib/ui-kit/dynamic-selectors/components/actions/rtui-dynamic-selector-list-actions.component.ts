@@ -1,11 +1,11 @@
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
-    InputSignalWithTransform,
-    OutputEmitterRef,
-    booleanAttribute,
     input,
+    InputSignalWithTransform,
     output,
+    OutputEmitterRef,
 } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -15,7 +15,6 @@ import { BlockDirective, ElemDirective } from '../../../../bem';
 import { Nullable, RtIconOutlinedDirective } from '../../../../util';
 
 @Component({
-    standalone: true,
     selector: 'rtui-dynamic-selector-list-actions',
     templateUrl: './rtui-dynamic-selector-list-actions.component.html',
     styleUrls: ['./rtui-dynamic-selector-list-actions.component.scss'],

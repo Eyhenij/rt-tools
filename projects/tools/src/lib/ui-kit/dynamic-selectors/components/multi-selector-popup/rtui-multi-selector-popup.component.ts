@@ -1,24 +1,24 @@
 import {
     AfterViewInit,
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     DestroyRef,
+    effect,
     ElementRef,
+    inject,
     Injector,
+    input,
     InputSignal,
     InputSignalWithTransform,
     OnInit,
+    output,
     OutputEmitterRef,
     Signal,
-    WritableSignal,
-    booleanAttribute,
-    effect,
-    inject,
-    input,
-    output,
     signal,
     untracked,
     viewChild,
+    WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -31,7 +31,6 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatRadioButton } from '@angular/material/radio';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-
 import { debounceTime } from 'rxjs/operators';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
@@ -50,7 +49,6 @@ import { RtuiClearButtonComponent } from '../../../table';
 import { RtuiToggleComponent } from '../../../toggle';
 
 @Component({
-    standalone: true,
     selector: 'rtui-multi-selector-popup',
     templateUrl: './rtui-multi-selector-popup.component.html',
     styleUrls: ['./rtui-multi-selector-popup.component.scss'],
@@ -235,7 +233,7 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
                     );
                 }
             },
-            { injector: this.#injector, allowSignalWrites: true }
+            { injector: this.#injector }
         );
     }
 

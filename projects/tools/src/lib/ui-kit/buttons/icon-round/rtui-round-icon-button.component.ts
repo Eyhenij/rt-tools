@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component, InputSignal, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 
 import { BlockDirective, ElemDirective } from '../../../bem';
 
 @Component({
-    standalone: true,
     selector: 'rtui-round-icon-button',
     templateUrl: './rtui-round-icon-button.component.html',
     styleUrls: ['./rtui-round-icon-button.component.scss'],

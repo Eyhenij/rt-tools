@@ -1,18 +1,18 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    contentChild,
     Directive,
+    input,
     InputSignal,
     InputSignalWithTransform,
+    output,
     OutputEmitterRef,
     Signal,
     TemplateRef,
     Type,
-    booleanAttribute,
-    contentChild,
-    input,
-    output,
     viewChild,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
@@ -40,21 +40,18 @@ import { PageModel, SortModel } from './util/lists.interface';
 
 /** Directive for selectors of the toolbar located on the left side */
 @Directive({
-    standalone: true,
     selector: '[rtuiDynamicListToolbarSelectorsDirective]',
 })
 export class RtuiDynamicListToolbarSelectorsDirective {}
 
 /** Directive for actions of the toolbar located on the right side */
 @Directive({
-    standalone: true,
     selector: '[rtuiDynamicListToolbarActionsDirective]',
 })
 export class RtuiDynamicListToolbarActionsDirective {}
 
 /** Directive for custom table cells */
 @Directive({
-    standalone: true,
     selector: '[rtuiDynamicListCustomTableCellsDirective]',
 })
 export class RtuiDynamicListCustomTableCellsDirective<ENTITY_TYPE> {
@@ -65,20 +62,17 @@ export class RtuiDynamicListCustomTableCellsDirective<ENTITY_TYPE> {
 
 /** Directive for row actions located inside a row menu button */
 @Directive({
-    standalone: true,
     selector: '[rtuiDynamicListRowActionsDirective]',
 })
 export class RtuiDynamicListRowActionsDirective {}
 
 /** Directive for row actions located outside a row menu button */
 @Directive({
-    standalone: true,
     selector: '[rtuiDynamicListRowAdditionalActionsDirective]',
 })
 export class RtuiDynamicListRowAdditionalActionsDirective {}
 
 @Component({
-    standalone: true,
     selector: 'rtui-dynamic-list',
     templateUrl: './dynamic-list.component.html',
     styleUrls: ['./dynamic-list.component.scss'],

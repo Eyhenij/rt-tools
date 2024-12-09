@@ -1,13 +1,11 @@
-import { DestroyRef, Directive, Injector, OnInit, Signal, WritableSignal, computed, effect, inject, signal } from '@angular/core';
+import { computed, DestroyRef, Directive, effect, inject, Injector, OnInit, Signal, signal, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-
 import { filter, switchMap, take } from 'rxjs/operators';
 
 import { RtuiTableComponent } from '../components';
 import { RtCommonSelectorsDirective } from './common-selectors.directive';
 
 @Directive({
-    standalone: true,
     selector: 'rtui-table[rtTableSelectorsDirective]',
 })
 export class RtTableSelectorsDirective<
@@ -82,7 +80,7 @@ export class RtTableSelectorsDirective<
                     this.#tableRef?.isPageEntitiesIndeterminate.set(this.isPageEntitiesIndeterminate());
                 }
             },
-            { injector: this.#injector, allowSignalWrites: true }
+            { injector: this.#injector }
         );
 
         /** Table config */
@@ -93,7 +91,7 @@ export class RtTableSelectorsDirective<
                     this.#tableRef?.isMultiSelect.set(this.isMultiSelect());
                 }
             },
-            { injector: this.#injector, allowSignalWrites: true }
+            { injector: this.#injector }
         );
         effect(
             () => {
@@ -104,7 +102,7 @@ export class RtTableSelectorsDirective<
                     this.#tableRef.onTogglePageEntities = (checked: boolean): void => this.togglePageEntities(checked);
                 }
             },
-            { injector: this.#injector, allowSignalWrites: true }
+            { injector: this.#injector }
         );
         effect(
             () => {
@@ -113,7 +111,7 @@ export class RtTableSelectorsDirective<
                     this.#tableRef?.isSelectorsColumnDisabled.set(this.isSelectorsColumnDisabled());
                 }
             },
-            { injector: this.#injector, allowSignalWrites: true }
+            { injector: this.#injector }
         );
     }
 

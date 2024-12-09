@@ -1,10 +1,8 @@
-import { Directive, InputSignalWithTransform, WritableSignal, booleanAttribute, input, signal } from '@angular/core';
+import { booleanAttribute, Directive, input, InputSignalWithTransform, signal, WritableSignal } from '@angular/core';
 
 import { transformArrayInput } from '../../../util';
 
-@Directive({
-    standalone: true,
-})
+@Directive()
 export class RtCommonSelectorsDirective<ENTITY_TYPE extends Record<string, unknown>, KEY extends Extract<keyof ENTITY_TYPE, string>> {
     /** Indicates is multiselect available */
     public isMultiSelect: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
