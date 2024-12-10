@@ -31,7 +31,10 @@ $mat-theme: mat.define-theme(
 
 html {
     @include mat.all-component-themes($mat-theme);
-    font-family: var(--font-default);
+
+    & {
+        font-family: var(--font-default);
+    }
 }
 
 // For correct displaying modal height in storybook
