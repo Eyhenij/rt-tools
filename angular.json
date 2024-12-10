@@ -66,7 +66,7 @@
                         "compodoc": false,
                         "outputDir": "storybook-static",
                         "styles": [
-                            "@rt-tools/src/lib/ui-kit/styles/styles.scss"
+                            "projects/tools/.storybook/storybook.scss"
                         ]
                     }
                 }
