@@ -1,5 +1,6 @@
 @use '../base/mixin' as mixins;
 @use '../base/variables' as vars;
+@use 'sass:color' as color;
 
 $button: (
     base: (
@@ -56,36 +57,36 @@ $button: (
         color: var(--clr-white-100),
     ),
     fill-green: (
-        border: 1px solid darken(vars.$clr-green-80, 10%),
+        border: 1px solid color.scale(vars.$clr-green-80, $lightness: -10%),
         color: var(--clr-white-100),
         background-color: var(--clr-green-80),
     ),
     fill-green-hover: (
-        background-color: darken(vars.$clr-green-80, 10%),
+        background-color: color.scale(vars.$clr-green-80, $lightness: -10%),
     ),
     fill-green-light: (
-        border-color: darken(vars.$clr-green-10, 10%),
+        border-color: color.scale(vars.$clr-green-10, $lightness: -10%),
         color: var(--clr-green-100),
         background-color: var(--clr-green-10),
     ),
     fill-green-light-hover: (
-        background-color: darken(vars.$clr-green-10, 10%),
+        background-color: color.scale(vars.$clr-green-10, $lightness: -10%),
     ),
     fill-red: (
-        border: 1px solid darken(vars.$clr-red-100, 10%),
+        border: 1px solid color.scale(vars.$clr-red-100, $lightness: -10%),
         color: var(--clr-white-100),
         background-color: vars.$clr-red-100,
     ),
     fill-red-hover: (
-        background-color: darken(vars.$clr-red-100, 10%),
+        background-color: color.scale(vars.$clr-red-100, $lightness: -10%),
     ),
     fill-red-light: (
-        border-color: darken(vars.$clr-red-10, 10%),
+        border-color: color.scale(vars.$clr-red-10, $lightness: -10%),
         color: var(--clr-red-100),
         background-color: var(--clr-red-10),
     ),
     fill-red-light-hover: (
-        background-color: darken(vars.$clr-red-10, 10%),
+        background-color: color.scale(vars.$clr-red-10, $lightness: -10%),
     ),
     outline: (
         border: 1px solid var(--clr-blue-40),

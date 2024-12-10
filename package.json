@@ -1,6 +1,6 @@
 {
     "name": "@rt/tools",
-    "version": "0.0.9",
+    "version": "0.0.10",
     "type": "module",
     "scripts": {
         "ng": "ng",
@@ -12,7 +12,9 @@
         "packagr:tools": "ng-packagr -p ./projects/tools/ng-package.json && cd ./dist/tools && npm pack && npm publish",
         "storybook": "ng run @rt/tools:storybook",
         "build-storybook": "ng run @rt/tools:build-storybook",
-        "prepare": "husky"
+        "prepare": "husky",
+        "postinstall": "rm -rf .angular",
+        "preinstall": "npx only-allow pnpm"
     },
     "private": false,
     "repository": {
@@ -36,8 +38,18 @@
         "@angular-eslint/eslint-plugin-template": "^19.0.1",
         "@angular-eslint/schematics": "^19.0.1",
         "@angular-eslint/template-parser": "^19.0.1",
+        "@angular/animations": "^19.0.3",
+        "@angular/cdk": "^19.0.2",
         "@angular/cli": "^19.0.4",
+        "@angular/common": "^19.0.3",
+        "@angular/compiler": "^19.0.3",
         "@angular/compiler-cli": "^19.0.3",
+        "@angular/core": "^19.0.3",
+        "@angular/forms": "^19.0.3",
+        "@angular/material": "^19.0.2",
+        "@angular/platform-browser": "^19.0.3",
+        "@angular/platform-browser-dynamic": "^19.0.3",
+        "@angular/router": "^19.0.3",
         "@chromatic-com/storybook": "^3.2.2",
         "@commitlint/cli": "^19.6.0",
         "@commitlint/config-angular": "^19.6.0",
@@ -51,6 +63,7 @@
         "@storybook/angular": "^8.4.7",
         "@storybook/blocks": "^8.4.7",
         "@storybook/test": "^8.4.7",
+        "@types/node": "^22.10.1",
         "@typescript-eslint/eslint-plugin": "^8.17.0",
         "@typescript-eslint/parser": "^8.17.0",
         "date-fns": "^4.1.0",
@@ -70,13 +83,16 @@
         "prettier-eslint": "^16.3.0",
         "prettier-plugin-organize-attributes": "^1.0.0",
         "prettier-stylelint": "^0.4.2",
+        "rxjs": "^7.8.1",
         "storybook": "^8.4.7",
         "stylelint": "^16.11.0",
         "stylelint-config-idiomatic-order": "^10.0.0",
         "stylelint-config-standard": "^36.0.1",
         "stylelint-prettier": "^5.0.2",
         "stylelint-scss": "^6.10.0",
-        "typescript": "~5.6.2"
+        "tslib": "^2.8.1",
+        "typescript": "~5.6.2",
+        "zone.js": "^0.15.0"
     },
     "lint-staged": {
         "**/src/**/*.{js,ts}": "eslint --fix",
@@ -84,5 +100,8 @@
     },
     "dependencies": {
         "ngx-image-cropper": "^9.0.0"
+    },
+    "engines": {
+        "node": ">=22.12.0"
     }
 }
