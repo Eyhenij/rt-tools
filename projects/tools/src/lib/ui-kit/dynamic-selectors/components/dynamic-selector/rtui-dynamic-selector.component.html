@@ -37,16 +37,18 @@
                         (submitAction)="showSelectionControl($event)" />
                 } @else {
                     <div rtElem="actions">
-                        <button
-                            #trigger="cdkOverlayOrigin"
-                            cdkOverlayOrigin
-                            type="button"
-                            class="c-button c-button--txt-base--size-sm"
-                            [class.--disabled]="disabled()"
-                            [disabled]="disabled()"
-                            (click)="showSelectionControl(trigger)">
-                            {{ buttonTitle() }}
-                        </button>
+                        @if (isOpenPopupButtonShown()) {
+                            <button
+                                #trigger="cdkOverlayOrigin"
+                                cdkOverlayOrigin
+                                type="button"
+                                class="c-button c-button--txt-base--size-sm"
+                                [class.--disabled]="disabled()"
+                                [disabled]="disabled()"
+                                (click)="showSelectionControl(trigger)">
+                                {{ buttonTitle() }}
+                            </button>
+                        }
 
                         <ng-template [ngTemplateOutlet]="listActionsTpl" />
                     </div>
@@ -73,6 +75,7 @@
                             [displayExp]="displayExp()"
                             [isMobile]="isMobile()"
                             [isSingleSelection]="isSingleSelection()"
+                            [isSelectAllButtonShown]="isSelectAllButtonShown()"
                             [loading]="loading()"
                             [fetching]="fetching()"
                             [useNameBreaking]="useNameBreaking()"
