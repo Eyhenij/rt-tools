@@ -63,6 +63,8 @@ export class TestSelectorComponent implements OnInit {
     public isMultiToggleShown: boolean = false;
     public hasReadonly: boolean = false;
     public isSingleMode: boolean = false;
+    public isSelectAllButtonShown: boolean = true;
+    public isOpenPopupButtonShown: boolean = true;
     public entities: Person[] = [];
     public readonlyEntitiesKeys: number[] = [1, 3, 5];
 
