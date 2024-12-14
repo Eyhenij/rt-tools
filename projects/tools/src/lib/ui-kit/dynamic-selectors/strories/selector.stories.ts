@@ -1,10 +1,9 @@
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { Routes, provideRouter } from '@angular/router';
-
-import { Meta, StoryObj, applicationConfig } from '@storybook/angular';
+import { provideRouter, Routes } from '@angular/router';
+import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
 import { PlatformService } from '../../../util';
-import { TestSelectorComponent, listOfPersons } from './component/selector/test-selector.component';
+import { listOfPersons, TestSelectorComponent } from './component/selector/test-selector.component';
 
 const routes: Routes = [
     {
@@ -35,6 +34,8 @@ export const Selector: Story = {
         entities: listOfPersons,
         isAdditionalControlShown: false,
         isMultiToggleShown: false,
+        isSelectAllButtonShown: true,
+        isOpenPopupButtonShown: true,
     },
 };
 

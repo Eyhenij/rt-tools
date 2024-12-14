@@ -16,6 +16,8 @@
     [isPlaceholderShown]="!form.value?.length"
     [placeholderIcon]="'person'"
     [isMultiToggleShown]="isMultiToggleShown"
+    [isOpenPopupButtonShown]="isOpenPopupButtonShown"
+    [isSelectAllButtonShown]="isSelectAllButtonShown"
     [(chosenEntities)]="chosenEntities"
     (selectionChangeAction)="onSelectionChange($event)">
     @if (isAdditionalControlShown) {

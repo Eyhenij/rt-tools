@@ -35,14 +35,16 @@
                 </div>
             }
 
-            <div rtElem="controls-item" rtMod="last">
-                <mat-checkbox
-                    [checked]="isAllSelected()"
-                    [indeterminate]="!isAllSelected() && selectionControl.value.length > 0"
-                    (change)="toggleSelectAll($event.checked)">
-                    <div rtElem="controls-item-title">Select all</div>
-                </mat-checkbox>
-            </div>
+            @if (isSelectAllButtonShown()) {
+                <div rtElem="controls-item" rtMod="last">
+                    <mat-checkbox
+                        [checked]="isAllSelected()"
+                        [indeterminate]="!isAllSelected() && selectionControl.value.length > 0"
+                        (change)="toggleSelectAll($event.checked)">
+                        <div rtElem="controls-item-title">Select all</div>
+                    </mat-checkbox>
+                </div>
+            }
         </div>
     }
 </div>

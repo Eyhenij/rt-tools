@@ -27,7 +27,7 @@ import {
     untracked,
     WritableSignal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import {
     ControlValueAccessor,
     FormBuilder,
@@ -39,23 +39,16 @@ import {
     ValidationErrors,
     Validator,
 } from '@angular/forms';
-import { MatIconButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatTooltip } from '@angular/material/tooltip';
 import { noop } from 'rxjs';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
 import {
     areArraysEqual,
-    BreakStringPipe,
     checkIsEntityInArrayByKey,
-    EntityToStringPipe,
     Nullable,
     OVERLAY_POSITIONS,
     RtEscapeKeyDirective,
-    RtHideTooltipDirective,
-    RtIconOutlinedDirective,
     sortByAlphabet,
     transformArrayInput,
 } from '../../../../util';
@@ -89,20 +82,9 @@ export class RtuiDynamicSelectorAdditionalControlDirective {}
         CdkOverlayOrigin,
         CdkConnectedOverlay,
 
-        // material
-        MatIconButton,
-        MatTooltip,
-        MatIcon,
-
-        // pipes
-        BreakStringPipe,
-        EntityToStringPipe,
-
         // directives
         BlockDirective,
         ElemDirective,
-        RtIconOutlinedDirective,
-        RtHideTooltipDirective,
         RtEscapeKeyDirective,
         RtuiDynamicSelectorItemAdditionalControlDirective,
 
@@ -190,6 +172,14 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     });
     /** Indicates is change multi select mode toggle shown */
     public isMultiToggleShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
+    /** Indicates is Select all button shown */
+    public isSelectAllButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+        transform: booleanAttribute,
+    });
+    /** Indicates is Open popup button shown */
+    public isOpenPopupButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
     /** Init search term value */
@@ -284,22 +274,22 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
             });
 
         /** Set list of selected entities if parent use ModelSignal instead of FormControl */
-        effect(
-            () => {
-                if (this.chosenEntities()?.length) {
-                    const chosenListIds: ReadonlyArray<ENTITY[KEY]> = this.chosenEntities().map((entity: ENTITY) => entity[this.keyExp()]);
-                    const selectedEntityIds: ReadonlyArray<ENTITY[KEY]> = this.#selectedEntityIds();
-                    const chosenListIdsForCompare: ENTITY[KEY][] = [...chosenListIds].sort();
-                    const selectedEntityIdsForCompare: ENTITY[KEY][] = [...selectedEntityIds].sort();
+        toObservable(this.chosenEntities, { injector: this.#injector })
+            .pipe(
+                filter((list: ENTITY[]) => !!list?.length),
+                takeUntilDestroyed(this.#destroyRef)
+            )
+            .subscribe((list: ENTITY[]) => {
+                const chosenListIds: ReadonlyArray<ENTITY[KEY]> = list.map((entity: ENTITY) => entity[this.keyExp()]);
+                const selectedEntityIds: ReadonlyArray<ENTITY[KEY]> = this.#selectedEntityIds();
+                const chosenListIdsForCompare: ENTITY[KEY][] = [...chosenListIds].sort();
+                const selectedEntityIdsForCompare: ENTITY[KEY][] = [...selectedEntityIds].sort();
 
-                    if (!areArraysEqual(chosenListIdsForCompare, selectedEntityIdsForCompare)) {
-                        this.#selectedEntityIds.set([...chosenListIds]);
-                        this.#initialEntityIds.set([...chosenListIds]);
-                    }
+                if (!areArraysEqual(chosenListIdsForCompare, selectedEntityIdsForCompare)) {
+                    this.#selectedEntityIds.set([...chosenListIds]);
+                    this.#initialEntityIds.set([...chosenListIds]);
                 }
-            },
-            { injector: this.#injector }
-        );
+            });
 
         /** Set list of selected entities ids for compare */
         effect(
@@ -312,7 +302,7 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
                     this.#selectedEntityIdsForCompare = selectedEntityIds;
                     this.#changeControlValue(selectedEntityIds);
                     this.chosenEntities.set(untracked(() => this.selectedEntities()));
-                    this.selectionChangeAction.emit(this.chosenEntities());
+                    this.selectionChangeAction.emit(untracked(() => this.selectedEntities()));
                 } else if (!this.#isFormInit && this.#entities().length) {
                     this.#selectedEntityIdsForCompare = selectedEntityIds;
                     this.#isFormInit = true;

@@ -22,7 +22,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatFormField, MatFormFieldAppearance, MatPrefix, MatSuffix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
@@ -63,7 +63,6 @@ import { RtuiToggleComponent } from '../../../toggle';
         MatPrefix,
         MatSuffix,
         MatCheckbox,
-        MatIconButton,
         MatRadioButton,
         MatProgressSpinner,
         BreakStringPipe,
@@ -119,6 +118,10 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
     });
     /** Indicates is change multi select mode toggle shown */
     public isMultiToggleShown: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(null, {
+        transform: booleanAttribute,
+    });
+    /** Indicates is Select all button shown */
+    public isSelectAllButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
     /** Indicates that a list of entities is being loading */
