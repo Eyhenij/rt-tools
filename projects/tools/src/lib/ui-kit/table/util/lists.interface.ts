@@ -28,7 +28,8 @@ export interface PageModel {
 export interface FilterModel<M = string> {
     operatorType: FilterOperatorType;
     propertyName: M;
-    value: string | number | boolean;
+    value?: string | number | boolean;
+    values?: Array<string | number>;
 }
 
 export enum FILTER_OPERATOR_TYPE_ENUM {
