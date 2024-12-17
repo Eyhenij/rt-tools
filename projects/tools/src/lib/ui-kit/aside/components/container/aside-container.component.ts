@@ -1,4 +1,5 @@
 import { CdkTrapFocus } from '@angular/cdk/a11y';
+import { BooleanInput } from '@angular/cdk/coercion';
 import { NgTemplateOutlet } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
@@ -84,10 +85,8 @@ export class RtuiAsideContainerComponent {
     public isSubmitButtonDisabled: InputSignalWithTransform<boolean, boolean> = input.required<boolean, boolean>({
         transform: booleanAttribute,
     });
-    public pending: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
-        transform: booleanAttribute,
-    });
-    public isRequestErrorShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+    public pending: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+    public isRequestErrorShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     public headerActionsButtons: InputSignalWithTransform<IAside.HeaderActionButton[], IAside.HeaderActionButton[]> = input<

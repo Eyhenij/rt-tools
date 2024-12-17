@@ -1,3 +1,4 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList } from '@angular/cdk/drag-drop';
 import { NgTemplateOutlet, TitleCasePipe } from '@angular/common';
 import {
@@ -83,19 +84,19 @@ export class RtuiDynamicSelectorSelectedListComponent<ENTITY extends Record<stri
         transform: (value: ENTITY[KEY][]) => transformArrayInput(value),
     });
     /** Indicates is list of items draggable */
-    public isListDraggable: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+    public isListDraggable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Indicates is break string pipe used */
-    public useNameBreaking: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+    public useNameBreaking: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Indicates is title case pipe used */
-    public useTitleCase: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+    public useTitleCase: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Indicates is delete entity button from the selected list shown */
-    public isDeleteButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+    public isDeleteButtonShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
 
