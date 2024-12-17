@@ -1,0 +1,53 @@
+name: Publish to npm
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    main:
+        runs-on: ubuntu-latest
+
+        strategy:
+            matrix:
+                node-version: [22.12.0]
+
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - uses: pnpm/action-setup@v2
+              with:
+                  version: 9
+
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: 'pnpm'
+
+            - run: pnpm install --frozen-lockfile
+
+            - run: |
+                  ls -la
+                  cd projects/tools
+                  ls -la
+
+            - run: sudo apt-get install jq
+
+            - run: |
+                  git config --global user.name "github-actions"
+                  git config --global user.email "github-actions@github.com"
+                  cd projects/tools
+                  pnpm version patch --no-git-tag-version
+                  git add package.json
+                  git commit -m "chore: bump version in tools to $(jq -r .version package.json) [ci skip]"
+                  git push
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - run: pnpm run build
+            - run: pnpm run packagr:tools
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
