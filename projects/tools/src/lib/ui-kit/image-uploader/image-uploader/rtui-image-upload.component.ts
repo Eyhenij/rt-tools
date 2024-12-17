@@ -1,3 +1,4 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import { DOCUMENT } from '@angular/common';
 import {
     booleanAttribute,
@@ -57,19 +58,19 @@ export class RtuiImageUploadComponent {
     public fileName: InputSignalWithTransform<string, string> = input<string, string>('image', {
         transform: transformStringInput,
     });
-    public isActive: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+    public isActive: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
-    public isSaveButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+    public isSaveButtonShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
-    public isTooltipDisabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+    public isTooltipDisabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
-    public isActionsShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+    public isActionsShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
-    public loading: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+    public loading: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     public tooltip: InputSignal<string> = input<string>('');

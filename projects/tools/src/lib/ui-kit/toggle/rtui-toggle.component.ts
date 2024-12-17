@@ -1,3 +1,4 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -58,10 +59,10 @@ export class RtuiToggleComponent implements OnInit, ControlValueAccessor {
     public tooltip: InputSignal<string> = input('');
     public size: InputSignal<ToggleSizeType> = input<ToggleSizeType>(TOGGLE_SIZE_TYPE_ENUM.MD);
     public tooltipPosition: InputSignal<TooltipPosition> = input<TooltipPosition>('above');
-    public disabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+    public disabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
-    public tooltipDisabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+    public tooltipDisabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
 

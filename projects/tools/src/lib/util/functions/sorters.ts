@@ -1,9 +1,11 @@
+import { isString } from './is-string';
+
 export const sortByAlphabet: <T extends object>(a: T, b: T, field: keyof T) => number = <T extends object>(
     a: T,
     b: T,
     field: keyof T
 ): number => {
-    if (a[field] && typeof a[field] === 'string' && b[field] && typeof b[field] === 'string') {
+    if (a[field] && isString(a[field]) && b[field] && isString(b[field])) {
         if ((a[field] as string).toLowerCase() < (b[field] as string).toLowerCase()) {
             return -1;
         }

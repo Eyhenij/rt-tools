@@ -1,4 +1,16 @@
-import { Directive, inject, input, InputSignal, OnDestroy, OnInit, output, OutputEmitterRef } from '@angular/core';
+import { BooleanInput, NumberInput } from '@angular/cdk/coercion';
+import {
+    booleanAttribute,
+    Directive,
+    inject,
+    input,
+    InputSignalWithTransform,
+    numberAttribute,
+    OnDestroy,
+    OnInit,
+    output,
+    OutputEmitterRef,
+} from '@angular/core';
 
 import { PlatformService } from '../services';
 import { WINDOW } from '../tokens';
@@ -10,8 +22,8 @@ export class RtScrollDirective implements OnInit, OnDestroy {
     readonly #windowRef: Window = inject(WINDOW);
     readonly #platformService: PlatformService = inject(PlatformService);
 
-    public active: InputSignal<boolean> = input<boolean>(true);
-    public multiplier: InputSignal<number> = input<number>(0.5);
+    public active: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, { transform: booleanAttribute });
+    public multiplier: InputSignalWithTransform<number, NumberInput> = input<number, NumberInput>(0.5, { transform: numberAttribute });
 
     public readonly scrollAction: OutputEmitterRef<void> = output<void>();
 
