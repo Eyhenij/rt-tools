@@ -1,3 +1,4 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import { booleanAttribute, Directive, input, InputSignal, InputSignalWithTransform } from '@angular/core';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
 
@@ -14,30 +15,30 @@ export abstract class RtuiDynamicSelectorsDirective {
         transform: transformStringInput,
     });
     /** Indicates if only one option can be chosen */
-    public isSingleSelection: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+    public isSingleSelection: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Indicates is selector disabled */
-    public disabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+    public disabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Indicates is break string pipe used */
-    public useNameBreaking: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+    public useNameBreaking: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Indicates is title case pipe used */
-    public useTitleCase: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+    public useTitleCase: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
-    public isPlaceholderIconOutlined: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+    public isPlaceholderIconOutlined: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
     /** Indicates is delete entity button from the selected list shown */
-    public isDeleteButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+    public isDeleteButtonShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
     /** Indicates is list of items draggable */
-    public isListDraggable: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+    public isListDraggable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Placeholder icon */

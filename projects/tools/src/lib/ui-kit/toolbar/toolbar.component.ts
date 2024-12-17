@@ -1,3 +1,4 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import { NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
@@ -50,7 +51,7 @@ export class RtuiToolbarComponent {
     public readonly rightToolTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiToolbarRightDirective, {
         read: TemplateRef,
     });
-    public sticky: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(false, {
+    public sticky: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
 }
