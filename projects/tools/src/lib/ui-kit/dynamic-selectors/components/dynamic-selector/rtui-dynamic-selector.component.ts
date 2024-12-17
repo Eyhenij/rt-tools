@@ -47,6 +47,8 @@ import { BlockDirective, ElemDirective } from '../../../../bem';
 import {
     areArraysEqual,
     checkIsEntityInArrayByKey,
+    isNumber,
+    isString,
     Nullable,
     OVERLAY_POSITIONS,
     RtEscapeKeyDirective,
@@ -226,7 +228,7 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
             .filter((entity: ENTITY) => !checkIsEntityInArrayByKey<ENTITY, KEY>(this.selectedEntities(), entity, this.keyExp()))
             .filter((entity: ENTITY) => {
                 return (
-                    (typeof entity[this.displayExp()] === 'string' || typeof entity[this.displayExp()] === 'number') &&
+                    (isString(entity[this.displayExp()]) || isNumber(entity[this.displayExp()])) &&
                     entity[this.displayExp()]?.toString().toLowerCase().includes(this.#autocompleteControlValue().toLowerCase())
                 );
             })

@@ -1,11 +1,11 @@
-import { BooleanInput } from '@angular/cdk/coercion';
+import { BooleanInput, NumberInput } from '@angular/cdk/coercion';
 import {
     booleanAttribute,
     Directive,
     inject,
     input,
-    InputSignal,
     InputSignalWithTransform,
+    numberAttribute,
     OnDestroy,
     OnInit,
     output,
@@ -23,7 +23,7 @@ export class RtScrollDirective implements OnInit, OnDestroy {
     readonly #platformService: PlatformService = inject(PlatformService);
 
     public active: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, { transform: booleanAttribute });
-    public multiplier: InputSignal<number> = input<number>(0.5);
+    public multiplier: InputSignalWithTransform<number, NumberInput> = input<number, NumberInput>(0.5, { transform: numberAttribute });
 
     public readonly scrollAction: OutputEmitterRef<void> = output<void>();
 

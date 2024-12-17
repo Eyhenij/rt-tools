@@ -41,7 +41,7 @@ export class RtuiClearButtonComponent {
     public isButtonShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
-    public tooltip: InputSignalWithTransform<Nullable<string>, string> = input<Nullable<string>, string>(null, {
+    public tooltip: InputSignalWithTransform<string, Nullable<string>> = input<string, Nullable<string>>('', {
         transform: (value: Nullable<string>) => (isString(value) ? value.trim() : ''),
     });
     public tooltipPosition: InputSignal<TooltipPosition> = input(this.#defaultTooltipPosition);

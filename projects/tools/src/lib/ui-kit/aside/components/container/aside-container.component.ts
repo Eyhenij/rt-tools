@@ -79,10 +79,10 @@ export class RtuiAsideContainerHeaderDirective {}
 })
 export class RtuiAsideContainerComponent {
     public title: InputSignal<Nullable<string>> = input<Nullable<string>>(null);
-    public isMobile: InputSignalWithTransform<Nullable<boolean>, boolean> = input.required<Nullable<boolean>, boolean>({
+    public isMobile: InputSignalWithTransform<boolean, BooleanInput> = input.required<boolean, BooleanInput>({
         transform: booleanAttribute,
     });
-    public isSubmitButtonDisabled: InputSignalWithTransform<boolean, boolean> = input.required<boolean, boolean>({
+    public isSubmitButtonDisabled: InputSignalWithTransform<boolean, BooleanInput> = input.required<boolean, BooleanInput>({
         transform: booleanAttribute,
     });
     public pending: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
