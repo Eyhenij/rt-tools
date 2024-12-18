@@ -4,6 +4,12 @@ on:
     push:
         branches:
             - main
+    workflow_dispatch:
+        inputs:
+            version:
+                description: 'Specify the version (patch, minor, major, or a specific version)'
+                required: true
+                default: 'patch'
 
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
@@ -22,31 +28,41 @@ jobs:
               with:
                   fetch-depth: 0
 
-            - uses: pnpm/action-setup@v4
+            - name: Install pnpm
+              uses: pnpm/action-setup@v4
               with:
                   version: 9
                   run_install: false
 
-            - uses: actions/setup-node@v4
+            - name: Cache node_modules
+              uses: actions/setup-node@v4
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: 'pnpm'
+                  registry-url: https://registry.npmjs.org/
 
-            - run: pnpm install --frozen-lockfile
-            - run: sudo apt-get install jq
+            - name: Install dependencies
+              run: |
+                  pnpm install --frozen-lockfile
+                  sudo apt-get install jq
 
-            - run: |
+            - name: Update version
+              run: |
                   git config user.name "github-actions"
                   git config user.email "github-actions@github.com"
                   cd projects/tools
-                  pnpm version patch --no-git-tag-version
+                  pnpm version ${{ github.event.inputs.version }} --no-git-tag-version
                   git add -A
-                  git commit -m "chore: bump version in tools to $(jq -r .version package.json) [ci skip]"
+                  git commit -m "chore: bump version to $(jq -r .version package.json) [ci skip]"
                   git push
+              shell: bash
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-            - run: pnpm run build
-            - run: pnpm run packagr:tools
+            - name: Build
+              run: pnpm run build
+
+            - name: Publish
+              run: pnpm run packagr:tools
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
