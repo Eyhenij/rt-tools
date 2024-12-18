@@ -1,6 +1,6 @@
 {
     "name": "@rt/tools",
-    "version": "0.0.11",
+    "version": "0.0.12",
     "type": "module",
     "scripts": {
         "ng": "ng",
@@ -13,7 +13,7 @@
         "storybook": "ng run @rt/tools:storybook",
         "build-storybook": "ng run @rt/tools:build-storybook",
         "prepare": "husky",
-        "postinstall": "rm -rf .angular",
+        "postinstall": "rimraf .angular",
         "preinstall": "npx only-allow pnpm"
     },
     "private": false,
@@ -78,11 +78,13 @@
         "eslint-plugin-simple-import-sort": "^12.1.1",
         "globals": "^15.13.0",
         "husky": "^9.1.7",
+        "lint-staged": "^15.2.11",
         "ng-packagr": "^19.0.1",
         "prettier": "^3.4.2",
         "prettier-eslint": "^16.3.0",
         "prettier-plugin-organize-attributes": "^1.0.0",
         "prettier-stylelint": "^0.4.2",
+        "rimraf": "^6.0.1",
         "rxjs": "^7.8.1",
         "storybook": "^8.4.7",
         "stylelint": "^16.11.0",
