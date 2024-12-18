@@ -49,14 +49,10 @@ jobs:
             - name: Update version
               run: |
                   cd projects/tools
-                  pnpm version ${{ github.event.inputs.version }} --no-git-tag-version
-                  echo "Updated package.json:"
+                  ls -la
                   cat package.json
-                  git config user.name "github-actions"
-                  git config user.email "github-actions@github.com"
-                  git add package.json
-                  git commit -m "chore: bump version to $(jq -r .version package.json) [ci skip]" || echo "Nothing to commit"
-                  git push
+                  pnpm version ${{ github.event.inputs.version }} --no-git-tag-version
+                  git status
               shell: bash
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
