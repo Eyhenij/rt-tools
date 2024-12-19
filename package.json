@@ -12,6 +12,7 @@
         "packagr:tools": "ng-packagr -p ./projects/tools/ng-package.json && cd ./dist/tools && npm pack && npm publish",
         "storybook": "ng run @rt/tools:storybook",
         "build-storybook": "ng run @rt/tools:build-storybook",
+        "changelog:tools": "conventional-changelog -p angular -i projects/tools/CHANGELOG.md -s -k projects/tools/package.json",
         "prepare": "husky",
         "postinstall": "rimraf .angular",
         "preinstall": "npx only-allow pnpm"
@@ -66,6 +67,7 @@
         "@types/node": "^22.10.1",
         "@typescript-eslint/eslint-plugin": "^8.17.0",
         "@typescript-eslint/parser": "^8.17.0",
+        "conventional-changelog-cli": "^5.0.0",
         "date-fns": "^4.1.0",
         "dayjs": "^1.11.13",
         "eslint": "~8.57.0",
