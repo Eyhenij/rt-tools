@@ -50,7 +50,7 @@ jobs:
               run: |
                   node update-version.cjs ${{ github.event.inputs.version }}
                   pnpm run changelog:tools
-                  VERSION=$(jq -r .version package.json)
+                  VERSION=$(jq -r .version packages/tools/package.json)
                   echo "VERSION=$VERSION" >> $GITHUB_ENV
 
             - uses: EndBug/add-and-commit@v9
