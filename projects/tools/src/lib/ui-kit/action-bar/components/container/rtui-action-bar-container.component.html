@@ -1,0 +1,3 @@
+@if (config()?.selected) {
+    <rtui-action-bar [@barState]="'opened'" [config]="config()" (closeAction)="closeBar()" />
+}

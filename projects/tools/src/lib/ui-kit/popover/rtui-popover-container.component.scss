@@ -1,0 +1,13 @@
+:host {
+    position: absolute;
+    width: fit-content;
+    display: block;
+
+    /* Hack to show properly popover on mouse hover */
+    padding-top: 20px;
+    text-align: left;
+
+    transition:
+        transform 0.1s,
+        opacity 0.5s;
+}

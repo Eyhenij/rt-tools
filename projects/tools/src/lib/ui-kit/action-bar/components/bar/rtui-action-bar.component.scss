@@ -1,0 +1,104 @@
+@use '../../../../../styles/base/mixin' as mixins;
+@use '../../../../../styles/base/variables' as vars;
+
+.rtui-action-bar {
+    width: var(--rt-action-bar-bar-width);
+    display: flex;
+    align-items: center;
+    gap: var(--rt-action-bar-bar-gap);
+    padding: var(--rt-action-bar-bar-padding);
+    border-radius: var(--rt-action-bar-bar-border-radius);
+    color: var(--rt-action-bar-bar-color);
+    background-color: var(--rt-action-bar-bar-background-color);
+    box-shadow: var(--rt-action-bar-bar-box-shadow);
+
+    &__counter {
+        font-size: var(--rt-action-bar-counter-font-size);
+        font-weight: var(--rt-action-bar-counter-font-weight);
+    }
+
+    &__actions {
+        display: flex;
+        gap: var(--rt-action-bar-actions-gap);
+    }
+
+    &__action {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: var(--rt-action-bar-action-gap);
+        font-size: var(--rt-action-bar-action-font-size);
+        font-weight: var(--rt-action-bar-action-font-weight);
+        padding: var(--rt-action-bar-action-padding);
+        border-radius: var(--rt-action-bar-action-border-radius);
+        cursor: pointer;
+
+        &:hover {
+            background-color: var(--rt-action-bar-action-hover-background-color);
+        }
+    }
+
+    &__close-button {
+        cursor: pointer;
+        margin-left: auto;
+
+        svg {
+            transition: transform 0.2s ease;
+
+            &:hover {
+                transform: rotate(90deg);
+            }
+        }
+    }
+
+    @include mixins.media-breakpoint-down(vars.$device-md) {
+        gap: var(--rt-action-bar-bar-mobile-gap);
+        padding: var(--rt-action-bar-bar-mobile-padding);
+
+        &__actions {
+            gap: var(--rt-action-bar-actions-mobile-gap);
+        }
+
+        &__action {
+            gap: var(--rt-action-bar-action-mobile-gap);
+            padding: var(--rt-action-bar-action-mobile-padding);
+        }
+    }
+}
+
+.rtui-action-bar-action-menu {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rt-action-bar-action-menu-gap);
+    padding: var(--rt-action-bar-action-menu-padding);
+    border-radius: var(--rt-action-bar-action-border-radius);
+    color: var(--rt-action-bar-action-menu-color);
+    background-color: var(--rt-action-bar-action-menu-background-color);
+    box-shadow: var(--rt-action-bar-action-menu-box-shadow);
+
+    &__action {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: var(--rt-action-bar-action-menu-action-gap);
+        padding: var(--rt-action-bar-action-menu-action-padding);
+        font-size: var(--rt-action-bar-action-menu-action-font-size);
+        font-weight: var(--rt-action-bar-action-menu-action-font-weight);
+        border-radius: var(--rt-action-bar-action-menu-action-border-radius);
+        cursor: pointer;
+
+        &:hover {
+            background-color: var(--rt-action-bar-action-menu-action-hover-background-color);
+        }
+    }
+
+    @include mixins.media-breakpoint-down(vars.$device-md) {
+        gap: var(--rt-action-bar-action-menu-action-mobile-gap);
+        padding: var(--rt-action-bar-action-menu-action-mobile-padding);
+
+        &__action {
+            gap: var(--rt-action-bar-action-menu-action-mobile-gap);
+            padding: var(--rt-action-bar-action-menu-action-mobile-padding);
+        }
+    }
+}

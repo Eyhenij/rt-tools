@@ -1,4 +1,5 @@
-import { Component, effect, inject, Injector, OnInit, Signal, viewChild } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, Injector, OnInit, Signal, viewChild } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatIconButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -8,6 +9,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { BlockDirective, ElemDirective } from '../../../../bem';
 import { IDBStorageService } from '../../../../idb-storage';
 import { Nullable, RtIconOutlinedDirective } from '../../../../util';
+import { RtActionBarService, RtuiActionBarContainerComponent } from '../../../action-bar';
 import { RtuiToggleComponent } from '../../../toggle';
 import { RtuiCustomTableCellsDirective } from '../../components';
 import {
@@ -43,6 +45,7 @@ import { Person } from '../types';
         // components
         RtuiDynamicListComponent,
         RtuiToggleComponent,
+        RtuiActionBarContainerComponent,
 
         // directives
         RtIconOutlinedDirective,
@@ -56,11 +59,13 @@ import { Person } from '../types';
         RtuiCustomTableCellsDirective,
         RtDynamicListSelectorsDirective,
     ],
-    providers: [IDBStorageService, RtTableConfigService],
+    providers: [IDBStorageService, RtTableConfigService, RtActionBarService],
 })
 export default class TestDynamicListComponent implements OnInit {
+    readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #injector: Injector = inject(Injector);
     readonly #tableConfigService: RtTableConfigService<Person> = inject(RtTableConfigService);
+    readonly #actionBarService: RtActionBarService = inject(RtActionBarService);
 
     public isMultiSelect: boolean = true;
     public isSelectorsShown: boolean = true;
@@ -79,7 +84,7 @@ export default class TestDynamicListComponent implements OnInit {
     public pageModel: PageModel = {
         pageNumber: 1,
         pageSize: 10,
-        totalCount: 0,
+        totalCount: 10,
     };
     public currentSortModel: SortModel<NonNullable<keyof Person>> = {
         propertyName: 'id',
@@ -89,13 +94,56 @@ export default class TestDynamicListComponent implements OnInit {
 
     public readonly dynamicListTpl: Signal<Nullable<RtDynamicListSelectorsDirective<Person, keyof Person, 'id'>>> =
         viewChild<RtDynamicListSelectorsDirective<Person, keyof Person, 'id'>>(RtDynamicListSelectorsDirective);
+    public readonly selectedEntities: Signal<Person[]> = computed(() => {
+        return this.dynamicListTpl()?.selectedEntities() ?? [];
+    });
 
     public ngOnInit(): void {
         this.#tableConfigService.initConfig(this.storageKey, COLUMNS);
 
+        this.#actionBarService.setActions([
+            {
+                title: 'Select All',
+                // eslint-disable-next-line no-console
+                action: (): void => console.warn('Select All'),
+                styles: {
+                    margin: '0 2rem 0 0',
+                    textDecoration: 'underline',
+                },
+            },
+            // eslint-disable-next-line no-console
+            { icon: 'content_copy', title: 'Copy', action: (): void => console.warn('Copy') },
+            // eslint-disable-next-line no-console
+            { icon: 'download', title: 'Export', action: (): void => console.warn('Export') },
+            {
+                icon: 'more_horiz',
+                title: 'More',
+                menu: [
+                    // eslint-disable-next-line no-console
+                    { icon: 'home', title: 'Action 1', action: (): void => console.warn('Action 1') },
+                    // eslint-disable-next-line no-console
+                    { icon: 'restart_alt', title: 'Action 2', action: (): void => console.warn('Action 2') },
+                    // eslint-disable-next-line no-console
+                    { icon: 'done_outline', title: 'Action 3', action: (): void => console.warn('Action 3') },
+                ],
+            },
+            // eslint-disable-next-line no-console
+            { icon: 'delete', title: 'Delete', action: (): void => console.warn('Delete') },
+        ]);
+
+        toObservable(this.selectedEntities, { injector: this.#injector })
+            .pipe(takeUntilDestroyed(this.#destroyRef))
+            .subscribe(() => {
+                if (this.selectedEntities().length) {
+                    this.#actionBarService.setCounts(this.selectedEntities().length, this.pageModel.totalCount);
+                } else if (this.#actionBarService.config()?.selected) {
+                    this.#actionBarService.closeActionBar();
+                }
+            });
+
         effect(
             () => {
-                if (this.dynamicListTpl()?.selectedEntities()) {
+                if (this.dynamicListTpl()?.selectedEntities()?.length) {
                     // eslint-disable-next-line no-console
                     console.warn('selectedEntities:', this.dynamicListTpl()?.selectedEntities());
                 }
