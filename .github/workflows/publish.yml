@@ -1,13 +1,10 @@
 name: Publish to npm
 
 on:
-    push:
-        branches:
-            - main
     workflow_dispatch:
         inputs:
             version:
-                description: 'Specify the version (patch, minor, major, or a specific version)'
+                description: 'Specify version: patch, minor, major, or specific version (e.g. 1.2.3)'
                 required: true
                 default: 'patch'
 
@@ -48,12 +45,14 @@ jobs:
 
             - name: Update version
               run: |
+                  node update-version.cjs ${{ github.event.inputs.version }}
+                  git config user.name "github-actions"
+                  git config user.email "github-actions@github.com"
                   cd projects/tools
-                  ls -la
-                  cat package.json
-                  pnpm version ${{ github.event.inputs.version }} --no-git-tag-version
-                  git status
-              shell: bash
+                  git add package.json
+                  git commit -m "chore: bump version to $(jq -r .version package.json) [ci skip]" || echo "Nothing to commit"
+                  git push
+                  shell: bash
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
