@@ -7,6 +7,9 @@ settings:
 importers:
     .:
         dependencies:
+            '@floating-ui/dom':
+                specifier: ^1.6.12
+                version: 1.6.12
             ngx-image-cropper:
                 specifier: ^9.0.0
                 version: 9.0.0(@angular/common@19.0.3(@angular/core@19.0.3(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.0.3(rxjs@7.8.1)(zone.js@0.15.0))
@@ -1362,6 +1365,15 @@ packages:
     '@faker-js/faker@9.3.0':
         resolution: { integrity: sha512-r0tJ3ZOkMd9xsu3VRfqlFR6cz0V/jFYRswAIpC+m/DIfAUXq7g8N7wTAlhSANySXYGKzGryfDXwtwsY8TxEIDw== }
         engines: { node: '>=18.0.0', npm: '>=9.0.0' }
+
+    '@floating-ui/core@1.6.8':
+        resolution: { integrity: sha512-7XJ9cPU+yI2QeLS+FCSlqNFZJq8arvswefkZrYI1yQBbftw6FyrZOxYSh+9S7z7TpeWlRt9zJ5IhM1WIL334jA== }
+
+    '@floating-ui/dom@1.6.12':
+        resolution: { integrity: sha512-NP83c0HjokcGVEMeoStg317VD9W7eDlGK7457dMBANbKA6GJZdc7rjujdgqzTaz93jkGgc5P/jeWbaCHnMNc+w== }
+
+    '@floating-ui/utils@0.2.8':
+        resolution: { integrity: sha512-kym7SodPp8/wloecOpcmSnWJsK7M0E5Wg8UcFA+uO4B9s5d0ywXOEro/8HM9x0rW+TljRzul/14UYz3TleT3ig== }
 
     '@humanwhocodes/config-array@0.13.0':
         resolution: { integrity: sha512-DZLEEqFWQFiyK6h5YIeynKx7JlvCYWL0cImfSRXZ9l4Sg2efkFGTuFf6vzXjK1cq6IYkU+Eg/JizXw+TD2vRNw== }
@@ -8745,6 +8757,17 @@ snapshots:
     '@eslint/js@9.16.0': {}
 
     '@faker-js/faker@9.3.0': {}
+
+    '@floating-ui/core@1.6.8':
+        dependencies:
+            '@floating-ui/utils': 0.2.8
+
+    '@floating-ui/dom@1.6.12':
+        dependencies:
+            '@floating-ui/core': 1.6.8
+            '@floating-ui/utils': 0.2.8
+
+    '@floating-ui/utils@0.2.8': {}
 
     '@humanwhocodes/config-array@0.13.0':
         dependencies:
