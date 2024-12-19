@@ -1,5 +1,6 @@
 import { Provider } from '@angular/core';
 
+import { RtActionBarService } from './action-bar';
 import { RtAsideService } from './aside';
 
 /**
@@ -16,5 +17,5 @@ import { RtAsideService } from './aside';
  * @publicApi
  */
 export function provideRtUi(): Provider[] {
-    return [RtAsideService];
+    return [RtAsideService, RtActionBarService];
 }

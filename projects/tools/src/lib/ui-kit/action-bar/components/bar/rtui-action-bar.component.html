@@ -1,0 +1,54 @@
+<div rtBlock="rtui-action-bar">
+    <div rtElem="counter">
+        {{ 'Selected: ' + config().selected + ' out of ' + config().total | emptyToDash }}
+    </div>
+
+    @if (config().buttons?.length) {
+        <div rtElem="actions">
+            @for (btn of config().buttons; track i; let i = $index) {
+                @if (btn?.menu) {
+                    @let menu = btn.menu;
+                    <ng-template #actionMenuWrapperTpl>
+                        <ng-container *ngTemplateOutlet="actionMenuTpl; context: { $implicit: menu }" />
+                    </ng-template>
+
+                    <div rtPopover rtElem="action" [trigger]="'click'" [template]="actionMenuWrapperTpl" [ngStyle]="btn?.styles">
+                        <ng-template *ngTemplateOutlet="buttonContentTpl; context: { $implicit: btn }" />
+                    </div>
+                } @else {
+                    <div rtElem="action" [ngStyle]="btn?.styles" (click)="onAction(btn)">
+                        <ng-template *ngTemplateOutlet="buttonContentTpl; context: { $implicit: btn }" />
+                    </div>
+                }
+            }
+        </div>
+    }
+
+    <div rtElem="close-button" (click)="onClose()">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+                d="M10.7071 0.293C10.5196 0.105529 10.2652 0.000213623 10.0001 0.000213623C9.73492 0.000213623 9.48061 0.105529 9.29308 0.293L6.00008 3.586L2.70708 0.293C2.51848 0.110842 2.26588 0.0100477 2.00368 0.0123261C1.74148 0.0146045 1.49067 0.119773 1.30526 0.305182C1.11985 0.49059 1.01469 0.741402 1.01241 1.0036C1.01013 1.2658 1.11092 1.5184 1.29308 1.707L4.58608 5L1.29308 8.293C1.19757 8.38525 1.12139 8.49559 1.06898 8.6176C1.01657 8.7396 0.988985 8.87082 0.987831 9.0036C0.986677 9.13638 1.01198 9.26806 1.06226 9.39095C1.11254 9.51385 1.18679 9.6255 1.28069 9.71939C1.37458 9.81329 1.48623 9.88754 1.60913 9.93782C1.73202 9.9881 1.8637 10.0134 1.99648 10.0123C2.12926 10.0111 2.26048 9.98351 2.38249 9.9311C2.50449 9.87869 2.61483 9.80251 2.70708 9.707L6.00008 6.414L9.29308 9.707C9.48168 9.88916 9.73429 9.98995 9.99648 9.98767C10.2587 9.9854 10.5095 9.88023 10.6949 9.69482C10.8803 9.50941 10.9855 9.2586 10.9878 8.9964C10.99 8.7342 10.8892 8.4816 10.7071 8.293L7.41408 5L10.7071 1.707C10.8946 1.51947 10.9999 1.26516 10.9999 1C10.9999 0.734836 10.8946 0.480528 10.7071 0.293Z"
+                fill="currentColor" />
+        </svg>
+    </div>
+</div>
+
+<ng-template #actionMenuTpl let-menu>
+    <div rtBlock="rtui-action-bar-action-menu">
+        @for (btn of menu; track i; let i = $index) {
+            <div rtElem="action" (click)="onAction(btn)">
+                <ng-template *ngTemplateOutlet="buttonContentTpl; context: { $implicit: btn }" />
+            </div>
+        }
+    </div>
+</ng-template>
+
+<ng-template #buttonContentTpl let-btn>
+    @if (btn?.icon) {
+        <mat-icon [rtIconOutlinedDirective]="true">{{ btn.icon }}</mat-icon>
+    }
+
+    @if (!isTablet() || (isTablet() && !btn?.icon)) {
+        <div>{{ btn.title }}</div>
+    }
+</ng-template>
