@@ -53,13 +53,13 @@ jobs:
                   git commit -m "chore: bump version to $(jq -r .version package.json) [ci skip]" || echo "Nothing to commit"
                   git push
                   shell: bash
-              env:
-                  GITHUB_TOKEN: ${{ secrets.WORKFLOW_ACCESS_TOKEN }}
+              with:
+                  token: ${{ secrets.WORKFLOW_ACCESS_TOKEN }}
 
             - name: Build
               run: pnpm run build
 
             - name: Publish
               run: pnpm run packagr:tools
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+              with:
+                  token: ${{ secrets.NPM_TOKEN }}
