@@ -13,6 +13,7 @@ export * from './lib/ui-kit/action-bar';
 export * from './lib/ui-kit/animation';
 export * from './lib/ui-kit/aside';
 export * from './lib/ui-kit/buttons';
+export * from './lib/ui-kit/checkbox';
 export * from './lib/ui-kit/dynamic-selectors';
 export * from './lib/ui-kit/file-uploader';
 export * from './lib/ui-kit/header';

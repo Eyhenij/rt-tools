@@ -1,0 +1,75 @@
+.rtui-checkbox {
+    display: flex;
+    gap: var(--rt-checkbox-container-gap);
+
+    &__input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        border: 0;
+        padding: 0;
+        white-space: nowrap;
+        clip-path: inset(100%);
+        clip: rect(0 0 0 0);
+        overflow: hidden;
+    }
+
+    &__box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: var(--rt-checkbox-box-width);
+        height: var(--rt-checkbox-box-height);
+        border: var(--rt-checkbox-box-border);
+        border-radius: var(--rt-checkbox-box-border-radius);
+        color: var(--rt-checkbox-box-inactive-color);
+        background-color: var(--rt-checkbox-box-background-color);
+        transition: border-color 0.15s linear;
+        cursor: pointer;
+
+        svg {
+            opacity: 0;
+            transition: opacity 0.15s linear;
+        }
+    }
+
+    &__input:checked + &__box,
+    &__input:indeterminate + &__box {
+        color: var(--rt-checkbox-box-active-color);
+        border-color: var(--rt-checkbox-box-active-color);
+
+        svg {
+            opacity: 1;
+        }
+    }
+
+    &__input:disabled + &__box {
+        color: var(--clr-black-40);
+        border-color: var(--clr-black-40);
+        cursor: default;
+    }
+
+    &__input:focus {
+        outline: none;
+    }
+
+    &:focus-within {
+        outline: 2px dashed var(--rt-checkbox-box-active-color);
+        outline-offset: 2px;
+    }
+
+    &__label {
+        font-size: var(--rt-checkbox-label-font-size);
+        font-weight: var(--rt-checkbox-label-font-weight);
+        color: var(--rt-checkbox-label-color);
+    }
+
+    &__description {
+        margin-top: var(--rt-checkbox-description-margin-top);
+        font-size: var(--rt-checkbox-description-font-size);
+        font-weight: var(--rt-checkbox-description-font-weight);
+        color: var(--rt-checkbox-description-color);
+    }
+}
