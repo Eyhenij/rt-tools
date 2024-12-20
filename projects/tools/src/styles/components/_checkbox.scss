@@ -1,0 +1,40 @@
+@use '../base/mixin' as mixins;
+@use '../base/variables' as vars;
+
+$checkbox: (
+    container: (
+        gap: 0.75rem,
+    ),
+    box: (
+        width: 1rem,
+        height: 1rem,
+        border: 0.125rem solid var(--clr-black-40),
+        border-radius: 0.25rem,
+        background-color: var(--clr-white-100),
+    ),
+    box-active: (
+        color: var(--mdc-text-button-label-text-color),
+    ),
+    box-inactive: (
+        color: var(--clr-black-40),
+    ),
+    label: (
+        font-size: 1rem,
+        font-weight: 500,
+        color: var(--clr-black-80),
+    ),
+    description: (
+        margin-top: 0.125rem,
+        font-size: 0.75rem,
+        font-weight: 500,
+        color: var(--clr-black-40),
+    ),
+);
+
+:root {
+    @each $element, $elements in $checkbox {
+        @each $style-token, $value in $elements {
+            #{mixins.generateCssVar('checkbox', #{$element}, #{$style-token})}: #{$value};
+        }
+    }
+}
