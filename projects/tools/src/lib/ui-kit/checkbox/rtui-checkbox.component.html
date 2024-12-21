@@ -1,0 +1,40 @@
+<label rtBlock="rtui-checkbox" (click)="onChangeValue($event)">
+    <input
+        #checkbox
+        rtElem="input"
+        type="checkbox"
+        [ngModel]="Value"
+        [checked]="Value"
+        [indeterminate]="!Value && isIndeterminate()"
+        [disabled]="disabled"
+        (ngModelChange)="Value = $event" />
+
+    <div rtElem="box">
+        @if (checkbox.indeterminate) {
+            <svg id="icon-dot" viewBox="0 0 16 16">
+                <g transform="translate(4, 4)">
+                    <path
+                        fill="currentColor"
+                        d="M1 4C1 3.06812 1 2.60218 1.15224 2.23463C1.35523 1.74458 1.74458 1.35523 2.23463 1.15224C2.60218 1 3.06812 1 4 1C4.93188 1 5.39782 1 5.76537 1.15224C6.25542 1.35523 6.64477 1.74458 6.84776 2.23463C7 2.60218 7 3.06812 7 4C7 4.93188 7 5.39782 6.84776 5.76537C6.64477 6.25542 6.25542 6.64477 5.76537 6.84776C5.39782 7 4.93188 7 4 7C3.06812 7 2.60218 7 2.23463 6.84776C1.74458 6.64477 1.35523 6.25542 1.15224 5.76537C1 5.39782 1 4.93188 1 4Z" />
+                </g>
+            </svg>
+        } @else {
+            <svg id="icon-mark" viewBox="0 0 16 16">
+                <path
+                    fill="currentColor"
+                    d="M7 11a.997.997 0 0 1-.707-.293l-2-2a.999.999 0 1 1 1.414-1.414L7 8.586l3.293-3.293a.999.999 0 1 1 1.414 1.414l-4 4A.997.997 0 0 1 7 11Z" />
+            </svg>
+        }
+    </div>
+
+    @if (label() || description()) {
+        <div rtElem="content">
+            @if (label()) {
+                <div rtElem="label">{{ label() }}</div>
+            }
+            @if (description()) {
+                <div rtElem="description">{{ description() }}</div>
+            }
+        </div>
+    }
+</label>
