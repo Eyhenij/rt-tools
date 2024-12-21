@@ -1,0 +1,12 @@
+:host {
+    width: var(--rt-action-bar-container-width);
+    position: fixed;
+    top: var(--rt-action-bar-container-top);
+    bottom: var(--rt-action-bar-container-bottom);
+    left: var(--rt-action-bar-container-left);
+    right: var(--rt-action-bar-container-right);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: var(--rt-action-bar-container-z-index);
+}
