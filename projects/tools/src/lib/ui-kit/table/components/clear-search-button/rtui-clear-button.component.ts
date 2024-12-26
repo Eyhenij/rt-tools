@@ -1,3 +1,4 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -34,13 +35,13 @@ import { isString, Nullable } from '../../../../util';
 export class RtuiClearButtonComponent {
     readonly #defaultTooltipPosition: TooltipPosition = 'above';
 
-    public isMobile: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(false, {
+    public isMobile: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
-    public isButtonShown: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(true, {
+    public isButtonShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
-    public tooltip: InputSignalWithTransform<Nullable<string>, string> = input<Nullable<string>, string>(null, {
+    public tooltip: InputSignalWithTransform<string, Nullable<string>> = input<string, Nullable<string>>('', {
         transform: (value: Nullable<string>) => (isString(value) ? value.trim() : ''),
     });
     public tooltipPosition: InputSignal<TooltipPosition> = input(this.#defaultTooltipPosition);

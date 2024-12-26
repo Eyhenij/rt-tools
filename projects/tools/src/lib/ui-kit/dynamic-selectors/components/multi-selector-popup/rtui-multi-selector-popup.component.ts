@@ -1,3 +1,4 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import {
     AfterViewInit,
     booleanAttribute,
@@ -38,6 +39,8 @@ import {
     BreakStringPipe,
     DeviceDetectorService,
     EntityToStringPipe,
+    isNumber,
+    isString,
     Nullable,
     OSTypes,
     RtIconOutlinedDirective,
@@ -113,11 +116,11 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
     /** Navigation button link */
     public navigateLink: InputSignal<string> = input<string>('');
     /** Indicates if only one option can be chosen */
-    public isSingleSelection: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(null, {
+    public isSingleSelection: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Indicates is change multi select mode toggle shown */
-    public isMultiToggleShown: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(null, {
+    public isMultiToggleShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Indicates is Select all button shown */
@@ -125,23 +128,23 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
         transform: booleanAttribute,
     });
     /** Indicates that a list of entities is being loading */
-    public loading: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(null, {
+    public loading: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Indicates that a list of entities is being fetching */
-    public fetching: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(null, {
+    public fetching: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Indicates is BreakStringPipe used */
-    public useNameBreaking: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(null, {
+    public useNameBreaking: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Indicates lazy loading is used */
-    public isLazyLoad: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(null, {
+    public isLazyLoad: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Indicates local search is used */
-    public isLocalSearch: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(true, {
+    public isLocalSearch: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
 
@@ -199,7 +202,7 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
                     this.filteredEntities.set(
                         this.entitiesToSelect().filter((el: ENTITY) => {
                             return (
-                                (typeof el[this.displayExp()] === 'string' || typeof el[this.displayExp()] === 'number') &&
+                                (isString(el[this.displayExp()]) || isNumber(el[this.displayExp()])) &&
                                 searchTerms.every(
                                     (term: string) =>
                                         el[this.displayExp()]?.toString().toLowerCase().includes(term) &&
@@ -210,7 +213,7 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
                     );
                 } else if (this.isLocalSearch()) {
                     this.filteredEntities.set(this.entitiesToSelect());
-                } else if (value !== null && typeof value === 'string') {
+                } else if (!!value && isString(value)) {
                     this.searchAction.emit(value);
                 }
             });

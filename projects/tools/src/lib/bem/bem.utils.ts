@@ -1,5 +1,6 @@
 import { ElementRef, Renderer2 } from '@angular/core';
 
+import { isString } from '../util';
 import { BEM_MODULE_CONFIG } from './bem.const';
 import { ModsObject } from './bem.types';
 
@@ -53,7 +54,7 @@ export function generateClass(blockName: string, elemName?: string, modName?: st
 }
 
 export function parseMods(mods?: string | string[] | (string | false)[] | ModsObject): ModsObject {
-    if (typeof mods === 'string') {
+    if (isString(mods)) {
         mods = mods.split(/\s+/);
     }
 

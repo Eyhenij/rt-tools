@@ -1,5 +1,7 @@
 import { format, parse, parseISO } from 'date-fns';
 
+import { isString } from '../functions';
+
 export class TypeCastHelper {
     public getAsString(data: unknown): string {
         return data !== undefined && data !== null && !Number.isNaN(data) ? String(data) : '';
@@ -14,7 +16,7 @@ export class TypeCastHelper {
     public getAsBoolean(data: unknown): boolean {
         const stringExceptions: string[] = ['false', '0', 'null'];
 
-        if (typeof data === 'string' && stringExceptions.includes(data)) {
+        if (isString(data) && stringExceptions.includes(data)) {
             return false;
         }
 
