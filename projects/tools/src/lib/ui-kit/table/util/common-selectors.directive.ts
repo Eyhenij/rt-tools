@@ -1,4 +1,3 @@
-import { BooleanInput } from '@angular/cdk/coercion';
 import { booleanAttribute, Directive, input, InputSignalWithTransform, signal, WritableSignal } from '@angular/core';
 
 import { transformArrayInput } from '../../../util';
@@ -6,15 +5,15 @@ import { transformArrayInput } from '../../../util';
 @Directive()
 export class RtCommonSelectorsDirective<ENTITY_TYPE extends Record<string, unknown>, KEY extends Extract<keyof ENTITY_TYPE, string>> {
     /** Indicates is multiselect available */
-    public isMultiSelect: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+    public isMultiSelect: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
     /** Indicates is 'Select all' checkbox shown  */
-    public isSelectorColumnShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+    public isSelectorColumnShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
     /** Indicates is selectors column disabled */
-    public isSelectorsColumnDisabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+    public isSelectorsColumnDisabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
     /** Selected entities Ids on init */

@@ -1,4 +1,3 @@
-import { BooleanInput } from '@angular/cdk/coercion';
 import {
     booleanAttribute,
     computed,
@@ -37,11 +36,11 @@ export class RtDynamicListSelectorsDirective<
         inject<RtuiDynamicListComponent<ENTITY_TYPE, SORT_PROPERTY, KEY>>(RtuiDynamicListComponent);
 
     /** Indicates is multiselect extended mod available (use selected and excluded lists) */
-    public isMultiSelectExtendedMod: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+    public isMultiSelectExtendedMod: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
     /** Indicates is 'Select all' checkbox shown  */
-    public isSelectAllSelectorShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+    public isSelectAllSelectorShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
 
