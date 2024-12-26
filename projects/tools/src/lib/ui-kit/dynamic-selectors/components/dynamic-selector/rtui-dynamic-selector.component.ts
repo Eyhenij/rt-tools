@@ -1,4 +1,3 @@
-import { BooleanInput } from '@angular/cdk/coercion';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedPosition } from '@angular/cdk/overlay';
 import { NgTemplateOutlet } from '@angular/common';
@@ -47,8 +46,6 @@ import { BlockDirective, ElemDirective } from '../../../../bem';
 import {
     areArraysEqual,
     checkIsEntityInArrayByKey,
-    isNumber,
-    isString,
     Nullable,
     OVERLAY_POSITIONS,
     RtEscapeKeyDirective,
@@ -146,37 +143,43 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     /** Selected entities */
     public chosenEntities: ModelSignal<ENTITY[]> = model<ENTITY[]>([]);
     /** Indicates is selection available */
-    public isSelectionAvailable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+    public isSelectionAvailable: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
     /** Indicates is placeholder shown */
-    public isPlaceholderShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+    public isPlaceholderShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
     /** Indicates that a list of entities is being loading */
-    public loading: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+    public loading: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
     /** Indicates that a list of entities is being pending */
-    public pending: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+    public pending: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
     /** Indicates that a list of entities is being fetching */
-    public fetching: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+    public fetching: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
     /** Indicates lazy loading is used */
-    public isLazyLoad: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+    public isLazyLoad: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
     /** Indicates local search is used */
-    public isLocalSearch: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+    public isLocalSearch: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
     /** Indicates is change multi select mode toggle shown */
-    public isMultiToggleShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+    public isMultiToggleShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
     /** Indicates is Select all button shown */
-    public isSelectAllButtonShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+    public isSelectAllButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
     /** Indicates is Open popup button shown */
-    public isOpenPopupButtonShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+    public isOpenPopupButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
     /** Init search term value */
@@ -228,7 +231,7 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
             .filter((entity: ENTITY) => !checkIsEntityInArrayByKey<ENTITY, KEY>(this.selectedEntities(), entity, this.keyExp()))
             .filter((entity: ENTITY) => {
                 return (
-                    (isString(entity[this.displayExp()]) || isNumber(entity[this.displayExp()])) &&
+                    (typeof entity[this.displayExp()] === 'string' || typeof entity[this.displayExp()] === 'number') &&
                     entity[this.displayExp()]?.toString().toLowerCase().includes(this.#autocompleteControlValue().toLowerCase())
                 );
             })
