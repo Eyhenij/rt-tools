@@ -1,4 +1,3 @@
-import { BooleanInput } from '@angular/cdk/coercion';
 import { NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
@@ -62,10 +61,13 @@ export class RtuiHeaderRightDirective {}
     ],
 })
 export class RtuiHeaderComponent {
-    public isMobile: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+    public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
         transform: booleanAttribute,
     });
-    public isMobileMenuButtonShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+    public isMobileMenuButtonShown: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<
+        Nullable<boolean>,
+        Nullable<boolean>
+    >(true, {
         transform: booleanAttribute,
     });
 

@@ -1,4 +1,3 @@
-import { NumberInput } from '@angular/cdk/coercion';
 import { NgClass } from '@angular/common';
 import {
     ChangeDetectionStrategy,
@@ -54,13 +53,13 @@ export class RtuiTableHeaderCellComponent {
     protected readonly sortOrderTypes: typeof LIST_SORT_ORDER_ENUM = LIST_SORT_ORDER_ENUM;
 
     public headerModel: InputSignal<ITable.Header> = input.required<ITable.Header>();
-    public sortModel: InputSignal<Nullable<SortModel>> = input.required<Nullable<SortModel>>();
-    public currentSortModel: InputSignal<Nullable<SortModel>> = input.required<Nullable<SortModel>>();
-    public headerDataEllipsisMaxLines: InputSignalWithTransform<number, NumberInput> = input<number, NumberInput>(1, {
+    public sortModel: InputSignal<Nullable<SortModel<string>>> = input.required<Nullable<SortModel<string>>>();
+    public currentSortModel: InputSignal<Nullable<SortModel<string>>> = input.required<Nullable<SortModel<string>>>();
+    public headerDataEllipsisMaxLines: InputSignalWithTransform<number, number> = input<number, number>(1, {
         transform: numberAttribute,
     });
 
-    public readonly sortChange: OutputEmitterRef<SortModel> = output<SortModel>();
+    public readonly sortChange: OutputEmitterRef<SortModel<string>> = output<SortModel<string>>();
 
     public readonly active: Signal<boolean> = computed(() => {
         return (
