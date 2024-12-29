@@ -42,6 +42,7 @@ export namespace ITable {
         propName: keyof T;
         type: Type;
         copyable: boolean;
+        copyBtnAlign: 'right' | 'left';
         header: Header;
 
         sorting?: SortModel<NonNullable<Extract<keyof T, string>>>;

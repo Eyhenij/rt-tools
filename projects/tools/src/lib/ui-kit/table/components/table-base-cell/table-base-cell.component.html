@@ -1,4 +1,18 @@
 <ng-container rtBlock="base-cell">
+    @if (column().copyable && (column().copyBtnAlign === 'left' || column().align === 'right') && cellValue()) {
+        <button
+            type="button"
+            rtElem="copy-button"
+            class="c-button c-button--txt-base"
+            matTooltipPosition="above"
+            [rtMod]="[isCopied() && 'complete', isMouseOver() && 'visible']"
+            [matTooltip]="isCopied() ? 'Copied!' : 'Copy'"
+            [matTooltipDisabled]="isMobile()"
+            (click)="onCopyToClipboard(); $event.stopPropagation()">
+            <mat-icon rtElem="copy-icon" [rtIconOutlinedDirective]="true">{{ isCopied() ? 'done' : 'content_copy' }}</mat-icon>
+        </button>
+    }
+
     @if (column()?.icon?.placement === 'left') {
         <mat-icon rtElem="prefix" [rtIconOutlinedDirective]="!!column().icon?.outlined" [style]="cellIconStyle()">
             {{ column().icon?.glyph }}
@@ -29,7 +43,7 @@
         </mat-icon>
     }
 
-    @if (column().copyable && cellValue()) {
+    @if (column().copyable && (column().copyBtnAlign === 'right' || column().align === 'left') && cellValue()) {
         <button
             type="button"
             rtElem="copy-button"
