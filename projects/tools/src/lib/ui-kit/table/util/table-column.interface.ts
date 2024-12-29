@@ -42,12 +42,12 @@ export namespace ITable {
         propName: keyof T;
         type: Type;
         copyable: boolean;
-        copyBtnAlign: 'right' | 'left';
         header: Header;
 
         sorting?: SortModel<NonNullable<Extract<keyof T, string>>>;
         filtering?: boolean;
         filteringMultiple?: boolean;
+        copyBtnAlign?: 'right' | 'left';
 
         width?: string;
         minWidth?: string;
