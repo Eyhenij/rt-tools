@@ -1,4 +1,4 @@
-import { isString, Nullable } from '../util';
+import { Nullable } from '../util/interfaces/nullable.type';
 import { IStorageConverter } from './interfaces/storage-converter';
 
 export class JsonConverter implements IStorageConverter {
@@ -8,8 +8,7 @@ export class JsonConverter implements IStorageConverter {
 
         try {
             parsedData = JSON.stringify(data);
-            // eslint-disable-next-line
-        } catch (e: unknown) {
+        } catch (e) {
             parsedData = 'null';
         }
 
@@ -18,11 +17,10 @@ export class JsonConverter implements IStorageConverter {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public convertFrom<T>(data: any): Nullable<T> {
-        if (isString(data)) {
+        if (typeof data === 'string') {
             try {
                 return JSON.parse(data) as T;
-                // eslint-disable-next-line
-            } catch (e: unknown) {
+            } catch (e) {
                 return null;
             }
         }
