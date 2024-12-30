@@ -87,6 +87,18 @@ export class TableBaseCellComponent<T = { [key: string]: unknown }> {
         return !!style.length ? this.#sanitizer.bypassSecurityTrustStyle(style) : undefined;
     }
 
+    public get copyBtnPosition(): string {
+        const { copyBtnAlign, align } = this.column();
+
+        if (copyBtnAlign === 'left') {
+            return 'left';
+        } else if (copyBtnAlign === 'right') {
+            return 'right';
+        }
+
+        return align === 'right' ? 'left' : 'right';
+    }
+
     @HostListener('mouseover')
     public onMouseOver(): void {
         this.isMouseOver.set(true);
