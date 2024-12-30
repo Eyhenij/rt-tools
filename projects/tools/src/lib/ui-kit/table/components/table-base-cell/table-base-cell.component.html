@@ -1,7 +1,7 @@
 <ng-container rtBlock="base-cell">
-    @if (column().copyable && (column().copyBtnAlign === 'left' || column().align === 'right') && cellValue()) {
-        <ng-container *ngTemplateOutlet="copyBtnTpl" />
-    }
+    <!--    @if (column().copyable && (column().align === 'right' || column().copyBtnAlign === 'left') && cellValue()) {-->
+    <!--        <ng-container *ngTemplateOutlet="copyBtnTpl" />-->
+    <!--    }-->
 
     @if (column()?.icon?.placement === 'left') {
         <mat-icon rtElem="prefix" [rtIconOutlinedDirective]="!!column().icon?.outlined" [style]="cellIconStyle()">
@@ -29,22 +29,45 @@
         </mat-icon>
     }
 
-    @if (column().copyable && (column().copyBtnAlign === 'right' || column().align === 'left') && cellValue()) {
-        <ng-container *ngTemplateOutlet="copyBtnTpl" />
-    }
-</ng-container>
-
-<ng-template #copyBtnTpl>
     <button
         type="button"
         rtBlock="base-cell"
         rtElem="copy-button"
         class="c-button c-button--txt-base"
         matTooltipPosition="above"
-        [rtMod]="[isCopied() && 'complete', isMouseOver() && 'visible']"
+        [rtMod]="[
+            column().copyBtnAlign === 'left'
+                ? 'align--left'
+                : column().copyBtnAlign === 'right'
+                  ? 'align--right'
+                  : column().align === 'right'
+                    ? 'align--left'
+                    : 'align--right',
+            isCopied() && 'complete',
+            isMouseOver() && 'visible',
+        ]"
         [matTooltip]="isCopied() ? 'Copied!' : 'Copy'"
         [matTooltipDisabled]="isMobile()"
         (click)="onCopyToClipboard(); $event.stopPropagation()">
         <mat-icon rtElem="copy-icon" [rtIconOutlinedDirective]="true">{{ isCopied() ? 'done' : 'content_copy' }}</mat-icon>
     </button>
-</ng-template>
+
+    <!--    @if (column().copyable && (column().align === 'left' || column().copyBtnAlign === 'right') && cellValue()) {-->
+    <!--        <ng-container *ngTemplateOutlet="copyBtnTpl" />-->
+    <!--    }-->
+</ng-container>
+
+<!--<ng-template #copyBtnTpl>-->
+<!--    <button-->
+<!--        type="button"-->
+<!--        rtBlock="base-cell"-->
+<!--        rtElem="copy-button"-->
+<!--        class="c-button c-button&#45;&#45;txt-base"-->
+<!--        matTooltipPosition="above"-->
+<!--        [rtMod]="[(column().align === 'right' || column().copyBtnAlign === 'left') ? 'align&#45;&#45;left' : 'align&#45;&#45;right', isCopied() && 'complete', isMouseOver() && 'visible']"-->
+<!--        [matTooltip]="isCopied() ? 'Copied!' : 'Copy'"-->
+<!--        [matTooltipDisabled]="isMobile()"-->
+<!--        (click)="onCopyToClipboard(); $event.stopPropagation()">-->
+<!--        <mat-icon rtElem="copy-icon" [rtIconOutlinedDirective]="true">{{ isCopied() ? 'done' : 'content_copy' }}</mat-icon>-->
+<!--    </button>-->
+<!--</ng-template>-->
