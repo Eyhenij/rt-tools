@@ -94,11 +94,10 @@ $base-cell: (
             padding: var(--rt-table-base-cell-copy-button-padding);
             background-color: var(--rt-table-base-cell-copy-button-background-color);
 
-            &--align {
+            &--position {
                 &--left {
                     left: var(--rt-table-base-cell-copy-button-position-left);
                 }
-
                 &--right {
                     right: var(--rt-table-base-cell-copy-button-position-right);
                 }

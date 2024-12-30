@@ -31,17 +31,11 @@
         rtElem="copy-button"
         class="c-button c-button--txt-base"
         matTooltipPosition="above"
-        [rtMod]="[
-            column().copyBtnAlign === 'left'
-                ? 'align--left'
-                : column().copyBtnAlign === 'right'
-                  ? 'align--right'
-                  : column().align === 'right'
-                    ? 'align--left'
-                    : 'align--right',
-            isCopied() && 'complete',
-            isMouseOver() && 'visible',
-        ]"
+        [rtMod]="{
+            position: copyBtnPosition,
+            complete: isCopied(),
+            visible: isMouseOver(),
+        }"
         [matTooltip]="isCopied() ? 'Copied!' : 'Copy'"
         [matTooltipDisabled]="isMobile()"
         (click)="onCopyToClipboard(); $event.stopPropagation()">
