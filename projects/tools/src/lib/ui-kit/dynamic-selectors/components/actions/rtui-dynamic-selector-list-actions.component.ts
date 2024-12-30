@@ -1,4 +1,3 @@
-import { BooleanInput } from '@angular/cdk/coercion';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -29,10 +28,12 @@ export class RtuiDynamicSelectorListActionsComponent {
     public isResetButtonDisabled: InputSignalWithTransform<boolean, boolean> = input.required<boolean, boolean>({
         transform: booleanAttribute,
     });
-    public isClearButtonDisabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+    public isClearButtonDisabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
-    public disabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, { transform: booleanAttribute });
+    public disabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
 
     public readonly resetAction: OutputEmitterRef<void> = output<void>();
     public readonly clearAction: OutputEmitterRef<void> = output<void>();

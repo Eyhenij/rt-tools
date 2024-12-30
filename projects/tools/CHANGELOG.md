@@ -1,3 +1,14 @@
+## [0.1.89](https://github.com/Eyhenij/rt-tools/compare/0.1.81...0.1.89) (2024-12-26)
+
+### Features
+
+- **rt:ui-kit:** implement action bar ([69ac1a0](https://github.com/Eyhenij/rt-tools/commit/69ac1a0afb37d090a9fe11e3d662d8a7437d049b))
+- **rt:ui-kit:** implement checkbox ([f12e94c](https://github.com/Eyhenij/rt-tools/commit/f12e94c7cd735f1931bfb59a4efbdd346886b412))
+
+### Reverts
+
+- Revert "Refactor/use input types (#135)" ([4de980a](https://github.com/Eyhenij/rt-tools/commit/4de980ade8e805e596f74a15f6752c6a837d7ffe)), closes [#135](https://github.com/Eyhenij/rt-tools/issues/135)
+
 ## [0.1.87](https://github.com/Eyhenij/rt-tools/compare/0.1.81...0.1.87) (2024-12-21)
 
 ### Features
