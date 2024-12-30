@@ -1,5 +1,6 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import { BooleanInput } from '@angular/cdk/coercion';
+import { NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -21,7 +22,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 import { BlockDirective, ElemDirective, ModDirective } from '../../../../bem';
-import { isNumber, isString, Nullable, RtHideTooltipDirective, RtIconOutlinedDirective } from '../../../../util';
+import { EmptyToDashPipe, isNumber, isString, Nullable, RtHideTooltipDirective, RtIconOutlinedDirective } from '../../../../util';
 import { ITable } from '../../util/table-column.interface';
 
 @Component({
@@ -29,6 +30,9 @@ import { ITable } from '../../util/table-column.interface';
     templateUrl: './table-base-cell.component.html',
     styleUrls: ['./table-base-cell.component.scss'],
     imports: [
+        NgTemplateOutlet,
+
+        // material
         MatIcon,
         MatIconButton,
         MatMiniFabButton,
@@ -40,6 +44,9 @@ import { ITable } from '../../util/table-column.interface';
         ModDirective,
         RtIconOutlinedDirective,
         RtHideTooltipDirective,
+
+        // pipes
+        EmptyToDashPipe,
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
