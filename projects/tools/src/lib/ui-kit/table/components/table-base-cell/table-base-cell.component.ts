@@ -1,7 +1,7 @@
 import { Clipboard } from '@angular/cdk/clipboard';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { BooleanInput } from '@angular/cdk/coercion';
 import { NgTemplateOutlet } from '@angular/common';
-
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -90,14 +90,7 @@ export class TableBaseCellComponent<T = { [key: string]: unknown }> {
 
     public get copyBtnPosition(): string {
         const { copyBtnAlign, align } = this.column();
-
-        if (copyBtnAlign === 'left') {
-            return 'left';
-        } else if (copyBtnAlign === 'right') {
-            return 'right';
-        }
-
-        return align === 'right' ? 'left' : 'right';
+        return copyBtnAlign || (align === 'right' ? 'left' : 'right');
     }
 
     @HostListener('mouseover')
