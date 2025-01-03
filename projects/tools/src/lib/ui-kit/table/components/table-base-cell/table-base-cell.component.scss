@@ -15,6 +15,7 @@ $base-cell: (
     ),
     copy-button: (
         position-right: 0.25rem,
+        position-left: 0.25rem,
         padding: 0.25rem,
         background-color: var(--mdc-fab-small-container-color),
         icon-size: 1rem,
@@ -89,10 +90,18 @@ $base-cell: (
 
         &__copy-button {
             position: absolute;
-            right: var(--rt-table-base-cell-copy-button-position-right);
             visibility: hidden;
             padding: var(--rt-table-base-cell-copy-button-padding);
             background-color: var(--rt-table-base-cell-copy-button-background-color);
+
+            &--position {
+                &--left {
+                    left: var(--rt-table-base-cell-copy-button-position-left);
+                }
+                &--right {
+                    right: var(--rt-table-base-cell-copy-button-position-right);
+                }
+            }
 
             &:hover,
             &:focus,
