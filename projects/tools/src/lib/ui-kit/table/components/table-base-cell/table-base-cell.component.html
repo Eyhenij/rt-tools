@@ -15,11 +15,7 @@
             [isTooltipShown]="!isMobile()"
             [matTooltip]="column()?.tooltip ?? tooltipValue()"
             [matTooltipDisabled]="isMobile()">
-            @if (cellValue()) {
-                {{ cellValue() }}
-            } @else {
-                -
-            }
+            {{ cellValue() | emptyToDash }}
         </div>
     </div>
 
@@ -29,17 +25,20 @@
         </mat-icon>
     }
 
-    @if (column().copyable && cellValue()) {
-        <button
-            type="button"
-            rtElem="copy-button"
-            class="c-button c-button--txt-base"
-            matTooltipPosition="above"
-            [rtMod]="[isCopied() && 'complete', isMouseOver() && 'visible']"
-            [matTooltip]="isCopied() ? 'Copied!' : 'Copy'"
-            [matTooltipDisabled]="isMobile()"
-            (click)="onCopyToClipboard(); $event.stopPropagation()">
-            <mat-icon rtElem="copy-icon" [rtIconOutlinedDirective]="true">{{ isCopied() ? 'done' : 'content_copy' }}</mat-icon>
-        </button>
-    }
+    <button
+        type="button"
+        rtBlock="base-cell"
+        rtElem="copy-button"
+        class="c-button c-button--txt-base"
+        matTooltipPosition="above"
+        [rtMod]="{
+            position: copyBtnPosition,
+            complete: isCopied(),
+            visible: isMouseOver(),
+        }"
+        [matTooltip]="isCopied() ? 'Copied!' : 'Copy'"
+        [matTooltipDisabled]="isMobile()"
+        (click)="onCopyToClipboard(); $event.stopPropagation()">
+        <mat-icon rtElem="copy-icon" [rtIconOutlinedDirective]="true">{{ isCopied() ? 'done' : 'content_copy' }}</mat-icon>
+    </button>
 </ng-container>

@@ -47,6 +47,7 @@ export namespace ITable {
         sorting?: SortModel<NonNullable<Extract<keyof T, string>>>;
         filtering?: boolean;
         filteringMultiple?: boolean;
+        copyBtnAlign?: 'right' | 'left';
 
         width?: string;
         minWidth?: string;
