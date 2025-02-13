@@ -63,6 +63,9 @@ export class RtuiImageUploadComponent {
     public isSaveButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
+    public isDownloadButtonEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+        transform: booleanAttribute,
+    });
     public isTooltipDisabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
@@ -80,6 +83,7 @@ export class RtuiImageUploadComponent {
     public tempImage: WritableSignal<Nullable<string>> = signal(null);
 
     public readonly imageChanged: OutputEmitterRef<File> = output<File>();
+    public readonly save: OutputEmitterRef<void> = output<void>();
 
     public onFileSelect(event: Event): void {
         const input: HTMLInputElement = event.target as HTMLInputElement;
@@ -122,7 +126,7 @@ export class RtuiImageUploadComponent {
     }
 
     public onDownloadImage(): void {
-        if (this.imageUrl()) {
+        if (this.imageUrl() && this.isDownloadButtonEnabled()) {
             const imageUrl: string = this.imageUrl() as string;
             const link: HTMLAnchorElement = this.#documentRef.createElement('a');
             link.href = imageUrl;
@@ -131,5 +135,6 @@ export class RtuiImageUploadComponent {
             link.click();
             this.#documentRef.body.removeChild(link);
         }
+        this.save.emit();
     }
 }
