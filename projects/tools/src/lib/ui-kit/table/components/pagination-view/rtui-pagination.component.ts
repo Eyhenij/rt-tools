@@ -1,4 +1,3 @@
-import { NgClass } from '@angular/common';
 import {
     AfterViewInit,
     booleanAttribute,
@@ -35,7 +34,7 @@ import { PageModel } from '../../util/lists.interface';
     templateUrl: './rtui-pagination.component.html',
     styleUrls: ['./rtui-pagination.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [NgClass, ReactiveFormsModule, BlockDirective, ElemDirective],
+    imports: [ReactiveFormsModule, BlockDirective, ElemDirective],
 })
 export class RtuiPaginationComponent implements OnInit, AfterViewInit {
     readonly #injector: Injector = inject(Injector);
@@ -128,7 +127,7 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
     }
 
     /** Action for select page */
-    public onClick(pageNumber: string | number): void {
+    public onChangePageNumber(pageNumber: string | number): void {
         if (isNumber(pageNumber)) {
             if (!this.currentPageModel().hasNext && this.currentPageModel().pageNumber <= pageNumber) {
                 return;

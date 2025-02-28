@@ -7,8 +7,8 @@
                 tabindex="0"
                 [rtMod]="{ enabled: currentPageModel()?.hasPrev }"
                 [class.c-pagination__paging-item--disabled]="!currentPageModel().hasPrev"
-                (click)="onClick(currentPageModel().pageNumber - 1)"
-                (keydown)="onClick(currentPageModel().pageNumber - 1)">
+                (click)="onChangePageNumber(currentPageModel().pageNumber - 1)"
+                (keydown)="onChangePageNumber(currentPageModel().pageNumber - 1)">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M15.5 8.5H0.5" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                     <path
@@ -35,8 +35,8 @@
                             divider: number === divider(),
                             enabled: number !== divider() && currentPageModel().pageNumber !== number,
                         }"
-                        (click)="onClick(number)"
-                        (keydown)="onClick(number)">
+                        (click)="onChangePageNumber(number)"
+                        (keydown)="onChangePageNumber(number)">
                         <span rtElem="item-label">{{ number }}</span>
                     </div>
                 }
@@ -47,8 +47,8 @@
                 role="button"
                 tabindex="3"
                 [rtMod]="{ enabled: currentPageModel()?.hasNext }"
-                (click)="onClick(currentPageModel().pageNumber + 1)"
-                (keydown)="onClick(currentPageModel().pageNumber + 1)">
+                (click)="onChangePageNumber(currentPageModel().pageNumber + 1)"
+                (keydown)="onChangePageNumber(currentPageModel().pageNumber + 1)">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M0.5 8.5H15.5" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                     <path
