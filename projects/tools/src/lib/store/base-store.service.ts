@@ -1,5 +1,4 @@
-import { Signal, WritableSignal, signal } from '@angular/core';
-
+import { Signal, signal, WritableSignal } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 
 import { MessageBus } from '../util/services/message-bus';
@@ -16,11 +15,11 @@ export abstract class BaseStoreService<STATE_TYPE extends object, MSG_TYPE exten
         this.#msgBus.emit(event);
     }
 
-    protected onDispatch(msg: MSG_TYPE): Observable<IAction<MSG_TYPE>> {
+    public onDispatch(msg: MSG_TYPE): Observable<IAction<MSG_TYPE>> {
         return this.#msgBus.ofType(msg);
     }
 
-    protected patchState(callbackFn: (state: STATE_TYPE) => STATE_TYPE): void {
+    public patchState(callbackFn: (state: STATE_TYPE) => STATE_TYPE): void {
         this.#store.update((currState: STATE_TYPE) => callbackFn(currState));
     }
 
