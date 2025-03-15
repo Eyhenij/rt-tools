@@ -1,7 +1,7 @@
 import { ElementRef, Renderer2 } from '@angular/core';
 
 import { BEM_MODULE_CONFIG } from './bem.const';
-import { ModsObject } from './bem.types';
+import { IModsObject } from './bem.types';
 
 export function modNameHandler(str: string): string {
     switch (BEM_MODULE_CONFIG.modCase) {
@@ -52,13 +52,13 @@ export function generateClass(blockName: string, elemName?: string, modName?: st
     return cls;
 }
 
-export function parseMods(mods?: string | string[] | (string | false)[] | ModsObject): ModsObject {
+export function parseMods(mods?: string | string[] | (string | false)[] | IModsObject): IModsObject {
     if (typeof mods === 'string') {
         mods = mods.split(/\s+/);
     }
 
     if (Array.isArray(mods)) {
-        const modsObj: ModsObject = {};
+        const modsObj: IModsObject = {};
 
         mods.forEach((key: string | false) => {
             if (key) {
@@ -76,8 +76,8 @@ export function parseMods(mods?: string | string[] | (string | false)[] | ModsOb
 export function setMods(
     blockName: string,
     elemName: string,
-    mods: ModsObject,
-    oldMods: ModsObject,
+    mods: IModsObject,
+    oldMods: IModsObject,
     element: ElementRef,
     renderer: Renderer2
 ): void {

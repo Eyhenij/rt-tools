@@ -1,1 +1,1 @@
-export { RtuiSideMenuComponent, RtuiSideMenuHeaderDirective, RtuiSideMenuFooterDirective } from './menu/rtui-side-menu.component';
+export { RtuiSideMenuComponent, RtuiSideMenuFooterDirective, RtuiSideMenuHeaderDirective } from './menu/rtui-side-menu.component';

@@ -272,7 +272,9 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     }
 
     /** Empty method, set in selectors directive */
-    public onToggleAllEntities: (checked: boolean) => void = (): void => {};
+    public onToggleAllEntities: (checked: boolean) => void = (): void => {
+        return;
+    };
 
     /** Set scrollbar styles by config */
     #setScrollbarsVisibility(): void {

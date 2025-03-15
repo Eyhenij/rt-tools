@@ -1,0 +1,68 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "@rt/tools",
+  "projectType": "library",
+  "generators": {
+    "@schematics/angular:component": {
+      "style": "scss",
+      "changeDetection": "OnPush"
+    }
+  },
+  "sourceRoot": "projects/tools/src",
+  "prefix": "rt",
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:package",
+      "options": {
+        "project": "projects/tools/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "projects/tools/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "projects/tools/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production",
+      "outputs": ["{workspaceRoot}/dist/tools"]
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "cacheable": false
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "projects/tools/jest.config.ts"
+      }
+    },
+    "storybook": {
+      "executor": "@storybook/angular:start-storybook",
+      "options": {
+        "configDir": "projects/tools/.storybook",
+        "browserTarget": "@rt/tools:build",
+        "compodoc": false,
+        "port": 6006,
+        "styles": ["projects/tools/.storybook/storybook.scss"]
+      }
+    },
+    "build-storybook": {
+      "executor": "@storybook/angular:build-storybook",
+      "options": {
+        "configDir": "projects/tools/.storybook",
+        "browserTarget": "@rt/tools:build",
+        "compodoc": false,
+        "outputDir": "storybook-static",
+        "styles": ["projects/tools/.storybook/storybook.scss"]
+      }
+    },
+    "nx-release-publish": {
+      "dependsOn": ["build"],
+      "options": {
+        "packageRoot": "{workspaceRoot}/dist/tools"
+      }
+    }
+  }
+}

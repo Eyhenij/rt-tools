@@ -1,6 +1,5 @@
 import { provideAnimations } from '@angular/platform-browser/animations';
-
-import { Meta, StoryObj, applicationConfig } from '@storybook/angular';
+import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
 import { TestInfoBadgeComponent } from './component/test-info-badge/test-info-badge.component';
 import { INFO_BADGE_PROPERTY_ENUM } from './utils/enum/info-badge-property.enum';

@@ -8,7 +8,9 @@ export class JsonConverter implements IStorageConverter {
 
         try {
             parsedData = JSON.stringify(data);
-        } catch (e) {
+        } catch (e: unknown) {
+            // eslint-disable-next-line no-console
+            console.error(e);
             parsedData = 'null';
         }
 
@@ -20,7 +22,9 @@ export class JsonConverter implements IStorageConverter {
         if (typeof data === 'string') {
             try {
                 return JSON.parse(data) as T;
-            } catch (e) {
+            } catch (e: unknown) {
+                // eslint-disable-next-line no-console
+                console.error(e);
                 return null;
             }
         }

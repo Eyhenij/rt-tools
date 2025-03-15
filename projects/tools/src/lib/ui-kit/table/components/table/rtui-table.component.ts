@@ -188,6 +188,10 @@ export class RtuiTableComponent<
     }
 
     /** Empty methods set in selectors directive */
-    public onToggleEntity: (entity: ENTITY_TYPE, checked: boolean) => void = (): void => {};
-    public onTogglePageEntities: (checked: boolean) => void = (): void => {};
+    public onToggleEntity: (entity: ENTITY_TYPE, checked: boolean) => void = (): void => {
+        return;
+    };
+    public onTogglePageEntities: (checked: boolean) => void = (): void => {
+        return;
+    };
 }
