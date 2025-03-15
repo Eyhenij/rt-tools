@@ -1,4 +1,4 @@
-import { AnimationTriggerMetadata, animate, state, style, transition, trigger } from '@angular/animations';
+import { animate, AnimationTriggerMetadata, state, style, transition, trigger } from '@angular/animations';
 
 export const progressIncreaseAnimation: AnimationTriggerMetadata[] = [
     trigger('progressIncreaseAnimation', [

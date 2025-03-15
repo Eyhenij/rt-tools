@@ -1,7 +1,6 @@
 import { provideAnimations } from '@angular/platform-browser/animations';
-
 import { faker } from '@faker-js/faker';
-import { Meta, StoryObj, applicationConfig } from '@storybook/angular';
+import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
 import { TestImageUploadComponent } from './component/test-image-upload.component';
 

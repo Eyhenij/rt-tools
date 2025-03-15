@@ -1,6 +1,6 @@
 export {
     RtuiScrollableContainerComponent,
-    RtuiScrollableContainerHeaderDirective,
     RtuiScrollableContainerContentDirective,
     RtuiScrollableContainerFooterDirective,
+    RtuiScrollableContainerHeaderDirective,
 } from './scrollable-container.component';
