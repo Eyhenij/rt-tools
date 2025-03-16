@@ -1,15 +1,15 @@
 {
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "name": "@rt/tools",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
+  "sourceRoot": "projects/tools/src",
+  "prefix": "rt",
   "generators": {
     "@schematics/angular:component": {
       "style": "scss",
       "changeDetection": "OnPush"
     }
   },
-  "sourceRoot": "projects/tools/src",
-  "prefix": "rt",
   "targets": {
     "build": {
       "executor": "@nx/angular:package",
@@ -41,27 +41,59 @@
     "storybook": {
       "executor": "@storybook/angular:start-storybook",
       "options": {
-        "configDir": "projects/tools/.storybook",
-        "browserTarget": "@rt/tools:build",
-        "compodoc": false,
         "port": 6006,
+        "configDir": "projects/tools/.storybook",
+        "browserTarget": "@rt/tools:build-storybook",
+        "compodoc": false,
         "styles": ["projects/tools/.storybook/storybook.scss"]
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
       }
     },
     "build-storybook": {
       "executor": "@storybook/angular:build-storybook",
+      "outputs": ["{options.outputDir}"],
       "options": {
+        "outputDir": "dist/storybook/@rt/tools",
         "configDir": "projects/tools/.storybook",
-        "browserTarget": "@rt/tools:build",
+        "browserTarget": "@rt/tools:build-storybook",
         "compodoc": false,
-        "outputDir": "storybook-static",
         "styles": ["projects/tools/.storybook/storybook.scss"]
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
       }
     },
     "nx-release-publish": {
       "dependsOn": ["build"],
       "options": {
         "packageRoot": "{workspaceRoot}/dist/tools"
+      }
+    },
+    "test-storybook": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "test-storybook -c projects/tools/.storybook --url=http://localhost:4400"
+      }
+    },
+    "static-storybook": {
+      "executor": "@nx/web:file-server",
+      "dependsOn": ["build-storybook"],
+      "options": {
+        "buildTarget": "@rt/tools:build-storybook",
+        "staticFilePath": "dist/storybook/@rt/tools",
+        "spa": true,
+        "styles": ["projects/tools/.storybook/storybook.scss"]
+      },
+      "configurations": {
+        "ci": {
+          "buildTarget": "@rt/tools:build-storybook:ci"
+        }
       }
     }
   }

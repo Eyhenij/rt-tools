@@ -1,11 +1,6 @@
 packages:
     - apps/**
     - libs/**
-ignoredBuiltDependencies:
-    - '@parcel/watcher'
-    - esbuild
-    - lmdb
-    - msgpackr-extract
-    - nx
 onlyBuiltDependencies:
+    - '@swc/core'
     - nx
