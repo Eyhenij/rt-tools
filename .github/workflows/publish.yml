@@ -59,7 +59,7 @@ jobs:
                   message: 'chore: bump version to ${{ env.VERSION }} [ci skip]'
 
             - name: Build
-              run: pnpm run build
+              run: pnpm run build:tools
 
             - name: Publish
               run: pnpm run packagr:tools
