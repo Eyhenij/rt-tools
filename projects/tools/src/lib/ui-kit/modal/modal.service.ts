@@ -1,6 +1,5 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
-
 import { Observable, ReplaySubject, share } from 'rxjs';
 import { filter } from 'rxjs/operators';
 

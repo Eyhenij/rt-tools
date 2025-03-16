@@ -1,5 +1,5 @@
-export * from './base-store.service';
 export * from './base-async-store.service';
+export * from './base-store.service';
 
 // constants
 export * from './constants';

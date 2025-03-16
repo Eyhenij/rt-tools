@@ -1,7 +1,11 @@
-export type ModsObject = Record<string, unknown>;
+export type IModsObject = Record<string, unknown>;
 
-export class BemConfig {
-    separators?: Array<string>;
+export interface IBemConfig {
+    separators: {
+        el: string;
+        mod: string;
+        val: string;
+    };
     ignoreValues?: boolean;
     modCase?: string;
 }

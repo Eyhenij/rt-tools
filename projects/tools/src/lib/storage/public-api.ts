@@ -1,16 +1,12 @@
 export * from './enums/storage-types.enum';
-
+export * from './in-memory-storage.service';
 export * from './interfaces/storage-config';
 export * from './interfaces/storage-converter';
-
-export * from './tokens/in-memory-storage.token';
+export * from './json-converter';
+export * from './providers';
+export * from './storage.factory';
+export * from './storage.service';
 export * from './tokens/custom-storage.token';
+export * from './tokens/in-memory-storage.token';
 export * from './tokens/local-storage.token';
 export * from './tokens/session-storage.token';
-
-export * from './storage.factory';
-export * from './in-memory-storage.service';
-export * from './storage.service';
-export * from './json-converter';
-
-export * from './providers';
