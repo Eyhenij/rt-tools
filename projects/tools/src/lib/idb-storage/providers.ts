@@ -1,7 +1,7 @@
 import { Provider } from '@angular/core';
 
-import { IDBStorageService } from './idb-storage-service';
 import { iDBStorageFactory } from './idb-storage.factory';
+import { IDBStorageService } from './idb-storage-service';
 import { IDB_STORAGE_SERVICE_TOKEN } from './token/idb-storage.token';
 
 /**

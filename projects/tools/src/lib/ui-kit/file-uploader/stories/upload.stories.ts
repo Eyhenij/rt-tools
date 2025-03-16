@@ -1,6 +1,5 @@
 import { provideAnimations } from '@angular/platform-browser/animations';
-
-import { Meta, StoryObj, applicationConfig } from '@storybook/angular';
+import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
 import { TestFileUploadComponent } from './component/test-file-upload.component';
 

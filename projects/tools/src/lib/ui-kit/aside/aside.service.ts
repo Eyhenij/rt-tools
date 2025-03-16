@@ -1,9 +1,8 @@
 import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal, ComponentType } from '@angular/cdk/portal';
-import { ComponentRef, Injectable, Injector, inject } from '@angular/core';
+import { ComponentRef, inject, Injectable, Injector } from '@angular/core';
 import { Event, NavigationEnd, Router } from '@angular/router';
-
-import { Observable, Subject, merge, of } from 'rxjs';
+import { merge, Observable, of, Subject } from 'rxjs';
 import { delay, filter, tap } from 'rxjs/operators';
 
 import { ASIDE_REF, AsidePositions, AsideRef } from '../../util';

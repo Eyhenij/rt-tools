@@ -54,6 +54,7 @@ describe('is-empty.function.ts', () => {
     });
 
     it('should be false if argument is a function', () => {
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         expect(isEmpty(() => {})).toBe(false);
     });
 });

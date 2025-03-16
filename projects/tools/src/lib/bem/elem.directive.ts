@@ -1,6 +1,6 @@
 import { Attribute, Directive, ElementRef, Input, OnChanges, Renderer2 } from '@angular/core';
 
-import { ModsObject } from './bem.types';
+import { IModsObject } from './bem.types';
 import { generateClass, parseMods, setMods } from './bem.utils';
 import { BlockDirective } from './block.directive';
 
@@ -8,9 +8,9 @@ import { BlockDirective } from './block.directive';
     selector: '[rtElem]',
 })
 export class ElemDirective implements OnChanges {
-    @Input() public rtMod?: string | string[] | (string | false)[] | ModsObject;
+    @Input() public rtMod?: string | string[] | (string | false)[] | IModsObject;
     public blockName: string;
-    #mods: ModsObject = {};
+    #mods: IModsObject = {};
     #modSerialized: string = '';
 
     constructor(
@@ -28,7 +28,7 @@ export class ElemDirective implements OnChanges {
         if (JSON.stringify(this.rtMod) !== this.#modSerialized) {
             this.#modSerialized = JSON.stringify(this.rtMod);
 
-            let mods: string | string[] | (string | false)[] | ModsObject | undefined = this.rtMod;
+            let mods: string | string[] | (string | false)[] | IModsObject | undefined = this.rtMod;
 
             const { renderer, element, blockName, name } = this;
 

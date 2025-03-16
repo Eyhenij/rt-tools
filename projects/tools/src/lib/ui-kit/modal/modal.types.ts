@@ -1,6 +1,5 @@
 import { Type } from '@angular/core';
 import { ThemePalette } from '@angular/material/core';
-
 import { Observable } from 'rxjs';
 
 import { Icon, Select } from '../../util/interfaces/modal-data.interface';

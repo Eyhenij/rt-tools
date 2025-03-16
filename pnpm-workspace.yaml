@@ -1,0 +1,6 @@
+packages:
+    - apps/**
+    - libs/**
+onlyBuiltDependencies:
+    - '@swc/core'
+    - nx
