@@ -175,7 +175,8 @@ export class RtuiDynamicListComponent<
     /** Refresh output action */
     public readonly refresh: OutputEmitterRef<void> = output<void>();
     /** Row click output action */
-    public readonly rowClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
+    public readonly rowClick: OutputEmitterRef<NonNullable<{ row: ENTITY_TYPE; event: MouseEvent }>> =
+        output<NonNullable<{ row: ENTITY_TYPE; event: MouseEvent }>>();
     /** Row doubleClick output action */
     public readonly rowDoubleClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
 
@@ -237,8 +238,8 @@ export class RtuiDynamicListComponent<
     }
 
     /** Row click output action */
-    public onRowClick(row: ENTITY_TYPE): void {
-        this.rowClick.emit(row);
+    public onRowClick({ row, event }: { row: ENTITY_TYPE; event: MouseEvent }): void {
+        this.rowClick.emit({ row, event });
     }
 
     /** Row doubleClick output action */
