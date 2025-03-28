@@ -30,6 +30,10 @@ $scrollable: (
     height: var(--rt-scrollable-host-height);
     width: var(--rt-scrollable-host-width);
 
+    @supports (height: 100dvh) {
+        --rt-scrollable-host-height: 100dvh;
+    }
+
     display: var(--rt-scrollable-host-display);
     flex-direction: var(--rt-scrollable-host-flex-direction);
 
