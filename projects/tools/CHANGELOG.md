@@ -1,3 +1,21 @@
+## [0.2.3](https://github.com/Eyhenij/rt-tools/compare/0.1.81...0.2.3) (2025-03-28)
+
+### Bug Fixes
+
+- fix position copy-btn logic ([e84ed2e](https://github.com/Eyhenij/rt-tools/commit/e84ed2e94e7e91f521010e940454b28f7a055c46))
+- fix scrollable host height for mobile devices ([7c77513](https://github.com/Eyhenij/rt-tools/commit/7c77513224fb02c800e48ebf08cdb65a7d623942))
+
+### Features
+
+- add copyBtnAlign parameter in props of table-base-cell ([ff02209](https://github.com/Eyhenij/rt-tools/commit/ff0220986c0a91555afae8a31e09a813ca7e12ce))
+- add save emitter ([27c510c](https://github.com/Eyhenij/rt-tools/commit/27c510c9d9898cfbce4d36534f5ed012fd6ff959))
+- **rt:ui-kit:** implement action bar ([69ac1a0](https://github.com/Eyhenij/rt-tools/commit/69ac1a0afb37d090a9fe11e3d662d8a7437d049b))
+- **rt:ui-kit:** implement checkbox ([f12e94c](https://github.com/Eyhenij/rt-tools/commit/f12e94c7cd735f1931bfb59a4efbdd346886b412))
+
+### Reverts
+
+- Revert "Refactor/use input types (#135)" ([4de980a](https://github.com/Eyhenij/rt-tools/commit/4de980ade8e805e596f74a15f6752c6a837d7ffe)), closes [#135](https://github.com/Eyhenij/rt-tools/issues/135)
+
 ## [0.2.2](https://github.com/Eyhenij/rt-tools/compare/0.1.81...0.2.2) (2025-03-27)
 
 ### Bug Fixes
