@@ -1,11 +1,13 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+    AfterViewChecked,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
     contentChild,
     Directive,
+    ElementRef,
     inject,
     input,
     InputSignal,
@@ -15,6 +17,7 @@ import {
     Signal,
     signal,
     TemplateRef,
+    viewChild,
     WritableSignal,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
@@ -89,7 +92,14 @@ export class RtuiTableComponent<
     ENTITY_TYPE extends Record<string, unknown>,
     SORT_PROPERTY extends Extract<keyof ENTITY_TYPE, string>,
     KEY extends Extract<keyof ENTITY_TYPE, string>,
-> {
+> implements AfterViewChecked
+{
+    protected readonly rowActions: Signal<Nullable<ElementRef<HTMLElement>>> = viewChild<ElementRef<HTMLElement>>('rowActions');
+    protected readonly rowActionsHeaderPaddingHelper: Signal<Nullable<ElementRef<HTMLElement>>> =
+        viewChild<ElementRef<HTMLElement>>('rowActionsHeaderPaddingHelper');
+    protected readonly rowActionsPaddingHelper: Signal<Nullable<ElementRef<HTMLElement>>> =
+        viewChild<ElementRef<HTMLElement>>('rowActionsRowPaddingHelper');
+
     readonly #tableConfigService: RtTableConfigService<ENTITY_TYPE> = inject(RtTableConfigService);
 
     protected readonly columnTypes: typeof TABLE_COLUMN_TYPES_ENUM = TABLE_COLUMN_TYPES_ENUM;
@@ -162,6 +172,10 @@ export class RtuiTableComponent<
     /** Current row index */
     public readonly activeRowIndex: WritableSignal<Nullable<number>> = signal(null);
 
+    public ngAfterViewChecked(): void {
+        this.#setPaddingHelperWidth();
+    }
+
     /** Sort change output action */
     public onSortChange(sortModel: SortModel<string>): void {
         // TODO: add type guard
@@ -195,4 +209,31 @@ export class RtuiTableComponent<
     public onTogglePageEntities: (checked: boolean) => void = (): void => {
         return;
     };
+
+    /**
+     * Updates the width of padding helpers dynamically to match the width of `rowActions`.
+     * Ensures that the width of `rowActionsHeaderPaddingHelper` and `rowActionsPaddingHelper`
+     * is consistent with the current `rowActions` width.
+     */
+    #setPaddingHelperWidth(): void {
+        if (this.rowActions()) {
+            const rowActionsWidth: number = this.rowActions()?.nativeElement.offsetWidth || 0;
+
+            const headerWidth: number = parseInt(this.rowActionsHeaderPaddingHelper()?.nativeElement?.style.width || '0', 10);
+            const paddingWidth: number = parseInt(this.rowActionsPaddingHelper()?.nativeElement?.style.width || '0', 10);
+
+            if (rowActionsWidth !== headerWidth || rowActionsWidth !== paddingWidth) {
+                const headerEl: Nullable<HTMLElement> = this.rowActionsHeaderPaddingHelper()?.nativeElement;
+                const paddingEl: Nullable<HTMLElement> = this.rowActionsPaddingHelper()?.nativeElement;
+
+                if (headerEl) {
+                    headerEl.style.width = `${rowActionsWidth}px`;
+                }
+
+                if (paddingEl) {
+                    paddingEl.style.width = `${rowActionsWidth}px`;
+                }
+            }
+        }
+    }
 }
