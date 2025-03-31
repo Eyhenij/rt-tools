@@ -5,7 +5,7 @@ import { Person, Status } from './types';
 
 export const createPerson: () => Person = (): Person => {
     const gender: 'male' | 'female' = faker.number.int({ min: 0, max: 1 }) ? 'male' : 'female';
-    const birthday: Date = faker.date.between({ from: '01.01.1990', to: '01.01.2018' });
+    const birthday: Date = faker.date.between({ from: '1995-01-01', to: '2018-01-01' });
     const status: Status = faker.helpers.arrayElement(['active', 'inactive', 'invited', 'deleted']);
 
     return {
