@@ -24,6 +24,10 @@
                     </th>
                 }
             }
+
+            @if (rowActionsTpl() || additionalRowActionsTpl()) {
+                <th #rowActionsHeaderPaddingHelper rtElem="cell">Actions</th>
+            }
         </tr>
     </thead>
 
@@ -76,7 +80,7 @@
 
                 @if (rowActionsTpl() || additionalRowActionsTpl()) {
                     <div rtBlock="c-table-actions" [rtMod]="{ hidden: activeRowIndex() !== i }">
-                        <div rtElem="container">
+                        <div rtElem="container" #rowActions>
                             @if (additionalRowActionsTpl()) {
                                 <ng-template *ngTemplateOutlet="additionalRowActionsTpl() || null; context: { $implicit: row }" />
                             }
@@ -100,6 +104,8 @@
                             }
                         </div>
                     </div>
+
+                    <div #rowActionsRowPaddingHelper></div>
                 }
             </tr>
         }
