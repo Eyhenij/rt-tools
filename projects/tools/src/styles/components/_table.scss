@@ -167,7 +167,7 @@ td.c-table__cell {
 // ROW ACTIONS
 .c-table-actions {
     width: 100%;
-    height: auto;
+    height: calc(var(--rt-table-base-cell-wrapper-padding) + var(--rt-table-row-height) - 5px);
 
     position: absolute;
     right: 0;
@@ -185,9 +185,7 @@ td.c-table__cell {
 
         right: 0;
         width: fit-content;
-        height: calc(
-            var(--rt-table-header-cell-wrapper-padding) + var(--rt-table-header-cell-wrapper-padding) + var(--rt-table-row-height) - 5px
-        );
+        height: 100%;
 
         display: flex;
         justify-content: flex-end;
