@@ -101,7 +101,7 @@ $table: (
     border-bottom: var(--rt-table-row-border-bottom);
     background-color: var(--rt-table-row-background-color);
 
-    position: relative;
+    transform: translate(0);
 
     &--active {
         border-bottom: var(--rt-table-row-active-border-bottom);
@@ -162,22 +162,16 @@ td.c-table__cell {
     height: 100%;
 
     padding: var(--rt-table-base-cell-wrapper-padding);
-
-    &--copyable {
-        &:last-of-type {
-            padding: var(--rt-table-base-cell-wrapper-last-child-padding);
-        }
-    }
 }
 
 // ROW ACTIONS
 .c-table-actions {
     width: 100%;
-    height: 100%;
+    height: auto;
 
     position: absolute;
     right: 0;
-    top: 0;
+    top: 1px;
     z-index: var(--rt-table-actions-z-index);
 
     display: flex;
@@ -191,7 +185,9 @@ td.c-table__cell {
 
         right: 0;
         width: fit-content;
-        height: calc(100% - 1px);
+        height: calc(
+            var(--rt-table-header-cell-wrapper-padding) + var(--rt-table-header-cell-wrapper-padding) + var(--rt-table-row-height) - 5px
+        );
 
         display: flex;
         justify-content: flex-end;
@@ -217,7 +213,9 @@ td.c-table__cell {
         pointer-events: auto;
     }
 
-    &--hidden {
-        visibility: hidden;
+    @media (hover: hover) {
+        &--hidden {
+            visibility: hidden;
+        }
     }
 }
