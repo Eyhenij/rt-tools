@@ -5,6 +5,10 @@
         --rt-scrollable-footer-padding: 0;
         // TODO: fix styles affect x-scroll
         --rt-scrollable-content-flex-direction: row;
+
+        @supports (height: 100dvh) {
+            --rt-scrollable-host-height: 100dvh;
+        }
     }
 
     rtui-toolbar {
