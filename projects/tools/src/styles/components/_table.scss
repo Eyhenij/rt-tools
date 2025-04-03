@@ -13,15 +13,15 @@ $table: (
     row: (
         height: 3rem,
         color: var(--clr-txt),
-        border-bottom: 1px solid var(--clr-black-20),
+        border-bottom: var(--rt-table-row-border-bottom-width) solid var(--clr-black-20),
         background-color: transparent,
     ),
     row-hover: (
-        border-bottom: 1px solid var(--clr-blue-100),
+        border-bottom: var(--rt-table-row-border-bottom-width) solid var(--clr-blue-100),
         transition: 0.2s,
     ),
     row-active: (
-        border-bottom: 1px solid var(--clr-blue-100),
+        border-bottom: var(--rt-table-row-border-bottom-width) solid var(--clr-blue-100),
     ),
     header-cell-wrapper: (
         padding: 0.625rem,
@@ -30,8 +30,8 @@ $table: (
         font-weight: 500,
         text-align: left,
         line-height: 1.2,
-        border-bottom: 1px solid var(--clr-black-20),
-        border-right: 1px solid var(--clr-black-40),
+        border-bottom: var(--rt-table-header-cell-wrapper-border-width) solid var(--clr-black-20),
+        border-right: var(--rt-table-header-cell-wrapper-border-width) solid var(--clr-black-40),
         background-color: var(--clr-white-100),
     ),
     base-cell-wrapper: (
@@ -58,6 +58,9 @@ $table: (
     // initial table container scrollbar styles
     --rt-table-container-content-scrollbar-vertical-width: 0;
     --rt-table-container-content-scrollbar-horizontal-height: 12px;
+
+    --rt-table-row-border-bottom-width: 1px;
+    --rt-table-header-cell-wrapper-border-width: 1px;
 }
 
 // TABLE
@@ -185,7 +188,7 @@ td.c-table__cell {
 
         right: 0;
         width: fit-content;
-        height: calc(var(--rt-table-row-height) - 1px);
+        height: calc(var(--rt-table-row-height) - var(--rt-table-row-border-bottom-width));
 
         display: flex;
         justify-content: flex-end;
