@@ -123,8 +123,8 @@ export class RtuiTableComponent<
     public currentSortModel: InputSignal<Nullable<SortModel<SORT_PROPERTY>>> = input.required();
 
     /** Row click output action */
-    public readonly rowClick: OutputEmitterRef<NonNullable<{ row: ENTITY_TYPE; event: MouseEvent }>> =
-        output<NonNullable<{ row: ENTITY_TYPE; event: MouseEvent }>>();
+    public readonly rowClick: OutputEmitterRef<NonNullable<{ row: ENTITY_TYPE; event: Event }>> =
+        output<NonNullable<{ row: ENTITY_TYPE; event: Event }>>();
     /** Row doubleClick output action */
     public readonly rowDoubleClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
     /** Sort change output action */
@@ -193,7 +193,7 @@ export class RtuiTableComponent<
     }
 
     /** Row click output action */
-    public onRowClick(row: NonNullable<ENTITY_TYPE>, event: MouseEvent): void {
+    public onRowClick(row: NonNullable<ENTITY_TYPE>, event: Event): void {
         this.rowClick.emit({ row, event });
     }
 

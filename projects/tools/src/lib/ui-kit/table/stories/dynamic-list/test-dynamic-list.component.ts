@@ -176,7 +176,7 @@ export default class TestDynamicListComponent implements OnInit {
         this.pageModel = { ...this.pageModel, ...pageModel };
     }
 
-    public onRowClick(data: { row: Person; event: MouseEvent }): void {
+    public onRowClick(data: { row: Person; event: Event }): void {
         // eslint-disable-next-line no-console
         console.warn('Row Click', data);
     }
