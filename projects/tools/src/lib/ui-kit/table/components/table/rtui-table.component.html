@@ -40,7 +40,7 @@
                     active: activeRowIndex() === i,
                 }"
                 (dblclick)="isTableRowsClickable() ? onRowDoubleClick(row) : $event.stopPropagation()"
-                (click)="isTableRowsClickable() ? onRowClick(row, $event) : $event.stopPropagation()">
+                (mousedown)="isTableRowsClickable() ? onRowClick(row, $event) : $event.stopPropagation()">
                 @if (isSelectorsColumnShown()) {
                     <td rtElem="cell" (click)="$event.stopPropagation()" (dblclick)="$event.stopPropagation()">
                         @if (isMultiSelect()) {
@@ -94,7 +94,8 @@
                                     [matMenuTriggerFor]="menuTpl"
                                     (menuOpened)="onMenuOpen(i)"
                                     (menuClosed)="onMenuClose()"
-                                    (click)="$event.stopPropagation()">
+                                    (click)="$event.stopPropagation()"
+                                    (mousedown)="$event.stopPropagation()">
                                     <mat-icon [rtIconOutlinedDirective]="true">more_vert</mat-icon>
                                 </button>
 
