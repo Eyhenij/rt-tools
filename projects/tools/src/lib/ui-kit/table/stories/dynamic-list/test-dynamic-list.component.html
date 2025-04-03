@@ -74,6 +74,7 @@
             aria-label="Icon-button"
             mat-icon-button
             [disableRipple]="true"
+            (mousedown)="$event.stopPropagation()"
             (click)="onInfo(row); $event.stopPropagation()">
             <mat-icon [rtIconOutlinedDirective]="true">info</mat-icon>
         </button>
@@ -83,6 +84,7 @@
             aria-label="Icon-button"
             mat-icon-button
             [disableRipple]="true"
+            (mousedown)="$event.stopPropagation()"
             (click)="onOpenNewTab(row); $event.stopPropagation()">
             <mat-icon [rtIconOutlinedDirective]="true">open_in_new</mat-icon>
         </button>
