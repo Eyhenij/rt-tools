@@ -193,7 +193,7 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
 
     /** Fields specified by the directive */
     /** Indicates is multiselect mod enabled */
-    public readonly isMultiSelect: WritableSignal<boolean> = signal(true);
+    public readonly isMultiSelect: WritableSignal<boolean> = signal(false);
     /** Indicates is 'Select All' selector shown */
     public readonly isSelectAllSelectorShown: WritableSignal<boolean> = signal(true);
     /** Indicates is 'Select All' selector disabled */

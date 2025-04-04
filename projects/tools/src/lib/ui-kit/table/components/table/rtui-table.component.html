@@ -42,7 +42,11 @@
                 (dblclick)="isTableRowsClickable() ? onRowDoubleClick(row) : $event.stopPropagation()"
                 (mousedown)="isTableRowsClickable() ? onRowClick(row, $event) : $event.stopPropagation()">
                 @if (isSelectorsColumnShown()) {
-                    <td rtElem="cell" (click)="$event.stopPropagation()" (dblclick)="$event.stopPropagation()">
+                    <td
+                        rtElem="cell"
+                        (click)="$event.stopPropagation()"
+                        (mousedown)="$event.stopPropagation()"
+                        (dblclick)="$event.stopPropagation()">
                         @if (isMultiSelect()) {
                             <mat-checkbox
                                 [disabled]="isSelectorsColumnDisabled()"
