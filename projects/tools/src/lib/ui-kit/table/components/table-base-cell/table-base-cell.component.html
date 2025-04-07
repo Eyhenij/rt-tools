@@ -25,20 +25,22 @@
         </mat-icon>
     }
 
-    <button
-        type="button"
-        rtBlock="base-cell"
-        rtElem="copy-button"
-        class="c-button c-button--txt-base"
-        matTooltipPosition="above"
-        [rtMod]="{
-            position: copyBtnPosition,
-            complete: isCopied(),
-            visible: isMouseOver(),
-        }"
-        [matTooltip]="isCopied() ? 'Copied!' : 'Copy'"
-        [matTooltipDisabled]="isMobile()"
-        (click)="onCopyToClipboard(); $event.stopPropagation()">
-        <mat-icon rtElem="copy-icon" [rtIconOutlinedDirective]="true">{{ isCopied() ? 'done' : 'content_copy' }}</mat-icon>
-    </button>
+    @if (column()?.copyable) {
+        <button
+            type="button"
+            rtBlock="base-cell"
+            rtElem="copy-button"
+            class="c-button c-button--txt-base"
+            matTooltipPosition="above"
+            [rtMod]="{
+                position: copyBtnPosition,
+                complete: isCopied(),
+                visible: isMobile() || isMouseOver(),
+            }"
+            [matTooltip]="isCopied() ? 'Copied!' : 'Copy'"
+            [matTooltipDisabled]="isMobile()"
+            (mousedown)="onCopyToClipboard(); $event.stopPropagation()">
+            <mat-icon rtElem="copy-icon" [rtIconOutlinedDirective]="true">{{ isCopied() ? 'done' : 'content_copy' }}</mat-icon>
+        </button>
+    }
 </ng-container>
