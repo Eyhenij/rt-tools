@@ -188,7 +188,7 @@ td.c-table__cell {
 
         right: 0;
         width: fit-content;
-        height: calc(var(--rt-table-row-height) - var(--rt-table-row-border-bottom-width));
+        height: calc(var(--rt-table-row-height) - var(--rt-table-row-border-bottom-width) - var(--rt-table-row-border-bottom-width));
 
         display: flex;
         justify-content: flex-end;
