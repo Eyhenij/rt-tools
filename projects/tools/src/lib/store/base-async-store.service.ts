@@ -10,7 +10,7 @@ import { IStateBase } from './interfaces/state-base.interface';
 
 export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async, MSG_TYPE extends string>
     extends BaseStoreService<STATE_TYPE, MSG_TYPE>
-    implements IBaseAsyncStoreService
+    implements IBaseAsyncStoreService<STATE_TYPE, MSG_TYPE>
 {
     // ================================
     // Selectors

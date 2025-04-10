@@ -3,12 +3,14 @@ import { Signal } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { ModelStatus } from '../enums/async-state-status.enum';
+import { IBaseStoreService } from './base-store-service.interface';
 
 export interface ISetPropertiesConfig {
     showNotification?: boolean;
 }
 
-export interface IBaseAsyncStoreService {
+export interface IBaseAsyncStoreService<STATE_TYPE extends object, MSG_TYPE extends string>
+    extends IBaseStoreService<STATE_TYPE, MSG_TYPE> {
     // ================================
     // region Selectors
     // ================================

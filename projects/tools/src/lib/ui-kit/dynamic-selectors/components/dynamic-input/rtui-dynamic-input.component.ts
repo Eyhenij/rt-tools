@@ -31,23 +31,13 @@ import {
     ValidationErrors,
     Validator,
 } from '@angular/forms';
-import { MatIconButton } from '@angular/material/button';
 import { MatFormField } from '@angular/material/form-field';
-import { MatIcon } from '@angular/material/icon';
 import { MatInput, MatLabel } from '@angular/material/input';
-import { MatTooltip } from '@angular/material/tooltip';
 import { noop } from 'rxjs';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
-import {
-    areArraysEqual,
-    BreakStringPipe,
-    Nullable,
-    RtIconOutlinedDirective,
-    transformArrayInput,
-    transformStringInput,
-} from '../../../../util';
+import { areArraysEqual, Nullable, transformArrayInput, transformStringInput } from '../../../../util';
 import {
     RtuiDynamicSelectorItemAdditionalControlDirective,
     RtuiDynamicSelectorListActionsComponent,
@@ -75,20 +65,13 @@ export class RtuiDynamicInputAdditionalControlDirective {}
     imports: [
         NgTemplateOutlet,
         ReactiveFormsModule,
-        MatIconButton,
-        MatTooltip,
-        MatIcon,
         MatFormField,
         MatLabel,
         MatInput,
 
-        // pipes
-        BreakStringPipe,
-
         // directives
         BlockDirective,
         ElemDirective,
-        RtIconOutlinedDirective,
         RtuiDynamicSelectorItemAdditionalControlDirective,
 
         // components
