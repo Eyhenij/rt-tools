@@ -44,6 +44,7 @@ export class TestDynamicInputComponent implements OnInit {
     public isMobile: boolean = false;
     public isSingleSelection: boolean = false;
     public isListDraggable: boolean = false;
+    public isInputsEditable: boolean = false;
     public isAdditionalControlShown: boolean = false;
 
     public ngOnInit(): void {

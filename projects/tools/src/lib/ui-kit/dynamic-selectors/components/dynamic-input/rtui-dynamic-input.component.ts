@@ -1,6 +1,7 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { NgTemplateOutlet } from '@angular/common';
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     contentChild,
@@ -45,6 +46,7 @@ import {
     RtuiDynamicSelectorSelectedListComponent,
 } from '../.';
 import { RtuiDynamicSelectorsDirective } from '../dynamic-selectors-directive';
+import { BooleanInput } from '@angular/cdk/coercion';
 
 interface FormModel {
     control: FormControl<string[]>;
@@ -65,6 +67,8 @@ export class RtuiDynamicInputAdditionalControlDirective {}
     imports: [
         NgTemplateOutlet,
         ReactiveFormsModule,
+
+        // material
         MatFormField,
         MatLabel,
         MatInput,
@@ -103,12 +107,16 @@ export class RtuiDynamicInputComponent extends RtuiDynamicSelectorsDirective imp
 
     /** Indicates is placeholder shown */
     public isPlaceholderShown: ModelSignal<Nullable<boolean>> = model<Nullable<boolean>>(true);
+    /** Indicates is inputs-editable */
+    public isInputsEditable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
     /** Input label */
-    public inputLabel: InputSignalWithTransform<string, string> = input<string, string>('', {
+    public inputLabel: InputSignalWithTransform<string, unknown> = input<string, unknown>('', {
         transform: transformStringInput,
     });
     /** Input placeholder */
-    public inputPlaceholder: InputSignalWithTransform<string, string> = input<string, string>('', {
+    public inputPlaceholder: InputSignalWithTransform<string, unknown> = input<string, unknown>('', {
         transform: transformStringInput,
     });
     /** Entity keys that can't be changed */
@@ -120,7 +128,7 @@ export class RtuiDynamicInputComponent extends RtuiDynamicSelectorsDirective imp
     public readonly selectedEntities: WritableSignal<Array<{ id: string }>> = signal([]);
     /** Indicates is input control shown */
     public readonly isInputControlShown: WritableSignal<boolean> = signal(false);
-    /** Indicates reset changes button is disabled */
+    /** Indicates the reset changes button is disabled */
     public readonly isResetButtonDisabled: WritableSignal<boolean> = signal(false);
 
     /** Initial entities */
@@ -215,7 +223,7 @@ export class RtuiDynamicInputComponent extends RtuiDynamicSelectorsDirective imp
         this.form.controls.control.setValue([]);
     }
 
-    /** Reset list of selected entities ids to init value */
+    /** Reset a list of selected entities ids to init value */
     public resetList(): void {
         this.form.controls.control.setValue(this.#initialEntities());
         this.hideSelectionControl();
@@ -234,23 +242,31 @@ export class RtuiDynamicInputComponent extends RtuiDynamicSelectorsDirective imp
         }
     }
 
+    /** Change entity value */
+    public changeEntity(data: { prev: string; new: string }): void {
+        this.form.controls.control.setValue(this.form.controls.control.value.map((el: string) => (el === data.prev ? data.new : el)));
+    }
+
     /** Add new item */
     public onAddEntity(): void {
-        if (this.form.controls.controlForUi.value) {
+        if (this.form.controls.controlForUi.value && this.form.controls.control.value.includes(this.form.controls.controlForUi.value)) {
+            this.form.controls.controlForUi.setValue(null);
+            this.hideSelectionControl();
+        } else if (this.form.controls.controlForUi.value) {
             this.toggleEntity(this.form.controls.controlForUi.value);
             this.form.controls.controlForUi.setValue(null);
             this.hideSelectionControl();
         }
     }
 
-    /** Proceed move items in list */
+    /** Process move items in a list */
     public onDrop(event: CdkDragDrop<Array<{ id: string }>>): void {
         const updatedList: Array<{ id: string }> = untracked(() => this.selectedEntities());
         moveItemInArray(updatedList, event.previousIndex, event.currentIndex);
         this.form.controls.control.patchValue(updatedList.map((el: { id: string }) => el.id));
     }
 
-    /** Set reset list button state */
+    /** Set the reset list button state */
     #setResetListButtonState(value: string[]): void {
         this.isResetButtonDisabled.set(areArraysEqual(this.#initialEntities(), value));
     }

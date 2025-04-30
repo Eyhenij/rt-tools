@@ -33,3 +33,13 @@ export const InputWithAdditional: Story = {
         isAdditionalControlShown: true,
     },
 };
+
+export const InputEditable: Story = {
+    args: {
+        isMobile: false,
+        isSingleSelection: false,
+        isListDraggable: false,
+        isInputsEditable: true,
+        isAdditionalControlShown: false,
+    },
+};

@@ -11,12 +11,15 @@
             <rtui-dynamic-selector-selected-list
                 keyExp="id"
                 displayExp="id"
+                [appearance]="appearance()"
                 [isMobile]="isMobile()"
                 [selectedEntities]="selectedEntities()"
                 [readonlyEntitiesKeys]="readonlyEntitiesKeys()"
                 [isListDraggable]="isListDraggable()"
                 [useNameBreaking]="useNameBreaking()"
                 [isDeleteButtonShown]="isDeleteButtonShown()"
+                [isItemsEditable]="isInputsEditable()"
+                (changeValueAction)="changeEntity($event)"
                 (dropAction)="onDrop($event)"
                 (deleteFromSelectedAction)="toggleEntity($event)">
                 @if (additionalControlTpl()) {
