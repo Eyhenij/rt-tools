@@ -1,6 +1,6 @@
 <ng-container rtBlock="rtui-dynamic-selector">
     <div rtElem="list" cdkDropList (cdkDropListDropped)="onDrop($event)">
-        @for (entity of selectedEntities(); track entity[displayExp()]) {
+        @for (entity of selectedEntities(); track entity[displayExp()]; let i = $index) {
             <div cdkDrag rtElem="item" [rtMod]="{ draggable: isListDraggable() }" [cdkDragDisabled]="!isListDraggable()">
                 @if (isListDraggable()) {
                     <div rtElem="item-mover">
@@ -20,30 +20,68 @@
                     </div>
                 }
 
-                <span
-                    #titleTpl
-                    rtElem="item-title"
-                    matTooltipPosition="above"
-                    [rtHideTooltipDirective]="titleTpl"
-                    [isTooltipShown]="!isMobile()"
-                    [matTooltip]="
-                        useNameBreaking() ? (entity[displayExp()] | entityToString | breakString) : (entity[displayExp()] | entityToString)
-                    "
-                    [matTooltipDisabled]="isMobile()">
-                    @if (useNameBreaking()) {
-                        {{
-                            useTitleCase()
-                                ? (entity[displayExp()] | entityToString | breakString | titlecase)
-                                : (entity[displayExp()] | entityToString | breakString)
-                        }}
-                    } @else {
-                        {{ useTitleCase() ? (entity[displayExp()] | entityToString | titlecase) : entity[displayExp()] }}
-                    }
-                </span>
+                @if (editedItemIndex() === i) {
+                    <mat-form-field rtElem="item-input" subscriptSizing="dynamic" [appearance]="appearance()">
+                        <input matInput type="text" [value]="entity[displayExp()]" (keydown.enter)="changeValue(entity[displayExp()])" />
+                    </mat-form-field>
+                } @else {
+                    <span
+                        #titleTpl
+                        rtElem="item-title"
+                        matTooltipPosition="above"
+                        [rtHideTooltipDirective]="titleTpl"
+                        [isTooltipShown]="!isMobile()"
+                        [matTooltip]="
+                            useNameBreaking()
+                                ? (entity[displayExp()] | entityToString | breakString)
+                                : (entity[displayExp()] | entityToString)
+                        "
+                        [matTooltipDisabled]="isMobile()">
+                        @if (useNameBreaking()) {
+                            {{
+                                useTitleCase()
+                                    ? (entity[displayExp()] | entityToString | breakString | titlecase)
+                                    : (entity[displayExp()] | entityToString | breakString)
+                            }}
+                        } @else {
+                            {{ useTitleCase() ? (entity[displayExp()] | entityToString | titlecase) : entity[displayExp()] }}
+                        }
+                    </span>
+                }
 
                 <div rtElem="item-controls">
                     @if (additionalControlTpl()) {
                         <ng-container *ngTemplateOutlet="additionalControlTpl() || null; context: { $implicit: entity }" />
+                    }
+
+                    @if (isItemsEditable()) {
+                        @if (editedItemIndex() === i) {
+                            <div rtElem="item-control">
+                                <button
+                                    mat-icon-button
+                                    type="button"
+                                    rtElem="item-control-button"
+                                    matTooltipPosition="left"
+                                    matTooltip="Reset"
+                                    [matTooltipDisabled]="isMobile()"
+                                    (click)="setEditModState(null)">
+                                    <mat-icon [rtIconOutlinedDirective]="true">refresh</mat-icon>
+                                </button>
+                            </div>
+                        }
+
+                        <div rtElem="item-control">
+                            <button
+                                mat-icon-button
+                                type="button"
+                                rtElem="item-control-button"
+                                matTooltipPosition="right"
+                                [matTooltip]="editedItemIndex() === i ? 'Apply' : 'Edit item'"
+                                [matTooltipDisabled]="isMobile()"
+                                (click)="editedItemIndex() === i ? changeValue(entity[displayExp()]) : setEditModState(i)">
+                                <mat-icon [rtIconOutlinedDirective]="true">{{ editedItemIndex() === i ? 'done' : 'edit' }}</mat-icon>
+                            </button>
+                        </div>
                     }
 
                     @if (isDeleteButtonShown()) {
