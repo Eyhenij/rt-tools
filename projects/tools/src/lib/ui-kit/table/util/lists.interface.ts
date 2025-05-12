@@ -34,6 +34,7 @@ export interface FilterModel<M = string> {
 
 export enum FILTER_OPERATOR_TYPE_ENUM {
     EQUALS = 'equals',
+    NOT_EQUALS = 'notEquals',
     STARTS_WITH = 'startsWith',
     ENDS_WITH = 'endsWith',
     CONTAINS = 'contains',
@@ -43,6 +44,7 @@ export enum FILTER_OPERATOR_TYPE_ENUM {
 
 export type FilterOperatorType =
     | FILTER_OPERATOR_TYPE_ENUM.EQUALS
+    | FILTER_OPERATOR_TYPE_ENUM.NOT_EQUALS
     | FILTER_OPERATOR_TYPE_ENUM.STARTS_WITH
     | FILTER_OPERATOR_TYPE_ENUM.ENDS_WITH
     | FILTER_OPERATOR_TYPE_ENUM.CONTAINS

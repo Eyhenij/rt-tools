@@ -23,15 +23,18 @@ import {
 import { MatIconButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatIcon } from '@angular/material/icon';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { MatRadioButton } from '@angular/material/radio';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
 import { Nullable, RtIconOutlinedDirective, transformArrayInput } from '../../../../util';
-import { ITable, SortModel, TABLE_COLUMN_TYPES_ENUM } from '../../util';
+import { FilterModel, ITable, SortModel, TABLE_COLUMN_TYPES_ENUM } from '../../util';
 import { RtTableConfigService } from '../../util/table-config.service';
 import { TableBaseCellComponent } from '../table-base-cell/table-base-cell.component';
 import { RtuiTableHeaderCellComponent } from '../table-header-cell/table-header-cell.component';
+import { RtuiTableHeaderFilterCellComponent } from '../table-header-filter-cell/table-header-filter-cell.component';
+import { MatFormFieldAppearance } from '@angular/material/form-field';
+import { BooleanInput } from '@angular/cdk/coercion';
 
 /** Directive for custom table cells */
 @Directive({
@@ -73,7 +76,6 @@ export class RtuiTableAdditionalRowActionsDirective {}
         MatMenuTrigger,
         MatIcon,
         MatMenu,
-        MatMenuItem,
         MatCheckbox,
         MatRadioButton,
 
@@ -85,6 +87,7 @@ export class RtuiTableAdditionalRowActionsDirective {}
         // components
         RtuiTableHeaderCellComponent,
         TableBaseCellComponent,
+        RtuiTableHeaderFilterCellComponent,
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -105,11 +108,11 @@ export class RtuiTableComponent<
     protected readonly columnTypes: typeof TABLE_COLUMN_TYPES_ENUM = TABLE_COLUMN_TYPES_ENUM;
 
     /** Indicates is mobile view */
-    public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
+    public isMobile: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
-    /** Indicates is table rows clickable */
-    public isTableRowsClickable: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+    /** Indicates are table rows clickable */
+    public isTableRowsClickable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Key of ENTITY_TYPE for compare entities */
@@ -121,6 +124,23 @@ export class RtuiTableComponent<
     });
     /** Current page model from store */
     public currentSortModel: InputSignal<Nullable<SortModel<SORT_PROPERTY>>> = input.required();
+    /** Current elements appearance */
+    public appearance: InputSignal<MatFormFieldAppearance> = input.required({
+        transform: (value: MatFormFieldAppearance) => (value === 'fill' ? 'fill' : 'outline'),
+    });
+    /** Filter inputs appearance */
+    public filterAppearance: InputSignal<MatFormFieldAppearance> = input<MatFormFieldAppearance>('outline');
+    /** Current filter model from store */
+    public filterModel: InputSignalWithTransform<FilterModel<KEY>[], FilterModel<KEY>[]> = input<FilterModel<KEY>[], FilterModel<KEY>[]>(
+        [],
+        {
+            transform: (value: FilterModel<KEY>[]) => transformArrayInput(value),
+        }
+    );
+    /** Indicates is filters shown */
+    public isFiltersShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
 
     /** Row click output action */
     public readonly rowClick: OutputEmitterRef<NonNullable<{ row: ENTITY_TYPE; event: MouseEvent }>> =
@@ -129,6 +149,8 @@ export class RtuiTableComponent<
     public readonly rowDoubleClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
     /** Sort change output action */
     public readonly sortChange: OutputEmitterRef<SortModel<SORT_PROPERTY>> = output<SortModel<SORT_PROPERTY>>();
+    /** Filter change output action */
+    public readonly filterChange: OutputEmitterRef<FilterModel<KEY>[]> = output<FilterModel<KEY>[]>();
 
     /** Columns config for table */
     public columns: Signal<Array<ITable.Column<ENTITY_TYPE>>> = computed(() => {
@@ -159,9 +181,9 @@ export class RtuiTableComponent<
     /** Fields specified by the directive */
     /** List of selected entities ids */
     public readonly selectedEntitiesIds: WritableSignal<ENTITY_TYPE[KEY][]> = signal([]);
-    /** Indicates is all page entities selected */
+    /** Indicates are all page entities selected */
     public readonly isPageEntitiesSelected: WritableSignal<boolean> = signal(false);
-    /** Indicates is some page entities selected */
+    /** Indicates are some page entities selected */
     public readonly isPageEntitiesIndeterminate: WritableSignal<boolean> = signal(false);
     /** Indicates is multiselect mod enabled */
     public readonly isMultiSelect: WritableSignal<boolean> = signal(true);
@@ -182,12 +204,17 @@ export class RtuiTableComponent<
         this.sortChange.emit(sortModel as SortModel<SORT_PROPERTY>);
     }
 
+    /** Filter change output action */
+    public onFilterChange(filterModel: FilterModel<KEY>[]): void {
+        this.filterChange.emit(filterModel);
+    }
+
     /** Open row actions menu */
     public onMenuOpen(index: number): void {
         this.activeRowIndex.set(index);
     }
 
-    /** Close row actions menu */
+    /** Close the row actions menu */
     public onMenuClose(): void {
         this.activeRowIndex.set(null);
     }

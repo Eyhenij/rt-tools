@@ -15,7 +15,11 @@
 
             @for (column of columns(); track column.propName; let i = $index) {
                 @if (!column?.hidden) {
-                    <th rtElem="cell" [rtMod]="{ sortable: column?.sorting }">
+                    <th
+                        rtElem="cell"
+                        [rtMod]="{ sortable: column?.sorting }"
+                        (click)="$event.stopPropagation()"
+                        (dblclick)="$event.stopPropagation()">
                         <rtui-table-header-cell
                             [headerModel]="column.header"
                             [sortModel]="column?.sorting"
@@ -29,6 +33,35 @@
                 <th #rowActionsHeaderPaddingHelper rtElem="cell">Actions</th>
             }
         </tr>
+
+        @if (isFiltersShown()) {
+            <tr>
+                @if (isSelectorsColumnShown()) {
+                    <th rtElem="cell" rtMod="filterable, empty"></th>
+                }
+
+                @for (column of columns(); track column.propName; let i = $index) {
+                    @if (!column?.hidden && column.filterType) {
+                        <th rtElem="cell" rtMod="filterable">
+                            <rtui-table-header-filter-cell
+                                [appearance]="filterAppearance()"
+                                [filterProperty]="column.propName"
+                                [filterType]="column.filterType"
+                                [filterOptions]="column.filterOptions || []"
+                                [filterSelectOptions]="column.filterSelectOptions || []"
+                                [filterModel]="filterModel()"
+                                (filterChange)="onFilterChange($event)" />
+                        </th>
+                    } @else if (!column?.hidden) {
+                        <th rtElem="cell" rtMod="filterable"></th>
+                    }
+                }
+
+                @if (rowActionsTpl() || additionalRowActionsTpl()) {
+                    <th rtElem="cell" rtMod="filterable"></th>
+                }
+            </tr>
+        }
     </thead>
 
     <tbody>

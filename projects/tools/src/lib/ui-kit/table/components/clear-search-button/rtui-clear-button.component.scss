@@ -31,6 +31,13 @@ $clear-button: (
         margin: var(--rt-clear-button-host-margin);
         padding: var(--rt-clear-button-host-padding);
         background-color: var(--rt-clear-button-host-background-color);
+        visibility: hidden;
+        pointer-events: none;
+
+        &--visible {
+            visibility: visible;
+            pointer-events: auto;
+        }
 
         &__icon {
             width: var(--rt-clear-button-icon-size);
