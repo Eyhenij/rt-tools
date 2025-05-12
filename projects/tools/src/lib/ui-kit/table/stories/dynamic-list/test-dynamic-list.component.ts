@@ -6,12 +6,11 @@ import { MatIcon } from '@angular/material/icon';
 import { MatMenuItem } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 
-import { BlockDirective, ElemDirective } from '../../../../bem';
+import { BlockDirective } from '../../../../bem';
 import { IDBStorageService } from '../../../../idb-storage';
 import { Nullable, RtIconOutlinedDirective } from '../../../../util';
 import { RtActionBarService, RtuiActionBarContainerComponent } from '../../../action-bar';
 import { RtuiToggleComponent } from '../../../toggle';
-import { RtuiCustomTableCellsDirective } from '../../components';
 import {
     RtuiDynamicListComponent,
     RtuiDynamicListCustomTableCellsDirective,
@@ -20,7 +19,7 @@ import {
     RtuiDynamicListToolbarActionsDirective,
     RtuiDynamicListToolbarSelectorsDirective,
 } from '../../dynamic-list.component';
-import { RtDynamicListSelectorsDirective } from '../../util';
+import { FILTER_OPERATOR_TYPE_ENUM, FilterModel, RtDynamicListSelectorsDirective } from '../../util';
 import { LIST_SORT_ORDER_ENUM } from '../../util/list-sort-order.enum';
 import { PageModel, SortModel } from '../../util/lists.interface';
 import { RtTableConfigService } from '../../util/table-config.service';
@@ -50,13 +49,11 @@ import { Person } from '../types';
         // directives
         RtIconOutlinedDirective,
         BlockDirective,
-        ElemDirective,
         RtuiDynamicListToolbarActionsDirective,
         RtuiDynamicListRowActionsDirective,
         RtuiDynamicListToolbarSelectorsDirective,
         RtuiDynamicListRowAdditionalActionsDirective,
         RtuiDynamicListCustomTableCellsDirective,
-        RtuiCustomTableCellsDirective,
         RtDynamicListSelectorsDirective,
     ],
     providers: [IDBStorageService, RtTableConfigService, RtActionBarService],
@@ -78,6 +75,7 @@ export default class TestDynamicListComponent implements OnInit {
     public isRefreshButtonShown: boolean = true;
     public isAllEntitiesSelected: boolean = false;
     public isTableRowsClickable: boolean = false;
+    public isFiltersShown: boolean = false;
     public searchTerm: string = '';
     public data: Person[] = [];
     public selectedEntitiesIds: number[] = [];
@@ -86,10 +84,17 @@ export default class TestDynamicListComponent implements OnInit {
         pageSize: 10,
         totalCount: 10,
     };
-    public currentSortModel: SortModel<NonNullable<keyof Person>> = {
+    public currentSortModel: SortModel<string> = {
         propertyName: 'id',
         sortDirection: LIST_SORT_ORDER_ENUM.ASC,
     };
+    public filterModel: FilterModel[] = [
+        {
+            propertyName: 'name',
+            operatorType: FILTER_OPERATOR_TYPE_ENUM.CONTAINS,
+            value: '111',
+        },
+    ];
     public storageKey: string = 'dynamicListManyItemsKey';
 
     public readonly dynamicListTpl: Signal<Nullable<RtDynamicListSelectorsDirective<Person, keyof Person, 'id'>>> =
@@ -166,7 +171,7 @@ export default class TestDynamicListComponent implements OnInit {
         this.data = createPersonList(20);
     }
 
-    public onSortChange(sortModel: SortModel<NonNullable<keyof Person>>): void {
+    public onSortChange(sortModel: SortModel<string>): void {
         this.currentSortModel = sortModel;
         // eslint-disable-next-line no-console
         console.warn('Sort Model', sortModel);
@@ -174,6 +179,12 @@ export default class TestDynamicListComponent implements OnInit {
 
     public onPageModelChange(pageModel: Partial<PageModel>): void {
         this.pageModel = { ...this.pageModel, ...pageModel };
+    }
+
+    public onFilterChange(filterModel: FilterModel[]): void {
+        this.filterModel = filterModel;
+        // eslint-disable-next-line no-console
+        console.warn('Filters', this.filterModel);
     }
 
     public onRowClick(data: { row: Person; event: MouseEvent }): void {

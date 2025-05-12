@@ -1,6 +1,6 @@
 import { FormControl } from '@angular/forms';
 
-import { SortModel } from './lists.interface';
+import { FilterOperatorType, SortModel } from './lists.interface';
 
 export enum TABLE_COLUMN_TYPES_ENUM {
     DATE = 'date',
@@ -10,6 +10,13 @@ export enum TABLE_COLUMN_TYPES_ENUM {
     TEXT = 'text',
     CURRENCY = 'currency',
     CUSTOM = 'custom',
+}
+
+export enum TABLE_COLUMN_FILTER_TYPES_ENUM {
+    TEXT = 'text',
+    NUMBER = 'number',
+    SELECT = 'select',
+    DATE = 'date',
 }
 
 export enum TEXT_CELL_COLOR_ENUM {
@@ -37,6 +44,12 @@ export namespace ITable {
         | TABLE_COLUMN_TYPES_ENUM.CURRENCY
         | TABLE_COLUMN_TYPES_ENUM.CUSTOM;
 
+    export type FilterType =
+        | TABLE_COLUMN_FILTER_TYPES_ENUM.TEXT
+        | TABLE_COLUMN_FILTER_TYPES_ENUM.NUMBER
+        | TABLE_COLUMN_FILTER_TYPES_ENUM.SELECT
+        | TABLE_COLUMN_FILTER_TYPES_ENUM.DATE;
+
     export interface Column<T = Record<string, unknown>> extends Record<string, unknown> {
         align: 'right' | 'left' | 'center';
         propName: keyof T;
@@ -58,6 +71,11 @@ export namespace ITable {
         className?: string;
         tooltip?: string;
         transform?: (value: T[keyof T]) => string | number;
+
+        // Additional properties for filters
+        filterType?: FilterType;
+        filterOptions?: FilterOperatorType[];
+        filterSelectOptions?: string[];
 
         // Additional properties for table configuration service
         displayName?: string;

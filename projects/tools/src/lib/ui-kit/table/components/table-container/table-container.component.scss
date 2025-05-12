@@ -24,6 +24,10 @@ $table-container: (
     toolbar-actions-last-child: (
         margin-right: 1rem,
     ),
+    toolbar-actions-divider: (
+        height: 2rem,
+        border-left: 1px solid var(--clr-gray-20),
+    ),
     toolbar-search: (
         width: 22rem,
     ),
@@ -126,6 +130,11 @@ $table-container: (
                 > :last-child {
                     margin-right: var(--rt-table-container-toolbar-actions-last-child-margin-right);
                 }
+            }
+
+            &-actions-divider {
+                height: var(--rt-table-container-toolbar-actions-divider-height);
+                border-left: var(--rt-table-container-toolbar-actions-divider-border-left);
             }
 
             &-search {

@@ -1,11 +1,10 @@
-@if (isButtonShown()) {
-    <button
-        rtBlock="rtui-clear-button"
-        [matTooltip]="tooltip() ?? ''"
-        [matTooltipPosition]="tooltipPosition()"
-        [matTooltipDisabled]="isMobile()"
-        (keydown)="onKeydown()"
-        (click)="onClick()">
-        <mat-icon rtElem="icon">close</mat-icon>
-    </button>
-}
+<button
+    rtBlock="rtui-clear-button"
+    [rtMod]="{ visible: isButtonShown() }"
+    [matTooltip]="tooltip() ?? ''"
+    [matTooltipPosition]="tooltipPosition()"
+    [matTooltipDisabled]="isMobile()"
+    (keydown)="onKeydown()"
+    (click)="onClick()">
+    <mat-icon rtElem="icon">close</mat-icon>
+</button>

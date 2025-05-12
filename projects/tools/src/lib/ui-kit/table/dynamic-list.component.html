@@ -8,9 +8,12 @@
     [isToolbarActionsIconsOutlined]="isToolbarActionsIconsOutlined()"
     [isRefreshButtonShown]="isRefreshButtonShown()"
     [isTableConfigButtonShown]="isTableConfigButtonShown()"
+    [isFiltersShown]="isFiltersShown()"
+    [isFiltersEmpty]="!filterModel()?.length"
     [appearance]="appearance()"
     [searchTerm]="searchTerm()"
     (refreshAction)="onRefresh()"
+    (clearFiltersAction)="onClearFilters()"
     (pageModelChange)="onPageModelChange($event)"
     (searchChange)="onSearchChange($event)">
     @if (toolbarSelectorsTpl()) {
@@ -26,11 +29,15 @@
     }
 
     <rtui-table
+        [appearance]="appearance()"
         [keyExp]="keyExp()"
         [entities]="entities()"
         [isMobile]="isMobile()"
+        [filterModel]="filterModel()"
         [isTableRowsClickable]="isTableRowsClickable()"
         [currentSortModel]="currentSortModel()"
+        [isFiltersShown]="isFiltersShown()"
+        (filterChange)="onFilterChange($event)"
         (rowClick)="onRowClick($event)"
         (rowDoubleClick)="onRowDoubleClick($event)"
         (sortChange)="onSortChange($event)">

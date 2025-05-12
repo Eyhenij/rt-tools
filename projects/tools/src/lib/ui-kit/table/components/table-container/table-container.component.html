@@ -23,6 +23,23 @@
 
                                 @if (toolbarActionsTpl()) {
                                     <ng-template *ngTemplateOutlet="toolbarActionsTpl() ?? null" />
+
+                                    <div rtElem="toolbar-actions-divider"></div>
+                                }
+
+                                @if (isFiltersShown()) {
+                                    <button
+                                        mat-mini-fab
+                                        type="button"
+                                        aria-label="Icon-button for clear filters"
+                                        class="c-button c-button--fab"
+                                        matTooltip="Clear filters"
+                                        matTooltipPosition="below"
+                                        [matTooltipDisabled]="isMobile()"
+                                        [disabled]="isFiltersEmpty()"
+                                        (click)="onClearFilters()">
+                                        <mat-icon [rtIconOutlinedDirective]="isToolbarActionsIconsOutlined()">block</mat-icon>
+                                    </button>
                                 }
 
                                 @if (isRefreshButtonShown()) {

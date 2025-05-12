@@ -1,23 +1,9 @@
 import { LIST_SORT_ORDER_ENUM } from '../util/list-sort-order.enum';
-import { ITable, TABLE_COLUMN_TYPES_ENUM, TEXT_CELL_COLOR_ENUM } from '../util/table-column.interface';
+import { ITable, TABLE_COLUMN_FILTER_TYPES_ENUM, TABLE_COLUMN_TYPES_ENUM, TEXT_CELL_COLOR_ENUM } from '../util/table-column.interface';
 import { Person, ResponsiblePerson } from './types';
+import { FILTER_OPERATOR_TYPE_ENUM } from '../util';
 
 export const COLUMNS: Array<ITable.Column<Person>> = [
-    {
-        align: 'left',
-        propName: 'userIcon' as keyof Person,
-        type: TABLE_COLUMN_TYPES_ENUM.TEXT,
-        copyable: false,
-        header: {
-            align: 'left',
-            label: '',
-        },
-        icon: {
-            glyph: 'priority_high',
-            color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
-            placement: 'left',
-        },
-    },
     {
         align: 'left',
         propName: 'id',
@@ -26,35 +12,14 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
         header: {
             align: 'left',
             label: 'ID',
-            icon: {
-                glyph: 'priority_high',
-                color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
-                placement: 'left',
-            },
         },
         sorting: {
             propertyName: 'id',
             sortDirection: LIST_SORT_ORDER_ENUM.ASC,
         },
-        icon: {
-            glyph: 'priority_high',
-            color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
-            placement: 'right',
-        },
         width: '100px',
         minWidth: '100px',
-    },
-    {
-        align: 'left',
-        propName: 'button',
-        type: TABLE_COLUMN_TYPES_ENUM.CUSTOM,
-        copyable: false,
-        header: {
-            align: 'left',
-            label: 'Button',
-        },
-        width: '100px',
-        minWidth: '100px',
+        hidden: true,
     },
     {
         align: 'left',
@@ -96,6 +61,8 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
         },
         width: '200px',
         minWidth: '200px',
+        filterType: TABLE_COLUMN_FILTER_TYPES_ENUM.TEXT,
+        filterOptions: [FILTER_OPERATOR_TYPE_ENUM.CONTAINS, FILTER_OPERATOR_TYPE_ENUM.EQUALS, FILTER_OPERATOR_TYPE_ENUM.NOT_EQUALS],
     },
     {
         align: 'left',
@@ -120,8 +87,10 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
             color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
             placement: 'left',
         },
-        width: '300px',
+        width: '200px',
         minWidth: '200px',
+        filterType: TABLE_COLUMN_FILTER_TYPES_ENUM.TEXT,
+        filterOptions: [FILTER_OPERATOR_TYPE_ENUM.CONTAINS, FILTER_OPERATOR_TYPE_ENUM.EQUALS, FILTER_OPERATOR_TYPE_ENUM.NOT_EQUALS],
     },
     {
         align: 'left',
@@ -166,7 +135,9 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
 
             return style;
         },
-        minWidth: '100px',
+        minWidth: '120px',
+        filterType: TABLE_COLUMN_FILTER_TYPES_ENUM.SELECT,
+        filterSelectOptions: ['active', 'inactive', 'invited', 'deleted'],
     },
     {
         align: 'right',
@@ -183,6 +154,14 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
         },
         width: '150px',
         minWidth: '100px',
+        filterType: TABLE_COLUMN_FILTER_TYPES_ENUM.NUMBER,
+        filterOptions: [
+            FILTER_OPERATOR_TYPE_ENUM.CONTAINS,
+            FILTER_OPERATOR_TYPE_ENUM.EQUALS,
+            FILTER_OPERATOR_TYPE_ENUM.NOT_EQUALS,
+            FILTER_OPERATOR_TYPE_ENUM.GREATER_THAN,
+            FILTER_OPERATOR_TYPE_ENUM.LESS_THAN,
+        ],
     },
     {
         align: 'left',
@@ -248,6 +227,14 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
         },
         width: '150px',
         minWidth: '100px',
+        filterType: TABLE_COLUMN_FILTER_TYPES_ENUM.DATE,
+        filterOptions: [
+            FILTER_OPERATOR_TYPE_ENUM.CONTAINS,
+            FILTER_OPERATOR_TYPE_ENUM.EQUALS,
+            FILTER_OPERATOR_TYPE_ENUM.NOT_EQUALS,
+            FILTER_OPERATOR_TYPE_ENUM.GREATER_THAN,
+            FILTER_OPERATOR_TYPE_ENUM.LESS_THAN,
+        ],
     },
     {
         align: 'left',

@@ -32,6 +32,7 @@ export const ManyItems: Story = {
         isSelectorsColumnDisabled: false,
         isRefreshButtonShown: true,
         isTableRowsClickable: true,
+        isFiltersShown: true,
         data: manyItems,
         selectedEntitiesIds: [manyItems[0].id, manyItems[3].id],
         pageModel: {
@@ -60,6 +61,7 @@ export const FewItems: Story = {
         isMultiSelect: false,
         isAllEntitiesSelected: false,
         isTableRowsClickable: true,
+        isFiltersShown: false,
         data: fewItems,
         selectedEntitiesIds: [fewItems[1].id],
         pageModel: {
@@ -86,6 +88,7 @@ export const NoItems: Story = {
         isMultiSelect: true,
         isAllEntitiesSelected: false,
         isTableRowsClickable: true,
+        isFiltersShown: false,
         data: [],
         selectedEntitiesIds: [],
         pageModel: {
