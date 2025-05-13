@@ -9,7 +9,7 @@ export type Person = {
     sex: SexType;
     bio: string;
     bill: number;
-    birthdate: number;
+    birthdate: string;
     items: string[];
     responsible: ResponsiblePerson;
     button: string;

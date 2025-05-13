@@ -6,6 +6,9 @@ $table: (
         font-size: 0.875rem,
         background-color: var(--mdc-filled-text-field-container-color),
     ),
+    header-row-last-child: (
+        border-bottom: var(--rt-table-header-cell-wrapper-border-width) solid var(--clr-black-20),
+    ),
     body: (
         font-size: 0.875rem,
         background-color: transparent,
@@ -30,9 +33,11 @@ $table: (
         font-weight: 500,
         text-align: left,
         line-height: 1.2,
-        border-bottom: var(--rt-table-header-cell-wrapper-border-width) solid var(--clr-black-20),
         border-right: var(--rt-table-header-cell-wrapper-border-width) solid var(--clr-black-40),
         background-color: var(--clr-white-100),
+    ),
+    header-filterable-cell-wrapper: (
+        padding: 0.25rem 0.5rem,
     ),
     base-cell-wrapper: (
         padding: 0.625rem,
@@ -79,11 +84,19 @@ $table: (
         font-size: var(--rt-table-header-font-size);
 
         tr {
+            &:last-child {
+                border-bottom: var(--rt-table-header-row-last-child-border-bottom);
+            }
+
             th {
-                background-color: var(--rt-table-header-background-color);
+                background-color: color-mix(in srgb, var(--rt-table-header-background-color), var(--clr-white-100) 50%);
+
+                &:not(.c-table__cell--filterable):not(.c-table__cell--empty) {
+                    background-color: var(--rt-table-header-background-color);
+                }
 
                 &:hover {
-                    &:not(.c-table__cell--selectable) {
+                    &:not(.c-table__cell--selectable):not(.c-table__cell--filterable) {
                         background-color: color-mix(in srgb, var(--rt-table-header-background-color), var(--clr-white-100) 30%);
                     }
                 }
@@ -139,15 +152,19 @@ th.c-table__cell {
     font-weight: var(--rt-table-header-cell-wrapper-font-weight);
     text-align: var(--rt-table-header-cell-wrapper-text-align);
     line-height: var(--rt-table-header-cell-wrapper-line-height);
-    border-bottom: var(--rt-table-header-cell-wrapper-border-bottom);
     background-color: var(--rt-table-header-cell-wrapper-background-color);
 
     &--sortable,
-    &--selectable {
+    &--selectable,
+    &--filterable {
         pointer-events: auto;
     }
 
-    &:not(:last-child):not(&--selectable) {
+    &--filterable {
+        padding: var(--rt-table-header-filterable-cell-wrapper-padding);
+    }
+
+    &:not(:last-child):not(&--selectable):not(&--empty) {
         &::after {
             content: '';
             position: absolute;

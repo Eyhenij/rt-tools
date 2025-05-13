@@ -17,7 +17,7 @@ export const createPerson: () => Person = (): Person => {
         sex: gender,
         bio: Math.random() > 0.7 ? faker.lorem.paragraph() : faker.lorem.words(1),
         items: faker.lorem.sentences().split('.'),
-        birthdate: birthday.getTime(),
+        birthdate: birthday.toISOString(),
         bill: faker.number.int(1000000000),
         responsible: {
             id: faker.string.uuid(),

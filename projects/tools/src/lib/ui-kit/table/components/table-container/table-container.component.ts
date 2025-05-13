@@ -21,6 +21,7 @@ import {
     Type,
     WritableSignal,
 } from '@angular/core';
+import { BooleanInput } from '@angular/cdk/coercion';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatMiniFabButton } from '@angular/material/button';
@@ -129,35 +130,43 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     /** Current page model from store */
     public pageModel: InputSignal<PageModel> = input.required();
     /** Indicates is mobile view */
-    public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input.required<Nullable<boolean>, Nullable<boolean>>({
+    public isMobile: InputSignalWithTransform<boolean, BooleanInput> = input.required<boolean, BooleanInput>({
         transform: booleanAttribute,
     });
     /** Indicates is loading in progress */
-    public loading: InputSignalWithTransform<boolean, boolean> = input.required<boolean, boolean>({
+    public loading: InputSignalWithTransform<boolean, BooleanInput> = input.required<boolean, BooleanInput>({
         transform: booleanAttribute,
     });
     /** Indicates is fetching in progress */
-    public fetching: InputSignalWithTransform<boolean, boolean> = input.required<boolean, boolean>({
+    public fetching: InputSignalWithTransform<boolean, BooleanInput> = input.required<boolean, BooleanInput>({
         transform: booleanAttribute,
     });
     /** Indicates is placeholder shown */
-    public isPlaceholderShown: InputSignalWithTransform<boolean, boolean> = input.required<boolean, boolean>({
+    public isPlaceholderShown: InputSignalWithTransform<boolean, BooleanInput> = input.required<boolean, BooleanInput>({
         transform: booleanAttribute,
     });
     /** Indicates is pagination shown */
-    public isPaginationShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+    public isPaginationShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
-    /** Indicates is refresh button shown */
-    public isRefreshButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+    /** Indicates is the refresh button shown */
+    public isRefreshButtonShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
-    /** Indicates is table config button shown */
-    public isTableConfigButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+    /** Indicates is a table config button shown */
+    public isTableConfigButtonShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
     /** Indicates is toolbar buttons outlined */
-    public isToolbarActionsIconsOutlined: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+    public isToolbarActionsIconsOutlined: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+    /** Indicates is filters shown */
+    public isFiltersShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+    /** Indicates is filters empty */
+    public isFiltersEmpty: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Current search term from store */
@@ -170,7 +179,7 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     /** Current placeholder title */
     public placeholderTitle: InputSignal<string> = input<string>('No Data Found');
 
-    /** Indicates is small tablet view */
+    /** Indicates is a small tablet view */
     public readonly isSmallTablet: Signal<Nullable<boolean>> = this.#breakpointService.isSmallTablet;
     /** Config for table */
     public readonly tableConfig: Signal<ITable.Config.Data<ENTITY_TYPE>> = this.#tableConfigService.tableConfig;
@@ -181,6 +190,8 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     public readonly searchChange: OutputEmitterRef<Nullable<string>> = output<Nullable<string>>();
     /** Refresh output action */
     public readonly refreshAction: OutputEmitterRef<void> = output<void>();
+    /** Clear filters output action */
+    public readonly clearFiltersAction: OutputEmitterRef<void> = output<void>();
 
     /** Toolbar selectors template */
     public readonly toolbarSelectorsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiTableToolbarSelectorsDirective, {
@@ -253,6 +264,11 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
         }
 
         this.refreshAction.emit();
+    }
+
+    /** Clear filters output action */
+    public onClearFilters(): void {
+        this.clearFiltersAction.emit();
     }
 
     /** Open table config aside */

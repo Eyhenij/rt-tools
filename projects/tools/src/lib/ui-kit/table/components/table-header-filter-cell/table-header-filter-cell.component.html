@@ -1,0 +1,142 @@
+@if (filterOptions()?.length) {
+    <button
+        aria-label="Icon-button for a context menu"
+        mat-icon-button
+        matTooltipPosition="left"
+        [matTooltip]="currentFilter().operatorType | titlecase"
+        [matTooltipDisabled]="isMobile()"
+        [matMenuTriggerFor]="menuTpl"
+        (click)="$event.stopPropagation()"
+        (mousedown)="$event.stopPropagation()">
+        <mat-icon [rtIconOutlinedDirective]="true">
+            @switch (currentFilter().operatorType) {
+                @case (filterOperatorTypes.EQUALS) {
+                    drag_handle
+                }
+                @case (filterOperatorTypes.NOT_EQUALS) {
+                    block
+                }
+                @case (filterOperatorTypes.CONTAINS) {
+                    more_horiz
+                }
+                @case (filterOperatorTypes.GREATER_THAN) {
+                    chevron_right
+                }
+                @case (filterOperatorTypes.LESS_THAN) {
+                    chevron_left
+                }
+            }
+        </mat-icon>
+    </button>
+
+    <mat-menu #menuTpl="matMenu" xPosition="before">
+        @if (filterOptions().includes(filterOperatorTypes.EQUALS) && currentFilter()?.operatorType !== filterOperatorTypes.EQUALS) {
+            <div mat-menu-item (click)="onFilterOperatorChange(filterOperatorTypes.EQUALS)">
+                <mat-icon class="material-icons-outlined" [rtIconOutlinedDirective]="false">drag_handle</mat-icon>
+                <span>Equal</span>
+            </div>
+        }
+        @if (filterOptions().includes(filterOperatorTypes.NOT_EQUALS) && currentFilter()?.operatorType !== filterOperatorTypes.NOT_EQUALS) {
+            <div mat-menu-item (click)="onFilterOperatorChange(filterOperatorTypes.NOT_EQUALS)">
+                <mat-icon [rtIconOutlinedDirective]="true">block</mat-icon>
+                <span>Not equal</span>
+            </div>
+        }
+        @if (filterOptions().includes(filterOperatorTypes.CONTAINS) && currentFilter()?.operatorType !== filterOperatorTypes.CONTAINS) {
+            <div mat-menu-item (click)="onFilterOperatorChange(filterOperatorTypes.CONTAINS)">
+                <mat-icon [rtIconOutlinedDirective]="true">more_horiz</mat-icon>
+                <span>Contains</span>
+            </div>
+        }
+        @if (
+            filterOptions().includes(filterOperatorTypes.GREATER_THAN) && currentFilter()?.operatorType !== filterOperatorTypes.GREATER_THAN
+        ) {
+            <div mat-menu-item (click)="onFilterOperatorChange(filterOperatorTypes.GREATER_THAN)">
+                <mat-icon [rtIconOutlinedDirective]="true">chevron_right</mat-icon>
+                <span>More than</span>
+            </div>
+        }
+        @if (filterOptions().includes(filterOperatorTypes.LESS_THAN) && currentFilter()?.operatorType !== filterOperatorTypes.LESS_THAN) {
+            <div mat-menu-item (click)="onFilterOperatorChange(filterOperatorTypes.LESS_THAN)">
+                <mat-icon [rtIconOutlinedDirective]="true">chevron_left</mat-icon>
+                <span>Less than</span>
+            </div>
+        }
+    </mat-menu>
+}
+
+@switch (filterType()) {
+    @case (filterTypes.TEXT) {
+        <mat-form-field rtBlock="table-header-cell-filter-input" subscriptSizing="dynamic" [appearance]="appearance()">
+            <input
+                #input
+                matInput
+                type="text"
+                placeholder="Type in filter value"
+                [value]="currentFilter().value"
+                (keydown.enter)="onFilterValueChange(input.value)"
+                (focusout)="onFilterValueChange(input.value)" />
+
+            <rtui-clear-button matSuffix [isButtonShown]="!!currentFilter().value" (clickAction)="onFilterValueChange('')" />
+        </mat-form-field>
+    }
+    @case (filterTypes.NUMBER) {
+        <mat-form-field rtBlock="table-header-cell-filter-input" subscriptSizing="dynamic" [appearance]="appearance()">
+            <input
+                #input
+                matInput
+                type="number"
+                placeholder="Type in filter value"
+                [value]="currentFilter().value"
+                (keydown.enter)="onFilterValueChange(input.value)"
+                (focusout)="onFilterValueChange(input.value)" />
+
+            <rtui-clear-button matSuffix [isButtonShown]="!!currentFilter().value" (clickAction)="onFilterValueChange('')" />
+        </mat-form-field>
+    }
+    @case (filterTypes.DATE) {
+        <button
+            aria-label="Icon-button for clear filter"
+            mat-icon-button
+            matTooltipPosition="left"
+            matTooltip="Clear filter"
+            [matTooltipDisabled]="isMobile()"
+            [disabled]="!currentFilter().value"
+            (click)="onFilterValueChange('')">
+            <mat-icon [rtIconOutlinedDirective]="true">close</mat-icon>
+        </button>
+
+        <mat-form-field rtBlock="table-header-cell-filter-input" subscriptSizing="dynamic" [appearance]="appearance()">
+            <input
+                matInput
+                placeholder="1/1/2025"
+                [matDatepicker]="picker"
+                [ngModel]="currentFilter().value"
+                (ngModelChange)="onFilterValueChange($event)" />
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+    }
+    @case (filterTypes.SELECT) {
+        <button
+            aria-label="Icon-button for clear filter"
+            mat-icon-button
+            matTooltipPosition="left"
+            matTooltip="Clear filter"
+            [matTooltipDisabled]="isMobile()"
+            [disabled]="!currentFilter().value"
+            (click)="onFilterValueChange('')">
+            <mat-icon [rtIconOutlinedDirective]="true">close</mat-icon>
+        </button>
+
+        <mat-form-field rtBlock="table-header-cell-filter-input" subscriptSizing="dynamic" [appearance]="appearance()">
+            <mat-select placeholder="Chose filter" [value]="currentFilter().value" (selectionChange)="onFilterValueChange($event.value)">
+                @for (item of filterSelectOptions(); track item) {
+                    <mat-option [value]="item">{{ item | titlecase }}</mat-option>
+                } @empty {
+                    <mat-option [value]="null">No options available</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+    }
+}

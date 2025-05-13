@@ -15,10 +15,14 @@
     [appearance]="'fill'"
     [searchTerm]="searchTerm"
     [pageModel]="pageModel"
+    [filterModel]="filterModel"
     [currentSortModel]="currentSortModel"
+    [isFiltersShown]="isFiltersShown"
     (refresh)="onRefresh()"
+    (clearFiltersAction)="onFilterChange([])"
     (sortChange)="onSortChange($event)"
     (pageModelChange)="onPageModelChange($event)"
+    (filterChange)="onFilterChange($event)"
     (rowDoubleClick)="onRowDoubleClick($event)"
     (rowClick)="onRowClick($event)">
     <ng-container *rtuiDynamicListToolbarSelectorsDirective>
