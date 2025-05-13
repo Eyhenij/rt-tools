@@ -1,0 +1,11 @@
+:host {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.5rem;
+
+    .table-header-cell-filter-input {
+        width: 100%;
+    }
+}

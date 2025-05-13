@@ -15,28 +15,22 @@ import {
     Type,
     viewChild,
 } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
-import { MatIcon } from '@angular/material/icon';
-import { MatToolbar } from '@angular/material/toolbar';
 
-import { BlockDirective, ElemDirective } from '../../bem';
 import { Nullable, transformArrayInput, transformStringInput } from '../../util';
-import { RtuiToolbarCenterDirective, RtuiToolbarComponent, RtuiToolbarLeftDirective, RtuiToolbarRightDirective } from '../toolbar';
 import {
     RtuiCustomTableCellsDirective,
     RtuiTableAdditionalRowActionsDirective,
     RtuiTableComponent,
     RtuiTableRowActionsDirective,
 } from './components';
-import { TableBaseCellComponent } from './components/table-base-cell/table-base-cell.component';
 import {
     RtuiTableContainerComponent,
     RtuiTableToolbarActionsDirective,
     RtuiTableToolbarSelectorsDirective,
 } from './components/table-container/table-container.component';
-import { RtuiTableHeaderCellComponent } from './components/table-header-cell/table-header-cell.component';
-import { PageModel, SortModel } from './util/lists.interface';
+import { PageModel, SortModel, FilterModel } from './util/lists.interface';
+import { BooleanInput } from '@angular/cdk/coercion';
 
 /** Directive for selectors of the toolbar located on the left side */
 @Directive({
@@ -80,29 +74,14 @@ export class RtuiDynamicListRowAdditionalActionsDirective {}
     imports: [
         NgTemplateOutlet,
 
-        // Material
-        MatToolbar,
-        MatIconButton,
-        MatIcon,
-
-        // BEM
-        BlockDirective,
-        ElemDirective,
-
         // Directives
-        RtuiToolbarLeftDirective,
-        RtuiToolbarCenterDirective,
-        RtuiToolbarRightDirective,
         RtuiTableToolbarActionsDirective,
         RtuiTableRowActionsDirective,
         RtuiTableToolbarSelectorsDirective,
         RtuiTableAdditionalRowActionsDirective,
 
         // Ui-kit
-        RtuiToolbarComponent,
         RtuiTableContainerComponent,
-        RtuiTableHeaderCellComponent,
-        TableBaseCellComponent,
         RtuiTableComponent,
         RtuiCustomTableCellsDirective,
     ],
@@ -113,39 +92,39 @@ export class RtuiDynamicListComponent<
     KEY extends Extract<keyof ENTITY_TYPE, string>,
 > {
     /** Table config storage key */
-    public tableConfigStorageKey: InputSignalWithTransform<string, string> = input.required<string, string>({
+    public tableConfigStorageKey: InputSignalWithTransform<string, unknown> = input.required<string, unknown>({
         transform: transformStringInput,
     });
     /** Indicates is mobile view */
-    public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
+    public isMobile: InputSignalWithTransform<Nullable<boolean>, BooleanInput> = input<Nullable<boolean>, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Indicates is loading in progress */
-    public loading: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+    public loading: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Indicates is fetching in progress */
-    public fetching: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+    public fetching: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
-    /** Indicates is table rows clickable */
-    public isTableRowsClickable: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+    /** Indicates are table rows clickable */
+    public isTableRowsClickable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Indicates is pagination shown */
-    public isPaginationShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+    public isPaginationShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
-    /** Indicates is refresh button shown */
-    public isRefreshButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+    /** Indicates is the refresh button shown */
+    public isRefreshButtonShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
-    /** Indicates is table config button shown */
-    public isTableConfigButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+    /** Indicates is a table config button shown */
+    public isTableConfigButtonShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
     /** Indicates is toolbar buttons outlined */
-    public isToolbarActionsIconsOutlined: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+    public isToolbarActionsIconsOutlined: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
     /** Key of ENTITY_TYPE for compare entities */
@@ -161,9 +140,22 @@ export class RtuiDynamicListComponent<
     public searchTerm: InputSignal<Nullable<string>> = input.required();
     /** Current sort model from store */
     public currentSortModel: InputSignal<Nullable<SortModel<NonNullable<KEY>>>> = input.required();
-
+    /** Inputs appearance */
     public appearance: InputSignal<MatFormFieldAppearance> = input.required({
         transform: (value: MatFormFieldAppearance) => (value === 'fill' ? 'fill' : 'outline'),
+    });
+    /** Filter inputs appearance */
+    public filterAppearance: InputSignal<MatFormFieldAppearance> = input<MatFormFieldAppearance>('outline');
+    /** Current filter model from store */
+    public filterModel: InputSignalWithTransform<FilterModel<KEY>[], FilterModel<KEY>[]> = input<FilterModel<KEY>[], FilterModel<KEY>[]>(
+        [],
+        {
+            transform: (value: FilterModel<KEY>[]) => transformArrayInput(value),
+        }
+    );
+    /** Indicates is filters shown */
+    public isFiltersShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
     });
 
     /** Sort model change output action */
@@ -174,11 +166,15 @@ export class RtuiDynamicListComponent<
     public readonly searchChange: OutputEmitterRef<Nullable<string>> = output<Nullable<string>>();
     /** Refresh output action */
     public readonly refresh: OutputEmitterRef<void> = output<void>();
+    /** Clear filters output action */
+    public readonly clearFiltersAction: OutputEmitterRef<void> = output<void>();
     /** Row click output action */
     public readonly rowClick: OutputEmitterRef<NonNullable<{ row: ENTITY_TYPE; event: MouseEvent }>> =
         output<NonNullable<{ row: ENTITY_TYPE; event: MouseEvent }>>();
     /** Row doubleClick output action */
     public readonly rowDoubleClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
+    /** Filter change output action */
+    public readonly filterChange: OutputEmitterRef<FilterModel<KEY>[]> = output<FilterModel<KEY>[]>();
 
     /** Toolbar selectors template */
     public readonly toolbarSelectorsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(
@@ -210,10 +206,10 @@ export class RtuiDynamicListComponent<
         }
     );
 
-    /** Table container for selectors directive */
+    /** Table container for selectors directive usage */
     public readonly tableContainerTpl: Signal<Nullable<RtuiTableContainerComponent<ENTITY_TYPE>>> =
         viewChild<RtuiTableContainerComponent<ENTITY_TYPE>>(RtuiTableContainerComponent);
-    /** Table selector for selectors directive */
+    /** Table selector for selectors directive usage */
     public readonly tableTpl: Signal<Nullable<RtuiTableComponent<ENTITY_TYPE, SORT_PROPERTY, KEY>>> =
         viewChild<RtuiTableComponent<ENTITY_TYPE, SORT_PROPERTY, KEY>>(RtuiTableComponent);
 
@@ -232,9 +228,19 @@ export class RtuiDynamicListComponent<
         this.pageModelChange.emit(pageModel);
     }
 
+    /** Filter change output action */
+    public onFilterChange(filterModel: FilterModel<KEY>[]): void {
+        this.filterChange.emit(filterModel);
+    }
+
     /** Refresh output action */
     public onRefresh(): void {
         this.refresh.emit();
+    }
+
+    /** Clear filters output action */
+    public onClearFilters(): void {
+        this.clearFiltersAction.emit();
     }
 
     /** Row click output action */
