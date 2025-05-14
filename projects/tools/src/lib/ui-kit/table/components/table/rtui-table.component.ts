@@ -28,7 +28,7 @@ import { MatRadioButton } from '@angular/material/radio';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
 import { Nullable, RtIconOutlinedDirective, transformArrayInput } from '../../../../util';
-import { FilterModel, ITable, SortModel, TABLE_COLUMN_TYPES_ENUM } from '../../util';
+import { FILTER_OPERATOR_TYPE_ENUM, FilterModel, ITable, SortModel, TABLE_COLUMN_TYPES_ENUM } from '../../util';
 import { RtTableConfigService } from '../../util/table-config.service';
 import { TableBaseCellComponent } from '../table-base-cell/table-base-cell.component';
 import { RtuiTableHeaderCellComponent } from '../table-header-cell/table-header-cell.component';
@@ -106,6 +106,7 @@ export class RtuiTableComponent<
     readonly #tableConfigService: RtTableConfigService<ENTITY_TYPE> = inject(RtTableConfigService);
 
     protected readonly columnTypes: typeof TABLE_COLUMN_TYPES_ENUM = TABLE_COLUMN_TYPES_ENUM;
+    protected readonly filterOperators: typeof FILTER_OPERATOR_TYPE_ENUM = FILTER_OPERATOR_TYPE_ENUM;
 
     /** Indicates is mobile view */
     public isMobile: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
