@@ -4,7 +4,7 @@
     [fetching]="fetching()"
     [isMobile]="isMobile()"
     [pageModel]="pageModel()"
-    [isPlaceholderShown]="!entities()?.length"
+    [isPlaceholderShown]="!entities()?.length && !filterModel()?.length"
     [isToolbarActionsIconsOutlined]="isToolbarActionsIconsOutlined()"
     [isRefreshButtonShown]="isRefreshButtonShown()"
     [isTableConfigButtonShown]="isTableConfigButtonShown()"

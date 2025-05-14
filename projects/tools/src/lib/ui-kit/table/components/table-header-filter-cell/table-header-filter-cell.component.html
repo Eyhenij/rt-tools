@@ -1,4 +1,4 @@
-@if (filterOptions()?.length) {
+@if (filterOperators()?.length) {
     <button
         aria-label="Icon-button for a context menu"
         mat-icon-button
@@ -30,33 +30,36 @@
     </button>
 
     <mat-menu #menuTpl="matMenu" xPosition="before">
-        @if (filterOptions().includes(filterOperatorTypes.EQUALS) && currentFilter()?.operatorType !== filterOperatorTypes.EQUALS) {
+        @if (filterOperators().includes(filterOperatorTypes.EQUALS) && currentFilter()?.operatorType !== filterOperatorTypes.EQUALS) {
             <div mat-menu-item (click)="onFilterOperatorChange(filterOperatorTypes.EQUALS)">
                 <mat-icon class="material-icons-outlined" [rtIconOutlinedDirective]="false">drag_handle</mat-icon>
                 <span>Equal</span>
             </div>
         }
-        @if (filterOptions().includes(filterOperatorTypes.NOT_EQUALS) && currentFilter()?.operatorType !== filterOperatorTypes.NOT_EQUALS) {
+        @if (
+            filterOperators().includes(filterOperatorTypes.NOT_EQUALS) && currentFilter()?.operatorType !== filterOperatorTypes.NOT_EQUALS
+        ) {
             <div mat-menu-item (click)="onFilterOperatorChange(filterOperatorTypes.NOT_EQUALS)">
                 <mat-icon [rtIconOutlinedDirective]="true">block</mat-icon>
                 <span>Not equal</span>
             </div>
         }
-        @if (filterOptions().includes(filterOperatorTypes.CONTAINS) && currentFilter()?.operatorType !== filterOperatorTypes.CONTAINS) {
+        @if (filterOperators().includes(filterOperatorTypes.CONTAINS) && currentFilter()?.operatorType !== filterOperatorTypes.CONTAINS) {
             <div mat-menu-item (click)="onFilterOperatorChange(filterOperatorTypes.CONTAINS)">
                 <mat-icon [rtIconOutlinedDirective]="true">more_horiz</mat-icon>
                 <span>Contains</span>
             </div>
         }
         @if (
-            filterOptions().includes(filterOperatorTypes.GREATER_THAN) && currentFilter()?.operatorType !== filterOperatorTypes.GREATER_THAN
+            filterOperators().includes(filterOperatorTypes.GREATER_THAN) &&
+            currentFilter()?.operatorType !== filterOperatorTypes.GREATER_THAN
         ) {
             <div mat-menu-item (click)="onFilterOperatorChange(filterOperatorTypes.GREATER_THAN)">
                 <mat-icon [rtIconOutlinedDirective]="true">chevron_right</mat-icon>
                 <span>More than</span>
             </div>
         }
-        @if (filterOptions().includes(filterOperatorTypes.LESS_THAN) && currentFilter()?.operatorType !== filterOperatorTypes.LESS_THAN) {
+        @if (filterOperators().includes(filterOperatorTypes.LESS_THAN) && currentFilter()?.operatorType !== filterOperatorTypes.LESS_THAN) {
             <div mat-menu-item (click)="onFilterOperatorChange(filterOperatorTypes.LESS_THAN)">
                 <mat-icon [rtIconOutlinedDirective]="true">chevron_left</mat-icon>
                 <span>Less than</span>
