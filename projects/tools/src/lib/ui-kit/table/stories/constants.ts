@@ -62,7 +62,7 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
         width: '200px',
         minWidth: '200px',
         filterType: TABLE_COLUMN_FILTER_TYPES_ENUM.TEXT,
-        filterOptions: [FILTER_OPERATOR_TYPE_ENUM.CONTAINS, FILTER_OPERATOR_TYPE_ENUM.EQUALS, FILTER_OPERATOR_TYPE_ENUM.NOT_EQUALS],
+        filterOperators: [FILTER_OPERATOR_TYPE_ENUM.EQUALS, FILTER_OPERATOR_TYPE_ENUM.NOT_EQUALS, FILTER_OPERATOR_TYPE_ENUM.CONTAINS],
     },
     {
         align: 'left',
@@ -90,7 +90,7 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
         width: '200px',
         minWidth: '200px',
         filterType: TABLE_COLUMN_FILTER_TYPES_ENUM.TEXT,
-        filterOptions: [FILTER_OPERATOR_TYPE_ENUM.CONTAINS, FILTER_OPERATOR_TYPE_ENUM.EQUALS, FILTER_OPERATOR_TYPE_ENUM.NOT_EQUALS],
+        filterOperators: [FILTER_OPERATOR_TYPE_ENUM.EQUALS, FILTER_OPERATOR_TYPE_ENUM.NOT_EQUALS, FILTER_OPERATOR_TYPE_ENUM.CONTAINS],
     },
     {
         align: 'left',
@@ -155,8 +155,31 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
         width: '150px',
         minWidth: '100px',
         filterType: TABLE_COLUMN_FILTER_TYPES_ENUM.NUMBER,
-        filterOptions: [
+        filterOperators: [
+            FILTER_OPERATOR_TYPE_ENUM.EQUALS,
+            FILTER_OPERATOR_TYPE_ENUM.NOT_EQUALS,
             FILTER_OPERATOR_TYPE_ENUM.CONTAINS,
+            FILTER_OPERATOR_TYPE_ENUM.GREATER_THAN,
+            FILTER_OPERATOR_TYPE_ENUM.LESS_THAN,
+        ],
+    },
+    {
+        align: 'left',
+        propName: 'birthdate',
+        type: TABLE_COLUMN_TYPES_ENUM.DATE,
+        copyable: false,
+        header: {
+            align: 'left',
+            label: 'Birthdate',
+        },
+        sorting: {
+            propertyName: 'birthdate',
+            sortDirection: LIST_SORT_ORDER_ENUM.ASC,
+        },
+        width: '150px',
+        minWidth: '100px',
+        filterType: TABLE_COLUMN_FILTER_TYPES_ENUM.DATE,
+        filterOperators: [
             FILTER_OPERATOR_TYPE_ENUM.EQUALS,
             FILTER_OPERATOR_TYPE_ENUM.NOT_EQUALS,
             FILTER_OPERATOR_TYPE_ENUM.GREATER_THAN,
@@ -211,30 +234,6 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
         },
         width: '150px',
         minWidth: '100px',
-    },
-    {
-        align: 'left',
-        propName: 'birthdate',
-        type: TABLE_COLUMN_TYPES_ENUM.DATE,
-        copyable: false,
-        header: {
-            align: 'left',
-            label: 'Birthdate',
-        },
-        sorting: {
-            propertyName: 'birthdate',
-            sortDirection: LIST_SORT_ORDER_ENUM.ASC,
-        },
-        width: '150px',
-        minWidth: '100px',
-        filterType: TABLE_COLUMN_FILTER_TYPES_ENUM.DATE,
-        filterOptions: [
-            FILTER_OPERATOR_TYPE_ENUM.CONTAINS,
-            FILTER_OPERATOR_TYPE_ENUM.EQUALS,
-            FILTER_OPERATOR_TYPE_ENUM.NOT_EQUALS,
-            FILTER_OPERATOR_TYPE_ENUM.GREATER_THAN,
-            FILTER_OPERATOR_TYPE_ENUM.LESS_THAN,
-        ],
     },
     {
         align: 'left',

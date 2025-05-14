@@ -91,7 +91,7 @@ export default class TestDynamicListComponent implements OnInit {
     public filterModel: FilterModel[] = [
         {
             propertyName: 'name',
-            operatorType: FILTER_OPERATOR_TYPE_ENUM.CONTAINS,
+            operatorType: FILTER_OPERATOR_TYPE_ENUM.EQUALS,
             value: '111',
         },
     ];

@@ -74,7 +74,8 @@ export namespace ITable {
 
         // Additional properties for filters
         filterType?: FilterType;
-        filterOptions?: FilterOperatorType[];
+        defaultFilterOperator?: FilterOperatorType;
+        filterOperators?: FilterOperatorType[];
         filterSelectOptions?: string[];
 
         // Additional properties for table configuration service

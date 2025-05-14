@@ -47,7 +47,8 @@
                                 [appearance]="filterAppearance()"
                                 [filterProperty]="column.propName"
                                 [filterType]="column.filterType"
-                                [filterOptions]="column.filterOptions || []"
+                                [defaultFilterOperator]="column?.defaultFilterOperator || filterOperators.EQUALS"
+                                [filterOperators]="column.filterOperators || []"
                                 [filterSelectOptions]="column.filterSelectOptions || []"
                                 [filterModel]="filterModel()"
                                 (filterChange)="onFilterChange($event)" />

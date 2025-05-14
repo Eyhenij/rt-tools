@@ -21,7 +21,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerModule, MatDatepickerToggle } from '@angular/material/datepicker';
 
 import { RtIconOutlinedDirective, transformArrayInput, isString } from '../../../../util';
-import { FILTER_OPERATOR_TYPE_ENUM, FilterModel, FilterOperatorType } from '../../util/lists.interface';
+import { FILTER_OPERATOR_TYPE_ENUM, FILTER_OPERATORS, FilterModel, FilterOperatorType } from '../../util/lists.interface';
 import { ITable, TABLE_COLUMN_FILTER_TYPES_ENUM } from '../../util/table-column.interface';
 import { MatFormField, MatFormFieldAppearance, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -96,8 +96,16 @@ export class RtuiTableHeaderFilterCellComponent<ENTITY_TYPE extends Record<strin
     >({
         transform: (value: FilterModel<KEY>[]) => transformArrayInput(value),
     });
-    /** List of selected filter models */
-    public filterOptions: InputSignalWithTransform<FilterOperatorType[], FilterOperatorType[]> = input<
+    /** Filter property */
+    public defaultFilterOperator: InputSignalWithTransform<FilterOperatorType, FilterOperatorType> = input.required<
+        FilterOperatorType,
+        FilterOperatorType
+    >({
+        transform: (value: FilterOperatorType): FilterOperatorType =>
+            value && FILTER_OPERATORS.includes(value) ? value : FILTER_OPERATOR_TYPE_ENUM.EQUALS,
+    });
+    /** Available filter operators */
+    public filterOperators: InputSignalWithTransform<FilterOperatorType[], FilterOperatorType[]> = input<
         FilterOperatorType[],
         FilterOperatorType[]
     >([], {
@@ -117,7 +125,7 @@ export class RtuiTableHeaderFilterCellComponent<ENTITY_TYPE extends Record<strin
 
     public readonly currentFilter: WritableSignal<FilterModel<KEY>> = signal({
         propertyName: '' as KEY,
-        operatorType: FILTER_OPERATOR_TYPE_ENUM.CONTAINS,
+        operatorType: FILTER_OPERATOR_TYPE_ENUM.EQUALS,
         value: '',
     });
 
@@ -125,18 +133,19 @@ export class RtuiTableHeaderFilterCellComponent<ENTITY_TYPE extends Record<strin
         toObservable(this.filterModel, { injector: this.#injector })
             .pipe(takeUntilDestroyed(this.#destroyRef))
             .subscribe((filterModel: FilterModel<KEY>[]) => {
-                this.currentFilter.update((filter: FilterModel<KEY>) => {
-                    return filterModel?.length && filterModel.find((el: FilterModel<KEY>) => el.propertyName === this.filterProperty())
+                this.currentFilter.set(
+                    filterModel?.length && filterModel.find((el: FilterModel<KEY>) => el.propertyName === this.filterProperty())
                         ? (filterModel.find((el: FilterModel<KEY>) => el.propertyName === this.filterProperty()) as FilterModel<KEY>)
                         : {
-                              ...filter,
+                              operatorType: this.defaultFilterOperator(),
                               propertyName: this.filterProperty(),
                               value: '',
-                          };
-                });
+                          }
+                );
             });
     }
 
+    /** Change filter value */
     public onFilterValueChange(value: number | string | Date): void {
         if (value === this.currentFilter().value) {
             return;
@@ -173,6 +182,7 @@ export class RtuiTableHeaderFilterCellComponent<ENTITY_TYPE extends Record<strin
         }));
     }
 
+    /** Change filter operator */
     public onFilterOperatorChange(operatorType: FilterOperatorType): void {
         if (operatorType === this.currentFilter().operatorType) {
             return;
