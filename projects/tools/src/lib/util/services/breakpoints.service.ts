@@ -1,8 +1,8 @@
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
-import { Injectable, Signal, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Injectable, Signal, inject, WritableSignal, signal, computed, Injector } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 
-import { map } from 'rxjs/operators';
+import { distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 
 import { Nullable } from '../../util/interfaces/nullable.type';
 import { Breakpoints } from './breakpoints';
@@ -22,34 +22,59 @@ export class BreakpointService {
      */
     readonly #breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
     /**
+     * Private instance of Injector.
+     */
+    readonly #injector: Injector = inject(Injector);
+
+    /**
      * Instance of a lass containing the breakpoint values for different screen sizes.
      */
-    readonly #breakpoints: IBreakpoints = new Breakpoints();
+    readonly #breakpoints: WritableSignal<IBreakpoints> = signal(new Breakpoints());
 
-    readonly #desktopQuery: string = `(min-width: ${this.#breakpoints.xl})`;
-    readonly #smallDesktopQuery: string = `(min-width: ${this.#breakpoints.lg})`;
-    readonly #tabletQuery: string = `(min-width: ${this.#breakpoints.md})`;
-    readonly #smallTabletQuery: string = `(min-width: ${this.#breakpoints.sm})`;
-    readonly #mobileQuery: string = `(max-width: ${this.decrementOnePixel(this.#breakpoints.xs)})`;
+    readonly #desktopQuery: Signal<string> = computed(() => `(min-width: ${this.#breakpoints().xl})`);
+    readonly #smallDesktopQuery: Signal<string> = computed(() => `(min-width: ${this.#breakpoints().lg})`);
+    readonly #tabletQuery: Signal<string> = computed(() => `(min-width: ${this.#breakpoints().md})`);
+    readonly #smallTabletQuery: Signal<string> = computed(() => `(min-width: ${this.#breakpoints().sm})`);
+    readonly #mobileQuery: Signal<string> = computed(() => `(max-width: ${this.decrementOnePixel(this.#breakpoints().xs)})`);
 
     public readonly isDesktop: Signal<Nullable<boolean>> = toSignal<Nullable<boolean>>(
-        this.#breakpointObserver.observe(this.#desktopQuery).pipe(map(({ matches }: BreakpointState) => matches))
+        toObservable(this.#desktopQuery, { injector: this.#injector }).pipe(
+            distinctUntilChanged(),
+            switchMap((query: string) => this.#breakpointObserver.observe(query)),
+            map(({ matches }: BreakpointState) => matches)
+        )
     );
 
     public readonly isSmallDesktop: Signal<Nullable<boolean>> = toSignal<Nullable<boolean>>(
-        this.#breakpointObserver.observe(this.#smallDesktopQuery).pipe(map(({ matches }: BreakpointState) => matches))
+        toObservable(this.#smallDesktopQuery, { injector: this.#injector }).pipe(
+            distinctUntilChanged(),
+            switchMap((query: string) => this.#breakpointObserver.observe(query)),
+            map(({ matches }: BreakpointState) => matches)
+        )
     );
 
     public readonly isMobile: Signal<Nullable<boolean>> = toSignal<Nullable<boolean>>(
-        this.#breakpointObserver.observe(this.#mobileQuery).pipe(map(({ matches }: BreakpointState) => matches))
+        toObservable(this.#mobileQuery, { injector: this.#injector }).pipe(
+            distinctUntilChanged(),
+            switchMap((query: string) => this.#breakpointObserver.observe(query)),
+            map(({ matches }: BreakpointState) => matches)
+        )
     );
 
     public readonly isTablet: Signal<Nullable<boolean>> = toSignal<Nullable<boolean>>(
-        this.#breakpointObserver.observe(this.#tabletQuery).pipe(map(({ matches }: BreakpointState) => !matches))
+        toObservable(this.#tabletQuery, { injector: this.#injector }).pipe(
+            distinctUntilChanged(),
+            switchMap((query: string) => this.#breakpointObserver.observe(query)),
+            map(({ matches }: BreakpointState) => !matches)
+        )
     );
 
     public readonly isSmallTablet: Signal<Nullable<boolean>> = toSignal<Nullable<boolean>>(
-        this.#breakpointObserver.observe(this.#smallTabletQuery).pipe(map(({ matches }: BreakpointState) => matches))
+        toObservable(this.#smallTabletQuery, { injector: this.#injector }).pipe(
+            distinctUntilChanged(),
+            switchMap((query: string) => this.#breakpointObserver.observe(query)),
+            map(({ matches }: BreakpointState) => matches)
+        )
     );
 
     /**
@@ -58,7 +83,7 @@ export class BreakpointService {
      * @param breakpoints - The custom breakpoints to apply.
      */
     public setBreakpoints(breakpoints: IBreakpoints): void {
-        Object.assign(this.#breakpoints, breakpoints);
+        this.#breakpoints.set(breakpoints);
     }
 
     /**
