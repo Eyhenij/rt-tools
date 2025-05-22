@@ -1,6 +1,6 @@
 <button
     rtBlock="rtui-clear-button"
-    [rtMod]="{ visible: isButtonShown() }"
+    [rtMod]="{ invisible: !isButtonShown() }"
     [matTooltip]="tooltip() ?? ''"
     [matTooltipPosition]="tooltipPosition()"
     [matTooltipDisabled]="isMobile()"
