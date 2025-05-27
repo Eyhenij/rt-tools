@@ -13,6 +13,8 @@ import {
     OutputEmitterRef,
     signal,
     WritableSignal,
+    computed,
+    Signal,
 } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -49,6 +51,20 @@ import { RtuiSpinnerComponent } from '../../spinner';
 })
 export class RtuiImageUploadComponent {
     readonly #documentRef: Document = inject(DOCUMENT);
+    readonly #originalMimeType: WritableSignal<string | null> = signal(null);
+    protected readonly imageFormat: Signal<'png' | 'jpeg' | 'webp'> = computed((): 'png' | 'jpeg' | 'webp' => {
+        const type: Nullable<string> = this.#originalMimeType();
+        if (!type) {
+            return 'png';
+        }
+        if (type.includes('jpeg') || type.includes('jpg')) {
+            return 'jpeg';
+        }
+        if (type.includes('webp')) {
+            return 'webp';
+        }
+        return 'png';
+    });
 
     public imageUrl: ModelSignal<Nullable<string>> = model.required<Nullable<string>>();
     public isMobile: InputSignalWithTransform<boolean, boolean> = input.required<boolean, boolean>({
@@ -77,6 +93,7 @@ export class RtuiImageUploadComponent {
     });
     public tooltip: InputSignal<string> = input<string>('');
     public tooltipPosition: InputSignal<TooltipPosition> = input<TooltipPosition>('above');
+    public imageQuality: InputSignal<number> = input<number>(92);
 
     public originalImage: WritableSignal<File | undefined> = signal(undefined);
     public croppedImage: WritableSignal<Nullable<File>> = signal(null);
@@ -88,6 +105,7 @@ export class RtuiImageUploadComponent {
     public onFileSelect(event: Event): void {
         const input: HTMLInputElement = event.target as HTMLInputElement;
         if (input.files && input.files.length > 0) {
+            this.#originalMimeType.set(input.files[0].type);
             this.originalImage.set(input.files[0]);
         }
     }
@@ -108,6 +126,7 @@ export class RtuiImageUploadComponent {
     }
 
     public onFileUpload(file: File): void {
+        this.#originalMimeType.set(file.type);
         this.originalImage.set(file);
     }
 
