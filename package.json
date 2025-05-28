@@ -131,7 +131,7 @@
     "**/src/**/*.{js,ts}": "eslint --fix",
     "**/src/**/*.{js,ts,json,mdx,md,html,scss,css}": "prettier . --write"
   },
-  "packageManager": "pnpm@10.6.3",
+  "packageManager": "pnpm@10.11.0",
   "engines": {
     "node": ">=22.12.0"
   }
