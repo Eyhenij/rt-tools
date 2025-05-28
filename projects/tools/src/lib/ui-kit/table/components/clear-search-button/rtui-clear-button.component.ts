@@ -19,6 +19,7 @@ import { isString, Nullable } from '../../../../util';
     selector: 'rtui-clear-button',
     templateUrl: './rtui-clear-button.component.html',
     styleUrls: ['./rtui-clear-button.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // Material
         MatIcon,
@@ -29,7 +30,6 @@ import { isString, Nullable } from '../../../../util';
         BlockDirective,
         ElemDirective,
     ],
-    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RtuiClearButtonComponent {
     readonly #defaultTooltipPosition: TooltipPosition = 'above';
