@@ -13,6 +13,8 @@ import {
     OutputEmitterRef,
     signal,
     WritableSignal,
+    computed,
+    Signal,
 } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -23,6 +25,9 @@ import { BlockDirective, ElemDirective } from '../../../bem';
 import { Nullable, RtIconOutlinedDirective, transformStringInput } from '../../../util';
 import { RtuiFileUploadComponent } from '../../file-uploader';
 import { RtuiSpinnerComponent } from '../../spinner';
+import { BooleanInput } from '@angular/cdk/coercion';
+
+export type IImageUploadFormat = 'png' | 'jpeg' | 'webp';
 
 @Component({
     selector: 'rtui-image-upload',
@@ -50,6 +55,18 @@ import { RtuiSpinnerComponent } from '../../spinner';
 export class RtuiImageUploadComponent {
     readonly #documentRef: Document = inject(DOCUMENT);
 
+    readonly #formats: Record<string, IImageUploadFormat> = {
+        ['png']: 'png',
+        ['jpg']: 'jpeg',
+        ['jpeg']: 'jpeg',
+        ['webp']: 'webp',
+    };
+    readonly #originalMimeType: WritableSignal<string | null> = signal(null);
+    protected readonly imageFormat: Signal<IImageUploadFormat> = computed((): IImageUploadFormat => {
+        const type: Nullable<string> = this.#originalMimeType();
+        return this.#formats[type?.toLowerCase() || ''] || 'png';
+    });
+
     public imageUrl: ModelSignal<Nullable<string>> = model.required<Nullable<string>>();
     public isMobile: InputSignalWithTransform<boolean, boolean> = input.required<boolean, boolean>({
         transform: booleanAttribute,
@@ -57,26 +74,27 @@ export class RtuiImageUploadComponent {
     public fileName: InputSignalWithTransform<string, string> = input<string, string>('image', {
         transform: transformStringInput,
     });
-    public isActive: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+    public isActive: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
-    public isSaveButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+    public isSaveButtonShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
-    public isDownloadButtonEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+    public isDownloadButtonEnabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
-    public isTooltipDisabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+    public isTooltipDisabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
-    public isActionsShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+    public isActionsShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
-    public loading: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+    public loading: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     public tooltip: InputSignal<string> = input<string>('');
     public tooltipPosition: InputSignal<TooltipPosition> = input<TooltipPosition>('above');
+    public imageQuality: InputSignal<number> = input<number>(92);
 
     public originalImage: WritableSignal<File | undefined> = signal(undefined);
     public croppedImage: WritableSignal<Nullable<File>> = signal(null);
@@ -87,7 +105,9 @@ export class RtuiImageUploadComponent {
 
     public onFileSelect(event: Event): void {
         const input: HTMLInputElement = event.target as HTMLInputElement;
-        if (input.files && input.files.length > 0) {
+
+        if (input?.files?.length) {
+            this.#originalMimeType.set(input.files[0].type);
             this.originalImage.set(input.files[0]);
         }
     }
@@ -97,6 +117,7 @@ export class RtuiImageUploadComponent {
             const croppedFile: File = new File([event.blob], this.fileName(), {
                 type: event.blob.type,
             });
+
             this.croppedImage.set(croppedFile);
             this.tempImage.set(event.objectUrl);
 
@@ -108,6 +129,7 @@ export class RtuiImageUploadComponent {
     }
 
     public onFileUpload(file: File): void {
+        this.#originalMimeType.set(file.type);
         this.originalImage.set(file);
     }
 
@@ -115,6 +137,7 @@ export class RtuiImageUploadComponent {
         if (this.croppedImage()) {
             this.imageChanged.emit(this.croppedImage() as File);
         }
+
         this.imageUrl.set(this.tempImage());
         this.originalImage.set(undefined);
     }
@@ -135,6 +158,7 @@ export class RtuiImageUploadComponent {
             link.click();
             this.#documentRef.body.removeChild(link);
         }
+
         this.save.emit();
     }
 }

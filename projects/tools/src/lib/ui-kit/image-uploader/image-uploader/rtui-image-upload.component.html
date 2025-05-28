@@ -4,6 +4,8 @@
     <div rtBlock="rtui-image-cropper">
         <image-cropper
             alignImage="center"
+            [format]="imageFormat()"
+            [imageQuality]="imageQuality()"
             [allowMoveImage]="true"
             [maintainAspectRatio]="false"
             [imageFile]="originalImage()"
@@ -17,7 +19,7 @@
         }
     </div>
 } @else {
-    <input #uploadInput hidden type="file" accept=".jpg,.jpeg,.png" (change)="onFileSelect($event)" />
+    <input #uploadInput hidden type="file" accept=".jpg,.jpeg,.png,.webp" (change)="onFileSelect($event)" />
 
     @if (imageUrl()) {
         <div rtBlock="rtui-image-container">
