@@ -13,6 +13,7 @@ export type Person = {
     items: string[];
     responsible: ResponsiblePerson;
     button: string;
+    active: boolean;
     image: string;
 };
 

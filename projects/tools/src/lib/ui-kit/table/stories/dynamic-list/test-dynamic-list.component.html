@@ -53,23 +53,35 @@
         </button>
     </ng-container>
 
-    <ng-container *rtuiDynamicListCustomTableCellsDirective="{ button: buttonTemplate, image: imageTemplate }" />
+    <ng-container *rtuiDynamicListCustomTableCellsDirective="{ button: buttonTemplate, active: toggleTemplate, image: imageTemplate }" />
 
     <ng-template #buttonTemplate let-row>
         <button
+            rtuiTableStopRowClickDirective
             mat-mini-fab
             type="button"
             aria-label="Icon-button"
             class="c-button c-button--fab"
             matTooltipPosition="below"
             [matTooltip]="row.button"
-            [matTooltipDisabled]="isMobile">
+            [matTooltipDisabled]="isMobile"
+            (click)="onCustomCellButtonClick(row); $event.stopPropagation()">
             <mat-icon [rtIconOutlinedDirective]="true">{{ row.button }}</mat-icon>
         </button>
     </ng-template>
 
+    <ng-template #toggleTemplate let-row>
+        <rtui-toggle
+            rtuiTableStopRowClickDirective
+            tabindex="0"
+            [disabled]="true"
+            [ngModel]="row.active"
+            (click)="$event.stopPropagation(); onCustomCellToggle(row)"
+            (keydown)="$event.stopPropagation(); onCustomCellToggle(row)" />
+    </ng-template>
+
     <ng-template #imageTemplate let-row>
-        <img alt="image" [src]="row.image" />
+        <img rtBlock="image-cell" alt="image" [src]="row.image" />
     </ng-template>
 
     <ng-container *rtuiDynamicListRowAdditionalActionsDirective="let row">
