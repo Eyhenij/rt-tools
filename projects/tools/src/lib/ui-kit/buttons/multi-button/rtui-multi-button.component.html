@@ -1,0 +1,9 @@
+@if (actions()?.length) {
+    <div rtBlock="rtui-multibutton-actions">
+        @for (action of actions(); track action) {
+            <button rtElem="action" type="button" [rtMod]="{ active: action === activeAction() }" (click)="onSetActiveAction(action)">
+                {{ action | titlecase }}
+            </button>
+        }
+    </div>
+}

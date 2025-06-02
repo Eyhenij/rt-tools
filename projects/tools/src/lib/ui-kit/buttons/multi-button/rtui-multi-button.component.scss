@@ -1,0 +1,92 @@
+@use '../../../../styles/base/mixin' as mixins;
+
+$rtui-multibutton: (
+    base: (
+        display: inline-flex,
+        flex-flow: row wrap,
+        radius: 8px,
+        padding: 4px,
+        background-color: var(--clr-black-10),
+    ),
+    action-base: (
+        padding: 4px 8px,
+        radius: 8px,
+        border: 0,
+        font-size: 12px,
+        font-weight: 600,
+        color: var(--clr-black-60),
+        background-color: transparent,
+        transition: 'background-color 0.15s, color 0.15s',
+        cursor: pointer,
+    ),
+    action-hover: (
+        color: var(--clr-black-80),
+    ),
+    action-active: (
+        color: var(--clr-black-80),
+        background-color: var(--clr-black-20),
+        cursor: default,
+    ),
+    action-focus-visible: (
+        outline: 2px dashed var(--clr-blue-40),
+        outline-offset: -2px,
+    ),
+    action-disabled: (
+        pointer-events: none,
+        cursor: default,
+        opacity: 0.75,
+    ),
+);
+
+:host {
+    @each $element, $elements in $rtui-multibutton {
+        @each $style-token, $value in $elements {
+            #{mixins.generateCssVar('rtui-multibutton', #{$element}, #{$style-token})}: #{$value};
+        }
+    }
+
+    .rtui-multibutton-actions {
+        display: var(--rt-rtui-multibutton-base-display);
+        flex-flow: var(--rt-rtui-multibutton-base-flex-flow);
+        border-radius: var(--rt-rtui-multibutton-base-radius);
+        padding: var(--rt-rtui-multibutton-base-padding);
+        background-color: var(--rt-rtui-multibutton-base-background-color);
+
+        &__action {
+            padding: var(--rt-rtui-multibutton-action-base-padding);
+            border-radius: var(--rt-rtui-multibutton-action-base-radius);
+            border: var(--rt-rtui-multibutton-action-base-border);
+            font-size: var(--rt-rtui-multibutton-action-base-font-size);
+            font-weight: var(--rt-rtui-multibutton-action-base-font-weight);
+            color: var(--rt-rtui-multibutton-action-base-color);
+            background-color: var(--rt-rtui-multibutton-action-base-background-color);
+            transition: var(--rt-rtui-multibutton-action-base-transition);
+            cursor: var(--rt-rtui-multibutton-action-base-cursor);
+
+            &--active {
+                color: var(--rt-rtui-multibutton-action-active-color);
+                background-color: var(--rt-rtui-multibutton-action-active-background-color);
+                cursor: var(--rt-rtui-multibutton-action-active-cursor);
+            }
+
+            &:not(&--active):hover {
+                color: var(--rt-rtui-multibutton-action-hover-color);
+            }
+
+            &:focus {
+                outline: none;
+            }
+
+            &:focus-visible {
+                outline: var(--rt-rtui-multibutton-action-focus-visible-outline);
+                outline-offset: var(--rt-rtui-multibutton-action-focus-visible-outline-offset);
+            }
+
+            &:disabled {
+                pointer-events: var(--rt-rtui-multibutton-action-disabled-pointer-events);
+                cursor: var(--rt-rtui-multibutton-action-disabled-cursor);
+                opacity: var(--rt-rtui-multibutton-action-disabled-opacity);
+            }
+        }
+    }
+}
