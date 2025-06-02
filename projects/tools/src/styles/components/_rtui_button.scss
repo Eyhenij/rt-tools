@@ -1,0 +1,452 @@
+@use '../base/mixin' as mixins;
+
+$rtui-button: (
+    base: (
+        width: auto,
+        bg: transparent,
+        border: 0,
+        color: var(--clr-black-80),
+        display: inline-flex,
+        font-size: 0,
+        gap: 0,
+        padding: 0,
+        shadow: 0,
+        shadow-blur: 8px,
+    ),
+    accent: (
+        border: 1px solid var(--clr-blue-100),
+        color: var(--clr-white-100),
+        bg: var(--clr-blue-60),
+        hover-bg: var(--clr-blue-40),
+        active-shadow: var(--clr-blue-40),
+    ),
+    accent-outline: (
+        border: 1px solid var(--clr-blue-100),
+        bg: var(--clr-blue-20),
+        color: var(--clr-blue-100),
+        hover-border: 1px solid var(--clr-blue-80),
+        hover-bg: var(--clr-white-100),
+        active-shadow: var(--clr-blue-40),
+    ),
+    accent-light: (
+        color: var(--clr-blue-100),
+        bg: var(--clr-blue-40),
+        hover-color: var(--clr-blue-80),
+        hover-bg: var(--clr-blue-20),
+        active-shadow: var(--clr-blue-40),
+    ),
+    success: (
+        border: 1px solid var(--clr-green-100),
+        color: var(--clr-white-100),
+        bg: var(--clr-green-80),
+        hover-bg: var(--clr-green-60),
+        active-shadow: var(--clr-green-40),
+    ),
+    success-outline: (
+        border: 1px solid var(--clr-green-100),
+        bg: var(--clr-green-20),
+        color: var(--clr-green-100),
+        hover-border: 1px solid var(--clr-green-80),
+        hover-bg: var(--clr-white-100),
+        active-shadow: var(--clr-green-40),
+    ),
+    success-light: (
+        color: var(--clr-green-100),
+        bg: var(--clr-green-20),
+        hover-color: var(--clr-green-80),
+        hover-bg: var(--clr-green-10),
+        active-shadow: var(--clr-green-40),
+    ),
+    secondary: (
+        border: 1px solid var(--clr-black-60),
+        color: var(--clr-white-100),
+        bg: var(--clr-black-60),
+        hover-bg: var(--clr-black-40),
+        active-shadow: var(--clr-black-40),
+    ),
+    secondary-outline: (
+        border: 1px solid var(--clr-black-60),
+        bg: var(--clr-black-20),
+        color: var(--clr-black-60),
+        hover-bg: var(--clr-white-100),
+        active-shadow: var(--clr-black-40),
+    ),
+    secondary-light: (
+        color: var(--clr-black-80),
+        bg: var(--clr-black-40),
+        hover-color: var(--clr-black-60),
+        hover-bg: var(--clr-black-20),
+        active-shadow: var(--clr-black-40),
+    ),
+    error: (
+        border: 1px solid var(--clr-red-100),
+        color: var(--clr-white-100),
+        bg: var(--clr-red-80),
+        hover-bg: var(--clr-red-60),
+        active-shadow: var(--clr-red-40),
+    ),
+    error-outline: (
+        border: 1px solid var(--clr-red-100),
+        bg: var(--clr-red-10),
+        color: var(--clr-red-100),
+        hover-bg: var(--clr-white-100),
+        active-shadow: var(--clr-red-40),
+    ),
+    error-light: (
+        color: var(--clr-red-100),
+        bg: var(--clr-red-40),
+        hover-bg: var(--clr-red-10),
+        active-shadow: var(--clr-red-40),
+    ),
+    warning: (
+        border: 1px solid var(--clr-orange-100),
+        color: var(--clr-white-100),
+        bg: var(--clr-orange-80),
+        hover-bg: var(--clr-orange-60),
+        active-shadow: var(--clr-orange-40),
+    ),
+    warning-outline: (
+        border: 1px solid var(--clr-orange-100),
+        bg: var(--clr-orange-10),
+        color: var(--clr-orange-100),
+        hover-bg: var(--clr-white-100),
+        active-shadow: var(--clr-orange-40),
+    ),
+    warning-light: (
+        color: var(--clr-orange-100),
+        bg: var(--clr-orange-10),
+        hover-bg: var(--clr-orange-5),
+        active-shadow: var(--clr-orange-40),
+    ),
+    size-sm: (
+        gap: 4px,
+        padding: 4px 8px,
+        font-size: 12px,
+        width: auto,
+        display: inline-flex,
+    ),
+
+    size-md: (
+        gap: 8px,
+        padding: 8px 16px,
+        font-size: 14px,
+        width: auto,
+        display: inline-flex,
+    ),
+
+    size-lg: (
+        gap: 12px,
+        padding: 12px 24px,
+        font-size: 18px,
+        width: auto,
+        display: inline-flex,
+    ),
+
+    size-full: (
+        width: 100%,
+        display: flex,
+        gap: 8px,
+        padding: 8px 16px,
+        font-size: 14px,
+    ),
+);
+
+:root {
+    @each $element, $elements in $rtui-button {
+        @each $style-token, $value in $elements {
+            #{mixins.generateCssVar('rtui-btn', #{$element}, #{$style-token})}: #{$value};
+        }
+    }
+}
+
+.rtui-btn {
+    --width: var(--rt-rtui-btn-base-width);
+    --bg: var(--rt-rtui-btn-base-bg);
+    --border: var(--rt-rtui-btn-base-border);
+    --color: var(--rt-rtui-btn-base-color);
+    --display: var(--rt-rtui-btn-base-display);
+    --font-size: var(--rt-rtui-btn-base-font-size);
+    --gap: var(--rt-rtui-btn-base-gap);
+    --padding: var(--rt-rtui-btn-base-padding);
+    --shadow: var(--rt-rtui-btn-base-shadow);
+    --shadow-blur: var(--rt-rtui-btn-base-shadow-blur);
+
+    width: var(--width);
+    align-items: center;
+    background-color: var(--bg);
+    border: var(--border);
+    border-radius: 6px;
+    box-shadow: var(--shadow);
+    color: var(--color);
+    cursor: pointer;
+    display: var(--display);
+    font-size: var(--font-size);
+    font-weight: 600;
+    gap: var(--gap);
+    justify-content: center;
+    line-height: 1;
+    padding: var(--padding);
+    transition:
+        background-color 0.15s linear,
+        color 0.15s linear,
+        box-shadow 0.15s linear,
+        border-color 0.15s linear;
+    text-decoration: none;
+
+    &:focus {
+        outline: none;
+    }
+
+    &:focus-visible {
+        outline: 2px dashed var(--clr-blue-40);
+        outline-offset: 2px;
+    }
+
+    &:disabled {
+        cursor: default;
+        opacity: 0.75;
+        pointer-events: none;
+    }
+}
+
+/* accent */
+.rtui-btn-accent {
+    --border: var(--rt-rtui-btn-accent-border);
+    --color: var(--rt-rtui-btn-accent-color);
+    --bg: var(--rt-rtui-btn-accent-bg);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-accent-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-accent-active-shadow);
+    }
+}
+
+.rtui-btn-accent-outline {
+    --border: var(--rt-rtui-btn-accent-outline-border);
+    --bg: var(--rt-rtui-btn-accent-outline-bg);
+    --color: var(--rt-rtui-btn-accent-outline-color);
+
+    &:hover {
+        --border: var(--rt-rtui-btn-accent-outline-hover-border);
+        --bg: var(--rt-rtui-btn-accent-outline-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-accent-outline-active-shadow);
+    }
+}
+
+.rtui-btn-accent-light {
+    --color: var(--rt-rtui-btn-accent-light-color);
+    --bg: var(--rt-rtui-btn-accent-light-bg);
+
+    &:hover {
+        --color: var(--rt-rtui-btn-accent-light-hover-color);
+        --bg: var(--rt-rtui-btn-accent-light-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-accent-light-active-shadow);
+    }
+}
+
+/* success */
+.rtui-btn-success {
+    --border: var(--rt-rtui-btn-success-border);
+    --color: var(--rt-rtui-btn-success-color);
+    --bg: var(--rt-rtui-btn-success-bg);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-success-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-success-active-shadow);
+    }
+}
+
+.rtui-btn-success-outline {
+    --border: var(--rt-rtui-btn-success-outline-border);
+    --bg: var(--rt-rtui-btn-success-outline-bg);
+    --color: var(--rt-rtui-btn-success-outline-color);
+
+    &:hover {
+        --border: var(--rt-rtui-btn-success-outline-hover-border);
+        --bg: var(--rt-rtui-btn-success-outline-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-success-outline-active-shadow);
+    }
+}
+
+.rtui-btn-success-light {
+    --color: var(--rt-rtui-btn-success-light-color);
+    --bg: var(--rt-rtui-btn-success-light-bg);
+
+    &:hover {
+        --color: var(--rt-rtui-btn-success-light-hover-color);
+        --bg: var(--rt-rtui-btn-success-light-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-success-light-active-shadow);
+    }
+}
+
+/* secondary */
+.rtui-btn-secondary {
+    --border: var(--rt-rtui-btn-secondary-border);
+    --color: var(--rt-rtui-btn-secondary-color);
+    --bg: var(--rt-rtui-btn-secondary-bg);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-secondary-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-secondary-active-shadow);
+    }
+}
+
+.rtui-btn-secondary-outline {
+    --border: var(--rt-rtui-btn-secondary-outline-border);
+    --bg: var(--rt-rtui-btn-secondary-outline-bg);
+    --color: var(--rt-rtui-btn-secondary-outline-color);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-secondary-outline-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-secondary-outline-active-shadow);
+    }
+}
+
+.rtui-btn-secondary-light {
+    --color: var(--rt-rtui-btn-secondary-light-color);
+    --bg: var(--rt-rtui-btn-secondary-light-bg);
+
+    &:hover {
+        --color: var(--rt-rtui-btn-secondary-light-hover-color);
+        --bg: var(--rt-rtui-btn-secondary-light-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-secondary-light-active-shadow);
+    }
+}
+
+/* error */
+.rtui-btn-error {
+    --border: var(--rt-rtui-btn-error-border);
+    --color: var(--rt-rtui-btn-error-color);
+    --bg: var(--rt-rtui-btn-error-bg);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-error-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-error-active-shadow);
+    }
+}
+
+.rtui-btn-error-outline {
+    --border: var(--rt-rtui-btn-error-outline-border);
+    --bg: var(--rt-rtui-btn-error-outline-bg);
+    --color: var(--rt-rtui-btn-error-outline-color);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-error-outline-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-error-outline-active-shadow);
+    }
+}
+
+.rtui-btn-error-light {
+    --color: var(--rt-rtui-btn-error-light-color);
+    --bg: var(--rt-rtui-btn-error-light-bg);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-error-light-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-error-light-active-shadow);
+    }
+}
+
+/* warning */
+.rtui-btn-warning {
+    --border: var(--rt-rtui-btn-warning-border);
+    --color: var(--rt-rtui-btn-warning-color);
+    --bg: var(--rt-rtui-btn-warning-bg);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-warning-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-warning-active-shadow);
+    }
+}
+
+.rtui-btn-warning-outline {
+    --border: var(--rt-rtui-btn-warning-outline-border);
+    --bg: var(--rt-rtui-btn-warning-outline-bg);
+    --color: var(--rt-rtui-btn-warning-outline-color);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-warning-outline-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-warning-outline-active-shadow);
+    }
+}
+
+.rtui-btn-warning-light {
+    --color: var(--rt-rtui-btn-warning-light-color);
+    --bg: var(--rt-rtui-btn-warning-light-bg);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-warning-light-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-warning-light-active-shadow);
+    }
+}
+
+/* size */
+.rtui-btn-sm {
+    --gap: var(--rt-rtui-btn-size-sm-gap);
+    --padding: var(--rt-rtui-btn-size-sm-padding);
+    --font-size: var(--rt-rtui-btn-size-sm-font-size);
+}
+
+.rtui-btn-md {
+    --gap: var(--rt-rtui-btn-size-md-gap);
+    --padding: var(--rt-rtui-btn-size-md-padding);
+    --font-size: var(--rt-rtui-btn-size-md-font-size);
+}
+
+.rtui-btn-lg {
+    --gap: var(--rt-rtui-btn-size-lg-gap);
+    --padding: var(--rt-rtui-btn-size-lg-padding);
+    --font-size: var(--rt-rtui-btn-size-lg-font-size);
+}
+
+.rtui-btn-full {
+    --width: var(--rt-rtui-btn-size-full-width);
+    --display: var(--rt-rtui-btn-size-full-display);
+    --gap: var(--rt-rtui-btn-size-full-gap);
+    --padding: var(--rt-rtui-btn-size-full-padding);
+    --font-size: var(--rt-rtui-btn-size-full-font-size);
+}
