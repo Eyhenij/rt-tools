@@ -23,6 +23,30 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
     },
     {
         align: 'left',
+        propName: 'button',
+        type: TABLE_COLUMN_TYPES_ENUM.CUSTOM,
+        copyable: false,
+        header: {
+            align: 'left',
+            label: 'Button',
+        },
+        width: '100px',
+        minWidth: '100px',
+    },
+    {
+        align: 'left',
+        propName: 'active',
+        type: TABLE_COLUMN_TYPES_ENUM.CUSTOM,
+        copyable: false,
+        header: {
+            align: 'left',
+            label: 'Active',
+        },
+        width: '100px',
+        minWidth: '100px',
+    },
+    {
+        align: 'left',
         propName: 'image',
         type: TABLE_COLUMN_TYPES_ENUM.CUSTOM,
         copyable: false,
