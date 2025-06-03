@@ -8,6 +8,7 @@ import {
     contentChild,
     Directive,
     ElementRef,
+    forwardRef,
     inject,
     input,
     InputSignal,
@@ -28,13 +29,22 @@ import { MatRadioButton } from '@angular/material/radio';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
 import { Nullable, RtIconOutlinedDirective, transformArrayInput } from '../../../../util';
-import { FILTER_OPERATOR_TYPE_ENUM, FilterModel, ITable, SortModel, TABLE_COLUMN_TYPES_ENUM } from '../../util';
+import {
+    FILTER_OPERATOR_TYPE_ENUM,
+    FilterModel,
+    IRtuiTable,
+    ITable,
+    RTUI_TABLE_COMPONENT_TOKEN,
+    SortModel,
+    TABLE_COLUMN_TYPES_ENUM,
+} from '../../util';
 import { RtTableConfigService } from '../../util/table-config.service';
 import { TableBaseCellComponent } from '../table-base-cell/table-base-cell.component';
 import { RtuiTableHeaderCellComponent } from '../table-header-cell/table-header-cell.component';
 import { RtuiTableHeaderFilterCellComponent } from '../table-header-filter-cell/table-header-filter-cell.component';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
 import { BooleanInput } from '@angular/cdk/coercion';
+import { RtuiTableRowClickDirective } from '../../directives';
 
 /** Directive for custom table cells */
 @Directive({
@@ -68,6 +78,13 @@ export class RtuiTableAdditionalRowActionsDirective {}
     selector: 'rtui-table',
     templateUrl: './rtui-table.component.html',
     styleUrls: ['./rtui-table.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        {
+            provide: RTUI_TABLE_COMPONENT_TOKEN,
+            useExisting: forwardRef(() => RtuiTableComponent),
+        },
+    ],
     imports: [
         NgTemplateOutlet,
 
@@ -83,19 +100,20 @@ export class RtuiTableAdditionalRowActionsDirective {}
         BlockDirective,
         ElemDirective,
         RtIconOutlinedDirective,
+        RtuiTableRowClickDirective,
 
         // components
         RtuiTableHeaderCellComponent,
         TableBaseCellComponent,
         RtuiTableHeaderFilterCellComponent,
     ],
-    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RtuiTableComponent<
-    ENTITY_TYPE extends Record<string, unknown>,
-    SORT_PROPERTY extends Extract<keyof ENTITY_TYPE, string>,
-    KEY extends Extract<keyof ENTITY_TYPE, string>,
-> implements AfterViewChecked
+        ENTITY_TYPE extends Record<string, unknown>,
+        SORT_PROPERTY extends Extract<keyof ENTITY_TYPE, string>,
+        KEY extends Extract<keyof ENTITY_TYPE, string>,
+    >
+    implements IRtuiTable<ENTITY_TYPE, SORT_PROPERTY, KEY>, AfterViewChecked
 {
     protected readonly rowActions: Signal<Nullable<ElementRef<HTMLElement>>> = viewChild<ElementRef<HTMLElement>>('rowActions');
     protected readonly rowActionsHeaderPaddingHelper: Signal<Nullable<ElementRef<HTMLElement>>> =

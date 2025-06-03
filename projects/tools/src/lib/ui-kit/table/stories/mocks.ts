@@ -24,6 +24,7 @@ export const createPerson: () => Person = (): Person => {
             name: { firstname: faker.person.firstName(), lastname: faker.person.lastName() },
         },
         button: faker.helpers.arrayElement(['add', 'clear', 'person', 'save']),
+        active: false,
         image: faker.image.url({ width: 100, height: 40 }),
     };
 };
