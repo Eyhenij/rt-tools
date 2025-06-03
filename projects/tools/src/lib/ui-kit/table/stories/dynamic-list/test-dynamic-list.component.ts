@@ -26,6 +26,7 @@ import { RtTableConfigService } from '../../util/table-config.service';
 import { COLUMNS } from '../constants';
 import { createPersonList } from '../mocks';
 import { Person } from '../types';
+import { RtuiTableStopRowClickDirective } from '../../directives';
 
 @Component({
     selector: 'app-test-dynamic-list-component',
@@ -55,6 +56,7 @@ import { Person } from '../types';
         RtuiDynamicListRowAdditionalActionsDirective,
         RtuiDynamicListCustomTableCellsDirective,
         RtDynamicListSelectorsDirective,
+        RtuiTableStopRowClickDirective,
     ],
     providers: [IDBStorageService, RtTableConfigService, RtActionBarService],
 })
@@ -205,6 +207,17 @@ export default class TestDynamicListComponent implements OnInit {
     public onDelete(row: Person): void {
         // eslint-disable-next-line no-console
         console.warn('Delete', row);
+    }
+
+    public onCustomCellButtonClick(row: Person): void {
+        // eslint-disable-next-line no-console
+        console.warn('Custom Cell Button', row);
+    }
+
+    public onCustomCellToggle(row: Person): void {
+        row.active = !row.active;
+        // eslint-disable-next-line no-console
+        console.warn('Custom Cell Toggle', row);
     }
 
     public onInfo(row: Person): void {

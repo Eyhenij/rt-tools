@@ -49,13 +49,13 @@ $snack-bar: (
         }
     }
 
-    --mdc-snackbar-container-color: var(--rt-snack-bar-default-background-color);
+    --mat-snack-bar-container-color: var(--rt-snack-bar-default-background-color);
     --mdc-snackbar-supporting-text-color: var(--clr-white-100);
     --mdc-snackbar-container-shape: 0.5rem;
 }
 
 .snack-bar-success-colored {
-    --mdc-snackbar-container-color: var(--rt-snack-bar-success-background-color);
+    --mat-snack-bar-container-color: var(--rt-snack-bar-success-background-color);
     --mdc-snackbar-supporting-text-color: var(--rt-snack-bar-success-text-color);
 
     rtui-snack-bar {
@@ -65,7 +65,7 @@ $snack-bar: (
 }
 
 .snack-bar-warning-colored {
-    --mdc-snackbar-container-color: var(--rt-snack-bar-warning-background-color);
+    --mat-snack-bar-container-color: var(--rt-snack-bar-warning-background-color);
     --mdc-snackbar-supporting-text-color: var(--rt-snack-bar-warning-text-color);
 
     rtui-snack-bar {
@@ -75,7 +75,7 @@ $snack-bar: (
 }
 
 .snack-bar-danger-colored {
-    --mdc-snackbar-container-color: var(--rt-snack-bar-danger-background-color);
+    --mat-snack-bar-container-color: var(--rt-snack-bar-danger-background-color);
     --mdc-snackbar-supporting-text-color: var(--rt-snack-bar-danger-text-color);
 
     rtui-snack-bar {

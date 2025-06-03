@@ -2,7 +2,12 @@
     <thead>
         <tr>
             @if (isSelectorsColumnShown()) {
-                <th rtElem="cell" rtMod="selectable" (click)="$event.stopPropagation()" (dblclick)="$event.stopPropagation()">
+                <th
+                    rtElem="cell"
+                    rtMod="selectable"
+                    (mousedown)="$event.stopPropagation()"
+                    (click)="$event.stopPropagation()"
+                    (dblclick)="$event.stopPropagation()">
                     @if (isMultiSelect()) {
                         <mat-checkbox
                             [disabled]="isSelectorsColumnDisabled()"
@@ -18,6 +23,7 @@
                     <th
                         rtElem="cell"
                         [rtMod]="{ sortable: column?.sorting }"
+                        (mousedown)="$event.stopPropagation()"
                         (click)="$event.stopPropagation()"
                         (dblclick)="$event.stopPropagation()">
                         <rtui-table-header-cell
@@ -30,7 +36,14 @@
             }
 
             @if (rowActionsTpl() || additionalRowActionsTpl()) {
-                <th #rowActionsHeaderPaddingHelper rtElem="cell">Actions</th>
+                <th
+                    #rowActionsHeaderPaddingHelper
+                    rtElem="cell"
+                    (mousedown)="$event.stopPropagation()"
+                    (click)="$event.stopPropagation()"
+                    (dblclick)="$event.stopPropagation()">
+                    Actions
+                </th>
             }
         </tr>
 
@@ -69,12 +82,12 @@
         @for (row of entities(); track i; let i = $index) {
             <tr
                 rtElem="row"
+                [rtuiTableRowClickDirective]="row"
+                [isTableRowClickable]="isTableRowsClickable()"
                 [rtMod]="{
                     clickable: isTableRowsClickable(),
                     active: activeRowIndex() === i,
-                }"
-                (dblclick)="isTableRowsClickable() ? onRowDoubleClick(row) : $event.stopPropagation()"
-                (mousedown)="isTableRowsClickable() ? onRowClick(row, $event) : $event.stopPropagation()">
+                }">
                 @if (isSelectorsColumnShown()) {
                     <td
                         rtElem="cell"

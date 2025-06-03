@@ -4,7 +4,7 @@ $table: (
     header: (
         z-index: 2,
         font-size: 0.875rem,
-        background-color: var(--mdc-filled-text-field-container-color),
+        background-color: var(--mat-form-field-filled-container-color),
     ),
     header-row-last-child: (
         border-bottom: var(--rt-table-header-cell-wrapper-border-width) solid var(--clr-black-20),
