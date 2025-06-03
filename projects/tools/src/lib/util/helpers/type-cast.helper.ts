@@ -1,8 +1,9 @@
 import { format, parse, parseISO } from 'date-fns';
+import { isNil } from '../functions';
 
 export class TypeCastHelper {
-    public getAsString(data: unknown): string {
-        return data !== undefined && data !== null && !Number.isNaN(data) ? String(data) : '';
+    public getAsString(data: unknown, defaultValue: string = ''): string {
+        return !isNil(data) && !Number.isNaN(data) ? String(data) : defaultValue;
     }
 
     public getAsNumber(data: unknown, defaultValue?: number): number {
@@ -22,7 +23,7 @@ export class TypeCastHelper {
     }
 
     public getAsNull(data: unknown, handler?: (data: unknown) => unknown): unknown {
-        if (data !== undefined && data !== null && !Number.isNaN(data)) {
+        if (!isNil(data) && !Number.isNaN(data)) {
             return handler ? handler(data) : data;
         }
 
