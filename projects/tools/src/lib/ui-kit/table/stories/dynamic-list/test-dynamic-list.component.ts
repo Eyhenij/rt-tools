@@ -26,7 +26,7 @@ import { RtTableConfigService } from '../../util/table-config.service';
 import { COLUMNS } from '../constants';
 import { createPersonList } from '../mocks';
 import { Person } from '../types';
-import { RtuiTableStopRowClickDirective } from '../../directives';
+import { RtuiStopTableRowClickDirective } from '../../directives';
 
 @Component({
     selector: 'app-test-dynamic-list-component',
@@ -56,7 +56,7 @@ import { RtuiTableStopRowClickDirective } from '../../directives';
         RtuiDynamicListRowAdditionalActionsDirective,
         RtuiDynamicListCustomTableCellsDirective,
         RtDynamicListSelectorsDirective,
-        RtuiTableStopRowClickDirective,
+        RtuiStopTableRowClickDirective,
     ],
     providers: [IDBStorageService, RtTableConfigService, RtActionBarService],
 })
