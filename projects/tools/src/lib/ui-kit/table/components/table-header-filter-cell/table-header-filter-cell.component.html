@@ -8,7 +8,7 @@
         [matMenuTriggerFor]="menuTpl"
         (click)="$event.stopPropagation()"
         (mousedown)="$event.stopPropagation()">
-        <mat-icon [rtIconOutlinedDirective]="true">
+        <mat-icon [rtIconOutlined]="true">
             @switch (currentFilter().operatorType) {
                 @case (filterOperatorTypes.EQUALS) {
                     drag_handle
@@ -32,7 +32,7 @@
     <mat-menu #menuTpl="matMenu" xPosition="before">
         @if (filterOperators().includes(filterOperatorTypes.EQUALS) && currentFilter()?.operatorType !== filterOperatorTypes.EQUALS) {
             <div mat-menu-item (click)="onFilterOperatorChange(filterOperatorTypes.EQUALS)">
-                <mat-icon class="material-icons-outlined" [rtIconOutlinedDirective]="false">drag_handle</mat-icon>
+                <mat-icon class="material-icons-outlined" rtIconOutlined>drag_handle</mat-icon>
                 <span>Equal</span>
             </div>
         }
@@ -40,13 +40,13 @@
             filterOperators().includes(filterOperatorTypes.NOT_EQUALS) && currentFilter()?.operatorType !== filterOperatorTypes.NOT_EQUALS
         ) {
             <div mat-menu-item (click)="onFilterOperatorChange(filterOperatorTypes.NOT_EQUALS)">
-                <mat-icon [rtIconOutlinedDirective]="true">block</mat-icon>
+                <mat-icon [rtIconOutlined]="true">block</mat-icon>
                 <span>Not equal</span>
             </div>
         }
         @if (filterOperators().includes(filterOperatorTypes.CONTAINS) && currentFilter()?.operatorType !== filterOperatorTypes.CONTAINS) {
             <div mat-menu-item (click)="onFilterOperatorChange(filterOperatorTypes.CONTAINS)">
-                <mat-icon [rtIconOutlinedDirective]="true">more_horiz</mat-icon>
+                <mat-icon [rtIconOutlined]="true">more_horiz</mat-icon>
                 <span>Contains</span>
             </div>
         }
@@ -55,13 +55,13 @@
             currentFilter()?.operatorType !== filterOperatorTypes.GREATER_THAN
         ) {
             <div mat-menu-item (click)="onFilterOperatorChange(filterOperatorTypes.GREATER_THAN)">
-                <mat-icon [rtIconOutlinedDirective]="true">chevron_right</mat-icon>
+                <mat-icon [rtIconOutlined]="true">chevron_right</mat-icon>
                 <span>More than</span>
             </div>
         }
         @if (filterOperators().includes(filterOperatorTypes.LESS_THAN) && currentFilter()?.operatorType !== filterOperatorTypes.LESS_THAN) {
             <div mat-menu-item (click)="onFilterOperatorChange(filterOperatorTypes.LESS_THAN)">
-                <mat-icon [rtIconOutlinedDirective]="true">chevron_left</mat-icon>
+                <mat-icon [rtIconOutlined]="true">chevron_left</mat-icon>
                 <span>Less than</span>
             </div>
         }
@@ -106,7 +106,7 @@
             [matTooltipDisabled]="isMobile()"
             [disabled]="!currentFilter().value"
             (click)="onFilterValueChange('')">
-            <mat-icon [rtIconOutlinedDirective]="true">close</mat-icon>
+            <mat-icon [rtIconOutlined]="true">close</mat-icon>
         </button>
 
         <mat-form-field rtBlock="table-header-cell-filter-input" subscriptSizing="dynamic" [appearance]="appearance()">
@@ -129,7 +129,7 @@
             [matTooltipDisabled]="isMobile()"
             [disabled]="!currentFilter().value"
             (click)="onFilterValueChange('')">
-            <mat-icon [rtIconOutlinedDirective]="true">close</mat-icon>
+            <mat-icon [rtIconOutlined]="true">close</mat-icon>
         </button>
 
         <mat-form-field rtBlock="table-header-cell-filter-input" subscriptSizing="dynamic" [appearance]="appearance()">

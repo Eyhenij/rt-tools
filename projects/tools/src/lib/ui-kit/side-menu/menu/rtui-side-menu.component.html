@@ -39,7 +39,7 @@
                                     [activated]="selectedItem() === item || (!selectedItem() && activeMenuIds().includes(item.id))"
                                     (click)="onClickMenu(item)">
                                     @if (item?.icon) {
-                                        <mat-icon matListItemIcon rtElem="icon" [rtIconOutlinedDirective]="isMainMenuIconsOutlined()">
+                                        <mat-icon matListItemIcon rtElem="icon" [rtIconOutlined]="isMainMenuIconsOutlined()">
                                             {{ item.icon }}
                                         </mat-icon>
                                     }
@@ -91,7 +91,7 @@
                                     rtBlock="rtui-side-menu-item-button"
                                     [activated]="selectedItem() === item || (!selectedItem() && activeMenuIds().includes(item.id))">
                                     <div rtElem="icon">
-                                        <mat-icon [rtIconOutlinedDirective]="isMainMenuIconsOutlined()">{{ item.icon }}</mat-icon>
+                                        <mat-icon [rtIconOutlined]="isMainMenuIconsOutlined()">{{ item.icon }}</mat-icon>
                                     </div>
                                 </mat-list-item>
                             }

@@ -38,7 +38,7 @@
                                         [matTooltipDisabled]="isMobile()"
                                         [disabled]="isFiltersEmpty()"
                                         (click)="onClearFilters()">
-                                        <mat-icon [rtIconOutlinedDirective]="isToolbarActionsIconsOutlined()">block</mat-icon>
+                                        <mat-icon [rtIconOutlined]="isToolbarActionsIconsOutlined()">block</mat-icon>
                                     </button>
                                 }
 
@@ -52,7 +52,7 @@
                                         matTooltipPosition="below"
                                         [matTooltipDisabled]="isMobile()"
                                         (click)="onRefresh()">
-                                        <mat-icon [rtIconOutlinedDirective]="isToolbarActionsIconsOutlined()">sync</mat-icon>
+                                        <mat-icon [rtIconOutlined]="isToolbarActionsIconsOutlined()">sync</mat-icon>
                                     </button>
                                 }
 
@@ -66,7 +66,7 @@
                                         matTooltipPosition="below"
                                         [matTooltipDisabled]="isMobile()"
                                         (click)="onOpenConfigAside()">
-                                        <mat-icon [rtIconOutlinedDirective]="isToolbarActionsIconsOutlined()">view_column</mat-icon>
+                                        <mat-icon [rtIconOutlined]="isToolbarActionsIconsOutlined()">view_column</mat-icon>
                                     </button>
                                 }
                             </div>
@@ -76,7 +76,7 @@
                                     <mat-form-field subscriptSizing="dynamic" [appearance]="appearance()" [style.width.%]="100">
                                         <input matInput placeholder="Search..." type="text" [formControl]="searchControl" />
 
-                                        <mat-icon matPrefix [rtIconOutlinedDirective]="true">search</mat-icon>
+                                        <mat-icon matPrefix [rtIconOutlined]="true">search</mat-icon>
 
                                         <rtui-clear-button
                                             matSuffix
@@ -106,7 +106,7 @@
                     }
                 } @else {
                     <div rtElem="placeholder">
-                        <mat-icon rtElem="placeholder-icon" [rtIconOutlinedDirective]="true">{{ placeholderIcon() }}</mat-icon>
+                        <mat-icon rtElem="placeholder-icon" [rtIconOutlined]="true">{{ placeholderIcon() }}</mat-icon>
 
                         <div rtElem="placeholder-title">{{ placeholderTitle() }}</div>
                     </div>
