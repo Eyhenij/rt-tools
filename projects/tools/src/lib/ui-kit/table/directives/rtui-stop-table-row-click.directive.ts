@@ -3,10 +3,10 @@ import { Directive, ElementRef, inject, OnInit } from '@angular/core';
 import { RTUI_TABLE_STOP_ROW_CLICK_ATTRIBUTE } from '../util';
 
 @Directive({
-    selector: '[rtuiTableStopRowClickDirective]',
     standalone: true,
+    selector: '[rtStopTableRowClick]',
 })
-export class RtuiTableStopRowClickDirective implements OnInit {
+export class RtuiStopTableRowClickDirective implements OnInit {
     readonly #elementRef: ElementRef<HTMLElement> = inject(ElementRef<HTMLElement>);
 
     public ngOnInit(): void {
