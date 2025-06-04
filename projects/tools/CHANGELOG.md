@@ -1,3 +1,40 @@
+## [0.3.3](https://github.com/Eyhenij/rt-tools/compare/0.1.81...0.3.3) (2025-06-04)
+
+### Bug Fixes
+
+- change type and handler of table row event ([b3c4c30](https://github.com/Eyhenij/rt-tools/commit/b3c4c30ef3cf7000daa3523966b0a7b40f7f69b2))
+- change type of table row event ([8b73a9e](https://github.com/Eyhenij/rt-tools/commit/8b73a9e9524ba0eb72d76a6373cc289d0ae7b227))
+- column base cell copyable component ([5d44251](https://github.com/Eyhenij/rt-tools/commit/5d44251ec05a9771a1c128f721ee0b5877d3e8e6))
+- fix action height based on local debug in web-store browser console ([75fd911](https://github.com/Eyhenij/rt-tools/commit/75fd911d7dd2b60ba2682c521cc1a1f4a62d56ef))
+- fix position copy-btn logic ([e84ed2e](https://github.com/Eyhenij/rt-tools/commit/e84ed2e94e7e91f521010e940454b28f7a055c46))
+- fix scrollable host height for mobile devices ([7c77513](https://github.com/Eyhenij/rt-tools/commit/7c77513224fb02c800e48ebf08cdb65a7d623942))
+- fix table pagination ([08d9a12](https://github.com/Eyhenij/rt-tools/commit/08d9a12b04c205053848e08509730cde95dea540))
+- fix table row actions position for Apple devices ([ea7c17b](https://github.com/Eyhenij/rt-tools/commit/ea7c17bea54b7abe31f281c2c6ca5fae3ee787c5))
+- fix table selector visible and propagation ([15308d1](https://github.com/Eyhenij/rt-tools/commit/15308d1f4408ead99f730561952ca2edd7e793b1))
+- row table actions position ([9cd18c0](https://github.com/Eyhenij/rt-tools/commit/9cd18c0b37560a443c004bc4fc0606f552839a1f))
+- table row actions height ([cace356](https://github.com/Eyhenij/rt-tools/commit/cace356c78c1465cbd1890126c3f103d6ba688da))
+
+### Features
+
+- add copyBtnAlign parameter in props of table-base-cell ([ff02209](https://github.com/Eyhenij/rt-tools/commit/ff0220986c0a91555afae8a31e09a813ca7e12ce))
+- add default values fields to type cast helpers ([908a83f](https://github.com/Eyhenij/rt-tools/commit/908a83f7d65c451675f0f848de820cc48bf8fb99))
+- add edit field option for dynamic input ([56bc83e](https://github.com/Eyhenij/rt-tools/commit/56bc83e7781557a96fe99cd4626ba3c2db77ea92))
+- add optimization to image cropper ([e83f0ad](https://github.com/Eyhenij/rt-tools/commit/e83f0addaa3c1ab2a96ea7596612cea55b0d326b))
+- add save emitter ([27c510c](https://github.com/Eyhenij/rt-tools/commit/27c510c9d9898cfbce4d36534f5ed012fd6ff959))
+- add table border width vars ([2e61f34](https://github.com/Eyhenij/rt-tools/commit/2e61f34228dd9c27ca07c9966c16c68f066eb5de))
+- add table filter header row ([2085dcc](https://github.com/Eyhenij/rt-tools/commit/2085dcc664cf03224bc85c416b9d8a8b5abb3550))
+- extend table interface ([bed9882](https://github.com/Eyhenij/rt-tools/commit/bed98822e59224d60a1b91b58b64eb7c984b914f))
+- implement button component ([74233d0](https://github.com/Eyhenij/rt-tools/commit/74233d09814586eea565852c640e708a6e19ef89))
+- implement multi-button component ([38e9a97](https://github.com/Eyhenij/rt-tools/commit/38e9a97231e9c1fcbd2e2991bb0f370e21c79432))
+- implement table row click directive and table stop row click directive ([ca576e6](https://github.com/Eyhenij/rt-tools/commit/ca576e6f63604ccd6d377c9e97feabfcb3f57ef6))
+- import debounce fn ([d912960](https://github.com/Eyhenij/rt-tools/commit/d912960c7288b5254ac70cc5aad514faec9ad831))
+- **rt:ui-kit:** implement action bar ([69ac1a0](https://github.com/Eyhenij/rt-tools/commit/69ac1a0afb37d090a9fe11e3d662d8a7437d049b))
+- **rt:ui-kit:** implement checkbox ([f12e94c](https://github.com/Eyhenij/rt-tools/commit/f12e94c7cd735f1931bfb59a4efbdd346886b412))
+
+### Reverts
+
+- Revert "Refactor/use input types (#135)" ([4de980a](https://github.com/Eyhenij/rt-tools/commit/4de980ade8e805e596f74a15f6752c6a837d7ffe)), closes [#135](https://github.com/Eyhenij/rt-tools/issues/135)
+
 ## [0.3.2](https://github.com/Eyhenij/rt-tools/compare/0.1.81...0.3.2) (2025-06-03)
 
 ### Bug Fixes
