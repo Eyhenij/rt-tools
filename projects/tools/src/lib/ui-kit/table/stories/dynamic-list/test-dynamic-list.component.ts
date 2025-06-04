@@ -8,7 +8,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective } from '../../../../bem';
 import { IDBStorageService } from '../../../../idb-storage';
-import { Nullable, RtIconOutlinedDirective } from '../../../../util';
+import { Nullable, PlatformService, RtIconOutlinedDirective } from '../../../../util';
 import { RtActionBarService, RtuiActionBarContainerComponent } from '../../../action-bar';
 import { RtuiToggleComponent } from '../../../toggle';
 import {
@@ -58,7 +58,7 @@ import { RtuiStopTableRowClickDirective } from '../../directives';
         RtDynamicListSelectorsDirective,
         RtuiStopTableRowClickDirective,
     ],
-    providers: [IDBStorageService, RtTableConfigService, RtActionBarService],
+    providers: [IDBStorageService, RtTableConfigService, RtActionBarService, PlatformService],
 })
 export default class TestDynamicListComponent implements OnInit {
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
