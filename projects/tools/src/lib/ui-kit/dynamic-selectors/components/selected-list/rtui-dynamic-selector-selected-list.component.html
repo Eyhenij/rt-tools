@@ -14,7 +14,7 @@
                                 matTooltip="Hold button to drag"
                                 matTooltipPosition="right"
                                 [matTooltipDisabled]="isMobile()">
-                                <mat-icon [rtIconOutlinedDirective]="true">open_with</mat-icon>
+                                <mat-icon [rtIconOutlined]="true">open_with</mat-icon>
                             </button>
                         </div>
                     </div>
@@ -65,7 +65,7 @@
                                     matTooltip="Reset"
                                     [matTooltipDisabled]="isMobile()"
                                     (click)="setEditModState(null)">
-                                    <mat-icon [rtIconOutlinedDirective]="true">refresh</mat-icon>
+                                    <mat-icon [rtIconOutlined]="true">refresh</mat-icon>
                                 </button>
                             </div>
                         }
@@ -79,7 +79,7 @@
                                 [matTooltip]="editedItemIndex() === i ? 'Apply' : 'Edit item'"
                                 [matTooltipDisabled]="isMobile()"
                                 (click)="editedItemIndex() === i ? changeValue(entity[displayExp()]) : setEditModState(i)">
-                                <mat-icon [rtIconOutlinedDirective]="true">{{ editedItemIndex() === i ? 'done' : 'edit' }}</mat-icon>
+                                <mat-icon [rtIconOutlined]="true">{{ editedItemIndex() === i ? 'done' : 'edit' }}</mat-icon>
                             </button>
                         </div>
                     }
@@ -96,7 +96,7 @@
                                 [matTooltipDisabled]="isMobile()"
                                 [disabled]="readonlyEntitiesKeys().includes(entity[keyExp()])"
                                 (click)="onDelete(entity[keyExp()])">
-                                <mat-icon [rtIconOutlinedDirective]="true">delete</mat-icon>
+                                <mat-icon [rtIconOutlined]="true">delete</mat-icon>
                             </button>
                         </div>
                     }

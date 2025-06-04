@@ -2,11 +2,11 @@ import { booleanAttribute, Directive, HostBinding, input, InputSignalWithTransfo
 import { BooleanInput } from '@angular/cdk/coercion';
 
 @Directive({
-    selector: '[rtIconOutlinedDirective]',
+    selector: 'mat-icon[rtIconOutlined]',
 })
 export class RtIconOutlinedDirective {
     public isOutlined: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
-        alias: 'rtIconOutlinedDirective',
+        alias: 'rtIconOutlined',
         transform: booleanAttribute,
     });
 
