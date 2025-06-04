@@ -45,7 +45,7 @@
 
 <ng-template #buttonContentTpl let-btn>
     @if (btn?.icon) {
-        <mat-icon [rtIconOutlinedDirective]="true">{{ btn.icon }}</mat-icon>
+        <mat-icon [rtIconOutlined]="true">{{ btn.icon }}</mat-icon>
     }
 
     @if (!isTablet() || (isTablet() && !btn?.icon)) {

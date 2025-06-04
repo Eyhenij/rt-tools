@@ -4,7 +4,7 @@
     <mat-form-field subscriptSizing="dynamic" [appearance]="appearance()">
         <input #searchInputTpl matInput placeholder="Search..." type="text" [formControl]="searchControl" />
 
-        <mat-icon matPrefix [rtIconOutlinedDirective]="false">search</mat-icon>
+        <mat-icon matPrefix rtIconOutlined>search</mat-icon>
 
         <rtui-clear-button matSuffix [isButtonShown]="!!searchControl.value" (clickAction)="onClearSearch()" />
     </mat-form-field>
@@ -19,7 +19,7 @@
                         <mat-icon
                             rtElem="controls-item-icon"
                             matTooltipPosition="above"
-                            [rtIconOutlinedDirective]="true"
+                            [rtIconOutlined]="true"
                             [matTooltip]="
                                 isMacOS() ? 'Also for multi selection use COMMAND button' : 'Also for multi selection use CTRL button'
                             ">
@@ -128,7 +128,7 @@
         @if (loading()) {
             <rtui-spinner />
         } @else {
-            <mat-icon rtElem="icon" [rtIconOutlinedDirective]="false">search</mat-icon>
+            <mat-icon rtElem="icon" rtIconOutlined>search</mat-icon>
 
             <div rtElem="title">No Results</div>
         }

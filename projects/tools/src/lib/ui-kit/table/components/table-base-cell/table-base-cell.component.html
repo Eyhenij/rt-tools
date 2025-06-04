@@ -1,6 +1,6 @@
 <ng-container rtBlock="base-cell">
     @if (column()?.icon?.placement === 'left') {
-        <mat-icon rtElem="prefix" [rtIconOutlinedDirective]="!!column().icon?.outlined" [style]="cellIconStyle()">
+        <mat-icon rtElem="prefix" [rtIconOutlined]="!!column().icon?.outlined" [style]="cellIconStyle()">
             {{ column().icon?.glyph }}
         </mat-icon>
     }
@@ -20,7 +20,7 @@
     </div>
 
     @if (column()?.icon?.placement === 'right') {
-        <mat-icon rtElem="suffix" [rtIconOutlinedDirective]="!!column().icon?.outlined" [style]="cellIconStyle()">
+        <mat-icon rtElem="suffix" [rtIconOutlined]="!!column().icon?.outlined" [style]="cellIconStyle()">
             {{ column().icon?.glyph }}
         </mat-icon>
     }
@@ -40,7 +40,7 @@
             [matTooltip]="isCopied() ? 'Copied!' : 'Copy'"
             [matTooltipDisabled]="isMobile()"
             (mousedown)="onCopyToClipboard(); $event.stopPropagation()">
-            <mat-icon rtElem="copy-icon" [rtIconOutlinedDirective]="true">{{ isCopied() ? 'done' : 'content_copy' }}</mat-icon>
+            <mat-icon rtElem="copy-icon" [rtIconOutlined]="true">{{ isCopied() ? 'done' : 'content_copy' }}</mat-icon>
         </button>
     }
 </ng-container>

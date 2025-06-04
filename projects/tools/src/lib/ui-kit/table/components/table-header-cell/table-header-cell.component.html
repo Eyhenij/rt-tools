@@ -1,6 +1,6 @@
 <div rtBlock="header-cell-label" [rtMod]="{ align: headerModel().align }">
     @if (headerModel()?.icon?.placement === 'left') {
-        <mat-icon rtElem="prefix" [rtIconOutlinedDirective]="!!headerModel().icon?.outlined" [style.color]="headerModel().icon?.color">
+        <mat-icon rtElem="prefix" [rtIconOutlined]="!!headerModel().icon?.outlined" [style.color]="headerModel().icon?.color">
             {{ headerModel().icon?.glyph }}
         </mat-icon>
     }
@@ -10,7 +10,7 @@
     </div>
 
     @if (headerModel()?.icon?.placement === 'right') {
-        <mat-icon rtElem="suffix" [rtIconOutlinedDirective]="!!headerModel().icon?.outlined" [style.color]="headerModel().icon?.color">
+        <mat-icon rtElem="suffix" [rtIconOutlined]="!!headerModel().icon?.outlined" [style.color]="headerModel().icon?.color">
             {{ headerModel().icon?.glyph }}
         </mat-icon>
     }

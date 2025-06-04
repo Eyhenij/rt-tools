@@ -11,7 +11,7 @@
             [disabled]="isResetButtonDisabled() || disabled()"
             [matTooltipDisabled]="isMobile()"
             (click)="onReset()">
-            <mat-icon rtElem="item-icon" [rtIconOutlinedDirective]="true">refresh</mat-icon>
+            <mat-icon rtElem="item-icon" [rtIconOutlined]="true">refresh</mat-icon>
         </button>
     </div>
 
@@ -27,7 +27,7 @@
             [matTooltipDisabled]="isMobile()"
             [disabled]="disabled() || isClearButtonDisabled()"
             (click)="onClear()">
-            <mat-icon rtElem="item-icon" [rtIconOutlinedDirective]="true">delete_forever</mat-icon>
+            <mat-icon rtElem="item-icon" [rtIconOutlined]="true">delete_forever</mat-icon>
         </button>
     </div>
 </ng-container>

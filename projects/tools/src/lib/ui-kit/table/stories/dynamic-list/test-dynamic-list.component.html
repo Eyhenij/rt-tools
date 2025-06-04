@@ -38,7 +38,7 @@
             matTooltip="Create Customer"
             matTooltipPosition="below"
             [matTooltipDisabled]="isMobile">
-            <mat-icon [rtIconOutlinedDirective]="true">person</mat-icon>
+            <mat-icon [rtIconOutlined]="true">person</mat-icon>
         </button>
 
         <button
@@ -49,7 +49,7 @@
             matTooltip="Info"
             matTooltipPosition="below"
             [matTooltipDisabled]="isMobile">
-            <mat-icon [rtIconOutlinedDirective]="true">info</mat-icon>
+            <mat-icon [rtIconOutlined]="true">info</mat-icon>
         </button>
     </ng-container>
 
@@ -66,7 +66,7 @@
             [matTooltip]="row.button"
             [matTooltipDisabled]="isMobile"
             (click)="onCustomCellButtonClick(row); $event.stopPropagation()">
-            <mat-icon [rtIconOutlinedDirective]="true">{{ row.button }}</mat-icon>
+            <mat-icon [rtIconOutlined]="true">{{ row.button }}</mat-icon>
         </button>
     </ng-template>
 
@@ -92,7 +92,7 @@
             [disableRipple]="true"
             (mousedown)="$event.stopPropagation()"
             (click)="onInfo(row); $event.stopPropagation()">
-            <mat-icon [rtIconOutlinedDirective]="true">info</mat-icon>
+            <mat-icon [rtIconOutlined]="true">info</mat-icon>
         </button>
 
         <button
@@ -102,7 +102,7 @@
             [disableRipple]="true"
             (mousedown)="$event.stopPropagation()"
             (click)="onOpenNewTab(row); $event.stopPropagation()">
-            <mat-icon [rtIconOutlinedDirective]="true">open_in_new</mat-icon>
+            <mat-icon [rtIconOutlined]="true">open_in_new</mat-icon>
         </button>
     </ng-container>
 
