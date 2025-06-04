@@ -57,7 +57,7 @@
 
     <ng-template #buttonTemplate let-row>
         <button
-            rtuiTableStopRowClickDirective
+            rtStopTableRowClick
             mat-mini-fab
             type="button"
             aria-label="Icon-button"
@@ -72,7 +72,7 @@
 
     <ng-template #toggleTemplate let-row>
         <rtui-toggle
-            rtuiTableStopRowClickDirective
+            rtStopTableRowClick
             tabindex="0"
             [disabled]="true"
             [ngModel]="row.active"
