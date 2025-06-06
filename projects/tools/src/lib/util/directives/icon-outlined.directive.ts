@@ -1,4 +1,4 @@
-import { booleanAttribute, Directive, HostBinding, input, InputSignalWithTransform } from '@angular/core';
+import { Directive, HostBinding, input, InputSignalWithTransform } from '@angular/core';
 import { BooleanInput } from '@angular/cdk/coercion';
 
 @Directive({
@@ -7,7 +7,9 @@ import { BooleanInput } from '@angular/cdk/coercion';
 export class RtIconOutlinedDirective {
     public isOutlined: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         alias: 'rtIconOutlined',
-        transform: booleanAttribute,
+        transform: (value: BooleanInput) => {
+            return Boolean(value);
+        },
     });
 
     @HostBinding('style.fontVariationSettings')
