@@ -20,7 +20,7 @@ import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerModule, MatDatepickerToggle } from '@angular/material/datepicker';
 
-import { RtIconOutlinedDirective, transformArrayInput, isString } from '../../../../util';
+import { RtIconOutlinedDirective, transformArrayInput, isString, Nullable } from '../../../../util';
 import { FILTER_OPERATOR_TYPE_ENUM, FILTER_OPERATORS, FilterModel, FilterOperatorType } from '../../util/lists.interface';
 import { ITable, TABLE_COLUMN_FILTER_TYPES_ENUM } from '../../util/table-column.interface';
 import { MatFormField, MatFormFieldAppearance, MatSuffix } from '@angular/material/form-field';
@@ -34,6 +34,8 @@ import { isDate } from 'date-fns';
 import { RtuiClearButtonComponent } from '../clear-search-button/rtui-clear-button.component';
 import { BlockDirective } from '../../../../bem';
 import { MatTooltip } from '@angular/material/tooltip';
+import { Subject } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
     selector: 'rtui-table-header-filter-cell',
@@ -77,6 +79,8 @@ export class RtuiTableHeaderFilterCellComponent<ENTITY_TYPE extends Record<strin
 {
     readonly #injector: Injector = inject(Injector);
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
+
+    readonly #filterChangeSource: Subject<string | number | Date> = new Subject<string | number | Date>();
 
     protected readonly filterTypes: typeof TABLE_COLUMN_FILTER_TYPES_ENUM = TABLE_COLUMN_FILTER_TYPES_ENUM;
     protected readonly filterOperatorTypes: typeof FILTER_OPERATOR_TYPE_ENUM = FILTER_OPERATOR_TYPE_ENUM;
@@ -143,43 +147,21 @@ export class RtuiTableHeaderFilterCellComponent<ENTITY_TYPE extends Record<strin
                           }
                 );
             });
-    }
 
-    /** Change filter value */
-    public onFilterValueChange(value: number | string | Date): void {
-        if (value === this.currentFilter().value) {
-            return;
-        }
+        this.#filterChangeSource
+            .asObservable()
+            .pipe(
+                distinctUntilChanged((_: string | number | Date, next: string | number | Date) => {
+                    const currentFilterValue: Nullable<string | number | boolean> = this.currentFilter().value;
 
-        let updatedFilterModel: FilterModel<KEY>[] = this.filterModel();
+                    if (isDate(next) && isDate(currentFilterValue)) {
+                        return next.toISOString() === currentFilterValue.toISOString();
+                    }
 
-        if (updatedFilterModel.find((el: FilterModel<KEY>) => el.propertyName === this.filterProperty())) {
-            if (value) {
-                updatedFilterModel = updatedFilterModel.map((el: FilterModel<KEY>) =>
-                    el.propertyName === this.filterProperty()
-                        ? {
-                              ...el,
-                              value: isDate(value) ? value.toISOString() : value,
-                          }
-                        : el
-                );
-            } else {
-                updatedFilterModel = updatedFilterModel.filter((el: FilterModel<KEY>) => el.propertyName !== this.filterProperty());
-            }
-            this.filterChange.emit(updatedFilterModel);
-        } else if (value) {
-            updatedFilterModel.push({
-                propertyName: this.filterProperty(),
-                operatorType: this.currentFilter().operatorType,
-                value: isDate(value) ? value.toISOString() : value,
-            });
-            this.filterChange.emit(updatedFilterModel);
-        }
-
-        this.currentFilter.update((filter: FilterModel<KEY>) => ({
-            ...filter,
-            value: isDate(value) ? value.toISOString() : value,
-        }));
+                    return next === currentFilterValue;
+                })
+            )
+            .subscribe((value: string | number | Date) => this.#filterValueChange(value));
     }
 
     /** Change filter operator */
@@ -210,5 +192,47 @@ export class RtuiTableHeaderFilterCellComponent<ENTITY_TYPE extends Record<strin
         }
 
         this.currentFilter.update((filter: FilterModel<KEY>) => ({ ...filter, operatorType }));
+    }
+
+    public onFilterValueChange(value: number | string | Date): void {
+        this.#filterChangeSource.next(value);
+    }
+
+    public onClearFilter(input: HTMLInputElement): void {
+        input.value = '';
+        this.#filterChangeSource.next('');
+    }
+
+    /** Change filter value */
+    #filterValueChange(value: number | string | Date): void {
+        let updatedFilterModel: FilterModel<KEY>[] = this.filterModel();
+
+        if (updatedFilterModel.find((el: FilterModel<KEY>) => el.propertyName === this.filterProperty())) {
+            if (value) {
+                updatedFilterModel = updatedFilterModel.map((el: FilterModel<KEY>) =>
+                    el.propertyName === this.filterProperty()
+                        ? {
+                              ...el,
+                              value: isDate(value) ? value.toISOString() : value,
+                          }
+                        : el
+                );
+            } else {
+                updatedFilterModel = updatedFilterModel.filter((el: FilterModel<KEY>) => el.propertyName !== this.filterProperty());
+            }
+            this.filterChange.emit(updatedFilterModel);
+        } else if (value) {
+            updatedFilterModel.push({
+                propertyName: this.filterProperty(),
+                operatorType: this.currentFilter().operatorType,
+                value: isDate(value) ? value.toISOString() : value,
+            });
+            this.filterChange.emit(updatedFilterModel);
+        }
+
+        this.currentFilter.update((filter: FilterModel<KEY>) => ({
+            ...filter,
+            value: isDate(value) ? value.toISOString() : value,
+        }));
     }
 }
