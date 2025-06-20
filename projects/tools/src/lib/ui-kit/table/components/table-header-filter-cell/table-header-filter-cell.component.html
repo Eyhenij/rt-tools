@@ -80,7 +80,7 @@
                 (keydown.enter)="onFilterValueChange(input.value)"
                 (focusout)="onFilterValueChange(input.value)" />
 
-            <rtui-clear-button matSuffix [isButtonShown]="!!currentFilter().value" (clickAction)="onFilterValueChange('')" />
+            <rtui-clear-button matSuffix [isButtonShown]="!!currentFilter().value" (pointerdown)="onClearFilter(input)" />
         </mat-form-field>
     }
     @case (filterTypes.NUMBER) {
@@ -94,7 +94,7 @@
                 (keydown.enter)="onFilterValueChange(input.value)"
                 (focusout)="onFilterValueChange(input.value)" />
 
-            <rtui-clear-button matSuffix [isButtonShown]="!!currentFilter().value" (clickAction)="onFilterValueChange('')" />
+            <rtui-clear-button matSuffix [isButtonShown]="!!currentFilter().value" (pointerdown)="onClearFilter(input)" />
         </mat-form-field>
     }
     @case (filterTypes.DATE) {
