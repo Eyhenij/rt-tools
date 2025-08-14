@@ -84,6 +84,10 @@ export class RtuiAsideContainerComponent {
     public isSubmitButtonDisabled: InputSignalWithTransform<boolean, boolean> = input.required<boolean, boolean>({
         transform: booleanAttribute,
     });
+    public isFooterShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+        transform: booleanAttribute,
+    });
+
     public pending: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
