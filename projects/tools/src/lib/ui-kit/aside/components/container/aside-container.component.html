@@ -66,27 +66,29 @@
         </div>
     </ng-container>
 
-    <ng-container *rtuiScrollableFooter>
-        <div rtBlock="c-aside-footer">
-            <div rtBlock="c-aside-footer-btn">
-                <button cdkFocusInitial mat-button type="button" (click)="onCancel()">
-                    {{ cancelButtonTitle() }}
-                </button>
-            </div>
+    @if (isFooterShown()) {
+        <ng-container *rtuiScrollableFooter>
+            <div rtBlock="c-aside-footer">
+                <div rtBlock="c-aside-footer-btn">
+                    <button cdkFocusInitial mat-button type="button" (click)="onCancel()">
+                        {{ cancelButtonTitle() }}
+                    </button>
+                </div>
 
-            <div rtBlock="c-aside-footer-btn">
-                <button
-                    mat-flat-button
-                    type="button"
-                    matTooltipClass="custom-tooltip"
-                    matTooltipPosition="left"
-                    [matTooltip]="submitButtonTooltip()"
-                    [matTooltipDisabled]="!isSubmitButtonDisabled() || isMobile()"
-                    [disabled]="isSubmitButtonDisabled()"
-                    (click)="onSubmit()">
-                    <div rtElem="title">{{ submitButtonTitle() }}</div>
-                </button>
+                <div rtBlock="c-aside-footer-btn">
+                    <button
+                        mat-flat-button
+                        type="button"
+                        matTooltipClass="custom-tooltip"
+                        matTooltipPosition="left"
+                        [matTooltip]="submitButtonTooltip()"
+                        [matTooltipDisabled]="!isSubmitButtonDisabled() || isMobile()"
+                        [disabled]="isSubmitButtonDisabled()"
+                        (click)="onSubmit()">
+                        <div rtElem="title">{{ submitButtonTitle() }}</div>
+                    </button>
+                </div>
             </div>
-        </div>
-    </ng-container>
+        </ng-container>
+    }
 </rtui-scrollable>
