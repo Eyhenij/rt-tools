@@ -14,6 +14,10 @@ export class BreakStringPipe implements PipeTransform {
         }
 
         if (value && isString(value)) {
+            if (/\s/.test(value) || /^[A-Z0-9\s]+$/.test(value) || /\d/.test(value) || /[^\w\s]/.test(value)) {
+                return value;
+            }
+
             return value.split(/(?=[A-Z])/).join(' ');
         }
 
