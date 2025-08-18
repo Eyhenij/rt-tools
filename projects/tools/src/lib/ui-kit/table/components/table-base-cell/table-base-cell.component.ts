@@ -1,7 +1,6 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 import { BooleanInput } from '@angular/cdk/coercion';
-import { NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -17,7 +16,6 @@ import {
     signal,
     WritableSignal,
 } from '@angular/core';
-import { MatIconButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
@@ -30,13 +28,10 @@ import { ITable } from '../../util/table-column.interface';
     selector: 'rtui-table-base-cell',
     templateUrl: './table-base-cell.component.html',
     styleUrls: ['./table-base-cell.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        NgTemplateOutlet,
-
         // material
         MatIcon,
-        MatIconButton,
-        MatMiniFabButton,
         MatTooltip,
 
         // directives
@@ -49,7 +44,6 @@ import { ITable } from '../../util/table-column.interface';
         // pipes
         EmptyToDashPipe,
     ],
-    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TableBaseCellComponent<T = { [key: string]: unknown }> {
     readonly #clipboard: Clipboard = inject(Clipboard);
@@ -69,7 +63,7 @@ export class TableBaseCellComponent<T = { [key: string]: unknown }> {
 
     public row: InputSignal<T> = input.required();
     public column: InputSignal<ITable.Column<T>> = input.required();
-    public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
+    public isMobile: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
 

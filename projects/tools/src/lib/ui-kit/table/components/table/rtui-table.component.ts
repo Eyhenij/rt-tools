@@ -79,12 +79,6 @@ export class RtuiTableAdditionalRowActionsDirective {}
     templateUrl: './rtui-table.component.html',
     styleUrls: ['./rtui-table.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [
-        {
-            provide: RTUI_TABLE_COMPONENT_TOKEN,
-            useExisting: forwardRef(() => RtuiTableComponent),
-        },
-    ],
     imports: [
         NgTemplateOutlet,
 
@@ -106,6 +100,12 @@ export class RtuiTableAdditionalRowActionsDirective {}
         RtuiTableHeaderCellComponent,
         TableBaseCellComponent,
         RtuiTableHeaderFilterCellComponent,
+    ],
+    providers: [
+        {
+            provide: RTUI_TABLE_COMPONENT_TOKEN,
+            useExisting: forwardRef(() => RtuiTableComponent),
+        },
     ],
 })
 export class RtuiTableComponent<
