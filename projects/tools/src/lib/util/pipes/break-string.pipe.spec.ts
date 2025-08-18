@@ -37,4 +37,18 @@ describe(BreakStringPipe.name, () => {
             expect(pipe.transform(value)).not.toBe('WithCapitalLetter');
         });
     });
+
+    describe('when string is ALL CAPS with spaces', () => {
+        it('should return original string (do not insert spaces between every letter)', () => {
+            const value: string = 'WITH ALL CAPITAL LETTER';
+            expect(pipe.transform(value)).toBe('WITH ALL CAPITAL LETTER');
+        });
+    });
+
+    describe('when string already contains spaces', () => {
+        it('should return original string', () => {
+            const value: string = 'With Capital Letter';
+            expect(pipe.transform(value)).toBe('With Capital Letter');
+        });
+    });
 });
