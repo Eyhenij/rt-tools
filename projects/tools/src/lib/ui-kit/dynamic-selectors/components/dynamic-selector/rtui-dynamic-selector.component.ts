@@ -45,6 +45,7 @@ import { distinctUntilChanged, filter } from 'rxjs/operators';
 import { BlockDirective, ElemDirective } from '../../../../bem';
 import {
     areArraysEqual,
+    areArraysEqualUnordered,
     checkIsEntityInArrayByKey,
     Nullable,
     OVERLAY_POSITIONS,
@@ -223,7 +224,7 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     });
     /** Indicates clear selected button is disabled */
     public readonly isClearButtonDisabled: Signal<boolean> = computed(() => {
-        return areArraysEqual(this.#selectedEntityIds(), this.readonlyEntitiesKeys()) && !this.additionalControlChanged();
+        return areArraysEqualUnordered(this.#selectedEntityIds(), this.readonlyEntitiesKeys()) && !this.additionalControlChanged();
     });
     /** Entities can be chosen, except selected on init */
     public readonly entitiesToSelect: Signal<ENTITY[]> = computed(() => {
