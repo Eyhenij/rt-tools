@@ -84,3 +84,60 @@ export function areObjectsEqual<T>(f: T, s: T): boolean {
 
     return false;
 }
+
+/**
+ * Checks whether two arrays are equal regardless of the order of their elements.
+ * Supports deep comparison of nested arrays and objects.
+ *
+ * @template T The type of elements in the arrays
+ * @param f first array
+ * @param s second array
+ * @returns True if the arrays contain the same elements in any order, false otherwise
+ */
+export function areArraysEqualUnordered<T>(f: T[], s: T[]): boolean {
+    if (!Array.isArray(f) || !Array.isArray(s)) {
+        return false;
+    }
+
+    if (f.length !== s.length) {
+        return false;
+    }
+
+    const used: boolean[] = new Array<boolean>(s.length).fill(false);
+
+    for (const valueF of f) {
+        let found: boolean = false;
+
+        for (let i: number = 0; i < s.length; i++) {
+            if (used[i]) {
+                continue;
+            }
+
+            const valueS: T = s[i];
+
+            if (Array.isArray(valueF) && Array.isArray(valueS)) {
+                if (areArraysEqualUnordered(valueF, valueS)) {
+                    used[i] = true;
+                    found = true;
+                    break;
+                }
+            } else if (typeof valueF === 'object' && valueF != null && typeof valueS === 'object' && valueS != null) {
+                if (areObjectsEqual(valueF, valueS)) {
+                    used[i] = true;
+                    found = true;
+                    break;
+                }
+            } else if (valueF === valueS) {
+                used[i] = true;
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            return false;
+        }
+    }
+
+    return true;
+}
