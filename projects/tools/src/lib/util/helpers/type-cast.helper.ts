@@ -22,7 +22,7 @@ export class TypeCastHelper {
         return Boolean(data);
     }
 
-    public getAsNull(data: unknown, handler?: (data: unknown) => unknown): unknown {
+    public getAsNull<T = unknown, R = T>(data: T, handler?: (data: T) => R): T | R | null {
         if (!isNil(data) && !Number.isNaN(data)) {
             return handler ? handler(data) : data;
         }
