@@ -18,7 +18,7 @@
                 </th>
             }
 
-            @for (column of columns(); track column.propName; let i = $index) {
+            @for (column of columns(); track column.propName) {
                 @if (!column?.hidden) {
                     <th
                         rtElem="cell"
@@ -53,7 +53,7 @@
                     <th rtElem="cell" rtMod="filterable, empty"></th>
                 }
 
-                @for (column of columns(); track column.propName; let i = $index) {
+                @for (column of columns(); track column.propName) {
                     @if (!column?.hidden && column.filterType) {
                         <th rtElem="cell" rtMod="filterable">
                             <rtui-table-header-filter-cell

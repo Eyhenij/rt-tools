@@ -23,6 +23,7 @@ import { filter } from 'rxjs/operators';
 import { BlockDirective, ElemDirective } from '../../bem';
 import { BreakpointService, Nullable } from '../../util';
 import { TOGGLE_SIZE_TYPE_ENUM, ToggleSizeType } from './toggle-size.type.enum';
+import { BooleanInput } from '@angular/cdk/coercion';
 
 @Component({
     selector: 'rtui-toggle',
@@ -58,10 +59,10 @@ export class RtuiToggleComponent implements OnInit, ControlValueAccessor {
     public tooltip: InputSignal<string> = input('');
     public size: InputSignal<ToggleSizeType> = input<ToggleSizeType>(TOGGLE_SIZE_TYPE_ENUM.MD);
     public tooltipPosition: InputSignal<TooltipPosition> = input<TooltipPosition>('above');
-    public disabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+    public isDisabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
-    public tooltipDisabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+    public tooltipDisabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
 
@@ -89,7 +90,7 @@ export class RtuiToggleComponent implements OnInit, ControlValueAccessor {
 
         effect(
             () => {
-                if (this.formControl.disabled !== this.disabled()) {
+                if (this.formControl.disabled !== this.isDisabled()) {
                     this.setDisabledState();
                 }
             },
@@ -112,7 +113,7 @@ export class RtuiToggleComponent implements OnInit, ControlValueAccessor {
     }
 
     public setDisabledState(): void {
-        if (this.disabled()) {
+        if (this.isDisabled()) {
             this.formControl.disable();
         } else {
             this.formControl.enable();

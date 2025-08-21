@@ -1,6 +1,6 @@
 <label
     rtBlock="rtui-toggle-container"
-    [rtMod]="{ disabled: disabled() }"
+    [rtMod]="{ disabled: isDisabled() }"
     [matTooltipPosition]="tooltipPosition()"
     [matTooltip]="tooltip()"
     [matTooltipDisabled]="!tooltip() || isMobile() || tooltipDisabled()">
