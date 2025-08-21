@@ -74,7 +74,7 @@
         <rtui-toggle
             rtStopTableRowClick
             tabindex="0"
-            [disabled]="true"
+            [isDisabled]="true"
             [ngModel]="row.active"
             (click)="$event.stopPropagation(); onCustomCellToggle(row)"
             (keydown)="$event.stopPropagation(); onCustomCellToggle(row)" />
