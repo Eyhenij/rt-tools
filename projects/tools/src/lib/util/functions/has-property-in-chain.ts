@@ -14,6 +14,7 @@ const safetyHasOwn: HasOwnFn = (o: object, k: PropertyKey) => {
     const native: Nullable<HasOwnFn> = (Object as unknown as { hasOwn?: HasOwnFn }).hasOwn;
     return typeof native === 'function' ? native(o, k) : Object.prototype.hasOwnProperty.call(o, k);
 };
+
 /**
  * Safe property existence check with configurable scope.
  *
@@ -47,8 +48,10 @@ export const hasPropertyInChain: (obj: unknown, key: PropertyKey, scope?: IHasSc
     switch (scope) {
         case HAS_OWN_SCOPE_ENUM.OWN:
             return safetyHasOwn(o, key);
+
         case HAS_OWN_SCOPE_ENUM.INHERITED:
             return key in o && !safetyHasOwn(o, key);
+
         default:
             return key in o;
     }
