@@ -55,6 +55,10 @@ export class TypeCastHelper {
             data = [data];
         }
 
+        if (!data.length) {
+            return [];
+        }
+
         return data.map(cb);
     }
 
@@ -68,12 +72,15 @@ export class TypeCastHelper {
             case 'number':
                 date = new Date(date);
                 break;
+
             case 'string':
                 date = !!parseFormatOptions ? parse(date as string, parseFormatOptions, new Date()) : parseISO(date as string);
                 break;
         }
 
-        if (!date || (date instanceof Date && !date.getTime())) return '';
+        if (!date || (date instanceof Date && !date.getTime())) {
+            return '';
+        }
 
         return asString ? format(date, formatOptions) : (date as Date);
     }

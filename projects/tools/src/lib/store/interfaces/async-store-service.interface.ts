@@ -24,6 +24,10 @@ export interface IBaseAsyncStoreService<STATE_TYPE extends object, MSG_TYPE exte
 
     /** @description Indicates failure status of the first request for getting list of Entities */
     requestStatus: Signal<ModelStatus>;
+    /** @description Indicates statuses of the first request for getting list of Entities */
+    loadingStatus: Signal<ModelStatus>;
+    /** @description Indicates statuses of the following requests for getting list of Entities */
+    fetchingStatus: Signal<ModelStatus>;
     /** @description Indicates statuses of create/update requests */
     upsertStatus: Signal<ModelStatus>;
     /** @description Indicates statuses of delete requests */
