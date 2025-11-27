@@ -216,7 +216,7 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     public readonly isSelectionControlShown: WritableSignal<boolean> = signal(false);
     /** Indicates is no data */
     public readonly isNoDataPlaceholderShown: Signal<boolean> = computed(() => {
-        return !this.entitiesToSelect()?.length && !this.selectedEntities().length && !this.searchTerm();
+        return !this.selectedEntities().length && !this.searchTerm() && (!this.entitiesToSelect()?.length || !this.isSelectionAvailable());
     });
     /** Indicates reset selected button is disabled */
     public readonly isResetButtonDisabled: Signal<boolean> = computed(() => {
