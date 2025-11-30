@@ -70,12 +70,12 @@ export class RtuiTableHeaderCellComponent {
     });
 
     @HostBinding('style')
-    private get style(): SafeStyle {
+    protected get style(): SafeStyle {
         return this.#sanitizer.bypassSecurityTrustStyle(`text-align: ${this.headerModel().align};`);
     }
 
     @HostListener('click')
-    private handleClick(): void {
+    protected handleClick(): void {
         const sortPropertyName: Nullable<string> = this.sortModel()?.propertyName;
 
         if (sortPropertyName) {

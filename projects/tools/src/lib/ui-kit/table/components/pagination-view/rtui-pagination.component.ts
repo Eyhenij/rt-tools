@@ -74,7 +74,7 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
     public readonly containerRef: Signal<Nullable<ElementRef<HTMLElement>>> = viewChild<ElementRef<HTMLElement>>('containerRef');
 
     /** Set 'isContentClipped' when widow resize */
-    @HostListener('window:resize', ['$event'])
+    @HostListener('window:resize')
     public onResize(): void {
         if (this.isContentClipped() && this.#windowRef?.innerWidth && this.minContentFitWidth() + 36 < this.#windowRef.innerWidth) {
             this.isContentClipped.set(false);

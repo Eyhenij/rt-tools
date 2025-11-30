@@ -2,7 +2,7 @@ import { IBaseMapper } from '../interfaces';
 import { TypeCastHelper } from './type-cast.helper';
 
 export abstract class BaseMapper<M> implements IBaseMapper<M> {
-    public typeCast: TypeCastHelper = new TypeCastHelper();
+    public readonly typeCast: TypeCastHelper = new TypeCastHelper();
 
     // eslint-disable-next-line
     public mapFrom(data: NonNullable<unknown>, ...args: unknown[]): M {
