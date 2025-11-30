@@ -109,10 +109,10 @@ export class RtuiTableAdditionalRowActionsDirective {}
     ],
 })
 export class RtuiTableComponent<
-        ENTITY_TYPE extends Record<string, unknown>,
-        SORT_PROPERTY extends Extract<keyof ENTITY_TYPE, string>,
-        KEY extends Extract<keyof ENTITY_TYPE, string>,
-    >
+    ENTITY_TYPE extends Record<string, unknown>,
+    SORT_PROPERTY extends Extract<keyof ENTITY_TYPE, string>,
+    KEY extends Extract<keyof ENTITY_TYPE, string>,
+>
     implements IRtuiTable<ENTITY_TYPE, SORT_PROPERTY, KEY>, AfterViewChecked
 {
     protected readonly rowActions: Signal<Nullable<ElementRef<HTMLElement>>> = viewChild<ElementRef<HTMLElement>>('rowActions');

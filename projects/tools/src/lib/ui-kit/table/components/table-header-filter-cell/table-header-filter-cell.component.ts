@@ -72,9 +72,10 @@ import { MatTooltip } from '@angular/material/tooltip';
         RtuiClearButtonComponent,
     ],
 })
-export class RtuiTableHeaderFilterCellComponent<ENTITY_TYPE extends Record<string, unknown>, KEY extends Extract<keyof ENTITY_TYPE, string>>
-    implements OnInit
-{
+export class RtuiTableHeaderFilterCellComponent<
+    ENTITY_TYPE extends Record<string, unknown>,
+    KEY extends Extract<keyof ENTITY_TYPE, string>,
+> implements OnInit {
     readonly #injector: Injector = inject(Injector);
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
 

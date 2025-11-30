@@ -9,8 +9,10 @@ export interface ISetPropertiesConfig {
     showNotification?: boolean;
 }
 
-export interface IBaseAsyncStoreService<STATE_TYPE extends object, MSG_TYPE extends string>
-    extends IBaseStoreService<STATE_TYPE, MSG_TYPE> {
+export interface IBaseAsyncStoreService<STATE_TYPE extends object, MSG_TYPE extends string> extends IBaseStoreService<
+    STATE_TYPE,
+    MSG_TYPE
+> {
     // ================================
     // region Selectors
     // ================================
