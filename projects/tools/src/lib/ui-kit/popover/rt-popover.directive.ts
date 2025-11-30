@@ -56,7 +56,7 @@ export class RtPopoverDirective implements OnInit, OnDestroy {
     });
 
     @HostListener('document:click', ['$event.target'])
-    public onClick(element: HTMLElement): void {
+    public onClick(element: EventTarget | null): void {
         if (this.trigger() === 'click') {
             if (this.#hostRef.nativeElement.contains(element)) {
                 this.#show();

@@ -9,10 +9,10 @@ import { RtCommonSelectorsDirective } from './common-selectors.directive';
     selector: 'rtui-table[rtTableSelectorsDirective]',
 })
 export class RtTableSelectorsDirective<
-        ENTITY_TYPE extends Record<string, unknown>,
-        SORT_PROPERTY extends Extract<keyof ENTITY_TYPE, string>,
-        KEY extends Extract<keyof ENTITY_TYPE, string>,
-    >
+    ENTITY_TYPE extends Record<string, unknown>,
+    SORT_PROPERTY extends Extract<keyof ENTITY_TYPE, string>,
+    KEY extends Extract<keyof ENTITY_TYPE, string>,
+>
     extends RtCommonSelectorsDirective<ENTITY_TYPE, KEY>
     implements OnInit
 {

@@ -1,3 +1,4 @@
+export * from './date-format';
 export * from './date-string-to-date';
 export * from './is-date-valid';
 export * from './is-equal';

@@ -4,7 +4,18 @@
         "outDir": "../../dist/out-tsc",
         "module": "commonjs",
         "target": "es2016",
-        "types": ["jest", "node"]
+        "moduleResolution": "bundler",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "types": ["jest", "node"],
+        "baseUrl": ".",
+        "paths": {
+            "@angular/core/testing": ["../../node_modules/@angular/core/types/testing.d.ts"],
+            "@angular/cdk/overlay": ["../../node_modules/@angular/cdk/types/overlay.d.ts"],
+            "@angular/cdk/layout": ["../../node_modules/@angular/cdk/types/layout.d.ts"],
+            "@angular/cdk/coercion": ["../../node_modules/@angular/cdk/types/coercion.d.ts"],
+            "@angular/cdk/portal": ["../../node_modules/@angular/cdk/types/portal.d.ts"]
+        }
     },
     "files": ["src/test-setup.ts"],
     "include": ["jest.config.ts", "src/**/*.test.ts", "src/**/*.spec.ts", "src/**/*.d.ts"]
