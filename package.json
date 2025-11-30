@@ -81,7 +81,6 @@
     "@typescript-eslint/parser": "^8.48.0",
     "conventional-changelog-cli": "^5.0.0",
     "date-fns": "^4.1.0",
-    "dayjs": "^1.11.19",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-html": "^8.1.3",

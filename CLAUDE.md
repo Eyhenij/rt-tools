@@ -48,14 +48,12 @@ This is an Nx-managed monorepo using pnpm workspaces. The main library is in `pr
 The library exports from `projects/tools/src/public-api.ts` with three main categories:
 
 1. **Core Tools** (`src/lib/`)
-
     - `bem/` - BEM CSS methodology utilities (block, elem, mod directives)
     - `storage/` - Browser storage services (localStorage, sessionStorage, in-memory)
     - `store/` - Signal-based state management (`BaseStoreService`, `BaseAsyncStoreService`)
     - `idb-storage/` - IndexedDB storage service
 
 2. **UI Kit** (`src/lib/ui-kit/`)
-
     - Components: modal, aside, buttons, table, spinner, toggle, checkbox, toolbar, header, popover, snack-bar, action-bar, dynamic-selectors, file-uploader, image-uploader, info-badge
     - All components use `rtui-` prefix (e.g., `rtui-button`, `rtui-spinner`)
 
