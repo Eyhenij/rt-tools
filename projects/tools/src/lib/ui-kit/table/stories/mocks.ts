@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-import dayjs from 'dayjs';
 
 import { Person, Status } from './types';
 
@@ -12,7 +11,7 @@ export const createPerson: () => Person = (): Person => {
         id: faker.number.int(),
         name: `${faker.person.firstName(gender)} ${faker.person.lastName(gender)} ${faker.person.middleName(gender)}`,
         email: faker.internet.email(),
-        age: dayjs().year() - dayjs(birthday).year(),
+        age: new Date().getFullYear() - birthday.getFullYear(),
         status: status,
         sex: gender,
         bio: Math.random() > 0.7 ? faker.lorem.paragraph() : faker.lorem.words(1),

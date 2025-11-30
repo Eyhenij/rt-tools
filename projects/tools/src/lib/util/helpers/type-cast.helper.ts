@@ -1,4 +1,4 @@
-import { format, parse, parseISO } from 'date-fns';
+import { formatDate, isDate, parseDate, parseISO } from '../functions/date-format';
 import { isNil } from '../functions';
 
 export class TypeCastHelper {
@@ -74,14 +74,14 @@ export class TypeCastHelper {
                 break;
 
             case 'string':
-                date = !!parseFormatOptions ? parse(date as string, parseFormatOptions, new Date()) : parseISO(date as string);
+                date = !!parseFormatOptions ? parseDate(date as string, parseFormatOptions, new Date()) : parseISO(date as string);
                 break;
         }
 
-        if (!date || (date instanceof Date && !date.getTime())) {
+        if (!isDate(date)) {
             return '';
         }
 
-        return asString ? format(date, formatOptions) : (date as Date);
+        return asString ? formatDate(date, formatOptions) : date;
     }
 }

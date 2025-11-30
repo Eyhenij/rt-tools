@@ -23,10 +23,10 @@ import { RtCommonSelectorsDirective } from './common-selectors.directive';
     selector: 'rtui-dynamic-list[rtDynamicListSelectorsDirective]',
 })
 export class RtDynamicListSelectorsDirective<
-        ENTITY_TYPE extends Record<string, unknown>,
-        SORT_PROPERTY extends Extract<keyof ENTITY_TYPE, string>,
-        KEY extends Extract<keyof ENTITY_TYPE, string>,
-    >
+    ENTITY_TYPE extends Record<string, unknown>,
+    SORT_PROPERTY extends Extract<keyof ENTITY_TYPE, string>,
+    KEY extends Extract<keyof ENTITY_TYPE, string>,
+>
     extends RtCommonSelectorsDirective<ENTITY_TYPE, KEY>
     implements OnInit
 {

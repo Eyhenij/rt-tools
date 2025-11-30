@@ -47,6 +47,7 @@ import {
 import { RtuiSpinnerComponent } from '../../../spinner';
 import { RtuiClearButtonComponent } from '../../../table';
 import { RtuiToggleComponent } from '../../../toggle';
+import { BooleanInput } from '@angular/cdk/coercion';
 
 @Component({
     selector: 'rtui-multi-selector-popup',
@@ -113,31 +114,31 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
     /** Navigation button link */
     public navigateLink: InputSignal<string> = input<string>('');
     /** Indicates if only one option can be chosen */
-    public isSingleSelection: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(null, {
+    public isSingleSelection: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Indicates is change multi select mode toggle shown */
-    public isMultiToggleShown: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(null, {
+    public isMultiToggleShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Indicates is Select all button shown */
-    public isSelectAllButtonShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+    public isSelectAllButtonShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
     /** Indicates that a list of entities is being loading */
-    public loading: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(null, {
+    public loading: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Indicates that a list of entities is being fetching */
-    public fetching: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(null, {
+    public fetching: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Indicates is BreakStringPipe used */
-    public useNameBreaking: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(null, {
+    public useNameBreaking: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Indicates lazy loading is used */
-    public isLazyLoad: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(null, {
+    public isLazyLoad: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(false, {
         transform: booleanAttribute,
     });
     /** Indicates local search is used */

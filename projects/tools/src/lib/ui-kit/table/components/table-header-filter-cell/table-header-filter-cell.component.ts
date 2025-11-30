@@ -30,7 +30,7 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatOption, provideNativeDateAdapter } from '@angular/material/core';
 import { MatSelect } from '@angular/material/select';
 import { TitleCasePipe } from '@angular/common';
-import { isDate } from 'date-fns';
+import { isDate } from '../../../../util';
 import { RtuiClearButtonComponent } from '../clear-search-button/rtui-clear-button.component';
 import { BlockDirective } from '../../../../bem';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -72,9 +72,10 @@ import { MatTooltip } from '@angular/material/tooltip';
         RtuiClearButtonComponent,
     ],
 })
-export class RtuiTableHeaderFilterCellComponent<ENTITY_TYPE extends Record<string, unknown>, KEY extends Extract<keyof ENTITY_TYPE, string>>
-    implements OnInit
-{
+export class RtuiTableHeaderFilterCellComponent<
+    ENTITY_TYPE extends Record<string, unknown>,
+    KEY extends Extract<keyof ENTITY_TYPE, string>,
+> implements OnInit {
     readonly #injector: Injector = inject(Injector);
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
 

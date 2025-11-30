@@ -1,6 +1,6 @@
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
-import { fn } from '@storybook/test';
+import { fn } from 'storybook/test';
 
 import { TestModalComponent } from './test-modal.component';
 

@@ -5,9 +5,10 @@ import { MessageBus } from '../util/services/message-bus';
 import { IAction } from './interfaces/action.interface';
 import { IBaseStoreService } from './interfaces/base-store-service.interface';
 
-export abstract class BaseStoreService<STATE_TYPE extends object, MSG_TYPE extends string>
-    implements IBaseStoreService<STATE_TYPE, MSG_TYPE>
-{
+export abstract class BaseStoreService<STATE_TYPE extends object, MSG_TYPE extends string> implements IBaseStoreService<
+    STATE_TYPE,
+    MSG_TYPE
+> {
     readonly #store: WritableSignal<STATE_TYPE> = signal({} as STATE_TYPE);
     public readonly store: Signal<STATE_TYPE> = this.#store.asReadonly();
 

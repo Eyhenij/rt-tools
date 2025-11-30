@@ -35,11 +35,7 @@ const safetyHasOwn: HasOwnFn = (o: object, k: PropertyKey) => {
  * hasPropertyInChain(Object.create({ a: 1 }), 'a', HAS_OWN_SCOPE_ENUM.INHERITED); // true
  * hasPropertyInChain({ a: 1 }, 'b', HAS_OWN_SCOPE_ENUM.OWN); // false
  */
-export const hasPropertyInChain: (obj: unknown, key: PropertyKey, scope?: IHasScopeType) => boolean = (
-    obj: unknown,
-    key: PropertyKey,
-    scope: IHasScopeType = HAS_OWN_SCOPE_ENUM.OWN
-): boolean => {
+export function hasPropertyInChain(obj: unknown, key: PropertyKey, scope: IHasScopeType = HAS_OWN_SCOPE_ENUM.OWN): boolean {
     if (obj === undefined || obj === null) {
         return false;
     }
@@ -55,4 +51,4 @@ export const hasPropertyInChain: (obj: unknown, key: PropertyKey, scope?: IHasSc
         default:
             return key in o;
     }
-};
+}
