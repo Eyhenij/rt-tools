@@ -36,7 +36,7 @@ export class RtuiAsidePanelComponent {
     readonly #asideRef: AsideRef<object, object> = inject(ASIDE_REF);
     readonly #breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
 
-    @HostBinding('@aside') private _state: string = `enter-${this.#asideRef.position}`;
+    @HostBinding('@aside') protected _state: string = `enter-${this.#asideRef.position}`;
 
     public portal: ComponentPortal<unknown> = this.#createPortal(this.#asideRef);
     public position: AsidePositions = this.#asideRef.position;

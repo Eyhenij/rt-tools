@@ -24,10 +24,10 @@ import { IconSideType } from './icon-side.type';
 
 @Component({
     selector: 'rtui-info-badge',
-    imports: [MatTooltip, NgClass, MatIcon, NgStyle, BlockDirective, ElemDirective],
     templateUrl: './info-badge.component.html',
     styleUrl: './info-badge.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [MatTooltip, NgClass, MatIcon, NgStyle, BlockDirective, ElemDirective],
 })
 export class RtuiInfoBadgeComponent implements AfterContentChecked {
     public size: InputSignal<IInfoBadgeSizeType> = input.required();
