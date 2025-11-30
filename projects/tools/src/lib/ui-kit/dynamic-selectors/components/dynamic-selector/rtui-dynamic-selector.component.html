@@ -37,7 +37,7 @@
                         (submitAction)="showSelectionControl($event)" />
                 } @else {
                     <div rtElem="actions">
-                        @if (isOpenPopupButtonShown()) {
+                        @if (isOpenPopupButtonShown() && this.entitiesToSelect()?.length) {
                             <button
                                 #trigger="cdkOverlayOrigin"
                                 cdkOverlayOrigin
