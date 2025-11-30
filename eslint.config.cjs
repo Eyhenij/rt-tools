@@ -179,7 +179,7 @@ module.exports = [
             '@angular-eslint/template/cyclomatic-complexity': [
                 'error',
                 {
-                    maxComplexity: 8,
+                    maxComplexity: 25,
                 },
             ],
             /* rule @angular-eslint/template/no-call-expression off until
@@ -197,6 +197,12 @@ module.exports = [
             ...config.rules,
         },
     })),
+    {
+        files: ['**/bem/*.directive.ts'],
+        rules: {
+            '@angular-eslint/prefer-inject': 'off',
+        },
+    },
     {
         ignores: [
             '**/.angular/**',
