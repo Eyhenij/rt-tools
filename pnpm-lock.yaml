@@ -281,7 +281,7 @@ importers:
             '@angular/core':
                 specifier: ^21.0.0
                 version: 21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0)
-            '@rt/core':
+            '@rt-tools/core':
                 specifier: workspace:*
                 version: link:../core
             rxjs:
@@ -320,13 +320,13 @@ importers:
             '@angular/router':
                 specifier: ^21.0.0
                 version: 21.0.1(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(@angular/platform-browser@21.0.1(@angular/animations@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0)))(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0)))(rxjs@7.8.2)
-            '@rt/core':
+            '@rt-tools/core':
                 specifier: workspace:*
                 version: link:../core
-            '@rt/store':
+            '@rt-tools/store':
                 specifier: workspace:*
                 version: link:../store
-            '@rt/utils':
+            '@rt-tools/utils':
                 specifier: workspace:*
                 version: link:../utils
             rxjs:
@@ -359,7 +359,7 @@ importers:
             '@angular/platform-browser':
                 specifier: ^21.0.0
                 version: 21.0.1(@angular/animations@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0)))(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))
-            '@rt/core':
+            '@rt-tools/core':
                 specifier: workspace:*
                 version: link:../core
             rxjs:
