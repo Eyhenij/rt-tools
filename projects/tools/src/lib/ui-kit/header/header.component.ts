@@ -18,7 +18,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatToolbar } from '@angular/material/toolbar';
 
 import { BlockDirective, ElemDirective } from '../../bem';
-import { Nullable } from '../../util';
+import { Nullable } from '@rt-tools/utils';
 import { RtuiToolbarCenterDirective, RtuiToolbarComponent, RtuiToolbarLeftDirective, RtuiToolbarRightDirective } from '../toolbar';
 
 @Directive({

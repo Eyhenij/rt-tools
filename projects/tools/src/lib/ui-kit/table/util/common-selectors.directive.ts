@@ -1,6 +1,6 @@
 import { booleanAttribute, Directive, input, InputSignalWithTransform, signal, WritableSignal } from '@angular/core';
 
-import { transformArrayInput } from '../../../util';
+import { transformArrayInput } from '@rt-tools/utils';
 
 @Directive()
 export class RtCommonSelectorsDirective<ENTITY_TYPE extends Record<string, unknown>, KEY extends Extract<keyof ENTITY_TYPE, string>> {

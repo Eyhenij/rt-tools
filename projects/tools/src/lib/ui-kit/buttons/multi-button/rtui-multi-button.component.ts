@@ -10,7 +10,7 @@ import {
     output,
 } from '@angular/core';
 import { BlockDirective, ElemDirective } from '../../../bem';
-import { transformArrayInput } from '../../../util';
+import { transformArrayInput } from '@rt-tools/utils';
 
 @Component({
     selector: 'rtui-multi-button',

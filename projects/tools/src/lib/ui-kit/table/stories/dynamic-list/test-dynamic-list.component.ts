@@ -19,7 +19,7 @@ import {
     RtuiDynamicListToolbarActionsDirective,
     RtuiDynamicListToolbarSelectorsDirective,
 } from '../../dynamic-list.component';
-import { FILTER_OPERATOR_TYPE_ENUM, FilterModel, RtDynamicListSelectorsDirective } from '../../util';
+import { FILTER_OPERATOR_TYPE_ENUM, FilterModel, RtDynamicListSelectorsDirective } from '@rt-tools/utils';
 import { LIST_SORT_ORDER_ENUM } from '../../util/list-sort-order.enum';
 import { PageModel, SortModel } from '../../util/lists.interface';
 import { RtTableConfigService } from '../../util/table-config.service';

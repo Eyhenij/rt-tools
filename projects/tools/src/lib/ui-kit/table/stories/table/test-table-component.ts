@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, effect, inject, Injector, OnInit, S
 import { IDBStorageService } from '../../../../idb-storage';
 import { Nullable } from '../../../../util';
 import { RtuiTableComponent } from '../../components';
-import { RtTableSelectorsDirective } from '../../util';
+import { RtTableSelectorsDirective } from '@rt-tools/utils';
 import { LIST_SORT_ORDER_ENUM } from '../../util/list-sort-order.enum';
 import { SortModel } from '../../util/lists.interface';
 import { RtTableConfigService } from '../../util/table-config.service';

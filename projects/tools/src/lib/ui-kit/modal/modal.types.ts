@@ -2,8 +2,7 @@ import { Type } from '@angular/core';
 import { ThemePalette } from '@angular/material/core';
 import { Observable } from 'rxjs';
 
-import { Icon, Select } from '../../util/interfaces/modal-data.interface';
-import { Nullable } from '../../util/interfaces/nullable.type';
+import { Icon, Nullable, Select } from '@rt-tools/utils';
 
 export namespace IModal {
     export interface Button<T> {
