@@ -1,4 +1,4 @@
-name: Publish @rt/core to npm
+name: Publish @rt-tools/core to npm
 
 on:
     workflow_dispatch:

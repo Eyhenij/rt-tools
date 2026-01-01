@@ -60,15 +60,15 @@ packageJson.version = newVersion;
 
 // Write changes back to package.json
 fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), 'utf8');
-console.log(`@rt/core version updated successfully: ${currentVersion} → ${newVersion}`);
+console.log(`@rt-tools/core version updated successfully: ${currentVersion} → ${newVersion}`);
 
 // Also update the peerDependency in rt-tools if needed
 const toolsPackageJsonPath = path.resolve(__dirname, './projects/tools/package.json');
 if (fs.existsSync(toolsPackageJsonPath)) {
     const toolsPackageJson = JSON.parse(fs.readFileSync(toolsPackageJsonPath, 'utf8'));
-    if (toolsPackageJson.peerDependencies && toolsPackageJson.peerDependencies['@rt/core']) {
-        toolsPackageJson.peerDependencies['@rt/core'] = `^${newVersion}`;
+    if (toolsPackageJson.peerDependencies && toolsPackageJson.peerDependencies['@rt-tools/core']) {
+        toolsPackageJson.peerDependencies['@rt-tools/core'] = `^${newVersion}`;
         fs.writeFileSync(toolsPackageJsonPath, JSON.stringify(toolsPackageJson, null, 2), 'utf8');
-        console.log(`rt-tools peerDependency @rt/core updated to ^${newVersion}`);
+        console.log(`rt-tools peerDependency @rt-tools/core updated to ^${newVersion}`);
     }
 }
