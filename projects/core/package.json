@@ -1,0 +1,28 @@
+{
+  "name": "@rt-tools/core",
+  "version": "0.0.1",
+  "description": "Core utilities for Angular applications - MessageBus, PlatformService, WINDOW token, and helper functions",
+  "license": "Apache-2.0",
+  "author": "Yauheni Krumin",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Eyhenij/rt-tools",
+    "directory": "projects/core"
+  },
+  "keywords": [
+    "Angular",
+    "Core",
+    "Utils",
+    "MessageBus",
+    "Signals"
+  ],
+  "peerDependencies": {
+    "@angular/common": "^21.0.0",
+    "@angular/core": "^21.0.0",
+    "rxjs": "^7.8.0"
+  },
+  "sideEffects": false,
+  "main": "src/index.ts",
+  "types": "src/index.ts"
+}

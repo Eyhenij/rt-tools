@@ -1,0 +1,39 @@
+{
+  "name": "@rt-tools/utils",
+  "version": "0.0.1",
+  "description": "Utility functions, pipes, directives, validators and services for Angular applications",
+  "author": "RT Team",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nickmdf/rt-tools.git",
+    "directory": "projects/utils"
+  },
+  "homepage": "https://github.com/nickmdf/rt-tools/tree/main/projects/utils",
+  "bugs": {
+    "url": "https://github.com/nickmdf/rt-tools/issues"
+  },
+  "keywords": [
+    "angular",
+    "utils",
+    "pipes",
+    "directives",
+    "validators",
+    "services"
+  ],
+  "dependencies": {
+    "@rt-tools/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "@rt-tools/core": "^0.0.1",
+    "@angular/common": "^21.0.0",
+    "@angular/core": "^21.0.0",
+    "@angular/forms": "^21.0.0",
+    "@angular/cdk": "^21.0.0",
+    "@angular/platform-browser": "^21.0.0",
+    "rxjs": "^7.8.0"
+  },
+  "sideEffects": false,
+  "main": "src/index.ts",
+  "types": "src/index.ts"
+}

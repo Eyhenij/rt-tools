@@ -6,7 +6,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
-import { areArraysEqual, ASIDE_REF, AsideRef, BreakpointService, Nullable, RtIconOutlinedDirective } from '../../../../util';
+import { areArraysEqual, ASIDE_REF, AsideRef, BreakpointService, Nullable, RtIconOutlinedDirective } from '@rt-tools/utils';
 import { RtuiAsideContainerComponent, RtuiAsideContainerHeaderDirective } from '../../../aside';
 import { RtuiDynamicSelectorAdditionalControlDirective, RtuiDynamicSelectorComponent } from '../../../dynamic-selectors';
 import { RtuiToggleComponent } from '../../../toggle';

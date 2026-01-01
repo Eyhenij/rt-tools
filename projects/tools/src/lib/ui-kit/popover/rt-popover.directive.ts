@@ -18,7 +18,7 @@ import {
 } from '@angular/core';
 import { computePosition, ComputePositionReturn, flip, offset, shift } from '@floating-ui/dom';
 
-import { Nullable, PlatformService, WINDOW } from '../../util';
+import { Nullable, PlatformService, WINDOW } from '@rt-tools/utils';
 import { RtuiPopoverContainerComponent } from './rtui-popover-container.component';
 
 export type MenuItemTrigger = 'click' | 'hover';

@@ -1,7 +1,7 @@
 import { booleanAttribute, Directive, input, InputSignal, InputSignalWithTransform } from '@angular/core';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
 
-import { Nullable, transformStringInput } from '../../../util';
+import { Nullable, transformStringInput } from '@rt-tools/utils';
 
 @Directive()
 export abstract class RtuiDynamicSelectorsDirective {

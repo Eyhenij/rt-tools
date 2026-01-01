@@ -6,5 +6,6 @@
   "assets": ["src/styles", "src/**/*.scss"],
   "lib": {
     "entryFile": "src/public-api.ts"
-  }
+  },
+  "allowedNonPeerDependencies": ["@rt-tools/core", "@rt-tools/store", "@rt-tools/utils"]
 }

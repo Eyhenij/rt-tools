@@ -1,4 +1,4 @@
-import { Nullable } from '../../util/interfaces/nullable.type';
+import { Nullable } from '@rt-tools/utils';
 
 export interface IStorageConverter {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

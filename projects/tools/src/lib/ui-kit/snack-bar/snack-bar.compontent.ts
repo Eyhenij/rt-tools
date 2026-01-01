@@ -5,7 +5,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar';
 
 import { BlockDirective, ElemDirective } from '../../bem';
-import { Nullable, RtIconOutlinedDirective } from '../../util';
+import { Nullable, RtIconOutlinedDirective } from '@rt-tools/utils';
 import { IRtSnackBar } from './snack-bar-config.interface';
 
 @Component({

@@ -1,9 +1,10 @@
 {
-  "name": "@rt/tools",
+  "name": "@rt-tools/tools",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
   "sourceRoot": "projects/tools/src",
   "prefix": "rt",
+  "implicitDependencies": ["@rt-tools/core", "@rt-tools/store", "@rt-tools/utils"],
   "generators": {
     "@schematics/angular:component": {
       "style": "scss",
@@ -43,7 +44,7 @@
       "options": {
         "port": 6006,
         "configDir": "projects/tools/.storybook",
-        "browserTarget": "@rt/tools:build-storybook",
+        "browserTarget": "@rt-tools/tools:build-storybook",
         "compodoc": false,
         "styles": ["projects/tools/.storybook/storybook.scss"]
       },
@@ -57,9 +58,9 @@
       "executor": "@storybook/angular:build-storybook",
       "outputs": ["{options.outputDir}"],
       "options": {
-        "outputDir": "dist/storybook/@rt/tools",
+        "outputDir": "dist/storybook/@rt-tools/tools",
         "configDir": "projects/tools/.storybook",
-        "browserTarget": "@rt/tools:build-storybook",
+        "browserTarget": "@rt-tools/tools:build-storybook",
         "compodoc": false,
         "styles": ["projects/tools/.storybook/storybook.scss"]
       },
@@ -85,14 +86,14 @@
       "executor": "@nx/web:file-server",
       "dependsOn": ["build-storybook"],
       "options": {
-        "buildTarget": "@rt/tools:build-storybook",
-        "staticFilePath": "dist/storybook/@rt/tools",
+        "buildTarget": "@rt-tools/tools:build-storybook",
+        "staticFilePath": "dist/storybook/@rt-tools/tools",
         "spa": true,
         "styles": ["projects/tools/.storybook/storybook.scss"]
       },
       "configurations": {
         "ci": {
-          "buildTarget": "@rt/tools:build-storybook:ci"
+          "buildTarget": "@rt-tools/tools:build-storybook:ci"
         }
       }
     }
