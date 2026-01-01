@@ -1,5 +1,5 @@
-import { IStorageConverter } from '../../storage/interfaces/storage-converter';
-import { Nullable } from '../../util/interfaces/nullable.type';
+import { Nullable } from '@rt-tools/utils';
+import { IStorageConverter } from './storage-converter';
 import { StorageType } from '../enums/storage-types.enum';
 
 export interface IStorageConfig {

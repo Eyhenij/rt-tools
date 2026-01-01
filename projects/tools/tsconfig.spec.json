@@ -10,6 +10,9 @@
         "types": ["jest", "node"],
         "baseUrl": ".",
         "paths": {
+            "@rt-tools/core": ["../core/src/index.ts"],
+            "@rt-tools/store": ["../store/src/index.ts"],
+            "@rt-tools/utils": ["../utils/src/index.ts"],
             "@angular/core/testing": ["../../node_modules/@angular/core/types/testing.d.ts"],
             "@angular/cdk/overlay": ["../../node_modules/@angular/cdk/types/overlay.d.ts"],
             "@angular/cdk/layout": ["../../node_modules/@angular/cdk/types/layout.d.ts"],

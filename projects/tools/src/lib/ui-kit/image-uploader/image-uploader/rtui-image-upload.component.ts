@@ -22,7 +22,7 @@ import { MatTooltip, TooltipPosition } from '@angular/material/tooltip';
 import { ImageCroppedEvent, ImageCropperComponent } from 'ngx-image-cropper';
 
 import { BlockDirective, ElemDirective } from '../../../bem';
-import { Nullable, RtIconOutlinedDirective, transformStringInput } from '../../../util';
+import { Nullable, RtIconOutlinedDirective, transformStringInput } from '@rt-tools/utils';
 import { RtuiFileUploadComponent } from '../../file-uploader';
 import { RtuiSpinnerComponent } from '../../spinner';
 import { BooleanInput } from '@angular/cdk/coercion';

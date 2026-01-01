@@ -2,7 +2,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, HostBinding, inject, input, InputSignalWithTransform, TemplateRef } from '@angular/core';
 import { DomSanitizer, SafeValue } from '@angular/platform-browser';
 
-import { isString, Nullable } from '../../util';
+import { isString, Nullable } from '@rt-tools/utils';
 
 @Component({
     selector: 'rtui-popover-container',

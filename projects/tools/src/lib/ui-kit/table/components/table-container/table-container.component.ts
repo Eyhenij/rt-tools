@@ -42,7 +42,7 @@ import {
     RtIconOutlinedDirective,
     transformStringInput,
     WINDOW,
-} from '../../../../util';
+} from '@rt-tools/utils';
 import { RtAsideService } from '../../../aside';
 import { RtuiHeaderCenterDirective } from '../../../header';
 import {
@@ -52,8 +52,7 @@ import {
 } from '../../../scrollable';
 import { RtuiSpinnerComponent } from '../../../spinner';
 import { RtuiToolbarComponent, RtuiToolbarLeftDirective, RtuiToolbarRightDirective } from '../../../toolbar';
-import { ITable, RtTableConfigService } from '../../util';
-import { PageModel } from '../../util/lists.interface';
+import { ITable, PageModel, RtTableConfigService } from '../../util';
 import { RtuiClearButtonComponent } from '../clear-search-button/rtui-clear-button.component';
 import { RtuiPaginationComponent } from '../pagination-view/rtui-pagination.component';
 import { RtTableConfigAsideComponent } from '../table-config-aside/rt-table-config-aside.component';

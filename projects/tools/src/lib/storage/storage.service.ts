@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 
-import { PlatformService } from '../util';
-import { Nullable } from '../util/interfaces/nullable.type';
+import { Nullable, PlatformService } from '@rt-tools/utils';
 import { STORAGE_TYPES_ENUM, StorageType } from './enums/storage-types.enum';
 import { IStorageConfig } from './interfaces/storage-config';
 import { JsonConverter } from './json-converter';

@@ -9,3 +9,5 @@ tsconfig.app.json
 tsconfig.json
 tsconfig.spec.json
 angular.json
+
+.angular

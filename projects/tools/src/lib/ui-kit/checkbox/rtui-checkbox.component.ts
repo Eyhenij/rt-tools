@@ -4,7 +4,7 @@ import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/f
 import { noop } from 'rxjs';
 
 import { BlockDirective, ElemDirective } from '../../bem';
-import { transformStringInput } from '../../util';
+import { transformStringInput } from '@rt-tools/utils';
 
 @Component({
     selector: 'rtui-checkbox',

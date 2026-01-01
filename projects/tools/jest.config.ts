@@ -4,6 +4,7 @@ export default {
     preset: '../../jest.preset.cjs',
     setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
     coverageDirectory: '../../coverage/rt-tools',
+    passWithNoTests: true,
     transform: {
         '^.+\\.(ts|mjs|js|html)$': [
             'jest-preset-angular',
