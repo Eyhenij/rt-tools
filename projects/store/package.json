@@ -18,7 +18,7 @@
     "Redux DevTools"
   ],
   "dependencies": {
-    "@rt-tools/core": "workspace:*"
+    "@rt-tools/core": "^0.0.1"
   },
   "peerDependencies": {
     "@rt-tools/core": "^0.0.1",

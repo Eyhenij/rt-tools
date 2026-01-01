@@ -1,4 +1,4 @@
-name: Publish @rt/utils to npm
+name: Publish @rt-tools/utils to npm
 
 on:
     workflow_dispatch:
@@ -58,8 +58,8 @@ jobs:
                   default_author: github_actions
                   message: 'chore(utils): bump version to ${{ env.VERSION }} [ci skip]'
 
-            - name: Build
-              run: pnpm run build:core && pnpm run build:utils
+            - name: Build utils
+              run: pnpm run build:utils
 
             - name: Publish
               run: pnpm run packagr:utils
