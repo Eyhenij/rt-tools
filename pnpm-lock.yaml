@@ -282,8 +282,8 @@ importers:
                 specifier: ^21.0.0
                 version: 21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0)
             '@rt-tools/core':
-                specifier: workspace:*
-                version: link:../core
+                specifier: ^0.0.1
+                version: 0.0.1(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2)
             rxjs:
                 specifier: ^7.8.0
                 version: 7.8.2
@@ -321,14 +321,14 @@ importers:
                 specifier: ^21.0.0
                 version: 21.0.1(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(@angular/platform-browser@21.0.1(@angular/animations@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0)))(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0)))(rxjs@7.8.2)
             '@rt-tools/core':
-                specifier: workspace:*
-                version: link:../core
+                specifier: ^0.0.1
+                version: 0.0.1(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2)
             '@rt-tools/store':
-                specifier: workspace:*
-                version: link:../store
+                specifier: ^0.0.1
+                version: 0.0.1(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(@rt-tools/core@0.0.1(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(rxjs@7.8.2)
             '@rt-tools/utils':
-                specifier: workspace:*
-                version: link:../utils
+                specifier: ^0.0.1
+                version: 0.0.1(e75faf935ddc33d211087d504b2d75c9)
             rxjs:
                 specifier: ^7.8.2
                 version: 7.8.2
@@ -360,8 +360,8 @@ importers:
                 specifier: ^21.0.0
                 version: 21.0.1(@angular/animations@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0)))(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))
             '@rt-tools/core':
-                specifier: workspace:*
-                version: link:../core
+                specifier: ^0.0.1
+                version: 0.0.1(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2)
             rxjs:
                 specifier: ^7.8.0
                 version: 7.8.2
@@ -3466,6 +3466,32 @@ packages:
         peerDependenciesMeta:
             webpack-hot-middleware:
                 optional: true
+
+    '@rt-tools/core@0.0.1':
+        resolution: { integrity: sha512-rJjDlUVnTKqcZ1Icfv8qOKaaDhzwsKSVokQEq24dxE9moCoGDJZmyz9Y5eZdsVO1b3BtEGP4n0FSCI+0QXT4WA== }
+        peerDependencies:
+            '@angular/common': ^21.0.0
+            '@angular/core': ^21.0.0
+            rxjs: ^7.8.0
+
+    '@rt-tools/store@0.0.1':
+        resolution: { integrity: sha512-18IitbZ5TWcaHa+/y7Ro8zpLhbR2+5UbH5DEk/ShegiRImmB/GW8FKYX9TRCd0Xwy2KxpPbkDJfBUlqdCDrkZg== }
+        peerDependencies:
+            '@angular/common': ^21.0.0
+            '@angular/core': ^21.0.0
+            '@rt-tools/core': ^0.0.1
+            rxjs: ^7.8.0
+
+    '@rt-tools/utils@0.0.1':
+        resolution: { integrity: sha512-2rQfxdhM1O1yTPy6q3TNW/rNqyCkigQKnQZ1iNnHoAhMr377AcMtqfT6XFSEewLP8pzHFxVrCBEUbT6QhF/QSQ== }
+        peerDependencies:
+            '@angular/cdk': ^21.0.0
+            '@angular/common': ^21.0.0
+            '@angular/core': ^21.0.0
+            '@angular/forms': ^21.0.0
+            '@angular/platform-browser': ^21.0.0
+            '@rt-tools/core': ^0.0.1
+            rxjs: ^7.8.0
 
     '@rtsao/scc@1.1.0':
         resolution: { integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g== }
@@ -15759,6 +15785,32 @@ snapshots:
             react-refresh: 0.18.0
         optionalDependencies:
             webpack-hot-middleware: 2.26.1
+
+    '@rt-tools/core@0.0.1(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2)':
+        dependencies:
+            '@angular/common': 21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2)
+            '@angular/core': 21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0)
+            rxjs: 7.8.2
+            tslib: 2.8.1
+
+    '@rt-tools/store@0.0.1(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(@rt-tools/core@0.0.1(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(rxjs@7.8.2)':
+        dependencies:
+            '@angular/common': 21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2)
+            '@angular/core': 21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0)
+            '@rt-tools/core': 0.0.1(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2)
+            rxjs: 7.8.2
+            tslib: 2.8.1
+
+    '@rt-tools/utils@0.0.1(e75faf935ddc33d211087d504b2d75c9)':
+        dependencies:
+            '@angular/cdk': 21.0.1(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2)
+            '@angular/common': 21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2)
+            '@angular/core': 21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0)
+            '@angular/forms': 21.0.1(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(@angular/platform-browser@21.0.1(@angular/animations@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0)))(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0)))(@standard-schema/spec@1.1.0)(rxjs@7.8.2)
+            '@angular/platform-browser': 21.0.1(@angular/animations@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0)))(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))
+            '@rt-tools/core': 0.0.1(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2)
+            rxjs: 7.8.2
+            tslib: 2.8.1
 
     '@rtsao/scc@1.1.0': {}
 
