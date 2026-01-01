@@ -6,6 +6,7 @@ import { BaseStoreService } from './base-store.service';
 import { BASE_INITIAL_STATE } from './constants/base-initial-state.const';
 import { ModelStatus } from './enums/async-state-status.enum';
 import { IBaseAsyncStoreService, ISetPropertiesConfig } from './interfaces/async-store-service.interface';
+import { IStoreConfig } from './interfaces/devtools.interface';
 import { IStateBase } from './interfaces/state-base.interface';
 
 export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async, MSG_TYPE extends string>
@@ -25,8 +26,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
     public readonly upsertStatus: Signal<ModelStatus> = computed(() => this.store().upsertStatus || ModelStatus.Init);
     public readonly deleteStatus: Signal<ModelStatus> = computed(() => this.store().deleteStatus || ModelStatus.Init);
 
-    protected constructor() {
-        super();
+    protected constructor(initialState: STATE_TYPE, config?: IStoreConfig) {
+        super(initialState, config);
     }
 
     // ================================
@@ -49,7 +50,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
                 ...BASE_INITIAL_STATE.ASYNC,
-            })
+            }),
+            'resetAsyncState'
         );
     }
 
@@ -64,7 +66,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
                 loading: true,
                 requestStatus: ModelStatus.Pending,
                 loadingStatus: ModelStatus.Pending,
-            })
+            }),
+            'startLoading'
         );
     }
 
@@ -75,7 +78,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
                 loading: false,
                 requestStatus: ModelStatus.Success,
                 loadingStatus: ModelStatus.Success,
-            })
+            }),
+            'setLoadingSuccess'
         );
     }
 
@@ -86,7 +90,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
                 loading: false,
                 requestStatus: ModelStatus.Error,
                 loadingStatus: ModelStatus.Error,
-            })
+            }),
+            'setLoadingFailure'
         );
 
         if (config.showNotification) {
@@ -102,7 +107,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
                 loading: false,
                 requestStatus: ModelStatus.Error,
                 loadingStatus: ModelStatus.Error,
-            })
+            }),
+            'setLoadingFailure'
         );
 
         if (config.showNotification) {
@@ -123,7 +129,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
                 fetching: true,
                 requestStatus: ModelStatus.Pending,
                 fetchingStatus: ModelStatus.Pending,
-            })
+            }),
+            'startFetching'
         );
     }
 
@@ -134,7 +141,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
                 fetching: false,
                 requestStatus: ModelStatus.Success,
                 fetchingStatus: ModelStatus.Success,
-            })
+            }),
+            'setFetchingSuccess'
         );
     }
 
@@ -145,7 +153,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
                 fetching: false,
                 requestStatus: ModelStatus.Error,
                 fetchingStatus: ModelStatus.Error,
-            })
+            }),
+            'setFetchingFailure'
         );
 
         if (config.showNotification) {
@@ -161,7 +170,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
                 fetching: false,
                 requestStatus: ModelStatus.Error,
                 fetchingStatus: ModelStatus.Error,
-            })
+            }),
+            'setFetchingFailure'
         );
 
         if (config.showNotification) {
@@ -181,7 +191,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
                 ...state,
                 requestStatus: ModelStatus.Init,
                 upsertStatus: ModelStatus.Init,
-            })
+            }),
+            'resetUpsertStatus'
         );
     }
 
@@ -191,7 +202,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
                 ...state,
                 requestStatus: ModelStatus.Pending,
                 upsertStatus: ModelStatus.Pending,
-            })
+            }),
+            'startUpsert'
         );
     }
 
@@ -201,7 +213,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
                 ...state,
                 requestStatus: ModelStatus.Success,
                 upsertStatus: ModelStatus.Success,
-            })
+            }),
+            'setUpsertSuccess'
         );
     }
 
@@ -211,7 +224,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
                 ...state,
                 requestStatus: ModelStatus.Error,
                 upsertStatus: ModelStatus.Error,
-            })
+            }),
+            'setUpsertFailure'
         );
 
         if (config.showNotification) {
@@ -226,7 +240,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
                 ...state,
                 requestStatus: ModelStatus.Error,
                 upsertStatus: ModelStatus.Error,
-            })
+            }),
+            'setUpsertFailure'
         );
 
         if (config.showNotification) {
@@ -246,7 +261,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
                 ...state,
                 requestStatus: ModelStatus.Init,
                 deleteStatus: ModelStatus.Init,
-            })
+            }),
+            'resetDeleteStatus'
         );
     }
 
@@ -256,7 +272,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
                 ...state,
                 requestStatus: ModelStatus.Pending,
                 deleteStatus: ModelStatus.Pending,
-            })
+            }),
+            'startDelete'
         );
     }
 
@@ -266,7 +283,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
                 ...state,
                 requestStatus: ModelStatus.Success,
                 deleteStatus: ModelStatus.Success,
-            })
+            }),
+            'setDeleteSuccess'
         );
     }
 
@@ -276,7 +294,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
                 ...state,
                 requestStatus: ModelStatus.Error,
                 deleteStatus: ModelStatus.Error,
-            })
+            }),
+            'setDeleteFailure'
         );
 
         if (config.showNotification) {
@@ -291,7 +310,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
                 ...state,
                 requestStatus: ModelStatus.Error,
                 deleteStatus: ModelStatus.Error,
-            })
+            }),
+            'setDeleteFailure'
         );
 
         if (config.showNotification) {
