@@ -5,7 +5,7 @@ import { Event, NavigationEnd, Router } from '@angular/router';
 import { merge, Observable, of, Subject } from 'rxjs';
 import { delay, filter, tap } from 'rxjs/operators';
 
-import { ASIDE_REF, AsidePositions, AsideRef } from '../../util';
+import { ASIDE_REF, AsidePositions, AsideRef } from '@rt-tools/utils';
 import { RtuiAsidePanelComponent } from './components/panel/aside-panel.component';
 
 @Injectable()

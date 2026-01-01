@@ -2,7 +2,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, Routes } from '@angular/router';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
-import { PlatformService } from '../../../util';
+import { PlatformService } from '@rt-tools/utils';
 import { listOfPersons, TestSelectorComponent } from './component/selector/test-selector.component';
 
 const routes: Routes = [

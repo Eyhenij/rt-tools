@@ -2,7 +2,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, contentChild, Directive, Signal, TemplateRef, Type } from '@angular/core';
 
 import { BlockDirective, ElemDirective } from '../../bem';
-import { Nullable } from '../../util';
+import { Nullable } from '@rt-tools/utils';
 
 @Directive({
     selector: '[rtuiScrollableHeader]',

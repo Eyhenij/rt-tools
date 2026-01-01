@@ -4,5 +4,5 @@
   "compilerOptions": {
     "declarationMap": false
   },
-  "include": ["src/public-api.ts"]
+  "include": ["src/**/*.ts"]
 }

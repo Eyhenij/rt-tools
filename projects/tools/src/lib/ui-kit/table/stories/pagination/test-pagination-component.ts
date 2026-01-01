@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { BlockDirective } from '../../../../bem';
 import { RtuiPaginationComponent } from '../../components';
-import { PageModel } from '../../util';
+import { PageModel } from '@rt-tools/utils';
 
 @Component({
     selector: 'app-test-pagination-component',

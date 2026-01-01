@@ -1,5 +1,5 @@
 /**
- * Public API Surface of @rt/tools
+ * Public API Surface of rt-tools
  */
 
 // tools

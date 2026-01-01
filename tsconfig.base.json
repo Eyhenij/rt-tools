@@ -1,4 +1,3 @@
-/* Visit https://aka.ms/tsconfig to read more about this file */
 {
   "compileOnSave": false,
   "compilerOptions": {
@@ -24,7 +23,12 @@
     "module": "ES2022",
     "useDefineForClassFields": false,
     "lib": ["ES2022", "dom"],
-    "types": ["node"]
+    "types": ["node"],
+    "paths": {
+      "@rt-tools/core": ["projects/core/src/index.ts"],
+      "@rt-tools/store": ["projects/store/src/index.ts"],
+      "@rt-tools/utils": ["projects/utils/src/index.ts"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
