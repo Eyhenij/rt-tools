@@ -13,7 +13,7 @@
   "peerDependencies": {
     "@rt-tools/core": "^0.0.2",
     "@rt-tools/store": "^0.0.2",
-    "@rt-tools/utils": "^0.0.1",
+    "@rt-tools/utils": "^0.0.2",
     "@angular/animations": "^21.0.0",
     "@angular/cdk": "^21.0.0",
     "@angular/common": "^21.0.0",
