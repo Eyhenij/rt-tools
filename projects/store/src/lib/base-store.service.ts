@@ -5,6 +5,7 @@ import { isNil, MessageBus, PlatformService, WINDOW } from '@rt-tools/core';
 import { IAction } from './interfaces/action.interface';
 import { IBaseStoreService } from './interfaces/base-store-service.interface';
 import { IDevToolsConfig, IDevToolsConnection, IDevToolsMessage, IStoreConfig } from './interfaces/devtools.interface';
+import { IDevToolsGlobalConfig, STORE_DEVTOOLS_CONFIG } from './tokens/devtools.token';
 
 export abstract class BaseStoreService<STATE_TYPE extends object, MSG_TYPE extends string> implements IBaseStoreService<
     STATE_TYPE,
@@ -12,6 +13,7 @@ export abstract class BaseStoreService<STATE_TYPE extends object, MSG_TYPE exten
 > {
     readonly #windowRef: Window = inject(WINDOW);
     readonly #platformService: PlatformService = inject(PlatformService);
+    readonly #globalDevToolsConfig: IDevToolsGlobalConfig | null = inject(STORE_DEVTOOLS_CONFIG, { optional: true });
 
     readonly #store: WritableSignal<STATE_TYPE>;
     public readonly store: Signal<STATE_TYPE>;
@@ -28,7 +30,7 @@ export abstract class BaseStoreService<STATE_TYPE extends object, MSG_TYPE exten
         this.#storeName = config?.name ?? this.constructor.name;
 
         if (this.#shouldEnableDevTools(config)) {
-            this.#devTools = this.#connectDevTools(initialState, config?.devTools);
+            this.#devTools = this.#connectDevTools(initialState, this.#mergeDevToolsConfig(config?.devTools));
         }
 
         inject(DestroyRef).onDestroy(() => this.#cleanup());
@@ -58,11 +60,28 @@ export abstract class BaseStoreService<STATE_TYPE extends object, MSG_TYPE exten
     }
 
     #shouldEnableDevTools(config?: IStoreConfig): boolean {
-        if (!config?.devTools) {
+        // Local config takes precedence over global config
+        const localEnabled: boolean | undefined =
+            config?.devTools !== undefined ? (typeof config.devTools === 'boolean' ? config.devTools : true) : undefined;
+
+        const globalEnabled: boolean = this.#globalDevToolsConfig?.enabled ?? false;
+        const isEnabled: boolean = localEnabled ?? globalEnabled;
+
+        if (!isEnabled) {
             return false;
         }
 
         return this.#platformService.isPlatformBrowser && !isNil(this.#windowRef) && !!this.#windowRef.__REDUX_DEVTOOLS_EXTENSION__;
+    }
+
+    #mergeDevToolsConfig(localConfig?: boolean | IDevToolsConfig): IDevToolsConfig {
+        const globalConfig: IDevToolsConfig = this.#globalDevToolsConfig ?? {};
+        const local: IDevToolsConfig = typeof localConfig === 'object' ? localConfig : {};
+
+        return {
+            ...globalConfig,
+            ...local,
+        };
     }
 
     #connectDevTools(initialState: STATE_TYPE, devToolsConfig?: boolean | IDevToolsConfig): IDevToolsConnection | null {
