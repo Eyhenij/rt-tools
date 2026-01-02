@@ -1,6 +1,6 @@
 import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
 
-import { IDevToolsGlobalConfig, STORE_DEVTOOLS_CONFIG } from '../interfaces';
+import { IDevToolsGlobalConfig, STORE_DEVTOOLS_CONFIG } from '../interfaces/devtools.interface';
 import { DevToolsManagerService } from '../services';
 
 /**
