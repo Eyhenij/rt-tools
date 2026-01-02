@@ -1,10 +1,7 @@
 import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
 
-import { DevToolsManagerService } from '../services/devtools-manager.service';
-import { IDevToolsGlobalConfig, STORE_DEVTOOLS_CONFIG } from './devtools-config.token';
-
-// Re-export for public API
-export { IDevToolsGlobalConfig, STORE_DEVTOOLS_CONFIG } from './devtools-config.token';
+import { IDevToolsGlobalConfig, STORE_DEVTOOLS_CONFIG } from '../interfaces';
+import { DevToolsManagerService } from '../services';
 
 /**
  * @description Provides global DevTools configuration for all stores.

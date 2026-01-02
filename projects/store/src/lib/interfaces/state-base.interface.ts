@@ -1,6 +1,6 @@
 import { IDictionary, Nullable, Primitive } from '@rt-tools/core';
 
-import { ModelStatus } from '../enums/async-state-status.enum';
+import { ModelStatus } from '../enums';
 
 export namespace IStateBase {
     export interface Async {
