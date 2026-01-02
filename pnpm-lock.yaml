@@ -321,8 +321,8 @@ importers:
                 specifier: ^0.0.2
                 version: 0.0.2(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2)
             '@rt-tools/store':
-                specifier: ^0.0.3
-                version: 0.0.3(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(@rt-tools/core@0.0.2(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(rxjs@7.8.2)
+                specifier: ^0.0.4
+                version: 0.0.4(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(@rt-tools/core@0.0.2(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(rxjs@7.8.2)
             '@rt-tools/utils':
                 specifier: ^0.0.2
                 version: 0.0.2(83273a03c3c91694496cdbc87a17cffb)
@@ -3468,12 +3468,12 @@ packages:
             '@angular/core': ^21.0.0
             rxjs: ^7.8.0
 
-    '@rt-tools/store@0.0.3':
-        resolution: { integrity: sha512-iPA9aPzgly4I3VkXUylN2DslbyIRMCTeIOZKiD7KCrd7N+uS4AFvmldv6Sw810AVZhBOO0lSk1QeINXuuot5BQ== }
+    '@rt-tools/store@0.0.4':
+        resolution: { integrity: sha512-BT9SyMglwnLnvtZ7WGk43QSG4WxI9nPon44KutPpVHkpz/ECtMFG5dZFIaMwx9ovgdIdSlM+flIyuMrZ/JBE5g== }
         peerDependencies:
             '@angular/common': ^21.0.0
             '@angular/core': ^21.0.0
-            '@rt-tools/core': ^0.0.1
+            '@rt-tools/core': ^0.0.2
             rxjs: ^7.8.0
 
     '@rt-tools/utils@0.0.2':
@@ -15787,7 +15787,7 @@ snapshots:
             rxjs: 7.8.2
             tslib: 2.8.1
 
-    '@rt-tools/store@0.0.3(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(@rt-tools/core@0.0.2(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(rxjs@7.8.2)':
+    '@rt-tools/store@0.0.4(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(@rt-tools/core@0.0.2(@angular/common@21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2))(rxjs@7.8.2)':
         dependencies:
             '@angular/common': 21.0.1(@angular/core@21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0))(rxjs@7.8.2)
             '@angular/core': 21.0.1(@angular/compiler@21.0.1)(rxjs@7.8.2)(zone.js@0.16.0)
