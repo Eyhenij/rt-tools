@@ -21,7 +21,10 @@ import { MatTab, MatTabContent, MatTabGroup, MatTabLabel } from '@angular/materi
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
-import { ASIDE_BUTTONS_ENUM, ASIDE_REF, AsideRef, IAside, Nullable } from '@rt-tools/utils';
+import { Nullable } from '@rt-tools/utils';
+import { ASIDE_REF, AsideRef } from '../../aside.types';
+import { ASIDE_BUTTONS_ENUM } from '../../aside.enums';
+import { IAside } from '../../aside.interfaces';
 import { RtuiAsideContainerComponent, RtuiAsideContainerHeaderDirective } from '../../components/container/aside-container.component';
 
 @Component({
