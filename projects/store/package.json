@@ -1,6 +1,6 @@
 {
   "name": "@rt-tools/store",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Signal-based state management for Angular with Redux DevTools support",
   "license": "Apache-2.0",
   "author": "Yauheni Krumin",

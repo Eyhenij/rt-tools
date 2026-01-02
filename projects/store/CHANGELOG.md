@@ -1,3 +1,10 @@
+## [0.0.3](https://github.com/Eyhenij/rt-tools/compare/0.1.81...0.0.3) (2026-01-02)
+
+### Features
+
+- **rt:store:** add config provider ([ca1a76f](https://github.com/Eyhenij/rt-tools/commit/ca1a76fcef7495315dde4087e24c11fe76af4dd5))
+- **rt:store:** add DevToolsManagerService ([d002b75](https://github.com/Eyhenij/rt-tools/commit/d002b75b9488a99d261b86db9605d18c9672dd39))
+
 ## [0.0.2](https://github.com/Eyhenij/rt-tools/compare/0.1.81...0.0.2) (2026-01-02)
 
 ### Bug Fixes
