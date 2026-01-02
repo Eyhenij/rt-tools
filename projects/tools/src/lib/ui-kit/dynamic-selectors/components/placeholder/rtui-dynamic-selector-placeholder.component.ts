@@ -12,7 +12,7 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
-import { RtIconOutlinedDirective, transformStringInput } from '../../../../util';
+import { RtIconOutlinedDirective, transformStringInput } from '@rt-tools/utils';
 
 @Component({
     selector: 'rtui-dynamic-selector-placeholder',

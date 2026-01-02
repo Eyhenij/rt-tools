@@ -38,7 +38,7 @@ import { noop } from 'rxjs';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
-import { areArraysEqual, Nullable, transformArrayInput, transformStringInput } from '../../../../util';
+import { areArraysEqual, Nullable, transformArrayInput, transformStringInput } from '@rt-tools/utils';
 import {
     RtuiDynamicSelectorItemAdditionalControlDirective,
     RtuiDynamicSelectorListActionsComponent,

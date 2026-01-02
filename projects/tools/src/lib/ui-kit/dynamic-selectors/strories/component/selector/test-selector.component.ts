@@ -7,7 +7,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { faker } from '@faker-js/faker';
 
 import { BlockDirective, ElemDirective } from '../../../../../bem';
-import { RtIconOutlinedDirective } from '../../../../../util';
+import { RtIconOutlinedDirective } from '@rt-tools/utils';
 import { RtuiDynamicSelectorAdditionalControlDirective, RtuiDynamicSelectorComponent } from '../../../components';
 
 export type Person = {

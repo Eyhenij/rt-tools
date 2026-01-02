@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, inject, Injector, OnInit, Signal, viewChild } from '@angular/core';
 
 import { IDBStorageService } from '../../../../idb-storage';
-import { Nullable } from '../../../../util';
+import { Nullable } from '@rt-tools/utils';
 import { RtuiTableComponent } from '../../components';
 import { RtTableSelectorsDirective } from '@rt-tools/utils';
 import { LIST_SORT_ORDER_ENUM } from '../../util/list-sort-order.enum';

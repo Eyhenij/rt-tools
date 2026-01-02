@@ -20,7 +20,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 import { BlockDirective, ElemDirective, ModDirective } from '../../../../bem';
-import { Nullable, RtIconOutlinedDirective } from '../../../../util';
+import { Nullable, RtIconOutlinedDirective } from '@rt-tools/utils';
 import { LIST_SORT_ORDER_ENUM, ListSortOrderType } from '../../util/list-sort-order.enum';
 import { SortModel } from '../../util/lists.interface';
 import { ITable } from '../../util/table-column.interface';
