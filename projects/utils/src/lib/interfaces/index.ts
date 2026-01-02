@@ -8,10 +8,5 @@ export * from './values.type';
 export * from './base-mapper.interface';
 export * from './scriptable.type';
 
-// ui
-export * from './modal-data.interface';
-export * from './side-menu.interface';
-export * from './aside.interface';
-
 // re-export from @rt-tools/core
 export { IDictionary, Nullable, Primitive } from '@rt-tools/core';
