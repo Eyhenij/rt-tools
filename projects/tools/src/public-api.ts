@@ -5,7 +5,6 @@
 // tools
 export * from './lib/bem';
 export * from './lib/storage';
-export * from './lib/store';
 export * from './lib/idb-storage';
 
 // ui-kit
@@ -28,6 +27,3 @@ export * from './lib/ui-kit/dynamic-selectors';
 export * from './lib/ui-kit/image-uploader';
 export * from './lib/ui-kit/popover';
 export * from './lib/ui-kit/action-bar';
-
-// utils
-export * from './lib/util';

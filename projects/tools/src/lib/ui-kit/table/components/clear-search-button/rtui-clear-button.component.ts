@@ -13,7 +13,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip, TooltipPosition } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
-import { isString, Nullable } from '../../../../util';
+import { isString, Nullable } from '@rt-tools/utils';
 
 @Component({
     selector: 'rtui-clear-button',

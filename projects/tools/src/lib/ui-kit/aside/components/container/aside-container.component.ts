@@ -22,7 +22,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
-import { AsideButtonsType, IAside, Nullable, transformArrayInput } from '../../../../util';
+import { AsideButtonsType, IAside, Nullable, transformArrayInput } from '@rt-tools/utils';
 import {
     RtuiScrollableContainerComponent,
     RtuiScrollableContainerContentDirective,

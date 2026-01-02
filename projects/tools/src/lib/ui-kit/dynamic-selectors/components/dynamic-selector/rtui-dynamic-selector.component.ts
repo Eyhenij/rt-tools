@@ -52,7 +52,7 @@ import {
     RtEscapeKeyDirective,
     sortByAlphabet,
     transformArrayInput,
-} from '../../../../util';
+} from '@rt-tools/utils';
 import { RtuiDynamicSelectorListActionsComponent } from '../actions/rtui-dynamic-selector-list-actions.component';
 import { RtuiDynamicSelectorsDirective } from '../dynamic-selectors-directive';
 import { RtuiMultiSelectorPopupComponent } from '../multi-selector-popup/rtui-multi-selector-popup.component';

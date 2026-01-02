@@ -43,7 +43,7 @@ import {
     RtIconOutlinedDirective,
     RtScrollDirective,
     transformArrayInput,
-} from '../../../../util';
+} from '@rt-tools/utils';
 import { RtuiSpinnerComponent } from '../../../spinner';
 import { RtuiClearButtonComponent } from '../../../table';
 import { RtuiToggleComponent } from '../../../toggle';

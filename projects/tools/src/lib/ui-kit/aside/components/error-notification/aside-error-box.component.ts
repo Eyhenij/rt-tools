@@ -5,7 +5,7 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
-import { Nullable } from '../../../../util';
+import { Nullable } from '@rt-tools/utils';
 
 @Component({
     selector: 'rtui-aside-error-box',

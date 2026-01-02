@@ -8,7 +8,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective } from '../../../../bem';
 import { IDBStorageService } from '../../../../idb-storage';
-import { Nullable, PlatformService, RtIconOutlinedDirective } from '../../../../util';
+import { Nullable, PlatformService, RtIconOutlinedDirective } from '@rt-tools/utils';
 import { RtActionBarService, RtuiActionBarContainerComponent } from '../../../action-bar';
 import { RtuiToggleComponent } from '../../../toggle';
 import {

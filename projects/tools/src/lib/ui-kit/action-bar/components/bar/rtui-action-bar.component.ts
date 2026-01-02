@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, InputSigna
 import { MatIcon } from '@angular/material/icon';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
-import { BreakpointService, EmptyToDashPipe, RtIconOutlinedDirective } from '../../../../util';
+import { BreakpointService, EmptyToDashPipe, RtIconOutlinedDirective } from '@rt-tools/utils';
 import { RtPopoverDirective } from '../../../popover/rt-popover.directive';
 import { IRtActionBar } from '../../action-bar-config.interface';
 

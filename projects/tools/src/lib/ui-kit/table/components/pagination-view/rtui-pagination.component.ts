@@ -25,7 +25,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
-import { isNumber, Nullable, WINDOW } from '../../../../util';
+import { isNumber, Nullable, WINDOW } from '@rt-tools/utils';
 import { DEFAULT_PAGE_SIZE } from '../../util/default-pagination';
 import { PageModel } from '../../util/lists.interface';
 
