@@ -2,7 +2,38 @@ import { Type } from '@angular/core';
 import { ThemePalette } from '@angular/material/core';
 import { Observable } from 'rxjs';
 
-import { Icon, Nullable, Select } from '@rt-tools/utils';
+import { Nullable } from '@rt-tools/core';
+
+// Modal enums
+export enum MODAL_WINDOW_SIZE_ENUM {
+    SM = '25rem',
+    MD = '45rem',
+    LG = '65rem',
+    FULL = '100%',
+}
+
+export type ModalWindowSizeType =
+    | MODAL_WINDOW_SIZE_ENUM.SM
+    | MODAL_WINDOW_SIZE_ENUM.MD
+    | MODAL_WINDOW_SIZE_ENUM.LG
+    | MODAL_WINDOW_SIZE_ENUM.FULL;
+
+// Modal data interfaces
+export interface Icon {
+    value: string;
+    style?: { [className: string]: string };
+}
+
+export interface NameValueType<N = string, V = string> {
+    name: N;
+    value: V;
+}
+
+export interface Select<T> {
+    value: Array<NameValueType<string, T>>;
+    label?: string;
+    hint?: string;
+}
 
 export namespace IModal {
     export interface Button<T> {

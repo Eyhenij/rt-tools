@@ -7,7 +7,7 @@ import { Component, HostBinding, inject, Injector, ViewEncapsulation } from '@an
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { ASIDE_REF, AsidePositions, AsideRef } from '@rt-tools/utils';
+import { ASIDE_REF, AsidePositions, AsideRef } from '../../aside.types';
 
 @Component({
     selector: 'rtui-aside-panel',

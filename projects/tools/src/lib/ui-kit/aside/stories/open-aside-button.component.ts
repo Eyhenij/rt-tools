@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
-import { AsidePositions } from '@rt-tools/utils';
+import { AsidePositions } from '../aside.types';
 import { RtAsideService } from '../aside.service';
 import { TestAsideComponent } from './aside-component/test-aside.component';
 
