@@ -1,6 +1,6 @@
 {
   "name": "@rt-tools/core",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Core utilities for Angular applications - MessageBus, PlatformService, WINDOW token, and helper functions",
   "license": "Apache-2.0",
   "author": "Yauheni Krumin",
