@@ -62,13 +62,29 @@ packageJson.version = newVersion;
 fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), 'utf8');
 console.log(`@rt-tools/core version updated successfully: ${currentVersion} → ${newVersion}`);
 
-// Also update the peerDependency in rt-tools if needed
-const toolsPackageJsonPath = path.resolve(__dirname, './projects/tools/package.json');
-if (fs.existsSync(toolsPackageJsonPath)) {
-    const toolsPackageJson = JSON.parse(fs.readFileSync(toolsPackageJsonPath, 'utf8'));
-    if (toolsPackageJson.peerDependencies && toolsPackageJson.peerDependencies['@rt-tools/core']) {
-        toolsPackageJson.peerDependencies['@rt-tools/core'] = `^${newVersion}`;
-        fs.writeFileSync(toolsPackageJsonPath, JSON.stringify(toolsPackageJson, null, 2), 'utf8');
-        console.log(`rt-tools peerDependency @rt-tools/core updated to ^${newVersion}`);
+// Update @rt-tools/core dependency in all dependent packages
+const dependentPackages = ['./projects/store/package.json', './projects/utils/package.json', './projects/tools/package.json'];
+
+function updateDependency(filePath, depName, newVer) {
+    const fullPath = path.resolve(__dirname, filePath);
+    if (!fs.existsSync(fullPath)) return;
+
+    const pkg = JSON.parse(fs.readFileSync(fullPath, 'utf8'));
+    let updated = false;
+
+    if (pkg.dependencies && pkg.dependencies[depName]) {
+        pkg.dependencies[depName] = `^${newVer}`;
+        updated = true;
+    }
+    if (pkg.peerDependencies && pkg.peerDependencies[depName]) {
+        pkg.peerDependencies[depName] = `^${newVer}`;
+        updated = true;
+    }
+
+    if (updated) {
+        fs.writeFileSync(fullPath, JSON.stringify(pkg, null, 2), 'utf8');
+        console.log(`${filePath}: @rt-tools/core updated to ^${newVer}`);
     }
 }
+
+dependentPackages.forEach((pkgPath) => updateDependency(pkgPath, '@rt-tools/core', newVersion));
