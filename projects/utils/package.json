@@ -1,6 +1,6 @@
 {
   "name": "@rt-tools/utils",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Utility functions, pipes, directives, validators and services for Angular applications",
   "author": "RT Team",
   "license": "Apache-2.0",
