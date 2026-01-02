@@ -18,7 +18,7 @@
     "packagr:core": "cd ./dist/core && npm pack && npm publish --access public",
     "packagr:store": "cd ./dist/store && npm pack && npm publish --access public",
     "packagr:utils": "cd ./dist/utils && npm pack && npm publish --access public",
-    "packagr:tools": "cd ./dist/tools && npm pack && npm publish",
+    "packagr:ui-kit": "cd ./dist/tools && npm pack && npm publish --access public",
     "storybook": "nx run @rt-tools/tools:storybook --verbose",
     "build-storybook": "nx run @rt-tools/tools:build-storybook --verbose",
     "graph": "pnpx nx dep-graph",

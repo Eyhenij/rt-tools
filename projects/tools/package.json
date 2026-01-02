@@ -1,6 +1,6 @@
 {
-  "name": "rt-tools",
-  "version": "0.3.16",
+  "name": "@rt-tools/ui-kit",
+  "version": "0.0.1",
   "license": "Apache-2.0",
   "author": "Yauheni Krumin",
   "type": "module",

@@ -27,7 +27,8 @@
     "paths": {
       "@rt-tools/core": ["projects/core/src/index.ts"],
       "@rt-tools/store": ["projects/store/src/index.ts"],
-      "@rt-tools/utils": ["projects/utils/src/index.ts"]
+      "@rt-tools/utils": ["projects/utils/src/index.ts"],
+      "@rt-tools/ui-kit": ["projects/tools/src/public-api.ts"]
     }
   },
   "angularCompilerOptions": {
