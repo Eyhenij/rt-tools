@@ -1,3 +1,16 @@
+## [0.0.4](https://github.com/Eyhenij/rt-tools/compare/0.1.81...0.0.4) (2026-01-02)
+
+### Bug Fixes
+
+- avoid duplicated instances for DevToolsManagerService ([b1be19e](https://github.com/Eyhenij/rt-tools/commit/b1be19efafa7c4c5556860b7c47d84950c779741))
+- avoid duplicated instances for DevToolsManagerService ([36b5a49](https://github.com/Eyhenij/rt-tools/commit/36b5a4932bd29c277a693f72f942dd702171a5ae))
+- build errors ([4ab2b36](https://github.com/Eyhenij/rt-tools/commit/4ab2b36071bf28631b63dec724955229f4c584d4))
+
+### Features
+
+- **rt:store:** add config provider ([ca1a76f](https://github.com/Eyhenij/rt-tools/commit/ca1a76fcef7495315dde4087e24c11fe76af4dd5))
+- **rt:store:** add DevToolsManagerService ([d002b75](https://github.com/Eyhenij/rt-tools/commit/d002b75b9488a99d261b86db9605d18c9672dd39))
+
 ## [0.0.3](https://github.com/Eyhenij/rt-tools/compare/0.1.81...0.0.3) (2026-01-02)
 
 ### Features
