@@ -257,9 +257,6 @@ importers:
             verdaccio:
                 specifier: ^6.0.5
                 version: 6.2.4(encoding@0.1.13)(typanion@3.14.0)
-            zone.js:
-                specifier: ^0.16.0
-                version: 0.16.0
 
     projects/core:
         dependencies:
@@ -338,9 +335,6 @@ importers:
             typescript:
                 specifier: ^5.9.3
                 version: 5.9.3
-            zone.js:
-                specifier: ^0.16.0
-                version: 0.16.0
 
     projects/utils:
         dependencies:
@@ -25408,4 +25402,5 @@ snapshots:
 
     zod@4.1.13: {}
 
-    zone.js@0.16.0: {}
+    zone.js@0.16.0:
+        optional: true
