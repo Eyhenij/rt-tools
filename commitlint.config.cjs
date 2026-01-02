@@ -7,6 +7,6 @@ module.exports = {
         'type-enum': [2, 'always', ['build', 'ci', 'docs', 'feat', 'fix', 'perf', 'refactor', 'revert', 'style', 'test', 'chore']],
         'subject-empty': [2, 'never'],
         'subject-full-stop': [2, 'never', '.'],
-        'scope-enum': [2, 'always', ['rt:ui-kit', 'rt:util', 'rt:store']],
+        'scope-enum': [2, 'always', ['rt:core', 'rt:store', 'rt:utils', 'rt:ui-kit']],
     },
 };
