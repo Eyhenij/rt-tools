@@ -2,8 +2,7 @@ import { DestroyRef, inject, Injectable, Signal } from '@angular/core';
 
 import { isNil, PlatformService, WINDOW } from '@rt-tools/core';
 
-import { IDevToolsConnection, IDevToolsMessage } from '../interfaces/devtools.interface';
-import { IDevToolsGlobalConfig, STORE_DEVTOOLS_CONFIG } from '../tokens/devtools-config.token';
+import { IDevToolsConnection, IDevToolsGlobalConfig, IDevToolsMessage, STORE_DEVTOOLS_CONFIG } from '../interfaces';
 
 interface IRegisteredStore {
     name: string;

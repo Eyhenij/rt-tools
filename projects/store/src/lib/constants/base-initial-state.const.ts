@@ -1,5 +1,5 @@
-import { ModelStatus } from '../enums/async-state-status.enum';
-import { IStateBase } from '../interfaces/state-base.interface';
+import { ModelStatus } from '../enums';
+import { IStateBase } from '../interfaces';
 
 export namespace BASE_INITIAL_STATE {
     export const ASYNC: Readonly<IStateBase.Async> = Object.freeze({
