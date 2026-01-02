@@ -10,5 +10,8 @@ export * from './lib/enums';
 // interfaces
 export * from './lib/interfaces';
 
+// services
+export * from './lib/services';
+
 // tokens
 export * from './lib/tokens';
