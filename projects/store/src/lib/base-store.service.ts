@@ -12,7 +12,7 @@ export abstract class BaseStoreService<STATE_TYPE extends object, MSG_TYPE exten
     STATE_TYPE,
     MSG_TYPE
 > {
-    readonly #devToolsManager: DevToolsManagerService = inject(DevToolsManagerService);
+    readonly #devToolsManager: DevToolsManagerService | null = inject(DevToolsManagerService, { optional: true });
 
     readonly #store: WritableSignal<STATE_TYPE>;
     public readonly store: Signal<STATE_TYPE>;
@@ -21,17 +21,19 @@ export abstract class BaseStoreService<STATE_TYPE extends object, MSG_TYPE exten
     readonly #subscriptions: Set<Subscription> = new Set<Subscription>();
 
     readonly #storeName: string;
-    readonly #unregisterDevTools: () => void;
+    readonly #unregisterDevTools: (() => void) | null = null;
 
     protected constructor(initialState: STATE_TYPE, config?: IStoreConfig) {
         this.#store = signal(initialState);
         this.store = this.#store.asReadonly();
         this.#storeName = config?.name ?? this.constructor.name;
 
-        // Register with DevTools manager
-        this.#unregisterDevTools = this.#devToolsManager.register(this.#storeName, this.store, (state: STATE_TYPE): void =>
-            this.#store.set(state)
-        );
+        // Register with DevTools manager if available
+        if (this.#devToolsManager) {
+            this.#unregisterDevTools = this.#devToolsManager.register(this.#storeName, this.store, (state: STATE_TYPE): void =>
+                this.#store.set(state)
+            );
+        }
 
         inject(DestroyRef).onDestroy(() => this.#cleanup());
     }
@@ -60,11 +62,11 @@ export abstract class BaseStoreService<STATE_TYPE extends object, MSG_TYPE exten
     }
 
     #sendToDevTools(actionName: string, payload?: unknown): void {
-        this.#devToolsManager.send(this.#storeName, actionName, payload);
+        this.#devToolsManager?.send(this.#storeName, actionName, payload);
     }
 
     #cleanup(): void {
         this.unsubscribe();
-        this.#unregisterDevTools();
+        this.#unregisterDevTools?.();
     }
 }

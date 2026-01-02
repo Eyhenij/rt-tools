@@ -3,7 +3,7 @@ import { DestroyRef, inject, Injectable, Signal } from '@angular/core';
 import { isNil, PlatformService, WINDOW } from '@rt-tools/core';
 
 import { IDevToolsConnection, IDevToolsMessage } from '../interfaces/devtools.interface';
-import { IDevToolsGlobalConfig, STORE_DEVTOOLS_CONFIG } from '../tokens/devtools.token';
+import { IDevToolsGlobalConfig, STORE_DEVTOOLS_CONFIG } from '../tokens/devtools-config.token';
 
 interface IRegisteredStore {
     name: string;
@@ -14,8 +14,9 @@ interface IRegisteredStore {
 /**
  * @description Global DevTools manager that aggregates all stores into a single DevTools connection.
  * This allows viewing all store states in Redux DevTools simultaneously.
+ * Must be provided via `provideStoreDevTools()` to ensure singleton across lazy-loaded modules.
  */
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class DevToolsManagerService {
     readonly #windowRef: Window = inject(WINDOW);
     readonly #platformService: PlatformService = inject(PlatformService);

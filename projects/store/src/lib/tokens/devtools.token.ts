@@ -1,18 +1,15 @@
-import { InjectionToken, Provider } from '@angular/core';
+import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
 
-import { IDevToolsConfig } from '../interfaces/devtools.interface';
+import { DevToolsManagerService } from '../services/devtools-manager.service';
+import { IDevToolsGlobalConfig, STORE_DEVTOOLS_CONFIG } from './devtools-config.token';
 
-export interface IDevToolsGlobalConfig extends IDevToolsConfig {
-    /** Enable DevTools globally (default: false) */
-    enabled: boolean;
-}
-
-export const STORE_DEVTOOLS_CONFIG: InjectionToken<IDevToolsGlobalConfig> = new InjectionToken<IDevToolsGlobalConfig>(
-    'Global configuration for store DevTools integration'
-);
+// Re-export for public API
+export { IDevToolsGlobalConfig, STORE_DEVTOOLS_CONFIG } from './devtools-config.token';
 
 /**
  * @description Provides global DevTools configuration for all stores.
+ * This function must be called in the root providers to ensure a single DevToolsManagerService
+ * instance is shared across all lazy-loaded modules.
  * @example
  * ```typescript
  * // app.config.ts
@@ -30,9 +27,6 @@ export const STORE_DEVTOOLS_CONFIG: InjectionToken<IDevToolsGlobalConfig> = new 
  * };
  * ```
  */
-export function provideStoreDevTools(config: IDevToolsGlobalConfig): Provider {
-    return {
-        provide: STORE_DEVTOOLS_CONFIG,
-        useValue: config,
-    };
+export function provideStoreDevTools(config: IDevToolsGlobalConfig): EnvironmentProviders {
+    return makeEnvironmentProviders([{ provide: STORE_DEVTOOLS_CONFIG, useValue: config }, DevToolsManagerService]);
 }
