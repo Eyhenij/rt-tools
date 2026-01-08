@@ -1,3 +1,5 @@
+## [0.0.5](https://github.com/nickmdf/rt-tools/compare/0.1.81...0.0.5) (2026-01-08)
+
 ## [0.0.4](https://github.com/nickmdf/rt-tools/compare/0.1.81...0.0.4) (2026-01-02)
 
 ## [0.0.3](https://github.com/nickmdf/rt-tools/compare/0.1.81...0.0.3) (2026-01-02)
