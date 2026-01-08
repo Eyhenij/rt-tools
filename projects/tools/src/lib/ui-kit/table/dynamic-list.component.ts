@@ -17,7 +17,7 @@ import {
 } from '@angular/core';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
 
-import { Nullable, transformArrayInput, transformStringInput } from '@rt-tools/utils';
+import { FilterModel, Nullable, PageModel, SortModel, transformArrayInput, transformStringInput } from '@rt-tools/utils';
 import {
     RtuiCustomTableCellsDirective,
     RtuiTableAdditionalRowActionsDirective,
@@ -29,7 +29,6 @@ import {
     RtuiTableToolbarActionsDirective,
     RtuiTableToolbarSelectorsDirective,
 } from './components/table-container/table-container.component';
-import { PageModel, SortModel, FilterModel } from './util/lists.interface';
 import { BooleanInput } from '@angular/cdk/coercion';
 
 /** Directive for selectors of the toolbar located on the left side */

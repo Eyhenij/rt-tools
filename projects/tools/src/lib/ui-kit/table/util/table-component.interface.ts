@@ -1,8 +1,8 @@
 import { InjectionToken, Signal, TemplateRef, WritableSignal } from '@angular/core';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
 
-import { Nullable } from '@rt-tools/utils';
-import { FilterModel, ITable, SortModel } from './index';
+import { FilterModel, Nullable, SortModel } from '@rt-tools/utils';
+import { ITable } from './table-column.interface';
 
 export const RTUI_TABLE_COMPONENT_TOKEN: InjectionToken<IRtuiTable<Record<string, unknown>, string, string>> = new InjectionToken<
     IRtuiTable<Record<string, unknown>, Extract<keyof Record<string, unknown>, string>, Extract<keyof Record<string, unknown>, string>>

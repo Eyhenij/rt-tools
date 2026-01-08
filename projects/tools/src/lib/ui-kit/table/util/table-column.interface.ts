@@ -1,6 +1,6 @@
 import { FormControl } from '@angular/forms';
 
-import { FilterOperatorType, SortModel } from './lists.interface';
+import { FilterOperatorType, SortModel } from '@rt-tools/utils';
 
 export enum TABLE_COLUMN_TYPES_ENUM {
     DATE = 'date',

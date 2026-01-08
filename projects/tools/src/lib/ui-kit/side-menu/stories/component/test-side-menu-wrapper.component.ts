@@ -5,7 +5,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
-import { ISideMenu } from '../../../side-menu.types';
+import { ISideMenu } from '../../side-menu.types';
 import { RtuiSideMenuComponent, RtuiSideMenuFooterDirective, RtuiSideMenuHeaderDirective } from '../../menu/rtui-side-menu.component';
 
 export const MENU_ITEMS: Readonly<ISideMenu.Item[]> = Object.freeze([

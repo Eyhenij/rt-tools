@@ -1,5 +1,6 @@
 export * from './basic.types';
 export * from './intersection.type';
+export * from './list.interface';
 export * from './modified.type';
 export * from './partial-omit.type';
 export * from './mapper.interface';

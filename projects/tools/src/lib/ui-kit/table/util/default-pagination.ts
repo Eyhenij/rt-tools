@@ -1,4 +1,4 @@
-import { PageModel } from './lists.interface';
+import { PageModel } from '@rt-tools/utils';
 
 export const DEFAULT_PAGE_SIZE: number = 20;
 

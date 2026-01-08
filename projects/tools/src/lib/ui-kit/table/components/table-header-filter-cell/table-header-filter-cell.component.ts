@@ -20,8 +20,15 @@ import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerModule, MatDatepickerToggle } from '@angular/material/datepicker';
 
-import { RtIconOutlinedDirective, transformArrayInput, isString } from '@rt-tools/utils';
-import { FILTER_OPERATOR_TYPE_ENUM, FILTER_OPERATORS, FilterModel, FilterOperatorType } from '../../util/lists.interface';
+import {
+    FILTER_OPERATOR_TYPE_ENUM,
+    FILTER_OPERATORS,
+    FilterModel,
+    FilterOperatorType,
+    RtIconOutlinedDirective,
+    transformArrayInput,
+    isString,
+} from '@rt-tools/utils';
 import { ITable, TABLE_COLUMN_FILTER_TYPES_ENUM } from '../../util/table-column.interface';
 import { MatFormField, MatFormFieldAppearance, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';

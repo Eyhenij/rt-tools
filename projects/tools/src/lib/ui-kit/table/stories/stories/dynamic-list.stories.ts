@@ -2,7 +2,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { Meta, StoryObj, applicationConfig } from '@storybook/angular';
 
-import { LIST_SORT_ORDER_ENUM } from '../../util/list-sort-order.enum';
+import { LIST_SORT_ORDER_ENUM } from '@rt-tools/utils';
 import TestDynamicListComponent from '../dynamic-list/test-dynamic-list.component';
 import { createPersonList } from '../mocks';
 import { Person } from '../types';
