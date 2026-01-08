@@ -28,17 +28,8 @@ import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { MatRadioButton } from '@angular/material/radio';
 
 import { BlockDirective, ElemDirective } from '../../../../bem';
-import { Nullable, RtIconOutlinedDirective, transformArrayInput } from '@rt-tools/utils';
-import {
-    FILTER_OPERATOR_TYPE_ENUM,
-    FilterModel,
-    IRtuiTable,
-    ITable,
-    RTUI_TABLE_COMPONENT_TOKEN,
-    RtTableConfigService,
-    SortModel,
-    TABLE_COLUMN_TYPES_ENUM,
-} from '../../util';
+import { FILTER_OPERATOR_TYPE_ENUM, FilterModel, Nullable, RtIconOutlinedDirective, SortModel, transformArrayInput } from '@rt-tools/utils';
+import { IRtuiTable, ITable, RTUI_TABLE_COMPONENT_TOKEN, RtTableConfigService, TABLE_COLUMN_TYPES_ENUM } from '../../util';
 import { TableBaseCellComponent } from '../table-base-cell/table-base-cell.component';
 import { RtuiTableHeaderCellComponent } from '../table-header-cell/table-header-cell.component';
 import { RtuiTableHeaderFilterCellComponent } from '../table-header-filter-cell/table-header-filter-cell.component';

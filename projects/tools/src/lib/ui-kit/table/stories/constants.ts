@@ -1,7 +1,6 @@
-import { LIST_SORT_ORDER_ENUM } from '../util/list-sort-order.enum';
+import { FILTER_OPERATOR_TYPE_ENUM, LIST_SORT_ORDER_ENUM } from '@rt-tools/utils';
 import { ITable, TABLE_COLUMN_FILTER_TYPES_ENUM, TABLE_COLUMN_TYPES_ENUM, TEXT_CELL_COLOR_ENUM } from '../util/table-column.interface';
 import { Person, ResponsiblePerson } from './types';
-import { FILTER_OPERATOR_TYPE_ENUM } from '@rt-tools/utils';
 
 export const COLUMNS: Array<ITable.Column<Person>> = [
     {

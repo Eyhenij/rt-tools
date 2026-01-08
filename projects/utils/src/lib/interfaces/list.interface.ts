@@ -1,5 +1,3 @@
-import { ListSortOrderType } from './list-sort-order.enum';
-
 export interface ListState<T extends string, M extends object> {
     pageModel: PageModel;
     sortModel: SortModel<T>;
@@ -60,3 +58,10 @@ export const FILTER_OPERATORS: ReadonlyArray<FilterOperatorType> = Object.freeze
     FILTER_OPERATOR_TYPE_ENUM.GREATER_THAN,
     FILTER_OPERATOR_TYPE_ENUM.LESS_THAN,
 ]);
+
+export enum LIST_SORT_ORDER_ENUM {
+    ASC = 'asc',
+    DESC = 'desc',
+}
+
+export type ListSortOrderType = LIST_SORT_ORDER_ENUM.ASC | LIST_SORT_ORDER_ENUM.DESC;
