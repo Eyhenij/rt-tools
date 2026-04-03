@@ -188,6 +188,8 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     public searchTerm: InputSignal<string> = input('');
     /** Indicates that an additional control has been changed */
     public additionalControlChanged: InputSignal<boolean> = input(false);
+    /** Custom sort function for entities list in popup */
+    public sortFn: InputSignal<Nullable<(a: ENTITY, b: ENTITY) => number>> = input<Nullable<(a: ENTITY, b: ENTITY) => number>>(null);
 
     /** Output search action */
     public readonly searchAction: OutputEmitterRef<string> = output<string>();
@@ -238,7 +240,7 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
                 );
             })
             .sort((a: ENTITY, b: ENTITY) => {
-                return sortByAlphabet(a, b, this.displayExp());
+                return this.sortFn() ? this.sortFn()!(a, b) : sortByAlphabet(a, b, this.displayExp());
             });
     });
 
