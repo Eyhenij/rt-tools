@@ -58,6 +58,11 @@ jobs:
                   default_author: github_actions
                   message: 'chore(rt:core): bump version to ${{ env.VERSION }} [ci skip]'
 
+            - name: Create git tag
+              run: |
+                  git tag "rt-core@${{ env.VERSION }}"
+                  git push origin "rt-core@${{ env.VERSION }}"
+
             - name: Build
               run: pnpm run build:core
 

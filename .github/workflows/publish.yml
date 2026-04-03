@@ -58,6 +58,11 @@ jobs:
                   default_author: github_actions
                   message: 'chore(rt:ui-kit): bump version to ${{ env.VERSION }} [ci skip]'
 
+            - name: Create git tag
+              run: |
+                  git tag "rt-tools@${{ env.VERSION }}"
+                  git push origin "rt-tools@${{ env.VERSION }}"
+
             - name: Build tools
               run: pnpm run build:tools
 
