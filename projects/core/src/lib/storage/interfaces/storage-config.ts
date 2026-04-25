@@ -1,4 +1,4 @@
-import { Nullable } from '@rt-tools/utils';
+import { Nullable } from '../../types';
 import { IStorageConverter } from './storage-converter';
 import { StorageType } from '../enums/storage-types.enum';
 

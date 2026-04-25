@@ -6,7 +6,7 @@ import { MatLabel } from '@angular/material/input';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 
-import { BlockDirective, ElemDirective } from '../../../../bem';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { RtuiToolbarCenterDirective, RtuiToolbarComponent, RtuiToolbarLeftDirective } from '../../../toolbar';
 import { RtSnackBarService } from '../../rt-snack-bar.service';
 

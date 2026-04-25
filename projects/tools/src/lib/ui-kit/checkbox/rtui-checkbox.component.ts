@@ -3,7 +3,7 @@ import { booleanAttribute, ChangeDetectionStrategy, Component, forwardRef, input
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { noop } from 'rxjs';
 
-import { BlockDirective, ElemDirective } from '../../bem';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { transformStringInput } from '@rt-tools/utils';
 
 @Component({

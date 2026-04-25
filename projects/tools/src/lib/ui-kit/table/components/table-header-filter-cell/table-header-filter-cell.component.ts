@@ -39,7 +39,7 @@ import { MatSelect } from '@angular/material/select';
 import { TitleCasePipe } from '@angular/common';
 import { isDate } from '@rt-tools/utils';
 import { RtuiClearButtonComponent } from '../clear-search-button/rtui-clear-button.component';
-import { BlockDirective } from '../../../../bem';
+import { BlockDirective } from '@rt-tools/core';
 import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({

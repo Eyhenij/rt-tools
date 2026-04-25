@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input, InputSignal, output, OutputE
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
-import { BlockDirective, ElemDirective } from '../../bem';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { RtIconOutlinedDirective } from '@rt-tools/utils';
 
 @Component({

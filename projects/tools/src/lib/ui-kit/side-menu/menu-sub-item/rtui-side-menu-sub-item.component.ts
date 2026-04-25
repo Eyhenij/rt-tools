@@ -15,7 +15,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatListItem, MatListItemIcon, MatListItemTitle, MatNavList } from '@angular/material/list';
 import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltip } from '@angular/material/tooltip';
 
-import { BlockDirective, ElemDirective } from '../../../bem';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { Nullable, RtHideTooltipDirective, RtIconOutlinedDirective } from '@rt-tools/utils';
 import { ISideMenu } from '../side-menu.types';
 import { RtuiSideMenuComponent } from '../menu/rtui-side-menu.component';

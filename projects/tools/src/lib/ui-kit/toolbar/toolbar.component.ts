@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import { MatToolbar } from '@angular/material/toolbar';
 
-import { BlockDirective, ElemDirective } from '../../bem';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { Nullable } from '@rt-tools/utils';
 
 @Directive({

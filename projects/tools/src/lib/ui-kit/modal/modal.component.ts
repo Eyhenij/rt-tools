@@ -7,7 +7,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
-import { BlockDirective, ElemDirective } from '../../bem';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { checkIsMatchingValues, SanitizePipe } from '@rt-tools/utils';
 import { IModal } from './modal.types';
 

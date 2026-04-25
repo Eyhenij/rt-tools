@@ -21,7 +21,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip, TooltipPosition } from '@angular/material/tooltip';
 import { ImageCroppedEvent, ImageCropperComponent } from 'ngx-image-cropper';
 
-import { BlockDirective, ElemDirective } from '../../../bem';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { Nullable, RtIconOutlinedDirective, transformStringInput } from '@rt-tools/utils';
 import { RtuiFileUploadComponent } from '../../file-uploader';
 import { RtuiSpinnerComponent } from '../../spinner';

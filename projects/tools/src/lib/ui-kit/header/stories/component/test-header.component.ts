@@ -4,7 +4,7 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTab, MatTabGroup } from '@angular/material/tabs';
 
-import { BlockDirective, ElemDirective } from '../../../../bem';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { RtuiHeaderCenterDirective, RtuiHeaderComponent, RtuiHeaderRightDirective } from '../../header.component';
 
 @Component({

@@ -20,7 +20,7 @@ import { MatTooltip, TooltipPosition } from '@angular/material/tooltip';
 import { noop } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
-import { BlockDirective, ElemDirective } from '../../bem';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { BreakpointService, Nullable } from '@rt-tools/utils';
 import { TOGGLE_SIZE_TYPE_ENUM, ToggleSizeType } from './toggle-size.type.enum';
 import { BooleanInput } from '@angular/cdk/coercion';

@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component, inject, input, InputSignal, signal,
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
-import { BlockDirective, ElemDirective } from '../../../../bem';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { Nullable } from '@rt-tools/utils';
 
 @Component({

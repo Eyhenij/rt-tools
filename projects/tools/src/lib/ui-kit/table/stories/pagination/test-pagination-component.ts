@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { BlockDirective } from '../../../../bem';
+import { BlockDirective } from '@rt-tools/core';
 import { RtuiPaginationComponent } from '../../components';
 import { PageModel } from '@rt-tools/utils';
 

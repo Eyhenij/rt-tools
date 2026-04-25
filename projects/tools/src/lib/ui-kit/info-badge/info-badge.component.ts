@@ -16,7 +16,7 @@ import {
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
-import { BlockDirective, ElemDirective } from '../../bem';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { Nullable, POSITION_ENUM } from '@rt-tools/utils';
 import { IInfoBadgeSizeType, INFO_BADGE_SIZE_ENUM } from './badge-info-enum';
 import { IconSideType } from './icon-side.type';

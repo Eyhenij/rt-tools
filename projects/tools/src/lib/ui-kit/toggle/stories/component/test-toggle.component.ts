@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TooltipPosition } from '@angular/material/tooltip';
 
-import { BlockDirective, ElemDirective } from '../../../../bem';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { RtuiToggleComponent } from '../../rtui-toggle.component';
 import { TOGGLE_SIZE_TYPE_ENUM, ToggleSizeType } from '../../toggle-size.type.enum';
 

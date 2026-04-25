@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable, Observer, Subscriber } from 'rxjs';
 
-import { WINDOW } from '@rt-tools/utils';
+import { WINDOW } from '../tokens';
 import { IIDBStorageServiceInterface } from './interfaces/idb-storage-service.interface';
 
 @Injectable()
