@@ -42,7 +42,7 @@ import {
 import { noop } from 'rxjs';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 
-import { BlockDirective, ElemDirective } from '../../../../bem';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import {
     areArraysEqual,
     areArraysEqualUnordered,

@@ -2,7 +2,7 @@ import { NgStyle, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, output, OutputEmitterRef, Signal } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 
-import { BlockDirective, ElemDirective } from '../../../../bem';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { BreakpointService, EmptyToDashPipe, RtIconOutlinedDirective } from '@rt-tools/utils';
 import { RtPopoverDirective } from '../../../popover/rt-popover.directive';
 import { IRtActionBar } from '../../action-bar-config.interface';

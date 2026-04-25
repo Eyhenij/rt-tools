@@ -33,7 +33,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
 
-import { BlockDirective, ElemDirective, ModDirective } from '../../../../bem';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import {
     BreakpointService,
     isString,

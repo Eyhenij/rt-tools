@@ -1,4 +1,4 @@
-import { Nullable } from '@rt-tools/utils';
+import { Nullable } from '../types';
 import { IStorageConverter } from './interfaces/storage-converter';
 
 export class JsonConverter implements IStorageConverter {

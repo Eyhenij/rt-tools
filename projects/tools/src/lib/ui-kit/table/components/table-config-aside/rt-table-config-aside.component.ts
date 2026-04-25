@@ -5,7 +5,7 @@ import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
-import { BlockDirective, ElemDirective } from '../../../../bem';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { areArraysEqual, BreakpointService, Nullable, RtIconOutlinedDirective } from '@rt-tools/utils';
 import { ASIDE_REF, AsideRef } from '../../../aside/aside.types';
 import { RtuiAsideContainerComponent, RtuiAsideContainerHeaderDirective } from '../../../aside';

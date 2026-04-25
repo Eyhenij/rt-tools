@@ -33,7 +33,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { debounceTime } from 'rxjs/operators';
 
-import { BlockDirective, ElemDirective } from '../../../../bem';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import {
     BreakStringPipe,
     DeviceDetectorService,

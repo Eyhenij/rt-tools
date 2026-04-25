@@ -9,7 +9,7 @@ import {
     model,
     output,
 } from '@angular/core';
-import { BlockDirective, ElemDirective } from '../../../bem';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { transformArrayInput } from '@rt-tools/utils';
 
 @Component({

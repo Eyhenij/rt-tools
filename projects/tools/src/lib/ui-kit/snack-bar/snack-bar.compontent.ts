@@ -4,7 +4,7 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar';
 
-import { BlockDirective, ElemDirective } from '../../bem';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { Nullable, RtIconOutlinedDirective } from '@rt-tools/utils';
 import { IRtSnackBar } from './snack-bar-config.interface';
 

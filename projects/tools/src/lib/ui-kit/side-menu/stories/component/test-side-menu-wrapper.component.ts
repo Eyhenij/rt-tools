@@ -4,7 +4,7 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
-import { BlockDirective, ElemDirective } from '../../../../bem';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { ISideMenu } from '../../side-menu.types';
 import { RtuiSideMenuComponent, RtuiSideMenuFooterDirective, RtuiSideMenuHeaderDirective } from '../../menu/rtui-side-menu.component';
 
