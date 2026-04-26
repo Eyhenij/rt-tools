@@ -1,6 +1,6 @@
 import { MatSnackBarConfig } from '@angular/material/snack-bar';
 
-import { Nullable } from '@rt-tools/utils';
+import { Nullable } from '@rt-tools/core';
 
 export namespace IRtSnackBar {
     export interface Config extends MatSnackBarConfig {

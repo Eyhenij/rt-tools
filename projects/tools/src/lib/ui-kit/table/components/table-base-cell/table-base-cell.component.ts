@@ -20,8 +20,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
-import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
-import { EmptyToDashPipe, isNumber, isString, Nullable, RtHideTooltipDirective, RtIconOutlinedDirective } from '@rt-tools/utils';
+import { BlockDirective, ElemDirective, ModDirective, Nullable } from '@rt-tools/core';
+import { EmptyToDashPipe, isNumber, isString, RtHideTooltipDirective, RtIconOutlinedDirective } from '@rt-tools/utils';
 import { ITable } from '../../util/table-column.interface';
 
 @Component({

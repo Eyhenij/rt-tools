@@ -13,8 +13,7 @@ import {
 } from '@angular/core';
 import { MatToolbar } from '@angular/material/toolbar';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { BlockDirective, ElemDirective, Nullable } from '@rt-tools/core';
 
 @Directive({
     selector: '[rtuiToolbarLeft]',

@@ -17,7 +17,8 @@ import {
 } from '@angular/core';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
 
-import { FilterModel, Nullable, PageModel, SortModel, transformArrayInput, transformStringInput } from '@rt-tools/utils';
+import { Nullable } from '@rt-tools/core';
+import { FilterModel, PageModel, SortModel, transformArrayInput, transformStringInput } from '@rt-tools/utils';
 import {
     RtuiCustomTableCellsDirective,
     RtuiTableAdditionalRowActionsDirective,

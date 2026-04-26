@@ -42,12 +42,11 @@ import {
 import { noop } from 'rxjs';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, Nullable } from '@rt-tools/core';
 import {
     areArraysEqual,
     areArraysEqualUnordered,
     checkIsEntityInArrayByKey,
-    Nullable,
     OVERLAY_POSITIONS,
     RtEscapeKeyDirective,
     sortByAlphabet,

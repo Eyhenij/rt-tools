@@ -1,4 +1,4 @@
-import { Nullable } from '../interfaces';
+import { Nullable } from '@rt-tools/core';
 
 export function debounce(timeout: number = 300): MethodDecorator {
     return function (_target: object, _key: string | symbol, descriptor: PropertyDescriptor) {
