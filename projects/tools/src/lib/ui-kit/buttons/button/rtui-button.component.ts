@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, InputSignal, Signal, computed, input } from '@angular/core';
 
-import { Nullable } from '@rt-tools/utils';
+import { Nullable } from '@rt-tools/core';
 
 export enum BUTTON_SIZE {
     SMALL = 'sm',

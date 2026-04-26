@@ -12,8 +12,8 @@ import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip, TooltipPosition } from '@angular/material/tooltip';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { isString, Nullable } from '@rt-tools/utils';
+import { BlockDirective, ElemDirective, Nullable } from '@rt-tools/core';
+import { isString } from '@rt-tools/utils';
 
 @Component({
     selector: 'rtui-clear-button',

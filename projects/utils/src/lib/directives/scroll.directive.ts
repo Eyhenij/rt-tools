@@ -1,7 +1,5 @@
 import { Directive, inject, input, InputSignal, OnDestroy, OnInit, output, OutputEmitterRef } from '@angular/core';
-
-import { PlatformService } from '../services';
-import { WINDOW } from '../tokens';
+import { PlatformService, WINDOW } from '@rt-tools/core';
 
 @Directive({
     selector: '[rtScrollDirective]',

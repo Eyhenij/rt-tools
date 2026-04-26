@@ -1,4 +1,4 @@
-import { Nullable } from '../interfaces';
+import { Nullable } from '@rt-tools/core';
 
 export enum HAS_OWN_SCOPE_ENUM {
     ANY = 'any',

@@ -8,6 +8,3 @@ export * from './optional.type';
 export * from './values.type';
 export * from './base-mapper.interface';
 export * from './scriptable.type';
-
-// re-export from @rt-tools/core
-export { IDictionary, Nullable, Primitive } from '@rt-tools/core';

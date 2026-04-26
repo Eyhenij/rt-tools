@@ -3,8 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { take } from 'rxjs/operators';
 
-import { IDBStorageService } from '@rt-tools/core';
-import { Nullable, areArraysEqual } from '@rt-tools/utils';
+import { IDBStorageService, Nullable } from '@rt-tools/core';
+import { areArraysEqual } from '@rt-tools/utils';
 import { ITable } from './index';
 
 @Injectable()

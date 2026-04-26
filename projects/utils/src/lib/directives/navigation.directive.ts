@@ -1,9 +1,6 @@
 import { Directive, HostListener, inject, input, InputSignal } from '@angular/core';
 import { Router } from '@angular/router';
-
-import { Nullable } from '../interfaces';
-import { PlatformService } from '../services';
-import { WINDOW } from '../tokens';
+import { Nullable, PlatformService, WINDOW } from '@rt-tools/core';
 
 @Directive({
     selector: '[rtNavigationDirective]',

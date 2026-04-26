@@ -4,8 +4,7 @@ import { ChangeDetectionStrategy, Component, inject, input, InputSignal, signal,
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { BlockDirective, ElemDirective, Nullable } from '@rt-tools/core';
 
 @Component({
     selector: 'rtui-aside-error-box',

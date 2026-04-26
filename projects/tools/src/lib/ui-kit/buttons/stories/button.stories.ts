@@ -8,7 +8,8 @@ import {
     RtuiButtonComponent,
     ButtonSizeType,
 } from '../button/rtui-button.component';
-import { Nullable, RtIconOutlinedDirective } from '@rt-tools/utils';
+import { Nullable } from '@rt-tools/core';
+import { RtIconOutlinedDirective } from '@rt-tools/utils';
 import { MatIcon } from '@angular/material/icon';
 
 interface ButtonComponentArgs {
