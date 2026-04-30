@@ -24,6 +24,8 @@
                     <mat-form-field rtElem="item-input" subscriptSizing="dynamic" [appearance]="appearance()">
                         <input matInput type="text" [value]="entity[displayExp()]" (keydown.enter)="changeValue(entity[displayExp()])" />
                     </mat-form-field>
+                } @else if (itemTitleTpl()) {
+                    <ng-container *ngTemplateOutlet="itemTitleTpl() || null; context: { $implicit: entity }" />
                 } @else {
                     <span
                         #titleTpl

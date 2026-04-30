@@ -58,6 +58,7 @@ import { RtuiMultiSelectorPopupComponent } from '../multi-selector-popup/rtui-mu
 import { RtuiDynamicSelectorPlaceholderComponent } from '../placeholder/rtui-dynamic-selector-placeholder.component';
 import {
     RtuiDynamicSelectorItemAdditionalControlDirective,
+    RtuiDynamicSelectorItemTitleDirective,
     RtuiDynamicSelectorSelectedListComponent,
 } from '../selected-list/rtui-dynamic-selector-selected-list.component';
 import { BooleanInput } from '@angular/cdk/coercion';
@@ -71,6 +72,12 @@ interface FormModel {
     selector: '[rtuiDynamicSelectorAdditionalControlDirective]',
 })
 export class RtuiDynamicSelectorAdditionalControlDirective {}
+
+/** Directive for custom item title template, projected from rtui-dynamic-selector down to selected-list */
+@Directive({
+    selector: '[rtuiDynamicSelectorItemTitleProjectionDirective]',
+})
+export class RtuiDynamicSelectorItemTitleProjectionDirective {}
 
 @Component({
     selector: 'rtui-dynamic-selector',
@@ -88,6 +95,7 @@ export class RtuiDynamicSelectorAdditionalControlDirective {}
         ElemDirective,
         RtEscapeKeyDirective,
         RtuiDynamicSelectorItemAdditionalControlDirective,
+        RtuiDynamicSelectorItemTitleDirective,
 
         // components
         RtuiMultiSelectorPopupComponent,
@@ -246,6 +254,13 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     /** Additional control for entity */
     public readonly additionalControlTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY }>>> = contentChild(
         RtuiDynamicSelectorAdditionalControlDirective,
+        {
+            read: TemplateRef,
+        }
+    );
+    /** Custom item title template */
+    public readonly itemTitleTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY }>>> = contentChild(
+        RtuiDynamicSelectorItemTitleProjectionDirective,
         {
             read: TemplateRef,
         }

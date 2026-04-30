@@ -51,6 +51,16 @@
             </div>
         </ng-container>
     }
+
+    @if (isCustomTitleShown) {
+        <ng-template rtuiDynamicSelectorItemTitleProjectionDirective let-entity>
+            <span class="custom-title">
+                <mat-icon class="custom-title__icon" [rtIconOutlined]="true">person</mat-icon>
+                <strong class="custom-title__id">#{{ entity.id }}</strong>
+                <span class="custom-title__name">{{ entity.name }}</span>
+            </span>
+        </ng-template>
+    }
 </rtui-dynamic-selector>
 
 <button

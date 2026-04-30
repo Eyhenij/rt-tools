@@ -8,7 +8,11 @@ import { faker } from '@faker-js/faker';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { RtIconOutlinedDirective } from '@rt-tools/utils';
-import { RtuiDynamicSelectorAdditionalControlDirective, RtuiDynamicSelectorComponent } from '../../../components';
+import {
+    RtuiDynamicSelectorAdditionalControlDirective,
+    RtuiDynamicSelectorComponent,
+    RtuiDynamicSelectorItemTitleProjectionDirective,
+} from '../../../components';
 
 export type Person = {
     id: number;
@@ -44,6 +48,7 @@ export const listOfPersons: Person[] = createPersonList(20);
         // components
         RtuiDynamicSelectorComponent,
         RtuiDynamicSelectorAdditionalControlDirective,
+        RtuiDynamicSelectorItemTitleProjectionDirective,
         MatIcon,
         MatIconButton,
         MatTooltip,
@@ -60,6 +65,7 @@ export class TestSelectorComponent implements OnInit {
     public loading: boolean = false;
     public fetching: boolean = false;
     public isAdditionalControlShown: boolean = false;
+    public isCustomTitleShown: boolean = false;
     public isMultiToggleShown: boolean = false;
     public hasReadonly: boolean = false;
     public isSingleMode: boolean = false;
