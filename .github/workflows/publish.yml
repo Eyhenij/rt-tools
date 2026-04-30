@@ -1,4 +1,4 @@
-name: Publish to npm
+name: Publish @rt-tools/ui-kit to npm
 
 on:
     workflow_dispatch:

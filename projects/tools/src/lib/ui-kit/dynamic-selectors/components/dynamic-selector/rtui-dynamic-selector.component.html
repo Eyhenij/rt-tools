@@ -24,6 +24,12 @@
                         <ng-template *ngTemplateOutlet="additionalControlTpl() || null; context: { $implicit: entity }" />
                     </ng-container>
                 }
+
+                @if (itemTitleTpl()) {
+                    <ng-container *rtuiDynamicSelectorItemTitleDirective="let entity">
+                        <ng-template *ngTemplateOutlet="itemTitleTpl() || null; context: { $implicit: entity }" />
+                    </ng-container>
+                }
             </rtui-dynamic-selector-selected-list>
 
             @if ((entitiesToSelect()?.length || !isLocalSearch()) && isSelectionAvailable()) {

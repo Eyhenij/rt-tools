@@ -34,6 +34,12 @@ import { MatFormFieldAppearance } from '@angular/material/form-field';
 })
 export class RtuiDynamicSelectorItemAdditionalControlDirective {}
 
+/** Directive for custom item title template */
+@Directive({
+    selector: '[rtuiDynamicSelectorItemTitleDirective]',
+})
+export class RtuiDynamicSelectorItemTitleDirective {}
+
 @Component({
     selector: 'rtui-dynamic-selector-selected-list',
     templateUrl: './rtui-dynamic-selector-selected-list.component.html',
@@ -119,6 +125,13 @@ export class RtuiDynamicSelectorSelectedListComponent<ENTITY extends Record<stri
     /** Additional control for entity */
     public readonly additionalControlTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY }>>> = contentChild(
         RtuiDynamicSelectorItemAdditionalControlDirective,
+        {
+            read: TemplateRef,
+        }
+    );
+    /** Custom item title template */
+    public readonly itemTitleTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY }>>> = contentChild(
+        RtuiDynamicSelectorItemTitleDirective,
         {
             read: TemplateRef,
         }
