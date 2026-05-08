@@ -10,7 +10,7 @@ if (!versionArg) {
 }
 
 // Путь к package.json
-const toolsDir = path.resolve(__dirname, './projects/tools');
+const toolsDir = path.resolve(__dirname, './projects/ui-kit');
 const packageJsonPath = path.join(toolsDir, 'package.json');
 
 // Читаем package.json

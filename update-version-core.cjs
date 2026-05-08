@@ -63,7 +63,7 @@ fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), 'utf8');
 console.log(`@rt-tools/core version updated successfully: ${currentVersion} → ${newVersion}`);
 
 // Update @rt-tools/core dependency in all dependent packages
-const dependentPackages = ['./projects/store/package.json', './projects/utils/package.json', './projects/tools/package.json'];
+const dependentPackages = ['./projects/store/package.json', './projects/utils/package.json', './projects/ui-kit/package.json'];
 
 function updateDependency(filePath, depName, newVer) {
     const fullPath = path.resolve(__dirname, filePath);

@@ -13,13 +13,13 @@ rt-tools is an Angular library providing utility types, functions, and UI compon
 pnpm install
 
 # Build the library
-pnpm run build:tools
+pnpm run build:ui-kit
 
 # Run all tests
 pnpm test
 
 # Run a single test file
-pnpm exec nx test @rt/tools --testFile=<path-to-spec>
+pnpm exec nx test @rt-tools/ui-kit --testFile=<path-to-spec>
 
 # Lint all projects
 pnpm run lint
@@ -41,11 +41,11 @@ pnpm run graph
 
 ### Monorepo Structure
 
-This is an Nx-managed monorepo using pnpm workspaces. The main library is in `projects/tools/`.
+This is an Nx-managed monorepo using pnpm workspaces. The main library is in `projects/ui-kit/`.
 
 ### Library Entry Points
 
-The library exports from `projects/tools/src/public-api.ts` with three main categories:
+The library exports from `projects/ui-kit/src/public-api.ts` with three main categories:
 
 1. **Core Tools** (`src/lib/`)
     - `bem/` - BEM CSS methodology utilities (block, elem, mod directives)
@@ -80,8 +80,8 @@ abstract class BaseStoreService<STATE, MSG> {
 
 ### Build Configuration
 
-- Built with ng-packagr (`projects/tools/ng-package.json`)
-- Output to `dist/tools/`
+- Built with ng-packagr (`projects/ui-kit/ng-package.json`)
+- Output to `dist/ui-kit/`
 - SCSS styles inlined
 - Assets include `src/styles` and all `.scss` files
 
@@ -99,7 +99,7 @@ abstract class BaseStoreService<STATE, MSG> {
 
 - Jest with jest-preset-angular
 - Test files: `*.spec.ts` alongside source files
-- Run single test: `pnpm exec nx test @rt/tools --testFile=<relative-path>`
+- Run single test: `pnpm exec nx test @rt-tools/ui-kit --testFile=<relative-path>`
 
 ## Using RtIconOutlinedDirective
 

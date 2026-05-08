@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../dist/tools",
+  "dest": "../../dist/ui-kit",
   "deleteDestPath": true,
   "inlineStyleLanguage": "scss",
   "assets": ["src/styles", "src/**/*.scss"],
