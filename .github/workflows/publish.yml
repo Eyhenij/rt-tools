@@ -49,8 +49,8 @@ jobs:
             - name: Update version
               run: |
                   node update-version.cjs ${{ github.event.inputs.version }}
-                  pnpm run changelog:tools
-                  VERSION=$(jq -r .version projects/tools/package.json)
+                  pnpm run changelog:ui-kit
+                  VERSION=$(jq -r .version projects/ui-kit/package.json)
                   echo "VERSION=$VERSION" >> $GITHUB_ENV
 
             - uses: EndBug/add-and-commit@v9
@@ -63,8 +63,8 @@ jobs:
                   git tag "rt-tools@${{ env.VERSION }}"
                   git push origin "rt-tools@${{ env.VERSION }}"
 
-            - name: Build tools
-              run: pnpm run build:tools
+            - name: Build ui-kit
+              run: pnpm run build:ui-kit
 
             - name: Publish
               run: pnpm run packagr:ui-kit

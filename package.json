@@ -7,8 +7,8 @@
     "build:core": "rimraf dist/core && nx build @rt-tools/core --verbose",
     "build:store": "rimraf dist/store && nx build @rt-tools/store --verbose",
     "build:utils": "rimraf dist/utils && nx build @rt-tools/utils --verbose",
-    "build:tools": "rimraf dist/tools && nx build @rt-tools/tools --verbose",
-    "build:all": "pnpm run build:core && pnpm run build:store && pnpm run build:utils && pnpm run build:tools",
+    "build:ui-kit": "rimraf dist/ui-kit && nx build @rt-tools/ui-kit --verbose",
+    "build:all": "pnpm run build:core && pnpm run build:store && pnpm run build:utils && pnpm run build:ui-kit",
     "watch": "nx build --watch --configuration development",
     "test": "pnpx nx run-many -t test",
     "lint": "pnpx nx run-many --target=lint --all",
@@ -18,14 +18,14 @@
     "packagr:core": "cd ./dist/core && npm pack && npm publish --access public",
     "packagr:store": "cd ./dist/store && npm pack && npm publish --access public",
     "packagr:utils": "cd ./dist/utils && npm pack && npm publish --access public",
-    "packagr:ui-kit": "cd ./dist/tools && npm pack && npm publish --access public",
-    "storybook": "nx run @rt-tools/tools:storybook --verbose",
-    "build-storybook": "nx run @rt-tools/tools:build-storybook --verbose",
+    "packagr:ui-kit": "cd ./dist/ui-kit && npm pack && npm publish --access public",
+    "storybook": "nx run @rt-tools/ui-kit:storybook --verbose",
+    "build-storybook": "nx run @rt-tools/ui-kit:build-storybook --verbose",
     "graph": "pnpx nx dep-graph",
     "changelog:core": "conventional-changelog -p angular -i projects/core/CHANGELOG.md -s -k projects/core/package.json --commit-path projects/core --tag-prefix rt-core@",
     "changelog:store": "conventional-changelog -p angular -i projects/store/CHANGELOG.md -s -k projects/store/package.json --commit-path projects/store --tag-prefix rt-store@",
     "changelog:utils": "conventional-changelog -p angular -i projects/utils/CHANGELOG.md -s -k projects/utils/package.json --commit-path projects/utils --tag-prefix rt-utils@",
-    "changelog:tools": "conventional-changelog -p angular -i projects/tools/CHANGELOG.md -s -k projects/tools/package.json --commit-path projects/tools --tag-prefix rt-tools@",
+    "changelog:ui-kit": "conventional-changelog -p angular -i projects/ui-kit/CHANGELOG.md -s -k projects/ui-kit/package.json --commit-path projects/ui-kit --tag-prefix rt-tools@",
     "prepare": "husky",
     "postinstall": "rimraf .angular .nx",
     "preinstall": "npx only-allow pnpm"
@@ -46,7 +46,7 @@
     "projects/core",
     "projects/store",
     "projects/utils",
-    "projects/tools"
+    "projects/ui-kit"
   ],
   "dependencies": {
     "@floating-ui/dom": "^1.7.4",

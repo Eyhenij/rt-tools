@@ -85,4 +85,4 @@ function updateDependency(filePath, depName, newVer) {
     }
 }
 
-updateDependency('./projects/tools/package.json', '@rt-tools/utils', newVersion);
+updateDependency('./projects/ui-kit/package.json', '@rt-tools/utils', newVersion);

@@ -179,10 +179,6 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
         /** Clear previous temp selection  */
         this.temporarySelectAction.emit([]);
 
-        if (this.searchTerm()) {
-            this.onClearSearch();
-        }
-
         /** Filter list of entities by search  */
         this.searchControl.valueChanges
             .pipe(debounceTime(this.isLocalSearch() ? 0 : 500), takeUntilDestroyed(this.#destroyRef))
@@ -244,6 +240,20 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
     public ngAfterViewInit(): void {
         if (this.searchInputRef) {
             this.searchInputRef()?.nativeElement.focus();
+        }
+
+        /**
+         * Reset search term left over from a previous open. Deferred from `ngOnInit` to
+         * `ngAfterViewInit` because emitting `searchAction` synchronously in `ngOnInit`
+         * triggers a parent state update during the same change-detection tick in which
+         * the host `cdkConnectedOverlay` is attaching. The cascade detaches/reattaches
+         * the overlay's origin reference before its position strategy has computed the
+         * connected coordinates, leaving the popup pinned at (0, 0). By the time
+         * `ngAfterViewInit` runs the overlay is positioned, so a downstream re-fetch is
+         * safe.
+         */
+        if (this.searchTerm()) {
+            this.onClearSearch();
         }
     }
 

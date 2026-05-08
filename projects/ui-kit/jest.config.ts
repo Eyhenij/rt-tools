@@ -1,9 +1,9 @@
 /* eslint-disable */
 export default {
-    displayName: 'rt-tools',
+    displayName: 'rt-ui-kit',
     preset: '../../jest.preset.cjs',
     setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-    coverageDirectory: '../../coverage/rt-tools',
+    coverageDirectory: '../../coverage/rt-ui-kit',
     passWithNoTests: true,
     transform: {
         '^.+\\.(ts|mjs|js|html)$': [
