@@ -1,0 +1,386 @@
+@use './variables' as vars;
+
+/// ============================================================================
+/// rt-tools Design Tokens v2
+/// ============================================================================
+///
+/// Two tiers + component tier, GMT-style:
+///   Tier 1  primitives  --rt-color-*                      raw values. NEVER use directly in components.
+///   Tier 2  semantic    --rt-{bg,text,icon,border}-*      role-based, adaptive via light-dark().
+///   Tier 3  component   --rt-<component>-<el>-<token>     per-component SCSS maps; must reference Tier 2
+///                                                         (raw primitives allowed only for intentionally
+///                                                         chromatic values, e.g. color-variant buttons).
+///
+/// Theming: light is the default. `.rt-dark` on <html>/<body> switches globally;
+/// `data-rt-theme="dark|light"` creates a nested local theme context on any element.
+/// Both work through `color-scheme` + light-dark() — no duplicated override blocks.
+///
+/// Angular Material hybrid: when the consuming app configures a Material theme
+/// (--mat-sys-* present), semantic tokens resolve to Material system colors;
+/// otherwise the own-palette fallback applies. Opt out at build time:
+///   @use 'rt-tools/src/styles/main' with ($tokens-use-material: false);
+///
+/// Rules (enforced by convention + review):
+///   - no HEX values in component SCSS;
+///   - components reference semantic tokens, semantic references primitives;
+///   - never skip the semantic tier.
+
+$use-material: true !default;
+
+/// Wrap a light/dark pair into light-dark(), optionally behind a --mat-sys-* fallback chain.
+@function t($light, $dark: null, $mat: null) {
+    $v: $light;
+
+    @if $dark != null {
+        $v: light-dark(#{$light}, #{$dark});
+    }
+
+    @if $mat != null and $use-material {
+        @return var(--mat-sys-#{$mat}, #{$v});
+    }
+
+    @return $v;
+}
+
+/* ============================== Tier 1: primitives ============================== */
+
+// Unified neutral scale (sorted by lightness, sourced from the legacy white/gray/black families)
+$neutral: (
+    0: #ffffff,
+    5: #f5f6f8,
+    10: #f3f3f3,
+    15: #eeeeee,
+    20: #e8e8e8,
+    25: #e0e0e0,
+    30: #d1d1d1,
+    35: #cccccc,
+    40: #a3a3a3,
+    60: #747474,
+    80: #323033,
+    100: #181818,
+);
+
+// Chromatic hues (steps preserved from the legacy palette)
+$hues: (
+    'red': (
+        10: #fdedee,
+        20: #efc0c1,
+        40: #f7b9bb,
+        60: #e88487,
+        80: #df6064,
+        100: #eb5055,
+    ),
+    'orange': (
+        5: #f6e4d9,
+        10: #e8cbbf,
+        20: #e1ba9e,
+        40: #e4a985,
+        60: #f1a05d,
+        70: #f2994a,
+        80: #ee7a34,
+        100: #ef7128,
+    ),
+    'blue': (
+        20: #eaedfc,
+        40: #b3ceef,
+        60: #6d96e8,
+        80: #4285f4,
+        100: #4284d7,
+    ),
+    'green': (
+        10: #e5f8f4,
+        20: #baf4e0,
+        40: #5dbfbc,
+        60: #46c4c0,
+        80: #21b18e,
+        100: #01af8d,
+    ),
+);
+
+// Base value per hue + brand
+$hue-base: (
+    'red': #eb5055,
+    'orange': #ef7128,
+    'blue': #4284d7,
+    'green': #01af8d,
+    'brand': #0d1c2b,
+);
+
+$opacity-steps: (5, 10, 20, 30, 40, 50, 60, 70, 80, 90);
+$overlay-steps: (5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90);
+
+/* ============================== Tier 2: semantic ============================== */
+// NOTE: function calls in this map are evaluated when the module loads,
+// honoring a `with ($use-material: ...)` configuration.
+
+$semantic: (
+    /* ---- bg / base (adaptive) ---- */ bg-base-base: t(#ffffff, #1c1b1e, surface),
+    bg-base-elevated: t(#ffffff, #2a292d, surface-container),
+    bg-base-subtle: t(#f5f6f8, #232226),
+    bg-base-hover: t(#f3f3f3, rgba(255, 255, 255, 0.06)),
+    bg-base-active: t(#eeeeee, rgba(255, 255, 255, 0.1)),
+    bg-base-strong: t(#e0e0e0, #3f3e43),
+    bg-base-emphasis: t(#747474, #a3a3a3),
+    bg-base-emphasis-soft: t(#a3a3a3, #747474),
+    bg-base-inverse: t(#181818, #f3f3f3, inverse-surface),
+    bg-base-inverse-soft: t(#323033, #eeeeee),
+    bg-base-overlay: t(rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0.6)),
+    /* ---- bg / static ---- */ bg-static-light: #ffffff,
+    bg-static-dark: #181818,
+    bg-static-none: transparent,
+    /* ---- bg / accent: {subtle, solid, hover, disabled} (simplified GMT scale) ---- */
+    bg-accent-primary-subtle: t(#eaedfc, color-mix(in srgb, #4284d7 18%, #1c1b1e), primary-container),
+    bg-accent-primary-solid: t(#4284d7, #4284d7, primary),
+    bg-accent-primary-hover: t(color-mix(in srgb, #4284d7 90%, #000000), color-mix(in srgb, #4284d7 90%, #ffffff)),
+    bg-accent-primary-disabled: color-mix(in srgb, #4284d7 38%, transparent),
+    bg-accent-success-subtle: t(#e5f8f4, color-mix(in srgb, #01af8d 18%, #1c1b1e)),
+    bg-accent-success-solid: #21b18e,
+    bg-accent-success-hover: t(color-mix(in srgb, #21b18e 90%, #000000), color-mix(in srgb, #21b18e 90%, #ffffff)),
+    bg-accent-success-disabled: color-mix(in srgb, #21b18e 38%, transparent),
+    bg-accent-warning-subtle: t(#e8cbbf, color-mix(in srgb, #ef7128 18%, #1c1b1e)),
+    bg-accent-warning-solid: #ee7a34,
+    bg-accent-warning-hover: t(color-mix(in srgb, #ee7a34 90%, #000000), color-mix(in srgb, #ee7a34 90%, #ffffff)),
+    bg-accent-warning-disabled: color-mix(in srgb, #ee7a34 38%, transparent),
+    bg-accent-danger-subtle: t(#fdedee, color-mix(in srgb, #eb5055 18%, #1c1b1e), error-container),
+    bg-accent-danger-solid: t(#eb5055, #eb5055, error),
+    bg-accent-danger-hover: t(color-mix(in srgb, #eb5055 90%, #000000), color-mix(in srgb, #eb5055 90%, #ffffff)),
+    bg-accent-danger-disabled: color-mix(in srgb, #eb5055 38%, transparent),
+    bg-accent-info-subtle: t(#eaedfc, color-mix(in srgb, #4284d7 18%, #1c1b1e)),
+    bg-accent-info-solid: #4284d7,
+    bg-accent-info-hover: t(color-mix(in srgb, #4284d7 90%, #000000), color-mix(in srgb, #4284d7 90%, #ffffff)),
+    bg-accent-info-disabled: color-mix(in srgb, #4284d7 38%, transparent),
+    bg-accent-neutral-subtle: t(#f3f3f3, rgba(255, 255, 255, 0.06)),
+    bg-accent-neutral-solid: t(#747474, #a3a3a3),
+    bg-accent-neutral-hover: t(#a3a3a3, #747474),
+    bg-accent-neutral-disabled: t(rgba(116, 116, 116, 0.38), rgba(163, 163, 163, 0.38)),
+    /* ---- text / base (adaptive) ---- */ text-base-primary: t(rgba(0, 0, 0, 0.87), rgba(255, 255, 255, 0.87), on-surface),
+    text-base-strong: t(#181818, #f3f3f3),
+    text-base-soft: t(#323033, #e0e0e0),
+    text-base-secondary: t(#747474, #a3a3a3, on-surface-variant),
+    text-base-disabled: t(#a3a3a3, #747474),
+    text-base-inverse: t(#ffffff, #181818, inverse-on-surface),
+    /* ---- text / static ---- */ text-static-light: #ffffff,
+    text-static-dark: #181818,
+    /* ---- text / accent ---- */ text-accent-brand: t(#0d1c2b, #e8e8e8, primary),
+    text-accent-primary: t(#4284d7, #6d96e8, primary),
+    text-accent-success: #01af8d,
+    text-accent-success-soft: #21b18e,
+    text-accent-warning: #ef7128,
+    text-accent-warning-soft: #ee7a34,
+    text-accent-danger: t(#eb5055, #eb5055, error),
+    text-accent-danger-soft: #e88487,
+    text-accent-info: #4284d7,
+    text-accent-info-soft: #4285f4,
+    /* ---- icon / neutral (adaptive) ---- */ icon-neutral-default: t(#323033, #e0e0e0),
+    icon-neutral-soft: t(#747474, #a3a3a3),
+    icon-neutral-disabled: t(#a3a3a3, #747474),
+    icon-neutral-inverse: t(#ffffff, #181818),
+    /* ---- icon / static ---- */ icon-static-light: #ffffff,
+    icon-static-dark: #181818,
+    /* ---- icon / accent ---- */ icon-accent-brand: t(#0d1c2b, #e8e8e8, primary),
+    icon-accent-primary: t(#4284d7, #6d96e8, primary),
+    icon-accent-success: #01af8d,
+    icon-accent-warning: #ef7128,
+    icon-accent-danger: t(#eb5055, #eb5055, error),
+    icon-accent-info: #4284d7,
+    /* ---- border / neutral (adaptive) ---- */ border-neutral-subtle: t(#e8e8e8, #2e2d31),
+    border-neutral-default: t(#e0e0e0, #3f3e43, outline-variant),
+    border-neutral-medium: t(#d1d1d1, #4a494e),
+    border-neutral-divider: t(#cccccc, #4a494e),
+    border-neutral-strong: t(#a3a3a3, #5c5b60, outline),
+    border-neutral-emphasis: t(#747474, #a3a3a3),
+    /* ---- border / accent ---- */ border-accent-primary: t(#4284d7, #6d96e8, primary),
+    border-accent-success: #01af8d,
+    border-accent-warning: #ef7128,
+    border-accent-danger: t(#eb5055, #eb5055, error),
+    border-accent-danger-soft: #e88487,
+    border-accent-info: #4284d7,
+    border-focus: t(#b3ceef, #6d96e8),
+    /* ---- form controls (rt extension) ---- */ control-track: t(#e8e8e8, #4a494e),
+    control-thumb: t(#ffffff, #eeeeee),
+    control-checked: t(#323033, #e0e0e0),
+    /* ---- misc ---- */ scrollbar-thumb: t(#cccccc, #4a494e),
+    scrollbar-thumb-hover: t(#a3a3a3, #5c5b60),
+    shadow-color: t(#747474, rgba(0, 0, 0, 0.6))
+);
+
+/* ============================== Foundations (mode-independent) ============================== */
+
+$spacing: (
+    0: 0,
+    2: 0.125rem,
+    4: 0.25rem,
+    6: 0.375rem,
+    8: 0.5rem,
+    12: 0.75rem,
+    16: 1rem,
+    20: 1.25rem,
+    24: 1.5rem,
+    32: 2rem,
+    40: 2.5rem,
+    48: 3rem,
+    56: 3.5rem,
+    64: 4rem,
+);
+
+$radius: (
+    xs: 0.25rem,
+    sm: 0.5rem,
+    md: 0.75rem,
+    lg: 1rem,
+    xl: 1.5rem,
+    2xl: 2rem,
+    full: 624.9375rem,
+);
+
+$font-size: (
+    xs: 0.75rem,
+    sm: 0.875rem,
+    md: 1rem,
+    lg: 1.25rem,
+    xl: 1.5rem,
+);
+
+$font-weight: (
+    regular: 400,
+    medium: 500,
+    semibold: 600,
+    bold: 700,
+);
+
+$shadow: (
+    sm: (
+        0 0.0625rem 0.25rem 0 rgba(0, 0, 0, 0.12),
+    ),
+    md: (
+        0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.14),
+    ),
+    lg: (
+        0 0.5rem 1rem 0 var(--rt-shadow-color),
+    ),
+);
+
+$transition: (
+    fast: 0.15s ease-in-out,
+    base: 0.25s ease-in-out,
+    slow: 0.4s ease-in-out,
+);
+
+$z-index: (
+    dropdown: 1000,
+    sticky: 1020,
+    overlay: 1040,
+    modal: 1060,
+    popover: 1080,
+    tooltip: 1100,
+);
+
+// informational only — media queries cannot read CSS vars, use vars.$device-* in SCSS
+$breakpoint: (
+    xs: vars.$device-xs,
+    sm: vars.$device-sm,
+    md: vars.$device-md,
+    lg: vars.$device-lg,
+    xl: vars.$device-xl,
+);
+
+/* ============================== Emission ============================== */
+
+:root {
+    color-scheme: light;
+
+    /* --- Tier 1: primitives --- */
+    @each $step, $value in $neutral {
+        --rt-color-neutral-#{$step}: #{$value};
+    }
+
+    @each $hue, $steps in $hues {
+        @each $step, $value in $steps {
+            --rt-color-#{$hue}-#{$step}: #{$value};
+        }
+    }
+
+    @each $hue, $value in $hue-base {
+        --rt-color-#{$hue}: #{$value};
+
+        // opacity scales via color-mix
+        @each $a in $opacity-steps {
+            --rt-color-#{$hue}-a#{$a}: color-mix(in srgb, #{$value} #{$a + '%'}, transparent);
+        }
+    }
+
+    // overlay scales (on-light darkens, on-dark lightens)
+    @each $a in $overlay-steps {
+        --rt-color-dark-a#{$a}: rgba(24, 24, 24, #{calc($a / 100)});
+        --rt-color-light-a#{$a}: rgba(255, 255, 255, #{calc($a / 100)});
+    }
+
+    /* --- Tier 2: semantic --- */
+    @each $token, $value in $semantic {
+        --rt-#{$token}: #{$value};
+    }
+
+    /* --- Foundations --- */
+    @each $token, $value in $spacing {
+        --rt-spacing-#{$token}: #{$value};
+    }
+    @each $token, $value in $radius {
+        --rt-radius-#{$token}: #{$value};
+    }
+    @each $token, $value in $font-size {
+        --rt-font-size-#{$token}: #{$value};
+    }
+    @each $token, $value in $font-weight {
+        --rt-font-weight-#{$token}: #{$value};
+    }
+    @each $token, $value in $shadow {
+        --rt-shadow-#{$token}: #{$value};
+    }
+    @each $token, $value in $transition {
+        --rt-transition-#{$token}: #{$value};
+    }
+    @each $token, $value in $z-index {
+        --rt-z-index-#{$token}: #{$value};
+    }
+    @each $token, $value in $breakpoint {
+        --rt-breakpoint-#{$token}: #{$value};
+    }
+
+    /* --- Deprecated aliases (legacy --clr-*; remove after consumers migrate) --- */
+    --clr-white-100: var(--rt-color-neutral-0);
+    --clr-gray-5: var(--rt-color-neutral-5);
+    --clr-gray-10: var(--rt-color-neutral-20);
+    --clr-gray-15: var(--rt-color-neutral-30);
+    --clr-gray-20: var(--rt-color-neutral-35);
+    --clr-black-10: var(--rt-color-neutral-10);
+    --clr-black-15: var(--rt-color-neutral-15);
+    --clr-black-20: var(--rt-color-neutral-25);
+    --clr-black-30: #b2cbca; // palette outlier, kept verbatim
+    --clr-black-40: var(--rt-color-neutral-40);
+    --clr-black-60: var(--rt-color-neutral-60);
+    --clr-black-80: var(--rt-color-neutral-80);
+    --clr-black-100: var(--rt-color-neutral-100);
+    @each $hue, $steps in $hues {
+        @each $step, $value in $steps {
+            --clr-#{$hue}-#{$step}: var(--rt-color-#{$hue}-#{$step});
+        }
+    }
+    --clr-txt: var(--rt-text-base-primary);
+    --clr-base-accent: var(--rt-color-brand);
+    --clr-white-rgb: 255, 255, 255;
+}
+
+/* Theme switching: global class + nested local contexts (GMT data-theme analogue) */
+.rt-dark,
+[data-rt-theme='dark'] {
+    color-scheme: dark;
+}
+
+[data-rt-theme='light'] {
+    color-scheme: light;
+}
+
+/* 'auto' follows prefers-color-scheme */
+.rt-theme-auto {
+    color-scheme: light dark;
+}

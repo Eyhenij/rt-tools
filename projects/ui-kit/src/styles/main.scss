@@ -2,6 +2,7 @@
 @forward 'base/variables' as vars-*;
 @forward 'base/mixin' as mixins-*;
 @forward 'base/base';
+@forward 'base/tokens' as tokens-*;
 
 // Components
 @forward 'components/form';

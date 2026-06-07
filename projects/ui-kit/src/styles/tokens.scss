@@ -1,0 +1,5 @@
+// Standalone design-token entry.
+// Compiled to dist/ui-kit/styles/tokens.css for consumers without a sass pipeline:
+//   @import 'rt-tools/styles/tokens.css';
+// SCSS consumers should @use 'rt-tools/src/styles/main' instead (mixins + component styles included).
+@use './base/tokens';
