@@ -1,5 +1,3 @@
-@use './mixin' as mixins;
-
 $palette: (
     white: (
         100: #ffffff,
@@ -55,17 +53,12 @@ $palette: (
     ),
 );
 
+// NOTE: the $palette map above is kept for backwards compatibility (consumers may @use it).
+// All CSS custom property emission lives in base/_tokens.scss:
+//   --rt-color-* primitives, --rt-{bg,text,icon,border}-* semantic, foundations,
+//   and deprecated --clr-* aliases.
+
 :root {
-    @each $family, $set in $palette {
-        @each $saturate, $clr in $set {
-            #{mixins.generateCssClrVar($family, $saturate)}: #{$clr};
-        }
-    }
-
-    --clr-base-accent: #0d1c2b;
-    --clr-txt: rgba(0, 0, 0, 0.87);
-    --clr-white-rgb: 255, 255, 255;
-
     // Buttons
     --rt-button-box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.12), 0 1px 18px 0 rgba(0, 0, 0, 0.14);
 }
