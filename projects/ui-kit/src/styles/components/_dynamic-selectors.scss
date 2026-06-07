@@ -13,12 +13,12 @@ $dynamic-selector: (
     ),
     item-mover: (
         padding: 0 0.25rem 0 0,
-        border-right: 1px solid var(--clr-black-30),
+        border-right: 1px solid var(--rt-border-neutral-divider),
         margin-right: 0.75rem,
     ),
     item-control: (
         padding: 0 0.25rem 0 0.25rem,
-        border-right: 1px solid var(--clr-black-30),
+        border-right: 1px solid var(--rt-border-neutral-divider),
         gap: 0.5rem,
     ),
     item-control-last-child: (
