@@ -1,0 +1,91 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Foundation/Design Tokens/Overview" />
+
+# Design Tokens
+
+rt-tools ships a CSS custom property based design token system. Import once:
+
+```css
+@use 'rt-tools/src/styles/main';
+```
+
+All tokens are emitted on `:root` and adapt to the active theme automatically.
+
+---
+
+## Tiers
+
+> **Components never use primitives or HEX directly — only semantic tokens.**
+
+| Tier          | Pattern                              | Purpose                                                                              |
+| ------------- | ------------------------------------ | ------------------------------------------------------------------------------------ |
+| 1 — Primitive | `--rt-color-*`                       | Raw values (HEX / scales). Foundation of the system, never referenced by components. |
+| 2 — Semantic  | `--rt-{bg,text,icon,border}-*`       | Role-based, adaptive. The only tier components may consume.                          |
+| 3 — Component | `--rt-<component>-<element>-<token>` | Generated per component; values alias Tier 2.                                        |
+
+Layering rules:
+
+- Semantic tokens reference **primitives** (or Material system tokens, see below).
+- Primitive tokens contain **HEX / rgba values**.
+- A component must not use HEX directly.
+- A component must not reference a primitive directly, bypassing semantics
+  (exception: intentionally chromatic values such as color-variant button hue steps).
+
+---
+
+## Naming convention
+
+| Pattern                                               | Description                                                    |
+| ----------------------------------------------------- | -------------------------------------------------------------- |
+| `--rt-color-{hue}`                                    | Primitive hue base (`red`, `orange`, `blue`, `green`, `brand`) |
+| `--rt-color-{hue}-{N}`                                | Hue steps (legacy palette ladder)                              |
+| `--rt-color-{hue}-a{N}`                               | Opacity scale (5–90) via `color-mix`                           |
+| `--rt-color-neutral-{N}`                              | Unified neutral scale (0–100)                                  |
+| `--rt-color-{dark,light}-a{N}`                        | Overlay scales: rgba(dark, N%) / rgba(white, N%)               |
+| `--rt-bg-base-*`                                      | Adaptive backgrounds (change with theme)                       |
+| `--rt-bg-static-*`                                    | Static backgrounds (never change)                              |
+| `--rt-bg-accent-{role}-{step}`                        | Accent backgrounds, steps: `subtle / solid / hover / disabled` |
+| `--rt-text-{base,static,accent}-*`                    | Text colors                                                    |
+| `--rt-icon-{neutral,static,accent}-*`                 | Icon colors                                                    |
+| `--rt-border-{neutral,accent}-*`, `--rt-border-focus` | Borders                                                        |
+| `--rt-control-*`                                      | Form control parts (track / thumb / checked)                   |
+| `--rt-spacing-{N}`                                    | Spacing: 0/2/4/6/8/12/16/20/24/32/40/48/56/64 px (rem values)  |
+| `--rt-radius-*`                                       | Radii (`xs … 2xl`, `full`)                                     |
+| `--rt-font-*`                                         | Typography (size / weight)                                     |
+| `--rt-shadow-*`                                       | Elevation                                                      |
+| `--rt-transition-*`                                   | Motion                                                         |
+| `--rt-z-index-*`                                      | Z-index scale                                                  |
+| `--rt-<component>-*`                                  | Component tier                                                 |
+
+Accent roles: `primary`, `success`, `warning`, `danger`, `info`, `neutral` (+ `brand` for text/icon).
+
+---
+
+## Angular Material hybrid
+
+When the consuming app configures a Material theme (so `--mat-sys-*` variables exist),
+key semantic tokens resolve to Material system colors via fallback chains:
+
+```css
+--rt-bg-base-base: var(--mat-sys-surface, light-dark(#ffffff, #1c1b1e));
+```
+
+No configuration needed — themed apps get Material colors, unthemed apps get the
+own palette. To force the own palette at build time:
+
+```scss
+@use 'rt-tools/src/styles/main' with (
+    $tokens-use-material: false
+);
+```
+
+---
+
+## Differences vs GMT (intentional)
+
+- Accent step scale is simplified to `subtle / solid / hover / disabled`
+  (no `xsubtle / default / strong`).
+- No `*-accent-ondark-*` duplicate sets — use nested theme contexts instead
+  (see **Foundation/Theming**).
+- Theming uses `light-dark()` + `color-scheme` instead of duplicated override blocks.

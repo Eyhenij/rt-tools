@@ -1,0 +1,90 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="How to use tokens" />
+
+# How to use tokens
+
+## Setup
+
+SCSS (recommended — also brings mixins and component styles):
+
+```scss
+// styles.scss of the consuming app
+@use 'rt-tools/src/styles/main';
+```
+
+Prebuilt CSS (no sass required):
+
+```css
+@import 'rt-tools/styles/tokens.css';
+```
+
+Force the own palette (ignore Angular Material system colors):
+
+```scss
+@use 'rt-tools/src/styles/main' with (
+    $tokens-use-material: false
+);
+```
+
+---
+
+## Rules
+
+1. **Components use semantic tokens only** — `--rt-bg-*`, `--rt-text-*`,
+   `--rt-icon-*`, `--rt-border-*`, foundations.
+2. **No raw HEX** in component styles.
+3. **No primitives** (`--rt-color-*`) in components — the only exception is an
+   intentionally chromatic value (e.g. hue ladders of color-variant buttons),
+   and it must be justified in review.
+4. New component tokens (`--rt-<component>-*`) must alias semantic tokens.
+
+```scss
+// ✅ good
+.card {
+    background: var(--rt-bg-base-elevated);
+    border: 1px solid var(--rt-border-neutral-default);
+    color: var(--rt-text-base-primary);
+}
+
+// ❌ bad — primitive + hex
+.card {
+    background: var(--rt-color-neutral-0);
+    border-color: #e0e0e0;
+}
+```
+
+---
+
+## Choosing a token
+
+| I need…                          | Take                                          |
+| -------------------------------- | --------------------------------------------- |
+| Page / panel background          | `--rt-bg-base-base` / `--rt-bg-base-elevated` |
+| Hover / pressed row              | `--rt-bg-base-hover` / `--rt-bg-base-active`  |
+| Main / secondary / disabled text | `--rt-text-base-{primary,secondary,disabled}` |
+| Text on a colored button         | `--rt-text-static-light`                      |
+| Status background (badge, alert) | `--rt-bg-accent-{role}-{subtle,solid}`        |
+| Status text                      | `--rt-text-accent-{role}`                     |
+| Default border / divider         | `--rt-border-neutral-{default,divider}`       |
+| Focus outline                    | `--rt-border-focus`                           |
+| Paddings, gaps                   | `--rt-spacing-{N}`                            |
+| Rounding                         | `--rt-radius-{xs…full}`                       |
+
+---
+
+## Migration from `--clr-*`
+
+Legacy `--clr-{family}-{saturate}` variables (and `--clr-txt`,
+`--clr-base-accent`) are still emitted as deprecated aliases, so existing
+consumers keep working. Migrate to semantic tokens at your own pace; the
+aliases will be removed in a future major release.
+
+---
+
+## Figma parity
+
+The Figma library “RT-Tools UI Kit” mirrors this system: variable collections
+`core` (primitives) and `theme` (semantic, Light/Dark modes) use the same
+names (`rt/bg/base/base` ↔ `--rt-bg-base-base`). Design and code stay in sync
+token-by-token.

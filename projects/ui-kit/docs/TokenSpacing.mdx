@@ -1,0 +1,153 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Foundation/Design Tokens/Spacing" />
+
+export const Bar = ({ n, px }) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '3px 0' }}>
+        <code style={{ fontSize: 12, width: 150, flexShrink: 0 }}>{`--rt-spacing-${n}`}</code>
+        <div style={{ height: 14, width: `var(--rt-spacing-${n})`, background: 'var(--rt-bg-accent-primary-solid)', borderRadius: 3 }} />
+        <span style={{ fontSize: 11, opacity: 0.55 }}>{px}px</span>
+    </div>
+);
+
+export const Rad = ({ r }) => (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+        <div
+            style={{
+                width: 64,
+                height: 44,
+                background: 'var(--rt-bg-accent-primary-subtle)',
+                border: '1px solid var(--rt-border-accent-primary)',
+                borderRadius: `var(--rt-radius-${r})`,
+            }}
+        />
+        <code style={{ fontSize: 11 }}>{r}</code>
+    </div>
+);
+
+# Spacing & Layout
+
+All spacing, radii, typography, shadows, motion and z-index are defined as
+tokens. Using magic numbers directly is forbidden. Foundations are
+**mode-independent** — identical in light and dark themes.
+
+---
+
+## Spacing scale — `--rt-spacing-{N}`
+
+Based on a **4px grid** (plus a 2px micro-step). Named by pixel value, emitted in `rem`:
+
+{[[0, 0], [2, 2], [4, 4], [6, 6], [8, 8], [12, 12], [16, 16], [20, 20], [24, 24], [32, 32], [40, 40], [48, 48], [56, 56], [64, 64]].map(([n, px]) => (
+
+<Bar key={n} n={n} px={px} />
+))}
+
+```css
+padding: var(--rt-spacing-16) var(--rt-spacing-24);
+gap: var(--rt-spacing-8);
+```
+
+---
+
+## Border radius — `--rt-radius-*`
+
+<div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', padding: '12px 0' }}>
+    {['xs', 'sm', 'md', 'lg', 'xl', '2xl', 'full'].map((r) => (
+        <Rad key={r} r={r} />
+    ))}
+</div>
+
+| Token              | Value         | Usage                         |
+| ------------------ | ------------- | ----------------------------- |
+| `--rt-radius-xs`   | `0.25rem`     | Tags, small elements          |
+| `--rt-radius-sm`   | `0.5rem`      | Inputs, small buttons         |
+| `--rt-radius-md`   | `0.75rem`     | Cards, pagination chips       |
+| `--rt-radius-lg`   | `1rem`        | Large cards, modals           |
+| `--rt-radius-xl`   | `1.5rem`      | Prominent containers          |
+| `--rt-radius-2xl`  | `2rem`        | Hero blocks                   |
+| `--rt-radius-full` | `624.9375rem` | Pills, avatars, round buttons |
+
+---
+
+## Typography — `--rt-font-*`
+
+| Token                       | Value      |
+| --------------------------- | ---------- |
+| `--rt-font-size-xs`         | `0.75rem`  |
+| `--rt-font-size-sm`         | `0.875rem` |
+| `--rt-font-size-md`         | `1rem`     |
+| `--rt-font-size-lg`         | `1.25rem`  |
+| `--rt-font-size-xl`         | `1.5rem`   |
+| `--rt-font-weight-regular`  | `400`      |
+| `--rt-font-weight-medium`   | `500`      |
+| `--rt-font-weight-semibold` | `600`      |
+| `--rt-font-weight-bold`     | `700`      |
+
+The font family (`--font-default`) is **app-defined** — the kit does not impose one.
+
+---
+
+## Shadows — `--rt-shadow-*`
+
+<div style={{ display: 'flex', gap: 24, padding: '16px 4px 20px' }}>
+    {['sm', 'md', 'lg'].map((s) => (
+        <div
+            key={s}
+            style={{
+                width: 96,
+                height: 64,
+                borderRadius: 8,
+                background: 'var(--rt-bg-base-elevated)',
+                boxShadow: `var(--rt-shadow-${s})`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+            }}>
+            <code style={{ fontSize: 12 }}>{s}</code>
+        </div>
+    ))}
+</div>
+
+| Token            | Usage                                               |
+| ---------------- | --------------------------------------------------- |
+| `--rt-shadow-sm` | Subtle elevation (chips, inputs)                    |
+| `--rt-shadow-md` | Cards                                               |
+| `--rt-shadow-lg` | Popovers, menus — uses adaptive `--rt-shadow-color` |
+
+---
+
+## Transitions — `--rt-transition-*`
+
+| Token                  | Value               | Usage                       |
+| ---------------------- | ------------------- | --------------------------- |
+| `--rt-transition-fast` | `0.15s ease-in-out` | Hovers, small state changes |
+| `--rt-transition-base` | `0.25s ease-in-out` | Default motion              |
+| `--rt-transition-slow` | `0.4s ease-in-out`  | Panels, large surfaces      |
+
+---
+
+## Z-index — `--rt-z-index-*`
+
+| Token                   | Value  |
+| ----------------------- | ------ |
+| `--rt-z-index-dropdown` | `1000` |
+| `--rt-z-index-sticky`   | `1020` |
+| `--rt-z-index-overlay`  | `1040` |
+| `--rt-z-index-modal`    | `1060` |
+| `--rt-z-index-popover`  | `1080` |
+| `--rt-z-index-tooltip`  | `1100` |
+
+---
+
+## Breakpoints
+
+`--rt-breakpoint-{xs,sm,md,lg,xl}` are emitted **for JS reads only** — CSS media
+queries cannot consume custom properties. In SCSS use the `$device-*` variables:
+
+```scss
+@use 'rt-tools/src/styles/main' as rt;
+
+@include rt.mixins-media-breakpoint-down(rt.$vars-device-md) {
+    font-size: 1rem;
+}
+```

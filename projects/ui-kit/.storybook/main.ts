@@ -1,9 +1,22 @@
+import remarkGfm from 'remark-gfm';
+
 import type { StorybookConfig } from '@storybook/angular';
 
 /* eslint-disable */
 const config: StorybookConfig = {
-    stories: ['../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
-    addons: [],
+    stories: ['../docs/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+    addons: [
+        {
+            name: '@storybook/addon-docs',
+            options: {
+                mdxPluginOptions: {
+                    mdxCompileOptions: {
+                        remarkPlugins: [remarkGfm],
+                    },
+                },
+            },
+        },
+    ],
     framework: {
         name: '@storybook/angular',
         options: {},

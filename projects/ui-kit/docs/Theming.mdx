@@ -1,0 +1,119 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Foundation/Theming" />
+
+# Theming
+
+rt-tools supports two modes: **light** (default) and **dark**, plus an **auto**
+mode following the OS preference. Everything is driven by `color-scheme` +
+`light-dark()` — every adaptive token is declared **once**:
+
+```css
+:root {
+    color-scheme: light;
+    --rt-bg-base-base: var(--mat-sys-surface, light-dark(#ffffff, #1c1b1e));
+}
+
+.rt-dark,
+[data-rt-theme='dark'] {
+    color-scheme: dark;
+}
+[data-rt-theme='light'] {
+    color-scheme: light;
+}
+.rt-theme-auto {
+    color-scheme: light dark;
+} /* follows the OS */
+```
+
+---
+
+## Switching the theme
+
+| Mode                 | How                                               |
+| -------------------- | ------------------------------------------------- |
+| Dark globally        | `<html class="rt-dark">`                          |
+| Auto (OS preference) | `<html class="rt-theme-auto">`                    |
+| Local context        | `data-rt-theme="dark"` / `"light"` on any element |
+
+### Via `RtThemeService`
+
+```typescript
+import { RtThemeService } from 'rt-tools';
+
+@Component({
+    template: `
+        <button (click)="theme.toggle()">{{ theme.theme() }}</button>
+    `,
+})
+export class AppComponent {
+    protected readonly theme: RtThemeService = inject(RtThemeService);
+}
+```
+
+- `theme: Signal<'light' | 'dark' | 'auto'>` — current mode
+- `setTheme(mode)` / `toggle()`
+- The choice is persisted to localStorage (`rt-theme` key) and restored on startup.
+
+---
+
+## Local theme contexts
+
+A block can opt into the opposite theme without any token overrides — all
+adaptive tokens inside re-resolve automatically:
+
+```html
+<!-- dark promo header inside a light page -->
+<header data-rt-theme="dark">
+    <button class="promo-btn">Buy</button>
+</header>
+```
+
+Or with the directive:
+
+```typescript
+import { RtThemeDirective } from 'rt-tools';
+
+@Component({
+    imports: [RtThemeDirective],
+    template: `<section [rtTheme]="'dark'">…</section>`,
+})
+```
+
+```css
+/* no manual overrides — tokens are already correct inside the context */
+.promo-btn {
+    background: var(--rt-bg-accent-primary-solid);
+    color: var(--rt-text-static-light);
+}
+```
+
+> **Caveat — inherited `color`.** CSS inherits _resolved_ values: text inside a
+> local context does not recolor by inheritance alone. Re-apply the token where
+> the text lives: `color: var(--rt-text-base-primary)`.
+
+---
+
+## Adaptive vs static tokens
+
+- `--rt-{bg,text,icon,border}-base-*`, `*-neutral-*`, accent `subtle/hover`
+  steps — **adaptive**, change with the theme.
+- `--rt-*-static-*` — **never** change (e.g. `--rt-text-static-light` for
+  labels on colored fills).
+- Foundations (`--rt-spacing-*`, `--rt-radius-*`, …) — mode-independent.
+
+---
+
+## Angular Material interplay
+
+Material M3 themes built with `light-dark()` react to the same `color-scheme`
+switches, so Material components and rt-tools tokens flip **in sync** — one
+mechanism, no extra wiring. See **Foundation/Design Tokens/Overview** for the
+`--mat-sys-*` fallback chains and the `$tokens-use-material` opt-out.
+
+---
+
+## Browser support
+
+`light-dark()` and `color-mix()` require Chrome 123+, Firefox 120+,
+Safari 17.5+ (all 2024). No fallback for older browsers is provided.
