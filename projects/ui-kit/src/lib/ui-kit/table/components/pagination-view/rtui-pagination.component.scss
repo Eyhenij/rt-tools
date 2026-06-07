@@ -48,9 +48,9 @@ $pagination: (
 );
 
 :host {
+    display: flex;
     width: fit-content;
     height: 100%;
-    display: flex;
 
     @each $element, $elements in $pagination {
         @each $style-token, $value in $elements {
@@ -60,21 +60,19 @@ $pagination: (
 
     .pagination-container {
         position: relative;
-
         display: flex;
-        justify-content: flex-start;
         align-items: center;
-        gap: var(--rt-table-pagination-container-gap);
-
+        justify-content: flex-start;
         color: var(--rt-table-pagination-container-color);
         font-size: var(--rt-table-pagination-container-font-size);
         font-weight: var(--rt-table-pagination-container-font-weight);
+        gap: var(--rt-table-pagination-container-gap);
         line-height: var(--rt-table-pagination-container-line-height);
 
         &--clipped {
             flex-direction: column;
-            justify-content: center;
             align-items: flex-start;
+            justify-content: center;
             gap: var(--rt-table-pagination-container-mobile-gap);
         }
 
@@ -85,26 +83,23 @@ $pagination: (
 
         .paging {
             display: flex;
-            justify-content: center;
             align-items: center;
-            gap: var(--rt-table-pagination-paging-gap);
+            justify-content: center;
             margin: var(--rt-table-pagination-container-margin);
+            gap: var(--rt-table-pagination-paging-gap);
 
             &--clipped {
                 margin: var(--rt-table-pagination-paging-mobile-margin);
             }
 
             &__item {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-
                 position: relative;
-
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 padding: var(--rt-table-pagination-paging-item-padding);
                 border: var(--rt-table-pagination-paging-item-border);
                 border-radius: var(--rt-table-pagination-paging-item-border-radius);
-
                 background-color: transparent;
                 cursor: default;
                 pointer-events: none;
@@ -119,13 +114,13 @@ $pagination: (
                 }
 
                 &:hover:not(.divider) {
-                    color: var(--rt-table-pagination-paging-item-hover-color);
                     background-color: var(--rt-table-pagination-paging-item-hover-background-color);
+                    color: var(--rt-table-pagination-paging-item-hover-color);
                 }
 
                 &--active {
-                    color: var(--rt-table-pagination-paging-item-active-color);
                     background-color: var(--rt-table-pagination-paging-item-active-background-color);
+                    color: var(--rt-table-pagination-paging-item-active-color);
                 }
 
                 &--enabled {
@@ -138,9 +133,9 @@ $pagination: (
                 }
 
                 &--divider {
+                    border: none;
                     cursor: default;
                     pointer-events: none;
-                    border: none;
                 }
             }
         }
@@ -148,10 +143,10 @@ $pagination: (
         .page-size-toggle {
             display: flex;
             flex-direction: row;
-            justify-content: center;
             align-items: center;
-            gap: var(--rt-table-pagination-size-toggle-gap);
+            justify-content: center;
             margin: var(--rt-table-pagination-container-margin);
+            gap: var(--rt-table-pagination-size-toggle-gap);
 
             &--clipped {
                 margin: var(--rt-table-pagination-size-toggle-selector-mobile-margin);
@@ -165,14 +160,11 @@ $pagination: (
                 width: auto;
                 min-width: var(--rt-table-pagination-size-toggle-selector-min-width);
                 height: var(--rt-table-pagination-size-toggle-selector-height);
-
                 border: var(--rt-table-pagination-paging-item-border);
                 border-radius: var(--rt-table-pagination-paging-item-border-radius);
-
                 background-color: transparent;
-                cursor: pointer;
-
                 color: var(--rt-table-pagination-container-color);
+                cursor: pointer;
                 font-size: var(--rt-table-pagination-container-font-size);
                 font-weight: var(--rt-table-pagination-container-font-weight);
                 line-height: var(--rt-table-pagination-container-line-height);

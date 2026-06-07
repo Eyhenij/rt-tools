@@ -5,22 +5,22 @@
     gap: var(--rt-checkbox-container-gap);
 
     &__input {
-        @include mixins.visually-hidden();
+        @include mixins.visually-hidden;
     }
 
     &__box {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
         width: var(--rt-checkbox-box-width);
         height: var(--rt-checkbox-box-height);
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
         border: var(--rt-checkbox-box-border);
         border-radius: var(--rt-checkbox-box-border-radius);
-        color: var(--rt-checkbox-box-inactive-color);
         background-color: var(--rt-checkbox-box-background-color);
-        transition: border-color 0.15s linear;
+        color: var(--rt-checkbox-box-inactive-color);
         cursor: pointer;
+        transition: border-color 0.15s linear;
 
         svg {
             opacity: 0;
@@ -30,8 +30,8 @@
 
     &__input:checked + &__box,
     &__input:indeterminate + &__box {
-        color: var(--rt-checkbox-box-active-color);
         border-color: var(--rt-checkbox-box-active-color);
+        color: var(--rt-checkbox-box-active-color);
 
         svg {
             opacity: 1;
@@ -39,8 +39,8 @@
     }
 
     &__input:disabled + &__box {
-        color: var(--rt-text-base-disabled);
         border-color: var(--rt-border-neutral-strong);
+        color: var(--rt-text-base-disabled);
         cursor: default;
     }
 
@@ -54,15 +54,15 @@
     }
 
     &__label {
+        color: var(--rt-checkbox-label-color);
         font-size: var(--rt-checkbox-label-font-size);
         font-weight: var(--rt-checkbox-label-font-weight);
-        color: var(--rt-checkbox-label-color);
     }
 
     &__description {
         margin-top: var(--rt-checkbox-description-margin-top);
+        color: var(--rt-checkbox-description-color);
         font-size: var(--rt-checkbox-description-font-size);
         font-weight: var(--rt-checkbox-description-font-weight);
-        color: var(--rt-checkbox-description-color);
     }
 }

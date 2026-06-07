@@ -24,23 +24,23 @@ $clear-button: (
 
     .rtui-clear-button {
         display: flex;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
+        padding: var(--rt-clear-button-host-padding);
         border: none;
         border-radius: 50%;
         margin: var(--rt-clear-button-host-margin);
-        padding: var(--rt-clear-button-host-padding);
         background-color: var(--rt-clear-button-host-background-color);
 
         &--invisible {
-            @include mixins.visually-hidden();
+            @include mixins.visually-hidden;
         }
 
         &__icon {
             width: var(--rt-clear-button-icon-size);
             height: var(--rt-clear-button-icon-size);
-            font-size: var(--rt-clear-button-icon-size);
             color: var(--rt-clear-button-icon-color);
+            font-size: var(--rt-clear-button-icon-size);
 
             &:hover {
                 color: var(--rt-clear-button-icon-hover-color);

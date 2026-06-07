@@ -47,23 +47,23 @@ $modal: (
     ::ng-deep {
         .--highlighted {
             display: inline;
-            font-weight: var(--rt-modal-text-highlited-font-weight);
             color: var(--rt-modal-text-highlited-color);
+            font-weight: var(--rt-modal-text-highlited-font-weight);
         }
 
         .--warn {
             display: inline;
+            color: var(--rt-modal-text-warn-color);
             font-size: var(--rt-modal-text-warn-font-size);
             font-weight: var(--rt-modal-text-warn-font-weight);
-            color: var(--rt-modal-text-warn-color);
         }
     }
 
     .rtui-modal {
         &__title {
             h1 {
-                font-size: var(--rt-modal-title-font-size);
                 color: var(--rt-modal-title-color);
+                font-size: var(--rt-modal-title-font-size);
                 font-weight: var(--rt-modal-title-font-weight);
             }
 
@@ -93,7 +93,7 @@ $modal: (
         height: auto;
     }
 
-    .mdc-dialog__title::before {
+    .mdc-dialog__title:before {
         height: 100%;
     }
 
@@ -101,8 +101,8 @@ $modal: (
         padding: var(--rt-modal-content-padding);
         color: var(--rt-modal-content-color);
         font-size: var(--rt-modal-content-font-size);
+        overflow-wrap: var(--rt-modal-content-word-wrap);
         text-align: var(--rt-modal-content-text-align);
-        word-wrap: var(--rt-modal-content-word-wrap);
 
         mat-form-field {
             width: 100%;

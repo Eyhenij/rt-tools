@@ -1,16 +1,16 @@
 :host {
+    position: relative;
+    display: flex;
+    overflow: hidden;
     width: 100vw;
     height: 100vh;
-    display: flex;
     flex-direction: column;
     margin: -1rem;
-    position: relative;
-    overflow: hidden;
 
     .pagination {
-        width: 100%;
         position: absolute;
         top: 0;
         left: 0;
+        width: 100%;
     }
 }
