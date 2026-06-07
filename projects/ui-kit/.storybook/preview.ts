@@ -1,5 +1,9 @@
 import type { Preview } from '@storybook/angular';
 
+import { setupTokenCopy } from './token-copy';
+
+setupTokenCopy();
+
 const preview: Preview = {
     parameters: {
         controls: {
