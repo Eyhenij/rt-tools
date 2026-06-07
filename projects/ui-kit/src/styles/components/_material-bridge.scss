@@ -1,0 +1,30 @@
+/// Material bridge — the single global touch-point between rt-tools and Angular Material.
+///
+/// Rule: every GLOBAL override of Material internals (--mat-* / --mdc-* vars, .mat-* / .cdk-* selectors
+/// that is not scoped to a component's own DOM) lives here, so a Material upgrade is reviewed in one file.
+///
+/// Scoped piercings stay next to their component (they target Material nodes inside the component's
+/// own template) — current inventory, revisit on every Angular Material major:
+///   - snack-bar:            styles/components/_snackbar.scss (panelClass .snack-bar-*: --mat-snack-bar-*, --mdc-snackbar-*)
+///   - table:                styles/components/_table.scss (consumes --mat-form-field-filled-container-color)
+///   - checkbox:             styles/components/_checkbox.scss (consumes --mat-button-text-label-text-color)
+///   - dynamic-selectors:    styles/components/_dynamic-selectors.scss (+ ::ng-deep .mat-mdc-form-field-* in
+///                           multi-selector-popup / selected-list component scss)
+///   - side-menu:            menu-sub-item component scss (::ng-deep .mat-expansion-*)
+///   - modal:                modal.component.scss (::ng-deep .mat-icon)
+///   - spinner:              spinner.component.scss (::ng-deep circle of mat-spinner SVG)
+///   - aside:                aside-panel.component.scss (.mat-mdc-tab-header, .mat-badge-content — encapsulation: None)
+///   - toolbar:              toolbar.component.scss (--mat-tab-*, --mdc-secondary-navigation-tab-*)
+
+/* Keep CDK overlays (aside drawer, selector popups, modals) above app chrome.
+   Moved from aside-panel.component.scss — applies app-wide by design. */
+.cdk-overlay-container,
+.cdk-overlay-pane {
+    z-index: 9999;
+}
+
+/* Mat tab groups stretch to their container (aside tabs rely on it).
+   Moved from aside-panel.component.scss. */
+.mat-mdc-tab-group {
+    width: 100%;
+}
