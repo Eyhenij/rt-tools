@@ -2,43 +2,43 @@
 
 $snack-bar: (
     default: (
-        background-color: var(--clr-black-80),
+        background-color: var(--rt-bg-base-inverse-soft),
     ),
     success: (
-        background-color: var(--clr-green-80),
+        background-color: var(--rt-bg-accent-success-solid),
     ),
     success-text: (
-        color: var(--clr-white-100),
+        color: var(--rt-text-base-inverse),
     ),
     success-action: (
-        color: var(--clr-black-80),
+        color: var(--rt-text-base-soft),
     ),
     success-close-button: (
-        color: var(--clr-white-100),
+        color: var(--rt-text-base-inverse),
     ),
     warning: (
-        background-color: var(--clr-orange-80),
+        background-color: var(--rt-bg-accent-warning-solid),
     ),
     warning-text: (
-        color: var(--clr-white-100),
+        color: var(--rt-text-base-inverse),
     ),
     warning-action: (
-        color: var(--clr-black-80),
+        color: var(--rt-text-base-soft),
     ),
     warning-close-button: (
-        color: var(--clr-white-100),
+        color: var(--rt-text-base-inverse),
     ),
     danger: (
-        background-color: var(--clr-red-100),
+        background-color: var(--rt-bg-accent-danger-solid),
     ),
     danger-text: (
-        color: var(--clr-white-100),
+        color: var(--rt-text-base-inverse),
     ),
     danger-action: (
-        color: var(--clr-black-80),
+        color: var(--rt-text-base-soft),
     ),
     danger-close-button: (
-        color: var(--clr-white-100),
+        color: var(--rt-text-base-inverse),
     ),
 );
 
@@ -50,7 +50,7 @@ $snack-bar: (
     }
 
     --mat-snack-bar-container-color: var(--rt-snack-bar-default-background-color);
-    --mdc-snackbar-supporting-text-color: var(--clr-white-100);
+    --mdc-snackbar-supporting-text-color: var(--rt-text-base-inverse);
     --mdc-snackbar-container-shape: 0.5rem;
 }
 

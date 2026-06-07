@@ -39,8 +39,8 @@
     }
 
     &__input:disabled + &__box {
-        color: var(--clr-black-40);
-        border-color: var(--clr-black-40);
+        color: var(--rt-text-base-disabled);
+        border-color: var(--rt-border-neutral-strong);
         cursor: default;
     }
 

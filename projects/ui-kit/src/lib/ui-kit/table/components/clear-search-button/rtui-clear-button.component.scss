@@ -4,14 +4,14 @@ $clear-button: (
     host: (
         margin: 0 0.5rem 0 0,
         padding: 0.1rem,
-        background-color: var(--clr-black-20),
+        background-color: var(--rt-bg-base-strong),
     ),
     icon: (
         size: 1rem,
-        color: var(--clr-black-60),
+        color: var(--rt-text-base-secondary),
     ),
     icon-hover: (
-        color: var(--clr-black-100),
+        color: var(--rt-text-base-strong),
     ),
 );
 

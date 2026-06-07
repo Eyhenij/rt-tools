@@ -30,7 +30,7 @@
 
             mat-spinner {
                 ::ng-deep circle {
-                    stroke: var(--clr-base-accent);
+                    stroke: var(--rt-icon-accent-brand);
                 }
             }
 
@@ -38,7 +38,7 @@
                 width: 3rem;
                 height: 3rem;
 
-                background: var(--clr-white-100);
+                background: var(--rt-bg-base-base);
                 border-radius: 50%;
                 box-shadow:
                     0 1px 3px rgba(0, 0, 0, 0.12),

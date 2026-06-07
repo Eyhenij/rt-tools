@@ -6,13 +6,13 @@ $table-container: (
         margin: 0 0.65rem,
     ),
     selector-label: (
-        color: var(--clr-black-60),
+        color: var(--rt-text-base-secondary),
     ),
     selector-label-hover: (
-        color: var(--clr-black-100),
+        color: var(--rt-text-base-strong),
     ),
     selector-counter: (
-        color: var(--clr-black-60),
+        color: var(--rt-text-base-secondary),
         font-size: 0.875rem,
     ),
     toolbar-mobile: (
@@ -26,7 +26,7 @@ $table-container: (
     ),
     toolbar-actions-divider: (
         height: 2rem,
-        border-left: 1px solid var(--clr-gray-20),
+        border-left: 1px solid var(--rt-border-neutral-divider),
     ),
     toolbar-search: (
         width: 22rem,
@@ -51,16 +51,16 @@ $table-container: (
 
     // initial table container scrollbar styles
     ::-webkit-scrollbar-track:hover {
-        border: 1px solid var(--clr-gray-10);
+        border: 1px solid var(--rt-border-neutral-subtle);
     }
     ::-webkit-scrollbar-thumb {
-        background: var(--clr-gray-20);
+        background: var(--rt-scrollbar-thumb);
         border: 3px solid transparent;
         border-radius: 6px;
         background-clip: content-box;
     }
     ::-webkit-scrollbar-thumb:hover {
-        background: var(--clr-black-40);
+        background: var(--rt-scrollbar-thumb-hover);
         border: 2px solid transparent;
         background-clip: content-box;
     }

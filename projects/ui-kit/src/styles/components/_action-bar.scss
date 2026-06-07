@@ -15,9 +15,9 @@ $action-bar: (
         gap: 0.75rem,
         padding: 0.5rem 1rem,
         border-radius: 0.5rem,
-        color: var(--clr-white-100),
-        background-color: var(--clr-black-100),
-        box-shadow: 0 0.5rem 1rem 0 var(--clr-black-60),
+        color: var(--rt-text-base-inverse),
+        background-color: var(--rt-bg-base-inverse),
+        box-shadow: 0 0.5rem 1rem 0 var(--rt-shadow-color),
     ),
     bar-mobile: (
         gap: 0.5rem,
@@ -45,15 +45,15 @@ $action-bar: (
         padding: 0.325rem 0.5rem,
     ),
     action-hover: (
-        background-color: var(--clr-black-80),
+        background-color: var(--rt-bg-base-inverse-soft),
     ),
     action-menu: (
         gap: 0.5rem,
         padding: 0.5rem,
         border-radius: 0.5rem,
-        color: var(--clr-black-100),
-        background-color: var(--clr-white-100),
-        box-shadow: 0 0.5rem 1rem 0 var(--clr-black-60),
+        color: var(--rt-text-base-strong),
+        background-color: var(--rt-bg-base-base),
+        box-shadow: 0 0.5rem 1rem 0 var(--rt-shadow-color),
     ),
     action-menu-mobile: (
         gap: 0.25rem,
@@ -71,7 +71,7 @@ $action-bar: (
         padding: 0.325rem 0.5rem,
     ),
     action-menu-action-hover: (
-        background-color: var(--clr-black-40),
+        background-color: var(--rt-bg-base-emphasis-soft),
     ),
 );
 

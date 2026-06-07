@@ -4,12 +4,12 @@
 $modal: (
     title: (
         font-size: 1.25rem,
-        color: var(--clr-txt),
+        color: var(--rt-text-base-primary),
         font-weight: 400,
     ),
     content: (
         padding: 1rem 1.5rem,
-        color: var(--clr-black-80),
+        color: var(--rt-text-base-soft),
         font-size: 0.8rem,
         text-align: center,
         word-wrap: break-word,
@@ -27,13 +27,13 @@ $modal: (
     ),
     text-highlited: (
         font-weight: 600,
-        color: var(--clr-black-100),
+        color: var(--rt-text-base-strong),
     ),
     text-warn: (
         display: inline,
         font-size: 1rem,
         font-weight: 600,
-        color: var(--clr-red-100),
+        color: var(--rt-text-accent-danger),
     ),
 );
 
