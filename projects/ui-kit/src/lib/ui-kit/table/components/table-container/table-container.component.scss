@@ -44,24 +44,26 @@ $table-container: (
 );
 
 :host {
-    width: 100%;
     position: relative;
     display: flex;
     overflow: hidden;
+    width: 100%;
 
     // initial table container scrollbar styles
     ::-webkit-scrollbar-track:hover {
         border: 1px solid var(--rt-border-neutral-subtle);
     }
+
     ::-webkit-scrollbar-thumb {
-        background: var(--rt-scrollbar-thumb);
         border: 3px solid transparent;
         border-radius: 6px;
+        background: var(--rt-scrollbar-thumb);
         background-clip: content-box;
     }
+
     ::-webkit-scrollbar-thumb:hover {
-        background: var(--rt-scrollbar-thumb-hover);
         border: 2px solid transparent;
+        background: var(--rt-scrollbar-thumb-hover);
         background-clip: content-box;
     }
 
@@ -94,10 +96,10 @@ $table-container: (
     .table-container {
         &__selectors {
             display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            flex-grow: 1;
             width: 100%;
+            flex-grow: 1;
+            align-items: center;
+            justify-content: flex-start;
             margin: var(--rt-table-container-selectors-margin);
             gap: var(--rt-table-container-toolbar-actions-gap);
 
@@ -110,16 +112,16 @@ $table-container: (
             }
 
             &-counter {
-                font-size: var(--rt-table-container-selector-counter-font-size);
                 color: var(--rt-table-container-selector-counter-color);
+                font-size: var(--rt-table-container-selector-counter-font-size);
             }
         }
 
         &__toolbar {
-            width: 100%;
             display: flex;
-            justify-content: flex-end;
+            width: 100%;
             align-items: center;
+            justify-content: flex-end;
 
             &-actions {
                 display: flex;
@@ -143,9 +145,9 @@ $table-container: (
         }
 
         &__content {
+            overflow: auto;
             width: 100%;
             flex-grow: 1;
-            overflow: auto;
             padding: var(--rt-table-container-content-padding);
 
             &::-webkit-scrollbar {
@@ -155,12 +157,12 @@ $table-container: (
         }
 
         &__placeholder {
+            display: flex;
             width: var(--rt-table-container-placeholder-width);
             height: var(--rt-table-container-placeholder-height);
-            display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             gap: var(--rt-table-container-placeholder-gap);
 
             &-icon {
@@ -203,8 +205,8 @@ $table-container: (
 
                 &-search {
                     width: 100%;
-                    grid-row: 1;
                     justify-content: center;
+                    grid-row: 1;
                 }
             }
         }

@@ -46,15 +46,14 @@ $dynamic-selector: (
 
 .rtui-dynamic-selector {
     &__item {
-        height: var(--rt-dynamic-selector-item-height);
         display: flex;
-        justify-content: flex-start;
+        height: var(--rt-dynamic-selector-item-height);
         align-items: center;
-
-        background-color: var(--rt-dynamic-selector-item-background-color);
+        justify-content: flex-start;
+        padding: var(--rt-dynamic-selector-item-padding);
         border-radius: var(--rt-dynamic-selector-item-border-radius);
         margin-bottom: var(--rt-dynamic-selector-item-margin-bottom);
-        padding: var(--rt-dynamic-selector-item-padding);
+        background-color: var(--rt-dynamic-selector-item-background-color);
 
         &::-webkit-scrollbar {
             display: none;
@@ -66,17 +65,17 @@ $dynamic-selector: (
 
         &-mover {
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             padding: var(--rt-dynamic-selector-item-mover-padding);
             border-right: var(--rt-dynamic-selector-item-mover-border-right);
             margin-right: var(--rt-dynamic-selector-item-mover-margin-right);
         }
 
         &-title {
-            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         &-input {
@@ -92,11 +91,11 @@ $dynamic-selector: (
 
         &-control {
             display: flex;
-            justify-content: center;
             align-items: center;
-            gap: var(--rt-dynamic-selector-item-control-gap);
+            justify-content: center;
             padding: var(--rt-dynamic-selector-item-control-padding);
             border-right: var(--rt-dynamic-selector-item-control-border-right);
+            gap: var(--rt-dynamic-selector-item-control-gap);
 
             &:last-child {
                 padding: var(--rt-dynamic-selector-item-control-last-child-padding);
@@ -105,8 +104,8 @@ $dynamic-selector: (
 
             &-button {
                 display: flex;
-                justify-content: center;
                 align-items: center;
+                justify-content: center;
 
                 .mat-icon {
                     width: var(--rt-dynamic-selector-item-control-icon-size);

@@ -4,6 +4,9 @@
 @forward 'base/base';
 @forward 'base/tokens' as tokens-*;
 
+// Material bridge — single home for global Material overrides
+@forward 'components/material-bridge';
+
 // Components
 @forward 'components/form';
 @forward 'components/button';

@@ -1,8 +1,8 @@
 :host {
-    width: 100%;
     display: flex;
-    justify-content: flex-start;
+    width: 100%;
     align-items: center;
+    justify-content: flex-start;
     gap: 0.5rem;
 
     .table-header-cell-filter-input {

@@ -40,9 +40,8 @@ $toolbar: (
         --mat-toolbar-standard-height: var(--rt-toolbar-body-mobile-height);
         --mdc-secondary-navigation-tab-container-height: var(--rt-toolbar-body-mobile-height);
 
-        min-height: var(--rt-toolbar-body-mobile-height);
         height: var(--rt-toolbar-body-mobile-height);
-
+        min-height: var(--rt-toolbar-body-mobile-height);
         padding: var(--rt-toolbar-body-padding);
         background-color: transparent;
 
@@ -61,16 +60,12 @@ $toolbar: (
 
         .bars {
             position: relative;
-
             display: flex;
             width: 100%;
             height: 100%;
-
+            border-bottom: var(--rt-toolbar-bars-border-bottom-width) var(--rt-toolbar-bars-border-bottom-style)
+                var(--rt-toolbar-bars-border-bottom-color);
             background-color: var(--rt-toolbar-body-background-color);
-
-            border-bottom-style: var(--rt-toolbar-bars-border-bottom-style);
-            border-bottom-width: var(--rt-toolbar-bars-border-bottom-width);
-            border-bottom-color: var(--rt-toolbar-bars-border-bottom-color);
 
             &__bar {
                 &--left {
@@ -78,8 +73,8 @@ $toolbar: (
                 }
 
                 &--center {
-                    width: var(--rt-toolbar-bars-center-width);
                     overflow: hidden;
+                    width: var(--rt-toolbar-bars-center-width);
                 }
 
                 &--right {
@@ -89,8 +84,8 @@ $toolbar: (
                 &--left,
                 &--center,
                 &--right {
-                    height: 100%;
                     display: flex;
+                    height: 100%;
                     align-items: center;
                 }
             }
