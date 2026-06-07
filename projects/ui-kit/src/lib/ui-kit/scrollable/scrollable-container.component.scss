@@ -7,22 +7,22 @@ $scrollable: (
         width: 100%,
         display: flex,
         flex-direction: column,
-        background-color: var(--clr-white-100),
+        background-color: var(--rt-bg-base-base),
     ),
     header: (
         padding: 0.5rem 1rem,
-        background-color: var(--clr-white-100),
+        background-color: var(--rt-bg-base-base),
     ),
     content: (
         display: flex,
         flex-direction: column,
         flex-grow: 1,
         padding: 1rem,
-        background-color: var(--clr-white-100),
+        background-color: var(--rt-bg-base-base),
     ),
     footer: (
         padding: 1rem,
-        background-color: var(--clr-white-100),
+        background-color: var(--rt-bg-base-base),
     ),
 );
 

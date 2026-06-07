@@ -26,13 +26,13 @@ $dynamic-selector: (
         border-right: none,
     ),
     item-control-button-active: (
-        color: var(--clr-red-100),
+        color: var(--rt-text-accent-danger),
     ),
     item-control-icon: (
         size: 1.125rem,
     ),
     item-drag-preview: (
-        box-shadow: 0 0.5rem 1rem 0 var(--clr-black-60),
+        box-shadow: 0 0.5rem 1rem 0 var(--rt-shadow-color),
     ),
 );
 

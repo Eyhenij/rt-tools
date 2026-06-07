@@ -5,9 +5,9 @@ $multi-selector: (
         width: 20rem,
         height: 30rem,
         padding: 1rem 0 1rem 1rem,
-        box-shadow: 0 0.5rem 1rem 0 var(--clr-black-60),
+        box-shadow: 0 0.5rem 1rem 0 var(--rt-shadow-color),
         border-radius: 0.375rem,
-        background-color: var(--clr-white-100),
+        background-color: var(--rt-bg-base-base),
     ),
     header: (
         padding: 0 1rem 0 0,
@@ -17,25 +17,25 @@ $multi-selector: (
     ),
     header-controls-item-icon: (
         margin-left: 0.5rem,
-        color: var(--clr-black-40),
+        color: var(--rt-text-base-disabled),
     ),
     header-controls-item-info: (
         margin-left: 0.5rem,
         font-size: 0.875rem,
-        color: var(--clr-black-60),
+        color: var(--rt-text-base-secondary),
     ),
     header-controls-item-first: (
         padding: 1rem 0 0 0.5rem,
     ),
     header-controls-item-last: (
         padding: 1rem 0 0 0,
-        border-bottom: solid 1px var(--clr-gray-20),
+        border-bottom: solid 1px var(--rt-border-neutral-divider),
     ),
     item-label-hover: (
-        color: var(--clr-black-60),
+        color: var(--rt-text-base-secondary),
     ),
     options-item-separated: (
-        border-bottom: solid 1px var(--clr-gray-20),
+        border-bottom: solid 1px var(--rt-border-neutral-divider),
     ),
     options-item-title: (
         max-width: 15rem,
@@ -46,11 +46,11 @@ $multi-selector: (
     ),
     placeholder-icon: (
         size: 3rem,
-        color: var(--clr-black-60),
+        color: var(--rt-text-base-secondary),
     ),
     placeholder-title: (
         font-size: 1.5rem,
-        color: var(--clr-black-60),
+        color: var(--rt-text-base-secondary),
     ),
     footer: (
         padding: 1rem 1.5rem 0 0.5rem,
@@ -58,10 +58,10 @@ $multi-selector: (
     ),
     footer-nav-action: (
         font-size: 0.875rem,
-        color: var(--clr-black-60),
+        color: var(--rt-text-base-secondary),
     ),
     footer-nav-action-hover: (
-        color: var(--clr-black-100),
+        color: var(--rt-text-base-strong),
     ),
 );
 

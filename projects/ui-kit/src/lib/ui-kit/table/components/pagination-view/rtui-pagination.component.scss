@@ -5,7 +5,7 @@ $pagination: (
     container: (
         gap: 2rem,
         margin: 0.5rem 0,
-        color: var(--clr-black-60),
+        color: var(--rt-text-base-secondary),
         font-size: 0.875rem,
         font-weight: 400,
         line-height: 1rem,
@@ -21,16 +21,16 @@ $pagination: (
     ),
     paging-item: (
         padding: 0.5rem,
-        border: 1px solid var(--clr-gray-15),
+        border: 1px solid var(--rt-border-neutral-medium),
         border-radius: 0.75rem,
     ),
     paging-item-hover: (
-        color: var(--clr-white-100),
-        background-color: var(--clr-black-60),
+        color: var(--rt-text-static-light),
+        background-color: var(--rt-bg-base-emphasis),
     ),
     paging-item-active: (
-        color: var(--clr-white-100),
-        background-color: var(--clr-black-60),
+        color: var(--rt-text-static-light),
+        background-color: var(--rt-bg-base-emphasis),
     ),
     paging-item-disabled-svg: (
         opacity: 0.3,

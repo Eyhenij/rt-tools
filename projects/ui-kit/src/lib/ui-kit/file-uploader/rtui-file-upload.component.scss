@@ -12,7 +12,7 @@ $file-upload: (
         align-items: center,
         gap: 1rem,
         padding: 1rem,
-        border: 2px dashed var(--clr-black-20),
+        border: 2px dashed var(--rt-border-neutral-default),
         border-radius: 1rem,
     ),
     host-dragged: (
@@ -20,11 +20,11 @@ $file-upload: (
     ),
     icon: (
         size: 2rem,
-        color: var(--clr-black-100),
+        color: var(--rt-text-base-strong),
     ),
     title: (
         font-size: 1rem,
-        color: var(--clr-text),
+        color: var(--rt-text-base-primary),
     ),
 );
 

@@ -5,7 +5,7 @@ $aside: (
     host: (
         width: 33.75rem,
         box-shadow: 0 0 1rem 0 rgba(#000, 0.1),
-        background-color: var(--clr-white-100),
+        background-color: var(--rt-bg-base-base),
     ),
     header: (
         padding: 2rem,
@@ -24,12 +24,12 @@ $aside: (
     header-description: (
         font-size: 1rem,
         margin-bottom: 0.25rem,
-        color: var(--clr-black-60),
+        color: var(--rt-text-base-secondary),
     ),
     header-addition: (
         font-size: 1rem,
         margin-top: 0.25rem,
-        color: var(--clr-black-60),
+        color: var(--rt-text-base-secondary),
     ),
     header-actions: (
         margin-left: 1rem,
@@ -54,16 +54,16 @@ $aside: (
         height: 2rem,
         padding: 0.5rem,
         margin: 2rem 0 2rem 0,
-        border: 1px solid var(--clr-red-60),
+        border: 1px solid var(--rt-border-accent-danger-soft),
         border-radius: 0.375rem,
     ),
     error-box-title: (
         font-size: 1rem,
-        font-color: var(--clr-red-60),
+        font-color: var(--rt-text-accent-danger-soft),
     ),
     error-box-button: (
         font-size: 1rem,
-        font-color: var(--clr-black-100),
+        font-color: var(--rt-text-base-strong),
     ),
     tab-indicator: (
         width: 6rem,
@@ -72,7 +72,7 @@ $aside: (
         color: var(--mdc-filled-button-container-color),
     ),
     tab-badge-incorrect: (
-        color: var(--clr-red-100),
+        color: var(--rt-text-accent-danger),
     ),
 );
 
@@ -211,7 +211,7 @@ $aside: (
         top: 0;
         z-index: 1000;
         position: sticky;
-        background: var(--clr-white-100);
+        background: var(--rt-bg-base-base);
     }
 
     @include mixins.media-breakpoint-down(vars.$device-xs) {
