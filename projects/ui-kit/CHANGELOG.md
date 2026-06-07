@@ -1,3 +1,5 @@
+## [0.0.19](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.18...rt-tools@0.0.19) (2026-06-07)
+
 ## [0.0.18](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.17...rt-tools@0.0.18) (2026-06-07)
 
 ## [0.0.17](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.16...rt-tools@0.0.17) (2026-06-07)
