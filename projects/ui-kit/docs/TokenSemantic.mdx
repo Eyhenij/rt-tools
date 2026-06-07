@@ -1,0 +1,210 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Foundation/Design Tokens/Semantic" />
+
+export const Chip = ({ bg, label, border }) => (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+        <div style={{ width: 52, height: 36, borderRadius: 8, background: bg, border: border ?? '1px solid rgba(128,128,128,.25)' }} />
+        <span style={{ fontSize: 11, opacity: 0.65 }}>{label}</span>
+    </div>
+);
+
+export const Strip = ({ items }) => (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, padding: '8px 0 16px' }}>
+        {items.map(([label, bg]) => (
+            <Chip key={label} label={label} bg={bg} />
+        ))}
+    </div>
+);
+
+# Semantic Tokens
+
+Semantic tokens express **intent**, not color. Components consume **only** this tier —
+never primitives or HEX (see [Overview](?path=/docs/foundation-design-tokens-overview--docs)
+and [Theming](?path=/docs/foundation-theming--docs)).
+
+> All adaptive tokens are declared once via `light-dark(light, dark)` and switch with
+> `color-scheme`. Tokens marked **·mat** resolve to Angular Material system colors
+> (`var(--mat-sys-*, …)`) when the app has a Material theme.
+
+---
+
+## Background — `--rt-bg-*`
+
+### Background / Base — adaptive page backgrounds
+
+Change with the theme. Used for the main application surfaces.
+
+<Strip
+    items={[
+        ['base', 'var(--rt-bg-base-base)'],
+        ['elevated', 'var(--rt-bg-base-elevated)'],
+        ['subtle', 'var(--rt-bg-base-subtle)'],
+        ['hover', 'var(--rt-bg-base-hover)'],
+        ['active', 'var(--rt-bg-base-active)'],
+        ['strong', 'var(--rt-bg-base-strong)'],
+        ['emphasis', 'var(--rt-bg-base-emphasis)'],
+        ['inverse', 'var(--rt-bg-base-inverse)'],
+    ]}
+/>
+
+| Token                        | Light             | Dark              | Usage                                                  |
+| ---------------------------- | ----------------- | ----------------- | ------------------------------------------------------ |
+| `--rt-bg-base-base`          | `#ffffff`         | `#1c1b1e`         | Page background · **mat** surface                      |
+| `--rt-bg-base-elevated`      | `#ffffff`         | `#2a292d`         | Cards, modals, dropdowns · **mat** surface-container   |
+| `--rt-bg-base-subtle`        | `#f5f6f8`         | `#232226`         | Subdued areas, input backplates                        |
+| `--rt-bg-base-hover`         | `#f3f3f3`         | `rgba(#fff, 6%)`  | Row / item hover                                       |
+| `--rt-bg-base-active`        | `#eeeeee`         | `rgba(#fff, 10%)` | Pressed / selected                                     |
+| `--rt-bg-base-strong`        | `#e0e0e0`         | `#3f3e43`         | Chips, strong neutral fills                            |
+| `--rt-bg-base-emphasis`      | `#747474`         | `#a3a3a3`         | Selected controls (active pagination chip)             |
+| `--rt-bg-base-emphasis-soft` | `#a3a3a3`         | `#747474`         | Mid-strength neutral fills                             |
+| `--rt-bg-base-inverse`       | `#181818`         | `#f3f3f3`         | Inverted blocks (action-bar) · **mat** inverse-surface |
+| `--rt-bg-base-inverse-soft`  | `#323033`         | `#eeeeee`         | Snack-bar, hover on inverse                            |
+| `--rt-bg-base-overlay`       | `rgba(#000, 32%)` | `rgba(#000, 60%)` | Scrims behind modals / asides                          |
+
+### Background / Static — never change with theme
+
+| Token                  | Value         | Usage                      |
+| ---------------------- | ------------- | -------------------------- |
+| `--rt-bg-static-light` | `#ffffff`     | Always white               |
+| `--rt-bg-static-dark`  | `#181818`     | Always dark (promo blocks) |
+| `--rt-bg-static-none`  | `transparent` | Explicit transparent       |
+
+### Background / Accent — stepped accent backgrounds
+
+Step system for status and brand fills. Roles:
+
+<Strip
+    items={[
+        ['primary', 'var(--rt-bg-accent-primary-solid)'],
+        ['success', 'var(--rt-bg-accent-success-solid)'],
+        ['warning', 'var(--rt-bg-accent-warning-solid)'],
+        ['danger', 'var(--rt-bg-accent-danger-solid)'],
+        ['info', 'var(--rt-bg-accent-info-solid)'],
+        ['neutral', 'var(--rt-bg-accent-neutral-solid)'],
+    ]}
+/>
+
+Step structure (example: **primary**):
+
+<Strip
+    items={[
+        ['subtle', 'var(--rt-bg-accent-primary-subtle)'],
+        ['solid', 'var(--rt-bg-accent-primary-solid)'],
+        ['hover', 'var(--rt-bg-accent-primary-hover)'],
+        ['disabled', 'var(--rt-bg-accent-primary-disabled)'],
+    ]}
+/>
+
+| Step       | Token (primary example)           | Light                   | Dark                      | Usage                                                 |
+| ---------- | --------------------------------- | ----------------------- | ------------------------- | ----------------------------------------------------- |
+| `subtle`   | `--rt-bg-accent-primary-subtle`   | `#eaedfc`               | `mix(solid 18%, surface)` | Tag / badge / alert fills · **mat** primary-container |
+| `solid`    | `--rt-bg-accent-primary-solid`    | `#4284d7`               | `#4284d7`                 | Filled buttons, colored snack-bars · **mat** primary  |
+| `hover`    | `--rt-bg-accent-primary-hover`    | `mix(solid 90%, black)` | `mix(solid 90%, white)`   | Hover of filled elements                              |
+| `disabled` | `--rt-bg-accent-primary-disabled` | `rgba(solid, 38%)`      | `rgba(solid, 38%)`        | Disabled fills                                        |
+
+Same structure for every role. Solid values:
+
+| Role      | Solid     | Subtle (light) | Material binding            |
+| --------- | --------- | -------------- | --------------------------- |
+| `primary` | `#4284d7` | `#eaedfc`      | primary / primary-container |
+| `success` | `#21b18e` | `#e5f8f4`      | —                           |
+| `warning` | `#ee7a34` | `#e8cbbf`      | —                           |
+| `danger`  | `#eb5055` | `#fdedee`      | error / error-container     |
+| `info`    | `#4284d7` | `#eaedfc`      | —                           |
+| `neutral` | `#747474` | `#f3f3f3`      | —                           |
+
+---
+
+## Text — `--rt-text-*`
+
+### Text / Base — adaptive
+
+| Token                      | Light             | Dark              | Usage                                                  |
+| -------------------------- | ----------------- | ----------------- | ------------------------------------------------------ |
+| `--rt-text-base-primary`   | `rgba(#000, 87%)` | `rgba(#fff, 87%)` | Default body text · **mat** on-surface                 |
+| `--rt-text-base-strong`    | `#181818`         | `#f3f3f3`         | Headings, table cells                                  |
+| `--rt-text-base-soft`      | `#323033`         | `#e0e0e0`         | Slightly softened text                                 |
+| `--rt-text-base-secondary` | `#747474`         | `#a3a3a3`         | Secondary text · **mat** on-surface-variant            |
+| `--rt-text-base-disabled`  | `#a3a3a3`         | `#747474`         | Disabled text                                          |
+| `--rt-text-base-inverse`   | `#ffffff`         | `#181818`         | Text on `bg-base-inverse` · **mat** inverse-on-surface |
+
+### Text / Static
+
+| Token                    | Value     | Usage                                     |
+| ------------------------ | --------- | ----------------------------------------- |
+| `--rt-text-static-light` | `#ffffff` | Labels on colored fills (buttons, badges) |
+| `--rt-text-static-dark`  | `#181818` | Dark text regardless of theme             |
+
+### Text / Accent
+
+| Token                           | Light     | Dark      | Usage                                    |
+| ------------------------------- | --------- | --------- | ---------------------------------------- |
+| `--rt-text-accent-brand`        | `#0d1c2b` | `#e8e8e8` | Brand accents · **mat** primary          |
+| `--rt-text-accent-primary`      | `#4284d7` | `#6d96e8` | Links, primary accents · **mat** primary |
+| `--rt-text-accent-success`      | `#01af8d` | `#01af8d` | Success text                             |
+| `--rt-text-accent-success-soft` | `#21b18e` | `#21b18e` | Muted success                            |
+| `--rt-text-accent-warning`      | `#ef7128` | `#ef7128` | Warning text                             |
+| `--rt-text-accent-warning-soft` | `#ee7a34` | `#ee7a34` | Muted warning                            |
+| `--rt-text-accent-danger`       | `#eb5055` | `#eb5055` | Errors · **mat** error                   |
+| `--rt-text-accent-danger-soft`  | `#e88487` | `#e88487` | Muted errors (aside error box)           |
+| `--rt-text-accent-info`         | `#4284d7` | `#4284d7` | Info text                                |
+| `--rt-text-accent-info-soft`    | `#4285f4` | `#4285f4` | Muted info                               |
+
+---
+
+## Icon — `--rt-icon-*`
+
+| Token                        | Light     | Dark      | Usage                            |
+| ---------------------------- | --------- | --------- | -------------------------------- |
+| `--rt-icon-neutral-default`  | `#323033` | `#e0e0e0` | Default icon color               |
+| `--rt-icon-neutral-soft`     | `#747474` | `#a3a3a3` | Secondary icons                  |
+| `--rt-icon-neutral-disabled` | `#a3a3a3` | `#747474` | Disabled icons                   |
+| `--rt-icon-neutral-inverse`  | `#ffffff` | `#181818` | Icons on inverse surfaces        |
+| `--rt-icon-static-light`     | `#ffffff` | `#ffffff` | Icons on colored fills           |
+| `--rt-icon-static-dark`      | `#181818` | `#181818` | Always-dark icons                |
+| `--rt-icon-accent-brand`     | `#0d1c2b` | `#e8e8e8` | Spinner stroke · **mat** primary |
+
+Accent roles mirror text: `--rt-icon-accent-{primary,success,warning,danger,info}`.
+
+---
+
+## Border — `--rt-border-*`
+
+<Strip
+    items={[
+        ['subtle', 'var(--rt-border-neutral-subtle)'],
+        ['default', 'var(--rt-border-neutral-default)'],
+        ['medium', 'var(--rt-border-neutral-medium)'],
+        ['divider', 'var(--rt-border-neutral-divider)'],
+        ['strong', 'var(--rt-border-neutral-strong)'],
+        ['emphasis', 'var(--rt-border-neutral-emphasis)'],
+        ['focus', 'var(--rt-border-focus)'],
+    ]}
+/>
+
+| Token                          | Light     | Dark      | Usage                                     |
+| ------------------------------ | --------- | --------- | ----------------------------------------- |
+| `--rt-border-neutral-subtle`   | `#e8e8e8` | `#2e2d31` | Subtle outlines (table container)         |
+| `--rt-border-neutral-default`  | `#e0e0e0` | `#3f3e43` | Default borders · **mat** outline-variant |
+| `--rt-border-neutral-medium`   | `#d1d1d1` | `#4a494e` | Pagination chips, toggles                 |
+| `--rt-border-neutral-divider`  | `#cccccc` | `#4a494e` | Dividers between blocks                   |
+| `--rt-border-neutral-strong`   | `#a3a3a3` | `#5c5b60` | Checkbox borders · **mat** outline        |
+| `--rt-border-neutral-emphasis` | `#747474` | `#a3a3a3` | Active indicators                         |
+| `--rt-border-focus`            | `#b3ceef` | `#6d96e8` | Focus outlines                            |
+
+Accent borders: `--rt-border-accent-{primary,success,warning,danger,info}` use the
+role solid colors; `--rt-border-accent-danger-soft` (`#e88487`) for soft error frames.
+
+---
+
+## Form controls & misc (rt extensions)
+
+| Token                        | Light     | Dark              | Usage                         |
+| ---------------------------- | --------- | ----------------- | ----------------------------- |
+| `--rt-control-track`         | `#e8e8e8` | `#4a494e`         | Toggle / slider track         |
+| `--rt-control-thumb`         | `#ffffff` | `#eeeeee`         | Toggle thumb                  |
+| `--rt-control-checked`       | `#323033` | `#e0e0e0`         | Checked fill of controls      |
+| `--rt-scrollbar-thumb`       | `#cccccc` | `#4a494e`         | Scrollbar thumb               |
+| `--rt-scrollbar-thumb-hover` | `#a3a3a3` | `#5c5b60`         | Scrollbar thumb hover         |
+| `--rt-shadow-color`          | `#747474` | `rgba(#000, 60%)` | Color inside `--rt-shadow-lg` |

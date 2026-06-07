@@ -1,0 +1,119 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Foundation/Design Tokens/Colors" />
+
+export const Chip = ({ bg, label }) => (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+        <div style={{ width: 52, height: 36, borderRadius: 8, background: bg, border: '1px solid rgba(128,128,128,.25)' }} />
+        <span style={{ fontSize: 11, opacity: 0.65 }}>{label}</span>
+    </div>
+);
+
+export const Strip = ({ items }) => (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, padding: '8px 0 16px' }}>
+        {items.map(([label, bg]) => (
+            <Chip key={label} label={label} bg={bg} />
+        ))}
+    </div>
+);
+
+# Colors — Primitive Tokens
+
+Primitive tokens are the **foundation** of the system: raw HEX values and
+generated scales. They are **never used directly** in components — only through
+semantic tokens (`--rt-bg-*`, `--rt-text-*`, `--rt-icon-*`, `--rt-border-*`).
+
+```css
+/* ❌ in a component */
+background: var(--rt-color-blue);
+
+/* ✅ in a component */
+background: var(--rt-bg-accent-primary-solid);
+```
+
+---
+
+## Neutral scale — `--rt-color-neutral-{0…100}`
+
+Unified lightness ladder. Values are sourced verbatim from the legacy
+white/gray/black families.
+
+<Strip items={[0, 5, 10, 15, 20, 25, 30, 35, 40, 60, 80, 100].map((n) => [`${n}`, `var(--rt-color-neutral-${n})`])} />
+
+| Token                    | Value     | Legacy alias      |
+| ------------------------ | --------- | ----------------- |
+| `--rt-color-neutral-0`   | `#ffffff` | `--clr-white-100` |
+| `--rt-color-neutral-5`   | `#f5f6f8` | `--clr-gray-5`    |
+| `--rt-color-neutral-10`  | `#f3f3f3` | `--clr-black-10`  |
+| `--rt-color-neutral-15`  | `#eeeeee` | `--clr-black-15`  |
+| `--rt-color-neutral-20`  | `#e8e8e8` | `--clr-gray-10`   |
+| `--rt-color-neutral-25`  | `#e0e0e0` | `--clr-black-20`  |
+| `--rt-color-neutral-30`  | `#d1d1d1` | `--clr-gray-15`   |
+| `--rt-color-neutral-35`  | `#cccccc` | `--clr-gray-20`   |
+| `--rt-color-neutral-40`  | `#a3a3a3` | `--clr-black-40`  |
+| `--rt-color-neutral-60`  | `#747474` | `--clr-black-60`  |
+| `--rt-color-neutral-80`  | `#323033` | `--clr-black-80`  |
+| `--rt-color-neutral-100` | `#181818` | `--clr-black-100` |
+
+---
+
+## Hues — `--rt-color-{hue}` + step ladders
+
+Base value per hue:
+
+<Strip
+    items={[
+        ['red', 'var(--rt-color-red)'],
+        ['orange', 'var(--rt-color-orange)'],
+        ['blue', 'var(--rt-color-blue)'],
+        ['green', 'var(--rt-color-green)'],
+        ['brand', 'var(--rt-color-brand)'],
+    ]}
+/>
+
+| Hue      | Base      | Steps (`--rt-color-{hue}-{N}`)                                                                                        |
+| -------- | --------- | --------------------------------------------------------------------------------------------------------------------- |
+| `red`    | `#eb5055` | 10 `#fdedee` · 20 `#efc0c1` · 40 `#f7b9bb` · 60 `#e88487` · 80 `#df6064` · 100 `#eb5055`                              |
+| `orange` | `#ef7128` | 5 `#f6e4d9` · 10 `#e8cbbf` · 20 `#e1ba9e` · 40 `#e4a985` · 60 `#f1a05d` · 70 `#f2994a` · 80 `#ee7a34` · 100 `#ef7128` |
+| `blue`   | `#4284d7` | 20 `#eaedfc` · 40 `#b3ceef` · 60 `#6d96e8` · 80 `#4285f4` · 100 `#4284d7`                                             |
+| `green`  | `#01af8d` | 10 `#e5f8f4` · 20 `#baf4e0` · 40 `#5dbfbc` · 60 `#46c4c0` · 80 `#21b18e` · 100 `#01af8d`                              |
+| `brand`  | `#0d1c2b` | — (single value; dark-navy brand accent)                                                                              |
+
+<Strip items={[10, 20, 40, 60, 80, 100].map((n) => [`red-${n}`, `var(--rt-color-red-${n})`])} />
+<Strip items={[5, 10, 20, 40, 60, 70, 80, 100].map((n) => [`orange-${n}`, `var(--rt-color-orange-${n})`])} />
+<Strip items={[20, 40, 60, 80, 100].map((n) => [`blue-${n}`, `var(--rt-color-blue-${n})`])} />
+<Strip items={[10, 20, 40, 60, 80, 100].map((n) => [`green-${n}`, `var(--rt-color-green-${n})`])} />
+
+---
+
+## Opacity scales — `--rt-color-{hue}-a{5…90}`
+
+Transparency steps generated with `color-mix(in srgb, <hue> N%, transparent)`.
+Available for every hue and `brand`. Example (`blue`):
+
+<Strip items={[5, 10, 20, 30, 40, 50, 60, 70, 80, 90].map((n) => [`a${n}`, `var(--rt-color-blue-a${n})`])} />
+
+---
+
+## Overlay scales — `--rt-color-{dark,light}-a{5…90}`
+
+Two overlay sets for dimming / lightening surfaces:
+
+| Token set               | Formula             | Used on        |
+| ----------------------- | ------------------- | -------------- |
+| `--rt-color-dark-a{N}`  | `rgba(#181818, N%)` | light surfaces |
+| `--rt-color-light-a{N}` | `rgba(#ffffff, N%)` | dark surfaces  |
+
+<Strip items={[5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90].map((n) => [`dark-a${n}`, `var(--rt-color-dark-a${n})`])} />
+
+> Readability threshold ≈ 50%: below it an overlay is barely visible, above it
+> actively dims/lightens the background.
+
+---
+
+## Deprecated aliases
+
+All legacy `--clr-*` variables are still emitted as aliases (see the
+**Legacy alias** column above; hue steps map 1:1, e.g. `--clr-red-100` →
+`--rt-color-red-100`). They will be removed in a future major release —
+do not use them in new code.
