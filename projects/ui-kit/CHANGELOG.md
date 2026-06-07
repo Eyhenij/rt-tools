@@ -1,3 +1,10 @@
+## [0.0.17](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.16...rt-tools@0.0.17) (2026-06-07)
+
+### Features
+
+- **rt:ui-kit:** add GMT-style design tokens v2 ([b053a03](https://github.com/Eyhenij/rt-tools/commit/b053a0353a5bf4bdccc26b752ec4d67783f668a4))
+- **rt:ui-kit:** add theme runtime (RtThemeService, RtThemeDirective) ([18f054a](https://github.com/Eyhenij/rt-tools/commit/18f054ab736a608fe4ad780534abd0870193f8d8))
+
 ## [0.0.16](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.15...rt-tools@0.0.16) (2026-05-08)
 
 ## [0.0.15](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.14...rt-tools@0.0.15) (2026-04-30)
