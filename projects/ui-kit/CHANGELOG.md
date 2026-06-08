@@ -1,3 +1,15 @@
+## [0.0.20](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.19...rt-tools@0.0.20) (2026-06-08)
+
+### Bug Fixes
+
+- **rt:ui-kit:** address color-scheme review notes ([abc7bab](https://github.com/Eyhenij/rt-tools/commit/abc7bab17c134b2465835e8d26783eed66dd05cd))
+- **rt:ui-kit:** import ModDirective where rtMod is used in templates ([a0147ec](https://github.com/Eyhenij/rt-tools/commit/a0147ec94842b5284ffb45d985394d7796a81f7f))
+- terminate leaking RxJS subscriptions with take(1) ([7a73637](https://github.com/Eyhenij/rt-tools/commit/7a736379376153cef2c3b8ff5b9227c7b796e3fc)), closes [#context](https://github.com/Eyhenij/rt-tools/issues/context)
+
+### Features
+
+- **rt:ui-kit:** add custom color-scheme (brand palette) support ([369fbb3](https://github.com/Eyhenij/rt-tools/commit/369fbb32dc86c7269116d952f9fd360f6bc299b5))
+
 ## [0.0.19](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.18...rt-tools@0.0.19) (2026-06-07)
 
 ## [0.0.18](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.17...rt-tools@0.0.18) (2026-06-07)
