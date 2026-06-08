@@ -18,6 +18,9 @@ Quick facts:
   fallback chains. Opt out: `@use '...main' with ($tokens-use-material: false)`.
 - Accent roles `{primary,success,warning,danger,info,neutral}`,
   steps `{subtle,solid,hover,disabled}` (simplified vs GMT).
+- Accent indirection: the accent semantic tier derives from `--rt-color-{role}-{0..100}`
+  ramps (`{primary,info,success,warning,danger,brand}`). Custom brand palettes
+  override only those rows — see **Custom color schemes** below.
 - Foundations: `--rt-spacing-{0..64}` (px-named, rem values), `--rt-radius-*`,
   `--rt-font-*`, `--rt-shadow-*`, `--rt-transition-*`, `--rt-z-index-*`.
 - Prebuilt CSS for non-sass consumers: `dist/ui-kit/styles/tokens.css`
@@ -76,3 +79,43 @@ Both stay until the next major because consumers apply `.c-button` classes and o
 All **global** Material/CDK overrides live in `styles/components/_material-bridge.scss`
 (single file to review on a Material upgrade). Component-scoped piercings stay with their
 component; the bridge header keeps the inventory of those locations.
+
+## Custom color schemes (brand palettes)
+
+The accent semantic tier never hardcodes color — it derives from an indirection layer,
+the **accent-role ramps** `--rt-color-{role}-{0..100}` for
+`{primary, info, success, warning, danger, brand}`. A custom brand palette overrides
+**only** those rows; the kit derives `--rt-{bg,text,icon,border}-accent-*`,
+hover/subtle/disabled and `--rt-border-focus` from them. The block is scoped to
+`[data-rt-scheme="<name>"]` on `<html>`, set raw → it wins over `--mat-sys-*`.
+
+```scss
+@use '@rt-tools/ui-kit/src/styles/main' as rt;
+@include rt.color-scheme(
+    'teal',
+    (
+        primary: (
+            20: #b3e3e1,
+            40: #5cb8b5,
+            60: #1a9d99,
+            100: #008582,
+        ),
+        brand: (
+            20: #e8e8e8,
+            100: #008582,
+        ),
+    )
+);
+```
+
+```typescript
+// runtime twin (browser-only); prefer the Sass path for SSR/brand-critical schemes
+theme.registerColorScheme('teal', { primary: { 100: '#008582' /* … */ } });
+theme.setColorScheme('teal'); // data-rt-scheme="teal"; persisted to rt-color-scheme
+theme.setColorScheme(null); // back to the default palette
+```
+
+- Orthogonal to light/dark (one ramp per role serves both modes).
+- Δ0: with no scheme the accent layer is byte-for-byte the historical palette
+  (regression-tested in `styles/color-scheme.spec.ts`); Sass↔JS generator parity is tested too.
+- Full guide: Storybook **Foundation/Theming/Custom color schemes** (`docs/ColorSchemes.mdx`).

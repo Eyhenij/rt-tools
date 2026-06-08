@@ -3,6 +3,7 @@
 @forward 'base/mixin' as mixins-*;
 @forward 'base/base';
 @forward 'base/tokens' as tokens-*;
+@forward 'base/color-scheme'; // public: rt.color-scheme($name, $roles)
 
 // Material bridge — single home for global Material overrides
 @forward 'components/material-bridge';

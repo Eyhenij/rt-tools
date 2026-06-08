@@ -1,0 +1,151 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Foundation/Theming/Custom color schemes" />
+
+# Custom color schemes (brand palettes)
+
+A **color scheme** lets a consuming app supply its own brand palette so the entire
+`--rt-*` accent layer resolves to that brand — in light, dark and auto — **without
+touching rt-tools internals and without duplicating the semantic tier**.
+
+It is orthogonal to light/dark: a scheme changes _which hue_ accents are, the theme
+changes _which tone_ of that hue renders per mode.
+
+---
+
+## How it works — the indirection contract
+
+The accent semantic tokens never hardcode a color. They reference a single
+indirection layer, the **accent-role ramps**:
+
+```
+--rt-color-{role}-{0..100}      ← the only thing a scheme overrides
+        │
+        ▼
+--rt-bg/text/icon/border-accent-{role}-*   ← derived once, in the kit
+--rt-border-focus
+```
+
+Roles: **`primary`, `info`, `success`, `warning`, `danger`, `brand`**.
+
+A scheme sets only the raw `--rt-color-{role}-{N}` rows. The kit derives everything
+else from them — one ramp per role serves both modes (the mode picks the tone via
+`light-dark()`; hover/subtle/disabled come from `color-mix()`). Schemes **never**
+re-declare the derivation layer.
+
+The scheme block is scoped to `[data-rt-scheme="<name>"]` on `<html>`. Because it
+sets raw values, it overrides the default rows (which carry the `--mat-sys-*`
+fallback) — so **a scheme wins over an active Material theme**.
+
+---
+
+## Recipe 1 — Sass (recommended, SSR-safe)
+
+```scss
+@use '@rt-tools/ui-kit/src/styles/main' as rt;
+
+@include rt.color-scheme(
+    'teal',
+    (
+        primary: (
+            20: #b3e3e1,
+            40: #5cb8b5,
+            60: #1a9d99,
+            100: #008582,
+        ),
+        brand: (
+            20: #e8e8e8,
+            100: #008582,
+        ),
+    )
+);
+```
+
+Emits:
+
+```css
+[data-rt-scheme='teal'] {
+    --rt-color-primary-20: #b3e3e1;
+    --rt-color-primary-40: #5cb8b5;
+    --rt-color-primary-60: #1a9d99;
+    --rt-color-primary-100: #008582;
+    --rt-color-brand-20: #e8e8e8;
+    --rt-color-brand-100: #008582;
+}
+```
+
+The mixin validates its input — an unknown role or an out-of-range tone (must be an
+integer 0–100) fails the build with an actionable message.
+
+## Recipe 2 — JavaScript (runtime, browser-only)
+
+The JS twin of the mixin, for schemes you don't know at build time. It injects an
+identical `[data-rt-scheme]` `<style>` block (no-op on the server — prefer the Sass
+path for brand-critical, SSR-rendered schemes):
+
+```typescript
+import { RtThemeService, RtColorSchemeRamp } from 'rt-tools';
+
+const teal: RtColorSchemeRamp = {
+    primary: { 20: '#b3e3e1', 40: '#5cb8b5', 60: '#1a9d99', 100: '#008582' },
+    brand: { 20: '#e8e8e8', 100: '#008582' },
+};
+
+const theme = inject(RtThemeService);
+theme.registerColorScheme('teal', teal); // make it available
+theme.setColorScheme('teal'); // activate it
+```
+
+---
+
+## Switching at runtime
+
+```typescript
+theme.setColorScheme('teal'); // activate (sets data-rt-scheme="teal" on <html>)
+theme.setColorScheme(null); // back to the default rt-tools palette
+theme.colorScheme(); // Signal<string | null> — the active scheme
+```
+
+- Orthogonal to `setTheme('light'|'dark'|'auto')` — combine freely.
+- Persisted to localStorage (`rt-color-scheme`) and restored on startup.
+- `null` or `'default'` clears the scheme (removes the attribute).
+
+| Concern       | API                                          | Storage key       | Attribute on `<html>` |
+| ------------- | -------------------------------------------- | ----------------- | --------------------- |
+| Light / dark  | `setTheme()` / `toggle()`                    | `rt-theme`        | `class="rt-dark"` …   |
+| Brand palette | `setColorScheme()` / `registerColorScheme()` | `rt-color-scheme` | `data-rt-scheme="…"`  |
+
+---
+
+## What a scheme drives
+
+Override `--rt-color-{role}-{N}` and these recolor automatically. The tones each
+default ramp anchors (provide at least these for a clean recolor):
+
+| Role      | Tones used by the kit | Drives                                                                                              |
+| --------- | --------------------- | --------------------------------------------------------------------------------------------------- |
+| `primary` | 20, 40, 60, 100       | `bg/text/icon/border-accent-primary-*`, `bg-accent-primary-{subtle,hover,disabled}`, `border-focus` |
+| `info`    | 20, 80, 100           | `bg/text/icon/border-accent-info-*`                                                                 |
+| `success` | 10, 80, 100           | `bg/text/icon/border-accent-success-*`                                                              |
+| `warning` | 10, 80, 100           | `bg/text/icon/border-accent-warning-*`                                                              |
+| `danger`  | 10, 60, 100           | `bg/text/icon/border-accent-danger-*`                                                               |
+| `brand`   | 20, 100               | `text-accent-brand`, `icon-accent-brand`                                                            |
+
+> `brand` is its own ramp (default navy `#0d1c2b`), independent of `primary`, so a
+> scheme can set brand ≠ primary. A partial ramp is allowed — unset tones keep the
+> rt-tools defaults (mixing brand and default hues, usually not what you want).
+
+---
+
+## Guarantees
+
+- **Δ0 default.** With no scheme, every accent token resolves byte-for-byte to the
+  historical own palette (regression-tested in `styles/color-scheme.spec.ts`).
+- **Stable contract.** Semantic token names never change — components don't care
+  which scheme is active.
+- **Generator parity.** The Sass mixin and `registerColorScheme()` emit identical
+  declarations for the same ramp (tested).
+- **Material.** The default honors `--mat-sys-*`; an active scheme overrides it.
+
+See **Foundation/Theming** for light/dark, and **Foundation/Design Tokens/Overview**
+for the `--mat-sys-*` fallback chains.

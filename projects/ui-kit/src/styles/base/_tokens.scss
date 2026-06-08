@@ -108,6 +108,48 @@ $hue-base: (
 $opacity-steps: (5, 10, 20, 30, 40, 50, 60, 70, 80, 90);
 $overlay-steps: (5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90);
 
+/* ------------------------------ Accent-role ramps (indirection layer) ------------------------------ */
+// The semantic accent tier references ONLY these `--rt-color-{role}-{0..100}` rows — never raw hues.
+// A custom color scheme overrides just these rows (see `_color-scheme.scss`) and the entire
+// accent layer (bg/text/icon/border + hover/subtle/disabled/focus derivations) recolors with Δ0 effort.
+// ---
+// Defaults reproduce the historical own-palette byte-for-byte. Tones that previously mapped to a
+// Material system color carry the `--mat-sys-*` fallback INSIDE the tone (`t(..., null, $mat)`), so:
+//   - default render honors Material (as before);
+//   - a scheme override replaces the tone with a raw value → the scheme wins over Material.
+$accent-roles: (
+    'primary': (
+        20: t(#eaedfc, null, primary-container),
+        40: #b3ceef,
+        60: t(#6d96e8, null, primary),
+        100: t(#4284d7, null, primary),
+    ),
+    'info': (
+        20: #eaedfc,
+        80: #4285f4,
+        100: #4284d7,
+    ),
+    'success': (
+        10: #e5f8f4,
+        80: #21b18e,
+        100: #01af8d,
+    ),
+    'warning': (
+        10: #e8cbbf,
+        80: #ee7a34,
+        100: #ef7128,
+    ),
+    'danger': (
+        10: t(#fdedee, null, error-container),
+        60: #e88487,
+        100: t(#eb5055, null, error),
+    ),
+    'brand': (
+        20: t(#e8e8e8, null, primary),
+        100: t(#0d1c2b, null, primary),
+    ),
+);
+
 /* ============================== Tier 2: semantic ============================== */
 // NOTE: function calls in this map are evaluated when the module loads,
 // honoring a `with ($use-material: ...)` configuration.
@@ -127,27 +169,39 @@ $semantic: (
     /* ---- bg / static ---- */ bg-static-light: #fff,
     bg-static-dark: #181818,
     bg-static-none: transparent,
-    /* ---- bg / accent: {subtle, solid, hover, disabled} (simplified GMT scale) ---- */
-    bg-accent-primary-subtle: t(#eaedfc, color-mix(in srgb, #4284d7 18%, #1c1b1e), primary-container),
-    bg-accent-primary-solid: t(#4284d7, #4284d7, primary),
-    bg-accent-primary-hover: t(color-mix(in srgb, #4284d7 90%, #000), color-mix(in srgb, #4284d7 90%, #fff)),
-    bg-accent-primary-disabled: color-mix(in srgb, #4284d7 38%, transparent),
-    bg-accent-success-subtle: t(#e5f8f4, color-mix(in srgb, #01af8d 18%, #1c1b1e)),
-    bg-accent-success-solid: #21b18e,
-    bg-accent-success-hover: t(color-mix(in srgb, #21b18e 90%, #000), color-mix(in srgb, #21b18e 90%, #fff)),
-    bg-accent-success-disabled: color-mix(in srgb, #21b18e 38%, transparent),
-    bg-accent-warning-subtle: t(#e8cbbf, color-mix(in srgb, #ef7128 18%, #1c1b1e)),
-    bg-accent-warning-solid: #ee7a34,
-    bg-accent-warning-hover: t(color-mix(in srgb, #ee7a34 90%, #000), color-mix(in srgb, #ee7a34 90%, #fff)),
-    bg-accent-warning-disabled: color-mix(in srgb, #ee7a34 38%, transparent),
-    bg-accent-danger-subtle: t(#fdedee, color-mix(in srgb, #eb5055 18%, #1c1b1e), error-container),
-    bg-accent-danger-solid: t(#eb5055, #eb5055, error),
-    bg-accent-danger-hover: t(color-mix(in srgb, #eb5055 90%, #000), color-mix(in srgb, #eb5055 90%, #fff)),
-    bg-accent-danger-disabled: color-mix(in srgb, #eb5055 38%, transparent),
-    bg-accent-info-subtle: t(#eaedfc, color-mix(in srgb, #4284d7 18%, #1c1b1e)),
-    bg-accent-info-solid: #4284d7,
-    bg-accent-info-hover: t(color-mix(in srgb, #4284d7 90%, #000), color-mix(in srgb, #4284d7 90%, #fff)),
-    bg-accent-info-disabled: color-mix(in srgb, #4284d7 38%, transparent),
+    /* ---- bg / accent: {subtle, solid, hover, disabled} — driven by --rt-color-{role}-{N} ---- */
+    bg-accent-primary-subtle: t(var(--rt-color-primary-20), color-mix(in srgb, var(--rt-color-primary-100) 18%, #1c1b1e)),
+    bg-accent-primary-solid: var(--rt-color-primary-100),
+    bg-accent-primary-hover: t(
+            color-mix(in srgb, var(--rt-color-primary-100) 90%, #000),
+            color-mix(in srgb, var(--rt-color-primary-100) 90%, #fff)
+        ),
+    bg-accent-primary-disabled: color-mix(in srgb, var(--rt-color-primary-100) 38%, transparent),
+    bg-accent-success-subtle: t(var(--rt-color-success-10), color-mix(in srgb, var(--rt-color-success-100) 18%, #1c1b1e)),
+    bg-accent-success-solid: var(--rt-color-success-80),
+    bg-accent-success-hover: t(
+            color-mix(in srgb, var(--rt-color-success-80) 90%, #000),
+            color-mix(in srgb, var(--rt-color-success-80) 90%, #fff)
+        ),
+    bg-accent-success-disabled: color-mix(in srgb, var(--rt-color-success-80) 38%, transparent),
+    bg-accent-warning-subtle: t(var(--rt-color-warning-10), color-mix(in srgb, var(--rt-color-warning-100) 18%, #1c1b1e)),
+    bg-accent-warning-solid: var(--rt-color-warning-80),
+    bg-accent-warning-hover: t(
+            color-mix(in srgb, var(--rt-color-warning-80) 90%, #000),
+            color-mix(in srgb, var(--rt-color-warning-80) 90%, #fff)
+        ),
+    bg-accent-warning-disabled: color-mix(in srgb, var(--rt-color-warning-80) 38%, transparent),
+    bg-accent-danger-subtle: t(var(--rt-color-danger-10), color-mix(in srgb, var(--rt-color-danger-100) 18%, #1c1b1e)),
+    bg-accent-danger-solid: var(--rt-color-danger-100),
+    bg-accent-danger-hover: t(
+            color-mix(in srgb, var(--rt-color-danger-100) 90%, #000),
+            color-mix(in srgb, var(--rt-color-danger-100) 90%, #fff)
+        ),
+    bg-accent-danger-disabled: color-mix(in srgb, var(--rt-color-danger-100) 38%, transparent),
+    bg-accent-info-subtle: t(var(--rt-color-info-20), color-mix(in srgb, var(--rt-color-info-100) 18%, #1c1b1e)),
+    bg-accent-info-solid: var(--rt-color-info-100),
+    bg-accent-info-hover: t(color-mix(in srgb, var(--rt-color-info-100) 90%, #000), color-mix(in srgb, var(--rt-color-info-100) 90%, #fff)),
+    bg-accent-info-disabled: color-mix(in srgb, var(--rt-color-info-100) 38%, transparent),
     bg-accent-neutral-subtle: t(#f3f3f3, rgb(255 255 255 / 6%)),
     bg-accent-neutral-solid: t(#747474, #a3a3a3),
     bg-accent-neutral-hover: t(#a3a3a3, #747474),
@@ -160,41 +214,41 @@ $semantic: (
     text-base-inverse: t(#fff, #181818, inverse-on-surface),
     /* ---- text / static ---- */ text-static-light: #fff,
     text-static-dark: #181818,
-    /* ---- text / accent ---- */ text-accent-brand: t(#0d1c2b, #e8e8e8, primary),
-    text-accent-primary: t(#4284d7, #6d96e8, primary),
-    text-accent-success: #01af8d,
-    text-accent-success-soft: #21b18e,
-    text-accent-warning: #ef7128,
-    text-accent-warning-soft: #ee7a34,
-    text-accent-danger: t(#eb5055, #eb5055, error),
-    text-accent-danger-soft: #e88487,
-    text-accent-info: #4284d7,
-    text-accent-info-soft: #4285f4,
+    /* ---- text / accent ---- */ text-accent-brand: t(var(--rt-color-brand-100), var(--rt-color-brand-20)),
+    text-accent-primary: t(var(--rt-color-primary-100), var(--rt-color-primary-60)),
+    text-accent-success: var(--rt-color-success-100),
+    text-accent-success-soft: var(--rt-color-success-80),
+    text-accent-warning: var(--rt-color-warning-100),
+    text-accent-warning-soft: var(--rt-color-warning-80),
+    text-accent-danger: var(--rt-color-danger-100),
+    text-accent-danger-soft: var(--rt-color-danger-60),
+    text-accent-info: var(--rt-color-info-100),
+    text-accent-info-soft: var(--rt-color-info-80),
     /* ---- icon / neutral (adaptive) ---- */ icon-neutral-default: t(#323033, #e0e0e0),
     icon-neutral-soft: t(#747474, #a3a3a3),
     icon-neutral-disabled: t(#a3a3a3, #747474),
     icon-neutral-inverse: t(#fff, #181818),
     /* ---- icon / static ---- */ icon-static-light: #fff,
     icon-static-dark: #181818,
-    /* ---- icon / accent ---- */ icon-accent-brand: t(#0d1c2b, #e8e8e8, primary),
-    icon-accent-primary: t(#4284d7, #6d96e8, primary),
-    icon-accent-success: #01af8d,
-    icon-accent-warning: #ef7128,
-    icon-accent-danger: t(#eb5055, #eb5055, error),
-    icon-accent-info: #4284d7,
+    /* ---- icon / accent ---- */ icon-accent-brand: t(var(--rt-color-brand-100), var(--rt-color-brand-20)),
+    icon-accent-primary: t(var(--rt-color-primary-100), var(--rt-color-primary-60)),
+    icon-accent-success: var(--rt-color-success-100),
+    icon-accent-warning: var(--rt-color-warning-100),
+    icon-accent-danger: var(--rt-color-danger-100),
+    icon-accent-info: var(--rt-color-info-100),
     /* ---- border / neutral (adaptive) ---- */ border-neutral-subtle: t(#e8e8e8, #2e2d31),
     border-neutral-default: t(#e0e0e0, #3f3e43, outline-variant),
     border-neutral-medium: t(#d1d1d1, #4a494e),
     border-neutral-divider: t(#ccc, #4a494e),
     border-neutral-strong: t(#a3a3a3, #5c5b60, outline),
     border-neutral-emphasis: t(#747474, #a3a3a3),
-    /* ---- border / accent ---- */ border-accent-primary: t(#4284d7, #6d96e8, primary),
-    border-accent-success: #01af8d,
-    border-accent-warning: #ef7128,
-    border-accent-danger: t(#eb5055, #eb5055, error),
-    border-accent-danger-soft: #e88487,
-    border-accent-info: #4284d7,
-    border-focus: t(#b3ceef, #6d96e8),
+    /* ---- border / accent ---- */ border-accent-primary: t(var(--rt-color-primary-100), var(--rt-color-primary-60)),
+    border-accent-success: var(--rt-color-success-100),
+    border-accent-warning: var(--rt-color-warning-100),
+    border-accent-danger: var(--rt-color-danger-100),
+    border-accent-danger-soft: var(--rt-color-danger-60),
+    border-accent-info: var(--rt-color-info-100),
+    border-focus: t(var(--rt-color-primary-40), var(--rt-color-primary-60)),
     /* ---- form controls (rt extension) ---- */ control-track: t(#e8e8e8, #4a494e),
     control-thumb: t(#fff, #eee),
     control-checked: t(#323033, #e0e0e0),
@@ -306,6 +360,13 @@ $breakpoint: (
     @each $a in $overlay-steps {
         --rt-color-dark-a#{$a}: rgba(24, 24, 24, #{calc($a / 100)});
         --rt-color-light-a#{$a}: rgba(255, 255, 255, #{calc($a / 100)});
+    }
+
+    // accent-role ramps (indirection layer) — overridable per color scheme
+    @each $role, $tones in $accent-roles {
+        @each $step, $value in $tones {
+            --rt-color-#{$role}-#{$step}: #{$value};
+        }
     }
 
     /* --- Tier 2: semantic --- */
