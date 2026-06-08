@@ -104,6 +104,16 @@ import { RtThemeDirective } from 'rt-tools';
 
 ---
 
+## Custom brand palettes
+
+Light/dark changes the _tone_; a **color scheme** changes the _hue_ — letting an app
+supply its own brand (e.g. teal) so the whole accent layer recolors without touching
+the kit. Schemes are orthogonal to the theme and switchable at runtime
+(`RtThemeService.setColorScheme('teal')`). See **Foundation/Theming/Custom color
+schemes**.
+
+---
+
 ## Angular Material interplay
 
 Material M3 themes built with `light-dark()` react to the same `color-scheme`
