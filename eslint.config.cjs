@@ -2,6 +2,7 @@ const { FlatCompat } = require('@eslint/eslintrc');
 const nxEslintPlugin = require('@nx/eslint-plugin');
 const js = require('@eslint/js');
 const eslintPluginPrettierRecommended = require('eslint-plugin-prettier/recommended');
+const rt = require('./tools/lint-rules/index.cjs');
 
 const compat = new FlatCompat({
     baseDirectory: __dirname,
@@ -174,6 +175,7 @@ module.exports = [
     ...compat.config({ extends: ['plugin:@nx/angular-template'] }).map((config) => ({
         ...config,
         files: ['**/*.html'],
+        plugins: { ...(config.plugins || {}), rt },
         rules: {
             '@angular-eslint/template/banana-in-box': ['error'],
             '@angular-eslint/template/cyclomatic-complexity': [
@@ -188,6 +190,10 @@ module.exports = [
              */
             '@angular-eslint/template/no-call-expression': 'off',
             '@angular-eslint/template/no-negated-async': 'error',
+
+            // Custom BEM-only rule. Warn while templates still use
+            // raw class= / [class.x] for the Material bridge; bump to error after migration.
+            'rt/require-bem-directives': 'warn',
         },
     })),
     ...compat.config({ env: { jest: true } }).map((config) => ({
@@ -201,6 +207,26 @@ module.exports = [
         files: ['**/bem/*.directive.ts'],
         rules: {
             '@angular-eslint/prefer-inject': 'off',
+        },
+    },
+    {
+        // Custom workspace rules (rt-tools conventions).
+        // The TS parser/projectService is contributed by the @nx/typescript compat block above.
+        files: ['**/*.ts'],
+        ignores: ['**/*.spec.ts', '**/*.spec.js'],
+        plugins: { rt },
+        rules: {
+            // 0 violations in the current codebase → safe at error.
+            'rt/require-source-suffix-for-subjects': 'error',
+            // 0 violations after adding take(1) to the idb-storage / aside subscriptions and
+            // disabling the rule on the non-RxJS Redux DevTools .subscribe(). Enforced at error.
+            'rt/require-take-until-destroyed': 'error',
+            // 0 violations after fixing 13 components that used rtMod without importing
+            // ModDirective (modifiers were silently dropped at runtime). Enforced at error.
+            'rt/require-mod-directive-import': 'error',
+            // rt-tools uses string-literal `host: { class: '...' }` (not a BEM_BLOCK const) and
+            // only on some components — warn to surface, not break, until a convention decision.
+            'rt/require-host-bem-block': 'warn',
         },
     },
     {
