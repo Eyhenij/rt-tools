@@ -144,5 +144,14 @@ describe('RtThemeService', () => {
 
             expect(declarationSet(jsBlock)).toEqual(declarationSet(sassBlock));
         });
+
+        it('validates its input like the Sass mixin (parity)', () => {
+            const service: RtThemeService = setup();
+
+            expect(() => service.registerColorScheme('x', { bogus: { 100: '#000' } } as RtColorSchemeRamp)).toThrow(/unknown role/i);
+            expect(() => service.registerColorScheme('x', { primary: { 150: '#000' } })).toThrow(/integer 0–100/i);
+            expect(() => service.registerColorScheme('', teal)).toThrow(/non-empty string/i);
+            expect(() => service.registerColorScheme('default', teal)).toThrow(/non-empty string/i);
+        });
     });
 });

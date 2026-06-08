@@ -4,6 +4,7 @@ import { effect, inject, Injectable, Signal, signal, WritableSignal } from '@ang
 import { LOCAL_STORAGE, PlatformService } from '@rt-tools/core';
 
 import {
+    RT_ACCENT_ROLE_ENUM,
     RT_COLOR_SCHEME_STORAGE_KEY,
     RT_DARK_CLASS,
     RT_DEFAULT_SCHEME,
@@ -89,6 +90,8 @@ export class RtThemeService {
      * scheme — call {@link setColorScheme} afterwards.
      */
     public registerColorScheme(name: string, ramp: RtColorSchemeRamp): void {
+        this.#validateRamp(name, ramp);
+
         if (!this.#platformService.isPlatformBrowser) {
             return;
         }
@@ -150,7 +153,34 @@ export class RtThemeService {
         }
     }
 
-    /** Builds the `[data-rt-scheme="<name>"] { --rt-color-{role}-{N}: … }` block (mirrors the Sass mixin). */
+    /**
+     * Validates a ramp the same way the `rt.color-scheme` Sass mixin does — unknown
+     * role or out-of-range tone (must be an integer 0–100) throws. Keeps the JS twin
+     * at parity with the build-time generator instead of silently emitting bad rows.
+     */
+    #validateRamp(name: string, ramp: RtColorSchemeRamp): void {
+        if (!name || name === RT_DEFAULT_SCHEME) {
+            throw new Error(`registerColorScheme: name must be a non-empty string other than '${RT_DEFAULT_SCHEME}'.`);
+        }
+
+        const roles: string[] = Object.values(RT_ACCENT_ROLE_ENUM);
+
+        for (const role of Object.keys(ramp)) {
+            if (!roles.includes(role)) {
+                throw new Error(`registerColorScheme("${name}"): unknown role "${role}". Allowed roles: ${roles.join(', ')}.`);
+            }
+
+            for (const tone of Object.keys(ramp[role as RT_ACCENT_ROLE_ENUM] ?? {})) {
+                const step: number = Number(tone);
+
+                if (!Number.isInteger(step) || step < 0 || step > 100) {
+                    throw new Error(`registerColorScheme("${name}"): role "${role}" tone "${tone}" must be an integer 0–100.`);
+                }
+            }
+        }
+    }
+
+    /** Builds the `:root[data-rt-scheme="<name>"] { --rt-color-{role}-{N}: … }` block (mirrors the Sass mixin). */
     #buildSchemeCss(name: string, ramp: RtColorSchemeRamp): string {
         const declarations: string = Object.entries(ramp)
             .flatMap(([role, tones]: [string, Record<number, string> | undefined]): string[] =>
@@ -158,7 +188,7 @@ export class RtThemeService {
             )
             .join('');
 
-        return `[${RT_SCHEME_ATTRIBUTE}="${name}"]{${declarations}}`;
+        return `:root[${RT_SCHEME_ATTRIBUTE}="${name}"]{${declarations}}`;
     }
 
     #isDarkApplied(): boolean {
