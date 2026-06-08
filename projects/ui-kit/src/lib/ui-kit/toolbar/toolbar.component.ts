@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import { MatToolbar } from '@angular/material/toolbar';
 
-import { BlockDirective, ElemDirective, Nullable } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective, Nullable } from '@rt-tools/core';
 
 @Directive({
     selector: '[rtuiToolbarLeft]',
@@ -35,7 +35,7 @@ export class RtuiToolbarRightDirective {}
     templateUrl: './toolbar.component.html',
     styleUrls: ['./toolbar.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatToolbar, NgTemplateOutlet, BlockDirective, ElemDirective],
+    imports: [MatToolbar, NgTemplateOutlet, BlockDirective, ElemDirective, ModDirective],
 })
 export class RtuiToolbarComponent {
     public isVisibleToolbar: Signal<boolean> = input(true);
