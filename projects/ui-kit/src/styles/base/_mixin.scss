@@ -2,12 +2,6 @@
 @use 'sass:math';
 @use './variables' as vars;
 
-// css clr var generator
-// #{generateCssVar(red, 100)}: #eb5055;
-@function generateCssClrVar($color, $saturate) {
-    @return --#{vars.$styles-clr-prefix}-#{$color}-#{$saturate};
-}
-
 // css var generator
 // #{generateCssVar(table-base-cell, suffix-icon, size)}: 1rem;
 @function generateCssVar($component-name, $element, $style-token) {

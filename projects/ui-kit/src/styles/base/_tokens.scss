@@ -345,31 +345,6 @@ $breakpoint: (
     @each $token, $value in $breakpoint {
         --rt-breakpoint-#{$token}: #{$value};
     }
-
-    /* --- Deprecated aliases (legacy --clr-*; remove after consumers migrate) --- */
-    --clr-white-100: var(--rt-color-neutral-0);
-    --clr-gray-5: var(--rt-color-neutral-5);
-    --clr-gray-10: var(--rt-color-neutral-20);
-    --clr-gray-15: var(--rt-color-neutral-30);
-    --clr-gray-20: var(--rt-color-neutral-35);
-    --clr-black-10: var(--rt-color-neutral-10);
-    --clr-black-15: var(--rt-color-neutral-15);
-    --clr-black-20: var(--rt-color-neutral-25);
-    --clr-black-30: #b2cbca; // palette outlier, kept verbatim
-    --clr-black-40: var(--rt-color-neutral-40);
-    --clr-black-60: var(--rt-color-neutral-60);
-    --clr-black-80: var(--rt-color-neutral-80);
-    --clr-black-100: var(--rt-color-neutral-100);
-
-    @each $hue, $steps in $hues {
-        @each $step, $value in $steps {
-            --clr-#{$hue}-#{$step}: var(--rt-color-#{$hue}-#{$step});
-        }
-    }
-
-    --clr-txt: var(--rt-text-base-primary);
-    --clr-base-accent: var(--rt-color-brand);
-    --clr-white-rgb: 255, 255, 255;
 }
 
 /* Theme switching: global class + nested local contexts (GMT data-theme analogue) */

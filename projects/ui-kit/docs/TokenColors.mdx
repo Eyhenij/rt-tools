@@ -40,20 +40,20 @@ white/gray/black families.
 
 <Strip items={[0, 5, 10, 15, 20, 25, 30, 35, 40, 60, 80, 100].map((n) => [`${n}`, `var(--rt-color-neutral-${n})`])} />
 
-| Token                    | Value     | Legacy alias      |
-| ------------------------ | --------- | ----------------- |
-| `--rt-color-neutral-0`   | `#ffffff` | `--clr-white-100` |
-| `--rt-color-neutral-5`   | `#f5f6f8` | `--clr-gray-5`    |
-| `--rt-color-neutral-10`  | `#f3f3f3` | `--clr-black-10`  |
-| `--rt-color-neutral-15`  | `#eeeeee` | `--clr-black-15`  |
-| `--rt-color-neutral-20`  | `#e8e8e8` | `--clr-gray-10`   |
-| `--rt-color-neutral-25`  | `#e0e0e0` | `--clr-black-20`  |
-| `--rt-color-neutral-30`  | `#d1d1d1` | `--clr-gray-15`   |
-| `--rt-color-neutral-35`  | `#cccccc` | `--clr-gray-20`   |
-| `--rt-color-neutral-40`  | `#a3a3a3` | `--clr-black-40`  |
-| `--rt-color-neutral-60`  | `#747474` | `--clr-black-60`  |
-| `--rt-color-neutral-80`  | `#323033` | `--clr-black-80`  |
-| `--rt-color-neutral-100` | `#181818` | `--clr-black-100` |
+| Token                    | Value     |
+| ------------------------ | --------- |
+| `--rt-color-neutral-0`   | `#ffffff` |
+| `--rt-color-neutral-5`   | `#f5f6f8` |
+| `--rt-color-neutral-10`  | `#f3f3f3` |
+| `--rt-color-neutral-15`  | `#eeeeee` |
+| `--rt-color-neutral-20`  | `#e8e8e8` |
+| `--rt-color-neutral-25`  | `#e0e0e0` |
+| `--rt-color-neutral-30`  | `#d1d1d1` |
+| `--rt-color-neutral-35`  | `#cccccc` |
+| `--rt-color-neutral-40`  | `#a3a3a3` |
+| `--rt-color-neutral-60`  | `#747474` |
+| `--rt-color-neutral-80`  | `#323033` |
+| `--rt-color-neutral-100` | `#181818` |
 
 ---
 
@@ -108,12 +108,3 @@ Two overlay sets for dimming / lightening surfaces:
 
 > Readability threshold ≈ 50%: below it an overlay is barely visible, above it
 > actively dims/lightens the background.
-
----
-
-## Deprecated aliases
-
-All legacy `--clr-*` variables are still emitted as aliases (see the
-**Legacy alias** column above; hue steps map 1:1, e.g. `--clr-red-100` →
-`--rt-color-red-100`). They will be removed in a future major release —
-do not use them in new code.

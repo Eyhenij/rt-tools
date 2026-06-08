@@ -1,6 +1,6 @@
 /**
  * Docs-wide enhancer: makes every inline `<code>` element whose text is exactly
- * a design-token name (`--rt-*` / `--clr-*`) copyable with one click.
+ * a design-token name (`--rt-*`) copyable with one click.
  *
  * React-safe by design: we only set `data-*` attributes on existing elements and
  * draw the copy icon via a CSS `::after` pseudo-element — no extra DOM nodes are

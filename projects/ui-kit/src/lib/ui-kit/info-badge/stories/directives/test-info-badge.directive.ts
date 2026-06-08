@@ -19,11 +19,11 @@ export class TestInfoBadgeDirective implements OnInit {
          * In project, you can use:
          *  if (this.#platformService.isPlatformBrowser) {
          *             this.infoBadgeColors = {
-         *                 success: this.#document.body.computedStyleMap().get('--clr-cell-success').toString(),
-         *                 info: this.#document.body.computedStyleMap().get('--clr-yellow').toString(),
-         *                 warning: this.#document.body.computedStyleMap().get('--clr-red-100').toString(),
-         *                 primary: this.#document.body.computedStyleMap().get('--clr-base-accent').toString(),
-         *                 disabled: this.#document.body.computedStyleMap().get('--clr-gray').toString(),
+         *                 success: this.#document.body.computedStyleMap().get('--rt-color-green-100').toString(),
+         *                 info: this.#document.body.computedStyleMap().get('--rt-color-blue-100').toString(),
+         *                 warning: this.#document.body.computedStyleMap().get('--rt-color-red-100').toString(),
+         *                 primary: this.#document.body.computedStyleMap().get('--rt-color-brand').toString(),
+         *                 disabled: this.#document.body.computedStyleMap().get('--rt-color-neutral-40').toString(),
          *             };
          *         }
          */
