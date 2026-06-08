@@ -3,7 +3,7 @@ export default {
     // (1700+ "Unknown rule" errors); stylelint-prettier plugin below covers prettier integration.
     // standard-scss brings postcss-scss syntax + scss rules.
     extends: ['stylelint-config-standard-scss', 'stylelint-config-idiomatic-order'],
-    plugins: ['stylelint-scss', 'stylelint-prettier'],
+    plugins: ['stylelint-scss', 'stylelint-prettier', './tools/stylelint-rules/no-hardcoded-design-tokens.cjs'],
     rules: {
         'at-rule-empty-line-before': [
             'always',
@@ -55,6 +55,10 @@ export default {
             files: ['projects/ui-kit/src/lib/**/*.scss'],
             rules: {
                 'color-no-hex': true,
+                // Custom rule ported from kvaris: no hardcoded colors / magic numbers in
+                // token-aware properties; allows var(--rt-*), --mat-*, --mdc-*, calc/min/max/clamp.
+                // Warning-level while the kit migrates remaining hardcoded values to tokens.
+                'rt-tools/no-hardcoded-design-tokens': [true, { severity: 'warning' }],
             },
         },
     ],
