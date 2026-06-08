@@ -53,12 +53,14 @@ export default {
         {
             // Component styles must consume tokens, not raw hex (palette lives in styles/base only)
             files: ['projects/ui-kit/src/lib/**/*.scss'],
+            // Story/test wrapper styles are demo scaffolding, not shipped library CSS —
+            // they are exempt from the design-token discipline.
+            ignoreFiles: ['**/stories/**/*.scss', '**/strories/**/*.scss'],
             rules: {
                 'color-no-hex': true,
-                // Custom rule ported from kvaris: no hardcoded colors / magic numbers in
+                // Custom rule: no hardcoded colors / magic numbers in
                 // token-aware properties; allows var(--rt-*), --mat-*, --mdc-*, calc/min/max/clamp.
-                // Warning-level while the kit migrates remaining hardcoded values to tokens.
-                'rt-tools/no-hardcoded-design-tokens': [true, { severity: 'warning' }],
+                'rt-tools/no-hardcoded-design-tokens': true,
             },
         },
     ],
