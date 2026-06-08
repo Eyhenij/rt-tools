@@ -117,6 +117,8 @@ $overlay-steps: (5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90);
 // Material system color carry the `--mat-sys-*` fallback INSIDE the tone (`t(..., null, $mat)`), so:
 //   - default render honors Material (as before);
 //   - a scheme override replaces the tone with a raw value → the scheme wins over Material.
+// `brand` is navy in light (100) / near-white in dark (20); both carry mat-sys-primary because the
+// original text/icon-accent-brand mapped to --mat-sys-primary.
 $accent-roles: (
     'primary': (
         20: t(#eaedfc, null, primary-container),

@@ -154,6 +154,44 @@ describe('rt-tools color schemes', () => {
         });
     });
 
+    describe('Material hybrid — default honors --mat-sys-*, a scheme overrides it', () => {
+        it('default ramp tones carry the --mat-sys-* fallback where the original token did', () => {
+            const ramp: Record<string, string> = extractDeclarations(
+                compileTokens(),
+                '--rt-color-(?:primary|info|success|warning|danger|brand)-\\d+'
+            );
+
+            // tones that mapped to a Material system color carry the fallback (default honors Material)
+            expect(ramp['--rt-color-primary-100']).toBe('var(--mat-sys-primary, #4284d7)');
+            expect(ramp['--rt-color-primary-20']).toBe('var(--mat-sys-primary-container, #eaedfc)');
+            expect(ramp['--rt-color-danger-100']).toBe('var(--mat-sys-error, #eb5055)');
+            expect(ramp['--rt-color-brand-100']).toBe('var(--mat-sys-primary, #0d1c2b)');
+
+            // roles with no Material mapping stay raw — and a scheme overriding ANY tone with a raw
+            // value drops the fallback entirely, so the scheme wins over an active Material theme.
+            expect(ramp['--rt-color-info-100']).toBe('#4284d7');
+            expect(ramp['--rt-color-success-100']).toBe('#01af8d');
+            expect(ramp['--rt-color-warning-100']).toBe('#ef7128');
+        });
+    });
+
+    describe('dark mode — a scheme drives both modes via distinct ramp tones', () => {
+        it('accent tokens pick tone-100 in light and tone-60 in dark (scheme controls each)', () => {
+            const semantic: Record<string, string> = extractDeclarations(
+                compileTokens(),
+                '--rt-text-accent-primary|--rt-border-accent-primary|--rt-icon-accent-primary'
+            );
+
+            // light-dark(primary-100, primary-60): the kit fixes WHICH tone per mode; the scheme
+            // supplies the VALUE of each tone → a scheme can set a different dark tone (tone-60) than light.
+            for (const token of Object.keys(semantic)) {
+                expect(semantic[token]).toContain('var(--rt-color-primary-100)');
+                expect(semantic[token]).toContain('var(--rt-color-primary-60)');
+                expect(semantic[token].indexOf('primary-100')).toBeLessThan(semantic[token].indexOf('primary-60'));
+            }
+        });
+    });
+
     describe('rt.color-scheme mixin', () => {
         it('emits a scoped [data-rt-scheme] block with only raw role rows', () => {
             const css: string = compileWithMixin(

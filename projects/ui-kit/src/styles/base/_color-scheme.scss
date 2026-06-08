@@ -44,7 +44,7 @@ $known-roles: tokens.$accent-roles;
     }
 
     @each $step, $value in $ramp {
-        @if meta.type-of($step) != 'number' or not math-is-integer-step($step) {
+        @if meta.type-of($step) != 'number' or not _is-integer-step($step) {
             @error 'rt.color-scheme("#{$name}"): role "#{$role}" tone "#{$step}" must be an integer 0–100.';
         }
     }
@@ -53,7 +53,7 @@ $known-roles: tokens.$accent-roles;
 }
 
 /// Tone steps must be integers within 0–100.
-@function math-is-integer-step($step) {
+@function _is-integer-step($step) {
     @return $step >= 0 and $step <= 100 and ($step % 1 == 0);
 }
 
@@ -75,7 +75,8 @@ $known-roles: tokens.$accent-roles;
         $ok: _validate-role($name, $role, $ramp);
     }
 
-    [data-rt-scheme='#{$name}'] {
+    // `:root[...]` (0,2,0) outranks the default `:root` rows (0,1,0) regardless of source order.
+    :root[data-rt-scheme='#{$name}'] {
         @each $role, $ramp in $roles {
             @each $step, $value in $ramp {
                 --rt-color-#{$role}-#{$step}: #{$value};

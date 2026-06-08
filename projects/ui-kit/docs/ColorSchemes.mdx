@@ -137,6 +137,50 @@ default ramp anchors (provide at least these for a clean recolor):
 
 ---
 
+## Dark mode & the single-ramp model
+
+One ramp per role serves **both** modes — the mode picks _which tone_ renders:
+
+| Token group                             | Light         | Dark                                              |
+| --------------------------------------- | ------------- | ------------------------------------------------- |
+| `text/icon/border-accent-primary`       | `primary-100` | `primary-60`                                      |
+| `border-focus`                          | `primary-40`  | `primary-60`                                      |
+| `*-accent-{role}-solid`                 | tone-100/80   | same tone (mode-independent)                      |
+| `*-accent-{role}-subtle/hover/disabled` | tone-anchor   | **derived** via `color-mix()` from the solid tone |
+
+What this means for a brand:
+
+- **Solid / text / icon / border** are under your full control in **both** modes — you
+  pick the light value (e.g. `primary-100`) _and_ the dark value (`primary-60`)
+  independently by setting those tones. Set `primary-60` to your dark-mode brand color.
+- **subtle / hover / disabled** dark values are **computed** from your solid tone
+  (`color-mix` with the dark surface), not authored per-mode.
+
+So a brand reaches **Δ0 in dark** when it adopts this M3 tone-selection model — i.e. it
+expresses its dark palette as ramp tones rather than a hand-authored, separate dark
+block. If your app currently ships a bespoke `.dark-mode` accent block whose subtle/hover
+values don't match the `color-mix` derivation, those specific states will differ in dark
+(solid/text/icon/border still match exactly). Validate with a contract test against your
+real ramp in both modes before declaring Δ0.
+
+> The kit deliberately avoids `scheme × mode` ramp combinatorics (one ramp, not two).
+> If you need a fully hand-authored dark ramp distinct from light, raise it — it's a
+> conscious design boundary, not an oversight.
+
+---
+
+## Notes
+
+- **Specificity.** Blocks are emitted as `:root[data-rt-scheme="<name>"]` (0,2,0) so they
+  outrank the default `:root` rows (0,1,0) regardless of stylesheet order.
+- **No `-a{N}` scheme tokens.** For brand-tinted translucency use
+  `color-mix(in srgb, var(--rt-color-{role}-{N}) <pct>, transparent)` — it stays
+  scheme-reactive (Δ0) without a dedicated alpha row.
+- **CSS injection.** `registerColorScheme` writes role/tone/value into a `<style>` —
+  treat scheme names and values as developer-controlled (don't feed end-user input).
+
+---
+
 ## Guarantees
 
 - **Δ0 default.** With no scheme, every accent token resolves byte-for-byte to the
@@ -144,8 +188,10 @@ default ramp anchors (provide at least these for a clean recolor):
 - **Stable contract.** Semantic token names never change — components don't care
   which scheme is active.
 - **Generator parity.** The Sass mixin and `registerColorScheme()` emit identical
-  declarations for the same ramp (tested).
-- **Material.** The default honors `--mat-sys-*`; an active scheme overrides it.
+  declarations **and** apply the same input validation (unknown role / out-of-range
+  tone throw in both) — tested.
+- **Material.** The default honors `--mat-sys-*` (the fallback lives inside the ramp
+  tone); an active scheme replaces the tone with a raw value, so it overrides Material.
 
 See **Foundation/Theming** for light/dark, and **Foundation/Design Tokens/Overview**
 for the `--mat-sys-*` fallback chains.
