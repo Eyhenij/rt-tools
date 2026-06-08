@@ -1,6 +1,6 @@
 $palette: (
     white: (
-        100: #ffffff,
+        100: #fff,
     ),
     gray: (
         5: #f5f6f8,
@@ -10,7 +10,7 @@ $palette: (
     ),
     black: (
         10: #f3f3f3,
-        15: #eeeeee,
+        15: #eee,
         20: #e0e0e0,
         30: #b2cbca,
         40: #a3a3a3,
@@ -55,10 +55,9 @@ $palette: (
 
 // NOTE: the $palette map above is kept for backwards compatibility (consumers may @use it).
 // All CSS custom property emission lives in base/_tokens.scss:
-//   --rt-color-* primitives, --rt-{bg,text,icon,border}-* semantic, foundations,
-//   and deprecated --clr-* aliases.
+//   --rt-color-* primitives, --rt-{bg,text,icon,border}-* semantic, and foundations.
 
 :root {
     // Buttons
-    --rt-button-box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.12), 0 1px 18px 0 rgba(0, 0, 0, 0.14);
+    --rt-button-box-shadow: 0 3px 5px -1px rgb(0 0 0 / 20%), 0 6px 10px 0 rgb(0 0 0 / 12%), 0 1px 18px 0 rgb(0 0 0 / 14%);
 }

@@ -26,9 +26,9 @@ $snack-bar: (
 );
 
 :host {
-    height: 100%;
-    width: 100%;
     display: flex;
+    width: 100%;
+    height: 100%;
     align-items: center;
     justify-content: space-between;
 
@@ -40,10 +40,10 @@ $snack-bar: (
 
     .rt-snack-bar {
         &__content {
-            height: 100%;
-            width: 100%;
             position: relative;
             display: flex;
+            width: 100%;
+            height: 100%;
             align-items: center;
             gap: var(--rt-snack-bar-content-gap);
 
@@ -56,16 +56,16 @@ $snack-bar: (
                 width: var(--rt-snack-bar-icon-size);
                 min-width: var(--rt-snack-bar-icon-size);
                 height: var(--rt-snack-bar-icon-size);
-                font-size: var(--rt-snack-bar-icon-size);
                 color: var(--rt-snack-bar-icon-color);
+                font-size: var(--rt-snack-bar-icon-size);
             }
 
             &-message {
                 display: -webkit-box;
                 overflow: hidden;
-                text-overflow: ellipsis;
-                -webkit-line-clamp: var(--rt-snack-bar-message-line-clamp);
                 -webkit-box-orient: vertical;
+                -webkit-line-clamp: var(--rt-snack-bar-message-line-clamp);
+                text-overflow: ellipsis;
             }
         }
 
@@ -87,11 +87,11 @@ $snack-bar: (
 
         &__progress {
             position: absolute;
+            right: 0;
             bottom: 0;
             left: 0;
-            right: 0;
-            height: var(--rt-snack-bar-progress-height);
             width: 100%;
+            height: var(--rt-snack-bar-progress-height);
             background-color: var(--mat-button-filled-container-color);
             border-bottom-left-radius: var(--mat-snack-bar-container-shape);
             border-bottom-right-radius: var(--mat-snack-bar-container-shape);

@@ -1,62 +1,63 @@
 :host {
-    border-radius: 9999px;
     display: block;
-    line-height: normal;
     max-width: fit-content;
+    border-radius: var(--rt-radius-full);
 
-    // default values
-    background-color: #005cbb;
-    color: #ffffff;
+    // default values (overridable by consumers; runtime variants set inline styles via InfoBadgeDirective)
+    /* stylelint-disable-next-line color-no-hex -- default brand blue has no palette token on purpose */
+    background-color: var(--rt-info-badge-background-color, #005cbb);
+    color: var(--rt-info-badge-color, var(--rt-text-static-light));
+    line-height: normal;
 
     .c-info-badge {
         display: flex;
-        gap: 0.15rem;
+        box-sizing: border-box;
         align-items: center;
         justify-content: center;
-        box-sizing: border-box;
+        gap: var(--rt-spacing-2);
         line-height: normal;
 
         &__content {
-            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            white-space: nowrap;
         }
     }
 
     .size-l {
-        font-size: 1.125rem;
-        padding: 0.3rem 0.65rem;
+        padding: var(--rt-spacing-4) var(--rt-spacing-12);
+        font-size: var(--rt-font-size-md);
 
         .mat-icon {
-            font-size: 1.5rem;
+            font-size: var(--rt-font-size-xl);
         }
     }
 
     .size-m {
-        font-size: 0.875rem;
-        padding: 0.22rem 0.65rem;
+        padding: var(--rt-spacing-4) var(--rt-spacing-12);
+        font-size: var(--rt-font-size-sm);
 
         .mat-icon {
-            font-size: 1.05rem;
+            font-size: var(--rt-font-size-md);
         }
     }
 
     .size-s {
-        font-size: 0.75rem;
-        padding: 0.2rem 0.65rem;
+        padding: var(--rt-spacing-4) var(--rt-spacing-12);
+        font-size: var(--rt-font-size-xs);
         letter-spacing: 0.025rem;
 
         .mat-icon {
-            font-size: 0.75rem;
+            font-size: var(--rt-font-size-xs);
         }
     }
 
     .mat-icon {
-        height: unset;
         width: unset;
+        height: unset;
     }
 
     .bold {
-        font-weight: 700;
+        font-weight: var(--rt-font-weight-bold);
     }
 }

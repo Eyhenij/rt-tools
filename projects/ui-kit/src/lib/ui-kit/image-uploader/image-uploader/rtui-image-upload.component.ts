@@ -21,7 +21,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip, TooltipPosition } from '@angular/material/tooltip';
 import { ImageCroppedEvent, ImageCropperComponent } from 'ngx-image-cropper';
 
-import { BlockDirective, ElemDirective, Nullable } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective, Nullable } from '@rt-tools/core';
 import { RtIconOutlinedDirective, transformStringInput } from '@rt-tools/utils';
 import { RtuiFileUploadComponent } from '../../file-uploader';
 import { RtuiSpinnerComponent } from '../../spinner';
@@ -46,6 +46,7 @@ export type IImageUploadFormat = 'png' | 'jpeg' | 'webp';
 
         // rt-tools
         ElemDirective,
+        ModDirective,
         BlockDirective,
         RtuiSpinnerComponent,
         RtuiFileUploadComponent,

@@ -40,15 +40,15 @@ $image-upload: (
         }
     }
 
+    display: var(--rt-image-upload-host-display);
     width: var(--rt-image-upload-host-width);
     min-width: var(--rt-image-upload-host-min-height);
     max-width: var(--rt-image-upload-host-max-width);
     height: var(--rt-image-upload-host-height);
     min-height: var(--rt-image-upload-host-min-height);
     max-height: var(--rt-image-upload-host-max-height);
-    display: var(--rt-image-upload-host-display);
-    justify-content: var(--rt-image-upload-host-justify-content);
     align-items: var(--rt-image-upload-host-align-items);
+    justify-content: var(--rt-image-upload-host-justify-content);
 
     .rtui-image-cropper {
         padding: var(--rt-image-upload-image-cropper-padding);
@@ -56,8 +56,8 @@ $image-upload: (
         &__actions {
             display: var(--rt-image-upload-image-cropper-actions-display);
             justify-content: var(--rt-image-upload-image-cropper-actions-justify-content);
-            gap: var(--rt-image-upload-image-cropper-actions-gap);
             margin-top: var(--rt-image-upload-image-cropper-actions-justify-margin-top);
+            gap: var(--rt-image-upload-image-cropper-actions-gap);
         }
     }
 
@@ -73,8 +73,8 @@ $image-upload: (
             pointer-events: none;
 
             &--active {
-                pointer-events: initial;
                 cursor: pointer;
+                pointer-events: initial;
 
                 &:hover {
                     opacity: 0.6;
@@ -84,9 +84,9 @@ $image-upload: (
 
         &__action {
             position: absolute;
+            z-index: 999;
             top: 0;
             right: 0;
-            z-index: 999;
             backdrop-filter: blur(1.25rem);
         }
     }

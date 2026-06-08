@@ -1,12 +1,11 @@
 :host {
     position: absolute;
-    width: fit-content;
     display: block;
+    width: fit-content;
 
     /* Hack to show properly popover on mouse hover */
-    padding-top: 20px;
+    padding-top: var(--rt-spacing-20);
     text-align: left;
-
     transition:
         transform 0.1s,
         opacity 0.5s;

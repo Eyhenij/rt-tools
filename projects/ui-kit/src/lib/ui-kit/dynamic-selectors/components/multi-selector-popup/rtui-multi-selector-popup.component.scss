@@ -73,13 +73,13 @@ $multi-selector: (
     }
 
     display: flex;
-    flex-direction: column;
     width: var(--rt-multi-selector-host-width);
     height: var(--rt-multi-selector-host-height);
+    flex-direction: column;
     padding: var(--rt-multi-selector-host-padding);
-    box-shadow: var(--rt-multi-selector-host-box-shadow);
     border-radius: var(--rt-multi-selector-host-border-radius);
     background-color: var(--rt-multi-selector-host-background-color);
+    box-shadow: var(--rt-multi-selector-host-box-shadow);
 
     &::ng-deep {
         // radiobutton
@@ -141,8 +141,8 @@ $multi-selector: (
 
                 &-info {
                     margin-left: var(--rt-multi-selector-header-controls-item-info-margin-left);
-                    font-size: var(--rt-multi-selector-header-controls-item-info-font-size);
                     color: var(--rt-multi-selector-header-controls-item-info-color);
+                    font-size: var(--rt-multi-selector-header-controls-item-info-font-size);
                 }
             }
         }
@@ -150,19 +150,19 @@ $multi-selector: (
 
     .rtui-multi-selector-options {
         display: flex;
-        flex-direction: column;
-        flex: 1 1 100%;
-        height: 100%;
         width: 100%;
+        height: 100%;
+        flex: 1 1 100%;
+        flex-direction: column;
         overflow-y: auto;
 
         &__item {
             &-title {
+                overflow: hidden;
                 width: 100%;
                 max-width: var(--rt-multi-selector-options-item-title-max-width);
-                white-space: nowrap;
-                overflow: hidden;
                 text-overflow: ellipsis;
+                white-space: nowrap;
             }
 
             &--separated {
@@ -172,38 +172,38 @@ $multi-selector: (
 
         &__loader {
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
         }
     }
 
     .rtui-multi-selector-placeholder {
         display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
         flex: 1 1 100%;
-        gap: var(--rt-multi-selector-placeholder-gap);
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         padding-right: var(--rt-multi-selector-placeholder-padding-right);
+        gap: var(--rt-multi-selector-placeholder-gap);
         overflow-y: auto;
 
         &__icon {
             width: var(--rt-multi-selector-placeholder-icon-size);
             height: var(--rt-multi-selector-placeholder-icon-size);
-            font-size: var(--rt-multi-selector-placeholder-icon-size);
             color: var(--rt-multi-selector-placeholder-icon-color);
+            font-size: var(--rt-multi-selector-placeholder-icon-size);
         }
 
         &__title {
-            font-size: var(--rt-multi-selector-placeholder-title-font-size);
             color: var(--rt-multi-selector-placeholder-title-color);
+            font-size: var(--rt-multi-selector-placeholder-title-font-size);
         }
     }
 
     .rtui-multi-selector-footer {
         display: flex;
-        justify-content: flex-end;
         align-items: center;
+        justify-content: flex-end;
         padding: var(--rt-multi-selector-footer-padding);
         gap: var(--rt-multi-selector-footer-gap);
 
@@ -212,9 +212,9 @@ $multi-selector: (
         }
 
         &__nav-action {
-            text-decoration: none;
-            font-size: var(--rt-multi-selector-footer-nav-action-font-size);
             color: var(--rt-multi-selector-footer-nav-action-color);
+            font-size: var(--rt-multi-selector-footer-nav-action-font-size);
+            text-decoration: none;
 
             &:hover {
                 color: var(--rt-multi-selector-footer-nav-action-hover-color);

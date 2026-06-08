@@ -48,24 +48,24 @@ $rtui-multibutton: (
     .rtui-multibutton-actions {
         display: var(--rt-rtui-multibutton-base-display);
         flex-flow: var(--rt-rtui-multibutton-base-flex-flow);
-        border-radius: var(--rt-rtui-multibutton-base-radius);
         padding: var(--rt-rtui-multibutton-base-padding);
+        border-radius: var(--rt-rtui-multibutton-base-radius);
         background-color: var(--rt-rtui-multibutton-base-background-color);
 
         &__action {
             padding: var(--rt-rtui-multibutton-action-base-padding);
-            border-radius: var(--rt-rtui-multibutton-action-base-radius);
             border: var(--rt-rtui-multibutton-action-base-border);
+            border-radius: var(--rt-rtui-multibutton-action-base-radius);
+            background-color: var(--rt-rtui-multibutton-action-base-background-color);
+            color: var(--rt-rtui-multibutton-action-base-color);
+            cursor: var(--rt-rtui-multibutton-action-base-cursor);
             font-size: var(--rt-rtui-multibutton-action-base-font-size);
             font-weight: var(--rt-rtui-multibutton-action-base-font-weight);
-            color: var(--rt-rtui-multibutton-action-base-color);
-            background-color: var(--rt-rtui-multibutton-action-base-background-color);
             transition: var(--rt-rtui-multibutton-action-base-transition);
-            cursor: var(--rt-rtui-multibutton-action-base-cursor);
 
             &--active {
-                color: var(--rt-rtui-multibutton-action-active-color);
                 background-color: var(--rt-rtui-multibutton-action-active-background-color);
+                color: var(--rt-rtui-multibutton-action-active-color);
                 cursor: var(--rt-rtui-multibutton-action-active-cursor);
             }
 
@@ -83,9 +83,9 @@ $rtui-multibutton: (
             }
 
             &:disabled {
-                pointer-events: var(--rt-rtui-multibutton-action-disabled-pointer-events);
                 cursor: var(--rt-rtui-multibutton-action-disabled-cursor);
                 opacity: var(--rt-rtui-multibutton-action-disabled-opacity);
+                pointer-events: var(--rt-rtui-multibutton-action-disabled-pointer-events);
             }
         }
     }

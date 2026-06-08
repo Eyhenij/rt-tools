@@ -11,14 +11,14 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
-import { BlockDirective, ElemDirective, Nullable } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective, Nullable } from '@rt-tools/core';
 import { RtIconOutlinedDirective } from '@rt-tools/utils';
 
 @Component({
     selector: 'rtui-dynamic-selector-list-actions',
     templateUrl: './rtui-dynamic-selector-list-actions.component.html',
     styleUrls: ['./rtui-dynamic-selector-list-actions.component.scss'],
-    imports: [MatIcon, MatButton, RtIconOutlinedDirective, BlockDirective, ElemDirective, MatIconButton, MatTooltip],
+    imports: [MatIcon, MatButton, RtIconOutlinedDirective, BlockDirective, ElemDirective, ModDirective, MatIconButton, MatTooltip],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RtuiDynamicSelectorListActionsComponent {

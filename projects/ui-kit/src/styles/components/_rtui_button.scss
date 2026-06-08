@@ -171,27 +171,27 @@ $rtui-button: (
     --shadow: var(--rt-rtui-btn-base-shadow);
     --shadow-blur: var(--rt-rtui-btn-base-shadow-blur);
 
+    display: var(--display);
     width: var(--width);
     align-items: center;
-    background-color: var(--bg);
+    justify-content: center;
+    padding: var(--padding);
     border: var(--border);
     border-radius: 6px;
+    background-color: var(--bg);
     box-shadow: var(--shadow);
     color: var(--color);
     cursor: pointer;
-    display: var(--display);
     font-size: var(--font-size);
     font-weight: 600;
     gap: var(--gap);
-    justify-content: center;
     line-height: 1;
-    padding: var(--padding);
+    text-decoration: none;
     transition:
         background-color 0.15s linear,
         color 0.15s linear,
         box-shadow 0.15s linear,
         border-color 0.15s linear;
-    text-decoration: none;
 
     &:focus {
         outline: none;
