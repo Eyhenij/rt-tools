@@ -7,7 +7,7 @@ import * as sass from 'sass';
  *      keeps every accent semantic token byte-for-byte identical (own palette).
  *   2. The `rt.color-scheme` Sass mixin emits a scoped `[data-rt-scheme]` block.
  *   3. Input validation rejects unknown roles / out-of-range tones.
- *   4. The Avalon teal case: a teal ramp drives `--rt-bg-accent-primary-solid` to teal.
+ *   4. The teal case: a custom teal ramp drives `--rt-bg-accent-primary-solid` to teal.
  */
 
 const STYLES_DIR: string = __dirname;
@@ -221,7 +221,7 @@ describe('rt-tools color schemes', () => {
         });
     });
 
-    describe('Avalon teal reference case', () => {
+    describe('teal reference case', () => {
         it('a teal primary ramp recolors --rt-bg-accent-primary-solid to teal', () => {
             const css: string = compileWithMixin(
                 '@include rt.color-scheme(\'teal\', (primary: (20: #b3e3e1, 40: #5cb8b5, 60: #1a9d99, 100: #008582)));'
