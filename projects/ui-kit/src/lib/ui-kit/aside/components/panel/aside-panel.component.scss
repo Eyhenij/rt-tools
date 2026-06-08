@@ -77,7 +77,7 @@ $aside: (
 );
 
 // NOTE: emitted at :root on purpose (ViewEncapsulation.None): consumers override
-// these vars from ancestor scopes (e.g. Avalon's `.dark-mode { --rt-aside-host-background-color: … }`).
+// these vars from ancestor scopes (e.g. a consumer's `.dark-mode { --rt-aside-host-background-color: … }`).
 // Emitting at :host would set values on the element itself and silently win over
 // inherited overrides — do not "fix" this to :host.
 :root {

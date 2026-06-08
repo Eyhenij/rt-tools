@@ -1,10 +1,8 @@
 /* Material Theme */
 $main-theme: light;
-$styles-clr-prefix: 'clr';
 $styles-prefix: 'rt';
 
 /* Base */
-$avalon-color: var(--clr-avalon);
 $base-accent: var(--rt-text-accent-brand);
 
 /* Device Definitions */
@@ -20,13 +18,11 @@ $base-font-weight: 400;
 $base-font-size: 1rem;
 $base-text-color: var(--rt-text-base-primary);
 
-/* Colors */
-$clr-red-100: #eb5055;
-$clr-red-10: #fdedee;
-$clr-green-80: #00b894;
-$clr-green-10: #e5f8f4;
+/* Button palette seeds (static — fed to sass color.scale() for hover/active states) */
+$btn-danger: #eb5055;
+$btn-danger-soft: #fdedee;
+$btn-success: #00b894; // outlier: not on the --rt-color-green scale
+$btn-success-soft: #e5f8f4;
 
 /* Components */
-$side-panel-dynamic-clr: var(--rt-text-accent-brand);
-$pagination-dynamic-clr: var(--rt-text-accent-brand);
 $text-highlight-color: #0077bf;

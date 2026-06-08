@@ -55,8 +55,7 @@ $palette: (
 
 // NOTE: the $palette map above is kept for backwards compatibility (consumers may @use it).
 // All CSS custom property emission lives in base/_tokens.scss:
-//   --rt-color-* primitives, --rt-{bg,text,icon,border}-* semantic, foundations,
-//   and deprecated --clr-* aliases.
+//   --rt-color-* primitives, --rt-{bg,text,icon,border}-* semantic, and foundations.
 
 :root {
     // Buttons

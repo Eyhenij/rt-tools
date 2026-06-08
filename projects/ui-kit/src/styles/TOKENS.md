@@ -20,12 +20,11 @@ Quick facts:
   steps `{subtle,solid,hover,disabled}` (simplified vs GMT).
 - Foundations: `--rt-spacing-{0..64}` (px-named, rem values), `--rt-radius-*`,
   `--rt-font-*`, `--rt-shadow-*`, `--rt-transition-*`, `--rt-z-index-*`.
-- Legacy `--clr-*` variables are emitted as **deprecated aliases**.
 - Prebuilt CSS for non-sass consumers: `dist/ui-kit/styles/tokens.css`
   (`pnpm run build:tokens`).
 - Figma parity: collections `core` (`rt/color/*`) and `theme` (`rt/{bg,text,icon,border}/*`,
   Light/Dark modes) in the “RT-Tools UI Kit” file mirror these names 1:1.
-- App-defined (never set by the kit): `--clr-avalon`, `--font-default`, mat theme colors.
+- App-defined (never set by the kit): `--font-default`, mat theme colors.
 
 ## Component theming API (Tier 3 contract)
 
@@ -52,7 +51,7 @@ major the internal set stops being emitted and gets inlined into rules.
   aside-panel) are overridable from any ancestor scope: `.dark-mode { --rt-aside-host-background-color: …; }`.
 - Vars emitted at **`:host`** are set on the element itself and **win over inherited values** —
   consumers must target the element (`rtui-toolbar { --rt-toolbar-body-height: … !important; }`).
-  This asymmetry is why Avalon needs `!important` for toolbar/toggle but not for aside/table.
+  This asymmetry is why some consumers need `!important` for toolbar/toggle but not for aside/table.
 - Planned unification (major): emit defaults via `var(--override, default)` indirection so all
   components are ancestor-overridable without `!important`.
 

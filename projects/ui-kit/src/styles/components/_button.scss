@@ -1,5 +1,5 @@
 /// @deprecated — legacy `.c-button` system. New code uses `.rtui-btn` (_rtui_button.scss);
-/// ~60% of this module duplicates it. Kept because consumers (Avalon) still apply `.c-button`
+/// ~60% of this module duplicates it. Kept because consumers still apply `.c-button`
 /// classes AND override `--rt-button-*` vars directly (incl. dark mode) — rerouting these rules
 /// onto `--rt-rtui-btn-*` would silently kill those overrides. Removal plan (next major):
 /// map classes `--fill-green→success`, `--fill-red→error`, `--fill-blue→accent-light`,
@@ -27,7 +27,8 @@ $button: (
         background: var(--rt-color-neutral-25),
     ),
     text-active: (
-        background: var(--clr-black-30),
+        background: #b2cbca,
+        // palette outlier, no neutral-scale equivalent
     ),
     text-base: (
         color: var(--rt-color-neutral-60),
@@ -64,36 +65,36 @@ $button: (
         color: var(--rt-color-neutral-0),
     ),
     fill-green: (
-        border: 1px solid color.scale(vars.$clr-green-80, $lightness: -10%),
+        border: 1px solid color.scale(vars.$btn-success, $lightness: -10%),
         color: var(--rt-color-neutral-0),
         background-color: var(--rt-color-green-80),
     ),
     fill-green-hover: (
-        background-color: color.scale(vars.$clr-green-80, $lightness: -10%),
+        background-color: color.scale(vars.$btn-success, $lightness: -10%),
     ),
     fill-green-light: (
-        border-color: color.scale(vars.$clr-green-10, $lightness: -10%),
+        border-color: color.scale(vars.$btn-success-soft, $lightness: -10%),
         color: var(--rt-color-green-100),
         background-color: var(--rt-color-green-10),
     ),
     fill-green-light-hover: (
-        background-color: color.scale(vars.$clr-green-10, $lightness: -10%),
+        background-color: color.scale(vars.$btn-success-soft, $lightness: -10%),
     ),
     fill-red: (
-        border: 1px solid color.scale(vars.$clr-red-100, $lightness: -10%),
+        border: 1px solid color.scale(vars.$btn-danger, $lightness: -10%),
         color: var(--rt-color-neutral-0),
-        background-color: vars.$clr-red-100,
+        background-color: vars.$btn-danger,
     ),
     fill-red-hover: (
-        background-color: color.scale(vars.$clr-red-100, $lightness: -10%),
+        background-color: color.scale(vars.$btn-danger, $lightness: -10%),
     ),
     fill-red-light: (
-        border-color: color.scale(vars.$clr-red-10, $lightness: -10%),
+        border-color: color.scale(vars.$btn-danger-soft, $lightness: -10%),
         color: var(--rt-color-red-100),
         background-color: var(--rt-color-red-10),
     ),
     fill-red-light-hover: (
-        background-color: color.scale(vars.$clr-red-10, $lightness: -10%),
+        background-color: color.scale(vars.$btn-danger-soft, $lightness: -10%),
     ),
     outline: (
         border: 1px solid var(--rt-color-blue-40),
