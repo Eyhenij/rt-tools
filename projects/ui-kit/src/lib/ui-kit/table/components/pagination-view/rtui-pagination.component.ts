@@ -24,7 +24,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 
-import { BlockDirective, ElemDirective, Nullable, WINDOW } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective, Nullable, WINDOW } from '@rt-tools/core';
 import { isNumber, PageModel } from '@rt-tools/utils';
 import { DEFAULT_PAGE_SIZE } from '../../util/default-pagination';
 
@@ -33,7 +33,7 @@ import { DEFAULT_PAGE_SIZE } from '../../util/default-pagination';
     templateUrl: './rtui-pagination.component.html',
     styleUrls: ['./rtui-pagination.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [ReactiveFormsModule, BlockDirective, ElemDirective],
+    imports: [ReactiveFormsModule, BlockDirective, ElemDirective, ModDirective],
 })
 export class RtuiPaginationComponent implements OnInit, AfterViewInit {
     readonly #injector: Injector = inject(Injector);

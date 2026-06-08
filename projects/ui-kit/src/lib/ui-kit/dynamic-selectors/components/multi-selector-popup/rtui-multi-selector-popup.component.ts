@@ -33,7 +33,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { debounceTime } from 'rxjs/operators';
 
-import { BlockDirective, ElemDirective, Nullable } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective, Nullable } from '@rt-tools/core';
 import {
     BreakStringPipe,
     DeviceDetectorService,
@@ -73,6 +73,7 @@ import { BooleanInput } from '@angular/cdk/coercion';
         // directives
         BlockDirective,
         ElemDirective,
+        ModDirective,
         RtScrollDirective,
         RtIconOutlinedDirective,
 

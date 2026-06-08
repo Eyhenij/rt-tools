@@ -12,7 +12,7 @@ import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip, TooltipPosition } from '@angular/material/tooltip';
 
-import { BlockDirective, ElemDirective, Nullable } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective, Nullable } from '@rt-tools/core';
 import { isString } from '@rt-tools/utils';
 
 @Component({
@@ -29,6 +29,7 @@ import { isString } from '@rt-tools/utils';
         // BEM
         BlockDirective,
         ElemDirective,
+        ModDirective,
     ],
 })
 export class RtuiClearButtonComponent {

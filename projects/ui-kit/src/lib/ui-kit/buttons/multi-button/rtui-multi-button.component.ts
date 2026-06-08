@@ -9,7 +9,7 @@ import {
     model,
     output,
 } from '@angular/core';
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { transformArrayInput } from '@rt-tools/utils';
 
 @Component({
@@ -23,6 +23,7 @@ import { transformArrayInput } from '@rt-tools/utils';
         // rt-tools
         BlockDirective,
         ElemDirective,
+        ModDirective,
     ],
 })
 export class RtuiMultiButtonComponent {
