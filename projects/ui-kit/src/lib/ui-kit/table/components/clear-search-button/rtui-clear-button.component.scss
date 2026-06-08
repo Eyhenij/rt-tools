@@ -28,7 +28,7 @@ $clear-button: (
         justify-content: center;
         padding: var(--rt-clear-button-host-padding);
         border: none;
-        border-radius: 50%;
+        border-radius: var(--rt-radius-full);
         margin: var(--rt-clear-button-host-margin);
         background-color: var(--rt-clear-button-host-background-color);
 

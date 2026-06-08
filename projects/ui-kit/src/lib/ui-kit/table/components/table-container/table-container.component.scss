@@ -56,7 +56,7 @@ $table-container: (
 
     ::-webkit-scrollbar-thumb {
         border: 3px solid transparent;
-        border-radius: 6px;
+        border-radius: var(--rt-radius-sm);
         background: var(--rt-scrollbar-thumb);
         background-clip: content-box;
     }

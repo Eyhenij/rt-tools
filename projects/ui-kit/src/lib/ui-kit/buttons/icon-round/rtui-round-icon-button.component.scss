@@ -27,7 +27,7 @@ $round-icon-button: (
         align-items: center;
         justify-content: center;
         padding: var(--rt-round-icon-button-host-padding);
-        border-radius: 50%;
+        border-radius: var(--rt-radius-full);
         cursor: pointer;
 
         &__icon {

@@ -2,12 +2,12 @@
     &::ng-deep {
         // Set expansion panel header padding
         .mat-expansion-indicator {
-            padding: 0 1.5rem;
+            padding: 0 var(--rt-spacing-24);
         }
 
         // Set expansion panel body padding
         .mat-expansion-panel-body {
-            padding: 0 0 0 1rem;
+            padding: 0 0 0 var(--rt-spacing-16);
         }
 
         // Set expansion panel transparent container
@@ -40,16 +40,16 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 0.1rem;
+                padding: var(--rt-spacing-2);
                 border: 1.5px solid transparent;
-                border-radius: 50%;
-                margin-left: 0.5rem;
+                border-radius: var(--rt-radius-full);
+                margin-left: var(--rt-spacing-8);
                 cursor: pointer;
 
                 &__icon {
                     width: 1.25rem;
                     height: 1.25rem;
-                    font-size: 1.25rem;
+                    font-size: var(--rt-font-size-lg);
                 }
 
                 &:hover {
@@ -63,7 +63,7 @@
         padding: 0;
 
         // Set expand sub item header border like menu item border
-        border-radius: 1.35rem;
+        border-radius: var(--rt-radius-xl);
         box-shadow: none;
 
         &--fixed {
