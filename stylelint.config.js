@@ -1,6 +1,9 @@
 export default {
-    extends: ['stylelint-config-standard', './node_modules/prettier-stylelint/config.js', 'stylelint-config-idiomatic-order'],
-    plugins: ['stylelint-scss', 'stylelint-prettier'],
+    // NOTE: 'prettier-stylelint/config.js' removed — it ships stylelint v14 rules deleted in v16
+    // (1700+ "Unknown rule" errors); stylelint-prettier plugin below covers prettier integration.
+    // standard-scss brings postcss-scss syntax + scss rules.
+    extends: ['stylelint-config-standard-scss', 'stylelint-config-idiomatic-order'],
+    plugins: ['stylelint-scss', 'stylelint-prettier', './tools/stylelint-rules/no-hardcoded-design-tokens.cjs'],
     rules: {
         'at-rule-empty-line-before': [
             'always',
@@ -25,6 +28,8 @@ export default {
             },
         ],
         'scss/at-rule-no-unknown': true,
+        // generateCssVar / generateCssClrVar are the repo-wide camelCase generator convention
+        'scss/at-function-pattern': null,
         'selector-pseudo-element-colon-notation': 'single',
         'selector-pseudo-element-no-unknown': [
             true,
@@ -33,6 +38,9 @@ export default {
             },
         ],
         'no-invalid-position-at-import-rule': null,
+        // The kit uses BEM (block__elem--mod) + `.--state` modifier classes and styles
+        // Material's .mdc-* internals — default kebab-case pattern rejects all of them.
+        'selector-class-pattern': null,
         'prettier/prettier': true,
         'selector-pseudo-class-no-unknown': [
             true,
@@ -41,4 +49,19 @@ export default {
             },
         ],
     },
+    overrides: [
+        {
+            // Component styles must consume tokens, not raw hex (palette lives in styles/base only)
+            files: ['projects/ui-kit/src/lib/**/*.scss'],
+            // Story/test wrapper styles are demo scaffolding, not shipped library CSS —
+            // they are exempt from the design-token discipline.
+            ignoreFiles: ['**/stories/**/*.scss', '**/strories/**/*.scss'],
+            rules: {
+                'color-no-hex': true,
+                // Custom rule: no hardcoded colors / magic numbers in
+                // token-aware properties; allows var(--rt-*), --mat-*, --mdc-*, calc/min/max/clamp.
+                'rt-tools/no-hardcoded-design-tokens': true,
+            },
+        },
+    ],
 };

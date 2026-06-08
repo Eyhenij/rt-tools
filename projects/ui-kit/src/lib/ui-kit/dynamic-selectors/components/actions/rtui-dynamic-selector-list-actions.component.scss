@@ -29,14 +29,14 @@ $dynamic-selector-list-actions: (
 
     display: flex;
     align-items: center;
-    margin-left: auto;
     padding-right: var(--rt-dynamic-selector-list-actions-host-padding-right);
+    margin-left: auto;
 
     .rtui-dynamic-selector-list-actions {
         display: flex;
         align-items: center;
-        margin-left: auto;
         padding-right: var(--rt-dynamic-selector-list-actions-padding-right);
+        margin-left: auto;
 
         &__control {
             padding: var(--rt-dynamic-selector-list-actions-control-padding);

@@ -2,12 +2,12 @@
     &::ng-deep {
         // Set expansion panel header padding
         .mat-expansion-indicator {
-            padding: 0 1.5rem 0 1.5rem;
+            padding: 0 var(--rt-spacing-24);
         }
 
         // Set expansion panel body padding
         .mat-expansion-panel-body {
-            padding: 0 0 0 1rem;
+            padding: 0 0 0 var(--rt-spacing-16);
         }
 
         // Set expansion panel transparent container
@@ -26,30 +26,30 @@
 
         .rtui-side-menu-sub-item-title {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
 
             &__text {
+                overflow: hidden;
                 font-size: var(--rt-side-menu-sub-menu-item-title-font-size);
                 text-overflow: ellipsis;
                 white-space: nowrap;
-                overflow: hidden;
             }
 
             .rtui-side-menu-sub-item-title-button {
                 display: flex;
-                justify-content: center;
                 align-items: center;
-                padding: 0.1rem;
-                margin-left: 0.5rem;
-                border-radius: 50%;
-                cursor: pointer;
+                justify-content: center;
+                padding: var(--rt-spacing-2);
                 border: 1.5px solid transparent;
+                border-radius: var(--rt-radius-full);
+                margin-left: var(--rt-spacing-8);
+                cursor: pointer;
 
                 &__icon {
                     width: 1.25rem;
                     height: 1.25rem;
-                    font-size: 1.25rem;
+                    font-size: var(--rt-font-size-lg);
                 }
 
                 &:hover {
@@ -61,9 +61,10 @@
 
     .rtui-side-menu-expand-sub-item {
         padding: 0;
-        box-shadow: none;
+
         // Set expand sub item header border like menu item border
-        border-radius: 1.35rem;
+        border-radius: var(--rt-radius-xl);
+        box-shadow: none;
 
         &--fixed {
             min-width: var(--rt-side-menu-sub-menu-item-width);
@@ -78,9 +79,8 @@
             }
 
             &__icon {
-                margin-inline-start: var(--mat-list-list-item-leading-icon-start-space);
-                margin-inline-end: var(--mat-list-list-item-leading-icon-end-space);
                 color: var(--mdc-list-list-item-leading-icon-color);
+                margin-inline: var(--mat-list-list-item-leading-icon-start-space) var(--mat-list-list-item-leading-icon-end-space);
             }
 
             &__title {

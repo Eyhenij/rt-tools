@@ -3,7 +3,7 @@ import { ComponentPortal, ComponentType } from '@angular/cdk/portal';
 import { ComponentRef, inject, Injectable, Injector } from '@angular/core';
 import { Event, NavigationEnd, Router } from '@angular/router';
 import { merge, Observable, of, Subject } from 'rxjs';
-import { delay, filter, tap } from 'rxjs/operators';
+import { delay, filter, take, tap } from 'rxjs/operators';
 
 import { ASIDE_REF, AsidePositions, AsideRef } from './aside.types';
 import { RtuiAsidePanelComponent } from './components/panel/aside-panel.component';
@@ -44,6 +44,9 @@ export class RtAsideService {
             answer.pipe(delay(10))
         )
             .pipe(
+                // The aside closes on the first of these events — terminate so the merged
+                // hot sources (router/backdrop/keydown) don't keep the subscription alive.
+                take(1),
                 tap((): void => {
                     componentRef.instance.startExitAnimation();
                     overlayRef.detach();

@@ -1,3 +1,10 @@
+/// @deprecated — legacy `.c-button` system. New code uses `.rtui-btn` (_rtui_button.scss);
+/// ~60% of this module duplicates it. Kept because consumers still apply `.c-button`
+/// classes AND override `--rt-button-*` vars directly (incl. dark mode) — rerouting these rules
+/// onto `--rt-rtui-btn-*` would silently kill those overrides. Removal plan (next major):
+/// map classes `--fill-green→success`, `--fill-red→error`, `--fill-blue→accent-light`,
+/// `--outline-*→*-outline`; `--txt-*`/`--fab` first need a text/icon appearance in .rtui-btn.
+/// See TOKENS.md "Buttons: legacy vs rtui".
 @use '../base/mixin' as mixins;
 @use '../base/variables' as vars;
 @use 'sass:color' as color;
@@ -20,7 +27,8 @@ $button: (
         background: var(--rt-color-neutral-25),
     ),
     text-active: (
-        background: var(--clr-black-30),
+        background: #b2cbca,
+        // palette outlier, no neutral-scale equivalent
     ),
     text-base: (
         color: var(--rt-color-neutral-60),
@@ -57,36 +65,36 @@ $button: (
         color: var(--rt-color-neutral-0),
     ),
     fill-green: (
-        border: 1px solid color.scale(vars.$clr-green-80, $lightness: -10%),
+        border: 1px solid color.scale(vars.$btn-success, $lightness: -10%),
         color: var(--rt-color-neutral-0),
         background-color: var(--rt-color-green-80),
     ),
     fill-green-hover: (
-        background-color: color.scale(vars.$clr-green-80, $lightness: -10%),
+        background-color: color.scale(vars.$btn-success, $lightness: -10%),
     ),
     fill-green-light: (
-        border-color: color.scale(vars.$clr-green-10, $lightness: -10%),
+        border-color: color.scale(vars.$btn-success-soft, $lightness: -10%),
         color: var(--rt-color-green-100),
         background-color: var(--rt-color-green-10),
     ),
     fill-green-light-hover: (
-        background-color: color.scale(vars.$clr-green-10, $lightness: -10%),
+        background-color: color.scale(vars.$btn-success-soft, $lightness: -10%),
     ),
     fill-red: (
-        border: 1px solid color.scale(vars.$clr-red-100, $lightness: -10%),
+        border: 1px solid color.scale(vars.$btn-danger, $lightness: -10%),
         color: var(--rt-color-neutral-0),
-        background-color: vars.$clr-red-100,
+        background-color: vars.$btn-danger,
     ),
     fill-red-hover: (
-        background-color: color.scale(vars.$clr-red-100, $lightness: -10%),
+        background-color: color.scale(vars.$btn-danger, $lightness: -10%),
     ),
     fill-red-light: (
-        border-color: color.scale(vars.$clr-red-10, $lightness: -10%),
+        border-color: color.scale(vars.$btn-danger-soft, $lightness: -10%),
         color: var(--rt-color-red-100),
         background-color: var(--rt-color-red-10),
     ),
     fill-red-light-hover: (
-        background-color: color.scale(vars.$clr-red-10, $lightness: -10%),
+        background-color: color.scale(vars.$btn-danger-soft, $lightness: -10%),
     ),
     outline: (
         border: 1px solid var(--rt-color-blue-40),
@@ -112,22 +120,22 @@ $button: (
 }
 
 button {
-    line-height: 1;
     cursor: pointer;
+    line-height: 1;
 }
 
 .c-button {
+    position: relative;
     display: inline-flex;
     align-items: center;
-    font-family: var(--rt-button-base-font-family);
-    line-height: 1;
-    position: relative;
     justify-content: center;
-    font-size: 1rem;
     color: var(--rt-button-base-color);
+    font-family: var(--rt-button-base-font-family);
+    font-size: 1rem;
+    line-height: 1;
     transition: all 0.15s linear;
 
-    //FAB
+    // FAB
     &[class*='--fab'] {
         border: 0;
         background-color: transparent;
@@ -149,8 +157,8 @@ button {
     // TEXT
     &[class*='--txt-'] {
         border: 0;
-        background-color: transparent;
         border-radius: 5px;
+        background-color: transparent;
 
         &:hover {
             background: var(--rt-button-text-hover-background);
@@ -239,9 +247,9 @@ button {
         &[class*='green'] {
             border: var(--rt-button-fill-green-border);
             border-radius: 2px;
-            color: var(--rt-button-fill-green-color);
-            box-shadow: 0 2px 4px rgba(24, 24, 24, 0.1);
             background-color: var(--rt-button-fill-green-background-color);
+            box-shadow: 0 2px 4px rgb(24 24 24 / 10%);
+            color: var(--rt-button-fill-green-color);
 
             &:hover {
                 background-color: var(--rt-button-fill-green-hover-background-color);
@@ -249,8 +257,8 @@ button {
 
             &[class*='-light'] {
                 border-color: var(--rt-button-fill-green-light-border-color);
-                color: var(--rt-button-fill-green-light-color);
                 background-color: var(--rt-button-fill-green-light-background-color);
+                color: var(--rt-button-fill-green-light-color);
 
                 &:hover {
                     background-color: var(--rt-button-fill-green-light-hover-background-color);
@@ -261,9 +269,9 @@ button {
         &[class*='red'] {
             border: var(--rt-button-fill-red-border);
             border-radius: 2px;
-            color: var(--rt-button-fill-red-color);
-            box-shadow: 0 2px 4px rgba(24, 24, 24, 0.1);
             background-color: var(--rt-button-fill-red-background-color);
+            box-shadow: 0 2px 4px rgb(24 24 24 / 10%);
+            color: var(--rt-button-fill-red-color);
 
             &:hover {
                 background-color: var(--rt-button-fill-red-hover-background-color);
@@ -271,8 +279,8 @@ button {
 
             &[class*='-light'] {
                 border-color: var(--rt-button-fill-red-light-border-color);
-                color: var(--rt-button-fill-red-light-color);
                 background-color: var(--rt-button-fill-red-light-background-color);
+                color: var(--rt-button-fill-red-light-color);
 
                 &:hover {
                     background-color: var(--rt-button-fill-red-light-hover-background-color);
@@ -348,7 +356,7 @@ button {
 
     // SHADOW
     &[class*='--shadow'] {
-        box-shadow: 0 2px 4px rgba(24, 24, 24, 0.1);
+        box-shadow: 0 2px 4px rgb(24 24 24 / 10%);
     }
 
     // --shadow

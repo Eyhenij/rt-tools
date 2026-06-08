@@ -1,0 +1,86 @@
+@use 'sass:map';
+@use 'sass:meta';
+@use 'sass:list';
+@use './tokens' as tokens;
+
+/// ============================================================================
+/// Custom color schemes (brand palettes)
+/// ============================================================================
+///
+/// A color scheme overrides ONLY the accent-role indirection rows
+/// `--rt-color-{role}-{0..100}` (see `_tokens.scss`). The whole semantic accent
+/// tier (`--rt-bg/text/icon/border-accent-*`, hover/subtle/disabled, `--rt-border-focus`)
+/// re-derives from those rows — so a brand recolors with Δ0 effort and the
+/// component contract (semantic token names) stays untouched.
+///
+/// The emitted block is scoped to `[data-rt-scheme="<name>"]`, which the runtime
+/// (`RtThemeService.setColorScheme`) toggles on `<html>`. Because the scheme sets
+/// raw values, it overrides the default rows that carry the `--mat-sys-*` fallback
+/// → the scheme wins over an active Material theme.
+///
+/// Usage:
+///   @use '@rt-tools/ui-kit/src/styles/main' as rt;   // or the package's scss entry
+///   @include rt.color-scheme('teal', (
+///       primary: (20: #b3e3e1, 40: #5cb8b5, 60: #1a9d99, 100: #008582),
+///       brand:   (20: #e8e8e8, 100: #008582),
+///   ));
+///
+/// One tonal ramp per role serves both light and dark (M3-style): the mode picks
+/// the tone via `light-dark()` inside the semantic tier — schemes never duplicate
+/// that logic. `$modes` is accepted for forward-compatibility but a single ramp
+/// already covers every mode.
+
+/// Roles a scheme may override, with their valid tone steps (from the default ramps).
+$known-roles: tokens.$accent-roles;
+
+/// Validate a single role/ramp pair; @error with an actionable message on bad input.
+@function _validate-role($name, $role, $ramp) {
+    @if not map.has-key($known-roles, $role) {
+        @error 'rt.color-scheme("#{$name}"): unknown role "#{$role}". Allowed roles: #{map.keys($known-roles)}.';
+    }
+
+    @if meta.type-of($ramp) != 'map' {
+        @error 'rt.color-scheme("#{$name}"): role "#{$role}" must be a map of (tone: color), got #{meta.type-of($ramp)}.';
+    }
+
+    @each $step, $value in $ramp {
+        @if meta.type-of($step) != 'number' or not _is-integer-step($step) {
+            @error 'rt.color-scheme("#{$name}"): role "#{$role}" tone "#{$step}" must be an integer 0–100.';
+        }
+    }
+
+    @return true;
+}
+
+/// Tone steps must be integers within 0–100.
+@function _is-integer-step($step) {
+    @return $step >= 0 and $step <= 100 and ($step % 1 == 0);
+}
+
+/// Emit a named color scheme as a `[data-rt-scheme]` block (only raw `--rt-color-{role}-{N}` rows).
+///
+/// @param {String} $name   Scheme name, matched by `data-rt-scheme="<name>"`.
+/// @param {Map}    $roles  Map of `role: (tone: color, …)`. Roles ⊆ #{map.keys($known-roles)}.
+/// @param {List}   $modes  Reserved for forward-compat; one ramp already serves all modes.
+@mixin color-scheme($name, $roles, $modes: (light, dark)) {
+    @if meta.type-of($name) != 'string' {
+        @error 'rt.color-scheme: $name must be a string, got #{meta.type-of($name)}.';
+    }
+
+    @if meta.type-of($roles) != 'map' or list.length(map.keys($roles)) == 0 {
+        @error 'rt.color-scheme("#{$name}"): $roles must be a non-empty map of (role: ramp).';
+    }
+
+    @each $role, $ramp in $roles {
+        $ok: _validate-role($name, $role, $ramp);
+    }
+
+    // `:root[...]` (0,2,0) outranks the default `:root` rows (0,1,0) regardless of source order.
+    :root[data-rt-scheme='#{$name}'] {
+        @each $role, $ramp in $roles {
+            @each $step, $value in $ramp {
+                --rt-color-#{$role}-#{$step}: #{$value};
+            }
+        }
+    }
+}

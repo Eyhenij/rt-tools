@@ -1,11 +1,6 @@
+@use 'sass:color';
 @use 'sass:math';
 @use './variables' as vars;
-
-// css clr var generator
-// #{generateCssVar(red, 100)}: #eb5055;
-@function generateCssClrVar($color, $saturate) {
-    @return --#{vars.$styles-clr-prefix}-#{$color}-#{$saturate};
-}
 
 // css var generator
 // #{generateCssVar(table-base-cell, suffix-icon, size)}: 1rem;
@@ -16,9 +11,9 @@
 // convert hex to rgb values
 // #{convert-hex-to-rgb-values(#ab2727)}: 171, 39, 39;
 @function convert-hex-to-rgb-values($hex) {
-    $r: red($hex);
-    $g: green($hex);
-    $b: blue($hex);
+    $r: color.channel($hex, 'red', $space: rgb);
+    $g: color.channel($hex, 'green', $space: rgb);
+    $b: color.channel($hex, 'blue', $space: rgb);
 
     @return $r + ', ' + $g + ', ' + $b;
 }
@@ -26,6 +21,7 @@
 // px to rem
 // font-size: rem(16);
 $browser-context: 16;
+
 @function rem($valueRem, $context: $browser-context) {
     @return #{math.div($valueRem, $context)}rem;
 }
@@ -47,20 +43,21 @@ $browser-context: 16;
 @mixin flex-column-center {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
 }
 
 @mixin visually-hidden {
     position: absolute;
+    overflow: hidden;
     width: 1px;
     height: 1px;
-    margin: -1px;
-    border: 0;
     padding: 0;
-    white-space: nowrap;
-    clip-path: inset(100%);
+    border: 0;
+    margin: -1px;
+    /* stylelint-disable-next-line property-no-deprecated -- legacy-browser leg of the visually-hidden pattern */
     clip: rect(0 0 0 0);
-    overflow: hidden;
+    clip-path: inset(100%);
     pointer-events: none;
+    white-space: nowrap;
 }

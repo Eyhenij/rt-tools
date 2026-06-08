@@ -1,25 +1,22 @@
 :host {
-    z-index: 10000;
     position: absolute;
-
+    z-index: 10000;
+    display: flex;
     width: 100%;
     height: 100%;
-
-    display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
 
     .c-spinner {
         &__container {
+            display: flex;
             width: 100%;
             height: 100%;
-
-            display: flex;
             align-items: center;
             justify-content: center;
 
             &--bgr-color {
-                background-color: rgba(#f5f6f8, 0.85);
+                background-color: color-mix(in srgb, var(--rt-bg-base-subtle) 85%, transparent);
             }
         }
 
@@ -35,14 +32,14 @@
             }
 
             &--bgr-color {
+                // Component-local elevation token for the spinner's circular backdrop.
+                --rt-spinner-backdrop-shadow: 0 1px 3px rgb(0 0 0 / 12%), 0 1px 2px rgb(0 0 0 / 24%);
+
                 width: 3rem;
                 height: 3rem;
-
+                border-radius: var(--rt-radius-full);
                 background: var(--rt-bg-base-base);
-                border-radius: 50%;
-                box-shadow:
-                    0 1px 3px rgba(0, 0, 0, 0.12),
-                    0 1px 2px rgba(0, 0, 0, 0.24);
+                box-shadow: var(--rt-spinner-backdrop-shadow);
             }
         }
     }

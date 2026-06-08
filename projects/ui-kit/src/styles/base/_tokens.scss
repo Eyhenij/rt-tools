@@ -31,11 +31,11 @@ $use-material: true !default;
 @function t($light, $dark: null, $mat: null) {
     $v: $light;
 
-    @if $dark != null {
+    @if $dark {
         $v: light-dark(#{$light}, #{$dark});
     }
 
-    @if $mat != null and $use-material {
+    @if $mat and $use-material {
         @return var(--mat-sys-#{$mat}, #{$v});
     }
 
@@ -46,14 +46,14 @@ $use-material: true !default;
 
 // Unified neutral scale (sorted by lightness, sourced from the legacy white/gray/black families)
 $neutral: (
-    0: #ffffff,
+    0: #fff,
     5: #f5f6f8,
     10: #f3f3f3,
-    15: #eeeeee,
+    15: #eee,
     20: #e8e8e8,
     25: #e0e0e0,
     30: #d1d1d1,
-    35: #cccccc,
+    35: #ccc,
     40: #a3a3a3,
     60: #747474,
     80: #323033,
@@ -105,103 +105,158 @@ $hue-base: (
     'green': #01af8d,
     'brand': #0d1c2b,
 );
-
 $opacity-steps: (5, 10, 20, 30, 40, 50, 60, 70, 80, 90);
 $overlay-steps: (5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90);
+
+/* ------------------------------ Accent-role ramps (indirection layer) ------------------------------ */
+// The semantic accent tier references ONLY these `--rt-color-{role}-{0..100}` rows — never raw hues.
+// A custom color scheme overrides just these rows (see `_color-scheme.scss`) and the entire
+// accent layer (bg/text/icon/border + hover/subtle/disabled/focus derivations) recolors with Δ0 effort.
+// ---
+// Defaults reproduce the historical own-palette byte-for-byte. Tones that previously mapped to a
+// Material system color carry the `--mat-sys-*` fallback INSIDE the tone (`t(..., null, $mat)`), so:
+//   - default render honors Material (as before);
+//   - a scheme override replaces the tone with a raw value → the scheme wins over Material.
+// `brand` is navy in light (100) / near-white in dark (20); both carry mat-sys-primary because the
+// original text/icon-accent-brand mapped to --mat-sys-primary.
+$accent-roles: (
+    'primary': (
+        20: t(#eaedfc, null, primary-container),
+        40: #b3ceef,
+        60: t(#6d96e8, null, primary),
+        100: t(#4284d7, null, primary),
+    ),
+    'info': (
+        20: #eaedfc,
+        80: #4285f4,
+        100: #4284d7,
+    ),
+    'success': (
+        10: #e5f8f4,
+        80: #21b18e,
+        100: #01af8d,
+    ),
+    'warning': (
+        10: #e8cbbf,
+        80: #ee7a34,
+        100: #ef7128,
+    ),
+    'danger': (
+        10: t(#fdedee, null, error-container),
+        60: #e88487,
+        100: t(#eb5055, null, error),
+    ),
+    'brand': (
+        20: t(#e8e8e8, null, primary),
+        100: t(#0d1c2b, null, primary),
+    ),
+);
 
 /* ============================== Tier 2: semantic ============================== */
 // NOTE: function calls in this map are evaluated when the module loads,
 // honoring a `with ($use-material: ...)` configuration.
 
 $semantic: (
-    /* ---- bg / base (adaptive) ---- */ bg-base-base: t(#ffffff, #1c1b1e, surface),
-    bg-base-elevated: t(#ffffff, #2a292d, surface-container),
+    /* ---- bg / base (adaptive) ---- */ bg-base-base: t(#fff, #1c1b1e, surface),
+    bg-base-elevated: t(#fff, #2a292d, surface-container),
     bg-base-subtle: t(#f5f6f8, #232226),
-    bg-base-hover: t(#f3f3f3, rgba(255, 255, 255, 0.06)),
-    bg-base-active: t(#eeeeee, rgba(255, 255, 255, 0.1)),
+    bg-base-hover: t(#f3f3f3, rgb(255 255 255 / 6%)),
+    bg-base-active: t(#eee, rgb(255 255 255 / 10%)),
     bg-base-strong: t(#e0e0e0, #3f3e43),
     bg-base-emphasis: t(#747474, #a3a3a3),
     bg-base-emphasis-soft: t(#a3a3a3, #747474),
     bg-base-inverse: t(#181818, #f3f3f3, inverse-surface),
-    bg-base-inverse-soft: t(#323033, #eeeeee),
-    bg-base-overlay: t(rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0.6)),
-    /* ---- bg / static ---- */ bg-static-light: #ffffff,
+    bg-base-inverse-soft: t(#323033, #eee),
+    bg-base-overlay: t(rgb(0 0 0 / 32%), rgb(0 0 0 / 60%)),
+    /* ---- bg / static ---- */ bg-static-light: #fff,
     bg-static-dark: #181818,
     bg-static-none: transparent,
-    /* ---- bg / accent: {subtle, solid, hover, disabled} (simplified GMT scale) ---- */
-    bg-accent-primary-subtle: t(#eaedfc, color-mix(in srgb, #4284d7 18%, #1c1b1e), primary-container),
-    bg-accent-primary-solid: t(#4284d7, #4284d7, primary),
-    bg-accent-primary-hover: t(color-mix(in srgb, #4284d7 90%, #000000), color-mix(in srgb, #4284d7 90%, #ffffff)),
-    bg-accent-primary-disabled: color-mix(in srgb, #4284d7 38%, transparent),
-    bg-accent-success-subtle: t(#e5f8f4, color-mix(in srgb, #01af8d 18%, #1c1b1e)),
-    bg-accent-success-solid: #21b18e,
-    bg-accent-success-hover: t(color-mix(in srgb, #21b18e 90%, #000000), color-mix(in srgb, #21b18e 90%, #ffffff)),
-    bg-accent-success-disabled: color-mix(in srgb, #21b18e 38%, transparent),
-    bg-accent-warning-subtle: t(#e8cbbf, color-mix(in srgb, #ef7128 18%, #1c1b1e)),
-    bg-accent-warning-solid: #ee7a34,
-    bg-accent-warning-hover: t(color-mix(in srgb, #ee7a34 90%, #000000), color-mix(in srgb, #ee7a34 90%, #ffffff)),
-    bg-accent-warning-disabled: color-mix(in srgb, #ee7a34 38%, transparent),
-    bg-accent-danger-subtle: t(#fdedee, color-mix(in srgb, #eb5055 18%, #1c1b1e), error-container),
-    bg-accent-danger-solid: t(#eb5055, #eb5055, error),
-    bg-accent-danger-hover: t(color-mix(in srgb, #eb5055 90%, #000000), color-mix(in srgb, #eb5055 90%, #ffffff)),
-    bg-accent-danger-disabled: color-mix(in srgb, #eb5055 38%, transparent),
-    bg-accent-info-subtle: t(#eaedfc, color-mix(in srgb, #4284d7 18%, #1c1b1e)),
-    bg-accent-info-solid: #4284d7,
-    bg-accent-info-hover: t(color-mix(in srgb, #4284d7 90%, #000000), color-mix(in srgb, #4284d7 90%, #ffffff)),
-    bg-accent-info-disabled: color-mix(in srgb, #4284d7 38%, transparent),
-    bg-accent-neutral-subtle: t(#f3f3f3, rgba(255, 255, 255, 0.06)),
+    /* ---- bg / accent: {subtle, solid, hover, disabled} — driven by --rt-color-{role}-{N} ---- */
+    bg-accent-primary-subtle: t(var(--rt-color-primary-20), color-mix(in srgb, var(--rt-color-primary-100) 18%, #1c1b1e)),
+    bg-accent-primary-solid: var(--rt-color-primary-100),
+    bg-accent-primary-hover: t(
+            color-mix(in srgb, var(--rt-color-primary-100) 90%, #000),
+            color-mix(in srgb, var(--rt-color-primary-100) 90%, #fff)
+        ),
+    bg-accent-primary-disabled: color-mix(in srgb, var(--rt-color-primary-100) 38%, transparent),
+    bg-accent-success-subtle: t(var(--rt-color-success-10), color-mix(in srgb, var(--rt-color-success-100) 18%, #1c1b1e)),
+    bg-accent-success-solid: var(--rt-color-success-80),
+    bg-accent-success-hover: t(
+            color-mix(in srgb, var(--rt-color-success-80) 90%, #000),
+            color-mix(in srgb, var(--rt-color-success-80) 90%, #fff)
+        ),
+    bg-accent-success-disabled: color-mix(in srgb, var(--rt-color-success-80) 38%, transparent),
+    bg-accent-warning-subtle: t(var(--rt-color-warning-10), color-mix(in srgb, var(--rt-color-warning-100) 18%, #1c1b1e)),
+    bg-accent-warning-solid: var(--rt-color-warning-80),
+    bg-accent-warning-hover: t(
+            color-mix(in srgb, var(--rt-color-warning-80) 90%, #000),
+            color-mix(in srgb, var(--rt-color-warning-80) 90%, #fff)
+        ),
+    bg-accent-warning-disabled: color-mix(in srgb, var(--rt-color-warning-80) 38%, transparent),
+    bg-accent-danger-subtle: t(var(--rt-color-danger-10), color-mix(in srgb, var(--rt-color-danger-100) 18%, #1c1b1e)),
+    bg-accent-danger-solid: var(--rt-color-danger-100),
+    bg-accent-danger-hover: t(
+            color-mix(in srgb, var(--rt-color-danger-100) 90%, #000),
+            color-mix(in srgb, var(--rt-color-danger-100) 90%, #fff)
+        ),
+    bg-accent-danger-disabled: color-mix(in srgb, var(--rt-color-danger-100) 38%, transparent),
+    bg-accent-info-subtle: t(var(--rt-color-info-20), color-mix(in srgb, var(--rt-color-info-100) 18%, #1c1b1e)),
+    bg-accent-info-solid: var(--rt-color-info-100),
+    bg-accent-info-hover: t(color-mix(in srgb, var(--rt-color-info-100) 90%, #000), color-mix(in srgb, var(--rt-color-info-100) 90%, #fff)),
+    bg-accent-info-disabled: color-mix(in srgb, var(--rt-color-info-100) 38%, transparent),
+    bg-accent-neutral-subtle: t(#f3f3f3, rgb(255 255 255 / 6%)),
     bg-accent-neutral-solid: t(#747474, #a3a3a3),
     bg-accent-neutral-hover: t(#a3a3a3, #747474),
-    bg-accent-neutral-disabled: t(rgba(116, 116, 116, 0.38), rgba(163, 163, 163, 0.38)),
-    /* ---- text / base (adaptive) ---- */ text-base-primary: t(rgba(0, 0, 0, 0.87), rgba(255, 255, 255, 0.87), on-surface),
+    bg-accent-neutral-disabled: t(rgb(116 116 116 / 38%), rgb(163 163 163 / 38%)),
+    /* ---- text / base (adaptive) ---- */ text-base-primary: t(rgb(0 0 0 / 87%), rgb(255 255 255 / 87%), on-surface),
     text-base-strong: t(#181818, #f3f3f3),
     text-base-soft: t(#323033, #e0e0e0),
     text-base-secondary: t(#747474, #a3a3a3, on-surface-variant),
     text-base-disabled: t(#a3a3a3, #747474),
-    text-base-inverse: t(#ffffff, #181818, inverse-on-surface),
-    /* ---- text / static ---- */ text-static-light: #ffffff,
+    text-base-inverse: t(#fff, #181818, inverse-on-surface),
+    /* ---- text / static ---- */ text-static-light: #fff,
     text-static-dark: #181818,
-    /* ---- text / accent ---- */ text-accent-brand: t(#0d1c2b, #e8e8e8, primary),
-    text-accent-primary: t(#4284d7, #6d96e8, primary),
-    text-accent-success: #01af8d,
-    text-accent-success-soft: #21b18e,
-    text-accent-warning: #ef7128,
-    text-accent-warning-soft: #ee7a34,
-    text-accent-danger: t(#eb5055, #eb5055, error),
-    text-accent-danger-soft: #e88487,
-    text-accent-info: #4284d7,
-    text-accent-info-soft: #4285f4,
+    /* ---- text / accent ---- */ text-accent-brand: t(var(--rt-color-brand-100), var(--rt-color-brand-20)),
+    text-accent-primary: t(var(--rt-color-primary-100), var(--rt-color-primary-60)),
+    text-accent-success: var(--rt-color-success-100),
+    text-accent-success-soft: var(--rt-color-success-80),
+    text-accent-warning: var(--rt-color-warning-100),
+    text-accent-warning-soft: var(--rt-color-warning-80),
+    text-accent-danger: var(--rt-color-danger-100),
+    text-accent-danger-soft: var(--rt-color-danger-60),
+    text-accent-info: var(--rt-color-info-100),
+    text-accent-info-soft: var(--rt-color-info-80),
     /* ---- icon / neutral (adaptive) ---- */ icon-neutral-default: t(#323033, #e0e0e0),
     icon-neutral-soft: t(#747474, #a3a3a3),
     icon-neutral-disabled: t(#a3a3a3, #747474),
-    icon-neutral-inverse: t(#ffffff, #181818),
-    /* ---- icon / static ---- */ icon-static-light: #ffffff,
+    icon-neutral-inverse: t(#fff, #181818),
+    /* ---- icon / static ---- */ icon-static-light: #fff,
     icon-static-dark: #181818,
-    /* ---- icon / accent ---- */ icon-accent-brand: t(#0d1c2b, #e8e8e8, primary),
-    icon-accent-primary: t(#4284d7, #6d96e8, primary),
-    icon-accent-success: #01af8d,
-    icon-accent-warning: #ef7128,
-    icon-accent-danger: t(#eb5055, #eb5055, error),
-    icon-accent-info: #4284d7,
+    /* ---- icon / accent ---- */ icon-accent-brand: t(var(--rt-color-brand-100), var(--rt-color-brand-20)),
+    icon-accent-primary: t(var(--rt-color-primary-100), var(--rt-color-primary-60)),
+    icon-accent-success: var(--rt-color-success-100),
+    icon-accent-warning: var(--rt-color-warning-100),
+    icon-accent-danger: var(--rt-color-danger-100),
+    icon-accent-info: var(--rt-color-info-100),
     /* ---- border / neutral (adaptive) ---- */ border-neutral-subtle: t(#e8e8e8, #2e2d31),
     border-neutral-default: t(#e0e0e0, #3f3e43, outline-variant),
     border-neutral-medium: t(#d1d1d1, #4a494e),
-    border-neutral-divider: t(#cccccc, #4a494e),
+    border-neutral-divider: t(#ccc, #4a494e),
     border-neutral-strong: t(#a3a3a3, #5c5b60, outline),
     border-neutral-emphasis: t(#747474, #a3a3a3),
-    /* ---- border / accent ---- */ border-accent-primary: t(#4284d7, #6d96e8, primary),
-    border-accent-success: #01af8d,
-    border-accent-warning: #ef7128,
-    border-accent-danger: t(#eb5055, #eb5055, error),
-    border-accent-danger-soft: #e88487,
-    border-accent-info: #4284d7,
-    border-focus: t(#b3ceef, #6d96e8),
+    /* ---- border / accent ---- */ border-accent-primary: t(var(--rt-color-primary-100), var(--rt-color-primary-60)),
+    border-accent-success: var(--rt-color-success-100),
+    border-accent-warning: var(--rt-color-warning-100),
+    border-accent-danger: var(--rt-color-danger-100),
+    border-accent-danger-soft: var(--rt-color-danger-60),
+    border-accent-info: var(--rt-color-info-100),
+    border-focus: t(var(--rt-color-primary-40), var(--rt-color-primary-60)),
     /* ---- form controls (rt extension) ---- */ control-track: t(#e8e8e8, #4a494e),
-    control-thumb: t(#ffffff, #eeeeee),
+    control-thumb: t(#fff, #eee),
     control-checked: t(#323033, #e0e0e0),
-    /* ---- misc ---- */ scrollbar-thumb: t(#cccccc, #4a494e),
+    /* ---- misc ---- */ scrollbar-thumb: t(#ccc, #4a494e),
     scrollbar-thumb-hover: t(#a3a3a3, #5c5b60),
-    shadow-color: t(#747474, rgba(0, 0, 0, 0.6))
+    shadow-color: t(#747474, rgb(0 0 0 / 60%))
 );
 
 /* ============================== Foundations (mode-independent) ============================== */
@@ -222,7 +277,6 @@ $spacing: (
     56: 3.5rem,
     64: 4rem,
 );
-
 $radius: (
     xs: 0.25rem,
     sm: 0.5rem,
@@ -232,7 +286,6 @@ $radius: (
     2xl: 2rem,
     full: 624.9375rem,
 );
-
 $font-size: (
     xs: 0.75rem,
     sm: 0.875rem,
@@ -240,32 +293,28 @@ $font-size: (
     lg: 1.25rem,
     xl: 1.5rem,
 );
-
 $font-weight: (
     regular: 400,
     medium: 500,
     semibold: 600,
     bold: 700,
 );
-
 $shadow: (
     sm: (
-        0 0.0625rem 0.25rem 0 rgba(0, 0, 0, 0.12),
+        0 0.0625rem 0.25rem 0 rgb(0 0 0 / 12%),
     ),
     md: (
-        0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.14),
+        0 0.25rem 0.5rem 0 rgb(0 0 0 / 14%),
     ),
     lg: (
         0 0.5rem 1rem 0 var(--rt-shadow-color),
     ),
 );
-
 $transition: (
     fast: 0.15s ease-in-out,
     base: 0.25s ease-in-out,
     slow: 0.4s ease-in-out,
 );
-
 $z-index: (
     dropdown: 1000,
     sticky: 1020,
@@ -315,6 +364,13 @@ $breakpoint: (
         --rt-color-light-a#{$a}: rgba(255, 255, 255, #{calc($a / 100)});
     }
 
+    // accent-role ramps (indirection layer) — overridable per color scheme
+    @each $role, $tones in $accent-roles {
+        @each $step, $value in $tones {
+            --rt-color-#{$role}-#{$step}: #{$value};
+        }
+    }
+
     /* --- Tier 2: semantic --- */
     @each $token, $value in $semantic {
         --rt-#{$token}: #{$value};
@@ -324,50 +380,34 @@ $breakpoint: (
     @each $token, $value in $spacing {
         --rt-spacing-#{$token}: #{$value};
     }
+
     @each $token, $value in $radius {
         --rt-radius-#{$token}: #{$value};
     }
+
     @each $token, $value in $font-size {
         --rt-font-size-#{$token}: #{$value};
     }
+
     @each $token, $value in $font-weight {
         --rt-font-weight-#{$token}: #{$value};
     }
+
     @each $token, $value in $shadow {
         --rt-shadow-#{$token}: #{$value};
     }
+
     @each $token, $value in $transition {
         --rt-transition-#{$token}: #{$value};
     }
+
     @each $token, $value in $z-index {
         --rt-z-index-#{$token}: #{$value};
     }
+
     @each $token, $value in $breakpoint {
         --rt-breakpoint-#{$token}: #{$value};
     }
-
-    /* --- Deprecated aliases (legacy --clr-*; remove after consumers migrate) --- */
-    --clr-white-100: var(--rt-color-neutral-0);
-    --clr-gray-5: var(--rt-color-neutral-5);
-    --clr-gray-10: var(--rt-color-neutral-20);
-    --clr-gray-15: var(--rt-color-neutral-30);
-    --clr-gray-20: var(--rt-color-neutral-35);
-    --clr-black-10: var(--rt-color-neutral-10);
-    --clr-black-15: var(--rt-color-neutral-15);
-    --clr-black-20: var(--rt-color-neutral-25);
-    --clr-black-30: #b2cbca; // palette outlier, kept verbatim
-    --clr-black-40: var(--rt-color-neutral-40);
-    --clr-black-60: var(--rt-color-neutral-60);
-    --clr-black-80: var(--rt-color-neutral-80);
-    --clr-black-100: var(--rt-color-neutral-100);
-    @each $hue, $steps in $hues {
-        @each $step, $value in $steps {
-            --clr-#{$hue}-#{$step}: var(--rt-color-#{$hue}-#{$step});
-        }
-    }
-    --clr-txt: var(--rt-text-base-primary);
-    --clr-base-accent: var(--rt-color-brand);
-    --clr-white-rgb: 255, 255, 255;
 }
 
 /* Theme switching: global class + nested local contexts (GMT data-theme analogue) */

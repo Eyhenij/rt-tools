@@ -27,7 +27,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { MatRadioButton } from '@angular/material/radio';
 
-import { BlockDirective, ElemDirective, Nullable } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective, Nullable } from '@rt-tools/core';
 import { FILTER_OPERATOR_TYPE_ENUM, FilterModel, RtIconOutlinedDirective, SortModel, transformArrayInput } from '@rt-tools/utils';
 import { IRtuiTable, ITable, RTUI_TABLE_COMPONENT_TOKEN, RtTableConfigService, TABLE_COLUMN_TYPES_ENUM } from '../../util';
 import { TableBaseCellComponent } from '../table-base-cell/table-base-cell.component';
@@ -84,6 +84,7 @@ export class RtuiTableAdditionalRowActionsDirective {}
         // directives
         BlockDirective,
         ElemDirective,
+        ModDirective,
         RtIconOutlinedDirective,
         RtuiTableRowClickDirective,
 

@@ -63,24 +63,20 @@ $table: (
     // initial table container scrollbar styles
     --rt-table-container-content-scrollbar-vertical-width: 0;
     --rt-table-container-content-scrollbar-horizontal-height: 12px;
-
     --rt-table-row-border-bottom-width: 1px;
     --rt-table-header-cell-wrapper-border-width: 1px;
 }
 
 // TABLE
 .c-table {
+    overflow: scroll;
     width: 100%;
-
     border-collapse: collapse;
-
-    overflow-x: scroll;
-    overflow-y: scroll;
 
     thead {
         position: sticky;
-        top: 0;
         z-index: var(--rt-table-header-z-index);
+        top: 0;
         font-size: var(--rt-table-header-font-size);
 
         tr {
@@ -91,12 +87,12 @@ $table: (
             th {
                 background-color: color-mix(in srgb, var(--rt-table-header-background-color), var(--rt-bg-base-base) 50%);
 
-                &:not(.c-table__cell--filterable):not(.c-table__cell--empty) {
+                &:not(.c-table__cell--filterable, .c-table__cell--empty) {
                     background-color: var(--rt-table-header-background-color);
                 }
 
                 &:hover {
-                    &:not(.c-table__cell--selectable):not(.c-table__cell--filterable) {
+                    &:not(.c-table__cell--selectable, .c-table__cell--filterable) {
                         background-color: color-mix(in srgb, var(--rt-table-header-background-color), var(--rt-bg-base-base) 30%);
                     }
                 }
@@ -105,18 +101,17 @@ $table: (
     }
 
     tbody {
-        font-size: var(--rt-table-body-font-size);
         background-color: var(--rt-table-body-background-color);
+        font-size: var(--rt-table-body-font-size);
     }
 }
 
 // ROW
 .c-table__row {
     height: var(--rt-table-row-height);
-    color: var(--rt-table-row-color);
     border-bottom: var(--rt-table-row-border-bottom);
     background-color: var(--rt-table-row-background-color);
-
+    color: var(--rt-table-row-color);
     transform: translate(0);
 
     &--active {
@@ -139,20 +134,17 @@ $table: (
 
 // CELL
 th.c-table__cell {
+    position: relative;
     width: fit-content;
     height: 100%;
-
-    position: relative;
-
-    pointer-events: none;
-
     padding: var(--rt-table-header-cell-wrapper-padding);
+    background-color: var(--rt-table-header-cell-wrapper-background-color);
     color: var(--rt-table-header-cell-wrapper-text-color);
     font-size: var(--rt-table-header-cell-wrapper-font-size);
     font-weight: var(--rt-table-header-cell-wrapper-font-weight);
-    text-align: var(--rt-table-header-cell-wrapper-text-align);
     line-height: var(--rt-table-header-cell-wrapper-line-height);
-    background-color: var(--rt-table-header-cell-wrapper-background-color);
+    pointer-events: none;
+    text-align: var(--rt-table-header-cell-wrapper-text-align);
 
     &--sortable,
     &--selectable,
@@ -164,14 +156,14 @@ th.c-table__cell {
         padding: var(--rt-table-header-filterable-cell-wrapper-padding);
     }
 
-    &:not(:last-child):not(&--selectable):not(&--empty) {
-        &::after {
-            content: '';
+    &:not(:last-child, &--selectable, &--empty) {
+        &:after {
             position: absolute;
-            right: 0;
             top: 25%;
+            right: 0;
             height: 50%;
             border-right: var(--rt-table-header-cell-wrapper-border-right);
+            content: '';
             pointer-events: none;
         }
     }
@@ -180,41 +172,32 @@ th.c-table__cell {
 td.c-table__cell {
     width: fit-content;
     height: 100%;
-
     padding: var(--rt-table-base-cell-wrapper-padding);
 }
 
 // ROW ACTIONS
 .c-table-actions {
+    position: absolute;
+    z-index: var(--rt-table-actions-z-index);
+    top: 0;
+    right: 0;
+    display: flex;
     width: 100%;
     height: var(--rt-table-row-height);
-
-    position: absolute;
-    right: 0;
-    top: 0;
-    z-index: var(--rt-table-actions-z-index);
-
-    display: flex;
-    justify-content: flex-end;
     align-items: center;
-
+    justify-content: flex-end;
     pointer-events: none;
 
     &__container {
         position: sticky;
-
         right: 0;
+        display: flex;
+        overflow: hidden;
         width: fit-content;
         height: calc(var(--rt-table-row-height) - var(--rt-table-row-border-bottom-width) - var(--rt-table-row-border-bottom-width));
-
-        display: flex;
-        justify-content: flex-end;
         align-items: center;
-        gap: 0.25rem;
+        justify-content: flex-end;
         padding: 0 0.25rem 0 1.25rem;
-
-        overflow: hidden;
-
         background: linear-gradient(
             to right,
             transparent 0%,
@@ -223,6 +206,7 @@ td.c-table__cell {
             var(--rt-table-actions-container-background-color) 20%,
             var(--rt-table-actions-container-background-color) 100%
         );
+        gap: 0.25rem;
         pointer-events: none;
     }
 

@@ -27,12 +27,10 @@ $scrollable: (
 );
 
 :host {
-    height: var(--rt-scrollable-host-height);
-    width: var(--rt-scrollable-host-width);
-
     display: var(--rt-scrollable-host-display);
+    width: var(--rt-scrollable-host-width);
+    height: var(--rt-scrollable-host-height);
     flex-direction: var(--rt-scrollable-host-flex-direction);
-
     background-color: var(--rt-scrollable-host-background-color);
 
     @each $element, $elements in $scrollable {
@@ -49,11 +47,11 @@ $scrollable: (
 
         &__content {
             display: var(--rt-scrollable-content-display);
+            overflow: auto;
             flex-direction: var(--rt-scrollable-content-flex-direction);
             flex-grow: var(--rt-scrollable-content-flex-grow);
             padding: var(--rt-scrollable-content-padding);
             background-color: var(--rt-scrollable-content-background-color);
-            overflow: auto;
         }
 
         &__footer {

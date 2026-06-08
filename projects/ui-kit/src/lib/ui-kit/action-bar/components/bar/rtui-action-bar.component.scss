@@ -2,15 +2,15 @@
 @use '../../../../../styles/base/variables' as vars;
 
 .rtui-action-bar {
-    width: var(--rt-action-bar-bar-width);
     display: flex;
+    width: var(--rt-action-bar-bar-width);
     align-items: center;
-    gap: var(--rt-action-bar-bar-gap);
     padding: var(--rt-action-bar-bar-padding);
     border-radius: var(--rt-action-bar-bar-border-radius);
-    color: var(--rt-action-bar-bar-color);
     background-color: var(--rt-action-bar-bar-background-color);
     box-shadow: var(--rt-action-bar-bar-box-shadow);
+    color: var(--rt-action-bar-bar-color);
+    gap: var(--rt-action-bar-bar-gap);
 
     &__counter {
         font-size: var(--rt-action-bar-counter-font-size);
@@ -24,14 +24,14 @@
 
     &__action {
         display: flex;
-        justify-content: center;
         align-items: center;
-        gap: var(--rt-action-bar-action-gap);
-        font-size: var(--rt-action-bar-action-font-size);
-        font-weight: var(--rt-action-bar-action-font-weight);
+        justify-content: center;
         padding: var(--rt-action-bar-action-padding);
         border-radius: var(--rt-action-bar-action-border-radius);
         cursor: pointer;
+        font-size: var(--rt-action-bar-action-font-size);
+        font-weight: var(--rt-action-bar-action-font-weight);
+        gap: var(--rt-action-bar-action-gap);
 
         &:hover {
             background-color: var(--rt-action-bar-action-hover-background-color);
@@ -39,8 +39,8 @@
     }
 
     &__close-button {
-        cursor: pointer;
         margin-left: auto;
+        cursor: pointer;
 
         svg {
             transition: transform 0.2s ease;
@@ -52,16 +52,16 @@
     }
 
     @include mixins.media-breakpoint-down(vars.$device-md) {
-        gap: var(--rt-action-bar-bar-mobile-gap);
         padding: var(--rt-action-bar-bar-mobile-padding);
+        gap: var(--rt-action-bar-bar-mobile-gap);
 
         &__actions {
             gap: var(--rt-action-bar-actions-mobile-gap);
         }
 
         &__action {
-            gap: var(--rt-action-bar-action-mobile-gap);
             padding: var(--rt-action-bar-action-mobile-padding);
+            gap: var(--rt-action-bar-action-mobile-gap);
         }
     }
 }
@@ -69,23 +69,23 @@
 .rtui-action-bar-action-menu {
     display: flex;
     flex-direction: column;
-    gap: var(--rt-action-bar-action-menu-gap);
     padding: var(--rt-action-bar-action-menu-padding);
     border-radius: var(--rt-action-bar-action-border-radius);
-    color: var(--rt-action-bar-action-menu-color);
     background-color: var(--rt-action-bar-action-menu-background-color);
     box-shadow: var(--rt-action-bar-action-menu-box-shadow);
+    color: var(--rt-action-bar-action-menu-color);
+    gap: var(--rt-action-bar-action-menu-gap);
 
     &__action {
         display: flex;
-        justify-content: center;
         align-items: center;
-        gap: var(--rt-action-bar-action-menu-action-gap);
+        justify-content: center;
         padding: var(--rt-action-bar-action-menu-action-padding);
-        font-size: var(--rt-action-bar-action-menu-action-font-size);
-        font-weight: var(--rt-action-bar-action-menu-action-font-weight);
         border-radius: var(--rt-action-bar-action-menu-action-border-radius);
         cursor: pointer;
+        font-size: var(--rt-action-bar-action-menu-action-font-size);
+        font-weight: var(--rt-action-bar-action-menu-action-font-weight);
+        gap: var(--rt-action-bar-action-menu-action-gap);
 
         &:hover {
             background-color: var(--rt-action-bar-action-menu-action-hover-background-color);
@@ -93,12 +93,12 @@
     }
 
     @include mixins.media-breakpoint-down(vars.$device-md) {
-        gap: var(--rt-action-bar-action-menu-action-mobile-gap);
         padding: var(--rt-action-bar-action-menu-action-mobile-padding);
+        gap: var(--rt-action-bar-action-menu-action-mobile-gap);
 
         &__action {
-            gap: var(--rt-action-bar-action-menu-action-mobile-gap);
             padding: var(--rt-action-bar-action-menu-action-mobile-padding);
+            gap: var(--rt-action-bar-action-menu-action-mobile-gap);
         }
     }
 }

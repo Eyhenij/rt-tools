@@ -11,14 +11,14 @@ import {
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { RtIconOutlinedDirective, transformStringInput } from '@rt-tools/utils';
 
 @Component({
     selector: 'rtui-dynamic-selector-placeholder',
     templateUrl: './rtui-dynamic-selector-placeholder.component.html',
     styleUrls: ['./rtui-dynamic-selector-placeholder.component.scss'],
-    imports: [MatIcon, MatButton, CdkOverlayOrigin, RtIconOutlinedDirective, BlockDirective, ElemDirective],
+    imports: [MatIcon, MatButton, CdkOverlayOrigin, RtIconOutlinedDirective, BlockDirective, ElemDirective, ModDirective],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RtuiDynamicSelectorPlaceholderComponent {

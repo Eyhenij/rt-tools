@@ -41,21 +41,21 @@ $side-menu: (
 
         .rtui-mobile-side-menu-list {
             display: flex;
-            flex-direction: column;
             width: 100%;
+            flex-direction: column;
 
             &--scrollable {
                 width: fit-content;
             }
 
             &__sub {
+                animation: fade-in-animation 0.15s ease-in-out 0.15s forwards;
                 opacity: 0;
-                animation: fadeInAnimation 0.15s ease-in-out 0.15s forwards;
             }
 
             .rtui-mobile-side-menu-list-main {
+                animation: fade-in-animation 0.15s ease-in-out 0.15s forwards;
                 opacity: 0;
-                animation: fadeInAnimation 0.15s ease-in-out 0.15s forwards;
 
                 .rtui-mobile-side-menu-item {
                     &__icon {
@@ -66,22 +66,22 @@ $side-menu: (
 
                     .rtui-mobile-side-menu-item-title {
                         display: flex;
-                        justify-content: space-between;
                         align-items: center;
+                        justify-content: space-between;
 
                         &__text {
-                            font-size: 0.75rem;
+                            overflow: hidden;
+                            font-size: var(--rt-font-size-xs);
                             text-overflow: ellipsis;
                             white-space: nowrap;
-                            overflow: hidden;
                         }
 
                         .rtui-mobile-side-menu-item-title-button {
                             display: flex;
-                            justify-content: center;
                             align-items: center;
-                            margin-left: 0.5rem;
-                            border-radius: 50%;
+                            justify-content: center;
+                            border-radius: var(--rt-radius-full);
+                            margin-left: var(--rt-spacing-8);
 
                             &__icon {
                                 width: var(--rt-side-menu-mobile-item-additional-icon-size);
@@ -93,7 +93,7 @@ $side-menu: (
                 }
 
                 .rtui-mobile-side-menu-item + .rtui-mobile-side-menu-item {
-                    margin-top: 0.5rem;
+                    margin-top: var(--rt-spacing-8);
                 }
             }
         }
@@ -104,37 +104,37 @@ $side-menu: (
 
         &__list {
             display: flex;
+            width: 100%;
             flex-direction: column;
             align-items: center;
-            width: 100%;
 
             .rtui-side-menu-item {
                 display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                cursor: pointer;
                 width: 100%;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
 
                 .rtui-side-menu-item-button {
-                    padding: 0;
                     display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    height: var(--rt-side-menu-item-height);
                     width: var(--rt-side-menu-item-width);
+                    height: var(--rt-side-menu-item-height);
+                    align-items: center;
+                    justify-content: center;
+                    padding: 0;
 
                     &__icon {
                         display: flex;
-                        justify-content: center;
                         align-items: center;
+                        justify-content: center;
                     }
                 }
 
                 &__title {
                     font-size: var(--rt-side-menu-item-font-size);
-                    text-align: var(--rt-side-menu-item-text-align);
                     line-height: var(--rt-side-menu-item-line-height);
+                    text-align: var(--rt-side-menu-item-text-align);
                 }
             }
 
@@ -157,18 +157,18 @@ $side-menu: (
         }
 
         .rtui-sub-side-menu-content {
+            // Component-local elevation token for the slide-out sub-menu drawer.
+            --rt-side-menu-sub-content-shadow: 14px 0 28px rgb(0 0 0 / 25%), 10px 0 10px rgb(0 0 0 / 22%);
+
             width: var(--rt-side-menu-sub-menu-width);
             height: 100%;
             border-left: 1px solid var(--rt-border-neutral-default);
-            box-shadow:
-                14px 0 28px rgba(0, 0, 0, 0.25),
-                10px 0 10px rgba(0, 0, 0, 0.22);
+            box-shadow: var(--rt-side-menu-sub-content-shadow);
 
             &__list {
                 width: 100%;
-
+                animation: fade-in-animation 0.15s ease-in-out 0.15s forwards;
                 opacity: 0;
-                animation: fadeInAnimation 0.15s ease-in-out 0.15s forwards;
 
                 &--scrollable {
                     min-width: fit-content;
@@ -178,7 +178,7 @@ $side-menu: (
     }
 }
 
-@keyframes fadeInAnimation {
+@keyframes fade-in-animation {
     to {
         opacity: 1;
     }
