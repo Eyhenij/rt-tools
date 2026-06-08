@@ -102,6 +102,8 @@ export class DevToolsManagerService {
         this.#devTools.init(this.#getAggregatedState());
         this.#isInitialized = true;
 
+        // Redux DevTools extension API — not an RxJS Observable, so no terminating operator applies.
+        // eslint-disable-next-line rt/require-take-until-destroyed
         this.#devTools.subscribe((message: IDevToolsMessage) => {
             if (message.type === 'DISPATCH') {
                 switch (message.payload?.type) {
