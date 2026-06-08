@@ -71,7 +71,7 @@ $side-menu: (
 
                         &__text {
                             overflow: hidden;
-                            font-size: 0.75rem;
+                            font-size: var(--rt-font-size-xs);
                             text-overflow: ellipsis;
                             white-space: nowrap;
                         }
@@ -80,8 +80,8 @@ $side-menu: (
                             display: flex;
                             align-items: center;
                             justify-content: center;
-                            border-radius: 50%;
-                            margin-left: 0.5rem;
+                            border-radius: var(--rt-radius-full);
+                            margin-left: var(--rt-spacing-8);
 
                             &__icon {
                                 width: var(--rt-side-menu-mobile-item-additional-icon-size);
@@ -93,7 +93,7 @@ $side-menu: (
                 }
 
                 .rtui-mobile-side-menu-item + .rtui-mobile-side-menu-item {
-                    margin-top: 0.5rem;
+                    margin-top: var(--rt-spacing-8);
                 }
             }
         }
@@ -157,12 +157,13 @@ $side-menu: (
         }
 
         .rtui-sub-side-menu-content {
+            // Component-local elevation token for the slide-out sub-menu drawer.
+            --rt-side-menu-sub-content-shadow: 14px 0 28px rgb(0 0 0 / 25%), 10px 0 10px rgb(0 0 0 / 22%);
+
             width: var(--rt-side-menu-sub-menu-width);
             height: 100%;
             border-left: 1px solid var(--rt-border-neutral-default);
-            box-shadow:
-                14px 0 28px rgb(0 0 0 / 25%),
-                10px 0 10px rgb(0 0 0 / 22%);
+            box-shadow: var(--rt-side-menu-sub-content-shadow);
 
             &__list {
                 width: 100%;

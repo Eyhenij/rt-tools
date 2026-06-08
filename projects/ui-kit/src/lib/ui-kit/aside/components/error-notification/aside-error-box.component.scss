@@ -20,7 +20,7 @@
 
         .aside-error-box-button {
             &__icon {
-                margin-right: 0.5rem;
+                margin-right: var(--rt-spacing-8);
             }
 
             &__title {

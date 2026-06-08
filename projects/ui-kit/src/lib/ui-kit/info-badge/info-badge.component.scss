@@ -1,7 +1,7 @@
 :host {
     display: block;
     max-width: fit-content;
-    border-radius: 9999px;
+    border-radius: var(--rt-radius-full);
 
     // default values (overridable by consumers; runtime variants set inline styles via InfoBadgeDirective)
     /* stylelint-disable-next-line color-no-hex -- default brand blue has no palette token on purpose */
@@ -14,7 +14,7 @@
         box-sizing: border-box;
         align-items: center;
         justify-content: center;
-        gap: 0.15rem;
+        gap: var(--rt-spacing-2);
         line-height: normal;
 
         &__content {
@@ -25,30 +25,30 @@
     }
 
     .size-l {
-        padding: 0.3rem 0.65rem;
-        font-size: 1.125rem;
+        padding: var(--rt-spacing-4) var(--rt-spacing-12);
+        font-size: var(--rt-font-size-md);
 
         .mat-icon {
-            font-size: 1.5rem;
+            font-size: var(--rt-font-size-xl);
         }
     }
 
     .size-m {
-        padding: 0.22rem 0.65rem;
-        font-size: 0.875rem;
+        padding: var(--rt-spacing-4) var(--rt-spacing-12);
+        font-size: var(--rt-font-size-sm);
 
         .mat-icon {
-            font-size: 1.05rem;
+            font-size: var(--rt-font-size-md);
         }
     }
 
     .size-s {
-        padding: 0.2rem 0.65rem;
-        font-size: 0.75rem;
+        padding: var(--rt-spacing-4) var(--rt-spacing-12);
+        font-size: var(--rt-font-size-xs);
         letter-spacing: 0.025rem;
 
         .mat-icon {
-            font-size: 0.75rem;
+            font-size: var(--rt-font-size-xs);
         }
     }
 
@@ -58,6 +58,6 @@
     }
 
     .bold {
-        font-weight: 700;
+        font-weight: var(--rt-font-weight-bold);
     }
 }

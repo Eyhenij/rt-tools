@@ -3,7 +3,7 @@
     width: 100%;
     align-items: center;
     justify-content: flex-start;
-    gap: 0.5rem;
+    gap: var(--rt-spacing-8);
 
     .table-header-cell-filter-input {
         width: 100%;
