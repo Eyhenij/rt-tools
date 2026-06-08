@@ -260,12 +260,9 @@ const PROPERTY_GROUPS = {
         'border-bottom-left-radius',
         'border-bottom-right-radius',
         'font-size',
-        'border-width',
-        'border-top-width',
-        'border-right-width',
-        'border-bottom-width',
-        'border-left-width',
-        'letter-spacing',
+        // NOTE: border-width / letter-spacing / line-height intentionally NOT enforced —
+        // rt-tools has no token scale for hairline border widths, letter-spacing or
+        // line-height ratios, so literals there are legitimate (not magic design tokens).
     ]),
     inspectColor: new Set([
         'color',
@@ -285,19 +282,25 @@ const PROPERTY_GROUPS = {
         'border-left-color',
     ]),
     fontWeight: new Set(['font-weight']),
-    lineHeight: new Set(['line-height']),
+    lineHeight: new Set(),
     fontStyle: new Set(['font-style']),
     borderStyle: new Set(['border-style', 'border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style']),
     composite: new Set(['box-shadow', 'text-shadow']),
-    borderShorthand: new Set(['border', 'border-top', 'border-right', 'border-bottom', 'border-left']),
-    transitionList: new Set(['transition']),
-    transitionTime: new Set(['transition-duration', 'transition-delay']),
-    transitionTiming: new Set(['transition-timing-function']),
-    animationList: new Set(['animation']),
-    animationTime: new Set(['animation-duration', 'animation-delay']),
-    animationTiming: new Set(['animation-timing-function']),
-    animationIterationCount: new Set(['animation-iteration-count']),
-    animationEnum: new Set(['animation-direction', 'animation-fill-mode', 'animation-play-state']),
+    // border shorthand widths are not enforced (no rt-tools border-width token scale);
+    // hardcoded border COLORS are still caught by the separate color-no-hex rule.
+    borderShorthand: new Set(),
+    // Motion (transition/animation) is NOT enforced: rt-tools' only motion tokens
+    // (--rt-transition-*) bundle a timing function, so they can't be substituted into
+    // shorthands that carry custom easing (linear/ease/cubic-bezier), and there is no
+    // bare-duration token scale. Bare durations/delays there are therefore legitimate.
+    transitionList: new Set(),
+    transitionTime: new Set(),
+    transitionTiming: new Set(),
+    animationList: new Set(),
+    animationTime: new Set(),
+    animationTiming: new Set(),
+    animationIterationCount: new Set(),
+    animationEnum: new Set(),
 };
 
 function classifyProperty(prop) {
