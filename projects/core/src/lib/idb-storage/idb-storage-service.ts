@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { Observable, Observer, Subscriber } from 'rxjs';
+import { Observable, Observer, Subscriber, take } from 'rxjs';
 
 import { WINDOW } from '../tokens';
 import { IIDBStorageServiceInterface } from './interfaces/idb-storage-service.interface';
@@ -25,7 +25,7 @@ export class IDBStorageService<ENTITY_TYPE> implements IIDBStorageServiceInterfa
 
     public get(key: string): Observable<ENTITY_TYPE | undefined> {
         return new Observable<ENTITY_TYPE | undefined>((observer: Subscriber<ENTITY_TYPE | undefined>) => {
-            this.#context.subscribe((db: IDBDatabase) => {
+            this.#context.pipe(take(1)).subscribe((db: IDBDatabase) => {
                 const transaction: IDBTransaction = db.transaction('idb', 'readonly');
                 const store: IDBObjectStore = transaction.objectStore('idb');
                 const request: IDBRequest<ENTITY_TYPE> = store.get(key);
@@ -38,7 +38,7 @@ export class IDBStorageService<ENTITY_TYPE> implements IIDBStorageServiceInterfa
 
     public set(key: string, value: ENTITY_TYPE): Observable<void> {
         return new Observable<void>((observer: Subscriber<void>) => {
-            this.#context.subscribe((db: IDBDatabase) => {
+            this.#context.pipe(take(1)).subscribe((db: IDBDatabase) => {
                 const transaction: IDBTransaction = db.transaction('idb', 'readwrite');
                 const store: IDBObjectStore = transaction.objectStore('idb');
                 const request: IDBRequest<IDBValidKey> = store.put(value, key);
@@ -51,7 +51,7 @@ export class IDBStorageService<ENTITY_TYPE> implements IIDBStorageServiceInterfa
 
     public remove(key: string): Observable<void> {
         return new Observable<void>((observer: Subscriber<void>) => {
-            this.#context.subscribe((db: IDBDatabase) => {
+            this.#context.pipe(take(1)).subscribe((db: IDBDatabase) => {
                 const transaction: IDBTransaction = db.transaction('idb', 'readwrite');
                 const store: IDBObjectStore = transaction.objectStore('idb');
                 const request: IDBRequest<undefined> = store.delete(key);
