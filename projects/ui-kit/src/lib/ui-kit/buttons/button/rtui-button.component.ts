@@ -25,8 +25,9 @@ export type ButtonColorType =
 export enum BUTTON_APPEARANCE {
     OUTLINE = 'outline',
     LIGHT = 'light',
+    TEXT = 'text',
 }
-export type ButtonAppearanceType = BUTTON_APPEARANCE.OUTLINE | BUTTON_APPEARANCE.LIGHT;
+export type ButtonAppearanceType = BUTTON_APPEARANCE.OUTLINE | BUTTON_APPEARANCE.LIGHT | BUTTON_APPEARANCE.TEXT;
 
 @Component({
     selector: 'a[rtui-btn], button[rtui-btn]',

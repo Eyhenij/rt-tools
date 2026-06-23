@@ -118,6 +118,36 @@ $rtui-button: (
         hover-bg: var(--rt-color-orange-5),
         active-shadow: var(--rt-color-orange-40),
     ),
+    accent-text: (
+        border: 0,
+        bg: transparent,
+        color: var(--rt-text-accent-info),
+        hover-bg: var(--rt-bg-base-hover),
+    ),
+    success-text: (
+        border: 0,
+        bg: transparent,
+        color: var(--rt-text-accent-success),
+        hover-bg: var(--rt-bg-base-hover),
+    ),
+    secondary-text: (
+        border: 0,
+        bg: transparent,
+        color: var(--rt-text-base-secondary),
+        hover-bg: var(--rt-bg-base-hover),
+    ),
+    error-text: (
+        border: 0,
+        bg: transparent,
+        color: var(--rt-text-accent-danger),
+        hover-bg: var(--rt-bg-base-hover),
+    ),
+    warning-text: (
+        border: 0,
+        bg: transparent,
+        color: var(--rt-text-accent-warning),
+        hover-bg: var(--rt-bg-base-hover),
+    ),
     size-sm: (
         gap: 4px,
         padding: 4px 8px,
@@ -421,6 +451,71 @@ $rtui-button: (
 
     &:active {
         --shadow: var(--rt-rtui-btn-warning-light-active-shadow);
+    }
+}
+
+/* text — transparent, borderless label with a subtle hover wash.
+   Shared box matches the legacy text-button (inline-text look). Compound
+   `.rtui-btn[...-text]` (0,2,0) outranks the size tokens (0,1,0) regardless of order. */
+.rtui-btn[class*='-text'] {
+    --font-size: 16px;
+    --gap: 8px;
+    --padding: 0 10px;
+
+    min-height: 30px;
+    border-radius: 5px;
+    font-weight: 400;
+}
+
+.rtui-btn-accent-text {
+    --border: var(--rt-rtui-btn-accent-text-border);
+    --bg: var(--rt-rtui-btn-accent-text-bg);
+    --color: var(--rt-rtui-btn-accent-text-color);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-accent-text-hover-bg);
+    }
+}
+
+.rtui-btn-success-text {
+    --border: var(--rt-rtui-btn-success-text-border);
+    --bg: var(--rt-rtui-btn-success-text-bg);
+    --color: var(--rt-rtui-btn-success-text-color);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-success-text-hover-bg);
+    }
+}
+
+/* secondary-text resolves its colour ON the element so the `--rt-text-base-secondary`
+   semantic (`--mat-sys-on-surface-variant` hybrid) lands where Material is in scope. */
+.rtui-btn-secondary-text {
+    --border: var(--rt-rtui-btn-secondary-text-border);
+    --bg: var(--rt-rtui-btn-secondary-text-bg);
+    --color: var(--mat-sys-on-surface-variant, var(--rt-rtui-btn-secondary-text-color));
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-secondary-text-hover-bg);
+    }
+}
+
+.rtui-btn-error-text {
+    --border: var(--rt-rtui-btn-error-text-border);
+    --bg: var(--rt-rtui-btn-error-text-bg);
+    --color: var(--rt-rtui-btn-error-text-color);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-error-text-hover-bg);
+    }
+}
+
+.rtui-btn-warning-text {
+    --border: var(--rt-rtui-btn-warning-text-border);
+    --bg: var(--rt-rtui-btn-warning-text-bg);
+    --color: var(--rt-rtui-btn-warning-text-color);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-warning-text-hover-bg);
     }
 }
 
