@@ -225,11 +225,12 @@
         }
     }
 
-    /* pill appearance: text — transparent, borderless inline-text look */
+    /* pill appearance: text — transparent, borderless inline-text look.
+       Radius is intentionally left to the `--radius-*` modifier (defaults to
+       full) so a text-appearance pill keeps its pill shape. */
     &--type-pill.rtui-button--appearance-text {
         min-height: 1.875rem;
         padding: 0 0.625rem;
-        border-radius: 5px;
         background-color: transparent;
         color: var(--mat-sys-on-surface-variant);
         font-size: 1rem;
