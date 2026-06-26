@@ -1,3 +1,14 @@
+## [0.0.21](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.20...rt-tools@0.0.21) (2026-06-26)
+
+### Bug Fixes
+
+- **rt:ui-kit:** let text-appearance pill honor the radius modifier ([9440079](https://github.com/Eyhenij/rt-tools/commit/94400797b2739eeca34ea16771793f45b98e1a9d))
+- **rt:ui-kit:** render projected icons in text-appearance buttons at a uniform size ([101c3ef](https://github.com/Eyhenij/rt-tools/commit/101c3ef0edf7abec85deb8f0c02c4c13c4977964))
+
+### Features
+
+- **rt:ui-kit:** add text appearance to rtui-btn ([47d4386](https://github.com/Eyhenij/rt-tools/commit/47d4386eead13900cb4f34c851372d1881bdf9d5))
+
 ## [Unreleased]
 
 ### Features
