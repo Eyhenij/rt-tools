@@ -81,27 +81,34 @@ cmd_status() {
     local target="$1" want="$2" o num pid; o="$(owner)"
     read -r num pid < <(resolve_project)
 
+    # Python is single-quoted at the shell level (double-quoted strings inside)
+    # so no shell metacharacter can leak into / truncate the command substitution.
     local fieldId optId
-    read -r fieldId optId < <(status_field_json "$num" | WANT="$want" $PY -c "
-import json,sys,os
-d=json.load(sys.stdin); want=os.environ['WANT'].lower()
-for f in d['fields']:
-    if f['name']=='Status':
-        opts=[o for o in f['options'] if want in o['name'].lower()]
-        if not opts: sys.exit('no Status option matching \"%s\"' % want)
-        if len(opts)>1: sys.exit('ambiguous status \"%s\": %s' % (want, [o['name'] for o in opts]))
-        print(f['id'], opts[0]['id'])
-")
+    read -r fieldId optId < <(status_field_json "$num" | WANT="$want" $PY -c '
+import json, sys, os
+d = json.load(sys.stdin)
+want = os.environ["WANT"].lower()
+field = next((f for f in d["fields"] if f["name"] == "Status"), None)
+if field is None:
+    sys.exit("no Status field on board")
+opts = [o for o in field["options"] if want in o["name"].lower()]
+if not opts:
+    sys.exit("no Status option matching %r" % want)
+if len(opts) > 1:
+    sys.exit("ambiguous status %r: %s" % (want, [o["name"] for o in opts]))
+print(field["id"], opts[0]["id"])
+')
 
     local itemId
-    itemId="$($GH project item-list "$num" --owner "$o" --format json | TARGET="$target" $PY -c "
-import json,sys,os
-d=json.load(sys.stdin); t=str(os.environ['TARGET'])
-for it in d['items']:
-    c=it.get('content',{}) or {}
-    if str(c.get('number'))==t: print(it['id']); break
-else: sys.exit('item #%s not on board (run: board.sh add %s)' % (t,t))
-")
+    itemId="$($GH project item-list "$num" --owner "$o" --format json | TARGET="$target" $PY -c '
+import json, sys, os
+d = json.load(sys.stdin)
+t = str(os.environ["TARGET"])
+m = [it["id"] for it in d["items"] if str((it.get("content") or {}).get("number")) == t]
+if not m:
+    sys.exit("item #%s not on board (run: board.sh add %s)" % (t, t))
+print(m[0])
+')"
 
     $GH project item-edit --id "$itemId" --project-id "$pid" \
         --field-id "$fieldId" --single-select-option-id "$optId" >/dev/null
