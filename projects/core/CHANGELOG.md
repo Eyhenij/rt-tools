@@ -1,3 +1,9 @@
+## [0.0.4](https://github.com/Eyhenij/rt-tools/compare/rt-core@0.0.3...rt-core@0.0.4) (2026-06-26)
+
+### Bug Fixes
+
+- terminate leaking RxJS subscriptions with take(1) ([7a73637](https://github.com/Eyhenij/rt-tools/commit/7a736379376153cef2c3b8ff5b9227c7b796e3fc)), closes [#context](https://github.com/Eyhenij/rt-tools/issues/context)
+
 ## 0.0.3 (2026-04-25)
 
 ## [0.0.2](https://github.com/Eyhenij/rt-tools/compare/0.1.81...0.0.2) (2026-01-02)
