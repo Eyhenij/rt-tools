@@ -1,0 +1,29 @@
+@switch (type()) {
+    @case ('pill') {
+        <button type="button" rtBlock="rtui-button" [rtMod]="modifiers()" [disabled]="disabled() || loading()" (click)="onClick()">
+            @if (loading()) {
+                <rtui-spinner rtElem="spinner" [diameter]="spinnerSize()" [showBox]="false" />
+            } @else {
+                @if (icon() && iconPosition() === 'start') {
+                    <rtui-icon rtElem="icon" [glyph]="icon()" [size]="resolvedIconSize()" [outlined]="outlined()" />
+                }
+                @if (text()) {
+                    <span rtElem="text">{{ text() }}</span>
+                }
+                <ng-content />
+                @if (icon() && iconPosition() === 'end') {
+                    <rtui-icon rtElem="icon" [glyph]="icon()" [size]="resolvedIconSize()" [outlined]="outlined()" />
+                }
+            }
+        </button>
+    }
+    @default {
+        <button type="button" rtBlock="rtui-button" [rtMod]="modifiers()" [disabled]="disabled() || loading()" (click)="onClick()">
+            @if (loading()) {
+                <rtui-spinner rtElem="spinner" [diameter]="spinnerSize()" [showBox]="false" />
+            } @else {
+                <rtui-icon rtElem="icon" [glyph]="icon()" [size]="resolvedIconSize()" [outlined]="outlined()" />
+            }
+        </button>
+    }
+}

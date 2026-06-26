@@ -1,0 +1,7 @@
+<mat-icon [rtIconOutlined]="outlined()">
+    @if (glyph()) {
+        {{ glyph() }}
+    } @else {
+        <ng-content />
+    }
+</mat-icon>

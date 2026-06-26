@@ -1,0 +1,110 @@
+.rtui-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &--loading {
+        visibility: hidden;
+    }
+
+    &--rotate {
+        animation: rt-icon-rotation 1s linear infinite;
+    }
+
+    .mat-icon {
+        width: inherit;
+        height: inherit;
+        color: inherit;
+        font-size: inherit;
+    }
+
+    &--size-xs {
+        width: 0.875rem;
+        height: 0.875rem;
+        font-size: 0.875rem;
+    }
+
+    &--size-sm {
+        width: 1rem;
+        height: 1rem;
+        font-size: 1rem;
+    }
+
+    &--size-md {
+        width: 1.5rem;
+        height: 1.5rem;
+        font-size: 1.5rem;
+    }
+
+    &--size-lg {
+        width: 2rem;
+        height: 2rem;
+        font-size: 2rem;
+    }
+
+    &--size-xl {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 2.5rem;
+    }
+
+    &--size-xxl {
+        width: 3rem;
+        height: 3rem;
+        font-size: 3rem;
+    }
+
+    &--size-3xl {
+        width: 3.5rem;
+        height: 3.5rem;
+        font-size: 3.5rem;
+    }
+
+    &--theme-inherit {
+        color: inherit;
+    }
+
+    &--theme-primary {
+        color: var(--rt-icon-accent-primary);
+    }
+
+    &--theme-primary-strong {
+        color: var(--rt-icon-accent-primary);
+    }
+
+    &--theme-neutral {
+        color: var(--rt-icon-neutral-soft);
+    }
+
+    &--theme-disabled {
+        color: var(--rt-icon-neutral-disabled);
+    }
+
+    &--theme-muted {
+        color: var(--rt-icon-neutral-soft);
+    }
+
+    &--theme-white {
+        color: var(--rt-icon-static-light);
+    }
+
+    &--theme-danger {
+        color: var(--rt-icon-accent-danger);
+    }
+
+    &--theme-success {
+        color: var(--rt-icon-accent-success);
+    }
+}
+
+/* Inside a text-appearance button, every projected icon renders at a single
+   uniform size regardless of the `size` modifier it was given, so labelled
+   text buttons read consistently (e.g. report-header currency/hotels/period
+   triggers). This component is ViewEncapsulation.None, so the rule is global
+   and reaches the projected icon; specificity (0,2,0) wins over the icon's own
+   `--size-*` (0,1,0). */
+.rtui-button--appearance-text .rtui-icon {
+    width: 1.375rem;
+    height: 1.375rem;
+    font-size: 1.375rem;
+}
