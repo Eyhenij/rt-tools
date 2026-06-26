@@ -195,7 +195,7 @@ describe('rt-tools color schemes', () => {
     describe('rt.color-scheme mixin', () => {
         it('emits a scoped [data-rt-scheme] block with only raw role rows', () => {
             const css: string = compileWithMixin(
-                "@include rt.color-scheme('teal', (primary: (20: #b3e3e1, 100: #008582), brand: (100: #008582)));"
+                '@include rt.color-scheme("teal", (primary: (20: #b3e3e1, 100: #008582), brand: (100: #008582)));'
             ).css;
 
             const block: string = css.slice(css.indexOf('[data-rt-scheme=teal]'));
@@ -209,22 +209,22 @@ describe('rt-tools color schemes', () => {
         });
 
         it('rejects an unknown role', () => {
-            expect(() => compileWithMixin("@include rt.color-scheme('x', (foo: (100: #000000)));")).toThrow(/unknown role/i);
+            expect(() => compileWithMixin('@include rt.color-scheme("x", (foo: (100: #000000)));')).toThrow(/unknown role/i);
         });
 
         it('rejects an out-of-range tone', () => {
-            expect(() => compileWithMixin("@include rt.color-scheme('x', (primary: (150: #000000)));")).toThrow(/integer 0–100/i);
+            expect(() => compileWithMixin('@include rt.color-scheme("x", (primary: (150: #000000)));')).toThrow(/integer 0–100/i);
         });
 
         it('rejects an empty role map', () => {
-            expect(() => compileWithMixin("@include rt.color-scheme('x', ());")).toThrow(/non-empty map/i);
+            expect(() => compileWithMixin('@include rt.color-scheme("x", ());')).toThrow(/non-empty map/i);
         });
     });
 
     describe('teal reference case', () => {
         it('a teal primary ramp recolors --rt-bg-accent-primary-solid to teal', () => {
             const css: string = compileWithMixin(
-                "@include rt.color-scheme('teal', (primary: (20: #b3e3e1, 40: #5cb8b5, 60: #1a9d99, 100: #008582)));"
+                '@include rt.color-scheme("teal", (primary: (20: #b3e3e1, 40: #5cb8b5, 60: #1a9d99, 100: #008582)));'
             ).css;
 
             const scheme: Record<string, string> = extractDeclarations(css, '--rt-color-primary-\\d+');

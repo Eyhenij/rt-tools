@@ -69,7 +69,7 @@ describe('RtThemeService', () => {
             expect(window.localStorage.getItem(RT_COLOR_SCHEME_STORAGE_KEY)).toBeNull();
         });
 
-        it("treats 'default' as a cleared scheme", () => {
+        it('treats "default" as a cleared scheme', () => {
             const service: RtThemeService = setup();
 
             service.setColorScheme('default');
@@ -134,7 +134,7 @@ describe('RtThemeService', () => {
 
             const jsBlock: string = document.getElementById('rt-color-scheme-teal')!.textContent ?? '';
             const sassCss: string = sass.compileString(
-                "@use 'main' as rt;\n@include rt.color-scheme('teal', (" +
+                '@use "main" as rt;\n@include rt.color-scheme("teal", (' +
                     'primary: (20: #b3e3e1, 40: #5cb8b5, 60: #1a9d99, 100: #008582),' +
                     'brand: (20: #e8e8e8, 100: #008582)));',
                 { loadPaths: [STYLES_DIR] }
