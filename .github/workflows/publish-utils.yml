@@ -50,6 +50,7 @@ jobs:
               run: |
                   node update-version-utils.cjs ${{ github.event.inputs.version }}
                   pnpm run changelog:utils
+                  pnpm install --lockfile-only
                   VERSION=$(jq -r .version projects/utils/package.json)
                   echo "VERSION=$VERSION" >> $GITHUB_ENV
 

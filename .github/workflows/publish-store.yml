@@ -50,6 +50,7 @@ jobs:
               run: |
                   node update-version-store.cjs ${{ github.event.inputs.version }}
                   pnpm run changelog:store
+                  pnpm install --lockfile-only
                   VERSION=$(jq -r .version projects/store/package.json)
                   echo "VERSION=$VERSION" >> $GITHUB_ENV
 
