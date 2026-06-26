@@ -96,3 +96,15 @@
         color: var(--rt-icon-accent-success);
     }
 }
+
+/* Inside a text-appearance button, every projected icon renders at a single
+   uniform size regardless of the `size` modifier it was given, so labelled
+   text buttons read consistently (e.g. report-header currency/hotels/period
+   triggers). This component is ViewEncapsulation.None, so the rule is global
+   and reaches the projected icon; specificity (0,2,0) wins over the icon's own
+   `--size-*` (0,1,0). */
+.rtui-button--appearance-text .rtui-icon {
+    width: 1.375rem;
+    height: 1.375rem;
+    font-size: 1.375rem;
+}
