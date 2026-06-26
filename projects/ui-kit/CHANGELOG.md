@@ -1,3 +1,19 @@
+## [Unreleased]
+
+### Features
+
+- **rt:ui-kit:** unify all button variants into a single `rtui-button` component (`type` icon/fab/pill, `variant` default/primary/danger/success/warning/accent, `size` xs/sm/md/lg, `radius` none/sm/md/lg/full, `appearance` solid/outline/light/text) with built-in tooltip, loading spinner and icon slots
+- **rt:ui-kit:** add a standalone `rtui-icon` component (Material Symbols Outlined) with `size`, `theme`, `glyph`, `outlined` and `rotate` inputs plus font-load tracking
+- **rt:ui-kit:** add a transparent, borderless `text` appearance for every button colour, with a neutral hover wash via `--rt-bg-base-hover`
+
+### Bug Fixes
+
+- **rt:ui-kit:** let the `text` appearance honour the `radius` modifier instead of hardcoding a 5px border-radius
+
+### BREAKING CHANGES
+
+- **rt:ui-kit:** the legacy `rtui-button` directive and `rtui-round-icon-button` component are removed. Migrate usages to the new `rtui-button` component (use `type="icon"`/`type="fab"` for the former round-icon button).
+
 ## [0.0.20](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.19...rt-tools@0.0.20) (2026-06-08)
 
 ### Bug Fixes
