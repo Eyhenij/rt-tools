@@ -1,0 +1,247 @@
+:host {
+    display: inline-block;
+}
+
+:host(.rtui-button-full) {
+    display: block;
+    width: 100%;
+
+    .rtui-button {
+        width: 100%;
+    }
+}
+
+.rtui-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    background-color: transparent;
+    color: var(--mat-sys-on-surface-variant);
+    cursor: pointer;
+    line-height: 1;
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease,
+        opacity 0.15s ease;
+
+    rtui-icon {
+        color: inherit;
+    }
+
+    rtui-spinner {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.38;
+    }
+
+    &--loading {
+        cursor: wait;
+    }
+
+    /* ===================== icon / fab ===================== */
+    &--type-icon,
+    &--type-fab {
+        border-radius: 1.5rem;
+
+        &:hover:not(:disabled) {
+            background-color: var(--rt-bg-base-hover);
+        }
+    }
+
+    &--type-icon.rtui-button--size-xs,
+    &--type-fab.rtui-button--size-xs {
+        padding: 0.25rem;
+    }
+
+    &--type-icon.rtui-button--size-sm,
+    &--type-fab.rtui-button--size-sm {
+        padding: 0.375rem;
+    }
+
+    &--type-icon.rtui-button--size-md,
+    &--type-fab.rtui-button--size-md {
+        padding: 0.5rem;
+    }
+
+    &--type-icon.rtui-button--size-lg,
+    &--type-fab.rtui-button--size-lg {
+        padding: 0.625rem;
+    }
+
+    &--type-icon.rtui-button--variant-primary,
+    &--type-fab.rtui-button--variant-primary {
+        color: var(--rt-icon-accent-primary);
+    }
+
+    &--type-icon.rtui-button--variant-danger,
+    &--type-fab.rtui-button--variant-danger {
+        color: var(--rt-icon-accent-danger);
+    }
+
+    &--type-icon.rtui-button--variant-success,
+    &--type-fab.rtui-button--variant-success {
+        color: var(--rt-icon-accent-success);
+    }
+
+    &--type-icon.rtui-button--variant-warning,
+    &--type-fab.rtui-button--variant-warning {
+        color: var(--rt-icon-accent-warning);
+    }
+
+    &--type-icon.rtui-button--variant-accent,
+    &--type-fab.rtui-button--variant-accent {
+        color: var(--rt-icon-accent-info);
+    }
+
+    /* ===================== pill ===================== */
+    &--type-pill {
+        gap: 0.375rem;
+        border-radius: 1.5rem;
+        background-color: var(--mat-sys-surface-container-high);
+        color: var(--mat-sys-on-surface-variant);
+        font-weight: 500;
+
+        &:hover:not(:disabled) {
+            background-color: var(--mat-sys-surface-container-highest);
+        }
+
+        &:active:not(:disabled) {
+            background-color: var(--mat-sys-surface-dim);
+        }
+    }
+
+    /* pill sizes */
+    &--type-pill.rtui-button--size-xs {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.6875rem;
+    }
+
+    &--type-pill.rtui-button--size-sm {
+        padding: 0.375rem 0.625rem;
+        font-size: 0.75rem;
+    }
+
+    &--type-pill.rtui-button--size-md {
+        padding: 0.5rem 0.875rem;
+        font-size: 0.8125rem;
+    }
+
+    &--type-pill.rtui-button--size-lg {
+        padding: 0.625rem 1rem;
+        font-size: 0.875rem;
+    }
+
+    /* pill radius */
+    &--type-pill.rtui-button--radius-none {
+        border-radius: 0;
+    }
+
+    &--type-pill.rtui-button--radius-sm {
+        border-radius: 0.25rem;
+    }
+
+    &--type-pill.rtui-button--radius-md {
+        border-radius: 0.5rem;
+    }
+
+    &--type-pill.rtui-button--radius-lg {
+        border-radius: 0.75rem;
+    }
+
+    &--type-pill.rtui-button--radius-full {
+        border-radius: 1.5rem;
+    }
+
+    /* pill variants */
+    &--type-pill.rtui-button--variant-primary {
+        background-color: var(--rt-bg-accent-primary-subtle);
+        color: var(--rt-text-accent-primary);
+
+        &:hover:not(:disabled) {
+            background-color: color-mix(in srgb, var(--rt-bg-accent-primary-subtle) 92%, var(--rt-color-neutral-100));
+        }
+
+        &:active:not(:disabled) {
+            background-color: color-mix(in srgb, var(--rt-bg-accent-primary-subtle) 84%, var(--rt-color-neutral-100));
+        }
+    }
+
+    &--type-pill.rtui-button--variant-danger {
+        background-color: var(--rt-bg-accent-danger-subtle);
+        color: var(--rt-text-accent-danger);
+
+        &:hover:not(:disabled) {
+            background-color: color-mix(in srgb, var(--rt-bg-accent-danger-subtle) 92%, var(--rt-color-neutral-100));
+        }
+
+        &:active:not(:disabled) {
+            background-color: color-mix(in srgb, var(--rt-bg-accent-danger-subtle) 84%, var(--rt-color-neutral-100));
+        }
+    }
+
+    &--type-pill.rtui-button--variant-success {
+        background-color: var(--rt-bg-accent-success-subtle);
+        color: var(--rt-text-accent-success);
+
+        &:hover:not(:disabled) {
+            background-color: color-mix(in srgb, var(--rt-bg-accent-success-subtle) 92%, var(--rt-color-neutral-100));
+        }
+
+        &:active:not(:disabled) {
+            background-color: color-mix(in srgb, var(--rt-bg-accent-success-subtle) 84%, var(--rt-color-neutral-100));
+        }
+    }
+
+    &--type-pill.rtui-button--variant-warning {
+        background-color: var(--rt-bg-accent-warning-subtle);
+        color: var(--rt-text-accent-warning);
+
+        &:hover:not(:disabled) {
+            background-color: color-mix(in srgb, var(--rt-bg-accent-warning-subtle) 92%, var(--rt-color-neutral-100));
+        }
+
+        &:active:not(:disabled) {
+            background-color: color-mix(in srgb, var(--rt-bg-accent-warning-subtle) 84%, var(--rt-color-neutral-100));
+        }
+    }
+
+    &--type-pill.rtui-button--variant-accent {
+        background-color: var(--rt-bg-accent-info-subtle);
+        color: var(--rt-text-accent-info);
+
+        &:hover:not(:disabled) {
+            background-color: color-mix(in srgb, var(--rt-bg-accent-info-subtle) 92%, var(--rt-color-neutral-100));
+        }
+
+        &:active:not(:disabled) {
+            background-color: color-mix(in srgb, var(--rt-bg-accent-info-subtle) 84%, var(--rt-color-neutral-100));
+        }
+    }
+
+    /* pill appearance: text — transparent, borderless inline-text look.
+       Radius is intentionally left to the `--radius-*` modifier (defaults to
+       full) so a text-appearance pill keeps its pill shape. */
+    &--type-pill.rtui-button--appearance-text {
+        min-height: 1.875rem;
+        padding: 0 0.625rem;
+        background-color: transparent;
+        color: var(--mat-sys-on-surface-variant);
+        font-size: 1rem;
+        font-weight: 400;
+
+        &:hover:not(:disabled) {
+            background-color: var(--rt-bg-base-hover);
+        }
+
+        &:active:not(:disabled) {
+            background-color: var(--rt-bg-base-hover);
+        }
+    }
+}
