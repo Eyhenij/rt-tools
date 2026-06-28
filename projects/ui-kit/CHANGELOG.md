@@ -1,3 +1,9 @@
+## [0.0.23](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.22...rt-tools@0.0.23) (2026-06-28)
+
+### Features
+
+- **rt:ui-kit:** add pinned group divider to multi-selector popup ([839675e](https://github.com/Eyhenij/rt-tools/commit/839675e43df665789bb0e3fc1b33184c8c7a9c95)), closes [#207](https://github.com/Eyhenij/rt-tools/issues/207)
+
 ## [Unreleased]
 
 ### Features
