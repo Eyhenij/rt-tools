@@ -3,6 +3,7 @@ import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    computed,
     DestroyRef,
     effect,
     ElementRef,
@@ -145,6 +146,10 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
     public isLocalSearch: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(true, {
         transform: booleanAttribute,
     });
+    /** Keys of a pinned group kept at the top of the list — a trailing divider is drawn after the last visible one */
+    public pinnedKeys: InputSignalWithTransform<ENTITY[KEY][], ENTITY[KEY][]> = input<ENTITY[KEY][], ENTITY[KEY][]>([], {
+        transform: (value: unknown) => transformArrayInput(value),
+    });
 
     /** Send output selected entities ids */
     public readonly submitAction: OutputEmitterRef<ENTITY[KEY][]> = output<ENTITY[KEY][]>();
@@ -175,6 +180,26 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
     public readonly isMultiSelection: WritableSignal<boolean> = signal(true);
     /** Indicates is macOS used */
     public readonly isMacOS: Signal<boolean> = signal(this.#deviceService.getOS() === this.oSTypes.MAC_OS);
+    /** Key of the last visible pinned option — its row gets a trailing divider */
+    public readonly lastSeparatedKey: Signal<Nullable<ENTITY[KEY]>> = computed(() => {
+        const keys: ENTITY[KEY][] = this.pinnedKeys();
+
+        if (!keys.length) {
+            return null;
+        }
+
+        const list: ENTITY[] = this.filteredEntities();
+
+        for (let i: number = list.length - 1; i >= 0; i--) {
+            const key: ENTITY[KEY] = list[i][this.keyExp()];
+
+            if (keys.includes(key)) {
+                return key;
+            }
+        }
+
+        return null;
+    });
 
     public ngOnInit(): void {
         /** Clear previous temp selection  */
