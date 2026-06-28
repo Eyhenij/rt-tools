@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Features
+
+- **rt:ui-kit:** add a pinned-group divider to `rtui-multi-selector-popup` via a `pinnedKeys` input (trailing separator after the pinned options, in both radio and checkbox modes)
+
 ## [0.0.22](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.21...rt-tools@0.0.22) (2026-06-28)
 
 ### Features
