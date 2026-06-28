@@ -16,6 +16,7 @@
 - **rt:ui-kit:** unify all button variants into a single `rtui-button` component (`type` icon/fab/pill, `variant` default/primary/danger/success/warning/accent, `size` xs/sm/md/lg, `radius` none/sm/md/lg/full, `appearance` solid/outline/light/text) with built-in tooltip, loading spinner and icon slots
 - **rt:ui-kit:** add a standalone `rtui-icon` component (Material Symbols Outlined) with `size`, `theme`, `glyph`, `outlined` and `rotate` inputs plus font-load tracking
 - **rt:ui-kit:** add a transparent, borderless `text` appearance for every button colour, with a neutral hover wash via `--rt-bg-base-hover`
+- **rt:ui-kit:** add a Material ripple to `rtui-button` press feedback (disabled while loading/disabled, clipped to the button bounds)
 
 ### Bug Fixes
 

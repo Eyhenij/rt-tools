@@ -1,6 +1,13 @@
 @switch (type()) {
     @case ('pill') {
-        <button type="button" rtBlock="rtui-button" [rtMod]="modifiers()" [disabled]="disabled() || loading()" (click)="onClick()">
+        <button
+            type="button"
+            rtBlock="rtui-button"
+            matRipple
+            [rtMod]="modifiers()"
+            [matRippleDisabled]="disabled() || loading()"
+            [disabled]="disabled() || loading()"
+            (click)="onClick()">
             @if (loading()) {
                 <rtui-spinner rtElem="spinner" [diameter]="spinnerSize()" [showBox]="false" />
             } @else {
@@ -18,7 +25,14 @@
         </button>
     }
     @default {
-        <button type="button" rtBlock="rtui-button" [rtMod]="modifiers()" [disabled]="disabled() || loading()" (click)="onClick()">
+        <button
+            type="button"
+            rtBlock="rtui-button"
+            matRipple
+            [rtMod]="modifiers()"
+            [matRippleDisabled]="disabled() || loading()"
+            [disabled]="disabled() || loading()"
+            (click)="onClick()">
             @if (loading()) {
                 <rtui-spinner rtElem="spinner" [diameter]="spinnerSize()" [showBox]="false" />
             } @else {

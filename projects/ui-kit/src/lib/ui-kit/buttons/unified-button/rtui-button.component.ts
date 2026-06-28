@@ -11,6 +11,7 @@ import {
     input,
     output,
 } from '@angular/core';
+import { MatRipple } from '@angular/material/core';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
@@ -42,6 +43,9 @@ export namespace IRtuiButton {
 
         // components
         RtuiIconComponent,
+
+        // material
+        MatRipple,
     ],
     hostDirectives: [
         {
