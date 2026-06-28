@@ -1,3 +1,9 @@
+## [0.0.22](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.21...rt-tools@0.0.22) (2026-06-28)
+
+### Features
+
+- **rt:ui-kit:** add Material ripple to rtui-button ([04cdae4](https://github.com/Eyhenij/rt-tools/commit/04cdae40e40c401af212b3c6f6e8017b9388e639)), closes [#205](https://github.com/Eyhenij/rt-tools/issues/205)
+
 ## [0.0.21](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.20...rt-tools@0.0.21) (2026-06-26)
 
 ### Bug Fixes
