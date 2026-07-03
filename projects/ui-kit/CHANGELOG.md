@@ -1,3 +1,9 @@
+## [0.0.26](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.25...rt-tools@0.0.26) (2026-07-03)
+
+### Bug Fixes
+
+- **rt:ui-kit:** keep projected button content in the material design branch ([fc21cd2](https://github.com/Eyhenij/rt-tools/commit/fc21cd22130f17f0f3d2fa8316bbdb1b446d26a2))
+
 ## [0.0.25](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.24...rt-tools@0.0.25) (2026-07-03)
 
 ### Features
