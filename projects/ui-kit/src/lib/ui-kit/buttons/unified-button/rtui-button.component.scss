@@ -6,7 +6,8 @@
     display: block;
     width: 100%;
 
-    .rtui-button {
+    .rtui-button,
+    .rtui-button-material {
         width: 100%;
     }
 }
@@ -103,11 +104,11 @@
 
     /* ===================== pill ===================== */
     &--type-pill {
-        gap: 0.375rem;
         border-radius: 1.5rem;
         background-color: var(--mat-sys-surface-container-high);
         color: var(--mat-sys-on-surface-variant);
         font-weight: 500;
+        gap: 0.375rem;
 
         &:hover:not(:disabled) {
             background-color: var(--mat-sys-surface-container-highest);
@@ -245,72 +246,36 @@
             background-color: var(--rt-bg-base-hover);
         }
     }
+}
 
-    /* ===================== design: material =====================
-       Classic Material (M3) look, opted in per instance ([design]="'material'")
-       or app-wide via the RT_UI_CONFIG provider. Renders the pill as an M3
-       filled button; `appearance-text` renders as an M3 text button. Variants
-       map onto the Material theme: `danger` -> error, everything else -> primary
-       (M3 has no success/warning roles). These rules come after the custom-look
-       blocks on purpose: equal-or-higher specificity wins by source order. */
-    &--type-pill.rtui-button--design-material {
-        min-height: 2.5rem;
-        padding: 0 var(--mat-button-filled-horizontal-padding, 1.5rem);
-        border-radius: var(--mat-sys-corner-full, 1.25rem);
-        background-color: var(--mat-sys-primary);
-        color: var(--mat-sys-on-primary);
-        font-size: var(--mat-sys-label-large-size, 0.875rem);
-        font-weight: var(--mat-sys-label-large-weight, 500);
-
-        &:hover:not(:disabled) {
-            background-color: color-mix(in srgb, var(--mat-sys-primary) 92%, var(--mat-sys-on-primary));
-        }
-
-        &:active:not(:disabled) {
-            background-color: color-mix(in srgb, var(--mat-sys-primary) 84%, var(--mat-sys-on-primary));
-        }
+/* ===================== design: material =====================
+   Under `design: 'material'` the pill renders a NATIVE Material button (see the
+   template) whose look is fully owned by the Material theme. The only styling
+   the library adds is the variant mapping: `danger` re-points the button's own
+   theme tokens at the M3 error role (M3 has no success/warning roles, so every
+   other variant keeps the theme primary). */
+.rtui-button-material {
+    rtui-spinner {
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    &--type-pill.rtui-button--design-material.rtui-button--variant-danger {
-        background-color: var(--mat-sys-error);
-        color: var(--mat-sys-on-error);
-
-        &:hover:not(:disabled) {
-            background-color: color-mix(in srgb, var(--mat-sys-error) 92%, var(--mat-sys-on-error));
-        }
-
-        &:active:not(:disabled) {
-            background-color: color-mix(in srgb, var(--mat-sys-error) 84%, var(--mat-sys-on-error));
-        }
-    }
-
-    &--type-pill.rtui-button--design-material.rtui-button--appearance-text {
-        min-height: 2.5rem;
-        padding: 0 var(--mat-button-text-horizontal-padding, 0.75rem);
-        background-color: transparent;
-        color: var(--mat-sys-primary);
-        font-size: var(--mat-sys-label-large-size, 0.875rem);
-        font-weight: var(--mat-sys-label-large-weight, 500);
-
-        &:hover:not(:disabled) {
-            background-color: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent);
-        }
-
-        &:active:not(:disabled) {
-            background-color: color-mix(in srgb, var(--mat-sys-primary) 12%, transparent);
-        }
-    }
-
-    &--type-pill.rtui-button--design-material.rtui-button--variant-danger.rtui-button--appearance-text {
-        background-color: transparent;
-        color: var(--mat-sys-error);
-
-        &:hover:not(:disabled) {
-            background-color: color-mix(in srgb, var(--mat-sys-error) 8%, transparent);
-        }
-
-        &:active:not(:disabled) {
-            background-color: color-mix(in srgb, var(--mat-sys-error) 12%, transparent);
-        }
+    &--danger {
+        --mat-button-filled-container-color: var(--mat-sys-error);
+        --mat-button-filled-label-text-color: var(--mat-sys-on-error);
+        --mat-button-filled-state-layer-color: var(--mat-sys-on-error);
+        --mat-button-filled-ripple-color: color-mix(in srgb, var(--mat-sys-on-error) 12%, transparent);
+        --mat-button-outlined-label-text-color: var(--mat-sys-error);
+        --mat-button-outlined-outline-color: var(--mat-sys-error);
+        --mat-button-outlined-state-layer-color: var(--mat-sys-error);
+        --mat-button-outlined-ripple-color: color-mix(in srgb, var(--mat-sys-error) 12%, transparent);
+        --mat-button-text-label-text-color: var(--mat-sys-error);
+        --mat-button-text-state-layer-color: var(--mat-sys-error);
+        --mat-button-text-ripple-color: color-mix(in srgb, var(--mat-sys-error) 12%, transparent);
+        --mat-button-tonal-container-color: var(--mat-sys-error-container);
+        --mat-button-tonal-label-text-color: var(--mat-sys-on-error-container);
+        --mat-button-tonal-state-layer-color: var(--mat-sys-on-error-container);
+        --mat-button-tonal-ripple-color: color-mix(in srgb, var(--mat-sys-on-error-container) 12%, transparent);
     }
 }

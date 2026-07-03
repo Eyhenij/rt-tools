@@ -1,28 +1,54 @@
 @switch (type()) {
     @case ('pill') {
-        <button
-            type="button"
-            rtBlock="rtui-button"
-            matRipple
-            [rtMod]="modifiers()"
-            [matRippleDisabled]="disabled() || loading()"
-            [disabled]="disabled() || loading()"
-            (click)="onClick()">
-            @if (loading()) {
-                <rtui-spinner rtElem="spinner" [diameter]="spinnerSize()" [showBox]="false" />
-            } @else {
-                @if (icon() && iconPosition() === 'start') {
-                    <rtui-icon rtElem="icon" [glyph]="icon()" [size]="resolvedIconSize()" [outlined]="outlined()" />
+        @if (resolvedDesign() === 'material') {
+            <!-- design: material — a native Material button; its look is owned by the Material theme -->
+            <button
+                type="button"
+                class="rtui-button-material"
+                [matButton]="materialAppearance()"
+                [class.rtui-button-material--danger]="variant() === 'danger'"
+                [disabled]="disabled() || loading()"
+                (click)="onClick()">
+                @if (loading()) {
+                    <rtui-spinner [diameter]="spinnerSize()" [showBox]="false" />
+                } @else {
+                    @if (icon() && iconPosition() === 'start') {
+                        <rtui-icon matButtonIcon [glyph]="icon()" [size]="resolvedIconSize()" [outlined]="outlined()" />
+                    }
+                    @if (text()) {
+                        <span>{{ text() }}</span>
+                    }
+                    <ng-content />
+                    @if (icon() && iconPosition() === 'end') {
+                        <rtui-icon matButtonIcon iconPositionEnd [glyph]="icon()" [size]="resolvedIconSize()" [outlined]="outlined()" />
+                    }
                 }
-                @if (text()) {
-                    <span rtElem="text">{{ text() }}</span>
+            </button>
+        } @else {
+            <button
+                type="button"
+                rtBlock="rtui-button"
+                matRipple
+                [rtMod]="modifiers()"
+                [matRippleDisabled]="disabled() || loading()"
+                [disabled]="disabled() || loading()"
+                (click)="onClick()">
+                @if (loading()) {
+                    <rtui-spinner rtElem="spinner" [diameter]="spinnerSize()" [showBox]="false" />
+                } @else {
+                    @if (icon() && iconPosition() === 'start') {
+                        <rtui-icon rtElem="icon" [glyph]="icon()" [size]="resolvedIconSize()" [outlined]="outlined()" />
+                    }
+                    @if (text()) {
+                        <span rtElem="text">{{ text() }}</span>
+                    }
+                    <ng-content />
+                    @if (icon() && iconPosition() === 'end') {
+                        <rtui-icon rtElem="icon" [glyph]="icon()" [size]="resolvedIconSize()" [outlined]="outlined()" />
+                    }
                 }
-                <ng-content />
-                @if (icon() && iconPosition() === 'end') {
-                    <rtui-icon rtElem="icon" [glyph]="icon()" [size]="resolvedIconSize()" [outlined]="outlined()" />
-                }
-            }
-        </button>
+            </button>
+        }
     }
     @default {
         <button

@@ -6,8 +6,9 @@ import type { RtThemeType } from '../theme/rtui-theme.types';
 /**
  * Design system a control renders with:
  * - `'custom'` — the rt-tools look (design tokens, pill shapes). The default.
- * - `'material'` — the classic Material (M3) look, for apps that have not migrated
- *   their visual language yet or need to match surrounding Material controls.
+ * - `'material'` — the control renders a NATIVE Angular Material component
+ *   (e.g. the button pill becomes a real `matButton`), for apps that have not
+ *   migrated their visual language yet or need to match surrounding Material controls.
  */
 export type RtUiDesign = 'material' | 'custom';
 
