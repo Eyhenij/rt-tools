@@ -1,3 +1,9 @@
+## [0.0.25](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.24...rt-tools@0.0.25) (2026-07-03)
+
+### Features
+
+- **rt:ui-kit:** render the material button design via the native Material button ([2318eba](https://github.com/Eyhenij/rt-tools/commit/2318eba2bc17417c559a2e834321756c8705bb1b))
+
 ## [0.0.24](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.23...rt-tools@0.0.24) (2026-07-03)
 
 ### Features
