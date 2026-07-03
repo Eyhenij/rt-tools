@@ -1,4 +1,5 @@
 import { BooleanInput } from '@angular/cdk/coercion';
+import { NgTemplateOutlet } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
@@ -38,6 +39,9 @@ export namespace IRtuiButton {
     styleUrl: './rtui-button.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        // angular
+        NgTemplateOutlet,
+
         // rt-tools
         BlockDirective,
         ElemDirective,
