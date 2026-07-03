@@ -1,3 +1,9 @@
+## [0.0.24](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.23...rt-tools@0.0.24) (2026-07-03)
+
+### Features
+
+- **rt:ui-kit:** add RT_UI_CONFIG with global/per-component defaults and a material design mode for rtui-button ([7832cc9](https://github.com/Eyhenij/rt-tools/commit/7832cc9a98fb793a8b9bde140653fa6c3835b265))
+
 ## [0.0.23](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.22...rt-tools@0.0.23) (2026-06-28)
 
 ### Features
