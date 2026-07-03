@@ -1,3 +1,9 @@
+<!-- Projected content is declared once and outlet-rendered per design branch: duplicating
+     <ng-content /> across @if branches assigns the projected nodes to the first slot only. -->
+<ng-template #projectedContent>
+    <ng-content />
+</ng-template>
+
 @switch (type()) {
     @case ('pill') {
         @if (resolvedDesign() === 'material') {
@@ -18,7 +24,7 @@
                     @if (text()) {
                         <span>{{ text() }}</span>
                     }
-                    <ng-content />
+                    <ng-container [ngTemplateOutlet]="projectedContent" />
                     @if (icon() && iconPosition() === 'end') {
                         <rtui-icon matButtonIcon iconPositionEnd [glyph]="icon()" [size]="resolvedIconSize()" [outlined]="outlined()" />
                     }
@@ -42,7 +48,7 @@
                     @if (text()) {
                         <span rtElem="text">{{ text() }}</span>
                     }
-                    <ng-content />
+                    <ng-container [ngTemplateOutlet]="projectedContent" />
                     @if (icon() && iconPosition() === 'end') {
                         <rtui-icon rtElem="icon" [glyph]="icon()" [size]="resolvedIconSize()" [outlined]="outlined()" />
                     }

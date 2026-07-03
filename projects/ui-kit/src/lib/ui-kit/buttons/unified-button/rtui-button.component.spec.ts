@@ -1,9 +1,17 @@
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButton } from '@angular/material/button';
 import { By } from '@angular/platform-browser';
 
 import { IRtUiConfig, RT_UI_CONFIG } from '../../config';
 import { RtuiButtonComponent } from './rtui-button.component';
+
+@Component({
+    template: '<rtui-button type="pill">Projected label</rtui-button>',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtuiButtonComponent],
+})
+class ProjectionHostComponent {}
 
 describe('RtuiButtonComponent', () => {
     function setup(config?: IRtUiConfig.Config): ComponentFixture<RtuiButtonComponent> {
@@ -87,6 +95,21 @@ describe('RtuiButtonComponent', () => {
 
         expect(matButton(fixture)).toBeUndefined();
         expect(buttonClasses(fixture).contains('rtui-button--design-custom')).toBe(true);
+    });
+
+    it('renders projected content in both the custom and the material design branches', () => {
+        for (const design of ['custom', 'material'] as const) {
+            TestBed.resetTestingModule();
+            TestBed.configureTestingModule({
+                imports: [ProjectionHostComponent],
+                providers: [{ provide: RT_UI_CONFIG, useValue: { global: { design } } }],
+            });
+            const fixture: ComponentFixture<ProjectionHostComponent> = TestBed.createComponent(ProjectionHostComponent);
+            fixture.detectChanges();
+
+            const button: HTMLButtonElement = (fixture.nativeElement as HTMLElement).querySelector('button')!;
+            expect(button.textContent).toContain('Projected label');
+        }
     });
 
     it('lets explicit size/radius inputs override the config defaults', () => {
