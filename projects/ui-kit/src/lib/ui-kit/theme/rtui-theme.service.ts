@@ -3,6 +3,7 @@ import { effect, inject, Injectable, Signal, signal, WritableSignal } from '@ang
 
 import { LOCAL_STORAGE, PlatformService } from '@rt-tools/core';
 
+import { IRtUiConfig, RT_UI_CONFIG } from '../config';
 import {
     RT_ACCENT_ROLE_ENUM,
     RT_COLOR_SCHEME_STORAGE_KEY,
@@ -36,6 +37,8 @@ export class RtThemeService {
     readonly #platformService: PlatformService = inject(PlatformService);
     // falls back to the native localStorage when the app does not call provideRtStorage()
     readonly #storage: Storage | null = inject(LOCAL_STORAGE, { optional: true }) ?? this.#document.defaultView?.localStorage ?? null;
+    // app-wide defaults (provideRtUi(config)); a persisted user choice always wins over them
+    readonly #config: IRtUiConfig.Config = inject(RT_UI_CONFIG);
 
     readonly #theme: WritableSignal<RtThemeType> = signal<RtThemeType>(this.#restore());
     readonly #colorScheme: WritableSignal<string | null> = signal<string | null>(this.#restoreScheme());
@@ -109,23 +112,27 @@ export class RtThemeService {
     }
 
     #restore(): RtThemeType {
+        const fallback: RtThemeType = this.#config.global?.theme ?? RT_THEME_ENUM.LIGHT;
+
         if (!this.#platformService.isPlatformBrowser || !this.#storage) {
-            return RT_THEME_ENUM.LIGHT;
+            return fallback;
         }
 
         const stored: string | null = this.#storage.getItem(RT_THEME_STORAGE_KEY);
 
-        return Object.values(RT_THEME_ENUM).includes(stored as RT_THEME_ENUM) ? (stored as RtThemeType) : RT_THEME_ENUM.LIGHT;
+        return Object.values(RT_THEME_ENUM).includes(stored as RT_THEME_ENUM) ? (stored as RtThemeType) : fallback;
     }
 
     #restoreScheme(): string | null {
+        const fallback: string | null = this.#config.global?.colorScheme ?? null;
+
         if (!this.#platformService.isPlatformBrowser || !this.#storage) {
-            return null;
+            return fallback;
         }
 
         const stored: string | null = this.#storage.getItem(RT_COLOR_SCHEME_STORAGE_KEY);
 
-        return stored && stored !== RT_DEFAULT_SCHEME ? stored : null;
+        return stored && stored !== RT_DEFAULT_SCHEME ? stored : fallback;
     }
 
     #apply(theme: RtThemeType): void {

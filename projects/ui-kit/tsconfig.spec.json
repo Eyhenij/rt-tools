@@ -14,10 +14,8 @@
             "@rt-tools/store": ["../store/src/index.ts"],
             "@rt-tools/utils": ["../utils/src/index.ts"],
             "@angular/core/testing": ["../../node_modules/@angular/core/types/testing.d.ts"],
-            "@angular/cdk/overlay": ["../../node_modules/@angular/cdk/types/overlay.d.ts"],
-            "@angular/cdk/layout": ["../../node_modules/@angular/cdk/types/layout.d.ts"],
-            "@angular/cdk/coercion": ["../../node_modules/@angular/cdk/types/coercion.d.ts"],
-            "@angular/cdk/portal": ["../../node_modules/@angular/cdk/types/portal.d.ts"]
+            "@angular/cdk/*": ["../../node_modules/@angular/cdk/types/*.d.ts"],
+            "@angular/material/*": ["../../node_modules/@angular/material/types/*.d.ts"]
         }
     },
     "files": ["src/test-setup.ts"],
