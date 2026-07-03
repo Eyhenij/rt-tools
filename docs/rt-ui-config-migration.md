@@ -36,9 +36,12 @@ provideRtUi({
 - `RtThemeService` uses `global.theme` / `global.colorScheme` as the _fallback_ when the user
   has no persisted preference; a persisted choice always wins.
 - `rtui-button` resolves `design`, `size`, `radius`, `appearance` through the chain above.
-  `design: 'material'` renders the pill as an M3 filled button (`--mat-sys-primary`), and
-  `appearance: 'text'` under material as an M3 text button; `variant: 'danger'` maps to the
-  M3 error role. All other variants map to primary (M3 has no success/warning roles).
+  `design: 'material'` renders the pill as a NATIVE Angular Material button (`matButton`) —
+  the Material theme fully owns its look. The rt appearances map onto the native ones:
+  `solid` → `filled` (the default), `outline` → `outlined`, `light` → `tonal`, `text` → `text`.
+  `variant: 'danger'` re-points the button's theme tokens at the M3 error role; all other
+  variants keep the theme primary (M3 has no success/warning roles). `size`/`radius` are
+  custom-design knobs and have no effect under material.
 
 ## Phases
 
@@ -46,7 +49,8 @@ provideRtUi({
 
 - `IRtUiConfig` types, `RT_UI_CONFIG` token, `provideRtUi(config?)` (backward compatible).
 - `rtui-button`: new `design` input (`'material' | 'custom'`, default `'custom'`),
-  config-resolved `size`/`radius`/`appearance`, `--design-*` BEM modifier, M3 style block.
+  config-resolved `size`/`radius`/`appearance`; under material the pill template renders
+  a native `matButton` instead of the custom-styled button.
 - `RtThemeService`: config-driven initial theme / color scheme.
 
 ### Phase 1 — migrate composite-component footers onto `rtui-button`

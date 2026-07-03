@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatButton } from '@angular/material/button';
+import { By } from '@angular/platform-browser';
 
 import { IRtUiConfig, RT_UI_CONFIG } from '../../config';
 import { RtuiButtonComponent } from './rtui-button.component';
@@ -21,30 +23,48 @@ describe('RtuiButtonComponent', () => {
         return (fixture.nativeElement as HTMLElement).querySelector('button')!.classList;
     }
 
+    function matButton(fixture: ComponentFixture<RtuiButtonComponent>): MatButton | undefined {
+        return fixture.debugElement.query(By.directive(MatButton))?.componentInstance as MatButton | undefined;
+    }
+
     it('defaults to the custom design, md size and full radius without any config', () => {
         const fixture: ComponentFixture<RtuiButtonComponent> = setup();
         const classes: DOMTokenList = buttonClasses(fixture);
 
+        expect(matButton(fixture)).toBeUndefined();
         expect(classes.contains('rtui-button--design-custom')).toBe(true);
         expect(classes.contains('rtui-button--size-md')).toBe(true);
         expect(classes.contains('rtui-button--radius-full')).toBe(true);
     });
 
-    it('applies component-level config defaults (design, size, appearance)', () => {
+    it('renders a native Material button with the mapped appearance under a component-level material design', () => {
         const fixture: ComponentFixture<RtuiButtonComponent> = setup({
-            components: { button: { design: 'material', size: 'lg', appearance: 'text' } },
+            components: { button: { design: 'material', appearance: 'text' } },
         });
-        const classes: DOMTokenList = buttonClasses(fixture);
 
-        expect(classes.contains('rtui-button--design-material')).toBe(true);
-        expect(classes.contains('rtui-button--size-lg')).toBe(true);
-        expect(classes.contains('rtui-button--appearance-text')).toBe(true);
+        expect(buttonClasses(fixture).contains('rtui-button-material')).toBe(true);
+        expect(matButton(fixture)?.appearance).toBe('text');
+    });
+
+    it('maps the appearance onto the native Material appearances (solid -> filled by default)', () => {
+        const fixture: ComponentFixture<RtuiButtonComponent> = setup({ global: { design: 'material' } });
+
+        expect(matButton(fixture)?.appearance).toBe('filled');
+
+        fixture.componentRef.setInput('appearance', 'outline');
+        fixture.detectChanges();
+        expect(matButton(fixture)?.appearance).toBe('outlined');
+
+        fixture.componentRef.setInput('appearance', 'light');
+        fixture.detectChanges();
+        expect(matButton(fixture)?.appearance).toBe('tonal');
     });
 
     it('falls back to the global design when the button entry does not set one', () => {
         const fixture: ComponentFixture<RtuiButtonComponent> = setup({ global: { design: 'material' } });
 
-        expect(buttonClasses(fixture).contains('rtui-button--design-material')).toBe(true);
+        expect(matButton(fixture)).toBeDefined();
+        expect(buttonClasses(fixture).contains('rtui-button-material')).toBe(true);
     });
 
     it('prefers the component entry over the global default', () => {
@@ -53,6 +73,7 @@ describe('RtuiButtonComponent', () => {
             components: { button: { design: 'custom' } },
         });
 
+        expect(matButton(fixture)).toBeUndefined();
         expect(buttonClasses(fixture).contains('rtui-button--design-custom')).toBe(true);
     });
 
@@ -64,6 +85,7 @@ describe('RtuiButtonComponent', () => {
         fixture.componentRef.setInput('design', 'custom');
         fixture.detectChanges();
 
+        expect(matButton(fixture)).toBeUndefined();
         expect(buttonClasses(fixture).contains('rtui-button--design-custom')).toBe(true);
     });
 
