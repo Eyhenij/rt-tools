@@ -8,6 +8,7 @@ import {
     Signal,
     booleanAttribute,
     computed,
+    inject,
     input,
     output,
 } from '@angular/core';
@@ -17,6 +18,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { transformStringInput } from '@rt-tools/utils';
 
+import { IRtUiConfig, RT_UI_CONFIG, RtUiDesign } from '../../config';
 import { RtuiIconComponent, RtuiIconSizeType } from '../../icon';
 import { RtuiSpinnerComponent } from '../../spinner';
 
@@ -63,6 +65,19 @@ export namespace IRtuiButton {
     },
 })
 export class RtuiButtonComponent {
+    /** App-wide defaults; the resolution order is: instance input → `components.button` → `global` → library default. */
+    readonly #config: IRtUiConfig.Config = inject(RT_UI_CONFIG);
+    readonly #buttonConfig: IRtUiConfig.Button | undefined = this.#config.components?.button;
+
+    /** Design system the button renders with — see {@link RtUiDesign}. */
+    protected readonly resolvedDesign: Signal<RtUiDesign> = computed(
+        () => this.design() ?? this.#buttonConfig?.design ?? this.#config.global?.design ?? 'custom'
+    );
+    protected readonly resolvedSize: Signal<IRtuiButton.Size> = computed(() => this.size() ?? this.#buttonConfig?.size ?? 'md');
+    protected readonly resolvedRadius: Signal<IRtuiButton.Radius> = computed(() => this.radius() ?? this.#buttonConfig?.radius ?? 'full');
+    protected readonly resolvedAppearance: Signal<IRtuiButton.Appearance | undefined> = computed(
+        () => this.appearance() ?? this.#buttonConfig?.appearance
+    );
     protected readonly resolvedIconSize: Signal<RtuiIconSizeType> = computed(() => {
         const iconSize: RtuiIconSizeType | undefined = this.iconSize();
 
@@ -76,7 +91,7 @@ export class RtuiButtonComponent {
             md: 'sm',
             lg: 'md',
         };
-        return sizeMap[this.size()];
+        return sizeMap[this.resolvedSize()];
     });
     protected readonly spinnerSize: Signal<number> = computed(() => {
         const sizeMap: Record<IRtuiButton.Size, number> = {
@@ -85,23 +100,25 @@ export class RtuiButtonComponent {
             md: 20,
             lg: 24,
         };
-        return this.spinnerDiameter() ?? sizeMap[this.size()];
+        return this.spinnerDiameter() ?? sizeMap[this.resolvedSize()];
     });
     protected readonly modifiers: Signal<Record<string, boolean>> = computed(() => ({
         [`type-${this.type()}`]: true,
+        [`design-${this.resolvedDesign()}`]: true,
         [`variant-${this.variant()}`]: true,
-        [`size-${this.size()}`]: true,
-        [`radius-${this.radius()}`]: true,
-        [`appearance-${this.appearance()}`]: !!this.appearance(),
+        [`size-${this.resolvedSize()}`]: true,
+        [`radius-${this.resolvedRadius()}`]: true,
+        [`appearance-${this.resolvedAppearance()}`]: !!this.resolvedAppearance(),
         loading: this.loading(),
         disabled: this.disabled(),
     }));
 
     public readonly type: InputSignal<IRtuiButton.Type> = input<IRtuiButton.Type>('icon');
+    public readonly design: InputSignal<RtUiDesign | undefined> = input<RtUiDesign>();
     public readonly variant: InputSignal<IRtuiButton.Variant> = input<IRtuiButton.Variant>('default');
     public readonly appearance: InputSignal<IRtuiButton.Appearance | undefined> = input<IRtuiButton.Appearance>();
-    public readonly size: InputSignal<IRtuiButton.Size> = input<IRtuiButton.Size>('md');
-    public readonly radius: InputSignal<IRtuiButton.Radius> = input<IRtuiButton.Radius>('full');
+    public readonly size: InputSignal<IRtuiButton.Size | undefined> = input<IRtuiButton.Size>();
+    public readonly radius: InputSignal<IRtuiButton.Radius | undefined> = input<IRtuiButton.Radius>();
     public readonly icon: InputSignalWithTransform<string, unknown> = input<string, unknown>('', { transform: transformStringInput });
     public readonly iconPosition: InputSignal<IRtuiButton.IconPosition> = input<IRtuiButton.IconPosition>('start');
     public readonly iconSize: InputSignal<RtuiIconSizeType | undefined> = input<RtuiIconSizeType>();
