@@ -21,9 +21,7 @@ export default {
         'jest-preset-angular/build/serializers/html-comment',
     ],
     moduleNameMapper: {
-        '^@angular/cdk/overlay$': '<rootDir>/../../node_modules/@angular/cdk/fesm2022/overlay.mjs',
-        '^@angular/cdk/layout$': '<rootDir>/../../node_modules/@angular/cdk/fesm2022/layout.mjs',
-        '^@angular/cdk/coercion$': '<rootDir>/../../node_modules/@angular/cdk/fesm2022/coercion.mjs',
-        '^@angular/cdk/portal$': '<rootDir>/../../node_modules/@angular/cdk/fesm2022/portal.mjs',
+        '^@angular/cdk/([\\w-]+)$': '<rootDir>/../../node_modules/@angular/cdk/fesm2022/$1.mjs',
+        '^@angular/material/([\\w-]+)$': '<rootDir>/../../node_modules/@angular/material/fesm2022/$1.mjs',
     },
 };
