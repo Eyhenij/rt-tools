@@ -12,6 +12,7 @@ import {
     input,
     output,
 } from '@angular/core';
+import { MatButton, MatButtonAppearance } from '@angular/material/button';
 import { MatRipple } from '@angular/material/core';
 import { MatTooltip } from '@angular/material/tooltip';
 
@@ -47,6 +48,7 @@ export namespace IRtuiButton {
         RtuiIconComponent,
 
         // material
+        MatButton,
         MatRipple,
     ],
     hostDirectives: [
@@ -78,6 +80,16 @@ export class RtuiButtonComponent {
     protected readonly resolvedAppearance: Signal<IRtuiButton.Appearance | undefined> = computed(
         () => this.appearance() ?? this.#buttonConfig?.appearance
     );
+    /** Native Material button appearance the pill renders with under `design: 'material'`. */
+    protected readonly materialAppearance: Signal<MatButtonAppearance> = computed(() => {
+        const appearanceMap: Record<IRtuiButton.Appearance, MatButtonAppearance> = {
+            solid: 'filled',
+            outline: 'outlined',
+            light: 'tonal',
+            text: 'text',
+        };
+        return appearanceMap[this.resolvedAppearance() ?? 'solid'];
+    });
     protected readonly resolvedIconSize: Signal<RtuiIconSizeType> = computed(() => {
         const iconSize: RtuiIconSizeType | undefined = this.iconSize();
 
