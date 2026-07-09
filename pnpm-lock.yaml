@@ -336,8 +336,8 @@ importers:
                 specifier: ^0.0.6
                 version: 0.0.6(@angular/common@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(@rt-tools/core@0.0.5(@angular/common@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(rxjs@7.8.2)
             '@rt-tools/utils':
-                specifier: ^0.0.6
-                version: 0.0.6(db7f78b119ba60c41c64ee8863031787)
+                specifier: ^0.0.7
+                version: 0.0.7(db7f78b119ba60c41c64ee8863031787)
             rxjs:
                 specifier: ^7.8.2
                 version: 7.8.2
@@ -3743,15 +3743,15 @@ packages:
             '@rt-tools/core': ^0.0.5
             rxjs: ^7.8.0
 
-    '@rt-tools/utils@0.0.6':
-        resolution: { integrity: sha512-yFHCsf3c7ekc71jb0et60MrB6jQ7jeTEq6UMRH0mkNg7L66Ru3xJjwBEEVGD+RmPNvwbnFcSGSZFVcJApfuPfQ== }
+    '@rt-tools/utils@0.0.7':
+        resolution: { integrity: sha512-Q1BKeNwBcanwXTSZVQEv0QRfNAXwAypKc81CGWC9ESux1tZYL5I0yxcoxM9uINVgrsqBzf06zLkWbPFyzTw/kw== }
         peerDependencies:
-            '@angular/cdk': ^21.0.0
-            '@angular/common': ^21.0.0
-            '@angular/core': ^21.0.0
-            '@angular/forms': ^21.0.0
-            '@angular/platform-browser': ^21.0.0
-            '@rt-tools/core': ^0.0.3
+            '@angular/cdk': ^22.0.0
+            '@angular/common': ^22.0.0
+            '@angular/core': ^22.0.0
+            '@angular/forms': ^22.0.0
+            '@angular/platform-browser': ^22.0.0
+            '@rt-tools/core': ^0.0.5
             rxjs: ^7.8.0
 
     '@rtsao/scc@1.1.0':
@@ -15609,7 +15609,7 @@ snapshots:
             rxjs: 7.8.2
             tslib: 2.8.1
 
-    '@rt-tools/utils@0.0.6(db7f78b119ba60c41c64ee8863031787)':
+    '@rt-tools/utils@0.0.7(db7f78b119ba60c41c64ee8863031787)':
         dependencies:
             '@angular/cdk': 22.0.3(@angular/common@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(@angular/platform-browser@22.0.5(@angular/animations@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2)))(@angular/common@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2)))(rxjs@7.8.2)
             '@angular/common': 22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2)

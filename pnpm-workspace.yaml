@@ -14,3 +14,4 @@ allowBuilds:
 minimumReleaseAgeExclude:
     - '@rt-tools/core@0.0.5'
     - '@rt-tools/store@0.0.6'
+    - '@rt-tools/utils@0.0.7'
