@@ -11,3 +11,5 @@ allowBuilds:
     msgpackr-extract: true
     nx: true
     unrs-resolver: true
+minimumReleaseAgeExclude:
+    - '@rt-tools/core@0.0.5'
