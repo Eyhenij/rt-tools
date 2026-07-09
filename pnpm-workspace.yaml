@@ -2,8 +2,11 @@ packages:
     - apps/**
     - libs/**
     - projects/**
-onlyBuiltDependencies:
-    - '@swc/core'
-    - esbuild
-    - lmdb
-    - nx
+allowBuilds:
+    '@parcel/watcher': true
+    '@swc/core': true
+    esbuild: true
+    lmdb: true
+    msgpackr-extract: true
+    nx: true
+    unrs-resolver: true
