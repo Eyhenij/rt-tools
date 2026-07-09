@@ -11,3 +11,5 @@ tsconfig.spec.json
 angular.json
 
 .angular
+
+.nx/self-healing

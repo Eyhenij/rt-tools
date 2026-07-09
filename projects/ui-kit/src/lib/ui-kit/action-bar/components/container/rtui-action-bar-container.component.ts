@@ -1,5 +1,5 @@
 import { animate, keyframes, state, style, transition, trigger } from '@angular/animations';
-import { Component, inject, Signal } from '@angular/core';
+import { Component, inject, Signal, ChangeDetectionStrategy } from '@angular/core';
 
 import { IRtActionBar } from '../../action-bar-config.interface';
 import { RtActionBarService } from '../../rt-action-bar.service';
@@ -10,6 +10,7 @@ import { RtuiActionBarComponent } from '../bar/rtui-action-bar.component';
     templateUrl: 'rtui-action-bar-container.component.html',
     styleUrls: ['rtui-action-bar-container.component.scss'],
     imports: [RtuiActionBarComponent],
+    changeDetection: ChangeDetectionStrategy.Eager,
     animations: [
         trigger('barState', [
             state('opened', style({ transform: 'translateY(0)' })),

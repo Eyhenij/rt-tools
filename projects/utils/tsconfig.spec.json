@@ -2,10 +2,10 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "module": "commonjs",
+    "module": "preserve",
     "target": "es2016",
     "types": ["jest", "node"],
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "baseUrl": ".",
     "paths": {
       "@rt-tools/core": ["../core/src/index.ts"],
@@ -13,8 +13,18 @@
       "@angular/cdk/*": ["../../node_modules/@angular/cdk/types/*.d.ts"],
       "@angular/core/testing": ["../../node_modules/@angular/core/types/testing.d.ts"],
       "@angular/platform-browser/testing": ["../../node_modules/@angular/platform-browser/types/testing.d.ts"]
-    }
+    },
+    "isolatedModules": true,
+    "rootDir": ".."
   },
   "files": ["src/test-setup.ts"],
-  "include": ["jest.config.ts", "src/**/*.test.ts", "src/**/*.spec.ts", "src/**/*.d.ts"]
+  "include": ["jest.config.ts", "src/**/*.test.ts", "src/**/*.spec.ts", "src/**/*.d.ts"],
+  "angularCompilerOptions": {
+    "extendedDiagnostics": {
+      "checks": {
+        "nullishCoalescingNotNullable": "suppress",
+        "optionalChainNotNullable": "suppress"
+      }
+    }
+  }
 }

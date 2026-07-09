@@ -1,4 +1,15 @@
-import { Component, computed, DestroyRef, effect, inject, Injector, OnInit, Signal, viewChild } from '@angular/core';
+import {
+    Component,
+    computed,
+    DestroyRef,
+    effect,
+    inject,
+    Injector,
+    OnInit,
+    Signal,
+    viewChild,
+    ChangeDetectionStrategy,
+} from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatIconButton, MatMiniFabButton } from '@angular/material/button';
@@ -57,6 +68,7 @@ import { RtuiStopTableRowClickDirective } from '../../directives';
         RtDynamicListSelectorsDirective,
         RtuiStopTableRowClickDirective,
     ],
+    changeDetection: ChangeDetectionStrategy.Eager,
     providers: [IDBStorageService, RtTableConfigService, RtActionBarService, PlatformService],
 })
 export default class TestDynamicListComponent implements OnInit {
