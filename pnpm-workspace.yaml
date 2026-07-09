@@ -2,6 +2,7 @@ packages:
     - apps/**
     - libs/**
     - projects/**
+verifyDepsBeforeRun: false
 allowBuilds:
     '@parcel/watcher': true
     '@swc/core': true
