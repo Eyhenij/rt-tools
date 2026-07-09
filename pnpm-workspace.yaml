@@ -13,3 +13,4 @@ allowBuilds:
     unrs-resolver: true
 minimumReleaseAgeExclude:
     - '@rt-tools/core@0.0.5'
+    - '@rt-tools/store@0.0.6'
