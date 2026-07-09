@@ -29,7 +29,9 @@
       "@rt-tools/store": ["projects/store/src/index.ts"],
       "@rt-tools/utils": ["projects/utils/src/index.ts"],
       "@rt-tools/ui-kit": ["projects/ui-kit/src/public-api.ts"]
-    }
+    },
+    "noUncheckedSideEffectImports": false,
+    "ignoreDeprecations": "6.0"
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

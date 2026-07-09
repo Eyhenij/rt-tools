@@ -4,4 +4,6 @@ packages:
     - projects/**
 onlyBuiltDependencies:
     - '@swc/core'
+    - esbuild
+    - lmdb
     - nx

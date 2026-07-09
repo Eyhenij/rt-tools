@@ -3,7 +3,7 @@ import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { PortalModule } from '@angular/cdk/portal';
 import { AsyncPipe } from '@angular/common';
-import { Component, HostBinding, inject, Injector, ViewEncapsulation } from '@angular/core';
+import { Component, HostBinding, inject, Injector, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -15,6 +15,7 @@ import { ASIDE_REF, AsidePositions, AsideRef } from '../../aside.types';
     styleUrls: ['./aside-panel.component.scss'],
     encapsulation: ViewEncapsulation.None,
     imports: [AsyncPipe, PortalModule],
+    changeDetection: ChangeDetectionStrategy.Eager,
     animations: [
         trigger('aside', [
             state('enter-left', style({ transform: 'none' })),
