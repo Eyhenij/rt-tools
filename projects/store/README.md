@@ -1,6 +1,11 @@
 # @rt-tools/store
 
-Signal-based state management for Angular with Redux DevTools support.
+[![npm](https://img.shields.io/npm/v/@rt-tools/store?color=c00)](https://www.npmjs.com/package/@rt-tools/store)
+[![Angular](https://img.shields.io/badge/Angular-22%2B-dd0031?logo=angular&logoColor=white)](https://angular.dev)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/Eyhenij/rt-tools/blob/main/LICENSE)
+
+Signal-based state management for Angular with a message bus and Redux DevTools support. Part of
+the [rt-tools](https://github.com/Eyhenij/rt-tools) workspace.
 
 ## Installation
 
@@ -108,10 +113,10 @@ super(INITIAL_STATE, {
 
 ## Requirements
 
-- Angular 21+
-- @rt-tools/core ^0.0.1
-- RxJS 7.8+
+- Angular `^22.0.0`
+- `@rt-tools/core` `^0.0.5`
+- RxJS `^7.8.0`
 
 ## License
 
-Apache-2.0
+[Apache-2.0](https://github.com/Eyhenij/rt-tools/blob/main/LICENSE) © Yauheni Krumin

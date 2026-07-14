@@ -2,16 +2,16 @@
   "name": "@rt-tools/utils",
   "version": "0.0.7",
   "description": "Utility functions, pipes, directives, validators and services for Angular applications",
-  "author": "RT Team",
+  "author": "Yauheni Krumin",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nickmdf/rt-tools.git",
+    "url": "https://github.com/Eyhenij/rt-tools",
     "directory": "projects/utils"
   },
-  "homepage": "https://github.com/nickmdf/rt-tools/tree/main/projects/utils",
+  "homepage": "https://github.com/Eyhenij/rt-tools/tree/main/projects/utils",
   "bugs": {
-    "url": "https://github.com/nickmdf/rt-tools/issues"
+    "url": "https://github.com/Eyhenij/rt-tools/issues"
   },
   "keywords": [
     "angular",
