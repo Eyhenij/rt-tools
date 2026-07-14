@@ -1,3 +1,5 @@
+## [0.0.8](https://github.com/Eyhenij/rt-tools/compare/rt-utils@0.0.7...rt-utils@0.0.8) (2026-07-14)
+
 ## [0.0.7](https://github.com/nickmdf/rt-tools/compare/rt-utils@0.0.6...rt-utils@0.0.7) (2026-07-09)
 
 ## 0.0.6 (2026-04-26)
