@@ -1,3 +1,5 @@
+## [0.0.7](https://github.com/Eyhenij/rt-tools/compare/rt-store@0.0.6...rt-store@0.0.7) (2026-07-14)
+
 ## [0.0.6](https://github.com/Eyhenij/rt-tools/compare/rt-store@0.0.5...rt-store@0.0.6) (2026-07-09)
 
 ## 0.0.5 (2026-06-26)
