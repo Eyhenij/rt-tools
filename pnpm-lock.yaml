@@ -333,8 +333,8 @@ importers:
                 specifier: ^0.0.6
                 version: 0.0.6(@angular/common@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2)
             '@rt-tools/store':
-                specifier: ^0.0.6
-                version: 0.0.6(@angular/common@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(@rt-tools/core@0.0.6(@angular/common@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(rxjs@7.8.2)
+                specifier: ^0.0.7
+                version: 0.0.7(@angular/common@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(@rt-tools/core@0.0.6(@angular/common@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(rxjs@7.8.2)
             '@rt-tools/utils':
                 specifier: ^0.0.7
                 version: 0.0.7(dd7b3e3de741c3105e1344659ffc6237)
@@ -3735,12 +3735,12 @@ packages:
             '@angular/core': ^22.0.0
             rxjs: ^7.8.0
 
-    '@rt-tools/store@0.0.6':
-        resolution: { integrity: sha512-la8nIbFF3MccCAzFscCYVIbi8bbCqCiK1/xPbTWzW92T7E8lcj8gRq9VsoPDTOQ+DULtZVLKG+k8BtNGDHChGw== }
+    '@rt-tools/store@0.0.7':
+        resolution: { integrity: sha512-U2S52CQ6wfblzXYGtuY/IhSidVgN72y1ULxPgsfVWdYsGQmEYFZAA0cuU0TCRGY710njj0cvPM0pLAk6OTvbcw== }
         peerDependencies:
             '@angular/common': ^22.0.0
             '@angular/core': ^22.0.0
-            '@rt-tools/core': ^0.0.5
+            '@rt-tools/core': ^0.0.6
             rxjs: ^7.8.0
 
     '@rt-tools/utils@0.0.7':
@@ -15601,7 +15601,7 @@ snapshots:
             rxjs: 7.8.2
             tslib: 2.8.1
 
-    '@rt-tools/store@0.0.6(@angular/common@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(@rt-tools/core@0.0.6(@angular/common@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(rxjs@7.8.2)':
+    '@rt-tools/store@0.0.7(@angular/common@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(@rt-tools/core@0.0.6(@angular/common@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(rxjs@7.8.2)':
         dependencies:
             '@angular/common': 22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2)
             '@angular/core': 22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2)
