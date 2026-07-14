@@ -22,10 +22,10 @@
     "services"
   ],
   "dependencies": {
-    "@rt-tools/core": "^0.0.5"
+    "@rt-tools/core": "^0.0.6"
   },
   "peerDependencies": {
-    "@rt-tools/core": "^0.0.5",
+    "@rt-tools/core": "^0.0.6",
     "@angular/common": "^22.0.0",
     "@angular/core": "^22.0.0",
     "@angular/forms": "^22.0.0",
