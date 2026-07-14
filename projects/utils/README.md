@@ -1,6 +1,11 @@
 # @rt-tools/utils
 
-Utility functions, pipes, directives, validators and services for Angular applications.
+[![npm](https://img.shields.io/npm/v/@rt-tools/utils?color=c00)](https://www.npmjs.com/package/@rt-tools/utils)
+[![Angular](https://img.shields.io/badge/Angular-22%2B-dd0031?logo=angular&logoColor=white)](https://angular.dev)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/Eyhenij/rt-tools/blob/main/LICENSE)
+
+Utility functions, pipes, directives, validators, and services for Angular applications. Part of
+the [rt-tools](https://github.com/Eyhenij/rt-tools) workspace.
 
 ## Installation
 
@@ -90,10 +95,10 @@ bootstrapApplication(RootComponent, {
 
 ## Requirements
 
-- Angular 21+
-- @rt-tools/core ^0.0.1
-- RxJS 7.8+
+- Angular `^22.0.0`
+- `@rt-tools/core` `^0.0.5`
+- RxJS `^7.8.0`
 
 ## License
 
-Apache-2.0
+[Apache-2.0](https://github.com/Eyhenij/rt-tools/blob/main/LICENSE) © Yauheni Krumin

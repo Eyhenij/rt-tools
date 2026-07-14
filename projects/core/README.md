@@ -1,6 +1,12 @@
 # @rt-tools/core
 
-Core utilities for Angular applications.
+[![npm](https://img.shields.io/npm/v/@rt-tools/core?color=c00)](https://www.npmjs.com/package/@rt-tools/core)
+[![Angular](https://img.shields.io/badge/Angular-22%2B-dd0031?logo=angular&logoColor=white)](https://angular.dev)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/Eyhenij/rt-tools/blob/main/LICENSE)
+
+The shared foundation of the [rt-tools](https://github.com/Eyhenij/rt-tools) workspace: framework
+primitives used by `@rt-tools/store`, `@rt-tools/utils`, and `@rt-tools/ui-kit` — a `MessageBus`,
+a `PlatformService`, the `WINDOW` injection token, and type guards.
 
 ## Installation
 
@@ -76,9 +82,9 @@ export class MyComponent {
 
 ## Requirements
 
-- Angular 21+
-- RxJS 7.8+
+- Angular `^22.0.0`
+- RxJS `^7.8.0`
 
 ## License
 
-Apache-2.0
+[Apache-2.0](https://github.com/Eyhenij/rt-tools/blob/main/LICENSE) © Yauheni Krumin
