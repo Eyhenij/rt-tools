@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Features
+
+- **rt:ui-kit:** `RtHideTooltipDirective` now ships from this package (`lib/ui-kit/tooltip`), alongside the components that use it
+
 ## [0.0.28](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.26...rt-tools@0.0.28) (2026-07-14)
 
 ## [0.0.27](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.26...rt-tools@0.0.27) (2026-07-14)
