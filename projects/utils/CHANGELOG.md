@@ -1,3 +1,13 @@
+## [Unreleased]
+
+### Bug Fixes
+
+- **rt:utils:** stop pulling `@angular/material/tooltip` into the bundle — the package now imports only what its peer list declares, so consumers without Angular Material can build again
+
+### BREAKING CHANGES
+
+- **rt:utils:** `RtHideTooltipDirective` no longer ships from `@rt-tools/utils`; it moved to `@rt-tools/ui-kit`, where Material is already a peer dependency. Import it from `@rt-tools/ui-kit` instead
+
 ## [0.0.7](https://github.com/nickmdf/rt-tools/compare/rt-utils@0.0.6...rt-utils@0.0.7) (2026-07-09)
 
 ## 0.0.6 (2026-04-26)
