@@ -22,7 +22,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective, ModDirective, Nullable } from '@rt-tools/core';
-import { BreakStringPipe, EntityToStringPipe, RtHideTooltipDirective, RtIconOutlinedDirective, transformArrayInput } from '@rt-tools/utils';
+import { BreakStringPipe, EntityToStringPipe, RtIconOutlinedDirective, transformArrayInput } from '@rt-tools/utils';
+import { RtHideTooltipDirective } from '../../../tooltip';
 import { BooleanInput } from '@angular/cdk/coercion';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormField, MatInput } from '@angular/material/input';
