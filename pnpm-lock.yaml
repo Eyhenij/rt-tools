@@ -336,8 +336,8 @@ importers:
                 specifier: ^0.0.6
                 version: 0.0.6(@angular/common@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(@rt-tools/core@0.0.5(@angular/common@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(rxjs@7.8.2)
             '@rt-tools/utils':
-                specifier: ^0.0.7
-                version: 0.0.7(db7f78b119ba60c41c64ee8863031787)
+                specifier: ^0.0.9
+                version: 0.0.9(db7f78b119ba60c41c64ee8863031787)
             rxjs:
                 specifier: ^7.8.2
                 version: 7.8.2
@@ -3743,8 +3743,8 @@ packages:
             '@rt-tools/core': ^0.0.5
             rxjs: ^7.8.0
 
-    '@rt-tools/utils@0.0.7':
-        resolution: { integrity: sha512-Q1BKeNwBcanwXTSZVQEv0QRfNAXwAypKc81CGWC9ESux1tZYL5I0yxcoxM9uINVgrsqBzf06zLkWbPFyzTw/kw== }
+    '@rt-tools/utils@0.0.9':
+        resolution: { integrity: sha512-DMX6VNdFvQW01iTURqX00YFfEuPbHMfZSloqATTU1/4NkecemA+R0cFzWuMKm42bW9dR8I39j+L3cYejDiKedQ== }
         peerDependencies:
             '@angular/cdk': ^22.0.0
             '@angular/common': ^22.0.0
@@ -15609,7 +15609,7 @@ snapshots:
             rxjs: 7.8.2
             tslib: 2.8.1
 
-    '@rt-tools/utils@0.0.7(db7f78b119ba60c41c64ee8863031787)':
+    '@rt-tools/utils@0.0.9(db7f78b119ba60c41c64ee8863031787)':
         dependencies:
             '@angular/cdk': 22.0.3(@angular/common@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(@angular/platform-browser@22.0.5(@angular/animations@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2)))(@angular/common@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2)))(rxjs@7.8.2)
             '@angular/common': 22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2)
