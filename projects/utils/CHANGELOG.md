@@ -1,3 +1,5 @@
+## [0.0.9](https://github.com/nickmdf/rt-tools/compare/rt-utils@0.0.7...rt-utils@0.0.9) (2026-07-28)
+
 ## [Unreleased]
 
 ### Bug Fixes
