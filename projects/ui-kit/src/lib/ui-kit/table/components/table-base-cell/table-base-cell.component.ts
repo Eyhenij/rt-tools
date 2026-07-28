@@ -21,7 +21,8 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 import { BlockDirective, ElemDirective, ModDirective, Nullable } from '@rt-tools/core';
-import { EmptyToDashPipe, isNumber, isString, RtHideTooltipDirective, RtIconOutlinedDirective } from '@rt-tools/utils';
+import { EmptyToDashPipe, isNumber, isString, RtIconOutlinedDirective } from '@rt-tools/utils';
+import { RtHideTooltipDirective } from '../../../tooltip';
 import { ITable } from '../../util/table-column.interface';
 
 @Component({
