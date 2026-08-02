@@ -2,14 +2,19 @@ version: 2
 
 updates:
     # npm: security patches only. Everything vulnerable here lives in the dev/build
-    # graph, so a single grouped PR per week is enough noise. Version updates are
-    # left out on purpose — the Angular/Nx versions are pinned deliberately.
+    # graph, so a single grouped PR per week is enough noise.
+    #
+    # `open-pull-requests-limit: 0` is what suppresses version updates — registering an
+    # ecosystem turns them on, and the `groups` block below only decides how security PRs
+    # are batched. The limit does not apply to security PRs, so those still come through.
+    # Version updates stay off on purpose: the Angular and Nx versions here are pinned by
+    # hand and a lone bump desyncs one package from the rest of its family.
     - package-ecosystem: npm
       directory: /
       schedule:
           interval: weekly
           day: monday
-      open-pull-requests-limit: 5
+      open-pull-requests-limit: 0
       commit-message:
           prefix: chore
           include: scope
