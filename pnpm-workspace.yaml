@@ -34,6 +34,6 @@ overrides:
   websocket-driver: '^0.7.5'
   ws: '^8.21.1'
 minimumReleaseAgeExclude:
-  - '@rt-tools/core@0.0.5 || 0.1.0 || 0.2.0 || 0.3.0'
+  - '@rt-tools/core@0.0.5 || 0.1.0 || 0.2.0 || 0.3.0 || 0.3.1'
   - '@rt-tools/store@0.0.6 || 0.0.8 || 0.1.0 || 0.2.0 || 0.3.0'
   - '@rt-tools/utils@0.0.7 || 0.0.9 || 0.1.0 || 0.1.1 || 0.2.0 || 0.3.0 || 0.3.1'
