@@ -1,7 +1,7 @@
-import { isNil } from '@rt-tools/core';
 import { isEmptyArray } from './is-empty-array';
 import { isEmptyObject } from './is-empty-object';
 import { isEmptyString } from './is-empty-string';
+import { isNil } from './is-nil';
 import { isObject } from './is-object';
 import { isString } from './is-string';
 
