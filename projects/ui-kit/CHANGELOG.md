@@ -1,4 +1,4 @@
-## [Unreleased]
+# [0.2.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.1.0...rt-tools@0.2.0) (2026-08-02)
 
 ### Features
 
