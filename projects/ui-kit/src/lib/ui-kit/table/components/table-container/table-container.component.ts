@@ -34,8 +34,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
 
 import { BlockDirective, ElemDirective, ModDirective, PlatformService, WINDOW } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
-import { isString, PageModel, transformStringInput } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
+import { isString, IPageModel, transformStringInput } from '@rt-tools/utils';
 import { BreakpointService, RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtAsideService } from '../../../aside';
 import { RtuiHeaderCenterDirective } from '../../../header';
@@ -113,7 +113,7 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     readonly #asideService: RtAsideService = inject(RtAsideService);
     readonly #tableConfigService: RtTableConfigService<ENTITY_TYPE> = inject(RtTableConfigService);
 
-    readonly #style: Nullable<CSSStyleDeclaration> = this.#documentRef?.documentElement?.style;
+    readonly #style: INullable<CSSStyleDeclaration> = this.#documentRef?.documentElement?.style;
 
     public appearance: InputSignal<MatFormFieldAppearance> = input.required();
     /** Table config storage key */
@@ -121,7 +121,7 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
         transform: transformStringInput,
     });
     /** Current page model from store */
-    public pageModel: InputSignal<PageModel> = input.required();
+    public pageModel: InputSignal<IPageModel> = input.required();
     /** Indicates is mobile view */
     public isMobile: InputSignalWithTransform<boolean, BooleanInput> = input.required<boolean, BooleanInput>({
         transform: booleanAttribute,
@@ -163,8 +163,8 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
         transform: booleanAttribute,
     });
     /** Current search term from store */
-    public searchTerm: InputSignalWithTransform<Nullable<string>, Nullable<string>> = input<Nullable<string>, Nullable<string>>('', {
-        transform: (value: Nullable<string>) => (isString(value) ? value.trim() : ''),
+    public searchTerm: InputSignalWithTransform<INullable<string>, INullable<string>> = input<INullable<string>, INullable<string>>('', {
+        transform: (value: INullable<string>) => (isString(value) ? value.trim() : ''),
     });
 
     /** Current placeholder icon */
@@ -173,25 +173,25 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     public placeholderTitle: InputSignal<string> = input<string>('No Data Found');
 
     /** Indicates is a small tablet view */
-    public readonly isSmallTablet: Signal<Nullable<boolean>> = this.#breakpointService.isSmallTablet;
+    public readonly isSmallTablet: Signal<INullable<boolean>> = this.#breakpointService.isSmallTablet;
     /** Config for table */
     public readonly tableConfig: Signal<ITable.Config.Data<ENTITY_TYPE>> = this.#tableConfigService.tableConfig;
 
     /** Page model change output action */
-    public readonly pageModelChange: OutputEmitterRef<Partial<PageModel>> = output<Partial<PageModel>>();
+    public readonly pageModelChange: OutputEmitterRef<Partial<IPageModel>> = output<Partial<IPageModel>>();
     /** Search change output action */
-    public readonly searchChange: OutputEmitterRef<Nullable<string>> = output<Nullable<string>>();
+    public readonly searchChange: OutputEmitterRef<INullable<string>> = output<INullable<string>>();
     /** Refresh output action */
     public readonly refreshAction: OutputEmitterRef<void> = output<void>();
     /** Clear filters output action */
     public readonly clearFiltersAction: OutputEmitterRef<void> = output<void>();
 
     /** Toolbar selectors template */
-    public readonly toolbarSelectorsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiTableToolbarSelectorsDirective, {
+    public readonly toolbarSelectorsTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiTableToolbarSelectorsDirective, {
         read: TemplateRef,
     });
     /** Toolbar actions template */
-    public readonly toolbarActionsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiTableToolbarActionsDirective, {
+    public readonly toolbarActionsTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiTableToolbarActionsDirective, {
         read: TemplateRef,
     });
 
@@ -210,7 +210,7 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     public readonly selectedEntitiesCount: WritableSignal<number> = signal(0);
 
     /** Control for search */
-    public readonly searchControl: FormControl<Nullable<string>> = new FormControl(null);
+    public readonly searchControl: FormControl<INullable<string>> = new FormControl(null);
 
     public ngOnInit(): void {
         /** Set scrollbar initial styles by config */
@@ -229,10 +229,10 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
             .pipe(
                 debounceTime(500),
                 distinctUntilChanged(),
-                map((value: Nullable<string>) => (!!value ? value.trim() : value)),
+                map((value: INullable<string>) => (!!value ? value.trim() : value)),
                 takeUntilDestroyed(this.#destroyRef)
             )
-            .subscribe((value: Nullable<string>) => {
+            .subscribe((value: INullable<string>) => {
                 if (value !== null) {
                     this.searchChange.emit(value);
                 }
@@ -240,7 +240,7 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     }
 
     /** Page model change output action */
-    public onPageModelChange(pageModel: Partial<PageModel>): void {
+    public onPageModelChange(pageModel: Partial<IPageModel>): void {
         this.pageModelChange.emit(pageModel);
     }
 
@@ -291,8 +291,8 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
         const horizontal: string = this.tableConfig().isHorizontalScrollbarShown ? '12px' : '0';
 
         if (this.#platformService?.isPlatformBrowser && this.#windowRef && this.#style) {
-            const safeVerticalValue: Nullable<string> = this.#sanitizer.sanitize(0, vertical);
-            const safeHorizontalValue: Nullable<string> = this.#sanitizer.sanitize(0, horizontal);
+            const safeVerticalValue: INullable<string> = this.#sanitizer.sanitize(0, vertical);
+            const safeHorizontalValue: INullable<string> = this.#sanitizer.sanitize(0, horizontal);
             this.#style.setProperty('--rt-table-container-content-scrollbar-vertical-width', safeVerticalValue);
             this.#style.setProperty('--rt-table-container-content-scrollbar-horizontal-height', safeHorizontalValue);
         }

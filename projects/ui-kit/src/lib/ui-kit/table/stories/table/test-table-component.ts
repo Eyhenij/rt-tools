@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, effect, inject, Injector, OnInit, Signal, viewChild } from '@angular/core';
 
 import { IDBStorageService } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
-import { LIST_SORT_ORDER_ENUM, SortModel } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
+import { LIST_SORT_ORDER_ENUM, ISortModel } from '@rt-tools/utils';
 import { RtuiTableComponent } from '../../components';
 import { RtTableSelectorsDirective } from '../../util/table-selectors.directive';
 import { RtTableConfigService } from '../../util/table-config.service';
@@ -31,13 +31,13 @@ export default class TestTableComponent implements OnInit {
     public isMobile: boolean = false;
     public data: Person[] = [];
     public selectedEntitiesIds: number[] = [];
-    public sortModel: SortModel<keyof Person> = {
+    public sortModel: ISortModel<keyof Person> = {
         propertyName: 'id',
         sortDirection: LIST_SORT_ORDER_ENUM.ASC,
     };
     public storageKey: string = 'tableManyItemsKey';
 
-    public readonly dynamicListTpl: Signal<Nullable<RtTableSelectorsDirective<Person, keyof Person, 'id'>>> =
+    public readonly dynamicListTpl: Signal<INullable<RtTableSelectorsDirective<Person, keyof Person, 'id'>>> =
         viewChild<RtTableSelectorsDirective<Person, keyof Person, 'id'>>(RtTableSelectorsDirective);
 
     public ngOnInit(): void {
@@ -54,7 +54,7 @@ export default class TestTableComponent implements OnInit {
         );
     }
 
-    public sortChange(sortModel: SortModel<keyof Person>): SortModel<keyof Person> {
+    public sortChange(sortModel: ISortModel<keyof Person>): ISortModel<keyof Person> {
         return sortModel;
     }
 }

@@ -1,4 +1,4 @@
-import { Nullable } from '../../interfaces/nullable.type.js';
+import { INullable } from '../../interfaces/nullable.type.js';
 import { isNil } from '../is-nil/index.js';
 
 /**
@@ -15,6 +15,6 @@ import { isNil } from '../is-nil/index.js';
  * isEmptyString(null); // true
  * isEmptyString('   '); // false
  */
-export function isEmptyString(value: Nullable<string>): boolean {
+export function isEmptyString(value: INullable<string>): boolean {
     return isNil(value) || value.length === 0;
 }

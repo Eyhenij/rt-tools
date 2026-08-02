@@ -1,4 +1,4 @@
-import { Nullable } from '../../interfaces/nullable.type.js';
+import { INullable } from '../../interfaces/nullable.type.js';
 
 export function debounce(timeout: number = 300): MethodDecorator {
     return function (_target: object, _key: string | symbol, descriptor: PropertyDescriptor) {
@@ -6,7 +6,7 @@ export function debounce(timeout: number = 300): MethodDecorator {
         const { value } = descriptor;
 
         descriptor.value = function (...args: unknown[]): void {
-            const timeoutRef: Nullable<ReturnType<typeof setTimeout>> = timeoutRefs.get(this);
+            const timeoutRef: INullable<ReturnType<typeof setTimeout>> = timeoutRefs.get(this);
             if (timeoutRef !== undefined) {
                 clearTimeout(timeoutRef);
             }

@@ -22,7 +22,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import { BreakStringPipe, EntityToStringPipe, RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtHideTooltipDirective } from '../../../tooltip';
@@ -79,9 +79,9 @@ export class RtuiDynamicSelectorItemTitleDirective {}
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RtuiDynamicSelectorSelectedListComponent<ENTITY extends Record<string, unknown>, KEY extends Extract<keyof ENTITY, string>> {
-    protected readonly editedItemIndex: WritableSignal<Nullable<number>> = signal(null);
+    protected readonly editedItemIndex: WritableSignal<INullable<number>> = signal(null);
 
-    public readonly inputRef: Signal<Nullable<MatInput>> = viewChild(MatInput);
+    public readonly inputRef: Signal<INullable<MatInput>> = viewChild(MatInput);
 
     /** Indicates if mobile view */
     public isMobile: InputSignalWithTransform<boolean, BooleanInput> = input.required<boolean, BooleanInput>({
@@ -127,14 +127,14 @@ export class RtuiDynamicSelectorSelectedListComponent<ENTITY extends Record<stri
     public readonly changeValueAction: OutputEmitterRef<{ prev: ENTITY[KEY]; new: string }> = output<{ prev: ENTITY[KEY]; new: string }>();
 
     /** Additional control for entity */
-    public readonly additionalControlTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY }>>> = contentChild(
+    public readonly additionalControlTpl: Signal<INullable<TemplateRef<{ $implicit: ENTITY }>>> = contentChild(
         RtuiDynamicSelectorItemAdditionalControlDirective,
         {
             read: TemplateRef,
         }
     );
     /** Custom item title template */
-    public readonly itemTitleTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY }>>> = contentChild(
+    public readonly itemTitleTpl: Signal<INullable<TemplateRef<{ $implicit: ENTITY }>>> = contentChild(
         RtuiDynamicSelectorItemTitleDirective,
         {
             read: TemplateRef,
@@ -156,7 +156,7 @@ export class RtuiDynamicSelectorSelectedListComponent<ENTITY extends Record<stri
         this.setEditModState(null);
     }
 
-    protected setEditModState(index: Nullable<number>): void {
+    protected setEditModState(index: INullable<number>): void {
         this.editedItemIndex.set(index);
     }
 }

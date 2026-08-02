@@ -133,12 +133,12 @@ with a required-check. `debounce` is a **method decorator** taking a timeout, tr
 ### Models and type helpers
 
 ```typescript
-import { ListState, SortModel, PageModel, FilterModel, FILTER_OPERATORS, LIST_SORT_ORDER_ENUM } from '@rt-tools/utils';
-import { Nullable, Optional, PartialOmit, IntersectionType, ValuesType } from '@rt-tools/utils';
+import { IListState, ISortModel, IPageModel, IFilterModel, FILTER_OPERATORS, LIST_SORT_ORDER_ENUM } from '@rt-tools/utils';
+import { INullable, IOptional, IPartialOmit, IIntersectionType, IValuesType } from '@rt-tools/utils';
 import { BaseMapper, TypeCastHelper } from '@rt-tools/utils';
 ```
 
-`ListState` and friends describe a paged, sorted, filtered list — the shape `@rt-tools/ui-kit`'s
+`IListState` and friends describe a paged, sorted, filtered list — the shape `@rt-tools/ui-kit`'s
 table speaks and a server can reuse. `BaseMapper` is the DTO↔model mapping base; `TypeCastHelper`
 coerces loosely typed values.
 

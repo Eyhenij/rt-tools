@@ -13,7 +13,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip, TooltipPosition } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 import { isString } from '@rt-tools/utils';
 
 @Component({
@@ -36,14 +36,14 @@ import { isString } from '@rt-tools/utils';
 export class RtuiClearButtonComponent {
     readonly #defaultTooltipPosition: TooltipPosition = 'above';
 
-    public isMobile: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(false, {
+    public isMobile: InputSignalWithTransform<INullable<boolean>, boolean> = input<INullable<boolean>, boolean>(false, {
         transform: booleanAttribute,
     });
-    public isButtonShown: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(true, {
+    public isButtonShown: InputSignalWithTransform<INullable<boolean>, boolean> = input<INullable<boolean>, boolean>(true, {
         transform: booleanAttribute,
     });
-    public tooltip: InputSignalWithTransform<Nullable<string>, string> = input<Nullable<string>, string>(null, {
-        transform: (value: Nullable<string>) => (isString(value) ? value.trim() : ''),
+    public tooltip: InputSignalWithTransform<INullable<string>, string> = input<INullable<string>, string>(null, {
+        transform: (value: INullable<string>) => (isString(value) ? value.trim() : ''),
     });
     public tooltipPosition: InputSignal<TooltipPosition> = input(this.#defaultTooltipPosition);
 

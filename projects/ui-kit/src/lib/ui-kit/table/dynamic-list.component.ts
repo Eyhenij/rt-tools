@@ -17,8 +17,8 @@ import {
 } from '@angular/core';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
 
-import { Nullable } from '@rt-tools/utils';
-import { FilterModel, PageModel, SortModel, transformArrayInput, transformStringInput } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
+import { IFilterModel, IPageModel, ISortModel, transformArrayInput, transformStringInput } from '@rt-tools/utils';
 import {
     RtuiCustomTableCellsDirective,
     RtuiTableAdditionalRowActionsDirective,
@@ -96,7 +96,7 @@ export class RtuiDynamicListComponent<
         transform: transformStringInput,
     });
     /** Indicates is mobile view */
-    public isMobile: InputSignalWithTransform<Nullable<boolean>, BooleanInput> = input<Nullable<boolean>, BooleanInput>(false, {
+    public isMobile: InputSignalWithTransform<INullable<boolean>, BooleanInput> = input<INullable<boolean>, BooleanInput>(false, {
         transform: booleanAttribute,
     });
     /** Indicates is loading in progress */
@@ -135,11 +135,11 @@ export class RtuiDynamicListComponent<
     });
 
     /** Current page model from store */
-    public pageModel: InputSignal<PageModel> = input.required();
+    public pageModel: InputSignal<IPageModel> = input.required();
     /** Current search term from store */
-    public searchTerm: InputSignal<Nullable<string>> = input.required();
+    public searchTerm: InputSignal<INullable<string>> = input.required();
     /** Current sort model from store */
-    public currentSortModel: InputSignal<Nullable<SortModel<NonNullable<KEY>>>> = input.required();
+    public currentSortModel: InputSignal<INullable<ISortModel<NonNullable<KEY>>>> = input.required();
     /** Inputs appearance */
     public appearance: InputSignal<MatFormFieldAppearance> = input.required({
         transform: (value: MatFormFieldAppearance) => (value === 'fill' ? 'fill' : 'outline'),
@@ -147,23 +147,23 @@ export class RtuiDynamicListComponent<
     /** Filter inputs appearance */
     public filterAppearance: InputSignal<MatFormFieldAppearance> = input<MatFormFieldAppearance>('outline');
     /** Current filter model from store */
-    public filterModel: InputSignalWithTransform<FilterModel<KEY>[], FilterModel<KEY>[]> = input<FilterModel<KEY>[], FilterModel<KEY>[]>(
-        [],
-        {
-            transform: (value: FilterModel<KEY>[]) => transformArrayInput(value),
-        }
-    );
+    public filterModel: InputSignalWithTransform<IFilterModel<KEY>[], IFilterModel<KEY>[]> = input<
+        IFilterModel<KEY>[],
+        IFilterModel<KEY>[]
+    >([], {
+        transform: (value: IFilterModel<KEY>[]) => transformArrayInput(value),
+    });
     /** Indicates is filters shown */
     public isFiltersShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
 
     /** Sort model change output action */
-    public readonly sortChange: OutputEmitterRef<SortModel<NonNullable<KEY>>> = output<SortModel<NonNullable<KEY>>>();
+    public readonly sortChange: OutputEmitterRef<ISortModel<NonNullable<KEY>>> = output<ISortModel<NonNullable<KEY>>>();
     /** Page model change output action */
-    public readonly pageModelChange: OutputEmitterRef<Partial<PageModel>> = output<Partial<PageModel>>();
+    public readonly pageModelChange: OutputEmitterRef<Partial<IPageModel>> = output<Partial<IPageModel>>();
     /** Search change output action */
-    public readonly searchChange: OutputEmitterRef<Nullable<string>> = output<Nullable<string>>();
+    public readonly searchChange: OutputEmitterRef<INullable<string>> = output<INullable<string>>();
     /** Refresh output action */
     public readonly refresh: OutputEmitterRef<void> = output<void>();
     /** Clear filters output action */
@@ -174,32 +174,35 @@ export class RtuiDynamicListComponent<
     /** Row doubleClick output action */
     public readonly rowDoubleClick: OutputEmitterRef<NonNullable<ENTITY_TYPE>> = output<NonNullable<ENTITY_TYPE>>();
     /** Filter change output action */
-    public readonly filterChange: OutputEmitterRef<FilterModel<KEY>[]> = output<FilterModel<KEY>[]>();
+    public readonly filterChange: OutputEmitterRef<IFilterModel<KEY>[]> = output<IFilterModel<KEY>[]>();
 
     /** Toolbar selectors template */
-    public readonly toolbarSelectorsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(
+    public readonly toolbarSelectorsTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(
         RtuiDynamicListToolbarSelectorsDirective,
         {
             read: TemplateRef,
         }
     );
     /** Toolbar actions template */
-    public readonly toolbarActionsTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiDynamicListToolbarActionsDirective, {
-        read: TemplateRef,
-    });
+    public readonly toolbarActionsTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(
+        RtuiDynamicListToolbarActionsDirective,
+        {
+            read: TemplateRef,
+        }
+    );
     /** Custom cells template */
-    public readonly customCellsTpl: Signal<Nullable<RtuiDynamicListCustomTableCellsDirective<{ $implicit: ENTITY_TYPE }>>> = contentChild(
+    public readonly customCellsTpl: Signal<INullable<RtuiDynamicListCustomTableCellsDirective<{ $implicit: ENTITY_TYPE }>>> = contentChild(
         RtuiDynamicListCustomTableCellsDirective
     );
     /** Row actions template */
-    public readonly rowActionsTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>> = contentChild(
+    public readonly rowActionsTpl: Signal<INullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>> = contentChild(
         RtuiDynamicListRowActionsDirective,
         {
             read: TemplateRef,
         }
     );
     /** Additional row actions template */
-    public readonly additionalRowActionsTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>> = contentChild(
+    public readonly additionalRowActionsTpl: Signal<INullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>> = contentChild(
         RtuiDynamicListRowAdditionalActionsDirective,
         {
             read: TemplateRef,
@@ -207,29 +210,29 @@ export class RtuiDynamicListComponent<
     );
 
     /** Table container for selectors directive usage */
-    public readonly tableContainerTpl: Signal<Nullable<RtuiTableContainerComponent<ENTITY_TYPE>>> =
+    public readonly tableContainerTpl: Signal<INullable<RtuiTableContainerComponent<ENTITY_TYPE>>> =
         viewChild<RtuiTableContainerComponent<ENTITY_TYPE>>(RtuiTableContainerComponent);
     /** Table selector for selectors directive usage */
-    public readonly tableTpl: Signal<Nullable<RtuiTableComponent<ENTITY_TYPE, SORT_PROPERTY, KEY>>> =
+    public readonly tableTpl: Signal<INullable<RtuiTableComponent<ENTITY_TYPE, SORT_PROPERTY, KEY>>> =
         viewChild<RtuiTableComponent<ENTITY_TYPE, SORT_PROPERTY, KEY>>(RtuiTableComponent);
 
     /** Search change output action */
-    public onSearchChange(value: Nullable<string>): void {
+    public onSearchChange(value: INullable<string>): void {
         this.searchChange.emit(value);
     }
 
     /** Sort change output action */
-    public onSortChange(sortModel: SortModel<NonNullable<KEY>>): void {
+    public onSortChange(sortModel: ISortModel<NonNullable<KEY>>): void {
         this.sortChange.emit(sortModel);
     }
 
     /** Page model change output action */
-    public onPageModelChange(pageModel: Partial<PageModel>): void {
+    public onPageModelChange(pageModel: Partial<IPageModel>): void {
         this.pageModelChange.emit(pageModel);
     }
 
     /** Filter change output action */
-    public onFilterChange(filterModel: FilterModel<KEY>[]): void {
+    public onFilterChange(filterModel: IFilterModel<KEY>[]): void {
         this.filterChange.emit(filterModel);
     }
 

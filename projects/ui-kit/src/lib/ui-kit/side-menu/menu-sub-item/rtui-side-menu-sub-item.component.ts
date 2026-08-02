@@ -16,7 +16,7 @@ import { MatListItem, MatListItemIcon, MatListItemTitle, MatNavList } from '@ang
 import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtHideTooltipDirective } from '../../tooltip';
 import { ISideMenu } from '../side-menu.types';
@@ -57,9 +57,12 @@ export class RtuiSideMenuSubItemComponent {
     public readonly menuRef: RtuiSideMenuComponent = inject(RtuiSideMenuComponent);
 
     public item: InputSignal<ISideMenu.Item> = input.required<ISideMenu.Item>();
-    public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
-        transform: booleanAttribute,
-    });
+    public isMobile: InputSignalWithTransform<INullable<boolean>, INullable<boolean>> = input<INullable<boolean>, INullable<boolean>>(
+        false,
+        {
+            transform: booleanAttribute,
+        }
+    );
     public isSubMenuXScrollEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });

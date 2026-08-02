@@ -10,7 +10,7 @@ message bus and the BEM helpers the kit's templates are built on.
 
 `@rt-tools/store` and `@rt-tools/ui-kit` build on it. The framework-free half — pure functions, list
 models, type helpers — lives in [`@rt-tools/utils`](https://www.npmjs.com/package/@rt-tools/utils),
-which this package depends on. Neither re-exports the other: `isNil` and `Nullable` are imported
+which this package depends on. Neither re-exports the other: `isNil` and `INullable` are imported
 from `@rt-tools/utils`, always.
 
 ## Installation

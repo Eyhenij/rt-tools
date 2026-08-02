@@ -2,7 +2,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, contentChild, Directive, Signal, TemplateRef, Type } from '@angular/core';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 
 @Directive({
     selector: '[rtuiScrollableHeader]',
@@ -27,13 +27,13 @@ export class RtuiScrollableContainerFooterDirective {}
     imports: [BlockDirective, ElemDirective, NgTemplateOutlet],
 })
 export class RtuiScrollableContainerComponent {
-    public readonly headerTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiScrollableContainerHeaderDirective, {
+    public readonly headerTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiScrollableContainerHeaderDirective, {
         read: TemplateRef,
     });
-    public readonly contentTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiScrollableContainerContentDirective, {
+    public readonly contentTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiScrollableContainerContentDirective, {
         read: TemplateRef,
     });
-    public readonly footerTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiScrollableContainerFooterDirective, {
+    public readonly footerTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiScrollableContainerFooterDirective, {
         read: TemplateRef,
     });
 }

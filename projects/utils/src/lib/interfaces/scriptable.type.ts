@@ -1,7 +1,7 @@
-import { AnyObject } from './basic.types.js';
+import { IAnyObject } from './basic.types.js';
 
-export type Scriptable<T, TContext> = T | ((ctx: TContext, options: AnyObject) => T | undefined);
-export type ScriptableOptions<T, TContext> = { [P in keyof T]: Scriptable<T[P], TContext> };
-export type ScriptableAndScriptableOptions<T, TContext> = Scriptable<T, TContext> | ScriptableOptions<T, TContext>;
-export type ScriptableAndArray<T, TContext> = readonly T[] | Scriptable<T, TContext>;
-export type ScriptableAndArrayOptions<T, TContext> = { [P in keyof T]: ScriptableAndArray<T[P], TContext> };
+export type IScriptable<T, TContext> = T | ((ctx: TContext, options: IAnyObject) => T | undefined);
+export type IScriptableOptions<T, TContext> = { [P in keyof T]: IScriptable<T[P], TContext> };
+export type IScriptableAndScriptableOptions<T, TContext> = IScriptable<T, TContext> | IScriptableOptions<T, TContext>;
+export type IScriptableAndArray<T, TContext> = readonly T[] | IScriptable<T, TContext>;
+export type IScriptableAndArrayOptions<T, TContext> = { [P in keyof T]: IScriptableAndArray<T[P], TContext> };

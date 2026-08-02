@@ -5,7 +5,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { IRtSnackBar } from './snack-bar-config.interface';
 
@@ -23,7 +23,7 @@ export class RtuiSnackBarComponent {
 
     public player: AnimationPlayer | undefined;
 
-    public readonly progressTplRef: Signal<Nullable<ElementRef<HTMLElement>>> = viewChild<ElementRef<HTMLElement>>('progressTpl');
+    public readonly progressTplRef: Signal<INullable<ElementRef<HTMLElement>>> = viewChild<ElementRef<HTMLElement>>('progressTpl');
 
     constructor() {
         afterNextRender(() => {

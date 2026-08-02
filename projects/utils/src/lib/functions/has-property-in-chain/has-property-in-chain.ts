@@ -1,4 +1,4 @@
-import { Nullable } from '../../interfaces/nullable.type.js';
+import { INullable } from '../../interfaces/nullable.type.js';
 
 export enum HAS_OWN_SCOPE_ENUM {
     ANY = 'any',
@@ -11,7 +11,7 @@ export type IHasScopeType = HAS_OWN_SCOPE_ENUM.ANY | HAS_OWN_SCOPE_ENUM.OWN | HA
 /** Internal: cross-runtime own-property check (uses Object.hasOwn if available, otherwise falls back to hasOwnProperty.call). */
 type HasOwnFn = (o: object, k: PropertyKey) => boolean;
 const safetyHasOwn: HasOwnFn = (o: object, k: PropertyKey) => {
-    const native: Nullable<HasOwnFn> = (Object as unknown as { hasOwn?: HasOwnFn }).hasOwn;
+    const native: INullable<HasOwnFn> = (Object as unknown as { hasOwn?: HasOwnFn }).hasOwn;
     return typeof native === 'function' ? native(o, k) : Object.prototype.hasOwnProperty.call(o, k);
 };
 
