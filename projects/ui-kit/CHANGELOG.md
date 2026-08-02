@@ -1,3 +1,5 @@
+## [0.3.1](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.3.0...rt-tools@0.3.1) (2026-08-02)
+
 # [0.3.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.2.0...rt-tools@0.3.0) (2026-08-02)
 
 ### Code Refactoring
