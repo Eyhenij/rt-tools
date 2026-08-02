@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 
 import { PlatformService } from '../services';
-import { Nullable } from '../types';
+import { Nullable } from '@rt-tools/utils';
 import { InMemoryStorageService } from './in-memory-storage.service';
 
 /**

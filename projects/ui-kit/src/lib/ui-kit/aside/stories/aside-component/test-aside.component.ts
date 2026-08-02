@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
@@ -20,7 +19,8 @@ import { MatOption, MatSelect } from '@angular/material/select';
 import { MatTab, MatTabContent, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
 import { MatTooltip } from '@angular/material/tooltip';
 
-import { BlockDirective, ElemDirective, Nullable } from '@rt-tools/core';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { Nullable } from '@rt-tools/utils';
 import { ASIDE_REF, AsideRef } from '../../aside.types';
 import { ASIDE_BUTTONS_ENUM } from '../../aside.enums';
 import { IAside } from '../../aside.interfaces';
@@ -71,14 +71,13 @@ export class TestAsideComponent implements OnInit {
         { name: ASIDE_BUTTONS_ENUM.DELETE, icon: 'delete', color: 'red', tooltip: 'Button example' },
         { name: ASIDE_BUTTONS_ENUM.RESET, icon: 'undo', color: 'gray', tooltip: 'Button example' },
     ]);
-    public readonly requestError: Signal<HttpErrorResponse> = signal(
-        new HttpErrorResponse({
-            error: { message: 'Not Found' },
-            status: 404,
-            statusText: 'Not Found',
-            url: 'https://api.example.com/data',
-        })
-    );
+    /** any failure shape is accepted — the container only serialises the value */
+    public readonly requestError: Signal<unknown> = signal({
+        code: 'NOT_FOUND',
+        message: 'Not Found',
+        status: 404,
+        url: 'https://api.example.com/data',
+    });
     public readonly selectedTabIndex: WritableSignal<number> = signal(0);
 
     public ngOnInit(): void {

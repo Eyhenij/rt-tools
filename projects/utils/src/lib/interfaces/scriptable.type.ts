@@ -1,4 +1,4 @@
-import { AnyObject } from './basic.types';
+import { AnyObject } from './basic.types.js';
 
 export type Scriptable<T, TContext> = T | ((ctx: TContext, options: AnyObject) => T | undefined);
 export type ScriptableOptions<T, TContext> = { [P in keyof T]: Scriptable<T[P], TContext> };

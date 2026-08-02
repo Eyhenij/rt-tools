@@ -1,5 +1,5 @@
-import { IBaseMapper } from '../interfaces';
-import { TypeCastHelper } from './type-cast.helper';
+import { IBaseMapper } from '../interfaces/index.js';
+import { TypeCastHelper } from './type-cast.helper.js';
 
 export abstract class BaseMapper<M> implements IBaseMapper<M> {
     public readonly typeCast: TypeCastHelper = new TypeCastHelper();

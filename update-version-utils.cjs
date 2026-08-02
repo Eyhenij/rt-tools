@@ -85,4 +85,9 @@ function updateDependency(filePath, depName, newVer) {
     }
 }
 
+// @rt-tools/core depends on utils and declares it as `workspace:*` so the workspace builds and
+// tests against the working tree rather than the last release. npm does not understand that
+// protocol, so publishing utils is what turns it into a real range for every dependent.
+updateDependency('./projects/core/package.json', '@rt-tools/utils', newVersion);
+updateDependency('./projects/store/package.json', '@rt-tools/utils', newVersion);
 updateDependency('./projects/ui-kit/package.json', '@rt-tools/utils', newVersion);

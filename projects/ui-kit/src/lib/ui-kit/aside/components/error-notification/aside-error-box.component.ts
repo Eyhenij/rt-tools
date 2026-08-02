@@ -1,10 +1,10 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, inject, input, InputSignal, signal, WritableSignal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
-import { BlockDirective, ElemDirective, Nullable } from '@rt-tools/core';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { Nullable } from '@rt-tools/utils';
 
 @Component({
     selector: 'rtui-aside-error-box',
@@ -23,7 +23,7 @@ import { BlockDirective, ElemDirective, Nullable } from '@rt-tools/core';
 export class AsideErrorBoxComponent {
     readonly #clipboard: Clipboard = inject(Clipboard);
 
-    public error: InputSignal<Nullable<HttpErrorResponse>> = input.required();
+    public error: InputSignal<Nullable<unknown>> = input.required<Nullable<unknown>>();
 
     public isErrorCopied: WritableSignal<boolean> = signal(false);
 

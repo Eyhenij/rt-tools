@@ -25,3 +25,4 @@ export * from './lib/ui-kit/image-uploader';
 export * from './lib/ui-kit/popover';
 export * from './lib/ui-kit/action-bar';
 export * from './lib/ui-kit/theme';
+export * from './lib/ui-kit/tooltip';

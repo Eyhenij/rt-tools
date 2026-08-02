@@ -12,7 +12,8 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
-import { RtIconOutlinedDirective, transformStringInput } from '@rt-tools/utils';
+import { transformStringInput } from '@rt-tools/utils';
+import { RtIconOutlinedDirective } from '@rt-tools/core';
 
 @Component({
     selector: 'rtui-dynamic-selector-placeholder',

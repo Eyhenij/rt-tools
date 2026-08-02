@@ -37,7 +37,8 @@ import { MatInput, MatLabel } from '@angular/material/input';
 import { noop } from 'rxjs';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 
-import { BlockDirective, ElemDirective, Nullable } from '@rt-tools/core';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { Nullable } from '@rt-tools/utils';
 import { areArraysEqual, transformArrayInput, transformStringInput } from '@rt-tools/utils';
 import {
     RtuiDynamicSelectorItemAdditionalControlDirective,
