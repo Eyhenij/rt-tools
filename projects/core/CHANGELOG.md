@@ -3,18 +3,13 @@
 ### Bug Fixes
 
 - **rt:core:** point at the utils working tree through the workspace protocol ([a257cbe](https://github.com/Eyhenij/rt-tools/commit/a257cbe14307acafc030c0d25c71a67e153c37bd))
-
-## [Unreleased]
+- **rt:core:** `@angular/router` is declared in `peerDependencies`. Two of the directives that now live here import it, and it was declared by no package in the kit — anyone installing without an Angular application around it got no warning about the missing peer.
 
 ### Features
 
 - **rt:core:** the package now owns everything in the kit that needs Angular but is not a UI component: `RtIconOutlinedDirective`, `RtScrollToElementDirective`, `RtNavigationDirective`, `RtTabQueryParamDirective`, `RtScrollDirective`, `RtEscapeKeyDirective`, `BreakStringPipe`, `SanitizePipe`, `EntityToStringPipe`, `EmptyToDashPipe`, `EqualPipe`, `EqualChainPipe`, `NotEqualPipe`, `NotEqualChainPipe`, `TernaryPipe`, `IsEmailPipe`, `checkIsMatchingValues`, `arraysNotEmptyValidator`, `BreakpointService`, `DeviceDetectorService`, `Breakpoints`, `IBreakpoints`, `OSTypes`, `NAVIGATOR`, `OVERLAY_POSITIONS`, `POSITION_ENUM`, `provideRtUtils` and `isHTMLElement`. They come from `@rt-tools/utils`, which is now framework-agnostic and usable from a Node runtime.
 - **rt:core:** `emailValidator` — a `ValidatorFn` over the same email predicate the pipe uses. Reactive forms previously had no email validator in the kit.
 - **rt:core:** `IsEmailPipe` is exported for the first time; it existed but was never listed in the pipes barrel and so never shipped.
-
-### Bug Fixes
-
-- **rt:core:** `@angular/router` is declared in `peerDependencies`. Two of the directives that now live here import it, and it was declared by no package in the kit — anyone installing without an Angular application around it got no warning about the missing peer.
 
 ### BREAKING CHANGES
 
