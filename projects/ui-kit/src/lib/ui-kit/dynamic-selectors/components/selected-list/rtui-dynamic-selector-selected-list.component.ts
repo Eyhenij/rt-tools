@@ -21,7 +21,8 @@ import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
-import { BlockDirective, ElemDirective, ModDirective, Nullable } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+import { Nullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import { BreakStringPipe, EntityToStringPipe, RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtHideTooltipDirective } from '../../../tooltip';

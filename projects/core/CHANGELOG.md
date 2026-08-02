@@ -12,7 +12,7 @@
 
 ### BREAKING CHANGES
 
-- **rt:core:** `isNil` and `Nullable` are no longer defined here; they live in `@rt-tools/utils` and are re-exported, so importing them from `@rt-tools/core` keeps working. Only a deep import into the package's internals would break.
+- **rt:core:** `isNil` and `Nullable` are gone. They live in `@rt-tools/utils` — import them from there. They are deliberately not re-exported: a re-export hides which package a symbol belongs to and pulls the source package into the import graph of everything that touches the barrel, which is exactly how `@rt-tools/utils` would end up depending on Angular again. A lint rule now rejects any re-export between `@rt-tools` packages.
 
 ## [0.0.5](https://github.com/Eyhenij/rt-tools/compare/rt-core@0.0.4...rt-core@0.0.5) (2026-07-09)
 

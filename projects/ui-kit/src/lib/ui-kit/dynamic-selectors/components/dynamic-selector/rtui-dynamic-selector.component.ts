@@ -42,7 +42,8 @@ import {
 import { noop } from 'rxjs';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 
-import { BlockDirective, ElemDirective, Nullable } from '@rt-tools/core';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { Nullable } from '@rt-tools/utils';
 import { areArraysEqual, areArraysEqualUnordered, checkIsEntityInArrayByKey, sortByAlphabet, transformArrayInput } from '@rt-tools/utils';
 import { OVERLAY_POSITIONS, RtEscapeKeyDirective } from '@rt-tools/core';
 import { RtuiDynamicSelectorListActionsComponent } from '../actions/rtui-dynamic-selector-list-actions.component';
