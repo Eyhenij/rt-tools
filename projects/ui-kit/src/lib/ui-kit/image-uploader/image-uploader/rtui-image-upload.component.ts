@@ -22,7 +22,8 @@ import { MatTooltip, TooltipPosition } from '@angular/material/tooltip';
 import { ImageCroppedEvent, ImageCropperComponent } from 'ngx-image-cropper';
 
 import { BlockDirective, ElemDirective, ModDirective, Nullable } from '@rt-tools/core';
-import { RtIconOutlinedDirective, transformStringInput } from '@rt-tools/utils';
+import { transformStringInput } from '@rt-tools/utils';
+import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtuiFileUploadComponent } from '../../file-uploader';
 import { RtuiSpinnerComponent } from '../../spinner';
 import { BooleanInput } from '@angular/cdk/coercion';

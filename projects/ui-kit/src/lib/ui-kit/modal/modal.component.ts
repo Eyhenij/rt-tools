@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { checkIsMatchingValues, SanitizePipe } from '@rt-tools/utils';
+import { checkIsMatchingValues, SanitizePipe } from '@rt-tools/core';
 import { IModal } from './modal.types';
 
 @Component({

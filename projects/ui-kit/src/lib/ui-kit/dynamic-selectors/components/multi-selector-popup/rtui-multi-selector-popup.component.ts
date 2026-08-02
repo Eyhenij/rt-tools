@@ -35,6 +35,7 @@ import { RouterLink } from '@angular/router';
 import { debounceTime } from 'rxjs/operators';
 
 import { BlockDirective, ElemDirective, ModDirective, Nullable } from '@rt-tools/core';
+import { transformArrayInput } from '@rt-tools/utils';
 import {
     BreakStringPipe,
     DeviceDetectorService,
@@ -42,8 +43,7 @@ import {
     OSTypes,
     RtIconOutlinedDirective,
     RtScrollDirective,
-    transformArrayInput,
-} from '@rt-tools/utils';
+} from '@rt-tools/core';
 import { RtuiSpinnerComponent } from '../../../spinner';
 import { RtuiClearButtonComponent } from '../../../table';
 import { RtuiToggleComponent } from '../../../toggle';
