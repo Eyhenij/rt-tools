@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { computed, Signal } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 
@@ -9,9 +8,14 @@ import { IBaseAsyncStoreService, ISetPropertiesConfig } from './interfaces/async
 import { IStoreConfig } from './interfaces/devtools.interface';
 import { IStateBase } from './interfaces/state-base.interface';
 
-export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async, MSG_TYPE extends string>
+/**
+ * @description Base async store.
+ * The failure methods carry whatever the transport reports as an error: the store never inspects it,
+ * so `ERROR_TYPE` defaults to `unknown` and consumers on any transport can narrow it themselves.
+ */
+export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async, MSG_TYPE extends string, ERROR_TYPE = unknown>
     extends BaseStoreService<STATE_TYPE, MSG_TYPE>
-    implements IBaseAsyncStoreService<STATE_TYPE, MSG_TYPE>
+    implements IBaseAsyncStoreService<STATE_TYPE, MSG_TYPE, ERROR_TYPE>
 {
     // ================================
     // Selectors
@@ -34,7 +38,7 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
     // Actions
     // ================================
 
-    public handleError(error?: HttpErrorResponse, callbackFn?: () => void): void {
+    public handleError(error?: ERROR_TYPE, callbackFn?: () => void): void {
         if (error) {
             // eslint-disable-next-line no-console
             console.error(error);
@@ -83,7 +87,7 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
         );
     }
 
-    public setLoadingFailure(error: HttpErrorResponse, config: ISetPropertiesConfig = { showNotification: true }): Observable<never> {
+    public setLoadingFailure(error: ERROR_TYPE, config: ISetPropertiesConfig = { showNotification: true }): Observable<never> {
         this.patchState(
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
@@ -100,7 +104,7 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
         return throwError(() => error);
     }
 
-    public setLoadingFailureVoid(error: HttpErrorResponse, config: ISetPropertiesConfig = { showNotification: true }): void {
+    public setLoadingFailureVoid(error: ERROR_TYPE, config: ISetPropertiesConfig = { showNotification: true }): void {
         this.patchState(
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
@@ -146,7 +150,7 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
         );
     }
 
-    public setFetchingFailure(error: HttpErrorResponse, config: ISetPropertiesConfig = { showNotification: true }): Observable<never> {
+    public setFetchingFailure(error: ERROR_TYPE, config: ISetPropertiesConfig = { showNotification: true }): Observable<never> {
         this.patchState(
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
@@ -163,7 +167,7 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
         return throwError(() => error);
     }
 
-    public setFetchingFailureVoid(error: HttpErrorResponse, config: ISetPropertiesConfig = { showNotification: true }): void {
+    public setFetchingFailureVoid(error: ERROR_TYPE, config: ISetPropertiesConfig = { showNotification: true }): void {
         this.patchState(
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
@@ -218,7 +222,7 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
         );
     }
 
-    public setUpsertFailure(error: HttpErrorResponse, config: ISetPropertiesConfig = { showNotification: true }): Observable<never> {
+    public setUpsertFailure(error: ERROR_TYPE, config: ISetPropertiesConfig = { showNotification: true }): Observable<never> {
         this.patchState(
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
@@ -234,7 +238,7 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
         return throwError(() => error);
     }
 
-    public setUpsertFailureVoid(error: HttpErrorResponse, config: ISetPropertiesConfig = { showNotification: true }): void {
+    public setUpsertFailureVoid(error: ERROR_TYPE, config: ISetPropertiesConfig = { showNotification: true }): void {
         this.patchState(
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
@@ -288,7 +292,7 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
         );
     }
 
-    public setDeleteFailure(error: HttpErrorResponse, config: ISetPropertiesConfig = { showNotification: true }): Observable<never> {
+    public setDeleteFailure(error: ERROR_TYPE, config: ISetPropertiesConfig = { showNotification: true }): Observable<never> {
         this.patchState(
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
@@ -304,7 +308,7 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
         return throwError(() => error);
     }
 
-    public setDeleteFailureVoid(error: HttpErrorResponse, config: ISetPropertiesConfig = { showNotification: true }): void {
+    public setDeleteFailureVoid(error: ERROR_TYPE, config: ISetPropertiesConfig = { showNotification: true }): void {
         this.patchState(
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
