@@ -20,7 +20,8 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 import { BlockDirective, ElemDirective, ModDirective, Nullable } from '@rt-tools/core';
-import { LIST_SORT_ORDER_ENUM, ListSortOrderType, RtIconOutlinedDirective, SortModel } from '@rt-tools/utils';
+import { LIST_SORT_ORDER_ENUM, ListSortOrderType, SortModel } from '@rt-tools/utils';
+import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { ITable } from '../../util/table-column.interface';
 
 @Component({

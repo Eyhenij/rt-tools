@@ -43,15 +43,8 @@ import { noop } from 'rxjs';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 
 import { BlockDirective, ElemDirective, Nullable } from '@rt-tools/core';
-import {
-    areArraysEqual,
-    areArraysEqualUnordered,
-    checkIsEntityInArrayByKey,
-    OVERLAY_POSITIONS,
-    RtEscapeKeyDirective,
-    sortByAlphabet,
-    transformArrayInput,
-} from '@rt-tools/utils';
+import { areArraysEqual, areArraysEqualUnordered, checkIsEntityInArrayByKey, sortByAlphabet, transformArrayInput } from '@rt-tools/utils';
+import { OVERLAY_POSITIONS, RtEscapeKeyDirective } from '@rt-tools/core';
 import { RtuiDynamicSelectorListActionsComponent } from '../actions/rtui-dynamic-selector-list-actions.component';
 import { RtuiDynamicSelectorsDirective } from '../dynamic-selectors-directive';
 import { RtuiMultiSelectorPopupComponent } from '../multi-selector-popup/rtui-multi-selector-popup.component';

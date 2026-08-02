@@ -5,7 +5,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatSelect } from '@angular/material/select';
 
-import { POSITION_ENUM } from '@rt-tools/utils';
+import { POSITION_ENUM } from '@rt-tools/core';
 import { ElemDirective } from '@rt-tools/core';
 import { INFO_BADGE_SIZE_ENUM } from '../../../badge-info-enum';
 import { IconSideType } from '../../../icon-side.type';

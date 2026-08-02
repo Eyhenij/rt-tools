@@ -23,7 +23,8 @@ import { MatListItem, MatListItemIcon, MatNavList } from '@angular/material/list
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 
 import { BlockDirective, ElemDirective, ModDirective, Nullable } from '@rt-tools/core';
-import { RtIconOutlinedDirective, RtNavigationDirective, RtScrollToElementDirective, transformArrayInput } from '@rt-tools/utils';
+import { transformArrayInput } from '@rt-tools/utils';
+import { RtIconOutlinedDirective, RtNavigationDirective, RtScrollToElementDirective } from '@rt-tools/core';
 import { ISideMenu } from '../side-menu.types';
 import {
     RtuiScrollableContainerComponent,

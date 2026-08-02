@@ -12,7 +12,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective, ModDirective, Nullable } from '@rt-tools/core';
-import { RtIconOutlinedDirective } from '@rt-tools/utils';
+import { RtIconOutlinedDirective } from '@rt-tools/core';
 
 @Component({
     selector: 'rtui-dynamic-selector-list-actions',

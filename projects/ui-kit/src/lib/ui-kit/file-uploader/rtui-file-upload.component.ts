@@ -3,7 +3,7 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { RtIconOutlinedDirective } from '@rt-tools/utils';
+import { RtIconOutlinedDirective } from '@rt-tools/core';
 
 @Component({
     selector: 'rtui-file-upload',
