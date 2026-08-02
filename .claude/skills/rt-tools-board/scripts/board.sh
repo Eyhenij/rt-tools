@@ -19,6 +19,9 @@ set -euo pipefail
 BOARD_TITLE="${RT_BOARD_TITLE:-Rt-tools}"
 export BOARD_TITLE
 GH="command gh"
+# `gh project item-list` defaults to 30 items. The board is past that, so a newly added task
+# falls outside the page and reads as "not on board" — pass an explicit page size everywhere.
+ITEM_LIMIT="${RT_BOARD_ITEM_LIMIT:-500}"
 PY="command python3"
 
 owner() { $GH repo view --json owner -q .owner.login; }
@@ -60,7 +63,7 @@ for f in d['fields']:
 cmd_list() {
     local o num pid; o="$(owner)"
     read -r num pid < <(resolve_project)
-    $GH project item-list "$num" --owner "$o" --format json | $PY -c "
+    $GH project item-list "$num" --owner "$o" --limit "$ITEM_LIMIT" --format json | $PY -c "
 import json,sys
 d=json.load(sys.stdin)
 for it in d['items']:
@@ -100,7 +103,7 @@ print(field["id"], opts[0]["id"])
 ')
 
     local itemId
-    itemId="$($GH project item-list "$num" --owner "$o" --format json | TARGET="$target" $PY -c '
+    itemId="$($GH project item-list "$num" --owner "$o" --limit "$ITEM_LIMIT" --format json | TARGET="$target" $PY -c '
 import json, sys, os
 d = json.load(sys.stdin)
 t = str(os.environ["TARGET"])
