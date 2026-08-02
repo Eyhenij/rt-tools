@@ -1,7 +1,5 @@
 ## [0.0.8](https://github.com/Eyhenij/rt-tools/compare/rt-store@0.0.6...rt-store@0.0.8) (2026-08-02)
 
-## [Unreleased]
-
 ### Features
 
 - **rt:store:** `BaseAsyncStoreService` takes a third type parameter `ERROR_TYPE` (default `unknown`) that types the failure argument of `handleError` and of every `set*Failure` / `set*FailureVoid` method. Consumers on any transport can now declare their own failure shape; stores that omit the parameter are unaffected.
