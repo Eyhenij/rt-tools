@@ -20,6 +20,9 @@
     "mappers",
     "framework-agnostic"
   ],
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
   "sideEffects": false,
   "main": "src/index.ts",
   "types": "src/index.ts"

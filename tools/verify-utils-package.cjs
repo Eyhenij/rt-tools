@@ -57,7 +57,34 @@ for (const block of ['dependencies', 'peerDependencies', 'optionalDependencies']
     }
 }
 
-// 4. Both entry points load. This is the check that would have caught the ESM-only package that
+// 4. Every package the built output reaches for is declared. Loading the entries proves nothing
+//    here: the workspace has every package installed, so an undeclared dependency resolves fine
+//    locally and only fails once someone installs the tarball on its own. `tslib` shipped
+//    undeclared in 0.1.0 exactly this way — `importHelpers` puts it in the CommonJS output, and
+//    nothing in the manifest said so.
+const BARE_IMPORT = /(?:from\s+|require\(\s*)['"]([^'".][^'"]*)['"]/g;
+const declared = new Set([...Object.keys(manifest.dependencies ?? {}), ...Object.keys(manifest.peerDependencies ?? {})]);
+const undeclared = new Map();
+
+for (const file of jsFiles) {
+    for (const [, specifier] of fs.readFileSync(file, 'utf8').matchAll(BARE_IMPORT)) {
+        if (specifier.startsWith('node:')) {
+            continue;
+        }
+
+        const pkg = specifier.startsWith('@') ? specifier.split('/').slice(0, 2).join('/') : specifier.split('/')[0];
+
+        if (!declared.has(pkg)) {
+            undeclared.set(pkg, path.relative(distDir, file));
+        }
+    }
+}
+
+for (const [pkg, file] of undeclared) {
+    failures.push(`${file} imports ${pkg}, which the manifest does not declare`);
+}
+
+// 5. Both entry points load. This is the check that would have caught the ESM-only package that
 //    a CommonJS consumer could not require() no matter how framework-free it was.
 const entries = [
     ['CommonJS', `require(${JSON.stringify(path.join(distDir, 'cjs', 'index.js'))})`],
