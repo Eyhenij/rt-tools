@@ -1,4 +1,4 @@
-import { TypeCastHelper } from '../helpers/type-cast.helper';
+import { TypeCastHelper } from '../helpers/type-cast.helper.js';
 
 export interface IBaseMapper<M> {
     typeCast: TypeCastHelper;

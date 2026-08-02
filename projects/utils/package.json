@@ -1,37 +1,27 @@
 {
   "name": "@rt-tools/utils",
-  "version": "0.0.8",
-  "description": "Utility functions, pipes, directives, validators and services for Angular applications",
-  "author": "Yauheni Krumin",
+  "version": "0.2.0",
+  "description": "Framework-agnostic list models, mappers, type helpers and pure utility functions",
+  "author": "RT Team",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Eyhenij/rt-tools",
+    "url": "https://github.com/nickmdf/rt-tools.git",
     "directory": "projects/utils"
   },
-  "homepage": "https://github.com/Eyhenij/rt-tools/tree/main/projects/utils",
+  "homepage": "https://github.com/nickmdf/rt-tools/tree/main/projects/utils",
   "bugs": {
-    "url": "https://github.com/Eyhenij/rt-tools/issues"
+    "url": "https://github.com/nickmdf/rt-tools/issues"
   },
   "keywords": [
-    "angular",
+    "typescript",
     "utils",
-    "pipes",
-    "directives",
-    "validators",
-    "services"
+    "models",
+    "mappers",
+    "framework-agnostic"
   ],
   "dependencies": {
-    "@rt-tools/core": "^0.0.6"
-  },
-  "peerDependencies": {
-    "@rt-tools/core": "^0.0.6",
-    "@angular/common": "^22.0.0",
-    "@angular/core": "^22.0.0",
-    "@angular/forms": "^22.0.0",
-    "@angular/cdk": "^22.0.0",
-    "@angular/platform-browser": "^22.0.0",
-    "rxjs": "^7.8.0"
+    "tslib": "^2.3.0"
   },
   "sideEffects": false,
   "main": "src/index.ts",

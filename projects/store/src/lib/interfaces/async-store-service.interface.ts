@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Signal } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -9,7 +8,12 @@ export interface ISetPropertiesConfig {
     showNotification?: boolean;
 }
 
-export interface IBaseAsyncStoreService<STATE_TYPE extends object, MSG_TYPE extends string> extends IBaseStoreService<
+/**
+ * @description Base contract for an async store.
+ * `ERROR_TYPE` describes whatever the transport reports as a failure — it is never read by the store
+ * itself, so it defaults to `unknown` and stays transport-agnostic.
+ */
+export interface IBaseAsyncStoreService<STATE_TYPE extends object, MSG_TYPE extends string, ERROR_TYPE = unknown> extends IBaseStoreService<
     STATE_TYPE,
     MSG_TYPE
 > {
@@ -40,7 +44,7 @@ export interface IBaseAsyncStoreService<STATE_TYPE extends object, MSG_TYPE exte
     // region Actions
     // ================================
 
-    handleError(error: HttpErrorResponse): void;
+    handleError(error?: ERROR_TYPE, callbackFn?: () => void): void;
     /**
      * @description Resets the next props to initial values:
      * - loading,
@@ -58,8 +62,8 @@ export interface IBaseAsyncStoreService<STATE_TYPE extends object, MSG_TYPE exte
 
     startLoading(): void;
     setLoadingSuccess(): void;
-    setLoadingFailure(error: HttpErrorResponse, config: ISetPropertiesConfig): Observable<never>;
-    setLoadingFailureVoid(error: HttpErrorResponse, config: ISetPropertiesConfig): void;
+    setLoadingFailure(error: ERROR_TYPE, config: ISetPropertiesConfig): Observable<never>;
+    setLoadingFailureVoid(error: ERROR_TYPE, config: ISetPropertiesConfig): void;
     // endregion
 
     // ================================
@@ -68,8 +72,8 @@ export interface IBaseAsyncStoreService<STATE_TYPE extends object, MSG_TYPE exte
 
     startFetching(): void;
     setFetchingSuccess(): void;
-    setFetchingFailure(error: HttpErrorResponse, config: ISetPropertiesConfig): Observable<never>;
-    setFetchingFailureVoid(error: HttpErrorResponse, config: ISetPropertiesConfig): void;
+    setFetchingFailure(error: ERROR_TYPE, config: ISetPropertiesConfig): Observable<never>;
+    setFetchingFailureVoid(error: ERROR_TYPE, config: ISetPropertiesConfig): void;
     // endregion
 
     // ================================
@@ -80,8 +84,8 @@ export interface IBaseAsyncStoreService<STATE_TYPE extends object, MSG_TYPE exte
     resetUpsertStatus(): void;
     startUpsert(): void;
     setUpsertSuccess(): void;
-    setUpsertFailure(error: HttpErrorResponse, config: ISetPropertiesConfig): Observable<never>;
-    setUpsertFailureVoid(error: HttpErrorResponse, config: ISetPropertiesConfig): void;
+    setUpsertFailure(error: ERROR_TYPE, config: ISetPropertiesConfig): Observable<never>;
+    setUpsertFailureVoid(error: ERROR_TYPE, config: ISetPropertiesConfig): void;
     // endregion
 
     // ================================
@@ -92,7 +96,7 @@ export interface IBaseAsyncStoreService<STATE_TYPE extends object, MSG_TYPE exte
     resetDeleteStatus(): void;
     startDelete(): void;
     setDeleteSuccess(): void;
-    setDeleteFailure(error: HttpErrorResponse, config: ISetPropertiesConfig): Observable<never>;
-    setDeleteFailureVoid(error: HttpErrorResponse, config: ISetPropertiesConfig): void;
+    setDeleteFailure(error: ERROR_TYPE, config: ISetPropertiesConfig): Observable<never>;
+    setDeleteFailureVoid(error: ERROR_TYPE, config: ISetPropertiesConfig): void;
     // endregion
 }

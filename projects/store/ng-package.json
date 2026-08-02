@@ -4,5 +4,5 @@
   "lib": {
     "entryFile": "src/index.ts"
   },
-  "allowedNonPeerDependencies": ["@rt-tools/core"]
+  "allowedNonPeerDependencies": ["@rt-tools/core", "@rt-tools/utils"]
 }

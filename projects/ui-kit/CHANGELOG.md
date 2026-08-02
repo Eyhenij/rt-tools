@@ -1,6 +1,18 @@
-## [0.0.28](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.26...rt-tools@0.0.28) (2026-07-14)
+# [0.2.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.1.0...rt-tools@0.2.0) (2026-08-02)
 
-## [0.0.27](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.26...rt-tools@0.0.27) (2026-07-14)
+### Features
+
+- **rt:ui-kit:** the aside error inputs (`rtui-aside-container [requestError]`, `rtui-aside-error-box [error]`) accept any failure value instead of an `HttpErrorResponse`, so a non-HTTP transport can feed them its own error object
+
+# [0.1.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.29...rt-tools@0.1.0) (2026-08-02)
+
+## [0.0.29](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.27...rt-tools@0.0.29) (2026-07-28)
+
+### Features
+
+- **rt:ui-kit:** `RtHideTooltipDirective` now ships from this package (`lib/ui-kit/tooltip`), alongside the components that use it
+
+## [0.0.27](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.26...rt-tools@0.0.27) (2026-07-09)
 
 ## [0.0.26](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.25...rt-tools@0.0.26) (2026-07-03)
 
@@ -24,43 +36,26 @@
 
 ### Features
 
-- **rt:ui-kit:** add pinned group divider to multi-selector popup ([839675e](https://github.com/Eyhenij/rt-tools/commit/839675e43df665789bb0e3fc1b33184c8c7a9c95)), closes [#207](https://github.com/Eyhenij/rt-tools/issues/207)
-
-## [Unreleased]
-
-### Features
-
-- **rt:ui-kit:** add a pinned-group divider to `rtui-multi-selector-popup` via a `pinnedKeys` input (trailing separator after the pinned options, in both radio and checkbox modes)
+- **rt:ui-kit:** add a pinned-group divider to `rtui-multi-selector-popup` via a `pinnedKeys` input (trailing separator after the pinned options, in both radio and checkbox modes) ([839675e](https://github.com/Eyhenij/rt-tools/commit/839675e43df665789bb0e3fc1b33184c8c7a9c95)), closes [#207](https://github.com/Eyhenij/rt-tools/issues/207)
 
 ## [0.0.22](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.21...rt-tools@0.0.22) (2026-06-28)
 
 ### Features
 
-- **rt:ui-kit:** add Material ripple to rtui-button ([04cdae4](https://github.com/Eyhenij/rt-tools/commit/04cdae40e40c401af212b3c6f6e8017b9388e639)), closes [#205](https://github.com/Eyhenij/rt-tools/issues/205)
+- **rt:ui-kit:** add a Material ripple to `rtui-button` press feedback, disabled while loading or disabled and clipped to the button bounds ([04cdae4](https://github.com/Eyhenij/rt-tools/commit/04cdae40e40c401af212b3c6f6e8017b9388e639)), closes [#205](https://github.com/Eyhenij/rt-tools/issues/205)
 
 ## [0.0.21](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.20...rt-tools@0.0.21) (2026-06-26)
 
 ### Bug Fixes
 
-- **rt:ui-kit:** let text-appearance pill honor the radius modifier ([9440079](https://github.com/Eyhenij/rt-tools/commit/94400797b2739eeca34ea16771793f45b98e1a9d))
+- **rt:ui-kit:** let the `text` appearance honour the `radius` modifier instead of hardcoding a 5px border-radius ([9440079](https://github.com/Eyhenij/rt-tools/commit/94400797b2739eeca34ea16771793f45b98e1a9d))
 - **rt:ui-kit:** render projected icons in text-appearance buttons at a uniform size ([101c3ef](https://github.com/Eyhenij/rt-tools/commit/101c3ef0edf7abec85deb8f0c02c4c13c4977964))
 
 ### Features
 
-- **rt:ui-kit:** add text appearance to rtui-btn ([47d4386](https://github.com/Eyhenij/rt-tools/commit/47d4386eead13900cb4f34c851372d1881bdf9d5))
-
-## [Unreleased]
-
-### Features
-
+- **rt:ui-kit:** add a transparent, borderless `text` appearance for every button colour, with a neutral hover wash via `--rt-bg-base-hover` ([47d4386](https://github.com/Eyhenij/rt-tools/commit/47d4386eead13900cb4f34c851372d1881bdf9d5))
 - **rt:ui-kit:** unify all button variants into a single `rtui-button` component (`type` icon/fab/pill, `variant` default/primary/danger/success/warning/accent, `size` xs/sm/md/lg, `radius` none/sm/md/lg/full, `appearance` solid/outline/light/text) with built-in tooltip, loading spinner and icon slots
 - **rt:ui-kit:** add a standalone `rtui-icon` component (Material Symbols Outlined) with `size`, `theme`, `glyph`, `outlined` and `rotate` inputs plus font-load tracking
-- **rt:ui-kit:** add a transparent, borderless `text` appearance for every button colour, with a neutral hover wash via `--rt-bg-base-hover`
-- **rt:ui-kit:** add a Material ripple to `rtui-button` press feedback (disabled while loading/disabled, clipped to the button bounds)
-
-### Bug Fixes
-
-- **rt:ui-kit:** let the `text` appearance honour the `radius` modifier instead of hardcoding a 5px border-radius
 
 ### BREAKING CHANGES
 

@@ -1,4 +1,21 @@
-## [0.0.6](https://github.com/Eyhenij/rt-tools/compare/rt-core@0.0.5...rt-core@0.0.6) (2026-07-14)
+# [0.2.0](https://github.com/Eyhenij/rt-tools/compare/rt-core@0.1.0...rt-core@0.2.0) (2026-08-02)
+
+# [0.1.0](https://github.com/Eyhenij/rt-tools/compare/rt-core@0.0.5...rt-core@0.1.0) (2026-08-02)
+
+### Bug Fixes
+
+- **rt:core:** point at the utils working tree through the workspace protocol ([a257cbe](https://github.com/Eyhenij/rt-tools/commit/a257cbe14307acafc030c0d25c71a67e153c37bd))
+- **rt:core:** `@angular/router` is declared in `peerDependencies`. Two of the directives that now live here import it, and it was declared by no package in the kit — anyone installing without an Angular application around it got no warning about the missing peer.
+
+### Features
+
+- **rt:core:** the package now owns everything in the kit that needs Angular but is not a UI component: `RtIconOutlinedDirective`, `RtScrollToElementDirective`, `RtNavigationDirective`, `RtTabQueryParamDirective`, `RtScrollDirective`, `RtEscapeKeyDirective`, `BreakStringPipe`, `SanitizePipe`, `EntityToStringPipe`, `EmptyToDashPipe`, `EqualPipe`, `EqualChainPipe`, `NotEqualPipe`, `NotEqualChainPipe`, `TernaryPipe`, `IsEmailPipe`, `checkIsMatchingValues`, `arraysNotEmptyValidator`, `BreakpointService`, `DeviceDetectorService`, `Breakpoints`, `IBreakpoints`, `OSTypes`, `NAVIGATOR`, `OVERLAY_POSITIONS`, `POSITION_ENUM`, `provideRtUtils` and `isHTMLElement`. They come from `@rt-tools/utils`, which is now framework-agnostic and usable from a Node runtime.
+- **rt:core:** `emailValidator` — a `ValidatorFn` over the same email predicate the pipe uses. Reactive forms previously had no email validator in the kit.
+- **rt:core:** `IsEmailPipe` is exported for the first time; it existed but was never listed in the pipes barrel and so never shipped.
+
+### BREAKING CHANGES
+
+- **rt:core:** `isNil` and `Nullable` are gone. They live in `@rt-tools/utils` — import them from there. They are deliberately not re-exported: a re-export hides which package a symbol belongs to and pulls the source package into the import graph of everything that touches the barrel, which is exactly how `@rt-tools/utils` would end up depending on Angular again. A lint rule now rejects any re-export between `@rt-tools` packages.
 
 ## [0.0.5](https://github.com/Eyhenij/rt-tools/compare/rt-core@0.0.4...rt-core@0.0.5) (2026-07-09)
 

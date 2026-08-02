@@ -7,7 +7,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { faker } from '@faker-js/faker';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { RtIconOutlinedDirective } from '@rt-tools/utils';
+import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtuiDynamicInputAdditionalControlDirective } from '../../../components';
 import { RtuiDynamicInputComponent } from '../../../components/dynamic-input/rtui-dynamic-input.component';
 

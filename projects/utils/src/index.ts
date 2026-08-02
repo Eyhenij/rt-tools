@@ -1,32 +1,11 @@
 // constants
-export * from './lib/const';
-
-// directives
-export * from './lib/directives';
-
-// enums
-export * from './lib/enums';
+export * from './lib/const/index.js';
 
 // functions
-export * from './lib/functions';
+export * from './lib/functions/index.js';
 
 // helpers
-export * from './lib/helpers';
+export * from './lib/helpers/index.js';
 
 // interfaces
-export * from './lib/interfaces';
-
-// pipes
-export * from './lib/pipes';
-
-// services
-export * from './lib/services';
-
-// tokens
-export * from './lib/tokens';
-
-// validators
-export * from './lib/validators';
-
-// providers
-export * from './lib/providers';
+export * from './lib/interfaces/index.js';

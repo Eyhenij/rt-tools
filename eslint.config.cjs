@@ -78,7 +78,10 @@ module.exports = [
             'space-infix-ops': ['error'],
             'semi-style': ['error', 'last'],
             semi: ['error', 'always'],
-            quotes: ['error', 'single'],
+            // `avoidEscape` keeps this from contradicting Prettier: with `singleQuote: true` Prettier
+            // still emits double quotes around a string that contains an apostrophe, because that is
+            // the form with fewer escapes.
+            quotes: ['error', 'single', { avoidEscape: true }],
             'no-bitwise': ['error'],
             'template-curly-spacing': ['error', 'never'],
             'object-curly-spacing': ['error', 'always'],
@@ -210,6 +213,50 @@ module.exports = [
     {
         files: ['**/*.spec.ts', '**/*.spec.js'],
         rules: {},
+    },
+
+    {
+        // A package must not re-export another package's symbols. A re-export hides which package
+        // a symbol really belongs to, and it drags the whole source package into the import graph
+        // of anything that touches the barrel — which is how @rt-tools/utils would end up
+        // depending on Angular again. Every symbol has exactly one package it is imported from.
+        files: ['projects/**/*.ts'],
+        rules: {
+            'no-restricted-syntax': [
+                'error',
+                {
+                    selector: 'ExportNamedDeclaration[source.value=/^@rt-tools\\//]',
+                    message: 'Do not re-export another @rt-tools package. Import the symbol from the package that owns it.',
+                },
+                {
+                    selector: 'ExportAllDeclaration[source.value=/^@rt-tools\\//]',
+                    message: 'Do not re-export another @rt-tools package. Import the symbol from the package that owns it.',
+                },
+            ],
+        },
+    },
+
+    {
+        // @rt-tools/utils ships to Node consumers as well as to Angular apps: no framework, no
+        // partial compilation, no peer dependencies. A single import from any of these would put
+        // that back and the package would silently stop resolving outside Angular — so the ban is
+        // enforced where the import is written, not discovered later at publish time.
+        // Anything here that turns out to need one of them belongs in @rt-tools/core instead.
+        files: ['projects/utils/**/*.ts'],
+        rules: {
+            'no-restricted-imports': [
+                'error',
+                {
+                    patterns: [
+                        {
+                            group: ['@angular/*', '@angular/**', 'rxjs', 'rxjs/*'],
+                            message:
+                                '@rt-tools/utils must stay framework-agnostic — it has no Angular or RxJS dependency. Put framework-bound code in @rt-tools/core.',
+                        },
+                    ],
+                },
+            ],
+        },
     },
 
     {

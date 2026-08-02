@@ -17,7 +17,8 @@ import {
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
-import { RtIconOutlinedDirective, transformStringInput } from '@rt-tools/utils';
+import { transformStringInput } from '@rt-tools/utils';
+import { RtIconOutlinedDirective } from '@rt-tools/core';
 
 export type RtuiIconSizeType = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | '3xl';
 export type RtuiIconThemeType =

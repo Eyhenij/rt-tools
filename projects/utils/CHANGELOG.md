@@ -1,4 +1,77 @@
-## [0.0.8](https://github.com/Eyhenij/rt-tools/compare/rt-utils@0.0.7...rt-utils@0.0.8) (2026-07-14)
+# [0.2.0](https://github.com/nickmdf/rt-tools/compare/rt-utils@0.1.1...rt-utils@0.2.0) (2026-08-02)
+
+### Bug Fixes
+
+- **rt:utils:** correct the surprising contracts in the function surface ([7d747a2](https://github.com/nickmdf/rt-tools/commit/7d747a28ecaca323a1b3bad98aa593d282c5ed9a)), closes [#228](https://github.com/nickmdf/rt-tools/issues/228)
+- **rt:utils:** make the coverage gate fire instead of erroring out ([7fb8a2d](https://github.com/nickmdf/rt-tools/commit/7fb8a2da27b4bd1a25a48019ee824add8fdc3c94)), closes [#224](https://github.com/nickmdf/rt-tools/issues/224)
+
+* **rt:utils:** `isEmptyArray`, `isEmptyString` and `isEmptyObject` accept a nullish value and report it as empty instead of throwing a `TypeError`
+* **rt:utils:** `formatDate` renders a token that appears more than once every time it appears — `dd/dd` used to emit a raw placeholder for the second one
+* **rt:utils:** `parseDate` reads a token that appears more than once; each occurrence now gets its own capture group
+
+### BREAKING CHANGES
+
+- **rt:utils:** `areObjectsEqual` returns `false` for an array compared
+  against a non-array, `isDateValid(new Date(0))` is now `true`, and
+  `dateStringToDate` returns an Invalid Date instead of the current date
+  when it cannot parse its input. A caller that wants the old fallback
+  writes it out: `isDate(parsed) ? parsed : new Date()`.
+
+Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01CkpaW5obf3ezRvTHYaDw2i
+
+- **rt:utils:** `areObjectsEqual` returns `false` when one side is an array and the other is not. `[1]` and `{ 0: 1 }` used to compare equal because only a pair of arrays took the array path.
+- **rt:utils:** `isDateValid(new Date(0))` is `true` — the Unix epoch is a real instant. The check was `Boolean(date.getTime())`. The function now delegates to `isDate` and agrees with it on every input; prefer `isDate` in new code.
+- **rt:utils:** `dateStringToDate` returns an Invalid Date for input it cannot parse, instead of the current date, matching `parseDate` and `parseISO`. To keep the old behaviour: `const value: Date = isDate(parsed) ? parsed : new Date();`
+
+### Code Refactoring
+
+- **rt:utils:** every exported function now lives in its own directory alongside its spec and a `CONTEXT.md` describing its contract and edge cases; coverage over `lib/functions` is 100% and enforced by a `coverageThreshold`. The published surface is unchanged.
+
+### Features
+
+- **rt:utils:** `formatDate` and `parseDate` read single-quoted text as a literal in both directions (`"'Issued on' dd.MM.yyyy"`), with `''` for an apostrophe. Without it every letter in a format is a token, so literal words could not be expressed.
+- **rt:utils:** `dateStringToDate` returns a copy of a `Date` argument rather than the same reference
+
+## [0.1.1](https://github.com/nickmdf/rt-tools/compare/rt-utils@0.1.0...rt-utils@0.1.1) (2026-08-02)
+
+### Bug Fixes
+
+- **rt:utils:** declare tslib, and check the manifest covers what the build imports ([83c3bce](https://github.com/nickmdf/rt-tools/commit/83c3bce6a9305853b94285543f851aa08ad62a7e))
+
+# [0.1.0](https://github.com/nickmdf/rt-tools/compare/rt-utils@0.0.9...rt-utils@0.1.0) (2026-08-02)
+
+### Code Refactoring
+
+- **rt:utils:** strip the Angular-bound surface out of the package ([f067de1](https://github.com/nickmdf/rt-tools/commit/f067de1cf1fa16f2b743ac0b0b735879e6b5e20c)), closes [#220](https://github.com/nickmdf/rt-tools/issues/220)
+
+### BREAKING CHANGES
+
+- **rt:utils:** directives, pipes, validators, BreakpointService,
+  DeviceDetectorService, Breakpoints, NAVIGATOR, OVERLAY_POSITIONS, POSITION_ENUM,
+  provideRtUtils and isHTMLElement no longer ship from @rt-tools/utils. They move
+  to @rt-tools/core.
+
+### BREAKING CHANGES
+
+- **rt:utils:** the package no longer ships anything that needs Angular. Six directives, ten pipes, both validators, `BreakpointService`, `DeviceDetectorService`, `Breakpoints`, `IBreakpoints`, `NAVIGATOR`, `OVERLAY_POSITIONS`, `POSITION_ENUM`, `provideRtUtils` and `isHTMLElement` move to `@rt-tools/core` — import them from there. No re-export shim is provided: one would put Angular back into this package's import graph, which is the whole point of the split.
+- **rt:utils:** `@angular/common`, `@angular/core`, `@angular/forms`, `@angular/cdk`, `@angular/platform-browser`, `rxjs` and `@rt-tools/core` are gone from the dependency lists. The package now depends on `tslib` alone and declares no peers.
+
+### Features
+
+- **rt:utils:** `isNil` and `Nullable` now live here rather than in `@rt-tools/core`, so the pure functions built on them no longer reach into an Angular package. `@rt-tools/core` no longer exports them at all — import them from `@rt-tools/utils`.
+- **rt:utils:** `isEmail` no longer builds a `FormControl` to reach `Validators.email`; it tests the same pattern directly and exports it as `EMAIL_REGEXP`. Verdicts are unchanged, including that an empty value counts as valid — a spec now pins that.
+- **rt:utils:** the package now ships both CommonJS and ESM behind an `exports` map, so a consumer compiling to CommonJS can `require()` it. It previously shipped ESM-only with `"type": "module"`, which no amount of removing Angular would have made loadable there. `main` points at the CommonJS entry, `module` and `types` at the ESM one.
+
+## [0.0.9](https://github.com/nickmdf/rt-tools/compare/rt-utils@0.0.7...rt-utils@0.0.9) (2026-07-28)
+
+### Bug Fixes
+
+- **rt:utils:** stop pulling `@angular/material/tooltip` into the bundle — the package now imports only what its peer list declares, so consumers without Angular Material can build again
+
+### BREAKING CHANGES
+
+- **rt:utils:** `RtHideTooltipDirective` no longer ships from `@rt-tools/utils`; it moved to `@rt-tools/ui-kit`, where Material is already a peer dependency. Import it from `@rt-tools/ui-kit` instead
 
 ## [0.0.7](https://github.com/nickmdf/rt-tools/compare/rt-utils@0.0.6...rt-utils@0.0.7) (2026-07-09)
 

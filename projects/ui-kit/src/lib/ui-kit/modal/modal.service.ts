@@ -3,7 +3,7 @@ import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dial
 import { Observable, ReplaySubject, share } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
-import { Nullable } from '@rt-tools/core';
+import { Nullable } from '@rt-tools/utils';
 import { MODAL_WINDOW_SIZE_ENUM } from './modal.types';
 import { RtuiModalComponent } from './modal.component';
 import { IModal } from './modal.types';
