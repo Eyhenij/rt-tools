@@ -10,7 +10,8 @@ describe(isEmptyArray.name, () => {
         expect(isEmptyArray([undefined])).toBe(false);
     });
 
-    it('should throw on a nullish argument — it reads .length blindly', () => {
-        expect(() => isEmptyArray(null as unknown as unknown[])).toThrow(TypeError);
+    it('should treat a nullish argument as empty', () => {
+        expect(isEmptyArray(null)).toBe(true);
+        expect(isEmptyArray(undefined)).toBe(true);
     });
 });

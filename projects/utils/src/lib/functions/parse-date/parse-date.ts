@@ -12,6 +12,11 @@ interface PlaceholderItem {
     handler: (val: string) => void;
 }
 
+interface LiteralItem {
+    placeholder: string;
+    literal: string;
+}
+
 interface PositionedHandler {
     placeholder: string;
     handler: (val: string) => void;
@@ -33,6 +38,9 @@ function escapeRegExp(str: string): string {
  * the format does not mention are taken from `referenceDate` for the date components and default
  * to zero for the time components.
  *
+ * Literal text goes in single quotes, exactly as in `formatDate` — `"'Issued on' dd.MM.yyyy"` reads
+ * back what that format wrote. Two quotes in a row (`''`) mean one apostrophe.
+ *
  * @param dateString - the string to parse
  * @param formatStr - the format describing the input (same tokens as `formatDate`)
  * @param referenceDate - supplies year/month/day when the format omits them (defaults to now)
@@ -42,6 +50,7 @@ function escapeRegExp(str: string): string {
  * parseDate('15.01.2024', 'dd.MM.yyyy'); // Date for Jan 15, 2024
  * parseDate('2024/01/15 14:30', 'yyyy/MM/dd HH:mm'); // Date with time
  * parseDate('nonsense', 'dd.MM.yyyy'); // Invalid Date
+ * parseDate('Issued on 15.01.2024', "'Issued on' dd.MM.yyyy"); // Date for Jan 15, 2024
  */
 export function parseDate(dateString: string, formatStr: string, referenceDate: Date = new Date()): Date {
     if (!dateString || typeof dateString !== 'string') {
@@ -194,14 +203,25 @@ export function parseDate(dateString: string, formatStr: string, referenceDate: 
 
     // Build regex from format string using placeholders to avoid double-replacement
     // First, replace all tokens in the original format string with placeholders
-    let workingFormat: string = formatStr;
     const placeholderList: PlaceholderItem[] = [];
+    const literalList: LiteralItem[] = [];
     let placeholderIndex: number = 0;
 
+    // Quoted text is literal: park it before any token is looked at, so its letters are matched as
+    // themselves rather than read as tokens. `''` is an escaped apostrophe.
+    let workingFormat: string = formatStr.replace(/'([^']*)'/g, (_match: string, literal: string): string => {
+        const placeholder: string = `\x00${placeholderIndex++}\x00`;
+        literalList.push({ placeholder, literal: literal === '' ? "'" : literal });
+
+        return placeholder;
+    });
+
+    // One placeholder per *occurrence*: a token used twice needs two capture groups, otherwise the
+    // second occurrence stays in the pattern as a literal placeholder and can never match.
     for (const { token, pattern, handler } of sortedPatterns) {
-        if (workingFormat.includes(token)) {
+        while (workingFormat.includes(token)) {
             const placeholder: string = `\x00${placeholderIndex++}\x00`;
-            workingFormat = workingFormat.split(token).join(placeholder);
+            workingFormat = workingFormat.replace(token, placeholder);
             placeholderList.push({ placeholder, pattern, handler });
         }
     }
@@ -212,6 +232,12 @@ export function parseDate(dateString: string, formatStr: string, referenceDate: 
     // Replace placeholders with actual regex patterns
     for (const { placeholder, pattern } of placeholderList) {
         regexStr = regexStr.replace(escapeRegExp(placeholder), pattern);
+    }
+
+    // Quoted text matches itself. Restored through a replacer so a `$` in it is not read as a
+    // substitution reference.
+    for (const { placeholder, literal } of literalList) {
+        regexStr = regexStr.replace(escapeRegExp(placeholder), (): string => escapeRegExp(literal));
     }
 
     // Sort handlers by their placeholder position in the original working format

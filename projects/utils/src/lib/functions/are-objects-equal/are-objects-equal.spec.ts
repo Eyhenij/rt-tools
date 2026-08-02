@@ -34,7 +34,9 @@ describe(areObjectsEqual.name, () => {
         expect(areObjectsEqual<unknown>({}, null)).toBe(false);
     });
 
-    it('should equate an array with an index-keyed object — only a pair of arrays takes the array path', () => {
-        expect(areObjectsEqual<unknown>([1], { 0: 1 })).toBe(true);
+    it('should return false when one side is an array and the other is not', () => {
+        expect(areObjectsEqual<unknown>([1], { 0: 1 })).toBe(false);
+        expect(areObjectsEqual<unknown>({ 0: 1 }, [1])).toBe(false);
+        expect(areObjectsEqual<unknown>([], {})).toBe(false);
     });
 });

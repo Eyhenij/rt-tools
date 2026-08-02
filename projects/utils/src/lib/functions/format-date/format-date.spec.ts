@@ -107,6 +107,35 @@ describe(formatDate.name, () => {
         expect(formatDate(testDate, 'h:mm a')).toBe('2:30 PM');
     });
 
+    describe('quoted literals', () => {
+        it('should render quoted text as itself', () => {
+            expect(formatDate(testDate, "'Issued on' dd.MM.yyyy")).toBe('Issued on 15.01.2024');
+        });
+
+        it('should protect letters that would otherwise be tokens', () => {
+            expect(formatDate(testDate, "'Month:' MM")).toBe('Month: 01');
+            expect(formatDate(testDate, "'dd MM yyyy'")).toBe('dd MM yyyy');
+        });
+
+        it('should render two quotes in a row as one apostrophe', () => {
+            expect(formatDate(testDate, "''")).toBe("'");
+            expect(formatDate(testDate, "d'' MMM")).toBe("15' Jan");
+        });
+
+        it('should render a token that appears more than once', () => {
+            expect(formatDate(testDate, 'dd/dd')).toBe('15/15');
+            expect(formatDate(testDate, 'yyyy yyyy yyyy')).toBe('2024 2024 2024');
+        });
+
+        it('should handle several quoted runs', () => {
+            expect(formatDate(testDate, "'from' dd 'to' dd")).toBe('from 15 to 15');
+        });
+
+        it('should not read a $-substitution out of a literal', () => {
+            expect(formatDate(testDate, "'$&' yyyy")).toBe('$& 2024');
+        });
+    });
+
     it('should leave a format without tokens untouched', () => {
         expect(formatDate(testDate, '--')).toBe('--');
         expect(formatDate(testDate, '')).toBe('');

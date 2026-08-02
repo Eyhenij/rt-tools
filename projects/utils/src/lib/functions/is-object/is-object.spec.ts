@@ -7,8 +7,8 @@ describe(isObject.name, () => {
         expect(isObject(new Date())).toBe(true);
     });
 
-    it('should return true for null — typeof null is "object"', () => {
-        expect(isObject(null)).toBe(true);
+    it('should return false for null', () => {
+        expect(isObject(null)).toBe(false);
     });
 
     it('should return false for primitives and functions', () => {

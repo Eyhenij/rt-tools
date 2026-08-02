@@ -1,20 +1,21 @@
 # isEmptyString
 
 ```ts
-isEmptyString(value: string): boolean
+isEmptyString(value: Nullable<string>): boolean
 ```
 
-Reports whether a string has no characters.
+Reports whether a string holds no characters. Nullish counts as empty.
 
 ## Use it when
 
-- You already know the value is a string and want the intent spelled out at the call site.
+- You have a string-or-nothing and want the intent spelled out at the call site.
 
 ## Edge cases
 
+- `null` and `undefined` are **empty**, matching how [`isEmpty`](../is-empty/CONTEXT.md) treats
+  absence.
 - **It does not trim.** `'   '` is not empty. Trim first when whitespace should not count.
-- **It does not check the type.** A nullish argument throws a `TypeError`.
 
 ## Reach for something else when
 
-- The value may be nullish or of an unknown shape — use [`isEmpty`](../is-empty/CONTEXT.md).
+- The value's shape is unknown — use [`isEmpty`](../is-empty/CONTEXT.md).

@@ -1,10 +1,13 @@
+import { isDate } from '../is-date/index.js';
 import { dateStringToDate } from './date-string-to-date.js';
 
 describe(dateStringToDate.name, () => {
-    it('should pass a Date through unchanged', () => {
+    it('should return a copy of a Date argument', () => {
         const date: Date = new Date(2024, 0, 15);
+        const result: Date = dateStringToDate(date);
 
-        expect(dateStringToDate(date)).toBe(date);
+        expect(result).toEqual(date);
+        expect(result).not.toBe(date);
     });
 
     it('should parse a dd.MM.yyyy string', () => {
@@ -33,23 +36,17 @@ describe(dateStringToDate.name, () => {
         expect(dateStringToDate('.01.2024').getFullYear()).toBe(2024);
     });
 
-    it('should fall back to now for an empty or unparseable input', () => {
-        const now: Date = new Date();
-
-        expect(dateStringToDate('').getFullYear()).toBe(now.getFullYear());
-        expect(dateStringToDate('nonsense').getFullYear()).toBe(now.getFullYear());
-        expect(dateStringToDate(null as unknown as string).getFullYear()).toBe(now.getFullYear());
+    it('should return an Invalid Date for an empty or unparseable input', () => {
+        expect(isDate(dateStringToDate(''))).toBe(false);
+        expect(isDate(dateStringToDate('nonsense'))).toBe(false);
+        expect(isDate(dateStringToDate(null as unknown as string))).toBe(false);
     });
 
-    it('should fall back to now for a year beyond 3000', () => {
-        const now: Date = new Date();
-
-        expect(dateStringToDate('15.01.3001').getFullYear()).toBe(now.getFullYear());
+    it('should return an Invalid Date for a year beyond 3000', () => {
+        expect(isDate(dateStringToDate('15.01.3001'))).toBe(false);
     });
 
-    it('should fall back to now for a year typed with an extra digit', () => {
-        const now: Date = new Date();
-
-        expect(dateStringToDate('15.01.20245').getFullYear()).toBe(now.getFullYear());
+    it('should return an Invalid Date for a year typed with an extra digit', () => {
+        expect(isDate(dateStringToDate('15.01.20245'))).toBe(false);
     });
 });
