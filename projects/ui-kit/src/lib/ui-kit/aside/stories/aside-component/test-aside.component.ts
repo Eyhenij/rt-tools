@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
@@ -72,14 +71,13 @@ export class TestAsideComponent implements OnInit {
         { name: ASIDE_BUTTONS_ENUM.DELETE, icon: 'delete', color: 'red', tooltip: 'Button example' },
         { name: ASIDE_BUTTONS_ENUM.RESET, icon: 'undo', color: 'gray', tooltip: 'Button example' },
     ]);
-    public readonly requestError: Signal<HttpErrorResponse> = signal(
-        new HttpErrorResponse({
-            error: { message: 'Not Found' },
-            status: 404,
-            statusText: 'Not Found',
-            url: 'https://api.example.com/data',
-        })
-    );
+    /** any failure shape is accepted — the container only serialises the value */
+    public readonly requestError: Signal<unknown> = signal({
+        code: 'NOT_FOUND',
+        message: 'Not Found',
+        status: 404,
+        url: 'https://api.example.com/data',
+    });
     public readonly selectedTabIndex: WritableSignal<number> = signal(0);
 
     public ngOnInit(): void {
