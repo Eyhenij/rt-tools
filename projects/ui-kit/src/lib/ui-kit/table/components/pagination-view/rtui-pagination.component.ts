@@ -25,8 +25,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective, WINDOW } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
-import { isNumber, PageModel } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
+import { isNumber, IPageModel } from '@rt-tools/utils';
 import { DEFAULT_PAGE_SIZE } from '../../util/default-pagination';
 
 @Component({
@@ -43,14 +43,14 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
     readonly #windowRef: Window = inject(WINDOW);
 
     /** Current Page Model */
-    public currentPageModel: InputSignal<PageModel> = input.required();
+    public currentPageModel: InputSignal<IPageModel> = input.required();
     /** Indicates is mobile view */
-    public isMobile: InputSignalWithTransform<Nullable<boolean>, boolean> = input.required<Nullable<boolean>, boolean>({
+    public isMobile: InputSignalWithTransform<INullable<boolean>, boolean> = input.required<INullable<boolean>, boolean>({
         transform: booleanAttribute,
     });
 
     /** Output action when Page Model changed */
-    public readonly pageModelChange: OutputEmitterRef<Partial<PageModel>> = output<Partial<PageModel>>();
+    public readonly pageModelChange: OutputEmitterRef<Partial<IPageModel>> = output<Partial<IPageModel>>();
 
     /** Form control for selected page size */
     public control: FormControl<number> = this.#fb.nonNullable.control(DEFAULT_PAGE_SIZE);
@@ -64,14 +64,14 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
     /** Array of current page numbers */
     public readonly numbers: WritableSignal<Array<number | string>> = signal([]);
     /** Page Model for compare */
-    public readonly previousPageModel: WritableSignal<Nullable<PageModel>> = signal(null);
+    public readonly previousPageModel: WritableSignal<INullable<IPageModel>> = signal(null);
     /** Value of full content width */
     public readonly minContentFitWidth: WritableSignal<number> = signal(0);
     /** Indicates is content clipped */
     public readonly isContentClipped: WritableSignal<boolean> = signal(false);
 
     /** Container template ref */
-    public readonly containerRef: Signal<Nullable<ElementRef<HTMLElement>>> = viewChild<ElementRef<HTMLElement>>('containerRef');
+    public readonly containerRef: Signal<INullable<ElementRef<HTMLElement>>> = viewChild<ElementRef<HTMLElement>>('containerRef');
 
     /** Set 'isContentClipped' when widow resize */
     @HostListener('window:resize')
@@ -107,7 +107,7 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
 
     /** Set 'isContentClipped' on init */
     public ngAfterViewInit(): void {
-        const currentContainerWidth: Nullable<number> = this.containerRef()?.nativeElement?.scrollWidth;
+        const currentContainerWidth: INullable<number> = this.containerRef()?.nativeElement?.scrollWidth;
 
         if (currentContainerWidth && this.#windowRef?.innerWidth) {
             this.minContentFitWidth.set(currentContainerWidth);
@@ -184,7 +184,7 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
 
     /** Set 'isContentClipped' when content changed */
     #setMinContentFitWidth(): void {
-        const currentContainerWidth: Nullable<number> = this.containerRef()?.nativeElement?.scrollWidth;
+        const currentContainerWidth: INullable<number> = this.containerRef()?.nativeElement?.scrollWidth;
 
         if (currentContainerWidth && this.minContentFitWidth() && this.minContentFitWidth() < currentContainerWidth) {
             this.minContentFitWidth.set(currentContainerWidth);

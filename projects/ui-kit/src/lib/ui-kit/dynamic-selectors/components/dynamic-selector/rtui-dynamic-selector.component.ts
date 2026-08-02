@@ -43,7 +43,7 @@ import { noop } from 'rxjs';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 import { areArraysEqual, areArraysEqualUnordered, checkIsEntityInArrayByKey, sortByAlphabet, transformArrayInput } from '@rt-tools/utils';
 import { OVERLAY_POSITIONS, RtEscapeKeyDirective } from '@rt-tools/core';
 import { RtuiDynamicSelectorListActionsComponent } from '../actions/rtui-dynamic-selector-list-actions.component';
@@ -58,7 +58,7 @@ import {
 import { BooleanInput } from '@angular/cdk/coercion';
 
 interface FormModel {
-    autocompleteControl: FormControl<Nullable<string>>;
+    autocompleteControl: FormControl<INullable<string>>;
 }
 
 /** Directive for row actions located outside a row menu button */
@@ -122,10 +122,10 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     protected readonly connectedOverlayPositions: ConnectedPosition[] = [...OVERLAY_POSITIONS];
 
     public form: FormGroup<FormModel> = this.#fb.group<FormModel>({
-        autocompleteControl: this.#fb.control<Nullable<string>>(null), // used only for UI
+        autocompleteControl: this.#fb.control<INullable<string>>(null), // used only for UI
     });
     /** Target element for overlay selector */
-    public selectedOverlayTrigger: Nullable<CdkOverlayOrigin> = null;
+    public selectedOverlayTrigger: INullable<CdkOverlayOrigin> = null;
 
     /** A model's field which should be used for http-requests */
     public keyExp: InputSignal<KEY> = input.required();
@@ -190,7 +190,7 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     /** Indicates that an additional control has been changed */
     public additionalControlChanged: InputSignal<boolean> = input(false);
     /** Custom sort function for entities list in popup */
-    public sortFn: InputSignal<Nullable<(a: ENTITY, b: ENTITY) => number>> = input<Nullable<(a: ENTITY, b: ENTITY) => number>>(null);
+    public sortFn: InputSignal<INullable<(a: ENTITY, b: ENTITY) => number>> = input<INullable<(a: ENTITY, b: ENTITY) => number>>(null);
 
     /** Output search action */
     public readonly searchAction: OutputEmitterRef<string> = output<string>();
@@ -214,7 +214,7 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     public readonly selectedEntities: Signal<ENTITY[]> = computed(() => {
         return this.#selectedEntityIds()
             .map((id: ENTITY[KEY]) => this.entities().find((el: ENTITY) => id === el[this.keyExp()]))
-            .filter((el: Nullable<ENTITY>): el is ENTITY => !!el);
+            .filter((el: INullable<ENTITY>): el is ENTITY => !!el);
     });
     /** Indicates is popup selector visible */
     public readonly isSelectionControlShown: WritableSignal<boolean> = signal(false);
@@ -246,14 +246,14 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     });
 
     /** Additional control for entity */
-    public readonly additionalControlTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY }>>> = contentChild(
+    public readonly additionalControlTpl: Signal<INullable<TemplateRef<{ $implicit: ENTITY }>>> = contentChild(
         RtuiDynamicSelectorAdditionalControlDirective,
         {
             read: TemplateRef,
         }
     );
     /** Custom item title template */
-    public readonly itemTitleTpl: Signal<Nullable<TemplateRef<{ $implicit: ENTITY }>>> = contentChild(
+    public readonly itemTitleTpl: Signal<INullable<TemplateRef<{ $implicit: ENTITY }>>> = contentChild(
         RtuiDynamicSelectorItemTitleProjectionDirective,
         {
             read: TemplateRef,
@@ -272,7 +272,7 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     public ngOnInit(): void {
         this.form.controls.autocompleteControl.valueChanges
             .pipe(distinctUntilChanged(), takeUntilDestroyed(this.#destroyRef))
-            .subscribe((value: Nullable<string>): void => {
+            .subscribe((value: INullable<string>): void => {
                 this.#autocompleteControlValue.set(value || '');
             });
 
@@ -378,7 +378,7 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
 
     /** Add entity to or delete entity from list of selected */
     public toggleEntity(keyValue: ENTITY[KEY]): void {
-        const entity: Nullable<ENTITY> = this.entities().find((entity: ENTITY) => {
+        const entity: INullable<ENTITY> = this.entities().find((entity: ENTITY) => {
             return entity[this.keyExp()] === keyValue;
         });
 
@@ -422,7 +422,7 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     /** Proceed selected entities ids */
     public select(values: ENTITY[KEY][]): void {
         if (this.isSingleSelection()) {
-            const entity: Nullable<ENTITY> = this.entities().find((entity: ENTITY) => {
+            const entity: INullable<ENTITY> = this.entities().find((entity: ENTITY) => {
                 return entity[this.keyExp()] === values[0];
             });
 

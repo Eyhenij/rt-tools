@@ -1,5 +1,5 @@
-import { IDictionary, Primitive } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { IDictionary, IPrimitive } from '@rt-tools/core';
+import { INullable } from '@rt-tools/utils';
 
 import { ModelStatus } from '../enums';
 
@@ -24,8 +24,8 @@ export namespace IStateBase {
     export interface List<ENTITY_TYPE extends object, PAGE_MODEL_TYPE extends object, SORT_MODEL_TYPE extends object> extends Async {
         entities: ENTITY_TYPE[];
         pageModel: PAGE_MODEL_TYPE;
-        sortModel: Nullable<SORT_MODEL_TYPE>;
-        searchTerm: Nullable<string>;
-        params: IDictionary<Primitive>;
+        sortModel: INullable<SORT_MODEL_TYPE>;
+        searchTerm: INullable<string>;
+        params: IDictionary<IPrimitive>;
     }
 }

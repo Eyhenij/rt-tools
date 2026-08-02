@@ -19,7 +19,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective } from '@rt-tools/core';
 import { IDBStorageService, PlatformService } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtActionBarService, RtuiActionBarContainerComponent } from '../../../action-bar';
 import { RtuiToggleComponent } from '../../../toggle';
@@ -31,7 +31,7 @@ import {
     RtuiDynamicListToolbarActionsDirective,
     RtuiDynamicListToolbarSelectorsDirective,
 } from '../../dynamic-list.component';
-import { FILTER_OPERATOR_TYPE_ENUM, FilterModel, LIST_SORT_ORDER_ENUM, PageModel, SortModel } from '@rt-tools/utils';
+import { FILTER_OPERATOR_TYPE_ENUM, IFilterModel, LIST_SORT_ORDER_ENUM, IPageModel, ISortModel } from '@rt-tools/utils';
 import { RtDynamicListSelectorsDirective } from '../../util/dynamic-list-selectors.directive';
 import { RtTableConfigService } from '../../util/table-config.service';
 import { COLUMNS } from '../constants';
@@ -93,16 +93,16 @@ export default class TestDynamicListComponent implements OnInit {
     public searchTerm: string = '';
     public data: Person[] = [];
     public selectedEntitiesIds: number[] = [];
-    public pageModel: PageModel = {
+    public pageModel: IPageModel = {
         pageNumber: 1,
         pageSize: 10,
         totalCount: 10,
     };
-    public currentSortModel: SortModel<string> = {
+    public currentSortModel: ISortModel<string> = {
         propertyName: 'id',
         sortDirection: LIST_SORT_ORDER_ENUM.ASC,
     };
-    public filterModel: FilterModel[] = [
+    public filterModel: IFilterModel[] = [
         {
             propertyName: 'name',
             operatorType: FILTER_OPERATOR_TYPE_ENUM.EQUALS,
@@ -111,7 +111,7 @@ export default class TestDynamicListComponent implements OnInit {
     ];
     public storageKey: string = 'dynamicListManyItemsKey';
 
-    public readonly dynamicListTpl: Signal<Nullable<RtDynamicListSelectorsDirective<Person, keyof Person, 'id'>>> =
+    public readonly dynamicListTpl: Signal<INullable<RtDynamicListSelectorsDirective<Person, keyof Person, 'id'>>> =
         viewChild<RtDynamicListSelectorsDirective<Person, keyof Person, 'id'>>(RtDynamicListSelectorsDirective);
     public readonly selectedEntities: Signal<Person[]> = computed(() => {
         return this.dynamicListTpl()?.selectedEntities() ?? [];
@@ -185,17 +185,17 @@ export default class TestDynamicListComponent implements OnInit {
         this.data = createPersonList(20);
     }
 
-    public onSortChange(sortModel: SortModel<string>): void {
+    public onSortChange(sortModel: ISortModel<string>): void {
         this.currentSortModel = sortModel;
         // eslint-disable-next-line no-console
         console.warn('Sort Model', sortModel);
     }
 
-    public onPageModelChange(pageModel: Partial<PageModel>): void {
+    public onPageModelChange(pageModel: Partial<IPageModel>): void {
         this.pageModel = { ...this.pageModel, ...pageModel };
     }
 
-    public onFilterChange(filterModel: FilterModel[]): void {
+    public onFilterChange(filterModel: IFilterModel[]): void {
         this.filterModel = filterModel;
         // eslint-disable-next-line no-console
         console.warn('Filters', this.filterModel);

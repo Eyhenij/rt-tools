@@ -18,7 +18,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatToolbar } from '@angular/material/toolbar';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 import { RtuiToolbarCenterDirective, RtuiToolbarComponent, RtuiToolbarLeftDirective, RtuiToolbarRightDirective } from '../toolbar';
 
 @Directive({
@@ -61,23 +61,26 @@ export class RtuiHeaderRightDirective {}
     ],
 })
 export class RtuiHeaderComponent {
-    public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
-        transform: booleanAttribute,
-    });
-    public isMobileMenuButtonShown: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<
-        Nullable<boolean>,
-        Nullable<boolean>
+    public isMobile: InputSignalWithTransform<INullable<boolean>, INullable<boolean>> = input<INullable<boolean>, INullable<boolean>>(
+        false,
+        {
+            transform: booleanAttribute,
+        }
+    );
+    public isMobileMenuButtonShown: InputSignalWithTransform<INullable<boolean>, INullable<boolean>> = input<
+        INullable<boolean>,
+        INullable<boolean>
     >(true, {
         transform: booleanAttribute,
     });
 
-    public readonly leftHeaderTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiHeaderLeftDirective, {
+    public readonly leftHeaderTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiHeaderLeftDirective, {
         read: TemplateRef,
     });
-    public readonly centerHeaderTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiHeaderCenterDirective, {
+    public readonly centerHeaderTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiHeaderCenterDirective, {
         read: TemplateRef,
     });
-    public readonly rightHeaderTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiHeaderRightDirective, {
+    public readonly rightHeaderTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiHeaderRightDirective, {
         read: TemplateRef,
     });
 

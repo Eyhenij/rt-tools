@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { BlockDirective } from '@rt-tools/core';
 import { RtuiPaginationComponent } from '../../components';
-import { PageModel } from '@rt-tools/utils';
+import { IPageModel } from '@rt-tools/utils';
 
 @Component({
     selector: 'app-test-pagination-component',
@@ -20,7 +20,7 @@ import { PageModel } from '@rt-tools/utils';
 })
 export default class TestPaginationComponent {
     public isMobile: boolean = false;
-    public pageModel: PageModel = {
+    public pageModel: IPageModel = {
         pageNumber: 1,
         pageSize: 10,
         totalCount: 100,
@@ -28,7 +28,7 @@ export default class TestPaginationComponent {
         hasNext: true,
     };
 
-    public onPageModelChange(pageModel: Partial<PageModel>): void {
+    public onPageModelChange(pageModel: Partial<IPageModel>): void {
         const pageNumber: number | undefined = pageModel.pageNumber;
 
         if (pageNumber) {

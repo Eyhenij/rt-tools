@@ -1,7 +1,7 @@
 # isEmptyString
 
 ```ts
-isEmptyString(value: Nullable<string>): boolean
+isEmptyString(value: INullable<string>): boolean
 ```
 
 Reports whether a string holds no characters. Nullish counts as empty.

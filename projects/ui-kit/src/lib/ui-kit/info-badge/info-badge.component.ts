@@ -17,7 +17,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 import { POSITION_ENUM } from '@rt-tools/core';
 import { IInfoBadgeSizeType, INFO_BADGE_SIZE_ENUM } from './badge-info-enum';
 import { IconSideType } from './icon-side.type';
@@ -35,7 +35,7 @@ export class RtuiInfoBadgeComponent implements AfterContentChecked {
     public glyph: InputSignal<string> = input('');
     public iconSide: InputSignal<IconSideType> = input<IconSideType>(POSITION_ENUM.RIGHT);
     public isFontBold: InputSignal<boolean> = input(false);
-    public isMobile: InputSignalWithTransform<Nullable<boolean>, boolean> = input.required<Nullable<boolean>, boolean>({
+    public isMobile: InputSignalWithTransform<INullable<boolean>, boolean> = input.required<INullable<boolean>, boolean>({
         transform: booleanAttribute,
     });
     public isTitleCollapsed: WritableSignal<boolean> = signal(false);

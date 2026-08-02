@@ -2,7 +2,7 @@ import { Type } from '@angular/core';
 import { ThemePalette } from '@angular/material/core';
 import { Observable } from 'rxjs';
 
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 
 // Modal enums
 export enum MODAL_WINDOW_SIZE_ENUM {
@@ -24,13 +24,13 @@ export interface Icon {
     style?: { [className: string]: string };
 }
 
-export interface NameValueType<N = string, V = string> {
+export interface INameValueType<N = string, V = string> {
     name: N;
     value: V;
 }
 
-export interface Select<T> {
-    value: Array<NameValueType<string, T>>;
+export interface ISelect<T> {
+    value: Array<INameValueType<string, T>>;
     label?: string;
     hint?: string;
 }
@@ -39,7 +39,7 @@ export namespace IModal {
     export interface Button<T> {
         text: string;
         color?: ThemePalette;
-        value: Nullable<T>;
+        value: INullable<T>;
         appearance?: 'standard' | 'raised' | 'flat' | 'stroked' | 'fab' | 'mini-fab';
         validateSelect?: boolean;
         assignSelectedValue?: boolean;
@@ -67,7 +67,7 @@ export namespace IModal {
             value: string;
             placeholder: string;
         };
-        select?: Select<T>;
+        select?: ISelect<T>;
     }
 
     export interface DataAnswer<T> {
@@ -75,13 +75,13 @@ export namespace IModal {
         message: string;
     }
 
-    export type ConfirmResponsePredicate<T> = (answer: Nullable<IModal.DataAnswer<T>>) => boolean;
+    export type ConfirmResponsePredicate<T> = (answer: INullable<IModal.DataAnswer<T>>) => boolean;
 
     export interface ConfirmResponse<T> {
-        on(predicate: ConfirmResponsePredicate<T>): Observable<Nullable<IModal.DataAnswer<T>>>;
+        on(predicate: ConfirmResponsePredicate<T>): Observable<INullable<IModal.DataAnswer<T>>>;
 
-        onCancel(cancel?: ConfirmResponsePredicate<T>): Observable<Nullable<IModal.DataAnswer<T>>>;
+        onCancel(cancel?: ConfirmResponsePredicate<T>): Observable<INullable<IModal.DataAnswer<T>>>;
 
-        onConfirm(confirm?: ConfirmResponsePredicate<T>): Observable<Nullable<IModal.DataAnswer<T>>>;
+        onConfirm(confirm?: ConfirmResponsePredicate<T>): Observable<INullable<IModal.DataAnswer<T>>>;
     }
 }

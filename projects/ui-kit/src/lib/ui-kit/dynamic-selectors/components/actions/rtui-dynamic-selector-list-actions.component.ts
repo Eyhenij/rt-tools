@@ -12,7 +12,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 
 @Component({
@@ -23,7 +23,10 @@ import { RtIconOutlinedDirective } from '@rt-tools/core';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RtuiDynamicSelectorListActionsComponent {
-    public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input.required<Nullable<boolean>, Nullable<boolean>>({
+    public isMobile: InputSignalWithTransform<INullable<boolean>, INullable<boolean>> = input.required<
+        INullable<boolean>,
+        INullable<boolean>
+    >({
         transform: booleanAttribute,
     });
     public isResetButtonDisabled: InputSignalWithTransform<boolean, boolean> = input.required<boolean, boolean>({

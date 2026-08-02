@@ -14,7 +14,7 @@ Rules that hold across the folder:
 
 - **One function per directory.** A file that used to group several (`date-format.ts`,
   `is-equal.ts`, `safe-comparator.ts`) is now several directories, one per export. A type or
-  constant that belongs to exactly one function lives with it — `ComparatorType` with `safeCompare`,
+  constant that belongs to exactly one function lives with it — `IComparatorType` with `safeCompare`,
   `EMAIL_REGEXP` with `isEmail`, `HAS_OWN_SCOPE_ENUM` with `hasPropertyInChain`.
 - **Cross-function imports go through the sibling's `index.ts`**, never at its inner file:
   `import { isNil } from '../is-nil/index.js';`. Extensions are `.js` — the package emits both

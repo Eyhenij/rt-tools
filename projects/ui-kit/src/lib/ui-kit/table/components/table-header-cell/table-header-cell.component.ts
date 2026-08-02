@@ -20,8 +20,8 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
-import { LIST_SORT_ORDER_ENUM, ListSortOrderType, SortModel } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
+import { LIST_SORT_ORDER_ENUM, ListSortOrderType, ISortModel } from '@rt-tools/utils';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { ITable } from '../../util/table-column.interface';
 
@@ -53,13 +53,13 @@ export class RtuiTableHeaderCellComponent {
     protected readonly sortOrderTypes: typeof LIST_SORT_ORDER_ENUM = LIST_SORT_ORDER_ENUM;
 
     public headerModel: InputSignal<ITable.Header> = input.required<ITable.Header>();
-    public sortModel: InputSignal<Nullable<SortModel<string>>> = input.required<Nullable<SortModel<string>>>();
-    public currentSortModel: InputSignal<Nullable<SortModel<string>>> = input.required<Nullable<SortModel<string>>>();
+    public sortModel: InputSignal<INullable<ISortModel<string>>> = input.required<INullable<ISortModel<string>>>();
+    public currentSortModel: InputSignal<INullable<ISortModel<string>>> = input.required<INullable<ISortModel<string>>>();
     public headerDataEllipsisMaxLines: InputSignalWithTransform<number, number> = input<number, number>(1, {
         transform: numberAttribute,
     });
 
-    public readonly sortChange: OutputEmitterRef<SortModel<string>> = output<SortModel<string>>();
+    public readonly sortChange: OutputEmitterRef<ISortModel<string>> = output<ISortModel<string>>();
 
     public readonly active: Signal<boolean> = computed(() => {
         return (
@@ -76,7 +76,7 @@ export class RtuiTableHeaderCellComponent {
 
     @HostListener('click')
     protected handleClick(): void {
-        const sortPropertyName: Nullable<string> = this.sortModel()?.propertyName;
+        const sortPropertyName: INullable<string> = this.sortModel()?.propertyName;
 
         if (sortPropertyName) {
             this.sortChange.emit({

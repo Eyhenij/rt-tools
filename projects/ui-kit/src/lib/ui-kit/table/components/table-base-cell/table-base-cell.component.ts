@@ -21,7 +21,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 import { isNumber, isString } from '@rt-tools/utils';
 import { EmptyToDashPipe, RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtHideTooltipDirective } from '../../../tooltip';
@@ -53,7 +53,7 @@ export class TableBaseCellComponent<T = { [key: string]: unknown }> {
     readonly #sanitizer: DomSanitizer = inject(DomSanitizer);
 
     protected readonly cellValue: Signal<T[keyof T] | string | number> = computed(() => {
-        const transformFn: Nullable<(value: T[keyof T]) => string | number> = this.column()?.transform;
+        const transformFn: INullable<(value: T[keyof T]) => string | number> = this.column()?.transform;
         return transformFn ? transformFn(this.row()[this.column().propName]) : this.row()[this.column().propName];
     });
     protected readonly cellIconStyle: Signal<SafeStyle | undefined> = computed(() => {

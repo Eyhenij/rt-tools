@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { take } from 'rxjs/operators';
 
 import { IDBStorageService } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 import { areArraysEqual } from '@rt-tools/utils';
 import { ITable } from './index';
 
@@ -30,7 +30,7 @@ export class RtTableConfigService<ENTITY_TYPE> {
             .pipe(take(1), takeUntilDestroyed(this.#destroyRef))
             .subscribe(
                 (
-                    savedConfig: Nullable<{
+                    savedConfig: INullable<{
                         isVerticalScrollbarShown: boolean;
                         isHorizontalScrollbarShown: boolean;
                         columns: Array<Partial<ITable.Column<ENTITY_TYPE>>>;
@@ -39,7 +39,7 @@ export class RtTableConfigService<ENTITY_TYPE> {
                     if (savedConfig?.columns && this.#checkIsSavedConfigConsistent(config, savedConfig.columns)) {
                         const updatedColumns: Array<ITable.Column<ENTITY_TYPE> & { orderIndex: number }> = savedConfig?.columns.map(
                             (el: Partial<ITable.Column<ENTITY_TYPE> & { orderIndex: number }>) => {
-                                const oldConfigIem: Nullable<ITable.Column<ENTITY_TYPE>> = config.find(
+                                const oldConfigIem: INullable<ITable.Column<ENTITY_TYPE>> = config.find(
                                     (item: ITable.Column<ENTITY_TYPE>) => el.propName === item.propName
                                 );
                                 return {

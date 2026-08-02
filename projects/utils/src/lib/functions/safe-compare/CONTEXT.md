@@ -1,8 +1,8 @@
-# safeCompare / ComparatorType
+# safeCompare / IComparatorType
 
 ```ts
-type ComparatorType<T> = (aa: T, bb: T) => number;
-safeCompare<T>(a: T, b: T, comparator: ComparatorType<T>): number
+type IComparatorType<T> = (aa: T, bb: T) => number;
+safeCompare<T>(a: T, b: T, comparator: IComparatorType<T>): number
 ```
 
 Wraps a comparator so it never sees a nullish operand: missing values are ordered first, present

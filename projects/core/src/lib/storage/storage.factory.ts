@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 
 import { PlatformService } from '../services';
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 import { InMemoryStorageService } from './in-memory-storage.service';
 
 /**
@@ -11,7 +11,7 @@ import { InMemoryStorageService } from './in-memory-storage.service';
  *
  * @returns localStorage or null
  */
-export function localStorageFactory(): Nullable<Storage> {
+export function localStorageFactory(): INullable<Storage> {
     return inject(PlatformService).isPlatformBrowser ? localStorage : null;
 }
 
@@ -22,7 +22,7 @@ export function localStorageFactory(): Nullable<Storage> {
  *
  * @returns sessionStorage or null
  */
-export function sessionStorageFactory(): Nullable<Storage> {
+export function sessionStorageFactory(): INullable<Storage> {
     return inject(PlatformService).isPlatformBrowser ? sessionStorage : null;
 }
 
