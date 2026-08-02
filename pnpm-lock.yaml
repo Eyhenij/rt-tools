@@ -349,8 +349,8 @@ importers:
         specifier: ^0.3.0
         version: 0.3.0(b58c8efa16ca07098f7715ff1753d0f2)
       '@rt-tools/store':
-        specifier: ^0.2.0
-        version: 0.2.0(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(@rt-tools/core@0.3.0(b58c8efa16ca07098f7715ff1753d0f2))(@rt-tools/utils@0.3.0)(rxjs@7.8.2)
+        specifier: ^0.3.0
+        version: 0.3.0(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(@rt-tools/core@0.3.0(b58c8efa16ca07098f7715ff1753d0f2))(@rt-tools/utils@0.3.0)(rxjs@7.8.2)
       '@rt-tools/utils':
         specifier: ^0.3.0
         version: 0.3.0
@@ -3739,12 +3739,12 @@ packages:
       '@rt-tools/utils': ^0.3.0
       rxjs: ^7.8.0
 
-  '@rt-tools/store@0.2.0':
-    resolution: {integrity: sha512-UPi1sooSyDOkUoLJ8fAQZZJCRBvAVlYxhgJ3BuiDscOiIwuLmVSHaD46fE3+EXS4YdTNcQBPh5uKV53LD+WOkw==}
+  '@rt-tools/store@0.3.0':
+    resolution: {integrity: sha512-ODjg4qflGgFsDrBV08cN4wtPMiCL/SGeR/r++y2KTLCzkyE6ZbgpTPdnEGjTYOZ8XbITIVPugVGxwHYLQfA/Nw==}
     peerDependencies:
       '@angular/core': ^22.0.0
-      '@rt-tools/core': ^0.2.0
-      '@rt-tools/utils': ^0.2.0
+      '@rt-tools/core': ^0.3.0
+      '@rt-tools/utils': ^0.3.0
       rxjs: ^7.8.0
 
   '@rt-tools/utils@0.3.0':
@@ -15603,7 +15603,7 @@ snapshots:
       rxjs: 7.8.2
       tslib: 2.8.1
 
-  '@rt-tools/store@0.2.0(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(@rt-tools/core@0.3.0(b58c8efa16ca07098f7715ff1753d0f2))(@rt-tools/utils@0.3.0)(rxjs@7.8.2)':
+  '@rt-tools/store@0.3.0(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(@rt-tools/core@0.3.0(b58c8efa16ca07098f7715ff1753d0f2))(@rt-tools/utils@0.3.0)(rxjs@7.8.2)':
     dependencies:
       '@angular/core': 22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2)
       '@rt-tools/core': 0.3.0(b58c8efa16ca07098f7715ff1753d0f2)
