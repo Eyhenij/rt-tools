@@ -1,6 +1,5 @@
 import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { NgTemplateOutlet } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -104,7 +103,7 @@ export class RtuiAsideContainerComponent {
         transform: (value: IAside.HeaderActionButton[]) => transformArrayInput(value),
     });
 
-    public requestError: InputSignal<Nullable<HttpErrorResponse>> = input<Nullable<HttpErrorResponse>>(null);
+    public requestError: InputSignal<Nullable<unknown>> = input<Nullable<unknown>>(null);
     public submitButtonTitle: InputSignal<string> = input<string>('Save');
     public cancelButtonTitle: InputSignal<string> = input<string>('Discard Changes');
     public submitButtonTooltip: InputSignal<string> = input<string>('');
