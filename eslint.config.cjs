@@ -78,7 +78,10 @@ module.exports = [
             'space-infix-ops': ['error'],
             'semi-style': ['error', 'last'],
             semi: ['error', 'always'],
-            quotes: ['error', 'single'],
+            // `avoidEscape` keeps this from contradicting Prettier: with `singleQuote: true` Prettier
+            // still emits double quotes around a string that contains an apostrophe, because that is
+            // the form with fewer escapes.
+            quotes: ['error', 'single', { avoidEscape: true }],
             'no-bitwise': ['error'],
             'template-curly-spacing': ['error', 'never'],
             'object-curly-spacing': ['error', 'always'],
