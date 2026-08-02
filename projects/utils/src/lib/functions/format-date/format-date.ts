@@ -20,7 +20,12 @@ function padStart(value: number, length: number): string {
  * - `mm`/`m` minutes, `ss`/`s` seconds, `SSS` milliseconds
  *
  * Tokens are substituted through placeholders (longest first), so an already-substituted value can
- * never be re-matched by a shorter token.
+ * never be re-matched by a shorter token. A token may appear more than once — `'dd/dd'` renders the
+ * day twice.
+ *
+ * Literal text goes in single quotes — `"'Month:' MM"` renders `Month: 01`. Two quotes in a row
+ * (`''`) produce one apostrophe. Without quoting every letter is read as a token, so an unquoted
+ * word is rewritten beyond recognition.
  *
  * @param date - the date to format
  * @param formatStr - the format string (e.g. `'dd.MM.yyyy'`, `'yyyy-MM-dd HH:mm:ss'`)
@@ -29,6 +34,7 @@ function padStart(value: number, length: number): string {
  * @example
  * formatDate(new Date(2024, 0, 15), 'dd.MM.yyyy'); // '15.01.2024'
  * formatDate(new Date(2024, 0, 15, 14, 30), 'yyyy-MM-dd HH:mm'); // '2024-01-15 14:30'
+ * formatDate(new Date(2024, 0, 15), "'Issued on' dd.MM.yyyy"); // 'Issued on 15.01.2024'
  */
 export function formatDate(date: Date, formatStr: string): string {
     if (!isDate(date)) {
@@ -57,9 +63,11 @@ export function formatDate(date: Date, formatStr: string): string {
         return placeholder;
     };
 
-    // Order matters: longer tokens must be replaced first
-    // Use exact token matching to prevent partial replacements
-    let result: string = formatStr;
+    // Quoted text is literal: park it in a placeholder before any token is looked at, so its
+    // letters can never be read as tokens. `''` is an escaped apostrophe.
+    let result: string = formatStr.replace(/'([^']*)'/g, (_match: string, literal: string): string =>
+        createPlaceholder(literal === '' ? "'" : literal)
+    );
 
     // Replace tokens with placeholders (longest first)
     result = result.replace(/yyyy/g, createPlaceholder(String(year)));
@@ -85,7 +93,7 @@ export function formatDate(date: Date, formatStr: string): string {
 
     // Replace placeholders with actual values
     for (const [placeholder, value] of placeholders) {
-        result = result.replace(placeholder, value);
+        result = result.split(placeholder).join(value);
     }
 
     return result;
