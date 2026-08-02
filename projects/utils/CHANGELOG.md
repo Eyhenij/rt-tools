@@ -1,3 +1,9 @@
+## [0.1.1](https://github.com/nickmdf/rt-tools/compare/rt-utils@0.1.0...rt-utils@0.1.1) (2026-08-02)
+
+### Bug Fixes
+
+- **rt:utils:** declare tslib, and check the manifest covers what the build imports ([83c3bce](https://github.com/nickmdf/rt-tools/commit/83c3bce6a9305853b94285543f851aa08ad62a7e))
+
 # [0.1.0](https://github.com/nickmdf/rt-tools/compare/rt-utils@0.0.9...rt-utils@0.1.0) (2026-08-02)
 
 ### Code Refactoring
