@@ -13,3 +13,8 @@ angular.json
 .angular
 
 .nx/self-healing
+
+# Written by pnpm, not by hand. Prettier reindents them to 4 spaces, pnpm writes them back to 2,
+# and the result is a many-thousand-line diff on every install.
+pnpm-lock.yaml
+pnpm-workspace.yaml
