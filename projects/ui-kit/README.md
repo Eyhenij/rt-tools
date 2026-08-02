@@ -74,8 +74,8 @@ All components use the `rtui-` prefix.
 | Group | Components |
 | --- | --- |
 | **Actions & forms** | `rtui-button`, `rtui-multi-button`, `rtui-icon`, `rtui-checkbox`, `rtui-toggle`, `rtui-file-upload`, `rtui-image-upload` |
-| **Overlays & feedback** | `rtui-modal`, `rtui-aside`, `rtui-popover`, `rtui-snack-bar`, `rtui-spinner`, `rtui-info-badge` |
-| **Data display** | `rtui-table`, `rtui-dynamic-list`, `rtui-dynamic-selector`, `rtui-dynamic-input`, `rtui-pagination` |
+| **Overlays & feedback** | `rtui-modal`, `rtui-aside-container`, `rtui-aside-panel`, `rtui-popover-container`, `rtui-snack-bar`, `rtui-spinner`, `rtui-info-badge` |
+| **Data display** | `rtui-table`, `rtui-dynamic-list`, `rtui-dynamic-selector`, `rtui-dynamic-input`, `rtui-multi-selector-popup`, `rtui-pagination` |
 | **Layout & navigation** | `rtui-header`, `rtui-toolbar`, `rtui-side-menu`, `rtui-scrollable`, `rtui-action-bar` |
 
 ### `rtui-button`
@@ -91,6 +91,7 @@ The button is fully configurable through inputs (all with sensible defaults):
 | `radius` | `'none' \| 'sm' \| 'md' \| 'lg' \| 'full'` | config / `'full'` |
 | `design` | `'custom' \| 'material'` | config / `'custom'` |
 | `icon` / `iconPosition` | `string` / `'start' \| 'end'` | `''` / `'start'` |
+| `iconSize` | `RtuiIconSizeType` | derived from `size` |
 | `text` | `string` | `''` |
 | `loading` / `disabled` | `boolean` | `false` |
 

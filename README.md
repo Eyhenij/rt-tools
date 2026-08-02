@@ -23,11 +23,14 @@ and a consistent, standalone-component API.
 | Package | Version | Description |
 | --- | --- | --- |
 | [`@rt-tools/ui-kit`](./projects/ui-kit) | [![npm](https://img.shields.io/npm/v/@rt-tools/ui-kit?color=c00)](https://www.npmjs.com/package/@rt-tools/ui-kit) | Themeable, signal-based UI components (`rtui-*`) with light/dark/auto theming and brand color schemes. |
-| [`@rt-tools/utils`](./projects/utils) | [![npm](https://img.shields.io/npm/v/@rt-tools/utils?color=c00)](https://www.npmjs.com/package/@rt-tools/utils) | Functions, pipes, directives, validators, and services for everyday Angular apps. |
 | [`@rt-tools/store`](./projects/store) | [![npm](https://img.shields.io/npm/v/@rt-tools/store?color=c00)](https://www.npmjs.com/package/@rt-tools/store) | Signal-based state management with a message bus and Redux DevTools support. |
-| [`@rt-tools/core`](./projects/core) | [![npm](https://img.shields.io/npm/v/@rt-tools/core?color=c00)](https://www.npmjs.com/package/@rt-tools/core) | Framework primitives — `MessageBus`, `PlatformService`, the `WINDOW` token, and type guards. |
+| [`@rt-tools/core`](./projects/core) | [![npm](https://img.shields.io/npm/v/@rt-tools/core?color=c00)](https://www.npmjs.com/package/@rt-tools/core) | Everything Angular-bound that is not a component — directives, pipes, validators, platform/breakpoint services, storage, `MessageBus`, BEM helpers. |
+| [`@rt-tools/utils`](./projects/utils) | [![npm](https://img.shields.io/npm/v/@rt-tools/utils?color=c00)](https://www.npmjs.com/package/@rt-tools/utils) | Pure functions, list models and type helpers. **No framework** — `tslib` is its only dependency. |
 
-`@rt-tools/core` is the shared foundation; the other packages depend on it. Install only what you need.
+`@rt-tools/utils` is the base of the stack and carries no framework, so a Node script or code shared
+between server and client can use it directly. `@rt-tools/core` adds everything that needs Angular,
+and `store` and `ui-kit` build on both. No package re-exports another, so every symbol has exactly
+one home. Install only what you need.
 
 ## Highlights
 
@@ -45,8 +48,9 @@ and a consistent, standalone-component API.
 pnpm add @rt-tools/ui-kit
 
 # …or pick individual packages
-pnpm add @rt-tools/utils @rt-tools/core
-pnpm add @rt-tools/store @rt-tools/core
+pnpm add @rt-tools/store   # pulls in core and utils
+pnpm add @rt-tools/core    # pulls in utils
+pnpm add @rt-tools/utils   # no dependencies beyond tslib, no Angular needed
 ```
 
 > npm and yarn work too — swap `pnpm add` for `npm install` / `yarn add`.
