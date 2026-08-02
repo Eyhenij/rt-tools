@@ -11,8 +11,6 @@
   provideRtUtils and isHTMLElement no longer ship from @rt-tools/utils. They move
   to @rt-tools/core.
 
-## [Unreleased]
-
 ### BREAKING CHANGES
 
 - **rt:utils:** the package no longer ships anything that needs Angular. Six directives, ten pipes, both validators, `BreakpointService`, `DeviceDetectorService`, `Breakpoints`, `IBreakpoints`, `NAVIGATOR`, `OVERLAY_POSITIONS`, `POSITION_ENUM`, `provideRtUtils` and `isHTMLElement` move to `@rt-tools/core` — import them from there. No re-export shim is provided: one would put Angular back into this package's import graph, which is the whole point of the split.
