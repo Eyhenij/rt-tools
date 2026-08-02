@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Code Refactoring
+
+- **rt:utils:** every exported function now lives in its own directory alongside its spec and a `CONTEXT.md` describing its contract and edge cases; coverage over `lib/functions` is 100% and enforced by a `coverageThreshold`. The published surface is unchanged.
+
 ## [0.1.1](https://github.com/nickmdf/rt-tools/compare/rt-utils@0.1.0...rt-utils@0.1.1) (2026-08-02)
 
 ### Bug Fixes
