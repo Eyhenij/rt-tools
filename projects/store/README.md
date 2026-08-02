@@ -78,6 +78,30 @@ export class UsersStore extends BaseAsyncStoreService<UsersState, string> {
 }
 ```
 
+#### Typing the failure
+
+The failure methods (`handleError`, `set*Failure`, `set*FailureVoid`) carry whatever the transport
+reports as an error. The store never inspects it, so the third type parameter defaults to `unknown`
+and the base class stays independent of the transport.
+
+Declare it to get a typed failure argument:
+
+```typescript
+interface TransportFailure {
+    code: number;
+    reason: string;
+}
+
+@Injectable({ providedIn: 'root' })
+export class UsersStore extends BaseAsyncStoreService<UsersState, string, TransportFailure> {
+    // handleError(error?: TransportFailure, callbackFn?: () => void): void
+    // setLoadingFailure(error: TransportFailure, config?: ISetPropertiesConfig): Observable<never>
+}
+```
+
+The failure is rethrown untouched by `set*Failure`, so downstream `catchError` receives the original
+object.
+
 ### Selectors
 
 ```typescript

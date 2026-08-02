@@ -1,3 +1,10 @@
+## [Unreleased]
+
+### Features
+
+- **rt:store:** `BaseAsyncStoreService` takes a third type parameter `ERROR_TYPE` (default `unknown`) that types the failure argument of `handleError` and of every `set*Failure` / `set*FailureVoid` method. Consumers on any transport can now declare their own failure shape; stores that omit the parameter are unaffected.
+- **rt:store:** the package no longer depends on `@angular/common` — it was only pulled in for the hardcoded `HttpErrorResponse` type and has been dropped from `peerDependencies`.
+
 ## [0.0.6](https://github.com/Eyhenij/rt-tools/compare/rt-store@0.0.5...rt-store@0.0.6) (2026-07-09)
 
 ## 0.0.5 (2026-06-26)

@@ -284,9 +284,6 @@ importers:
 
     projects/store:
         dependencies:
-            '@angular/common':
-                specifier: ^22.0.0
-                version: 22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2)
             '@angular/core':
                 specifier: ^22.0.0
                 version: 22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2)
