@@ -2,7 +2,7 @@ import { Type } from '@angular/core';
 import { ThemePalette } from '@angular/material/core';
 import { Observable } from 'rxjs';
 
-import { Nullable } from '@rt-tools/core';
+import { Nullable } from '@rt-tools/utils';
 
 // Modal enums
 export enum MODAL_WINDOW_SIZE_ENUM {

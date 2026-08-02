@@ -20,7 +20,8 @@ import { MatOption, MatSelect } from '@angular/material/select';
 import { MatTab, MatTabContent, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
 import { MatTooltip } from '@angular/material/tooltip';
 
-import { BlockDirective, ElemDirective, Nullable } from '@rt-tools/core';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { Nullable } from '@rt-tools/utils';
 import { ASIDE_REF, AsideRef } from '../../aside.types';
 import { ASIDE_BUTTONS_ENUM } from '../../aside.enums';
 import { IAside } from '../../aside.interfaces';

@@ -34,7 +34,8 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { debounceTime } from 'rxjs/operators';
 
-import { BlockDirective, ElemDirective, ModDirective, Nullable } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+import { Nullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import {
     BreakStringPipe,

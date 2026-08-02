@@ -7,7 +7,7 @@
 
 ### Features
 
-- **rt:utils:** `isNil` and `Nullable` now live here rather than in `@rt-tools/core`, so the pure functions built on them no longer reach into an Angular package. `@rt-tools/core` re-exports both, so importing them from there keeps working.
+- **rt:utils:** `isNil` and `Nullable` now live here rather than in `@rt-tools/core`, so the pure functions built on them no longer reach into an Angular package. `@rt-tools/core` no longer exports them at all — import them from `@rt-tools/utils`.
 - **rt:utils:** `isEmail` no longer builds a `FormControl` to reach `Validators.email`; it tests the same pattern directly and exports it as `EMAIL_REGEXP`. Verdicts are unchanged, including that an empty value counts as valid — a spec now pins that.
 - **rt:utils:** the package now ships both CommonJS and ESM behind an `exports` map, so a consumer compiling to CommonJS can `require()` it. It previously shipped ESM-only with `"type": "module"`, which no amount of removing Angular would have made loadable there. `main` points at the CommonJS entry, `module` and `types` at the ESM one.
 

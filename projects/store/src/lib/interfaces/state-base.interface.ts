@@ -1,4 +1,5 @@
-import { IDictionary, Nullable, Primitive } from '@rt-tools/core';
+import { IDictionary, Primitive } from '@rt-tools/core';
+import { Nullable } from '@rt-tools/utils';
 
 import { ModelStatus } from '../enums';
 

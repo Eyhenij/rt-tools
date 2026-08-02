@@ -1,6 +1,7 @@
 import { DestroyRef, inject, Injectable, Signal } from '@angular/core';
 
-import { isNil, PlatformService, WINDOW } from '@rt-tools/core';
+import { PlatformService, WINDOW } from '@rt-tools/core';
+import { isNil } from '@rt-tools/utils';
 
 import { IDevToolsConnection, IDevToolsGlobalConfig, IDevToolsMessage, STORE_DEVTOOLS_CONFIG } from '../interfaces/devtools.interface';
 

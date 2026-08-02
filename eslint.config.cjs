@@ -213,6 +213,27 @@ module.exports = [
     },
 
     {
+        // A package must not re-export another package's symbols. A re-export hides which package
+        // a symbol really belongs to, and it drags the whole source package into the import graph
+        // of anything that touches the barrel — which is how @rt-tools/utils would end up
+        // depending on Angular again. Every symbol has exactly one package it is imported from.
+        files: ['projects/**/*.ts'],
+        rules: {
+            'no-restricted-syntax': [
+                'error',
+                {
+                    selector: 'ExportNamedDeclaration[source.value=/^@rt-tools\\//]',
+                    message: 'Do not re-export another @rt-tools package. Import the symbol from the package that owns it.',
+                },
+                {
+                    selector: 'ExportAllDeclaration[source.value=/^@rt-tools\\//]',
+                    message: 'Do not re-export another @rt-tools package. Import the symbol from the package that owns it.',
+                },
+            ],
+        },
+    },
+
+    {
         // @rt-tools/utils ships to Node consumers as well as to Angular apps: no framework, no
         // partial compilation, no peer dependencies. A single import from any of these would put
         // that back and the package would silently stop resolving outside Angular — so the ban is
