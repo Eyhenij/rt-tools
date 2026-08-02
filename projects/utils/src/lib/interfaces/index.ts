@@ -8,3 +8,4 @@ export * from './optional.type';
 export * from './values.type';
 export * from './base-mapper.interface';
 export * from './scriptable.type';
+export * from './nullable.type';

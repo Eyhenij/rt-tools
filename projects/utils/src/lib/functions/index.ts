@@ -21,3 +21,4 @@ export * from './is-empty-array';
 export * from './is-empty-object';
 export * from './debounce';
 export * from './has-property-in-chain';
+export * from './is-nil';
