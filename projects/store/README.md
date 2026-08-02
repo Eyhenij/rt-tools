@@ -10,10 +10,12 @@ the [rt-tools](https://github.com/Eyhenij/rt-tools) workspace.
 ## Installation
 
 ```bash
-npm install @rt-tools/store @rt-tools/core
+pnpm add @rt-tools/store
 # or
-pnpm add @rt-tools/store @rt-tools/core
+npm install @rt-tools/store
 ```
+
+`@rt-tools/core` and `@rt-tools/utils` come along as dependencies.
 
 ## Features
 
@@ -137,9 +139,15 @@ super(INITIAL_STATE, {
 
 ## Requirements
 
-- Angular `^22.0.0`
-- `@rt-tools/core` `^0.0.5`
-- RxJS `^7.8.0`
+| Requirement       | Version   |
+| ----------------- | --------- |
+| Angular           | `^22.0.0` |
+| RxJS              | `^7.8.0`  |
+| `@rt-tools/core`  | `^0.2.0`  |
+| `@rt-tools/utils` | `^0.2.0`  |
+
+The package pulls in `@angular/core` and `rxjs` only; nothing here touches `@angular/common/http`,
+which is what lets the failure type stay transport-agnostic.
 
 ## License
 
