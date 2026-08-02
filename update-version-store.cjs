@@ -21,6 +21,24 @@ if (!fs.existsSync(packageJsonPath)) {
 
 const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
 
+// `workspace:*` is how the repo points at a sibling package's working tree. npm does not
+// understand the protocol, so a manifest still carrying it would publish a package nobody can
+// install. Publishing the sibling rewrites the spec — so hitting this means the packages went out
+// in the wrong order.
+const unresolved = ['dependencies', 'peerDependencies', 'optionalDependencies'].flatMap((block) =>
+    Object.entries(packageJson[block] ?? {})
+        .filter(([, spec]) => String(spec).startsWith('workspace:'))
+        .map(([name]) => `${block}.${name}`)
+);
+
+if (unresolved.length > 0) {
+    console.error(
+        `Error: @rt-tools/store still points at a workspace sibling: ${unresolved.join(', ')}.\n` +
+            'Publish that package first — its release rewrites the spec to a real range.'
+    );
+    process.exit(1);
+}
+
 // Get current version
 const currentVersion = packageJson.version;
 
