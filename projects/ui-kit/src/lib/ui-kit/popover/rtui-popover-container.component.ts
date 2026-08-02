@@ -2,7 +2,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, HostBinding, inject, input, InputSignalWithTransform, TemplateRef } from '@angular/core';
 import { DomSanitizer, SafeValue } from '@angular/platform-browser';
 
-import { Nullable } from '@rt-tools/core';
+import { Nullable } from '@rt-tools/utils';
 import { isString } from '@rt-tools/utils';
 
 @Component({

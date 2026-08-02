@@ -1,4 +1,4 @@
-import { sortByAlphabet, sortByDate } from './sorters';
+import { sortByAlphabet, sortByDate } from './sorters.js';
 
 describe(sortByAlphabet.name, () => {
     describe('when the first value is less than the second value', () => {

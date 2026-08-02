@@ -1,7 +1,7 @@
 import { booleanAttribute, Directive, input, InputSignal, InputSignalWithTransform } from '@angular/core';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
 
-import { Nullable } from '@rt-tools/core';
+import { Nullable } from '@rt-tools/utils';
 import { transformStringInput } from '@rt-tools/utils';
 
 @Directive()

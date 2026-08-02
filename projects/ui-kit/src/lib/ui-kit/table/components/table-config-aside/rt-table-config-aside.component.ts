@@ -5,8 +5,10 @@ import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
-import { BlockDirective, ElemDirective, Nullable } from '@rt-tools/core';
-import { areArraysEqual, BreakpointService, RtIconOutlinedDirective } from '@rt-tools/utils';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { Nullable } from '@rt-tools/utils';
+import { areArraysEqual } from '@rt-tools/utils';
+import { BreakpointService, RtIconOutlinedDirective } from '@rt-tools/core';
 import { ASIDE_REF, AsideRef } from '../../../aside/aside.types';
 import { RtuiAsideContainerComponent, RtuiAsideContainerHeaderDirective } from '../../../aside';
 import { RtuiDynamicSelectorAdditionalControlDirective, RtuiDynamicSelectorComponent } from '../../../dynamic-selectors';

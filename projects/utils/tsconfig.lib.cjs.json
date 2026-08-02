@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "node10",
+    "verbatimModuleSyntax": false,
+    "outDir": "../../dist/utils/cjs",
+    "declaration": false,
+    "declarationMap": false,
+    "types": [],
+    "rootDir": "src"
+  },
+  "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts", "jest.config.ts", "jest.config.cts"],
+  "include": ["src/**/*.ts"]
+}

@@ -18,12 +18,14 @@
     "Redux DevTools"
   ],
   "dependencies": {
-    "@rt-tools/core": "^0.0.5"
+    "@rt-tools/core": "^0.0.5",
+    "@rt-tools/utils": "workspace:*"
   },
   "peerDependencies": {
     "@rt-tools/core": "^0.0.5",
     "@angular/core": "^22.0.0",
-    "rxjs": "^7.8.0"
+    "rxjs": "^7.8.0",
+    "@rt-tools/utils": "workspace:*"
   },
   "sideEffects": false,
   "main": "src/index.ts",

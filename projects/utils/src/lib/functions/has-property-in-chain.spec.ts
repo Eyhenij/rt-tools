@@ -1,4 +1,4 @@
-import { HAS_OWN_SCOPE_ENUM, hasPropertyInChain } from './has-property-in-chain';
+import { HAS_OWN_SCOPE_ENUM, hasPropertyInChain } from './has-property-in-chain.js';
 
 type Parent = { p: number };
 type Child = { o?: number } & Parent;

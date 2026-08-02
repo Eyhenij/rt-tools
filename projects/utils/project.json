@@ -6,7 +6,7 @@
   "projectType": "library",
   "release": {
     "version": {
-      "manifestRootsToUpdate": ["dist/{projectRoot}"],
+      "manifestRootsToUpdate": ["dist/utils"],
       "currentVersionResolver": "git-tag",
       "fallbackCurrentVersionResolver": "disk"
     }
@@ -14,28 +14,52 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/angular:package",
-      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/utils"],
+      "dependsOn": ["build:esm", "build:cjs"],
       "options": {
-        "project": "projects/utils/ng-package.json",
-        "tsConfig": "projects/utils/tsconfig.lib.json"
-      },
-      "configurations": {
-        "production": {
-          "tsConfig": "projects/utils/tsconfig.lib.prod.json"
-        },
-        "development": {}
-      },
-      "defaultConfiguration": "production"
+        "command": "node tools/finalize-utils-package.cjs"
+      }
+    },
+    "build:esm": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{workspaceRoot}/dist/utils/esm"],
+      "options": {
+        "main": "projects/utils/src/index.ts",
+        "tsConfig": "projects/utils/tsconfig.lib.esm.json",
+        "outputPath": "dist/utils/esm",
+        "generatePackageJson": false,
+        "assets": [],
+        "rootDir": "projects/utils/src"
+      }
+    },
+    "build:cjs": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{workspaceRoot}/dist/utils/cjs"],
+      "options": {
+        "main": "projects/utils/src/index.ts",
+        "tsConfig": "projects/utils/tsconfig.lib.cjs.json",
+        "outputPath": "dist/utils/cjs",
+        "generatePackageJson": false,
+        "assets": [],
+        "rootDir": "projects/utils/src"
+      }
+    },
+    "verify": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "node tools/verify-utils-package.cjs"
+      }
     },
     "nx-release-publish": {
       "options": {
-        "packageRoot": "dist/{projectRoot}"
+        "packageRoot": "dist/utils"
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": ["{workspaceRoot}/coverage/projects/utils"],
       "options": {
         "jestConfig": "projects/utils/jest.config.ts",
         "tsConfig": "projects/utils/tsconfig.spec.json"

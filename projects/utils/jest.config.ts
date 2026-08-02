@@ -1,26 +1,19 @@
+/**
+ * Plain ts-jest, not jest-preset-angular: the package has no framework to bootstrap, and a preset
+ * that pulls Angular into the test run would mask a framework dependency creeping back into the
+ * sources — the one thing this package must not have.
+ */
 export default {
     displayName: 'utils',
     preset: '../../jest.preset.cjs',
-    setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
+    testEnvironment: 'node',
     coverageDirectory: '../../coverage/projects/utils',
     transform: {
-        '^.+\\.(ts|mjs|js|html)$': [
-            'jest-preset-angular',
+        '^.+\\.ts$': [
+            'ts-jest',
             {
                 tsconfig: '<rootDir>/tsconfig.spec.json',
-                stringifyContentPathRegex: '\\.(html|svg)$',
             },
         ],
-    },
-    transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$)'],
-    snapshotSerializers: [
-        'jest-preset-angular/build/serializers/no-ng-attributes',
-        'jest-preset-angular/build/serializers/ng-snapshot',
-        'jest-preset-angular/build/serializers/html-comment',
-    ],
-    moduleNameMapper: {
-        '^@angular/cdk/(.*)$': '<rootDir>/../../node_modules/@angular/cdk/fesm2022/$1.mjs',
-        '^@angular/core/testing$': '<rootDir>/../../node_modules/@angular/core/fesm2022/testing.mjs',
-        '^@angular/platform-browser/testing$': '<rootDir>/../../node_modules/@angular/platform-browser/fesm2022/testing.mjs',
     },
 };

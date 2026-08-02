@@ -4,18 +4,14 @@
     "module": "preserve",
     "ignoreDeprecations": "6.0"
   },
-  "angularCompilerOptions": {
-    "enableI18nLegacyMessageIdFormat": false,
-    "strictInjectionParameters": true,
-    "strictInputAccessModifiers": true,
-    "typeCheckHostBindings": true,
-    "strictTemplates": true
-  },
   "files": [],
   "include": [],
   "references": [
     {
-      "path": "./tsconfig.lib.json"
+      "path": "./tsconfig.lib.esm.json"
+    },
+    {
+      "path": "./tsconfig.lib.cjs.json"
     },
     {
       "path": "./tsconfig.spec.json"
