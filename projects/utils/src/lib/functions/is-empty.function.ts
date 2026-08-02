@@ -1,9 +1,9 @@
-import { isEmptyArray } from './is-empty-array';
-import { isEmptyObject } from './is-empty-object';
-import { isEmptyString } from './is-empty-string';
-import { isNil } from './is-nil';
-import { isObject } from './is-object';
-import { isString } from './is-string';
+import { isEmptyArray } from './is-empty-array.js';
+import { isEmptyObject } from './is-empty-object.js';
+import { isEmptyString } from './is-empty-string.js';
+import { isNil } from './is-nil.js';
+import { isObject } from './is-object.js';
+import { isString } from './is-string.js';
 
 export function isEmpty(value: unknown): boolean {
     if (isNil(value)) {

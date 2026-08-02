@@ -1,5 +1,5 @@
-import { formatDate, isDate, parseDate, parseISO } from '../functions/date-format';
-import { isNil } from '../functions/is-nil';
+import { formatDate, isDate, parseDate, parseISO } from '../functions/date-format.js';
+import { isNil } from '../functions/is-nil.js';
 
 export class TypeCastHelper {
     public getAsString(data: unknown, defaultValue: string = ''): string {

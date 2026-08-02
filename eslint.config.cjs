@@ -213,6 +213,29 @@ module.exports = [
     },
 
     {
+        // @rt-tools/utils ships to Node consumers as well as to Angular apps: no framework, no
+        // partial compilation, no peer dependencies. A single import from any of these would put
+        // that back and the package would silently stop resolving outside Angular — so the ban is
+        // enforced where the import is written, not discovered later at publish time.
+        // Anything here that turns out to need one of them belongs in @rt-tools/core instead.
+        files: ['projects/utils/**/*.ts'],
+        rules: {
+            'no-restricted-imports': [
+                'error',
+                {
+                    patterns: [
+                        {
+                            group: ['@angular/*', '@angular/**', 'rxjs', 'rxjs/*'],
+                            message:
+                                '@rt-tools/utils must stay framework-agnostic — it has no Angular or RxJS dependency. Put framework-bound code in @rt-tools/core.',
+                        },
+                    ],
+                },
+            ],
+        },
+    },
+
+    {
         files: ['**/bem/*.directive.ts'],
         rules: {
             '@angular-eslint/prefer-inject': 'off',

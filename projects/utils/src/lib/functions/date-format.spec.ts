@@ -1,4 +1,4 @@
-import { formatDate, isDate, parseDate, parseISO } from './date-format';
+import { formatDate, isDate, parseDate, parseISO } from './date-format.js';
 
 describe('date-format', () => {
     describe('isDate', () => {
