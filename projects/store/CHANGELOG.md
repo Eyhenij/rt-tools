@@ -1,3 +1,21 @@
+# [0.3.0](https://github.com/Eyhenij/rt-tools/compare/rt-store@0.2.0...rt-store@0.3.0) (2026-08-02)
+
+### Code Refactoring
+
+- prefix the interfaces and generic type helpers with I ([bcb5e76](https://github.com/Eyhenij/rt-tools/commit/bcb5e76c064b82d46f152a6af807b94b2010384d)), closes [#234](https://github.com/Eyhenij/rt-tools/issues/234)
+
+### BREAKING CHANGES
+
+- every renamed type is part of the published surface.
+  `import { Nullable } from '@rt-tools/utils'` becomes
+  `import { INullable } from '@rt-tools/utils'`, and likewise for the rest.
+  No aliases are left behind — a symbol keeps exactly one name.
+
+Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01CkpaW5obf3ezRvTHYaDw2i
+
+## [0.0.7](https://github.com/Eyhenij/rt-tools/compare/rt-store@0.0.6...rt-store@0.0.7) (2026-07-14)
+
 # [0.2.0](https://github.com/Eyhenij/rt-tools/compare/rt-store@0.1.0...rt-store@0.2.0) (2026-08-02)
 
 # [0.1.0](https://github.com/Eyhenij/rt-tools/compare/rt-store@0.0.8...rt-store@0.1.0) (2026-08-02)
