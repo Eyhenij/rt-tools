@@ -1,12 +1,12 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-import { DASH, isNil, isString, Nullable } from '@rt-tools/utils';
+import { DASH, isNil, isString, INullable } from '@rt-tools/utils';
 
 @Pipe({
     name: 'breakString',
 })
 export class BreakStringPipe implements PipeTransform {
-    public transform(value: Nullable<string>): string {
+    public transform(value: INullable<string>): string {
         if (isNil(value)) {
             return DASH;
         }

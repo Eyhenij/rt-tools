@@ -1,6 +1,6 @@
-import { ComparatorType, safeCompare } from './safe-compare.js';
+import { IComparatorType, safeCompare } from './safe-compare.js';
 
-const numeric: ComparatorType<number> = (a: number, b: number) => a - b;
+const numeric: IComparatorType<number> = (a: number, b: number) => a - b;
 
 describe(safeCompare.name, () => {
     it('should delegate to the comparator when both values are present', () => {

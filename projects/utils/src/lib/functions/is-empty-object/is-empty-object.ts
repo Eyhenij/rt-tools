@@ -1,4 +1,4 @@
-import { Nullable } from '../../interfaces/nullable.type.js';
+import { INullable } from '../../interfaces/nullable.type.js';
 import { isEmptyArray } from '../is-empty-array/index.js';
 import { isNil } from '../is-nil/index.js';
 
@@ -16,6 +16,6 @@ import { isNil } from '../is-nil/index.js';
  * isEmptyObject(null); // true
  * isEmptyObject({ a: undefined }); // false — the key is there
  */
-export function isEmptyObject(value: Nullable<Record<string, unknown>>): boolean {
+export function isEmptyObject(value: INullable<Record<string, unknown>>): boolean {
     return isNil(value) || isEmptyArray(Object.keys(value));
 }

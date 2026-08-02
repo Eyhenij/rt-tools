@@ -1,6 +1,6 @@
 import { FormControl } from '@angular/forms';
 
-import { FilterOperatorType, SortModel } from '@rt-tools/utils';
+import { FilterOperatorType, ISortModel } from '@rt-tools/utils';
 
 export enum TABLE_COLUMN_TYPES_ENUM {
     DATE = 'date',
@@ -57,7 +57,7 @@ export namespace ITable {
         copyable: boolean;
         header: Header;
 
-        sorting?: SortModel<NonNullable<Extract<keyof T, string>>>;
+        sorting?: ISortModel<NonNullable<Extract<keyof T, string>>>;
         filtering?: boolean;
         filteringMultiple?: boolean;
         copyBtnAlign?: 'right' | 'left';

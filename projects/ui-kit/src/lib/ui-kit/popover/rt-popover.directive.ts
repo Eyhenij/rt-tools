@@ -19,7 +19,7 @@ import {
 import { computePosition, ComputePositionReturn, flip, offset, shift } from '@floating-ui/dom';
 
 import { PlatformService, WINDOW } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 import { RtuiPopoverContainerComponent } from './rtui-popover-container.component';
 
 export type MenuItemTrigger = 'click' | 'hover';
@@ -46,11 +46,11 @@ export class RtPopoverDirective implements OnInit, OnDestroy {
     public trigger: InputSignalWithTransform<MenuItemTrigger, MenuItemTrigger> = input<MenuItemTrigger, MenuItemTrigger>('hover', {
         transform: (value: unknown) => (value === 'click' ? 'click' : 'hover'),
     });
-    public template: InputSignalWithTransform<Nullable<TemplateRef<HTMLElement>>, Nullable<TemplateRef<HTMLElement>>> = input<
-        Nullable<TemplateRef<HTMLElement>>,
-        Nullable<TemplateRef<HTMLElement>>
+    public template: InputSignalWithTransform<INullable<TemplateRef<HTMLElement>>, INullable<TemplateRef<HTMLElement>>> = input<
+        INullable<TemplateRef<HTMLElement>>,
+        INullable<TemplateRef<HTMLElement>>
     >(null, {
-        transform: (value: Nullable<TemplateRef<HTMLElement>>) => value || null,
+        transform: (value: INullable<TemplateRef<HTMLElement>>) => value || null,
     });
     public isMouseHoverAllowed: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,

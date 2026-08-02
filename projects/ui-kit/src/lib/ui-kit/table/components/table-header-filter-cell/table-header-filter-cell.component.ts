@@ -23,7 +23,7 @@ import { MatDatepicker, MatDatepickerInput, MatDatepickerModule, MatDatepickerTo
 import {
     FILTER_OPERATOR_TYPE_ENUM,
     FILTER_OPERATORS,
-    FilterModel,
+    IFilterModel,
     FilterOperatorType,
     transformArrayInput,
     isString,
@@ -98,11 +98,11 @@ export class RtuiTableHeaderFilterCellComponent<
     /** Filter cell type */
     public filterType: InputSignal<ITable.FilterType> = input.required();
     /** Current filter model from store */
-    public filterModel: InputSignalWithTransform<FilterModel<KEY>[], FilterModel<KEY>[]> = input.required<
-        FilterModel<KEY>[],
-        FilterModel<KEY>[]
+    public filterModel: InputSignalWithTransform<IFilterModel<KEY>[], IFilterModel<KEY>[]> = input.required<
+        IFilterModel<KEY>[],
+        IFilterModel<KEY>[]
     >({
-        transform: (value: FilterModel<KEY>[]) => transformArrayInput(value),
+        transform: (value: IFilterModel<KEY>[]) => transformArrayInput(value),
     });
     /** Filter property */
     public defaultFilterOperator: InputSignalWithTransform<FilterOperatorType, FilterOperatorType> = input.required<
@@ -129,9 +129,9 @@ export class RtuiTableHeaderFilterCellComponent<
     });
 
     /** Filter change output action */
-    public readonly filterChange: OutputEmitterRef<FilterModel<KEY>[]> = output<FilterModel<KEY>[]>();
+    public readonly filterChange: OutputEmitterRef<IFilterModel<KEY>[]> = output<IFilterModel<KEY>[]>();
 
-    public readonly currentFilter: WritableSignal<FilterModel<KEY>> = signal({
+    public readonly currentFilter: WritableSignal<IFilterModel<KEY>> = signal({
         propertyName: '' as KEY,
         operatorType: FILTER_OPERATOR_TYPE_ENUM.EQUALS,
         value: '',
@@ -140,10 +140,10 @@ export class RtuiTableHeaderFilterCellComponent<
     public ngOnInit(): void {
         toObservable(this.filterModel, { injector: this.#injector })
             .pipe(takeUntilDestroyed(this.#destroyRef))
-            .subscribe((filterModel: FilterModel<KEY>[]) => {
+            .subscribe((filterModel: IFilterModel<KEY>[]) => {
                 this.currentFilter.set(
-                    filterModel?.length && filterModel.find((el: FilterModel<KEY>) => el.propertyName === this.filterProperty())
-                        ? (filterModel.find((el: FilterModel<KEY>) => el.propertyName === this.filterProperty()) as FilterModel<KEY>)
+                    filterModel?.length && filterModel.find((el: IFilterModel<KEY>) => el.propertyName === this.filterProperty())
+                        ? (filterModel.find((el: IFilterModel<KEY>) => el.propertyName === this.filterProperty()) as IFilterModel<KEY>)
                         : {
                               operatorType: this.defaultFilterOperator(),
                               propertyName: this.filterProperty(),
@@ -159,11 +159,11 @@ export class RtuiTableHeaderFilterCellComponent<
             return;
         }
 
-        let updatedFilterModel: FilterModel<KEY>[] = this.filterModel();
+        let updatedFilterModel: IFilterModel<KEY>[] = this.filterModel();
 
-        if (updatedFilterModel.find((el: FilterModel<KEY>) => el.propertyName === this.filterProperty())) {
+        if (updatedFilterModel.find((el: IFilterModel<KEY>) => el.propertyName === this.filterProperty())) {
             if (value) {
-                updatedFilterModel = updatedFilterModel.map((el: FilterModel<KEY>) =>
+                updatedFilterModel = updatedFilterModel.map((el: IFilterModel<KEY>) =>
                     el.propertyName === this.filterProperty()
                         ? {
                               ...el,
@@ -172,7 +172,7 @@ export class RtuiTableHeaderFilterCellComponent<
                         : el
                 );
             } else {
-                updatedFilterModel = updatedFilterModel.filter((el: FilterModel<KEY>) => el.propertyName !== this.filterProperty());
+                updatedFilterModel = updatedFilterModel.filter((el: IFilterModel<KEY>) => el.propertyName !== this.filterProperty());
             }
             this.filterChange.emit(updatedFilterModel);
         } else if (value) {
@@ -184,7 +184,7 @@ export class RtuiTableHeaderFilterCellComponent<
             this.filterChange.emit(updatedFilterModel);
         }
 
-        this.currentFilter.update((filter: FilterModel<KEY>) => ({
+        this.currentFilter.update((filter: IFilterModel<KEY>) => ({
             ...filter,
             value: isDate(value) ? value.toISOString() : value,
         }));
@@ -196,10 +196,10 @@ export class RtuiTableHeaderFilterCellComponent<
             return;
         }
 
-        let updatedFilterModel: FilterModel<KEY>[] = this.filterModel();
+        let updatedFilterModel: IFilterModel<KEY>[] = this.filterModel();
 
-        if (updatedFilterModel.find((el: FilterModel<KEY>) => el.propertyName === this.filterProperty())) {
-            updatedFilterModel = updatedFilterModel.map((el: FilterModel<KEY>) =>
+        if (updatedFilterModel.find((el: IFilterModel<KEY>) => el.propertyName === this.filterProperty())) {
+            updatedFilterModel = updatedFilterModel.map((el: IFilterModel<KEY>) =>
                 el.propertyName === this.filterProperty()
                     ? {
                           ...el,
@@ -217,6 +217,6 @@ export class RtuiTableHeaderFilterCellComponent<
             this.filterChange.emit(updatedFilterModel);
         }
 
-        this.currentFilter.update((filter: FilterModel<KEY>) => ({ ...filter, operatorType }));
+        this.currentFilter.update((filter: IFilterModel<KEY>) => ({ ...filter, operatorType }));
     }
 }

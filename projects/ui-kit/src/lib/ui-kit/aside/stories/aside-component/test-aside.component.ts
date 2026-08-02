@@ -20,7 +20,7 @@ import { MatTab, MatTabContent, MatTabGroup, MatTabLabel } from '@angular/materi
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 import { ASIDE_REF, AsideRef } from '../../aside.types';
 import { ASIDE_BUTTONS_ENUM } from '../../aside.enums';
 import { IAside } from '../../aside.interfaces';
@@ -82,11 +82,11 @@ export class TestAsideComponent implements OnInit {
 
     public ngOnInit(): void {
         this.form = this.#fb.group({
-            name: this.#fb.control<Nullable<string>>(null, Validators.required),
-            email: this.#fb.control<Nullable<string>>(null, [Validators.required, Validators.email]),
-            statuses: this.#fb.control<Nullable<string>>(null, Validators.required),
-            description: this.#fb.control<Nullable<string>>(null),
-            description1: this.#fb.control<Nullable<string>>(null),
+            name: this.#fb.control<INullable<string>>(null, Validators.required),
+            email: this.#fb.control<INullable<string>>(null, [Validators.required, Validators.email]),
+            statuses: this.#fb.control<INullable<string>>(null, Validators.required),
+            description: this.#fb.control<INullable<string>>(null),
+            description1: this.#fb.control<INullable<string>>(null),
         });
 
         this.form.valueChanges.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe(() => {

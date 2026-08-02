@@ -1,16 +1,16 @@
-export interface ListState<T extends string, M extends object> {
-    pageModel: PageModel;
-    sortModel: SortModel<T>;
+export interface IListState<T extends string, M extends object> {
+    pageModel: IPageModel;
+    sortModel: ISortModel<T>;
     filterModel: M;
     searchTerm: string;
 }
 
-export interface SortModel<T = string> {
+export interface ISortModel<T = string> {
     propertyName: T;
     sortDirection: ListSortOrderType;
 }
 
-export interface PageModel {
+export interface IPageModel {
     pageNumber: number;
     pageSize: number;
     totalCount: number;
@@ -23,7 +23,7 @@ export interface PageModel {
     startIndex?: number;
 }
 
-export interface FilterModel<M = string> {
+export interface IFilterModel<M = string> {
     operatorType: FilterOperatorType;
     propertyName: M;
     value?: string | number | boolean;

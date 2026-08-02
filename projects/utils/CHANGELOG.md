@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### BREAKING CHANGES
+
+- **rt:utils:** the interfaces and generic type helpers are `I`-prefixed, matching the convention the rest of the workspace already follows: `Nullable` → `INullable`, `Optional` → `IOptional`, `PartialOmit` → `IPartialOmit`, `Modify` → `IModify`, `IntersectionType` → `IIntersectionType`, `ValuesType` → `IValuesType`, `AnyObject` → `IAnyObject`, `EmptyObject` → `IEmptyObject`, `ComparatorType` → `IComparatorType`, `Scriptable*` → `IScriptable*`, `ListState` → `IListState`, `SortModel` → `ISortModel`, `PageModel` → `IPageModel`, `FilterModel` → `IFilterModel`. String-literal unions keep their `*Type` suffix and are untouched.
+
 # [0.2.0](https://github.com/nickmdf/rt-tools/compare/rt-utils@0.1.1...rt-utils@0.2.0) (2026-08-02)
 
 ### Bug Fixes
@@ -59,7 +65,7 @@ Claude-Session: https://claude.ai/code/session_01CkpaW5obf3ezRvTHYaDw2i
 
 ### Features
 
-- **rt:utils:** `isNil` and `Nullable` now live here rather than in `@rt-tools/core`, so the pure functions built on them no longer reach into an Angular package. `@rt-tools/core` no longer exports them at all — import them from `@rt-tools/utils`.
+- **rt:utils:** `isNil` and `INullable` now live here rather than in `@rt-tools/core`, so the pure functions built on them no longer reach into an Angular package. `@rt-tools/core` no longer exports them at all — import them from `@rt-tools/utils`.
 - **rt:utils:** `isEmail` no longer builds a `FormControl` to reach `Validators.email`; it tests the same pattern directly and exports it as `EMAIL_REGEXP`. Verdicts are unchanged, including that an empty value counts as valid — a spec now pins that.
 - **rt:utils:** the package now ships both CommonJS and ESM behind an `exports` map, so a consumer compiling to CommonJS can `require()` it. It previously shipped ESM-only with `"type": "module"`, which no amount of removing Angular would have made loadable there. `main` points at the CommonJS entry, `module` and `types` at the ESM one.
 
