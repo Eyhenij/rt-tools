@@ -1,3 +1,16 @@
+# [0.1.0](https://github.com/nickmdf/rt-tools/compare/rt-utils@0.0.9...rt-utils@0.1.0) (2026-08-02)
+
+### Code Refactoring
+
+- **rt:utils:** strip the Angular-bound surface out of the package ([f067de1](https://github.com/nickmdf/rt-tools/commit/f067de1cf1fa16f2b743ac0b0b735879e6b5e20c)), closes [#220](https://github.com/nickmdf/rt-tools/issues/220)
+
+### BREAKING CHANGES
+
+- **rt:utils:** directives, pipes, validators, BreakpointService,
+  DeviceDetectorService, Breakpoints, NAVIGATOR, OVERLAY_POSITIONS, POSITION_ENUM,
+  provideRtUtils and isHTMLElement no longer ship from @rt-tools/utils. They move
+  to @rt-tools/core.
+
 ## [Unreleased]
 
 ### BREAKING CHANGES
