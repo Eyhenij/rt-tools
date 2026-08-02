@@ -4,7 +4,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 
 import { distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 
 import { Breakpoints } from './breakpoints';
 import { IBreakpoints } from './breakpoints.model';
@@ -38,7 +38,7 @@ export class BreakpointService {
     readonly #smallTabletQuery: Signal<string> = computed(() => `(min-width: ${this.#breakpoints().sm})`);
     readonly #mobileQuery: Signal<string> = computed(() => `(max-width: ${this.decrementOnePixel(this.#breakpoints().xs)})`);
 
-    public readonly isDesktop: Signal<Nullable<boolean>> = toSignal<Nullable<boolean>>(
+    public readonly isDesktop: Signal<INullable<boolean>> = toSignal<INullable<boolean>>(
         toObservable(this.#desktopQuery, { injector: this.#injector }).pipe(
             distinctUntilChanged(),
             switchMap((query: string) => this.#breakpointObserver.observe(query)),
@@ -46,7 +46,7 @@ export class BreakpointService {
         )
     );
 
-    public readonly isSmallDesktop: Signal<Nullable<boolean>> = toSignal<Nullable<boolean>>(
+    public readonly isSmallDesktop: Signal<INullable<boolean>> = toSignal<INullable<boolean>>(
         toObservable(this.#smallDesktopQuery, { injector: this.#injector }).pipe(
             distinctUntilChanged(),
             switchMap((query: string) => this.#breakpointObserver.observe(query)),
@@ -54,7 +54,7 @@ export class BreakpointService {
         )
     );
 
-    public readonly isMobile: Signal<Nullable<boolean>> = toSignal<Nullable<boolean>>(
+    public readonly isMobile: Signal<INullable<boolean>> = toSignal<INullable<boolean>>(
         toObservable(this.#mobileQuery, { injector: this.#injector }).pipe(
             distinctUntilChanged(),
             switchMap((query: string) => this.#breakpointObserver.observe(query)),
@@ -62,7 +62,7 @@ export class BreakpointService {
         )
     );
 
-    public readonly isTablet: Signal<Nullable<boolean>> = toSignal<Nullable<boolean>>(
+    public readonly isTablet: Signal<INullable<boolean>> = toSignal<INullable<boolean>>(
         toObservable(this.#tabletQuery, { injector: this.#injector }).pipe(
             distinctUntilChanged(),
             switchMap((query: string) => this.#breakpointObserver.observe(query)),
@@ -70,7 +70,7 @@ export class BreakpointService {
         )
     );
 
-    public readonly isSmallTablet: Signal<Nullable<boolean>> = toSignal<Nullable<boolean>>(
+    public readonly isSmallTablet: Signal<INullable<boolean>> = toSignal<INullable<boolean>>(
         toObservable(this.#smallTabletQuery, { injector: this.#injector }).pipe(
             distinctUntilChanged(),
             switchMap((query: string) => this.#breakpointObserver.observe(query)),

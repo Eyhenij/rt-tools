@@ -1,6 +1,6 @@
 import { Directive, HostListener, inject, input, InputSignal } from '@angular/core';
 import { Router } from '@angular/router';
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 
 import { PlatformService } from '../services/platform.service';
 import { WINDOW } from '../tokens/window.token';
@@ -14,7 +14,7 @@ export class RtNavigationDirective {
     readonly #windowRef: Window = inject(WINDOW);
     readonly #platformService: PlatformService = inject(PlatformService);
 
-    public link: InputSignal<Nullable<string>> = input.required({ alias: 'rtNavigationDirective' });
+    public link: InputSignal<INullable<string>> = input.required({ alias: 'rtNavigationDirective' });
 
     @HostListener('click', ['$event'])
     public onClick(event: MouseEvent): void {

@@ -6,7 +6,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 import { areArraysEqual } from '@rt-tools/utils';
 import { BreakpointService, RtIconOutlinedDirective } from '@rt-tools/core';
 import { ASIDE_REF, AsideRef } from '../../../aside/aside.types';
@@ -94,7 +94,7 @@ export class RtTableConfigAsideComponent<ENTITY_TYPE> implements OnInit {
             ) => {
                 const updatedList: (ITable.Column<ENTITY_TYPE> & { orderIndex: number })[] = [];
                 value?.columns?.forEach((item: keyof ENTITY_TYPE, index: number) => {
-                    const currentItem: Nullable<ITable.Column<ENTITY_TYPE>> = this.selectedColumns().find(
+                    const currentItem: INullable<ITable.Column<ENTITY_TYPE>> = this.selectedColumns().find(
                         (el: ITable.Column<ENTITY_TYPE>) => el.propName === item
                     );
                     if (currentItem) {

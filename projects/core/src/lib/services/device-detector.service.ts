@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 
 import { NAVIGATOR } from '../tokens/navigator.token';
 import { WINDOW } from '../tokens/window.token';
@@ -21,7 +21,7 @@ export class DeviceDetectorService {
     readonly #navigatorRef: Navigator = inject(NAVIGATOR);
     readonly #platformService: PlatformService = inject(PlatformService);
 
-    public userAgent: Nullable<string> = null;
+    public userAgent: INullable<string> = null;
 
     constructor() {
         if (

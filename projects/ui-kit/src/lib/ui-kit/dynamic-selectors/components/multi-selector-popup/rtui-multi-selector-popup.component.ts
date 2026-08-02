@@ -35,7 +35,7 @@ import { RouterLink } from '@angular/router';
 import { debounceTime } from 'rxjs/operators';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import {
     BreakStringPipe,
@@ -97,7 +97,10 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
     protected readonly oSTypes: typeof OSTypes = OSTypes;
 
     /** Indicates is mobile view */
-    public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input.required<Nullable<boolean>, Nullable<boolean>>({
+    public isMobile: InputSignalWithTransform<INullable<boolean>, INullable<boolean>> = input.required<
+        INullable<boolean>,
+        INullable<boolean>
+    >({
         transform: booleanAttribute,
     });
     public entitiesToSelect: InputSignalWithTransform<ENTITY[], ENTITY[]> = input.required<ENTITY[], ENTITY[]>({
@@ -140,11 +143,11 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
         transform: booleanAttribute,
     });
     /** Indicates lazy loading is used */
-    public isLazyLoad: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(false, {
+    public isLazyLoad: InputSignalWithTransform<INullable<boolean>, boolean> = input<INullable<boolean>, boolean>(false, {
         transform: booleanAttribute,
     });
     /** Indicates local search is used */
-    public isLocalSearch: InputSignalWithTransform<Nullable<boolean>, boolean> = input<Nullable<boolean>, boolean>(true, {
+    public isLocalSearch: InputSignalWithTransform<INullable<boolean>, boolean> = input<INullable<boolean>, boolean>(true, {
         transform: booleanAttribute,
     });
     /** Keys of a pinned group kept at the top of the list — a trailing divider is drawn after the last visible one */
@@ -164,11 +167,11 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
     public readonly temporarySelectAction: OutputEmitterRef<ENTITY[]> = output<ENTITY[]>();
 
     /** Search input Ref for set focus on init */
-    public readonly searchInputRef: Signal<Nullable<ElementRef<HTMLInputElement>>> =
+    public readonly searchInputRef: Signal<INullable<ElementRef<HTMLInputElement>>> =
         viewChild<ElementRef<HTMLInputElement>>('searchInputTpl');
 
     /** Form control for search */
-    public readonly searchControl: FormControl<Nullable<string>> = new FormControl('');
+    public readonly searchControl: FormControl<INullable<string>> = new FormControl('');
     /** Form control for select */
     public readonly selectionControl: FormControl<ENTITY[KEY][]> = new FormControl<ENTITY[KEY][]>([], { nonNullable: true });
     /** Entities filtered by local search */
@@ -182,7 +185,7 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
     /** Indicates is macOS used */
     public readonly isMacOS: Signal<boolean> = signal(this.#deviceService.getOS() === this.oSTypes.MAC_OS);
     /** Key of the last visible pinned option — its row gets a trailing divider */
-    public readonly lastSeparatedKey: Signal<Nullable<ENTITY[KEY]>> = computed(() => {
+    public readonly lastSeparatedKey: Signal<INullable<ENTITY[KEY]>> = computed(() => {
         const keys: ENTITY[KEY][] = this.pinnedKeys();
 
         if (!keys.length) {
@@ -209,7 +212,7 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
         /** Filter list of entities by search  */
         this.searchControl.valueChanges
             .pipe(debounceTime(this.isLocalSearch() ? 0 : 500), takeUntilDestroyed(this.#destroyRef))
-            .subscribe((value: Nullable<string>): void => {
+            .subscribe((value: INullable<string>): void => {
                 const selectedEntities: ENTITY[] = this.entitiesToSelect().filter((el: ENTITY) => {
                     return this.selectionControl.value.includes(el[this.keyExp()]);
                 });

@@ -4,7 +4,7 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 
 @Component({
     selector: 'rtui-aside-error-box',
@@ -23,7 +23,7 @@ import { Nullable } from '@rt-tools/utils';
 export class AsideErrorBoxComponent {
     readonly #clipboard: Clipboard = inject(Clipboard);
 
-    public error: InputSignal<Nullable<unknown>> = input.required<Nullable<unknown>>();
+    public error: InputSignal<INullable<unknown>> = input.required<INullable<unknown>>();
 
     public isErrorCopied: WritableSignal<boolean> = signal(false);
 

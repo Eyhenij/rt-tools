@@ -1,14 +1,21 @@
 # @rt-tools/store
 
-Signal-based state management for Angular with Redux DevTools support.
+[![npm](https://img.shields.io/npm/v/@rt-tools/store?color=c00)](https://www.npmjs.com/package/@rt-tools/store)
+[![Angular](https://img.shields.io/badge/Angular-22%2B-dd0031?logo=angular&logoColor=white)](https://angular.dev)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/Eyhenij/rt-tools/blob/main/LICENSE)
+
+Signal-based state management for Angular with a message bus and Redux DevTools support. Part of
+the [rt-tools](https://github.com/Eyhenij/rt-tools) workspace.
 
 ## Installation
 
 ```bash
-npm install @rt-tools/store @rt-tools/core
+pnpm add @rt-tools/store
 # or
-pnpm add @rt-tools/store @rt-tools/core
+npm install @rt-tools/store
 ```
+
+`@rt-tools/core` and `@rt-tools/utils` come along as dependencies.
 
 ## Features
 
@@ -132,10 +139,16 @@ super(INITIAL_STATE, {
 
 ## Requirements
 
-- Angular 21+
-- @rt-tools/core ^0.0.1
-- RxJS 7.8+
+| Requirement       | Version   |
+| ----------------- | --------- |
+| Angular           | `^22.0.0` |
+| RxJS              | `^7.8.0`  |
+| `@rt-tools/core`  | `^0.2.0`  |
+| `@rt-tools/utils` | `^0.2.0`  |
+
+The package pulls in `@angular/core` and `rxjs` only; nothing here touches `@angular/common/http`,
+which is what lets the failure type stay transport-agnostic.
 
 ## License
 
-Apache-2.0
+[Apache-2.0](https://github.com/Eyhenij/rt-tools/blob/main/LICENSE) © Yauheni Krumin

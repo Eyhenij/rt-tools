@@ -38,7 +38,7 @@ import { noop } from 'rxjs';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 import { areArraysEqual, transformArrayInput, transformStringInput } from '@rt-tools/utils';
 import {
     RtuiDynamicSelectorItemAdditionalControlDirective,
@@ -51,7 +51,7 @@ import { BooleanInput } from '@angular/cdk/coercion';
 
 interface FormModel {
     control: FormControl<string[]>;
-    controlForUi: FormControl<Nullable<string>>;
+    controlForUi: FormControl<INullable<string>>;
 }
 
 /** Directive for row actions located outside a row menu button */
@@ -103,11 +103,11 @@ export class RtuiDynamicInputComponent extends RtuiDynamicSelectorsDirective imp
 
     public form: FormGroup<FormModel> = this.#fb.group<FormModel>({
         control: this.#fb.nonNullable.control<string[]>([]),
-        controlForUi: this.#fb.control<Nullable<string>>(null), // used only for UI
+        controlForUi: this.#fb.control<INullable<string>>(null), // used only for UI
     });
 
     /** Indicates is placeholder shown */
-    public isPlaceholderShown: ModelSignal<Nullable<boolean>> = model<Nullable<boolean>>(true);
+    public isPlaceholderShown: ModelSignal<INullable<boolean>> = model<INullable<boolean>>(true);
     /** Indicates is inputs-editable */
     public isInputsEditable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
@@ -136,7 +136,7 @@ export class RtuiDynamicInputComponent extends RtuiDynamicSelectorsDirective imp
     readonly #initialEntities: WritableSignal<string[]> = signal([]);
 
     /** Additional control for entity */
-    public readonly additionalControlTpl: Signal<Nullable<TemplateRef<{ $implicit: string }>>> = contentChild(
+    public readonly additionalControlTpl: Signal<INullable<TemplateRef<{ $implicit: string }>>> = contentChild(
         RtuiDynamicInputAdditionalControlDirective,
         {
             read: TemplateRef,

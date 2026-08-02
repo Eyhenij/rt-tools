@@ -1,9 +1,9 @@
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 import { IStorageConverter } from './interfaces/storage-converter';
 
 export class JsonConverter implements IStorageConverter {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public convertTo(data: Nullable<any>): string {
+    public convertTo(data: INullable<any>): string {
         let parsedData: string;
 
         try {
@@ -18,7 +18,7 @@ export class JsonConverter implements IStorageConverter {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public convertFrom<T>(data: any): Nullable<T> {
+    public convertFrom<T>(data: any): INullable<T> {
         if (typeof data === 'string') {
             try {
                 return JSON.parse(data) as T;

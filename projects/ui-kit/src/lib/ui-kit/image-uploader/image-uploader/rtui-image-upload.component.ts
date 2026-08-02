@@ -22,7 +22,7 @@ import { MatTooltip, TooltipPosition } from '@angular/material/tooltip';
 import { ImageCroppedEvent, ImageCropperComponent } from 'ngx-image-cropper';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 import { transformStringInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtuiFileUploadComponent } from '../../file-uploader';
@@ -66,11 +66,11 @@ export class RtuiImageUploadComponent {
     };
     readonly #originalMimeType: WritableSignal<string | null> = signal(null);
     protected readonly imageFormat: Signal<IImageUploadFormat> = computed((): IImageUploadFormat => {
-        const type: Nullable<string> = this.#originalMimeType();
+        const type: INullable<string> = this.#originalMimeType();
         return this.#formats[type?.toLowerCase() || ''] || 'png';
     });
 
-    public imageUrl: ModelSignal<Nullable<string>> = model.required<Nullable<string>>();
+    public imageUrl: ModelSignal<INullable<string>> = model.required<INullable<string>>();
     public isMobile: InputSignalWithTransform<boolean, boolean> = input.required<boolean, boolean>({
         transform: booleanAttribute,
     });
@@ -100,8 +100,8 @@ export class RtuiImageUploadComponent {
     public imageQuality: InputSignal<number> = input<number>(92);
 
     public originalImage: WritableSignal<File | undefined> = signal(undefined);
-    public croppedImage: WritableSignal<Nullable<File>> = signal(null);
-    public tempImage: WritableSignal<Nullable<string>> = signal(null);
+    public croppedImage: WritableSignal<INullable<File>> = signal(null);
+    public tempImage: WritableSignal<INullable<string>> = signal(null);
 
     public readonly imageChanged: OutputEmitterRef<File> = output<File>();
     public readonly save: OutputEmitterRef<void> = output<void>();

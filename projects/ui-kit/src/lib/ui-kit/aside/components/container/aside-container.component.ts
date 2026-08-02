@@ -21,7 +21,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import { AsideButtonsType } from '../../aside.enums';
 import { IAside } from '../../aside.interfaces';
@@ -79,8 +79,8 @@ export class RtuiAsideContainerHeaderDirective {}
     },
 })
 export class RtuiAsideContainerComponent {
-    public title: InputSignal<Nullable<string>> = input<Nullable<string>>(null);
-    public isMobile: InputSignalWithTransform<Nullable<boolean>, boolean> = input.required<Nullable<boolean>, boolean>({
+    public title: InputSignal<INullable<string>> = input<INullable<string>>(null);
+    public isMobile: InputSignalWithTransform<INullable<boolean>, boolean> = input.required<INullable<boolean>, boolean>({
         transform: booleanAttribute,
     });
     public isSubmitButtonDisabled: InputSignalWithTransform<boolean, boolean> = input.required<boolean, boolean>({
@@ -103,7 +103,7 @@ export class RtuiAsideContainerComponent {
         transform: (value: IAside.HeaderActionButton[]) => transformArrayInput(value),
     });
 
-    public requestError: InputSignal<Nullable<unknown>> = input<Nullable<unknown>>(null);
+    public requestError: InputSignal<INullable<unknown>> = input<INullable<unknown>>(null);
     public submitButtonTitle: InputSignal<string> = input<string>('Save');
     public cancelButtonTitle: InputSignal<string> = input<string>('Discard Changes');
     public submitButtonTooltip: InputSignal<string> = input<string>('');
@@ -112,7 +112,7 @@ export class RtuiAsideContainerComponent {
     public readonly cancelAction: OutputEmitterRef<void> = output<void>();
     public readonly headerAction: OutputEmitterRef<AsideButtonsType> = output<AsideButtonsType>();
 
-    public readonly headerTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiAsideContainerHeaderDirective, {
+    public readonly headerTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiAsideContainerHeaderDirective, {
         read: TemplateRef,
     });
 

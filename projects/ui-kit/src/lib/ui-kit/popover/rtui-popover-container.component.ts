@@ -2,7 +2,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, HostBinding, inject, input, InputSignalWithTransform, TemplateRef } from '@angular/core';
 import { DomSanitizer, SafeValue } from '@angular/platform-browser';
 
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 import { isString } from '@rt-tools/utils';
 
 @Component({
@@ -15,14 +15,14 @@ import { isString } from '@rt-tools/utils';
 export class RtuiPopoverContainerComponent {
     readonly #sanitizer: DomSanitizer = inject(DomSanitizer);
 
-    public popoverTemplate: InputSignalWithTransform<Nullable<TemplateRef<HTMLElement>>, Nullable<TemplateRef<HTMLElement>>> = input<
-        Nullable<TemplateRef<HTMLElement>>,
-        Nullable<TemplateRef<HTMLElement>>
+    public popoverTemplate: InputSignalWithTransform<INullable<TemplateRef<HTMLElement>>, INullable<TemplateRef<HTMLElement>>> = input<
+        INullable<TemplateRef<HTMLElement>>,
+        INullable<TemplateRef<HTMLElement>>
     >(undefined, {
-        transform: (value: Nullable<TemplateRef<HTMLElement>>) => value ?? null,
+        transform: (value: INullable<TemplateRef<HTMLElement>>) => value ?? null,
     });
 
-    public popoverClass: InputSignalWithTransform<Nullable<string>, string | undefined> = input<Nullable<string>, string | undefined>(
+    public popoverClass: InputSignalWithTransform<INullable<string>, string | undefined> = input<INullable<string>, string | undefined>(
         undefined,
         {
             transform: (value: unknown) => (isString(value) ? value : undefined),

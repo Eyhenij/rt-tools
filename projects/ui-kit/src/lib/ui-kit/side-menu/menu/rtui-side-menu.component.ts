@@ -23,7 +23,7 @@ import { MatListItem, MatListItemIcon, MatNavList } from '@angular/material/list
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
-import { Nullable } from '@rt-tools/utils';
+import { INullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective, RtNavigationDirective, RtScrollToElementDirective } from '@rt-tools/core';
 import { ISideMenu } from '../side-menu.types';
@@ -75,25 +75,28 @@ export class RtuiSideMenuFooterDirective {}
     ],
 })
 export class RtuiSideMenuComponent {
-    public readonly headerTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiSideMenuHeaderDirective, {
+    public readonly headerTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiSideMenuHeaderDirective, {
         read: TemplateRef,
     });
-    public readonly footerTpl: Signal<Nullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiSideMenuFooterDirective, {
+    public readonly footerTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiSideMenuFooterDirective, {
         read: TemplateRef,
     });
-    public readonly subMenuRef: Signal<Nullable<MatDrawer>> = viewChild(MatDrawer);
+    public readonly subMenuRef: Signal<INullable<MatDrawer>> = viewChild(MatDrawer);
 
     public readonly backToMainMenuButton: Signal<ISideMenu.Item> = signal({ id: 0, icon: 'arrow_back', name: 'Main Menu', link: ' ' });
-    public readonly selectedItem: WritableSignal<Nullable<ISideMenu.Item>> = signal(null);
-    public readonly selectedSubMenu: WritableSignal<Nullable<ISideMenu.Item[]>> = signal(null);
+    public readonly selectedItem: WritableSignal<INullable<ISideMenu.Item>> = signal(null);
+    public readonly selectedSubMenu: WritableSignal<INullable<ISideMenu.Item[]>> = signal(null);
 
     public activeMenuIds: InputSignal<Array<string | number>> = input.required();
     public menuItems: InputSignalWithTransform<ISideMenu.Item[], ISideMenu.Item[]> = input<ISideMenu.Item[], ISideMenu.Item[]>([], {
         transform: (value: ISideMenu.Item[]) => transformArrayInput(value),
     });
-    public isMobile: InputSignalWithTransform<Nullable<boolean>, Nullable<boolean>> = input<Nullable<boolean>, Nullable<boolean>>(false, {
-        transform: booleanAttribute,
-    });
+    public isMobile: InputSignalWithTransform<INullable<boolean>, INullable<boolean>> = input<INullable<boolean>, INullable<boolean>>(
+        false,
+        {
+            transform: booleanAttribute,
+        }
+    );
     public isSubMenuXScrollEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
