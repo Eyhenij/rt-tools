@@ -9,16 +9,12 @@ isObject(value: unknown): value is Record<string, unknown>
 
 ## Why it is not published
 
-The implementation is a bare `typeof value === 'object'`, so:
-
-- **`isObject(null)` returns `true`**, while the signature claims a `Record`. A caller who trusts
-  the guard and reads a property gets a `TypeError`.
-- Arrays, `Date`s, `Map`s and every other object return `true` as well.
-
-`isEmpty` only calls it behind an `isNil` check and immediately special-cases arrays and dates, so
-inside that one caller the trap cannot fire. Published on its own it would be a footgun.
+The guard is `typeof value === 'object' && value !== null`, so it is honest about `null` — but every
+object still passes: arrays, `Date`s, `Map`s, class instances. That is exactly what its one caller
+needs (`isEmpty` special-cases arrays and dates immediately afterwards) and misleading for anyone
+who reads the `Record` in the signature as "a plain object".
 
 ## Reach for something else when
 
 - You want a plain object literal — use [`isRecord`](../is-record/CONTEXT.md), which excludes
-  `null`, arrays and class instances.
+  arrays, dates and class instances too.

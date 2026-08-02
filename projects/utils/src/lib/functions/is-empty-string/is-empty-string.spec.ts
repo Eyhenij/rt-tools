@@ -13,7 +13,8 @@ describe(isEmptyString.name, () => {
         expect(isEmptyString('   ')).toBe(false);
     });
 
-    it('should throw on a nullish argument — it reads .length blindly', () => {
-        expect(() => isEmptyString(null as unknown as string)).toThrow(TypeError);
+    it('should treat a nullish argument as empty', () => {
+        expect(isEmptyString(null)).toBe(true);
+        expect(isEmptyString(undefined)).toBe(true);
     });
 });

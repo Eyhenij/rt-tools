@@ -18,7 +18,8 @@ describe(isEmptyObject.name, () => {
         expect(isEmptyObject([] as unknown as Record<string, unknown>)).toBe(true);
     });
 
-    it('should throw on a nullish argument', () => {
-        expect(() => isEmptyObject(null as unknown as Record<string, unknown>)).toThrow(TypeError);
+    it('should treat a nullish argument as empty', () => {
+        expect(isEmptyObject(null)).toBe(true);
+        expect(isEmptyObject(undefined)).toBe(true);
     });
 });

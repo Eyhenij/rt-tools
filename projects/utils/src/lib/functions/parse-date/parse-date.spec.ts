@@ -116,6 +116,42 @@ describe(parseDate.name, () => {
         expect(result.getDate()).toBe(today.getDate());
     });
 
+    it('should read a token that appears more than once', () => {
+        expect(isDate(parseDate('15/15', 'dd/dd'))).toBe(true);
+        expect(parseDate('15/16', 'dd/dd').getDate()).toBe(16);
+    });
+
+    describe('quoted literals', () => {
+        it('should read back what the same quoted format wrote', () => {
+            const result: Date = parseDate('Issued on 15.01.2024', "'Issued on' dd.MM.yyyy");
+
+            expect(result.getDate()).toBe(15);
+            expect(result.getMonth()).toBe(0);
+            expect(result.getFullYear()).toBe(2024);
+        });
+
+        it('should require the literal to be present', () => {
+            expect(isDate(parseDate('15.01.2024', "'Issued on' dd.MM.yyyy"))).toBe(false);
+        });
+
+        it('should protect letters that would otherwise be tokens', () => {
+            expect(parseDate('Month: 03', "'Month:' MM").getMonth()).toBe(2);
+        });
+
+        it('should read two quotes in a row as one apostrophe', () => {
+            expect(isDate(parseDate("15' Jan", "d'' MMM"))).toBe(true);
+        });
+
+        it('should match a literal carrying regex metacharacters', () => {
+            expect(isDate(parseDate('(2024)', "'(' yyyy ')'"))).toBe(false);
+            expect(isDate(parseDate('( 2024 )', "'(' yyyy ')'"))).toBe(true);
+        });
+
+        it('should not read a $-substitution out of a literal', () => {
+            expect(isDate(parseDate('$& 2024', "'$&' yyyy"))).toBe(true);
+        });
+    });
+
     it('should match a format that carries no tokens at all', () => {
         expect(isDate(parseDate('noon', 'noon'))).toBe(true);
         expect(isDate(parseDate('noon', 'midnight'))).toBe(false);
