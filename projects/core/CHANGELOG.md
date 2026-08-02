@@ -1,3 +1,19 @@
+## [Unreleased]
+
+### Features
+
+- **rt:core:** the package now owns everything in the kit that needs Angular but is not a UI component: `RtIconOutlinedDirective`, `RtScrollToElementDirective`, `RtNavigationDirective`, `RtTabQueryParamDirective`, `RtScrollDirective`, `RtEscapeKeyDirective`, `BreakStringPipe`, `SanitizePipe`, `EntityToStringPipe`, `EmptyToDashPipe`, `EqualPipe`, `EqualChainPipe`, `NotEqualPipe`, `NotEqualChainPipe`, `TernaryPipe`, `IsEmailPipe`, `checkIsMatchingValues`, `arraysNotEmptyValidator`, `BreakpointService`, `DeviceDetectorService`, `Breakpoints`, `IBreakpoints`, `OSTypes`, `NAVIGATOR`, `OVERLAY_POSITIONS`, `POSITION_ENUM`, `provideRtUtils` and `isHTMLElement`. They come from `@rt-tools/utils`, which is now framework-agnostic and usable from a Node runtime.
+- **rt:core:** `emailValidator` — a `ValidatorFn` over the same email predicate the pipe uses. Reactive forms previously had no email validator in the kit.
+- **rt:core:** `IsEmailPipe` is exported for the first time; it existed but was never listed in the pipes barrel and so never shipped.
+
+### Bug Fixes
+
+- **rt:core:** `@angular/router` is declared in `peerDependencies`. Two of the directives that now live here import it, and it was declared by no package in the kit — anyone installing without an Angular application around it got no warning about the missing peer.
+
+### BREAKING CHANGES
+
+- **rt:core:** `isNil` and `Nullable` are no longer defined here; they live in `@rt-tools/utils` and are re-exported, so importing them from `@rt-tools/core` keeps working. Only a deep import into the package's internals would break.
+
 ## [0.0.5](https://github.com/Eyhenij/rt-tools/compare/rt-core@0.0.4...rt-core@0.0.5) (2026-07-09)
 
 ## [0.0.4](https://github.com/Eyhenij/rt-tools/compare/rt-core@0.0.3...rt-core@0.0.4) (2026-06-26)
