@@ -1,3 +1,9 @@
+# [0.1.0](https://github.com/Eyhenij/rt-tools/compare/rt-core@0.0.5...rt-core@0.1.0) (2026-08-02)
+
+### Bug Fixes
+
+- **rt:core:** point at the utils working tree through the workspace protocol ([a257cbe](https://github.com/Eyhenij/rt-tools/commit/a257cbe14307acafc030c0d25c71a67e153c37bd))
+
 ## [Unreleased]
 
 ### Features
