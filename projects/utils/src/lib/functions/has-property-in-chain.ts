@@ -1,4 +1,4 @@
-import { Nullable } from '../interfaces/nullable.type';
+import { Nullable } from '../interfaces/nullable.type.js';
 
 export enum HAS_OWN_SCOPE_ENUM {
     ANY = 'any',

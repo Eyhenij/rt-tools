@@ -1,1 +1,1 @@
-export * from './dash.const';
+export * from './dash.const.js';

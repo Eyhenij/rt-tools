@@ -6,7 +6,7 @@
     "ng": "nx",
     "build:core": "rimraf dist/core && nx build @rt-tools/core --verbose",
     "build:store": "rimraf dist/store && nx build @rt-tools/store --verbose",
-    "build:utils": "rimraf dist/utils && nx build @rt-tools/utils --verbose",
+    "build:utils": "rimraf dist/utils && nx build @rt-tools/utils --verbose && nx verify @rt-tools/utils",
     "build:ui-kit": "rimraf dist/ui-kit && nx build @rt-tools/ui-kit --verbose && pnpm run build:tokens",
     "build:all": "pnpm run build:core && pnpm run build:store && pnpm run build:utils && pnpm run build:ui-kit",
     "watch": "nx build --watch --configuration development",

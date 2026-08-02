@@ -1,4 +1,4 @@
-import { transformArrayInput } from './transform-array-input';
+import { transformArrayInput } from './transform-array-input.js';
 
 describe(`${transformArrayInput.name} function`, () => {
     describe('should return the transformed array', () => {
