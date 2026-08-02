@@ -1,6 +1,16 @@
-## [0.0.9](https://github.com/nickmdf/rt-tools/compare/rt-utils@0.0.7...rt-utils@0.0.9) (2026-07-28)
-
 ## [Unreleased]
+
+### BREAKING CHANGES
+
+- **rt:utils:** the package no longer ships anything that needs Angular. Six directives, ten pipes, both validators, `BreakpointService`, `DeviceDetectorService`, `Breakpoints`, `IBreakpoints`, `NAVIGATOR`, `OVERLAY_POSITIONS`, `POSITION_ENUM`, `provideRtUtils` and `isHTMLElement` move to `@rt-tools/core` — import them from there. No re-export shim is provided: one would put Angular back into this package's import graph, which is the whole point of the split.
+- **rt:utils:** `@angular/common`, `@angular/core`, `@angular/forms`, `@angular/cdk`, `@angular/platform-browser`, `rxjs` and `@rt-tools/core` are gone from the dependency lists. The package now depends on `tslib` alone and declares no peers.
+
+### Features
+
+- **rt:utils:** `isNil` and `Nullable` now live here rather than in `@rt-tools/core`, so the pure functions built on them no longer reach into an Angular package. `@rt-tools/core` re-exports both, so importing them from there keeps working.
+- **rt:utils:** `isEmail` no longer builds a `FormControl` to reach `Validators.email`; it tests the same pattern directly and exports it as `EMAIL_REGEXP`. Verdicts are unchanged, including that an empty value counts as valid — a spec now pins that.
+
+## [0.0.9](https://github.com/nickmdf/rt-tools/compare/rt-utils@0.0.7...rt-utils@0.0.9) (2026-07-28)
 
 ### Bug Fixes
 
