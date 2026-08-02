@@ -9,18 +9,23 @@ export default {
     testEnvironment: 'node',
     coverageDirectory: '../../coverage/projects/utils',
     /**
-     * Collect from the sources rather than only from what a spec happened to import, so a function
-     * added without a spec shows up as 0% instead of being absent from the report — which is what
-     * makes the threshold below a real gate. Barrels are pure re-exports and carry nothing to cover.
+     * Scoped to `lib/functions`, where every function owns a directory holding its source, its spec
+     * and a CONTEXT.md. Reading the sources rather than only what a spec happened to import is what
+     * makes the threshold below a real gate: a function added without a spec reports 0% instead of
+     * being absent from the report. Barrels are pure re-exports and carry nothing to cover.
+     *
+     * `helpers/` and `interfaces/` have no tests yet and are deliberately out of both the report and
+     * the gate; widen this list once they do, rather than lowering the threshold.
      */
-    collectCoverageFrom: ['src/lib/**/*.ts', '!src/lib/**/index.ts', '!src/lib/**/*.spec.ts'],
+    collectCoverageFrom: ['src/lib/functions/**/*.ts', '!src/lib/functions/**/index.ts', '!src/lib/functions/**/*.spec.ts'],
     /**
-     * Every function under `lib/functions` is fully covered and must stay that way: each one owns a
-     * directory holding its source, its spec and a CONTEXT.md. The rest of the package is not gated
-     * yet, hence a path-scoped threshold rather than a global one.
+     * Gates exactly what is collected above. A path- or glob-keyed threshold would read more
+     * precisely, but jest resolves those keys against the working directory, which differs between
+     * running the target through nx and running jest in the project folder — the key then matches
+     * nothing and the run fails with "coverage data was not found" instead of gating anything.
      */
     coverageThreshold: {
-        '**/src/lib/functions/**/*.ts': {
+        global: {
             statements: 100,
             branches: 100,
             functions: 100,
