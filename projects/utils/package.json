@@ -1,7 +1,7 @@
 {
   "name": "@rt-tools/utils",
   "version": "0.0.9",
-  "description": "Utility functions, pipes, directives, validators and services for Angular applications",
+  "description": "Framework-agnostic list models, mappers, type helpers and pure utility functions",
   "author": "RT Team",
   "license": "Apache-2.0",
   "repository": {
@@ -14,25 +14,12 @@
     "url": "https://github.com/nickmdf/rt-tools/issues"
   },
   "keywords": [
-    "angular",
+    "typescript",
     "utils",
-    "pipes",
-    "directives",
-    "validators",
-    "services"
+    "models",
+    "mappers",
+    "framework-agnostic"
   ],
-  "dependencies": {
-    "@rt-tools/core": "^0.0.5"
-  },
-  "peerDependencies": {
-    "@rt-tools/core": "^0.0.5",
-    "@angular/common": "^22.0.0",
-    "@angular/core": "^22.0.0",
-    "@angular/forms": "^22.0.0",
-    "@angular/cdk": "^22.0.0",
-    "@angular/platform-browser": "^22.0.0",
-    "rxjs": "^7.8.0"
-  },
   "sideEffects": false,
   "main": "src/index.ts",
   "types": "src/index.ts"

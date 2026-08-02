@@ -1,5 +1,5 @@
-import { isNil } from '@rt-tools/core';
 import { formatDate, isDate, parseDate, parseISO } from '../functions/date-format';
+import { isNil } from '../functions/is-nil';
 
 export class TypeCastHelper {
     public getAsString(data: unknown, defaultValue: string = ''): string {

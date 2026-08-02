@@ -3,6 +3,5 @@
   "dest": "../../dist/utils",
   "lib": {
     "entryFile": "src/index.ts"
-  },
-  "allowedNonPeerDependencies": ["@rt-tools/core"]
+  }
 }
