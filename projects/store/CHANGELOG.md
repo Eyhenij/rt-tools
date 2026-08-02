@@ -1,3 +1,5 @@
+## [0.0.8](https://github.com/Eyhenij/rt-tools/compare/rt-store@0.0.6...rt-store@0.0.8) (2026-08-02)
+
 ## [Unreleased]
 
 ### Features
