@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Features
+
+- **rt:ui-kit:** the aside error inputs (`rtui-aside-container [requestError]`, `rtui-aside-error-box [error]`) accept any failure value instead of an `HttpErrorResponse`, so a non-HTTP transport can feed them its own error object
+
 # [0.1.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.29...rt-tools@0.1.0) (2026-08-02)
 
 ## [0.0.29](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.0.27...rt-tools@0.0.29) (2026-07-28)
