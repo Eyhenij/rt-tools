@@ -41,6 +41,9 @@ testem.log
 .DS_Store
 Thumbs.db
 
+# Local, per-developer env (see .env.example)
+.env
+
 # Angular
 .angular
 
