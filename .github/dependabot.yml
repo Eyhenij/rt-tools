@@ -1,0 +1,36 @@
+version: 2
+
+updates:
+    # npm: security patches only. Everything vulnerable here lives in the dev/build
+    # graph, so a single grouped PR per week is enough noise. Version updates are
+    # left out on purpose — the Angular/Nx versions are pinned deliberately.
+    - package-ecosystem: npm
+      directory: /
+      schedule:
+          interval: weekly
+          day: monday
+      open-pull-requests-limit: 5
+      commit-message:
+          prefix: chore
+          include: scope
+      labels:
+          - dependencies
+          - security
+      groups:
+          npm-security:
+              applies-to: security-updates
+              patterns:
+                  - '*'
+
+    - package-ecosystem: github-actions
+      directory: /
+      schedule:
+          interval: monthly
+      commit-message:
+          prefix: ci
+      labels:
+          - dependencies
+      groups:
+          actions:
+              patterns:
+                  - '*'
