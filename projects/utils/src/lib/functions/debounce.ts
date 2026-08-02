@@ -1,4 +1,4 @@
-import { Nullable } from '../interfaces/nullable.type';
+import { Nullable } from '../interfaces/nullable.type.js';
 
 export function debounce(timeout: number = 300): MethodDecorator {
     return function (_target: object, _key: string | symbol, descriptor: PropertyDescriptor) {

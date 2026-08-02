@@ -3,7 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { take } from 'rxjs/operators';
 
-import { IDBStorageService, Nullable } from '@rt-tools/core';
+import { IDBStorageService } from '@rt-tools/core';
+import { Nullable } from '@rt-tools/utils';
 import { areArraysEqual } from '@rt-tools/utils';
 import { ITable } from './index';
 

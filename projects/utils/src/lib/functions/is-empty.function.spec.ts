@@ -1,4 +1,4 @@
-import { isEmpty } from './is-empty.function';
+import { isEmpty } from './is-empty.function.js';
 
 describe('is-empty.function.ts', () => {
     it('should be true if argument is null', () => {

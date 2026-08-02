@@ -39,3 +39,9 @@ jobs:
             - name: Test, Lint, Build
               run: |
                   pnpm exec nx affected -t lint test build --parallel --base=origin/main --head=HEAD
+
+            # Only @rt-tools/utils defines `verify`; it asserts the built package stays consumable
+            # outside Angular. Projects without the target are skipped.
+            - name: Verify built packages
+              run: |
+                  pnpm exec nx affected -t verify --parallel --base=origin/main --head=HEAD

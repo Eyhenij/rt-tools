@@ -25,10 +25,10 @@ import {
     FILTER_OPERATORS,
     FilterModel,
     FilterOperatorType,
-    RtIconOutlinedDirective,
     transformArrayInput,
     isString,
 } from '@rt-tools/utils';
+import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { ITable, TABLE_COLUMN_FILTER_TYPES_ENUM } from '../../util/table-column.interface';
 import { MatFormField, MatFormFieldAppearance, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';

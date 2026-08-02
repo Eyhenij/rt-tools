@@ -1,4 +1,4 @@
-import { isEmail } from './is-email';
+import { isEmail } from './is-email.js';
 
 describe('isEmail', () => {
     describe('accepts well-formed addresses', () => {

@@ -21,7 +21,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 
-import { BlockDirective, ElemDirective, Nullable } from '@rt-tools/core';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { Nullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import { AsideButtonsType } from '../../aside.enums';
 import { IAside } from '../../aside.interfaces';
