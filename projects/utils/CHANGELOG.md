@@ -1,25 +1,37 @@
-## [Unreleased]
+# [0.2.0](https://github.com/nickmdf/rt-tools/compare/rt-utils@0.1.1...rt-utils@0.2.0) (2026-08-02)
+
+### Bug Fixes
+
+- **rt:utils:** correct the surprising contracts in the function surface ([7d747a2](https://github.com/nickmdf/rt-tools/commit/7d747a28ecaca323a1b3bad98aa593d282c5ed9a)), closes [#228](https://github.com/nickmdf/rt-tools/issues/228)
+- **rt:utils:** make the coverage gate fire instead of erroring out ([7fb8a2d](https://github.com/nickmdf/rt-tools/commit/7fb8a2da27b4bd1a25a48019ee824add8fdc3c94)), closes [#224](https://github.com/nickmdf/rt-tools/issues/224)
+
+* **rt:utils:** `isEmptyArray`, `isEmptyString` and `isEmptyObject` accept a nullish value and report it as empty instead of throwing a `TypeError`
+* **rt:utils:** `formatDate` renders a token that appears more than once every time it appears — `dd/dd` used to emit a raw placeholder for the second one
+* **rt:utils:** `parseDate` reads a token that appears more than once; each occurrence now gets its own capture group
+
+### BREAKING CHANGES
+
+- **rt:utils:** `areObjectsEqual` returns `false` for an array compared
+  against a non-array, `isDateValid(new Date(0))` is now `true`, and
+  `dateStringToDate` returns an Invalid Date instead of the current date
+  when it cannot parse its input. A caller that wants the old fallback
+  writes it out: `isDate(parsed) ? parsed : new Date()`.
+
+Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01CkpaW5obf3ezRvTHYaDw2i
+
+- **rt:utils:** `areObjectsEqual` returns `false` when one side is an array and the other is not. `[1]` and `{ 0: 1 }` used to compare equal because only a pair of arrays took the array path.
+- **rt:utils:** `isDateValid(new Date(0))` is `true` — the Unix epoch is a real instant. The check was `Boolean(date.getTime())`. The function now delegates to `isDate` and agrees with it on every input; prefer `isDate` in new code.
+- **rt:utils:** `dateStringToDate` returns an Invalid Date for input it cannot parse, instead of the current date, matching `parseDate` and `parseISO`. To keep the old behaviour: `const value: Date = isDate(parsed) ? parsed : new Date();`
 
 ### Code Refactoring
 
 - **rt:utils:** every exported function now lives in its own directory alongside its spec and a `CONTEXT.md` describing its contract and edge cases; coverage over `lib/functions` is 100% and enforced by a `coverageThreshold`. The published surface is unchanged.
 
-### Bug Fixes
-
-- **rt:utils:** `isEmptyArray`, `isEmptyString` and `isEmptyObject` accept a nullish value and report it as empty instead of throwing a `TypeError`
-- **rt:utils:** `formatDate` renders a token that appears more than once every time it appears — `dd/dd` used to emit a raw placeholder for the second one
-- **rt:utils:** `parseDate` reads a token that appears more than once; each occurrence now gets its own capture group
-
 ### Features
 
 - **rt:utils:** `formatDate` and `parseDate` read single-quoted text as a literal in both directions (`"'Issued on' dd.MM.yyyy"`), with `''` for an apostrophe. Without it every letter in a format is a token, so literal words could not be expressed.
 - **rt:utils:** `dateStringToDate` returns a copy of a `Date` argument rather than the same reference
-
-### BREAKING CHANGES
-
-- **rt:utils:** `areObjectsEqual` returns `false` when one side is an array and the other is not. `[1]` and `{ 0: 1 }` used to compare equal because only a pair of arrays took the array path.
-- **rt:utils:** `isDateValid(new Date(0))` is `true` — the Unix epoch is a real instant. The check was `Boolean(date.getTime())`. The function now delegates to `isDate` and agrees with it on every input; prefer `isDate` in new code.
-- **rt:utils:** `dateStringToDate` returns an Invalid Date for input it cannot parse, instead of the current date, matching `parseDate` and `parseISO`. To keep the old behaviour: `const value: Date = isDate(parsed) ? parsed : new Date();`
 
 ## [0.1.1](https://github.com/nickmdf/rt-tools/compare/rt-utils@0.1.0...rt-utils@0.1.1) (2026-08-02)
 

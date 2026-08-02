@@ -1,6 +1,6 @@
 {
   "name": "@rt-tools/utils",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Framework-agnostic list models, mappers, type helpers and pure utility functions",
   "author": "RT Team",
   "license": "Apache-2.0",
