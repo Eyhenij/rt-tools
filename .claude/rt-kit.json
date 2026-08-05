@@ -1,0 +1,21 @@
+{
+  "vars": {},
+  "layout": {
+    "laws": "docs/constitution",
+    "hooks": ".claude/hooks",
+    "checks": "tools",
+    "agents": ".claude/agents",
+    "templates": ".claude/rt-kit/templates"
+  },
+  "skip": [
+    "laws/access.md",
+    "laws/admin-lists.md",
+    "laws/admin-navigation.md",
+    "laws/entity-editing.md",
+    "laws/entity-models.md",
+    "laws/frontend-application.md",
+    "laws/locales.md",
+    "laws/search-visibility.md",
+    "laws/shared-code.md"
+  ]
+}

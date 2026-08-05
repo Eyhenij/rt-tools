@@ -18,3 +18,9 @@ angular.json
 # and the result is a many-thousand-line diff on every install.
 pnpm-lock.yaml
 pnpm-workspace.yaml
+
+# Laid out by `agent-kit sync`, not written by hand. Each file carries a digest of its own body,
+# so any reformatting — even one blank line — reads as a hand edit, and sync refuses the file
+# instead of relaying it. Formatting belongs in the package these come from.
+docs/constitution
+.claude/rt-kit
