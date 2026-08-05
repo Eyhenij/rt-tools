@@ -22,15 +22,7 @@ import { RtIconOutlinedDirective } from '@rt-tools/core';
 
 export type RtuiIconSizeType = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | '3xl';
 export type RtuiIconThemeType =
-    | 'inherit'
-    | 'primary'
-    | 'primary-strong'
-    | 'neutral'
-    | 'disabled'
-    | 'muted'
-    | 'white'
-    | 'danger'
-    | 'success';
+    'inherit' | 'primary' | 'primary-strong' | 'neutral' | 'disabled' | 'muted' | 'white' | 'danger' | 'success';
 
 const MATERIAL_SYMBOLS_FONT: string = 'Material Symbols Outlined';
 const fontLoaded: WritableSignal<boolean> = signal<boolean>(false);
