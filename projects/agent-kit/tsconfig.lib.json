@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "outDir": "../../dist/agent-kit",
+    "declaration": true,
+    "declarationMap": true,
+    "inlineSources": true,
+    "types": ["node"],
+    "rootDir": "src"
+  },
+  "exclude": ["src/**/*.spec.ts", "jest.config.ts"],
+  "include": ["src/**/*.ts"]
+}
