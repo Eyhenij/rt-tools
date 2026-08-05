@@ -39,6 +39,37 @@
         "jestConfig": "projects/ui-kit-v2/jest.config.ts"
       }
     },
+    "storybook": {
+      "executor": "@storybook/angular:start-storybook",
+      "options": {
+        "port": 6007,
+        "configDir": "projects/ui-kit-v2/.storybook",
+        "browserTarget": "@rt-tools/ui-kit-v2:build-storybook",
+        "compodoc": false,
+        "styles": ["projects/ui-kit-v2/.storybook/storybook.scss"]
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "build-storybook": {
+      "executor": "@storybook/angular:build-storybook",
+      "outputs": ["{options.outputDir}"],
+      "options": {
+        "outputDir": "dist/storybook/@rt-tools/ui-kit-v2",
+        "configDir": "projects/ui-kit-v2/.storybook",
+        "browserTarget": "@rt-tools/ui-kit-v2:build-storybook",
+        "compodoc": false,
+        "styles": ["projects/ui-kit-v2/.storybook/storybook.scss"]
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
     "nx-release-publish": {
       "dependsOn": ["build"],
       "options": {
