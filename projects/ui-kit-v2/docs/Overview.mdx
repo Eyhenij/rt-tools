@@ -1,0 +1,179 @@
+import { Meta, Source, Title } from '@storybook/addon-docs/blocks';
+
+<Meta title="Foundation/Design Tokens/Overview" />
+
+export const card = (accent) => ({
+    background: `color-mix(in srgb, ${accent} 8%, transparent)`,
+    border: `1px solid color-mix(in srgb, ${accent} 30%, transparent)`,
+    borderRadius: 10,
+    padding: '18px 20px',
+    display: 'flex',
+    gap: 16,
+    alignItems: 'flex-start',
+    marginBlock: 8,
+});
+export const badge = (accent) => ({
+    background: `color-mix(in srgb, ${accent} 20%, transparent)`,
+    color: accent,
+    fontFamily: 'var(--rt-font-family-mono)',
+    fontSize: 12,
+    fontWeight: 600,
+    padding: '4px 10px',
+    borderRadius: 6,
+    whiteSpace: 'nowrap',
+    flexShrink: 0,
+});
+export const body = { display: 'flex', flexDirection: 'column', gap: 6, flexGrow: 1 };
+export const title = { fontWeight: 600, fontSize: 15 };
+export const mono = { fontFamily: 'var(--rt-font-family-mono)', fontSize: 12, opacity: 0.85 };
+export const note = { fontSize: 13, opacity: 0.9 };
+export const arrow = { textAlign: 'center', opacity: 0.5, fontSize: 13, paddingBlock: 4 };
+export const good = {
+    background: 'color-mix(in srgb, var(--rt-color-state-success) 6%, transparent)',
+    border: '1px solid color-mix(in srgb, var(--rt-color-state-success) 30%, transparent)',
+    borderRadius: 8,
+    padding: '14px 18px',
+    fontSize: 13,
+    marginBlock: 8,
+};
+export const bad = {
+    background: 'color-mix(in srgb, var(--rt-color-state-danger) 6%, transparent)',
+    border: '1px solid color-mix(in srgb, var(--rt-color-state-danger) 30%, transparent)',
+    borderRadius: 8,
+    padding: '14px 18px',
+    fontSize: 13,
+    marginBlock: 8,
+};
+
+<Title>Свойства оформления — обзор</Title>
+
+Пользовательские свойства CSS (`--rt-*`) — единственный договор между макетом и кодом. Они
+объявляются один раз в `projects/ui-kit-v2/src/styles/` и доступны всюду через `var(--rt-…)`.
+Собранный файл со всеми свойствами уезжает в пакет как `styles/tokens.css`.
+
+<Source language="scss" code={`@use '@rt-tools/ui-kit-v2/styles/tokens.css';`} />
+
+---
+
+## Три слоя
+
+Каждый слой ссылается на предыдущий и никогда не перепрыгивает через него.
+
+<div style={card('var(--rt-color-action-primary)')}>
+    <span style={badge('var(--rt-color-action-primary)')}>Слой 3</span>
+    <div style={body}>
+        <div style={title}>Свойства компонента</div>
+        <div style={mono}>--rt-btn-radius, --rt-input-height-md, --rt-nav-item-color-hover</div>
+        <div style={note}>
+            Принадлежат одному компоненту и ссылаются на назначения. Меняются вместе с ним, а не вместе со всей палитрой.
+        </div>
+    </div>
+</div>
+
+<div style={arrow}>↓ ссылается на</div>
+
+<div style={card('var(--rt-color-state-success)')}>
+    <span style={badge('var(--rt-color-state-success)')}>Слой 2</span>
+    <div style={body}>
+        <div style={title}>Назначения</div>
+        <div style={mono}>--rt-color-bg-surface, --rt-color-text-muted, --rt-color-action-primary</div>
+        <div style={note}>
+            Говорят, <em>зачем</em> цвет, а не какой он: фон поверхности, приглушённая подпись, основное действие. Это единственный слой,
+            который переопределяет тёмная тема.
+        </div>
+    </div>
+</div>
+
+<div style={arrow}>↓ ссылается на</div>
+
+<div style={card('var(--rt-color-text-link)')}>
+    <span style={badge('var(--rt-color-text-link)')}>Слой 1</span>
+    <div style={body}>
+        <div style={title}>Шкалы</div>
+        <div style={mono}>--rt-neutral-100, --rt-blue-500, --rt-space-4, --rt-radius-lg</div>
+        <div style={note}>
+            Литералы: hex, пиксели, числа. Никаких <code>var()</code> внутри. Их читает только слой назначений.
+        </div>
+    </div>
+</div>
+
+---
+
+## Главное правило
+
+> Экран берёт **назначения**. Компонент берёт **свои свойства**. Шкалу не берёт никто напрямую.
+
+<div style={good}>
+    <strong>✓ Так.</strong> Экран говорит о намерении:
+    <Source
+        language="scss"
+        code={`.card {
+    background-color: var(--rt-color-bg-surface);
+    color: var(--rt-color-text-primary);
+}`}
+    />
+</div>
+
+<div style={bad}>
+    <strong>✖ Не так.</strong> Экран лезет в шкалу:
+    <Source
+        language="scss"
+        code={`.card {
+    background-color: var(--rt-neutral-0);   /* тёмная тема это не переопределяет */
+    color: var(--rt-neutral-900);            /* на тёмном фоне останется чёрным */
+}`}
+    />
+</div>
+
+Тёмная тема переопределяет **только назначения**. Экран, взявший шкалу напрямую, останется
+светлым внутри тёмной страницы, и увидят это уже на выкатке.
+
+---
+
+## Как читается имя
+
+`--rt-<род>-<роль>-<уточнение>`
+
+| Род                  | Примеры                                                 | О чём                                        |
+| -------------------- | ------------------------------------------------------- | -------------------------------------------- |
+| `--rt-color-*`       | `--rt-color-bg-page`, `--rt-color-action-primary-hover` | назначения цвета                             |
+| `--rt-space-*`       | `--rt-space-4`, `--rt-space-md`                         | отступы: числовая шкала и именованные алиасы |
+| `--rt-radius-*`      | `--rt-radius-lg`, `--rt-radius-full`                    | скругления                                   |
+| `--rt-text-*`        | `--rt-text-md`, `--rt-text-2xl`                         | кегль                                        |
+| `--rt-font-weight-*` | `--rt-font-weight-regular`, `--rt-font-weight-semibold` | начертание                                   |
+| `--rt-shadow-*`      | `--rt-shadow-sm`, `--rt-shadow-card`                    | тени                                         |
+| `--rt-z-*`           | `--rt-z-modal`, `--rt-z-tooltip`                        | ярусы наложения                              |
+| `--rt-duration-*`    | `--rt-duration-fast`, `--rt-duration-base`              | длительности переходов                       |
+
+Пороги ширины — исключение: они остаются переменными препроцессора
+(`$rt-bp-sm … $rt-bp-xl` в `_breakpoints.scss`), потому что пользовательские свойства CSS
+в `@media` не работают.
+
+---
+
+## Откуда что берётся
+
+| Файл                | Что держит                                                                              |
+| ------------------- | --------------------------------------------------------------------------------------- |
+| `_primitives.scss`  | шкалы: нейтральные и цветные ряды, отступы, радиусы, тени, типографика, ярусы. Литералы |
+| `_semantic.scss`    | назначения светлой темы и именованные алиасы отступов — через `var(--rt-<шкала>)`       |
+| `_theme-dark.scss`  | переопределения назначений для `:root[data-theme='dark']` и `html.rt-theme-dark`        |
+| `_scrollbar.scss`   | оформление полос прокрутки                                                              |
+| `_breakpoints.scss` | пороги ширины переменными SCSS; в `_index.scss` **не** форвардится                      |
+| `_mixins.scss`      | миксины поверхности карточки и её заголовка                                             |
+| `_index.scss`       | собирает всё, кроме порогов, — из него собран `tokens.css`                              |
+
+Пороги и миксины подключаются партиалами напрямую:
+
+<Source
+    language="scss"
+    code={`@use 'pkg:@rt-tools/ui-kit-v2/styles/breakpoints' as bp;
+@use 'pkg:@rt-tools/ui-kit-v2/styles/mixins';`}
+/>
+
+---
+
+## Один префикс
+
+Свойства оформления заводятся только в пространстве `--rt-*`. Компонент, взявший чужое
+свойство, теряет тёмную тему молча: переопределять его будет некому.

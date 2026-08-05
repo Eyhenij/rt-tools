@@ -1,0 +1,157 @@
+import { Meta, Source, Title } from '@storybook/addon-docs/blocks';
+
+import * as s from './_style';
+import { readTokens } from './_tokens';
+
+<Meta title="Foundation/Design Tokens/Spacing" />
+
+export const Rows = ({ prefix, measure }) => {
+    const tokens = readTokens(prefix);
+    if (!tokens.length) {
+        return <p style={s.empty}>Свойств «{prefix}» в подключённых стилях нет.</p>;
+    }
+    return (
+        <div style={{ marginBlock: 16 }}>
+            {tokens.map((token, index) => (
+                <div key={token.name} style={s.scaleRow(index % 2 === 1)}>
+                    <span style={s.scaleName}>{token.name}</span>
+                    <span>{measure(token)}</span>
+                    <span style={s.scaleValue}>{token.value}</span>
+                </div>
+            ))}
+        </div>
+    );
+};
+
+export const bar = (token) => (
+    <span
+        style={{
+            display: 'block',
+            height: 12,
+            width: `var(${token.name})`,
+            minWidth: 1,
+            background: 'var(--rt-color-action-primary)',
+            borderRadius: 2,
+        }}
+    />
+);
+export const corner = (token) => (
+    <span
+        style={{
+            display: 'block',
+            width: 52,
+            height: 30,
+            borderRadius: `var(${token.name})`,
+            background: 'var(--rt-color-bg-surface-subtle-2)',
+            border: '1px solid var(--rt-color-border-default)',
+        }}
+    />
+);
+export const sample = (token) => <span style={{ fontSize: `var(${token.name})` }}>Съешь ещё этих булок</span>;
+export const heavy = (token) => <span style={{ fontWeight: `var(${token.name})` }}>Съешь ещё этих булок</span>;
+export const shade = (token) => (
+    <span
+        style={{
+            display: 'block',
+            width: 60,
+            height: 30,
+            borderRadius: 6,
+            background: 'var(--rt-color-bg-surface)',
+            boxShadow: `var(${token.name})`,
+        }}
+    />
+);
+export const none = () => null;
+
+<Title>Spacing & Effects — Размеры, типографика и эффекты</Title>
+
+<p style={s.intro}>
+    Отступы, скругления, кегль, тени и ярусы наложения заданы свойствами. Магическое число в стилях компонента (<code>padding: 13px</code>)
+    — отступление от шкалы, которое дальше уже не сходится с соседним экраном.
+</p>
+
+<h2 style={s.section}>Шкала отступов</h2>
+
+<p style={s.intro}>
+    Основана на сетке <strong>8px</strong>. Половинные ступени вне сетки помечены в исходнике как устаревшие — округляйте к соседней целой.
+</p>
+
+<Rows prefix="--rt-space-" measure={bar} />
+
+<h2 style={s.section}>Скругления</h2>
+
+<Rows prefix="--rt-radius-" measure={corner} />
+
+<h2 style={s.section}>Кегль</h2>
+
+<Rows prefix="--rt-text-" measure={sample} />
+
+<h2 style={s.section}>Начертание</h2>
+
+<Rows prefix="--rt-font-weight-" measure={heavy} />
+
+<h2 style={s.section}>Межстрочный интервал</h2>
+
+<Rows prefix="--rt-leading-" measure={none} />
+
+<h2 style={s.section}>Тени</h2>
+
+<Rows prefix="--rt-shadow-" measure={shade} />
+
+<h2 style={s.section}>Ярусы наложения</h2>
+
+<p style={s.intro}>
+    Числа заданы шкалой, а не подобраны на месте: слой, назначенный на глаз, всплывает над диалогом ровно там, где этого никто не проверял.
+</p>
+
+<Rows prefix="--rt-z-" measure={none} />
+
+<h2 style={s.section}>Длительности</h2>
+
+<Rows prefix="--rt-duration-" measure={none} />
+
+<h2 style={s.section}>Пороги ширины</h2>
+
+<p style={s.intro}>
+    Свойства CSS в <code>@media</code> не работают, поэтому пороги остаются переменными препроцессора и в <code>tokens.css</code> не
+    попадают.
+</p>
+
+export const mediaSample = [
+    "@use 'pkg:@rt-tools/ui-kit-v2/styles/breakpoints' as bp;",
+    '',
+    '@media (width <= bp.$rt-bp-md) {',
+    '    .panel {',
+    '        padding: var(--rt-space-sm);',
+    '    }',
+    '}',
+].join('\n');
+
+<Source language="scss" code={mediaSample} />
+
+<table style={s.table}>
+    <thead>
+        <tr>
+            <th style={s.th}>Переменная</th>
+            <th style={s.th}>Значение</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style={s.tdMono}>$rt-bp-sm</td>
+            <td style={s.tdMono}>480px</td>
+        </tr>
+        <tr>
+            <td style={s.tdMono}>$rt-bp-md</td>
+            <td style={s.tdMono}>768px</td>
+        </tr>
+        <tr>
+            <td style={s.tdMono}>$rt-bp-lg</td>
+            <td style={s.tdMono}>1080px</td>
+        </tr>
+        <tr>
+            <td style={s.tdMono}>$rt-bp-xl</td>
+            <td style={s.tdMono}>1380px</td>
+        </tr>
+    </tbody>
+</table>
