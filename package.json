@@ -27,6 +27,8 @@
     "packagr:ui-kit-v2": "cd ./dist/ui-kit-v2 && npm pack && npm publish --access public",
     "storybook": "nx run @rt-tools/ui-kit:storybook --verbose",
     "build-storybook": "nx run @rt-tools/ui-kit:build-storybook --verbose",
+    "storybook:ui-kit-v2": "nx run @rt-tools/ui-kit-v2:storybook --verbose",
+    "build-storybook:ui-kit-v2": "nx run @rt-tools/ui-kit-v2:build-storybook --verbose",
     "graph": "pnpx nx dep-graph",
     "changelog:core": "conventional-changelog -p angular -i projects/core/CHANGELOG.md -s -k projects/core/package.json --commit-path projects/core --tag-prefix rt-core@ && node tools/fold-unreleased-changelog.cjs projects/core/CHANGELOG.md",
     "changelog:store": "conventional-changelog -p angular -i projects/store/CHANGELOG.md -s -k projects/store/package.json --commit-path projects/store --tag-prefix rt-store@ && node tools/fold-unreleased-changelog.cjs projects/store/CHANGELOG.md",
