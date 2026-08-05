@@ -1,3 +1,17 @@
+# 0.1.0 (2026-08-05)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** восстановить повреждённые байты в комментариях ([6a34336](https://github.com/Eyhenij/rt-tools/commit/6a34336797503efaea3f993f3673483798d0a1a2))
+- **rt:ui-kit-v2:** довезти стили кнопки до потребителя ([b7e3bb3](https://github.com/Eyhenij/rt-tools/commit/b7e3bb3a3547545867fd328dccec6b4d94c6b926))
+- **rt:ui-kit-v2:** проставить типы помощникам документации ([4321d26](https://github.com/Eyhenij/rt-tools/commit/4321d260e0246beffa9077a73bcaeb80f24232f8))
+
+### Features
+
+- **rt:ui-kit-v2:** второй набор компонентов и его дизайн-система ([2d63d3d](https://github.com/Eyhenij/rt-tools/commit/2d63d3d6e70de3df033df49e0fb285dbdfd8e496))
+- **rt:ui-kit-v2:** завести витрину Storybook ([c3c6aa0](https://github.com/Eyhenij/rt-tools/commit/c3c6aa018859ea3114d3b72238270fbe73f7353e))
+- **rt:ui-kit-v2:** истории компонентов на витрине ([3bc969a](https://github.com/Eyhenij/rt-tools/commit/3bc969a91df18876bbd3235507797607a1cc53b4))
+
 # Changelog
 
 Все заметные изменения пакета `@rt-tools/ui-kit-v2` записываются здесь.
