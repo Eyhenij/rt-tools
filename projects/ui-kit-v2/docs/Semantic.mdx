@@ -1,0 +1,141 @@
+import { Meta, Source, Title } from '@storybook/addon-docs/blocks';
+
+import * as s from './_style';
+import { readTokens } from './_tokens';
+
+<Meta title="Foundation/Design Tokens/Semantic" />
+
+export const USAGE = {
+    '--rt-color-bg-page': 'Фон страницы',
+    '--rt-color-bg-surface': 'Карточка, панель, диалог',
+    '--rt-color-bg-surface-subtle': 'Вложенная поверхность, поле ввода',
+    '--rt-color-bg-hover': 'Наведение на строку и пункт списка',
+    '--rt-color-bg-overlay': 'Затемнение под диалогом',
+    '--rt-color-bg-inverse': 'Тост и подсказка — на противоходе к теме',
+    '--rt-color-text-primary': 'Основной текст',
+    '--rt-color-text-muted': 'Подпись, пояснение, метаданные',
+    '--rt-color-text-disabled': 'Текст выключенного элемента',
+    '--rt-color-text-inverse': 'Текст на инвертированной поверхности',
+    '--rt-color-text-link': 'Ссылка в тексте',
+    '--rt-color-border-default': 'Граница поверхности и поля',
+    '--rt-color-border-subtle': 'Разделитель строк',
+    '--rt-color-action-primary': 'Основное действие',
+    '--rt-color-action-primary-hover': 'Основное действие под курсором',
+    '--rt-color-state-success': 'Подтверждение',
+    '--rt-color-state-warning': 'Предупреждение',
+    '--rt-color-state-danger': 'Отказ, разрушающее действие',
+    '--rt-color-state-info': 'Справка',
+};
+
+export const Preview = ({ prefix, limit = 6 }) => {
+    const tokens = readTokens(prefix).slice(0, limit);
+    if (!tokens.length) {
+        return null;
+    }
+    return (
+        <div style={s.panel}>
+            {tokens.map((token) => (
+                <div key={token.name} style={s.panelItem}>
+                    <div style={s.panelPatch(`var(${token.name})`)} />
+                    <span style={s.panelName}>{token.name}</span>
+                </div>
+            ))}
+        </div>
+    );
+};
+
+export const Group = ({ prefix }) => {
+    const light = readTokens(prefix);
+    if (!light.length) {
+        return <p style={s.empty}>Назначений «{prefix}» в подключённых стилях нет.</p>;
+    }
+    const dark = new Map(readTokens(prefix, true).map((t) => [t.name, t.value]));
+    return (
+        <table style={s.table}>
+            <thead>
+                <tr>
+                    <th style={s.th}>Token</th>
+                    <th style={s.th}>Light</th>
+                    <th style={s.th}>Dark</th>
+                    <th style={s.th}>Применение</th>
+                </tr>
+            </thead>
+            <tbody>
+                {light.map((token) => (
+                    <tr key={token.name}>
+                        <td style={s.tdMono}>{token.name}</td>
+                        <td style={s.tdMono}>
+                            <span style={s.cellSwatch(`var(${token.name})`)} />
+                            {token.value.replace('var(--rt-', '').replace(')', '')}
+                        </td>
+                        <td style={s.tdMono}>
+                            {dark.has(token.name) ? (
+                                <>
+                                    <span style={s.cellSwatch(dark.get(token.name))} />
+                                    {dark.get(token.name).replace('var(--rt-', '').replace(')', '')}
+                                </>
+                            ) : (
+                                '— как в light'
+                            )}
+                        </td>
+                        <td style={s.td}>{USAGE[token.name] ?? ''}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    );
+};
+
+<Title>Semantic Tokens — Назначения</Title>
+
+<p style={s.intro}>
+    Второй слой говорит, <strong>зачем</strong> свойство, а не какое оно. Это единственный слой, который переопределяет тёмная тема, —
+    поэтому стили экрана берут только его. Колонки Light и Dark показывают объявленное значение: у назначения это всегда ссылка на шкалу.
+</p>
+
+<div style={s.callout}>
+    Подробнее об устройстве — <a href="./?path=/docs/foundation-design-tokens-overview--docs">Overview</a> и{' '}
+    <a href="./?path=/docs/foundation-design-tokens-theming--docs">Theming</a>.
+</div>
+
+<Source
+    language="scss"
+    code={`.panel {
+    background-color: var(--rt-color-bg-surface);
+    border: 1px solid var(--rt-color-border-default);
+    color: var(--rt-color-text-primary);
+}`}
+/>
+
+<h2 style={s.section}>Background — Фоны</h2>
+
+<Preview prefix="--rt-color-bg-" />
+<Group prefix="--rt-color-bg-" />
+
+<h2 style={s.section}>Text — Тексты</h2>
+
+<Preview prefix="--rt-color-text-" />
+<Group prefix="--rt-color-text-" />
+
+<h2 style={s.section}>Border — Границы</h2>
+
+<Preview prefix="--rt-color-border-" />
+<Group prefix="--rt-color-border-" />
+
+<h2 style={s.section}>Action — Действия</h2>
+
+<Preview prefix="--rt-color-action-" />
+<Group prefix="--rt-color-action-" />
+
+<h2 style={s.section}>State — Состояния</h2>
+
+<Preview prefix="--rt-color-state-" />
+<Group prefix="--rt-color-state-" />
+
+<h2 style={s.section}>Focus — Кольцо фокуса</h2>
+
+<Group prefix="--rt-color-focus-" />
+
+<h2 style={s.section}>Icon — Иконки</h2>
+
+<Group prefix="--rt-color-icon-" />
