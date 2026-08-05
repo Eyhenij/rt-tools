@@ -76,6 +76,15 @@
           }
         ],
         "matcher": "compact|clear"
+      },
+      {
+        "hooks": [
+          {
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/constitution-index.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": "startup|resume|compact|clear"
       }
     ],
     "UserPromptSubmit": [
