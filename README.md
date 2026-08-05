@@ -26,11 +26,15 @@ and a consistent, standalone-component API.
 | [`@rt-tools/store`](./projects/store) | [![npm](https://img.shields.io/npm/v/@rt-tools/store?color=c00)](https://www.npmjs.com/package/@rt-tools/store) | Signal-based state management with a message bus and Redux DevTools support. |
 | [`@rt-tools/core`](./projects/core) | [![npm](https://img.shields.io/npm/v/@rt-tools/core?color=c00)](https://www.npmjs.com/package/@rt-tools/core) | Everything Angular-bound that is not a component — directives, pipes, validators, platform/breakpoint services, storage, `MessageBus`, BEM helpers. |
 | [`@rt-tools/utils`](./projects/utils) | [![npm](https://img.shields.io/npm/v/@rt-tools/utils?color=c00)](https://www.npmjs.com/package/@rt-tools/utils) | Pure functions, list models and type helpers. **No framework** — `tslib` is its only dependency. |
+| [`@rt-tools/agent-kit`](./projects/agent-kit) | [![npm](https://img.shields.io/npm/v/@rt-tools/agent-kit?color=c00)](https://www.npmjs.com/package/@rt-tools/agent-kit) | A dev-time CLI that lays a portable layer of coding rules into a repository and keeps it in sync. Ships nothing to the browser. |
 
 `@rt-tools/utils` is the base of the stack and carries no framework, so a Node script or code shared
 between server and client can use it directly. `@rt-tools/core` adds everything that needs Angular,
 and `store` and `ui-kit` build on both. No package re-exports another, so every symbol has exactly
 one home. Install only what you need.
+
+`@rt-tools/agent-kit` stands apart from that stack: it is a development tool, not a runtime
+dependency, and it is installed with `-D`. See [its README](./projects/agent-kit/README.md).
 
 ## Highlights
 
@@ -38,7 +42,7 @@ one home. Install only what you need.
 - 🎨 **Theming built in** — light / dark / auto modes and swappable brand color schemes, all driven by CSS design tokens with zero runtime style recompilation.
 - 🧩 **Two design modes per control** — render the native rt-tools look (`custom`) or delegate to Angular Material (`material`) so you can adopt the kit incrementally.
 - ⚙️ **Configurable defaults** — set app-wide and per-component defaults once with `provideRtUi()`; override per instance via inputs.
-- 📦 **Modular** — four independently versioned packages so you pull in only the surface you use.
+- 📦 **Modular** — four independently versioned runtime packages so you pull in only the surface you use.
 - ♿ **Accessible & typed** — strict TypeScript, explicit types, and Material CDK a11y primitives under the hood.
 
 ## Installation

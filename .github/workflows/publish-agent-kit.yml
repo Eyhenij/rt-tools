@@ -1,0 +1,72 @@
+name: Publish @rt-tools/agent-kit to npm
+
+on:
+    workflow_dispatch:
+        inputs:
+            version:
+                description: 'Specify version: patch, minor, major, or specific version (e.g. 1.2.3)'
+                required: true
+                default: 'patch'
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    publish:
+        runs-on: ubuntu-latest
+
+        strategy:
+            matrix:
+                node-version: [22.22.3]
+
+        steps:
+            - uses: actions/checkout@v7
+              with:
+                  fetch-depth: 0
+                  repository: ${{ github.event.pull_request.head.repo.full_name }}
+                  ref: ${{ github.event.pull_request.head.ref }}
+                  token: ${{ secrets.WORKFLOW_ACCESS_TOKEN }}
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v6
+              with:
+                  version: 11.10.0
+                  run_install: false
+
+            - name: Cache node_modules
+              uses: actions/setup-node@v7
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: 'pnpm'
+                  registry-url: https://registry.npmjs.org/
+
+            - name: Install dependencies
+              run: |
+                  pnpm install --frozen-lockfile
+                  sudo apt-get install jq
+
+            - name: Update version
+              run: |
+                  node update-version-agent-kit.cjs ${{ github.event.inputs.version }}
+                  pnpm run changelog:agent-kit
+                  VERSION=$(jq -r .version projects/agent-kit/package.json)
+                  echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+            - uses: EndBug/add-and-commit@v10
+              with:
+                  default_author: github_actions
+                  message: 'chore(rt:agent-kit): bump version to ${{ env.VERSION }} [ci skip]'
+
+            - name: Create git tag
+              run: |
+                  git tag "rt-agent-kit@${{ env.VERSION }}"
+                  git push origin "rt-agent-kit@${{ env.VERSION }}"
+
+            - name: Build agent-kit
+              run: pnpm run build:agent-kit
+
+            - name: Publish
+              run: pnpm run packagr:agent-kit
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
