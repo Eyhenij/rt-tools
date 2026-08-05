@@ -243,13 +243,11 @@ export function parseDate(dateString: string, formatStr: string, referenceDate: 
     // Sort handlers by their placeholder position in the original working format
     // to match capture group order (left-to-right in the regex)
     const sortedByPosition: PositionedHandler[] = placeholderList
-        .map(
-            (item: PlaceholderItem): PositionedHandler => ({
-                placeholder: item.placeholder,
-                handler: item.handler,
-                position: escapeRegExp(workingFormat).indexOf(escapeRegExp(item.placeholder)),
-            })
-        )
+        .map((item: PlaceholderItem): PositionedHandler => ({
+            placeholder: item.placeholder,
+            handler: item.handler,
+            position: escapeRegExp(workingFormat).indexOf(escapeRegExp(item.placeholder)),
+        }))
         .sort((a: PositionedHandler, b: PositionedHandler) => a.position - b.position);
 
     const handlers: ((val: string) => void)[] = sortedByPosition.map((item: PositionedHandler) => item.handler);
