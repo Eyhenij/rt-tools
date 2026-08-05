@@ -35,7 +35,7 @@ export const panel: object = {
     background: 'var(--rt-color-bg-surface)',
 };
 export const panelItem: object = { width: 140, display: 'flex', flexDirection: 'column', gap: 6 };
-export const panelPatch = (value: string): object => ({
+export const panelPatch: (value: string) => object = (value: string): object => ({
     height: 62,
     borderRadius: 6,
     background: value,
@@ -62,7 +62,7 @@ export const th: object = {
 };
 export const td: object = { padding: '10px 14px', borderBottom: HAIRLINE, verticalAlign: 'middle' };
 export const tdMono: object = { ...td, fontFamily: MONO, fontSize: 11.5, whiteSpace: 'nowrap' };
-export const cellSwatch = (value: string): object => ({
+export const cellSwatch: (value: string) => object = (value: string): object => ({
     width: 22,
     height: 22,
     borderRadius: 4,
@@ -74,7 +74,7 @@ export const cellSwatch = (value: string): object => ({
 });
 
 /** Строка шкалы: имя слева, мера посередине, значение справа. */
-export const scaleRow = (odd: boolean): object => ({
+export const scaleRow: (odd: boolean) => object = (odd: boolean): object => ({
     display: 'grid',
     gridTemplateColumns: '230px 1fr 90px',
     alignItems: 'center',
@@ -88,7 +88,7 @@ export const scaleValue: object = { fontFamily: MONO, fontSize: 11.5, opacity: 0
 
 /** Сплошная лента ряда: ступени стоят встык, поэтому переход между ними виден. */
 export const strip: object = { display: 'flex', borderRadius: 8, overflow: 'hidden', border: HAIRLINE };
-export const stripCell = (value: string): object => ({ flex: '1 1 0', height: 56, background: value });
+export const stripCell: (value: string) => object = (value: string): object => ({ flex: '1 1 0', height: 56, background: value });
 export const stripLegend: object = { display: 'flex', marginTop: 6 };
 export const stripLabel: object = {
     flex: '1 1 0',
