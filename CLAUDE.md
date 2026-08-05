@@ -35,7 +35,28 @@ pnpm run storybook
 
 # View dependency graph
 pnpm run graph
+
+# Lay out the laws from @rt-tools/agent-kit / verify what is laid out
+pnpm run agent-kit:sync
+pnpm run agent-kit:check
 ```
+
+## Laws and rules
+
+Two layers, and they do not replace one another.
+
+**Laws** live in `docs/constitution/` and say _what must be true_, without paths or file names.
+They are laid out from `@rt-tools/agent-kit` by `pnpm run agent-kit:sync` and listed at session
+start by `.claude/hooks/constitution-index.sh`. Read the whole law before a decision it touches.
+
+**Rules** live in `.claude/skills/` and say _what that is called in this tree_ —
+`rt-tools-component`, `rt-tools-styling`, `rt-tools-testing` and the rest. `.claude/hooks/skill-gate.sh`
+blocks an edit until the matching rule is loaded.
+
+Laid-out files carry a `rt-kit v… · <resource> · <digest>` header and are **not edited in place**:
+an edit there is lost on the next sync, and `agent-kit sync` refuses the file instead of
+overwriting it. Project additions go to `.claude/rt-kit/overrides/<resource>` and merge by `## `
+section. What this repo opts out of is listed in `skip` in `.claude/rt-kit.json`.
 
 ## Architecture
 
