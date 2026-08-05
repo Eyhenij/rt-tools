@@ -1,0 +1,45 @@
+.rt-toaster {
+    --width: 356px;
+    --toaster-offset: 32px;
+
+    position: fixed;
+    z-index: 1100;
+    width: var(--width);
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    outline: none;
+
+    &--x--right {
+        right: max(var(--toaster-offset), env(safe-area-inset-right));
+    }
+
+    &--x--left {
+        left: max(var(--toaster-offset), env(safe-area-inset-left));
+    }
+
+    &--x--center {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    &--y--top {
+        top: max(var(--toaster-offset), env(safe-area-inset-top));
+    }
+
+    &--y--bottom {
+        bottom: max(var(--toaster-offset), env(safe-area-inset-bottom));
+    }
+
+    @media (width <= 480px) {
+        --toaster-offset: 16px;
+
+        right: var(--toaster-offset);
+        left: var(--toaster-offset);
+        width: auto;
+
+        &--x--center {
+            transform: none;
+        }
+    }
+}

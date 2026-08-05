@@ -1,0 +1,175 @@
+.rt-container {
+    display: grid;
+    min-height: 100%;
+    flex: 1 1 auto;
+    background-color: var(--rt-color-bg-page, #f5f5f5);
+    color: var(--rt-color-text-primary, #222);
+    grid-template: 'header header' auto 'left-sidenav toolbar' auto 'left-sidenav content' 1fr / auto 1fr;
+
+    &__header {
+        // Хедер закреплён вверху: при скролле документа (высота контейнера не
+        // ограничена вьюпортом) grid-строка header уезжала бы вверх. sticky top:0
+        // держит её на месте. z-index:1 — выше later-DOM контента, но ниже CDK
+        // overlay асайдов (1000). Работает благодаря `html { overflow-x: clip }`
+        // (clip, в отличие от hidden, не создаёт scroll-контейнер и не ломает sticky).
+        position: sticky;
+        z-index: 1;
+        top: 0;
+        display: block;
+        grid-area: header;
+
+        // Обёртка прозрачна: спроецированный хедер даёт собственный фон. Свой
+        // bg-surface здесь протекал бы за скруглёнными нижними углами хедера —
+        // в тёмной теме это давало серые «уголки» (surface ≠ фон хедера).
+    }
+
+    &__left-sidenav {
+        display: block;
+        padding: var(--rt-space-md);
+        border-right: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+        background-color: var(--rt-color-bg-surface, #fff);
+        grid-area: left-sidenav;
+    }
+
+    &__toolbar {
+        display: flex;
+        align-items: center;
+        padding: var(--rt-space-sm) var(--rt-space-md);
+        border-bottom: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+        background-color: var(--rt-color-bg-surface, #fff);
+        grid-area: toolbar;
+
+        &--slot--left {
+            justify-content: flex-start;
+        }
+
+        &--slot--center {
+            justify-content: center;
+        }
+
+        &--slot--right {
+            justify-content: flex-end;
+        }
+    }
+
+    &__content {
+        display: flex;
+        overflow: auto;
+        min-height: 0;
+        flex-direction: column;
+        grid-area: content;
+    }
+}
+
+/* App-shell раскладка (opt-in `height="viewport"`): контейнер жёстко равен
+   вьюпорту, документ не скроллится вовсе — скроллятся зоны внутри, каждая сама.
+   В дефолтном `auto` контейнер не ограничен вьюпортом (растёт под контент), из-за
+   чего `&__content { overflow: auto }` никогда не переполняется: скролл забирает
+   документ и утаскивает нав-рейл вместе со списком и лентой чата одним движением.
+   `min-block-size` сбрасываем — иначе `min-height: 100%` спорит с фиксированной
+   высотой, если родитель окажется выше вьюпорта. */
+.rt-container--viewport {
+    block-size: 100dvh;
+    min-block-size: 0;
+
+    /* Content перестаёт быть скролл-владельцем: он клипает, а скроллит то, что
+       внутри (список диалогов, лента чата) — у каждой зоны свой overflow. */
+    .rt-container__content {
+        overflow: hidden;
+    }
+
+    /* Нав-рейлу высоты вьюпорта хватает, скролла на нём быть не должно. `auto`,
+       а не `hidden`: в низком окне пункты меню иначе стали бы недостижимы. */
+    .rt-container__left-sidenav {
+        overflow: auto;
+    }
+}
+
+/* Backdrop + overlay панели CDK Overlay (persistent attach режим).
+   Cc-container владеет CDK Overlay для правой sidenav — стили глобальные
+   (ViewEncapsulation.None), живут тут чтобы не зависеть от подгрузки rt-aside
+   компонента (он tree-shake'тся когда не used active route'ом).
+
+   Двойной селектор `.cdk-overlay-backdrop.rt-aside-backdrop` нужен для specificity:
+   CDK Overlay добавляет `.cdk-overlay-backdrop-showing { opacity: 1 }` сразу при
+   attach; при persistent overlay backdrop должен оставаться скрытым пока aside
+   не открыт. Два класса > одиночный — наш opacity:0 побеждает. */
+.cdk-overlay-backdrop.rt-aside-backdrop {
+    /* stylelint-disable-next-line property-no-vendor-prefix -- Safari < 18 */
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    background: rgb(0 0 0 / 45%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--rt-duration-base) ease;
+
+    &.rt-aside-backdrop--visible {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+.rt-aside-overlay {
+    height: 100dvh;
+    transition: transform var(--rt-duration-base) ease;
+}
+
+/* Закрытая панель нажатий не ловит. На узком экране она шириной во весь вьюпорт,
+   и пока её сдвиг за край экрана не досчитан, она перекрывает страницу целиком:
+   выглядит это нормально, а нажатия уходят в пустоту. Селектор из двух классов —
+   чтобы правило не зависело от порядка, в котором браузер получил стили панели и
+   стили контейнера. */
+.rt-aside-overlay:not(.rt-aside-overlay--open) {
+    pointer-events: none;
+}
+
+/* Стартовое положение за краем экрана не анимируется: переход из него начинается,
+   как только вьюпорт задаёт панели ширину, и всю анимацию держит панель на месте. */
+.rt-aside-overlay.rt-aside-overlay--entering {
+    transition: none;
+}
+
+.rt-aside-overlay--position-right.rt-aside-overlay--entering,
+.rt-aside-overlay--position-right.rt-aside-overlay--leaving {
+    transform: translateX(100%);
+}
+
+.rt-aside-overlay--position-left.rt-aside-overlay--entering,
+.rt-aside-overlay--position-left.rt-aside-overlay--leaving {
+    transform: translateX(-100%);
+}
+
+.rt-aside-overlay--position-right.rt-aside-overlay--open,
+.rt-aside-overlay--position-left.rt-aside-overlay--open {
+    transform: translateX(0);
+}
+
+@media (width <= 768px) {
+    .rt-aside-overlay {
+        width: 100dvw;
+    }
+
+    // Opt-in: левый sidenav сворачивается в нижний ряд grid'а (таб-бар).
+    // Контент занимает всю ширину и скроллится в своём `1fr` над баром —
+    // бар остаётся видимым без position:fixed и без привязки к его высоте.
+    .rt-container--mobile-left-bottom {
+        grid-template:
+            'header' auto
+            'toolbar' auto
+            'content' 1fr
+            'left-sidenav' auto
+            / 1fr;
+
+        .rt-container__left-sidenav {
+            padding: 0;
+            border-top: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+            border-right: none;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rt-aside-overlay {
+        transition: none;
+    }
+}

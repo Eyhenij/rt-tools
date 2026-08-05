@@ -1,0 +1,9 @@
+<ng-container rtBlock="rt-counter-row">
+    <span rtElem="text">
+        <span rtElem="label" qa-dataid="counter-row-label">{{ label() }}</span>
+        @if (hint(); as hintText) {
+            <span rtElem="hint" qa-dataid="counter-row-hint">{{ hintText }}</span>
+        }
+    </span>
+    <ng-content />
+</ng-container>

@@ -1,0 +1,80 @@
+<ng-container rtBlock="rt-select">
+    @if (isReadonly()) {
+        <span rtElem="readonly" [rtMod]="{ empty: !displayText() }">{{ displayText() || '—' }}</span>
+    }
+    <button
+        #triggerEl
+        rtElem="trigger"
+        qa-dataid="select-trigger"
+        type="button"
+        rtPopoverWidth="trigger"
+        [rtPopover]="panelTpl"
+        [rtPopoverDisabled]="isDisabled()"
+        [attr.id]="effectiveControlId()"
+        [attr.aria-label]="ariaLabel()"
+        [attr.aria-haspopup]="'listbox'"
+        [attr.aria-expanded]="isOpen()"
+        [attr.aria-invalid]="isInvalid() || null"
+        [attr.aria-controls]="panelId"
+        [attr.aria-activedescendant]="isOpen() && activeIndex() >= 0 ? panelId + '-opt-' + activeIndex() : null"
+        [disabled]="isDisabled()"
+        (keydown)="onTriggerKeydown($event)"
+        (rtPopoverClosed)="onClosed()">
+        @if (iconLeft(); as left) {
+            <rt-icon rtElem="icon-left" size="sm" color="muted" [name]="left" />
+        }
+        <span rtElem="label" [rtMod]="{ placeholder: !selectedLabel() }">
+            {{ selectedLabel() || placeholder() }}
+        </span>
+        @if (showClearButton()) {
+            <rt-icon-button
+                rtElem="clear"
+                icon="ico-close"
+                size="sm"
+                variant="ghost"
+                iconColor="muted"
+                [ariaLabel]="'rtKit.uiClear' | transloco"
+                [tabIndex]="-1"
+                (clicked)="clear($event)" />
+        }
+        <rt-icon rtElem="chevron" name="chevron-down" size="sm" color="muted" />
+    </button>
+
+    <ng-template #panelTpl>
+        <div rtElem="panel" role="listbox" [attr.aria-label]="ariaLabel()">
+            @if (filter()) {
+                <div rtElem="filter">
+                    <rt-input [placeholder]="filterPlaceholderText()" [ngModel]="filterTerm()" (ngModelChange)="setFilter($event)" />
+                </div>
+            }
+            <!--
+                Опции listbox'а выбираются мышью через (click); keyboard-nav —
+                на trigger'е (activedescendant: ArrowUp/Down/Enter), опции не
+                focusable индивидуально, поэтому a11y-правила здесь не применимы.
+            -->
+            <!-- eslint-disable @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+            <ul rtElem="list">
+                @for (opt of filteredOptions(); track opt.value; let i = $index) {
+                    <li
+                        rtElem="option"
+                        qa-dataid="select-option"
+                        role="option"
+                        [id]="panelId + '-opt-' + i"
+                        [attr.data-value]="opt.value"
+                        [rtMod]="{
+                            selected: opt.value === value(),
+                            active: i === activeIndex(),
+                            disabled: !!opt.disabled,
+                        }"
+                        [attr.aria-selected]="opt.value === value()"
+                        [attr.aria-disabled]="!!opt.disabled"
+                        (click)="select(opt)">
+                        {{ opt.label }}
+                    </li>
+                } @empty {
+                    <li rtElem="empty">{{ 'rtKit.uiNoOptions' | transloco }}</li>
+                }
+            </ul>
+        </div>
+    </ng-template>
+</ng-container>

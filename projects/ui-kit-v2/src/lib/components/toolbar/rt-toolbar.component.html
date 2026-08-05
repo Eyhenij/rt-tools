@@ -1,0 +1,23 @@
+@if (leftTpl() || centerTpl() || rightTpl()) {
+    <ng-container rtBlock="rt-toolbar">
+        <div rtElem="bars">
+            @if (leftTpl()) {
+                <div rtElem="bar" qa-dataid="toolbar-bar" data-slot="left" [rtMod]="{ left: true }">
+                    <ng-container [ngTemplateOutlet]="leftTpl() ?? null" />
+                </div>
+            }
+
+            @if (centerTpl()) {
+                <div rtElem="bar" qa-dataid="toolbar-bar" data-slot="center" [rtMod]="{ center: true }">
+                    <ng-container [ngTemplateOutlet]="centerTpl() ?? null" />
+                </div>
+            }
+
+            @if (rightTpl()) {
+                <div rtElem="bar" qa-dataid="toolbar-bar" data-slot="right" [rtMod]="{ right: true }">
+                    <ng-container [ngTemplateOutlet]="rightTpl() ?? null" />
+                </div>
+            }
+        </div>
+    </ng-container>
+}

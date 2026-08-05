@@ -1,0 +1,21 @@
+<ng-container rtBlock="rt-textarea">
+    @if (isReadonly()) {
+        <span rtElem="readonly" qa-dataid="textarea-readonly" [rtMod]="{ empty: !displayText() }">{{ displayText() || '—' }}</span>
+    } @else {
+        <textarea
+            #fieldEl
+            rtElem="control"
+            qa-dataid="textarea-control"
+            [attr.id]="effectiveControlId()"
+            [attr.aria-label]="ariaLabel() || null"
+            [attr.aria-invalid]="isInvalid() || null"
+            [style.resize]="resize()"
+            [placeholder]="placeholder()"
+            [disabled]="effectiveDisabled()"
+            [readOnly]="readonly()"
+            [rows]="rows()"
+            [value]="value()"
+            (input)="onInput($event)"
+            (blur)="onBlur()"></textarea>
+    }
+</ng-container>

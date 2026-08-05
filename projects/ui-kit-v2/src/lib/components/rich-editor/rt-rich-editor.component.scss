@@ -1,0 +1,71 @@
+// Базовая тема Quill (snow) подключена глобально в project.json приложения (styles).
+// Здесь — только перекрытие цветов на семантические --rt-* токены (dark-aware):
+// нативный snow светлый (иконки #444, границы #ccc) и в тёмной теме не читается.
+.rt-rich-editor {
+    // Хост — flex-колонка (тулбар над контейнером). min-block-size:0 позволяет
+    // ужиматься ниже интринзик-высоты Quill, когда редактор — flex-item в
+    // height-ограниченном родителе (композер в fill-режиме): без этого контейнер
+    // с фиксированной высотой вываливается за ужатый хост и перекрывает соседей.
+    display: flex;
+    flex-direction: column;
+    min-block-size: 0;
+
+    .ql-toolbar.ql-snow,
+    .ql-container.ql-snow {
+        border-color: var(--rt-color-border-default);
+    }
+
+    .ql-toolbar.ql-snow {
+        flex: 0 0 auto;
+        border-start-end-radius: var(--rt-radius-md);
+        border-start-start-radius: var(--rt-radius-md);
+    }
+
+    // Native snow задаёт контейнеру Helvetica 13px — возвращаем шрифт приложения.
+    // flex:1 + min-block-size:0 + overflow держат зону ввода внутри хоста —
+    // при нехватке высоты контент скроллится, а не наезжает на контролы.
+    .ql-container.ql-snow {
+        flex: 1 1 auto;
+        border-end-end-radius: var(--rt-radius-md);
+        border-end-start-radius: var(--rt-radius-md);
+        font-family: inherit;
+        font-size: inherit;
+        min-block-size: 0;
+        overflow-y: auto;
+    }
+
+    .ql-editor {
+        background-color: var(--rt-color-bg-surface-subtle);
+        color: var(--rt-color-text-default);
+        min-block-size: 96px;
+    }
+
+    .ql-editor.ql-blank:before {
+        color: var(--rt-color-text-muted);
+        font-style: normal;
+    }
+
+    // Иконки тулбара — приглушённый цвет по умолчанию (native #444 в dark не виден).
+    .ql-snow .ql-stroke {
+        stroke: var(--rt-color-text-muted);
+    }
+
+    .ql-snow .ql-fill {
+        fill: var(--rt-color-text-muted);
+    }
+
+    .ql-snow .ql-picker {
+        color: var(--rt-color-text-muted);
+    }
+
+    // Активная/наведённая кнопка — акцентный цвет.
+    .ql-snow .ql-toolbar button:hover .ql-stroke,
+    .ql-snow button.ql-active .ql-stroke {
+        stroke: var(--rt-color-text-link);
+    }
+
+    .ql-snow .ql-toolbar button:hover .ql-fill,
+    .ql-snow button.ql-active .ql-fill {
+        fill: var(--rt-color-text-link);
+    }
+}

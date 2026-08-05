@@ -1,0 +1,61 @@
+<ng-container rtBlock="rt-workspace">
+    <section rtElem="list" qa-dataid="workspace-list">
+        <ng-container [ngTemplateOutlet]="listSlot()?.templateRef ?? null" [ngTemplateOutletContext]="slotContext" />
+    </section>
+
+    <div
+        rtElem="handle"
+        qa-dataid="workspace-handle-list"
+        role="separator"
+        aria-orientation="vertical"
+        tabindex="0"
+        [attr.aria-label]="'rtKit.uiResizeList' | transloco"
+        [rtMod]="{ list: true }"
+        [attr.aria-valuenow]="listWidth()"
+        [attr.aria-valuemin]="listMinWidth()"
+        [attr.aria-valuemax]="listMaxWidth()"
+        (pointerdown)="onHandlePointerDown($event, 'list')"
+        (dblclick)="onHandleReset('list')"
+        (keydown)="onHandleKeydown($event, 'list')"></div>
+
+    <section rtElem="center" qa-dataid="workspace-center">
+        @if (hasActive()) {
+            <div rtElem="mobile-toolbar">
+                <rt-icon-button
+                    qa-dataid="workspace-back"
+                    icon="arrow-left"
+                    variant="secondary"
+                    [ariaLabel]="'rtKit.uiBackToList' | transloco"
+                    [tooltip]="'rtKit.uiToList' | transloco"
+                    (clicked)="onBackClicked()" />
+                <rt-icon-button
+                    qa-dataid="workspace-open-details"
+                    icon="info-circle"
+                    variant="secondary"
+                    [ariaLabel]="'rtKit.uiShowDetails' | transloco"
+                    [tooltip]="'rtKit.uiDetails' | transloco"
+                    (clicked)="openAside()" />
+            </div>
+        }
+        <ng-container [ngTemplateOutlet]="centerSlot()?.templateRef ?? null" [ngTemplateOutletContext]="slotContext" />
+    </section>
+
+    <div
+        rtElem="handle"
+        qa-dataid="workspace-handle-aside"
+        role="separator"
+        aria-orientation="vertical"
+        tabindex="0"
+        [attr.aria-label]="'rtKit.uiResizeDetails' | transloco"
+        [rtMod]="{ aside: true }"
+        [attr.aria-valuenow]="asideWidth()"
+        [attr.aria-valuemin]="asideMinWidth()"
+        [attr.aria-valuemax]="asideMaxWidth()"
+        (pointerdown)="onHandlePointerDown($event, 'aside')"
+        (dblclick)="onHandleReset('aside')"
+        (keydown)="onHandleKeydown($event, 'aside')"></div>
+
+    <section rtElem="aside" qa-dataid="workspace-aside" [rtMod]="{ open: asideOpen() }">
+        <ng-container [ngTemplateOutlet]="asideSlot()?.templateRef ?? null" [ngTemplateOutletContext]="slotContext" />
+    </section>
+</ng-container>

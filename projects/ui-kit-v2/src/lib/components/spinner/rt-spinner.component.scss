@@ -1,0 +1,42 @@
+.rt-spinner {
+    --rt-spinner-diameter: 32px;
+    --rt-spinner-border-width: 3px;
+    --rt-spinner-track-color: var(--rt-color-border-subtle);
+    --rt-spinner-progress-color: var(--rt-color-action-primary);
+    --rt-spinner-rotation-duration: 1s;
+    --rt-spinner-rotation-duration-reduced: 4s;
+
+    display: inline-block;
+    width: var(--rt-spinner-diameter);
+    height: var(--rt-spinner-diameter);
+    box-sizing: border-box;
+    border: var(--rt-spinner-border-width) solid var(--rt-spinner-track-color);
+    border-radius: var(--rt-radius-full);
+    border-right-color: var(--rt-spinner-progress-color);
+    animation: rt-spinner-rotate var(--rt-spinner-rotation-duration) linear infinite;
+
+    &--primary {
+        --rt-spinner-progress-color: var(--rt-color-action-primary);
+    }
+
+    &--neutral {
+        --rt-spinner-progress-color: var(--rt-color-text-primary);
+    }
+
+    &--on-primary {
+        --rt-spinner-track-color: rgb(255 255 255 / 30%);
+        --rt-spinner-progress-color: var(--rt-color-action-on-primary);
+    }
+}
+
+@keyframes rt-spinner-rotate {
+    to {
+        transform: rotate(1turn);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rt-spinner {
+        animation-duration: var(--rt-spinner-rotation-duration-reduced);
+    }
+}

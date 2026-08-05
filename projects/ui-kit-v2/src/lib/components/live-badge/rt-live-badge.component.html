@@ -1,0 +1,5 @@
+<span rtBlock="rt-live-badge" qa-dataid="live-badge" [attr.data-active]="active()" [rtMod]="{ active: active() }">
+    <span rtElem="dot"></span>
+    <span rtElem="label" qa-dataid="live-badge-label">{{ labelText() }}</span>
+    <span rtElem="count" qa-dataid="live-badge-count">{{ count() ?? '—' }}</span>
+</span>

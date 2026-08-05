@@ -1,0 +1,62 @@
+/* rt-dialog — styled frame модалки поверх CDK Overlay.
+   ViewEncapsulation.None — селекторы префиксованы `.rt-dialog`.
+   Видимость / backdrop / focus-trap обеспечивает CDK Overlay через RtDialogService. */
+
+:host {
+    display: contents;
+}
+
+/* Size tokens — sm/md/lg.
+   Component-локальные tokens для backdrop/shadow держим в :root, чтобы
+   feature-консьюмеры могли переопределить per-instance через --rt-dialog-*. */
+:root {
+    --rt-dialog-width-sm: 460px;
+    --rt-dialog-width-md: 660px;
+    --rt-dialog-width-lg: 860px;
+    --rt-dialog-shadow: 0 0 40px 0 rgb(0 0 0 / 25%);
+    --rt-dialog-backdrop-bg: rgb(25 41 64 / 70%);
+    --rt-dialog-backdrop-blur: 5px;
+}
+
+.rt-dialog {
+    display: flex;
+    overflow: hidden;
+    width: var(--rt-dialog-width, var(--rt-dialog-width-md));
+    max-width: 90dvw;
+    max-height: 90dvh;
+    flex-direction: column;
+    padding: 0;
+    border: none;
+    border-radius: var(--rt-radius-xl, 15px);
+    background: var(--rt-color-bg-surface);
+    box-shadow: var(--rt-dialog-shadow);
+    color: var(--rt-color-text-primary);
+
+    &--size--sm {
+        width: var(--rt-dialog-width, var(--rt-dialog-width-sm));
+    }
+
+    &--size--md {
+        width: var(--rt-dialog-width, var(--rt-dialog-width-md));
+    }
+
+    &--size--lg {
+        width: var(--rt-dialog-width, var(--rt-dialog-width-lg));
+    }
+}
+
+/* CDK Overlay backdrop + panel classes, выставляемые RtDialogService.
+   Live в global scope — overlay-container — sibling от <body>,
+   encapsulation не работает. */
+.rt-dialog-backdrop {
+    /* stylelint-disable-next-line property-no-vendor-prefix -- Safari < 18 */
+    -webkit-backdrop-filter: blur(var(--rt-dialog-backdrop-blur));
+    backdrop-filter: blur(var(--rt-dialog-backdrop-blur));
+    background: var(--rt-dialog-backdrop-bg);
+}
+
+.rt-dialog-overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

@@ -1,0 +1,25 @@
+/* rt-money-row — строка финансового блока (ViewEncapsulation.None).
+   Селектор bare `.rt-money-row` (класс на host). */
+
+.rt-money-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--rt-text-sm);
+    gap: var(--rt-space-md);
+    line-height: var(--rt-leading-normal);
+
+    &__label {
+        color: var(--rt-color-text-muted);
+    }
+
+    &__value {
+        color: var(--rt-color-text-primary);
+        white-space: nowrap;
+    }
+
+    &--total {
+        padding-top: var(--rt-space-xs);
+        border-top: var(--rt-border-width-thin) solid var(--rt-color-border-default);
+        font-weight: var(--rt-font-weight-semibold);
+    }
+}

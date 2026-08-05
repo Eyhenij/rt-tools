@@ -1,0 +1,30 @@
+<span
+    rtBlock="rt-tag"
+    qa-dataid="tag"
+    [attr.data-severity]="severity()"
+    [rtMod]="{
+        severity: severity(),
+        shape: shape(),
+        appearance: appearance(),
+        radius: radius(),
+        closable: closable(),
+    }">
+    @if (icon(); as iconName) {
+        <rt-icon rtElem="icon" size="sm" [name]="iconName" />
+    }
+    <span rtElem="text" qa-dataid="tag-text">{{ value() }}</span>
+    @if (iconEnd(); as iconEndName) {
+        <rt-icon rtElem="icon-end" size="sm" [name]="iconEndName" />
+    }
+    @if (closable()) {
+        <rt-icon-button
+            rtElem="close"
+            qa-dataid="tag-close"
+            icon="ico-close"
+            variant="ghost"
+            size="sm"
+            shape="circle"
+            [ariaLabel]="'rtKit.uiRemove' | transloco"
+            (clicked)="onClose($event)" />
+    }
+</span>

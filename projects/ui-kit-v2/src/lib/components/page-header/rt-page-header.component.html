@@ -1,0 +1,410 @@
+<ng-container rtBlock="rt-page-header">
+    <nav rtElem="nav" [attr.aria-label]="navAriaLabel()">
+        <ul rtElem="list" role="list">
+            @for (section of sections(); track section.id) {
+                <li rtElem="item" qa-dataid="header-nav-item" [attr.data-id]="section.id">
+                    @switch (section.kind) {
+                        @case (EntryKind.Panel) {
+                            <button
+                                rtElem="link"
+                                type="button"
+                                qa-dataid="header-nav-trigger"
+                                #groupPopover="rtPopover"
+                                rtPopoverTrigger="hover"
+                                rtPopoverFitViewport
+                                rtPopoverOffsetY="14"
+                                [rtMod]="{
+                                    isActive: activeSectionIds().has(section.id),
+                                    isOpen: groupPopover.isOpen(),
+                                }"
+                                [attr.aria-haspopup]="true"
+                                [attr.aria-expanded]="groupPopover.isOpen()"
+                                [rtPopover]="submenuTpl"
+                                (click)="groupPopover.open()">
+                                @if (section.icon) {
+                                    <rt-icon rtElem="icon" size="sm" [name]="section.icon" />
+                                }
+                                <span rtElem="label">{{ section.label }}</span>
+                                @if (section.unread) {
+                                    <span
+                                        rtElem="marker"
+                                        role="img"
+                                        qa-dataid="header-nav-marker"
+                                        [attr.data-id]="section.id"
+                                        [attr.aria-label]="'rtKit.uiNavUnread' | transloco"></span>
+                                }
+                                <span rtElem="caret" aria-hidden="true">
+                                    <rt-icon name="chevron-up-down" size="xs" />
+                                </span>
+                            </button>
+                            <ng-template #submenuTpl>
+                                <div rtBlock="rt-page-header-submenu" role="menu" [style.--rt-nav-panel-columns]="section.columnCount">
+                                    @for (column of section.columns; track column.id) {
+                                        <div rtElem="column" qa-dataid="header-nav-column" [attr.data-id]="column.id">
+                                            @for (group of column.groups; track group.id) {
+                                                <div rtElem="group" role="group" [attr.aria-label]="group.label || null">
+                                                    @if (group.label) {
+                                                        <div rtElem="group-title" qa-dataid="header-nav-group" [attr.data-id]="group.id">
+                                                            @if (group.icon) {
+                                                                <rt-icon rtElem="group-icon" size="xs" [name]="group.icon" />
+                                                            }
+                                                            <span rtElem="group-label">{{ group.label }}</span>
+                                                        </div>
+                                                    }
+                                                    @for (entry of group.items; track entry.id) {
+                                                        @if (entry.kind === EntryKind.Link) {
+                                                            <a
+                                                                rtElem="link"
+                                                                role="menuitem"
+                                                                qa-dataid="header-nav-subitem"
+                                                                routerLinkActive="rt-page-header-submenu__link--is-active"
+                                                                [attr.data-id]="entry.id"
+                                                                [routerLink]="entry.route"
+                                                                [routerLinkActiveOptions]="{ exact: entry.routerLinkActiveExact }"
+                                                                (click)="groupPopover.close()">
+                                                                <span rtElem="label">{{ entry.label }}</span>
+                                                                @if (entry.unread) {
+                                                                    <span
+                                                                        rtElem="marker"
+                                                                        role="img"
+                                                                        qa-dataid="header-nav-marker"
+                                                                        [attr.data-id]="entry.id"
+                                                                        [attr.aria-label]="'rtKit.uiNavUnread' | transloco"></span>
+                                                                }
+                                                            </a>
+                                                        } @else if (entry.disabled) {
+                                                            <span
+                                                                rtElem="disabled-slot"
+                                                                role="none"
+                                                                [rtTooltip]="
+                                                                    'rtKit.uiSectionInProgress' | transloco: { label: entry.label }
+                                                                ">
+                                                                <button
+                                                                    rtElem="link"
+                                                                    role="menuitem"
+                                                                    type="button"
+                                                                    qa-dataid="header-nav-subitem"
+                                                                    [rtMod]="{ disabled: true }"
+                                                                    [attr.data-id]="entry.id"
+                                                                    [attr.aria-disabled]="true">
+                                                                    <span rtElem="label">{{ entry.label }}</span>
+                                                                </button>
+                                                            </span>
+                                                        } @else {
+                                                            <button
+                                                                rtElem="link"
+                                                                role="menuitem"
+                                                                type="button"
+                                                                qa-dataid="header-nav-subitem"
+                                                                [attr.data-id]="entry.id"
+                                                                (click)="onItemClick(entry.id)">
+                                                                <span rtElem="label">{{ entry.label }}</span>
+                                                                @if (entry.unread) {
+                                                                    <span
+                                                                        rtElem="marker"
+                                                                        role="img"
+                                                                        qa-dataid="header-nav-marker"
+                                                                        [attr.data-id]="entry.id"
+                                                                        [attr.aria-label]="'rtKit.uiNavUnread' | transloco"></span>
+                                                                }
+                                                            </button>
+                                                        }
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </ng-template>
+                        }
+                        @case (EntryKind.Link) {
+                            <a
+                                rtElem="link"
+                                routerLinkActive="rt-page-header__link--is-active"
+                                [routerLink]="section.route"
+                                [routerLinkActiveOptions]="{ exact: section.routerLinkActiveExact }">
+                                @if (section.icon) {
+                                    <rt-icon rtElem="icon" size="sm" [name]="section.icon" />
+                                }
+                                <span rtElem="label">{{ section.label }}</span>
+                                @if (section.unread) {
+                                    <span
+                                        rtElem="marker"
+                                        role="img"
+                                        qa-dataid="header-nav-marker"
+                                        [attr.data-id]="section.id"
+                                        [attr.aria-label]="'rtKit.uiNavUnread' | transloco"></span>
+                                }
+                            </a>
+                        }
+                        @default {
+                            @if (section.disabled) {
+                                <span
+                                    rtElem="disabled-slot"
+                                    role="none"
+                                    [rtTooltip]="'rtKit.uiSectionInProgress' | transloco: { label: section.label }">
+                                    <button rtElem="link" type="button" [rtMod]="{ disabled: true }" [attr.aria-disabled]="true">
+                                        @if (section.icon) {
+                                            <rt-icon rtElem="icon" size="sm" [name]="section.icon" />
+                                        }
+                                        <span rtElem="label">{{ section.label }}</span>
+                                    </button>
+                                </span>
+                            } @else {
+                                <button rtElem="link" type="button" (click)="onItemClick(section.id)">
+                                    @if (section.icon) {
+                                        <rt-icon rtElem="icon" size="sm" [name]="section.icon" />
+                                    }
+                                    <span rtElem="label">{{ section.label }}</span>
+                                    @if (section.unread) {
+                                        <span
+                                            rtElem="marker"
+                                            role="img"
+                                            qa-dataid="header-nav-marker"
+                                            [attr.data-id]="section.id"
+                                            [attr.aria-label]="'rtKit.uiNavUnread' | transloco"></span>
+                                    }
+                                </button>
+                            }
+                        }
+                    }
+                </li>
+            }
+        </ul>
+    </nav>
+
+    <button
+        rtElem="burger"
+        type="button"
+        qa-dataid="header-nav-burger"
+        #mobileNavPopover="rtPopover"
+        rtPopoverFitViewport
+        rtPopoverOffsetY="14"
+        [attr.aria-label]="'rtKit.uiNavMenu' | transloco"
+        [rtMod]="{ isOpen: mobileNavPopover.isOpen() }"
+        [attr.aria-haspopup]="true"
+        [attr.aria-expanded]="mobileNavPopover.isOpen()"
+        [rtPopover]="mobileNavTpl">
+        <rt-icon rtElem="burger-icon" name="bars" size="md" />
+    </button>
+
+    <ng-template #mobileNavTpl>
+        <div rtBlock="rt-page-header-mobile" role="menu">
+            @for (section of sections(); track section.id) {
+                @switch (section.kind) {
+                    @case (EntryKind.Panel) {
+                        <button
+                            rtElem="section"
+                            type="button"
+                            qa-dataid="header-nav-mobile-trigger"
+                            [rtMod]="{
+                                isExpanded: expandedSectionIds().has(section.id),
+                                isActive: activeSectionIds().has(section.id),
+                            }"
+                            [attr.data-id]="section.id"
+                            [attr.aria-expanded]="expandedSectionIds().has(section.id)"
+                            (click)="toggleSection(section.id)">
+                            @if (section.icon) {
+                                <rt-icon rtElem="icon" size="sm" [name]="section.icon" />
+                            }
+                            <span rtElem="label">{{ section.label }}</span>
+                            @if (section.unread) {
+                                <span
+                                    rtElem="marker"
+                                    role="img"
+                                    qa-dataid="header-nav-marker"
+                                    [attr.data-id]="section.id"
+                                    [attr.aria-label]="'rtKit.uiNavUnread' | transloco"></span>
+                            }
+                            <span rtElem="caret" aria-hidden="true">
+                                <rt-icon name="chevron-up-down" size="xs" />
+                            </span>
+                        </button>
+                        @if (expandedSectionIds().has(section.id)) {
+                            <div rtElem="children">
+                                @for (group of section.panelGroups; track group.id) {
+                                    <div rtElem="group" role="group" [attr.aria-label]="group.label || null">
+                                        @if (group.label) {
+                                            <div rtElem="group-title" qa-dataid="header-nav-mobile-group" [attr.data-id]="group.id">
+                                                @if (group.icon) {
+                                                    <rt-icon rtElem="group-icon" size="xs" [name]="group.icon" />
+                                                }
+                                                <span rtElem="group-label">{{ group.label }}</span>
+                                            </div>
+                                        }
+                                        @for (entry of group.items; track entry.id) {
+                                            @if (entry.kind === EntryKind.Link) {
+                                                <a
+                                                    rtElem="link"
+                                                    role="menuitem"
+                                                    qa-dataid="header-nav-mobile-item"
+                                                    routerLinkActive="rt-page-header-mobile__link--is-active"
+                                                    [rtMod]="{ child: true }"
+                                                    [attr.data-id]="entry.id"
+                                                    [routerLink]="entry.route"
+                                                    [routerLinkActiveOptions]="{ exact: entry.routerLinkActiveExact }"
+                                                    (click)="mobileNavPopover.close()">
+                                                    <span rtElem="label">{{ entry.label }}</span>
+                                                    @if (entry.unread) {
+                                                        <span
+                                                            rtElem="marker"
+                                                            role="img"
+                                                            qa-dataid="header-nav-marker"
+                                                            [attr.data-id]="entry.id"
+                                                            [attr.aria-label]="'rtKit.uiNavUnread' | transloco"></span>
+                                                    }
+                                                </a>
+                                            } @else if (entry.disabled) {
+                                                <span
+                                                    rtElem="disabled-slot"
+                                                    role="none"
+                                                    [rtTooltip]="'rtKit.uiSectionInProgress' | transloco: { label: entry.label }">
+                                                    <button
+                                                        rtElem="link"
+                                                        type="button"
+                                                        role="menuitem"
+                                                        qa-dataid="header-nav-mobile-item"
+                                                        [rtMod]="{ child: true, disabled: true }"
+                                                        [attr.data-id]="entry.id"
+                                                        [attr.aria-disabled]="true">
+                                                        <span rtElem="label">{{ entry.label }}</span>
+                                                    </button>
+                                                </span>
+                                            } @else {
+                                                <button
+                                                    rtElem="link"
+                                                    type="button"
+                                                    role="menuitem"
+                                                    qa-dataid="header-nav-mobile-item"
+                                                    [rtMod]="{ child: true }"
+                                                    [attr.data-id]="entry.id"
+                                                    (click)="onMobileItemClick(entry.id)">
+                                                    <span rtElem="label">{{ entry.label }}</span>
+                                                    @if (entry.unread) {
+                                                        <span
+                                                            rtElem="marker"
+                                                            role="img"
+                                                            qa-dataid="header-nav-marker"
+                                                            [attr.data-id]="entry.id"
+                                                            [attr.aria-label]="'rtKit.uiNavUnread' | transloco"></span>
+                                                    }
+                                                </button>
+                                            }
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        }
+                    }
+                    @case (EntryKind.Link) {
+                        <a
+                            rtElem="link"
+                            role="menuitem"
+                            qa-dataid="header-nav-mobile-item"
+                            routerLinkActive="rt-page-header-mobile__link--is-active"
+                            [attr.data-id]="section.id"
+                            [routerLink]="section.route"
+                            [routerLinkActiveOptions]="{ exact: section.routerLinkActiveExact }"
+                            (click)="mobileNavPopover.close()">
+                            @if (section.icon) {
+                                <rt-icon rtElem="icon" size="sm" [name]="section.icon" />
+                            }
+                            <span rtElem="label">{{ section.label }}</span>
+                            @if (section.unread) {
+                                <span
+                                    rtElem="marker"
+                                    role="img"
+                                    qa-dataid="header-nav-marker"
+                                    [attr.data-id]="section.id"
+                                    [attr.aria-label]="'rtKit.uiNavUnread' | transloco"></span>
+                            }
+                        </a>
+                    }
+                    @default {
+                        @if (section.disabled) {
+                            <span
+                                rtElem="disabled-slot"
+                                role="none"
+                                [rtTooltip]="'rtKit.uiSectionInProgress' | transloco: { label: section.label }">
+                                <button
+                                    rtElem="link"
+                                    type="button"
+                                    role="menuitem"
+                                    qa-dataid="header-nav-mobile-item"
+                                    [rtMod]="{ disabled: true }"
+                                    [attr.data-id]="section.id"
+                                    [attr.aria-disabled]="true">
+                                    @if (section.icon) {
+                                        <rt-icon rtElem="icon" size="sm" [name]="section.icon" />
+                                    }
+                                    <span rtElem="label">{{ section.label }}</span>
+                                </button>
+                            </span>
+                        } @else {
+                            <button
+                                rtElem="link"
+                                type="button"
+                                role="menuitem"
+                                qa-dataid="header-nav-mobile-item"
+                                [attr.data-id]="section.id"
+                                (click)="onMobileItemClick(section.id)">
+                                @if (section.icon) {
+                                    <rt-icon rtElem="icon" size="sm" [name]="section.icon" />
+                                }
+                                <span rtElem="label">{{ section.label }}</span>
+                                @if (section.unread) {
+                                    <span
+                                        rtElem="marker"
+                                        role="img"
+                                        qa-dataid="header-nav-marker"
+                                        [attr.data-id]="section.id"
+                                        [attr.aria-label]="'rtKit.uiNavUnread' | transloco"></span>
+                                }
+                            </button>
+                        }
+                    }
+                }
+            }
+        </div>
+    </ng-template>
+
+    <ng-content select="[rtHeaderBell]" />
+
+    @if (user(); as u) {
+        @if (userMenu(); as menuTpl) {
+            <!--
+                Меню профиля открывается наведением, как и разделы: весь верхний
+                ряд ведёт себя одинаково. Нажатие остаётся запасным путём для
+                касания, а переход курсора на список языков панель переживает —
+                вложенный оверлей за уход наружу не считается.
+            -->
+            <button
+                rtElem="user"
+                type="button"
+                qa-dataid="header-user-menu"
+                #userPopover="rtPopover"
+                rtPopoverTrigger="hover"
+                rtPopoverAlign="end"
+                rtPopoverOffsetY="14"
+                [rtMod]="{ isOpen: userPopover.isOpen() }"
+                [attr.aria-haspopup]="true"
+                [attr.aria-expanded]="userPopover.isOpen()"
+                [rtPopover]="menuTpl"
+                (click)="userPopover.open()">
+                <span rtElem="user-avatar" aria-hidden="true">{{ userAvatar() }}</span>
+                <span rtElem="user-name" qa-dataid="header-user-name">{{ u.name }}</span>
+                <span rtElem="user-caret" aria-hidden="true">
+                    <rt-icon name="chevron-up-down" size="xs" />
+                </span>
+            </button>
+        } @else {
+            <button rtElem="user" type="button" (click)="onUserClick()">
+                <span rtElem="user-avatar" aria-hidden="true">{{ userAvatar() }}</span>
+                <span rtElem="user-name" qa-dataid="header-user-name">{{ u.name }}</span>
+                <span rtElem="user-caret" aria-hidden="true">
+                    <rt-icon name="chevron-up-down" size="xs" />
+                </span>
+            </button>
+        }
+    }
+</ng-container>

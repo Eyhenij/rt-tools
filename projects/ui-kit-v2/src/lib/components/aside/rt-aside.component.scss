@@ -1,0 +1,208 @@
+/* rt-aside — styled frame side-sheet (mirror rt-dialog с заменой токенов).
+   ViewEncapsulation.None — селекторы префиксованы `.rt-aside`.
+   Видимость / backdrop / slide-in анимацию обеспечивает CDK Overlay через RtAsideService. */
+
+:host {
+    display: contents;
+}
+
+/* Size tokens — sm/md/lg (aside уже модалки чем rt-dialog).
+   Backdrop / animation duration — component-local, переопределяемые через CSS-properties. */
+:root {
+    --rt-aside-width-sm: 400px;
+    --rt-aside-width-md: 540px;
+    --rt-aside-width-lg: 720px;
+    --rt-aside-animation-duration: 200ms;
+    --rt-aside-backdrop-bg: rgb(0 0 0 / 45%);
+    --rt-aside-backdrop-blur: 5px;
+
+    /* Инсет панели: шапка, содержимое и футер отбиты от края одним и тем же
+       значением, поэтому поля во всех панелях одной ширины. */
+    --rt-aside-inset: var(--rt-space-lg);
+
+    /* Ритм между корневыми блоками содержимого. */
+    --rt-aside-content-gap: var(--rt-space-md);
+}
+
+.rt-aside {
+    display: flex;
+    width: var(--rt-aside-width, var(--rt-aside-width-md));
+
+    /* rt-aside — flex-child cdk-overlay-pane. Default `min-width: auto` у flex-item
+       заставляет ширину расти до max-content вложенного контента (длинный
+       заголовок без переносов раздул бы panel за пределы viewport). 0 — let
+       cross-axis размера контейнера ограничивать, а ellipsis в title клипает текст. */
+    min-width: 0;
+    max-width: 100%;
+    height: 100%;
+    flex-direction: column;
+    padding: 0;
+    border: none;
+    background: var(--rt-color-bg-surface);
+    color: var(--rt-color-text-primary);
+
+    /* Header / footer всегда видны, контентная часть скроллится при overflow.
+       Селекторы по тегам — `<rt-aside-header>` / `<rt-aside-footer>` это
+       Angular host-элементы, у которых нет класса `.rt-aside-header`
+       (этот класс висит на вложенном `<header>` / `<footer>` внутри них).
+       `min-height: 0` обязателен — без него flex item не сможет shrink ниже
+       intrinsic content size и overflow-y не сработает. */
+    & > rt-aside-header,
+    & > rt-aside-footer {
+        /* min-width: 0 пробрасывается флекс-детям вниз — без него заголовок с
+           неразрывным длинным текстом раздувает header/footer шире
+           cross-axis-размера контейнера и выходит за viewport. */
+        min-width: 0;
+        flex-shrink: 0;
+    }
+
+    /* Единственная зона содержимого: она держит инсет панели и она же
+       прокручивается. Отступы живут здесь, а не в потребителях — иначе каждая
+       панель помнит про них сама, и поля получают разную ширину. */
+    &__content {
+        display: flex;
+        min-width: 0;
+        min-height: 0;
+        flex: 1 1 auto;
+        flex-direction: column;
+        padding: var(--rt-aside-inset);
+        gap: var(--rt-aside-content-gap);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+    }
+
+    &--size--sm {
+        width: var(--rt-aside-width, var(--rt-aside-width-sm));
+    }
+
+    &--size--md {
+        width: var(--rt-aside-width, var(--rt-aside-width-md));
+    }
+
+    &--size--lg {
+        width: var(--rt-aside-width, var(--rt-aside-width-lg));
+    }
+
+    /* Контент — rt-tabs: скроллером становится контент активной вкладки, а не
+       контентная зона асайда, чтобы полоса вкладок оставалась прибитой. */
+    &--content--tabs {
+        /* Контентная зона больше не скроллер, но её горизонтальный инсет СОХРАНЯЕМ:
+           прямой контент вне rt-tabs (скелетоны загрузки, rt-message ошибки) должен
+           отступать от краёв как обычно. Снимаем только нижний отступ. */
+        .rt-aside__content {
+            overflow: hidden;
+            padding-block-end: 0;
+        }
+
+        /* rt-tabs растягивается на всю ширину панели (гасит инсет контентной зоны),
+           а инсет возвращается ВНУТРЬ полосы и скролл-контейнера. Так overflow
+           скролл-контейнера не режет focus-ring инпутов, прижатых к краю, а полоса
+           и контент остаются в коридоре --rt-aside-inset. */
+        rt-tabs {
+            min-height: 0;
+            flex: 1 1 auto;
+            margin-inline: calc(-1 * var(--rt-aside-inset));
+        }
+
+        .rt-tabs__header {
+            padding-inline: var(--rt-aside-inset);
+        }
+
+        .rt-tabs__content {
+            /* Нижний отступ внутри скроллера — последний элемент не докручивается
+               вплотную к футеру. */
+            padding-bottom: var(--rt-aside-inset);
+            padding-inline: var(--rt-aside-inset);
+        }
+    }
+}
+
+/* CDK Overlay backdrop + panel классы, выставляемые RtAsideService.
+   Live в global scope — overlay-container — sibling от <body>,
+   encapsulation не работает. */
+
+/* Двойной селектор `.cdk-overlay-backdrop.rt-aside-backdrop` нужен для specificity:
+   CDK Overlay добавляет `.cdk-overlay-backdrop-showing { opacity: 1 }` сразу при attach;
+   при persistent overlay (rt-container auto-attach) backdrop должен оставаться скрытым
+   пока aside не открыт. Два класса (.cdk-overlay-backdrop + .rt-aside-backdrop) — выше
+   specificity чем одиночный (.cdk-overlay-backdrop-showing), поэтому наш opacity:0
+   побеждает. */
+.cdk-overlay-backdrop.rt-aside-backdrop {
+    /* stylelint-disable-next-line property-no-vendor-prefix -- Safari < 18 */
+    -webkit-backdrop-filter: blur(var(--rt-aside-backdrop-blur));
+    backdrop-filter: blur(var(--rt-aside-backdrop-blur));
+    background: var(--rt-aside-backdrop-bg);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--rt-aside-animation-duration) ease;
+
+    &.rt-aside-backdrop--visible {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+.rt-aside-overlay {
+    height: 100dvh;
+    transition: transform var(--rt-aside-animation-duration) ease;
+}
+
+/* Закрытая панель нажатий не ловит. На узком экране она шириной во весь вьюпорт,
+   и пока её сдвиг за край экрана не досчитан, она перекрывает страницу целиком:
+   выглядит это нормально, а нажатия уходят в пустоту. Селектор из двух классов —
+   чтобы правило не зависело от порядка, в котором браузер получил стили панели и
+   стили контейнера. */
+.rt-aside-overlay:not(.rt-aside-overlay--open) {
+    pointer-events: none;
+}
+
+/* Стартовое положение за краем экрана не анимируется: переход из него начинается,
+   как только вьюпорт задаёт панели ширину, и всю анимацию держит панель на месте. */
+.rt-aside-overlay.rt-aside-overlay--entering {
+    transition: none;
+}
+
+/* Slide-in / slide-out states — переключаются сервисом через Renderer2 на host.
+   --entering: initial off-screen position; --open: in place; --leaving: off-screen exit. */
+.rt-aside-overlay--position-right.rt-aside-overlay--entering {
+    transform: translateX(100%);
+}
+
+.rt-aside-overlay--position-left.rt-aside-overlay--entering {
+    transform: translateX(-100%);
+}
+
+.rt-aside-overlay--position-right.rt-aside-overlay--open,
+.rt-aside-overlay--position-left.rt-aside-overlay--open {
+    transform: translateX(0);
+}
+
+.rt-aside-overlay--position-right.rt-aside-overlay--leaving {
+    transform: translateX(100%);
+}
+
+.rt-aside-overlay--position-left.rt-aside-overlay--leaving {
+    transform: translateX(-100%);
+}
+
+@media (width <= 768px) {
+    .rt-aside-overlay {
+        overflow: hidden;
+        width: 100dvw;
+        max-width: 100dvw;
+    }
+
+    .rt-aside,
+    .rt-aside--size--sm,
+    .rt-aside--size--md,
+    .rt-aside--size--lg {
+        width: 100dvw;
+        max-width: 100dvw;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rt-aside-overlay {
+        transition: none;
+    }
+}

@@ -1,0 +1,13 @@
+<header rtBlock="rt-dialog-header" qa-dataid="dialog-header">
+    <h2 rtElem="title" qa-dataid="dialog-title">{{ title() }}</h2>
+    @if (closable()) {
+        <rt-icon-button
+            rtElem="close"
+            qa-dataid="dialog-close"
+            icon="ico-close"
+            size="sm"
+            variant="ghost"
+            [ariaLabel]="'rtKit.uiClose' | transloco"
+            (clicked)="onClose()" />
+    }
+</header>

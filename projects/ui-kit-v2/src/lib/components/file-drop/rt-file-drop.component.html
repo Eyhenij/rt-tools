@@ -1,0 +1,27 @@
+<ng-container rtBlock="rt-file-drop">
+    <ng-content />
+
+    @if (isDragging()) {
+        <div rtElem="overlay" qa-dataid="file-drop-overlay" aria-hidden="true" [rtMod]="{ zoned: hasZones() }">
+            @if (hasZones()) {
+                @for (zone of zones(); track zone.id) {
+                    <div
+                        rtElem="zone"
+                        qa-dataid="file-drop-zone"
+                        [attr.data-zone]="zone.id"
+                        [attr.data-active]="activeZoneId() === zone.id"
+                        [rtMod]="{ active: activeZoneId() === zone.id }">
+                        <span rtElem="label" qa-dataid="file-drop-zone-label">{{ zone.label }}</span>
+                        @if (zone.sublabel) {
+                            <span rtElem="sublabel" qa-dataid="file-drop-zone-sublabel">{{ zone.sublabel }}</span>
+                        }
+                    </div>
+                }
+            } @else {
+                <div rtElem="frame" qa-dataid="file-drop-frame">
+                    <span rtElem="label" qa-dataid="file-drop-label">{{ overlayText() }}</span>
+                </div>
+            }
+        </div>
+    }
+</ng-container>

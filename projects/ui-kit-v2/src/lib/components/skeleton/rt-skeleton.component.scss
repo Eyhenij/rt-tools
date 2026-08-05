@@ -1,0 +1,56 @@
+.rt-skeleton {
+    --rt-skeleton-wave-duration: 2.5s;
+
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    background: linear-gradient(90deg, var(--rt-color-bg-subtle) 0%, var(--rt-color-border-default) 50%, var(--rt-color-bg-subtle) 100%);
+    background-size: 200% 100%;
+
+    &--rectangle {
+        border-radius: var(--rt-radius-sm);
+    }
+
+    &--circle {
+        border-radius: var(--rt-radius-full);
+    }
+
+    &--square {
+        border-radius: 0;
+    }
+
+    &--sm {
+        min-width: 10px;
+        min-height: 10px;
+    }
+
+    &--md {
+        min-width: 15px;
+        min-height: 15px;
+    }
+
+    &--lg {
+        min-width: 20px;
+        min-height: 20px;
+    }
+
+    &--animated {
+        animation: rt-skeleton-wave var(--rt-skeleton-wave-duration) ease-in-out infinite;
+    }
+}
+
+@keyframes rt-skeleton-wave {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rt-skeleton--animated {
+        animation: none;
+    }
+}

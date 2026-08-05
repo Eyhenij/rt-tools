@@ -1,0 +1,29 @@
+<section rtBlock="rt-bar-list" qa-dataid="bar-list">
+    @if (title()) {
+        <h3 rtElem="title" qa-dataid="bar-list-title">{{ title() }}</h3>
+    }
+
+    @if (rows().length > 0) {
+        <ul rtElem="rows" qa-dataid="bar-list-rows">
+            @for (row of rows(); track row.id) {
+                <li rtElem="row" qa-dataid="bar-list-row" [attr.data-id]="row.id">
+                    <span rtElem="row-head">
+                        <span rtElem="row-title" qa-dataid="bar-list-row-title">{{ row.title }}</span>
+                        <span rtElem="row-value" qa-dataid="bar-list-row-value">{{ row.value }}</span>
+                    </span>
+                    @if (row.meta) {
+                        <span rtElem="row-meta" qa-dataid="bar-list-row-meta">{{ row.meta }}</span>
+                    }
+                    <span rtElem="track">
+                        <span rtElem="fill" qa-dataid="bar-list-row-fill" [style.width.%]="row.sharePercent"></span>
+                    </span>
+                </li>
+            }
+        </ul>
+    } @else {
+        <div rtElem="empty" qa-dataid="bar-list-empty">
+            <rt-icon name="warning" size="md" color="muted" />
+            <p rtElem="empty-text" qa-dataid="bar-list-empty-text">{{ emptyMessage() }}</p>
+        </div>
+    }
+</section>

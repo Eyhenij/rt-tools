@@ -1,0 +1,69 @@
+.rt-toolbar {
+    display: block;
+
+    &__bars {
+        display: flex;
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: var(--rt-space-2-5) 0;
+        gap: var(--rt-space-2-5);
+    }
+
+    &__bar {
+        display: flex;
+        align-items: center;
+
+        // left/right — по контенту; center — эластичный спейсер, который
+        // прижимает right-бар к краю. Раньше каждый list-page переопределял
+        // эти три флекса через ::ng-deep — теперь поведение зашито здесь.
+        &--left {
+            flex: 0 0 auto;
+            gap: var(--rt-space-2-5);
+        }
+
+        &--center {
+            flex: 1 1 auto;
+            justify-content: flex-end;
+            gap: var(--rt-space-2-5);
+
+            // Контрол-фильтр (поиск/селект) занимает ширину center и право-
+            // выравнивается к action-кнопкам; свой max-width задаёт потребитель.
+            rt-input,
+            rt-select {
+                width: 100%;
+            }
+        }
+
+        &--right {
+            // Прижатие к правому краю даже когда right — единственный бар
+            // (нет left/center, которые бы вытолкнули его через space-between).
+            flex: 0 0 auto;
+            margin-left: auto;
+            gap: var(--rt-space-sm);
+        }
+    }
+}
+
+// Мобилка: три зоны не влезают в строку — стекаем в колонку на всю ширину
+// (фильтр → поиск → действия), поиск растягивается. `--dense` (компактная
+// шапка вроде rt-chat) из стекинга исключён — остаётся в одну строку.
+@media (width <= 768px) {
+    .rt-toolbar:not(.rt-toolbar--dense) {
+        .rt-toolbar__bars {
+            flex-direction: column;
+            align-items: stretch;
+            gap: var(--rt-space-sm);
+        }
+
+        .rt-toolbar__bar--center {
+            justify-content: stretch;
+        }
+
+        .rt-toolbar__bar--right {
+            justify-content: flex-end;
+            margin-left: 0;
+        }
+    }
+}

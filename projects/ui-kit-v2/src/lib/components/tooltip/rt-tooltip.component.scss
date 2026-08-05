@@ -1,0 +1,18 @@
+/* rt-tooltip — панель подсказки в CDK Overlay. ViewEncapsulation.None.
+   Тёмная инверсная подложка (theme-aware пара bg-inverse / text-inverse). */
+
+.rt-tooltip {
+    display: block;
+    max-width: 240px;
+    padding: var(--rt-space-xs) var(--rt-space-sm);
+    border-radius: var(--rt-radius-sm);
+    background: var(--rt-color-bg-inverse);
+    box-shadow: var(--rt-shadow-md);
+    color: var(--rt-color-text-inverse);
+    font-size: var(--rt-text-xs);
+    line-height: var(--rt-leading-snug);
+
+    /* Tooltip — чисто визуальная подсказка: не перехватывает указатель, чтобы
+       не мешать hover/leave логике host'а. */
+    pointer-events: none;
+}

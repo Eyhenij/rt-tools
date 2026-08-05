@@ -1,0 +1,156 @@
+/* Мобильная панель навигации (гамбургер). Рендерится в CDK Overlay, поэтому
+   отдельный корневой блок. Раздел — аккордеон, внутри него те же группы, что и в
+   панели на широком экране, только без колонок: они сюда не помещаются. */
+.rt-page-header-mobile {
+    display: flex;
+    min-width: 240px;
+    max-width: 320px;
+
+    /* Панель ужимается до свободного места под гамбургером, а список прокручивается
+       внутри неё: на низком экране раскрытый раздел уводит половину пунктов под
+       нижний край, а страница за оверлеем панель не двигает. */
+    min-height: 0;
+    max-height: 100%;
+    box-sizing: border-box;
+    flex-direction: column;
+    padding: var(--rt-space-2);
+    border: var(--rt-border-width-thin) solid var(--rt-nav-panel-color-border);
+    border-radius: var(--rt-radius-md);
+    background-color: var(--rt-nav-panel-color-bg);
+    box-shadow: var(--rt-nav-panel-shadow);
+    gap: var(--rt-space-2xs);
+    overflow-y: auto;
+
+    &__link,
+    &__section {
+        position: relative;
+        display: flex;
+        width: 100%;
+        align-items: center;
+        padding: var(--rt-nav-item-padding);
+        border: 0;
+        border-radius: var(--rt-radius-md);
+        background-color: transparent;
+        color: var(--rt-nav-item-color);
+        cursor: pointer;
+        font-size: var(--rt-nav-item-font-size);
+        font-weight: var(--rt-nav-item-font-weight);
+        gap: var(--rt-nav-item-content-gap);
+        line-height: var(--rt-leading-tight);
+        text-align: left;
+        text-decoration: none;
+        transition:
+            background-color var(--rt-duration-fast) linear,
+            color var(--rt-duration-fast) linear;
+        white-space: nowrap;
+
+        &:hover {
+            background-color: var(--rt-nav-panel-item-color-bg-hover);
+        }
+
+        &:focus {
+            outline: none;
+        }
+
+        &:focus-visible {
+            outline: 2px dashed var(--rt-nav-color-focus);
+            outline-offset: 2px;
+        }
+    }
+
+    /* Пункт второго уровня набран легче раздела — как в панели на широком
+       экране; сам раздел остаётся полужирным. */
+    &__link--child {
+        color: var(--rt-nav-panel-item-color);
+        font-weight: var(--rt-nav-panel-item-font-weight);
+    }
+
+    &__link--is-active {
+        background-color: var(--rt-nav-panel-item-color-bg-active);
+        color: var(--rt-nav-panel-item-color-active);
+    }
+
+    &__link--disabled,
+    &__link:disabled,
+    &__link[aria-disabled='true'] {
+        background-color: transparent;
+        color: var(--rt-nav-color-disabled);
+        cursor: not-allowed;
+
+        &:hover {
+            background-color: transparent;
+        }
+    }
+
+    &__disabled-slot {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    &__section--is-active {
+        background-color: var(--rt-color-bg-surface-subtle);
+    }
+
+    &__caret {
+        display: inline-flex;
+        flex-shrink: 0;
+        margin-left: auto;
+        color: var(--rt-nav-item-color-caret);
+        transition: transform var(--rt-duration-fast) linear;
+    }
+
+    &__section--is-expanded &__caret {
+        transform: rotate(180deg);
+    }
+
+    /* Точка идёт следом за подписью, а не поверх неё: указатель раскрытия здесь
+       отжат к правому краю, и место у текста свободно. */
+    &__marker {
+        width: var(--rt-nav-marker-size);
+        height: var(--rt-nav-marker-size);
+        flex-shrink: 0;
+        border-radius: var(--rt-radius-full);
+        background-color: var(--rt-nav-marker-color);
+    }
+
+    &__children {
+        display: flex;
+        flex-direction: column;
+        padding-left: var(--rt-space-4);
+        gap: var(--rt-nav-panel-group-gap);
+    }
+
+    &__group {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rt-space-2xs);
+    }
+
+    &__group-title {
+        display: flex;
+        min-height: var(--rt-nav-panel-item-height);
+        align-items: center;
+        padding: var(--rt-nav-panel-item-padding);
+        color: var(--rt-nav-panel-group-color);
+        cursor: default;
+        font-size: var(--rt-nav-panel-group-font-size);
+        font-weight: var(--rt-nav-panel-group-font-weight);
+        gap: var(--rt-nav-panel-group-content-gap);
+        line-height: var(--rt-leading-none);
+    }
+
+    &__group-label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__group-icon {
+        flex-shrink: 0;
+    }
+
+    &__icon {
+        flex-shrink: 0;
+    }
+}

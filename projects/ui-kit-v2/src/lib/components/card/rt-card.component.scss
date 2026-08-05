@@ -1,0 +1,57 @@
+/* rt-card — контейнер карточки в common/ui (Emulated encapsulation; :host обязательно). */
+
+:host {
+    display: block;
+
+    .rt-card {
+        display: block;
+        padding: var(--rt-space-lg);
+        border-radius: var(--rt-radius-xl);
+        background: var(--rt-color-bg-surface);
+        box-shadow: var(--rt-shadow-card);
+        color: var(--rt-color-text-primary);
+
+        &--clickable {
+            cursor: pointer;
+            transition:
+                box-shadow var(--rt-duration-fast) ease,
+                transform var(--rt-duration-fast) ease;
+
+            &:hover {
+                box-shadow: var(--rt-shadow-lg);
+            }
+
+            &:focus-visible {
+                box-shadow: var(--rt-shadow-focus-ring);
+                outline: 2px solid transparent;
+                outline-offset: 2px;
+            }
+        }
+
+        &__header {
+            margin-block-end: var(--rt-space-md);
+
+            &:empty {
+                display: none;
+            }
+        }
+
+        &__title {
+            margin: 0;
+            font-size: var(--rt-text-lg);
+            line-height: var(--rt-leading-snug);
+        }
+
+        &__content {
+            display: block;
+        }
+
+        &__footer {
+            margin-block-start: var(--rt-space-md);
+
+            &:empty {
+                display: none;
+            }
+        }
+    }
+}

@@ -1,0 +1,21 @@
+<ng-container rtBlock="rt-counter">
+    <rt-icon-button
+        rtElem="decrease"
+        qa-dataid="counter-decrease"
+        icon="minus"
+        variant="secondary"
+        size="sm"
+        [ariaLabel]="decreaseAriaLabel()"
+        [disabled]="!canDecrease()"
+        (clicked)="decrease()" />
+    <span rtElem="value" qa-dataid="counter-value" aria-live="polite">{{ value() }}</span>
+    <rt-icon-button
+        rtElem="increase"
+        qa-dataid="counter-increase"
+        icon="ico-plus"
+        variant="secondary"
+        size="sm"
+        [ariaLabel]="increaseAriaLabel()"
+        [disabled]="!canIncrease()"
+        (clicked)="increase()" />
+</ng-container>

@@ -1,0 +1,240 @@
+<ng-container rtBlock="rt-workspace-details">
+    @if (title(); as headTitle) {
+        <header rtElem="head">
+            <span rtElem="head-title" qa-dataid="workspace-details-title">{{ headTitle }}</span>
+        </header>
+    }
+
+    @if (hasTabs()) {
+        <rt-tabs rtElem="tabs" qa-dataid="workspace-details-tabs">
+            <ng-template rtTab="details" [label]="'rtKit.uiDetails' | transloco">
+                <ng-container [ngTemplateOutlet]="detailsTpl" />
+            </ng-template>
+
+            <ng-template rtTab="transition" [label]="'rtKit.uiStageTransition' | transloco" [hidden]="transition() === null">
+                @if (transition(); as stageTransition) {
+                    @if (stageTransition.currentStageLabel; as stageLabel) {
+                        <rt-detail-list>
+                            <rt-detail-row qa-dataid="workspace-details-current-stage" [label]="'rtKit.uiCurrentStage' | transloco">
+                                {{ stageLabel }}
+                            </rt-detail-row>
+                        </rt-detail-list>
+                    }
+
+                    @if (noTransitions()) {
+                        <rt-note qa-dataid="workspace-details-no-transitions">{{ stageTransition.noTransitionsText }}</rt-note>
+                    } @else {
+                        <form
+                            rtElem="transition-form"
+                            qa-dataid="workspace-details-transition-form"
+                            [formGroup]="transitionForm"
+                            (ngSubmit)="onTransitionSubmit()">
+                            <rt-field
+                                [label]="'rtKit.uiTargetStage' | transloco"
+                                [loading]="stageTransition.loading"
+                                [errors]="{ required: ('rtKit.uiTargetStageRequired' | transloco) }">
+                                <rt-select
+                                    formControlName="to_key"
+                                    qa-dataid="workspace-details-transition-stage"
+                                    [placeholder]="'rtKit.uiPickTransition' | transloco"
+                                    [options]="stageTransition.options" />
+                            </rt-field>
+
+                            <rt-field
+                                [label]="'rtKit.uiCommentOptional' | transloco"
+                                [hint]="'rtKit.uiStageNoteHint' | transloco"
+                                [loading]="stageTransition.loading">
+                                <rt-textarea formControlName="note" qa-dataid="workspace-details-transition-note" rows="3" />
+                            </rt-field>
+
+                            <button
+                                rtButton
+                                rtElem="transition-submit"
+                                qa-dataid="workspace-details-transition-submit"
+                                type="submit"
+                                [label]="'rtKit.uiMoveStage' | transloco"
+                                [attr.aria-label]="'rtKit.uiMoveStageAria' | transloco"
+                                [loading]="stageTransition.submitting"
+                                [disabled]="stageTransition.loading || busy()"></button>
+                        </form>
+                    }
+                }
+            </ng-template>
+
+            <ng-template rtTab="audit" [label]="'rtKit.uiHistory' | transloco" [hidden]="audit() === null">
+                @if (audit(); as auditFeed) {
+                    <div rtElem="audit" qa-dataid="workspace-details-audit">
+                        @if (auditFeed.loading) {
+                            <rt-spinner rtElem="audit-loading" qa-dataid="workspace-details-audit-loading" />
+                        } @else if (auditFeed.steps.length === 0) {
+                            <rt-empty-state
+                                qa-dataid="workspace-details-audit-empty"
+                                icon="history"
+                                [description]="'rtKit.uiAuditEmptyHint' | transloco"
+                                [title]="auditFeed.emptyText" />
+                        } @else {
+                            <rt-timeline qa-dataid="workspace-details-audit-timeline" [steps]="auditFeed.steps" />
+                        }
+
+                        @if (auditFeed.hasMore) {
+                            <button
+                                rtButton
+                                rtElem="audit-more"
+                                qa-dataid="workspace-details-audit-more"
+                                type="button"
+                                appearance="text"
+                                [label]="'rtKit.uiLoadMore' | transloco"
+                                [attr.aria-label]="'rtKit.uiLoadMore' | transloco"
+                                [loading]="auditFeed.loadingMore"
+                                [disabled]="auditFeed.loadingMore"
+                                (click)="onAuditLoadMore()"></button>
+                        }
+                    </div>
+                }
+            </ng-template>
+        </rt-tabs>
+    } @else {
+        <div rtElem="body">
+            <ng-container [ngTemplateOutlet]="detailsTpl" />
+        </div>
+    }
+
+    <ng-template #detailsTpl>
+        @if (rows().length > 0) {
+            <rt-detail-list>
+                @for (row of rows(); track row.label) {
+                    <rt-detail-row qa-dataid="workspace-details-row" [label]="row.label" [loading]="loading()">
+                        @if (row.agent && agentEdit(); as edit) {
+                            @if (!editingAgent()) {
+                                <div rtElem="agent-view">
+                                    <span rtElem="agent-name" qa-dataid="workspace-details-agent-name">{{ edit.currentLabel }}</span>
+                                    <rt-icon-button
+                                        qa-dataid="workspace-details-agent-edit"
+                                        icon="pencil"
+                                        size="sm"
+                                        [ariaLabel]="'rtKit.uiChangeAgent' | transloco"
+                                        [tooltip]="edit.canEdit ? edit.editTooltip : edit.cannotEditTooltip"
+                                        [disabled]="!edit.canEdit || busy()"
+                                        (clicked)="startEditAgent()" />
+                                </div>
+                            } @else {
+                                <div rtElem="agent-edit">
+                                    <rt-select
+                                        qa-dataid="workspace-details-agent-select"
+                                        [placeholder]="'rtKit.uiPickAgent' | transloco"
+                                        [ngModel]="selectedAgentId()"
+                                        [options]="edit.options"
+                                        [clearable]="false"
+                                        (ngModelChange)="onSelectedAgentChange($event)" />
+                                    <rt-icon-button
+                                        qa-dataid="workspace-details-agent-save"
+                                        icon="check"
+                                        size="sm"
+                                        rtConfirmTone="primary"
+                                        [ariaLabel]="'rtKit.uiSaveNewAgent' | transloco"
+                                        [rtConfirmTitle]="'rtKit.uiReplaceAgentTitle' | transloco"
+                                        [rtConfirmLabel]="'rtKit.uiReplace' | transloco"
+                                        [tooltip]="
+                                            canSaveReassign()
+                                                ? ('rtKit.uiSaveNewAgent' | transloco)
+                                                : ('rtKit.uiPickAnotherAgent' | transloco)
+                                        "
+                                        [loading]="edit.loading"
+                                        [disabled]="!canSaveReassign() || busy()"
+                                        [rtConfirm]="edit.confirmText"
+                                        [rtConfirmDisabled]="!canSaveReassign() || busy()"
+                                        (confirmed)="onReassign()" />
+                                    <rt-icon-button
+                                        qa-dataid="workspace-details-agent-cancel"
+                                        icon="ico-close"
+                                        size="sm"
+                                        [ariaLabel]="'rtKit.uiRevert' | transloco"
+                                        [tooltip]="'rtKit.uiRevert' | transloco"
+                                        [disabled]="edit.loading"
+                                        (clicked)="cancelEditAgent()" />
+                                </div>
+                            }
+                        } @else {
+                            {{ row.value }}
+                        }
+                    </rt-detail-row>
+                }
+            </rt-detail-list>
+        }
+
+        @if (money().length > 0) {
+            <rt-money-list>
+                @for (moneyRow of money(); track moneyRow.label) {
+                    <rt-money-row
+                        qa-dataid="workspace-details-money-row"
+                        [label]="moneyRow.label"
+                        [total]="moneyRow.total ?? false"
+                        [loading]="loading()">
+                        {{ moneyRow.amount | number: moneyRow.format ?? '1.0-0' }} ₽
+                    </rt-money-row>
+                }
+            </rt-money-list>
+        }
+
+        @if (toggles().length > 0 || toggleHint()) {
+            <rt-aside-section>
+                @for (toggle of toggles(); track toggle.id) {
+                    <div rtElem="toggle-row" qa-dataid="workspace-details-toggle-row" [attr.data-id]="toggle.id">
+                        <span rtElem="toggle-label" qa-dataid="workspace-details-toggle-label">{{ toggle.label }}</span>
+                        <rt-toggle-switch
+                            qa-dataid="workspace-details-toggle"
+                            [inputId]="toggle.id"
+                            [ariaLabel]="toggle.label"
+                            [ngModel]="toggle.value"
+                            [disabled]="(toggle.disabled ?? false) || busy()"
+                            (ngModelChange)="onToggleChange(toggle, $event)" />
+                    </div>
+                }
+                @if (toggleHint(); as hint) {
+                    <p rtElem="toggle-hint" qa-dataid="workspace-details-toggle-hint">{{ hint }}</p>
+                }
+            </rt-aside-section>
+        }
+    </ng-template>
+
+    <footer rtElem="footer">
+        @for (panelAction of actions(); track panelAction.id) {
+            @if (panelAction.confirm; as confirm) {
+                <button
+                    rtButton
+                    rtElem="footer-action"
+                    qa-dataid="workspace-details-action"
+                    type="button"
+                    [attr.data-id]="panelAction.id"
+                    [theme]="panelAction.theme ?? 'primary'"
+                    [appearance]="panelAction.appearance ?? 'filled'"
+                    [label]="panelAction.label"
+                    [icon]="panelAction.icon"
+                    [attr.aria-label]="panelAction.label"
+                    [rtConfirmTitle]="confirm.title"
+                    [rtConfirmLabel]="confirm.label"
+                    [rtConfirmTone]="confirm.tone"
+                    [loading]="panelAction.loading ?? false"
+                    [disabled]="(panelAction.disabled ?? false) || busy()"
+                    [rtConfirm]="confirm.text"
+                    [rtConfirmDisabled]="(panelAction.disabled ?? false) || busy()"
+                    (confirmed)="onAction(panelAction)"></button>
+            } @else {
+                <button
+                    rtButton
+                    rtElem="footer-action"
+                    qa-dataid="workspace-details-action"
+                    type="button"
+                    [attr.data-id]="panelAction.id"
+                    [theme]="panelAction.theme ?? 'primary'"
+                    [appearance]="panelAction.appearance ?? 'filled'"
+                    [label]="panelAction.label"
+                    [icon]="panelAction.icon"
+                    [attr.aria-label]="panelAction.label"
+                    [loading]="panelAction.loading ?? false"
+                    [disabled]="(panelAction.disabled ?? false) || busy()"
+                    (click)="onAction(panelAction)"></button>
+            }
+        }
+    </footer>
+</ng-container>

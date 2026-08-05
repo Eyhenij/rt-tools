@@ -1,0 +1,126 @@
+import { Meta, Source, Title } from '@storybook/addon-docs/blocks';
+
+<Meta title="Foundation/Design Tokens/Theming" />
+
+export const pane = {
+    border: '1px solid var(--rt-color-border-default)',
+    borderRadius: 10,
+    padding: 18,
+    display: 'grid',
+    gap: 10,
+    marginBlock: 12,
+};
+export const row = { display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' };
+export const swatch = (token) => ({
+    width: 90,
+    height: 44,
+    borderRadius: 6,
+    background: `var(${token})`,
+    border: '1px solid var(--rt-color-border-default)',
+});
+export const cap = { fontFamily: 'var(--rt-font-family-mono)', fontSize: 11, opacity: 0.7 };
+export const warn = {
+    background: 'color-mix(in srgb, var(--rt-color-state-warning) 8%, transparent)',
+    border: '1px solid color-mix(in srgb, var(--rt-color-state-warning) 30%, transparent)',
+    borderRadius: 8,
+    padding: '14px 18px',
+    fontSize: 13,
+    marginBlock: 12,
+};
+
+<Title>Тема</Title>
+
+Тема — признак на корневом элементе. Тёмная переопределяет **только назначения**; шкалы
+остаются теми же, и ни один компонент о теме не знает.
+
+<Source
+    language="html"
+    code={`<html data-theme="dark">   <!-- либо class="rt-theme-dark" -->`}
+/>
+
+Оба признака равнозначны — `_theme-dark.scss` объявляет их одним правилом:
+`:root[data-theme='dark'], html.rt-theme-dark`.
+
+---
+
+## Кто ставит признак
+
+`ThemeService` — он же держит выбор между перезагрузками.
+
+<Source
+    language="typescript"
+    code={`const theme: ThemeService = inject(ThemeService);
+
+theme.current(); // Signal<'light' | 'dark'>
+theme.isDark(); // Signal<boolean>
+theme.toggle();
+theme.setTheme('dark');`}
+/>
+
+Выбор пишется под ключ устройства, а не пользователя: последняя выставленная тема переживает
+вход, выход и перезагрузку. Под серверным рендером признак не ставится вовсе — разметка
+приезжает светлой и переключается после гидратации.
+
+Готовый переключатель — `rt-theme-toggle`; своего состояния он не держит и ходит в тот же
+сервис.
+
+---
+
+## Что видно на этой странице
+
+Переключатель темы в панели сверху пишет `data-theme` на `<html>` — тот же признак, что ставит
+`ThemeService`. Прямоугольники ниже перерисуются вместе со страницей.
+
+<div style={pane}>
+    <div style={row}>
+        <div>
+            <div style={swatch('--rt-color-bg-page')} />
+            <span style={cap}>bg-page</span>
+        </div>
+        <div>
+            <div style={swatch('--rt-color-bg-surface')} />
+            <span style={cap}>bg-surface</span>
+        </div>
+        <div>
+            <div style={swatch('--rt-color-bg-surface-subtle')} />
+            <span style={cap}>bg-surface-subtle</span>
+        </div>
+        <div>
+            <div style={swatch('--rt-color-action-primary')} />
+            <span style={cap}>action-primary</span>
+        </div>
+        <div>
+            <div style={swatch('--rt-color-state-danger')} />
+            <span style={cap}>state-danger</span>
+        </div>
+    </div>
+    <div>
+        <span style={{ color: 'var(--rt-color-text-primary)' }}>Основной текст</span>
+        {' · '}
+        <span style={{ color: 'var(--rt-color-text-muted)' }}>приглушённый</span>
+        {' · '}
+        <span style={{ color: 'var(--rt-color-text-link)' }}>ссылка</span>
+    </div>
+</div>
+
+---
+
+## Почему графит на `:root`
+
+Диалоги, панели и меню рисуются наложением на уровне `body` — вне разметки того экрана, из
+которого их открыли. Держи тёмные назначения на классе оболочки, наложения не унаследовали бы
+палитру и остались бы светлыми поверх тёмной страницы.
+
+---
+
+## Чего делать не надо
+
+<div style={warn}>
+    <strong>Не берите шкалу в стилях экрана.</strong> <code>var(--rt-neutral-0)</code> останется белым и в тёмной теме: переопределять его
+    некому. Возьмите назначение — <code>var(--rt-color-bg-surface)</code>.
+</div>
+
+<div style={warn}>
+    <strong>Не заводите свой признак темы.</strong> Компонент кита слушает только <code>data-theme</code> и <code>rt-theme-dark</code>; на
+    своём признаке он останется светлым, а экран вокруг него потемнеет.
+</div>

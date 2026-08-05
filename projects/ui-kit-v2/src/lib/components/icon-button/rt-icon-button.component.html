@@ -1,0 +1,20 @@
+<button
+    rtBlock="rt-icon-button"
+    qa-dataid="icon-button-control"
+    [rtTooltip]="tooltip()"
+    [rtMod]="bemMods()"
+    [type]="type()"
+    [disabled]="isDisabled()"
+    [attr.aria-label]="ariaLabel()"
+    [attr.aria-pressed]="active() ? 'true' : null"
+    [attr.tabindex]="tabIndex()"
+    (click)="onClick($event)">
+    @if (loading()) {
+        <rt-icon rtElem="spinner" name="spinner" color="current" [size]="resolvedIconSize()" />
+    } @else {
+        <rt-icon rtElem="icon" [color]="iconColor()" [name]="icon()" [size]="resolvedIconSize()" />
+    }
+    @if (indicator()) {
+        <span rtElem="indicator" aria-hidden="true"></span>
+    }
+</button>

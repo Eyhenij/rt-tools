@@ -1,0 +1,19 @@
+/* rt-menu — dropdown-меню действий. ViewEncapsulation.None.
+   Триггер живёт в host'е, панель (`__panel`) рендерится в CDK Overlay. */
+
+.rt-menu {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &__panel {
+        display: flex;
+        min-width: 180px;
+        flex-direction: column;
+        padding: var(--rt-space-xs);
+        border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+        border-radius: var(--rt-radius-md);
+        background: var(--rt-color-bg-surface);
+        box-shadow: var(--rt-shadow-lg);
+    }
+}

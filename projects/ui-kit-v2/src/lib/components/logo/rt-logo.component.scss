@@ -1,0 +1,64 @@
+/* rt-logo — логотип приложения.
+ *
+ * Размеры host'а задаются inline через style.height/width (см. rt-logo.component.ts),
+ * а сами начертания приходят свойствами оформления от приложения: кит своего
+ * логотипа не имеет и умолчаний тут не ставит.
+ *
+ * Внутри host'а начертание сверху, слоган под ним ужат по ширине. Начертания
+ * лежат фоном, а не в <img>: у тёмной темы своя пара файлов, и подмена
+ * background-image — единственный способ переключить их одним правилом.
+ */
+:host {
+    display: inline-block;
+    line-height: 0;
+}
+
+.rt-logo {
+    &__wordmark,
+    &__tagline {
+        display: block;
+        width: 100%;
+        background-position: left center;
+        background-repeat: no-repeat;
+        background-size: contain;
+    }
+
+    &__wordmark {
+        height: 100%;
+        background-image: var(--rt-logo-wordmark, none);
+    }
+
+    &__tagline {
+        background-image: var(--rt-logo-tagline, none);
+    }
+}
+
+/* Тёмная тема: тёмная надпись на тёмной поверхности не читается, поэтому берётся
+   вариант со светлым ink. Не задали пару — остаётся то же начертание. */
+[data-theme='dark'] .rt-logo {
+    &__wordmark {
+        background-image: var(--rt-logo-wordmark-dark, var(--rt-logo-wordmark, none));
+    }
+
+    &__tagline {
+        background-image: var(--rt-logo-tagline-dark, var(--rt-logo-tagline, none));
+    }
+}
+
+/* Композиция lockup: начертание и слоган стоят колонкой и делят высоту host'а.
+   Пропорция та же, что у пары в макете: ~66.7% начертанию, ~22.1% слогану,
+   остальное — зазор между ними. */
+:host:has(.rt-logo__tagline) {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-between;
+}
+
+:host:has(.rt-logo__tagline) .rt-logo__wordmark {
+    height: 66.7%;
+}
+
+:host:has(.rt-logo__tagline) .rt-logo__tagline {
+    height: 22.1%;
+}

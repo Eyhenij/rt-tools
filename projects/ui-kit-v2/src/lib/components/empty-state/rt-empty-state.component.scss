@@ -1,0 +1,58 @@
+/* rt-empty-state — заглушка пустого состояния в common/ui (ViewEncapsulation.None).
+   Селектор bare `.rt-empty-state` (класс на host) — `:host` в None light-DOM не матчит.
+   Палитра приглушённая (как rt-note), центрированная вертикальная стопка. */
+
+.rt-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--rt-space-xl) var(--rt-space-lg);
+    gap: var(--rt-space-sm);
+    text-align: center;
+
+    /* Слот иллюстрации (проецируемая графика вместо иконки) — скрыт, если пуст. */
+    &__illustration {
+        &:empty {
+            display: none;
+        }
+
+        margin-bottom: var(--rt-space-xs);
+    }
+
+    &__icon-wrap {
+        display: flex;
+        width: 64px;
+        height: 64px;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--rt-radius-full);
+        margin-bottom: var(--rt-space-xs);
+        background: var(--rt-color-bg-subtle);
+        color: var(--rt-color-text-muted);
+    }
+
+    &__title {
+        margin: 0;
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-text-md);
+        font-weight: var(--rt-font-weight-medium);
+    }
+
+    &__description {
+        max-width: 320px;
+        margin: 0;
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+        line-height: var(--rt-leading-normal);
+    }
+
+    /* Слот действия скрыт, если ничего не спроецировано (пустой div). */
+    &__action {
+        &:empty {
+            display: none;
+        }
+
+        margin-top: var(--rt-space-sm);
+    }
+}

@@ -1,0 +1,21 @@
+<button
+    rtBlock="rt-toggle-switch"
+    qa-dataid="toggle-switch-control"
+    type="button"
+    role="switch"
+    [rtMod]="bemMods()"
+    [attr.id]="inputId()"
+    [attr.aria-checked]="isOn()"
+    [attr.aria-label]="ariaLabel()"
+    [disabled]="isDisabled()"
+    (click)="toggle()">
+    <span rtElem="track">
+        @if (iconOff(); as iconOffName) {
+            <rt-icon rtElem="icon-off" size="sm" [name]="iconOffName" />
+        }
+        @if (iconOn(); as iconOnName) {
+            <rt-icon rtElem="icon-on" size="sm" [name]="iconOnName" />
+        }
+        <span rtElem="thumb"></span>
+    </span>
+</button>

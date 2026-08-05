@@ -1,0 +1,21 @@
+/* rt-dialog-header — заголовок модалки. ViewEncapsulation.None.
+   Селекторы префиксованы `.rt-dialog-header`. */
+
+.rt-dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--rt-space-lg);
+    border-block-end: 1px solid var(--rt-color-border-subtle);
+    gap: var(--rt-space-sm);
+
+    &__title {
+        margin: 0;
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-text-xl);
+    }
+
+    &__close {
+        margin-inline-start: auto;
+    }
+}

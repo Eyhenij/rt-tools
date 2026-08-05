@@ -1,0 +1,131 @@
+:host {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    background: var(--rt-color-bg-inverse);
+
+    .rt-photo-viewer {
+        // Обёртка существует ради ловушки фокуса и повторяет размеры хоста:
+        // display: contents ломает ловушку — ей нужен настоящий бокс
+        &__surface {
+            position: absolute;
+            inset: 0;
+        }
+
+        &__bar {
+            position: absolute;
+            z-index: 1;
+            top: 0;
+            right: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--rt-space-4) var(--rt-space-5);
+            color: var(--rt-color-text-inverse);
+            gap: var(--rt-space-4);
+        }
+
+        &__counter {
+            font-size: var(--rt-text-sm);
+            font-variant-numeric: tabular-nums;
+        }
+
+        &__track {
+            display: flex;
+            overflow: auto hidden;
+            width: 100%;
+            height: 100%;
+
+            // Свайп, инерцию и прилипание кадра даёт браузер
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+        }
+
+        &__slide {
+            display: flex;
+            flex: 0 0 100%;
+            align-items: center;
+            justify-content: center;
+            padding: var(--rt-space-10) var(--rt-space-4);
+            margin: 0;
+            scroll-snap-align: center;
+
+            picture {
+                display: flex;
+                width: 100%;
+                height: 100%;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        // Кадры вертикальные, поэтому ограничение по высоте важнее, чем по ширине
+        &__image {
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        // Панель правки: светлая полоса поверх тёмного просмотра — она рабочая
+        // область, а не часть кадра
+        &__panel {
+            position: absolute;
+            z-index: 1;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            padding: var(--rt-space-4) var(--rt-space-5);
+            background: var(--rt-color-bg-surface);
+            color: var(--rt-color-text-primary);
+        }
+
+        /* TODO: отрефакторить это дерьмо */
+        &__bar rt-icon-button,
+        &__arrow-prev,
+        &__arrow-next {
+            --rt-icon-button-color: var(--rt-color-text-inverse);
+            --rt-icon-button-color-bg-hover: color-mix(in srgb, var(--rt-color-text-inverse) 24%, transparent);
+
+            border-radius: var(--rt-radius-md);
+            background: color-mix(in srgb, var(--rt-color-bg-inverse) 55%, transparent);
+        }
+
+        &__arrow-prev,
+        &__arrow-next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        &__arrow-prev {
+            left: var(--rt-space-3);
+        }
+
+        &__arrow-next {
+            right: var(--rt-space-3);
+        }
+    }
+
+    // С панелью кадру нужно место под неё, иначе низ снимка уходит под полосу
+    &:has(.rt-photo-viewer__panel) {
+        .rt-photo-viewer__slide {
+            padding-bottom: var(--rt-space-20);
+        }
+    }
+
+    @media (width <= 700px) {
+        .rt-photo-viewer {
+            &__arrow-prev,
+            &__arrow-next {
+                display: none;
+            }
+
+            &__slide {
+                padding: var(--rt-space-12) 0;
+            }
+        }
+    }
+}

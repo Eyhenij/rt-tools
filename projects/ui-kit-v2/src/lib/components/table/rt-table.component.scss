@@ -1,0 +1,312 @@
+/* rt-table — common/ui таблица поверх cdk-table. ViewEncapsulation.None:
+   классы доступны без scope-attrs, токены --rt-* наследуются. */
+
+.rt-table {
+    position: relative;
+    display: table;
+    width: 100%;
+    background: var(--rt-color-bg-surface);
+    border-collapse: collapse;
+    color: var(--rt-color-text-primary);
+
+    .cdk-header-cell,
+    .cdk-cell,
+    &__skeleton-cell {
+        position: relative;
+        height: 50px;
+        padding: var(--rt-space-2) var(--rt-space-5);
+        border-bottom: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+
+        /* Single-owner границы: каждую линию сетки рисует РОВНО одна ячейка —
+           вертикаль только левой гранью, горизонталь только нижней. Внутренние
+           линии не удваиваются, правого периметра нет вовсе, а левый гасим у
+           первой колонки ниже. Таблица упирается в края контейнера — боковые
+           рамки не нужны. */
+        border-left: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+        font-size: var(--rt-text-sm);
+        font-weight: var(--rt-font-weight-medium);
+        text-align: start;
+        vertical-align: middle;
+
+        &[data-align='right'] {
+            text-align: right;
+
+            input {
+                text-align: right;
+            }
+        }
+    }
+
+    /* Левый периметр не рисуем — первая колонка без левой грани. */
+    .cdk-header-cell:first-child,
+    .cdk-cell:first-child,
+    &__skeleton-cell:first-child {
+        border-left: none;
+    }
+
+    .cdk-header-cell {
+        /* Верхняя грань таблицы — только у шапки (низ даёт border-bottom строк). */
+        border-top: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+        background: var(--rt-color-bg-surface);
+        color: var(--rt-color-text-muted);
+    }
+
+    .cdk-cell {
+        color: var(--rt-color-text-primary);
+        overflow-wrap: anywhere;
+    }
+
+    /* «…»-действия строки ([showRowActions]) — НЕ отдельная видимая колонка.
+       Ячейка нулевой ширины, sticky к правому краю scroll-контейнера
+       (rtElem="table-scroll", overflow-x), без border/padding. Плавающая кнопка
+       не занимает места в раскладке — поэтому горизонтальный скролл не уводит её
+       из вьюпорта. Компаунд с .cdk-cell держит специфичность выше базовой ячейки. */
+    &__actions-header.cdk-header-cell {
+        width: 0;
+        padding: 0;
+        border: none;
+    }
+
+    &__actions-cell.cdk-cell {
+        position: sticky;
+        z-index: 1;
+        right: 0;
+        width: 0;
+        padding: 0;
+        border: none;
+        background: transparent;
+    }
+
+    &__actions-float {
+        position: absolute;
+        display: flex;
+        height: 100%;
+        align-items: center;
+        padding: 0 var(--rt-space-2) 0 var(--rt-space-8);
+
+        /* Содержимое последней ячейки «утопает» под кнопкой; кнопка видна только
+           на hover строки, поэтому фон градиента — hover-цвет строки. */
+        background: linear-gradient(to right, transparent 0%, var(--rt-color-bg-hover) 45%);
+        inset: 0 0 0 auto;
+
+        /* Прозрачная зона пропускает клики на строку; интерактивна только кнопка. */
+        pointer-events: none;
+
+        .rt-menu {
+            pointer-events: auto;
+        }
+    }
+
+    /* Hover-reveal: по умолчанию кнопка скрыта, появляется при наведении/фокусе
+       строки или пока её меню открыто (:has(.rt-menu--open) — переживает уход
+       hover'а на overlay-панель). Скрытие — только на hover-устройствах: на тач
+       (hover: none) правило не применяется и кнопка видна всегда. */
+    @media (hover: hover) {
+        &__actions-cell.cdk-cell {
+            visibility: hidden;
+        }
+
+        .cdk-row:hover &__actions-cell.cdk-cell,
+        .cdk-row:focus-within &__actions-cell.cdk-cell,
+        &__actions-cell.cdk-cell:has(.rt-menu--open) {
+            visibility: visible;
+        }
+    }
+
+    .cdk-row {
+        &:hover {
+            background: var(--rt-color-bg-hover);
+        }
+
+        /* Опт-ин подсветка проблемной строки (просрочка и т.п.): потребитель
+           вешает класс `rt-table__row--danger` на строку. Составной селектор с
+           `.cdk-row` нужен, чтобы danger-фон держался и при :hover. */
+        &.rt-table__row--danger {
+            background: var(--rt-color-state-danger-bg);
+
+            &:hover {
+                background: var(--rt-color-state-danger-bg);
+            }
+        }
+    }
+
+    /* Строки-ссылки: курсор + focus-ring. Активацию (click/Enter/Space) и
+       table-семантику обеспечивает директива rtTableRow на самой строке. */
+    &--clickable {
+        .cdk-row {
+            cursor: pointer;
+
+            &:focus-visible {
+                outline: 2px solid var(--rt-color-action-primary);
+                outline-offset: -2px;
+            }
+        }
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    &--density--compact {
+        .cdk-header-cell,
+        .cdk-cell,
+        .rt-table__skeleton-cell {
+            height: 36px;
+            padding: var(--rt-space-xs) var(--rt-space-sm);
+        }
+    }
+
+    &__skeleton-bar {
+        display: block;
+        width: 80%;
+        height: 14px;
+    }
+
+    &__empty-row {
+        display: table-row;
+    }
+
+    &__empty {
+        padding: var(--rt-space-6) var(--rt-space-5);
+
+        /* Только нижняя грань — как у строк: верхнюю даёт border-bottom шапки
+           (иначе двойная линия), боковые не рисуем (нет периметра). */
+        border-bottom: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+        background: var(--rt-color-bg-surface);
+        color: var(--rt-color-text-muted);
+        text-align: center;
+    }
+
+    &__empty-message {
+        margin: 0;
+        font-size: var(--rt-text-sm);
+    }
+
+    &__overlay {
+        position: absolute;
+        z-index: 1;
+        display: grid;
+        min-height: 100%;
+        inset: 0;
+        place-items: center;
+        pointer-events: none;
+    }
+
+    &__overlay-backdrop {
+        position: absolute;
+        background: var(--rt-color-bg-surface);
+        inset: 0;
+        opacity: 0.72;
+    }
+
+    &__overlay-spinner {
+        position: sticky;
+        z-index: 1;
+        top: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: translateY(-50%);
+    }
+
+    /* Мобильный card-режим (≤1080px, host-модификатор --cards): хост перестаёт
+       быть таблицей, CDK-строки скрываются, вместо них — вертикальный список
+       карточек. Карточки в DOM только при narrow (гейт @if в шаблоне). */
+    &__cards {
+        display: none;
+    }
+
+    &--cards {
+        display: block;
+
+        /* Потребители часто форсят ширину таблицы под горизонтальный скролл
+           (`min-width: max-content` на элементе таблицы). В card-режиме это увело
+           бы карточки за вьюпорт — перебиваем `!important`, т.к. consumer-правило
+           (Emulated, с [ngcontent]-атрибутом) выигрывает по специфичности. */
+        min-width: 0 !important;
+        max-width: 100%;
+
+        .cdk-header-row,
+        .cdk-row,
+        .rt-table__skeleton-row,
+        .rt-table__empty-row {
+            display: none;
+        }
+
+        .rt-table__cards {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-sm);
+        }
+    }
+
+    &__card {
+        display: flex;
+        flex-direction: column;
+        padding: var(--rt-space-md);
+        border: var(--rt-border-width-thin) solid var(--rt-color-border-default);
+        border-radius: var(--rt-radius-md);
+        background: var(--rt-color-bg-surface);
+        gap: var(--rt-space-xs);
+    }
+
+    &__card-field {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: var(--rt-space-md);
+    }
+
+    &__card-label {
+        flex: 0 0 auto;
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+    }
+
+    &__card-value {
+        min-width: 0;
+        overflow-wrap: anywhere;
+        text-align: right;
+
+        /* Cell-шаблон колонки — это `<td cdk-cell>` целиком; вне таблицы он тащит
+           табличные стили (height 50px, border, padding, inline min-width под
+           горизонтальный скролл). Гасим их, чтобы значение вело себя как inline-текст. */
+        .cdk-cell {
+            display: inline;
+            height: auto;
+            padding: 0;
+            border: none;
+            font: inherit;
+            min-inline-size: 0 !important;
+            text-align: inherit;
+        }
+    }
+
+    &__card-actions {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    &__card-skeleton-bar {
+        display: block;
+        width: 60%;
+        height: 14px;
+
+        &:first-child {
+            width: 80%;
+        }
+    }
+}
+
+/* В тёмной теме таблица сливается с фоном контента (bg-page), а не поднимается
+   на bg-surface — иначе список выпирает более светлой плитой над страницей. */
+:root[data-theme='dark'] .rt-table,
+html.rt-theme-dark .rt-table {
+    background: var(--rt-color-bg-page);
+
+    .cdk-header-cell,
+    .rt-table__empty,
+    .rt-table__overlay-backdrop {
+        background: var(--rt-color-bg-page);
+    }
+}

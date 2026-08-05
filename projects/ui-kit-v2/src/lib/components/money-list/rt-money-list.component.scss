@@ -1,0 +1,11 @@
+/* rt-money-list — финансовый блок на подложке (ViewEncapsulation.None).
+   Селектор bare `.rt-money-list` (класс на host). */
+
+.rt-money-list {
+    display: flex;
+    flex-direction: column;
+    padding: var(--rt-space-md);
+    border-radius: var(--rt-radius-md);
+    background: var(--rt-color-bg-subtle);
+    gap: var(--rt-space-xs);
+}

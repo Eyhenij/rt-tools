@@ -1,0 +1,53 @@
+<ng-container rtBlock="rt-file-card">
+    <rt-icon rtElem="icon" [size]="iconSize()" [name]="iconName()" />
+
+    <span rtElem="text">
+        <span rtElem="title" qa-dataid="file-card-title" [rtTooltip]="title()">{{ title() }}</span>
+        <span rtElem="name" qa-dataid="file-card-name">{{ name() | rtTruncateMiddle }}</span>
+    </span>
+
+    <span rtElem="meta">
+        @if (hasSize()) {
+            <span rtElem="size" qa-dataid="file-card-size">{{ sizeLabel() }}</span>
+        }
+
+        @if (showDownload()) {
+            <rt-icon-button
+                rtElem="action"
+                qa-dataid="file-card-download"
+                icon="ico-download"
+                variant="ghost"
+                [ariaLabel]="'rtKit.uiDownload' | transloco"
+                [tooltip]="'rtKit.uiDownload' | transloco"
+                [size]="actionSize()"
+                [disabled]="disabled()"
+                (clicked)="onDownload()" />
+        }
+
+        @if (showRename()) {
+            <rt-icon-button
+                rtElem="action"
+                qa-dataid="file-card-rename"
+                icon="ico-edit"
+                variant="ghost"
+                [ariaLabel]="'rtKit.uiRename' | transloco"
+                [tooltip]="'rtKit.uiRename' | transloco"
+                [size]="actionSize()"
+                [disabled]="disabled()"
+                (clicked)="onRename()" />
+        }
+
+        @if (showRemove()) {
+            <rt-icon-button
+                rtElem="action"
+                qa-dataid="file-card-remove"
+                icon="ico-trash"
+                variant="ghost"
+                [ariaLabel]="'rtKit.uiRemove' | transloco"
+                [tooltip]="'rtKit.uiRemove' | transloco"
+                [size]="actionSize()"
+                [disabled]="disabled()"
+                (clicked)="onRemove()" />
+        }
+    </span>
+</ng-container>

@@ -1,0 +1,88 @@
+import { Meta, Title } from '@storybook/addon-docs/blocks';
+
+import * as s from './_style';
+import { readTokens } from './_tokens';
+
+<Meta title="Foundation/Design Tokens/Colors" />
+
+export const Scale = ({ prefix, name, note }) => {
+    const tokens = readTokens(prefix);
+    if (!tokens.length) {
+        return <p style={s.empty}>Ряда «{prefix}» в подключённых стилях нет.</p>;
+    }
+    return (
+        <div style={s.scaleGrid}>
+            <div>
+                <div style={s.scaleTitle}>{name}</div>
+                <div style={s.scaleNote}>{note}</div>
+            </div>
+            <div>
+                <div style={s.strip}>
+                    {tokens.map((token) => (
+                        <div key={token.name} style={s.stripCell(`var(${token.name})`)} />
+                    ))}
+                </div>
+                <div style={s.stripLegend}>
+                    {tokens.map((token) => (
+                        <div key={token.name} style={s.stripLabel} title={`${token.name} ${token.value}`}>
+                            {token.name.replace(prefix, '')}
+                            {tokens.length <= 12 ? (
+                                <>
+                                    <br />
+                                    {token.value}
+                                </>
+                            ) : null}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+<Title>Color Primitives — Шкалы цвета</Title>
+
+<div style={s.callout}>
+    <strong>Шкалу не берут напрямую.</strong> Тёмная тема переопределяет только назначения — оттенок, взятый из шкалы в стилях экрана,
+    останется прежним на обеих темах. Берите <a href="./?path=/docs/foundation-design-tokens-semantic--docs">назначения</a>.
+</div>
+
+<p style={s.intro}>
+    Первый слой: литералы, из которых собран второй. Всё, что ниже, читается из подключённых таблиц стилей — страница показывает не
+    переписанный список, а свойства, которые получает потребитель пакета.
+</p>
+
+<h2 style={s.section}>Neutral — Нейтральные</h2>
+
+<Scale
+    prefix="--rt-neutral-"
+    name="Neutral"
+    note="Серо-сине-стальной ряд. Фон страницы, поверхности карточек, текст, границы светлой темы."
+/>
+
+<h2 style={s.section}>Blue — Акцент бренда</h2>
+
+<Scale prefix="--rt-blue-" name="Blue" note="Основное действие, ссылки, кольцо фокуса. `--rt-blue-500` — бренд." />
+
+<h2 style={s.section}>Charcoal — Основа тёмной темы</h2>
+
+<Scale prefix="--rt-charcoal-" name="Charcoal" note="Тёплый графит: фон, поверхности и границы тёмной темы. Светлая его не использует." />
+
+<h2 style={s.section}>Status — Состояния</h2>
+
+<Scale prefix="--rt-success-" name="Success" note="Подтверждение: иконка, рамка, поверхность." />
+<Scale prefix="--rt-warning-" name="Warning" note="Предупреждение." />
+<Scale prefix="--rt-danger-" name="Danger" note="Отказ и разрушающее действие." />
+<Scale prefix="--rt-info-" name="Info" note="Справка и нейтральное уведомление." />
+
+<h2 style={s.section}>Accents — Дополнительные ряды</h2>
+
+<Scale prefix="--rt-amber-" name="Amber" note="Текущий шаг в `rt-stepper`, отметки «сейчас»." />
+<Scale prefix="--rt-yellow-" name="Yellow" note="Выделение и подсветка." />
+<Scale prefix="--rt-gray-" name="Gray" note="Рельса прогресса, светлая тема." />
+<Scale prefix="--rt-navy-" name="Navy" note="Рельса прогресса, тёмная тема." />
+<Scale prefix="--rt-slate-" name="Slate" note="Пройденный участок прогресса, тёмная тема." />
+
+<h2 style={s.section}>Overlays — Накладки</h2>
+
+<Scale prefix="--rt-overlay-" name="Overlay" note="Полупрозрачные слои: затемнение под диалогом, подсветка строки, тонировка состояний." />

@@ -64,6 +64,12 @@ section. What this repo opts out of is listed in `skip` in `.claude/rt-kit.json`
 
 This is an Nx-managed monorepo using pnpm workspaces. The main library is in `projects/ui-kit/`.
 
+`projects/ui-kit-v2/` is a second, independent component package (`@rt-tools/ui-kit-v2`). It does
+not replace `ui-kit` and shares no code with it: different selectors (`rt-*` against `rtui-*`),
+its own design-token set, its own component list, so one application can hold both. It ships its
+own runtime services (theme, breakpoints, notification bus), an icon set under `src/assets/icons`,
+and eight-language labels in the `rtKit` namespace. See `projects/ui-kit-v2/README.md`.
+
 ### Library Entry Points
 
 The library exports from `projects/ui-kit/src/public-api.ts` with three main categories:

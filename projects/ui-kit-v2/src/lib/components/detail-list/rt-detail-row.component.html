@@ -1,0 +1,8 @@
+<ng-container rtBlock="rt-detail-row">
+    <span rtElem="label" qa-dataid="detail-row-label">{{ label() }}</span>
+    <div rtElem="value" qa-dataid="detail-row-value">
+        <rt-skeleton-wrapper width="180px" height="16px" [isLoading]="loading()">
+            <ng-content />
+        </rt-skeleton-wrapper>
+    </div>
+</ng-container>

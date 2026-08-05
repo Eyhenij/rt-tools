@@ -1,0 +1,102 @@
+.rt-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--rt-space-3) var(--rt-space-xs);
+
+    // Адаптив завязан на собственную ширину компонента, а не на viewport:
+    // в узком контейнере (зажатая таблица / aside) числовая полоса прячется,
+    // показывается compact-форма «‹ Стр. N из M ›».
+    container-type: inline-size;
+    gap: var(--rt-space-md);
+
+    &__range {
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+        white-space: nowrap;
+    }
+
+    &__nav {
+        display: flex;
+        align-items: center;
+        gap: var(--rt-space-xs);
+    }
+
+    // Compact-форма по умолчанию скрыта — показывается только в узком контейнере.
+    &__compact {
+        display: none;
+        align-items: center;
+        gap: var(--rt-space-xs);
+    }
+
+    &__compact-label {
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-text-sm);
+        white-space: nowrap;
+    }
+
+    &__page {
+        min-width: var(--rt-space-xl);
+        height: var(--rt-space-xl);
+        padding: 0 var(--rt-space-sm);
+        border: var(--rt-border-width-thin) solid var(--rt-color-border-default);
+        border-radius: var(--rt-radius-md);
+        background: transparent;
+        color: var(--rt-color-text-primary);
+        cursor: pointer;
+        transition:
+            background-color var(--rt-duration-fast) ease,
+            border-color var(--rt-duration-fast) ease,
+            color var(--rt-duration-fast) ease;
+
+        &:hover:not(:disabled, &--current) {
+            border-color: var(--rt-color-border-strong);
+            background: var(--rt-color-bg-surface-subtle);
+        }
+
+        &:focus-visible {
+            box-shadow: var(--rt-shadow-focus-ring);
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+        }
+
+        &--current {
+            border-color: var(--rt-color-border-strong);
+            background: var(--rt-color-bg-surface-subtle);
+            font-weight: var(--rt-font-weight-semibold);
+        }
+
+        &:disabled {
+            cursor: default;
+            opacity: 0.6;
+        }
+    }
+
+    &__gap {
+        padding: 0 var(--rt-space-xs);
+        color: var(--rt-color-text-muted);
+    }
+
+    &__per-page {
+        display: flex;
+        align-items: center;
+        gap: var(--rt-space-sm);
+    }
+
+    &__per-page-label {
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+    }
+}
+
+// Узкий контейнер: прячем числовую полосу и диапазон, показываем compact-форму.
+@container (max-width: 460px) {
+    .rt-pagination__nav,
+    .rt-pagination__range {
+        display: none;
+    }
+
+    .rt-pagination__compact {
+        display: flex;
+    }
+}

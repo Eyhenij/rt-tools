@@ -1,0 +1,77 @@
+/* rt-table-settings-panel — ViewEncapsulation.None (common/ui): правила таргетируют
+   BEM-класс глобально, без :host-обёртки (как rt-icon / rt-dialog-footer). */
+.rt-table-settings-panel {
+    &__list {
+        display: flex;
+        min-width: 320px;
+        flex-direction: column;
+        padding: 0;
+        margin: 0;
+        gap: var(--rt-space-2xs);
+        list-style: none;
+    }
+
+    &__row {
+        display: flex;
+        align-items: center;
+        padding: var(--rt-space-2xs) var(--rt-space-xs);
+        border: var(--rt-border-width-thin) solid var(--rt-color-border-default);
+        border-radius: var(--rt-radius-md);
+        background-color: var(--rt-color-bg-surface);
+        gap: var(--rt-space-sm);
+
+        &--hidden {
+            color: var(--rt-color-text-muted);
+        }
+
+        &.cdk-drag-preview {
+            box-shadow: var(--rt-shadow-card);
+        }
+
+        &.cdk-drag-placeholder {
+            opacity: 0.4;
+        }
+
+        &.cdk-drag-animating {
+            transition: transform var(--rt-duration-base) cubic-bezier(0, 0, 0.2, 1);
+        }
+    }
+
+    &__handle {
+        display: inline-flex;
+        width: 24px;
+        height: 24px;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border: none;
+        background: none;
+        cursor: grab;
+
+        &:active {
+            cursor: grabbing;
+        }
+
+        &--placeholder {
+            cursor: default;
+        }
+    }
+
+    &__label {
+        overflow: hidden;
+        min-width: 0;
+        flex: 1;
+        font-size: var(--rt-text-sm);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__toggle {
+        margin-left: auto;
+    }
+}
+
+/* Плавающий клон строки во время перетаскивания (CDK монтирует его в body). */
+.cdk-drop-list-dragging .rt-table-settings-panel__row:not(.cdk-drag-placeholder) {
+    transition: transform var(--rt-duration-base) cubic-bezier(0, 0, 0.2, 1);
+}

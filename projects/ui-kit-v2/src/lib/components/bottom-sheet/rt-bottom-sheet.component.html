@@ -1,0 +1,21 @@
+<ng-container rtBlock="rt-bottom-sheet">
+    <button
+        type="button"
+        rtElem="backdrop"
+        qa-dataid="bottom-sheet-backdrop"
+        [attr.aria-label]="'rtKit.bottomSheetClose' | transloco"
+        (click)="dismiss()"></button>
+    <div
+        rtElem="panel"
+        qa-dataid="bottom-sheet-panel"
+        role="dialog"
+        aria-modal="true"
+        [rtMod]="{ dragging: dragging() }"
+        [style.transform]="dragging() ? 'translateY(' + dragDeltaY() + 'px)' : null">
+        <div rtElem="handle" qa-dataid="bottom-sheet-handle" (pointerdown)="onDragStart($event)"></div>
+        <div rtElem="header" qa-dataid="bottom-sheet-header">
+            <ng-content select="[sheetHeader]" />
+        </div>
+        <ng-content />
+    </div>
+</ng-container>

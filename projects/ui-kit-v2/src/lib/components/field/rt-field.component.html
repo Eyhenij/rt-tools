@@ -1,0 +1,50 @@
+<ng-container rtBlock="rt-field">
+    @if (label()) {
+        <span rtElem="label-row">
+            <label rtElem="label" qa-dataid="field-label" [attr.for]="controlId()">
+                {{ label() }}
+                @if (isRequired() && !hideRequiredMark()) {
+                    <span rtElem="required" qa-dataid="field-required" aria-hidden="true">*</span>
+                }
+            </label>
+            @if (help()) {
+                <button
+                    rtElem="help"
+                    qa-dataid="field-help"
+                    type="button"
+                    rtPopoverTrigger="hover"
+                    [attr.aria-label]="'rtKit.uiHint' | transloco"
+                    [rtPopover]="helpTpl">
+                    <rt-icon name="ico-help" size="sm" color="muted" />
+                </button>
+                <ng-template #helpTpl>
+                    <span rtElem="help-popover" qa-dataid="field-help-popover">{{ help() }}</span>
+                </ng-template>
+            }
+        </span>
+    }
+
+    <rt-skeleton-wrapper rtElem="control" height="var(--rt-input-height)" [isLoading]="loading()">
+        <ng-content />
+    </rt-skeleton-wrapper>
+
+    <!-- С резервом hint остаётся в потоке даже под ошибкой (скрытый), а сама
+         ошибка кладётся в ту же ячейку грида: высота зоны равна большему из
+         двух сообщений и не меняется при их подмене. Без резерва — как было,
+         одно сообщение за раз, чтобы плотные формы не набирали лишний воздух. -->
+    <span rtElem="messages" [rtMod]="{ reserved: reserveHintSpace() }">
+        @if (projectedHint() && (reserveHintSpace() || !showError())) {
+            <small rtElem="hint" qa-dataid="field-hint" [rtMod]="{ hidden: showError() }" [attr.aria-hidden]="showError() ? 'true' : null">
+                <ng-content select="[rtFieldHint]" />
+            </small>
+        } @else if (hint() && (reserveHintSpace() || !showError())) {
+            <small rtElem="hint" qa-dataid="field-hint" [rtMod]="{ hidden: showError() }" [attr.aria-hidden]="showError() ? 'true' : null">
+                {{ hint() }}
+            </small>
+        }
+
+        @if (showError()) {
+            <small rtElem="error" qa-dataid="field-error">{{ errorText() }}</small>
+        }
+    </span>
+</ng-container>

@@ -1,0 +1,117 @@
+/* rt-stepper — линейный прогресс-степпер в common/ui (Emulated; :host обязателен). */
+
+:host {
+    display: block;
+
+    .rt-stepper {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rt-space-3);
+
+        &__rail {
+            position: relative;
+            block-size: 39px;
+        }
+
+        &__label {
+            position: absolute;
+            margin: 0;
+            color: var(--rt-color-stepper-current);
+            font-size: var(--rt-text-xs);
+            font-weight: var(--rt-font-weight-regular);
+            inset-block-start: 0;
+            letter-spacing: var(--rt-letter-spacing-wide);
+            line-height: var(--rt-leading-none);
+            transition: left var(--rt-duration-fast) ease-out;
+            white-space: nowrap;
+
+            /* Подпись висит над активной точкой (`left` задаётся инлайном):
+               на крайних шагах прижимаем к краю точки, иначе центрируем. */
+            &--anchor--start {
+                transform: translateX(0);
+            }
+
+            &--anchor--center {
+                transform: translateX(-50%);
+            }
+
+            &--anchor--end {
+                transform: translateX(-100%);
+            }
+        }
+
+        &__track-band {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            block-size: 16px;
+            inset-block-end: 0;
+            inset-inline: 0;
+        }
+
+        &__track,
+        &__progress {
+            position: absolute;
+            border-radius: var(--rt-radius-full);
+            block-size: 2px;
+            inset-block-start: 50%;
+            inset-inline-start: 0;
+            transform: translateY(-50%);
+        }
+
+        &__track {
+            background: var(--rt-color-stepper-track);
+            inset-inline-end: 0;
+        }
+
+        &__progress {
+            background: var(--rt-color-stepper-progress);
+            transition: width var(--rt-duration-fast) ease-out;
+        }
+
+        &__points {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0;
+            margin: 0;
+            inline-size: 100%;
+            list-style: none;
+        }
+
+        &__point {
+            border-radius: var(--rt-radius-full);
+            background: var(--rt-color-stepper-track);
+            block-size: 8px;
+            inline-size: 8px;
+            transition:
+                inline-size var(--rt-duration-fast) ease-out,
+                block-size var(--rt-duration-fast) ease-out,
+                background var(--rt-duration-fast) ease-out;
+
+            &--complete {
+                background: var(--rt-color-stepper-progress);
+            }
+
+            &--current {
+                background: var(--rt-color-stepper-current);
+                block-size: 16px;
+                box-shadow: var(--rt-shadow-step-indicator);
+                inline-size: 16px;
+            }
+        }
+
+        &__description {
+            margin: 0;
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-xs);
+            letter-spacing: var(--rt-letter-spacing-wide);
+            line-height: var(--rt-leading-snug);
+
+            & + & {
+                margin-block-start: var(--rt-space-2-5);
+            }
+        }
+    }
+}
