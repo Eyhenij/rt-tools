@@ -1,0 +1,95 @@
+/* rt-bar-list — топ-N со шкалой доли в common/ui (Emulated encapsulation; :host обязательно). */
+
+:host {
+    display: block;
+
+    .rt-bar-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rt-space-2);
+
+        &__title {
+            margin: 0;
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-sm);
+            font-weight: var(--rt-font-weight-semibold);
+        }
+
+        &__rows {
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            margin: 0;
+            gap: var(--rt-space-5);
+            list-style: none;
+        }
+
+        &__row {
+            display: flex;
+            min-width: 0;
+            flex-direction: column;
+            gap: var(--rt-space-1-5);
+        }
+
+        &__row-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            font-size: var(--rt-text-md);
+            font-weight: var(--rt-font-weight-semibold);
+            gap: var(--rt-space-3);
+            line-height: var(--rt-leading-tight);
+        }
+
+        &__row-title {
+            overflow: hidden;
+            color: var(--rt-color-text-primary);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__row-value {
+            flex: 0 0 auto;
+            color: var(--rt-color-text-primary);
+        }
+
+        &__row-meta {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            line-height: var(--rt-leading-none);
+        }
+
+        &__track {
+            display: block;
+            height: 6px;
+            border-radius: var(--rt-radius-sm);
+            background: var(--rt-color-bg-surface-subtle);
+        }
+
+        &__fill {
+            display: block;
+            min-width: 2px;
+            height: 100%;
+            border-radius: var(--rt-radius-sm);
+            background: var(--rt-color-action-primary);
+        }
+
+        /* Пустое состояние центрируется в свободном месте панели: список
+           короче панели, и текст, прижатый к заголовку, читался бы как сбой. */
+        &__empty {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--rt-space-lg) 0;
+            gap: var(--rt-space-2-5);
+        }
+
+        &__empty-text {
+            margin: 0;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+        }
+    }
+}

@@ -1,0 +1,17 @@
+/* rt-icon — глобальные правила компонента (ViewEncapsulation.None).
+   Намеренно без :host-обёртки: правила должны таргетировать `.rt-icon` глобально
+   (host-класс компонента + потенциальные программные потребители sprite'а).
+   Это исключение из общего правила "обёртывать стили в :host", применимого
+   только для Emulated-инкапсуляции. */
+.rt-icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    line-height: 0;
+
+    svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+        fill: currentcolor;
+    }
+}

@@ -1,0 +1,43 @@
+<article rtBlock="rt-stat-tile" qa-dataid="stat-tile">
+    <header rtElem="head">
+        <span rtElem="label" qa-dataid="stat-tile-label">{{ label() }}</span>
+        @if (hint(); as hintText) {
+            <rt-icon rtElem="hint" qa-dataid="stat-tile-hint" name="info-circle" size="xs" [attr.title]="hintText" />
+        }
+    </header>
+
+    <div rtElem="value-row">
+        <p rtElem="value" qa-dataid="stat-tile-value">{{ value() }}</p>
+
+        @if (primaryDelta(); as row) {
+            <span
+                rtElem="delta"
+                qa-dataid="stat-tile-delta"
+                [attr.data-direction]="row.direction"
+                [rtMod]="{ direction: row.direction }"
+                [attr.title]="row.label">
+                <rt-icon rtElem="delta-icon" size="xs" [name]="row.icon" />
+                <span rtElem="delta-percent" qa-dataid="stat-tile-delta-percent">{{ row.text }}</span>
+            </span>
+        }
+
+        @if (yearDelta(); as row) {
+            <span
+                rtElem="year"
+                qa-dataid="stat-tile-year"
+                [attr.data-direction]="row.direction"
+                [rtMod]="{ direction: row.direction }"
+                [attr.title]="row.label">
+                {{ 'rtKit.uiYearOverYear' | transloco }} {{ row.text }}
+            </span>
+        }
+    </div>
+
+    @if (baselineText(); as text) {
+        <p rtElem="baseline" qa-dataid="stat-tile-baseline">{{ text }}</p>
+    }
+
+    @if (secondary(); as text) {
+        <p rtElem="secondary" qa-dataid="stat-tile-secondary">{{ text }}</p>
+    }
+</article>

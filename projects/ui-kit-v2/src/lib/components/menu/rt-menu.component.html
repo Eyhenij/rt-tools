@@ -1,0 +1,27 @@
+<rt-icon-button
+    cdkOverlayOrigin
+    qa-dataid="menu-trigger"
+    #trigger="cdkOverlayOrigin"
+    variant="ghost"
+    [icon]="icon()"
+    [ariaLabel]="ariaText()"
+    [tooltip]="ariaText()"
+    [disabled]="disabled()"
+    (clicked)="toggle($event)" />
+
+<ng-template
+    cdkConnectedOverlay
+    cdkConnectedOverlayHasBackdrop
+    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+    [cdkConnectedOverlayOrigin]="trigger"
+    [cdkConnectedOverlayOpen]="isOpen()"
+    [cdkConnectedOverlayPositions]="overlayPositions()"
+    (backdropClick)="close()"
+    (detach)="close()"
+    (overlayKeydown)="onKeydown($event)">
+    <ng-container rtBlock="rt-menu">
+        <div rtElem="panel" qa-dataid="menu-panel" role="menu" (rtMenuSelect)="close()">
+            <ng-content />
+        </div>
+    </ng-container>
+</ng-template>

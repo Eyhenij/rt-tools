@@ -1,0 +1,40 @@
+/* rt-copy-cell — ячейка с копированием в буфер.
+   ViewEncapsulation.None: классы глобальны, токены --rt-* наследуются.
+   Кнопка скрыта по умолчанию и проявляется при наведении/фокусе — чтобы не
+   зашумлять плотные таблицы. */
+
+.rt-copy-cell {
+    display: inline-flex;
+    min-width: 0;
+    align-items: center;
+    gap: var(--rt-space-xs);
+
+    &__content {
+        min-width: 0;
+    }
+
+    &__button {
+        flex: 0 0 auto;
+        opacity: 0;
+        transition: opacity var(--rt-duration-fast) ease;
+    }
+
+    /* Reveal при наведении/клавиатурном фокусе внутри самой ячейки — работает
+       и вне таблицы (карточки, асайды). */
+    &:hover &__button,
+    &:focus-within &__button {
+        opacity: 1;
+    }
+
+    /* revealOnHover=false — кнопка всегда видима (модалки/карточки без hover-строки). */
+    &--static &__button {
+        opacity: 1;
+    }
+}
+
+/* Reveal при наведении/фокусе на всю строку rt-table — привычное поведение
+   таблиц: кнопка появляется, как только курсор над строкой. */
+.rt-table tbody tr:hover .rt-copy-cell__button,
+.rt-table tbody tr:focus-within .rt-copy-cell__button {
+    opacity: 1;
+}

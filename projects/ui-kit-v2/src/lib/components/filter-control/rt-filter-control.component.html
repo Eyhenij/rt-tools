@@ -1,0 +1,22 @@
+@if (isNarrow()) {
+    <rt-select
+        qa-dataid="filter-control-select"
+        size="md"
+        [options]="selectOptions()"
+        [placeholder]="placeholder()"
+        [ariaLabel]="ariaLabel()"
+        [clearable]="false"
+        [disabled]="disabled()"
+        [ngModel]="value()"
+        (selectionChange)="onSelectionChange($event)" />
+} @else {
+    <rt-toggle-button-group
+        qa-dataid="filter-control-group"
+        [options]="options()"
+        [value]="value()"
+        [ariaLabel]="ariaLabel()"
+        [size]="size()"
+        [disabled]="disabled()"
+        [fullWidth]="fullWidth()"
+        (valueChange)="onValueChange($event)" />
+}

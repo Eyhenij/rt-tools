@@ -1,0 +1,20 @@
+@if (isSwitch()) {
+    <rt-toggle-switch
+        qa-dataid="theme-toggle-control"
+        size="md"
+        iconOff="ico-sun"
+        iconOn="moon"
+        [ariaLabel]="label"
+        [ngModel]="isDark()"
+        (ngModelChange)="onToggle()" />
+} @else {
+    <rt-icon-button
+        qa-dataid="theme-toggle-control"
+        variant="ghost"
+        size="md"
+        shape="circle"
+        [ariaLabel]="label"
+        [icon]="iconName()"
+        [active]="isDark()"
+        (clicked)="onToggle()" />
+}

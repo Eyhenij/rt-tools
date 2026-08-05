@@ -1,0 +1,39 @@
+<ng-container rtBlock="rt-container">
+    @if (headerTpl(); as tpl) {
+        <header rtElem="header" qa-dataid="container-header">
+            <ng-container [ngTemplateOutlet]="tpl" />
+        </header>
+    }
+
+    @if (leftSidenavTpl(); as tpl) {
+        <aside rtElem="left-sidenav" qa-dataid="container-left-sidenav">
+            <ng-container [ngTemplateOutlet]="tpl" />
+        </aside>
+    }
+
+    @if (toolbarLeftTpl(); as tpl) {
+        <div rtElem="toolbar" qa-dataid="container-toolbar" data-slot="left" [rtMod]="{ slot: 'left' }">
+            <ng-container [ngTemplateOutlet]="tpl" />
+        </div>
+    }
+
+    @if (toolbarCenterTpl(); as tpl) {
+        <div rtElem="toolbar" qa-dataid="container-toolbar" data-slot="center" [rtMod]="{ slot: 'center' }">
+            <ng-container [ngTemplateOutlet]="tpl" />
+        </div>
+    }
+
+    @if (toolbarRightTpl(); as tpl) {
+        <div rtElem="toolbar" qa-dataid="container-toolbar" data-slot="right" [rtMod]="{ slot: 'right' }">
+            <ng-container [ngTemplateOutlet]="tpl" />
+        </div>
+    }
+
+    @if (contentTpl(); as tpl) {
+        <main rtElem="content" qa-dataid="container-content">
+            <ng-container [ngTemplateOutlet]="tpl" />
+        </main>
+    }
+
+    <rt-toaster position="bottom-center" />
+</ng-container>

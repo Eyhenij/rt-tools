@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <g transform="translate(0.0000 4.9992) scale(1.000000 1.000114)">
+        <g>
+            <path d="M0 0H24V2H0V0Z" fill="currentColor" />
+            <path d="M0 6H24V8H0V6Z" fill="currentColor" />
+            <path d="M0 12H24V14H0V12Z" fill="currentColor" />
+        </g>
+    </g>
+</svg>

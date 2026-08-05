@@ -1,0 +1,24 @@
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar:horizontal {
+    height: 12px;
+}
+
+::-webkit-scrollbar-thumb {
+    border: var(--rt-border-width-thick) solid transparent;
+    border-radius: var(--rt-radius-md);
+    background: var(--rt-color-border-default);
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    border: var(--rt-border-width-medium) solid transparent;
+    background: var(--rt-color-border-strong);
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-track:hover {
+    border: var(--rt-border-width-thin) solid var(--rt-color-bg-subtle);
+}

@@ -1,0 +1,57 @@
+<ng-container rtBlock="rt-aside-header">
+    <header rtElem="content" qa-dataid="aside-header">
+        @if (closable()) {
+            <rt-icon-button
+                rtElem="back"
+                qa-dataid="aside-back"
+                icon="arrow-left"
+                size="sm"
+                variant="ghost"
+                [ariaLabel]="'rtKit.uiBack' | transloco"
+                [tooltip]="'rtKit.uiBack' | transloco"
+                (clicked)="onDismiss()" />
+        }
+
+        <div rtElem="heading">
+            @if (overline(); as overlineText) {
+                <p rtElem="overline" qa-dataid="aside-overline">{{ overlineText }}</p>
+            }
+            <h2 rtElem="title" qa-dataid="aside-title">
+                <rt-skeleton-wrapper width="180px" height="20px" [isLoading]="loading()">
+                    {{ title() }}
+                </rt-skeleton-wrapper>
+            </h2>
+
+            @if (badges().length > 0) {
+                <div rtElem="badges">
+                    @for (badge of badges(); track badge.value) {
+                        @if (badge.href; as href) {
+                            <a rtElem="badge-link" qa-dataid="aside-badge-link" target="_blank" rel="noopener" [href]="href">
+                                <rt-tag
+                                    iconEnd="external-link"
+                                    [value]="badge.value"
+                                    [severity]="badge.severity ?? 'neutral'"
+                                    [appearance]="badge.appearance ?? 'solid'"
+                                    [shape]="badge.shape ?? 'square'"
+                                    [radius]="badge.radius ?? 'md'"
+                                    [icon]="badge.icon ?? null" />
+                            </a>
+                        } @else {
+                            <rt-tag
+                                [value]="badge.value"
+                                [severity]="badge.severity ?? 'neutral'"
+                                [appearance]="badge.appearance ?? 'solid'"
+                                [shape]="badge.shape ?? 'square'"
+                                [radius]="badge.radius ?? 'md'"
+                                [icon]="badge.icon ?? null" />
+                        }
+                    }
+                </div>
+            }
+        </div>
+
+        <div rtElem="actions" qa-dataid="aside-actions">
+            <ng-content select="[asideActions]" />
+        </div>
+    </header>
+</ng-container>

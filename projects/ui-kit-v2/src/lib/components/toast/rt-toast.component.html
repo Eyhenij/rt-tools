@@ -1,0 +1,42 @@
+<ng-container rtBlock="rt-toast">
+    <rt-icon rtElem="icon" size="sm" [name]="icon()" [color]="toast().severity" />
+    <div rtElem="content" qa-dataid="toast-content">
+        @if (toast().meta; as meta) {
+            <span rtElem="meta" qa-dataid="toast-meta">{{ meta }}</span>
+        }
+        <span rtElem="message" qa-dataid="toast-message">{{ toast().message }}</span>
+        @if (toast().description; as description) {
+            <span rtElem="description" qa-dataid="toast-description">{{ description }}</span>
+        }
+        @if (toast().action || toast().secondaryAction) {
+            <div rtElem="actions">
+                @if (toast().action; as action) {
+                    <button rtButton rtElem="action" qa-dataid="toast-action" size="sm" type="button" (click)="onAction()">
+                        {{ action.label }}
+                    </button>
+                }
+                @if (toast().secondaryAction; as secondaryAction) {
+                    <button
+                        rtButton
+                        rtElem="action"
+                        qa-dataid="toast-secondary-action"
+                        size="sm"
+                        theme="secondary"
+                        appearance="text"
+                        type="button"
+                        (click)="onSecondaryAction()">
+                        {{ secondaryAction.label }}
+                    </button>
+                }
+            </div>
+        }
+    </div>
+    <rt-icon-button
+        rtElem="close"
+        qa-dataid="toast-close"
+        icon="ico-close"
+        variant="ghost"
+        size="sm"
+        [ariaLabel]="'rtKit.uiClose' | transloco"
+        (clicked)="onClose()" />
+</ng-container>

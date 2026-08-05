@@ -1,0 +1,32 @@
+<rt-dialog width="360px" [ariaLabel]="'rtKit.uiConfirmAction' | transloco">
+    <div rtBlock="rt-menu-confirm-dialog">
+        <div rtElem="text">
+            @if (data.title; as title) {
+                <h2 rtElem="title" qa-dataid="menu-confirm-title">{{ title }}</h2>
+            }
+            <p rtElem="message" qa-dataid="menu-confirm-message">{{ data.message }}</p>
+        </div>
+        <div rtElem="footer">
+            <!-- eslint-disable-next-line @angular-eslint/template/elements-content -->
+            <button
+                rtButton
+                rtElem="cancel"
+                qa-dataid="menu-confirm-cancel"
+                type="button"
+                appearance="text"
+                theme="secondary"
+                [label]="data.cancelLabel"
+                (click)="onCancel()"></button>
+            <!-- eslint-disable-next-line @angular-eslint/template/elements-content -->
+            <button
+                rtButton
+                rtElem="confirm"
+                qa-dataid="menu-confirm-accept"
+                type="button"
+                appearance="filled"
+                [label]="data.confirmLabel"
+                [theme]="data.tone"
+                (click)="onConfirm()"></button>
+        </div>
+    </div>
+</rt-dialog>

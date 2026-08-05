@@ -1,0 +1,198 @@
+.rt-multiselect {
+    position: relative;
+    display: block;
+    width: 100%;
+
+    /* bordered=false: снимаем только resting-рамку триггера. Объявлено ДО блока
+       __trigger — его :focus и правила --open/--invalid __trigger (равная
+       специфичность) идут ниже по source-order и перекрывают рамку. */
+    &--borderless &__trigger {
+        border-color: transparent;
+    }
+
+    &__trigger {
+        display: flex;
+        width: 100%;
+        min-height: var(--rt-input-height);
+        box-sizing: border-box;
+        align-items: center;
+        padding: var(--rt-input-padding-y) var(--rt-input-padding-x);
+        border: var(--rt-input-border-width) solid var(--rt-input-color-border);
+        border-radius: var(--rt-input-radius);
+        background-color: var(--rt-input-color-bg);
+        color: var(--rt-input-color-text);
+        cursor: pointer;
+
+        /* Триггер — нативный <button>: без явного наследования берёт UA-шрифт
+           (Arial), а не Montserrat от body. */
+        font-family: inherit;
+        font-size: var(--rt-input-font-size);
+        gap: var(--rt-space-sm);
+        line-height: var(--rt-input-line-height);
+        text-align: start;
+        transition: var(--rt-input-transition);
+
+        // :focus (не :focus-visible) — триггер это <button>, у которого
+        // :focus-visible не срабатывает на клик мышью; кольцо нужно и при клике.
+        &:focus {
+            border-color: var(--rt-input-color-border-focus);
+            box-shadow: var(--rt-input-focus-shadow);
+            outline: 2px solid transparent;
+            outline-offset: var(--rt-input-focus-outline-offset);
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+        }
+    }
+
+    &--open &__trigger {
+        border-color: var(--rt-input-color-border-focus);
+    }
+
+    &--invalid &__trigger {
+        border-color: var(--rt-input-color-border-error);
+
+        &:focus {
+            box-shadow: var(--rt-input-focus-shadow-error);
+        }
+    }
+
+    &--disabled {
+        opacity: var(--rt-input-disabled-opacity);
+    }
+
+    /* Read-only: триггер остаётся в DOM (нужен для viewChild.required popover'а),
+       но скрыт — значение показывает плоский текст __readonly. */
+    &--readonly &__trigger {
+        display: none;
+    }
+
+    /* Read-only: выбранные labels через запятую как плоский текст. */
+    &__readonly {
+        display: inline-flex;
+        min-height: var(--rt-input-height);
+        align-items: center;
+        color: var(--rt-field-value-color);
+        font-size: var(--rt-field-value-font-size);
+
+        &--empty {
+            color: var(--rt-field-value-empty-color);
+        }
+    }
+
+    &--size--sm &__trigger {
+        min-height: var(--rt-input-height-sm);
+    }
+
+    &--size--lg &__trigger {
+        min-height: var(--rt-input-height-lg);
+    }
+
+    &__placeholder {
+        overflow: hidden;
+        min-width: 0;
+        flex: 1 1 auto;
+        color: var(--rt-input-color-text-placeholder);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__chips {
+        display: flex;
+        min-width: 0;
+        flex: 1 1 auto;
+        flex-wrap: wrap;
+        gap: var(--rt-space-2xs);
+    }
+
+    &__chip {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    &__chip-more {
+        display: inline-flex;
+        align-items: center;
+        padding: 0 var(--rt-space-xs);
+        color: var(--rt-input-color-text-placeholder);
+        font-size: var(--rt-input-font-size);
+    }
+
+    &__clear {
+        flex-shrink: 0;
+    }
+
+    &__chevron {
+        flex-shrink: 0;
+        transition: transform var(--rt-duration-fast) ease;
+    }
+
+    &--open &__chevron {
+        transform: rotate(180deg);
+    }
+
+    /* Panel рендерится в CDK Overlay (body) — позиционирование на CDK. */
+    &__panel {
+        width: 100%;
+        max-height: var(--rt-input-panel-max-height);
+        box-sizing: border-box;
+        border: var(--rt-input-border-width) solid var(--rt-color-border-subtle);
+        border-radius: var(--rt-input-radius);
+        background-color: var(--rt-color-bg-surface);
+        box-shadow: var(--rt-shadow-md);
+        overflow-y: auto;
+    }
+
+    &__list {
+        padding: var(--rt-space-2xs) 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    &__option {
+        display: flex;
+        align-items: center;
+        padding: var(--rt-space-sm) var(--rt-space-md);
+        color: var(--rt-color-text-primary);
+        cursor: pointer;
+        font-size: var(--rt-input-font-size);
+        gap: var(--rt-space-sm);
+
+        &:hover,
+        &--active {
+            background-color: var(--rt-color-bg-hover);
+        }
+
+        &--selected {
+            background-color: var(--rt-color-action-primary-subtle);
+            font-weight: var(--rt-font-weight-semibold);
+        }
+
+        &--disabled {
+            cursor: not-allowed;
+            opacity: var(--rt-input-disabled-opacity);
+
+            &:hover {
+                background-color: transparent;
+            }
+        }
+    }
+
+    &__checkbox {
+        flex-shrink: 0;
+        margin: 0;
+        pointer-events: none;
+    }
+
+    &__option-label {
+        min-width: 0;
+        flex: 1 1 auto;
+    }
+
+    &__empty {
+        padding: var(--rt-space-sm) var(--rt-space-md);
+        color: var(--rt-input-color-text-placeholder);
+        font-style: italic;
+    }
+}

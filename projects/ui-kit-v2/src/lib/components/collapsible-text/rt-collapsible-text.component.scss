@@ -1,0 +1,43 @@
+.rt-collapsible-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rt-space-sm);
+
+    &__text {
+        display: block;
+
+        &--clamped {
+            display: -webkit-box;
+            overflow: hidden;
+            -webkit-box-orient: vertical;
+        }
+    }
+
+    &__paragraph {
+        margin: 0;
+        color: var(--rt-color-text-primary);
+        font-family: var(--rt-font-family-sans);
+        font-size: var(--rt-text-xs);
+        font-weight: var(--rt-font-weight-regular);
+        letter-spacing: var(--rt-letter-spacing-wide);
+        line-height: var(--rt-leading-snug);
+
+        & + & {
+            margin-top: var(--rt-space-sm);
+        }
+    }
+
+    &__toggle {
+        align-self: flex-start;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--rt-color-text-link);
+        cursor: pointer;
+        font-family: var(--rt-font-family-sans);
+        font-size: var(--rt-text-xs);
+        font-weight: var(--rt-font-weight-medium);
+        letter-spacing: var(--rt-letter-spacing-wide);
+        line-height: var(--rt-leading-snug);
+    }
+}

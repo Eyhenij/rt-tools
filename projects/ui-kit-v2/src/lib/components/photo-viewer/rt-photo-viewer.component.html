@@ -1,0 +1,66 @@
+<ng-container rtBlock="rt-photo-viewer">
+    <!-- Ловушка держит Tab внутри; фокус ставит сам компонент, поэтому
+         авто-захвата здесь нет: он перебивал фокус на просмотрщике, и клавиши
+         переставали листать -->
+    <div rtElem="surface" cdkTrapFocus>
+        <header rtElem="bar">
+            <span rtElem="counter" qa-dataid="photo-viewer-counter">{{ counter() }}</span>
+            <rt-icon-button
+                qa-dataid="photo-viewer-close"
+                icon="close"
+                variant="ghost"
+                [ariaLabel]="'rtKit.photoViewerClose' | transloco"
+                (clicked)="close()" />
+        </header>
+
+        <div rtElem="track" qa-dataid="photo-viewer-track" #track (scroll)="onScroll()">
+            @for (photo of photos; track photo.id; let index = $index) {
+                <figure rtElem="slide" [attr.data-photo-index]="index">
+                    @if (rendered()[index]) {
+                        <picture>
+                            @for (source of photo.picture.sources; track source.type) {
+                                <source sizes="100vw" [type]="source.type" [srcset]="source.srcset" />
+                            }
+                            <img
+                                rtElem="image"
+                                qa-dataid="photo-viewer-image"
+                                decoding="async"
+                                sizes="100vw"
+                                [srcset]="photo.picture.fallbackSrcset"
+                                [src]="photo.picture.fallbackSrc"
+                                [alt]="photo.alt" />
+                        </picture>
+                    }
+                </figure>
+            }
+        </div>
+
+        @if (photos.length > 1) {
+            <rt-icon-button
+                rtElem="arrow-prev"
+                qa-dataid="photo-viewer-prev"
+                icon="angle-left"
+                variant="ghost"
+                [ariaLabel]="'rtKit.photoViewerPrev' | transloco"
+                (clicked)="move(-1)" />
+
+            <rt-icon-button
+                rtElem="arrow-next"
+                qa-dataid="photo-viewer-next"
+                icon="angle-right"
+                variant="ghost"
+                [ariaLabel]="'rtKit.photoViewerNext' | transloco"
+                (clicked)="move(1)" />
+        }
+
+        <!-- Панель приходит снаружи: где-то кадр только смотрят, где-то им ещё и
+             управляют, и решение принимается там же, где кадр виден крупно -->
+        @if (panel) {
+            <footer rtElem="panel" qa-dataid="photo-viewer-panel">
+                <ng-container
+                    [ngTemplateOutlet]="panel"
+                    [ngTemplateOutletContext]="{ $implicit: photos[currentIndex()], index: currentIndex() }" />
+            </footer>
+        }
+    </div>
+</ng-container>

@@ -1,0 +1,71 @@
+<ng-container rtBlock="rt-autocomplete">
+    @if (isReadonly()) {
+        <span rtElem="readonly" qa-dataid="autocomplete-readonly" [rtMod]="{ empty: !displayText() }">{{ displayText() || '—' }}</span>
+    }
+    <div rtElem="field" rtPopoverTrigger="manual" rtPopoverWidth="trigger" [rtPopover]="panelTpl" (rtPopoverClosed)="onClosed()">
+        @if (iconLeft(); as left) {
+            <rt-icon rtElem="icon-left" size="sm" color="muted" [name]="left" />
+        }
+        <input
+            #fieldEl
+            rtElem="input"
+            qa-dataid="autocomplete-input"
+            type="text"
+            autocomplete="off"
+            role="combobox"
+            [attr.id]="effectiveControlId()"
+            [attr.aria-label]="ariaLabel()"
+            [attr.aria-expanded]="isOpen()"
+            [attr.aria-invalid]="isInvalid() || null"
+            [attr.aria-autocomplete]="'list'"
+            [attr.aria-controls]="panelId"
+            [attr.aria-activedescendant]="isOpen() && activeIndex() >= 0 ? panelId + '-opt-' + activeIndex() : null"
+            [placeholder]="placeholder()"
+            [value]="inputText()"
+            [disabled]="isDisabled()"
+            (input)="onInput($event)"
+            (focus)="onFocus()"
+            (blur)="onBlur()"
+            (keydown)="onInputKeydown($event)" />
+        @if (showClearButton()) {
+            <rt-icon-button
+                rtElem="clear"
+                qa-dataid="autocomplete-clear"
+                icon="ico-close"
+                size="sm"
+                variant="ghost"
+                iconColor="muted"
+                [ariaLabel]="'rtKit.uiClear' | transloco"
+                [tabIndex]="-1"
+                (clicked)="clear($event)" />
+        }
+    </div>
+
+    <ng-template #panelTpl>
+        <!--
+            Опции выбираются мышью через (click); keyboard-nav — на input'е
+            (activedescendant), опции не focusable индивидуально.
+        -->
+        <!-- eslint-disable @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+        <ul rtElem="panel" qa-dataid="autocomplete-panel" role="listbox" [id]="panelId">
+            @for (item of suggestions(); track $index; let i = $index) {
+                <li
+                    rtElem="option"
+                    qa-dataid="autocomplete-option"
+                    role="option"
+                    [id]="panelId + '-opt-' + i"
+                    [rtMod]="{ active: i === activeIndex() }"
+                    [attr.aria-selected]="item === value()"
+                    (click)="onSelect(item)">
+                    @if (itemTemplate(); as tpl) {
+                        <ng-container *ngTemplateOutlet="tpl; context: { $implicit: item }" />
+                    } @else {
+                        {{ displayWith()(item) }}
+                    }
+                </li>
+            } @empty {
+                <li rtElem="empty" qa-dataid="autocomplete-empty">{{ 'rtKit.uiNothingFound' | transloco }}</li>
+            }
+        </ul>
+    </ng-template>
+</ng-container>

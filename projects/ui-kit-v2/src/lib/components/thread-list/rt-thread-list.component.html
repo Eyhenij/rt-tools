@@ -1,0 +1,96 @@
+<ng-container rtBlock="rt-thread-list">
+    <header rtElem="head">
+        @if (searchTemplate()) {
+            <div rtElem="search" qa-dataid="thread-list-search">
+                <ng-container [ngTemplateOutlet]="searchTemplate()?.templateRef ?? null" />
+            </div>
+        } @else {
+            <rt-input
+                rtElem="search"
+                qa-dataid="thread-list-search"
+                iconLeft="search"
+                [placeholder]="searchPlaceholderText()"
+                [formControl]="searchControl" />
+        }
+        @if (filtersTemplate()) {
+            <rt-icon-button
+                rtElem="filter-trigger"
+                qa-dataid="thread-list-filter"
+                icon="filter"
+                variant="secondary"
+                rtPopoverAlign="end"
+                [ariaLabel]="'rtKit.uiFilters' | transloco"
+                [indicator]="filtersActive()"
+                [rtPopover]="filtersPanel" />
+        }
+    </header>
+
+    <ng-template #filtersPanel>
+        <div rtElem="filters-panel" qa-dataid="thread-list-filters-panel">
+            <ng-container [ngTemplateOutlet]="filtersTemplate()?.templateRef ?? null" />
+        </div>
+    </ng-template>
+
+    <div rtElem="rows" qa-dataid="thread-list-rows">
+        @if (loading() && !rows().length) {
+            @for (i of skeletonRows; track i) {
+                <div rtElem="row-skeleton" qa-dataid="thread-list-row-skeleton" aria-hidden="true">
+                    <rt-skeleton width="60%" height="14px" />
+                    <rt-skeleton width="90%" height="12px" />
+                </div>
+            }
+        } @else if (!rows().length) {
+            <rt-empty-state
+                rtElem="empty"
+                qa-dataid="thread-list-empty"
+                [description]="'rtKit.uiThreadListEmptyHint' | transloco"
+                [title]="emptyTitle()">
+                <div rtEmptyIllustration rtElem="empty-preview">
+                    @for (row of emptyPreviewRows; track row.id) {
+                        <div rtElem="empty-card" [rtMod]="{ offset: row.offset }">
+                            <span rtElem="empty-avatar">
+                                <rt-icon size="sm" [name]="row.icon" />
+                            </span>
+                            <span rtElem="empty-lines">
+                                <span rtElem="empty-line" [rtMod]="{ short: true }"></span>
+                                <span rtElem="empty-line"></span>
+                            </span>
+                        </div>
+                    }
+                </div>
+            </rt-empty-state>
+        } @else {
+            @for (row of rows(); track row.id) {
+                <button
+                    rtElem="row"
+                    qa-dataid="thread-list-row"
+                    type="button"
+                    [attr.data-id]="row.id"
+                    [attr.data-unread]="row.hasUnread"
+                    [attr.aria-current]="row.id === activeId() ? 'true' : null"
+                    [rtMod]="{
+                        active: row.id === activeId(),
+                        unread: row.hasUnread,
+                        overdue: !!row.overdue,
+                    }"
+                    (click)="onSelect(row.id, $event)">
+                    <ng-container [ngTemplateOutlet]="rowTemplate()?.templateRef ?? null" [ngTemplateOutletContext]="{ $implicit: row }" />
+                </button>
+            }
+            @if (fetching()) {
+                <div rtElem="row-loader" qa-dataid="thread-list-row-loader">
+                    <rt-skeleton width="90%" height="12px" />
+                </div>
+            }
+            @if (hasMore()) {
+                <div
+                    rtElem="load-anchor"
+                    qa-dataid="thread-list-load-more"
+                    aria-hidden="true"
+                    rtInfiniteScroll
+                    [disabled]="fetching()"
+                    (loadMore)="onLoadMore()"></div>
+            }
+        }
+    </div>
+</ng-container>

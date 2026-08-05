@@ -1,0 +1,8 @@
+/* rt-file-list — ViewEncapsulation.None, плоский `.rt-file-list`.
+   Host-класс ставится через @Component host:{class}. */
+.rt-file-list {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: var(--rt-space-sm);
+}

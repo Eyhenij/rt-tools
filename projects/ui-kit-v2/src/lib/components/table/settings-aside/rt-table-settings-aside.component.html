@@ -1,0 +1,36 @@
+<ng-container rtContainerRightSidenavPanel #panel="rtContainerRightPanel" (cancelled)="onCancel()" (closed)="onClosed()" />
+
+<rt-aside [ariaLabel]="'rtKit.uiColumnSettings' | transloco">
+    <rt-aside-header [title]="'rtKit.uiColumnSettingsTitle' | transloco" (dismiss)="onClose()">
+        <rt-icon-button
+            asideActions
+            qa-dataid="table-settings-reset"
+            icon="undo"
+            variant="ghost"
+            [tooltip]="'rtKit.uiResetDefaults' | transloco"
+            [ariaLabel]="'rtKit.uiResetDefaults' | transloco"
+            (clicked)="onReset()" />
+    </rt-aside-header>
+
+    <rt-table-settings-panel [(items)]="items" />
+
+    <rt-aside-footer>
+        <button
+            rtButton
+            asideDismiss
+            qa-dataid="table-settings-close"
+            type="button"
+            appearance="text"
+            [label]="'rtKit.uiClose' | transloco"
+            [attr.aria-label]="'rtKit.uiClose' | transloco"
+            (click)="onClose()"></button>
+        <button
+            rtButton
+            asidePrimary
+            qa-dataid="table-settings-save"
+            type="button"
+            [label]="'rtKit.uiSave' | transloco"
+            [attr.aria-label]="'rtKit.uiSave' | transloco"
+            (click)="onSave()"></button>
+    </rt-aside-footer>
+</rt-aside>

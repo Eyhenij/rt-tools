@@ -1,0 +1,31 @@
+.rt-delta-view {
+    display: block;
+
+    p,
+    ul,
+    ol,
+    blockquote,
+    pre,
+    h1,
+    h2,
+    h3 {
+        margin: 0;
+    }
+
+    ul,
+    ol {
+        padding-inline-start: var(--rt-space-lg);
+    }
+
+    blockquote {
+        border-inline-start: 1px solid var(--rt-color-border-default);
+        color: var(--rt-color-text-muted);
+        padding-inline-start: var(--rt-space-sm);
+    }
+
+    pre {
+        margin: 0;
+        font-family: monospace;
+        white-space: pre-wrap;
+    }
+}

@@ -1,0 +1,366 @@
+.rt-chat {
+    display: flex;
+    flex-direction: column;
+
+    // Встроенная drop-обёртка несёт колоночную раскладку чата (тред/композер
+    // стопкой) и служит позиционным якорем для drag-оверлея. Тред/композер
+    // проецируются внутрь, BEM-контекст `rt-chat` сохраняется (DI декларации).
+    > .rt-file-drop {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        gap: var(--rt-space-3);
+        min-block-size: 0;
+    }
+
+    // Полноэкранный режим — overlay поверх страницы. Чат заполняет вьюпорт как
+    // flex-колонка: скроллится только тред, а композер и футер (доменные действия
+    // потребителя) остаются прижаты к низу и всегда видны. Раньше overflow-y был
+    // на всём чате — тред рос на все сообщения и выталкивал композер за экран.
+    // Собственный фон нужен только здесь: в обычном режиме фон даёт потребитель.
+    &--expanded {
+        position: fixed;
+        z-index: var(--rt-z-modal);
+        box-sizing: border-box;
+        padding: var(--rt-space-md);
+        background: var(--rt-color-bg-surface);
+        inset: 0;
+    }
+
+    &--expanded > .rt-file-drop {
+        block-size: 100%;
+
+        // На широких экранах чат не растягивается на весь вьюпорт: тред и
+        // композер иначе разрежены. Свыше 1440px фиксируем колонку по центру.
+        @media (width >= 1441px) {
+            inline-size: 1000px;
+            margin-inline: auto;
+            max-inline-size: 100%;
+        }
+    }
+
+    &--expanded &__thread-viewport {
+        flex: 1 1 auto;
+        min-block-size: 0;
+    }
+
+    &--expanded &__thread {
+        max-height: none;
+    }
+
+    // Fill-режим: чат занимает всю высоту контейнера, тред растягивается на
+    // свободное место, композер остаётся прижатым к низу.
+    &--fill {
+        block-size: 100%;
+    }
+
+    &--fill &__thread-viewport {
+        flex: 1 1 auto;
+        min-block-size: 0;
+    }
+
+    &--fill &__thread {
+        max-height: none;
+    }
+
+    &__title {
+        margin: 0;
+        color: var(--rt-color-text-primary);
+        font-family: var(--rt-font-family-sans);
+        font-size: var(--rt-text-md);
+        font-weight: var(--rt-font-weight-bold);
+        letter-spacing: var(--rt-letter-spacing-wide);
+        line-height: var(--rt-leading-snug);
+    }
+
+    &__thread-viewport {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+
+        // Пузыри меряют максимальную ширину в процентах от треда: без contain
+        // длинное неразрывное слово сначала распирает тред, и только потом от
+        // него считаются проценты — лента уезжает по горизонтали.
+        contain: inline-size;
+        min-block-size: 0;
+    }
+
+    &__thread {
+        display: flex;
+        max-height: 280px;
+        flex: 1 1 auto;
+        flex-direction: column;
+        gap: var(--rt-space-4);
+        min-block-size: 0;
+        overflow-y: auto;
+
+        &--frozen {
+            overflow-y: hidden;
+        }
+    }
+
+    &__thread-overlay {
+        position: absolute;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: color-mix(in srgb, var(--rt-color-bg-surface) 60%, transparent);
+        inset: 0;
+    }
+
+    &__footer-slot {
+        display: flex;
+        flex-direction: column;
+
+        &:empty {
+            display: none;
+        }
+
+        &--blocked {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    }
+
+    // Строка сообщения — общий hover-контейнер пузыря и боковой кнопки удаления.
+    // Ховер отслеживается по всей строке, поэтому переход курсора с текста на
+    // кнопку (она снаружи пузыря) непрерывен: кнопка не пропадает в зазоре.
+    &__message-row {
+        display: flex;
+        max-width: min(80%, 480px);
+        align-items: center;
+
+        // Входящие — влево, свои — вправо. max-width на строке: пузырь + кнопка
+        // вместе не растягиваются через весь тред.
+        align-self: flex-start;
+        gap: var(--rt-space-1-5);
+
+        &--own {
+            align-self: flex-end;
+        }
+
+        // Кнопка проявляется по наведению/фокусу в пределах всей строки.
+        &:hover .rt-chat__message-delete,
+        &:focus-within .rt-chat__message-delete {
+            opacity: 1;
+            pointer-events: auto;
+        }
+    }
+
+    &__message {
+        display: flex;
+        min-width: 0;
+
+        // grow:0 — пузырь обнимает контент (короткие не растягиваются); shrink:1 +
+        // min-width:0 — длинный текст переносится внутри строки, не распирая её.
+        flex: 0 1 auto;
+        flex-direction: column;
+        padding: var(--rt-space-2-5);
+
+        // Срезанный угол со стороны автора заменяет «хвостик» пузыря: направление
+        // видно даже когда соседние сообщения одного цвета идут подряд.
+        border-radius: var(--rt-radius-lg) var(--rt-radius-lg) var(--rt-radius-lg) 0;
+        background: var(--rt-chat-bubble-in-bg);
+        gap: var(--rt-space-2-5);
+
+        &--own {
+            border-radius: var(--rt-radius-lg) var(--rt-radius-lg) 0 var(--rt-radius-lg);
+            background: var(--rt-chat-bubble-own-bg);
+        }
+
+        // Удалённое сообщение остаётся в ленте, но приглушено и с пунктиром.
+        &--deleted {
+            border: var(--rt-border-width-thin) dashed var(--rt-color-border-default);
+            background: transparent;
+        }
+    }
+
+    &__message-author {
+        margin: 0;
+        color: var(--rt-chat-bubble-in-author);
+        font-size: var(--rt-text-2xs);
+        font-weight: var(--rt-font-weight-bold);
+        letter-spacing: var(--rt-letter-spacing-wide);
+        line-height: var(--rt-leading-snug);
+    }
+
+    &__message--own &__message-author {
+        color: var(--rt-chat-bubble-own-author);
+    }
+
+    &__message-text {
+        margin: 0;
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-text-xs);
+        font-weight: var(--rt-font-weight-regular);
+        line-height: var(--rt-leading-snug);
+        white-space: pre-wrap;
+
+        // Плейсхолдер удалённого сообщения — курсив, приглушённый цвет.
+        &--deleted {
+            color: var(--rt-color-text-muted);
+            font-style: italic;
+        }
+    }
+
+    // Боковая кнопка удаления: flex-сосед пузыря (не наезжает на текст), место
+    // под неё зарезервировано всегда (opacity, не display) — тред не «прыгает»
+    // при наведении. Проявляется по ховеру строки (см. `&__message-row`).
+    &__message-delete {
+        flex: 0 0 auto;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity var(--rt-duration-fast) ease;
+    }
+
+    &__message-attachment {
+        display: block;
+    }
+
+    &__message-footer {
+        display: flex;
+        align-items: center;
+        gap: var(--rt-space-1);
+    }
+
+    &__message-date {
+        color: var(--rt-chat-bubble-date);
+        font-size: var(--rt-text-xs);
+        line-height: var(--rt-leading-none);
+    }
+
+    // Пер-месседж статус своего сообщения: часы / двойной чек / «!»+retry.
+    // sending и sent приглушены — цветом выделены только два состояния, о
+    // которых стоит знать: прочитано (синий) и не ушло (красный).
+    &__message-status {
+        display: inline-flex;
+        align-items: center;
+        color: var(--rt-color-text-muted);
+        gap: var(--rt-space-0-5);
+
+        &--status--read {
+            color: var(--rt-chat-status-read);
+        }
+
+        &--status--failed {
+            color: var(--rt-color-state-danger);
+        }
+    }
+
+    &__status-icon {
+        font-size: var(--rt-text-sm);
+    }
+
+    // Скелетон-пузырь повторяет геометрию `&__message`, чтобы подмена на реальное
+    // сообщение не сдвигала тред.
+    &__message-skeleton {
+        display: flex;
+        max-width: min(80%, 480px);
+        flex-direction: column;
+        align-self: flex-start;
+        padding: var(--rt-space-2-5);
+        border-radius: var(--rt-radius-lg) var(--rt-radius-lg) var(--rt-radius-lg) 0;
+        background: var(--rt-chat-bubble-in-bg);
+        gap: var(--rt-space-1);
+
+        &--own {
+            align-self: flex-end;
+            border-radius: var(--rt-radius-lg) var(--rt-radius-lg) 0 var(--rt-radius-lg);
+            background: var(--rt-chat-bubble-own-bg);
+        }
+    }
+
+    &__skeleton-line {
+        display: block;
+    }
+
+    // Кнопка-ссылка (привязка Telegram) внутри пузыря сообщения — прижата влево
+    // под текстом. Класс — на span'е, а не на rtButton: host-class rt-button затёр
+    // бы rtElem. Вид (outlined) даёт сам rtButton.
+    &__message-deeplink {
+        display: flex;
+        justify-content: flex-start;
+        margin-top: var(--rt-space-1);
+    }
+
+    // Композер (и note-замена) отбиваем от ленты сильнее общего gap'а, чтобы поле
+    // ввода визуально отделялось от последнего сообщения.
+    &__composer,
+    &__composer-rich,
+    &__reply-block {
+        margin-top: var(--rt-space-3);
+    }
+
+    &__composer {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rt-space-2-5);
+    }
+
+    &__composer-files {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--rt-space-2);
+    }
+
+    // Поле ввода — одна рамка на скрепку и текст: скрепка снаружи читалась бы
+    // как отдельное действие, а не как часть сообщения. Геометрия взята из
+    // input-токенов, поэтому поле совпадает с остальными контролами формы.
+    &__composer-field {
+        display: flex;
+        box-sizing: border-box;
+        align-items: center;
+        border: var(--rt-input-border-width) solid var(--rt-input-color-border);
+        border-radius: var(--rt-input-radius);
+        background-color: var(--rt-input-color-bg);
+        gap: var(--rt-space-1);
+        min-block-size: var(--rt-input-height);
+        padding-inline: var(--rt-input-padding-x);
+        transition: var(--rt-input-transition);
+
+        // Подсветка на всём поле, а не на textarea: рамка принадлежит обёртке.
+        &:focus-within {
+            border-color: var(--rt-input-color-border-focus);
+            box-shadow: var(--rt-input-focus-shadow);
+        }
+
+        &--attach {
+            padding-inline-start: var(--rt-space-1);
+        }
+    }
+
+    &__composer-input {
+        // Именно content-box: cdkTextareaAutosize задаёт height по высоте строк,
+        // не прибавляя вертикальные поля. С глобальным border-box поле выходит
+        // ровно на одну строку меньше, и текст режется нижней границей.
+        box-sizing: content-box;
+        flex: 1 1 auto;
+        border: 0;
+        background: transparent;
+        color: var(--rt-input-color-text);
+        font-family: inherit;
+        font-size: var(--rt-input-font-size);
+        inline-size: 100%;
+        line-height: var(--rt-textarea-line-height);
+        padding-block: var(--rt-space-2);
+        resize: none;
+
+        &::placeholder {
+            color: var(--rt-input-color-text-placeholder);
+            opacity: 1;
+        }
+
+        &:focus-visible {
+            outline: none;
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+        }
+    }
+
+    &__composer-send {
+        inline-size: 100%;
+    }
+}

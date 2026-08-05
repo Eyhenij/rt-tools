@@ -1,0 +1,13 @@
+/* rt-dialog-footer — footer-слот модалки. ViewEncapsulation.None. */
+
+.rt-dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: var(--rt-space-lg);
+    border-block-start: 1px solid var(--rt-color-border-subtle);
+    gap: var(--rt-space-sm);
+
+    &:empty {
+        display: none;
+    }
+}

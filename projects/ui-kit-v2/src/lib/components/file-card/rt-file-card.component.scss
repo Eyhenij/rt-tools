@@ -1,0 +1,96 @@
+/* rt-file-card — ViewEncapsulation.None, плоский `.rt-file-card` (как rt-file-input/rt-icon).
+   Host-класс ставится через @Component host:{class}. */
+.rt-file-card {
+    /* Дефолт = md; перезаписывается модификаторами sm/lg ниже. Размеры иконки
+       типа и кнопок действий сюда не входят — они задаются входами дочерних
+       компонентов и маппятся в .ts. */
+    --rt-file-card-padding-block: var(--rt-space-sm);
+    --rt-file-card-padding-inline: var(--rt-space-md);
+    --rt-file-card-gap: var(--rt-space-sm);
+    --rt-file-card-title-size: var(--rt-text-md);
+    --rt-file-card-name-size: var(--rt-text-sm);
+    --rt-file-card-badge-size: var(--rt-text-xs);
+
+    display: flex;
+    align-items: center;
+    padding: var(--rt-file-card-padding-block) var(--rt-file-card-padding-inline);
+    border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+    border-radius: var(--rt-radius-lg);
+    background-color: var(--rt-color-bg-surface);
+    gap: var(--rt-file-card-gap);
+
+    &--sm {
+        --rt-file-card-padding-block: var(--rt-space-xs);
+        --rt-file-card-padding-inline: var(--rt-space-sm);
+        --rt-file-card-gap: var(--rt-space-xs);
+        --rt-file-card-title-size: var(--rt-text-xs);
+        --rt-file-card-name-size: var(--rt-text-2xs);
+        --rt-file-card-badge-size: var(--rt-text-2xs);
+    }
+
+    &--md {
+        --rt-file-card-padding-block: var(--rt-space-sm);
+        --rt-file-card-padding-inline: var(--rt-space-md);
+        --rt-file-card-gap: var(--rt-space-sm);
+        --rt-file-card-title-size: var(--rt-text-md);
+        --rt-file-card-name-size: var(--rt-text-sm);
+        --rt-file-card-badge-size: var(--rt-text-xs);
+    }
+
+    &--lg {
+        --rt-file-card-padding-block: var(--rt-space-md);
+        --rt-file-card-padding-inline: var(--rt-space-lg);
+        --rt-file-card-gap: var(--rt-space-md);
+        --rt-file-card-title-size: var(--rt-text-lg);
+        --rt-file-card-name-size: var(--rt-text-md);
+        --rt-file-card-badge-size: var(--rt-text-sm);
+    }
+
+    &__icon {
+        flex-shrink: 0;
+    }
+
+    &__text {
+        display: flex;
+
+        /* min-width:0 нужен, чтобы дочерние с ellipsis могли сжиматься в flex-строке */
+        min-width: 0;
+        flex: 1 1 auto;
+        flex-direction: column;
+        gap: var(--rt-space-2xs);
+    }
+
+    &__title {
+        overflow: hidden;
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-file-card-title-size);
+        font-weight: var(--rt-font-weight-semibold);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__name {
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-file-card-name-size);
+    }
+
+    &__meta {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        gap: var(--rt-space-xs);
+    }
+
+    &__size {
+        padding: var(--rt-space-2xs) var(--rt-space-sm);
+        border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+        border-radius: var(--rt-radius-full);
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-file-card-badge-size);
+        white-space: nowrap;
+    }
+
+    &__action {
+        flex-shrink: 0;
+    }
+}

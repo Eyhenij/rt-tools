@@ -1,0 +1,15 @@
+:host {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--rt-counter-gap);
+
+    .rt-counter {
+        &__value {
+            min-width: var(--rt-counter-value-min-width);
+            color: var(--rt-counter-value-color);
+            font-size: var(--rt-counter-value-font-size);
+            font-variant-numeric: tabular-nums;
+            text-align: center;
+        }
+    }
+}

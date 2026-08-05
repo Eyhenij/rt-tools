@@ -1,0 +1,27 @@
+<ng-container rtBlock="rt-confirm-popover">
+    @if (title()) {
+        <p rtElem="title">{{ title() }}</p>
+    }
+
+    <p rtElem="message">{{ message() }}</p>
+
+    <div rtElem="actions">
+        <button
+            rtButton
+            qa-dataid="confirm-cancel"
+            type="button"
+            theme="secondary"
+            appearance="text"
+            [label]="cancelText()"
+            [attr.aria-label]="cancelText()"
+            (click)="onCancel()"></button>
+        <button
+            rtButton
+            qa-dataid="confirm-accept"
+            type="button"
+            [theme]="tone()"
+            [label]="confirmText()"
+            [attr.aria-label]="confirmText()"
+            (click)="onConfirm()"></button>
+    </div>
+</ng-container>

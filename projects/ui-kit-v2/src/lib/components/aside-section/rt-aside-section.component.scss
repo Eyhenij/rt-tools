@@ -1,0 +1,30 @@
+/* rt-aside-section — смысловая секция асайда (ViewEncapsulation.None).
+   Селектор bare `.rt-aside-section` (класс на host) — :host в None light-DOM не матчит.
+   Соседние секции разделяются верхней границей через adjacent-sibling правило. */
+
+.rt-aside-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rt-space-md);
+
+    /* Разделитель отбит от соседей одинаково: сверху его отбивает зазор зоны
+       содержимого, снизу — тот же токен. */
+    & + & {
+        padding-top: var(--rt-aside-content-gap);
+        border-top: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+    }
+
+    &__heading {
+        margin: 0;
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-text-md);
+        font-weight: var(--rt-font-weight-semibold);
+        line-height: var(--rt-leading-snug);
+    }
+
+    &__body {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rt-space-md);
+    }
+}

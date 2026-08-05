@@ -1,0 +1,19 @@
+<aside rtBlock="rt-message" qa-dataid="message-alert" role="alert" [attr.data-severity]="severity()" [rtMod]="{ severity: severity() }">
+    @if (effectiveIcon(); as iconName) {
+        <rt-icon rtElem="icon" [name]="iconName" />
+    }
+    <div rtElem="body" qa-dataid="message-body">
+        <ng-content />
+    </div>
+    @if (closable()) {
+        <rt-icon-button
+            rtElem="close"
+            qa-dataid="message-close"
+            icon="ico-close"
+            variant="ghost"
+            size="sm"
+            shape="circle"
+            [ariaLabel]="'rtKit.uiClose' | transloco"
+            (clicked)="onClose()" />
+    }
+</aside>

@@ -1,0 +1,17 @@
+@for (item of toasts(); track item.id) {
+    <rt-toast
+        qa-dataid="toast"
+        [toast]="item"
+        [index]="$index"
+        [totalToasts]="toasts().length"
+        [heights]="heights()"
+        [expanded]="expanded()"
+        [expandByDefault]="expand()"
+        [interacting]="interacting()"
+        [position]="position()"
+        [visibleToasts]="visibleToasts()"
+        [duration]="duration()"
+        (heightAdded)="onHeightAdded($event)"
+        (heightRemoved)="onHeightRemoved($event)"
+        (dismissed)="onDismissed($event)" />
+}

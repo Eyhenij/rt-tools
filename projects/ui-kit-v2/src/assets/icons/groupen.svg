@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <g transform="translate(0.0000 0.0000) scale(1.000000 1.000000)">
+        <g>
+            <path d="M0 0H6V6H0V0Z" fill="currentColor" />
+            <path d="M9 0H15V6H9V0Z" fill="currentColor" />
+            <path d="M18 0H24V6H18V0Z" fill="currentColor" />
+            <path d="M0 9H6V15H0V9Z" fill="currentColor" />
+            <path d="M9 9H15V15H9V9Z" fill="currentColor" />
+            <path d="M18 9H24V15H18V9Z" fill="currentColor" />
+            <path d="M0 18H6V24H0V18Z" fill="currentColor" />
+            <path d="M9 18H15V24H9V18Z" fill="currentColor" />
+            <path d="M18 18H24V24H18V18Z" fill="currentColor" />
+        </g>
+    </g>
+</svg>

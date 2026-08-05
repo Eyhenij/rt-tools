@@ -1,0 +1,78 @@
+.rt-textarea {
+    display: block;
+    width: 100%;
+
+    /* bordered=false: снимаем только resting-рамку контрола. Объявлено ДО блока
+       __control — его focus-visible (равная специфичность) и правило
+       --invalid __control идут ниже по source-order и перекрывают рамку. */
+    &--borderless &__control {
+        border-color: transparent;
+    }
+
+    &__control {
+        width: 100%;
+        min-height: var(--rt-textarea-min-height);
+        box-sizing: border-box;
+        padding: var(--rt-textarea-padding-y) var(--rt-input-padding-x);
+        border: var(--rt-input-border-width) solid var(--rt-input-color-border);
+        border-radius: var(--rt-input-radius);
+        background-color: var(--rt-input-color-bg);
+        color: var(--rt-input-color-text);
+
+        /* textarea не наследует font-family от body на UA-defaults (browser даёт
+           monospace) — задаём inherit явно, иначе шрифт отваливается. */
+        font-family: inherit;
+        font-size: var(--rt-input-font-size);
+        line-height: var(--rt-textarea-line-height);
+        transition: var(--rt-input-transition);
+
+        &::placeholder {
+            color: var(--rt-input-color-text-placeholder);
+            opacity: 1;
+        }
+
+        &:focus-visible {
+            border-color: var(--rt-input-color-border-focus);
+            box-shadow: var(--rt-input-focus-shadow);
+            outline: 2px solid transparent;
+            outline-offset: var(--rt-input-focus-outline-offset);
+        }
+
+        &:disabled {
+            background-color: var(--rt-input-color-bg-disabled);
+            cursor: not-allowed;
+        }
+    }
+
+    &--size--sm &__control {
+        min-height: var(--rt-textarea-min-height-sm);
+    }
+
+    &--size--lg &__control {
+        min-height: var(--rt-textarea-min-height-lg);
+    }
+
+    &--invalid &__control {
+        border-color: var(--rt-input-color-border-error);
+
+        &:focus-visible {
+            box-shadow: var(--rt-input-focus-shadow-error);
+        }
+    }
+
+    &--disabled {
+        opacity: var(--rt-input-disabled-opacity);
+    }
+
+    /* Read-only: многострочное значение как плоский текст (переносы сохраняем). */
+    &__readonly {
+        display: block;
+        color: var(--rt-field-value-color);
+        font-size: var(--rt-field-value-font-size);
+        white-space: pre-wrap;
+
+        &--empty {
+            color: var(--rt-field-value-empty-color);
+        }
+    }
+}
