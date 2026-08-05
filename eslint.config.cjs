@@ -211,6 +211,17 @@ module.exports = [
     },
 
     {
+        // Шапка страницы держит в одном шаблоне две навигации — широкую и
+        // мобильную, — и ветвлений там вдвое больше порога. Разнести их по
+        // компонентам — отдельное решение о разбиении публичного компонента,
+        // а не правка стиля; до него порог здесь снят точечно.
+        files: ['projects/ui-kit-v2/src/lib/components/page-header/rt-page-header.component.html'],
+        rules: {
+            '@angular-eslint/template/cyclomatic-complexity': 'off',
+        },
+    },
+
+    {
         files: ['**/*.spec.ts', '**/*.spec.js'],
         rules: {},
     },

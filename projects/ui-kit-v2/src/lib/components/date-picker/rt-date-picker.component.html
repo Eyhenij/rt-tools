@@ -1,0 +1,32 @@
+<ng-container rtBlock="rt-date-picker">
+    @if (isReadonly()) {
+        <span rtElem="readonly" qa-dataid="date-picker-readonly" [rtMod]="{ empty: !displayText() }">{{ displayText() || '—' }}</span>
+    } @else {
+        <input
+            #fieldEl
+            rtElem="field"
+            qa-dataid="date-picker-control"
+            [type]="type()"
+            [value]="value()"
+            [disabled]="isDisabled()"
+            [attr.id]="effectiveControlId()"
+            [attr.aria-label]="ariaLabel()"
+            [attr.aria-invalid]="isInvalid() || null"
+            [attr.min]="min()"
+            [attr.max]="max()"
+            (input)="onInput($event)"
+            (blur)="onBlur()" />
+        @if (showClearButton()) {
+            <rt-icon-button
+                rtElem="clear"
+                qa-dataid="date-picker-clear"
+                icon="ico-close"
+                size="sm"
+                variant="ghost"
+                iconColor="muted"
+                [ariaLabel]="'rtKit.uiClear' | transloco"
+                [tabIndex]="-1"
+                (clicked)="clear($event)" />
+        }
+    }
+</ng-container>

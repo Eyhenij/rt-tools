@@ -1,0 +1,48 @@
+<ng-container rtBlock="rt-input">
+    @if (isReadonly()) {
+        <span rtElem="readonly" qa-dataid="input-readonly" [rtMod]="{ empty: !displayText() }">{{ displayText() || '—' }}</span>
+    } @else {
+        @if (iconLeft(); as left) {
+            <rt-icon rtElem="icon-left" size="sm" color="muted" [name]="left" />
+        }
+        <input
+            #fieldEl
+            rtElem="field"
+            qa-dataid="input-control"
+            [type]="effectiveType()"
+            [placeholder]="placeholder()"
+            [value]="value()"
+            [disabled]="isDisabled()"
+            [attr.autocomplete]="autocomplete()"
+            [attr.id]="effectiveControlId()"
+            [attr.aria-label]="ariaLabel()"
+            [attr.aria-invalid]="isInvalid() || null"
+            (input)="onInput($event)"
+            (blur)="onBlur()" />
+        @if (showClearButton() && !showPasswordToggle()) {
+            <rt-icon-button
+                rtElem="clear"
+                qa-dataid="input-clear"
+                icon="ico-close"
+                size="sm"
+                variant="ghost"
+                iconColor="muted"
+                [ariaLabel]="'rtKit.uiClear' | transloco"
+                [tabIndex]="-1"
+                (clicked)="clear($event)" />
+        }
+        @if (showPasswordToggle()) {
+            <button
+                rtElem="toggle"
+                qa-dataid="input-password-toggle"
+                type="button"
+                [attr.aria-label]="isPasswordVisible() ? ('rtKit.uiHidePassword' | transloco) : ('rtKit.uiShowPassword' | transloco)"
+                [tabIndex]="-1"
+                (click)="togglePassword()">
+                <rt-icon size="sm" color="muted" [name]="passwordToggleIcon()" />
+            </button>
+        } @else if (iconRight(); as right) {
+            <rt-icon rtElem="icon-right" size="sm" color="muted" [name]="right" />
+        }
+    }
+</ng-container>

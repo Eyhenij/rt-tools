@@ -1,0 +1,62 @@
+<ng-container rtBlock="rt-split-button">
+    <!-- Popover висит на всём контроле (а не на узкой каретке): width="trigger"
+         делает меню по ширине кнопки, originX:start — ровно под её левым краем,
+         без горизонтального вылета за экран. Триггер manual — открывает каретка. -->
+    <div
+        rtElem="control"
+        rtPopoverTrigger="manual"
+        rtPopoverWidth="trigger"
+        rtPopoverPanelClass="rt-split-button-menu-panel"
+        [rtPopover]="menuTpl"
+        [rtPopoverOffsetY]="6"
+        [rtPopoverDisabled]="disabled() || loading()">
+        <button
+            rtButton
+            rtElem="face"
+            qa-dataid="split-button-face"
+            type="button"
+            [label]="label()"
+            [theme]="theme()"
+            [size]="size()"
+            [attr.aria-label]="label()"
+            [loading]="loading()"
+            [disabled]="disabled()"
+            (click)="onFace()"></button>
+
+        <button
+            rtButton
+            rtElem="toggle"
+            qa-dataid="split-button-toggle"
+            type="button"
+            icon="chevron-down"
+            [theme]="theme()"
+            [size]="size()"
+            [attr.aria-label]="menuAriaText()"
+            [disabled]="disabled() || loading()"
+            (click)="onToggle()"></button>
+    </div>
+
+    <ng-template #menuTpl>
+        <ul rtElem="menu" qa-dataid="split-button-menu" role="menu">
+            @for (item of menuItems(); track item.value) {
+                <li role="none">
+                    <button
+                        rtButton
+                        rtElem="menu-item"
+                        qa-dataid="split-button-menu-item"
+                        type="button"
+                        theme="secondary"
+                        appearance="text"
+                        size="sm"
+                        role="menuitem"
+                        [attr.data-value]="item.value"
+                        [label]="item.label"
+                        [icon]="item.icon ?? null"
+                        [attr.aria-label]="item.label"
+                        [disabled]="item.disabled ?? false"
+                        (click)="onItem(item)"></button>
+                </li>
+            }
+        </ul>
+    </ng-template>
+</ng-container>

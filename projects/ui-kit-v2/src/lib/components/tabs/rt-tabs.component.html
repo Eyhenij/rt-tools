@@ -1,0 +1,100 @@
+<ng-container rtBlock="rt-tabs">
+    <div rtElem="header">
+        @if (leftControls().length) {
+            <div rtElem="controls" [rtMod]="{ before: true }">
+                @for (control of leftControls(); track $index) {
+                    <ng-container [ngTemplateOutlet]="control.templateRef" />
+                }
+            </div>
+        }
+
+        <div rtElem="tab-list-wrapper">
+            <div
+                rtElem="rest"
+                qa-dataid="tabs-scroll-prev"
+                [rtMod]="{ before: true, visible: restBeforeVisible() }"
+                (mousedown)="onRestPointerDown('before', $event)"
+                (mouseup)="onRestPointerUp()"
+                (mouseleave)="onRestPointerUp()">
+                <rt-icon rtElem="rest-icon" name="chevron-left" color="current" size="sm" />
+            </div>
+
+            <div
+                #tabList
+                rtElem="tab-list"
+                qa-dataid="tabs-tab-list"
+                role="tablist"
+                [rtMod]="{ stretch: stretch(), direction: direction() }"
+                [attr.aria-orientation]="direction()"
+                (scroll)="onTabListScroll()">
+                @for (tab of visibleTabs(); track tab.id()) {
+                    <button
+                        rtBlock="rt-tab-item"
+                        qa-dataid="tabs-tab"
+                        type="button"
+                        role="tab"
+                        [rtMod]="{
+                            selected: tab.id() === selectedId(),
+                            disabled: tab.disabled(),
+                            invalid: tab.invalid(),
+                            stretch: stretch(),
+                        }"
+                        [id]="'rt-tab-' + tab.id()"
+                        [disabled]="tab.disabled()"
+                        [attr.data-tabid]="tab.id()"
+                        [attr.aria-selected]="tab.id() === selectedId()"
+                        [attr.aria-controls]="'rt-tabpanel-' + tab.id()"
+                        [attr.tabindex]="tab.id() === selectedId() ? 0 : -1"
+                        [rtTooltip]="tab.invalid() ? tab.invalidTitle() : ''"
+                        (click)="selectTab(tab.id())"
+                        (keydown)="onTabKeydown($event)">
+                        @if (tab.icon(); as icon) {
+                            <rt-icon rtElem="icon" size="sm" [name]="icon" [color]="tab.iconColor()" />
+                        }
+
+                        @if (tab.titleTemplate(); as titleTpl) {
+                            <ng-container [ngTemplateOutlet]="titleTpl" />
+                        } @else {
+                            <span rtElem="title">{{ tab.label() }}</span>
+                        }
+
+                        @if (tab.badge() !== null) {
+                            <span rtElem="badge">{{ tab.badge() }}</span>
+                        }
+                    </button>
+                }
+            </div>
+
+            <div
+                rtElem="rest"
+                qa-dataid="tabs-scroll-next"
+                [rtMod]="{ after: true, visible: restAfterVisible() }"
+                (mousedown)="onRestPointerDown('after', $event)"
+                (mouseup)="onRestPointerUp()"
+                (mouseleave)="onRestPointerUp()">
+                <rt-icon rtElem="rest-icon" name="chevron-right" color="current" size="sm" />
+            </div>
+        </div>
+
+        @if (rightControls().length) {
+            <div rtElem="controls" [rtMod]="{ after: true }">
+                @for (control of rightControls(); track $index) {
+                    <ng-container [ngTemplateOutlet]="control.templateRef" />
+                }
+            </div>
+        }
+    </div>
+
+    @if (activeTab(); as tab) {
+        <div
+            rtElem="content"
+            qa-dataid="tabs-panel"
+            role="tabpanel"
+            tabindex="0"
+            [rtMod]="{ scrollable: contentScrollable() }"
+            [id]="'rt-tabpanel-' + tab.id()"
+            [attr.aria-labelledby]="'rt-tab-' + tab.id()">
+            <ng-container [ngTemplateOutlet]="tab.templateRef" />
+        </div>
+    }
+</ng-container>

@@ -1,0 +1,23 @@
+<article
+    rtBlock="rt-card"
+    qa-dataid="card"
+    [rtMod]="{ clickable: clickable() }"
+    [attr.role]="clickable() ? 'button' : null"
+    [attr.tabindex]="clickable() ? 0 : null"
+    [attr.aria-label]="ariaLabel()"
+    (click)="onClick($event)"
+    (keydown.enter)="onKeyActivate($event)"
+    (keydown.space)="onKeyActivate($event)">
+    <header rtElem="header">
+        @if (header(); as h) {
+            <h3 rtElem="title" qa-dataid="card-title">{{ h }}</h3>
+        }
+        <ng-content select="[rtCardHeader]" />
+    </header>
+    <div rtElem="content">
+        <ng-content />
+    </div>
+    <footer rtElem="footer">
+        <ng-content select="[rtCardFooter]" />
+    </footer>
+</article>

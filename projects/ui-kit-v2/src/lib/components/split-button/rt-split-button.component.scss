@@ -1,0 +1,64 @@
+/* rt-split-button — основной CTA + каретка с меню второстепенных действий.
+   ViewEncapsulation.None: селекторы префиксованы `.rt-split-button`. Меню
+   рендерится в CDK Overlay, поэтому `__menu` стилизуется глобально (вне host'а). */
+
+.rt-split-button {
+    display: inline-flex;
+
+    /* Контрол — origin popover'а (width="trigger" берёт его ширину) и flex-ряд
+       лица + каретки. */
+    &__control {
+        display: inline-flex;
+        width: 100%;
+        align-items: stretch;
+    }
+
+    /* Лицо и каретка сшиты в один контрол: смежные углы выпрямлены,
+       каретку отделяет тонкий делитель. */
+    &__face.rt-button {
+        border-end-end-radius: 0;
+        border-start-end-radius: 0;
+    }
+
+    &__toggle.rt-button {
+        min-width: 0;
+        border-end-start-radius: 0;
+        border-inline-start: var(--rt-border-width-thin) solid color-mix(in srgb, var(--rt-color-text-inverse) 24%, transparent);
+        border-start-start-radius: 0;
+        padding-inline: var(--rt-space-sm);
+
+        /* Шеврон наследует цвет текста кнопки: svg `.rt-button__icon` без
+           `fill: currentColor` тянет дефолтный чёрный, не цвет лейбла. */
+        .rt-button__icon {
+            fill: currentcolor;
+            transition: transform var(--rt-duration-fast) ease;
+        }
+    }
+
+    /* Открытое меню — шеврон смотрит вверх (как у select/multiselect). */
+    &--open &__toggle.rt-button .rt-button__icon {
+        transform: rotate(180deg);
+    }
+
+    /* Меню (overlay). width="trigger" задаёт ширину панели = ширине контрола,
+       поэтому меню тянется на 100% и box-sizing учитывает падинг. */
+    &__menu {
+        display: flex;
+        width: 100%;
+        box-sizing: border-box;
+        flex-direction: column;
+        padding: var(--rt-space-2xs);
+        border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+        border-radius: var(--rt-radius-md);
+        margin: 0;
+        background: var(--rt-color-bg-surface);
+        box-shadow: var(--rt-shadow-lg);
+        gap: var(--rt-space-2xs);
+        list-style: none;
+    }
+
+    &__menu-item.rt-button {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}

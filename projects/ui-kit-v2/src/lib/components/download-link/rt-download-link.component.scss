@@ -1,0 +1,22 @@
+.rt-download-link {
+    display: inline-flex;
+
+    &__button {
+        display: inline-flex;
+        align-items: center;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--rt-color-text-link);
+        cursor: pointer;
+        font-family: var(--rt-font-family-sans);
+        font-size: var(--rt-text-xs);
+        font-weight: var(--rt-font-weight-medium);
+        gap: var(--rt-space-sm);
+        line-height: var(--rt-leading-snug);
+    }
+
+    &__icon {
+        color: var(--rt-color-text-link);
+    }
+}

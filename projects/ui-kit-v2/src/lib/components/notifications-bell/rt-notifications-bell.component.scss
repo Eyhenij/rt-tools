@@ -1,0 +1,32 @@
+.rt-notifications-bell {
+    display: inline-flex;
+    min-height: var(--rt-nav-item-height);
+    align-items: center;
+    padding: var(--rt-nav-item-padding);
+    border: 0;
+    border-radius: var(--rt-radius-md);
+    background-color: transparent;
+    color: var(--rt-nav-item-color);
+    cursor: pointer;
+    gap: var(--rt-nav-item-content-gap);
+    transition: color var(--rt-duration-fast) linear;
+
+    &:hover {
+        color: var(--rt-nav-item-color-hover);
+    }
+
+    &:focus-visible {
+        outline: var(--rt-border-width-thin) dashed var(--rt-color-border-strong);
+        outline-offset: calc(var(--rt-space-0-5) * -1);
+    }
+
+    /* Точка идёт следом за иконкой, в потоке содержимого кнопки: место ей даёт
+       общий зазор, как и у пункта меню. */
+    &__marker {
+        width: var(--rt-nav-marker-size);
+        height: var(--rt-nav-marker-size);
+        flex-shrink: 0;
+        border-radius: var(--rt-radius-full);
+        background-color: var(--rt-nav-marker-color);
+    }
+}

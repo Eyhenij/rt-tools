@@ -1,0 +1,95 @@
+/* rt-tag — status pill в common/ui (Emulated encapsulation; :host обязательно). */
+
+:host {
+    display: inline-flex;
+
+    .rt-tag {
+        display: inline-flex;
+        align-items: center;
+        padding: var(--rt-space-1) var(--rt-space-2);
+        border-radius: var(--rt-radius-md);
+        background: var(--rt-neutral-100);
+        color: var(--rt-neutral-700);
+        font-size: var(--rt-text-sm);
+        gap: var(--rt-space-1);
+        line-height: var(--rt-leading-tight);
+
+        &--shape--pill {
+            border-radius: var(--rt-radius-full);
+        }
+
+        &--shape--square {
+            border-radius: var(--rt-radius-sm);
+        }
+
+        /* Явный radius переопределяет shape — правила идут позже по порядку. */
+        &--radius--none {
+            border-radius: var(--rt-radius-none);
+        }
+
+        &--radius--sm {
+            border-radius: var(--rt-radius-sm);
+        }
+
+        &--radius--md {
+            border-radius: var(--rt-radius-md);
+        }
+
+        &--radius--lg {
+            border-radius: var(--rt-radius-lg);
+        }
+
+        &--radius--full {
+            border-radius: var(--rt-radius-full);
+        }
+
+        &--severity--info {
+            background: var(--rt-color-state-info-bg);
+            color: var(--rt-color-state-info);
+        }
+
+        &--severity--success {
+            background: var(--rt-color-state-success-bg);
+            color: var(--rt-color-state-success);
+        }
+
+        &--severity--warning {
+            background: var(--rt-color-state-warning-bg);
+            color: var(--rt-color-state-warning);
+        }
+
+        &--severity--danger {
+            background: var(--rt-color-state-danger-bg);
+            color: var(--rt-color-state-danger);
+        }
+
+        &--severity--secondary,
+        &--severity--neutral {
+            background: var(--rt-color-bg-subtle);
+            color: var(--rt-color-text-primary);
+        }
+
+        /* Outlined: прозрачный фон + рамка цвета палитры (currentColor = текст).
+           После severity-блоков — иначе их `background` перебил бы transparent. */
+        &--appearance--outlined {
+            border: var(--rt-border-width-thin) solid currentcolor;
+            background: transparent;
+        }
+
+        &__icon {
+            flex-shrink: 0;
+        }
+
+        &__icon-end {
+            flex-shrink: 0;
+        }
+
+        &__text {
+            line-height: var(--rt-leading-none);
+        }
+
+        &__close {
+            margin-inline-start: var(--rt-space-0-5);
+        }
+    }
+}

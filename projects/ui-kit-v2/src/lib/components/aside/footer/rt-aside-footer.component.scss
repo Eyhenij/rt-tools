@@ -1,0 +1,22 @@
+/* rt-aside-footer — footer-слот side-sheet'а. ViewEncapsulation.None. */
+
+.rt-aside-footer {
+    padding-top: var(--rt-aside-inset);
+
+    /* Верхний разделитель не на всю ширину панели: margin отбивает футер по
+       горизонтали на тот же инсет, что и контентная зона, поэтому
+       border-block-start совпадает по краям с контентом. */
+    margin: var(--rt-aside-inset);
+    border-block-start: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+
+    &__content {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: var(--rt-space-sm);
+    }
+
+    &:empty {
+        display: none;
+    }
+}

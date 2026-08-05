@@ -1,0 +1,46 @@
+@use '../../../styles/mixins' as kv;
+
+.rt-info-item {
+    @include kv.surface-card;
+
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    margin: 0;
+    gap: var(--rt-space-0-5);
+
+    &--grow {
+        flex: 1 0 0;
+    }
+
+    &__label {
+        margin: 0;
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-text-xs);
+        font-weight: var(--rt-font-weight-regular);
+        letter-spacing: var(--rt-letter-spacing-wide);
+        line-height: var(--rt-leading-snug);
+    }
+
+    &__value {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        margin: 0;
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-text-sm);
+        font-weight: var(--rt-font-weight-bold);
+        gap: var(--rt-space-0-5);
+        letter-spacing: var(--rt-letter-spacing-wide);
+        line-height: var(--rt-leading-snug);
+        overflow-wrap: anywhere;
+    }
+
+    &__value-skeleton {
+        display: block;
+    }
+}
+
+[data-theme='dark'] .rt-info-item {
+    @include kv.surface-card-dark;
+}

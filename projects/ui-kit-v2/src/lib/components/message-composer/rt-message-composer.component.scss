@@ -1,0 +1,59 @@
+.rt-message-composer {
+    display: flex;
+    flex-direction: column;
+    padding: var(--rt-space-3);
+    border: var(--rt-border-width-thin) solid var(--rt-color-border-default);
+    border-radius: var(--rt-radius-md);
+    background: var(--rt-color-bg-surface-default, transparent);
+    gap: var(--rt-space-2);
+
+    &:focus-within {
+        border-color: var(--rt-color-border-strong, var(--rt-color-border-default));
+    }
+
+    &__input {
+        padding: 0;
+        border: 0;
+        margin: 0;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        font-size: var(--rt-text-sm);
+        inline-size: 100%;
+        line-height: var(--rt-leading-snug);
+        outline: 0;
+        resize: none;
+
+        &::placeholder {
+            color: var(--rt-color-text-muted);
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+        }
+    }
+
+    &__files {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rt-space-1);
+    }
+
+    // Разделитель тянется на всю ширину бокса — компенсируем горизонтальный padding.
+    &__divider {
+        background: var(--rt-color-border-default);
+        block-size: var(--rt-border-width-thin);
+        margin-inline: calc(-1 * var(--rt-space-3));
+    }
+
+    &__controls {
+        display: flex;
+        align-items: center;
+        gap: var(--rt-space-2);
+    }
+
+    // Кнопка отправки всегда у правого края, даже когда attach скрыт.
+    &__send {
+        margin-inline-start: auto;
+    }
+}

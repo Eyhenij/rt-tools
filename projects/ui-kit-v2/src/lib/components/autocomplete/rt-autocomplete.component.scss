@@ -1,0 +1,143 @@
+.rt-autocomplete {
+    position: relative;
+    display: block;
+    width: 100%;
+
+    /* Поле-контейнер: рамка/фон/паддинги/flex — как у rt-input, чтобы префикс-
+       иконка и крестик были flex-child'ами с одинаковыми (через gap) отступами. */
+    &__field {
+        display: inline-flex;
+        width: 100%;
+        min-height: var(--rt-input-height);
+        box-sizing: border-box;
+        align-items: center;
+        padding: var(--rt-input-padding-y) var(--rt-input-padding-x);
+        border: var(--rt-input-border-width) solid var(--rt-input-color-border);
+        border-radius: var(--rt-input-radius);
+        background-color: var(--rt-input-color-bg);
+        color: var(--rt-input-color-text);
+        cursor: text;
+        font-size: var(--rt-input-font-size);
+        gap: var(--rt-space-sm);
+        line-height: var(--rt-input-line-height);
+        transition: var(--rt-input-transition);
+
+        &:focus-within {
+            border-color: var(--rt-input-color-border-focus);
+            box-shadow: var(--rt-input-focus-shadow);
+            outline: 2px solid transparent;
+            outline-offset: var(--rt-input-focus-outline-offset);
+        }
+    }
+
+    /* bordered=false: снимаем только resting-рамку; --open/--invalid ниже по
+       source-order перекрывают её своей рамкой. */
+    &--borderless &__field {
+        border-color: transparent;
+    }
+
+    &--open &__field {
+        border-color: var(--rt-input-color-border-focus);
+    }
+
+    &--invalid &__field {
+        border-color: var(--rt-input-color-border-error);
+
+        &:focus-within {
+            box-shadow: var(--rt-input-focus-shadow-error);
+        }
+    }
+
+    &--disabled &__field {
+        cursor: not-allowed;
+        opacity: var(--rt-input-disabled-opacity);
+    }
+
+    &--size--sm &__field {
+        min-height: var(--rt-input-height-sm);
+    }
+
+    &--size--lg &__field {
+        min-height: var(--rt-input-height-lg);
+    }
+
+    /* Read-only: поле-контейнер скрыт (остаётся в DOM ради viewChild.required
+       popover'а), значение показывает плоский текст __readonly. */
+    &--readonly &__field {
+        display: none;
+    }
+
+    &__readonly {
+        display: inline-flex;
+        min-height: var(--rt-input-height);
+        align-items: center;
+        color: var(--rt-field-value-color);
+        font-size: var(--rt-field-value-font-size);
+
+        &--empty {
+            color: var(--rt-field-value-empty-color);
+        }
+    }
+
+    &__input {
+        min-width: 0;
+        flex: 1 1 auto;
+        padding: 0;
+        border: none;
+        background: transparent;
+        color: inherit;
+
+        /* Наследуем шрифт от __field, иначе нативный <input> берёт UA-шрифт. */
+        font: inherit;
+        outline: none;
+
+        &::placeholder {
+            color: var(--rt-input-color-text-placeholder);
+            opacity: 1;
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+        }
+    }
+
+    &__icon-left,
+    &__clear {
+        flex-shrink: 0;
+    }
+
+    /* Panel рендерится в CDK Overlay (body) — позиционирование на CDK.
+       width:100% — заполнить overlay-pane (CDK ставит pane = ширине trigger'а
+       через rtPopoverWidth="trigger"; flex-pane сам не растягивает контент). */
+    &__panel {
+        width: 100%;
+        max-height: var(--rt-input-panel-max-height);
+        box-sizing: border-box;
+        padding: var(--rt-space-2xs) 0;
+        border: var(--rt-input-border-width) solid var(--rt-color-border-subtle);
+        border-radius: var(--rt-input-radius);
+        margin: 0;
+        background-color: var(--rt-color-bg-surface);
+        box-shadow: var(--rt-shadow-md);
+        list-style: none;
+        overflow-y: auto;
+    }
+
+    &__option {
+        padding: var(--rt-space-sm) var(--rt-space-md);
+        color: var(--rt-color-text-primary);
+        cursor: pointer;
+        font-size: var(--rt-input-font-size);
+
+        &:hover,
+        &--active {
+            background-color: var(--rt-color-bg-hover);
+        }
+    }
+
+    &__empty {
+        padding: var(--rt-space-sm) var(--rt-space-md);
+        color: var(--rt-input-color-text-placeholder);
+        font-style: italic;
+    }
+}

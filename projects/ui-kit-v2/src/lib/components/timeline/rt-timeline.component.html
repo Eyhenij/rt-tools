@@ -1,0 +1,25 @@
+<ol rtBlock="rt-timeline" qa-dataid="timeline">
+    @for (step of steps(); track $index; let last = $last) {
+        <li rtElem="item" qa-dataid="timeline-item" [attr.data-status]="step.status" [rtMod]="{ status: step.status }">
+            <span rtElem="rail" aria-hidden="true">
+                <span rtElem="dot" [rtMod]="{ status: step.status }"></span>
+                @if (!last) {
+                    <span rtElem="line"></span>
+                }
+            </span>
+            <span rtElem="body">
+                <span rtElem="label" qa-dataid="timeline-item-label">{{ step.label }}</span>
+                @if (step.meta || step.actor) {
+                    <span rtElem="meta">
+                        @if (step.meta) {
+                            <span rtElem="time" qa-dataid="timeline-item-time">{{ step.meta }}</span>
+                        }
+                        @if (step.actor) {
+                            <span rtElem="actor" qa-dataid="timeline-item-actor">{{ step.actor }}</span>
+                        }
+                    </span>
+                }
+            </span>
+        </li>
+    }
+</ol>

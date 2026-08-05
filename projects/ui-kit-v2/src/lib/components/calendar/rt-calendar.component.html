@@ -1,0 +1,63 @@
+<ng-container rtBlock="rt-calendar">
+    <div rtElem="header">
+        <rt-icon-button
+            rtElem="nav"
+            qa-dataid="calendar-prev-month"
+            icon="chevron-left"
+            variant="secondary"
+            shape="circle"
+            [ariaLabel]="prevAriaLabel()"
+            [disabled]="!canPrev()"
+            (clicked)="prevMonth.emit()" />
+        <ng-content select="[calendarHint]" />
+        <rt-icon-button
+            rtElem="nav"
+            qa-dataid="calendar-next-month"
+            icon="chevron-right"
+            variant="secondary"
+            shape="circle"
+            [ariaLabel]="nextAriaLabel()"
+            [disabled]="!canNext()"
+            (clicked)="nextMonth.emit()" />
+    </div>
+
+    <div rtElem="months" qa-dataid="calendar-months">
+        @for (month of months(); track month.key) {
+            <div rtElem="month" qa-dataid="calendar-month">
+                <p rtElem="month-title" qa-dataid="calendar-month-title">{{ month.label }}</p>
+                <div rtElem="grid" qa-dataid="calendar-grid">
+                    @for (weekday of weekdayLabels(); track $index) {
+                        <span rtElem="weekday" qa-dataid="calendar-weekday">{{ weekday }}</span>
+                    }
+                    @for (blank of month.leadingBlanks; track blank) {
+                        <span rtElem="blank"></span>
+                    }
+                    @for (day of month.days; track day.key) {
+                        <button
+                            rtElem="day"
+                            qa-dataid="calendar-day"
+                            type="button"
+                            [attr.data-iso]="day.key"
+                            [attr.data-state]="day.state"
+                            [disabled]="day.disabled"
+                            (click)="onDayClick(day)">
+                            <span rtElem="day-num" qa-dataid="calendar-day-num">{{ day.dayOfMonth }}</span>
+                            @if (sublabelsLoading()) {
+                                <rt-skeleton
+                                    rtElem="day-sublabel"
+                                    qa-dataid="calendar-day-price-skeleton"
+                                    width="80%"
+                                    borderRadius="sm"
+                                    [height]="sublabelSkeletonHeight" />
+                            } @else if (day.sublabel) {
+                                <span rtElem="day-sublabel" qa-dataid="calendar-day-price">{{ day.sublabel }}</span>
+                            }
+                        </button>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <ng-content />
+</ng-container>

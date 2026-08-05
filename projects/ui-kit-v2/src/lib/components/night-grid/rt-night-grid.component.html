@@ -1,0 +1,15 @@
+<div rtBlock="rt-night-grid" qa-dataid="night-grid" role="list" [attr.aria-label]="ariaText()">
+    @for (cell of cells(); track cell.id) {
+        <button
+            rtElem="cell"
+            qa-dataid="night-grid-cell"
+            type="button"
+            role="listitem"
+            [attr.data-id]="cell.id"
+            [attr.data-state]="cell.state"
+            [rtMod]="{ state: cell.state }"
+            [attr.title]="cell.title"
+            [attr.aria-label]="cell.title"
+            (click)="onCellClick(cell)"></button>
+    }
+</div>

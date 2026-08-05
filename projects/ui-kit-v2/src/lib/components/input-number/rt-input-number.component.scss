@@ -1,0 +1,102 @@
+.rt-input-number {
+    position: relative;
+    display: inline-flex;
+    width: 100%;
+    min-height: var(--rt-input-height);
+    box-sizing: border-box;
+    align-items: center;
+    padding: var(--rt-input-padding-y) var(--rt-input-padding-x);
+    border: var(--rt-input-border-width) solid var(--rt-input-color-border);
+    border-radius: var(--rt-input-radius);
+    background-color: var(--rt-input-color-bg);
+    color: var(--rt-input-color-text);
+    cursor: text;
+    font-size: var(--rt-input-font-size);
+    gap: var(--rt-space-sm);
+    line-height: var(--rt-input-line-height);
+    transition: var(--rt-input-transition);
+
+    &:focus-within {
+        border-color: var(--rt-input-color-border-focus);
+        box-shadow: var(--rt-input-focus-shadow);
+        outline: 2px solid transparent;
+        outline-offset: var(--rt-input-focus-outline-offset);
+    }
+
+    /* bordered=false: снимаем только resting-рамку; invalid/focus/readonly идут
+       ниже по source-order и перекрывают её своей рамкой. */
+    &--borderless {
+        border-color: transparent;
+    }
+
+    &--invalid {
+        border-color: var(--rt-input-color-border-error);
+
+        &:focus-within {
+            box-shadow: var(--rt-input-focus-shadow-error);
+        }
+    }
+
+    &--disabled {
+        cursor: not-allowed;
+        opacity: var(--rt-input-disabled-opacity);
+    }
+
+    &--size--sm {
+        min-height: var(--rt-input-height-sm);
+    }
+
+    &--size--lg {
+        min-height: var(--rt-input-height-lg);
+    }
+
+    /* Read-only: плоский текст вместо input — снимаем рамку/фон/паддинги. */
+    &--readonly {
+        padding-right: 0;
+        padding-left: 0;
+        border-color: transparent;
+        background-color: transparent;
+        cursor: default;
+    }
+
+    &__readonly {
+        color: var(--rt-field-value-color);
+        font-size: var(--rt-field-value-font-size);
+
+        &--empty {
+            color: var(--rt-field-value-empty-color);
+        }
+    }
+
+    &__field {
+        min-width: 0;
+        flex: 1 1 auto;
+        padding: 0;
+        border: none;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        outline: none;
+
+        &::placeholder {
+            color: var(--rt-input-color-text-placeholder);
+            opacity: 1;
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+        }
+    }
+
+    &__icon-left,
+    &__prefix,
+    &__clear {
+        flex-shrink: 0;
+    }
+
+    /* Текстовый префикс (напр. «₽»): приглушён, неинтерактивен. */
+    &__prefix {
+        color: var(--rt-color-text-muted);
+        user-select: none;
+    }
+}

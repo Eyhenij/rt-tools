@@ -1,0 +1,222 @@
+/* Primitive design tokens — single source of truth для шкал. */
+
+:root {
+    /* Neutral scale — серо-сине-стальная. */
+    --rt-neutral-0: #fff;
+    --rt-neutral-50: #fafafa;
+    --rt-neutral-100: #f6f7f9;
+    --rt-neutral-150: #eef0f4;
+    --rt-neutral-200: #e6e6e6;
+    --rt-neutral-250: #d2d2d2;
+    --rt-neutral-280: #bebebe;
+    --rt-neutral-300: #cad5e2;
+    --rt-neutral-350: #b1b1b1;
+    --rt-neutral-400: #90a1b9;
+    --rt-neutral-420: #9e9e9e;
+    --rt-neutral-450: #909090;
+    --rt-neutral-520: #707070;
+    --rt-neutral-500: #7e7e7e;
+
+    /* Самый светлый серый, проходящий порог AA (4.5:1) на белом — 4.54:1.
+       Ниже него подпись на светлой поверхности порог не берёт. */
+    --rt-neutral-510: #767676;
+    --rt-neutral-550: #666;
+    --rt-neutral-600: #6b7280;
+    --rt-neutral-700: #3b4557;
+    --rt-neutral-800: #364152;
+    --rt-neutral-900: #1f1f1f;
+    --rt-neutral-950: #122341;
+
+    /* Blue — brand accent */
+    --rt-blue-50: #eff6ff;
+    --rt-blue-100: #dbeafe;
+    --rt-blue-150: #ddebf6;
+    --rt-blue-300: #93c5fd;
+    --rt-blue-400: #5496ff; /* отметка прочтения в чате */
+    --rt-blue-500: #155dfc; /* brand */
+    --rt-blue-600: #0e4ad6;
+    --rt-blue-700: #0c3fb0;
+    --rt-blue-900: #182142;
+
+    /* Charcoal — тёплый графит для тёмной темы. */
+    --rt-charcoal-950: #17181c; /* глубокий фон / приподнятая alt-поверхность, subtle */
+    --rt-charcoal-900: #1b1f22; /* фон страницы */
+    --rt-charcoal-800: #222629; /* основная поверхность / карточка */
+    --rt-charcoal-700: #2a2f33; /* hover / приподнятая поверхность / secondary action */
+    --rt-charcoal-border: #33383d; /* граница по умолчанию */
+    --rt-charcoal-border-strong: #444a50; /* усиленная граница */
+
+    /* Stepper rail — приглушённые оттенки трека/прогресса прогресс-полосы. */
+    --rt-gray-350: #b3b3b3; /* трек, light */
+    --rt-navy-600: #435775; /* трек, dark */
+    --rt-slate-300: #a9b8cd; /* пройденный прогресс, dark */
+
+    /* Status — success/warning/danger/info */
+    --rt-success-50: #ecfdf5;
+    --rt-success-100: #eafaf5;
+    --rt-success-500: #059669;
+    --rt-success-600: #047857;
+    --rt-success-700: #088e63;
+    --rt-warning-50: #fffbeb;
+    --rt-warning-500: #d97706;
+    --rt-warning-600: #b45309;
+    --rt-yellow-400: #f4d85a;
+    --rt-amber-400: #f49f5a;
+    --rt-danger-50: #fef2f2;
+    --rt-danger-500: #dc2626;
+    --rt-danger-600: #d32f2f;
+    --rt-danger-700: #b91c1c;
+    --rt-info-50: #eff6ff;
+    --rt-info-500: #2563eb;
+    --rt-info-600: #1d4ed8;
+
+    /* Spacing — 8px base (off-grid half-steps помечены @deprecated). */
+    --rt-space-0: 0;
+    --rt-space-0-5: 2px;
+    --rt-space-1: 4px;
+
+    /* @deprecated off-grid — округлять к --rt-space-2 (8) или --rt-space-1 (4). */
+    --rt-space-1-5: 6px;
+    --rt-space-2: 8px;
+
+    /* @deprecated off-grid — округлять к --rt-space-2 (8) или --rt-space-md (16). */
+    --rt-space-2-5: 10px;
+
+    /* @deprecated off-grid — округлять к --rt-space-md (16). */
+    --rt-space-3: 12px;
+    --rt-space-4: 16px;
+    --rt-space-5: 20px;
+    --rt-space-6: 24px;
+
+    /* @deprecated off-grid — заведён под промежуток между группами панели навигации. */
+    --rt-space-7: 28px;
+    --rt-space-8: 32px;
+    --rt-space-10: 40px;
+    --rt-space-12: 48px;
+    --rt-space-16: 64px;
+    --rt-space-20: 80px;
+    --rt-space-24: 96px;
+
+    /* Radius */
+    --rt-radius-none: 0;
+    --rt-radius-xs: 2px;
+    --rt-radius-sm: 4px;
+    --rt-radius-ms: 6px;
+    --rt-radius-md: 8px;
+    --rt-radius-lg: 10px;
+    --rt-radius-xl: 15px;
+    --rt-radius-2xl: 20px;
+    --rt-radius-full: 9999px;
+
+    /* Typography — font-family */
+
+    /* Noto-начертания идут после Montserrat запасными: они подхватывают тайский,
+       хангыль и деванагари, которых в основном шрифте нет, и не трогают латиницу
+       с кириллицей — браузер берёт из них только недостающие знаки. */
+    --rt-font-family-sans: 'Montserrat', 'Noto Sans Thai', 'Noto Sans KR', 'Noto Sans Devanagari', system-ui, sans-serif;
+    --rt-font-family-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+    /* Typography — text size scale */
+
+    /* Ступень ниже 2xs — только для узких экранов: цена в клетке календаря
+       набрана неразрывным пробелом и не переносится, поэтому семь колонок
+       упираются в ширину строки, а не в отступы */
+    --rt-text-3xs: 9px;
+    --rt-text-2xs: 10px;
+    --rt-text-xs: 12px;
+    --rt-text-sm: 14px;
+    --rt-text-md: 16px;
+    --rt-text-lg: 18px;
+    --rt-text-xl: 20px;
+    --rt-text-2xl: 24px;
+    --rt-text-3xl: 32px;
+    --rt-text-4xl: 40px;
+
+    /* Typography — line-height */
+    --rt-leading-none: 1;
+    --rt-leading-tight: 1.2;
+    --rt-leading-snug: 1.35;
+    --rt-leading-normal: 1.5;
+    --rt-leading-relaxed: 1.65;
+
+    /* Typography — font-weight */
+    --rt-font-weight-regular: 400;
+    --rt-font-weight-medium: 500;
+    --rt-font-weight-semibold: 600;
+    --rt-font-weight-bold: 700;
+
+    /* Shadows — shadow-card литерал (НЕ алиас на shadow-md) */
+    --rt-shadow-none: none;
+    --rt-shadow-sm: 0 1px 2px rgb(0 0 0 / 5%);
+    --rt-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -2px rgb(0 0 0 / 6%);
+    --rt-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -4px rgb(0 0 0 / 6%);
+    --rt-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 12%), 0 8px 10px -6px rgb(0 0 0 / 8%);
+    --rt-shadow-card: 0 4px 16px rgb(0 0 0 / 8%);
+
+    /* Soft glow shadow для карточек/секций — широкое размытие. */
+    --rt-shadow-card-soft: 0 0 40px rgb(0 0 0 / 10%);
+
+    /* Тень панели навигации — три слоя от плотного к рассеянному: панель на
+       полтора экрана шириной должна отделяться от страницы без тёмной кромки. */
+    --rt-shadow-nav-panel: 0 8px 24px rgb(0 0 0 / 8%), 0 12px 32px rgb(0 0 0 / 4%), 0 16px 48px rgb(0 0 0 / 2%);
+
+    /* Тень попапа профиля — один плотный слой: панель узкая, и рассеянные слои
+       панели навигации размазывают её край вместо того, чтобы его очертить. */
+    --rt-shadow-profile-menu: 0 16px 32px rgb(0 0 0 / 15%);
+
+    /* Form-control size primitives — raw-шкала высот/min-height для полей.
+       Semantic-слой (--rt-input-*) ссылается на эти значения. */
+    --rt-control-height-sm: 36px;
+    --rt-control-height-md: 45px;
+    --rt-control-height-lg: 52px;
+    --rt-control-textarea-min-height-sm: 80px;
+    --rt-control-textarea-min-height-md: 120px;
+    --rt-control-textarea-min-height-lg: 160px;
+    --rt-control-panel-max-height: 256px;
+    --rt-control-max-width: 400px;
+
+    /* Opacity states */
+    --rt-opacity-disabled: 0.6;
+
+    /* Motion */
+    --rt-duration-fast: 120ms;
+    --rt-duration-base: 200ms;
+    --rt-duration-slow: 400ms;
+    --rt-duration-slower: 500ms;
+
+    /* Typography helpers */
+    --rt-letter-spacing-wide: 0.03em;
+
+    /* Border-width */
+    --rt-border-width-thin: 1px;
+    --rt-border-width-medium: 2px;
+    --rt-border-width-thick: 3px;
+
+    /* Alpha overlays — для backdrop'ов и focus-ring tint'ов. */
+    --rt-overlay-black-4: rgb(0 0 0 / 4%);
+    --rt-overlay-white-4: rgb(255 255 255 / 4%);
+    --rt-overlay-white-25: rgb(250 250 250 / 25%); /* disabled-текст на графите */
+    --rt-overlay-white-40: rgb(250 250 250 / 40%); /* muted-текст на графите */
+    --rt-overlay-black-50: rgb(0 0 0 / 50%);
+    --rt-overlay-blue-8: rgb(21 93 252 / 8%);
+    --rt-overlay-blue-24: rgb(21 93 252 / 24%);
+    --rt-overlay-danger-16: rgb(220 38 38 / 16%);
+    --rt-overlay-amber-16: rgb(244 159 90 / 16%);
+
+    /* Z-index */
+    --rt-z-base: 0;
+    --rt-z-dropdown: 1000;
+    --rt-z-sticky: 1100;
+    --rt-z-fixed: 1200;
+    --rt-z-modal-backdrop: 1300;
+    --rt-z-modal: 1400;
+    --rt-z-popover: 1500;
+    --rt-z-tooltip: 1600;
+
+    /* Breakpoints — справочные CSS-vars (для JS-чтения `getComputedStyle`);
+       реальные media queries используют SCSS-переменные из `_breakpoints.scss`. */
+    --rt-bp-sm: 480px;
+    --rt-bp-md: 768px;
+    --rt-bp-lg: 1080px;
+    --rt-bp-xl: 1380px;
+}

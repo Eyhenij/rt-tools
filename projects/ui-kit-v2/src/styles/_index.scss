@@ -1,0 +1,8 @@
+// Aggregator: primitives → semantic → theme-dark cascade.
+// _breakpoints.scss НЕ форвардим — это SCSS-namespace для прямого @use
+// из feature-стилей (CSS-vars в @media не поддерживаются).
+
+@forward './primitives';
+@forward './semantic';
+@forward './theme-dark';
+@forward './scrollbar';

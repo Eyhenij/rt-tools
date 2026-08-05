@@ -1,0 +1,248 @@
+.rt-thread-list {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-block-size: 0;
+
+    // Фикс-высота 56px держит верхнюю «полку» списка на одном бейзлайне с хедером
+    // чата (rt-toolbar dense) и хедером колонки деталей — иначе низы трёх колонок
+    // расходятся и верхний край воркспейса читается рваным.
+    &__head {
+        display: flex;
+        flex: 0 0 auto;
+        align-items: center;
+        block-size: 56px;
+        border-block-end: var(--rt-border-width-thin) solid var(--rt-color-border-strong);
+        gap: var(--rt-space-2);
+        padding-inline: var(--rt-space-4);
+    }
+
+    &__search {
+        flex: 1 1 auto;
+        max-inline-size: 400px;
+        min-inline-size: 0;
+    }
+
+    &__filter-trigger {
+        flex: 0 0 auto;
+    }
+
+    &__filters-panel {
+        display: flex;
+        flex-direction: column;
+        padding: var(--rt-space-3);
+        gap: var(--rt-space-2);
+        min-inline-size: 220px;
+    }
+
+    &__rows {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        min-block-size: 0;
+        overflow-y: auto;
+    }
+
+    &__row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: var(--rt-space-2-5) var(--rt-space-4);
+        border: none;
+        background: none;
+
+        // Прозрачная левая полоса зарезервирована на всех строках, чтобы окраска
+        // у выбранной не сдвигала контент.
+        border-inline-start: 3px solid transparent;
+        cursor: pointer;
+
+        // `<button>` не наследует шрифт из UA-стилей — без этого строки списка
+        // рендерятся системным Arial ~13.33px вместо Montserrat 14px, как везде.
+        font-family: inherit;
+        font-size: var(--rt-text-sm);
+        gap: var(--rt-space-3);
+        inline-size: 100%;
+        text-align: start;
+
+        &:hover {
+            background: var(--rt-color-bg-subtle);
+        }
+
+        // Выбранная строка: брендовый фон + акцентная левая полоса. Раньше делила
+        // `--rt-color-bg-subtle` с :hover — выбор был неотличим от наведения.
+        &--active,
+        &--active:hover {
+            background: var(--rt-color-state-info-bg);
+            border-inline-start-color: var(--rt-color-action-primary);
+        }
+
+        // Непрочитанное видно независимо от шаблона строки: жирный заголовок
+        // работает только со штатной разметкой, а точку у левого края и более
+        // плотный фон получает любой потребитель, включая собственные шаблоны.
+        &--unread {
+            position: relative;
+            background: var(--rt-color-bg-subtle);
+            border-inline-start-color: var(--rt-color-action-primary);
+
+            .rt-thread-list__row-title {
+                font-weight: var(--rt-font-weight-semibold);
+            }
+
+            &:before {
+                position: absolute;
+                border-radius: var(--rt-radius-full);
+                background: var(--rt-color-action-primary);
+                block-size: var(--rt-space-1-5);
+                content: '';
+                inline-size: var(--rt-space-1-5);
+                inset-block-start: 50%;
+                inset-inline-start: var(--rt-space-1-5);
+                transform: translateY(-50%);
+            }
+        }
+
+        // Выбранная переписка важнее непрочитанной: иначе открытый тред с новым
+        // сообщением сливается с остальными непрочитанными в списке.
+        &--active,
+        &--active:hover {
+            background: var(--rt-color-state-info-bg);
+        }
+
+        &--overdue {
+            .rt-thread-list__row-time {
+                color: var(--rt-color-state-error-text);
+            }
+        }
+    }
+
+    &__row-body {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rt-space-0-5);
+        min-inline-size: 0;
+    }
+
+    &__row-title {
+        overflow: hidden;
+        color: var(--rt-color-text-primary);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__row-id {
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+    }
+
+    &__row:hover .rt-copy-cell__button,
+    &__row:focus-within .rt-copy-cell__button {
+        opacity: 1;
+    }
+
+    &__row-subtitle {
+        overflow: hidden;
+        color: var(--rt-color-text-muted);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__row-meta {
+        display: flex;
+        flex: 0 0 auto;
+        align-items: center;
+        gap: var(--rt-space-1-5);
+    }
+
+    &__row-time {
+        color: var(--rt-color-text-muted);
+        white-space: nowrap;
+    }
+
+    &__row-tag {
+        padding: var(--rt-space-0-5) var(--rt-space-1-5);
+        border-radius: var(--rt-radius-sm);
+        background: var(--rt-color-state-warning-surface);
+        color: var(--rt-color-state-warning-text);
+        font-size: var(--rt-text-xs);
+        white-space: nowrap;
+    }
+
+    &__row-dot {
+        display: inline-block;
+        border-radius: var(--rt-radius-full);
+        background: var(--rt-color-text-link);
+        block-size: 6px;
+        inline-size: 6px;
+    }
+
+    &__row-skeleton {
+        display: flex;
+        flex-direction: column;
+        padding: var(--rt-space-2-5) var(--rt-space-4);
+        gap: var(--rt-space-1-5);
+    }
+
+    &__row-loader {
+        display: flex;
+        justify-content: center;
+        padding: var(--rt-space-2) var(--rt-space-4);
+    }
+
+    &__load-anchor {
+        block-size: 1px;
+    }
+
+    &__empty {
+        padding: var(--rt-space-6) var(--rt-space-4);
+    }
+
+    // Иллюстрация пустого состояния: стопка декоративных строк-превью тредов
+    // (аватар + две «полоски» текста), средняя со сдвигом — намёк на список чатов.
+    &__empty-preview {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rt-space-1);
+    }
+
+    &__empty-card {
+        display: flex;
+        align-items: center;
+        padding: var(--rt-space-2);
+        border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+        border-radius: var(--rt-radius-lg);
+        background: var(--rt-color-bg-surface-subtle);
+        gap: var(--rt-space-2);
+
+        &--offset {
+            transform: translateX(20px);
+        }
+    }
+
+    &__empty-avatar {
+        display: grid;
+        flex: 0 0 auto;
+        border-radius: var(--rt-radius-full);
+        background: var(--rt-color-text-muted);
+        block-size: 24px;
+        color: var(--rt-color-bg-surface);
+        inline-size: 24px;
+        place-items: center;
+    }
+
+    &__empty-lines {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rt-space-1-5);
+    }
+
+    &__empty-line {
+        border-radius: var(--rt-radius-full);
+        background: var(--rt-color-border-strong);
+        block-size: 6px;
+        inline-size: 112px;
+
+        &--short {
+            inline-size: 48px;
+        }
+    }
+}

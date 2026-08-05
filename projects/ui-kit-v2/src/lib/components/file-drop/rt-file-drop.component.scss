@@ -1,0 +1,91 @@
+/* rt-file-drop — зона перетаскивания файлов в common/ui (ViewEncapsulation.None).
+   Селектор bare `.rt-file-drop` (класс на host) — `:host` в None light-DOM не матчит.
+   Host — позиционный якорь для абсолютного оверлея, обрамляющего спроецированный
+   контент. Оверлей pointer-events:none — не перехватывает drag/drop. */
+
+.rt-file-drop {
+    position: relative;
+    display: block;
+    height: 100%;
+
+    &__overlay {
+        position: absolute;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--rt-space-lg);
+        border-radius: var(--rt-radius-lg);
+        /* stylelint-disable-next-line property-no-vendor-prefix -- Safari < 18 */
+        -webkit-backdrop-filter: blur(4px);
+        backdrop-filter: blur(4px);
+        background: rgb(0 0 0 / 45%);
+
+        /* Отступ от краёв host'а — рамка-приглашение не прижата к границе зоны. */
+        inset: var(--rt-space-sm);
+        pointer-events: none;
+
+        /* Мультизонный режим: вертикальная стопка равных зон-целей. */
+        &--zoned {
+            flex-direction: column;
+            align-items: stretch;
+            padding: var(--rt-space-md);
+            gap: var(--rt-space-sm);
+        }
+    }
+
+    &__frame {
+        display: flex;
+        width: 100%;
+        height: 100%;
+
+        /* border-box: иначе height:100% + padding переполняет контейнер по
+           вертикали (flex-shrink ужимает только ширину) — зазор рамки сверху/снизу
+           выходит меньше, чем слева/справа. */
+        box-sizing: border-box;
+        align-items: center;
+        justify-content: center;
+        padding: var(--rt-space-md);
+        border: var(--rt-border-width-thin) dashed var(--rt-color-action-on-primary);
+        border-radius: var(--rt-radius-lg);
+        gap: var(--rt-space-sm);
+        text-align: center;
+    }
+
+    &__zone {
+        display: flex;
+        min-height: 0;
+        box-sizing: border-box;
+        flex: 1 1 0;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: var(--rt-space-md);
+        border: var(--rt-border-width-thin) dashed var(--rt-color-action-on-primary);
+        border-radius: var(--rt-radius-lg);
+        gap: var(--rt-space-2xs);
+        text-align: center;
+        transition:
+            border-color var(--rt-duration-fast) ease,
+            background-color var(--rt-duration-fast) ease;
+
+        /* Зона под курсором: акцентная сплошная рамка + лёгкая подсветка. */
+        &--active {
+            border-style: solid;
+            border-color: var(--rt-color-action-primary);
+            background: rgb(255 255 255 / 10%);
+        }
+    }
+
+    &__label {
+        color: var(--rt-color-action-on-primary);
+        font-size: var(--rt-text-lg);
+        font-weight: var(--rt-font-weight-semibold);
+    }
+
+    &__sublabel {
+        color: var(--rt-color-action-on-primary);
+        font-size: var(--rt-text-sm);
+        opacity: 0.8;
+    }
+}

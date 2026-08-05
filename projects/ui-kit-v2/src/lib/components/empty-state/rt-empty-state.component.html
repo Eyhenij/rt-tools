@@ -1,0 +1,23 @@
+<ng-container rtBlock="rt-empty-state">
+    <div rtElem="illustration">
+        <ng-content select="[rtEmptyIllustration]" />
+    </div>
+
+    @if (icon(); as iconName) {
+        <span rtElem="icon-wrap" qa-dataid="empty-state-icon">
+            <rt-icon size="xl" color="muted" [name]="iconName" />
+        </span>
+    }
+
+    @if (title()) {
+        <p rtElem="title" qa-dataid="empty-state-title">{{ title() }}</p>
+    }
+
+    @if (description(); as desc) {
+        <p rtElem="description" qa-dataid="empty-state-description">{{ desc }}</p>
+    }
+
+    <div rtElem="action" qa-dataid="empty-state-action">
+        <ng-content />
+    </div>
+</ng-container>

@@ -1,0 +1,219 @@
+.rt-tabs {
+    display: flex;
+    -webkit-tap-highlight-color: transparent;
+
+    &--direction--horizontal {
+        flex-direction: column;
+    }
+
+    &--direction--vertical {
+        flex-direction: row;
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+    }
+
+    &__tab-list-wrapper {
+        position: relative;
+        display: flex;
+        overflow: hidden;
+        flex: 1 1 auto;
+        align-items: center;
+    }
+
+    &__tab-list {
+        display: flex;
+        border-bottom: var(--rt-border-width-thin) solid var(--rt-color-border-default);
+        margin: 0;
+        -ms-overflow-style: none;
+        overflow-x: auto;
+        scrollbar-width: none;
+        white-space: nowrap;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        &--direction--horizontal {
+            width: 100%;
+            flex-direction: row;
+        }
+
+        &--direction--vertical {
+            flex-direction: column;
+            border-right: var(--rt-border-width-thin) solid var(--rt-color-border-default);
+            border-bottom: 0;
+        }
+
+        &--stretch {
+            justify-content: space-between;
+        }
+    }
+
+    &__rest {
+        position: absolute;
+        z-index: 1;
+        top: 0;
+        bottom: 0;
+        display: flex;
+        width: var(--rt-control-height-lg);
+        align-items: center;
+        justify-content: center;
+        background-color: var(--rt-color-bg-surface);
+        color: var(--rt-color-text-muted);
+        cursor: pointer;
+        transition: color var(--rt-duration-fast) linear;
+        visibility: hidden;
+
+        &:hover {
+            color: var(--rt-color-text-primary);
+        }
+
+        &--before {
+            left: 0;
+            border-right: var(--rt-border-width-thin) solid var(--rt-color-border-default);
+        }
+
+        &--after {
+            right: 0;
+            border-left: var(--rt-border-width-thin) solid var(--rt-color-border-default);
+        }
+
+        &--visible {
+            visibility: visible;
+        }
+    }
+
+    &__controls {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+
+        &--before {
+            padding-right: var(--rt-space-md);
+        }
+
+        &--after {
+            padding-left: var(--rt-space-md);
+        }
+    }
+
+    &__content {
+        display: flex;
+        min-height: 0;
+        flex: 1 1 auto;
+        flex-direction: column;
+        padding-top: var(--rt-space-md);
+        gap: var(--rt-space-md);
+        line-height: var(--rt-leading-relaxed);
+
+        &--scrollable {
+            overflow: auto;
+        }
+    }
+}
+
+.rt-tab-item {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--rt-space-2) var(--rt-space-3);
+    border: 0;
+    margin: 0;
+    background-color: transparent;
+    color: var(--rt-color-text-muted);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: var(--rt-text-sm);
+    font-weight: var(--rt-font-weight-semibold);
+    gap: var(--rt-space-sm);
+    line-height: var(--rt-leading-none);
+    transition:
+        color var(--rt-duration-fast) linear,
+        background-color var(--rt-duration-fast) linear;
+    white-space: nowrap;
+
+    /* Нижний индикатор активной вкладки — поверх border-bottom полосы. */
+    &:after {
+        position: absolute;
+        bottom: calc(-1 * var(--rt-border-width-thin));
+        height: 2px;
+        background-color: transparent;
+        content: '';
+        inset-inline: 0;
+        pointer-events: none;
+    }
+
+    &:hover:not(.rt-tab-item--disabled, .rt-tab-item--selected) {
+        background-color: var(--rt-color-bg-hover);
+        color: var(--rt-color-text-primary);
+    }
+
+    /* Inset-outline вместо box-shadow ring: полоса вкладок — scroll-контейнер
+       (overflow), который обрезал бы внешнее кольцо. Inset рисуется внутри
+       элемента, не клиппится и переживает forced-colors. */
+    &:focus-visible {
+        outline: 2px solid var(--rt-color-action-primary);
+        outline-offset: -3px;
+    }
+
+    &__title {
+        overflow: hidden;
+        max-width: 200px;
+        text-overflow: ellipsis;
+    }
+
+    &__icon {
+        flex-shrink: 0;
+    }
+
+    &__badge {
+        display: inline-flex;
+        min-width: 18px;
+        height: 18px;
+        align-items: center;
+        justify-content: center;
+        padding: 0 var(--rt-space-1-5);
+        border-radius: var(--rt-radius-full);
+        background-color: var(--rt-color-bg-surface-subtle);
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-xs);
+        font-weight: var(--rt-font-weight-medium);
+        line-height: var(--rt-leading-none);
+    }
+
+    &--selected {
+        color: var(--rt-color-action-primary);
+        cursor: default;
+
+        &:after {
+            background-color: var(--rt-color-action-primary);
+        }
+
+        .rt-tab-item__badge {
+            background-color: var(--rt-color-action-primary-soft);
+            color: var(--rt-color-action-primary);
+        }
+    }
+
+    &--invalid {
+        color: var(--rt-color-state-danger);
+
+        &:after {
+            background-color: var(--rt-color-state-danger);
+        }
+    }
+
+    &--disabled {
+        color: var(--rt-color-text-disabled);
+        cursor: not-allowed;
+    }
+
+    &--stretch {
+        max-width: 100%;
+        flex: 1 1 auto;
+    }
+}

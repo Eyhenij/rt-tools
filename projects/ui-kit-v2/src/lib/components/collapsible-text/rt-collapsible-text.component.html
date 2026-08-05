@@ -1,0 +1,17 @@
+<ng-container rtBlock="rt-collapsible-text">
+    <div
+        #text
+        rtElem="text"
+        qa-dataid="collapsible-text-body"
+        [rtMod]="{ clamped: !expanded() }"
+        [style.-webkit-line-clamp]="expanded() ? null : clampLines()">
+        @for (paragraph of paragraphs(); track $index) {
+            <p rtElem="paragraph" qa-dataid="collapsible-text-paragraph">{{ paragraph }}</p>
+        }
+    </div>
+    @if (overflowing() || expanded()) {
+        <button rtElem="toggle" qa-dataid="collapsible-text-toggle" type="button" [attr.aria-expanded]="expanded()" (click)="toggle()">
+            {{ expanded() ? ('rtKit.uiCollapse' | transloco) : ('rtKit.uiMore' | transloco) }}
+        </button>
+    }
+</ng-container>

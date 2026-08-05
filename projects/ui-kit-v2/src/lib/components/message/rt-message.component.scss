@@ -1,0 +1,58 @@
+/* rt-message — alert/banner в common/ui (Emulated encapsulation; :host обязательно). */
+
+:host {
+    display: block;
+
+    .rt-message {
+        display: flex;
+        align-items: flex-start;
+        padding: var(--rt-space-3) var(--rt-space-4);
+        border-radius: var(--rt-radius-md);
+        background: var(--rt-color-state-info-bg);
+        color: var(--rt-color-state-info);
+        font-size: var(--rt-text-sm);
+        gap: var(--rt-space-2);
+        line-height: var(--rt-leading-normal);
+
+        &--severity--info {
+            background: var(--rt-color-state-info-bg);
+            color: var(--rt-color-state-info);
+        }
+
+        &--severity--success {
+            background: var(--rt-color-state-success-bg);
+            color: var(--rt-color-state-success);
+        }
+
+        &--severity--warning {
+            background: var(--rt-color-state-warning-bg);
+            color: var(--rt-color-state-warning);
+        }
+
+        &--severity--danger {
+            background: var(--rt-color-state-danger-bg);
+            color: var(--rt-color-state-danger);
+        }
+
+        &--severity--secondary,
+        &--severity--neutral {
+            background: var(--rt-color-bg-subtle);
+            color: var(--rt-color-text-primary);
+        }
+
+        &__icon {
+            flex-shrink: 0;
+            margin-block-start: var(--rt-space-0-5);
+        }
+
+        &__body {
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+
+        &__close {
+            flex-shrink: 0;
+            margin-inline-start: auto;
+        }
+    }
+}

@@ -1,0 +1,36 @@
+/* rt-confirm-popover — панель подтверждения в CDK Overlay. ViewEncapsulation.None.
+   Селекторы префиксованы `.rt-confirm-popover`. */
+
+.rt-confirm-popover {
+    display: flex;
+    width: 280px;
+    max-width: 280px;
+    flex-direction: column;
+    padding: var(--rt-space-md);
+    border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+    border-radius: var(--rt-radius-md);
+    background: var(--rt-color-bg-surface);
+    box-shadow: var(--rt-shadow-lg);
+    gap: var(--rt-space-sm);
+
+    &__title {
+        margin: 0;
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-text-sm);
+        font-weight: var(--rt-font-weight-semibold);
+    }
+
+    &__message {
+        margin: 0;
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-text-sm);
+        line-height: var(--rt-leading-normal);
+    }
+
+    &__actions {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--rt-space-sm);
+        margin-block-start: var(--rt-space-xs);
+    }
+}

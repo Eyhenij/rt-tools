@@ -1,0 +1,44 @@
+<ng-container rtBlock="rt-file-input">
+    @if (isReadonly()) {
+        <span rtElem="readonly" qa-dataid="file-input-readonly" [rtMod]="{ empty: !displayText() }">{{ displayText() || '—' }}</span>
+    } @else {
+        <input
+            #fileEl
+            rtElem="native"
+            qa-dataid="file-input-native"
+            type="file"
+            hidden
+            [multiple]="multiple()"
+            [disabled]="isDisabled()"
+            [attr.id]="effectiveControlId()"
+            [attr.accept]="accept()"
+            [attr.webkitdirectory]="directory() ? '' : null"
+            (change)="onFiles($event)" />
+
+        <button
+            rtElem="trigger"
+            qa-dataid="file-input-trigger"
+            type="button"
+            rtButton
+            appearance="outlined"
+            icon="ico-upload"
+            [label]="buttonText()"
+            [attr.aria-label]="buttonText()"
+            [disabled]="isDisabled()"
+            (click)="openPicker()"></button>
+
+        @if (value().length > 0) {
+            <rt-file-list rtElem="list" qa-dataid="file-input-list">
+                @for (file of value(); track $index) {
+                    <rt-file-card
+                        showRemove
+                        qa-dataid="file-input-file"
+                        [name]="file.name"
+                        [sizeBytes]="file.size"
+                        [disabled]="isDisabled()"
+                        (removed)="removeFile($index)" />
+                }
+            </rt-file-list>
+        }
+    }
+</ng-container>

@@ -1,0 +1,12 @@
+<ng-container rtBlock="rt-copy-cell">
+    <span rtElem="content" qa-dataid="copy-cell-content"><ng-content /></span>
+    <rt-icon-button
+        rtElem="button"
+        qa-dataid="copy-cell-button"
+        size="sm"
+        [icon]="iconName()"
+        [variant]="variant()"
+        [ariaLabel]="actionLabel()"
+        [tooltip]="actionLabel()"
+        (clicked)="onCopy($event)" />
+</ng-container>

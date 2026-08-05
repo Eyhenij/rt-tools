@@ -1,0 +1,93 @@
+<ng-container rtBlock="rt-multiselect">
+    @if (isReadonly()) {
+        <span rtElem="readonly" qa-dataid="multiselect-readonly" [rtMod]="{ empty: !displayText() }">{{ displayText() || '—' }}</span>
+    }
+    <button
+        #triggerEl
+        rtElem="trigger"
+        qa-dataid="multiselect-trigger"
+        type="button"
+        rtPopoverWidth="trigger"
+        [rtPopover]="panelTpl"
+        [rtPopoverDisabled]="isDisabled()"
+        [attr.id]="effectiveControlId()"
+        [attr.aria-label]="ariaLabel()"
+        [attr.aria-haspopup]="'listbox'"
+        [attr.aria-expanded]="isOpen()"
+        [attr.aria-invalid]="isInvalid() || null"
+        [attr.aria-controls]="panelId"
+        [attr.aria-activedescendant]="isOpen() && activeIndex() >= 0 ? panelId + '-opt-' + activeIndex() : null"
+        [disabled]="isDisabled()"
+        (keydown)="onTriggerKeydown($event)"
+        (rtPopoverClosed)="onClosed()">
+        @if (value().length === 0) {
+            <span rtElem="placeholder" qa-dataid="multiselect-placeholder">{{ placeholderText() }}</span>
+        } @else {
+            <span rtElem="chips">
+                @for (val of visibleChips(); track val) {
+                    <span rtElem="chip" qa-dataid="multiselect-chip" [attr.data-value]="val">
+                        <rt-tag
+                            severity="info"
+                            [value]="val | rtMultiselectLabel: options()"
+                            [closable]="true"
+                            (closed)="removeChip(val, $event)" />
+                    </span>
+                }
+                @if (extraChipsCount() > 0) {
+                    <span rtElem="chip-more" qa-dataid="multiselect-chip-more">+{{ extraChipsCount() }}</span>
+                }
+            </span>
+        }
+        @if (showClearButton()) {
+            <rt-icon-button
+                rtElem="clear"
+                qa-dataid="multiselect-clear"
+                icon="ico-close"
+                size="sm"
+                variant="ghost"
+                iconColor="muted"
+                [ariaLabel]="'rtKit.uiClear' | transloco"
+                [tabIndex]="-1"
+                (clicked)="clear($event)" />
+        }
+        <rt-icon rtElem="chevron" name="chevron-down" size="sm" color="muted" />
+    </button>
+
+    <ng-template #panelTpl>
+        <div rtElem="panel" qa-dataid="multiselect-panel" role="listbox" [attr.aria-label]="ariaLabel()">
+            <!--
+                Опции выбираются мышью через (click); keyboard-nav — на trigger'е
+                (activedescendant), опции не focusable индивидуально.
+            -->
+            <!-- eslint-disable @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+            <ul rtElem="list">
+                @for (opt of options(); track opt.value; let i = $index) {
+                    <li
+                        rtElem="option"
+                        qa-dataid="multiselect-option"
+                        role="option"
+                        [id]="panelId + '-opt-' + i"
+                        [attr.data-value]="opt.value"
+                        [rtMod]="{
+                            selected: value().includes(opt.value),
+                            active: i === activeIndex(),
+                            disabled: !!opt.disabled,
+                        }"
+                        [attr.aria-selected]="value().includes(opt.value)"
+                        [attr.aria-disabled]="!!opt.disabled"
+                        (click)="toggleOption(opt)">
+                        <input
+                            rtElem="checkbox"
+                            qa-dataid="multiselect-option-checkbox"
+                            type="checkbox"
+                            tabindex="-1"
+                            [checked]="value().includes(opt.value)" />
+                        <span rtElem="option-label" qa-dataid="multiselect-option-label">{{ opt.label }}</span>
+                    </li>
+                } @empty {
+                    <li rtElem="empty" qa-dataid="multiselect-empty">{{ 'rtKit.uiNoOptions' | transloco }}</li>
+                }
+            </ul>
+        </div>
+    </ng-template>
+</ng-container>

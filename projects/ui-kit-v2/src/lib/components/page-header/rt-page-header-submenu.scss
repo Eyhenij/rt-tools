@@ -1,0 +1,147 @@
+/* Панель второго уровня. Рендерится в CDK Overlay (вне DOM хедера), поэтому
+   отдельный корневой блок, а не элемент rt-page-header.
+
+   Ширина считается числом колонок, а не содержимым: колонки разной длины иначе
+   меняли бы габарит панели при каждом переходе между разделами. Число колонок
+   приходит инлайн-переменной `--rt-nav-panel-columns` из шаблона. */
+.rt-page-header-submenu {
+    --rt-nav-panel-columns-width: calc(var(--rt-nav-panel-columns) * var(--rt-nav-panel-column-width));
+    --rt-nav-panel-gaps-width: calc((var(--rt-nav-panel-columns) - 1) * var(--rt-nav-panel-column-gap));
+    --rt-nav-panel-padding-width: calc(var(--rt-nav-panel-padding) + var(--rt-nav-panel-padding));
+
+    display: flex;
+    width: calc(var(--rt-nav-panel-columns-width) + var(--rt-nav-panel-gaps-width) + var(--rt-nav-panel-padding-width));
+    box-sizing: border-box;
+    align-items: flex-start;
+    padding: var(--rt-nav-panel-padding-y) var(--rt-nav-panel-padding);
+    border: var(--rt-border-width-thin) solid var(--rt-nav-panel-color-border);
+    border-radius: var(--rt-radius-md);
+    background-color: var(--rt-nav-panel-color-bg);
+    box-shadow: var(--rt-nav-panel-shadow);
+    color: var(--rt-nav-panel-item-color);
+    font-size: var(--rt-nav-panel-item-font-size);
+    font-weight: var(--rt-nav-panel-item-font-weight);
+    gap: var(--rt-nav-panel-column-gap);
+
+    &__column {
+        display: flex;
+        min-width: 0;
+        flex: 0 0 var(--rt-nav-panel-column-width);
+        flex-direction: column;
+        gap: var(--rt-nav-panel-group-gap);
+    }
+
+    /* Пункты обжимают подпись, поэтому колонка выравнивает их по левому краю:
+       растянутый на всю ширину пункт давал бы подсветку во всю колонку. */
+    &__group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--rt-nav-panel-item-gap);
+    }
+
+    &__group-title {
+        display: inline-flex;
+        max-width: 100%;
+        min-height: var(--rt-nav-panel-item-height);
+        align-items: center;
+        padding: var(--rt-nav-panel-item-padding);
+        color: var(--rt-nav-panel-group-color);
+        cursor: default;
+        font-size: var(--rt-nav-panel-group-font-size);
+        font-weight: var(--rt-nav-panel-group-font-weight);
+        gap: var(--rt-nav-panel-group-content-gap);
+        line-height: var(--rt-leading-none);
+    }
+
+    &__group-label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__group-icon {
+        flex-shrink: 0;
+    }
+
+    &__disabled-slot {
+        display: inline-flex;
+        max-width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    &__link {
+        display: inline-flex;
+        max-width: 100%;
+        min-height: var(--rt-nav-panel-item-height);
+        align-items: center;
+        padding: var(--rt-nav-panel-item-padding);
+        border: 0;
+        border-radius: var(--rt-radius-md);
+        background-color: transparent;
+        color: var(--rt-nav-panel-item-color);
+        cursor: pointer;
+        font-size: var(--rt-nav-panel-item-font-size);
+        font-weight: var(--rt-nav-panel-item-font-weight);
+        gap: var(--rt-nav-panel-item-content-gap);
+        line-height: var(--rt-leading-none);
+        text-align: left;
+        text-decoration: none;
+        transition:
+            background-color var(--rt-duration-fast) linear,
+            color var(--rt-duration-fast) linear;
+        white-space: nowrap;
+
+        &--is-active {
+            background-color: var(--rt-nav-panel-item-color-bg-active);
+            color: var(--rt-nav-panel-item-color-active);
+        }
+
+        &:not(&--is-active):hover,
+        &:not(&--is-active):active {
+            background-color: var(--rt-nav-panel-item-color-bg-hover);
+        }
+
+        &:focus {
+            outline: none;
+        }
+
+        &:focus-visible {
+            outline: 2px dashed var(--rt-nav-color-focus);
+            outline-offset: 2px;
+        }
+
+        &--disabled,
+        &:disabled,
+        &[aria-disabled='true'] {
+            background-color: transparent;
+            color: var(--rt-nav-color-disabled);
+            cursor: not-allowed;
+
+            &:hover {
+                background-color: transparent;
+            }
+        }
+    }
+
+    &__label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Пункт панели обжимает подпись и стоит на своей строке, поэтому точка идёт
+       следом за текстом: соседей она не сдвигает, а у правого края колонки
+       оторвалась бы от подписи, к которой относится. */
+    &__marker {
+        width: var(--rt-nav-marker-size);
+        height: var(--rt-nav-marker-size);
+        flex-shrink: 0;
+        border-radius: var(--rt-radius-full);
+        background-color: var(--rt-nav-marker-color);
+    }
+
+    &__icon {
+        flex-shrink: 0;
+    }
+}

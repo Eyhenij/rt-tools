@@ -1,0 +1,40 @@
+<rt-dialog width="440px" qa-dataid="aside-unsaved-dialog" [ariaLabel]="'rtKit.uiUnsavedTitle' | transloco">
+    <div rtBlock="rt-aside-unsaved-dialog">
+        <div rtElem="text">
+            <h2 rtElem="title" qa-dataid="aside-unsaved-title">{{ 'rtKit.uiUnsavedTitle' | transloco }}</h2>
+            <p rtElem="message" qa-dataid="aside-unsaved-message">{{ 'rtKit.uiUnsavedMessage' | transloco }}</p>
+        </div>
+
+        <div rtElem="footer">
+            <button
+                rtButton
+                rtElem="discard"
+                qa-dataid="aside-unsaved-discard"
+                type="button"
+                theme="danger"
+                appearance="outlined"
+                [label]="'rtKit.uiUnsavedDiscard' | transloco"
+                [attr.aria-label]="'rtKit.uiUnsavedDiscard' | transloco"
+                (click)="onDiscard()"></button>
+            <button
+                rtButton
+                rtElem="stay"
+                qa-dataid="aside-unsaved-stay"
+                type="button"
+                theme="secondary"
+                appearance="text"
+                [label]="'rtKit.uiUnsavedStay' | transloco"
+                [attr.aria-label]="'rtKit.uiUnsavedStay' | transloco"
+                (click)="onStay()"></button>
+            <button
+                rtButton
+                rtElem="save"
+                qa-dataid="aside-unsaved-save"
+                type="button"
+                appearance="filled"
+                [label]="'rtKit.uiUnsavedSave' | transloco"
+                [attr.aria-label]="'rtKit.uiUnsavedSave' | transloco"
+                (click)="onSave()"></button>
+        </div>
+    </div>
+</rt-dialog>

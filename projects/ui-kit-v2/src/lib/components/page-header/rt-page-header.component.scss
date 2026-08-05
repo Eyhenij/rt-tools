@@ -1,0 +1,257 @@
+/* Цвет плашки вынесен в локальный override `--rt-page-header-bg`, дефолт
+   берётся из семантики навигации. Отступ от краёв страницы задаёт тот, кто
+   ставит шапку: своего у неё нет. */
+.rt-page-header {
+    display: flex;
+    width: auto;
+    min-height: 48px;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--rt-nav-header-padding);
+    border-radius: var(--rt-radius-md);
+    background-color: var(--rt-page-header-bg, var(--rt-nav-header-color-bg));
+    color: var(--rt-nav-item-color);
+    gap: var(--rt-space-2);
+
+    &__nav {
+        min-width: 0;
+        flex: 1 1 auto;
+    }
+
+    &__list {
+        display: flex;
+        flex-flow: row wrap;
+        align-items: center;
+        padding: 0;
+        margin: 0;
+        gap: var(--rt-nav-item-gap);
+        list-style: none;
+    }
+
+    /* Пункт ряда несёт собственную плашку. На фоне шапки того же цвета её не
+       видно — проступает только активный раздел, у которого фон белый. */
+    &__item {
+        display: inline-flex;
+        align-items: center;
+        border: var(--rt-border-width-thin) solid var(--rt-nav-item-color-border);
+        border-radius: var(--rt-radius-md);
+        background-color: var(--rt-nav-item-color-bg);
+    }
+
+    &__disabled-slot {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    &__link {
+        position: relative;
+        display: inline-flex;
+        min-height: var(--rt-nav-item-height);
+        align-items: center;
+        padding: var(--rt-nav-item-padding);
+        border: 0;
+        border-radius: var(--rt-radius-md);
+        background-color: transparent;
+        color: var(--rt-nav-item-color);
+        cursor: pointer;
+        font-size: var(--rt-nav-item-font-size);
+        font-weight: var(--rt-nav-item-font-weight);
+        gap: var(--rt-nav-item-content-gap);
+        line-height: var(--rt-nav-item-line-height);
+        text-decoration: none;
+        transition: color var(--rt-duration-fast) linear;
+        white-space: nowrap;
+
+        /* Наведение красит подпись, а не фон: фоном отмечен активный раздел, и
+           два фона в одном ряду читались бы как два активных. */
+        &:hover {
+            color: var(--rt-nav-item-color-hover);
+        }
+
+        &:focus {
+            outline: none;
+        }
+
+        &:focus-visible {
+            outline: 2px dashed var(--rt-nav-color-focus);
+            outline-offset: 2px;
+        }
+
+        &--is-active {
+            background-color: var(--rt-nav-item-color-bg-active);
+            color: var(--rt-nav-item-color);
+        }
+
+        /* Пока панель открыта, её раздел держит цвет наведения: курсор ушёл в
+           панель, наведение с него снялось, и без этого не видно, чья панель
+           открыта. */
+        &--is-open {
+            color: var(--rt-nav-item-color-hover);
+        }
+
+        /* `aria-disabled` браузер не стилизует сам: без этого правила пункт,
+           выключенный только для скринридера, выглядит рабочим. Нативный
+           `disabled` не годится — он не даёт ни наведения, ни фокуса, и
+           объяснение до пользователю� не доходит. */
+        &--disabled,
+        &:disabled,
+        &[aria-disabled='true'] {
+            background-color: transparent;
+            color: var(--rt-nav-color-disabled);
+            cursor: not-allowed;
+
+            &:hover {
+                background-color: transparent;
+            }
+        }
+    }
+
+    &__icon {
+        flex-shrink: 0;
+    }
+
+    /* Точка идёт следом за подписью и перед указателем раскрытия, в общем ритме
+       содержимого пункта. Поверх текста она садилась бы на последнюю букву. */
+    &__marker {
+        width: var(--rt-nav-marker-size);
+        height: var(--rt-nav-marker-size);
+        flex-shrink: 0;
+        border-radius: var(--rt-radius-full);
+        background-color: var(--rt-nav-marker-color);
+    }
+
+    /* Указатель раскрытия приглушён сильнее подписи: он говорит, что панель есть,
+       и не должен спорить с названием раздела. Начертание парное (вверх-вниз),
+       поэтому разворот на раскрытии ничего не добавил бы. */
+    &__caret {
+        display: inline-flex;
+        flex-shrink: 0;
+        color: var(--rt-nav-item-color-caret);
+    }
+
+    &__burger {
+        display: none; /* десктоп — гамбургера нет; включается ниже в @media */
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        padding: var(--rt-space-1-5);
+        border: 0;
+        border-radius: var(--rt-radius-ms);
+        background-color: transparent;
+        color: var(--rt-nav-item-color);
+        cursor: pointer;
+        transition: color var(--rt-duration-fast) linear;
+
+        &:hover {
+            color: var(--rt-nav-item-color-hover);
+        }
+
+        &:active {
+            color: var(--rt-nav-item-color-pressed);
+        }
+
+        &:focus {
+            outline: none;
+        }
+
+        &:focus-visible {
+            outline: 2px dashed var(--rt-nav-color-focus);
+            outline-offset: 2px;
+        }
+
+        &--is-open {
+            background-color: var(--rt-nav-item-color-bg-active);
+        }
+    }
+
+    &__burger-icon {
+        flex-shrink: 0;
+    }
+
+    /* Восемь разделов с иконками в ряд не помещаются и переносятся на вторую
+       строку, а перенос удваивает высоту шапки. До широкого вьюпорта ряд идёт
+       без иконок: подпись раздела нужнее картинки рядом с ней. Замер в Chrome
+       2026-08-02: на 1081px ряд с иконками занимает 938.7px при доступных
+       798.4, без иконок — 762.7. */
+    @media (width <= 1380px) {
+        /* Селектор из двух классов, а не одного: `.rt-icon` задаёт иконке
+           `display`, и порядок стилей двух компонентов кита между собой не
+           закреплён ничем. */
+        &__link &__icon {
+            display: none;
+        }
+    }
+
+    /* Узкий вьюпорт: инлайн-навигация уступает место гамбургеру. */
+    @media (width <= 1080px) {
+        &__nav {
+            display: none;
+        }
+
+        &__burger {
+            display: inline-flex;
+        }
+    }
+
+    &__user {
+        display: inline-flex;
+        min-height: var(--rt-nav-item-height);
+        align-items: center;
+        padding: var(--rt-nav-item-padding);
+        border: 0;
+        border-radius: var(--rt-radius-md);
+        background-color: transparent;
+        color: var(--rt-nav-item-color);
+        cursor: pointer;
+        font-size: var(--rt-nav-item-font-size);
+        font-weight: var(--rt-nav-item-font-weight);
+        gap: var(--rt-nav-item-content-gap);
+        line-height: var(--rt-leading-tight);
+        transition: background-color var(--rt-duration-fast) linear;
+
+        &:hover,
+        &:active {
+            background-color: var(--rt-nav-item-color-bg-active);
+        }
+
+        &:focus {
+            outline: none;
+        }
+
+        &:focus-visible {
+            outline: 2px dashed var(--rt-nav-color-focus);
+            outline-offset: 2px;
+        }
+    }
+
+    &__user-avatar {
+        display: inline-flex;
+        width: 16px;
+        height: 16px;
+        align-items: center;
+        justify-content: center;
+        border: var(--rt-border-width-thin) solid var(--rt-nav-item-color-caret);
+        border-radius: var(--rt-radius-full);
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-2xs);
+        font-weight: var(--rt-font-weight-semibold);
+        line-height: var(--rt-leading-none);
+    }
+
+    &__user-name {
+        white-space: nowrap;
+    }
+
+    /* Начертание парное, вверх-вниз: разворачивать его при открытии нечего. */
+    &__user-caret {
+        display: inline-flex;
+        flex-shrink: 0;
+        color: var(--rt-nav-item-color-caret);
+    }
+
+    &__user--is-open {
+        background-color: var(--rt-nav-item-color-bg-active);
+    }
+}

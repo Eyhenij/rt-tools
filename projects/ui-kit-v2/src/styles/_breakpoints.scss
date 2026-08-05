@@ -1,0 +1,7 @@
+// Использовать в media queries через `@use "../styles/breakpoints" as bp;`.
+// CSS-vars в media queries не поддерживаются — используем SCSS-переменные.
+
+$rt-bp-sm: 480px !default;
+$rt-bp-md: 768px !default;
+$rt-bp-lg: 1080px !default;
+$rt-bp-xl: 1380px !default;

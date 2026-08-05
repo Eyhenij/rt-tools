@@ -1,0 +1,8 @@
+<ng-container rtBlock="rt-info-item">
+    <span rtElem="label" qa-dataid="info-item-label">{{ label() }}</span>
+    @if (loading()) {
+        <rt-skeleton-wrapper rtElem="value-skeleton" qa-dataid="info-item-skeleton" width="80px" [isLoading]="true" />
+    } @else {
+        <span rtElem="value" qa-dataid="info-item-value"><ng-content /></span>
+    }
+</ng-container>

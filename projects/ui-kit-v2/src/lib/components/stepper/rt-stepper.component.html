@@ -1,0 +1,36 @@
+@let current = currentStep();
+<div
+    rtBlock="rt-stepper"
+    qa-dataid="stepper"
+    role="progressbar"
+    [attr.aria-valuemin]="0"
+    [attr.aria-valuemax]="totalSteps()"
+    [attr.aria-valuenow]="currentIndex() + 1"
+    [attr.aria-valuetext]="current?.label ?? null">
+    <div rtElem="rail">
+        @if (current) {
+            <p rtElem="label" qa-dataid="stepper-label" [rtMod]="{ anchor: labelAnchor() }" [style.left.%]="progressPercent()">
+                {{ current.label }}
+            </p>
+        }
+        <div rtElem="track-band">
+            <span rtElem="track" aria-hidden="true"></span>
+            <span rtElem="progress" qa-dataid="stepper-progress" aria-hidden="true" [style.width.%]="progressPercent()"></span>
+            <ul rtElem="points">
+                @for (step of steps(); track $index; let i = $index) {
+                    <li
+                        rtElem="point"
+                        qa-dataid="stepper-point"
+                        aria-hidden="true"
+                        [rtMod]="{
+                            current: i === currentIndex(),
+                            complete: i < currentIndex(),
+                        }"></li>
+                }
+            </ul>
+        </div>
+    </div>
+    @for (paragraph of descriptionParagraphs(); track $index) {
+        <p rtElem="description" qa-dataid="stepper-description">{{ paragraph }}</p>
+    }
+</div>

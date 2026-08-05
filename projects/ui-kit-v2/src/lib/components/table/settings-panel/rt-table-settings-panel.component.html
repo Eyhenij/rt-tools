@@ -1,0 +1,41 @@
+<ul rtBlock="rt-table-settings-panel" rtElem="list" qa-dataid="table-settings-list" cdkDropList (cdkDropListDropped)="onDrop($event)">
+    @for (item of items(); track item.key) {
+        <li
+            rtElem="row"
+            qa-dataid="table-settings-row"
+            cdkDrag
+            [attr.data-key]="item.key"
+            [rtMod]="{ locked: item.locked === true, hidden: item.hidden }"
+            [cdkDragDisabled]="item.locked === true">
+            @if (item.locked === true) {
+                <span rtElem="handle" rtMod="placeholder" aria-hidden="true"></span>
+            } @else {
+                <button
+                    rtElem="handle"
+                    qa-dataid="table-settings-drag"
+                    type="button"
+                    cdkDragHandle
+                    [attr.aria-label]="'rtKit.uiDragColumn' | transloco">
+                    <rt-icon name="bars" size="sm" color="muted" />
+                </button>
+            }
+
+            <span rtElem="label" qa-dataid="table-settings-label">{{ item.label }}</span>
+
+            <rt-icon-button
+                rtElem="toggle"
+                qa-dataid="table-settings-toggle"
+                [icon]="item.hidden ? 'eye-slash' : 'eye'"
+                [ariaLabel]="item.hidden ? ('rtKit.uiShowColumn' | transloco) : ('rtKit.uiHideColumn' | transloco)"
+                [tooltip]="
+                    item.locked === true
+                        ? ('rtKit.uiColumnLocked' | transloco)
+                        : item.hidden
+                          ? ('rtKit.uiShow' | transloco)
+                          : ('rtKit.uiHide' | transloco)
+                "
+                [disabled]="item.locked === true"
+                (clicked)="onToggleHidden(item.key)" />
+        </li>
+    }
+</ul>

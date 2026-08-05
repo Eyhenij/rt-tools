@@ -1,0 +1,12 @@
+@if (isLoading()) {
+    <rt-skeleton
+        qa-dataid="skeleton-wrapper-placeholder"
+        [width]="width()"
+        [height]="height()"
+        [shape]="shape()"
+        [size]="size()"
+        [borderRadius]="borderRadius()"
+        [animation]="animation()" />
+} @else {
+    <ng-content />
+}

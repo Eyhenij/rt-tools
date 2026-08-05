@@ -1,0 +1,47 @@
+<ng-container rtBlock="rt-header">
+    <div rtElem="content">
+        <rt-icon-button
+            rtElem="back"
+            qa-dataid="header-back"
+            icon="arrow-left"
+            variant="ghost"
+            size="md"
+            shape="circle"
+            [ariaLabel]="'rtKit.uiBack' | transloco"
+            [tooltip]="'rtKit.uiBack' | transloco"
+            [rtMod]="{ visible: canGoBack() }"
+            (clicked)="onBackClick()" />
+
+        <div rtElem="logo" qa-dataid="header-logo">
+            <rt-logo variant="wordmark" height="15" />
+        </div>
+
+        @if (showInvite()) {
+            <rt-icon-button
+                rtElem="action"
+                qa-dataid="header-invite"
+                icon="user-plus"
+                variant="ghost"
+                size="md"
+                shape="circle"
+                style="--rt-icon-button-size: 35px"
+                [ariaLabel]="'rtKit.uiInviteUser' | transloco"
+                [tooltip]="'rtKit.uiInviteUser' | transloco"
+                (clicked)="onInviteClick()" />
+        }
+
+        <ng-content select="[rtHeaderBell]" />
+
+        <rt-icon-button
+            rtElem="action"
+            qa-dataid="header-profile"
+            icon="user"
+            variant="ghost"
+            size="md"
+            shape="circle"
+            style="--rt-icon-button-size: 35px"
+            [ariaLabel]="'rtKit.uiProfile' | transloco"
+            [tooltip]="'rtKit.uiProfile' | transloco"
+            (clicked)="onProfileClick()" />
+    </div>
+</ng-container>

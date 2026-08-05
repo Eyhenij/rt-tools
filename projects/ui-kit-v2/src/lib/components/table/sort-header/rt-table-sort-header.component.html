@@ -1,0 +1,19 @@
+<ng-template #label>
+    <ng-content />
+</ng-template>
+
+@if (sortable()) {
+    <button
+        rtElem="button"
+        qa-dataid="table-sort-header"
+        type="button"
+        [attr.data-column]="rtSortHeader()"
+        [attr.data-direction]="direction()"
+        [rtMod]="{ active: direction() !== null }"
+        (click)="onToggle()">
+        <ng-container [ngTemplateOutlet]="label" />
+        <rt-icon rtElem="icon" size="xs" [name]="icon()" />
+    </button>
+} @else {
+    <ng-container [ngTemplateOutlet]="label" />
+}

@@ -1,0 +1,10 @@
+<div
+    rtBlock="rt-dialog"
+    qa-dataid="dialog"
+    role="dialog"
+    aria-modal="true"
+    [rtMod]="{ size: size() }"
+    [style.--rt-dialog-width]="width()"
+    [attr.aria-label]="ariaLabel()">
+    <ng-content />
+</div>
