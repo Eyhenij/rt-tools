@@ -1,0 +1,28 @@
+{
+    "name": "@rt-tools/agent-kit",
+    "version": "0.1.0",
+    "description": "Переносимый слой правил для агента: законы, хуки, проверки и агенты, раскладываемые в репозиторий одной командой",
+    "author": "RT Team",
+    "license": "Apache-2.0",
+    "type": "module",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Eyhenij/rt-tools.git",
+        "directory": "projects/agent-kit"
+    },
+    "homepage": "https://github.com/Eyhenij/rt-tools/tree/main/projects/agent-kit",
+    "bugs": {
+        "url": "https://github.com/Eyhenij/rt-tools/issues"
+    },
+    "keywords": ["agent", "claude", "rules", "constitution", "codegen", "cli"],
+    "bin": {
+        "agent-kit": "./bin/agent-kit.js"
+    },
+    "engines": {
+        "node": ">=20"
+    },
+    "dependencies": {},
+    "sideEffects": false,
+    "main": "src/index.ts",
+    "types": "src/index.ts"
+}
