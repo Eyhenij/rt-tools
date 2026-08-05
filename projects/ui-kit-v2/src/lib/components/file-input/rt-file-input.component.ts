@@ -84,7 +84,7 @@ export class RtFileInputComponent extends RtFormControlBase<File[]> {
     /**
      * Выбор каталога целиком вместо отдельных файлов. Браузер отдаёт
      * относительные пути (`webkitRelativePath`), по ним вызывающая сторона
-     * восстанавливает структуру — иначе пользователю� пришлось бы выбирать
+     * восстанавливает структуру — иначе пользователю пришлось бы выбирать
      * десятки файлов по одному.
      */
     public readonly directory: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
