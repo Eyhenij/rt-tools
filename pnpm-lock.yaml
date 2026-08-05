@@ -285,6 +285,8 @@ importers:
         specifier: 6.9.0
         version: 6.9.0(typanion@3.14.0)
 
+  projects/agent-kit: {}
+
   projects/core:
     dependencies:
       '@angular/cdk':
