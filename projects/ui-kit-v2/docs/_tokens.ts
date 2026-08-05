@@ -13,10 +13,12 @@ export interface IToken {
 }
 
 /** Правило светлой темы: свойства объявлены на корне без дополнительных признаков. */
-const isLightRoot = (selector: string): boolean => [':root', 'html', ':root, html', 'html, body'].includes(selector.trim());
+const isLightRoot: (selector: string) => boolean = (selector: string): boolean =>
+    [':root', 'html', ':root, html', 'html, body'].includes(selector.trim());
 
 /** Правило тёмной темы: `:root[data-theme='dark']` либо `html.rt-theme-dark`. */
-const isDarkRoot = (selector: string): boolean => selector.includes('data-theme') || selector.includes('rt-theme-dark');
+const isDarkRoot: (selector: string) => boolean = (selector: string): boolean =>
+    selector.includes('data-theme') || selector.includes('rt-theme-dark');
 
 function eachRootRule(dark: boolean, visit: (style: CSSStyleDeclaration) => void): void {
     for (const sheet of Array.from(document.styleSheets)) {
