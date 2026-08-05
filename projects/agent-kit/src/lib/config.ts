@@ -18,6 +18,11 @@ export interface IConfig {
     readonly vars: Readonly<Record<string, string>>;
     /** Куда класть каждый род ресурса, путями от корня проекта. */
     readonly layout: Readonly<Record<TKind, string>>;
+    /**
+     * Ресурсы, которые проект выбрал, идентификаторами: `laws/access.md`. Пусто — берётся всё.
+     * Ограничивает только те роды, которые сам называет; как именно — `isChosen`.
+     */
+    readonly only: readonly string[];
     /** Ресурсы, от которых проект отказался, идентификаторами: `laws/money.md`. */
     readonly skip: readonly string[];
 }
@@ -61,6 +66,15 @@ function stringMap(value: unknown, where: string): Record<string, string> {
     return result;
 }
 
+function idList(value: unknown, where: string): readonly string[] {
+    const list: unknown = value ?? [];
+    if (!Array.isArray(list) || list.some((entry: unknown): boolean => typeof entry !== 'string')) {
+        throw new ConfigError(`${where}: ожидается список идентификаторов ресурсов`);
+    }
+
+    return list as string[];
+}
+
 export function parseConfig(text: string): IConfig {
     let raw: unknown;
     try {
@@ -79,10 +93,8 @@ export function parseConfig(text: string): IConfig {
         }
     }
 
-    const skip: unknown = raw['skip'] ?? [];
-    if (!Array.isArray(skip) || skip.some((entry: unknown): boolean => typeof entry !== 'string')) {
-        throw new ConfigError('skip: ожидается список идентификаторов ресурсов');
-    }
+    const only: readonly string[] = idList(raw['only'], 'only');
+    const skip: readonly string[] = idList(raw['skip'], 'skip');
 
     // Пути раскладки — тоже значения проекта, и пакет их уже знает. Требовать их вторым списком
     // значило бы держать одно и то же в двух местах: расходятся такие пары молча.
@@ -91,7 +103,7 @@ export function parseConfig(text: string): IConfig {
         derived[`${kind.replace(/s$/, '')}sDir`] = layout[kind];
     }
 
-    return { vars: { ...derived, ...stringMap(raw['vars'], 'vars') }, layout: layout as Record<TKind, string>, skip: skip as string[] };
+    return { vars: { ...derived, ...stringMap(raw['vars'], 'vars') }, layout: layout as Record<TKind, string>, only, skip };
 }
 
 /** Конфиг проекта; его отсутствие — не отказ, а повод сказать про `agent-kit init`. */
