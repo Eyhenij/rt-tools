@@ -1,0 +1,277 @@
+<ng-container rtBlock="rt-chat">
+    <rt-file-drop
+        [overlayLabel]="'rtKit.chatDropOverlay' | transloco"
+        [accept]="accept()"
+        [disabled]="dropDisabled()"
+        (filesDropped)="onFilesDropped($event)">
+        @if (showHeader()) {
+            <rt-toolbar rtElem="header" dense>
+                <ng-template rtToolbarLeft>
+                    <h3 rtElem="title" qa-dataid="chat-title">{{ title() }}</h3>
+                </ng-template>
+                <ng-template rtToolbarRight>
+                    @if (showRefresh()) {
+                        <rt-icon-button
+                            qa-dataid="chat-refresh"
+                            icon="sync"
+                            variant="ghost"
+                            [ariaLabel]="'rtKit.chatRefreshAria' | transloco"
+                            [tooltip]="'rtKit.chatRefreshTooltip' | transloco"
+                            [loading]="fetching()"
+                            [disabled]="!hasThread()"
+                            (clicked)="onRefresh()" />
+                    }
+                    @if (showExpand()) {
+                        <rt-icon-button
+                            qa-dataid="chat-expand"
+                            variant="ghost"
+                            [icon]="expanded() ? 'window-minimize' : 'window-maximize'"
+                            [ariaLabel]="expandLabel()"
+                            [tooltip]="expandLabel()"
+                            (clicked)="toggleExpand()" />
+                    }
+                    <ng-content select="[rtChatHeaderActions]" />
+                </ng-template>
+            </rt-toolbar>
+        }
+
+        @if (!hasThread()) {
+            <rt-note qa-dataid="chat-empty-hint">{{ emptyHint() }}</rt-note>
+        } @else {
+            <div rtElem="thread-viewport" qa-dataid="chat-thread-viewport">
+                @if (loading()) {
+                    <!-- Скелетон повторяет структуру сообщения (автор → текст → дата),
+                 чередуя выравнивание, чтобы тред не «прыгал» при подмене на реальные. -->
+                    <div rtElem="thread" qa-dataid="chat-thread-skeleton">
+                        @for (row of skeletonRows; track row; let even = $even) {
+                            <div rtElem="message-skeleton" qa-dataid="chat-message-skeleton" [rtMod]="{ own: even }">
+                                <rt-skeleton-wrapper rtElem="skeleton-line" width="72px" height="10px" [isLoading]="true" />
+                                <rt-skeleton-wrapper rtElem="skeleton-line" width="100%" height="13px" [isLoading]="true" />
+                                <rt-skeleton-wrapper rtElem="skeleton-line" width="55%" height="13px" [isLoading]="true" />
+                                <rt-skeleton-wrapper rtElem="skeleton-line" width="56px" height="10px" [isLoading]="true" />
+                            </div>
+                        }
+                    </div>
+                } @else {
+                    <div
+                        #thread
+                        rtElem="thread"
+                        qa-dataid="chat-thread"
+                        [rtMod]="{ frozen: fetching() }"
+                        [attr.aria-busy]="fetching() ? 'true' : null"
+                        (scroll)="onThreadScroll()">
+                        @for (m of messages(); track m.id) {
+                            <div
+                                rtElem="message-row"
+                                qa-dataid="chat-message"
+                                [attr.data-own]="m.own"
+                                [attr.data-status]="m.status || null"
+                                [attr.data-deleted]="m.deleted || null"
+                                [rtMod]="{ own: m.own }">
+                                @if (m.canDelete && !m.deleted) {
+                                    @if (m.deleteConfirm) {
+                                        <rt-icon-button
+                                            rtElem="message-delete"
+                                            qa-dataid="chat-message-delete"
+                                            icon="trash"
+                                            variant="ghost"
+                                            [ariaLabel]="'rtKit.chatDeleteAria' | transloco"
+                                            [tooltip]="'rtKit.chatDeleteTooltip' | transloco"
+                                            [rtConfirm]="m.deleteConfirm"
+                                            (confirmed)="onDeleteMessage(m)" />
+                                    } @else {
+                                        <rt-icon-button
+                                            rtElem="message-delete"
+                                            qa-dataid="chat-message-delete"
+                                            icon="trash"
+                                            variant="ghost"
+                                            [ariaLabel]="'rtKit.chatDeleteAria' | transloco"
+                                            [tooltip]="'rtKit.chatDeleteTooltip' | transloco"
+                                            (clicked)="onDeleteMessage(m)" />
+                                    }
+                                }
+                                <div rtElem="message" [rtMod]="{ own: m.own, deleted: m.deleted }">
+                                    <p rtElem="message-author" qa-dataid="chat-message-author">{{ m.author }}</p>
+                                    @if (m.deleted) {
+                                        <p rtElem="message-text" qa-dataid="chat-message-deleted" rtMod="deleted">
+                                            {{ 'rtKit.chatMessageDeleted' | transloco }}
+                                        </p>
+                                    } @else {
+                                        @if (m.delta) {
+                                            <rt-delta-view rtElem="message-text" qa-dataid="chat-message-text" [delta]="m.delta" />
+                                        } @else {
+                                            <p rtElem="message-text" qa-dataid="chat-message-text">{{ m.text }}</p>
+                                        }
+                                        @if (m.attachments?.length) {
+                                            @for (att of m.attachments; track att.id) {
+                                                <span rtElem="message-attachment" qa-dataid="chat-message-attachment">
+                                                    <rt-file-card
+                                                        showDownload
+                                                        size="sm"
+                                                        [name]="att.name || attachmentFallbackName()"
+                                                        (download)="onDownloadAttachment(att)" />
+                                                </span>
+                                            }
+                                        } @else if (m.fileUrl) {
+                                            <span rtElem="message-attachment" qa-dataid="chat-message-attachment">
+                                                <rt-file-card
+                                                    showDownload
+                                                    size="sm"
+                                                    [name]="m.fileName || attachmentFallbackName()"
+                                                    (download)="onDownload(m)" />
+                                            </span>
+                                        }
+                                        @if (m.deepLink) {
+                                            <span rtElem="message-deeplink">
+                                                <a
+                                                    rtButton
+                                                    qa-dataid="chat-message-deeplink"
+                                                    appearance="outlined"
+                                                    icon="send"
+                                                    rel="noopener"
+                                                    target="_blank"
+                                                    [href]="m.deepLink"
+                                                    [label]="m.deepLinkLabel || ('rtKit.uiSubscribeNotifications' | transloco)"
+                                                    [attr.aria-label]="
+                                                        m.deepLinkLabel || ('rtKit.uiSubscribeNotifications' | transloco)
+                                                    "></a>
+                                            </span>
+                                        }
+                                    }
+                                    <span rtElem="message-footer">
+                                        <span rtElem="message-date" qa-dataid="chat-message-date">
+                                            {{ m.createdAt | date: 'short' : undefined : locale() }}
+                                        </span>
+                                        @if (m.status) {
+                                            <span
+                                                rtElem="message-status"
+                                                qa-dataid="chat-message-status"
+                                                [attr.data-status]="m.status"
+                                                [rtMod]="{ status: m.status }"
+                                                [attr.aria-label]="m.status | rtChatStatusLabel">
+                                                @if (m.status === MessageStatus.Failed) {
+                                                    <rt-icon rtElem="status-icon" name="exclamation-circle" size="sm" />
+                                                    <rt-icon-button
+                                                        rtElem="status-retry"
+                                                        qa-dataid="chat-message-retry"
+                                                        icon="sync"
+                                                        variant="ghost"
+                                                        [ariaLabel]="'rtKit.chatRetryAria' | transloco"
+                                                        [tooltip]="'rtKit.chatRetryTooltip' | transloco"
+                                                        (clicked)="onRetryMessage(m)" />
+                                                } @else {
+                                                    <!-- Часы, пока сообщение в пути; дальше двойной чек, цвет которого
+                                                         (серый/синий) различает доставлено и прочитано. -->
+                                                    <rt-icon
+                                                        rtElem="status-icon"
+                                                        size="sm"
+                                                        [name]="m.status === MessageStatus.Sending ? 'clock' : 'check-double'" />
+                                                }
+                                            </span>
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                        } @empty {
+                            <rt-note rtElem="empty-thread" qa-dataid="chat-empty-thread">{{ 'rtKit.chatEmptyThread' | transloco }}</rt-note>
+                        }
+                    </div>
+                }
+                @if (!loading() && fetching()) {
+                    <div
+                        rtElem="thread-overlay"
+                        qa-dataid="chat-thread-overlay"
+                        role="status"
+                        [attr.aria-label]="'rtKit.chatRefreshAria' | transloco">
+                        <rt-spinner diameter="32" />
+                    </div>
+                }
+            </div>
+
+            @if (canReply()) {
+                @if (richComposer()) {
+                    <rt-message-composer
+                        rtElem="composer-rich"
+                        qa-dataid="chat-composer-rich"
+                        [placeholder]="placeholder()"
+                        [accept]="accept()"
+                        [attachments]="attachments()"
+                        [formatting]="formatting()"
+                        [toolbar]="formattingToolbar()"
+                        [sending]="sending()"
+                        [disabled]="loading() || fetching()"
+                        [droppedFiles]="droppedFiles()"
+                        (submitted)="onComposerSubmit($event)" />
+                } @else {
+                    <form rtElem="composer" qa-dataid="chat-composer" [formGroup]="replyForm" (ngSubmit)="onSubmit()">
+                        @if (attachments() && selectedFiles().length > 0) {
+                            <div rtElem="composer-files" qa-dataid="chat-composer-files">
+                                @for (file of selectedFiles(); track $index) {
+                                    <rt-file-card
+                                        showRemove
+                                        qa-dataid="chat-composer-file"
+                                        size="sm"
+                                        [name]="file.name"
+                                        [sizeBytes]="file.size"
+                                        [disabled]="composerDisabled()"
+                                        (removed)="removeFile($index)" />
+                                }
+                            </div>
+                        }
+                        <div rtElem="composer-field" [rtMod]="{ attach: attachments() }">
+                            @if (attachments()) {
+                                <input
+                                    #composerFileEl
+                                    rtElem="composer-native"
+                                    qa-dataid="chat-composer-file-input"
+                                    type="file"
+                                    hidden
+                                    multiple
+                                    [attr.accept]="accept() || null"
+                                    (change)="onFilesPicked($event)" />
+                                <rt-icon-button
+                                    rtElem="composer-attach"
+                                    qa-dataid="chat-composer-attach"
+                                    icon="paperclip"
+                                    variant="ghost"
+                                    [ariaLabel]="'rtKit.chatAttachAria' | transloco"
+                                    [tooltip]="'rtKit.chatAttachTooltip' | transloco"
+                                    [disabled]="composerDisabled()"
+                                    (clicked)="openFilePicker()" />
+                            }
+                            <textarea
+                                rtElem="composer-input"
+                                qa-dataid="chat-composer-input"
+                                cdkTextareaAutosize
+                                formControlName="message"
+                                cdkAutosizeMinRows="1"
+                                cdkAutosizeMaxRows="4"
+                                [attr.aria-label]="'rtKit.chatComposerAria' | transloco"
+                                [placeholder]="placeholder()"
+                                (keydown)="onComposerKeydown($event)"></textarea>
+                        </div>
+                        <button
+                            rtButton
+                            rtElem="composer-send"
+                            qa-dataid="chat-composer-send"
+                            type="submit"
+                            theme="primary"
+                            appearance="filled"
+                            [label]="'rtKit.chatSendLabel' | transloco"
+                            [attr.aria-label]="'rtKit.chatSendAria' | transloco"
+                            [loading]="sending()"
+                            [disabled]="!canSend()"></button>
+                    </form>
+                }
+            } @else if (replyBlockReason()) {
+                <rt-note rtElem="reply-block" qa-dataid="chat-reply-block">{{ replyBlockReason() }}</rt-note>
+            }
+
+            <!-- Слот доменных действий потребителя под композером: в fullscreen
+                 попадает внутрь overlay, поэтому кнопки остаются видны. -->
+            <div rtElem="footer-slot" qa-dataid="chat-footer" [rtMod]="{ blocked: fetching() }" [attr.inert]="fetching() ? '' : null">
+                <ng-content select="[rtChatFooter]" />
+            </div>
+        }
+    </rt-file-drop>
+</ng-container>

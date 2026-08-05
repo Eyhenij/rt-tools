@@ -1,0 +1,36 @@
+/* rt-menu-confirm-dialog — confirm-модалка деструктивного пункта rt-menu-item.
+   ViewEncapsulation.None — селекторы префиксованы `.rt-menu-confirm-dialog`.
+   Frame (фон/радиус/тень) даёт rt-dialog; здесь — только layout контента. */
+
+.rt-menu-confirm-dialog {
+    display: flex;
+    box-sizing: border-box;
+    flex-direction: column;
+    padding: var(--rt-space-xl);
+    gap: var(--rt-space-lg);
+
+    &__text {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rt-space-sm);
+    }
+
+    &__title {
+        margin: 0;
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-text-md);
+        font-weight: var(--rt-font-weight-bold);
+    }
+
+    &__message {
+        margin: 0;
+        color: var(--rt-color-text-secondary);
+        font-size: var(--rt-text-sm);
+    }
+
+    &__footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: var(--rt-space-sm);
+    }
+}

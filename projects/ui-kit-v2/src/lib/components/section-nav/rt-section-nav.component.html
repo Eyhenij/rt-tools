@@ -1,0 +1,16 @@
+<ng-container rtBlock="rt-section-nav">
+    @for (item of items(); track item.id) {
+        <button
+            rtElem="tile"
+            qa-dataid="section-nav-tile"
+            type="button"
+            [attr.data-key]="item.id"
+            [attr.data-active]="item.active"
+            [attr.aria-current]="item.active ? 'page' : null"
+            [rtMod]="{ active: item.active }"
+            (click)="onSelect(item)">
+            <rt-icon rtElem="icon" size="lg" [name]="item.icon" />
+            <span rtElem="label">{{ item.label }}</span>
+        </button>
+    }
+</ng-container>

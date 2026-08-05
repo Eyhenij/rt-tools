@@ -1,0 +1,33 @@
+:host {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--rt-counter-row-padding-y) 0;
+    gap: var(--rt-counter-row-gap);
+
+    .rt-counter-row {
+        &__text {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-2xs);
+            text-align: start;
+        }
+
+        &__label {
+            color: var(--rt-counter-row-label-color);
+            font-size: var(--rt-counter-row-label-font-size);
+            font-weight: var(--rt-font-weight-medium);
+        }
+
+        &__hint {
+            color: var(--rt-counter-row-hint-color);
+            font-size: var(--rt-counter-row-hint-font-size);
+        }
+    }
+}
+
+// Линия разделяет соседние строки, а не обводит каждую: рамка на всех дала бы
+// лишние границы сверху у первой и снизу у последней
+:host(:not(:first-of-type)) {
+    border-top: var(--rt-border-width-thin) solid var(--rt-counter-row-color-border);
+}

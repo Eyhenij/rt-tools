@@ -1,0 +1,104 @@
+<ng-container rtBlock="rt-table">
+    <ng-content select="caption" />
+    <ng-content select="colgroup, col" />
+
+    <ng-container cdkColumnDef="rtRowActions">
+        <th *cdkHeaderCellDef rtElem="actions-header" cdk-header-cell aria-hidden="true"></th>
+        <td *cdkCellDef="let row" rtElem="actions-cell" qa-dataid="table-row-actions" cdk-cell>
+            @if (rowActions()?.template; as tpl) {
+                @if (row | rtRowHasActions: rowHasActions()) {
+                    <div rtElem="actions-float">
+                        <rt-menu>
+                            <ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ $implicit: row }" />
+                        </rt-menu>
+                    </div>
+                }
+            }
+        </td>
+    </ng-container>
+
+    <ng-container headerRowOutlet />
+
+    @if (isInitialLoading()) {
+        @for (i of skeletonRowIndexes(); track i) {
+            <tr rtElem="skeleton-row" qa-dataid="table-skeleton-row">
+                @for (col of displayedColumns(); track col) {
+                    <td rtElem="skeleton-cell">
+                        <rt-skeleton rtElem="skeleton-bar" />
+                    </td>
+                }
+            </tr>
+        }
+    }
+
+    <ng-container rowOutlet />
+    <ng-container noDataRowOutlet />
+    <ng-container footerRowOutlet />
+
+    @if (isEmpty()) {
+        <tr rtElem="empty-row" qa-dataid="table-empty-row">
+            <td rtElem="empty" [attr.colspan]="displayedColumns().length || null">
+                @if (emptyTemplate(); as tpl) {
+                    <ng-container [ngTemplateOutlet]="tpl" />
+                } @else {
+                    <rt-empty-state
+                        rtElem="empty-message"
+                        qa-dataid="table-empty"
+                        [icon]="emptyIcon()"
+                        [title]="emptyText()"
+                        [description]="emptyDescription()" />
+                }
+            </td>
+        </tr>
+    }
+
+    @if (showCards()) {
+        <div rtElem="cards" qa-dataid="table-cards" role="list">
+            @if (isInitialLoading()) {
+                @for (i of skeletonRowIndexes(); track i) {
+                    <article rtElem="card" qa-dataid="table-skeleton-card" [rtMod]="{ skeleton: true }">
+                        <rt-skeleton rtElem="card-skeleton-bar" />
+                        <rt-skeleton rtElem="card-skeleton-bar" />
+                    </article>
+                }
+            } @else if (isEmpty()) {
+                @if (emptyTemplate(); as tpl) {
+                    <ng-container [ngTemplateOutlet]="tpl" />
+                } @else {
+                    <rt-empty-state
+                        rtElem="empty-message"
+                        qa-dataid="table-empty"
+                        [icon]="emptyIcon()"
+                        [title]="emptyText()"
+                        [description]="emptyDescription()" />
+                }
+            } @else {
+                @for (row of cardRows(); track row) {
+                    <article rtElem="card" qa-dataid="table-card" role="listitem">
+                        @if (cardTemplate()?.template; as tpl) {
+                            <ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ $implicit: row }" />
+                        } @else {
+                            @for (col of cardColumns(); track col.key) {
+                                <div rtElem="card-field" qa-dataid="table-card-field" [attr.data-key]="col.key">
+                                    <span rtElem="card-label" qa-dataid="table-card-label">{{ col.label }}</span>
+                                    <div rtElem="card-value" qa-dataid="table-card-value">
+                                        <ng-container [ngTemplateOutlet]="col.cell" [ngTemplateOutletContext]="{ $implicit: row }" />
+                                    </div>
+                                </div>
+                            }
+                            @if (rowActions()?.template; as tpl) {
+                                @if (row | rtRowHasActions: rowHasActions()) {
+                                    <div rtElem="card-actions" qa-dataid="table-card-actions">
+                                        <rt-menu>
+                                            <ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ $implicit: row }" />
+                                        </rt-menu>
+                                    </div>
+                                }
+                            }
+                        }
+                    </article>
+                }
+            }
+        </div>
+    }
+</ng-container>

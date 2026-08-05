@@ -1,0 +1,93 @@
+<ng-container rtBlock="rt-pagination">
+    <span rtElem="range" qa-dataid="pagination-range">
+        @if (pageModel().totalCount === 0) {
+            {{ 'rtKit.uiRangeEmpty' | transloco }}
+        } @else {
+            {{ 'rtKit.uiRangeOf' | transloco: { from: rangeFrom(), to: rangeTo(), total: pageModel().totalCount } }}
+        }
+    </span>
+
+    @if (pageItems().length) {
+        <nav rtElem="compact" qa-dataid="pagination-compact" [attr.aria-label]="'rtKit.uiPagination' | transloco">
+            <rt-icon-button
+                rtElem="arrow"
+                qa-dataid="pagination-compact-prev"
+                icon="chevron-left"
+                variant="ghost"
+                size="sm"
+                [ariaLabel]="'rtKit.uiPrevPage' | transloco"
+                [tooltip]="'rtKit.uiBack' | transloco"
+                [disabled]="isFirst() || loading()"
+                (clicked)="goTo(pageModel().pageNumber - 1)" />
+
+            <span rtElem="compact-label" qa-dataid="pagination-compact-label">
+                {{ 'rtKit.uiPageOf' | transloco: { page: pageModel().pageNumber, last: lastPage() } }}
+            </span>
+
+            <rt-icon-button
+                rtElem="arrow"
+                qa-dataid="pagination-compact-next"
+                icon="chevron-right"
+                variant="ghost"
+                size="sm"
+                [ariaLabel]="'rtKit.uiNextPage' | transloco"
+                [tooltip]="'rtKit.uiForward' | transloco"
+                [disabled]="isLast() || loading()"
+                (clicked)="goTo(pageModel().pageNumber + 1)" />
+        </nav>
+
+        <nav rtElem="nav" qa-dataid="pagination-nav" [attr.aria-label]="'rtKit.uiPagination' | transloco">
+            <rt-icon-button
+                rtElem="arrow"
+                qa-dataid="pagination-prev"
+                icon="chevron-left"
+                variant="ghost"
+                size="sm"
+                [ariaLabel]="'rtKit.uiPrevPage' | transloco"
+                [tooltip]="'rtKit.uiBack' | transloco"
+                [disabled]="isFirst() || loading()"
+                (clicked)="goTo(pageModel().pageNumber - 1)" />
+
+            @for (item of pageItems(); track $index) {
+                @if (item === 'gap') {
+                    <span rtElem="gap" aria-hidden="true">…</span>
+                } @else {
+                    <button
+                        rtElem="page"
+                        qa-dataid="pagination-page"
+                        type="button"
+                        [attr.data-page]="item"
+                        [rtMod]="{ current: item === pageModel().pageNumber }"
+                        [attr.aria-current]="item === pageModel().pageNumber ? 'page' : null"
+                        [disabled]="loading()"
+                        (click)="goTo(item)">
+                        {{ item }}
+                    </button>
+                }
+            }
+
+            <rt-icon-button
+                rtElem="arrow"
+                qa-dataid="pagination-next"
+                icon="chevron-right"
+                variant="ghost"
+                size="sm"
+                [ariaLabel]="'rtKit.uiNextPage' | transloco"
+                [tooltip]="'rtKit.uiForward' | transloco"
+                [disabled]="isLast() || loading()"
+                (clicked)="goTo(pageModel().pageNumber + 1)" />
+        </nav>
+    }
+
+    <div rtElem="per-page">
+        <span rtElem="per-page-label">{{ 'rtKit.uiPerPage' | transloco }}</span>
+        <rt-select
+            qa-dataid="pagination-per-page"
+            [ariaLabel]="'rtKit.uiItemsPerPage' | transloco"
+            [options]="perPageSelectOptions()"
+            [clearable]="false"
+            [ngModel]="pageModel().pageSize"
+            [ngModelOptions]="{ standalone: true }"
+            (selectionChange)="onPerPage($event)" />
+    </div>
+</ng-container>

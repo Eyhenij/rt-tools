@@ -1,0 +1,67 @@
+.rt-header {
+    display: block;
+    height: 45px;
+    padding: 0 var(--rt-space-5);
+    background: var(--rt-color-bg-surface);
+    border-bottom-left-radius: var(--rt-radius-lg);
+    border-bottom-right-radius: var(--rt-radius-lg);
+
+    // Мягкая тень (тот же токен, что у карточек) отделяет хедер от контента —
+    // в тёмной теме фон хедера и страницы почти совпадают и сливались.
+    box-shadow: var(--rt-shadow-card-soft);
+    color: var(--rt-color-text-primary);
+
+    &__content {
+        display: flex;
+        width: 100%;
+        max-width: var(--rt-header-content-max-width, 100%);
+        height: 100%;
+        align-items: center;
+        margin: 0 auto;
+        gap: 0;
+    }
+
+    &__back {
+        display: inline-flex;
+        overflow: hidden;
+
+        /* Hidden state по умолчанию — slot полностью схлопнут (нулевая ширина),
+           Контент скрыт через opacity + сдвиг влево; pointer-events:none снимает hit-target. */
+        width: 0;
+        height: 45px;
+        align-items: center;
+        justify-content: flex-start;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(-8px);
+        transition:
+            width var(--rt-duration-base) cubic-bezier(0.34, 1.56, 0.64, 1),
+            opacity var(--rt-duration-base) ease-out,
+            transform var(--rt-duration-base) cubic-bezier(0.34, 1.56, 0.64, 1);
+
+        &--visible {
+            width: 35px;
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(0);
+        }
+    }
+
+    &__logo {
+        display: flex;
+        min-width: 0;
+        flex: 1 0 0;
+        align-items: center;
+    }
+}
+
+/* dark override: header bg = navy, близко к --rt-blue-900 */
+[data-theme='dark'] .rt-header {
+    background: var(--rt-blue-900);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rt-header__back {
+        transition: none;
+    }
+}

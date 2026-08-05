@@ -1,0 +1,108 @@
+/* rt-stat-tile — KPI-плитка в common/ui (Emulated encapsulation; :host обязательно).
+
+   Рамку и фон плитка не рисует: плитки стоят рядом внутри одной карточки, а
+   разделители между ними — забота контейнера. */
+
+:host {
+    display: block;
+
+    .rt-stat-tile {
+        display: flex;
+        height: 100%;
+        flex-direction: column;
+        gap: var(--rt-space-2);
+
+        &__head {
+            display: flex;
+            align-items: center;
+            gap: var(--rt-space-1);
+        }
+
+        &__label {
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-sm);
+            font-weight: var(--rt-font-weight-semibold);
+        }
+
+        &__hint {
+            color: var(--rt-color-text-muted);
+            cursor: help;
+        }
+
+        &__value-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: var(--rt-space-3);
+        }
+
+        &__value {
+            margin: 0;
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-3xl);
+            font-weight: var(--rt-font-weight-bold);
+            line-height: var(--rt-leading-none);
+        }
+
+        &__delta {
+            display: inline-flex;
+            align-items: center;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-md);
+            font-weight: var(--rt-font-weight-bold);
+            gap: var(--rt-space-1);
+            line-height: var(--rt-leading-none);
+
+            &--direction--up {
+                color: var(--rt-color-state-success);
+            }
+
+            &--direction--down {
+                color: var(--rt-color-state-danger);
+            }
+        }
+
+        &__year {
+            flex: 0 0 auto;
+            padding: var(--rt-space-0-5) var(--rt-space-1-5);
+            border-radius: var(--rt-radius-sm);
+            background: var(--rt-color-bg-surface-subtle);
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            font-weight: var(--rt-font-weight-semibold);
+            line-height: var(--rt-leading-none);
+            white-space: nowrap;
+
+            &--direction--up {
+                background: var(--rt-color-state-success-bg);
+                color: var(--rt-color-state-success);
+            }
+
+            &--direction--down {
+                background: var(--rt-color-state-danger-bg);
+                color: var(--rt-color-state-danger);
+            }
+        }
+
+        &__baseline {
+            overflow: hidden;
+            margin: 0;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Вторичная метрика прижата к низу: строки «было …» может не быть,
+           и без прижатия плитки в ряду разъезжались бы по базовой линии. */
+        &__secondary {
+            overflow: hidden;
+            margin: 0;
+            margin-top: auto;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+}

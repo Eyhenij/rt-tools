@@ -1,0 +1,27 @@
+<button
+    rtBlock="rt-checkbox"
+    qa-dataid="checkbox-control"
+    type="button"
+    role="checkbox"
+    [rtMod]="{
+        checked: isChecked() && !indeterminate(),
+        indeterminate: indeterminate(),
+        disabled: isDisabled(),
+    }"
+    [attr.id]="inputId()"
+    [attr.aria-checked]="indeterminate() ? 'mixed' : isChecked()"
+    [attr.aria-label]="ariaLabel()"
+    [disabled]="isDisabled()"
+    (click)="toggle()">
+    <span rtElem="box">
+        @if (indeterminate()) {
+            <rt-icon rtElem="icon" name="minus" size="xs" color="inverse" />
+        } @else if (isChecked()) {
+            <rt-icon rtElem="icon" name="check" size="xs" color="inverse" />
+        }
+    </span>
+
+    <span rtElem="label" qa-dataid="checkbox-label">
+        <ng-content />
+    </span>
+</button>

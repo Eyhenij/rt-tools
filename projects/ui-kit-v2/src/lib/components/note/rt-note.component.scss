@@ -1,0 +1,13 @@
+/* rt-note — тихая информационная заметка в common/ui (ViewEncapsulation.None).
+   Селектор bare `.rt-note` (класс на host) — `:host` в None light-DOM не матчит.
+   Палитра приглушённая (text-muted на subtle-фоне) — намеренно тише rt-message. */
+
+.rt-note {
+    display: block;
+    padding: var(--rt-space-sm) var(--rt-space-md);
+    border-radius: var(--rt-radius-md);
+    background: var(--rt-color-bg-subtle);
+    color: var(--rt-color-text-muted);
+    font-size: var(--rt-text-sm);
+    line-height: var(--rt-leading-normal);
+}

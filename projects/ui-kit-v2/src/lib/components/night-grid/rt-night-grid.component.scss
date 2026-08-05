@@ -1,0 +1,43 @@
+/* rt-night-grid — плотная сетка суток в common/ui (Emulated encapsulation; :host обязательно).
+
+   Ячейки мелкие и без подписей: сетка читается как индикатор занятости целиком, а
+   не как календарь — конкретный день подсказывает нативный title. */
+
+:host {
+    display: block;
+
+    .rt-night-grid {
+        /* Колонки резиновые от 16px: при жёсткой ширине ячейки сетка занимала
+           треть широкой карточки, а фиксированный максимум оставлял в ряду
+           «хвост» из одной ячейки, не попавшей в предыдущую строку. */
+        display: grid;
+        gap: var(--rt-space-1);
+        grid-template-columns: repeat(auto-fit, minmax(16px, 1fr));
+
+        &__cell {
+            padding: 0;
+            border: none;
+            border-radius: var(--rt-radius-sm);
+            aspect-ratio: 1;
+            background: var(--rt-color-bg-surface-subtle);
+            cursor: pointer;
+
+            &:hover {
+                outline: var(--rt-border-width-thin) solid var(--rt-color-border-strong);
+            }
+
+            &:focus-visible {
+                outline: var(--rt-border-width-thin) solid var(--rt-color-border-focus);
+                outline-offset: 1px;
+            }
+
+            &--state--primary {
+                background: var(--rt-color-state-success);
+            }
+
+            &--state--secondary {
+                background: color-mix(in srgb, var(--rt-color-state-success) 35%, transparent);
+            }
+        }
+    }
+}

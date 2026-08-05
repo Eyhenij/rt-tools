@@ -1,0 +1,48 @@
+/* Welcome-модалка первого входа — открывается через RtDialogService.open().
+   rt-dialog даёт styled-frame, контент внутри получает свой padding. */
+
+:host {
+    display: contents;
+
+    .rt-welcome-dialog {
+        display: flex;
+        flex-direction: column;
+        padding: var(--rt-space-16) var(--rt-space-5);
+        gap: var(--rt-space-5);
+
+        &__text {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-2-5);
+            text-align: center;
+        }
+
+        &__title {
+            margin: 0;
+            color: var(--rt-color-text-primary);
+            font-family: var(--rt-font-family-sans);
+            font-size: var(--rt-text-md);
+            font-weight: var(--rt-font-weight-bold);
+            line-height: var(--rt-leading-snug);
+        }
+
+        &__description {
+            margin: 0;
+            color: var(--rt-color-text-primary);
+            font-family: var(--rt-font-family-sans);
+            font-size: var(--rt-text-xs);
+            font-weight: var(--rt-font-weight-regular);
+            line-height: var(--rt-leading-snug);
+
+            /* Одиночные переводы строк внутри абзаца сохраняются как <br>. */
+            white-space: pre-line;
+        }
+
+        &__cta {
+            --rt-btn-font-size: 14px;
+
+            width: 100%;
+            letter-spacing: 0;
+        }
+    }
+}

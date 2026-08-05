@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <g transform="translate(1.9992 1.9992) scale(1.000080 1.000080) matrix(1 0 0 -1 0 20.000000)">
+        <path
+            d="M0 20H5V15H0V20ZM7.5 20H12.5V15H7.5V20ZM15 20H20V15H15V20ZM0 12.5H5V7.5H0V12.5ZM7.5 12.5H12.5V7.5H7.5V12.5ZM15 12.5H20V7.5H15V12.5ZM0 5H5V0H0V5ZM7.5 5H12.5V0H7.5V5ZM15 5H20V0H15V5Z"
+            fill="currentColor" />
+    </g>
+</svg>

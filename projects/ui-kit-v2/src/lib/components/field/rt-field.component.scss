@@ -1,0 +1,78 @@
+.rt-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rt-field-gap);
+
+    &__label-row {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--rt-field-label-help-gap);
+    }
+
+    &__label {
+        color: var(--rt-field-label-color);
+        font-size: var(--rt-field-label-font-size);
+        font-weight: var(--rt-field-label-font-weight);
+    }
+
+    &__required {
+        color: var(--rt-field-required-color);
+    }
+
+    /* Зона значения: проецируемый контрол или read-only текст. Задаёт размер/цвет
+       значения, чтобы оно было крупнее и контрастнее muted-лейбла. Нативные
+       <input> у rt-контролов задают свой font-size сами и это не переопределяют —
+       подхватывают только проецируемые элементы (напр. read-only <p>). */
+    &__control {
+        color: var(--rt-field-value-color);
+        font-size: var(--rt-field-value-font-size);
+    }
+
+    &__help {
+        display: inline-flex;
+        padding: 0;
+        border: none;
+        margin: 0;
+        background: none;
+        cursor: help;
+    }
+
+    &__help-popover {
+        display: block;
+        max-width: 240px;
+        font-size: var(--rt-field-hint-font-size);
+    }
+
+    /* Зона сообщений под контролом. С резервом (reserveHintSpace) hint и ошибка
+       кладутся в одну ячейку грида: скрытый hint продолжает задавать высоту, и
+       подмена сообщения не двигает форму ни вниз, ни вверх. Без hint высоту
+       держит min-height в одну строку — считаем по error-шрифту, он крупнее. */
+    &__messages {
+        display: grid;
+
+        &--reserved {
+            font-size: var(--rt-field-error-font-size);
+            min-block-size: 1lh;
+
+            > * {
+                grid-area: 1 / 1;
+            }
+        }
+    }
+
+    &__hint {
+        color: var(--rt-field-hint-color);
+        font-size: var(--rt-field-hint-font-size);
+
+        /* Место под собой держит, глазу не мешает — только так высота зоны
+           остаётся равной большему из двух сообщений. */
+        &--hidden {
+            visibility: hidden;
+        }
+    }
+
+    &__error {
+        color: var(--rt-field-error-color);
+        font-size: var(--rt-field-error-font-size);
+    }
+}

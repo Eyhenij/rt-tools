@@ -1,0 +1,21 @@
+@mixin surface-card {
+    padding: var(--rt-space-md);
+    border-radius: var(--rt-radius-xl);
+    background: var(--rt-color-bg-surface);
+    box-shadow: var(--rt-shadow-card-soft);
+}
+
+@mixin surface-card-dark {
+    background: var(--rt-blue-900);
+    box-shadow: var(--rt-shadow-card-soft);
+}
+
+@mixin card-title {
+    margin: 0;
+    color: var(--rt-color-text-primary);
+    font-family: var(--rt-font-family-sans);
+    font-size: var(--rt-text-md);
+    font-weight: var(--rt-font-weight-bold);
+    letter-spacing: var(--rt-letter-spacing-wide);
+    line-height: var(--rt-leading-snug);
+}

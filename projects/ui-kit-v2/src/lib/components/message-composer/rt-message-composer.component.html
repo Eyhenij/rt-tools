@@ -1,0 +1,72 @@
+<ng-container rtBlock="rt-message-composer" [formGroup]="form">
+    @if (formatting()) {
+        <rt-rich-editor
+            rtElem="rich"
+            qa-dataid="message-composer-rich"
+            formControlName="delta"
+            [placeholder]="placeholderText()"
+            [toolbar]="toolbar()"
+            (enterPressed)="submit()" />
+    } @else {
+        <textarea
+            rtElem="input"
+            qa-dataid="message-composer-input"
+            cdkTextareaAutosize
+            formControlName="message"
+            [attr.aria-label]="'rtKit.chatComposerAria' | transloco"
+            [placeholder]="placeholderText()"
+            [cdkAutosizeMinRows]="minRows()"
+            [cdkAutosizeMaxRows]="maxRows()"
+            (keydown)="onKeydown($event)"></textarea>
+    }
+
+    @if (attachments() && files().length) {
+        <div rtElem="files" qa-dataid="message-composer-files">
+            @for (file of files(); track $index) {
+                <rt-file-card
+                    showRemove
+                    qa-dataid="message-composer-file"
+                    size="sm"
+                    [name]="file.name"
+                    [sizeBytes]="file.size"
+                    [disabled]="disabled() || sending()"
+                    (removed)="removeFile($index)" />
+            }
+        </div>
+    }
+
+    <div rtElem="divider"></div>
+
+    <div rtElem="controls">
+        @if (attachments()) {
+            <input
+                #fileEl
+                rtElem="native"
+                qa-dataid="message-composer-file-input"
+                type="file"
+                hidden
+                multiple
+                [attr.accept]="accept() || null"
+                (change)="onFilesPicked($event)" />
+            <rt-icon-button
+                rtElem="attach"
+                qa-dataid="message-composer-attach"
+                icon="paperclip"
+                variant="ghost"
+                [ariaLabel]="'rtKit.chatAttachAria' | transloco"
+                [tooltip]="'rtKit.chatAttachTooltip' | transloco"
+                [disabled]="disabled() || sending()"
+                (clicked)="openPicker()" />
+        }
+
+        <rt-icon-button
+            rtElem="send"
+            qa-dataid="message-composer-send"
+            icon="send"
+            variant="primary"
+            [ariaLabel]="'rtKit.chatSendAria' | transloco"
+            [tooltip]="'rtKit.chatSendLabel' | transloco"
+            [disabled]="!canSend()"
+            (clicked)="submit()" />
+    </div>
+</ng-container>

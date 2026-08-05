@@ -1,0 +1,21 @@
+/* rt-detail-row — stacked строка «лейбл + значение» (ViewEncapsulation.None).
+   Селектор bare `.rt-detail-row` (класс на host). Типографика лейбла и значения
+   берётся из тех же `--rt-field-*` токенов, что и `rt-field`, — read-only строка
+   и редактируемое поле в одной секции выглядят одинаково. */
+
+.rt-detail-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rt-field-gap);
+
+    &__label {
+        color: var(--rt-field-label-color);
+        font-size: var(--rt-field-label-font-size);
+        font-weight: var(--rt-field-label-font-weight);
+    }
+
+    &__value {
+        color: var(--rt-field-value-color);
+        font-size: var(--rt-field-value-font-size);
+    }
+}

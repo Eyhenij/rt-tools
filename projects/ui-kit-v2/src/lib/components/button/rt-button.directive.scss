@@ -1,0 +1,268 @@
+/* rt-* color namespace bridge — мост на семантические --rt-* токены.
+   Живёт здесь, потому что единственный потребитель — `.rt-button` ниже. */
+:root {
+    --rt-color-primary: var(--rt-color-action-primary);
+    --rt-color-primary-hover: var(--rt-color-action-primary-hover);
+    --rt-color-primary-active: var(--rt-color-action-primary-hover);
+    --rt-color-on-primary: var(--rt-color-action-on-primary);
+}
+
+.rt-button {
+    --rt-btn-height: 40px;
+    --rt-btn-padding: 0 1.25rem;
+    --rt-btn-gap: 0.5rem;
+    --rt-btn-radius: 10px;
+    --rt-btn-font-size: 0.95rem;
+    --rt-btn-icon-size: 1rem;
+    --rt-btn-spinner-size: 1rem;
+    --rt-btn-spinner-border-width: 2px;
+    --rt-btn-bg: var(--rt-color-primary, #10b981);
+    --rt-btn-bg-hover: var(--rt-color-primary-hover, #059669);
+    --rt-btn-bg-active: var(--rt-color-primary-active, #047857);
+    --rt-btn-color: var(--rt-color-on-primary, #fff);
+    --rt-btn-border-color: var(--rt-btn-bg);
+    --rt-btn-border-color-hover: var(--rt-btn-bg-hover);
+    --rt-btn-shadow: none;
+
+    display: inline-flex;
+    height: var(--rt-btn-height);
+    min-height: var(--rt-btn-height);
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    padding: var(--rt-btn-padding);
+    border: var(--rt-border-width-thin) solid var(--rt-btn-border-color);
+    border-radius: var(--rt-btn-radius);
+    margin: 0;
+    background: var(--rt-btn-bg);
+    box-shadow: var(--rt-btn-shadow);
+    color: var(--rt-btn-color);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: var(--rt-btn-font-size);
+    font-weight: var(--rt-font-weight-medium);
+    gap: var(--rt-btn-gap);
+    line-height: var(--rt-leading-none);
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    text-decoration: none;
+    transition:
+        background-color var(--rt-duration-fast),
+        color var(--rt-duration-fast),
+        border-color var(--rt-duration-fast),
+        box-shadow var(--rt-duration-fast);
+    user-select: none;
+    white-space: nowrap;
+
+    &:hover:not(:disabled) {
+        border-color: var(--rt-btn-border-color-hover);
+        background: var(--rt-btn-bg-hover);
+    }
+
+    &:active:not(:disabled) {
+        background: var(--rt-btn-bg-active);
+    }
+
+    &:focus-visible {
+        box-shadow: var(--rt-shadow-focus-ring);
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+    }
+
+    &:disabled {
+        --rt-btn-bg: var(--rt-color-disabled, #d1d5db);
+        --rt-btn-bg-hover: var(--rt-color-disabled, #d1d5db);
+        --rt-btn-border-color: var(--rt-color-disabled, #d1d5db);
+        --rt-btn-border-color-hover: var(--rt-color-disabled, #d1d5db);
+        --rt-btn-color: var(--rt-color-on-disabled, #6b7280);
+
+        cursor: not-allowed;
+    }
+
+    &__icon {
+        display: inline-flex;
+        width: var(--rt-btn-icon-size);
+        height: var(--rt-btn-icon-size);
+        align-items: center;
+        justify-content: center;
+        font-size: var(--rt-btn-icon-size);
+    }
+
+    &__label {
+        display: inline-flex;
+        align-items: center;
+        white-space: nowrap;
+    }
+
+    &__spinner {
+        --rt-btn-spinner-fade-duration: 0.3s;
+        --rt-btn-spinner-rotation-duration: 0.7s;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        animation: rt-button-fade-in var(--rt-btn-spinner-fade-duration) both;
+    }
+
+    &__spinner-circle {
+        display: inline-block;
+        width: var(--rt-btn-spinner-size);
+        height: var(--rt-btn-spinner-size);
+        border: var(--rt-btn-spinner-border-width) solid currentcolor;
+        border-radius: var(--rt-radius-full);
+        border-bottom-color: transparent;
+        animation: rt-button-spin var(--rt-btn-spinner-rotation-duration) linear infinite;
+        opacity: 0.85;
+    }
+
+    &--secondary {
+        --rt-btn-bg: var(--rt-color-secondary, #6b7280);
+        --rt-btn-bg-hover: var(--rt-color-secondary-hover, #4b5563);
+        --rt-btn-bg-active: var(--rt-color-secondary-active, #374151);
+    }
+
+    &--success {
+        --rt-btn-bg: var(--rt-color-success, #16a34a);
+        --rt-btn-bg-hover: var(--rt-color-success-hover, #15803d);
+        --rt-btn-bg-active: var(--rt-color-success-active, #166534);
+    }
+
+    &--warning {
+        --rt-btn-bg: var(--rt-color-warning, #f59e0b);
+        --rt-btn-bg-hover: var(--rt-color-warning-hover, #d97706);
+        --rt-btn-bg-active: var(--rt-color-warning-active, #b45309);
+    }
+
+    &--danger {
+        --rt-btn-bg: var(--rt-color-danger, #ef4444);
+        --rt-btn-bg-hover: var(--rt-color-danger-hover, #dc2626);
+        --rt-btn-bg-active: var(--rt-color-danger-active, #b91c1c);
+    }
+
+    &--info {
+        --rt-btn-bg: var(--rt-color-info, #0ea5e9);
+        --rt-btn-bg-hover: var(--rt-color-info-hover, #0284c7);
+        --rt-btn-bg-active: var(--rt-color-info-active, #0369a1);
+    }
+
+    &--outlined {
+        --rt-btn-bg: transparent;
+        --rt-btn-bg-hover: rgb(16 185 129 / 8%);
+        --rt-btn-bg-active: rgb(16 185 129 / 16%);
+        --rt-btn-color: var(--rt-color-primary, #10b981);
+        --rt-btn-border-color: currentcolor;
+        --rt-btn-border-color-hover: currentcolor;
+        --rt-btn-shadow: none;
+    }
+
+    &--outlined#{&}--secondary {
+        --rt-btn-color: var(--rt-color-secondary, #6b7280);
+    }
+
+    &--outlined#{&}--success {
+        --rt-btn-color: var(--rt-color-success, #16a34a);
+    }
+
+    &--outlined#{&}--warning {
+        --rt-btn-color: var(--rt-color-warning, #f59e0b);
+    }
+
+    &--outlined#{&}--danger {
+        --rt-btn-color: var(--rt-color-danger, #ef4444);
+    }
+
+    &--outlined#{&}--info {
+        --rt-btn-color: var(--rt-color-info, #0ea5e9);
+    }
+
+    &--text {
+        --rt-btn-bg: transparent;
+        --rt-btn-bg-hover: rgb(16 185 129 / 8%);
+        --rt-btn-bg-active: rgb(16 185 129 / 16%);
+        --rt-btn-color: var(--rt-color-primary, #10b981);
+        --rt-btn-border-color: transparent;
+        --rt-btn-border-color-hover: transparent;
+        --rt-btn-shadow: none;
+    }
+
+    &--text#{&}--secondary {
+        --rt-btn-color: var(--rt-color-secondary, #6b7280);
+    }
+
+    &--text#{&}--success {
+        --rt-btn-color: var(--rt-color-success, #16a34a);
+    }
+
+    &--text#{&}--warning {
+        --rt-btn-color: var(--rt-color-warning, #f59e0b);
+    }
+
+    &--text#{&}--danger {
+        --rt-btn-color: var(--rt-color-danger, #ef4444);
+    }
+
+    &--text#{&}--info {
+        --rt-btn-color: var(--rt-color-info, #0ea5e9);
+    }
+
+    &--rounded {
+        --rt-btn-radius: 999px;
+    }
+
+    &--sm {
+        --rt-btn-height: 30px;
+        --rt-btn-padding: 0 0.875rem;
+        --rt-btn-font-size: 0.8125rem;
+        --rt-btn-icon-size: 0.875rem;
+        --rt-btn-spinner-size: 0.875rem;
+    }
+
+    &--lg {
+        --rt-btn-height: 50px;
+        --rt-btn-padding: 0 1.5rem;
+        --rt-btn-font-size: 1.0625rem;
+        --rt-btn-icon-size: 1.125rem;
+        --rt-btn-spinner-size: 1.125rem;
+    }
+
+    &--icon-only {
+        width: var(--rt-btn-height);
+        padding: 0;
+        gap: 0;
+    }
+
+    &--icon-only#{&}--rounded {
+        --rt-btn-radius: 50%;
+    }
+
+    &--loading {
+        cursor: wait;
+        pointer-events: none;
+    }
+}
+
+@keyframes rt-button-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes rt-button-fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes rt-button-fade-out {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}

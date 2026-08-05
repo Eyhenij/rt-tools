@@ -1,0 +1,15 @@
+<div
+    rtBlock="rt-aside"
+    qa-dataid="aside"
+    role="complementary"
+    [rtMod]="{ size: size(), content: contentLayout() }"
+    [style.--rt-aside-width]="width()"
+    [attr.aria-label]="ariaLabel()">
+    <ng-content select="rt-aside-header" />
+
+    <div rtElem="content" qa-dataid="aside-content">
+        <ng-content />
+    </div>
+
+    <ng-content select="rt-aside-footer" />
+</div>

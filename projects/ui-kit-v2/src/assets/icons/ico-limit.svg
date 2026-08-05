@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <g transform="translate(3.2496 1.9995) scale(1.000046 1.000046)">
+        <g>
+            <path d="M7.5 4.16667H5V20H7.5V4.16667Z" fill="currentColor" />
+            <path d="M2.5 12.5H0V20H2.5V12.5Z" fill="currentColor" />
+            <path d="M10 5.83333H12.5V20H10V5.83333Z" fill="currentColor" />
+            <path d="M17.5 0H15V20H17.5V0Z" fill="currentColor" />
+        </g>
+    </g>
+</svg>

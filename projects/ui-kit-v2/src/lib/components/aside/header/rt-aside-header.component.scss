@@ -1,0 +1,88 @@
+/* rt-aside-header — заголовок side-sheet'а. ViewEncapsulation.None.
+   Селекторы префиксованы `.rt-aside-header`. */
+
+.rt-aside-header {
+    padding: var(--rt-aside-inset);
+
+    &__content {
+        display: flex;
+        min-width: 0;
+        align-items: center;
+        gap: var(--rt-space-sm);
+    }
+
+    &__back {
+        flex-shrink: 0;
+    }
+
+    /* Колонка overline + title. flex/min-width живут здесь, чтобы ellipsis
+       у title работал и в двухстрочном варианте. */
+    &__heading {
+        display: flex;
+        min-width: 0;
+        flex: 1 1 auto;
+        flex-direction: column;
+        gap: var(--rt-space-0-5);
+    }
+
+    &__overline {
+        overflow: hidden;
+        margin: 0;
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-xs);
+        line-height: var(--rt-leading-snug);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__title {
+        overflow: hidden;
+        min-width: 0;
+        margin: 0;
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-text-xl);
+
+        /* Ellipsis для длинного заголовка: skeleton-wrapper рендерит `{{ title }}`
+           как ng-content внутри inline-flex; чтобы `text-overflow: ellipsis`
+           cработал, нужен block-level контейнер с overflow: hidden над текстом. */
+        > rt-skeleton-wrapper {
+            display: block;
+            overflow: hidden;
+            min-width: 0;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    /* Ряд бэйджей под title — переносится на новую строку при нехватке ширины. */
+    &__badges {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: var(--rt-space-1);
+        gap: var(--rt-space-xs);
+    }
+
+    /* Бэйдж-ссылка: тег в роли якоря (открывает тур в новой вкладке). */
+    &__badge-link {
+        display: inline-flex;
+        cursor: pointer;
+        text-decoration: none;
+
+        &:hover {
+            opacity: 0.85;
+        }
+    }
+
+    /* Ряд action-иконок справа от title (отклонить / на доработку / снять с
+       публикации и т.п.). Пустой при отсутствии проекции — нулевой ширины. */
+    &__actions {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        gap: var(--rt-space-xs);
+
+        &:empty {
+            display: none;
+        }
+    }
+}

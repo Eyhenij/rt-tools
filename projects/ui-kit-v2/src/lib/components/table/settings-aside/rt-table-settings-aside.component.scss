@@ -1,0 +1,5 @@
+/* rt-table-settings-aside — ViewEncapsulation.None (common/ui). Своей раскладки нет:
+   chrome даёт rt-aside, тело — rt-table-settings-panel. */
+:host {
+    display: contents;
+}

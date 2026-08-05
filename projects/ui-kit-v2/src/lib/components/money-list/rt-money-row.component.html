@@ -1,0 +1,10 @@
+<ng-container rtBlock="rt-money-row">
+    <span rtElem="label" qa-dataid="money-row-label">{{ label() }}</span>
+    <span rtElem="value" qa-dataid="money-row-value">
+        @if (loading()) {
+            <rt-skeleton qa-dataid="money-row-skeleton" width="72px" height="14px" />
+        } @else {
+            <ng-content />
+        }
+    </span>
+</ng-container>

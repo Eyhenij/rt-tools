@@ -1,0 +1,297 @@
+/* Semantic design tokens — light defaults. */
+
+:root {
+    /* Background */
+    --rt-color-bg-page: var(--rt-neutral-50);
+    --rt-color-bg-surface: var(--rt-neutral-0);
+    --rt-color-bg-surface-subtle: var(--rt-neutral-100);
+    --rt-color-bg-surface-subtle-2: var(--rt-neutral-200);
+    --rt-color-bg-hover: var(--rt-neutral-100);
+    --rt-color-bg-subtle: var(--rt-neutral-100);
+    --rt-color-bg-overlay: var(--rt-overlay-black-50);
+    --rt-color-bg-inverse: var(--rt-neutral-900);
+
+    /* Text */
+    --rt-color-text-primary: var(--rt-neutral-900);
+    --rt-color-text-muted: var(--rt-neutral-500);
+    --rt-color-text-disabled: var(--rt-neutral-400);
+    --rt-color-text-inverse: var(--rt-neutral-0);
+    --rt-color-text-link: var(--rt-blue-500);
+    --rt-color-text-link-hover: var(--rt-blue-600);
+
+    /* Border */
+    --rt-color-border-default: var(--rt-neutral-200);
+    --rt-color-border-strong: var(--rt-neutral-300);
+    --rt-color-border-subtle: var(--rt-neutral-200);
+    --rt-color-border-focus: var(--rt-blue-500);
+
+    /* Action */
+    --rt-color-action-primary: var(--rt-blue-500);
+    --rt-color-action-primary-hover: var(--rt-blue-600);
+    --rt-color-action-primary-subtle: var(--rt-overlay-blue-8);
+
+    /* Focus-ring tint — насыщеннее subtle, для visible 3px outline. */
+    --rt-color-action-primary-soft: var(--rt-overlay-blue-24);
+    --rt-color-action-on-primary: var(--rt-neutral-0);
+    --rt-color-action-secondary: var(--rt-neutral-200);
+    --rt-color-action-on-secondary: var(--rt-neutral-900);
+
+    /* Focus-ring composite — для interactive элементов с custom focus-visible. */
+    --rt-shadow-focus-ring: 0 0 0 3px var(--rt-color-action-primary-soft);
+    --rt-shadow-focus-ring-danger: 0 0 0 3px var(--rt-overlay-danger-16);
+
+    /* Stepper (rt-stepper) — рельса прогресса. Текущий шаг — янтарный (одинаков
+       в обеих темах); трек/прогресс переопределяются в dark на приглушённые. */
+    --rt-color-stepper-current: var(--rt-amber-400);
+    --rt-color-stepper-current-subtle: var(--rt-overlay-amber-16);
+    --rt-color-stepper-track: var(--rt-gray-350);
+    --rt-color-stepper-progress: var(--rt-color-action-primary);
+
+    /* Step-indicator ring — halo вокруг активного пункта rt-stepper. */
+    --rt-shadow-step-indicator: 0 0 0 4px var(--rt-color-stepper-current-subtle);
+
+    /* Status-dot ring — halo вокруг точки «объект занят сейчас». */
+    --rt-shadow-status-dot: 0 0 0 3px var(--rt-color-state-success-bg);
+
+    /* State */
+    --rt-color-state-success: var(--rt-success-500);
+    --rt-color-state-success-bg: var(--rt-success-50);
+    --rt-color-state-warning: var(--rt-warning-500);
+    --rt-color-state-warning-bg: var(--rt-warning-50);
+    --rt-color-state-danger: var(--rt-danger-500);
+    --rt-color-state-danger-bg: var(--rt-danger-50);
+    --rt-color-state-error-text: var(--rt-danger-600);
+    --rt-color-state-info: var(--rt-info-500);
+    --rt-color-state-info-bg: var(--rt-info-50);
+
+    /* Chat — пузыри переписки. Входящее и своё различаются фоном, а не рамкой:
+       рамка на каждом пузыре дробит ленту. Отметка прочтения синяя — единственный
+       цветной элемент подвала пузыря, остальные статусы приглушены. */
+    --rt-chat-bubble-in-bg: var(--rt-blue-50);
+    --rt-chat-bubble-in-author: var(--rt-blue-700);
+    --rt-chat-bubble-own-bg: var(--rt-neutral-100);
+    --rt-chat-bubble-own-author: var(--rt-neutral-500);
+    --rt-chat-bubble-date: var(--rt-color-text-muted);
+    --rt-chat-status-read: var(--rt-blue-400);
+
+    /* Special — Auth surface (gradient bg + transparent card в dark) */
+    --rt-color-bg-page-auth: var(--rt-neutral-50);
+    --rt-color-bg-surface-auth-card: var(--rt-neutral-0);
+
+    /* Spacing aliases — named semantic aliases на primitive numeric scale */
+    --rt-space-2xs: 2px;
+    --rt-space-xs: var(--rt-space-1); /* 4px */
+    --rt-space-sm: var(--rt-space-2); /* 8px */
+    --rt-space-md: var(--rt-space-4); /* 16px */
+    --rt-space-lg: var(--rt-space-6); /* 24px */
+    --rt-space-xl: var(--rt-space-8); /* 32px */
+    --rt-space-2xl: var(--rt-space-12); /* 48px */
+    --rt-space-3xl: var(--rt-space-16); /* 64px */
+
+    /* Text size base — semantic alias для default body text */
+    --rt-text-base: 16px;
+
+    /* Form input — composition tokens. Единый контракт для всего input-семейства
+       (rt-input, rt-input-number, rt-autocomplete, rt-select, rt-multiselect,
+       rt-textarea). Namespace --rt-input-* / --rt-textarea-*. Компоненты
+       потребляют ТОЛЬКО эти токены, не primitives и не литералы. */
+
+    /* Colors */
+    --rt-input-color-bg: var(--rt-color-bg-surface-subtle);
+    --rt-input-color-bg-disabled: var(--rt-color-bg-surface-subtle);
+    --rt-input-color-bg-hover: var(--rt-overlay-black-4);
+    --rt-input-color-border: var(--rt-color-border-default);
+    --rt-input-color-border-focus: var(--rt-color-action-primary);
+    --rt-input-color-border-error: var(--rt-color-state-danger);
+    --rt-input-color-text: var(--rt-color-text-primary);
+    --rt-input-color-text-placeholder: var(--rt-color-text-muted);
+
+    /* Sizes (single-line height scale) */
+    --rt-input-height-sm: var(--rt-control-height-sm);
+    --rt-input-height-md: var(--rt-control-height-md);
+    --rt-input-height-lg: var(--rt-control-height-lg);
+    --rt-input-height: var(--rt-input-height-md);
+
+    /* Кап ширины одиночного контрола (input/select) в тулбарах list-страниц —
+       внутри flex-баров контрол без ограничения растягивается на всю строку. */
+    --rt-input-max-width: var(--rt-control-max-width);
+
+    /* Radius / spacing / border */
+    --rt-input-radius: var(--rt-radius-lg);
+    --rt-input-padding-x: var(--rt-space-3);
+    --rt-input-padding-y: var(--rt-space-0);
+    --rt-input-border-width: var(--rt-border-width-thin);
+    --rt-input-focus-outline-offset: var(--rt-border-width-thin);
+
+    /* Typography */
+    --rt-input-font-size: var(--rt-text-sm);
+    --rt-input-line-height: var(--rt-leading-none);
+
+    /* State / motion */
+    --rt-input-disabled-opacity: var(--rt-opacity-disabled);
+    --rt-input-focus-shadow: var(--rt-shadow-focus-ring);
+    --rt-input-focus-shadow-error: var(--rt-shadow-focus-ring-danger);
+    --rt-input-transition: border-color var(--rt-duration-fast) ease, box-shadow var(--rt-duration-fast) ease;
+
+    /* Textarea overrides (multi-line) */
+    --rt-textarea-min-height-sm: var(--rt-control-textarea-min-height-sm);
+    --rt-textarea-min-height-md: var(--rt-control-textarea-min-height-md);
+    --rt-textarea-min-height-lg: var(--rt-control-textarea-min-height-lg);
+    --rt-textarea-min-height: var(--rt-textarea-min-height-md);
+    --rt-textarea-padding-y: var(--rt-space-sm);
+    --rt-textarea-line-height: var(--rt-leading-snug);
+
+    /* Dropdown panel (select / multiselect / autocomplete popup). */
+    --rt-input-panel-max-height: var(--rt-control-panel-max-height);
+
+    /* Icon-button hover-overlay — отдельный namespace (вне input-family),
+       тот же primitive-источник. */
+    --rt-icon-button-color-bg-hover: var(--rt-overlay-black-4);
+
+    /* Counter (rt-counter) и строка вокруг него (rt-counter-row). Значение
+       набирается табличными цифрами и держит ширину, иначе кнопки прыгают
+       при переходе через десяток. */
+    --rt-counter-gap: var(--rt-space-sm);
+    --rt-counter-value-min-width: 24px;
+    --rt-counter-value-font-size: var(--rt-text-md);
+    --rt-counter-value-color: var(--rt-color-text-primary);
+    --rt-counter-row-gap: var(--rt-space-md);
+    --rt-counter-row-padding-y: var(--rt-space-md);
+    --rt-counter-row-color-border: var(--rt-color-border-subtle);
+    --rt-counter-row-label-font-size: var(--rt-text-md);
+    --rt-counter-row-label-color: var(--rt-color-text-primary);
+    --rt-counter-row-hint-font-size: var(--rt-text-sm);
+    --rt-counter-row-hint-color: var(--rt-color-text-muted);
+
+    /* Toggle-switch (rt-toggle-switch) — трек, бегунок и иконки состояния. */
+    --rt-toggle-color-track: var(--rt-color-bg-surface-subtle-2);
+    --rt-toggle-color-track-on: var(--rt-color-action-primary);
+    --rt-toggle-color-border: var(--rt-color-border-strong);
+    --rt-toggle-color-thumb: var(--rt-color-bg-surface);
+    --rt-toggle-color-icon: var(--rt-amber-400);
+    --rt-toggle-shadow-thumb: var(--rt-shadow-md);
+
+    /* Рамка off-трека — inset-тенью, а не border: у border своя коробка, и
+       отступы бегунка с иконками пришлось бы пересчитывать на её толщину. */
+    --rt-toggle-shadow-border: inset 0 0 0 var(--rt-border-width-thin) var(--rt-toggle-color-border);
+
+    /* Навигация (rt-page-header). Шапка — отдельная плашка; отступ от краёв
+       страницы задаёт тот, кто её ставит. */
+    --rt-nav-header-padding: var(--rt-space-2-5) var(--rt-space-3);
+    --rt-nav-header-color-bg: var(--rt-neutral-150);
+
+    /* Первый уровень. Пункт ряда несёт плашку цвета самой шапки: на общем фоне её
+       не видно, и белым проступает только активный раздел. Наведение красит
+       подпись, а не фон — иначе оно спорит с этой подсветкой. */
+    --rt-nav-item-height: 28px;
+    --rt-nav-item-gap: var(--rt-space-1);
+    --rt-nav-item-padding: var(--rt-space-1-5) var(--rt-space-2);
+    --rt-nav-item-content-gap: var(--rt-space-1-5);
+    --rt-nav-item-font-size: var(--rt-text-sm);
+    --rt-nav-item-font-weight: var(--rt-font-weight-semibold);
+    --rt-nav-item-line-height: var(--rt-leading-none);
+    --rt-nav-item-color: var(--rt-color-text-primary);
+    --rt-nav-item-color-hover: var(--rt-color-action-primary);
+    --rt-nav-item-color-pressed: var(--rt-color-action-primary-hover);
+    --rt-nav-item-color-bg: var(--rt-neutral-150);
+    --rt-nav-item-color-border: var(--rt-neutral-150);
+    --rt-nav-item-color-bg-active: var(--rt-color-bg-surface);
+    --rt-nav-item-color-caret: var(--rt-neutral-250);
+
+    /* Фокус обведён пунктиром: сплошная рамка на плашке пункта неотличима от его
+       же границы. */
+    --rt-nav-color-focus: var(--rt-color-action-primary);
+
+    /* Недоступный пункт светлее доступного, а не другого оттенка: общий
+       `text-disabled` уходит в сине-стальной и рядом с серой подписью читается
+       как второй цвет, а не как выключенное состояние. */
+    --rt-nav-color-disabled: var(--rt-neutral-350);
+
+    /* Попап профиля. Подложку берёт у панели навигации, своего здесь — габариты
+       блока пользователя, тень и набор строк: строк четыре, и они читаются как
+       список действий, а не как выпадающее меню. */
+    --rt-profile-menu-min-width: 240px;
+    --rt-profile-menu-padding: var(--rt-space-5);
+    --rt-profile-menu-shadow: var(--rt-shadow-profile-menu);
+    --rt-profile-avatar-size: 42px;
+    --rt-profile-avatar-font-size: var(--rt-text-2xl);
+    --rt-profile-item-padding-y: var(--rt-space-3);
+    --rt-profile-item-content-gap: var(--rt-space-2-5);
+    --rt-profile-item-font-size: var(--rt-text-md);
+    --rt-profile-item-font-weight: var(--rt-font-weight-medium);
+    --rt-profile-item-radius: var(--rt-radius-md);
+
+    /* Строки выступают за содержимое панели на половину её отступа: так
+       подсветка на наведении не упирается в рамку, а иконка остаётся на одной
+       вертикали с содержимым. Это же число — горизонтальный отступ строки. */
+    --rt-profile-row-inset: var(--rt-space-2-5);
+    --rt-profile-theme-icon-padding: var(--rt-space-2);
+
+    /* Габариты панели второго уровня: ширина считается числом колонок, поэтому
+       колонка, промежуток и внутренний отступ — токены, из которых панель
+       складывает свою ширину. По вертикали отступ крупнее: у первой группы над
+       заголовком нет ничего, и панель иначе начинается впритык. */
+    --rt-nav-panel-column-width: 250px;
+    --rt-nav-panel-column-gap: var(--rt-space-5);
+    --rt-nav-panel-padding: var(--rt-space-3);
+    --rt-nav-panel-padding-y: var(--rt-space-md);
+    --rt-nav-panel-group-gap: var(--rt-space-7);
+    --rt-nav-panel-item-gap: var(--rt-space-0-5);
+    --rt-nav-panel-item-height: 24px;
+    --rt-nav-panel-item-padding: var(--rt-space-1) var(--rt-space-2);
+    --rt-nav-panel-columns: 1;
+    --rt-nav-panel-color-bg: var(--rt-color-bg-surface);
+    --rt-nav-panel-color-border: var(--rt-neutral-250);
+    --rt-nav-panel-shadow: var(--rt-shadow-nav-panel);
+
+    /* Второй уровень набран легче первого: ряд разделов держит вес, а полтора
+       десятка пунктов под ним читаются построчно. */
+    --rt-nav-panel-item-font-size: var(--rt-text-sm);
+    --rt-nav-panel-item-font-weight: var(--rt-font-weight-medium);
+    --rt-nav-panel-item-content-gap: var(--rt-space-1);
+    --rt-nav-panel-item-color: var(--rt-neutral-520);
+    --rt-nav-panel-item-color-bg-hover: var(--rt-neutral-150);
+    --rt-nav-panel-item-color-active: var(--rt-color-text-inverse);
+    --rt-nav-panel-item-color-bg-active: var(--rt-color-action-primary);
+    --rt-nav-panel-group-font-size: var(--rt-text-xs);
+    --rt-nav-panel-group-font-weight: var(--rt-font-weight-medium);
+
+    /* Заголовок группы светлее пункта, но оба берут порог AA на белой панели:
+       4.95:1 у пункта и 4.54:1 у заголовка. */
+    --rt-nav-panel-group-color: var(--rt-neutral-510);
+    --rt-nav-panel-group-content-gap: var(--rt-space-1-5);
+
+    /* Маркер непросмотренного. Точка стоит в потоке следом за подписью — и в ряду
+       разделов, и в панели, и на узком экране: место ей даёт общий зазор
+       содержимого пункта. */
+    --rt-nav-caret-size: 12px;
+    --rt-nav-marker-size: 4px;
+    --rt-nav-marker-color: var(--rt-color-state-danger);
+
+    /* Form field (rt-field) — обёртка анатомии поля: label / help / hint / error /
+       required-маркер / read-only значение. Визуал label+hint в стиле Tailwind
+       form (мелкий medium label, muted hint). Компоненты потребляют только эти
+       токены. */
+    --rt-field-gap: var(--rt-space-xs);
+    --rt-field-label-font-size: var(--rt-text-sm);
+    --rt-field-label-font-weight: var(--rt-font-weight-medium);
+    --rt-field-label-color: var(--rt-color-text-muted);
+    --rt-field-label-help-gap: var(--rt-space-xs);
+    --rt-field-hint-font-size: var(--rt-text-xs);
+    --rt-field-hint-color: var(--rt-color-text-muted);
+    --rt-field-error-font-size: var(--rt-text-xs);
+    --rt-field-error-color: var(--rt-color-state-danger);
+    --rt-field-required-color: var(--rt-color-state-danger);
+    --rt-field-value-font-size: var(--rt-text-sm);
+    --rt-field-value-color: var(--rt-color-text-primary);
+    --rt-field-value-empty-color: var(--rt-color-text-muted);
+}
+
+/* На тач-устройствах инпут не меньше 16px: WebKit (весь iOS, включая Chrome)
+   зумит страницу при фокусе на поле с font-size < 16px — отсюда горизонтальный
+   сдвиг вёрстки. Десктоп сохраняет плотный 14px. */
+@media (pointer: coarse) {
+    :root {
+        --rt-input-font-size: var(--rt-text-md);
+    }
+}

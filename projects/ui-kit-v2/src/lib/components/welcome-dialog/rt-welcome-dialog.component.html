@@ -1,0 +1,24 @@
+<rt-dialog width="335px" [ariaLabel]="'rtKit.uiWelcomeAria' | transloco">
+    <div rtBlock="rt-welcome-dialog">
+        <div rtElem="text">
+            @if (title) {
+                <h2 rtElem="title" qa-dataid="welcome-dialog-title">{{ title }}</h2>
+            }
+            @for (paragraph of paragraphs; track $index) {
+                <p rtElem="description" qa-dataid="welcome-dialog-description">{{ paragraph }}</p>
+            }
+        </div>
+        <!-- rtButton-директива рендерит label через Renderer2 в afterNextRender —
+             статического child-контента в template нет намеренно. -->
+        <!-- eslint-disable-next-line @angular-eslint/template/elements-content -->
+        <button
+            rtButton
+            rtElem="cta"
+            qa-dataid="welcome-dialog-cta"
+            type="button"
+            theme="primary"
+            appearance="filled"
+            [label]="ctaLabel()"
+            (click)="onClose()"></button>
+    </div>
+</rt-dialog>

@@ -1,0 +1,44 @@
+<ng-container rtBlock="rt-input-number">
+    @if (isReadonly()) {
+        <span rtElem="readonly" qa-dataid="input-number-readonly" [rtMod]="{ empty: !displayText() }">
+            @if (prefix() && displayText()) {
+                <span rtElem="prefix" qa-dataid="input-number-prefix">{{ prefix() }}</span>
+            }
+            {{ displayText() || '—' }}
+        </span>
+    } @else {
+        @if (iconLeft(); as left) {
+            <rt-icon rtElem="icon-left" size="sm" color="muted" [name]="left" />
+        }
+        @if (prefix(); as pfx) {
+            <span rtElem="prefix" qa-dataid="input-number-prefix" aria-hidden="true">{{ pfx }}</span>
+        }
+        <input
+            #fieldEl
+            rtElem="field"
+            qa-dataid="input-number-control"
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            [attr.id]="effectiveControlId()"
+            [attr.aria-label]="ariaLabel()"
+            [attr.aria-invalid]="isInvalid() || null"
+            [attr.placeholder]="placeholder()"
+            [disabled]="isDisabled()"
+            [value]="displayValue()"
+            (input)="onInput($event)"
+            (blur)="onBlur()" />
+        @if (showClearButton()) {
+            <rt-icon-button
+                rtElem="clear"
+                qa-dataid="input-number-clear"
+                icon="ico-close"
+                size="sm"
+                variant="ghost"
+                iconColor="muted"
+                [ariaLabel]="'rtKit.uiClear' | transloco"
+                [tabIndex]="-1"
+                (clicked)="clear($event)" />
+        }
+    }
+</ng-container>

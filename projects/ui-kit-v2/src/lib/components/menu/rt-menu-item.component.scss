@@ -1,0 +1,54 @@
+/* rt-menu-item — пункт меню rt-menu. ViewEncapsulation.None.
+   Host (`<rt-menu-item>`) несёт класс блока и сам является кликабельной зоной. */
+
+.rt-menu-item {
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    align-items: center;
+    padding: var(--rt-space-sm) var(--rt-space-md);
+    border-radius: var(--rt-radius-sm);
+    color: var(--rt-color-text-primary);
+    cursor: pointer;
+    font-size: var(--rt-text-sm);
+    gap: var(--rt-space-sm);
+    text-align: start;
+    transition: background-color var(--rt-duration-fast) ease;
+
+    &:hover {
+        background: var(--rt-color-bg-hover);
+    }
+
+    &:focus-visible {
+        background: var(--rt-color-bg-hover);
+        outline: none;
+    }
+
+    &__icon {
+        flex-shrink: 0;
+        color: var(--rt-color-text-muted);
+    }
+
+    &__label {
+        flex: 1 1 auto;
+        white-space: nowrap;
+    }
+
+    &--danger {
+        color: var(--rt-color-state-error-text);
+
+        .rt-menu-item__icon {
+            color: var(--rt-color-state-error-text);
+        }
+    }
+
+    &--disabled {
+        color: var(--rt-color-text-muted);
+        cursor: default;
+        opacity: 0.5;
+
+        &:hover {
+            background: transparent;
+        }
+    }
+}

@@ -1,0 +1,25 @@
+/* Оформление витрины. Свойства берутся из тех же партиалов, что уезжают в
+   пакет, — иначе витрина показывала бы свою палитру, а не палитру кита. */
+
+@use '../src/styles/index';
+
+/* Стили директивы кнопки лежат отдельным файлом и ни одним `styleUrl` не подключены:
+   у директивы своего представления нет. В приложении их подключает точка входа — витрина
+   делает то же, иначе `rtButton` рисуется браузерной кнопкой без оформления кита. */
+@use '../src/lib/components/button/rt-button.directive.scss';
+
+html,
+body {
+    background-color: var(--rt-color-bg-page);
+    color: var(--rt-color-text-primary);
+    font-family: var(--rt-font-family-sans);
+}
+
+/* Панель документации Storybook рисует свой белый фон поверх страницы. В тёмной
+   теме на нём подписи кита становятся белым по белому — поэтому фон и текст
+   контейнера тоже переводим на свойства кита. */
+:root[data-theme='dark'] .docs-story,
+:root[data-theme='dark'] .sbdocs-wrapper {
+    background-color: var(--rt-color-bg-page);
+    color: var(--rt-color-text-primary);
+}
