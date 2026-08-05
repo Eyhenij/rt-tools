@@ -6,3 +6,8 @@
 @forward './semantic';
 @forward './theme-dark';
 @forward './scrollbar';
+
+// Стили директивы кнопки: своего представления у директивы нет, поэтому её `.scss` не
+// подключён ни одним `styleUrl`. Без этой строки потребитель, взявший `tokens.css` по
+// инструкции README, получает `rtButton`, нарисованный браузерной кнопкой.
+@forward '../lib/components/button/rt-button.directive';

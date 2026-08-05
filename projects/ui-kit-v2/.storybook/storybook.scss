@@ -3,11 +3,6 @@
 
 @use '../src/styles/index';
 
-/* Стили директивы кнопки лежат отдельным файлом и ни одним `styleUrl` не подключены:
-   у директивы своего представления нет. В приложении их подключает точка входа — витрина
-   делает то же, иначе `rtButton` рисуется браузерной кнопкой без оформления кита. */
-@use '../src/lib/components/button/rt-button.directive.scss';
-
 html,
 body {
     background-color: var(--rt-color-bg-page);
