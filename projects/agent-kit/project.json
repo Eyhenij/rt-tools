@@ -1,0 +1,54 @@
+{
+  "name": "@rt-tools/agent-kit",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "projects/agent-kit/src",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "manifestRootsToUpdate": ["dist/agent-kit"],
+      "currentVersionResolver": "git-tag",
+      "fallbackCurrentVersionResolver": "disk"
+    }
+  },
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{workspaceRoot}/dist/agent-kit"],
+      "options": {
+        "main": "projects/agent-kit/src/index.ts",
+        "tsConfig": "projects/agent-kit/tsconfig.lib.json",
+        "outputPath": "dist/agent-kit",
+        "generatePackageJson": false,
+        "rootDir": "projects/agent-kit/src",
+        "assets": [
+          {
+            "input": "projects/agent-kit",
+            "glob": "assets/**/*",
+            "output": "."
+          },
+          {
+            "input": "projects/agent-kit",
+            "glob": "package.json",
+            "output": "."
+          },
+          {
+            "input": "projects/agent-kit",
+            "glob": "README.md",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/projects/agent-kit"],
+      "options": {
+        "jestConfig": "projects/agent-kit/jest.config.ts"
+      }
+    }
+  }
+}
