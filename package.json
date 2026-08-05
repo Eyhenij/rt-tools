@@ -27,6 +27,7 @@
     "changelog:core": "conventional-changelog -p angular -i projects/core/CHANGELOG.md -s -k projects/core/package.json --commit-path projects/core --tag-prefix rt-core@ && node tools/fold-unreleased-changelog.cjs projects/core/CHANGELOG.md",
     "changelog:store": "conventional-changelog -p angular -i projects/store/CHANGELOG.md -s -k projects/store/package.json --commit-path projects/store --tag-prefix rt-store@ && node tools/fold-unreleased-changelog.cjs projects/store/CHANGELOG.md",
     "changelog:utils": "conventional-changelog -p angular -i projects/utils/CHANGELOG.md -s -k projects/utils/package.json --commit-path projects/utils --tag-prefix rt-utils@ && node tools/fold-unreleased-changelog.cjs projects/utils/CHANGELOG.md",
+    "changelog:agent-kit": "conventional-changelog -p angular -i projects/agent-kit/CHANGELOG.md -s -k projects/agent-kit/package.json --commit-path projects/agent-kit --tag-prefix rt-agent-kit@ && node tools/fold-unreleased-changelog.cjs projects/agent-kit/CHANGELOG.md",
     "changelog:ui-kit": "conventional-changelog -p angular -i projects/ui-kit/CHANGELOG.md -s -k projects/ui-kit/package.json --commit-path projects/ui-kit --tag-prefix rt-tools@ && node tools/fold-unreleased-changelog.cjs projects/ui-kit/CHANGELOG.md",
     "prepare": "husky",
     "postinstall": "rimraf .angular .nx",
@@ -49,6 +50,7 @@
     "projects/core",
     "projects/store",
     "projects/utils",
+    "projects/agent-kit",
     "projects/ui-kit"
   ],
   "dependencies": {
