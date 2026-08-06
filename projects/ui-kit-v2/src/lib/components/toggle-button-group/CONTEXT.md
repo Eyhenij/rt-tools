@@ -1,0 +1,39 @@
+# `rt-toggle-button-group<T>`
+
+Группа сегментированных кнопок: один выбранный вариант из нескольких.
+
+```html
+<rt-toggle-button-group
+    ariaLabel="Период"
+    [options]="[{ value: 'day', label: 'День' }, { value: 'week', label: 'Неделя' }]"
+    [value]="period()"
+    (valueChange)="period.set($event)" />
+```
+
+| вход                     | тип                                              | умолчание      |
+| ------------------------ | ------------------------------------------------ | -------------- |
+| `options`                | `ReadonlyArray<{ value, label, icon?, title? }>` | **обязателен** |
+| `value`                  | `T \| undefined`                                 | `undefined`    |
+| `ariaLabel`              | `string \| null`                                 | `null`         |
+| `size`                   | `'sm' \| 'md' \| 'lg'`                           | `'sm'`         |
+| `disabled` / `fullWidth` | `boolean`                                        | `false`        |
+
+Выход: `valueChange`.
+
+## Главное, что нужно знать
+
+**Группа не держит состояния.** Нажатие только просит сменить значение; подсветка сдвинется,
+когда потребитель вернёт новое `value`. Повторное нажатие по выбранному тоже поднимает событие —
+снимать выбор группа не умеет.
+
+## Края
+
+- Крайние кнопки помечены модификаторами `--first` / `--last`: по ним скругляются углы группы.
+- `title` варианта превращается во всплывающую подсказку.
+- Размер иконки выводится из размера группы: `sm` → 12px, `md`/`lg` → 16px.
+
+## Рядом
+
+- [`rt-filter-control`](../filter-control/CONTEXT.md) — та же группа, но с автоматическим
+  переключением на список на узком экране.
+- Проверки: [`rt-toggle-button-group.component.spec.ts`](./rt-toggle-button-group.component.spec.ts).
