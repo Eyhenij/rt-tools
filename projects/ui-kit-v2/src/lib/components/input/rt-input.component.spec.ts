@@ -16,6 +16,17 @@ class InputHostComponent {
     public readonly control: FormControl<string | null> = new FormControl<string | null>('', [Validators.required]);
 }
 
+/** Контрол создан уже отключённым — форма скажет об этом до первого рендера. */
+@Component({
+    selector: 'rt-input-disabled-host',
+    template: '<rt-input [formControl]="control" placeholder="Имя" />',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtInputComponent, ReactiveFormsModule],
+})
+class InputDisabledHostComponent {
+    public readonly control: FormControl<string | null> = new FormControl<string | null>({ value: '', disabled: true });
+}
+
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtInputComponent> {
     return createRtFixture(RtInputComponent, inputs);
 }
@@ -215,6 +226,24 @@ describe('RtInputComponent', (): void => {
             fixture.detectChanges();
 
             expect(fixture.componentInstance.control.touched).toBe(true);
+        });
+
+        it('контрол, созданный отключённым, отключён уже на первом рендере', (): void => {
+            // Форма зовёт setDisabledState при связывании — раньше, чем поле
+            // обновит своё вью. Если вход дозатирает её слово, отключённая
+            // форма приезжает к пользователю редактируемой.
+            const fixture: ComponentFixture<InputDisabledHostComponent> = createRtFixture(InputDisabledHostComponent);
+
+            expect(field(fixture).disabled).toBe(true);
+        });
+
+        it('включение формы возвращает поле в работу', (): void => {
+            const fixture: ComponentFixture<InputDisabledHostComponent> = createRtFixture(InputDisabledHostComponent);
+
+            fixture.componentInstance.control.enable();
+            fixture.detectChanges();
+
+            expect(field(fixture).disabled).toBe(false);
         });
 
         it('ошибка подсвечивается только после того, как поля коснулись', (): void => {

@@ -3,11 +3,12 @@ import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
-    effect,
+    computed,
     forwardRef,
     input,
     InputSignal,
     InputSignalWithTransform,
+    Signal,
     signal,
     WritableSignal,
 } from '@angular/core';
@@ -29,10 +30,12 @@ const BEM_BLOCK: string = 'rt-checkbox';
  * `useExisting: forwardRef(...)` — `useClass` на self-reference вызывает
  * NG0200 cycle при boot'е.
  *
- * Source-of-truth для disabled — внутренний `isDisabled` signal: и signal-input
- * `disabled`, и CVA `setDisabledState` пишут в один и тот же signal (input —
- * через `effect()`, CVA — напрямую), так `[disabled]="true"` и
- * `FormControl.disable()` ведут себя одинаково.
+ * Отключение складывается из двух независимых источников: входа `disabled` и
+ * слова формы (CVA `setDisabledState`). Отключено, если так сказал любой из
+ * них. Сводить их в один signal нельзя: форма зовёт `setDisabledState` при
+ * связывании контрола, то есть раньше, чем чекбокс впервые обновит своё вью,
+ * и мирроринг входа затирал бы её слово — контрол, созданный отключённым,
+ * оказывался бы кликабельным.
  *
  * `indeterminate` — чисто визуальное mixed-состояние; клик по нему разрешается
  * в `true` (стандартное поведение tri-state чекбокса).
@@ -66,8 +69,11 @@ export class RtCheckboxComponent implements ControlValueAccessor {
     #onChange: (value: boolean) => void = (): void => undefined;
     #onTouched: () => void = (): void => undefined;
 
+    /** Отключение, назначенное формой через CVA (`setDisabledState`). */
+    readonly #disabledByForm: WritableSignal<boolean> = signal<boolean>(false);
+
     protected readonly isChecked: WritableSignal<boolean> = signal<boolean>(false);
-    protected readonly isDisabled: WritableSignal<boolean> = signal<boolean>(false);
+    protected readonly isDisabled: Signal<boolean> = computed((): boolean => this.disabled() || this.#disabledByForm());
 
     public readonly inputId: InputSignal<string | null> = input<string | null>(null);
 
@@ -80,15 +86,6 @@ export class RtCheckboxComponent implements ControlValueAccessor {
     public readonly indeterminate: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
-
-    constructor() {
-        // Синхронизируем signal-input `disabled` в `isDisabled`, чтобы
-        // `[disabled]="..."` и `setDisabledState(...)` (CVA) писали в одно
-        // и то же место. Effect живёт в injection context конструктора.
-        effect((): void => {
-            this.isDisabled.set(this.disabled());
-        });
-    }
 
     public writeValue(value: boolean | null | undefined): void {
         this.isChecked.set(value === true);
@@ -103,7 +100,7 @@ export class RtCheckboxComponent implements ControlValueAccessor {
     }
 
     public setDisabledState(disabled: boolean): void {
-        this.isDisabled.set(disabled);
+        this.#disabledByForm.set(disabled);
     }
 
     protected toggle(): void {

@@ -15,6 +15,17 @@ class TextareaHostComponent {
     public readonly control: FormControl<string | null> = new FormControl<string | null>('');
 }
 
+/** Контрол создан уже отключённым — форма скажет об этом до первого рендера. */
+@Component({
+    selector: 'rt-textarea-disabled-host',
+    template: '<rt-textarea [formControl]="control" />',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtTextareaComponent, ReactiveFormsModule],
+})
+class TextareaDisabledHostComponent {
+    public readonly control: FormControl<string | null> = new FormControl<string | null>({ value: '', disabled: true });
+}
+
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtTextareaComponent> {
     return createRtFixture(RtTextareaComponent, inputs);
 }
@@ -72,12 +83,14 @@ describe('RtTextareaComponent', (): void => {
     describe('крестик очистки', (): void => {
         it('не рисуется даже при значении — в многострочном поле он нетипичен', (): void => {
             // Вход `clearable` наследуется от общей основы полей, но разметка
-            // многострочного поля его не использует.
+            // многострочного поля его не использует. Смотрим на любые кнопки, а
+            // не на конкретный `qa-dataid`: несуществующий идентификатор давал
+            // бы `null` всегда, в том числе после появления крестика.
             const fixture: ComponentFixture<RtTextareaComponent> = setup({ clearable: true });
 
             type(fixture, 'Длинный текст');
 
-            expect(qa(fixture, 'textarea-clear')).toBeNull();
+            expect((fixture.nativeElement as HTMLElement).querySelectorAll('button').length).toBe(0);
         });
     });
 
@@ -144,6 +157,24 @@ describe('RtTextareaComponent', (): void => {
             fixture.detectChanges();
 
             expect(field(fixture).disabled).toBe(true);
+        });
+
+        it('контрол, созданный отключённым, отключён уже на первом рендере', (): void => {
+            // Форма зовёт setDisabledState при связывании — раньше, чем поле
+            // обновит своё вью. Если вход дозатирает её слово, отключённая
+            // форма приезжает к пользователю редактируемой.
+            const fixture: ComponentFixture<TextareaDisabledHostComponent> = createRtFixture(TextareaDisabledHostComponent);
+
+            expect(field(fixture).disabled).toBe(true);
+        });
+
+        it('включение формы возвращает поле в работу', (): void => {
+            const fixture: ComponentFixture<TextareaDisabledHostComponent> = createRtFixture(TextareaDisabledHostComponent);
+
+            fixture.componentInstance.control.enable();
+            fixture.detectChanges();
+
+            expect(field(fixture).disabled).toBe(false);
         });
     });
 
