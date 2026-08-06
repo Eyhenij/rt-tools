@@ -58,3 +58,6 @@ Thumbs.db
 .nx/polygraph
 .nx/self-healing
 .nx/migrate-runs
+# Личный бриф на сборку кита в Figma: содержит почту аккаунта,
+# идентификатор команды и ключ приватного файла — в публичное дерево не едет.
+rt-tools-figma-uikit-task.md
