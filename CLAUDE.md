@@ -39,6 +39,9 @@ pnpm run graph
 # Lay out the laws from @rt-tools/agent-kit / verify what is laid out
 pnpm run agent-kit:sync
 pnpm run agent-kit:check
+
+# Check the branch carries a task number, the work has a spec, and its coverage summary holds
+pnpm run check:spec
 ```
 
 ## Laws and rules
@@ -57,6 +60,27 @@ Laid-out files carry a `rt-kit v… · <resource> · <digest>` header and are **
 an edit there is lost on the next sync, and `agent-kit sync` refuses the file instead of
 overwriting it. Project additions go to `.claude/rt-kit/overrides/<resource>` and merge by `## `
 section. What this repo opts out of is listed in `skip` in `.claude/rt-kit.json`.
+
+## Describing the work before building it
+
+Work that changes package code starts from a spec, not from an edit. Spec Kit provides the
+process (`/speckit-specify` → `/speckit-plan` → `/speckit-tasks` → `/speckit-implement`, with
+`/speckit-clarify` and `/speckit-analyze` alongside), and this tree subordinates it:
+
+- The only body of principles is `docs/constitution/`. `.specify/memory/constitution.md` is a
+  pointer to it and **not** a second constitution — `/speckit-constitution` is not used here.
+- Document shape comes from `.specify/templates/overrides/` (priority 1 in template
+  resolution), so the packaged templates stay upgradable. Tests are **not** optional there,
+  whatever the upstream template says.
+- The spec directory is `specs/<task number>-<short name>/` — the number is the board task's,
+  never the next free one. Branches stay with the `rt-tools-board` rule.
+- Promised behaviour is broken into `AS-NNN` scenarios, and every one of them appears in the
+  spec's coverage summary — covered, partial, or uncovered with a reason.
+
+`pnpm run check:spec` enforces this (also on `pre-push` and in CI): branch name carries a task
+number, code changes have a spec, and the coverage summary neither omits a declared scenario
+nor points at a file that does not exist. See `docs/adr/0003-spec-driven-workflow.md` for what
+this costs and what it still does not check.
 
 ## Architecture
 
