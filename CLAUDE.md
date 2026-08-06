@@ -56,6 +56,11 @@ start by `.claude/hooks/constitution-index.sh`. Read the whole law before a deci
 `rt-tools-component`, `rt-tools-styling`, `rt-tools-testing` and the rest. `.claude/hooks/skill-gate.sh`
 blocks an edit until the matching rule is loaded.
 
+**How the layers fit together — which mask hands out which rule, when the gate fires and stops
+firing, what enforces a law (almost nothing) and what the gate does not catch — is written down
+in [docs/agent-layers.md](docs/agent-layers.md).** Read it before changing a hook, a mask, or a
+law override; the mechanics live in shell comments otherwise.
+
 Laid-out files carry a `rt-kit v… · <resource> · <digest>` header and are **not edited in place**:
 an edit there is lost on the next sync, and `agent-kit sync` refuses the file instead of
 overwriting it. Project additions go to `.claude/rt-kit/overrides/<resource>` and merge by `## `
