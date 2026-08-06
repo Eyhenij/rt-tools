@@ -27,4 +27,3 @@
 
 - [`rt-info-item`](../info-item/CONTEXT.md) — одиночная пара «подпись: значение» в строку.
 - [`rt-money-list`](../money-list/CONTEXT.md) — то же, но для сумм с итогом.
-- Проверки: [`rt-detail-list.component.spec.ts`](./rt-detail-list.component.spec.ts).

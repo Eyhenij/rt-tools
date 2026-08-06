@@ -24,7 +24,3 @@
   (`rtKit.uiDownloadFile` с подстановкой `{{name}}`) — на экране видно имя, а вслух читается
   «Download: Договор.pdf».
 - Для перечня вложений есть [`rt-file-list`](../file-list/CONTEXT.md); эта кнопка — одиночная.
-
-## Проверки
-
-[`rt-download-link.component.spec.ts`](./rt-download-link.component.spec.ts).

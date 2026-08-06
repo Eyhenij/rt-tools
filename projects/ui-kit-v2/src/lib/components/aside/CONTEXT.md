@@ -49,4 +49,3 @@ ref.afterClosed().subscribe((result?: ITour): void => …);
 - [`rt-aside-section`](../aside-section/CONTEXT.md) — раздел внутри.
 - [`rt-bottom-sheet`](../bottom-sheet/CONTEXT.md) — то же на узком экране.
 - [`rt-dialog`](../dialog/CONTEXT.md) — когда нужна именно модальность.
-- Проверки: [`rt-aside.component.spec.ts`](./rt-aside.component.spec.ts).

@@ -37,4 +37,3 @@
 ## Рядом
 
 - [`rt-menu`](../menu/CONTEXT.md) — меню без основного действия.
-- Проверки: [`rt-split-button.component.spec.ts`](./rt-split-button.component.spec.ts).

@@ -41,8 +41,3 @@
   `rtKit.uiRangeEmpty` тут была, но показать её не могло ничто: правило видимости прячет бар
   раньше. Сам ключ в словаре остался (он часть публичного `rtKit`), но кит его больше не читает.
   Про пустоту говорит [`rt-empty-state`](../empty-state/CONTEXT.md), а не пагинация.
-
-## Проверки
-
-[`rt-pagination.component.spec.ts`](./rt-pagination.component.spec.ts),
-[`rt-pagination.logic.spec.ts`](./rt-pagination.logic.spec.ts) — расчёт диапазона и полосы номеров.

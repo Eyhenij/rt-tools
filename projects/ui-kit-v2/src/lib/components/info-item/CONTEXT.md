@@ -28,4 +28,3 @@
 ## Рядом
 
 - [`rt-skeleton-wrapper`](../skeleton-wrapper/CONTEXT.md) — то, чем нарисована заглушка.
-- Проверки: [`rt-info-item.component.spec.ts`](./rt-info-item.component.spec.ts).

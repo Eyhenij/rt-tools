@@ -1,0 +1,45 @@
+// Обвязка витрины: ряд по одной оси. Свойства — из тех же `--rt-*`, что у кита.
+.app-story-row {
+    display: block;
+    margin-block-end: var(--rt-space-3xl);
+
+    &__caption {
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+        font-weight: var(--rt-font-weight-semibold);
+        letter-spacing: 0.06em;
+        margin-block: 0 var(--rt-space-12);
+        text-transform: uppercase;
+    }
+
+    // Перенос, а не прокрутка: у ряда значения независимы, и разорвать его по строкам
+    // ничего не теряет — в отличие от сетки, где строка читается целиком.
+    &__items {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--rt-space-16);
+    }
+
+    &__item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--rt-space-8);
+    }
+
+    // Ячейка тянется до общей высоты ряда: без этого подписи разъезжаются по вертикали
+    // всякий раз, когда значения оси дают разную высоту.
+    &__slot {
+        display: flex;
+        flex-grow: 1;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__label {
+        color: var(--rt-color-text-muted);
+        font-family: var(--rt-font-family-mono);
+        font-size: var(--rt-text-2xs);
+        text-align: center;
+    }
+}

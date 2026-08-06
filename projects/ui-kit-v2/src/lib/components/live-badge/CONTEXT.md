@@ -29,4 +29,3 @@
 ## Рядом
 
 - [`rt-tag`](../tag/CONTEXT.md) — статусная пилюля без счётчика.
-- Проверки: [`rt-live-badge.component.spec.ts`](./rt-live-badge.component.spec.ts).

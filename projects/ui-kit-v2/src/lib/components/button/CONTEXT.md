@@ -51,4 +51,3 @@
 
 - [`rt-icon-button`](../icon-button/CONTEXT.md) — кнопка без подписи, с обязательным `ariaLabel`.
 - [`rt-split-button`](../split-button/CONTEXT.md) — кнопка с прикреплённым меню.
-- Проверки: [`rt-button.directive.spec.ts`](./rt-button.directive.spec.ts).
