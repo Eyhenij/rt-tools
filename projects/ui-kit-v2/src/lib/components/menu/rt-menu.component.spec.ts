@@ -74,7 +74,6 @@ describe('RtMenuComponent', (): void => {
 
         openMenu(fixture);
 
-        expect(hostClasses(fixture).length >= 0).toBe(true);
         expect(Array.from((el(fixture, 'rt-menu')?.nativeElement as HTMLElement).classList)).toContain('rt-menu--open');
     });
 

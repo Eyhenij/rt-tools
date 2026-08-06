@@ -39,6 +39,12 @@
         "jestConfig": "projects/ui-kit-v2/jest.config.ts"
       }
     },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit -p projects/ui-kit-v2/tsconfig.spec.json"
+      }
+    },
     "storybook": {
       "executor": "@storybook/angular:start-storybook",
       "options": {

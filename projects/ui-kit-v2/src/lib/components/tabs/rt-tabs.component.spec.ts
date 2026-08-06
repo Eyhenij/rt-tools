@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, DebugElement, WritableSignal, signal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
-import { classesOf, createRtFixture, el, els, hostClasses, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
+import { classesOf, createRtFixture, el, els, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
 import { RtTabDirective } from './rt-tab.directive';
 import { RtTabsComponent } from './rt-tabs.component';
 import { IRtTabs } from './rt-tabs.model';
@@ -221,7 +221,9 @@ describe('RtTabsComponent', (): void => {
         });
     });
 
-    it('host не несёт BEM-блока сам — блок объявлен на внутреннем контейнере', (): void => {
-        expect(hostClasses(setup())).toEqual([]);
+    it('несёт свой BEM-блок на host-элементе', (): void => {
+        // Смотреть надо на сам `rt-tabs`, а не на обёртку из спеки: у обёртки
+        // классов нет никогда, и утверждение о ней говорило бы не о компоненте.
+        expect(classesOf(el(setup(), 'rt-tabs'))).toContain('rt-tabs');
     });
 });

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
-import { createRtFixture, el, hostClasses, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
+import { createRtFixture, el, fileListOf, hostClasses, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
 import { RtFileInputComponent } from './rt-file-input.component';
 
 @Component({
@@ -32,7 +32,7 @@ function pick<T>(fixture: ComponentFixture<T>, files: File[]): void {
     const input: HTMLInputElement = nativeInput(fixture);
     Object.defineProperty(input, 'files', {
         configurable: true,
-        value: { length: files.length, item: (i: number): File => files[i], ...files },
+        value: fileListOf(files),
     });
     input.dispatchEvent(new Event('change'));
     fixture.detectChanges();

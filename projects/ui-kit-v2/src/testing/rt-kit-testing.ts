@@ -171,3 +171,19 @@ export function textOf(target: DebugElement | HTMLElement | null): string {
 export function renderedText<T>(fixture: ComponentFixture<T>): string {
     return textOf(fixture.nativeElement as HTMLElement);
 }
+
+/**
+ * Собирает `FileList` из обычного массива: в jsdom его нельзя ни создать, ни
+ * присвоить, а компоненты выбора файлов читают именно `FileList` — с `length`,
+ * `item()` и доступом по индексу.
+ *
+ * Порядок ключей важен: разложение массива приносит с собой собственный
+ * `length`, поэтому свой ставится после него — иначе он же и затрётся.
+ */
+export function fileListOf(files: readonly File[]): FileList {
+    return {
+        ...files,
+        length: files.length,
+        item: (index: number): File | null => files[index] ?? null,
+    } as unknown as FileList;
+}

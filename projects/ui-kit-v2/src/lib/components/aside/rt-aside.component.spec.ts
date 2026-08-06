@@ -81,6 +81,15 @@ describe('RtAsideComponent', (): void => {
 });
 
 describe('RtAsideService', (): void => {
+    // Возврат к настоящим таймерам — в afterEach, а не в конце теста: падение
+    // утверждения посреди теста иначе оставило бы поддельные таймеры всем
+    // следующим тестам файла. Здесь это особенно дорого — закрытие асайда
+    // отложено на 300 мс, и под чужими поддельными таймерами ожидание
+    // `afterClosed()` висело бы до таймаута Jest, пряча настоящую причину.
+    afterEach((): void => {
+        jest.useRealTimers();
+    });
+
     function service(): RtAsideService {
         TestBed.configureTestingModule({ providers: [...provideRtKitTesting()] });
         return TestBed.inject(RtAsideService);
@@ -138,7 +147,6 @@ describe('RtAsideService', (): void => {
 
         jest.advanceTimersByTime(300);
         expect(overlayPanel()).toBeNull();
-        jest.useRealTimers();
     });
 
     it('повторное закрытие ничего не ломает', (): void => {
@@ -151,7 +159,6 @@ describe('RtAsideService', (): void => {
         jest.advanceTimersByTime(300);
 
         expect(overlayPanel()).toBeNull();
-        jest.useRealTimers();
     });
 
     it('клик по подложке закрывает асайд', async (): Promise<void> => {
@@ -165,13 +172,25 @@ describe('RtAsideService', (): void => {
     });
 
     it('запрет закрытия держит асайд открытым', (): void => {
+        // Панель уходит из DOM только через 300 мс после закрытия, поэтому её
+        // наличие сразу после клика не доказывает ничего: она была бы на месте
+        // и при снятом запрете. Проверяем, что закрытие не состоялось вовсе —
+        // результат `afterClosed()` отдаётся немедленно, — и что панель цела
+        // уже после того, как отложенный демонтаж успел бы отработать.
+        jest.useFakeTimers();
         const ref: RtAsideRef = service().open(AsideContentComponent, { data: '…' });
         render();
+        const closed: (unknown | undefined)[] = [];
+        ref.afterClosed().subscribe((result: unknown): void => {
+            closed.push(result);
+        });
 
         ref.disableClose.set(true);
         backdrop()?.click();
         overlayPanel()?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        jest.advanceTimersByTime(300);
 
+        expect(closed).toEqual([]);
         expect(overlayPanel()).not.toBeNull();
     });
 });

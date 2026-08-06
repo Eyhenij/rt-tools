@@ -36,9 +36,14 @@ jobs:
             - name: Fetch main branch
               run: git fetch origin main
 
-            - name: Test, Lint, Build
+            # `typecheck` проверяет типы там, где их не проверяет ничто другое:
+            # Jest транспилирует спеки без проверки типов, а ESLint здесь не
+            # type-aware, так что спека могла годами гонять форму, которой по
+            # типам компонента не бывает. Цель объявлена не у всех проектов —
+            # у кого её нет, тот пропускается.
+            - name: Test, Lint, Typecheck, Build
               run: |
-                  pnpm exec nx affected -t lint test build --parallel --base=origin/main --head=HEAD
+                  pnpm exec nx affected -t lint typecheck test build --parallel --base=origin/main --head=HEAD
 
             # Only @rt-tools/utils defines `verify`; it asserts the built package stays consumable
             # outside Angular. Projects without the target are skipped.

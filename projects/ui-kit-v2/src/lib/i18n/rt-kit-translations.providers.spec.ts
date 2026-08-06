@@ -1,15 +1,22 @@
 import { ApplicationInitStatus } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
+import { Observable, of } from 'rxjs';
+
 import { provideTransloco, Translation, TranslocoLoader, TranslocoService } from '@jsverse/transloco';
 
 import { RT_KIT_TRANSLATIONS } from './rt-kit-translations';
 import { provideRtKitTranslations } from './rt-kit-translations.providers';
 
-/** Словарь приложения: пустой, чтобы видеть только то, что положил кит. */
+/**
+ * Словарь приложения: пустой, чтобы видеть только то, что положил кит. Отдаёт
+ * `of(...)`, а не готовый объект: Transloco оборачивает результат в `from()`,
+ * и обычный объект там падает, а отказ гасится внутренним `catchError` — язык
+ * остаётся пустым молча.
+ */
 class EmptyLoader implements TranslocoLoader {
-    public getTranslation(): Translation {
-        return {};
+    public getTranslation(): Observable<Translation> {
+        return of({});
     }
 }
 

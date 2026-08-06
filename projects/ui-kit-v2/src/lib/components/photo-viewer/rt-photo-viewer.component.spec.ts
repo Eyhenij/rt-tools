@@ -11,10 +11,16 @@ import { RtPhotoViewerComponent } from './rt-photo-viewer.component';
 
 function photo(id: number): IRtPhotoViewer.Photo {
     return {
-        id,
+        id: String(id),
         alt: `Кадр ${id}`,
-        picture: { sources: [], fallbackSrc: `/photo-${id}.jpg`, fallbackSrcset: `/photo-${id}.jpg 1x` },
-    } as IRtPhotoViewer.Photo;
+        picture: {
+            sources: [],
+            fallbackType: 'image/jpeg',
+            fallbackSrc: `/photo-${id}.jpg`,
+            fallbackSrcset: `/photo-${id}.jpg 1x`,
+        },
+        aspectRatio: '3 / 2',
+    };
 }
 
 const PHOTOS: ReadonlyArray<IRtPhotoViewer.Photo> = [photo(1), photo(2), photo(3)];
@@ -139,7 +145,7 @@ describe('RtPhotoViewerComponent', (): void => {
     });
 
     describe('закрытие', (): void => {
-        it('крестик отдаёт номер кадра, на котором закрыли', (): void => {
+        it('крестик отдаёт номер кадра, на котором закрыли', async (): Promise<void> => {
             // Список за просмотрщиком прокручивается к тому же кадру.
             const ref: RtDialogRef<number> = open();
             const closed: Promise<number | undefined> = firstValueFrom(ref.afterClosed());
@@ -147,7 +153,7 @@ describe('RtPhotoViewerComponent', (): void => {
 
             press('photo-viewer-close');
 
-            return expect(closed).resolves.toBe(1);
+            await expect(closed).resolves.toBe(1);
         });
 
         it('Escape закрывает так же', async (): Promise<void> => {

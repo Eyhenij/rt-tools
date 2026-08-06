@@ -18,7 +18,7 @@ function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture
     return createRtFixture(RtMessageComponent, inputs);
 }
 
-function iconHref(fixture: ComponentFixture<RtMessageComponent>): string | undefined {
+function iconHref(fixture: ComponentFixture<RtMessageComponent>): string | null | undefined {
     return el(fixture, '.rt-message__icon use')?.attributes['href'];
 }
 
