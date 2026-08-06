@@ -30,6 +30,14 @@
             --rt-icon-button-size: 44px;
         }
 
+        &--xl {
+            --rt-icon-button-size: 52px;
+        }
+
+        &--2xl {
+            --rt-icon-button-size: 60px;
+        }
+
         &--circle {
             border-radius: var(--rt-radius-full);
         }

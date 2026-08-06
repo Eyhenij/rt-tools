@@ -8,7 +8,7 @@ export default {
     argTypes: {
         name: { control: false },
         size: {
-            options: ['xs', 'sm', 'md', 'lg', 'xl'],
+            options: ['xs', 'sm', 'md', 'lg', 'xl', '2xl'],
             control: { type: 'select' },
         },
         color: {
