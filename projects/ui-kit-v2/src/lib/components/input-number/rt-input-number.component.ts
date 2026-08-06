@@ -26,13 +26,21 @@ import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 const BEM_BLOCK: string = 'rt-input-number';
 
 /**
- * Парсит строку в `number | null`. Принимает `,` или `.` как decimal
- * separator. Все пробелы (включая неразрывный) удаляются — нужно чтобы
- * сгруппированное по разрядам отображение (`1 234,56`) парсилось обратно.
+ * Парсит строку в `number | null` по разделителям локали: `groupSep` и любые
+ * пробелы удаляются, оставшийся разделитель дробной части приводится к точке.
+ *
+ * Разбор обязан знать локаль, иначе он расходится с показом: в `en-US` разряды
+ * группируются запятой, и набранное `1000` показывалось как `1,000`, а в форму
+ * уходила `1` — безусловная замена первой запятой на точку читала разделитель
+ * разрядов как десятичный.
+ *
  * Пустая строка / NaN → null.
  */
-function parseNumber(text: string): number | null {
-    const cleaned: string = text.replace(/\s/g, '').replace(',', '.');
+function parseNumber(text: string, groupSep: string): number | null {
+    const withoutSpaces: string = text.replace(/\s/g, '');
+    // Пробельный разделитель разрядов (ru) уже снят предыдущей строкой.
+    const withoutGroups: string = groupSep.trim() === '' ? withoutSpaces : withoutSpaces.split(groupSep).join('');
+    const cleaned: string = withoutGroups.replace(/,/g, '.');
     if (cleaned === '') {
         return null;
     }
@@ -128,6 +136,15 @@ export class RtInputNumberComponent extends RtFormControlBase<number | null> {
     // одинаково, а parseNumber (стрипает \s) парсит обратно обе формы.
     readonly #groupSep: string = (1000).toLocaleString(this.#locale).replace(/\d/g, '') || ' ';
 
+    /**
+     * Что в этой локали можно набрать как разделитель дробной части: всё из
+     * «.,», кроме того, чем локаль разделяет разряды. В `ru` разряды разделяет
+     * неразрывный пробел, поэтому годятся оба знака; в `en-US` запятая — это
+     * разряды, и десятичной остаётся только точка. Иначе набранное `1,5`
+     * значило бы в показе одно, а в разборе другое.
+     */
+    readonly #decimalSepPattern: RegExp = new RegExp(`[${['.', ','].filter((char: string): boolean => char !== this.#groupSep).join('')}]`);
+
     protected readonly fieldEl: Signal<ElementRef<HTMLInputElement> | undefined> = viewChild<ElementRef<HTMLInputElement>>('fieldEl');
 
     protected readonly displayValue: WritableSignal<string> = signal<string>('');
@@ -208,7 +225,7 @@ export class RtInputNumberComponent extends RtFormControlBase<number | null> {
         target.setSelectionRange(nextCaret, nextCaret);
         this.displayValue.set(formatted);
 
-        const parsed: number | null = parseNumber(formatted);
+        const parsed: number | null = parseNumber(formatted, this.#groupSep);
         if (parsed === null) {
             // Только реально пустой ввод → emit null (пользователь очистил поле).
             // Нечисловой ввод стрипается из отображения, но prev value держится до
@@ -224,7 +241,7 @@ export class RtInputNumberComponent extends RtFormControlBase<number | null> {
     }
 
     protected onBlur(): void {
-        const parsed: number | null = parseNumber(this.displayValue());
+        const parsed: number | null = parseNumber(this.displayValue(), this.#groupSep);
         if (parsed === null) {
             this.value.set(null);
             this.displayValue.set('');
@@ -234,9 +251,9 @@ export class RtInputNumberComponent extends RtFormControlBase<number | null> {
         }
         const clamped: number = clamp(parsed, this.min(), this.max());
         const formatted: string = formatNumber(clamped, this.minFractionDigits(), this.maxFractionDigits(), this.#locale);
-        // `formatted` содержит пробелы-разделители и запятую — обратный парс
-        // через parseNumber (а не parseFloat) даёт округлённое числовое значение.
-        const rounded: number = parseNumber(formatted) ?? clamped;
+        // `formatted` содержит разделители локали — обратный парс через
+        // parseNumber (а не parseFloat) даёт округлённое числовое значение.
+        const rounded: number = parseNumber(formatted, this.#groupSep) ?? clamped;
         this.value.set(rounded);
         this.displayValue.set(formatted);
         this.emitChange(rounded);
@@ -246,8 +263,11 @@ export class RtInputNumberComponent extends RtFormControlBase<number | null> {
     /**
      * Live-форматирование строки во время набора: целая часть группируется по
      * разрядам (`#groupSep`), дробная остаётся как набрана (хвостовая запятая и
-     * нули сохраняются, чтобы их можно было дописать). Десятичный разделитель
-     * всегда допускается — округление по `maxFractionDigits` происходит на blur
+     * нули сохраняются, чтобы их можно было дописать). Разделителем дробной
+     * части считается только то, что им может быть в этой локали
+     * (`#decimalSepPattern`), — иначе запятая-разряды в `en-US` читалась бы как
+     * десятичная. Разделитель допускается всегда — округление по
+     * `maxFractionDigits` происходит на blur
      * (поэтому в целочисленном поле «1000,5» парсится и округлится, а не склеится
      * в «10005»). Группировка — линейным проходом, а не `Number()`, чтобы не
      * терять точность на суммах длиннее 2^53.
@@ -259,7 +279,7 @@ export class RtInputNumberComponent extends RtFormControlBase<number | null> {
         let fracDigits: string = '';
         let intDigits: string;
 
-        const sepIndex: number = raw.search(/[.,]/);
+        const sepIndex: number = raw.search(this.#decimalSepPattern);
         if (sepIndex >= 0) {
             sep = raw.charAt(sepIndex);
             intDigits = raw.slice(0, sepIndex).replace(/\D/g, '');

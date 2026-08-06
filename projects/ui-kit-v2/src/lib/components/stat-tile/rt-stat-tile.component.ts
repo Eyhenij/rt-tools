@@ -93,7 +93,17 @@ function deltaRow(key: string, delta: IRtStatTile.Delta | null): IDeltaRow | nul
     },
 })
 export class RtStatTileComponent {
-    readonly #baselinePrefix: Signal<string> = translateSignal('rtKit.uiBaseline');
+    /**
+     * Значение базы уходит параметром перевода, а не подставляется в готовую
+     * строку: Transloco интерполирует `{{value}}` в момент перевода, и к
+     * возвращённой строке подставлять уже нечего — от подписи оставалась одна
+     * приставка («было», «was»), а само число пропадало.
+     */
+    readonly #baselineParams: Signal<Record<string, string>> = computed((): Record<string, string> => ({
+        value: this.deltaPrimary()?.baseline ?? '',
+    }));
+
+    readonly #baselineLine: Signal<string> = translateSignal('rtKit.uiBaseline', this.#baselineParams);
 
     /**
      * Дельта к предыдущему периоду — рядом со значением. Пустая база (`percent`
@@ -110,10 +120,7 @@ export class RtStatTileComponent {
      * (занятость, состав воронки) живёт во вторичной строке, иначе одна плитка
      * растягивает ряд под самую длинную подпись.
      */
-    protected readonly baselineText: Signal<string> = computed((): string => {
-        const baseline: string | undefined = this.deltaPrimary()?.baseline;
-        return baseline ? this.#baselinePrefix().replace('{{value}}', baseline) : '';
-    });
+    protected readonly baselineText: Signal<string> = computed((): string => (this.deltaPrimary()?.baseline ? this.#baselineLine() : ''));
 
     /** Подпись метрики. */
     public readonly label: InputSignal<string> = input.required<string>();

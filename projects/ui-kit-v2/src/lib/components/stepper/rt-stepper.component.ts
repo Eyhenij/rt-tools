@@ -44,11 +44,25 @@ const BEM_BLOCK: string = 'rt-stepper';
     },
 })
 export class RtStepperComponent {
-    protected readonly currentStep: Signal<IRtStepper.Step | null> = computed((): IRtStepper.Step | null => {
-        const list: readonly IRtStepper.Step[] = this.steps();
-        const idx: number = this.currentIndex();
-        return list[idx] ?? null;
+    /**
+     * Номер шага, зажатый в набор. Индекс приходит снаружи и может выйти за
+     * границы; полоса и якорь подписи это уже переживали, а вот объявление для
+     * скринридера — нет: при `currentIndex: 99` на трёх шагах на прогрессбаре
+     * оказывалось `aria-valuenow="100"` при `aria-valuemax="3"`, а подпись шага
+     * пропадала вовсе. Зажимаем один раз здесь, чтобы показ и объявление не
+     * могли разойтись.
+     */
+    readonly #safeIndex: Signal<number> = computed((): number => {
+        const total: number = this.steps().length;
+        return Math.max(0, Math.min(this.currentIndex(), total - 1));
     });
+
+    protected readonly currentStep: Signal<IRtStepper.Step | null> = computed(
+        (): IRtStepper.Step | null => this.steps()[this.#safeIndex()] ?? null
+    );
+
+    /** Номер текущего шага для скринридера: `0`, когда шагов нет вовсе. */
+    protected readonly currentStepNumber: Signal<number> = computed((): number => (this.steps().length === 0 ? 0 : this.#safeIndex() + 1));
 
     /**
      * Доля заполненной полосы от 0 до 100. На один шаг и меньше — 0%, иначе
@@ -57,11 +71,10 @@ export class RtStepperComponent {
      */
     protected readonly progressPercent: Signal<number> = computed((): number => {
         const total: number = this.steps().length;
-        const idx: number = this.currentIndex();
         if (total <= 1) {
             return 0;
         }
-        return Math.max(0, Math.min(100, (idx / (total - 1)) * 100));
+        return (this.#safeIndex() / (total - 1)) * 100;
     });
 
     protected readonly totalSteps: Signal<number> = computed((): number => this.steps().length);
@@ -73,7 +86,7 @@ export class RtStepperComponent {
      */
     protected readonly labelAnchor: Signal<'start' | 'center' | 'end'> = computed((): 'start' | 'center' | 'end' => {
         const total: number = this.steps().length;
-        const idx: number = this.currentIndex();
+        const idx: number = this.#safeIndex();
         if (idx <= 0) {
             return 'start';
         }

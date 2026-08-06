@@ -4,7 +4,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
-    effect,
     forwardRef,
     input,
     InputSignal,
@@ -39,9 +38,12 @@ function clamp(value: number, min: number, max: number): number {
  * `useExisting: forwardRef(...)` — `useClass` на self-reference вызывает
  * NG0200 cycle при boot'е.
  *
- * Source-of-truth для disabled — внутренний `isDisabled` signal: и signal-input
- * `disabled`, и CVA `setDisabledState` пишут в него, поэтому `[disabled]="true"`
- * и `FormControl.disable()` ведут себя одинаково.
+ * Отключение складывается из двух независимых источников: входа `disabled` и
+ * слова формы (CVA `setDisabledState`). Отключено, если так сказал любой из
+ * них. Сводить их в один signal нельзя: форма зовёт `setDisabledState` при
+ * связывании контрола, то есть раньше, чем счётчик впервые обновит своё вью,
+ * и мирроринг входа затирал бы её слово — контрол, созданный отключённым,
+ * оказывался бы рабочим.
  *
  * Хост объявлен группой с `aria-label`, значение помечено `aria-live`, так что
  * скринридер называет назначение счётчика и проговаривает новое число.
@@ -80,9 +82,11 @@ export class RtCounterComponent implements ControlValueAccessor {
 
     readonly #decreaseFallback: Signal<string> = translateSignal(RT_COUNTER_DECREASE_KEY);
     readonly #increaseFallback: Signal<string> = translateSignal(RT_COUNTER_INCREASE_KEY);
+    /** Отключение, назначенное формой через CVA (`setDisabledState`). */
+    readonly #disabledByForm: WritableSignal<boolean> = signal<boolean>(false);
 
     protected readonly value: WritableSignal<number> = signal<number>(0);
-    protected readonly isDisabled: WritableSignal<boolean> = signal<boolean>(false);
+    protected readonly isDisabled: Signal<boolean> = computed((): boolean => this.disabled() || this.#disabledByForm());
     /** Своя подпись важнее умолчания: форма знает, что именно считает */
     protected readonly decreaseAriaLabel: Signal<string> = computed((): string => this.decreaseLabel() || this.#decreaseFallback());
     protected readonly increaseAriaLabel: Signal<string> = computed((): string => this.increaseLabel() || this.#increaseFallback());
@@ -112,15 +116,6 @@ export class RtCounterComponent implements ControlValueAccessor {
         transform: booleanAttribute,
     });
 
-    constructor() {
-        // Синхронизируем signal-input `disabled` в `isDisabled`, чтобы
-        // `[disabled]="..."` и `setDisabledState(...)` (CVA) писали в одно
-        // и то же место. Effect живёт в injection context конструктора.
-        effect((): void => {
-            this.isDisabled.set(this.disabled());
-        });
-    }
-
     public writeValue(value: number | null | undefined): void {
         this.value.set(clamp(Number(value ?? this.min()), this.min(), this.max()));
     }
@@ -134,7 +129,7 @@ export class RtCounterComponent implements ControlValueAccessor {
     }
 
     public setDisabledState(disabled: boolean): void {
-        this.isDisabled.set(disabled);
+        this.#disabledByForm.set(disabled);
     }
 
     protected decrease(): void {

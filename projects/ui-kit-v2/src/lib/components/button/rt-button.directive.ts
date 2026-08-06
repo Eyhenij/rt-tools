@@ -22,6 +22,12 @@ import { IButton } from './rt-button.model';
 
 const BEM_BLOCK: string = 'rt-button';
 
+/** Длительность затухания спиннера при выходе из загрузки. */
+const LOADING_FADE_OUT_MS: number = 300;
+
+/** Запас поверх затухания, после которого подпись возвращается без анимации. */
+const LOADING_FADE_OUT_BUFFER_MS: number = 50;
+
 /**
  * Директива стилизованной кнопки. Применяется к `<button>` или `<a>`
  * (для ссылок-кнопок с `routerLink`/`href`).
@@ -134,20 +140,37 @@ export class RtButtonDirective {
     #transitionFromLoading(button: HTMLElement): void {
         const spinnerEl: HTMLElement | null = this.#spinnerEl;
 
-        if (spinnerEl) {
-            spinnerEl.style.animation = 'rt-button-fade-out 0.3s ease-out forwards';
-            spinnerEl.addEventListener(
-                'animationend',
-                () => {
-                    this.#clearContent(button);
-                    this.#renderIconAndLabel(button);
-                },
-                { once: true }
-            );
-        } else {
-            this.#clearContent(button);
-            this.#renderIconAndLabel(button);
+        if (spinnerEl === null) {
+            this.#restoreContent(button);
+            return;
         }
+
+        spinnerEl.style.animation = `rt-button-fade-out ${LOADING_FADE_OUT_MS}ms ease-out forwards`;
+
+        // settled-гард делает animationend и страховочный таймаут взаимно
+        // идемпотентными — сработает и снимет listener только то, что раньше.
+        // Без таймаута подпись возвращалась бы только по анимации, а она не
+        // идёт, пока кнопка спрятана (свёрнутая панель, неактивная вкладка):
+        // выход из загрузки не наступал никогда, и на кнопке навсегда
+        // оставался голый спиннер.
+        let settled: boolean = false;
+
+        const finish: () => void = (): void => {
+            if (settled) {
+                return;
+            }
+            settled = true;
+            spinnerEl.removeEventListener('animationend', finish);
+            this.#restoreContent(button);
+        };
+
+        spinnerEl.addEventListener('animationend', finish);
+        setTimeout(finish, LOADING_FADE_OUT_MS + LOADING_FADE_OUT_BUFFER_MS);
+    }
+
+    #restoreContent(button: HTMLElement): void {
+        this.#clearContent(button);
+        this.#renderIconAndLabel(button);
     }
 
     /**

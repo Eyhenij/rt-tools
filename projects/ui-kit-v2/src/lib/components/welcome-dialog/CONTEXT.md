@@ -1,0 +1,24 @@
+# `rt-welcome-dialog`
+
+Приветственное окно с текстом и одной кнопкой. Открывается через
+[`RtDialogService`](../dialog/CONTEXT.md).
+
+```typescript
+this.#dialog.open<RtWelcomeDialogComponent, IRtWelcomeDialog.Data>(RtWelcomeDialogComponent, {
+    data: { message: 'Добро пожаловать\n\nЗдесь появятся ваши заявки.', ctaLabel: 'Поехали' },
+});
+```
+
+Данные приходят токеном `RT_DIALOG_DATA`: `message`, необязательный `ctaLabel`.
+
+## Главное, что нужно знать
+
+**Заголовок компонент выбирает сам — это первый абзац сообщения.** Приветствие приходит одной
+строкой из настроек приложения, и делить её на заголовок и текст приходится здесь: абзацы
+разделяются пустой строкой, пустые отбрасываются.
+
+Без данных окно рисуется пустым, но не падает — остаётся одна кнопка.
+
+## Проверки
+
+[`rt-welcome-dialog.component.spec.ts`](./rt-welcome-dialog.component.spec.ts).

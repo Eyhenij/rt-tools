@@ -1,10 +1,15 @@
-<div rtBlock="rt-night-grid" qa-dataid="night-grid" role="list" [attr.aria-label]="ariaText()">
+<!--
+    Группа, а не список: клетки — настоящие кнопки, и `role="listitem"` на них
+    перебивал бы роль кнопки, так что скринридер называл бы элемент списка и
+    умалчивал, что по нему нажимают. Обернуть каждую кнопку в `listitem` тоже
+    нельзя: клетки — прямые дети grid-контейнера, обёртка развалила бы раскладку.
+-->
+<div rtBlock="rt-night-grid" qa-dataid="night-grid" role="group" [attr.aria-label]="ariaText()">
     @for (cell of cells(); track cell.id) {
         <button
             rtElem="cell"
             qa-dataid="night-grid-cell"
             type="button"
-            role="listitem"
             [attr.data-id]="cell.id"
             [attr.data-state]="cell.state"
             [rtMod]="{ state: cell.state }"
