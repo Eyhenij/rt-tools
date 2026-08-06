@@ -19,6 +19,7 @@
     "check:affected": "pnpm exec nx affected -t lint typecheck test build --parallel",
     "agent-kit:sync": "nx build @rt-tools/agent-kit && node dist/agent-kit/bin/agent-kit.js sync",
     "agent-kit:check": "nx build @rt-tools/agent-kit && node dist/agent-kit/bin/agent-kit.js sync --check",
+    "check:spec": "node tools/check-spec-coverage.cjs",
     "packagr:core": "cd ./dist/core && npm pack && npm publish --access public",
     "packagr:store": "cd ./dist/store && npm pack && npm publish --access public",
     "packagr:utils": "cd ./dist/utils && npm pack && npm publish --access public",
