@@ -59,6 +59,11 @@ describe('RtPageHeaderComponent', (): void => {
 
     describe('панель вложенных разделов', (): void => {
         it('до наведения не отрисована', (): void => {
+            // Шапку надо поднять: без неё утверждение говорило бы о пустом
+            // документе и держалось бы на чём угодно.
+            const fixture: ComponentFixture<RtPageHeaderComponent> = setup();
+
+            expect(qa(fixture, 'header-nav-trigger')).not.toBeNull();
             expect(document.querySelector('[qa-dataid="header-nav-column"]')).toBeNull();
         });
 
@@ -84,15 +89,21 @@ describe('RtPageHeaderComponent', (): void => {
             expect(textOf(el(fixture, '.rt-page-header__user'))).toContain('Иванов И.');
         });
 
-        it('нажатие поднимает событие', (): void => {
+        it('блок пользователя — кнопка, и нажатие поднимает событие ровно один раз', (): void => {
+            // Без выпадающего меню блок сам и есть кнопка. Считаем именно один
+            // вызов: «не больше одного» проходило бы и на нуле, то есть и при
+            // снятом обработчике.
             const fixture: ComponentFixture<RtPageHeaderComponent> = setup({ user: { name: 'Иванов И.' } });
             const clicks: jest.Mock = jest.fn();
             fixture.componentInstance.userClick.subscribe(clicks);
+            const userButton: HTMLElement = el(fixture, '.rt-page-header__user')?.nativeElement as HTMLElement;
 
-            el(fixture, '.rt-page-header__user button, .rt-page-header__user')?.nativeElement.click();
+            expect(userButton.tagName).toBe('BUTTON');
+
+            userButton.click();
             fixture.detectChanges();
 
-            expect(clicks.mock.calls.length).toBeLessThanOrEqual(1);
+            expect(clicks).toHaveBeenCalledTimes(1);
         });
     });
 

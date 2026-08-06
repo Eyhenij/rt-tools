@@ -8,7 +8,7 @@ function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture
     return createRtFixture(RtFileCardComponent, { name: 'Договор.pdf', ...inputs });
 }
 
-function iconHref(fixture: ComponentFixture<RtFileCardComponent>): string | undefined {
+function iconHref(fixture: ComponentFixture<RtFileCardComponent>): string | null | undefined {
     return el(fixture, '.rt-file-card__icon use')?.attributes['href'];
 }
 

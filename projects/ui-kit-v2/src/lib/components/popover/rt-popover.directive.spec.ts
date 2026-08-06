@@ -71,6 +71,13 @@ function clickTrigger(fixture: ComponentFixture<PopoverHostComponent>): void {
 }
 
 describe('RtPopoverDirective', (): void => {
+    // Возврат к настоящим таймерам — в afterEach, а не в конце теста: падение
+    // утверждения посреди теста иначе оставило бы поддельные таймеры всем
+    // следующим тестам файла, и одна поломка размножилась бы в каскад.
+    afterEach((): void => {
+        jest.useRealTimers();
+    });
+
     describe('открытие по клику', (): void => {
         it('первый клик открывает панель', (): void => {
             const fixture: ComponentFixture<PopoverHostComponent> = setup();
@@ -147,7 +154,6 @@ describe('RtPopoverDirective', (): void => {
             jest.advanceTimersByTime(200);
             fixture.detectChanges();
             expect(panel()).toBeNull();
-            jest.useRealTimers();
         });
 
         it('клик в режиме наведения ничего не переключает', (): void => {

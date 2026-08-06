@@ -12,17 +12,40 @@ export interface IQuillMockDelta {
     ops: { insert: string }[];
 }
 
+/** Привязка клавиши, как её объявляет кит при создании редактора. */
+export interface IQuillMockBinding {
+    key: string;
+    shiftKey?: boolean;
+    handler: () => boolean;
+}
+
+/** Та часть настроек, которую макет разбирает, — остальное ему не нужно. */
+export interface IQuillMockOptions {
+    modules?: {
+        keyboard?: {
+            bindings?: Record<string, IQuillMockBinding>;
+        };
+    };
+}
+
 /** Экземпляры, созданные за тест: через них спека имитирует правку. */
 export const quillInstances: QuillMock[] = [];
 
 export class QuillMock {
+    #contents: IQuillMockDelta = { ops: [] };
+
     public readonly handlers: Map<string, () => void> = new Map<string, () => void>();
+    /**
+     * Привязки клавиш, объявленные китом. Макет их не только хранит, но и даёт
+     * нажать (`press`): иначе повешенные на них обработчики не проверяет ничто,
+     * а спека читается так, будто проверяет.
+     */
+    public readonly bindings: Record<string, IQuillMockBinding>;
     public enabled: boolean = true;
     public focused: boolean = false;
 
-    #contents: IQuillMockDelta = { ops: [] };
-
-    constructor() {
+    constructor(host?: unknown, options?: IQuillMockOptions) {
+        this.bindings = options?.modules?.keyboard?.bindings ?? {};
         quillInstances.push(this);
     }
 
@@ -52,6 +75,15 @@ export class QuillMock {
 
     public focus(): void {
         this.focused = true;
+    }
+
+    /**
+     * Имитирует нажатие клавиши с объявленной привязкой. Возвращает то же, что
+     * обработчик: `false` значит «дальше не пускать» (перенос строки погашен).
+     * `undefined` — привязки с таким именем нет.
+     */
+    public press(binding: string): boolean | undefined {
+        return this.bindings[binding]?.handler();
     }
 
     /** Имитирует ввод пользователя и будит подписчика правок. */

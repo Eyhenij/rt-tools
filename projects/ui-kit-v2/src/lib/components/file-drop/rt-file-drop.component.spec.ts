@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, DebugElement } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
-import { createRtFixture, hostClasses, qa, qaAll, renderedText, textOf } from '../../../testing/rt-kit-testing';
+import { createRtFixture, fileListOf, hostClasses, qa, qaAll, renderedText, textOf } from '../../../testing/rt-kit-testing';
 import { IRtFileDrop } from './rt-file-drop.model';
 import { RtFileDropComponent } from './rt-file-drop.component';
 
@@ -31,7 +31,7 @@ function dragEvent(type: string, files: File[] = [], clientY: number = 0): Event
         value: {
             types: ['Files'],
             dropEffect: '',
-            files: { length: files.length, item: (i: number): File => files[i], ...files },
+            files: fileListOf(files),
         },
     });
     return event;
@@ -47,6 +47,13 @@ function fire<T>(fixture: ComponentFixture<T>, event: Event): void {
 }
 
 describe('RtFileDropComponent', (): void => {
+    // Возврат к настоящим таймерам — в afterEach, а не в конце теста: падение
+    // утверждения посреди теста иначе оставило бы поддельные таймеры всем
+    // следующим тестам файла, и одна поломка размножилась бы в каскад.
+    afterEach((): void => {
+        jest.useRealTimers();
+    });
+
     it('несёт свой BEM-блок и проецирует содержимое', (): void => {
         expect(hostClasses(setup())).toContain('rt-file-drop');
         expect(renderedText(createRtFixture(FileDropHostComponent))).toContain('Перетащите файлы сюда');
@@ -97,7 +104,6 @@ describe('RtFileDropComponent', (): void => {
             jest.advanceTimersByTime(100);
             fixture.detectChanges();
             expect(qa(fixture, 'file-drop-overlay')).toBeNull();
-            jest.useRealTimers();
         });
 
         it('отключённая область на перетаскивание не отзывается', (): void => {

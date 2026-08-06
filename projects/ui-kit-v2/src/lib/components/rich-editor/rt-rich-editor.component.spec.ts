@@ -144,12 +144,26 @@ describe('RtRichEditorComponent', (): void => {
         });
     });
 
-    it('Enter без Shift поднимает событие вместо переноса строки', async (): Promise<void> => {
-        const fixture: ComponentFixture<RtRichEditorComponent> = await setup();
-        const enters: jest.Mock = jest.fn();
-        fixture.componentInstance.enterPressed.subscribe(enters);
+    describe('Enter', (): void => {
+        it('без Shift поднимает событие вместо переноса строки', async (): Promise<void> => {
+            const fixture: ComponentFixture<RtRichEditorComponent> = await setup();
+            const enters: jest.Mock = jest.fn();
+            fixture.componentInstance.enterPressed.subscribe(enters);
 
-        expect(enters).not.toHaveBeenCalled();
+            const passedThrough: boolean | undefined = editor().press('enterSubmit');
+
+            expect(enters).toHaveBeenCalledTimes(1);
+            // `false` гасит перенос: иначе к отправке добавилась бы пустая строка.
+            expect(passedThrough).toBe(false);
+        });
+
+        it('c Shift переносом и остаётся — привязка на него не заявлена', async (): Promise<void> => {
+            // Привязка объявлена с `shiftKey: false`, поэтому Shift+Enter до неё
+            // не доходит и уходит в поведение редактора по умолчанию.
+            await setup();
+
+            expect(editor().bindings['enterSubmit']?.shiftKey).toBe(false);
+        });
     });
 
     it('плоский текст значения читается для режима только для чтения', async (): Promise<void> => {

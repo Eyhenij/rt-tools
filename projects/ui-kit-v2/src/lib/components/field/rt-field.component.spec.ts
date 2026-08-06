@@ -110,7 +110,7 @@ describe('RtFieldComponent', (): void => {
             // Идентификатор поле выдаёт само, если контрол не задал свой, —
             // иначе клик по подписи не переводил бы фокус в контрол.
             const fixture: ComponentFixture<FieldHostComponent> = setup();
-            const forId: string | undefined = qa(fixture, 'field-label')?.attributes['for'];
+            const forId: string | null | undefined = qa(fixture, 'field-label')?.attributes['for'];
             const controlId: string = (qa(fixture, 'input-control')?.nativeElement as HTMLInputElement).id;
 
             expect(forId).toMatch(/^rt-field-\d+$/);
