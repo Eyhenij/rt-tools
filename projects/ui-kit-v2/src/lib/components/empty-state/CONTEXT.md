@@ -33,4 +33,3 @@
 ## Рядом
 
 - [`rt-note`](../note/CONTEXT.md) — когда объяснить нужно, а места под заглушку нет.
-- Проверки: [`rt-empty-state.component.spec.ts`](./rt-empty-state.component.spec.ts).

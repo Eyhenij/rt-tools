@@ -33,4 +33,3 @@ unchecked» — для тумблера это точнее. Своего тек
 
 - [`rt-checkbox`](../checkbox/CONTEXT.md) — для «отмечено», а не «включено».
 - [`rt-theme-toggle`](../theme-toggle/CONTEXT.md) — готовый переключатель темы поверх этого.
-- Проверки: [`rt-toggle-switch.component.spec.ts`](./rt-toggle-switch.component.spec.ts).

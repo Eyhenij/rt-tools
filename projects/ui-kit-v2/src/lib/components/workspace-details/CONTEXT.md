@@ -40,7 +40,3 @@
   `actionClicked` приходит только после подтверждения.
 - Смена исполнителя (`agentEdit`) — отдельный сценарий с выбором и подтверждением; событие
   `agentReassign` отдаёт идентификатор нового исполнителя.
-
-## Проверки
-
-[`rt-workspace-details.component.spec.ts`](./rt-workspace-details.component.spec.ts).

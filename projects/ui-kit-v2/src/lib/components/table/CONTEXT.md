@@ -51,9 +51,3 @@
 - Колонка `rtRowActions` добавляется китом сама, когда включён `showRowActions`, и рисует
   [`rt-menu`](../menu/CONTEXT.md) в строке.
 - Спеки логики лежат рядом: сортировка и предикат действий строки проверены отдельно.
-
-## Проверки
-
-[`rt-table.component.spec.ts`](./rt-table.component.spec.ts),
-[`rt-table-sort.logic.spec.ts`](./rt-table-sort.logic.spec.ts),
-[`rt-table-row-actions.logic.spec.ts`](./rt-table-row-actions.logic.spec.ts).

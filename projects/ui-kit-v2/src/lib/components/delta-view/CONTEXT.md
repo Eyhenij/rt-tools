@@ -29,4 +29,3 @@
 ## Рядом
 
 - [`rt-rich-editor`](../rich-editor/CONTEXT.md) — редактор, который эту модель производит.
-- Проверки: [`rt-delta-view.component.spec.ts`](./rt-delta-view.component.spec.ts).

@@ -37,4 +37,3 @@
 ## Рядом
 
 - [`rt-file-input`](../file-input/CONTEXT.md) — выбор файлов кнопкой.
-- Проверки: [`rt-file-drop.component.spec.ts`](./rt-file-drop.component.spec.ts).

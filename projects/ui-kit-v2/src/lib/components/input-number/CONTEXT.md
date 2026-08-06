@@ -50,4 +50,3 @@
 ## Рядом
 
 - [`rt-counter`](../counter/CONTEXT.md) — когда число меняют шагами, а не набирают.
-- Проверки: [`rt-input-number.component.spec.ts`](./rt-input-number.component.spec.ts).

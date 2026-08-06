@@ -39,4 +39,3 @@
 ## Рядом
 
 - [`rt-skeleton-wrapper`](../skeleton-wrapper/CONTEXT.md) — обёртка «загрузка ↔ контент».
-- Проверки: [`rt-skeleton.component.spec.ts`](./rt-skeleton.component.spec.ts).

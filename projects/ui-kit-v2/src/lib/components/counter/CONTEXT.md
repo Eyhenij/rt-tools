@@ -38,4 +38,3 @@
 ## Рядом
 
 - [`rt-input-number`](../input-number/CONTEXT.md) — когда число набирают.
-- Проверки: [`rt-counter.component.spec.ts`](./rt-counter.component.spec.ts).

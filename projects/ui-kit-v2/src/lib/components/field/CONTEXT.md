@@ -70,4 +70,3 @@
 ## Рядом
 
 - [`RtFormControlBase`](../form-control/CONTEXT.md) — что именно поле читает у контрола.
-- Проверки: [`rt-field.component.spec.ts`](./rt-field.component.spec.ts).

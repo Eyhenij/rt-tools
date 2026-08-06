@@ -45,4 +45,3 @@
 - [`rt-field`](../field/CONTEXT.md) — подпись, звёздочка, текст ошибки, режим чтения.
 - [`rt-input-number`](../input-number/CONTEXT.md) — для чисел с группировкой разрядов.
 - [`rt-autocomplete`](../autocomplete/CONTEXT.md) — поле с подсказками.
-- Проверки: [`rt-input.component.spec.ts`](./rt-input.component.spec.ts).

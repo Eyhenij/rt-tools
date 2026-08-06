@@ -32,4 +32,3 @@ no-op, а не пустая панель под курсором. Поэтому
 ## Рядом
 
 - [`[rtPopover]`](../popover/CONTEXT.md) — когда в панель нужно положить разметку.
-- Проверки: [`rt-tooltip.directive.spec.ts`](./rt-tooltip.directive.spec.ts).

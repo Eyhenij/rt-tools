@@ -48,10 +48,3 @@
 
 Поля с отдельным состоянием отображения (`rt-autocomplete`, `rt-input-number`) вдобавок
 переопределяют `writeValue` и `clearValue`, синхронизируя свой сигнал отображения.
-
-## Проверки
-
-Своей спеки у основы нет — она проверена через наследников:
-[`rt-input`](../input/rt-input.component.spec.ts), [`rt-textarea`](../textarea/rt-textarea.component.spec.ts),
-[`rt-input-number`](../input-number/rt-input-number.component.spec.ts). Общие сценарии (очистка,
-подсветка ошибки, режим чтения, связка идентификаторов) проверены там на конкретных полях.

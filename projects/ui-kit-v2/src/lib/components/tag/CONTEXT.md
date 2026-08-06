@@ -45,4 +45,3 @@
 ## Рядом
 
 - [`rt-live-badge`](../live-badge/CONTEXT.md) — пилюля живого счётчика, а не статуса.
-- Проверки: [`rt-tag.component.spec.ts`](./rt-tag.component.spec.ts).

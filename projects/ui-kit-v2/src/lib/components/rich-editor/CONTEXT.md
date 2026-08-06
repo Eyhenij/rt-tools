@@ -34,4 +34,3 @@
 - [`rt-delta-view`](../delta-view/CONTEXT.md) — показ той же модели без редактирования.
 - [`rt-message-composer`](../message-composer/CONTEXT.md) — использует редактор в режиме
   форматирования.
-- Проверки: [`rt-rich-editor.component.spec.ts`](./rt-rich-editor.component.spec.ts).

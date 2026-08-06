@@ -45,4 +45,3 @@
 
 - [`[rtButton]`](../button/CONTEXT.md) — кнопка с подписью.
 - [`[rtTooltip]`](../tooltip/CONTEXT.md) — то, чем рисуется вход `tooltip`.
-- Проверки: [`rt-icon-button.component.spec.ts`](./rt-icon-button.component.spec.ts).

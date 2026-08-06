@@ -48,4 +48,3 @@ ref.afterClosed().subscribe((ok?: boolean): void => …);
 - [`rt-aside`](../aside/CONTEXT.md) — немодальная панель сбоку.
 - [`[rtConfirm]`](../confirm-popover/CONTEXT.md) — подтверждение без модалки.
 - [`rt-welcome-dialog`](../welcome-dialog/CONTEXT.md) — готовое приветственное окно.
-- Проверки: [`rt-dialog.component.spec.ts`](./rt-dialog.component.spec.ts).
