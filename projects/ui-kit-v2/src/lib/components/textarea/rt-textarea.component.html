@@ -11,7 +11,7 @@
             [attr.aria-invalid]="isInvalid() || null"
             [style.resize]="resize()"
             [placeholder]="placeholder()"
-            [disabled]="effectiveDisabled()"
+            [disabled]="isDisabled()"
             [readOnly]="readonly()"
             [rows]="rows()"
             [value]="value()"

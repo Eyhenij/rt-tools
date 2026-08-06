@@ -5,7 +5,7 @@
     role="progressbar"
     [attr.aria-valuemin]="0"
     [attr.aria-valuemax]="totalSteps()"
-    [attr.aria-valuenow]="currentIndex() + 1"
+    [attr.aria-valuenow]="currentStepNumber()"
     [attr.aria-valuetext]="current?.label ?? null">
     <div rtElem="rail">
         @if (current) {

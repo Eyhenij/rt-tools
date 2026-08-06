@@ -1,4 +1,6 @@
-import { firstValueFrom, Observable, of } from 'rxjs';
+import { GuardResult, MaybeAsync } from '@angular/router';
+
+import { firstValueFrom, isObservable, Observable, of } from 'rxjs';
 
 import { IRtAsideDeactivate, rtAsideUnsavedGuard } from './rt-route-aside.guard';
 import { rootSegmentsOf } from './rt-route-aside.logic';
@@ -13,6 +15,16 @@ function panel(answer: boolean): IRtAsideDeactivate {
  */
 function guardArgs(): [never, never, never] {
     return [undefined, undefined, undefined] as unknown as [never, never, never];
+}
+
+/**
+ * Ответ гарда, приведённый к одному виду. Роутер разрешает гарду вернуть и
+ * значение, и промис, и поток, поэтому спека разбирает все три случая, а не
+ * приводит результат к потоку насильно.
+ */
+async function guardAnswer(component: IRtAsideDeactivate | null): Promise<GuardResult> {
+    const answer: MaybeAsync<GuardResult> = rtAsideUnsavedGuard(component, ...guardArgs());
+    return isObservable(answer) ? firstValueFrom(answer) : answer;
 }
 
 describe('rootSegmentsOf', () => {
@@ -39,11 +51,11 @@ describe('rootSegmentsOf', () => {
 
 describe('rtAsideUnsavedGuard', () => {
     it('спрашивает панель, когда она есть', async () => {
-        await expect(firstValueFrom(rtAsideUnsavedGuard(panel(false), ...guardArgs()))).resolves.toBe(false);
-        await expect(firstValueFrom(rtAsideUnsavedGuard(panel(true), ...guardArgs()))).resolves.toBe(true);
+        await expect(guardAnswer(panel(false))).resolves.toBe(false);
+        await expect(guardAnswer(panel(true))).resolves.toBe(true);
     });
 
     it('уступает место, когда компонента маршрута нет', async () => {
-        await expect(firstValueFrom(rtAsideUnsavedGuard(null, ...guardArgs()))).resolves.toBe(true);
+        await expect(guardAnswer(null)).resolves.toBe(true);
     });
 });

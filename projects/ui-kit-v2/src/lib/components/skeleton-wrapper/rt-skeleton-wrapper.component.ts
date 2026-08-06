@@ -45,7 +45,8 @@ export class RtSkeletonWrapperComponent {
 
     public readonly size: InputSignal<IRtSkeletonSize> = input<IRtSkeletonSize>('md');
 
-    public readonly borderRadius: InputSignal<IRtSkeletonRadius> = input<IRtSkeletonRadius>('xl');
+    /** Как у `rt-skeleton`: `null` — «по фигуре», а не «без скругления». */
+    public readonly borderRadius: InputSignal<IRtSkeletonRadius | null> = input<IRtSkeletonRadius | null>(null);
 
     public readonly animation: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,

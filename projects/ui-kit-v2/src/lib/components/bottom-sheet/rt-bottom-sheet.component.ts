@@ -37,6 +37,12 @@ const BEM_BLOCK: string = 'rt-bottom-sheet';
     host: {
         class: BEM_BLOCK,
         '[class.rt-bottom-sheet--open]': 'open()',
+        // Закрытый лист остаётся в разметке ради анимации, и спрятан он только
+        // стилями — а `opacity`/`pointer-events` не убирают узел ни из порядка
+        // табуляции, ни из дерева доступности. Без `inert` страница с закрытым
+        // листом держала бы в табуляции невидимую кнопку «Закрыть», а
+        // скринридер объявлял бы модальный диалог, которого не видно.
+        '[attr.inert]': 'open() ? null : ""',
     },
 })
 export class RtBottomSheetComponent {

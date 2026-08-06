@@ -63,8 +63,6 @@ export type IRtTextareaResize = 'none' | 'vertical';
 export class RtTextareaComponent extends RtFormControlBase<string> {
     protected readonly fieldEl: Signal<ElementRef<HTMLTextAreaElement> | undefined> = viewChild<ElementRef<HTMLTextAreaElement>>('fieldEl');
 
-    protected readonly effectiveDisabled: Signal<boolean> = computed((): boolean => this.disabled() || this.isDisabled());
-
     protected readonly hasValue: Signal<boolean> = computed((): boolean => this.value() !== '');
 
     public readonly displayText: Signal<string> = computed((): string => this.value());
