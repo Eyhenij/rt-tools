@@ -57,6 +57,23 @@ describe('RtBottomSheetComponent', (): void => {
         expect(qa(fixture, 'bottom-sheet-panel')).not.toBeNull();
     });
 
+    it('закрытый лист выключен из табуляции и дерева доступности', (): void => {
+        // Стили прячут его прозрачностью, а она не убирает ни кнопку подложки
+        // из порядка табуляции, ни объявление диалога у скринридера.
+        const fixture: ComponentFixture<RtBottomSheetComponent> = setup(false);
+
+        expect(fixture.nativeElement.getAttribute('inert')).toBe('');
+    });
+
+    it('раскрытый лист снова доступен', (): void => {
+        const fixture: ComponentFixture<RtBottomSheetComponent> = setup(false);
+
+        setInputs(fixture, { open: true });
+        fixture.detectChanges();
+
+        expect(fixture.nativeElement.getAttribute('inert')).toBeNull();
+    });
+
     it('панель объявлена модальным диалогом', (): void => {
         const panel: HTMLElement = qa(setup(), 'bottom-sheet-panel')?.nativeElement as HTMLElement;
 

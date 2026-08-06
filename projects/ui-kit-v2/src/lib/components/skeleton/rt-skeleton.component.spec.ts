@@ -47,12 +47,22 @@ describe('RtSkeletonComponent', (): void => {
             expect(style(fixture, 'border-radius')).toBe('50%');
         });
 
-        it('квадрат тоже берёт сторону от размера, но со своим скруглением', (): void => {
-            const fixture: ComponentFixture<RtSkeletonComponent> = setup({ shape: 'square', size: 'sm', borderRadius: 'xl' });
+        it('квадрат тоже берёт сторону от размера, а без входа скругляется скромно', (): void => {
+            // Пилюля из квадрата не квадрат, поэтому умолчание у него своё —
+            // но это именно умолчание, а не запрет.
+            const fixture: ComponentFixture<RtSkeletonComponent> = setup({ shape: 'square', size: 'sm' });
 
             expect(style(fixture, 'width')).toBe('10px');
             expect(style(fixture, 'height')).toBe('10px');
             expect(style(fixture, 'border-radius')).toBe('4px');
+        });
+
+        it('заданное скругление квадрат слушается', (): void => {
+            expect(style(setup({ shape: 'square', borderRadius: 'xl' }), 'border-radius')).toBe('999px');
+        });
+
+        it('круг скругление не слушается — иначе он перестанет быть кругом', (): void => {
+            expect(style(setup({ shape: 'circle', borderRadius: 'xs' }), 'border-radius')).toBe('50%');
         });
 
         it('прямоугольник слушается ширины и высоты', (): void => {

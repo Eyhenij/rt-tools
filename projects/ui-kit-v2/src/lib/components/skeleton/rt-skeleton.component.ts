@@ -59,7 +59,13 @@ export class RtSkeletonComponent {
 
     public readonly height: InputSignal<string> = input<string>(this.#sizeMap.sm);
 
-    public readonly borderRadius: InputSignal<IRtSkeletonRadius> = input<IRtSkeletonRadius>('xl');
+    /**
+     * Скругление. `null` — «не задано»: прямоугольник берёт `xl`, квадрат —
+     * `sm` (пилюля из квадрата не квадрат). Умолчанием нельзя было держать сам
+     * `xl`: тогда явный `xl` неотличим от невыставленного, и квадрату
+     * приходилось прибивать `sm` жёстко — вход у него молча пропадал.
+     */
+    public readonly borderRadius: InputSignal<IRtSkeletonRadius | null> = input<IRtSkeletonRadius | null>(null);
 
     public readonly animation: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
@@ -128,17 +134,18 @@ export class RtSkeletonComponent {
 
     @HostBinding('style.border-radius')
     protected get hostBorderRadius(): string {
-        switch (this.shape()) {
-            case 'circle':
-                return '50%';
-
-            case 'square':
-                return this.#radiusMap.sm;
-
-            case 'rectangle':
-            default:
-                return this.#radiusMap[this.borderRadius()];
+        // Круг задаётся именно скруглением, поэтому вход к нему не применяется:
+        // любое другое значение перестало бы быть кругом.
+        if (this.shape() === 'circle') {
+            return '50%';
         }
+
+        const requested: IRtSkeletonRadius | null = this.borderRadius();
+        if (requested !== null) {
+            return this.#radiusMap[requested];
+        }
+
+        return this.shape() === 'square' ? this.#radiusMap.sm : this.#radiusMap.xl;
     }
 
     #getSizeValue(): string {

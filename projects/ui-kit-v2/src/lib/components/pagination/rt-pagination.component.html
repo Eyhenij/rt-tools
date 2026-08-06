@@ -1,10 +1,12 @@
 <ng-container rtBlock="rt-pagination">
+    <!--
+        Ветки «ничего не найдено» здесь нет намеренно: пустой набор прячет весь
+        бар целиком (`isVisible`), так что до этой строки дело не доходит. Пока
+        такая ветка тут висела, она читалась как рабочее состояние, а показать
+        её было нельзя ни при каких входах.
+    -->
     <span rtElem="range" qa-dataid="pagination-range">
-        @if (pageModel().totalCount === 0) {
-            {{ 'rtKit.uiRangeEmpty' | transloco }}
-        } @else {
-            {{ 'rtKit.uiRangeOf' | transloco: { from: rangeFrom(), to: rangeTo(), total: pageModel().totalCount } }}
-        }
+        {{ 'rtKit.uiRangeOf' | transloco: { from: rangeFrom(), to: rangeTo(), total: pageModel().totalCount } }}
     </span>
 
     @if (pageItems().length) {
