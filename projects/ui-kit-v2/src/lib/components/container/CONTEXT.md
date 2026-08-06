@@ -40,4 +40,3 @@
 
 - [`rt-toaster`](../toast/CONTEXT.md) — та самая стопка.
 - [`rt-workspace`](../workspace/CONTEXT.md) — трёхколоночная раскладка внутри содержимого.
-- Проверки: [`rt-container.component.spec.ts`](./rt-container.component.spec.ts).

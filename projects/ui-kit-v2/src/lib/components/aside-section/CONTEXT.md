@@ -24,4 +24,3 @@
 ## Рядом
 
 - [`rt-aside`](../aside/CONTEXT.md) — сам асайд.
-- Проверки: [`rt-aside-section.component.spec.ts`](./rt-aside-section.component.spec.ts).

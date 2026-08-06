@@ -18,7 +18,3 @@ this.#dialog.open<RtWelcomeDialogComponent, IRtWelcomeDialog.Data>(RtWelcomeDial
 разделяются пустой строкой, пустые отбрасываются.
 
 Без данных окно рисуется пустым, но не падает — остаётся одна кнопка.
-
-## Проверки
-
-[`rt-welcome-dialog.component.spec.ts`](./rt-welcome-dialog.component.spec.ts).

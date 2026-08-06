@@ -38,7 +38,7 @@
 ## Свайп
 
 Порог — **80 px** (`DRAG_DISMISS_THRESHOLD_PX` в
-[`rt-bottom-sheet.logic.ts`](./rt-bottom-sheet.logic.ts)). Ровно на пороге лист остаётся
+`rt-bottom-sheet.logic.ts`). Ровно на пороге лист остаётся
 открытым, закрывается только за ним. Вверх лист не тянется: отрицательный сдвиг обнуляется.
 После отпускания сдвиг сбрасывается независимо от исхода.
 
@@ -52,5 +52,3 @@
 
 - [`rt-aside`](../aside/CONTEXT.md) — то же на широком экране.
 - [`rt-dialog`](../dialog/CONTEXT.md) — модальное окно по центру.
-- Проверки: [`rt-bottom-sheet.component.spec.ts`](./rt-bottom-sheet.component.spec.ts),
-  [`rt-bottom-sheet.logic.spec.ts`](./rt-bottom-sheet.logic.spec.ts).

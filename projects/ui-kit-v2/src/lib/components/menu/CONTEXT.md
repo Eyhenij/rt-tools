@@ -63,4 +63,3 @@
 
 - [`[rtConfirm]`](../confirm-popover/CONTEXT.md) — подтверждение под обычной кнопкой.
 - [`rt-split-button`](../split-button/CONTEXT.md) — кнопка с прикреплённым меню.
-- Проверки: [`rt-menu.component.spec.ts`](./rt-menu.component.spec.ts).

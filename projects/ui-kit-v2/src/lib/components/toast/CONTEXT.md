@@ -28,7 +28,7 @@ this.#notifications.error('Не удалось сохранить', 'danger', {
 ## Главное, что нужно знать
 
 **Тосты показываются не входом, а шиной.** Стопка подписана на
-[`NotificationBus`](../../platform/notification-bus.service.ts) и других способов показать тост
+`NotificationBus` и других способов показать тост
 нет. Шина — `providedIn: 'root'`, поэтому её достаточно инжектировать где угодно.
 
 Четыре метода шины задают палитру и иконку: `success` → `check-circle`, `info` → `info-circle`,
@@ -51,4 +51,3 @@ this.#notifications.error('Не удалось сохранить', 'danger', {
 ## Рядом
 
 - [`rt-message`](../message/CONTEXT.md) — постоянное сообщение внутри страницы, а не всплывающее.
-- Проверки: [`rt-toaster.component.spec.ts`](./rt-toaster.component.spec.ts).

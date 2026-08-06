@@ -45,6 +45,12 @@
         "command": "tsc --noEmit -p projects/ui-kit-v2/tsconfig.spec.json"
       }
     },
+    "verify": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/verify-ui-kit-v2-docs.cjs"
+      }
+    },
     "storybook": {
       "executor": "@storybook/angular:start-storybook",
       "options": {

@@ -35,4 +35,3 @@
 
 - [`rt-toggle-switch`](../toggle-switch/CONTEXT.md) — то же булево значение, но для «включено /
   выключено», а не «отмечено».
-- Проверки: [`rt-checkbox.component.spec.ts`](./rt-checkbox.component.spec.ts).

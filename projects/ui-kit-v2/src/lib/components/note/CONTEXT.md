@@ -25,4 +25,3 @@
 ## Рядом
 
 - [`rt-message`](../message/CONTEXT.md) — то же место на экране, но с severity и закрытием.
-- Проверки: [`rt-note.component.spec.ts`](./rt-note.component.spec.ts).

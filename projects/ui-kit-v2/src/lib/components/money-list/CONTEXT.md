@@ -30,4 +30,3 @@
 ## Рядом
 
 - [`rt-detail-list`](../detail-list/CONTEXT.md) — то же для нечисловых значений.
-- Проверки: [`rt-money-list.component.spec.ts`](./rt-money-list.component.spec.ts).

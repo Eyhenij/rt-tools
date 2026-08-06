@@ -27,4 +27,3 @@
 ## Рядом
 
 - [`rt-header`](../header/CONTEXT.md) — слот `[rtHeaderBell]`, куда его обычно кладут.
-- Проверки: [`rt-notifications-bell.component.spec.ts`](./rt-notifications-bell.component.spec.ts).

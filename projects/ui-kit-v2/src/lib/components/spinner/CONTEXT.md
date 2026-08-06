@@ -37,4 +37,3 @@
 
 - [`rt-skeleton`](../skeleton/CONTEXT.md) — заглушка формы контента вместо кольца; для списков
   и карточек она честнее спиннера.
-- Проверки: [`rt-spinner.component.spec.ts`](./rt-spinner.component.spec.ts).

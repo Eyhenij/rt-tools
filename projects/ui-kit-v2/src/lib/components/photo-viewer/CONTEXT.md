@@ -28,8 +28,3 @@ ref.afterClosed().subscribe((lastIndex?: number): void => scrollListTo(lastIndex
   внутри без авто-захвата — иначе клавиши переставали бы листать.
 - Стрелки-кнопки не рисуются, если кадр один.
 - Управление кадром (удалить, сделать обложкой) приходит снаружи шаблоном `panel`.
-
-## Проверки
-
-[`rt-photo-viewer.component.spec.ts`](./rt-photo-viewer.component.spec.ts),
-[`rt-photo-viewer.logic.spec.ts`](./rt-photo-viewer.logic.spec.ts) — перебор кадров и отсечение.

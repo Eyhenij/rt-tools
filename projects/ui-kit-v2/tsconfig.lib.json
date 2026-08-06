@@ -7,7 +7,7 @@
     "inlineSources": true,
     "rootDir": ".."
   },
-  "exclude": ["**/*.spec.ts", "**/*.stories.ts", "**/*.stories.js", "src/testing/**"],
+  "exclude": ["**/*.spec.ts", "**/*.stories.ts", "**/*.stories.js", "**/stories/**", "src/testing/**", "src/showcase/**"],
   "include": ["src/**/*.ts"],
   "angularCompilerOptions": {
     "extendedDiagnostics": {

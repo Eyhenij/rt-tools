@@ -4,8 +4,15 @@ import type { StorybookConfig } from '@storybook/angular';
 
 /* eslint-disable */
 const config: StorybookConfig = {
-    stories: ['../docs/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+    // `../src/**/*.mdx` — страница-обзор компонента лежит рядом с ним, как лежит его
+    // CONTEXT.md: документ, уехавший от того, что описывает, расходится с ним молча.
+    // Foundation-страницы остаются в ../docs — они не про конкретный компонент.
+    stories: ['../docs/**/*.mdx', '../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
     addons: [
+        // Без него hover/focus-visible/active не увидеть глазами: они стилизованы в 27 SCSS
+        // кита, а мышь в статичной сетке не наведёшь. Аддон переписывает CSS на лету —
+        // отгружаемые стили ради витрины трогать не приходится.
+        'storybook-addon-pseudo-states',
         {
             name: '@storybook/addon-docs',
             options: {

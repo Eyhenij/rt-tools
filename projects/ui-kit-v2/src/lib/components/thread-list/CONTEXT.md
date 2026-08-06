@@ -40,7 +40,3 @@
 - Кнопка фильтров рисуется, только если объявлен шаблон `[rtThreadListFilters]`;
   `filtersActive` рисует на ней точку.
 - Собственное поле поиска можно заменить шаблоном `[rtThreadListSearch]`.
-
-## Проверки
-
-[`rt-thread-list.component.spec.ts`](./rt-thread-list.component.spec.ts).

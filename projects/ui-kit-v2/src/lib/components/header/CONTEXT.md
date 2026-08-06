@@ -34,4 +34,3 @@
 ## Рядом
 
 - [`rt-page-header`](../page-header/CONTEXT.md) — вторая полоса, с разделами.
-- Проверки: [`rt-header.component.spec.ts`](./rt-header.component.spec.ts).

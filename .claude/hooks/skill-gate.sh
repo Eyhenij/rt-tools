@@ -26,6 +26,8 @@ case "$tool" in
             */.claude/*)                        exit 0 ;;
             *.stories.ts)                       req="rt-tools-storybook" ;;
             */stories/*.ts|*/strories/*.ts)     req="rt-tools-storybook" ;;
+            # Component overview pages are showcase docs, not prose: same rule as the stories.
+            *.mdx)                              req="rt-tools-storybook" ;;
             *.spec.ts)                          req="rt-tools-testing" ;;
             *.component.ts|*.component.html)    req="rt-tools-component" ;;
             *.scss)                             req="rt-tools-styling" ;;

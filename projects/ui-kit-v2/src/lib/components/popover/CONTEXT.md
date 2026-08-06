@@ -52,4 +52,3 @@
 - [`[rtTooltip]`](../tooltip/CONTEXT.md) — та же механика, но для короткой подсказки.
 - [`[rtConfirm]`](../confirm-popover/CONTEXT.md) — панель подтверждения.
 - [`rt-menu`](../menu/CONTEXT.md) — меню действий (на CDK-оверлее напрямую).
-- Проверки: [`rt-popover.directive.spec.ts`](./rt-popover.directive.spec.ts).

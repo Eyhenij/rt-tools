@@ -34,4 +34,3 @@
 ## Рядом
 
 - [`rt-timeline`](../timeline/CONTEXT.md) — журнал событий, а не линейный прогресс.
-- Проверки: [`rt-stepper.component.spec.ts`](./rt-stepper.component.spec.ts).

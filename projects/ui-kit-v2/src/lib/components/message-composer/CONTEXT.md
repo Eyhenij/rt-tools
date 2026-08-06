@@ -44,4 +44,3 @@
 ## Рядом
 
 - [`rt-chat`](../chat/CONTEXT.md) — использует это поле как своё.
-- Проверки: [`rt-message-composer.component.spec.ts`](./rt-message-composer.component.spec.ts).

@@ -34,4 +34,3 @@
 
 - [`rt-file-drop`](../file-drop/CONTEXT.md) — приём файлов перетаскиванием.
 - [`rt-file-card`](../file-card/CONTEXT.md) — чем рисуется каждый выбранный файл.
-- Проверки: [`rt-file-input.component.spec.ts`](./rt-file-input.component.spec.ts).

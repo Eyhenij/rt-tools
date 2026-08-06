@@ -1,0 +1,50 @@
+// Обвязка витрины: сетка «ось × ось». В пакет не уезжает, но правило запрета
+// захардкоженных значений на неё распространяется — свойства берутся из тех же
+// `--rt-*`, что и у кита, иначе витрина показывала бы свою палитру, а не палитру кита.
+.app-story-grid {
+    display: block;
+    margin-block-end: var(--rt-space-3xl);
+
+    &__caption {
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+        font-weight: var(--rt-font-weight-semibold);
+        letter-spacing: 0.06em;
+        margin-block: 0 var(--rt-space-12);
+        text-transform: uppercase;
+    }
+
+    // Широкая матрица не должна разгонять горизонтальную прокрутку всей страницы:
+    // ось со многими значениями скроллится внутри своего блока.
+    &__scroll {
+        overflow-x: auto;
+    }
+
+    &__table {
+        border-collapse: collapse;
+    }
+
+    &__corner {
+        border: 0;
+    }
+
+    &__head {
+        padding: var(--rt-space-8) var(--rt-space-12);
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-xs);
+        font-weight: var(--rt-font-weight-medium);
+        text-align: center;
+        white-space: nowrap;
+
+        &--row {
+            text-align: end;
+        }
+    }
+
+    &__cell {
+        padding: var(--rt-space-12);
+        border: 1px solid var(--rt-color-border-subtle);
+        text-align: center;
+        vertical-align: middle;
+    }
+}

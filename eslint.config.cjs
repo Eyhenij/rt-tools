@@ -278,10 +278,23 @@ module.exports = [
     },
 
     {
+        // Демонстрационная разметка витрины блоков BEM не несёт и никуда не шипится: гнать её
+        // через rtBlock/rtElem — театр. Гасится только правило BEM; правила доступности здесь
+        // остаются в силе — кнопка без доступного имени остаётся дефектом и в демонстрации.
+        files: ['**/stories/**/*.{ts,html}', '**/strories/**/*.{ts,html}', '**/showcase/**/*.{ts,html}'],
+        plugins: { rt },
+        rules: {
+            'rt/require-bem-directives': 'off',
+        },
+    },
+
+    {
         // Custom workspace rules (rt-tools conventions).
         // The TS parser/projectService is contributed by the nx flat/typescript preset above.
+        // Story wrappers and the showcase harness are demo scaffolding: they carry no BEM block,
+        // ship nowhere, and their 80 `require-host-bem-block` warnings drown the 81st real one.
         files: ['**/*.ts'],
-        ignores: ['**/*.spec.ts', '**/*.spec.js'],
+        ignores: ['**/*.spec.ts', '**/*.spec.js', '**/stories/**', '**/showcase/**'],
         plugins: { rt },
         rules: {
             // 0 violations in the current codebase → safe at error.
