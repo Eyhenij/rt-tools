@@ -7,12 +7,12 @@
 | вход     | тип                                                                                 | умолчание      |
 | -------- | ----------------------------------------------------------------------------------- | -------------- |
 | `name`   | `IRtIcon.Name` — литеральный union из `rt-icon-names.ts`                            | **обязателен** |
-| `size`   | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'`                                              | `'md'`         |
+| `size`   | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'`                                     | `'md'`         |
 | `color`  | `'current' \| 'muted' \| 'info' \| 'success' \| 'warning' \| 'danger' \| 'inverse'` | `'current'`    |
 | `rotate` | `number \| string \| null`                                                          | `null`         |
 
 Выходов нет. Размер и цвет едут инлайновым стилем host-а (`width`/`height`/`color`), не классом:
-`xs` 12px, `sm` 16px, `md` 20px, `lg` 24px, `xl` 32px.
+`xs` 12px, `sm` 16px, `md` 20px, `lg` 24px, `xl` 32px, `2xl` 40px.
 
 ## Главное, что нужно знать
 

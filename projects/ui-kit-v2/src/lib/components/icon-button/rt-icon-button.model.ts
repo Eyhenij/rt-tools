@@ -10,7 +10,7 @@ export namespace IRtIconButton {
     export type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success' | 'warning';
 
     /** Размер квадрата кнопки. Маппинг на пиксели — в SCSS (`--rt-icon-button-size`). */
-    export type Size = 'sm' | 'md' | 'lg';
+    export type Size = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
     /** Форма границы кнопки. */
     export type Shape = 'circle' | 'square';

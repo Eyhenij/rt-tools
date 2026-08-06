@@ -43,9 +43,12 @@ describe('RtIconButtonComponent', (): void => {
             }
         );
 
-        it.each<IRtIconButton.Size>(['sm', 'md', 'lg'])('размер %s выводит свой модификатор', (size: IRtIconButton.Size): void => {
-            expect(controlClasses(setup({ size }))).toContain(`rt-icon-button--${size}`);
-        });
+        it.each<IRtIconButton.Size>(['sm', 'md', 'lg', 'xl', '2xl'])(
+            'размер %s выводит свой модификатор',
+            (size: IRtIconButton.Size): void => {
+                expect(controlClasses(setup({ size }))).toContain(`rt-icon-button--${size}`);
+            }
+        );
 
         it.each<IRtIconButton.Shape>(['circle', 'square'])('форма %s выводит свой модификатор', (shape: IRtIconButton.Shape): void => {
             expect(controlClasses(setup({ shape }))).toContain(`rt-icon-button--${shape}`);
