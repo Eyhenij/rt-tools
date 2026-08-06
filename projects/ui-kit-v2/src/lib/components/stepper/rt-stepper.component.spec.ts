@@ -65,6 +65,10 @@ describe('RtStepperComponent', (): void => {
         it('шаг за пределами набора не выводит полосу за сто процентов', (): void => {
             expect(progressWidth(setup({ currentIndex: 99 }))).toBe('100%');
         });
+
+        it('шаг до начала набора не уводит полосу в минус', (): void => {
+            expect(progressWidth(setup({ currentIndex: -5 }))).toBe('0%');
+        });
     });
 
     describe('описание', (): void => {
@@ -102,6 +106,30 @@ describe('RtStepperComponent', (): void => {
             const strip: HTMLElement = qa(setup({ currentIndex: 1 }), 'stepper')?.nativeElement as HTMLElement;
 
             expect(strip.getAttribute('aria-valuetext')).toBe('Проверка');
+        });
+
+        it('шаг за пределами набора не объявляется числом больше максимума', (): void => {
+            // Полоса при этом уже упиралась в 100%, а объявление уезжало:
+            // aria-valuenow="100" при aria-valuemax="3" — противоречие,
+            // и подпись шага пропадала вовсе.
+            const strip: HTMLElement = qa(setup({ currentIndex: 99 }), 'stepper')?.nativeElement as HTMLElement;
+
+            expect(strip.getAttribute('aria-valuenow')).toBe('3');
+            expect(strip.getAttribute('aria-valuetext')).toBe('Готово');
+        });
+
+        it('шаг до начала набора объявляется первым', (): void => {
+            const strip: HTMLElement = qa(setup({ currentIndex: -5 }), 'stepper')?.nativeElement as HTMLElement;
+
+            expect(strip.getAttribute('aria-valuenow')).toBe('1');
+            expect(strip.getAttribute('aria-valuetext')).toBe('Заявка');
+        });
+
+        it('без шагов объявляется ноль, а не первый из пустоты', (): void => {
+            const strip: HTMLElement = qa(setup({ steps: [] }), 'stepper')?.nativeElement as HTMLElement;
+
+            expect(strip.getAttribute('aria-valuemax')).toBe('0');
+            expect(strip.getAttribute('aria-valuenow')).toBe('0');
         });
     });
 

@@ -29,6 +29,12 @@ describe('RtNightGridComponent', (): void => {
         expect(cells(setup())[0].type).toBe('button');
     });
 
+    it('клетка не перебивает роль кнопки своей ролью', (): void => {
+        // Явная роль на `<button>` вытесняет родную: с `role="listitem"`
+        // скринридер называл бы элемент списка и умалчивал, что тут нажимают.
+        expect(cells(setup())[0].getAttribute('role')).toBeNull();
+    });
+
     it.each<IRtNightGrid.State>(['free', 'primary', 'secondary'])(
         'состояние %s помечает клетку модификатором и атрибутом данных',
         (state: IRtNightGrid.State): void => {
@@ -75,8 +81,8 @@ describe('RtNightGridComponent', (): void => {
             expect(qa(setup({ ariaLabel: 'Ночи марта' }), 'night-grid')?.attributes['aria-label']).toBe('Ночи марта');
         });
 
-        it('сетка объявлена списком', (): void => {
-            expect(qa(setup(), 'night-grid')?.attributes['role']).toBe('list');
+        it('сетка объявлена группой — она собирает кнопки, а не пункты списка', (): void => {
+            expect(qa(setup(), 'night-grid')?.attributes['role']).toBe('group');
         });
     });
 

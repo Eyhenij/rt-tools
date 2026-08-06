@@ -51,13 +51,17 @@ describe('RtPaginationComponent', (): void => {
             expect(textOf(qa(fixture, 'pagination-range'))).toBe('81–95 of 95');
         });
 
-        it('пустой набор рисуется отдельной формулировкой, а не «1–0 из 0»', (): void => {
+        it('пустой набор не показывает бар вовсе — листать нечего', (): void => {
+            // Проверять текст диапазона у пустого набора бессмысленно: бар при
+            // нём спрятан целиком, и любое утверждение о его содержимом
+            // говорило бы о том, чего пользователь не видит.
             const fixture: ComponentFixture<RtPaginationComponent> = setup({
                 pageModel: page({ totalCount: 0 }),
                 perPageOptions: [0, 20],
             });
 
-            expect(textOf(qa(fixture, 'pagination-range'))).toBe('0 of 0');
+            expect(fixture.componentInstance.isVisible()).toBe(false);
+            expect((fixture.nativeElement as HTMLElement).style.display).toBe('none');
         });
     });
 
