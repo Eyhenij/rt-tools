@@ -1,9 +1,24 @@
 ---
 name: rt-tools-storybook
-description: Add or edit a Storybook story for a kit component — the Test*Component wrapper convention, Meta/StoryObj typing, applicationConfig decorators and argTypes controls. Use when creating any *.stories.ts, adding a demo variant for a component, or wiring token/theming docs into Storybook.
+description: Add or edit a Storybook story or MDX page for a kit component — the Test*Component wrapper convention, Meta/StoryObj typing, applicationConfig decorators, argTypes controls, and the ui-kit-v2 state-coverage contract. Use when creating any *.stories.ts or docs *.mdx, adding a demo variant for a component, or wiring token/theming docs into Storybook.
 ---
 
 # Storybook
+
+**Two kits, two independent showcases.** They share no config, no port and no
+conventions beyond `@storybook/angular` itself. Check which package you are in
+before copying anything across.
+
+|                  | `@rt-tools/ui-kit`            | `@rt-tools/ui-kit-v2`                                    |
+| ---------------- | ----------------------------- | -------------------------------------------------------- |
+| Config           | `projects/ui-kit/.storybook/` | `projects/ui-kit-v2/.storybook/`                         |
+| Port             | 6006                          | 6007                                                     |
+| Command          | `pnpm run storybook`          | `pnpm run storybook:ui-kit-v2`                           |
+| Wrapper prefix   | `Test*Component`              | `TestRt*Component`                                       |
+| Global providers | per-story `applicationConfig` | `preview.ts` (zoneless, transloco, icons, theme toolbar) |
+| Story set        | `Default` + ad-hoc variants   | fixed set — see the coverage contract below              |
+
+Everything from here to the ui-kit-v2 section describes **`@rt-tools/ui-kit`**.
 
 Storybook 10 with `@storybook/angular`. Config lives in
 `projects/ui-kit/.storybook/`; stories are discovered from
@@ -107,6 +122,97 @@ export class TestToggleComponent {
 - Wrapper styles are exempt from the design-token stylelint rule (the
   `**/stories/**` ignore), so demo layout CSS is fine there.
 - The wrapper is **not** exported from any `public-api.ts` — it must never ship.
+
+---
+
+# `@rt-tools/ui-kit-v2`
+
+Second kit, own showcase. Selectors are `rt-*`, wrappers are named
+`TestRt*Component`, and story titles are `Components/<PascalName>`.
+
+```bash
+pnpm run storybook:ui-kit-v2        # nx run @rt-tools/ui-kit-v2:storybook — port 6007
+pnpm run build-storybook:ui-kit-v2  # dist/storybook/@rt-tools/ui-kit-v2
+```
+
+## What `preview.ts` already provides
+
+Do **not** re-declare these in a story's `applicationConfig` — they are global in
+`projects/ui-kit-v2/.storybook/preview.ts`:
+
+`provideZonelessChangeDetection()`, `provideHttpClient()`, `provideRouter([])`,
+`provideRtStorage()`, `provideRtIcons('/icons')`, `provideTransloco(…)` with a
+loader returning `of({})`, and `provideRtKitTranslations()`.
+
+- Icons are served by `staticDirs` from `src/assets/icons` to `/icons`; `rt-icon`
+  fetches them over HTTP and inlines a sprite.
+- The theme toolbar writes `<html data-theme>` — the same attribute `ThemeService`
+  sets in an application, so the showcase renders what a consumer gets.
+- Sidebar order is fixed by `storySort`: `Foundation` (Design Tokens: Overview,
+  Colors, Semantic, Spacing, Theming) → `Components` → the rest.
+
+## State-coverage contract
+
+Under law `docs/constitution/verifiability.md` (section «Демонстрация видимого
+состояния») and ADR `docs/adr/0002-ui-kit-v2-state-coverage.md`. A component is
+covered when **every input axis is shown at every value**, not when a control
+exists that could reach it.
+
+Required per component — a missing entry is a defect, not a preference:
+
+| Story / page       | What it must show                                                                                                                                                                                                                                         |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Overview` (MDX)   | Purpose, when to use / when not to use, axis tables, states table, accessibility, theming, related components, and a hand-written input/output table. `compodoc` is deliberately off — `tools/verify-ui-kit-v2-docs.cjs` is what keeps that table honest. |
+| `Playground`       | The single arg-driven story (today's `Default`, renamed).                                                                                                                                                                                                 |
+| one story per axis | Every value of that axis, laid out at once and labelled.                                                                                                                                                                                                  |
+| `States`           | `default`, `hover`, `focus-visible`, `active`, `disabled`, plus `loading` / `readonly` where the component has them.                                                                                                                                      |
+| `Themes`           | Light and dark side by side.                                                                                                                                                                                                                              |
+
+Rules that decide what goes in a matrix:
+
+- **Cross axes only when they visually interact.** `theme × appearance` earns a
+  grid because the pair changes how each reads; `size × theme` does not. The full
+  cartesian product is explicitly rejected — see ADR 0002 decision 3.
+- **An axis you cannot show is declared, not skipped.** Say so in `Overview` with
+  the reason; a silent gap looks exactly like coverage.
+- **A story that renders an empty collection is not coverage.** Ten stories
+  currently pass an empty array and paint nothing (`UI-KIT-V2-ISSUES.md` §2.3);
+  seed a realistic fixture instead.
+
+## Matrix mechanics
+
+Grids are drawn by the shared harness in `projects/ui-kit-v2/src/showcase/`, not
+by 72 hand-written templates. The folder is excluded from the library build
+alongside `src/testing/**`, and it is linted like any other source — unlike
+`.storybook/`, which ESLint ignores.
+
+- Interaction states come from `storybook-addon-pseudo-states`. Never simulate
+  `:hover` by adding a class to shipped SCSS.
+- Dark-side-by-side works because the dark theme is a mixin
+  (`rt-theme-dark-tokens` in `src/styles/_theme-dark.scss`), so it applies to a
+  scoped selector, not only `:root`. The `body` gradient and the `.rt-logo`
+  inversion stay `:root`-scoped and will not follow into a scoped block.
+- **Overlay components** (13 of them use CDK Overlay: aside, autocomplete,
+  confirm-popover, container, dialog, file-drop, menu, multiselect, page-header,
+  popover, select, split-button, tooltip) split in two: matrix the presentational
+  inner component (dialog header, menu item, toast, panel), and open the overlay
+  itself from a `play` function clicking the trigger on mount. Only
+  `rt-bottom-sheet` takes a declarative `open` input.
+
+## Gotchas — ui-kit-v2
+
+- **`tsconfig.lib.json` excludes `**/*.stories.ts` but not `**/stories/**`.**
+  Wrappers stay out of `dist` only because `public-api.ts` never reaches them
+  (`UI-KIT-V2-ISSUES.md` §2.7). One stray barrel export ships demo code.
+- **Every wrapper adds a lint warning.** `rt/require-host-bem-block` fires on
+  demo wrappers — 80 warnings today (§2.6). They are warnings, so the real
+  eighty-first drowns.
+- **`skill-gate.sh` does not match `*.mdx`.** Editing a docs page hands out no
+  rule; load this skill yourself before writing MDX.
+- MDX tables need `remark-gfm` — already wired in `main.ts`. Without it a table
+  renders as raw text.
+- Foundation docs live in `projects/ui-kit-v2/docs/*.mdx`. `Overview` and
+  `Theming` are still styled unlike `Colors`/`Semantic`/`Spacing` (§2.4).
 
 ## Gotchas
 
