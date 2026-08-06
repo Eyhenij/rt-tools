@@ -3,7 +3,7 @@
   "dest": "../../dist/ui-kit-v2",
   "deleteDestPath": true,
   "inlineStyleLanguage": "scss",
-  "assets": ["src/styles", "src/assets", "src/**/*.scss"],
+  "assets": ["src/styles", "src/assets", "src/lib/**/*.scss", "src/lib/**/CONTEXT.md"],
   "lib": {
     "entryFile": "src/public-api.ts"
   },

@@ -22,7 +22,3 @@
 отсутствует. Значит внутрь можно смело класть выражения по ещё не пришедшим данным.
 
 Высота по умолчанию здесь **15px**, а у самого `rt-skeleton` — 10px.
-
-## Проверки
-
-[`rt-skeleton-wrapper.component.spec.ts`](./rt-skeleton-wrapper.component.spec.ts).

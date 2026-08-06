@@ -1,0 +1,46 @@
+// Обвязка витрины: светлая и тёмная половины рядом. Набор свойств тёмной половины живёт
+// не здесь, а в `.storybook/storybook.scss` — свойства тёмной темы кит вешает на `:root`,
+// и скоупнуть их можно только из глобального стиля.
+.app-story-themes {
+    display: block;
+    margin-block-end: var(--rt-space-3xl);
+
+    &__caption {
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+        font-weight: var(--rt-font-weight-semibold);
+        letter-spacing: 0.06em;
+        margin-block: 0 var(--rt-space-12);
+        text-transform: uppercase;
+    }
+
+    &__panes {
+        display: grid;
+        gap: var(--rt-space-16);
+        grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    }
+
+    // Половина красит себе фон сама: без него тёмные свойства применились бы к контенту,
+    // а подложка осталась бы светлой, и контраст читался бы неверно.
+    // `align-items: flex-start` — иначе колонка растягивает содержимое на всю ширину, и
+    // кнопка в паре тем выглядит не так, как та же кнопка в соседней матрице.
+    &__pane {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: var(--rt-space-16);
+        border: 1px solid var(--rt-color-border-subtle);
+        border-radius: var(--rt-radius-md);
+        background-color: var(--rt-color-bg-page);
+        color: var(--rt-color-text-primary);
+        gap: var(--rt-space-12);
+    }
+
+    &__label {
+        color: var(--rt-color-text-muted);
+        font-family: var(--rt-font-family-mono);
+        font-size: var(--rt-text-2xs);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+}

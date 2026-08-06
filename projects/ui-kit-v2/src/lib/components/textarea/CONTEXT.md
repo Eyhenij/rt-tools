@@ -36,4 +36,3 @@
 ## Рядом
 
 - [`rt-rich-editor`](../rich-editor/CONTEXT.md) — когда нужна разметка внутри текста.
-- Проверки: [`rt-textarea.component.spec.ts`](./rt-textarea.component.spec.ts).

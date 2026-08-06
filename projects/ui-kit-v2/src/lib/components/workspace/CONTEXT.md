@@ -44,4 +44,3 @@
 ## Рядом
 
 - [`rt-workspace-details`](../workspace-details/CONTEXT.md) — типовое наполнение правой панели.
-- Проверки: [`rt-workspace.component.spec.ts`](./rt-workspace.component.spec.ts).

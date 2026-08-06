@@ -39,8 +39,3 @@
   тот грузит Quill динамическим импортом.
 - Неотправленное сообщение (`status: 'failed'`) получает кнопку повтора.
 - Файлы можно бросать прямо в ленту — чат обёрнут в [`rt-file-drop`](../file-drop/CONTEXT.md).
-
-## Проверки
-
-[`rt-chat.component.spec.ts`](./rt-chat.component.spec.ts),
-[`to-rt-message.spec.ts`](./to-rt-message.spec.ts) — преобразование модели сообщения.

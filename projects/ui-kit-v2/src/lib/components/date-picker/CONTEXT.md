@@ -39,4 +39,3 @@
 
 - [`rt-input`](../input/CONTEXT.md) с `type="time"` — когда нужно только время без обёртки.
 - [`rt-calendar`](../calendar/CONTEXT.md) — календарь-витрина, а не поле ввода.
-- Проверки: [`rt-date-picker.component.spec.ts`](./rt-date-picker.component.spec.ts).

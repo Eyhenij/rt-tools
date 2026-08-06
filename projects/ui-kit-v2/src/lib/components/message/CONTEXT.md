@@ -33,4 +33,3 @@
 ## Рядом
 
 - [`rt-toaster`](../toast/CONTEXT.md) — всплывающее уведомление вместо встроенного.
-- Проверки: [`rt-message.component.spec.ts`](./rt-message.component.spec.ts).

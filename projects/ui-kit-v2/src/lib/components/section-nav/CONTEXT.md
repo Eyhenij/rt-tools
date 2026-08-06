@@ -25,7 +25,3 @@
 - Активная плитка помечена тремя способами: модификатором, `data-active` и `aria-current="page"`.
 - Идентификатор дублируется атрибутом `data-key`.
 - Пустой набор рисует пустую навигацию.
-
-## Проверки
-
-[`rt-section-nav.component.spec.ts`](./rt-section-nav.component.spec.ts).

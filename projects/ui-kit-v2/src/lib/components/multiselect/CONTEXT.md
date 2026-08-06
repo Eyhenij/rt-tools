@@ -41,4 +41,3 @@
 ## Рядом
 
 - [`rt-select`](../select/CONTEXT.md) — одно значение.
-- Проверки: [`rt-multiselect.component.spec.ts`](./rt-multiselect.component.spec.ts).

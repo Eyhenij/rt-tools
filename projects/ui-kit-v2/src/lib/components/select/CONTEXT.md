@@ -52,4 +52,3 @@
 
 - [`rt-multiselect`](../multiselect/CONTEXT.md) — тот же список, но с несколькими значениями.
 - [`rt-autocomplete`](../autocomplete/CONTEXT.md) — когда набор ищут на сервере.
-- Проверки: [`rt-select.component.spec.ts`](./rt-select.component.spec.ts).

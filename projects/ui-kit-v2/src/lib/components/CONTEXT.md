@@ -47,21 +47,3 @@ tag/
 | переписка                | `chat`, `message`, `message-composer`                                                                                             |
 | файлы                    | `file-card`, `file-list`, `file-drop`, `download-link`                                                                            |
 | прочее                   | `card`, `note`, `empty-state`, `tabs`, `stepper`, `logo`, `theme-toggle`, `notifications-bell`, `collapsible-text`, `counter-row` |
-
-## Проверки
-
-Спеки лежат рядом с компонентами. Общая обвязка — `src/testing/rt-kit-testing.ts`:
-`createRtFixture()` поднимает standalone-компонент со словарями, `HttpClient`, хранилищами и
-`PlatformService`; `qa()` / `el()` / `classesOf()` / `textOf()` — запросы к разметке.
-
-```bash
-pnpm exec nx test @rt-tools/ui-kit-v2
-pnpm exec nx test @rt-tools/ui-kit-v2 --testFile=src/lib/components/tag
-```
-
-Две подмены, о которых надо знать заранее:
-
-- **Quill** (`rich-editor`, `message-composer`, `chat`) в jsdom не поднимается — модуль
-  подменяется `jest.mock('quill', …)` заглушкой из `src/testing/quill-mock.ts`.
-- **Ширина вьюпорта** ничего не измеряет — компоненты, которые перестраиваются по ней
-  (`table`, `filter-control`), тестируются с подменённым `BreakpointsService`.

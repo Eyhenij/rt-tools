@@ -36,4 +36,3 @@
 
 - [`rt-filter-control`](../filter-control/CONTEXT.md) — та же группа, но с автоматическим
   переключением на список на узком экране.
-- Проверки: [`rt-toggle-button-group.component.spec.ts`](./rt-toggle-button-group.component.spec.ts).

@@ -56,4 +56,3 @@
 ## Рядом
 
 - [`rt-select`](../select/CONTEXT.md) — когда набор известен заранее.
-- Проверки: [`rt-autocomplete.component.spec.ts`](./rt-autocomplete.component.spec.ts).
