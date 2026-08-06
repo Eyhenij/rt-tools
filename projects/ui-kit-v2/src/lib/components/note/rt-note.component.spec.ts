@@ -33,7 +33,9 @@ describe('RtNoteComponent', (): void => {
     it('проецирует содержимое как есть, сохраняя разметку внутри', (): void => {
         const fixture: ComponentFixture<NoteHostComponent> = createRtFixture(NoteHostComponent);
 
-        expect(renderedText(fixture)).toContain('Тариф меняется со следующего месяца.');
+        // Пробелы схлопываются: проверяется, что текст и вложенный тег доехали,
+        // а не то, как разметку переносит форматтер.
+        expect(renderedText(fixture).replace(/\s+/g, ' ')).toContain('Тариф меняется со следующего месяца');
         expect(el(fixture, 'rt-note strong')).not.toBeNull();
     });
 
