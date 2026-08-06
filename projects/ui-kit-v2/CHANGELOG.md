@@ -1,3 +1,14 @@
+# [0.2.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.1.0...rt-ui-kit-v2@0.2.0) (2026-08-06)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** выправить объявления для скринридера и потерянные входы ([c00887f](https://github.com/Eyhenij/rt-tools/commit/c00887f4fdc0980dc52470673fa9d2773f7b9903))
+- **rt:ui-kit-v2:** починить четыре дефекта, вскрытых спеками ([2d8ac5e](https://github.com/Eyhenij/rt-tools/commit/2d8ac5e1326288a6153df4caeafc96f4eaf51c71))
+
+### Features
+
+- **rt:ui-kit-v2:** крупные ступени шкалы у кнопок и иконки ([7ae8600](https://github.com/Eyhenij/rt-tools/commit/7ae8600952b6eb2399b0dbf345a1324081473005))
+
 # 0.1.0 (2026-08-05)
 
 ### Bug Fixes
