@@ -1,0 +1,38 @@
+# `rt-card`
+
+```html
+<rt-card header="Тариф" ariaLabel="Открыть тариф" [clickable]="true" (cardClick)="open()">
+    <rt-tag rtCardHeader value="Активен" severity="success" />
+    <p>Базовый, до 5 пользователей</p>
+    <button rtButton rtCardFooter label="Продлить"></button>
+</rt-card>
+```
+
+| вход        | тип              | умолчание |
+| ----------- | ---------------- | --------- |
+| `header`    | `string \| null` | `null`    |
+| `ariaLabel` | `string \| null` | `null`    |
+| `clickable` | `boolean`        | `false`   |
+
+| выход       | тип          |
+| ----------- | ------------ |
+| `cardClick` | `MouseEvent` |
+
+Три слота: `[rtCardHeader]` — рядом с заголовком, слот по умолчанию — тело, `[rtCardFooter]` — низ.
+
+## Главное, что нужно знать
+
+**Без `clickable` карточка не интерактивна вовсе**: ни `role`, ни `tabindex`, ни события. Это
+намеренно — иначе текст внутри нельзя было бы выделить, не «нажав» карточку.
+
+С `clickable` карточка объявляется `role="button"`, встаёт в таб-порядок и реагирует на Enter и
+Space. Подпись для скринридера задаётся входом: содержимое карточки именем контрола не служит.
+
+## Края
+
+- Карточка рисуется тегом `<article>` — она самостоятельный кусок содержимого.
+- Шапка и подвал существуют всегда, даже пустыми; прячут их стили.
+
+## Проверки
+
+[`rt-card.component.spec.ts`](./rt-card.component.spec.ts).

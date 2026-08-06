@@ -1,0 +1,28 @@
+# `rt-counter-row`
+
+Строка «подпись + контрол» для настроек и форм бронирования.
+
+```html
+<rt-counter-row label="Гостей" hint="Не больше четырёх">
+    <rt-counter [formControl]="guests" [max]="4" />
+</rt-counter-row>
+```
+
+| вход    | тип      | умолчание      |
+| ------- | -------- | -------------- |
+| `label` | `string` | **обязателен** |
+| `hint`  | `string` | `''`           |
+
+Контрол приходит проекцией. Выходов нет.
+
+## Главное, что нужно знать
+
+**Строка не знает, что именно считают.** Внутрь кладут [`rt-counter`](../counter/CONTEXT.md),
+[`rt-toggle-switch`](../toggle-switch/CONTEXT.md), [`rt-select`](../select/CONTEXT.md) — что
+угодно. Отсюда и имя входа: строка отвечает только за подпись и раскладку.
+
+Пустое пояснение равно отсутствию входа — `[hint]="maybeEmpty()"` безопасно.
+
+## Проверки
+
+[`rt-counter-row.component.spec.ts`](./rt-counter-row.component.spec.ts).
