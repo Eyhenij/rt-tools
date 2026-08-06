@@ -273,20 +273,48 @@ describe('RtInputNumberComponent', (): void => {
     });
 
     describe('локаль с запятой в разрядах', (): void => {
-        it('ломает обратный разбор — известный дефект, зафиксирован, чтобы не уехал молча', (): void => {
-            // В локали, где разряды разделяет запятая (en-US), набранное «1000»
-            // отображается как «1,000», а обратный разбор режет строку по первой
-            // запятой и отдаёт 1. Поле рассчитано на локали с пробелом-разделителем.
-            const fixture: ComponentFixture<InputNumberHostComponent> = createRtFixture(
-                InputNumberHostComponent,
-                {},
-                { providers: [{ provide: LOCALE_ID, useValue: 'en-US' }] }
-            );
+        function setupEnUs(): ComponentFixture<InputNumberHostComponent> {
+            return createRtFixture(InputNumberHostComponent, {}, { providers: [{ provide: LOCALE_ID, useValue: 'en-US' }] });
+        }
+
+        it('разряды показываются запятой, а в форму уходит целое число', (): void => {
+            // Разбор идёт по разделителям локали: запятая здесь — разряды, и
+            // читать её как десятичную нельзя, иначе «1,000» превращается в 1.
+            const fixture: ComponentFixture<InputNumberHostComponent> = setupEnUs();
 
             type(fixture, '1000');
 
             expect(field(fixture).value).toBe('1,000');
-            expect(fixture.componentInstance.control.value).toBe(1);
+            expect(fixture.componentInstance.control.value).toBe(1000);
+        });
+
+        it('дробная часть отделяется точкой', (): void => {
+            const fixture: ComponentFixture<InputNumberHostComponent> = setupEnUs();
+
+            type(fixture, '1234.5');
+
+            expect(fixture.componentInstance.control.value).toBe(1234.5);
+        });
+
+        it('запятая внутри набора остаётся разрядами, а не дробной частью', (): void => {
+            // Показ и разбор обязаны сходиться: если поле рисует запятую как
+            // разряды, разбор не вправе считать её десятичной.
+            const fixture: ComponentFixture<InputNumberHostComponent> = setupEnUs();
+
+            type(fixture, '1,5');
+
+            expect(field(fixture).value).toBe('15');
+            expect(fixture.componentInstance.control.value).toBe(15);
+        });
+
+        it('уход фокуса оставляет то же число, что и показано', (): void => {
+            const fixture: ComponentFixture<InputNumberHostComponent> = setupEnUs();
+
+            type(fixture, '1234567.89');
+            blur(fixture);
+
+            expect(field(fixture).value).toBe('1,234,567.89');
+            expect(fixture.componentInstance.control.value).toBe(1234567.89);
         });
     });
 });

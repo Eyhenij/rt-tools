@@ -1,6 +1,6 @@
 import { ComponentFixture } from '@angular/core/testing';
 
-import { classesOf, createRtFixture, el, qa, textOf } from '../../../testing/rt-kit-testing';
+import { classesOf, createRtFixture, el, qa, setInputs, textOf } from '../../../testing/rt-kit-testing';
 import { IRtStatTile } from './rt-stat-tile.model';
 import { RtStatTileComponent } from './rt-stat-tile.component';
 
@@ -91,16 +91,22 @@ describe('RtStatTileComponent', (): void => {
     });
 
     describe('база сравнения', (): void => {
-        it('само значение до строки не доезжает — известный дефект', (): void => {
-            // Подпись берётся `translateSignal('rtKit.uiBaseline')`, и Transloco
-            // подставляет в `{{value}}` пустоту ещё до того, как компонент
-            // попробует заменить плейсхолдер сам. Замена не находит ничего, и на
-            // экране остаётся одна приставка. Чинится передачей значения
-            // параметром перевода, а не `String.replace` после него.
+        it('значение подставляется в переведённую приставку', (): void => {
+            // Значение уходит параметром перевода: Transloco интерполирует
+            // `{{value}}` в момент перевода, и подставлять что-то в уже готовую
+            // строку поздно — от подписи осталась бы одна приставка.
             const fixture: ComponentFixture<RtStatTileComponent> = setup({ deltaPrimary: delta(5, { baseline: '1 100' }) });
 
-            expect(textOf(qa(fixture, 'stat-tile-baseline'))).toBe('was');
-            expect(textOf(qa(fixture, 'stat-tile-baseline'))).not.toContain('1 100');
+            expect(textOf(qa(fixture, 'stat-tile-baseline'))).toBe('was 1 100');
+        });
+
+        it('смена базы переписывает строку — параметр перевода реактивен', (): void => {
+            const fixture: ComponentFixture<RtStatTileComponent> = setup({ deltaPrimary: delta(5, { baseline: '1 100' }) });
+
+            setInputs(fixture, { deltaPrimary: delta(5, { baseline: '900' }) });
+            fixture.detectChanges();
+
+            expect(textOf(qa(fixture, 'stat-tile-baseline'))).toBe('was 900');
         });
 
         it('без базы строки нет', (): void => {

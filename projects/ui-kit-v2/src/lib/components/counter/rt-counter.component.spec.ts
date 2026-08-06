@@ -15,6 +15,17 @@ class CounterHostComponent {
     public readonly control: FormControl<number | null> = new FormControl<number | null>(2);
 }
 
+/** Контрол создан уже отключённым — форма скажет об этом до первого рендера. */
+@Component({
+    selector: 'rt-counter-disabled-host',
+    template: '<rt-counter ariaLabel="Гостей" [formControl]="control" [min]="1" [max]="4" />',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtCounterComponent, ReactiveFormsModule],
+})
+class CounterDisabledHostComponent {
+    public readonly control: FormControl<number | null> = new FormControl<number | null>({ value: 2, disabled: true });
+}
+
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtCounterComponent> {
     return createRtFixture(RtCounterComponent, inputs);
 }
@@ -185,6 +196,25 @@ describe('RtCounterComponent', (): void => {
             fixture.detectChanges();
 
             expect(stepButton(fixture, 'counter-increase').disabled).toBe(true);
+        });
+
+        it('контрол, созданный отключённым, отключён уже на первом рендере', (): void => {
+            // Форма зовёт setDisabledState при связывании — раньше, чем счётчик
+            // обновит своё вью. Если вход дозатирает её слово, отключённая
+            // форма приезжает к пользователю рабочей.
+            const fixture: ComponentFixture<CounterDisabledHostComponent> = createRtFixture(CounterDisabledHostComponent);
+
+            expect(stepButton(fixture, 'counter-increase').disabled).toBe(true);
+            expect(stepButton(fixture, 'counter-decrease').disabled).toBe(true);
+        });
+
+        it('включение формы возвращает кнопки в работу', (): void => {
+            const fixture: ComponentFixture<CounterDisabledHostComponent> = createRtFixture(CounterDisabledHostComponent);
+
+            fixture.componentInstance.control.enable();
+            fixture.detectChanges();
+
+            expect(stepButton(fixture, 'counter-increase').disabled).toBe(false);
         });
     });
 

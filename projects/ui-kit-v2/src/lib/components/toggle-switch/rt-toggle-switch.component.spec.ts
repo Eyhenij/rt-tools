@@ -16,6 +16,17 @@ class ToggleSwitchHostComponent {
     public readonly control: FormControl<boolean | null> = new FormControl<boolean | null>(false);
 }
 
+/** Контрол создан уже отключённым — форма скажет об этом до первого рендера. */
+@Component({
+    selector: 'rt-toggle-switch-disabled-host',
+    template: '<rt-toggle-switch [formControl]="control" ariaLabel="Уведомления" />',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtToggleSwitchComponent, ReactiveFormsModule],
+})
+class ToggleSwitchDisabledHostComponent {
+    public readonly control: FormControl<boolean | null> = new FormControl<boolean | null>({ value: false, disabled: true });
+}
+
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtToggleSwitchComponent> {
     return createRtFixture(RtToggleSwitchComponent, inputs);
 }
@@ -139,6 +150,24 @@ describe('RtToggleSwitchComponent', (): void => {
             fixture.detectChanges();
 
             expect((control(fixture)?.nativeElement as HTMLButtonElement).disabled).toBe(true);
+        });
+
+        it('контрол, созданный отключённым, отключён уже на первом рендере', (): void => {
+            // Форма зовёт setDisabledState при связывании — раньше, чем тумблер
+            // обновит своё вью. Если вход дозатирает её слово, отключённая
+            // форма приезжает к пользователю кликабельной.
+            const fixture: ComponentFixture<ToggleSwitchDisabledHostComponent> = createRtFixture(ToggleSwitchDisabledHostComponent);
+
+            expect((control(fixture)?.nativeElement as HTMLButtonElement).disabled).toBe(true);
+        });
+
+        it('включение формы возвращает тумблер в работу', (): void => {
+            const fixture: ComponentFixture<ToggleSwitchDisabledHostComponent> = createRtFixture(ToggleSwitchDisabledHostComponent);
+
+            fixture.componentInstance.control.enable();
+            fixture.detectChanges();
+
+            expect((control(fixture)?.nativeElement as HTMLButtonElement).disabled).toBe(false);
         });
     });
 

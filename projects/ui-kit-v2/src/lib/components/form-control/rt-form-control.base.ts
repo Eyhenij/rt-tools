@@ -4,7 +4,6 @@ import {
     computed,
     DestroyRef,
     Directive,
-    effect,
     inject,
     input,
     InputSignal,
@@ -24,7 +23,8 @@ import { IRtInput } from '../input/rt-input.model';
  * - self-injected `NgControl` + ручная привязка `valueAccessor` (без
  *   `NG_VALUE_ACCESSOR` provider — иначе NG0200 cycle при self-reference),
  *   что даёт доступ к `control.invalid/touched` для авто-подсветки ошибки;
- * - сигнал значения `value`, состояния `isDisabled`/`isInvalid`;
+ * - сигнал значения `value`, состояния `isDisabled`/`isInvalid` (отключение
+ *   складывается из входа `disabled` и слова формы — см. `isDisabled`);
  * - общие инпуты `size`/`disabled`/`controlId`/`ariaLabel`/`clearable`;
  * - оркестрацию очистки (`clear`) через абстрактные хуки конкретного поля.
  *
@@ -46,9 +46,18 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
     readonly #readonlyAssigned: WritableSignal<boolean> = signal<boolean>(false);
     readonly #errors: WritableSignal<ValidationErrors | null> = signal<ValidationErrors | null>(null);
     readonly #required: WritableSignal<boolean> = signal<boolean>(false);
+    /** Отключение, назначенное формой через CVA (`setDisabledState`). */
+    readonly #disabledByForm: WritableSignal<boolean> = signal<boolean>(false);
 
     protected readonly value: WritableSignal<TValue>;
-    protected readonly isDisabled: WritableSignal<boolean> = signal<boolean>(false);
+    /**
+     * Отключение: вход и форма — два независимых источника, поле отключено,
+     * если так сказал любой из них. Сводить их в один signal нельзя: форма
+     * зовёт `setDisabledState` при связывании контрола, то есть раньше, чем
+     * поле впервые обновит своё вью, и мирроринг входа затирал бы её слово —
+     * контрол, созданный отключённым, оказывался бы редактируемым.
+     */
+    protected readonly isDisabled: Signal<boolean> = computed((): boolean => this.disabled() || this.#disabledByForm());
     protected readonly isInvalid: WritableSignal<boolean> = signal<boolean>(false);
 
     /** Видимость кнопки очистки: включена, есть значение, поле активно. */
@@ -106,10 +115,6 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
         if (this.#ngControl !== null) {
             this.#ngControl.valueAccessor = this;
         }
-        // Signal-input `disabled` → внутренний isDisabled (CVA пишет туда же).
-        effect((): void => {
-            this.isDisabled.set(this.disabled());
-        });
     }
 
     public ngOnInit(): void {
@@ -138,7 +143,7 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
     }
 
     public setDisabledState(isDisabled: boolean): void {
-        this.isDisabled.set(isDisabled);
+        this.#disabledByForm.set(isDisabled);
     }
 
     /** Назначить авто-id (rt-field), когда у контрола нет явного controlId. */

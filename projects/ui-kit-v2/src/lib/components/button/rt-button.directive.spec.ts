@@ -39,6 +39,9 @@ class ButtonHostComponent {
     public readonly loadingIcon: WritableSignal<string | null> = signal<string | null>(null);
 }
 
+/** Затухание кольца (300 мс) плюс запас страховочного таймаута. */
+const SPINNER_FADE_OUT_TIMEOUT_MS: number = 350;
+
 function setup(): ComponentFixture<ButtonHostComponent> {
     return createRtFixture(ButtonHostComponent);
 }
@@ -60,6 +63,13 @@ function iconHref(fixture: ComponentFixture<ButtonHostComponent>): string | null
 }
 
 describe('RtButtonDirective', (): void => {
+    // Возврат к настоящим таймерам — в afterEach, а не в конце теста: падение
+    // утверждения посреди теста иначе оставило бы поддельные таймеры всем
+    // следующим тестам файла, и одна поломка размножилась бы в каскад.
+    afterEach((): void => {
+        jest.useRealTimers();
+    });
+
     it('несёт свой BEM-блок на элементе, к которому применена', (): void => {
         expect(classesOf(button(setup()))).toContain('rt-button');
     });
@@ -218,10 +228,9 @@ describe('RtButtonDirective', (): void => {
             expect(iconHref(fixture)).toBe('#rt-icon-spinner');
         });
 
-        it('выход из загрузки ждёт конца анимации — до неё кольцо остаётся на месте', (): void => {
-            // Возврат содержимого повешен на `animationend` гаснущего кольца.
-            // Без события кнопка так и стоит с кольцом: в среде без анимаций
-            // (тест, отключённая анимация) это надо знать.
+        it('пока кольцо гаснет, оно остаётся на месте', (): void => {
+            // Содержимое возвращается по концу затухания — либо по `animationend`,
+            // либо страховочным таймаутом; до того на кнопке ещё кольцо.
             const fixture: ComponentFixture<ButtonHostComponent> = setup();
 
             fixture.componentInstance.loading.set(true);
@@ -230,6 +239,45 @@ describe('RtButtonDirective', (): void => {
             fixture.detectChanges();
 
             expect(el(fixture, '.rt-button__spinner')).not.toBeNull();
+        });
+
+        it('без animationend содержимое возвращает страховочный таймаут', (): void => {
+            // Анимация не идёт, пока кнопка спрятана (свёрнутая панель,
+            // неактивная вкладка), и `animationend` не приходит никогда. Без
+            // страховки кнопка навсегда осталась бы голым кольцом — в том
+            // числе после того, как её снова покажут.
+            jest.useFakeTimers();
+            const fixture: ComponentFixture<ButtonHostComponent> = setup();
+
+            fixture.componentInstance.icon.set('check');
+            fixture.componentInstance.loading.set(true);
+            fixture.detectChanges();
+            fixture.componentInstance.loading.set(false);
+            fixture.detectChanges();
+
+            jest.advanceTimersByTime(SPINNER_FADE_OUT_TIMEOUT_MS);
+            fixture.detectChanges();
+
+            expect(el(fixture, '.rt-button__spinner')).toBeNull();
+            expect(childClasses(fixture)).toEqual(['rt-button__icon', 'rt-button__label']);
+        });
+
+        it('пришедший animationend отменяет страховку — содержимое возвращается один раз', (): void => {
+            jest.useFakeTimers();
+            const fixture: ComponentFixture<ButtonHostComponent> = setup();
+
+            fixture.componentInstance.icon.set('check');
+            fixture.componentInstance.loading.set(true);
+            fixture.detectChanges();
+            fixture.componentInstance.loading.set(false);
+            fixture.detectChanges();
+
+            el(fixture, '.rt-button__spinner')?.nativeElement.dispatchEvent(new Event('animationend'));
+            fixture.detectChanges();
+            jest.advanceTimersByTime(SPINNER_FADE_OUT_TIMEOUT_MS);
+            fixture.detectChanges();
+
+            expect(childClasses(fixture)).toEqual(['rt-button__icon', 'rt-button__label']);
         });
 
         it('по концу анимации содержимое возвращается', (): void => {

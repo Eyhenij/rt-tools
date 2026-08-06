@@ -16,6 +16,17 @@ class CheckboxHostComponent {
     public readonly control: FormControl<boolean | null> = new FormControl<boolean | null>(false);
 }
 
+/** Контрол создан уже отключённым — форма скажет об этом до первого рендера. */
+@Component({
+    selector: 'rt-checkbox-disabled-host',
+    template: '<rt-checkbox [formControl]="control">Согласен</rt-checkbox>',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtCheckboxComponent, ReactiveFormsModule],
+})
+class CheckboxDisabledHostComponent {
+    public readonly control: FormControl<boolean | null> = new FormControl<boolean | null>({ value: false, disabled: true });
+}
+
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtCheckboxComponent> {
     return createRtFixture(RtCheckboxComponent, inputs);
 }
@@ -156,14 +167,32 @@ describe('RtCheckboxComponent', (): void => {
         });
 
         it('отключение формой равносильно отключению входом', (): void => {
-            // Оба пути пишут в один и тот же внутренний сигнал — иначе
-            // `[disabled]` и `FormControl.disable()` расходились бы.
+            // Вход и форма — два источника отключения, и любой из них решает.
             const fixture: ComponentFixture<CheckboxHostComponent> = createRtFixture(CheckboxHostComponent);
 
             fixture.componentInstance.control.disable();
             fixture.detectChanges();
 
             expect((control(fixture)?.nativeElement as HTMLButtonElement).disabled).toBe(true);
+        });
+
+        it('контрол, созданный отключённым, отключён уже на первом рендере', (): void => {
+            // Форма зовёт setDisabledState при связывании — раньше, чем чекбокс
+            // обновит своё вью. Если вход дозатирает её слово, отключённая форма
+            // приезжает к пользователю кликабельной.
+            const fixture: ComponentFixture<CheckboxDisabledHostComponent> = createRtFixture(CheckboxDisabledHostComponent);
+
+            expect((control(fixture)?.nativeElement as HTMLButtonElement).disabled).toBe(true);
+            expect(classesOf(control(fixture))).toContain('rt-checkbox--disabled');
+        });
+
+        it('включение формы возвращает кнопку в работу', (): void => {
+            const fixture: ComponentFixture<CheckboxDisabledHostComponent> = createRtFixture(CheckboxDisabledHostComponent);
+
+            fixture.componentInstance.control.enable();
+            fixture.detectChanges();
+
+            expect((control(fixture)?.nativeElement as HTMLButtonElement).disabled).toBe(false);
         });
 
         it('null в форме читается как «не отмечен»', (): void => {
