@@ -11,6 +11,7 @@ import {
     signal,
     TemplateRef,
     viewChild,
+    ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
 
@@ -43,6 +44,7 @@ const BEM_BLOCK: string = 'rt-photo-viewer';
     templateUrl: './rt-photo-viewer.component.html',
     styleUrl: './rt-photo-viewer.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
     imports: [
         // angular
         CdkTrapFocus,

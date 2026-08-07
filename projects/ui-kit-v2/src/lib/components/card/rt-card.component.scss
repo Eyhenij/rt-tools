@@ -1,6 +1,9 @@
-/* rt-card — контейнер карточки в common/ui (Emulated encapsulation; :host обязательно). */
+/* rt-card — контейнер карточки в common/ui. ViewEncapsulation.None.
+   Хост адресуется по имени элемента, а не по классу блока: класс `.rt-card` висит
+   и на `<rt-card>`, и на корне шаблона, поэтому правила блока вложены в хост —
+   так они достаются только корню шаблона. */
 
-:host {
+rt-card {
     display: block;
 
     .rt-card {

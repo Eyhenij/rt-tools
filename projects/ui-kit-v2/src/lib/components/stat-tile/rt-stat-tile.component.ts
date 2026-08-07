@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, InputSignal, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, InputSignal, Signal, ViewEncapsulation } from '@angular/core';
 
 import { translateSignal, TranslocoPipe } from '@jsverse/transloco';
 
@@ -80,6 +80,7 @@ function deltaRow(key: string, delta: IRtStatTile.Delta | null): IDeltaRow | nul
     templateUrl: './rt-stat-tile.component.html',
     styleUrl: './rt-stat-tile.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
     imports: [
         // standalone components / directives
         RtIconComponent,

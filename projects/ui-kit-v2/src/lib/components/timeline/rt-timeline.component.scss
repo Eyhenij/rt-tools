@@ -1,6 +1,9 @@
-/* rt-timeline — вертикальный таймлайн-степпер в common/ui (Emulated; :host обязателен). */
+/* rt-timeline — вертикальный таймлайн-степпер в common/ui. ViewEncapsulation.None.
+   Хост адресуется по имени элемента, а не по классу блока: класс `.rt-timeline` висит
+   и на `<rt-timeline>`, и на корне шаблона, поэтому правила блока вложены в хост —
+   так они достаются только корню шаблона. */
 
-:host {
+rt-timeline {
     display: block;
 
     .rt-timeline {

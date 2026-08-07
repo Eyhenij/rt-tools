@@ -1,9 +1,12 @@
-/* rt-stat-tile — KPI-плитка в common/ui (Emulated encapsulation; :host обязательно).
+/* rt-stat-tile — KPI-плитка в common/ui. ViewEncapsulation.None.
+   Хост адресуется по имени элемента, а не по классу блока: класс `.rt-stat-tile` висит
+   и на `<rt-stat-tile>`, и на корне шаблона, поэтому правила блока вложены в хост —
+   так они достаются только корню шаблона.
 
    Рамку и фон плитка не рисует: плитки стоят рядом внутри одной карточки, а
    разделители между ними — забота контейнера. */
 
-:host {
+rt-stat-tile {
     display: block;
 
     .rt-stat-tile {

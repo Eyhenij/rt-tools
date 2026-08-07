@@ -1,6 +1,9 @@
-/* rt-stepper — линейный прогресс-степпер в common/ui (Emulated; :host обязателен). */
+/* rt-stepper — линейный прогресс-степпер в common/ui. ViewEncapsulation.None.
+   Хост адресуется по имени элемента, а не по классу блока: класс `.rt-stepper` висит
+   и на `<rt-stepper>`, и на корне шаблона, поэтому правила блока вложены в хост —
+   так они достаются только корню шаблона. */
 
-:host {
+rt-stepper {
     display: block;
 
     .rt-stepper {

@@ -10,6 +10,7 @@ import {
     InputSignalWithTransform,
     Signal,
     signal,
+    ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -47,6 +48,7 @@ const BEM_BLOCK: string = 'rt-checkbox';
     templateUrl: './rt-checkbox.component.html',
     styleUrl: './rt-checkbox.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
     imports: [
         // standalone components / directives
         RtIconComponent,
