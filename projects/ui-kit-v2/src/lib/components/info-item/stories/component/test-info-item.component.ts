@@ -10,7 +10,7 @@ import { RtInfoItemComponent } from '../../rt-info-item.component';
 @Component({
     selector: 'app-info-item',
     template: `
-        <rt-info-item [label]="label" [loading]="loading" [grow]="grow" />
+        <rt-info-item [label]="label" [loading]="loading" [grow]="grow">{{ value }}</rt-info-item>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -19,7 +19,10 @@ import { RtInfoItemComponent } from '../../rt-info-item.component';
     ],
 })
 export class TestRtInfoItemComponent {
-    public label: string = 'Сохранить';
+    public label: string = 'Тариф';
+
+    /** Значение у компонента приходит проекцией — контрол вешается сюда, а не на вход. */
+    public value: string = 'Годовой';
     public loading: boolean = false;
     public grow: boolean = false;
 }

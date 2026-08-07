@@ -12,8 +12,5 @@ export default {
 
 type Story = StoryObj<TestRtDeltaViewComponent>;
 
-export const Default: Story = {
-    args: {
-        delta: null,
-    },
-};
+/** Модель берётся из обёртки: контрола у входа нет, а `null` рисовал бы пустую историю. */
+export const Playground: Story = {};
