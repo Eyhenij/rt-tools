@@ -14,10 +14,9 @@ import {
     ViewEncapsulation,
 } from '@angular/core';
 
-import { translateSignal } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { rtKitLabel } from '../../i18n';
 import { RtButtonDirective } from '../button/rt-button.directive';
 import { RtFileCardComponent } from '../file-card/rt-file-card.component';
 import { RtFileListComponent } from '../file-list/rt-file-list.component';
@@ -62,7 +61,7 @@ const BEM_BLOCK: string = 'rt-file-input';
     },
 })
 export class RtFileInputComponent extends RtFormControlBase<File[]> {
-    readonly #t_uiChooseFile: Signal<string> = translateSignal('rtKit.uiChooseFile');
+    readonly #t_uiChooseFile: Signal<string> = rtKitLabel('uiChooseFile');
 
     protected readonly fileEl: Signal<ElementRef<HTMLInputElement> | undefined> = viewChild<ElementRef<HTMLInputElement>>('fileEl');
 

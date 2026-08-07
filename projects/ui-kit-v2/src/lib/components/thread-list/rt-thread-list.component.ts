@@ -1,17 +1,17 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
-    ChangeDetectionStrategy,
-    Component,
     computed,
     contentChild,
-    DestroyRef,
     inject,
     input,
+    output,
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
     InputSignal,
     InputSignalWithTransform,
     OnInit,
-    output,
     OutputEmitterRef,
     Signal,
     ViewEncapsulation,
@@ -21,10 +21,9 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { distinctUntilChanged, map } from 'rxjs';
 
-import { translateSignal, TranslocoPipe } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { RT_KIT_LABELS, RtKitLabelMap, rtKitLabel } from '../../i18n';
 import { searchDebounce } from '../../util';
 
 import { RtInfiniteScrollDirective } from '../../scroll/infinite-scroll.directive';
@@ -75,7 +74,6 @@ const SKELETON_ROWS_COUNT: number = 6;
         ElemDirective,
         RtInfiniteScrollDirective,
         ModDirective,
-        TranslocoPipe,
     ],
     host: {
         class: BEM_BLOCK,
@@ -84,8 +82,10 @@ const SKELETON_ROWS_COUNT: number = 6;
 export class RtThreadListComponent<TRow extends IRtThreadList.Row> implements OnInit {
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
 
-    readonly #t_uiSearch: Signal<string> = translateSignal('rtKit.uiSearch');
-    readonly #t_uiNothingFound: Signal<string> = translateSignal('rtKit.uiNothingFound');
+    readonly #t_uiSearch: Signal<string> = rtKitLabel('uiSearch');
+    readonly #t_uiNothingFound: Signal<string> = rtKitLabel('uiNothingFound');
+
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly searchPlaceholderText: Signal<string> = computed((): string => this.searchPlaceholder() || this.#t_uiSearch());
     protected readonly emptyTitle: Signal<string> = computed((): string => this.emptyText() || this.#t_uiNothingFound());

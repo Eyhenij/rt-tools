@@ -7,8 +7,8 @@
             variant="ghost"
             size="md"
             shape="circle"
-            [ariaLabel]="'rtKit.uiBack' | transloco"
-            [tooltip]="'rtKit.uiBack' | transloco"
+            [ariaLabel]="t().uiBack"
+            [tooltip]="t().uiBack"
             [rtMod]="{ visible: canGoBack() }"
             (clicked)="onBackClick()" />
 
@@ -25,8 +25,8 @@
                 size="md"
                 shape="circle"
                 style="--rt-icon-button-size: 35px"
-                [ariaLabel]="'rtKit.uiInviteUser' | transloco"
-                [tooltip]="'rtKit.uiInviteUser' | transloco"
+                [ariaLabel]="t().uiInviteUser"
+                [tooltip]="t().uiInviteUser"
                 (clicked)="onInviteClick()" />
         }
 
@@ -40,8 +40,8 @@
             size="md"
             shape="circle"
             style="--rt-icon-button-size: 35px"
-            [ariaLabel]="'rtKit.uiProfile' | transloco"
-            [tooltip]="'rtKit.uiProfile' | transloco"
+            [ariaLabel]="t().uiProfile"
+            [tooltip]="t().uiProfile"
             (clicked)="onProfileClick()" />
     </div>
 </ng-container>

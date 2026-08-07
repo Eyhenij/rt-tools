@@ -9,7 +9,7 @@
         role="separator"
         aria-orientation="vertical"
         tabindex="0"
-        [attr.aria-label]="'rtKit.uiResizeList' | transloco"
+        [attr.aria-label]="t().uiResizeList"
         [rtMod]="{ list: true }"
         [attr.aria-valuenow]="listWidth()"
         [attr.aria-valuemin]="listMinWidth()"
@@ -25,15 +25,15 @@
                     qa-dataid="workspace-back"
                     icon="arrow-left"
                     variant="secondary"
-                    [ariaLabel]="'rtKit.uiBackToList' | transloco"
-                    [tooltip]="'rtKit.uiToList' | transloco"
+                    [ariaLabel]="t().uiBackToList"
+                    [tooltip]="t().uiToList"
                     (clicked)="onBackClicked()" />
                 <rt-icon-button
                     qa-dataid="workspace-open-details"
                     icon="info-circle"
                     variant="secondary"
-                    [ariaLabel]="'rtKit.uiShowDetails' | transloco"
-                    [tooltip]="'rtKit.uiDetails' | transloco"
+                    [ariaLabel]="t().uiShowDetails"
+                    [tooltip]="t().uiDetails"
                     (clicked)="openAside()" />
             </div>
         }
@@ -46,7 +46,7 @@
         role="separator"
         aria-orientation="vertical"
         tabindex="0"
-        [attr.aria-label]="'rtKit.uiResizeDetails' | transloco"
+        [attr.aria-label]="t().uiResizeDetails"
         [rtMod]="{ aside: true }"
         [attr.aria-valuenow]="asideWidth()"
         [attr.aria-valuemin]="asideMinWidth()"

@@ -18,8 +18,6 @@ import { ActivatedRoute, ParamMap, Params, Router, UrlTree } from '@angular/rout
 
 import { catchError, exhaustMap, filter, map, mergeMap, Observable, of, startWith, Subject, switchMap, take, tap } from 'rxjs';
 
-import { TranslocoService } from '@jsverse/transloco';
-
 import { NotificationBus } from '../../platform';
 
 import { RtAsideUnsavedDialogComponent } from '../aside/unsaved-dialog/rt-aside-unsaved-dialog.component';
@@ -76,7 +74,6 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
     #relatedQueryParams: Params | null = null;
 
     readonly #notificationBus: NotificationBus = inject(NotificationBus);
-    readonly #transloco: TranslocoService = inject(TranslocoService);
     readonly #dialog: RtDialogService = inject(RtDialogService);
     readonly #injector: Injector = inject(Injector);
 
@@ -320,9 +317,12 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
     }
 
     /**
-     * `successKey` — ключ словаря для тоста об успехе. Ключ принадлежит
-     * конкретной мутации, а не панели: у снятия промокода и опроса подписки свой
-     * текст успеха, и один ключ на панель показал бы не тот.
+     * `successText` — готовый текст тоста об успехе. Он принадлежит конкретной
+     * мутации, а не панели: у снятия промокода и опроса подписки свой текст
+     * успеха, и один на панель показал бы не тот.
+     *
+     * Именно текст, а не ключ словаря: ключ принадлежал бы словарю приложения, а
+     * кит чужих словарей не знает — переводит приложение и передаёт готовое.
      *
      * `errorText` принимается и функцией: причина отказа известна только после
      * него — стор кладёт её в свой сигнал, а панель без стора выводит из ответа
@@ -332,7 +332,7 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
         op$: Observable<unknown>,
         opts?: {
             onSuccess?: () => void;
-            successKey?: string;
+            successText?: string;
             errorText?: string | ((error: unknown) => string);
             closeOnSuccess?: boolean;
             refreshOnSuccess?: boolean;
@@ -346,8 +346,8 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
             op$,
             handleSuccess: (): void => {
                 this.#submitting.set(false);
-                if (opts?.successKey) {
-                    this.#notificationBus.success(this.#transloco.translate(opts.successKey));
+                if (opts?.successText) {
+                    this.#notificationBus.success(opts.successText);
                 }
                 // Пользователь шёл на связанную запись и по дороге согласился
                 // сохранить: панель уходит туда, куда он нажал.

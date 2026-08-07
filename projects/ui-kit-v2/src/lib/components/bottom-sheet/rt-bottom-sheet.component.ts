@@ -1,22 +1,22 @@
 import { DOCUMENT } from '@angular/common';
 import {
-    ChangeDetectionStrategy,
-    Component,
     inject,
     input,
-    InputSignal,
     output,
-    OutputEmitterRef,
     signal,
+    ChangeDetectionStrategy,
+    Component,
+    InputSignal,
+    OutputEmitterRef,
+    Signal,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
 
-import { TranslocoPipe } from '@jsverse/transloco';
-
 // rt-tools
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { RT_KIT_LABELS, RtKitLabelMap } from '../../i18n';
 import { clampDragDelta, shouldDismissDrag } from './rt-bottom-sheet.logic';
 
 const BEM_BLOCK: string = 'rt-bottom-sheet';
@@ -34,7 +34,6 @@ const BEM_BLOCK: string = 'rt-bottom-sheet';
         ModDirective,
 
         // transloco
-        TranslocoPipe,
     ],
     host: {
         class: BEM_BLOCK,
@@ -53,6 +52,8 @@ export class RtBottomSheetComponent {
     readonly #onDragEnd: () => void = (): void => this.#handleDragEnd();
 
     #dragStartY: number = 0;
+
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly dragDeltaY: WritableSignal<number> = signal<number>(0);
     protected readonly dragging: WritableSignal<boolean> = signal<boolean>(false);

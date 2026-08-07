@@ -1,23 +1,24 @@
 import {
     afterRenderEffect,
+    inject,
+    input,
+    numberAttribute,
+    signal,
+    viewChild,
     ChangeDetectionStrategy,
     Component,
     ElementRef,
-    input,
     InputSignal,
     InputSignalWithTransform,
-    numberAttribute,
     OnDestroy,
     Signal,
-    signal,
-    viewChild,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
 
-import { TranslocoPipe } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+
+import { RT_KIT_LABELS, RtKitLabelMap } from '../../i18n';
 
 const BEM_BLOCK: string = 'rt-collapsible-text';
 
@@ -32,7 +33,6 @@ const BEM_BLOCK: string = 'rt-collapsible-text';
         BlockDirective,
         ElemDirective,
         ModDirective,
-        TranslocoPipe,
     ],
     host: {
         class: BEM_BLOCK,
@@ -40,6 +40,8 @@ const BEM_BLOCK: string = 'rt-collapsible-text';
 })
 export class RtCollapsibleTextComponent implements OnDestroy {
     #resizeObserver: ResizeObserver | null = null;
+
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly textRef: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('text');
 

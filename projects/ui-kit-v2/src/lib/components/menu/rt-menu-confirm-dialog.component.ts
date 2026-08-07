@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject, ViewEncapsulation } from '@angular/core';
-
-import { TranslocoPipe } from '@jsverse/transloco';
+import { inject, ChangeDetectionStrategy, Component, Signal, ViewEncapsulation } from '@angular/core';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
+import { RT_KIT_LABELS, RtKitLabelMap } from '../../i18n';
 import { RtButtonDirective } from '../button/rt-button.directive';
 import { RtDialogRef } from '../dialog/rt-dialog-ref';
 import { RtDialogComponent } from '../dialog/rt-dialog.component';
@@ -34,13 +33,14 @@ const BEM_BLOCK: string = 'rt-menu-confirm-dialog';
         RtDialogComponent,
         BlockDirective,
         ElemDirective,
-        TranslocoPipe,
     ],
     host: {
         class: BEM_BLOCK,
     },
 })
 export class RtMenuConfirmDialogComponent {
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+
     protected readonly data: IRtMenu.ConfirmData = inject(RT_DIALOG_DATA) as IRtMenu.ConfirmData;
 
     readonly #dialogRef: RtDialogRef<boolean> = inject(RtDialogRef);

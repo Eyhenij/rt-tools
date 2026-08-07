@@ -13,7 +13,7 @@
             qa-dataid="message-composer-input"
             cdkTextareaAutosize
             formControlName="message"
-            [attr.aria-label]="'rtKit.chatComposerAria' | transloco"
+            [attr.aria-label]="t().chatComposerAria"
             [placeholder]="placeholderText()"
             [cdkAutosizeMinRows]="minRows()"
             [cdkAutosizeMaxRows]="maxRows()"
@@ -53,8 +53,8 @@
                 qa-dataid="message-composer-attach"
                 icon="paperclip"
                 variant="ghost"
-                [ariaLabel]="'rtKit.chatAttachAria' | transloco"
-                [tooltip]="'rtKit.chatAttachTooltip' | transloco"
+                [ariaLabel]="t().chatAttachAria"
+                [tooltip]="t().chatAttachTooltip"
                 [disabled]="disabled() || sending()"
                 (clicked)="openPicker()" />
         }
@@ -64,8 +64,8 @@
             qa-dataid="message-composer-send"
             icon="send"
             variant="primary"
-            [ariaLabel]="'rtKit.chatSendAria' | transloco"
-            [tooltip]="'rtKit.chatSendLabel' | transloco"
+            [ariaLabel]="t().chatSendAria"
+            [tooltip]="t().chatSendLabel"
             [disabled]="!canSend()"
             (clicked)="submit()" />
     </div>

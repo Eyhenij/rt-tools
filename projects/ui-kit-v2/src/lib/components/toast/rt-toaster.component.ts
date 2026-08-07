@@ -17,8 +17,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { translateSignal } from '@jsverse/transloco';
-
+import { rtKitLabel } from '../../i18n';
 import { INotification, NotificationBus } from '../../platform';
 
 import { RtToastComponent } from './rt-toast.component';
@@ -51,7 +50,7 @@ const DEFAULT_VISIBLE_TOASTS: number = 3;
 export class RtToasterComponent {
     readonly #notificationBus: NotificationBus = inject(NotificationBus);
 
-    protected readonly ariaLabel: Signal<string> = translateSignal('rtKit.uiNotifications');
+    protected readonly ariaLabel: Signal<string> = rtKitLabel('uiNotifications');
 
     #toastCounter: number = 0;
 

@@ -19,7 +19,7 @@
                 icon="filter"
                 variant="secondary"
                 rtPopoverAlign="end"
-                [ariaLabel]="'rtKit.uiFilters' | transloco"
+                [ariaLabel]="t().uiFilters"
                 [indicator]="filtersActive()"
                 [rtPopover]="filtersPanel" />
         }
@@ -40,11 +40,7 @@
                 </div>
             }
         } @else if (!rows().length) {
-            <rt-empty-state
-                rtElem="empty"
-                qa-dataid="thread-list-empty"
-                [description]="'rtKit.uiThreadListEmptyHint' | transloco"
-                [title]="emptyTitle()">
+            <rt-empty-state rtElem="empty" qa-dataid="thread-list-empty" [description]="t().uiThreadListEmptyHint" [title]="emptyTitle()">
                 <div rtEmptyIllustration rtElem="empty-preview">
                     @for (row of emptyPreviewRows; track row.id) {
                         <div rtElem="empty-card" [rtMod]="{ offset: row.offset }">

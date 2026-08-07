@@ -92,19 +92,19 @@ backdrop'ом, и жест по второму триггеру достаётс
 
 Таблица одна на оба компонента папки — колонка «чей» говорит, к какому из них вход относится.
 
-| вход                 | чей            | тип                                  | умолчание                |
-| -------------------- | -------------- | ------------------------------------ | ------------------------ |
-| `icon`               | оба            | `IRtIcon.Name` / `\| null` у пункта  | `'ellipsis-h'` / `null`  |
-| `ariaLabel`          | `rt-menu`      | `string`                             | `''` → `rtKit.uiActions` |
-| `align`              | `rt-menu`      | `'start' \| 'end'`                   | `'end'`                  |
-| `disabled`           | оба            | `boolean`                            | `false`                  |
-| `label`              | `rt-menu-item` | `string`                             | `''`                     |
-| `danger`             | `rt-menu-item` | `boolean`                            | `false`                  |
-| `confirmMessage`     | `rt-menu-item` | `string`                             | `''`                     |
-| `confirmTitle`       | `rt-menu-item` | `string \| null`                     | `null`                   |
-| `confirmLabel`       | `rt-menu-item` | `string`                             | `''` → словарь кита      |
-| `confirmCancelLabel` | `rt-menu-item` | `string`                             | `''` → словарь кита      |
-| `confirmTone`        | `rt-menu-item` | `'danger' \| 'warning' \| 'primary'` | `'danger'`               |
+| вход                 | чей            | тип                                  | умолчание               |
+| -------------------- | -------------- | ------------------------------------ | ----------------------- |
+| `icon`               | оба            | `IRtIcon.Name` / `\| null` у пункта  | `'ellipsis-h'` / `null` |
+| `ariaLabel`          | `rt-menu`      | `string`                             | `''` → `uiActions`      |
+| `align`              | `rt-menu`      | `'start' \| 'end'`                   | `'end'`                 |
+| `disabled`           | оба            | `boolean`                            | `false`                 |
+| `label`              | `rt-menu-item` | `string`                             | `''`                    |
+| `danger`             | `rt-menu-item` | `boolean`                            | `false`                 |
+| `confirmMessage`     | `rt-menu-item` | `string`                             | `''`                    |
+| `confirmTitle`       | `rt-menu-item` | `string \| null`                     | `null`                  |
+| `confirmLabel`       | `rt-menu-item` | `string`                             | `''` → словарь кита     |
+| `confirmCancelLabel` | `rt-menu-item` | `string`                             | `''` → словарь кита     |
+| `confirmTone`        | `rt-menu-item` | `'danger' \| 'warning' \| 'primary'` | `'danger'`              |
 
 Пункт несёт ещё вход подсказки `tooltip` — он приходит от
 [`[rtTooltip]`](./?path=/docs/components-tooltip-overview--docs), навешенной директивой хоста,

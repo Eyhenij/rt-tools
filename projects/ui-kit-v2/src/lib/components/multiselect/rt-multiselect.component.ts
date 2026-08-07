@@ -1,22 +1,22 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
     computed,
-    ElementRef,
     forwardRef,
+    inject,
     input,
-    InputSignal,
-    Signal,
     signal,
     viewChild,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    InputSignal,
+    Signal,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
 
-import { translateSignal, TranslocoPipe } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { RT_KIT_LABELS, RtKitLabelMap, rtKitLabel } from '../../i18n';
 import { RtFormControlBase } from '../form-control/rt-form-control.base';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtIconComponent } from '../icon/rt-icon.component';
@@ -68,7 +68,6 @@ function nextPanelId(): number {
 
         // pipes
         RtMultiselectLabelPipe,
-        TranslocoPipe,
     ],
     providers: [
         // Алиас базового токена — для contentChild(RtFormControlBase) в rt-field.
@@ -86,7 +85,9 @@ function nextPanelId(): number {
     },
 })
 export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyArray<TValue>> {
-    readonly #t_uiSelectValues: Signal<string> = translateSignal('rtKit.uiSelectValues');
+    readonly #t_uiSelectValues: Signal<string> = rtKitLabel('uiSelectValues');
+
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly panelId: string = `rt-multiselect-panel-${nextPanelId()}`;
 

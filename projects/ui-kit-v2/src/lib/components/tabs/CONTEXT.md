@@ -23,15 +23,15 @@
 
 ## `[rtTab]`
 
-| вход                              | тип                                           | умолчание                   |
-| --------------------------------- | --------------------------------------------- | --------------------------- |
-| `rtTab`                           | `IRtTabs.Id` — идентификатор вкладки          | `''`                        |
-| `label`                           | `string`                                      | `''`                        |
-| `titleTemplate`                   | `TemplateRef \| null`                         | `null`                      |
-| `icon` / `iconColor`              | `IRtIcon.Name \| null` / `IRtTabs.TitleColor` | `null` / `'current'`        |
-| `badge`                           | `string \| number \| null`                    | `null`                      |
-| `disabled` / `hidden` / `invalid` | `boolean`                                     | `false`                     |
-| `invalidMessage`                  | `string`                                      | `''` → `rtKit.uiTabInvalid` |
+| вход                              | тип                                           | умолчание             |
+| --------------------------------- | --------------------------------------------- | --------------------- |
+| `rtTab`                           | `IRtTabs.Id` — идентификатор вкладки          | `''`                  |
+| `label`                           | `string`                                      | `''`                  |
+| `titleTemplate`                   | `TemplateRef \| null`                         | `null`                |
+| `icon` / `iconColor`              | `IRtIcon.Name \| null` / `IRtTabs.TitleColor` | `null` / `'current'`  |
+| `badge`                           | `string \| number \| null`                    | `null`                |
+| `disabled` / `hidden` / `invalid` | `boolean`                                     | `false`               |
+| `invalidMessage`                  | `string`                                      | `''` → `uiTabInvalid` |
 
 ## Главное, что нужно знать
 

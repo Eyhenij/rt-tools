@@ -1,3 +1,5 @@
+import { RtKitLabelKey } from '../../i18n';
+
 /** Контракт счётчика common/ui. */
 
 /**
@@ -9,6 +11,6 @@
  * берёт компонент, у которого есть доступ к текущей локали; перекрываются
  * поштучно через input'ы `decreaseLabel` / `increaseLabel`.
  */
-export const RT_COUNTER_DECREASE_KEY: string = 'rtKit.counterDecrease';
+export const RT_COUNTER_DECREASE_KEY: RtKitLabelKey = 'counterDecrease';
 
-export const RT_COUNTER_INCREASE_KEY: string = 'rtKit.counterIncrease';
+export const RT_COUNTER_INCREASE_KEY: RtKitLabelKey = 'counterIncrease';

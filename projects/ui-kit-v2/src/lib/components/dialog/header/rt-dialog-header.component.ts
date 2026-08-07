@@ -1,19 +1,19 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import {
     booleanAttribute,
-    ChangeDetectionStrategy,
-    Component,
     inject,
     input,
+    ChangeDetectionStrategy,
+    Component,
     InputSignal,
     InputSignalWithTransform,
+    Signal,
     ViewEncapsulation,
 } from '@angular/core';
 
-import { TranslocoPipe } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
+import { RT_KIT_LABELS, RtKitLabelMap } from '../../../i18n';
 import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
 import { RtDialogRef } from '../rt-dialog-ref';
 
@@ -52,7 +52,6 @@ const BEM_BLOCK: string = 'rt-dialog-header';
         RtIconButtonComponent,
         BlockDirective,
         ElemDirective,
-        TranslocoPipe,
     ],
     host: {
         class: BEM_BLOCK,
@@ -62,6 +61,8 @@ export class RtDialogHeaderComponent {
     readonly #dialogRef: RtDialogRef | null = inject(RtDialogRef, { optional: true });
 
     /** Текст заголовка — рендерится в `<h2>`. */
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+
     public readonly title: InputSignal<string> = input.required<string>();
 
     /** Показывать кнопку закрытия в углу заголовка. Дефолт `true`. */

@@ -33,7 +33,7 @@
                 size="sm"
                 variant="ghost"
                 iconColor="muted"
-                [ariaLabel]="'rtKit.uiClear' | transloco"
+                [ariaLabel]="t().uiClear"
                 [tabIndex]="-1"
                 (clicked)="clear($event)" />
         }
@@ -72,7 +72,7 @@
                         {{ opt.label }}
                     </li>
                 } @empty {
-                    <li rtElem="empty">{{ 'rtKit.uiNoOptions' | transloco }}</li>
+                    <li rtElem="empty">{{ t().uiNoOptions }}</li>
                 }
             </ul>
         </div>

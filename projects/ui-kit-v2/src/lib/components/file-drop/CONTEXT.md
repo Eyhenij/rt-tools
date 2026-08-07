@@ -9,12 +9,12 @@
 </rt-file-drop>
 ```
 
-| вход           | тип               | умолчание                        |
-| -------------- | ----------------- | -------------------------------- |
-| `disabled`     | `boolean`         | `false`                          |
-| `overlayLabel` | `string`          | `''` → `rtKit.uiFileDropOverlay` |
-| `zones`        | `readonly Zone[]` | `[]`                             |
-| `accept`       | `string`          | `''`                             |
+| вход           | тип               | умолчание                  |
+| -------------- | ----------------- | -------------------------- |
+| `disabled`     | `boolean`         | `false`                    |
+| `overlayLabel` | `string`          | `''` → `uiFileDropOverlay` |
+| `zones`        | `readonly Zone[]` | `[]`                       |
+| `accept`       | `string`          | `''`                       |
 
 Выходы: `filesDropped` (`File[]`), `zoneFilesDropped` (`{ zoneId, files }`), `draggingChange`.
 

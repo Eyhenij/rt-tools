@@ -2,28 +2,28 @@ import { BooleanInput, NumberInput } from '@angular/cdk/coercion';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import {
     booleanAttribute,
-    ChangeDetectionStrategy,
-    Component,
     computed,
     effect,
-    ElementRef,
+    inject,
     input,
-    InputSignal,
-    InputSignalWithTransform,
     numberAttribute,
     output,
+    viewChild,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    InputSignal,
+    InputSignalWithTransform,
     OutputEmitterRef,
     Signal,
-    viewChild,
     ViewEncapsulation,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
-import { translateSignal, TranslocoPipe } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
+import { RT_KIT_LABELS, RtKitLabelMap, rtKitLabel } from '../../i18n';
 import { IQuillDelta } from '../../util';
 
 import { RtFileCardComponent } from '../file-card/rt-file-card.component';
@@ -66,7 +66,6 @@ interface IComposerFormShape {
         RtRichEditorComponent,
         BlockDirective,
         ElemDirective,
-        TranslocoPipe,
     ],
     host: {
         class: BEM_BLOCK,
@@ -75,7 +74,9 @@ interface IComposerFormShape {
 export class RtMessageComposerComponent {
     readonly #formValue: Signal<Partial<{ message: string; files: File[]; delta: IQuillDelta | null }>>;
 
-    readonly #t_chatPlaceholder: Signal<string> = translateSignal('rtKit.chatPlaceholder');
+    readonly #t_chatPlaceholder: Signal<string> = rtKitLabel('chatPlaceholder');
+
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly placeholderText: Signal<string> = computed((): string => this.placeholder() || this.#t_chatPlaceholder());
 
