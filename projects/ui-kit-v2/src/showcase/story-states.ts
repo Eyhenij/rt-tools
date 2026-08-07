@@ -22,13 +22,32 @@ export interface IStoryState {
     readonly state: string | null;
 }
 
+/**
+ * Отдельные состояния. Набор компонента собирается из них, а не пишется строками на месте:
+ * подпись и значение признака должны совпадать на всех страницах, иначе одно и то же состояние
+ * в двух матрицах подписано по-разному и читается как два разных.
+ */
+export const STORY_STATE_DEFAULT: IStoryState = { name: 'обычное', state: null };
+export const STORY_STATE_HOVER: IStoryState = { name: 'наведение', state: 'hover' };
+export const STORY_STATE_ACTIVE: IStoryState = { name: 'нажатие', state: 'active' };
+export const STORY_STATE_FOCUS_VISIBLE: IStoryState = { name: 'фокус с клавиши', state: 'focus-visible' };
+export const STORY_STATE_FOCUS_WITHIN: IStoryState = { name: 'фокус внутри', state: 'focus-within' };
+
 /** Состояния, которые есть у всего, что принимает наведение и фокус. */
-export const STORY_STATES: readonly IStoryState[] = [
-    { name: 'обычное', state: null },
-    { name: 'наведение', state: 'hover' },
-    { name: 'нажатие', state: 'active' },
-    { name: 'фокус с клавиши', state: 'focus-visible' },
-];
+export const STORY_STATES: readonly IStoryState[] = [STORY_STATE_DEFAULT, STORY_STATE_HOVER, STORY_STATE_ACTIVE, STORY_STATE_FOCUS_VISIBLE];
+
+/**
+ * Состояния поля, у которого рамку рисует коробка вокруг контрола. Фокус ловится **внутри**:
+ * принимает его `<input>`, а `:focus-visible` на самой коробке не совпадает ни с чем.
+ * Нажатия у поля нет — оно не кнопка.
+ */
+export const STORY_FIELD_STATES: readonly IStoryState[] = [STORY_STATE_DEFAULT, STORY_STATE_HOVER, STORY_STATE_FOCUS_WITHIN];
+
+/**
+ * Состояния поля, у которого рамку рисует сам контрол (`<textarea>`, нативный переключатель).
+ * Тогда фокус — обычный `:focus-visible`, но передавать его надо со спуском до контрола.
+ */
+export const STORY_CONTROL_STATES: readonly IStoryState[] = [STORY_STATE_DEFAULT, STORY_STATE_HOVER, STORY_STATE_FOCUS_VISIBLE];
 
 /** Подпись состояния для `app-story-row`. */
 export const storyStateLabel: (value: IStoryState) => string = (value: IStoryState): string => value.name;
@@ -52,6 +71,7 @@ export function storyPseudoParameters(target: string = ''): Readonly<Record<stri
         hover: at('hover'),
         active: at('active'),
         focusVisible: at('focus-visible'),
+        focusWithin: at('focus-within'),
     };
 }
 

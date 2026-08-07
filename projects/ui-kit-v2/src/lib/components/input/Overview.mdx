@@ -1,0 +1,126 @@
+import { Meta, Title } from '@storybook/addon-docs/blocks';
+
+<Meta title="Components/Input/Overview" />
+
+<Title>Input — `rt-input`</Title>
+
+Однострочное поле ввода. Значение приходит и уходит только через форму — собственного входа
+значения у него нет, поэтому в разметке рядом всегда стоит `formControl` или `ngModel`.
+
+```html
+<rt-field label="Город" hint="Как в адресе доставки">
+    <rt-input placeholder="Москва" iconLeft="ico-search" [formControl]="city" />
+</rt-field>
+
+<rt-input type="password" [passwordToggle]="true" [formControl]="password" />
+<rt-input type="time" ariaLabel="Начало смены" [formControl]="startsAt" />
+```
+
+## Когда применять
+
+- Строка, которую пользователь набирает руками: имя, адрес, почта, пароль, время.
+- Поле поиска или фильтра — с `iconLeft="ico-search"` и без вмещающего `rt-field`.
+
+## Когда не применять
+
+- **Число** — [`rt-input-number`](./?path=/docs/components-inputnumber-overview--docs): там
+  группировка разрядов, диапазон и разбор разделителей локали.
+- **Много строк** — [`rt-textarea`](./?path=/docs/components-textarea-overview--docs).
+- **Выбор из списка** — [`rt-select`](./?path=/docs/components-select--docs) или
+  [`rt-autocomplete`](./?path=/docs/components-autocomplete--docs): поле со свободным вводом
+  не подсказывает допустимых значений.
+- **Дата** — [`rt-date-picker`](./?path=/docs/components-datepicker-overview--docs).
+
+## Оси
+
+Оси не перемножаются: размер, тип, иконки и наполненность меняют разные части поля, и вместе
+ничего нового не показывают.
+
+| ось           | значения                                          | умолчание |
+| ------------- | ------------------------------------------------- | --------- |
+| размер        | `sm`, `md`, `lg` — 32 / 40 / 48 px                | `md`      |
+| тип           | `text`, `password`, `email`, `time`               | `text`    |
+| иконки        | нет, слева, справа, с обеих сторон, переключатель | нет       |
+| наполненность | пусто, со значением, со значением без очистки     | пусто     |
+| рамка         | видна, снята (`bordered=false`)                   | видна     |
+
+**Оси, которых не видно.** `autocomplete` меняет поведение подсказки браузера и в вёрстке не
+проявляется; `controlId` и `ariaLabel` уходят в атрибуты. Их значения читаются в разметке,
+показывать их сеткой нечем.
+
+## Состояния
+
+| состояние     | чем задаётся                         | что меняется                                            |
+| ------------- | ------------------------------------ | ------------------------------------------------------- |
+| обычное       | —                                    | рамка `--rt-input-color-border`                         |
+| наведение     | —                                    | **ничего:** своего `:hover` у коробки поля нет          |
+| фокус внутри  | `:focus-within`                      | рамка фокуса и `--rt-input-focus-shadow`                |
+| ошибка        | контрол `invalid` после касания      | рамка `--rt-input-color-border-error`                   |
+| отключено     | вход `disabled` или слово формы      | прозрачность `--rt-input-disabled-opacity`, курсор      |
+| только чтение | `[readonly]` на вмещающем `rt-field` | контрол подменяется плоским текстом, пустое — прочерком |
+
+Фокус ловится псевдоклассом `:focus-within`, а не `:focus-visible`: принимает его `<input>`
+внутри, а рисует окружающая коробка. Наведение показано в матрице **States** пустой ячейкой
+намеренно — так видно, что состояние не забыто, а его нет.
+
+Режим чтения включает **не поле, а обёртка**: `[readonly]` стоит на
+[`rt-field`](./?path=/docs/components-field-overview--docs), поэтому в матрице эти ячейки
+обёрнуты в него.
+
+## Доступность
+
+- Подпись даёт вмещающий `rt-field`: он выдаёт полю авто-идентификатор и связывает с ним
+  `<label for>`. Без обёртки поле обязано нести `ariaLabel` — иначе доступного имени нет.
+- Ошибка объявляется атрибутом `aria-invalid` на самом `<input>`, текст ошибки рисует `rt-field`.
+- Крестик очистки и переключатель пароля исключены из таб-порядка (`tabindex="-1"`):
+  до вспомогательного аффорданса не должны доходить табом.
+
+## Оформление
+
+Свойства объявлены группой `--rt-input-*`: `--rt-input-height`, `--rt-input-color-border`,
+`--rt-input-color-border-focus`, `--rt-input-color-border-error`, `--rt-input-color-bg`,
+`--rt-input-color-text-placeholder`, `--rt-input-radius`. Ту же группу берут
+`rt-input-number`, `rt-select`, `rt-autocomplete` и `rt-date-picker` — поля кита стоят в форме
+одной высоты не по совпадению.
+
+`bordered=false` снимает **только** рамку покоя: рамку фокуса и ошибки поле показывает всё
+равно, иначе состояние пропадало бы вместе с оформлением.
+
+## Входы
+
+| вход             | тип                                         | умолчание |
+| ---------------- | ------------------------------------------- | --------- |
+| `type`           | `'text' \| 'password' \| 'email' \| 'time'` | `'text'`  |
+| `placeholder`    | `string`                                    | `''`      |
+| `iconLeft`       | `IRtIcon.Name \| null`                      | `null`    |
+| `iconRight`      | `IRtIcon.Name \| null`                      | `null`    |
+| `passwordToggle` | `boolean`                                   | `false`   |
+| `autocomplete`   | `string \| null`                            | `null`    |
+
+**Крестик очистки и переключатель пароля делят один постфикс.** На поле пароля с включённым
+переключателем крестика не будет: показать оба некуда.
+
+## Входы от основы полей
+
+Достались от [`RtFormControlBase`](./?path=/docs/components-input-overview--docs) — общей основы
+полей кита; в ней же они и меняются, сразу для всех наследников.
+
+| вход        | тип                    | умолчание |
+| ----------- | ---------------------- | --------- |
+| `size`      | `'sm' \| 'md' \| 'lg'` | `'md'`    |
+| `disabled`  | `boolean`              | `false`   |
+| `controlId` | `string \| null`       | `null`    |
+| `ariaLabel` | `string \| null`       | `null`    |
+| `clearable` | `boolean`              | `true`    |
+| `bordered`  | `boolean`              | `true`    |
+
+## Выходы
+
+Своих выходов нет: значение уходит через `ControlValueAccessor`, то есть в связанный контрол
+формы.
+
+## Рядом
+
+- [`rt-field`](./?path=/docs/components-field-overview--docs) — подпись, звёздочка, текст ошибки, режим чтения.
+- [`rt-input-number`](./?path=/docs/components-inputnumber-overview--docs) — числа с группировкой разрядов.
+- [`rt-textarea`](./?path=/docs/components-textarea-overview--docs) — многострочный ввод.

@@ -18,7 +18,7 @@ export default {
 
 type Story = StoryObj<TestRtInputNumberComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         iconLeft: null,
         prefix: null,
