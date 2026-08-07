@@ -20,7 +20,7 @@ export default {
 
 type Story = StoryObj<TestRtToggleSwitchComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         inputId: null,
         ariaLabel: null,
