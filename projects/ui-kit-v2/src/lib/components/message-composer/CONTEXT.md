@@ -11,16 +11,16 @@
     (submitted)="send($event)" />
 ```
 
-| вход                   | тип                    | умолчание                      |
-| ---------------------- | ---------------------- | ------------------------------ |
-| `placeholder`          | `string`               | `''` → `rtKit.chatPlaceholder` |
-| `attachments`          | `boolean`              | `false`                        |
-| `accept`               | `string`               | `''`                           |
-| `sending` / `disabled` | `boolean`              | `false`                        |
-| `formatting`           | `boolean`              | `false`                        |
-| `toolbar`              | `IRtRichEditorToolbar` | `'full'`                       |
-| `minRows` / `maxRows`  | `number`               | 1 / 6                          |
-| `droppedFiles`         | `File[] \| null`       | `null`                         |
+| вход                   | тип                    | умолчание                |
+| ---------------------- | ---------------------- | ------------------------ |
+| `placeholder`          | `string`               | `''` → `chatPlaceholder` |
+| `attachments`          | `boolean`              | `false`                  |
+| `accept`               | `string`               | `''`                     |
+| `sending` / `disabled` | `boolean`              | `false`                  |
+| `formatting`           | `boolean`              | `false`                  |
+| `toolbar`              | `IRtRichEditorToolbar` | `'full'`                 |
+| `minRows` / `maxRows`  | `number`               | 1 / 6                    |
+| `droppedFiles`         | `File[] \| null`       | `null`                   |
 
 Выход: `submitted` — `{ text, delta?, files }`.
 

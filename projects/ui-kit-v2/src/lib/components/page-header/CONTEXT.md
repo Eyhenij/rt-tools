@@ -6,13 +6,13 @@
 <rt-page-header ariaLabel="Разделы" [items]="sections()" [user]="user()" (itemClick)="go($event)" (userClick)="openProfile()" />
 ```
 
-| вход        | тип                         | умолчание                |
-| ----------- | --------------------------- | ------------------------ |
-| `items`     | `ReadonlyArray<Item>`       | `[]`                     |
-| `user`      | `{ name, avatar? } \| null` | `null`                   |
-| `userTitle` | `string`                    | `''`                     |
-| `userMenu`  | `TemplateRef \| null`       | `null`                   |
-| `ariaLabel` | `string`                    | `''` → `rtKit.uiMainNav` |
+| вход        | тип                         | умолчание          |
+| ----------- | --------------------------- | ------------------ |
+| `items`     | `ReadonlyArray<Item>`       | `[]`               |
+| `user`      | `{ name, avatar? } \| null` | `null`             |
+| `userTitle` | `string`                    | `''`               |
+| `userMenu`  | `TemplateRef \| null`       | `null`             |
+| `ariaLabel` | `string`                    | `''` → `uiMainNav` |
 
 Выходы: `itemClick`, `userClick`.
 

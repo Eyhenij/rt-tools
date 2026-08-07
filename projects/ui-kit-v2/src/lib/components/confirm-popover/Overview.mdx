@@ -93,15 +93,15 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 Таблица одна на оба компонента папки — колонка «чей» говорит, к какому из них вход относится.
 
-| вход           | чей                  | тип                                  | умолчание                |
-| -------------- | -------------------- | ------------------------------------ | ------------------------ |
-| `message`      | оба                  | `string`                             | `''`                     |
-| `title`        | оба                  | `string \| null`                     | `null`                   |
-| `tone`         | оба                  | `'danger' \| 'warning' \| 'primary'` | `'danger'`               |
-| `cancelLabel`  | оба                  | `string`                             | `''` → `rtKit.uiCancel`  |
-| `label`        | `[rtConfirm]`        | `string`                             | `''` → `rtKit.uiConfirm` |
-| `disabled`     | `[rtConfirm]`        | `boolean`                            | `false`                  |
-| `confirmLabel` | `rt-confirm-popover` | `string`                             | `''` → `rtKit.uiConfirm` |
+| вход           | чей                  | тип                                  | умолчание          |
+| -------------- | -------------------- | ------------------------------------ | ------------------ |
+| `message`      | оба                  | `string`                             | `''`               |
+| `title`        | оба                  | `string \| null`                     | `null`             |
+| `tone`         | оба                  | `'danger' \| 'warning' \| 'primary'` | `'danger'`         |
+| `cancelLabel`  | оба                  | `string`                             | `''` → `uiCancel`  |
+| `label`        | `[rtConfirm]`        | `string`                             | `''` → `uiConfirm` |
+| `disabled`     | `[rtConfirm]`        | `boolean`                            | `false`            |
+| `confirmLabel` | `rt-confirm-popover` | `string`                             | `''` → `uiConfirm` |
 
 Входы директивы пишутся в разметке под алиасами: `rtConfirm` (вопрос), `rtConfirmTitle`,
 `rtConfirmLabel`, `rtConfirmCancelLabel`, `rtConfirmTone`, `rtConfirmDisabled`.

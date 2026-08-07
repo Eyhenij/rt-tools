@@ -11,13 +11,13 @@
     (itemSelect)="run($event)" />
 ```
 
-| вход                   | тип                                             | умолчание                    |
-| ---------------------- | ----------------------------------------------- | ---------------------------- |
-| `label`                | `string`                                        | **обязателен**               |
-| `menuItems`            | `readonly { value, label, icon?, disabled? }[]` | **обязателен**               |
-| `theme` / `size`       | как у [`[rtButton]`](../button/CONTEXT.md)      | `'primary'` / `'md'`         |
-| `menuAriaLabel`        | `string`                                        | `''` → `rtKit.uiMoreActions` |
-| `loading` / `disabled` | `boolean`                                       | `false`                      |
+| вход                   | тип                                             | умолчание              |
+| ---------------------- | ----------------------------------------------- | ---------------------- |
+| `label`                | `string`                                        | **обязателен**         |
+| `menuItems`            | `readonly { value, label, icon?, disabled? }[]` | **обязателен**         |
+| `theme` / `size`       | как у [`[rtButton]`](../button/CONTEXT.md)      | `'primary'` / `'md'`   |
+| `menuAriaLabel`        | `string`                                        | `''` → `uiMoreActions` |
+| `loading` / `disabled` | `boolean`                                       | `false`                |
 
 Выходы: `faceClick`, `itemSelect` (значение пункта).
 

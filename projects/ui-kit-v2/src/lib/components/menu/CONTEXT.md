@@ -17,12 +17,12 @@
 
 ## `rt-menu`
 
-| вход        | тип                | умолчание                |
-| ----------- | ------------------ | ------------------------ |
-| `icon`      | `IRtIcon.Name`     | `'ellipsis-h'`           |
-| `ariaLabel` | `string`           | `''` → `rtKit.uiActions` |
-| `align`     | `'start' \| 'end'` | `'end'`                  |
-| `disabled`  | `boolean`          | `false`                  |
+| вход        | тип                | умолчание          |
+| ----------- | ------------------ | ------------------ |
+| `icon`      | `IRtIcon.Name`     | `'ellipsis-h'`     |
+| `ariaLabel` | `string`           | `''` → `uiActions` |
+| `align`     | `'start' \| 'end'` | `'end'`            |
+| `disabled`  | `boolean`          | `false`            |
 
 ## `rt-menu-item`
 

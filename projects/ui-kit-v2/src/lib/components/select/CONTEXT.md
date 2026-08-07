@@ -8,13 +8,13 @@
 
 Свои входы поверх общих из [`RtFormControlBase`](../form-control/CONTEXT.md):
 
-| вход                | тип                                          | умолчание               |
-| ------------------- | -------------------------------------------- | ----------------------- |
-| `options`           | `ReadonlyArray<{ label, value, disabled? }>` | `[]`                    |
-| `placeholder`       | `string`                                     | `''`                    |
-| `iconLeft`          | `IRtIcon.Name \| null`                       | `null`                  |
-| `filter`            | `boolean`                                    | `false`                 |
-| `filterPlaceholder` | `string`                                     | `''` → `rtKit.uiSearch` |
+| вход                | тип                                          | умолчание         |
+| ------------------- | -------------------------------------------- | ----------------- |
+| `options`           | `ReadonlyArray<{ label, value, disabled? }>` | `[]`              |
+| `placeholder`       | `string`                                     | `''`              |
+| `iconLeft`          | `IRtIcon.Name \| null`                       | `null`            |
+| `filter`            | `boolean`                                    | `false`           |
+| `filterPlaceholder` | `string`                                     | `''` → `uiSearch` |
 
 | выход             | тип              |
 | ----------------- | ---------------- |
@@ -45,7 +45,7 @@
 - Закрытие списка помечает контрол тронутым и сбрасывает строку фильтра.
 - `FormControl.disable()` **закрывает уже раскрытый** список — иначе панель висела бы над
   контролом, которым уже нельзя пользоваться.
-- Пустой набор опций рисует строку `rtKit.uiNoOptions`.
+- Пустой набор опций рисует строку `uiNoOptions`.
 - Ширина панели равна ширине триггера (`rtPopoverWidth="trigger"`).
 
 ## Рядом
