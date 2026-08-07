@@ -63,7 +63,11 @@ rt-toggle-switch .rt-toggle-switch {
             box-shadow var(--rt-duration-fast) ease;
     }
 
-    &--on &__track {
+    /* Элемент адресуется классом, а не вторым `&`: родитель здесь составной
+       (`rt-toggle-switch .rt-toggle-switch`), и второй `&` развернулся бы в него целиком —
+       то есть в селектор, требующий вложенного переключателя. Включённое состояние
+       из-за этого не применялось: трек оставался серым, бегунок — слева. */
+    &--on .rt-toggle-switch__track {
         background: var(--rt-toggle-color-track-on);
         box-shadow: none;
     }
@@ -97,7 +101,7 @@ rt-toggle-switch .rt-toggle-switch {
         transition: transform var(--rt-duration-fast) ease;
     }
 
-    &--on &__thumb {
+    &--on .rt-toggle-switch__thumb {
         transform: translateX(var(--rt-toggle-thumb-travel));
     }
 }

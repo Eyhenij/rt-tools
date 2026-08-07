@@ -20,7 +20,7 @@ export default {
 
 type Story = StoryObj<TestRtInputComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         type: 'text',
         placeholder: 'Введите значение',

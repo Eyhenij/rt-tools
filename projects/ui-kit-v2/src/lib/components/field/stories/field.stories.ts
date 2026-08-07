@@ -19,7 +19,7 @@ export default {
 
 type Story = StoryObj<TestRtFieldComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         label: 'Сохранить',
         hint: 'Подсказка',

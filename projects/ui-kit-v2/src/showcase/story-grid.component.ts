@@ -49,11 +49,13 @@ export interface IStoryCell<ROW, COL> {
                             <th scope="row" class="app-story-grid__head app-story-grid__head--row">{{ rowLabel()(row) }}</th>
                             @for (col of columns(); track $index) {
                                 <td class="app-story-grid__cell">
-                                    @if (cell(); as template) {
-                                        <ng-container
-                                            [ngTemplateOutlet]="template"
-                                            [ngTemplateOutletContext]="{ $implicit: row, col: col }" />
-                                    }
+                                    <div class="app-story-grid__slot" [style.inline-size]="slotWidth()">
+                                        @if (cell(); as template) {
+                                            <ng-container
+                                                [ngTemplateOutlet]="template"
+                                                [ngTemplateOutletContext]="{ $implicit: row, col: col }" />
+                                        }
+                                    </div>
                                 </td>
                             }
                         </tr>
@@ -84,6 +86,12 @@ export class StoryGridComponent<ROW, COL> {
 
     /** Значения оси, идущей по столбцам. */
     public readonly columns: InputSignal<readonly COL[]> = input.required<readonly COL[]>();
+
+    /**
+     * Ширина ячейки. Нужна тому, что тянется на всю ширину родителя: поле ввода в ячейке
+     * по содержимому схлопывается до нуля и показывает не размер, а его отсутствие.
+     */
+    public readonly slotWidth: InputSignal<string> = input<string>('');
 
     /** Подпись строки; по умолчанию — само значение. Нужна осям, чьи значения не строки. */
     public readonly rowLabel: InputSignal<(value: ROW) => string> = input<(value: ROW) => string>((value: ROW): string => String(value));
