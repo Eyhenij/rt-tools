@@ -41,7 +41,7 @@ interface IFileDropDraggingCase {
             @case ('resting') {
                 <app-story-row caption="Область в покое" [items]="restingCases" [itemLabel]="caseLabel" [slotWidth]="areaWidth">
                     <ng-template let-restingCase>
-                        <rt-file-drop [disabled]="restingCase.disabled">
+                        <rt-file-drop class="app-file-drop-matrix__area" [disabled]="restingCase.disabled">
                             <div class="app-file-drop-matrix__content">Форма заявки</div>
                         </rt-file-drop>
                     </ng-template>
@@ -52,6 +52,7 @@ interface IFileDropDraggingCase {
                 <app-story-row caption="Под перетаскиванием" [items]="draggingCases" [itemLabel]="caseLabel" [slotWidth]="areaWidth">
                     <ng-template let-draggingCase>
                         <rt-file-drop
+                            class="app-file-drop-matrix__area"
                             [attr.data-story-trigger]="triggerAttribute"
                             [disabled]="draggingCase.disabled"
                             [overlayLabel]="draggingCase.overlayLabel">
@@ -64,7 +65,10 @@ interface IFileDropDraggingCase {
             @case ('zones') {
                 <app-story-row caption="Зоны под перетаскиванием" [items]="zoneCases" [itemLabel]="caseLabel" [slotWidth]="areaWidth">
                     <ng-template let-zoneCase>
-                        <rt-file-drop [attr.data-story-trigger]="triggerAttribute" [zones]="zoneCase.zones">
+                        <rt-file-drop
+                            class="app-file-drop-matrix__area"
+                            [attr.data-story-trigger]="triggerAttribute"
+                            [zones]="zoneCase.zones">
                             <div class="app-file-drop-matrix__content app-file-drop-matrix__content--tall">Форма заявки</div>
                         </rt-file-drop>
                     </ng-template>
@@ -85,6 +89,13 @@ interface IFileDropDraggingCase {
         }
     `,
     styles: `
+        /* Ячейка ряда центрирует содержимое, и область сжималась по своей начинке —
+           98 px вместо заданных ячейке 224. Подписи зон в такой ширине не помещались
+           и наезжали друг на друга: матрица показывала кашу вместо трёх полос. */
+        .app-file-drop-matrix__area {
+            width: 100%;
+        }
+
         /* Содержимое области — демонстрационное: сама область его только оборачивает. */
         .app-file-drop-matrix__content {
             display: flex;
