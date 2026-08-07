@@ -28,13 +28,27 @@ function declaredInputs(source) {
     return names;
 }
 
-/** Имена входов, перечисленные в таблице страницы-обзора: первая колонка в обратных кавычках. */
+/**
+ * Имена входов, перечисленные на странице-обзоре: первая колонка в обратных кавычках,
+ * но только в разделе `## Входы`.
+ *
+ * Разделом читаемое ограничено потому, что на той же странице стоят таблицы осей, состояний
+ * и выходов, и в их первой колонке тоже бывает имя в кавычках. Без границы значение оси
+ * `primary` числилось бы входом, которого в компоненте нет, и страж падал бы на исправном
+ * документе. Раздела нет — читать нечего, и каждый вход отчитается неописанным.
+ */
 function documentedInputs(source) {
+    const section = /^##\s+Входы\s*$([\s\S]*?)(?=^##\s|$(?![\s\S]))/m.exec(source);
     const names = new Set();
+
+    if (section === null) {
+        return names;
+    }
+
     const pattern = /^\|\s*`([A-Za-z_$][\w$]*)`\s*\|/gm;
     let match;
 
-    while ((match = pattern.exec(source)) !== null) {
+    while ((match = pattern.exec(section[1])) !== null) {
         names.add(match[1]);
     }
 
@@ -79,14 +93,14 @@ for (const overview of overviews) {
     // Задокументированного входа нет в коде — переименован или выкинут, а документ этого не знает.
     for (const name of documented) {
         if (!declared.has(name)) {
-            failures.push(`${relative}: в таблице есть \`${name}\`, а среди входов компонента его нет`);
+            failures.push(`${relative}: в разделе «Входы» есть \`${name}\`, а среди входов компонента его нет`);
         }
     }
 
     // Вход есть, а строки нет — «все входы описаны» держится на памяти автора.
     for (const name of declared) {
         if (!documented.has(name)) {
-            failures.push(`${relative}: вход \`${name}\` не описан в таблице`);
+            failures.push(`${relative}: вход \`${name}\` не описан в разделе «Входы»`);
         }
     }
 }
