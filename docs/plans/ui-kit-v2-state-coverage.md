@@ -18,7 +18,7 @@ Docs-страниц у компонентов нет вовсе. Чтобы ув
 `docs/adr/0002-ui-kit-v2-state-coverage.md` (решения и их цена),
 `.claude/rt-kit/overrides/laws/verifiability.md` (раздел «Демонстрация видимого состояния»),
 разделы про `ui-kit-v2` в `.claude/skills/rt-tools-storybook/SKILL.md` и
-`.claude/skills/rt-tools-testing/SKILL.md`.
+`.claude/skills/testing/implementation.md`.
 
 ## Что считается сделанным
 
