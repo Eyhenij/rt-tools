@@ -140,8 +140,8 @@ export class TestRtButtonMatrixComponent {
     public readonly iconCases: readonly IButtonIconCase[] = [
         { name: 'без иконки', label: 'Сохранить', icon: null, iconPos: 'left' },
         { name: 'слева', label: 'Скачать', icon: 'ico-download', iconPos: 'left' },
-        { name: 'справа', label: 'Далее', icon: 'ico-arrow-right', iconPos: 'right' },
-        { name: 'без подписи', label: null, icon: 'ico-pencil', iconPos: 'left' },
+        { name: 'справа', label: 'Далее', icon: 'arrow-right', iconPos: 'right' },
+        { name: 'без подписи', label: null, icon: 'pencil', iconPos: 'left' },
     ];
 
     public readonly roundedLabel: (value: boolean) => string = (value: boolean): string => (value ? 'rounded' : 'по умолчанию');

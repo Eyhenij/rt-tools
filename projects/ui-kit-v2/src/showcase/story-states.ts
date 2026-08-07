@@ -36,9 +36,24 @@ export const storyStateLabel: (value: IStoryState) => string = (value: IStorySta
 /**
  * Параметр `pseudo` для истории состояний. Ставится в `parameters` рядом с историей: без него
  * признаки в разметке есть, а классы аддон не вешает, и все ячейки выглядят обычными.
+ *
+ * Аддон вешает класс ровно на тот элемент, что подошёл под селектор, а правило со `:hover`
+ * написано на том элементе, который стилизован. У части кита это не хост, а настоящий контрол
+ * внутри шаблона (`<button>` в `rt-icon-button`) — признак ставится снаружи, на хост, и тогда
+ * нужен спуск до контрола. Он и передаётся аргументом.
+ *
+ * @param target — селектор стилизованного элемента внутри хоста; пусто, если стилизован сам хост.
  */
-export const STORY_PSEUDO_PARAMETERS: Readonly<Record<string, string>> = {
-    hover: `[${STORY_STATE_ATTRIBUTE}='hover']`,
-    active: `[${STORY_STATE_ATTRIBUTE}='active']`,
-    focusVisible: `[${STORY_STATE_ATTRIBUTE}='focus-visible']`,
-};
+export function storyPseudoParameters(target: string = ''): Readonly<Record<string, string>> {
+    const at: (state: string) => string = (state: string): string =>
+        `[${STORY_STATE_ATTRIBUTE}='${state}']${target === '' ? '' : ` ${target}`}`;
+
+    return {
+        hover: at('hover'),
+        active: at('active'),
+        focusVisible: at('focus-visible'),
+    };
+}
+
+/** Готовый параметр для случая, когда стилизован сам элемент с признаком. */
+export const STORY_PSEUDO_PARAMETERS: Readonly<Record<string, string>> = storyPseudoParameters();

@@ -22,6 +22,14 @@ import {
  * `.storybook/storybook.scss`: свойства тем кит вешает на `:root`, и скоупнуть их можно
  * только там, где стиль глобальный.
  *
+ * Тёмная половина несёт ещё и признак `data-theme="dark"`: часть кита переключается не
+ * свойствами, а правилами вида `[data-theme='dark'] .rt-логотип`, и без признака они в
+ * половину не попадают.
+ *
+ * Чего пара не показывает: при тёмной теме в тулбаре светлая половина получает светлые
+ * свойства, но правила `[data-theme='dark'] …` продолжают доставать её от `<html>` —
+ * снять их изнутри нечем. Светлую половину смотрят при светлой теме в тулбаре.
+ *
  * Обвязка витрины: `tsconfig.lib.json` исключает `src/showcase/**`, в пакет не уезжает.
  */
 @Component({
@@ -37,7 +45,7 @@ import {
                     <ng-container [ngTemplateOutlet]="template" />
                 }
             </div>
-            <div class="app-story-themes__pane app-story-themes__pane--dark">
+            <div class="app-story-themes__pane app-story-themes__pane--dark" data-theme="dark">
                 <span class="app-story-themes__label">Тёмная</span>
                 @if (pane(); as template) {
                     <ng-container [ngTemplateOutlet]="template" />

@@ -15,7 +15,7 @@ export default {
 
 type Story = StoryObj<TestRtThemeToggleComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         appearance: 'icon',
     },
