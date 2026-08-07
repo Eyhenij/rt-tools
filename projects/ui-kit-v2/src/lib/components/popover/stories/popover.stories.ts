@@ -6,7 +6,6 @@ export default {
     title: 'Components/Popover',
     component: TestRtPopoverComponent,
     argTypes: {
-        template: { control: false },
         trigger: {
             options: ['click', 'hover', 'manual'],
             control: { type: 'select' },
@@ -20,7 +19,6 @@ export default {
             control: { type: 'select' },
         },
         fitViewport: { control: { type: 'boolean' } },
-        context: { control: false },
         panelClass: { control: { type: 'text' } },
         disabled: { control: { type: 'boolean' } },
         offsetY: { control: { type: 'number' } },
@@ -30,17 +28,23 @@ export default {
 
 type Story = StoryObj<TestRtPopoverComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
-        template: null,
         trigger: 'click',
         width: 'auto',
         align: 'start',
         fitViewport: false,
-        context: null,
         panelClass: '',
         disabled: false,
         offsetY: 4,
         offsetX: 0,
+    },
+};
+
+/** Наведение вместо щелчка: панель держится, пока курсор на ней, и закрывается с отсрочкой. */
+export const HoverTrigger: Story = {
+    args: {
+        ...Playground.args,
+        trigger: 'hover',
     },
 };

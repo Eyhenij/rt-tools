@@ -20,11 +20,11 @@ export default {
 
 type Story = StoryObj<TestRtConfirmComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
-        message: 'Сообщение',
-        title: 'Заголовок',
-        label: 'Сохранить',
+        message: 'Удалить запись? Действие необратимо.',
+        title: 'Удаление',
+        label: 'Удалить',
         cancelLabel: 'Отмена',
         tone: 'danger',
         disabled: false,
