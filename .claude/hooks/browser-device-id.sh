@@ -1,13 +1,21 @@
 #!/usr/bin/env bash
-# Shared helper: prints RT_TOOLS_BROWSER_DEVICE_ID from the project's .env, or nothing.
+# rt-kit v0.2.0 · hooks/browser-device-id.sh · 43320c47c7c8 · правится надстройкой, не здесь
+# Общий помощник: печатает идентификатор закреплённого профиля браузера.
 #
-# .env is gitignored and per-developer, so the browser guards configure themselves from it.
-# An unset/empty value means "not configured" and every guard must then allow the action —
-# a shared hook must never block a teammate who has not set this up.
+# Идентификатор локален для машины и в пакет не едет вовсе. Он берётся из переменной окружения,
+# а если её нет — из файла рядом с конфигом раскладки. Ни там ни там ничего нет — помощник
+# молчит, и все браузерные гарды пропускают: гард, который не может назвать нужный профиль,
+# ничего не предлагает взамен, и слепой отказ только заводил бы работу в тупик.
+#
+# Файл с идентификатором в репозиторий не коммитится: у каждой машины он свой.
 
-env_file="${CLAUDE_PROJECT_DIR:-.}/.env"
-[ -r "$env_file" ] || exit 0
+if [ -n "${RT_BROWSER_DEVICE_ID:-}" ]; then
+    printf '%s\n' "$RT_BROWSER_DEVICE_ID"
+    exit 0
+fi
 
-sed -n 's/^[[:space:]]*RT_TOOLS_BROWSER_DEVICE_ID[[:space:]]*=[[:space:]]*//p' "$env_file" \
-    | head -n 1 \
-    | sed -e 's/^"//' -e "s/^'//" -e 's/"[[:space:]]*$//' -e "s/'[[:space:]]*$//" -e 's/[[:space:]]*$//'
+file="${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/browser-device-id"
+[ -f "$file" ] || exit 0
+
+tr -d '[:space:]' <"$file"
+printf '\n'

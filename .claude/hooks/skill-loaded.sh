@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
-# PostToolUse hook on the `Skill` tool.
-# Records which skill was loaded, per session, so the edit gate can verify it.
-# Always exits 0 and never blocks — this hook only observes.
+# rt-kit v0.2.0 · hooks/skill-loaded.sh · fb4998a0439c · правится надстройкой, не здесь
+# Запись о загруженном правиле. PostToolUse на инструменте `Skill`.
+#
+# Гейт обязан знать, загружено правило или нет, а спросить об этом ему некого: инструмент о
+# своих прошлых вызовах не рассказывает. Поэтому загрузка записывается здесь, по сессии.
+#
+# Хук только наблюдает: он всегда пропускает и ничего не отбивает.
 
 input="$(cat 2>/dev/null)"
 [ -z "$input" ] && exit 0

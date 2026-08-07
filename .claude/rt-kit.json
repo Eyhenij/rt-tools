@@ -13,9 +13,31 @@
     "laws/admin-navigation.md",
     "laws/entity-editing.md",
     "laws/entity-models.md",
-    "laws/frontend-application.md",
     "laws/locales.md",
     "laws/search-visibility.md",
-    "laws/shared-code.md"
+    "laws/shared-code.md",
+
+    "rules/api-layer.md",
+    "rules/permissions.md",
+    "rules/seo.md",
+    "rules/shared-code.md",
+    "rules/translations.md",
+
+    "patterns/api-layer-pair.md",
+    "patterns/browser-verification-stand.md",
+    "patterns/git-workflow-migration.md",
+    "patterns/git-workflow-restart.md",
+    "patterns/permissions-procedure.md",
+    "patterns/seo-page.md",
+    "patterns/seo-verify.md",
+    "patterns/shared-code-new.md",
+    "patterns/testing-e2e.md",
+    "patterns/translations-key.md",
+    "patterns/ts-procedure.md",
+
+    "hooks/commit-msg.sh",
+    "hooks/dev-server-guard.sh",
+    "hooks/qa-dataid-guard.sh",
+    "hooks/sql-guard.sh"
   ]
 }

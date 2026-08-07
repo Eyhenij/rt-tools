@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
-# PreToolUse guard for mcp__claude-in-chrome__select_browser.
+# rt-kit v0.2.0 · hooks/browser-guard-device-id.sh · 37c62e32f82b · правится надстройкой, не здесь
+# Гард выбора браузера. PreToolUse на выборе браузера расширением.
 #
-# Rejects any deviceId other than the pinned profile. Picking another one wastes a round trip
-# and lands on a browser without this project's sessions.
+# Отклоняет любой профиль, кроме закреплённого: чужой стоит лишнего круга и приводит в браузер,
+# где сессий этого проекта нет вовсе.
 #
-# On a successful match it stamps a per-session marker. browser-guard-require-select.sh reads
-# that marker's AGE, so the stamp is what makes later browser work legal.
+# На совпадении ставит метку сессии. Гард свежести читает ВОЗРАСТ этой метки — она и делает
+# законной всю дальнейшую работу с браузером.
 #
-# FAIL-OPEN when RT_TOOLS_BROWSER_DEVICE_ID is unset (see browser-guard-no-listing.sh).
+# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: помощник не назвал профиль — пропуск.
 
 input="$(cat 2>/dev/null)"
 
@@ -19,9 +20,9 @@ requested="$(printf '%s' "$input" | jq -r '.tool_input.deviceId // empty' 2>/dev
 if [ "$requested" = "$device_id" ]; then
     sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
     marker_dir="${TMPDIR:-/tmp}/claude-browser-guard"
-    mkdir -p "$marker_dir" 2>/dev/null && : >"$marker_dir/rt-tools-${sid}" 2>/dev/null
+    mkdir -p "$marker_dir" 2>/dev/null && : >"$marker_dir/${sid}" 2>/dev/null
     exit 0
 fi
 
-echo "deviceId '${requested}' is not the pinned Chrome profile. Use ${device_id} — the only profile set up for this project." >&2
+echo "Профиль «${requested}» не тот, что закреплён за проектом. Бери ${device_id} — единственный профиль, где сделан вход." >&2
 exit 2

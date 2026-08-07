@@ -24,3 +24,7 @@ pnpm-workspace.yaml
 # instead of relaying it. Formatting belongs in the package these come from.
 docs/constitution
 .claude/rt-kit
+
+# Правила и паттерны кладёт `agent-kit sync` — по той же причине, что законы выше: тело файла
+# закрыто суммой в его шапке, и переформатирование читается раскладкой как правка руками.
+.claude/skills/*/SKILL.md

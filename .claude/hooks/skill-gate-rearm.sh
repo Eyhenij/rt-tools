@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
-# SessionStart(compact|clear) hook — re-arms the skill gate.
+# rt-kit v0.2.0 · hooks/skill-gate-rearm.sh · d05e9dbeb021 · правится надстройкой, не здесь
+# Взвод гейта заново. SessionStart(compact|clear).
 #
-# The gate records a loaded skill per session_id and then passes that domain silently for the
-# rest of the session. Compaction and /clear wipe the skill's CONTENT out of context but keep
-# the SAME session_id, so without this the gate would keep passing while the agent works from
-# a summary instead of the actual skill.
+# Гейт помнит загруженное правило по идентификатору сессии и дальше пропускает эту область
+# молча. Сжатие контекста и очистка выносят из контекста САМ ТЕКСТ правила, но идентификатор
+# сессии оставляют прежним — без этого хука гейт продолжал бы пропускать, пока агент работает
+# по пересказу вместо самого правила.
 #
-# Dropping the record forces every domain to re-load its skill after a compaction.
+# Снятие записи заставляет каждую область загрузить своё правило заново.
 #
-# FAIL-OPEN: any error exits 0. This hook only deletes a temp file; it never blocks.
+# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: любая ошибка пропускает. Хук удаляет временный файл и ничего не
+# отбивает.
 
 input="$(cat 2>/dev/null)"
 [ -z "$input" ] && exit 0
