@@ -9,6 +9,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
 import { collectAssets, IAsset } from './assets.js';
+import { ICompanion, pathOf, planCompanion } from './companion.js';
 import { IConfig, OVERRIDES_DIR } from './config.js';
 import { IPlanned, isPending, isRefusal, planFile } from './plan.js';
 import { mergeDocuments, parseDocument, renderDocument } from './sections.js';
@@ -18,8 +19,13 @@ export interface ISyncResult {
     readonly planned: readonly IPlanned[];
     /** Дырки без значения, по ресурсам. Непустой список — отказ: подставлять нечего. */
     readonly missing: ReadonlyMap<string, readonly string[]>;
+    /** Компаньоны разложенных правил: имена этого дерева, которые пишет проект. */
+    readonly companions: readonly ICompanion[];
     readonly written: readonly string[];
 }
+
+/** Шаблон черновика компаньона — тот же, что пакет кладёт проекту в шаблоны. */
+const COMPANION_TEMPLATE: string = 'templates/implementation.md';
 
 const read: (path: string) => string | null = (path: string): string | null => (existsSync(path) ? readFileSync(path, 'utf8') : null);
 
@@ -39,6 +45,8 @@ function renderAsset(asset: IAsset, config: IConfig, root: string): IRenderResul
 export function planSync(config: IConfig, root: string, version: string, assetsDir: string): ISyncResult {
     const planned: IPlanned[] = [];
     const missing: Map<string, readonly string[]> = new Map();
+    const companions: ICompanion[] = [];
+    const template: string | null = read(join(assetsDir, COMPANION_TEMPLATE));
 
     for (const asset of collectAssets(config, assetsDir)) {
         const rendered: IRenderResult = renderAsset(asset, config, root);
@@ -49,9 +57,12 @@ export function planSync(config: IConfig, root: string, version: string, assetsD
         planned.push(
             planFile({ path: asset.target, asset: asset.id, version, rendered: rendered.text, existing: read(join(root, asset.target)) })
         );
+        if (asset.kind === 'rules' && template !== null) {
+            companions.push(planCompanion(asset, read(join(root, pathOf(asset))), template));
+        }
     }
 
-    return { planned, missing, written: [] };
+    return { planned, missing, companions, written: [] };
 }
 
 /** Раскладка. Отказ хотя бы по одному файлу не пишет ничего: половина разложенного хуже целого. */
@@ -70,6 +81,18 @@ export function runSync(config: IConfig, root: string, version: string, assetsDi
         mkdirSync(dirname(path), { recursive: true });
         writeFileSync(path, entry.content, 'utf8');
         written.push(entry.path);
+    }
+
+    // Черновик компаньона кладётся только там, где файла нет вовсе. Он без шапки и без суммы:
+    // сверять в нём нечего — с первой правки проекта это его текст, а не текст пакета.
+    for (const companion of result.companions) {
+        if (companion.content === null) {
+            continue;
+        }
+        const path: string = join(root, companion.path);
+        mkdirSync(dirname(path), { recursive: true });
+        writeFileSync(path, companion.content, 'utf8');
+        written.push(companion.path);
     }
 
     return { ...result, written };

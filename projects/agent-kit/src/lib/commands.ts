@@ -8,6 +8,7 @@ import { join } from 'node:path';
 
 import { collectAssets } from './assets.js';
 import { IEntryOfCatalog, isChosen, readCatalog } from './catalog.js';
+import { ICompanion, isUnfilled, TCompanionState } from './companion.js';
 import { CONFIG_PATH, DEFAULT_LAYOUT, IConfig, KINDS, OVERRIDES_DIR, readConfig, TKind } from './config.js';
 import { IPlanned, isRefusal, TOutcome } from './plan.js';
 import { ISyncResult, pendingOf, planSync, runSync } from './sync.js';
@@ -51,10 +52,21 @@ const SKIPPED: string = 'пропущен';
 
 const KIND_TITLE: Readonly<Record<TKind, string>> = {
     laws: 'ЗАКОНЫ',
+    rules: 'ПРАВИЛА',
+    patterns: 'ПАТТЕРНЫ',
     hooks: 'ХУКИ',
     checks: 'ПРОВЕРКИ',
     agents: 'АГЕНТЫ',
+    commands: 'КОМАНДЫ',
+    workflows: 'ВОРКФЛОУ',
     templates: 'ШАБЛОНЫ',
+};
+
+/** Состояние компаньона словами. У заполненного слова нет: о нём говорить нечего. */
+const COMPANION_WORD: Readonly<Record<TCompanionState, string>> = {
+    missing: 'пропал',
+    draft: 'остался черновиком',
+    filled: 'заполнен',
 };
 
 const NO_CONFIG: string = `нет \`${CONFIG_PATH}\` — начни с \`agent-kit init\``;
@@ -65,9 +77,13 @@ const holes: (result: ISyncResult) => string[] = (result: ISyncResult): string[]
             `  ${asset}: нет значений для ${names.map((name: string): string => `{{${name}}}`).join(', ')}`
     );
 
+const unfilled: (result: ISyncResult) => readonly ICompanion[] = (result: ISyncResult): readonly ICompanion[] =>
+    result.companions.filter(isUnfilled);
+
 const describe: (result: ISyncResult) => string[] = (result: ISyncResult): string[] => [
     ...holes(result),
     ...pendingOf(result).map((entry: IPlanned): string => `  ${entry.path} — ${STATE_WORD[entry.outcome]}`),
+    ...unfilled(result).map((entry: ICompanion): string => `  ${entry.path} — ${COMPANION_WORD[entry.state]}`),
 ];
 
 /**
@@ -107,11 +123,17 @@ export function sync(env: IEnvironment, check: boolean): IOutcomeOfCommand {
     if (check) {
         const result: ISyncResult = planSync(config, root, version, assetsDir);
         const pending: readonly IPlanned[] = pendingOf(result);
-        if (!result.missing.size && !pending.length) {
+        // Незаполненный компаньон — такое же расхождение, как отставший файл: правило разложено,
+        // а имён этого дерева при нём нет, и агент читает указание, которому некуда примениться.
+        const empty: readonly ICompanion[] = unfilled(result);
+        if (!result.missing.size && !pending.length && !empty.length) {
             return { code: 0, lines: [`sync --check: разложенное сходится с пакетом v${version}`] };
         }
 
-        return { code: 1, lines: [`sync --check: расхождений ${result.missing.size + pending.length}`, ...describe(result)] };
+        return {
+            code: 1,
+            lines: [`sync --check: расхождений ${result.missing.size + pending.length + empty.length}`, ...describe(result)],
+        };
     }
 
     const result: ISyncResult = runSync(config, root, version, assetsDir);

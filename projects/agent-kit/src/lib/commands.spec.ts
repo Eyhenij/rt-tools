@@ -6,7 +6,7 @@
  * чего поштучные спеки увидеть не могли, — путь до собственных ресурсов, который в собранном
  * пакете иной, чем в исходниках.
  */
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 
@@ -29,6 +29,17 @@ const put: (path: string, text: string) => void = (path: string, text: string): 
 };
 const get: (path: string) => string = (path: string): string => readFileSync(join(root, path), 'utf8');
 const said: (outcome: IOutcomeOfCommand) => string = (outcome: IOutcomeOfCommand): string => outcome.lines.join('\n');
+
+/** Заполнить черновики компаньонов так, как это делает проект: снять метки пустых мест. */
+const fillCompanions: () => void = (): void => {
+    const skills: string = join(root, '.claude/skills');
+    for (const name of readdirSync(skills, { withFileTypes: true })) {
+        const path: string = join(skills, name.name, 'implementation.md');
+        if (existsSync(path)) {
+            writeFileSync(path, `# ${name.name}\n\nВсё названо своими именами.\n`, 'utf8');
+        }
+    }
+};
 
 beforeEach((): void => {
     root = mkdtempSync(join(tmpdir(), 'agent-kit-'));
@@ -157,9 +168,12 @@ describe('sync', () => {
 });
 
 describe('sync --check', () => {
-    it('на разложенном молчит и пропускает', () => {
+    it('на разложенном и заполненном молчит и пропускает', () => {
         init(root);
         sync(env, false);
+        // Разложенного мало: у каждого правила рядом встаёт черновик компаньона, и до
+        // заполнения проектом он сам по себе расхождение — набор про это ниже.
+        fillCompanions();
 
         expect(sync(env, true).code).toBe(0);
     });
@@ -185,6 +199,69 @@ describe('sync --check', () => {
         sync(env, false);
 
         expect(sync({ ...env, version: '0.2.0' }, true).code).toBe(1);
+    });
+});
+
+describe('правило и его компаньон', () => {
+    const RULE: string = '.claude/skills/testing/SKILL.md';
+    const COMPANION: string = '.claude/skills/testing/implementation.md';
+    const FILLED: string = '# testing\n\nВсё названо своими именами.\n';
+
+    it('правило ложится каталогом по имени: другого имени скил не находит', () => {
+        init(root, ['rules/testing.md']);
+        sync(env, false);
+
+        expect(get(RULE)).toContain('name: testing');
+    });
+
+    it('шапка встаёт после вступления, иначе скил теряет имя и описание', () => {
+        init(root, ['rules/testing.md']);
+        sync(env, false);
+        const lines: readonly string[] = get(RULE).split('\n');
+
+        expect(lines[0]).toBe('---');
+        expect(lines.findIndex((line: string): boolean => line.includes('rt-kit v'))).toBeGreaterThan(1);
+    });
+
+    it('черновик компаньона кладётся рядом с правилом', () => {
+        init(root, ['rules/testing.md']);
+        sync(env, false);
+
+        expect(get(COMPANION)).toContain('заполняет проект');
+    });
+
+    it('заполненного компаньона раскладка не трогает', () => {
+        init(root, ['rules/testing.md']);
+        sync(env, false);
+        writeFileSync(join(root, COMPANION), FILLED, 'utf8');
+        sync(env, false);
+
+        expect(get(COMPANION)).toBe(FILLED);
+    });
+
+    it('пока компаньон черновик, гейт отказывает: правилу нечего назвать', () => {
+        init(root, ['rules/testing.md']);
+        sync(env, false);
+        const outcome: IOutcomeOfCommand = sync(env, true);
+
+        expect(outcome.code).toBe(1);
+        expect(said(outcome)).toContain('остался черновиком');
+    });
+
+    it('пропавшего компаньона гейт называет отдельно от черновика', () => {
+        init(root, ['rules/testing.md']);
+        sync(env, false);
+        rmSync(join(root, COMPANION));
+
+        expect(said(sync(env, true))).toContain('пропал');
+    });
+
+    it('с заполненным компаньоном гейт проходит', () => {
+        init(root, ['rules/testing.md']);
+        sync(env, false);
+        writeFileSync(join(root, COMPANION), FILLED, 'utf8');
+
+        expect(sync(env, true).code).toBe(0);
     });
 });
 
