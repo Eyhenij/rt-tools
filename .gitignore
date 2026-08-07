@@ -44,6 +44,9 @@ Thumbs.db
 # Local, per-developer env (see .env.example)
 .env
 
+# Pinned browser profile: one per machine, never shared
+.claude/rt-kit/browser-device-id
+
 # Angular
 .angular
 

@@ -1,27 +1,23 @@
 #!/usr/bin/env bash
-# PreToolUse guard for every other mcp__claude-in-chrome__* tool (tabs_context, navigate,
-# computer, read_page, …).
+# rt-kit v0.2.0 · hooks/browser-guard-require-select.sh · 226ad6acb66f · правится надстройкой, не здесь
+# Гард свежести выбора браузера. PreToolUse на всех остальных вызовах расширения.
 #
-# WHY THIS EXISTS — the failure it is built from:
-# The extension acts on whatever browser it currently considers active, and that choice DRIFTS.
-# A select_browser early in a session does NOT hold: after a long stretch of non-browser work
-# the next tabs_context_mcp opened a tab in a DIFFERENT profile, silently. Guarding only
-# select_browser cannot catch this, because select_browser is never called at that point — the
-# id it was given was correct, and the drift happened afterwards.
+# ЗАЧЕМ ОН ЕСТЬ — отказ, из которого он вырос: расширение действует на тот браузер, который
+# считает активным сейчас, и этот выбор ПЛЫВЁТ. Выбор, сделанный в начале сессии, не держится:
+# после долгого перерыва на работу без браузера следующий же вызов открыл вкладку в другом
+# профиле — молча. Гард на самом выборе такого не ловит: в этот момент выбор никто не вызывает,
+# а тот, что был сделан раньше, был верным.
 #
-# So this gate is about FRESHNESS, not about "was select ever called":
-#   - browser-guard-device-id.sh stamps a marker on every accepted select_browser;
-#   - every browser tool that passes here RE-STAMPS it, so an active burst keeps flowing;
-#   - once the marker goes older than the window, the next browser tool is denied and must
-#     re-select. A pause is exactly when drift happens, so a pause is what re-arms the gate.
+# Поэтому гард про СВЕЖЕСТЬ, а не про «выбирали ли вообще»:
+#   - гард выбора ставит метку на каждом принятом выборе;
+#   - каждый прошедший здесь вызов метку обновляет, поэтому непрерывная работа идёт свободно;
+#   - как только метка старше окна, следующий вызов отбивается и требует выбрать заново.
+#     Перерыв — это ровно то, когда выбор уплывает, поэтому перерыв гард и взводит.
 #
-# select_browser is one cheap idempotent call, so re-selecting costs far less than landing in
-# the wrong browser.
+# Выбор — один дешёвый повторяемый вызов, и повторить его стоит несравнимо меньше, чем попасть
+# не в тот браузер.
 #
-# Window: RT_TOOLS_BROWSER_DEVICE_ID_TTL seconds from .env, default 300.
-# list/switch/select have their own guards and are skipped here.
-#
-# FAIL-OPEN when RT_TOOLS_BROWSER_DEVICE_ID is unset.
+# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: помощник не назвал профиль — пропуск.
 
 input="$(cat 2>/dev/null)"
 
@@ -29,21 +25,18 @@ device_id="$("${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/browser-device-id.sh" 2>/de
 [ -z "$device_id" ] && exit 0
 
 tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+# У перечисления, переключения и самого выбора свои гарды.
 case "$tool" in
     *list_connected_browsers|*switch_browser|*select_browser) exit 0 ;;
 esac
 
-ttl="$(sed -n 's/^[[:space:]]*RT_TOOLS_BROWSER_DEVICE_ID_TTL[[:space:]]*=[[:space:]]*//p' "${CLAUDE_PROJECT_DIR:-.}/.env" 2>/dev/null \
-    | head -n 1 | tr -d '"'"'"' \r')"
-case "$ttl" in
-    ''|*[!0-9]*) ttl=300 ;;
-esac
+ttl=300
 
 sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
-marker="${TMPDIR:-/tmp}/claude-browser-guard/rt-tools-${sid}"
+marker="${TMPDIR:-/tmp}/claude-browser-guard/${sid}"
 
 if [ ! -f "$marker" ]; then
-    echo "No browser selected in this session. Call select_browser with deviceId ${device_id} — the pinned Chrome profile — before any other browser tool." >&2
+    echo "В этой сессии браузер не выбран. Вызови выбор браузера с профилем ${device_id} до любого другого вызова." >&2
     exit 2
 fi
 
@@ -53,7 +46,7 @@ age=$(( now - stamped ))
 
 if [ "$age" -gt "$ttl" ]; then
     rm -f "$marker" 2>/dev/null
-    echo "Last select_browser was ${age}s ago (limit ${ttl}s) — the extension's active browser drifts across gaps like this, so it may no longer be the pinned Chrome profile. Call select_browser with deviceId ${device_id} again, then retry." >&2
+    echo "Последний выбор браузера был ${age} с назад (предел ${ttl} с) — на таких перерывах активный браузер расширения уплывает, и это может быть уже не закреплённый профиль. Вызови выбор с профилем ${device_id} заново и повтори." >&2
     exit 2
 fi
 

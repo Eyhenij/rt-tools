@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
-# SessionStart entrance for the law layer laid out by @rt-tools/agent-kit.
+# rt-kit v0.2.0 · hooks/constitution-index.sh · 1bf063d8b45b · правится надстройкой, не здесь
+# Вход в слой законов. SessionStart.
 #
-# A law file in docs/constitution/ pulls nothing into context on its own — it is read only when
-# someone goes for it. This hook emits the index (file name + its H1) once per session so the
-# layer is known to exist and can be opened when a decision touches it.
+# Файл закона сам по себе не приносит в контекст ничего — его читают, только когда за ним
+# пошли. Хук печатает указатель (имя файла и его заголовок) один раз за сессию: слой известен,
+# что существует, и открывается, когда решение его задевает.
 #
-# The index is READ FROM THE DIRECTORY, never hardcoded: a hand-written list would drift from
-# what `agent-kit sync` actually laid out, and nothing would report the gap.
+# Указатель ЧИТАЕТСЯ ИЗ КАТАЛОГА, а не выписан руками: выписанный разошёлся бы с тем, что
+# разложено на самом деле, и сказать об этом было бы нечем.
 #
-# FAIL-OPEN: on any error the session starts with no extra context (exit 0). A broken entrance
-# must never wedge a session.
+# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: любая ошибка начинает сессию без добавленного контекста (exit 0).
+# Сломанный вход не имеет права остановить сессию.
 
 dir="${CLAUDE_PROJECT_DIR:-.}/docs/constitution"
 [ -d "$dir" ] || exit 0
@@ -26,14 +27,15 @@ done
 read -r -d '' context <<EOF
 ЗАКОНЫ ПРОЕКТА (слой @rt-tools/agent-kit, разложен в docs/constitution/).
 
-Закон говорит, ЧТО должно быть верно, и не знает ни путей, ни имён файлов. Правило — чем это
-названо в этом дереве — живёт в .claude/skills/. Закон не отменяет скилл и не заменяется им:
-перед решением, которое закон задевает, читается закон целиком, скилл — как обычно.
+Закон говорит, ЧТО должно быть верно, и не знает ни путей, ни имён файлов. Правило — каким
+приёмом это делается — живёт в .claude/skills/, а имена этого дерева при нём — в
+implementation.md рядом. Закон не отменяет правила и не заменяется им: перед решением, которое
+закон задевает, читается закон целиком, правило — как обычно.
 
 ${index}
 Разложенные файлы правятся не руками, а надстройкой в .claude/rt-kit/overrides/<ресурс>:
 правка на месте теряется на следующем \`agent-kit sync\`, и он на неё отказывает. Сверить
-разложенное с пакетом: \`pnpm run agent-kit:check\`.
+разложенное с пакетом: \`agent-kit sync --check\`.
 EOF
 
 jq -n --arg c "$context" '{hookSpecificOutput:{hookEventName:"SessionStart",additionalContext:$c}}' 2>/dev/null || exit 0

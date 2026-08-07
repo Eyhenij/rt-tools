@@ -9,6 +9,15 @@
           }
         ],
         "matcher": "Skill"
+      },
+      {
+        "hooks": [
+          {
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/lint-after-edit.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": "Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file"
       }
     ],
     "PreToolUse": [
@@ -58,6 +67,41 @@
         "matcher": "Edit|Write|MultiEdit|Bash"
       },
       {
+        "hooks": [
+          {
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/reuse-first-guard.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": "Edit|Write|MultiEdit|mcp__webstorm__create_new_file"
+      },
+      {
+        "hooks": [
+          {
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/docs-guard.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": "Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool"
+      },
+      {
+        "hooks": [
+          {
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/git-guard-main.sh",
+            "type": "command"
+          },
+          {
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/git-guard-delivery.sh",
+            "type": "command"
+          },
+          {
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/git-guard-push-tests.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": "Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool"
+      },
+      {
         "matcher": "mcp__playwright__.*|mcp__chrome-devtools__.*|Bash",
         "hooks": [
           {
@@ -85,16 +129,6 @@
           }
         ],
         "matcher": "startup|resume|compact|clear"
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"AUTOMATED SKILLS REMINDER: Before editing any file, committing, or opening a PR, FIRST identify which .claude/skills apply and invoke them via the Skill tool — proactively, not after being reminded. Frequent ones: rt-tools-component (*.component.ts, rtui- selectors, signal-only API), rt-tools-styling (*.scss and the --rt-* token tiers), rt-tools-testing (*.spec.ts, Jest + zoneless TestBed), rt-tools-storybook (*.stories.ts and the Test*Component wrapper convention), rt-tools-public-api (barrels, entry points, peer ranges, breaking changes), rt-tools-typescript (any other .ts), rt-tools-board (cross-repo coordination), rt-tools-ship-pr (commits, PRs, publishing).\"}}'",
-            "type": "command"
-          }
-        ]
       }
     ]
   }
