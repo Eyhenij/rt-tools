@@ -8,12 +8,10 @@
  * лежат фоном, а не в <img>: у тёмной темы своя пара файлов, и подмена
  * background-image — единственный способ переключить их одним правилом.
  */
-:host {
+.rt-logo {
     display: inline-block;
     line-height: 0;
-}
 
-.rt-logo {
     &__wordmark,
     &__tagline {
         display: block;
@@ -48,17 +46,17 @@
 /* Композиция lockup: начертание и слоган стоят колонкой и делят высоту host'а.
    Пропорция та же, что у пары в макете: ~66.7% начертанию, ~22.1% слогану,
    остальное — зазор между ними. */
-:host:has(.rt-logo__tagline) {
+.rt-logo:has(.rt-logo__tagline) {
     display: flex;
     flex-direction: column;
     align-items: stretch;
     justify-content: space-between;
 }
 
-:host:has(.rt-logo__tagline) .rt-logo__wordmark {
+.rt-logo:has(.rt-logo__tagline) .rt-logo__wordmark {
     height: 66.7%;
 }
 
-:host:has(.rt-logo__tagline) .rt-logo__tagline {
+.rt-logo:has(.rt-logo__tagline) .rt-logo__tagline {
     height: 22.1%;
 }

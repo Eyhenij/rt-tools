@@ -8,6 +8,7 @@ import {
     InputSignal,
     InputSignalWithTransform,
     Signal,
+    ViewEncapsulation,
 } from '@angular/core';
 
 import { translateSignal } from '@jsverse/transloco';
@@ -27,6 +28,7 @@ const BEM_BLOCK: string = 'rt-live-badge';
     templateUrl: './rt-live-badge.component.html',
     styleUrl: './rt-live-badge.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
     imports: [
         // standalone components / directives
         BlockDirective,

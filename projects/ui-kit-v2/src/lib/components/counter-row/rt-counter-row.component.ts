@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, InputSignal, ViewEncapsulation } from '@angular/core';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
@@ -12,13 +12,14 @@ const BEM_BLOCK: string = 'rt-counter-row';
  * раскладку, и её не приходится расширять каждый раз, когда у `rt-counter`
  * появляется новый input.
  *
- * ViewEncapsulation — default (Emulated), стили обёрнуты в `:host { ... }`.
+ * ViewEncapsulation.None — стили таргетируют имя элемента и BEM-класс блока.
  */
 @Component({
     selector: 'rt-counter-row',
     templateUrl: './rt-counter-row.component.html',
     styleUrl: './rt-counter-row.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
     imports: [
         // rt-tools
         BlockDirective,

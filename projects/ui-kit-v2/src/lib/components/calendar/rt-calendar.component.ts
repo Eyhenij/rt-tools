@@ -8,6 +8,7 @@ import {
     InputSignalWithTransform,
     output,
     OutputEmitterRef,
+    ViewEncapsulation,
 } from '@angular/core';
 
 // rt-tools
@@ -24,6 +25,7 @@ const BEM_BLOCK: string = 'rt-calendar';
     templateUrl: './rt-calendar.component.html',
     styleUrl: './rt-calendar.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
     imports: [
         // rt-tools
         BlockDirective,

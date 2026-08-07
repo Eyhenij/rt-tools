@@ -1,6 +1,9 @@
-/* rt-message — alert/banner в common/ui (Emulated encapsulation; :host обязательно). */
+/* rt-message — alert/banner в common/ui. ViewEncapsulation.None.
+   Хост адресуется по имени элемента, а не по классу блока: класс `.rt-message` висит
+   и на `<rt-message>`, и на корне шаблона, поэтому правила блока вложены в хост —
+   так они достаются только корню шаблона. */
 
-:host {
+rt-message {
     display: block;
 
     .rt-message {

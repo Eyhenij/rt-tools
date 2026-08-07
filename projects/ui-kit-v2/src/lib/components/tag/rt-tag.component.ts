@@ -8,6 +8,7 @@ import {
     InputSignalWithTransform,
     output,
     OutputEmitterRef,
+    ViewEncapsulation,
 } from '@angular/core';
 
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -35,6 +36,7 @@ const BEM_BLOCK: string = 'rt-tag';
     templateUrl: './rt-tag.component.html',
     styleUrl: './rt-tag.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
     imports: [
         // standalone components / directives
         RtIconComponent,

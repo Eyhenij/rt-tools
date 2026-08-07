@@ -10,6 +10,7 @@ import {
     output,
     OutputEmitterRef,
     Signal,
+    ViewEncapsulation,
 } from '@angular/core';
 
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -51,6 +52,7 @@ const BEM_BLOCK: string = 'rt-message';
     templateUrl: './rt-message.component.html',
     styleUrl: './rt-message.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
     imports: [
         // standalone components / directives
         RtIconButtonComponent,

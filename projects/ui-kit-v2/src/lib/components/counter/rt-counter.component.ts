@@ -11,6 +11,7 @@ import {
     numberAttribute,
     Signal,
     signal,
+    ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -48,13 +49,14 @@ function clamp(value: number, min: number, max: number): number {
  * Хост объявлен группой с `aria-label`, значение помечено `aria-live`, так что
  * скринридер называет назначение счётчика и проговаривает новое число.
  *
- * ViewEncapsulation — default (Emulated), стили обёрнуты в `:host { ... }`.
+ * ViewEncapsulation.None — стили таргетируют имя элемента и BEM-класс блока.
  */
 @Component({
     selector: 'rt-counter',
     templateUrl: './rt-counter.component.html',
     styleUrl: './rt-counter.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
     imports: [
         // rt-tools
         BlockDirective,
