@@ -5,6 +5,7 @@
  * `src/showcase/**` из сборки библиотеки, как и `src/testing/**`.
  */
 export * from './story-grid.component';
+export * from './story-metrics';
 export * from './story-row.component';
 export * from './story-states';
 export * from './story-themes.component';

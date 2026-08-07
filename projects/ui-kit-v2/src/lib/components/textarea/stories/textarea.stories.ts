@@ -18,7 +18,7 @@ export default {
 
 type Story = StoryObj<TestRtTextareaComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         placeholder: 'Введите значение',
         readonly: false,

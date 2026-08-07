@@ -13,7 +13,7 @@ export default {
 
 type Story = StoryObj<TestRtCounterRowComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         label: 'Сохранить',
         hint: 'Подсказка',

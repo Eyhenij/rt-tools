@@ -58,7 +58,7 @@
         "configDir": "projects/ui-kit-v2/.storybook",
         "browserTarget": "@rt-tools/ui-kit-v2:build-storybook",
         "compodoc": false,
-        "styles": ["projects/ui-kit-v2/.storybook/storybook.scss"]
+        "styles": ["node_modules/quill/dist/quill.snow.css", "projects/ui-kit-v2/.storybook/storybook.scss"]
       },
       "configurations": {
         "ci": {
@@ -74,7 +74,7 @@
         "configDir": "projects/ui-kit-v2/.storybook",
         "browserTarget": "@rt-tools/ui-kit-v2:build-storybook",
         "compodoc": false,
-        "styles": ["projects/ui-kit-v2/.storybook/storybook.scss"]
+        "styles": ["node_modules/quill/dist/quill.snow.css", "projects/ui-kit-v2/.storybook/storybook.scss"]
       },
       "configurations": {
         "ci": {

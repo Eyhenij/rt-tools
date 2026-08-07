@@ -33,7 +33,7 @@ export interface IStoryItem<ITEM> {
         <div class="app-story-row__items">
             @for (item of items(); track $index) {
                 <div class="app-story-row__item">
-                    <div class="app-story-row__slot">
+                    <div class="app-story-row__slot" [style.inline-size]="slotWidth()">
                         @if (cell(); as template) {
                             <ng-container [ngTemplateOutlet]="template" [ngTemplateOutletContext]="{ $implicit: item }" />
                         }
@@ -62,6 +62,12 @@ export class StoryRowComponent<ITEM> {
 
     /** Значения оси. */
     public readonly items: InputSignal<readonly ITEM[]> = input.required<readonly ITEM[]>();
+
+    /**
+     * Ширина ячейки. Нужна тому, что тянется на всю ширину родителя: поле ввода в ячейке
+     * по содержимому схлопывается до нуля и показывает не размер, а его отсутствие.
+     */
+    public readonly slotWidth: InputSignal<string> = input<string>('');
 
     /** Подпись значения; по умолчанию — само значение. Нужна осям, чьи значения не строки. */
     public readonly itemLabel: InputSignal<(value: ITEM) => string> = input<(value: ITEM) => string>((value: ITEM): string =>

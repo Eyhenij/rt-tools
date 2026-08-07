@@ -20,7 +20,7 @@ export default {
 
 type Story = StoryObj<TestRtToggleButtonGroupComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         options: [],
         value: undefined,

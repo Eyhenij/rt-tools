@@ -18,7 +18,7 @@ export default {
 
 type Story = StoryObj<TestRtCounterComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         ariaLabel: null,
         min: 0,

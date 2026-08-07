@@ -21,7 +21,7 @@ export default {
 
 type Story = StoryObj<TestRtFilterControlComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         options: [],
         value: undefined,
