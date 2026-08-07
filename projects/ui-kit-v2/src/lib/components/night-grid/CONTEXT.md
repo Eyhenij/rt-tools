@@ -6,10 +6,10 @@
 <rt-night-grid ariaLabel="Ночи марта" [cells]="cells()" (cellClick)="toggle($event)" />
 ```
 
-| вход        | тип                                   | умолчание                      |
-| ----------- | ------------------------------------- | ------------------------------ |
-| `cells`     | `ReadonlyArray<{ id, state, title }>` | **обязателен**                 |
-| `ariaLabel` | `string`                              | `''` → `rtKit.uiNightGridAria` |
+| вход        | тип                                   | умолчание                |
+| ----------- | ------------------------------------- | ------------------------ |
+| `cells`     | `ReadonlyArray<{ id, state, title }>` | **обязателен**           |
+| `ariaLabel` | `string`                              | `''` → `uiNightGridAria` |
 
 Выход: `cellClick` — отдаёт **целую клетку**, а не идентификатор.
 

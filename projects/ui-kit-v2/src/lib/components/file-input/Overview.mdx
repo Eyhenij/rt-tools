@@ -61,7 +61,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
   кликая по нему программно. Само поле остаётся в разметке — по нему работают `accept` и
   `multiple`.
 - Подпись даёт вмещающий `rt-field`; без обёртки полю нужен `ariaLabel`.
-- Подпись кнопки берётся из словаря кита (`rtKit.uiChooseFile`), пока не задан `buttonLabel`.
+- Подпись кнопки берётся из словаря кита (`uiChooseFile`), пока не задан `buttonLabel`.
 
 ## Оформление
 
@@ -71,12 +71,12 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход          | тип              | умолчание                   |
-| ------------- | ---------------- | --------------------------- |
-| `multiple`    | `boolean`        | `false`                     |
-| `accept`      | `string \| null` | `null`                      |
-| `directory`   | `boolean`        | `false`                     |
-| `buttonLabel` | `string`         | `''` → `rtKit.uiChooseFile` |
+| вход          | тип              | умолчание             |
+| ------------- | ---------------- | --------------------- |
+| `multiple`    | `boolean`        | `false`               |
+| `accept`      | `string \| null` | `null`                |
+| `directory`   | `boolean`        | `false`               |
+| `buttonLabel` | `string`         | `''` → `uiChooseFile` |
 
 ## Входы от основы полей
 
