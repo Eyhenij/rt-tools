@@ -57,8 +57,21 @@
         list-style: none;
     }
 
+    /* Ширину пункту задаёт панель, а не его текст: `width="trigger"` держит её равной
+       кнопке. Пункт длиннее обязан обрезаться, иначе лейбл вылезает за скруглённую
+       рамку панели и висит в воздухе. Многоточие требует блочного лейбла: у
+       `inline-flex` `text-overflow` не работает — текст внутри становится анонимным
+       flex-элементом, и обрезка проходит без знака. */
     &__menu-item.rt-button {
+        overflow: hidden;
         width: 100%;
         justify-content: flex-start;
+
+        .rt-button__label {
+            display: block;
+            overflow: hidden;
+            min-width: 0;
+            text-overflow: ellipsis;
+        }
     }
 }
