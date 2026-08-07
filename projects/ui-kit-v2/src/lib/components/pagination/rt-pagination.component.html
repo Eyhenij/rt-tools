@@ -6,24 +6,24 @@
         её было нельзя ни при каких входах.
     -->
     <span rtElem="range" qa-dataid="pagination-range">
-        {{ 'rtKit.uiRangeOf' | transloco: { from: rangeFrom(), to: rangeTo(), total: pageModel().totalCount } }}
+        {{ rangeLabel() }}
     </span>
 
     @if (pageItems().length) {
-        <nav rtElem="compact" qa-dataid="pagination-compact" [attr.aria-label]="'rtKit.uiPagination' | transloco">
+        <nav rtElem="compact" qa-dataid="pagination-compact" [attr.aria-label]="t().uiPagination">
             <rt-icon-button
                 rtElem="arrow"
                 qa-dataid="pagination-compact-prev"
                 icon="chevron-left"
                 variant="ghost"
                 size="sm"
-                [ariaLabel]="'rtKit.uiPrevPage' | transloco"
-                [tooltip]="'rtKit.uiBack' | transloco"
+                [ariaLabel]="t().uiPrevPage"
+                [tooltip]="t().uiBack"
                 [disabled]="isFirst() || loading()"
                 (clicked)="goTo(pageModel().pageNumber - 1)" />
 
             <span rtElem="compact-label" qa-dataid="pagination-compact-label">
-                {{ 'rtKit.uiPageOf' | transloco: { page: pageModel().pageNumber, last: lastPage() } }}
+                {{ pageLabel() }}
             </span>
 
             <rt-icon-button
@@ -32,21 +32,21 @@
                 icon="chevron-right"
                 variant="ghost"
                 size="sm"
-                [ariaLabel]="'rtKit.uiNextPage' | transloco"
-                [tooltip]="'rtKit.uiForward' | transloco"
+                [ariaLabel]="t().uiNextPage"
+                [tooltip]="t().uiForward"
                 [disabled]="isLast() || loading()"
                 (clicked)="goTo(pageModel().pageNumber + 1)" />
         </nav>
 
-        <nav rtElem="nav" qa-dataid="pagination-nav" [attr.aria-label]="'rtKit.uiPagination' | transloco">
+        <nav rtElem="nav" qa-dataid="pagination-nav" [attr.aria-label]="t().uiPagination">
             <rt-icon-button
                 rtElem="arrow"
                 qa-dataid="pagination-prev"
                 icon="chevron-left"
                 variant="ghost"
                 size="sm"
-                [ariaLabel]="'rtKit.uiPrevPage' | transloco"
-                [tooltip]="'rtKit.uiBack' | transloco"
+                [ariaLabel]="t().uiPrevPage"
+                [tooltip]="t().uiBack"
                 [disabled]="isFirst() || loading()"
                 (clicked)="goTo(pageModel().pageNumber - 1)" />
 
@@ -74,18 +74,18 @@
                 icon="chevron-right"
                 variant="ghost"
                 size="sm"
-                [ariaLabel]="'rtKit.uiNextPage' | transloco"
-                [tooltip]="'rtKit.uiForward' | transloco"
+                [ariaLabel]="t().uiNextPage"
+                [tooltip]="t().uiForward"
                 [disabled]="isLast() || loading()"
                 (clicked)="goTo(pageModel().pageNumber + 1)" />
         </nav>
     }
 
     <div rtElem="per-page">
-        <span rtElem="per-page-label">{{ 'rtKit.uiPerPage' | transloco }}</span>
+        <span rtElem="per-page-label">{{ t().uiPerPage }}</span>
         <rt-select
             qa-dataid="pagination-per-page"
-            [ariaLabel]="'rtKit.uiItemsPerPage' | transloco"
+            [ariaLabel]="t().uiItemsPerPage"
             [options]="perPageSelectOptions()"
             [clearable]="false"
             [ngModel]="pageModel().pageSize"

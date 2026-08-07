@@ -1,24 +1,23 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
     computed,
-    ElementRef,
     forwardRef,
     inject,
     input,
+    signal,
+    viewChild,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
     InputSignal,
     LOCALE_ID,
     Signal,
-    signal,
-    viewChild,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
 
-import { TranslocoPipe } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { RT_KIT_LABELS, RtKitLabelMap } from '../../i18n';
 import { RtFormControlBase } from '../form-control/rt-form-control.base';
 import { RtIconComponent, IRtIcon } from '../icon';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
@@ -111,7 +110,6 @@ function formatNumber(value: number | null, minFractionDigits: number, maxFracti
         BlockDirective,
         ElemDirective,
         ModDirective,
-        TranslocoPipe,
     ],
     providers: [
         // Алиас базового токена — для contentChild(RtFormControlBase) в rt-field.
@@ -144,6 +142,8 @@ export class RtInputNumberComponent extends RtFormControlBase<number | null> {
      * значило бы в показе одно, а в разборе другое.
      */
     readonly #decimalSepPattern: RegExp = new RegExp(`[${['.', ','].filter((char: string): boolean => char !== this.#groupSep).join('')}]`);
+
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly fieldEl: Signal<ElementRef<HTMLInputElement> | undefined> = viewChild<ElementRef<HTMLInputElement>>('fieldEl');
 

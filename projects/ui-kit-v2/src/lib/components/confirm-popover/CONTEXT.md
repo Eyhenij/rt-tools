@@ -13,14 +13,14 @@
     (confirmed)="reject()" />
 ```
 
-| вход (алиас)           | тип                                  | умолчание                |
-| ---------------------- | ------------------------------------ | ------------------------ |
-| `rtConfirm`            | `string`                             | `''`                     |
-| `rtConfirmTitle`       | `string \| null`                     | `null`                   |
-| `rtConfirmLabel`       | `string`                             | `''` → `rtKit.uiConfirm` |
-| `rtConfirmCancelLabel` | `string`                             | `''` → `rtKit.uiCancel`  |
-| `rtConfirmTone`        | `'danger' \| 'warning' \| 'primary'` | `'danger'`               |
-| `rtConfirmDisabled`    | `boolean`                            | `false`                  |
+| вход (алиас)           | тип                                  | умолчание          |
+| ---------------------- | ------------------------------------ | ------------------ |
+| `rtConfirm`            | `string`                             | `''`               |
+| `rtConfirmTitle`       | `string \| null`                     | `null`             |
+| `rtConfirmLabel`       | `string`                             | `''` → `uiConfirm` |
+| `rtConfirmCancelLabel` | `string`                             | `''` → `uiCancel`  |
+| `rtConfirmTone`        | `'danger' \| 'warning' \| 'primary'` | `'danger'`         |
+| `rtConfirmDisabled`    | `boolean`                            | `false`            |
 
 | выход       | тип    |
 | ----------- | ------ |

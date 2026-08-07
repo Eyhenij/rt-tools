@@ -6,11 +6,11 @@
 <rt-bar-list title="Источники" [rows]="[{ id: 'direct', title: 'Прямые заходы', meta: '1 240 визитов', value: '52%', sharePercent: 52 }]" />
 ```
 
-| вход        | тип                                                        | умолчание               |
-| ----------- | ---------------------------------------------------------- | ----------------------- |
-| `rows`      | `ReadonlyArray<{ id, title, meta?, value, sharePercent }>` | **обязателен**          |
-| `title`     | `string`                                                   | `''`                    |
-| `emptyText` | `string`                                                   | `''` → `rtKit.uiNoData` |
+| вход        | тип                                                        | умолчание         |
+| ----------- | ---------------------------------------------------------- | ----------------- |
+| `rows`      | `ReadonlyArray<{ id, title, meta?, value, sharePercent }>` | **обязателен**    |
+| `title`     | `string`                                                   | `''`              |
+| `emptyText` | `string`                                                   | `''` → `uiNoData` |
 
 Выходов нет.
 

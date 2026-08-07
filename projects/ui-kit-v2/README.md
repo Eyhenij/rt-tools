@@ -1,8 +1,8 @@
 # @rt-tools/ui-kit-v2
 
-Набор компонентов Angular и дизайн-система к ним: шкалы оформления, светлая и тёмная темы,
-восемь языков подписей. Компоненты сигнальные и `OnPush`, разметка размечена BEM-директивами из
-`@rt-tools/core`, каждый интерактивный элемент несёт `qa-dataid`.
+Набор компонентов Angular и дизайн-система к ним: шкалы оформления, светлая и тёмная темы.
+Компоненты сигнальные и `OnPush`, разметка размечена BEM-директивами из `@rt-tools/core`,
+каждый интерактивный элемент несёт `qa-dataid`.
 
 Пакет живёт рядом с `@rt-tools/ui-kit`, а не вместо него: селекторы (`rt-*` против `rtui-*`),
 свойства оформления и наборы компонентов у них не пересекаются, поэтому одно приложение может
@@ -11,7 +11,7 @@
 ## Установка
 
 ```bash
-pnpm add @rt-tools/ui-kit-v2 @rt-tools/core @rt-tools/utils @jsverse/transloco
+pnpm add @rt-tools/ui-kit-v2 @rt-tools/core @rt-tools/utils
 ```
 
 `quill` нужен только тем, кто ставит `rt-rich-editor`: редактор грузит его динамически, и без
@@ -20,15 +20,10 @@ pnpm add @rt-tools/ui-kit-v2 @rt-tools/core @rt-tools/utils @jsverse/transloco
 ## Подключение
 
 ```typescript
-import { provideRtIcons, provideRtKitTranslations } from '@rt-tools/ui-kit-v2';
+import { provideRtIcons } from '@rt-tools/ui-kit-v2';
 
 export const appConfig: ApplicationConfig = {
-    providers: [
-        provideHttpClient(),
-        provideTransloco({ config, loader }),
-        provideRtKitTranslations(),
-        provideRtIcons(),
-    ],
+    providers: [provideHttpClient(), provideRtIcons()],
 };
 ```
 
@@ -81,12 +76,26 @@ export const appConfig: ApplicationConfig = {
 **Среда исполнения** — `ThemeService` (тема на `<html data-theme>`, переживает перезагрузку),
 `BreakpointsService` (сигналы совпадения по ширине), `NotificationBus` (шина тостов).
 
-**Подписи** — 131 ключ в неймспейсе `rtKit` на восьми языках (en, ru, de, ko, th, hi, zh-Hans,
-zh-Hant); везут их `RT_KIT_TRANSLATIONS` и `provideRtKitTranslations()`. Свою подпись приложение
-кладёт поверх, передав словарь тем же провайдером; им же добавляется язык, которого в пакете нет.
+**Подписи** — 131 ключ: кнопки диалогов, тексты ошибок поля, расшифровки иконок для
+скринридера. Своего языка у кита нет и быть не может — его знает приложение.
 
-Читаются только языки, заявленные в `availableLangs` приложения: язык вне этого списка Transloco
-считает не языком, а именем скоупа, и подписи по нему не найдёт.
+Без единой настройки кит рисует английский набор, вшитый умолчанием: пустая `aria`-подпись
+означала бы кнопку без имени для скринридера, а это хуже чужого языка. Свои подписи приложение
+отдаёт функцией-переводчиком:
+
+```typescript
+import { provideRtKitLabels, RtKitLabelKey, RtKitLabelParams } from '@rt-tools/ui-kit-v2';
+
+provideRtKitLabels({
+    translator: computed(() => (key: RtKitLabelKey, params?: RtKitLabelParams) => myDictionary(key, params)),
+    locale: myLocale, // Signal<string>; ею кит форматирует даты
+});
+```
+
+Способ доставки — дело приложения: Transloco, `$localize`, собственный словарь. Кит знает
+только ключи (`RtKitLabelKey` — перечень выводится из английского набора, поэтому опечатка не
+доживает до рантайма) и то, что на них отвечают готовой строкой: подстановки вида `{{name}}`
+переводчик делает сам. Подпись, которой он не дал, берётся английской — поштучно, не набором.
 
 ## Свой логотип
 

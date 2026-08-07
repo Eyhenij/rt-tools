@@ -1,26 +1,25 @@
 import { DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import {
-    ChangeDetectionStrategy,
-    Component,
     computed,
     effect,
     inject,
     input,
-    InputSignal,
     output,
-    OutputEmitterRef,
     signal,
-    Signal,
     untracked,
+    ChangeDetectionStrategy,
+    Component,
+    InputSignal,
+    OutputEmitterRef,
+    Signal,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { TranslocoPipe } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
+import { RT_KIT_LABELS, RtKitLabelMap } from '../../i18n';
 import { NotificationBus } from '../../platform';
 
 import { RtAsideSectionComponent } from '../aside-section/rt-aside-section.component';
@@ -84,7 +83,6 @@ interface ITransitionFormShape {
         RtToggleSwitchComponent,
         BlockDirective,
         ElemDirective,
-        TranslocoPipe,
     ],
     host: {
         class: BEM_BLOCK,
@@ -106,6 +104,8 @@ export class RtWorkspaceDetailsComponent {
     #lastAuditError: string | null = null;
 
     #lastPanelError: string | null = null;
+
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly editingAgent: WritableSignal<boolean> = signal<boolean>(false);
 

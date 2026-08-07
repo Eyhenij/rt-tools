@@ -14,10 +14,9 @@ import {
     WritableSignal,
 } from '@angular/core';
 
-import { translateSignal } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
+import { rtKitLabel } from '../../i18n';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { IRtIcon } from '../icon/rt-icon.model';
 import { IRtMenu } from './rt-menu.model';
@@ -95,7 +94,7 @@ const POSITION_ABOVE_START: ConnectedPosition = {
     },
 })
 export class RtMenuComponent {
-    readonly #t_uiActions: Signal<string> = translateSignal('rtKit.uiActions');
+    readonly #t_uiActions: Signal<string> = rtKitLabel('uiActions');
 
     protected readonly isOpen: WritableSignal<boolean> = signal<boolean>(false);
 

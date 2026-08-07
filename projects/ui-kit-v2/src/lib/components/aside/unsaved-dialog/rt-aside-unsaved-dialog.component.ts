@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject, ViewEncapsulation } from '@angular/core';
-
-import { TranslocoPipe } from '@jsverse/transloco';
+import { inject, ChangeDetectionStrategy, Component, Signal, ViewEncapsulation } from '@angular/core';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
+import { RT_KIT_LABELS, RtKitLabelMap } from '../../../i18n';
 import { RtButtonDirective } from '../../button/rt-button.directive';
 import { RtDialogRef } from '../../dialog/rt-dialog-ref';
 import { RtDialogComponent } from '../../dialog/rt-dialog.component';
@@ -31,7 +30,6 @@ const BEM_BLOCK: string = 'rt-aside-unsaved-dialog';
         RtDialogComponent,
         BlockDirective,
         ElemDirective,
-        TranslocoPipe,
     ],
     host: {
         class: BEM_BLOCK,
@@ -39,6 +37,8 @@ const BEM_BLOCK: string = 'rt-aside-unsaved-dialog';
 })
 export class RtAsideUnsavedDialogComponent {
     readonly #dialogRef: RtDialogRef<ERtAsideUnsavedOutcome> = inject(RtDialogRef);
+
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected onDiscard(): void {
         this.#dialogRef.close(ERtAsideUnsavedOutcome.Discard);

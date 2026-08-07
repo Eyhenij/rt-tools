@@ -14,10 +14,9 @@ import {
     ViewEncapsulation,
 } from '@angular/core';
 
-import { translateSignal } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
+import { rtKitLabel } from '../../i18n';
 import { RtButtonDirective } from '../button/rt-button.directive';
 import { RtPopoverDirective } from '../popover/rt-popover.directive';
 import { IRtSplitButton } from './rt-split-button.model';
@@ -50,7 +49,7 @@ const BEM_BLOCK: string = 'rt-split-button';
     },
 })
 export class RtSplitButtonComponent {
-    readonly #t_uiMoreActions: Signal<string> = translateSignal('rtKit.uiMoreActions');
+    readonly #t_uiMoreActions: Signal<string> = rtKitLabel('uiMoreActions');
 
     protected readonly menu: Signal<RtPopoverDirective | undefined> = viewChild(RtPopoverDirective);
 

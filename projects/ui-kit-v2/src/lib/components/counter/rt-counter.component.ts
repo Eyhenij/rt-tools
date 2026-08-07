@@ -16,10 +16,9 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
-import { translateSignal } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
+import { rtKitLabel } from '../../i18n';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RT_COUNTER_DECREASE_KEY, RT_COUNTER_INCREASE_KEY } from './rt-counter.model';
 
@@ -82,8 +81,8 @@ export class RtCounterComponent implements ControlValueAccessor {
     #onChange: (value: number) => void = (): void => undefined;
     #onTouched: () => void = (): void => undefined;
 
-    readonly #decreaseFallback: Signal<string> = translateSignal(RT_COUNTER_DECREASE_KEY);
-    readonly #increaseFallback: Signal<string> = translateSignal(RT_COUNTER_INCREASE_KEY);
+    readonly #decreaseFallback: Signal<string> = rtKitLabel(RT_COUNTER_DECREASE_KEY);
+    readonly #increaseFallback: Signal<string> = rtKitLabel(RT_COUNTER_INCREASE_KEY);
     /** Отключение, назначенное формой через CVA (`setDisabledState`). */
     readonly #disabledByForm: WritableSignal<boolean> = signal<boolean>(false);
 

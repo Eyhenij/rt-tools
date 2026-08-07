@@ -10,10 +10,9 @@ import {
     ViewEncapsulation,
 } from '@angular/core';
 
-import { translateSignal } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
+import { rtKitLabel } from '../../i18n';
 import { RtButtonDirective } from '../button/rt-button.directive';
 import { IRtConfirmPopover } from './rt-confirm-popover.model';
 
@@ -41,8 +40,8 @@ const BEM_BLOCK: string = 'rt-confirm-popover';
     },
 })
 export class RtConfirmPopoverComponent {
-    readonly #t_uiConfirm: Signal<string> = translateSignal('rtKit.uiConfirm');
-    readonly #t_uiCancel: Signal<string> = translateSignal('rtKit.uiCancel');
+    readonly #t_uiConfirm: Signal<string> = rtKitLabel('uiConfirm');
+    readonly #t_uiCancel: Signal<string> = rtKitLabel('uiCancel');
 
     protected readonly confirmText: Signal<string> = computed((): string => this.confirmLabel() || this.#t_uiConfirm());
     protected readonly cancelText: Signal<string> = computed((): string => this.cancelLabel() || this.#t_uiCancel());

@@ -1,32 +1,31 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
-    ChangeDetectionStrategy,
-    Component,
     computed,
     contentChild,
-    DestroyRef,
     effect,
-    ElementRef,
     inject,
     input,
-    InputSignal,
-    InputSignalWithTransform,
     numberAttribute,
     output,
+    signal,
+    untracked,
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    ElementRef,
+    InputSignal,
+    InputSignalWithTransform,
     OutputEmitterRef,
     Renderer2,
-    signal,
     Signal,
-    untracked,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
 
-import { TranslocoPipe } from '@jsverse/transloco';
-
 import { StorageService } from '@rt-tools/core';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { RT_KIT_LABELS, RtKitLabelMap } from '../../i18n';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtWorkspaceAsideDirective, RtWorkspaceCenterDirective, RtWorkspaceListDirective } from './rt-workspace.directives';
 import { IRtWorkspace } from './rt-workspace.model';
@@ -56,7 +55,6 @@ interface IDragState {
         BlockDirective,
         ElemDirective,
         ModDirective,
-        TranslocoPipe,
     ],
     host: {
         class: BEM_BLOCK,
@@ -91,6 +89,8 @@ export class RtWorkspaceComponent implements IRtWorkspace.PanelApi {
     #dragState: IDragState | null = null;
 
     #detachDragListeners: (() => void) | null = null;
+
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly listSlot: Signal<RtWorkspaceListDirective | undefined> = contentChild(RtWorkspaceListDirective);
 

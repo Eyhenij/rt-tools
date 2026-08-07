@@ -18,10 +18,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { mergeMap, Observable, Subject } from 'rxjs';
 
-import { translateSignal } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
+import { rtKitLabel } from '../../i18n';
 import { RtDialogService } from '../dialog/rt-dialog.service';
 import { RtIconComponent } from '../icon/rt-icon.component';
 import { IRtIcon } from '../icon/rt-icon.model';
@@ -88,8 +87,8 @@ export class RtMenuItemComponent {
 
     readonly #confirmRequestSource: Subject<IRtMenu.ConfirmData> = new Subject<IRtMenu.ConfirmData>();
 
-    readonly #t_uiConfirm: Signal<string> = translateSignal('rtKit.uiConfirm');
-    readonly #t_uiCancel: Signal<string> = translateSignal('rtKit.uiCancel');
+    readonly #t_uiConfirm: Signal<string> = rtKitLabel('uiConfirm');
+    readonly #t_uiCancel: Signal<string> = rtKitLabel('uiCancel');
 
     /** Иконка слева от лейбла. `null` — без иконки. */
     public readonly icon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);

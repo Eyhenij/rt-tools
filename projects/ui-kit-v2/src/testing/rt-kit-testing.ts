@@ -4,41 +4,17 @@ import { DebugElement, EnvironmentProviders, Provider, Type } from '@angular/cor
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
-import { Observable, of } from 'rxjs';
-
-import { Translation, TranslocoLoader, provideTransloco } from '@jsverse/transloco';
-
 import { provideRtIDBStorage, provideRtStorage, provideRtUtils } from '@rt-tools/core';
-
-import { RT_KIT_TRANSLATIONS } from '../lib/i18n/rt-kit-translations';
-import { RT_KIT_TRANSLATION_NAMESPACE } from '../lib/i18n/rt-kit-translations.providers';
 
 /**
  * Обвязка для спек кита. Здесь собрано то, без чего не поднимается ни один
- * компонент: словари подписей, `HttpClient` (его тянет реестр иконок), хранилище
- * и `PlatformService`.
+ * компонент: `HttpClient` (его тянет реестр иконок), хранилище и `PlatformService`.
  *
- * Отдельным файлом, а не копипастой в каждой спеке, потому что настройка
- * Transloco неочевидна: подписи кита лежат под неймспейсом `rtKit`, и если
- * отдать их не загрузчиком, а `setTranslation` после конфигурации, загрузка
- * языка перетирает их пустым словарём приложения — подпись в разметке молча
- * становится ключом, и проверка текста подтверждает ключ вместо подписи.
+ * Подписей в этом списке нет намеренно: кит берёт их у токена, у которого есть
+ * английское умолчание, и спека получает готовый текст без единой настройки.
+ * Спеке, проверяющей подписи приложения, а не умолчания, надо добавить свой
+ * `provideRtKitLabels(...)` в `providers` — общая обвязка его не навязывает.
  */
-
-/**
- * Загрузчик, отдающий вшитые словари кита под их собственным неймспейсом.
- *
- * Отдаёт именно `of(...)`, а не готовый объект: Transloco оборачивает результат
- * загрузчика в `from()`, и обычный объект там падает — отказ гасится внутренним
- * `catchError`, язык остаётся пустым, а подпись в разметке молча становится
- * пустой строкой. Синхронный Observable проходит `from()` без задержки, поэтому
- * подпись доезжает к первой же отрисовке и спеке не нужно ничего дожидаться.
- */
-class RtKitTestTranslationLoader implements TranslocoLoader {
-    public getTranslation(lang: string): Observable<Translation> {
-        return of({ [RT_KIT_TRANSLATION_NAMESPACE]: RT_KIT_TRANSLATIONS[lang] ?? {} });
-    }
-}
 
 /** Дополнения к TestBed поверх общей обвязки. */
 export interface IRtFixtureOptions {
@@ -64,15 +40,6 @@ export function provideRtKitTesting(): (Provider | EnvironmentProviders)[] {
         // Реестр настроек таблицы держит выбор колонок в IndexedDB и инжектит
         // сервис в поле — без провайдера не поднимается сама таблица.
         provideRtIDBStorage(),
-        provideTransloco({
-            config: {
-                availableLangs: ['en', 'ru'],
-                defaultLang: 'en',
-                reRenderOnLangChange: false,
-                missingHandler: { logMissingKey: false },
-            },
-            loader: RtKitTestTranslationLoader,
-        }),
     ];
 }
 

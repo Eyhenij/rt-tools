@@ -17,10 +17,9 @@ import {
     WritableSignal,
 } from '@angular/core';
 
-import { translateSignal } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
+import { RtKitLabelKey, rtKitLabel } from '../../../i18n';
 import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
 import { IRtIconButton } from '../../icon-button/rt-icon-button.model';
 import { IRtIcon } from '../../icon/rt-icon.model';
@@ -36,8 +35,8 @@ type ICopyValue = string | number | null;
  * Здесь ключи, а не готовый текст: константа вычисляется при загрузке чанка,
  * когда язык страницы ещё не выбран, — переводит сам компонент.
  */
-const COPY_KEY: string = 'rtKit.uiCopy';
-const COPIED_KEY: string = 'rtKit.uiCopied';
+const COPY_KEY: RtKitLabelKey = 'uiCopy';
+const COPIED_KEY: RtKitLabelKey = 'uiCopied';
 
 /** Сколько держать состояние «скопировано» перед сбросом иконки/подписи. */
 const RESET_DELAY_MS: number = 2000;
@@ -86,8 +85,8 @@ export class RtCopyCellComponent {
 
     #resetTimer: ReturnType<typeof setTimeout> | null = null;
 
-    readonly #copyLabel: Signal<string> = translateSignal(COPY_KEY);
-    readonly #copiedLabel: Signal<string> = translateSignal(COPIED_KEY);
+    readonly #copyLabel: Signal<string> = rtKitLabel(COPY_KEY);
+    readonly #copiedLabel: Signal<string> = rtKitLabel(COPIED_KEY);
 
     protected readonly copied: WritableSignal<boolean> = signal(false);
 

@@ -10,12 +10,7 @@
             @if (item.locked === true) {
                 <span rtElem="handle" rtMod="placeholder" aria-hidden="true"></span>
             } @else {
-                <button
-                    rtElem="handle"
-                    qa-dataid="table-settings-drag"
-                    type="button"
-                    cdkDragHandle
-                    [attr.aria-label]="'rtKit.uiDragColumn' | transloco">
+                <button rtElem="handle" qa-dataid="table-settings-drag" type="button" cdkDragHandle [attr.aria-label]="t().uiDragColumn">
                     <rt-icon name="bars" size="sm" color="muted" />
                 </button>
             }
@@ -26,14 +21,8 @@
                 rtElem="toggle"
                 qa-dataid="table-settings-toggle"
                 [icon]="item.hidden ? 'eye-slash' : 'eye'"
-                [ariaLabel]="item.hidden ? ('rtKit.uiShowColumn' | transloco) : ('rtKit.uiHideColumn' | transloco)"
-                [tooltip]="
-                    item.locked === true
-                        ? ('rtKit.uiColumnLocked' | transloco)
-                        : item.hidden
-                          ? ('rtKit.uiShow' | transloco)
-                          : ('rtKit.uiHide' | transloco)
-                "
+                [ariaLabel]="item.hidden ? t().uiShowColumn : t().uiHideColumn"
+                [tooltip]="item.locked === true ? t().uiColumnLocked : item.hidden ? t().uiShow : t().uiHide"
                 [disabled]="item.locked === true"
                 (clicked)="onToggleHidden(item.key)" />
         </li>

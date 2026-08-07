@@ -7,15 +7,15 @@
 
     @if (hasTabs()) {
         <rt-tabs rtElem="tabs" qa-dataid="workspace-details-tabs">
-            <ng-template rtTab="details" [label]="'rtKit.uiDetails' | transloco">
+            <ng-template rtTab="details" [label]="t().uiDetails">
                 <ng-container [ngTemplateOutlet]="detailsTpl" />
             </ng-template>
 
-            <ng-template rtTab="transition" [label]="'rtKit.uiStageTransition' | transloco" [hidden]="transition() === null">
+            <ng-template rtTab="transition" [label]="t().uiStageTransition" [hidden]="transition() === null">
                 @if (transition(); as stageTransition) {
                     @if (stageTransition.currentStageLabel; as stageLabel) {
                         <rt-detail-list>
-                            <rt-detail-row qa-dataid="workspace-details-current-stage" [label]="'rtKit.uiCurrentStage' | transloco">
+                            <rt-detail-row qa-dataid="workspace-details-current-stage" [label]="t().uiCurrentStage">
                                 {{ stageLabel }}
                             </rt-detail-row>
                         </rt-detail-list>
@@ -30,20 +30,17 @@
                             [formGroup]="transitionForm"
                             (ngSubmit)="onTransitionSubmit()">
                             <rt-field
-                                [label]="'rtKit.uiTargetStage' | transloco"
+                                [label]="t().uiTargetStage"
                                 [loading]="stageTransition.loading"
-                                [errors]="{ required: ('rtKit.uiTargetStageRequired' | transloco) }">
+                                [errors]="{ required: t().uiTargetStageRequired }">
                                 <rt-select
                                     formControlName="to_key"
                                     qa-dataid="workspace-details-transition-stage"
-                                    [placeholder]="'rtKit.uiPickTransition' | transloco"
+                                    [placeholder]="t().uiPickTransition"
                                     [options]="stageTransition.options" />
                             </rt-field>
 
-                            <rt-field
-                                [label]="'rtKit.uiCommentOptional' | transloco"
-                                [hint]="'rtKit.uiStageNoteHint' | transloco"
-                                [loading]="stageTransition.loading">
+                            <rt-field [label]="t().uiCommentOptional" [hint]="t().uiStageNoteHint" [loading]="stageTransition.loading">
                                 <rt-textarea formControlName="note" qa-dataid="workspace-details-transition-note" rows="3" />
                             </rt-field>
 
@@ -52,8 +49,8 @@
                                 rtElem="transition-submit"
                                 qa-dataid="workspace-details-transition-submit"
                                 type="submit"
-                                [label]="'rtKit.uiMoveStage' | transloco"
-                                [attr.aria-label]="'rtKit.uiMoveStageAria' | transloco"
+                                [label]="t().uiMoveStage"
+                                [attr.aria-label]="t().uiMoveStageAria"
                                 [loading]="stageTransition.submitting"
                                 [disabled]="stageTransition.loading || busy()"></button>
                         </form>
@@ -61,7 +58,7 @@
                 }
             </ng-template>
 
-            <ng-template rtTab="audit" [label]="'rtKit.uiHistory' | transloco" [hidden]="audit() === null">
+            <ng-template rtTab="audit" [label]="t().uiHistory" [hidden]="audit() === null">
                 @if (audit(); as auditFeed) {
                     <div rtElem="audit" qa-dataid="workspace-details-audit">
                         @if (auditFeed.loading) {
@@ -70,7 +67,7 @@
                             <rt-empty-state
                                 qa-dataid="workspace-details-audit-empty"
                                 icon="history"
-                                [description]="'rtKit.uiAuditEmptyHint' | transloco"
+                                [description]="t().uiAuditEmptyHint"
                                 [title]="auditFeed.emptyText" />
                         } @else {
                             <rt-timeline qa-dataid="workspace-details-audit-timeline" [steps]="auditFeed.steps" />
@@ -83,8 +80,8 @@
                                 qa-dataid="workspace-details-audit-more"
                                 type="button"
                                 appearance="text"
-                                [label]="'rtKit.uiLoadMore' | transloco"
-                                [attr.aria-label]="'rtKit.uiLoadMore' | transloco"
+                                [label]="t().uiLoadMore"
+                                [attr.aria-label]="t().uiLoadMore"
                                 [loading]="auditFeed.loadingMore"
                                 [disabled]="auditFeed.loadingMore"
                                 (click)="onAuditLoadMore()"></button>
@@ -112,7 +109,7 @@
                                         qa-dataid="workspace-details-agent-edit"
                                         icon="pencil"
                                         size="sm"
-                                        [ariaLabel]="'rtKit.uiChangeAgent' | transloco"
+                                        [ariaLabel]="t().uiChangeAgent"
                                         [tooltip]="edit.canEdit ? edit.editTooltip : edit.cannotEditTooltip"
                                         [disabled]="!edit.canEdit || busy()"
                                         (clicked)="startEditAgent()" />
@@ -121,7 +118,7 @@
                                 <div rtElem="agent-edit">
                                     <rt-select
                                         qa-dataid="workspace-details-agent-select"
-                                        [placeholder]="'rtKit.uiPickAgent' | transloco"
+                                        [placeholder]="t().uiPickAgent"
                                         [ngModel]="selectedAgentId()"
                                         [options]="edit.options"
                                         [clearable]="false"
@@ -131,14 +128,10 @@
                                         icon="check"
                                         size="sm"
                                         rtConfirmTone="primary"
-                                        [ariaLabel]="'rtKit.uiSaveNewAgent' | transloco"
-                                        [rtConfirmTitle]="'rtKit.uiReplaceAgentTitle' | transloco"
-                                        [rtConfirmLabel]="'rtKit.uiReplace' | transloco"
-                                        [tooltip]="
-                                            canSaveReassign()
-                                                ? ('rtKit.uiSaveNewAgent' | transloco)
-                                                : ('rtKit.uiPickAnotherAgent' | transloco)
-                                        "
+                                        [ariaLabel]="t().uiSaveNewAgent"
+                                        [rtConfirmTitle]="t().uiReplaceAgentTitle"
+                                        [rtConfirmLabel]="t().uiReplace"
+                                        [tooltip]="canSaveReassign() ? t().uiSaveNewAgent : t().uiPickAnotherAgent"
                                         [loading]="edit.loading"
                                         [disabled]="!canSaveReassign() || busy()"
                                         [rtConfirm]="edit.confirmText"
@@ -148,8 +141,8 @@
                                         qa-dataid="workspace-details-agent-cancel"
                                         icon="ico-close"
                                         size="sm"
-                                        [ariaLabel]="'rtKit.uiRevert' | transloco"
-                                        [tooltip]="'rtKit.uiRevert' | transloco"
+                                        [ariaLabel]="t().uiRevert"
+                                        [tooltip]="t().uiRevert"
                                         [disabled]="edit.loading"
                                         (clicked)="cancelEditAgent()" />
                                 </div>

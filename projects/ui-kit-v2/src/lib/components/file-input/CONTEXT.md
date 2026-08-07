@@ -10,12 +10,12 @@
 
 Свои входы поверх общих из [`RtFormControlBase`](../form-control/CONTEXT.md):
 
-| вход          | тип              | умолчание                   |
-| ------------- | ---------------- | --------------------------- |
-| `multiple`    | `boolean`        | `false`                     |
-| `accept`      | `string \| null` | `null`                      |
-| `directory`   | `boolean`        | `false`                     |
-| `buttonLabel` | `string`         | `''` → `rtKit.uiChooseFile` |
+| вход          | тип              | умолчание             |
+| ------------- | ---------------- | --------------------- |
+| `multiple`    | `boolean`        | `false`               |
+| `accept`      | `string \| null` | `null`                |
+| `directory`   | `boolean`        | `false`               |
+| `buttonLabel` | `string`         | `''` → `uiChooseFile` |
 
 Значение — `File[]`.
 

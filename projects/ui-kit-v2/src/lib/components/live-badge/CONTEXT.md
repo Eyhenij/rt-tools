@@ -4,11 +4,11 @@
 <rt-live-badge label="Смотрят сейчас" [count]="visitors()" [active]="streamAlive()" />
 ```
 
-| вход     | тип              | умолчание                                |
-| -------- | ---------------- | ---------------------------------------- |
-| `label`  | `string`         | `''` → переведённое `rtKit.uiLiveOnSite` |
-| `count`  | `number \| null` | `null` → прочерк `—`                     |
-| `active` | `boolean`        | `false`                                  |
+| вход     | тип              | умолчание                          |
+| -------- | ---------------- | ---------------------------------- |
+| `label`  | `string`         | `''` → переведённое `uiLiveOnSite` |
+| `count`  | `number \| null` | `null` → прочерк `—`               |
+| `active` | `boolean`        | `false`                            |
 
 Выходов нет.
 

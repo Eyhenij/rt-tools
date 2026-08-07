@@ -1,13 +1,14 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import {
-    AfterContentInit,
     booleanAttribute,
-    ChangeDetectionStrategy,
-    Component,
     computed,
     contentChild,
     effect,
+    inject,
     input,
+    AfterContentInit,
+    ChangeDetectionStrategy,
+    Component,
     InputSignal,
     InputSignalWithTransform,
     Signal,
@@ -15,10 +16,9 @@ import {
 } from '@angular/core';
 import { ValidationErrors } from '@angular/forms';
 
-import { translateSignal, TranslocoPipe } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { RT_KIT_LABELS, RtKitLabelKey, RtKitLabelMap, rtKitLabel } from '../../i18n';
 import { RtFormControlBase } from '../form-control/rt-form-control.base';
 import { RtIconComponent } from '../icon';
 import { RtPopoverDirective } from '../popover/rt-popover.directive';
@@ -64,13 +64,14 @@ function nextAutoId(): string {
         BlockDirective,
         ElemDirective,
         ModDirective,
-        TranslocoPipe,
     ],
     host: { class: BEM_BLOCK },
 })
 export class RtFieldComponent implements AfterContentInit {
     // contentChild нельзя объявлять на ES-private (#) поле — Angular это запрещает,
     // поэтому проекция контрола живёт в protected-поле.
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+
     protected readonly projectedControl: Signal<RtFormControlBase<unknown> | undefined> = contentChild(RtFormControlBase);
 
     // Проецируемый hint (с разметкой) — если присутствует, рендерится вместо
@@ -99,8 +100,8 @@ export class RtFieldComponent implements AfterContentInit {
      * смене валидатора, и при смене языка — пользователь переключает его
      * на лету, и текст ошибки обязан переключиться вместе с формой.
      */
-    readonly #defaultErrorText: Signal<string> = translateSignal(
-        computed((): string => RT_FIELD_DEFAULT_ERROR_KEYS[this.#failedValidator()] ?? '')
+    readonly #defaultErrorText: Signal<string> = rtKitLabel(
+        computed((): RtKitLabelKey | '' => RT_FIELD_DEFAULT_ERROR_KEYS[this.#failedValidator()] ?? '')
     );
 
     /** Сообщение об ошибке: текст, переданный формой, важнее умолчания */

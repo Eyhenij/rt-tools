@@ -1,19 +1,20 @@
 import {
     booleanAttribute,
+    inject,
+    input,
+    output,
     ChangeDetectionStrategy,
     Component,
-    input,
     InputSignal,
     InputSignalWithTransform,
-    output,
     OutputEmitterRef,
+    Signal,
     ViewEncapsulation,
 } from '@angular/core';
 
-import { TranslocoPipe } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { RT_KIT_LABELS, RtKitLabelMap } from '../../i18n';
 import { RtIconButtonComponent } from '../icon-button';
 import { RtLogoComponent } from '../logo';
 
@@ -51,13 +52,14 @@ const BEM_BLOCK: string = 'rt-header';
         BlockDirective,
         ElemDirective,
         ModDirective,
-        TranslocoPipe,
     ],
     host: {
         class: BEM_BLOCK,
     },
 })
 export class RtHeaderComponent {
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+
     public readonly canGoBack: InputSignal<boolean> = input<boolean>(false);
 
     /** Показывать action-иконку «Пригласить пользователя» слева от колокола. */
