@@ -16,7 +16,7 @@ export default {
 
 type Story = StoryObj<TestRtSpinnerComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         diameter: 32,
         color: 'primary',
