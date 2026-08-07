@@ -17,7 +17,7 @@ export default {
 
 type Story = StoryObj<TestRtAutocompleteComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         placeholder: 'Начните вводить город',
         minLength: 1,
@@ -25,9 +25,10 @@ export const Default: Story = {
     },
 };
 
+/** Подсказки запрашиваются уже при фокусе — для списков «последнее выбранное». */
 export const OpenOnFocus: Story = {
     args: {
-        ...Default.args,
+        ...Playground.args,
         openOnFocus: true,
     },
 };
