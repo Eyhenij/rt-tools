@@ -18,7 +18,7 @@ export default {
 
 type Story = StoryObj<TestRtLogoComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         variant: 'lockup',
         height: 0,

@@ -40,10 +40,10 @@ export default {
 
 type Story = StoryObj<TestRtIconButtonComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         icon: 'alarm-clock',
-        ariaLabel: '',
+        ariaLabel: 'Править',
         variant: 'ghost',
         iconColor: 'current',
         size: 'md',

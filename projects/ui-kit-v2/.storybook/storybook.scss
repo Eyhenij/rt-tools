@@ -10,12 +10,30 @@ body {
     font-family: var(--rt-font-family-sans);
 }
 
-/* Тёмная половина `app-story-themes`. Свойства тёмной темы кит вешает на `:root`, поэтому
-   отдельным поддеревом их не включить — но объявлены они миксином, и тот же набор
-   накладывается на любой селектор. Правило живёт здесь, а не в стилях обвязки: стиль
-   компонента подключается своим файлом на каждый компонент, и набор дублировался бы. */
+/* Половины `app-story-themes`. Обе прибивают свой набор явно: тумблер в тулбаре пишет тему
+   в `<html data-theme>`, и половина, положившаяся на умолчание, показала бы не свою тему, а
+   выбранную в тулбаре — в тёмной теме пара становилась двумя тёмными колонками и переставала
+   что-либо сравнивать. Оба набора объявлены миксинами и накладываются на любой селектор.
+   Правило живёт здесь, а не в стилях обвязки: стиль компонента подключается своим файлом на
+   каждый компонент, и набор дублировался бы. */
+.app-story-themes__pane {
+    @include index.rt-theme-light-tokens;
+}
+
 .app-story-themes__pane--dark {
     @include index.rt-theme-dark-tokens;
+}
+
+/* Начертания для `rt-logo`. Кит своего логотипа не везёт — их даёт приложение четырьмя
+   свойствами оформления, и до тех пор компонент занимает место, но не рисует ничего.
+   Витрине приходится подставить свои: история пустого места не показывает ни размеров, ни
+   пары «светлое ↔ тёмное начертание», ради которой у компонента и заведены две пары свойств.
+   Заглушки нарочно безымянные — своего названия у кита нет, и подставлять чужое незачем. */
+:root {
+    --rt-logo-wordmark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 270 50'%3E%3Ctext x='0' y='38' font-family='sans-serif' font-size='40' font-weight='700' fill='%230f172a'%3EWORDMARK%3C/text%3E%3C/svg%3E");
+    --rt-logo-wordmark-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 270 50'%3E%3Ctext x='0' y='38' font-family='sans-serif' font-size='40' font-weight='700' fill='%23f8fafc'%3EWORDMARK%3C/text%3E%3C/svg%3E");
+    --rt-logo-tagline: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 270 20'%3E%3Ctext x='0' y='15' font-family='sans-serif' font-size='14' letter-spacing='2' fill='%2364748b'%3Etagline%3C/text%3E%3C/svg%3E");
+    --rt-logo-tagline-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 270 20'%3E%3Ctext x='0' y='15' font-family='sans-serif' font-size='14' letter-spacing='2' fill='%2394a3b8'%3Etagline%3C/text%3E%3C/svg%3E");
 }
 
 /* Панель документации Storybook рисует свой белый фон поверх страницы. В тёмной

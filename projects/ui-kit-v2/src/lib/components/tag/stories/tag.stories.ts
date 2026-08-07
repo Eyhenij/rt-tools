@@ -28,7 +28,7 @@ export default {
 
 type Story = StoryObj<TestRtTagComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         value: 'Значение',
         severity: 'neutral',

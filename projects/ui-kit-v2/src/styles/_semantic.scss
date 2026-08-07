@@ -1,6 +1,11 @@
-/* Semantic design tokens — light defaults. */
+/* Semantic design tokens — light defaults.
 
-:root {
+   Тело вынесено в @mixin по той же причине, что и у тёмной темы: набор нужен не
+   только на `:root`, но и на отдельном контейнере. Без этого светлую половину
+   пары «светлая ↔ тёмная» нельзя показать, пока приложение стоит в тёмной теме, —
+   контейнер унаследует тёмные значения, и обе половины покажут одно и то же. */
+
+@mixin rt-theme-light-tokens {
     /* Background */
     --rt-color-bg-page: var(--rt-neutral-50);
     --rt-color-bg-surface: var(--rt-neutral-0);
@@ -285,6 +290,10 @@
     --rt-field-value-font-size: var(--rt-text-sm);
     --rt-field-value-color: var(--rt-color-text-primary);
     --rt-field-value-empty-color: var(--rt-color-text-muted);
+}
+
+:root {
+    @include rt-theme-light-tokens;
 }
 
 /* На тач-устройствах инпут не меньше 16px: WebKit (весь iOS, включая Chrome)

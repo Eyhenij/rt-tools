@@ -14,6 +14,19 @@
         font-weight: var(--rt-font-weight-medium);
         gap: var(--rt-space-sm);
         line-height: var(--rt-leading-snug);
+
+        &:hover {
+            text-decoration: underline;
+        }
+
+        /* Своей рамки у кнопки нет — она нарисована как ссылка, и умолчательный контур
+           браузер снимает вместе с рамкой. Без этого правила место фокуса с клавиатуры
+           не видно вовсе: кнопка выглядит одинаково выбранной и невыбранной. */
+        &:focus-visible {
+            border-radius: var(--rt-radius-sm);
+            box-shadow: var(--rt-shadow-focus-ring);
+            outline: none;
+        }
     }
 
     &__icon {

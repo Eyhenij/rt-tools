@@ -15,15 +15,17 @@ export default {
             options: ['current', 'muted', 'info', 'success', 'warning', 'danger', 'inverse'],
             control: { type: 'select' },
         },
+        rotate: { control: { type: 'number' } },
     },
 } as Meta<TestRtIconComponent>;
 
 type Story = StoryObj<TestRtIconComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         name: 'alarm-clock',
         size: 'md',
         color: 'current',
+        rotate: null,
     },
 };
