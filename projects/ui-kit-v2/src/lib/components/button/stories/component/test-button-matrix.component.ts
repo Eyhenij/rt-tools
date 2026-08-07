@@ -81,7 +81,7 @@ import { IButton } from '../../rt-button.model';
 export class TestRtButtonMatrixComponent {
     public readonly themes: readonly IButton.Theme[] = ['primary', 'secondary', 'success', 'warning', 'danger', 'info'];
     public readonly appearances: readonly IButton.Appearance[] = ['filled', 'outlined', 'text'];
-    public readonly sizes: readonly IButton.Size[] = ['sm', 'md', 'lg'];
+    public readonly sizes: readonly IButton.Size[] = ['sm', 'md', 'lg', 'xl', '2xl'];
     public readonly rounded: readonly boolean[] = [false, true];
 
     /** Иконка — не ось значений, а три различимых случая: без неё, слева, справа, без подписи. */
