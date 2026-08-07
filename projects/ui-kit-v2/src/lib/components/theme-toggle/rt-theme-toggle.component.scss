@@ -1,3 +1,7 @@
-:host {
+/* rt-theme-toggle — ViewEncapsulation.None: правило таргетирует BEM-класс блока.
+   `.rt-theme-toggle` — сам хост: своей разметки блока у компонента нет, внутри
+   только rt-toggle-switch либо rt-icon-button. */
+
+.rt-theme-toggle {
     display: inline-flex;
 }

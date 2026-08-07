@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component, computed, input, InputSignal, output, OutputEmitterRef, Signal } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    input,
+    InputSignal,
+    output,
+    OutputEmitterRef,
+    Signal,
+    ViewEncapsulation,
+} from '@angular/core';
 
 import { translateSignal } from '@jsverse/transloco';
 
@@ -19,6 +29,7 @@ const BEM_BLOCK: string = 'rt-night-grid';
     templateUrl: './rt-night-grid.component.html',
     styleUrl: './rt-night-grid.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
     imports: [
         // standalone components / directives
         BlockDirective,

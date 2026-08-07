@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, InputSignal, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, InputSignal, Signal, ViewEncapsulation } from '@angular/core';
 
 import { translateSignal } from '@jsverse/transloco';
 
@@ -23,6 +23,7 @@ const BEM_BLOCK: string = 'rt-bar-list';
     templateUrl: './rt-bar-list.component.html',
     styleUrl: './rt-bar-list.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
     imports: [
         // standalone components / directives
         RtIconComponent,

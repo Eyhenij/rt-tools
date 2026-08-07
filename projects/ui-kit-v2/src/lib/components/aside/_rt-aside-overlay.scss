@@ -1,0 +1,88 @@
+/* Панель и backdrop CDK Overlay, в котором живёт rt-aside.
+
+   Оверлей-контейнер CDK — sibling от <body>, поэтому эти правила глобальны по
+   природе: инкапсуляции здесь нет ни при какой настройке компонента.
+
+   Овладеть ими может не только сам rt-aside: rt-container держит ту же панель в
+   persistent-режиме и должен рисовать её, даже когда rt-aside в сборку не попал.
+   Поэтому правила вынесены сюда и подключаются обоими — один текст, один набор
+   значений, и разойтись им негде. */
+
+/* Backdrop / длительность анимации — переопределяемые CSS-properties. */
+:root {
+    --rt-aside-animation-duration: 200ms;
+    --rt-aside-backdrop-bg: rgb(0 0 0 / 45%);
+    --rt-aside-backdrop-blur: 5px;
+}
+
+/* Двойной селектор `.cdk-overlay-backdrop.rt-aside-backdrop` нужен для specificity:
+   CDK Overlay добавляет `.cdk-overlay-backdrop-showing { opacity: 1 }` сразу при attach;
+   при persistent overlay (rt-container auto-attach) backdrop должен оставаться скрытым
+   пока aside не открыт. Два класса (.cdk-overlay-backdrop + .rt-aside-backdrop) — выше
+   specificity чем одиночный (.cdk-overlay-backdrop-showing), поэтому наш opacity:0
+   побеждает. */
+.cdk-overlay-backdrop.rt-aside-backdrop {
+    /* stylelint-disable-next-line property-no-vendor-prefix -- Safari < 18 */
+    -webkit-backdrop-filter: blur(var(--rt-aside-backdrop-blur));
+    backdrop-filter: blur(var(--rt-aside-backdrop-blur));
+    background: var(--rt-aside-backdrop-bg);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--rt-aside-animation-duration) ease;
+
+    &.rt-aside-backdrop--visible {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+.rt-aside-overlay {
+    height: 100dvh;
+    transition: transform var(--rt-aside-animation-duration) ease;
+}
+
+/* Закрытая панель нажатий не ловит. На узком экране она шириной во весь вьюпорт,
+   и пока её сдвиг за край экрана не досчитан, она перекрывает страницу целиком:
+   выглядит это нормально, а нажатия уходят в пустоту. Селектор из двух классов —
+   чтобы правило не зависело от порядка, в котором браузер получил стили панели и
+   стили контейнера. */
+.rt-aside-overlay:not(.rt-aside-overlay--open) {
+    pointer-events: none;
+}
+
+/* Стартовое положение за краем экрана не анимируется: переход из него начинается,
+   как только вьюпорт задаёт панели ширину, и всю анимацию держит панель на месте. */
+.rt-aside-overlay.rt-aside-overlay--entering {
+    transition: none;
+}
+
+/* Slide-in / slide-out states — переключаются сервисом через Renderer2 на host.
+   --entering: initial off-screen position; --open: in place; --leaving: off-screen exit. */
+.rt-aside-overlay--position-right.rt-aside-overlay--entering,
+.rt-aside-overlay--position-right.rt-aside-overlay--leaving {
+    transform: translateX(100%);
+}
+
+.rt-aside-overlay--position-left.rt-aside-overlay--entering,
+.rt-aside-overlay--position-left.rt-aside-overlay--leaving {
+    transform: translateX(-100%);
+}
+
+.rt-aside-overlay--position-right.rt-aside-overlay--open,
+.rt-aside-overlay--position-left.rt-aside-overlay--open {
+    transform: translateX(0);
+}
+
+@media (width <= 768px) {
+    .rt-aside-overlay {
+        overflow: hidden;
+        width: 100dvw;
+        max-width: 100dvw;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rt-aside-overlay {
+        transition: none;
+    }
+}

@@ -7,6 +7,7 @@ import {
     InputSignalWithTransform,
     numberAttribute,
     Signal,
+    ViewEncapsulation,
 } from '@angular/core';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
@@ -53,6 +54,7 @@ const BEM_BLOCK: string = 'rt-logo';
     templateUrl: './rt-logo.component.html',
     styleUrls: ['./rt-logo.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
     imports: [
         // standalone components / directives
         BlockDirective,

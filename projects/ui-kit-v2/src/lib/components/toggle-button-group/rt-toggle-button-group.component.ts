@@ -10,6 +10,7 @@ import {
     output,
     OutputEmitterRef,
     Signal,
+    ViewEncapsulation,
 } from '@angular/core';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
@@ -55,6 +56,7 @@ const ICON_SIZE_BY_SIZE: Readonly<Record<IRtToggleButtonGroup.Size, IRtIcon.Size
     templateUrl: './rt-toggle-button-group.component.html',
     styleUrls: ['./rt-toggle-button-group.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
     imports: [
         // standalone components / directives
         RtIconComponent,

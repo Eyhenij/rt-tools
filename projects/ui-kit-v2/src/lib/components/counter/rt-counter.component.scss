@@ -1,15 +1,16 @@
-:host {
+/* rt-counter — ViewEncapsulation.None: правила таргетируют BEM-класс блока.
+   `.rt-counter` — сам хост (шаблон начинается с ng-container, класс ставит host). */
+
+.rt-counter {
     display: inline-flex;
     align-items: center;
     gap: var(--rt-counter-gap);
 
-    .rt-counter {
-        &__value {
-            min-width: var(--rt-counter-value-min-width);
-            color: var(--rt-counter-value-color);
-            font-size: var(--rt-counter-value-font-size);
-            font-variant-numeric: tabular-nums;
-            text-align: center;
-        }
+    &__value {
+        min-width: var(--rt-counter-value-min-width);
+        color: var(--rt-counter-value-color);
+        font-size: var(--rt-counter-value-font-size);
+        font-variant-numeric: tabular-nums;
+        text-align: center;
     }
 }

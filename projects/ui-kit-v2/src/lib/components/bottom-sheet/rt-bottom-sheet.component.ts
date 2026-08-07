@@ -8,6 +8,7 @@ import {
     output,
     OutputEmitterRef,
     signal,
+    ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
 
@@ -25,6 +26,7 @@ const BEM_BLOCK: string = 'rt-bottom-sheet';
     templateUrl: './rt-bottom-sheet.component.html',
     styleUrl: './rt-bottom-sheet.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
     imports: [
         // rt-tools
         BlockDirective,

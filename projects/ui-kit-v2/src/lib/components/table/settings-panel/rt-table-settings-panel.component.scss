@@ -1,5 +1,5 @@
 /* rt-table-settings-panel — ViewEncapsulation.None (common/ui): правила таргетируют
-   BEM-класс глобально, без :host-обёртки (как rt-icon / rt-dialog-footer). */
+   BEM-класс блока, как во всём ките. */
 .rt-table-settings-panel {
     &__list {
         display: flex;

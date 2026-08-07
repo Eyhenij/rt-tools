@@ -10,6 +10,7 @@ import {
     InputSignalWithTransform,
     Signal,
     signal,
+    ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -43,13 +44,14 @@ const BEM_BLOCK: string = 'rt-toggle-switch';
  * и наезжает на иконку активного состояния, так что видна всегда иконка того
  * состояния, куда переключится контрол.
  *
- * ViewEncapsulation — default (Emulated), стили обёрнуты в `:host { ... }`.
+ * ViewEncapsulation.None — стили таргетируют имя элемента и BEM-класс блока.
  */
 @Component({
     selector: 'rt-toggle-switch',
     templateUrl: './rt-toggle-switch.component.html',
     styleUrl: './rt-toggle-switch.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
     imports: [
         // standalone components / directives
         RtIconComponent,

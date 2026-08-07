@@ -3,7 +3,12 @@ export default {
     // (1700+ "Unknown rule" errors); stylelint-prettier plugin below covers prettier integration.
     // standard-scss brings postcss-scss syntax + scss rules.
     extends: ['stylelint-config-standard-scss', 'stylelint-config-idiomatic-order'],
-    plugins: ['stylelint-scss', 'stylelint-prettier', './tools/stylelint-rules/no-hardcoded-design-tokens.cjs'],
+    plugins: [
+        'stylelint-scss',
+        'stylelint-prettier',
+        './tools/stylelint-rules/no-hardcoded-design-tokens.cjs',
+        './tools/stylelint-rules/no-host-selector.cjs',
+    ],
     rules: {
         'at-rule-empty-line-before': [
             'always',
@@ -61,6 +66,15 @@ export default {
                 // Custom rule: no hardcoded colors / magic numbers in
                 // token-aware properties; allows var(--rt-*), --mat-*, --mdc-*, calc/min/max/clamp.
                 'rt-tools/no-hardcoded-design-tokens': true,
+            },
+        },
+        {
+            // У всех компонентов этого кита ViewEncapsulation.None, поэтому `:host`
+            // не совпадает ни с чем: правило, написанное через него, будет мёртвым,
+            // и молча. Хост адресуется классом блока либо именем элемента.
+            files: ['projects/ui-kit-v2/src/lib/**/*.scss'],
+            rules: {
+                'rt-tools/no-host-selector': true,
             },
         },
     ],

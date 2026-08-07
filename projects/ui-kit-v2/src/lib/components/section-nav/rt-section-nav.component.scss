@@ -1,3 +1,6 @@
+/* rt-section-nav — ViewEncapsulation.None: правила таргетируют BEM-класс блока.
+   `.rt-section-nav` — сам хост (шаблон начинается с ng-container, класс ставит host). */
+
 .rt-section-nav {
     display: flex;
     gap: var(--rt-space-md);
@@ -47,6 +50,9 @@
     }
 }
 
-:host-context([data-theme='dark']) .rt-section-nav__tile--active {
+/* Тёмная тема: активная плитка на тёмной поверхности берёт свой фон.
+   Раньше правило было записано через `:host-context`, который под None не
+   совпадает ни с чем, — тема задаётся атрибутом на предке, и им же адресуется. */
+[data-theme='dark'] .rt-section-nav__tile--active {
     background: var(--rt-blue-900);
 }
