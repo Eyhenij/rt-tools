@@ -26,7 +26,7 @@ export default {
 
 type Story = StoryObj<TestRtSkeletonComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         shape: 'rectangle',
         size: 'md',

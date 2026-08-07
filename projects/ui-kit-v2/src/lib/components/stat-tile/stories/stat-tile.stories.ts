@@ -17,13 +17,13 @@ export default {
 
 type Story = StoryObj<TestRtStatTileComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
-        label: 'Сохранить',
-        value: 'Значение',
-        secondary: null,
-        deltaPrimary: null,
-        deltaSecondary: null,
-        hint: 'Подсказка',
+        label: 'Визиты',
+        value: '1 240',
+        secondary: 'из них 300 новых',
+        deltaPrimary: { percent: 12.5, label: 'к прошлой неделе', baseline: '1 100' },
+        deltaSecondary: { percent: 8, label: 'к прошлому году' },
+        hint: 'Считается по уникальным',
     },
 };

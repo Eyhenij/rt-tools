@@ -20,5 +20,19 @@ import { IQuillDelta } from '../../../../util/quill-delta.model';
     ],
 })
 export class TestRtDeltaViewComponent {
-    public delta: IQuillDelta | null = null;
+    /**
+     * Правдоподобная модель, а не `null`: контрола у входа нет (модель руками не набирается),
+     * и пустое умолчание рисовало бы пустую историю — то есть непокрытие.
+     */
+    public delta: IQuillDelta | null = {
+        ops: [
+            { insert: 'Абзац с ' },
+            { insert: 'жирным', attributes: { bold: true } },
+            { insert: ' и ' },
+            { insert: 'курсивом', attributes: { italic: true } },
+            { insert: '.\n' },
+            { insert: 'Пункт списка' },
+            { insert: '\n', attributes: { list: 'bullet' } },
+        ],
+    };
 }

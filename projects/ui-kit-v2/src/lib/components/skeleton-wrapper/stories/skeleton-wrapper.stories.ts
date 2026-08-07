@@ -27,7 +27,7 @@ export default {
 
 type Story = StoryObj<TestRtSkeletonWrapperComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         width: '100%',
         height: '15px',

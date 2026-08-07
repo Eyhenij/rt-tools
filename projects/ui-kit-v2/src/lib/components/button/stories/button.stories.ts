@@ -32,7 +32,7 @@ export default {
 
 type Story = StoryObj<TestRtButtonComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         label: 'Сохранить',
         icon: null,

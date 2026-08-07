@@ -6,4 +6,5 @@
  */
 export * from './story-grid.component';
 export * from './story-row.component';
+export * from './story-states';
 export * from './story-themes.component';

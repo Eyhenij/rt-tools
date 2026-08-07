@@ -14,7 +14,7 @@ export default {
 
 type Story = StoryObj<TestRtEmptyStateComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         icon: null,
         title: 'Заголовок',
