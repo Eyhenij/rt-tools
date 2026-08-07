@@ -44,8 +44,12 @@ rt-checkbox .rt-checkbox {
             border-color var(--rt-duration-fast) ease;
     }
 
-    &--checked &__box,
-    &--indeterminate &__box {
+    /* Элемент адресуется классом, а не вторым `&`: родитель здесь составной
+       (`rt-checkbox .rt-checkbox`), и второй `&` развернулся бы в него целиком —
+       `… .rt-checkbox--checked rt-checkbox .rt-checkbox__box`, то есть в селектор,
+       требующий вложенного чекбокса. Заливка отмеченного из-за этого не применялась. */
+    &--checked .rt-checkbox__box,
+    &--indeterminate .rt-checkbox__box {
         border-color: var(--rt-color-action-primary);
         background: var(--rt-color-action-primary);
     }

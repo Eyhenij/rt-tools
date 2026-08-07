@@ -15,7 +15,7 @@ export default {
 
 type Story = StoryObj<TestRtCheckboxComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         inputId: null,
         ariaLabel: null,
