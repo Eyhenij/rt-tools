@@ -11,6 +11,7 @@ import {
     output,
     OutputEmitterRef,
     Signal,
+    ViewEncapsulation,
 } from '@angular/core';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
@@ -43,6 +44,7 @@ const BEM_BLOCK: string = 'rt-icon-button';
     templateUrl: './rt-icon-button.component.html',
     styleUrls: ['./rt-icon-button.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
     imports: [
         // standalone components / directives
         RtIconComponent,

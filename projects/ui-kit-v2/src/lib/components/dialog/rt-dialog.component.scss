@@ -2,7 +2,11 @@
    ViewEncapsulation.None — селекторы префиксованы `.rt-dialog`.
    Видимость / backdrop / focus-trap обеспечивает CDK Overlay через RtDialogService. */
 
-:host {
+/* Хост адресуется по имени элемента, а не по классу блока: класс `.rt-dialog`
+   висит и на `<rt-dialog>`, и на рамке внутри него, поэтому правила рамки
+   вложены в хост — так они достаются только рамке. Сам хост боксом не
+   становится: рамка должна быть прямым flex-ребёнком overlay-панели. */
+rt-dialog {
     display: contents;
 }
 
@@ -18,7 +22,7 @@
     --rt-dialog-backdrop-blur: 5px;
 }
 
-.rt-dialog {
+rt-dialog .rt-dialog {
     display: flex;
     overflow: hidden;
     width: var(--rt-dialog-width, var(--rt-dialog-width-md));

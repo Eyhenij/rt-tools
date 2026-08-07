@@ -8,6 +8,7 @@ import {
     InputSignalWithTransform,
     output,
     OutputEmitterRef,
+    ViewEncapsulation,
 } from '@angular/core';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
@@ -36,6 +37,7 @@ const BEM_BLOCK: string = 'rt-card';
     templateUrl: './rt-card.component.html',
     styleUrl: './rt-card.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
     imports: [
         // standalone components / directives
         BlockDirective,

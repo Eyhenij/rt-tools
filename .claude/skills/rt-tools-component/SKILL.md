@@ -49,6 +49,9 @@ story wrapper. Do not add new ones.
 - `styleUrl` singular, never `styleUrls`.
 - `OnPush` on every component. `@angular-eslint/prefer-on-push-component-change-detection`
   is only a `warn` because 3 legacy components predate it — new code has no excuse.
+- Во втором ките (`projects/ui-kit-v2/`, префикс `rt-`) у каждого компонента ещё и
+  `encapsulation: ViewEncapsulation.None` — кит целиком на одной инкапсуляции, и
+  стили там пишутся по классу блока, а `:host` запрещён (см. `rt-tools-styling`).
 - `imports` are grouped with the `// angular` / `// rt-tools` / `// components` /
   `// directives` / `// material` comments.
 - Cross-package imports go through `@rt-tools/core|store|utils`, never relative paths.

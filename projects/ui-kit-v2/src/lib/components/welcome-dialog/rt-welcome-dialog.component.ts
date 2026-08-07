@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal, ViewEncapsulation } from '@angular/core';
 
 import { translateSignal, TranslocoPipe } from '@jsverse/transloco';
 
@@ -35,6 +35,7 @@ export namespace IRtWelcomeDialog {
     templateUrl: './rt-welcome-dialog.component.html',
     styleUrl: './rt-welcome-dialog.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
     imports: [
         // standalone components / directives
         RtButtonDirective,

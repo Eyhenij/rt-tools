@@ -1,3 +1,8 @@
+/* Панель и backdrop правой sidenav — тот же overlay, что у rt-aside, и правила у
+   них общие. Контейнер подключает их сам: rt-aside tree-shake'тся, когда его не
+   взял ни один маршрут, а панель контейнер держит в persistent-режиме. */
+@use '../aside/rt-aside-overlay';
+
 .rt-container {
     display: grid;
     min-height: 100%;
@@ -85,70 +90,7 @@
     }
 }
 
-/* Backdrop + overlay панели CDK Overlay (persistent attach режим).
-   Cc-container владеет CDK Overlay для правой sidenav — стили глобальные
-   (ViewEncapsulation.None), живут тут чтобы не зависеть от подгрузки rt-aside
-   компонента (он tree-shake'тся когда не used active route'ом).
-
-   Двойной селектор `.cdk-overlay-backdrop.rt-aside-backdrop` нужен для specificity:
-   CDK Overlay добавляет `.cdk-overlay-backdrop-showing { opacity: 1 }` сразу при
-   attach; при persistent overlay backdrop должен оставаться скрытым пока aside
-   не открыт. Два класса > одиночный — наш opacity:0 побеждает. */
-.cdk-overlay-backdrop.rt-aside-backdrop {
-    /* stylelint-disable-next-line property-no-vendor-prefix -- Safari < 18 */
-    -webkit-backdrop-filter: blur(5px);
-    backdrop-filter: blur(5px);
-    background: rgb(0 0 0 / 45%);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity var(--rt-duration-base) ease;
-
-    &.rt-aside-backdrop--visible {
-        opacity: 1;
-        pointer-events: auto;
-    }
-}
-
-.rt-aside-overlay {
-    height: 100dvh;
-    transition: transform var(--rt-duration-base) ease;
-}
-
-/* Закрытая панель нажатий не ловит. На узком экране она шириной во весь вьюпорт,
-   и пока её сдвиг за край экрана не досчитан, она перекрывает страницу целиком:
-   выглядит это нормально, а нажатия уходят в пустоту. Селектор из двух классов —
-   чтобы правило не зависело от порядка, в котором браузер получил стили панели и
-   стили контейнера. */
-.rt-aside-overlay:not(.rt-aside-overlay--open) {
-    pointer-events: none;
-}
-
-/* Стартовое положение за краем экрана не анимируется: переход из него начинается,
-   как только вьюпорт задаёт панели ширину, и всю анимацию держит панель на месте. */
-.rt-aside-overlay.rt-aside-overlay--entering {
-    transition: none;
-}
-
-.rt-aside-overlay--position-right.rt-aside-overlay--entering,
-.rt-aside-overlay--position-right.rt-aside-overlay--leaving {
-    transform: translateX(100%);
-}
-
-.rt-aside-overlay--position-left.rt-aside-overlay--entering,
-.rt-aside-overlay--position-left.rt-aside-overlay--leaving {
-    transform: translateX(-100%);
-}
-
-.rt-aside-overlay--position-right.rt-aside-overlay--open,
-.rt-aside-overlay--position-left.rt-aside-overlay--open {
-    transform: translateX(0);
-}
-
 @media (width <= 768px) {
-    .rt-aside-overlay {
-        width: 100dvw;
-    }
-
     // Opt-in: левый sidenav сворачивается в нижний ряд grid'а (таб-бар).
     // Контент занимает всю ширину и скроллится в своём `1fr` над баром —
     // бар остаётся видимым без position:fixed и без привязки к его высоте.
@@ -165,11 +107,5 @@
             border-top: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
             border-right: none;
         }
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .rt-aside-overlay {
-        transition: none;
     }
 }

@@ -91,7 +91,9 @@ documented size hooks listed in TOKENS.md.
   `[rtMod]="{ sizeMd: true }"` → `.rtui-toggle--size--md`. Style those shapes;
   `selector-class-pattern` is disabled because BEM, `.--state` modifiers and
   `.mdc-*` internals all coexist.
-- **Scope to `:host`.** Use `:host(.rtui-button-full)` for host state classes.
+- **Scope to `:host`** — в первом ките (`projects/ui-kit/`, префикс `rtui-`), где
+  инкапсуляция эмулируется. Для `:host(.rtui-button-full)` — состояния на хосте.
+  Во втором ките (`projects/ui-kit-v2/`) `:host` запрещён — см. раздел ниже.
 - **Media queries via mixins**: `@include mixins.media-breakpoint-down($device-sm)`.
 - **Global Material/CDK overrides go in `styles/components/_material-bridge.scss`**
   (one file to review on a Material upgrade); component-scoped piercings stay with
@@ -100,6 +102,52 @@ documented size hooks listed in TOKENS.md.
   through `stylelint-prettier`.
 - `.c-button` (`styles/base/_button.scss`) is **deprecated** — `.rtui-btn`
   (`_rtui_button.scss`) is the system. Migration map in TOKENS.md.
+
+## `projects/ui-kit-v2/` — `:host` не применяется
+
+Второй кит (`@rt-tools/ui-kit-v2`, префикс `rt-`) целиком на
+`ViewEncapsulation.None`. Под `None` Angular селектор не переписывает, а в
+обычном документе `:host` не совпадает ни с чем — правило, написанное через
+него, оказывается мёртвым, и молча: синтаксически оно верно, стиль просто не
+применяется. Ровно так в ките лежали неработающими `display: contents` у
+`rt-aside` / `rt-dialog` и тёмная тема активной плитки `rt-section-nav`.
+
+Поэтому `:host`, `:host()` и `:host-context()` в `projects/ui-kit-v2/src/lib/**`
+запрещены правилом `rt-tools/no-host-selector`
+(`tools/stylelint-rules/no-host-selector.cjs`). Чем их заменять:
+
+| Вместо                                  | Писать                                 |
+| --------------------------------------- | -------------------------------------- |
+| `:host`                                 | `.rt-<блок>` — класс блока и есть хост |
+| `:host(.rt-блок--мод)`                  | `.rt-<блок>--мод`                      |
+| `:host-context([data-theme='dark']) .x` | `[data-theme='dark'] .x`               |
+
+**Оговорка про совпадение имён.** У части компонентов класс блока висит и на
+хосте (`host: { class: BEM_BLOCK }`), и на корне шаблона (`rtBlock` на реальном
+элементе — `<article>`, `<button>`, `<div>`). Тогда `.rt-<блок>` бьёт по обоим,
+и правила рамки достались бы ещё и хосту. У таких компонентов хост адресуется
+**по имени элемента**, а правила блока вложены в него:
+
+```scss
+rt-card {
+    display: block;
+
+    .rt-card {
+        padding: var(--rt-space-lg);
+        background: var(--rt-color-bg-surface);
+    }
+}
+```
+
+Определить, какой случай перед вами, можно по шаблону: `rtBlock` на
+`<ng-container>` класс не ставит (директива пропускает comment-ноду), значит
+класс только на хосте — работает `.rt-<блок>`. `rtBlock` на реальном
+элементе — класс двойной, нужен селектор по имени элемента.
+
+Стили компонента под `None` глобальны: вложенные правила остаются под классом
+блока, но верхнеуровневый селектор бьёт по всему документу. Новый
+верхнеуровневый селектор, не начинающийся с класса блока или имени элемента, —
+повод остановиться и проверить, что протечка задумана.
 
 ## Verify
 

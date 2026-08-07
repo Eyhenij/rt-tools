@@ -1,8 +1,13 @@
-:host {
+/* rt-checkbox — чекбокс в common/ui. ViewEncapsulation.None.
+   Хост адресуется по имени элемента, а не по классу блока: класс `.rt-checkbox` висит
+   и на `<rt-checkbox>`, и на корне шаблона, поэтому правила блока вложены в хост —
+   так они достаются только корню шаблона. */
+
+rt-checkbox {
     display: inline-block;
 }
 
-.rt-checkbox {
+rt-checkbox .rt-checkbox {
     display: inline-flex;
     align-items: center;
     padding: 0;

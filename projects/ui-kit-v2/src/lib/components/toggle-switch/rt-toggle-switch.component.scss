@@ -1,8 +1,13 @@
-:host {
+/* rt-toggle-switch — переключатель в common/ui. ViewEncapsulation.None.
+   Хост адресуется по имени элемента, а не по классу блока: класс `.rt-toggle-switch` висит
+   и на `<rt-toggle-switch>`, и на корне шаблона, поэтому правила блока вложены в хост —
+   так они достаются только корню шаблона. */
+
+rt-toggle-switch {
     display: inline-flex;
 }
 
-.rt-toggle-switch {
+rt-toggle-switch .rt-toggle-switch {
     /* Геометрия размера. База — `sm`; модификаторы перекрывают только числа,
        правила ниже к размерам не привязаны. `thumb-travel` держим явным
        числом, а не calc из ширины: каждое значение сверяется с макетом. */

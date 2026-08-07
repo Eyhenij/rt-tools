@@ -1,6 +1,9 @@
-/* rt-bar-list — топ-N со шкалой доли в common/ui (Emulated encapsulation; :host обязательно). */
+/* rt-bar-list — топ-N со шкалой доли в common/ui. ViewEncapsulation.None.
+   Хост адресуется по имени элемента, а не по классу блока: класс `.rt-bar-list` висит
+   и на `<rt-bar-list>`, и на корне шаблона, поэтому правила блока вложены в хост —
+   так они достаются только корню шаблона. */
 
-:host {
+rt-bar-list {
     display: block;
 
     .rt-bar-list {

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, Signal, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { translateSignal } from '@jsverse/transloco';
@@ -30,6 +30,7 @@ const BEM_BLOCK: string = 'rt-theme-toggle';
     templateUrl: './rt-theme-toggle.component.html',
     styleUrls: ['./rt-theme-toggle.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
     imports: [
         // angular
         FormsModule,

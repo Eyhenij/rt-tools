@@ -7,6 +7,7 @@ import {
     InputSignalWithTransform,
     numberAttribute,
     Signal,
+    ViewEncapsulation,
 } from '@angular/core';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
@@ -33,6 +34,7 @@ const BEM_BLOCK: string = 'rt-stepper';
     templateUrl: './rt-stepper.component.html',
     styleUrl: './rt-stepper.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
     imports: [
         // standalone components / directives
         BlockDirective,

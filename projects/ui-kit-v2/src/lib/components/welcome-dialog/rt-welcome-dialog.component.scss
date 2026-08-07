@@ -1,7 +1,11 @@
 /* Welcome-модалка первого входа — открывается через RtDialogService.open().
-   rt-dialog даёт styled-frame, контент внутри получает свой padding. */
+   rt-dialog даёт styled-frame, контент внутри получает свой padding.
 
-:host {
+   ViewEncapsulation.None. Хост адресуется по имени элемента, а не по классу
+   блока: класс `.rt-welcome-dialog` висит и на `<rt-welcome-dialog>`, и на
+   обёртке содержимого внутри него, поэтому правила обёртки вложены в хост. */
+
+rt-welcome-dialog {
     display: contents;
 
     .rt-welcome-dialog {
