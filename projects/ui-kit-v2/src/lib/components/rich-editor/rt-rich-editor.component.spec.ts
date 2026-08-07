@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { QuillMock, quillInstances, resetQuillInstances } from '../../../testing/quill-mock';
-import { createRtFixture, hostClasses, qa } from '../../../testing/rt-kit-testing';
+import { createRtFixture, hostClasses, qa, textOf } from '../../../testing/rt-kit-testing';
 import { IQuillDelta } from '../../util';
+import { RtFieldComponent } from '../field/rt-field.component';
 import { RtRichEditorComponent } from './rt-rich-editor.component';
 
 // Сам Quill в jsdom не поднимается — подменяем модуль целиком. `__esModule`
@@ -19,6 +20,21 @@ jest.mock('quill', (): { __esModule: true; default: typeof QuillMock } => ({ __e
 })
 class RichEditorHostComponent {
     public readonly control: FormControl<IQuillDelta | null> = new FormControl<IQuillDelta | null>(null);
+}
+
+/** Редактор внутри обёртки поля — так его ставят в форме, и так видно, что обёртка его нашла. */
+@Component({
+    selector: 'rt-rich-editor-field-host',
+    template: `
+        <rt-field label="Описание">
+            <rt-rich-editor [formControl]="control" />
+        </rt-field>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtFieldComponent, RtRichEditorComponent, ReactiveFormsModule],
+})
+class RichEditorFieldHostComponent {
+    public readonly control: FormControl<IQuillDelta | null> = new FormControl<IQuillDelta | null>(null, [Validators.required]);
 }
 
 async function setup(inputs: Readonly<Record<string, unknown>> = {}): Promise<ComponentFixture<RtRichEditorComponent>> {
@@ -164,6 +180,19 @@ describe('RtRichEditorComponent', (): void => {
 
             expect(editor().bindings['enterSubmit']?.shiftKey).toBe(false);
         });
+    });
+
+    it('вмещающее поле находит редактор и рисует по нему звёздочку и текст ошибки', async (): Promise<void> => {
+        // Поле ищет контрол через `contentChild(RtFormControlBase)` — query по абстрактному
+        // классу. Без алиаса базового токена редактор в этот запрос не попадает, и обёртка
+        // молча теряет и обязательность, и ошибку: подпись есть, а сообщения под ней нет.
+        const fixture: ComponentFixture<RichEditorFieldHostComponent> = createRtFixture(RichEditorFieldHostComponent);
+        await fixture.whenStable();
+        fixture.componentInstance.control.markAsTouched();
+        fixture.detectChanges();
+
+        expect(qa(fixture, 'field-required')).not.toBeNull();
+        expect(textOf(qa(fixture, 'field-error'))).toBe('Required field');
     });
 
     it('плоский текст значения читается для режима только для чтения', async (): Promise<void> => {
