@@ -225,6 +225,22 @@
         --rt-btn-spinner-size: 1.125rem;
     }
 
+    &--xl {
+        --rt-btn-height: 60px;
+        --rt-btn-padding: 0 1.75rem;
+        --rt-btn-font-size: 1.125rem;
+        --rt-btn-icon-size: 1.25rem;
+        --rt-btn-spinner-size: 1.25rem;
+    }
+
+    &--2xl {
+        --rt-btn-height: 70px;
+        --rt-btn-padding: 0 2rem;
+        --rt-btn-font-size: 1.1875rem;
+        --rt-btn-icon-size: 1.375rem;
+        --rt-btn-spinner-size: 1.375rem;
+    }
+
     &--icon-only {
         width: var(--rt-btn-height);
         padding: 0;

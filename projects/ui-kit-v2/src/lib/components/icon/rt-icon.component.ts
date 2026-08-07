@@ -20,6 +20,7 @@ const SIZES: Readonly<Record<IRtIcon.Size, number>> = Object.freeze({
     md: 20,
     lg: 24,
     xl: 32,
+    '2xl': 40,
 });
 
 const COLORS: Readonly<Record<IRtIcon.Color, string>> = Object.freeze({

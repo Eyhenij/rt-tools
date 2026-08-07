@@ -10,7 +10,7 @@ export namespace IRtIcon {
     export type Name = (typeof iconsName)[number];
 
     /** Доступные размеры. Маппинг на пиксели — в `rt-icon.component.ts`. */
-    export type Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+    export type Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
     /** Семантические цвета. Маппинг на CSS-переменные `--rt-icon-color-*` — в `rt-icon.component.ts`. */
     export type Color = 'current' | 'muted' | 'info' | 'success' | 'warning' | 'danger' | 'inverse';
