@@ -1,0 +1,118 @@
+import { Meta, Title } from '@storybook/addon-docs/blocks';
+
+<Meta title="Components/Popover/Overview" />
+
+<Title>Popover — `[rtPopover]`</Title>
+
+Примитив плавающей панели поверх CDK Overlay. Привязывает `<ng-template>` к элементу, на котором
+висит. На нём стоят [`rt-select`](./?path=/docs/components-select-overview--docs),
+[`rt-multiselect`](./?path=/docs/components-multiselect-overview--docs),
+[`rt-autocomplete`](./?path=/docs/components-autocomplete-overview--docs) и пояснение в
+[`rt-field`](./?path=/docs/components-field-overview--docs).
+
+```html
+<button rtButton label="Открыть" rtPopoverTrigger="click" rtPopoverWidth="trigger" [rtPopover]="tpl"></button>
+<ng-template #tpl>
+    <div>Содержимое панели</div>
+</ng-template>
+```
+
+## Когда применять
+
+- Панель со **своей разметкой**: форма, список, пояснение с ссылками.
+- Плавающее содержимое, которое режет `overflow: hidden` у таблицы, панели или карточки.
+
+## Когда не применять
+
+- **Короткая строка-подсказка** — [`[rtTooltip]`](./?path=/docs/components-tooltip-overview--docs).
+- **Меню действий** — [`rt-menu`](./?path=/docs/components-menu-overview--docs): там уже есть
+  и пункты, и подтверждение, и закрытие по выбору.
+- **Подтверждение действия** — [`[rtConfirm]`](./?path=/docs/components-confirmpopover-overview--docs).
+
+## Оси
+
+| ось          | значения                          | умолчание      |
+| ------------ | --------------------------------- | -------------- |
+| выравнивание | `start`, `end`                    | `start`        |
+| ширина       | по триггеру, по содержимому       | по содержимому |
+| отступ       | умолчание, вниз на 24, вбок на 24 | 4 / 0          |
+
+**Оси, которых не видно.** `rtPopoverTrigger` (`click`, `hover`, `manual`) решает, **когда**
+панель появляется, а не как она выглядит: показать его сеткой нечем, режим наведения показан
+отдельной историей `Playground → HoverTrigger`. `rtPopoverDisabled` не даёт панели открыться —
+ячейкой это тоже не показать. `rtPopoverFitViewport` проявляется только у края экрана,
+`rtPopoverPanelClass` и `rtPopoverContext` не видны вовсе: первый добавляет класс **к** базовому
+`rt-popover-panel`, второй передаёт значение в шаблон.
+
+**Панели открыты все сразу — и открывает их не жест, а вызов `open()`.** Иначе выравнивание и
+ширину рядом не показать: щелчок по второму триггеру для CDK — указатель за пределами первой
+панели, и та закрывается. Режим `manual` для того и есть: автоматических слушателей он не
+вешает, а `open()`, `close()`, `toggle()` и `isOpen()` работают во всех режимах.
+
+**Светло-тёмной пары у директивы нет.** Своего оформления она не несёт вовсе: панель красит
+содержимое, а директива только ставит её на место. Красить нечему — и пара показывала бы
+оформление демонстрационной карточки, а не кита.
+
+## Состояния
+
+Своих состояний нет: панель либо открыта, либо нет. Открывают её щелчок, наведение или вызов —
+в зависимости от режима; закрывают `Escape` и щелчок мимо, **во всех режимах**.
+
+**Вложенная панель не считается щелчком снаружи.** Панель, открытая из нашей (список
+`rt-select`, календарь, вложенное меню), лежит в DOM рядом, отдельным оверлеем. Без этой
+проверки меню профиля закрывалось бы, стоило потянуться к списку языков, а выбранное значение
+не доходило бы до обработчика. Вложенность определяется порядком панелей в контейнере оверлеев:
+открытая позже считается вложенной.
+
+Наведение держит панель открытой при переходе курсора на неё: закрытие отложено на 100 мс, и
+наведение на панель отсрочку гасит.
+
+## Доступность
+
+- Директива не расставляет ни ролей, ни `aria-*`: она — механика положения. Роль (`listbox`,
+  `menu`, `dialog`) и связку `aria-expanded` / `aria-controls` объявляет тот, кто её применяет —
+  так это и сделано в списке и в меню.
+- `Escape` закрывает панель в любом режиме.
+- Фокус директива не переносит и не удерживает: панели, которой нужна ловушка фокуса, нужен
+  [`rt-dialog`](./?path=/docs/components-dialog-overview--docs), а не поповер.
+
+## Оформление
+
+Своего оформления нет. Панель получает класс `rt-popover-panel` (и всё, что добавлено
+`rtPopoverPanelClass`), а рамку, фон и тень рисует её содержимое.
+
+`rtPopoverFitViewport` **выключен по умолчанию**: панель стоит там, куда её ставит привязка к
+триггеру, даже если часть ушла за экран. Включать для широких и высоких панелей — иначе их
+содержимое остаётся недостижимым.
+
+## Входы
+
+| вход          | тип                              | умолчание |
+| ------------- | -------------------------------- | --------- |
+| `template`    | `TemplateRef \| null`            | `null`    |
+| `trigger`     | `'click' \| 'hover' \| 'manual'` | `'click'` |
+| `width`       | `'trigger' \| 'auto'`            | `'auto'`  |
+| `align`       | `'start' \| 'end'`               | `'start'` |
+| `fitViewport` | `boolean`                        | `false`   |
+| `context`     | `unknown`                        | `null`    |
+| `panelClass`  | `string`                         | `''`      |
+| `disabled`    | `boolean`                        | `false`   |
+| `offsetY`     | `number`                         | `4`       |
+| `offsetX`     | `number`                         | `0`       |
+
+В разметке они пишутся под алиасами: `rtPopover` (шаблон), `rtPopoverTrigger`, `rtPopoverWidth`,
+`rtPopoverAlign`, `rtPopoverFitViewport`, `rtPopoverContext`, `rtPopoverPanelClass`,
+`rtPopoverDisabled`, `rtPopoverOffsetY`, `rtPopoverOffsetX`.
+
+## Выходы
+
+| выход    | тип    | алиас             | когда            |
+| -------- | ------ | ----------------- | ---------------- |
+| `opened` | `void` | `rtPopoverOpened` | панель открылась |
+| `closed` | `void` | `rtPopoverClosed` | панель закрылась |
+
+## Рядом
+
+- [`[rtTooltip]`](./?path=/docs/components-tooltip-overview--docs) — та же механика для короткой строки.
+- [`rt-menu`](./?path=/docs/components-menu-overview--docs) — готовое меню действий.
+- [`[rtConfirm]`](./?path=/docs/components-confirmpopover-overview--docs) — панель подтверждения.

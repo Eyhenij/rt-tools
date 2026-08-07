@@ -23,7 +23,7 @@ export default {
 
 type Story = StoryObj<TestRtMenuItemComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         icon: null,
         label: 'Сохранить',
