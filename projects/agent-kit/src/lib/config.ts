@@ -9,9 +9,26 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 /** Род ресурса. Он же имя каталога в `assets/` пакета и ключ раскладки. */
-export type TKind = 'laws' | 'hooks' | 'checks' | 'agents' | 'templates';
+export type TKind = 'laws' | 'rules' | 'patterns' | 'hooks' | 'checks' | 'agents' | 'commands' | 'workflows' | 'templates';
 
-export const KINDS: readonly TKind[] = ['laws', 'hooks', 'checks', 'agents', 'templates'];
+export const KINDS: readonly TKind[] = ['laws', 'rules', 'patterns', 'hooks', 'checks', 'agents', 'commands', 'workflows', 'templates'];
+
+/**
+ * Роды, которые ложатся не файлом в каталог, а каталогом по имени ресурса: скил читается как
+ * `<имя>/SKILL.md`, и рядом с ним лежит то, что пишет проект.
+ */
+export const SKILL_KINDS: readonly TKind[] = ['rules', 'patterns'];
+
+/** Имя файла скила: так его ищет агент, и другого имени у него быть не может. */
+export const SKILL_FILE: string = 'SKILL.md';
+
+/**
+ * Файл-компаньон правила: чем названо в этом дереве то, о чём правило говорит приёмом.
+ *
+ * Пакет знает приём, но не знает ни путей, ни имён — их пишет проект. Черновик кладётся один
+ * раз и дальше не сверяется: это единственный файл раскладки, который принадлежит проекту.
+ */
+export const COMPANION_FILE: string = 'implementation.md';
 
 export interface IConfig {
     /** Значения дырок `{{имя}}`. */
@@ -30,6 +47,17 @@ export interface IConfig {
 export const CONFIG_PATH: string = '.claude/rt-kit.json';
 export const OVERRIDES_DIR: string = '.claude/rt-kit/overrides';
 
+/** Имя дырки под путь карты гейта и её умолчание: карту пишет проект, путь знают оба. */
+export const GATE_MAP_VAR: string = 'gateMap';
+export const DEFAULT_GATE_MAP: string = '.claude/rt-kit/gate-map.sh';
+
+/**
+ * Профиль проекта: команды, стенды и пары «правка — документ» этого дерева. Его читают
+ * сторожевые хуки — механизм у них общий, а всё, что они зовут и называют, своё у каждого.
+ */
+export const PROFILE_VAR: string = 'projectProfile';
+export const DEFAULT_PROFILE: string = '.claude/rt-kit/project.sh';
+
 /**
  * Умолчания раскладки. Это не единственно возможные пути, но менять их без нужды не стоит:
  * агент ищет законы в `docs/constitution`, потому что так написано в правилах, которые пакет
@@ -37,9 +65,13 @@ export const OVERRIDES_DIR: string = '.claude/rt-kit/overrides';
  */
 export const DEFAULT_LAYOUT: Readonly<Record<TKind, string>> = {
     laws: 'docs/constitution',
+    rules: '.claude/skills',
+    patterns: '.claude/skills',
     hooks: '.claude/hooks',
     checks: 'tools',
     agents: '.claude/agents',
+    commands: '.claude/commands',
+    workflows: '.claude/workflows',
     templates: '.claude/rt-kit/templates',
 };
 
@@ -102,6 +134,11 @@ export function parseConfig(text: string): IConfig {
     for (const kind of KINDS) {
         derived[`${kind.replace(/s$/, '')}sDir`] = layout[kind];
     }
+    // Карту гейта пишет проект, но путь к ней знают обе стороны: хук её читает, шаблон
+    // ложится рядом. Умолчание здесь избавляет проект от обязанности объявлять его самому —
+    // а переопределить его он всё равно может, значением в `vars`.
+    derived[GATE_MAP_VAR] = DEFAULT_GATE_MAP;
+    derived[PROFILE_VAR] = DEFAULT_PROFILE;
 
     return { vars: { ...derived, ...stringMap(raw['vars'], 'vars') }, layout: layout as Record<TKind, string>, only, skip };
 }

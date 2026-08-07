@@ -63,16 +63,35 @@ export function formatStamp(stamp: IStamp, path: string): string {
 }
 
 /**
- * Шапка и тело разложенного файла. Ищется она в первых двух строках: у скрипта первой стоит
- * `#!`, и требовать шапку строго первой значило бы ломать запуск.
+ * С какой строки начинается тело, поверх которого встаёт шапка.
+ *
+ * Первой строкой шапка встать может не всегда. У скрипта первой идёт `#!` — иначе он перестаёт
+ * запускаться. У скила первым идёт вступление между `---`, и оно обязано начинаться со строки
+ * ноль: строка перед ним превращает вступление в обычный текст, скил теряет имя и описание и
+ * перестаёт находиться вовсе — молча, потому что файл при этом остаётся читаемым.
  */
+function bodyStart(lines: readonly string[]): number {
+    if (lines[0]?.startsWith('#!')) {
+        return 1;
+    }
+    if (lines[0]?.trim() !== '---') {
+        return 0;
+    }
+    const closing: number = lines.findIndex((line: string, index: number): boolean => index > 0 && line.trim() === '---');
+
+    return closing < 0 ? 0 : closing + 1;
+}
+
+/** Шапка и тело разложенного файла. Ищется она в двух строках от начала тела. */
 export function readStamped(text: string): IStamped | null {
     const lines: string[] = text.split('\n');
-    const index: number = lines.slice(0, 2).findIndex((line: string): boolean => STAMP_LINE.test(line));
-    if (index < 0) {
+    const from: number = bodyStart(lines);
+    const offset: number = lines.slice(from, from + 2).findIndex((line: string): boolean => STAMP_LINE.test(line));
+    if (offset < 0) {
         return null;
     }
 
+    const index: number = from + offset;
     const found: RegExpMatchArray = lines[index].match(STAMP_LINE) as RegExpMatchArray;
     const [, version, asset, hash]: string[] = found;
     const body: string = [...lines.slice(0, index), ...lines.slice(index + 1)].join('\n');
@@ -80,14 +99,11 @@ export function readStamped(text: string): IStamped | null {
     return { stamp: { version, asset, hash }, body };
 }
 
-/** Тело с шапкой: у скрипта она встаёт после строки запуска, у остальных — первой. */
+/** Тело с шапкой: она встаёт после строки запуска и после вступления скила, иначе — первой. */
 export function applyStamp(body: string, stamp: IStamp, path: string): string {
     const line: string = formatStamp(stamp, path);
-    if (body.startsWith('#!')) {
-        const cut: number = body.indexOf('\n');
+    const lines: string[] = body.split('\n');
+    const from: number = bodyStart(lines);
 
-        return `${body.slice(0, cut + 1)}${line}\n${body.slice(cut + 1)}`;
-    }
-
-    return `${line}\n${body}`;
+    return [...lines.slice(0, from), line, ...lines.slice(from)].join('\n');
 }
