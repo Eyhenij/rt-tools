@@ -79,10 +79,14 @@
         cursor: not-allowed;
     }
 
+    /* `flex-shrink: 0` — иконке заданного размера. Без него в кнопке, которой ширину
+       навязали снаружи (пункт меню `rt-split-button` берёт её от панели), лейбл давит
+       на иконку, и та сжимается до нуля: место занято, а иконки не видно. */
     &__icon {
         display: inline-flex;
         width: var(--rt-btn-icon-size);
         height: var(--rt-btn-icon-size);
+        flex-shrink: 0;
         align-items: center;
         justify-content: center;
         font-size: var(--rt-btn-icon-size);
