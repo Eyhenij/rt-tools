@@ -17,7 +17,7 @@ export default {
 
 type Story = StoryObj<TestRtDialogComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         size: 'md',
         width: null,
