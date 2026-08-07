@@ -11,7 +11,7 @@ import { IRtIcon } from '../../rt-icon.model';
 @Component({
     selector: 'app-icon',
     template: `
-        <rt-icon [name]="name" [size]="size" [color]="color" />
+        <rt-icon [name]="name" [size]="size" [color]="color" [rotate]="rotate" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -23,4 +23,5 @@ export class TestRtIconComponent {
     public name: IRtIcon.Name = 'alarm-clock';
     public size: IRtIcon.Size = 'md';
     public color: IRtIcon.Color = 'current';
+    public rotate: number | null = null;
 }
