@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, input, InputSignal, Signal, ViewEncapsulation } from '@angular/core';
-
-import { translateSignal, TranslocoPipe } from '@jsverse/transloco';
+import { computed, inject, input, ChangeDetectionStrategy, Component, InputSignal, Signal, ViewEncapsulation } from '@angular/core';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { RT_KIT_LABELS, RtKitLabelMap, rtKitLabel } from '../../i18n';
 import { IRtIcon, RtIconComponent } from '../icon';
 import { IRtStatTile } from './rt-stat-tile.model';
 
@@ -87,7 +86,6 @@ function deltaRow(key: string, delta: IRtStatTile.Delta | null): IDeltaRow | nul
         BlockDirective,
         ElemDirective,
         ModDirective,
-        TranslocoPipe,
     ],
     host: {
         class: BEM_BLOCK,
@@ -104,13 +102,15 @@ export class RtStatTileComponent {
         value: this.deltaPrimary()?.baseline ?? '',
     }));
 
-    readonly #baselineLine: Signal<string> = translateSignal('rtKit.uiBaseline', this.#baselineParams);
+    readonly #baselineLine: Signal<string> = rtKitLabel('uiBaseline', this.#baselineParams);
 
     /**
      * Дельта к предыдущему периоду — рядом со значением. Пустая база (`percent`
      * = null) не рисуется вовсе: «—» рядом с цифрой читается как поломка, а не
      * как «сравнивать не с чем».
      */
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+
     protected readonly primaryDelta: Signal<IDeltaRow | null> = computed((): IDeltaRow | null => this.#visibleDelta(this.deltaPrimary()));
 
     /** Годовое сравнение — отдельным компактным чипом, без слов в строке. */

@@ -1,20 +1,21 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import {
     booleanAttribute,
+    inject,
+    input,
+    output,
     ChangeDetectionStrategy,
     Component,
-    input,
     InputSignal,
     InputSignalWithTransform,
-    output,
     OutputEmitterRef,
+    Signal,
     ViewEncapsulation,
 } from '@angular/core';
 
-import { TranslocoPipe } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { RT_KIT_LABELS, RtKitLabelMap } from '../../i18n';
 import { RtIconComponent, IRtIcon } from '../icon';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { IRtTag } from './rt-tag.model';
@@ -44,7 +45,6 @@ const BEM_BLOCK: string = 'rt-tag';
         BlockDirective,
         ElemDirective,
         ModDirective,
-        TranslocoPipe,
     ],
     host: {
         class: BEM_BLOCK,
@@ -52,6 +52,8 @@ const BEM_BLOCK: string = 'rt-tag';
 })
 export class RtTagComponent {
     /** Текст pill — обязательный input. */
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+
     public readonly value: InputSignal<string> = input.required<string>();
 
     /** Семантическая палитра. По умолчанию `neutral` (нейтральный серый). */

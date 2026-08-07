@@ -42,11 +42,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { mergeMap, Observable, Subject } from 'rxjs';
 
-import { translateSignal } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective, IDBStorageService, ModDirective } from '@rt-tools/core';
 import { ISortModel } from '@rt-tools/utils';
 
+import { RtKitLabelKey, rtKitLabel } from '../../i18n';
 import { BreakpointsService } from '../../platform';
 import { ERtStorageKeys } from '../../platform';
 
@@ -71,7 +70,7 @@ function settingsKey(tableId: string): string {
 
 const DEFAULT_SKELETON_ROWS: number = 5;
 /** Ключ подписи пустой таблицы: язык известен только после старта приложения */
-const DEFAULT_EMPTY_KEY: string = 'rtKit.uiNoRows';
+const DEFAULT_EMPTY_KEY: RtKitLabelKey = 'uiNoRows';
 
 /** Имя внутренней «…»-колонки действий, добавляемой при `[showRowActions]`. */
 export const RT_TABLE_ROW_ACTIONS_COLUMN: string = 'rtRowActions';
@@ -171,7 +170,7 @@ interface IRtTablePersistRequest {
     },
 })
 export class RtTableComponent<TRow> extends CdkTable<TRow> {
-    readonly #t_uiNoRows: Signal<string> = translateSignal(DEFAULT_EMPTY_KEY);
+    readonly #t_uiNoRows: Signal<string> = rtKitLabel(DEFAULT_EMPTY_KEY);
 
     readonly #registry: RtTableSettingsRegistry = inject(RtTableSettingsRegistry);
     readonly #settingsStorage: IDBStorageService<IRtTable.ColumnSettings> = inject(IDBStorageService);

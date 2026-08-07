@@ -1,8 +1,8 @@
-<rt-dialog width="440px" qa-dataid="aside-unsaved-dialog" [ariaLabel]="'rtKit.uiUnsavedTitle' | transloco">
+<rt-dialog width="440px" qa-dataid="aside-unsaved-dialog" [ariaLabel]="t().uiUnsavedTitle">
     <div rtBlock="rt-aside-unsaved-dialog">
         <div rtElem="text">
-            <h2 rtElem="title" qa-dataid="aside-unsaved-title">{{ 'rtKit.uiUnsavedTitle' | transloco }}</h2>
-            <p rtElem="message" qa-dataid="aside-unsaved-message">{{ 'rtKit.uiUnsavedMessage' | transloco }}</p>
+            <h2 rtElem="title" qa-dataid="aside-unsaved-title">{{ t().uiUnsavedTitle }}</h2>
+            <p rtElem="message" qa-dataid="aside-unsaved-message">{{ t().uiUnsavedMessage }}</p>
         </div>
 
         <div rtElem="footer">
@@ -13,8 +13,8 @@
                 type="button"
                 theme="danger"
                 appearance="outlined"
-                [label]="'rtKit.uiUnsavedDiscard' | transloco"
-                [attr.aria-label]="'rtKit.uiUnsavedDiscard' | transloco"
+                [label]="t().uiUnsavedDiscard"
+                [attr.aria-label]="t().uiUnsavedDiscard"
                 (click)="onDiscard()"></button>
             <button
                 rtButton
@@ -23,8 +23,8 @@
                 type="button"
                 theme="secondary"
                 appearance="text"
-                [label]="'rtKit.uiUnsavedStay' | transloco"
-                [attr.aria-label]="'rtKit.uiUnsavedStay' | transloco"
+                [label]="t().uiUnsavedStay"
+                [attr.aria-label]="t().uiUnsavedStay"
                 (click)="onStay()"></button>
             <button
                 rtButton
@@ -32,8 +32,8 @@
                 qa-dataid="aside-unsaved-save"
                 type="button"
                 appearance="filled"
-                [label]="'rtKit.uiUnsavedSave' | transloco"
-                [attr.aria-label]="'rtKit.uiUnsavedSave' | transloco"
+                [label]="t().uiUnsavedSave"
+                [attr.aria-label]="t().uiUnsavedSave"
                 (click)="onSave()"></button>
         </div>
     </div>

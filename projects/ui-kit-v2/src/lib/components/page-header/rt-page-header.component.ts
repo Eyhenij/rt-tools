@@ -1,17 +1,17 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
     computed,
     effect,
     inject,
     input,
-    InputSignal,
     output,
-    OutputEmitterRef,
     signal,
+    viewChild,
+    ChangeDetectionStrategy,
+    Component,
+    InputSignal,
+    OutputEmitterRef,
     Signal,
     TemplateRef,
-    viewChild,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
@@ -20,10 +20,9 @@ import { Event as RouterEvent, NavigationEnd, Router, RouterLink, RouterLinkActi
 
 import { filter, map } from 'rxjs';
 
-import { translateSignal, TranslocoPipe } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { RT_KIT_LABELS, RT_KIT_TRANSLATOR, RtKitLabelMap, RtKitTranslator, rtKitLabel } from '../../i18n';
 import { BreakpointsService } from '../../platform';
 
 import { RtIconComponent } from '../icon';
@@ -69,7 +68,6 @@ const BEM_BLOCK: string = 'rt-page-header';
         BlockDirective,
         ElemDirective,
         ModDirective,
-        TranslocoPipe,
     ],
     host: {
         class: BEM_BLOCK,
@@ -78,7 +76,7 @@ const BEM_BLOCK: string = 'rt-page-header';
 export class RtPageHeaderComponent {
     readonly #router: Router = inject(Router);
 
-    readonly #t_uiMainNav: Signal<string> = translateSignal('rtKit.uiMainNav');
+    readonly #t_uiMainNav: Signal<string> = rtKitLabel('uiMainNav');
 
     /* Реактивный URL для подсветки раздела: у раздела с панелью нет своего
        route, поэтому RouterLinkActive не применим — сравниваем по факту навигации. */
@@ -91,6 +89,10 @@ export class RtPageHeaderComponent {
     );
 
     readonly #breakpoints: BreakpointsService = inject(BreakpointsService);
+
+    readonly #translate: Signal<RtKitTranslator> = inject(RT_KIT_TRANSLATOR);
+
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly mobileNavPopoverRef: Signal<RtPopoverDirective | undefined> = viewChild('mobileNavPopover', {
         read: RtPopoverDirective,
@@ -158,6 +160,15 @@ export class RtPageHeaderComponent {
                 this.mobileNavPopoverRef()?.close();
             }
         });
+    }
+
+    /**
+     * Подпись раздела в разработке. Методом, а не сигналом: имя раздела приходит
+     * элементом цикла, и до него подписи ещё нет. Метод читает сигнал
+     * переводчика, поэтому смена языка перерисовывает разметку и зовёт его заново.
+     */
+    protected sectionInProgressLabel(label: string): string {
+        return this.#translate()('uiSectionInProgress', { label });
     }
 
     protected onItemClick(id: string): void {

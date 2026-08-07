@@ -1,4 +1,10 @@
 import {
+    computed,
+    effect,
+    inject,
+    input,
+    output,
+    signal,
     AfterViewInit,
     ChangeDetectionStrategy,
     Component,
@@ -10,18 +16,11 @@ import {
     Signal,
     ViewEncapsulation,
     WritableSignal,
-    computed,
-    effect,
-    inject,
-    input,
-    output,
-    signal,
 } from '@angular/core';
-
-import { TranslocoPipe } from '@jsverse/transloco';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
+import { RT_KIT_LABELS, RtKitLabelMap } from '../../i18n';
 import { INotification } from '../../platform';
 
 import { RtButtonDirective } from '../button/rt-button.directive';
@@ -40,7 +39,7 @@ const UNMOUNT_DELAY_MS: number = 200;
     styleUrl: './rt-toast.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
-    imports: [RtButtonDirective, RtIconComponent, RtIconButtonComponent, BlockDirective, ElemDirective, TranslocoPipe],
+    imports: [RtButtonDirective, RtIconComponent, RtIconButtonComponent, BlockDirective, ElemDirective],
     host: {
         class: BEM_BLOCK,
         role: 'status',
@@ -92,6 +91,8 @@ export class RtToastComponent implements AfterViewInit, OnDestroy {
     #closeTimerStartedAt: number = 0;
 
     #closeTimerPausedAt: number = 0;
+
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly icon: Signal<IRtIcon.Name> = computed((): IRtIcon.Name => this.#severityIcon[this.toast().severity]);
 

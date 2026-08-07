@@ -2,24 +2,23 @@ import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { NgTemplateOutlet } from '@angular/common';
 import {
     afterNextRender,
+    computed,
+    inject,
+    signal,
+    viewChild,
     ChangeDetectionStrategy,
     Component,
-    computed,
     ElementRef,
-    inject,
     Signal,
-    signal,
     TemplateRef,
-    viewChild,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
 
-import { TranslocoPipe } from '@jsverse/transloco';
-
 // rt-tools
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
+import { RT_KIT_LABELS, RtKitLabelMap } from '../../i18n';
 import { RtDialogRef } from '../dialog/rt-dialog-ref';
 import { RT_DIALOG_DATA } from '../dialog/rt-dialog.tokens';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
@@ -58,7 +57,6 @@ const BEM_BLOCK: string = 'rt-photo-viewer';
         RtIconButtonComponent,
 
         // transloco
-        TranslocoPipe,
     ],
     host: {
         class: BEM_BLOCK,
@@ -77,6 +75,8 @@ export class RtPhotoViewerComponent {
     readonly #data: IRtPhotoViewer.Data = inject(RT_DIALOG_DATA) as IRtPhotoViewer.Data;
     readonly #dialogRef: RtDialogRef<number> = inject(RtDialogRef<number>);
     readonly #host: ElementRef<HTMLElement> = inject(ElementRef<HTMLElement>);
+
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly track: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('track');
 

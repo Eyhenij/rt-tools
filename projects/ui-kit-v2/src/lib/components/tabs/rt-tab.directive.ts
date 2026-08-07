@@ -11,8 +11,7 @@ import {
     TemplateRef,
 } from '@angular/core';
 
-import { translateSignal } from '@jsverse/transloco';
-
+import { rtKitLabel } from '../../i18n';
 import { IRtIcon } from '../icon/rt-icon.model';
 import { IRtTabs } from './rt-tabs.model';
 
@@ -28,7 +27,7 @@ import { IRtTabs } from './rt-tabs.model';
     selector: '[rtTab]',
 })
 export class RtTabDirective {
-    readonly #t_uiTabInvalid: Signal<string> = translateSignal('rtKit.uiTabInvalid');
+    readonly #t_uiTabInvalid: Signal<string> = rtKitLabel('uiTabInvalid');
 
     /** Шаблон тела панели — рендерится в области контента при активной вкладке. */
     public readonly templateRef: TemplateRef<unknown> = inject<TemplateRef<unknown>>(TemplateRef);

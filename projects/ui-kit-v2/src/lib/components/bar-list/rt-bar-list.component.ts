@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input, InputSignal, Signal, ViewEncapsulation } from '@angular/core';
 
-import { translateSignal } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
+import { rtKitLabel } from '../../i18n';
 import { RtIconComponent } from '../icon';
 import { IRtBarList } from './rt-bar-list.model';
 
@@ -35,7 +34,7 @@ const BEM_BLOCK: string = 'rt-bar-list';
     },
 })
 export class RtBarListComponent {
-    readonly #t_uiNoData: Signal<string> = translateSignal('rtKit.uiNoData');
+    readonly #t_uiNoData: Signal<string> = rtKitLabel('uiNoData');
 
     protected readonly emptyMessage: Signal<string> = computed((): string => this.emptyText() || this.#t_uiNoData());
 

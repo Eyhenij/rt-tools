@@ -35,7 +35,7 @@
                 size="sm"
                 variant="ghost"
                 iconColor="muted"
-                [ariaLabel]="'rtKit.uiClear' | transloco"
+                [ariaLabel]="t().uiClear"
                 [tabIndex]="-1"
                 (clicked)="clear($event)" />
         }
@@ -64,7 +64,7 @@
                     }
                 </li>
             } @empty {
-                <li rtElem="empty" qa-dataid="autocomplete-empty">{{ 'rtKit.uiNothingFound' | transloco }}</li>
+                <li rtElem="empty" qa-dataid="autocomplete-empty">{{ t().uiNothingFound }}</li>
             }
         </ul>
     </ng-template>

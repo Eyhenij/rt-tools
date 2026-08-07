@@ -31,7 +31,7 @@
                                         role="img"
                                         qa-dataid="header-nav-marker"
                                         [attr.data-id]="section.id"
-                                        [attr.aria-label]="'rtKit.uiNavUnread' | transloco"></span>
+                                        [attr.aria-label]="t().uiNavUnread"></span>
                                 }
                                 <span rtElem="caret" aria-hidden="true">
                                     <rt-icon name="chevron-up-down" size="xs" />
@@ -69,16 +69,14 @@
                                                                         role="img"
                                                                         qa-dataid="header-nav-marker"
                                                                         [attr.data-id]="entry.id"
-                                                                        [attr.aria-label]="'rtKit.uiNavUnread' | transloco"></span>
+                                                                        [attr.aria-label]="t().uiNavUnread"></span>
                                                                 }
                                                             </a>
                                                         } @else if (entry.disabled) {
                                                             <span
                                                                 rtElem="disabled-slot"
                                                                 role="none"
-                                                                [rtTooltip]="
-                                                                    'rtKit.uiSectionInProgress' | transloco: { label: entry.label }
-                                                                ">
+                                                                [rtTooltip]="sectionInProgressLabel(entry.label)">
                                                                 <button
                                                                     rtElem="link"
                                                                     role="menuitem"
@@ -105,7 +103,7 @@
                                                                         role="img"
                                                                         qa-dataid="header-nav-marker"
                                                                         [attr.data-id]="entry.id"
-                                                                        [attr.aria-label]="'rtKit.uiNavUnread' | transloco"></span>
+                                                                        [attr.aria-label]="t().uiNavUnread"></span>
                                                                 }
                                                             </button>
                                                         }
@@ -133,16 +131,13 @@
                                         role="img"
                                         qa-dataid="header-nav-marker"
                                         [attr.data-id]="section.id"
-                                        [attr.aria-label]="'rtKit.uiNavUnread' | transloco"></span>
+                                        [attr.aria-label]="t().uiNavUnread"></span>
                                 }
                             </a>
                         }
                         @default {
                             @if (section.disabled) {
-                                <span
-                                    rtElem="disabled-slot"
-                                    role="none"
-                                    [rtTooltip]="'rtKit.uiSectionInProgress' | transloco: { label: section.label }">
+                                <span rtElem="disabled-slot" role="none" [rtTooltip]="sectionInProgressLabel(section.label)">
                                     <button rtElem="link" type="button" [rtMod]="{ disabled: true }" [attr.aria-disabled]="true">
                                         @if (section.icon) {
                                             <rt-icon rtElem="icon" size="sm" [name]="section.icon" />
@@ -162,7 +157,7 @@
                                             role="img"
                                             qa-dataid="header-nav-marker"
                                             [attr.data-id]="section.id"
-                                            [attr.aria-label]="'rtKit.uiNavUnread' | transloco"></span>
+                                            [attr.aria-label]="t().uiNavUnread"></span>
                                     }
                                 </button>
                             }
@@ -180,7 +175,7 @@
         #mobileNavPopover="rtPopover"
         rtPopoverFitViewport
         rtPopoverOffsetY="14"
-        [attr.aria-label]="'rtKit.uiNavMenu' | transloco"
+        [attr.aria-label]="t().uiNavMenu"
         [rtMod]="{ isOpen: mobileNavPopover.isOpen() }"
         [attr.aria-haspopup]="true"
         [attr.aria-expanded]="mobileNavPopover.isOpen()"
@@ -214,7 +209,7 @@
                                     role="img"
                                     qa-dataid="header-nav-marker"
                                     [attr.data-id]="section.id"
-                                    [attr.aria-label]="'rtKit.uiNavUnread' | transloco"></span>
+                                    [attr.aria-label]="t().uiNavUnread"></span>
                             }
                             <span rtElem="caret" aria-hidden="true">
                                 <rt-icon name="chevron-up-down" size="xs" />
@@ -251,14 +246,11 @@
                                                             role="img"
                                                             qa-dataid="header-nav-marker"
                                                             [attr.data-id]="entry.id"
-                                                            [attr.aria-label]="'rtKit.uiNavUnread' | transloco"></span>
+                                                            [attr.aria-label]="t().uiNavUnread"></span>
                                                     }
                                                 </a>
                                             } @else if (entry.disabled) {
-                                                <span
-                                                    rtElem="disabled-slot"
-                                                    role="none"
-                                                    [rtTooltip]="'rtKit.uiSectionInProgress' | transloco: { label: entry.label }">
+                                                <span rtElem="disabled-slot" role="none" [rtTooltip]="sectionInProgressLabel(entry.label)">
                                                     <button
                                                         rtElem="link"
                                                         type="button"
@@ -286,7 +278,7 @@
                                                             role="img"
                                                             qa-dataid="header-nav-marker"
                                                             [attr.data-id]="entry.id"
-                                                            [attr.aria-label]="'rtKit.uiNavUnread' | transloco"></span>
+                                                            [attr.aria-label]="t().uiNavUnread"></span>
                                                     }
                                                 </button>
                                             }
@@ -316,16 +308,13 @@
                                     role="img"
                                     qa-dataid="header-nav-marker"
                                     [attr.data-id]="section.id"
-                                    [attr.aria-label]="'rtKit.uiNavUnread' | transloco"></span>
+                                    [attr.aria-label]="t().uiNavUnread"></span>
                             }
                         </a>
                     }
                     @default {
                         @if (section.disabled) {
-                            <span
-                                rtElem="disabled-slot"
-                                role="none"
-                                [rtTooltip]="'rtKit.uiSectionInProgress' | transloco: { label: section.label }">
+                            <span rtElem="disabled-slot" role="none" [rtTooltip]="sectionInProgressLabel(section.label)">
                                 <button
                                     rtElem="link"
                                     type="button"
@@ -358,7 +347,7 @@
                                         role="img"
                                         qa-dataid="header-nav-marker"
                                         [attr.data-id]="section.id"
-                                        [attr.aria-label]="'rtKit.uiNavUnread' | transloco"></span>
+                                        [attr.aria-label]="t().uiNavUnread"></span>
                                 }
                             </button>
                         }

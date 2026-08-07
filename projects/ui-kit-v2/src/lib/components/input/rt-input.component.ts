@@ -1,25 +1,25 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import {
     booleanAttribute,
+    computed,
+    forwardRef,
+    inject,
+    input,
+    signal,
+    viewChild,
     ChangeDetectionStrategy,
     Component,
-    computed,
     ElementRef,
-    forwardRef,
-    input,
     InputSignal,
     InputSignalWithTransform,
     Signal,
-    signal,
-    viewChild,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
 
-import { TranslocoPipe } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { RT_KIT_LABELS, RtKitLabelMap } from '../../i18n';
 import { RtFormControlBase } from '../form-control/rt-form-control.base';
 import { RtIconComponent, IRtIcon } from '../icon';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
@@ -51,7 +51,6 @@ const BEM_BLOCK: string = 'rt-input';
         BlockDirective,
         ElemDirective,
         ModDirective,
-        TranslocoPipe,
     ],
     providers: [
         // Алиас базового токена — чтобы rt-field мог найти контрол через
@@ -72,6 +71,8 @@ const BEM_BLOCK: string = 'rt-input';
     },
 })
 export class RtInputComponent extends RtFormControlBase<string> {
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+
     protected readonly fieldEl: Signal<ElementRef<HTMLInputElement> | undefined> = viewChild<ElementRef<HTMLInputElement>>('fieldEl');
 
     protected readonly isPasswordVisible: WritableSignal<boolean> = signal<boolean>(false);

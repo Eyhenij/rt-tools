@@ -17,8 +17,8 @@
                 qa-dataid="file-card-download"
                 icon="ico-download"
                 variant="ghost"
-                [ariaLabel]="'rtKit.uiDownload' | transloco"
-                [tooltip]="'rtKit.uiDownload' | transloco"
+                [ariaLabel]="t().uiDownload"
+                [tooltip]="t().uiDownload"
                 [size]="actionSize()"
                 [disabled]="disabled()"
                 (clicked)="onDownload()" />
@@ -30,8 +30,8 @@
                 qa-dataid="file-card-rename"
                 icon="ico-edit"
                 variant="ghost"
-                [ariaLabel]="'rtKit.uiRename' | transloco"
-                [tooltip]="'rtKit.uiRename' | transloco"
+                [ariaLabel]="t().uiRename"
+                [tooltip]="t().uiRename"
                 [size]="actionSize()"
                 [disabled]="disabled()"
                 (clicked)="onRename()" />
@@ -43,8 +43,8 @@
                 qa-dataid="file-card-remove"
                 icon="ico-trash"
                 variant="ghost"
-                [ariaLabel]="'rtKit.uiRemove' | transloco"
-                [tooltip]="'rtKit.uiRemove' | transloco"
+                [ariaLabel]="t().uiRemove"
+                [tooltip]="t().uiRemove"
                 [size]="actionSize()"
                 [disabled]="disabled()"
                 (clicked)="onRemove()" />

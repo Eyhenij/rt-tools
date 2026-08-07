@@ -1,22 +1,22 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import {
     booleanAttribute,
+    computed,
+    inject,
+    input,
+    output,
     ChangeDetectionStrategy,
     Component,
-    computed,
-    input,
     InputSignal,
     InputSignalWithTransform,
-    output,
     OutputEmitterRef,
     Signal,
     ViewEncapsulation,
 } from '@angular/core';
 
-import { TranslocoPipe } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
+import { RT_KIT_LABELS, RtKitLabelMap } from '../../i18n';
 import { formatFileSize } from '../../util';
 
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
@@ -73,7 +73,6 @@ const ACTION_SIZES: Readonly<Record<IRtFileCard.Size, IRtIconButton.Size>> = {
 
         // pipes
         RtTruncateMiddlePipe,
-        TranslocoPipe,
     ],
     host: {
         class: BEM_BLOCK,
@@ -84,6 +83,8 @@ const ACTION_SIZES: Readonly<Record<IRtFileCard.Size, IRtIconButton.Size>> = {
 })
 export class RtFileCardComponent {
     /** Имя цветной иконки типа файла по расширению. */
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+
     protected readonly iconName: Signal<IRtIcon.Name> = computed((): IRtIcon.Name => getFileTypeIcon(this.name()));
 
     /** Заголовок карточки, выведенный из имени файла (без расширения, разделители → пробелы). */
