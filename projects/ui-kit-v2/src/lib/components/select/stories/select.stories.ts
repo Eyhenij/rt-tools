@@ -16,10 +16,9 @@ export default {
 
 type Story = StoryObj<TestRtSelectComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
-        options: [],
-        placeholder: 'Введите значение',
+        placeholder: 'Выберите город',
         iconLeft: null,
         filter: false,
         filterPlaceholder: '',

@@ -16,7 +16,7 @@ export default {
 
 type Story = StoryObj<TestRtAsideHeaderComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         title: 'Заголовок',
         overline: null,

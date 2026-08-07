@@ -18,7 +18,7 @@ export default {
 
 type Story = StoryObj<TestRtMenuComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         icon: 'ellipsis-h',
         ariaLabel: '',

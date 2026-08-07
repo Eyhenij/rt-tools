@@ -14,10 +14,9 @@ export default {
 
 type Story = StoryObj<TestRtMultiselectComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
-        options: [],
-        placeholder: 'Введите значение',
+        placeholder: 'Выберите города',
         maxChips: 3,
     },
 };

@@ -1,21 +1,33 @@
 /* rt-dialog-header — заголовок модалки. ViewEncapsulation.None.
-   Селекторы префиксованы `.rt-dialog-header`. */
+   Селекторы префиксованы `.rt-dialog-header`.
 
-.rt-dialog-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--rt-space-lg);
-    border-block-end: 1px solid var(--rt-color-border-subtle);
-    gap: var(--rt-space-sm);
+   Хост адресуется по имени элемента, а не по классу блока: класс
+   `.rt-dialog-header` висит и на `<rt-dialog-header>`, и на `<header>` внутри
+   него. Правило на голом классе доставалось обоим — хост становился flex-строкой,
+   а `<header>` внутри неё сжимался по содержимому: заголовок и крестик стояли
+   вплотную вместо краёв окна, и разделитель рисовался дважды, двумя линиями
+   разной длины. Хост боксом не становится: строка шапки должна быть прямым
+   flex-ребёнком рамки окна. */
 
-    &__title {
-        margin: 0;
-        color: var(--rt-color-text-primary);
-        font-size: var(--rt-text-xl);
-    }
+rt-dialog-header {
+    display: contents;
 
-    &__close {
-        margin-inline-start: auto;
+    .rt-dialog-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: var(--rt-space-lg);
+        border-block-end: 1px solid var(--rt-color-border-subtle);
+        gap: var(--rt-space-sm);
+
+        &__title {
+            margin: 0;
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-xl);
+        }
+
+        &__close {
+            margin-inline-start: auto;
+        }
     }
 }

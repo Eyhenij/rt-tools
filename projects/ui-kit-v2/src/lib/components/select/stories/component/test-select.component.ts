@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { IRtIcon } from '../../../icon/rt-icon.model';
 import { RtSelectComponent } from '../../rt-select.component';
 import { IRtSelect } from '../../rt-select.model';
-import { IRtIcon } from '../../../icon/rt-icon.model';
 
 /**
  * Демонстрационная обёртка для витрины: держит изменяемое состояние, на которое
@@ -13,6 +13,7 @@ import { IRtIcon } from '../../../icon/rt-icon.model';
     selector: 'app-select',
     template: `
         <rt-select
+            ariaLabel="Город"
             [options]="options"
             [placeholder]="placeholder"
             [iconLeft]="iconLeft"
@@ -26,8 +27,17 @@ import { IRtIcon } from '../../../icon/rt-icon.model';
     ],
 })
 export class TestRtSelectComponent {
-    public options: ReadonlyArray<IRtSelect.Option<string>> = [];
-    public placeholder: string = 'Введите значение';
+    /**
+     * Набор опций — правдоподобный, а не пустой: с пустым история рисовала строку «нет
+     * вариантов», то есть показывала отсутствие компонента вместо компонента.
+     */
+    public options: ReadonlyArray<IRtSelect.Option<string>> = [
+        { label: 'Москва', value: 'msk' },
+        { label: 'Санкт-Петербург', value: 'spb' },
+        { label: 'Новосибирск', value: 'nsk' },
+        { label: 'Владивосток', value: 'vvo', disabled: true },
+    ];
+    public placeholder: string = 'Выберите город';
     public iconLeft: IRtIcon.Name | null = null;
     public filter: boolean = false;
     public filterPlaceholder: string = '';

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { RtMultiselectComponent } from '../../rt-multiselect.component';
 import { IRtSelect } from '../../../select/rt-select.model';
+import { RtMultiselectComponent } from '../../rt-multiselect.component';
 
 /**
  * Демонстрационная обёртка для витрины: держит изменяемое состояние, на которое
@@ -11,7 +11,7 @@ import { IRtSelect } from '../../../select/rt-select.model';
 @Component({
     selector: 'app-multiselect',
     template: `
-        <rt-multiselect [options]="options" [placeholder]="placeholder" [maxChips]="maxChips" />
+        <rt-multiselect ariaLabel="Города" [options]="options" [placeholder]="placeholder" [maxChips]="maxChips" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -20,7 +20,17 @@ import { IRtSelect } from '../../../select/rt-select.model';
     ],
 })
 export class TestRtMultiselectComponent {
-    public options: ReadonlyArray<IRtSelect.Option<string>> = [];
-    public placeholder: string = 'Введите значение';
+    /**
+     * Набор опций — правдоподобный, а не пустой: с пустым история рисовала строку «нет
+     * вариантов», то есть показывала отсутствие компонента вместо компонента.
+     */
+    public options: ReadonlyArray<IRtSelect.Option<string>> = [
+        { label: 'Москва', value: 'msk' },
+        { label: 'Санкт-Петербург', value: 'spb' },
+        { label: 'Новосибирск', value: 'nsk' },
+        { label: 'Казань', value: 'kzn' },
+        { label: 'Владивосток', value: 'vvo', disabled: true },
+    ];
+    public placeholder: string = 'Выберите города';
     public maxChips: number = 3;
 }

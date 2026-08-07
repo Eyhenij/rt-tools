@@ -16,9 +16,9 @@ export default {
 
 type Story = StoryObj<TestRtTooltipComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
-        text: 'Текст',
+        text: 'Текст подсказки',
         placement: 'top',
     },
 };

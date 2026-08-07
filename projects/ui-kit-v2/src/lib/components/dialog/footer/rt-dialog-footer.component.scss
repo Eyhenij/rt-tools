@@ -1,13 +1,24 @@
-/* rt-dialog-footer — footer-слот модалки. ViewEncapsulation.None. */
+/* rt-dialog-footer — footer-слот модалки. ViewEncapsulation.None.
 
-.rt-dialog-footer {
-    display: flex;
-    justify-content: flex-end;
-    padding: var(--rt-space-lg);
-    border-block-start: 1px solid var(--rt-color-border-subtle);
-    gap: var(--rt-space-sm);
+   Хост адресуется по имени элемента, а не по классу блока: класс
+   `.rt-dialog-footer` висит и на `<rt-dialog-footer>`, и на `<footer>` внутри
+   него. Правило на голом классе доставалось обоим — кнопки прижимались к правому
+   краю не окна, а строки по содержимому, и разделитель рисовался дважды. Заодно
+   `:empty` теперь спрашивается у `<footer>`, а не у хоста: у хоста внутри всегда
+   лежит `<footer>`, и пустым он не бывал никогда. */
 
-    &:empty {
-        display: none;
+rt-dialog-footer {
+    display: contents;
+
+    .rt-dialog-footer {
+        display: flex;
+        justify-content: flex-end;
+        padding: var(--rt-space-lg);
+        border-block-start: 1px solid var(--rt-color-border-subtle);
+        gap: var(--rt-space-sm);
+
+        &:empty {
+            display: none;
+        }
     }
 }
