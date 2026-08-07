@@ -15,7 +15,7 @@ export default {
 
 type Story = StoryObj<TestRtFileInputComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         multiple: false,
         accept: null,

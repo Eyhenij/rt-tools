@@ -4,6 +4,7 @@ import {
     Component,
     computed,
     ElementRef,
+    forwardRef,
     input,
     InputSignal,
     OnDestroy,
@@ -65,6 +66,11 @@ type IQuillContentsArg = Parameters<Quill['setContents']>[0];
         // standalone components / directives
         BlockDirective,
         ElemDirective,
+    ],
+    providers: [
+        // Алиас базового токена — чтобы rt-field мог найти контрол через
+        // contentChild(RtFormControlBase) (query по абстрактному классу).
+        { provide: RtFormControlBase, useExisting: forwardRef(() => RtRichEditorComponent) },
     ],
     host: {
         class: BEM_BLOCK,

@@ -16,7 +16,7 @@ export default {
 
 type Story = StoryObj<TestRtRichEditorComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         placeholder: 'Введите значение',
         toolbar: 'full',

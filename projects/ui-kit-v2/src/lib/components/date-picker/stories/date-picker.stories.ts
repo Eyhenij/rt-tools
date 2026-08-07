@@ -17,7 +17,7 @@ export default {
 
 type Story = StoryObj<TestRtDatePickerComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         type: 'date',
         min: null,
