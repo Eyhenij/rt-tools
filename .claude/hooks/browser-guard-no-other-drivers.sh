@@ -1,17 +1,16 @@
 #!/usr/bin/env bash
-# PreToolUse guard for every OTHER way to reach a browser.
+# rt-kit v0.2.0 · hooks/browser-guard-no-other-drivers.sh · 3b5e695b78f1 · правится надстройкой, не здесь
+# Гард обходных путей к браузеру. PreToolUse.
 #
-# The pin is only worth something if claude-in-chrome is the ONLY door. These are the doors that
-# bypass it entirely — none of them consult the pinned deviceId:
-#   - mcp__playwright__*        a second driver, on a profile that is NOT logged in
-#   - mcp__chrome-devtools__*   a third driver, same problem
-#   - Bash: open <url>, open -a "Google Chrome", osascript telling Chrome to do things,
-#     chrome-cli, a raw chrome/chromium binary, playwright open|codegen|screenshot|cr
+# Закрепление профиля чего-то стоит только тогда, когда дверь одна. Здесь перечислены двери,
+# которые обходят её целиком и закреплённый профиль не спрашивают вовсе: второй драйвер,
+# третий драйвер, открытие ссылки средствами системы, управление браузером через сценарий
+# автоматизации, отдельная утилита и прямой запуск бинарника.
 #
-# Writing Playwright E2E *scripts* stays allowed: `playwright test` runs a spec, it does not
-# hand the agent an interactive browser. Only the driving verbs are denied.
+# Написание сквозных спек при этом остаётся законным: прогон спеки не выдаёт агенту
+# интерактивный браузер. Отбиваются только глаголы вождения.
 #
-# FAIL-OPEN when RT_TOOLS_BROWSER_DEVICE_ID is unset.
+# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: помощник не назвал профиль — пропуск.
 
 input="$(cat 2>/dev/null)"
 
@@ -21,47 +20,60 @@ device_id="$("${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/browser-device-id.sh" 2>/de
 tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
 
 deny() {
-    echo "$1 Use claude-in-chrome instead: select_browser with deviceId ${device_id} — the pinned Chrome profile — then drive it with mcp__claude-in-chrome__* tools." >&2
+    echo "$1 Води браузер закреплённым расширением: выбери профиль ${device_id} и работай его инструментами." >&2
     exit 2
 }
 
 case "$tool" in
     mcp__playwright__*)
-        deny "Playwright MCP is not a browser driver in this project — its profile is not logged in." ;;
+        deny "Второй драйвер браузера в этом проекте не используется — в его профиле вход не сделан." ;;
     mcp__chrome-devtools__*)
-        deny "Chrome DevTools MCP is not a browser driver in this project — it does not honour the pinned profile." ;;
+        deny "Третий драйвер браузера в этом проекте не используется — закреплённый профиль он не спрашивает." ;;
 esac
 
-[ "$tool" = "Bash" ] || exit 0
+# Терминал среды разработки запускает те же драйверы той же командной строкой.
+case "$tool" in
+    Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool) ;;
+    *) exit 0 ;;
+esac
 
 cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
 [ -z "$cmd" ] && exit 0
 
-# `playwright test` (and its runner aliases) are the legitimate E2E path — never block them.
+if [ "$tool" = "mcp__webstorm__execute_tool" ] && command -v perl >/dev/null 2>&1; then
+    inner="$(printf '%s' "$cmd" | perl -0ne '
+        if (/--command(?:=|\s+)(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(.+))/s) {
+            print defined $1 ? $1 : (defined $2 ? $2 : $3);
+        }
+    ' 2>/dev/null)"
+    [ -n "$inner" ] && cmd="$inner"
+fi
+
+# Прогон сквозных спек — законный путь, и он не отбивается никогда.
 case "$cmd" in
     *playwright\ open*|*playwright\ codegen*|*playwright\ screenshot*|*playwright\ cr*)
-        deny "Driving a browser through the Playwright CLI bypasses the pinned profile." ;;
+        deny "Вождение браузера из командной строки драйвера обходит закреплённый профиль." ;;
 esac
 
 case "$cmd" in
     *open\ http*|*open\ -a\ *Chrome*|*open\ -a\ *chrome*)
-        deny "Opening a URL with \`open\` launches the default browser, not the pinned profile." ;;
+        deny "Открытие адреса средствами системы поднимает браузер по умолчанию, а не закреплённый профиль." ;;
     *osascript*Chrome*|*osascript*chrome*)
-        deny "Driving Chrome via osascript bypasses the pinned profile." ;;
+        deny "Управление браузером сценарием автоматизации обходит закреплённый профиль." ;;
     *chrome-cli*)
-        deny "chrome-cli bypasses the pinned profile." ;;
+        deny "Эта утилита обходит закреплённый профиль." ;;
 esac
 
-# A Chrome/Chromium BINARY, and only in command position.
+# Бинарник браузера — и только в позиции команды.
 #
-# A bare "*chromium *" glob is NOT usable here: it also matches `--project=chromium`, which is
-# the mandatory flag on every legitimate Playwright E2E run — that glob denied the e2e suite
-# itself the moment it shipped. So anchor on a command boundary and require an executable-looking
-# token, never a flag value.
+# Голый образец с именем движка здесь непригоден: он совпадает и со значением флага, которым
+# помечают движок в прогоне сквозных спек, — такой образец отбил бы сам прогон в день, когда
+# появился. Поэтому якорь на границе команды и требование похожего на исполняемый файл слова,
+# а не значения флага.
 printf '%s' "$cmd" | grep -qE '(^|[;&|(]|[[:space:]]&&|[[:space:]]\|\|)[[:space:]]*(/[^[:space:]]*/)?(google-chrome|chromium)([[:space:]]|$)' \
-    && deny "Launching a Chrome binary directly bypasses the pinned profile."
+    && deny "Прямой запуск бинарника браузера обходит закреплённый профиль."
 
 printf '%s' "$cmd" | grep -qF 'Google Chrome.app/Contents/MacOS' \
-    && deny "Launching the Chrome binary directly bypasses the pinned profile."
+    && deny "Прямой запуск бинарника браузера обходит закреплённый профиль."
 
 exit 0

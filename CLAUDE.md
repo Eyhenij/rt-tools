@@ -49,9 +49,16 @@ Two layers, and they do not replace one another.
 They are laid out from `@rt-tools/agent-kit` by `pnpm run agent-kit:sync` and listed at session
 start by `.claude/hooks/constitution-index.sh`. Read the whole law before a decision it touches.
 
-**Rules** live in `.claude/skills/` and say _what that is called in this tree_ —
-`rt-tools-component`, `rt-tools-styling`, `rt-tools-testing` and the rest. `.claude/hooks/skill-gate.sh`
-blocks an edit until the matching rule is loaded.
+**Rules** live in `.claude/skills/` and say _by which technique_ a law is kept — `component-structure`,
+`styling-bem`, `testing`, `git-workflow` and the rest, laid out from the same package. What each of
+them is called in this tree sits in `implementation.md` next to the rule; patterns
+(`<rule>-<what>`) carry the ready-made code. `rt-tools-storybook` is this tree's own rule — the
+package ships no showcase rule.
+
+`.claude/hooks/skill-gate.sh` blocks an edit until the matching rule is loaded; the map from a
+file to its rule is `.claude/rt-kit/gate-map.sh`, and the commands, stands and doc pairs the
+guard hooks call are in `.claude/rt-kit/project.sh`. Both are written by this project, not laid
+out from the package.
 
 Laid-out files carry a `rt-kit v… · <resource> · <digest>` header and are **not edited in place**:
 an edit there is lost on the next sync, and `agent-kit sync` refuses the file instead of

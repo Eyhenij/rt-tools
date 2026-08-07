@@ -1,11 +1,18 @@
 #!/usr/bin/env bash
-# PreToolUse gate for Edit|Write|MultiEdit and Bash(git commit/push).
-# Blocks the action ONCE per (session, domain) until the matching skill has been loaded this
-# session (recorded by skill-loaded.sh). After the skill is loaded the same domain passes
-# silently for the rest of the session — so there is no repetition and negligible token cost.
+# rt-kit v0.2.0 · hooks/skill-gate.sh · 87a5feb17a85 · правится надстройкой, не здесь
+# Гейт правил: не даёт править файл, пока не загружено правило, под которое он подпадает.
 #
-# FAIL-OPEN: on any error or unmapped path the action is ALLOWED (exit 0). A buggy gate must
-# never wedge editing.
+# Закон и правило, которых никто не открывает, не действуют. Напоминание в подсказке помогает
+# ровно до первой спешки, поэтому требование держит хук: правка отбивается ОДИН раз на сессию
+# для каждой области, а после загрузки правила та же область проходит молча — повторов нет, и
+# стоит это почти ничего.
+#
+# Карта «файл — правило» живёт не здесь: она знает имена этого дерева, а хук их знать не может.
+# Её пишет проект в .claude/rt-kit/gate-map.sh — функцией `skill_for <род вызова> <цель>`, печатающей имя
+# правила. Нет карты — гейт пропускает всё: пустой гейт лучше гейта, отбивающего наугад.
+#
+# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: любая ошибка и любой неопознанный путь пропускают правку (exit 0).
+# Сломанный гейт не имеет права остановить работу совсем.
 
 input="$(cat 2>/dev/null)"
 [ -z "$input" ] && exit 0
@@ -13,49 +20,50 @@ input="$(cat 2>/dev/null)"
 sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
 tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
 
+map="${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/gate-map.sh"
+[ -f "$map" ] || exit 0
+# shellcheck disable=SC1090
+. "$map" 2>/dev/null || exit 0
+command -v skill_for >/dev/null 2>&1 || exit 0
+
 req=""
 target=""
 case "$tool" in
     Edit|Write|MultiEdit)
-        target="$(printf '%s' "$input" | jq -r '.tool_input.file_path // empty' 2>/dev/null)"
+        target="$(printf '%s' "$input" | jq -r '.tool_input.file_path // .tool_input.pathInProject // empty' 2>/dev/null)"
         [ -z "$target" ] && exit 0
-        # Most specific first — the first match wins. A story/spec is never a component file,
-        # so both must be tested before *.component.ts; the barrels must be tested before the
-        # *.ts catch-all.
+        # Путь от корня проекта приводится к абсолютному один раз: иначе карту пришлось бы
+        # писать в двух формах, и вторая расходилась бы с первой молча.
         case "$target" in
-            */.claude/*)                        exit 0 ;;
-            *.stories.ts)                       req="rt-tools-storybook" ;;
-            */stories/*.ts|*/strories/*.ts)     req="rt-tools-storybook" ;;
-            # Component overview pages are showcase docs, not prose: same rule as the stories.
-            *.mdx)                              req="rt-tools-storybook" ;;
-            *.spec.ts)                          req="rt-tools-testing" ;;
-            *.component.ts|*.component.html)    req="rt-tools-component" ;;
-            *.scss)                             req="rt-tools-styling" ;;
-            */public-api.ts|*/index.ts)         req="rt-tools-public-api" ;;
-            *.ts)                               req="rt-tools-typescript" ;;
+            /*) ;;
+            ?*) target="${CLAUDE_PROJECT_DIR:-.}/$target" ;;
+        esac
+        # Правила этого дерева действуют на файлы этого дерева. Без проверки корня гейт ловил
+        # бы и соседний репозиторий на той же машине.
+        case "$target" in
+            "${CLAUDE_PROJECT_DIR:-.}"/*) ;;
             *) exit 0 ;;
         esac
+        req="$(skill_for edit "$target" 2>/dev/null)"
         ;;
     Bash)
         target="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
-        case "$target" in
-            *git\ commit*|*git\ push*|*gh\ pr\ create*) req="rt-tools-ship-pr" ;;
-            *) exit 0 ;;
-        esac
+        [ -z "$target" ] && exit 0
+        req="$(skill_for bash "$target" 2>/dev/null)"
         ;;
     *) exit 0 ;;
 esac
 
 [ -z "$req" ] && exit 0
 
-# Accept both the bare skill name and a directory-scoped one ("<dir>:<name>").
+# Принимается и голое имя правила, и имя с областью каталога («<каталог>:<имя>»).
 loaded="${TMPDIR:-/tmp}/claude-skill-gate/${sid}.loaded"
 if [ -f "$loaded" ] && grep -qE "^([^:]*:)?$(printf '%s' "$req" | sed 's/[][\.*^$/]/\\&/g')$" "$loaded" 2>/dev/null; then
     exit 0
 fi
 
-reason="BLOCKED by skill-gate: load the '${req}' skill via the Skill tool BEFORE this action, then retry. This fires once per session for this domain."
+reason="Отбито гейтом правил: загрузи правило «${req}» инструментом Skill и повтори действие. Для этой области это происходит один раз за сессию."
 jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Load the %s skill first, then retry."}}\n' "$req"
+    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Загрузи правило %s и повтори."}}\n' "$req"
 
 exit 0
