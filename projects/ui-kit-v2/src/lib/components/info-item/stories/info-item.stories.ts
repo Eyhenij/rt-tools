@@ -7,6 +7,7 @@ export default {
     component: TestRtInfoItemComponent,
     argTypes: {
         label: { control: { type: 'text' } },
+        value: { control: { type: 'text' } },
         loading: { control: { type: 'boolean' } },
         grow: { control: { type: 'boolean' } },
     },
@@ -14,9 +15,10 @@ export default {
 
 type Story = StoryObj<TestRtInfoItemComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
-        label: 'Сохранить',
+        label: 'Тариф',
+        value: 'Годовой',
         loading: false,
         grow: false,
     },

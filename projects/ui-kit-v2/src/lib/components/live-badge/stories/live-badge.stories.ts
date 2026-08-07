@@ -14,10 +14,10 @@ export default {
 
 type Story = StoryObj<TestRtLiveBadgeComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
-        label: 'Сохранить',
-        count: null,
-        active: false,
+        label: 'Смотрят сейчас',
+        count: 128,
+        active: true,
     },
 };

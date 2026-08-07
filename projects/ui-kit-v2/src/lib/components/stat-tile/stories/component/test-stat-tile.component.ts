@@ -26,10 +26,10 @@ import { IRtStatTile } from '../../rt-stat-tile.model';
     ],
 })
 export class TestRtStatTileComponent {
-    public label: string = 'Сохранить';
-    public value: string = 'Значение';
-    public secondary: string | null = null;
-    public deltaPrimary: IRtStatTile.Delta | null = null;
-    public deltaSecondary: IRtStatTile.Delta | null = null;
-    public hint: string | null = 'Подсказка';
+    public label: string = 'Визиты';
+    public value: string = '1 240';
+    public secondary: string | null = 'из них 300 новых';
+    public deltaPrimary: IRtStatTile.Delta | null = { percent: 12.5, label: 'к прошлой неделе', baseline: '1 100' };
+    public deltaSecondary: IRtStatTile.Delta | null = { percent: 8, label: 'к прошлому году' };
+    public hint: string | null = 'Считается по уникальным';
 }
