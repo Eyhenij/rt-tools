@@ -12,7 +12,7 @@ export default {
 
 type Story = StoryObj<TestRtDownloadLinkComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         label: 'Сохранить',
     },
