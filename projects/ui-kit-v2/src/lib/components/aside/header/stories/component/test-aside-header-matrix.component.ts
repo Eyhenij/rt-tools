@@ -44,7 +44,11 @@ interface IAsideHeaderBadgeCase {
                     [itemLabel]="caseLabel"
                     [slotWidth]="headerWidth">
                     <ng-template let-headingCase>
-                        <rt-aside-header [title]="headingCase.title" [overline]="headingCase.overline" [closable]="headingCase.closable" />
+                        <rt-aside-header
+                            class="app-aside-header-matrix__header"
+                            [title]="headingCase.title"
+                            [overline]="headingCase.overline"
+                            [closable]="headingCase.closable" />
                     </ng-template>
                 </app-story-row>
             }
@@ -52,7 +56,11 @@ interface IAsideHeaderBadgeCase {
             @case ('badges') {
                 <app-story-row caption="Бэйджи под заголовком" [items]="badgeCases" [itemLabel]="caseLabel" [slotWidth]="headerWidth">
                     <ng-template let-badgeCase>
-                        <rt-aside-header title="Тур в Сочи" overline="Заявка № 1024" [badges]="badgeCase.badges" />
+                        <rt-aside-header
+                            class="app-aside-header-matrix__header"
+                            title="Тур в Сочи"
+                            overline="Заявка № 1024"
+                            [badges]="badgeCase.badges" />
                     </ng-template>
                 </app-story-row>
             }
@@ -60,7 +68,11 @@ interface IAsideHeaderBadgeCase {
             @case ('states') {
                 <app-story-row caption="Загрузка заголовка" [items]="loadingCases" [itemLabel]="caseLabel" [slotWidth]="headerWidth">
                     <ng-template let-loadingCase>
-                        <rt-aside-header title="Тур в Сочи" overline="Заявка № 1024" [loading]="loadingCase.loading" />
+                        <rt-aside-header
+                            class="app-aside-header-matrix__header"
+                            title="Тур в Сочи"
+                            overline="Заявка № 1024"
+                            [loading]="loadingCase.loading" />
                     </ng-template>
                 </app-story-row>
             }
@@ -72,6 +84,15 @@ interface IAsideHeaderBadgeCase {
                     </ng-template>
                 </app-story-themes>
             }
+        }
+    `,
+    styles: `
+        /* Ячейка ряда центрирует содержимое, и шапка бралась по своей начинке: короткая
+           сжималась вдвое, а длинный заголовок разрастался на 706 px в ячейке 320 и
+           наезжал на соседнюю. Ширина ячейки должна доставаться шапке — только тогда
+           видно, что длинный заголовок обрезается многоточием. */
+        .app-aside-header-matrix__header {
+            width: 100%;
         }
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
