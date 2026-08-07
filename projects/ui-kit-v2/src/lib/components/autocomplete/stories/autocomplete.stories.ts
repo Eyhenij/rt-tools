@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { openStoryOverlay } from '../../../../showcase/story-overlay';
 import { TestRtAutocompleteComponent } from './component/test-autocomplete.component';
 
 export default {
@@ -17,7 +18,7 @@ export default {
 
 type Story = StoryObj<TestRtAutocompleteComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         placeholder: 'Начните вводить город',
         minLength: 1,
@@ -25,9 +26,19 @@ export const Default: Story = {
     },
 };
 
+/**
+ * Подсказки запрашиваются уже при фокусе — для списков «последнее выбранное».
+ *
+ * Фокус ставит `play`: без него история рисовала обычное пустое поле, то есть
+ * ровно то же, что `Playground`, — режим объявлен входом и ничем не показан.
+ * Жест уходит полю внутри обёртки: раскрытие слушает `<input>`, а не хост.
+ */
 export const OpenOnFocus: Story = {
     args: {
-        ...Default.args,
+        ...Playground.args,
         openOnFocus: true,
+    },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openStoryOverlay(canvasElement, { within: 'input', wait: 200 });
     },
 };

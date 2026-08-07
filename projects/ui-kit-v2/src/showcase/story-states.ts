@@ -32,6 +32,12 @@ export const STORY_STATE_HOVER: IStoryState = { name: 'наведение', stat
 export const STORY_STATE_ACTIVE: IStoryState = { name: 'нажатие', state: 'active' };
 export const STORY_STATE_FOCUS_VISIBLE: IStoryState = { name: 'фокус с клавиши', state: 'focus-visible' };
 export const STORY_STATE_FOCUS_WITHIN: IStoryState = { name: 'фокус внутри', state: 'focus-within' };
+/**
+ * Фокус любого происхождения. От `фокус с клавиши` отличается тем, что виден и после щелчка
+ * мышью: триггеры оверлеев стилизованы `:focus` намеренно — раскрытая панель обязана показывать,
+ * куда вернётся клавиатура, чем бы её ни открыли.
+ */
+export const STORY_STATE_FOCUS: IStoryState = { name: 'фокус', state: 'focus' };
 
 /** Состояния, которые есть у всего, что принимает наведение и фокус. */
 export const STORY_STATES: readonly IStoryState[] = [STORY_STATE_DEFAULT, STORY_STATE_HOVER, STORY_STATE_ACTIVE, STORY_STATE_FOCUS_VISIBLE];
@@ -48,6 +54,13 @@ export const STORY_FIELD_STATES: readonly IStoryState[] = [STORY_STATE_DEFAULT, 
  * Тогда фокус — обычный `:focus-visible`, но передавать его надо со спуском до контрола.
  */
 export const STORY_CONTROL_STATES: readonly IStoryState[] = [STORY_STATE_DEFAULT, STORY_STATE_HOVER, STORY_STATE_FOCUS_VISIBLE];
+
+/**
+ * Состояния триггера оверлея: кнопки, раскрывающей панель. Нажатия у неё нет — жест кончается
+ * раскрытием, а не удержанием; фокус берётся обычный, потому что кольцо триггеру нужно и после
+ * щелчка мышью, а `:focus-visible` после щелчка не совпадает.
+ */
+export const STORY_TRIGGER_STATES: readonly IStoryState[] = [STORY_STATE_DEFAULT, STORY_STATE_HOVER, STORY_STATE_FOCUS];
 
 /** Подпись состояния для `app-story-row`. */
 export const storyStateLabel: (value: IStoryState) => string = (value: IStoryState): string => value.name;
@@ -70,6 +83,7 @@ export function storyPseudoParameters(target: string = ''): Readonly<Record<stri
     return {
         hover: at('hover'),
         active: at('active'),
+        focus: at('focus'),
         focusVisible: at('focus-visible'),
         focusWithin: at('focus-within'),
     };

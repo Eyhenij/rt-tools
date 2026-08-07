@@ -13,7 +13,7 @@ export default {
 
 type Story = StoryObj<TestRtDialogHeaderComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         title: 'Заголовок',
         closable: true,

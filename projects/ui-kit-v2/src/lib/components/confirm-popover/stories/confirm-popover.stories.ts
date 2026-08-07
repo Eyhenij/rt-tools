@@ -19,10 +19,10 @@ export default {
 
 type Story = StoryObj<TestRtConfirmPopoverComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
-        message: 'Сообщение',
-        title: 'Заголовок',
+        message: 'Удалить запись? Действие необратимо.',
+        title: 'Удаление',
         confirmLabel: 'Подтвердить',
         cancelLabel: 'Отмена',
         tone: 'danger',

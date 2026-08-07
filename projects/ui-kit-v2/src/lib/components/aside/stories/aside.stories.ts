@@ -21,7 +21,7 @@ export default {
 
 type Story = StoryObj<TestRtAsideComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         size: 'md',
         contentLayout: 'default',

@@ -16,10 +16,8 @@ export default {
 
 type Story = StoryObj<TestRtPageHeaderComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
-        items: [],
-        user: null,
         userTitle: '',
         userMenu: null,
         ariaLabel: '',

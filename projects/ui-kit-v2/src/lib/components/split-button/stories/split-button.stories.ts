@@ -18,10 +18,9 @@ export default {
 
 type Story = StoryObj<TestRtSplitButtonComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     args: {
         label: 'Сохранить',
-        menuItems: [],
         theme: 'primary',
         size: 'md',
         menuAriaLabel: '',
