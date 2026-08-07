@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { STORY_TRIGGER_ATTRIBUTE } from '../../../../../showcase/story-overlay';
 import { RtButtonDirective } from '../../../button/rt-button.directive';
 import { RtPopoverDirective } from '../../rt-popover.directive';
 import { IRtPopover } from '../../rt-popover.model';
@@ -11,6 +12,10 @@ import { IRtPopover } from '../../rt-popover.model';
  *
  * Директива висит на кнопке, а панель объявлена здесь же шаблоном: без того и другого история
  * рисовала пустой `div` и панель, которой неоткуда взяться.
+ *
+ * Признак `data-story-trigger` стоит на кнопке, чтобы `play`-функция истории `HoverTrigger`
+ * нашла её и послала наведение: режим раскрытия объявлен входом, а закрытая панель выглядит
+ * ровно как в `Playground` — то есть ось показана не была бы вовсе.
  */
 @Component({
     selector: 'app-popover',
@@ -32,7 +37,8 @@ import { IRtPopover } from '../../rt-popover.model';
             [rtPopoverPanelClass]="panelClass"
             [rtPopoverDisabled]="disabled"
             [rtPopoverOffsetY]="offsetY"
-            [rtPopoverOffsetX]="offsetX"></button>
+            [rtPopoverOffsetX]="offsetX"
+            [attr.data-story-trigger]="triggerAttribute"></button>
     `,
     styles: `
         /* Своего оформления у директивы нет — панель красит содержимое, и здесь оно
@@ -54,6 +60,8 @@ import { IRtPopover } from '../../rt-popover.model';
     ],
 })
 export class TestRtPopoverComponent {
+    public readonly triggerAttribute: string = STORY_TRIGGER_ATTRIBUTE;
+
     public trigger: IRtPopover.Trigger = 'click';
     public width: IRtPopover.Width = 'auto';
     public align: IRtPopover.Align = 'start';
