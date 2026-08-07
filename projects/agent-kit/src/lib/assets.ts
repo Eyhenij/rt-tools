@@ -8,15 +8,27 @@
 import { join } from 'node:path';
 
 import { IEntryOfCatalog, isChosen, readCatalog } from './catalog.js';
-import { IConfig, TKind } from './config.js';
+import { IConfig, SKILL_FILE, SKILL_KINDS, TKind } from './config.js';
 
 export interface IAsset {
     /** Идентификатор: `laws/delivery.md`. Он же путь надстройки и ключ в `only` и `skip`. */
     readonly id: string;
     readonly kind: TKind;
+    /** Имя без рода и расширения: `delivery`. У скила — имя каталога, которым его зовут. */
+    readonly name: string;
     readonly text: string;
     /** Путь в дереве проекта, куда ресурс ложится. */
     readonly target: string;
+}
+
+/**
+ * Куда ложится ресурс. Скил читается агентом как `<имя>/SKILL.md`, и другого имени у него быть
+ * не может: файл, названный по ресурсу, агент не найдёт вовсе. Остальные роды ложатся файлом.
+ */
+export function targetOf(entry: IEntryOfCatalog, layout: Readonly<Record<TKind, string>>): string {
+    return SKILL_KINDS.includes(entry.kind)
+        ? join(layout[entry.kind], entry.name, SKILL_FILE)
+        : join(layout[entry.kind], entry.id.slice(entry.kind.length + 1));
 }
 
 export function collectAssets(config: IConfig, assetsDir: string): readonly IAsset[] {
@@ -25,7 +37,8 @@ export function collectAssets(config: IConfig, assetsDir: string): readonly IAss
         .map((entry: IEntryOfCatalog): IAsset => ({
             id: entry.id,
             kind: entry.kind,
+            name: entry.name,
             text: entry.text,
-            target: join(config.layout[entry.kind], entry.id.slice(entry.kind.length + 1)),
+            target: targetOf(entry, config.layout),
         }));
 }
