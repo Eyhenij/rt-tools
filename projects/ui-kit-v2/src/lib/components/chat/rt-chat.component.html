@@ -1,6 +1,6 @@
 <ng-container rtBlock="rt-chat">
     <rt-file-drop
-        [overlayLabel]="'rtKit.chatDropOverlay' | transloco"
+        [overlayLabel]="t().chatDropOverlay"
         [accept]="accept()"
         [disabled]="dropDisabled()"
         (filesDropped)="onFilesDropped($event)">
@@ -15,8 +15,8 @@
                             qa-dataid="chat-refresh"
                             icon="sync"
                             variant="ghost"
-                            [ariaLabel]="'rtKit.chatRefreshAria' | transloco"
-                            [tooltip]="'rtKit.chatRefreshTooltip' | transloco"
+                            [ariaLabel]="t().chatRefreshAria"
+                            [tooltip]="t().chatRefreshTooltip"
                             [loading]="fetching()"
                             [disabled]="!hasThread()"
                             (clicked)="onRefresh()" />
@@ -75,8 +75,8 @@
                                             qa-dataid="chat-message-delete"
                                             icon="trash"
                                             variant="ghost"
-                                            [ariaLabel]="'rtKit.chatDeleteAria' | transloco"
-                                            [tooltip]="'rtKit.chatDeleteTooltip' | transloco"
+                                            [ariaLabel]="t().chatDeleteAria"
+                                            [tooltip]="t().chatDeleteTooltip"
                                             [rtConfirm]="m.deleteConfirm"
                                             (confirmed)="onDeleteMessage(m)" />
                                     } @else {
@@ -85,8 +85,8 @@
                                             qa-dataid="chat-message-delete"
                                             icon="trash"
                                             variant="ghost"
-                                            [ariaLabel]="'rtKit.chatDeleteAria' | transloco"
-                                            [tooltip]="'rtKit.chatDeleteTooltip' | transloco"
+                                            [ariaLabel]="t().chatDeleteAria"
+                                            [tooltip]="t().chatDeleteTooltip"
                                             (clicked)="onDeleteMessage(m)" />
                                     }
                                 }
@@ -94,7 +94,7 @@
                                     <p rtElem="message-author" qa-dataid="chat-message-author">{{ m.author }}</p>
                                     @if (m.deleted) {
                                         <p rtElem="message-text" qa-dataid="chat-message-deleted" rtMod="deleted">
-                                            {{ 'rtKit.chatMessageDeleted' | transloco }}
+                                            {{ t().chatMessageDeleted }}
                                         </p>
                                     } @else {
                                         @if (m.delta) {
@@ -131,10 +131,8 @@
                                                     rel="noopener"
                                                     target="_blank"
                                                     [href]="m.deepLink"
-                                                    [label]="m.deepLinkLabel || ('rtKit.uiSubscribeNotifications' | transloco)"
-                                                    [attr.aria-label]="
-                                                        m.deepLinkLabel || ('rtKit.uiSubscribeNotifications' | transloco)
-                                                    "></a>
+                                                    [label]="m.deepLinkLabel || t().uiSubscribeNotifications"
+                                                    [attr.aria-label]="m.deepLinkLabel || t().uiSubscribeNotifications"></a>
                                             </span>
                                         }
                                     }
@@ -156,8 +154,8 @@
                                                         qa-dataid="chat-message-retry"
                                                         icon="sync"
                                                         variant="ghost"
-                                                        [ariaLabel]="'rtKit.chatRetryAria' | transloco"
-                                                        [tooltip]="'rtKit.chatRetryTooltip' | transloco"
+                                                        [ariaLabel]="t().chatRetryAria"
+                                                        [tooltip]="t().chatRetryTooltip"
                                                         (clicked)="onRetryMessage(m)" />
                                                 } @else {
                                                     <!-- Часы, пока сообщение в пути; дальше двойной чек, цвет которого
@@ -173,16 +171,12 @@
                                 </div>
                             </div>
                         } @empty {
-                            <rt-note rtElem="empty-thread" qa-dataid="chat-empty-thread">{{ 'rtKit.chatEmptyThread' | transloco }}</rt-note>
+                            <rt-note rtElem="empty-thread" qa-dataid="chat-empty-thread">{{ t().chatEmptyThread }}</rt-note>
                         }
                     </div>
                 }
                 @if (!loading() && fetching()) {
-                    <div
-                        rtElem="thread-overlay"
-                        qa-dataid="chat-thread-overlay"
-                        role="status"
-                        [attr.aria-label]="'rtKit.chatRefreshAria' | transloco">
+                    <div rtElem="thread-overlay" qa-dataid="chat-thread-overlay" role="status" [attr.aria-label]="t().chatRefreshAria">
                         <rt-spinner diameter="32" />
                     </div>
                 }
@@ -234,8 +228,8 @@
                                     qa-dataid="chat-composer-attach"
                                     icon="paperclip"
                                     variant="ghost"
-                                    [ariaLabel]="'rtKit.chatAttachAria' | transloco"
-                                    [tooltip]="'rtKit.chatAttachTooltip' | transloco"
+                                    [ariaLabel]="t().chatAttachAria"
+                                    [tooltip]="t().chatAttachTooltip"
                                     [disabled]="composerDisabled()"
                                     (clicked)="openFilePicker()" />
                             }
@@ -246,7 +240,7 @@
                                 formControlName="message"
                                 cdkAutosizeMinRows="1"
                                 cdkAutosizeMaxRows="4"
-                                [attr.aria-label]="'rtKit.chatComposerAria' | transloco"
+                                [attr.aria-label]="t().chatComposerAria"
                                 [placeholder]="placeholder()"
                                 (keydown)="onComposerKeydown($event)"></textarea>
                         </div>
@@ -257,8 +251,8 @@
                             type="submit"
                             theme="primary"
                             appearance="filled"
-                            [label]="'rtKit.chatSendLabel' | transloco"
-                            [attr.aria-label]="'rtKit.chatSendAria' | transloco"
+                            [label]="t().chatSendLabel"
+                            [attr.aria-label]="t().chatSendAria"
                             [loading]="sending()"
                             [disabled]="!canSend()"></button>
                     </form>

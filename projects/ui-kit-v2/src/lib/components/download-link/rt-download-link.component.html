@@ -1,10 +1,5 @@
 <ng-container rtBlock="rt-download-link">
-    <button
-        rtElem="button"
-        qa-dataid="download-link-button"
-        type="button"
-        [attr.aria-label]="'rtKit.uiDownloadFile' | transloco: { name: label() }"
-        (click)="onClick()">
+    <button rtElem="button" qa-dataid="download-link-button" type="button" [attr.aria-label]="downloadAriaLabel()" (click)="onClick()">
         <rt-icon rtElem="icon" name="ico-download" size="md" />
         <span rtElem="label" qa-dataid="download-link-label">{{ label() }}</span>
     </button>

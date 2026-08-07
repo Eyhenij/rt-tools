@@ -11,9 +11,9 @@ import {
     ViewEncapsulation,
 } from '@angular/core';
 
-import { translateSignal } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+
+import { rtKitLabel } from '../../i18n';
 
 const BEM_BLOCK: string = 'rt-live-badge';
 
@@ -40,7 +40,7 @@ const BEM_BLOCK: string = 'rt-live-badge';
     },
 })
 export class RtLiveBadgeComponent {
-    readonly #t_uiLiveOnSite: Signal<string> = translateSignal('rtKit.uiLiveOnSite');
+    readonly #t_uiLiveOnSite: Signal<string> = rtKitLabel('uiLiveOnSite');
 
     protected readonly labelText: Signal<string> = computed((): string => this.label() || this.#t_uiLiveOnSite());
 

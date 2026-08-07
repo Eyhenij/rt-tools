@@ -10,10 +10,9 @@ import {
     ViewEncapsulation,
 } from '@angular/core';
 
-import { translateSignal } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { rtKitLabel } from '../../i18n';
 import { IRtNightGrid } from './rt-night-grid.model';
 
 const BEM_BLOCK: string = 'rt-night-grid';
@@ -41,7 +40,7 @@ const BEM_BLOCK: string = 'rt-night-grid';
     },
 })
 export class RtNightGridComponent {
-    readonly #t_uiNightGridAria: Signal<string> = translateSignal('rtKit.uiNightGridAria');
+    readonly #t_uiNightGridAria: Signal<string> = rtKitLabel('uiNightGridAria');
 
     protected readonly ariaText: Signal<string> = computed((): string => this.ariaLabel() || this.#t_uiNightGridAria());
 

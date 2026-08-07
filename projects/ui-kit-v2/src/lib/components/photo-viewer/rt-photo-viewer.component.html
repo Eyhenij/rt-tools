@@ -9,7 +9,7 @@
                 qa-dataid="photo-viewer-close"
                 icon="close"
                 variant="ghost"
-                [ariaLabel]="'rtKit.photoViewerClose' | transloco"
+                [ariaLabel]="t().photoViewerClose"
                 (clicked)="close()" />
         </header>
 
@@ -41,7 +41,7 @@
                 qa-dataid="photo-viewer-prev"
                 icon="angle-left"
                 variant="ghost"
-                [ariaLabel]="'rtKit.photoViewerPrev' | transloco"
+                [ariaLabel]="t().photoViewerPrev"
                 (clicked)="move(-1)" />
 
             <rt-icon-button
@@ -49,7 +49,7 @@
                 qa-dataid="photo-viewer-next"
                 icon="angle-right"
                 variant="ghost"
-                [ariaLabel]="'rtKit.photoViewerNext' | transloco"
+                [ariaLabel]="t().photoViewerNext"
                 (clicked)="move(1)" />
         }
 

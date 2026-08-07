@@ -4,30 +4,29 @@ import { DatePipe } from '@angular/common';
 import {
     afterRenderEffect,
     booleanAttribute,
-    ChangeDetectionStrategy,
-    Component,
     computed,
     effect,
-    ElementRef,
     inject,
     input,
-    InputSignal,
-    InputSignalWithTransform,
     output,
-    OutputEmitterRef,
-    Signal,
     signal,
     viewChild,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    InputSignal,
+    InputSignalWithTransform,
+    OutputEmitterRef,
+    Signal,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
-import { translateSignal, TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { RT_KIT_LABELS, RT_KIT_LOCALE, RtKitLabelKey, RtKitLabelMap, rtKitLabel } from '../../i18n';
 import { RtChatStatusLabelPipe } from '../../pipes/rt-chat-status-label.pipe';
 import { RtButtonDirective } from '../button/rt-button.directive';
 import { RtConfirmDirective } from '../confirm-popover/rt-confirm.directive';
@@ -48,7 +47,7 @@ import { ERtChatMessageStatus, IRtChat } from './rt-chat.model';
 const BEM_BLOCK: string = 'rt-chat';
 
 /** Ключ заглушки имени вложения, когда домен не отдал `fileName` (только URL). */
-const ATTACHMENT_FALLBACK_KEY: string = 'rtKit.chatAttachmentFallback';
+const ATTACHMENT_FALLBACK_KEY: RtKitLabelKey = 'chatAttachmentFallback';
 
 /** Зазор от низа треда, в пределах которого считаем пользователя «у нижнего края». */
 const NEAR_BOTTOM_THRESHOLD_PX: number = 64;
@@ -106,9 +105,6 @@ const PIN_RETRY_DELAYS_MS: readonly number[] = [50, 150, 300, 500, 800];
         BlockDirective,
         ElemDirective,
         ModDirective,
-
-        // transloco
-        TranslocoPipe,
     ],
     host: {
         class: BEM_BLOCK,
@@ -117,19 +113,17 @@ const PIN_RETRY_DELAYS_MS: readonly number[] = [50, 150, 300, 500, 800];
     },
 })
 export class RtChatComponent {
-    readonly #transloco: TranslocoService = inject(TranslocoService);
-
     /**
-     * Дата сообщения форматируется по активному языку Transloco, а не по
+     * Дата сообщения форматируется по активной локали приложения, а не по
      * `LOCALE_ID`: тот вычисляется на подъёме приложения и там, где язык
      * переключают на ходу, оставил бы часы в прежнем формате до перезагрузки.
      *
      * Данные локали для `DatePipe` регистрирует приложение: без них пайп падает
      * `Missing locale data`, и кит за это не отвечает.
      */
-    protected readonly locale: Signal<string> = toSignal(this.#transloco.langChanges$, {
-        initialValue: this.#transloco.getActiveLang(),
-    });
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+
+    protected readonly locale: Signal<string> = inject(RT_KIT_LOCALE);
 
     /**
      * Пользователь у нижнего края треда. Плоское поле (не сигнал), чтобы
@@ -157,16 +151,16 @@ export class RtChatComponent {
     protected readonly composerFileEl: Signal<ElementRef<HTMLInputElement> | undefined> =
         viewChild<ElementRef<HTMLInputElement>>('composerFileEl');
 
-    protected readonly attachmentFallbackName: Signal<string> = translateSignal(ATTACHMENT_FALLBACK_KEY);
+    protected readonly attachmentFallbackName: Signal<string> = rtKitLabel(ATTACHMENT_FALLBACK_KEY);
 
     /** Подписи с учётом того, что передал хозяин компонента: своё важнее умолчания */
     protected readonly titleText: Signal<string> = computed((): string => this.title() || this.#defaultTitle());
     protected readonly placeholderText: Signal<string> = computed((): string => this.placeholder() || this.#defaultPlaceholder());
     protected readonly emptyHintText: Signal<string> = computed((): string => this.emptyHint() || this.#defaultEmptyHint());
 
-    readonly #defaultTitle: Signal<string> = translateSignal('rtKit.chatTitle');
-    readonly #defaultPlaceholder: Signal<string> = translateSignal('rtKit.chatPlaceholder');
-    readonly #defaultEmptyHint: Signal<string> = translateSignal('rtKit.chatEmptyHint');
+    readonly #defaultTitle: Signal<string> = rtKitLabel('chatTitle');
+    readonly #defaultPlaceholder: Signal<string> = rtKitLabel('chatPlaceholder');
+    readonly #defaultEmptyHint: Signal<string> = rtKitLabel('chatEmptyHint');
 
     protected readonly MessageStatus: typeof ERtChatMessageStatus = ERtChatMessageStatus;
 
@@ -206,8 +200,8 @@ export class RtChatComponent {
     protected readonly showHeader: Signal<boolean> = computed((): boolean => this.showRefresh() || this.showExpand());
 
     /** Подпись кнопки fullscreen: тернарник в шаблоне переводом не покрыть. */
-    protected readonly expandLabel: Signal<string> = translateSignal(
-        computed((): string => (this.expanded() ? 'rtKit.chatCollapse' : 'rtKit.chatExpand'))
+    protected readonly expandLabel: Signal<string> = rtKitLabel(
+        computed((): RtKitLabelKey => (this.expanded() ? 'chatCollapse' : 'chatExpand'))
     );
 
     /** Выбранные, но ещё не отправленные файлы — карточки над полем ввода. */

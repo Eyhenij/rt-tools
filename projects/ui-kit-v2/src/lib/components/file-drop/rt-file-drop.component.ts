@@ -19,10 +19,9 @@ import {
     WritableSignal,
 } from '@angular/core';
 
-import { translateSignal } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { rtKitLabel } from '../../i18n';
 import { IRtFileDrop } from './rt-file-drop.model';
 
 const BEM_BLOCK: string = 'rt-file-drop';
@@ -77,7 +76,7 @@ export class RtFileDropComponent {
 
     readonly #host: ElementRef<HTMLElement> = inject(ElementRef);
 
-    readonly #t_uiFileDropOverlay: Signal<string> = translateSignal('rtKit.uiFileDropOverlay');
+    readonly #t_uiFileDropOverlay: Signal<string> = rtKitLabel('uiFileDropOverlay');
 
     #dragLeaveTimer: ReturnType<typeof setTimeout> | null = null;
 

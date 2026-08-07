@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, Signal, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { translateSignal } from '@jsverse/transloco';
-
+import { rtKitLabel } from '../../i18n';
 import { ThemeService } from '../../platform';
 
 import { RtIconButtonComponent } from '../icon-button';
@@ -45,7 +44,7 @@ const BEM_BLOCK: string = 'rt-theme-toggle';
 })
 export class RtThemeToggleComponent {
     /** Тексты компонента: сигналы, потому что язык может смениться без перезагрузки */
-    readonly #t_themeToggleLabel: Signal<string> = translateSignal('rtKit.themeToggleLabel');
+    readonly #t_themeToggleLabel: Signal<string> = rtKitLabel('themeToggleLabel');
 
     readonly #theme: ThemeService = inject(ThemeService);
 

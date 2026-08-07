@@ -27,7 +27,7 @@
                 size="sm"
                 variant="ghost"
                 iconColor="muted"
-                [ariaLabel]="'rtKit.uiClear' | transloco"
+                [ariaLabel]="t().uiClear"
                 [tabIndex]="-1"
                 (clicked)="clear($event)" />
         }
@@ -36,7 +36,7 @@
                 rtElem="toggle"
                 qa-dataid="input-password-toggle"
                 type="button"
-                [attr.aria-label]="isPasswordVisible() ? ('rtKit.uiHidePassword' | transloco) : ('rtKit.uiShowPassword' | transloco)"
+                [attr.aria-label]="isPasswordVisible() ? t().uiHidePassword : t().uiShowPassword"
                 [tabIndex]="-1"
                 (click)="togglePassword()">
                 <rt-icon size="sm" color="muted" [name]="passwordToggleIcon()" />

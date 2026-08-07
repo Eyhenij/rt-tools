@@ -1,27 +1,27 @@
 import {
     booleanAttribute,
-    ChangeDetectionStrategy,
-    Component,
     computed,
-    ElementRef,
     forwardRef,
+    inject,
     input,
-    InputSignal,
-    InputSignalWithTransform,
     output,
-    OutputEmitterRef,
-    Signal,
     signal,
     viewChild,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    InputSignal,
+    InputSignalWithTransform,
+    OutputEmitterRef,
+    Signal,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { translateSignal, TranslocoPipe } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { RT_KIT_LABELS, RtKitLabelMap, rtKitLabel } from '../../i18n';
 import { RtFormControlBase } from '../form-control/rt-form-control.base';
 import { RtIconComponent, IRtIcon } from '../icon';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
@@ -73,7 +73,6 @@ function nextPanelId(): number {
         BlockDirective,
         ElemDirective,
         ModDirective,
-        TranslocoPipe,
     ],
     providers: [
         // Алиас базового токена — для contentChild(RtFormControlBase) в rt-field.
@@ -92,7 +91,9 @@ function nextPanelId(): number {
     },
 })
 export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> {
-    readonly #t_uiSearch: Signal<string> = translateSignal('rtKit.uiSearch');
+    readonly #t_uiSearch: Signal<string> = rtKitLabel('uiSearch');
+
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly panelId: string = `rt-select-panel-${nextPanelId()}`;
 

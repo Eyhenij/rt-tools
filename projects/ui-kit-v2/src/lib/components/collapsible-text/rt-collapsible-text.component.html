@@ -11,7 +11,7 @@
     </div>
     @if (overflowing() || expanded()) {
         <button rtElem="toggle" qa-dataid="collapsible-text-toggle" type="button" [attr.aria-expanded]="expanded()" (click)="toggle()">
-            {{ expanded() ? ('rtKit.uiCollapse' | transloco) : ('rtKit.uiMore' | transloco) }}
+            {{ expanded() ? t().uiCollapse : t().uiMore }}
         </button>
     }
 </ng-container>

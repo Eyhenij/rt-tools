@@ -1,22 +1,21 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
     computed,
-    ElementRef,
     forwardRef,
     inject,
     input,
+    viewChild,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
     InputSignal,
     LOCALE_ID,
     Signal,
-    viewChild,
     ViewEncapsulation,
 } from '@angular/core';
 
-import { TranslocoPipe } from '@jsverse/transloco';
-
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { RT_KIT_LABELS, RtKitLabelMap } from '../../i18n';
 import { RtFormControlBase } from '../form-control/rt-form-control.base';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { IRtDatePicker } from './rt-date-picker.model';
@@ -45,7 +44,6 @@ const BEM_BLOCK: string = 'rt-date-picker';
         BlockDirective,
         ElemDirective,
         ModDirective,
-        TranslocoPipe,
     ],
     providers: [
         // Алиас базового токена — для contentChild(RtFormControlBase) в rt-field.
@@ -63,6 +61,8 @@ const BEM_BLOCK: string = 'rt-date-picker';
 })
 export class RtDatePickerComponent extends RtFormControlBase<string> {
     readonly #locale: string = inject(LOCALE_ID);
+
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly fieldEl: Signal<ElementRef<HTMLInputElement> | undefined> = viewChild<ElementRef<HTMLInputElement>>('fieldEl');
 

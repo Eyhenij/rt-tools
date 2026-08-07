@@ -1,10 +1,9 @@
 import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
-import { ChangeDetectionStrategy, Component, model, ModelSignal, ViewEncapsulation } from '@angular/core';
-
-import { TranslocoPipe } from '@jsverse/transloco';
+import { inject, model, ChangeDetectionStrategy, Component, ModelSignal, Signal, ViewEncapsulation } from '@angular/core';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { RT_KIT_LABELS, RtKitLabelMap } from '../../../i18n';
 import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
 import { RtIconComponent } from '../../icon/rt-icon.component';
 import { IRtTable } from '../rt-table.model';
@@ -35,13 +34,14 @@ const BEM_BLOCK: string = 'rt-table-settings-panel';
         BlockDirective,
         ElemDirective,
         ModDirective,
-        TranslocoPipe,
     ],
     host: {
         class: BEM_BLOCK,
     },
 })
 export class RtTableSettingsPanelComponent {
+    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+
     public readonly items: ModelSignal<ReadonlyArray<IRtTable.ColumnSettingItem>> =
         model.required<ReadonlyArray<IRtTable.ColumnSettingItem>>();
 
