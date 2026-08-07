@@ -1,2 +1,3 @@
-export * from './rt-kit-translations';
-export * from './rt-kit-translations.providers';
+export * from './rt-kit-labels.en';
+export * from './rt-kit-labels.model';
+export * from './rt-kit-labels.providers';
