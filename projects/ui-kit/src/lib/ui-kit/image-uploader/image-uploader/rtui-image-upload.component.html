@@ -31,7 +31,7 @@
                 matTooltipClass="custom-tooltip"
                 [matTooltip]="tooltip()"
                 [matTooltipPosition]="tooltipPosition()"
-                [matTooltipDisabled]="isMobile() || !tooltip() || !isActive() || isTooltipDisabled()"
+                [matTooltipDisabled]="narrow() || !tooltip() || !isActive() || isTooltipDisabled()"
                 [rtMod]="{ active: isActive() }"
                 [src]="imageUrl()"
                 (click)="uploadInput.click()"
@@ -44,7 +44,7 @@
                     aria-label="Download image"
                     matTooltip="Download image"
                     matTooltipPosition="above"
-                    [matTooltipDisabled]="isMobile()"
+                    [matTooltipDisabled]="narrow()"
                     (click)="onDownloadImage()">
                     <mat-icon rtIconOutlined>download</mat-icon>
                 </button>

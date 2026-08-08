@@ -14,7 +14,7 @@
                         matTooltip="Go back"
                         matTooltipClass="custom-tooltip"
                         matTooltipPosition="below"
-                        [matTooltipDisabled]="isMobile()"
+                        [matTooltipDisabled]="narrow()"
                         [disableRipple]="true"
                         (click)="onCancel()">
                         <mat-icon>arrow_back</mat-icon>
@@ -42,7 +42,7 @@
                                     matTooltipClass="custom-tooltip"
                                     matTooltipPosition="left"
                                     [matTooltip]="button.tooltip"
-                                    [matTooltipDisabled]="isMobile()"
+                                    [matTooltipDisabled]="narrow()"
                                     [disableRipple]="true"
                                     [disabled]="button?.disabled"
                                     (click)="onHeaderActionClick(button.name)">
@@ -82,7 +82,7 @@
                         matTooltipClass="custom-tooltip"
                         matTooltipPosition="left"
                         [matTooltip]="submitButtonTooltip()"
-                        [matTooltipDisabled]="!isSubmitButtonDisabled() || isMobile()"
+                        [matTooltipDisabled]="!isSubmitButtonDisabled() || narrow()"
                         [disabled]="isSubmitButtonDisabled()"
                         (click)="onSubmit()">
                         <div rtElem="title">{{ submitButtonTitle() }}</div>

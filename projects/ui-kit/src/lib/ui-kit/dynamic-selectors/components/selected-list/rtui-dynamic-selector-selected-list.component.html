@@ -13,7 +13,7 @@
                                 rtMod="draggable"
                                 matTooltip="Hold button to drag"
                                 matTooltipPosition="right"
-                                [matTooltipDisabled]="isMobile()">
+                                [matTooltipDisabled]="narrow()">
                                 <mat-icon [rtIconOutlined]="true">open_with</mat-icon>
                             </button>
                         </div>
@@ -32,13 +32,13 @@
                         rtElem="item-title"
                         matTooltipPosition="above"
                         [rtHideTooltipDirective]="titleTpl"
-                        [isTooltipShown]="!isMobile()"
+                        [isTooltipShown]="!narrow()"
                         [matTooltip]="
                             useNameBreaking()
                                 ? (entity[displayExp()] | entityToString | breakString)
                                 : (entity[displayExp()] | entityToString)
                         "
-                        [matTooltipDisabled]="isMobile()">
+                        [matTooltipDisabled]="narrow()">
                         @if (useNameBreaking()) {
                             {{
                                 useTitleCase()
@@ -65,7 +65,7 @@
                                     rtElem="item-control-button"
                                     matTooltipPosition="left"
                                     matTooltip="Reset"
-                                    [matTooltipDisabled]="isMobile()"
+                                    [matTooltipDisabled]="narrow()"
                                     (click)="setEditModState(null)">
                                     <mat-icon [rtIconOutlined]="true">refresh</mat-icon>
                                 </button>
@@ -79,7 +79,7 @@
                                 rtElem="item-control-button"
                                 matTooltipPosition="right"
                                 [matTooltip]="editedItemIndex() === i ? 'Apply' : 'Edit item'"
-                                [matTooltipDisabled]="isMobile()"
+                                [matTooltipDisabled]="narrow()"
                                 (click)="editedItemIndex() === i ? changeValue(entity[displayExp()]) : setEditModState(i)">
                                 <mat-icon [rtIconOutlined]="true">{{ editedItemIndex() === i ? 'done' : 'edit' }}</mat-icon>
                             </button>
@@ -95,7 +95,7 @@
                                 matTooltip="Remove the Item from the List"
                                 matTooltipPosition="left"
                                 [rtMod]="{ active: !readonlyEntitiesKeys().includes(entity[keyExp()]) }"
-                                [matTooltipDisabled]="isMobile()"
+                                [matTooltipDisabled]="narrow()"
                                 [disabled]="readonlyEntitiesKeys().includes(entity[keyExp()])"
                                 (click)="onDelete(entity[keyExp()])">
                                 <mat-icon [rtIconOutlined]="true">delete</mat-icon>

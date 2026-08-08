@@ -3,6 +3,7 @@ import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    computed,
     contentChild,
     DestroyRef,
     Directive,
@@ -107,6 +108,7 @@ const BEM_BLOCK: string = 'rtui-table-container';
     providers: [BreakpointService, RtAsideService, PlatformService],
 })
 export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
+    readonly #breakpoints: BreakpointService = inject(BreakpointService);
     readonly #documentRef: Document = inject(DOCUMENT);
     readonly #windowRef: Window = inject(WINDOW);
     readonly #platformService: PlatformService = inject(PlatformService);
@@ -119,6 +121,9 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
 
     readonly #style: INullable<CSSStyleDeclaration> = this.#documentRef?.documentElement?.style;
 
+    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
+
     public appearance: InputSignal<MatFormFieldAppearance> = input.required();
     /** Table config storage key */
     public tableConfigStorageKey: InputSignalWithTransform<string, string> = input.required<string, string>({
@@ -126,9 +131,17 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     });
     /** Current page model from store */
     public pageModel: InputSignal<IPageModel> = input.required();
-    /** Indicates is mobile view */
-    public isMobile: InputSignalWithTransform<boolean, BooleanInput> = input.required<boolean, BooleanInput>({
-        transform: booleanAttribute,
+    /**
+     * Признак узкого экрана.
+     *
+     * @deprecated Кит определяет его сам — `RtuiBreakpointsService`. Вход оставлен ради
+     * приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
+     */
+    public isMobile: InputSignalWithTransform<INullable<boolean>, INullable<boolean> | string> = input<
+        INullable<boolean>,
+        INullable<boolean> | string
+    >(null, {
+        transform: (value: INullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
     });
     /** Indicates is loading in progress */
     public loading: InputSignalWithTransform<boolean, BooleanInput> = input.required<boolean, BooleanInput>({

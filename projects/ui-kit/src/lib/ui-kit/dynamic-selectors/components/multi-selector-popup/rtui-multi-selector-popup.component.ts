@@ -34,7 +34,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { debounceTime } from 'rxjs/operators';
 
-import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '@rt-tools/core';
 import { INullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import {
@@ -88,23 +88,32 @@ const BEM_BLOCK: string = 'rtui-multi-selector-popup';
         RtuiSpinnerComponent,
         EntityToStringPipe,
     ],
-    providers: [DeviceDetectorService],
+    providers: [BreakpointService, DeviceDetectorService],
 })
 export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unknown>, KEY extends Extract<keyof ENTITY, string>>
     implements OnInit, AfterViewInit
 {
+    readonly #breakpoints: BreakpointService = inject(BreakpointService);
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #injector: Injector = inject(Injector);
+
+    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
     readonly #deviceService: DeviceDetectorService = inject(DeviceDetectorService);
 
     protected readonly oSTypes: typeof OSTypes = OSTypes;
 
-    /** Indicates is mobile view */
-    public isMobile: InputSignalWithTransform<INullable<boolean>, INullable<boolean>> = input.required<
+    /**
+     * Признак узкого экрана.
+     *
+     * @deprecated Кит определяет его сам — `RtuiBreakpointsService`. Вход оставлен ради
+     * приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
+     */
+    public isMobile: InputSignalWithTransform<INullable<boolean>, INullable<boolean> | string> = input<
         INullable<boolean>,
-        INullable<boolean>
-    >({
-        transform: booleanAttribute,
+        INullable<boolean> | string
+    >(null, {
+        transform: (value: INullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
     });
     public entitiesToSelect: InputSignalWithTransform<ENTITY[], ENTITY[]> = input.required<ENTITY[], ENTITY[]>({
         transform: (value: unknown) => transformArrayInput(value),
