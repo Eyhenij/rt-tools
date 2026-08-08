@@ -73,8 +73,11 @@ export class RtuiDynamicSelectorAdditionalControlDirective {}
 })
 export class RtuiDynamicSelectorItemTitleProjectionDirective {}
 
+const BEM_BLOCK: string = 'rtui-dynamic-selector';
+
 @Component({
     selector: 'rtui-dynamic-selector',
+    host: { class: BEM_BLOCK },
     templateUrl: './rtui-dynamic-selector.component.html',
     styleUrls: ['./rtui-dynamic-selector.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,

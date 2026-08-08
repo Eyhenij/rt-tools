@@ -9,8 +9,11 @@ import { map } from 'rxjs/operators';
 
 import { ASIDE_REF, AsidePositions, AsideRef } from '../../aside.types';
 
+const BEM_BLOCK: string = 'rtui-aside-panel';
+
 @Component({
     selector: 'rtui-aside-panel',
+    host: { class: BEM_BLOCK },
     templateUrl: './aside-panel.component.html',
     styleUrls: ['./aside-panel.component.scss'],
     encapsulation: ViewEncapsulation.None,

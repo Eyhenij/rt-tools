@@ -60,8 +60,11 @@ interface FormModel {
 })
 export class RtuiDynamicInputAdditionalControlDirective {}
 
+const BEM_BLOCK: string = 'rtui-dynamic-input';
+
 @Component({
     selector: 'rtui-dynamic-input',
+    host: { class: BEM_BLOCK },
     templateUrl: './rtui-dynamic-input.component.html',
     styleUrls: ['./rtui-dynamic-input.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,

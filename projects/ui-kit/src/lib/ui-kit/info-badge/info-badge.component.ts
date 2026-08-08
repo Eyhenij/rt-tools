@@ -22,8 +22,11 @@ import { POSITION_ENUM } from '@rt-tools/core';
 import { IInfoBadgeSizeType, INFO_BADGE_SIZE_ENUM } from './badge-info-enum';
 import { IconSideType } from './icon-side.type';
 
+const BEM_BLOCK: string = 'rtui-info-badge';
+
 @Component({
     selector: 'rtui-info-badge',
+    host: { class: BEM_BLOCK },
     templateUrl: './info-badge.component.html',
     styleUrl: './info-badge.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,

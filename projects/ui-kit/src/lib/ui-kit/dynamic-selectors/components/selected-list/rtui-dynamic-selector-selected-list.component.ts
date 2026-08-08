@@ -43,8 +43,11 @@ export class RtuiDynamicSelectorItemAdditionalControlDirective {}
 })
 export class RtuiDynamicSelectorItemTitleDirective {}
 
+const BEM_BLOCK: string = 'rtui-dynamic-selector-selected-list';
+
 @Component({
     selector: 'rtui-dynamic-selector-selected-list',
+    host: { class: BEM_BLOCK },
     templateUrl: './rtui-dynamic-selector-selected-list.component.html',
     styleUrls: ['./rtui-dynamic-selector-selected-list.component.scss'],
     imports: [

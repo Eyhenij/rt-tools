@@ -16,8 +16,11 @@ export const createEmail: () => string = (): string => {
 };
 export const createEmailsList: (size: number) => string[] = (size: number) => Array.from({ length: size }, createEmail);
 
+const BEM_BLOCK: string = 'app-dynamic-input';
+
 @Component({
     selector: 'app-dynamic-input',
+    host: { class: BEM_BLOCK },
     templateUrl: './test-dynamic-input.component.html',
     styleUrls: ['./test-dynamic-input.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,

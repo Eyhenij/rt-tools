@@ -36,8 +36,11 @@ export class RtuiHeaderCenterDirective {}
 })
 export class RtuiHeaderRightDirective {}
 
+const BEM_BLOCK: string = 'rtui-header';
+
 @Component({
     selector: 'rtui-header',
+    host: { class: BEM_BLOCK },
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,

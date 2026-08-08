@@ -11,12 +11,14 @@ import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { checkIsMatchingValues, SanitizePipe } from '@rt-tools/core';
 import { IModal } from './modal.types';
 
+const BEM_BLOCK: string = 'rtui-modal';
+
 @Component({
     selector: 'rtui-modal',
     templateUrl: './modal.component.html',
     styleUrls: ['./modal.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    host: { class: 'rtui-modal' },
+    host: { class: BEM_BLOCK },
     imports: [
         NgStyle,
         NgClass,

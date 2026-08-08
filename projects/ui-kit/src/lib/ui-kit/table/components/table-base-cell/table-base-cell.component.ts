@@ -27,8 +27,11 @@ import { EmptyToDashPipe, RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtHideTooltipDirective } from '../../../tooltip';
 import { ITable } from '../../util/table-column.interface';
 
+const BEM_BLOCK: string = 'rtui-table-base-cell';
+
 @Component({
     selector: 'rtui-table-base-cell',
+    host: { class: BEM_BLOCK },
     templateUrl: './table-base-cell.component.html',
     styleUrls: ['./table-base-cell.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,5 +1,7 @@
-<div class="c-spinner c-spinner__container" [class.c-spinner__container--bgr-color]="showBackground()">
-    <div class="c-spinner__wrapper" [class.c-spinner__wrapper--bgr-color]="showBox()">
-        <mat-spinner [diameter]="diameter()" />
+<ng-container rtBlock="rtui-spinner">
+    <div rtElem="container" [rtMod]="{ 'bgr-color': showBackground() }">
+        <div rtElem="wrapper" [rtMod]="{ 'bgr-color': showBox() }">
+            <mat-spinner [diameter]="diameter()" />
+        </div>
     </div>
-</div>
+</ng-container>

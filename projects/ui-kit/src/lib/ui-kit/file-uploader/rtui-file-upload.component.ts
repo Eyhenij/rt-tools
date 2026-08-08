@@ -5,6 +5,8 @@ import { MatIcon } from '@angular/material/icon';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 
+const BEM_BLOCK: string = 'rtui-file-upload';
+
 @Component({
     selector: 'rtui-file-upload',
     templateUrl: './rtui-file-upload.component.html',
@@ -20,6 +22,7 @@ import { RtIconOutlinedDirective } from '@rt-tools/core';
         RtIconOutlinedDirective,
     ],
     host: {
+        class: BEM_BLOCK,
         '[class.--dragged]': 'isDragOver()',
         '(dragover)': 'onDragOver($event)',
         '(dragleave)': 'onDragLeave($event)',

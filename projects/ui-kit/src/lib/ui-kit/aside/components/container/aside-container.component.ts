@@ -40,6 +40,8 @@ import { AsideErrorBoxComponent } from '../error-notification/aside-error-box.co
 })
 export class RtuiAsideContainerHeaderDirective {}
 
+const BEM_BLOCK: string = 'c-aside';
+
 @Component({
     selector: 'rtui-aside-container',
     templateUrl: './aside-container.component.html',
@@ -75,7 +77,7 @@ export class RtuiAsideContainerHeaderDirective {}
         ElemDirective,
     ],
     host: {
-        class: 'c-aside',
+        class: BEM_BLOCK,
     },
 })
 export class RtuiAsideContainerComponent {

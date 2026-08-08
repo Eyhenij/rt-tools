@@ -61,8 +61,11 @@ export class RtuiTableToolbarSelectorsDirective {}
 })
 export class RtuiTableToolbarActionsDirective {}
 
+const BEM_BLOCK: string = 'rtui-table-container';
+
 @Component({
     selector: 'rtui-table-container',
+    host: { class: BEM_BLOCK },
     templateUrl: './table-container.component.html',
     styleUrls: ['./table-container.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
