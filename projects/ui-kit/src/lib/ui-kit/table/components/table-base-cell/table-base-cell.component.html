@@ -35,7 +35,7 @@
             [rtMod]="{
                 position: copyBtnPosition,
                 complete: isCopied(),
-                visible: narrow() || isMouseOver(),
+                visible: isMouseOver(),
             }"
             [matTooltip]="isCopied() ? 'Copied!' : 'Copy'"
             [matTooltipDisabled]="narrow()"

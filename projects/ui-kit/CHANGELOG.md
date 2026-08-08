@@ -4,6 +4,7 @@
 
 - **rt:ui-kit:** `--rt-icon-size-{xs,sm,md,lg,xl,xxl,3xl}` sizes an icon box whole — width, height and font-size take the same step, so an app can resize `rtui-icon` without touching three declarations
 - **rt:ui-kit:** the spacing scale gained the 10px and 14px steps (`--rt-spacing-10`, `--rt-spacing-14`)
+- **rt:ui-kit:** the kit measures the narrow screen itself through `BreakpointService`, so `[isMobile]` is optional everywhere. Pass it and your value still wins — it is the way to render the kit narrow inside a panel on a wide screen.
 
 ### Bug Fixes
 
@@ -18,6 +19,8 @@
 - **rt:ui-kit:** `rtui-info-badge` renamed its state classes to block modifiers: `.size-l` / `.size-m` / `.size-s` / `.bold` are now `.c-info-badge--size-l` / `-m` / `-s` / `--bold`.
 - **rt:ui-kit:** `rtui-aside-panel` no longer emits `position-left`, `position-right` and `full-screen` — none of them had a single style rule.
 - **rt:ui-kit:** `RtuiCheckboxComponent.onChangeValue()` is gone; the checkbox toggles itself and reports through `ngModelChange`.
+- **rt:ui-kit:** `RtuiTableComponent` and `RtuiDynamicListComponent` expose `narrow` instead of `isMobile`, matching the `ITableComponent` contract. The `isMobile` input is untouched — this is the read side, used by projected templates.
+- **rt:ui-kit:** three pagination custom properties were renamed to say what they do: `--rt-table-pagination-container-mobile-gap`, `-paging-mobile-margin` and `-size-toggle-selector-mobile-margin` are now `--rt-table-pagination-container-clipped-gap`, `-paging-clipped-margin` and `-size-toggle-selector-clipped-margin`. They drive the clipped layout, which applies above the mobile breakpoint, not below it.
 
 ## [0.3.1](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.3.0...rt-tools@0.3.1) (2026-08-02)
 

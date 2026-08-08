@@ -10,13 +10,13 @@ $pagination: (
         font-weight: 400,
         line-height: 1rem,
     ),
-    container-mobile: (
+    container-clipped: (
         gap: 1rem,
     ),
     paging: (
         gap: 0.5rem,
     ),
-    paging-mobile: (
+    paging-clipped: (
         margin: 0.5rem 0 0 0,
     ),
     paging-item: (
@@ -42,7 +42,7 @@ $pagination: (
         min-width: 3rem,
         height: 2rem,
     ),
-    size-toggle-selector-mobile: (
+    size-toggle-selector-clipped: (
         margin: 0 0 0.5rem 0,
     ),
 );
@@ -69,16 +69,15 @@ $pagination: (
         gap: var(--rt-table-pagination-container-gap);
         line-height: var(--rt-table-pagination-container-line-height);
 
-        &--clipped {
-            flex-direction: column;
-            align-items: flex-start;
-            justify-content: center;
-            gap: var(--rt-table-pagination-container-mobile-gap);
-        }
-
-        &--mobile {
-            width: 100%;
-            justify-content: space-between;
+        // Перенос в столбец — ответ на нехватку ширины под полный список страниц.
+        // На узком экране списка нет вовсе, и строка туда влезает: правило туда не идёт.
+        @include mixins.media-breakpoint-up(vars.$device-xs) {
+            &--clipped {
+                flex-direction: column;
+                align-items: flex-start;
+                justify-content: center;
+                gap: var(--rt-table-pagination-container-clipped-gap);
+            }
         }
 
         .paging {
@@ -88,8 +87,10 @@ $pagination: (
             margin: var(--rt-table-pagination-container-margin);
             gap: var(--rt-table-pagination-paging-gap);
 
-            &--clipped {
-                margin: var(--rt-table-pagination-paging-mobile-margin);
+            @include mixins.media-breakpoint-up(vars.$device-xs) {
+                &--clipped {
+                    margin: var(--rt-table-pagination-paging-clipped-margin);
+                }
             }
 
             &__item {
@@ -148,8 +149,10 @@ $pagination: (
             margin: var(--rt-table-pagination-container-margin);
             gap: var(--rt-table-pagination-size-toggle-gap);
 
-            &--clipped {
-                margin: var(--rt-table-pagination-size-toggle-selector-mobile-margin);
+            @include mixins.media-breakpoint-up(vars.$device-xs) {
+                &--clipped {
+                    margin: var(--rt-table-pagination-size-toggle-selector-clipped-margin);
+                }
             }
 
             &__title {
