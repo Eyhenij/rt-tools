@@ -5,15 +5,18 @@
  * только потом писать. `sync --check` отличается от `sync` ровно последним шагом — иначе гейт
  * пуша проверял бы не то, что кладёт раскладка.
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
-import { collectAssets, IAsset } from './assets.js';
+import { collectAssets, IAsset, targetOf } from './assets.js';
+import { IEntryOfCatalog, readCatalog } from './catalog.js';
 import { ICompanion, pathOf, planCompanion } from './companion.js';
 import { IConfig, OVERRIDES_DIR } from './config.js';
 import { IPlanned, isPending, isRefusal, planFile } from './plan.js';
 import { mergeDocuments, parseDocument, renderDocument } from './sections.js';
+import { readStamped } from './stamp.js';
 import { IRenderResult, renderVars } from './vars.js';
+import { matchesVariant } from './variants.js';
 
 export interface ISyncResult {
     readonly planned: readonly IPlanned[];
@@ -21,6 +24,14 @@ export interface ISyncResult {
     readonly missing: ReadonlyMap<string, readonly string[]>;
     /** Компаньоны разложенных правил: имена этого дерева, которые пишет проект. */
     readonly companions: readonly ICompanion[];
+    /**
+     * Файлы, лежащие в дереве от ресурсов, от которых проект отказался.
+     *
+     * Отказ значит «больше не клади», а не «убери»: разложенное коммитится, рядом с правилом
+     * лежит написанный проектом компаньон, и стирать это молча пакет не вправе. Но и молчать
+     * нельзя — брошенный файл читается как действующее правило, и агент по нему работает.
+     */
+    readonly abandoned: readonly string[];
     readonly written: readonly string[];
 }
 
@@ -40,6 +51,26 @@ function renderAsset(asset: IAsset, config: IConfig, root: string): IRenderResul
     const merged: string = override ? renderDocument(mergeDocuments(parseDocument(asset.text), parseDocument(override))) : asset.text;
 
     return renderVars(merged, config.vars);
+}
+
+/**
+ * Что лежит в дереве от ресурсов, которые проект больше не берёт.
+ *
+ * Ищется по тем же правилам раскладки, что и всё остальное: путь ресурса вычисляется так, будто
+ * его кладут, и проверяется, лежит ли там файл с шапкой пакета. Чужой файл на том же пути
+ * брошенным не считается — его пакет не клал.
+ */
+function abandonedOf(config: IConfig, root: string, assetsDir: string): readonly string[] {
+    const taken: ReadonlySet<string> = new Set(collectAssets(config, assetsDir).map((asset: IAsset): string => asset.id));
+
+    return readCatalog(assetsDir)
+        .filter((entry: IEntryOfCatalog): boolean => !taken.has(entry.id) && matchesVariant(entry.variant, config.variants))
+        .map((entry: IEntryOfCatalog): string => targetOf(entry, config.layout))
+        .filter((path: string): boolean => {
+            const existing: string | null = read(join(root, path));
+
+            return existing !== null && readStamped(existing) !== null;
+        });
 }
 
 export function planSync(config: IConfig, root: string, version: string, assetsDir: string): ISyncResult {
@@ -62,7 +93,7 @@ export function planSync(config: IConfig, root: string, version: string, assetsD
         }
     }
 
-    return { planned, missing, companions, written: [] };
+    return { planned, missing, companions, abandoned: abandonedOf(config, root, assetsDir), written: [] };
 }
 
 /** Раскладка. Отказ хотя бы по одному файлу не пишет ничего: половина разложенного хуже целого. */
@@ -72,6 +103,15 @@ export function runSync(config: IConfig, root: string, version: string, assetsDi
         return result;
     }
 
+    // Право на запуск переносится с файла в пакете. Без него гард отвечает отказом доступа, то
+    // есть ненулевым кодом, а ненулевой код у гарда значит «правка отбита»: разложенный набор
+    // отбивал бы подряд всё, включая сборку и тесты, и причина при этом нигде не называлась.
+    const executable: ReadonlySet<string> = new Set(
+        collectAssets(config, assetsDir)
+            .filter((asset: IAsset): boolean => asset.executable)
+            .map((asset: IAsset): string => asset.id)
+    );
+
     const written: string[] = [];
     for (const entry of result.planned) {
         if (entry.content === null) {
@@ -80,6 +120,9 @@ export function runSync(config: IConfig, root: string, version: string, assetsDi
         const path: string = join(root, entry.path);
         mkdirSync(dirname(path), { recursive: true });
         writeFileSync(path, entry.content, 'utf8');
+        if (executable.has(entry.asset)) {
+            chmodSync(path, 0o755);
+        }
         written.push(entry.path);
     }
 

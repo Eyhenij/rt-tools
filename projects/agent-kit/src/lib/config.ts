@@ -9,15 +9,32 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 /** Род ресурса. Он же имя каталога в `assets/` пакета и ключ раскладки. */
-export type TKind = 'laws' | 'rules' | 'patterns' | 'hooks' | 'checks' | 'agents' | 'commands' | 'workflows' | 'templates';
+export type TKind =
+    'laws' | 'rules' | 'patterns' | 'skills' | 'hooks' | 'defaults' | 'checks' | 'agents' | 'commands' | 'workflows' | 'templates';
 
-export const KINDS: readonly TKind[] = ['laws', 'rules', 'patterns', 'hooks', 'checks', 'agents', 'commands', 'workflows', 'templates'];
+export const KINDS: readonly TKind[] = [
+    'laws',
+    'rules',
+    'patterns',
+    'skills',
+    'hooks',
+    'defaults',
+    'checks',
+    'agents',
+    'commands',
+    'workflows',
+    'templates',
+];
 
 /**
  * Роды, которые ложатся не файлом в каталог, а каталогом по имени ресурса: скил читается как
  * `<имя>/SKILL.md`, и рядом с ним лежит то, что пишет проект.
+ *
+ * `skills` — скил, у которого нет закона над собой: он не про то, что должно быть верно в
+ * продукте, а про то, как здесь делается работа. Правилом его называть нельзя — тогда придётся
+ * выдумать ему закон, — а паттерном тем более: паттерн стоит при правиле.
  */
-export const SKILL_KINDS: readonly TKind[] = ['rules', 'patterns'];
+export const SKILL_KINDS: readonly TKind[] = ['rules', 'patterns', 'skills'];
 
 /** Имя файла скила: так его ищет агент, и другого имени у него быть не может. */
 export const SKILL_FILE: string = 'SKILL.md';
@@ -40,23 +57,35 @@ export interface IConfig {
      * Ограничивает только те роды, которые сам называет; как именно — `isChosen`.
      */
     readonly only: readonly string[];
-    /** Ресурсы, от которых проект отказался, идентификаторами: `laws/money.md`. */
+    /** Ресурсы, от которых проект отказался, идентификаторами: `laws/application/money.md`. */
     readonly skip: readonly string[];
+    /**
+     * Выбор проекта по осям различия: `{ "host": "gitlab" }`. Оси объявлены пакетом в
+     * `assets/variants.json`, а ресурс с вариантом в имени берётся, только если проект выбрал
+     * его значение; как именно — `isChosen`.
+     */
+    readonly variants: Readonly<Record<string, string>>;
 }
 
 export const CONFIG_PATH: string = '.claude/rt-kit.json';
 export const OVERRIDES_DIR: string = '.claude/rt-kit/overrides';
 
-/** Имя дырки под путь карты гейта и её умолчание: карту пишет проект, путь знают оба. */
-export const GATE_MAP_VAR: string = 'gateMap';
-export const DEFAULT_GATE_MAP: string = '.claude/rt-kit/gate-map.sh';
-
 /**
- * Профиль проекта: команды, стенды и пары «правка — документ» этого дерева. Его читают
- * сторожевые хуки — механизм у них общий, а всё, что они зовут и называют, своё у каждого.
+ * Карта «что правится — какое правило» и профиль дерева: команды, стенды, пары «правка —
+ * документ». Оба лежат в двух видах, и это не дублирование, а разделение ответственности.
+ *
+ * Умолчание везёт пакет: проекты этой мастерской устроены одинаково — Nx, те же расширения, те
+ * же имена каталогов, — и переписывать одну и ту же карту в каждом дереве заново значило бы
+ * заводить пятнадцать её редакций, расходящихся молча. Оно разложено, под шапкой, и правится
+ * не на месте.
+ *
+ * Надстройку пишет проект, и она необязательна: витрина, свой род файлов, другой запускатель
+ * тестов есть не у всех. Объявленная в ней функция замещает умолчание целиком и вправе позвать
+ * его обратно суффиксом `_default` — так дерево дописывает своё, не теряя общего.
  */
-export const PROFILE_VAR: string = 'projectProfile';
-export const DEFAULT_PROFILE: string = '.claude/rt-kit/project.sh';
+export const DEFAULTS_DIR: string = '.claude/rt-kit/defaults';
+export const GATE_MAP_FILE: string = 'gate-map.sh';
+export const PROFILE_FILE: string = 'project.sh';
 
 /**
  * Умолчания раскладки. Это не единственно возможные пути, но менять их без нужды не стоит:
@@ -67,7 +96,9 @@ export const DEFAULT_LAYOUT: Readonly<Record<TKind, string>> = {
     laws: 'docs/constitution',
     rules: '.claude/skills',
     patterns: '.claude/skills',
+    skills: '.claude/skills',
     hooks: '.claude/hooks',
+    defaults: DEFAULTS_DIR,
     checks: 'tools',
     agents: '.claude/agents',
     commands: '.claude/commands',
@@ -134,13 +165,14 @@ export function parseConfig(text: string): IConfig {
     for (const kind of KINDS) {
         derived[`${kind.replace(/s$/, '')}sDir`] = layout[kind];
     }
-    // Карту гейта пишет проект, но путь к ней знают обе стороны: хук её читает, шаблон
-    // ложится рядом. Умолчание здесь избавляет проект от обязанности объявлять его самому —
-    // а переопределить его он всё равно может, значением в `vars`.
-    derived[GATE_MAP_VAR] = DEFAULT_GATE_MAP;
-    derived[PROFILE_VAR] = DEFAULT_PROFILE;
 
-    return { vars: { ...derived, ...stringMap(raw['vars'], 'vars') }, layout: layout as Record<TKind, string>, only, skip };
+    return {
+        vars: { ...derived, ...stringMap(raw['vars'], 'vars') },
+        layout: layout as Record<TKind, string>,
+        only,
+        skip,
+        variants: stringMap(raw['variants'], 'variants'),
+    };
 }
 
 /** Конфиг проекта; его отсутствие — не отказ, а повод сказать про `agent-kit init`. */
