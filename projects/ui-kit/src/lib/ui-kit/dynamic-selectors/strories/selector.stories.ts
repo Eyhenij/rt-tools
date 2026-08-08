@@ -1,6 +1,7 @@
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, Routes } from '@angular/router';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
+import { expect, userEvent, waitFor } from 'storybook/test';
 
 import { PlatformService } from '@rt-tools/core';
 import { listOfPersons, TestSelectorComponent } from './component/selector/test-selector.component';
@@ -144,5 +145,59 @@ export const SelectorSingleMode: Story = {
 export const NoData: Story = {
     args: {
         entities: [],
+    },
+};
+
+/**
+ * Пустой выбор: вместо списка показана заглушка со своей кнопкой. Другой истории с этой
+ * кнопкой нет, а без неё её оформление не проверяет ничто.
+ *
+ * Список очищается нажатием, а не значением входа: обёртка задаёт начальный выбор при
+ * запуске, а значения истории приходят к ней позже.
+ */
+export const SelectorPlaceholder: Story = {
+    args: {
+        entities: listOfPersons,
+        isOpenPopupButtonShown: true,
+        isSelectAllButtonShown: true,
+    },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        const clear: HTMLElement | undefined = [...canvasElement.querySelectorAll<HTMLElement>('button')].find(
+            (node: HTMLElement) => node.querySelector('mat-icon')?.textContent?.trim() === 'delete_forever'
+        );
+
+        if (!clear) {
+            throw new Error('Кнопки очистки списка в истории нет');
+        }
+
+        await userEvent.click(clear);
+        await waitFor(() => expect(canvasElement.querySelector('rtui-dynamic-selector-placeholder')).toBeTruthy());
+    },
+};
+
+/**
+ * Попап выбора, открытый нажатием. Его подвал живёт в перекрытии и в кадр сам не попадает:
+ * без нажатия проверить оформление кнопок «Cancel» и «SUBMIT» нечем.
+ */
+export const SelectorPopup: Story = {
+    args: {
+        // Список короткий намеренно: с полным попап уходит за нижний край кадра вместе с
+        // подвалом, ради которого история и заведена.
+        entities: listOfPersons.slice(0, 8),
+        isListDraggable: true,
+        isOpenPopupButtonShown: true,
+        isSelectAllButtonShown: true,
+    },
+    // Попап рисуется в перекрытии, и полный снимок его не достраивает: кадр под него выше.
+    parameters: { snapshotViewport: { height: 1100 } },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        const trigger: HTMLElement | null = canvasElement.querySelector('[cdkoverlayorigin]');
+
+        if (!trigger) {
+            throw new Error('Кнопка, открывающая попап выбора, в истории не отрисована');
+        }
+
+        await userEvent.click(trigger);
+        await waitFor(() => expect(document.querySelector('rtui-multi-selector-popup')).toBeTruthy());
     },
 };

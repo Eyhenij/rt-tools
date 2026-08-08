@@ -1,4 +1,5 @@
 import type { TestRunnerConfig } from '@storybook/test-runner';
+import { getStoryContext } from '@storybook/test-runner';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 
 /**
@@ -24,9 +25,25 @@ const FONT_TIMEOUT_MS: number = 10_000;
 /** Пауза после глушения движения — кадру нужно успеть встать. */
 const SETTLE_MS: number = 150;
 
+/** Размер кадра по умолчанию. Истории, которым нужен другой, называют его параметром. */
+const VIEWPORT: { width: number; height: number } = { width: 1280, height: 720 };
+
 const config: TestRunnerConfig = {
     setup(): void {
         expect.extend({ toMatchImageSnapshot });
+    },
+
+    async preVisit(page, context): Promise<void> {
+        // Содержимое в перекрытии живёт вне потока страницы, и полный снимок его не
+        // достраивает: попап или панель выше кадра просто обрезаются. Кадр под такую
+        // историю задаётся ею самой — параметром `snapshotViewport`.
+        const story = await getStoryContext(page, context);
+        const requested = story.parameters?.snapshotViewport as { width?: number; height?: number } | undefined;
+
+        await page.setViewportSize({
+            width: requested?.width ?? VIEWPORT.width,
+            height: requested?.height ?? VIEWPORT.height,
+        });
     },
 
     async postVisit(page, context): Promise<void> {
@@ -58,6 +75,16 @@ const config: TestRunnerConfig = {
         await page.evaluate(() => {
             document.getAnimations().forEach((animation: Animation) => animation.finish());
         });
+        // Состояние под наведением наводится настоящим указателем, а не событием из истории:
+        // полный снимок перекладывает страницу заново, и наведение, разыгранное событием,
+        // до кадра не доживает.
+        const story = await getStoryContext(page, context);
+        const hovered = story.parameters?.snapshotHover as string | undefined;
+
+        if (hovered) {
+            await page.locator(hovered).first().hover();
+        }
+
         await page.waitForTimeout(SETTLE_MS);
 
         const image: Buffer = await page.screenshot({ fullPage: true });
