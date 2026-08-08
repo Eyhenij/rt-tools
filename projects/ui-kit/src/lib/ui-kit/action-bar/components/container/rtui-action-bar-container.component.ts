@@ -13,7 +13,7 @@ const BEM_BLOCK: string = 'rtui-action-bar-container';
     templateUrl: 'rtui-action-bar-container.component.html',
     styleUrls: ['rtui-action-bar-container.component.scss'],
     imports: [RtuiActionBarComponent],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     animations: [
         trigger('barState', [
             state('opened', style({ transform: 'translateY(0)' })),
