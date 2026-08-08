@@ -23,7 +23,7 @@ export interface IRtuiTable<
     rowActionsTpl: Signal<INullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>>;
     additionalRowActionsTpl: Signal<INullable<TemplateRef<unknown>>>;
 
-    isMobile: Signal<boolean>;
+    narrow: Signal<boolean>;
     isTableRowsClickable: Signal<boolean>;
     keyExp: Signal<NonNullable<KEY>>;
     entities: Signal<ENTITY_TYPE[]>;

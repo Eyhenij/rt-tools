@@ -98,10 +98,7 @@
 
                     @if (isPaginationShown()) {
                         <div rtElem="pagination">
-                            <rtui-pagination
-                                [isMobile]="!!narrow()"
-                                [currentPageModel]="pageModel()"
-                                (pageModelChange)="onPageModelChange($event)" />
+                            <rtui-pagination [currentPageModel]="pageModel()" (pageModelChange)="onPageModelChange($event)" />
                         </div>
                     }
                 } @else {

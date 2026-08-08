@@ -3,7 +3,7 @@
     [rtMod]="{ invisible: !isButtonShown() }"
     [matTooltip]="tooltip() ?? ''"
     [matTooltipPosition]="tooltipPosition()"
-    [matTooltipDisabled]="isMobile()"
+    [matTooltipDisabled]="narrow()"
     (keydown)="onKeydown()"
     (click)="onClick()">
     <mat-icon rtElem="icon">close</mat-icon>

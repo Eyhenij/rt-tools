@@ -3,9 +3,12 @@ import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    computed,
     contentChild,
     Directive,
+    inject,
     input,
+    InputSignal,
     InputSignalWithTransform,
     output,
     OutputEmitterRef,
@@ -17,7 +20,7 @@ import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatToolbar } from '@angular/material/toolbar';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, BreakpointService, ElemDirective } from '@rt-tools/core';
 import { INullable } from '@rt-tools/utils';
 import { RtuiToolbarCenterDirective, RtuiToolbarComponent, RtuiToolbarLeftDirective, RtuiToolbarRightDirective } from '../toolbar';
 
@@ -43,6 +46,7 @@ const BEM_BLOCK: string = 'rtui-header';
     host: { class: BEM_BLOCK },
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.scss'],
+    providers: [BreakpointService],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         NgTemplateOutlet,
@@ -64,12 +68,17 @@ const BEM_BLOCK: string = 'rtui-header';
     ],
 })
 export class RtuiHeaderComponent {
-    public isMobile: InputSignalWithTransform<INullable<boolean>, INullable<boolean>> = input<INullable<boolean>, INullable<boolean>>(
-        false,
-        {
-            transform: booleanAttribute,
-        }
-    );
+    readonly #breakpoints: BreakpointService = inject(BreakpointService);
+
+    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
+    /**
+     * Признак узкого экрана.
+     *
+     * @deprecated Кит определяет его сам — `BreakpointService` из `@rt-tools/core`. Вход
+     * оставлен ради приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
+     */
+    public isMobile: InputSignal<INullable<boolean>> = input<INullable<boolean>>(null);
     public isMobileMenuButtonShown: InputSignalWithTransform<INullable<boolean>, INullable<boolean>> = input<
         INullable<boolean>,
         INullable<boolean>

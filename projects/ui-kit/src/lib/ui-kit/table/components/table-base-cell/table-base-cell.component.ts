@@ -1,8 +1,6 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 
-import { BooleanInput } from '@angular/cdk/coercion';
 import {
-    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
@@ -11,7 +9,6 @@ import {
     inject,
     input,
     InputSignal,
-    InputSignalWithTransform,
     Signal,
     signal,
     WritableSignal,
@@ -20,7 +17,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
-import { BlockDirective, ConcatClassesPipe, ElemDirective, ModDirective } from '@rt-tools/core';
+import { BlockDirective, BreakpointService, ConcatClassesPipe, ElemDirective, ModDirective } from '@rt-tools/core';
 import { INullable } from '@rt-tools/utils';
 import { isNumber, isString } from '@rt-tools/utils';
 import { EmptyToDashPipe, RtIconOutlinedDirective } from '@rt-tools/core';
@@ -34,6 +31,7 @@ const BEM_BLOCK: string = 'rtui-table-base-cell';
     host: { class: BEM_BLOCK },
     templateUrl: './table-base-cell.component.html',
     styleUrls: ['./table-base-cell.component.scss'],
+    providers: [BreakpointService],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // material
@@ -53,8 +51,12 @@ const BEM_BLOCK: string = 'rtui-table-base-cell';
     ],
 })
 export class TableBaseCellComponent<T = { [key: string]: unknown }> {
+    readonly #breakpoints: BreakpointService = inject(BreakpointService);
     readonly #clipboard: Clipboard = inject(Clipboard);
     readonly #sanitizer: DomSanitizer = inject(DomSanitizer);
+
+    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
 
     protected readonly cellValue: Signal<T[keyof T] | string | number> = computed(() => {
         const transformFn: INullable<(value: T[keyof T]) => string | number> = this.column()?.transform;
@@ -70,9 +72,13 @@ export class TableBaseCellComponent<T = { [key: string]: unknown }> {
 
     public row: InputSignal<T> = input.required();
     public column: InputSignal<ITable.Column<T>> = input.required();
-    public isMobile: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
-        transform: booleanAttribute,
-    });
+    /**
+     * Признак узкого экрана.
+     *
+     * @deprecated Кит определяет его сам — `BreakpointService` из `@rt-tools/core`. Вход
+     * оставлен ради приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
+     */
+    public isMobile: InputSignal<INullable<boolean>> = input<INullable<boolean>>(null);
 
     @HostBinding('style')
     public get style(): SafeStyle | undefined {
