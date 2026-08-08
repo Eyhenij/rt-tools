@@ -8,6 +8,16 @@
 ### Bug Fixes
 
 - **rt:ui-kit:** the `pill` button reads 12px at size `xs` and 14px at size `md` (was 11px and 13px, both off the type scale)
+- **rt:ui-kit:** keyboard reaches the filter-operator menu, the action-bar buttons, the side-menu items and the checkbox — they carried click handlers on non-focusable nodes
+- **rt:ui-kit:** `rtui-aside-panel` and `rtui-action-bar-container` run on `OnPush` again
+
+### BREAKING CHANGES
+
+- **rt:ui-kit:** every component now carries its block class on the host element. If your app targets a kit component by an inner wrapper class, target the host instead.
+- **rt:ui-kit:** `rtui-button` moved its block to the host: the inner `<button>` is `.rtui-button__control`, the Material branch is `.rtui-button__material` (was `.rtui-button-material`), and every modifier (`--type-*`, `--size-*`, `--variant-*`, `--radius-*`, `--appearance-*`) sits on the host. Selectors like `.rtui-button--type-pill { … }` still match, but now they match the host, not the button.
+- **rt:ui-kit:** `rtui-info-badge` renamed its state classes to block modifiers: `.size-l` / `.size-m` / `.size-s` / `.bold` are now `.c-info-badge--size-l` / `-m` / `-s` / `--bold`.
+- **rt:ui-kit:** `rtui-aside-panel` no longer emits `position-left`, `position-right` and `full-screen` — none of them had a single style rule.
+- **rt:ui-kit:** `RtuiCheckboxComponent.onChangeValue()` is gone; the checkbox toggles itself and reports through `ngModelChange`.
 
 ## [0.3.1](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.3.0...rt-tools@0.3.1) (2026-08-02)
 
