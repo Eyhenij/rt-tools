@@ -51,6 +51,30 @@ jobs:
             - name: Stylelint
               run: pnpm run lint:styles
 
+            # Снимки витрины: замер вычисленных значений отвечает только на заданный вопрос,
+            # а снимок ловит всё видимое разом. Эталоны сняты на этой же машине — раннер
+            # собственный, и разницы платформ, из-за которой обычно поднимают контейнер, нет.
+            #
+            # Порт свой: раннер делит машину с разработчиком, и прогон, прибитый к 6006,
+            # подцепил бы витрину, поднятую руками, вместо своей.
+            - name: Visual tests
+              run: |
+                  node node_modules/.pnpm/playwright@*/node_modules/playwright/cli.js install chromium
+                  pnpm exec nx run @rt-tools/ui-kit:storybook --port 6106 --no-open > /tmp/storybook-ci.log 2>&1 &
+                  for _ in $(seq 1 120); do
+                      curl -sf http://localhost:6106/index.json > /dev/null && break
+                      sleep 2
+                  done
+                  STORYBOOK_URL=http://localhost:6106 pnpm run test:visual
+
+            - name: Upload visual diffs
+              if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: visual-diffs
+                  path: projects/ui-kit/.storybook/__snapshots__/__diff_output__/
+                  if-no-files-found: ignore
+
             # Only @rt-tools/utils defines `verify`; it asserts the built package stays consumable
             # outside Angular. Projects without the target are skipped.
             - name: Verify built packages
