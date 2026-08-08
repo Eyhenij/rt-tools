@@ -9,7 +9,7 @@
 # Отбивается всё, что ПОДНИМАЕТ сервер. Сборка, тесты, линтеры, запросы к поднятым портам и
 # осмотр слушателей проходят.
 #
-# Где именно подняты приложения, знает профиль проекта: {{projectProfile}}, переменная
+# Где именно подняты приложения, знает профиль проекта: .claude/rt-kit/project.sh, переменная
 # RT_STANDS. Нет профиля — текст отказа остаётся общим, сам гард работает.
 
 input="$(cat 2>/dev/null)"
@@ -66,12 +66,13 @@ case "$cmd" in
         printf '%s' "$cmd" | grep -qE '(^|[[:space:]])git[[:space:]]+daemon([[:space:]]|$)' || exit 0 ;;
 esac
 
-stands=""
-profile="${CLAUDE_PROJECT_DIR:-.}/{{projectProfile}}"
-if [ -f "$profile" ]; then
+# Профиль дерева: сперва умолчание пакета, поверх него — надстройка проекта, если она есть.
+rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"; do
     # shellcheck disable=SC1090
-    . "$profile" 2>/dev/null && stands="${RT_STANDS:-}"
-fi
+    [ -f "$profile" ] && . "$profile" 2>/dev/null
+done
+stands="${RT_STANDS:-}"
 
 deny() {
     if [ -n "$stands" ]; then
