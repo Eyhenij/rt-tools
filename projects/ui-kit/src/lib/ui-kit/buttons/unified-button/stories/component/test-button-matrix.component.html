@@ -1,0 +1,105 @@
+<section class="matrix">
+    <h3 class="matrix__title">type</h3>
+    <div class="matrix__row">
+        @for (type of types; track type) {
+            <div class="matrix__cell">
+                <rtui-button icon="add" text="Button" [attr.data-case]="'type-' + type" [type]="type" />
+                <span class="matrix__label">{{ type }}</span>
+            </div>
+        }
+    </div>
+
+    <h3 class="matrix__title">size — pill</h3>
+    <div class="matrix__row">
+        @for (size of sizes; track size) {
+            <div class="matrix__cell">
+                <rtui-button type="pill" icon="add" text="Button" [attr.data-case]="'pill-size-' + size" [size]="size" />
+                <span class="matrix__label">{{ size }}</span>
+            </div>
+        }
+    </div>
+
+    <h3 class="matrix__title">size — icon</h3>
+    <div class="matrix__row">
+        @for (size of sizes; track size) {
+            <div class="matrix__cell">
+                <rtui-button type="icon" icon="add" [attr.data-case]="'icon-size-' + size" [size]="size" />
+                <span class="matrix__label">{{ size }}</span>
+            </div>
+        }
+    </div>
+
+    <h3 class="matrix__title">variant — pill</h3>
+    <div class="matrix__row">
+        @for (variant of variants; track variant) {
+            <div class="matrix__cell">
+                <rtui-button type="pill" text="Button" [attr.data-case]="'pill-variant-' + variant" [variant]="variant" />
+                <span class="matrix__label">{{ variant }}</span>
+            </div>
+        }
+    </div>
+
+    <h3 class="matrix__title">variant — icon</h3>
+    <div class="matrix__row">
+        @for (variant of variants; track variant) {
+            <div class="matrix__cell">
+                <rtui-button type="icon" icon="add" [attr.data-case]="'icon-variant-' + variant" [variant]="variant" />
+                <span class="matrix__label">{{ variant }}</span>
+            </div>
+        }
+    </div>
+
+    <h3 class="matrix__title">radius — pill</h3>
+    <div class="matrix__row">
+        @for (radius of radii; track radius) {
+            <div class="matrix__cell">
+                <rtui-button type="pill" text="Button" [attr.data-case]="'pill-radius-' + radius" [radius]="radius" />
+                <span class="matrix__label">{{ radius }}</span>
+            </div>
+        }
+    </div>
+
+    <h3 class="matrix__title">appearance — pill</h3>
+    <div class="matrix__row">
+        @for (appearance of appearances; track appearance) {
+            <div class="matrix__cell">
+                <rtui-button
+                    type="pill"
+                    icon="add"
+                    text="Button"
+                    [attr.data-case]="'pill-appearance-' + appearance"
+                    [appearance]="appearance" />
+                <span class="matrix__label">{{ appearance }}</span>
+            </div>
+        }
+    </div>
+
+    <h3 class="matrix__title">состояния</h3>
+    <div class="matrix__row">
+        <div class="matrix__cell">
+            <rtui-button data-case="state-default" type="pill" text="Button" />
+            <span class="matrix__label">default</span>
+        </div>
+        <div class="matrix__cell">
+            <rtui-button data-case="state-loading" type="pill" text="Button" loading />
+            <span class="matrix__label">loading</span>
+        </div>
+        <div class="matrix__cell">
+            <rtui-button data-case="state-disabled" type="pill" text="Button" disabled />
+            <span class="matrix__label">disabled</span>
+        </div>
+        <div class="matrix__cell">
+            <rtui-button data-case="state-icon-loading" type="icon" icon="add" loading />
+            <span class="matrix__label">icon loading</span>
+        </div>
+        <div class="matrix__cell">
+            <rtui-button data-case="state-icon-disabled" type="icon" icon="add" disabled />
+            <span class="matrix__label">icon disabled</span>
+        </div>
+    </div>
+
+    <h3 class="matrix__title">fullWidth</h3>
+    <div class="matrix__row matrix__row--stretch">
+        <rtui-button data-case="state-full-width" type="pill" text="Full width" fullWidth />
+    </div>
+</section>

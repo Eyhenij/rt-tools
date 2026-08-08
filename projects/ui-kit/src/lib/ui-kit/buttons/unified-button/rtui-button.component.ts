@@ -33,6 +33,8 @@ export namespace IRtuiButton {
     export type IconPosition = 'start' | 'end';
 }
 
+const BEM_BLOCK: string = 'rtui-button';
+
 @Component({
     selector: 'rtui-button',
     templateUrl: './rtui-button.component.html',
@@ -67,6 +69,8 @@ export namespace IRtuiButton {
         },
     ],
     host: {
+        class: BEM_BLOCK,
+        '[class]': 'hostModifiers()',
         '[class.rtui-button-full]': 'fullWidth()',
     },
 })
@@ -128,6 +132,16 @@ export class RtuiButtonComponent {
         loading: this.loading(),
         disabled: this.disabled(),
     }));
+    /**
+     * Те же модификаторы строкой — они висят на хосте, потому что описывают блок целиком.
+     * Директива модификатора сюда не дотянется: хост объявлен декоратором, а не разметкой.
+     */
+    protected readonly hostModifiers: Signal<string> = computed(() =>
+        Object.entries(this.modifiers())
+            .filter(([, isOn]: [string, boolean]) => isOn)
+            .map(([name]: [string, boolean]) => `${BEM_BLOCK}--${name}`)
+            .join(' ')
+    );
 
     public readonly type: InputSignal<IRtuiButton.Type> = input<IRtuiButton.Type>('icon');
     public readonly design: InputSignal<RtUiDesign | undefined> = input<RtUiDesign>();

@@ -4,72 +4,74 @@
     <ng-content />
 </ng-template>
 
-@switch (type()) {
-    @case ('pill') {
-        @if (resolvedDesign() === 'material') {
-            <!-- design: material — a native Material button; its look is owned by the Material theme -->
+<!-- Блок объявлен контейнером: класс он не ставит (узел комментария), а только даёт имя
+     потомкам. Сам класс блока и его модификаторы висят на хосте — см. `host` в компоненте. -->
+<ng-container rtBlock="rtui-button">
+    @switch (type()) {
+        @case ('pill') {
+            @if (resolvedDesign() === 'material') {
+                <!-- design: material — a native Material button; its look is owned by the Material theme -->
+                <button
+                    type="button"
+                    rtElem="material"
+                    [matButton]="materialAppearance()"
+                    [rtMod]="{ danger: variant() === 'danger' }"
+                    [disabled]="disabled() || loading()"
+                    (click)="onClick()">
+                    @if (loading()) {
+                        <rtui-spinner [diameter]="spinnerSize()" [showBox]="false" />
+                    } @else {
+                        @if (icon() && iconPosition() === 'start') {
+                            <rtui-icon matButtonIcon [glyph]="icon()" [size]="resolvedIconSize()" [outlined]="outlined()" />
+                        }
+                        @if (text()) {
+                            <span>{{ text() }}</span>
+                        }
+                        <ng-container [ngTemplateOutlet]="projectedContent" />
+                        @if (icon() && iconPosition() === 'end') {
+                            <rtui-icon matButtonIcon iconPositionEnd [glyph]="icon()" [size]="resolvedIconSize()" [outlined]="outlined()" />
+                        }
+                    }
+                </button>
+            } @else {
+                <button
+                    type="button"
+                    rtElem="control"
+                    matRipple
+                    [matRippleDisabled]="disabled() || loading()"
+                    [disabled]="disabled() || loading()"
+                    (click)="onClick()">
+                    @if (loading()) {
+                        <rtui-spinner rtElem="spinner" [diameter]="spinnerSize()" [showBox]="false" />
+                    } @else {
+                        @if (icon() && iconPosition() === 'start') {
+                            <rtui-icon rtElem="icon" [glyph]="icon()" [size]="resolvedIconSize()" [outlined]="outlined()" />
+                        }
+                        @if (text()) {
+                            <span rtElem="text">{{ text() }}</span>
+                        }
+                        <ng-container [ngTemplateOutlet]="projectedContent" />
+                        @if (icon() && iconPosition() === 'end') {
+                            <rtui-icon rtElem="icon" [glyph]="icon()" [size]="resolvedIconSize()" [outlined]="outlined()" />
+                        }
+                    }
+                </button>
+            }
+        }
+        @default {
             <button
                 type="button"
-                class="rtui-button-material"
-                [matButton]="materialAppearance()"
-                [class.rtui-button-material--danger]="variant() === 'danger'"
-                [disabled]="disabled() || loading()"
-                (click)="onClick()">
-                @if (loading()) {
-                    <rtui-spinner [diameter]="spinnerSize()" [showBox]="false" />
-                } @else {
-                    @if (icon() && iconPosition() === 'start') {
-                        <rtui-icon matButtonIcon [glyph]="icon()" [size]="resolvedIconSize()" [outlined]="outlined()" />
-                    }
-                    @if (text()) {
-                        <span>{{ text() }}</span>
-                    }
-                    <ng-container [ngTemplateOutlet]="projectedContent" />
-                    @if (icon() && iconPosition() === 'end') {
-                        <rtui-icon matButtonIcon iconPositionEnd [glyph]="icon()" [size]="resolvedIconSize()" [outlined]="outlined()" />
-                    }
-                }
-            </button>
-        } @else {
-            <button
-                type="button"
-                rtBlock="rtui-button"
+                rtElem="control"
                 matRipple
-                [rtMod]="modifiers()"
                 [matRippleDisabled]="disabled() || loading()"
                 [disabled]="disabled() || loading()"
                 (click)="onClick()">
                 @if (loading()) {
                     <rtui-spinner rtElem="spinner" [diameter]="spinnerSize()" [showBox]="false" />
                 } @else {
-                    @if (icon() && iconPosition() === 'start') {
-                        <rtui-icon rtElem="icon" [glyph]="icon()" [size]="resolvedIconSize()" [outlined]="outlined()" />
-                    }
-                    @if (text()) {
-                        <span rtElem="text">{{ text() }}</span>
-                    }
-                    <ng-container [ngTemplateOutlet]="projectedContent" />
-                    @if (icon() && iconPosition() === 'end') {
-                        <rtui-icon rtElem="icon" [glyph]="icon()" [size]="resolvedIconSize()" [outlined]="outlined()" />
-                    }
+                    <rtui-icon rtElem="icon" [glyph]="icon()" [size]="resolvedIconSize()" [outlined]="outlined()" />
                 }
             </button>
         }
     }
-    @default {
-        <button
-            type="button"
-            rtBlock="rtui-button"
-            matRipple
-            [rtMod]="modifiers()"
-            [matRippleDisabled]="disabled() || loading()"
-            [disabled]="disabled() || loading()"
-            (click)="onClick()">
-            @if (loading()) {
-                <rtui-spinner rtElem="spinner" [diameter]="spinnerSize()" [showBox]="false" />
-            } @else {
-                <rtui-icon rtElem="icon" [glyph]="icon()" [size]="resolvedIconSize()" [outlined]="outlined()" />
-            }
-        </button>
-    }
-}
+</ng-container>
