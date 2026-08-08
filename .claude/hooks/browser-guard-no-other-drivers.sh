@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.2.0 · hooks/browser-guard-no-other-drivers.sh · 3b5e695b78f1 · правится надстройкой, не здесь
+# rt-kit v0.3.0 · hooks/browser-guard-no-other-drivers.sh · 3b5e695b78f1 · правится надстройкой, не здесь
 # Гард обходных путей к браузеру. PreToolUse.
 #
 # Закрепление профиля чего-то стоит только тогда, когда дверь одна. Здесь перечислены двери,

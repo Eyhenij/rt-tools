@@ -9,7 +9,7 @@
             matTooltipPosition="left"
             [rtMod]="{ active: !isResetButtonDisabled() && !disabled() }"
             [disabled]="isResetButtonDisabled() || disabled()"
-            [matTooltipDisabled]="isMobile()"
+            [matTooltipDisabled]="narrow()"
             (click)="onReset()">
             <mat-icon rtElem="item-icon" [rtIconOutlined]="true">refresh</mat-icon>
         </button>
@@ -24,7 +24,7 @@
             matTooltipClass="custom-tooltip"
             matTooltipPosition="above"
             [rtMod]="{ active: !disabled() && !isClearButtonDisabled() }"
-            [matTooltipDisabled]="isMobile()"
+            [matTooltipDisabled]="narrow()"
             [disabled]="disabled() || isClearButtonDisabled()"
             (click)="onClear()">
             <mat-icon rtElem="item-icon" [rtIconOutlined]="true">delete_forever</mat-icon>

@@ -1,5 +1,4 @@
 <rtui-aside-container
-    [isMobile]="isMobile()"
     [pending]="false"
     [isSubmitButtonDisabled]="!isVisibilityChanged() && !isOrderChanged() && !form.dirty"
     (submitAction)="save()"
@@ -32,7 +31,6 @@
                         displayExp="displayName"
                         formControlName="columns"
                         [entities]="selectedColumns()"
-                        [isMobile]="isMobile()"
                         [useNameBreaking]="true"
                         [useTitleCase]="true"
                         [isSelectionAvailable]="false"

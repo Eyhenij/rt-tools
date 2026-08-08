@@ -4,8 +4,10 @@ import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    computed,
     contentChild,
     Directive,
+    inject,
     input,
     InputSignal,
     InputSignalWithTransform,
@@ -21,7 +23,7 @@ import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
-import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '@rt-tools/core';
 import { INullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import { BreakStringPipe, EntityToStringPipe, RtIconOutlinedDirective } from '@rt-tools/core';
@@ -79,16 +81,29 @@ const BEM_BLOCK: string = 'rtui-dynamic-selector-selected-list';
         BreakStringPipe,
         TitleCasePipe,
     ],
+    providers: [BreakpointService],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RtuiDynamicSelectorSelectedListComponent<ENTITY extends Record<string, unknown>, KEY extends Extract<keyof ENTITY, string>> {
+    readonly #breakpoints: BreakpointService = inject(BreakpointService);
+
+    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
     protected readonly editedItemIndex: WritableSignal<INullable<number>> = signal(null);
 
     public readonly inputRef: Signal<INullable<MatInput>> = viewChild(MatInput);
 
-    /** Indicates if mobile view */
-    public isMobile: InputSignalWithTransform<boolean, BooleanInput> = input.required<boolean, BooleanInput>({
-        transform: booleanAttribute,
+    /**
+     * Признак узкого экрана.
+     *
+     * @deprecated Кит определяет его сам — `RtuiBreakpointsService`. Вход оставлен ради
+     * приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
+     */
+    public isMobile: InputSignalWithTransform<INullable<boolean>, INullable<boolean> | string> = input<
+        INullable<boolean>,
+        INullable<boolean> | string
+    >(null, {
+        transform: (value: INullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
     });
     /** A model's field, which should be used for http-requests */
     public keyExp: InputSignal<KEY> = input.required();

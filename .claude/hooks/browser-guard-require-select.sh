@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.2.0 · hooks/browser-guard-require-select.sh · 226ad6acb66f · правится надстройкой, не здесь
+# rt-kit v0.3.0 · hooks/browser-guard-require-select.sh · 226ad6acb66f · правится надстройкой, не здесь
 # Гард свежести выбора браузера. PreToolUse на всех остальных вызовах расширения.
 #
 # ЗАЧЕМ ОН ЕСТЬ — отказ, из которого он вырос: расширение действует на тот браузер, который

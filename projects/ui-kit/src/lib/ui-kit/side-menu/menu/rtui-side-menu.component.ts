@@ -6,6 +6,7 @@ import {
     computed,
     contentChild,
     Directive,
+    inject,
     input,
     InputSignal,
     InputSignalWithTransform,
@@ -22,7 +23,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatListItem, MatListItemIcon, MatNavList } from '@angular/material/list';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 
-import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '@rt-tools/core';
 import { INullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective, RtNavigationDirective, RtScrollToElementDirective } from '@rt-tools/core';
@@ -52,6 +53,7 @@ const BEM_BLOCK: string = 'rtui-side-menu';
     host: { class: BEM_BLOCK },
     templateUrl: './rtui-side-menu.component.html',
     styleUrls: ['./rtui-side-menu.component.scss'],
+    providers: [BreakpointService],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         NgTemplateOutlet,
@@ -78,6 +80,10 @@ const BEM_BLOCK: string = 'rtui-side-menu';
     ],
 })
 export class RtuiSideMenuComponent {
+    readonly #breakpoints: BreakpointService = inject(BreakpointService);
+
+    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
     public readonly headerTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiSideMenuHeaderDirective, {
         read: TemplateRef,
     });
@@ -94,12 +100,13 @@ export class RtuiSideMenuComponent {
     public menuItems: InputSignalWithTransform<ISideMenu.Item[], ISideMenu.Item[]> = input<ISideMenu.Item[], ISideMenu.Item[]>([], {
         transform: (value: ISideMenu.Item[]) => transformArrayInput(value),
     });
-    public isMobile: InputSignalWithTransform<INullable<boolean>, INullable<boolean>> = input<INullable<boolean>, INullable<boolean>>(
-        false,
-        {
-            transform: booleanAttribute,
-        }
-    );
+    /**
+     * Признак узкого экрана.
+     *
+     * @deprecated Кит определяет его сам — `BreakpointService` из `@rt-tools/core`. Вход
+     * оставлен ради приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
+     */
+    public isMobile: InputSignal<INullable<boolean>> = input<INullable<boolean>>(null);
     public isSubMenuXScrollEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });

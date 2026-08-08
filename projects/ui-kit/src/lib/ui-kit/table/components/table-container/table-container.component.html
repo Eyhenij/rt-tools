@@ -35,7 +35,7 @@
                                         matTooltip="Clear filters"
                                         matTooltipPosition="below"
                                         [class]="['c-button', 'c-button--fab'] | concatClasses"
-                                        [matTooltipDisabled]="isMobile()"
+                                        [matTooltipDisabled]="narrow()"
                                         [disabled]="isFiltersEmpty()"
                                         (click)="onClearFilters()">
                                         <mat-icon [rtIconOutlined]="isToolbarActionsIconsOutlined()">block</mat-icon>
@@ -50,7 +50,7 @@
                                         matTooltip="Refresh"
                                         matTooltipPosition="below"
                                         [class]="['c-button', 'c-button--fab'] | concatClasses"
-                                        [matTooltipDisabled]="isMobile()"
+                                        [matTooltipDisabled]="narrow()"
                                         (click)="onRefresh()">
                                         <mat-icon [rtIconOutlined]="isToolbarActionsIconsOutlined()">sync</mat-icon>
                                     </button>
@@ -64,7 +64,7 @@
                                         matTooltip="Table configuration"
                                         matTooltipPosition="below"
                                         [class]="['c-button', 'c-button--fab'] | concatClasses"
-                                        [matTooltipDisabled]="isMobile()"
+                                        [matTooltipDisabled]="narrow()"
                                         (click)="onOpenConfigAside()">
                                         <mat-icon [rtIconOutlined]="isToolbarActionsIconsOutlined()">view_column</mat-icon>
                                     </button>
@@ -98,10 +98,7 @@
 
                     @if (isPaginationShown()) {
                         <div rtElem="pagination">
-                            <rtui-pagination
-                                [isMobile]="!!isMobile()"
-                                [currentPageModel]="pageModel()"
-                                (pageModelChange)="onPageModelChange($event)" />
+                            <rtui-pagination [currentPageModel]="pageModel()" (pageModelChange)="onPageModelChange($event)" />
                         </div>
                     }
                 } @else {
