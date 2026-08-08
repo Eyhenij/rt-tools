@@ -1,3 +1,22 @@
+@use '../../../styles/base/mixin' as mixins;
+
+/* Component tier: the one size every projected icon takes inside a text-appearance button.
+   It sits between the `md` and `lg` steps of the icon scale on purpose — see the rule at the
+   bottom of this file. */
+$icon: (
+    text-button: (
+        size: 1.375rem,
+    ),
+);
+
+:root {
+    @each $element, $elements in $icon {
+        @each $style-token, $value in $elements {
+            #{mixins.generateCssVar('icon', #{$element}, #{$style-token})}: #{$value};
+        }
+    }
+}
+
 .rtui-icon {
     display: inline-flex;
     align-items: center;
@@ -19,45 +38,45 @@
     }
 
     &--size-xs {
-        width: 0.875rem;
-        height: 0.875rem;
-        font-size: 0.875rem;
+        width: var(--rt-icon-size-xs);
+        height: var(--rt-icon-size-xs);
+        font-size: var(--rt-icon-size-xs);
     }
 
     &--size-sm {
-        width: 1rem;
-        height: 1rem;
-        font-size: 1rem;
+        width: var(--rt-icon-size-sm);
+        height: var(--rt-icon-size-sm);
+        font-size: var(--rt-icon-size-sm);
     }
 
     &--size-md {
-        width: 1.5rem;
-        height: 1.5rem;
-        font-size: 1.5rem;
+        width: var(--rt-icon-size-md);
+        height: var(--rt-icon-size-md);
+        font-size: var(--rt-icon-size-md);
     }
 
     &--size-lg {
-        width: 2rem;
-        height: 2rem;
-        font-size: 2rem;
+        width: var(--rt-icon-size-lg);
+        height: var(--rt-icon-size-lg);
+        font-size: var(--rt-icon-size-lg);
     }
 
     &--size-xl {
-        width: 2.5rem;
-        height: 2.5rem;
-        font-size: 2.5rem;
+        width: var(--rt-icon-size-xl);
+        height: var(--rt-icon-size-xl);
+        font-size: var(--rt-icon-size-xl);
     }
 
     &--size-xxl {
-        width: 3rem;
-        height: 3rem;
-        font-size: 3rem;
+        width: var(--rt-icon-size-xxl);
+        height: var(--rt-icon-size-xxl);
+        font-size: var(--rt-icon-size-xxl);
     }
 
     &--size-3xl {
-        width: 3.5rem;
-        height: 3.5rem;
-        font-size: 3.5rem;
+        width: var(--rt-icon-size-3xl);
+        height: var(--rt-icon-size-3xl);
+        font-size: var(--rt-icon-size-3xl);
     }
 
     &--theme-inherit {
@@ -104,7 +123,7 @@
    and reaches the projected icon; specificity (0,2,0) wins over the icon's own
    `--size-*` (0,1,0). */
 .rtui-button--appearance-text .rtui-icon {
-    width: 1.375rem;
-    height: 1.375rem;
-    font-size: 1.375rem;
+    width: var(--rt-icon-text-button-size);
+    height: var(--rt-icon-text-button-size);
+    font-size: var(--rt-icon-text-button-size);
 }
