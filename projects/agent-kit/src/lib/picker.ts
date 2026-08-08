@@ -18,6 +18,11 @@ export interface IPickerState {
     readonly choices: readonly IChoice[];
     readonly cursor: number;
     readonly chosen: ReadonlySet<string>;
+    /**
+     * Выбирается ровно один. Вид ресурса галочками не набирается: репозиторий лежит либо в
+     * одном месте, либо в другом, и «оба» здесь означало бы два правила поставки в одном дереве.
+     */
+    readonly single: boolean;
     /** Выбор окончен, `chosen` — ответ. */
     readonly done: boolean;
     /** Выбор брошен: ответа нет, и подставлять вместо него умолчание нельзя. */
@@ -26,7 +31,29 @@ export interface IPickerState {
 
 /** Первым предложением взято всё: отказ от закона — решение, и принимать его должен человек. */
 export function pickerOf(choices: readonly IChoice[]): IPickerState {
-    return { choices, cursor: 0, chosen: new Set(choices.map((choice: IChoice): string => choice.id)), done: false, cancelled: false };
+    return {
+        choices,
+        cursor: 0,
+        chosen: new Set(choices.map((choice: IChoice): string => choice.id)),
+        single: false,
+        done: false,
+        cancelled: false,
+    };
+}
+
+/**
+ * Выбор одного из. Отмечено то, что под курсором, и переезд курсора переносит отметку: так
+ * ответ есть в любой момент, и enter отвечает без единого нажатия пробела.
+ */
+export function singlePickerOf(choices: readonly IChoice[]): IPickerState {
+    return {
+        choices,
+        cursor: 0,
+        chosen: new Set(choices.slice(0, 1).map((choice: IChoice): string => choice.id)),
+        single: true,
+        done: false,
+        cancelled: false,
+    };
 }
 
 /**
@@ -50,14 +77,24 @@ const CANCEL: readonly string[] = [KEY_CANCEL, KEY_ESCAPE];
 
 function moved(state: IPickerState, step: number): IPickerState {
     const count: number = state.choices.length;
+    if (!count) {
+        return state;
+    }
+    const cursor: number = (state.cursor + step + count) % count;
+    const chosen: ReadonlySet<string> = state.single ? new Set([state.choices[cursor].id]) : state.chosen;
 
-    return count ? { ...state, cursor: (state.cursor + step + count) % count } : state;
+    return { ...state, cursor, chosen };
 }
 
 function toggled(state: IPickerState): IPickerState {
     const choice: IChoice | undefined = state.choices[state.cursor];
     if (!choice) {
         return state;
+    }
+    // При выборе одного пробел ставит отметку, но не снимает: отметить нечего — ответа не
+    // осталось бы вовсе, а брошенный выбор здесь говорится отдельной клавишей.
+    if (state.single) {
+        return { ...state, chosen: new Set([choice.id]) };
     }
     const chosen: Set<string> = new Set(state.chosen);
     if (!chosen.delete(choice.id)) {
@@ -68,6 +105,9 @@ function toggled(state: IPickerState): IPickerState {
 }
 
 function switched(state: IPickerState): IPickerState {
+    if (state.single) {
+        return state;
+    }
     const all: boolean = state.chosen.size === state.choices.length;
 
     return { ...state, chosen: all ? new Set() : new Set(state.choices.map((choice: IChoice): string => choice.id)) };
@@ -133,18 +173,22 @@ export const pressChunk: (state: IPickerState, chunk: string) => IPickerState = 
 const widest: (choices: readonly IChoice[]) => number = (choices: readonly IChoice[]): number =>
     choices.reduce((width: number, choice: IChoice): number => Math.max(width, choice.name.length), 0);
 
-/** Разметка выбиралки строками. Курсор — стрелкой, выбранное — крестиком в скобках. */
+/** Разметка выбиралки строками. Курсор — стрелкой, выбранное — крестиком или точкой в скобках. */
 export function renderPicker(state: IPickerState, question: string): readonly string[] {
     const width: number = widest(state.choices);
+    const help: string = state.single
+        ? '  ↑↓ — двигаться, enter — готово'
+        : '  ↑↓ — двигаться, пробел — выбрать, a — все или ни одного, enter — готово';
 
     return [
         question,
-        '  ↑↓ — двигаться, пробел — выбрать, a — все или ни одного, enter — готово',
+        help,
         '',
         ...state.choices.map((choice: IChoice, index: number): string => {
-            const mark: string = state.chosen.has(choice.id) ? 'x' : ' ';
+            const marked: boolean = state.chosen.has(choice.id);
+            const mark: string = state.single ? (marked ? '(•)' : '( )') : marked ? '[x]' : '[ ]';
 
-            return `${index === state.cursor ? '❯' : ' '} [${mark}] ${choice.name.padEnd(width)}  ${choice.title}`;
+            return `${index === state.cursor ? '❯' : ' '} ${mark} ${choice.name.padEnd(width)}  ${choice.title}`;
         }),
     ];
 }

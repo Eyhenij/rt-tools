@@ -11,7 +11,7 @@
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: любая ошибка начинает сессию без добавленного контекста (exit 0).
 # Сломанный вход не имеет права остановить сессию.
 
-dir="${CLAUDE_PROJECT_DIR:-.}/{{lawsDir}}"
+dir="${CLAUDE_PROJECT_DIR:-.}/docs/constitution"
 [ -d "$dir" ] || exit 0
 
 index=""
@@ -19,15 +19,15 @@ for law in "$dir"/*.md; do
     [ -f "$law" ] || continue
     title="$(grep -m1 '^# ' "$law" 2>/dev/null | sed 's/^# //')"
     [ -z "$title" ] && continue
-    index="${index}  {{lawsDir}}/$(basename "$law") — ${title}"$'\n'
+    index="${index}  docs/constitution/$(basename "$law") — ${title}"$'\n'
 done
 [ -z "$index" ] && exit 0
 
 read -r -d '' context <<EOF
-ЗАКОНЫ ПРОЕКТА (слой @rt-tools/agent-kit, разложен в {{lawsDir}}/).
+ЗАКОНЫ ПРОЕКТА (слой @rt-tools/agent-kit, разложен в docs/constitution/).
 
 Закон говорит, ЧТО должно быть верно, и не знает ни путей, ни имён файлов. Правило — каким
-приёмом это делается — живёт в {{rulesDir}}/, а имена этого дерева при нём — в
+приёмом это делается — живёт в .claude/skills/, а имена этого дерева при нём — в
 implementation.md рядом. Закон не отменяет правила и не заменяется им: перед решением, которое
 закон задевает, читается закон целиком, правило — как обычно.
 
