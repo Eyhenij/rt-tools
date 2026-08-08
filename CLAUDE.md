@@ -56,6 +56,13 @@ them is called in this tree sits in `implementation.md` next to the rule; patter
 ships neither: `rt-tools-storybook` for the showcase, and `ui-component-tests` for the ready-made
 spec, the visual snapshot and the choice between them.
 
+Work itself is kept in `docs/tasks/<branch>/` — the owner's request verbatim in `grill.md`, the
+plan in `plan.md` (never edited after it is written), the running state in `progress.md`, the only
+place where done work is marked. `.claude/hooks/task-context-load.sh` reads that state into the
+session on startup and `.claude/hooks/task-flow-guard.sh` refuses code before a plan exists — both
+written by this project. A domain here is a package under `projects/`, and its spec lives in
+`docs/specs/<package>/`.
+
 `.claude/hooks/skill-gate.sh` blocks an edit until the matching rule is loaded; the map from a
 file to its rule is `.claude/rt-kit/gate-map.sh`, and the commands, stands and doc pairs the
 guard hooks call are in `.claude/rt-kit/project.sh`. Both are written by this project, not laid
