@@ -1,23 +1,24 @@
 import { NgStyle } from '@angular/common';
 import {
-    computed,
     AfterContentChecked,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    computed,
     ElementRef,
+    inject,
     input,
     InputSignal,
     InputSignalWithTransform,
-    Signal,
     signal,
+    Signal,
     viewChild,
     WritableSignal,
 } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
-import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '@rt-tools/core';
 import { INullable } from '@rt-tools/utils';
 import { POSITION_ENUM } from '@rt-tools/core';
 import { IInfoBadgeSizeType, INFO_BADGE_SIZE_ENUM } from './badge-info-enum';
@@ -30,17 +31,31 @@ const BEM_BLOCK: string = 'rtui-info-badge';
     host: { class: BEM_BLOCK },
     templateUrl: './info-badge.component.html',
     styleUrl: './info-badge.component.scss',
+    providers: [BreakpointService],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [MatTooltip, MatIcon, NgStyle, BlockDirective, ElemDirective, ModDirective],
 })
 export class RtuiInfoBadgeComponent implements AfterContentChecked {
+    readonly #breakpoints: BreakpointService = inject(BreakpointService);
+
+    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
     public size: InputSignal<IInfoBadgeSizeType> = input.required();
     public text: InputSignal<string> = input.required();
     public glyph: InputSignal<string> = input('');
     public iconSide: InputSignal<IconSideType> = input<IconSideType>(POSITION_ENUM.RIGHT);
     public isFontBold: InputSignal<boolean> = input(false);
-    public isMobile: InputSignalWithTransform<INullable<boolean>, boolean> = input.required<INullable<boolean>, boolean>({
-        transform: booleanAttribute,
+    /**
+     * Признак узкого экрана.
+     *
+     * @deprecated Кит определяет его сам — `RtuiBreakpointsService`. Вход оставлен ради
+     * приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
+     */
+    public isMobile: InputSignalWithTransform<INullable<boolean>, INullable<boolean> | string> = input<
+        INullable<boolean>,
+        INullable<boolean> | string
+    >(null, {
+        transform: (value: INullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
     });
     public isTitleCollapsed: WritableSignal<boolean> = signal(false);
     public readonly contentRef: Signal<ElementRef<HTMLElement> | undefined> = viewChild('content');

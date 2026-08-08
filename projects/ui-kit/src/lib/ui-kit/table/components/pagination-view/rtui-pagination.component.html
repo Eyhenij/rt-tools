@@ -1,6 +1,6 @@
 @if (currentPageModel().totalCount > pageSizes()[0]) {
-    <div #containerRef rtBlock="pagination-container" [rtMod]="{ clipped: isContentClipped() && !isMobile() }">
-        <div rtBlock="paging" [rtMod]="{ clipped: isContentClipped() && !isMobile() }">
+    <div #containerRef rtBlock="pagination-container" [rtMod]="{ clipped: isContentClipped() && !narrow() }">
+        <div rtBlock="paging" [rtMod]="{ clipped: isContentClipped() && !narrow() }">
             <div
                 rtElem="item"
                 role="button"
@@ -19,7 +19,7 @@
                 </svg>
             </div>
 
-            @if (isMobile()) {
+            @if (narrow()) {
                 <div rtElem="item" rtMod="active" role="button" tabindex="1">
                     <span rtElem="item-label">{{ currentPageModel().pageNumber }}</span>
                 </div>
@@ -60,8 +60,8 @@
             </div>
         </div>
 
-        <div rtBlock="page-size-toggle" [rtMod]="{ clipped: isContentClipped() && !isMobile() }">
-            @if (!isMobile()) {
+        <div rtBlock="page-size-toggle" [rtMod]="{ clipped: isContentClipped() && !narrow() }">
+            @if (!narrow()) {
                 <div rtElem="title">Items per page:</div>
             }
 

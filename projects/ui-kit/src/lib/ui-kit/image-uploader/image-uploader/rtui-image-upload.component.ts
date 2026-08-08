@@ -21,7 +21,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip, TooltipPosition } from '@angular/material/tooltip';
 import { ImageCroppedEvent, ImageCropperComponent } from 'ngx-image-cropper';
 
-import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '@rt-tools/core';
 import { INullable } from '@rt-tools/utils';
 import { transformStringInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
@@ -38,6 +38,7 @@ const BEM_BLOCK: string = 'rtui-image-upload';
     host: { class: BEM_BLOCK },
     templateUrl: './rtui-image-upload.component.html',
     styleUrls: ['./rtui-image-upload.component.scss'],
+    providers: [BreakpointService],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // material
@@ -59,6 +60,7 @@ const BEM_BLOCK: string = 'rtui-image-upload';
     ],
 })
 export class RtuiImageUploadComponent {
+    readonly #breakpoints: BreakpointService = inject(BreakpointService);
     readonly #documentRef: Document = inject(DOCUMENT);
 
     readonly #formats: Record<string, IImageUploadFormat> = {
@@ -68,14 +70,26 @@ export class RtuiImageUploadComponent {
         ['webp']: 'webp',
     };
     readonly #originalMimeType: WritableSignal<string | null> = signal(null);
+
+    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
     protected readonly imageFormat: Signal<IImageUploadFormat> = computed((): IImageUploadFormat => {
         const type: INullable<string> = this.#originalMimeType();
         return this.#formats[type?.toLowerCase() || ''] || 'png';
     });
 
     public imageUrl: ModelSignal<INullable<string>> = model.required<INullable<string>>();
-    public isMobile: InputSignalWithTransform<boolean, boolean> = input.required<boolean, boolean>({
-        transform: booleanAttribute,
+    /**
+     * Признак узкого экрана.
+     *
+     * @deprecated Кит определяет его сам — `RtuiBreakpointsService`. Вход оставлен ради
+     * приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
+     */
+    public isMobile: InputSignalWithTransform<INullable<boolean>, INullable<boolean> | string> = input<
+        INullable<boolean>,
+        INullable<boolean> | string
+    >(null, {
+        transform: (value: INullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
     });
     public fileName: InputSignalWithTransform<string, string> = input<string, string>('image', {
         transform: transformStringInput,

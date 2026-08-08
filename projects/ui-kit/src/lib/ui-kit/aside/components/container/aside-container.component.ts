@@ -4,8 +4,10 @@ import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    computed,
     contentChild,
     Directive,
+    inject,
     input,
     InputSignal,
     InputSignalWithTransform,
@@ -20,7 +22,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, BreakpointService, ElemDirective } from '@rt-tools/core';
 import { INullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import { AsideButtonsType } from '../../aside.enums';
@@ -46,6 +48,7 @@ const BEM_BLOCK: string = 'c-aside';
     selector: 'rtui-aside-container',
     templateUrl: './aside-container.component.html',
     styleUrls: ['./aside-container.component.scss'],
+    providers: [BreakpointService],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         RouterLink,
@@ -81,9 +84,22 @@ const BEM_BLOCK: string = 'c-aside';
     },
 })
 export class RtuiAsideContainerComponent {
+    readonly #breakpoints: BreakpointService = inject(BreakpointService);
+
+    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
     public title: InputSignal<INullable<string>> = input<INullable<string>>(null);
-    public isMobile: InputSignalWithTransform<INullable<boolean>, boolean> = input.required<INullable<boolean>, boolean>({
-        transform: booleanAttribute,
+    /**
+     * Признак узкого экрана.
+     *
+     * @deprecated Кит определяет его сам — `RtuiBreakpointsService`. Вход оставлен ради
+     * приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
+     */
+    public isMobile: InputSignalWithTransform<INullable<boolean>, INullable<boolean> | string> = input<
+        INullable<boolean>,
+        INullable<boolean> | string
+    >(null, {
+        transform: (value: INullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
     });
     public isSubmitButtonDisabled: InputSignalWithTransform<boolean, boolean> = input.required<boolean, boolean>({
         transform: booleanAttribute,

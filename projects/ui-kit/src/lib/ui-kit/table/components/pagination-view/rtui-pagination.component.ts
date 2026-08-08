@@ -24,7 +24,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 
-import { BlockDirective, ElemDirective, ModDirective, WINDOW } from '@rt-tools/core';
+import { BlockDirective, BreakpointService, ElemDirective, ModDirective, WINDOW } from '@rt-tools/core';
 import { INullable } from '@rt-tools/utils';
 import { isNumber, IPageModel } from '@rt-tools/utils';
 import { DEFAULT_PAGE_SIZE } from '../../util/default-pagination';
@@ -36,20 +36,33 @@ const BEM_BLOCK: string = 'rtui-pagination';
     host: { class: BEM_BLOCK },
     templateUrl: './rtui-pagination.component.html',
     styleUrls: ['./rtui-pagination.component.scss'],
+    providers: [BreakpointService],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ReactiveFormsModule, BlockDirective, ElemDirective, ModDirective],
 })
 export class RtuiPaginationComponent implements OnInit, AfterViewInit {
     readonly #injector: Injector = inject(Injector);
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
+    readonly #breakpoints: BreakpointService = inject(BreakpointService);
     readonly #fb: FormBuilder = inject(FormBuilder);
     readonly #windowRef: Window = inject(WINDOW);
 
+    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
+
     /** Current Page Model */
     public currentPageModel: InputSignal<IPageModel> = input.required();
-    /** Indicates is mobile view */
-    public isMobile: InputSignalWithTransform<INullable<boolean>, boolean> = input.required<INullable<boolean>, boolean>({
-        transform: booleanAttribute,
+    /**
+     * Признак узкого экрана.
+     *
+     * @deprecated Кит определяет его сам — `RtuiBreakpointsService`. Вход оставлен ради
+     * приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
+     */
+    public isMobile: InputSignalWithTransform<INullable<boolean>, INullable<boolean> | string> = input<
+        INullable<boolean>,
+        INullable<boolean> | string
+    >(null, {
+        transform: (value: INullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
     });
 
     /** Output action when Page Model changed */

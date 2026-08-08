@@ -1,14 +1,28 @@
-import { booleanAttribute, Directive, input, InputSignal, InputSignalWithTransform } from '@angular/core';
+import { booleanAttribute, computed, Directive, inject, input, InputSignal, InputSignalWithTransform, Signal } from '@angular/core';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
 
 import { INullable } from '@rt-tools/utils';
 import { transformStringInput } from '@rt-tools/utils';
+import { BreakpointService } from '@rt-tools/core';
 
 @Directive()
 export abstract class RtuiDynamicSelectorsDirective {
-    /** Indicates if mobile view */
-    public isMobile: InputSignalWithTransform<INullable<boolean>, boolean> = input.required<INullable<boolean>, boolean>({
-        transform: booleanAttribute,
+    readonly #breakpoints: BreakpointService = inject(BreakpointService);
+
+    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
+
+    /**
+     * Признак узкого экрана.
+     *
+     * @deprecated Кит определяет его сам — `RtuiBreakpointsService`. Вход оставлен ради
+     * приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
+     */
+    public isMobile: InputSignalWithTransform<INullable<boolean>, INullable<boolean> | string> = input<
+        INullable<boolean>,
+        INullable<boolean> | string
+    >(null, {
+        transform: (value: INullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
     });
     /** Selections control button title */
     public buttonTitle: InputSignalWithTransform<string, string> = input<string, string>('Add', {

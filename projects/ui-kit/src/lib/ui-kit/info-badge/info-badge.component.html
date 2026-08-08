@@ -4,7 +4,7 @@
     matTooltipPosition="above"
     [matTooltip]="text()"
     [rtMod]="badgeModifiers()"
-    [matTooltipDisabled]="!isTitleCollapsed() || isMobile()">
+    [matTooltipDisabled]="!isTitleCollapsed() || narrow()">
     <div rtElem="content" #content>{{ text() }}</div>
     @if (glyph()) {
         <mat-icon [ngStyle]="iconStyles">{{ glyph() }}</mat-icon>
