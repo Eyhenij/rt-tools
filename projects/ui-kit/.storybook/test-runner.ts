@@ -14,10 +14,11 @@ import { toMatchImageSnapshot } from 'jest-image-snapshot';
 const SNAPSHOT_DIR: string = `${process.cwd()}/projects/ui-kit/.storybook/__snapshots__`;
 
 /**
- * Порог расхождения. Ноль здесь не ставится: сглаживание шрифта даёт единицы пикселей
- * разницы между запусками даже на неизменном дереве, и прогон начинает мигать.
+ * Порог расхождения. Две съёмки одной истории подряд сходятся пиксель в пиксель, поэтому
+ * порог держится у нуля: подпись кнопки занимает сотые доли кадра, и порог пощедрее
+ * пропускал бы её правку молча.
  */
-const FAILURE_THRESHOLD: number = 0.002;
+const FAILURE_THRESHOLD: number = 0.0002;
 
 /** Сколько ждать шрифт значков: он приходит из сети, а до него иконка себя прячет. */
 const FONT_TIMEOUT_MS: number = 10_000;
@@ -83,6 +84,10 @@ const config: TestRunnerConfig = {
 
         if (hovered) {
             await page.locator(hovered).first().hover();
+        } else {
+            // Указатель переживает переход к следующей истории и наводится уже на её
+            // разметку: снимок соседа приходит с проявившейся кнопкой, которой там не ждут.
+            await page.mouse.move(0, 0);
         }
 
         await page.waitForTimeout(SETTLE_MS);

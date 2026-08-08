@@ -28,6 +28,12 @@ $table-container: (
         height: 2rem,
         border-left: 1px solid var(--rt-border-neutral-divider),
     ),
+    toolbar-action: (
+        color: var(--rt-color-neutral-60),
+    ),
+    toolbar-action-hover: (
+        color: var(--rt-color-neutral-100),
+    ),
     toolbar-search: (
         width: 22rem,
     ),
@@ -137,6 +143,26 @@ $table-container: (
             &-actions-divider {
                 height: var(--rt-table-container-toolbar-actions-divider-height);
                 border-left: var(--rt-table-container-toolbar-actions-divider-border-left);
+            }
+
+            &-action {
+                position: relative;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border: 0;
+                background-color: transparent;
+                color: var(--rt-table-container-toolbar-action-color);
+                line-height: 1;
+                transition: all 0.15s linear;
+
+                &:hover {
+                    color: var(--rt-table-container-toolbar-action-hover-color);
+
+                    svg g {
+                        fill: var(--rt-table-container-toolbar-action-hover-color);
+                    }
+                }
             }
 
             &-search {
