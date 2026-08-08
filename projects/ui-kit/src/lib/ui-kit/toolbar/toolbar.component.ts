@@ -31,8 +31,11 @@ export class RtuiToolbarCenterDirective {}
 })
 export class RtuiToolbarRightDirective {}
 
+const BEM_BLOCK: string = 'rtui-toolbar';
+
 @Component({
     selector: 'rtui-toolbar',
+    host: { class: BEM_BLOCK },
     templateUrl: './toolbar.component.html',
     styleUrls: ['./toolbar.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,

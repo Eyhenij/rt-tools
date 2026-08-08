@@ -33,8 +33,11 @@ export const createPersonList: (size: number) => Person[] = (size: number) =>
 
 export const listOfPersons: Person[] = createPersonList(20);
 
+const BEM_BLOCK: string = 'app-selector';
+
 @Component({
     selector: 'app-selector',
+    host: { class: BEM_BLOCK },
     templateUrl: './test-selector.component.html',
     styleUrls: ['./test-selector.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,

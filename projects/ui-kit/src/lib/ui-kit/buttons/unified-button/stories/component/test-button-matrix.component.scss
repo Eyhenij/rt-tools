@@ -1,0 +1,38 @@
+.matrix {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rt-spacing-4);
+
+    &__title {
+        margin: var(--rt-spacing-16) 0 var(--rt-spacing-4);
+        color: var(--rt-text-base-secondary);
+        font-size: var(--rt-font-size-xs);
+        font-weight: var(--rt-font-weight-semibold);
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    &__row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: var(--rt-spacing-16);
+
+        &--stretch {
+            display: block;
+        }
+    }
+
+    &__cell {
+        display: flex;
+        min-width: 4rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--rt-spacing-4);
+    }
+
+    &__label {
+        color: var(--rt-text-base-disabled);
+        font-size: var(--rt-font-size-xs);
+    }
+}

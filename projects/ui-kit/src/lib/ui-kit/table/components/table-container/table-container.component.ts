@@ -33,7 +33,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
 
-import { BlockDirective, ElemDirective, ModDirective, PlatformService, WINDOW } from '@rt-tools/core';
+import { BlockDirective, ConcatClassesPipe, ElemDirective, ModDirective, PlatformService, WINDOW } from '@rt-tools/core';
 import { INullable } from '@rt-tools/utils';
 import { isString, IPageModel, transformStringInput } from '@rt-tools/utils';
 import { BreakpointService, RtIconOutlinedDirective } from '@rt-tools/core';
@@ -61,12 +61,16 @@ export class RtuiTableToolbarSelectorsDirective {}
 })
 export class RtuiTableToolbarActionsDirective {}
 
+const BEM_BLOCK: string = 'rtui-table-container';
+
 @Component({
     selector: 'rtui-table-container',
+    host: { class: BEM_BLOCK },
     templateUrl: './table-container.component.html',
     styleUrls: ['./table-container.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        ConcatClassesPipe,
         ReactiveFormsModule,
         NgTemplateOutlet,
 

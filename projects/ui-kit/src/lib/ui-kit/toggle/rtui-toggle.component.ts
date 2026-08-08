@@ -26,8 +26,11 @@ import { BreakpointService } from '@rt-tools/core';
 import { TOGGLE_SIZE_TYPE_ENUM, ToggleSizeType } from './toggle-size.type.enum';
 import { BooleanInput } from '@angular/cdk/coercion';
 
+const BEM_BLOCK: string = 'rtui-toggle';
+
 @Component({
     selector: 'rtui-toggle',
+    host: { class: BEM_BLOCK },
     templateUrl: './rtui-toggle.component.html',
     styleUrls: ['./rtui-toggle.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,

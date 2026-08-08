@@ -6,276 +6,280 @@
     display: block;
     width: 100%;
 
-    .rtui-button,
-    .rtui-button-material {
+    .rtui-button__control,
+    .rtui-button__material {
         width: 100%;
     }
 }
 
+/* Класс блока и его модификаторы висят на хосте, поэтому правило вида
+   `&--type-pill &__control` читается как «кнопка внутри блока такого-то вида». */
 .rtui-button {
-    position: relative;
-    display: inline-flex;
-    overflow: hidden;
-    align-items: center;
-    justify-content: center;
-    border: 0;
-    background-color: transparent;
-    color: var(--mat-sys-on-surface-variant);
-    cursor: pointer;
-    line-height: 1;
-    transition:
-        background-color 0.15s ease,
-        color 0.15s ease,
-        opacity 0.15s ease;
-
-    rtui-icon {
-        color: inherit;
-    }
-
-    rtui-spinner {
-        display: flex;
+    &__control {
+        position: relative;
+        display: inline-flex;
+        overflow: hidden;
         align-items: center;
         justify-content: center;
-    }
-
-    &:disabled {
-        cursor: not-allowed;
-        opacity: 0.38;
-    }
-
-    &--loading {
-        cursor: wait;
-    }
-
-    /* ===================== icon / fab ===================== */
-    &--type-icon,
-    &--type-fab {
-        border-radius: var(--rt-radius-xl);
-
-        &:hover:not(:disabled) {
-            background-color: var(--rt-bg-base-hover);
-        }
-    }
-
-    &--type-icon.rtui-button--size-xs,
-    &--type-fab.rtui-button--size-xs {
-        padding: var(--rt-spacing-4);
-    }
-
-    &--type-icon.rtui-button--size-sm,
-    &--type-fab.rtui-button--size-sm {
-        padding: var(--rt-spacing-6);
-    }
-
-    &--type-icon.rtui-button--size-md,
-    &--type-fab.rtui-button--size-md {
-        padding: var(--rt-spacing-8);
-    }
-
-    &--type-icon.rtui-button--size-lg,
-    &--type-fab.rtui-button--size-lg {
-        padding: var(--rt-spacing-10);
-    }
-
-    &--type-icon.rtui-button--variant-primary,
-    &--type-fab.rtui-button--variant-primary {
-        color: var(--rt-icon-accent-primary);
-    }
-
-    &--type-icon.rtui-button--variant-danger,
-    &--type-fab.rtui-button--variant-danger {
-        color: var(--rt-icon-accent-danger);
-    }
-
-    &--type-icon.rtui-button--variant-success,
-    &--type-fab.rtui-button--variant-success {
-        color: var(--rt-icon-accent-success);
-    }
-
-    &--type-icon.rtui-button--variant-warning,
-    &--type-fab.rtui-button--variant-warning {
-        color: var(--rt-icon-accent-warning);
-    }
-
-    &--type-icon.rtui-button--variant-accent,
-    &--type-fab.rtui-button--variant-accent {
-        color: var(--rt-icon-accent-info);
-    }
-
-    /* ===================== pill ===================== */
-    &--type-pill {
-        border-radius: var(--rt-radius-xl);
-        background-color: var(--mat-sys-surface-container-high);
-        color: var(--mat-sys-on-surface-variant);
-        font-weight: var(--rt-font-weight-medium);
-        gap: var(--rt-spacing-6);
-
-        &:hover:not(:disabled) {
-            background-color: var(--mat-sys-surface-container-highest);
-        }
-
-        &:active:not(:disabled) {
-            background-color: var(--mat-sys-surface-dim);
-        }
-    }
-
-    /* pill sizes */
-    &--type-pill.rtui-button--size-xs {
-        padding: var(--rt-spacing-4) var(--rt-spacing-8);
-        font-size: var(--rt-font-size-xs);
-    }
-
-    &--type-pill.rtui-button--size-sm {
-        padding: var(--rt-spacing-6) var(--rt-spacing-10);
-        font-size: var(--rt-font-size-xs);
-    }
-
-    &--type-pill.rtui-button--size-md {
-        padding: var(--rt-spacing-8) var(--rt-spacing-14);
-        font-size: var(--rt-font-size-sm);
-    }
-
-    &--type-pill.rtui-button--size-lg {
-        padding: var(--rt-spacing-10) var(--rt-spacing-16);
-        font-size: var(--rt-font-size-sm);
-    }
-
-    /* pill radius */
-    &--type-pill.rtui-button--radius-none {
-        border-radius: 0;
-    }
-
-    &--type-pill.rtui-button--radius-sm {
-        border-radius: var(--rt-radius-xs);
-    }
-
-    &--type-pill.rtui-button--radius-md {
-        border-radius: var(--rt-radius-sm);
-    }
-
-    &--type-pill.rtui-button--radius-lg {
-        border-radius: var(--rt-radius-md);
-    }
-
-    &--type-pill.rtui-button--radius-full {
-        border-radius: var(--rt-radius-xl);
-    }
-
-    /* pill variants */
-    &--type-pill.rtui-button--variant-primary {
-        background-color: var(--rt-bg-accent-primary-subtle);
-        color: var(--rt-text-accent-primary);
-
-        &:hover:not(:disabled) {
-            background-color: color-mix(in srgb, var(--rt-bg-accent-primary-subtle) 92%, var(--rt-color-neutral-100));
-        }
-
-        &:active:not(:disabled) {
-            background-color: color-mix(in srgb, var(--rt-bg-accent-primary-subtle) 84%, var(--rt-color-neutral-100));
-        }
-    }
-
-    &--type-pill.rtui-button--variant-danger {
-        background-color: var(--rt-bg-accent-danger-subtle);
-        color: var(--rt-text-accent-danger);
-
-        &:hover:not(:disabled) {
-            background-color: color-mix(in srgb, var(--rt-bg-accent-danger-subtle) 92%, var(--rt-color-neutral-100));
-        }
-
-        &:active:not(:disabled) {
-            background-color: color-mix(in srgb, var(--rt-bg-accent-danger-subtle) 84%, var(--rt-color-neutral-100));
-        }
-    }
-
-    &--type-pill.rtui-button--variant-success {
-        background-color: var(--rt-bg-accent-success-subtle);
-        color: var(--rt-text-accent-success);
-
-        &:hover:not(:disabled) {
-            background-color: color-mix(in srgb, var(--rt-bg-accent-success-subtle) 92%, var(--rt-color-neutral-100));
-        }
-
-        &:active:not(:disabled) {
-            background-color: color-mix(in srgb, var(--rt-bg-accent-success-subtle) 84%, var(--rt-color-neutral-100));
-        }
-    }
-
-    &--type-pill.rtui-button--variant-warning {
-        background-color: var(--rt-bg-accent-warning-subtle);
-        color: var(--rt-text-accent-warning);
-
-        &:hover:not(:disabled) {
-            background-color: color-mix(in srgb, var(--rt-bg-accent-warning-subtle) 92%, var(--rt-color-neutral-100));
-        }
-
-        &:active:not(:disabled) {
-            background-color: color-mix(in srgb, var(--rt-bg-accent-warning-subtle) 84%, var(--rt-color-neutral-100));
-        }
-    }
-
-    &--type-pill.rtui-button--variant-accent {
-        background-color: var(--rt-bg-accent-info-subtle);
-        color: var(--rt-text-accent-info);
-
-        &:hover:not(:disabled) {
-            background-color: color-mix(in srgb, var(--rt-bg-accent-info-subtle) 92%, var(--rt-color-neutral-100));
-        }
-
-        &:active:not(:disabled) {
-            background-color: color-mix(in srgb, var(--rt-bg-accent-info-subtle) 84%, var(--rt-color-neutral-100));
-        }
-    }
-
-    /* pill appearance: text — transparent, borderless inline-text look.
-       Radius is intentionally left to the `--radius-*` modifier (defaults to
-       full) so a text-appearance pill keeps its pill shape. */
-    &--type-pill.rtui-button--appearance-text {
-        min-height: 1.875rem;
-        padding: 0 var(--rt-spacing-10);
+        border: 0;
         background-color: transparent;
         color: var(--mat-sys-on-surface-variant);
-        font-size: var(--rt-font-size-md);
-        font-weight: var(--rt-font-weight-regular);
+        cursor: pointer;
+        line-height: 1;
+        transition:
+            background-color 0.15s ease,
+            color 0.15s ease,
+            opacity 0.15s ease;
 
-        &:hover:not(:disabled) {
-            background-color: var(--rt-bg-base-hover);
+        rtui-icon {
+            color: inherit;
         }
 
-        &:active:not(:disabled) {
-            background-color: var(--rt-bg-base-hover);
+        rtui-spinner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+            opacity: 0.38;
+        }
+    }
+
+    /* ===================== design: material =====================
+       Under `design: 'material'` the pill renders a NATIVE Material button (see the
+       template) whose look is fully owned by the Material theme. The only styling
+       the library adds is the variant mapping: `danger` re-points the button's own
+       theme tokens at the M3 error role (M3 has no success/warning roles, so every
+       other variant keeps the theme primary). */
+    &__material {
+        rtui-spinner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        &--danger {
+            --mat-button-filled-container-color: var(--mat-sys-error);
+            --mat-button-filled-label-text-color: var(--mat-sys-on-error);
+            --mat-button-filled-state-layer-color: var(--mat-sys-on-error);
+            --mat-button-filled-ripple-color: color-mix(in srgb, var(--mat-sys-on-error) 12%, transparent);
+            --mat-button-outlined-label-text-color: var(--mat-sys-error);
+            --mat-button-outlined-outline-color: var(--mat-sys-error);
+            --mat-button-outlined-state-layer-color: var(--mat-sys-error);
+            --mat-button-outlined-ripple-color: color-mix(in srgb, var(--mat-sys-error) 12%, transparent);
+            --mat-button-text-label-text-color: var(--mat-sys-error);
+            --mat-button-text-state-layer-color: var(--mat-sys-error);
+            --mat-button-text-ripple-color: color-mix(in srgb, var(--mat-sys-error) 12%, transparent);
+            --mat-button-tonal-container-color: var(--mat-sys-error-container);
+            --mat-button-tonal-label-text-color: var(--mat-sys-on-error-container);
+            --mat-button-tonal-state-layer-color: var(--mat-sys-on-error-container);
+            --mat-button-tonal-ripple-color: color-mix(in srgb, var(--mat-sys-on-error-container) 12%, transparent);
         }
     }
 }
 
-/* ===================== design: material =====================
-   Under `design: 'material'` the pill renders a NATIVE Material button (see the
-   template) whose look is fully owned by the Material theme. The only styling
-   the library adds is the variant mapping: `danger` re-points the button's own
-   theme tokens at the M3 error role (M3 has no success/warning roles, so every
-   other variant keeps the theme primary). */
-.rtui-button-material {
-    rtui-spinner {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+:host(.rtui-button--loading) .rtui-button__control {
+    cursor: wait;
+}
+
+/* ===================== icon / fab ===================== */
+:host(.rtui-button--type-icon) .rtui-button__control,
+:host(.rtui-button--type-fab) .rtui-button__control {
+    border-radius: var(--rt-radius-xl);
+
+    &:hover:not(:disabled) {
+        background-color: var(--rt-bg-base-hover);
+    }
+}
+
+:host(.rtui-button--type-icon.rtui-button--size-xs) .rtui-button__control,
+:host(.rtui-button--type-fab.rtui-button--size-xs) .rtui-button__control {
+    padding: var(--rt-spacing-4);
+}
+
+:host(.rtui-button--type-icon.rtui-button--size-sm) .rtui-button__control,
+:host(.rtui-button--type-fab.rtui-button--size-sm) .rtui-button__control {
+    padding: var(--rt-spacing-6);
+}
+
+:host(.rtui-button--type-icon.rtui-button--size-md) .rtui-button__control,
+:host(.rtui-button--type-fab.rtui-button--size-md) .rtui-button__control {
+    padding: var(--rt-spacing-8);
+}
+
+:host(.rtui-button--type-icon.rtui-button--size-lg) .rtui-button__control,
+:host(.rtui-button--type-fab.rtui-button--size-lg) .rtui-button__control {
+    padding: var(--rt-spacing-10);
+}
+
+:host(.rtui-button--type-icon.rtui-button--variant-primary) .rtui-button__control,
+:host(.rtui-button--type-fab.rtui-button--variant-primary) .rtui-button__control {
+    color: var(--rt-icon-accent-primary);
+}
+
+:host(.rtui-button--type-icon.rtui-button--variant-danger) .rtui-button__control,
+:host(.rtui-button--type-fab.rtui-button--variant-danger) .rtui-button__control {
+    color: var(--rt-icon-accent-danger);
+}
+
+:host(.rtui-button--type-icon.rtui-button--variant-success) .rtui-button__control,
+:host(.rtui-button--type-fab.rtui-button--variant-success) .rtui-button__control {
+    color: var(--rt-icon-accent-success);
+}
+
+:host(.rtui-button--type-icon.rtui-button--variant-warning) .rtui-button__control,
+:host(.rtui-button--type-fab.rtui-button--variant-warning) .rtui-button__control {
+    color: var(--rt-icon-accent-warning);
+}
+
+:host(.rtui-button--type-icon.rtui-button--variant-accent) .rtui-button__control,
+:host(.rtui-button--type-fab.rtui-button--variant-accent) .rtui-button__control {
+    color: var(--rt-icon-accent-info);
+}
+
+/* ===================== pill ===================== */
+:host(.rtui-button--type-pill) .rtui-button__control {
+    border-radius: var(--rt-radius-xl);
+    background-color: var(--mat-sys-surface-container-high);
+    color: var(--mat-sys-on-surface-variant);
+    font-weight: var(--rt-font-weight-medium);
+    gap: var(--rt-spacing-6);
+
+    &:hover:not(:disabled) {
+        background-color: var(--mat-sys-surface-container-highest);
     }
 
-    &--danger {
-        --mat-button-filled-container-color: var(--mat-sys-error);
-        --mat-button-filled-label-text-color: var(--mat-sys-on-error);
-        --mat-button-filled-state-layer-color: var(--mat-sys-on-error);
-        --mat-button-filled-ripple-color: color-mix(in srgb, var(--mat-sys-on-error) 12%, transparent);
-        --mat-button-outlined-label-text-color: var(--mat-sys-error);
-        --mat-button-outlined-outline-color: var(--mat-sys-error);
-        --mat-button-outlined-state-layer-color: var(--mat-sys-error);
-        --mat-button-outlined-ripple-color: color-mix(in srgb, var(--mat-sys-error) 12%, transparent);
-        --mat-button-text-label-text-color: var(--mat-sys-error);
-        --mat-button-text-state-layer-color: var(--mat-sys-error);
-        --mat-button-text-ripple-color: color-mix(in srgb, var(--mat-sys-error) 12%, transparent);
-        --mat-button-tonal-container-color: var(--mat-sys-error-container);
-        --mat-button-tonal-label-text-color: var(--mat-sys-on-error-container);
-        --mat-button-tonal-state-layer-color: var(--mat-sys-on-error-container);
-        --mat-button-tonal-ripple-color: color-mix(in srgb, var(--mat-sys-on-error-container) 12%, transparent);
+    &:active:not(:disabled) {
+        background-color: var(--mat-sys-surface-dim);
+    }
+}
+
+/* pill sizes */
+:host(.rtui-button--type-pill.rtui-button--size-xs) .rtui-button__control {
+    padding: var(--rt-spacing-4) var(--rt-spacing-8);
+    font-size: var(--rt-font-size-xs);
+}
+
+:host(.rtui-button--type-pill.rtui-button--size-sm) .rtui-button__control {
+    padding: var(--rt-spacing-6) var(--rt-spacing-10);
+    font-size: var(--rt-font-size-xs);
+}
+
+:host(.rtui-button--type-pill.rtui-button--size-md) .rtui-button__control {
+    padding: var(--rt-spacing-8) var(--rt-spacing-14);
+    font-size: var(--rt-font-size-sm);
+}
+
+:host(.rtui-button--type-pill.rtui-button--size-lg) .rtui-button__control {
+    padding: var(--rt-spacing-10) var(--rt-spacing-16);
+    font-size: var(--rt-font-size-sm);
+}
+
+/* pill radius */
+:host(.rtui-button--type-pill.rtui-button--radius-none) .rtui-button__control {
+    border-radius: 0;
+}
+
+:host(.rtui-button--type-pill.rtui-button--radius-sm) .rtui-button__control {
+    border-radius: var(--rt-radius-xs);
+}
+
+:host(.rtui-button--type-pill.rtui-button--radius-md) .rtui-button__control {
+    border-radius: var(--rt-radius-sm);
+}
+
+:host(.rtui-button--type-pill.rtui-button--radius-lg) .rtui-button__control {
+    border-radius: var(--rt-radius-md);
+}
+
+:host(.rtui-button--type-pill.rtui-button--radius-full) .rtui-button__control {
+    border-radius: var(--rt-radius-xl);
+}
+
+/* pill variants */
+:host(.rtui-button--type-pill.rtui-button--variant-primary) .rtui-button__control {
+    background-color: var(--rt-bg-accent-primary-subtle);
+    color: var(--rt-text-accent-primary);
+
+    &:hover:not(:disabled) {
+        background-color: color-mix(in srgb, var(--rt-bg-accent-primary-subtle) 92%, var(--rt-color-neutral-100));
+    }
+
+    &:active:not(:disabled) {
+        background-color: color-mix(in srgb, var(--rt-bg-accent-primary-subtle) 84%, var(--rt-color-neutral-100));
+    }
+}
+
+:host(.rtui-button--type-pill.rtui-button--variant-danger) .rtui-button__control {
+    background-color: var(--rt-bg-accent-danger-subtle);
+    color: var(--rt-text-accent-danger);
+
+    &:hover:not(:disabled) {
+        background-color: color-mix(in srgb, var(--rt-bg-accent-danger-subtle) 92%, var(--rt-color-neutral-100));
+    }
+
+    &:active:not(:disabled) {
+        background-color: color-mix(in srgb, var(--rt-bg-accent-danger-subtle) 84%, var(--rt-color-neutral-100));
+    }
+}
+
+:host(.rtui-button--type-pill.rtui-button--variant-success) .rtui-button__control {
+    background-color: var(--rt-bg-accent-success-subtle);
+    color: var(--rt-text-accent-success);
+
+    &:hover:not(:disabled) {
+        background-color: color-mix(in srgb, var(--rt-bg-accent-success-subtle) 92%, var(--rt-color-neutral-100));
+    }
+
+    &:active:not(:disabled) {
+        background-color: color-mix(in srgb, var(--rt-bg-accent-success-subtle) 84%, var(--rt-color-neutral-100));
+    }
+}
+
+:host(.rtui-button--type-pill.rtui-button--variant-warning) .rtui-button__control {
+    background-color: var(--rt-bg-accent-warning-subtle);
+    color: var(--rt-text-accent-warning);
+
+    &:hover:not(:disabled) {
+        background-color: color-mix(in srgb, var(--rt-bg-accent-warning-subtle) 92%, var(--rt-color-neutral-100));
+    }
+
+    &:active:not(:disabled) {
+        background-color: color-mix(in srgb, var(--rt-bg-accent-warning-subtle) 84%, var(--rt-color-neutral-100));
+    }
+}
+
+:host(.rtui-button--type-pill.rtui-button--variant-accent) .rtui-button__control {
+    background-color: var(--rt-bg-accent-info-subtle);
+    color: var(--rt-text-accent-info);
+
+    &:hover:not(:disabled) {
+        background-color: color-mix(in srgb, var(--rt-bg-accent-info-subtle) 92%, var(--rt-color-neutral-100));
+    }
+
+    &:active:not(:disabled) {
+        background-color: color-mix(in srgb, var(--rt-bg-accent-info-subtle) 84%, var(--rt-color-neutral-100));
+    }
+}
+
+/* pill appearance: text — transparent, borderless inline-text look.
+   Radius is intentionally left to the `--radius-*` modifier (defaults to
+   full) so a text-appearance pill keeps its pill shape. */
+:host(.rtui-button--type-pill.rtui-button--appearance-text) .rtui-button__control {
+    min-height: 1.875rem;
+    padding: 0 var(--rt-spacing-10);
+    background-color: transparent;
+    color: var(--mat-sys-on-surface-variant);
+    font-size: var(--rt-font-size-md);
+    font-weight: var(--rt-font-weight-regular);
+
+    &:hover:not(:disabled) {
+        background-color: var(--rt-bg-base-hover);
+    }
+
+    &:active:not(:disabled) {
+        background-color: var(--rt-bg-base-hover);
     }
 }

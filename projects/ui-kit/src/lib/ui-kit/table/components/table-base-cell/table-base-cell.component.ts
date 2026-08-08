@@ -20,15 +20,18 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
-import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+import { BlockDirective, ConcatClassesPipe, ElemDirective, ModDirective } from '@rt-tools/core';
 import { INullable } from '@rt-tools/utils';
 import { isNumber, isString } from '@rt-tools/utils';
 import { EmptyToDashPipe, RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtHideTooltipDirective } from '../../../tooltip';
 import { ITable } from '../../util/table-column.interface';
 
+const BEM_BLOCK: string = 'rtui-table-base-cell';
+
 @Component({
     selector: 'rtui-table-base-cell',
+    host: { class: BEM_BLOCK },
     templateUrl: './table-base-cell.component.html',
     styleUrls: ['./table-base-cell.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,6 +43,7 @@ import { ITable } from '../../util/table-column.interface';
         // directives
         BlockDirective,
         ElemDirective,
+        ConcatClassesPipe,
         ModDirective,
         RtIconOutlinedDirective,
         RtHideTooltipDirective,

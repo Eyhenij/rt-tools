@@ -67,8 +67,11 @@ export class RtuiTableRowActionsDirective {}
 })
 export class RtuiTableAdditionalRowActionsDirective {}
 
+const BEM_BLOCK: string = 'rtui-table';
+
 @Component({
     selector: 'rtui-table',
+    host: { class: BEM_BLOCK },
     templateUrl: './rtui-table.component.html',
     styleUrls: ['./rtui-table.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,

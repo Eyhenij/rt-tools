@@ -27,8 +27,12 @@
         align-items: center;
         justify-content: center;
         padding: var(--rt-action-bar-action-padding);
+        border: 0;
         border-radius: var(--rt-action-bar-action-border-radius);
+        background-color: transparent;
+        color: inherit;
         cursor: pointer;
+        font-family: inherit;
         font-size: var(--rt-action-bar-action-font-size);
         font-weight: var(--rt-action-bar-action-font-weight);
         gap: var(--rt-action-bar-action-gap);
@@ -39,7 +43,13 @@
     }
 
     &__close-button {
+        display: flex;
+        align-items: center;
+        padding: 0;
+        border: 0;
         margin-left: auto;
+        background-color: transparent;
+        color: inherit;
         cursor: pointer;
 
         svg {
@@ -81,8 +91,12 @@
         align-items: center;
         justify-content: center;
         padding: var(--rt-action-bar-action-menu-action-padding);
+        border: 0;
         border-radius: var(--rt-action-bar-action-menu-action-border-radius);
+        background-color: transparent;
+        color: inherit;
         cursor: pointer;
+        font-family: inherit;
         font-size: var(--rt-action-bar-action-menu-action-font-size);
         font-weight: var(--rt-action-bar-action-menu-action-font-weight);
         gap: var(--rt-action-bar-action-menu-action-gap);

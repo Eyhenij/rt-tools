@@ -12,8 +12,11 @@ import {
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { transformArrayInput } from '@rt-tools/utils';
 
+const BEM_BLOCK: string = 'rtui-multi-button';
+
 @Component({
     selector: 'rtui-multi-button',
+    host: { class: BEM_BLOCK },
     templateUrl: 'rtui-multi-button.component.html',
     styleUrls: ['rtui-multi-button.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,

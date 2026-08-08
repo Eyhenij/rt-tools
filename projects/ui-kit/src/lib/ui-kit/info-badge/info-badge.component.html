@@ -3,7 +3,7 @@
     matTooltipClass="custom-tooltip"
     matTooltipPosition="above"
     [matTooltip]="text()"
-    [ngClass]="badgeClass"
+    [rtMod]="badgeModifiers()"
     [matTooltipDisabled]="!isTitleCollapsed() || isMobile()">
     <div rtElem="content" #content>{{ text() }}</div>
     @if (glyph()) {

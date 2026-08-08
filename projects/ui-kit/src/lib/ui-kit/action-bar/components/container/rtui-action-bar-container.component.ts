@@ -5,12 +5,15 @@ import { IRtActionBar } from '../../action-bar-config.interface';
 import { RtActionBarService } from '../../rt-action-bar.service';
 import { RtuiActionBarComponent } from '../bar/rtui-action-bar.component';
 
+const BEM_BLOCK: string = 'rtui-action-bar-container';
+
 @Component({
     selector: 'rtui-action-bar-container',
+    host: { class: BEM_BLOCK },
     templateUrl: 'rtui-action-bar-container.component.html',
     styleUrls: ['rtui-action-bar-container.component.scss'],
     imports: [RtuiActionBarComponent],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     animations: [
         trigger('barState', [
             state('opened', style({ transform: 'translateY(0)' })),

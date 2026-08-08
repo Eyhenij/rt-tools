@@ -5,7 +5,7 @@
         </mat-icon>
     }
 
-    <div rtElem="text" [matTooltip]="headerModel()?.tooltip ?? ''" [ngClass]="headerModel()?.className">
+    <div rtElem="text" [matTooltip]="headerModel()?.tooltip ?? ''" [class]="[headerModel()?.className] | concatClasses">
         {{ headerModel().label }}
     </div>
 

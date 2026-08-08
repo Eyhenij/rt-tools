@@ -1,21 +1,21 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { PortalModule } from '@angular/cdk/portal';
-import { AsyncPipe } from '@angular/common';
-import { Component, HostBinding, inject, Injector, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { ChangeDetectorRef, Component, HostBinding, inject, Injector, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 
+import { BlockDirective } from '@rt-tools/core';
 import { ASIDE_REF, AsidePositions, AsideRef } from '../../aside.types';
+
+const BEM_BLOCK: string = 'rtui-aside-panel';
 
 @Component({
     selector: 'rtui-aside-panel',
+    host: { class: BEM_BLOCK },
     templateUrl: './aside-panel.component.html',
     styleUrls: ['./aside-panel.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    imports: [AsyncPipe, PortalModule],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [PortalModule, BlockDirective],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     animations: [
         trigger('aside', [
             state('enter-left', style({ transform: 'none' })),
@@ -35,15 +35,12 @@ import { ASIDE_REF, AsidePositions, AsideRef } from '../../aside.types';
 })
 export class RtuiAsidePanelComponent {
     readonly #asideRef: AsideRef<object, object> = inject(ASIDE_REF);
-    readonly #breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
+    readonly #changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
 
     @HostBinding('@aside') protected _state: string = `enter-${this.#asideRef.position}`;
 
     public portal: ComponentPortal<unknown> = this.#createPortal(this.#asideRef);
     public position: AsidePositions = this.#asideRef.position;
-    public isSmall$: Observable<boolean> = this.#breakpointObserver
-        .observe(['(max-width: 1023px)'])
-        .pipe(map((result: BreakpointState) => result.matches));
 
     public close(): void {
         this.#asideRef.close();
@@ -51,6 +48,7 @@ export class RtuiAsidePanelComponent {
 
     public startExitAnimation(): void {
         this._state = `exit-${this.#asideRef.position}`;
+        this.#changeDetectorRef.markForCheck();
     }
 
     #createPortal<D, R>(asideRef: AsideRef<D, R>): ComponentPortal<unknown> {

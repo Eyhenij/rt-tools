@@ -31,8 +31,11 @@ import { BooleanInput } from '@angular/cdk/coercion';
 
 export type IImageUploadFormat = 'png' | 'jpeg' | 'webp';
 
+const BEM_BLOCK: string = 'rtui-image-upload';
+
 @Component({
     selector: 'rtui-image-upload',
+    host: { class: BEM_BLOCK },
     templateUrl: './rtui-image-upload.component.html',
     styleUrls: ['./rtui-image-upload.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,

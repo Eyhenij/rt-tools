@@ -15,8 +15,11 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { transformStringInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 
+const BEM_BLOCK: string = 'rtui-dynamic-selector-placeholder';
+
 @Component({
     selector: 'rtui-dynamic-selector-placeholder',
+    host: { class: BEM_BLOCK },
     templateUrl: './rtui-dynamic-selector-placeholder.component.html',
     styleUrls: ['./rtui-dynamic-selector-placeholder.component.scss'],
     imports: [MatIcon, MatButton, CdkOverlayOrigin, RtIconOutlinedDirective, BlockDirective, ElemDirective, ModDirective],

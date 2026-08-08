@@ -7,8 +7,11 @@ import { BreakpointService, EmptyToDashPipe, RtIconOutlinedDirective } from '@rt
 import { RtPopoverDirective } from '../../../popover/rt-popover.directive';
 import { IRtActionBar } from '../../action-bar-config.interface';
 
+const BEM_BLOCK: string = 'rtui-action-bar';
+
 @Component({
     selector: 'rtui-action-bar',
+    host: { class: BEM_BLOCK },
     templateUrl: 'rtui-action-bar.component.html',
     styleUrls: ['rtui-action-bar.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,

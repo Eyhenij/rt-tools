@@ -50,8 +50,11 @@ import { RtuiClearButtonComponent } from '../../../table';
 import { RtuiToggleComponent } from '../../../toggle';
 import { BooleanInput } from '@angular/cdk/coercion';
 
+const BEM_BLOCK: string = 'rtui-multi-selector-popup';
+
 @Component({
     selector: 'rtui-multi-selector-popup',
+    host: { class: BEM_BLOCK },
     templateUrl: './rtui-multi-selector-popup.component.html',
     styleUrls: ['./rtui-multi-selector-popup.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
