@@ -12,6 +12,7 @@ import { ICompanion, isUnfilled, TCompanionState } from './companion.js';
 import { CONFIG_PATH, DEFAULT_LAYOUT, IConfig, KINDS, OVERRIDES_DIR, readConfig, TKind } from './config.js';
 import { IPlanned, isRefusal, TOutcome } from './plan.js';
 import { ISyncResult, pendingOf, planSync, runSync } from './sync.js';
+import { IAxis, IOptionOfAxis, readAxes, unansweredAxes } from './variants.js';
 
 export interface IOutcomeOfCommand {
     readonly code: number;
@@ -49,12 +50,16 @@ const STATE_WORD: Readonly<Record<TOutcome, string>> = {
 
 const NOT_CHOSEN: string = 'не выбран';
 const SKIPPED: string = 'пропущен';
+/** Ресурс чужого вида: в этом дереве его не существует, а не «от него отказались». */
+const OTHER_VARIANT: string = 'другой вид';
 
 const KIND_TITLE: Readonly<Record<TKind, string>> = {
     laws: 'ЗАКОНЫ',
     rules: 'ПРАВИЛА',
     patterns: 'ПАТТЕРНЫ',
+    skills: 'СКИЛЫ',
     hooks: 'ХУКИ',
+    defaults: 'УМОЛЧАНИЯ',
     checks: 'ПРОВЕРКИ',
     agents: 'АГЕНТЫ',
     commands: 'КОМАНДЫ',
@@ -80,10 +85,33 @@ const holes: (result: ISyncResult) => string[] = (result: ISyncResult): string[]
 const unfilled: (result: ISyncResult) => readonly ICompanion[] = (result: ISyncResult): readonly ICompanion[] =>
     result.companions.filter(isUnfilled);
 
+/** Ось без ответа: чем её спрашивают и из чего выбирают. */
+const axisLines: (axes: readonly IAxis[]) => string[] = (axes: readonly IAxis[]): string[] =>
+    axes.flatMap((axis: IAxis): string[] => [
+        `  ${axis.name} — ${axis.question}`,
+        ...axis.options.map((option: IOptionOfAxis): string => `      ${option.value.padEnd(8)} ${option.title}`),
+        `  выбор пишется в \`variants\` конфига: {"${axis.name}": "${axis.options[0]?.value ?? ''}"}`,
+    ]);
+
+/**
+ * Брошенное: файл лежит, а ресурс за ним больше не берут. Печатается отдельным списком и с
+ * подсказкой — стереть его пакет не вправе, а промолчать не может: агент читает такой файл как
+ * действующее правило.
+ */
+const abandonedLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] =>
+    result.abandoned.length
+        ? [
+              `лежит от ресурсов, которые больше не берутся: ${result.abandoned.length}`,
+              ...result.abandoned.map((path: string): string => `  ${path}`),
+              '  их не стирает никто: рядом может лежать написанное проектом — убирать вручную',
+          ]
+        : [];
+
 const describe: (result: ISyncResult) => string[] = (result: ISyncResult): string[] => [
     ...holes(result),
     ...pendingOf(result).map((entry: IPlanned): string => `  ${entry.path} — ${STATE_WORD[entry.outcome]}`),
     ...unfilled(result).map((entry: ICompanion): string => `  ${entry.path} — ${COMPANION_WORD[entry.state]}`),
+    ...abandonedLines(result),
 ];
 
 /**
@@ -91,13 +119,13 @@ const describe: (result: ISyncResult) => string[] = (result: ISyncResult): strin
  * готовым, потому что взять его негде, кроме края: у строки запуска флаг, у терминала вопрос,
  * а у неинтерактивного прогона нет ни того ни другого — и решать это команде не по чину.
  */
-export function init(root: string, only: readonly string[] = []): IOutcomeOfCommand {
+export function init(root: string, only: readonly string[] = [], variants: Readonly<Record<string, string>> = {}): IOutcomeOfCommand {
     const path: string = join(root, CONFIG_PATH);
     if (existsSync(path)) {
         return { code: 0, lines: [`${CONFIG_PATH} уже есть — оставлен как есть`] };
     }
 
-    const config: object = { vars: {}, layout: DEFAULT_LAYOUT, only, skip: [] };
+    const config: object = { vars: {}, layout: DEFAULT_LAYOUT, variants, only, skip: [] };
     mkdirSync(join(root, OVERRIDES_DIR), { recursive: true });
     mkdirSync(join(root, CONFIG_PATH, '..'), { recursive: true });
     writeFileSync(path, `${JSON.stringify(config, null, 4)}\n`, 'utf8');
@@ -107,8 +135,9 @@ export function init(root: string, only: readonly string[] = []): IOutcomeOfComm
         lines: [
             `заведён ${CONFIG_PATH}`,
             only.length ? `выбрано ресурсов: ${only.length}` : 'выбрано всё, что везёт пакет',
+            ...Object.entries(variants).map(([axis, value]: [string, string]): string => `${axis}: ${value}`),
             `заведён ${OVERRIDES_DIR}/ — надстройки проекта кладутся сюда путём ресурса`,
-            'дальше: заполни `vars` и запусти `agent-kit sync`',
+            'дальше: `agent-kit sync`, а своё дописывается в `.claude/rt-kit/gate-map.sh` и `project.sh`',
         ],
     };
 }
@@ -118,6 +147,14 @@ export function sync(env: IEnvironment, check: boolean): IOutcomeOfCommand {
     const config: IConfig | null = readConfig(root);
     if (!config) {
         return { code: 1, lines: [NO_CONFIG] };
+    }
+
+    // Ось без ответа отбивает раскладку целиком, а не пропускает свои ресурсы молча: правило
+    // поставки бывает в трёх видах, и дерево, не назвавшее свой, осталось бы вовсе без правила
+    // поставки — заметить это можно было бы только по тому, что гейт перестал его требовать.
+    const unanswered: readonly IAxis[] = unansweredAxes(readAxes(assetsDir), config.variants);
+    if (unanswered.length) {
+        return { code: 1, lines: ['раскладка не начата: не выбран вид', ...axisLines(unanswered)] };
     }
 
     if (check) {
@@ -178,13 +215,28 @@ export function doctor(env: IEnvironment): IOutcomeOfCommand {
 
     const catalog: readonly IEntryOfCatalog[] = readCatalog(assetsDir);
     const taken: number = collectAssets(config, assetsDir).length;
+    const unanswered: readonly IAxis[] = unansweredAxes(readAxes(assetsDir), config.variants);
+    const chosen: string[] = Object.entries(config.variants).map(([axis, value]: [string, string]): string => `${axis}: ${value}`);
+    // Ресурс чужого вида в «не выбрано» не идёт: проект от него не отказывался — его в этом
+    // дереве не существует, как не существует второго правила поставки.
+    const foreignVariant: readonly IEntryOfCatalog[] = catalog.filter(
+        (entry: IEntryOfCatalog): boolean => entry.variant !== null && config.variants[entry.variant.axis] !== entry.variant.value
+    );
+    const other: number = foreignVariant.length;
+    // Ресурс, названный и в отказе, и чужим видом, считается один раз — иначе «не выбрано»
+    // уходит в минус, а минус в отчёте читается как поломка счёта, а не как двойной счёт.
+    const skipped: number = config.skip.filter((id: string): boolean =>
+        foreignVariant.every((entry: IEntryOfCatalog): boolean => entry.id !== id)
+    ).length;
 
     const lines: string[] = [
         `пакет v${version}, везёт ресурсов ${catalog.length}, взято ${taken}`,
-        `не выбрано: ${catalog.length - taken - config.skip.length}, пропущено: ${config.skip.length}`,
+        `не выбрано: ${catalog.length - taken - skipped - other}, пропущено: ${skipped}, другой вид: ${other}`,
         `значений в конфиге: ${Object.keys(config.vars).length}`,
+        ...chosen,
         ...[...counted].map(([outcome, count]: [TOutcome, number]): string => `${STATE_WORD[outcome]}: ${count}`),
         ...describe(result),
+        ...(unanswered.length ? ['не выбран вид — раскладка не начнётся:', ...axisLines(unanswered)] : []),
     ];
 
     return { code: 0, lines };
@@ -212,10 +264,13 @@ export function list(env: IEnvironment): IOutcomeOfCommand {
         if (!config) {
             return 'везёт пакет';
         }
+        if (entry.variant && config.variants[entry.variant.axis] !== entry.variant.value) {
+            return OTHER_VARIANT;
+        }
         if (config.skip.includes(entry.id)) {
             return SKIPPED;
         }
-        if (!isChosen(entry, config.only, config.skip)) {
+        if (!isChosen(entry, config)) {
             return NOT_CHOSEN;
         }
         const outcome: TOutcome | undefined = planned.get(entry.id);

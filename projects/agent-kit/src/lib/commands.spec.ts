@@ -10,12 +10,13 @@ import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, 
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 
+import { IEntryOfCatalog, readCatalog } from './catalog.js';
 import { doctor, IEnvironment, init, IOutcomeOfCommand, list, sync } from './commands.js';
 import { CONFIG_PATH, OVERRIDES_DIR } from './config.js';
 
 const VERSION: string = '0.1.0';
 const LAW: string = 'docs/constitution/delivery.md';
-const OTHER_LAW: string = 'docs/constitution/access.md';
+const OTHER_LAW: string = 'docs/constitution/application/access.md';
 const TEMPLATE: string = '.claude/rt-kit/templates/rule.md';
 /** Ресурсы берутся из дерева пакета: спека проверяет раскладку, а не выдуманный набор. */
 const ASSETS: string = join(__dirname, '..', '..', 'assets');
@@ -29,6 +30,12 @@ const put: (path: string, text: string) => void = (path: string, text: string): 
 };
 const get: (path: string) => string = (path: string): string => readFileSync(join(root, path), 'utf8');
 const said: (outcome: IOutcomeOfCommand) => string = (outcome: IOutcomeOfCommand): string => outcome.lines.join('\n');
+
+/** Вид, объявленный пакетом. Без ответа по оси раскладка не начнётся — про это отдельный набор. */
+const HOST: Readonly<Record<string, string>> = { host: 'github' };
+
+/** Заведение конфига так, как его заводит человек: с выбором законов и с ответом по осям. */
+const start: (only?: readonly string[]) => IOutcomeOfCommand = (only: readonly string[] = []): IOutcomeOfCommand => init(root, only, HOST);
 
 /** Заполнить черновики компаньонов так, как это делает проект: снять метки пустых мест. */
 const fillCompanions: () => void = (): void => {
@@ -52,24 +59,24 @@ afterEach((): void => {
 
 describe('init', () => {
     it('заводит конфиг и каталог надстроек', () => {
-        expect(init(root).code).toBe(0);
+        expect(start().code).toBe(0);
         expect(JSON.parse(get(CONFIG_PATH))).toMatchObject({ vars: {}, only: [], skip: [] });
     });
 
     it('без выбора берётся всё, что везёт пакет', () => {
-        expect(said(init(root))).toContain('выбрано всё');
+        expect(said(start())).toContain('выбрано всё');
     });
 
     it('выбор уезжает в конфиг и называется числом', () => {
-        expect(said(init(root, ['laws/delivery.md', 'laws/access.md']))).toContain('выбрано ресурсов: 2');
-        expect(JSON.parse(get(CONFIG_PATH)).only).toEqual(['laws/delivery.md', 'laws/access.md']);
+        expect(said(start(['laws/delivery.md', 'laws/application/access.md']))).toContain('выбрано ресурсов: 2');
+        expect(JSON.parse(get(CONFIG_PATH)).only).toEqual(['laws/delivery.md', 'laws/application/access.md']);
     });
 
     it('заведённый конфиг не переписывает', () => {
-        init(root);
+        start();
         put(CONFIG_PATH, '{"vars":{"своё":"да"}}');
 
-        expect(said(init(root))).toContain('уже есть');
+        expect(said(start())).toContain('уже есть');
         expect(get(CONFIG_PATH)).toContain('своё');
     });
 });
@@ -83,7 +90,7 @@ describe('sync', () => {
     });
 
     it('раскладывает законы и ставит шапку с версией', () => {
-        init(root);
+        start();
 
         expect(sync(env, false).code).toBe(0);
         expect(get(LAW)).toContain(`rt-kit v${VERSION}`);
@@ -91,14 +98,14 @@ describe('sync', () => {
     });
 
     it('повторный прогон ничего не переписывает', () => {
-        init(root);
+        start();
         sync(env, false);
 
         expect(said(sync(env, false))).toContain('всё уже разложено');
     });
 
     it('дырка без значения отказывает и не пишет ни одного файла', () => {
-        put(CONFIG_PATH, JSON.stringify({ vars: {}, layout: { templates: 'шаблоны' } }));
+        put(CONFIG_PATH, JSON.stringify({ variants: HOST, vars: {}, layout: { templates: 'шаблоны' } }));
         // Умолчания дают значение для `lawsDir`, поэтому дырка заводится своя.
         put(join(OVERRIDES_DIR, 'laws/delivery.md'), '## Статьи\n\nВетка {{mainBranch}}.\n');
         const outcome: IOutcomeOfCommand = sync(env, false);
@@ -109,7 +116,7 @@ describe('sync', () => {
     });
 
     it('правку руками не переписывает, а называет', () => {
-        init(root);
+        start();
         sync(env, false);
         writeFileSync(join(root, LAW), `${get(LAW)}\nдописано руками\n`, 'utf8');
         const outcome: IOutcomeOfCommand = sync(env, false);
@@ -120,7 +127,7 @@ describe('sync', () => {
     });
 
     it('чужой файл на своём пути не трогает', () => {
-        init(root);
+        start();
         put(LAW, 'своё, положено не пакетом\n');
         const outcome: IOutcomeOfCommand = sync(env, false);
 
@@ -129,7 +136,7 @@ describe('sync', () => {
     });
 
     it('надстройка дописывает свой раздел и снимает пустой', () => {
-        init(root);
+        start();
         put(join(OVERRIDES_DIR, 'laws/delivery.md'), '## Решения\n\nРешили здесь.\n\n## Открытые вопросы\n');
         sync(env, false);
 
@@ -138,14 +145,14 @@ describe('sync', () => {
     });
 
     it('ресурс из `skip` не раскладывается вовсе', () => {
-        put(CONFIG_PATH, JSON.stringify({ skip: ['laws/delivery.md'] }));
+        put(CONFIG_PATH, JSON.stringify({ variants: HOST, skip: ['laws/delivery.md'] }));
         sync(env, false);
 
         expect((): string => get(LAW)).toThrow();
     });
 
     it('невыбранный закон не раскладывается', () => {
-        init(root, ['laws/delivery.md']);
+        start(['laws/delivery.md']);
         sync(env, false);
 
         expect(get(LAW)).toContain('rt-kit');
@@ -153,14 +160,14 @@ describe('sync', () => {
     });
 
     it('выбор законов шаблоны при себе оставляет', () => {
-        init(root, ['laws/delivery.md']);
+        start(['laws/delivery.md']);
         sync(env, false);
 
         expect(get(TEMPLATE)).toContain('rt-kit');
     });
 
     it('`skip` вычитает из выбранного', () => {
-        put(CONFIG_PATH, JSON.stringify({ only: ['laws/delivery.md'], skip: ['laws/delivery.md'] }));
+        put(CONFIG_PATH, JSON.stringify({ variants: HOST, only: ['laws/delivery.md'], skip: ['laws/delivery.md'] }));
         sync(env, false);
 
         expect((): string => get(LAW)).toThrow();
@@ -169,7 +176,7 @@ describe('sync', () => {
 
 describe('sync --check', () => {
     it('на разложенном и заполненном молчит и пропускает', () => {
-        init(root);
+        start();
         sync(env, false);
         // Разложенного мало: у каждого правила рядом встаёт черновик компаньона, и до
         // заполнения проектом он сам по себе расхождение — набор про это ниже.
@@ -179,7 +186,7 @@ describe('sync --check', () => {
     });
 
     it('ничего не пишет и отказывает, пока не разложено', () => {
-        init(root);
+        start();
         const outcome: IOutcomeOfCommand = sync(env, true);
 
         expect(outcome.code).toBe(1);
@@ -187,7 +194,7 @@ describe('sync --check', () => {
     });
 
     it('видит правку руками', () => {
-        init(root);
+        start();
         sync(env, false);
         writeFileSync(join(root, LAW), `${get(LAW)}\nдописано руками\n`, 'utf8');
 
@@ -195,7 +202,7 @@ describe('sync --check', () => {
     });
 
     it('видит новую версию пакета', () => {
-        init(root);
+        start();
         sync(env, false);
 
         expect(sync({ ...env, version: '0.2.0' }, true).code).toBe(1);
@@ -208,14 +215,14 @@ describe('правило и его компаньон', () => {
     const FILLED: string = '# testing\n\nВсё названо своими именами.\n';
 
     it('правило ложится каталогом по имени: другого имени скил не находит', () => {
-        init(root, ['rules/testing.md']);
+        start(['rules/testing.md']);
         sync(env, false);
 
         expect(get(RULE)).toContain('name: testing');
     });
 
     it('шапка встаёт после вступления, иначе скил теряет имя и описание', () => {
-        init(root, ['rules/testing.md']);
+        start(['rules/testing.md']);
         sync(env, false);
         const lines: readonly string[] = get(RULE).split('\n');
 
@@ -224,14 +231,14 @@ describe('правило и его компаньон', () => {
     });
 
     it('черновик компаньона кладётся рядом с правилом', () => {
-        init(root, ['rules/testing.md']);
+        start(['rules/testing.md']);
         sync(env, false);
 
         expect(get(COMPANION)).toContain('заполняет проект');
     });
 
     it('заполненного компаньона раскладка не трогает', () => {
-        init(root, ['rules/testing.md']);
+        start(['rules/testing.md']);
         sync(env, false);
         writeFileSync(join(root, COMPANION), FILLED, 'utf8');
         sync(env, false);
@@ -240,7 +247,7 @@ describe('правило и его компаньон', () => {
     });
 
     it('пока компаньон черновик, гейт отказывает: правилу нечего назвать', () => {
-        init(root, ['rules/testing.md']);
+        start(['rules/testing.md']);
         sync(env, false);
         const outcome: IOutcomeOfCommand = sync(env, true);
 
@@ -249,7 +256,7 @@ describe('правило и его компаньон', () => {
     });
 
     it('пропавшего компаньона гейт называет отдельно от черновика', () => {
-        init(root, ['rules/testing.md']);
+        start(['rules/testing.md']);
         sync(env, false);
         rmSync(join(root, COMPANION));
 
@@ -257,7 +264,7 @@ describe('правило и его компаньон', () => {
     });
 
     it('с заполненным компаньоном гейт проходит', () => {
-        init(root, ['rules/testing.md']);
+        start(['rules/testing.md']);
         sync(env, false);
         writeFileSync(join(root, COMPANION), FILLED, 'utf8');
 
@@ -267,7 +274,7 @@ describe('правило и его компаньон', () => {
 
 describe('doctor', () => {
     it('рассказывает о состоянии и не меняет дерева', () => {
-        init(root);
+        start();
         const outcome: IOutcomeOfCommand = doctor(env);
 
         expect(outcome.code).toBe(0);
@@ -275,17 +282,29 @@ describe('doctor', () => {
     });
 
     it('о неразложенном говорит в настоящем времени: он ничего не писал', () => {
-        init(root);
+        start();
         const outcome: IOutcomeOfCommand = doctor(env);
 
         expect(said(outcome)).toContain('нет в дереве');
         expect(said(outcome)).not.toContain('положен:');
     });
 
-    it('считает невыбранное', () => {
-        init(root, ['laws/delivery.md']);
+    it('считает невыбранное — все законы, кроме названного', () => {
+        const laws: number = readCatalog(ASSETS).filter((entry: IEntryOfCatalog): boolean => entry.kind === 'laws').length;
+        start(['laws/delivery.md']);
 
-        expect(said(doctor(env))).toContain('не выбрано: 14');
+        expect(said(doctor(env))).toContain(`не выбрано: ${laws - 1}`);
+    });
+
+    // Ресурс чужого вида — не «не выбран»: проект от него не отказывался, его в этом дереве
+    // не существует вовсе. Сосчитанный как невыбранный, он читался бы как забытый.
+    it('ресурсы чужого вида считает отдельно', () => {
+        const foreign: number = readCatalog(ASSETS).filter(
+            (entry: IEntryOfCatalog): boolean => entry.variant !== null && entry.variant.value !== 'github'
+        ).length;
+        start();
+
+        expect(said(doctor(env))).toContain(`другой вид: ${foreign}`);
     });
 });
 
@@ -304,18 +323,27 @@ describe('list', () => {
     });
 
     it('различает выбранное, невыбранное и пропущенное', () => {
-        put(CONFIG_PATH, JSON.stringify({ only: ['laws/delivery.md', 'laws/access.md'], skip: ['laws/access.md'] }));
+        put(
+            CONFIG_PATH,
+            JSON.stringify({
+                variants: HOST,
+                only: ['laws/delivery.md', 'laws/application/access.md'],
+                skip: ['laws/application/access.md'],
+            })
+        );
         const lines: readonly string[] = list(env).lines;
         const lineOf: (name: string) => string = (name: string): string =>
             lines.find((line: string): boolean => line.trim().startsWith(name)) ?? '';
 
         expect(lineOf('delivery')).toContain('нет в дереве');
-        expect(lineOf('access')).toContain('пропущен');
+        // Закон приложения зовётся со слоем: путь внутри рода едет в имя, и перечень показывает
+        // его целиком — иначе два закона с одинаковым коротким именем читались бы как один.
+        expect(lineOf('application/access')).toContain('пропущен');
         expect(lineOf('verifiability')).toContain('не выбран');
     });
 
     it('после раскладки говорит, что файл на месте', () => {
-        init(root);
+        start();
         sync(env, false);
 
         expect(list(env).lines.find((line: string): boolean => line.trim().startsWith('delivery'))).toContain('на месте');
