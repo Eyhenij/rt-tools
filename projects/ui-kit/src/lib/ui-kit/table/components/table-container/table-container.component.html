@@ -34,7 +34,7 @@
                                         aria-label="Icon-button for clear filters"
                                         matTooltip="Clear filters"
                                         matTooltipPosition="below"
-                                        [class]="['c-button', 'c-button--fab'] | concatClasses"
+                                        rtElem="toolbar-action"
                                         [matTooltipDisabled]="narrow()"
                                         [disabled]="isFiltersEmpty()"
                                         (click)="onClearFilters()">
@@ -49,7 +49,7 @@
                                         aria-label="Icon-button for table refresh"
                                         matTooltip="Refresh"
                                         matTooltipPosition="below"
-                                        [class]="['c-button', 'c-button--fab'] | concatClasses"
+                                        rtElem="toolbar-action"
                                         [matTooltipDisabled]="narrow()"
                                         (click)="onRefresh()">
                                         <mat-icon [rtIconOutlined]="isToolbarActionsIconsOutlined()">sync</mat-icon>
@@ -63,7 +63,7 @@
                                         aria-label="Icon-button for table config"
                                         matTooltip="Table configuration"
                                         matTooltipPosition="below"
-                                        [class]="['c-button', 'c-button--fab'] | concatClasses"
+                                        rtElem="toolbar-action"
                                         [matTooltipDisabled]="narrow()"
                                         (click)="onOpenConfigAside()">
                                         <mat-icon [rtIconOutlined]="isToolbarActionsIconsOutlined()">view_column</mat-icon>

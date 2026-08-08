@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.3.0 · hooks/git-guard-push-tests.sh · 7043f86bad6d · правится надстройкой, не здесь
+# rt-kit v0.3.0 · hooks/git-guard-push-tests.sh · 22fc85f0a43b · правится надстройкой, не здесь
 # Гард проверок перед пушем. PreToolUse на вызове пуша.
 #
 # Пуш — это вход в конвейер: слияние в главную ветку запускает выкатку, и всё, что не
@@ -42,10 +42,14 @@ workdir="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)"
 cd "$workdir" 2>/dev/null || exit 0
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 
-profile="${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"
-[ -f "$profile" ] || exit 0
-# shellcheck disable=SC1090
-. "$profile" 2>/dev/null || exit 0
+# Профиль дерева: сперва умолчание пакета, поверх него — надстройка проекта, если она есть.
+# Объявленная в надстройке функция замещает умолчание целиком и вправе позвать его обратно
+# суффиксом `_default`. Нет ни того ни другого — хук пропускает: пустой гард лучше гарда,
+# отбивающего наугад.
+for profile in "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"; do
+    # shellcheck disable=SC1090
+    [ -f "$profile" ] && . "$profile" 2>/dev/null
+done
 command -v rt_push_checks >/dev/null 2>&1 || exit 0
 
 failed=""

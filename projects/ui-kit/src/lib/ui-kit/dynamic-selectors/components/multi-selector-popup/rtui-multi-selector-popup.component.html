@@ -143,15 +143,8 @@
     }
 
     <div rtElem="base-actions">
-        <button mat-button type="button" rtBlock="c-button" (click)="onClose()">Cancel</button>
+        <button mat-button type="button" (click)="onClose()">Cancel</button>
 
-        <button
-            mat-flat-button
-            type="button"
-            rtBlock="c-button"
-            [disabled]="!selectionControl.value?.length || loading()"
-            (click)="onSubmit()">
-            SUBMIT
-        </button>
+        <button mat-flat-button type="button" [disabled]="!selectionControl.value?.length || loading()" (click)="onSubmit()">SUBMIT</button>
     </div>
 </div>

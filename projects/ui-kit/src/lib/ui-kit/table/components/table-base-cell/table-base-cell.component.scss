@@ -19,7 +19,12 @@ $base-cell: (
         position-left: 0.25rem,
         padding: 0.25rem,
         background-color: var(--mat-fab-small-container-color),
+        border-radius: 5px,
+        color: var(--rt-color-neutral-60),
         icon-size: 1rem,
+    ),
+    copy-button-hover: (
+        color: var(--rt-color-neutral-100),
     ),
     copy-button-complete: (
         color: var(--rt-text-base-strong),
@@ -89,8 +94,16 @@ $base-cell: (
 
         &__copy-button {
             position: absolute;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             padding: var(--rt-table-base-cell-copy-button-padding);
+            border: 0;
+            border-radius: var(--rt-table-base-cell-copy-button-border-radius);
             background-color: var(--rt-table-base-cell-copy-button-background-color);
+            color: var(--rt-table-base-cell-copy-button-color);
+            line-height: 1;
+            transition: all 0.15s linear;
             visibility: hidden;
 
             // На узком экране кнопка показана всегда: наведения, по которому она
@@ -113,6 +126,7 @@ $base-cell: (
             &:focus,
             &:active {
                 background-color: var(--rt-table-base-cell-copy-button-background-color);
+                color: var(--rt-table-base-cell-copy-button-hover-color);
             }
 
             &--complete {
