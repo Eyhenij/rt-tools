@@ -1,6 +1,6 @@
 @if (currentPageModel().totalCount > pageSizes()[0]) {
-    <div #containerRef rtBlock="pagination-container" [rtMod]="{ clipped: isContentClipped() && !narrow() }">
-        <div rtBlock="paging" [rtMod]="{ clipped: isContentClipped() && !narrow() }">
+    <div #containerRef rtBlock="pagination-container" [rtMod]="{ clipped: isContentClipped() }">
+        <div rtBlock="paging" [rtMod]="{ clipped: isContentClipped() }">
             <div
                 rtElem="item"
                 role="button"
@@ -60,7 +60,7 @@
             </div>
         </div>
 
-        <div rtBlock="page-size-toggle" [rtMod]="{ clipped: isContentClipped() && !narrow() }">
+        <div rtBlock="page-size-toggle" [rtMod]="{ clipped: isContentClipped() }">
             @if (!narrow()) {
                 <div rtElem="title">Items per page:</div>
             }
