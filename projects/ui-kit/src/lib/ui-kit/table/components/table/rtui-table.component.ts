@@ -27,7 +27,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { MatRadioButton } from '@angular/material/radio';
 
-import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '@rt-tools/core';
 import { INullable } from '@rt-tools/utils';
 import { FILTER_OPERATOR_TYPE_ENUM, IFilterModel, ISortModel, transformArrayInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
@@ -99,6 +99,7 @@ const BEM_BLOCK: string = 'rtui-table';
         RtuiTableHeaderFilterCellComponent,
     ],
     providers: [
+        BreakpointService,
         {
             provide: RTUI_TABLE_COMPONENT_TOKEN,
             useExisting: forwardRef(() => RtuiTableComponent),
@@ -118,15 +119,23 @@ export class RtuiTableComponent<
     protected readonly rowActionsPaddingHelper: Signal<INullable<ElementRef<HTMLElement>>> =
         viewChild<ElementRef<HTMLElement>>('rowActionsRowPaddingHelper');
 
+    readonly #breakpoints: BreakpointService = inject(BreakpointService);
+
     readonly #tableConfigService: RtTableConfigService<ENTITY_TYPE> = inject(RtTableConfigService);
 
     protected readonly columnTypes: typeof TABLE_COLUMN_TYPES_ENUM = TABLE_COLUMN_TYPES_ENUM;
     protected readonly filterOperators: typeof FILTER_OPERATOR_TYPE_ENUM = FILTER_OPERATOR_TYPE_ENUM;
 
     /** Indicates is mobile view */
-    public isMobile: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
-        transform: booleanAttribute,
-    });
+    /**
+     * Признак узкого экрана.
+     *
+     * @deprecated Кит определяет его сам — `BreakpointService` из `@rt-tools/core`. Вход
+     * оставлен ради приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
+     */
+    public isMobile: InputSignal<INullable<boolean>> = input<INullable<boolean>>(null);
+    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    public readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
     /** Indicates are table rows clickable */
     public isTableRowsClickable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,

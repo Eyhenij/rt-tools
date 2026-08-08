@@ -15,7 +15,7 @@
                 <div rtElem="controls-item" rtMod="first">
                     <rtui-toggle label="Multi selection" [ngModel]="this.isMultiSelection()" (ngModelChange)="toggleMultiSelection()" />
 
-                    @if (!isMobile()) {
+                    @if (!narrow()) {
                         <mat-icon
                             rtElem="controls-item-icon"
                             matTooltipPosition="above"
@@ -27,7 +27,7 @@
                         </mat-icon>
                     }
 
-                    @if (isMobile()) {
+                    @if (narrow()) {
                         <div rtElem="controls-item-info">
                             {{ isMacOS() ? 'Also for multi selection use COMMAND button' : 'Also for multi selection use CTRL button' }}
                         </div>

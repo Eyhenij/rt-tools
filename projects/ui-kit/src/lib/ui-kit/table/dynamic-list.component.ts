@@ -3,8 +3,10 @@ import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    computed,
     contentChild,
     Directive,
+    inject,
     input,
     InputSignal,
     InputSignalWithTransform,
@@ -31,6 +33,7 @@ import {
     RtuiTableToolbarSelectorsDirective,
 } from './components/table-container/table-container.component';
 import { BooleanInput } from '@angular/cdk/coercion';
+import { BreakpointService } from '@rt-tools/core';
 
 /** Directive for selectors of the toolbar located on the left side */
 @Directive({
@@ -73,6 +76,7 @@ const BEM_BLOCK: string = 'rtui-dynamic-list';
     host: { class: BEM_BLOCK },
     templateUrl: './dynamic-list.component.html',
     styleUrls: ['./dynamic-list.component.scss'],
+    providers: [BreakpointService],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         NgTemplateOutlet,
@@ -94,14 +98,21 @@ export class RtuiDynamicListComponent<
     SORT_PROPERTY extends Extract<keyof ENTITY_TYPE, string>,
     KEY extends Extract<keyof ENTITY_TYPE, string>,
 > {
+    readonly #breakpoints: BreakpointService = inject(BreakpointService);
+
     /** Table config storage key */
     public tableConfigStorageKey: InputSignalWithTransform<string, unknown> = input.required<string, unknown>({
         transform: transformStringInput,
     });
-    /** Indicates is mobile view */
-    public isMobile: InputSignalWithTransform<INullable<boolean>, BooleanInput> = input<INullable<boolean>, BooleanInput>(false, {
-        transform: booleanAttribute,
-    });
+    /**
+     * Признак узкого экрана.
+     *
+     * @deprecated Кит определяет его сам — `BreakpointService` из `@rt-tools/core`. Вход
+     * оставлен ради приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
+     */
+    public isMobile: InputSignal<INullable<boolean>> = input<INullable<boolean>>(null);
+    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    public readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
     /** Indicates is loading in progress */
     public loading: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,

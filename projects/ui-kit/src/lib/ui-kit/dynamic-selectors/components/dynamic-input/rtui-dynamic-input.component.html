@@ -12,7 +12,6 @@
                 keyExp="id"
                 displayExp="id"
                 [appearance]="appearance()"
-                [isMobile]="isMobile()"
                 [selectedEntities]="selectedEntities()"
                 [readonlyEntitiesKeys]="readonlyEntitiesKeys()"
                 [isListDraggable]="isListDraggable()"
@@ -54,7 +53,6 @@
                 }
 
                 <rtui-dynamic-selector-list-actions
-                    [isMobile]="isMobile()"
                     [isResetButtonDisabled]="isResetButtonDisabled()"
                     [isClearButtonDisabled]="!form.controls.control.value?.length"
                     (resetAction)="resetList()"

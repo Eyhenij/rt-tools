@@ -12,9 +12,9 @@
             matTooltipClass="custom-tooltip"
             matTooltipPosition="above"
             [rtHideTooltipDirective]="titleTpl"
-            [isTooltipShown]="!isMobile()"
+            [isTooltipShown]="!narrow()"
             [matTooltip]="column()?.tooltip ?? tooltipValue()"
-            [matTooltipDisabled]="isMobile()">
+            [matTooltipDisabled]="narrow()">
             {{ cellValue() | emptyToDash }}
         </div>
     </div>
@@ -35,10 +35,10 @@
             [rtMod]="{
                 position: copyBtnPosition,
                 complete: isCopied(),
-                visible: isMobile() || isMouseOver(),
+                visible: isMouseOver(),
             }"
             [matTooltip]="isCopied() ? 'Copied!' : 'Copy'"
-            [matTooltipDisabled]="isMobile()"
+            [matTooltipDisabled]="narrow()"
             (mousedown)="onCopyToClipboard(); $event.stopPropagation()">
             <mat-icon rtElem="copy-icon" [rtIconOutlined]="true">{{ isCopied() ? 'done' : 'content_copy' }}</mat-icon>
         </button>

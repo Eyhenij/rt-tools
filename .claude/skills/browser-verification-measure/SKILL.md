@@ -4,7 +4,7 @@ kind: pattern
 rule: browser-verification
 description: Паттерн правила browser-verification. Брать, когда вывод о вёрстке надо подкрепить числом — готовые замеры, разбивка вычисленного значения по всем узлам, узкий экран вложенной рамкой, ловушки инструмента снимка экрана. Не брать для подъёма стенда — это паттерн browser-verification-stand.
 ---
-<!-- rt-kit v0.2.0 · patterns/browser-verification-measure.md · 1b8e7d42fd8e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.3.0 · patterns/browser-verification-measure.md · 1b8e7d42fd8e · правится надстройкой, не здесь -->
 
 # Замер вместо взгляда
 
