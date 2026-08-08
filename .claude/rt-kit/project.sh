@@ -14,13 +14,12 @@ RT_STANDS='витрина ui-kit http://localhost:6006, витрина ui-kit-v2
 # Команды, которые обязаны пройти перед пушем. По одной на строку; первая упавшая отбивает пуш.
 # Линтер стилей отдельной строкой: линтер кода файлы стилей не читает вовсе.
 #
-# Два файла первого кита выведены из прогона: в них 35 нарушений запрета сырых значений,
-# накопленных до заведения правила, и за ними стоит задача #282. Без исключения гард отбивал бы
-# каждый пуш на долге, которого правка не касалась; строки снимаются вместе с закрытием задачи.
+# Зовётся именованным скриптом, а не разложенной командой: порог замечаний объявлен при нём один
+# раз, и гард, сквозной прогон и ручной вызов не расходятся между собой.
 rt_push_checks() {
     cat <<'EOF'
 pnpm exec nx affected -t lint typecheck test --parallel
-pnpm exec stylelint "projects/**/*.scss" --ignore-pattern "projects/ui-kit/src/lib/ui-kit/icon/rtui-icon.component.scss" --ignore-pattern "projects/ui-kit/src/lib/ui-kit/buttons/unified-button/rtui-button.component.scss"
+pnpm run lint:styles
 EOF
 }
 
@@ -45,7 +44,7 @@ rt_docs_pair_for() {
 # вычислением строки, и `$1` в нём разрешился бы в параметр самого хука, то есть в пустоту.
 rt_lint_for() {
     case "$1" in
-        *.scss) printf 'pnpm exec stylelint "%s"' "$1" ;;
+        *.scss) printf 'pnpm exec stylelint --max-warnings 0 "%s"' "$1" ;;
         *.ts | *.html) printf 'pnpm exec eslint "%s"' "$1" ;;
     esac
 }
