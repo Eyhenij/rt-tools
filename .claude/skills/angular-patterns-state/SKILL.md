@@ -4,7 +4,7 @@ kind: pattern
 rule: angular-patterns
 description: Паттерн правила angular-patterns. Брать при объявлении состояния и потоков в классе фронтового каркаса — реактивные входы и выходы, производные значения, состояние службы, долгоживущая подписка с источником действия. Не брать для раскладки файла компонента — это паттерн component-structure-new.
 ---
-<!-- rt-kit v0.2.0 · patterns/angular-patterns-state.md · c45e35ca3acb · правится надстройкой, не здесь -->
+<!-- rt-kit v0.3.0 · patterns/angular-patterns-state.md · c45e35ca3acb · правится надстройкой, не здесь -->
 
 # Состояние и потоки
 
