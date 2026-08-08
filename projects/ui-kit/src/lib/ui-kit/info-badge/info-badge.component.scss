@@ -22,42 +22,42 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-    }
 
-    .size-l {
-        padding: var(--rt-spacing-4) var(--rt-spacing-12);
-        font-size: var(--rt-font-size-md);
-
-        .mat-icon {
-            font-size: var(--rt-font-size-xl);
-        }
-    }
-
-    .size-m {
-        padding: var(--rt-spacing-4) var(--rt-spacing-12);
-        font-size: var(--rt-font-size-sm);
-
-        .mat-icon {
+        &--size-l {
+            padding: var(--rt-spacing-4) var(--rt-spacing-12);
             font-size: var(--rt-font-size-md);
+
+            .mat-icon {
+                font-size: var(--rt-font-size-xl);
+            }
         }
-    }
 
-    .size-s {
-        padding: var(--rt-spacing-4) var(--rt-spacing-12);
-        font-size: var(--rt-font-size-xs);
-        letter-spacing: 0.025rem;
+        &--size-m {
+            padding: var(--rt-spacing-4) var(--rt-spacing-12);
+            font-size: var(--rt-font-size-sm);
 
-        .mat-icon {
+            .mat-icon {
+                font-size: var(--rt-font-size-md);
+            }
+        }
+
+        &--size-s {
+            padding: var(--rt-spacing-4) var(--rt-spacing-12);
             font-size: var(--rt-font-size-xs);
+            letter-spacing: 0.025rem;
+
+            .mat-icon {
+                font-size: var(--rt-font-size-xs);
+            }
+        }
+
+        &--bold {
+            font-weight: var(--rt-font-weight-bold);
         }
     }
 
     .mat-icon {
         width: unset;
         height: unset;
-    }
-
-    .bold {
-        font-weight: var(--rt-font-weight-bold);
     }
 }

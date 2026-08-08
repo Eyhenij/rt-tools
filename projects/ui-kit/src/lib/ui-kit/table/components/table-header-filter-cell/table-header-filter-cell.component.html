@@ -32,7 +32,7 @@
     <mat-menu #menuTpl="matMenu" xPosition="before">
         @if (filterOperators().includes(filterOperatorTypes.EQUALS) && currentFilter()?.operatorType !== filterOperatorTypes.EQUALS) {
             <div mat-menu-item (click)="onFilterOperatorChange(filterOperatorTypes.EQUALS)">
-                <mat-icon class="material-icons-outlined" rtIconOutlined>drag_handle</mat-icon>
+                <mat-icon rtIconOutlined [class]="['material-icons-outlined'] | concatClasses">drag_handle</mat-icon>
                 <span>Equal</span>
             </div>
         }

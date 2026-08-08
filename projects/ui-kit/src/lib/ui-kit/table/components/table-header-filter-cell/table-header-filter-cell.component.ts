@@ -28,7 +28,7 @@ import {
     transformArrayInput,
     isString,
 } from '@rt-tools/utils';
-import { RtIconOutlinedDirective } from '@rt-tools/core';
+import { ConcatClassesPipe, RtIconOutlinedDirective } from '@rt-tools/core';
 import { ITable, TABLE_COLUMN_FILTER_TYPES_ENUM } from '../../util/table-column.interface';
 import { MatFormField, MatFormFieldAppearance, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -52,6 +52,7 @@ const BEM_BLOCK: string = 'rtui-table-header-filter-cell';
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [provideNativeDateAdapter()],
     imports: [
+        ConcatClassesPipe,
         FormsModule,
 
         // Material

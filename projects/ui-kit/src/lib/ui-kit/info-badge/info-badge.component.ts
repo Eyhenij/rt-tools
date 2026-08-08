@@ -1,5 +1,6 @@
-import { NgClass, NgStyle } from '@angular/common';
+import { NgStyle } from '@angular/common';
 import {
+    computed,
     AfterContentChecked,
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -16,7 +17,7 @@ import {
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { INullable } from '@rt-tools/utils';
 import { POSITION_ENUM } from '@rt-tools/core';
 import { IInfoBadgeSizeType, INFO_BADGE_SIZE_ENUM } from './badge-info-enum';
@@ -30,7 +31,7 @@ const BEM_BLOCK: string = 'rtui-info-badge';
     templateUrl: './info-badge.component.html',
     styleUrl: './info-badge.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [MatTooltip, NgClass, MatIcon, NgStyle, BlockDirective, ElemDirective],
+    imports: [MatTooltip, MatIcon, NgStyle, BlockDirective, ElemDirective, ModDirective],
 })
 export class RtuiInfoBadgeComponent implements AfterContentChecked {
     public size: InputSignal<IInfoBadgeSizeType> = input.required();
@@ -44,14 +45,13 @@ export class RtuiInfoBadgeComponent implements AfterContentChecked {
     public isTitleCollapsed: WritableSignal<boolean> = signal(false);
     public readonly contentRef: Signal<ElementRef<HTMLElement> | undefined> = viewChild('content');
 
-    public get badgeClass(): { [key: string]: boolean | string } {
-        return {
-            'size-l': this.size() === INFO_BADGE_SIZE_ENUM.LARGE,
-            'size-m': this.size() === INFO_BADGE_SIZE_ENUM.MEDIUM,
-            'size-s': this.size() === INFO_BADGE_SIZE_ENUM.SMALL,
-            bold: this.isFontBold(),
-        };
-    }
+    /** Модификаторы блока значка: ставятся директивой, а не строкой в атрибуте. */
+    public readonly badgeModifiers: Signal<Record<string, boolean>> = computed(() => ({
+        'size-l': this.size() === INFO_BADGE_SIZE_ENUM.LARGE,
+        'size-m': this.size() === INFO_BADGE_SIZE_ENUM.MEDIUM,
+        'size-s': this.size() === INFO_BADGE_SIZE_ENUM.SMALL,
+        bold: this.isFontBold(),
+    }));
 
     public get iconStyles(): { [key: string]: string } {
         return {
