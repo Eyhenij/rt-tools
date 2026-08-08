@@ -1,3 +1,14 @@
+## [Unreleased]
+
+### Features
+
+- **rt:ui-kit:** `--rt-icon-size-{xs,sm,md,lg,xl,xxl,3xl}` sizes an icon box whole — width, height and font-size take the same step, so an app can resize `rtui-icon` without touching three declarations
+- **rt:ui-kit:** the spacing scale gained the 10px and 14px steps (`--rt-spacing-10`, `--rt-spacing-14`)
+
+### Bug Fixes
+
+- **rt:ui-kit:** the `pill` button reads 12px at size `xs` and 14px at size `md` (was 11px and 13px, both off the type scale)
+
 ## [0.3.1](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.3.0...rt-tools@0.3.1) (2026-08-02)
 
 # [0.3.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.2.0...rt-tools@0.3.0) (2026-08-02)

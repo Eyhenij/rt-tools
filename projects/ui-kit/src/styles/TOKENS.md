@@ -22,7 +22,10 @@ Quick facts:
   ramps (`{primary,info,success,warning,danger,brand}`). Custom brand palettes
   override only those rows — see **Custom color schemes** below.
 - Foundations: `--rt-spacing-{0..64}` (px-named, rem values), `--rt-radius-*`,
-  `--rt-font-*`, `--rt-shadow-*`, `--rt-transition-*`, `--rt-z-index-*`.
+  `--rt-font-*`, `--rt-icon-size-{xs..3xl}`, `--rt-shadow-*`, `--rt-transition-*`,
+  `--rt-z-index-*`.
+- `--rt-icon-size-*` sizes an icon box whole — width, height and font-size take the same
+  step, because a glyph icon is sized by its font-size and the box has to follow it.
 - Prebuilt CSS for non-sass consumers: `dist/ui-kit/styles/tokens.css`
   (`pnpm run build:tokens`).
 - Figma parity: collections `core` (`rt/color/*`) and `theme` (`rt/{bg,text,icon,border}/*`,

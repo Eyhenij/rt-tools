@@ -267,7 +267,9 @@ $spacing: (
     4: 0.25rem,
     6: 0.375rem,
     8: 0.5rem,
+    10: 0.625rem,
     12: 0.75rem,
+    14: 0.875rem,
     16: 1rem,
     20: 1.25rem,
     24: 1.5rem,
@@ -298,6 +300,19 @@ $font-weight: (
     medium: 500,
     semibold: 600,
     bold: 700,
+);
+
+// Icon box: one step drives width, height and font-size at once — a glyph icon is sized
+// by its font-size, and the box has to follow it exactly. Separate from $font-size because
+// the large steps (32-56px) are icon sizes, not type sizes.
+$icon-size: (
+    xs: 0.875rem,
+    sm: 1rem,
+    md: 1.5rem,
+    lg: 2rem,
+    xl: 2.5rem,
+    xxl: 3rem,
+    3xl: 3.5rem,
 );
 $shadow: (
     sm: (
@@ -391,6 +406,10 @@ $breakpoint: (
 
     @each $token, $value in $font-weight {
         --rt-font-weight-#{$token}: #{$value};
+    }
+
+    @each $token, $value in $icon-size {
+        --rt-icon-size-#{$token}: #{$value};
     }
 
     @each $token, $value in $shadow {
