@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.3.0 · hooks/git-guard-delivery.sh · 0eb665e08aa8 · правится надстройкой, не здесь
+# rt-kit v0.3.0 · hooks/git-guard-delivery.sh · efe9ebde0d88 · правится надстройкой, не здесь
 # Гард поставки. PreToolUse на заведении ветки и открытии PR.
 #
 # Закон о поставке требует трёх вещей, которых обычно не проверяет ничто: правка начинается с
@@ -42,10 +42,14 @@ if [ "$tool" = "mcp__webstorm__execute_tool" ] && command -v perl >/dev/null 2>&
     [ -n "$inner" ] && cmd="$inner"
 fi
 
-profile="${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"
-[ -f "$profile" ] || exit 0
-# shellcheck disable=SC1090
-. "$profile" 2>/dev/null || exit 0
+# Профиль дерева: сперва умолчание пакета, поверх него — надстройка проекта, если она есть.
+# Объявленная в надстройке функция замещает умолчание целиком и вправе позвать его обратно
+# суффиксом `_default`. Нет ни того ни другого — хук пропускает: пустой гард лучше гарда,
+# отбивающего наугад.
+for profile in "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"; do
+    # shellcheck disable=SC1090
+    [ -f "$profile" ] && . "$profile" 2>/dev/null
+done
 command -v rt_task_branch_ok >/dev/null 2>&1 || exit 0
 
 deny() {
