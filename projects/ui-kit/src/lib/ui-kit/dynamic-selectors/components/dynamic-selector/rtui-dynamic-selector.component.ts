@@ -42,7 +42,7 @@ import {
 import { noop } from 'rxjs';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ConcatClassesPipe, ElemDirective } from '@rt-tools/core';
 import { INullable } from '@rt-tools/utils';
 import { areArraysEqual, areArraysEqualUnordered, checkIsEntityInArrayByKey, sortByAlphabet, transformArrayInput } from '@rt-tools/utils';
 import { OVERLAY_POSITIONS, RtEscapeKeyDirective } from '@rt-tools/core';
@@ -82,6 +82,7 @@ const BEM_BLOCK: string = 'rtui-dynamic-selector';
     styleUrls: ['./rtui-dynamic-selector.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        ConcatClassesPipe,
         ReactiveFormsModule,
         NgTemplateOutlet,
         CdkOverlayOrigin,

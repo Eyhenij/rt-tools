@@ -37,7 +37,7 @@ import { MatInput, MatLabel } from '@angular/material/input';
 import { noop } from 'rxjs';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ConcatClassesPipe, ElemDirective } from '@rt-tools/core';
 import { INullable } from '@rt-tools/utils';
 import { areArraysEqual, transformArrayInput, transformStringInput } from '@rt-tools/utils';
 import {
@@ -69,6 +69,7 @@ const BEM_BLOCK: string = 'rtui-dynamic-input';
     styleUrls: ['./rtui-dynamic-input.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        ConcatClassesPipe,
         NgTemplateOutlet,
         ReactiveFormsModule,
 

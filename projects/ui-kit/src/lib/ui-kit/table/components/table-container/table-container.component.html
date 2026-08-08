@@ -32,9 +32,9 @@
                                         mat-mini-fab
                                         type="button"
                                         aria-label="Icon-button for clear filters"
-                                        class="c-button c-button--fab"
                                         matTooltip="Clear filters"
                                         matTooltipPosition="below"
+                                        [class]="['c-button', 'c-button--fab'] | concatClasses"
                                         [matTooltipDisabled]="isMobile()"
                                         [disabled]="isFiltersEmpty()"
                                         (click)="onClearFilters()">
@@ -47,9 +47,9 @@
                                         mat-mini-fab
                                         type="button"
                                         aria-label="Icon-button for table refresh"
-                                        class="c-button c-button--fab"
                                         matTooltip="Refresh"
                                         matTooltipPosition="below"
+                                        [class]="['c-button', 'c-button--fab'] | concatClasses"
                                         [matTooltipDisabled]="isMobile()"
                                         (click)="onRefresh()">
                                         <mat-icon [rtIconOutlined]="isToolbarActionsIconsOutlined()">sync</mat-icon>
@@ -61,9 +61,9 @@
                                         mat-mini-fab
                                         type="button"
                                         aria-label="Icon-button for table config"
-                                        class="c-button c-button--fab"
                                         matTooltip="Table configuration"
                                         matTooltipPosition="below"
+                                        [class]="['c-button', 'c-button--fab'] | concatClasses"
                                         [matTooltipDisabled]="isMobile()"
                                         (click)="onOpenConfigAside()">
                                         <mat-icon [rtIconOutlined]="isToolbarActionsIconsOutlined()">view_column</mat-icon>

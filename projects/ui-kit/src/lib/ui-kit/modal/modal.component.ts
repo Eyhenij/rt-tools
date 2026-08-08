@@ -1,4 +1,4 @@
-import { NgClass, NgComponentOutlet, NgStyle } from '@angular/common';
+import { NgComponentOutlet, NgStyle } from '@angular/common';
 import { ChangeDetectionStrategy, Component, HostBinding, inject, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,7 +7,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ConcatClassesPipe, ElemDirective } from '@rt-tools/core';
 import { checkIsMatchingValues, SanitizePipe } from '@rt-tools/core';
 import { IModal } from './modal.types';
 
@@ -21,7 +21,6 @@ const BEM_BLOCK: string = 'rtui-modal';
     host: { class: BEM_BLOCK },
     imports: [
         NgStyle,
-        NgClass,
         NgComponentOutlet,
         ReactiveFormsModule,
         SanitizePipe,
@@ -36,6 +35,7 @@ const BEM_BLOCK: string = 'rtui-modal';
         // BEM
         BlockDirective,
         ElemDirective,
+        ConcatClassesPipe,
     ],
 })
 export class RtuiModalComponent<T> implements OnInit {

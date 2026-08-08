@@ -1,12 +1,9 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { PortalModule } from '@angular/cdk/portal';
-import { AsyncPipe } from '@angular/common';
 import { Component, HostBinding, inject, Injector, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
+import { BlockDirective } from '@rt-tools/core';
 import { ASIDE_REF, AsidePositions, AsideRef } from '../../aside.types';
 
 const BEM_BLOCK: string = 'rtui-aside-panel';
@@ -17,7 +14,7 @@ const BEM_BLOCK: string = 'rtui-aside-panel';
     templateUrl: './aside-panel.component.html',
     styleUrls: ['./aside-panel.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    imports: [AsyncPipe, PortalModule],
+    imports: [PortalModule, BlockDirective],
     changeDetection: ChangeDetectionStrategy.Eager,
     animations: [
         trigger('aside', [
@@ -38,15 +35,11 @@ const BEM_BLOCK: string = 'rtui-aside-panel';
 })
 export class RtuiAsidePanelComponent {
     readonly #asideRef: AsideRef<object, object> = inject(ASIDE_REF);
-    readonly #breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
 
     @HostBinding('@aside') protected _state: string = `enter-${this.#asideRef.position}`;
 
     public portal: ComponentPortal<unknown> = this.#createPortal(this.#asideRef);
     public position: AsidePositions = this.#asideRef.position;
-    public isSmall$: Observable<boolean> = this.#breakpointObserver
-        .observe(['(max-width: 1023px)'])
-        .pipe(map((result: BreakpointState) => result.matches));
 
     public close(): void {
         this.#asideRef.close();

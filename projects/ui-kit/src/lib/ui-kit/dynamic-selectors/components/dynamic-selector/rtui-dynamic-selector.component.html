@@ -48,8 +48,7 @@
                                 #trigger="cdkOverlayOrigin"
                                 cdkOverlayOrigin
                                 type="button"
-                                class="c-button c-button--txt-base--size-sm"
-                                [class.--disabled]="disabled()"
+                                [class]="['c-button', 'c-button--txt-base--size-sm', disabled() ? '--disabled' : null] | concatClasses"
                                 [disabled]="disabled()"
                                 (click)="showSelectionControl(trigger)">
                                 {{ buttonTitle() }}
