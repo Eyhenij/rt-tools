@@ -22,8 +22,11 @@ import { RtHideTooltipDirective } from '../../tooltip';
 import { ISideMenu } from '../side-menu.types';
 import { RtuiSideMenuComponent } from '../menu/rtui-side-menu.component';
 
+const BEM_BLOCK: string = 'rtui-side-menu-sub-item';
+
 @Component({
     selector: 'rtui-side-menu-sub-item',
+    host: { class: BEM_BLOCK },
     templateUrl: './rtui-side-menu-sub-item.component.html',
     styleUrls: ['./rtui-side-menu-sub-item.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,

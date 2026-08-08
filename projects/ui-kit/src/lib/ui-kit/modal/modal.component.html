@@ -69,7 +69,7 @@
                     <button
                         mat-flat-button
                         type="button"
-                        [ngClass]="button.className"
+                        [class]="[button.className] | concatClasses"
                         [color]="button.color"
                         [disabled]="button.validateSelect && (selectControl?.invalid || control?.invalid)"
                         [ngStyle]="button.style"

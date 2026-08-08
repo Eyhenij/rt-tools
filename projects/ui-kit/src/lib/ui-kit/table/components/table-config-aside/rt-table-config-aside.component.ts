@@ -15,8 +15,11 @@ import { RtuiDynamicSelectorAdditionalControlDirective, RtuiDynamicSelectorCompo
 import { RtuiToggleComponent } from '../../../toggle';
 import { ITable } from '../../util';
 
+const BEM_BLOCK: string = 'rtui-test-aside';
+
 @Component({
     selector: 'rtui-test-aside',
+    host: { class: BEM_BLOCK },
     templateUrl: './rt-table-config-aside.component.html',
     styleUrls: ['./rt-table-config-aside.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,

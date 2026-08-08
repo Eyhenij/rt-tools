@@ -45,7 +45,10 @@
 
             <div rtElem="actions">
                 @if (!isInputControlShown() && !isSingleSelection()) {
-                    <button type="button" class="c-button c-button--txt-base--size-sm" (click)="showSelectionControl()">
+                    <button
+                        type="button"
+                        [class]="['c-button', 'c-button--txt-base--size-sm'] | concatClasses"
+                        (click)="showSelectionControl()">
                         {{ buttonTitle() }}
                     </button>
                 }

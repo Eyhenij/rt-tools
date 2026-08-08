@@ -27,7 +27,13 @@ describe('RtuiButtonComponent', () => {
         return fixture;
     }
 
-    function buttonClasses(fixture: ComponentFixture<RtuiButtonComponent>): DOMTokenList {
+    /** Модификаторы блока висят на хосте: класс блока объявлен декоратором, а не разметкой. */
+    function blockClasses(fixture: ComponentFixture<RtuiButtonComponent>): DOMTokenList {
+        return (fixture.nativeElement as HTMLElement).classList;
+    }
+
+    /** Ветка Material рисует свою кнопку — она элемент блока, и класс лежит на ней. */
+    function controlClasses(fixture: ComponentFixture<RtuiButtonComponent>): DOMTokenList {
         return (fixture.nativeElement as HTMLElement).querySelector('button')!.classList;
     }
 
@@ -37,7 +43,7 @@ describe('RtuiButtonComponent', () => {
 
     it('defaults to the custom design, md size and full radius without any config', () => {
         const fixture: ComponentFixture<RtuiButtonComponent> = setup();
-        const classes: DOMTokenList = buttonClasses(fixture);
+        const classes: DOMTokenList = blockClasses(fixture);
 
         expect(matButton(fixture)).toBeUndefined();
         expect(classes.contains('rtui-button--design-custom')).toBe(true);
@@ -50,7 +56,7 @@ describe('RtuiButtonComponent', () => {
             components: { button: { design: 'material', appearance: 'text' } },
         });
 
-        expect(buttonClasses(fixture).contains('rtui-button-material')).toBe(true);
+        expect(controlClasses(fixture).contains('rtui-button__material')).toBe(true);
         expect(matButton(fixture)?.appearance).toBe('text');
     });
 
@@ -72,7 +78,7 @@ describe('RtuiButtonComponent', () => {
         const fixture: ComponentFixture<RtuiButtonComponent> = setup({ global: { design: 'material' } });
 
         expect(matButton(fixture)).toBeDefined();
-        expect(buttonClasses(fixture).contains('rtui-button-material')).toBe(true);
+        expect(controlClasses(fixture).contains('rtui-button__material')).toBe(true);
     });
 
     it('prefers the component entry over the global default', () => {
@@ -82,7 +88,7 @@ describe('RtuiButtonComponent', () => {
         });
 
         expect(matButton(fixture)).toBeUndefined();
-        expect(buttonClasses(fixture).contains('rtui-button--design-custom')).toBe(true);
+        expect(blockClasses(fixture).contains('rtui-button--design-custom')).toBe(true);
     });
 
     it('lets the instance input override every config level', () => {
@@ -94,7 +100,7 @@ describe('RtuiButtonComponent', () => {
         fixture.detectChanges();
 
         expect(matButton(fixture)).toBeUndefined();
-        expect(buttonClasses(fixture).contains('rtui-button--design-custom')).toBe(true);
+        expect(blockClasses(fixture).contains('rtui-button--design-custom')).toBe(true);
     });
 
     it('renders projected content in both the custom and the material design branches', () => {
@@ -120,7 +126,7 @@ describe('RtuiButtonComponent', () => {
         fixture.componentRef.setInput('radius', 'sm');
         fixture.detectChanges();
 
-        const classes: DOMTokenList = buttonClasses(fixture);
+        const classes: DOMTokenList = blockClasses(fixture);
         expect(classes.contains('rtui-button--size-xs')).toBe(true);
         expect(classes.contains('rtui-button--radius-sm')).toBe(true);
     });

@@ -1,11 +1,15 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, input, InputSignalWithTransform, numberAttribute } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+
+const BEM_BLOCK: string = 'rtui-spinner';
 
 @Component({
     selector: 'rtui-spinner',
     templateUrl: './spinner.component.html',
     styleUrls: ['./spinner.component.scss'],
-    imports: [MatProgressSpinnerModule],
+    imports: [MatProgressSpinnerModule, BlockDirective, ElemDirective, ModDirective],
+    host: { class: BEM_BLOCK },
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RtuiSpinnerComponent {

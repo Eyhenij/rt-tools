@@ -6,8 +6,11 @@ import { noop } from 'rxjs';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { transformStringInput } from '@rt-tools/utils';
 
+const BEM_BLOCK: string = 'rtui-checkbox';
+
 @Component({
     selector: 'rtui-checkbox',
+    host: { class: BEM_BLOCK },
     templateUrl: 'rtui-checkbox.component.html',
     styleUrls: ['rtui-checkbox.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -72,13 +75,5 @@ export class RtuiCheckboxComponent implements ControlValueAccessor {
 
     public setDisabledState(isDisabled: boolean): void {
         this.disabled = isDisabled;
-    }
-
-    public onChangeValue(event: Event): void {
-        if (!this.disabled) {
-            this.Value = !this.Value;
-        }
-        event.stopPropagation();
-        event.preventDefault();
     }
 }

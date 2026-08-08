@@ -16,8 +16,11 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { INullable } from '@rt-tools/utils';
 import { isString } from '@rt-tools/utils';
 
+const BEM_BLOCK: string = 'rtui-clear-button';
+
 @Component({
     selector: 'rtui-clear-button',
+    host: { class: BEM_BLOCK },
     templateUrl: './rtui-clear-button.component.html',
     styleUrls: ['./rtui-clear-button.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,

@@ -19,8 +19,11 @@ export class RtuiScrollableContainerContentDirective {}
 })
 export class RtuiScrollableContainerFooterDirective {}
 
+const BEM_BLOCK: string = 'rtui-scrollable';
+
 @Component({
     selector: 'rtui-scrollable',
+    host: { class: BEM_BLOCK },
     templateUrl: './scrollable-container.component.html',
     styleUrls: ['./scrollable-container.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,

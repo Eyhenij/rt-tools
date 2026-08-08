@@ -15,8 +15,11 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { INullable } from '@rt-tools/utils';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 
+const BEM_BLOCK: string = 'rtui-dynamic-selector-list-actions';
+
 @Component({
     selector: 'rtui-dynamic-selector-list-actions',
+    host: { class: BEM_BLOCK },
     templateUrl: './rtui-dynamic-selector-list-actions.component.html',
     styleUrls: ['./rtui-dynamic-selector-list-actions.component.scss'],
     imports: [MatIcon, MatButton, RtIconOutlinedDirective, BlockDirective, ElemDirective, ModDirective, MatIconButton, MatTooltip],

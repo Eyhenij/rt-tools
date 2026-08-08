@@ -24,6 +24,7 @@ export type RtuiIconSizeType = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | '3xl';
 export type RtuiIconThemeType =
     'inherit' | 'primary' | 'primary-strong' | 'neutral' | 'disabled' | 'muted' | 'white' | 'danger' | 'success';
 
+const BEM_BLOCK: string = 'rtui-icon';
 const MATERIAL_SYMBOLS_FONT: string = 'Material Symbols Outlined';
 const fontLoaded: WritableSignal<boolean> = signal<boolean>(false);
 
@@ -47,7 +48,7 @@ const fontLoaded: WritableSignal<boolean> = signal<boolean>(false);
         },
     ],
     host: {
-        class: 'rtui-icon',
+        class: BEM_BLOCK,
         '[class]': 'hostClasses()',
     },
 })

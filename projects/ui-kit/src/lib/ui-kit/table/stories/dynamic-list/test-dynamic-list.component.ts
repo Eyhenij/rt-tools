@@ -69,7 +69,7 @@ import { RtuiStopTableRowClickDirective } from '../../directives';
         RtDynamicListSelectorsDirective,
         RtuiStopTableRowClickDirective,
     ],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [IDBStorageService, RtTableConfigService, RtActionBarService, PlatformService],
 })
 export default class TestDynamicListComponent implements OnInit {

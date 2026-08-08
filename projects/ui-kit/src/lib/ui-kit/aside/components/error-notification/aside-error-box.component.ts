@@ -3,20 +3,25 @@ import { ChangeDetectionStrategy, Component, inject, input, InputSignal, signal,
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ConcatClassesPipe, ElemDirective, ModDirective } from '@rt-tools/core';
 import { INullable } from '@rt-tools/utils';
+
+const BEM_BLOCK: string = 'rtui-aside-error-box';
 
 @Component({
     selector: 'rtui-aside-error-box',
+    host: { class: BEM_BLOCK },
     templateUrl: './aside-error-box.component.html',
     styleUrls: ['./aside-error-box.component.scss'],
     imports: [
+        ModDirective,
         MatIcon,
         MatButton,
 
         // bem
         BlockDirective,
         ElemDirective,
+        ConcatClassesPipe,
     ],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })

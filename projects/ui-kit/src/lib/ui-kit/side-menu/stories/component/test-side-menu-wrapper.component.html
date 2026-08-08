@@ -12,8 +12,8 @@
     (clickSubMenuAdditionalAction)="onClickSubMenuAdditional($event)"
     (closeMobileMenuAction)="closeMobileMenu()">
     <ng-container *rtuiSideMenuHeader>
-        <a rtElem="header" (click)="closeMobileMenu()">
-            <mat-icon rtElem="icon" matTooltip="Header" matTooltipPosition="above" (click)="closeMobileMenu()">info</mat-icon>
+        <a rtElem="header" tabindex="0" (click)="closeMobileMenu()" (keydown.enter)="closeMobileMenu()">
+            <mat-icon rtElem="icon" matTooltip="Header" matTooltipPosition="above">info</mat-icon>
         </a>
     </ng-container>
 

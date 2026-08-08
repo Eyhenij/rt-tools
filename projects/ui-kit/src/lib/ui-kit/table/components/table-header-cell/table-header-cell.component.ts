@@ -19,14 +19,17 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
-import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+import { BlockDirective, ConcatClassesPipe, ElemDirective, ModDirective } from '@rt-tools/core';
 import { INullable } from '@rt-tools/utils';
 import { LIST_SORT_ORDER_ENUM, ListSortOrderType, ISortModel } from '@rt-tools/utils';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { ITable } from '../../util/table-column.interface';
 
+const BEM_BLOCK: string = 'rtui-table-header-cell';
+
 @Component({
     selector: 'rtui-table-header-cell',
+    host: { class: BEM_BLOCK },
     templateUrl: './table-header-cell.component.html',
     styleUrls: ['./table-header-cell.component.scss'],
     imports: [
@@ -41,6 +44,7 @@ import { ITable } from '../../util/table-column.interface';
         // Bem
         BlockDirective,
         ElemDirective,
+        ConcatClassesPipe,
         ModDirective,
 
         // Directives

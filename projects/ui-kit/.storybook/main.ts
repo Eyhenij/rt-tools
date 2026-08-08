@@ -26,6 +26,14 @@ const config: StorybookConfig = {
         if (definePlugin && (definePlugin as any).definitions) {
             delete (definePlugin as any).definitions['process.env.NODE_ENV'];
         }
+        // Барели @rt-tools/utils зовут соседей с расширением `.js`, как того требует ESM, а лежат
+        // файлы `.ts`. Сборщик библиотеки такое разрешает сам, сборщик витрины — нет, и без этой
+        // строки витрина не поднимается вовсе: «Can't resolve './lib/const/index.js'».
+        config.resolve = config.resolve ?? {};
+        (config.resolve as any).extensionAlias = {
+            ...((config.resolve as any).extensionAlias ?? {}),
+            '.js': ['.ts', '.js'],
+        };
         return config;
     },
 };
