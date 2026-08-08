@@ -76,12 +76,4 @@ export class RtuiCheckboxComponent implements ControlValueAccessor {
     public setDisabledState(isDisabled: boolean): void {
         this.disabled = isDisabled;
     }
-
-    public onChangeValue(event: Event): void {
-        if (!this.disabled) {
-            this.Value = !this.Value;
-        }
-        event.stopPropagation();
-        event.preventDefault();
-    }
 }

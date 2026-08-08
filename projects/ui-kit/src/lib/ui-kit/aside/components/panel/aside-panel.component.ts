@@ -1,7 +1,7 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { PortalModule } from '@angular/cdk/portal';
-import { Component, HostBinding, inject, Injector, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, HostBinding, inject, Injector, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 
 import { BlockDirective } from '@rt-tools/core';
 import { ASIDE_REF, AsidePositions, AsideRef } from '../../aside.types';
@@ -15,7 +15,7 @@ const BEM_BLOCK: string = 'rtui-aside-panel';
     styleUrls: ['./aside-panel.component.scss'],
     encapsulation: ViewEncapsulation.None,
     imports: [PortalModule, BlockDirective],
-    changeDetection: ChangeDetectionStrategy.Eager,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     animations: [
         trigger('aside', [
             state('enter-left', style({ transform: 'none' })),
@@ -35,6 +35,7 @@ const BEM_BLOCK: string = 'rtui-aside-panel';
 })
 export class RtuiAsidePanelComponent {
     readonly #asideRef: AsideRef<object, object> = inject(ASIDE_REF);
+    readonly #changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
 
     @HostBinding('@aside') protected _state: string = `enter-${this.#asideRef.position}`;
 
@@ -47,6 +48,7 @@ export class RtuiAsidePanelComponent {
 
     public startExitAnimation(): void {
         this._state = `exit-${this.#asideRef.position}`;
+        this.#changeDetectorRef.markForCheck();
     }
 
     #createPortal<D, R>(asideRef: AsideRef<D, R>): ComponentPortal<unknown> {
