@@ -2,45 +2,50 @@
 name: angular-patterns-state
 kind: pattern
 rule: angular-patterns
-description: Паттерн правила angular-patterns. Брать при объявлении состояния и потоков в классе фронтового каркаса — реактивные входы и выходы, производные значения, состояние службы, долгоживущая подписка с источником действия. Не брать для раскладки файла компонента — это паттерн component-structure-new.
+description: Паттерн правила angular-patterns. Брать при объявлении состояния и потоков в классе Angular — готовые сигналы, производные значения, состояние сервиса, долгоживущая подписка с источником действия. Не брать для раскладки файла компонента — это правило component-structure.
 ---
 
 # Состояние и потоки
 
 Паттерн правила `angular-patterns`. Что при этом должно быть верно — закон
-`{{lawsDir}}/frontend-application.md`.
+`docs/constitution/frontend-application.md`.
 
 ## Когда брать
 
-- Объявляется состояние компонента или службы.
+- Объявляется состояние компонента или сервиса.
 - Появляется поток, на который надо подписаться.
 - Значение считается из другого значения.
 
-## Реактивные входы и выходы
+## Сигнальный API входов и выходов
 
 ```typescript
 public readonly data: InputSignal<Item[]> = input.required<Item[]>();
-public readonly isNarrow: InputSignal<boolean | undefined> = input<boolean>();
+public readonly isMobile: InputSignal<boolean | undefined> = input<boolean>();
 public readonly save: OutputEmitterRef<void> = output<void>();
 
 protected readonly myButton: Signal<ElementRef | undefined> = viewChild<ElementRef>('button');
 ```
 
-Декораторной формы входов, выходов и запросов к разметке в дереве нет: у неё нет типа, который
-видно в месте использования, и нет реактивности, на которую можно подписаться.
+Декораторов `@Input()`, `@Output()`, `@ViewChild()`, `@ContentChild()` и их множественных пар
+в дереве нет.
 
-## Производное значение — вычисляемое, а не эффект
+## Производное значение — `computed`, а не эффект
+
+```typescript
+protected readonly items: WritableSignal<Item[]> = signal<Item[]>([]);
+protected readonly itemCount: Signal<number> = computed((): number => this.items().length);
+protected readonly hasItems: Signal<boolean> = computed((): boolean => this.itemCount() > 0);
+```
 
 ```typescript
 ✗ effect((): void => { this.count.set(this.items().length); });
 ✓ protected readonly count: Signal<number> = computed((): number => this.items().length);
 ```
 
-Эффект, кладущий значение в реактивное поле, — это ручной пересчёт, и он рано или поздно
-отстаёт от источника. Геттера в компоненте не заводить: он пересчитывается на каждой
-перерисовке, и цена его не видна ни в одном месте кода.
+Геттера в компоненте не заводить: он пересчитывается на каждой перерисовке, и цена его не
+видна ни в одном месте кода.
 
-## Состояние службы
+## Состояние сервиса
 
 Наружу — только чтение:
 
@@ -60,7 +65,7 @@ export class DomainStateService {
 
 ## Подписка объявляется один раз
 
-Метод действия толкает значение в источник, подписка живёт при создании владельца:
+Метод действия толкает значение в источник, подписка живёт в конструкторе:
 
 ```typescript
 readonly #loadSource: Subject<void> = new Subject<void>();
@@ -69,7 +74,7 @@ readonly #destroyRef: DestroyRef = inject(DestroyRef);
 constructor() {
     this.#loadSource
         .pipe(
-            switchMap((): Observable<IResult> => this.#api.getList(this.#query())),
+            switchMap((): Observable<IPromoCode.ListResult> => this.#api.getList(this.#query())),
             takeUntilDestroyed(this.#destroyRef)
         )
         .subscribe();
@@ -80,15 +85,17 @@ protected reload(): void {
 }
 ```
 
-Оператор выбирается по тому, что делать с предыдущим запросом: список берёт последний ответ,
-кнопка не плодит дублей, независимые строки идут параллельно.
+Оператор выбирается по тому, что делать с предыдущим запросом: список берёт последний ответ
+(`switchMap`), кнопка не плодит дублей (`exhaustMap`), соседние строки идут независимо
+(`mergeMap`).
 
 ## Частые промахи
 
-- **Подписка внутри метода:** правило линтера отбивает, а вместе с ним отбивается и гонка
+- `.subscribe()` внутри метода: правило линтера отбивает, а вместе с ним отбивается и гонка
   ответов на быстрых нажатиях.
-- **Подписка без гашения:** она переживает владельца и держит уничтоженный экран в памяти.
-- **Поле-поток без суффикса источника:** поток и значение в коде становятся неотличимы.
-- **Параметры конструктора вместо функции внедрения** — везде, включая базовые классы.
-- **Эффект без снятия слежения там, где зависимость не нужна:** он просыпается на каждое чужое
-  изменение.
+- Подписка без `takeUntilDestroyed`: она переживает владельца и держит уничтоженный экран в
+  памяти.
+- Поле-поток без суффикса `Source`: поток и значение в коде становятся неотличимы.
+- `inject()` вместо параметров конструктора — везде, включая базовые классы.
+- `untracked()` там, где эффекту не нужна зависимость от сигнала: без него эффект просыпается
+  на каждое чужое изменение.
