@@ -9,8 +9,11 @@ import { INullable } from '@rt-tools/utils';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { IRtSnackBar } from './snack-bar-config.interface';
 
+const BEM_BLOCK: string = 'rtui-snack-bar';
+
 @Component({
     selector: 'rtui-snack-bar',
+    host: { class: BEM_BLOCK },
     templateUrl: './snack-bar.component.html',
     styleUrls: ['./snack-bar.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,

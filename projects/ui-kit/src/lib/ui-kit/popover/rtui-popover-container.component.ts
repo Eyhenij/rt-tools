@@ -5,12 +5,15 @@ import { DomSanitizer, SafeValue } from '@angular/platform-browser';
 import { INullable } from '@rt-tools/utils';
 import { isString } from '@rt-tools/utils';
 
+const BEM_BLOCK: string = 'rtui-popover-container';
+
 @Component({
     selector: 'rtui-popover-container',
     templateUrl: './rtui-popover-container.component.html',
     styleUrls: ['./rtui-popover-container.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [NgTemplateOutlet],
+    host: { class: BEM_BLOCK },
 })
 export class RtuiPopoverContainerComponent {
     readonly #sanitizer: DomSanitizer = inject(DomSanitizer);

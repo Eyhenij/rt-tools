@@ -66,8 +66,11 @@ export class RtuiDynamicListRowActionsDirective {}
 })
 export class RtuiDynamicListRowAdditionalActionsDirective {}
 
+const BEM_BLOCK: string = 'rtui-dynamic-list';
+
 @Component({
     selector: 'rtui-dynamic-list',
+    host: { class: BEM_BLOCK },
     templateUrl: './dynamic-list.component.html',
     styleUrls: ['./dynamic-list.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,

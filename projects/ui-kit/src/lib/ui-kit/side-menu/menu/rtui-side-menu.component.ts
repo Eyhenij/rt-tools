@@ -45,8 +45,11 @@ export class RtuiSideMenuHeaderDirective {}
 })
 export class RtuiSideMenuFooterDirective {}
 
+const BEM_BLOCK: string = 'rtui-side-menu';
+
 @Component({
     selector: 'rtui-side-menu',
+    host: { class: BEM_BLOCK },
     templateUrl: './rtui-side-menu.component.html',
     styleUrls: ['./rtui-side-menu.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,

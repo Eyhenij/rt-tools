@@ -25,8 +25,11 @@ import { LIST_SORT_ORDER_ENUM, ListSortOrderType, ISortModel } from '@rt-tools/u
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { ITable } from '../../util/table-column.interface';
 
+const BEM_BLOCK: string = 'rtui-table-header-cell';
+
 @Component({
     selector: 'rtui-table-header-cell',
+    host: { class: BEM_BLOCK },
     templateUrl: './table-header-cell.component.html',
     styleUrls: ['./table-header-cell.component.scss'],
     imports: [

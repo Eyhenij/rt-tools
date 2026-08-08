@@ -29,8 +29,11 @@ import { INullable } from '@rt-tools/utils';
 import { isNumber, IPageModel } from '@rt-tools/utils';
 import { DEFAULT_PAGE_SIZE } from '../../util/default-pagination';
 
+const BEM_BLOCK: string = 'rtui-pagination';
+
 @Component({
     selector: 'rtui-pagination',
+    host: { class: BEM_BLOCK },
     templateUrl: './rtui-pagination.component.html',
     styleUrls: ['./rtui-pagination.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,

@@ -42,8 +42,11 @@ import { RtuiClearButtonComponent } from '../clear-search-button/rtui-clear-butt
 import { BlockDirective } from '@rt-tools/core';
 import { MatTooltip } from '@angular/material/tooltip';
 
+const BEM_BLOCK: string = 'rtui-table-header-filter-cell';
+
 @Component({
     selector: 'rtui-table-header-filter-cell',
+    host: { class: BEM_BLOCK },
     templateUrl: './table-header-filter-cell.component.html',
     styleUrls: ['./table-header-filter-cell.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
