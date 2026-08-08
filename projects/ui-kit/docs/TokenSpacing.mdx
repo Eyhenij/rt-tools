@@ -35,9 +35,10 @@ tokens. Using magic numbers directly is forbidden. Foundations are
 
 ## Spacing scale — `--rt-spacing-{N}`
 
-Based on a **4px grid** (plus a 2px micro-step). Named by pixel value, emitted in `rem`:
+Based on a **4px grid**, with a 2px step below 16px where control padding needs it.
+Named by pixel value, emitted in `rem`:
 
-{[[0, 0], [2, 2], [4, 4], [6, 6], [8, 8], [12, 12], [16, 16], [20, 20], [24, 24], [32, 32], [40, 40], [48, 48], [56, 56], [64, 64]].map(([n, px]) => (
+{[[0, 0], [2, 2], [4, 4], [6, 6], [8, 8], [10, 10], [12, 12], [14, 14], [16, 16], [20, 20], [24, 24], [32, 32], [40, 40], [48, 48], [56, 56], [64, 64]].map(([n, px]) => (
 
 <Bar key={n} n={n} px={px} />
 ))}
@@ -84,6 +85,24 @@ gap: var(--rt-spacing-8);
 | `--rt-font-weight-bold`     | `700`      |
 
 The font family (`--font-default`) is **app-defined** — the kit does not impose one.
+
+---
+
+## Icon sizes — `--rt-icon-size-*`
+
+One step sizes an icon box whole: `rtui-icon` puts the same token on `width`, `height` and
+`font-size`, because a glyph icon is sized by its font-size and the box has to follow it.
+The steps match the `size` input of `rtui-icon`.
+
+| Token                | Value      | `rtui-icon [size]` |
+| -------------------- | ---------- | ------------------ |
+| `--rt-icon-size-xs`  | `0.875rem` | `xs`               |
+| `--rt-icon-size-sm`  | `1rem`     | `sm`               |
+| `--rt-icon-size-md`  | `1.5rem`   | `md`               |
+| `--rt-icon-size-lg`  | `2rem`     | `lg`               |
+| `--rt-icon-size-xl`  | `2.5rem`   | `xl`               |
+| `--rt-icon-size-xxl` | `3rem`     | `xxl`              |
+| `--rt-icon-size-3xl` | `3.5rem`   | `3xl`              |
 
 ---
 
