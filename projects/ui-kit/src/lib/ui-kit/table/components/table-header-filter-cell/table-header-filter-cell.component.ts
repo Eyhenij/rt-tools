@@ -1,7 +1,7 @@
 import {
-    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    computed,
     DestroyRef,
     inject,
     Injector,
@@ -12,10 +12,10 @@ import {
     output,
     OutputEmitterRef,
     signal,
+    Signal,
     WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { BooleanInput } from '@angular/cdk/coercion';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerModule, MatDatepickerToggle } from '@angular/material/datepicker';
@@ -23,12 +23,13 @@ import { MatDatepicker, MatDatepickerInput, MatDatepickerModule, MatDatepickerTo
 import {
     FILTER_OPERATOR_TYPE_ENUM,
     FILTER_OPERATORS,
-    IFilterModel,
     FilterOperatorType,
-    transformArrayInput,
+    IFilterModel,
+    INullable,
     isString,
+    transformArrayInput,
 } from '@rt-tools/utils';
-import { ConcatClassesPipe, RtIconOutlinedDirective } from '@rt-tools/core';
+import { BreakpointService, ConcatClassesPipe, RtIconOutlinedDirective } from '@rt-tools/core';
 import { ITable, TABLE_COLUMN_FILTER_TYPES_ENUM } from '../../util/table-column.interface';
 import { MatFormField, MatFormFieldAppearance, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -50,7 +51,7 @@ const BEM_BLOCK: string = 'rtui-table-header-filter-cell';
     templateUrl: './table-header-filter-cell.component.html',
     styleUrls: ['./table-header-filter-cell.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [provideNativeDateAdapter()],
+    providers: [BreakpointService, provideNativeDateAdapter()],
     imports: [
         ConcatClassesPipe,
         FormsModule,
@@ -87,8 +88,12 @@ export class RtuiTableHeaderFilterCellComponent<
     ENTITY_TYPE extends Record<string, unknown>,
     KEY extends Extract<keyof ENTITY_TYPE, string>,
 > implements OnInit {
+    readonly #breakpoints: BreakpointService = inject(BreakpointService);
     readonly #injector: Injector = inject(Injector);
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
+
+    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
 
     protected readonly filterTypes: typeof TABLE_COLUMN_FILTER_TYPES_ENUM = TABLE_COLUMN_FILTER_TYPES_ENUM;
     protected readonly filterOperatorTypes: typeof FILTER_OPERATOR_TYPE_ENUM = FILTER_OPERATOR_TYPE_ENUM;
@@ -127,10 +132,13 @@ export class RtuiTableHeaderFilterCellComponent<
     public filterSelectOptions: InputSignalWithTransform<string[], string[]> = input<string[], string[]>([], {
         transform: (value: string[]) => transformArrayInput(value),
     });
-    /** Indicates is mobile view */
-    public isMobile: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
-        transform: booleanAttribute,
-    });
+    /**
+     * Признак узкого экрана.
+     *
+     * @deprecated Кит определяет его сам — `BreakpointService` из `@rt-tools/core`. Вход
+     * оставлен ради приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
+     */
+    public isMobile: InputSignal<INullable<boolean>> = input<INullable<boolean>>(null);
 
     /** Filter change output action */
     public readonly filterChange: OutputEmitterRef<IFilterModel<KEY>[]> = output<IFilterModel<KEY>[]>();

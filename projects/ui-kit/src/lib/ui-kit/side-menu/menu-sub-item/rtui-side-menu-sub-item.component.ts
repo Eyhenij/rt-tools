@@ -3,19 +3,21 @@ import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    computed,
     inject,
     input,
     InputSignal,
     InputSignalWithTransform,
     output,
     OutputEmitterRef,
+    Signal,
 } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIcon } from '@angular/material/icon';
 import { MatListItem, MatListItemIcon, MatListItemTitle, MatNavList } from '@angular/material/list';
 import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltip } from '@angular/material/tooltip';
 
-import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '@rt-tools/core';
 import { INullable } from '@rt-tools/utils';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtHideTooltipDirective } from '../../tooltip';
@@ -48,6 +50,7 @@ const BEM_BLOCK: string = 'rtui-side-menu-sub-item';
         RtHideTooltipDirective,
     ],
     providers: [
+        BreakpointService,
         {
             provide: MAT_TOOLTIP_DEFAULT_OPTIONS,
             useValue: {
@@ -57,15 +60,20 @@ const BEM_BLOCK: string = 'rtui-side-menu-sub-item';
     ],
 })
 export class RtuiSideMenuSubItemComponent {
+    readonly #breakpoints: BreakpointService = inject(BreakpointService);
+
+    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
     public readonly menuRef: RtuiSideMenuComponent = inject(RtuiSideMenuComponent);
 
     public item: InputSignal<ISideMenu.Item> = input.required<ISideMenu.Item>();
-    public isMobile: InputSignalWithTransform<INullable<boolean>, INullable<boolean>> = input<INullable<boolean>, INullable<boolean>>(
-        false,
-        {
-            transform: booleanAttribute,
-        }
-    );
+    /**
+     * Признак узкого экрана.
+     *
+     * @deprecated Кит определяет его сам — `BreakpointService` из `@rt-tools/core`. Вход
+     * оставлен ради приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
+     */
+    public isMobile: InputSignal<INullable<boolean>> = input<INullable<boolean>>(null);
     public isSubMenuXScrollEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });

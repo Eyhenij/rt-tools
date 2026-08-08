@@ -4,7 +4,7 @@
         mat-icon-button
         matTooltipPosition="left"
         [matTooltip]="currentFilter().operatorType | titlecase"
-        [matTooltipDisabled]="isMobile()"
+        [matTooltipDisabled]="narrow()"
         [matMenuTriggerFor]="menuTpl"
         (click)="$event.stopPropagation()"
         (mousedown)="$event.stopPropagation()">
@@ -103,7 +103,7 @@
             mat-icon-button
             matTooltipPosition="left"
             matTooltip="Clear filter"
-            [matTooltipDisabled]="isMobile()"
+            [matTooltipDisabled]="narrow()"
             [disabled]="!currentFilter().value"
             (click)="onFilterValueChange('')">
             <mat-icon [rtIconOutlined]="true">close</mat-icon>
@@ -126,7 +126,7 @@
             mat-icon-button
             matTooltipPosition="left"
             matTooltip="Clear filter"
-            [matTooltipDisabled]="isMobile()"
+            [matTooltipDisabled]="narrow()"
             [disabled]="!currentFilter().value"
             (click)="onFilterValueChange('')">
             <mat-icon [rtIconOutlined]="true">close</mat-icon>

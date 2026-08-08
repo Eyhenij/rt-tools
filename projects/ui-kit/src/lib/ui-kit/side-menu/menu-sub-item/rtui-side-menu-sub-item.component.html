@@ -21,9 +21,9 @@
                         rtElem="text"
                         matTooltipPosition="above"
                         [matTooltip]="item.name"
-                        [matTooltipDisabled]="!isSubMenuTooltipsShown() || isMobile()"
+                        [matTooltipDisabled]="!isSubMenuTooltipsShown() || narrow()"
                         [rtHideTooltipDirective]="titleTpl"
-                        [isTooltipShown]="isSubMenuTooltipsShown() && !isMobile()">
+                        [isTooltipShown]="isSubMenuTooltipsShown() && !narrow()">
                         {{ item.name }}
                     </div>
 
@@ -60,9 +60,9 @@
                         rtElem="title"
                         matTooltipPosition="above"
                         [matTooltip]="item.name"
-                        [matTooltipDisabled]="!isSubMenuTooltipsShown() || isMobile()"
+                        [matTooltipDisabled]="!isSubMenuTooltipsShown() || narrow()"
                         [rtHideTooltipDirective]="headerTitleTpl"
-                        [isTooltipShown]="isSubMenuTooltipsShown() && !isMobile()">
+                        [isTooltipShown]="isSubMenuTooltipsShown() && !narrow()">
                         {{ item.name }}
                     </div>
                 }

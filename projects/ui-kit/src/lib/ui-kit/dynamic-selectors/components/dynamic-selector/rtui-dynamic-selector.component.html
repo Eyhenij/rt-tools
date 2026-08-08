@@ -8,7 +8,6 @@
                 [isIconOutlined]="true" />
         } @else {
             <rtui-dynamic-selector-selected-list
-                [isMobile]="isMobile()"
                 [keyExp]="keyExp()"
                 [displayExp]="displayExp()"
                 [selectedEntities]="selectedEntities()"
@@ -78,7 +77,6 @@
                             [appearance]="appearance()"
                             [keyExp]="keyExp()"
                             [displayExp]="displayExp()"
-                            [isMobile]="isMobile()"
                             [isSingleSelection]="isSingleSelection()"
                             [isSelectAllButtonShown]="isSelectAllButtonShown()"
                             [loading]="loading()"
@@ -106,7 +104,6 @@
 
 <ng-template #listActionsTpl>
     <rtui-dynamic-selector-list-actions
-        [isMobile]="isMobile()"
         [disabled]="disabled()"
         [isResetButtonDisabled]="isResetButtonDisabled()"
         [isClearButtonDisabled]="isClearButtonDisabled()"

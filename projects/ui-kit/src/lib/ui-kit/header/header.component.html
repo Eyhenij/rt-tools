@@ -1,6 +1,6 @@
 <rtui-toolbar>
     <ng-container *rtuiToolbarLeft>
-        @if (isMobile() && isMobileMenuButtonShown()) {
+        @if (narrow() && isMobileMenuButtonShown()) {
             <button mat-icon-button rtBlock="mobile-menu-button" (click)="openSideMenu()">
                 <mat-icon>menu</mat-icon>
             </button>
