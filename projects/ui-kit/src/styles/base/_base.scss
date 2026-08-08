@@ -57,7 +57,10 @@ $palette: (
 // All CSS custom property emission lives in base/_tokens.scss:
 //   --rt-color-* primitives, --rt-{bg,text,icon,border}-* semantic, and foundations.
 
-:root {
-    // Buttons
-    --rt-button-box-shadow: 0 3px 5px -1px rgb(0 0 0 / 20%), 0 6px 10px 0 rgb(0 0 0 / 12%), 0 1px 18px 0 rgb(0 0 0 / 14%);
+// Base reset for every button on the page. It used to ride along with the legacy `.c-button`
+// set; the set is gone, the reset is not — dropping it would move the text metrics of every
+// button in a consuming app, which has nothing to do with retiring a class set.
+button {
+    cursor: pointer;
+    line-height: 1;
 }

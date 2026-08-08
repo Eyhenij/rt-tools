@@ -7,7 +7,7 @@ The library currently renders controls from two visual generations:
 - **`rtui-*` design-system controls** (e.g. `rtui-button`) styled by the `--rt-*` design tokens — the target look;
 - **raw Material buttons hardcoded inside composite components** — e.g. the footers of
   `rtui-aside-container` and `rtui-multi-selector-popup` use `mat-button` / `mat-flat-button`
-  (the latter still carrying the dead legacy `c-button` class and a hardcoded uppercase label).
+  (the latter with a hardcoded uppercase label).
 
 Consumer apps cannot pick which look they get, and the two looks diverge (height, radius,
 typography, colors). `RT_UI_CONFIG` makes the look a **consumer decision** at three levels:
@@ -56,15 +56,15 @@ provideRtUi({
 ### Phase 1 — migrate composite-component footers onto `rtui-button`
 
 Replace the hardcoded Material buttons inside the library with `rtui-button` so the config
-governs them. Inventory (grep `mat-button|mat-flat-button|mat-stroked-button|c-button` in
+governs them. Inventory (grep `mat-button|mat-flat-button|mat-stroked-button` in
 `projects/ui-kit/src/lib/ui-kit`):
 
-| Component                        | Spot                                 | Notes                                       |
-| -------------------------------- | ------------------------------------ | ------------------------------------------- |
-| `rtui-aside-container`           | footer Cancel/Submit                 | keep `cdkFocusInitial` on Cancel            |
-| `rtui-multi-selector-popup`      | footer Cancel/SUBMIT                 | drop `c-button` class + hardcoded uppercase |
-| `rtui-modal` footers             | confirm/cancel actions               | check all modal templates                   |
-| other spots surfaced by the grep | file/image uploaders, table controls | case by case                                |
+| Component                        | Spot                                 | Notes                              |
+| -------------------------------- | ------------------------------------ | ---------------------------------- |
+| `rtui-aside-container`           | footer Cancel/Submit                 | keep `cdkFocusInitial` on Cancel   |
+| `rtui-multi-selector-popup`      | footer Cancel/SUBMIT                 | drop the hardcoded uppercase label |
+| `rtui-modal` footers             | confirm/cancel actions               | check all modal templates          |
+| other spots surfaced by the grep | file/image uploaders, table controls | case by case                       |
 
 **Compatibility rule:** during Phase 1 these internal buttons resolve their design from the
 config with a **`'material'` fallback** (not the library default `'custom'`), so a consumer
@@ -92,7 +92,7 @@ Once consumers have had a release cycle to set `design` explicitly:
 
 ### Phase 4 — cleanup
 
-- Remove the dead `c-button` classes and hardcoded label casing from templates.
+- Remove the hardcoded label casing from templates.
 - Deprecate (JSDoc `@deprecated`, one minor release) and then remove any per-component
   inputs that merely duplicated what the config expresses better.
 - Storybook: add a global toolbar toggle that re-provides `RT_UI_CONFIG` so every story can

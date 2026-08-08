@@ -61,21 +61,27 @@ major the internal set stops being emitted and gets inlined into rules.
 - Planned unification (major): emit defaults via `var(--override, default)` indirection so all
   components are ancestor-overridable without `!important`.
 
-## Buttons: legacy vs rtui
+## Buttons: the retired `.c-button` set
 
-`.c-button` (\_button.scss) is **deprecated**; `.rtui-btn` (\_rtui_button.scss) is the system.
-Both stay until the next major because consumers apply `.c-button` classes and override
-`--rt-button-*` directly. Migration map:
+`.c-button` is **gone** — `.rtui-btn` (\_rtui_button.scss) is the only button set the kit ships.
+The `--rt-button-*` custom properties went with it; an app that overrode them (dark mode
+included) overrides `--rt-rtui-btn-*` instead. Migration map:
 
-| legacy `.c-button`        | `.rtui-btn`                                                           |
-| ------------------------- | --------------------------------------------------------------------- |
-| `--fill-green` / `-light` | `rtui-btn-success` / `-light`                                         |
-| `--fill-red` / `-light`   | `rtui-btn-error` / `-light`                                           |
-| `--fill-blue`             | `rtui-btn-accent-light`                                               |
-| `--fill-base/black/gray`  | `rtui-btn-secondary` (+`-light`)                                      |
-| `--outline-{blue,base}`   | `rtui-btn-{accent,secondary}-outline`                                 |
-| `--txt-*`, `--fab`        | no equivalent yet — needs a text/icon appearance in `.rtui-btn` first |
-| `--size-{sm,md,l}`        | `rtui-btn-{sm,md,lg}` (+`-full`)                                      |
+| retired `.c-button`       | `.rtui-btn`                                                              |
+| ------------------------- | ------------------------------------------------------------------------ |
+| `--fill-green` / `-light` | `rtui-btn-success` / `-light`                                            |
+| `--fill-red` / `-light`   | `rtui-btn-error` / `-light`                                              |
+| `--fill-blue`             | `rtui-btn-accent-light`                                                  |
+| `--fill-base/black/gray`  | `rtui-btn-secondary` (+`-light`)                                         |
+| `--outline-{blue,base}`   | `rtui-btn-{accent,secondary}-outline`                                    |
+| `--txt-{base,gray,blue}`  | `rtui-btn-{secondary,secondary,accent}-text`                             |
+| `--size-{sm,md,l}`        | `rtui-btn-{sm,md,lg}` (+`-full`) — a text appearance sizes itself        |
+| `--fab`                   | none: an icon-only button is styled by the component that owns it        |
+| `--h-{30,40}`, `--shadow` | none — pick a size class, or declare the box on your own component class |
+| `--disabled`              | none: `.rtui-btn:disabled` dims the button, the class is not needed      |
+
+`button { cursor: pointer; line-height: 1 }` used to ride along with the set and now lives in
+`styles/base/_base.scss` — it is a page-wide reset, not part of any button set.
 
 ## Material bridge
 

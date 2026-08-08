@@ -37,6 +37,25 @@ export const ManyItems: Story = {
     },
 };
 
+/**
+ * Кнопка копирования под наведением. Она есть в разметке каждой копируемой ячейки, но до
+ * наведения скрыта — в снимок остальных историй попадает пустое место, а не её оформление.
+ */
+export const CopyButtonOnHover: Story = {
+    args: {
+        isMultiSelect: false,
+        isSelectorsColumnShown: true,
+        isSelectorsColumnDisabled: false,
+        isMobile: false,
+        data: fewItems,
+        sortModel: {
+            propertyName: 'id',
+            sortDirection: LIST_SORT_ORDER_ENUM.ASC,
+        },
+    },
+    parameters: { snapshotHover: 'rtui-table-base-cell:has(.base-cell__copy-button)' },
+};
+
 export const FewItems: Story = {
     args: {
         isMultiSelect: false,

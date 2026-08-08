@@ -4,7 +4,7 @@
     <button
         type="button"
         rtBlock="aside-error-box-button"
-        [class]="['c-button', 'c-button--txt-base--size-sm'] | concatClasses"
+        [class]="['rtui-btn', 'rtui-btn-secondary-text'] | concatClasses"
         [rtMod]="{ complete: isErrorCopied() }"
         (click)="onCopyToClipboard()">
         @if (isErrorCopied()) {

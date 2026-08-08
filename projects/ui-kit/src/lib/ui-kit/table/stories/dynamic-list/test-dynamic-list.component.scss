@@ -12,4 +12,22 @@
         width: 100px;
         height: 40px;
     }
+
+    // Так приложение гасит собственный вид материальной кнопки-действия. Кит своих кнопок
+    // этим набором больше не оформляет, и витрина показывает приём, а не заимствует его.
+    .demo-fab {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        background-color: transparent;
+        color: var(--rt-color-neutral-60);
+        line-height: 1;
+        transition: all 0.15s linear;
+
+        &:hover {
+            color: var(--rt-color-neutral-100);
+        }
+    }
 }
