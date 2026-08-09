@@ -36,7 +36,10 @@ g "сервис" "$TREE/libs/site/x/data-access/src/lib/a.service.ts" angular-pa
 g "документ" "$TREE/docs/adr/0001-x.md" doc-style
 g "спек домена" "$TREE/docs/specs/bookings/spec.md" spec-driven
 g "папка задачи" "$TREE/docs/tasks/RT-1-x/plan.md" task-flow
-g "манифест зависимостей" "$TREE/package.json" dependencies
+g "манифест зависимостей" "$TREE/package.json" dependencies '"prettier": "3.9.6"'
+# Правка скриптов зависимостью не является: правило про точные версии, снимок дерева и подмены
+# на неё не вступает. Снимок правится тем же коммитом и правило потребует уже он.
+g "скрипт в манифесте" "$TREE/package.json" PASS '"test:visual": "test-storybook --url http://localhost:6006"'
 
 # --- правило вступает от того, ЧТО пишут ----------------------------------------------
 # Обращение к среде исполнения приходит в обычный сервис, и по имени файла его не видно. Карта
