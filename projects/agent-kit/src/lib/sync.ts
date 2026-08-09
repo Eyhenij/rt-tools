@@ -9,9 +9,10 @@ import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'n
 import { dirname, join } from 'node:path';
 
 import { collectAssets, IAsset, targetOf } from './assets.js';
-import { IEntryOfCatalog, readCatalog } from './catalog.js';
+import { IEntryOfCatalog, IGapOfVariant, readCatalog, variantGaps } from './catalog.js';
 import { ICompanion, pathOf, planCompanion } from './companion.js';
 import { IConfig, OVERRIDES_DIR } from './config.js';
+import { bindingOf, IHookBinding, unboundHooks } from './hooks-map.js';
 import { IPlanned, isPending, isRefusal, planFile } from './plan.js';
 import { mergeDocuments, parseDocument, renderDocument } from './sections.js';
 import { readStamped } from './stamp.js';
@@ -32,6 +33,22 @@ export interface ISyncResult {
      * нельзя — брошенный файл читается как действующее правило, и агент по нему работает.
      */
     readonly abandoned: readonly string[];
+    /**
+     * Ресурсы, у которых виды есть, а вида под выбор дерева нет.
+     *
+     * Пропустить такой ресурс молча значит разложить правило и не разложить инструмент, который
+     * оно зовёт: дерево получает указание без исполнителя и узнаёт об этом, когда команда из
+     * правила не находится. Поэтому непустой список — отказ раскладки наравне с дыркой без
+     * значения и с файлом, который правили руками.
+     */
+    readonly gaps: readonly IGapOfVariant[];
+    /**
+     * Разложенные гарды, которых нет в настройке агента: файл лежит, а позвать его некому.
+     *
+     * Раскладку это не отбивает — настройка принадлежит дереву, и пакет в неё не пишет, — но и
+     * молчать нельзя: гард, который не зовут, неотличим от гарда, который всё пропускает.
+     */
+    readonly unbound: readonly IHookBinding[];
     readonly written: readonly string[];
 }
 
@@ -73,6 +90,25 @@ function abandonedOf(config: IConfig, root: string, assetsDir: string): readonly
         });
 }
 
+/**
+ * Что о себе говорят гарды, которые дерево берёт. Читается у ресурсов, а не у разложенных
+ * файлов: карта нужна и до первой раскладки — чтобы было что вставить в настройку.
+ */
+function bindingsOf(config: IConfig, assetsDir: string): readonly IHookBinding[] {
+    const bindings: IHookBinding[] = [];
+    for (const asset of collectAssets(config, assetsDir)) {
+        if (asset.kind !== 'hooks') {
+            continue;
+        }
+        const binding: IHookBinding | null = bindingOf(asset.text, asset.target);
+        if (binding) {
+            bindings.push(binding);
+        }
+    }
+
+    return bindings;
+}
+
 export function planSync(config: IConfig, root: string, version: string, assetsDir: string): ISyncResult {
     const planned: IPlanned[] = [];
     const missing: Map<string, readonly string[]> = new Map();
@@ -93,13 +129,21 @@ export function planSync(config: IConfig, root: string, version: string, assetsD
         }
     }
 
-    return { planned, missing, companions, abandoned: abandonedOf(config, root, assetsDir), written: [] };
+    return {
+        planned,
+        missing,
+        companions,
+        abandoned: abandonedOf(config, root, assetsDir),
+        gaps: variantGaps(readCatalog(assetsDir), config),
+        unbound: unboundHooks(bindingsOf(config, assetsDir), root),
+        written: [],
+    };
 }
 
 /** Раскладка. Отказ хотя бы по одному файлу не пишет ничего: половина разложенного хуже целого. */
 export function runSync(config: IConfig, root: string, version: string, assetsDir: string): ISyncResult {
     const result: ISyncResult = planSync(config, root, version, assetsDir);
-    if (result.missing.size || result.planned.some((entry: IPlanned): boolean => isRefusal(entry.outcome))) {
+    if (result.missing.size || result.gaps.length || result.planned.some((entry: IPlanned): boolean => isRefusal(entry.outcome))) {
         return result;
     }
 

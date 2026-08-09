@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Гард главной ветки. PreToolUse на вызове коммита.
 #
 # Коммит в главную ветку минует ветку, PR и разбор, а поставка построена на них целиком —

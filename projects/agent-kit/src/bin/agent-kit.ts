@@ -11,7 +11,8 @@ import { fileURLToPath } from 'node:url';
 import process from 'node:process';
 
 import { IEntryOfCatalog, readCatalog, resolveSelection } from '../lib/catalog.js';
-import { doctor, IEnvironment, init, IOutcomeOfCommand, list, sync } from '../lib/commands.js';
+import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, list, sync } from '../lib/commands.js';
+import { staleBuild } from '../lib/freshness.js';
 import { packageRootFrom } from '../lib/package-root.js';
 import { IChoice } from '../lib/picker.js';
 import { IAxis, IOptionOfAxis, readAxes } from '../lib/variants.js';
@@ -25,6 +26,7 @@ const USAGE: readonly string[] = [
     '  sync            разложить ресурсы пакета в дерево проекта',
     '  sync --check    ничего не писать, отказать при расхождении — для гейта пуша',
     '  doctor          рассказать о состоянии раскладки, ничего не меняя',
+    '  adopt [файлы]   отдать пакету файлы, лежащие на его путях не от него',
     '',
     '  --root <путь>   корень проекта; по умолчанию текущий каталог',
     '',
@@ -47,9 +49,19 @@ const USAGE: readonly string[] = [
  */
 function environmentOf(root: string): IEnvironment {
     const pkg: string = packageRootFrom(dirname(fileURLToPath(import.meta.url)));
-    const version: string = (JSON.parse(readFileSync(join(pkg, 'package.json'), 'utf8')) as { version: string }).version;
+    const manifest: { name: string; version: string } = JSON.parse(readFileSync(join(pkg, 'package.json'), 'utf8')) as {
+        name: string;
+        version: string;
+    };
 
-    return { root, version, assetsDir: join(pkg, 'assets') };
+    return {
+        root,
+        version: manifest.version,
+        assetsDir: join(pkg, 'assets'),
+        // Сверка со своими исходниками возможна только отсюда: здесь пакет знает, где лежит сам.
+        // У потребителя исходников рядом нет, и сверка молчит.
+        stale: staleBuild(pkg, manifest.name),
+    };
 }
 
 function optionOf(argv: readonly string[], name: string, fallback: string): string {
@@ -182,7 +194,9 @@ export async function main(argv: readonly string[]): Promise<IOutcomeOfCommand> 
                 return variants;
             }
 
-            return variants === null ? { code: 1, lines: ['выбор брошен — ничего не заведено'] } : init(env.root, selection, variants);
+            return variants === null
+                ? { code: 1, lines: ['выбор брошен — ничего не заведено'] }
+                : init(env.root, selection, variants, env.assetsDir);
         }
         case 'list':
             return list(env);
@@ -190,6 +204,11 @@ export async function main(argv: readonly string[]): Promise<IOutcomeOfCommand> 
             return sync(env, argv.includes('--check'));
         case 'doctor':
             return doctor(env);
+        case 'adopt':
+            return adopt(
+                env,
+                argv.slice(1).filter((value: string): boolean => !value.startsWith('--') && value !== optionOf(argv, '--root', ''))
+            );
         default:
             return { code: command ? 1 : 0, lines: command ? [`неизвестная команда «${command}»`, '', ...USAGE] : USAGE };
     }

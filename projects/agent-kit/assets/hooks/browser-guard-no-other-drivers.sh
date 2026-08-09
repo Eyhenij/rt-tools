@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# rt-hook: PreToolUse mcp__playwright__.*|mcp__chrome-devtools__.*|Bash
 # Гард обходных путей к браузеру. PreToolUse.
 #
 # Закрепление профиля чего-то стоит только тогда, когда дверь одна. Здесь перечислены двери,

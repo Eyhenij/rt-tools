@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# rt-hook: PreToolUse AskUserQuestion
 # PreToolUse guard for AskUserQuestion.
 #
 # The browser choice is already made and pinned in browser-device-id.sh — asking again is noise, and the

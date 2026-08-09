@@ -3,15 +3,18 @@
  * а `process.exit` зовёт только точка входа — иначе ни одну из них нельзя было бы проверить
  * спекой, не перехватывая поток вывода.
  */
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, renameSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { collectAssets } from './assets.js';
-import { IEntryOfCatalog, isChosen, readCatalog } from './catalog.js';
+import { IEntryOfCatalog, IGapOfVariant, isChosen, readCatalog } from './catalog.js';
 import { ICompanion, isUnfilled, TCompanionState } from './companion.js';
 import { CONFIG_PATH, DEFAULT_LAYOUT, IConfig, KINDS, OVERRIDES_DIR, readConfig, TKind } from './config.js';
+import { IStaleBuild } from './freshness.js';
+import { hooksSection, IHookBinding, SETTINGS_PATH } from './hooks-map.js';
 import { IPlanned, isRefusal, TOutcome } from './plan.js';
 import { ISyncResult, pendingOf, planSync, runSync } from './sync.js';
+import { placeholdersOf } from './vars.js';
 import { IAxis, IOptionOfAxis, readAxes, unansweredAxes } from './variants.js';
 
 export interface IOutcomeOfCommand {
@@ -24,6 +27,12 @@ export interface IEnvironment {
     readonly root: string;
     readonly version: string;
     readonly assetsDir: string;
+    /**
+     * Ресурсы правлены позже, чем собран пакет, из которого идёт раскладка; `null` — сверять не с
+     * чем. Считается на краю, где пакет знает своё расположение: библиотечные модули работают с
+     * тем каталогом ресурсов, который им дали, и о существовании исходников не знают.
+     */
+    readonly stale?: IStaleBuild | null;
 }
 
 /** Что с файлом сделала раскладка. Прошедшее время здесь правда: `sync` уже записал. */
@@ -76,6 +85,9 @@ const COMPANION_WORD: Readonly<Record<TCompanionState, string>> = {
 
 const NO_CONFIG: string = `нет \`${CONFIG_PATH}\` — начни с \`agent-kit init\``;
 
+/** Куда уезжает прежнее содержимое файла, отданного пакету. */
+export const KEPT_SUFFIX: string = '.before-rt-kit';
+
 const holes: (result: ISyncResult) => string[] = (result: ISyncResult): string[] =>
     [...result.missing].map(
         ([asset, names]: [string, readonly string[]]): string =>
@@ -107,19 +119,71 @@ const abandonedLines: (result: ISyncResult) => string[] = (result: ISyncResult):
           ]
         : [];
 
+/**
+ * Ресурс, у которого нет вида под выбор дерева. Называется и то, чего не хватает, и оба способа
+ * это снять: отказ без действия обходят, а не исполняют.
+ */
+const gapLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] =>
+    result.gaps.flatMap((gap: IGapOfVariant): string[] => [
+        `  ${gap.kind}/${gap.name} — есть только под ${gap.axis}: ${gap.available.join(', ')}, а выбран «${gap.chosen}»`,
+        `      либо заведи вид под «${gap.chosen}», либо назови в skip: ${gap.ids.join(', ')}`,
+    ]);
+
+/**
+ * Гарды, которых нет в настройке агента, и готовый кусок для неё.
+ *
+ * Кусок печатается целиком, а не одними именами: правку в свою настройку делает проект, и
+ * список «не хватает трёх» заставляет собирать JSON по памяти — там и теряется образец вызова.
+ */
+const unboundLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] =>
+    result.unbound.length
+        ? [
+              `гарды разложены, но в \`${SETTINGS_PATH}\` их не зовёт никто: ${result.unbound.length}`,
+              ...result.unbound.map((binding: IHookBinding): string => `  ${binding.path} — ${binding.event} ${binding.matcher}`),
+              `  вставь в \`${SETTINGS_PATH}\` раздел \`hooks\` — готовый кусок ниже:`,
+              ...JSON.stringify({ hooks: hooksSection(result.unbound) }, null, 4)
+                  .split('\n')
+                  .map((line: string): string => `  ${line}`),
+          ]
+        : [];
+
 const describe: (result: ISyncResult) => string[] = (result: ISyncResult): string[] => [
     ...holes(result),
+    ...gapLines(result),
+    ...unboundLines(result),
     ...pendingOf(result).map((entry: IPlanned): string => `  ${entry.path} — ${STATE_WORD[entry.outcome]}`),
     ...unfilled(result).map((entry: ICompanion): string => `  ${entry.path} — ${COMPANION_WORD[entry.state]}`),
     ...abandonedLines(result),
 ];
+
+/** Имена дырок во всех ресурсах, которые дерево берёт. Без конфига — ни одной: выбор неизвестен. */
+function placeholdersIn(config: IConfig | null, assetsDir: string): readonly string[] {
+    if (!config) {
+        return [];
+    }
+    const names: string[] = [];
+    for (const asset of collectAssets(config, assetsDir)) {
+        for (const name of placeholdersOf(asset.text)) {
+            if (!names.includes(name)) {
+                names.push(name);
+            }
+        }
+    }
+
+    return names.sort();
+}
 
 /**
  * Что проект выбрал при заведении конфига. Пустой список — весь набор; выбор приходит сюда
  * готовым, потому что взять его негде, кроме края: у строки запуска флаг, у терминала вопрос,
  * а у неинтерактивного прогона нет ни того ни другого — и решать это команде не по чину.
  */
-export function init(root: string, only: readonly string[] = [], variants: Readonly<Record<string, string>> = {}): IOutcomeOfCommand {
+export function init(
+    root: string,
+    only: readonly string[] = [],
+    variants: Readonly<Record<string, string>> = {},
+    assetsDir: string = ''
+): IOutcomeOfCommand {
     const path: string = join(root, CONFIG_PATH);
     if (existsSync(path)) {
         return { code: 0, lines: [`${CONFIG_PATH} уже есть — оставлен как есть`] };
@@ -130,6 +194,11 @@ export function init(root: string, only: readonly string[] = [], variants: Reado
     mkdirSync(join(root, CONFIG_PATH, '..'), { recursive: true });
     writeFileSync(path, `${JSON.stringify(config, null, 4)}\n`, 'utf8');
 
+    // Значения, которых пакет ждёт от дерева, называются здесь, а не отказом раскладки: узнать
+    // о них на первом же `sync` значит начать установку с ошибки, притом что список известен
+    // сразу — он вычитывается из текстов выбранных ресурсов.
+    const wanted: readonly string[] = assetsDir ? placeholdersIn(readConfig(root), assetsDir) : [];
+
     return {
         code: 0,
         lines: [
@@ -137,16 +206,39 @@ export function init(root: string, only: readonly string[] = [], variants: Reado
             only.length ? `выбрано ресурсов: ${only.length}` : 'выбрано всё, что везёт пакет',
             ...Object.entries(variants).map(([axis, value]: [string, string]): string => `${axis}: ${value}`),
             `заведён ${OVERRIDES_DIR}/ — надстройки проекта кладутся сюда путём ресурса`,
+            ...(wanted.length
+                ? [
+                      `значения, которых ждут ресурсы, — впиши их в \`vars\` конфига: ${wanted.length}`,
+                      ...wanted.map((name: string): string => `  {{${name}}}`),
+                  ]
+                : []),
             'дальше: `agent-kit sync`, а своё дописывается в `.claude/rt-kit/gate-map.sh` и `project.sh`',
         ],
     };
 }
+
+/**
+ * Отказ на устаревшей сборке. Раскладка из неё положила бы прежнюю редакцию ресурса и назвала
+ * это сделанным: неправда дороже отказа — её замечают, когда правленое правило не действует.
+ */
+const staleRefusal: (stale: IStaleBuild) => IOutcomeOfCommand = (stale: IStaleBuild): IOutcomeOfCommand => ({
+    code: 1,
+    lines: [
+        'раскладка не начата: строка запуска читает собранное, а ресурсы правлены позже',
+        `  правлено: ${stale.newest}`,
+        `  исходные ресурсы: ${stale.source}`,
+        '  собери пакет и повтори',
+    ],
+});
 
 export function sync(env: IEnvironment, check: boolean): IOutcomeOfCommand {
     const { root, version, assetsDir } = env;
     const config: IConfig | null = readConfig(root);
     if (!config) {
         return { code: 1, lines: [NO_CONFIG] };
+    }
+    if (env.stale) {
+        return staleRefusal(env.stale);
     }
 
     // Ось без ответа отбивает раскладку целиком, а не пропускает свои ресурсы молча: правило
@@ -163,14 +255,14 @@ export function sync(env: IEnvironment, check: boolean): IOutcomeOfCommand {
         // Незаполненный компаньон — такое же расхождение, как отставший файл: правило разложено,
         // а имён этого дерева при нём нет, и агент читает указание, которому некуда примениться.
         const empty: readonly ICompanion[] = unfilled(result);
-        if (!result.missing.size && !pending.length && !empty.length) {
+        // Гард, которого не зовёт настройка агента, — такое же расхождение, как отставший файл:
+        // он разложен, он коммитится, и по дереву его не отличить от работающего.
+        const count: number = result.missing.size + result.gaps.length + pending.length + empty.length + result.unbound.length;
+        if (!count) {
             return { code: 0, lines: [`sync --check: разложенное сходится с пакетом v${version}`] };
         }
 
-        return {
-            code: 1,
-            lines: [`sync --check: расхождений ${result.missing.size + pending.length + empty.length}`, ...describe(result)],
-        };
+        return { code: 1, lines: [`sync --check: расхождений ${count}`, ...describe(result)] };
     }
 
     const result: ISyncResult = runSync(config, root, version, assetsDir);
@@ -178,6 +270,15 @@ export function sync(env: IEnvironment, check: boolean): IOutcomeOfCommand {
     // сказать неправду — на диске его нет.
     if (result.missing.size) {
         return { code: 1, lines: ['раскладка не начата: нечего подставить в дырки', ...holes(result)] };
+    }
+
+    // Ресурс без вида под выбор дерева отбивает раскладку целиком, а не выпадает из неё молча:
+    // правило, разложенное без инструмента, который оно зовёт, читается как действующее.
+    if (result.gaps.length) {
+        return {
+            code: 1,
+            lines: ['раскладка не начата: у этих ресурсов нет вида под выбор дерева', ...gapLines(result)],
+        };
     }
 
     const refused: readonly IPlanned[] = result.planned.filter((entry: IPlanned): boolean => isRefusal(entry.outcome));
@@ -188,15 +289,82 @@ export function sync(env: IEnvironment, check: boolean): IOutcomeOfCommand {
                 'раскладка не начата: эти файлы пакет переписывать не станет',
                 ...refused.map((entry: IPlanned): string => `  ${entry.path} — ${DONE_WORD[entry.outcome]}`),
                 'правку надо либо перенести в надстройку, либо снять — и повторить',
+                `положенное не пакетом отдаётся ему командой \`agent-kit adopt\`: прежнее содержимое ляжет рядом с пометкой \`${KEPT_SUFFIX}\``,
             ],
         };
     }
 
+    // Раскладка удалась, а гарды могут остаться неподключёнными: настройка агента принадлежит
+    // дереву, и пакет в неё не пишет. Код возврата остаётся нулевым — файлы легли, — но молчать
+    // об этом нельзя: узнают иначе, когда что-нибудь пройдёт мимо гарда.
     return {
         code: 0,
-        lines: result.written.length
-            ? [`разложено файлов: ${result.written.length}`, ...result.written.map((path: string): string => `  ${path}`)]
-            : ['всё уже разложено'],
+        lines: [
+            ...(result.written.length
+                ? [`разложено файлов: ${result.written.length}`, ...result.written.map((path: string): string => `  ${path}`)]
+                : ['всё уже разложено']),
+            ...unboundLines(result),
+        ],
+    };
+}
+
+/**
+ * Отдать пакету файл, который лежит в дереве не от него.
+ *
+ * Пока команды не было, `sync` отказывал на такой файл поимённо и предлагал «перенести правку в
+ * надстройку или снять» — то есть работу, которую делают руками, и до неё же сводилась вся
+ * установка в живое дерево. При этом один чужой файл останавливал раскладку целиком.
+ *
+ * Молчаливой перезаписи здесь нет и быть не может: в файле лежит то, чего в дереве больше нигде
+ * нет. Поэтому переход — это переименование прежнего содержимого рядом и повторный `sync`:
+ * пакет кладёт своё, а прежнее остаётся на диске под именем с пометкой и ждёт разбора.
+ */
+export function adopt(env: IEnvironment, names: readonly string[]): IOutcomeOfCommand {
+    const { root, version, assetsDir } = env;
+    const config: IConfig | null = readConfig(root);
+    if (!config) {
+        return { code: 1, lines: [NO_CONFIG] };
+    }
+
+    const foreign: readonly IPlanned[] = planSync(config, root, version, assetsDir).planned.filter(
+        (entry: IPlanned): boolean => entry.outcome === 'foreign'
+    );
+    if (!foreign.length) {
+        return { code: 0, lines: ['чужих файлов на путях пакета нет'] };
+    }
+
+    // Имена принимаются как их печатает `sync`: путём в дереве. Без имён отдаются все — на
+    // свежей установке их бывает столько же, сколько ресурсов, и перечислять их руками значит
+    // делать ту же работу, ради которой команда заведена.
+    const wanted: readonly IPlanned[] = names.length
+        ? foreign.filter((entry: IPlanned): boolean => names.some((name: string): boolean => entry.path.endsWith(name)))
+        : foreign;
+    if (!wanted.length) {
+        return {
+            code: 1,
+            lines: ['ни одно имя не отвечает чужому файлу; чужие сейчас такие:', ...foreign.map((e: IPlanned): string => `  ${e.path}`)],
+        };
+    }
+
+    const moved: string[] = [];
+    const blocked: string[] = [];
+    for (const entry of wanted) {
+        const path: string = join(root, entry.path);
+        const kept: string = `${path}${KEPT_SUFFIX}`;
+        if (existsSync(kept)) {
+            blocked.push(`  ${entry.path}${KEPT_SUFFIX} — уже лежит, разбери его прежде`);
+            continue;
+        }
+        renameSync(path, kept);
+        moved.push(`  ${entry.path} → ${entry.path}${KEPT_SUFFIX}`);
+    }
+
+    return {
+        code: blocked.length ? 1 : 0,
+        lines: [
+            ...(moved.length ? [`прежнее содержимое отложено: ${moved.length}`, ...moved, 'дальше: `agent-kit sync`'] : []),
+            ...(blocked.length ? ['не тронуто:', ...blocked] : []),
+        ],
     };
 }
 
@@ -237,6 +405,9 @@ export function doctor(env: IEnvironment): IOutcomeOfCommand {
         ...[...counted].map(([outcome, count]: [TOutcome, number]): string => `${STATE_WORD[outcome]}: ${count}`),
         ...describe(result),
         ...(unanswered.length ? ['не выбран вид — раскладка не начнётся:', ...axisLines(unanswered)] : []),
+        // Про устаревшую сборку `doctor` говорит, но отказом её не считает: он ничего не пишет,
+        // и прочитать состояние дерева можно и из вчерашней сборки — знать бы, что она вчерашняя.
+        ...(env.stale ? ['собранное отстало от исходников — раскладка откажет:', `  правлено: ${env.stale.newest}`] : []),
     ];
 
     return { code: 0, lines };

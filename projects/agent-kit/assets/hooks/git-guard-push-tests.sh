@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Гард проверок перед пушем. PreToolUse на вызове пуша.
 #
 # Пуш — это вход в конвейер: слияние в главную ветку запускает выкатку, и всё, что не

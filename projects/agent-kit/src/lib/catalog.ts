@@ -137,6 +137,72 @@ export function isChosen(entry: IEntryOfCatalog, selection: ISelection): boolean
     return !restricted || selection.only.includes(entry.id);
 }
 
+/** Ресурс, у которого виды есть, но ни один не отвечает тому, что выбрало дерево. */
+export interface IGapOfVariant {
+    readonly kind: TKind;
+    /** Имя без вида — под ним ресурс лёг бы в дерево. */
+    readonly name: string;
+    readonly axis: string;
+    /** Что выбрало дерево по этой оси. */
+    readonly chosen: string;
+    /** Виды, которые у ресурса есть на самом деле. */
+    readonly available: readonly string[];
+    /** Идентификаторы этих видов: ими же пробел и снимается через `skip`. */
+    readonly ids: readonly string[];
+}
+
+/**
+ * Ресурсы, оставшиеся без вида под выбор дерева.
+ *
+ * Молчаливый пропуск такого ресурса — худший из исходов. Правило поставки едет тремя видами, а
+ * команды заведения задачи и сверки очереди — одним: дерево, выбравшее чужой хостинг, получает
+ * правило, которое зовёт три команды, и ни одного скрипта под ними. Отказа при этом не бывает —
+ * ресурс просто не приезжает, и узнают об этом, когда команда из правила не находится.
+ *
+ * Отсюда правило: **ресурс с видами, ни один из которых не совпал, — отказ, а не пропуск.**
+ * Снимается он двумя способами, и оба явные: завести недостающий вид в пакете либо назвать
+ * существующие в `skip` — дерево тем самым говорит, что обходится без этого ресурса.
+ */
+export function variantGaps(catalog: readonly IEntryOfCatalog[], selection: ISelection): readonly IGapOfVariant[] {
+    const groups: Map<string, IEntryOfCatalog[]> = new Map();
+    for (const entry of catalog) {
+        if (entry.variant === null) {
+            continue;
+        }
+        const key: string = `${entry.kind}/${entry.name}`;
+        groups.set(key, [...(groups.get(key) ?? []), entry]);
+    }
+
+    const gaps: IGapOfVariant[] = [];
+    for (const entries of groups.values()) {
+        const axis: string = entries[0].variant?.axis ?? '';
+        if (entries.some((entry: IEntryOfCatalog): boolean => matchesVariant(entry.variant, selection.variants))) {
+            continue;
+        }
+        // Отказ от ресурса — законный ответ, и повторять его отказом раскладки незачем: дерево
+        // уже сказало, что обходится без него.
+        if (entries.every((entry: IEntryOfCatalog): boolean => selection.skip.includes(entry.id))) {
+            continue;
+        }
+        // Род, суженный через `only`, отбирает ресурсы поимённо: не названный в нём ресурс не
+        // пропал — его не просили.
+        const restricted: boolean = selection.only.some((id: string): boolean => id.startsWith(`${entries[0].kind}/`));
+        if (restricted && !entries.some((entry: IEntryOfCatalog): boolean => selection.only.includes(entry.id))) {
+            continue;
+        }
+        gaps.push({
+            kind: entries[0].kind,
+            name: entries[0].name,
+            axis,
+            chosen: selection.variants[axis] ?? '',
+            available: entries.map((entry: IEntryOfCatalog): string => entry.variant?.value ?? ''),
+            ids: entries.map((entry: IEntryOfCatalog): string => entry.id),
+        });
+    }
+
+    return gaps;
+}
+
 /**
  * Идентификатор по тому, как ресурс назвали в строке запуска. Принимаются все формы, которыми
  * его называют вслух: `money`, `application/money`, `money.md` и `laws/application/money.md`.

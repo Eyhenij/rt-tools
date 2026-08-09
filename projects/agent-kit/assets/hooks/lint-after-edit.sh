@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# rt-hook: PostToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file
 # Линтер по следам правки. PostToolUse.
 #
 # Два входа. Правка файла — линтуется один изменённый файл. Перенос файла командой — линтуются

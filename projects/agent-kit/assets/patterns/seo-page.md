@@ -83,7 +83,7 @@ export const appRoutes: Route[] = [
 ## Страница попадает в карту сайта явно
 
 Карта строится из объектов, а не из маршрутов, и новая страница сама туда не попадёт. Записи
-собирает `buildSitemap` (`libs/site/property/util/src/lib/sitemap.util.ts`), отдаёт обработчик
+собирает `buildSitemap` (слой `util` домена страницы объекта), отдаёт обработчик
 `/sitemap.xml` в `apps/site/src/server.ts`. Правка идёт вместе со спекой в
 `sitemap.util.spec.ts`.
 
