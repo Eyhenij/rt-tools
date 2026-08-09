@@ -4,7 +4,7 @@ kind: pattern
 rule: testing
 description: Паттерн правила testing. Брать при заведении или правке *.spec.ts под Vitest — готовая раскладка describe и it, сборщик фикстур, идентификатор сценария в заголовке, спека процедуры Connect с рукописным двойником базы. Не брать для сквозных спек — это паттерн testing-e2e.
 ---
-<!-- rt-kit v0.3.0 · patterns/testing-unit.md · b9c4c1f33fa4 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.4.0 · patterns/testing-unit.md · 920c57a4e910 · правится надстройкой, не здесь -->
 
 # Спека на чистую функцию и на процедуру
 
@@ -65,13 +65,13 @@ function day(iso: string, overrides: Partial<ICalendarDay> = {}): ICalendarDay {
 Господствующая форма в этом дереве: логика уезжает в `*.logic.ts`, `*.util.ts` или
 `*.calculator.ts`, и проверяется вызовом — без `TestBed`, без подмены зависимостей. Образцы —
 `libs/site/common/booking/util/src/lib/availability-calendar.logic.ts` и
-`libs/api/pricing/util/src/lib/quote.calculator.ts`.
+`libs/api/<домен расчёта>/util/src/lib/quote.calculator.ts`.
 
 ## Процедура зовётся напрямую
 
 Обработчик — метод `handle` класса процедуры в слое `feature` своего домена. Двойник базы
 пишется руками; образец — `FakePrismaClient` в
-`libs/api/booking/feature/src/lib/link-booking.procedure.spec.ts`:
+`libs/api/<домен заявок>/feature/src/lib/link-booking.procedure.spec.ts`:
 
 ```typescript
 const prisma: FakePrismaClient = new FakePrismaClient();

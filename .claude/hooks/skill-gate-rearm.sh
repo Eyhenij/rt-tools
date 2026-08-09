@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# rt-kit v0.3.0 · hooks/skill-gate-rearm.sh · d05e9dbeb021 · правится надстройкой, не здесь
+# rt-kit v0.4.0 · hooks/skill-gate-rearm.sh · aec1777242a1 · правится надстройкой, не здесь
+# rt-hook: SessionStart compact|clear
 # Взвод гейта заново. SessionStart(compact|clear).
 #
 # Гейт помнит загруженное правило по идентификатору сессии и дальше пропускает эту область

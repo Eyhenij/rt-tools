@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.3.0 · checks/check-lib-layers.mjs · ba4f9aa6fe44 · правится надстройкой, не здесь
+// rt-kit v0.4.0 · checks/check-lib-layers.mjs · cbc34b79c777 · правится надстройкой, не здесь
 /**
  * Проверка инварианта доменной сетки: у каждого домена ровно те слои, что положены
  * его форме, а у каждой либы — имя, тег, алиас и конфиги, совпадающие с её путём.
@@ -16,16 +16,23 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { allowlistOf, CONFIG, ROOT } from './rt-kit-checks.config.mjs';
+import { allowlistOf, CONFIG, readAllowlist, ROOT, skipUnless } from './rt-kit-checks.config.mjs';
 
 const FAMILIES = CONFIG.families;
+/**
+ * Корень либ и семья бэкенда берутся из настройки дерева, а не из кода: у дерева, которое
+ * держит либы под другим именем, обход шёл мимо кода и проверка зеленела на пустом каталоге —
+ * то есть отвечала «нарушений нет» там, где она не смотрела вовсе.
+ */
+const LIBS_ROOT = CONFIG.libsRoot;
+const API_FAMILY = CONFIG.apiFamily;
 const FLAT_LAYERS = ['api', 'data-access', 'ui', 'util'];
 const FEATURE_DOMAIN_LAYERS = [...FLAT_LAYERS, 'feature', 'shell'].sort();
 const COMMON_DOMAIN_LAYERS = [...FLAT_LAYERS, 'feature'].sort();
 /** У бэкенда нет `ui` и `shell`: отдавать разметку и роутиться ему нечем */
 const API_DOMAIN_LAYERS = ['api', 'data-access', 'feature', 'util'];
 /** Где ищутся либы, оказавшиеся вне доменной сетки */
-const LIB_ROOTS = [...FAMILIES, 'api'].map((family) => `libs/${family}`);
+const LIB_ROOTS = [...FAMILIES, API_FAMILY].map((family) => `${LIBS_ROOT}/${family}`);
 const REQUIRED_FILES = ['project.json', 'tsconfig.json', 'vitest.config.mts', 'src/index.ts'];
 const BOUNDARIES_DIR = 'eslint/boundaries/domains';
 
@@ -44,10 +51,23 @@ const dirsIn = (path) =>
         : [];
 const isLib = (path) => existsSync(join(ROOT, path, 'project.json'));
 
-const allowlist = readJson(allowlistOf('lib-layers'));
+// Дерево без доменной сетки проверять нечем: раскладка либ есть не у всякого, кто берёт пакет.
+// Пока пропуска не было, первая же установка получала отказ «нет tsconfig.base.json» — то есть
+// поломку вместо ответа «этой раскладки здесь нет».
+skipUnless(
+    LIB_ROOTS.some((root) => isDir(root)) && existsSync(join(ROOT, 'tsconfig.base.json')),
+    `раскладки либ ${LIB_ROOTS.join(', ')} или файла tsconfig.base.json`
+);
+
+/**
+ * Список принятых долгов. Читается помощником настроек, а не напрямую: файла в свежем дереве
+ * нет вовсе, и прямое чтение роняло проверку отказом «нет такого файла» — то есть первая же
+ * установка получала поломку вместо отчёта о том, что долгов нет.
+ */
+const allowlist = readAllowlist('lib-layers');
 const pathsOf = (key) => (allowlist[key] ?? []).map((exception) => exception.path);
 
-/** Паттерн `libs/x/*` покрывает и сам каталог `libs/x`: исключение снимается целиком */
+/** Паттерн `<корень>/x/*` покрывает и сам каталог `<корень>/x`: исключение снимается целиком */
 const matches = (patterns, path) =>
     patterns.some((pattern) => {
         if (!pattern.endsWith('/*')) {
@@ -120,7 +140,7 @@ const isIgnoredLib = (path) => isNotDomain(path) || isLegacyDomain(path) || isLe
 
 const projectName = (libPath) => libPath.replace(/^libs\//, '').replaceAll('/', '-');
 const projectTag = (libPath) => `scope:${projectName(libPath)}`;
-const importAlias = (libPath) => `${CONFIG.importScope}/${libPath.replace(/^libs\//, '')}`;
+const importAlias = (libPath) => `${CONFIG.importScope}/${libPath.slice(`${LIBS_ROOT}/`.length)}`;
 
 /** Собирает пути всех либ домена и попутно проверяет состав его слоёв */
 function collectDomainLibs(domainPath, isCommon) {
@@ -160,7 +180,7 @@ function collectDomainLibs(domainPath, isCommon) {
 }
 
 /**
- * Домены бэкенда: `libs/api/<домен>` с четырьмя слоями. `feature` бывает и либой,
+ * Домены бэкенда: `<корень либ>/<семья бэкенда>/<домен>` с четырьмя слоями. `feature` бывает и либой,
  * и каталогом с либой на proto-сервис — по тому же правилу, по которому у
  * фичевого домена фронта `feature/<экран>`.
  *
@@ -171,8 +191,8 @@ function collectDomainLibs(domainPath, isCommon) {
 function collectApiDomainLibs() {
     const libs = [];
 
-    for (const entry of dirsIn('libs/api')) {
-        const domainPath = `libs/api/${entry}`;
+    for (const entry of dirsIn(`${LIBS_ROOT}/${API_FAMILY}`)) {
+        const domainPath = `${LIBS_ROOT}/${API_FAMILY}/${entry}`;
         if (isNotDomain(domainPath) || isLegacyDomain(domainPath)) {
             continue;
         }
@@ -219,14 +239,14 @@ function collectAllDomainLibs() {
     const libs = [];
 
     for (const family of FAMILIES) {
-        for (const entry of dirsIn(`libs/${family}`)) {
+        for (const entry of dirsIn(`${LIBS_ROOT}/${family}`)) {
             if (entry === 'common') {
-                for (const commonDomain of dirsIn(`libs/${family}/common`)) {
-                    libs.push(...collectDomainLibs(`libs/${family}/common/${commonDomain}`, true));
+                for (const commonDomain of dirsIn(`${LIBS_ROOT}/${family}/common`)) {
+                    libs.push(...collectDomainLibs(`${LIBS_ROOT}/${family}/common/${commonDomain}`, true));
                 }
                 continue;
             }
-            const domainPath = `libs/${family}/${entry}`;
+            const domainPath = `${LIBS_ROOT}/${family}/${entry}`;
             if (isNotDomain(domainPath) || isLegacyDomain(domainPath)) {
                 continue;
             }
@@ -260,9 +280,9 @@ function collectStrayLibs(knownLibs) {
 }
 
 /**
- * Плоские либы бэкенда: `libs/api/<домен>`. Лесенки слоёв у них нет по
+ * Плоские либы бэкенда: `<корень либ>/<семья бэкенда>/<домен>`. Лесенки слоёв у них нет по
  * устройству — домен это одна либа, — но всё остальное проверяется наравне с
- * доменной сеткой. До сужения исключение `libs/api/*` снимало с них и состав
+ * доменной сеткой. До сужения исключение по этому корню снимало с них и состав
  * файлов, и тег, и алиас: новая либа заводилась без `vitest.config.mts`, и
  * `nx test` по ней молча не гонял ни одной спеки.
  */
@@ -478,7 +498,7 @@ function collectSourceFiles() {
         }
     };
 
-    ['libs', 'apps'].filter(isDir).forEach(walk);
+    CONFIG.sourceRoots.filter(isDir).forEach(walk);
 
     return files;
 }
@@ -497,7 +517,16 @@ const CORE_EXCEPTIONS = {
 const isFamilyCommonUtil = (tag, family) => new RegExp(`^scope:${family}-common-[a-z0-9-]+-util$`).test(tag);
 
 async function checkCoreLibs() {
-    const { allBoundaries } = await import(join(ROOT, 'eslint/boundaries/index.mjs'));
+    // Свод границ есть не у всякого дерева с доменной сеткой: он собирается отдельным файлом, и
+    // пока его отсутствие не обрабатывалось, проверка падала на импорте — то есть отвечала
+    // поломкой на дерево, где границы объявлены иначе.
+    const boundaries = join(ROOT, 'eslint/boundaries/index.mjs');
+    if (!existsSync(boundaries)) {
+        console.log('пропущено: свода границ eslint/boundaries/index.mjs в дереве нет');
+
+        return;
+    }
+    const { allBoundaries } = await import(boundaries);
 
     for (const family of FAMILIES) {
         const tag = `scope:${family}-core`;
