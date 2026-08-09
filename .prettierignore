@@ -28,3 +28,20 @@ docs/constitution
 # Правила и паттерны кладёт `agent-kit sync` — по той же причине, что законы выше: тело файла
 # закрыто суммой в его шапке, и переформатирование читается раскладкой как правка руками.
 .claude/skills/*/SKILL.md
+
+# Разложено пакетом @rt-tools/agent-kit и сверяется по сумме тела. Форматтер меняет кавычки во
+# вступлении скила и добавляет пустую строку — сумма перестаёт сходиться, и раскладка считает
+# файл правленным руками, отказываясь его обновлять. Компаньоны `implementation.md` рядом с
+# правилами пакет не сверяет, и они форматируются как обычные тексты.
+docs/constitution/
+.claude/skills/*/SKILL.md
+.claude/hooks/
+.claude/agents/
+.claude/commands/
+.claude/workflows/
+.claude/rt-kit/templates/
+.claude/rt-kit/defaults/
+tools/board.mjs
+tools/check-*.mjs
+tools/rt-kit-checks.config.mjs
+tools/task-new.mjs
