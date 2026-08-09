@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# rt-hook: SessionStart compact|clear
 # Взвод гейта заново. SessionStart(compact|clear).
 #
 # Гейт помнит загруженное правило по идентификатору сессии и дальше пропускает эту область

@@ -24,14 +24,9 @@ description: Правило под «Закон о доступе». Брать 
 
 ## Где это лежит
 
-| Что                                 | Где                                                                              |
-| ----------------------------------- | -------------------------------------------------------------------------------- |
-| Декораторы доступа                  | `libs/api/auth/util/src/lib/procedure-access.ts`                                 |
-| Сбор объявлений и отказ подниматься | `libs/api/auth/feature/src/lib/procedure-access.service.ts`                      |
-| Проверка входа и права              | `libs/api/auth/feature/src/lib/auth.interceptor.ts`                              |
-| Сложение пресета с оверрайдами      | `libs/api/auth/util/src/lib/permissions.util.ts`                                 |
-| Гейтинг разделов админки            | `libs/admin/common/container/util/src/lib/admin-nav.logic.ts`                    |
-| Права в админке                     | `libs/admin/common/permissions/data-access/src/lib/permissions-store.service.ts` |
+В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
+переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
+же дереве, которое держит код иначе.
 
 ## Как закон применяется здесь
 

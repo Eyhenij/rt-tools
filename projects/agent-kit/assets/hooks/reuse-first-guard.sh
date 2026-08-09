@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file
 # Гард «ничего не пишется с нуля». PreToolUse на правке кода и разметки.
 #
 # Линтеры знают правила, но не знают ИНВЕНТАРЬ: линтер стилей поймает сырой цвет, линтер кода —

@@ -8,3 +8,4 @@ export * from './lib/sections.js';
 export * from './lib/stamp.js';
 export * from './lib/sync.js';
 export * from './lib/vars.js';
+export * from './lib/freshness.js';

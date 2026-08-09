@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+# Сценарии умолчаний: профиль дерева и карта гейта.
+#
+# Умолчания — это то, что пакет считает верным для любого дерева мастерской, пока дерево не
+# сказало иначе. Проверяется каждая функция по отдельности и главное свойство обеих: надстройка
+# проекта вправе объявить функцию заново и позвать умолчание обратно суффиксом `_default`.
+. "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
+
+echo "умолчания"
+
+TREE="$(fixture_tree)"
+export CLAUDE_PROJECT_DIR="$TREE"
+cleanup() { rm -rf "$TREE"; }
+trap cleanup EXIT
+
+# shellcheck disable=SC1091
+. "$DEFAULTS/project.sh"
+# shellcheck disable=SC1091
+. "$DEFAULTS/gate-map.sh"
+
+ok() {
+    if "${@:2}"; then report "$1" да да; else report "$1" нет да; fi
+}
+no() {
+    if "${@:2}"; then report "$1" да нет; else report "$1" нет нет; fi
+}
+
+# --- код приложения ли это ------------------------------------------------------------------
+ok "код приложения: apps" rt_is_app_code /r/apps/site/src/main.ts
+ok "код приложения: libs" rt_is_app_code /r/libs/site/x/ui/a.ts
+ok "код приложения: projects" rt_is_app_code /r/projects/ui-kit/src/a.ts
+no "не код: тексты" rt_is_app_code /r/docs/adr/0001.md
+no "не код: обвязка" rt_is_app_code /r/tools/check-x.mjs
+no "не код: правила агента" rt_is_app_code /r/.claude/skills/x/SKILL.md
+
+# --- форма имени ветки ------------------------------------------------------------------------
+ok "ветка: ключ, номер и хвост" rt_task_branch_ok RT-12-guest-token
+ok "ветка: голый номер" rt_task_branch_ok 12-guest-token
+ok "ветка: приставка рода правки" rt_task_branch_ok fix/12-guest-token
+no "ветка: без номера" rt_task_branch_ok probe-idea
+no "ветка: заглавные в хвосте" rt_task_branch_ok RT-12-GuestToken
+no "ветка: хвоста нет вовсе" rt_task_branch_ok RT-12
+no "ветка: незнакомая приставка" rt_task_branch_ok hotfix/12-x
+
+# --- пары документов ----------------------------------------------------------------------------
+report "пара: контракт и спек" "$(rt_docs_pair_for a/x.proto)" 'docs/specs/.*/spec\.md'
+report "пара: гард и его сценарии" "$(rt_docs_pair_for .claude/hooks/x.sh)" '.claude/hooks/tests/.*'
+# Тест — не описание кода: он его проверяет, и пары у него нет.
+report "пара: у спеки её нет" "$(rt_docs_pair_for a/x.spec.ts)" ''
+
+# --- запускатель пакетов --------------------------------------------------------------------------
+# По локфайлу, а не по договорённости: деревья с pnpm и с npm лежат в одной мастерской.
+printf '' > "$TREE/pnpm-lock.yaml"
+report "запускатель: pnpm по локфайлу" "$(rt_runner)" 'pnpm exec'
+rm -f "$TREE/pnpm-lock.yaml"
+printf '' > "$TREE/yarn.lock"
+report "запускатель: yarn по локфайлу" "$(rt_runner)" 'yarn'
+rm -f "$TREE/yarn.lock"
+report "запускатель: npx, когда локфайла нет" "$(rt_runner)" 'npx'
+
+# --- чем линтуется файл ------------------------------------------------------------------------------
+# Путь подставляется в напечатанную команду: хук исполняет её вычислением строки, и позиционный
+# параметр разрешился бы в параметр самого хука, то есть в пустоту.
+report "линтер стилей знает свой файл" "$(rt_lint_for a/x.scss | grep -c 'a/x.scss')" 1
+report "линтер кода знает свой файл" "$(rt_lint_for a/x.ts | grep -c 'a/x.ts')" 1
+report "линтера на неизвестное расширение нет" "$(rt_lint_for a/x.bin)" ''
+
+# --- надстройка зовёт умолчание обратно -----------------------------------------------------------------
+# Главное свойство обоих умолчаний: дерево объявляет функцию заново, называет своё и передаёт
+# остальное вниз. Без этого надстройка обязана была бы повторить всё умолчание целиком.
+rt_is_app_code() {
+    case "$1" in
+        */generated/*) return 1 ;;
+        *) rt_is_app_code_default "$@" ;;
+    esac
+}
+no "надстройка сузила умолчание" rt_is_app_code /r/libs/site/x/generated/a.ts
+ok "и остальное отдала вниз" rt_is_app_code /r/libs/site/x/ui/a.ts
+
+# --- карта гейта -------------------------------------------------------------------------------------
+report "карта: правило по роду файла" "$(skill_for edit /r/libs/x/a.component.ts '')" component-structure
+report "карта: правило по тексту правки" "$(skill_for edit /r/libs/x/a.service.ts 'localStorage.getItem("x")' | tr '\n' ' ')" 'angular-patterns platform-access '
+report "карта: правила на файлы агента нет" "$(skill_for edit /r/.claude/skills/x/SKILL.md '')" ''
+report "карта: правило по команде" "$(skill_for bash 'git push origin x' '')" git-workflow
+report "карта: команда без правила" "$(skill_for bash 'ls -la' '')" ''
+# Тексты и спеки читают ту же строку, что и код, и правило среды исполнения к ним не относится.
+report "карта: текст правки в документе правила не поднимает" "$(skill_for edit /r/docs/x.md 'window.open()')" doc-style
+
+suite_result "умолчания"

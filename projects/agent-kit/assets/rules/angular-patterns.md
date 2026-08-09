@@ -27,13 +27,9 @@ description: Правило под «Закон о фронтовом прило
 
 ## Где это лежит
 
-| Что                             | Где                                                                |
-| ------------------------------- | ------------------------------------------------------------------ |
-| Запрет подписки в методе        | `tools/eslint-rules/rules/no-subscribe-in-methods.ts`              |
-| Требование гасить подписку      | `tools/eslint-rules/rules/require-take-until-destroyed.ts`         |
-| Требование суффикса у источника | `tools/eslint-rules/rules/require-source-suffix-for-subjects.ts`   |
-| Общая основа списочного стора   | `libs/common/platform/src/lib/services/base-list-store.service.ts` |
-| Требование её наследовать       | `tools/eslint-rules/rules/require-list-store-base.ts`              |
+В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
+переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
+же дереве, которое держит код иначе.
 
 ## Как закон применяется здесь
 

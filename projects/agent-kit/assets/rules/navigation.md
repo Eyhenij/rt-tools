@@ -23,14 +23,9 @@ description: Правило под «Закон о навигации по ра�
 
 ## Где это лежит
 
-| Что              | Где                                                                        |
-| ---------------- | -------------------------------------------------------------------------- |
-| Декларация меню  | `libs/admin/common/container/util/src/lib/admin-nav.items.ts`              |
-| Разбор видимости | `libs/admin/common/container/util/src/lib/admin-nav.logic.ts`              |
-| Гейт маршрута    | `libs/admin/common/container/data-access/src/lib/nav-permission.guard.ts`  |
-| Шапка            | `@rt-tools/ui-kit-v2/src/lib/components/page-header/`                      |
-| Вложение адресов | `apps/admin/src/app/app.routes.ts`                                         |
-| Подписи пунктов  | `libs/common/i18n/src/lib/dictionaries/en/admin.json` и семь его близнецов |
+В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
+переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
+же дереве, которое держит код иначе.
 
 ## Как закон применяется здесь
 

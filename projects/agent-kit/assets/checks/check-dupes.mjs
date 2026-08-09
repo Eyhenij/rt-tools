@@ -42,7 +42,11 @@ import { join } from 'node:path';
 import { allowlistOf, CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 const ALLOWLIST = allowlistOf('dupes');
-const SOURCE_ROOT = 'libs';
+/**
+ * Где ищутся повторы. Корни берутся из настройки: зашитое имя молча не находило ни одного файла
+ * у дерева, которое держит код иначе, и проверка зеленела на пустом обходе.
+ */
+const SOURCE_ROOTS = CONFIG.sourceRoots;
 /**
  * `gen` и `generated` — контракт и клиент Prisma: их объявления и есть источник, с
  * которым сверяются остальные. Считать их копией значит требовать правки того, что
@@ -141,7 +145,7 @@ function collectEnums(text, lib) {
     }
 }
 
-for (const path of collectFiles(SOURCE_ROOT)) {
+for (const path of SOURCE_ROOTS.flatMap((root) => collectFiles(root))) {
     const text = readFileSync(join(ROOT, path), 'utf8');
     const lib = libOf(path);
 

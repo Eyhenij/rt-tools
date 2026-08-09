@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file
 # Гард якоря для спек. PreToolUse на правке разметки.
 #
 # Спеки адресуют элементы только через этот атрибут. Классы оформления меняются вместе с

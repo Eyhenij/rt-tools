@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# rt-hook: PreToolUse Edit|Write|MultiEdit
 # PreToolUse guard for Edit|Write|MultiEdit: код не пишется раньше замысла.
 #
 # Работа идёт много заходов, и между ними исполнитель не помнит ничего. Замысел, лежащий на
