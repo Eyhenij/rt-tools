@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.3.0 · checks/check-specs.mjs · 73bb01479ef6 · правится надстройкой, не здесь
+// rt-kit v0.4.0 · checks/check-specs.mjs · dfa823170ae5 · правится надстройкой, не здесь
 /**
  * Проверка того, что спек домена не разошёлся с кодом.
  *
@@ -53,7 +53,12 @@ const CONSTITUTION_DIR = 'docs/constitution';
  * плейсхолдерами, и обязательных разделов у них нет.
  */
 const NOT_DOMAINS = ['_template'];
-const TEST_ROOTS = ['apps', 'libs'];
+/**
+ * Где ищутся тесты. Берётся из настройки дерева, а не из кода: зашитые здесь корни молча не
+ * находили ни одного теста у дерева, которое держит код иначе, — и каждый сценарий выглядел
+ * непокрытым, притом что тест на него был.
+ */
+const TEST_ROOTS = CONFIG.sourceRoots;
 /** Где ищется вызов символа из привязки. */
 const SOURCE_ROOTS = [...CONFIG.sourceRoots, ...(CONFIG.schemaFile ? [CONFIG.schemaFile.split('/')[0]] : [])];
 const SKIPPED_DIRS = CONFIG.skippedDirs;

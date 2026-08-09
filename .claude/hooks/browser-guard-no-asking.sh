@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# rt-kit v0.3.0 · hooks/browser-guard-no-asking.sh · 0d0dd7250732 · правится надстройкой, не здесь
+# rt-kit v0.4.0 · hooks/browser-guard-no-asking.sh · 0ca93c9fe27a · правится надстройкой, не здесь
+# rt-hook: PreToolUse AskUserQuestion
 # PreToolUse guard for AskUserQuestion.
 #
 # The browser choice is already made and pinned in browser-device-id.sh — asking again is noise, and the
