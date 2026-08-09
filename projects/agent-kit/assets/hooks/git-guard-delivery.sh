@@ -79,11 +79,34 @@ title_re="${RT_TASK_TITLE_RE:-^\[[A-Za-z]+-[0-9]+\][[:space:]]+[^[:space:]]}"
 task_new="${RT_TASK_NEW_CMD:-npm run task:new}"
 board_check="${RT_BOARD_CHECK_CMD:-npm run check:board}"
 task_bot="${RT_TASK_BOT:-}"
+tasks_dir="${RT_TASKS_DIR:-}"
+archive_dir="${RT_ARCHIVE_DIR:-}"
+main_branch="${RT_MAIN_BRANCH:-main}"
+
+# Обход требования: строка с причиной. Причина видна тому, кто вливает, поэтому обход законен.
+# Без причины это просто молчаливый пропуск, поэтому она обязательна. Порог в три знака — тот
+# же, что у гарда документа: если сделать по-разному, две формы одного обхода разойдутся.
+folder_skip_re='Task-folder-skip:[[:space:]]*[^[:space:]"'"'"']{3,}'
 
 deny() {
     jq -n --arg r "$1" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
         || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Гард поставки."}}\n'
     exit 0
+}
+
+# Подсказка вместо отказа: на открытии отчёта папка ещё нужна. Решения подсказка не несёт,
+# команда идёт дальше своим ходом.
+hint() {
+    jq -n --arg c "$1" '{hookSpecificOutput:{hookEventName:"PreToolUse",additionalContext:$c}}' 2>/dev/null
+    exit 0
+}
+
+# Есть ли папка задачи в ветке. Смотрим содержимое ветки, а не рабочее дерево: если папку
+# удалили, но не закоммитили, проверка прошла бы, а папка всё равно уехала бы в main. Имя
+# ветки подставляем целиком, вместе с косой: у ветки вида `chore/312-slug` папка лежит во
+# вложенном каталоге.
+folder_in_branch() {
+    git ls-tree -d --name-only HEAD -- "$1" 2>/dev/null | head -1
 }
 
 check_task() {
@@ -127,6 +150,54 @@ if [ -n "$branch_arg" ]; then
     exit 0
 fi
 
+# --- слияние заявки ----------------------------------------------------------------------
+#
+# Папку задачи разбирают тем же PR, что и работу. После слияния этого уже никто не сделает:
+# работа перешла к следующей задаче, а PR закрыт. Раньше слияния требовать нельзя — пока идёт
+# ревью, plan.md нужен на диске, иначе гард хода работы не даст править код.
+case "$cmd" in
+    *gh\ pr\ merge* | *glab\ mr\ merge* | *az\ repos\ pr\ update*)
+        [ -n "$tasks_dir" ] || exit 0   # ведения работы папкой в дереве нет
+
+        merge_branch="$(git branch --show-current 2>/dev/null)"
+        [ -z "$merge_branch" ] && exit 0
+        rt_task_branch_ok "$merge_branch" || exit 0   # за беззадачной веткой папки не стоит
+
+        folder="$tasks_dir/$merge_branch"
+
+        # Сначала ищем обход в самой команде — это работает и без сети. Если читать только
+        # тело PR, то без сети гард отбил бы слияние, причина которого в этом теле и написана.
+        printf '%s' "$cmd" | grep -qiE "$folder_skip_re" && exit 0
+
+        merge_number="$(printf '%s' "$cmd" | sed -nE 's/.*(pr|mr)[[:space:]]+(merge|update)[[:space:]]+([0-9]+).*/\3/p' | head -1)"
+        if [ -n "$merge_number" ] && command -v rt_report_body >/dev/null 2>&1; then
+            body="$(cd "$root" && rt_report_body "$merge_number" 2>/dev/null)"
+            [ -n "$body" ] && printf '%s' "$body" | grep -qiE "$folder_skip_re" && exit 0
+        fi
+
+        lying="$(folder_in_branch "$folder")"
+        [ -n "$lying" ] \
+            && deny "BLOCKED: в ветке осталась папка задачи «${lying}» — она уедет в главную. Разобрать её потом будет некому: работа перейдёт к следующей задаче, а этот PR закроется. Перенеси в «${archive_dir:-архив}» то, что объясняет принятые решения, остальное удали и повтори. Если работа вливается частями, поставь в тело PR строку «Task-folder-skip: <причина>»."
+
+        # Запись в архиве спрашиваем только у ветки, которая папку удалила. Иначе проверка
+        # цеплялась бы к работе, у которой папки и не было. Без общего предка с главной веткой
+        # сравнивать не с чем — тогда молчим.
+        [ -n "$archive_dir" ] || exit 0
+        base="$(git merge-base "$main_branch" HEAD 2>/dev/null)"
+        [ -z "$base" ] && exit 0
+
+        had="$(git ls-tree -d --name-only "$base" -- "$folder" 2>/dev/null | head -1)"
+        [ -z "$had" ] && had="$(git log "$base..HEAD" --diff-filter=A --name-only --pretty=format: -- "$folder" 2>/dev/null | head -1)"
+        [ -z "$had" ] && exit 0
+
+        gained="$(git diff --name-only --diff-filter=A "$base" HEAD -- "$archive_dir" 2>/dev/null | head -1)"
+        [ -z "$gained" ] \
+            && deny "BLOCKED: папку задачи удалили, но в «${archive_dir}» ветка ничего не добавила. Удалить проще, чем разобрать, — и вместе с папкой пропадает разбор просьбы, единственная запись слов владельца. Перенеси то, что объясняет принятые решения, одним файлом с понятным именем и повтори."
+
+        exit 0
+        ;;
+esac
+
 # --- открытие заявки на слияние ----------------------------------------------------------
 case "$cmd" in
     *gh\ pr\ create* | *glab\ mr\ create* | *az\ repos\ pr\ create*) ;;
@@ -163,5 +234,14 @@ if [ -n "$title" ]; then
 fi
 
 check_task "$number" "заявка с ветки «${branch}»"
+
+# Сейчас папка ещё нужна: правки по замечаниям ревью идут в эту же ветку, а без plan.md их не
+# пропустит гард хода работы. Поэтому здесь только напоминание. Требование стоит на слиянии —
+# там папка уже не нужна, а вред от неё как раз и наступает.
+if [ -n "$tasks_dir" ]; then
+    lying="$(folder_in_branch "$tasks_dir/$branch")"
+    [ -n "$lying" ] \
+        && hint "В ветке лежит папка задачи «${lying}». Разбери её до слияния, этим же PR: потом за неё уже никто не возьмётся. На слиянии это будет отказ, а не напоминание."
+fi
 
 exit 0

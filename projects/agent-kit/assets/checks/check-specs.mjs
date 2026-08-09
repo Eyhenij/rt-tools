@@ -730,6 +730,20 @@ function collectReferences() {
             // идентификатором: состояние теста читается, когда файл разобран целиком
             found.forEach(({ id, test: own, place }) => remember(id, { place, screen: Boolean(e2eRoot), off: Boolean(own?.off) }));
         }
+
+        // Наборы сценариев на shell. Так проверяются исполняемые файлы — гарды, проверки,
+        // умолчания: они не на TypeScript, и набор к ним пишут на том же языке, что и их
+        // самих. Выключателей здесь нет: пропустить сценарий в таком наборе нечем, поэтому
+        // достаточно найти идентификатор.
+        for (const file of walk(root, (name) => name.endsWith('.test.sh'))) {
+            read(file)
+                .split('\n')
+                .forEach((line, index) => {
+                    for (const [id] of line.matchAll(SCENARIO_REFERENCE)) {
+                        remember(id, { place: `${file}:${index + 1}`, screen: false, off: false });
+                    }
+                });
+        }
     }
 
     return references;
