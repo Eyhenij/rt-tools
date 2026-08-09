@@ -1,0 +1,20 @@
+{
+  "host": {
+    "question": "Где лежит репозиторий и очередь работ?",
+    "title": "хостинг репозитория",
+    "options": [
+      {
+        "value": "github",
+        "title": "GitHub — gh, issues, Projects"
+      },
+      {
+        "value": "gitlab",
+        "title": "GitLab — glab, issues, Boards"
+      },
+      {
+        "value": "azure",
+        "title": "Azure DevOps — az repos, work items, Boards"
+      }
+    ]
+  }
+}

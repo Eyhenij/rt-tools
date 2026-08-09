@@ -14,7 +14,8 @@ import { IEntryOfCatalog, readCatalog, resolveSelection } from '../lib/catalog.j
 import { doctor, IEnvironment, init, IOutcomeOfCommand, list, sync } from '../lib/commands.js';
 import { packageRootFrom } from '../lib/package-root.js';
 import { IChoice } from '../lib/picker.js';
-import { ask, canAsk } from './prompt.js';
+import { IAxis, IOptionOfAxis, readAxes } from '../lib/variants.js';
+import { ask, askOne, canAsk } from './prompt.js';
 
 const USAGE: readonly string[] = [
     'agent-kit <команда>',
@@ -32,6 +33,11 @@ const USAGE: readonly string[] = [
     '  --all             взять все законы, ни о чём не спрашивая',
     '  --laws a,b,c      взять только названные; имена — из `agent-kit list`',
     '  без обоих         спросить галочками; без терминала — отказ',
+    '',
+    'Вид ресурсов при `init` — там, где один закон исполняется разными командами:',
+    '',
+    '  --<ось> <вид>     например `--host gitlab`; оси и виды — из `agent-kit list`',
+    '  без флага         спросить; без терминала — отказ, кроме `--all`',
 ];
 
 /**
@@ -99,6 +105,64 @@ async function selectionFor(argv: readonly string[], assetsDir: string): Promise
     return ask(choices, 'Какие законы разложить в этом проекте?');
 }
 
+/**
+ * Виды для `init` по осям, объявленным пакетом: что взято из флага, что спрошено.
+ *
+ * `--all` берёт первый объявленный вид оси и **говорит об этом**: в CI спрашивать некого, а
+ * отказ там означал бы, что пакет нельзя разложить без человека. Первый вид — умолчание, а не
+ * догадка: порядок в объявлении оси и есть порядок предпочтения.
+ */
+async function variantsFor(argv: readonly string[], assetsDir: string): Promise<Record<string, string> | null | IOutcomeOfCommand> {
+    const axes: readonly IAxis[] = readAxes(assetsDir);
+    const chosen: Record<string, string> = {};
+
+    for (const axis of axes) {
+        const spoken: string = optionOf(argv, `--${axis.name}`, '');
+        const known: (value: string) => boolean = (value: string): boolean =>
+            axis.options.some((option: IOptionOfAxis): boolean => option.value === value);
+
+        if (spoken) {
+            if (!known(spoken)) {
+                return {
+                    code: 1,
+                    lines: [
+                        `такого вида по оси «${axis.name}» пакет не везёт: ${spoken}`,
+                        `есть: ${axis.options.map((option: IOptionOfAxis): string => option.value).join(', ')}`,
+                    ],
+                };
+            }
+            chosen[axis.name] = spoken;
+            continue;
+        }
+
+        if (argv.includes('--all')) {
+            chosen[axis.name] = axis.options[0]?.value ?? '';
+            continue;
+        }
+
+        if (!canAsk()) {
+            return {
+                code: 1,
+                lines: [
+                    'спросить некого: запуск без терминала',
+                    `назови вид флагом \`--${axis.name} <вид>\`: ${axis.options.map((option: IOptionOfAxis): string => option.value).join(', ')}`,
+                ],
+            };
+        }
+
+        const answer: string | null = await askOne(
+            axis.options.map((option: IOptionOfAxis): IChoice => ({ id: option.value, name: option.value, title: option.title })),
+            axis.question
+        );
+        if (answer === null) {
+            return null;
+        }
+        chosen[axis.name] = answer;
+    }
+
+    return chosen;
+}
+
 export async function main(argv: readonly string[]): Promise<IOutcomeOfCommand> {
     const command: string = argv[0] ?? '';
     const env: IEnvironment = environmentOf(resolve(optionOf(argv, '--root', process.cwd())));
@@ -109,8 +173,16 @@ export async function main(argv: readonly string[]): Promise<IOutcomeOfCommand> 
             if (isOutcome(selection)) {
                 return selection;
             }
+            if (selection === null) {
+                return { code: 1, lines: ['выбор брошен — ничего не заведено'] };
+            }
 
-            return selection === null ? { code: 1, lines: ['выбор брошен — ничего не заведено'] } : init(env.root, selection);
+            const variants: Record<string, string> | null | IOutcomeOfCommand = await variantsFor(argv, env.assetsDir);
+            if (isOutcome(variants)) {
+                return variants;
+            }
+
+            return variants === null ? { code: 1, lines: ['выбор брошен — ничего не заведено'] } : init(env.root, selection, variants);
         }
         case 'list':
             return list(env);

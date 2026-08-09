@@ -11,7 +11,7 @@
 
 input="$(cat 2>/dev/null)"
 
-device_id="$("${CLAUDE_PROJECT_DIR:-.}/{{hooksDir}}/browser-device-id.sh" 2>/dev/null)"
+device_id="$("${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/browser-device-id.sh" 2>/dev/null)"
 [ -z "$device_id" ] && exit 0
 
 requested="$(printf '%s' "$input" | jq -r '.tool_input.deviceId // empty' 2>/dev/null)"
