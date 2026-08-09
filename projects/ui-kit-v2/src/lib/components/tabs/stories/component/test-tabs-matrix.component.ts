@@ -28,9 +28,9 @@ export type TabsMatrixPart = 'direction' | 'title' | 'tabState' | 'stretch' | 'e
                 <app-story-row caption="Раскладка" slotWidth="24rem" [items]="directions" [itemLabel]="directionLabel">
                     <ng-template let-direction>
                         <rt-tabs activeId="overview" [direction]="direction">
-                            <ng-template rtTab id="overview" label="Обзор">Сводка по договору</ng-template>
-                            <ng-template rtTab id="members" label="Участники">Список участников</ng-template>
-                            <ng-template rtTab id="history" label="История">Журнал изменений</ng-template>
+                            <ng-template rtTab="overview" label="Обзор">Сводка по договору</ng-template>
+                            <ng-template rtTab="members" label="Участники">Список участников</ng-template>
+                            <ng-template rtTab="history" label="История">Журнал изменений</ng-template>
                         </rt-tabs>
                     </ng-template>
                 </app-story-row>
@@ -42,26 +42,26 @@ export type TabsMatrixPart = 'direction' | 'title' | 'tabState' | 'stretch' | 'e
                         @switch (title) {
                             @case ('только подпись') {
                                 <rt-tabs activeId="a">
-                                    <ng-template rtTab id="a" label="Обзор">Содержимое</ng-template>
-                                    <ng-template rtTab id="b" label="Участники">Содержимое</ng-template>
+                                    <ng-template rtTab="a" label="Обзор">Содержимое</ng-template>
+                                    <ng-template rtTab="b" label="Участники">Содержимое</ng-template>
                                 </rt-tabs>
                             }
                             @case ('с иконкой') {
                                 <rt-tabs activeId="a">
-                                    <ng-template rtTab id="a" label="Обзор" icon="ico-listing">Содержимое</ng-template>
-                                    <ng-template rtTab id="b" label="Участники" icon="ico-users">Содержимое</ng-template>
+                                    <ng-template rtTab="a" label="Обзор" icon="ico-listing">Содержимое</ng-template>
+                                    <ng-template rtTab="b" label="Участники" icon="ico-users">Содержимое</ng-template>
                                 </rt-tabs>
                             }
                             @case ('со значком') {
                                 <rt-tabs activeId="a">
-                                    <ng-template rtTab id="a" label="Обзор" [badge]="3">Содержимое</ng-template>
-                                    <ng-template rtTab id="b" label="Участники" badge="99+">Содержимое</ng-template>
+                                    <ng-template rtTab="a" label="Обзор" [badge]="3">Содержимое</ng-template>
+                                    <ng-template rtTab="b" label="Участники" badge="99+">Содержимое</ng-template>
                                 </rt-tabs>
                             }
                             @case ('иконка и значок') {
                                 <rt-tabs activeId="a">
-                                    <ng-template rtTab id="a" label="Обзор" icon="ico-listing" [badge]="3">Содержимое</ng-template>
-                                    <ng-template rtTab id="b" label="Задачи" icon="list" iconColor="warning" badge="12">
+                                    <ng-template rtTab="a" label="Обзор" icon="ico-listing" [badge]="3">Содержимое</ng-template>
+                                    <ng-template rtTab="b" label="Задачи" icon="list" iconColor="warning" badge="12">
                                         Содержимое
                                     </ng-template>
                                 </rt-tabs>
@@ -74,14 +74,12 @@ export type TabsMatrixPart = 'direction' | 'title' | 'tabState' | 'stretch' | 'e
             @case ('tabState') {
                 <div style="width: 34rem">
                     <rt-tabs activeId="active">
-                        <ng-template rtTab id="active" label="Активная">Содержимое активной вкладки</ng-template>
-                        <ng-template rtTab id="plain" label="Обычная">Содержимое</ng-template>
-                        <ng-template rtTab disabled id="off" label="Отключённая">Сюда не попасть</ng-template>
-                        <ng-template rtTab invalid id="bad" label="С ошибкой" invalidMessage="Не заполнено два поля">
-                            Содержимое
-                        </ng-template>
-                        <ng-template rtTab id="badge" label="Со значком" [badge]="7">Содержимое</ng-template>
-                        <ng-template rtTab hidden id="gone" label="Скрытая — её в полосе нет">Содержимое</ng-template>
+                        <ng-template rtTab="active" label="Активная">Содержимое активной вкладки</ng-template>
+                        <ng-template rtTab="plain" label="Обычная">Содержимое</ng-template>
+                        <ng-template rtTab="off" disabled label="Отключённая">Сюда не попасть</ng-template>
+                        <ng-template rtTab="bad" invalid label="С ошибкой" invalidMessage="Не заполнено два поля">Содержимое</ng-template>
+                        <ng-template rtTab="badge" label="Со значком" [badge]="7">Содержимое</ng-template>
+                        <ng-template rtTab="gone" hidden label="Скрытая — её в полосе нет">Содержимое</ng-template>
                     </rt-tabs>
                 </div>
             }
@@ -90,9 +88,9 @@ export type TabsMatrixPart = 'direction' | 'title' | 'tabState' | 'stretch' | 'e
                 <app-story-row caption="Растяжение по ширине" slotWidth="24rem" [items]="stretches" [itemLabel]="stretchLabel">
                     <ng-template let-value>
                         <rt-tabs activeId="a" [stretch]="value">
-                            <ng-template rtTab id="a" label="Обзор">Содержимое</ng-template>
-                            <ng-template rtTab id="b" label="Участники">Содержимое</ng-template>
-                            <ng-template rtTab id="c" label="История">Содержимое</ng-template>
+                            <ng-template rtTab="a" label="Обзор">Содержимое</ng-template>
+                            <ng-template rtTab="b" label="Участники">Содержимое</ng-template>
+                            <ng-template rtTab="c" label="История">Содержимое</ng-template>
                         </rt-tabs>
                     </ng-template>
                 </app-story-row>
@@ -107,25 +105,25 @@ export type TabsMatrixPart = 'direction' | 'title' | 'tabState' | 'stretch' | 'e
                             }
                             @case ('одна вкладка') {
                                 <rt-tabs activeId="only">
-                                    <ng-template rtTab id="only" label="Обзор">Содержимое</ng-template>
+                                    <ng-template rtTab="only" label="Обзор">Содержимое</ng-template>
                                 </rt-tabs>
                             }
                             @case ('неизвестный activeId') {
                                 <rt-tabs activeId="нет-такой">
-                                    <ng-template rtTab id="a" label="Обзор">Откат на первую доступную</ng-template>
-                                    <ng-template rtTab id="b" label="Участники">Содержимое</ng-template>
+                                    <ng-template rtTab="a" label="Обзор">Откат на первую доступную</ng-template>
+                                    <ng-template rtTab="b" label="Участники">Содержимое</ng-template>
                                 </rt-tabs>
                             }
                             @case ('активная отключена') {
                                 <rt-tabs activeId="off">
-                                    <ng-template rtTab disabled id="off" label="Отключённая">Активной стать не может</ng-template>
-                                    <ng-template rtTab id="b" label="Участники">Содержимое</ng-template>
+                                    <ng-template rtTab="off" disabled label="Отключённая">Активной стать не может</ng-template>
+                                    <ng-template rtTab="b" label="Участники">Содержимое</ng-template>
                                 </rt-tabs>
                             }
                             @case ('вкладок больше ширины') {
                                 <rt-tabs activeId="t1">
                                     @for (index of many; track index) {
-                                        <ng-template rtTab [id]="'t' + index" [label]="'Раздел ' + index">Содержимое</ng-template>
+                                        <ng-template [rtTab]="'t' + index" [label]="'Раздел ' + index">Содержимое</ng-template>
                                     }
                                 </rt-tabs>
                             }
@@ -139,9 +137,9 @@ export type TabsMatrixPart = 'direction' | 'title' | 'tabState' | 'stretch' | 'e
                     <ng-template>
                         <div style="width: 24rem">
                             <rt-tabs activeId="a">
-                                <ng-template rtTab id="a" label="Обзор" icon="ico-listing">Содержимое</ng-template>
-                                <ng-template rtTab id="b" label="Участники" [badge]="3">Содержимое</ng-template>
-                                <ng-template rtTab disabled id="c" label="Отключённая">Содержимое</ng-template>
+                                <ng-template rtTab="a" label="Обзор" icon="ico-listing">Содержимое</ng-template>
+                                <ng-template rtTab="b" label="Участники" [badge]="3">Содержимое</ng-template>
+                                <ng-template rtTab="c" disabled label="Отключённая">Содержимое</ng-template>
                             </rt-tabs>
                         </div>
                     </ng-template>
