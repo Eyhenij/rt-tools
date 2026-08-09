@@ -18,7 +18,8 @@
  * та же, от которой идут коммиты; `--assignee` перекрывает исполнителя.
  */
 import { existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import {
     BACKLOG_OPTION_ID,
