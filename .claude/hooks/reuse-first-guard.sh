@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# rt-kit v0.3.0 · hooks/reuse-first-guard.sh · 458ee9ea69dc · правится надстройкой, не здесь
+# rt-kit v0.4.0 · hooks/reuse-first-guard.sh · bedc2b03dd9d · правится надстройкой, не здесь
+# rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file
 # Гард «ничего не пишется с нуля». PreToolUse на правке кода и разметки.
 #
 # Линтеры знают правила, но не знают ИНВЕНТАРЬ: линтер стилей поймает сырой цвет, линтер кода —

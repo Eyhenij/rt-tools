@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.3.0 · checks/board.github.mjs · ad2cc3996aaf · правится надстройкой, не здесь
+// rt-kit v0.4.0 · checks/board.github.mjs · ad2cc3996aaf · правится надстройкой, не здесь
 /**
  * Общая работа с очередью работ: борда проекта, тикеты и их состояние.
  *

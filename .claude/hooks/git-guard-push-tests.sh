@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# rt-kit v0.3.0 · hooks/git-guard-push-tests.sh · 0c918a9d07b5 · правится надстройкой, не здесь
+# rt-kit v0.4.0 · hooks/git-guard-push-tests.sh · ced3c0145440 · правится надстройкой, не здесь
+# rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Гард проверок перед пушем. PreToolUse на вызове пуша.
 #
 # Пуш — это вход в конвейер: слияние в главную ветку запускает выкатку, и всё, что не

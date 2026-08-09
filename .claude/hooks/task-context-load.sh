@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# rt-kit v0.3.0 · hooks/task-context-load.sh · c114ea04f9f4 · правится надстройкой, не здесь
+# rt-kit v0.4.0 · hooks/task-context-load.sh · b0ebee8b39d0 · правится надстройкой, не здесь
+# rt-hook: SessionStart startup|resume|compact|clear
 # SessionStart: состояние незаконченной работы уезжает в контекст на каждом запуске сессии.
 #
 # Памятью это не держится по той же причине, что и словарь: замысел читают перед правкой

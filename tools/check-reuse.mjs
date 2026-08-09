@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.3.0 · checks/check-reuse.mjs · 5db827645607 · правится надстройкой, не здесь
+// rt-kit v0.4.0 · checks/check-reuse.mjs · 8b4a52750891 · правится надстройкой, не здесь
 /**
  * Сплошная проверка того, что готовое не обошли.
  *
@@ -29,6 +29,7 @@ import { allowlistOf, CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 const ALLOWLIST = allowlistOf('reuse');
 const SOURCE_ROOTS = CONFIG.sourceRoots;
 const SKIPPED_DIRS = CONFIG.skippedDirs;
+const BACKEND_ROOTS = CONFIG.backendRoots;
 
 /**
  * Признак расхождения: чем он виден в тексте и на что готовое его меняет. Порядок строк —
@@ -87,8 +88,9 @@ const SIGNALS = [
         key: 'mapper-base',
         ext: '.mapper.ts',
         // На бэкенде перевод сущности написан свободными функциями — это долг `Q-S-1`,
-        // а не место для этой проверки
-        skip: (path) => path.startsWith('libs/api/') || path.startsWith('apps/api/'),
+        // а не место для этой проверки. Где лежит бэкенд, знает настройка дерева: зашитый здесь
+        // корень молча проверял бы фронтовым мерилом чужой код у всякого, кто держит его иначе.
+        skip: (path) => BACKEND_ROOTS.some((root) => path.startsWith(root)),
         find: (text) => (/class +[A-Za-z0-9_]+Mapper/.test(text) && !/extends BaseMapper/.test(text) ? 1 : 0),
         instead: 'BaseMapper и this.typeCast',
     },
