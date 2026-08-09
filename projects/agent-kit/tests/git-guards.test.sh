@@ -82,6 +82,15 @@ rm -rf "$LYING/docs/tasks/RT-42-probe"
 mg "SC-AK-14 — удаление без коммита требование не проходит" "$LYING" 'gh pr merge 42 --merge' deny
 rm -rf "$LYING"
 
+# Упоминание команды в тексте командой не является. Гард сработал на правке этого же файла:
+# в тексте стояло `gh pr merge`, и он выдал напоминание там, где никто ничего не сливал.
+UNRELATED="$(fixture_repo_branched main RT-48-probe)"
+fixture_commit "$UNRELATED" docs/tasks/RT-48-probe/plan.md 'замысел' 'docs: замысел'
+mg "упоминание команды внутри строки не считается слиянием" "$UNRELATED" \
+    "printf '%s' 'в правиле написано: gh pr merge отбивается, пока папка лежит'" PASS
+mg "имя файла, похожее на команду, не считается слиянием" "$UNRELATED" 'cat docs/gh-pr-merge-notes.md' PASS
+rm -rf "$UNRELATED"
+
 # Папка разобрана: снята веткой, и в архив что-то приехало.
 DONE="$(fixture_repo_branched main RT-43-probe)"
 fixture_commit "$DONE" docs/tasks/RT-43-probe/plan.md 'замысел' 'docs: замысел'
