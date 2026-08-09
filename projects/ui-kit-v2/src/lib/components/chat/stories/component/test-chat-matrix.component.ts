@@ -1,0 +1,187 @@
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+
+import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
+import { RtChatComponent } from '../../rt-chat.component';
+import { ERtChatMessageStatus, IRtChat } from '../../rt-chat.model';
+
+/** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
+export type ChatMatrixPart = 'thread' | 'messageKind' | 'status' | 'reply' | 'header' | 'loading' | 'themes';
+
+const NOW: string = '2026-03-14T16:02:00.000Z';
+
+const MESSAGES: readonly IRtChat.Message[] = [
+    { id: 1, author: 'Система', own: false, system: true, text: 'Переписка создана', createdAt: NOW },
+    { id: 2, author: 'Петрова А. С.', own: false, text: 'Добрый день! Договор на согласовании.', createdAt: NOW },
+    { id: 3, author: 'Вы', own: true, status: ERtChatMessageStatus.Read, text: 'Спасибо, ждём.', createdAt: NOW },
+    {
+        id: 4,
+        author: 'Петрова А. С.',
+        own: false,
+        text: 'Приложила подписанный экземпляр.',
+        createdAt: NOW,
+        attachments: [{ id: 1, name: 'договор-2024-118.pdf', publicId: 'p1' }],
+    },
+];
+
+/**
+ * Матрицы состояний `rt-chat` для витрины.
+ *
+ * Показывать надо не перечисление входов, а состояния экрана, которые между собой не сводятся:
+ *
+ * - **Без `hasThread` чат рисует только подсказку выбора** — ни ленты, ни поля ответа. Это
+ *   «переписка не выбрана», а не «переписка пустая», и рядом эти два случая различаются.
+ * - **Шапка появляется только вместе с кнопками**: один заголовок её не создаёт.
+ * - **Поле ответа гейтится `canReply`**: когда отвечать нельзя, вместо него стоит причина.
+ *
+ * Виды сообщения — своё, чужое, системное, с вложением — стоят одной лентой: порознь не видно,
+ * что своё прижато вправо, а чужое влево.
+ *
+ * В пакет не уезжает: `tsconfig.lib.json` исключает папки историй.
+ */
+@Component({
+    selector: 'app-chat-matrix',
+    template: `
+        @switch (part) {
+            @case ('thread') {
+                <app-story-row caption="Выбрана ли переписка" slotWidth="24rem" [items]="threadCases" [itemLabel]="caseLabel">
+                    <ng-template let-item>
+                        <div style="height: 22rem">
+                            <rt-chat
+                                canReply
+                                title="Договор №2024-118"
+                                emptyHint="Выберите переписку слева"
+                                placeholder="Написать сообщение"
+                                [hasThread]="item.hasThread"
+                                [messages]="item.messages" />
+                        </div>
+                    </ng-template>
+                </app-story-row>
+            }
+
+            @case ('messageKind') {
+                <div style="width: 26rem; height: 24rem">
+                    <rt-chat hasThread canReply title="Договор №2024-118" placeholder="Написать сообщение" [messages]="messages" />
+                </div>
+            }
+
+            @case ('status') {
+                <div style="width: 26rem; height: 24rem">
+                    <rt-chat hasThread canReply title="Свои сообщения" placeholder="Написать сообщение" [messages]="statusMessages" />
+                </div>
+            }
+
+            @case ('reply') {
+                <app-story-row caption="Можно ли отвечать" slotWidth="24rem" [items]="replyCases" [itemLabel]="caseLabel">
+                    <ng-template let-item>
+                        <div style="height: 22rem">
+                            <rt-chat
+                                hasThread
+                                title="Договор №2024-118"
+                                placeholder="Написать сообщение"
+                                [messages]="messages"
+                                [canReply]="item.canReply"
+                                [replyBlockReason]="item.reason"
+                                [sending]="item.sending" />
+                        </div>
+                    </ng-template>
+                </app-story-row>
+            }
+
+            @case ('header') {
+                <app-story-row caption="Когда появляется шапка" slotWidth="24rem" [items]="headerCases" [itemLabel]="caseLabel">
+                    <ng-template let-item>
+                        <div style="height: 22rem">
+                            <rt-chat
+                                hasThread
+                                canReply
+                                placeholder="Написать сообщение"
+                                title="Договор №2024-118"
+                                [messages]="messages"
+                                [showRefresh]="item.refresh"
+                                [showExpand]="item.expand" />
+                        </div>
+                    </ng-template>
+                </app-story-row>
+            }
+
+            @case ('loading') {
+                <app-story-row caption="Загрузка и догрузка" slotWidth="24rem" [items]="loadingCases" [itemLabel]="caseLabel">
+                    <ng-template let-item>
+                        <div style="height: 22rem">
+                            <rt-chat
+                                hasThread
+                                canReply
+                                title="Договор №2024-118"
+                                placeholder="Написать сообщение"
+                                [messages]="item.empty ? none : messages"
+                                [loading]="item.loading"
+                                [fetching]="item.fetching" />
+                        </div>
+                    </ng-template>
+                </app-story-row>
+            }
+
+            @case ('themes') {
+                <app-story-themes caption="Переписка в обеих темах">
+                    <ng-template>
+                        <div style="width: 24rem; height: 22rem">
+                            <rt-chat hasThread canReply title="Договор №2024-118" placeholder="Написать сообщение" [messages]="messages" />
+                        </div>
+                    </ng-template>
+                </app-story-themes>
+            }
+        }
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        // components
+        RtChatComponent,
+
+        // showcase
+        StoryRowComponent,
+        StoryThemesComponent,
+    ],
+})
+export class TestRtChatMatrixComponent {
+    public part: ChatMatrixPart = 'thread';
+
+    public readonly messages: readonly IRtChat.Message[] = MESSAGES;
+    public readonly none: readonly IRtChat.Message[] = [];
+
+    /** Все четыре состояния своего сообщения: чужому сообщать о доставке нечего. */
+    public readonly statusMessages: readonly IRtChat.Message[] = [
+        { id: 11, author: 'Вы', own: true, status: ERtChatMessageStatus.Sending, text: 'Отправляется', createdAt: NOW },
+        { id: 12, author: 'Вы', own: true, status: ERtChatMessageStatus.Sent, text: 'Доставлено', createdAt: NOW },
+        { id: 13, author: 'Вы', own: true, status: ERtChatMessageStatus.Read, text: 'Прочитано', createdAt: NOW },
+        { id: 14, author: 'Вы', own: true, status: ERtChatMessageStatus.Failed, text: 'Не ушло', createdAt: NOW },
+    ];
+
+    public readonly threadCases: readonly { name: string; hasThread: boolean; messages: readonly IRtChat.Message[] }[] = [
+        { name: 'переписка не выбрана', hasThread: false, messages: [] },
+        { name: 'выбрана и пуста', hasThread: true, messages: [] },
+        { name: 'выбрана с сообщениями', hasThread: true, messages: MESSAGES },
+    ];
+
+    public readonly replyCases: readonly { name: string; canReply: boolean; reason: string | null; sending: boolean }[] = [
+        { name: 'отвечать можно', canReply: true, reason: null, sending: false },
+        { name: 'отправка в пути', canReply: true, reason: null, sending: true },
+        { name: 'отвечать нельзя — причина', canReply: false, reason: 'Переписка закрыта', sending: false },
+        { name: 'нельзя, причина не названа', canReply: false, reason: null, sending: false },
+    ];
+
+    public readonly headerCases: readonly { name: string; refresh: boolean; expand: boolean }[] = [
+        { name: 'один заголовок — шапки нет', refresh: false, expand: false },
+        { name: 'с обновлением', refresh: true, expand: false },
+        { name: 'с разворотом', refresh: false, expand: true },
+        { name: 'обе кнопки', refresh: true, expand: true },
+    ];
+
+    public readonly loadingCases: readonly { name: string; loading: boolean; fetching: boolean; empty: boolean }[] = [
+        { name: 'сообщения на месте', loading: false, fetching: false, empty: false },
+        { name: 'первая загрузка', loading: true, fetching: false, empty: true },
+        { name: 'догрузка сверху', loading: false, fetching: true, empty: false },
+    ];
+
+    public readonly caseLabel: (value: { name: string }) => string = (value: { name: string }): string => value.name;
+}
