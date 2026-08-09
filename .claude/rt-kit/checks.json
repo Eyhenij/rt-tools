@@ -19,7 +19,7 @@
       "in-review": { "id": "965595e4", "name": "👀 In review" },
       "done": { "id": "9194bf24", "name": "✅ Done" }
     },
-    "taskKey": "",
+    "taskKey": "RT",
     "bot": "rt-tools-agent",
     "tokenPath": "~/.config/rt-tools-bot-token",
     "reviewer": "Eyhenij"
