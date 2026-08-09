@@ -14,12 +14,9 @@ export default {
 
 type Story = StoryObj<TestRtNightGridComponent>;
 
-export const Default: Story = {
-    parameters: storySnapshotSkip(
-        'обёртка отдаёт пустой `cells`, и сетка не рисует ни одной ячейки; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
-    ),
+export const Playground: Story = {
+    parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
-        cells: [],
-        ariaLabel: '',
+        ariaLabel: 'Март',
     },
 };

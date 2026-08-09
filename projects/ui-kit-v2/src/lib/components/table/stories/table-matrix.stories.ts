@@ -33,4 +33,7 @@ export const Empty: Story = { args: { part: 'empty' } };
 
 export const Clickable: Story = { args: { part: 'clickable' } };
 
+/** Своя карточка против авто-карточки: обе видны только на узком кадре — на широком там таблица. */
+export const Cards: Story = { args: { part: 'cards' } };
+
 export const Themes: Story = { args: { part: 'themes' } };

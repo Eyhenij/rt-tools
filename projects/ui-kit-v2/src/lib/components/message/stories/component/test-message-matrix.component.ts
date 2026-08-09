@@ -35,7 +35,7 @@ export type MessageMatrixPart = 'severity' | 'icon' | 'closable' | 'content' | '
                     <ng-template let-severity let-iconCase="col">
                         <rt-message
                             [severity]="severity"
-                            [icon]="iconCase === 'своя иконка' ? 'ico-star' : null"
+                            [icon]="iconCase === 'своя иконка' ? 'star' : null"
                             [hideIcon]="iconCase === 'без иконки'">
                             Договор подписан
                         </rt-message>

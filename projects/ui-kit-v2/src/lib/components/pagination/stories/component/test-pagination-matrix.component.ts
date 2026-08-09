@@ -122,10 +122,16 @@ export class TestRtPaginationMatrixComponent {
      * Единственная страница номеров не показывает вовсе, а набор меньше самого мелкого размера
      * страницы прячет полосу целиком — `display: none` на хосте.
      */
+    /**
+     * Края идут парой «показана / спрятана»: полоса прячет себя целиком, когда записей не
+     * больше наименьшего размера страницы, и порознь спрятанная ячейка неотличима от
+     * несработавшей истории.
+     */
     public readonly edges: readonly IPaginationCase[] = [
-        { name: 'одна страница — номеров нет', pageModel: { pageNumber: 1, pageSize: 20, totalCount: 14 } },
-        { name: 'ровно на границе размера', pageModel: { pageNumber: 1, pageSize: 20, totalCount: 20 } },
+        { name: 'одна страница — номеров нет, полоса показана', pageModel: { pageNumber: 1, pageSize: 50, totalCount: 21 } },
+        { name: 'ровно наименьший размер — полоса спрятана', pageModel: { pageNumber: 1, pageSize: 20, totalCount: 20 } },
         { name: 'пустой набор — полоса спрятана', pageModel: { pageNumber: 1, pageSize: 20, totalCount: 0 } },
+        { name: 'последняя страница неполная', pageModel: { pageNumber: 3, pageSize: 20, totalCount: 41 } },
     ];
 
     /** Форму выбирает запрос по ширине контейнера: до 460 px — свёрнутая «‹ Стр. N из M ›». */

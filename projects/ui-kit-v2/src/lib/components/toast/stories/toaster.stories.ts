@@ -19,9 +19,9 @@ export default {
 
 type Story = StoryObj<TestRtToasterComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     parameters: storySnapshotSkip(
-        'уведомление никем не отправлено, и стопка пуста; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
+        'плашки живут по таймеру и к моменту кадра успевают уйти по-разному; вид самой плашки проверяют матрицы `Components/Toast`'
     ),
     args: {
         position: 'bottom-right',

@@ -15,11 +15,12 @@ import { ISortModel, LIST_SORT_ORDER_ENUM } from '@rt-tools/utils';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
+import { RtTableCardDirective } from '../../rt-table-card.directive';
 import { RtTableComponent } from '../../rt-table.component';
 import { IRtTable } from '../../rt-table.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TableMatrixPart = 'density' | 'loading' | 'sort' | 'empty' | 'clickable' | 'themes';
+export type TableMatrixPart = 'density' | 'loading' | 'sort' | 'empty' | 'clickable' | 'cards' | 'themes';
 
 /** Строка витрины: то, что показывают ячейки. */
 interface ITableRow {
@@ -198,6 +199,52 @@ const COLUMNS_CONFIG: readonly IRtTable.ColumnConfig[] = [
                 </app-story-row>
             }
 
+            @case ('cards') {
+                <app-story-row caption="Карточка узкого показа — видно только на узком кадре" [items]="cardCases" [itemLabel]="cardLabel">
+                    <ng-template let-item>
+                        @if (item.own) {
+                            <table rt-table ariaLabel="Договоры" [dataSource]="rows" [columns]="columns" [columnsConfig]="columnsConfig">
+                                <ng-container cdkColumnDef="title">
+                                    <th *cdkHeaderCellDef cdk-header-cell>Договор</th>
+                                    <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
+                                </ng-container>
+                                <ng-container cdkColumnDef="city">
+                                    <th *cdkHeaderCellDef cdk-header-cell>Город</th>
+                                    <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
+                                </ng-container>
+                                <ng-container cdkColumnDef="sum">
+                                    <th *cdkHeaderCellDef cdk-header-cell>Сумма</th>
+                                    <td *cdkCellDef="let row" cdk-cell>{{ row.sum }}</td>
+                                </ng-container>
+                                <ng-template rtTableCard let-row [rtTableCardRowType]="rows">
+                                    <strong>{{ row.title }}</strong>
+                                    <div>{{ row.city }} · {{ row.sum }}</div>
+                                </ng-template>
+                                <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
+                                <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
+                            </table>
+                        } @else {
+                            <table rt-table ariaLabel="Договоры" [dataSource]="rows" [columns]="columns" [columnsConfig]="columnsConfig">
+                                <ng-container cdkColumnDef="title">
+                                    <th *cdkHeaderCellDef cdk-header-cell>Договор</th>
+                                    <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
+                                </ng-container>
+                                <ng-container cdkColumnDef="city">
+                                    <th *cdkHeaderCellDef cdk-header-cell>Город</th>
+                                    <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
+                                </ng-container>
+                                <ng-container cdkColumnDef="sum">
+                                    <th *cdkHeaderCellDef cdk-header-cell>Сумма</th>
+                                    <td *cdkCellDef="let row" cdk-cell>{{ row.sum }}</td>
+                                </ng-container>
+                                <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
+                                <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
+                            </table>
+                        }
+                    </ng-template>
+                </app-story-row>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Таблица в обеих темах">
                     <ng-template>
@@ -226,6 +273,7 @@ const COLUMNS_CONFIG: readonly IRtTable.ColumnConfig[] = [
     imports: [
         // components
         RtTableComponent,
+        RtTableCardDirective,
 
         // cdk table
         CdkCell,
@@ -274,6 +322,12 @@ export class TestRtTableMatrixComponent {
         { name: 'без иконки', message: 'Договоров пока нет', icon: null, description: null },
     ];
 
+    /** Своя карточка против авто-карточки: на широком кадре обе ячейки — обычная таблица. */
+    public readonly cardCases: readonly { name: string; own: boolean }[] = [
+        { name: 'авто-карточка по колонкам', own: false },
+        { name: 'своя разметка карточки', own: true },
+    ];
+
     public readonly densityLabel: (value: IRtTable.Density) => string = (value: IRtTable.Density): string =>
         value === 'compact' ? 'compact — плотные строки' : 'default';
 
@@ -282,6 +336,8 @@ export class TestRtTableMatrixComponent {
     public readonly sortLabel: (value: { name: string }) => string = (value: { name: string }): string => value.name;
 
     public readonly emptyLabel: (value: { name: string }) => string = (value: { name: string }): string => value.name;
+
+    public readonly cardLabel: (value: { name: string }) => string = (value: { name: string }): string => value.name;
 
     public readonly clickableLabel: (value: boolean) => string = (value: boolean): string =>
         value ? 'clickable — строка отзывается' : 'обычная';

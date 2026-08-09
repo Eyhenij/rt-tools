@@ -10,7 +10,14 @@ import { IRtToaster } from '../../rt-toaster.model';
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type ToastMatrixPart = 'severity' | 'parts' | 'actions' | 'edges' | 'themes';
 
-/** Ничего не делающее действие: в витрине важен вид кнопки, а не её последствие. */
+/**
+ * Ничего не делающее действие: в витрине важен вид кнопки, а не её последствие.
+ *
+ * Плашки показаны с признаком взаимодействия: он держит таймер закрытия на паузе. Без него
+ * нулевая длительность закрывает плашку в тот же кадр, в котором она появилась, — в разметке
+ * она остаётся, но с признаком «удалена» и нулевой прозрачностью, и все ячейки матрицы
+ * выходили пустыми при живой разметке.
+ */
 const NOOP: () => void = (): void => undefined;
 
 /**
@@ -37,7 +44,17 @@ const NOOP: () => void = (): void => undefined;
                     [columns]="fills"
                     [columnLabel]="fillLabel">
                     <ng-template let-severity let-filled="col">
-                        <rt-toast [toast]="toastOf(severity, filled)" [index]="0" [totalToasts]="1" [visibleToasts]="3" [duration]="0" />
+                        <div style="position: relative; display: block; min-block-size: 5.5rem; width: 100%">
+                            <rt-toast
+                                [toast]="toastOf(severity, filled)"
+                                [index]="0"
+                                [totalToasts]="1"
+                                [heights]="heights"
+                                [expanded]="false"
+                                [interacting]="true"
+                                [visibleToasts]="3"
+                                [duration]="0" />
+                        </div>
                     </ng-template>
                 </app-story-grid>
             }
@@ -45,7 +62,17 @@ const NOOP: () => void = (): void => undefined;
             @case ('parts') {
                 <app-story-row caption="Из чего собран" slotWidth="22rem" [items]="partCases" [itemLabel]="partLabel">
                     <ng-template let-item>
-                        <rt-toast [toast]="item.toast" [index]="0" [totalToasts]="1" [visibleToasts]="3" [duration]="0" />
+                        <div style="position: relative; display: block; min-block-size: 5.5rem; width: 100%">
+                            <rt-toast
+                                [toast]="item.toast"
+                                [index]="0"
+                                [totalToasts]="1"
+                                [heights]="heights"
+                                [expanded]="false"
+                                [interacting]="true"
+                                [visibleToasts]="3"
+                                [duration]="0" />
+                        </div>
                     </ng-template>
                 </app-story-row>
             }
@@ -53,7 +80,17 @@ const NOOP: () => void = (): void => undefined;
             @case ('actions') {
                 <app-story-row caption="Кнопки действий" slotWidth="22rem" [items]="actionCases" [itemLabel]="partLabel">
                     <ng-template let-item>
-                        <rt-toast [toast]="item.toast" [index]="0" [totalToasts]="1" [visibleToasts]="3" [duration]="0" />
+                        <div style="position: relative; display: block; min-block-size: 5.5rem; width: 100%">
+                            <rt-toast
+                                [toast]="item.toast"
+                                [index]="0"
+                                [totalToasts]="1"
+                                [heights]="heights"
+                                [expanded]="false"
+                                [interacting]="true"
+                                [visibleToasts]="3"
+                                [duration]="0" />
+                        </div>
                     </ng-template>
                 </app-story-row>
             }
@@ -61,7 +98,17 @@ const NOOP: () => void = (): void => undefined;
             @case ('edges') {
                 <app-story-row caption="Края" slotWidth="22rem" [items]="edgeCases" [itemLabel]="partLabel">
                     <ng-template let-item>
-                        <rt-toast [toast]="item.toast" [index]="0" [totalToasts]="1" [visibleToasts]="3" [duration]="0" />
+                        <div style="position: relative; display: block; min-block-size: 5.5rem; width: 100%">
+                            <rt-toast
+                                [toast]="item.toast"
+                                [index]="0"
+                                [totalToasts]="1"
+                                [heights]="heights"
+                                [expanded]="false"
+                                [interacting]="true"
+                                [visibleToasts]="3"
+                                [duration]="0" />
+                        </div>
                     </ng-template>
                 </app-story-row>
             }
@@ -71,12 +118,17 @@ const NOOP: () => void = (): void => undefined;
                     <ng-template>
                         <div style="display: grid; gap: 0.5rem; width: 20rem">
                             @for (severity of severities; track severity) {
-                                <rt-toast
-                                    [toast]="toastOf(severity, false)"
-                                    [index]="0"
-                                    [totalToasts]="1"
-                                    [visibleToasts]="3"
-                                    [duration]="0" />
+                                <div style="position: relative; display: block; min-block-size: 5.5rem; width: 100%">
+                                    <rt-toast
+                                        [toast]="toastOf(severity, false)"
+                                        [index]="0"
+                                        [totalToasts]="1"
+                                        [heights]="heights"
+                                        [expanded]="false"
+                                        [interacting]="true"
+                                        [visibleToasts]="3"
+                                        [duration]="0" />
+                                </div>
                             }
                         </div>
                     </ng-template>
@@ -97,6 +149,13 @@ const NOOP: () => void = (): void => undefined;
 })
 export class TestRtToastMatrixComponent {
     public part: ToastMatrixPart = 'severity';
+
+    /**
+     * Высоты соседей по стопке. Плашка требует их обязательным входом: по ним она считает своё
+     * смещение. В матрице стопки нет — каждая ячейка показывает одиночную плашку, — и список
+     * пуст. Ссылка на него общая: новый массив на каждой проверке менял бы вход без нужды.
+     */
+    public readonly heights: IRtToaster.Height[] = [];
 
     public readonly severities: readonly INotification.Severity[] = ['info', 'success', 'warning', 'danger'];
     public readonly fills: readonly boolean[] = [false, true];
