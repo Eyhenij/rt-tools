@@ -139,6 +139,10 @@
           {
             "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/task-context-load.sh",
             "type": "command"
+          },
+          {
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/glossary-load.sh",
+            "type": "command"
           }
         ],
         "matcher": "startup|resume|compact|clear"
