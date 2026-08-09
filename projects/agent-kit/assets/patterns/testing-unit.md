@@ -64,13 +64,13 @@ function day(iso: string, overrides: Partial<ICalendarDay> = {}): ICalendarDay {
 Господствующая форма в этом дереве: логика уезжает в `*.logic.ts`, `*.util.ts` или
 `*.calculator.ts`, и проверяется вызовом — без `TestBed`, без подмены зависимостей. Образцы —
 `libs/site/common/booking/util/src/lib/availability-calendar.logic.ts` и
-`libs/api/pricing/util/src/lib/quote.calculator.ts`.
+`libs/api/<домен расчёта>/util/src/lib/quote.calculator.ts`.
 
 ## Процедура зовётся напрямую
 
 Обработчик — метод `handle` класса процедуры в слое `feature` своего домена. Двойник базы
 пишется руками; образец — `FakePrismaClient` в
-`libs/api/booking/feature/src/lib/link-booking.procedure.spec.ts`:
+`libs/api/<домен заявок>/feature/src/lib/link-booking.procedure.spec.ts`:
 
 ```typescript
 const prisma: FakePrismaClient = new FakePrismaClient();

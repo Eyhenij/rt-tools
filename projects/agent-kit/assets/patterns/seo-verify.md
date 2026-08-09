@@ -22,10 +22,10 @@ description: Паттерн правила seo. Брать после любой
 
 ```bash
 npx nx build site
-PORT=4930 node dist/apps/site/server/server.mjs &
+PORT={{prodSitePort}} node dist/apps/site/server/server.mjs &
 ```
 
-Порт 4930 — тот же, что берёт стенд; дев-серверы владельца на 4900 и 4901 при этом не
+Порт {{prodSitePort}} — тот же, что берёт стенд; дев-серверы владельца на {{sitePort}} и {{adminPort}} при этом не
 трогаются. Angular SSR отвечает `400` на чужой `Host`, поэтому запросы идут с
 `-H "Host: localhost"`.
 
@@ -34,7 +34,7 @@ PORT=4930 node dist/apps/site/server/server.mjs &
 ```bash
 for locale in "" ru/ de/ zh-Hans/ zh-Hant/ ko/ th/ hi/; do
     printf '%-10s ' "${locale:-en}"
-    curl -s -H "Host: localhost" "http://localhost:4930/${locale}<адрес страницы>" \
+    curl -s -H "Host: localhost" "http://localhost:{{prodSitePort}}/${locale}<адрес страницы>" \
         | grep -c -E '<title>|name="description"|property="og:|rel="canonical"|hreflang=|application/ld\+json'
 done
 ```
@@ -45,14 +45,14 @@ done
 Отдельно проверяется, что `canonical` ведёт на **свой** язык, а не на локаль по умолчанию:
 
 ```bash
-curl -s -H "Host: localhost" http://localhost:4930/de/<адрес страницы> \
+curl -s -H "Host: localhost" http://localhost:{{prodSitePort}}/de/<адрес страницы> \
     | grep -o 'rel="canonical" href="[^"]*"'
 ```
 
 ## Карта сайта
 
 ```bash
-curl -s -H "Host: localhost" http://localhost:4930/sitemap.xml | head -20
+curl -s -H "Host: localhost" http://localhost:{{prodSitePort}}/sitemap.xml | head -20
 ```
 
 Карта строится из живых данных, а не из файла. Пустой ответ означает, что не поднялся запрос

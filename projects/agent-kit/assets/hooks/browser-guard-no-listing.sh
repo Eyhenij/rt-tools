@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# rt-hook: PreToolUse mcp__claude-in-chrome__(list_connected_browsers|switch_browser)
 # Гард перечисления и переключения браузеров. PreToolUse.
 #
 # Сессии проекта живут в одном закреплённом профиле. Перечисление и переключение отдают общие
