@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.4.0 · defaults/gate-map.sh · 79ac768f8c1d · правится надстройкой, не здесь
+# rt-kit v0.4.0 · defaults/gate-map.sh · d748a83752c1 · правится надстройкой, не здесь
 # Карта «что правится — какое правило». Умолчание пакета: настоящие пути, а не образцы.
 #
 # Деревья этой мастерской устроены одинаково — Nx, `apps/` и `libs/`, те же расширения и те же
@@ -62,8 +62,14 @@ skill_for_default() {
                 */docs/constitution/*) printf '%s\n' 'spec-driven' ;;
                 *.md) printf '%s\n' 'doc-style' ;;
 
-                # Поставка: состав зависимостей — это то, что приезжает на прод.
-                */package.json | */pnpm-lock.yaml | */pnpm-workspace.yaml | */package-lock.json) printf '%s\n' 'dependencies' ;;
+                # Поставка: состав зависимостей — это то, что приезжает на прод. Правка
+                # скриптов зависимостью не является, и правило про версии на неё не вступает.
+                # Оговорка: удаление зависимости приходит правкой без номера версии и сюда не
+                # попадает — его ловит снимок дерева, который правится тем же коммитом.
+                */package.json)
+                    printf '%s' "$written" | grep -qE '"(dependencies|devDependencies|peerDependencies|optionalDependencies|overrides|resolutions|packageManager)"|"[^"]+"[[:space:]]*:[[:space:]]*"[~^]?[0-9]+\.[0-9]+' \
+                        && printf '%s\n' 'dependencies' ;;
+                */pnpm-lock.yaml | */pnpm-workspace.yaml | */package-lock.json) printf '%s\n' 'dependencies' ;;
 
                 # Границы между либами: манифест, алиасы, барель.
                 */project.json | */tsconfig.base.json | */eslint/boundaries/* | */src/index.ts | */public-api.ts | */ng-package.json)

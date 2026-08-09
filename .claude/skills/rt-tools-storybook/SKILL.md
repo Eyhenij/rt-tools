@@ -1,9 +1,34 @@
 ---
 name: rt-tools-storybook
+kind: rule
+law: verifiability
 description: Add or edit a Storybook story or MDX page for a kit component — the Test*Component wrapper convention, Meta/StoryObj typing, applicationConfig decorators, argTypes controls, and the ui-kit-v2 state-coverage contract. Use when creating any *.stories.ts or docs *.mdx, adding a demo variant for a component, or wiring token/theming docs into Storybook.
 ---
 
 # Storybook
+
+Правило под «Закон о проверяемости», раздел «Демонстрация видимого состояния». Текст ниже
+написан по-английски и приведётся к одному языку отдельным проходом; статьи — здесь.
+
+## Как закон применяется здесь
+
+- **Витрина у каждого кита своя, и общего между ними нет ничего.** Ни настройки, ни порта, ни
+  договорённостей об именах: киты разведены намеренно, и приём, снятый с одного, на втором
+  оказывается неверным молча.
+- **История целит в обёртку, а не в компонент кита.** Вход компонента сигнальный, и привязать к
+  нему изменяемое значение витрины нечем; обёртка держит демонстрационное состояние и не едет
+  в пакет.
+- **Компонент покрыт, когда каждая ось входов показана всеми значениями сразу.** Существующий
+  контрол, которым до значения можно доехать, покрытием не является: расхождение, видное на
+  сочетании, не видит ни автор правки, ни ревьюер.
+- **Оси перемножаются только там, где видно влияют друг на друга.** Полный декартов продукт
+  отвергнут: у кнопки это тысяча с лишним ячеек.
+- **Ось, которую показать нельзя, объявляется с причиной.** Молчаливый пропуск выглядит ровно
+  как покрытие.
+- **История, рисующая пустой набор, покрытием не считается.** Сначала правдоподобные данные,
+  потом матрица.
+- **Сетку рисует общая обвязка показа, а не разметка каждой истории.** Иначе одно и то же
+  показывается семьюдесятью способами и расходится при первой правке.
 
 **Two kits, two independent showcases.** They share no config, no port and no
 conventions beyond `@storybook/angular` itself. Check which package you are in
@@ -198,6 +223,54 @@ alongside `src/testing/**`, and it is linted like any other source — unlike
   inner component (dialog header, menu item, toast, panel), and open the overlay
   itself from a `play` function clicking the trigger on mount. Only
   `rt-bottom-sheet` takes a declarative `open` input.
+  Панель CDK Overlay рисуется в контейнере на `body`, то есть вне `[data-story-root]`: кадр по
+  корню показа не содержит её вовсе, и истории, открывающей панель, ставится
+  `snapshot: { fullPage: true }`.
+
+## Snapshot parameters — ui-kit-v2
+
+Стories are compared against baselines, and what gets a frame is decided **by
+subtraction**: everything is shot except what carries a skip with a reason. Get it
+backwards — shoot only what is marked — and a matrix whose marker was forgotten
+passes green with zero pixels checked, indistinguishable from a healthy run.
+
+Helpers live in `projects/ui-kit-v2/src/showcase/story-snapshot.ts`:
+
+```typescript
+import { storySnapshotSkip, storyWidthAtMost } from '../../../../showcase';
+
+// A story that repeats a matrix cell — skip it, and say why. An empty reason fails the run.
+export const Playground: Story = {
+    parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
+    args: { … },
+};
+
+// A component that names a width itself — one extra frame per threshold it declares.
+export default {
+    parameters: {
+        controls: { disable: true },
+        snapshot: { widths: [storyWidthAtMost(768)] },
+    },
+} as Meta<TestRtContainerMatrixComponent>;
+```
+
+- **The frame is taken by the show root**, not the whole page: `app-story-grid`,
+  `app-story-row` and `app-story-themes` all carry `data-story-root`. A story
+  whose display is not drawn by the harness asks for `snapshot: { fullPage: true }`.
+- **Pick the width helper that matches the media query**, not the raw number:
+  `storyWidthAtMost(768)` for `width <= 768px`, `storyWidthAtLeast(1441)` for
+  `width >= 1441px`, `storyWidthOver(1080)` for `width > 1080px`,
+  `storyWidthUnder(480)` for `width < 480px`. The strict ones shift by a pixel —
+  at the threshold itself the rule does not apply yet, and the frame would check
+  the side where it is absent.
+- **Only 11 folders of 74 name a width**: `calendar`, `chat`, `workspace`,
+  `toast`, `toolbar`, `container`, `page-header`, `photo-viewer`,
+  `filter-control`, `aside` by media query, and `table` through the breakpoints
+  service. Every other `@media` in the kit is `prefers-reduced-motion`,
+  `hover: hover` or `pointer: coarse` — nothing to do with width.
+
+The agreement behind all of this is
+`docs/specs/ui-kit-v2/proposed/visual-snapshots/`.
 
 ## Gotchas — ui-kit-v2
 
@@ -207,8 +280,6 @@ alongside `src/testing/**`, and it is linted like any other source — unlike
 - **Every wrapper adds a lint warning.** `rt/require-host-bem-block` fires on
   demo wrappers — 80 warnings today (§2.6). They are warnings, so the real
   eighty-first drowns.
-- **`skill-gate.sh` does not match `*.mdx`.** Editing a docs page hands out no
-  rule; load this skill yourself before writing MDX.
 - MDX tables need `remark-gfm` — already wired in `main.ts`. Without it a table
   renders as raw text.
 - Foundation docs live in `projects/ui-kit-v2/docs/*.mdx`. `Overview` and
@@ -216,9 +287,12 @@ alongside `src/testing/**`, and it is linted like any other source — unlike
 
 ## Gotchas
 
-- `.storybook` is excluded from ESLint (`eslint.config.cjs` ignores), and
-  `main.ts` carries a `/* eslint-disable */`. Do not rely on lint to catch
-  mistakes in that folder.
+- **Настройку витрины не проверяет ни линтер, ни тайпчек пакета — только её сборка.**
+  `.storybook` исключена из ESLint, а `main.ts` вдобавок несёт `/* eslint-disable */`;
+  `nx run @rt-tools/ui-kit-v2:typecheck` эту папку не видит вовсе. `process.env.RT_SNAPSHOT_RUN`
+  вместо `process.env['RT_SNAPSHOT_RUN']` прошло `check:all` целиком и отказало только на
+  `pnpm run build-storybook:ui-kit-v2`. Правка в `.storybook/` подтверждается сборкой витрины,
+  а не общим прогоном проверок.
 - `projects/ui-kit/src/lib/ui-kit/dynamic-selectors/` uses a misspelled
   `strories/` folder. It is matched by the `../src/**` glob and works; leave it
   unless you are deliberately renaming it (both the stylelint ignore and any

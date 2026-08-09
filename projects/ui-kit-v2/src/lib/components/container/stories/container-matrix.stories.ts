@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storyWidthAtMost } from '../../../../showcase';
 import { TestRtContainerMatrixComponent } from './component/test-container-matrix.component';
 
 /**
@@ -14,6 +15,9 @@ export default {
     component: TestRtContainerMatrixComponent,
     parameters: {
         controls: { disable: true },
+        // Каркас называет ширину сам: `@media (width <= 768px)` в его стилях перекладывает зоны.
+        // Кадр порога снимается на той стороне, которую правило включает, — в окне ровно 768.
+        snapshot: { widths: [storyWidthAtMost(768)] },
     },
 } as Meta<TestRtContainerMatrixComponent>;
 
