@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.3.0 · checks/task-new.github.mjs · cb09d0618f68 · правится надстройкой, не здесь
+// rt-kit v0.3.0 · checks/task-new.github.mjs · c1b4cf1be5d5 · правится надстройкой, не здесь
 /**
  * Заведение задачи, с которой начинается правка.
  *
@@ -19,7 +19,8 @@
  * та же, от которой идут коммиты; `--assignee` перекрывает исполнителя.
  */
 import { existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import {
     BACKLOG_OPTION_ID,
