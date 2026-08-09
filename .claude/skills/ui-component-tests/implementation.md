@@ -23,7 +23,7 @@
 | Обвязка снимков второго кита | `projects/ui-kit-v2/.storybook/test-runner.ts` + `tools/visual-snapshots-v2.mjs` |
 | Эталоны                      | `projects/<пакет>/.storybook/__snapshots__`                                      |
 | Параметры съёмки истории     | `projects/ui-kit-v2/src/showcase/story-snapshot.ts`                              |
-| Договорённость о снимках     | `docs/specs/ui-kit-v2/proposed/visual-snapshots/`                                |
+| Договорённость о снимках     | `docs/specs/ui-kit-v2/`                                                          |
 | Общая обвязка показа         | `projects/ui-kit-v2/src/showcase/`                                               |
 
 ## Где исполняются статьи

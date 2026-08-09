@@ -15,7 +15,7 @@
  *    стирает и то расхождение, которого не ждали, поэтому она — отдельная команда с явным
  *    признаком, а не умолчание.
  *
- * Договорённость — `docs/specs/ui-kit-v2/proposed/visual-snapshots/`.
+ * Договорённость — `docs/specs/ui-kit-v2/`.
  *
  *   node tools/visual-snapshots-v2.mjs                      # сверка с эталонами
  *   node tools/visual-snapshots-v2.mjs --update '<файл>'    # пересъёмка названных файлов историй
