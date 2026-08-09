@@ -1,11 +1,11 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtTabsComponent } from './component/test-tabs.component';
 
 export default {
     title: 'Components/Tabs',
     component: TestRtTabsComponent,
-    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         activeId: { control: false },
         direction: {
@@ -20,6 +20,9 @@ export default {
 type Story = StoryObj<TestRtTabsComponent>;
 
 export const Default: Story = {
+    parameters: storySnapshotSkip(
+        'обёртка не передаёт ни одной вкладки, и полоса пуста; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
+    ),
     args: {
         activeId: null,
         direction: 'horizontal',

@@ -5,6 +5,7 @@ import { TestRtTabComponent } from './component/test-tab.component';
 export default {
     title: 'Components/Tab',
     component: TestRtTabComponent,
+    // Показ рисует не сетка витрины, а сам составной компонент, поэтому кадр целой страницей.
     parameters: { snapshot: { fullPage: true } },
     argTypes: {
         id: { control: false },
@@ -24,7 +25,7 @@ type Story = StoryObj<TestRtTabComponent>;
 
 export const Default: Story = {
     args: {
-        id: '',
+        id: 'first',
         label: 'Сохранить',
         titleTemplate: null,
         icon: null,

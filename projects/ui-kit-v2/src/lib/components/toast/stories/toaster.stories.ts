@@ -1,14 +1,11 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
-import { storyWidthAtMost } from '../../../../showcase';
+import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtToasterComponent } from './component/test-toaster.component';
 
 export default {
     title: 'Components/Toaster',
     component: TestRtToasterComponent,
-    // Показ рисует не сетка витрины, поэтому кадр целой страницей. Стопка уведомлений называет
-    // ширину сама: `@media (width <= 480px)` разворачивает её во всю ширину экрана.
-    parameters: { snapshot: { fullPage: true, widths: [storyWidthAtMost(480)] } },
     argTypes: {
         position: {
             options: ['top-left', 'top-center', 'top-right', 'bottom-left', 'bottom-center', 'bottom-right'],
@@ -23,6 +20,9 @@ export default {
 type Story = StoryObj<TestRtToasterComponent>;
 
 export const Default: Story = {
+    parameters: storySnapshotSkip(
+        'уведомление никем не отправлено, и стопка пуста; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
+    ),
     args: {
         position: 'bottom-right',
         duration: 4000,

@@ -1,14 +1,11 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
-import { storyWidthAtMost } from '../../../../showcase';
+import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtCalendarComponent } from './component/test-calendar.component';
 
 export default {
     title: 'Components/Calendar',
     component: TestRtCalendarComponent,
-    // Показ рисует не сетка витрины, поэтому кадр целой страницей. Календарь называет ширину
-    // сам: на 640 сетка дней сжимается, на 374 — уходят подписи месяцев.
-    parameters: { snapshot: { fullPage: true, widths: [storyWidthAtMost(640), storyWidthAtMost(374)] } },
     argTypes: {
         months: { control: false },
         weekdayLabels: { control: false },
@@ -23,6 +20,9 @@ export default {
 type Story = StoryObj<TestRtCalendarComponent>;
 
 export const Default: Story = {
+    parameters: storySnapshotSkip(
+        'обёртка отдаёт пустой `months`, и в кадре только стрелки перелистывания; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
+    ),
     args: {
         months: [],
         weekdayLabels: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
