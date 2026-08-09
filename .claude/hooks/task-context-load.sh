@@ -1,45 +1,100 @@
 #!/usr/bin/env bash
+# rt-kit v0.3.0 · hooks/task-context-load.sh · c114ea04f9f4 · правится надстройкой, не здесь
 # SessionStart: состояние незаконченной работы уезжает в контекст на каждом запуске сессии.
 #
-# Памятью это не держится: между заходами исполнитель не помнит ничего, а владелец помнит и
-# вынужден пересказывать. Пересказ каждый раз выходит короче предыдущего, и работа доделывается
-# по обрывку исходной просьбы. Замысел и ход лежат на диске — их и надо прочитать раньше первого
-# ответа, а не после первой правки.
+# Памятью это не держится по той же причине, что и словарь: замысел читают перед правкой
+# файла, а разговор с владельцем начинается с вопроса — и заход отвечает, не зная, что работа
+# уже наполовину сделана. Здесь замысел и ход работы приходят до первой реплики, и владельцу
+# не приходится пересказывать то, что уже записано.
 #
-# Файл этого дерева: пакет такого хука не везёт.
+# Разбор просьбы (`grill.md`) отдаётся путём, а не текстом: он неизменен, объёмен и нужен
+# реже остальных.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: нет ветки, нет папки задачи, нет git — хук молчит и выходит успешно.
+# FAIL-OPEN: нет `jq`, не git-репозиторий, нет папки задачи — выходим молча. Сессия важнее
+# контекста.
 
-root="${CLAUDE_PROJECT_DIR:-.}"
-cd "$root" 2>/dev/null || exit 0
+ROOT="${CLAUDE_PROJECT_DIR:-.}"
+command -v jq >/dev/null 2>&1 || exit 0
+cd "$ROOT" 2>/dev/null || exit 0
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 
-branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)" || exit 0
+branch="$(git branch --show-current 2>/dev/null)"
 [ -z "$branch" ] && exit 0
-[ "$branch" = "main" ] && exit 0
 
-# Имя каталога повторяет имя ветки; косые заменены дефисом.
-dir="docs/tasks/$(printf '%s' "$branch" | tr '/' '-')"
-[ -d "$dir" ] || exit 0
+# Профиль дерева: сперва умолчание пакета, поверх него — надстройка проекта, если она есть.
+rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" "$ROOT/.claude/rt-kit/defaults/project.sh" "$ROOT/.claude/rt-kit/project.sh"; do
+    # shellcheck disable=SC1090
+    [ -f "$profile" ] && . "$profile" 2>/dev/null
+done
 
-say() { printf '%s\n' "$1"; }
+TASKS_DIR="${RT_TASKS_DIR:-docs/tasks}"
+[ -z "$TASKS_DIR" ] && exit 0
 
-say "СОСТОЯНИЕ НЕЗАКОНЧЕННОЙ РАБОТЫ — $dir"
-say ""
+DIR="$TASKS_DIR/$branch"
+PLAN="$DIR/plan.md"
+PROGRESS="$DIR/progress.md"
+GRILL="$DIR/grill.md"
 
-if [ -f "$dir/progress.md" ]; then
-    # «Где стоим» — единственное место, где отмечается сделанное. Остальное читается по ссылке.
-    awk '/^## Где стоим/{flag=1; next} /^## /{flag=0} flag' "$dir/progress.md" | sed '/^$/d' | head -12
-    say ""
+emit() {
+    jq -Rs '{hookSpecificOutput:{hookEventName:"SessionStart",additionalContext:.}}' 2>/dev/null
+}
+
+# Ветка под задачу без папки — работа идёт мимо. Сессию не рвём: SessionStart, отбивающий
+# запуск, оставляет владельца без агента вовсе, а правку кода поймает `task-flow-guard`.
+if [ ! -d "$DIR" ]; then
+    if command -v rt_task_branch_ok >/dev/null 2>&1 && rt_task_branch_ok "$branch"; then
+        {
+            printf 'РАБОТА БЕЗ ПАПКИ ЗАДАЧИ.\n\n'
+            printf 'Ветка `%s` названа задачей, а `%s/` нет: ход работы записывать некуда,\n' "$branch" "$DIR"
+            printf 'и следующий заход начнёт с расспросов владельца.\n\n'
+            printf 'Собрать с образца:\n\n    cp -r %s/_template %s\n\n' "$TASKS_DIR" "$DIR"
+            printf 'Правку кода приложения до этого отбивает гард. Правило — скил `task-flow`.\n'
+        } | emit
+    fi
+    exit 0
 fi
 
-if [ -f "$dir/plan.md" ]; then
-    say "Замысел — $dir/plan.md. Этапы:"
-    grep -E '^### ' "$dir/plan.md" | sed 's/^### /  /' | head -12
-    say ""
-fi
+# Порог объёма. Ход работы растёт с каждым заходом, и на десятом заходе целиком он стоит
+# дороже, чем даёт. Перевалив порог, отдаём «Где стоим» и последние записи.
+LIMIT=40000
+size=0
+for file in "$PLAN" "$PROGRESS"; do
+    [ -f "$file" ] || continue
+    size=$((size + $(wc -c <"$file" 2>/dev/null || echo 0)))
+done
 
-[ -f "$dir/grill.md" ] && say "Просьба владельца дословно — $dir/grill.md: перечитать до первого вопроса."
+{
+    printf 'СОСТОЯНИЕ РАБОТЫ — ветка `%s`, папка `%s/`.\n\n' "$branch" "$DIR"
+    printf 'Это записано прошлыми заходами. Владельца о том, что здесь есть, не спрашивают.\n'
+    printf 'Отметка о сделанном — только в `progress.md`; `plan.md` по ходу не правится.\n'
+    printf 'Как ведётся работа — правило `task-flow`, возвращение к ней — паттерн `task-flow-resume`.\n\n'
 
-say "Сделанное отмечается только в $dir/progress.md. Замысел после написания не правится."
+    if [ -f "$GRILL" ]; then
+        printf 'Разбор просьбы владельца — `%s`, читается по надобности.\n\n' "$GRILL"
+    fi
 
-exit 0
+    if [ -f "$PLAN" ]; then
+        printf -- '--- ЗАМЫСЕЛ (`%s`) ---\n\n' "$PLAN"
+        if [ "$size" -le "$LIMIT" ]; then
+            cat "$PLAN"
+        else
+            sed -n '1,60p' "$PLAN"
+            printf '\n<обрезано по объёму — читается целиком: %s>\n' "$PLAN"
+        fi
+        printf '\n'
+    fi
+
+    if [ -f "$PROGRESS" ]; then
+        printf -- '--- ХОД РАБОТЫ (`%s`) ---\n\n' "$PROGRESS"
+        if [ "$size" -le "$LIMIT" ]; then
+            cat "$PROGRESS"
+        else
+            # Раздел «Где стоим» перезаписывается каждым заходом и переживает любой объём.
+            awk '/^## Где стоим/{f=1} f&&/^## /&&!/^## Где стоим/{exit} f' "$PROGRESS"
+            printf '\n<обрезано по объёму. Последние записи:>\n\n'
+            tail -40 "$PROGRESS"
+            printf '\n<читается целиком: %s>\n' "$PROGRESS"
+        fi
+    fi
+} | emit

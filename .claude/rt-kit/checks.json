@@ -1,0 +1,27 @@
+{
+  "sourceRoots": ["projects"],
+  "e2eRoots": [],
+  "backendRoots": [],
+  "schemaFile": "",
+  "migrationsDir": "",
+  "families": [],
+  "importScope": "@rt-tools",
+  "board": {
+    "owner": "Eyhenij",
+    "repo": "rt-tools",
+    "projectId": "PVT_kwHOBE82K84AjroZ",
+    "statusFieldId": "PVTSSF_lAHOBE82K84AjroZzgcAY0U",
+    "statusOptions": {
+      "new": { "id": "e9c5e93d", "name": "🆕 New" },
+      "backlog": { "id": "bb429887", "name": "📋 Backlog" },
+      "ready": { "id": "69a42c4a", "name": "🔖 Ready" },
+      "in-progress": { "id": "9f0e17a7", "name": "🏗 In progress" },
+      "in-review": { "id": "965595e4", "name": "👀 In review" },
+      "done": { "id": "9194bf24", "name": "✅ Done" }
+    },
+    "taskKey": "",
+    "bot": "rt-tools-agent",
+    "tokenPath": "~/.config/rt-tools-bot-token",
+    "reviewer": "Eyhenij"
+  }
+}
