@@ -270,7 +270,7 @@ export default {
   `hover: hover` or `pointer: coarse` — nothing to do with width.
 
 The agreement behind all of this is
-`docs/specs/ui-kit-v2/proposed/visual-snapshots/`.
+`docs/specs/ui-kit-v2/`.
 
 ## Gotchas — ui-kit-v2
 

@@ -83,7 +83,7 @@ pnpm run check:affected                                # то же, что сп�
 | Что снимается      | каждая история                                 | всё, кроме помеченного `storySnapshotSkip`       |
 | Область кадра      | вся страница                                   | корень показа `[data-story-root]`                |
 
-Договорённость второй витрины — `docs/specs/ui-kit-v2/proposed/visual-snapshots/`; параметры
+Договорённость второй витрины — `docs/specs/ui-kit-v2/`; параметры
 историй — `src/showcase/story-snapshot.ts`, и как их ставить, сказано в правиле
 `rt-tools-storybook`.
 
