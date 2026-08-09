@@ -3,6 +3,20 @@ import remarkGfm from 'remark-gfm';
 import type { StorybookConfig } from '@storybook/angular';
 
 /* eslint-disable */
+
+// Прогон снимков грузит эту настройку в Node, чтобы найти файлы историй, — а
+// `storybook-addon-pseudo-states` в Node не грузится вовсе: на верхнем уровне он трогает
+// `Element`, и импорт падает с `Element is not defined`. Ошибку прогон проглатывает, но
+// окружение остаётся без страницы, и все 124 файла историй падают на
+// `Cannot read properties of undefined (reading 'goto')` — выглядит это как сломанная обвязка
+// снимков, хотя сломан импорт настройки.
+//
+// Аддон нужен витрине, а не прогону: состояния рисуются в браузере, на уже поднятой витрине,
+// а прогон только ходит к ней по адресу. Поэтому в заходе снимков аддон не подключается.
+// Переменную ставит `tools/visual-snapshots-v2.mjs`; поднимать витрину с ней нельзя — тогда
+// hover, focus и active пропадут из кадра и эталон закрепит не то состояние.
+const isSnapshotRun: boolean = process.env['RT_SNAPSHOT_RUN'] === '1';
+
 const config: StorybookConfig = {
     // `../src/**/*.mdx` — страница-обзор компонента лежит рядом с ним, как лежит его
     // CONTEXT.md: документ, уехавший от того, что описывает, расходится с ним молча.
@@ -12,7 +26,7 @@ const config: StorybookConfig = {
         // Без него hover/focus-visible/active не увидеть глазами: они стилизованы в 27 SCSS
         // кита, а мышь в статичной сетке не наведёшь. Аддон переписывает CSS на лету —
         // отгружаемые стили ради витрины трогать не приходится.
-        'storybook-addon-pseudo-states',
+        ...(isSnapshotRun ? [] : ['storybook-addon-pseudo-states']),
         {
             name: '@storybook/addon-docs',
             options: {

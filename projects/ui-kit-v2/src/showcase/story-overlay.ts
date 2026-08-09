@@ -57,17 +57,43 @@ export interface IStoryOverlayGesture {
 }
 
 /**
+ * Сколько ждать кадр отрисовки, прежде чем идти дальше без него. Два кадра при 60 Гц: в окне,
+ * которое рисует, запас не тратится вовсе — кадр приходит раньше и гонку выигрывает он.
+ */
+const SETTLE_FALLBACK_MS: number = 32;
+
+/**
+ * Один шаг ожидания: кадр отрисовки или макрозадача — что придёт первым.
+ *
+ * Одним только кадром это ждать нельзя. Браузер не вызывает `requestAnimationFrame` в фоновой
+ * вкладке и в окне без отрисовки, а прогон снимков идёт именно там: ожидание не кончалось бы
+ * никогда, жест не случался бы, и кадр истории с закрытой панелью был бы неотличим от исправной
+ * истории, у которой панель и не должна быть открыта. Эталон такого кадра узаконил бы поломку
+ * молча — поэтому у ожидания есть запасной выход.
+ */
+async function frame(): Promise<void> {
+    await new Promise<void>((resolve: () => void): void => {
+        let settled: boolean = false;
+        const finish: () => void = (): void => {
+            if (!settled) {
+                settled = true;
+                resolve();
+            }
+        };
+
+        requestAnimationFrame(finish);
+        setTimeout(finish, SETTLE_FALLBACK_MS);
+    });
+}
+
+/**
  * Ждёт, пока нарисованное встанет на место: Angular обновляет вью после микрозадачи, а CDK
  * ставит панель к триггеру в следующем кадре. Без ожидания жест не находит триггера, а сразу
  * после жеста панель ещё стоит в левом верхнем углу.
  */
 async function settle(): Promise<void> {
-    await new Promise<void>((resolve: () => void): void => {
-        requestAnimationFrame((): void => resolve());
-    });
-    await new Promise<void>((resolve: () => void): void => {
-        requestAnimationFrame((): void => resolve());
-    });
+    await frame();
+    await frame();
 }
 
 /** Пауза для того, что появляется с задержкой. */

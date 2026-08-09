@@ -9,5 +9,6 @@ export * from './story-grid.component';
 export * from './story-metrics';
 export * from './story-overlay';
 export * from './story-row.component';
+export * from './story-snapshot';
 export * from './story-states';
 export * from './story-themes.component';

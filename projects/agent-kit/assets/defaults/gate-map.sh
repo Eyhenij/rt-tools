@@ -61,8 +61,14 @@ skill_for_default() {
                 */docs/constitution/*) printf '%s\n' 'spec-driven' ;;
                 *.md) printf '%s\n' 'doc-style' ;;
 
-                # Поставка: состав зависимостей — это то, что приезжает на прод.
-                */package.json | */pnpm-lock.yaml | */pnpm-workspace.yaml | */package-lock.json) printf '%s\n' 'dependencies' ;;
+                # Поставка: состав зависимостей — это то, что приезжает на прод. Правка
+                # скриптов зависимостью не является, и правило про версии на неё не вступает.
+                # Оговорка: удаление зависимости приходит правкой без номера версии и сюда не
+                # попадает — его ловит снимок дерева, который правится тем же коммитом.
+                */package.json)
+                    printf '%s' "$written" | grep -qE '"(dependencies|devDependencies|peerDependencies|optionalDependencies|overrides|resolutions|packageManager)"|"[^"]+"[[:space:]]*:[[:space:]]*"[~^]?[0-9]+\.[0-9]+' \
+                        && printf '%s\n' 'dependencies' ;;
+                */pnpm-lock.yaml | */pnpm-workspace.yaml | */package-lock.json) printf '%s\n' 'dependencies' ;;
 
                 # Границы между либами: манифест, алиасы, барель.
                 */project.json | */tsconfig.base.json | */eslint/boundaries/* | */src/index.ts | */public-api.ts | */ng-package.json)

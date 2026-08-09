@@ -69,6 +69,9 @@ export interface IStoryCell<ROW, COL> {
     encapsulation: ViewEncapsulation.None,
     host: {
         class: 'app-story-grid',
+        // Корень показа: по нему обвязка снимков берёт область кадра — см. STORY_SNAPSHOT_ROOT_ATTRIBUTE.
+        // Записан литералом, а не константой: метаданные компонента читаются сборщиком статически.
+        'data-story-root': '',
     },
     imports: [
         // angular
