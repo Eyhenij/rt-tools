@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.3.0 · checks/check-dupes.mjs · ae772392aa02 · правится надстройкой, не здесь
+// rt-kit v0.4.0 · checks/check-dupes.mjs · 67a66cbbb2fd · правится надстройкой, не здесь
 /**
  * Проверка того, что образец не написан второй раз.
  *
@@ -43,7 +43,11 @@ import { join } from 'node:path';
 import { allowlistOf, CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 const ALLOWLIST = allowlistOf('dupes');
-const SOURCE_ROOT = 'libs';
+/**
+ * Где ищутся повторы. Корни берутся из настройки: зашитое имя молча не находило ни одного файла
+ * у дерева, которое держит код иначе, и проверка зеленела на пустом обходе.
+ */
+const SOURCE_ROOTS = CONFIG.sourceRoots;
 /**
  * `gen` и `generated` — контракт и клиент Prisma: их объявления и есть источник, с
  * которым сверяются остальные. Считать их копией значит требовать правки того, что
@@ -142,7 +146,7 @@ function collectEnums(text, lib) {
     }
 }
 
-for (const path of collectFiles(SOURCE_ROOT)) {
+for (const path of SOURCE_ROOTS.flatMap((root) => collectFiles(root))) {
     const text = readFileSync(join(ROOT, path), 'utf8');
     const lib = libOf(path);
 

@@ -4,7 +4,7 @@ kind: rule
 law: frontend-application
 description: Правило под «Закон о фронтовом приложении». Брать при правке любого класса Angular — компонента, стора админки, сервиса, директивы, пайпа, гарда, интерцептора. Называет сигнальный API входов, OnPush, zoneless, inject и место, где живёт подписка. Не действует под libs/api и apps/api. Готовый код — в паттерне angular-patterns-state.
 ---
-<!-- rt-kit v0.3.0 · rules/angular-patterns.md · 1b42386a2bd3 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.4.0 · rules/angular-patterns.md · 3f3ae158101c · правится надстройкой, не здесь -->
 
 # Реактивность экрана — как это устроено здесь
 
@@ -28,13 +28,9 @@ description: Правило под «Закон о фронтовом прило
 
 ## Где это лежит
 
-| Что                             | Где                                                                |
-| ------------------------------- | ------------------------------------------------------------------ |
-| Запрет подписки в методе        | `tools/eslint-rules/rules/no-subscribe-in-methods.ts`              |
-| Требование гасить подписку      | `tools/eslint-rules/rules/require-take-until-destroyed.ts`         |
-| Требование суффикса у источника | `tools/eslint-rules/rules/require-source-suffix-for-subjects.ts`   |
-| Общая основа списочного стора   | `libs/common/platform/src/lib/services/base-list-store.service.ts` |
-| Требование её наследовать       | `tools/eslint-rules/rules/require-list-store-base.ts`              |
+В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
+переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
+же дереве, которое держит код иначе.
 
 ## Как закон применяется здесь
 

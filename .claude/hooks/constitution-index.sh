@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# rt-kit v0.3.0 · hooks/constitution-index.sh · 1bf063d8b45b · правится надстройкой, не здесь
+# rt-kit v0.4.0 · hooks/constitution-index.sh · e2b6366c4773 · правится надстройкой, не здесь
+# rt-hook: SessionStart startup|resume|compact|clear
 # Вход в слой законов. SessionStart.
 #
 # Файл закона сам по себе не приносит в контекст ничего — его читают, только когда за ним

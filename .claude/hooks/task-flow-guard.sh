@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# rt-kit v0.3.0 · hooks/task-flow-guard.sh · aebf4218ae40 · правится надстройкой, не здесь
+# rt-kit v0.4.0 · hooks/task-flow-guard.sh · a851805cad70 · правится надстройкой, не здесь
+# rt-hook: PreToolUse Edit|Write|MultiEdit
 # PreToolUse guard for Edit|Write|MultiEdit: код не пишется раньше замысла.
 #
 # Работа идёт много заходов, и между ними исполнитель не помнит ничего. Замысел, лежащий на

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# rt-kit v0.3.0 · hooks/browser-guard-device-id.sh · 37c62e32f82b · правится надстройкой, не здесь
+# rt-kit v0.4.0 · hooks/browser-guard-device-id.sh · 811389bf2ec2 · правится надстройкой, не здесь
+# rt-hook: PreToolUse mcp__claude-in-chrome__select_browser
 # Гард выбора браузера. PreToolUse на выборе браузера расширением.
 #
 # Отклоняет любой профиль, кроме закреплённого: чужой стоит лишнего круга и приводит в браузер,

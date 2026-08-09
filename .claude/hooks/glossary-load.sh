@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# rt-kit v0.3.0 · hooks/glossary-load.sh · da125803eb2e · правится надстройкой, не здесь
+# rt-kit v0.4.0 · hooks/glossary-load.sh · 4843d5926698 · правится надстройкой, не здесь
+# rt-hook: SessionStart startup|resume|compact|clear
 # SessionStart: словарь проекта уезжает в контекст целиком, на каждом запуске сессии.
 #
 # Памятью это не держится: словарь читают перед тем, как написать текст, а разговор с
