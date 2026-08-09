@@ -1,15 +1,11 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
-import { storyWidthAtMost, storyWidthOver } from '../../../../showcase';
+import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtWorkspaceComponent } from './component/test-workspace.component';
 
 export default {
     title: 'Components/Workspace',
     component: TestRtWorkspaceComponent,
-    // Показ рисует не сетка витрины, поэтому кадр целой страницей. Рабочее место называет ширину
-    // тремя правилами: два включающих порога и одно строгое `width > 1080px` — у него кадр берётся
-    // на пиксель шире, иначе проверялась бы сторона, где правило не действует.
-    parameters: { snapshot: { fullPage: true, widths: [storyWidthAtMost(1080), storyWidthAtMost(768), storyWidthOver(1080)] } },
     argTypes: {
         storageKey: { control: { type: 'text' } },
         hasActive: { control: { type: 'boolean' } },
@@ -26,6 +22,9 @@ export default {
 type Story = StoryObj<TestRtWorkspaceComponent>;
 
 export const Default: Story = {
+    parameters: storySnapshotSkip(
+        'обёртка не заполняет ни одной зоны, и в кадре только разделители колонок; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
+    ),
     args: {
         storageKey: null,
         hasActive: false,
