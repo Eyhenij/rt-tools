@@ -1,3 +1,17 @@
+# [0.4.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.3.0...rt-agent-kit@0.4.0) (2026-08-09)
+
+### Bug Fixes
+
+- **rt:agent-kit:** дать проверкам право на запуск, обещанное их шебангом ([6dd4ed4](https://github.com/Eyhenij/rt-tools/commit/6dd4ed47a43375baebd1db1f8994d16d98855ccb))
+- **rt:agent-kit:** отказывать там, где раскладка молчала, и проверять то, что везём ([7d8eb97](https://github.com/Eyhenij/rt-tools/commit/7d8eb97bfd41db6093905b15f21f73b668df4c2c))
+
+### Features
+
+- **rt:agent-kit:** везти исполнителей — роли, конвейеры, проверки и умолчания ([d0187af](https://github.com/Eyhenij/rt-tools/commit/d0187af24ef185be0ea9bded078d111db744d2d6))
+- **rt:agent-kit:** виды ресурса, сверка шапок и новые рода в раскладке ([6aad63a](https://github.com/Eyhenij/rt-tools/commit/6aad63a387eb0839b8857d538347804cc065b9f4))
+- **rt:agent-kit:** второй слой законов и рост состава до 18 законов и 25 правил ([272dea7](https://github.com/Eyhenij/rt-tools/commit/272dea795bb9663a64a01bbbf462ff59e49c2e21))
+- **rt:agent-kit:** сделать ключ задач обязательным и вывести из него все три имени ([ed74eb9](https://github.com/Eyhenij/rt-tools/commit/ed74eb9f4f2b1daa6990b514463f8b8d047effcb)), closes [#317](https://github.com/Eyhenij/rt-tools/issues/317)
+
 # 0.4.0 (не выпущено)
 
 ### Bug Fixes
