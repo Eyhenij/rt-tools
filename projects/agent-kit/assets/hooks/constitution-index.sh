@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# rt-hook: SessionStart startup|resume|compact|clear
 # Вход в слой законов. SessionStart.
 #
 # Файл закона сам по себе не приносит в контекст ничего — его читают, только когда за ним

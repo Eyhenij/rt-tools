@@ -23,18 +23,9 @@ description: Правило под «Закон об общем коде при�
 
 ## Где это лежит
 
-| Что                                                                             | Откуда берётся                      |
-| ------------------------------------------------------------------------------- | ----------------------------------- |
-| `IPageModel`, `ISortModel`, `IFilterModel`, `IListState`                        | `@rt-tools/utils`                   |
-| `FILTER_OPERATOR_TYPE_ENUM`, `LIST_SORT_ORDER_ENUM`                             | `@rt-tools/utils`                   |
-| `BaseMapper`, `TypeCastHelper`                                                  | `@rt-tools/utils`                   |
-| `DEFAULT_PAGE_SIZE`, `MAX_PAGE_SIZE`                                            | `@<область>/common/util`            |
-| `IRateLimitRule`, `isWithinRateLimit`, `pruneTimestamps`, `RATE_LIMIT_MAX_KEYS` | `@<область>/common/util`            |
-| `listSortOrderOf`, `listFilterOperatorOf`                                       | `@<область>/common/util`            |
-| `PageModelMapper`, `SortModelMapper`, `FilterModelMapper`                       | `@<область>/common/util`            |
-| Типы выборки, вид списка в адресе, конвертер страницы                           | `@<область>/common/util`            |
-| `ListQueryMapper`                                                               | `@<область>/admin/core`             |
-| Разбор выборки на бэкенде                                                       | `@<область>/api/observability/util` |
+В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
+переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
+же дереве, которое держит код иначе.
 
 ## Как закон применяется здесь
 

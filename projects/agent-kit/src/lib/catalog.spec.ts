@@ -3,7 +3,7 @@
  * с собой шаблоны — иначе проект, выбравший девять законов, остался бы без шаблона правила и
  * узнал бы об этом, только пойдя за ним.
  */
-import { IEntryOfCatalog, idOf, isChosen, ISelection, resolveSelection, titleOf } from './catalog.js';
+import { IEntryOfCatalog, idOf, IGapOfVariant, isChosen, ISelection, resolveSelection, titleOf, variantGaps } from './catalog.js';
 import { TKind } from './config.js';
 import { IVariant } from './variants.js';
 
@@ -78,6 +78,40 @@ describe('isChosen', () => {
     it('без ответа по оси не берётся ни один вид', () => {
         expect(isChosen(GITHUB, picked())).toBe(false);
         expect(isChosen(GITLAB, picked())).toBe(false);
+    });
+});
+
+describe('variantGaps', () => {
+    // Проверка заведена под один случай: правило поставки едет тремя видами, а команды, которые
+    // оно зовёт, — одним. Дерево на чужом хостинге получало правило без инструмента и молчание
+    // вместо отказа.
+    const BOARD: IEntryOfCatalog = entry('checks', 'board', { axis: 'host', value: 'github' });
+    const WITH_BOARD: readonly IEntryOfCatalog[] = [...CATALOG, BOARD];
+
+    it('вид под выбор есть — пробела нет', () => {
+        expect(variantGaps(WITH_BOARD, picked([], [], { host: 'github' }))).toEqual([]);
+    });
+
+    it('SC-AK-01 — вид оставил правило без инструмента, и раскладка отказала', () => {
+        const gaps: readonly IGapOfVariant[] = variantGaps(WITH_BOARD, picked([], [], { host: 'gitlab' }));
+
+        expect(gaps).toHaveLength(1);
+        expect(gaps[0].name).toBe('board');
+        expect(gaps[0].chosen).toBe('gitlab');
+        expect(gaps[0].available).toEqual(['github']);
+        expect(gaps[0].ids).toEqual(['checks/board.github.md']);
+    });
+
+    it('ресурс, названный в отказе, пробелом не считается', () => {
+        expect(variantGaps(WITH_BOARD, picked([], ['checks/board.github.md'], { host: 'gitlab' }))).toEqual([]);
+    });
+
+    it('род, суженный через `only`, отбирает поимённо', () => {
+        expect(variantGaps(WITH_BOARD, picked(['checks/other.mjs'], [], { host: 'gitlab' }))).toEqual([]);
+    });
+
+    it('ресурс без видов пробела не даёт', () => {
+        expect(variantGaps([ACCESS, RULE], picked([], [], { host: 'gitlab' }))).toEqual([]);
     });
 });
 

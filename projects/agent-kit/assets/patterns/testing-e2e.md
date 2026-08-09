@@ -35,10 +35,10 @@ description: Паттерн правила testing. Брать при правк
 ```bash
 npx nx e2e site-e2e -- --project=chromium
 npx nx e2e admin-e2e -- --project=chromium
-BASE_URL=http://localhost:8188 npx nx e2e site-e2e -- --project=chromium   # против внешнего стенда
+BASE_URL=http://localhost:{{dockerSitePort}} npx nx e2e site-e2e -- --project=chromium   # против внешнего стенда
 ```
 
-По умолчанию конфиг идёт на 4900 и подхватывает уже поднятый сервер. С `BASE_URL` свой сервер
+По умолчанию конфиг идёт на {{sitePort}} и подхватывает уже поднятый сервер. С `BASE_URL` свой сервер
 не стартует вовсе.
 
 Полный набор админки гоняется **одним воркером** (`--workers=1`): тесты с настоящей сессией
@@ -69,8 +69,8 @@ test.skip(!ALLOW_RENAME, 'меняет живой адрес объекта: в�
 
 ## Частые промахи
 
-- **Порт 4000 занимать осторожно:** стенд разработчика на 4900 ходит по тому же имени
-  `ssr:4000` через `host-gateway`, и пока на нём висит чужой процесс, стенд отдаёт чужую
+- **Порт {{ssrPort}} занимать осторожно:** стенд разработчика на {{sitePort}} ходит по тому же имени
+  `ssr:{{ssrPort}}` через `host-gateway`, и пока на нём висит чужой процесс, стенд отдаёт чужую
   сборку.
 - Браузер стоит один — chromium; узкий экран — `--project=mobile-chrome`. Ошибка «Executable
   doesn't exist» разобрана в правиле `testing`: она же приходит после смены версии Playwright.

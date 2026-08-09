@@ -49,17 +49,54 @@ export const pathOf: (asset: IAsset) => string = (asset: IAsset): string => asse
  */
 export const RULE_SLOT: string = '<имя-правила>';
 
+/** Строка таблицы «Где исполняются статьи»: статья дословно и пустое место под путь. */
+const STATEMENT_ROW: string = '| <статья дословно> | `<путь>:<символ>` <!-- заполняет проект --> |';
+
+/**
+ * Статьи правила — жирные фразы, которыми начинается каждый пункт раздела о применении закона.
+ * Раздел называется по-разному у правила пакета и у развёрнутого в дереве, поэтому берутся оба.
+ */
+function statementsOf(rule: string): readonly string[] {
+    const section: RegExpMatchArray | null = rule.match(
+        /^## (?:Как закон применяется здесь|Что здесь действует)$([\s\S]*?)(?=^## |$(?![\s\S]))/m
+    );
+    if (!section) {
+        return [];
+    }
+
+    return [...section[1].matchAll(/^- \*\*(.+?)\*\*/gm)].map((found: RegExpMatchArray): string => found[1].trim());
+}
+
 /**
  * Черновик по шаблону пакета. Имя правила подставляется, чтобы заполняющий не гадал, к чему
  * файл относится, — открывают его обычно из гейта, а не из правила.
+ *
+ * Статьи правила переносятся в таблицу заранее: их текст — ключ связи, и переписанный руками он
+ * расходится с правилом молча. Проекту остаётся вторая колонка, а не перепечатывание первой:
+ * двадцать пять компаньонов на первой установке — это работа, и половина её механическая.
  */
-export const draftOf: (template: string, rule: string) => string = (template: string, rule: string): string =>
-    template.split(RULE_SLOT).join(rule);
+export const draftOf: (template: string, rule: string, text?: string) => string = (
+    template: string,
+    rule: string,
+    text: string = ''
+): string => {
+    const draft: string = template.split(RULE_SLOT).join(rule);
+    const statements: readonly string[] = statementsOf(text);
+    if (!statements.length) {
+        return draft;
+    }
+
+    const rows: string = statements
+        .map((statement: string): string => `| ${statement} | \`<путь>:<символ>\` ${COMPANION_MARK} |`)
+        .join('\n');
+
+    return draft.includes(STATEMENT_ROW) ? draft.replace(STATEMENT_ROW, rows) : draft;
+};
 
 export function planCompanion(asset: IAsset, existing: string | null, template: string): ICompanion {
     const path: string = pathOf(asset);
     if (existing === null) {
-        return { rule: asset.name, path, state: 'missing', content: draftOf(template, asset.name) };
+        return { rule: asset.name, path, state: 'missing', content: draftOf(template, asset.name, asset.text) };
     }
 
     return {

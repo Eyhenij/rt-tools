@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# rt-hook: PreToolUse Bash|mcp__webstorm__execute_sql_query|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Гард пишущих запросов к хранилищу. PreToolUse.
 #
 # Правка данных — единственное действие, которое нельзя откатить правкой кода. Удаление по

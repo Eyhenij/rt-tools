@@ -11,7 +11,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 
 import { IEntryOfCatalog, readCatalog } from './catalog.js';
-import { doctor, IEnvironment, init, IOutcomeOfCommand, list, sync } from './commands.js';
+import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, KEPT_SUFFIX, list, sync } from './commands.js';
 import { CONFIG_PATH, OVERRIDES_DIR } from './config.js';
 
 const VERSION: string = '0.1.0';
@@ -34,8 +34,29 @@ const said: (outcome: IOutcomeOfCommand) => string = (outcome: IOutcomeOfCommand
 /** Вид, объявленный пакетом. Без ответа по оси раскладка не начнётся — про это отдельный набор. */
 const HOST: Readonly<Record<string, string>> = { host: 'github' };
 
-/** Заведение конфига так, как его заводит человек: с выбором законов и с ответом по осям. */
-const start: (only?: readonly string[]) => IOutcomeOfCommand = (only: readonly string[] = []): IOutcomeOfCommand => init(root, only, HOST);
+/**
+ * Значения дырок: порты стендов у каждого дерева свои, и пакет требует их назвать. Здесь они
+ * выдуманные — набор проверяет раскладку, а не стенд.
+ */
+const PORTS: Readonly<Record<string, string>> = {
+    sitePort: '4900',
+    adminPort: '4901',
+    apiPort: '3333',
+    prodSitePort: '4930',
+    prodApiPort: '3999',
+    ssrPort: '4000',
+    dockerSitePort: '8188',
+    dockerAdminPort: '8189',
+};
+
+/** Заведение конфига так, как его заводит человек: с выбором законов, ответом по осям и значениями. */
+const start: (only?: readonly string[]) => IOutcomeOfCommand = (only: readonly string[] = []): IOutcomeOfCommand => {
+    const outcome: IOutcomeOfCommand = init(root, only, HOST);
+    const config: Record<string, unknown> = JSON.parse(get(CONFIG_PATH));
+    writeFileSync(join(root, CONFIG_PATH), JSON.stringify({ ...config, vars: PORTS }, null, 4), 'utf8');
+
+    return outcome;
+};
 
 /** Заполнить черновики компаньонов так, как это делает проект: снять метки пустых мест. */
 const fillCompanions: () => void = (): void => {
@@ -46,6 +67,21 @@ const fillCompanions: () => void = (): void => {
             writeFileSync(path, `# ${name.name}\n\nВсё названо своими именами.\n`, 'utf8');
         }
     }
+};
+
+/**
+ * Подключить разложенные гарды к агенту так, как это делает проект: пакет в чужую настройку не
+ * пишет, а гард, которого в ней нет, считается расхождением наравне с отставшим файлом.
+ */
+const bindHooks: () => void = (): void => {
+    const dir: string = join(root, '.claude/hooks');
+    if (!existsSync(dir)) {
+        return;
+    }
+    const commands: unknown[] = readdirSync(dir)
+        .filter((name: string): boolean => name.endsWith('.sh'))
+        .map((name: string): unknown => ({ type: 'command', command: `$CLAUDE_PROJECT_DIR/.claude/hooks/${name}` }));
+    put('.claude/settings.json', JSON.stringify({ hooks: { PreToolUse: [{ matcher: '*', hooks: commands }] } }, null, 4));
 };
 
 beforeEach((): void => {
@@ -59,7 +95,7 @@ afterEach((): void => {
 
 describe('init', () => {
     it('заводит конфиг и каталог надстроек', () => {
-        expect(start().code).toBe(0);
+        expect(init(root, [], HOST).code).toBe(0);
         expect(JSON.parse(get(CONFIG_PATH))).toMatchObject({ vars: {}, only: [], skip: [] });
     });
 
@@ -73,10 +109,10 @@ describe('init', () => {
     });
 
     it('заведённый конфиг не переписывает', () => {
-        start();
+        init(root, [], HOST);
         put(CONFIG_PATH, '{"vars":{"своё":"да"}}');
 
-        expect(said(start())).toContain('уже есть');
+        expect(said(init(root, [], HOST))).toContain('уже есть');
         expect(get(CONFIG_PATH)).toContain('своё');
     });
 });
@@ -181,8 +217,20 @@ describe('sync --check', () => {
         // Разложенного мало: у каждого правила рядом встаёт черновик компаньона, и до
         // заполнения проектом он сам по себе расхождение — набор про это ниже.
         fillCompanions();
+        bindHooks();
 
         expect(sync(env, true).code).toBe(0);
+    });
+
+    it('SC-AK-05 — разложенный гард доезжает до настройки агента', () => {
+        start();
+        sync(env, false);
+        fillCompanions();
+        const outcome: IOutcomeOfCommand = sync(env, true);
+
+        expect(outcome.code).toBe(1);
+        expect(said(outcome)).toContain('.claude/settings.json');
+        expect(said(outcome)).toContain('"PreToolUse"');
     });
 
     it('ничего не пишет и отказывает, пока не разложено', () => {
@@ -193,7 +241,7 @@ describe('sync --check', () => {
         expect((): string => get(LAW)).toThrow();
     });
 
-    it('видит правку руками', () => {
+    it('SC-AK-08 — расхождение тела при совпавшей шапке видно `doctor`', () => {
         start();
         sync(env, false);
         writeFileSync(join(root, LAW), `${get(LAW)}\nдописано руками\n`, 'utf8');
@@ -267,8 +315,64 @@ describe('правило и его компаньон', () => {
         start(['rules/testing.md']);
         sync(env, false);
         writeFileSync(join(root, COMPANION), FILLED, 'utf8');
+        bindHooks();
 
         expect(sync(env, true).code).toBe(0);
+    });
+});
+
+describe('adopt', () => {
+    // Пока команды не было, чужой файл на пути пакета снимался только руками, и один такой файл
+    // останавливал раскладку целиком: установка в живое дерево сводилась к ручной работе.
+    it('SC-AK-06 — чужой файл переходит в управление пакетом командой', () => {
+        start();
+        put(LAW, 'своё, положено не пакетом\n');
+
+        expect(sync(env, false).code).toBe(1);
+        expect(adopt(env, []).code).toBe(0);
+        expect(get(`${LAW}${KEPT_SUFFIX}`)).toBe('своё, положено не пакетом\n');
+        expect(sync(env, false).code).toBe(0);
+        expect(get(LAW)).toContain(`rt-kit v${VERSION}`);
+    });
+
+    it('берёт названный файл, остальных не трогает', () => {
+        start();
+        put(LAW, 'своё\n');
+        put(OTHER_LAW, 'тоже своё\n');
+        adopt(env, ['delivery.md']);
+
+        expect(existsSync(join(root, `${LAW}${KEPT_SUFFIX}`))).toBe(true);
+        expect(get(OTHER_LAW)).toBe('тоже своё\n');
+    });
+
+    // Отложенное прежнее содержимое стирать нельзя: во второй раз в дереве больше нет ни того ни
+    // другого, и разбирать станет нечего.
+    it('второй раз поверх отложенного не пишет', () => {
+        start();
+        put(LAW, 'первое\n');
+        adopt(env, []);
+        sync(env, false);
+        put(LAW, 'второе\n');
+        const outcome: IOutcomeOfCommand = adopt(env, []);
+
+        expect(outcome.code).toBe(1);
+        expect(said(outcome)).toContain('уже лежит');
+        expect(get(`${LAW}${KEPT_SUFFIX}`)).toBe('первое\n');
+    });
+
+    it('чужих файлов нет — говорит это и ничего не делает', () => {
+        start();
+
+        expect(said(adopt(env, []))).toContain('чужих файлов на путях пакета нет');
+    });
+
+    it('имя, которому ничего не отвечает, — отказ со списком чужих', () => {
+        start();
+        put(LAW, 'своё\n');
+        const outcome: IOutcomeOfCommand = adopt(env, ['такого-нет.md']);
+
+        expect(outcome.code).toBe(1);
+        expect(said(outcome)).toContain(LAW);
     });
 });
 

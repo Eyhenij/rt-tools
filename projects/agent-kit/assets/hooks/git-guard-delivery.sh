@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Гард поставки. PreToolUse на заведении ветки и открытии заявки на слияние.
 #
 # Закон о поставке требует трёх вещей, которых обычно не проверяет ничто: правка начинается с

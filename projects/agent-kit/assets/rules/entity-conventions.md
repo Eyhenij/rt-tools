@@ -24,14 +24,9 @@ description: Правило под «Закон о правке сущности
 
 ## Где это лежит
 
-| Что                           | Где                                                                                    |
-| ----------------------------- | -------------------------------------------------------------------------------------- |
-| Общая основа асайда           | `@rt-tools/ui-kit-v2/src/lib/components/container/rt-route-aside.base.ts`              |
-| Разбор команд ухода           | `@rt-tools/ui-kit-v2/src/lib/components/container/rt-route-aside.logic.ts`             |
-| Шапка и футер панели          | `@rt-tools/ui-kit-v2/src/lib/components/aside/`                                        |
-| Общая основа списочного стора | `libs/common/platform/src/lib/services/base-list-store.service.ts`                     |
-| Аутлет `ro`                   | `libs/admin/common/container/feature/src/lib/admin-layout/admin-layout.component.html` |
-| Адрес панели                  | `libs/admin/common/container/util` — `asidePanelRouteOf`                               |
+В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
+переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
+же дереве, которое держит код иначе.
 
 ## Как закон применяется здесь
 

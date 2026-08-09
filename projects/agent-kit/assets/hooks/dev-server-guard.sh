@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_run_configuration|mcp__webstorm__execute_tool
 # Гард второго сервера разработки. PreToolUse.
 #
 # Приложения уже подняты владельцем, и всякая проверка через браузер идёт туда. Второй

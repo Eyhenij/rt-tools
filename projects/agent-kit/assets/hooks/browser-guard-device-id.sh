@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# rt-hook: PreToolUse mcp__claude-in-chrome__select_browser
 # Гард выбора браузера. PreToolUse на выборе браузера расширением.
 #
 # Отклоняет любой профиль, кроме закреплённого: чужой стоит лишнего круга и приводит в браузер,

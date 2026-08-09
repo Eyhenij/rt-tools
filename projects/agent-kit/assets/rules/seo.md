@@ -26,15 +26,9 @@ description: Правило под «Закон о видимости в пои�
 
 ## Где это лежит
 
-| Что                                                                   | Где                                                                                        |
-| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| title, description, Open Graph, Twitter, canonical, hreflang, JSON-LD | `libs/site/property/util/src/lib/property-seo.service.ts`                                  |
-| Сборка JSON-LD (`LodgingBusiness`)                                    | `libs/site/property/util/src/lib/property-seo.util.ts`                                     |
-| `sitemap.xml`                                                         | `libs/site/property/util/src/lib/sitemap.util.ts` + обработчик в `apps/site/src/server.ts` |
-| `robots.txt`                                                          | `apps/site/public/robots.txt`                                                              |
-| Пути и origin                                                         | `libs/common/site-routing` — `SITE_ORIGIN`, `propertyPath()`, `DEFAULT_LOCALE`             |
-| Ветки локалей                                                         | `apps/site/src/app/app.routes.ts`                                                          |
-| Кэш и перенаправления                                                 | `deploy/nginx.conf`                                                                        |
+В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
+переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
+же дереве, которое держит код иначе.
 
 ## Как закон применяется здесь
 
@@ -74,4 +68,4 @@ description: Правило под «Закон о видимости в пои�
 - Адрес режется по **первому** `?` и только им: `req.url.split('?')` теряет всё после второго
   знака, и перенаправление приходит на страницу без UTM-хвоста — источник заявки считается
   неверно. Разрез живёт в `splitRequestUrl`
-  (`libs/site/property/util/src/lib/slug-redirect.logic.ts`) и покрыт спеками; свой не заводить.
+  (слой `util` домена страницы объекта) и покрыт спеками; свой не заводить.
