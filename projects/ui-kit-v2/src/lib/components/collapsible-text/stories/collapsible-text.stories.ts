@@ -5,6 +5,7 @@ import { TestRtCollapsibleTextComponent } from './component/test-collapsible-tex
 export default {
     title: 'Components/CollapsibleText',
     component: TestRtCollapsibleTextComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         paragraphs: { control: false },
         clampLines: { control: { type: 'number' } },

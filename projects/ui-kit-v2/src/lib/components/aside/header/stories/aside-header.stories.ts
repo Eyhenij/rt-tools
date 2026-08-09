@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotSkip } from '../../../../../showcase';
 import { TestRtAsideHeaderComponent } from './component/test-aside-header.component';
 
 export default {
@@ -17,6 +18,7 @@ export default {
 type Story = StoryObj<TestRtAsideHeaderComponent>;
 
 export const Playground: Story = {
+    parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         title: 'Заголовок',
         overline: null,

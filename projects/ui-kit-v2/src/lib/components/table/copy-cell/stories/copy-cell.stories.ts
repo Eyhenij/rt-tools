@@ -5,6 +5,7 @@ import { TestRtCopyCellComponent } from './component/test-copy-cell.component';
 export default {
     title: 'Components/CopyCell',
     component: TestRtCopyCellComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         value: { control: { type: 'text' } },
         variant: {

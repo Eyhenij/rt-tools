@@ -5,6 +5,7 @@ import { TestRtWorkspaceDetailsComponent } from './component/test-workspace-deta
 export default {
     title: 'Components/WorkspaceDetails',
     component: TestRtWorkspaceDetailsComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         title: { control: { type: 'text' } },
         entityId: { control: { type: 'number' } },

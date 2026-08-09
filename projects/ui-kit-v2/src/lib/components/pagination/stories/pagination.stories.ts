@@ -5,6 +5,7 @@ import { TestRtPaginationComponent } from './component/test-pagination.component
 export default {
     title: 'Components/Pagination',
     component: TestRtPaginationComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         pageModel: { control: false },
         perPageOptions: { control: false },

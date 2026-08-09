@@ -5,6 +5,7 @@ import { TestRtNightGridComponent } from './component/test-night-grid.component'
 export default {
     title: 'Components/NightGrid',
     component: TestRtNightGridComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         cells: { control: false },
         ariaLabel: { control: { type: 'text' } },

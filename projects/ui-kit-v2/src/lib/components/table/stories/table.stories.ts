@@ -1,10 +1,14 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storyWidthAtMost } from '../../../../showcase';
 import { TestRtTableComponent } from './component/test-table.component';
 
 export default {
     title: 'Components/Table',
     component: TestRtTableComponent,
+    // Показ рисует не сетка витрины, поэтому кадр целой страницей. Таблица называет ширину не
+    // медиазапросом, а службой порогов: на `width <= 1080px` строки перерисовываются карточками.
+    parameters: { snapshot: { fullPage: true, widths: [storyWidthAtMost(1080)] } },
     argTypes: {
         ariaLabel: { control: { type: 'text' } },
         density: {

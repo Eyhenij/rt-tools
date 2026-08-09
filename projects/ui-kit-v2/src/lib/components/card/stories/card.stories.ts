@@ -5,6 +5,7 @@ import { TestRtCardComponent } from './component/test-card.component';
 export default {
     title: 'Components/Card',
     component: TestRtCardComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         header: { control: { type: 'text' } },
         ariaLabel: { control: { type: 'text' } },

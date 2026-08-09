@@ -5,6 +5,7 @@ import { TestRtInfiniteScrollComponent } from './component/test-infinite-scroll.
 export default {
     title: 'Components/InfiniteScroll',
     component: TestRtInfiniteScrollComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         disabled: { control: { type: 'boolean' } },
         rootMargin: { control: { type: 'text' } },

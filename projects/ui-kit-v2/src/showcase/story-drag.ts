@@ -11,7 +11,14 @@
  * Обвязка витрины: `tsconfig.lib.json` исключает `src/showcase/**`, в пакет не уезжает.
  */
 
-import { STORY_TRIGGER_ATTRIBUTE } from './story-overlay';
+/**
+ * Признак, по которому `play`-функция находит область приёма файла.
+ *
+ * Свой, а не общий с признаком триггера перекрытия: по триггеру обвязка снимков требует
+ * открытой панели CDK, а перетаскивание её не открывает вовсе — область подсвечивает саму себя.
+ * Общий признак ронял бы каждую историю области приёма требованием панели, которой там нет.
+ */
+export const STORY_DRAG_ATTRIBUTE: string = 'data-story-drag';
 
 /**
  * Ждёт кадр: Angular обновляет вью после микрозадачи, а подсветка появляется уже от события.
@@ -36,7 +43,7 @@ async function settle(): Promise<void> {
 export async function startStoryFileDrag(canvasElement: HTMLElement, ratio: number = 0.5): Promise<void> {
     await settle();
 
-    const areas: readonly HTMLElement[] = Array.from(canvasElement.querySelectorAll<HTMLElement>(`[${STORY_TRIGGER_ATTRIBUTE}]`));
+    const areas: readonly HTMLElement[] = Array.from(canvasElement.querySelectorAll<HTMLElement>(`[${STORY_DRAG_ATTRIBUTE}]`));
 
     for (const area of areas) {
         const transfer: DataTransfer = new DataTransfer();

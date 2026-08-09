@@ -5,6 +5,7 @@ import { TestRtTableSortHeaderComponent } from './component/test-table-sort-head
 export default {
     title: 'Components/TableSortHeader',
     component: TestRtTableSortHeaderComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         rtSortHeader: { control: { type: 'text' } },
     },

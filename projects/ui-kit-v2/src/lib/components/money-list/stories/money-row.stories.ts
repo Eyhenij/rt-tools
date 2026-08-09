@@ -5,6 +5,7 @@ import { TestRtMoneyRowComponent } from './component/test-money-row.component';
 export default {
     title: 'Components/MoneyRow',
     component: TestRtMoneyRowComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         label: { control: { type: 'text' } },
         total: { control: { type: 'boolean' } },

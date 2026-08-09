@@ -5,6 +5,7 @@ import { TestRtMessageComponent } from './component/test-message.component';
 export default {
     title: 'Components/Message',
     component: TestRtMessageComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         severity: {
             options: ['info', 'success', 'warning', 'danger', 'secondary', 'neutral'],

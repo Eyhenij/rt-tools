@@ -5,6 +5,7 @@ import { TestRtMessageComposerComponent } from './component/test-message-compose
 export default {
     title: 'Components/MessageComposer',
     component: TestRtMessageComposerComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         placeholder: { control: { type: 'text' } },
         accept: { control: { type: 'text' } },

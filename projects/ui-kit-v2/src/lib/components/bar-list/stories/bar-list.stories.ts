@@ -5,6 +5,7 @@ import { TestRtBarListComponent } from './component/test-bar-list.component';
 export default {
     title: 'Components/BarList',
     component: TestRtBarListComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         rows: { control: false },
         title: { control: { type: 'text' } },

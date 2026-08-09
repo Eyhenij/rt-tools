@@ -5,6 +5,7 @@ import { TestRtTabsComponent } from './component/test-tabs.component';
 export default {
     title: 'Components/Tabs',
     component: TestRtTabsComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         activeId: { control: false },
         direction: {
