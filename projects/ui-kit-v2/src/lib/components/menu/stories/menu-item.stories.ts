@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtMenuItemComponent } from './component/test-menu-item.component';
 
 export default {
@@ -24,6 +25,7 @@ export default {
 type Story = StoryObj<TestRtMenuItemComponent>;
 
 export const Playground: Story = {
+    parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         icon: null,
         label: 'Сохранить',

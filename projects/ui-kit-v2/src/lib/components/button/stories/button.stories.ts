@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtButtonComponent } from './component/test-button.component';
 
 export default {
@@ -33,6 +34,9 @@ export default {
 type Story = StoryObj<TestRtButtonComponent>;
 
 export const Playground: Story = {
+    // Значения по умолчанию уже стоят ячейкой внутри матрицы этого же компонента: отдельный кадр
+    // проверял бы то же самое второй раз, а меняется он от любой правки аргументов.
+    parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         label: 'Сохранить',
         icon: null,
