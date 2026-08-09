@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtSkeletonComponent } from './component/test-skeleton.component';
 
 export default {
@@ -27,6 +28,7 @@ export default {
 type Story = StoryObj<TestRtSkeletonComponent>;
 
 export const Playground: Story = {
+    parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         shape: 'rectangle',
         size: 'md',

@@ -31,15 +31,27 @@ const showAll: (context: { canvasElement: HTMLElement }) => Promise<void> = asyn
     await openStoryOverlays(canvasElement, { event: 'mouseenter', wait: 400 });
 };
 
-export const Placement: Story = { args: { part: 'placement' }, play: showAll };
+export const Placement: Story = {
+    parameters: { snapshot: { fullPage: true } },
+    args: { part: 'placement' },
+    play: showAll,
+};
 
-export const Text: Story = { args: { part: 'text' }, play: showAll };
+export const Text: Story = {
+    parameters: { snapshot: { fullPage: true } },
+    args: { part: 'text' },
+    play: showAll,
+};
 
 /**
  * На чём висит подсказка: на кнопке — директивой, на иконочной кнопке — её входом `tooltip`.
  * Третья ячейка намеренно пуста: пустой текст выключает директиву целиком, и панели не будет.
  */
-export const Hosts: Story = { args: { part: 'hosts' }, play: showAll };
+export const Hosts: Story = {
+    parameters: { snapshot: { fullPage: true } },
+    args: { part: 'hosts' },
+    play: showAll,
+};
 
 /**
  * Светло-тёмная пара показывает саму панель `rt-tooltip`, а не директиву: оверлей уезжает в

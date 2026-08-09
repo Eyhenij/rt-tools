@@ -5,6 +5,7 @@ import { TestRtAsideSectionComponent } from './component/test-aside-section.comp
 export default {
     title: 'Components/AsideSection',
     component: TestRtAsideSectionComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         heading: { control: { type: 'text' } },
     },

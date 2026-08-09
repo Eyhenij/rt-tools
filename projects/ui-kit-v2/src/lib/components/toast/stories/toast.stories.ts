@@ -5,6 +5,7 @@ import { TestRtToastComponent } from './component/test-toast.component';
 export default {
     title: 'Components/Toast',
     component: TestRtToastComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         toast: { control: false },
         index: { control: { type: 'number' } },

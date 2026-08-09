@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtCheckboxComponent } from './component/test-checkbox.component';
 
 export default {
@@ -16,6 +17,7 @@ export default {
 type Story = StoryObj<TestRtCheckboxComponent>;
 
 export const Playground: Story = {
+    parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         inputId: null,
         ariaLabel: null,

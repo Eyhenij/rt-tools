@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtWorkspaceDetailsComponent } from './component/test-workspace-details.component';
 
 export default {
@@ -25,6 +26,9 @@ export default {
 type Story = StoryObj<TestRtWorkspaceDetailsComponent>;
 
 export const Default: Story = {
+    parameters: storySnapshotSkip(
+        'обёртка отдаёт пустыми `rows`, `money`, `toggles` и `actions`, и карточка рисует один заголовок; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
+    ),
     args: {
         title: 'Заголовок',
         entityId: null,

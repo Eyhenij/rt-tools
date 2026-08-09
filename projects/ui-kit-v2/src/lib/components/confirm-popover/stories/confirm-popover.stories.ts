@@ -5,6 +5,7 @@ import { TestRtConfirmPopoverComponent } from './component/test-confirm-popover.
 export default {
     title: 'Components/ConfirmPopover',
     component: TestRtConfirmPopoverComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         message: { control: { type: 'text' } },
         title: { control: { type: 'text' } },

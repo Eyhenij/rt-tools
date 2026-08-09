@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtThemeToggleComponent } from './component/test-theme-toggle.component';
 
 export default {
@@ -16,6 +17,7 @@ export default {
 type Story = StoryObj<TestRtThemeToggleComponent>;
 
 export const Playground: Story = {
+    parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         appearance: 'icon',
     },

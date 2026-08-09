@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtNightGridComponent } from './component/test-night-grid.component';
 
 export default {
@@ -14,6 +15,9 @@ export default {
 type Story = StoryObj<TestRtNightGridComponent>;
 
 export const Default: Story = {
+    parameters: storySnapshotSkip(
+        'обёртка отдаёт пустой `cells`, и сетка не рисует ни одной ячейки; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
+    ),
     args: {
         cells: [],
         ariaLabel: '',

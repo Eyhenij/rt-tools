@@ -12,7 +12,7 @@ import type { Page } from 'playwright';
  * токены, своя витрина, — и общий файл связал бы их там, где связи нет. Правка ради второго
  * роняла бы эталоны первого.
  *
- * Договорённость, которую этот файл исполняет, — `docs/specs/ui-kit-v2/proposed/visual-snapshots/`.
+ * Договорённость, которую этот файл исполняет, — `docs/specs/ui-kit-v2/`.
  */
 
 /** Снимки лежат при витрине, а не в корне: их читают вместе с историями. */
@@ -27,8 +27,15 @@ const SNAPSHOT_DIR: string = `${process.cwd()}/projects/ui-kit-v2/.storybook/__s
  */
 const FAILURE_THRESHOLD: number = 0.0002;
 
-/** Сколько ждать шрифт значков: он приходит из сети, а до него значок себя прячет. */
-const FONT_TIMEOUT_MS: number = 10_000;
+/**
+ * Сколько ждать набор значков. Он не шрифт: реестр забирает три сотни файлов по сети и склеивает
+ * их в один `<svg id="rt-icon-sprite">` в начале `body`. Пока набора нет, `<use href="#…">`
+ * каждого значка не рисует ничего — кадр выходит без значков, и вся раскладка ряда съезжает.
+ */
+const ICONS_TIMEOUT_MS: number = 30_000;
+
+/** Признак, по которому со страницы видно, что набор значков доехал. */
+const ICON_SPRITE_ID: string = 'rt-icon-sprite';
 
 /** Пауза после глушения движения — кадру нужно успеть встать. */
 const SETTLE_MS: number = 150;
@@ -76,12 +83,42 @@ function remember(identifier: string): void {
  * остановлено, каркасные анимации доиграны, указатель уведён.
  */
 async function quiet(page: Page): Promise<void> {
-    // Шрифт значков грузится с внешнего адреса, а значок до его загрузки держит себя невидимым.
-    // Снимок, сделанный раньше, отличается от эталона всегда.
     await page.evaluate(() => document.fonts.ready);
-    await page
-        .waitForFunction(() => document.querySelector('.rt-icon--loading') === null, undefined, { timeout: FONT_TIMEOUT_MS })
-        .catch(() => undefined);
+
+    // Набор значков едет по сети, и до него `<use>` не рисует ничего. Ждётся не наличие набора в
+    // разметке, а нарисованный значок: набор витрина пересобирает между историями — снимает
+    // прежний и вставляет новый, — и в этот промежуток он на странице есть, а значок пуст.
+    //
+    // Ожидание не глушится: кадр без значков — это состояние, до которого съёмка не дошла, а не
+    // повод снять эталон. Прежняя проверка ждала класс `.rt-icon--loading`, которого у значка нет
+    // вовсе: условие выполнялось сразу, и на загруженной машине часть кадров выходила без значков.
+    await page.waitForFunction(
+        (spriteId: string) => {
+            if (document.querySelector('rt-icon') === null) {
+                return true;
+            }
+            if (document.getElementById(spriteId) === null) {
+                return false;
+            }
+
+            // Значок, которого не видно самого (скрыт, свёрнут, за пределами показа), ничего не
+            // говорит о готовности набора: его `<use>` пуст и с пришедшим набором.
+            return Array.from(document.querySelectorAll('rt-icon')).every((icon: Element): boolean => {
+                const host: DOMRect = icon.getBoundingClientRect();
+                if (host.width === 0 || host.height === 0) {
+                    return true;
+                }
+                const use: Element | null = icon.querySelector('use');
+                if (use === null) {
+                    return false;
+                }
+                const drawn: DOMRect = use.getBoundingClientRect();
+                return drawn.width > 0 && drawn.height > 0;
+            });
+        },
+        ICON_SPRITE_ID,
+        { timeout: ICONS_TIMEOUT_MS }
+    );
 
     // Движение останавливается, а не пережидается — пережидать пришлось бы каждый раз дольше.
     await page.addStyleTag({

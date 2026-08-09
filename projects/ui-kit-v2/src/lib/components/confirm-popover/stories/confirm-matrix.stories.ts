@@ -36,6 +36,7 @@ export const Themes: Story = { args: { part: 'themes' } };
  * увидеть.
  */
 export const Panel: Story = {
+    parameters: { snapshot: { fullPage: true } },
     args: { part: 'panel' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await openStoryOverlay(canvasElement);

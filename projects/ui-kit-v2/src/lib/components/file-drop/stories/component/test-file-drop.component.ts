@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { STORY_TRIGGER_ATTRIBUTE } from '../../../../../showcase/story-overlay';
+import { STORY_DRAG_ATTRIBUTE } from '../../../../../showcase/story-drag';
 import { RtFileDropComponent } from '../../rt-file-drop.component';
 import { IRtFileDrop } from '../../rt-file-drop.model';
 
@@ -12,7 +12,7 @@ import { IRtFileDrop } from '../../rt-file-drop.model';
  * Внутрь положено содержимое: область его только оборачивает, и без содержимого история
  * показывала бы пустое место, над которым нечего перетаскивать.
  *
- * Признак `data-story-trigger` стоит на области, чтобы `play`-функция истории `Zoned` начала
+ * Признак `data-story-drag` стоит на области, чтобы `play`-функция истории `Zoned` начала
  * над ней перетаскивание: зоны рисуются только под ним, и в покое многозонная область
  * неотличима от обычной — то есть ось не показана вовсе.
  */
@@ -24,7 +24,7 @@ import { IRtFileDrop } from '../../rt-file-drop.model';
             [overlayLabel]="overlayLabel"
             [zones]="zones"
             [accept]="accept"
-            [attr.data-story-trigger]="triggerAttribute">
+            [attr.data-story-drag]="dragAttribute">
             <div class="app-file-drop__content">Перетащите сюда файл</div>
         </rt-file-drop>
     `,
@@ -48,7 +48,7 @@ import { IRtFileDrop } from '../../rt-file-drop.model';
     ],
 })
 export class TestRtFileDropComponent {
-    public readonly triggerAttribute: string = STORY_TRIGGER_ATTRIBUTE;
+    public readonly dragAttribute: string = STORY_DRAG_ATTRIBUTE;
 
     public disabled: boolean = false;
     public overlayLabel: string = '';

@@ -75,6 +75,34 @@ jobs:
                   path: projects/ui-kit/.storybook/__snapshots__/__diff_output__/
                   if-no-files-found: ignore
 
+            # Снимки второй витрины — свой шаг, а не строка в соседнем: киты разведены намеренно,
+            # у каждого своя настройка прогона, свой каталог эталонов и свой порт. Общий шаг связал
+            # бы их там, где связи нет, а вложение с картинками различий перестало бы говорить,
+            # чьи кадры разошлись.
+            #
+            # Порт 6107 — свой, по той же причине, что и 6106 у первой витрины: раннер делит
+            # машину с разработчиком.
+            #
+            # Витрина поднимается без `RT_SNAPSHOT_RUN`: этим признаком прогон снимает аддон
+            # псевдосостояний, и витрина, поднятая с ним, теряет наведение, фокус и нажатие.
+            # Ставит его сама команда прогона, и только себе.
+            - name: Visual tests (ui-kit-v2)
+              run: |
+                  pnpm exec nx run @rt-tools/ui-kit-v2:storybook --port 6107 --no-open > /tmp/storybook-v2-ci.log 2>&1 &
+                  for _ in $(seq 1 120); do
+                      curl -sf http://localhost:6107/index.json > /dev/null && break
+                      sleep 2
+                  done
+                  STORYBOOK_URL=http://localhost:6107 pnpm run test:visual:v2
+
+            - name: Upload visual diffs (ui-kit-v2)
+              if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: visual-diffs-ui-kit-v2
+                  path: projects/ui-kit-v2/.storybook/__snapshots__/__diff_output__/
+                  if-no-files-found: ignore
+
             # Only @rt-tools/utils defines `verify`; it asserts the built package stays consumable
             # outside Angular. Projects without the target are skipped.
             - name: Verify built packages

@@ -1,10 +1,21 @@
-import { Meta, StoryObj } from '@storybook/angular';
+import { IDBStorageService } from '@rt-tools/core';
+import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtTableComponent } from './component/test-table.component';
 
 export default {
     title: 'Components/Table',
     component: TestRtTableComponent,
+    // Таблица держит настройки колонок в IndexedDB и просит службу хранилища у окружения, а
+    // `provideRtStorage()` её не отдаёт: без этой строки история рисует не таблицу, а страницу
+    // отказа `NG0201`. Поставляется здесь, а не общими провайдерами витрины, — служба нужна
+    // одной таблице.
+    decorators: [
+        applicationConfig({
+            providers: [IDBStorageService],
+        }),
+    ],
     argTypes: {
         ariaLabel: { control: { type: 'text' } },
         density: {
@@ -31,6 +42,9 @@ export default {
 type Story = StoryObj<TestRtTableComponent>;
 
 export const Default: Story = {
+    parameters: storySnapshotSkip(
+        'обёртка отдаёт пустые `columns` и `columnsConfig`, и таблица не рисует ни строки; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
+    ),
     args: {
         ariaLabel: null,
         density: 'default',

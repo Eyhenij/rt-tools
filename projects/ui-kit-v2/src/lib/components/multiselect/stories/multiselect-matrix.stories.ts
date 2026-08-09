@@ -45,6 +45,7 @@ export const Themes: Story = { args: { part: 'themes' } };
  * темы в тулбаре.
  */
 export const Panel: Story = {
+    parameters: { snapshot: { fullPage: true } },
     args: { part: 'panel', panel: 'options' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await openStoryOverlay(canvasElement, { key: 'ArrowDown' });
@@ -53,6 +54,7 @@ export const Panel: Story = {
 
 /** Пустой набор опций: строка `rtKit.uiNoOptions` вместо списка. */
 export const PanelEmpty: Story = {
+    parameters: { snapshot: { fullPage: true } },
     args: { part: 'panel', panel: 'empty' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await openStoryOverlay(canvasElement, { key: 'ArrowDown' });

@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtToasterComponent } from './component/test-toaster.component';
 
 export default {
@@ -19,6 +20,9 @@ export default {
 type Story = StoryObj<TestRtToasterComponent>;
 
 export const Default: Story = {
+    parameters: storySnapshotSkip(
+        'уведомление никем не отправлено, и стопка пуста; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
+    ),
     args: {
         position: 'bottom-right',
         duration: 4000,
