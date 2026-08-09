@@ -46,6 +46,47 @@ report "вложенное: названный ключ пришёл" "$(value_o
 report "вложенное: соседние ключи целы" "$(value_of board.bot)" '""'
 report "вложенное: сам объект не пропал" "$(value_of board.reviewer)" '""'
 
+# --- обход папок задач ---------------------------------------------------------------------
+#
+# Папка задачи повторяет имя ветки буквально, вместе с косой, поэтому под формой с родом правки
+# впереди она лежит вложенным каталогом. Обход только по верхнему уровню её не видел вовсе:
+# невидимую нашли грепом, а не сверкой. Сеть здесь не нужна — потому обход и живёт в модуле
+# борды отдельно от запросов к ней.
+printf '{"board":{"taskKey":"RT"},"tasksDir":"docs/tasks"}\n' > "$TREE/.claude/rt-kit/checks.json"
+cp "$CHECKS/board.github.mjs" "$TREE/tools/board.mjs"
+mkdir -p "$TREE/docs/tasks/RT-40-plain" "$TREE/docs/tasks/chore/41-nested" \
+    "$TREE/docs/tasks/_template" "$TREE/docs/tasks/_draft-idea" "$TREE/docs/tasks/archive/2026"
+
+dirs_seen() {
+    node --input-type=module -e "
+        import { taskDirs } from '${TREE}/tools/board.mjs';
+        console.log(taskDirs().sort().join(' '));
+    " 2>/dev/null
+}
+
+report "SC-AK-20 — обход: папка верхнего уровня" "$(dirs_seen | grep -o 'RT-40-plain')" 'RT-40-plain'
+report "SC-AK-20 — обход: вложенная папка старой формы" "$(dirs_seen | grep -o 'chore/41-nested')" 'chore/41-nested'
+report "обход: черновик разбора виден" "$(dirs_seen | grep -o '_draft-idea')" '_draft-idea'
+report "SC-AK-20 — обход: образец не считается папкой задачи" "$(dirs_seen | grep -c '_template')" '0'
+# Каталог, не назвавшийся ни номером, ни черновиком, папкой задачи не бывает: внутрь него
+# сверка спускается, но сам он в перечень не идёт — иначе туда попал бы и архив.
+report "обход: промежуточный каталог не папка задачи" "$(dirs_seen | grep -cE '(^| )chore( |$)')" '0'
+report "SC-AK-20 — обход: архив внутри каталога задач не задет" "$(dirs_seen | grep -c 'archive')" '0'
+
+num_of() {
+    node --input-type=module -e "
+        import { numberFromTaskDir } from '${TREE}/tools/board.mjs';
+        console.log(JSON.stringify(numberFromTaskDir(process.argv[1])));
+    " "$1" 2>/dev/null
+}
+
+report "номер: ключ впереди" "$(num_of RT-336-guard-folder)" '336'
+# Форма с родом правки впереди законна, и папка под ней зовётся голым числом.
+report "SC-AK-20 — номер: голое число" "$(num_of 312-sync-agent-kit)" '312'
+report "номер: имя без номера" "$(num_of chore)" 'null'
+
+rm -rf "$TREE/docs" "$TREE/tools/board.mjs"
+
 # --- список замещается целиком ----------------------------------------------------------------
 # Дописывать в список нельзя: убрать из него стало бы невозможно вовсе.
 printf '{"skippedDirs":["dist"]}\n' > "$TREE/.claude/rt-kit/checks.json"
