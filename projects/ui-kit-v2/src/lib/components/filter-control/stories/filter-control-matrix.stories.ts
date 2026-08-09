@@ -1,6 +1,7 @@
 import { signal, Signal } from '@angular/core';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
+import { storyWidthAtMost } from '../../../../showcase';
 import { BreakpointsService } from '../../../platform';
 import { TestRtFilterControlMatrixComponent } from './component/test-filter-control-matrix.component';
 
@@ -30,6 +31,9 @@ export default {
     title: 'Components/FilterControl',
     component: TestRtFilterControlMatrixComponent,
     parameters: {
+        // Фильтр называет ширину сам двумя правилами: на 1080 включается кап ширины поля, на
+        // 768 — растяжение на всю строку. Кадр порога снимается на каждом.
+        snapshot: { widths: [storyWidthAtMost(1080), storyWidthAtMost(768)] },
         controls: { disable: true },
     },
 } as Meta<TestRtFilterControlMatrixComponent>;

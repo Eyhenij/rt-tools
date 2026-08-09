@@ -44,6 +44,7 @@ export const Themes: Story = { args: { part: 'themes' } };
  * светло-тёмной паре, ни в матрице состояний: тёмную панель смотрят переключателем темы.
  */
 export const Panel: Story = {
+    parameters: { snapshot: { fullPage: true } },
     args: { part: 'panel', panel: 'suggestions' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await openStoryOverlay(canvasElement, { text: 'Мо', within: 'input' });
@@ -52,6 +53,7 @@ export const Panel: Story = {
 
 /** Своя разметка подсказки: вход `itemTemplate` рисует иконку рядом с названием. */
 export const PanelWithTemplate: Story = {
+    parameters: { snapshot: { fullPage: true } },
     args: { part: 'panel', panel: 'template' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await openStoryOverlay(canvasElement, { text: 'Мо', within: 'input' });
@@ -60,6 +62,7 @@ export const PanelWithTemplate: Story = {
 
 /** Подсказок не нашлось: строка `rtKit.uiNothingFound` вместо списка. */
 export const PanelEmpty: Story = {
+    parameters: { snapshot: { fullPage: true } },
     args: { part: 'panel', panel: 'empty' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await openStoryOverlay(canvasElement, { text: 'Мо', within: 'input' });

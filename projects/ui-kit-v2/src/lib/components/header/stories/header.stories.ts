@@ -5,6 +5,7 @@ import { TestRtHeaderComponent } from './component/test-header.component';
 export default {
     title: 'Components/Header',
     component: TestRtHeaderComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         canGoBack: { control: { type: 'boolean' } },
         showInvite: { control: { type: 'boolean' } },

@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtInputComponent } from './component/test-input.component';
 
 export default {
@@ -21,6 +22,7 @@ export default {
 type Story = StoryObj<TestRtInputComponent>;
 
 export const Playground: Story = {
+    parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         type: 'text',
         placeholder: 'Введите значение',

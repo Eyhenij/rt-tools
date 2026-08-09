@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtWorkspaceComponent } from './component/test-workspace.component';
 
 export default {
@@ -21,6 +22,9 @@ export default {
 type Story = StoryObj<TestRtWorkspaceComponent>;
 
 export const Default: Story = {
+    parameters: storySnapshotSkip(
+        'обёртка не заполняет ни одной зоны, и в кадре только разделители колонок; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
+    ),
     args: {
         storageKey: null,
         hasActive: false,

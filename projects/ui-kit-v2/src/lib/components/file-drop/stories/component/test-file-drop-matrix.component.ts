@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { STORY_TRIGGER_ATTRIBUTE } from '../../../../../showcase/story-overlay';
+import { STORY_DRAG_ATTRIBUTE } from '../../../../../showcase/story-drag';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtFileDropComponent } from '../../rt-file-drop.component';
@@ -53,7 +53,7 @@ interface IFileDropDraggingCase {
                     <ng-template let-draggingCase>
                         <rt-file-drop
                             class="app-file-drop-matrix__area"
-                            [attr.data-story-trigger]="triggerAttribute"
+                            [attr.data-story-drag]="dragAttribute"
                             [disabled]="draggingCase.disabled"
                             [overlayLabel]="draggingCase.overlayLabel">
                             <div class="app-file-drop-matrix__content">Форма заявки</div>
@@ -65,10 +65,7 @@ interface IFileDropDraggingCase {
             @case ('zones') {
                 <app-story-row caption="Зоны под перетаскиванием" [items]="zoneCases" [itemLabel]="caseLabel" [slotWidth]="areaWidth">
                     <ng-template let-zoneCase>
-                        <rt-file-drop
-                            class="app-file-drop-matrix__area"
-                            [attr.data-story-trigger]="triggerAttribute"
-                            [zones]="zoneCase.zones">
+                        <rt-file-drop class="app-file-drop-matrix__area" [attr.data-story-drag]="dragAttribute" [zones]="zoneCase.zones">
                             <div class="app-file-drop-matrix__content app-file-drop-matrix__content--tall">Форма заявки</div>
                         </rt-file-drop>
                     </ng-template>
@@ -79,7 +76,7 @@ interface IFileDropDraggingCase {
                 <app-story-themes caption="Подсказка в обеих темах">
                     <ng-template>
                         <div class="app-file-drop-matrix__pane">
-                            <rt-file-drop [attr.data-story-trigger]="triggerAttribute">
+                            <rt-file-drop [attr.data-story-drag]="dragAttribute">
                                 <div class="app-file-drop-matrix__content">Форма заявки</div>
                             </rt-file-drop>
                         </div>
@@ -130,7 +127,7 @@ interface IFileDropDraggingCase {
 export class TestRtFileDropMatrixComponent {
     public part: FileDropMatrixPart = 'resting';
 
-    public readonly triggerAttribute: string = STORY_TRIGGER_ATTRIBUTE;
+    public readonly dragAttribute: string = STORY_DRAG_ATTRIBUTE;
 
     /** Ширина ячейки: область тянется на всю ширину родителя и по содержимому схлопнулась бы. */
     public readonly areaWidth: string = '14rem';

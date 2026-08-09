@@ -5,6 +5,7 @@ import { TestRtDetailRowComponent } from './component/test-detail-row.component'
 export default {
     title: 'Components/DetailRow',
     component: TestRtDetailRowComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         label: { control: { type: 'text' } },
         loading: { control: { type: 'boolean' } },

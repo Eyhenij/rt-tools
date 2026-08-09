@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtInfoItemComponent } from './component/test-info-item.component';
 
 export default {
@@ -16,6 +17,7 @@ export default {
 type Story = StoryObj<TestRtInfoItemComponent>;
 
 export const Playground: Story = {
+    parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         label: 'Тариф',
         value: 'Годовой',

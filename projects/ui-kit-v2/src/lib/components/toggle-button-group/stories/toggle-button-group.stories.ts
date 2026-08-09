@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtToggleButtonGroupComponent } from './component/test-toggle-button-group.component';
 
 export default {
@@ -21,6 +22,7 @@ export default {
 type Story = StoryObj<TestRtToggleButtonGroupComponent>;
 
 export const Playground: Story = {
+    parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         options: [],
         value: undefined,

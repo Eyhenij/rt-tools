@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotSkip } from '../../../../showcase';
 import { openStoryOverlay } from '../../../../showcase/story-overlay';
 import { TestRtPopoverComponent } from './component/test-popover.component';
 
@@ -30,6 +31,7 @@ export default {
 type Story = StoryObj<TestRtPopoverComponent>;
 
 export const Playground: Story = {
+    parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         trigger: 'click',
         width: 'auto',
@@ -50,6 +52,7 @@ export const Playground: Story = {
  * директива слушает `mouseenter` на своём хосте.
  */
 export const HoverTrigger: Story = {
+    parameters: { snapshot: { fullPage: true } },
     args: {
         ...Playground.args,
         trigger: 'hover',

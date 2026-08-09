@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtContainerComponent } from './component/test-container.component';
 
 export default {
@@ -20,6 +21,7 @@ export default {
 type Story = StoryObj<TestRtContainerComponent>;
 
 export const Playground: Story = {
+    parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         mobileLeftNav: 'keep',
         height: 'auto',

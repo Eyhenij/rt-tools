@@ -41,7 +41,13 @@ export function provideRtIcons(baseUrl?: string): EnvironmentProviders {
             // Не блокируем bootstrap: sprite иконок грузится в фоне, приложение
             // стартует сразу. Иначе Angular ждёт forkJoin из сотен SVG-запросов
             // (первая загрузка +5с). rt-icon рендерит через <use> по мере готовности sprite.
-            void firstValueFrom(registry.preloadAll());
+            //
+            // Умолчание обязательно. Приложение, снесённое до прихода набора, обрывает запросы,
+            // `forkJoin` завершается ничего не отдав, и без умолчания обещание отказывает
+            // необработанным `no elements in sequence`. Видно это там, где приложения живут
+            // коротко: витрина роняла на этом по одной-две истории за заход, и причина читалась
+            // как дефект обвязки снимков.
+            void firstValueFrom(registry.preloadAll(), { defaultValue: undefined });
         }),
     ]);
 }

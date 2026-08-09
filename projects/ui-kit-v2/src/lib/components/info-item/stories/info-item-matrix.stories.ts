@@ -19,7 +19,12 @@ type Story = StoryObj<TestRtInfoItemMatrixComponent>;
 
 export const Loading: Story = { args: { part: 'loading' } };
 
-export const Grow: Story = { args: { part: 'grow' } };
+/** Полосы этот показ рисует сам, без сетки витрины, — корня показа на странице нет, и кадр
+ * берётся целой страницей. */
+export const Grow: Story = {
+    parameters: { snapshot: { fullPage: true } },
+    args: { part: 'grow' },
+};
 
 export const Content: Story = { args: { part: 'content' } };
 

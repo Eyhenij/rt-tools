@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotSkip } from '../../../../showcase';
 import { startStoryFileDrag } from '../../../../showcase/story-drag';
 import { TestRtFileDropComponent } from './component/test-file-drop.component';
 
@@ -17,6 +18,7 @@ export default {
 type Story = StoryObj<TestRtFileDropComponent>;
 
 export const Playground: Story = {
+    parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         disabled: false,
         overlayLabel: '',
@@ -33,6 +35,7 @@ export const Playground: Story = {
  * трети, поэтому активна первая зона: активную выбирает координата, а не вход.
  */
 export const Zoned: Story = {
+    parameters: { snapshot: { fullPage: true } },
     args: {
         ...Playground.args,
         zones: [
