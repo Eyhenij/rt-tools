@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.4.0 · hooks/git-guard-delivery.sh · ba5bab4d729e · правится надстройкой, не здесь
+# rt-kit v0.4.0 · hooks/git-guard-delivery.sh · 58430fd1e6ec · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Гард поставки. PreToolUse на заведении ветки и открытии заявки на слияние.
 #
@@ -156,54 +156,57 @@ fi
 # Папку задачи разбирают тем же PR, что и работу. После слияния этого уже никто не сделает:
 # работа перешла к следующей задаче, а PR закрыт. Раньше слияния требовать нельзя — пока идёт
 # ревью, plan.md нужен на диске, иначе гард хода работы не даст править код.
-case "$cmd" in
-    *gh\ pr\ merge* | *glab\ mr\ merge* | *az\ repos\ pr\ update*)
-        [ -n "$tasks_dir" ] || exit 0   # ведения работы папкой в дереве нет
+# Команду ищем от начала строки или после разделителя, а не где угодно в тексте. Иначе гард
+# отбивает сообщение, где `gh pr merge` просто упомянут в кавычках, — так он и сработал на
+# правке этого же текста. Полностью подстроку в кавычках так не отсечь, но случайное упоминание
+# внутри слова или пути мимо уже не пройдёт.
+if printf '%s' "$cmd" | grep -qE '(^|[;&|(]|&&|\|\|)[[:space:]]*(gh[[:space:]]+pr[[:space:]]+merge|glab[[:space:]]+mr[[:space:]]+merge|az[[:space:]]+repos[[:space:]]+pr[[:space:]]+update)([[:space:]]|$)'; then
+    [ -n "$tasks_dir" ] || exit 0   # ведения работы папкой в дереве нет
 
-        merge_branch="$(git branch --show-current 2>/dev/null)"
-        [ -z "$merge_branch" ] && exit 0
-        rt_task_branch_ok "$merge_branch" || exit 0   # за беззадачной веткой папки не стоит
+    merge_branch="$(git branch --show-current 2>/dev/null)"
+    [ -z "$merge_branch" ] && exit 0
+    rt_task_branch_ok "$merge_branch" || exit 0   # за беззадачной веткой папки не стоит
 
-        folder="$tasks_dir/$merge_branch"
+    folder="$tasks_dir/$merge_branch"
 
-        # Сначала ищем обход в самой команде — это работает и без сети. Если читать только
-        # тело PR, то без сети гард отбил бы слияние, причина которого в этом теле и написана.
-        printf '%s' "$cmd" | grep -qiE "$folder_skip_re" && exit 0
+    # Сначала ищем обход в самой команде — это работает и без сети. Если читать только
+    # тело PR, то без сети гард отбил бы слияние, причина которого в этом теле и написана.
+    printf '%s' "$cmd" | grep -qiE "$folder_skip_re" && exit 0
 
-        merge_number="$(printf '%s' "$cmd" | sed -nE 's/.*(pr|mr)[[:space:]]+(merge|update)[[:space:]]+([0-9]+).*/\3/p' | head -1)"
-        if [ -n "$merge_number" ] && command -v rt_report_body >/dev/null 2>&1; then
-            body="$(cd "$root" && rt_report_body "$merge_number" 2>/dev/null)"
-            [ -n "$body" ] && printf '%s' "$body" | grep -qiE "$folder_skip_re" && exit 0
-        fi
+    merge_number="$(printf '%s' "$cmd" | sed -nE 's/.*(pr|mr)[[:space:]]+(merge|update)[[:space:]]+([0-9]+).*/\3/p' | head -1)"
+    if [ -n "$merge_number" ] && command -v rt_report_body >/dev/null 2>&1; then
+        body="$(cd "$root" && rt_report_body "$merge_number" 2>/dev/null)"
+        [ -n "$body" ] && printf '%s' "$body" | grep -qiE "$folder_skip_re" && exit 0
+    fi
 
-        lying="$(folder_in_branch "$folder")"
-        [ -n "$lying" ] \
-            && deny "BLOCKED: в ветке осталась папка задачи «${lying}» — она уедет в главную. Разобрать её потом будет некому: работа перейдёт к следующей задаче, а этот PR закроется. Перенеси в «${archive_dir:-архив}» то, что объясняет принятые решения, остальное удали и повтори. Если работа вливается частями, поставь в тело PR строку «Task-folder-skip: <причина>»."
+    lying="$(folder_in_branch "$folder")"
+    [ -n "$lying" ] \
+        && deny "BLOCKED: в ветке осталась папка задачи «${lying}» — она уедет в главную. Разобрать её потом будет некому: работа перейдёт к следующей задаче, а этот PR закроется. Перенеси в «${archive_dir:-архив}» то, что объясняет принятые решения, остальное удали и повтори. Если работа вливается частями, поставь в тело PR строку «Task-folder-skip: <причина>»."
 
-        # Запись в архиве спрашиваем только у ветки, которая папку удалила. Иначе проверка
-        # цеплялась бы к работе, у которой папки и не было. Без общего предка с главной веткой
-        # сравнивать не с чем — тогда молчим.
-        [ -n "$archive_dir" ] || exit 0
-        base="$(git merge-base "$main_branch" HEAD 2>/dev/null)"
-        [ -z "$base" ] && exit 0
+    # Запись в архиве спрашиваем только у ветки, которая папку удалила. Иначе проверка
+    # цеплялась бы к работе, у которой папки и не было. Без общего предка с главной веткой
+    # сравнивать не с чем — тогда молчим.
+    [ -n "$archive_dir" ] || exit 0
+    base="$(git merge-base "$main_branch" HEAD 2>/dev/null)"
+    [ -z "$base" ] && exit 0
 
-        had="$(git ls-tree -d --name-only "$base" -- "$folder" 2>/dev/null | head -1)"
-        [ -z "$had" ] && had="$(git log "$base..HEAD" --diff-filter=A --name-only --pretty=format: -- "$folder" 2>/dev/null | head -1)"
-        [ -z "$had" ] && exit 0
+    had="$(git ls-tree -d --name-only "$base" -- "$folder" 2>/dev/null | head -1)"
+    [ -z "$had" ] && had="$(git log "$base..HEAD" --diff-filter=A --name-only --pretty=format: -- "$folder" 2>/dev/null | head -1)"
+    [ -z "$had" ] && exit 0
 
-        gained="$(git diff --name-only --diff-filter=A "$base" HEAD -- "$archive_dir" 2>/dev/null | head -1)"
-        [ -z "$gained" ] \
-            && deny "BLOCKED: папку задачи удалили, но в «${archive_dir}» ветка ничего не добавила. Удалить проще, чем разобрать, — и вместе с папкой пропадает разбор просьбы, единственная запись слов владельца. Перенеси то, что объясняет принятые решения, одним файлом с понятным именем и повтори."
+    gained="$(git diff --name-only --diff-filter=A "$base" HEAD -- "$archive_dir" 2>/dev/null | head -1)"
+    [ -z "$gained" ] \
+        && deny "BLOCKED: папку задачи удалили, но в «${archive_dir}» ветка ничего не добавила. Удалить проще, чем разобрать, — и вместе с папкой пропадает разбор просьбы, единственная запись слов владельца. Перенеси то, что объясняет принятые решения, одним файлом с понятным именем и повтори."
 
-        exit 0
-        ;;
-esac
+    exit 0
+fi
 
 # --- открытие заявки на слияние ----------------------------------------------------------
-case "$cmd" in
-    *gh\ pr\ create* | *glab\ mr\ create* | *az\ repos\ pr\ create*) ;;
-    *) exit 0 ;;
-esac
+# Команду ищем от начала строки или после разделителя — по той же причине, что и слияние:
+# упоминание в кавычках командой не является.
+printf '%s' "$cmd" \
+    | grep -qE '(^|[;&|(]|&&|\|\|)[[:space:]]*(gh[[:space:]]+pr[[:space:]]+create|glab[[:space:]]+mr[[:space:]]+create|az[[:space:]]+repos[[:space:]]+pr[[:space:]]+create)([[:space:]]|$)' \
+    || exit 0
 
 branch="$(git branch --show-current 2>/dev/null)"
 [ -z "$branch" ] && exit 0   # открепившийся HEAD — не про этот случай
