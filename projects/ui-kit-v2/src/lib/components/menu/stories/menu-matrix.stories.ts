@@ -39,6 +39,9 @@ export const Themes: Story = { args: { part: 'themes' } };
  * триггеру достался бы backdrop'у первого.
  */
 export const PanelAlignEnd: Story = {
+    // Панель живёт в контейнере перекрытий CDK — за пределами корня показа, и кадром по сетке её
+    // не снять вовсе. Такой истории кадр берётся целой страницей.
+    parameters: { snapshot: { fullPage: true } },
     args: { part: 'panel', align: 'end' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await openStoryOverlay(canvasElement);
@@ -47,6 +50,7 @@ export const PanelAlignEnd: Story = {
 
 /** То же меню, прижатое к левому краю триггера. */
 export const PanelAlignStart: Story = {
+    parameters: { snapshot: { fullPage: true } },
     args: { part: 'panel', align: 'start' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await openStoryOverlay(canvasElement);
