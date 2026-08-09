@@ -5,6 +5,7 @@ import { TestRtNotificationsBellComponent } from './component/test-notifications
 export default {
     title: 'Components/NotificationsBell',
     component: TestRtNotificationsBellComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         unread: { control: { type: 'boolean' } },
         ariaLabel: { control: { type: 'text' } },

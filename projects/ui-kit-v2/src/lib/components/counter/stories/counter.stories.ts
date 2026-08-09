@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtCounterComponent } from './component/test-counter.component';
 
 export default {
@@ -19,6 +20,7 @@ export default {
 type Story = StoryObj<TestRtCounterComponent>;
 
 export const Playground: Story = {
+    parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         ariaLabel: null,
         min: 0,

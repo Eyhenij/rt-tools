@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storyWidthAtMost } from '../../../../showcase';
 import { TestRtAsideMatrixComponent } from './component/test-aside-matrix.component';
 
 /**
@@ -14,6 +15,9 @@ export default {
     title: 'Components/Aside',
     component: TestRtAsideMatrixComponent,
     parameters: {
+        // Панель называет ширину сама: `@media (width <= 768px)` растягивает её на весь экран
+        // и меняет отступы шапки. Кадр порога снимается в окне ровно 768 — правило его включает.
+        snapshot: { widths: [storyWidthAtMost(768)] },
         controls: { disable: true },
     },
 } as Meta<TestRtAsideMatrixComponent>;

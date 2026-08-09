@@ -5,6 +5,7 @@ import { TestRtTabsControlComponent } from './component/test-tabs-control.compon
 export default {
     title: 'Components/TabsControl',
     component: TestRtTabsControlComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         side: {
             options: ['left', 'right'],

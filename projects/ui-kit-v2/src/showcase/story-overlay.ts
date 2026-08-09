@@ -120,10 +120,20 @@ function triggerOf(marked: HTMLElement, within: string): HTMLElement {
     return marked instanceof HTMLButtonElement ? marked : (marked.querySelector<HTMLElement>('button') ?? marked);
 }
 
-/** Повторяет жест на одном отмеченном хосте. */
+/**
+ * Повторяет жест на одном отмеченном хосте.
+ *
+ * Фокус ставится всем жестам, кроме названного событием: наведение фокуса за собой не ведёт, а
+ * перевод фокуса на соседний хост гасит панель, открытую наведением до него. На ряде подсказок
+ * это оставляло открытой ровно одну — последнюю, — и кадр показывал одну панель там, где история
+ * обещает все.
+ */
 function fire(marked: HTMLElement, gesture: IStoryOverlayGesture): void {
     const trigger: HTMLElement = triggerOf(marked, gesture.within ?? '');
-    trigger.focus();
+
+    if (gesture.event === undefined) {
+        trigger.focus();
+    }
 
     if (gesture.text !== undefined && trigger instanceof HTMLInputElement) {
         trigger.value = gesture.text;

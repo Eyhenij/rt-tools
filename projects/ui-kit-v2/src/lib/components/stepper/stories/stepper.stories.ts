@@ -5,6 +5,7 @@ import { TestRtStepperComponent } from './component/test-stepper.component';
 export default {
     title: 'Components/Stepper',
     component: TestRtStepperComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         steps: { control: false },
         currentIndex: { control: { type: 'number' } },

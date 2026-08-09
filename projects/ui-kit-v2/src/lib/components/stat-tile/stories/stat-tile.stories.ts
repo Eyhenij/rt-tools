@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtStatTileComponent } from './component/test-stat-tile.component';
 
 export default {
@@ -18,6 +19,7 @@ export default {
 type Story = StoryObj<TestRtStatTileComponent>;
 
 export const Playground: Story = {
+    parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         label: 'Визиты',
         value: '1 240',

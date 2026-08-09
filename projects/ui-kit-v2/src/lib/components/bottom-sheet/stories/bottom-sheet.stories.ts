@@ -5,6 +5,7 @@ import { TestRtBottomSheetComponent } from './component/test-bottom-sheet.compon
 export default {
     title: 'Components/BottomSheet',
     component: TestRtBottomSheetComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         open: { control: { type: 'boolean' } },
     },

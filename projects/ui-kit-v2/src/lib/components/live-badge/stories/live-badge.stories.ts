@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtLiveBadgeComponent } from './component/test-live-badge.component';
 
 export default {
@@ -15,6 +16,7 @@ export default {
 type Story = StoryObj<TestRtLiveBadgeComponent>;
 
 export const Playground: Story = {
+    parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         label: 'Смотрят сейчас',
         count: 128,

@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotSkip } from '../../../../showcase';
 import { openStoryOverlay } from '../../../../showcase/story-overlay';
 import { TestRtAutocompleteComponent } from './component/test-autocomplete.component';
 
@@ -19,6 +20,7 @@ export default {
 type Story = StoryObj<TestRtAutocompleteComponent>;
 
 export const Playground: Story = {
+    parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         placeholder: 'Начните вводить город',
         minLength: 1,
@@ -34,6 +36,7 @@ export const Playground: Story = {
  * Жест уходит полю внутри обёртки: раскрытие слушает `<input>`, а не хост.
  */
 export const OpenOnFocus: Story = {
+    parameters: { snapshot: { fullPage: true } },
     args: {
         ...Playground.args,
         openOnFocus: true,

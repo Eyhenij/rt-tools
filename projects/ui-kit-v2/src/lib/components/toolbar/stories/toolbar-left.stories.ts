@@ -5,6 +5,7 @@ import { TestRtToolbarLeftComponent } from './component/test-toolbar-left.compon
 export default {
     title: 'Components/ToolbarLeft',
     component: TestRtToolbarLeftComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         dense: { control: { type: 'boolean' } },
     },

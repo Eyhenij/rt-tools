@@ -5,6 +5,7 @@ import { TestRtTableSettingsPanelComponent } from './component/test-table-settin
 export default {
     title: 'Components/TableSettingsPanel',
     component: TestRtTableSettingsPanelComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         items: { control: false },
     },

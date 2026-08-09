@@ -5,6 +5,7 @@ import { TestRtTimelineComponent } from './component/test-timeline.component';
 export default {
     title: 'Components/Timeline',
     component: TestRtTimelineComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         steps: { control: false },
     },

@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storyWidthAtMost } from '../../../../showcase';
 import { openStoryOverlay } from '../../../../showcase/story-overlay';
 import { TestRtPageHeaderMatrixComponent } from './component/test-page-header-matrix.component';
 
@@ -13,6 +14,9 @@ export default {
     component: TestRtPageHeaderMatrixComponent,
     parameters: {
         controls: { disable: true },
+        // Шапка называет ширину сама: `@media (width <= 1380px)` прячет подписи пунктов, а
+        // `@media (width <= 1080px)` убирает полосу в меню. Кадр порога — на каждом из них.
+        snapshot: { widths: [storyWidthAtMost(1380), storyWidthAtMost(1080)] },
     },
 } as Meta<TestRtPageHeaderMatrixComponent>;
 
@@ -32,6 +36,7 @@ export const Themes: Story = { args: { part: 'themes' } };
  * кнопка полосы, поэтому аддону передан спуск до неё.
  */
 export const Panel: Story = {
+    parameters: { snapshot: { fullPage: true } },
     args: { part: 'panel' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await openStoryOverlay(canvasElement, {

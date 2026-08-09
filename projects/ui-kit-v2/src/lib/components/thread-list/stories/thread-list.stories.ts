@@ -5,6 +5,7 @@ import { TestRtThreadListComponent } from './component/test-thread-list.componen
 export default {
     title: 'Components/ThreadList',
     component: TestRtThreadListComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         rows: { control: false },
         activeId: { control: { type: 'number' } },

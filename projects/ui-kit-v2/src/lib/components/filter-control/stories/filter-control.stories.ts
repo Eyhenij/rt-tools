@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtFilterControlComponent } from './component/test-filter-control.component';
 
 export default {
@@ -22,6 +23,7 @@ export default {
 type Story = StoryObj<TestRtFilterControlComponent>;
 
 export const Playground: Story = {
+    parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         options: [],
         value: undefined,

@@ -5,6 +5,7 @@ import { TestRtSectionNavComponent } from './component/test-section-nav.componen
 export default {
     title: 'Components/SectionNav',
     component: TestRtSectionNavComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         items: { control: false },
     },
