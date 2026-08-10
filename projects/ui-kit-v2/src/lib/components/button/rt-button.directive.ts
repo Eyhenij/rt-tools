@@ -40,7 +40,7 @@ const LOADING_FADE_OUT_BUFFER_MS: number = 50;
  * ```html
  * <button rtButton label="Войти" theme="primary"></button>
  * <button rtButton label="Скачать" icon="ico-download" theme="success"></button>
- * <button rtButton icon="ico-pencil" theme="info" appearance="text"></button>
+ * <button rtButton icon="pencil" theme="info" appearance="text"></button>
  * <button rtButton label="Сохранение..." [loading]="saving()" [disabled]="saving()"></button>
  * <a rtButton label="Главная" [routerLink]="'/'"></a>
  * ```

@@ -13,8 +13,9 @@ export default {
 
 type Story = StoryObj<TestRtBottomSheetComponent>;
 
-export const Default: Story = {
+/** Лист показан открытым: закрытый не рисует ничего, и кадр закрепил бы пустую страницу. */
+export const Playground: Story = {
     args: {
-        open: false,
+        open: true,
     },
 };

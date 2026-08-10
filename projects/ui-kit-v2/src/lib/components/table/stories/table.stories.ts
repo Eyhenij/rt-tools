@@ -1,5 +1,4 @@
-import { IDBStorageService } from '@rt-tools/core';
-import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
+import { Meta, StoryObj } from '@storybook/angular';
 
 import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtTableComponent } from './component/test-table.component';
@@ -7,15 +6,6 @@ import { TestRtTableComponent } from './component/test-table.component';
 export default {
     title: 'Components/Table',
     component: TestRtTableComponent,
-    // Таблица держит настройки колонок в IndexedDB и просит службу хранилища у окружения, а
-    // `provideRtStorage()` её не отдаёт: без этой строки история рисует не таблицу, а страницу
-    // отказа `NG0201`. Поставляется здесь, а не общими провайдерами витрины, — служба нужна
-    // одной таблице.
-    decorators: [
-        applicationConfig({
-            providers: [IDBStorageService],
-        }),
-    ],
     argTypes: {
         ariaLabel: { control: { type: 'text' } },
         density: {
@@ -26,7 +16,7 @@ export default {
         clickable: { control: { type: 'boolean' } },
         loading: { control: { type: 'boolean' } },
         fetching: { control: { type: 'boolean' } },
-        columns: { control: false },
+        rows: { control: false },
         columnsConfig: { control: false },
         tableId: { control: { type: 'text' } },
         showRowActions: { control: { type: 'boolean' } },
@@ -41,21 +31,17 @@ export default {
 
 type Story = StoryObj<TestRtTableComponent>;
 
-export const Default: Story = {
-    parameters: storySnapshotSkip(
-        'обёртка отдаёт пустые `columns` и `columnsConfig`, и таблица не рисует ни строки; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
-    ),
+export const Playground: Story = {
+    parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
-        ariaLabel: null,
+        ariaLabel: 'Договоры',
         density: 'default',
         cards: true,
         clickable: false,
         loading: false,
         fetching: false,
-        columns: [],
-        columnsConfig: [],
         tableId: null,
-        showRowActions: false,
+        showRowActions: true,
         rowHasActions: null,
         sort: null,
         skeletonRows: 5,

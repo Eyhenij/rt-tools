@@ -14,9 +14,9 @@ export default {
 
 type Story = StoryObj<TestRtInfiniteScrollComponent>;
 
-export const Default: Story = {
+export const Playground: Story = {
     parameters: storySnapshotSkip(
-        'директива висит на пустом `div`, и в кадре нет ни строки; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
+        'число догрузок зависит от того, сколько раз маяк успел войти в область видимости, и от кадра к кадру не повторяется'
     ),
     args: {
         disabled: false,
