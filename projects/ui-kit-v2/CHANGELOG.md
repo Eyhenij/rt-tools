@@ -1,3 +1,28 @@
+# [0.5.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.4.0...rt-ui-kit-v2@0.5.0) (2026-08-10)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** витрина показывает то, что обещает подписью ([ecd66e1](https://github.com/Eyhenij/rt-tools/commit/ecd66e1dbb478f9ae7e1fa3b03a179da313ee258))
+- **rt:ui-kit-v2:** заголовок сортировки и контрол вкладок доезжают до потребителя ([1ab31eb](https://github.com/Eyhenij/rt-tools/commit/1ab31eb72dafc58efd6c2d716341ebaebb9ae649))
+- **rt:ui-kit-v2:** загрузка значков не отказывает, когда приложение снесли раньше неё ([f3884f1](https://github.com/Eyhenij/rt-tools/commit/f3884f189d57f505b9c62cd35a9ceee2a58c8821))
+- **rt:ui-kit-v2:** уход с route-панели спрашивает панель на экране ([0b11d2d](https://github.com/Eyhenij/rt-tools/commit/0b11d2d91f5d0d8708c5ddf00eb5a158b5f5fb81))
+
+### Features
+
+- **rt:ui-kit-v2:** витрина знает, что снимается, а что помечено причиной ([cbc9f5d](https://github.com/Eyhenij/rt-tools/commit/cbc9f5dd0a11dc5024ca68104a368fe15cc3bcf4))
+- **rt:ui-kit-v2:** вкладки, панель действий и шапка показаны матрицами ([ce5db27](https://github.com/Eyhenij/rt-tools/commit/ce5db27c66e0ee932b0468f0f78478b47d7371cc))
+- **rt:ui-kit-v2:** карточка, текст с обрезкой, список реквизитов и раздел панели показаны матрицами ([148087d](https://github.com/Eyhenij/rt-tools/commit/148087dc07ce6d7a3567ae95fb04aff1c0866b59))
+- **rt:ui-kit-v2:** полосы долей, суммы, листание и карточка файла показаны матрицами ([d2fd400](https://github.com/Eyhenij/rt-tools/commit/d2fd4009ce84f451af99f27b1a02b51b082bca97))
+- **rt:ui-kit-v2:** рабочий стол и панель подробностей показаны матрицами, волна закрыта ([633e509](https://github.com/Eyhenij/rt-tools/commit/633e509f5f4ec0cfc5227b7698991da279d78ec2))
+- **rt:ui-kit-v2:** сверять кадры витрины с эталонами ([a91378f](https://github.com/Eyhenij/rt-tools/commit/a91378f69e6f84949c9bbb43d0ea6ae5c309625f))
+- **rt:ui-kit-v2:** сообщение, колокольчик и сетка суток показаны матрицами ([8fb20cd](https://github.com/Eyhenij/rt-tools/commit/8fb20cd42c986e134b3c9dbab38bc33822979bf3))
+- **rt:ui-kit-v2:** список переписок, поле набора и сама переписка показаны матрицами ([721e318](https://github.com/Eyhenij/rt-tools/commit/721e3183faeeec5ef4f7371134259f03d9a302e8))
+- **rt:ui-kit-v2:** список файлов, заметка, просмотрщик и окно приветствия показаны матрицами ([69cb439](https://github.com/Eyhenij/rt-tools/commit/69cb43960c42c797dcfab764c65efc1e855d96c9))
+- **rt:ui-kit-v2:** степпер, лента событий и полоса разделов показаны матрицами ([a9bc904](https://github.com/Eyhenij/rt-tools/commit/a9bc904b69d361a34c209484e4a546dcf048f1b4))
+- **rt:ui-kit-v2:** таблица показана матрицами ([9419b12](https://github.com/Eyhenij/rt-tools/commit/9419b127991763f6b6fede628b1f78a0bba9e1d8))
+- **rt:ui-kit-v2:** уведомление, выезжающий лист и календарь показаны матрицами ([364a173](https://github.com/Eyhenij/rt-tools/commit/364a17370a506652c8d9e59a3aad75f8ed71e780))
+- **rt:ui-kit-v2:** эталоны на всю витрину и детерминированный кадр ([b6512f2](https://github.com/Eyhenij/rt-tools/commit/b6512f2194aac88bb9170e343e83bf623f845c24))
+
 # [0.4.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.3.0...rt-ui-kit-v2@0.4.0) (2026-08-07)
 
 ### Bug Fixes
