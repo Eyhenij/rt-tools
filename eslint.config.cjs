@@ -223,7 +223,25 @@ module.exports = [
 
     {
         files: ['**/*.spec.ts', '**/*.spec.js'],
-        rules: {},
+        rules: {
+            // Параметр стрелки в спеке аннотации не требует. Спека сплошь состоит из коротких
+            // стрелок — колбэк ожидания, двойник службы, обработчик выхода, — и тип у каждого
+            // параметра выводится из места вызова. Требование писать его руками не ловит ни
+            // одной ошибки и в каждой спеке обходится построчным выключением правила, то есть
+            // выключается всё равно — только россыпью и без объяснения.
+            '@typescript-eslint/typedef': [
+                'error',
+                {
+                    parameter: true,
+                    arrowParameter: false,
+                    propertyDeclaration: true,
+                    variableDeclaration: true,
+                    memberVariableDeclaration: true,
+                    objectDestructuring: false,
+                    arrayDestructuring: true,
+                },
+            ],
+        },
     },
 
     {
