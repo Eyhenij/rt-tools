@@ -29,6 +29,9 @@ description: Add or edit a Storybook story or MDX page for a kit component — t
   потом матрица.
 - **Сетку рисует общая обвязка показа, а не разметка каждой истории.** Иначе одно и то же
   показывается семьюдесятью способами и расходится при первой правке.
+- **Провайдер, без которого компонент не поднимается, стоит в `preview.ts`, а не декоратором
+  одной истории.** Локальный декоратор чинит ту историю, где его написали, и оставляет матрицу
+  того же компонента падать — дефект при этом наполовину известен и всё равно повторяется.
 
 **Two kits, two independent showcases.** They share no config, no port and no
 conventions beyond `@storybook/angular` itself. Check which package you are in
@@ -40,7 +43,7 @@ before copying anything across.
 | Port             | 6006                          | 6007                                                     |
 | Command          | `pnpm run storybook`          | `pnpm run storybook:ui-kit-v2`                           |
 | Wrapper prefix   | `Test*Component`              | `TestRt*Component`                                       |
-| Global providers | per-story `applicationConfig` | `preview.ts` (zoneless, transloco, icons, theme toolbar) |
+| Global providers | per-story `applicationConfig` | `preview.ts` (zoneless, storage, icons, labels, theme toolbar) |
 | Story set        | `Default` + ad-hoc variants   | fixed set — see the coverage contract below              |
 
 Everything from here to the ui-kit-v2 section describes **`@rt-tools/ui-kit`**.
@@ -160,14 +163,24 @@ pnpm run storybook:ui-kit-v2        # nx run @rt-tools/ui-kit-v2:storybook — p
 pnpm run build-storybook:ui-kit-v2  # dist/storybook/@rt-tools/ui-kit-v2
 ```
 
-## What `preview.ts` already provides
+## Что уже даёт `preview.ts`
 
-Do **not** re-declare these in a story's `applicationConfig` — they are global in
-`projects/ui-kit-v2/.storybook/preview.ts`:
+`projects/ui-kit-v2/.storybook/preview.ts` объявляет это глобально, и повторять их декоратором
+истории не надо:
 
-`provideZonelessChangeDetection()`, `provideHttpClient()`, `provideRouter([])`,
-`provideRtStorage()`, `provideRtIcons('/icons')`, `provideTransloco(…)` with a
-loader returning `of({})`, and `provideRtKitTranslations()`.
+| что                                        | зачем                                                                                                     |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| `provideZonelessChangeDetection()`         | кит собран без зоны                                                                                       |
+| `provideHttpClient()`                      | им ходит за спрайтом `rt-icon`                                                                            |
+| `provideRouter([])`                        | ссылки кита требуют маршрутизатор в инжекторе                                                             |
+| `provideRtStorage()`                       | службы кита, помнящие выбор пользователя                                                                  |
+| `provideRtIDBStorage()`                    | настройки колонок таблица держит в IndexedDB и внедряет службу полем: без провайдера таблица не поднимается вовсе — `NG0201` и пустая разметка вместо строк |
+| `provideRtIcons('/icons')`                 | адрес набора значков                                                                                      |
+| `provideRtKitLabels({ translator, locale })` | подписи кита — русский набор лежит рядом с витриной, в `showcase-labels.ru.ts`                            |
+| `registerLocaleData(localeRu)`             | не провайдер, а вызов на уровне модуля: без него любой `DatePipe` падает `Missing locale data for "ru"` и рисует пустоту вместо ленты |
+
+Список полный. Провайдер, понадобившийся ради одной истории, дописывается сюда, а не остаётся в
+её декораторе: следующая матрица того же компонента поднимается уже без него.
 
 - Icons are served by `staticDirs` from `src/assets/icons` to `/icons`; `rt-icon`
   fetches them over HTTP and inlines a sprite.
