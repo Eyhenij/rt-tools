@@ -20,6 +20,7 @@
         "test:visual:v2": "STORYBOOK_URL=${STORYBOOK_URL:-http://localhost:6007} node tools/visual-snapshots-v2.mjs",
         "test:visual:v2:update": "STORYBOOK_URL=${STORYBOOK_URL:-http://localhost:6007} node tools/visual-snapshots-v2.mjs --update",
         "test:visual:v2:update-all": "STORYBOOK_URL=${STORYBOOK_URL:-http://localhost:6007} node tools/visual-snapshots-v2.mjs --update-all",
+        "test:stories:v2": "STORYBOOK_URL=${STORYBOOK_URL:-http://localhost:6007} node tools/story-sweep-v2.mjs",
         "prettier": "npx prettier --write ./projects",
         "check:all": "pnpm exec nx run-many -t lint typecheck test build verify --all --parallel && pnpm run lint:styles",
         "check:affected": "pnpm exec nx affected -t lint typecheck test build verify --parallel && pnpm run lint:styles",
