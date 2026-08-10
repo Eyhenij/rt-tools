@@ -7,17 +7,21 @@ export default {
     title: 'Components/SectionNav',
     component: TestRtSectionNavComponent,
     argTypes: {
-        items: { control: false },
+        items: { control: 'object' },
     },
 } as Meta<TestRtSectionNavComponent>;
 
 type Story = StoryObj<TestRtSectionNavComponent>;
 
-export const Default: Story = {
-    parameters: storySnapshotSkip(
-        'обёртка отдаёт пустой `items`, и полоса разделов пуста; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
-    ),
+export const Playground: Story = {
+    // Тот же набор стоит ячейкой «первая плитка» в матрице подсветки: отдельный кадр проверял бы
+    // то же самое второй раз, а меняется он от любой правки аргументов.
+    parameters: storySnapshotSkip('этот набор уже стоит ячейкой в матрице подсветки'),
     args: {
-        items: [],
+        items: [
+            { id: 'overview', icon: 'ico-listing', label: 'Обзор', active: true },
+            { id: 'members', icon: 'ico-users', label: 'Участники', active: false },
+            { id: 'settings', icon: 'ico-settings', label: 'Настройки', active: false },
+        ],
     },
 };

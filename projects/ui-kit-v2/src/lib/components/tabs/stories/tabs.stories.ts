@@ -19,10 +19,8 @@ export default {
 
 type Story = StoryObj<TestRtTabsComponent>;
 
-export const Default: Story = {
-    parameters: storySnapshotSkip(
-        'обёртка не передаёт ни одной вкладки, и полоса пуста; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
-    ),
+export const Playground: Story = {
+    parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         activeId: null,
         direction: 'horizontal',

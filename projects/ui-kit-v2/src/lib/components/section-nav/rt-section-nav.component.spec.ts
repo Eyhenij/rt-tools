@@ -77,7 +77,7 @@ describe('RtSectionNavComponent', (): void => {
     it('новый набор разделов перерисовывает плитки', (): void => {
         const fixture: ComponentFixture<RtSectionNavComponent> = setup();
 
-        setInputs(fixture, { items: [{ id: 'billing', icon: 'ico-wallet', label: 'Оплата', active: true }] });
+        setInputs(fixture, { items: [{ id: 'billing', icon: 'wallet', label: 'Оплата', active: true }] });
         fixture.detectChanges();
 
         expect(textOf(qa(fixture, 'section-nav-tile'))).toBe('Оплата');

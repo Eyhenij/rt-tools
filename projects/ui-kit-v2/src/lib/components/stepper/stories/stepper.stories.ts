@@ -7,19 +7,23 @@ export default {
     title: 'Components/Stepper',
     component: TestRtStepperComponent,
     argTypes: {
-        steps: { control: false },
+        steps: { control: 'object' },
         currentIndex: { control: { type: 'number' } },
     },
 } as Meta<TestRtStepperComponent>;
 
 type Story = StoryObj<TestRtStepperComponent>;
 
-export const Default: Story = {
-    parameters: storySnapshotSkip(
-        'обёртка отдаёт пустой `steps`, и в кадре только черта; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
-    ),
+export const Playground: Story = {
+    // Тот же набор стоит ячейкой «середина — 50 %» в матрице положения: отдельный кадр проверял
+    // бы то же самое второй раз, а меняется он от любой правки аргументов.
+    parameters: storySnapshotSkip('этот набор уже стоит ячейкой в матрице положения шага'),
     args: {
-        steps: [],
-        currentIndex: 0,
+        steps: [
+            { label: 'Заявка', description: 'Проверяем данные организации.' },
+            { label: 'Договор', description: 'Готовим договор и согласуем условия.' },
+            { label: 'Подключение', description: 'Открываем доступ и передаём ключи.' },
+        ],
+        currentIndex: 1,
     },
 };
