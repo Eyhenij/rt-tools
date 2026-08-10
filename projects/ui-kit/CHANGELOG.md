@@ -1,16 +1,22 @@
-## [Unreleased]
-
-### Features
-
-- **rt:ui-kit:** `--rt-icon-size-{xs,sm,md,lg,xl,xxl,3xl}` sizes an icon box whole — width, height and font-size take the same step, so an app can resize `rtui-icon` without touching three declarations
-- **rt:ui-kit:** the spacing scale gained the 10px and 14px steps (`--rt-spacing-10`, `--rt-spacing-14`)
-- **rt:ui-kit:** the kit measures the narrow screen itself through `BreakpointService`, so `[isMobile]` is optional everywhere. Pass it and your value still wins — it is the way to render the kit narrow inside a panel on a wide screen.
+# [0.4.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.3.1...rt-tools@0.4.0) (2026-08-10)
 
 ### Bug Fixes
 
-- **rt:ui-kit:** the `pill` button reads 12px at size `xs` and 14px at size `md` (was 11px and 13px, both off the type scale)
-- **rt:ui-kit:** keyboard reaches the filter-operator menu, the action-bar buttons, the side-menu items and the checkbox — they carried click handlers on non-focusable nodes
-- **rt:ui-kit:** `rtui-aside-panel` and `rtui-action-bar-container` run on `OnPush` again
+- **rt:ui-kit:** вернуть клавиатуру интерактивным элементам и перерисовку по требованию ([977454d](https://github.com/Eyhenij/rt-tools/commit/977454d89540722a4051c3c7a46a6b6f5004ff23))
+- **rt:ui-kit:** перевести оформление иконки и кнопки на токены ([2741cbb](https://github.com/Eyhenij/rt-tools/commit/2741cbb8abaf8f42db4c4909381bd3d4ee08967a))
+- **rt:ui-kit:** снять с употребления набор .c-button ([4a91ad2](https://github.com/Eyhenij/rt-tools/commit/4a91ad22a9c32d17606fe32f4b31a781700e9034)), closes [#290](https://github.com/Eyhenij/rt-tools/issues/290)
+
+* **rt:ui-kit:** the `pill` button reads 12px at size `xs` and 14px at size `md` (was 11px and 13px, both off the type scale)
+* **rt:ui-kit:** keyboard reaches the filter-operator menu, the action-bar buttons, the side-menu items and the checkbox — they carried click handlers on non-focusable nodes
+* **rt:ui-kit:** `rtui-aside-panel` and `rtui-action-bar-container` run on `OnPush` again
+
+### Features
+
+- **rt:ui-kit:** сверять витрину со снимками ([0bede88](https://github.com/Eyhenij/rt-tools/commit/0bede886eefc42f03cf60bda924c9e0a28289e2b))
+
+* **rt:ui-kit:** `--rt-icon-size-{xs,sm,md,lg,xl,xxl,3xl}` sizes an icon box whole — width, height and font-size take the same step, so an app can resize `rtui-icon` without touching three declarations
+* **rt:ui-kit:** the spacing scale gained the 10px and 14px steps (`--rt-spacing-10`, `--rt-spacing-14`)
+* **rt:ui-kit:** the kit measures the narrow screen itself through `BreakpointService`, so `[isMobile]` is optional everywhere. Pass it and your value still wins — it is the way to render the kit narrow inside a panel on a wide screen.
 
 ### BREAKING CHANGES
 
