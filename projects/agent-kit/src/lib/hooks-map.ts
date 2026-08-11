@@ -20,12 +20,15 @@ import { join } from 'node:path';
 /** Настройка агента, в которой живёт карта. Путь от корня дерева. */
 export const SETTINGS_PATH: string = '.claude/settings.json';
 
-const DECLARATION: RegExp = /^#\s*rt-hook:\s*(\S+)\s+(\S.*)$/m;
+const DECLARATION: RegExp = /^#\s*rt-hook:\s*(\S+)(?:[ \t]+(\S.*))?$/m;
 
 export interface IHookBinding {
-    /** Событие агента: `PreToolUse`, `PostToolUse`, `SessionStart`. */
+    /** Событие агента: `PreToolUse`, `PostToolUse`, `SessionStart`, `Stop`. */
     readonly event: string;
-    /** Образец, по которому событие достаётся этому гарду. */
+    /**
+     * Образец, по которому событие достаётся этому гарду. Пустой у события, которое не про
+     * инструмент: завершение хода приходит целиком, и выбирать в нём нечего.
+     */
     readonly matcher: string;
     /** Путь разложенного гарда от корня дерева. */
     readonly path: string;
@@ -35,7 +38,7 @@ export interface IHookBinding {
 export function bindingOf(text: string, path: string): IHookBinding | null {
     const found: RegExpMatchArray | null = text.match(DECLARATION);
 
-    return found ? { event: found[1], matcher: found[2].trim(), path } : null;
+    return found ? { event: found[1], matcher: (found[2] ?? '').trim(), path } : null;
 }
 
 /**
@@ -55,10 +58,16 @@ export function hooksSection(bindings: readonly IHookBinding[]): Record<string, 
 
     const section: Record<string, unknown> = {};
     for (const [event, byMatcher] of [...events].sort()) {
-        section[event] = [...byMatcher].sort().map(([matcher, paths]: [string, readonly string[]]): unknown => ({
-            matcher,
-            hooks: paths.map((path: string): unknown => ({ type: 'command', command: `$CLAUDE_PROJECT_DIR/${path}` })),
-        }));
+        section[event] = [...byMatcher].sort().map(([matcher, paths]: [string, readonly string[]]): unknown => {
+            const hooks: unknown[] = paths.map((path: string): unknown => ({
+                type: 'command',
+                command: `$CLAUDE_PROJECT_DIR/${path}`,
+            }));
+
+            // Запись без образца — не запись с пустым образцом: агент читает пустую строку как
+            // образец, которому не соответствует ни один вызов, и гард молча не зовётся.
+            return matcher ? { matcher, hooks } : { hooks };
+        });
     }
 
     return section;
