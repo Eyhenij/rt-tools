@@ -12,7 +12,7 @@ import { collectAssets, IAsset, targetOf } from './assets.js';
 import { IEntryOfCatalog, IGapOfVariant, readCatalog, variantGaps } from './catalog.js';
 import { ICompanion, pathOf, planCompanion } from './companion.js';
 import { IConfig, OVERRIDES_DIR } from './config.js';
-import { bindingOf, IHookBinding, unboundHooks } from './hooks-map.js';
+import { bindingsOf as declaredIn, IHookBinding, unboundHooks } from './hooks-map.js';
 import { IPlanned, isPending, isRefusal, planFile } from './plan.js';
 import { mergeDocuments, parseDocument, renderDocument } from './sections.js';
 import { readStamped } from './stamp.js';
@@ -100,10 +100,7 @@ function bindingsOf(config: IConfig, assetsDir: string): readonly IHookBinding[]
         if (asset.kind !== 'hooks') {
             continue;
         }
-        const binding: IHookBinding | null = bindingOf(asset.text, asset.target);
-        if (binding) {
-            bindings.push(binding);
-        }
+        bindings.push(...declaredIn(asset.text, asset.target));
     }
 
     return bindings;
