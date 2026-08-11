@@ -18,6 +18,15 @@
           }
         ],
         "matcher": "Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file"
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/window-fill-guard.sh"
+          }
+        ]
       }
     ],
     "PreToolUse": [
@@ -118,6 +127,15 @@
             "type": "command"
           }
         ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/window-fill-guard.sh"
+          }
+        ]
       }
     ],
     "SessionStart": [
@@ -158,5 +176,8 @@
         ]
       }
     ]
+  },
+  "env": {
+    "RT_WINDOW_TOKENS": "1000000"
   }
 }

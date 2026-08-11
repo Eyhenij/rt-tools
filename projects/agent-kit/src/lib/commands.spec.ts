@@ -13,6 +13,7 @@ import { dirname, join } from 'node:path';
 import { IEntryOfCatalog, readCatalog } from './catalog.js';
 import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, KEPT_SUFFIX, list, sync } from './commands.js';
 import { CONFIG_PATH, OVERRIDES_DIR } from './config.js';
+import { bindingsOf } from './hooks-map.js';
 
 const VERSION: string = '0.1.0';
 const LAW: string = 'docs/constitution/delivery.md';
@@ -78,10 +79,20 @@ const bindHooks: () => void = (): void => {
     if (!existsSync(dir)) {
         return;
     }
-    const commands: unknown[] = readdirSync(dir)
-        .filter((name: string): boolean => name.endsWith('.sh'))
-        .map((name: string): unknown => ({ type: 'command', command: `$CLAUDE_PROJECT_DIR/.claude/hooks/${name}` }));
-    put('.claude/settings.json', JSON.stringify({ hooks: { PreToolUse: [{ matcher: '*', hooks: commands }] } }, null, 4));
+    // Гард подключается к тому событию, которое объявил сам, и гард с двумя объявлениями — к
+    // обоим: настройка, где все они свалены под одно событие, половину из них не зовёт.
+    const events: Record<string, unknown[]> = {};
+    for (const name of readdirSync(dir).filter((file: string): boolean => file.endsWith('.sh'))) {
+        const path: string = `.claude/hooks/${name}`;
+        for (const binding of bindingsOf(readFileSync(join(root, path), 'utf8'), path)) {
+            events[binding.event] = [...(events[binding.event] ?? []), { type: 'command', command: `$CLAUDE_PROJECT_DIR/${path}` }];
+        }
+    }
+    const hooks: Record<string, unknown> = {};
+    for (const [event, commands] of Object.entries(events)) {
+        hooks[event] = [{ matcher: '*', hooks: commands }];
+    }
+    put('.claude/settings.json', JSON.stringify({ hooks }, null, 4));
 };
 
 beforeEach((): void => {
