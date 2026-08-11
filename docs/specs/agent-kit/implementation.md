@@ -31,6 +31,7 @@
 | Гард разговора пропускает работу при любой поломке.                                                        | `projects/agent-kit/assets/hooks/grill-gate.sh:transcript`               |
 | Поддомен сверяется наравне с доменом.                                                                      | `projects/agent-kit/assets/checks/check-specs.mjs:collectSpecDirs`       |
 | Предложенный закон правила не требует.                                                                     | `projects/agent-kit/assets/checks/check-specs.mjs:isProposedLaw`         |
+| Влитая договорённость ветку не запирает.                                                                   | `projects/agent-kit/assets/hooks/task-flow-guard.sh:draft_path`          |
 | Префикс сценариев занят одним спеком по всему дереву.                                                      | `projects/agent-kit/assets/checks/check-specs.mjs:prefixOwners`          |
 
 ## Что ещё стоит знать при чтении кода
