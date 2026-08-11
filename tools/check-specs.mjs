@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.4.0 · checks/check-specs.mjs · 93868e98f863 · правится надстройкой, не здесь
+// rt-kit v0.4.0 · checks/check-specs.mjs · 6a3944a122b6 · правится надстройкой, не здесь
 /**
  * Проверка того, что спек домена не разошёлся с кодом.
  *
@@ -789,15 +789,47 @@ for (const file of walk(CONSTITUTION_DIR, (name) => name.endsWith('.md'))) {
     laws.set(name, file);
 }
 
+/**
+ * Директории, описывающие предмет: сам домен и его поддомены. Поддомен заводится, когда домен
+ * вырос настолько, что читать его целиком ради одной подробности дороже, чем найти её; устроен
+ * он так же — три файла и свой префикс сценариев.
+ *
+ * `proposed/` предметом не является: это договорённость о продукте до кода, и её сценарии живут
+ * в нумерации того спека, в который она вольётся.
+ */
+function collectSpecDirs(base) {
+    const found = [base];
+    let entries;
+    try {
+        entries = readdirSync(join(ROOT, base), { withFileTypes: true });
+    } catch {
+        return found;
+    }
+
+    for (const entry of entries) {
+        if (entry.isDirectory() && entry.name !== 'proposed') {
+            found.push(...collectSpecDirs(`${base}/${entry.name}`));
+        }
+    }
+
+    return found;
+}
+
+/** Префикс сценариев принадлежит одному спеку по всему дереву. */
+const prefixOwners = new Map();
+
 for (const domain of domains) {
     const base = `${SPECS_DIR}/${domain}`;
-    // Домен, у которого есть только `proposed/`, ещё не существует: спека о нём
-    // нет, пока фича не выкачена
-    const isProposedOnly = exists(`${base}/proposed`) && !exists(`${base}/spec.md`);
-    if (!isProposedOnly) {
+    for (const dir of collectSpecDirs(base)) {
+        // Спек, у которого есть только `proposed/`, ещё не существует: его самого нет, пока
+        // фича не выкачена
+        if (exists(`${dir}/proposed`) && !exists(`${dir}/spec.md`)) {
+            continue;
+        }
+        const what = dir === base ? 'домен' : 'поддомен';
         ['spec.md', 'scenarios.md']
-            .filter((name) => !exists(`${base}/${name}`))
-            .forEach((name) => report(base, `нет файла \`${name}\` — домен описан наполовину`));
+            .filter((name) => !exists(`${dir}/${name}`))
+            .forEach((name) => report(dir, `нет файла \`${name}\` — ${what} описан наполовину`));
     }
 
     // Спеки фич из `proposed/` проверяются наравне со спеком домена: они и есть
@@ -818,10 +850,38 @@ for (const domain of domains) {
     }
 
     const found = walk(base, (name) => name === 'scenarios.md').flatMap(parseScenarios);
-    const prefixes = new Set(found.map((scenario) => scenario.prefix));
-    if (prefixes.size > 1) {
-        report(base, `в домене больше одного префикса сценариев: ${[...prefixes].sort().join(', ')}`);
+
+    // Префикс судится в пределах одного спека, а не всего дерева домена: у поддомена он свой, и
+    // по номеру видно, о чём сценарий. Два префикса в одном спеке по-прежнему означают, что
+    // предмет описан дважды.
+    const prefixesOf = new Map();
+    for (const scenario of found) {
+        const dir = dirname(scenario.file);
+        if (!prefixesOf.has(dir)) {
+            prefixesOf.set(dir, new Set());
+        }
+        prefixesOf.get(dir).add(scenario.prefix);
     }
+
+    for (const [dir, prefixes] of prefixesOf) {
+        if (prefixes.size > 1) {
+            report(dir, `в спеке больше одного префикса сценариев: ${[...prefixes].sort().join(', ')}`);
+        }
+        // Договорённость о продукте нумеруется вместе со спеком, в который вольётся:
+        // идентификаторы переезд переживают, и занятым префикс от неё не становится
+        if (dir.includes('/proposed/')) {
+            continue;
+        }
+        for (const prefix of prefixes) {
+            const owner = prefixOwners.get(prefix);
+            if (owner && owner !== dir) {
+                report(dir, `префикс \`SC-${prefix}\` уже занят — \`${owner}\`; по номеру не видно, чей сценарий`);
+                continue;
+            }
+            prefixOwners.set(prefix, dir);
+        }
+    }
+
     scenarios.push(...found);
 }
 
@@ -902,11 +962,16 @@ for (const file of walk('.claude/skills', (name) => name === 'SKILL.md')) {
     }
 }
 
+// Предложенный закон правила не требует: договорённость записана раньше кода, привязывать её
+// не к чему, и требование правила заставило бы завести его с якорями в несуществующие места.
+// Признак стоит строкой статуса в самом законе, а не списком исключений рядом с проверкой.
+const isProposedLaw = (file) => /^\*\*Статус:\*\*\s*предложен/m.test(read(file));
+
 // Обратные стороны связи. Закон без правила читается как договорённость, которую этот проект
 // не применяет; правило без паттерна оставляет готовый код там, где ему не место, — в самом
 // правиле, которое читается при каждой правке.
 [...laws]
-    .filter(([law]) => !ruled.has(law))
+    .filter(([law, file]) => !ruled.has(law) && !isProposedLaw(file))
     .forEach(([, file]) => report(file, 'у закона нет ни одного правила — заведи скил с `law:` на него'));
 
 for (const file of walk('.claude/skills', (name) => name === 'SKILL.md')) {
