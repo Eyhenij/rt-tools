@@ -19,6 +19,7 @@ const VERSION: string = '0.1.0';
 const LAW: string = 'docs/constitution/delivery.md';
 const OTHER_LAW: string = 'docs/constitution/application/access.md';
 const TEMPLATE: string = '.claude/rt-kit/templates/rule.md';
+const GLOSSARY: string = 'docs/GLOSSARY.md';
 /** Ресурсы берутся из дерева пакета: спека проверяет раскладку, а не выдуманный набор. */
 const ASSETS: string = join(__dirname, '..', '..', 'assets');
 
@@ -180,6 +181,23 @@ describe('sync', () => {
 
         expect(outcome.code).toBe(1);
         expect(get(LAW)).toBe('своё, положено не пакетом\n');
+    });
+
+    it('SC-AK-33 — словарь приезжает в дерево раскладкой', () => {
+        start();
+        sync(env, false);
+
+        expect(get(GLOSSARY)).toContain(`rt-kit v${VERSION}`);
+        expect(get(GLOSSARY)).toContain('## Слой правил');
+    });
+
+    it('SC-AK-34 — предметные разделы словаря дописываются надстройкой', () => {
+        start();
+        put(join(OVERRIDES_DIR, 'docs/GLOSSARY.md'), '## Своё слово\n\nЗначит вот это.\n');
+        sync(env, false);
+
+        expect(get(GLOSSARY)).toContain('## Слой правил');
+        expect(get(GLOSSARY)).toContain('## Своё слово');
     });
 
     it('надстройка дописывает свой раздел и снимает пустой', () => {
