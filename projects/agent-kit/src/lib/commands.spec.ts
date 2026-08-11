@@ -13,11 +13,13 @@ import { dirname, join } from 'node:path';
 import { IEntryOfCatalog, readCatalog } from './catalog.js';
 import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, KEPT_SUFFIX, list, sync } from './commands.js';
 import { CONFIG_PATH, OVERRIDES_DIR } from './config.js';
+import { bindingsOf } from './hooks-map.js';
 
 const VERSION: string = '0.1.0';
 const LAW: string = 'docs/constitution/delivery.md';
 const OTHER_LAW: string = 'docs/constitution/application/access.md';
 const TEMPLATE: string = '.claude/rt-kit/templates/rule.md';
+const GLOSSARY: string = 'docs/GLOSSARY.md';
 /** Ресурсы берутся из дерева пакета: спека проверяет раскладку, а не выдуманный набор. */
 const ASSETS: string = join(__dirname, '..', '..', 'assets');
 
@@ -78,10 +80,20 @@ const bindHooks: () => void = (): void => {
     if (!existsSync(dir)) {
         return;
     }
-    const commands: unknown[] = readdirSync(dir)
-        .filter((name: string): boolean => name.endsWith('.sh'))
-        .map((name: string): unknown => ({ type: 'command', command: `$CLAUDE_PROJECT_DIR/.claude/hooks/${name}` }));
-    put('.claude/settings.json', JSON.stringify({ hooks: { PreToolUse: [{ matcher: '*', hooks: commands }] } }, null, 4));
+    // Гард подключается к тому событию, которое объявил сам, и гард с двумя объявлениями — к
+    // обоим: настройка, где все они свалены под одно событие, половину из них не зовёт.
+    const events: Record<string, unknown[]> = {};
+    for (const name of readdirSync(dir).filter((file: string): boolean => file.endsWith('.sh'))) {
+        const path: string = `.claude/hooks/${name}`;
+        for (const binding of bindingsOf(readFileSync(join(root, path), 'utf8'), path)) {
+            events[binding.event] = [...(events[binding.event] ?? []), { type: 'command', command: `$CLAUDE_PROJECT_DIR/${path}` }];
+        }
+    }
+    const hooks: Record<string, unknown> = {};
+    for (const [event, commands] of Object.entries(events)) {
+        hooks[event] = [{ matcher: '*', hooks: commands }];
+    }
+    put('.claude/settings.json', JSON.stringify({ hooks }, null, 4));
 };
 
 beforeEach((): void => {
@@ -169,6 +181,23 @@ describe('sync', () => {
 
         expect(outcome.code).toBe(1);
         expect(get(LAW)).toBe('своё, положено не пакетом\n');
+    });
+
+    it('SC-AK-33 — словарь приезжает в дерево раскладкой', () => {
+        start();
+        sync(env, false);
+
+        expect(get(GLOSSARY)).toContain(`rt-kit v${VERSION}`);
+        expect(get(GLOSSARY)).toContain('## Слой правил');
+    });
+
+    it('SC-AK-34 — предметные разделы словаря дописываются надстройкой', () => {
+        start();
+        put(join(OVERRIDES_DIR, 'docs/GLOSSARY.md'), '## Своё слово\n\nЗначит вот это.\n');
+        sync(env, false);
+
+        expect(get(GLOSSARY)).toContain('## Слой правил');
+        expect(get(GLOSSARY)).toContain('## Своё слово');
     });
 
     it('надстройка дописывает свой раздел и снимает пустой', () => {
