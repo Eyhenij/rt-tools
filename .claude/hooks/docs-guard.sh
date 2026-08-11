@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.4.0 · hooks/docs-guard.sh · ec7e4f728ca9 · правится надстройкой, не здесь
+# rt-kit v0.5.0 · hooks/docs-guard.sh · ec7e4f728ca9 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Гард пары «правка и её документ». PreToolUse.
 #
