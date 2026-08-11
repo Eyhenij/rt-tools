@@ -74,6 +74,7 @@ const KIND_TITLE: Readonly<Record<TKind, string>> = {
     commands: 'КОМАНДЫ',
     workflows: 'ВОРКФЛОУ',
     templates: 'ШАБЛОНЫ',
+    docs: 'ДОКУМЕНТЫ',
 };
 
 /** Состояние компаньона словами. У заполненного слова нет: о нём говорить нечего. */

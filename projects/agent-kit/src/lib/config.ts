@@ -10,7 +10,19 @@ import { join } from 'node:path';
 
 /** Род ресурса. Он же имя каталога в `assets/` пакета и ключ раскладки. */
 export type TKind =
-    'laws' | 'rules' | 'patterns' | 'skills' | 'hooks' | 'defaults' | 'checks' | 'agents' | 'commands' | 'workflows' | 'templates';
+    | 'laws'
+    | 'rules'
+    | 'patterns'
+    | 'skills'
+    | 'hooks'
+    | 'defaults'
+    | 'checks'
+    | 'agents'
+    | 'commands'
+    | 'workflows'
+    | 'templates'
+    /** Документы дерева, которые читает и человек, и агент: словарь проекта. */
+    | 'docs';
 
 export const KINDS: readonly TKind[] = [
     'laws',
@@ -24,6 +36,7 @@ export const KINDS: readonly TKind[] = [
     'commands',
     'workflows',
     'templates',
+    'docs',
 ];
 
 /**
@@ -104,6 +117,7 @@ export const DEFAULT_LAYOUT: Readonly<Record<TKind, string>> = {
     commands: '.claude/commands',
     workflows: '.claude/workflows',
     templates: '.claude/rt-kit/templates',
+    docs: 'docs',
 };
 
 export class ConfigError extends Error {}
