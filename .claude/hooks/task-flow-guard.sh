@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.4.0 · hooks/task-flow-guard.sh · a851805cad70 · правится надстройкой, не здесь
+# rt-kit v0.4.0 · hooks/task-flow-guard.sh · 0aac90be31c9 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit
 # PreToolUse guard for Edit|Write|MultiEdit: код не пишется раньше замысла.
 #
@@ -101,8 +101,19 @@ case "$draft" in
     *) draft_path="$root/$draft" ;;
 esac
 
-if [ ! -e "$draft_path" ]; then
-    deny "BLOCKED by task-flow: замысел называет договорённость '${draft}', а её на диске нет. Заведи её с образца (docs/specs/_template) или поправь путь в '${tasks_dir}/${branch}/plan.md'. Правило — скил task-flow."
+if [ -e "$draft_path" ]; then
+    exit 0
 fi
 
-exit 0
+# Договорённость, влитая в спек домена, с диска уходит — так и задумано: в главной ветке
+# директории «предложено» быть не должно. Но замысел на неё ссылается до конца работы, и без
+# этой развилки последний коммит отчёта запирал бы ветку: ни правки по замечаниям разбора, ни
+# записи в журнал изменений после вливания уже не сделать.
+#
+# Влитое от незаведённого отличает история ветки: путь, которого в ней никогда не было,
+# договорённостью не был. Спросить об этом нечем, кроме git, поэтому нет git — отказ остаётся.
+if git -C "$root" log --oneline -1 -- "$draft" 2>/dev/null | grep -q .; then
+    exit 0
+fi
+
+deny "BLOCKED by task-flow: замысел называет договорённость '${draft}', а её на диске нет и в истории ветки не было. Заведи её с образца (docs/specs/_template) или поправь путь в '${tasks_dir}/${branch}/plan.md'. Правило — скил task-flow."
