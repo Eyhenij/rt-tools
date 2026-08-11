@@ -33,6 +33,14 @@
 | Предложенный закон правила не требует.                                                                     | `projects/agent-kit/assets/checks/check-specs.mjs:isProposedLaw`         |
 | Влитая договорённость ветку не запирает.                                                                   | `projects/agent-kit/assets/hooks/task-flow-guard.sh:draft_path`          |
 | Префикс сценариев занят одним спеком по всему дереву.                                                      | `projects/agent-kit/assets/checks/check-specs.mjs:prefixOwners`          |
+| Пакет везёт словарь как ресурс, а не только хук, который его читает.                                       | `projects/agent-kit/src/lib/config.ts:DEFAULT_LAYOUT`                    |
+| Пакет везёт общую часть словаря, дерево дописывает предметную.                                             | `projects/agent-kit/src/lib/sections.ts:mergeDocuments`                  |
+| Гард окна напоминает раньше, чем отбивает.                                                                 | `projects/agent-kit/assets/hooks/window-fill-guard.sh:warn_pct`          |
+| Напоминание повторяется по ступеням, а не на каждом действии.                                              | `projects/agent-kit/assets/hooks/window-fill-guard.sh:step`              |
+| После порога остановки проходят запись хода работы, передача и команды поставки.                           | `projects/agent-kit/assets/hooks/window-fill-guard.sh:allowed`           |
+| Размер окна берётся из настройки дерева, а не из записи захода.                                            | `projects/agent-kit/assets/defaults/project.sh:RT_WINDOW_TOKENS`         |
+| Гард окна пропускает работу при любой поломке.                                                             | `projects/agent-kit/assets/hooks/window-fill-guard.sh:transcript`        |
+| Один файл гарда вправе объявить несколько событий.                                                         | `projects/agent-kit/src/lib/hooks-map.ts:bindingsOf`                     |
 
 ## Что ещё стоит знать при чтении кода
 
