@@ -139,7 +139,9 @@ const unboundLines: (result: ISyncResult) => string[] = (result: ISyncResult): s
     result.unbound.length
         ? [
               `гарды разложены, но в \`${SETTINGS_PATH}\` их не зовёт никто: ${result.unbound.length}`,
-              ...result.unbound.map((binding: IHookBinding): string => `  ${binding.path} — ${binding.event} ${binding.matcher}`),
+              ...result.unbound.map(
+                  (binding: IHookBinding): string => `  ${binding.path} — ${binding.event}${binding.matcher ? ` ${binding.matcher}` : ''}`
+              ),
               `  вставь в \`${SETTINGS_PATH}\` раздел \`hooks\` — готовый кусок ниже:`,
               ...JSON.stringify({ hooks: hooksSection(result.unbound) }, null, 4)
                   .split('\n')

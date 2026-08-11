@@ -111,4 +111,71 @@ for check in "$CHECKS"/*.mjs; do
     fi
 done
 
+# --- сверка спеков: поддомены, предложенный закон, префикс по дереву -------------------------
+#
+# Фикстура повторяет раскладку дерева: проверки лежат в `tools/`, а тексты — там, где их ищет
+# настройка. Сверка запускается целиком и судится по строкам, которые напечатала: она отвечает
+# перечнем расхождений, а не кодом на каждое из них.
+
+SPEC_TREE="$(mktemp -d)"
+mkdir -p "$SPEC_TREE/tools" "$SPEC_TREE/docs/constitution" "$SPEC_TREE/.claude/skills"
+cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/check-specs.mjs" "$SPEC_TREE/tools/"
+
+# Заготовка спека: все обязательные разделы на месте, чтобы в выводе оставалось только то,
+# ради чего сценарий заведён.
+spec_body() {
+    printf '# %s\n\n**Статус:** действует · **Префикс сценариев:** `SC-%s`\n**Законы:** нет\n**Процедуры:** нет\n\n' "$1" "$2"
+    for heading in '## Зачем' '## Терминология' '### Как это называется в интерфейсе' '## Правила' \
+        '## Что не входит' '## Контракт' '### Коды отказов' '## Данные' '## Экраны и состояния' \
+        '## Сквозные требования' '### Локали' '### SEO' '### Мобильная раскладка' '### Мультиобъектность' \
+        '## Решения' '## Открытые вопросы' '## История изменений'; do
+        printf '%s\n\nНе применимо.\n\n' "$heading"
+    done
+}
+
+spec_dir() {
+    mkdir -p "$SPEC_TREE/$1"
+    spec_body "$2" "$3" > "$SPEC_TREE/$1/spec.md"
+    printf '# Сценарии\n\n### SC-%s-01 — первый\n\nДано раз\nКогда два\nТогда три\n' "$3" > "$SPEC_TREE/$1/scenarios.md"
+    printf '# Привязка\n\n| Правило | Где исполняется |\n| --- | --- |\n' > "$SPEC_TREE/$1/implementation.md"
+}
+
+specs_says() {
+    (cd "$SPEC_TREE" && node tools/check-specs.mjs 2>&1) | grep -cE "$1"
+}
+
+spec_dir docs/specs/alpha 'Альфа' AL
+
+# SC-AK-27 — поддомен без обязательного раздела виден сверке
+mkdir -p "$SPEC_TREE/docs/specs/alpha/inner"
+report "SC-AK-27 — пустой поддомен назван" "$(specs_says 'поддомен описан наполовину')" 2
+spec_dir docs/specs/alpha/inner 'Альфа изнутри' IN
+report "SC-AK-27 — описанный поддомен молчит" "$(specs_says 'поддомен описан наполовину')" 0
+report "SC-AK-27 — свой префикс поддомену законен" "$(specs_says 'больше одного префикса')" 0
+
+# SC-AK-29 — префикс, занятый чужим спеком, — расхождение
+spec_dir docs/specs/beta 'Бета' AL
+report "SC-AK-29 — занятый префикс назван" "$(specs_says 'префикс .* уже занят')" 1
+rm -rf "$SPEC_TREE/docs/specs/beta"
+
+# SC-AK-30 — договорённость префикс своего домена не занимает
+mkdir -p "$SPEC_TREE/docs/specs/alpha/proposed/feature"
+spec_body 'Договорённость' AL > "$SPEC_TREE/docs/specs/alpha/proposed/feature/spec.md"
+# Идентификатор собирается из частей: написанный литералом, он читался бы сверкой этого дерева
+# как ссылка на сценарий, которого здесь нет.
+printf '# Сценарии\n\n### SC-%s-09 — предложенный\n\nДано раз\nКогда два\nТогда три\n' AL \
+    > "$SPEC_TREE/docs/specs/alpha/proposed/feature/scenarios.md"
+report "SC-AK-30 — договорённость префикс не занимает" "$(specs_says 'префикс .* уже занят')" 0
+rm -rf "$SPEC_TREE/docs/specs/alpha/proposed"
+
+# SC-AK-28 — предложенный закон правила не требует
+printf '# Закон\n\n**Статус:** действует\n\n## Статьи\n\n- **Раз.** Два.\n' \
+    > "$SPEC_TREE/docs/constitution/acting.md"
+report "SC-AK-28 — действующий закон без правила назван" "$(specs_says 'нет ни одного правила')" 1
+printf '# Закон\n\n**Статус:** предложено\n\n## Статьи\n\n- **Раз.** Два.\n' \
+    > "$SPEC_TREE/docs/constitution/acting.md"
+report "SC-AK-28 — предложенный закон правила не требует" "$(specs_says 'нет ни одного правила')" 0
+
+rm -rf "$SPEC_TREE"
+
 suite_result "проверки"

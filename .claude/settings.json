@@ -147,6 +147,16 @@
         ],
         "matcher": "startup|resume|compact|clear"
       }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/grill-gate.sh"
+          }
+        ]
+      }
     ]
   }
 }
