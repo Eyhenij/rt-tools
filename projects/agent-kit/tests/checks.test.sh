@@ -234,6 +234,22 @@ printf '{"indexedDirs":[]}\n' > "$DOC_TREE/.claude/rt-kit/checks.json"
 git -C "$DOC_TREE" add -A
 report "SC-AK-53 — без объявленных указателей сверки нет" "$(docs_says 'указатель разошёлся с каталогом')" 0
 
+# SC-AK-54 — разложенный текст выведен из сверки по своей шапке
+doc laid.md '<!-- rt-kit v0.5.0 · rules/some.md · 0123456789ab · правится надстройкой, не здесь -->
+Правило зовёт `libs/common/util`, которого в этом дереве нет.'
+report "SC-AK-54 — адрес разложенного текста не судится" "$(docs_says 'нет файла .libs/common/util')" 0
+doc own.md 'Свой текст зовёт `libs/common/util`, которого нет.'
+report "SC-AK-54 — адрес своего текста судится" "$(docs_says 'нет файла .libs/common/util')" 1
+
+# SC-AK-55 — исходник переносимого текста выведен по каталогу из настройки
+mkdir -p "$DOC_TREE/assets/rules"
+printf 'Исходник правила зовёт `prisma/schema.prisma`, которого нет.\n' > "$DOC_TREE/assets/rules/some.md"
+git -C "$DOC_TREE" add -A
+report "SC-AK-55 — неназванный каталог исходников судится" "$(docs_says 'нет файла .prisma/schema\.prisma')" 1
+printf '{"indexedDirs":[],"portableDirs":["assets"]}\n' > "$DOC_TREE/.claude/rt-kit/checks.json"
+git -C "$DOC_TREE" add -A
+report "SC-AK-55 — названный каталог исходников не судится" "$(docs_says 'нет файла .prisma/schema\.prisma')" 0
+
 rm -rf "$DOC_TREE"
 
 suite_result "проверки"
