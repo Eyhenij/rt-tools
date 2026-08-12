@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.5.0 · hooks/task-flow-guard.sh · 0aac90be31c9 · правится надстройкой, не здесь
+# rt-kit v0.5.1 · hooks/task-flow-guard.sh · 0aac90be31c9 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit
 # PreToolUse guard for Edit|Write|MultiEdit: код не пишется раньше замысла.
 #
