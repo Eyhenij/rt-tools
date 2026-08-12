@@ -15,6 +15,7 @@
     "rt/require-bem-directives",
     "rt/require-mod-directive-import",
     "rt/no-host-selector",
+    "rt-tools/no-hardcoded-design-tokens",
     "provideRtIcons('/icons')",
     "provideRtIcons('/my/icons')",
     "aria-valuemin/max/now",

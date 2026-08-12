@@ -306,6 +306,12 @@ The agreement behind all of this is
   eighty-first drowns.
 - MDX tables need `remark-gfm` — already wired in `main.ts`. Without it a table
   renders as raw text.
+- **Комментарий вида `{/* … */}` в `.mdx` не ставится: форматтер портит его молча.** Prettier
+  разбирает `.mdx` как разметку и превращает звёздочки в подчёркивания — `{/_ … _/}`, — после
+  чего MDX перестаёт разбираться вовсе, а витрина отдаёт 500 на указатель историй и ни одного
+  кадра не снимает. Ловится это только повторным заходом в браузер **после** форматирования:
+  до него страница рисуется, и прогон кадров падает уже потом. Пояснение ставится обычным
+  `/* … */` внутри блока `export const`.
 - Foundation docs live in `projects/ui-kit-v2/docs/*.mdx`. `Overview` and
   `Theming` are still styled unlike `Colors`/`Semantic`/`Spacing` (§2.4).
 
