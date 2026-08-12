@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.5.0 · hooks/window-fill-guard.sh · ae18d109ee8e · правится надстройкой, не здесь
+# rt-kit v0.5.1 · hooks/window-fill-guard.sh · ae18d109ee8e · правится надстройкой, не здесь
 # rt-hook: PostToolUse .*
 # rt-hook: PreToolUse .*
 # Заполнение окна: заход доводится до логической точки заранее, а не обрывается на середине.

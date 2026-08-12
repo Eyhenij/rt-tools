@@ -4,7 +4,7 @@ kind: pattern
 rule: angular-patterns
 description: Паттерн правила angular-patterns. Брать при объявлении состояния и потоков в классе Angular — готовые сигналы, производные значения, состояние сервиса, долгоживущая подписка с источником действия. Не брать для раскладки файла компонента — это правило component-structure.
 ---
-<!-- rt-kit v0.5.0 · patterns/angular-patterns-state.md · c46716347061 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.5.1 · patterns/angular-patterns-state.md · c46716347061 · правится надстройкой, не здесь -->
 
 # Состояние и потоки
 
