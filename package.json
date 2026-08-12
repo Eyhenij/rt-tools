@@ -28,6 +28,7 @@
         "check:docs": "node tools/check-doc-paths.mjs",
         "check:dupes": "node tools/check-dupes.mjs",
         "check:styles": "node tools/check-styles.mjs",
+        "check:tokens-styles": "node tools/check-tokens-styles.mjs",
         "check:reuse": "node tools/check-reuse.mjs",
         "check:layers": "node tools/check-lib-layers.mjs",
         "check:schema": "node tools/check-schema-drift.mjs",
