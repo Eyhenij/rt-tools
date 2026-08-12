@@ -48,6 +48,12 @@ const DARK_MIXIN = 'rt-theme-dark-tokens';
 const DECLARATION_RE = /^[ \t]*(--rt-[a-z0-9-]+)[ \t]*:[ \t]*([^;]+);[ \t]*(?:\/\* rt-theme-shared:[ \t]*([^*]*?)[ \t]*\*\/)?/gm;
 const COLOR_LITERAL_RE = /^(#[0-9a-f]{3,8}|rgba?\([^)]*\)|hsla?\([^)]*\)|linear-gradient\(.*\)|transparent)$/i;
 const SINGLE_VAR_RE = /^var\(\s*(--rt-[a-z0-9-]+)\s*\)$/;
+/**
+ * Прозрачный оттенок, посчитанный от цвета: доля цвета, остальное — прозрачность. Форма одна,
+ * потому что кит считает оттенки только так; неизвестная форма остаётся неразобранной, и пара
+ * с ней объявляется расхождением, а не пропускается молча.
+ */
+const COLOR_MIX_RE = /^color-mix\(\s*in\s+srgb\s*,\s*(.+?)\s+([\d.]+)%\s*,\s*transparent\s*\)$/i;
 const BLOCK_RE = /^--rt-([a-z0-9]+)-/;
 
 const read = (path) => readFileSync(join(ROOT, path), 'utf8');
@@ -101,10 +107,21 @@ const valueOf = (name, theme) =>
 /** Цепочка ссылок значения: только целиком-ссылка, составное значение цепочкой не считается. */
 const linkOf = (value) => value.match(SINGLE_VAR_RE)?.[1];
 
+/** Разбор посчитанного оттенка: от какого цвета считается и какая доля от него берётся. */
+function mixOf(value) {
+    const parts = value.match(COLOR_MIX_RE);
+
+    return parts ? { source: parts[1].trim(), share: Number(parts[2]) / 100 } : undefined;
+}
+
 /** Цвет ли значение: литерал цвета либо ссылка, доходящая до литерала. */
 function isColor(value, seen = new Set()) {
     if (COLOR_LITERAL_RE.test(value)) {
         return true;
+    }
+    const mix = mixOf(value);
+    if (mix) {
+        return isColor(mix.source, seen);
     }
     const link = linkOf(value);
     if (!link || seen.has(link)) {
@@ -177,6 +194,18 @@ function colorOf(name, theme, seen = new Set()) {
         return null;
     }
     seen.add(name);
+    const mix = mixOf(value);
+    if (mix) {
+        const base = colorOfValue(mix.source, theme, seen);
+
+        return base ? { ...base, a: base.a * mix.share } : null;
+    }
+
+    return colorOfValue(value, theme, seen);
+}
+
+/** Цвет значения: ссылка идёт дальше по цепочке, литерал разбирается на месте. */
+function colorOfValue(value, theme, seen) {
     const link = linkOf(value);
 
     return link ? colorOf(link, theme, seen) : parseColor(value);
