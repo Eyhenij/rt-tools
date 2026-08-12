@@ -33,6 +33,8 @@
     "docs/ColorSchemes.mdx",
     "docs/tasks/RT-334-archive-closed-task-folders/",
     ".claude/rt-kit/overrides/skills/agent-kit.md",
+    ".claude/rt-kit/observations/",
+    ".claude/rt-kit/proposals/",
     "src/lib/i18n/rt-kit-translations.ts",
     "date-format.ts",
     "safe-comparator.ts"
