@@ -12,5 +12,6 @@
 | Голое имя и каталог судятся наравне с полным путём.                                | `projects/agent-kit/assets/checks/check-doc-paths.mjs:existsInTree` |
 | Дерево для сверки путей берётся у системы контроля версий, а не обходом каталогов. | `projects/agent-kit/assets/checks/check-doc-paths.mjs:treeOfRepo`   |
 | Папки задач выведены из сверки путей, как архив.                                   | `projects/agent-kit/assets/checks/check-doc-paths.mjs:isSkipped`    |
+| Переносимый текст из сверки адресов выведен.                                       | `projects/agent-kit/assets/checks/check-doc-paths.mjs:isPortable`   |
 | Полнота указателя каталога сверяется обеими сторонами.                             | `projects/agent-kit/assets/checks/check-doc-paths.mjs:checkIndex`   |
 | Расхождение указателя печатается своим списком со своим доводом.                   | `projects/agent-kit/assets/checks/check-doc-paths.mjs:reportIndex`  |
