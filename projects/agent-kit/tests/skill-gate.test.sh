@@ -12,7 +12,7 @@ export CLAUDE_PROJECT_DIR="$TREE"
 # Правила, которые в этом дереве есть. Всё, что карта назовёт сверх них, гейт требовать не
 # вправе: дерево отказалось от предметного слоя списком, и загружать такое имя нечем.
 for rule in testing component-structure styling-bem typescript-conventions angular-patterns \
-    doc-style spec-driven task-flow dependencies platform-access git-workflow; do
+    doc-style spec-driven task-flow dependencies platform-access git-workflow shared-code; do
     mkdir -p "$TREE/.claude/skills/$rule"
     printf -- '---\nname: %s\nkind: rule\n---\n' "$rule" > "$TREE/.claude/skills/$rule/SKILL.md"
 done
@@ -36,6 +36,21 @@ g "сервис" "$TREE/libs/site/x/data-access/src/lib/a.service.ts" angular-pa
 g "документ" "$TREE/docs/adr/0001-x.md" doc-style
 g "спек домена" "$TREE/docs/specs/bookings/spec.md" spec-driven
 g "папка задачи" "$TREE/docs/tasks/RT-1-x/plan.md" task-flow
+
+# SC-AK-43 — текст правила и текст паттерна устроены как спек, а не как файл агента.
+g "SC-AK-43 — правило" "$TREE/.claude/skills/testing/SKILL.md" spec-driven
+g "SC-AK-43 — компаньон правила" "$TREE/.claude/skills/testing/implementation.md" spec-driven
+# SC-AK-44 — остальное хозяйство агента правится без правила: правило на него — оно само.
+g "SC-AK-44 — роль" "$TREE/.claude/agents/qa-engineer.md" PASS
+g "SC-AK-44 — команда" "$TREE/.claude/commands/plan.md" PASS
+g "SC-AK-44 — конвейер" "$TREE/.claude/workflows/plan.js" PASS
+# SC-AK-45 — запреты линтера и есть исполнение правил про типы и про оформление.
+g "SC-AK-45 — линтер кода" "$TREE/eslint.config.mjs" typescript-conventions
+g "SC-AK-45 — линтер стилей" "$TREE/stylelint.config.js" styling-bem
+# SC-AK-46 — проверка повторов требует одно правило, а не два подряд.
+g "SC-AK-46 — проверка повторов" "$TREE/tools/check-dupes.mjs" shared-code
+g "SC-AK-46 — её список исключений" "$TREE/tools/dupes-allowlist.json" shared-code
+
 g "манифест зависимостей" "$TREE/package.json" dependencies '"prettier": "3.9.6"'
 # Правка скриптов зависимостью не является: правило про точные версии, снимок дерева и подмены
 # на неё не вступает. Снимок правится тем же коммитом и правило потребует уже он.

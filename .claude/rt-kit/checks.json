@@ -1,5 +1,6 @@
 {
   "sourceRoots": ["projects"],
+  "portableDirs": ["projects/agent-kit/assets"],
   "e2eRoots": [],
   "backendRoots": [],
   "schemaFile": "",
