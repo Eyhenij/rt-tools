@@ -50,6 +50,8 @@
 | Переносимый текст из сверки адресов выведен.                                                               | `projects/agent-kit/assets/checks/check-doc-paths.mjs:isPortable`        |
 | Полнота указателя каталога сверяется обеими сторонами.                                                     | `projects/agent-kit/assets/checks/check-doc-paths.mjs:checkIndex`        |
 | Расхождение указателя печатается своим списком со своим доводом.                                           | `projects/agent-kit/assets/checks/check-doc-paths.mjs:reportIndex`       |
+| Привязками считаются строки одной таблицы компаньона, а не всякая строка, похожая на строку таблицы.       | `projects/agent-kit/assets/checks/check-specs.mjs:rowsOfMap`             |
+| Компаньон правила без раздела привязок — отказ, а не молчание.                                             | `projects/agent-kit/assets/checks/check-specs.mjs:rowsOfMap`             |
 
 ## Что ещё стоит знать при чтении кода
 
