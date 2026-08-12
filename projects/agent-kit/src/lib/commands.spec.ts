@@ -11,10 +11,12 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 
 import { IEntryOfCatalog, readCatalog } from './catalog.js';
-import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, KEPT_SUFFIX, list, stats, sync } from './commands.js';
+import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, KEPT_SUFFIX, list, propose, stats, sync } from './commands.js';
 import { CONFIG_PATH, OVERRIDES_DIR } from './config.js';
 import { bindingsOf } from './hooks-map.js';
 import { OBSERVATIONS_DIR } from './observations.js';
+import { PROPOSALS_DIR } from './proposals.js';
+import { FEEDBACK_LABEL, IIssueInput, TSubmit } from './submit.js';
 
 const VERSION: string = '0.1.0';
 const LAW: string = 'docs/constitution/delivery.md';
@@ -581,5 +583,145 @@ describe('stats', () => {
         );
 
         expect(said(summed())).toContain('--days');
+    });
+});
+
+describe('propose', () => {
+    const REPOSITORY: string = 'owner/package-repo';
+
+    /** Двойник отправки: спека не заводит записей в живом репозитории. */
+    let asked: IIssueInput[];
+    const submit: TSubmit = (input: IIssueInput): string => {
+        asked.push(input);
+
+        return `https://example.test/issues/${asked.length}`;
+    };
+
+    const sending: (dryRun?: boolean) => IOutcomeOfCommand = (dryRun: boolean = false): IOutcomeOfCommand =>
+        propose(env, { dryRun, submit, repository: REPOSITORY, remote: '', summary: ['наблюдений за 3 дн.: 12'] });
+
+    const proposals: (blocks: readonly string[]) => void = (blocks: readonly string[]): void =>
+        put(`${PROPOSALS_DIR}/2026-08-12-probe.md`, `# Предложения\n\n${blocks.join('\n\n')}\n`);
+
+    const forPackage: string = [
+        '## пакет · rules/styling-bem.md',
+        '',
+        '- **повод:** правило молчит про токены',
+        '',
+        '> Текст правки.',
+    ].join('\n');
+    const forTree: string = ['## дерево · .claude/rt-kit/gate-map.sh', '', '> Свой род файлов.'].join('\n');
+
+    beforeEach((): void => {
+        asked = [];
+    });
+
+    it('без конфига говорит про init', () => {
+        expect(sending().code).toBe(1);
+    });
+
+    it('без адреса репозитория не начинается', () => {
+        start();
+        proposals([forPackage]);
+
+        expect(propose(env, { dryRun: false, submit, repository: '', remote: '', summary: [] }).code).toBe(1);
+    });
+
+    it('предложений нет вовсе: говорит, куда их класть', () => {
+        start();
+
+        expect(said(sending())).toContain(PROPOSALS_DIR);
+        expect(asked).toHaveLength(0);
+    });
+
+    it('SC-AK-78 — наружу уезжает только адрес «пакет»', () => {
+        start();
+        proposals([forPackage, forTree]);
+
+        expect(sending().code).toBe(0);
+        expect(asked).toHaveLength(1);
+        expect(asked[0].title).toContain('rules/styling-bem.md');
+        expect(asked[0].label).toBe(FEEDBACK_LABEL);
+        expect(asked[0].repository).toBe(REPOSITORY);
+    });
+
+    it('SC-AK-78 — при одних чужих адресах говорит, где они правятся', () => {
+        start();
+        proposals([forTree]);
+
+        expect(said(sending())).toContain('надстройкой');
+        expect(asked).toHaveLength(0);
+    });
+
+    it('сводка наблюдений едет вместе с предложением', () => {
+        start();
+        proposals([forPackage]);
+        sending();
+
+        expect(asked[0].body).toContain('наблюдений за 3 дн.: 12');
+        expect(asked[0].body).toContain('rules/styling-bem.md');
+    });
+
+    it('SC-AK-79 — адрес дерева в тексте отбивает отправку целиком', () => {
+        start();
+        proposals([forPackage, ['## пакет · rules/testing.md', '', '> Правится в /Users/probe/tree/apps/site.'].join('\n')]);
+
+        const outcome: IOutcomeOfCommand = sending();
+
+        expect(outcome.code).toBe(1);
+        expect(said(outcome)).toContain('абсолютный путь');
+        // Отбивается всё, а не свой блок: «уехало одно из двух» человек прочтёт как «в порядке».
+        expect(asked).toHaveLength(0);
+    });
+
+    it('SC-AK-80 — отправленное помечается и второй раз не уезжает', () => {
+        start();
+        proposals([forPackage]);
+
+        expect(sending().code).toBe(0);
+        expect(get(`${PROPOSALS_DIR}/2026-08-12-probe.md`)).toContain('**отправлено:** https://example.test/issues/1');
+
+        asked = [];
+
+        expect(said(sending())).toContain('уже отправлено: 1');
+        expect(asked).toHaveLength(0);
+    });
+
+    it('пробный прогон ничего не отправляет и называет, что уехало бы', () => {
+        start();
+        proposals([forPackage]);
+
+        const outcome: IOutcomeOfCommand = sending(true);
+
+        expect(said(outcome)).toContain('уехало бы записей: 1');
+        expect(asked).toHaveLength(0);
+        expect(get(`${PROPOSALS_DIR}/2026-08-12-probe.md`)).not.toContain('отправлено');
+    });
+
+    it('оборванная отправка называет отправленное до отказа', () => {
+        start();
+        proposals([forPackage, ['## пакет · rules/testing.md', '', '> Второй текст.'].join('\n')]);
+        let calls: number = 0;
+        const failing: TSubmit = (): string => {
+            calls += 1;
+            if (calls > 1) {
+                throw new Error('нет доступа к очереди работ');
+            }
+
+            return 'https://example.test/issues/1';
+        };
+
+        const outcome: IOutcomeOfCommand = propose(env, {
+            dryRun: false,
+            submit: failing,
+            repository: REPOSITORY,
+            remote: '',
+            summary: [],
+        });
+
+        expect(outcome.code).toBe(1);
+        expect(said(outcome)).toContain('отправлено до отказа: 1');
+        // Первое помечено — повторный запуск увезёт только второе.
+        expect(get(`${PROPOSALS_DIR}/2026-08-12-probe.md`)).toContain('**отправлено:**');
     });
 });
