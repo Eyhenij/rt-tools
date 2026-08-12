@@ -229,7 +229,34 @@ function ruleHeadOf(bulletText) {
  * Одно слово в двух смыслах развели именно здесь: «правило» — слой между законом и скилом,
  * а внутри закона живут статьи.
  */
-function checkRuleImplementation(specFile, text, mapFile, heading = '## Правила') {
+/**
+ * Строки таблицы привязок компаньона.
+ *
+ * Компаньон правила держит три таблицы: чем вещи правила названы в этом дереве, где лежат
+ * механизмы и где исполняется каждая статья. Привязки — только третья, и берётся она по имени
+ * раздела, а не по месту в файле. Пока читался весь файл, строки первых двух попадали в список
+ * наравне с настоящими и тут же объявлялись расхождением: статьи с таким текстом в правиле нет
+ * и быть не может. Две трети перечня в дереве были ими, и правильно дописанная строка «Где это
+ * лежит» отвечала отказом.
+ *
+ * У компаньона спека домена раздела нет: там таблица одна, и сужать нечего — такой зовёт без
+ * имени раздела. У правила раздел стоит в образце компаньона, поэтому его отсутствие — отказ:
+ * молча прочесть вместо него весь файл значило бы вернуть тот же дефект.
+ */
+function rowsOfMap(specFile, mapFile, mapHeading) {
+    const text = read(mapFile);
+    if (!mapHeading) {
+        return text.split('\n');
+    }
+    const section = sectionOf(text, mapHeading);
+    if (!section.length) {
+        report(mapFile, `нет раздела \`${mapHeading}\` — привязкам правила негде лежать`);
+    }
+
+    return section;
+}
+
+function checkRuleImplementation(specFile, text, mapFile, heading = '## Правила', mapHeading = '') {
     const bullets = bulletsOf(sectionOf(text, heading));
     if (!bullets.length) {
         report(specFile, `в разделе \`${heading}\` нет ни одного пункта`);
@@ -244,7 +271,7 @@ function checkRuleImplementation(specFile, text, mapFile, heading = '## Прав
     }
 
     const rows = new Map();
-    for (const line of read(mapFile).split('\n')) {
+    for (const line of rowsOfMap(specFile, mapFile, mapHeading)) {
         const cells = line.match(/^\|([^|]+)\|([^|]*)\|\s*$/);
         if (!cells) {
             continue;
@@ -907,6 +934,8 @@ for (const file of walk(CONSTITUTION_DIR, (name) => name.endsWith('.md'))) {
 // Правило — скил с `kind: rule` в шапке. Оно и знает о проекте: имена, пути, связи. Привязка
 // его утверждений к коду живёт в `implementation.md` рядом со скилом.
 const RULE_HEADING = '## Как закон применяется здесь';
+/** Раздел компаньона правила, где лежат привязки; остальные его таблицы называют имена дерева. */
+const MAP_HEADING = '## Где исполняются статьи';
 
 /**
  * Шапка скила — первый блок между `---`. Читается только она: паттерн, который учит заводить
@@ -953,7 +982,7 @@ for (const file of walk('.claude/skills', (name) => name === 'SKILL.md')) {
     } else {
         ruled.add(law);
     }
-    checkRuleImplementation(file, text, `${dirname(file)}/implementation.md`, RULE_HEADING);
+    checkRuleImplementation(file, text, `${dirname(file)}/implementation.md`, RULE_HEADING, MAP_HEADING);
 
     const name = nameOf(head);
     if (name && name !== file.slice('.claude/skills/'.length, -'/SKILL.md'.length)) {
