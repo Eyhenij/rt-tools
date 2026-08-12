@@ -80,7 +80,12 @@ ok "и остальное отдала вниз" rt_is_app_code /r/libs/site/x/u
 # --- карта гейта -------------------------------------------------------------------------------------
 report "карта: правило по роду файла" "$(skill_for edit /r/libs/x/a.component.ts '')" component-structure
 report "карта: правило по тексту правки" "$(skill_for edit /r/libs/x/a.service.ts 'localStorage.getItem("x")' | tr '\n' ' ')" 'angular-patterns platform-access '
-report "карта: правила на файлы агента нет" "$(skill_for edit /r/.claude/skills/x/SKILL.md '')" ''
+# Текст правила устроен как спек, и правило под него есть; остальное хозяйство агента — нет.
+report "карта: правило и паттерн судятся как спек" "$(skill_for edit /r/.claude/skills/x/SKILL.md '')" spec-driven
+report "карта: правила на прочие файлы агента нет" "$(skill_for edit /r/.claude/agents/qa.md '')" ''
+report "карта: конфиг линтера кода" "$(skill_for edit /r/eslint.config.mjs '')" typescript-conventions
+report "карта: конфиг линтера стилей" "$(skill_for edit /r/stylelint.config.js '')" styling-bem
+report "карта: проверка повторов требует одно правило" "$(skill_for edit /r/tools/check-dupes.mjs '')" shared-code
 report "карта: правило по команде" "$(skill_for bash 'git push origin x' '')" git-workflow
 report "карта: команда без правила" "$(skill_for bash 'ls -la' '')" ''
 # Тексты и спеки читают ту же строку, что и код, и правило среды исполнения к ним не относится.
