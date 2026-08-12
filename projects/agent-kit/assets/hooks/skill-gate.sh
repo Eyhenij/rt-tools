@@ -38,6 +38,7 @@ command -v skill_for >/dev/null 2>&1 || exit 0
 
 req=""
 target=""
+kind=""
 case "$tool" in
     # Инструмент среды заводит файл теми же двумя данными, только называет их иначе — без этой
     # ветки файл заводился мимо гейта.
@@ -61,6 +62,12 @@ case "$tool" in
         # приходит в обычный сервис, а число-настройка в обычный класс.
         written="$(printf '%s' "$input" | jq -r '[.tool_input.content, .tool_input.text, .tool_input.new_string, (.tool_input.edits[]?.new_string)] | map(select(. != null)) | join("\n")' 2>/dev/null)"
         req="$(skill_for edit "$target" "$written" 2>/dev/null)"
+        # Род правки для наблюдения. Одно расширение, без пути и без имени файла: наблюдение
+        # уезжает наружу, и всё, кроме рода, там было бы адресом этого дерева.
+        case "${target##*/}" in
+            *.*) kind="${target##*.}" ;;
+            *) kind="none" ;;
+        esac
         ;;
     # Терминал среды исполняет ту же командную строку и кладёт её в то же поле: без этой ветки
     # коммит из него не требовал правила, тогда как тот же коммит из оболочки требовал.
@@ -77,9 +84,11 @@ case "$tool" in
             [ -n "$inner" ] && target="$inner"
         fi
         req="$(skill_for bash "$target" "" 2>/dev/null)"
+        kind="command"
         ;;
     mcp__claude-in-chrome__*)
         req="$(skill_for browser "$tool" "" 2>/dev/null)"
+        kind="browser"
         ;;
     *) exit 0 ;;
 esac
@@ -107,6 +116,12 @@ for name in $req; do
 done
 [ -z "$want" ] && exit 0
 req="$want"
+
+# Отбитие — наблюдение: правило, которое приходится требовать чаще прочего, и род правки, на
+# котором это происходит, говорят о слое правил больше, чем список загруженного.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/observe.sh" ] && . "$rt_hooks_dir/observe.sh" 2>/dev/null
+command -v rt_note >/dev/null 2>&1 && rt_note gate-deny "res=$req" "kind=$kind" "sid=$sid"
 
 reason="Отбито гейтом правил: загрузи правило «${req}» инструментом Skill и повтори действие. Для этой области это происходит один раз за сессию."
 

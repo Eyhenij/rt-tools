@@ -67,6 +67,14 @@ fi
 
 reason="Отбито: коммит прямо в «${default}». Работа едет через ветку и PR — правило git-workflow. Заведи ветку отдельным вызовом и коммить в неё: подготовленные изменения при этом сохранятся. Если коммит в ${default} действительно нужен — спроси владельца, сам не обходи."
 
+# Отказ — наблюдение. Имя главной ветки в него не идёт: у деревьев оно своё, а счёт отказов
+# одинаков везде.
+rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/observe.sh" ] && . "$rt_hooks_dir/observe.sh" 2>/dev/null
+command -v rt_note >/dev/null 2>&1 \
+    && rt_note guard-deny res=git-guard-main "sid=$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
+
 jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
     || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Коммит в главную ветку отбит. Заведи ветку."}}\n'
 

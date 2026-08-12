@@ -32,6 +32,16 @@ command -v jq >/dev/null 2>&1 || exit 0
 tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
 
 decide() {
+    # Наблюдение пишется только на отказе: подсказку гард раздаёт и там, где всё в порядке, и
+    # счёт, в котором они смешаны, не значит ничего.
+    if [ "$1" = "deny" ]; then
+        # shellcheck disable=SC1090
+        [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/observe.sh" ] \
+            && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/observe.sh" 2>/dev/null
+        command -v rt_note >/dev/null 2>&1 \
+            && rt_note guard-deny res=docs-guard "sid=$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
+    fi
+
     jq -n --arg d "$1" --arg r "$2" \
         '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:$d,permissionDecisionReason:$r}}' 2>/dev/null \
         || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Документ едет тем же коммитом."}}\n'
