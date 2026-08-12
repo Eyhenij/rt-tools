@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.5.0 · hooks/browser-guard-no-other-drivers.sh · 4a975aa93627 · правится надстройкой, не здесь
+# rt-kit v0.5.1 · hooks/browser-guard-no-other-drivers.sh · 4a975aa93627 · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__playwright__.*|mcp__chrome-devtools__.*|Bash
 # Гард обходных путей к браузеру. PreToolUse.
 #
