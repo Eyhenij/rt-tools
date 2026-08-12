@@ -5,14 +5,16 @@
  * спеками — кроме одного, чего команде знать не по чину: откуда взялся выбор законов. У строки
  * запуска это флаг, у терминала — вопрос, у прогона без терминала нет ни того ни другого.
  */
+import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import process from 'node:process';
 
 import { IEntryOfCatalog, readCatalog, resolveSelection } from '../lib/catalog.js';
-import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, list, stats, sync } from '../lib/commands.js';
+import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, list, propose, stats, sync } from '../lib/commands.js';
 import { DEFAULT_DAYS } from '../lib/observations.js';
+import { ghIssue, repositoryOf } from '../lib/submit.js';
 import { staleBuild } from '../lib/freshness.js';
 import { packageRootFrom } from '../lib/package-root.js';
 import { IChoice } from '../lib/picker.js';
@@ -30,6 +32,8 @@ const USAGE: readonly string[] = [
     '  stats           свести наблюдения: чем пользовались, чем ни разу, обо что спотыкались',
     '  stats --days N  за сколько дней; без довода — за три',
     '  stats --json    то же машиночитаемо — этим сводку прикладывают к предложению',
+    '  propose         отправить предложения с адресом «пакет» в очередь работ пакета',
+    '  propose --dry-run   показать, что уехало бы, и ничего не отправлять',
     '  adopt [файлы]   отдать пакету файлы, лежащие на его путях не от него',
     '',
     '  --root <путь>   корень проекта; по умолчанию текущий каталог',
@@ -53,9 +57,12 @@ const USAGE: readonly string[] = [
  */
 function environmentOf(root: string): IEnvironment {
     const pkg: string = packageRootFrom(dirname(fileURLToPath(import.meta.url)));
-    const manifest: { name: string; version: string } = JSON.parse(readFileSync(join(pkg, 'package.json'), 'utf8')) as {
+    const manifest: { name: string; version: string; repository?: { url?: string } } = JSON.parse(
+        readFileSync(join(pkg, 'package.json'), 'utf8')
+    ) as {
         name: string;
         version: string;
+        repository?: { url?: string };
     };
 
     return {
@@ -65,7 +72,22 @@ function environmentOf(root: string): IEnvironment {
         // Сверка со своими исходниками возможна только отсюда: здесь пакет знает, где лежит сам.
         // У потребителя исходников рядом нет, и сверка молчит.
         stale: staleBuild(pkg, manifest.name),
+        // Куда уезжают предложения. Читается из манифеста: зашитый в код адрес назвал бы чужое
+        // дерево в текстах пакета — и врал бы у всякого, кто пакет форкнул.
+        repository: repositoryOf(manifest.repository?.url ?? ''),
     };
+}
+
+/** Чем это дерево себя выдаёт снаружи. Нет удалённого репозитория — нечем, и это не отказ. */
+function remoteOf(root: string): string {
+    try {
+        return execFileSync('git', ['-C', root, 'remote', 'get-url', 'origin'], {
+            encoding: 'utf8',
+            stdio: ['ignore', 'pipe', 'ignore'],
+        }).trim();
+    } catch {
+        return '';
+    }
 }
 
 function optionOf(argv: readonly string[], name: string, fallback: string): string {
@@ -215,6 +237,23 @@ export async function main(argv: readonly string[]): Promise<IOutcomeOfCommand> 
                 // отрезок не проверить спекой — вчерашняя фикстура завтра станет позавчерашней.
                 today: new Date().toISOString().slice(0, 10),
                 json: argv.includes('--json'),
+            });
+        }
+        case 'propose': {
+            // Сводка едет вместе с предложением: без цифр оно читается как мнение. Берётся тем
+            // же отрезком, что и сводка по умолчанию, — предложение пишут по свежей задаче.
+            const summary: IOutcomeOfCommand = stats(env, {
+                days: DEFAULT_DAYS,
+                today: new Date().toISOString().slice(0, 10),
+                json: false,
+            });
+
+            return propose(env, {
+                dryRun: argv.includes('--dry-run'),
+                submit: ghIssue,
+                repository: env.repository ?? '',
+                remote: remoteOf(env.root),
+                summary: summary.lines,
             });
         }
         case 'doctor':
