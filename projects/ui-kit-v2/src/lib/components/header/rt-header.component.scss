@@ -55,9 +55,9 @@
     }
 }
 
-/* dark override: header bg = navy, близко к --rt-blue-900 */
+/* dark override: подложка обвязки — своё назначение, а не ступень шкалы. */
 [data-theme='dark'] .rt-header {
-    background: var(--rt-blue-900);
+    background: var(--rt-color-bg-nav);
 }
 
 @media (prefers-reduced-motion: reduce) {
