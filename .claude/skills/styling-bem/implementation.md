@@ -57,8 +57,9 @@
   селектор по имени элемента.
 - Порядок свойств держит `stylelint-config-idiomatic-order`, форматирование —
   `stylelint-prettier`. Комментарии-выключатели линтера стилей здесь не ставятся.
-- `.c-button` в `projects/ui-kit/src/styles/components/_button.scss` снят с употребления;
-  действующий набор — `.rtui-btn` в `_rtui_button.scss` рядом.
+- Набор `.c-button` снят с употребления вместе со своим файлом; действующий —
+  `.rtui-btn` в `projects/ui-kit/src/styles/components/_rtui_button.scss`, карта перехода — в
+  `projects/ui-kit/src/styles/TOKENS.md`.
 
 ## Чем это проверяется
 
