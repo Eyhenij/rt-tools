@@ -41,6 +41,15 @@
 | Размер окна берётся из настройки дерева, а не из записи захода.                                            | `projects/agent-kit/assets/defaults/project.sh:RT_WINDOW_TOKENS`         |
 | Гард окна пропускает работу при любой поломке.                                                             | `projects/agent-kit/assets/hooks/window-fill-guard.sh:transcript`        |
 | Один файл гарда вправе объявить несколько событий.                                                         | `projects/agent-kit/src/lib/hooks-map.ts:bindingsOf`                     |
+| Правило и паттерн судятся как спек, а не как файл агента.                                                  | `projects/agent-kit/assets/defaults/gate-map.sh:skill_for_default`       |
+| Конфиг линтера требует правило под собой.                                                                  | `projects/agent-kit/assets/defaults/gate-map.sh:skill_for_default`       |
+| Проверка повторов требует правило, чьи признаки исполняет, и только его.                                   | `projects/agent-kit/assets/defaults/gate-map.sh:skill_for_default`       |
+| Голое имя и каталог судятся наравне с полным путём.                                                        | `projects/agent-kit/assets/checks/check-doc-paths.mjs:existsInTree`      |
+| Дерево для сверки путей берётся у системы контроля версий, а не обходом каталогов.                         | `projects/agent-kit/assets/checks/check-doc-paths.mjs:treeOfRepo`        |
+| Папки задач выведены из сверки путей, как архив.                                                           | `projects/agent-kit/assets/checks/check-doc-paths.mjs:isSkipped`         |
+| Переносимый текст из сверки адресов выведен.                                                               | `projects/agent-kit/assets/checks/check-doc-paths.mjs:isPortable`        |
+| Полнота указателя каталога сверяется обеими сторонами.                                                     | `projects/agent-kit/assets/checks/check-doc-paths.mjs:checkIndex`        |
+| Расхождение указателя печатается своим списком со своим доводом.                                           | `projects/agent-kit/assets/checks/check-doc-paths.mjs:reportIndex`       |
 
 ## Что ещё стоит знать при чтении кода
 
