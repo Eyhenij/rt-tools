@@ -16,34 +16,55 @@
     --rt-color-bg-overlay: var(--rt-overlay-black-50);
     --rt-color-bg-inverse: var(--rt-neutral-900);
 
+    /* Подложка обвязки — шапка и боковая навигация. Отдельно от bg-inverse: тот
+       нейтральный и работает под перевёрнутым текстом, а этот синеватый и в обеих
+       темах один. */
+    --rt-color-bg-nav: var(--rt-navy-900); /* rt-theme-shared: обвязка тёмная в обеих темах */
+
     /* Text */
     --rt-color-text-primary: var(--rt-neutral-900);
     --rt-color-text-muted: var(--rt-neutral-500);
     --rt-color-text-disabled: var(--rt-neutral-400);
     --rt-color-text-inverse: var(--rt-neutral-0);
-    --rt-color-text-link: var(--rt-blue-500);
-    --rt-color-text-link-hover: var(--rt-blue-600);
+    --rt-color-text-link: var(--rt-brand-500);
+    --rt-color-text-link-hover: var(--rt-brand-600);
 
     /* Border */
     --rt-color-border-default: var(--rt-neutral-200);
     --rt-color-border-strong: var(--rt-neutral-300);
     --rt-color-border-subtle: var(--rt-neutral-200);
-    --rt-color-border-focus: var(--rt-blue-500);
+    --rt-color-border-focus: var(--rt-brand-500);
 
     /* Action */
-    --rt-color-action-primary: var(--rt-blue-500); /* rt-theme-shared: цвет марки один в обеих темах */
-    --rt-color-action-primary-hover: var(--rt-blue-600); /* rt-theme-shared: цвет марки один в обеих темах */
-    --rt-color-action-primary-subtle: var(--rt-overlay-blue-8);
+    --rt-color-action-primary: var(--rt-brand-500); /* rt-theme-shared: цвет марки один в обеих темах */
+    --rt-color-action-primary-hover: var(--rt-brand-600); /* rt-theme-shared: цвет марки один в обеих темах */
+    --rt-color-action-primary-subtle: var(--rt-overlay-brand-8);
 
     /* Focus-ring tint — насыщеннее subtle, для visible 3px outline. */
-    --rt-color-action-primary-soft: var(--rt-overlay-blue-24);
+    --rt-color-action-primary-soft: var(--rt-overlay-brand-24);
     --rt-color-action-on-primary: var(--rt-neutral-0); /* rt-theme-shared: подпись на действии марки светлая в обеих темах */
     --rt-color-action-secondary: var(--rt-neutral-200);
     --rt-color-action-on-secondary: var(--rt-neutral-900);
 
+    /* Кольцо фокуса разобрано на составляющие: толщину, отступ и цвет. Композит
+       собирается из них и остаётся на месте — восемь компонентов берут его целиком, и
+       менять их незачем. Отступ — зазор цвета поверхности между элементом и кольцом:
+       первая тень при нулевом отступе не рисует ничего. */
+    --rt-focus-ring-width: 3px;
+
+    /* Ноль с единицей намеренно: безразмерный ноль внутри calc с длиной невалиден, и
+       браузер отбрасывает объявление кольца целиком — кольцо просто пропадает. */
+    --rt-focus-ring-offset: 0px;
+    --rt-focus-ring-color: var(--rt-color-action-primary-soft);
+    --rt-focus-ring-color-danger: var(--rt-overlay-danger-16); /* rt-theme-shared: оттенок опасного действия один в обеих темах */
+
     /* Focus-ring composite — для interactive элементов с custom focus-visible. */
-    --rt-shadow-focus-ring: 0 0 0 3px var(--rt-color-action-primary-soft);
-    --rt-shadow-focus-ring-danger: 0 0 0 3px var(--rt-overlay-danger-16);
+    --rt-shadow-focus-ring:
+        0 0 0 var(--rt-focus-ring-offset) var(--rt-color-bg-surface),
+        0 0 0 calc(var(--rt-focus-ring-offset) + var(--rt-focus-ring-width)) var(--rt-focus-ring-color);
+    --rt-shadow-focus-ring-danger:
+        0 0 0 var(--rt-focus-ring-offset) var(--rt-color-bg-surface),
+        0 0 0 calc(var(--rt-focus-ring-offset) + var(--rt-focus-ring-width)) var(--rt-focus-ring-color-danger);
 
     /* Stepper (rt-stepper) — рельса прогресса. Текущий шаг — янтарный (одинаков
        в обеих темах); трек/прогресс переопределяются в dark на приглушённые. */
@@ -72,12 +93,12 @@
     /* Chat — пузыри переписки. Входящее и своё различаются фоном, а не рамкой:
        рамка на каждом пузыре дробит ленту. Отметка прочтения синяя — единственный
        цветной элемент подвала пузыря, остальные статусы приглушены. */
-    --rt-chat-bubble-in-bg: var(--rt-blue-50);
-    --rt-chat-bubble-in-author: var(--rt-blue-700);
+    --rt-chat-bubble-in-bg: var(--rt-brand-50);
+    --rt-chat-bubble-in-author: var(--rt-brand-700);
     --rt-chat-bubble-own-bg: var(--rt-neutral-100);
     --rt-chat-bubble-own-author: var(--rt-neutral-500);
     --rt-chat-bubble-date: var(--rt-color-text-muted);
-    --rt-chat-status-read: var(--rt-blue-400);
+    --rt-chat-status-read: var(--rt-brand-400);
 
     /* Special — Auth surface (gradient bg + transparent card в dark) */
     --rt-color-bg-page-auth: var(--rt-neutral-50);

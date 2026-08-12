@@ -24,14 +24,14 @@
     --rt-color-text-muted: var(--rt-overlay-white-40);
     --rt-color-text-disabled: var(--rt-overlay-white-25);
     --rt-color-text-inverse: var(--rt-neutral-900);
-    --rt-color-text-link: var(--rt-blue-300);
-    --rt-color-text-link-hover: var(--rt-blue-500);
+    --rt-color-text-link: var(--rt-brand-300);
+    --rt-color-text-link-hover: var(--rt-brand-500);
 
     /* Border — приглушённые на графите */
     --rt-color-border-default: var(--rt-charcoal-border);
     --rt-color-border-strong: var(--rt-charcoal-border-strong);
     --rt-color-border-subtle: var(--rt-charcoal-border);
-    --rt-color-border-focus: var(--rt-blue-500);
+    --rt-color-border-focus: var(--rt-brand-500);
 
     /* Input border видим в dark (в light — transparent). */
     --rt-input-color-border: var(--rt-charcoal-border);
@@ -57,11 +57,13 @@
     --rt-nav-panel-group-color: var(--rt-neutral-420);
     --rt-nav-color-disabled: var(--rt-neutral-520);
 
-    /* Action — primary остаётся синим в обеих темах */
-    --rt-color-action-primary-subtle: rgb(21 93 252 / 16%);
+    /* Action — сам цвет марки один в обеих темах, а доля оттенка на графите вдвое
+       больше: слабый оттенок на тёмном фоне просто не виден. Считается от ступени
+       бренда, как и в светлой теме. */
+    --rt-color-action-primary-subtle: color-mix(in srgb, var(--rt-brand-500) 16%, transparent);
 
     /* Focus-ring в dark — ярче для контрастности на тёмных фонах. */
-    --rt-color-action-primary-soft: rgb(21 93 252 / 32%);
+    --rt-color-action-primary-soft: color-mix(in srgb, var(--rt-brand-500) 32%, transparent);
     --rt-color-action-secondary: var(--rt-charcoal-700);
     --rt-color-action-on-secondary: var(--rt-neutral-50);
 
@@ -88,15 +90,15 @@
 
     /* Chat — на графите светлые фоны пузырей нечитаемы: входящее уходит в
        полупрозрачный синий, своё — в глубокий графит. */
-    --rt-chat-bubble-in-bg: rgb(37 99 235 / 12%);
-    --rt-chat-bubble-in-author: var(--rt-blue-300);
+    --rt-chat-bubble-in-bg: color-mix(in srgb, var(--rt-brand-500) 12%, transparent);
+    --rt-chat-bubble-in-author: var(--rt-brand-300);
     --rt-chat-bubble-own-bg: var(--rt-charcoal-950);
     --rt-chat-bubble-own-author: var(--rt-overlay-white-40);
     --rt-chat-bubble-date: var(--rt-overlay-white-40);
-    --rt-chat-status-read: var(--rt-blue-300);
+    --rt-chat-status-read: var(--rt-brand-300);
 
     /* Special — Auth surface (градиентный фон логина + прозрачная карточка). */
-    --rt-color-bg-page-auth: linear-gradient(156deg, #122341 12.68%, #182142 99.28%);
+    --rt-color-bg-page-auth: linear-gradient(156deg, var(--rt-neutral-950) 12.68%, var(--rt-navy-900) 99.28%);
     --rt-color-bg-surface-auth-card: transparent;
 }
 
