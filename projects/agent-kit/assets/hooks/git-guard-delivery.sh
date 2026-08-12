@@ -37,6 +37,7 @@ input="$(cat 2>/dev/null)"
 command -v jq >/dev/null 2>&1 || exit 0
 
 tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
 case "$tool" in
     # Терминал среды и универсальный исполнитель кладут команду в то же поле.
     Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool) ;;
@@ -89,6 +90,13 @@ main_branch="${RT_MAIN_BRANCH:-main}"
 folder_skip_re='Task-folder-skip:[[:space:]]*[^[:space:]"'"'"']{3,}'
 
 deny() {
+    # Отказ гарда — наблюдение: гард, отбивающий чаще прочих, говорит, какое место поставки
+    # раз за разом делают не так. Текст отказа в наблюдение не идёт: в нём стоят номера задач
+    # и имена веток этого дерева.
+    # shellcheck disable=SC1090
+    [ -f "$rt_hooks_dir/observe.sh" ] && . "$rt_hooks_dir/observe.sh" 2>/dev/null
+    command -v rt_note >/dev/null 2>&1 && rt_note guard-deny res=git-guard-delivery "sid=$sid"
+
     jq -n --arg r "$1" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
         || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Гард поставки."}}\n'
     exit 0
