@@ -45,7 +45,7 @@
 | Описание прошлого из проверки путей выведено целиком.                              | `tools/check-doc-paths.mjs:isSkipped` — `docs/archive/` и папки задач под `docs/tasks/`                                                                                              |
 | Переносимый текст из сверки адресов выведен, как архив.                            | `tools/check-doc-paths.mjs:isPortable`; исходники — `portableDirs` в `.claude/rt-kit/checks.json`, здесь это `projects/agent-kit/assets`                                             |
 | Указатель каталога сверяется с его содержимым обеими сторонами.                    | `tools/check-doc-paths.mjs:checkIndex`; какие каталоги сверяются — `indexedDirs` в `tools/rt-kit-checks.config.mjs`, здесь это архив                                                 |
-| Имя, названное затем, чтобы сказать «его нет», стоит в списке исключений поимённо. | `tools/check-doc-paths.mjs:readAllowlist`; своего списка это дерево пока не завело — исключений не понадобилось                                                                      |
+| Имя, названное затем, чтобы сказать «его нет», стоит в списке исключений поимённо. | `tools/check-doc-paths.mjs:readAllowlist`; сам список — `tools/doc-paths-allowlist.json`: имена правил линтера, куски кода, имена веток, порождённое сборкой                         |
 | Документ едет в том же коммите, что и правка, которую он описывает.                | `.claude/hooks/docs-guard.sh` + `rt_docs_pair_for` в профиле: правка компонента второго кита ждёт `CONTEXT.md` рядом, правка токенов — `TOKENS.md`. Обход — `Docs-skip:` с причиной. |
 
 ## Что ещё стоит знать при чтении кода
