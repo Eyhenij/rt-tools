@@ -1,19 +1,27 @@
 #!/usr/bin/env node
 /**
- * Проверка того, что пути, названные в документации, существуют.
+ * Проверка того, что адреса, названные в документации, существуют.
  *
  * Документ, ссылающийся на исчезнувший файл, хуже отсутствующего: он выглядит
  * действующей справкой и уводит читателя в каталог, которого нет. Накапливается
  * это молча — перекладка дерева правит код и ломает текст, а текст никто не
- * собирает. К моменту заведения проверки из 159 путей, названных в `docs/`,
- * не существовало 80.
+ * собирает.
  *
- * Считаются только пути в обратных кавычках и вне блоков кода: в блоках лежат
- * команды и вывод, где `dist/apps/api/main.js` — результат сборки, а не файл
- * репозитория. Шаблоны (`*`, `<…>`, `{…}`) пропускаются: это форма пути, а не путь.
+ * Считаются только адреса в обратных кавычках и вне блоков кода: в блоках лежат
+ * команды и вывод, где путь до собранного — результат сборки, а не файл
+ * репозитория. Шаблоны (`*`, `<…>`, `{…}`) пропускаются: это форма адреса, а не адрес.
  *
- * Документы, которые по устройству говорят о несуществующем — планы будущего и
- * архив, — перечислены в tools/doc-paths-allowlist.json.
+ * Адрес бывает трёх родов, и все три судятся одинаково: укоренённый в дереве путь,
+ * голое имя файла и каталог. Каталогами занята половина таблиц «Где это лежит», и
+ * проверка, знающая только строку с расширением, их не видит вовсе.
+ *
+ * Документы, которые по устройству говорят о несуществующем — планы будущего, архив
+ * и папки задач, — из проверки выведены.
+ *
+ * Вторым заходом сверяется полнота указателя каталога: обзорный документ перечисляет
+ * записи таблицей, и читатель ищет по ней, а не обходом. Это обратная сторона той же
+ * договорённости — не только адрес из текста ведёт в файл, но и файл назван в тексте,
+ * по которому его ищут.
  *
  * Ненулевой код возврата и перечень расхождений.
  */
@@ -24,20 +32,37 @@ import { join } from 'node:path';
 import { allowlistOf, CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 const ALLOWLIST = allowlistOf('doc-paths');
-// `worktrees` — копии репозитория под `.claude/`: их документы описывают раскладку своей
-// ветки, а проверка ищет пути в дереве текущей. Одна брошенная копия дала 73 расхождения и
-// красный сквозной прогон на ветке, которая её не заводила.
+// `worktrees` — копии репозитория под каталогом агента: их документы описывают раскладку
+// своей ветки, а проверка ищет адреса в дереве текущей. Одна брошенная копия дала 73
+// расхождения и красный сквозной прогон на ветке, которая её не заводила.
 const SKIPPED_DIRS = CONFIG.skippedDirs;
 /**
- * Архив описывает раскладку, бывшую на момент записи. Править в нём пути — значит
+ * Архив описывает раскладку, бывшую на момент записи. Править в нём адреса — значит
  * переписывать историю задним числом, поэтому он выведен из проверки целиком.
  */
 const ARCHIVE_DIR = CONFIG.archiveDir;
-/** Расширения, по которым строка в кавычках считается путём, а не именем сущности */
+/**
+ * Папка задачи описывает ход работы, и снятое она называет по имени: раздел находок
+ * перечисляет ровно то, чего в дереве нет. Отличить такое упоминание от ссылки машине
+ * нечем, а живёт папка до слияния — поэтому она выведена из проверки, как архив.
+ */
+const TASKS_DIR = CONFIG.tasksDir.endsWith('/') ? CONFIG.tasksDir : `${CONFIG.tasksDir}/`;
+/**
+ * Каталоги, чей указатель сверяется с содержимым. Каталог, выведенный из проверки адресов,
+ * иначе не судит ничто: запись, приехавшая слиянием соседней ветки, остаётся неназванной, а
+ * читатель ищет по указателю. Сверенный руками указатель расходится снова через сутки.
+ */
+const INDEXED_DIRS = (CONFIG.indexedDirs ?? []).map((dir) => (dir.endsWith('/') ? dir : `${dir}/`));
+/** Расширения, по которым голое имя считается файлом, а не именем сущности */
 const EXTENSIONS = 'ts|mts|cts|js|mjs|cjs|json|jsonc|scss|css|html|proto|conf|ya?ml|sh|md|sql|txt|xml|svg|webp|png|ico|env|Dockerfile|lock';
-const PATH_IN_BACKTICKS = new RegExp(`\`([^\`\\n]+?\\.(?:${EXTENSIONS}))\``, 'g');
+/**
+ * Берётся любая строка в кавычках: каталог расширения не несёт, и требовать его в самой
+ * выборке значило бы не видеть половину таблиц «Где это лежит». Отсев — в `looksLikePath`.
+ */
+const PATH_IN_BACKTICKS = /`([^`\n]+?)`/g;
 
 const problems = [];
+const indexProblems = [];
 const report = (doc, line, path) => problems.push(`${doc}:${line}: нет файла \`${path}\``);
 
 function readAllowlist() {
@@ -71,9 +96,9 @@ function collectDocs(dir = '.') {
 
 /**
  * Документы, которые в репозиторий не попадут: личный черновик, лежащий в дереве и
- * закрытый `.gitignore` или `.git/info/exclude`. Проверка судит репозиторий, а не рабочий
- * стол того, кто её запустил: мёртвая ссылка в чужом черновике держала гейт пуша, хотя ни
- * в одну ветку этот файл не едет.
+ * закрытый настройкой неотслеживаемого. Проверка судит репозиторий, а не рабочий стол того,
+ * кто её запустил: мёртвая ссылка в чужом черновике держала гейт пуша, хотя ни в одну ветку
+ * этот файл не едет.
  */
 function droppedByGit(docs) {
     if (docs.length === 0) {
@@ -91,12 +116,7 @@ function droppedByGit(docs) {
     return new Set((ignored.stdout ?? '').split('\n').filter(Boolean));
 }
 
-/**
- * Верхний уровень дерева. Проверяются только адреса, укоренённые в нём: `src/index.ts`
- * в правиле означает «любой файл такого вида», а `services/theme/theme.service.ts` —
- * обрывок чужого пути. Ни то, ни другое адресом не является, и требовать их
- * существования значит ловить форму записи вместо ссылки.
- */
+/** Верхний уровень дерева: по нему узнаётся адрес, укоренённый в репозитории */
 const ROOTED_IN = new Set(
     readdirSync(ROOT, { withFileTypes: true })
         .filter((entry) => entry.isDirectory() && !SKIPPED_DIRS.includes(entry.name))
@@ -104,18 +124,122 @@ const ROOTED_IN = new Set(
 );
 
 /**
- * Путь ли это вообще. Отсекается всё, что описывает форму, а не адрес: шаблоны,
- * URL и пакеты npm.
+ * Дерево спрашивается у системы контроля версий, а не обходом каталогов: каталоги агента и
+ * конвейера начинаются с точки, и обход мимо них проходит молча — всё, что в них лежит,
+ * читалось бы как несуществующее. Неотслеживаемое берётся вместе с отслеживаемым: файл,
+ * заведённый этой же веткой и ещё не добавленный, существует ничуть не меньше.
+ */
+function treeOfRepo() {
+    const listed = spawnSync('git', ['ls-files', '--cached', '--others', '--exclude-standard'], {
+        cwd: ROOT,
+        encoding: 'utf8',
+        maxBuffer: 64 * 1024 * 1024,
+    });
+    const paths = (listed.stdout ?? '').split('\n').filter(Boolean);
+    const files = new Set(paths);
+    const dirs = new Set();
+    const byName = new Map();
+
+    for (const path of paths) {
+        const segments = path.split('/');
+        for (let depth = 1; depth < segments.length; depth += 1) {
+            dirs.add(segments.slice(0, depth).join('/'));
+        }
+        byName.set(segments[segments.length - 1], true);
+    }
+    for (const dir of dirs) {
+        byName.set(dir.split('/').pop(), true);
+    }
+
+    return { files, dirs, byName };
+}
+
+const TREE = treeOfRepo();
+
+/**
+ * Адрес ли это вообще. Отсекается всё, что описывает форму, а не адрес: шаблоны, сетевые
+ * ссылки, имена пакетов, флаги и привязка «путь:символ» — её судит сверка спеков. Дальше
+ * кандидат бывает двух родов: укоренённый в дереве и голое имя. Голым именем зовут и файл, и
+ * каталог — оба ищутся по дереву, потому что адрес у них один, а написан он коротко.
  */
 function looksLikePath(candidate) {
     if (/[*<>{}$|\s]|\.\.\.|…/.test(candidate)) {
         return false;
     }
-    if (/^(https?:|@|~|\/)/.test(candidate)) {
+    if (/^(https?:|@|~|\/|-)/.test(candidate) || candidate.includes(':')) {
+        return false;
+    }
+    // Каталог, который проверка не обходит, она и не судит: там чужое, сборка и служебное
+    if (SKIPPED_DIRS.some((dir) => candidate.startsWith(`${dir}/`))) {
+        return false;
+    }
+    // Начинается с точки и стоит без каталога — род файла, а не файл
+    if (/^\.[^/]+$/.test(candidate)) {
         return false;
     }
 
-    return ROOTED_IN.has(candidate.split('/')[0]);
+    return candidate.includes('/') || new RegExp(`\\.(?:${EXTENSIONS})$`).test(candidate);
+}
+
+/**
+ * Есть ли такой адрес в дереве. Укоренённый спрашивается у файловой системы: он назван
+ * целиком, и промах в нём — промах. Голое имя ищется по дереву целиком — и среди файлов, и
+ * среди каталогов: имя каталога в обзорном документе либы означает каталог рядом, а не
+ * каталог в корне.
+ */
+function existsInTree(candidate) {
+    const bare = candidate.replace(/\/$/, '');
+
+    if (ROOTED_IN.has(bare.split('/')[0])) {
+        return existsSync(join(ROOT, bare));
+    }
+    if (TREE.files.has(bare) || TREE.dirs.has(bare)) {
+        return true;
+    }
+    if (bare.includes('/')) {
+        return [...TREE.files, ...TREE.dirs].some((path) => path.endsWith(`/${bare}`));
+    }
+
+    return TREE.byName.has(bare);
+}
+
+/** Из проверки адресов выведены документы, которые по устройству говорят о несуществующем. */
+const isSkipped = (doc) => doc.startsWith(ARCHIVE_DIR) || doc.startsWith(TASKS_DIR);
+
+/**
+ * Полнота указателя каталога: у каждой записи каталога есть строка в таблице, у каждой
+ * строки — запись. Записью считается первое имя в обратных кавычках строки таблицы: во
+ * второй колонке стоит проза, и брать оттуда было бы нечего. Каталог берётся у системы
+ * контроля версий той же выборкой, что и дерево: черновик, закрытый настройкой
+ * неотслеживаемого, в репозиторий не едет и указателю не нужен.
+ */
+function checkIndex(dir) {
+    const index = `${dir}README.md`;
+    if (!existsSync(join(ROOT, index))) {
+        return;
+    }
+
+    const named = new Set(
+        readFileSync(join(ROOT, index), 'utf8')
+            .split('\n')
+            .filter((line) => line.startsWith('|'))
+            .map((line) => line.match(PATH_IN_BACKTICKS)?.[0].replaceAll('`', ''))
+            .filter((name) => name?.endsWith('.md'))
+    );
+    const stored = new Set(
+        [...TREE.files]
+            .filter((path) => path.startsWith(dir) && path.endsWith('.md') && path !== index)
+            .map((path) => path.slice(dir.length))
+    );
+
+    [...stored]
+        .filter((name) => !named.has(name))
+        .sort()
+        .forEach((name) => indexProblems.push(`${index}: запись \`${name}\` лежит в каталоге, но в таблице не названа`));
+    [...named]
+        .filter((name) => !stored.has(name))
+        .sort()
+        .forEach((name) => indexProblems.push(`${index}: строка \`${name}\` названа в таблице, но записи в каталоге нет`));
 }
 
 function checkDoc(doc, allowed) {
@@ -136,27 +260,46 @@ function checkDoc(doc, allowed) {
             if (!looksLikePath(candidate) || allowed.has(candidate)) {
                 continue;
             }
-            if (!existsSync(join(ROOT, candidate))) {
+            if (!existsInTree(candidate)) {
                 report(doc, index + 1, candidate);
             }
         }
     });
 }
 
+/** Расхождение указателя печатается своим списком: чинится оно строкой в таблице, а не молчанием. */
+function reportIndex() {
+    if (indexProblems.length === 0) {
+        return;
+    }
+
+    console.error(`\nуказатель разошёлся с каталогом, расхождений ${indexProblems.length}\n`);
+    indexProblems.forEach((problem) => console.error(`  ${problem}`));
+    console.error(
+        '\nЗапись называется в таблице указателя тем же изменением, которым кладётся:\nчитатель ищет по указателю, а не обходом каталога.'
+    );
+}
+
 const allowlist = readAllowlist();
 const allowedPaths = new Set(allowlist.paths);
-const collected = collectDocs().filter((doc) => !allowlist.files.includes(doc) && !doc.startsWith(ARCHIVE_DIR));
+const collected = collectDocs().filter((doc) => !allowlist.files.includes(doc) && !isSkipped(doc));
 const dropped = droppedByGit(collected);
 const docs = collected.filter((doc) => !dropped.has(doc));
 
 docs.forEach((doc) => checkDoc(doc, allowedPaths));
+INDEXED_DIRS.forEach((dir) => checkIndex(dir));
 
 if (problems.length > 0) {
     console.error(`check-doc-paths: расхождений ${problems.length}\n`);
     problems.forEach((problem) => console.error(`  ${problem}`));
     console.error(
-        `\nЛибо путь устарел и его надо поправить, либо документ описывает ещё не созданное —\nтогда он вносится в ${ALLOWLIST}.`
+        `\nЛибо адрес устарел и его надо поправить, либо документ описывает ещё не созданное —\nтогда он вносится в ${ALLOWLIST}.`
     );
+}
+
+reportIndex();
+
+if (problems.length > 0 || indexProblems.length > 0) {
     process.exit(1);
 }
 
