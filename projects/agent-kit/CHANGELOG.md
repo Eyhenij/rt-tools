@@ -1,3 +1,17 @@
+## [0.5.1](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.5.0...rt-agent-kit@0.5.1) (2026-08-12)
+
+### Bug Fixes
+
+- **rt:agent-kit:** привязками считается одна таблица компаньона, а не все ([3a9d049](https://github.com/Eyhenij/rt-tools/commit/3a9d049200c846f164b442d7cbf6c1522304aeb1))
+- **rt:agent-kit:** сверка спеков видит номер сценария из одной цифры ([c718a2d](https://github.com/Eyhenij/rt-tools/commit/c718a2d453616cfc5bc8e7bc0961c6f50fb71863))
+
+### Features
+
+- **rt:agent-kit:** гейт судит три рода файлов, сверка адресов видит имя и каталог ([d7a9616](https://github.com/Eyhenij/rt-tools/commit/d7a961665c760945a83a6728809d84c8b50e171a))
+- **rt:agent-kit:** заход закрывается одной командой ([3bba3b8](https://github.com/Eyhenij/rt-tools/commit/3bba3b84f086dc5f7564c7fb353d99118506133f))
+- **rt:agent-kit:** пакет везёт словарь, стража окна и передачу захода ([1bb3d66](https://github.com/Eyhenij/rt-tools/commit/1bb3d6616ce227f95ac73b8ae836129817a5444f))
+- **rt:agent-kit:** сверка адресов не судит переносимый текст, у архива появился указатель ([9379551](https://github.com/Eyhenij/rt-tools/commit/93795517f55f1c6454d83bd6815146ed47feaa25))
+
 # [0.5.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.4.0...rt-agent-kit@0.5.0) (2026-08-11)
 
 ### Bug Fixes
