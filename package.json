@@ -29,6 +29,7 @@
         "check:dupes": "node tools/check-dupes.mjs",
         "check:styles": "node tools/check-styles.mjs",
         "check:tokens-styles": "node tools/check-tokens-styles.mjs",
+        "check:tokens-graph": "node tools/check-tokens-graph.mjs",
         "check:reuse": "node tools/check-reuse.mjs",
         "check:layers": "node tools/check-lib-layers.mjs",
         "check:schema": "node tools/check-schema-drift.mjs",
