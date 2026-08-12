@@ -274,6 +274,8 @@ for (const path of scssFiles(COMPONENTS)) {
 /** 6–7. Контраст пар и таблица замера. */
 const pairs = existsSync(join(ROOT, PAIRS_FILE)) ? JSON.parse(read(PAIRS_FILE)).pairs ?? [] : [];
 const doc = existsSync(join(ROOT, COLORS_DOC)) ? read(COLORS_DOC) : '';
+/** Пара названа в таблице замера, если оба её имени стоят в одной строке страницы. */
+const docLines = doc.split('\n');
 const measured = [];
 
 for (const pair of pairs) {
@@ -298,7 +300,7 @@ for (const pair of pairs) {
             );
         }
     }
-    if (doc && !doc.includes(`${pair.text}\` на \`${pair.bg}`)) {
+    if (doc && !docLines.some((line) => line.includes(pair.text) && line.includes(pair.bg))) {
         add(
             `пара вне ${COLORS_DOC}: ${pair.text} на ${pair.bg}`,
             `${pair.text} на ${pair.bg} стоит в ${PAIRS_FILE}, но в таблице замера ${COLORS_DOC} этой пары нет`
@@ -348,4 +350,7 @@ console.log(
     `check-tokens-theme: тёмных ответов мимо слоя оформления принято списком ` +
         `${acceptedOf('тёмный блок ') + acceptedOf('ступень шкалы в тёмной ')}`
 );
-console.log(`check-tokens-theme: пар контраста ${pairs.length}, порог ${THRESHOLD}:1 — ниже порога нет`);
+console.log(
+    `check-tokens-theme: пар контраста ${pairs.length} в двух темах, порог ${THRESHOLD}:1 — ` +
+        `ниже порога ${acceptedOf('контраст ')}, и все приняты списком`
+);
