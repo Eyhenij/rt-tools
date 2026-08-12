@@ -31,13 +31,13 @@
     --rt-color-border-focus: var(--rt-blue-500);
 
     /* Action */
-    --rt-color-action-primary: var(--rt-blue-500);
-    --rt-color-action-primary-hover: var(--rt-blue-600);
+    --rt-color-action-primary: var(--rt-blue-500); /* rt-theme-shared: цвет марки один в обеих темах */
+    --rt-color-action-primary-hover: var(--rt-blue-600); /* rt-theme-shared: цвет марки один в обеих темах */
     --rt-color-action-primary-subtle: var(--rt-overlay-blue-8);
 
     /* Focus-ring tint — насыщеннее subtle, для visible 3px outline. */
     --rt-color-action-primary-soft: var(--rt-overlay-blue-24);
-    --rt-color-action-on-primary: var(--rt-neutral-0);
+    --rt-color-action-on-primary: var(--rt-neutral-0); /* rt-theme-shared: подпись на действии марки светлая в обеих темах */
     --rt-color-action-secondary: var(--rt-neutral-200);
     --rt-color-action-on-secondary: var(--rt-neutral-900);
 
@@ -47,8 +47,8 @@
 
     /* Stepper (rt-stepper) — рельса прогресса. Текущий шаг — янтарный (одинаков
        в обеих темах); трек/прогресс переопределяются в dark на приглушённые. */
-    --rt-color-stepper-current: var(--rt-amber-400);
-    --rt-color-stepper-current-subtle: var(--rt-overlay-amber-16);
+    --rt-color-stepper-current: var(--rt-amber-400); /* rt-theme-shared: янтарь текущего шага один в обеих темах */
+    --rt-color-stepper-current-subtle: var(--rt-overlay-amber-16); /* rt-theme-shared: янтарь текущего шага один в обеих темах */
     --rt-color-stepper-track: var(--rt-gray-350);
     --rt-color-stepper-progress: var(--rt-color-action-primary);
 
@@ -59,14 +59,14 @@
     --rt-shadow-status-dot: 0 0 0 3px var(--rt-color-state-success-bg);
 
     /* State */
-    --rt-color-state-success: var(--rt-success-500);
+    --rt-color-state-success: var(--rt-success-500); /* rt-theme-shared: цвет статуса один в обеих темах */
     --rt-color-state-success-bg: var(--rt-success-50);
-    --rt-color-state-warning: var(--rt-warning-500);
+    --rt-color-state-warning: var(--rt-warning-500); /* rt-theme-shared: цвет статуса один в обеих темах */
     --rt-color-state-warning-bg: var(--rt-warning-50);
-    --rt-color-state-danger: var(--rt-danger-500);
+    --rt-color-state-danger: var(--rt-danger-500); /* rt-theme-shared: цвет статуса один в обеих темах */
     --rt-color-state-danger-bg: var(--rt-danger-50);
     --rt-color-state-error-text: var(--rt-danger-600);
-    --rt-color-state-info: var(--rt-info-500);
+    --rt-color-state-info: var(--rt-info-500); /* rt-theme-shared: цвет статуса один в обеих темах */
     --rt-color-state-info-bg: var(--rt-info-50);
 
     /* Chat — пузыри переписки. Входящее и своё различаются фоном, а не рамкой:
@@ -173,7 +173,7 @@
     --rt-toggle-color-track-on: var(--rt-color-action-primary);
     --rt-toggle-color-border: var(--rt-color-border-strong);
     --rt-toggle-color-thumb: var(--rt-color-bg-surface);
-    --rt-toggle-color-icon: var(--rt-amber-400);
+    --rt-toggle-color-icon: var(--rt-amber-400); /* rt-theme-shared: янтарь иконки один в обеих темах */
     --rt-toggle-shadow-thumb: var(--rt-shadow-md);
 
     /* Рамка off-трека — inset-тенью, а не border: у border своя коробка, и
@@ -261,8 +261,9 @@
     --rt-nav-panel-group-font-size: var(--rt-text-xs);
     --rt-nav-panel-group-font-weight: var(--rt-font-weight-medium);
 
-    /* Заголовок группы светлее пункта, но оба берут порог AA на белой панели:
-       4.95:1 у пункта и 4.54:1 у заголовка. */
+    /* Заголовок группы светлее пункта, и оба берут порог контраста на белой панели.
+       Отношения обеих пар считает проверка тёмной темы; таблица замера — на странице
+       «Colors» витрины. */
     --rt-nav-panel-group-color: var(--rt-neutral-510);
     --rt-nav-panel-group-content-gap: var(--rt-space-1-5);
 
