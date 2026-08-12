@@ -6,12 +6,13 @@
 import { existsSync, mkdirSync, renameSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { collectAssets } from './assets.js';
+import { collectAssets, IAsset } from './assets.js';
 import { IEntryOfCatalog, IGapOfVariant, isChosen, readCatalog } from './catalog.js';
 import { ICompanion, isUnfilled, TCompanionState } from './companion.js';
-import { CONFIG_PATH, DEFAULT_LAYOUT, IConfig, KINDS, OVERRIDES_DIR, readConfig, TKind } from './config.js';
+import { CONFIG_PATH, DEFAULT_LAYOUT, IConfig, KINDS, OVERRIDES_DIR, readConfig, SKILL_KINDS, TKind } from './config.js';
 import { IStaleBuild } from './freshness.js';
 import { hooksSection, IHookBinding, SETTINGS_PATH } from './hooks-map.js';
+import { DEFAULT_DAYS, ICount, IReadResult, ISummary, KEEP_DAYS, OBSERVATIONS_DIR, readObservations, summarize } from './observations.js';
 import { IPlanned, isRefusal, TOutcome } from './plan.js';
 import { ISyncResult, pendingOf, planSync, runSync } from './sync.js';
 import { placeholdersOf } from './vars.js';
@@ -367,6 +368,133 @@ export function adopt(env: IEnvironment, names: readonly string[]): IOutcomeOfCo
         lines: [
             ...(moved.length ? [`прежнее содержимое отложено: ${moved.length}`, ...moved, 'дальше: `agent-kit sync`'] : []),
             ...(blocked.length ? ['не тронуто:', ...blocked] : []),
+        ],
+    };
+}
+
+/**
+ * Сколько незагруженных правил называется поимённо. На коротком отрезке их бывает больше
+ * тридцати, и список во весь экран прячет всё остальное, ради чего сводку и открыли.
+ */
+const UNUSED_SHOWN: number = 12;
+
+/** Чем сводка отвечает: отрезок в днях, сегодняшний день и вид вывода. */
+export interface IStatsOptions {
+    readonly days: number;
+    /** Сегодняшний день, `ГГГГ-ММ-ДД`. Приходит с края: команду со своими часами не проверить. */
+    readonly today: string;
+    readonly json: boolean;
+}
+
+/** Столбиком: имя и счёт. Ширина по самому длинному имени — иначе счёт читается по одному. */
+const countLines: (counted: readonly ICount[]) => string[] = (counted: readonly ICount[]): string[] => {
+    const width: number = counted.reduce((found: number, entry: ICount): number => Math.max(found, entry.name.length), 0);
+
+    return counted.map((entry: ICount): string => `  ${entry.name.padEnd(width)}  ${entry.count}`);
+};
+
+/** Имена скилов, разложенных в это дерево: правила, паттерны и скилы без закона. */
+const skillsOf: (config: IConfig, assetsDir: string) => readonly string[] = (config: IConfig, assetsDir: string): readonly string[] =>
+    collectAssets(config, assetsDir)
+        .filter((asset: IAsset): boolean => SKILL_KINDS.includes(asset.kind))
+        .map((asset: IAsset): string => asset.name);
+
+/**
+ * Сводка наблюдений за отрезок дней.
+ *
+ * Отдельная строка про незагруженное — то, ради чего сводка вообще нужна: чем пользуются, видно
+ * и по работе, а вот правило, которое не открыли ни разу, ничем себя не выдаёт. Сокращать текст
+ * правил так же ценно, как дополнять.
+ */
+export function stats(env: IEnvironment, options: IStatsOptions): IOutcomeOfCommand {
+    const { root, version, assetsDir } = env;
+    const config: IConfig | null = readConfig(root);
+    if (!config) {
+        return { code: 1, lines: [NO_CONFIG] };
+    }
+
+    // Выключенная запись — не пустая сводка: нули на месте наблюдений читаются как «ничего не
+    // делали», тогда как на самом деле никто и не смотрел.
+    if (!config.observe) {
+        return {
+            code: 0,
+            lines: [
+                'запись наблюдений выключена ключом `observe` в конфиге',
+                `включить — убрать ключ или поставить \`"observe": true\`; пишутся они в ${OBSERVATIONS_DIR}/`,
+            ],
+        };
+    }
+
+    const days: number = options.days > 0 ? options.days : DEFAULT_DAYS;
+    const result: IReadResult = readObservations(root, options.today, days);
+    const summary: ISummary = summarize(result.observations, skillsOf(config, assetsDir), days);
+
+    if (options.json) {
+        return { code: 0, lines: [JSON.stringify({ ...summary, swept: result.swept })] };
+    }
+
+    if (result.silent) {
+        return {
+            code: 0,
+            lines: [
+                'наблюдений нет: записи не велось ни разу',
+                `их пишут гарды в ${OBSERVATIONS_DIR}/ — проверь, что гарды разложены и подключены в ${SETTINGS_PATH}`,
+            ],
+        };
+    }
+
+    if (!summary.total) {
+        return {
+            code: 0,
+            lines: [
+                `наблюдений за ${days} дн. нет ни одного, а записи велись раньше`,
+                ...(result.swept.length ? [`снято по сроку хранения (${KEEP_DAYS} дн.): ${result.swept.length}`] : []),
+                'возьми отрезок длиннее: `--days 14`',
+            ],
+        };
+    }
+
+    return {
+        code: 0,
+        lines: [
+            `наблюдения за ${days} дн., заходов ${summary.sessions}, событий ${summary.total}`,
+            ...(summary.versions.length ? [`версии пакета в записях: ${summary.versions.join(', ')}`] : []),
+            '',
+            `правил загружено: ${summary.loads.reduce((found: number, entry: ICount): number => found + entry.count, 0)}`,
+            ...countLines(summary.loads),
+            ...(summary.unused.length
+                ? [
+                      '',
+                      `разложено и не загружено ни разу: ${summary.unused.length} из ${skillsOf(config, assetsDir).length}`,
+                      ...summary.unused.slice(0, UNUSED_SHOWN).map((name: string): string => `  ${name}`),
+                      // Список говорится не весь, и об этом говорится вслух: молчаливый обрыв
+                      // читается как «вот они все», и правило, не попавшее в первую дюжину,
+                      // считалось бы работающим.
+                      ...(summary.unused.length > UNUSED_SHOWN
+                          ? [`  … и ещё ${summary.unused.length - UNUSED_SHOWN} — целиком в \`--json\``]
+                          : []),
+                  ]
+                : []),
+            ...(summary.denials.length
+                ? [
+                      '',
+                      `гейт отбивал: ${summary.denials.reduce((found: number, entry: ICount): number => found + entry.count, 0)}`,
+                      ...countLines(summary.denials),
+                      ...(summary.kinds.length
+                          ? ['  чаще всего на:', ...countLines(summary.kinds).map((line: string): string => `  ${line}`)]
+                          : []),
+                  ]
+                : []),
+            ...(summary.guards.length
+                ? [
+                      '',
+                      `гарды отказывали: ${summary.guards.reduce((found: number, entry: ICount): number => found + entry.count, 0)}`,
+                      ...countLines(summary.guards),
+                  ]
+                : []),
+            ...(result.swept.length ? ['', `снято по сроку хранения (${KEEP_DAYS} дн.): ${result.swept.length}`] : []),
+            '',
+            `пакет v${version}`,
         ],
     };
 }

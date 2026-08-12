@@ -11,7 +11,8 @@ import { fileURLToPath } from 'node:url';
 import process from 'node:process';
 
 import { IEntryOfCatalog, readCatalog, resolveSelection } from '../lib/catalog.js';
-import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, list, sync } from '../lib/commands.js';
+import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, list, stats, sync } from '../lib/commands.js';
+import { DEFAULT_DAYS } from '../lib/observations.js';
 import { staleBuild } from '../lib/freshness.js';
 import { packageRootFrom } from '../lib/package-root.js';
 import { IChoice } from '../lib/picker.js';
@@ -26,6 +27,9 @@ const USAGE: readonly string[] = [
     '  sync            разложить ресурсы пакета в дерево проекта',
     '  sync --check    ничего не писать, отказать при расхождении — для гейта пуша',
     '  doctor          рассказать о состоянии раскладки, ничего не меняя',
+    '  stats           свести наблюдения: чем пользовались, чем ни разу, обо что спотыкались',
+    '  stats --days N  за сколько дней; без довода — за три',
+    '  stats --json    то же машиночитаемо — этим сводку прикладывают к предложению',
     '  adopt [файлы]   отдать пакету файлы, лежащие на его путях не от него',
     '',
     '  --root <путь>   корень проекта; по умолчанию текущий каталог',
@@ -202,6 +206,17 @@ export async function main(argv: readonly string[]): Promise<IOutcomeOfCommand> 
             return list(env);
         case 'sync':
             return sync(env, argv.includes('--check'));
+        case 'stats': {
+            const spoken: number = Number(optionOf(argv, '--days', ''));
+
+            return stats(env, {
+                days: Number.isFinite(spoken) && spoken > 0 ? Math.floor(spoken) : DEFAULT_DAYS,
+                // Сегодняшний день берётся здесь: у команды своих часов нет, иначе сводку за
+                // отрезок не проверить спекой — вчерашняя фикстура завтра станет позавчерашней.
+                today: new Date().toISOString().slice(0, 10),
+                json: argv.includes('--json'),
+            });
+        }
         case 'doctor':
             return doctor(env);
         case 'adopt':
