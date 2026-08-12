@@ -66,4 +66,5 @@
 | `RT-355-sync-agent-kit-0-5-0.md`              | Раскладка дерева выпущенной редакцией 0.5.0                               |
 | `RT-358-glossary-window-handoff.md`           | Словарь, страж окна и передача захода                                     |
 | `RT-360-archive-two-task-folders.md`          | Разбор папок двух закрытых задач                                          |
+| `RT-362-text-layer-catchup.md`                | Слой правил пакета подтянут до переносимых подходов                       |
 | `ui-kit-v2-state-coverage-line.md`            | Покрытие состояний `@rt-tools/ui-kit-v2`: витрина и документация          |
