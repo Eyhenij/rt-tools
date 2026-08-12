@@ -11,9 +11,10 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 
 import { IEntryOfCatalog, readCatalog } from './catalog.js';
-import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, KEPT_SUFFIX, list, sync } from './commands.js';
+import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, KEPT_SUFFIX, list, stats, sync } from './commands.js';
 import { CONFIG_PATH, OVERRIDES_DIR } from './config.js';
 import { bindingsOf } from './hooks-map.js';
+import { OBSERVATIONS_DIR } from './observations.js';
 
 const VERSION: string = '0.1.0';
 const LAW: string = 'docs/constitution/delivery.md';
@@ -484,5 +485,101 @@ describe('list', () => {
 
     it('шаблоны показывает своим разделом', () => {
         expect(said(list(env))).toContain('ШАБЛОНЫ');
+    });
+});
+
+describe('stats', () => {
+    const TODAY: string = '2026-08-12';
+
+    /** Наблюдения так, как их пишет гард: строка на событие, файл на день. */
+    const observed: (lines: readonly Readonly<Record<string, string>>[]) => void = (
+        lines: readonly Readonly<Record<string, string>>[]
+    ): void =>
+        put(
+            `${OBSERVATIONS_DIR}/${TODAY}.jsonl`,
+            `${lines.map((fields: Readonly<Record<string, string>>): string => JSON.stringify({ t: `${TODAY}T09:00:00Z`, ...fields, v: VERSION })).join('\n')}\n`
+        );
+
+    const summed: (days?: number) => IOutcomeOfCommand = (days: number = 3): IOutcomeOfCommand =>
+        stats(env, { days, today: TODAY, json: false });
+
+    it('без конфига говорит про init', () => {
+        expect(summed().code).toBe(1);
+        expect(said(summed())).toContain('init');
+    });
+
+    it('SC-AK-75 — записи не велось: говорит причину, а не нули', () => {
+        start();
+
+        expect(said(summed())).toContain('записи не велось');
+        expect(said(summed())).not.toContain('правил загружено: 0');
+    });
+
+    it('SC-AK-72 — выключенная запись названа выключенной', () => {
+        start();
+        const config: Record<string, unknown> = JSON.parse(get(CONFIG_PATH));
+        put(CONFIG_PATH, JSON.stringify({ ...config, observe: false }, null, 4));
+        observed([{ ev: 'skill-load', res: 'task-flow', sid: '1' }]);
+
+        const said_: string = said(summed());
+
+        expect(said_).toContain('выключена');
+        // Наблюдения на диске есть, но сводки по ним нет: выключатель судится раньше чтения.
+        expect(said_).not.toContain('task-flow');
+    });
+
+    it('считает загрузки, отбития и отказы', () => {
+        start();
+        observed([
+            { ev: 'skill-load', res: 'task-flow', sid: '1' },
+            { ev: 'gate-deny', res: 'styling-bem', kind: 'scss', sid: '1' },
+            { ev: 'guard-deny', res: 'docs-guard', sid: '2' },
+        ]);
+
+        const lines: string = said(summed());
+
+        expect(lines).toContain('заходов 2');
+        expect(lines).toContain('правил загружено: 1');
+        expect(lines).toContain('гейт отбивал: 1');
+        expect(lines).toContain('гарды отказывали: 1');
+    });
+
+    it('SC-AK-74 — называет разложенное и ни разу не загруженное', () => {
+        start();
+        sync(env, false);
+        observed([{ ev: 'skill-load', res: 'task-flow', sid: '1' }]);
+
+        expect(said(summed())).toContain('не загружено ни разу');
+        // Поимённо список проверяется машинным выводом: печатная сводка обрывает его вслух, и
+        // искать в ней конкретное имя значило бы проверять длину дюжины, а не сам отбор.
+        expect(JSON.parse(stats(env, { days: 3, today: TODAY, json: true }).lines[0]).unused).toContain('git-workflow');
+    });
+
+    it('длинный список незагруженного обрывается вслух', () => {
+        start();
+        sync(env, false);
+        observed([{ ev: 'skill-load', res: 'task-flow', sid: '1' }]);
+
+        expect(said(summed())).toContain('и ещё');
+    });
+
+    it('машинный вывод — одна строка разбираемого JSON', () => {
+        start();
+        observed([{ ev: 'skill-load', res: 'task-flow', sid: '1' }]);
+
+        const outcome: IOutcomeOfCommand = stats(env, { days: 3, today: TODAY, json: true });
+
+        expect(outcome.lines).toHaveLength(1);
+        expect(JSON.parse(outcome.lines[0])).toMatchObject({ days: 3, sessions: 1, total: 1 });
+    });
+
+    it('SC-AK-76 — за отрезок наблюдений нет, а записи велись: зовёт взять отрезок длиннее', () => {
+        start();
+        put(
+            `${OBSERVATIONS_DIR}/2026-08-01.jsonl`,
+            `${JSON.stringify({ t: '2026-08-01T09:00:00Z', ev: 'skill-load', res: 'task-flow', sid: '1' })}\n`
+        );
+
+        expect(said(summed())).toContain('--days');
     });
 });

@@ -78,6 +78,12 @@ export interface IConfig {
      * его значение; как именно — `isChosen`.
      */
     readonly variants: Readonly<Record<string, string>>;
+    /**
+     * Пишут ли гарды наблюдения о слое правил. Умолчание — да; выключает дерево, и целиком, а
+     * не частями. Ключ читают двое: сводка — отсюда, гард — тем же именем прямо из файла, потому
+     * что разборщика конфига у него нет.
+     */
+    readonly observe: boolean;
 }
 
 export const CONFIG_PATH: string = '.claude/rt-kit.json';
@@ -186,6 +192,8 @@ export function parseConfig(text: string): IConfig {
         only,
         skip,
         variants: stringMap(raw['variants'], 'variants'),
+        // Выключателем считается только явное «нет»: ключа нет — запись идёт, как и у гарда.
+        observe: raw['observe'] !== false,
     };
 }
 
