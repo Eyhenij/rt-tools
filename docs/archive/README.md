@@ -67,4 +67,5 @@
 | `RT-358-glossary-window-handoff.md`           | Словарь, страж окна и передача захода                                     |
 | `RT-360-archive-two-task-folders.md`          | Разбор папок двух закрытых задач                                          |
 | `RT-362-text-layer-catchup.md`                | Слой правил пакета подтянут до переносимых подходов                       |
+| `RT-364-check-specs-bindings-table.md`        | Привязками считается одна таблица компаньона                              |
 | `ui-kit-v2-state-coverage-line.md`            | Покрытие состояний `@rt-tools/ui-kit-v2`: витрина и документация          |
