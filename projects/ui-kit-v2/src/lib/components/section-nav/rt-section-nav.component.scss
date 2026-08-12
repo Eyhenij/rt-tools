@@ -54,5 +54,5 @@
    Раньше правило было записано через `:host-context`, который под None не
    совпадает ни с чем, — тема задаётся атрибутом на предке, и им же адресуется. */
 [data-theme='dark'] .rt-section-nav__tile--active {
-    background: var(--rt-blue-900);
+    background: var(--rt-color-bg-nav);
 }
