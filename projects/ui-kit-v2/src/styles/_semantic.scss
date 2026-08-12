@@ -261,8 +261,9 @@
     --rt-nav-panel-group-font-size: var(--rt-text-xs);
     --rt-nav-panel-group-font-weight: var(--rt-font-weight-medium);
 
-    /* Заголовок группы светлее пункта, но оба берут порог AA на белой панели:
-       4.95:1 у пункта и 4.54:1 у заголовка. */
+    /* Заголовок группы светлее пункта, и оба берут порог контраста на белой панели.
+       Отношения обеих пар считает проверка тёмной темы; таблица замера — на странице
+       «Colors» витрины. */
     --rt-nav-panel-group-color: var(--rt-neutral-510);
     --rt-nav-panel-group-content-gap: var(--rt-space-1-5);
 
