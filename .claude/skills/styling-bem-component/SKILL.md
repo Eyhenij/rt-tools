@@ -4,7 +4,7 @@ kind: pattern
 rule: styling-bem
 description: Паттерн правила styling-bem. Брать при правке стилей компонента кита — готовый :host, модификаторы, токены оформления, язык оформления публичного сайта, обход умолчаний кита. Не брать для раскладки экрана — это паттерн styling-bem-layout.
 ---
-<!-- rt-kit v0.5.0 · patterns/styling-bem-component.md · 580b858d9dab · правится надстройкой, не здесь -->
+<!-- rt-kit v0.5.1 · patterns/styling-bem-component.md · 580b858d9dab · правится надстройкой, не здесь -->
 
 # Стили компонента
 
