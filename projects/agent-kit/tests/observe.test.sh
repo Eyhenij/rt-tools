@@ -47,11 +47,11 @@ note_in() {
 
 tree="$(fixture_observed_tree '')"
 note_in "$tree" gate-deny res=styling-bem kind=scss sid=session-one
-expect_note "SC-AK-70 запись легла в дерево" "$tree" '"ev":"gate-deny"'
-expect_note "SC-AK-70 ресурс назван" "$tree" '"res":"styling-bem"'
-expect_note "SC-AK-70 род правки назван" "$tree" '"kind":"scss"'
-expect_note "SC-AK-70 версия пакета проставлена" "$tree" '"v":"[^"]+"'
-report "SC-AK-70 файл назван днём" \
+expect_note "SC-AK-70 — запись легла в дерево" "$tree" '"ev":"gate-deny"'
+expect_note "SC-AK-70 — ресурс назван" "$tree" '"res":"styling-bem"'
+expect_note "SC-AK-70 — род правки назван" "$tree" '"kind":"scss"'
+expect_note "SC-AK-70 — версия пакета проставлена" "$tree" '"v":"[^"]+"'
+report "SC-AK-70 — файл назван днём" \
     "$(basename "$(ls "$tree/.claude/rt-kit/observations/" | head -1)" .jsonl | grep -cE '^[0-9]{4}-[0-9]{2}-[0-9]{2}$')" "1"
 rm -rf "$tree"
 
@@ -59,24 +59,24 @@ rm -rf "$tree"
 tree="$(fixture_observed_tree '')"
 note_in "$tree" skill-load res=task-flow sid=session-one
 note_in "$tree" skill-load res=doc-style sid=session-one
-expect_note "SC-AK-70 признак сессии проставлен" "$tree" '"sid":"[0-9]+"'
-report "SC-AK-70 имени сессии в записи нет" "$(notes_of "$tree" | grep -c 'session-one')" "0"
-report "SC-AK-70 признак у одной сессии один" "$(notes_of "$tree" | grep -oE '"sid":"[0-9]+"' | sort -u | wc -l | tr -d ' ')" "1"
+expect_note "SC-AK-70 — признак сессии проставлен" "$tree" '"sid":"[0-9]+"'
+report "SC-AK-70 — имени сессии в записи нет" "$(notes_of "$tree" | grep -c 'session-one')" "0"
+report "SC-AK-70 — признак у одной сессии один" "$(notes_of "$tree" | grep -oE '"sid":"[0-9]+"' | sort -u | wc -l | tr -d ' ')" "1"
 rm -rf "$tree"
 
 # --- SC-AK-71. Наблюдение не называет дерева -------------------------------------------
 
 tree="$(fixture_observed_tree '')"
 note_in "$tree" gate-deny res=projects/ui-kit/src/lib/card/card.scss kind=scss sid=one
-expect_note "SC-AK-71 событие записано" "$tree" '"ev":"gate-deny"'
-report "SC-AK-71 путь в запись не попал" "$(notes_of "$tree" | grep -c 'ui-kit')" "0"
-report "SC-AK-71 поля с путём нет вовсе" "$(notes_of "$tree" | grep -c '"res"')" "0"
+expect_note "SC-AK-71 — событие записано" "$tree" '"ev":"gate-deny"'
+report "SC-AK-71 — путь в запись не попал" "$(notes_of "$tree" | grep -c 'ui-kit')" "0"
+report "SC-AK-71 — поля с путём нет вовсе" "$(notes_of "$tree" | grep -c '"res"')" "0"
 rm -rf "$tree"
 
 tree="$(fixture_observed_tree '')"
 note_in "$tree" gate-deny res='styling bem; rm -rf /' kind='scss"' sid=one
-report "SC-AK-71 пробелы и кавычки вычищены" "$(notes_of "$tree" | grep -cE '"res":"stylingbem;rm-rf"')" "0"
-report "SC-AK-71 строка осталась разбираемой" "$(notes_of "$tree" | jq -r '.ev' 2>/dev/null)" "gate-deny"
+report "SC-AK-71 — пробелы и кавычки вычищены" "$(notes_of "$tree" | grep -cE '"res":"stylingbem;rm-rf"')" "0"
+report "SC-AK-71 — строка осталась разбираемой" "$(notes_of "$tree" | jq -r '.ev' 2>/dev/null)" "gate-deny"
 rm -rf "$tree"
 
 # --- SC-AK-72. Выключатель дерева гасит запись целиком ----------------------------------
@@ -84,24 +84,24 @@ rm -rf "$tree"
 tree="$(fixture_observed_tree '{"observe": false}')"
 note_in "$tree" gate-deny res=styling-bem kind=scss sid=one
 note_in "$tree" skill-load res=task-flow sid=one
-expect_no_notes "SC-AK-72 выключенная запись молчит" "$tree"
+expect_no_notes "SC-AK-72 — выключенная запись молчит" "$tree"
 rm -rf "$tree"
 
 tree="$(fixture_observed_tree '{"observe": true}')"
 note_in "$tree" skill-load res=task-flow sid=one
-expect_note "SC-AK-72 включённая запись пишет" "$tree" '"ev":"skill-load"'
+expect_note "SC-AK-72 — включённая запись пишет" "$tree" '"ev":"skill-load"'
 rm -rf "$tree"
 
 # Настройка без ключа записи выключателем не считается: умолчание — писать.
 tree="$(fixture_observed_tree '{"vars": {}}')"
 note_in "$tree" skill-load res=task-flow sid=one
-expect_note "SC-AK-72 настройка без ключа пишет" "$tree" '"ev":"skill-load"'
+expect_note "SC-AK-72 — настройка без ключа пишет" "$tree" '"ev":"skill-load"'
 rm -rf "$tree"
 
 # Сломанная настройка выключателем не считается тоже: иначе битый JSON тихо гасил бы запись.
 tree="$(fixture_observed_tree '{сломано')"
 note_in "$tree" skill-load res=task-flow sid=one
-expect_note "SC-AK-72 сломанная настройка не гасит запись" "$tree" '"ev":"skill-load"'
+expect_note "SC-AK-72 — сломанная настройка не гасит запись" "$tree" '"ev":"skill-load"'
 rm -rf "$tree"
 
 # --- SC-AK-73. Непишущееся наблюдение не останавливает работу ---------------------------
@@ -111,7 +111,7 @@ tree="$(fixture_observed_tree '')"
 mkdir -p "$tree/.claude/rt-kit"
 printf 'занято\n' > "$tree/.claude/rt-kit/observations"
 if note_in "$tree" gate-deny res=styling-bem kind=scss sid=one; then got="PASS"; else got="DENY"; fi
-report "SC-AK-73 недоступный каталог не отбивает" "$got" "PASS"
+report "SC-AK-73 — недоступный каталог не отбивает" "$got" "PASS"
 rm -rf "$tree"
 
 # --- Гарды зовут запись сами -----------------------------------------------------------
