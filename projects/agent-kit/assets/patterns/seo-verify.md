@@ -32,7 +32,7 @@ PORT={{prodSitePort}} node dist/apps/site/server/server.mjs &
 ## Что смотреть в отданном HTML
 
 ```bash
-for locale in "" ru/ de/ zh-Hans/ zh-Hant/ ko/ th/ hi/; do
+for locale in "" <префиксы локалей>; do
     printf '%-10s ' "${locale:-en}"
     curl -s -H "Host: localhost" "http://localhost:{{prodSitePort}}/${locale}<адрес страницы>" \
         | grep -c -E '<title>|name="description"|property="og:|rel="canonical"|hreflang=|application/ld\+json'
