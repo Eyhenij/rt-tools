@@ -108,11 +108,22 @@ const NO_CONFIG: string = `нет \`${CONFIG_PATH}\` — начни с \`agent-k
 /** Куда уезжает прежнее содержимое файла, отданного пакету. */
 export const KEPT_SUFFIX: string = '.before-rt-kit';
 
-/** Имя функции профиля, которую хук ждёт: `command -v rt_is_app_code`. */
-const PROFILE_CALL: RegExp = /command -v (rt_[a-z_]+)/g;
+/**
+ * Имя функции профиля, которую хук ждёт. Обе формы: голая проверка наличия и спрос через
+ * помощника, который о нехватке говорит вслух. Считать одну значило бы недосчитаться ровно тех
+ * хуков, которые перешли на второе.
+ */
+const PROFILE_CALL: RegExp = /(?:command -v|rt_needs)[ \t]+(rt_[a-z_]+)/g;
 
-/** Объявление функции в профиле: `rt_is_app_code() {`. */
-const PROFILE_DEFINE: RegExp = /^(rt_[a-z_]+)\s*\(\)/gm;
+/** Сам помощник функцией профиля не является: его везёт пакет, а не дерево. */
+const PROFILE_HELPER: string = 'rt_needs';
+
+/**
+ * Объявление функции: `rt_is_app_code() {`. Не с начала строки — хук объявляет запасной вариант
+ * прямо в условии, и не считать его объявлением значило бы звать недостающим то, что у хука
+ * есть.
+ */
+const PROFILE_DEFINE: RegExp = /(rt_[a-z_]+)\s*\(\)\s*\{/g;
 
 /**
  * Функции профиля, которых ждут взятые хуки, и те из них, что дерево не определило.
@@ -129,7 +140,9 @@ function profileLines(root: string, assetsDir: string, config: IConfig): string[
             continue;
         }
         for (const found of asset.text.matchAll(PROFILE_CALL)) {
-            wanted.add(found[1]);
+            if (found[1] !== PROFILE_HELPER) {
+                wanted.add(found[1]);
+            }
         }
         // Часть общих функций живёт не в профиле, а в соседнем хуке: запись наблюдения объявлена
         // в хуке наблюдений, и гарды зовут её через ту же проверку наличия. Не считать их
