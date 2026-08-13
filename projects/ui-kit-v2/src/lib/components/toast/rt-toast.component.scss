@@ -1,4 +1,11 @@
 .rt-toast {
+    --rt-toast-radius: var(--rt-radius-md);
+    --rt-toast-border-width: var(--rt-border-width-thin);
+    --rt-toast-shadow: var(--rt-shadow-card);
+    --rt-toast-enter-duration: var(--rt-duration-slow);
+    --rt-toast-shadow-duration: var(--rt-duration-base);
+    --rt-toast-leave-duration: var(--rt-duration-slower);
+    --rt-toast-fade-duration: var(--rt-duration-fast);
     --y: translateY(100%);
     --lift-amount: calc(var(--lift) * var(--gap));
 
@@ -9,10 +16,10 @@
     box-sizing: border-box;
     align-items: center;
     padding: var(--rt-space-4);
-    border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
-    border-radius: var(--rt-radius-md);
+    border: var(--rt-toast-border-width) solid var(--rt-color-border-subtle);
+    border-radius: var(--rt-toast-radius);
     background: var(--rt-color-bg-surface);
-    box-shadow: var(--rt-shadow-card);
+    box-shadow: var(--rt-toast-shadow);
     color: var(--rt-color-text-primary);
     font-size: var(--rt-text-sm);
     font-weight: var(--rt-font-weight-medium);
@@ -24,10 +31,10 @@
     touch-action: none;
     transform: var(--y);
     transition:
-        transform var(--rt-duration-slow),
-        opacity var(--rt-duration-slow),
-        height var(--rt-duration-slow),
-        box-shadow var(--rt-duration-base);
+        transform var(--rt-toast-enter-duration),
+        opacity var(--rt-toast-enter-duration),
+        height var(--rt-toast-enter-duration),
+        box-shadow var(--rt-toast-shadow-duration);
 
     &:after {
         position: absolute;
@@ -39,7 +46,7 @@
     }
 
     > * {
-        transition: opacity var(--rt-duration-slow);
+        transition: opacity var(--rt-toast-enter-duration);
     }
 
     &--y--top {
@@ -131,8 +138,8 @@
 
         opacity: 0;
         transition:
-            transform var(--rt-duration-slower),
-            opacity var(--rt-duration-base);
+            transform var(--rt-toast-leave-duration),
+            opacity var(--rt-toast-shadow-duration);
     }
 
     &--removed:not(.rt-toast--front):before {
@@ -183,7 +190,7 @@
         align-self: flex-start;
         margin-inline-start: auto;
         opacity: 0;
-        transition: opacity var(--rt-duration-fast);
+        transition: opacity var(--rt-toast-fade-duration);
     }
 
     &:hover &__close,
