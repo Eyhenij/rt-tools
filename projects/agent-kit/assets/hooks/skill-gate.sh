@@ -62,6 +62,11 @@ case "$tool" in
         # приходит в обычный сервис, а число-настройка в обычный класс.
         written="$(printf '%s' "$input" | jq -r '[.tool_input.content, .tool_input.text, .tool_input.new_string, (.tool_input.edits[]?.new_string)] | map(select(. != null)) | join("\n")' 2>/dev/null)"
         req="$(skill_for edit "$target" "$written" 2>/dev/null)"
+        # Слои поверх доменного правила лежат отдельным файлом и зовутся в этой же оболочке:
+        # доменное правило выбирается один раз по пути, а слоёв полтора десятка, и вместе они не
+        # помещаются в карту, которую читают целиком. Нет файла — гейт остаётся одним слоем.
+        # shellcheck disable=SC1090
+        [ -f "$rt_hooks_dir/skill-gate-layers.sh" ] && . "$rt_hooks_dir/skill-gate-layers.sh" 2>/dev/null
         # Род правки для наблюдения. Одно расширение, без пути и без имени файла: наблюдение
         # уезжает наружу, и всё, кроме рода, там было бы адресом этого дерева.
         case "${target##*/}" in

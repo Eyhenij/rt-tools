@@ -15,33 +15,10 @@
 #
 # Порядок веток решает: первое совпадение выигрывает, поэтому частное идёт раньше общего.
 
-# Правила, которые вступают не от рода файла, а от того, что в него пишут.
-#
-# Обращение к среде исполнения приходит в обычный сервис, а число-настройка и перечисление —
-# в обычный класс: по имени файла ни то ни другое не видно, и правило, требуемое только по
-# расширению, здесь молчало бы.
-skill_for_written() {
-    target="$1"
-    written="$2"
+# Правила, вступающие не от рода файла, а от того, что в него пишут, здесь не выбираются:
+# они приходят слоем поверх доменного — `hooks/skill-gate-layers.sh`. Карта судит путь, слой
+# судит текст, и оба зовутся из гейта в одной оболочке.
 
-    [ -z "$written" ] && return 0
-
-    case "$target" in
-        *.spec.ts | */docs/* | *.md) return 0 ;;
-    esac
-
-    printf '%s' "$written" | grep -qE '(globalThis|window\.|document\.defaultView|PLATFORM_ID|isPlatformBrowser|localStorage|sessionStorage)' \
-        && printf '%s\n' 'platform-access'
-
-    case "$target" in
-        *.ts)
-            printf '%s' "$written" | grep -qE '^[[:space:]]*(export[[:space:]]+)?(const[[:space:]]+[A-Z][A-Z0-9_]*[[:space:]]*(:[^=]*)?=[[:space:]]*-?[0-9]|enum[[:space:]])' \
-                && printf '%s\n' 'shared-code'
-            ;;
-    esac
-
-    return 0
-}
 
 skill_for_default() {
     kind="$1"
@@ -105,7 +82,6 @@ skill_for_default() {
 
                 *.ts) printf '%s\n' 'typescript-conventions' ;;
             esac
-            skill_for_written "$target" "$written"
             ;;
         bash)
             case "$target" in
