@@ -262,7 +262,7 @@
     /* Навигация (rt-page-header). Шапка — отдельная плашка; отступ от краёв
        страницы задаёт тот, кто её ставит. */
     --rt-nav-header-padding: var(--rt-space-2) var(--rt-space-4);
-    --rt-nav-header-color-bg: var(--rt-neutral-150);
+    --rt-nav-header-color-bg: var(--rt-neutral-50);
 
     /* Первый уровень. Пункт ряда несёт плашку цвета самой шапки: на общем фоне её
        не видно, и белым проступает только активный раздел. Наведение красит
@@ -277,10 +277,10 @@
     --rt-nav-item-color: var(--rt-color-text-primary);
     --rt-nav-item-color-hover: var(--rt-color-action-primary);
     --rt-nav-item-color-pressed: var(--rt-color-action-primary-hover);
-    --rt-nav-item-color-bg: var(--rt-neutral-150);
-    --rt-nav-item-color-border: var(--rt-neutral-150);
+    --rt-nav-item-color-bg: var(--rt-neutral-50);
+    --rt-nav-item-color-border: var(--rt-neutral-50);
     --rt-nav-item-color-bg-active: var(--rt-color-bg-surface);
-    --rt-nav-item-color-caret: var(--rt-neutral-250);
+    --rt-nav-item-color-caret: var(--rt-neutral-200);
 
     /* Фокус обведён пунктиром: сплошная рамка на плашке пункта неотличима от его
        же границы. */
@@ -289,7 +289,7 @@
     /* Недоступный пункт светлее доступного, а не другого оттенка: общий
        `text-disabled` уходит в сине-стальной и рядом с серой подписью читается
        как второй цвет, а не как выключенное состояние. */
-    --rt-nav-color-disabled: var(--rt-neutral-350);
+    --rt-nav-color-disabled: var(--rt-neutral-300);
 
     /* Попап профиля. Подложку берёт у панели навигации, своего здесь — габариты
        блока пользователя, тень и набор строк: строк четыре, и они читаются как
@@ -325,7 +325,7 @@
     --rt-nav-panel-item-padding: var(--rt-space-1) var(--rt-space-2);
     --rt-nav-panel-columns: 1;
     --rt-nav-panel-color-bg: var(--rt-color-bg-surface);
-    --rt-nav-panel-color-border: var(--rt-neutral-250);
+    --rt-nav-panel-color-border: var(--rt-neutral-200);
     --rt-nav-panel-shadow: var(--rt-shadow-nav-panel);
 
     /* Второй уровень набран легче первого: ряд разделов держит вес, а полтора
@@ -333,8 +333,8 @@
     --rt-nav-panel-item-font-size: var(--rt-text-sm);
     --rt-nav-panel-item-font-weight: var(--rt-font-weight-medium);
     --rt-nav-panel-item-content-gap: var(--rt-space-1);
-    --rt-nav-panel-item-color: var(--rt-neutral-520);
-    --rt-nav-panel-item-color-bg-hover: var(--rt-neutral-150);
+    --rt-nav-panel-item-color: var(--rt-neutral-600);
+    --rt-nav-panel-item-color-bg-hover: var(--rt-neutral-50);
     --rt-nav-panel-item-color-active: var(--rt-color-text-inverse);
     --rt-nav-panel-item-color-bg-active: var(--rt-color-action-primary);
     --rt-nav-panel-group-font-size: var(--rt-text-xs);
@@ -343,7 +343,7 @@
     /* Заголовок группы светлее пункта, и оба берут порог контраста на белой панели.
        Отношения обеих пар считает проверка тёмной темы; таблица замера — на странице
        «Colors» витрины. */
-    --rt-nav-panel-group-color: var(--rt-neutral-510);
+    --rt-nav-panel-group-color: var(--rt-neutral-600);
     --rt-nav-panel-group-content-gap: var(--rt-space-2);
 
     /* Маркер непросмотренного. Точка стоит в потоке следом за подписью — и в ряду
