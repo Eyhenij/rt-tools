@@ -1,25 +1,27 @@
-.rt-file-input {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--rt-space-sm);
+@layer rt-kit.components {
+    .rt-file-input {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--rt-space-sm);
 
-    &--disabled {
-        opacity: var(--rt-input-disabled-opacity);
-    }
+        &--disabled {
+            opacity: var(--rt-input-disabled-opacity);
+        }
 
-    /* Список выбранных файлов — карточки rt-file-card внутри rt-file-list. */
-    &__list {
-        width: 100%;
-    }
+        /* Список выбранных файлов — карточки rt-file-card внутри rt-file-list. */
+        &__list {
+            width: 100%;
+        }
 
-    /* Read-only: имена файлов как плоский текст. */
-    &__readonly {
-        color: var(--rt-field-value-color);
-        font-size: var(--rt-field-value-font-size);
+        /* Read-only: имена файлов как плоский текст. */
+        &__readonly {
+            color: var(--rt-field-value-color);
+            font-size: var(--rt-field-value-font-size);
 
-        &--empty {
-            color: var(--rt-field-value-empty-color);
+            &--empty {
+                color: var(--rt-field-value-empty-color);
+            }
         }
     }
 }
