@@ -816,6 +816,7 @@ export const light = [
     {
         name: `--rt-color-bg-surface-subtle-2`,
         value: `var(--rt-neutral-200)`,
+        dark: `var(--rt-charcoal-950)`,
     },
     {
         name: `--rt-color-bg-hover`,
@@ -1911,6 +1912,9 @@ export const darkLayout = [
     },
     {
         name: `--rt-color-bg-surface-subtle`,
+    },
+    {
+        name: `--rt-color-bg-surface-subtle-2`,
     },
     {
         name: `--rt-color-bg-hover`,
