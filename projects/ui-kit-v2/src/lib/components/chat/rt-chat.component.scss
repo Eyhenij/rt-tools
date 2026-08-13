@@ -1,4 +1,8 @@
 .rt-chat {
+    --rt-chat-bubble-radius: var(--rt-radius-lg);
+    --rt-chat-message-border-width: var(--rt-border-width-thin);
+    --rt-chat-transition-duration: var(--rt-duration-fast);
+
     display: flex;
     flex-direction: column;
 
@@ -160,18 +164,18 @@
 
         // Срезанный угол со стороны автора заменяет «хвостик» пузыря: направление
         // видно даже когда соседние сообщения одного цвета идут подряд.
-        border-radius: var(--rt-radius-lg) var(--rt-radius-lg) var(--rt-radius-lg) 0;
+        border-radius: var(--rt-chat-bubble-radius) var(--rt-chat-bubble-radius) var(--rt-chat-bubble-radius) 0;
         background: var(--rt-chat-bubble-in-bg);
         gap: var(--rt-space-2);
 
         &--own {
-            border-radius: var(--rt-radius-lg) var(--rt-radius-lg) 0 var(--rt-radius-lg);
+            border-radius: var(--rt-chat-bubble-radius) var(--rt-chat-bubble-radius) 0 var(--rt-chat-bubble-radius);
             background: var(--rt-chat-bubble-own-bg);
         }
 
         // Удалённое сообщение остаётся в ленте, но приглушено и с пунктиром.
         &--deleted {
-            border: var(--rt-border-width-thin) dashed var(--rt-color-border-default);
+            border: var(--rt-chat-message-border-width) dashed var(--rt-color-border-default);
             background: transparent;
         }
     }
@@ -211,7 +215,7 @@
         flex: 0 0 auto;
         opacity: 0;
         pointer-events: none;
-        transition: opacity var(--rt-duration-fast) ease;
+        transition: opacity var(--rt-chat-transition-duration) ease;
     }
 
     &__message-attachment {
@@ -260,13 +264,13 @@
         flex-direction: column;
         align-self: flex-start;
         padding: var(--rt-space-2);
-        border-radius: var(--rt-radius-lg) var(--rt-radius-lg) var(--rt-radius-lg) 0;
+        border-radius: var(--rt-chat-bubble-radius) var(--rt-chat-bubble-radius) var(--rt-chat-bubble-radius) 0;
         background: var(--rt-chat-bubble-in-bg);
         gap: var(--rt-space-1);
 
         &--own {
             align-self: flex-end;
-            border-radius: var(--rt-radius-lg) var(--rt-radius-lg) 0 var(--rt-radius-lg);
+            border-radius: var(--rt-chat-bubble-radius) var(--rt-chat-bubble-radius) 0 var(--rt-chat-bubble-radius);
             background: var(--rt-chat-bubble-own-bg);
         }
     }

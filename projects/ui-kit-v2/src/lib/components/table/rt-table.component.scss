@@ -2,6 +2,9 @@
    классы доступны без scope-attrs, токены --rt-* наследуются. */
 
 .rt-table {
+    --rt-table-border-width: var(--rt-border-width-thin);
+    --rt-table-card-radius: var(--rt-radius-md);
+
     position: relative;
     display: table;
     width: 100%;
@@ -15,14 +18,14 @@
         position: relative;
         height: 50px;
         padding: var(--rt-space-2) var(--rt-space-5);
-        border-bottom: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+        border-bottom: var(--rt-table-border-width) solid var(--rt-color-border-subtle);
 
         /* Single-owner границы: каждую линию сетки рисует РОВНО одна ячейка —
            вертикаль только левой гранью, горизонталь только нижней. Внутренние
            линии не удваиваются, правого периметра нет вовсе, а левый гасим у
            первой колонки ниже. Таблица упирается в края контейнера — боковые
            рамки не нужны. */
-        border-left: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+        border-left: var(--rt-table-border-width) solid var(--rt-color-border-subtle);
         font-size: var(--rt-text-sm);
         font-weight: var(--rt-font-weight-medium);
         text-align: start;
@@ -46,7 +49,7 @@
 
     .cdk-header-cell {
         /* Верхняя грань таблицы — только у шапки (низ даёт border-bottom строк). */
-        border-top: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+        border-top: var(--rt-table-border-width) solid var(--rt-color-border-subtle);
         background: var(--rt-color-bg-surface);
         color: var(--rt-color-text-muted);
     }
@@ -171,7 +174,7 @@
 
         /* Только нижняя грань — как у строк: верхнюю даёт border-bottom шапки
            (иначе двойная линия), боковые не рисуем (нет периметра). */
-        border-bottom: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+        border-bottom: var(--rt-table-border-width) solid var(--rt-color-border-subtle);
         background: var(--rt-color-bg-surface);
         color: var(--rt-color-text-muted);
         text-align: center;
@@ -244,8 +247,8 @@
         display: flex;
         flex-direction: column;
         padding: var(--rt-space-md);
-        border: var(--rt-border-width-thin) solid var(--rt-color-border-default);
-        border-radius: var(--rt-radius-md);
+        border: var(--rt-table-border-width) solid var(--rt-color-border-default);
+        border-radius: var(--rt-table-card-radius);
         background: var(--rt-color-bg-surface);
         gap: var(--rt-space-xs);
     }
