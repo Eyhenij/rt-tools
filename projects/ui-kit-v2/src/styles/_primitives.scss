@@ -24,8 +24,12 @@
     --rt-neutral-510: #767676;
     --rt-neutral-550: #666;
     --rt-neutral-600: #6b7280;
-    --rt-neutral-700: #3b4557;
-    --rt-neutral-800: #364152;
+
+    /* 700 и 800 считаны от 600 тем же шагом светлоты: прежние значения отличались
+       друг от друга на глаз неразличимо, и вторичное действие получало одинаковые
+       наведение и нажатие. */
+    --rt-neutral-700: #585e6c;
+    --rt-neutral-800: #454b58;
     --rt-neutral-900: #1f1f1f;
     --rt-neutral-950: #122341;
 
@@ -66,24 +70,32 @@
     --rt-gray-350: #b3b3b3; /* трек, light */
     --rt-slate-300: #a9b8cd; /* пройденный прогресс, dark */
 
-    /* Status — success/warning/danger/info */
+    /* Status — success/warning/danger/info.
+
+       Ступени 600 и 700 считаны от своей 500 ровным шагом светлоты линейки бренда
+       (ΔL = 0.0687 в OKLCH): тон и цветность берутся у 500, светлота убывает шагом.
+       До этого ряды были собраны вручную и шли неровно — у успеха 700 была светлее
+       600, а у опасности 600 отличалась от 500 неразличимо на глаз. Наведение и
+       нажатие действия берут именно эти ступени, и такая пара их сливала. */
     --rt-success-50: #ecfdf5;
     --rt-success-100: #eafaf5;
     --rt-success-500: #059669;
-    --rt-success-600: #047857;
-    --rt-success-700: #088e63;
+    --rt-success-600: #017f58;
+    --rt-success-700: #006848;
     --rt-warning-50: #fffbeb;
     --rt-warning-500: #d97706;
-    --rt-warning-600: #b45309;
+    --rt-warning-600: #bc6600;
+    --rt-warning-700: #9f5500;
     --rt-yellow-400: #f4d85a;
     --rt-amber-400: #f49f5a;
     --rt-danger-50: #fef2f2;
     --rt-danger-500: #dc2626;
-    --rt-danger-600: #d32f2f;
-    --rt-danger-700: #b91c1c;
+    --rt-danger-600: #c00111;
+    --rt-danger-700: #9e000c;
     --rt-info-50: #eff6ff;
     --rt-info-500: #2563eb;
-    --rt-info-600: #1d4ed8;
+    --rt-info-600: #0f4cd3;
+    --rt-info-700: #0038b5;
 
     /* Spacing — 8px base (off-grid half-steps помечены @deprecated). */
     --rt-space-0: 0;
