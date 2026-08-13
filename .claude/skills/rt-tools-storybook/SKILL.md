@@ -216,6 +216,15 @@ Rules that decide what goes in a matrix:
 - **A story that renders an empty collection is not coverage.** Ten stories
   currently pass an empty array and paint nothing (`UI-KIT-V2-ISSUES.md` §2.3);
   seed a realistic fixture instead.
+- **История уровня основ живёт при обвязке показа, а не в папке компонента, и договор о
+  покрытии к ней не относится.** Она показывает приём, общий для всего кита, — у неё нет ни
+  осей входов, ни состояний, и требовать от неё `Playground`, `States` и `Themes` не с чего.
+  Заголовок начинается разделом Foundation, файл лежит в `src/showcase/stories/`, обёртка — рядом,
+  в `component/`. Foundation-страницы при этом остаются в `projects/ui-kit-v2/docs/`: MDX
+  Angular не поднимает, и живой компонент показать со страницы нечем.
+- **Обёртка, переопределяющая своё свойство компонента, снимает инкапсуляцию.** Компонент
+  объявляет свойство на корне своего блока, а корень рисуется шаблоном кита — правило с
+  атрибутом инкапсуляции до него не доходит вовсе, и переопределение молча ничего не меняет.
 
 ## Matrix mechanics
 
