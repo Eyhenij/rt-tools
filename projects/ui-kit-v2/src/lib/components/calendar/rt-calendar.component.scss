@@ -1,131 +1,133 @@
-/* rt-calendar — ViewEncapsulation.None: правила таргетируют BEM-класс блока.
-   `.rt-calendar` — сам хост (шаблон начинается с ng-container, класс ставит host). */
+@layer rt-kit.components {
+    /* rt-calendar — ViewEncapsulation.None: правила таргетируют BEM-класс блока.
+       `.rt-calendar` — сам хост (шаблон начинается с ng-container, класс ставит host). */
 
-.rt-calendar {
-    --rt-calendar-day-radius: var(--rt-radius-md);
+    .rt-calendar {
+        --rt-calendar-day-radius: var(--rt-radius-md);
 
-    display: block;
+        display: block;
 
-    &__header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: var(--rt-space-4);
-        gap: var(--rt-space-4);
-    }
-
-    &__nav {
-        flex: 0 0 auto;
-    }
-
-    &__months {
-        display: grid;
-        gap: var(--rt-space-6);
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    &__month-title {
-        margin: 0 0 var(--rt-space-2);
-        color: var(--rt-color-text-primary);
-        font-weight: var(--rt-font-weight-semibold);
-        text-align: center;
-
-        &:first-letter {
-            text-transform: uppercase;
-        }
-    }
-
-    &__grid {
-        display: grid;
-        gap: var(--rt-space-0-5);
-        grid-template-columns: repeat(7, 1fr);
-    }
-
-    &__weekday {
-        padding: var(--rt-space-1) 0;
-        color: var(--rt-color-text-muted);
-        font-size: var(--rt-text-xs);
-        text-align: center;
-    }
-
-    &__day {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: var(--rt-space-2) var(--rt-space-0-5);
-        border: none;
-        border-radius: var(--rt-calendar-day-radius);
-        background: none;
-        color: var(--rt-color-text-primary);
-        cursor: pointer;
-        font: inherit;
-        gap: var(--rt-space-0-5);
-
-        &:hover:not(:disabled, [data-state='start'], [data-state='end'], [data-state='in-range']) {
-            background: var(--rt-color-bg-subtle);
+        &__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--rt-space-4);
+            gap: var(--rt-space-4);
         }
 
-        &:disabled {
-            cursor: not-allowed;
+        &__nav {
+            flex: 0 0 auto;
         }
 
-        &[data-state='past'],
-        &[data-state='blocked'] {
-            color: var(--rt-color-text-muted);
-            opacity: 0.45;
-        }
-
-        &[data-state='busy'] {
-            color: var(--rt-color-text-muted);
-            opacity: 0.45;
-            text-decoration: line-through;
-        }
-
-        &[data-state='start'],
-        &[data-state='end'] {
-            background: var(--rt-color-action-primary);
-            color: var(--rt-color-action-on-primary);
-        }
-
-        &[data-state='in-range'] {
-            background: var(--rt-color-action-primary-soft);
-            color: var(--rt-color-text-link);
-            font-weight: var(--rt-font-weight-semibold);
-        }
-    }
-
-    &__day-num {
-        font-size: var(--rt-text-sm);
-        font-weight: var(--rt-font-weight-medium);
-    }
-
-    &__day-sublabel {
-        font-size: var(--rt-text-2xs);
-        opacity: 0.75;
-    }
-
-    @media (width <= 640px) {
         &__months {
-            grid-template-columns: 1fr;
+            display: grid;
+            gap: var(--rt-space-6);
+            grid-template-columns: repeat(2, 1fr);
         }
 
-        /* на мобиле показываем один месяц — навигация листает по одному */
-        &__month:last-child {
-            display: none;
-        }
-    }
+        &__month-title {
+            margin: 0 0 var(--rt-space-2);
+            color: var(--rt-color-text-primary);
+            font-weight: var(--rt-font-weight-semibold);
+            text-align: center;
 
-    /* Экраны уже 375px: колонка не сжимается ниже строки с ценой — разряды
-       разделены неразрывным пробелом, и перенести её нечем. Освобождаем
-       ширину боковыми отступами клетки и ступенью кегля, а не прячем цену:
-       без неё календарь перестаёт быть прайс-листом */
-    @media (width <= 374px) {
+            &:first-letter {
+                text-transform: uppercase;
+            }
+        }
+
+        &__grid {
+            display: grid;
+            gap: var(--rt-space-0-5);
+            grid-template-columns: repeat(7, 1fr);
+        }
+
+        &__weekday {
+            padding: var(--rt-space-1) 0;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            text-align: center;
+        }
+
         &__day {
-            padding-inline: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: var(--rt-space-2) var(--rt-space-0-5);
+            border: none;
+            border-radius: var(--rt-calendar-day-radius);
+            background: none;
+            color: var(--rt-color-text-primary);
+            cursor: pointer;
+            font: inherit;
+            gap: var(--rt-space-0-5);
+
+            &:hover:not(:disabled, [data-state='start'], [data-state='end'], [data-state='in-range']) {
+                background: var(--rt-color-bg-subtle);
+            }
+
+            &:disabled {
+                cursor: not-allowed;
+            }
+
+            &[data-state='past'],
+            &[data-state='blocked'] {
+                color: var(--rt-color-text-muted);
+                opacity: 0.45;
+            }
+
+            &[data-state='busy'] {
+                color: var(--rt-color-text-muted);
+                opacity: 0.45;
+                text-decoration: line-through;
+            }
+
+            &[data-state='start'],
+            &[data-state='end'] {
+                background: var(--rt-color-action-primary);
+                color: var(--rt-color-action-on-primary);
+            }
+
+            &[data-state='in-range'] {
+                background: var(--rt-color-action-primary-soft);
+                color: var(--rt-color-text-link);
+                font-weight: var(--rt-font-weight-semibold);
+            }
+        }
+
+        &__day-num {
+            font-size: var(--rt-text-sm);
+            font-weight: var(--rt-font-weight-medium);
         }
 
         &__day-sublabel {
-            font-size: var(--rt-text-3xs);
+            font-size: var(--rt-text-2xs);
+            opacity: 0.75;
+        }
+
+        @media (width <= 640px) {
+            &__months {
+                grid-template-columns: 1fr;
+            }
+
+            /* на мобиле показываем один месяц — навигация листает по одному */
+            &__month:last-child {
+                display: none;
+            }
+        }
+
+        /* Экраны уже 375px: колонка не сжимается ниже строки с ценой — разряды
+           разделены неразрывным пробелом, и перенести её нечем. Освобождаем
+           ширину боковыми отступами клетки и ступенью кегля, а не прячем цену:
+           без неё календарь перестаёт быть прайс-листом */
+        @media (width <= 374px) {
+            &__day {
+                padding-inline: 0;
+            }
+
+            &__day-sublabel {
+                font-size: var(--rt-text-3xs);
+            }
         }
     }
 }

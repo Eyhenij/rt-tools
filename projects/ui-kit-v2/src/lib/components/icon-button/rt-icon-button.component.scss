@@ -1,166 +1,168 @@
-/* rt-icon-button — иконочная кнопка в common/ui. ViewEncapsulation.None.
-   Хост адресуется по имени элемента, а не по классу блока: класс `.rt-icon-button` висит
-   и на `<rt-icon-button>`, и на корне шаблона, поэтому правила блока вложены в хост —
-   так они достаются только корню шаблона. */
+@layer rt-kit.components {
+    /* rt-icon-button — иконочная кнопка в common/ui. ViewEncapsulation.None.
+       Хост адресуется по имени элемента, а не по классу блока: класс `.rt-icon-button` висит
+       и на `<rt-icon-button>`, и на корне шаблона, поэтому правила блока вложены в хост —
+       так они достаются только корню шаблона. */
 
-rt-icon-button {
-    display: inline-flex;
-
-    /* Дефолт = md; перезаписывается модификаторами sm/lg ниже либо inline стилем потребителя.
-       Ряд берётся из общей шкалы высот контролов: иконочная кнопка стоит в строке
-       рядом с кнопкой и полем и обязана совпадать с ними по высоте. */
-    --rt-icon-button-size: var(--rt-control-height-md);
-
-    /* Цвет иконки объявлен здесь, а не приходил бы запасным значением на месте
-       обращения: запасное переживает смену темы — переопределять нечего. Своё
-       свойство блока перебивает тот, кому нужен другой цвет: так делает просмотр
-       фотографии, где кнопка стоит на снимке. */
-    --rt-icon-button-color: var(--rt-color-text-primary);
-
-    .rt-icon-button {
-        --rt-icon-button-circle-radius: var(--rt-radius-full);
-        --rt-icon-button-square-radius: var(--rt-radius-md);
-        --rt-icon-button-indicator-radius: var(--rt-radius-full);
-        --rt-icon-button-focus-shadow: var(--rt-shadow-focus-ring);
-        --rt-icon-button-transition-duration: var(--rt-duration-fast);
-
-        position: relative;
+    rt-icon-button {
         display: inline-flex;
-        width: var(--rt-icon-button-size);
-        height: var(--rt-icon-button-size);
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-        border: 0;
-        background: transparent;
-        color: var(--rt-icon-button-color);
-        cursor: pointer;
-        transition: background-color var(--rt-icon-button-transition-duration) ease;
 
-        &--sm {
-            --rt-icon-button-size: var(--rt-control-height-sm);
-        }
+        /* Дефолт = md; перезаписывается модификаторами sm/lg ниже либо inline стилем потребителя.
+           Ряд берётся из общей шкалы высот контролов: иконочная кнопка стоит в строке
+           рядом с кнопкой и полем и обязана совпадать с ними по высоте. */
+        --rt-icon-button-size: var(--rt-control-height-md);
 
-        &--md {
-            --rt-icon-button-size: var(--rt-control-height-md);
-        }
+        /* Цвет иконки объявлен здесь, а не приходил бы запасным значением на месте
+           обращения: запасное переживает смену темы — переопределять нечего. Своё
+           свойство блока перебивает тот, кому нужен другой цвет: так делает просмотр
+           фотографии, где кнопка стоит на снимке. */
+        --rt-icon-button-color: var(--rt-color-text-primary);
 
-        &--lg {
-            --rt-icon-button-size: var(--rt-control-height-lg);
-        }
+        .rt-icon-button {
+            --rt-icon-button-circle-radius: var(--rt-radius-full);
+            --rt-icon-button-square-radius: var(--rt-radius-md);
+            --rt-icon-button-indicator-radius: var(--rt-radius-full);
+            --rt-icon-button-focus-shadow: var(--rt-shadow-focus-ring);
+            --rt-icon-button-transition-duration: var(--rt-duration-fast);
 
-        &--xl {
-            --rt-icon-button-size: var(--rt-control-height-xl);
-        }
+            position: relative;
+            display: inline-flex;
+            width: var(--rt-icon-button-size);
+            height: var(--rt-icon-button-size);
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: var(--rt-icon-button-color);
+            cursor: pointer;
+            transition: background-color var(--rt-icon-button-transition-duration) ease;
 
-        &--2xl {
-            --rt-icon-button-size: var(--rt-control-height-2xl);
-        }
-
-        &--circle {
-            border-radius: var(--rt-icon-button-circle-radius);
-        }
-
-        &--square {
-            border-radius: var(--rt-icon-button-square-radius);
-        }
-
-        &--ghost {
-            &:hover:not(:disabled) {
-                background-color: var(--rt-icon-button-color-bg-hover);
+            &--sm {
+                --rt-icon-button-size: var(--rt-control-height-sm);
             }
 
-            &.rt-icon-button--active {
-                background-color: var(--rt-icon-button-color-bg-hover);
-            }
-        }
-
-        &--primary {
-            background-color: var(--rt-color-action-primary);
-            color: var(--rt-color-action-on-primary);
-
-            &:hover:not(:disabled) {
-                background-color: var(--rt-color-action-primary-hover);
-            }
-        }
-
-        &--secondary {
-            background-color: var(--rt-color-bg-surface-subtle);
-            color: var(--rt-color-text-primary);
-
-            &:hover:not(:disabled) {
-                background-color: var(--rt-icon-button-color-bg-hover);
-            }
-        }
-
-        &--danger {
-            color: var(--rt-color-state-danger);
-
-            &:hover:not(:disabled) {
-                background-color: var(--rt-icon-button-color-bg-hover);
+            &--md {
+                --rt-icon-button-size: var(--rt-control-height-md);
             }
 
-            &.rt-icon-button--active {
-                background-color: var(--rt-icon-button-color-bg-hover);
-            }
-        }
-
-        &--success {
-            color: var(--rt-color-state-success);
-
-            &:hover:not(:disabled) {
-                background-color: var(--rt-icon-button-color-bg-hover);
+            &--lg {
+                --rt-icon-button-size: var(--rt-control-height-lg);
             }
 
-            &.rt-icon-button--active {
-                background-color: var(--rt-icon-button-color-bg-hover);
-            }
-        }
-
-        &--warning {
-            color: var(--rt-color-state-warning);
-
-            &:hover:not(:disabled) {
-                background-color: var(--rt-icon-button-color-bg-hover);
+            &--xl {
+                --rt-icon-button-size: var(--rt-control-height-xl);
             }
 
-            &.rt-icon-button--active {
-                background-color: var(--rt-icon-button-color-bg-hover);
+            &--2xl {
+                --rt-icon-button-size: var(--rt-control-height-2xl);
             }
-        }
 
-        &:disabled {
-            cursor: not-allowed;
-            opacity: 0.5;
-        }
+            &--circle {
+                border-radius: var(--rt-icon-button-circle-radius);
+            }
 
-        &:focus-visible {
-            box-shadow: var(--rt-icon-button-focus-shadow);
-            outline: 2px solid transparent;
-            outline-offset: 2px;
-        }
+            &--square {
+                border-radius: var(--rt-icon-button-square-radius);
+            }
 
-        &__spinner {
-            --rt-icon-button-spin-duration: 1s;
+            &--ghost {
+                &:hover:not(:disabled) {
+                    background-color: var(--rt-icon-button-color-bg-hover);
+                }
 
-            animation: rt-icon-button-spin var(--rt-icon-button-spin-duration) linear infinite;
-        }
+                &.rt-icon-button--active {
+                    background-color: var(--rt-icon-button-color-bg-hover);
+                }
+            }
 
-        &__indicator {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            border-radius: var(--rt-icon-button-indicator-radius);
-            background: var(--rt-color-state-danger);
-            inset-block-start: -2px;
-            inset-inline-end: -2px;
-            pointer-events: none;
+            &--primary {
+                background-color: var(--rt-color-action-primary);
+                color: var(--rt-color-action-on-primary);
+
+                &:hover:not(:disabled) {
+                    background-color: var(--rt-color-action-primary-hover);
+                }
+            }
+
+            &--secondary {
+                background-color: var(--rt-color-bg-surface-subtle);
+                color: var(--rt-color-text-primary);
+
+                &:hover:not(:disabled) {
+                    background-color: var(--rt-icon-button-color-bg-hover);
+                }
+            }
+
+            &--danger {
+                color: var(--rt-color-state-danger);
+
+                &:hover:not(:disabled) {
+                    background-color: var(--rt-icon-button-color-bg-hover);
+                }
+
+                &.rt-icon-button--active {
+                    background-color: var(--rt-icon-button-color-bg-hover);
+                }
+            }
+
+            &--success {
+                color: var(--rt-color-state-success);
+
+                &:hover:not(:disabled) {
+                    background-color: var(--rt-icon-button-color-bg-hover);
+                }
+
+                &.rt-icon-button--active {
+                    background-color: var(--rt-icon-button-color-bg-hover);
+                }
+            }
+
+            &--warning {
+                color: var(--rt-color-state-warning);
+
+                &:hover:not(:disabled) {
+                    background-color: var(--rt-icon-button-color-bg-hover);
+                }
+
+                &.rt-icon-button--active {
+                    background-color: var(--rt-icon-button-color-bg-hover);
+                }
+            }
+
+            &:disabled {
+                cursor: not-allowed;
+                opacity: 0.5;
+            }
+
+            &:focus-visible {
+                box-shadow: var(--rt-icon-button-focus-shadow);
+                outline: 2px solid transparent;
+                outline-offset: 2px;
+            }
+
+            &__spinner {
+                --rt-icon-button-spin-duration: 1s;
+
+                animation: rt-icon-button-spin var(--rt-icon-button-spin-duration) linear infinite;
+            }
+
+            &__indicator {
+                position: absolute;
+                width: 8px;
+                height: 8px;
+                border-radius: var(--rt-icon-button-indicator-radius);
+                background: var(--rt-color-state-danger);
+                inset-block-start: -2px;
+                inset-inline-end: -2px;
+                pointer-events: none;
+            }
         }
     }
-}
 
-@keyframes rt-icon-button-spin {
-    to {
-        transform: rotate(360deg);
+    @keyframes rt-icon-button-spin {
+        to {
+            transform: rotate(360deg);
+        }
     }
 }

@@ -1,325 +1,327 @@
-.rt-button {
-    /* Высота приходит общей шкалой контролов, а не своим числом: кнопка, поле и
-       иконочная кнопка одного размера стоят в одной строке и обязаны совпадать. */
-    --rt-btn-height: var(--rt-control-height-md);
-    --rt-btn-padding: 0 1.25rem;
-    --rt-btn-gap: 0.5rem;
-    --rt-btn-radius: var(--rt-radius-lg);
-    --rt-btn-border-width: var(--rt-border-width-thin);
-    --rt-btn-transition-duration: var(--rt-duration-fast);
-    --rt-btn-focus-shadow: var(--rt-shadow-focus-ring);
-    --rt-btn-font-size: 0.95rem;
-    --rt-btn-icon-size: 1rem;
-    --rt-btn-spinner-size: 1rem;
-    --rt-btn-spinner-border-width: var(--rt-border-width-medium);
-    --rt-btn-spinner-radius: var(--rt-radius-full);
-    --rt-btn-bg: var(--rt-color-action-primary);
-    --rt-btn-bg-hover: var(--rt-color-action-primary-hover);
-    --rt-btn-bg-active: var(--rt-color-action-primary-active);
-    --rt-btn-color: var(--rt-color-action-on-primary);
-    --rt-btn-border-color: var(--rt-btn-bg);
-    --rt-btn-border-color-hover: var(--rt-btn-bg-hover);
-    --rt-btn-shadow: none;
+@layer rt-kit.components {
+    .rt-button {
+        /* Высота приходит общей шкалой контролов, а не своим числом: кнопка, поле и
+           иконочная кнопка одного размера стоят в одной строке и обязаны совпадать. */
+        --rt-btn-height: var(--rt-control-height-md);
+        --rt-btn-padding: 0 1.25rem;
+        --rt-btn-gap: 0.5rem;
+        --rt-btn-radius: var(--rt-radius-lg);
+        --rt-btn-border-width: var(--rt-border-width-thin);
+        --rt-btn-transition-duration: var(--rt-duration-fast);
+        --rt-btn-focus-shadow: var(--rt-shadow-focus-ring);
+        --rt-btn-font-size: 0.95rem;
+        --rt-btn-icon-size: 1rem;
+        --rt-btn-spinner-size: 1rem;
+        --rt-btn-spinner-border-width: var(--rt-border-width-medium);
+        --rt-btn-spinner-radius: var(--rt-radius-full);
+        --rt-btn-bg: var(--rt-color-action-primary);
+        --rt-btn-bg-hover: var(--rt-color-action-primary-hover);
+        --rt-btn-bg-active: var(--rt-color-action-primary-active);
+        --rt-btn-color: var(--rt-color-action-on-primary);
+        --rt-btn-border-color: var(--rt-btn-bg);
+        --rt-btn-border-color-hover: var(--rt-btn-bg-hover);
+        --rt-btn-shadow: none;
 
-    display: inline-flex;
-    height: var(--rt-btn-height);
-    min-height: var(--rt-btn-height);
-    box-sizing: border-box;
-    align-items: center;
-    justify-content: center;
-    padding: var(--rt-btn-padding);
-    border: var(--rt-btn-border-width) solid var(--rt-btn-border-color);
-    border-radius: var(--rt-btn-radius);
-    margin: 0;
-    background: var(--rt-btn-bg);
-    box-shadow: var(--rt-btn-shadow);
-    color: var(--rt-btn-color);
-    cursor: pointer;
-    font-family: inherit;
-    font-size: var(--rt-btn-font-size);
-    font-weight: var(--rt-font-weight-medium);
-    gap: var(--rt-btn-gap);
-    line-height: var(--rt-leading-none);
-    outline: none;
-    -webkit-tap-highlight-color: transparent;
-    text-decoration: none;
-    transition:
-        background-color var(--rt-btn-transition-duration),
-        color var(--rt-btn-transition-duration),
-        border-color var(--rt-btn-transition-duration),
-        box-shadow var(--rt-btn-transition-duration);
-    user-select: none;
-    white-space: nowrap;
-
-    &:hover:not(:disabled) {
-        border-color: var(--rt-btn-border-color-hover);
-        background: var(--rt-btn-bg-hover);
-    }
-
-    &:active:not(:disabled) {
-        background: var(--rt-btn-bg-active);
-    }
-
-    &:focus-visible {
-        box-shadow: var(--rt-btn-focus-shadow);
-        outline: 2px solid transparent;
-        outline-offset: 2px;
-    }
-
-    /* `flex-shrink: 0` — иконке заданного размера. Без него в кнопке, которой ширину
-       навязали снаружи (пункт меню `rt-split-button` берёт её от панели), лейбл давит
-       на иконку, и та сжимается до нуля: место занято, а иконки не видно. */
-    &__icon {
         display: inline-flex;
-        width: var(--rt-btn-icon-size);
-        height: var(--rt-btn-icon-size);
-        flex-shrink: 0;
+        height: var(--rt-btn-height);
+        min-height: var(--rt-btn-height);
+        box-sizing: border-box;
         align-items: center;
         justify-content: center;
-        font-size: var(--rt-btn-icon-size);
-    }
-
-    &__label {
-        display: inline-flex;
-        align-items: center;
+        padding: var(--rt-btn-padding);
+        border: var(--rt-btn-border-width) solid var(--rt-btn-border-color);
+        border-radius: var(--rt-btn-radius);
+        margin: 0;
+        background: var(--rt-btn-bg);
+        box-shadow: var(--rt-btn-shadow);
+        color: var(--rt-btn-color);
+        cursor: pointer;
+        font-family: inherit;
+        font-size: var(--rt-btn-font-size);
+        font-weight: var(--rt-font-weight-medium);
+        gap: var(--rt-btn-gap);
+        line-height: var(--rt-leading-none);
+        outline: none;
+        -webkit-tap-highlight-color: transparent;
+        text-decoration: none;
+        transition:
+            background-color var(--rt-btn-transition-duration),
+            color var(--rt-btn-transition-duration),
+            border-color var(--rt-btn-transition-duration),
+            box-shadow var(--rt-btn-transition-duration);
+        user-select: none;
         white-space: nowrap;
+
+        &:hover:not(:disabled) {
+            border-color: var(--rt-btn-border-color-hover);
+            background: var(--rt-btn-bg-hover);
+        }
+
+        &:active:not(:disabled) {
+            background: var(--rt-btn-bg-active);
+        }
+
+        &:focus-visible {
+            box-shadow: var(--rt-btn-focus-shadow);
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+        }
+
+        /* `flex-shrink: 0` — иконке заданного размера. Без него в кнопке, которой ширину
+           навязали снаружи (пункт меню `rt-split-button` берёт её от панели), лейбл давит
+           на иконку, и та сжимается до нуля: место занято, а иконки не видно. */
+        &__icon {
+            display: inline-flex;
+            width: var(--rt-btn-icon-size);
+            height: var(--rt-btn-icon-size);
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--rt-btn-icon-size);
+        }
+
+        &__label {
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        &__spinner {
+            --rt-btn-spinner-fade-duration: 0.3s;
+            --rt-btn-spinner-rotation-duration: 0.7s;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            animation: rt-button-fade-in var(--rt-btn-spinner-fade-duration) both;
+        }
+
+        &__spinner-circle {
+            display: inline-block;
+            width: var(--rt-btn-spinner-size);
+            height: var(--rt-btn-spinner-size);
+            border: var(--rt-btn-spinner-border-width) solid currentcolor;
+            border-radius: var(--rt-btn-spinner-radius);
+            border-bottom-color: transparent;
+            animation: rt-button-spin var(--rt-btn-spinner-rotation-duration) linear infinite;
+            opacity: 0.85;
+        }
+
+        &--secondary {
+            --rt-btn-bg: var(--rt-color-action-secondary);
+            --rt-btn-bg-hover: var(--rt-color-action-secondary-hover);
+            --rt-btn-bg-active: var(--rt-color-action-secondary-active);
+            --rt-btn-color: var(--rt-color-action-on-secondary);
+        }
+
+        &--success {
+            --rt-btn-bg: var(--rt-color-action-success);
+            --rt-btn-bg-hover: var(--rt-color-action-success-hover);
+            --rt-btn-bg-active: var(--rt-color-action-success-active);
+            --rt-btn-color: var(--rt-color-action-on-success);
+        }
+
+        &--warning {
+            --rt-btn-bg: var(--rt-color-action-warning);
+            --rt-btn-bg-hover: var(--rt-color-action-warning-hover);
+            --rt-btn-bg-active: var(--rt-color-action-warning-active);
+            --rt-btn-color: var(--rt-color-action-on-warning);
+        }
+
+        &--danger {
+            --rt-btn-bg: var(--rt-color-action-danger);
+            --rt-btn-bg-hover: var(--rt-color-action-danger-hover);
+            --rt-btn-bg-active: var(--rt-color-action-danger-active);
+            --rt-btn-color: var(--rt-color-action-on-danger);
+        }
+
+        &--info {
+            --rt-btn-bg: var(--rt-color-action-info);
+            --rt-btn-bg-hover: var(--rt-color-action-info-hover);
+            --rt-btn-bg-active: var(--rt-color-action-info-active);
+            --rt-btn-color: var(--rt-color-action-on-info);
+        }
+
+        /* Подложка наведения и нажатия у безфоновых оформлений считается от цвета самой
+           кнопки, а не берётся готовым оттенком: оттенок в слое назначений есть только у
+           марки, и роли danger или success получали бы от него чужой след. Доли вынесены
+           свойствами — на графите слабый оттенок не виден, и тёмная тема их поднимает. */
+        &--outlined {
+            --rt-btn-bg: transparent;
+            --rt-btn-bg-hover: color-mix(in srgb, var(--rt-btn-color) var(--rt-btn-tint-hover), transparent);
+            --rt-btn-bg-active: color-mix(in srgb, var(--rt-btn-color) var(--rt-btn-tint-active), transparent);
+            --rt-btn-color: var(--rt-color-action-primary-on-surface);
+            --rt-btn-border-color: currentcolor;
+            --rt-btn-border-color-hover: currentcolor;
+            --rt-btn-shadow: none;
+        }
+
+        &--outlined#{&}--secondary {
+            --rt-btn-color: var(--rt-color-action-secondary-on-surface);
+        }
+
+        &--outlined#{&}--success {
+            --rt-btn-color: var(--rt-color-action-success-on-surface);
+        }
+
+        &--outlined#{&}--warning {
+            --rt-btn-color: var(--rt-color-action-warning-on-surface);
+        }
+
+        &--outlined#{&}--danger {
+            --rt-btn-color: var(--rt-color-action-danger-on-surface);
+        }
+
+        &--outlined#{&}--info {
+            --rt-btn-color: var(--rt-color-action-info-on-surface);
+        }
+
+        &--text {
+            --rt-btn-bg: transparent;
+            --rt-btn-bg-hover: color-mix(in srgb, var(--rt-btn-color) var(--rt-btn-tint-hover), transparent);
+            --rt-btn-bg-active: color-mix(in srgb, var(--rt-btn-color) var(--rt-btn-tint-active), transparent);
+            --rt-btn-color: var(--rt-color-action-primary-on-surface);
+            --rt-btn-border-color: transparent;
+            --rt-btn-border-color-hover: transparent;
+            --rt-btn-shadow: none;
+        }
+
+        &--text#{&}--secondary {
+            --rt-btn-color: var(--rt-color-action-secondary-on-surface);
+        }
+
+        &--text#{&}--success {
+            --rt-btn-color: var(--rt-color-action-success-on-surface);
+        }
+
+        &--text#{&}--warning {
+            --rt-btn-color: var(--rt-color-action-warning-on-surface);
+        }
+
+        &--text#{&}--danger {
+            --rt-btn-color: var(--rt-color-action-danger-on-surface);
+        }
+
+        &--text#{&}--info {
+            --rt-btn-color: var(--rt-color-action-info-on-surface);
+        }
+
+        &--rounded {
+            --rt-btn-radius: 999px;
+        }
+
+        &--sm {
+            --rt-btn-height: var(--rt-control-height-sm);
+            --rt-btn-padding: 0 0.875rem;
+            --rt-btn-font-size: 0.8125rem;
+            --rt-btn-icon-size: 0.875rem;
+            --rt-btn-spinner-size: 0.875rem;
+        }
+
+        &--lg {
+            --rt-btn-height: var(--rt-control-height-lg);
+            --rt-btn-padding: 0 1.5rem;
+            --rt-btn-font-size: 1.0625rem;
+            --rt-btn-icon-size: 1.125rem;
+            --rt-btn-spinner-size: 1.125rem;
+        }
+
+        &--xl {
+            --rt-btn-height: var(--rt-control-height-xl);
+            --rt-btn-padding: 0 1.75rem;
+            --rt-btn-font-size: 1.125rem;
+            --rt-btn-icon-size: 1.25rem;
+            --rt-btn-spinner-size: 1.25rem;
+        }
+
+        &--2xl {
+            --rt-btn-height: var(--rt-control-height-2xl);
+            --rt-btn-padding: 0 2rem;
+            --rt-btn-font-size: 1.1875rem;
+            --rt-btn-icon-size: 1.375rem;
+            --rt-btn-spinner-size: 1.375rem;
+        }
+
+        &--icon-only {
+            width: var(--rt-btn-height);
+            padding: 0;
+            gap: 0;
+        }
+
+        &--icon-only#{&}--rounded {
+            --rt-btn-radius: 50%;
+        }
+
+        &--loading {
+            cursor: wait;
+            pointer-events: none;
+        }
+
+        /* Состояние стоит ниже всех вариантов оформления и палитры того же блока.
+           Специфичность у них равная, и правила равной силы разбираются порядком в
+           файле: отсюда, снизу, отключённость отменяет и заливку, и цвет подписи.
+           Стояла она выше — и проигрывала молча: текстовая кнопка получала серую
+           плашку, которой у неё нет ни в одном другом состоянии, а отключённая
+           danger оставалась красной надписью на этой плашке.
+
+           Поднимать специфичность вместо переноса нельзя: она перебила бы и то, чего
+           перебивать не собирались, — размер, скругление и свои свойства потребителя. */
+        &:disabled {
+            --rt-btn-bg: var(--rt-color-action-disabled);
+            --rt-btn-bg-hover: var(--rt-color-action-disabled);
+            --rt-btn-bg-active: var(--rt-color-action-disabled);
+            --rt-btn-border-color: var(--rt-color-action-disabled);
+            --rt-btn-border-color-hover: var(--rt-color-action-disabled);
+            --rt-btn-color: var(--rt-color-action-on-disabled);
+
+            cursor: not-allowed;
+        }
+
+        /* Безфоновым оформлениям отключённость фона не даёт: его у них нет ни в одном
+           другом состоянии, и серая плашка читалась бы как подсветка, а не как
+           недоступность. Остаётся приглушённая подпись, а обводочной — спокойная рамка
+           вместо цвета своей роли. */
+        &--outlined:disabled,
+        &--text:disabled {
+            --rt-btn-bg: transparent;
+            --rt-btn-bg-hover: transparent;
+            --rt-btn-bg-active: transparent;
+        }
+
+        &--outlined:disabled {
+            --rt-btn-border-color: var(--rt-color-border-default);
+            --rt-btn-border-color-hover: var(--rt-color-border-default);
+        }
+
+        &--text:disabled {
+            --rt-btn-border-color: transparent;
+            --rt-btn-border-color-hover: transparent;
+        }
     }
 
-    &__spinner {
-        --rt-btn-spinner-fade-duration: 0.3s;
-        --rt-btn-spinner-rotation-duration: 0.7s;
-
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        animation: rt-button-fade-in var(--rt-btn-spinner-fade-duration) both;
+    @keyframes rt-button-spin {
+        to {
+            transform: rotate(360deg);
+        }
     }
 
-    &__spinner-circle {
-        display: inline-block;
-        width: var(--rt-btn-spinner-size);
-        height: var(--rt-btn-spinner-size);
-        border: var(--rt-btn-spinner-border-width) solid currentcolor;
-        border-radius: var(--rt-btn-spinner-radius);
-        border-bottom-color: transparent;
-        animation: rt-button-spin var(--rt-btn-spinner-rotation-duration) linear infinite;
-        opacity: 0.85;
+    @keyframes rt-button-fade-in {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
     }
 
-    &--secondary {
-        --rt-btn-bg: var(--rt-color-action-secondary);
-        --rt-btn-bg-hover: var(--rt-color-action-secondary-hover);
-        --rt-btn-bg-active: var(--rt-color-action-secondary-active);
-        --rt-btn-color: var(--rt-color-action-on-secondary);
-    }
+    @keyframes rt-button-fade-out {
+        from {
+            opacity: 1;
+        }
 
-    &--success {
-        --rt-btn-bg: var(--rt-color-action-success);
-        --rt-btn-bg-hover: var(--rt-color-action-success-hover);
-        --rt-btn-bg-active: var(--rt-color-action-success-active);
-        --rt-btn-color: var(--rt-color-action-on-success);
-    }
-
-    &--warning {
-        --rt-btn-bg: var(--rt-color-action-warning);
-        --rt-btn-bg-hover: var(--rt-color-action-warning-hover);
-        --rt-btn-bg-active: var(--rt-color-action-warning-active);
-        --rt-btn-color: var(--rt-color-action-on-warning);
-    }
-
-    &--danger {
-        --rt-btn-bg: var(--rt-color-action-danger);
-        --rt-btn-bg-hover: var(--rt-color-action-danger-hover);
-        --rt-btn-bg-active: var(--rt-color-action-danger-active);
-        --rt-btn-color: var(--rt-color-action-on-danger);
-    }
-
-    &--info {
-        --rt-btn-bg: var(--rt-color-action-info);
-        --rt-btn-bg-hover: var(--rt-color-action-info-hover);
-        --rt-btn-bg-active: var(--rt-color-action-info-active);
-        --rt-btn-color: var(--rt-color-action-on-info);
-    }
-
-    /* Подложка наведения и нажатия у безфоновых оформлений считается от цвета самой
-       кнопки, а не берётся готовым оттенком: оттенок в слое назначений есть только у
-       марки, и роли danger или success получали бы от него чужой след. Доли вынесены
-       свойствами — на графите слабый оттенок не виден, и тёмная тема их поднимает. */
-    &--outlined {
-        --rt-btn-bg: transparent;
-        --rt-btn-bg-hover: color-mix(in srgb, var(--rt-btn-color) var(--rt-btn-tint-hover), transparent);
-        --rt-btn-bg-active: color-mix(in srgb, var(--rt-btn-color) var(--rt-btn-tint-active), transparent);
-        --rt-btn-color: var(--rt-color-action-primary-on-surface);
-        --rt-btn-border-color: currentcolor;
-        --rt-btn-border-color-hover: currentcolor;
-        --rt-btn-shadow: none;
-    }
-
-    &--outlined#{&}--secondary {
-        --rt-btn-color: var(--rt-color-action-secondary-on-surface);
-    }
-
-    &--outlined#{&}--success {
-        --rt-btn-color: var(--rt-color-action-success-on-surface);
-    }
-
-    &--outlined#{&}--warning {
-        --rt-btn-color: var(--rt-color-action-warning-on-surface);
-    }
-
-    &--outlined#{&}--danger {
-        --rt-btn-color: var(--rt-color-action-danger-on-surface);
-    }
-
-    &--outlined#{&}--info {
-        --rt-btn-color: var(--rt-color-action-info-on-surface);
-    }
-
-    &--text {
-        --rt-btn-bg: transparent;
-        --rt-btn-bg-hover: color-mix(in srgb, var(--rt-btn-color) var(--rt-btn-tint-hover), transparent);
-        --rt-btn-bg-active: color-mix(in srgb, var(--rt-btn-color) var(--rt-btn-tint-active), transparent);
-        --rt-btn-color: var(--rt-color-action-primary-on-surface);
-        --rt-btn-border-color: transparent;
-        --rt-btn-border-color-hover: transparent;
-        --rt-btn-shadow: none;
-    }
-
-    &--text#{&}--secondary {
-        --rt-btn-color: var(--rt-color-action-secondary-on-surface);
-    }
-
-    &--text#{&}--success {
-        --rt-btn-color: var(--rt-color-action-success-on-surface);
-    }
-
-    &--text#{&}--warning {
-        --rt-btn-color: var(--rt-color-action-warning-on-surface);
-    }
-
-    &--text#{&}--danger {
-        --rt-btn-color: var(--rt-color-action-danger-on-surface);
-    }
-
-    &--text#{&}--info {
-        --rt-btn-color: var(--rt-color-action-info-on-surface);
-    }
-
-    &--rounded {
-        --rt-btn-radius: 999px;
-    }
-
-    &--sm {
-        --rt-btn-height: var(--rt-control-height-sm);
-        --rt-btn-padding: 0 0.875rem;
-        --rt-btn-font-size: 0.8125rem;
-        --rt-btn-icon-size: 0.875rem;
-        --rt-btn-spinner-size: 0.875rem;
-    }
-
-    &--lg {
-        --rt-btn-height: var(--rt-control-height-lg);
-        --rt-btn-padding: 0 1.5rem;
-        --rt-btn-font-size: 1.0625rem;
-        --rt-btn-icon-size: 1.125rem;
-        --rt-btn-spinner-size: 1.125rem;
-    }
-
-    &--xl {
-        --rt-btn-height: var(--rt-control-height-xl);
-        --rt-btn-padding: 0 1.75rem;
-        --rt-btn-font-size: 1.125rem;
-        --rt-btn-icon-size: 1.25rem;
-        --rt-btn-spinner-size: 1.25rem;
-    }
-
-    &--2xl {
-        --rt-btn-height: var(--rt-control-height-2xl);
-        --rt-btn-padding: 0 2rem;
-        --rt-btn-font-size: 1.1875rem;
-        --rt-btn-icon-size: 1.375rem;
-        --rt-btn-spinner-size: 1.375rem;
-    }
-
-    &--icon-only {
-        width: var(--rt-btn-height);
-        padding: 0;
-        gap: 0;
-    }
-
-    &--icon-only#{&}--rounded {
-        --rt-btn-radius: 50%;
-    }
-
-    &--loading {
-        cursor: wait;
-        pointer-events: none;
-    }
-
-    /* Состояние стоит ниже всех вариантов оформления и палитры того же блока.
-       Специфичность у них равная, и правила равной силы разбираются порядком в
-       файле: отсюда, снизу, отключённость отменяет и заливку, и цвет подписи.
-       Стояла она выше — и проигрывала молча: текстовая кнопка получала серую
-       плашку, которой у неё нет ни в одном другом состоянии, а отключённая
-       danger оставалась красной надписью на этой плашке.
-
-       Поднимать специфичность вместо переноса нельзя: она перебила бы и то, чего
-       перебивать не собирались, — размер, скругление и свои свойства потребителя. */
-    &:disabled {
-        --rt-btn-bg: var(--rt-color-action-disabled);
-        --rt-btn-bg-hover: var(--rt-color-action-disabled);
-        --rt-btn-bg-active: var(--rt-color-action-disabled);
-        --rt-btn-border-color: var(--rt-color-action-disabled);
-        --rt-btn-border-color-hover: var(--rt-color-action-disabled);
-        --rt-btn-color: var(--rt-color-action-on-disabled);
-
-        cursor: not-allowed;
-    }
-
-    /* Безфоновым оформлениям отключённость фона не даёт: его у них нет ни в одном
-       другом состоянии, и серая плашка читалась бы как подсветка, а не как
-       недоступность. Остаётся приглушённая подпись, а обводочной — спокойная рамка
-       вместо цвета своей роли. */
-    &--outlined:disabled,
-    &--text:disabled {
-        --rt-btn-bg: transparent;
-        --rt-btn-bg-hover: transparent;
-        --rt-btn-bg-active: transparent;
-    }
-
-    &--outlined:disabled {
-        --rt-btn-border-color: var(--rt-color-border-default);
-        --rt-btn-border-color-hover: var(--rt-color-border-default);
-    }
-
-    &--text:disabled {
-        --rt-btn-border-color: transparent;
-        --rt-btn-border-color-hover: transparent;
-    }
-}
-
-@keyframes rt-button-spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes rt-button-fade-in {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes rt-button-fade-out {
-    from {
-        opacity: 1;
-    }
-
-    to {
-        opacity: 0;
+        to {
+            opacity: 0;
+        }
     }
 }

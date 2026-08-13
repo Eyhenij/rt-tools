@@ -1,101 +1,103 @@
-/* rt-tag — status pill в common/ui. ViewEncapsulation.None.
-   Хост адресуется по имени элемента, а не по классу блока: класс `.rt-tag` висит
-   и на `<rt-tag>`, и на корне шаблона, поэтому правила блока вложены в хост —
-   так они достаются только корню шаблона. */
+@layer rt-kit.components {
+    /* rt-tag — status pill в common/ui. ViewEncapsulation.None.
+       Хост адресуется по имени элемента, а не по классу блока: класс `.rt-tag` висит
+       и на `<rt-tag>`, и на корне шаблона, поэтому правила блока вложены в хост —
+       так они достаются только корню шаблона. */
 
-rt-tag {
-    display: inline-flex;
-
-    .rt-tag {
-        --rt-tag-radius: var(--rt-radius-md);
-        --rt-tag-border-width: var(--rt-border-width-thin);
-
+    rt-tag {
         display: inline-flex;
-        align-items: center;
-        padding: var(--rt-space-1) var(--rt-space-2);
-        border-radius: var(--rt-tag-radius);
-        background: var(--rt-neutral-100);
-        color: var(--rt-neutral-700);
-        font-size: var(--rt-text-sm);
-        gap: var(--rt-space-1);
-        line-height: var(--rt-leading-tight);
 
-        &--shape--pill {
-            --rt-tag-radius: var(--rt-radius-full);
-        }
-
-        &--shape--square {
-            --rt-tag-radius: var(--rt-radius-sm);
-        }
-
-        /* Явный radius переопределяет shape — правила идут позже по порядку. */
-        &--radius--none {
-            --rt-tag-radius: var(--rt-radius-none);
-        }
-
-        &--radius--sm {
-            --rt-tag-radius: var(--rt-radius-sm);
-        }
-
-        &--radius--md {
+        .rt-tag {
             --rt-tag-radius: var(--rt-radius-md);
-        }
+            --rt-tag-border-width: var(--rt-border-width-thin);
 
-        &--radius--lg {
-            --rt-tag-radius: var(--rt-radius-lg);
-        }
+            display: inline-flex;
+            align-items: center;
+            padding: var(--rt-space-1) var(--rt-space-2);
+            border-radius: var(--rt-tag-radius);
+            background: var(--rt-neutral-100);
+            color: var(--rt-neutral-700);
+            font-size: var(--rt-text-sm);
+            gap: var(--rt-space-1);
+            line-height: var(--rt-leading-tight);
 
-        &--radius--full {
-            --rt-tag-radius: var(--rt-radius-full);
-        }
+            &--shape--pill {
+                --rt-tag-radius: var(--rt-radius-full);
+            }
 
-        &--severity--info {
-            background: var(--rt-color-state-info-bg);
-            color: var(--rt-color-state-info);
-        }
+            &--shape--square {
+                --rt-tag-radius: var(--rt-radius-sm);
+            }
 
-        &--severity--success {
-            background: var(--rt-color-state-success-bg);
-            color: var(--rt-color-state-success);
-        }
+            /* Явный radius переопределяет shape — правила идут позже по порядку. */
+            &--radius--none {
+                --rt-tag-radius: var(--rt-radius-none);
+            }
 
-        &--severity--warning {
-            background: var(--rt-color-state-warning-bg);
-            color: var(--rt-color-state-warning);
-        }
+            &--radius--sm {
+                --rt-tag-radius: var(--rt-radius-sm);
+            }
 
-        &--severity--danger {
-            background: var(--rt-color-state-danger-bg);
-            color: var(--rt-color-state-danger);
-        }
+            &--radius--md {
+                --rt-tag-radius: var(--rt-radius-md);
+            }
 
-        &--severity--secondary,
-        &--severity--neutral {
-            background: var(--rt-color-bg-subtle);
-            color: var(--rt-color-text-primary);
-        }
+            &--radius--lg {
+                --rt-tag-radius: var(--rt-radius-lg);
+            }
 
-        /* Outlined: прозрачный фон + рамка цвета палитры (currentColor = текст).
-           После severity-блоков — иначе их `background` перебил бы transparent. */
-        &--appearance--outlined {
-            border: var(--rt-tag-border-width) solid currentcolor;
-            background: transparent;
-        }
+            &--radius--full {
+                --rt-tag-radius: var(--rt-radius-full);
+            }
 
-        &__icon {
-            flex-shrink: 0;
-        }
+            &--severity--info {
+                background: var(--rt-color-state-info-bg);
+                color: var(--rt-color-state-info);
+            }
 
-        &__icon-end {
-            flex-shrink: 0;
-        }
+            &--severity--success {
+                background: var(--rt-color-state-success-bg);
+                color: var(--rt-color-state-success);
+            }
 
-        &__text {
-            line-height: var(--rt-leading-none);
-        }
+            &--severity--warning {
+                background: var(--rt-color-state-warning-bg);
+                color: var(--rt-color-state-warning);
+            }
 
-        &__close {
-            margin-inline-start: var(--rt-space-0-5);
+            &--severity--danger {
+                background: var(--rt-color-state-danger-bg);
+                color: var(--rt-color-state-danger);
+            }
+
+            &--severity--secondary,
+            &--severity--neutral {
+                background: var(--rt-color-bg-subtle);
+                color: var(--rt-color-text-primary);
+            }
+
+            /* Outlined: прозрачный фон + рамка цвета палитры (currentColor = текст).
+               После severity-блоков — иначе их `background` перебил бы transparent. */
+            &--appearance--outlined {
+                border: var(--rt-tag-border-width) solid currentcolor;
+                background: transparent;
+            }
+
+            &__icon {
+                flex-shrink: 0;
+            }
+
+            &__icon-end {
+                flex-shrink: 0;
+            }
+
+            &__text {
+                line-height: var(--rt-leading-none);
+            }
+
+            &__close {
+                margin-inline-start: var(--rt-space-0-5);
+            }
         }
     }
 }
