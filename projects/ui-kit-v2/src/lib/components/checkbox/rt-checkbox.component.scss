@@ -1,71 +1,73 @@
-/* rt-checkbox — чекбокс в common/ui. ViewEncapsulation.None.
-   Хост адресуется по имени элемента, а не по классу блока: класс `.rt-checkbox` висит
-   и на `<rt-checkbox>`, и на корне шаблона, поэтому правила блока вложены в хост —
-   так они достаются только корню шаблона. */
+@layer rt-kit.components {
+    /* rt-checkbox — чекбокс в common/ui. ViewEncapsulation.None.
+       Хост адресуется по имени элемента, а не по классу блока: класс `.rt-checkbox` висит
+       и на `<rt-checkbox>`, и на корне шаблона, поэтому правила блока вложены в хост —
+       так они достаются только корню шаблона. */
 
-rt-checkbox {
-    display: inline-block;
-}
-
-rt-checkbox .rt-checkbox {
-    --rt-checkbox-focus-radius: var(--rt-radius-sm);
-    --rt-checkbox-focus-shadow: var(--rt-shadow-focus-ring);
-    --rt-checkbox-box-radius: var(--rt-radius-sm);
-    --rt-checkbox-transition-duration: var(--rt-duration-fast);
-
-    display: inline-flex;
-    align-items: center;
-    padding: 0;
-    border: none;
-    background: none;
-    cursor: pointer;
-    gap: var(--rt-space-sm);
-    text-align: start;
-
-    &:focus-visible {
-        border-radius: var(--rt-checkbox-focus-radius);
-        box-shadow: var(--rt-checkbox-focus-shadow);
-        outline: 2px solid transparent;
-        outline-offset: 2px;
+    rt-checkbox {
+        display: inline-block;
     }
 
-    &--disabled {
-        cursor: not-allowed;
-        opacity: 0.5;
-    }
+    rt-checkbox .rt-checkbox {
+        --rt-checkbox-focus-radius: var(--rt-radius-sm);
+        --rt-checkbox-focus-shadow: var(--rt-shadow-focus-ring);
+        --rt-checkbox-box-radius: var(--rt-radius-sm);
+        --rt-checkbox-transition-duration: var(--rt-duration-fast);
 
-    &__box {
         display: inline-flex;
-        width: 18px;
-        height: 18px;
-        flex-shrink: 0;
         align-items: center;
-        justify-content: center;
-        border: var(--rt-input-border-width) solid var(--rt-color-border-strong);
-        border-radius: var(--rt-checkbox-box-radius);
-        background: var(--rt-color-bg-surface);
-        transition:
-            background var(--rt-checkbox-transition-duration) ease,
-            border-color var(--rt-checkbox-transition-duration) ease;
-    }
+        padding: 0;
+        border: none;
+        background: none;
+        cursor: pointer;
+        gap: var(--rt-space-sm);
+        text-align: start;
 
-    /* Элемент адресуется классом, а не вторым `&`: родитель здесь составной
-       (`rt-checkbox .rt-checkbox`), и второй `&` развернулся бы в него целиком —
-       `… .rt-checkbox--checked rt-checkbox .rt-checkbox__box`, то есть в селектор,
-       требующий вложенного чекбокса. Заливка отмеченного из-за этого не применялась. */
-    &--checked .rt-checkbox__box,
-    &--indeterminate .rt-checkbox__box {
-        border-color: var(--rt-color-action-primary);
-        background: var(--rt-color-action-primary);
-    }
+        &:focus-visible {
+            border-radius: var(--rt-checkbox-focus-radius);
+            box-shadow: var(--rt-checkbox-focus-shadow);
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+        }
 
-    &__label {
-        color: var(--rt-color-text-primary);
-        font-size: var(--rt-text-sm);
-        user-select: none;
+        &--disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
 
-        &:empty {
-            display: none;
+        &__box {
+            display: inline-flex;
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: center;
+            border: var(--rt-input-border-width) solid var(--rt-color-border-strong);
+            border-radius: var(--rt-checkbox-box-radius);
+            background: var(--rt-color-bg-surface);
+            transition:
+                background var(--rt-checkbox-transition-duration) ease,
+                border-color var(--rt-checkbox-transition-duration) ease;
+        }
+
+        /* Элемент адресуется классом, а не вторым `&`: родитель здесь составной
+           (`rt-checkbox .rt-checkbox`), и второй `&` развернулся бы в него целиком —
+           `… .rt-checkbox--checked rt-checkbox .rt-checkbox__box`, то есть в селектор,
+           требующий вложенного чекбокса. Заливка отмеченного из-за этого не применялась. */
+        &--checked .rt-checkbox__box,
+        &--indeterminate .rt-checkbox__box {
+            border-color: var(--rt-color-action-primary);
+            background: var(--rt-color-action-primary);
+        }
+
+        &__label {
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-sm);
+            user-select: none;
+
+            &:empty {
+                display: none;
+            }
         }
     }
 }

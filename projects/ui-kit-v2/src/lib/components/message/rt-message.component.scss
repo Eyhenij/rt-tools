@@ -1,63 +1,65 @@
-/* rt-message — alert/banner в common/ui. ViewEncapsulation.None.
-   Хост адресуется по имени элемента, а не по классу блока: класс `.rt-message` висит
-   и на `<rt-message>`, и на корне шаблона, поэтому правила блока вложены в хост —
-   так они достаются только корню шаблона. */
+@layer rt-kit.components {
+    /* rt-message — alert/banner в common/ui. ViewEncapsulation.None.
+       Хост адресуется по имени элемента, а не по классу блока: класс `.rt-message` висит
+       и на `<rt-message>`, и на корне шаблона, поэтому правила блока вложены в хост —
+       так они достаются только корню шаблона. */
 
-rt-message {
-    display: block;
+    rt-message {
+        display: block;
 
-    .rt-message {
-        --rt-message-radius: var(--rt-radius-md);
+        .rt-message {
+            --rt-message-radius: var(--rt-radius-md);
 
-        display: flex;
-        align-items: flex-start;
-        padding: var(--rt-space-4) var(--rt-space-4);
-        border-radius: var(--rt-message-radius);
-        background: var(--rt-color-state-info-bg);
-        color: var(--rt-color-state-info);
-        font-size: var(--rt-text-sm);
-        gap: var(--rt-space-2);
-        line-height: var(--rt-leading-normal);
-
-        &--severity--info {
+            display: flex;
+            align-items: flex-start;
+            padding: var(--rt-space-4) var(--rt-space-4);
+            border-radius: var(--rt-message-radius);
             background: var(--rt-color-state-info-bg);
             color: var(--rt-color-state-info);
-        }
+            font-size: var(--rt-text-sm);
+            gap: var(--rt-space-2);
+            line-height: var(--rt-leading-normal);
 
-        &--severity--success {
-            background: var(--rt-color-state-success-bg);
-            color: var(--rt-color-state-success);
-        }
+            &--severity--info {
+                background: var(--rt-color-state-info-bg);
+                color: var(--rt-color-state-info);
+            }
 
-        &--severity--warning {
-            background: var(--rt-color-state-warning-bg);
-            color: var(--rt-color-state-warning);
-        }
+            &--severity--success {
+                background: var(--rt-color-state-success-bg);
+                color: var(--rt-color-state-success);
+            }
 
-        &--severity--danger {
-            background: var(--rt-color-state-danger-bg);
-            color: var(--rt-color-state-danger);
-        }
+            &--severity--warning {
+                background: var(--rt-color-state-warning-bg);
+                color: var(--rt-color-state-warning);
+            }
 
-        &--severity--secondary,
-        &--severity--neutral {
-            background: var(--rt-color-bg-subtle);
-            color: var(--rt-color-text-primary);
-        }
+            &--severity--danger {
+                background: var(--rt-color-state-danger-bg);
+                color: var(--rt-color-state-danger);
+            }
 
-        &__icon {
-            flex-shrink: 0;
-            margin-block-start: var(--rt-space-0-5);
-        }
+            &--severity--secondary,
+            &--severity--neutral {
+                background: var(--rt-color-bg-subtle);
+                color: var(--rt-color-text-primary);
+            }
 
-        &__body {
-            min-width: 0;
-            flex: 1 1 auto;
-        }
+            &__icon {
+                flex-shrink: 0;
+                margin-block-start: var(--rt-space-0-5);
+            }
 
-        &__close {
-            flex-shrink: 0;
-            margin-inline-start: auto;
+            &__body {
+                min-width: 0;
+                flex: 1 1 auto;
+            }
+
+            &__close {
+                flex-shrink: 0;
+                margin-inline-start: auto;
+            }
         }
     }
 }
