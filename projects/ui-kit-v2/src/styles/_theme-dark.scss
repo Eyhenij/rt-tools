@@ -103,13 +103,17 @@
     --rt-toggle-color-thumb: var(--rt-neutral-50);
     --rt-toggle-shadow-thumb: var(--rt-shadow-none);
 
-    /* State — surfaces под dark + ярче error-text */
-    --rt-color-state-success-bg: rgb(5 150 105 / 12%);
-    --rt-color-state-warning-bg: rgb(217 119 6 / 12%);
-    --rt-color-state-danger-bg: rgb(220 38 38 / 12%);
+    /* State — surfaces под dark + ярче error-text.
+
+       Подложка считается от ступени своего статуса, а не повторяет её код цвета
+       тройкой каналов: повторённое значение расходится с источником молча, и
+       правка ступени оставляла подложку прежней. */
+    --rt-color-state-success-bg: color-mix(in srgb, var(--rt-success-500) 12%, transparent);
+    --rt-color-state-warning-bg: color-mix(in srgb, var(--rt-warning-500) 12%, transparent);
+    --rt-color-state-danger-bg: color-mix(in srgb, var(--rt-danger-500) 12%, transparent);
     --rt-color-state-error-text: var(--rt-danger-500);
     --rt-color-state-warning-text: var(--rt-warning-500);
-    --rt-color-state-info-bg: rgb(37 99 235 / 12%);
+    --rt-color-state-info-bg: color-mix(in srgb, var(--rt-info-500) 12%, transparent);
 
     /* Chat — на графите светлые фоны пузырей нечитаемы: входящее уходит в
        полупрозрачный синий, своё — в глубокий графит. */

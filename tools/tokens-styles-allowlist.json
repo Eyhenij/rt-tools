@@ -1,9 +1,3 @@
 {
-  "accepted": [
-    "projects/ui-kit-v2/src/lib/components/aside/_rt-aside-overlay.scss · rgb(0 0 0 / 45%)",
-    "projects/ui-kit-v2/src/lib/components/dialog/rt-dialog.component.scss · rgb(0 0 0 / 25%)",
-    "projects/ui-kit-v2/src/lib/components/dialog/rt-dialog.component.scss · rgb(25 41 64 / 70%)",
-    "projects/ui-kit-v2/src/lib/components/spinner/rt-spinner.component.scss · rgb(255 255 255 / 30%)",
-    "projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group.component.scss · #eef0f4"
-  ]
+  "accepted": []
 }
