@@ -11,6 +11,8 @@ description: Правило под «Закон о ведении работы»
 про ход работы; здесь — чем это названо в этом дереве, где лежит и что из закона у нас не
 проверяется.
 
+**Требует:** `hooks/task-flow-guard.sh`, `hooks/task-context-load.sh`, `hooks/grill-gate.sh`, `hooks/window-fill-guard.sh`
+
 ## Как это называется здесь
 
 | В законе                                      | Здесь                                                                                                                         |

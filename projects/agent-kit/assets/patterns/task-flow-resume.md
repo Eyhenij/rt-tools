@@ -10,6 +10,8 @@ description: Паттерн правила task-flow. Брать при возв
 Паттерн правила `task-flow`. Что при этом должно быть верно — закон
 `docs/constitution/work-conduct.md`.
 
+**Требует:** `hooks/task-context-load.sh`
+
 ## Когда брать
 
 - Сессия начата на ветке `<КЛЮЧ>-*`, работа в ней уже шла.
