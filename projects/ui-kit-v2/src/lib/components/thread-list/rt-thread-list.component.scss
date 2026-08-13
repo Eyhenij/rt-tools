@@ -30,7 +30,7 @@
     &__filters-panel {
         display: flex;
         flex-direction: column;
-        padding: var(--rt-space-3);
+        padding: var(--rt-space-4);
         gap: var(--rt-space-2);
         min-inline-size: 220px;
     }
@@ -47,7 +47,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: var(--rt-space-2-5) var(--rt-space-4);
+        padding: var(--rt-space-2) var(--rt-space-4);
         border: none;
         background: none;
 
@@ -60,7 +60,7 @@
         // рендерятся системным Arial ~13.33px вместо Montserrat 14px, как везде.
         font-family: inherit;
         font-size: var(--rt-text-sm);
-        gap: var(--rt-space-3);
+        gap: var(--rt-space-4);
         inline-size: 100%;
         text-align: start;
 
@@ -92,11 +92,11 @@
                 position: absolute;
                 border-radius: var(--rt-radius-full);
                 background: var(--rt-color-action-primary);
-                block-size: var(--rt-space-1-5);
+                block-size: var(--rt-space-2);
                 content: '';
-                inline-size: var(--rt-space-1-5);
+                inline-size: var(--rt-space-2);
                 inset-block-start: 50%;
-                inset-inline-start: var(--rt-space-1-5);
+                inset-inline-start: var(--rt-space-2);
                 transform: translateY(-50%);
             }
         }
@@ -150,7 +150,7 @@
         display: flex;
         flex: 0 0 auto;
         align-items: center;
-        gap: var(--rt-space-1-5);
+        gap: var(--rt-space-2);
     }
 
     &__row-time {
@@ -159,7 +159,7 @@
     }
 
     &__row-tag {
-        padding: var(--rt-space-0-5) var(--rt-space-1-5);
+        padding: var(--rt-space-0-5) var(--rt-space-2);
         border-radius: var(--rt-radius-sm);
         background: var(--rt-color-state-warning-bg);
         color: var(--rt-color-state-warning-text);
@@ -178,8 +178,8 @@
     &__row-skeleton {
         display: flex;
         flex-direction: column;
-        padding: var(--rt-space-2-5) var(--rt-space-4);
-        gap: var(--rt-space-1-5);
+        padding: var(--rt-space-2) var(--rt-space-4);
+        gap: var(--rt-space-2);
     }
 
     &__row-loader {
@@ -232,7 +232,7 @@
     &__empty-lines {
         display: flex;
         flex-direction: column;
-        gap: var(--rt-space-1-5);
+        gap: var(--rt-space-2);
     }
 
     &__empty-line {

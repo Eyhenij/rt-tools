@@ -8,8 +8,8 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: var(--rt-space-3);
-        gap: var(--rt-space-3);
+        margin-bottom: var(--rt-space-4);
+        gap: var(--rt-space-4);
     }
 
     &__nav {
@@ -50,7 +50,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: var(--rt-space-1-5) var(--rt-space-0-5);
+        padding: var(--rt-space-2) var(--rt-space-0-5);
         border: none;
         border-radius: var(--rt-radius-md);
         background: none;

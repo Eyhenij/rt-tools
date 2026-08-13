@@ -31,7 +31,7 @@ rt-bar-list {
             display: flex;
             min-width: 0;
             flex-direction: column;
-            gap: var(--rt-space-1-5);
+            gap: var(--rt-space-2);
         }
 
         &__row-head {
@@ -40,7 +40,7 @@ rt-bar-list {
             justify-content: space-between;
             font-size: var(--rt-text-md);
             font-weight: var(--rt-font-weight-semibold);
-            gap: var(--rt-space-3);
+            gap: var(--rt-space-4);
             line-height: var(--rt-leading-tight);
         }
 
@@ -86,7 +86,7 @@ rt-bar-list {
             align-items: center;
             justify-content: center;
             padding: var(--rt-space-lg) 0;
-            gap: var(--rt-space-2-5);
+            gap: var(--rt-space-2);
         }
 
         &__empty-text {

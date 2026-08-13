@@ -49,13 +49,13 @@
     --rt-nav-item-color-bg: var(--rt-charcoal-950);
     --rt-nav-item-color-border: var(--rt-charcoal-950);
     --rt-nav-item-color-bg-active: var(--rt-charcoal-800);
-    --rt-nav-item-color-caret: var(--rt-neutral-520);
+    --rt-nav-item-color-caret: var(--rt-neutral-600);
     --rt-nav-panel-color-bg: var(--rt-charcoal-800);
-    --rt-nav-panel-color-border: var(--rt-neutral-520);
-    --rt-nav-panel-item-color: var(--rt-neutral-280);
+    --rt-nav-panel-color-border: var(--rt-neutral-600);
+    --rt-nav-panel-item-color: var(--rt-neutral-200);
     --rt-nav-panel-item-color-bg-hover: var(--rt-charcoal-950);
-    --rt-nav-panel-group-color: var(--rt-neutral-420);
-    --rt-nav-color-disabled: var(--rt-neutral-520);
+    --rt-nav-panel-group-color: var(--rt-neutral-400);
+    --rt-nav-color-disabled: var(--rt-neutral-600);
 
     /* Action — сам цвет марки один в обеих темах, а доля оттенка на графите вдвое
        больше: слабый оттенок на тёмном фоне просто не виден. Считается от ступени
@@ -103,13 +103,17 @@
     --rt-toggle-color-thumb: var(--rt-neutral-50);
     --rt-toggle-shadow-thumb: var(--rt-shadow-none);
 
-    /* State — surfaces под dark + ярче error-text */
-    --rt-color-state-success-bg: rgb(5 150 105 / 12%);
-    --rt-color-state-warning-bg: rgb(217 119 6 / 12%);
-    --rt-color-state-danger-bg: rgb(220 38 38 / 12%);
+    /* State — surfaces под dark + ярче error-text.
+
+       Подложка считается от ступени своего статуса, а не повторяет её код цвета
+       тройкой каналов: повторённое значение расходится с источником молча, и
+       правка ступени оставляла подложку прежней. */
+    --rt-color-state-success-bg: color-mix(in srgb, var(--rt-success-500) 12%, transparent);
+    --rt-color-state-warning-bg: color-mix(in srgb, var(--rt-warning-500) 12%, transparent);
+    --rt-color-state-danger-bg: color-mix(in srgb, var(--rt-danger-500) 12%, transparent);
     --rt-color-state-error-text: var(--rt-danger-500);
     --rt-color-state-warning-text: var(--rt-warning-500);
-    --rt-color-state-info-bg: rgb(37 99 235 / 12%);
+    --rt-color-state-info-bg: color-mix(in srgb, var(--rt-info-500) 12%, transparent);
 
     /* Chat — на графите светлые фоны пузырей нечитаемы: входящее уходит в
        полупрозрачный синий, своё — в глубокий графит. */

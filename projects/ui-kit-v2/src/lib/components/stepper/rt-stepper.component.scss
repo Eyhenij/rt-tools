@@ -9,7 +9,7 @@ rt-stepper {
     .rt-stepper {
         display: flex;
         flex-direction: column;
-        gap: var(--rt-space-3);
+        gap: var(--rt-space-4);
 
         &__rail {
             position: relative;
@@ -113,7 +113,7 @@ rt-stepper {
             line-height: var(--rt-leading-snug);
 
             & + & {
-                margin-block-start: var(--rt-space-2-5);
+                margin-block-start: var(--rt-space-2);
             }
         }
     }

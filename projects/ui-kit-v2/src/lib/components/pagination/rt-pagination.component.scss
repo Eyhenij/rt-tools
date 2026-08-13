@@ -2,7 +2,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--rt-space-3) var(--rt-space-xs);
+    padding: var(--rt-space-4) var(--rt-space-xs);
 
     // Адаптив завязан на собственную ширину компонента, а не на viewport:
     // в узком контейнере (зажатая таблица / aside) числовая полоса прячется,

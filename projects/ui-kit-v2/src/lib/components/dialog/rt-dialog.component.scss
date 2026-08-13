@@ -17,8 +17,8 @@ rt-dialog {
     --rt-dialog-width-sm: 460px;
     --rt-dialog-width-md: 660px;
     --rt-dialog-width-lg: 860px;
-    --rt-dialog-shadow: 0 0 40px 0 rgb(0 0 0 / 25%);
-    --rt-dialog-backdrop-bg: rgb(25 41 64 / 70%);
+    --rt-dialog-shadow: var(--rt-shadow-dialog);
+    --rt-dialog-backdrop-bg: var(--rt-overlay-navy-70);
     --rt-dialog-backdrop-blur: 5px;
 }
 
