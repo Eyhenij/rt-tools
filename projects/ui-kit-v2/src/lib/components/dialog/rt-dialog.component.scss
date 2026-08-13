@@ -18,6 +18,7 @@ rt-dialog {
     --rt-dialog-width-md: 660px;
     --rt-dialog-width-lg: 860px;
     --rt-dialog-shadow: var(--rt-shadow-dialog);
+    --rt-dialog-radius: var(--rt-radius-xl);
     --rt-dialog-backdrop-bg: var(--rt-overlay-navy-70);
     --rt-dialog-backdrop-blur: 5px;
 }
@@ -31,7 +32,7 @@ rt-dialog .rt-dialog {
     flex-direction: column;
     padding: 0;
     border: none;
-    border-radius: var(--rt-radius-xl);
+    border-radius: var(--rt-dialog-radius);
     background: var(--rt-color-bg-surface);
     box-shadow: var(--rt-dialog-shadow);
     color: var(--rt-color-text-primary);

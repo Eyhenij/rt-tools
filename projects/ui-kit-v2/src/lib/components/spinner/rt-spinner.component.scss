@@ -5,13 +5,14 @@
     --rt-spinner-progress-color: var(--rt-color-action-primary);
     --rt-spinner-rotation-duration: 1s;
     --rt-spinner-rotation-duration-reduced: 4s;
+    --rt-spinner-radius: var(--rt-radius-full);
 
     display: inline-block;
     width: var(--rt-spinner-diameter);
     height: var(--rt-spinner-diameter);
     box-sizing: border-box;
     border: var(--rt-spinner-border-width) solid var(--rt-spinner-track-color);
-    border-radius: var(--rt-radius-full);
+    border-radius: var(--rt-spinner-radius);
     border-right-color: var(--rt-spinner-progress-color);
     animation: rt-spinner-rotate var(--rt-spinner-rotation-duration) linear infinite;
 

@@ -22,6 +22,8 @@ rt-toggle-button-group {
     .rt-toggle-button-group {
         /* Default size = sm. md/lg переопределяют ниже. */
         --rt-toggle-button-group-height: 30px;
+        --rt-toggle-button-group-transition-duration: var(--rt-duration-fast);
+        --rt-toggle-button-group-focus-shadow: var(--rt-shadow-focus-ring);
         --rt-toggle-button-group-track-padding: 4px;
         --rt-toggle-button-group-track-radius: 8px;
         --rt-toggle-button-group-btn-padding: 0 8px;
@@ -58,8 +60,8 @@ rt-toggle-button-group {
             gap: var(--rt-toggle-button-group-btn-gap);
             line-height: var(--rt-toggle-button-group-btn-line-height);
             transition:
-                background-color var(--rt-duration-fast) ease,
-                color var(--rt-duration-fast) ease;
+                background-color var(--rt-toggle-button-group-transition-duration) ease,
+                color var(--rt-toggle-button-group-transition-duration) ease;
 
             &:hover:not(:disabled, &--active) {
                 color: var(--rt-color-text-primary);
@@ -73,7 +75,7 @@ rt-toggle-button-group {
             &:focus-visible {
                 position: relative;
                 z-index: 1;
-                box-shadow: var(--rt-shadow-focus-ring);
+                box-shadow: var(--rt-toggle-button-group-focus-shadow);
                 outline: 2px solid transparent;
                 outline-offset: 1px;
             }

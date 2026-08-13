@@ -2,6 +2,15 @@
    берётся из семантики навигации. Отступ от краёв страницы задаёт тот, кто
    ставит шапку: своего у неё нет. */
 .rt-page-header {
+    --rt-nav-header-radius: var(--rt-radius-md);
+    --rt-nav-header-transition-duration: var(--rt-duration-fast);
+    --rt-nav-item-radius: var(--rt-radius-md);
+    --rt-nav-item-border-width: var(--rt-border-width-thin);
+    --rt-nav-burger-radius: var(--rt-radius-ms);
+    --rt-nav-marker-radius: var(--rt-radius-full);
+    --rt-nav-user-avatar-radius: var(--rt-radius-full);
+    --rt-nav-user-avatar-border-width: var(--rt-border-width-thin);
+
     display: flex;
     width: auto;
     min-height: 48px;
@@ -9,7 +18,7 @@
     align-items: center;
     justify-content: space-between;
     padding: var(--rt-nav-header-padding);
-    border-radius: var(--rt-radius-md);
+    border-radius: var(--rt-nav-header-radius);
     background-color: var(--rt-page-header-bg, var(--rt-nav-header-color-bg));
     color: var(--rt-nav-item-color);
     gap: var(--rt-space-2);
@@ -34,8 +43,8 @@
     &__item {
         display: inline-flex;
         align-items: center;
-        border: var(--rt-border-width-thin) solid var(--rt-nav-item-color-border);
-        border-radius: var(--rt-radius-md);
+        border: var(--rt-nav-item-border-width) solid var(--rt-nav-item-color-border);
+        border-radius: var(--rt-nav-item-radius);
         background-color: var(--rt-nav-item-color-bg);
     }
 
@@ -52,7 +61,7 @@
         align-items: center;
         padding: var(--rt-nav-item-padding);
         border: 0;
-        border-radius: var(--rt-radius-md);
+        border-radius: var(--rt-nav-item-radius);
         background-color: transparent;
         color: var(--rt-nav-item-color);
         cursor: pointer;
@@ -61,7 +70,7 @@
         gap: var(--rt-nav-item-content-gap);
         line-height: var(--rt-nav-item-line-height);
         text-decoration: none;
-        transition: color var(--rt-duration-fast) linear;
+        transition: color var(--rt-nav-header-transition-duration) linear;
         white-space: nowrap;
 
         /* Наведение красит подпись, а не фон: фоном отмечен активный раздел, и
@@ -118,7 +127,7 @@
         width: var(--rt-nav-marker-size);
         height: var(--rt-nav-marker-size);
         flex-shrink: 0;
-        border-radius: var(--rt-radius-full);
+        border-radius: var(--rt-nav-marker-radius);
         background-color: var(--rt-nav-marker-color);
     }
 
@@ -138,11 +147,11 @@
         justify-content: center;
         padding: var(--rt-space-2);
         border: 0;
-        border-radius: var(--rt-radius-ms);
+        border-radius: var(--rt-nav-burger-radius);
         background-color: transparent;
         color: var(--rt-nav-item-color);
         cursor: pointer;
-        transition: color var(--rt-duration-fast) linear;
+        transition: color var(--rt-nav-header-transition-duration) linear;
 
         &:hover {
             color: var(--rt-nav-item-color-hover);
@@ -201,7 +210,7 @@
         align-items: center;
         padding: var(--rt-nav-item-padding);
         border: 0;
-        border-radius: var(--rt-radius-md);
+        border-radius: var(--rt-nav-item-radius);
         background-color: transparent;
         color: var(--rt-nav-item-color);
         cursor: pointer;
@@ -209,7 +218,7 @@
         font-weight: var(--rt-nav-item-font-weight);
         gap: var(--rt-nav-item-content-gap);
         line-height: var(--rt-leading-tight);
-        transition: background-color var(--rt-duration-fast) linear;
+        transition: background-color var(--rt-nav-header-transition-duration) linear;
 
         &:hover,
         &:active {
@@ -232,8 +241,8 @@
         height: 16px;
         align-items: center;
         justify-content: center;
-        border: var(--rt-border-width-thin) solid var(--rt-nav-item-color-caret);
-        border-radius: var(--rt-radius-full);
+        border: var(--rt-nav-user-avatar-border-width) solid var(--rt-nav-item-color-caret);
+        border-radius: var(--rt-nav-user-avatar-radius);
         color: var(--rt-color-text-muted);
         font-size: var(--rt-text-2xs);
         font-weight: var(--rt-font-weight-semibold);

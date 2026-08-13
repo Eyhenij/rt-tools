@@ -1,6 +1,10 @@
 /* rt-file-card — ViewEncapsulation.None, плоский `.rt-file-card` (как rt-file-input/rt-icon).
    Host-класс ставится через @Component host:{class}. */
 .rt-file-card {
+    --rt-file-card-radius: var(--rt-radius-lg);
+    --rt-file-card-border-width: var(--rt-border-width-thin);
+    --rt-file-card-badge-radius: var(--rt-radius-full);
+
     /* Дефолт = md; перезаписывается модификаторами sm/lg ниже. Размеры иконки
        типа и кнопок действий сюда не входят — они задаются входами дочерних
        компонентов и маппятся в .ts. */
@@ -14,8 +18,8 @@
     display: flex;
     align-items: center;
     padding: var(--rt-file-card-padding-block) var(--rt-file-card-padding-inline);
-    border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
-    border-radius: var(--rt-radius-lg);
+    border: var(--rt-file-card-border-width) solid var(--rt-color-border-subtle);
+    border-radius: var(--rt-file-card-radius);
     background-color: var(--rt-color-bg-surface);
     gap: var(--rt-file-card-gap);
 
@@ -83,8 +87,8 @@
 
     &__size {
         padding: var(--rt-space-2xs) var(--rt-space-sm);
-        border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
-        border-radius: var(--rt-radius-full);
+        border: var(--rt-file-card-border-width) solid var(--rt-color-border-subtle);
+        border-radius: var(--rt-file-card-badge-radius);
         color: var(--rt-color-text-muted);
         font-size: var(--rt-file-card-badge-size);
         white-space: nowrap;

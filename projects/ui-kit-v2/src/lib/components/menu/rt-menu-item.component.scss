@@ -2,18 +2,21 @@
    Host (`<rt-menu-item>`) несёт класс блока и сам является кликабельной зоной. */
 
 .rt-menu-item {
+    --rt-menu-item-radius: var(--rt-radius-sm);
+    --rt-menu-item-transition-duration: var(--rt-duration-fast);
+
     display: flex;
     width: 100%;
     box-sizing: border-box;
     align-items: center;
     padding: var(--rt-space-sm) var(--rt-space-md);
-    border-radius: var(--rt-radius-sm);
+    border-radius: var(--rt-menu-item-radius);
     color: var(--rt-color-text-primary);
     cursor: pointer;
     font-size: var(--rt-text-sm);
     gap: var(--rt-space-sm);
     text-align: start;
-    transition: background-color var(--rt-duration-fast) ease;
+    transition: background-color var(--rt-menu-item-transition-duration) ease;
 
     &:hover {
         background: var(--rt-color-bg-hover);

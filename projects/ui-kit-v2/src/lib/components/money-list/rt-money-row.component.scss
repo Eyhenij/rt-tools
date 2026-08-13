@@ -2,6 +2,8 @@
    Селектор bare `.rt-money-row` (класс на host). */
 
 .rt-money-row {
+    --rt-money-row-border-width: var(--rt-border-width-thin);
+
     display: flex;
     justify-content: space-between;
     font-size: var(--rt-text-sm);
@@ -19,7 +21,7 @@
 
     &--total {
         padding-top: var(--rt-space-xs);
-        border-top: var(--rt-border-width-thin) solid var(--rt-color-border-default);
+        border-top: var(--rt-money-row-border-width) solid var(--rt-color-border-default);
         font-weight: var(--rt-font-weight-semibold);
     }
 }

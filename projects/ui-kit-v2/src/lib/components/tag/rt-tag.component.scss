@@ -7,10 +7,13 @@ rt-tag {
     display: inline-flex;
 
     .rt-tag {
+        --rt-tag-radius: var(--rt-radius-md);
+        --rt-tag-border-width: var(--rt-border-width-thin);
+
         display: inline-flex;
         align-items: center;
         padding: var(--rt-space-1) var(--rt-space-2);
-        border-radius: var(--rt-radius-md);
+        border-radius: var(--rt-tag-radius);
         background: var(--rt-neutral-100);
         color: var(--rt-neutral-700);
         font-size: var(--rt-text-sm);
@@ -18,32 +21,32 @@ rt-tag {
         line-height: var(--rt-leading-tight);
 
         &--shape--pill {
-            border-radius: var(--rt-radius-full);
+            --rt-tag-radius: var(--rt-radius-full);
         }
 
         &--shape--square {
-            border-radius: var(--rt-radius-sm);
+            --rt-tag-radius: var(--rt-radius-sm);
         }
 
         /* Явный radius переопределяет shape — правила идут позже по порядку. */
         &--radius--none {
-            border-radius: var(--rt-radius-none);
+            --rt-tag-radius: var(--rt-radius-none);
         }
 
         &--radius--sm {
-            border-radius: var(--rt-radius-sm);
+            --rt-tag-radius: var(--rt-radius-sm);
         }
 
         &--radius--md {
-            border-radius: var(--rt-radius-md);
+            --rt-tag-radius: var(--rt-radius-md);
         }
 
         &--radius--lg {
-            border-radius: var(--rt-radius-lg);
+            --rt-tag-radius: var(--rt-radius-lg);
         }
 
         &--radius--full {
-            border-radius: var(--rt-radius-full);
+            --rt-tag-radius: var(--rt-radius-full);
         }
 
         &--severity--info {
@@ -75,7 +78,7 @@ rt-tag {
         /* Outlined: прозрачный фон + рамка цвета палитры (currentColor = текст).
            После severity-блоков — иначе их `background` перебил бы transparent. */
         &--appearance--outlined {
-            border: var(--rt-border-width-thin) solid currentcolor;
+            border: var(--rt-tag-border-width) solid currentcolor;
             background: transparent;
         }
 

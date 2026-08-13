@@ -2,10 +2,12 @@
    Селектор bare `.rt-money-list` (класс на host). */
 
 .rt-money-list {
+    --rt-money-list-radius: var(--rt-radius-md);
+
     display: flex;
     flex-direction: column;
     padding: var(--rt-space-md);
-    border-radius: var(--rt-radius-md);
+    border-radius: var(--rt-money-list-radius);
     background: var(--rt-color-bg-subtle);
     gap: var(--rt-space-xs);
 }

@@ -8,6 +8,11 @@ rt-checkbox {
 }
 
 rt-checkbox .rt-checkbox {
+    --rt-checkbox-focus-radius: var(--rt-radius-sm);
+    --rt-checkbox-focus-shadow: var(--rt-shadow-focus-ring);
+    --rt-checkbox-box-radius: var(--rt-radius-sm);
+    --rt-checkbox-transition-duration: var(--rt-duration-fast);
+
     display: inline-flex;
     align-items: center;
     padding: 0;
@@ -18,8 +23,8 @@ rt-checkbox .rt-checkbox {
     text-align: start;
 
     &:focus-visible {
-        border-radius: var(--rt-radius-sm);
-        box-shadow: var(--rt-shadow-focus-ring);
+        border-radius: var(--rt-checkbox-focus-radius);
+        box-shadow: var(--rt-checkbox-focus-shadow);
         outline: 2px solid transparent;
         outline-offset: 2px;
     }
@@ -37,11 +42,11 @@ rt-checkbox .rt-checkbox {
         align-items: center;
         justify-content: center;
         border: var(--rt-input-border-width) solid var(--rt-color-border-strong);
-        border-radius: var(--rt-radius-sm);
+        border-radius: var(--rt-checkbox-box-radius);
         background: var(--rt-color-bg-surface);
         transition:
-            background var(--rt-duration-fast) ease,
-            border-color var(--rt-duration-fast) ease;
+            background var(--rt-checkbox-transition-duration) ease,
+            border-color var(--rt-checkbox-transition-duration) ease;
     }
 
     /* Элемент адресуется классом, а не вторым `&`: родитель здесь составной
