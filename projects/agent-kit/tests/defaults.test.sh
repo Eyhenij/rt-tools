@@ -97,6 +97,60 @@ report "карта: конфиг линтера стилей" "$(skill_for edit 
 report "карта: проверка повторов требует одно правило" "$(skill_for edit /r/tools/check-dupes.mjs '')" shared-code
 report "карта: правило по команде" "$(skill_for bash 'git push origin x' '')" git-workflow
 report "карта: команда без правила" "$(skill_for bash 'ls -la' '')" ''
+# Упоминание команды командой не является: пока карта судила по подстроке, гейт отбивал строку о
+# коммите в теле самого коммита и поиск по истории.
+report "карта: упоминание команды вызовом не считается" "$(skill_for bash 'echo "потом git commit -m x"' '')" ''
+report "карта: вызов после разделителя" "$(skill_for bash 'cd /tmp && git commit -m x' '')" git-workflow
+report "карта: заведение ветки" "$(skill_for bash 'git checkout -b RT-9-x' '')" git-workflow
+report "карта: заведение ветки вторым именем команды" "$(skill_for bash 'git switch -c RT-9-x' '')" git-workflow
+report "карта: заведение задачи" "$(skill_for bash 'npm run task:new -- --title x' '')" git-workflow
+report "карта: заведение отчёта" "$(skill_for bash 'gh pr create --fill' '')" git-workflow
+# Правка тела отчёта ловится двумя признаками сразу: одного слова о заявке мало — оно попадает в
+# строку любой команды, которая о ней пишет.
+report "карта: правка тела отчёта" "$(skill_for bash 'gh api -X PATCH repos/o/r/pulls/12 -f body=x' '')" git-workflow
+report "карта: чтение отчёта тем же клиентом" "$(skill_for bash 'gh api repos/o/r/pulls/12' '')" ''
+# Слияние отчёта требует два правила: поставку и разбор папки задачи — она разбирается тем же
+# отчётом, потому что после слияния отвечать за неё уже некому.
+report "карта: слияние отчёта тянет и ведение работы" \
+    "$(skill_for bash 'gh pr merge 12 --merge' '' | tr '\n' ' ')" 'git-workflow task-flow '
+# Образы и реестр уносят чужое безвозвратно; команды чтения остаются вне гейта — ими нехватку
+# места и разбирают.
+report "карта: сборка образа" "$(skill_for bash 'docker build -t x .' '')" git-workflow
+report "карта: общая чистка" "$(skill_for bash 'docker system prune -af' '')" git-workflow
+report "карта: перечисление контейнеров" "$(skill_for bash 'docker ps -a' '')" ''
+# Обращение к поднятому приложению: нужны оба признака — вызов клиента И адрес. Одного адреса
+# мало, он попадает в строку любой команды, которая о нём пишет.
+report "карта: запрос к поднятому приложению" "$(skill_for bash 'curl -s http://localhost:4200/ru/' '')" browser-verification
+report "карта: адрес в тексте без вызова" "$(skill_for bash 'echo http://localhost:4200 >> notes.md' '')" ''
+# Проверка через браузер — единственная область, где правило нужно под инструмент, а не под файл.
+report "карта: инструмент браузера" "$(skill_for browser mcp__claude-in-chrome__navigate '')" browser-verification
+# Проверка исполняет утверждения своего правила, и признаки, по которым она судит, объявлены у
+# него в привязке: правя признак, второе место открывают рядом.
+report "карта: сверка спеков" "$(skill_for edit /r/tools/check-specs.mjs '')" spec-driven
+report "карта: сверка длины файла" "$(skill_for edit /r/tools/check-file-size.mjs '')" doc-style
+report "карта: сверка оформления" "$(skill_for edit /r/tools/check-styles.mjs '')" styling-bem
+report "карта: своё правило линтера кода" "$(skill_for edit /r/tools/eslint-rules/no-x.mjs '')" typescript-conventions
+# Поставка судит и то, что приезжает на прод, и то, чем оно туда едет.
+report "карта: файл конвейера" "$(skill_for edit /r/.github/workflows/deploy.yml '')" git-workflow
+report "карта: состав образа" "$(skill_for edit /r/deploy/api.Dockerfile '')" git-workflow
+report "карта: миграция хранилища" "$(skill_for edit /r/prisma/migrations/20260101_x/migration.sql '')" git-workflow
+# Сквозная спека по имени файла от обычного модуля не отличается.
+report "карта: сквозная спека" "$(skill_for edit /r/apps/web-e2e/src/x.ts '')" testing
+
+# --- что гоняется перед пушем -------------------------------------------------------------------
+# Заведённая проверка встаёт в гейт пуша, а не только в общий прогон, который никто не зовёт сам.
+# Печатается по тому, что лежит на диске: проверки, которой в дереве нет, гейт не зовёт.
+report "гейт пуша: сборка идёт наравне с линтом и спеками" \
+    "$(rt_push_checks origin/main | grep -c 'nx affected -t lint test build --base=origin/main')" 1
+report "гейт пуша: без удалённого гоняется всё" \
+    "$(rt_push_checks '' | grep -c 'run-many -t lint test build --all')" 1
+report "гейт пуша: проверки, которой нет, в наборе нет" "$(rt_push_checks '' | grep -c 'check-specs')" 0
+mkdir -p "$TREE/tools" "$TREE/.claude/hooks/tests"
+printf '' > "$TREE/tools/check-specs.mjs"
+printf '#!/bin/sh\nexit 0\n' > "$TREE/.claude/hooks/tests/run.sh"
+chmod +x "$TREE/.claude/hooks/tests/run.sh"
+report "гейт пуша: разложенная проверка зовётся" "$(rt_push_checks '' | grep -c 'node tools/check-specs.mjs')" 1
+report "гейт пуша: сценарии гардов зовутся" "$(rt_push_checks '' | grep -c 'bash .claude/hooks/tests/run.sh')" 1
 # SC-AK-93. Заведение рабочего дерева — работа с поставкой: свежее дерево получает только
 # индекс, а ключи, разрешения и зависимости переносятся руками по списку из компаньона.
 report "SC-AK-93 — заведение рабочего дерева" "$(skill_for bash 'git worktree add --detach ../wt origin/main' '')" git-workflow
