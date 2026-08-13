@@ -23,7 +23,11 @@
 
     /* Text */
     --rt-color-text-primary: var(--rt-neutral-900);
-    --rt-color-text-muted: var(--rt-neutral-500);
+
+    /* Ступень 600, а не 500: приглушённый текст обязан брать порог, а после
+       пересчёта ряда самая светлая ступень, которая его берёт, — шестисотая.
+       Прежде эту роль держала off-grid ступень 510, заведённая ровно под неё. */
+    --rt-color-text-muted: var(--rt-neutral-600);
     --rt-color-text-disabled: var(--rt-neutral-400);
     --rt-color-text-inverse: var(--rt-neutral-0);
     --rt-color-text-link: var(--rt-brand-500);
