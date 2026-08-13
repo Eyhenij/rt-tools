@@ -4,6 +4,8 @@
 @use '../aside/rt-aside-overlay';
 
 .rt-container {
+    --rt-container-border-width: var(--rt-border-width-thin);
+
     display: grid;
     min-height: 100%;
     flex: 1 1 auto;
@@ -31,7 +33,7 @@
     &__left-sidenav {
         display: block;
         padding: var(--rt-space-md);
-        border-right: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+        border-right: var(--rt-container-border-width) solid var(--rt-color-border-subtle);
         background-color: var(--rt-color-bg-surface);
         grid-area: left-sidenav;
     }
@@ -40,7 +42,7 @@
         display: flex;
         align-items: center;
         padding: var(--rt-space-sm) var(--rt-space-md);
-        border-bottom: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+        border-bottom: var(--rt-container-border-width) solid var(--rt-color-border-subtle);
         background-color: var(--rt-color-bg-surface);
         grid-area: toolbar;
 
@@ -104,7 +106,7 @@
 
         .rt-container__left-sidenav {
             padding: 0;
-            border-top: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+            border-top: var(--rt-container-border-width) solid var(--rt-color-border-subtle);
             border-right: none;
         }
     }

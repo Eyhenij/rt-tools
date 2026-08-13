@@ -1,22 +1,27 @@
 .rt-notifications-bell {
+    --rt-notifications-bell-radius: var(--rt-radius-md);
+    --rt-notifications-bell-dot-radius: var(--rt-radius-full);
+    --rt-notifications-bell-outline-width: var(--rt-border-width-thin);
+    --rt-notifications-bell-transition-duration: var(--rt-duration-fast);
+
     display: inline-flex;
     min-height: var(--rt-nav-item-height);
     align-items: center;
     padding: var(--rt-nav-item-padding);
     border: 0;
-    border-radius: var(--rt-radius-md);
+    border-radius: var(--rt-notifications-bell-radius);
     background-color: transparent;
     color: var(--rt-nav-item-color);
     cursor: pointer;
     gap: var(--rt-nav-item-content-gap);
-    transition: color var(--rt-duration-fast) linear;
+    transition: color var(--rt-notifications-bell-transition-duration) linear;
 
     &:hover {
         color: var(--rt-nav-item-color-hover);
     }
 
     &:focus-visible {
-        outline: var(--rt-border-width-thin) dashed var(--rt-color-border-strong);
+        outline: var(--rt-notifications-bell-outline-width) dashed var(--rt-color-border-strong);
         outline-offset: calc(var(--rt-space-0-5) * -1);
     }
 
@@ -26,7 +31,7 @@
         width: var(--rt-nav-marker-size);
         height: var(--rt-nav-marker-size);
         flex-shrink: 0;
-        border-radius: var(--rt-radius-full);
+        border-radius: var(--rt-notifications-bell-dot-radius);
         background-color: var(--rt-nav-marker-color);
     }
 }
