@@ -1,3 +1,10 @@
+# [0.6.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.5.3...rt-agent-kit@0.6.0) (2026-08-13)
+
+### Features
+
+- **rt:agent-kit:** гейт судит вызов, а гейт пуша зовёт разложенное ([d029c86](https://github.com/Eyhenij/rt-tools/commit/d029c86cd21dd9a356225bf37472dbe40d880060))
+- **rt:agent-kit:** слой гейта поверх доменного правила и проверка длины файла ([c5f2e91](https://github.com/Eyhenij/rt-tools/commit/c5f2e91cae78c2da3cc219a6d7d262535f6e4a77))
+
 ## [0.5.3](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.5.2...rt-agent-kit@0.5.3) (2026-08-13)
 
 ## [0.5.2](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.5.1...rt-agent-kit@0.5.2) (2026-08-13)
