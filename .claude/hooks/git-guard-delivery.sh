@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.5.1 · hooks/git-guard-delivery.sh · 58430fd1e6ec · правится надстройкой, не здесь
+# rt-kit v0.5.1 · hooks/git-guard-delivery.sh · 9870290abf92 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Гард поставки. PreToolUse на заведении ветки и открытии заявки на слияние.
 #
@@ -38,6 +38,7 @@ input="$(cat 2>/dev/null)"
 command -v jq >/dev/null 2>&1 || exit 0
 
 tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
 case "$tool" in
     # Терминал среды и универсальный исполнитель кладут команду в то же поле.
     Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool) ;;
@@ -90,6 +91,13 @@ main_branch="${RT_MAIN_BRANCH:-main}"
 folder_skip_re='Task-folder-skip:[[:space:]]*[^[:space:]"'"'"']{3,}'
 
 deny() {
+    # Отказ гарда — наблюдение: гард, отбивающий чаще прочих, говорит, какое место поставки
+    # раз за разом делают не так. Текст отказа в наблюдение не идёт: в нём стоят номера задач
+    # и имена веток этого дерева.
+    # shellcheck disable=SC1090
+    [ -f "$rt_hooks_dir/observe.sh" ] && . "$rt_hooks_dir/observe.sh" 2>/dev/null
+    command -v rt_note >/dev/null 2>&1 && rt_note guard-deny res=git-guard-delivery "sid=$sid"
+
     jq -n --arg r "$1" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
         || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Гард поставки."}}\n'
     exit 0
@@ -235,6 +243,18 @@ if [ -n "$title" ]; then
         [ "$title_number" = "$number" ] \
             || deny "BLOCKED: в заголовке заявки номер ${title_number}, у ветки — ${number}. Задача, ветка и отчёт несут один и тот же номер."
     fi
+fi
+
+# Главная ветка влита до открытия отчёта. Отчёт от разошедшейся ветки показывает ревьюверу свою
+# правку вперемешку с чужой, а проверки на нём гоняются от устаревшего основания.
+#
+# Судится локальная вершина главной ветки, без сети: сетевой вызов в разборе команды падал бы
+# вместе со связью и отбивал бы работу вместо промаха. Отсюда и граница — гард ловит ветку,
+# отставшую заведомо; свежесть самой вершины держит `git fetch`, и требует его чеклист.
+if git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \
+    && ! git merge-base --is-ancestor "origin/${main_branch}" HEAD 2>/dev/null; then
+    behind="$(git rev-list --count "HEAD..origin/${main_branch}" 2>/dev/null)"
+    deny "BLOCKED: «${main_branch}» ушла вперёд на ${behind:-несколько} коммитов, а в ветку не влита. Отчёт от разошедшейся ветки показывает ревьюверу правку вперемешку с чужой, а проверки на нём идут от устаревшего основания. Влей и повтори: git fetch origin && git merge origin/${main_branch} — порядок и разбор конфликта в паттерне git-workflow-merge."
 fi
 
 check_task "$number" "заявка с ветки «${branch}»"
