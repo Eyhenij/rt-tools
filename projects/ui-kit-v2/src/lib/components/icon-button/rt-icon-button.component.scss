@@ -9,6 +9,12 @@ rt-icon-button {
     /* Дефолт = md; перезаписывается модификаторами sm/lg ниже либо inline стилем потребителя */
     --rt-icon-button-size: 36px;
 
+    /* Цвет иконки объявлен здесь, а не приходил бы запасным значением на месте
+       обращения: запасное переживает смену темы — переопределять нечего. Своё
+       свойство блока перебивает тот, кому нужен другой цвет: так делает просмотр
+       фотографии, где кнопка стоит на снимке. */
+    --rt-icon-button-color: var(--rt-color-text-primary);
+
     .rt-icon-button {
         position: relative;
         display: inline-flex;
@@ -19,7 +25,7 @@ rt-icon-button {
         padding: 0;
         border: 0;
         background: transparent;
-        color: var(--rt-icon-button-color, var(--rt-color-text-primary));
+        color: var(--rt-icon-button-color);
         cursor: pointer;
         transition: background-color var(--rt-duration-fast) ease;
 
