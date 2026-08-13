@@ -26,12 +26,19 @@ no() {
 }
 
 # --- код приложения ли это ------------------------------------------------------------------
-ok "код приложения: apps" rt_is_app_code /r/apps/site/src/main.ts
-ok "код приложения: libs" rt_is_app_code /r/libs/site/x/ui/a.ts
-ok "код приложения: projects" rt_is_app_code /r/projects/ui-kit/src/a.ts
-no "не код: тексты" rt_is_app_code /r/docs/adr/0001.md
-no "не код: обвязка" rt_is_app_code /r/tools/check-x.mjs
-no "не код: правила агента" rt_is_app_code /r/.claude/skills/x/SKILL.md
+ok "код приложения: apps" rt_is_app_code "$TREE/apps/site/src/main.ts"
+ok "код приложения: libs" rt_is_app_code "$TREE/libs/site/x/ui/a.ts"
+ok "код приложения: projects" rt_is_app_code "$TREE/projects/ui-kit/src/a.ts"
+no "не код: тексты" rt_is_app_code "$TREE/docs/adr/0001.md"
+no "не код: обвязка" rt_is_app_code "$TREE/tools/check-x.mjs"
+no "не код: правила агента" rt_is_app_code "$TREE/.claude/skills/x/SKILL.md"
+
+# SC-AK-91. Путь вне корня дерева признака не получает, даже когда совпал с образцом: гарды
+# отдают сюда абсолютный путь целиком, и каталог со словом `projects` в имени встречается и в
+# домашнем каталоге агента. Правка файла вне корня замыслом этой ветки не распоряжается.
+no "SC-AK-91 — чужой корень со словом из образца" rt_is_app_code /elsewhere/projects/x/a.ts
+no "SC-AK-91 — домашний каталог агента" rt_is_app_code /home/agent/apps/notes.md
+ok "путь от корня дерева, без ведущей косой" rt_is_app_code apps/site/src/main.ts
 
 # --- форма имени ветки ------------------------------------------------------------------------
 ok "ветка: ключ, номер и хвост" rt_task_branch_ok RT-12-guest-token
@@ -74,8 +81,8 @@ rt_is_app_code() {
         *) rt_is_app_code_default "$@" ;;
     esac
 }
-no "надстройка сузила умолчание" rt_is_app_code /r/libs/site/x/generated/a.ts
-ok "и остальное отдала вниз" rt_is_app_code /r/libs/site/x/ui/a.ts
+no "надстройка сузила умолчание" rt_is_app_code "$TREE/libs/site/x/generated/a.ts"
+ok "и остальное отдала вниз" rt_is_app_code "$TREE/libs/site/x/ui/a.ts"
 
 # --- карта гейта -------------------------------------------------------------------------------------
 report "карта: правило по роду файла" "$(skill_for edit /r/libs/x/a.component.ts '')" component-structure
@@ -88,6 +95,10 @@ report "карта: конфиг линтера стилей" "$(skill_for edit 
 report "карта: проверка повторов требует одно правило" "$(skill_for edit /r/tools/check-dupes.mjs '')" shared-code
 report "карта: правило по команде" "$(skill_for bash 'git push origin x' '')" git-workflow
 report "карта: команда без правила" "$(skill_for bash 'ls -la' '')" ''
+# SC-AK-93. Заведение рабочего дерева — работа с поставкой: свежее дерево получает только
+# индекс, а ключи, разрешения и зависимости переносятся руками по списку из компаньона.
+report "SC-AK-93 — заведение рабочего дерева" "$(skill_for bash 'git worktree add --detach ../wt origin/main' '')" git-workflow
+report "SC-AK-93 — снятие рабочего дерева" "$(skill_for bash 'git worktree remove ../wt' '')" git-workflow
 # Тексты и спеки читают ту же строку, что и код, и правило среды исполнения к ним не относится.
 report "карта: текст правки в документе правила не поднимает" "$(skill_for edit /r/docs/x.md 'window.open()')" doc-style
 
