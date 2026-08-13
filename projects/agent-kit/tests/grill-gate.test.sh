@@ -58,15 +58,43 @@ expect_stop() {
     report "$label" "$got" "$want"
 }
 
+# Вход события вызова инструмента вопроса: имя инструмента отличает его от завершения хода.
+input_ask() {
+    jq -n --arg p "$1" '{session_id:"tests",transcript_path:$p,tool_name:"AskUserQuestion",tool_input:{questions:[]}}'
+}
+
+# Решение гарда на вызове инструмента: DENY | PASS. Форма ответа здесь другая — решение о
+# доступе, а не о ходе, и одна форма на оба события молча не срабатывает.
+expect_ask() {
+    local label="$1" json="$2" want="$3" out got
+    out="$(printf '%s' "$json" | "$HOOKS/grill-gate.sh" 2>/dev/null)"
+    if [ -z "$out" ]; then
+        got="PASS"
+    else
+        got="$(printf '%s' "$out" | jq -r 'if .hookSpecificOutput.permissionDecision == "deny" then "DENY" else "PASS" end' 2>/dev/null)"
+    fi
+    report "$label" "$got" "$want"
+}
+
 READ_RULES='{"pattern":"панель","path":".claude/skills"}'
 READ_ELSE='{"pattern":"панель","path":"projects/ui-kit/src"}'
 
 # --- вопрос без чтения правил ----------------------------------------------------------
 # SC-AK-22 — вопрос владельцу без чтения правил ход не заканчивает
-expect_stop "вопрос прозой без чтения" \
+# SC-AK-98 — вопрос прозой ловится на завершении хода: инструментом он не является.
+expect_stop "SC-AK-98 — вопрос прозой без чтения" \
     "$(input_stop "$(transcript "$(say 'почини панель')" "$(reply 'Панель починить или переписать?')")")" BLOCK
-expect_stop "вопрос меню без чтения" \
-    "$(input_stop "$(transcript "$(say 'почини панель')" "$(uses AskUserQuestion '{"questions":[]}')")")" BLOCK
+# Меню на завершении хода уже не судится: оно отбито раньше, на своём инструменте.
+expect_stop "меню на завершении хода не судится дважды" \
+    "$(input_stop "$(transcript "$(say 'почини панель')" "$(uses AskUserQuestion '{"questions":[]}')")")" PASS
+
+# --- SC-AK-97 — вопрос меню отбивается до отправки ---------------------------------------
+# Проверка на завершении хода отбивает задним числом: к моменту отказа вопрос уже у владельца.
+# Единственный момент, когда требование исполнимо, — вызов инструмента вопроса.
+expect_ask "SC-AK-97 — вопрос меню без чтения отбит до отправки" \
+    "$(input_ask "$(transcript "$(say 'почини панель')")")" DENY
+expect_ask "прочитанное правило вопрос пропускает" \
+    "$(input_ask "$(transcript "$(say 'почини панель')" "$(uses Skill '{"skill":"task-flow"}')")")" PASS
 
 # --- чтение правил вопрос разрешает -----------------------------------------------------
 # SC-AK-23 — прочитанное правило вопрос разрешает

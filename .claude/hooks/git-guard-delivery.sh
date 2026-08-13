@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.5.1 · hooks/git-guard-delivery.sh · 58430fd1e6ec · правится надстройкой, не здесь
+# rt-kit v0.5.1 · hooks/git-guard-delivery.sh · 8f17c7fd7799 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
+# Требует: hooks/profile-check.sh
 # Гард поставки. PreToolUse на заведении ветки и открытии заявки на слияние.
 #
 # Закон о поставке требует трёх вещей, которых обычно не проверяет ничто: правка начинается с
@@ -38,6 +39,7 @@ input="$(cat 2>/dev/null)"
 command -v jq >/dev/null 2>&1 || exit 0
 
 tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
 case "$tool" in
     # Терминал среды и универсальный исполнитель кладут команду в то же поле.
     Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool) ;;
@@ -74,7 +76,13 @@ for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../d
     # shellcheck disable=SC1090
     [ -f "$profile" ] && . "$profile" 2>/dev/null
 done
-command -v rt_task_branch_ok >/dev/null 2>&1 || exit 0
+
+# Слово о нехватке функции профиля: хук, вышедший молча, неотличим от работающего. Файл может
+# быть не разложен — тогда остаётся прежнее поведение, молчаливое.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
+command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
+rt_needs rt_task_branch_ok git-guard-delivery || exit 0
 
 title_re="${RT_TASK_TITLE_RE:-^\[[A-Za-z]+-[0-9]+\][[:space:]]+[^[:space:]]}"
 task_new="${RT_TASK_NEW_CMD:-npm run task:new}"
@@ -90,6 +98,13 @@ main_branch="${RT_MAIN_BRANCH:-main}"
 folder_skip_re='Task-folder-skip:[[:space:]]*[^[:space:]"'"'"']{3,}'
 
 deny() {
+    # Отказ гарда — наблюдение: гард, отбивающий чаще прочих, говорит, какое место поставки
+    # раз за разом делают не так. Текст отказа в наблюдение не идёт: в нём стоят номера задач
+    # и имена веток этого дерева.
+    # shellcheck disable=SC1090
+    [ -f "$rt_hooks_dir/observe.sh" ] && . "$rt_hooks_dir/observe.sh" 2>/dev/null
+    command -v rt_note >/dev/null 2>&1 && rt_note guard-deny res=git-guard-delivery "sid=$sid"
+
     jq -n --arg r "$1" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
         || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Гард поставки."}}\n'
     exit 0
@@ -113,7 +128,7 @@ folder_in_branch() {
 check_task() {
     number="$1"
     where="$2"
-    command -v rt_task_state >/dev/null 2>&1 || return 0
+    rt_needs rt_task_state git-guard-delivery || return 0
     state="$(cd "$root" && rt_task_state "$number" 2>/dev/null)" || return 0
     [ -z "$state" ] && return 0
 
@@ -174,7 +189,7 @@ if printf '%s' "$cmd" | grep -qE '(^|[;&|(]|&&|\|\|)[[:space:]]*(gh[[:space:]]+p
     printf '%s' "$cmd" | grep -qiE "$folder_skip_re" && exit 0
 
     merge_number="$(printf '%s' "$cmd" | sed -nE 's/.*(pr|mr)[[:space:]]+(merge|update)[[:space:]]+([0-9]+).*/\3/p' | head -1)"
-    if [ -n "$merge_number" ] && command -v rt_report_body >/dev/null 2>&1; then
+    if [ -n "$merge_number" ] && rt_needs rt_report_body git-guard-delivery; then
         body="$(cd "$root" && rt_report_body "$merge_number" 2>/dev/null)"
         [ -n "$body" ] && printf '%s' "$body" | grep -qiE "$folder_skip_re" && exit 0
     fi
@@ -235,6 +250,18 @@ if [ -n "$title" ]; then
         [ "$title_number" = "$number" ] \
             || deny "BLOCKED: в заголовке заявки номер ${title_number}, у ветки — ${number}. Задача, ветка и отчёт несут один и тот же номер."
     fi
+fi
+
+# Главная ветка влита до открытия отчёта. Отчёт от разошедшейся ветки показывает ревьюверу свою
+# правку вперемешку с чужой, а проверки на нём гоняются от устаревшего основания.
+#
+# Судится локальная вершина главной ветки, без сети: сетевой вызов в разборе команды падал бы
+# вместе со связью и отбивал бы работу вместо промаха. Отсюда и граница — гард ловит ветку,
+# отставшую заведомо; свежесть самой вершины держит `git fetch`, и требует его чеклист.
+if git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \
+    && ! git merge-base --is-ancestor "origin/${main_branch}" HEAD 2>/dev/null; then
+    behind="$(git rev-list --count "HEAD..origin/${main_branch}" 2>/dev/null)"
+    deny "BLOCKED: «${main_branch}» ушла вперёд на ${behind:-несколько} коммитов, а в ветку не влита. Отчёт от разошедшейся ветки показывает ревьюверу правку вперемешку с чужой, а проверки на нём идут от устаревшего основания. Влей и повтори: git fetch origin && git merge origin/${main_branch} — порядок и разбор конфликта в паттерне git-workflow-merge."
 fi
 
 check_task "$number" "заявка с ветки «${branch}»"

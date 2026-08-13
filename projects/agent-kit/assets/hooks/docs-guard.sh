@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
+# Требует: hooks/profile-check.sh
 # Гард пары «правка и её документ». PreToolUse.
 #
 # Расхождение кода с текстом беззвучно. Ни линтер, ни сборка, ни тесты не читают правила,
@@ -56,6 +57,12 @@ for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../d
     # shellcheck disable=SC1090
     [ -f "$profile" ] && . "$profile" 2>/dev/null
 done
+
+# Слово о нехватке функции профиля: хук, вышедший молча, неотличим от работающего. Файл может
+# быть не разложен — тогда остаётся прежнее поведение, молчаливое.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
+command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
 
 laws_dir="${RT_LAWS_DIR:-docs/constitution}"
 lib_marker="${RT_LIB_MARKER:-project.json}"
@@ -180,7 +187,7 @@ done
 #
 # Контракт и спек домена, гард и его сценарии — что именно, знает профиль: связь у каждого
 # дерева своя, а механика одна.
-if command -v rt_docs_pair_for >/dev/null 2>&1; then
+if rt_needs rt_docs_pair_for docs-guard; then
     while IFS= read -r file; do
         [ -z "$file" ] && continue
         want="$(rt_docs_pair_for "$file" 2>/dev/null)"
