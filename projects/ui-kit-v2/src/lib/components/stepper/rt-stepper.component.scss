@@ -7,6 +7,10 @@ rt-stepper {
     display: block;
 
     .rt-stepper {
+        --rt-stepper-radius: var(--rt-radius-full);
+        --rt-stepper-point-shadow: var(--rt-shadow-step-indicator);
+        --rt-stepper-transition-duration: var(--rt-duration-fast);
+
         display: flex;
         flex-direction: column;
         gap: var(--rt-space-4);
@@ -25,7 +29,7 @@ rt-stepper {
             inset-block-start: 0;
             letter-spacing: var(--rt-letter-spacing-wide);
             line-height: var(--rt-leading-none);
-            transition: left var(--rt-duration-fast) ease-out;
+            transition: left var(--rt-stepper-transition-duration) ease-out;
             white-space: nowrap;
 
             /* Подпись висит над активной точкой (`left` задаётся инлайном):
@@ -55,7 +59,7 @@ rt-stepper {
         &__track,
         &__progress {
             position: absolute;
-            border-radius: var(--rt-radius-full);
+            border-radius: var(--rt-stepper-radius);
             block-size: 2px;
             inset-block-start: 50%;
             inset-inline-start: 0;
@@ -69,7 +73,7 @@ rt-stepper {
 
         &__progress {
             background: var(--rt-color-stepper-progress);
-            transition: width var(--rt-duration-fast) ease-out;
+            transition: width var(--rt-stepper-transition-duration) ease-out;
         }
 
         &__points {
@@ -84,14 +88,14 @@ rt-stepper {
         }
 
         &__point {
-            border-radius: var(--rt-radius-full);
+            border-radius: var(--rt-stepper-radius);
             background: var(--rt-color-stepper-track);
             block-size: 8px;
             inline-size: 8px;
             transition:
-                inline-size var(--rt-duration-fast) ease-out,
-                block-size var(--rt-duration-fast) ease-out,
-                background var(--rt-duration-fast) ease-out;
+                inline-size var(--rt-stepper-transition-duration) ease-out,
+                block-size var(--rt-stepper-transition-duration) ease-out,
+                background var(--rt-stepper-transition-duration) ease-out;
 
             &--complete {
                 background: var(--rt-color-stepper-progress);
@@ -100,7 +104,7 @@ rt-stepper {
             &--current {
                 background: var(--rt-color-stepper-current);
                 block-size: 16px;
-                box-shadow: var(--rt-shadow-step-indicator);
+                box-shadow: var(--rt-stepper-point-shadow);
                 inline-size: 16px;
             }
         }

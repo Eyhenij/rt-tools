@@ -1,4 +1,7 @@
 .rt-tabs {
+    --rt-tabs-border-width: var(--rt-border-width-thin);
+    --rt-tabs-transition-duration: var(--rt-duration-fast);
+
     display: flex;
     -webkit-tap-highlight-color: transparent;
 
@@ -25,7 +28,7 @@
 
     &__tab-list {
         display: flex;
-        border-bottom: var(--rt-border-width-thin) solid var(--rt-color-border-default);
+        border-bottom: var(--rt-tabs-border-width) solid var(--rt-color-border-default);
         margin: 0;
         -ms-overflow-style: none;
         overflow-x: auto;
@@ -43,7 +46,7 @@
 
         &--direction--vertical {
             flex-direction: column;
-            border-right: var(--rt-border-width-thin) solid var(--rt-color-border-default);
+            border-right: var(--rt-tabs-border-width) solid var(--rt-color-border-default);
             border-bottom: 0;
         }
 
@@ -64,7 +67,7 @@
         background-color: var(--rt-color-bg-surface);
         color: var(--rt-color-text-muted);
         cursor: pointer;
-        transition: color var(--rt-duration-fast) linear;
+        transition: color var(--rt-tabs-transition-duration) linear;
         visibility: hidden;
 
         &:hover {
@@ -73,12 +76,12 @@
 
         &--before {
             left: 0;
-            border-right: var(--rt-border-width-thin) solid var(--rt-color-border-default);
+            border-right: var(--rt-tabs-border-width) solid var(--rt-color-border-default);
         }
 
         &--after {
             right: 0;
-            border-left: var(--rt-border-width-thin) solid var(--rt-color-border-default);
+            border-left: var(--rt-tabs-border-width) solid var(--rt-color-border-default);
         }
 
         &--visible {
@@ -116,6 +119,10 @@
 }
 
 .rt-tab-item {
+    --rt-tab-item-border-width: var(--rt-border-width-thin);
+    --rt-tab-item-badge-radius: var(--rt-radius-full);
+    --rt-tab-item-transition-duration: var(--rt-duration-fast);
+
     position: relative;
     display: inline-flex;
     align-items: center;
@@ -132,14 +139,14 @@
     gap: var(--rt-space-sm);
     line-height: var(--rt-leading-none);
     transition:
-        color var(--rt-duration-fast) linear,
-        background-color var(--rt-duration-fast) linear;
+        color var(--rt-tab-item-transition-duration) linear,
+        background-color var(--rt-tab-item-transition-duration) linear;
     white-space: nowrap;
 
     /* Нижний индикатор активной вкладки — поверх border-bottom полосы. */
     &:after {
         position: absolute;
-        bottom: calc(-1 * var(--rt-border-width-thin));
+        bottom: calc(-1 * var(--rt-tab-item-border-width));
         height: 2px;
         background-color: transparent;
         content: '';
@@ -177,7 +184,7 @@
         align-items: center;
         justify-content: center;
         padding: 0 var(--rt-space-2);
-        border-radius: var(--rt-radius-full);
+        border-radius: var(--rt-tab-item-badge-radius);
         background-color: var(--rt-color-bg-surface-subtle);
         color: var(--rt-color-text-muted);
         font-size: var(--rt-text-xs);

@@ -1,14 +1,18 @@
 .rt-header {
+    --rt-header-radius: var(--rt-radius-lg);
+    --rt-header-shadow: var(--rt-shadow-card-soft);
+    --rt-header-back-transition-duration: var(--rt-duration-base);
+
     display: block;
     height: 45px;
     padding: 0 var(--rt-space-5);
     background: var(--rt-color-bg-surface);
-    border-bottom-left-radius: var(--rt-radius-lg);
-    border-bottom-right-radius: var(--rt-radius-lg);
+    border-bottom-left-radius: var(--rt-header-radius);
+    border-bottom-right-radius: var(--rt-header-radius);
 
     // Мягкая тень (тот же токен, что у карточек) отделяет хедер от контента —
     // в тёмной теме фон хедера и страницы почти совпадают и сливались.
-    box-shadow: var(--rt-shadow-card-soft);
+    box-shadow: var(--rt-header-shadow);
     color: var(--rt-color-text-primary);
 
     &__content {
@@ -35,9 +39,9 @@
         pointer-events: none;
         transform: translateX(-8px);
         transition:
-            width var(--rt-duration-base) cubic-bezier(0.34, 1.56, 0.64, 1),
-            opacity var(--rt-duration-base) ease-out,
-            transform var(--rt-duration-base) cubic-bezier(0.34, 1.56, 0.64, 1);
+            width var(--rt-header-back-transition-duration) cubic-bezier(0.34, 1.56, 0.64, 1),
+            opacity var(--rt-header-back-transition-duration) ease-out,
+            transform var(--rt-header-back-transition-duration) cubic-bezier(0.34, 1.56, 0.64, 1);
 
         &--visible {
             width: 35px;
