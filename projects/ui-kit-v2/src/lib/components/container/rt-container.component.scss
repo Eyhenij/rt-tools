@@ -7,8 +7,8 @@
     display: grid;
     min-height: 100%;
     flex: 1 1 auto;
-    background-color: var(--rt-color-bg-page, #f5f5f5);
-    color: var(--rt-color-text-primary, #222);
+    background-color: var(--rt-color-bg-page);
+    color: var(--rt-color-text-primary);
     grid-template: 'header header' auto 'left-sidenav toolbar' auto 'left-sidenav content' 1fr / auto 1fr;
 
     &__header {
@@ -32,7 +32,7 @@
         display: block;
         padding: var(--rt-space-md);
         border-right: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
-        background-color: var(--rt-color-bg-surface, #fff);
+        background-color: var(--rt-color-bg-surface);
         grid-area: left-sidenav;
     }
 
@@ -41,7 +41,7 @@
         align-items: center;
         padding: var(--rt-space-sm) var(--rt-space-md);
         border-bottom: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
-        background-color: var(--rt-color-bg-surface, #fff);
+        background-color: var(--rt-color-bg-surface);
         grid-area: toolbar;
 
         &--slot--left {

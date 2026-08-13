@@ -1,28 +1,9 @@
 {
   "accepted": [
-    "projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss · #0284c7",
-    "projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss · #0369a1",
-    "projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss · #047857",
-    "projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss · #059669",
-    "projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss · #0ea5e9",
-    "projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss · #10b981",
-    "projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss · #15803d",
-    "projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss · #166534",
-    "projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss · #16a34a",
-    "projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss · #374151",
-    "projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss · #4b5563",
-    "projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss · #6b7280",
-    "projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss · #b45309",
-    "projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss · #b91c1c",
-    "projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss · #d1d5db",
-    "projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss · #d97706",
-    "projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss · #dc2626",
-    "projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss · #ef4444",
-    "projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss · #f59e0b",
-    "projects/ui-kit-v2/src/lib/components/button/rt-button.directive.scss · #fff",
-    "projects/ui-kit-v2/src/lib/components/container/rt-container.component.scss · #222",
-    "projects/ui-kit-v2/src/lib/components/container/rt-container.component.scss · #f5f5f5",
-    "projects/ui-kit-v2/src/lib/components/container/rt-container.component.scss · #fff",
+    "projects/ui-kit-v2/src/lib/components/aside/_rt-aside-overlay.scss · rgb(0 0 0 / 45%)",
+    "projects/ui-kit-v2/src/lib/components/dialog/rt-dialog.component.scss · rgb(0 0 0 / 25%)",
+    "projects/ui-kit-v2/src/lib/components/dialog/rt-dialog.component.scss · rgb(25 41 64 / 70%)",
+    "projects/ui-kit-v2/src/lib/components/spinner/rt-spinner.component.scss · rgb(255 255 255 / 30%)",
     "projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group.component.scss · #eef0f4"
   ]
 }
