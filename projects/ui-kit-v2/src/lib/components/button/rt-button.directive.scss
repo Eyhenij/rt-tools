@@ -4,11 +4,15 @@
     --rt-btn-height: var(--rt-control-height-md);
     --rt-btn-padding: 0 1.25rem;
     --rt-btn-gap: 0.5rem;
-    --rt-btn-radius: 10px;
+    --rt-btn-radius: var(--rt-radius-lg);
+    --rt-btn-border-width: var(--rt-border-width-thin);
+    --rt-btn-transition-duration: var(--rt-duration-fast);
+    --rt-btn-focus-shadow: var(--rt-shadow-focus-ring);
     --rt-btn-font-size: 0.95rem;
     --rt-btn-icon-size: 1rem;
     --rt-btn-spinner-size: 1rem;
-    --rt-btn-spinner-border-width: 2px;
+    --rt-btn-spinner-border-width: var(--rt-border-width-medium);
+    --rt-btn-spinner-radius: var(--rt-radius-full);
     --rt-btn-bg: var(--rt-color-action-primary);
     --rt-btn-bg-hover: var(--rt-color-action-primary-hover);
     --rt-btn-bg-active: var(--rt-color-action-primary-active);
@@ -24,7 +28,7 @@
     align-items: center;
     justify-content: center;
     padding: var(--rt-btn-padding);
-    border: var(--rt-border-width-thin) solid var(--rt-btn-border-color);
+    border: var(--rt-btn-border-width) solid var(--rt-btn-border-color);
     border-radius: var(--rt-btn-radius);
     margin: 0;
     background: var(--rt-btn-bg);
@@ -40,10 +44,10 @@
     -webkit-tap-highlight-color: transparent;
     text-decoration: none;
     transition:
-        background-color var(--rt-duration-fast),
-        color var(--rt-duration-fast),
-        border-color var(--rt-duration-fast),
-        box-shadow var(--rt-duration-fast);
+        background-color var(--rt-btn-transition-duration),
+        color var(--rt-btn-transition-duration),
+        border-color var(--rt-btn-transition-duration),
+        box-shadow var(--rt-btn-transition-duration);
     user-select: none;
     white-space: nowrap;
 
@@ -57,7 +61,7 @@
     }
 
     &:focus-visible {
-        box-shadow: var(--rt-shadow-focus-ring);
+        box-shadow: var(--rt-btn-focus-shadow);
         outline: 2px solid transparent;
         outline-offset: 2px;
     }
@@ -96,7 +100,7 @@
         width: var(--rt-btn-spinner-size);
         height: var(--rt-btn-spinner-size);
         border: var(--rt-btn-spinner-border-width) solid currentcolor;
-        border-radius: var(--rt-radius-full);
+        border-radius: var(--rt-btn-spinner-radius);
         border-bottom-color: transparent;
         animation: rt-button-spin var(--rt-btn-spinner-rotation-duration) linear infinite;
         opacity: 0.85;
