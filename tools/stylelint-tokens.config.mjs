@@ -22,7 +22,11 @@ export default {
             files: ['projects/ui-kit-v2/src/lib/**/*.scss'],
             rules: {
                 'color-no-hex': true,
-                'rt-tools/no-hardcoded-design-tokens': true,
+
+                /* `customProperties` судит код цвета и в объявлении своего свойства блока.
+                   Включено только здесь: у первого кита свои накопленные места, и его
+                   проверки эта линия не трогает. */
+                'rt-tools/no-hardcoded-design-tokens': [true, { customProperties: true }],
             },
         },
     ],
