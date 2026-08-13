@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.5.1 · hooks/git-guard-push-tests.sh · ced3c0145440 · правится надстройкой, не здесь
+# rt-kit v0.5.1 · hooks/git-guard-push-tests.sh · 01a5c9673064 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
+# Требует: hooks/profile-check.sh
 # Гард проверок перед пушем. PreToolUse на вызове пуша.
 #
 # Пуш — это вход в конвейер: слияние в главную ветку запускает выкатку, и всё, что не
@@ -61,7 +62,13 @@ for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../d
     # shellcheck disable=SC1090
     [ -f "$profile" ] && . "$profile" 2>/dev/null
 done
-command -v rt_push_checks >/dev/null 2>&1 || exit 0
+
+# Слово о нехватке функции профиля: хук, вышедший молча, неотличим от работающего. Файл может
+# быть не разложен — тогда остаётся прежнее поведение, молчаливое.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
+command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
+rt_needs rt_push_checks git-guard-push-tests || exit 0
 
 main_branch="${RT_MAIN_BRANCH:-main}"
 base=''

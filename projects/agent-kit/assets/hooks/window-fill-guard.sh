@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PostToolUse .*
+# Требует: hooks/profile-check.sh
 # rt-hook: PreToolUse .*
 # Заполнение окна: заход доводится до логической точки заранее, а не обрывается на середине.
 #
@@ -33,6 +34,12 @@ for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../d
     # shellcheck disable=SC1090
     [ -f "$profile" ] && . "$profile" 2>/dev/null
 done
+
+# Слово о нехватке функции профиля: хук, вышедший молча, неотличим от работающего. Файл может
+# быть не разложен — тогда остаётся прежнее поведение, молчаливое.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
+command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
 
 window="${RT_WINDOW_TOKENS:-}"
 case "$window" in
@@ -126,7 +133,7 @@ case "$tool" in
     Bash | mcp__webstorm__execute_terminal_command)
         # Поставка и сверки: коммит, пуш, отчёт, колонка задачи, состояние дерева. Список
         # дописывается профилем дерева — клиент хостинга и имена команд у каждого свои.
-        if command -v rt_handoff_allowed_cmd >/dev/null 2>&1 && rt_handoff_allowed_cmd "$cmd"; then
+        if rt_needs rt_handoff_allowed_cmd window-fill-guard && rt_handoff_allowed_cmd "$cmd"; then
             allowed=1
         fi
         ;;

@@ -87,6 +87,8 @@ export interface IConfig {
 }
 
 export const CONFIG_PATH: string = '.claude/rt-kit.json';
+/** Каталог, в котором дерево держит своё при пакете: надстройки, умолчания, свою карту и профиль. */
+export const RT_KIT_DIR: string = '.claude/rt-kit';
 export const OVERRIDES_DIR: string = '.claude/rt-kit/overrides';
 
 /**

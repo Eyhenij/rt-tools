@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
+# Требует: hooks/profile-check.sh
 # Гард поставки. PreToolUse на заведении ветки и открытии заявки на слияние.
 #
 # Закон о поставке требует трёх вещей, которых обычно не проверяет ничто: правка начинается с
@@ -74,7 +75,13 @@ for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../d
     # shellcheck disable=SC1090
     [ -f "$profile" ] && . "$profile" 2>/dev/null
 done
-command -v rt_task_branch_ok >/dev/null 2>&1 || exit 0
+
+# Слово о нехватке функции профиля: хук, вышедший молча, неотличим от работающего. Файл может
+# быть не разложен — тогда остаётся прежнее поведение, молчаливое.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
+command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
+rt_needs rt_task_branch_ok git-guard-delivery || exit 0
 
 title_re="${RT_TASK_TITLE_RE:-^\[[A-Za-z]+-[0-9]+\][[:space:]]+[^[:space:]]}"
 task_new="${RT_TASK_NEW_CMD:-npm run task:new}"
@@ -120,7 +127,7 @@ folder_in_branch() {
 check_task() {
     number="$1"
     where="$2"
-    command -v rt_task_state >/dev/null 2>&1 || return 0
+    rt_needs rt_task_state git-guard-delivery || return 0
     state="$(cd "$root" && rt_task_state "$number" 2>/dev/null)" || return 0
     [ -z "$state" ] && return 0
 
@@ -181,7 +188,7 @@ if printf '%s' "$cmd" | grep -qE '(^|[;&|(]|&&|\|\|)[[:space:]]*(gh[[:space:]]+p
     printf '%s' "$cmd" | grep -qiE "$folder_skip_re" && exit 0
 
     merge_number="$(printf '%s' "$cmd" | sed -nE 's/.*(pr|mr)[[:space:]]+(merge|update)[[:space:]]+([0-9]+).*/\3/p' | head -1)"
-    if [ -n "$merge_number" ] && command -v rt_report_body >/dev/null 2>&1; then
+    if [ -n "$merge_number" ] && rt_needs rt_report_body git-guard-delivery; then
         body="$(cd "$root" && rt_report_body "$merge_number" 2>/dev/null)"
         [ -n "$body" ] && printf '%s' "$body" | grep -qiE "$folder_skip_re" && exit 0
     fi

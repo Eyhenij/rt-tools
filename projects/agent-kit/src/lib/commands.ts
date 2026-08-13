@@ -7,9 +7,20 @@ import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from '
 import { join } from 'node:path';
 
 import { collectAssets, IAsset } from './assets.js';
-import { IEntryOfCatalog, IGapOfVariant, isChosen, readCatalog } from './catalog.js';
+import { IBrokenLink, IEntryOfCatalog, IGapOfVariant, isChosen, readCatalog } from './catalog.js';
 import { ICompanion, isUnfilled, TCompanionState } from './companion.js';
-import { CONFIG_PATH, DEFAULT_LAYOUT, IConfig, KINDS, OVERRIDES_DIR, readConfig, SKILL_KINDS, TKind } from './config.js';
+import {
+    CONFIG_PATH,
+    DEFAULT_LAYOUT,
+    IConfig,
+    KINDS,
+    OVERRIDES_DIR,
+    PROFILE_FILE,
+    readConfig,
+    RT_KIT_DIR,
+    SKILL_KINDS,
+    TKind,
+} from './config.js';
 import { IStaleBuild } from './freshness.js';
 import { hooksSection, IHookBinding, SETTINGS_PATH } from './hooks-map.js';
 import { DEFAULT_DAYS, ICount, IReadResult, ISummary, KEEP_DAYS, OBSERVATIONS_DIR, readObservations, summarize } from './observations.js';
@@ -97,6 +108,80 @@ const NO_CONFIG: string = `нет \`${CONFIG_PATH}\` — начни с \`agent-k
 /** Куда уезжает прежнее содержимое файла, отданного пакету. */
 export const KEPT_SUFFIX: string = '.before-rt-kit';
 
+/**
+ * Имя функции профиля, которую хук ждёт. Обе формы: голая проверка наличия и спрос через
+ * помощника, который о нехватке говорит вслух. Считать одну значило бы недосчитаться ровно тех
+ * хуков, которые перешли на второе.
+ */
+const PROFILE_CALL: RegExp = /(?:command -v|rt_needs)[ \t]+(rt_[a-z_]+)/g;
+
+/** Сам помощник функцией профиля не является: его везёт пакет, а не дерево. */
+const PROFILE_HELPER: string = 'rt_needs';
+
+/**
+ * Объявление функции: `rt_is_app_code() {`. Не с начала строки — хук объявляет запасной вариант
+ * прямо в условии, и не считать его объявлением значило бы звать недостающим то, что у хука
+ * есть.
+ */
+const PROFILE_DEFINE: RegExp = /(rt_[a-z_]+)\s*\(\)\s*\{/g;
+
+/**
+ * Функции профиля, которых ждут взятые хуки, и те из них, что дерево не определило.
+ *
+ * Отдельной строкой в разборе состояния потому, что на месте вызова нехватка не видна вовсе:
+ * хук выходит с нулём, стоит в настройке, виден в списке — и читается как работающий. Тишина
+ * при этом означает разом «нечего проверять», «проверять нечем» и «всё в порядке».
+ */
+function profileLines(root: string, assetsDir: string, config: IConfig): string[] {
+    const wanted: Set<string> = new Set();
+    const defined: Set<string> = new Set();
+    for (const asset of collectAssets(config, assetsDir)) {
+        if (asset.kind !== 'hooks') {
+            continue;
+        }
+        for (const found of asset.text.matchAll(PROFILE_CALL)) {
+            if (found[1] !== PROFILE_HELPER) {
+                wanted.add(found[1]);
+            }
+        }
+        // Часть общих функций живёт не в профиле, а в соседнем хуке: запись наблюдения объявлена
+        // в хуке наблюдений, и гарды зовут её через ту же проверку наличия. Не считать их
+        // определёнными значило бы требовать от дерева переписать в профиль чужой код.
+        for (const found of asset.text.matchAll(PROFILE_DEFINE)) {
+            defined.add(found[1]);
+        }
+    }
+    if (!wanted.size) {
+        return [];
+    }
+
+    // Профиль собирается из тех же файлов, что читает сам хук: сперва разложенное умолчание
+    // пакета, поверх — надстройка дерева. Судить по одной надстройке значило бы объявить мёртвым
+    // каждый гард дерева, которое умолчаний не переписывало.
+    const defaults: string = config.layout.defaults ?? DEFAULT_LAYOUT.defaults;
+    const sources: readonly string[] = [join(root, defaults, PROFILE_FILE), join(root, RT_KIT_DIR, PROFILE_FILE)];
+    for (const path of sources) {
+        if (!existsSync(path)) {
+            continue;
+        }
+        for (const found of readFileSync(path, 'utf8').matchAll(PROFILE_DEFINE)) {
+            defined.add(found[1]);
+        }
+    }
+
+    const absent: readonly string[] = [...wanted].filter((name: string): boolean => !defined.has(name)).sort();
+
+    return [
+        `функции профиля, которых ждут взятые хуки: ${wanted.size}`,
+        ...(absent.length
+            ? [
+                  ...absent.map((name: string): string => `  нет функции ${name} — её определяют в ${join(RT_KIT_DIR, PROFILE_FILE)}`),
+                  '  хук без своей функции проверку не делает и действие пропускает',
+              ]
+            : ['  все определены']),
+    ];
+}
+
 const holes: (result: ISyncResult) => string[] = (result: ISyncResult): string[] =>
     [...result.missing].map(
         ([asset, names]: [string, readonly string[]]): string =>
@@ -158,10 +243,29 @@ const unboundLines: (result: ISyncResult) => string[] = (result: ISyncResult): s
           ]
         : [];
 
+/**
+ * Разорванные связи между ресурсами.
+ *
+ * Печатается предупреждением и кода возврата не меняет: дерево вправе закрыть требование своим
+ * средством. Но и молчать нельзя — дерево, выбравшее паттерн без хука, которым тот живёт,
+ * выглядит исправным, а расходится с пакетом на целую волну работ.
+ */
+const brokenLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] =>
+    result.broken.length
+        ? [
+              `требования ресурсов, оставшиеся без ответа: ${result.broken.length}`,
+              ...result.broken.map(
+                  (link: IBrokenLink): string => `  ${link.id} — требует ${link.requires}: ${link.unknown ? 'нет в пакете' : NOT_CHOSEN}`
+              ),
+              '  это предупреждение, а не отказ: требование закрывается своим средством дерева либо выбором ресурса',
+          ]
+        : [];
+
 const describe: (result: ISyncResult) => string[] = (result: ISyncResult): string[] => [
     ...holes(result),
     ...gapLines(result),
     ...unboundLines(result),
+    ...brokenLines(result),
     ...pendingOf(result).map((entry: IPlanned): string => `  ${entry.path} — ${STATE_WORD[entry.outcome]}`),
     ...unfilled(result).map((entry: ICompanion): string => `  ${entry.path} — ${COMPANION_WORD[entry.state]}`),
     ...abandonedLines(result),
@@ -268,9 +372,12 @@ export function sync(env: IEnvironment, check: boolean): IOutcomeOfCommand {
         const empty: readonly ICompanion[] = unfilled(result);
         // Гард, которого не зовёт настройка агента, — такое же расхождение, как отставший файл:
         // он разложен, он коммитится, и по дереву его не отличить от работающего.
+        // Разорванная связь в счёт расхождений не идёт: дерево вправе закрыть требование своим
+        // средством, и отказ отбивал бы законную раскладку. Но и сходство её не отменяет —
+        // предупреждение печатается и там, где расходиться больше нечему.
         const count: number = result.missing.size + result.gaps.length + pending.length + empty.length + result.unbound.length;
         if (!count) {
-            return { code: 0, lines: [`sync --check: разложенное сходится с пакетом v${version}`] };
+            return { code: 0, lines: [`sync --check: разложенное сходится с пакетом v${version}`, ...brokenLines(result)] };
         }
 
         return { code: 1, lines: [`sync --check: расхождений ${count}`, ...describe(result)] };
@@ -676,9 +783,20 @@ export function doctor(env: IEnvironment): IOutcomeOfCommand {
         foreignVariant.every((entry: IEntryOfCatalog): boolean => entry.id !== id)
     ).length;
 
+    // Невыбранное называется поимённо: число «не выбрано: 73» не отвечает ни на один вопрос,
+    // ради которого его читают, — ни какого ресурса не хватает, ни требуется ли он соседу.
+    const unchosen: readonly IEntryOfCatalog[] = catalog.filter(
+        (entry: IEntryOfCatalog): boolean =>
+            !isChosen(entry, config) &&
+            !config.skip.includes(entry.id) &&
+            foreignVariant.every((one: IEntryOfCatalog): boolean => one.id !== entry.id)
+    );
+
     const lines: string[] = [
         `пакет v${version}, везёт ресурсов ${catalog.length}, взято ${taken}`,
         `не выбрано: ${catalog.length - taken - skipped - other}, пропущено: ${skipped}, другой вид: ${other}`,
+        ...unchosen.map((entry: IEntryOfCatalog): string => `  не выбран: ${entry.id}`),
+        ...profileLines(root, assetsDir, config),
         `значений в конфиге: ${Object.keys(config.vars).length}`,
         ...chosen,
         ...[...counted].map(([outcome, count]: [TOutcome, number]): string => `${STATE_WORD[outcome]}: ${count}`),
