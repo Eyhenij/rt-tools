@@ -70,9 +70,14 @@ export const appConfig: ApplicationConfig = {
 
 **Дизайн-система** — `src/styles`:
 
+- `tokens.source.mjs` — источник: ступени шкал, назначения и ответ тёмной темы рядом со своим
+  назначением. Три файла ниже и имена в `src/lib/tokens/rt-design-tokens.ts` собираются отсюда
+  командой `pnpm run build:tokens-source` и руками не правятся;
 - `_primitives.scss` — шкалы: нейтральные и цветные ряды, отступы, радиусы, тени, типографика;
 - `_semantic.scss` — назначения поверх шкал (`--rt-color-bg-surface`, `--rt-color-text-muted`);
 - `_theme-dark.scss` — переопределения назначений для `[data-theme='dark']`;
+- `_theme-dark-rules.scss` — правила тёмной темы, которые свойств не объявляют: подложка экранов
+  входа и инверсия логотипа;
 - `_scrollbar.scss` — оформление полос прокрутки;
 - `_breakpoints.scss` — SCSS-переменные порогов: свойства оформления в `@media` не работают,
   поэтому пороги остаются переменными препроцессора;
