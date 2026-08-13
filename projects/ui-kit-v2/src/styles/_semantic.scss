@@ -23,7 +23,11 @@
 
     /* Text */
     --rt-color-text-primary: var(--rt-neutral-900);
-    --rt-color-text-muted: var(--rt-neutral-500);
+
+    /* Ступень 600, а не 500: приглушённый текст обязан брать порог, а после
+       пересчёта ряда самая светлая ступень, которая его берёт, — шестисотая.
+       Прежде эту роль держала off-grid ступень 510, заведённая ровно под неё. */
+    --rt-color-text-muted: var(--rt-neutral-600);
     --rt-color-text-disabled: var(--rt-neutral-400);
     --rt-color-text-inverse: var(--rt-neutral-0);
     --rt-color-text-link: var(--rt-brand-500);
@@ -104,7 +108,7 @@
        собирается из них и остаётся на месте — восемь компонентов берут его целиком, и
        менять их незачем. Отступ — зазор цвета поверхности между элементом и кольцом:
        первая тень при нулевом отступе не рисует ничего. */
-    --rt-focus-ring-width: 3px;
+    --rt-focus-ring-width: var(--rt-border-width-thick);
 
     /* Ноль с единицей намеренно: безразмерный ноль внутри calc с длиной невалиден, и
        браузер отбрасывает объявление кольца целиком — кольцо просто пропадает. */
@@ -163,7 +167,7 @@
     --rt-color-bg-surface-auth-card: var(--rt-neutral-0);
 
     /* Spacing aliases — named semantic aliases на primitive numeric scale */
-    --rt-space-2xs: 2px;
+    --rt-space-2xs: var(--rt-space-0-5); /* 2px */
     --rt-space-xs: var(--rt-space-1); /* 4px */
     --rt-space-sm: var(--rt-space-2); /* 8px */
     --rt-space-md: var(--rt-space-4); /* 16px */
@@ -173,7 +177,7 @@
     --rt-space-3xl: var(--rt-space-16); /* 64px */
 
     /* Text size base — semantic alias для default body text */
-    --rt-text-base: 16px;
+    --rt-text-base: var(--rt-text-md);
 
     /* Form input — composition tokens. Единый контракт для всего input-семейства
        (rt-input, rt-input-number, rt-autocomplete, rt-select, rt-multiselect,
@@ -202,7 +206,7 @@
 
     /* Radius / spacing / border */
     --rt-input-radius: var(--rt-radius-lg);
-    --rt-input-padding-x: var(--rt-space-3);
+    --rt-input-padding-x: var(--rt-space-4);
     --rt-input-padding-y: var(--rt-space-0);
     --rt-input-border-width: var(--rt-border-width-thin);
     --rt-input-focus-outline-offset: var(--rt-border-width-thin);
@@ -236,7 +240,7 @@
        набирается табличными цифрами и держит ширину, иначе кнопки прыгают
        при переходе через десяток. */
     --rt-counter-gap: var(--rt-space-sm);
-    --rt-counter-value-min-width: 24px;
+    --rt-counter-value-min-width: var(--rt-size-6);
     --rt-counter-value-font-size: var(--rt-text-md);
     --rt-counter-value-color: var(--rt-color-text-primary);
     --rt-counter-row-gap: var(--rt-space-md);
@@ -261,26 +265,26 @@
 
     /* Навигация (rt-page-header). Шапка — отдельная плашка; отступ от краёв
        страницы задаёт тот, кто её ставит. */
-    --rt-nav-header-padding: var(--rt-space-2-5) var(--rt-space-3);
-    --rt-nav-header-color-bg: var(--rt-neutral-150);
+    --rt-nav-header-padding: var(--rt-space-2) var(--rt-space-4);
+    --rt-nav-header-color-bg: var(--rt-neutral-50);
 
     /* Первый уровень. Пункт ряда несёт плашку цвета самой шапки: на общем фоне её
        не видно, и белым проступает только активный раздел. Наведение красит
        подпись, а не фон — иначе оно спорит с этой подсветкой. */
-    --rt-nav-item-height: 28px;
+    --rt-nav-item-height: var(--rt-size-6);
     --rt-nav-item-gap: var(--rt-space-1);
-    --rt-nav-item-padding: var(--rt-space-1-5) var(--rt-space-2);
-    --rt-nav-item-content-gap: var(--rt-space-1-5);
+    --rt-nav-item-padding: var(--rt-space-2) var(--rt-space-2);
+    --rt-nav-item-content-gap: var(--rt-space-2);
     --rt-nav-item-font-size: var(--rt-text-sm);
     --rt-nav-item-font-weight: var(--rt-font-weight-semibold);
     --rt-nav-item-line-height: var(--rt-leading-none);
     --rt-nav-item-color: var(--rt-color-text-primary);
     --rt-nav-item-color-hover: var(--rt-color-action-primary);
     --rt-nav-item-color-pressed: var(--rt-color-action-primary-hover);
-    --rt-nav-item-color-bg: var(--rt-neutral-150);
-    --rt-nav-item-color-border: var(--rt-neutral-150);
+    --rt-nav-item-color-bg: var(--rt-neutral-50);
+    --rt-nav-item-color-border: var(--rt-neutral-50);
     --rt-nav-item-color-bg-active: var(--rt-color-bg-surface);
-    --rt-nav-item-color-caret: var(--rt-neutral-250);
+    --rt-nav-item-color-caret: var(--rt-neutral-200);
 
     /* Фокус обведён пунктиром: сплошная рамка на плашке пункта неотличима от его
        же границы. */
@@ -289,18 +293,18 @@
     /* Недоступный пункт светлее доступного, а не другого оттенка: общий
        `text-disabled` уходит в сине-стальной и рядом с серой подписью читается
        как второй цвет, а не как выключенное состояние. */
-    --rt-nav-color-disabled: var(--rt-neutral-350);
+    --rt-nav-color-disabled: var(--rt-neutral-300);
 
     /* Попап профиля. Подложку берёт у панели навигации, своего здесь — габариты
        блока пользователя, тень и набор строк: строк четыре, и они читаются как
        список действий, а не как выпадающее меню. */
-    --rt-profile-menu-min-width: 240px;
+    --rt-profile-menu-min-width: var(--rt-size-60);
     --rt-profile-menu-padding: var(--rt-space-5);
     --rt-profile-menu-shadow: var(--rt-shadow-profile-menu);
-    --rt-profile-avatar-size: 42px;
+    --rt-profile-avatar-size: var(--rt-size-10);
     --rt-profile-avatar-font-size: var(--rt-text-2xl);
-    --rt-profile-item-padding-y: var(--rt-space-3);
-    --rt-profile-item-content-gap: var(--rt-space-2-5);
+    --rt-profile-item-padding-y: var(--rt-space-4);
+    --rt-profile-item-content-gap: var(--rt-space-2);
     --rt-profile-item-font-size: var(--rt-text-md);
     --rt-profile-item-font-weight: var(--rt-font-weight-medium);
     --rt-profile-item-radius: var(--rt-radius-md);
@@ -308,24 +312,24 @@
     /* Строки выступают за содержимое панели на половину её отступа: так
        подсветка на наведении не упирается в рамку, а иконка остаётся на одной
        вертикали с содержимым. Это же число — горизонтальный отступ строки. */
-    --rt-profile-row-inset: var(--rt-space-2-5);
+    --rt-profile-row-inset: var(--rt-space-2);
     --rt-profile-theme-icon-padding: var(--rt-space-2);
 
     /* Габариты панели второго уровня: ширина считается числом колонок, поэтому
        колонка, промежуток и внутренний отступ — токены, из которых панель
        складывает свою ширину. По вертикали отступ крупнее: у первой группы над
        заголовком нет ничего, и панель иначе начинается впритык. */
-    --rt-nav-panel-column-width: 250px;
+    --rt-nav-panel-column-width: var(--rt-size-60);
     --rt-nav-panel-column-gap: var(--rt-space-5);
-    --rt-nav-panel-padding: var(--rt-space-3);
+    --rt-nav-panel-padding: var(--rt-space-4);
     --rt-nav-panel-padding-y: var(--rt-space-md);
-    --rt-nav-panel-group-gap: var(--rt-space-7);
+    --rt-nav-panel-group-gap: var(--rt-space-8);
     --rt-nav-panel-item-gap: var(--rt-space-0-5);
-    --rt-nav-panel-item-height: 24px;
+    --rt-nav-panel-item-height: var(--rt-size-6);
     --rt-nav-panel-item-padding: var(--rt-space-1) var(--rt-space-2);
     --rt-nav-panel-columns: 1;
     --rt-nav-panel-color-bg: var(--rt-color-bg-surface);
-    --rt-nav-panel-color-border: var(--rt-neutral-250);
+    --rt-nav-panel-color-border: var(--rt-neutral-200);
     --rt-nav-panel-shadow: var(--rt-shadow-nav-panel);
 
     /* Второй уровень набран легче первого: ряд разделов держит вес, а полтора
@@ -333,8 +337,8 @@
     --rt-nav-panel-item-font-size: var(--rt-text-sm);
     --rt-nav-panel-item-font-weight: var(--rt-font-weight-medium);
     --rt-nav-panel-item-content-gap: var(--rt-space-1);
-    --rt-nav-panel-item-color: var(--rt-neutral-520);
-    --rt-nav-panel-item-color-bg-hover: var(--rt-neutral-150);
+    --rt-nav-panel-item-color: var(--rt-neutral-600);
+    --rt-nav-panel-item-color-bg-hover: var(--rt-neutral-50);
     --rt-nav-panel-item-color-active: var(--rt-color-text-inverse);
     --rt-nav-panel-item-color-bg-active: var(--rt-color-action-primary);
     --rt-nav-panel-group-font-size: var(--rt-text-xs);
@@ -343,14 +347,14 @@
     /* Заголовок группы светлее пункта, и оба берут порог контраста на белой панели.
        Отношения обеих пар считает проверка тёмной темы; таблица замера — на странице
        «Colors» витрины. */
-    --rt-nav-panel-group-color: var(--rt-neutral-510);
-    --rt-nav-panel-group-content-gap: var(--rt-space-1-5);
+    --rt-nav-panel-group-color: var(--rt-neutral-600);
+    --rt-nav-panel-group-content-gap: var(--rt-space-2);
 
     /* Маркер непросмотренного. Точка стоит в потоке следом за подписью — и в ряду
        разделов, и в панели, и на узком экране: место ей даёт общий зазор
        содержимого пункта. */
-    --rt-nav-caret-size: 12px;
-    --rt-nav-marker-size: 4px;
+    --rt-nav-caret-size: var(--rt-size-3);
+    --rt-nav-marker-size: var(--rt-size-1);
     --rt-nav-marker-color: var(--rt-color-state-danger);
 
     /* Form field (rt-field) — обёртка анатомии поля: label / help / hint / error /

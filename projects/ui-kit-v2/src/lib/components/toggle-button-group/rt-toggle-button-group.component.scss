@@ -11,9 +11,12 @@ rt-toggle-button-group {
     display: inline-flex;
 
     /* Локальные overridable custom properties — позволяют потребителю
-       подстроить trackовый bg без перекраски всей темы (см. dark override ниже). */
-    // --rt-toggle-button-group-track-bg: var(--rt-color-bg-surface-subtle-2);
-    --rt-toggle-button-group-track-bg: #eef0f4;
+       подстроить trackовый bg без перекраски всей темы (см. dark override ниже).
+
+       Дорожка берёт приглушённую поверхность, а не ближайшую по светлоте ступень:
+       прежний код цвета стоял почти на уровне белого, а отличаться дорожка обязана
+       именно от активного сегмента, который белым и покрашен. */
+    --rt-toggle-button-group-track-bg: var(--rt-color-bg-surface-subtle);
     --rt-toggle-button-group-active-bg: var(--rt-color-bg-surface);
 
     .rt-toggle-button-group {

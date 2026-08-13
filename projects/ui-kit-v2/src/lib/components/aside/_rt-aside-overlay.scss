@@ -11,7 +11,7 @@
 /* Backdrop / длительность анимации — переопределяемые CSS-properties. */
 :root {
     --rt-aside-animation-duration: 200ms;
-    --rt-aside-backdrop-bg: rgb(0 0 0 / 45%);
+    --rt-aside-backdrop-bg: var(--rt-color-bg-overlay);
     --rt-aside-backdrop-blur: 5px;
 }
 

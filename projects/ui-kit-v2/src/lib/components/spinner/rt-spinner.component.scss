@@ -24,7 +24,7 @@
     }
 
     &--on-primary {
-        --rt-spinner-track-color: rgb(255 255 255 / 30%);
+        --rt-spinner-track-color: var(--rt-overlay-white-25);
         --rt-spinner-progress-color: var(--rt-color-action-on-primary);
     }
 }
