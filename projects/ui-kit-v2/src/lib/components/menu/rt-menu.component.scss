@@ -7,13 +7,19 @@
     justify-content: center;
 
     &__panel {
+        /* Панель рисуется в CDK Overlay, вне поддерева блока: свойство
+           объявляется на ней самой — с корня блока оно бы не докатилось. */
+        --rt-menu-panel-radius: var(--rt-radius-md);
+        --rt-menu-panel-border-width: var(--rt-border-width-thin);
+        --rt-menu-panel-shadow: var(--rt-shadow-lg);
+
         display: flex;
         min-width: 180px;
         flex-direction: column;
         padding: var(--rt-space-xs);
-        border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
-        border-radius: var(--rt-radius-md);
+        border: var(--rt-menu-panel-border-width) solid var(--rt-color-border-subtle);
+        border-radius: var(--rt-menu-panel-radius);
         background: var(--rt-color-bg-surface);
-        box-shadow: var(--rt-shadow-lg);
+        box-shadow: var(--rt-menu-panel-shadow);
     }
 }

@@ -2,6 +2,10 @@
    `.rt-section-nav` — сам хост (шаблон начинается с ng-container, класс ставит host). */
 
 .rt-section-nav {
+    --rt-section-nav-tile-radius: var(--rt-radius-xl);
+    --rt-section-nav-tile-shadow: var(--rt-shadow-card-soft);
+    --rt-section-nav-transition-duration: var(--rt-duration-fast);
+
     display: flex;
     gap: var(--rt-space-md);
 
@@ -14,24 +18,24 @@
         justify-content: center;
         padding: var(--rt-space-md);
         border: 0;
-        border-radius: var(--rt-radius-xl);
+        border-radius: var(--rt-section-nav-tile-radius);
         background: transparent;
         box-shadow: none;
         color: var(--rt-color-text-primary);
         cursor: pointer;
         gap: var(--rt-space-2);
         transition:
-            background var(--rt-duration-fast) ease,
-            box-shadow var(--rt-duration-fast) ease;
+            background var(--rt-section-nav-transition-duration) ease,
+            box-shadow var(--rt-section-nav-transition-duration) ease;
 
         &:not(.rt-section-nav__tile--active):hover {
             background: var(--rt-color-bg-surface-subtle);
-            box-shadow: var(--rt-shadow-card-soft);
+            box-shadow: var(--rt-section-nav-tile-shadow);
         }
 
         &--active {
             background: var(--rt-color-bg-surface);
-            box-shadow: var(--rt-shadow-card-soft);
+            box-shadow: var(--rt-section-nav-tile-shadow);
             cursor: default;
         }
     }
