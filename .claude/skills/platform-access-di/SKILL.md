@@ -4,7 +4,7 @@ kind: pattern
 rule: platform-access
 description: Паттерн правила platform-access. Брать, когда в код заходит окно, документ или проверка среды — готовые инжекты токенов, приведение к Window & typeof globalThis, окно параметром в чистой функции, инициализация DOM после первой отрисовки. Не брать под libs/api и apps/api.
 ---
-<!-- rt-kit v0.5.1 · patterns/platform-access-di.md · 7afb65b31d8a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.5.3 · patterns/platform-access-di.md · 7afb65b31d8a · правится надстройкой, не здесь -->
 
 # Окно, документ и проверка среды
 
