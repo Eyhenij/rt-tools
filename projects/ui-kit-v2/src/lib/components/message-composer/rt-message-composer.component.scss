@@ -1,9 +1,13 @@
 .rt-message-composer {
+    --rt-message-composer-radius: var(--rt-radius-md);
+    --rt-message-composer-border-width: var(--rt-border-width-thin);
+    --rt-message-composer-divider-width: var(--rt-border-width-thin);
+
     display: flex;
     flex-direction: column;
     padding: var(--rt-space-4);
-    border: var(--rt-border-width-thin) solid var(--rt-color-border-default);
-    border-radius: var(--rt-radius-md);
+    border: var(--rt-message-composer-border-width) solid var(--rt-color-border-default);
+    border-radius: var(--rt-message-composer-radius);
     background: var(--rt-color-bg-surface);
     gap: var(--rt-space-2);
 
@@ -42,7 +46,7 @@
     // Разделитель тянется на всю ширину бокса — компенсируем горизонтальный padding.
     &__divider {
         background: var(--rt-color-border-default);
-        block-size: var(--rt-border-width-thin);
+        block-size: var(--rt-message-composer-divider-width);
         margin-inline: calc(-1 * var(--rt-space-4));
     }
 

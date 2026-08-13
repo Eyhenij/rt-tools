@@ -2,6 +2,8 @@
    `.rt-counter-row` — сам хост (шаблон начинается с ng-container, класс ставит host). */
 
 .rt-counter-row {
+    --rt-counter-row-border-width: var(--rt-border-width-thin);
+
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -11,7 +13,7 @@
     // Линия разделяет соседние строки, а не обводит каждую: рамка на всех дала бы
     // лишние границы сверху у первой и снизу у последней
     &:not(:first-of-type) {
-        border-top: var(--rt-border-width-thin) solid var(--rt-counter-row-color-border);
+        border-top: var(--rt-counter-row-border-width) solid var(--rt-counter-row-color-border);
     }
 
     &__text {

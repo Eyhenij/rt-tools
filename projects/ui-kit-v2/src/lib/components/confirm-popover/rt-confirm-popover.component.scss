@@ -2,15 +2,19 @@
    Селекторы префиксованы `.rt-confirm-popover`. */
 
 .rt-confirm-popover {
+    --rt-confirm-popover-radius: var(--rt-radius-md);
+    --rt-confirm-popover-border-width: var(--rt-border-width-thin);
+    --rt-confirm-popover-shadow: var(--rt-shadow-lg);
+
     display: flex;
     width: 280px;
     max-width: 280px;
     flex-direction: column;
     padding: var(--rt-space-md);
-    border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
-    border-radius: var(--rt-radius-md);
+    border: var(--rt-confirm-popover-border-width) solid var(--rt-color-border-subtle);
+    border-radius: var(--rt-confirm-popover-radius);
     background: var(--rt-color-bg-surface);
-    box-shadow: var(--rt-shadow-lg);
+    box-shadow: var(--rt-confirm-popover-shadow);
     gap: var(--rt-space-sm);
 
     &__title {

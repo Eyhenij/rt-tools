@@ -10,6 +10,8 @@ rt-stat-tile {
     display: block;
 
     .rt-stat-tile {
+        --rt-stat-tile-year-radius: var(--rt-radius-sm);
+
         display: flex;
         height: 100%;
         flex-direction: column;
@@ -68,7 +70,7 @@ rt-stat-tile {
         &__year {
             flex: 0 0 auto;
             padding: var(--rt-space-0-5) var(--rt-space-2);
-            border-radius: var(--rt-radius-sm);
+            border-radius: var(--rt-stat-tile-year-radius);
             background: var(--rt-color-bg-surface-subtle);
             color: var(--rt-color-text-muted);
             font-size: var(--rt-text-xs);

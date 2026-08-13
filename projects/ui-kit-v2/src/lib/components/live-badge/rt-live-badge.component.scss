@@ -7,6 +7,8 @@ rt-live-badge {
     display: inline-flex;
 
     .rt-live-badge {
+        --rt-live-badge-dot-radius: var(--rt-radius-full);
+
         display: inline-flex;
         align-items: center;
         color: var(--rt-color-text-muted);
@@ -20,7 +22,7 @@ rt-live-badge {
         &__dot {
             width: 8px;
             height: 8px;
-            border-radius: var(--rt-radius-full);
+            border-radius: var(--rt-live-badge-dot-radius);
             background: var(--rt-color-border-subtle);
         }
 

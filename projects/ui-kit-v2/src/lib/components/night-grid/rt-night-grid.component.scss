@@ -10,6 +10,9 @@ rt-night-grid {
     display: block;
 
     .rt-night-grid {
+        --rt-night-grid-cell-radius: var(--rt-radius-sm);
+        --rt-night-grid-outline-width: var(--rt-border-width-thin);
+
         /* Колонки резиновые от 16px: при жёсткой ширине ячейки сетка занимала
            треть широкой карточки, а фиксированный максимум оставлял в ряду
            «хвост» из одной ячейки, не попавшей в предыдущую строку. */
@@ -20,17 +23,17 @@ rt-night-grid {
         &__cell {
             padding: 0;
             border: none;
-            border-radius: var(--rt-radius-sm);
+            border-radius: var(--rt-night-grid-cell-radius);
             aspect-ratio: 1;
             background: var(--rt-color-bg-surface-subtle);
             cursor: pointer;
 
             &:hover {
-                outline: var(--rt-border-width-thin) solid var(--rt-color-border-strong);
+                outline: var(--rt-night-grid-outline-width) solid var(--rt-color-border-strong);
             }
 
             &:focus-visible {
-                outline: var(--rt-border-width-thin) solid var(--rt-color-border-focus);
+                outline: var(--rt-night-grid-outline-width) solid var(--rt-color-border-focus);
                 outline-offset: 1px;
             }
 
