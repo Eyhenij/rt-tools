@@ -3,7 +3,19 @@
  * с собой шаблоны — иначе проект, выбравший девять законов, остался бы без шаблона правила и
  * узнал бы об этом, только пойдя за ним.
  */
-import { IEntryOfCatalog, idOf, IGapOfVariant, isChosen, ISelection, resolveSelection, titleOf, variantGaps } from './catalog.js';
+import {
+    brokenLinks,
+    IBrokenLink,
+    IEntryOfCatalog,
+    idOf,
+    IGapOfVariant,
+    isChosen,
+    ISelection,
+    requiresOf,
+    resolveSelection,
+    titleOf,
+    variantGaps,
+} from './catalog.js';
 import { TKind } from './config.js';
 import { IVariant } from './variants.js';
 
@@ -18,7 +30,15 @@ const entry: (kind: TKind, name: string, variant?: IVariant) => IEntryOfCatalog 
     title: name,
     variant,
     text: '',
+    requires: [],
 });
+
+/** Ресурс, объявивший требование: им проверяются разорванные связи. */
+const needing: (kind: TKind, name: string, requires: readonly string[]) => IEntryOfCatalog = (
+    kind: TKind,
+    name: string,
+    requires: readonly string[]
+): IEntryOfCatalog => ({ ...entry(kind, name), requires });
 
 const picked: (only?: readonly string[], skip?: readonly string[], variants?: Record<string, string>) => ISelection = (
     only: readonly string[] = [],
@@ -143,5 +163,45 @@ describe('resolveSelection', () => {
 
     it('повтор не удваивает', () => {
         expect(resolveSelection(['access', 'laws/access.md'], 'laws', CATALOG).ids).toEqual([ACCESS.id]);
+    });
+});
+
+describe('requiresOf', () => {
+    it('читает строку требования из разметки', () => {
+        expect(requiresOf('# Правило\n\n**Требует:** `hooks/a.sh`, `hooks/b.sh`\n')).toEqual(['hooks/a.sh', 'hooks/b.sh']);
+    });
+
+    it('читает её же из комментария исполняемого файла', () => {
+        expect(requiresOf('#!/usr/bin/env bash\n# Требует: defaults/project.sh\n')).toEqual(['defaults/project.sh']);
+    });
+
+    it('ресурс без строки ничего не требует', () => {
+        expect(requiresOf('# Правило\n\nтекст\n')).toEqual([]);
+    });
+});
+
+describe('brokenLinks', () => {
+    const HOOK: IEntryOfCatalog = entry('hooks', 'task-context-load');
+    const PATTERN: IEntryOfCatalog = needing('patterns', 'task-flow-resume', [HOOK.id]);
+    const CATALOG_OF_TWO: readonly IEntryOfCatalog[] = [HOOK, PATTERN];
+
+    it('SC-AK-85 — выбранный ресурс требует невыбранного, и сверка говорит об этом', () => {
+        const broken: readonly IBrokenLink[] = brokenLinks(CATALOG_OF_TWO, picked([], [HOOK.id]));
+
+        expect(broken).toEqual([{ id: PATTERN.id, requires: HOOK.id, unknown: false }]);
+    });
+
+    it('SC-AK-86 — оба взяты, и связи не разорваны', () => {
+        expect(brokenLinks(CATALOG_OF_TWO, picked())).toEqual([]);
+    });
+
+    it('требование невзятого ресурса не считается: его в дереве нет вовсе', () => {
+        expect(brokenLinks(CATALOG_OF_TWO, picked([], [PATTERN.id, HOOK.id]))).toEqual([]);
+    });
+
+    it('требование, которого нет в пакете, названо промахом шапки, а не выбором дерева', () => {
+        const stray: IEntryOfCatalog = needing('rules', 'x', ['hooks/нетакого.sh']);
+
+        expect(brokenLinks([stray], picked())).toEqual([{ id: stray.id, requires: 'hooks/нетакого.sh', unknown: true }]);
     });
 });

@@ -31,9 +31,41 @@ export interface IEntryOfCatalog {
      * «правка отбита». Признак берётся с файла в пакете и переносится на разложенный.
      */
     readonly executable: boolean;
+    /**
+     * Ресурсы, без которых этот неисполним, — их идентификаторы.
+     *
+     * Читается из шапки самого ресурса, а не из отдельного списка при пакете: список разошёлся
+     * бы с ресурсами молча, ровно тем же молчанием, ради которого требование и заведено. Паттерн
+     * возвращения к работе начинается словами «хук запуска сессии отдал замысел и ход работы» —
+     * без хука он неисполним, и до этой строки узнать об этом было нечем.
+     */
+    readonly requires: readonly string[];
 }
 
 const TITLE: RegExp = /^#\s+(\S.*)$/m;
+
+/**
+ * Строка требования в шапке ресурса. Двух видов, потому что ресурсы двух родов: у разметки
+ * `**Требует:**`, у исполняемого файла — комментарий `# Требует:`.
+ */
+const REQUIRES: RegExp = /^(?:#\s*Требует:|\*\*Требует:\*\*)\s*(.+)$/m;
+
+/**
+ * Что ресурс о себе объявил. Имена читаются идентификаторами — `hooks/observe.sh`: короткая
+ * форма совпала бы у закона и правила с одним именем, а требование, указавшее не туда, хуже
+ * ненайденного.
+ */
+export function requiresOf(text: string): readonly string[] {
+    const found: RegExpMatchArray | null = text.match(REQUIRES);
+    if (!found) {
+        return [];
+    }
+
+    return found[1]
+        .split(',')
+        .map((name: string): string => name.trim().replace(/^`|`$/g, '').trim())
+        .filter((name: string): boolean => name.length > 0);
+}
 
 /** Запускается ли файл сам по себе. Спрашиваем систему, а не разбираем биты режима руками. */
 function isExecutable(path: string): boolean {
@@ -97,7 +129,16 @@ export function readCatalog(assetsDir: string): readonly IEntryOfCatalog[] {
             const variant: IVariant | null = variantOf(file, axes);
             const name: string = withoutVariant(file, variant).replace(/\.[^./]+$/, '');
             const executable: boolean = isExecutable(path);
-            entries.push({ id: `${kind}/${file}`, kind, name, title: titleOf(text, name), variant, text, executable });
+            entries.push({
+                id: `${kind}/${file}`,
+                kind,
+                name,
+                title: titleOf(text, name),
+                variant,
+                text,
+                executable,
+                requires: requiresOf(text),
+            });
         }
     }
 
@@ -201,6 +242,46 @@ export function variantGaps(catalog: readonly IEntryOfCatalog[], selection: ISel
     }
 
     return gaps;
+}
+
+/** Выбранный ресурс, чьё требование в дерево не поехало. */
+export interface IBrokenLink {
+    /** Кто требует — идентификатор выбранного ресурса. */
+    readonly id: string;
+    /** Чего не хватает — идентификатор требования. */
+    readonly requires: string;
+    /** Требования нет в пакете вовсе: промах в шапке ресурса, а не выбор дерева. */
+    readonly unknown: boolean;
+}
+
+/**
+ * Связи, разорванные выбором дерева.
+ *
+ * Не отказ, а предупреждение — и это главное свойство. Дерево вправе закрыть требование своим
+ * средством: паттерн исполним и с чужим хуком, если тот делает то же самое. Отказ здесь отбивал
+ * бы законную раскладку, а молчание оставляет дерево исправным на вид — сверка зелена на любом
+ * подмножестве, сколько бы связок ни было разорвано.
+ */
+export function brokenLinks(catalog: readonly IEntryOfCatalog[], selection: ISelection): readonly IBrokenLink[] {
+    const known: ReadonlySet<string> = new Set(catalog.map((entry: IEntryOfCatalog): string => entry.id));
+    const chosen: ReadonlySet<string> = new Set(
+        catalog.filter((entry: IEntryOfCatalog): boolean => isChosen(entry, selection)).map((entry: IEntryOfCatalog): string => entry.id)
+    );
+
+    const broken: IBrokenLink[] = [];
+    for (const entry of catalog) {
+        if (!chosen.has(entry.id)) {
+            continue;
+        }
+        for (const required of entry.requires) {
+            if (chosen.has(required)) {
+                continue;
+            }
+            broken.push({ id: entry.id, requires: required, unknown: !known.has(required) });
+        }
+    }
+
+    return broken;
 }
 
 /**
