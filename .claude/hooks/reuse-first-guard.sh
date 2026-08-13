@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.5.1 · hooks/reuse-first-guard.sh · bedc2b03dd9d · правится надстройкой, не здесь
+# rt-kit v0.5.1 · hooks/reuse-first-guard.sh · 76a986695cd2 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file
+# Требует: hooks/profile-check.sh
 # Гард «ничего не пишется с нуля». PreToolUse на правке кода и разметки.
 #
 # Линтеры знают правила, но не знают ИНВЕНТАРЬ: линтер стилей поймает сырой цвет, линтер кода —
@@ -62,11 +63,17 @@ for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../d
     # shellcheck disable=SC1090
     [ -f "$profile" ] && . "$profile" 2>/dev/null
 done
-command -v rt_reinvented_in >/dev/null 2>&1 || exit 0
+
+# Слово о нехватке функции профиля: хук, вышедший молча, неотличим от работающего. Файл может
+# быть не разложен — тогда остаётся прежнее поведение, молчаливое.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
+command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
+rt_needs rt_reinvented_in reuse-first-guard || exit 0
 
 # Правила этого дерева действуют на код этого дерева: без положительной проверки гард требовал
 # бы собирать готовым и в черновике за пределами дерева.
-if command -v rt_is_app_code >/dev/null 2>&1; then
+if rt_needs rt_is_app_code reuse-first-guard; then
     rt_is_app_code "$path" || exit 0
 fi
 
