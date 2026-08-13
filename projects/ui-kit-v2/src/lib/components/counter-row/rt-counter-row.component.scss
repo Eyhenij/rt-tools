@@ -1,36 +1,38 @@
-/* rt-counter-row — ViewEncapsulation.None: правила таргетируют BEM-класс блока.
-   `.rt-counter-row` — сам хост (шаблон начинается с ng-container, класс ставит host). */
+@layer rt-kit.components {
+    /* rt-counter-row — ViewEncapsulation.None: правила таргетируют BEM-класс блока.
+       `.rt-counter-row` — сам хост (шаблон начинается с ng-container, класс ставит host). */
 
-.rt-counter-row {
-    --rt-counter-row-border-width: var(--rt-border-width-thin);
+    .rt-counter-row {
+        --rt-counter-row-border-width: var(--rt-border-width-thin);
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--rt-counter-row-padding-y) 0;
-    gap: var(--rt-counter-row-gap);
-
-    // Линия разделяет соседние строки, а не обводит каждую: рамка на всех дала бы
-    // лишние границы сверху у первой и снизу у последней
-    &:not(:first-of-type) {
-        border-top: var(--rt-counter-row-border-width) solid var(--rt-counter-row-color-border);
-    }
-
-    &__text {
         display: flex;
-        flex-direction: column;
-        gap: var(--rt-space-2xs);
-        text-align: start;
-    }
+        align-items: center;
+        justify-content: space-between;
+        padding: var(--rt-counter-row-padding-y) 0;
+        gap: var(--rt-counter-row-gap);
 
-    &__label {
-        color: var(--rt-counter-row-label-color);
-        font-size: var(--rt-counter-row-label-font-size);
-        font-weight: var(--rt-font-weight-medium);
-    }
+        // Линия разделяет соседние строки, а не обводит каждую: рамка на всех дала бы
+        // лишние границы сверху у первой и снизу у последней
+        &:not(:first-of-type) {
+            border-top: var(--rt-counter-row-border-width) solid var(--rt-counter-row-color-border);
+        }
 
-    &__hint {
-        color: var(--rt-counter-row-hint-color);
-        font-size: var(--rt-counter-row-hint-font-size);
+        &__text {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-2xs);
+            text-align: start;
+        }
+
+        &__label {
+            color: var(--rt-counter-row-label-color);
+            font-size: var(--rt-counter-row-label-font-size);
+            font-weight: var(--rt-font-weight-medium);
+        }
+
+        &__hint {
+            color: var(--rt-counter-row-hint-color);
+            font-size: var(--rt-counter-row-hint-font-size);
+        }
     }
 }

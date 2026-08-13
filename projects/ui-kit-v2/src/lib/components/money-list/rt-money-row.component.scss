@@ -1,27 +1,29 @@
-/* rt-money-row — строка финансового блока (ViewEncapsulation.None).
-   Селектор bare `.rt-money-row` (класс на host). */
+@layer rt-kit.components {
+    /* rt-money-row — строка финансового блока (ViewEncapsulation.None).
+       Селектор bare `.rt-money-row` (класс на host). */
 
-.rt-money-row {
-    --rt-money-row-border-width: var(--rt-border-width-thin);
+    .rt-money-row {
+        --rt-money-row-border-width: var(--rt-border-width-thin);
 
-    display: flex;
-    justify-content: space-between;
-    font-size: var(--rt-text-sm);
-    gap: var(--rt-space-md);
-    line-height: var(--rt-leading-normal);
+        display: flex;
+        justify-content: space-between;
+        font-size: var(--rt-text-sm);
+        gap: var(--rt-space-md);
+        line-height: var(--rt-leading-normal);
 
-    &__label {
-        color: var(--rt-color-text-muted);
-    }
+        &__label {
+            color: var(--rt-color-text-muted);
+        }
 
-    &__value {
-        color: var(--rt-color-text-primary);
-        white-space: nowrap;
-    }
+        &__value {
+            color: var(--rt-color-text-primary);
+            white-space: nowrap;
+        }
 
-    &--total {
-        padding-top: var(--rt-space-xs);
-        border-top: var(--rt-money-row-border-width) solid var(--rt-color-border-default);
-        font-weight: var(--rt-font-weight-semibold);
+        &--total {
+            padding-top: var(--rt-space-xs);
+            border-top: var(--rt-money-row-border-width) solid var(--rt-color-border-default);
+            font-weight: var(--rt-font-weight-semibold);
+        }
     }
 }

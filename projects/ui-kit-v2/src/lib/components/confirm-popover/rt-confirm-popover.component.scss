@@ -1,40 +1,42 @@
-/* rt-confirm-popover — панель подтверждения в CDK Overlay. ViewEncapsulation.None.
-   Селекторы префиксованы `.rt-confirm-popover`. */
+@layer rt-kit.components {
+    /* rt-confirm-popover — панель подтверждения в CDK Overlay. ViewEncapsulation.None.
+       Селекторы префиксованы `.rt-confirm-popover`. */
 
-.rt-confirm-popover {
-    --rt-confirm-popover-radius: var(--rt-radius-md);
-    --rt-confirm-popover-border-width: var(--rt-border-width-thin);
-    --rt-confirm-popover-shadow: var(--rt-shadow-lg);
+    .rt-confirm-popover {
+        --rt-confirm-popover-radius: var(--rt-radius-md);
+        --rt-confirm-popover-border-width: var(--rt-border-width-thin);
+        --rt-confirm-popover-shadow: var(--rt-shadow-lg);
 
-    display: flex;
-    width: 280px;
-    max-width: 280px;
-    flex-direction: column;
-    padding: var(--rt-space-md);
-    border: var(--rt-confirm-popover-border-width) solid var(--rt-color-border-subtle);
-    border-radius: var(--rt-confirm-popover-radius);
-    background: var(--rt-color-bg-surface);
-    box-shadow: var(--rt-confirm-popover-shadow);
-    gap: var(--rt-space-sm);
-
-    &__title {
-        margin: 0;
-        color: var(--rt-color-text-primary);
-        font-size: var(--rt-text-sm);
-        font-weight: var(--rt-font-weight-semibold);
-    }
-
-    &__message {
-        margin: 0;
-        color: var(--rt-color-text-primary);
-        font-size: var(--rt-text-sm);
-        line-height: var(--rt-leading-normal);
-    }
-
-    &__actions {
         display: flex;
-        justify-content: space-between;
+        width: 280px;
+        max-width: 280px;
+        flex-direction: column;
+        padding: var(--rt-space-md);
+        border: var(--rt-confirm-popover-border-width) solid var(--rt-color-border-subtle);
+        border-radius: var(--rt-confirm-popover-radius);
+        background: var(--rt-color-bg-surface);
+        box-shadow: var(--rt-confirm-popover-shadow);
         gap: var(--rt-space-sm);
-        margin-block-start: var(--rt-space-xs);
+
+        &__title {
+            margin: 0;
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-sm);
+            font-weight: var(--rt-font-weight-semibold);
+        }
+
+        &__message {
+            margin: 0;
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-sm);
+            line-height: var(--rt-leading-normal);
+        }
+
+        &__actions {
+            display: flex;
+            justify-content: space-between;
+            gap: var(--rt-space-sm);
+            margin-block-start: var(--rt-space-xs);
+        }
     }
 }
