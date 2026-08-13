@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.5.1 · hooks/task-context-load.sh · 09853b6a2fef · правится надстройкой, не здесь
+# rt-kit v0.5.1 · hooks/task-context-load.sh · 1d7af57185fa · правится надстройкой, не здесь
 # rt-hook: SessionStart startup|resume|compact|clear
 # Требует: hooks/profile-check.sh
 # SessionStart: состояние незаконченной работы уезжает в контекст на каждом запуске сессии.
@@ -57,7 +57,14 @@ if [ ! -d "$DIR" ]; then
             printf 'Ветка `%s` названа задачей, а `%s/` нет: ход работы записывать некуда,\n' "$branch" "$DIR"
             printf 'и следующий заход начнёт с расспросов владельца.\n\n'
             printf 'Собрать с образца:\n\n    cp -r %s/_template %s\n\n' "$TASKS_DIR" "$DIR"
-            printf 'Правку кода приложения до этого отбивает гард. Правило — скил `task-flow`.\n'
+            # О соседнем ресурсе — условно и по имени: пакет не знает, разложен ли он здесь,
+            # а сказанное безусловно приходит в контекст каждой сессии и врёт про дерево тем
+            # увереннее, что печатает это сам инструмент.
+            if [ -f "$rt_hooks_dir/task-flow-guard.sh" ]; then
+                printf 'Правку кода приложения до этого отбивает гард `task-flow-guard`. Правило — скил `task-flow`.\n'
+            else
+                printf 'Правило — скил `task-flow`. Гарда `task-flow-guard` в дереве нет: правку кода до этого не отбивает ничто.\n'
+            fi
         } | emit
     fi
     exit 0
