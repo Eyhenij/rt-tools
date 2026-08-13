@@ -37,10 +37,18 @@
 
     /* Action — роли действия.
 
-       Роль это четвёрка: подложка, наведение, нажатие и подпись на них. Кнопка берёт
-       роль целиком и своих цветов не знает вовсе, поэтому смена роли — одна строка
-       здесь, а не правка стилей компонента. Наведение и нажатие — соседние ступени
-       своей шкалы; подпись светлая у всех ролей, потому что все подложки тёмные. */
+       Роль это пятёрка: подложка, наведение, нажатие, подпись на них и цвет самой
+       роли на поверхности. Кнопка берёт роль целиком и своих цветов не знает вовсе,
+       поэтому смена роли — одна строка здесь, а не правка стилей компонента.
+       Наведение и нажатие — соседние ступени своей шкалы; подпись светлая у всех
+       ролей, потому что все подложки тёмные.
+
+       Пятый член — `-on-surface` — красит безфоновые оформления: текстовое и
+       обводочное берут им подпись и рамку. Отдельным именем, а не подложкой роли:
+       подложка вправе быть поверхностью, и у вторичной роли на графите она ею
+       становится — подпись, взятая из подложки, легла бы сама на себя. У пяти ролей
+       цвет тот же, что и у подложки, и это записано ссылкой, а не повтором
+       значения. */
     --rt-color-action-primary: var(--rt-brand-500); /* rt-theme-shared: цвет марки один в обеих темах */
     --rt-color-action-primary-hover: var(--rt-brand-600); /* rt-theme-shared: цвет марки один в обеих темах */
     --rt-color-action-primary-active: var(--rt-brand-700); /* rt-theme-shared: цвет марки один в обеих темах */
@@ -49,30 +57,37 @@
     /* Focus-ring tint — насыщеннее subtle, для visible 3px outline. */
     --rt-color-action-primary-soft: var(--rt-overlay-brand-24);
     --rt-color-action-on-primary: var(--rt-neutral-0); /* rt-theme-shared: подпись на действии марки светлая в обеих темах */
+    --rt-color-action-primary-on-surface: var(--rt-color-action-primary);
 
     /* Вторичное действие — единственная роль без своего цвета: она нейтральна и на
        графите разворачивается в подложку поверхности, поэтому тёмная тема отвечает
-       на всю её тройку. */
+       на всю её тройку. По той же причине пятый член у неё свой: подложкой роли на
+       графите красить подпись нечем. */
     --rt-color-action-secondary: var(--rt-neutral-600);
     --rt-color-action-secondary-hover: var(--rt-neutral-700);
     --rt-color-action-secondary-active: var(--rt-neutral-800);
     --rt-color-action-on-secondary: var(--rt-neutral-0);
+    --rt-color-action-secondary-on-surface: var(--rt-neutral-600);
     --rt-color-action-success: var(--rt-success-500); /* rt-theme-shared: цвет роли один в обеих темах */
     --rt-color-action-success-hover: var(--rt-success-600); /* rt-theme-shared: цвет роли один в обеих темах */
     --rt-color-action-success-active: var(--rt-success-700); /* rt-theme-shared: цвет роли один в обеих темах */
     --rt-color-action-on-success: var(--rt-neutral-0); /* rt-theme-shared: подпись на цветной подложке светлая в обеих темах */
+    --rt-color-action-success-on-surface: var(--rt-color-action-success);
     --rt-color-action-warning: var(--rt-warning-500); /* rt-theme-shared: цвет роли один в обеих темах */
     --rt-color-action-warning-hover: var(--rt-warning-600); /* rt-theme-shared: цвет роли один в обеих темах */
     --rt-color-action-warning-active: var(--rt-warning-700); /* rt-theme-shared: цвет роли один в обеих темах */
     --rt-color-action-on-warning: var(--rt-neutral-0); /* rt-theme-shared: подпись на цветной подложке светлая в обеих темах */
+    --rt-color-action-warning-on-surface: var(--rt-color-action-warning);
     --rt-color-action-danger: var(--rt-danger-500); /* rt-theme-shared: цвет роли один в обеих темах */
     --rt-color-action-danger-hover: var(--rt-danger-600); /* rt-theme-shared: цвет роли один в обеих темах */
     --rt-color-action-danger-active: var(--rt-danger-700); /* rt-theme-shared: цвет роли один в обеих темах */
     --rt-color-action-on-danger: var(--rt-neutral-0); /* rt-theme-shared: подпись на цветной подложке светлая в обеих темах */
+    --rt-color-action-danger-on-surface: var(--rt-color-action-danger);
     --rt-color-action-info: var(--rt-info-500); /* rt-theme-shared: цвет роли один в обеих темах */
     --rt-color-action-info-hover: var(--rt-info-600); /* rt-theme-shared: цвет роли один в обеих темах */
     --rt-color-action-info-active: var(--rt-info-700); /* rt-theme-shared: цвет роли один в обеих темах */
     --rt-color-action-on-info: var(--rt-neutral-0); /* rt-theme-shared: подпись на цветной подложке светлая в обеих темах */
+    --rt-color-action-info-on-surface: var(--rt-color-action-info);
 
     /* Отключённое действие — своя пара, а не вторичная роль: делить подложку с ней
        значит сделать отключённую вторичную кнопку неотличимой от доступной. */
