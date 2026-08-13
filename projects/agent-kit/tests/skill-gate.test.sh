@@ -98,6 +98,52 @@ g "после загрузки правила" "$TREE/libs/site/x/ui/src/lib/b.c
 gate_session_load 'projects/ui:styling-bem'
 g "правило загружено с областью каталога" "$TREE/libs/site/x/ui/src/lib/b.component.scss" PASS
 
+# --- слои поверх доменного правила -------------------------------------------------------
+#
+# Доменное правило выбирается по пути, слой приходит сверх него. Проверяется это на дереве, где
+# доменное правило уже загружено: гейт требует первое незагруженное, и без этого слой был бы не
+# виден за доменным.
+
+# Состояние загруженного набралось выше: слои проверяются с чистого листа, иначе доменное
+# правило уже загружено и слой за ним не виден.
+gate_session_reset
+
+# SC-AK-99 — слой требует правило ПОВЕРХ доменного, а не вместо него.
+mkdir -p "$TREE/.claude/skills/observability"
+printf -- '---\nname: observability\nkind: rule\n---\n' > "$TREE/.claude/skills/observability/SKILL.md"
+g "SC-AK-99 — доменное правило остаётся первым" "$TREE/libs/site/x/ui/src/lib/b.component.ts" \
+    component-structure 'const w = globalThis.innerWidth;'
+gate_session_load component-structure angular-patterns
+g "SC-AK-99 — слой приходит вторым, а не вместо" "$TREE/libs/site/x/ui/src/lib/b.component.ts" \
+    platform-access 'const w = globalThis.innerWidth;'
+
+# SC-AK-100 — признак, невидимый по пути, судится по тексту правки.
+gate_session_load typescript-conventions
+g "SC-AK-100 — обращение к среде видно только в тексте" "$TREE/libs/site/x/util/src/lib/e.ts" \
+    platform-access 'const view = document.defaultView;'
+g "SC-AK-100 — чтение окружения зовёт наблюдаемость" "$TREE/libs/site/x/util/src/lib/f.ts" \
+    observability 'const url = process.env["API_URL"];'
+
+# SC-AK-101 — место, где признак разрешён, слоя не получает. Какое место разрешено, говорит
+# само дерево: слои адресов не знают.
+printf 'skill_layer_skip() { [ "$1" = "platform-access" ] && case "$2" in */lib/g.ts) return 0 ;; esac; return 1; }\n' \
+    >> "$TREE/.claude/rt-kit/defaults/gate-map.sh"
+g "SC-AK-101 — снятый деревом слой не требуется" "$TREE/libs/site/x/util/src/lib/g.ts" \
+    PASS 'const view = document.defaultView;'
+g "SC-AK-101 — соседний файл слой получает" "$TREE/libs/site/x/util/src/lib/h.ts" \
+    platform-access 'const view = document.defaultView;'
+
+# SC-AK-102 — слой без разборщика входа отпускает правку: разбор здесь побочная работа.
+no_jq_dir="$(mktemp -d)"
+printf '#!/bin/sh\nexit 1\n' > "$no_jq_dir/jq"
+chmod +x "$no_jq_dir/jq"
+layers_code="$(PATH="$no_jq_dir:$PATH" sh -c "printf '%s' '$(input_edit "$TREE/libs/site/x/util/src/lib/i.ts" 'const view = document.defaultView;')' | '$HOOKS/skill-gate.sh' >/dev/null 2>&1"; printf '%s' "$?")"
+report "SC-AK-102 — без разборщика входа правка проходит" "код:$layers_code" "код:0"
+rm -rf "$no_jq_dir"
+
+# Дальше идут сценарии, которым нужен незагруженный набор: состояние возвращается чистым.
+gate_session_reset
+
 # --- отказ в пользу работы --------------------------------------------------------------
 # Сломанный гейт не имеет права остановить работу совсем: любой неразобранный вход пропускается.
 exit_code_of() {

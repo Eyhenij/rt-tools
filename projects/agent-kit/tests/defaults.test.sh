@@ -86,7 +86,9 @@ ok "и остальное отдала вниз" rt_is_app_code "$TREE/libs/site
 
 # --- карта гейта -------------------------------------------------------------------------------------
 report "карта: правило по роду файла" "$(skill_for edit /r/libs/x/a.component.ts '')" component-structure
-report "карта: правило по тексту правки" "$(skill_for edit /r/libs/x/a.service.ts 'localStorage.getItem("x")' | tr '\n' ' ')" 'angular-patterns platform-access '
+# Карта судит путь и только его: правило, вступающее от текста правки, приходит слоем поверх
+# доменного — `hooks/skill-gate-layers.sh`, — и в карте его нет вовсе.
+report "карта: судит путь, а не текст правки" "$(skill_for edit /r/libs/x/a.service.ts 'localStorage.getItem("x")' | tr '\n' ' ')" 'angular-patterns '
 # Текст правила устроен как спек, и правило под него есть; остальное хозяйство агента — нет.
 report "карта: правило и паттерн судятся как спек" "$(skill_for edit /r/.claude/skills/x/SKILL.md '')" spec-driven
 report "карта: правила на прочие файлы агента нет" "$(skill_for edit /r/.claude/agents/qa.md '')" ''
