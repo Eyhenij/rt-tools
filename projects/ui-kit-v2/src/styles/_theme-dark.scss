@@ -1,13 +1,19 @@
-/* Dark theme — переопределение СЕМАНТИЧЕСКИХ токенов (примитивы неизменны).
+/* Собрано генератором `tools/build-tokens-v2.mjs` из `tokens.source.mjs` — правится там, не здесь:
+   правка на месте теряется на следующей сборке, и её называет `pnpm run check:tokens-build`. */
 
-   Тело токенов вынесено в @mixin, чтобы тот же набор переопределений можно было
+/* Тёмная тема — переопределение назначений; ступени шкалы неизменны.
+
+   Тело вынесено в @mixin, чтобы тот же набор переопределений можно было
    применить не только на html-уровне (тема приложения), но и к локальному
    контейнеру (side-by-side light/dark в Storybook) — без дублирования значений.
 
    База (`rt-theme-dark-tokens`) — тёплый графит для приложений и всех
    CDK-overlay'ев (асайды/диалоги/меню рендерятся на уровне body, вне
    host-классов шеллов — поэтому графит держим на :root, иначе overlay'и
-   не наследовали бы палитру). */
+   не наследовали бы палитру).
+
+   Значения ответов живут в источнике рядом со своим светлым назначением: забытая половина
+   пары видна там же, а не вылавливается сверкой двух файлов. */
 
 @mixin rt-theme-dark-tokens {
     /* Background — тёплый графит */
@@ -132,25 +138,4 @@
 :root[data-theme='dark'],
 html.rt-theme-dark {
     @include rt-theme-dark-tokens;
-}
-
-/* Body-level градиент — подложка экранов авторизации: их вьюпорт прозрачен
-   (`--rt-color-bg-surface-auth-card: transparent`) и просвечивает body.
-   Остальные экраны его не видят — rt-container кроет body непрозрачным фоном
-   страницы. Не shorthand `background:`, чтобы не сбросить body{}'ный
-   `background-color`. */
-@layer rt-kit.base {
-    :root[data-theme='dark'] body,
-    html.rt-theme-dark body {
-        background-attachment: fixed;
-        background-image: linear-gradient(156deg, #122341 12.68%, #182142 99.28%);
-    }
-}
-
-/* rt-logo (чёрный SVG) — инверсия для читаемости на тёмном фоне */
-@layer rt-kit.base {
-    :root[data-theme='dark'] .rt-logo,
-    html.rt-theme-dark .rt-logo {
-        filter: invert(1) brightness(1.5);
-    }
 }

@@ -9,6 +9,7 @@
 @forward './primitives';
 @forward './semantic';
 @forward './theme-dark';
+@forward './theme-dark-rules';
 @forward './scrollbar';
 
 // Стили директивы кнопки: своего представления у директивы нет, поэтому её `.scss` не
