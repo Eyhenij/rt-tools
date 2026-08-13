@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.5.1 · hooks/skill-gate.sh · 531a68c89a57 · правится надстройкой, не здесь
+# rt-kit v0.5.2 · hooks/skill-gate.sh · 531a68c89a57 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash
 # Гейт правил: не даёт править файл, пока не загружено правило, под которое он подпадает.
 #
