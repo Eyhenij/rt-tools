@@ -1,5 +1,7 @@
 .rt-button {
-    --rt-btn-height: 40px;
+    /* Высота приходит общей шкалой контролов, а не своим числом: кнопка, поле и
+       иконочная кнопка одного размера стоят в одной строке и обязаны совпадать. */
+    --rt-btn-height: var(--rt-control-height-md);
     --rt-btn-padding: 0 1.25rem;
     --rt-btn-gap: 0.5rem;
     --rt-btn-radius: 10px;
@@ -204,7 +206,7 @@
     }
 
     &--sm {
-        --rt-btn-height: 30px;
+        --rt-btn-height: var(--rt-control-height-sm);
         --rt-btn-padding: 0 0.875rem;
         --rt-btn-font-size: 0.8125rem;
         --rt-btn-icon-size: 0.875rem;
@@ -212,7 +214,7 @@
     }
 
     &--lg {
-        --rt-btn-height: 50px;
+        --rt-btn-height: var(--rt-control-height-lg);
         --rt-btn-padding: 0 1.5rem;
         --rt-btn-font-size: 1.0625rem;
         --rt-btn-icon-size: 1.125rem;
@@ -220,7 +222,7 @@
     }
 
     &--xl {
-        --rt-btn-height: 60px;
+        --rt-btn-height: var(--rt-control-height-xl);
         --rt-btn-padding: 0 1.75rem;
         --rt-btn-font-size: 1.125rem;
         --rt-btn-icon-size: 1.25rem;
@@ -228,7 +230,7 @@
     }
 
     &--2xl {
-        --rt-btn-height: 70px;
+        --rt-btn-height: var(--rt-control-height-2xl);
         --rt-btn-padding: 0 2rem;
         --rt-btn-font-size: 1.1875rem;
         --rt-btn-icon-size: 1.375rem;
