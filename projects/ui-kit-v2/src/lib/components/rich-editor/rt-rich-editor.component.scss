@@ -2,6 +2,8 @@
 // Здесь — только перекрытие цветов на семантические --rt-* токены (dark-aware):
 // нативный snow светлый (иконки #444, границы #ccc) и в тёмной теме не читается.
 .rt-rich-editor {
+    --rt-rich-editor-radius: var(--rt-radius-md);
+
     // Хост — flex-колонка (тулбар над контейнером). min-block-size:0 позволяет
     // ужиматься ниже интринзик-высоты Quill, когда редактор — flex-item в
     // height-ограниченном родителе (композер в fill-режиме): без этого контейнер
@@ -17,8 +19,8 @@
 
     .ql-toolbar.ql-snow {
         flex: 0 0 auto;
-        border-start-end-radius: var(--rt-radius-md);
-        border-start-start-radius: var(--rt-radius-md);
+        border-start-end-radius: var(--rt-rich-editor-radius);
+        border-start-start-radius: var(--rt-rich-editor-radius);
     }
 
     // Native snow задаёт контейнеру Helvetica 13px — возвращаем шрифт приложения.
@@ -26,8 +28,8 @@
     // при нехватке высоты контент скроллится, а не наезжает на контролы.
     .ql-container.ql-snow {
         flex: 1 1 auto;
-        border-end-end-radius: var(--rt-radius-md);
-        border-end-start-radius: var(--rt-radius-md);
+        border-end-end-radius: var(--rt-rich-editor-radius);
+        border-end-start-radius: var(--rt-rich-editor-radius);
         font-family: inherit;
         font-size: inherit;
         min-block-size: 0;

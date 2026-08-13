@@ -2,6 +2,8 @@
    `.rt-calendar` — сам хост (шаблон начинается с ng-container, класс ставит host). */
 
 .rt-calendar {
+    --rt-calendar-day-radius: var(--rt-radius-md);
+
     display: block;
 
     &__header {
@@ -52,7 +54,7 @@
         align-items: center;
         padding: var(--rt-space-2) var(--rt-space-0-5);
         border: none;
-        border-radius: var(--rt-radius-md);
+        border-radius: var(--rt-calendar-day-radius);
         background: none;
         color: var(--rt-color-text-primary);
         cursor: pointer;

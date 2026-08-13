@@ -1,4 +1,7 @@
 .rt-download-link {
+    --rt-download-link-focus-radius: var(--rt-radius-sm);
+    --rt-download-link-focus-shadow: var(--rt-shadow-focus-ring);
+
     display: inline-flex;
 
     &__button {
@@ -23,8 +26,8 @@
            браузер снимает вместе с рамкой. Без этого правила место фокуса с клавиатуры
            не видно вовсе: кнопка выглядит одинаково выбранной и невыбранной. */
         &:focus-visible {
-            border-radius: var(--rt-radius-sm);
-            box-shadow: var(--rt-shadow-focus-ring);
+            border-radius: var(--rt-download-link-focus-radius);
+            box-shadow: var(--rt-download-link-focus-shadow);
             outline: none;
         }
     }

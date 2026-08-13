@@ -4,6 +4,8 @@
    зашумлять плотные таблицы. */
 
 .rt-copy-cell {
+    --rt-copy-cell-transition-duration: var(--rt-duration-fast);
+
     display: inline-flex;
     min-width: 0;
     align-items: center;
@@ -16,7 +18,7 @@
     &__button {
         flex: 0 0 auto;
         opacity: 0;
-        transition: opacity var(--rt-duration-fast) ease;
+        transition: opacity var(--rt-copy-cell-transition-duration) ease;
     }
 
     /* Reveal при наведении/клавиатурном фокусе внутри самой ячейки — работает

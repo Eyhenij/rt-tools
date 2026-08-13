@@ -1,4 +1,6 @@
 .rt-input {
+    --rt-input-toggle-radius: var(--rt-radius-sm);
+
     position: relative;
     display: inline-flex;
     width: 100%;
@@ -102,7 +104,7 @@
         justify-content: center;
         padding: var(--rt-space-1);
         border: none;
-        border-radius: var(--rt-radius-sm);
+        border-radius: var(--rt-input-toggle-radius);
         margin: 0;
         background: transparent;
         color: inherit;

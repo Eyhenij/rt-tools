@@ -1,5 +1,7 @@
 .rt-skeleton {
     --rt-skeleton-wave-duration: 2.5s;
+    --rt-skeleton-radius: var(--rt-radius-sm);
+    --rt-skeleton-circle-radius: var(--rt-radius-full);
 
     position: relative;
     display: inline-block;
@@ -8,11 +10,11 @@
     background-size: 200% 100%;
 
     &--rectangle {
-        border-radius: var(--rt-radius-sm);
+        border-radius: var(--rt-skeleton-radius);
     }
 
     &--circle {
-        border-radius: var(--rt-radius-full);
+        border-radius: var(--rt-skeleton-circle-radius);
     }
 
     &--square {

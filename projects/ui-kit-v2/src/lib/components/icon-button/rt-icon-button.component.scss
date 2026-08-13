@@ -18,6 +18,12 @@ rt-icon-button {
     --rt-icon-button-color: var(--rt-color-text-primary);
 
     .rt-icon-button {
+        --rt-icon-button-circle-radius: var(--rt-radius-full);
+        --rt-icon-button-square-radius: var(--rt-radius-md);
+        --rt-icon-button-indicator-radius: var(--rt-radius-full);
+        --rt-icon-button-focus-shadow: var(--rt-shadow-focus-ring);
+        --rt-icon-button-transition-duration: var(--rt-duration-fast);
+
         position: relative;
         display: inline-flex;
         width: var(--rt-icon-button-size);
@@ -29,7 +35,7 @@ rt-icon-button {
         background: transparent;
         color: var(--rt-icon-button-color);
         cursor: pointer;
-        transition: background-color var(--rt-duration-fast) ease;
+        transition: background-color var(--rt-icon-button-transition-duration) ease;
 
         &--sm {
             --rt-icon-button-size: var(--rt-control-height-sm);
@@ -52,11 +58,11 @@ rt-icon-button {
         }
 
         &--circle {
-            border-radius: var(--rt-radius-full);
+            border-radius: var(--rt-icon-button-circle-radius);
         }
 
         &--square {
-            border-radius: var(--rt-radius-md);
+            border-radius: var(--rt-icon-button-square-radius);
         }
 
         &--ghost {
@@ -129,7 +135,7 @@ rt-icon-button {
         }
 
         &:focus-visible {
-            box-shadow: var(--rt-shadow-focus-ring);
+            box-shadow: var(--rt-icon-button-focus-shadow);
             outline: 2px solid transparent;
             outline-offset: 2px;
         }
@@ -144,7 +150,7 @@ rt-icon-button {
             position: absolute;
             width: 8px;
             height: 8px;
-            border-radius: var(--rt-radius-full);
+            border-radius: var(--rt-icon-button-indicator-radius);
             background: var(--rt-color-state-danger);
             inset-block-start: -2px;
             inset-inline-end: -2px;

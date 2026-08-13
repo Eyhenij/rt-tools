@@ -3,9 +3,11 @@
    Палитра приглушённая (text-muted на subtle-фоне) — намеренно тише rt-message. */
 
 .rt-note {
+    --rt-note-radius: var(--rt-radius-md);
+
     display: block;
     padding: var(--rt-space-sm) var(--rt-space-md);
-    border-radius: var(--rt-radius-md);
+    border-radius: var(--rt-note-radius);
     background: var(--rt-color-bg-subtle);
     color: var(--rt-color-text-muted);
     font-size: var(--rt-text-sm);

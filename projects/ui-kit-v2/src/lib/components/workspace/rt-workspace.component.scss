@@ -1,4 +1,10 @@
 .rt-workspace {
+    --rt-workspace-border-width: var(--rt-border-width-thin);
+    --rt-workspace-handle-line-width: var(--rt-border-width-medium);
+    --rt-workspace-handle-transition-duration: var(--rt-duration-fast);
+    --rt-workspace-panel-transition-duration: var(--rt-duration-base);
+    --rt-workspace-aside-shadow: var(--rt-shadow-md);
+
     position: relative;
     display: flex;
     flex-direction: row;
@@ -9,7 +15,7 @@
         display: flex;
         flex: 0 0 var(--rt-workspace-list-size, 320px);
         flex-direction: column;
-        border-inline-end: var(--rt-border-width-thin) solid var(--rt-color-border-strong);
+        border-inline-end: var(--rt-workspace-border-width) solid var(--rt-color-border-strong);
         min-inline-size: 0;
     }
 
@@ -30,7 +36,7 @@
         display: flex;
         flex: 0 0 var(--rt-workspace-aside-size, 360px);
         flex-direction: column;
-        border-inline-start: var(--rt-border-width-thin) solid var(--rt-color-border-strong);
+        border-inline-start: var(--rt-workspace-border-width) solid var(--rt-color-border-strong);
         min-inline-size: 0;
     }
 
@@ -48,11 +54,11 @@
             position: absolute;
             background: transparent;
             content: '';
-            inline-size: var(--rt-border-width-medium);
+            inline-size: var(--rt-workspace-handle-line-width);
             inset-block: 0;
             inset-inline-start: 50%;
             transform: translateX(-50%);
-            transition: background var(--rt-duration-fast) ease;
+            transition: background var(--rt-workspace-handle-transition-duration) ease;
         }
 
         &:hover:before,
@@ -91,12 +97,12 @@
             z-index: 2;
             flex-basis: 360px;
             background: var(--rt-color-bg-surface);
-            box-shadow: var(--rt-shadow-md);
+            box-shadow: var(--rt-workspace-aside-shadow);
             inset-block: 0;
             inset-inline-end: 0;
             max-inline-size: 90%;
             transform: translateX(100%);
-            transition: transform var(--rt-duration-base) ease;
+            transition: transform var(--rt-workspace-panel-transition-duration) ease;
         }
 
         &__aside--open {
@@ -114,9 +120,9 @@
         &__aside {
             overflow: hidden;
             transition:
-                flex-basis var(--rt-duration-base) ease,
-                border-inline-start-width var(--rt-duration-base) ease,
-                opacity var(--rt-duration-base) ease;
+                flex-basis var(--rt-workspace-panel-transition-duration) ease,
+                border-inline-start-width var(--rt-workspace-panel-transition-duration) ease,
+                opacity var(--rt-workspace-panel-transition-duration) ease;
             will-change: flex-basis;
         }
     }
@@ -142,10 +148,10 @@
                 opacity: 0;
                 pointer-events: none;
                 transition:
-                    flex-basis var(--rt-duration-base) ease,
-                    border-inline-start-width var(--rt-duration-base) ease,
-                    opacity var(--rt-duration-base) ease,
-                    visibility 0s linear var(--rt-duration-base);
+                    flex-basis var(--rt-workspace-panel-transition-duration) ease,
+                    border-inline-start-width var(--rt-workspace-panel-transition-duration) ease,
+                    opacity var(--rt-workspace-panel-transition-duration) ease,
+                    visibility 0s linear var(--rt-workspace-panel-transition-duration);
                 visibility: hidden;
             }
 

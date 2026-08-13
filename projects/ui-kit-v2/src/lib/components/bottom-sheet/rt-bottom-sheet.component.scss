@@ -3,6 +3,11 @@
    модификатор `--open` ставит host). */
 
 .rt-bottom-sheet {
+    --rt-bottom-sheet-radius: var(--rt-radius-2xl);
+    --rt-bottom-sheet-handle-radius: var(--rt-radius-xs);
+    --rt-bottom-sheet-shadow: var(--rt-shadow-card-soft);
+    --rt-bottom-sheet-transition-duration: var(--rt-duration-base);
+
     position: fixed;
     z-index: 1000;
     inset: 0;
@@ -16,7 +21,7 @@
         cursor: pointer;
         inset: 0;
         opacity: 0;
-        transition: opacity var(--rt-duration-base) ease;
+        transition: opacity var(--rt-bottom-sheet-transition-duration) ease;
     }
 
     &__panel {
@@ -27,11 +32,11 @@
         display: flex;
         max-height: 80vh;
         flex-direction: column;
-        border-radius: var(--rt-radius-2xl) var(--rt-radius-2xl) 0 0;
+        border-radius: var(--rt-bottom-sheet-radius) var(--rt-bottom-sheet-radius) 0 0;
         background: var(--rt-color-bg-surface);
-        box-shadow: var(--rt-shadow-card-soft);
+        box-shadow: var(--rt-bottom-sheet-shadow);
         transform: translateY(100%);
-        transition: transform var(--rt-duration-base) ease;
+        transition: transform var(--rt-bottom-sheet-transition-duration) ease;
 
         &--dragging {
             transition: none;
@@ -42,7 +47,7 @@
         width: 40px;
         height: 4px;
         align-self: center;
-        border-radius: var(--rt-radius-xs);
+        border-radius: var(--rt-bottom-sheet-handle-radius);
         margin: var(--rt-space-4) 0;
         background: var(--rt-color-border-default);
         cursor: grab;

@@ -2,12 +2,15 @@
    Тёмная инверсная подложка (theme-aware пара bg-inverse / text-inverse). */
 
 .rt-tooltip {
+    --rt-tooltip-radius: var(--rt-radius-sm);
+    --rt-tooltip-shadow: var(--rt-shadow-md);
+
     display: block;
     max-width: 240px;
     padding: var(--rt-space-xs) var(--rt-space-sm);
-    border-radius: var(--rt-radius-sm);
+    border-radius: var(--rt-tooltip-radius);
     background: var(--rt-color-bg-inverse);
-    box-shadow: var(--rt-shadow-md);
+    box-shadow: var(--rt-tooltip-shadow);
     color: var(--rt-color-text-inverse);
     font-size: var(--rt-text-xs);
     line-height: var(--rt-leading-snug);

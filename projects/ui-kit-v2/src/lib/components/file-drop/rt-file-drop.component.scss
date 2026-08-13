@@ -4,6 +4,10 @@
    контент. Оверлей pointer-events:none — не перехватывает drag/drop. */
 
 .rt-file-drop {
+    --rt-file-drop-radius: var(--rt-radius-lg);
+    --rt-file-drop-border-width: var(--rt-border-width-thin);
+    --rt-file-drop-transition-duration: var(--rt-duration-fast);
+
     position: relative;
     display: block;
     height: 100%;
@@ -15,7 +19,7 @@
         align-items: center;
         justify-content: center;
         padding: var(--rt-space-lg);
-        border-radius: var(--rt-radius-lg);
+        border-radius: var(--rt-file-drop-radius);
         /* stylelint-disable-next-line property-no-vendor-prefix -- Safari < 18 */
         -webkit-backdrop-filter: blur(4px);
         backdrop-filter: blur(4px);
@@ -46,8 +50,8 @@
         align-items: center;
         justify-content: center;
         padding: var(--rt-space-md);
-        border: var(--rt-border-width-thin) dashed var(--rt-color-action-on-primary);
-        border-radius: var(--rt-radius-lg);
+        border: var(--rt-file-drop-border-width) dashed var(--rt-color-action-on-primary);
+        border-radius: var(--rt-file-drop-radius);
         gap: var(--rt-space-sm);
         text-align: center;
     }
@@ -61,13 +65,13 @@
         align-items: center;
         justify-content: center;
         padding: var(--rt-space-md);
-        border: var(--rt-border-width-thin) dashed var(--rt-color-action-on-primary);
-        border-radius: var(--rt-radius-lg);
+        border: var(--rt-file-drop-border-width) dashed var(--rt-color-action-on-primary);
+        border-radius: var(--rt-file-drop-radius);
         gap: var(--rt-space-2xs);
         text-align: center;
         transition:
-            border-color var(--rt-duration-fast) ease,
-            background-color var(--rt-duration-fast) ease;
+            border-color var(--rt-file-drop-transition-duration) ease,
+            background-color var(--rt-file-drop-transition-duration) ease;
 
         /* Зона под курсором: акцентная сплошная рамка + лёгкая подсветка. */
         &--active {

@@ -7,25 +7,31 @@ rt-card {
     display: block;
 
     .rt-card {
+        --rt-card-radius: var(--rt-radius-xl);
+        --rt-card-shadow: var(--rt-shadow-card);
+        --rt-card-shadow-hover: var(--rt-shadow-lg);
+        --rt-card-focus-shadow: var(--rt-shadow-focus-ring);
+        --rt-card-transition-duration: var(--rt-duration-fast);
+
         display: block;
         padding: var(--rt-space-lg);
-        border-radius: var(--rt-radius-xl);
+        border-radius: var(--rt-card-radius);
         background: var(--rt-color-bg-surface);
-        box-shadow: var(--rt-shadow-card);
+        box-shadow: var(--rt-card-shadow);
         color: var(--rt-color-text-primary);
 
         &--clickable {
             cursor: pointer;
             transition:
-                box-shadow var(--rt-duration-fast) ease,
-                transform var(--rt-duration-fast) ease;
+                box-shadow var(--rt-card-transition-duration) ease,
+                transform var(--rt-card-transition-duration) ease;
 
             &:hover {
-                box-shadow: var(--rt-shadow-lg);
+                box-shadow: var(--rt-card-shadow-hover);
             }
 
             &:focus-visible {
-                box-shadow: var(--rt-shadow-focus-ring);
+                box-shadow: var(--rt-card-focus-shadow);
                 outline: 2px solid transparent;
                 outline-offset: 2px;
             }

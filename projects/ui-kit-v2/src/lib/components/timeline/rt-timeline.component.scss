@@ -7,6 +7,10 @@ rt-timeline {
     display: block;
 
     .rt-timeline {
+        --rt-timeline-dot-radius: var(--rt-radius-full);
+        --rt-timeline-dot-shadow: var(--rt-shadow-step-indicator);
+        --rt-timeline-dot-border-width: var(--rt-border-width-thin);
+
         display: flex;
         flex-direction: column;
         padding: 0;
@@ -35,7 +39,7 @@ rt-timeline {
         &__dot {
             box-sizing: border-box;
             flex: none;
-            border-radius: var(--rt-radius-full);
+            border-radius: var(--rt-timeline-dot-radius);
             background: var(--rt-color-stepper-track);
             block-size: 10px;
             inline-size: 10px;
@@ -48,13 +52,13 @@ rt-timeline {
             &--status--current {
                 background: var(--rt-color-stepper-current);
                 block-size: 14px;
-                box-shadow: var(--rt-shadow-step-indicator);
+                box-shadow: var(--rt-timeline-dot-shadow);
                 inline-size: 14px;
                 margin-block-start: var(--rt-space-2xs);
             }
 
             &--status--pending {
-                border: var(--rt-border-width-thin) solid var(--rt-color-stepper-track);
+                border: var(--rt-timeline-dot-border-width) solid var(--rt-color-stepper-track);
                 background: transparent;
             }
         }

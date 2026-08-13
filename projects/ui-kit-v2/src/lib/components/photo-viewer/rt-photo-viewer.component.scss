@@ -2,6 +2,8 @@
    `.rt-photo-viewer` — сам хост (шаблон начинается с ng-container, класс ставит host). */
 
 .rt-photo-viewer {
+    --rt-photo-viewer-control-radius: var(--rt-radius-md);
+
     display: block;
     width: 100vw;
     height: 100vh;
@@ -91,7 +93,7 @@
         --rt-icon-button-color: var(--rt-color-text-inverse);
         --rt-icon-button-color-bg-hover: color-mix(in srgb, var(--rt-color-text-inverse) 24%, transparent);
 
-        border-radius: var(--rt-radius-md);
+        border-radius: var(--rt-photo-viewer-control-radius);
         background: color-mix(in srgb, var(--rt-color-bg-inverse) 55%, transparent);
     }
 

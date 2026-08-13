@@ -1,4 +1,11 @@
 .rt-thread-list {
+    --rt-thread-list-border-width: var(--rt-border-width-thin);
+    --rt-thread-list-card-radius: var(--rt-radius-lg);
+    --rt-thread-list-tag-radius: var(--rt-radius-sm);
+    --rt-thread-list-dot-radius: var(--rt-radius-full);
+    --rt-thread-list-avatar-radius: var(--rt-radius-full);
+    --rt-thread-list-line-radius: var(--rt-radius-full);
+
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
@@ -12,7 +19,7 @@
         flex: 0 0 auto;
         align-items: center;
         block-size: 56px;
-        border-block-end: var(--rt-border-width-thin) solid var(--rt-color-border-strong);
+        border-block-end: var(--rt-thread-list-border-width) solid var(--rt-color-border-strong);
         gap: var(--rt-space-2);
         padding-inline: var(--rt-space-4);
     }
@@ -90,7 +97,7 @@
 
             &:before {
                 position: absolute;
-                border-radius: var(--rt-radius-full);
+                border-radius: var(--rt-thread-list-dot-radius);
                 background: var(--rt-color-action-primary);
                 block-size: var(--rt-space-2);
                 content: '';
@@ -160,7 +167,7 @@
 
     &__row-tag {
         padding: var(--rt-space-0-5) var(--rt-space-2);
-        border-radius: var(--rt-radius-sm);
+        border-radius: var(--rt-thread-list-tag-radius);
         background: var(--rt-color-state-warning-bg);
         color: var(--rt-color-state-warning-text);
         font-size: var(--rt-text-xs);
@@ -169,7 +176,7 @@
 
     &__row-dot {
         display: inline-block;
-        border-radius: var(--rt-radius-full);
+        border-radius: var(--rt-thread-list-dot-radius);
         background: var(--rt-color-text-link);
         block-size: 6px;
         inline-size: 6px;
@@ -208,8 +215,8 @@
         display: flex;
         align-items: center;
         padding: var(--rt-space-2);
-        border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
-        border-radius: var(--rt-radius-lg);
+        border: var(--rt-thread-list-border-width) solid var(--rt-color-border-subtle);
+        border-radius: var(--rt-thread-list-card-radius);
         background: var(--rt-color-bg-surface-subtle);
         gap: var(--rt-space-2);
 
@@ -221,7 +228,7 @@
     &__empty-avatar {
         display: grid;
         flex: 0 0 auto;
-        border-radius: var(--rt-radius-full);
+        border-radius: var(--rt-thread-list-avatar-radius);
         background: var(--rt-color-text-muted);
         block-size: 24px;
         color: var(--rt-color-bg-surface);
@@ -236,7 +243,7 @@
     }
 
     &__empty-line {
-        border-radius: var(--rt-radius-full);
+        border-radius: var(--rt-thread-list-line-radius);
         background: var(--rt-color-border-strong);
         block-size: 6px;
         inline-size: 112px;
