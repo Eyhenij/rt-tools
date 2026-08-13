@@ -1,3 +1,35 @@
+# [0.6.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.5.0...rt-ui-kit-v2@0.6.0) (2026-08-13)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** кольцо фокуса не пропадает, а эталоны отвечают новым ступеням ([0cd9a55](https://github.com/Eyhenij/rt-tools/commit/0cd9a55a30a4dde42cb8be1f1fb756c6cd34e71d))
+- **rt:ui-kit-v2:** комментарий в MDX не ломает указатель историй витрины ([cc7c783](https://github.com/Eyhenij/rt-tools/commit/cc7c7835c24208b226bf9b00c1f54af81439cc7f))
+- **rt:ui-kit-v2:** приглушённый текст взял порог, а список принятого перестал врать ([580431f](https://github.com/Eyhenij/rt-tools/commit/580431ff08757ec5b20447bb9e708b68fa272988)), closes [#386](https://github.com/Eyhenij/rt-tools/issues/386)
+- **rt:ui-kit-v2:** роль действия обзавелась цветом на поверхности, и безфоновая кнопка перестала пропадать на графите ([3827eb1](https://github.com/Eyhenij/rt-tools/commit/3827eb14c229d288246685c5f3d22b948c8f9b5e))
+
+### Documentation
+
+- **rt:ui-kit-v2:** тексты кита называют слой каскада и переход на него ([495d81e](https://github.com/Eyhenij/rt-tools/commit/495d81e51cc43ab2c09e02204716d83820b5482c))
+
+### Features
+
+- **rt:ui-kit-v2:** бренд становится линейкой, а палитра синего снимается ([c774d0f](https://github.com/Eyhenij/rt-tools/commit/c774d0f1f345d80e8becc2e36d7a9042e10287c7)), closes [#385](https://github.com/Eyhenij/rt-tools/issues/385)
+- **rt:ui-kit-v2:** витрина показывает победу правила приложения над правилом кита ([33df955](https://github.com/Eyhenij/rt-tools/commit/33df95504778544ea1e2dd16ae58cf748e81113f))
+- **rt:ui-kit-v2:** контраст пар «текст и фон» считает машина, а не комментарий рядом со ступенью ([8a40c97](https://github.com/Eyhenij/rt-tools/commit/8a40c9707d2316c9bcad511ab8531d0dc4d1c2fa))
+- **rt:ui-kit-v2:** молчание тёмной темы отличается от намеренно общего цвета ([e7d5b83](https://github.com/Eyhenij/rt-tools/commit/e7d5b83113ad310fd862f7c53026c2b1a5eaf703))
+- **rt:ui-kit-v2:** основа кита объявлена подслоем rt-kit.base ([0c4b991](https://github.com/Eyhenij/rt-tools/commit/0c4b9912d3faa6b01edd8ff9d059c4f6df20277e))
+- **rt:ui-kit-v2:** палитра кнопки стала ролями действия, а отключённость перестала проигрывать ([14a3549](https://github.com/Eyhenij/rt-tools/commit/14a3549779553701629e618af93e904374681f36))
+- **rt:ui-kit-v2:** стили компонентов объявлены подслоем rt-kit.components ([eac99ec](https://github.com/Eyhenij/rt-tools/commit/eac99ec06dca80cf416df0a741e62a4c4464f638))
+- **rt:ui-kit-v2:** у имени токена ровно три состояния, и это проверяется ([905ed50](https://github.com/Eyhenij/rt-tools/commit/905ed505594c0fc70535e55b2ba7bc47ab3f74c6))
+
+### BREAKING CHANGES
+
+- **rt:ui-kit-v2:** стили кита объявлены слоем каскада rt-kit. Правило приложения теперь
+  выигрывает у правила кита независимо от специфичности, а правило кита проигрывает чужой
+  библиотеке, чей CSS объявлен вне слоя: тема редактора текста подключается в подслой
+  rt-kit.vendor, иначе панель редактора перестраивается. Таблица в карточном виде больше не
+  перебивает min-width приложения восклицательным знаком.
+
 # [0.5.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.4.0...rt-ui-kit-v2@0.5.0) (2026-08-10)
 
 ### Bug Fixes
