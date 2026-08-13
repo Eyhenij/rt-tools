@@ -9,7 +9,7 @@
         display: flex;
         flex: 1 1 auto;
         flex-direction: column;
-        gap: var(--rt-space-3);
+        gap: var(--rt-space-4);
         min-block-size: 0;
     }
 
@@ -134,7 +134,7 @@
         // Входящие — влево, свои — вправо. max-width на строке: пузырь + кнопка
         // вместе не растягиваются через весь тред.
         align-self: flex-start;
-        gap: var(--rt-space-1-5);
+        gap: var(--rt-space-2);
 
         &--own {
             align-self: flex-end;
@@ -156,13 +156,13 @@
         // min-width:0 — длинный текст переносится внутри строки, не распирая её.
         flex: 0 1 auto;
         flex-direction: column;
-        padding: var(--rt-space-2-5);
+        padding: var(--rt-space-2);
 
         // Срезанный угол со стороны автора заменяет «хвостик» пузыря: направление
         // видно даже когда соседние сообщения одного цвета идут подряд.
         border-radius: var(--rt-radius-lg) var(--rt-radius-lg) var(--rt-radius-lg) 0;
         background: var(--rt-chat-bubble-in-bg);
-        gap: var(--rt-space-2-5);
+        gap: var(--rt-space-2);
 
         &--own {
             border-radius: var(--rt-radius-lg) var(--rt-radius-lg) 0 var(--rt-radius-lg);
@@ -259,7 +259,7 @@
         max-width: min(80%, 480px);
         flex-direction: column;
         align-self: flex-start;
-        padding: var(--rt-space-2-5);
+        padding: var(--rt-space-2);
         border-radius: var(--rt-radius-lg) var(--rt-radius-lg) var(--rt-radius-lg) 0;
         background: var(--rt-chat-bubble-in-bg);
         gap: var(--rt-space-1);
@@ -289,13 +289,13 @@
     &__composer,
     &__composer-rich,
     &__reply-block {
-        margin-top: var(--rt-space-3);
+        margin-top: var(--rt-space-4);
     }
 
     &__composer {
         display: flex;
         flex-direction: column;
-        gap: var(--rt-space-2-5);
+        gap: var(--rt-space-2);
     }
 
     &__composer-files {

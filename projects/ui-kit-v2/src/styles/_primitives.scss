@@ -97,26 +97,16 @@
     --rt-info-600: #0f4cd3;
     --rt-info-700: #0038b5;
 
-    /* Spacing — 8px base (off-grid half-steps помечены @deprecated). */
+    /* Spacing — ряд с шагом 4px. Промежуточных ступеней в нём нет: 6, 10, 12 и 28
+       пикселей стояли ступенями под конкретные места, и выбрать из такого ряда было
+       нельзя. Употребления округлены к ближайшей ступени, при равенстве — вверх. */
     --rt-space-0: 0;
     --rt-space-0-5: 2px;
     --rt-space-1: 4px;
-
-    /* @deprecated off-grid — округлять к --rt-space-2 (8) или --rt-space-1 (4). */
-    --rt-space-1-5: 6px;
     --rt-space-2: 8px;
-
-    /* @deprecated off-grid — округлять к --rt-space-2 (8) или --rt-space-md (16). */
-    --rt-space-2-5: 10px;
-
-    /* @deprecated off-grid — округлять к --rt-space-md (16). */
-    --rt-space-3: 12px;
     --rt-space-4: 16px;
     --rt-space-5: 20px;
     --rt-space-6: 24px;
-
-    /* @deprecated off-grid — заведён под промежуток между группами панели навигации. */
-    --rt-space-7: 28px;
     --rt-space-8: 32px;
     --rt-space-10: 40px;
     --rt-space-12: 48px;
