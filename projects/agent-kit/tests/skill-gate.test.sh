@@ -151,18 +151,18 @@ gate_session_reset
 mkdir -p "$TREE/.claude/skills/browser-verification"
 printf -- '---\nname: browser-verification\nkind: rule\n---\n' \
     > "$TREE/.claude/skills/browser-verification/SKILL.md"
-expect_skill "инструмент браузера требует своё правило" \
+expect_skill "SC-AK-111 — инструмент браузера требует своё правило" \
     "$(jq -n '{session_id:"tests",tool_name:"mcp__claude-in-chrome__navigate",tool_input:{url:"http://localhost:4200"}}')" \
     browser-verification
 
 # Слияние отчёта требует два правила подряд: поставку и разбор папки задачи. Требуется первое
 # незагруженное — отказ, перечисляющий оба, читается как «загрузи оба», и однократность теряется.
-c "слияние отчёта: первым правило поставки" 'gh pr merge 12 --merge'
+c "SC-AK-110 — слияние отчёта: первым правило поставки" 'gh pr merge 12 --merge'
 gate_session_load git-workflow
-c "слияние отчёта: следом ведение работы" 'gh pr merge 12 --merge' Bash task-flow
+c "SC-AK-110 — слияние отчёта: следом ведение работы" 'gh pr merge 12 --merge' Bash task-flow
 # Упоминание команды в тексте вызовом не является: пока карта судила по подстроке, гейт отбивал
 # строку о коммите в теле самого коммита.
-c "упоминание команды вызовом не считается" 'echo "потом git commit -m x" >> notes.md' Bash PASS
+c "SC-AK-109 — упоминание команды вызовом не считается" 'echo "потом git commit -m x" >> notes.md' Bash PASS
 
 # Запасной ход назван прямо в отказе: правило, заведённое в этой же ветке, реестру правил
 # неизвестно — он собирается на запуске сессии, а гейт читает диск.

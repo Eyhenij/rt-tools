@@ -99,7 +99,7 @@ report "карта: правило по команде" "$(skill_for bash 'git p
 report "карта: команда без правила" "$(skill_for bash 'ls -la' '')" ''
 # Упоминание команды командой не является: пока карта судила по подстроке, гейт отбивал строку о
 # коммите в теле самого коммита и поиск по истории.
-report "карта: упоминание команды вызовом не считается" "$(skill_for bash 'echo "потом git commit -m x"' '')" ''
+report "SC-AK-109 — упоминание команды вызовом не считается" "$(skill_for bash 'echo "потом git commit -m x"' '')" ''
 report "карта: вызов после разделителя" "$(skill_for bash 'cd /tmp && git commit -m x' '')" git-workflow
 report "карта: заведение ветки" "$(skill_for bash 'git checkout -b RT-9-x' '')" git-workflow
 report "карта: заведение ветки вторым именем команды" "$(skill_for bash 'git switch -c RT-9-x' '')" git-workflow
@@ -111,7 +111,7 @@ report "карта: правка тела отчёта" "$(skill_for bash 'gh ap
 report "карта: чтение отчёта тем же клиентом" "$(skill_for bash 'gh api repos/o/r/pulls/12' '')" ''
 # Слияние отчёта требует два правила: поставку и разбор папки задачи — она разбирается тем же
 # отчётом, потому что после слияния отвечать за неё уже некому.
-report "карта: слияние отчёта тянет и ведение работы" \
+report "SC-AK-110 — слияние отчёта тянет и ведение работы" \
     "$(skill_for bash 'gh pr merge 12 --merge' '' | tr '\n' ' ')" 'git-workflow task-flow '
 # Образы и реестр уносят чужое безвозвратно; команды чтения остаются вне гейта — ими нехватку
 # места и разбирают.
@@ -123,7 +123,7 @@ report "карта: перечисление контейнеров" "$(skill_fo
 report "карта: запрос к поднятому приложению" "$(skill_for bash 'curl -s http://localhost:4200/ru/' '')" browser-verification
 report "карта: адрес в тексте без вызова" "$(skill_for bash 'echo http://localhost:4200 >> notes.md' '')" ''
 # Проверка через браузер — единственная область, где правило нужно под инструмент, а не под файл.
-report "карта: инструмент браузера" "$(skill_for browser mcp__claude-in-chrome__navigate '')" browser-verification
+report "SC-AK-111 — правило под инструмент браузера" "$(skill_for browser mcp__claude-in-chrome__navigate '')" browser-verification
 # Проверка исполняет утверждения своего правила, и признаки, по которым она судит, объявлены у
 # него в привязке: правя признак, второе место открывают рядом.
 report "карта: сверка спеков" "$(skill_for edit /r/tools/check-specs.mjs '')" spec-driven
@@ -144,13 +144,13 @@ report "гейт пуша: сборка идёт наравне с линтом 
     "$(rt_push_checks origin/main | grep -c 'nx affected -t lint test build --base=origin/main')" 1
 report "гейт пуша: без удалённого гоняется всё" \
     "$(rt_push_checks '' | grep -c 'run-many -t lint test build --all')" 1
-report "гейт пуша: проверки, которой нет, в наборе нет" "$(rt_push_checks '' | grep -c 'check-specs')" 0
+report "SC-AK-113 — проверки, которой в дереве нет, гейт не зовёт" "$(rt_push_checks '' | grep -c 'check-specs')" 0
 mkdir -p "$TREE/tools" "$TREE/.claude/hooks/tests"
 printf '' > "$TREE/tools/check-specs.mjs"
 printf '#!/bin/sh\nexit 0\n' > "$TREE/.claude/hooks/tests/run.sh"
 chmod +x "$TREE/.claude/hooks/tests/run.sh"
-report "гейт пуша: разложенная проверка зовётся" "$(rt_push_checks '' | grep -c 'node tools/check-specs.mjs')" 1
-report "гейт пуша: сценарии гардов зовутся" "$(rt_push_checks '' | grep -c 'bash .claude/hooks/tests/run.sh')" 1
+report "SC-AK-112 — разложенная проверка зовётся гейтом пуша" "$(rt_push_checks '' | grep -c 'node tools/check-specs.mjs')" 1
+report "SC-AK-112 — сценарии гардов зовутся гейтом пуша" "$(rt_push_checks '' | grep -c 'bash .claude/hooks/tests/run.sh')" 1
 # SC-AK-93. Заведение рабочего дерева — работа с поставкой: свежее дерево получает только
 # индекс, а ключи, разрешения и зависимости переносятся руками по списку из компаньона.
 report "SC-AK-93 — заведение рабочего дерева" "$(skill_for bash 'git worktree add --detach ../wt origin/main' '')" git-workflow
