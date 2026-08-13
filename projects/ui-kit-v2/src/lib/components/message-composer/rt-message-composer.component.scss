@@ -4,11 +4,11 @@
     padding: var(--rt-space-3);
     border: var(--rt-border-width-thin) solid var(--rt-color-border-default);
     border-radius: var(--rt-radius-md);
-    background: var(--rt-color-bg-surface-default, transparent);
+    background: var(--rt-color-bg-surface);
     gap: var(--rt-space-2);
 
     &:focus-within {
-        border-color: var(--rt-color-border-strong, var(--rt-color-border-default));
+        border-color: var(--rt-color-border-strong);
     }
 
     &__input {

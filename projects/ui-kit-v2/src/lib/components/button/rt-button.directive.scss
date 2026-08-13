@@ -1,12 +1,3 @@
-/* rt-* color namespace bridge — мост на семантические --rt-* токены.
-   Живёт здесь, потому что единственный потребитель — `.rt-button` ниже. */
-:root {
-    --rt-color-primary: var(--rt-color-action-primary);
-    --rt-color-primary-hover: var(--rt-color-action-primary-hover);
-    --rt-color-primary-active: var(--rt-color-action-primary-hover);
-    --rt-color-on-primary: var(--rt-color-action-on-primary);
-}
-
 .rt-button {
     --rt-btn-height: 40px;
     --rt-btn-padding: 0 1.25rem;
@@ -16,10 +7,10 @@
     --rt-btn-icon-size: 1rem;
     --rt-btn-spinner-size: 1rem;
     --rt-btn-spinner-border-width: 2px;
-    --rt-btn-bg: var(--rt-color-primary, #10b981);
-    --rt-btn-bg-hover: var(--rt-color-primary-hover, #059669);
-    --rt-btn-bg-active: var(--rt-color-primary-active, #047857);
-    --rt-btn-color: var(--rt-color-on-primary, #fff);
+    --rt-btn-bg: var(--rt-color-action-primary);
+    --rt-btn-bg-hover: var(--rt-color-action-primary-hover);
+    --rt-btn-bg-active: var(--rt-color-action-primary-active);
+    --rt-btn-color: var(--rt-color-action-on-primary);
     --rt-btn-border-color: var(--rt-btn-bg);
     --rt-btn-border-color-hover: var(--rt-btn-bg-hover);
     --rt-btn-shadow: none;
@@ -69,16 +60,6 @@
         outline-offset: 2px;
     }
 
-    &:disabled {
-        --rt-btn-bg: var(--rt-color-disabled, #d1d5db);
-        --rt-btn-bg-hover: var(--rt-color-disabled, #d1d5db);
-        --rt-btn-border-color: var(--rt-color-disabled, #d1d5db);
-        --rt-btn-border-color-hover: var(--rt-color-disabled, #d1d5db);
-        --rt-btn-color: var(--rt-color-on-disabled, #6b7280);
-
-        cursor: not-allowed;
-    }
-
     /* `flex-shrink: 0` — иконке заданного размера. Без него в кнопке, которой ширину
        навязали снаружи (пункт меню `rt-split-button` берёт её от панели), лейбл давит
        на иконку, и та сжимается до нуля: место занято, а иконки не видно. */
@@ -120,93 +101,102 @@
     }
 
     &--secondary {
-        --rt-btn-bg: var(--rt-color-secondary, #6b7280);
-        --rt-btn-bg-hover: var(--rt-color-secondary-hover, #4b5563);
-        --rt-btn-bg-active: var(--rt-color-secondary-active, #374151);
+        --rt-btn-bg: var(--rt-color-action-secondary);
+        --rt-btn-bg-hover: var(--rt-color-action-secondary-hover);
+        --rt-btn-bg-active: var(--rt-color-action-secondary-active);
+        --rt-btn-color: var(--rt-color-action-on-secondary);
     }
 
     &--success {
-        --rt-btn-bg: var(--rt-color-success, #16a34a);
-        --rt-btn-bg-hover: var(--rt-color-success-hover, #15803d);
-        --rt-btn-bg-active: var(--rt-color-success-active, #166534);
+        --rt-btn-bg: var(--rt-color-action-success);
+        --rt-btn-bg-hover: var(--rt-color-action-success-hover);
+        --rt-btn-bg-active: var(--rt-color-action-success-active);
+        --rt-btn-color: var(--rt-color-action-on-success);
     }
 
     &--warning {
-        --rt-btn-bg: var(--rt-color-warning, #f59e0b);
-        --rt-btn-bg-hover: var(--rt-color-warning-hover, #d97706);
-        --rt-btn-bg-active: var(--rt-color-warning-active, #b45309);
+        --rt-btn-bg: var(--rt-color-action-warning);
+        --rt-btn-bg-hover: var(--rt-color-action-warning-hover);
+        --rt-btn-bg-active: var(--rt-color-action-warning-active);
+        --rt-btn-color: var(--rt-color-action-on-warning);
     }
 
     &--danger {
-        --rt-btn-bg: var(--rt-color-danger, #ef4444);
-        --rt-btn-bg-hover: var(--rt-color-danger-hover, #dc2626);
-        --rt-btn-bg-active: var(--rt-color-danger-active, #b91c1c);
+        --rt-btn-bg: var(--rt-color-action-danger);
+        --rt-btn-bg-hover: var(--rt-color-action-danger-hover);
+        --rt-btn-bg-active: var(--rt-color-action-danger-active);
+        --rt-btn-color: var(--rt-color-action-on-danger);
     }
 
     &--info {
-        --rt-btn-bg: var(--rt-color-info, #0ea5e9);
-        --rt-btn-bg-hover: var(--rt-color-info-hover, #0284c7);
-        --rt-btn-bg-active: var(--rt-color-info-active, #0369a1);
+        --rt-btn-bg: var(--rt-color-action-info);
+        --rt-btn-bg-hover: var(--rt-color-action-info-hover);
+        --rt-btn-bg-active: var(--rt-color-action-info-active);
+        --rt-btn-color: var(--rt-color-action-on-info);
     }
 
+    /* Подложка наведения и нажатия у безфоновых оформлений считается от цвета самой
+       кнопки, а не берётся готовым оттенком: оттенок в слое назначений есть только у
+       марки, и роли danger или success получали бы от него чужой след. Доли вынесены
+       свойствами — на графите слабый оттенок не виден, и тёмная тема их поднимает. */
     &--outlined {
         --rt-btn-bg: transparent;
-        --rt-btn-bg-hover: rgb(16 185 129 / 8%);
-        --rt-btn-bg-active: rgb(16 185 129 / 16%);
-        --rt-btn-color: var(--rt-color-primary, #10b981);
+        --rt-btn-bg-hover: color-mix(in srgb, var(--rt-btn-color) var(--rt-btn-tint-hover), transparent);
+        --rt-btn-bg-active: color-mix(in srgb, var(--rt-btn-color) var(--rt-btn-tint-active), transparent);
+        --rt-btn-color: var(--rt-color-action-primary);
         --rt-btn-border-color: currentcolor;
         --rt-btn-border-color-hover: currentcolor;
         --rt-btn-shadow: none;
     }
 
     &--outlined#{&}--secondary {
-        --rt-btn-color: var(--rt-color-secondary, #6b7280);
+        --rt-btn-color: var(--rt-color-action-secondary);
     }
 
     &--outlined#{&}--success {
-        --rt-btn-color: var(--rt-color-success, #16a34a);
+        --rt-btn-color: var(--rt-color-action-success);
     }
 
     &--outlined#{&}--warning {
-        --rt-btn-color: var(--rt-color-warning, #f59e0b);
+        --rt-btn-color: var(--rt-color-action-warning);
     }
 
     &--outlined#{&}--danger {
-        --rt-btn-color: var(--rt-color-danger, #ef4444);
+        --rt-btn-color: var(--rt-color-action-danger);
     }
 
     &--outlined#{&}--info {
-        --rt-btn-color: var(--rt-color-info, #0ea5e9);
+        --rt-btn-color: var(--rt-color-action-info);
     }
 
     &--text {
         --rt-btn-bg: transparent;
-        --rt-btn-bg-hover: rgb(16 185 129 / 8%);
-        --rt-btn-bg-active: rgb(16 185 129 / 16%);
-        --rt-btn-color: var(--rt-color-primary, #10b981);
+        --rt-btn-bg-hover: color-mix(in srgb, var(--rt-btn-color) var(--rt-btn-tint-hover), transparent);
+        --rt-btn-bg-active: color-mix(in srgb, var(--rt-btn-color) var(--rt-btn-tint-active), transparent);
+        --rt-btn-color: var(--rt-color-action-primary);
         --rt-btn-border-color: transparent;
         --rt-btn-border-color-hover: transparent;
         --rt-btn-shadow: none;
     }
 
     &--text#{&}--secondary {
-        --rt-btn-color: var(--rt-color-secondary, #6b7280);
+        --rt-btn-color: var(--rt-color-action-secondary);
     }
 
     &--text#{&}--success {
-        --rt-btn-color: var(--rt-color-success, #16a34a);
+        --rt-btn-color: var(--rt-color-action-success);
     }
 
     &--text#{&}--warning {
-        --rt-btn-color: var(--rt-color-warning, #f59e0b);
+        --rt-btn-color: var(--rt-color-action-warning);
     }
 
     &--text#{&}--danger {
-        --rt-btn-color: var(--rt-color-danger, #ef4444);
+        --rt-btn-color: var(--rt-color-action-danger);
     }
 
     &--text#{&}--info {
-        --rt-btn-color: var(--rt-color-info, #0ea5e9);
+        --rt-btn-color: var(--rt-color-action-info);
     }
 
     &--rounded {
@@ -258,6 +248,47 @@
     &--loading {
         cursor: wait;
         pointer-events: none;
+    }
+
+    /* Состояние стоит ниже всех вариантов оформления и палитры того же блока.
+       Специфичность у них равная, и правила равной силы разбираются порядком в
+       файле: отсюда, снизу, отключённость отменяет и заливку, и цвет подписи.
+       Стояла она выше — и проигрывала молча: текстовая кнопка получала серую
+       плашку, которой у неё нет ни в одном другом состоянии, а отключённая
+       danger оставалась красной надписью на этой плашке.
+
+       Поднимать специфичность вместо переноса нельзя: она перебила бы и то, чего
+       перебивать не собирались, — размер, скругление и свои свойства потребителя. */
+    &:disabled {
+        --rt-btn-bg: var(--rt-color-action-disabled);
+        --rt-btn-bg-hover: var(--rt-color-action-disabled);
+        --rt-btn-bg-active: var(--rt-color-action-disabled);
+        --rt-btn-border-color: var(--rt-color-action-disabled);
+        --rt-btn-border-color-hover: var(--rt-color-action-disabled);
+        --rt-btn-color: var(--rt-color-action-on-disabled);
+
+        cursor: not-allowed;
+    }
+
+    /* Безфоновым оформлениям отключённость фона не даёт: его у них нет ни в одном
+       другом состоянии, и серая плашка читалась бы как подсветка, а не как
+       недоступность. Остаётся приглушённая подпись, а обводочной — спокойная рамка
+       вместо цвета своей роли. */
+    &--outlined:disabled,
+    &--text:disabled {
+        --rt-btn-bg: transparent;
+        --rt-btn-bg-hover: transparent;
+        --rt-btn-bg-active: transparent;
+    }
+
+    &--outlined:disabled {
+        --rt-btn-border-color: var(--rt-color-border-default);
+        --rt-btn-border-color-hover: var(--rt-color-border-default);
+    }
+
+    &--text:disabled {
+        --rt-btn-border-color: transparent;
+        --rt-btn-border-color-hover: transparent;
     }
 }
 
