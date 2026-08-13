@@ -1,3 +1,26 @@
+## [0.5.3](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.5.2...rt-agent-kit@0.5.3) (2026-08-13)
+
+## [0.5.2](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.5.1...rt-agent-kit@0.5.2) (2026-08-13)
+
+### Bug Fixes
+
+- **rt:agent-kit:** вопрос владельцу идёт после разведки, а не вместо неё ([2ccd053](https://github.com/Eyhenij/rt-tools/commit/2ccd053d3c4a329ea2884436cfad63ba350046ef))
+- **rt:agent-kit:** гард без функции профиля больше не выходит молча ([9e1a55f](https://github.com/Eyhenij/rt-tools/commit/9e1a55f121d2af4a22a9a79928310a081321d8c7))
+- **rt:agent-kit:** отправка называет, чего ей не хватило, а метка заведена ([163609a](https://github.com/Eyhenij/rt-tools/commit/163609ad0a34e25075c3be8e880c09661844d413))
+- **rt:agent-kit:** ресурс не утверждает про дерево того, чего не знает ([925144f](https://github.com/Eyhenij/rt-tools/commit/925144f6f0fde7b7c03957ced6424b424cb7b390))
+- **rt:agent-kit:** спрос функции профиля считается в обеих формах ([0dbfd01](https://github.com/Eyhenij/rt-tools/commit/0dbfd014e2b1184c9db3d7f2dec1d050974c6558))
+- **rt:agent-kit:** ход с вопросом судится до того, как вопрос ушёл ([5387167](https://github.com/Eyhenij/rt-tools/commit/53871674ff6829a91e2cc37e8b4d411b7916d7c5))
+
+### Features
+
+- **rt:agent-kit:** гарды пишут наблюдения о слое правил ([aa8cc9d](https://github.com/Eyhenij/rt-tools/commit/aa8cc9d9ae963ad8da7a5b3c303cf200afa5c4ac))
+- **rt:agent-kit:** отчёт от разошедшейся ветки отбивается гардом поставки ([039e640](https://github.com/Eyhenij/rt-tools/commit/039e640a33578280885867b4e50b2586b836fd58))
+- **rt:agent-kit:** предложения уезжают в очередь работ пакета, а не остаются в переписке ([77b49d6](https://github.com/Eyhenij/rt-tools/commit/77b49d6aed8c639d379b18455f91fc2321ba5a44))
+- **rt:agent-kit:** происшествие кончается записью, а не извинением ([a1843be](https://github.com/Eyhenij/rt-tools/commit/a1843bed232ee65a68fe97079e3be7172619cc01))
+- **rt:agent-kit:** ресурс объявляет, без чего он неисполним ([5598ee2](https://github.com/Eyhenij/rt-tools/commit/5598ee23d7ef18e3a221cab33bcfecd46a2abce8))
+- **rt:agent-kit:** сведение разбирает пришедшее, а законы называют, зачем оно ([e229347](https://github.com/Eyhenij/rt-tools/commit/e229347793e5325cee610782057533a66defb72c))
+- **rt:agent-kit:** сводка отвечает, чем из слоя правил не пользовались ни разу ([e3c26c2](https://github.com/Eyhenij/rt-tools/commit/e3c26c2dc6a656530b9023aec56d556a455b1cc2))
+
 ## [0.5.1](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.5.0...rt-agent-kit@0.5.1) (2026-08-12)
 
 ### Bug Fixes
