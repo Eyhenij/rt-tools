@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.5.1 · checks/check-board.github.mjs · 7374ee61ba41 · правится надстройкой, не здесь
+// rt-kit v0.5.2 · checks/check-board.github.mjs · 7374ee61ba41 · правится надстройкой, не здесь
 /**
  * Сверка очереди работ с тем, что закон о поставке требует от задачи и её отчёта.
  *
