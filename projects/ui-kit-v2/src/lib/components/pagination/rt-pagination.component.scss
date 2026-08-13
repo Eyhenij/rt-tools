@@ -1,4 +1,9 @@
 .rt-pagination {
+    --rt-pagination-page-radius: var(--rt-radius-md);
+    --rt-pagination-page-border-width: var(--rt-border-width-thin);
+    --rt-pagination-focus-shadow: var(--rt-shadow-focus-ring);
+    --rt-pagination-transition-duration: var(--rt-duration-fast);
+
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -39,15 +44,15 @@
         min-width: var(--rt-space-xl);
         height: var(--rt-space-xl);
         padding: 0 var(--rt-space-sm);
-        border: var(--rt-border-width-thin) solid var(--rt-color-border-default);
-        border-radius: var(--rt-radius-md);
+        border: var(--rt-pagination-page-border-width) solid var(--rt-color-border-default);
+        border-radius: var(--rt-pagination-page-radius);
         background: transparent;
         color: var(--rt-color-text-primary);
         cursor: pointer;
         transition:
-            background-color var(--rt-duration-fast) ease,
-            border-color var(--rt-duration-fast) ease,
-            color var(--rt-duration-fast) ease;
+            background-color var(--rt-pagination-transition-duration) ease,
+            border-color var(--rt-pagination-transition-duration) ease,
+            color var(--rt-pagination-transition-duration) ease;
 
         &:hover:not(:disabled, &--current) {
             border-color: var(--rt-color-border-strong);
@@ -55,7 +60,7 @@
         }
 
         &:focus-visible {
-            box-shadow: var(--rt-shadow-focus-ring);
+            box-shadow: var(--rt-pagination-focus-shadow);
             outline: 2px solid transparent;
             outline-offset: 2px;
         }
