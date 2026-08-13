@@ -212,6 +212,36 @@
       "where": "подпись отключённого действия"
     },
     {
+      "text": "--rt-color-action-primary-on-surface",
+      "bg": "--rt-color-bg-surface",
+      "where": "подпись текстовой кнопки марки"
+    },
+    {
+      "text": "--rt-color-action-secondary-on-surface",
+      "bg": "--rt-color-bg-surface",
+      "where": "подпись текстовой кнопки второстепенного действия"
+    },
+    {
+      "text": "--rt-color-action-success-on-surface",
+      "bg": "--rt-color-bg-surface",
+      "where": "подпись текстовой кнопки успеха"
+    },
+    {
+      "text": "--rt-color-action-warning-on-surface",
+      "bg": "--rt-color-bg-surface",
+      "where": "подпись текстовой кнопки предупреждения"
+    },
+    {
+      "text": "--rt-color-action-danger-on-surface",
+      "bg": "--rt-color-bg-surface",
+      "where": "подпись текстовой кнопки опасного действия"
+    },
+    {
+      "text": "--rt-color-action-info-on-surface",
+      "bg": "--rt-color-bg-surface",
+      "where": "подпись текстовой кнопки сведения"
+    },
+    {
       "text": "--rt-color-state-warning-text",
       "bg": "--rt-color-state-warning-bg",
       "where": "подпись на подложке предупреждения"
