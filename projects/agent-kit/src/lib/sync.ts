@@ -9,7 +9,7 @@ import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'n
 import { dirname, join } from 'node:path';
 
 import { collectAssets, IAsset, targetOf } from './assets.js';
-import { IEntryOfCatalog, IGapOfVariant, readCatalog, variantGaps } from './catalog.js';
+import { brokenLinks, IBrokenLink, IEntryOfCatalog, IGapOfVariant, readCatalog, variantGaps } from './catalog.js';
 import { ICompanion, pathOf, planCompanion } from './companion.js';
 import { IConfig, OVERRIDES_DIR } from './config.js';
 import { bindingsOf as declaredIn, IHookBinding, unboundHooks } from './hooks-map.js';
@@ -49,6 +49,14 @@ export interface ISyncResult {
      * молчать нельзя: гард, который не зовут, неотличим от гарда, который всё пропускает.
      */
     readonly unbound: readonly IHookBinding[];
+    /**
+     * Выбранные ресурсы, чьи требования в дерево не поехали.
+     *
+     * Предупреждение, а не отказ: дерево вправе закрыть требование своим средством, но обязано
+     * знать, что закрывает. Молчание же оставляет его исправным на вид — сверка зелена на любом
+     * подмножестве, сколько бы связок ни было разорвано.
+     */
+    readonly broken: readonly IBrokenLink[];
     readonly written: readonly string[];
 }
 
@@ -133,6 +141,7 @@ export function planSync(config: IConfig, root: string, version: string, assetsD
         abandoned: abandonedOf(config, root, assetsDir),
         gaps: variantGaps(readCatalog(assetsDir), config),
         unbound: unboundHooks(bindingsOf(config, assetsDir), root),
+        broken: brokenLinks(readCatalog(assetsDir), config),
         written: [],
     };
 }

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: SessionStart startup|resume|compact|clear
+# Требует: hooks/profile-check.sh
 # SessionStart: состояние незаконченной работы уезжает в контекст на каждом запуске сессии.
 #
 # Памятью это не держится по той же причине, что и словарь: замысел читают перед правкой
@@ -28,6 +29,12 @@ for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../d
     [ -f "$profile" ] && . "$profile" 2>/dev/null
 done
 
+# Слово о нехватке функции профиля: хук, вышедший молча, неотличим от работающего. Файл может
+# быть не разложен — тогда остаётся прежнее поведение, молчаливое.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
+command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
+
 TASKS_DIR="${RT_TASKS_DIR:-docs/tasks}"
 [ -z "$TASKS_DIR" ] && exit 0
 
@@ -43,13 +50,20 @@ emit() {
 # Ветка под задачу без папки — работа идёт мимо. Сессию не рвём: SessionStart, отбивающий
 # запуск, оставляет владельца без агента вовсе, а правку кода поймает `task-flow-guard`.
 if [ ! -d "$DIR" ]; then
-    if command -v rt_task_branch_ok >/dev/null 2>&1 && rt_task_branch_ok "$branch"; then
+    if rt_needs rt_task_branch_ok task-context-load && rt_task_branch_ok "$branch"; then
         {
             printf 'РАБОТА БЕЗ ПАПКИ ЗАДАЧИ.\n\n'
             printf 'Ветка `%s` названа задачей, а `%s/` нет: ход работы записывать некуда,\n' "$branch" "$DIR"
             printf 'и следующий заход начнёт с расспросов владельца.\n\n'
             printf 'Собрать с образца:\n\n    cp -r %s/_template %s\n\n' "$TASKS_DIR" "$DIR"
-            printf 'Правку кода приложения до этого отбивает гард. Правило — скил `task-flow`.\n'
+            # О соседнем ресурсе — условно и по имени: пакет не знает, разложен ли он здесь,
+            # а сказанное безусловно приходит в контекст каждой сессии и врёт про дерево тем
+            # увереннее, что печатает это сам инструмент.
+            if [ -f "$rt_hooks_dir/task-flow-guard.sh" ]; then
+                printf 'Правку кода приложения до этого отбивает гард `task-flow-guard`. Правило — скил `task-flow`.\n'
+            else
+                printf 'Правило — скил `task-flow`. Гарда `task-flow-guard` в дереве нет: правку кода до этого не отбивает ничто.\n'
+            fi
         } | emit
     fi
     exit 0
