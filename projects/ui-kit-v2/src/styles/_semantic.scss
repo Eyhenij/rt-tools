@@ -104,7 +104,7 @@
        собирается из них и остаётся на месте — восемь компонентов берут его целиком, и
        менять их незачем. Отступ — зазор цвета поверхности между элементом и кольцом:
        первая тень при нулевом отступе не рисует ничего. */
-    --rt-focus-ring-width: 3px;
+    --rt-focus-ring-width: var(--rt-border-width-thick);
 
     /* Ноль с единицей намеренно: безразмерный ноль внутри calc с длиной невалиден, и
        браузер отбрасывает объявление кольца целиком — кольцо просто пропадает. */
@@ -163,7 +163,7 @@
     --rt-color-bg-surface-auth-card: var(--rt-neutral-0);
 
     /* Spacing aliases — named semantic aliases на primitive numeric scale */
-    --rt-space-2xs: 2px;
+    --rt-space-2xs: var(--rt-space-0-5); /* 2px */
     --rt-space-xs: var(--rt-space-1); /* 4px */
     --rt-space-sm: var(--rt-space-2); /* 8px */
     --rt-space-md: var(--rt-space-4); /* 16px */
@@ -173,7 +173,7 @@
     --rt-space-3xl: var(--rt-space-16); /* 64px */
 
     /* Text size base — semantic alias для default body text */
-    --rt-text-base: 16px;
+    --rt-text-base: var(--rt-text-md);
 
     /* Form input — composition tokens. Единый контракт для всего input-семейства
        (rt-input, rt-input-number, rt-autocomplete, rt-select, rt-multiselect,
@@ -236,7 +236,7 @@
        набирается табличными цифрами и держит ширину, иначе кнопки прыгают
        при переходе через десяток. */
     --rt-counter-gap: var(--rt-space-sm);
-    --rt-counter-value-min-width: 24px;
+    --rt-counter-value-min-width: var(--rt-size-6);
     --rt-counter-value-font-size: var(--rt-text-md);
     --rt-counter-value-color: var(--rt-color-text-primary);
     --rt-counter-row-gap: var(--rt-space-md);
@@ -267,7 +267,7 @@
     /* Первый уровень. Пункт ряда несёт плашку цвета самой шапки: на общем фоне её
        не видно, и белым проступает только активный раздел. Наведение красит
        подпись, а не фон — иначе оно спорит с этой подсветкой. */
-    --rt-nav-item-height: 28px;
+    --rt-nav-item-height: var(--rt-size-6);
     --rt-nav-item-gap: var(--rt-space-1);
     --rt-nav-item-padding: var(--rt-space-1-5) var(--rt-space-2);
     --rt-nav-item-content-gap: var(--rt-space-1-5);
@@ -294,10 +294,10 @@
     /* Попап профиля. Подложку берёт у панели навигации, своего здесь — габариты
        блока пользователя, тень и набор строк: строк четыре, и они читаются как
        список действий, а не как выпадающее меню. */
-    --rt-profile-menu-min-width: 240px;
+    --rt-profile-menu-min-width: var(--rt-size-60);
     --rt-profile-menu-padding: var(--rt-space-5);
     --rt-profile-menu-shadow: var(--rt-shadow-profile-menu);
-    --rt-profile-avatar-size: 42px;
+    --rt-profile-avatar-size: var(--rt-size-10);
     --rt-profile-avatar-font-size: var(--rt-text-2xl);
     --rt-profile-item-padding-y: var(--rt-space-3);
     --rt-profile-item-content-gap: var(--rt-space-2-5);
@@ -315,13 +315,13 @@
        колонка, промежуток и внутренний отступ — токены, из которых панель
        складывает свою ширину. По вертикали отступ крупнее: у первой группы над
        заголовком нет ничего, и панель иначе начинается впритык. */
-    --rt-nav-panel-column-width: 250px;
+    --rt-nav-panel-column-width: var(--rt-size-60);
     --rt-nav-panel-column-gap: var(--rt-space-5);
     --rt-nav-panel-padding: var(--rt-space-3);
     --rt-nav-panel-padding-y: var(--rt-space-md);
     --rt-nav-panel-group-gap: var(--rt-space-7);
     --rt-nav-panel-item-gap: var(--rt-space-0-5);
-    --rt-nav-panel-item-height: 24px;
+    --rt-nav-panel-item-height: var(--rt-size-6);
     --rt-nav-panel-item-padding: var(--rt-space-1) var(--rt-space-2);
     --rt-nav-panel-columns: 1;
     --rt-nav-panel-color-bg: var(--rt-color-bg-surface);
@@ -349,8 +349,8 @@
     /* Маркер непросмотренного. Точка стоит в потоке следом за подписью — и в ряду
        разделов, и в панели, и на узком экране: место ей даёт общий зазор
        содержимого пункта. */
-    --rt-nav-caret-size: 12px;
-    --rt-nav-marker-size: 4px;
+    --rt-nav-caret-size: var(--rt-size-3);
+    --rt-nav-marker-size: var(--rt-size-1);
     --rt-nav-marker-color: var(--rt-color-state-danger);
 
     /* Form field (rt-field) — обёртка анатомии поля: label / help / hint / error /
