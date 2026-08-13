@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.5.2 · checks/check-specs.mjs · 5bca322e8ff8 · правится надстройкой, не здесь
+// rt-kit v0.5.3 · checks/check-specs.mjs · 5bca322e8ff8 · правится надстройкой, не здесь
 /**
  * Проверка того, что спек домена не разошёлся с кодом.
  *
