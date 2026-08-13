@@ -97,6 +97,20 @@
 | Главная ветка влита в ветку задачи до открытия отчёта.                                                       | `projects/agent-kit/assets/rules/git-workflow.github.md:git-workflow`         |
 | Открытие отчёта отбивается, пока главная ветка не влита.                                                     | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:behind`                |
 | Пакет не пишет в файлы, принадлежащие дереву.                                                                | `projects/agent-kit/README.md:observations`                                   |
+| Слои поверх доменного правила объявляются своим файлом, а не строками в гейте.                               | `projects/agent-kit/assets/hooks/skill-gate-layers.sh:rt_layer_add`           |
+| Слой требует правило дополнительно, а не вместо доменного.                                                   | `projects/agent-kit/assets/hooks/skill-gate.sh:want`                          |
+| Признак, невидимый по пути, судится по тексту правки.                                                        | `projects/agent-kit/assets/hooks/skill-gate-layers.sh:rt_layer_payload`       |
+| Слой, которому нечем прочитать текст правки, отпускает действие.                                             | `projects/agent-kit/assets/hooks/skill-gate-layers.sh:rt_layer_is_spec`       |
+| Файл слоёв гейт зовёт в своей оболочке, а не отдельным процессом.                                            | `projects/agent-kit/assets/hooks/skill-gate.sh:rt_hooks_dir`                  |
+| Карта гейта считает командой вызов, а не упоминание.                                                         | `projects/agent-kit/assets/defaults/gate-map.sh:rt_gate_invokes`              |
+| Гейт пуша зовёт то, что дерево разложило.                                                                    | `projects/agent-kit/assets/defaults/project.sh:rt_push_checks_default`        |
+| Предел длины объявлен одним числом на все роды файлов.                                                       | `projects/agent-kit/assets/checks/check-file-size.mjs:LIMIT`                  |
+| Накопленное до объявления предела перечислено поимённо.                                                      | `projects/agent-kit/assets/checks/check-file-size.mjs:readKnown`              |
+| Принятое и долг в перечне различаются.                                                                       | `projects/agent-kit/assets/checks/check-file-size.mjs:known`                  |
+| Данные из счёта длины выведены.                                                                              | `projects/agent-kit/assets/checks/check-file-size.mjs:JUDGED`                 |
+| Описание прошлого и папка задачи из счёта выведены.                                                          | `projects/agent-kit/assets/checks/check-file-size.mjs:SKIPPED_PREFIXES`       |
+| Сгенерированное выведено каталогом, а не именами.                                                            | `projects/agent-kit/assets/checks/check-file-size.mjs:SKIPPED_PREFIXES`       |
+| Длина считается тем же способом, каким её считает линтер.                                                    | `projects/agent-kit/assets/checks/check-file-size.mjs:lineCount`              |
 
 ## Что ещё стоит знать при чтении кода
 
