@@ -3,16 +3,19 @@
  * а `process.exit` зовёт только точка входа — иначе ни одну из них нельзя было бы проверить
  * спекой, не перехватывая поток вывода.
  */
-import { existsSync, mkdirSync, renameSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { collectAssets } from './assets.js';
+import { collectAssets, IAsset } from './assets.js';
 import { IEntryOfCatalog, IGapOfVariant, isChosen, readCatalog } from './catalog.js';
 import { ICompanion, isUnfilled, TCompanionState } from './companion.js';
-import { CONFIG_PATH, DEFAULT_LAYOUT, IConfig, KINDS, OVERRIDES_DIR, readConfig, TKind } from './config.js';
+import { CONFIG_PATH, DEFAULT_LAYOUT, IConfig, KINDS, OVERRIDES_DIR, readConfig, SKILL_KINDS, TKind } from './config.js';
 import { IStaleBuild } from './freshness.js';
 import { hooksSection, IHookBinding, SETTINGS_PATH } from './hooks-map.js';
+import { DEFAULT_DAYS, ICount, IReadResult, ISummary, KEEP_DAYS, OBSERVATIONS_DIR, readObservations, summarize } from './observations.js';
 import { IPlanned, isRefusal, TOutcome } from './plan.js';
+import { ILeak, IProposal, leaksIn, markSent, marksOf, PROPOSALS_DIR, readProposals, TO_PACKAGE } from './proposals.js';
+import { FEEDBACK_LABEL, TSubmit } from './submit.js';
 import { ISyncResult, pendingOf, planSync, runSync } from './sync.js';
 import { placeholdersOf } from './vars.js';
 import { IAxis, IOptionOfAxis, readAxes, unansweredAxes } from './variants.js';
@@ -33,6 +36,11 @@ export interface IEnvironment {
      * тем каталогом ресурсов, который им дали, и о существовании исходников не знают.
      */
     readonly stale?: IStaleBuild | null;
+    /**
+     * `владелец/репозиторий` пакета — куда уезжают предложения. Читается из его манифеста на
+     * краю: зашитый в код адрес назвал бы чужое дерево в текстах пакета.
+     */
+    readonly repository?: string;
 }
 
 /** Что с файлом сделала раскладка. Прошедшее время здесь правда: `sync` уже записал. */
@@ -367,6 +375,274 @@ export function adopt(env: IEnvironment, names: readonly string[]): IOutcomeOfCo
         lines: [
             ...(moved.length ? [`прежнее содержимое отложено: ${moved.length}`, ...moved, 'дальше: `agent-kit sync`'] : []),
             ...(blocked.length ? ['не тронуто:', ...blocked] : []),
+        ],
+    };
+}
+
+/**
+ * Сколько незагруженных правил называется поимённо. На коротком отрезке их бывает больше
+ * тридцати, и список во весь экран прячет всё остальное, ради чего сводку и открыли.
+ */
+const UNUSED_SHOWN: number = 12;
+
+/** Чем сводка отвечает: отрезок в днях, сегодняшний день и вид вывода. */
+export interface IStatsOptions {
+    readonly days: number;
+    /** Сегодняшний день, `ГГГГ-ММ-ДД`. Приходит с края: команду со своими часами не проверить. */
+    readonly today: string;
+    readonly json: boolean;
+}
+
+/** Столбиком: имя и счёт. Ширина по самому длинному имени — иначе счёт читается по одному. */
+const countLines: (counted: readonly ICount[]) => string[] = (counted: readonly ICount[]): string[] => {
+    const width: number = counted.reduce((found: number, entry: ICount): number => Math.max(found, entry.name.length), 0);
+
+    return counted.map((entry: ICount): string => `  ${entry.name.padEnd(width)}  ${entry.count}`);
+};
+
+/** Имена скилов, разложенных в это дерево: правила, паттерны и скилы без закона. */
+const skillsOf: (config: IConfig, assetsDir: string) => readonly string[] = (config: IConfig, assetsDir: string): readonly string[] =>
+    collectAssets(config, assetsDir)
+        .filter((asset: IAsset): boolean => SKILL_KINDS.includes(asset.kind))
+        .map((asset: IAsset): string => asset.name);
+
+/**
+ * Сводка наблюдений за отрезок дней.
+ *
+ * Отдельная строка про незагруженное — то, ради чего сводка вообще нужна: чем пользуются, видно
+ * и по работе, а вот правило, которое не открыли ни разу, ничем себя не выдаёт. Сокращать текст
+ * правил так же ценно, как дополнять.
+ */
+export function stats(env: IEnvironment, options: IStatsOptions): IOutcomeOfCommand {
+    const { root, version, assetsDir } = env;
+    const config: IConfig | null = readConfig(root);
+    if (!config) {
+        return { code: 1, lines: [NO_CONFIG] };
+    }
+
+    // Выключенная запись — не пустая сводка: нули на месте наблюдений читаются как «ничего не
+    // делали», тогда как на самом деле никто и не смотрел.
+    if (!config.observe) {
+        return {
+            code: 0,
+            lines: [
+                'запись наблюдений выключена ключом `observe` в конфиге',
+                `включить — убрать ключ или поставить \`"observe": true\`; пишутся они в ${OBSERVATIONS_DIR}/`,
+            ],
+        };
+    }
+
+    const days: number = options.days > 0 ? options.days : DEFAULT_DAYS;
+    const result: IReadResult = readObservations(root, options.today, days);
+    const summary: ISummary = summarize(result.observations, skillsOf(config, assetsDir), days);
+
+    if (options.json) {
+        return { code: 0, lines: [JSON.stringify({ ...summary, swept: result.swept })] };
+    }
+
+    if (result.silent) {
+        return {
+            code: 0,
+            lines: [
+                'наблюдений нет: записи не велось ни разу',
+                `их пишут гарды в ${OBSERVATIONS_DIR}/ — проверь, что гарды разложены и подключены в ${SETTINGS_PATH}`,
+            ],
+        };
+    }
+
+    if (!summary.total) {
+        return {
+            code: 0,
+            lines: [
+                `наблюдений за ${days} дн. нет ни одного, а записи велись раньше`,
+                ...(result.swept.length ? [`снято по сроку хранения (${KEEP_DAYS} дн.): ${result.swept.length}`] : []),
+                'возьми отрезок длиннее: `--days 14`',
+            ],
+        };
+    }
+
+    return {
+        code: 0,
+        lines: [
+            `наблюдения за ${days} дн., заходов ${summary.sessions}, событий ${summary.total}`,
+            ...(summary.versions.length ? [`версии пакета в записях: ${summary.versions.join(', ')}`] : []),
+            '',
+            `правил загружено: ${summary.loads.reduce((found: number, entry: ICount): number => found + entry.count, 0)}`,
+            ...countLines(summary.loads),
+            ...(summary.unused.length
+                ? [
+                      '',
+                      `разложено и не загружено ни разу: ${summary.unused.length} из ${skillsOf(config, assetsDir).length}`,
+                      ...summary.unused.slice(0, UNUSED_SHOWN).map((name: string): string => `  ${name}`),
+                      // Список говорится не весь, и об этом говорится вслух: молчаливый обрыв
+                      // читается как «вот они все», и правило, не попавшее в первую дюжину,
+                      // считалось бы работающим.
+                      ...(summary.unused.length > UNUSED_SHOWN
+                          ? [`  … и ещё ${summary.unused.length - UNUSED_SHOWN} — целиком в \`--json\``]
+                          : []),
+                  ]
+                : []),
+            ...(summary.denials.length
+                ? [
+                      '',
+                      `гейт отбивал: ${summary.denials.reduce((found: number, entry: ICount): number => found + entry.count, 0)}`,
+                      ...countLines(summary.denials),
+                      ...(summary.kinds.length
+                          ? ['  чаще всего на:', ...countLines(summary.kinds).map((line: string): string => `  ${line}`)]
+                          : []),
+                  ]
+                : []),
+            ...(summary.guards.length
+                ? [
+                      '',
+                      `гарды отказывали: ${summary.guards.reduce((found: number, entry: ICount): number => found + entry.count, 0)}`,
+                      ...countLines(summary.guards),
+                  ]
+                : []),
+            ...(result.swept.length ? ['', `снято по сроку хранения (${KEEP_DAYS} дн.): ${result.swept.length}`] : []),
+            '',
+            `пакет v${version}`,
+        ],
+    };
+}
+
+/** Чем отправка живёт: чем заводить запись, куда и чем себя выдаёт это дерево. */
+export interface IProposeOptions {
+    /** Печатать, что уехало бы, и ничего не отправлять. */
+    readonly dryRun: boolean;
+    readonly submit: TSubmit;
+    /** `владелец/репозиторий` пакета — из его манифеста, а не из кода. */
+    readonly repository: string;
+    /** Адрес удалённого репозитория этого дерева: он тоже называет дерево. */
+    readonly remote: string;
+    /** Сводка наблюдений, которая едет вместе с предложением: без цифр это мнение. */
+    readonly summary: readonly string[];
+}
+
+/** Тело записи: место, повод, готовый текст — и сводка под ними. */
+const issueBody: (proposal: IProposal, summary: readonly string[], version: string) => string = (
+    proposal: IProposal,
+    summary: readonly string[],
+    version: string
+): string =>
+    [
+        `Ресурс: \`${proposal.resource}\``,
+        `Пакет: v${version}`,
+        '',
+        proposal.body,
+        '',
+        '## Наблюдения дерева, из которого пришло предложение',
+        '',
+        '```',
+        ...summary,
+        '```',
+        '',
+        'Заведено `agent-kit propose`. Дерево, из которого оно пришло, здесь не называется намеренно.',
+    ].join('\n');
+
+/**
+ * Отправка предложений, адресованных пакету.
+ *
+ * Наружу уезжает только адрес «пакет»: «компаньон» и «дерево» — про имена и надстройки этого
+ * дерева, и в репозитории пакета им делать нечего. Перед отправкой текст сверяется на адрес
+ * дерева: файл уезжает в чужой репозиторий целиком, и проверка здесь дешевле, чем разбор потом.
+ */
+export function propose(env: IEnvironment, options: IProposeOptions): IOutcomeOfCommand {
+    const { root, version } = env;
+    const config: IConfig | null = readConfig(root);
+    if (!config) {
+        return { code: 1, lines: [NO_CONFIG] };
+    }
+    if (!options.repository) {
+        return { code: 1, lines: ['куда отправлять — неизвестно: в манифесте пакета нет адреса репозитория'] };
+    }
+
+    const all: readonly IProposal[] = readProposals(root);
+    const mine: readonly IProposal[] = all.filter((entry: IProposal): boolean => entry.address === TO_PACKAGE && !entry.sent);
+    if (!mine.length) {
+        const others: number = all.filter((entry: IProposal): boolean => entry.address !== TO_PACKAGE).length;
+        const sent: number = all.filter((entry: IProposal): boolean => Boolean(entry.sent)).length;
+
+        return {
+            code: 0,
+            lines: [
+                'отправлять нечего: предложений с адресом «пакет» и без пометки об отправке нет',
+                ...(others ? [`с другими адресами: ${others} — они правятся здесь же, надстройкой и компаньоном`] : []),
+                ...(sent ? [`уже отправлено: ${sent}`] : []),
+                ...(all.length ? [] : [`предложения кладутся в ${PROPOSALS_DIR}/ — форма в шаблоне \`proposal.md\``]),
+            ],
+        };
+    }
+
+    // Утечка отбивает отправку целиком, а не свой блок: файл разбирает человек, и «уехало два из
+    // трёх» он прочтёт как «всё в порядке».
+    const marks: readonly string[] = marksOf(root, options.remote);
+    const leaked: readonly { proposal: IProposal; leak: ILeak }[] = mine.flatMap(
+        (proposal: IProposal): { proposal: IProposal; leak: ILeak }[] =>
+            leaksIn(proposal.body, marks).map((leak: ILeak): { proposal: IProposal; leak: ILeak } => ({ proposal, leak }))
+    );
+    if (leaked.length) {
+        return {
+            code: 1,
+            lines: [
+                `отправка не начата: в тексте предложений назван адрес этого дерева — ${leaked.length}`,
+                ...leaked.map(
+                    ({ proposal, leak }: { proposal: IProposal; leak: ILeak }): string =>
+                        `  ${proposal.file}:${proposal.line + leak.line} — ${leak.why}\n      ${leak.text}`
+                ),
+                'предложение уезжает в чужой репозиторий целиком: правь текст, а не обходи проверку',
+            ],
+        };
+    }
+
+    if (options.dryRun) {
+        return {
+            code: 0,
+            lines: [
+                `уехало бы записей: ${mine.length} → ${options.repository}, метка ${FEEDBACK_LABEL}`,
+                ...mine.map((entry: IProposal): string => `  ${entry.resource} (${entry.file}:${entry.line})`),
+                'сводка наблюдений едет вместе с ними',
+            ],
+        };
+    }
+
+    const done: string[] = [];
+    for (const proposal of mine) {
+        let url: string = '';
+        try {
+            url = options.submit({
+                repository: options.repository,
+                title: `предложение: ${proposal.resource}`,
+                body: issueBody(proposal, options.summary, version),
+                label: FEEDBACK_LABEL,
+            });
+        } catch (error: unknown) {
+            return {
+                code: 1,
+                lines: [
+                    ...(done.length ? [`отправлено до отказа: ${done.length}`, ...done] : []),
+                    `отправка оборвалась на ${proposal.resource}: ${(error as Error).message.split('\n')[0]}`,
+                    // Три причины покрывают почти все отказы, и ни одну из них не видно из
+                    // сообщения помощника: он говорит про метку, доступ и сам себя одинаково глухо.
+                    `проверь: помощник хостинга стоит и вошёл в учётную запись; в ${options.repository} заведена метка ${FEEDBACK_LABEL}; у учётной записи есть право заводить записи`,
+                    'файл предложений остался на месте — отправленное помечено, остальное уедет повторным запуском',
+                ],
+            };
+        }
+
+        // Пометка ложится сразу, а не после всех: оборвавшаяся отправка иначе увозит половину
+        // предложений и не оставляет следа, по которому видно, какую именно.
+        const path: string = join(root, proposal.file);
+        writeFileSync(path, markSent(readFileSync(path, 'utf8'), proposal, url), 'utf8');
+        done.push(`  ${proposal.resource} → ${url}`);
+    }
+
+    return {
+        code: 0,
+        lines: [
+            `заведено записей: ${done.length} в ${options.repository}`,
+            ...done,
+            'разбирается сведением: `/agent-kit-digest` в репозитории пакета — оно и заводит задачу',
         ],
     };
 }

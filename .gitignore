@@ -47,6 +47,12 @@ Thumbs.db
 # Pinned browser profile: one per machine, never shared
 .claude/rt-kit/browser-device-id
 
+# Observations of the rules layer: written by guards on this machine, summed up by `agent-kit stats`
+.claude/rt-kit/observations/
+
+# Proposals awaiting `agent-kit propose`: correspondence with the package, not this tree's history
+.claude/rt-kit/proposals/
+
 # Angular
 .angular
 

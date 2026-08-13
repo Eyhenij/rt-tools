@@ -135,6 +135,35 @@ out="$(CLAUDE_PROJECT_DIR="$NO_TASKS_DIR" input_cmd 'gh pr merge 47 --merge' Bas
 report "SC-AK-21 — дерево без каталога задач требования не получает" "${out:-PASS}" PASS
 rm -rf "$NO_TASKS_DIR"
 
+# --- главная ветка влита до открытия заявки ------------------------------------------------------
+# Судится локальная вершина главной ветки: сети у гарда нет. Поэтому фикстура заводит
+# `refs/remotes/origin/main` сама — ровно то, что видел бы гард после `git fetch`.
+
+FRESH="$(fixture_repo_branched main RT-11-fresh)"
+git -C "$FRESH" update-ref refs/remotes/origin/main main 2>/dev/null
+expect_decision "SC-AK-84 — влитая главная ветка заявку пропускает" git-guard-delivery.sh \
+    "$(input_cmd 'gh pr create --title "[RT-11] Сделано" --body x' Bash "$FRESH")" PASS
+rm -rf "$FRESH"
+
+STALE="$(fixture_repo_branched main RT-12-stale)"
+git -C "$STALE" checkout -q main 2>/dev/null
+fixture_commit "$STALE" docs/чужое.md 'правка соседней ветки' 'docs: чужая правка'
+git -C "$STALE" update-ref refs/remotes/origin/main main 2>/dev/null
+git -C "$STALE" checkout -q RT-12-stale 2>/dev/null
+expect_decision "SC-AK-83 — заявка от разошедшейся ветки отбита" git-guard-delivery.sh \
+    "$(input_cmd 'gh pr create --title "[RT-12] Сделано" --body x' Bash "$STALE")" deny
+expect_reason "SC-AK-83 — отказ называет расхождение числом" git-guard-delivery.sh \
+    "$(input_cmd 'gh pr create --title "[RT-12] Сделано" --body x' Bash "$STALE")" 'вперёд на 1 коммит'
+expect_reason "SC-AK-83 — отказ называет, чем снимается" git-guard-delivery.sh \
+    "$(input_cmd 'gh pr create --title "[RT-12] Сделано" --body x' Bash "$STALE")" 'git merge origin/main'
+rm -rf "$STALE"
+
+# Вершины главной ветки в дереве нет вовсе — судить не по чему, и гард не выдумывает отказа.
+NO_REMOTE="$(fixture_repo_branched main RT-13-alone)"
+expect_decision "заявки без вершины главной ветки гард не судит" git-guard-delivery.sh \
+    "$(input_cmd 'gh pr create --title "[RT-13] Сделано" --body x' Bash "$NO_REMOTE")" PASS
+rm -rf "$NO_REMOTE"
+
 # --- отказ в пользу работы ---------------------------------------------------------------------
 for hook in git-guard-main.sh git-guard-delivery.sh; do
     printf '' | "$HOOKS/$hook" >/dev/null 2>&1

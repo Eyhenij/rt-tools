@@ -11,9 +11,12 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 
 import { IEntryOfCatalog, readCatalog } from './catalog.js';
-import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, KEPT_SUFFIX, list, sync } from './commands.js';
+import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, KEPT_SUFFIX, list, propose, stats, sync } from './commands.js';
 import { CONFIG_PATH, OVERRIDES_DIR } from './config.js';
 import { bindingsOf } from './hooks-map.js';
+import { OBSERVATIONS_DIR } from './observations.js';
+import { PROPOSALS_DIR } from './proposals.js';
+import { FEEDBACK_LABEL, IIssueInput, TSubmit } from './submit.js';
 
 const VERSION: string = '0.1.0';
 const LAW: string = 'docs/constitution/delivery.md';
@@ -484,5 +487,241 @@ describe('list', () => {
 
     it('шаблоны показывает своим разделом', () => {
         expect(said(list(env))).toContain('ШАБЛОНЫ');
+    });
+});
+
+describe('stats', () => {
+    const TODAY: string = '2026-08-12';
+
+    /** Наблюдения так, как их пишет гард: строка на событие, файл на день. */
+    const observed: (lines: readonly Readonly<Record<string, string>>[]) => void = (
+        lines: readonly Readonly<Record<string, string>>[]
+    ): void =>
+        put(
+            `${OBSERVATIONS_DIR}/${TODAY}.jsonl`,
+            `${lines.map((fields: Readonly<Record<string, string>>): string => JSON.stringify({ t: `${TODAY}T09:00:00Z`, ...fields, v: VERSION })).join('\n')}\n`
+        );
+
+    const summed: (days?: number) => IOutcomeOfCommand = (days: number = 3): IOutcomeOfCommand =>
+        stats(env, { days, today: TODAY, json: false });
+
+    it('без конфига говорит про init', () => {
+        expect(summed().code).toBe(1);
+        expect(said(summed())).toContain('init');
+    });
+
+    it('SC-AK-75 — записи не велось: говорит причину, а не нули', () => {
+        start();
+
+        expect(said(summed())).toContain('записи не велось');
+        expect(said(summed())).not.toContain('правил загружено: 0');
+    });
+
+    it('SC-AK-72 — выключенная запись названа выключенной', () => {
+        start();
+        const config: Record<string, unknown> = JSON.parse(get(CONFIG_PATH));
+        put(CONFIG_PATH, JSON.stringify({ ...config, observe: false }, null, 4));
+        observed([{ ev: 'skill-load', res: 'task-flow', sid: '1' }]);
+
+        const said_: string = said(summed());
+
+        expect(said_).toContain('выключена');
+        // Наблюдения на диске есть, но сводки по ним нет: выключатель судится раньше чтения.
+        expect(said_).not.toContain('task-flow');
+    });
+
+    it('считает загрузки, отбития и отказы', () => {
+        start();
+        observed([
+            { ev: 'skill-load', res: 'task-flow', sid: '1' },
+            { ev: 'gate-deny', res: 'styling-bem', kind: 'scss', sid: '1' },
+            { ev: 'guard-deny', res: 'docs-guard', sid: '2' },
+        ]);
+
+        const lines: string = said(summed());
+
+        expect(lines).toContain('заходов 2');
+        expect(lines).toContain('правил загружено: 1');
+        expect(lines).toContain('гейт отбивал: 1');
+        expect(lines).toContain('гарды отказывали: 1');
+    });
+
+    it('SC-AK-74 — называет разложенное и ни разу не загруженное', () => {
+        start();
+        sync(env, false);
+        observed([{ ev: 'skill-load', res: 'task-flow', sid: '1' }]);
+
+        expect(said(summed())).toContain('не загружено ни разу');
+        // Поимённо список проверяется машинным выводом: печатная сводка обрывает его вслух, и
+        // искать в ней конкретное имя значило бы проверять длину дюжины, а не сам отбор.
+        expect(JSON.parse(stats(env, { days: 3, today: TODAY, json: true }).lines[0]).unused).toContain('git-workflow');
+    });
+
+    it('длинный список незагруженного обрывается вслух', () => {
+        start();
+        sync(env, false);
+        observed([{ ev: 'skill-load', res: 'task-flow', sid: '1' }]);
+
+        expect(said(summed())).toContain('и ещё');
+    });
+
+    it('машинный вывод — одна строка разбираемого JSON', () => {
+        start();
+        observed([{ ev: 'skill-load', res: 'task-flow', sid: '1' }]);
+
+        const outcome: IOutcomeOfCommand = stats(env, { days: 3, today: TODAY, json: true });
+
+        expect(outcome.lines).toHaveLength(1);
+        expect(JSON.parse(outcome.lines[0])).toMatchObject({ days: 3, sessions: 1, total: 1 });
+    });
+
+    it('SC-AK-76 — за отрезок наблюдений нет, а записи велись: зовёт взять отрезок длиннее', () => {
+        start();
+        put(
+            `${OBSERVATIONS_DIR}/2026-08-01.jsonl`,
+            `${JSON.stringify({ t: '2026-08-01T09:00:00Z', ev: 'skill-load', res: 'task-flow', sid: '1' })}\n`
+        );
+
+        expect(said(summed())).toContain('--days');
+    });
+});
+
+describe('propose', () => {
+    const REPOSITORY: string = 'owner/package-repo';
+
+    /** Двойник отправки: спека не заводит записей в живом репозитории. */
+    let asked: IIssueInput[];
+    const submit: TSubmit = (input: IIssueInput): string => {
+        asked.push(input);
+
+        return `https://example.test/issues/${asked.length}`;
+    };
+
+    const sending: (dryRun?: boolean) => IOutcomeOfCommand = (dryRun: boolean = false): IOutcomeOfCommand =>
+        propose(env, { dryRun, submit, repository: REPOSITORY, remote: '', summary: ['наблюдений за 3 дн.: 12'] });
+
+    const proposals: (blocks: readonly string[]) => void = (blocks: readonly string[]): void =>
+        put(`${PROPOSALS_DIR}/2026-08-12-probe.md`, `# Предложения\n\n${blocks.join('\n\n')}\n`);
+
+    const forPackage: string = [
+        '## пакет · rules/styling-bem.md',
+        '',
+        '- **повод:** правило молчит про токены',
+        '',
+        '> Текст правки.',
+    ].join('\n');
+    const forTree: string = ['## дерево · .claude/rt-kit/gate-map.sh', '', '> Свой род файлов.'].join('\n');
+
+    beforeEach((): void => {
+        asked = [];
+    });
+
+    it('без конфига говорит про init', () => {
+        expect(sending().code).toBe(1);
+    });
+
+    it('без адреса репозитория не начинается', () => {
+        start();
+        proposals([forPackage]);
+
+        expect(propose(env, { dryRun: false, submit, repository: '', remote: '', summary: [] }).code).toBe(1);
+    });
+
+    it('предложений нет вовсе: говорит, куда их класть', () => {
+        start();
+
+        expect(said(sending())).toContain(PROPOSALS_DIR);
+        expect(asked).toHaveLength(0);
+    });
+
+    it('SC-AK-78 — наружу уезжает только адрес «пакет»', () => {
+        start();
+        proposals([forPackage, forTree]);
+
+        expect(sending().code).toBe(0);
+        expect(asked).toHaveLength(1);
+        expect(asked[0].title).toContain('rules/styling-bem.md');
+        expect(asked[0].label).toBe(FEEDBACK_LABEL);
+        expect(asked[0].repository).toBe(REPOSITORY);
+    });
+
+    it('SC-AK-78 — при одних чужих адресах говорит, где они правятся', () => {
+        start();
+        proposals([forTree]);
+
+        expect(said(sending())).toContain('надстройкой');
+        expect(asked).toHaveLength(0);
+    });
+
+    it('сводка наблюдений едет вместе с предложением', () => {
+        start();
+        proposals([forPackage]);
+        sending();
+
+        expect(asked[0].body).toContain('наблюдений за 3 дн.: 12');
+        expect(asked[0].body).toContain('rules/styling-bem.md');
+    });
+
+    it('SC-AK-79 — адрес дерева в тексте отбивает отправку целиком', () => {
+        start();
+        proposals([forPackage, ['## пакет · rules/testing.md', '', '> Правится в /Users/probe/tree/apps/site.'].join('\n')]);
+
+        const outcome: IOutcomeOfCommand = sending();
+
+        expect(outcome.code).toBe(1);
+        expect(said(outcome)).toContain('абсолютный путь');
+        // Отбивается всё, а не свой блок: «уехало одно из двух» человек прочтёт как «в порядке».
+        expect(asked).toHaveLength(0);
+    });
+
+    it('SC-AK-80 — отправленное помечается и второй раз не уезжает', () => {
+        start();
+        proposals([forPackage]);
+
+        expect(sending().code).toBe(0);
+        expect(get(`${PROPOSALS_DIR}/2026-08-12-probe.md`)).toContain('**отправлено:** https://example.test/issues/1');
+
+        asked = [];
+
+        expect(said(sending())).toContain('уже отправлено: 1');
+        expect(asked).toHaveLength(0);
+    });
+
+    it('пробный прогон ничего не отправляет и называет, что уехало бы', () => {
+        start();
+        proposals([forPackage]);
+
+        const outcome: IOutcomeOfCommand = sending(true);
+
+        expect(said(outcome)).toContain('уехало бы записей: 1');
+        expect(asked).toHaveLength(0);
+        expect(get(`${PROPOSALS_DIR}/2026-08-12-probe.md`)).not.toContain('отправлено');
+    });
+
+    it('оборванная отправка называет отправленное до отказа', () => {
+        start();
+        proposals([forPackage, ['## пакет · rules/testing.md', '', '> Второй текст.'].join('\n')]);
+        let calls: number = 0;
+        const failing: TSubmit = (): string => {
+            calls += 1;
+            if (calls > 1) {
+                throw new Error('нет доступа к очереди работ');
+            }
+
+            return 'https://example.test/issues/1';
+        };
+
+        const outcome: IOutcomeOfCommand = propose(env, {
+            dryRun: false,
+            submit: failing,
+            repository: REPOSITORY,
+            remote: '',
+            summary: [],
+        });
+
+        expect(outcome.code).toBe(1);
+        expect(said(outcome)).toContain('отправлено до отказа: 1');
+        // Первое помечено — повторный запуск увезёт только второе.
+        expect(get(`${PROPOSALS_DIR}/2026-08-12-probe.md`)).toContain('**отправлено:**');
     });
 });
