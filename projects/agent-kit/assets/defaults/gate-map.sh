@@ -111,6 +111,8 @@ skill_for_default() {
             case "$target" in
                 *git\ commit* | *git\ push* | *git\ merge* | *git\ rebase* | *git\ cherry-pick* | *gh\ pr\ * | *glab\ mr\ * | *az\ repos\ *)
                     printf '%s\n' 'git-workflow' ;;
+                *git\ worktree\ add* | *git\ worktree\ remove*)
+                    printf '%s\n' 'git-workflow' ;;
                 *prisma\ migrate* | *prisma\ db\ *) printf '%s\n' 'git-workflow' ;;
                 *curl\ *localhost* | *wget\ *localhost*) printf '%s\n' 'browser-verification' ;;
             esac
