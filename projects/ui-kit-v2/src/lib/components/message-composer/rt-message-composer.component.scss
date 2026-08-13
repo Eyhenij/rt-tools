@@ -1,7 +1,7 @@
 .rt-message-composer {
     display: flex;
     flex-direction: column;
-    padding: var(--rt-space-3);
+    padding: var(--rt-space-4);
     border: var(--rt-border-width-thin) solid var(--rt-color-border-default);
     border-radius: var(--rt-radius-md);
     background: var(--rt-color-bg-surface);
@@ -43,7 +43,7 @@
     &__divider {
         background: var(--rt-color-border-default);
         block-size: var(--rt-border-width-thin);
-        margin-inline: calc(-1 * var(--rt-space-3));
+        margin-inline: calc(-1 * var(--rt-space-4));
     }
 
     &__controls {

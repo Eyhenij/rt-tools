@@ -36,7 +36,7 @@ rt-stat-tile {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: var(--rt-space-3);
+            gap: var(--rt-space-4);
         }
 
         &__value {
@@ -67,7 +67,7 @@ rt-stat-tile {
 
         &__year {
             flex: 0 0 auto;
-            padding: var(--rt-space-0-5) var(--rt-space-1-5);
+            padding: var(--rt-space-0-5) var(--rt-space-2);
             border-radius: var(--rt-radius-sm);
             background: var(--rt-color-bg-surface-subtle);
             color: var(--rt-color-text-muted);

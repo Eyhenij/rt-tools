@@ -202,7 +202,7 @@
 
     /* Radius / spacing / border */
     --rt-input-radius: var(--rt-radius-lg);
-    --rt-input-padding-x: var(--rt-space-3);
+    --rt-input-padding-x: var(--rt-space-4);
     --rt-input-padding-y: var(--rt-space-0);
     --rt-input-border-width: var(--rt-border-width-thin);
     --rt-input-focus-outline-offset: var(--rt-border-width-thin);
@@ -261,7 +261,7 @@
 
     /* Навигация (rt-page-header). Шапка — отдельная плашка; отступ от краёв
        страницы задаёт тот, кто её ставит. */
-    --rt-nav-header-padding: var(--rt-space-2-5) var(--rt-space-3);
+    --rt-nav-header-padding: var(--rt-space-2) var(--rt-space-4);
     --rt-nav-header-color-bg: var(--rt-neutral-150);
 
     /* Первый уровень. Пункт ряда несёт плашку цвета самой шапки: на общем фоне её
@@ -269,8 +269,8 @@
        подпись, а не фон — иначе оно спорит с этой подсветкой. */
     --rt-nav-item-height: var(--rt-size-6);
     --rt-nav-item-gap: var(--rt-space-1);
-    --rt-nav-item-padding: var(--rt-space-1-5) var(--rt-space-2);
-    --rt-nav-item-content-gap: var(--rt-space-1-5);
+    --rt-nav-item-padding: var(--rt-space-2) var(--rt-space-2);
+    --rt-nav-item-content-gap: var(--rt-space-2);
     --rt-nav-item-font-size: var(--rt-text-sm);
     --rt-nav-item-font-weight: var(--rt-font-weight-semibold);
     --rt-nav-item-line-height: var(--rt-leading-none);
@@ -299,8 +299,8 @@
     --rt-profile-menu-shadow: var(--rt-shadow-profile-menu);
     --rt-profile-avatar-size: var(--rt-size-10);
     --rt-profile-avatar-font-size: var(--rt-text-2xl);
-    --rt-profile-item-padding-y: var(--rt-space-3);
-    --rt-profile-item-content-gap: var(--rt-space-2-5);
+    --rt-profile-item-padding-y: var(--rt-space-4);
+    --rt-profile-item-content-gap: var(--rt-space-2);
     --rt-profile-item-font-size: var(--rt-text-md);
     --rt-profile-item-font-weight: var(--rt-font-weight-medium);
     --rt-profile-item-radius: var(--rt-radius-md);
@@ -308,7 +308,7 @@
     /* Строки выступают за содержимое панели на половину её отступа: так
        подсветка на наведении не упирается в рамку, а иконка остаётся на одной
        вертикали с содержимым. Это же число — горизонтальный отступ строки. */
-    --rt-profile-row-inset: var(--rt-space-2-5);
+    --rt-profile-row-inset: var(--rt-space-2);
     --rt-profile-theme-icon-padding: var(--rt-space-2);
 
     /* Габариты панели второго уровня: ширина считается числом колонок, поэтому
@@ -317,9 +317,9 @@
        заголовком нет ничего, и панель иначе начинается впритык. */
     --rt-nav-panel-column-width: var(--rt-size-60);
     --rt-nav-panel-column-gap: var(--rt-space-5);
-    --rt-nav-panel-padding: var(--rt-space-3);
+    --rt-nav-panel-padding: var(--rt-space-4);
     --rt-nav-panel-padding-y: var(--rt-space-md);
-    --rt-nav-panel-group-gap: var(--rt-space-7);
+    --rt-nav-panel-group-gap: var(--rt-space-8);
     --rt-nav-panel-item-gap: var(--rt-space-0-5);
     --rt-nav-panel-item-height: var(--rt-size-6);
     --rt-nav-panel-item-padding: var(--rt-space-1) var(--rt-space-2);
@@ -344,7 +344,7 @@
        Отношения обеих пар считает проверка тёмной темы; таблица замера — на странице
        «Colors» витрины. */
     --rt-nav-panel-group-color: var(--rt-neutral-510);
-    --rt-nav-panel-group-content-gap: var(--rt-space-1-5);
+    --rt-nav-panel-group-content-gap: var(--rt-space-2);
 
     /* Маркер непросмотренного. Точка стоит в потоке следом за подписью — и в ряду
        разделов, и в панели, и на узком экране: место ей даёт общий зазор

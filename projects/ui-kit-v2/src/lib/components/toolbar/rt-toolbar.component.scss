@@ -7,8 +7,8 @@
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        padding: var(--rt-space-2-5) 0;
-        gap: var(--rt-space-2-5);
+        padding: var(--rt-space-2) 0;
+        gap: var(--rt-space-2);
     }
 
     &__bar {
@@ -20,13 +20,13 @@
         // эти три флекса через ::ng-deep — теперь поведение зашито здесь.
         &--left {
             flex: 0 0 auto;
-            gap: var(--rt-space-2-5);
+            gap: var(--rt-space-2);
         }
 
         &--center {
             flex: 1 1 auto;
             justify-content: flex-end;
-            gap: var(--rt-space-2-5);
+            gap: var(--rt-space-2);
 
             // Контрол-фильтр (поиск/селект) занимает ширину center и право-
             // выравнивается к action-кнопкам; свой max-width задаёт потребитель.

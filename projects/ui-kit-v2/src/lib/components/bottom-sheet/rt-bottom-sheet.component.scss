@@ -43,7 +43,7 @@
         height: 4px;
         align-self: center;
         border-radius: var(--rt-radius-xs);
-        margin: var(--rt-space-3) 0;
+        margin: var(--rt-space-4) 0;
         background: var(--rt-color-border-default);
         cursor: grab;
         touch-action: none;
@@ -52,7 +52,7 @@
     &__header {
         display: flex;
         justify-content: center;
-        padding: 0 var(--rt-space-5) var(--rt-space-3);
+        padding: 0 var(--rt-space-5) var(--rt-space-4);
         color: var(--rt-color-text-primary);
         font-weight: var(--rt-font-weight-semibold);
     }
