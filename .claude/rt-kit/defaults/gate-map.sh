@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.5.1 · defaults/gate-map.sh · cd8687602814 · правится надстройкой, не здесь
+# rt-kit v0.5.1 · defaults/gate-map.sh · 78f044fa84c3 · правится надстройкой, не здесь
 # Карта «что правится — какое правило». Умолчание пакета: настоящие пути, а не образцы.
 #
 # Деревья этой мастерской устроены одинаково — Nx, `apps/` и `libs/`, те же расширения и те же
@@ -111,6 +111,8 @@ skill_for_default() {
         bash)
             case "$target" in
                 *git\ commit* | *git\ push* | *git\ merge* | *git\ rebase* | *git\ cherry-pick* | *gh\ pr\ * | *glab\ mr\ * | *az\ repos\ *)
+                    printf '%s\n' 'git-workflow' ;;
+                *git\ worktree\ add* | *git\ worktree\ remove*)
                     printf '%s\n' 'git-workflow' ;;
                 *prisma\ migrate* | *prisma\ db\ *) printf '%s\n' 'git-workflow' ;;
                 *curl\ *localhost* | *wget\ *localhost*) printf '%s\n' 'browser-verification' ;;
