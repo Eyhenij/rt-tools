@@ -6,8 +6,10 @@
 rt-icon-button {
     display: inline-flex;
 
-    /* Дефолт = md; перезаписывается модификаторами sm/lg ниже либо inline стилем потребителя */
-    --rt-icon-button-size: 36px;
+    /* Дефолт = md; перезаписывается модификаторами sm/lg ниже либо inline стилем потребителя.
+       Ряд берётся из общей шкалы высот контролов: иконочная кнопка стоит в строке
+       рядом с кнопкой и полем и обязана совпадать с ними по высоте. */
+    --rt-icon-button-size: var(--rt-control-height-md);
 
     /* Цвет иконки объявлен здесь, а не приходил бы запасным значением на месте
        обращения: запасное переживает смену темы — переопределять нечего. Своё
@@ -30,23 +32,23 @@ rt-icon-button {
         transition: background-color var(--rt-duration-fast) ease;
 
         &--sm {
-            --rt-icon-button-size: 28px;
+            --rt-icon-button-size: var(--rt-control-height-sm);
         }
 
         &--md {
-            --rt-icon-button-size: 36px;
+            --rt-icon-button-size: var(--rt-control-height-md);
         }
 
         &--lg {
-            --rt-icon-button-size: 44px;
+            --rt-icon-button-size: var(--rt-control-height-lg);
         }
 
         &--xl {
-            --rt-icon-button-size: 52px;
+            --rt-icon-button-size: var(--rt-control-height-xl);
         }
 
         &--2xl {
-            --rt-icon-button-size: 60px;
+            --rt-icon-button-size: var(--rt-control-height-2xl);
         }
 
         &--circle {
