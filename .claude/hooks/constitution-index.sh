@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.5.1 · hooks/constitution-index.sh · e2b6366c4773 · правится надстройкой, не здесь
+# rt-kit v0.5.2 · hooks/constitution-index.sh · e2b6366c4773 · правится надстройкой, не здесь
 # rt-hook: SessionStart startup|resume|compact|clear
 # Вход в слой законов. SessionStart.
 #
