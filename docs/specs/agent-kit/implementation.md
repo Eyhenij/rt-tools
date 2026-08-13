@@ -88,3 +88,14 @@
 - Установка с нуля в одноразовое дерево: `init --all --host <чужой вид>`, `sync`, `doctor`.
   Сводный признак прогоняется рукой — заводить чистое дерево прогоном значило бы проверять
   собственную фикстуру.
+  | Требование ресурса названо в самом ресурсе, а не выводится чтением. | `projects/agent-kit/src/lib/catalog.ts:requiresOf` |
+  | Разорванная связь — предупреждение, а не отказ. | `projects/agent-kit/src/lib/catalog.ts:brokenLinks` |
+  | Разбор состояния называет невыбранное поимённо, а не числом. | `projects/agent-kit/src/lib/commands.ts:doctor` |
+  | Хук, которому не хватает функции профиля, говорит об этом вместо молчания. | `projects/agent-kit/assets/hooks/profile-check.sh:rt_needs` |
+  | Сообщение о нехватке не превращает хук в отказ. | `projects/agent-kit/assets/hooks/profile-check.sh:rt_needs` |
+  | Разбор состояния перечисляет функции профиля, которых ждут разложенные хуки, и те из них, что не определены. | `projects/agent-kit/src/lib/commands.ts:profileLines` |
+  | Ресурс пакета не описывает состояние дерева как факт. | `projects/agent-kit/assets/rules/spec-driven.md:spec-driven` |
+  | Признак кода приложения судится относительно корня дерева. | `projects/agent-kit/assets/defaults/project.sh:rt_is_app_code_default` |
+  | Ход, в котором исполнитель признал промах, не закрывается, пока записи о происшествии нет. | `projects/agent-kit/assets/hooks/postmortem-guard.sh:postmortem-guard` |
+  | Ход с вопросом владельцу проверяется на инструменте вопроса, а не на завершении хода. | `projects/agent-kit/assets/hooks/grill-gate.sh:grill-gate` |
+  | Заведение рабочего дерева грузит правило поставки. | `projects/agent-kit/assets/defaults/gate-map.sh:skill_for_default` |
