@@ -7,10 +7,12 @@ rt-message {
     display: block;
 
     .rt-message {
+        --rt-message-radius: var(--rt-radius-md);
+
         display: flex;
         align-items: flex-start;
         padding: var(--rt-space-4) var(--rt-space-4);
-        border-radius: var(--rt-radius-md);
+        border-radius: var(--rt-message-radius);
         background: var(--rt-color-state-info-bg);
         color: var(--rt-color-state-info);
         font-size: var(--rt-text-sm);

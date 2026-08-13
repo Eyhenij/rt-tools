@@ -7,6 +7,8 @@ rt-bar-list {
     display: block;
 
     .rt-bar-list {
+        --rt-bar-list-bar-radius: var(--rt-radius-sm);
+
         display: flex;
         flex-direction: column;
         gap: var(--rt-space-2);
@@ -65,7 +67,7 @@ rt-bar-list {
         &__track {
             display: block;
             height: 6px;
-            border-radius: var(--rt-radius-sm);
+            border-radius: var(--rt-bar-list-bar-radius);
             background: var(--rt-color-bg-surface-subtle);
         }
 
@@ -73,7 +75,7 @@ rt-bar-list {
             display: block;
             min-width: 2px;
             height: 100%;
-            border-radius: var(--rt-radius-sm);
+            border-radius: var(--rt-bar-list-bar-radius);
             background: var(--rt-color-action-primary);
         }
 

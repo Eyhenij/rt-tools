@@ -1,4 +1,6 @@
 .rt-select {
+    --rt-select-caret-transition-duration: var(--rt-duration-fast);
+
     position: relative;
     display: block;
     width: 100%;
@@ -108,7 +110,7 @@
 
     &__chevron {
         flex-shrink: 0;
-        transition: transform var(--rt-duration-fast) ease;
+        transition: transform var(--rt-select-caret-transition-duration) ease;
     }
 
     &--open &__chevron {
@@ -118,13 +120,17 @@
     /* Panel рендерится в CDK Overlay (body) — позиционирование на CDK,
        здесь только chrome. Глобальный класс (ViewEncapsulation.None). */
     &__panel {
+        /* Панель рисуется в CDK Overlay, вне поддерева блока: свойство
+           объявляется на ней самой — с корня блока оно бы не докатилось. */
+        --rt-select-panel-shadow: var(--rt-shadow-md);
+
         width: 100%;
         max-height: var(--rt-input-panel-max-height);
         box-sizing: border-box;
         border: var(--rt-input-border-width) solid var(--rt-color-border-subtle);
         border-radius: var(--rt-input-radius);
         background-color: var(--rt-color-bg-surface);
-        box-shadow: var(--rt-shadow-md);
+        box-shadow: var(--rt-select-panel-shadow);
         overflow-y: auto;
     }
 
