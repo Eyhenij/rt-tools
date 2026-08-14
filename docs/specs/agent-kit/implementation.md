@@ -129,6 +129,13 @@
 | Родителя нет в каталоге — каскад молчит.                                                                     | `projects/agent-kit/src/lib/catalog.ts:cascadeCuts`                           |
 | Связь, порванную самим каскадом, предупреждением не считают.                                                 | `projects/agent-kit/src/lib/catalog.ts:brokenLinks`                           |
 | Предупреждение раскладки печатается на любом её исходе.                                                      | `projects/agent-kit/src/lib/commands.ts:warnings`                             |
+| Признак единообразия живёт данными, а не кодом проверки.                                                     | `projects/agent-kit/assets/checks/signals.mjs:loadSignals`                    |
+| Набор признаков режется по пакетам rt-tools.                                                                 | `projects/agent-kit/assets/checks/signals.mjs:BUNDLES_DIR`                    |
+| Дерево получает признаки тех пакетов, которые назвало.                                                       | `projects/agent-kit/assets/checks/signals.mjs:readBundle`                     |
+| Дерево дописывает признаки, а не правит чужие.                                                               | `projects/agent-kit/assets/checks/signals.mjs:byKey`                          |
+| Признак называет свою область.                                                                               | `projects/agent-kit/assets/hooks/reuse-first-guard.sh:scope`                  |
+| Пустое поле признака не съезжает в соседнее.                                                                 | `projects/agent-kit/assets/hooks/reuse-first-guard.sh:cancel`                 |
+| Гард, не получивший ни одного признака, говорит об этом.                                                     | `projects/agent-kit/assets/hooks/reuse-first-guard.sh:signals_seen`           |
 
 ## Что ещё стоит знать при чтении кода
 
