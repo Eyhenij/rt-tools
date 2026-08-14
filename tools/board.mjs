@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.8.1 · checks/board.github.mjs · 80ef9a8a96f7 · правится надстройкой, не здесь
+// rt-kit v0.8.1 · checks/board.github.mjs · ebeebe32e261 · правится надстройкой, не здесь
 /**
  * Общая работа с очередью работ: борда проекта, тикеты и их состояние.
  *
@@ -306,7 +306,10 @@ export function describeTaskState(number, state) {
     if (state?.offline) {
         return {
             ok: false,
-            lines: [`в очереди работ: спросить не удалось — ${state.offline}`, 'состояние очереди неизвестно, и заведённым это не считается'],
+            lines: [
+                `в очереди работ: спросить не удалось — ${state.offline}`,
+                'состояние очереди неизвестно, и заведённым это не считается',
+            ],
         };
     }
     if (!state?.exists) {
@@ -321,7 +324,10 @@ export function describeTaskState(number, state) {
 
     const column = state.status ? `колонка «${state.status}»` : 'колонки нет';
     if (!state.assigned) {
-        return { ok: false, lines: [`в очереди работ: ${column}, исполнителя нет`, 'ничья задача стоит в очереди невидимой для того, кто её делает'] };
+        return {
+            ok: false,
+            lines: [`в очереди работ: ${column}, исполнителя нет`, 'ничья задача стоит в очереди невидимой для того, кто её делает'],
+        };
     }
     return { ok: true, lines: [`в очереди работ: ${column}, исполнитель ${state.assignees.join(', ')}`] };
 }
