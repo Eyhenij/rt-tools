@@ -5,6 +5,8 @@ packages:
 verifyDepsBeforeRun: false
 allowBuilds:
   '@parcel/watcher': true
+  '@prisma/engines': true
+  prisma: true
   '@swc/core': true
   esbuild: true
   lmdb: true

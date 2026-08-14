@@ -1,0 +1,9 @@
+{
+  "name": "message-bus-api-postmortems-data-access",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/message-bus-api/postmortems/data-access/src",
+  "projectType": "library",
+  "tags": ["scope:message-bus-api-postmortems-data-access"],
+  "// targets": "to see all targets run: nx show project message-bus-api-postmortems-data-access --web",
+  "targets": {}
+}

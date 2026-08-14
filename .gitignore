@@ -76,3 +76,8 @@ projects/*/.storybook/__snapshots__/__diff_output__/
 
 # Передача захода: пересказ хода работы для нового захода, в историю не едет.
 .claude/handoff/
+
+vitest.config.*.timestamp*
+
+# Клиент хранилища: его переписывает генератор Prisma целиком.
+libs/message-bus-api/persistence/util/src/generated

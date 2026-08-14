@@ -37,6 +37,10 @@
       "types": "./index.d.ts",
       "default": "./index.js"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./cargo": {
+      "types": "./lib/cargo.d.ts",
+      "default": "./lib/cargo.js"
+    }
   }
 }
