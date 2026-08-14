@@ -8,39 +8,9 @@
  * Разбирается только вступление между `---`: остальное в файле — проза, и `law:` посреди неё
  * означает пример, а не объявление.
  */
-import { IEntryOfCatalog } from './catalog.js';
+import { frontMatterOf, IEntryOfCatalog, IFrontMatter } from './catalog.js';
 
-/** Что объявила шапка ресурса. Пустое поле и отсутствующее здесь одно и то же. */
-export interface IFrontMatter {
-    readonly name: string;
-    readonly kind: string;
-    /** Закон, под которым стоит правило. */
-    readonly law: string;
-    /** Правило, при котором стоит паттерн. */
-    readonly rule: string;
-}
-
-const FIELD: RegExp = /^([a-z]+):\s*(\S.*?)\s*$/;
-
-/** Вступление между `---` в начале файла; его нет — вернётся пустая шапка. */
-export function frontMatterOf(text: string): IFrontMatter {
-    const lines: readonly string[] = text.split('\n');
-    const found: Record<string, string> = {};
-
-    if (lines[0]?.trim() === '---') {
-        for (const line of lines.slice(1)) {
-            if (line.trim() === '---') {
-                break;
-            }
-            const match: RegExpMatchArray | null = line.match(FIELD);
-            if (match) {
-                found[match[1]] = match[2];
-            }
-        }
-    }
-
-    return { name: found['name'] ?? '', kind: found['kind'] ?? '', law: found['law'] ?? '', rule: found['rule'] ?? '' };
-}
+export { frontMatterOf, IFrontMatter };
 
 /** Расхождение в ресурсах пакета: кто ссылается, на что и чего не нашлось. */
 export interface IBrokenLink {

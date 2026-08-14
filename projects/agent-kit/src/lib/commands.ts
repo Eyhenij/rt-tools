@@ -7,7 +7,7 @@ import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from '
 import { join } from 'node:path';
 
 import { collectAssets, IAsset } from './assets.js';
-import { IBrokenLink, IEntryOfCatalog, IGapOfVariant, isChosen, readCatalog } from './catalog.js';
+import { cascadeCuts, IBrokenLink, ICascadeCut, IEntryOfCatalog, IGapOfVariant, IIdleSkip, isChosen, readCatalog } from './catalog.js';
 import { ICompanion, isUnfilled, TCompanionState } from './companion.js';
 import {
     CONFIG_PATH,
@@ -27,7 +27,7 @@ import { DEFAULT_DAYS, ICount, IReadResult, ISummary, KEEP_DAYS, OBSERVATIONS_DI
 import { IPlanned, isRefusal, TOutcome } from './plan.js';
 import { ILeak, IProposal, leaksIn, markSent, marksOf, PROPOSALS_DIR, readProposals, TO_PACKAGE } from './proposals.js';
 import { FEEDBACK_LABEL, TSubmit } from './submit.js';
-import { ISyncResult, pendingOf, planSync, runSync } from './sync.js';
+import { IRetiredFound, ISyncResult, pendingOf, planSync, runSync } from './sync.js';
 import { placeholdersOf } from './vars.js';
 import { IAxis, IOptionOfAxis, readAxes, unansweredAxes } from './variants.js';
 
@@ -77,6 +77,8 @@ const STATE_WORD: Readonly<Record<TOutcome, string>> = {
 };
 
 const NOT_CHOSEN: string = 'не выбран';
+/** Перечень отделяет снятое каскадом от невыбранного: дерево его не выбирало и не отвергало. */
+const CUT_BY_CASCADE: string = 'снят каскадом';
 const SKIPPED: string = 'пропущен';
 /** Ресурс чужого вида: в этом дереве его не существует, а не «от него отказались». */
 const OTHER_VARIANT: string = 'другой вид';
@@ -261,11 +263,44 @@ const brokenLines: (result: ISyncResult) => string[] = (result: ISyncResult): st
           ]
         : [];
 
+/**
+ * Строки отказа, которые ничего не снимают.
+ *
+ * Названы вместе с тем, из-за чего стали лишними: «строка ни на что не влияет» без этого читается
+ * как промах в имени, и дерево идёт искать опечатку там, где её нет.
+ */
+const idleLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] =>
+    result.idle.length
+        ? [
+              `строк отказа, которые ничего не снимают: ${result.idle.length}`,
+              ...result.idle.map((one: IIdleSkip): string => `  ${one.id} — ${one.by ? `снято отказом от ${one.by}` : 'нет в пакете'}`),
+              '  это предупреждение, а не отказ: строки убирает дерево, и раскладка идёт дальше',
+          ]
+        : [];
+
+/**
+ * Файлы ресурсов, ушедших из набора.
+ *
+ * Названы отдельно от брошенных: брошенный ресурс в наборе есть и вернётся, если дерево его
+ * выберет, а снятый не вернётся никогда — и правило, по которому агент работает, у него
+ * последнее.
+ */
+const retiredLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] =>
+    result.retired.length
+        ? [
+              `в дереве лежат файлы ресурсов, которых в пакете больше нет: ${result.retired.length}`,
+              ...result.retired.map((one: IRetiredFound): string => `  ${one.path} — снят в v${one.since}: ${one.why}`),
+              '  убирает их дерево: в чужие файлы пакет не пишет',
+          ]
+        : [];
+
 const describe: (result: ISyncResult) => string[] = (result: ISyncResult): string[] => [
     ...holes(result),
     ...gapLines(result),
     ...unboundLines(result),
     ...brokenLines(result),
+    ...idleLines(result),
+    ...retiredLines(result),
     ...pendingOf(result).map((entry: IPlanned): string => `  ${entry.path} — ${STATE_WORD[entry.outcome]}`),
     ...unfilled(result).map((entry: ICompanion): string => `  ${entry.path} — ${COMPANION_WORD[entry.state]}`),
     ...abandonedLines(result),
@@ -783,6 +818,11 @@ export function doctor(env: IEnvironment): IOutcomeOfCommand {
         foreignVariant.every((entry: IEntryOfCatalog): boolean => entry.id !== id)
     ).length;
 
+    // Снятое каскадом считается и называется отдельно от невыбранного: дерево его не выбирало и
+    // не отвергало — оно ушло вслед за родителем, и искать его в отказе читатель пойдёт зря.
+    const cuts: readonly ICascadeCut[] = cascadeCuts(catalog, config);
+    const cut: ReadonlySet<string> = new Set(cuts.map((one: ICascadeCut): string => one.id));
+
     // Невыбранное называется поимённо: число «не выбрано: 73» не отвечает ни на один вопрос,
     // ради которого его читают, — ни какого ресурса не хватает, ни требуется ли он соседу.
     const unchosen: readonly IEntryOfCatalog[] = catalog.filter(
@@ -794,8 +834,12 @@ export function doctor(env: IEnvironment): IOutcomeOfCommand {
 
     const lines: string[] = [
         `пакет v${version}, везёт ресурсов ${catalog.length}, взято ${taken}`,
-        `не выбрано: ${catalog.length - taken - skipped - other}, пропущено: ${skipped}, другой вид: ${other}`,
+        `не выбрано: ${catalog.length - taken - skipped - other - cut.size}, пропущено: ${skipped}, другой вид: ${other}, снято каскадом: ${cut.size}`,
         ...unchosen.map((entry: IEntryOfCatalog): string => `  не выбран: ${entry.id}`),
+        ...cuts.map(
+            (one: ICascadeCut): string =>
+                `  снят каскадом: ${one.id} — вслед за ${one.parent}${one.parent === one.root ? '' : `, отвергнут ${one.root}`}`
+        ),
         ...profileLines(root, assetsDir, config),
         `значений в конфиге: ${Object.keys(config.vars).length}`,
         ...chosen,
@@ -821,6 +865,7 @@ export function list(env: IEnvironment): IOutcomeOfCommand {
     const config: IConfig | null = readConfig(root);
     const catalog: readonly IEntryOfCatalog[] = readCatalog(assetsDir);
     const planned: Map<string, TOutcome> = new Map();
+    const cutByCascade: ReadonlySet<string> = new Set(config ? cascadeCuts(catalog, config).map((one: ICascadeCut): string => one.id) : []);
 
     if (config) {
         for (const entry of planSync(config, root, version, assetsDir).planned) {
@@ -840,6 +885,9 @@ export function list(env: IEnvironment): IOutcomeOfCommand {
         }
         if (!isChosen(entry, config)) {
             return NOT_CHOSEN;
+        }
+        if (cutByCascade.has(entry.id)) {
+            return CUT_BY_CASCADE;
         }
         const outcome: TOutcome | undefined = planned.get(entry.id);
 
