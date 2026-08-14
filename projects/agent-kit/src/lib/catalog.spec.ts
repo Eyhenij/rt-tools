@@ -35,9 +35,17 @@ const entry: (kind: TKind, name: string, variant?: IVariant) => IEntryOfCatalog 
     name,
     title: name,
     variant,
+    needs: null,
     text: '',
     requires: [],
 });
+
+/** Ресурс, требующий свойства дерева: им проверяется отбор по свойствам. */
+const needingTrait: (kind: TKind, name: string, trait: string) => IEntryOfCatalog = (
+    kind: TKind,
+    name: string,
+    trait: string
+): IEntryOfCatalog => ({ ...entry(kind, name), needs: trait });
 
 /** Ресурс, объявивший требование: им проверяются разорванные связи. */
 const needing: (kind: TKind, name: string, requires: readonly string[]) => IEntryOfCatalog = (
@@ -46,11 +54,17 @@ const needing: (kind: TKind, name: string, requires: readonly string[]) => IEntr
     requires: readonly string[]
 ): IEntryOfCatalog => ({ ...entry(kind, name), requires });
 
-const picked: (only?: readonly string[], skip?: readonly string[], variants?: Record<string, string>) => ISelection = (
+const picked: (
+    only?: readonly string[],
+    skip?: readonly string[],
+    variants?: Record<string, string>,
+    has?: readonly string[]
+) => ISelection = (
     only: readonly string[] = [],
     skip: readonly string[] = [],
-    variants: Record<string, string> = {}
-): ISelection => ({ only, skip, variants });
+    variants: Record<string, string> = {},
+    has: readonly string[] = []
+): ISelection => ({ only, skip, variants, has });
 
 const ACCESS: IEntryOfCatalog = entry('laws', 'access');
 const DELIVERY: IEntryOfCatalog = entry('laws', 'delivery');
@@ -104,6 +118,34 @@ describe('isChosen', () => {
     it('без ответа по оси не берётся ни один вид', () => {
         expect(isChosen(GITHUB, picked())).toBe(false);
         expect(isChosen(GITLAB, picked())).toBe(false);
+    });
+
+    it('SC-AK-168 — ресурс с неотвеченным требованием не берётся', () => {
+        expect(isChosen(needingTrait('rules', 'observability', 'db'), picked([], [], {}, ['packages']))).toBe(false);
+    });
+
+    it('SC-AK-169 — названное деревом свойство ресурс пропускает', () => {
+        expect(isChosen(needingTrait('rules', 'observability', 'db'), picked([], [], {}, ['db']))).toBe(true);
+    });
+
+    it('SC-AK-170 — молчание дерева о свойствах требованию не отвечает', () => {
+        expect(isChosen(needingTrait('rules', 'observability', 'db'), picked())).toBe(false);
+    });
+
+    it('SC-AK-171 — ресурс без требования берётся молчащим деревом', () => {
+        expect(isChosen(ACCESS, picked())).toBe(true);
+    });
+
+    it('SC-AK-172 — выбор поимённо сильнее неотвеченного требования', () => {
+        const needing: IEntryOfCatalog = needingTrait('rules', 'observability', 'db');
+
+        expect(isChosen(needing, picked([needing.id]))).toBe(true);
+    });
+
+    it('SC-AK-168 — отказ строкой сильнее названного свойства', () => {
+        const needing: IEntryOfCatalog = needingTrait('rules', 'observability', 'db');
+
+        expect(isChosen(needing, picked([], [needing.id], {}, ['db']))).toBe(false);
     });
 });
 
