@@ -16,7 +16,22 @@ import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-i
 import { AbstractControl, PristineChangeEvent } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Params, Router, UrlTree } from '@angular/router';
 
-import { catchError, exhaustMap, filter, map, mergeMap, Observable, of, startWith, Subject, switchMap, take, tap } from 'rxjs';
+import {
+    catchError,
+    exhaustMap,
+    filter,
+    finalize,
+    map,
+    mergeMap,
+    Observable,
+    of,
+    shareReplay,
+    startWith,
+    Subject,
+    switchMap,
+    take,
+    tap,
+} from 'rxjs';
 
 import { NotificationBus } from '../../platform';
 
@@ -30,6 +45,7 @@ import {
 import { RtDialogService } from '../dialog/rt-dialog.service';
 import { RtContainerRightSidenavPanelDirective } from './rt-container.directives';
 import { rootSegmentsOf } from './rt-route-aside.logic';
+import { RtRouteAsideRegistry } from './rt-route-aside.registry';
 
 /**
  * Одна мутация, запущенная через `runMutation()`: сам поток операции + готовые
@@ -76,8 +92,23 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
     readonly #notificationBus: NotificationBus = inject(NotificationBus);
     readonly #dialog: RtDialogService = inject(RtDialogService);
     readonly #injector: Injector = inject(Injector);
+    readonly #registry: RtRouteAsideRegistry = inject(RtRouteAsideRegistry);
 
     #opened: boolean = false;
+
+    /**
+     * Уход санкционирован самой панелью, и о правках спрашивать не надо: они либо
+     * записаны, либо пользователь уже решил их судьбу. Признак живёт до первого
+     * же вопроса о правках и снимается вместе с ответом на него.
+     */
+    #leaveAllowed: boolean = false;
+
+    /**
+     * Вопрос о правках, заданный роутерному уходу и ещё не отвеченный. Второй
+     * уход, пришедший пока окно открыто, ждёт того же ответа: своё окно он
+     * поставил бы поверх первого, и убрать его было бы некому.
+     */
+    #pendingAsk$: Observable<boolean> | null = null;
 
     protected readonly router: Router = inject(Router);
     protected readonly route: ActivatedRoute = inject(ActivatedRoute);
@@ -121,7 +152,15 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
             }
             this.#opened = true;
             panel.open();
+            // Панель встала в аутлет — с этого мгновения о правках спрашивают её,
+            // а не тот компонент, который роутер подставит гарду.
+            this.#registry.register(this.route.snapshot, this);
         });
+
+        // Снятие с учёта идёт по уничтожению, а не по уходу с экрана: уход может и
+        // не состояться — роутер отклоняет навигацию молча, — и панель, снятая с
+        // учёта раньше времени, осталась бы на экране, не отвечая о своих правках.
+        this.destroyRef.onDestroy((): void => this.#registry.unregister(this.route.snapshot, this));
 
         // Мутации из runMutation(): mergeMap подписывает каждый op$ независимо
         // (как раньше — по подписке на вызов, без отмены предыдущей in-flight
@@ -216,18 +255,24 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
     public canDeactivate(): Observable<boolean> {
         const intent: ERtAsideCloseIntent = this.#closeIntent();
 
+        // Признак идущей записи старше разрешения на уход: панель, выдавшая себе
+        // разрешение и не дождавшаяся ответа сервера, уходить не должна — исход
+        // записи решит её судьбу сам.
         if (intent === ERtAsideCloseIntent.Ignore) {
             return of(false);
+        }
+
+        // Уход начала сама панель: правки либо записаны секунду назад, либо их
+        // судьбу пользователь уже решил. Вопрос был бы задан про то, чего нет.
+        if (this.#consumeLeaveAllowance()) {
+            return of(true);
         }
 
         if (intent === ERtAsideCloseIntent.Close) {
             return of(true);
         }
 
-        return this.#dialog
-            .open<RtAsideUnsavedDialogComponent, undefined, ERtAsideUnsavedOutcome>(RtAsideUnsavedDialogComponent)
-            .afterClosed()
-            .pipe(switchMap((outcome: ERtAsideUnsavedOutcome | undefined): Observable<boolean> => this.#deactivateAfter(outcome)));
+        return this.#askUnsaved();
     }
 
     protected setEntity(entity: T | null): void {
@@ -360,9 +405,11 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
                     opts.onSuccess();
                     return;
                 }
-                // Закрытие после успеха идёт мимо гарда: форма к этому моменту
-                // ещё тронута, и вопрос о несохранённых правках был бы задан
-                // ровно про то, что только что сохранилось.
+                // Закрытие после успеха идёт мимо обоих гардов — и кнопочного, и
+                // роутерного. Форма к этому моменту ещё тронута, и вопрос о
+                // несохранённых правках был бы задан ровно про то, что только что
+                // сохранилось; роутерный гард закрывает разрешение на уход,
+                // которое панель выдаёт себе перед вызовом роутера.
                 if (opts?.closeOnSuccess === true || this.#isCreateMode()) {
                     this.#closePanel();
                     return;
@@ -462,6 +509,67 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
         );
     }
 
+    /**
+     * Вопрос о правках роутерному уходу. Окно открывается одно на все уходы,
+     * пришедшие пока оно висит: второе поставило бы поверх первого оверлей,
+     * убрать который было бы некому — от того же и `exhaustMap` на пути кнопок.
+     */
+    #askUnsaved(): Observable<boolean> {
+        const pending: Observable<boolean> | null = this.#pendingAsk$;
+
+        if (pending !== null) {
+            return pending;
+        }
+
+        const ask$: Observable<boolean> = this.#dialog
+            .open<RtAsideUnsavedDialogComponent, undefined, ERtAsideUnsavedOutcome>(RtAsideUnsavedDialogComponent)
+            .afterClosed()
+            .pipe(
+                switchMap((outcome: ERtAsideUnsavedOutcome | undefined): Observable<boolean> => this.#deactivateAfter(outcome)),
+                finalize((): void => {
+                    this.#pendingAsk$ = null;
+                }),
+                shareReplay({ bufferSize: 1, refCount: false })
+            );
+
+        this.#pendingAsk$ = ask$;
+
+        return ask$;
+    }
+
+    /**
+     * Разрешение на уход читается один раз: иначе первое же закрытие после записи
+     * сняло бы вопрос о правках со всех следующих уходов, и тронутая форма
+     * уезжала бы молча.
+     */
+    #consumeLeaveAllowance(): boolean {
+        const allowed: boolean = this.#leaveAllowed;
+
+        this.#leaveAllowed = false;
+
+        return allowed;
+    }
+
+    /**
+     * Уход, начатый самой панелью. Разрешение выдаётся здесь, вплотную к вызову
+     * роутера, а не при закрытии панели: между закрытием и навигацией оверлей
+     * доигрывает уход, и разрешение, выданное раньше, достаётся чужому уходу,
+     * пришедшему в это окно, — тронутая форма уехала бы без вопроса.
+     *
+     * Невостребованное разрешение снимается итогом навигации: роутер отклоняет
+     * навигацию молча, её может отменить другой гард, и оставшееся разрешение
+     * сняло бы вопрос о правках со следующего ухода, которого панель не начинала.
+     */
+    #navigateAllowed(navigate: () => Promise<boolean>): void {
+        this.#leaveAllowed = true;
+
+        void navigate()
+            .catch((): boolean => false)
+            .then((): void => {
+                this.#leaveAllowed = false;
+            });
+    }
+
     #closePanel(): void {
         this.panel()?.close();
     }
@@ -471,7 +579,7 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
 
         this.#relatedCommands = null;
         this.#relatedQueryParams = null;
-        void this.router.navigateByUrl(this.#relatedTree(commands, params));
+        this.#navigateAllowed((): Promise<boolean> => this.router.navigateByUrl(this.#relatedTree(commands, params)));
     }
 
     /**
@@ -517,8 +625,10 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
     }
 
     #navigateAway(): void {
-        void this.router.navigate([{ outlets: this.closeOutlets() }], {
-            relativeTo: this.route.parent,
-        });
+        this.#navigateAllowed((): Promise<boolean> =>
+            this.router.navigate([{ outlets: this.closeOutlets() }], {
+                relativeTo: this.route.parent,
+            })
+        );
     }
 }

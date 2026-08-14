@@ -1,22 +1,26 @@
-/* rt-aside-footer — footer-слот side-sheet'а. ViewEncapsulation.None. */
+@layer rt-kit.components {
+    /* rt-aside-footer — footer-слот side-sheet'а. ViewEncapsulation.None. */
 
-.rt-aside-footer {
-    padding-top: var(--rt-aside-inset);
+    .rt-aside-footer {
+        --rt-aside-footer-border-width: var(--rt-border-width-thin);
 
-    /* Верхний разделитель не на всю ширину панели: margin отбивает футер по
-       горизонтали на тот же инсет, что и контентная зона, поэтому
-       border-block-start совпадает по краям с контентом. */
-    margin: var(--rt-aside-inset);
-    border-block-start: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+        padding-top: var(--rt-aside-inset);
 
-    &__content {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        gap: var(--rt-space-sm);
-    }
+        /* Верхний разделитель не на всю ширину панели: margin отбивает футер по
+           горизонтали на тот же инсет, что и контентная зона, поэтому
+           border-block-start совпадает по краям с контентом. */
+        margin: var(--rt-aside-inset);
+        border-block-start: var(--rt-aside-footer-border-width) solid var(--rt-color-border-subtle);
 
-    &:empty {
-        display: none;
+        &__content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: var(--rt-space-sm);
+        }
+
+        &:empty {
+            display: none;
+        }
     }
 }

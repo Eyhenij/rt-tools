@@ -27,6 +27,8 @@
 | набор токенов второго кита               | `projects/ui-kit-v2/src/styles/`                                   |
 | правило про сырые значения               | `tools/stylelint-rules/no-hardcoded-design-tokens.cjs`             |
 | правило про хост во втором ките          | `tools/stylelint-rules/no-host-selector.cjs`                       |
+| слой каскада второго кита                | `projects/ui-kit-v2/src/styles/_layers.scss`                       |
+| проверка слоя каскада                    | `tools/check-cascade-layer.mjs`                                    |
 | образец стилей компонента                | `projects/ui-kit/src/lib/ui-kit/toggle/rtui-toggle.component.scss` |
 | мост к Material                          | `projects/ui-kit/src/styles/components/_material-bridge.scss`      |
 
@@ -57,12 +59,15 @@
   селектор по имени элемента.
 - Порядок свойств держит `stylelint-config-idiomatic-order`, форматирование —
   `stylelint-prettier`. Комментарии-выключатели линтера стилей здесь не ставятся.
-- `.c-button` в `projects/ui-kit/src/styles/components/_button.scss` снят с употребления;
-  действующий набор — `.rtui-btn` в `_rtui_button.scss` рядом.
+- Набор `.c-button` снят с употребления вместе со своим файлом; действующий —
+  `.rtui-btn` в `projects/ui-kit/src/styles/components/_rtui_button.scss`, карта перехода — в
+  `projects/ui-kit/src/styles/TOKENS.md`.
 
 ## Чем это проверяется
 
 - `pnpm run lint:styles` — оба собственных правила и набор целиком, с порогом замечаний.
+- `pnpm run check:cascade-layer` — файл стилей второго кита без слоя, правило до обёртки,
+  порядок подслоёв и объявление корня, уехавшее в слой.
 - `pnpm run build:tokens` и `pnpm run build:tokens-v2` — пересборка готового набора токенов для
   потребителей, которые не собирают SCSS.
 - Правка `_tokens.scss` или `_color-scheme.scss` — `pnpm exec nx test @rt-tools/ui-kit`, спека

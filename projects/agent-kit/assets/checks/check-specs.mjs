@@ -62,14 +62,20 @@ const TEST_ROOTS = CONFIG.sourceRoots;
 const SOURCE_ROOTS = [...CONFIG.sourceRoots, ...(CONFIG.schemaFile ? [CONFIG.schemaFile.split('/')[0]] : [])];
 const SKIPPED_DIRS = CONFIG.skippedDirs;
 
-/** `### SC-BK-03 — заявка на занятые даты` */
-const SCENARIO_HEADING = /^###\s+(SC-([A-Z]{2,4})-(\d{2,3}))\s+—\s+(.+?)\s*$/;
+/**
+ * `### SC-BK-03 — заявка на занятые даты`
+ *
+ * Номер принимается от одной цифры до трёх. Заголовок, не подошедший под шаблон, сценария не
+ * заводит и отказа не даёт: дерево, пронумеровавшее сценарии с единицы, теряло бы первые
+ * девять из них молча — ни в покрытии, ни в долгах, при зелёной сверке.
+ */
+const SCENARIO_HEADING = /^###\s+(SC-([A-Z]{2,4})-(\d{1,3}))\s+—\s+(.+?)\s*$/;
 /** Отметка осознанно непокрытого сценария; причина обязательна */
 const UNCOVERED = /^Не покрыто:\s*\S/;
 /** Тест есть, но проверяет не всё обещанное или идёт другим путём */
 const PARTIAL = /^Покрытие:\s*частичное\s*—\s*\S/;
-/** Упоминание сценария в заголовке теста */
-const SCENARIO_REFERENCE = /\bSC-[A-Z]{2,4}-\d{2,3}\b/g;
+/** Упоминание сценария в заголовке теста; номер той же длины, что и в заголовке сценария */
+const SCENARIO_REFERENCE = /\bSC-[A-Z]{2,4}-\d{1,3}\b/g;
 /** Строка обещания сценария; её продолжения идут с отступом */
 const PROMISE = /^Тогда\s+\S/;
 /**
@@ -229,7 +235,34 @@ function ruleHeadOf(bulletText) {
  * Одно слово в двух смыслах развели именно здесь: «правило» — слой между законом и скилом,
  * а внутри закона живут статьи.
  */
-function checkRuleImplementation(specFile, text, mapFile, heading = '## Правила') {
+/**
+ * Строки таблицы привязок компаньона.
+ *
+ * Компаньон правила держит три таблицы: чем вещи правила названы в этом дереве, где лежат
+ * механизмы и где исполняется каждая статья. Привязки — только третья, и берётся она по имени
+ * раздела, а не по месту в файле. Пока читался весь файл, строки первых двух попадали в список
+ * наравне с настоящими и тут же объявлялись расхождением: статьи с таким текстом в правиле нет
+ * и быть не может. Две трети перечня в дереве были ими, и правильно дописанная строка «Где это
+ * лежит» отвечала отказом.
+ *
+ * У компаньона спека домена раздела нет: там таблица одна, и сужать нечего — такой зовёт без
+ * имени раздела. У правила раздел стоит в образце компаньона, поэтому его отсутствие — отказ:
+ * молча прочесть вместо него весь файл значило бы вернуть тот же дефект.
+ */
+function rowsOfMap(specFile, mapFile, mapHeading) {
+    const text = read(mapFile);
+    if (!mapHeading) {
+        return text.split('\n');
+    }
+    const section = sectionOf(text, mapHeading);
+    if (!section.length) {
+        report(mapFile, `нет раздела \`${mapHeading}\` — привязкам правила негде лежать`);
+    }
+
+    return section;
+}
+
+function checkRuleImplementation(specFile, text, mapFile, heading = '## Правила', mapHeading = '') {
     const bullets = bulletsOf(sectionOf(text, heading));
     if (!bullets.length) {
         report(specFile, `в разделе \`${heading}\` нет ни одного пункта`);
@@ -244,7 +277,7 @@ function checkRuleImplementation(specFile, text, mapFile, heading = '## Прав
     }
 
     const rows = new Map();
-    for (const line of read(mapFile).split('\n')) {
+    for (const line of rowsOfMap(specFile, mapFile, mapHeading)) {
         const cells = line.match(/^\|([^|]+)\|([^|]*)\|\s*$/);
         if (!cells) {
             continue;
@@ -730,6 +763,20 @@ function collectReferences() {
             // идентификатором: состояние теста читается, когда файл разобран целиком
             found.forEach(({ id, test: own, place }) => remember(id, { place, screen: Boolean(e2eRoot), off: Boolean(own?.off) }));
         }
+
+        // Наборы сценариев на shell. Так проверяются исполняемые файлы — гарды, проверки,
+        // умолчания: они не на TypeScript, и набор к ним пишут на том же языке, что и их
+        // самих. Выключателей здесь нет: пропустить сценарий в таком наборе нечем, поэтому
+        // достаточно найти идентификатор.
+        for (const file of walk(root, (name) => name.endsWith('.test.sh'))) {
+            read(file)
+                .split('\n')
+                .forEach((line, index) => {
+                    for (const [id] of line.matchAll(SCENARIO_REFERENCE)) {
+                        remember(id, { place: `${file}:${index + 1}`, screen: false, off: false });
+                    }
+                });
+        }
     }
 
     return references;
@@ -774,15 +821,47 @@ for (const file of walk(CONSTITUTION_DIR, (name) => name.endsWith('.md'))) {
     laws.set(name, file);
 }
 
+/**
+ * Директории, описывающие предмет: сам домен и его поддомены. Поддомен заводится, когда домен
+ * вырос настолько, что читать его целиком ради одной подробности дороже, чем найти её; устроен
+ * он так же — три файла и свой префикс сценариев.
+ *
+ * `proposed/` предметом не является: это договорённость о продукте до кода, и её сценарии живут
+ * в нумерации того спека, в который она вольётся.
+ */
+function collectSpecDirs(base) {
+    const found = [base];
+    let entries;
+    try {
+        entries = readdirSync(join(ROOT, base), { withFileTypes: true });
+    } catch {
+        return found;
+    }
+
+    for (const entry of entries) {
+        if (entry.isDirectory() && entry.name !== 'proposed') {
+            found.push(...collectSpecDirs(`${base}/${entry.name}`));
+        }
+    }
+
+    return found;
+}
+
+/** Префикс сценариев принадлежит одному спеку по всему дереву. */
+const prefixOwners = new Map();
+
 for (const domain of domains) {
     const base = `${SPECS_DIR}/${domain}`;
-    // Домен, у которого есть только `proposed/`, ещё не существует: спека о нём
-    // нет, пока фича не выкачена
-    const isProposedOnly = exists(`${base}/proposed`) && !exists(`${base}/spec.md`);
-    if (!isProposedOnly) {
+    for (const dir of collectSpecDirs(base)) {
+        // Спек, у которого есть только `proposed/`, ещё не существует: его самого нет, пока
+        // фича не выкачена
+        if (exists(`${dir}/proposed`) && !exists(`${dir}/spec.md`)) {
+            continue;
+        }
+        const what = dir === base ? 'домен' : 'поддомен';
         ['spec.md', 'scenarios.md']
-            .filter((name) => !exists(`${base}/${name}`))
-            .forEach((name) => report(base, `нет файла \`${name}\` — домен описан наполовину`));
+            .filter((name) => !exists(`${dir}/${name}`))
+            .forEach((name) => report(dir, `нет файла \`${name}\` — ${what} описан наполовину`));
     }
 
     // Спеки фич из `proposed/` проверяются наравне со спеком домена: они и есть
@@ -803,10 +882,38 @@ for (const domain of domains) {
     }
 
     const found = walk(base, (name) => name === 'scenarios.md').flatMap(parseScenarios);
-    const prefixes = new Set(found.map((scenario) => scenario.prefix));
-    if (prefixes.size > 1) {
-        report(base, `в домене больше одного префикса сценариев: ${[...prefixes].sort().join(', ')}`);
+
+    // Префикс судится в пределах одного спека, а не всего дерева домена: у поддомена он свой, и
+    // по номеру видно, о чём сценарий. Два префикса в одном спеке по-прежнему означают, что
+    // предмет описан дважды.
+    const prefixesOf = new Map();
+    for (const scenario of found) {
+        const dir = dirname(scenario.file);
+        if (!prefixesOf.has(dir)) {
+            prefixesOf.set(dir, new Set());
+        }
+        prefixesOf.get(dir).add(scenario.prefix);
     }
+
+    for (const [dir, prefixes] of prefixesOf) {
+        if (prefixes.size > 1) {
+            report(dir, `в спеке больше одного префикса сценариев: ${[...prefixes].sort().join(', ')}`);
+        }
+        // Договорённость о продукте нумеруется вместе со спеком, в который вольётся:
+        // идентификаторы переезд переживают, и занятым префикс от неё не становится
+        if (dir.includes('/proposed/')) {
+            continue;
+        }
+        for (const prefix of prefixes) {
+            const owner = prefixOwners.get(prefix);
+            if (owner && owner !== dir) {
+                report(dir, `префикс \`SC-${prefix}\` уже занят — \`${owner}\`; по номеру не видно, чей сценарий`);
+                continue;
+            }
+            prefixOwners.set(prefix, dir);
+        }
+    }
+
     scenarios.push(...found);
 }
 
@@ -833,6 +940,8 @@ for (const file of walk(CONSTITUTION_DIR, (name) => name.endsWith('.md'))) {
 // Правило — скил с `kind: rule` в шапке. Оно и знает о проекте: имена, пути, связи. Привязка
 // его утверждений к коду живёт в `implementation.md` рядом со скилом.
 const RULE_HEADING = '## Как закон применяется здесь';
+/** Раздел компаньона правила, где лежат привязки; остальные его таблицы называют имена дерева. */
+const MAP_HEADING = '## Где исполняются статьи';
 
 /**
  * Шапка скила — первый блок между `---`. Читается только она: паттерн, который учит заводить
@@ -879,7 +988,7 @@ for (const file of walk('.claude/skills', (name) => name === 'SKILL.md')) {
     } else {
         ruled.add(law);
     }
-    checkRuleImplementation(file, text, `${dirname(file)}/implementation.md`, RULE_HEADING);
+    checkRuleImplementation(file, text, `${dirname(file)}/implementation.md`, RULE_HEADING, MAP_HEADING);
 
     const name = nameOf(head);
     if (name && name !== file.slice('.claude/skills/'.length, -'/SKILL.md'.length)) {
@@ -887,11 +996,16 @@ for (const file of walk('.claude/skills', (name) => name === 'SKILL.md')) {
     }
 }
 
+// Предложенный закон правила не требует: договорённость записана раньше кода, привязывать её
+// не к чему, и требование правила заставило бы завести его с якорями в несуществующие места.
+// Признак стоит строкой статуса в самом законе, а не списком исключений рядом с проверкой.
+const isProposedLaw = (file) => /^\*\*Статус:\*\*\s*предложен/m.test(read(file));
+
 // Обратные стороны связи. Закон без правила читается как договорённость, которую этот проект
 // не применяет; правило без паттерна оставляет готовый код там, где ему не место, — в самом
 // правиле, которое читается при каждой правке.
 [...laws]
-    .filter(([law]) => !ruled.has(law))
+    .filter(([law, file]) => !ruled.has(law) && !isProposedLaw(file))
     .forEach(([, file]) => report(file, 'у закона нет ни одного правила — заведи скил с `law:` на него'));
 
 for (const file of walk('.claude/skills', (name) => name === 'SKILL.md')) {

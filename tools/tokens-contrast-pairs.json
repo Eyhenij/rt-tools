@@ -1,0 +1,250 @@
+{
+  "note": "Пары «цвет текста и его фон», которые встречаются на экране второго кита. Перечень читает tools/check-tokens-theme.mjs: он разрешает оба имени до кода цвета в светлой и в тёмной теме и считает контраст при пороге 4.5:1. Пары выведены из правил стилей кита, где заданы и color, и background; полноту перечня машина не судит — забытая пара молчит так же, как её нет. Пары с именами, которых ни один слой не объявляет, сюда не заводятся: мёртвые ссылки чинит своя задача, и пары к ним заведутся вместе с объявлением.",
+  "pairs": [
+    {
+      "text": "--rt-color-text-primary",
+      "bg": "--rt-color-bg-page",
+      "where": "текст страницы"
+    },
+    {
+      "text": "--rt-color-text-primary",
+      "bg": "--rt-color-bg-surface",
+      "where": "текст карточки"
+    },
+    {
+      "text": "--rt-color-text-primary",
+      "bg": "--rt-color-bg-surface-subtle",
+      "where": "текст приглушённой поверхности"
+    },
+    {
+      "text": "--rt-color-text-primary",
+      "bg": "--rt-color-bg-subtle",
+      "where": "текст плашки сообщения"
+    },
+    {
+      "text": "--rt-color-text-primary",
+      "bg": "--rt-color-bg-hover",
+      "where": "текст пункта под курсором"
+    },
+    {
+      "text": "--rt-color-text-muted",
+      "bg": "--rt-color-bg-page",
+      "where": "приглушённая подпись на странице"
+    },
+    {
+      "text": "--rt-color-text-muted",
+      "bg": "--rt-color-bg-surface",
+      "where": "приглушённая подпись в таблице"
+    },
+    {
+      "text": "--rt-color-text-muted",
+      "bg": "--rt-color-bg-surface-subtle",
+      "where": "неактивная вкладка"
+    },
+    {
+      "text": "--rt-color-text-muted",
+      "bg": "--rt-color-bg-subtle",
+      "where": "подпись пустого состояния"
+    },
+    {
+      "text": "--rt-color-text-link",
+      "bg": "--rt-color-bg-surface",
+      "where": "ссылка на карточке"
+    },
+    {
+      "text": "--rt-color-text-inverse",
+      "bg": "--rt-color-bg-inverse",
+      "where": "подсказка"
+    },
+    {
+      "text": "--rt-color-bg-surface",
+      "bg": "--rt-color-text-muted",
+      "where": "буква в кружке собеседника"
+    },
+    {
+      "text": "--rt-color-action-on-primary",
+      "bg": "--rt-color-action-primary",
+      "where": "подпись действия марки"
+    },
+    {
+      "text": "--rt-color-action-primary",
+      "bg": "--rt-color-action-primary-soft",
+      "where": "выбранный день календаря"
+    },
+    {
+      "text": "--rt-color-text-link",
+      "bg": "--rt-color-action-primary-soft",
+      "where": "сегодняшний день календаря"
+    },
+    {
+      "text": "--rt-color-action-on-secondary",
+      "bg": "--rt-color-action-secondary",
+      "where": "подпись второстепенного действия"
+    },
+    {
+      "text": "--rt-color-state-success",
+      "bg": "--rt-color-state-success-bg",
+      "where": "сообщение об успехе"
+    },
+    {
+      "text": "--rt-color-state-warning",
+      "bg": "--rt-color-state-warning-bg",
+      "where": "предупреждение"
+    },
+    {
+      "text": "--rt-color-state-danger",
+      "bg": "--rt-color-state-danger-bg",
+      "where": "сообщение об отказе"
+    },
+    {
+      "text": "--rt-color-state-info",
+      "bg": "--rt-color-state-info-bg",
+      "where": "справочное сообщение"
+    },
+    {
+      "text": "--rt-color-state-error-text",
+      "bg": "--rt-color-state-danger-bg",
+      "where": "ошибка формы входа"
+    },
+    {
+      "text": "--rt-chat-bubble-in-author",
+      "bg": "--rt-chat-bubble-in-bg",
+      "where": "автор входящего сообщения"
+    },
+    {
+      "text": "--rt-chat-bubble-own-author",
+      "bg": "--rt-chat-bubble-own-bg",
+      "where": "автор своего сообщения"
+    },
+    {
+      "text": "--rt-chat-bubble-date",
+      "bg": "--rt-chat-bubble-own-bg",
+      "where": "время своего сообщения"
+    },
+    {
+      "text": "--rt-input-color-text",
+      "bg": "--rt-input-color-bg",
+      "where": "значение поля"
+    },
+    {
+      "text": "--rt-input-color-text-placeholder",
+      "bg": "--rt-input-color-bg",
+      "where": "подсказка поля"
+    },
+    {
+      "text": "--rt-field-label-color",
+      "bg": "--rt-color-bg-surface",
+      "where": "подпись поля"
+    },
+    {
+      "text": "--rt-field-hint-color",
+      "bg": "--rt-color-bg-surface",
+      "where": "пояснение под полем"
+    },
+    {
+      "text": "--rt-field-error-color",
+      "bg": "--rt-color-bg-surface",
+      "where": "ошибка поля"
+    },
+    {
+      "text": "--rt-nav-item-color",
+      "bg": "--rt-nav-item-color-bg",
+      "where": "пункт ряда разделов"
+    },
+    {
+      "text": "--rt-nav-item-color",
+      "bg": "--rt-nav-item-color-bg-active",
+      "where": "активный пункт ряда разделов"
+    },
+    {
+      "text": "--rt-nav-color-disabled",
+      "bg": "--rt-nav-item-color-bg",
+      "where": "недоступный пункт"
+    },
+    {
+      "text": "--rt-nav-panel-item-color",
+      "bg": "--rt-nav-panel-color-bg",
+      "where": "пункт панели второго уровня"
+    },
+    {
+      "text": "--rt-nav-panel-group-color",
+      "bg": "--rt-nav-panel-color-bg",
+      "where": "заголовок группы панели"
+    },
+    {
+      "text": "--rt-nav-panel-item-color-active",
+      "bg": "--rt-nav-panel-item-color-bg-active",
+      "where": "активный пункт панели"
+    },
+    {
+      "text": "--rt-counter-value-color",
+      "bg": "--rt-color-bg-surface",
+      "where": "значение счётчика"
+    },
+    {
+      "text": "--rt-counter-row-hint-color",
+      "bg": "--rt-color-bg-surface",
+      "where": "пояснение строки счётчика"
+    },
+    {
+      "text": "--rt-color-action-on-success",
+      "bg": "--rt-color-action-success",
+      "where": "подпись действия успеха"
+    },
+    {
+      "text": "--rt-color-action-on-warning",
+      "bg": "--rt-color-action-warning",
+      "where": "подпись действия предупреждения"
+    },
+    {
+      "text": "--rt-color-action-on-danger",
+      "bg": "--rt-color-action-danger",
+      "where": "подпись опасного действия"
+    },
+    {
+      "text": "--rt-color-action-on-info",
+      "bg": "--rt-color-action-info",
+      "where": "подпись действия сведения"
+    },
+    {
+      "text": "--rt-color-action-on-disabled",
+      "bg": "--rt-color-action-disabled",
+      "where": "подпись отключённого действия"
+    },
+    {
+      "text": "--rt-color-action-primary-on-surface",
+      "bg": "--rt-color-bg-surface",
+      "where": "подпись текстовой кнопки марки"
+    },
+    {
+      "text": "--rt-color-action-secondary-on-surface",
+      "bg": "--rt-color-bg-surface",
+      "where": "подпись текстовой кнопки второстепенного действия"
+    },
+    {
+      "text": "--rt-color-action-success-on-surface",
+      "bg": "--rt-color-bg-surface",
+      "where": "подпись текстовой кнопки успеха"
+    },
+    {
+      "text": "--rt-color-action-warning-on-surface",
+      "bg": "--rt-color-bg-surface",
+      "where": "подпись текстовой кнопки предупреждения"
+    },
+    {
+      "text": "--rt-color-action-danger-on-surface",
+      "bg": "--rt-color-bg-surface",
+      "where": "подпись текстовой кнопки опасного действия"
+    },
+    {
+      "text": "--rt-color-action-info-on-surface",
+      "bg": "--rt-color-bg-surface",
+      "where": "подпись текстовой кнопки сведения"
+    },
+    {
+      "text": "--rt-color-state-warning-text",
+      "bg": "--rt-color-state-warning-bg",
+      "where": "подпись на подложке предупреждения"
+    }
+  ]
+}

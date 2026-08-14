@@ -1,98 +1,103 @@
-/* rt-tag — status pill в common/ui. ViewEncapsulation.None.
-   Хост адресуется по имени элемента, а не по классу блока: класс `.rt-tag` висит
-   и на `<rt-tag>`, и на корне шаблона, поэтому правила блока вложены в хост —
-   так они достаются только корню шаблона. */
+@layer rt-kit.components {
+    /* rt-tag — status pill в common/ui. ViewEncapsulation.None.
+       Хост адресуется по имени элемента, а не по классу блока: класс `.rt-tag` висит
+       и на `<rt-tag>`, и на корне шаблона, поэтому правила блока вложены в хост —
+       так они достаются только корню шаблона. */
 
-rt-tag {
-    display: inline-flex;
-
-    .rt-tag {
+    rt-tag {
         display: inline-flex;
-        align-items: center;
-        padding: var(--rt-space-1) var(--rt-space-2);
-        border-radius: var(--rt-radius-md);
-        background: var(--rt-neutral-100);
-        color: var(--rt-neutral-700);
-        font-size: var(--rt-text-sm);
-        gap: var(--rt-space-1);
-        line-height: var(--rt-leading-tight);
 
-        &--shape--pill {
-            border-radius: var(--rt-radius-full);
-        }
+        .rt-tag {
+            --rt-tag-radius: var(--rt-radius-md);
+            --rt-tag-border-width: var(--rt-border-width-thin);
 
-        &--shape--square {
-            border-radius: var(--rt-radius-sm);
-        }
+            display: inline-flex;
+            align-items: center;
+            padding: var(--rt-space-1) var(--rt-space-2);
+            border-radius: var(--rt-tag-radius);
+            background: var(--rt-neutral-100);
+            color: var(--rt-neutral-700);
+            font-size: var(--rt-text-sm);
+            gap: var(--rt-space-1);
+            line-height: var(--rt-leading-tight);
 
-        /* Явный radius переопределяет shape — правила идут позже по порядку. */
-        &--radius--none {
-            border-radius: var(--rt-radius-none);
-        }
+            &--shape--pill {
+                --rt-tag-radius: var(--rt-radius-full);
+            }
 
-        &--radius--sm {
-            border-radius: var(--rt-radius-sm);
-        }
+            &--shape--square {
+                --rt-tag-radius: var(--rt-radius-sm);
+            }
 
-        &--radius--md {
-            border-radius: var(--rt-radius-md);
-        }
+            /* Явный radius переопределяет shape — правила идут позже по порядку. */
+            &--radius--none {
+                --rt-tag-radius: var(--rt-radius-none);
+            }
 
-        &--radius--lg {
-            border-radius: var(--rt-radius-lg);
-        }
+            &--radius--sm {
+                --rt-tag-radius: var(--rt-radius-sm);
+            }
 
-        &--radius--full {
-            border-radius: var(--rt-radius-full);
-        }
+            &--radius--md {
+                --rt-tag-radius: var(--rt-radius-md);
+            }
 
-        &--severity--info {
-            background: var(--rt-color-state-info-bg);
-            color: var(--rt-color-state-info);
-        }
+            &--radius--lg {
+                --rt-tag-radius: var(--rt-radius-lg);
+            }
 
-        &--severity--success {
-            background: var(--rt-color-state-success-bg);
-            color: var(--rt-color-state-success);
-        }
+            &--radius--full {
+                --rt-tag-radius: var(--rt-radius-full);
+            }
 
-        &--severity--warning {
-            background: var(--rt-color-state-warning-bg);
-            color: var(--rt-color-state-warning);
-        }
+            &--severity--info {
+                background: var(--rt-color-state-info-bg);
+                color: var(--rt-color-state-info);
+            }
 
-        &--severity--danger {
-            background: var(--rt-color-state-danger-bg);
-            color: var(--rt-color-state-danger);
-        }
+            &--severity--success {
+                background: var(--rt-color-state-success-bg);
+                color: var(--rt-color-state-success);
+            }
 
-        &--severity--secondary,
-        &--severity--neutral {
-            background: var(--rt-color-bg-subtle);
-            color: var(--rt-color-text-primary);
-        }
+            &--severity--warning {
+                background: var(--rt-color-state-warning-bg);
+                color: var(--rt-color-state-warning);
+            }
 
-        /* Outlined: прозрачный фон + рамка цвета палитры (currentColor = текст).
-           После severity-блоков — иначе их `background` перебил бы transparent. */
-        &--appearance--outlined {
-            border: var(--rt-border-width-thin) solid currentcolor;
-            background: transparent;
-        }
+            &--severity--danger {
+                background: var(--rt-color-state-danger-bg);
+                color: var(--rt-color-state-danger);
+            }
 
-        &__icon {
-            flex-shrink: 0;
-        }
+            &--severity--secondary,
+            &--severity--neutral {
+                background: var(--rt-color-bg-subtle);
+                color: var(--rt-color-text-primary);
+            }
 
-        &__icon-end {
-            flex-shrink: 0;
-        }
+            /* Outlined: прозрачный фон + рамка цвета палитры (currentColor = текст).
+               После severity-блоков — иначе их `background` перебил бы transparent. */
+            &--appearance--outlined {
+                border: var(--rt-tag-border-width) solid currentcolor;
+                background: transparent;
+            }
 
-        &__text {
-            line-height: var(--rt-leading-none);
-        }
+            &__icon {
+                flex-shrink: 0;
+            }
 
-        &__close {
-            margin-inline-start: var(--rt-space-0-5);
+            &__icon-end {
+                flex-shrink: 0;
+            }
+
+            &__text {
+                line-height: var(--rt-leading-none);
+            }
+
+            &__close {
+                margin-inline-start: var(--rt-space-0-5);
+            }
         }
     }
 }

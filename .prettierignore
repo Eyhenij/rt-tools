@@ -41,7 +41,16 @@ docs/constitution/
 .claude/workflows/
 .claude/rt-kit/templates/
 .claude/rt-kit/defaults/
+# Словарь тоже кладёт раскладка, а лежит он среди обычных документов, и форматтер добирается до
+# него общим проходом `prettier . --write`: одна пустая строка после шапки — и раскладка считает
+# файл правленным руками. Предметные разделы дерева правятся надстройкой в `.claude/rt-kit`.
+docs/GLOSSARY.md
+
 tools/board.mjs
 tools/check-*.mjs
 tools/rt-kit-checks.config.mjs
 tools/task-new.mjs
+tools/signals.mjs
+# Наборы признаков разложены пакетом, и первой строкой у них шапка раскладки: в JSON
+# комментария нет, и форматтер на ней спотыкается. Правятся они в пакете, а не здесь.
+tools/signals/

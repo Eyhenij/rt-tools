@@ -2,9 +2,14 @@
 // _breakpoints.scss НЕ форвардим — это SCSS-namespace для прямого @use
 // из feature-стилей (CSS-vars в @media не поддерживаются).
 
+// Порядок подслоёв идёт первым: он обязан попасть в вывод раньше первого правила, которое в
+// подслой ложится.
+@forward './layers';
+
 @forward './primitives';
 @forward './semantic';
 @forward './theme-dark';
+@forward './theme-dark-rules';
 @forward './scrollbar';
 
 // Стили директивы кнопки: своего представления у директивы нет, поэтому её `.scss` не

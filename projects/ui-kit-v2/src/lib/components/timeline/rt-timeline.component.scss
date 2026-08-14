@@ -1,98 +1,104 @@
-/* rt-timeline — вертикальный таймлайн-степпер в common/ui. ViewEncapsulation.None.
-   Хост адресуется по имени элемента, а не по классу блока: класс `.rt-timeline` висит
-   и на `<rt-timeline>`, и на корне шаблона, поэтому правила блока вложены в хост —
-   так они достаются только корню шаблона. */
+@layer rt-kit.components {
+    /* rt-timeline — вертикальный таймлайн-степпер в common/ui. ViewEncapsulation.None.
+       Хост адресуется по имени элемента, а не по классу блока: класс `.rt-timeline` висит
+       и на `<rt-timeline>`, и на корне шаблона, поэтому правила блока вложены в хост —
+       так они достаются только корню шаблона. */
 
-rt-timeline {
-    display: block;
+    rt-timeline {
+        display: block;
 
-    .rt-timeline {
-        display: flex;
-        flex-direction: column;
-        padding: 0;
-        margin: 0;
-        list-style: none;
+        .rt-timeline {
+            --rt-timeline-dot-radius: var(--rt-radius-full);
+            --rt-timeline-dot-shadow: var(--rt-shadow-step-indicator);
+            --rt-timeline-dot-border-width: var(--rt-border-width-thin);
 
-        &__item {
-            display: flex;
-            gap: var(--rt-space-sm);
-
-            // Последний шаг без линии — не растягиваем хвост под ним.
-            &:last-child {
-                .rt-timeline__body {
-                    padding-block-end: 0;
-                }
-            }
-        }
-
-        &__rail {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            inline-size: 16px;
-        }
+            padding: 0;
+            margin: 0;
+            list-style: none;
 
-        &__dot {
-            box-sizing: border-box;
-            flex: none;
-            border-radius: var(--rt-radius-full);
-            background: var(--rt-color-stepper-track);
-            block-size: 10px;
-            inline-size: 10px;
-            margin-block-start: var(--rt-space-xs);
+            &__item {
+                display: flex;
+                gap: var(--rt-space-sm);
 
-            &--status--complete {
-                background: var(--rt-color-stepper-progress);
+                // Последний шаг без линии — не растягиваем хвост под ним.
+                &:last-child {
+                    .rt-timeline__body {
+                        padding-block-end: 0;
+                    }
+                }
             }
 
-            &--status--current {
-                background: var(--rt-color-stepper-current);
-                block-size: 14px;
-                box-shadow: var(--rt-shadow-step-indicator);
-                inline-size: 14px;
+            &__rail {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                inline-size: 16px;
+            }
+
+            &__dot {
+                box-sizing: border-box;
+                flex: none;
+                border-radius: var(--rt-timeline-dot-radius);
+                background: var(--rt-color-stepper-track);
+                block-size: 10px;
+                inline-size: 10px;
+                margin-block-start: var(--rt-space-xs);
+
+                &--status--complete {
+                    background: var(--rt-color-stepper-progress);
+                }
+
+                &--status--current {
+                    background: var(--rt-color-stepper-current);
+                    block-size: 14px;
+                    box-shadow: var(--rt-timeline-dot-shadow);
+                    inline-size: 14px;
+                    margin-block-start: var(--rt-space-2xs);
+                }
+
+                &--status--pending {
+                    border: var(--rt-timeline-dot-border-width) solid var(--rt-color-stepper-track);
+                    background: transparent;
+                }
+            }
+
+            // Соединительная линия тянется от точки вниз до следующего шага.
+            &__line {
+                flex: 1 1 auto;
+                background: var(--rt-color-stepper-track);
+                inline-size: 2px;
                 margin-block-start: var(--rt-space-2xs);
             }
 
-            &--status--pending {
-                border: var(--rt-border-width-thin) solid var(--rt-color-stepper-track);
-                background: transparent;
+            &__body {
+                display: flex;
+                flex-direction: column;
+                gap: var(--rt-space-2xs);
+                padding-block-end: var(--rt-space-md);
             }
-        }
 
-        // Соединительная линия тянется от точки вниз до следующего шага.
-        &__line {
-            flex: 1 1 auto;
-            background: var(--rt-color-stepper-track);
-            inline-size: 2px;
-            margin-block-start: var(--rt-space-2xs);
-        }
+            &__label {
+                color: var(--rt-color-text-primary);
+                font-size: var(--rt-text-sm);
+                line-height: var(--rt-leading-snug);
+            }
 
-        &__body {
-            display: flex;
-            flex-direction: column;
-            gap: var(--rt-space-2xs);
-            padding-block-end: var(--rt-space-md);
-        }
+            &__meta {
+                display: inline-flex;
+                flex-wrap: wrap;
+                color: var(--rt-color-text-muted);
+                font-size: var(--rt-text-xs);
+                gap: var(--rt-space-xs);
+                line-height: var(--rt-leading-snug);
+            }
 
-        &__label {
-            color: var(--rt-color-text-primary);
-            font-size: var(--rt-text-sm);
-            line-height: var(--rt-leading-snug);
-        }
-
-        &__meta {
-            display: inline-flex;
-            flex-wrap: wrap;
-            color: var(--rt-color-text-muted);
-            font-size: var(--rt-text-xs);
-            gap: var(--rt-space-xs);
-            line-height: var(--rt-leading-snug);
-        }
-
-        // Точка-разделитель между временем и инициатором.
-        &__actor:before {
-            content: '·';
-            margin-inline-end: var(--rt-space-xs);
+            // Точка-разделитель между временем и инициатором.
+            &__actor:before {
+                content: '·';
+                margin-inline-end: var(--rt-space-xs);
+            }
         }
     }
 }

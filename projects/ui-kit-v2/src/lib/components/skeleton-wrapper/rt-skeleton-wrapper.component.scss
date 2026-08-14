@@ -1,8 +1,10 @@
-/* rt-skeleton-wrapper — ViewEncapsulation.None: правило таргетирует BEM-класс блока.
-   `.rt-skeleton-wrapper` — сам хост: своей разметки блока нет, внутри либо
-   rt-skeleton, либо спроецированное содержимое. */
+@layer rt-kit.components {
+    /* rt-skeleton-wrapper — ViewEncapsulation.None: правило таргетирует BEM-класс блока.
+       `.rt-skeleton-wrapper` — сам хост: своей разметки блока нет, внутри либо
+       rt-skeleton, либо спроецированное содержимое. */
 
-.rt-skeleton-wrapper {
-    display: inline-flex;
-    width: 100%;
+    .rt-skeleton-wrapper {
+        display: inline-flex;
+        width: 100%;
+    }
 }

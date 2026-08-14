@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.4.0 · hooks/skill-loaded.sh · 69a0a720ec5b · правится надстройкой, не здесь
+# rt-kit v0.8.1 · hooks/skill-loaded.sh · 7cc481b750f9 · правится надстройкой, не здесь
 # rt-hook: PostToolUse Skill
 # Запись о загруженном правиле. PostToolUse на инструменте `Skill`.
 #
@@ -18,5 +18,12 @@ skill="$(printf '%s' "$input" | jq -r '.tool_input.skill // empty' 2>/dev/null)"
 dir="${TMPDIR:-/tmp}/claude-skill-gate"
 mkdir -p "$dir" 2>/dev/null || exit 0
 printf '%s\n' "$skill" >> "$dir/${sid}.loaded" 2>/dev/null
+
+# Та же загрузка вторым адресом — в наблюдения дерева. Запись выше живёт до сжатия контекста и
+# гибнет вместе с ним: она отвечает гейту на вопрос «загружено ли», и больше ни на что.
+rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/observe.sh" ] && . "$rt_hooks_dir/observe.sh" 2>/dev/null
+command -v rt_note >/dev/null 2>&1 && rt_note skill-load "res=$skill" "sid=$sid"
 
 exit 0

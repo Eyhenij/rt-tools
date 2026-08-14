@@ -20,22 +20,33 @@ import { join } from 'node:path';
 /** Настройка агента, в которой живёт карта. Путь от корня дерева. */
 export const SETTINGS_PATH: string = '.claude/settings.json';
 
-const DECLARATION: RegExp = /^#\s*rt-hook:\s*(\S+)\s+(\S.*)$/m;
+const DECLARATION: RegExp = /^#\s*rt-hook:\s*(\S+)(?:[ \t]+(\S.*))?$/gm;
 
 export interface IHookBinding {
-    /** Событие агента: `PreToolUse`, `PostToolUse`, `SessionStart`. */
+    /** Событие агента: `PreToolUse`, `PostToolUse`, `SessionStart`, `Stop`. */
     readonly event: string;
-    /** Образец, по которому событие достаётся этому гарду. */
+    /**
+     * Образец, по которому событие достаётся этому гарду. Пустой у события, которое не про
+     * инструмент: завершение хода приходит целиком, и выбирать в нём нечего.
+     */
     readonly matcher: string;
     /** Путь разложенного гарда от корня дерева. */
     readonly path: string;
 }
 
-/** Что гард говорит о себе. Молчит — он не подключается к агенту вовсе. */
-export function bindingOf(text: string, path: string): IHookBinding | null {
-    const found: RegExpMatchArray | null = text.match(DECLARATION);
-
-    return found ? { event: found[1], matcher: found[2].trim(), path } : null;
+/**
+ * Что гард говорит о себе. Молчит — он не подключается к агенту вовсе.
+ *
+ * Объявлений бывает несколько: гард, который сперва напоминает, а потом отбивает, стоит на двух
+ * событиях сразу. Разводить его по двум файлам значило бы держать два разбора одной записи и
+ * два места, где правится один порог.
+ */
+export function bindingsOf(text: string, path: string): readonly IHookBinding[] {
+    return [...text.matchAll(DECLARATION)].map((found: RegExpMatchArray): IHookBinding => ({
+        event: found[1],
+        matcher: (found[2] ?? '').trim(),
+        path,
+    }));
 }
 
 /**
@@ -55,10 +66,16 @@ export function hooksSection(bindings: readonly IHookBinding[]): Record<string, 
 
     const section: Record<string, unknown> = {};
     for (const [event, byMatcher] of [...events].sort()) {
-        section[event] = [...byMatcher].sort().map(([matcher, paths]: [string, readonly string[]]): unknown => ({
-            matcher,
-            hooks: paths.map((path: string): unknown => ({ type: 'command', command: `$CLAUDE_PROJECT_DIR/${path}` })),
-        }));
+        section[event] = [...byMatcher].sort().map(([matcher, paths]: [string, readonly string[]]): unknown => {
+            const hooks: unknown[] = paths.map((path: string): unknown => ({
+                type: 'command',
+                command: `$CLAUDE_PROJECT_DIR/${path}`,
+            }));
+
+            // Запись без образца — не запись с пустым образцом: агент читает пустую строку как
+            // образец, которому не соответствует ни один вызов, и гард молча не зовётся.
+            return matcher ? { matcher, hooks } : { hooks };
+        });
     }
 
     return section;
@@ -77,17 +94,44 @@ export function boundInSettings(root: string): readonly string[] {
         return [];
     }
 
-    // Настройка читается текстом, а не разбором: у неё нет объявленной формы, и дерево вправе
-    // держать её так, как ему удобно, — вплоть до комментариев, которых JSON не разбирает. Ищется
-    // одно: назван ли путь гарда хоть где-нибудь в ней.
-    return [...text.matchAll(/[\w./$-]*\.claude\/hooks\/[\w.-]+\.sh/g)].map((found: RegExpMatchArray): string =>
-        found[0].replace(/^.*?(\.claude\/)/, '$1')
-    );
+    // Сперва разбором: гард, стоящий на двух событиях, подключается к каждому отдельно, и по
+    // одному имени файла этого не увидеть — подключённый к первому событию выглядел бы
+    // подключённым и ко второму.
+    const byEvent: string[] = [];
+    try {
+        const settings: unknown = JSON.parse(text);
+        const hooks: unknown = (settings as Record<string, unknown> | null)?.['hooks'];
+        for (const [event, records] of Object.entries((hooks ?? {}) as Record<string, unknown>)) {
+            for (const record of Array.isArray(records) ? records : []) {
+                const commands: unknown = (record as Record<string, unknown> | null)?.['hooks'];
+                for (const command of Array.isArray(commands) ? commands : []) {
+                    const line: unknown = (command as Record<string, unknown> | null)?.['command'];
+                    if (typeof line === 'string') {
+                        byEvent.push(`${event} ${line.replace(/^.*?(\.claude\/)/, '$1')}`);
+                    }
+                }
+            }
+        }
+
+        return byEvent;
+    } catch {
+        // Настройку дерево вправе держать так, как ему удобно, — вплоть до комментариев, которых
+        // JSON не разбирает. Тогда ищется одно: назван ли путь гарда хоть где-нибудь в ней.
+        return [...text.matchAll(/[\w./$-]*\.claude\/hooks\/[\w.-]+\.sh/g)].map((found: RegExpMatchArray): string =>
+            found[0].replace(/^.*?(\.claude\/)/, '$1')
+        );
+    }
 }
 
-/** Разложенные гарды, которых в настройке агента нет: они лежат, но их никто не позовёт. */
+/**
+ * Разложенные гарды, которых в настройке агента нет: они лежат, но их никто не позовёт.
+ *
+ * Разбор настройки называет пару «событие и путь», а падение назад — один путь. Поэтому
+ * подключённым считается и то, и другое: иначе дерево с настройкой, которую не разобрать,
+ * получало бы список из всех гардов разом.
+ */
 export function unboundHooks(bindings: readonly IHookBinding[], root: string): readonly IHookBinding[] {
     const bound: ReadonlySet<string> = new Set(boundInSettings(root));
 
-    return bindings.filter((binding: IHookBinding): boolean => !bound.has(binding.path));
+    return bindings.filter((binding: IHookBinding): boolean => !bound.has(`${binding.event} ${binding.path}`) && !bound.has(binding.path));
 }

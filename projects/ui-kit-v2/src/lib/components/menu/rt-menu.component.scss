@@ -1,19 +1,27 @@
-/* rt-menu — dropdown-меню действий. ViewEncapsulation.None.
-   Триггер живёт в host'е, панель (`__panel`) рендерится в CDK Overlay. */
+@layer rt-kit.components {
+    /* rt-menu — dropdown-меню действий. ViewEncapsulation.None.
+       Триггер живёт в host'е, панель (`__panel`) рендерится в CDK Overlay. */
 
-.rt-menu {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    .rt-menu {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
 
-    &__panel {
-        display: flex;
-        min-width: 180px;
-        flex-direction: column;
-        padding: var(--rt-space-xs);
-        border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
-        border-radius: var(--rt-radius-md);
-        background: var(--rt-color-bg-surface);
-        box-shadow: var(--rt-shadow-lg);
+        &__panel {
+            /* Панель рисуется в CDK Overlay, вне поддерева блока: свойство
+               объявляется на ней самой — с корня блока оно бы не докатилось. */
+            --rt-menu-panel-radius: var(--rt-radius-md);
+            --rt-menu-panel-border-width: var(--rt-border-width-thin);
+            --rt-menu-panel-shadow: var(--rt-shadow-lg);
+
+            display: flex;
+            min-width: 180px;
+            flex-direction: column;
+            padding: var(--rt-space-xs);
+            border: var(--rt-menu-panel-border-width) solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-menu-panel-radius);
+            background: var(--rt-color-bg-surface);
+            box-shadow: var(--rt-menu-panel-shadow);
+        }
     }
 }

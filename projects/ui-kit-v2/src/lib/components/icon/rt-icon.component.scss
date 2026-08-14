@@ -1,15 +1,17 @@
-/* rt-icon — правила компонента (ViewEncapsulation.None).
-   Селектор bare `.rt-icon` (класс на host) — им же адресуются и программные
-   потребители sprite'а, рисующие иконку без компонента. */
-.rt-icon {
-    display: inline-flex;
-    flex-shrink: 0;
-    line-height: 0;
+@layer rt-kit.components {
+    /* rt-icon — правила компонента (ViewEncapsulation.None).
+       Селектор bare `.rt-icon` (класс на host) — им же адресуются и программные
+       потребители sprite'а, рисующие иконку без компонента. */
+    .rt-icon {
+        display: inline-flex;
+        flex-shrink: 0;
+        line-height: 0;
 
-    svg {
-        display: block;
-        width: 100%;
-        height: 100%;
-        fill: currentcolor;
+        svg {
+            display: block;
+            width: 100%;
+            height: 100%;
+            fill: currentcolor;
+        }
     }
 }

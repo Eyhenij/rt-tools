@@ -1,45 +1,50 @@
-/* rt-night-grid — плотная сетка суток в common/ui. ViewEncapsulation.None.
-   Хост адресуется по имени элемента, а не по классу блока: класс `.rt-night-grid` висит
-   и на `<rt-night-grid>`, и на корне шаблона, поэтому правила блока вложены в хост —
-   так они достаются только корню шаблона.
+@layer rt-kit.components {
+    /* rt-night-grid — плотная сетка суток в common/ui. ViewEncapsulation.None.
+       Хост адресуется по имени элемента, а не по классу блока: класс `.rt-night-grid` висит
+       и на `<rt-night-grid>`, и на корне шаблона, поэтому правила блока вложены в хост —
+       так они достаются только корню шаблона.
 
-   Ячейки мелкие и без подписей: сетка читается как индикатор занятости целиком, а
-   не как календарь — конкретный день подсказывает нативный title. */
+       Ячейки мелкие и без подписей: сетка читается как индикатор занятости целиком, а
+       не как календарь — конкретный день подсказывает нативный title. */
 
-rt-night-grid {
-    display: block;
+    rt-night-grid {
+        display: block;
 
-    .rt-night-grid {
-        /* Колонки резиновые от 16px: при жёсткой ширине ячейки сетка занимала
-           треть широкой карточки, а фиксированный максимум оставлял в ряду
-           «хвост» из одной ячейки, не попавшей в предыдущую строку. */
-        display: grid;
-        gap: var(--rt-space-1);
-        grid-template-columns: repeat(auto-fit, minmax(16px, 1fr));
+        .rt-night-grid {
+            --rt-night-grid-cell-radius: var(--rt-radius-sm);
+            --rt-night-grid-outline-width: var(--rt-border-width-thin);
 
-        &__cell {
-            padding: 0;
-            border: none;
-            border-radius: var(--rt-radius-sm);
-            aspect-ratio: 1;
-            background: var(--rt-color-bg-surface-subtle);
-            cursor: pointer;
+            /* Колонки резиновые от 16px: при жёсткой ширине ячейки сетка занимала
+               треть широкой карточки, а фиксированный максимум оставлял в ряду
+               «хвост» из одной ячейки, не попавшей в предыдущую строку. */
+            display: grid;
+            gap: var(--rt-space-1);
+            grid-template-columns: repeat(auto-fit, minmax(16px, 1fr));
 
-            &:hover {
-                outline: var(--rt-border-width-thin) solid var(--rt-color-border-strong);
-            }
+            &__cell {
+                padding: 0;
+                border: none;
+                border-radius: var(--rt-night-grid-cell-radius);
+                aspect-ratio: 1;
+                background: var(--rt-color-bg-surface-subtle);
+                cursor: pointer;
 
-            &:focus-visible {
-                outline: var(--rt-border-width-thin) solid var(--rt-color-border-focus);
-                outline-offset: 1px;
-            }
+                &:hover {
+                    outline: var(--rt-night-grid-outline-width) solid var(--rt-color-border-strong);
+                }
 
-            &--state--primary {
-                background: var(--rt-color-state-success);
-            }
+                &:focus-visible {
+                    outline: var(--rt-night-grid-outline-width) solid var(--rt-color-border-focus);
+                    outline-offset: 1px;
+                }
 
-            &--state--secondary {
-                background: color-mix(in srgb, var(--rt-color-state-success) 35%, transparent);
+                &--state--primary {
+                    background: var(--rt-color-state-success);
+                }
+
+                &--state--secondary {
+                    background: color-mix(in srgb, var(--rt-color-state-success) 35%, transparent);
+                }
             }
         }
     }

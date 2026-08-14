@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.4.0 · hooks/docs-guard.sh · ec7e4f728ca9 · правится надстройкой, не здесь
+# rt-kit v0.8.1 · hooks/docs-guard.sh · 656831d78f70 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
+# Требует: hooks/profile-check.sh
 # Гард пары «правка и её документ». PreToolUse.
 #
 # Расхождение кода с текстом беззвучно. Ни линтер, ни сборка, ни тесты не читают правила,
@@ -33,6 +34,16 @@ command -v jq >/dev/null 2>&1 || exit 0
 tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
 
 decide() {
+    # Наблюдение пишется только на отказе: подсказку гард раздаёт и там, где всё в порядке, и
+    # счёт, в котором они смешаны, не значит ничего.
+    if [ "$1" = "deny" ]; then
+        # shellcheck disable=SC1090
+        [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/observe.sh" ] \
+            && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/observe.sh" 2>/dev/null
+        command -v rt_note >/dev/null 2>&1 \
+            && rt_note guard-deny res=docs-guard "sid=$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
+    fi
+
     jq -n --arg d "$1" --arg r "$2" \
         '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:$d,permissionDecisionReason:$r}}' 2>/dev/null \
         || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Документ едет тем же коммитом."}}\n'
@@ -47,6 +58,12 @@ for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../d
     # shellcheck disable=SC1090
     [ -f "$profile" ] && . "$profile" 2>/dev/null
 done
+
+# Слово о нехватке функции профиля: хук, вышедший молча, неотличим от работающего. Файл может
+# быть не разложен — тогда остаётся прежнее поведение, молчаливое.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
+command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
 
 laws_dir="${RT_LAWS_DIR:-docs/constitution}"
 lib_marker="${RT_LIB_MARKER:-project.json}"
@@ -171,7 +188,7 @@ done
 #
 # Контракт и спек домена, гард и его сценарии — что именно, знает профиль: связь у каждого
 # дерева своя, а механика одна.
-if command -v rt_docs_pair_for >/dev/null 2>&1; then
+if rt_needs rt_docs_pair_for docs-guard; then
     while IFS= read -r file; do
         [ -z "$file" ] && continue
         want="$(rt_docs_pair_for "$file" 2>/dev/null)"

@@ -7,127 +7,129 @@
 
 @use './rt-aside-overlay';
 
-/* Size tokens — sm/md/lg (aside уже модалки чем rt-dialog). */
-:root {
-    --rt-aside-width-sm: 400px;
-    --rt-aside-width-md: 540px;
-    --rt-aside-width-lg: 720px;
+@layer rt-kit.components {
+    /* Size tokens — sm/md/lg (aside уже модалки чем rt-dialog). */
+    :root {
+        --rt-aside-width-sm: 400px;
+        --rt-aside-width-md: 540px;
+        --rt-aside-width-lg: 720px;
 
-    /* Инсет панели: шапка, содержимое и футер отбиты от края одним и тем же
-       значением, поэтому поля во всех панелях одной ширины. */
-    --rt-aside-inset: var(--rt-space-lg);
+        /* Инсет панели: шапка, содержимое и футер отбиты от края одним и тем же
+           значением, поэтому поля во всех панелях одной ширины. */
+        --rt-aside-inset: var(--rt-space-lg);
 
-    /* Ритм между корневыми блоками содержимого. */
-    --rt-aside-content-gap: var(--rt-space-md);
-}
-
-/* Хост адресуется по имени элемента, а не по классу блока: класс `.rt-aside`
-   висит и на `<rt-aside>`, и на рамке внутри него, поэтому правила рамки
-   вложены в хост. Сам хост боксом не становится: рамка должна быть прямым
-   flex-ребёнком overlay-панели. */
-rt-aside {
-    display: contents;
-}
-
-rt-aside .rt-aside {
-    display: flex;
-    width: var(--rt-aside-width, var(--rt-aside-width-md));
-
-    /* rt-aside — flex-child cdk-overlay-pane. Default `min-width: auto` у flex-item
-       заставляет ширину расти до max-content вложенного контента (длинный
-       заголовок без переносов раздул бы panel за пределы viewport). 0 — let
-       cross-axis размера контейнера ограничивать, а ellipsis в title клипает текст. */
-    min-width: 0;
-    max-width: 100%;
-    height: 100%;
-    flex-direction: column;
-    padding: 0;
-    border: none;
-    background: var(--rt-color-bg-surface);
-    color: var(--rt-color-text-primary);
-
-    /* Header / footer всегда видны, контентная часть скроллится при overflow.
-       Селекторы по тегам — `<rt-aside-header>` / `<rt-aside-footer>` это
-       Angular host-элементы, у которых нет класса `.rt-aside-header`
-       (этот класс висит на вложенном `<header>` / `<footer>` внутри них).
-       `min-height: 0` обязателен — без него flex item не сможет shrink ниже
-       intrinsic content size и overflow-y не сработает. */
-    & > rt-aside-header,
-    & > rt-aside-footer {
-        /* min-width: 0 пробрасывается флекс-детям вниз — без него заголовок с
-           неразрывным длинным текстом раздувает header/footer шире
-           cross-axis-размера контейнера и выходит за viewport. */
-        min-width: 0;
-        flex-shrink: 0;
+        /* Ритм между корневыми блоками содержимого. */
+        --rt-aside-content-gap: var(--rt-space-md);
     }
 
-    /* Единственная зона содержимого: она держит инсет панели и она же
-       прокручивается. Отступы живут здесь, а не в потребителях — иначе каждая
-       панель помнит про них сама, и поля получают разную ширину. */
-    &__content {
+    /* Хост адресуется по имени элемента, а не по классу блока: класс `.rt-aside`
+       висит и на `<rt-aside>`, и на рамке внутри него, поэтому правила рамки
+       вложены в хост. Сам хост боксом не становится: рамка должна быть прямым
+       flex-ребёнком overlay-панели. */
+    rt-aside {
+        display: contents;
+    }
+
+    rt-aside .rt-aside {
         display: flex;
-        min-width: 0;
-        min-height: 0;
-        flex: 1 1 auto;
-        flex-direction: column;
-        padding: var(--rt-aside-inset);
-        gap: var(--rt-aside-content-gap);
-        overflow-y: auto;
-        overscroll-behavior: contain;
-    }
-
-    &--size--sm {
-        width: var(--rt-aside-width, var(--rt-aside-width-sm));
-    }
-
-    &--size--md {
         width: var(--rt-aside-width, var(--rt-aside-width-md));
-    }
 
-    &--size--lg {
-        width: var(--rt-aside-width, var(--rt-aside-width-lg));
-    }
+        /* rt-aside — flex-child cdk-overlay-pane. Default `min-width: auto` у flex-item
+           заставляет ширину расти до max-content вложенного контента (длинный
+           заголовок без переносов раздул бы panel за пределы viewport). 0 — let
+           cross-axis размера контейнера ограничивать, а ellipsis в title клипает текст. */
+        min-width: 0;
+        max-width: 100%;
+        height: 100%;
+        flex-direction: column;
+        padding: 0;
+        border: none;
+        background: var(--rt-color-bg-surface);
+        color: var(--rt-color-text-primary);
 
-    /* Контент — rt-tabs: скроллером становится контент активной вкладки, а не
-       контентная зона асайда, чтобы полоса вкладок оставалась прибитой. */
-    &--content--tabs {
-        /* Контентная зона больше не скроллер, но её горизонтальный инсет СОХРАНЯЕМ:
-           прямой контент вне rt-tabs (скелетоны загрузки, rt-message ошибки) должен
-           отступать от краёв как обычно. Снимаем только нижний отступ. */
-        .rt-aside__content {
-            overflow: hidden;
-            padding-block-end: 0;
+        /* Header / footer всегда видны, контентная часть скроллится при overflow.
+           Селекторы по тегам — `<rt-aside-header>` / `<rt-aside-footer>` это
+           Angular host-элементы, у которых нет класса `.rt-aside-header`
+           (этот класс висит на вложенном `<header>` / `<footer>` внутри них).
+           `min-height: 0` обязателен — без него flex item не сможет shrink ниже
+           intrinsic content size и overflow-y не сработает. */
+        & > rt-aside-header,
+        & > rt-aside-footer {
+            /* min-width: 0 пробрасывается флекс-детям вниз — без него заголовок с
+               неразрывным длинным текстом раздувает header/footer шире
+               cross-axis-размера контейнера и выходит за viewport. */
+            min-width: 0;
+            flex-shrink: 0;
         }
 
-        /* rt-tabs растягивается на всю ширину панели (гасит инсет контентной зоны),
-           а инсет возвращается ВНУТРЬ полосы и скролл-контейнера. Так overflow
-           скролл-контейнера не режет focus-ring инпутов, прижатых к краю, а полоса
-           и контент остаются в коридоре --rt-aside-inset. */
-        rt-tabs {
+        /* Единственная зона содержимого: она держит инсет панели и она же
+           прокручивается. Отступы живут здесь, а не в потребителях — иначе каждая
+           панель помнит про них сама, и поля получают разную ширину. */
+        &__content {
+            display: flex;
+            min-width: 0;
             min-height: 0;
             flex: 1 1 auto;
-            margin-inline: calc(-1 * var(--rt-aside-inset));
+            flex-direction: column;
+            padding: var(--rt-aside-inset);
+            gap: var(--rt-aside-content-gap);
+            overflow-y: auto;
+            overscroll-behavior: contain;
         }
 
-        .rt-tabs__header {
-            padding-inline: var(--rt-aside-inset);
+        &--size--sm {
+            width: var(--rt-aside-width, var(--rt-aside-width-sm));
         }
 
-        .rt-tabs__content {
-            /* Нижний отступ внутри скроллера — последний элемент не докручивается
-               вплотную к футеру. */
-            padding-bottom: var(--rt-aside-inset);
-            padding-inline: var(--rt-aside-inset);
+        &--size--md {
+            width: var(--rt-aside-width, var(--rt-aside-width-md));
+        }
+
+        &--size--lg {
+            width: var(--rt-aside-width, var(--rt-aside-width-lg));
+        }
+
+        /* Контент — rt-tabs: скроллером становится контент активной вкладки, а не
+           контентная зона асайда, чтобы полоса вкладок оставалась прибитой. */
+        &--content--tabs {
+            /* Контентная зона больше не скроллер, но её горизонтальный инсет СОХРАНЯЕМ:
+               прямой контент вне rt-tabs (скелетоны загрузки, rt-message ошибки) должен
+               отступать от краёв как обычно. Снимаем только нижний отступ. */
+            .rt-aside__content {
+                overflow: hidden;
+                padding-block-end: 0;
+            }
+
+            /* rt-tabs растягивается на всю ширину панели (гасит инсет контентной зоны),
+               а инсет возвращается ВНУТРЬ полосы и скролл-контейнера. Так overflow
+               скролл-контейнера не режет focus-ring инпутов, прижатых к краю, а полоса
+               и контент остаются в коридоре --rt-aside-inset. */
+            rt-tabs {
+                min-height: 0;
+                flex: 1 1 auto;
+                margin-inline: calc(-1 * var(--rt-aside-inset));
+            }
+
+            .rt-tabs__header {
+                padding-inline: var(--rt-aside-inset);
+            }
+
+            .rt-tabs__content {
+                /* Нижний отступ внутри скроллера — последний элемент не докручивается
+                   вплотную к футеру. */
+                padding-bottom: var(--rt-aside-inset);
+                padding-inline: var(--rt-aside-inset);
+            }
         }
     }
-}
 
-@media (width <= 768px) {
-    rt-aside .rt-aside,
-    rt-aside .rt-aside--size--sm,
-    rt-aside .rt-aside--size--md,
-    rt-aside .rt-aside--size--lg {
-        width: 100dvw;
-        max-width: 100dvw;
+    @media (width <= 768px) {
+        rt-aside .rt-aside,
+        rt-aside .rt-aside--size--sm,
+        rt-aside .rt-aside--size--md,
+        rt-aside .rt-aside--size--lg {
+            width: 100dvw;
+            max-width: 100dvw;
+        }
     }
 }

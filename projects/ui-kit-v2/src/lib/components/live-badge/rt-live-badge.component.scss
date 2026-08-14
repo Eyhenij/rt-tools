@@ -1,31 +1,35 @@
-/* rt-live-badge — пилюля живого счётчика в common/ui. ViewEncapsulation.None.
-   Хост адресуется по имени элемента, а не по классу блока: класс `.rt-live-badge` висит
-   и на `<rt-live-badge>`, и на корне шаблона, поэтому правила блока вложены в хост —
-   так они достаются только корню шаблона. */
+@layer rt-kit.components {
+    /* rt-live-badge — пилюля живого счётчика в common/ui. ViewEncapsulation.None.
+       Хост адресуется по имени элемента, а не по классу блока: класс `.rt-live-badge` висит
+       и на `<rt-live-badge>`, и на корне шаблона, поэтому правила блока вложены в хост —
+       так они достаются только корню шаблона. */
 
-rt-live-badge {
-    display: inline-flex;
-
-    .rt-live-badge {
+    rt-live-badge {
         display: inline-flex;
-        align-items: center;
-        color: var(--rt-color-text-muted);
-        font-size: var(--rt-text-sm);
-        gap: var(--rt-space-1);
 
-        &--active .rt-live-badge__dot {
-            background: var(--rt-color-state-success);
-        }
+        .rt-live-badge {
+            --rt-live-badge-dot-radius: var(--rt-radius-full);
 
-        &__dot {
-            width: 8px;
-            height: 8px;
-            border-radius: var(--rt-radius-full);
-            background: var(--rt-color-border-subtle);
-        }
+            display: inline-flex;
+            align-items: center;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+            gap: var(--rt-space-1);
 
-        &__count {
-            color: var(--rt-color-text-primary);
+            &--active .rt-live-badge__dot {
+                background: var(--rt-color-state-success);
+            }
+
+            &__dot {
+                width: 8px;
+                height: 8px;
+                border-radius: var(--rt-live-badge-dot-radius);
+                background: var(--rt-color-border-subtle);
+            }
+
+            &__count {
+                color: var(--rt-color-text-primary);
+            }
         }
     }
 }

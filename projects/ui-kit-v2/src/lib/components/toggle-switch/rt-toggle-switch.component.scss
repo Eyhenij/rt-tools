@@ -1,107 +1,113 @@
-/* rt-toggle-switch — переключатель в common/ui. ViewEncapsulation.None.
-   Хост адресуется по имени элемента, а не по классу блока: класс `.rt-toggle-switch` висит
-   и на `<rt-toggle-switch>`, и на корне шаблона, поэтому правила блока вложены в хост —
-   так они достаются только корню шаблона. */
+@layer rt-kit.components {
+    /* rt-toggle-switch — переключатель в common/ui. ViewEncapsulation.None.
+       Хост адресуется по имени элемента, а не по классу блока: класс `.rt-toggle-switch` висит
+       и на `<rt-toggle-switch>`, и на корне шаблона, поэтому правила блока вложены в хост —
+       так они достаются только корню шаблона. */
 
-rt-toggle-switch {
-    display: inline-flex;
-}
-
-rt-toggle-switch .rt-toggle-switch {
-    /* Геометрия размера. База — `sm`; модификаторы перекрывают только числа,
-       правила ниже к размерам не привязаны. `thumb-travel` держим явным
-       числом, а не calc из ширины: каждое значение сверяется с макетом. */
-    --rt-toggle-track-width: 42px;
-    --rt-toggle-track-height: 24px;
-    --rt-toggle-thumb-size: 18px;
-    --rt-toggle-thumb-inset: 3px;
-    --rt-toggle-thumb-travel: 18px;
-    --rt-toggle-icon-inset: 4px;
-
-    display: inline-flex;
-    padding: 0;
-    border: none;
-    background: none;
-    cursor: pointer;
-
-    &--md {
-        --rt-toggle-track-width: 52px;
-        --rt-toggle-thumb-travel: 28px;
+    rt-toggle-switch {
+        display: inline-flex;
     }
 
-    &--lg {
-        --rt-toggle-track-width: 60px;
-        --rt-toggle-track-height: 30px;
-        --rt-toggle-thumb-size: 24px;
-        --rt-toggle-thumb-travel: 30px;
-        --rt-toggle-icon-inset: 6px;
-    }
+    rt-toggle-switch .rt-toggle-switch {
+        --rt-toggle-radius: var(--rt-radius-full);
+        --rt-toggle-focus-shadow: var(--rt-shadow-focus-ring);
+        --rt-toggle-transition-duration: var(--rt-duration-fast);
 
-    &:focus-visible {
-        border-radius: var(--rt-radius-full);
-        box-shadow: var(--rt-shadow-focus-ring);
-        outline: 2px solid transparent;
-        outline-offset: 2px;
-    }
+        /* Геометрия размера. База — `sm`; модификаторы перекрывают только числа,
+           правила ниже к размерам не привязаны. `thumb-travel` держим явным
+           числом, а не calc из ширины: каждое значение сверяется с макетом. */
+        --rt-toggle-track-width: 42px;
+        --rt-toggle-track-height: 24px;
+        --rt-toggle-thumb-size: 18px;
+        --rt-toggle-thumb-inset: 3px;
+        --rt-toggle-thumb-travel: 18px;
+        --rt-toggle-icon-inset: 4px;
 
-    &--disabled {
-        cursor: not-allowed;
-        opacity: 0.5;
-    }
+        display: inline-flex;
+        padding: 0;
+        border: none;
+        background: none;
+        cursor: pointer;
 
-    &__track {
-        position: relative;
-        display: inline-block;
-        width: var(--rt-toggle-track-width);
-        height: var(--rt-toggle-track-height);
-        border-radius: var(--rt-radius-full);
-        background: var(--rt-toggle-color-track);
-        box-shadow: var(--rt-toggle-shadow-border);
-        color: var(--rt-toggle-color-icon);
-        transition:
-            background var(--rt-duration-fast) ease,
-            box-shadow var(--rt-duration-fast) ease;
-    }
+        &--md {
+            --rt-toggle-track-width: 52px;
+            --rt-toggle-thumb-travel: 28px;
+        }
 
-    /* Элемент адресуется классом, а не вторым `&`: родитель здесь составной
-       (`rt-toggle-switch .rt-toggle-switch`), и второй `&` развернулся бы в него целиком —
-       то есть в селектор, требующий вложенного переключателя. Включённое состояние
-       из-за этого не применялось: трек оставался серым, бегунок — слева. */
-    &--on .rt-toggle-switch__track {
-        background: var(--rt-toggle-color-track-on);
-        box-shadow: none;
-    }
+        &--lg {
+            --rt-toggle-track-width: 60px;
+            --rt-toggle-track-height: 30px;
+            --rt-toggle-thumb-size: 24px;
+            --rt-toggle-thumb-travel: 30px;
+            --rt-toggle-icon-inset: 6px;
+        }
 
-    /* Иконки статичны: бегунок наезжает на иконку активного состояния и
-       закрывает её, поэтому видна всегда иконка целевого состояния. */
-    &__icon-off,
-    &__icon-on {
-        position: absolute;
-        inset-block-start: 50%;
-        transform: translateY(-50%);
-    }
+        &:focus-visible {
+            border-radius: var(--rt-toggle-radius);
+            box-shadow: var(--rt-toggle-focus-shadow);
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+        }
 
-    &__icon-off {
-        inset-inline-start: var(--rt-toggle-icon-inset);
-    }
+        &--disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
 
-    &__icon-on {
-        inset-inline-end: var(--rt-toggle-icon-inset);
-    }
+        &__track {
+            position: relative;
+            display: inline-block;
+            width: var(--rt-toggle-track-width);
+            height: var(--rt-toggle-track-height);
+            border-radius: var(--rt-toggle-radius);
+            background: var(--rt-toggle-color-track);
+            box-shadow: var(--rt-toggle-shadow-border);
+            color: var(--rt-toggle-color-icon);
+            transition:
+                background var(--rt-toggle-transition-duration) ease,
+                box-shadow var(--rt-toggle-transition-duration) ease;
+        }
 
-    &__thumb {
-        position: absolute;
-        width: var(--rt-toggle-thumb-size);
-        height: var(--rt-toggle-thumb-size);
-        border-radius: var(--rt-radius-full);
-        background: var(--rt-toggle-color-thumb);
-        box-shadow: var(--rt-toggle-shadow-thumb);
-        inset-block-start: var(--rt-toggle-thumb-inset);
-        inset-inline-start: var(--rt-toggle-thumb-inset);
-        transition: transform var(--rt-duration-fast) ease;
-    }
+        /* Элемент адресуется классом, а не вторым `&`: родитель здесь составной
+           (`rt-toggle-switch .rt-toggle-switch`), и второй `&` развернулся бы в него целиком —
+           то есть в селектор, требующий вложенного переключателя. Включённое состояние
+           из-за этого не применялось: трек оставался серым, бегунок — слева. */
+        &--on .rt-toggle-switch__track {
+            background: var(--rt-toggle-color-track-on);
+            box-shadow: none;
+        }
 
-    &--on .rt-toggle-switch__thumb {
-        transform: translateX(var(--rt-toggle-thumb-travel));
+        /* Иконки статичны: бегунок наезжает на иконку активного состояния и
+           закрывает её, поэтому видна всегда иконка целевого состояния. */
+        &__icon-off,
+        &__icon-on {
+            position: absolute;
+            inset-block-start: 50%;
+            transform: translateY(-50%);
+        }
+
+        &__icon-off {
+            inset-inline-start: var(--rt-toggle-icon-inset);
+        }
+
+        &__icon-on {
+            inset-inline-end: var(--rt-toggle-icon-inset);
+        }
+
+        &__thumb {
+            position: absolute;
+            width: var(--rt-toggle-thumb-size);
+            height: var(--rt-toggle-thumb-size);
+            border-radius: var(--rt-toggle-radius);
+            background: var(--rt-toggle-color-thumb);
+            box-shadow: var(--rt-toggle-shadow-thumb);
+            inset-block-start: var(--rt-toggle-thumb-inset);
+            inset-inline-start: var(--rt-toggle-thumb-inset);
+            transition: transform var(--rt-toggle-transition-duration) ease;
+        }
+
+        &--on .rt-toggle-switch__thumb {
+            transform: translateX(var(--rt-toggle-thumb-travel));
+        }
     }
 }

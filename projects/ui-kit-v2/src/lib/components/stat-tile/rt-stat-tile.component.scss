@@ -1,111 +1,115 @@
-/* rt-stat-tile — KPI-плитка в common/ui. ViewEncapsulation.None.
-   Хост адресуется по имени элемента, а не по классу блока: класс `.rt-stat-tile` висит
-   и на `<rt-stat-tile>`, и на корне шаблона, поэтому правила блока вложены в хост —
-   так они достаются только корню шаблона.
+@layer rt-kit.components {
+    /* rt-stat-tile — KPI-плитка в common/ui. ViewEncapsulation.None.
+       Хост адресуется по имени элемента, а не по классу блока: класс `.rt-stat-tile` висит
+       и на `<rt-stat-tile>`, и на корне шаблона, поэтому правила блока вложены в хост —
+       так они достаются только корню шаблона.
 
-   Рамку и фон плитка не рисует: плитки стоят рядом внутри одной карточки, а
-   разделители между ними — забота контейнера. */
+       Рамку и фон плитка не рисует: плитки стоят рядом внутри одной карточки, а
+       разделители между ними — забота контейнера. */
 
-rt-stat-tile {
-    display: block;
+    rt-stat-tile {
+        display: block;
 
-    .rt-stat-tile {
-        display: flex;
-        height: 100%;
-        flex-direction: column;
-        gap: var(--rt-space-2);
+        .rt-stat-tile {
+            --rt-stat-tile-year-radius: var(--rt-radius-sm);
 
-        &__head {
             display: flex;
-            align-items: center;
-            gap: var(--rt-space-1);
-        }
+            height: 100%;
+            flex-direction: column;
+            gap: var(--rt-space-2);
 
-        &__label {
-            color: var(--rt-color-text-primary);
-            font-size: var(--rt-text-sm);
-            font-weight: var(--rt-font-weight-semibold);
-        }
-
-        &__hint {
-            color: var(--rt-color-text-muted);
-            cursor: help;
-        }
-
-        &__value-row {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: var(--rt-space-3);
-        }
-
-        &__value {
-            margin: 0;
-            color: var(--rt-color-text-primary);
-            font-size: var(--rt-text-3xl);
-            font-weight: var(--rt-font-weight-bold);
-            line-height: var(--rt-leading-none);
-        }
-
-        &__delta {
-            display: inline-flex;
-            align-items: center;
-            color: var(--rt-color-text-muted);
-            font-size: var(--rt-text-md);
-            font-weight: var(--rt-font-weight-bold);
-            gap: var(--rt-space-1);
-            line-height: var(--rt-leading-none);
-
-            &--direction--up {
-                color: var(--rt-color-state-success);
+            &__head {
+                display: flex;
+                align-items: center;
+                gap: var(--rt-space-1);
             }
 
-            &--direction--down {
-                color: var(--rt-color-state-danger);
-            }
-        }
-
-        &__year {
-            flex: 0 0 auto;
-            padding: var(--rt-space-0-5) var(--rt-space-1-5);
-            border-radius: var(--rt-radius-sm);
-            background: var(--rt-color-bg-surface-subtle);
-            color: var(--rt-color-text-muted);
-            font-size: var(--rt-text-xs);
-            font-weight: var(--rt-font-weight-semibold);
-            line-height: var(--rt-leading-none);
-            white-space: nowrap;
-
-            &--direction--up {
-                background: var(--rt-color-state-success-bg);
-                color: var(--rt-color-state-success);
+            &__label {
+                color: var(--rt-color-text-primary);
+                font-size: var(--rt-text-sm);
+                font-weight: var(--rt-font-weight-semibold);
             }
 
-            &--direction--down {
-                background: var(--rt-color-state-danger-bg);
-                color: var(--rt-color-state-danger);
+            &__hint {
+                color: var(--rt-color-text-muted);
+                cursor: help;
             }
-        }
 
-        &__baseline {
-            overflow: hidden;
-            margin: 0;
-            color: var(--rt-color-text-muted);
-            font-size: var(--rt-text-sm);
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
+            &__value-row {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: var(--rt-space-4);
+            }
 
-        /* Вторичная метрика прижата к низу: строки «было …» может не быть,
-           и без прижатия плитки в ряду разъезжались бы по базовой линии. */
-        &__secondary {
-            overflow: hidden;
-            margin: 0;
-            margin-top: auto;
-            color: var(--rt-color-text-muted);
-            font-size: var(--rt-text-xs);
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            &__value {
+                margin: 0;
+                color: var(--rt-color-text-primary);
+                font-size: var(--rt-text-3xl);
+                font-weight: var(--rt-font-weight-bold);
+                line-height: var(--rt-leading-none);
+            }
+
+            &__delta {
+                display: inline-flex;
+                align-items: center;
+                color: var(--rt-color-text-muted);
+                font-size: var(--rt-text-md);
+                font-weight: var(--rt-font-weight-bold);
+                gap: var(--rt-space-1);
+                line-height: var(--rt-leading-none);
+
+                &--direction--up {
+                    color: var(--rt-color-state-success);
+                }
+
+                &--direction--down {
+                    color: var(--rt-color-state-danger);
+                }
+            }
+
+            &__year {
+                flex: 0 0 auto;
+                padding: var(--rt-space-0-5) var(--rt-space-2);
+                border-radius: var(--rt-stat-tile-year-radius);
+                background: var(--rt-color-bg-surface-subtle);
+                color: var(--rt-color-text-muted);
+                font-size: var(--rt-text-xs);
+                font-weight: var(--rt-font-weight-semibold);
+                line-height: var(--rt-leading-none);
+                white-space: nowrap;
+
+                &--direction--up {
+                    background: var(--rt-color-state-success-bg);
+                    color: var(--rt-color-state-success);
+                }
+
+                &--direction--down {
+                    background: var(--rt-color-state-danger-bg);
+                    color: var(--rt-color-state-danger);
+                }
+            }
+
+            &__baseline {
+                overflow: hidden;
+                margin: 0;
+                color: var(--rt-color-text-muted);
+                font-size: var(--rt-text-sm);
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            /* Вторичная метрика прижата к низу: строки «было …» может не быть,
+               и без прижатия плитки в ряду разъезжались бы по базовой линии. */
+            &__secondary {
+                overflow: hidden;
+                margin: 0;
+                margin-top: auto;
+                color: var(--rt-color-text-muted);
+                font-size: var(--rt-text-xs);
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
         }
     }
 }
