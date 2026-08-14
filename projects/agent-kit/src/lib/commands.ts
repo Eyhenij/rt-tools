@@ -8,7 +8,7 @@ import { join } from 'node:path';
 
 import { collectAssets } from './assets.js';
 import { cascadeCuts, IBrokenLink, ICascadeCut, IEntryOfCatalog, IGapOfVariant, IIdleSkip, isChosen, readCatalog } from './catalog.js';
-import { ICompanion, isUnfilled, TCompanionState } from './companion.js';
+import { debtLine, ICompanion, isUnfilled, IUnaddressed, pathOf as companionPathOf, TCompanionState, unaddressedOf } from './companion.js';
 import { CONFIG_PATH, DEFAULT_LAYOUT, IConfig, KINDS, OVERRIDES_DIR, PROFILE_FILE, readConfig, RT_KIT_DIR, TKind } from './config.js';
 import { IStaleBuild } from './freshness.js';
 import { hooksSection, IHookBinding, SETTINGS_PATH } from './hooks-map.js';
@@ -396,6 +396,28 @@ export function init(
 }
 
 /**
+ * Долг, добавленный этой раскладкой: статьи разложенных правил, у которых в компаньонах дерева
+ * нет адреса.
+ *
+ * Называется он здесь, а не отдельной сверкой, ровно потому, что через день его уже не отличить
+ * от накопленного: сверка видит расхождение, но не знает, чьим обновлением оно приехало.
+ */
+function debtLines(config: IConfig, root: string, assetsDir: string): readonly string[] {
+    const found: IUnaddressed[] = [];
+    for (const asset of collectAssets(config, assetsDir)) {
+        if (asset.kind !== 'rules') {
+            continue;
+        }
+        const path: string = join(root, companionPathOf(asset));
+        const existing: string | null = existsSync(path) ? readFileSync(path, 'utf8') : null;
+        found.push(unaddressedOf(asset.name, asset.text, existing));
+    }
+
+    const line: string | null = debtLine(found);
+    return line === null ? [] : [line, 'адрес статье дописывается в компаньоне рядом с правилом'];
+}
+
+/**
  * Отказ на устаревшей сборке. Раскладка из неё положила бы прежнюю редакцию ресурса и назвала
  * это сделанным: неправда дороже отказа — её замечают, когда правленое правило не действует.
  */
@@ -485,6 +507,7 @@ export function sync(env: IEnvironment, check: boolean): IOutcomeOfCommand {
                 ? [`разложено файлов: ${result.written.length}`, ...result.written.map((path: string): string => `  ${path}`)]
                 : ['всё уже разложено']),
             ...unboundLines(result),
+            ...debtLines(config, root, assetsDir),
             ...warnings(result),
         ],
     };
