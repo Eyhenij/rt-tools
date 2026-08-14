@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.8.1 · checks/board.github.mjs · 48b7efc4cf90 · правится надстройкой, не здесь
+// rt-kit v0.8.1 · checks/board.github.mjs · 80ef9a8a96f7 · правится надстройкой, не здесь
 /**
  * Общая работа с очередью работ: борда проекта, тикеты и их состояние.
  *
@@ -285,9 +285,45 @@ export function taskState(number, options) {
         onBoard: item !== undefined,
         status: item?.status ?? null,
         assigned: issue.assignees.length > 0,
+        assignees: issue.assignees.map((assignee) => assignee.login),
         numbered: numberFromTitle(issue.title) === issue.number,
         labels: issue.labels.map((label) => label.name),
     };
+}
+
+/**
+ * Ответ очереди работ о заведённой задаче, сложенный в строки, и приговор: обеспечена работа
+ * или нет.
+ *
+ * Отделено от вызовов сети намеренно. Заведение кончается не выводом команды, а ответом
+ * очереди, и решение о том, что напечатать и чем кончиться, — это то самое место, где
+ * шестнадцать задач подряд прошли как успешные, не попав в очередь ни одна. Внутри вызовов
+ * сети оно проверяется только живой бордой, то есть не проверяется никогда.
+ *
+ * `state` — то, что вернул `taskState`, либо `{ offline: <причина> }`, если спросить не удалось.
+ */
+export function describeTaskState(number, state) {
+    if (state?.offline) {
+        return {
+            ok: false,
+            lines: [`в очереди работ: спросить не удалось — ${state.offline}`, 'состояние очереди неизвестно, и заведённым это не считается'],
+        };
+    }
+    if (!state?.exists) {
+        return { ok: false, lines: [`задачи #${number} у хостинга нет — заведение не состоялось`] };
+    }
+    if (!state.onBoard) {
+        return {
+            ok: false,
+            lines: [`в очереди работ: НЕТ`, 'задача, которой нет в очереди, работой не обеспечена — по ней никто не придёт'],
+        };
+    }
+
+    const column = state.status ? `колонка «${state.status}»` : 'колонки нет';
+    if (!state.assigned) {
+        return { ok: false, lines: [`в очереди работ: ${column}, исполнителя нет`, 'ничья задача стоит в очереди невидимой для того, кто её делает'] };
+    }
+    return { ok: true, lines: [`в очереди работ: ${column}, исполнитель ${state.assignees.join(', ')}`] };
 }
 
 const isEntryPoint = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
