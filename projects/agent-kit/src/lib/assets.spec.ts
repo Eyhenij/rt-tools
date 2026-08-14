@@ -58,6 +58,10 @@ describe('исполняемые ресурсы пакета', (): void => {
         expectGreen('checks.test.sh');
     }, 120_000);
 
+    it('SC-AK-142, SC-AK-149 — гард единообразия берёт признаки у объявленных наборов', (): void => {
+        expectGreen('reuse-guard.test.sh');
+    }, 120_000);
+
     it('SC-AK-04 — текст правила не называет чужого дерева', (): void => {
         expectGreen('texts.test.sh');
     }, 120_000);

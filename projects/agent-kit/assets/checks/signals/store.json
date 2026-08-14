@@ -1,0 +1,14 @@
+{
+  "about": "Признаки пакета @rt-tools/store: своё хранилище состояния вместо базового.",
+  "signals": [
+    {
+      "key": "store-base",
+      "ext": ".service.ts",
+      "mode": "presence",
+      "scope": "whole",
+      "find": "new BehaviorSubject|private +readonly +state *=",
+      "cancel": "extends +Base(Async)?StoreService",
+      "instead": "BaseStoreService / BaseAsyncStoreService"
+    }
+  ]
+}
