@@ -4,7 +4,7 @@ kind: rule
 law: frontend-application
 description: Правило под «Закон о фронтовом приложении». Брать при правке любого *.component.ts и его шаблона. Называет порядок свойств декоратора, группировку импортов, договорённости шаблона и обязательный qa-dataid. Готовый код — в паттерне component-structure-new.
 ---
-<!-- rt-kit v0.7.0 · rules/component-structure.md · a414169a8d5f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.8.0 · rules/component-structure.md · a414169a8d5f · правится надстройкой, не здесь -->
 
 # Файл компонента — как это устроено здесь
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.7.0 · hooks/reuse-first-guard.sh · ff2282c1143c · правится надстройкой, не здесь
+# rt-kit v0.8.0 · hooks/reuse-first-guard.sh · ff2282c1143c · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file
 # Требует: hooks/profile-check.sh
 # Гард «ничего не пишется с нуля». PreToolUse на правке кода и разметки.
