@@ -89,6 +89,8 @@
         "@nestjs/common": "11.1.29",
         "@nestjs/core": "11.1.29",
         "@nestjs/platform-express": "11.1.29",
+        "@prisma/adapter-pg": "7.9.1",
+        "@prisma/client": "7.9.1",
         "ngx-image-cropper": "^9.1.6",
         "reflect-metadata": "0.2.2"
     },
@@ -172,6 +174,7 @@
         "postcss-url": "~10.1.4",
         "prettier": "^3.9.6",
         "prettier-plugin-organize-attributes": "^1.0.0",
+        "prisma": "7.9.1",
         "quill": "^2.0.3",
         "remark-gfm": "^4.0.1",
         "rimraf": "^6.1.3",

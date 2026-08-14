@@ -42,7 +42,11 @@
       "@rt/message-bus-api/postmortems/data-access": ["./libs/message-bus-api/postmortems/data-access/src/index.ts"],
       "@rt/message-bus-api/postmortems/feature": ["./libs/message-bus-api/postmortems/feature/src/index.ts"],
       "@rt/message-bus-api/postmortems/api": ["./libs/message-bus-api/postmortems/api/src/index.ts"],
-      "@rt/message-bus-common": ["./libs/message-bus-common/src/index.ts"]
+      "@rt/message-bus-common": ["./libs/message-bus-common/src/index.ts"],
+      "@rt/message-bus-api/persistence/util": ["./libs/message-bus-api/persistence/util/src/index.ts"],
+      "@rt/message-bus-api/persistence/data-access": ["./libs/message-bus-api/persistence/data-access/src/index.ts"],
+      "@rt/message-bus-api/persistence/feature": ["./libs/message-bus-api/persistence/feature/src/index.ts"],
+      "@rt/message-bus-api/persistence/api": ["./libs/message-bus-api/persistence/api/src/index.ts"]
     },
     "noUncheckedSideEffectImports": false,
     "ignoreDeprecations": "6.0"
