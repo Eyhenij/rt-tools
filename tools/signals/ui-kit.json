@@ -1,0 +1,12 @@
+# rt-kit v0.7.0 · checks/signals/ui-kit.json · c922c6a2547e · правится надстройкой, не здесь
+{
+  "about": "Признаки пакета @rt-tools/ui-kit: нативный контрол там, где кит везёт свой.",
+  "signals": [
+    { "key": "input", "ext": ".html", "find": "<input\\b", "instead": "rtui-dynamic-input / rtui-checkbox / rtui-toggle" },
+    { "key": "button", "ext": ".html", "find": "<button\\b", "instead": "rtui-button / rtui-multi-button" },
+    { "key": "table", "ext": ".html", "find": "<table\\b", "instead": "rtui-table / rtui-table-container" },
+    { "key": "dialog", "ext": ".html", "find": "<dialog\\b", "instead": "rtui-modal / rtui-aside-panel" },
+    { "key": "alert", "ext": ".html", "find": "role=\"alert\"", "instead": "rtui-snack-bar / rtui-info-badge" },
+    { "key": "spin", "ext": ".scss", "find": "@keyframes[^{]*(spin|rotate|loading)", "instead": "rtui-spinner" }
+  ]
+}

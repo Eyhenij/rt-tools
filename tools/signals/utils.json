@@ -1,0 +1,16 @@
+# rt-kit v0.7.0 · checks/signals/utils.json · 10715edb0684 · правится надстройкой, не здесь
+{
+  "about": "Признаки пакета @rt-tools/utils: основа перевода сущности и приведение типов.",
+  "signals": [
+    {
+      "key": "mapper-base",
+      "ext": ".mapper.ts",
+      "mode": "presence",
+      "scope": "whole",
+      "skipBackendRoots": true,
+      "find": "class +[A-Za-z0-9_]+Mapper",
+      "cancel": "extends +BaseMapper",
+      "instead": "BaseMapper и this.typeCast"
+    }
+  ]
+}

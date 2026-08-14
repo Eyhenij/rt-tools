@@ -1,0 +1,49 @@
+# rt-kit v0.7.0 · checks/signals/ui-kit-v2.json · 225bd5fe0bc5 · правится надстройкой, не здесь
+{
+  "about": "Признаки пакета @rt-tools/ui-kit-v2: нативный контрол там, где кит везёт свой.",
+  "signals": [
+    { "key": "input", "ext": ".html", "find": "<input\\b", "instead": "rt-input / rt-input-number / rt-file-input / rt-checkbox" },
+    { "key": "textarea", "ext": ".html", "find": "<textarea\\b", "instead": "rt-textarea" },
+    { "key": "select", "ext": ".html", "find": "<select\\b", "instead": "rt-select / rt-multiselect" },
+    {
+      "key": "button",
+      "ext": ".html",
+      "strip": "<button\\b[^>]*rtButton[^>]*>",
+      "find": "<button\\b",
+      "instead": "button[rtButton] / rt-icon-button / rt-split-button"
+    },
+    { "key": "table", "ext": ".html", "find": "<table\\b", "instead": "rt-table" },
+    { "key": "dialog", "ext": ".html", "find": "<dialog\\b", "instead": "rt-dialog" },
+    { "key": "alert", "ext": ".html", "find": "role=\"alert\"", "instead": "rt-message / rt-toast" },
+    {
+      "key": "overlay-inset",
+      "ext": ".scss",
+      "mode": "presence",
+      "find": "position: *fixed",
+      "all": ["inset: *0"],
+      "instead": "rt-dialog / rt-aside / rt-bottom-sheet"
+    },
+    {
+      "key": "overlay-sides",
+      "ext": ".scss",
+      "mode": "presence",
+      "find": "position: *fixed",
+      "all": ["(^|[^-])top: *0", "left: *0", "right: *0", "bottom: *0"],
+      "instead": "rt-dialog / rt-aside / rt-bottom-sheet"
+    },
+    {
+      "key": "backdrop",
+      "ext": ".scss",
+      "find": "backdrop-filter|background(-color)?: *(rgba\\( *0 *, *0 *, *0|rgb\\( *0 +0 +0)",
+      "instead": "подложку рисует rt-dialog"
+    },
+    { "key": "z-index", "ext": ".scss", "find": "z-index: *\\d{4,}", "instead": "слой перекрытий кита уже выше" },
+    { "key": "spin", "ext": ".scss", "find": "@keyframes[^{]*(spin|rotate|loading)", "instead": "rt-spinner" },
+    {
+      "key": "shimmer",
+      "ext": ".scss",
+      "find": "@keyframes[^{]*(shimmer|skeleton|pulse)",
+      "instead": "rt-skeleton / rt-skeleton-wrapper"
+    }
+  ]
+}

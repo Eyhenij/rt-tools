@@ -1,0 +1,23 @@
+{
+    "about": "Признаки этого дерева: то, что здесь считается обходом готового сверх наборов пакета.",
+    "signals": [
+        {
+            "key": "foreign-runner",
+            "ext": ".ts",
+            "find": "from '(vitest|@vitest)",
+            "instead": "describe/it/expect из @types/jest — прогонщик здесь один"
+        },
+        {
+            "key": "relative-package",
+            "ext": ".ts",
+            "find": "from '\\.\\./\\.\\./\\.\\./(core|store|utils)",
+            "instead": "алиас пакета: @rt-tools/core, @rt-tools/store, @rt-tools/utils"
+        },
+        {
+            "key": "decorator-io",
+            "ext": ".ts",
+            "find": "@(Input|Output|ViewChild|ViewChildren|ContentChild)\\(",
+            "instead": "input(), output(), viewChild(), contentChild() — реактивный вход и выход"
+        }
+    ]
+}

@@ -1,0 +1,141 @@
+#!/usr/bin/env bash
+# Сценарии гарда единообразия: откуда он берёт признаки и что с ними делает.
+#
+# Набора у гарда не было вовсе, и это дорого стоило: он читал четыре поля, а все профили печатали
+# два, поэтому в любом дереве он выходил молча и выглядел работающим. Здесь проверяется механика —
+# объявленные наборы, свои признаки дерева, область признака, пустое поле и дерево без признаков.
+. "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
+
+echo "гард единообразия"
+
+TREE="$(fixture_tree)"
+export CLAUDE_PROJECT_DIR="$TREE"
+mkdir -p "$TREE/tools/signals" "$TREE/src"
+cleanup() { rm -rf "$TREE"; }
+trap cleanup EXIT
+
+# Профиль дерева: гард без него выходит молча — инвентарь дерева пакет знать не может.
+cat > "$TREE/.claude/rt-kit/project.sh" <<'PROFILE'
+rt_reinvented_in() { :; }
+rt_is_app_code() { return 0; }
+PROFILE
+
+declare_bundles() {
+    cat > "$TREE/.claude/rt-kit/checks.json" <<JSON
+{ "reuse": { "bundles": [$1], "signals": "$2" } }
+JSON
+}
+
+cat > "$TREE/tools/signals/kit.json" <<'JSON'
+{
+    "signals": [
+        { "key": "input", "ext": ".html", "find": "<input\\b", "instead": "готовое поле кита" },
+        {
+            "key": "control-base",
+            "ext": ".component.ts",
+            "scope": "whole",
+            "find": "ControlValueAccessor",
+            "cancel": "extends +KitControlBase",
+            "instead": "KitControlBase"
+        }
+    ]
+}
+JSON
+
+cat > "$TREE/tools/signals/other.json" <<'JSON'
+{ "signals": [{ "key": "table", "ext": ".html", "find": "<table\\b", "instead": "готовая таблица второго кита" }] }
+JSON
+
+cat > "$TREE/.claude/rt-kit/signals.json" <<'JSON'
+{
+    "signals": [
+        { "key": "own", "ext": ".ts", "find": "console\\.log", "instead": "журнал дерева" },
+        { "key": "input", "ext": ".html", "find": "<input\\b", "instead": "поле именно этого дерева" }
+    ]
+}
+JSON
+
+write_input() {
+    jq -n --arg path "$TREE/$1" --arg text "$2" \
+        '{tool_name:"Write",tool_input:{file_path:$path,content:$text}}'
+}
+
+# SC-AK-142 — объявлен один набор из двух: признаки второго не применяются вовсе.
+declare_bundles '"kit"' ''
+expect_decision "SC-AK-142 — признак объявленного набора отбивает" reuse-first-guard.sh \
+    "$(write_input 'src/a.html' '<input type="text">')" deny
+expect_decision "SC-AK-142 — признак необъявленного набора молчит" reuse-first-guard.sh \
+    "$(write_input 'src/b.html' '<table></table>')" PASS
+
+declare_bundles '"kit", "other"' ''
+expect_decision "SC-AK-142 — объявленный вторым набор работает" reuse-first-guard.sh \
+    "$(write_input 'src/c.html' '<table></table>')" deny
+
+# SC-AK-143 — гард называет то же готовое, что стоит в наборе: список у него и у сплошной сверки один.
+declare_bundles '"kit"' ''
+expect_reason "SC-AK-143 — назван совет из набора" reuse-first-guard.sh \
+    "$(write_input 'src/d.html' '<input>')" 'готовое поле кита'
+
+# SC-AK-144, SC-AK-145 — свои признаки дерева: новый ключ дописывается, занятый замещает пакетный.
+declare_bundles '"kit"' '.claude/rt-kit/signals.json'
+expect_reason "SC-AK-144 — свой признак дерева применяется" reuse-first-guard.sh \
+    "$(write_input 'src/e.ts' 'console.log(1);')" 'журнал дерева'
+expect_reason "SC-AK-145 — свой признак замещает пакетный по ключу" reuse-first-guard.sh \
+    "$(write_input 'src/f.html' '<input>')" 'поле именно этого дерева'
+
+# SC-AK-147 — область «файл целиком»: правка приносит строку без объявления класса, признак судит файл.
+declare_bundles '"kit"' ''
+printf 'export class FooComponent implements ControlValueAccessor {}\n' > "$TREE/src/g.component.ts"
+expect_decision "SC-AK-147 — признак области «файл целиком» видит содержимое файла" reuse-first-guard.sh \
+    "$(write_input 'src/g.component.ts' '    writeValue(): void {}')" deny
+
+printf 'export class BarComponent extends KitControlBase implements ControlValueAccessor {}\n' > "$TREE/src/h.component.ts"
+expect_decision "SC-AK-147 — отмена признака гасит его" reuse-first-guard.sh \
+    "$(write_input 'src/h.component.ts' '    writeValue(): void {}')" PASS
+
+# SC-AK-148 — пустое поле не съезжает в соседнее: у профиля четыре колонки, третья пуста.
+cat > "$TREE/.claude/rt-kit/project.sh" <<'PROFILE'
+rt_reinvented_in() {
+    case "$1" in
+        *.ts) printf '%s\t%s\t%s\t%s\n' 'added' '@Input\(' '' 'реактивный вход' ;;
+    esac
+}
+rt_is_app_code() { return 0; }
+PROFILE
+expect_reason "SC-AK-148 — совет при пустой отмене остаётся советом" reuse-first-guard.sh \
+    "$(write_input 'src/i.ts' '@Input() name = 1;')" 'реактивный вход'
+
+# SC-AK-149 — дерево без признаков: правка проходит, но молчания нет.
+BARE="$(fixture_tree)"
+cat > "$BARE/.claude/rt-kit/project.sh" <<'PROFILE'
+rt_reinvented_in() { :; }
+rt_is_app_code() { return 0; }
+PROFILE
+mkdir -p "$BARE/src"
+said="$(jq -n --arg path "$BARE/src/a.html" --arg text '<input>' \
+    '{tool_name:"Write",tool_input:{file_path:$path,content:$text}}' \
+    | CLAUDE_PROJECT_DIR="$BARE" "$HOOKS/reuse-first-guard.sh" 2>&1 >/dev/null)"
+case "$said" in
+    *reuse.bundles*) report "SC-AK-149 — дерево без признаков слышит, чем они объявляются" есть есть ;;
+    *) report "SC-AK-149 — дерево без признаков слышит, чем они объявляются" "нет" есть ;;
+esac
+CLAUDE_PROJECT_DIR="$BARE" expect_decision "SC-AK-149 — и правку при этом не отбивает" reuse-first-guard.sh \
+    "$(jq -n --arg path "$BARE/src/a.html" --arg text '<input>' '{tool_name:"Write",tool_input:{file_path:$path,content:$text}}')" PASS
+rm -rf "$BARE"
+
+# SC-AK-150 — набор, которого при пакете нет: сплошная сверка отказывает и перечисляет, что есть.
+said="$(node --input-type=module -e "
+import { loadSignals } from '$CHECKS/signals.mjs';
+try {
+    loadSignals({ bundles: ['нетакого'] }, '$TREE');
+    console.log('без отказа');
+} catch (error) {
+    console.log(error.message);
+}
+" 2>&1)"
+case "$said" in
+    *'не найден'*'есть:'*) report "SC-AK-150 — неизвестный набор назван вместе с теми, что есть" есть есть ;;
+    *) report "SC-AK-150 — неизвестный набор назван вместе с теми, что есть" "$said" есть ;;
+esac
+
+suite_result "гард единообразия"
