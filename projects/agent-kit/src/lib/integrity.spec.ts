@@ -5,7 +5,7 @@
 import { join } from 'node:path';
 
 import { IEntryOfCatalog, readCatalog } from './catalog.js';
-import { brokenLinks, frontMatterOf, IBrokenLink } from './integrity.js';
+import { ambiguousNames, brokenLinks, frontMatterOf, IAmbiguousName, IBrokenLink } from './integrity.js';
 
 const ASSETS: string = join(__dirname, '..', '..', 'assets');
 
@@ -34,7 +34,7 @@ describe('brokenLinks', () => {
         expect(broken.map((one: IBrokenLink): string => `${one.id} → ${one.field}: ${one.wanted}`)).toEqual([]);
     });
 
-    it('находит правило под несуществующим законом', () => {
+    it('SC-AK-127 — находит правило под несуществующим законом', () => {
         const catalog: readonly IEntryOfCatalog[] = [
             {
                 id: 'rules/x.md',
@@ -70,5 +70,52 @@ describe('brokenLinks', () => {
         ];
 
         expect(brokenLinks(catalog)).toEqual([]);
+    });
+});
+
+describe('ambiguousNames', () => {
+    it('в наборе пакета одноимённых ресурсов одного рода нет', () => {
+        const ambiguous: readonly IAmbiguousName[] = ambiguousNames(readCatalog(ASSETS));
+
+        expect(ambiguous.map((one: IAmbiguousName): string => `${one.kind}: ${one.name} — ${one.ids.join(', ')}`)).toEqual([]);
+    });
+
+    it('SC-AK-141 — два закона с одинаковым последним звеном имени названы оба', () => {
+        const catalog: readonly IEntryOfCatalog[] = [
+            { id: 'laws/access.md', kind: 'laws', name: 'access', title: 'Доступ', variant: null, text: '# Доступ\n' },
+            {
+                id: 'laws/application/access.md',
+                kind: 'laws',
+                name: 'application/access',
+                title: 'Доступ приложения',
+                variant: null,
+                text: '# Доступ приложения\n',
+            },
+        ];
+
+        expect(ambiguousNames(catalog)).toEqual([{ kind: 'laws', name: 'access', ids: ['laws/access.md', 'laws/application/access.md'] }]);
+    });
+
+    it('виды одного ресурса двусмысленными не считаются', () => {
+        const catalog: readonly IEntryOfCatalog[] = [
+            {
+                id: 'rules/git-workflow.github.md',
+                kind: 'rules',
+                name: 'git-workflow',
+                title: 'Поставка',
+                variant: { axis: 'forge', value: 'github' },
+                text: '# Поставка\n',
+            },
+            {
+                id: 'rules/git-workflow.gitlab.md',
+                kind: 'rules',
+                name: 'git-workflow',
+                title: 'Поставка',
+                variant: { axis: 'forge', value: 'gitlab' },
+                text: '# Поставка\n',
+            },
+        ];
+
+        expect(ambiguousNames(catalog)).toEqual([]);
     });
 });

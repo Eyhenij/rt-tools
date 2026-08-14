@@ -16,6 +16,7 @@ import {
     IIdleSkip,
     isChosen,
     ISelection,
+    namedButCut,
     requiresOf,
     resolveSelection,
     titleOf,
@@ -200,6 +201,13 @@ describe('brokenLinks', () => {
         expect(brokenLinks(CATALOG_OF_TWO, picked())).toEqual([]);
     });
 
+    it('SC-AK-136 — связь, порванную каскадом, вторым предупреждением не называют', () => {
+        const pricing: IEntryOfCatalog = { ...entry('rules', 'pricing'), text: '---\nname: pricing\nkind: rules\nlaw: money\n---\n' };
+        const asking: IEntryOfCatalog = needing('patterns', 'quote', [pricing.id]);
+
+        expect(brokenLinks([ACCESS, MONEY, pricing, asking], picked([], [MONEY.id]))).toEqual([]);
+    });
+
     it('требование невзятого ресурса не считается: его в дереве нет вовсе', () => {
         expect(brokenLinks(CATALOG_OF_TWO, picked([], [PATTERN.id, HOOK.id]))).toEqual([]);
     });
@@ -271,6 +279,19 @@ describe('cascadeCuts', () => {
 
     it('паттерн при точечно отвергнутом правиле снят родителем, а не корнем чужой цепочки', () => {
         expect(cascadeCuts(FULL, picked([], [PRICING.id]))).toEqual([{ id: QUOTE.id, parent: 'pricing', root: 'pricing' }]);
+    });
+});
+
+describe('namedButCut', () => {
+    const PRICING: IEntryOfCatalog = { ...entry('rules', 'pricing'), text: '---\nname: pricing\nkind: rules\nlaw: money\n---\n' };
+    const FULL: readonly IEntryOfCatalog[] = [ACCESS, MONEY, RULE, PRICING];
+
+    it('SC-AK-134 — выбор, который после каскада ничего не берёт, называется вслух', () => {
+        expect(namedButCut(FULL, picked([ACCESS.id, PRICING.id]))).toEqual([{ id: PRICING.id, parent: 'money', root: 'money' }]);
+    });
+
+    it('снятое каскадом, но выбором не названное, здесь не считается', () => {
+        expect(namedButCut(FULL, picked([], [MONEY.id]))).toEqual([]);
     });
 });
 
