@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.7.0 · hooks/reuse-first-guard.sh · 76a986695cd2 · правится надстройкой, не здесь
+# rt-kit v0.8.1 · hooks/reuse-first-guard.sh · ff2282c1143c · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file
 # Требует: hooks/profile-check.sh
 # Гард «ничего не пишется с нуля». PreToolUse на правке кода и разметки.
@@ -133,8 +133,90 @@ has_re() {
     printf '%s' "$1" | RT_RE="$2" perl -0777 -ne 'exit(/$ENV{RT_RE}/s ? 0 : 1)' 2>/dev/null
 }
 
+# Что дерево объявило своим: наборы признаков и файл собственных. Настройка проверок — та же,
+# что читает сплошная проверка; каталог наборов называет профиль дерева, потому что раскладка
+# проверок у каждого дерева своя.
+rt_checks_json="${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/checks.json"
+rt_bundles=''
+rt_own_signals=''
+if [ -f "$rt_checks_json" ]; then
+    rt_bundles="$(jq -r '.reuse.bundles[]? // empty' "$rt_checks_json" 2>/dev/null | tr '\n' ' ')"
+    own="$(jq -r '.reuse.signals // empty' "$rt_checks_json" 2>/dev/null)"
+    [ -n "$own" ] && rt_own_signals="${CLAUDE_PROJECT_DIR:-.}/$own"
+fi
+rt_signals_dir="${CLAUDE_PROJECT_DIR:-.}/${RT_REUSE_SIGNALS_DIR:-tools/signals}"
+
+# Признаки объявленных наборов: те же файлы читает сплошная проверка. Ключ признака совпал с
+# ключом дерева — побеждает дерево: оно видит своё готовое, а пакет его не видел.
+signals_json() {
+    [ -n "$rt_signals_dir" ] || return 0
+    [ -d "$rt_signals_dir" ] || return 0
+    # Шапка раскладки снимается до разбора: в JSON комментария нет, и с ней разбор падает.
+    for name in $rt_bundles; do
+        file="$rt_signals_dir/$name.json"
+        [ -f "$file" ] && grep -v '^# rt-kit ' "$file" | jq -c '.signals[]?' 2>/dev/null
+    done
+    [ -n "$rt_own_signals" ] && [ -f "$rt_own_signals" ] && grep -v '^# rt-kit ' "$rt_own_signals" | jq -c '.signals[]?' 2>/dev/null
+}
+
+# Поля читаются по одному, а не разбором строки: таб в `IFS` — пробельный разделитель, и пустое
+# поле в середине схлопывается, из-за чего совет уезжает в образец отмены и гасит признак молча.
+field() { printf '%s' "$1" | jq -r "$2 // empty" 2>/dev/null; }
+
 found=''
-while IFS="$(printf '\t')" read -r scope pattern cancel replacement; do
+signals_seen=0
+while IFS= read -r signal; do
+    [ -z "$signal" ] && continue
+    signals_seen=1
+    ext="$(field "$signal" '.ext')"
+    case "$ext" in
+        '') ;;
+        *) case "$path" in *"$ext") ;; *) continue ;; esac ;;
+    esac
+    only_named="$(field "$signal" '.onlyNamed')"
+    if [ -n "$only_named" ]; then
+        printf '%s' "${path##*/}" | grep -qE "$only_named" || continue
+    fi
+
+    case "$(field "$signal" '.scope')" in
+        whole) text="$whole" ;;
+        *) text="$added" ;;
+    esac
+
+    pattern="$(field "$signal" '.find')"
+    [ -z "$pattern" ] && continue
+    strip="$(field "$signal" '.strip')"
+    [ -n "$strip" ] && text="$(printf '%s' "$text" | RT_RE="$strip" perl -0777 -pe 's/$ENV{RT_RE}//gs' 2>/dev/null)"
+
+    has_re "$text" "$pattern" || continue
+
+    cancel="$(field "$signal" '.cancel')"
+    [ -n "$cancel" ] && has_re "$text" "$cancel" && continue
+
+    skip_signal=''
+    while IFS= read -r one; do
+        [ -z "$one" ] && continue
+        has_re "$text" "$one" || skip_signal=1
+    done <<ALL
+$(printf '%s' "$signal" | jq -r '.all[]? // empty' 2>/dev/null)
+ALL
+    [ -n "$skip_signal" ] && continue
+
+    found="${found}
+  - $(field "$signal" '.instead')"
+done <<EOF
+$(signals_json | jq -s -c 'reduce .[] as $one ({}; .[$one.key] = $one) | .[]' 2>/dev/null)
+EOF
+
+# Функция профиля остаётся вторым источником: деревья её уже написали. Поля читаются построчно,
+# по тем же четырём колонкам, что объявлены выше.
+while IFS= read -r line; do
+    [ -z "$line" ] && continue
+    signals_seen=1
+    scope="$(printf '%s' "$line" | cut -f1)"
+    pattern="$(printf '%s' "$line" | cut -f2)"
+    cancel="$(printf '%s' "$line" | cut -f3)"
+    replacement="$(printf '%s' "$line" | cut -f4)"
     [ -z "$pattern" ] && continue
     case "$scope" in
         whole) text="$whole" ;;
@@ -147,6 +229,13 @@ while IFS="$(printf '\t')" read -r scope pattern cancel replacement; do
 done <<EOF
 $(rt_reinvented_in "$path" 2>/dev/null)
 EOF
+
+# Гард без единого признака неотличим от гарда, которому нечего отбивать. Правку он пропускает —
+# останавливать работу за ненастроенное дерево не за что, — но говорит, чем это настраивается.
+if [ "$signals_seen" = 0 ]; then
+    printf '%s\n' 'reuse-first-guard: признаков нет — объявите наборы ключом `reuse.bundles` в настройке проверок' >&2
+    exit 0
+fi
 
 [ -z "$found" ] && exit 0
 

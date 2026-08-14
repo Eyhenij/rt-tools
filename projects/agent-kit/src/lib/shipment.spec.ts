@@ -126,25 +126,25 @@ describe('признак дерева', () => {
 describe('снимок надстроек', () => {
     const packaged: string = ['# Правило', '', '## Первый', '', 'Пакетный текст.', '', '## Второй', '', 'И этот.'].join('\n');
 
-    it('SC-AK-119 — замещённый раздел пакета назван в снимке по имени', () => {
+    it('SC-AK-152 — замещённый раздел пакета назван в снимке по имени', () => {
         const found: readonly ICargoOverride[] = overridesOf('rules/probe.md', packaged, '## Первый\n\nСвой текст.');
 
         expect(found).toEqual([{ resource: 'rules/probe.md', section: '## Первый', kind: 'replace' }]);
     });
 
-    it('SC-AK-120 — свой раздел уезжает родом правки, а его заголовок — нет', () => {
+    it('SC-AK-153 — свой раздел уезжает родом правки, а его заголовок — нет', () => {
         const found: readonly ICargoOverride[] = overridesOf('rules/probe.md', packaged, '## Про свой домен\n\nСвой текст.');
 
         expect(found).toEqual([{ resource: 'rules/probe.md', section: null, kind: 'append' }]);
     });
 
-    it('SC-AK-122 — содержимое надстройки в снимок не попадает', () => {
+    it('SC-AK-155 — содержимое надстройки в снимок не попадает', () => {
         const found: readonly ICargoOverride[] = overridesOf('rules/probe.md', packaged, '## Первый\n\nСекрет дерева.');
 
         expect(JSON.stringify(found)).not.toContain('Секрет');
     });
 
-    it('SC-AK-119 — снятый раздел отличается от замещённого родом правки', () => {
+    it('SC-AK-152 — снятый раздел отличается от замещённого родом правки', () => {
         const found: readonly ICargoOverride[] = overridesOf('rules/probe.md', packaged, '## Второй\n');
 
         expect(found).toEqual([{ resource: 'rules/probe.md', section: '## Второй', kind: 'drop' }]);
@@ -173,7 +173,7 @@ describe('разборы происшествий', () => {
 });
 
 describe('propose', () => {
-    it('SC-AK-134 — выключенная запись наблюдений отправку не начинает', async () => {
+    it('SC-AK-167 — выключенная запись наблюдений отправку не начинает', async () => {
         start({ observe: false });
 
         const outcome: IOutcomeOfCommand = await shipping();
@@ -183,7 +183,7 @@ describe('propose', () => {
         expect(sent).toHaveLength(0);
     });
 
-    it('SC-AK-132 — без адреса приёма отправка отказывает и называет, где он объявляется', async () => {
+    it('SC-AK-165 — без адреса приёма отправка отказывает и называет, где он объявляется', async () => {
         start({ intake: '' });
 
         const outcome: IOutcomeOfCommand = await shipping();
@@ -193,7 +193,7 @@ describe('propose', () => {
         expect(sent).toHaveLength(0);
     });
 
-    it('SC-AK-133 — без токена дерева не уезжает ничего', async () => {
+    it('SC-AK-166 — без токена дерева не уезжает ничего', async () => {
         start({ token: 'нет-такого-файла' });
 
         const outcome: IOutcomeOfCommand = await shipping();
@@ -203,7 +203,7 @@ describe('propose', () => {
         expect(sent).toHaveLength(0);
     });
 
-    it('SC-AK-133 — отозванный токен отбивает отправку, и отказ называет адрес и род груза', async () => {
+    it('SC-AK-166 — отозванный токен отбивает отправку, и отказ называет адрес и род груза', async () => {
         start();
 
         const outcome: IOutcomeOfCommand = await shipping(refusing(TOKEN_REFUSED, 'токен не принят'));
@@ -215,7 +215,7 @@ describe('propose', () => {
         expect(said(outcome)).toContain('выдай новый командой приёма');
     });
 
-    it('SC-AK-129 — прогон без предложений отправляет груз и выходит нулём', async () => {
+    it('SC-AK-162 — прогон без предложений отправляет груз и выходит нулём', async () => {
         start();
 
         const outcome: IOutcomeOfCommand = await shipping();
@@ -225,7 +225,7 @@ describe('propose', () => {
         expect(summarySent().tree).toBe(treeSlugOf(REMOTE, ''));
     });
 
-    it('SC-AK-121 — невыбранный ресурс виден в снимке отдельно от надстроенного', async () => {
+    it('SC-AK-154 — невыбранный ресурс виден в снимке отдельно от надстроенного', async () => {
         start({ skip: ['rules/testing.md'] });
 
         await shipping();
@@ -234,7 +234,7 @@ describe('propose', () => {
         expect(summarySent().overrides).toEqual([]);
     });
 
-    it('SC-AK-119 — надстройка дерева уезжает вместе со сводкой', async () => {
+    it('SC-AK-152 — надстройка дерева уезжает вместе со сводкой', async () => {
         start();
         put(`${OVERRIDES_DIR}/rules/testing.md`, '## Ловушки\n\nСвой текст про ловушки.');
 
@@ -266,7 +266,7 @@ describe('propose', () => {
         expect(sent).toHaveLength(0);
     });
 
-    it('SC-AK-130 — адрес дерева в сводке отбивает отправку целиком', () => {
+    it('SC-AK-163 — адрес дерева в сводке отбивает отправку целиком', () => {
         // Проверка зовётся на собранной сводке: пройти в неё адресу дерева сегодня неоткуда —
         // счётчики отобраны по именам пакета, — и подложенное значение показывает, что проверка
         // видит именно сводку, а не одни тексты предложений.
@@ -309,7 +309,7 @@ describe('propose', () => {
         expect(summarySent().total).toBe(2);
     });
 
-    it('SC-AK-131 — второй прогон месяца называет месяц и то, что запись дописана', async () => {
+    it('SC-AK-164 — второй прогон месяца называет месяц и то, что запись дописана', async () => {
         start();
 
         const first: IOutcomeOfCommand = await shipping(accepting(true));
@@ -345,7 +345,7 @@ describe('propose', () => {
         expect(cargo.items[0].text).toContain('Промах случился');
     });
 
-    it('SC-AK-130 — проверка на адрес дерева разбор происшествия не накрывает', async () => {
+    it('SC-AK-163 — проверка на адрес дерева разбор происшествия не накрывает', async () => {
         start();
         put('docs/postmortems/2026-08-14-промах.md', '# Разбор\n\nПромах в /Users/probe/tree/apps/site.');
 
