@@ -22,7 +22,6 @@
     "laws/entity-models.md",
     "laws/lists.md",
     "laws/navigation.md",
-    "laws/observability.md",
     "laws/shared-code.md",
     "patterns/browser-verification-stand.md",
     "patterns/git-workflow-migration.md",
