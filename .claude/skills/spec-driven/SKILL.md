@@ -4,7 +4,7 @@ kind: rule
 law: project-documentation
 description: Правило под «Закон о документации проекта». Брать при правке docs/specs/**, docs/constitution/** и любого скила в .claude/skills. Называет три слоя — закон, правило, паттерн, — обязательные разделы, привязку к коду и связь сценариев с тестами. Готовый порядок действий — в паттернах spec-driven-domain и spec-driven-rule.
 ---
-<!-- rt-kit v0.8.0 · rules/spec-driven.md · e7650dcfda20 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.8.1 · rules/spec-driven.md · e7650dcfda20 · правится надстройкой, не здесь -->
 
 # Документация проекта — как это устроено здесь
 
