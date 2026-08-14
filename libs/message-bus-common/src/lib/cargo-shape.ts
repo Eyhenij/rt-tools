@@ -1,0 +1,58 @@
+/**
+ * Разбор формы приехавшего груза: что в теле запроса есть, а чего в нём нет.
+ *
+ * Живёт рядом с самими типами груза, потому что голова у всех трёх родов одна — версия схемы и
+ * признак дерева, — и вторая копия этой проверки разошлась бы с первой в тексте отказа. Форму
+ * своего рода каждый домен проверяет сам: роды устроены по-разному, и общая проверка «принять
+ * что-нибудь» перекладывала бы разбор формы на того, кто её зовёт.
+ *
+ * Приёмник судит наличие полей, а не их содержимое: счётчики и снимок надстроек он хранит как
+ * приехали. Знай он поля наизусть, он отказывал бы на каждой правке отправляющей стороны.
+ */
+
+/** Тело запроса до разбора: приехало снаружи, и формы у него пока нет никакой. */
+export type TCargoBody = Record<string, unknown>;
+
+/** Читается ли тело запроса как набор полей вовсе. Список и строка — не груз. */
+export function isCargoBody(body: unknown): body is TCargoBody {
+    return typeof body === 'object' && body !== null && !Array.isArray(body);
+}
+
+/**
+ * Версия схемы груза, названная запросом. Пусто — не названа: без неё разбирать запрос нечем, и
+ * приём отказывает отдельно от прочих полей.
+ */
+export function cargoSchemaOf(body: TCargoBody): string {
+    const schema: unknown = body['schema'];
+
+    return typeof schema === 'string' ? schema.trim() : '';
+}
+
+/** Признак дерева, названный грузом. Сверяется с деревом токена, а не берётся на веру. */
+export function cargoTreeOf(body: TCargoBody): string {
+    const tree: unknown = body['tree'];
+
+    return typeof tree === 'string' ? tree.trim() : '';
+}
+
+/**
+ * Названные поля, которых в грузе нет. Пусто — форма сошлась.
+ *
+ * Пустая строка, пустой список и пустой объект полем считаются: месяц без единого наблюдения
+ * законен, и сводка с нулевыми счётчиками — это принятый груз, а не недостача. Не считается
+ * только отсутствие поля и явная пустота на его месте.
+ */
+export function missingCargoFields(body: TCargoBody, fields: readonly string[]): string[] {
+    return fields.filter((field: string): boolean => body[field] === undefined || body[field] === null);
+}
+
+/** Список записей груза: предложения и разборы приезжают ими. */
+export function cargoItemsOf(body: TCargoBody): TCargoBody[] | null {
+    const items: unknown = body['items'];
+
+    if (!Array.isArray(items) || !items.every(isCargoBody)) {
+        return null;
+    }
+
+    return items;
+}
