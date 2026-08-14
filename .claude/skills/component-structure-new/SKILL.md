@@ -4,7 +4,7 @@ kind: pattern
 rule: component-structure
 description: Паттерн правила component-structure. Брать при заведении или правке *.component.ts — готовый декоратор с порядком свойств, группировка импортов, раскладка полей класса, договорённости шаблона и qa-dataid. Не брать для состояния и потоков — это паттерн angular-patterns-state.
 ---
-<!-- rt-kit v0.5.3 · patterns/component-structure-new.md · 667a00b0fdd9 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.6.0 · patterns/component-structure-new.md · 667a00b0fdd9 · правится надстройкой, не здесь -->
 
 # Файл компонента
 
