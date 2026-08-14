@@ -1,3 +1,9 @@
+## [0.8.1](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.8.0...rt-agent-kit@0.8.1) (2026-08-14)
+
+### Bug Fixes
+
+- **rt:agent-kit:** маркер отступления снимает свою строку и следующую ([918103c](https://github.com/Eyhenij/rt-tools/commit/918103c3dd6e6a7059e05a19c656095bc4edbb67))
+
 # [0.8.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.7.0...rt-agent-kit@0.8.0) (2026-08-14)
 
 ### Features
