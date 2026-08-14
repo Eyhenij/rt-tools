@@ -350,6 +350,17 @@ export function cascadeCuts(catalog: readonly IEntryOfCatalog[], selection: ISel
 }
 
 /**
+ * Ресурсы, названные выбором поимённо и всё равно снятые каскадом.
+ *
+ * Дерево, назвавшее правило в выборе при невыбранном законе, не получает его молча — то самое
+ * молчание, ради которого каскад и заводится, только с другой стороны: там о снятии не знал тот,
+ * кто ничего не просил, здесь — тот, кто попросил прямо.
+ */
+export function namedButCut(catalog: readonly IEntryOfCatalog[], selection: ISelection): readonly ICascadeCut[] {
+    return cascadeCuts(catalog, selection).filter((one: ICascadeCut): boolean => selection.only.includes(one.id));
+}
+
+/**
  * Что ложится в дерево: прямой отбор за вычетом снятого каскадом.
  *
  * Отдельной функцией, а не внутри `isChosen`, потому что каскад знает весь каталог, а отбор —

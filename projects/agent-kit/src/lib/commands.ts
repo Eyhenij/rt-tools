@@ -27,7 +27,7 @@ import { DEFAULT_DAYS, ICount, IReadResult, ISummary, KEEP_DAYS, OBSERVATIONS_DI
 import { IPlanned, isRefusal, TOutcome } from './plan.js';
 import { ILeak, IProposal, leaksIn, markSent, marksOf, PROPOSALS_DIR, readProposals, TO_PACKAGE } from './proposals.js';
 import { FEEDBACK_LABEL, TSubmit } from './submit.js';
-import { IRetiredFound, ISyncResult, pendingOf, planSync, runSync } from './sync.js';
+import { ICutFound, IRetiredFound, ISyncResult, pendingOf, planSync, runSync } from './sync.js';
 import { placeholdersOf } from './vars.js';
 import { IAxis, IOptionOfAxis, readAxes, unansweredAxes } from './variants.js';
 
@@ -279,6 +279,38 @@ const idleLines: (result: ISyncResult) => string[] = (result: ISyncResult): stri
         : [];
 
 /**
+ * Разложенное раньше, а теперь снятое каскадом.
+ *
+ * Отдельно от брошенного: от брошенного дерево отказалось само и знает, где искать причину, а
+ * снятое каскадом ушло вслед за родителем — в отказе его имени нет и не будет.
+ */
+const cutOnDiskLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] =>
+    result.cutOnDisk.length
+        ? [
+              `лежит от ресурсов, снятых вслед за родителем: ${result.cutOnDisk.length}`,
+              ...result.cutOnDisk.map(
+                  (one: ICutFound): string => `  ${one.path} — снят вслед за ${one.cut.parent}, отвергнут ${one.cut.root}`
+              ),
+              '  их не стирает никто: убирать вручную, как и брошенные',
+          ]
+        : [];
+
+/**
+ * Названное выбором, чего дерево всё равно не получит.
+ *
+ * Молчать здесь нельзя вдвойне: дерево не просто осталось без ресурса — оно попросило его
+ * поимённо и прочло бы отсутствие как промах раскладки.
+ */
+const namedCutLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] =>
+    result.namedCut.length
+        ? [
+              `названо выбором, но не приедет: ${result.namedCut.length}`,
+              ...result.namedCut.map((one: ICascadeCut): string => `  ${one.id} — снято вслед за ${one.parent}, отвергнут ${one.root}`),
+              '  это предупреждение, а не отказ: возьми родителя в выбор либо убери потомка из него',
+          ]
+        : [];
+
+/**
  * Файлы ресурсов, ушедших из набора.
  *
  * Названы отдельно от брошенных: брошенный ресурс в наборе есть и вернётся, если дерево его
@@ -294,16 +326,29 @@ const retiredLines: (result: ISyncResult) => string[] = (result: ISyncResult): s
           ]
         : [];
 
+/**
+ * Предупреждения раскладки: кода возврата они не меняют и печатаются на любом её исходе.
+ *
+ * Иначе их не видит никто: на сошедшемся дереве проверка молчит, а удавшаяся раскладка называет
+ * положенные файлы — и лишняя строка отказа, снятый каскадом файл и ушедший из набора ресурс
+ * всплывали бы только там, где и без них уже красно.
+ */
+const warnings: (result: ISyncResult) => string[] = (result: ISyncResult): string[] => [
+    ...brokenLines(result),
+    ...idleLines(result),
+    ...namedCutLines(result),
+    ...retiredLines(result),
+    ...cutOnDiskLines(result),
+    ...abandonedLines(result),
+];
+
 const describe: (result: ISyncResult) => string[] = (result: ISyncResult): string[] => [
     ...holes(result),
     ...gapLines(result),
     ...unboundLines(result),
-    ...brokenLines(result),
-    ...idleLines(result),
-    ...retiredLines(result),
+    ...warnings(result),
     ...pendingOf(result).map((entry: IPlanned): string => `  ${entry.path} — ${STATE_WORD[entry.outcome]}`),
     ...unfilled(result).map((entry: ICompanion): string => `  ${entry.path} — ${COMPANION_WORD[entry.state]}`),
-    ...abandonedLines(result),
 ];
 
 /** Имена дырок во всех ресурсах, которые дерево берёт. Без конфига — ни одной: выбор неизвестен. */
@@ -412,7 +457,7 @@ export function sync(env: IEnvironment, check: boolean): IOutcomeOfCommand {
         // предупреждение печатается и там, где расходиться больше нечему.
         const count: number = result.missing.size + result.gaps.length + pending.length + empty.length + result.unbound.length;
         if (!count) {
-            return { code: 0, lines: [`sync --check: разложенное сходится с пакетом v${version}`, ...brokenLines(result)] };
+            return { code: 0, lines: [`sync --check: разложенное сходится с пакетом v${version}`, ...warnings(result)] };
         }
 
         return { code: 1, lines: [`sync --check: расхождений ${count}`, ...describe(result)] };
@@ -457,6 +502,7 @@ export function sync(env: IEnvironment, check: boolean): IOutcomeOfCommand {
                 ? [`разложено файлов: ${result.written.length}`, ...result.written.map((path: string): string => `  ${path}`)]
                 : ['всё уже разложено']),
             ...unboundLines(result),
+            ...warnings(result),
         ],
     };
 }
