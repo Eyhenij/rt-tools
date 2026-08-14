@@ -11,6 +11,7 @@
 import { BadRequestException, Body, Controller, HttpStatus, Post, Req, Res } from '@nestjs/common';
 
 import { ensureMonthRecord, IMonthRecordWritten } from '@rt/message-bus-api/observations/data-access';
+import { IIntakeAccepted } from '@rt-tools/agent-kit/cargo';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IPostmortemRow, writePostmortems } from '@rt/message-bus-api/postmortems/data-access';
 import { POSTMORTEM_ITEM_FIELDS, POSTMORTEMS_FIELDS } from '@rt/message-bus-api/postmortems/util';
@@ -23,7 +24,6 @@ import {
     cargoSchemaOf,
     faultyCargoItems,
     ICargoFault,
-    IIntakeAccepted,
     IIntakeResponse,
     monthOf,
     TCargoBody,

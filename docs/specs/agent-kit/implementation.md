@@ -87,7 +87,7 @@
 | Наблюдения старше срока хранения снимаются сводкой.                                                          | `projects/agent-kit/src/lib/observations.ts:readObservations`                 |
 | Предложение выгружается файлом с адресом в заголовке.                                                        | `projects/agent-kit/src/lib/proposals.ts:parseProposals`                      |
 | Роль разбора закрытой задачи файлов не пишет.                                                                | `projects/agent-kit/assets/commands/skill-curator.md:proposals`               |
-| Наружу уезжают только предложения с адресом «пакет».                                                         | `projects/agent-kit/src/lib/commands.ts:propose`                              |
+| Наружу уезжают только предложения с адресом «пакет».                                                         | `projects/agent-kit/src/lib/shipment.ts:propose`                              |
 | Отправка отказывает, если в тексте предложения найден адрес дерева.                                          | `projects/agent-kit/src/lib/proposals.ts:leaksIn`                             |
 | Отправленное предложение помечается ссылкой и второй раз не уезжает.                                         | `projects/agent-kit/src/lib/proposals.ts:markSent`                            |
 | Адрес репозитория пакета читается из его манифеста.                                                          | `projects/agent-kit/src/lib/submit.ts:repositoryOf`                           |
