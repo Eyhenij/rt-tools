@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.5.3 · defaults/project.sh · 56e1658bf101 · правится надстройкой, не здесь
+# rt-kit v0.6.0 · defaults/project.sh · db03c1d32d41 · правится надстройкой, не здесь
 # Профиль дерева: чем здесь проверяется правка и что считается переизобретением.
 #
 # Умолчание пакета. Всё, что общего у деревьев этой мастерской, живёт здесь: запускатель Nx,
@@ -26,19 +26,42 @@ rt_runner() {
 # Порты у каждого дерева свои, поэтому умолчание молчит: назвать чужой порт хуже, чем не назвать.
 RT_STANDS="${RT_STANDS:-}"
 
+# Где лежат проверки дерева и набор сценариев его гардов. Проверку, которой в дереве нет, гейт
+# пуша не зовёт: список печатается по тому, что лежит на диске.
+RT_CHECKS_DIR="${RT_CHECKS_DIR:-tools}"
+RT_HOOKS_TESTS="${RT_HOOKS_TESTS:-.claude/hooks/tests/run.sh}"
+
 # Команды, которые обязаны пройти перед пушем. По одной на строку; первая упавшая отбивает пуш.
 # Линтер стилей отдельной строкой: линтер кода файлы стилей не читает вовсе.
 #
 # Первый параметр — база: ветка, относительно которой считается вклад. Пустая означает, что
 # удалённого нет, и тогда гоняется всё: набор строже нужного безопасен, набор уже нужного — нет.
+#
+# Сборка идёт наравне с линтом и спеками. Линтер типов не читает, а спеки читают только то, что
+# кто-то ввёз в них импортом: ошибка типов в непокрытом коде доживает до сборки образа, то есть
+# до слияния. Стоит это мало — дальше работает кэш прогонщика.
+#
+# Заведённая проверка встаёт сюда, а не только в общий прогон, который никто не зовёт сам:
+# новая строка в её списке известного уезжает в главную ветку молча, а список при этом читается
+# как действующая охрана.
 rt_push_checks_default() {
     runner="$(rt_runner)"
+    root="${CLAUDE_PROJECT_DIR:-.}"
     if [ -n "$1" ]; then
-        printf '%s\n' "$runner nx affected -t lint test --base=$1"
+        printf '%s\n' "$runner nx affected -t lint test build --base=$1"
     else
-        printf '%s\n' "$runner nx run-many -t lint test --all"
+        printf '%s\n' "$runner nx run-many -t lint test build --all"
     fi
-    [ -f "${CLAUDE_PROJECT_DIR:-.}/stylelint.config.js" ] && printf '%s\n' "$runner stylelint \"**/*.scss\" --max-warnings 0"
+    [ -f "$root/stylelint.config.js" ] && printf '%s\n' "$runner stylelint \"**/*.scss\" --max-warnings 0"
+
+    # Сценарии гардов — такой же код, как всё остальное: на них держится и разбор ветки, и
+    # уверенность, что обвязка ещё работает. Прогон занимает секунды: он ничего не собирает.
+    [ -x "$root/$RT_HOOKS_TESTS" ] && printf '%s\n' "bash $RT_HOOKS_TESTS"
+
+    for check in check-doc-paths check-specs check-file-size check-dupes check-styles \
+        check-lib-layers check-reuse check-schema-drift; do
+        [ -f "$root/$RT_CHECKS_DIR/$check.mjs" ] && printf '%s\n' "node $RT_CHECKS_DIR/$check.mjs"
+    done
 
     return 0
 }
