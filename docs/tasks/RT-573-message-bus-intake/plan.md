@@ -1,6 +1,6 @@
 # Замысел
 
-Задача: #498. Ветка: `RT-498-message-bus-intake`.
+Задача: #573. Ветка: `RT-573-message-bus-intake`.
 
 **Драфт:** `docs/specs/message-bus/proposed/intake/`
 **Поведение:** меняется
