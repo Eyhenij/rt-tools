@@ -9,7 +9,6 @@ module.exports = [
             '**/dist/**',
             '**/tmp/**',
             '**/coverage/**',
-
             '**/test-setup.ts',
             '**/jest.config.js',
             '**/jest.config.ts',
@@ -17,8 +16,8 @@ module.exports = [
             '**/jest.setup.js',
             '**/karma.conf.js',
             '**/protractor.conf.js',
-
             '**/.storybook',
+            '**/vitest.config.*.timestamp*',
         ],
     },
 
@@ -48,6 +47,48 @@ module.exports = [
                     enforceBuildableLibDependency: true,
                     allow: [],
                     depConstraints: [
+                        // Семья приёмника: лесенка слоёв. Первое подходящее правило выигрывает,
+                        // поэтому конкретные теги стоят до общего разрешения ниже. Строка на слой
+                        // выписана целиком, без подстановок: новое ребро видно в разборе.
+                        {
+                            sourceTag: 'scope:api-app',
+                            onlyDependOnLibsWithTags: [
+                                'scope:api-observations-feature',
+                                'scope:api-proposals-feature',
+                                'scope:api-postmortems-feature',
+                                'scope:common',
+                            ],
+                        },
+                        ...['observations', 'proposals', 'postmortems'].flatMap((domain) => [
+                            {
+                                sourceTag: `scope:api-${domain}-feature`,
+                                onlyDependOnLibsWithTags: [
+                                    `scope:api-${domain}-data-access`,
+                                    `scope:api-${domain}-api`,
+                                    `scope:api-${domain}-util`,
+                                    'scope:common',
+                                ],
+                            },
+                            {
+                                sourceTag: `scope:api-${domain}-data-access`,
+                                onlyDependOnLibsWithTags: [`scope:api-${domain}-util`, 'scope:common'],
+                            },
+                            {
+                                sourceTag: `scope:api-${domain}-api`,
+                                onlyDependOnLibsWithTags: [`scope:api-${domain}-util`, 'scope:common'],
+                            },
+                            {
+                                sourceTag: `scope:api-${domain}-util`,
+                                onlyDependOnLibsWithTags: ['scope:common'],
+                            },
+                        ]),
+                        // Общий слой не видит никого: типы груза не знают ни о хранилище, ни о доменах.
+                        {
+                            sourceTag: 'scope:common',
+                            onlyDependOnLibsWithTags: [],
+                        },
+                        // Публикуемые пакеты границами не сужены: направление между ними держат
+                        // их собственные package.json.
                         {
                             sourceTag: '*',
                             onlyDependOnLibsWithTags: ['*'],

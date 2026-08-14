@@ -29,7 +29,20 @@
       "@rt-tools/store": ["projects/store/src/index.ts"],
       "@rt-tools/utils": ["projects/utils/src/index.ts"],
       "@rt-tools/ui-kit": ["projects/ui-kit/src/public-api.ts"],
-      "@rt-tools/ui-kit-v2": ["projects/ui-kit-v2/src/public-api.ts"]
+      "@rt-tools/ui-kit-v2": ["projects/ui-kit-v2/src/public-api.ts"],
+      "@rt/message-bus-api/observations/util": ["./libs/message-bus-api/observations/util/src/index.ts"],
+      "@rt/message-bus-api/observations/data-access": ["./libs/message-bus-api/observations/data-access/src/index.ts"],
+      "@rt/message-bus-api/observations/feature": ["./libs/message-bus-api/observations/feature/src/index.ts"],
+      "@rt/message-bus-api/observations/api": ["./libs/message-bus-api/observations/api/src/index.ts"],
+      "@rt/message-bus-api/proposals/util": ["./libs/message-bus-api/proposals/util/src/index.ts"],
+      "@rt/message-bus-api/proposals/data-access": ["./libs/message-bus-api/proposals/data-access/src/index.ts"],
+      "@rt/message-bus-api/proposals/feature": ["./libs/message-bus-api/proposals/feature/src/index.ts"],
+      "@rt/message-bus-api/proposals/api": ["./libs/message-bus-api/proposals/api/src/index.ts"],
+      "@rt/message-bus-api/postmortems/util": ["./libs/message-bus-api/postmortems/util/src/index.ts"],
+      "@rt/message-bus-api/postmortems/data-access": ["./libs/message-bus-api/postmortems/data-access/src/index.ts"],
+      "@rt/message-bus-api/postmortems/feature": ["./libs/message-bus-api/postmortems/feature/src/index.ts"],
+      "@rt/message-bus-api/postmortems/api": ["./libs/message-bus-api/postmortems/api/src/index.ts"],
+      "@rt/message-bus-common": ["./libs/message-bus-common/src/index.ts"]
     },
     "noUncheckedSideEffectImports": false,
     "ignoreDeprecations": "6.0"
