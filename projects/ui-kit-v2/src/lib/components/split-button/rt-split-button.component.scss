@@ -1,86 +1,89 @@
-/* rt-split-button — основной CTA + каретка с меню второстепенных действий.
-   ViewEncapsulation.None: селекторы префиксованы `.rt-split-button`. Меню
-   рендерится в CDK Overlay, поэтому `__menu` стилизуется глобально (вне host'а). */
+@layer rt-kit.components {
+    /* rt-split-button — основной CTA + каретка с меню второстепенных действий.
+       ViewEncapsulation.None: селекторы префиксованы `.rt-split-button`. Меню
+       рендерится в CDK Overlay, поэтому `__menu` стилизуется глобально (вне host'а). */
 
-.rt-split-button {
-    --rt-split-button-divider-width: var(--rt-border-width-thin);
-    --rt-split-button-caret-transition-duration: var(--rt-duration-fast);
+    .rt-split-button {
+        --rt-split-button-divider-width: var(--rt-border-width-thin);
+        --rt-split-button-caret-transition-duration: var(--rt-duration-fast);
 
-    display: inline-flex;
-
-    /* Контрол — origin popover'а (width="trigger" берёт его ширину) и flex-ряд
-       лица + каретки. */
-    &__control {
         display: inline-flex;
-        width: 100%;
-        align-items: stretch;
-    }
 
-    /* Лицо и каретка сшиты в один контрол: смежные углы выпрямлены,
-       каретку отделяет тонкий делитель. */
-    &__face.rt-button {
-        border-end-end-radius: 0;
-        border-start-end-radius: 0;
-    }
-
-    &__toggle.rt-button {
-        min-width: 0;
-        border-end-start-radius: 0;
-        border-inline-start: var(--rt-split-button-divider-width) solid color-mix(in srgb, var(--rt-color-text-inverse) 24%, transparent);
-        border-start-start-radius: 0;
-        padding-inline: var(--rt-space-sm);
-
-        /* Шеврон наследует цвет текста кнопки: svg `.rt-button__icon` без
-           `fill: currentColor` тянет дефолтный чёрный, не цвет лейбла. */
-        .rt-button__icon {
-            fill: currentcolor;
-            transition: transform var(--rt-split-button-caret-transition-duration) ease;
+        /* Контрол — origin popover'а (width="trigger" берёт его ширину) и flex-ряд
+           лица + каретки. */
+        &__control {
+            display: inline-flex;
+            width: 100%;
+            align-items: stretch;
         }
-    }
 
-    /* Открытое меню — шеврон смотрит вверх (как у select/multiselect). */
-    &--open &__toggle.rt-button .rt-button__icon {
-        transform: rotate(180deg);
-    }
+        /* Лицо и каретка сшиты в один контрол: смежные углы выпрямлены,
+           каретку отделяет тонкий делитель. */
+        &__face.rt-button {
+            border-end-end-radius: 0;
+            border-start-end-radius: 0;
+        }
 
-    /* Меню (overlay). width="trigger" задаёт ширину панели = ширине контрола,
-       поэтому меню тянется на 100% и box-sizing учитывает падинг. */
-    &__menu {
-        /* Меню рисуется в CDK Overlay, вне поддерева блока: свойства
-           объявляются на нём самом — с корня блока они бы не докатились. */
-        --rt-split-button-menu-radius: var(--rt-radius-md);
-        --rt-split-button-menu-border-width: var(--rt-border-width-thin);
-        --rt-split-button-menu-shadow: var(--rt-shadow-lg);
-
-        display: flex;
-        width: 100%;
-        box-sizing: border-box;
-        flex-direction: column;
-        padding: var(--rt-space-2xs);
-        border: var(--rt-split-button-menu-border-width) solid var(--rt-color-border-subtle);
-        border-radius: var(--rt-split-button-menu-radius);
-        margin: 0;
-        background: var(--rt-color-bg-surface);
-        box-shadow: var(--rt-split-button-menu-shadow);
-        gap: var(--rt-space-2xs);
-        list-style: none;
-    }
-
-    /* Ширину пункту задаёт панель, а не его текст: `width="trigger"` держит её равной
-       кнопке. Пункт длиннее обязан обрезаться, иначе лейбл вылезает за скруглённую
-       рамку панели и висит в воздухе. Многоточие требует блочного лейбла: у
-       `inline-flex` `text-overflow` не работает — текст внутри становится анонимным
-       flex-элементом, и обрезка проходит без знака. */
-    &__menu-item.rt-button {
-        overflow: hidden;
-        width: 100%;
-        justify-content: flex-start;
-
-        .rt-button__label {
-            display: block;
-            overflow: hidden;
+        &__toggle.rt-button {
             min-width: 0;
-            text-overflow: ellipsis;
+            border-end-start-radius: 0;
+            border-inline-start: var(--rt-split-button-divider-width) solid
+                color-mix(in srgb, var(--rt-color-text-inverse) 24%, transparent);
+            border-start-start-radius: 0;
+            padding-inline: var(--rt-space-sm);
+
+            /* Шеврон наследует цвет текста кнопки: svg `.rt-button__icon` без
+               `fill: currentColor` тянет дефолтный чёрный, не цвет лейбла. */
+            .rt-button__icon {
+                fill: currentcolor;
+                transition: transform var(--rt-split-button-caret-transition-duration) ease;
+            }
+        }
+
+        /* Открытое меню — шеврон смотрит вверх (как у select/multiselect). */
+        &--open &__toggle.rt-button .rt-button__icon {
+            transform: rotate(180deg);
+        }
+
+        /* Меню (overlay). width="trigger" задаёт ширину панели = ширине контрола,
+           поэтому меню тянется на 100% и box-sizing учитывает падинг. */
+        &__menu {
+            /* Меню рисуется в CDK Overlay, вне поддерева блока: свойства
+               объявляются на нём самом — с корня блока они бы не докатились. */
+            --rt-split-button-menu-radius: var(--rt-radius-md);
+            --rt-split-button-menu-border-width: var(--rt-border-width-thin);
+            --rt-split-button-menu-shadow: var(--rt-shadow-lg);
+
+            display: flex;
+            width: 100%;
+            box-sizing: border-box;
+            flex-direction: column;
+            padding: var(--rt-space-2xs);
+            border: var(--rt-split-button-menu-border-width) solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-split-button-menu-radius);
+            margin: 0;
+            background: var(--rt-color-bg-surface);
+            box-shadow: var(--rt-split-button-menu-shadow);
+            gap: var(--rt-space-2xs);
+            list-style: none;
+        }
+
+        /* Ширину пункту задаёт панель, а не его текст: `width="trigger"` держит её равной
+           кнопке. Пункт длиннее обязан обрезаться, иначе лейбл вылезает за скруглённую
+           рамку панели и висит в воздухе. Многоточие требует блочного лейбла: у
+           `inline-flex` `text-overflow` не работает — текст внутри становится анонимным
+           flex-элементом, и обрезка проходит без знака. */
+        &__menu-item.rt-button {
+            overflow: hidden;
+            width: 100%;
+            justify-content: flex-start;
+
+            .rt-button__label {
+                display: block;
+                overflow: hidden;
+                min-width: 0;
+                text-overflow: ellipsis;
+            }
         }
     }
 }

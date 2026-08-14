@@ -66,6 +66,28 @@ describe('разбор предложений', (): void => {
         expect(again[0].sent).toBe('https://example.test/7');
         expect(again[1].sent).toBe('');
     });
+
+    it('SC-AK-140 — пометка встаёт в свой блок при любом их числе', (): void => {
+        // Отправка помечает блоки по одному, перечитывая файл, а номера строк у всех блоков
+        // посчитаны один раз — до первой вставки. Одна пометка смещения не показывает.
+        let marked: string = text;
+        for (const [index, proposal] of parseProposals(text, FILE).entries()) {
+            marked = markSent(marked, proposal, `https://example.test/${index + 1}`);
+        }
+        const again: readonly IProposal[] = parseProposals(marked, FILE);
+
+        expect(again.map((entry: IProposal): string => entry.sent)).toEqual(['https://example.test/1', 'https://example.test/2']);
+    });
+
+    it('SC-AK-140 — готовый текст правки пометкой не рвётся', (): void => {
+        let marked: string = text;
+        for (const [index, proposal] of parseProposals(text, FILE).entries()) {
+            marked = markSent(marked, proposal, `https://example.test/${index + 1}`);
+        }
+
+        expect(marked).toContain('> Готовый текст правки.');
+        expect(marked).toContain('> Свой род файлов.');
+    });
 });
 
 describe('адрес дерева в тексте', (): void => {

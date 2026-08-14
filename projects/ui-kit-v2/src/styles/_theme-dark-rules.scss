@@ -1,0 +1,23 @@
+/* Правила тёмной темы, которые свойств не объявляют. Стоят отдельно от `_theme-dark.scss`:
+   тот собирается генератором из источника и держит только объявления. */
+
+/* Body-level градиент — подложка экранов авторизации: их вьюпорт прозрачен
+   (`--rt-color-bg-surface-auth-card: transparent`) и просвечивает body.
+   Остальные экраны его не видят — rt-container кроет body непрозрачным фоном
+   страницы. Не shorthand `background:`, чтобы не сбросить body{}'ный
+   `background-color`. */
+@layer rt-kit.base {
+    :root[data-theme='dark'] body,
+    html.rt-theme-dark body {
+        background-attachment: fixed;
+        background-image: linear-gradient(156deg, #122341 12.68%, #182142 99.28%);
+    }
+}
+
+/* rt-logo (чёрный SVG) — инверсия для читаемости на тёмном фоне */
+@layer rt-kit.base {
+    :root[data-theme='dark'] .rt-logo,
+    html.rt-theme-dark .rt-logo {
+        filter: invert(1) brightness(1.5);
+    }
+}

@@ -48,8 +48,8 @@ docs/specs/<домен>/
 процедуры домен обслуживает.
 
 ```markdown
-**Зависимости:** `pricing` (сумма заявки), `availability` (занятость дат)
-**Законы:** `access`, `locales`, `money`, `ownership`
+**Зависимости:** `catalog` (состав заявки), `availability` (занятость дат)
+**Законы:** `access`, `locales`, `lists`
 **Процедуры:** `libs/api/<домен>`
 ```
 
