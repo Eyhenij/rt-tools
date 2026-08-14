@@ -12,9 +12,10 @@ import { fileURLToPath } from 'node:url';
 import process from 'node:process';
 
 import { IEntryOfCatalog, readCatalog, resolveSelection } from '../lib/catalog.js';
-import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, list, propose, stats, sync } from '../lib/commands.js';
+import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, list, stats, sync } from '../lib/commands.js';
+import { httpShip } from '../lib/ship.js';
+import { propose } from '../lib/shipment.js';
 import { DEFAULT_DAYS } from '../lib/observations.js';
-import { ghIssue, repositoryOf } from '../lib/submit.js';
 import { staleBuild } from '../lib/freshness.js';
 import { packageRootFrom } from '../lib/package-root.js';
 import { IChoice } from '../lib/picker.js';
@@ -32,7 +33,7 @@ const USAGE: readonly string[] = [
     '  stats           свести наблюдения: чем пользовались, чем ни разу, обо что спотыкались',
     '  stats --days N  за сколько дней; без довода — за три',
     '  stats --json    то же машиночитаемо — этим сводку прикладывают к предложению',
-    '  propose         отправить предложения с адресом «пакет» в очередь работ пакета',
+    '  propose         отправить груз в приём: сводку со снимком надстроек, предложения и разборы',
     '  propose --dry-run   показать, что уехало бы, и ничего не отправлять',
     '  adopt [файлы]   отдать пакету файлы, лежащие на его путях не от него',
     '',
@@ -57,12 +58,9 @@ const USAGE: readonly string[] = [
  */
 function environmentOf(root: string): IEnvironment {
     const pkg: string = packageRootFrom(dirname(fileURLToPath(import.meta.url)));
-    const manifest: { name: string; version: string; repository?: { url?: string } } = JSON.parse(
-        readFileSync(join(pkg, 'package.json'), 'utf8')
-    ) as {
+    const manifest: { name: string; version: string } = JSON.parse(readFileSync(join(pkg, 'package.json'), 'utf8')) as {
         name: string;
         version: string;
-        repository?: { url?: string };
     };
 
     return {
@@ -72,9 +70,6 @@ function environmentOf(root: string): IEnvironment {
         // Сверка со своими исходниками возможна только отсюда: здесь пакет знает, где лежит сам.
         // У потребителя исходников рядом нет, и сверка молчит.
         stale: staleBuild(pkg, manifest.name),
-        // Куда уезжают предложения. Читается из манифеста: зашитый в код адрес назвал бы чужое
-        // дерево в текстах пакета — и врал бы у всякого, кто пакет форкнул.
-        repository: repositoryOf(manifest.repository?.url ?? ''),
     };
 }
 
@@ -239,23 +234,15 @@ export async function main(argv: readonly string[]): Promise<IOutcomeOfCommand> 
                 json: argv.includes('--json'),
             });
         }
-        case 'propose': {
-            // Сводка едет вместе с предложением: без цифр оно читается как мнение. Берётся тем
-            // же отрезком, что и сводка по умолчанию, — предложение пишут по свежей задаче.
-            const summary: IOutcomeOfCommand = stats(env, {
-                days: DEFAULT_DAYS,
-                today: new Date().toISOString().slice(0, 10),
-                json: false,
-            });
-
+        case 'propose':
             return propose(env, {
                 dryRun: argv.includes('--dry-run'),
-                submit: ghIssue,
-                repository: env.repository ?? '',
+                ship: httpShip,
                 remote: remoteOf(env.root),
-                summary: summary.lines,
+                // Отрезок тот же, что у сводки по умолчанию: отправку зовут по свежей задаче.
+                days: DEFAULT_DAYS,
+                today: new Date().toISOString().slice(0, 10),
             });
-        }
         case 'doctor':
             return doctor(env);
         case 'adopt':

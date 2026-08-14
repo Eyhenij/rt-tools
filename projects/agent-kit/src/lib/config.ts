@@ -84,12 +84,35 @@ export interface IConfig {
      * что разборщика конфига у него нет.
      */
     readonly observe: boolean;
+    /**
+     * Адрес приёма, куда уезжает груз: `https://…`. Пусто — отправлять некуда, и отправка
+     * отказывает вместо молчания. Зашитый в код адрес назвал бы чужое дерево в текстах пакета.
+     */
+    readonly intake: string;
+    /**
+     * Файл с токеном дерева — путь от корня дерева или от домашнего каталога (`~/…`). Сам токен
+     * в конфиге не лежит: конфиг коммитится, а токен обязан остаться вне истории.
+     */
+    readonly token: string;
+    /**
+     * Признак дерева, когда удалённого репозитория нет. При нём — считается из адреса
+     * репозитория: две рабочие копии одного репозитория обязаны дать один признак.
+     */
+    readonly tree: string;
+    /** Где дерево держит разборы происшествий. Путь от корня дерева. */
+    readonly postmortems: string;
 }
 
 export const CONFIG_PATH: string = '.claude/rt-kit.json';
 /** Каталог, в котором дерево держит своё при пакете: надстройки, умолчания, свою карту и профиль. */
 export const RT_KIT_DIR: string = '.claude/rt-kit';
 export const OVERRIDES_DIR: string = '.claude/rt-kit/overrides';
+
+/**
+ * Где разборы происшествий лежат, когда конфиг не сказал иначе. Роды ресурсов сюда не годятся:
+ * разборы пишет дерево про себя, пакет их не раскладывает и не сверяет.
+ */
+export const DEFAULT_POSTMORTEMS_DIR: string = 'docs/postmortems';
 
 /**
  * Карта «что правится — какое правило» и профиль дерева: команды, стенды, пары «правка —
@@ -151,6 +174,18 @@ function stringMap(value: unknown, where: string): Record<string, string> {
     return result;
 }
 
+/** Строковый ключ конфига. Ключа нет — пустая строка: значение необязательное у всех четырёх. */
+function textOf(value: unknown, where: string): string {
+    if (value === undefined || value === null) {
+        return '';
+    }
+    if (typeof value !== 'string') {
+        throw new ConfigError(`${where}: ожидается строка`);
+    }
+
+    return value.trim();
+}
+
 function idList(value: unknown, where: string): readonly string[] {
     const list: unknown = value ?? [];
     if (!Array.isArray(list) || list.some((entry: unknown): boolean => typeof entry !== 'string')) {
@@ -196,6 +231,10 @@ export function parseConfig(text: string): IConfig {
         variants: stringMap(raw['variants'], 'variants'),
         // Выключателем считается только явное «нет»: ключа нет — запись идёт, как и у гарда.
         observe: raw['observe'] !== false,
+        intake: textOf(raw['intake'], 'intake'),
+        token: textOf(raw['token'], 'token'),
+        tree: textOf(raw['tree'], 'tree'),
+        postmortems: textOf(raw['postmortems'], 'postmortems') || DEFAULT_POSTMORTEMS_DIR,
     };
 }
 
