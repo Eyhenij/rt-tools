@@ -389,4 +389,71 @@ report "длина: отказ называет, где перечень" "$(siz
 
 rm -rf "$SIZE_TREE"
 
+# --- SC-AK-114…118 — набор гейта пуша против набора конвейера --------------------------------
+#
+# Файл конвейера машиной не толкуется: проверка берёт оттуда только имена шагов, а чем каждое
+# закрыто, объявляет дерево. Профиль здесь настоящий — тот же, который зовёт гард пуша.
+
+GATE_TREE="$(mktemp -d)"
+mkdir -p "$GATE_TREE/tools" "$GATE_TREE/.claude/rt-kit" "$GATE_TREE/.github/workflows"
+cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/check-push-gate.mjs" "$GATE_TREE/tools/"
+
+printf '%s\n' 'jobs:' '    check:' '        steps:' \
+    '            - name: Lint' '              run: npm run lint' \
+    '            - name: Build' '              run: npm run build' > "$GATE_TREE/.github/workflows/ci.yml"
+
+# Профиль дерева печатает набор гейта — проверка спрашивает его же оболочкой, а не переписывает
+# список себе: два списка одного набора расходятся молча.
+gate_profile() {
+    printf '%s\n' 'rt_push_checks() {' "    printf '%s\\n' \"$1\"" '}' > "$GATE_TREE/.claude/rt-kit/project.sh"
+}
+gate_config() {
+    printf '%s\n' "$1" > "$GATE_TREE/.claude/rt-kit/checks.json"
+}
+gate_says() {
+    (cd "$GATE_TREE" && node tools/check-push-gate.mjs 2>&1) | grep -cE "$1"
+}
+gate_code() {
+    (cd "$GATE_TREE" && node tools/check-push-gate.mjs >/dev/null 2>&1)
+    printf '%s' "$?"
+}
+
+gate_profile 'npm run lint'
+
+# SC-AK-118 — дерево без файла конвейера сверку не получает
+gate_config '{"pushGate":{"pipelineFile":".github/workflows/nope.yml"}}'
+report "SC-AK-118 — конвейера нет: проверка молчит" "$(gate_code)" 0
+report "SC-AK-118 — сказано, почему пропущено" "$(gate_says 'файла конвейера в дереве нет')" 1
+
+# SC-AK-114 — необъявленный шаг конвейера отбивает пуш
+gate_config '{"pushGate":{"pipelineFile":".github/workflows/ci.yml","steps":{"Lint":"npm run lint"}}}'
+report "SC-AK-114 — необъявленный шаг отбит" "$(gate_code)" 1
+report "SC-AK-114 — отказ называет шаг" "$(gate_says 'шаг конвейера «Build» не объявлен')" 1
+
+# SC-AK-115 — объявленное исключение пуш не отбивает
+gate_config '{"pushGate":{"pipelineFile":".github/workflows/ci.yml","steps":{"Lint":"npm run lint","Build":{"skip":"дольше секунд, гоняется конвейером"}}}}'
+report "SC-AK-115 — исключение с причиной не отбивает" "$(gate_code)" 0
+report "SC-AK-115 — исключение сосчитано" "$(gate_says 'объявлено исключениями 1')" 1
+
+# SC-AK-116 — исключение без причины расхождением остаётся
+gate_config '{"pushGate":{"pipelineFile":".github/workflows/ci.yml","steps":{"Lint":"npm run lint","Build":{"skip":"  "}}}}'
+report "SC-AK-116 — пустая причина отбита" "$(gate_code)" 1
+report "SC-AK-116 — отказ требует причину" "$(gate_says 'исключением без причины')" 1
+
+# SC-AK-117 — объявленная строка, которой нет в наборе, краснеет
+gate_config '{"pushGate":{"pipelineFile":".github/workflows/ci.yml","steps":{"Lint":"npm run lint","Build":"npm run build"}}}'
+report "SC-AK-117 — строка вне набора отбита" "$(gate_code)" 1
+report "SC-AK-117 — отказ называет строку" "$(gate_says 'набор гейта её не печатает')" 1
+
+# Та же настройка при наборе, который эту строку печатает, расхождением не является.
+gate_profile 'npm run lint
+    npm run build'
+report "SC-AK-117 — строка в наборе принята" "$(gate_code)" 0
+
+# Объявление шага, которого в конвейере нет, — устаревшее: иначе список копит мёртвое.
+gate_config '{"pushGate":{"pipelineFile":".github/workflows/ci.yml","steps":{"Lint":"npm run lint","Build":"npm run build","Gone":"npm run gone"}}}'
+report "гейт: устаревшее объявление названо" "$(gate_says 'объявление «Gone» устарело')" 1
+
+rm -rf "$GATE_TREE"
+
 suite_result "проверки"
