@@ -16,6 +16,7 @@ import { DEFAULT_DAYS, ICount, IReadResult, ISummary, KEEP_DAYS, OBSERVATIONS_DI
 import { IPlanned, isRefusal, TOutcome } from './plan.js';
 import { laidOutSkills } from './snapshot.js';
 import { ICutFound, IRetiredFound, ISyncResult, pendingOf, planSync, runSync } from './sync.js';
+import { ITrait, readTraits, unknownTraits } from './traits.js';
 import { placeholdersOf } from './vars.js';
 import { IAxis, IOptionOfAxis, readAxes, unansweredAxes } from './variants.js';
 
@@ -207,6 +208,28 @@ const gapLines: (result: ISyncResult) => string[] = (result: ISyncResult): strin
         `  ${gap.kind}/${gap.name} — есть только под ${gap.axis}: ${gap.available.join(', ')}, а выбран «${gap.chosen}»`,
         `      либо заведи вид под «${gap.chosen}», либо назови в skip: ${gap.ids.join(', ')}`,
     ]);
+
+/**
+ * Свойства, названные не по перечню пакета, — и деревом, и ресурсами.
+ *
+ * Обе стороны собираются одной функцией, потому что промах у них общий: имя свойства написано
+ * так, как его никто не объявлял. Разница только в том, где оно написано, и потому в строке
+ * отказа стоит место, а не одно имя.
+ */
+function strangeTraits(config: IConfig, assetsDir: string): readonly string[] {
+    const traits: readonly ITrait[] = readTraits(assetsDir);
+    const lines: string[] = unknownTraits(config.has, traits).map(
+        (trait: string): string => `  \`${trait}\` — названо деревом в \`has\`, а пакет такого свойства не объявлял`
+    );
+
+    for (const entry of readCatalog(assetsDir)) {
+        if (entry.needs !== null && unknownTraits([entry.needs], traits).length) {
+            lines.push(`  \`${entry.needs}\` — требует ${entry.id}, а пакет такого свойства не объявлял`);
+        }
+    }
+
+    return lines.length ? [...lines, `  объявленные свойства: ${traits.map((trait: ITrait): string => trait.value).join(', ')}`] : [];
+}
 
 /**
  * Гарды, которых нет в настройке агента, и готовый кусок для неё.
@@ -447,6 +470,14 @@ export function sync(env: IEnvironment, check: boolean): IOutcomeOfCommand {
     const unanswered: readonly IAxis[] = unansweredAxes(readAxes(assetsDir), config.variants);
     if (unanswered.length) {
         return { code: 1, lines: ['раскладка не начата: не выбран вид', ...axisLines(unanswered)] };
+    }
+
+    // Незнакомое свойство — опечатка, и молчать о ней нельзя ни с одной стороны. У дерева она
+    // означает, что помеченного им ресурса оно не получит вовсе; у ресурса — что он не ляжет
+    // никуда и никогда, а причину в имени файла не разглядеть.
+    const strange: readonly string[] = strangeTraits(config, assetsDir);
+    if (strange.length) {
+        return { code: 1, lines: ['раскладка не начата: свойство дерева не объявлено пакетом', ...strange] };
     }
 
     if (check) {
