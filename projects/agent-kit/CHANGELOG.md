@@ -1,3 +1,19 @@
+# [0.7.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.6.0...rt-agent-kit@0.7.0) (2026-08-14)
+
+### Features
+
+- **rt:agent-kit:** договорённость о каскаде исполнена целиком ([0fdd802](https://github.com/Eyhenij/rt-tools/commit/0fdd802fe02c711c4fc9f77b468ead7744890e61))
+- **rt:agent-kit:** отказ от закона снимает его правила и паттерны ([21d5089](https://github.com/Eyhenij/rt-tools/commit/21d5089b5bf49e439304e5cb35422c63335da859))
+- **rt:agent-kit:** расхождение гейта пуша с конвейером отбивает пуш ([1521d94](https://github.com/Eyhenij/rt-tools/commit/1521d947b7f7e30de0ff45cc292c48f6b2049be9))
+
+### BREAKING CHANGES
+
+- **rt:agent-kit:** дерево, выбравшее законы поимённо, получает теперь только
+  правила и паттерны выбранных законов. Прежде приезжали все, и часть из них
+  разложена в деревьях с прошлых редакций — раскладка назовёт их брошенными.
+
+Docs-skip: README пакета и линия работ правлены тем же коммитом
+
 # [0.6.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.5.3...rt-agent-kit@0.6.0) (2026-08-13)
 
 ### Features
