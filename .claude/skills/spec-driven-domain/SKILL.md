@@ -4,7 +4,7 @@ kind: pattern
 rule: spec-driven
 description: Паттерн правила spec-driven. Брать при заведении или правке спека домена в docs/specs — обязательные разделы, форма сценария, привязка правила к коду, порядок работы от спека к коду. Не брать для заведения закона, правила или паттерна — это паттерн spec-driven-rule.
 ---
-<!-- rt-kit v0.6.0 · patterns/spec-driven-domain.md · 243496d2d953 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.6.0 · patterns/spec-driven-domain.md · d83ca9522fde · правится надстройкой, не здесь -->
 
 # Спек домена
 
@@ -49,8 +49,8 @@ docs/specs/<домен>/
 процедуры домен обслуживает.
 
 ```markdown
-**Зависимости:** `pricing` (сумма заявки), `availability` (занятость дат)
-**Законы:** `access`, `locales`, `money`, `ownership`
+**Зависимости:** `catalog` (состав заявки), `availability` (занятость дат)
+**Законы:** `access`, `locales`, `lists`
 **Процедуры:** `libs/api/<домен>`
 ```
 
