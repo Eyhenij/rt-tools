@@ -87,6 +87,41 @@ report "номер: имя без номера" "$(num_of chore)" 'null'
 
 rm -rf "$TREE/docs" "$TREE/tools/board.mjs"
 
+# --- ответ очереди работ о заведённой задаче ---------------------------------------------------
+#
+# Заведение кончается ответом очереди, а не выводом команды: шестнадцать заведений подряд
+# напечатали номер со ссылкой, и ни одно не попало в очередь. Решение о том, что сказать и чем
+# кончиться, вынесено из вызовов сети — иначе оно проверяется только живой бордой.
+printf '{"board":{"taskKey":"RT"}}\n' > "$TREE/.claude/rt-kit/checks.json"
+cp "$CHECKS/board.github.mjs" "$TREE/tools/board.mjs"
+
+answer_for() {
+    node --input-type=module -e "
+        import { describeTaskState } from '${TREE}/tools/board.mjs';
+        const answer = describeTaskState(565, JSON.parse(process.argv[1]));
+        console.log([answer.ok ? 'ok' : 'нет', ...answer.lines].join(' | '));
+    " "$1" 2>/dev/null
+}
+
+ON_BOARD='{"exists":true,"onBoard":true,"status":"Backlog","assigned":true,"assignees":["bot"]}'
+report "SC-AK-152 — ответ очереди: задача в очереди" "$(answer_for "$ON_BOARD" | cut -d' ' -f1)" 'ok'
+report "SC-AK-152 — ответ очереди: названа колонка" "$(answer_for "$ON_BOARD" | grep -c 'колонка «Backlog»')" '1'
+report "SC-AK-152 — ответ очереди: назван исполнитель" "$(answer_for "$ON_BOARD" | grep -c 'исполнитель bot')" '1'
+
+OFF_BOARD='{"exists":true,"onBoard":false,"status":null,"assigned":true,"assignees":["bot"]}'
+report "SC-AK-153 — задача вне очереди: приговор" "$(answer_for "$OFF_BOARD" | cut -d' ' -f1)" 'нет'
+report "SC-AK-153 — задача вне очереди: сказано вслух" "$(answer_for "$OFF_BOARD" | grep -c 'в очереди работ: НЕТ')" '1'
+
+NO_ASSIGNEE='{"exists":true,"onBoard":true,"status":"Backlog","assigned":false,"assignees":[]}'
+report "SC-AK-154 — задача без исполнителя: приговор" "$(answer_for "$NO_ASSIGNEE" | cut -d' ' -f1)" 'нет'
+report "SC-AK-154 — задача без исполнителя: сказано вслух" "$(answer_for "$NO_ASSIGNEE" | grep -c 'исполнителя нет')" '1'
+
+report "SC-AK-155 — очередь не спрошена: приговор" "$(answer_for '{"offline":"нет связи"}' | cut -d' ' -f1)" 'нет'
+report "SC-AK-155 — очередь не спрошена: причина названа" "$(answer_for '{"offline":"нет связи"}' | grep -c 'нет связи')" '1'
+report "SC-AK-155 — задачи нет вовсе" "$(answer_for '{"exists":false}' | grep -c 'заведение не состоялось')" '1'
+
+rm -f "$TREE/tools/board.mjs"
+
 # --- список замещается целиком ----------------------------------------------------------------
 # Дописывать в список нельзя: убрать из него стало бы невозможно вовсе.
 printf '{"skippedDirs":["dist"]}\n' > "$TREE/.claude/rt-kit/checks.json"
