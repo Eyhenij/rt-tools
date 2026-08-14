@@ -4,7 +4,7 @@ kind: pattern
 rule: spec-driven
 description: Паттерн правила spec-driven. Брать при заведении или правке закона в docs/constitution, правила или паттерна в .claude/skills — готовые шапки, набор разделов каждого слоя, таблица привязки, признак того, что правило пора делить. Не брать для спека домена — это паттерн spec-driven-domain.
 ---
-<!-- rt-kit v0.6.0 · patterns/spec-driven-rule.md · 64a27a937591 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.7.0 · patterns/spec-driven-rule.md · 64a27a937591 · правится надстройкой, не здесь -->
 
 # Закон, правило и паттерн
 
