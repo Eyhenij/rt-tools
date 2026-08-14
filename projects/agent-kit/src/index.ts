@@ -1,4 +1,5 @@
 export * from './lib/assets.js';
+export * from './lib/cargo.js';
 export * from './lib/catalog.js';
 export * from './lib/commands.js';
 export * from './lib/config.js';

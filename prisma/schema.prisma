@@ -1,0 +1,112 @@
+// Хранилище приёмника груза. Пять сущностей договорённости
+// `docs/specs/message-bus/`; правила, которые выражают ограничения, там же.
+
+generator client {
+    provider            = "prisma-client"
+    output              = "../libs/message-bus-api/persistence/util/src/generated/prisma"
+    runtime             = "nodejs"
+    moduleFormat        = "cjs"
+    importFileExtension = ""
+}
+
+// Адрес хранилища живёт в `prisma.config.ts`: седьмая редакция Prisma не принимает его в схеме.
+datasource db {
+    provider = "postgresql"
+}
+
+/// Дерево, от которого приезжает груз. Признак считает само дерево от адреса своего
+/// репозитория; приёмник его только сверяет и по нему не восстанавливает адреса.
+model Tree {
+    id        String   @id @default(uuid())
+    /// Признак дерева: им груз называет отправителя.
+    slug      String   @unique
+    /// Читаемое имя: его называет владелец при заведении.
+    name      String   @unique
+    createdAt DateTime @default(now())
+
+    tokens      TreeToken[]
+    months      MonthRecord[]
+    postmortems Postmortem[]
+
+    @@map("tree")
+}
+
+/// Токен дерева. В хранилище лежит только хеш: по нему токен не восстанавливается, и утёкший
+/// дамп доступа не даёт. Годен у дерева один — новый замещает прежний, помечая его отозванным.
+model TreeToken {
+    id        String    @id @default(uuid())
+    treeId    String
+    tree      Tree      @relation(fields: [treeId], references: [id], onDelete: Cascade)
+    hash      String    @unique
+    issuedAt  DateTime  @default(now())
+    /// Пусто — токен годен. Отозванный не удаляется: по нему читается прежний груз.
+    revokedAt DateTime?
+
+    @@index([treeId])
+    @@map("tree_token")
+}
+
+/// Свод одного дерева за один календарный месяц. Одна запись на пару «дерево — месяц»:
+/// уникальность держит хранилище, потому что два прогона приезжают одновременно.
+model MonthRecord {
+    id     String @id @default(uuid())
+    treeId String
+    tree   Tree   @relation(fields: [treeId], references: [id], onDelete: Cascade)
+    /// Месяц в форме `2026-08`, по всемирному времени приёмника.
+    month  String
+
+    /// Сводка последнего прогона целиком: счётчики, снимок надстроек, невыбранное. Приёмник её
+    /// не разбирает — колонка под каждое поле разъезжалась бы с пакетом при первой его правке.
+    ///
+    /// Пусто — сводки в этом месяце ещё не было: запись завели предложения или разборы,
+    /// приехавшие раньше неё. Пустой объект сказал бы то же самое неотличимо от сводки с
+    /// нулевыми счётчиками, а такая сводка законна: у дерева бывает месяц без единого наблюдения.
+    summary Json?
+    /// Версия схемы груза, которой назвался последний прогон. Незнакомая принимается как есть.
+    /// Ставит её любой род груза: версия — свойство прогона, а не одной только сводки.
+    schema  String
+    /// Время последнего прогона: по нему видно, отчитывается ли дерево вообще.
+    ranAt   DateTime @default(now())
+
+    proposals Proposal[]
+
+    @@unique([treeId, month])
+    @@map("month_record")
+}
+
+/// Предложение по слою правил. Копится, а не замещается: сводка отвечает на вопрос «как дела
+/// сейчас», предложения — «что случилось за месяц».
+model Proposal {
+    id       String      @id @default(uuid())
+    recordId String
+    record   MonthRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+    /// Текст предложения. Им же предложение отличается от уже приехавшего.
+    text     String
+    /// Адрес правки: пакет, дерево или компаньон.
+    address  String
+    /// Ресурс слоя правил, к которому предложение относится. По нему берётся счёт «сколько
+    /// деревьев правят это место» — ради него линия работ и заведена.
+    resource String
+    arrivedAt DateTime   @default(now())
+
+    @@unique([recordId, text])
+    @@index([recordId])
+    @@map("proposal")
+}
+
+/// Разбор происшествия: текст целиком, как он лежит на дереве. Опознаётся именем файла —
+/// заголовок правится вместе с текстом, а имя файла правку переживает.
+model Postmortem {
+    id        String   @id @default(uuid())
+    treeId    String
+    tree      Tree     @relation(fields: [treeId], references: [id], onDelete: Cascade)
+    /// Имя файла разбора на дереве.
+    file      String
+    text      String
+    arrivedAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([treeId, file])
+    @@index([treeId])
+    @@map("postmortem")
+}
