@@ -1,45 +1,90 @@
 {
-  "sourceRoots": ["projects"],
-  "portableDirs": ["projects/agent-kit/assets"],
-  "e2eRoots": [],
-  "backendRoots": [],
-  "schemaFile": "",
-  "migrationsDir": "",
-  "families": [],
-  "importScope": "@rt-tools",
-  "pushGate": {
-    "pipelineFile": ".github/workflows/ci.yml",
-    "stepPattern": "^\\s*-\\s*name:\\s*(.+?)\\s*$",
-    "steps": {
-      "Install pnpm": { "skip": "подъём окружения задания; на своей машине оно уже поднято" },
-      "Cache node_modules": { "skip": "кэш задания; локально зависимости уже стоят" },
-      "Install dependencies": { "skip": "установка зависимостей задания; локально она сделана" },
-      "Fetch main branch": { "skip": "гард пуша подтягивает главную ветку сам, перед подсчётом базы" },
-      "Test, Lint, Typecheck, Build": "pnpm exec nx affected -t lint typecheck test build --parallel",
-      "Stylelint": "pnpm run lint:styles",
-      "Visual tests": { "skip": "кадры ждут отсчётом времени и плавают под нагрузкой — снимается задачей RT-427" },
-      "Upload visual diffs": { "skip": "выгрузка следов прогона; смотреть их локально не на чем" },
-      "Visual tests (ui-kit-v2)": { "skip": "та же причина, что у снимков первой витрины — RT-427" },
-      "Upload visual diffs (ui-kit-v2)": { "skip": "выгрузка следов прогона" },
-      "Verify built packages": "pnpm exec nx affected -t verify --parallel"
-    }
-  },
-  "board": {
-    "owner": "Eyhenij",
-    "repo": "rt-tools",
-    "projectId": "PVT_kwHOBE82K84AjroZ",
-    "statusFieldId": "PVTSSF_lAHOBE82K84AjroZzgcAY0U",
-    "statusOptions": {
-      "new": { "id": "e9c5e93d", "name": "🆕 New" },
-      "backlog": { "id": "bb429887", "name": "📋 Backlog" },
-      "ready": { "id": "69a42c4a", "name": "🔖 Ready" },
-      "in-progress": { "id": "9f0e17a7", "name": "🏗 In progress" },
-      "in-review": { "id": "965595e4", "name": "👀 In review" },
-      "done": { "id": "9194bf24", "name": "✅ Done" }
+    "sourceRoots": [
+        "projects",
+        "apps",
+        "libs"
+    ],
+    "portableDirs": [
+        "projects/agent-kit/assets"
+    ],
+    "e2eRoots": [],
+    "backendRoots": [
+        "libs/message-bus-api/",
+        "apps/message-bus/"
+    ],
+    "schemaFile": "",
+    "migrationsDir": "",
+    "families": [],
+    "importScope": "@rt",
+    "pushGate": {
+        "pipelineFile": ".github/workflows/ci.yml",
+        "stepPattern": "^\\s*-\\s*name:\\s*(.+?)\\s*$",
+        "steps": {
+            "Install pnpm": {
+                "skip": "подъём окружения задания; на своей машине оно уже поднято"
+            },
+            "Cache node_modules": {
+                "skip": "кэш задания; локально зависимости уже стоят"
+            },
+            "Install dependencies": {
+                "skip": "установка зависимостей задания; локально она сделана"
+            },
+            "Fetch main branch": {
+                "skip": "гард пуша подтягивает главную ветку сам, перед подсчётом базы"
+            },
+            "Test, Lint, Typecheck, Build": "pnpm exec nx affected -t lint typecheck test build --parallel",
+            "Stylelint": "pnpm run lint:styles",
+            "Visual tests": {
+                "skip": "кадры ждут отсчётом времени и плавают под нагрузкой — снимается задачей RT-427"
+            },
+            "Upload visual diffs": {
+                "skip": "выгрузка следов прогона; смотреть их локально не на чем"
+            },
+            "Visual tests (ui-kit-v2)": {
+                "skip": "та же причина, что у снимков первой витрины — RT-427"
+            },
+            "Upload visual diffs (ui-kit-v2)": {
+                "skip": "выгрузка следов прогона"
+            },
+            "Verify built packages": "pnpm exec nx affected -t verify --parallel"
+        }
     },
-    "taskKey": "RT",
-    "bot": "rt-tools-agent",
-    "tokenPath": "~/.config/rt-tools-bot-token",
-    "reviewer": "Eyhenij"
-  }
+    "board": {
+        "owner": "Eyhenij",
+        "repo": "rt-tools",
+        "projectId": "PVT_kwHOBE82K84AjroZ",
+        "statusFieldId": "PVTSSF_lAHOBE82K84AjroZzgcAY0U",
+        "statusOptions": {
+            "new": {
+                "id": "e9c5e93d",
+                "name": "🆕 New"
+            },
+            "backlog": {
+                "id": "bb429887",
+                "name": "📋 Backlog"
+            },
+            "ready": {
+                "id": "69a42c4a",
+                "name": "🔖 Ready"
+            },
+            "in-progress": {
+                "id": "9f0e17a7",
+                "name": "🏗 In progress"
+            },
+            "in-review": {
+                "id": "965595e4",
+                "name": "👀 In review"
+            },
+            "done": {
+                "id": "9194bf24",
+                "name": "✅ Done"
+            }
+        },
+        "taskKey": "RT",
+        "bot": "rt-tools-agent",
+        "tokenPath": "~/.config/rt-tools-bot-token",
+        "reviewer": "Eyhenij"
+    },
+    "apiFamily": "message-bus-api",
+    "libsRoot": "libs"
 }

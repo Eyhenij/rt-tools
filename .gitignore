@@ -76,3 +76,5 @@ projects/*/.storybook/__snapshots__/__diff_output__/
 
 # Передача захода: пересказ хода работы для нового захода, в историю не едет.
 .claude/handoff/
+
+vitest.config.*.timestamp*

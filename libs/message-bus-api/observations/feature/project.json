@@ -1,0 +1,9 @@
+{
+  "name": "message-bus-api-observations-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/message-bus-api/observations/feature/src",
+  "projectType": "library",
+  "tags": ["scope:message-bus-api-observations-feature"],
+  "// targets": "to see all targets run: nx show project message-bus-api-observations-feature --web",
+  "targets": {}
+}
