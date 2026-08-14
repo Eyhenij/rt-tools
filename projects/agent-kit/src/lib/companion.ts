@@ -109,3 +109,58 @@ export function planCompanion(asset: IAsset, existing: string | null, template: 
 
 /** Что `sync --check` считает недоделанным: правило при пустом компаньоне не действует. */
 export const isUnfilled: (companion: ICompanion) => boolean = (companion: ICompanion): boolean => companion.state !== 'filled';
+
+/** Долг, добавленный обновлением: статьи правила, у которых в компаньоне дерева нет адреса. */
+export interface IUnaddressed {
+    /** Имя правила, чьи статьи считались. */
+    readonly rule: string;
+    /** Сколько статей у правила всего. */
+    readonly total: number;
+    /** Статьи, которых в компаньоне нет. */
+    readonly missing: readonly string[];
+    /** Компаньона рядом с правилом нет вовсе: долг здесь — все статьи разом. */
+    readonly absent: boolean;
+}
+
+/**
+ * Счёт статей без адреса. Отделён от записи файлов намеренно: раскладка кладёт их на диск, а
+ * решение о том, что назвать добавленным долгом, к записи не привязано и проверяется без
+ * файловой системы.
+ *
+ * Статья ищется в компаньоне дословно — её текст и есть ключ связи, тот же, которым сверяются
+ * привязки. Переписанная руками, она расходится с правилом молча, и здесь это видно сразу:
+ * такая статья считается ненайденной.
+ */
+export function unaddressedOf(rule: string, text: string, existing: string | null): IUnaddressed {
+    const statements: readonly string[] = statementsOf(text);
+    if (existing === null) {
+        return { rule, total: statements.length, missing: statements, absent: true };
+    }
+
+    return {
+        rule,
+        total: statements.length,
+        missing: statements.filter((statement: string): boolean => !existing.includes(statement)),
+        absent: false,
+    };
+}
+
+/**
+ * Строка о добавленном долге для вывода раскладки. Молчит, когда долга нет: строка «статей без
+ * адреса: 0» приходила бы при каждой раскладке и перестала бы читаться.
+ *
+ * Долг называется числом, а не списком: двадцать девять строк в выводе не читают, а сами статьи
+ * стоят в компаньоне, куда за ними и идут.
+ */
+export function debtLine(found: readonly IUnaddressed[]): string | null {
+    const withDebt: readonly IUnaddressed[] = found.filter((entry: IUnaddressed): boolean => entry.missing.length > 0);
+    if (!withDebt.length) {
+        return null;
+    }
+
+    const statements: number = withDebt.reduce((sum: number, entry: IUnaddressed): number => sum + entry.missing.length, 0);
+    const absent: number = withDebt.filter((entry: IUnaddressed): boolean => entry.absent).length;
+    const tail: string = absent ? `, из них ${absent} без компаньона вовсе` : '';
+
+    return `статей без адреса: ${statements} в ${withDebt.length} компаньонах${tail}`;
+}
