@@ -9,11 +9,12 @@ import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'n
 import { dirname, join } from 'node:path';
 
 import { collectAssets, IAsset, targetOf } from './assets.js';
-import { brokenLinks, IBrokenLink, IEntryOfCatalog, IGapOfVariant, readCatalog, variantGaps } from './catalog.js';
+import { brokenLinks, IBrokenLink, idleSkips, IEntryOfCatalog, IGapOfVariant, IIdleSkip, readCatalog, variantGaps } from './catalog.js';
 import { ICompanion, pathOf, planCompanion } from './companion.js';
 import { IConfig, OVERRIDES_DIR } from './config.js';
 import { bindingsOf as declaredIn, IHookBinding, unboundHooks } from './hooks-map.js';
 import { IPlanned, isPending, isRefusal, planFile } from './plan.js';
+import { RETIRED } from './retired.js';
 import { mergeDocuments, parseDocument, renderDocument } from './sections.js';
 import { readStamped } from './stamp.js';
 import { IRenderResult, renderVars } from './vars.js';
@@ -57,6 +58,16 @@ export interface ISyncResult {
      * подмножестве, сколько бы связок ни было разорвано.
      */
     readonly broken: readonly IBrokenLink[];
+    /**
+     * Строки отказа, которые ничего не снимают.
+     *
+     * Предупреждение, а не отказ: строка становится лишней сама, обновлением пакета, без единой
+     * правки в дереве. Молчание же оставляет её в настройке навсегда — ровно так список отказа и
+     * дорастает до полусотни строк, ни одна из которых ни на что не влияет.
+     */
+    readonly idle: readonly IIdleSkip[];
+    /** Файлы ресурсов, которых в наборе больше нет: их убирает дерево, пакет только называет. */
+    readonly retired: readonly IRetiredFound[];
     readonly written: readonly string[];
 }
 
@@ -96,6 +107,35 @@ function abandonedOf(config: IConfig, root: string, assetsDir: string): readonly
 
             return existing !== null && readStamped(existing) !== null;
         });
+}
+
+/**
+ * Что лежит в дереве от ресурсов, которых в наборе больше нет.
+ *
+ * Брошенным такой файл не назовёт никто: брошенное ищется по каталогу пакета, а снятого в
+ * каталоге нет вовсе. Поэтому его ищут по списку снятых имён — там же, где записано, почему
+ * ресурс ушёл.
+ */
+export interface IRetiredFound {
+    /** Путь в дереве, где лежит файл снятого ресурса. */
+    readonly path: string;
+    /** Редакция пакета, в которой ресурс снят. */
+    readonly since: string;
+    readonly why: string;
+}
+
+function retiredOf(config: IConfig, root: string): readonly IRetiredFound[] {
+    const found: IRetiredFound[] = [];
+
+    for (const entry of RETIRED) {
+        const path: string = targetOf(entry, config.layout);
+        const existing: string | null = read(join(root, path));
+        if (existing !== null && readStamped(existing) !== null) {
+            found.push({ path, since: entry.since, why: entry.why });
+        }
+    }
+
+    return found;
 }
 
 /**
@@ -142,6 +182,8 @@ export function planSync(config: IConfig, root: string, version: string, assetsD
         gaps: variantGaps(readCatalog(assetsDir), config),
         unbound: unboundHooks(bindingsOf(config, assetsDir), root),
         broken: brokenLinks(readCatalog(assetsDir), config),
+        idle: idleSkips(readCatalog(assetsDir), config),
+        retired: retiredOf(config, root),
         written: [],
     };
 }
