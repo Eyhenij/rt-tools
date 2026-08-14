@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.6.0 · checks/check-push-gate.mjs · edee6fc05cd7 · правится надстройкой, не здесь
+// rt-kit v0.6.0 · checks/check-push-gate.mjs · 69763c18d801 · правится надстройкой, не здесь
 /**
  * Проверка того, что набор гейта пуша не уже набора конвейера.
  *
@@ -95,8 +95,7 @@ for (const step of steps) {
 
     if (declaration === undefined) {
         problems.push(
-            `шаг конвейера «${step}» не объявлен: закрой его строкой набора в pushGate.steps ` +
-                'либо объяви исключением с причиной'
+            `шаг конвейера «${step}» не объявлен: закрой его строкой набора в pushGate.steps ` + 'либо объяви исключением с причиной'
         );
         continue;
     }
@@ -137,6 +136,5 @@ if (problems.length > 0) {
 
 const skipped = Object.values(DECLARED).filter((value) => typeof value === 'object' && value !== null).length;
 console.log(
-    `check-push-gate: шагов конвейера ${steps.length}, закрыто набором ${steps.length - skipped}, ` +
-        `объявлено исключениями ${skipped}`
+    `check-push-gate: шагов конвейера ${steps.length}, закрыто набором ${steps.length - skipped}, ` + `объявлено исключениями ${skipped}`
 );
