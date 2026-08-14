@@ -1,1 +1,1 @@
-export * from './lib/message-bus-api-proposals-data-access';
+export * from './lib/proposal.queries';

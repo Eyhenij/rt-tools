@@ -1,1 +1,1 @@
-export * from './lib/message-bus-api-observations-util';
+export * from './lib/summary.logic';

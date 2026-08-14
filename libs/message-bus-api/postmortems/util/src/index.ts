@@ -1,1 +1,1 @@
-export * from './lib/message-bus-api-postmortems-util';
+export * from './lib/postmortem.logic';

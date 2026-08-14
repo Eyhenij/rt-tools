@@ -1,5 +1,6 @@
 import nx from '@nx/eslint-plugin';
 
+import { backendConfig } from './eslint/backend.config.mjs';
 import { allBoundaries } from './eslint/boundaries/index.mjs';
 import rt from './tools/lint-rules/index.cjs';
 
@@ -293,6 +294,15 @@ export default [
             '@angular-eslint/prefer-inject': 'off',
         },
     },
+
+    // Серверная сторона, когда линт зовут от корня дерева: `lint-staged` перед коммитом идёт
+    // именно так, и путь здесь совпадает. Тот же список стоит в `eslint/backend.config.mjs` —
+    // его подключают конфиги самих проектов, потому что цель линта проекта зовётся из его
+    // каталога, и путь от корня там не совпадает ни с одним файлом.
+    ...backendConfig.map((entry) => ({
+        ...entry,
+        files: ['apps/message-bus/**/*.ts', 'libs/message-bus-api/**/*.ts', 'libs/message-bus-common/**/*.ts'],
+    })),
 
     {
         // Демонстрационная разметка витрины блоков BEM не несёт и никуда не шипится: гнать её

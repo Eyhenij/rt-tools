@@ -1,1 +1,2 @@
-export * from './lib/message-bus-api-proposals-feature';
+export * from './lib/proposals-intake.controller';
+export * from './lib/proposals.module';

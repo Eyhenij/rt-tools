@@ -1,1 +1,2 @@
-export * from './lib/message-bus-api-observations-feature';
+export * from './lib/observations.module';
+export * from './lib/summary-intake.controller';
