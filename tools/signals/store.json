@@ -1,0 +1,15 @@
+# rt-kit v0.7.0 · checks/signals/store.json · 90f7547f4735 · правится надстройкой, не здесь
+{
+    "about": "Признаки пакета @rt-tools/store: своё хранилище состояния вместо базового.",
+    "signals": [
+        {
+            "key": "store-base",
+            "ext": ".service.ts",
+            "mode": "presence",
+            "scope": "whole",
+            "find": "new BehaviorSubject|private +readonly +state *=",
+            "cancel": "extends +Base(Async)?StoreService",
+            "instead": "BaseStoreService / BaseAsyncStoreService"
+        }
+    ]
+}

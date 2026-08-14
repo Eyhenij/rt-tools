@@ -1,0 +1,20 @@
+# rt-kit v0.7.0 · checks/signals/angular.json · 53afa4f9feee · правится надстройкой, не здесь
+{
+    "about": "Признаки самого фреймворка: ничьих имён не называют и верны любому дереву на Angular.",
+    "signals": [
+        { "key": "inline-template", "ext": ".component.ts", "find": "^ *template: *['\"`]", "flags": "gm", "instead": "шаблон в своём .html" },
+        {
+            "key": "inline-styles",
+            "ext": ".component.ts",
+            "find": "^ *styles: *(\\[\\s*)?['\"`\\n]",
+            "flags": "gm",
+            "instead": "стили в своём .scss"
+        },
+        {
+            "key": "decorator-io",
+            "ext": ".ts",
+            "find": "@(Input|Output|ViewChild|ViewChildren|ContentChild)\\(",
+            "instead": "input(), output(), viewChild(), contentChild()"
+        }
+    ]
+}
