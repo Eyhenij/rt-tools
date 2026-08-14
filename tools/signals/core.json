@@ -1,0 +1,20 @@
+# rt-kit v0.7.0 · checks/signals/core.json · f61c410f0257 · правится надстройкой, не здесь
+{
+    "about": "Признаки пакета @rt-tools/core: директивы BEM, доступ к среде и хранилищу браузера.",
+    "signals": [
+        { "key": "class-binding", "ext": ".html", "find": "\\[ngClass\\]|\\[class\\.", "instead": "директивы rtBlock, rtElem, [rtMod]" },
+        {
+            "key": "raw-storage",
+            "ext": ".ts",
+            "find": "(window\\.)?(local|session)Storage\\.",
+            "instead": "службы хранилища @rt-tools/core"
+        },
+        { "key": "raw-media-query", "ext": ".ts", "find": "matchMedia\\(", "instead": "BreakpointsService" },
+        {
+            "key": "raw-window",
+            "ext": ".ts",
+            "find": "(^|[^.\\w])(window|document)\\.",
+            "instead": "PlatformService и токены среды @rt-tools/core"
+        }
+    ]
+}

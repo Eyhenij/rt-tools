@@ -1,6 +1,10 @@
 {
   "sourceRoots": ["projects"],
   "portableDirs": ["projects/agent-kit/assets"],
+  "reuse": {
+    "bundles": ["angular"],
+    "signals": ".claude/rt-kit/signals.json"
+  },
   "e2eRoots": [],
   "backendRoots": [],
   "schemaFile": "",
