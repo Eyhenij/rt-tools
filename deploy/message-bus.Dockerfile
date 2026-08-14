@@ -14,9 +14,10 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
     pnpm install --frozen-lockfile
 
-# Конфиг линтера читает tools/lint-rules, а плагин Nx строит по нему граф проектов: без этих
-# каталогов сборка падает на построении графа, а не на самом коде.
-COPY nx.json tsconfig.base.json eslint.config.cjs ./
+# Конфиг линтера читает tools/lint-rules и каталог границ, а плагин Nx строит по нему граф
+# проектов: без этих каталогов сборка падает на построении графа, а не на самом коде.
+COPY nx.json tsconfig.base.json eslint.config.mjs ./
+COPY eslint ./eslint
 COPY tools ./tools
 COPY prisma ./prisma
 COPY apps/message-bus ./apps/message-bus
