@@ -1,1 +1,1 @@
-export * from './lib/message-bus-api-proposals-util';
+export * from './lib/proposal.logic';

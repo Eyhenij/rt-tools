@@ -1,1 +1,1 @@
-export * from './lib/message-bus-api-postmortems-data-access';
+export * from './lib/postmortem.queries';
