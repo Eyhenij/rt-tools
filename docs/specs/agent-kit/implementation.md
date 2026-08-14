@@ -87,11 +87,11 @@
 | Наблюдения старше срока хранения снимаются сводкой.                                                          | `projects/agent-kit/src/lib/observations.ts:readObservations`                 |
 | Предложение выгружается файлом с адресом в заголовке.                                                        | `projects/agent-kit/src/lib/proposals.ts:parseProposals`                      |
 | Роль разбора закрытой задачи файлов не пишет.                                                                | `projects/agent-kit/assets/commands/skill-curator.md:proposals`               |
-| Наружу уезжают только предложения с адресом «пакет».                                                         | `projects/agent-kit/src/lib/commands.ts:propose`                              |
+| Наружу уезжают только предложения с адресом «пакет».                                                         | `projects/agent-kit/src/lib/shipment.ts:propose`                              |
 | Отправка отказывает, если в тексте предложения найден адрес дерева.                                          | `projects/agent-kit/src/lib/proposals.ts:leaksIn`                             |
-| Отправленное предложение помечается ссылкой и второй раз не уезжает.                                         | `projects/agent-kit/src/lib/proposals.ts:markSent`                            |
-| Адрес репозитория пакета читается из его манифеста.                                                          | `projects/agent-kit/src/lib/submit.ts:repositoryOf`                           |
-| Наружу не уходит ничего, чего не отправил человек командой.                                                  | `projects/agent-kit/src/lib/submit.ts:ghIssue`                                |
+| Отправленное предложение помечается принявшим его месяцем и второй раз не уезжает.                           | `projects/agent-kit/src/lib/proposals.ts:markSent`                            |
+| Адрес приёма читается из настройки дерева.                                                                   | `projects/agent-kit/src/lib/config.ts:intake`                                 |
+| Наружу не уходит ничего, чего не отправил человек командой.                                                  | `projects/agent-kit/src/lib/shipment.ts:propose`                              |
 | Сведение отделяет пришедшее из нескольких деревьев от пришедшего из одного.                                  | `projects/agent-kit/assets/commands/agent-kit-digest.md:overrides`            |
 | Выпуск версии остаётся отдельным решением владельца.                                                         | `projects/agent-kit/assets/commands/agent-kit-digest.md:ARGUMENTS`            |
 | Главная ветка влита в ветку задачи до открытия отчёта.                                                       | `projects/agent-kit/assets/rules/git-workflow.github.md:git-workflow`         |

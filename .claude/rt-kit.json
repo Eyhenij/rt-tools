@@ -22,7 +22,6 @@
     "laws/entity-models.md",
     "laws/lists.md",
     "laws/navigation.md",
-    "laws/observability.md",
     "laws/shared-code.md",
     "patterns/browser-verification-stand.md",
     "patterns/git-workflow-migration.md",
@@ -30,5 +29,7 @@
     "patterns/testing-e2e.md",
     "patterns/ts-procedure.md",
     "rules/api-layer.md"
-  ]
+  ],
+  "intake": "http://localhost:3000",
+  "token": "~/.config/rt-tools-tree-token"
 }

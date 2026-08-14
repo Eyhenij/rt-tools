@@ -1,7 +1,10 @@
-const nx = require('@nx/eslint-plugin');
-const rt = require('./tools/lint-rules/index.cjs');
+import nx from '@nx/eslint-plugin';
 
-module.exports = [
+import { backendConfig } from './eslint/backend.config.mjs';
+import { allBoundaries } from './eslint/boundaries/index.mjs';
+import rt from './tools/lint-rules/index.cjs';
+
+export default [
     {
         ignores: [
             '**/.angular/**',
@@ -9,7 +12,6 @@ module.exports = [
             '**/dist/**',
             '**/tmp/**',
             '**/coverage/**',
-
             '**/test-setup.ts',
             '**/jest.config.js',
             '**/jest.config.ts',
@@ -17,8 +19,8 @@ module.exports = [
             '**/jest.setup.js',
             '**/karma.conf.js',
             '**/protractor.conf.js',
-
             '**/.storybook',
+            '**/vitest.config.*.timestamp*',
         ],
     },
 
@@ -46,13 +48,15 @@ module.exports = [
                 'error',
                 {
                     enforceBuildableLibDependency: true,
-                    allow: [],
-                    depConstraints: [
-                        {
-                            sourceTag: '*',
-                            onlyDependOnLibsWithTags: ['*'],
-                        },
-                    ],
+                    // Форма груза объявлена отправляющей стороной и видна обеим: приёмник берёт
+                    // её у источника, а не заводит копию. Тегом это не выражается — у
+                    // публикуемых пакетов меток нет вовсе, и заведённая ради одного файла метка
+                    // стала бы вторым ответом на вопрос о направлении между пакетами.
+                    allow: ['@rt-tools/agent-kit/cargo'],
+                    // Рёбра живут файлами доменов в `eslint/boundaries/domains`, а сюда приезжают
+                    // сводом: проверка раскладки читает их модулем и требует, чтобы тег либы был
+                    // объявлен там ровно один раз.
+                    depConstraints: allBoundaries,
                 },
             ],
         },
@@ -294,6 +298,15 @@ module.exports = [
             '@angular-eslint/prefer-inject': 'off',
         },
     },
+
+    // Серверная сторона, когда линт зовут от корня дерева: `lint-staged` перед коммитом идёт
+    // именно так, и путь здесь совпадает. Тот же список стоит в `eslint/backend.config.mjs` —
+    // его подключают конфиги самих проектов, потому что цель линта проекта зовётся из его
+    // каталога, и путь от корня там не совпадает ни с одним файлом.
+    ...backendConfig.map((entry) => ({
+        ...entry,
+        files: ['apps/message-bus/**/*.ts', 'libs/message-bus-api/**/*.ts', 'libs/message-bus-common/**/*.ts'],
+    })),
 
     {
         // Демонстрационная разметка витрины блоков BEM не несёт и никуда не шипится: гнать её

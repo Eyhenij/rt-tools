@@ -1,0 +1,9 @@
+{
+  "name": "message-bus-api-trees-util",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/message-bus-api/trees/util/src",
+  "projectType": "library",
+  "tags": ["scope:message-bus-api-trees-util"],
+  "// targets": "to see all targets run: nx show project message-bus-api-trees-util --web",
+  "targets": {}
+}
