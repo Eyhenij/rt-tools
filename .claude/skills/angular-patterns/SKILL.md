@@ -4,7 +4,7 @@ kind: rule
 law: frontend-application
 description: Правило под «Закон о фронтовом приложении». Брать при правке любого класса Angular — компонента, стора админки, сервиса, директивы, пайпа, гарда, интерцептора. Называет сигнальный API входов, OnPush, zoneless, inject и место, где живёт подписка. Не действует под libs/api и apps/api. Готовый код — в паттерне angular-patterns-state.
 ---
-<!-- rt-kit v0.7.0 · rules/angular-patterns.md · 4049517cbe3f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.8.0 · rules/angular-patterns.md · 4049517cbe3f · правится надстройкой, не здесь -->
 
 # Реактивность экрана — как это устроено здесь
 
