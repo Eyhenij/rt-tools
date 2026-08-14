@@ -5,12 +5,18 @@
  */
 import {
     brokenLinks,
+    cascadeCuts,
+    chosenEntries,
     IBrokenLink,
+    ICascadeCut,
     IEntryOfCatalog,
+    idleSkips,
     idOf,
     IGapOfVariant,
+    IIdleSkip,
     isChosen,
     ISelection,
+    namedButCut,
     requiresOf,
     resolveSelection,
     titleOf,
@@ -195,6 +201,13 @@ describe('brokenLinks', () => {
         expect(brokenLinks(CATALOG_OF_TWO, picked())).toEqual([]);
     });
 
+    it('SC-AK-136 — связь, порванную каскадом, вторым предупреждением не называют', () => {
+        const pricing: IEntryOfCatalog = { ...entry('rules', 'pricing'), text: '---\nname: pricing\nkind: rules\nlaw: money\n---\n' };
+        const asking: IEntryOfCatalog = needing('patterns', 'quote', [pricing.id]);
+
+        expect(brokenLinks([ACCESS, MONEY, pricing, asking], picked([], [MONEY.id]))).toEqual([]);
+    });
+
     it('требование невзятого ресурса не считается: его в дереве нет вовсе', () => {
         expect(brokenLinks(CATALOG_OF_TWO, picked([], [PATTERN.id, HOOK.id]))).toEqual([]);
     });
@@ -203,5 +216,120 @@ describe('brokenLinks', () => {
         const stray: IEntryOfCatalog = needing('rules', 'x', ['hooks/нетакого.sh']);
 
         expect(brokenLinks([stray], picked())).toEqual([{ id: stray.id, requires: 'hooks/нетакого.sh', unknown: true }]);
+    });
+});
+
+describe('cascadeCuts', () => {
+    /** Ресурс со вступлением: связь родителя с потомком читается только оттуда. */
+    const under: (kind: TKind, name: string, field: 'law' | 'rule', parent: string) => IEntryOfCatalog = (
+        kind: TKind,
+        name: string,
+        field: 'law' | 'rule',
+        parent: string
+    ): IEntryOfCatalog => ({ ...entry(kind, name), text: `---\nname: ${name}\nkind: ${kind}\n${field}: ${parent}\n---\n` });
+
+    const PRICING: IEntryOfCatalog = under('rules', 'pricing', 'law', 'money');
+    const QUOTE: IEntryOfCatalog = under('patterns', 'pricing-quote', 'rule', 'pricing');
+    const PERMISSIONS: IEntryOfCatalog = under('rules', 'permissions', 'law', 'access');
+    const FULL: readonly IEntryOfCatalog[] = [ACCESS, DELIVERY, MONEY, RULE, PRICING, QUOTE, PERMISSIONS];
+
+    const idsOf: (cuts: readonly ICascadeCut[]) => readonly string[] = (cuts: readonly ICascadeCut[]): readonly string[] =>
+        cuts.map((one: ICascadeCut): string => one.id);
+
+    it('SC-AK-119 — отказ от закона снимает правила и паттерны при нём', () => {
+        expect(idsOf(cascadeCuts(FULL, picked([], [MONEY.id])))).toEqual([PRICING.id, QUOTE.id]);
+    });
+
+    it('SC-AK-119 — правило чужого закона при этом остаётся', () => {
+        expect(idsOf(cascadeCuts(FULL, picked([], [MONEY.id])))).not.toContain(PERMISSIONS.id);
+    });
+
+    it('SC-AK-120 — невыбранный закон потомков не раскладывает', () => {
+        expect(idsOf(cascadeCuts(FULL, picked([ACCESS.id, DELIVERY.id])))).toEqual([PRICING.id, QUOTE.id]);
+    });
+
+    it('SC-AK-121 — отказ от паттерна ни правила, ни закона не трогает', () => {
+        expect(cascadeCuts(FULL, picked([], [QUOTE.id]))).toEqual([]);
+    });
+
+    it('SC-AK-129 — пустой выбор берёт весь набор', () => {
+        expect(cascadeCuts(FULL, picked())).toEqual([]);
+    });
+
+    it('SC-AK-130 — родитель отвергнут, только когда не выбран ни один его вид', () => {
+        const pattern: IEntryOfCatalog = under('patterns', 'git-workflow-commit', 'rule', 'git-workflow');
+
+        expect(cascadeCuts([ACCESS, GITHUB, GITLAB, pattern], picked([], [], { host: 'github' }))).toEqual([]);
+    });
+
+    it('SC-AK-132 — закон слоя приложения находится по короткому имени из шапки', () => {
+        expect(cascadeCuts(FULL, picked([], [MONEY.id]))[0]).toEqual({ id: PRICING.id, parent: 'money', root: 'money' });
+    });
+
+    it('SC-AK-133 — снятый внук назван обоими родителями', () => {
+        expect(cascadeCuts(FULL, picked([], [MONEY.id]))[1]).toEqual({ id: QUOTE.id, parent: 'pricing', root: 'money' });
+    });
+
+    it('SC-AK-135 — родителя нет в каталоге — каскад молчит', () => {
+        const orphan: IEntryOfCatalog = under('rules', 'x', 'law', 'нетакого');
+        const empty: IEntryOfCatalog = { ...entry('rules', 'y'), text: '---\nname: y\nkind: rules\n---\n' };
+
+        expect(cascadeCuts([ACCESS, orphan, empty], picked())).toEqual([]);
+    });
+
+    it('паттерн при точечно отвергнутом правиле снят родителем, а не корнем чужой цепочки', () => {
+        expect(cascadeCuts(FULL, picked([], [PRICING.id]))).toEqual([{ id: QUOTE.id, parent: 'pricing', root: 'pricing' }]);
+    });
+});
+
+describe('namedButCut', () => {
+    const PRICING: IEntryOfCatalog = { ...entry('rules', 'pricing'), text: '---\nname: pricing\nkind: rules\nlaw: money\n---\n' };
+    const FULL: readonly IEntryOfCatalog[] = [ACCESS, MONEY, RULE, PRICING];
+
+    it('SC-AK-134 — выбор, который после каскада ничего не берёт, называется вслух', () => {
+        expect(namedButCut(FULL, picked([ACCESS.id, PRICING.id]))).toEqual([{ id: PRICING.id, parent: 'money', root: 'money' }]);
+    });
+
+    it('снятое каскадом, но выбором не названное, здесь не считается', () => {
+        expect(namedButCut(FULL, picked([], [MONEY.id]))).toEqual([]);
+    });
+});
+
+describe('idleSkips', () => {
+    const PRICING: IEntryOfCatalog = { ...entry('rules', 'pricing'), text: '---\nname: pricing\nkind: rules\nlaw: money\n---\n' };
+    const FULL: readonly IEntryOfCatalog[] = [ACCESS, MONEY, RULE, PRICING, GITHUB, GITLAB];
+
+    it('SC-AK-122 — строка отказа, снятая каскадом, объявляется предупреждением', () => {
+        expect(idleSkips(FULL, picked([], [MONEY.id, PRICING.id]))).toEqual([{ id: PRICING.id, by: 'money' }]);
+    });
+
+    it('SC-AK-122 — строка на сам отвергнутый закон лишней не считается', () => {
+        const idle: readonly IIdleSkip[] = idleSkips(FULL, picked([], [MONEY.id, PRICING.id]));
+
+        expect(idle.map((one: IIdleSkip): string => one.id)).not.toContain(MONEY.id);
+    });
+
+    it('SC-AK-124 — строка отказа без ресурса в каталоге называется тем же предупреждением', () => {
+        expect(idleSkips(FULL, picked([], ['rules/нетакого.md']))).toEqual([{ id: 'rules/нетакого.md', by: '' }]);
+    });
+
+    it('SC-AK-131 — строка отказа на ресурс чужого вида лишней не считается', () => {
+        expect(idleSkips(FULL, picked([], [GITLAB.id], { host: 'github' }))).toEqual([]);
+    });
+
+    it('точечный отказ при взятом родителе лишним не бывает', () => {
+        expect(idleSkips(FULL, picked([], [PRICING.id]))).toEqual([]);
+    });
+});
+
+describe('chosenEntries', () => {
+    const PRICING: IEntryOfCatalog = { ...entry('rules', 'pricing'), text: '---\nname: pricing\nkind: rules\nlaw: money\n---\n' };
+
+    it('SC-AK-128 — отказ от предметного закона одной строкой уносит и правило при нём', () => {
+        const ids: readonly string[] = chosenEntries([ACCESS, MONEY, RULE, PRICING], picked([], [MONEY.id])).map(
+            (one: IEntryOfCatalog): string => one.id
+        );
+
+        expect(ids).toEqual([ACCESS.id, RULE.id]);
     });
 });

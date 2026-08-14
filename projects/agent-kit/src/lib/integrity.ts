@@ -8,39 +8,10 @@
  * Разбирается только вступление между `---`: остальное в файле — проза, и `law:` посреди неё
  * означает пример, а не объявление.
  */
-import { IEntryOfCatalog } from './catalog.js';
+import { frontMatterOf, IEntryOfCatalog, IFrontMatter } from './catalog.js';
+import { TKind } from './config.js';
 
-/** Что объявила шапка ресурса. Пустое поле и отсутствующее здесь одно и то же. */
-export interface IFrontMatter {
-    readonly name: string;
-    readonly kind: string;
-    /** Закон, под которым стоит правило. */
-    readonly law: string;
-    /** Правило, при котором стоит паттерн. */
-    readonly rule: string;
-}
-
-const FIELD: RegExp = /^([a-z]+):\s*(\S.*?)\s*$/;
-
-/** Вступление между `---` в начале файла; его нет — вернётся пустая шапка. */
-export function frontMatterOf(text: string): IFrontMatter {
-    const lines: readonly string[] = text.split('\n');
-    const found: Record<string, string> = {};
-
-    if (lines[0]?.trim() === '---') {
-        for (const line of lines.slice(1)) {
-            if (line.trim() === '---') {
-                break;
-            }
-            const match: RegExpMatchArray | null = line.match(FIELD);
-            if (match) {
-                found[match[1]] = match[2];
-            }
-        }
-    }
-
-    return { name: found['name'] ?? '', kind: found['kind'] ?? '', law: found['law'] ?? '', rule: found['rule'] ?? '' };
-}
+export { frontMatterOf, IFrontMatter };
 
 /** Расхождение в ресурсах пакета: кто ссылается, на что и чего не нашлось. */
 export interface IBrokenLink {
@@ -75,4 +46,50 @@ export function brokenLinks(catalog: readonly IEntryOfCatalog[]): readonly IBrok
     }
 
     return broken;
+}
+
+/** Род и короткое имя, под которым в наборе лежит больше одного ресурса. */
+export interface IAmbiguousName {
+    readonly kind: TKind;
+    /** Последнее звено имени — то, чем ресурсы ссылаются друг на друга. */
+    readonly name: string;
+    readonly ids: readonly string[];
+}
+
+/** Ресурсы, сошедшиеся на одном коротком имени, вместе с полными именами, которыми они зовутся. */
+interface INamedGroup {
+    readonly kind: TKind;
+    readonly name: string;
+    readonly ids: string[];
+    readonly names: Set<string>;
+}
+
+/**
+ * Ресурсы одного рода с одинаковым последним звеном имени.
+ *
+ * Связь потомка с родителем ищется по этому звену — и полного пути в шапке нет намеренно, чтобы
+ * переезд закона между слоями не переписывал шапки всех правил при нём. Два закона с именем
+ * `access` в разных слоях делают такую ссылку двусмысленной: каскад снял бы потомков не того
+ * родителя, и молча — оба имени существуют, и промахом ни одно из них не выглядит.
+ *
+ * Судится здесь, до всякой раскладки в дереве: набор с двусмысленным именем неисправен сам, у
+ * любого потребителя разом.
+ *
+ * Виды одного ресурса двусмысленности не дают: у них совпадает не только последнее звено, но и
+ * имя целиком, и ссылка при них указывает на один ресурс — тот, чей вид выбрало дерево.
+ */
+export function ambiguousNames(catalog: readonly IEntryOfCatalog[]): readonly IAmbiguousName[] {
+    const found: Map<string, INamedGroup> = new Map<string, INamedGroup>();
+    for (const entry of catalog) {
+        const short: string = entry.name.split('/').pop() ?? entry.name;
+        const key: string = `${entry.kind} ${short}`;
+        const group: INamedGroup = found.get(key) ?? { kind: entry.kind, name: short, ids: [], names: new Set<string>() };
+        group.ids.push(entry.id);
+        group.names.add(entry.name);
+        found.set(key, group);
+    }
+
+    return [...found.values()]
+        .filter((group: INamedGroup): boolean => group.names.size > 1)
+        .map((group: INamedGroup): IAmbiguousName => ({ kind: group.kind, name: group.name, ids: group.ids }));
 }

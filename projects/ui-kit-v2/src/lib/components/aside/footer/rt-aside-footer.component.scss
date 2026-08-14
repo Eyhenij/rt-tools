@@ -1,24 +1,26 @@
-/* rt-aside-footer — footer-слот side-sheet'а. ViewEncapsulation.None. */
+@layer rt-kit.components {
+    /* rt-aside-footer — footer-слот side-sheet'а. ViewEncapsulation.None. */
 
-.rt-aside-footer {
-    --rt-aside-footer-border-width: var(--rt-border-width-thin);
+    .rt-aside-footer {
+        --rt-aside-footer-border-width: var(--rt-border-width-thin);
 
-    padding-top: var(--rt-aside-inset);
+        padding-top: var(--rt-aside-inset);
 
-    /* Верхний разделитель не на всю ширину панели: margin отбивает футер по
-       горизонтали на тот же инсет, что и контентная зона, поэтому
-       border-block-start совпадает по краям с контентом. */
-    margin: var(--rt-aside-inset);
-    border-block-start: var(--rt-aside-footer-border-width) solid var(--rt-color-border-subtle);
+        /* Верхний разделитель не на всю ширину панели: margin отбивает футер по
+           горизонтали на тот же инсет, что и контентная зона, поэтому
+           border-block-start совпадает по краям с контентом. */
+        margin: var(--rt-aside-inset);
+        border-block-start: var(--rt-aside-footer-border-width) solid var(--rt-color-border-subtle);
 
-    &__content {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        gap: var(--rt-space-sm);
-    }
+        &__content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: var(--rt-space-sm);
+        }
 
-    &:empty {
-        display: none;
+        &:empty {
+            display: none;
+        }
     }
 }

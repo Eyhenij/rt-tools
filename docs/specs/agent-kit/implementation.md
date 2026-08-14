@@ -97,6 +97,45 @@
 | Главная ветка влита в ветку задачи до открытия отчёта.                                                       | `projects/agent-kit/assets/rules/git-workflow.github.md:git-workflow`         |
 | Открытие отчёта отбивается, пока главная ветка не влита.                                                     | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:behind`                |
 | Пакет не пишет в файлы, принадлежащие дереву.                                                                | `projects/agent-kit/README.md:observations`                                   |
+| Слои поверх доменного правила объявляются своим файлом, а не строками в гейте.                               | `projects/agent-kit/assets/hooks/skill-gate-layers.sh:rt_layer_add`           |
+| Слой требует правило дополнительно, а не вместо доменного.                                                   | `projects/agent-kit/assets/hooks/skill-gate.sh:want`                          |
+| Признак, невидимый по пути, судится по тексту правки.                                                        | `projects/agent-kit/assets/hooks/skill-gate-layers.sh:rt_layer_payload`       |
+| Слой, которому нечем прочитать текст правки, отпускает действие.                                             | `projects/agent-kit/assets/hooks/skill-gate-layers.sh:rt_layer_is_spec`       |
+| Файл слоёв гейт зовёт в своей оболочке, а не отдельным процессом.                                            | `projects/agent-kit/assets/hooks/skill-gate.sh:rt_hooks_dir`                  |
+| Карта гейта считает командой вызов, а не упоминание.                                                         | `projects/agent-kit/assets/defaults/gate-map.sh:rt_gate_invokes`              |
+| Гейт пуша зовёт то, что дерево разложило.                                                                    | `projects/agent-kit/assets/defaults/project.sh:rt_push_checks_default`        |
+| Предел длины объявлен одним числом на все роды файлов.                                                       | `projects/agent-kit/assets/checks/check-file-size.mjs:LIMIT`                  |
+| Накопленное до объявления предела перечислено поимённо.                                                      | `projects/agent-kit/assets/checks/check-file-size.mjs:readKnown`              |
+| Принятое и долг в перечне различаются.                                                                       | `projects/agent-kit/assets/checks/check-file-size.mjs:known`                  |
+| Данные из счёта длины выведены.                                                                              | `projects/agent-kit/assets/checks/check-file-size.mjs:JUDGED`                 |
+| Описание прошлого и папка задачи из счёта выведены.                                                          | `projects/agent-kit/assets/checks/check-file-size.mjs:SKIPPED_PREFIXES`       |
+| Сгенерированное выведено каталогом, а не именами.                                                            | `projects/agent-kit/assets/checks/check-file-size.mjs:SKIPPED_PREFIXES`       |
+| Длина считается тем же способом, каким её считает линтер.                                                    | `projects/agent-kit/assets/checks/check-file-size.mjs:lineCount`              |
+| Отказ от родителя снимает потомков, а лишняя строка отказа объявляется предупреждением.                      | `projects/agent-kit/src/lib/catalog.ts:cascadeCuts`                           |
+| Закон, не попавший в выбор, отвергнут наравне с названным в отказе.                                          | `projects/agent-kit/src/lib/catalog.ts:isChosen`                              |
+| Каскад идёт сверху вниз и только.                                                                            | `projects/agent-kit/src/lib/catalog.ts:cascadeCuts`                           |
+| Связь берётся из вступления самих ресурсов.                                                                  | `projects/agent-kit/src/lib/catalog.ts:frontMatterOf`                         |
+| Снятое каскадом называется вместе с родителем.                                                               | `projects/agent-kit/src/lib/commands.ts:doctor`                               |
+| Пакет везёт закон, верный любому дереву своего класса.                                                       | `projects/agent-kit/src/lib/retired.ts:RETIRED`                               |
+| Отказ дерева от предметного закона — одна строка.                                                            | `projects/agent-kit/src/lib/catalog.ts:chosenEntries`                         |
+| Ресурс, ушедший из пакета, уходит вместе с потомками.                                                        | `projects/agent-kit/src/lib/integrity.ts:brokenLinks`                         |
+| Пакет помнит имена, которые из него ушли.                                                                    | `projects/agent-kit/src/lib/sync.ts:retiredOf`                                |
+| Снятое каскадом остаётся на диске и называется отдельно от брошенного.                                       | `projects/agent-kit/src/lib/sync.ts:leftOnDisk`                               |
+| Короткое имя из вступления разрешается по последнему звену имени внутри своего рода.                         | `projects/agent-kit/src/lib/catalog.ts:shortNameOf`                           |
+| Два ресурса одного рода с одинаковым последним звеном имени — отказ набора.                                  | `projects/agent-kit/src/lib/integrity.ts:ambiguousNames`                      |
+| Родитель с несколькими видами отвергнут, только когда не выбран ни один его вид.                             | `projects/agent-kit/src/lib/catalog.ts:cascadeCuts`                           |
+| Снятый внук называется обоими: ближайшим родителем и отвергнутым корнем.                                     | `projects/agent-kit/src/lib/catalog.ts:ICascadeCut`                           |
+| Выбор, который после каскада ничего не берёт, называется вслух.                                              | `projects/agent-kit/src/lib/catalog.ts:namedButCut`                           |
+| Родителя нет в каталоге — каскад молчит.                                                                     | `projects/agent-kit/src/lib/catalog.ts:cascadeCuts`                           |
+| Связь, порванную самим каскадом, предупреждением не считают.                                                 | `projects/agent-kit/src/lib/catalog.ts:brokenLinks`                           |
+| Предупреждение раскладки печатается на любом её исходе.                                                      | `projects/agent-kit/src/lib/commands.ts:warnings`                             |
+| Признак единообразия живёт данными, а не кодом проверки.                                                     | `projects/agent-kit/assets/checks/signals.mjs:loadSignals`                    |
+| Набор признаков режется по пакетам rt-tools.                                                                 | `projects/agent-kit/assets/checks/signals.mjs:BUNDLES_DIR`                    |
+| Дерево получает признаки тех пакетов, которые назвало.                                                       | `projects/agent-kit/assets/checks/signals.mjs:readBundle`                     |
+| Дерево дописывает признаки, а не правит чужие.                                                               | `projects/agent-kit/assets/checks/signals.mjs:byKey`                          |
+| Признак называет свою область.                                                                               | `projects/agent-kit/assets/hooks/reuse-first-guard.sh:scope`                  |
+| Пустое поле признака не съезжает в соседнее.                                                                 | `projects/agent-kit/assets/hooks/reuse-first-guard.sh:cancel`                 |
+| Гард, не получивший ни одного признака, говорит об этом.                                                     | `projects/agent-kit/assets/hooks/reuse-first-guard.sh:signals_seen`           |
 
 ## Что ещё стоит знать при чтении кода
 

@@ -23,6 +23,10 @@ const LAW: string = 'docs/constitution/delivery.md';
 const OTHER_LAW: string = 'docs/constitution/application/access.md';
 const TEMPLATE: string = '.claude/rt-kit/templates/rule.md';
 const GLOSSARY: string = 'docs/GLOSSARY.md';
+/** Закон с правилами при нём: им проверяется каскад — отказ от него уносит и правила, и паттерны. */
+const VERIFIABILITY: string = 'laws/verifiability.md';
+const TESTING: string = 'rules/testing.md';
+const TESTING_SKILL: string = '.claude/skills/testing/SKILL.md';
 /** Ресурсы берутся из дерева пакета: спека проверяет раскладку, а не выдуманный набор. */
 const ASSETS: string = join(__dirname, '..', '..', 'assets');
 
@@ -61,6 +65,13 @@ const start: (only?: readonly string[]) => IOutcomeOfCommand = (only: readonly s
     writeFileSync(join(root, CONFIG_PATH), JSON.stringify({ ...config, vars: PORTS }, null, 4), 'utf8');
 
     return outcome;
+};
+
+/** Настройка человека плюс строки отказа: ими проверяется каскад на живом наборе. */
+const startSkipping: (skip: readonly string[]) => void = (skip: readonly string[]): void => {
+    start();
+    const config: Record<string, unknown> = JSON.parse(get(CONFIG_PATH));
+    writeFileSync(join(root, CONFIG_PATH), JSON.stringify({ ...config, skip }, null, 4), 'utf8');
 };
 
 /** Заполнить черновики компаньонов так, как это делает проект: снять метки пустых мест. */
@@ -232,6 +243,49 @@ describe('sync', () => {
         sync(env, false);
 
         expect(get(TEMPLATE)).toContain('rt-kit');
+    });
+
+    it('SC-AK-123 — предупреждение о лишней строке раскладку не отбивает', () => {
+        startSkipping([VERIFIABILITY, TESTING]);
+        const outcome: IOutcomeOfCommand = sync(env, false);
+
+        expect(outcome.code).toBe(0);
+        expect(said(outcome)).toContain('строк отказа, которые ничего не снимают');
+        expect(said(outcome)).toContain(`${TESTING} — снято отказом от verifiability`);
+    });
+
+    it('SC-AK-134 — выбор, который после каскада ничего не берёт, называется вслух', () => {
+        start(['laws/delivery.md', TESTING]);
+        const outcome: IOutcomeOfCommand = sync(env, false);
+
+        expect(outcome.code).toBe(0);
+        expect(said(outcome)).toContain('названо выбором, но не приедет');
+        expect(said(outcome)).toContain(`${TESTING} — снято вслед за verifiability`);
+        expect((): string => get(TESTING_SKILL)).toThrow();
+    });
+
+    it('SC-AK-137 — ушедшее из набора называется по списку снятого', () => {
+        start();
+        sync(env, false);
+        // Файл прошлой редакции: тело с шапкой пакета берётся у разложенного правила — снятого
+        // ресурса в наборе нет, и положить его раскладкой уже нечем.
+        put('.claude/skills/pricing/SKILL.md', get(TESTING_SKILL));
+        const outcome: IOutcomeOfCommand = sync(env, false);
+
+        expect(said(outcome)).toContain('которых в пакете больше нет');
+        expect(said(outcome)).toContain('.claude/skills/pricing/SKILL.md — снят в v0.7.0');
+    });
+
+    it('SC-AK-138 — снятое каскадом на диске называется отдельно от брошенного', () => {
+        start();
+        sync(env, false);
+        const config: Record<string, unknown> = JSON.parse(get(CONFIG_PATH));
+        writeFileSync(join(root, CONFIG_PATH), JSON.stringify({ ...config, skip: [VERIFIABILITY] }, null, 4), 'utf8');
+        const outcome: IOutcomeOfCommand = sync(env, false);
+
+        expect(said(outcome)).toContain('лежит от ресурсов, снятых вслед за родителем');
+        expect(said(outcome)).toContain(`${TESTING_SKILL} — снят вслед за verifiability`);
+        expect(said(outcome)).not.toContain(`лежит от ресурсов, которые больше не берутся: ${TESTING_SKILL}`);
     });
 
     it('`skip` вычитает из выбранного', () => {
@@ -423,6 +477,15 @@ describe('doctor', () => {
 
         expect(said(outcome)).toContain('нет в дереве');
         expect(said(outcome)).not.toContain('положен:');
+    });
+
+    it('SC-AK-125 — разбор состояния называет снятое вместе с родителем', () => {
+        startSkipping([VERIFIABILITY]);
+        const said_: string = said(doctor(env));
+
+        expect(said_).toContain(`снят каскадом: ${TESTING} — вслед за verifiability`);
+        expect(said_).toContain('patterns/testing-unit.md — вслед за testing, отвергнут verifiability');
+        expect(said_).not.toContain(`не выбран: ${TESTING}`);
     });
 
     it('считает невыбранное — все законы, кроме названного', () => {

@@ -50,3 +50,7 @@ tools/board.mjs
 tools/check-*.mjs
 tools/rt-kit-checks.config.mjs
 tools/task-new.mjs
+tools/signals.mjs
+# Наборы признаков разложены пакетом, и первой строкой у них шапка раскладки: в JSON
+# комментария нет, и форматтер на ней спотыкается. Правятся они в пакете, а не здесь.
+tools/signals/
