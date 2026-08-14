@@ -11,6 +11,9 @@ export default defineConfig(() => ({
         watch: false,
         globals: true,
         environment: 'node',
+        // Слой, кода в котором ещё нет, спек не имеет — и это не отказ прогона. Пустота
+        // при этом видна числом тестов в отчёте, а не цветом прогона.
+        passWithNoTests: true,
         include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
         reporters: ['default'],
         coverage: {

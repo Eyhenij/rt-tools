@@ -1,0 +1,53 @@
+# Локальный подъём приёмника: база и сама служба. Тот же состав, из которого растёт прод, —
+# у прода будет свой файл с образом из реестра, здесь образ собирается на месте.
+#
+#   docker compose up -d db          — одна база: под накат миграций и прогон спек
+#   docker compose up -d --build     — база и приёмник целиком
+#
+# Пароль здесь простой намеренно: состав локальный, наружу порт базы не выходит за пределы
+# машины, а прод берёт пароль из своего окружения.
+
+services:
+    db:
+        image: postgres:18.3-alpine
+        environment:
+            POSTGRES_USER: message_bus
+            POSTGRES_PASSWORD: message_bus
+            POSTGRES_DB: message_bus
+        ports:
+            - '55432:5432'
+        volumes:
+            # Восемнадцатый Postgres ждёт одну точку монтирования на весь каталог, а не на
+            # `data` внутри него: иначе он отказывается подниматься и уходит в перезапуск.
+            - message-bus-db:/var/lib/postgresql
+        healthcheck:
+            test: ['CMD-SHELL', 'pg_isready -U message_bus -d message_bus']
+            interval: 5s
+            timeout: 3s
+            retries: 10
+        restart: unless-stopped
+
+    api:
+        build:
+            context: .
+            dockerfile: deploy/message-bus.Dockerfile
+        environment:
+            DATABASE_URL: postgresql://message_bus:message_bus@db:5432/message_bus
+            PORT: '3000'
+            # Предел веса груза. Без него запрос произвольного размера кладёт службу на самом
+            # малом узле — правило договорённости приёмника.
+            CARGO_LIMIT: '2mb'
+        ports:
+            - '3000:3000'
+        depends_on:
+            db:
+                condition: service_healthy
+        restart: unless-stopped
+        logging:
+            driver: json-file
+            options:
+                max-size: '10m'
+                max-file: '3'
+
+volumes:
+    message-bus-db:

@@ -53,38 +53,66 @@ module.exports = [
                         {
                             sourceTag: 'scope:api-app',
                             onlyDependOnLibsWithTags: [
-                                'scope:api-observations-feature',
-                                'scope:api-proposals-feature',
-                                'scope:api-postmortems-feature',
-                                'scope:common',
+                                'scope:message-bus-api-observations-feature',
+                                'scope:message-bus-api-proposals-feature',
+                                'scope:message-bus-api-postmortems-feature',
+                                'scope:message-bus-api-persistence-feature',
+                                // Проба живости спрашивает хранилище напрямую: домена, чьей
+                                // возможностью она была бы, у неё нет.
+                                'scope:message-bus-api-persistence-data-access',
+                                'scope:message-bus-common',
                             ],
                         },
                         ...['observations', 'proposals', 'postmortems'].flatMap((domain) => [
                             {
-                                sourceTag: `scope:api-${domain}-feature`,
+                                sourceTag: `scope:message-bus-api-${domain}-feature`,
                                 onlyDependOnLibsWithTags: [
-                                    `scope:api-${domain}-data-access`,
-                                    `scope:api-${domain}-api`,
-                                    `scope:api-${domain}-util`,
-                                    'scope:common',
+                                    `scope:message-bus-api-${domain}-data-access`,
+                                    `scope:message-bus-api-${domain}-api`,
+                                    `scope:message-bus-api-${domain}-util`,
+                                    'scope:message-bus-api-persistence-feature',
+                                    'scope:message-bus-common',
                                 ],
                             },
                             {
-                                sourceTag: `scope:api-${domain}-data-access`,
-                                onlyDependOnLibsWithTags: [`scope:api-${domain}-util`, 'scope:common'],
+                                sourceTag: `scope:message-bus-api-${domain}-data-access`,
+                                onlyDependOnLibsWithTags: [
+                                    `scope:message-bus-api-${domain}-util`,
+                                    'scope:message-bus-api-persistence-data-access',
+                                    'scope:message-bus-api-persistence-util',
+                                    'scope:message-bus-common',
+                                ],
                             },
                             {
-                                sourceTag: `scope:api-${domain}-api`,
-                                onlyDependOnLibsWithTags: [`scope:api-${domain}-util`, 'scope:common'],
+                                sourceTag: `scope:message-bus-api-${domain}-api`,
+                                onlyDependOnLibsWithTags: [`scope:message-bus-api-${domain}-util`, 'scope:message-bus-common'],
                             },
                             {
-                                sourceTag: `scope:api-${domain}-util`,
-                                onlyDependOnLibsWithTags: ['scope:common'],
+                                sourceTag: `scope:message-bus-api-${domain}-util`,
+                                onlyDependOnLibsWithTags: ['scope:message-bus-common'],
                             },
                         ]),
+                        // Домен хранилища: клиент лежит в слое утилит, служба над ним, модуль над
+                        // службой. Доменных либ он не видит вовсе — его зовут, а не он зовёт.
+                        {
+                            sourceTag: 'scope:message-bus-api-persistence-feature',
+                            onlyDependOnLibsWithTags: ['scope:message-bus-api-persistence-data-access'],
+                        },
+                        {
+                            sourceTag: 'scope:message-bus-api-persistence-data-access',
+                            onlyDependOnLibsWithTags: ['scope:message-bus-api-persistence-util'],
+                        },
+                        {
+                            sourceTag: 'scope:message-bus-api-persistence-util',
+                            onlyDependOnLibsWithTags: [],
+                        },
+                        {
+                            sourceTag: 'scope:message-bus-api-persistence-api',
+                            onlyDependOnLibsWithTags: ['scope:message-bus-api-persistence-util'],
+                        },
                         // Общий слой не видит никого: типы груза не знают ни о хранилище, ни о доменах.
                         {
-                            sourceTag: 'scope:common',
+                            sourceTag: 'scope:message-bus-common',
                             onlyDependOnLibsWithTags: [],
                         },
                         // Публикуемые пакеты границами не сужены: направление между ними держат
