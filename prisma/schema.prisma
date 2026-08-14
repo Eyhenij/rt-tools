@@ -1,5 +1,5 @@
 // Хранилище приёмника груза. Пять сущностей договорённости
-// `docs/specs/message-bus/proposed/intake/`; правила, которые выражают ограничения, там же.
+// `docs/specs/message-bus/`; правила, которые выражают ограничения, там же.
 
 generator client {
     provider            = "prisma-client"
