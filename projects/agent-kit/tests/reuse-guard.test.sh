@@ -138,4 +138,31 @@ case "$said" in
     *) report "SC-AK-150 — неизвестный набор назван вместе с теми, что есть" "$said" есть ;;
 esac
 
+# SC-AK-151 — маркер снимает свою строку и следующую, а дальше не достаёт.
+#
+# Форма из паттерна — комментарий над кодом: атрибутом маркер в разметке не ставится, потому что
+# форматировщик уводит первый атрибут со строки имени тега. Фикстура повторяет раскладку дерева:
+# `tools/` с проверкой и списком принятых долгов, `src/` с кодом.
+cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/signals.mjs" "$CHECKS/check-reuse.mjs" "$TREE/tools/"
+printf '{ "accepted": [], "debt": [] }\n' > "$TREE/tools/reuse-allowlist.json"
+cat > "$TREE/.claude/rt-kit/checks.json" <<'JSON'
+{ "sourceRoots": ["src"], "reuse": { "bundles": [], "signals": "tools/signals/kit.json" } }
+JSON
+
+# Сколько расхождений напечатала сплошная сверка на единственном файле дерева.
+reuse_findings() {
+    rm -f "$TREE"/src/*.html
+    printf '%b\n' "$1" > "$TREE/src/marked.html"
+
+    (cd "$TREE" && node tools/check-reuse.mjs 2>&1) | grep -c 'input ×'
+}
+
+report "SC-AK-151 — маркер комментарием строкой выше снимает признак" \
+    "$(reuse_findings '<!-- native-ok: в ките нет поля с маской -->\n<input type="tel" />')" 0
+report "SC-AK-151 — маркер в самой строке снимает признак" \
+    "$(reuse_findings '<input type="tel" /> <!-- native-ok: в ките нет поля с маской -->')" 0
+report "SC-AK-151 — через строку после маркера признак считается" \
+    "$(reuse_findings '<!-- native-ok: в ките нет поля с маской -->\n<b>всё равно</b>\n<input type="tel" />')" 1
+report "SC-AK-151 — без маркера признак считается" "$(reuse_findings '<input type="tel" />')" 1
+
 suite_result "гард единообразия"
