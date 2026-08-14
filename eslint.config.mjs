@@ -1,7 +1,9 @@
-const nx = require('@nx/eslint-plugin');
-const rt = require('./tools/lint-rules/index.cjs');
+import nx from '@nx/eslint-plugin';
 
-module.exports = [
+import { allBoundaries } from './eslint/boundaries/index.mjs';
+import rt from './tools/lint-rules/index.cjs';
+
+export default [
     {
         ignores: [
             '**/.angular/**',
@@ -46,82 +48,10 @@ module.exports = [
                 {
                     enforceBuildableLibDependency: true,
                     allow: [],
-                    depConstraints: [
-                        // Семья приёмника: лесенка слоёв. Первое подходящее правило выигрывает,
-                        // поэтому конкретные теги стоят до общего разрешения ниже. Строка на слой
-                        // выписана целиком, без подстановок: новое ребро видно в разборе.
-                        {
-                            sourceTag: 'scope:api-app',
-                            onlyDependOnLibsWithTags: [
-                                'scope:message-bus-api-observations-feature',
-                                'scope:message-bus-api-proposals-feature',
-                                'scope:message-bus-api-postmortems-feature',
-                                'scope:message-bus-api-persistence-feature',
-                                // Проба живости спрашивает хранилище напрямую: домена, чьей
-                                // возможностью она была бы, у неё нет.
-                                'scope:message-bus-api-persistence-data-access',
-                                'scope:message-bus-common',
-                            ],
-                        },
-                        ...['observations', 'proposals', 'postmortems'].flatMap((domain) => [
-                            {
-                                sourceTag: `scope:message-bus-api-${domain}-feature`,
-                                onlyDependOnLibsWithTags: [
-                                    `scope:message-bus-api-${domain}-data-access`,
-                                    `scope:message-bus-api-${domain}-api`,
-                                    `scope:message-bus-api-${domain}-util`,
-                                    'scope:message-bus-api-persistence-feature',
-                                    'scope:message-bus-common',
-                                ],
-                            },
-                            {
-                                sourceTag: `scope:message-bus-api-${domain}-data-access`,
-                                onlyDependOnLibsWithTags: [
-                                    `scope:message-bus-api-${domain}-util`,
-                                    'scope:message-bus-api-persistence-data-access',
-                                    'scope:message-bus-api-persistence-util',
-                                    'scope:message-bus-common',
-                                ],
-                            },
-                            {
-                                sourceTag: `scope:message-bus-api-${domain}-api`,
-                                onlyDependOnLibsWithTags: [`scope:message-bus-api-${domain}-util`, 'scope:message-bus-common'],
-                            },
-                            {
-                                sourceTag: `scope:message-bus-api-${domain}-util`,
-                                onlyDependOnLibsWithTags: ['scope:message-bus-common'],
-                            },
-                        ]),
-                        // Домен хранилища: клиент лежит в слое утилит, служба над ним, модуль над
-                        // службой. Доменных либ он не видит вовсе — его зовут, а не он зовёт.
-                        {
-                            sourceTag: 'scope:message-bus-api-persistence-feature',
-                            onlyDependOnLibsWithTags: ['scope:message-bus-api-persistence-data-access'],
-                        },
-                        {
-                            sourceTag: 'scope:message-bus-api-persistence-data-access',
-                            onlyDependOnLibsWithTags: ['scope:message-bus-api-persistence-util'],
-                        },
-                        {
-                            sourceTag: 'scope:message-bus-api-persistence-util',
-                            onlyDependOnLibsWithTags: [],
-                        },
-                        {
-                            sourceTag: 'scope:message-bus-api-persistence-api',
-                            onlyDependOnLibsWithTags: ['scope:message-bus-api-persistence-util'],
-                        },
-                        // Общий слой не видит никого: типы груза не знают ни о хранилище, ни о доменах.
-                        {
-                            sourceTag: 'scope:message-bus-common',
-                            onlyDependOnLibsWithTags: [],
-                        },
-                        // Публикуемые пакеты границами не сужены: направление между ними держат
-                        // их собственные package.json.
-                        {
-                            sourceTag: '*',
-                            onlyDependOnLibsWithTags: ['*'],
-                        },
-                    ],
+                    // Рёбра живут файлами доменов в `eslint/boundaries/domains`, а сюда приезжают
+                    // сводом: проверка раскладки читает их модулем и требует, чтобы тег либы был
+                    // объявлен там ровно один раз.
+                    depConstraints: allBoundaries,
                 },
             ],
         },
