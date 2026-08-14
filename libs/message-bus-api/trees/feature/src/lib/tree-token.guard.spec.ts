@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { ITreeBearingRequest, TREE_OF_REQUEST, treeTokenHash } from '@rt/message-bus-api/trees/util';
-import { TREE_TOKEN_HEADER } from '@rt/message-bus-common';
+import { TREE_TOKEN_HEADER } from '@rt-tools/agent-kit/cargo';
 
 import { PUBLIC_OPERATION } from './public.decorator';
 import { TreeTokenGuard } from './tree-token.guard';

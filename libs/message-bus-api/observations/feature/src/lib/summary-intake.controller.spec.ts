@@ -1,9 +1,10 @@
 import { BadRequestException, HttpStatus } from '@nestjs/common';
 import { describe, expect, it } from 'vitest';
 
+import { IIntakeAccepted } from '@rt-tools/agent-kit/cargo';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IRequestTree, ITreeBearingRequest, rememberTree } from '@rt/message-bus-api/trees/util';
-import { IIntakeAccepted, IIntakeResponse, TCargoBody } from '@rt/message-bus-common';
+import { IIntakeResponse, TCargoBody } from '@rt/message-bus-common';
 
 import { SummaryIntakeController } from './summary-intake.controller';
 

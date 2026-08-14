@@ -15,7 +15,7 @@ import { Reflector } from '@nestjs/core';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { findTreeByTokenHash } from '@rt/message-bus-api/trees/data-access';
 import { IRequestTree, ITreeBearingRequest, rememberTree, treeTokenHash } from '@rt/message-bus-api/trees/util';
-import { TREE_TOKEN_HEADER } from '@rt/message-bus-common';
+import { TREE_TOKEN_HEADER } from '@rt-tools/agent-kit/cargo';
 
 import { PUBLIC_OPERATION } from './public.decorator';
 

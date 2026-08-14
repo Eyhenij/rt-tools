@@ -13,18 +13,10 @@ import { BadRequestException, Body, Controller, HttpStatus, Post, Req, Res } fro
 
 import { IMonthRecordWritten, writeMonthSummary } from '@rt/message-bus-api/observations/data-access';
 import { SUMMARY_FIELDS } from '@rt/message-bus-api/observations/util';
+import { IIntakeAccepted } from '@rt-tools/agent-kit/cargo';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IRequestTree, ITreeBearingRequest, treeOf } from '@rt/message-bus-api/trees/util';
-import {
-    cargoFault,
-    cargoFaultMessage,
-    cargoSchemaOf,
-    ICargoFault,
-    IIntakeAccepted,
-    IIntakeResponse,
-    monthOf,
-    TCargoBody,
-} from '@rt/message-bus-common';
+import { cargoFault, cargoFaultMessage, cargoSchemaOf, ICargoFault, IIntakeResponse, monthOf, TCargoBody } from '@rt/message-bus-common';
 
 /** Как род груза зовётся в отказе: дерево шлёт три рода и должно знать, какой из них отбит. */
 const CARGO_KIND: string = 'сводка';

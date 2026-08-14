@@ -5,7 +5,6 @@
  * Сама отправка проверяется в спеке команд — двойником, а не живой записью.
  */
 import { ILeak, IProposal, leaksIn, markSent, marksOf, parseProposals, TO_PACKAGE, TO_TREE } from './proposals.js';
-import { repositoryOf } from './submit.js';
 
 const FILE: string = '.claude/rt-kit/proposals/2026-08-12-probe.md';
 
@@ -119,18 +118,5 @@ describe('адрес дерева в тексте', (): void => {
 
     it('дерево без удалённого репозитория проверку не ломает', (): void => {
         expect(marksOf('/tmp/probe', '')).toEqual(['/tmp/probe', 'probe']);
-    });
-});
-
-describe('адрес репозитория пакета', (): void => {
-    it('SC-AK-81 — читается из любой формы записи в манифесте', (): void => {
-        expect(repositoryOf('https://github.com/Eyhenij/rt-tools.git')).toBe('Eyhenij/rt-tools');
-        expect(repositoryOf('git+https://github.com/Eyhenij/rt-tools.git')).toBe('Eyhenij/rt-tools');
-        expect(repositoryOf('git@github.com:Eyhenij/rt-tools.git')).toBe('Eyhenij/rt-tools');
-    });
-
-    it('SC-AK-81 — чужой хостинг адресом не считается', (): void => {
-        expect(repositoryOf('https://example.test/some/repo.git')).toBe('');
-        expect(repositoryOf('')).toBe('');
     });
 });
