@@ -24,10 +24,17 @@ RT_STANDS='витрина ui-kit http://localhost:6006, витрина ui-kit-v2
 #
 # Зовётся именованным скриптом, а не разложенной командой: порог замечаний объявлен при нём один
 # раз, и гард, сквозной прогон и ручной вызов не расходятся между собой.
+#
+# Чем каждый шаг конвейера здесь закрыт — в `pushGate.steps` файла `.claude/rt-kit/checks.json`,
+# и `check-push-gate` отбивает пуш, если шаг не закрыт ни строкой отсюда, ни исключением с
+# причиной. Сборка и сверка собранных пакетов стоят здесь именно поэтому: без них набор был уже
+# конвейерного, и дважды подряд отчёт уходил со словом «проверено» о том, чего не гоняли.
 rt_push_checks() {
     cat <<'EOF'
-pnpm exec nx affected -t lint typecheck test --parallel
+pnpm exec nx affected -t lint typecheck test build --parallel
 pnpm run lint:styles
+pnpm exec nx affected -t verify --parallel
+node tools/check-push-gate.mjs
 EOF
 }
 
