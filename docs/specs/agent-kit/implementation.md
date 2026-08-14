@@ -141,6 +141,9 @@
 | Задача без исполнителя названа отдельной строкой.                                                            | `projects/agent-kit/assets/checks/board.github.mjs:assignees`                 |
 | Неспрошенная очередь работ подтверждением не является.                                                       | `projects/agent-kit/assets/checks/task-new.github.mjs:OfflineError`           |
 | Ответ очереди складывается в строки чистой функцией.                                                         | `projects/agent-kit/assets/checks/board.github.mjs:describeTaskState`         |
+| Раскладка называет добавленный долг в тот же момент, когда его добавила.                                     | `projects/agent-kit/src/lib/commands.ts:debtLines`                            |
+| Статьи считаются по компаньону дерева, а не по черновику пакета.                                             | `projects/agent-kit/src/lib/companion.ts:unaddressedOf`                       |
+| Счёт добавленного долга складывается чистой функцией.                                                        | `projects/agent-kit/src/lib/companion.ts:debtLine`                            |
 
 ## Что ещё стоит знать при чтении кода
 
