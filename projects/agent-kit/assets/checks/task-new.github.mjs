@@ -33,10 +33,12 @@ import {
     TASK_KEY,
     TOKEN_PATH,
     botToken,
+    describeTaskState,
     gh,
     ghJson,
     graphql,
     numberFromTitle,
+    taskState,
 } from './board.mjs';
 
 function parseArgs(argv) {
@@ -194,5 +196,29 @@ adoptDraft();
 
 console.log(`[${TASK_KEY}-${number}] ${args.title}`);
 console.log(`https://github.com/${OWNER}/${REPO}/issues/${number}`);
+
+/**
+ * Пятый шаг: заведение подтверждается ответом очереди работ, а не выводом этой команды.
+ *
+ * Все четыре шага выше отвечают за свои вызовы и молчат о том, видна ли задача тому, кто по
+ * ней придёт. Шестнадцать заведений подряд так и напечатали номер со ссылкой, не попав в
+ * очередь ни одно: учётная запись была ограничена хостингом, вызовы при этом отказа не дали.
+ */
+let answer;
+try {
+    answer = describeTaskState(number, taskState(number, { token }));
+} catch (error) {
+    const reason = error instanceof OfflineError ? error.message : String(error.message ?? error);
+    answer = describeTaskState(number, { offline: reason });
+}
+for (const line of answer.lines) {
+    (answer.ok ? console.log : console.error)(`task-new: ${line}`);
+}
+
 console.log(`\nВетка заводится отдельным вызовом:\n  git checkout -b ${branch}`);
 console.log(`Взятая в работу задача переставляется на борде:\n  npm run task:move -- ${number} ${IN_PROGRESS_STATUS}`);
+
+if (!answer.ok) {
+    console.error(`task-new: проверь очередь работ целиком — npm run check:board`);
+    process.exit(1);
+}
