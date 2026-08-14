@@ -11,13 +11,22 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 
 import { IEntryOfCatalog, readCatalog } from './catalog.js';
-import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, KEPT_SUFFIX, list, sync } from './commands.js';
+import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, KEPT_SUFFIX, list, propose, stats, sync } from './commands.js';
 import { CONFIG_PATH, OVERRIDES_DIR } from './config.js';
+import { bindingsOf } from './hooks-map.js';
+import { OBSERVATIONS_DIR } from './observations.js';
+import { PROPOSALS_DIR } from './proposals.js';
+import { FEEDBACK_LABEL, IIssueInput, TSubmit } from './submit.js';
 
 const VERSION: string = '0.1.0';
 const LAW: string = 'docs/constitution/delivery.md';
 const OTHER_LAW: string = 'docs/constitution/application/access.md';
 const TEMPLATE: string = '.claude/rt-kit/templates/rule.md';
+const GLOSSARY: string = 'docs/GLOSSARY.md';
+/** Закон с правилами при нём: им проверяется каскад — отказ от него уносит и правила, и паттерны. */
+const VERIFIABILITY: string = 'laws/verifiability.md';
+const TESTING: string = 'rules/testing.md';
+const TESTING_SKILL: string = '.claude/skills/testing/SKILL.md';
 /** Ресурсы берутся из дерева пакета: спека проверяет раскладку, а не выдуманный набор. */
 const ASSETS: string = join(__dirname, '..', '..', 'assets');
 
@@ -58,6 +67,13 @@ const start: (only?: readonly string[]) => IOutcomeOfCommand = (only: readonly s
     return outcome;
 };
 
+/** Настройка человека плюс строки отказа: ими проверяется каскад на живом наборе. */
+const startSkipping: (skip: readonly string[]) => void = (skip: readonly string[]): void => {
+    start();
+    const config: Record<string, unknown> = JSON.parse(get(CONFIG_PATH));
+    writeFileSync(join(root, CONFIG_PATH), JSON.stringify({ ...config, skip }, null, 4), 'utf8');
+};
+
 /** Заполнить черновики компаньонов так, как это делает проект: снять метки пустых мест. */
 const fillCompanions: () => void = (): void => {
     const skills: string = join(root, '.claude/skills');
@@ -78,10 +94,20 @@ const bindHooks: () => void = (): void => {
     if (!existsSync(dir)) {
         return;
     }
-    const commands: unknown[] = readdirSync(dir)
-        .filter((name: string): boolean => name.endsWith('.sh'))
-        .map((name: string): unknown => ({ type: 'command', command: `$CLAUDE_PROJECT_DIR/.claude/hooks/${name}` }));
-    put('.claude/settings.json', JSON.stringify({ hooks: { PreToolUse: [{ matcher: '*', hooks: commands }] } }, null, 4));
+    // Гард подключается к тому событию, которое объявил сам, и гард с двумя объявлениями — к
+    // обоим: настройка, где все они свалены под одно событие, половину из них не зовёт.
+    const events: Record<string, unknown[]> = {};
+    for (const name of readdirSync(dir).filter((file: string): boolean => file.endsWith('.sh'))) {
+        const path: string = `.claude/hooks/${name}`;
+        for (const binding of bindingsOf(readFileSync(join(root, path), 'utf8'), path)) {
+            events[binding.event] = [...(events[binding.event] ?? []), { type: 'command', command: `$CLAUDE_PROJECT_DIR/${path}` }];
+        }
+    }
+    const hooks: Record<string, unknown> = {};
+    for (const [event, commands] of Object.entries(events)) {
+        hooks[event] = [{ matcher: '*', hooks: commands }];
+    }
+    put('.claude/settings.json', JSON.stringify({ hooks }, null, 4));
 };
 
 beforeEach((): void => {
@@ -171,6 +197,23 @@ describe('sync', () => {
         expect(get(LAW)).toBe('своё, положено не пакетом\n');
     });
 
+    it('SC-AK-33 — словарь приезжает в дерево раскладкой', () => {
+        start();
+        sync(env, false);
+
+        expect(get(GLOSSARY)).toContain(`rt-kit v${VERSION}`);
+        expect(get(GLOSSARY)).toContain('## Слой правил');
+    });
+
+    it('SC-AK-34 — предметные разделы словаря дописываются надстройкой', () => {
+        start();
+        put(join(OVERRIDES_DIR, 'docs/GLOSSARY.md'), '## Своё слово\n\nЗначит вот это.\n');
+        sync(env, false);
+
+        expect(get(GLOSSARY)).toContain('## Слой правил');
+        expect(get(GLOSSARY)).toContain('## Своё слово');
+    });
+
     it('надстройка дописывает свой раздел и снимает пустой', () => {
         start();
         put(join(OVERRIDES_DIR, 'laws/delivery.md'), '## Решения\n\nРешили здесь.\n\n## Открытые вопросы\n');
@@ -200,6 +243,49 @@ describe('sync', () => {
         sync(env, false);
 
         expect(get(TEMPLATE)).toContain('rt-kit');
+    });
+
+    it('SC-AK-123 — предупреждение о лишней строке раскладку не отбивает', () => {
+        startSkipping([VERIFIABILITY, TESTING]);
+        const outcome: IOutcomeOfCommand = sync(env, false);
+
+        expect(outcome.code).toBe(0);
+        expect(said(outcome)).toContain('строк отказа, которые ничего не снимают');
+        expect(said(outcome)).toContain(`${TESTING} — снято отказом от verifiability`);
+    });
+
+    it('SC-AK-134 — выбор, который после каскада ничего не берёт, называется вслух', () => {
+        start(['laws/delivery.md', TESTING]);
+        const outcome: IOutcomeOfCommand = sync(env, false);
+
+        expect(outcome.code).toBe(0);
+        expect(said(outcome)).toContain('названо выбором, но не приедет');
+        expect(said(outcome)).toContain(`${TESTING} — снято вслед за verifiability`);
+        expect((): string => get(TESTING_SKILL)).toThrow();
+    });
+
+    it('SC-AK-137 — ушедшее из набора называется по списку снятого', () => {
+        start();
+        sync(env, false);
+        // Файл прошлой редакции: тело с шапкой пакета берётся у разложенного правила — снятого
+        // ресурса в наборе нет, и положить его раскладкой уже нечем.
+        put('.claude/skills/pricing/SKILL.md', get(TESTING_SKILL));
+        const outcome: IOutcomeOfCommand = sync(env, false);
+
+        expect(said(outcome)).toContain('которых в пакете больше нет');
+        expect(said(outcome)).toContain('.claude/skills/pricing/SKILL.md — снят в v0.7.0');
+    });
+
+    it('SC-AK-138 — снятое каскадом на диске называется отдельно от брошенного', () => {
+        start();
+        sync(env, false);
+        const config: Record<string, unknown> = JSON.parse(get(CONFIG_PATH));
+        writeFileSync(join(root, CONFIG_PATH), JSON.stringify({ ...config, skip: [VERIFIABILITY] }, null, 4), 'utf8');
+        const outcome: IOutcomeOfCommand = sync(env, false);
+
+        expect(said(outcome)).toContain('лежит от ресурсов, снятых вслед за родителем');
+        expect(said(outcome)).toContain(`${TESTING_SKILL} — снят вслед за verifiability`);
+        expect(said(outcome)).not.toContain(`лежит от ресурсов, которые больше не берутся: ${TESTING_SKILL}`);
     });
 
     it('`skip` вычитает из выбранного', () => {
@@ -393,6 +479,15 @@ describe('doctor', () => {
         expect(said(outcome)).not.toContain('положен:');
     });
 
+    it('SC-AK-125 — разбор состояния называет снятое вместе с родителем', () => {
+        startSkipping([VERIFIABILITY]);
+        const said_: string = said(doctor(env));
+
+        expect(said_).toContain(`снят каскадом: ${TESTING} — вслед за verifiability`);
+        expect(said_).toContain('patterns/testing-unit.md — вслед за testing, отвергнут verifiability');
+        expect(said_).not.toContain(`не выбран: ${TESTING}`);
+    });
+
     it('считает невыбранное — все законы, кроме названного', () => {
         const laws: number = readCatalog(ASSETS).filter((entry: IEntryOfCatalog): boolean => entry.kind === 'laws').length;
         start(['laws/delivery.md']);
@@ -455,5 +550,241 @@ describe('list', () => {
 
     it('шаблоны показывает своим разделом', () => {
         expect(said(list(env))).toContain('ШАБЛОНЫ');
+    });
+});
+
+describe('stats', () => {
+    const TODAY: string = '2026-08-12';
+
+    /** Наблюдения так, как их пишет гард: строка на событие, файл на день. */
+    const observed: (lines: readonly Readonly<Record<string, string>>[]) => void = (
+        lines: readonly Readonly<Record<string, string>>[]
+    ): void =>
+        put(
+            `${OBSERVATIONS_DIR}/${TODAY}.jsonl`,
+            `${lines.map((fields: Readonly<Record<string, string>>): string => JSON.stringify({ t: `${TODAY}T09:00:00Z`, ...fields, v: VERSION })).join('\n')}\n`
+        );
+
+    const summed: (days?: number) => IOutcomeOfCommand = (days: number = 3): IOutcomeOfCommand =>
+        stats(env, { days, today: TODAY, json: false });
+
+    it('без конфига говорит про init', () => {
+        expect(summed().code).toBe(1);
+        expect(said(summed())).toContain('init');
+    });
+
+    it('SC-AK-75 — записи не велось: говорит причину, а не нули', () => {
+        start();
+
+        expect(said(summed())).toContain('записи не велось');
+        expect(said(summed())).not.toContain('правил загружено: 0');
+    });
+
+    it('SC-AK-72 — выключенная запись названа выключенной', () => {
+        start();
+        const config: Record<string, unknown> = JSON.parse(get(CONFIG_PATH));
+        put(CONFIG_PATH, JSON.stringify({ ...config, observe: false }, null, 4));
+        observed([{ ev: 'skill-load', res: 'task-flow', sid: '1' }]);
+
+        const said_: string = said(summed());
+
+        expect(said_).toContain('выключена');
+        // Наблюдения на диске есть, но сводки по ним нет: выключатель судится раньше чтения.
+        expect(said_).not.toContain('task-flow');
+    });
+
+    it('считает загрузки, отбития и отказы', () => {
+        start();
+        observed([
+            { ev: 'skill-load', res: 'task-flow', sid: '1' },
+            { ev: 'gate-deny', res: 'styling-bem', kind: 'scss', sid: '1' },
+            { ev: 'guard-deny', res: 'docs-guard', sid: '2' },
+        ]);
+
+        const lines: string = said(summed());
+
+        expect(lines).toContain('заходов 2');
+        expect(lines).toContain('правил загружено: 1');
+        expect(lines).toContain('гейт отбивал: 1');
+        expect(lines).toContain('гарды отказывали: 1');
+    });
+
+    it('SC-AK-74 — называет разложенное и ни разу не загруженное', () => {
+        start();
+        sync(env, false);
+        observed([{ ev: 'skill-load', res: 'task-flow', sid: '1' }]);
+
+        expect(said(summed())).toContain('не загружено ни разу');
+        // Поимённо список проверяется машинным выводом: печатная сводка обрывает его вслух, и
+        // искать в ней конкретное имя значило бы проверять длину дюжины, а не сам отбор.
+        expect(JSON.parse(stats(env, { days: 3, today: TODAY, json: true }).lines[0]).unused).toContain('git-workflow');
+    });
+
+    it('длинный список незагруженного обрывается вслух', () => {
+        start();
+        sync(env, false);
+        observed([{ ev: 'skill-load', res: 'task-flow', sid: '1' }]);
+
+        expect(said(summed())).toContain('и ещё');
+    });
+
+    it('машинный вывод — одна строка разбираемого JSON', () => {
+        start();
+        observed([{ ev: 'skill-load', res: 'task-flow', sid: '1' }]);
+
+        const outcome: IOutcomeOfCommand = stats(env, { days: 3, today: TODAY, json: true });
+
+        expect(outcome.lines).toHaveLength(1);
+        expect(JSON.parse(outcome.lines[0])).toMatchObject({ days: 3, sessions: 1, total: 1 });
+    });
+
+    it('SC-AK-76 — за отрезок наблюдений нет, а записи велись: зовёт взять отрезок длиннее', () => {
+        start();
+        put(
+            `${OBSERVATIONS_DIR}/2026-08-01.jsonl`,
+            `${JSON.stringify({ t: '2026-08-01T09:00:00Z', ev: 'skill-load', res: 'task-flow', sid: '1' })}\n`
+        );
+
+        expect(said(summed())).toContain('--days');
+    });
+});
+
+describe('propose', () => {
+    const REPOSITORY: string = 'owner/package-repo';
+
+    /** Двойник отправки: спека не заводит записей в живом репозитории. */
+    let asked: IIssueInput[];
+    const submit: TSubmit = (input: IIssueInput): string => {
+        asked.push(input);
+
+        return `https://example.test/issues/${asked.length}`;
+    };
+
+    const sending: (dryRun?: boolean) => IOutcomeOfCommand = (dryRun: boolean = false): IOutcomeOfCommand =>
+        propose(env, { dryRun, submit, repository: REPOSITORY, remote: '', summary: ['наблюдений за 3 дн.: 12'] });
+
+    const proposals: (blocks: readonly string[]) => void = (blocks: readonly string[]): void =>
+        put(`${PROPOSALS_DIR}/2026-08-12-probe.md`, `# Предложения\n\n${blocks.join('\n\n')}\n`);
+
+    const forPackage: string = [
+        '## пакет · rules/styling-bem.md',
+        '',
+        '- **повод:** правило молчит про токены',
+        '',
+        '> Текст правки.',
+    ].join('\n');
+    const forTree: string = ['## дерево · .claude/rt-kit/gate-map.sh', '', '> Свой род файлов.'].join('\n');
+
+    beforeEach((): void => {
+        asked = [];
+    });
+
+    it('без конфига говорит про init', () => {
+        expect(sending().code).toBe(1);
+    });
+
+    it('без адреса репозитория не начинается', () => {
+        start();
+        proposals([forPackage]);
+
+        expect(propose(env, { dryRun: false, submit, repository: '', remote: '', summary: [] }).code).toBe(1);
+    });
+
+    it('предложений нет вовсе: говорит, куда их класть', () => {
+        start();
+
+        expect(said(sending())).toContain(PROPOSALS_DIR);
+        expect(asked).toHaveLength(0);
+    });
+
+    it('SC-AK-78 — наружу уезжает только адрес «пакет»', () => {
+        start();
+        proposals([forPackage, forTree]);
+
+        expect(sending().code).toBe(0);
+        expect(asked).toHaveLength(1);
+        expect(asked[0].title).toContain('rules/styling-bem.md');
+        expect(asked[0].label).toBe(FEEDBACK_LABEL);
+        expect(asked[0].repository).toBe(REPOSITORY);
+    });
+
+    it('SC-AK-78 — при одних чужих адресах говорит, где они правятся', () => {
+        start();
+        proposals([forTree]);
+
+        expect(said(sending())).toContain('надстройкой');
+        expect(asked).toHaveLength(0);
+    });
+
+    it('сводка наблюдений едет вместе с предложением', () => {
+        start();
+        proposals([forPackage]);
+        sending();
+
+        expect(asked[0].body).toContain('наблюдений за 3 дн.: 12');
+        expect(asked[0].body).toContain('rules/styling-bem.md');
+    });
+
+    it('SC-AK-79 — адрес дерева в тексте отбивает отправку целиком', () => {
+        start();
+        proposals([forPackage, ['## пакет · rules/testing.md', '', '> Правится в /Users/probe/tree/apps/site.'].join('\n')]);
+
+        const outcome: IOutcomeOfCommand = sending();
+
+        expect(outcome.code).toBe(1);
+        expect(said(outcome)).toContain('абсолютный путь');
+        // Отбивается всё, а не свой блок: «уехало одно из двух» человек прочтёт как «в порядке».
+        expect(asked).toHaveLength(0);
+    });
+
+    it('SC-AK-80 — отправленное помечается и второй раз не уезжает', () => {
+        start();
+        proposals([forPackage]);
+
+        expect(sending().code).toBe(0);
+        expect(get(`${PROPOSALS_DIR}/2026-08-12-probe.md`)).toContain('**отправлено:** https://example.test/issues/1');
+
+        asked = [];
+
+        expect(said(sending())).toContain('уже отправлено: 1');
+        expect(asked).toHaveLength(0);
+    });
+
+    it('пробный прогон ничего не отправляет и называет, что уехало бы', () => {
+        start();
+        proposals([forPackage]);
+
+        const outcome: IOutcomeOfCommand = sending(true);
+
+        expect(said(outcome)).toContain('уехало бы записей: 1');
+        expect(asked).toHaveLength(0);
+        expect(get(`${PROPOSALS_DIR}/2026-08-12-probe.md`)).not.toContain('отправлено');
+    });
+
+    it('оборванная отправка называет отправленное до отказа', () => {
+        start();
+        proposals([forPackage, ['## пакет · rules/testing.md', '', '> Второй текст.'].join('\n')]);
+        let calls: number = 0;
+        const failing: TSubmit = (): string => {
+            calls += 1;
+            if (calls > 1) {
+                throw new Error('нет доступа к очереди работ');
+            }
+
+            return 'https://example.test/issues/1';
+        };
+
+        const outcome: IOutcomeOfCommand = propose(env, {
+            dryRun: false,
+            submit: failing,
+            repository: REPOSITORY,
+            remote: '',
+            summary: [],
+        });
+
+        expect(outcome.code).toBe(1);
+        expect(said(outcome)).toContain('отправлено до отказа: 1');
+        // Первое помечено — повторный запуск увезёт только второе.
+        expect(get(`${PROPOSALS_DIR}/2026-08-12-probe.md`)).toContain('**отправлено:**');
     });
 });

@@ -1,8 +1,10 @@
-/* rt-detail-list — контейнер read-only строк деталей (ViewEncapsulation.None).
-   Селектор bare `.rt-detail-list` (класс на host). */
+@layer rt-kit.components {
+    /* rt-detail-list — контейнер read-only строк деталей (ViewEncapsulation.None).
+       Селектор bare `.rt-detail-list` (класс на host). */
 
-.rt-detail-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--rt-space-md);
+    .rt-detail-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rt-space-md);
+    }
 }

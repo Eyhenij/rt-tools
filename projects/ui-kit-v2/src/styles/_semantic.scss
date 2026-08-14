@@ -1,4 +1,7 @@
-/* Semantic design tokens — light defaults.
+/* Собрано генератором `tools/build-tokens-v2.mjs` из `tokens.source.mjs` — правится там, не здесь:
+   правка на месте теряется на следующей сборке, и её называет `pnpm run check:tokens-build`. */
+
+/* Назначения светлой темы.
 
    Тело вынесено в @mixin по той же причине, что и у тёмной темы: набор нужен не
    только на `:root`, но и на отдельном контейнере. Без этого светлую половину
@@ -16,39 +19,118 @@
     --rt-color-bg-overlay: var(--rt-overlay-black-50);
     --rt-color-bg-inverse: var(--rt-neutral-900);
 
+    /* Подложка обвязки — шапка и боковая навигация. Отдельно от bg-inverse: тот
+       нейтральный и работает под перевёрнутым текстом, а этот синеватый и в обеих
+       темах один. */
+    --rt-color-bg-nav: var(--rt-navy-900); /* rt-theme-shared: обвязка тёмная в обеих темах */
+
     /* Text */
     --rt-color-text-primary: var(--rt-neutral-900);
-    --rt-color-text-muted: var(--rt-neutral-500);
+
+    /* Ступень 600, а не 500: приглушённый текст обязан брать порог, а после
+       пересчёта ряда самая светлая ступень, которая его берёт, — шестисотая.
+       Прежде эту роль держала off-grid ступень 510, заведённая ровно под неё. */
+    --rt-color-text-muted: var(--rt-neutral-600);
     --rt-color-text-disabled: var(--rt-neutral-400);
     --rt-color-text-inverse: var(--rt-neutral-0);
-    --rt-color-text-link: var(--rt-blue-500);
-    --rt-color-text-link-hover: var(--rt-blue-600);
+    --rt-color-text-link: var(--rt-brand-500);
+    --rt-color-text-link-hover: var(--rt-brand-600);
 
     /* Border */
     --rt-color-border-default: var(--rt-neutral-200);
     --rt-color-border-strong: var(--rt-neutral-300);
     --rt-color-border-subtle: var(--rt-neutral-200);
-    --rt-color-border-focus: var(--rt-blue-500);
+    --rt-color-border-focus: var(--rt-brand-500);
 
-    /* Action */
-    --rt-color-action-primary: var(--rt-blue-500);
-    --rt-color-action-primary-hover: var(--rt-blue-600);
-    --rt-color-action-primary-subtle: var(--rt-overlay-blue-8);
+    /* Action — роли действия.
+
+       Роль это пятёрка: подложка, наведение, нажатие, подпись на них и цвет самой
+       роли на поверхности. Кнопка берёт роль целиком и своих цветов не знает вовсе,
+       поэтому смена роли — одна строка здесь, а не правка стилей компонента.
+       Наведение и нажатие — соседние ступени своей шкалы; подпись светлая у всех
+       ролей, потому что все подложки тёмные.
+
+       Пятый член — `-on-surface` — красит безфоновые оформления: текстовое и
+       обводочное берут им подпись и рамку. Отдельным именем, а не подложкой роли:
+       подложка вправе быть поверхностью, и у вторичной роли на графите она ею
+       становится — подпись, взятая из подложки, легла бы сама на себя. У пяти ролей
+       цвет тот же, что и у подложки, и это записано ссылкой, а не повтором
+       значения. */
+    --rt-color-action-primary: var(--rt-brand-500); /* rt-theme-shared: цвет марки один в обеих темах */
+    --rt-color-action-primary-hover: var(--rt-brand-600); /* rt-theme-shared: цвет марки один в обеих темах */
+    --rt-color-action-primary-active: var(--rt-brand-700); /* rt-theme-shared: цвет марки один в обеих темах */
+    --rt-color-action-primary-subtle: var(--rt-overlay-brand-8);
 
     /* Focus-ring tint — насыщеннее subtle, для visible 3px outline. */
-    --rt-color-action-primary-soft: var(--rt-overlay-blue-24);
-    --rt-color-action-on-primary: var(--rt-neutral-0);
-    --rt-color-action-secondary: var(--rt-neutral-200);
-    --rt-color-action-on-secondary: var(--rt-neutral-900);
+    --rt-color-action-primary-soft: var(--rt-overlay-brand-24);
+    --rt-color-action-on-primary: var(--rt-neutral-0); /* rt-theme-shared: подпись на действии марки светлая в обеих темах */
+    --rt-color-action-primary-on-surface: var(--rt-color-action-primary);
+
+    /* Вторичное действие — единственная роль без своего цвета: она нейтральна и на
+       графите разворачивается в подложку поверхности, поэтому тёмная тема отвечает
+       на всю её тройку. По той же причине пятый член у неё свой: подложкой роли на
+       графите красить подпись нечем. */
+    --rt-color-action-secondary: var(--rt-neutral-600);
+    --rt-color-action-secondary-hover: var(--rt-neutral-700);
+    --rt-color-action-secondary-active: var(--rt-neutral-800);
+    --rt-color-action-on-secondary: var(--rt-neutral-0);
+    --rt-color-action-secondary-on-surface: var(--rt-neutral-600);
+    --rt-color-action-success: var(--rt-success-500); /* rt-theme-shared: цвет роли один в обеих темах */
+    --rt-color-action-success-hover: var(--rt-success-600); /* rt-theme-shared: цвет роли один в обеих темах */
+    --rt-color-action-success-active: var(--rt-success-700); /* rt-theme-shared: цвет роли один в обеих темах */
+    --rt-color-action-on-success: var(--rt-neutral-0); /* rt-theme-shared: подпись на цветной подложке светлая в обеих темах */
+    --rt-color-action-success-on-surface: var(--rt-color-action-success);
+    --rt-color-action-warning: var(--rt-warning-500); /* rt-theme-shared: цвет роли один в обеих темах */
+    --rt-color-action-warning-hover: var(--rt-warning-600); /* rt-theme-shared: цвет роли один в обеих темах */
+    --rt-color-action-warning-active: var(--rt-warning-700); /* rt-theme-shared: цвет роли один в обеих темах */
+    --rt-color-action-on-warning: var(--rt-neutral-0); /* rt-theme-shared: подпись на цветной подложке светлая в обеих темах */
+    --rt-color-action-warning-on-surface: var(--rt-color-action-warning);
+    --rt-color-action-danger: var(--rt-danger-500); /* rt-theme-shared: цвет роли один в обеих темах */
+    --rt-color-action-danger-hover: var(--rt-danger-600); /* rt-theme-shared: цвет роли один в обеих темах */
+    --rt-color-action-danger-active: var(--rt-danger-700); /* rt-theme-shared: цвет роли один в обеих темах */
+    --rt-color-action-on-danger: var(--rt-neutral-0); /* rt-theme-shared: подпись на цветной подложке светлая в обеих темах */
+    --rt-color-action-danger-on-surface: var(--rt-color-action-danger);
+    --rt-color-action-info: var(--rt-info-500); /* rt-theme-shared: цвет роли один в обеих темах */
+    --rt-color-action-info-hover: var(--rt-info-600); /* rt-theme-shared: цвет роли один в обеих темах */
+    --rt-color-action-info-active: var(--rt-info-700); /* rt-theme-shared: цвет роли один в обеих темах */
+    --rt-color-action-on-info: var(--rt-neutral-0); /* rt-theme-shared: подпись на цветной подложке светлая в обеих темах */
+    --rt-color-action-info-on-surface: var(--rt-color-action-info);
+
+    /* Отключённое действие — своя пара, а не вторичная роль: делить подложку с ней
+       значит сделать отключённую вторичную кнопку неотличимой от доступной. */
+    --rt-color-action-disabled: var(--rt-neutral-200);
+    --rt-color-action-on-disabled: var(--rt-color-text-disabled);
+
+    /* Доли оттенка под наведение и нажатие безфоновых оформлений кнопки. Живут в
+       слое, а не в стилях компонента: тёмная тема их поднимает, а половина пары,
+       оставшаяся в компоненте, тёмному ответу не видна. */
+    --rt-btn-tint-hover: 8%;
+    --rt-btn-tint-active: 16%;
+
+    /* Кольцо фокуса разобрано на составляющие: толщину, отступ и цвет. Композит
+       собирается из них и остаётся на месте — восемь компонентов берут его целиком, и
+       менять их незачем. Отступ — зазор цвета поверхности между элементом и кольцом:
+       первая тень при нулевом отступе не рисует ничего. */
+    --rt-focus-ring-width: var(--rt-border-width-thick);
+
+    /* Ноль с единицей намеренно: безразмерный ноль внутри calc с длиной невалиден, и
+       браузер отбрасывает объявление кольца целиком — кольцо просто пропадает. */
+    --rt-focus-ring-offset: 0px;
+    --rt-focus-ring-color: var(--rt-color-action-primary-soft);
+    --rt-focus-ring-color-danger: var(--rt-overlay-danger-16); /* rt-theme-shared: оттенок опасного действия один в обеих темах */
 
     /* Focus-ring composite — для interactive элементов с custom focus-visible. */
-    --rt-shadow-focus-ring: 0 0 0 3px var(--rt-color-action-primary-soft);
-    --rt-shadow-focus-ring-danger: 0 0 0 3px var(--rt-overlay-danger-16);
+    --rt-shadow-focus-ring:
+        0 0 0 var(--rt-focus-ring-offset) var(--rt-color-bg-surface),
+        0 0 0 calc(var(--rt-focus-ring-offset) + var(--rt-focus-ring-width)) var(--rt-focus-ring-color);
+    --rt-shadow-focus-ring-danger:
+        0 0 0 var(--rt-focus-ring-offset) var(--rt-color-bg-surface),
+        0 0 0 calc(var(--rt-focus-ring-offset) + var(--rt-focus-ring-width)) var(--rt-focus-ring-color-danger);
 
     /* Stepper (rt-stepper) — рельса прогресса. Текущий шаг — янтарный (одинаков
        в обеих темах); трек/прогресс переопределяются в dark на приглушённые. */
-    --rt-color-stepper-current: var(--rt-amber-400);
-    --rt-color-stepper-current-subtle: var(--rt-overlay-amber-16);
+    --rt-color-stepper-current: var(--rt-amber-400); /* rt-theme-shared: янтарь текущего шага один в обеих темах */
+    --rt-color-stepper-current-subtle: var(--rt-overlay-amber-16); /* rt-theme-shared: янтарь текущего шага один в обеих темах */
     --rt-color-stepper-track: var(--rt-gray-350);
     --rt-color-stepper-progress: var(--rt-color-action-primary);
 
@@ -59,32 +141,36 @@
     --rt-shadow-status-dot: 0 0 0 3px var(--rt-color-state-success-bg);
 
     /* State */
-    --rt-color-state-success: var(--rt-success-500);
+    --rt-color-state-success: var(--rt-success-500); /* rt-theme-shared: цвет статуса один в обеих темах */
     --rt-color-state-success-bg: var(--rt-success-50);
-    --rt-color-state-warning: var(--rt-warning-500);
+    --rt-color-state-warning: var(--rt-warning-500); /* rt-theme-shared: цвет статуса один в обеих темах */
     --rt-color-state-warning-bg: var(--rt-warning-50);
-    --rt-color-state-danger: var(--rt-danger-500);
+
+    /* Подпись на подложке предупреждения — ступенью темнее самого статуса: сам
+       статус на своей подложке порога контраста не берёт. Пара к error-text. */
+    --rt-color-state-warning-text: var(--rt-warning-600);
+    --rt-color-state-danger: var(--rt-danger-500); /* rt-theme-shared: цвет статуса один в обеих темах */
     --rt-color-state-danger-bg: var(--rt-danger-50);
     --rt-color-state-error-text: var(--rt-danger-600);
-    --rt-color-state-info: var(--rt-info-500);
+    --rt-color-state-info: var(--rt-info-500); /* rt-theme-shared: цвет статуса один в обеих темах */
     --rt-color-state-info-bg: var(--rt-info-50);
 
     /* Chat — пузыри переписки. Входящее и своё различаются фоном, а не рамкой:
        рамка на каждом пузыре дробит ленту. Отметка прочтения синяя — единственный
        цветной элемент подвала пузыря, остальные статусы приглушены. */
-    --rt-chat-bubble-in-bg: var(--rt-blue-50);
-    --rt-chat-bubble-in-author: var(--rt-blue-700);
+    --rt-chat-bubble-in-bg: var(--rt-brand-50);
+    --rt-chat-bubble-in-author: var(--rt-brand-700);
     --rt-chat-bubble-own-bg: var(--rt-neutral-100);
     --rt-chat-bubble-own-author: var(--rt-neutral-500);
     --rt-chat-bubble-date: var(--rt-color-text-muted);
-    --rt-chat-status-read: var(--rt-blue-400);
+    --rt-chat-status-read: var(--rt-brand-400);
 
     /* Special — Auth surface (gradient bg + transparent card в dark) */
     --rt-color-bg-page-auth: var(--rt-neutral-50);
     --rt-color-bg-surface-auth-card: var(--rt-neutral-0);
 
     /* Spacing aliases — named semantic aliases на primitive numeric scale */
-    --rt-space-2xs: 2px;
+    --rt-space-2xs: var(--rt-space-0-5); /* 2px */
     --rt-space-xs: var(--rt-space-1); /* 4px */
     --rt-space-sm: var(--rt-space-2); /* 8px */
     --rt-space-md: var(--rt-space-4); /* 16px */
@@ -94,7 +180,7 @@
     --rt-space-3xl: var(--rt-space-16); /* 64px */
 
     /* Text size base — semantic alias для default body text */
-    --rt-text-base: 16px;
+    --rt-text-base: var(--rt-text-md);
 
     /* Form input — composition tokens. Единый контракт для всего input-семейства
        (rt-input, rt-input-number, rt-autocomplete, rt-select, rt-multiselect,
@@ -123,7 +209,7 @@
 
     /* Radius / spacing / border */
     --rt-input-radius: var(--rt-radius-lg);
-    --rt-input-padding-x: var(--rt-space-3);
+    --rt-input-padding-x: var(--rt-space-4);
     --rt-input-padding-y: var(--rt-space-0);
     --rt-input-border-width: var(--rt-border-width-thin);
     --rt-input-focus-outline-offset: var(--rt-border-width-thin);
@@ -157,7 +243,7 @@
        набирается табличными цифрами и держит ширину, иначе кнопки прыгают
        при переходе через десяток. */
     --rt-counter-gap: var(--rt-space-sm);
-    --rt-counter-value-min-width: 24px;
+    --rt-counter-value-min-width: var(--rt-size-6);
     --rt-counter-value-font-size: var(--rt-text-md);
     --rt-counter-value-color: var(--rt-color-text-primary);
     --rt-counter-row-gap: var(--rt-space-md);
@@ -173,7 +259,7 @@
     --rt-toggle-color-track-on: var(--rt-color-action-primary);
     --rt-toggle-color-border: var(--rt-color-border-strong);
     --rt-toggle-color-thumb: var(--rt-color-bg-surface);
-    --rt-toggle-color-icon: var(--rt-amber-400);
+    --rt-toggle-color-icon: var(--rt-amber-400); /* rt-theme-shared: янтарь иконки один в обеих темах */
     --rt-toggle-shadow-thumb: var(--rt-shadow-md);
 
     /* Рамка off-трека — inset-тенью, а не border: у border своя коробка, и
@@ -182,26 +268,26 @@
 
     /* Навигация (rt-page-header). Шапка — отдельная плашка; отступ от краёв
        страницы задаёт тот, кто её ставит. */
-    --rt-nav-header-padding: var(--rt-space-2-5) var(--rt-space-3);
-    --rt-nav-header-color-bg: var(--rt-neutral-150);
+    --rt-nav-header-padding: var(--rt-space-2) var(--rt-space-4);
+    --rt-nav-header-color-bg: var(--rt-neutral-50);
 
     /* Первый уровень. Пункт ряда несёт плашку цвета самой шапки: на общем фоне её
        не видно, и белым проступает только активный раздел. Наведение красит
        подпись, а не фон — иначе оно спорит с этой подсветкой. */
-    --rt-nav-item-height: 28px;
+    --rt-nav-item-height: var(--rt-size-6);
     --rt-nav-item-gap: var(--rt-space-1);
-    --rt-nav-item-padding: var(--rt-space-1-5) var(--rt-space-2);
-    --rt-nav-item-content-gap: var(--rt-space-1-5);
+    --rt-nav-item-padding: var(--rt-space-2) var(--rt-space-2);
+    --rt-nav-item-content-gap: var(--rt-space-2);
     --rt-nav-item-font-size: var(--rt-text-sm);
     --rt-nav-item-font-weight: var(--rt-font-weight-semibold);
     --rt-nav-item-line-height: var(--rt-leading-none);
     --rt-nav-item-color: var(--rt-color-text-primary);
     --rt-nav-item-color-hover: var(--rt-color-action-primary);
     --rt-nav-item-color-pressed: var(--rt-color-action-primary-hover);
-    --rt-nav-item-color-bg: var(--rt-neutral-150);
-    --rt-nav-item-color-border: var(--rt-neutral-150);
+    --rt-nav-item-color-bg: var(--rt-neutral-50);
+    --rt-nav-item-color-border: var(--rt-neutral-50);
     --rt-nav-item-color-bg-active: var(--rt-color-bg-surface);
-    --rt-nav-item-color-caret: var(--rt-neutral-250);
+    --rt-nav-item-color-caret: var(--rt-neutral-200);
 
     /* Фокус обведён пунктиром: сплошная рамка на плашке пункта неотличима от его
        же границы. */
@@ -210,18 +296,18 @@
     /* Недоступный пункт светлее доступного, а не другого оттенка: общий
        `text-disabled` уходит в сине-стальной и рядом с серой подписью читается
        как второй цвет, а не как выключенное состояние. */
-    --rt-nav-color-disabled: var(--rt-neutral-350);
+    --rt-nav-color-disabled: var(--rt-neutral-300);
 
     /* Попап профиля. Подложку берёт у панели навигации, своего здесь — габариты
        блока пользователя, тень и набор строк: строк четыре, и они читаются как
        список действий, а не как выпадающее меню. */
-    --rt-profile-menu-min-width: 240px;
+    --rt-profile-menu-min-width: var(--rt-size-60);
     --rt-profile-menu-padding: var(--rt-space-5);
     --rt-profile-menu-shadow: var(--rt-shadow-profile-menu);
-    --rt-profile-avatar-size: 42px;
+    --rt-profile-avatar-size: var(--rt-size-10);
     --rt-profile-avatar-font-size: var(--rt-text-2xl);
-    --rt-profile-item-padding-y: var(--rt-space-3);
-    --rt-profile-item-content-gap: var(--rt-space-2-5);
+    --rt-profile-item-padding-y: var(--rt-space-4);
+    --rt-profile-item-content-gap: var(--rt-space-2);
     --rt-profile-item-font-size: var(--rt-text-md);
     --rt-profile-item-font-weight: var(--rt-font-weight-medium);
     --rt-profile-item-radius: var(--rt-radius-md);
@@ -229,24 +315,24 @@
     /* Строки выступают за содержимое панели на половину её отступа: так
        подсветка на наведении не упирается в рамку, а иконка остаётся на одной
        вертикали с содержимым. Это же число — горизонтальный отступ строки. */
-    --rt-profile-row-inset: var(--rt-space-2-5);
+    --rt-profile-row-inset: var(--rt-space-2);
     --rt-profile-theme-icon-padding: var(--rt-space-2);
 
     /* Габариты панели второго уровня: ширина считается числом колонок, поэтому
        колонка, промежуток и внутренний отступ — токены, из которых панель
        складывает свою ширину. По вертикали отступ крупнее: у первой группы над
        заголовком нет ничего, и панель иначе начинается впритык. */
-    --rt-nav-panel-column-width: 250px;
+    --rt-nav-panel-column-width: var(--rt-size-60);
     --rt-nav-panel-column-gap: var(--rt-space-5);
-    --rt-nav-panel-padding: var(--rt-space-3);
+    --rt-nav-panel-padding: var(--rt-space-4);
     --rt-nav-panel-padding-y: var(--rt-space-md);
-    --rt-nav-panel-group-gap: var(--rt-space-7);
+    --rt-nav-panel-group-gap: var(--rt-space-8);
     --rt-nav-panel-item-gap: var(--rt-space-0-5);
-    --rt-nav-panel-item-height: 24px;
+    --rt-nav-panel-item-height: var(--rt-size-6);
     --rt-nav-panel-item-padding: var(--rt-space-1) var(--rt-space-2);
     --rt-nav-panel-columns: 1;
     --rt-nav-panel-color-bg: var(--rt-color-bg-surface);
-    --rt-nav-panel-color-border: var(--rt-neutral-250);
+    --rt-nav-panel-color-border: var(--rt-neutral-200);
     --rt-nav-panel-shadow: var(--rt-shadow-nav-panel);
 
     /* Второй уровень набран легче первого: ряд разделов держит вес, а полтора
@@ -254,23 +340,24 @@
     --rt-nav-panel-item-font-size: var(--rt-text-sm);
     --rt-nav-panel-item-font-weight: var(--rt-font-weight-medium);
     --rt-nav-panel-item-content-gap: var(--rt-space-1);
-    --rt-nav-panel-item-color: var(--rt-neutral-520);
-    --rt-nav-panel-item-color-bg-hover: var(--rt-neutral-150);
+    --rt-nav-panel-item-color: var(--rt-neutral-600);
+    --rt-nav-panel-item-color-bg-hover: var(--rt-neutral-50);
     --rt-nav-panel-item-color-active: var(--rt-color-text-inverse);
     --rt-nav-panel-item-color-bg-active: var(--rt-color-action-primary);
     --rt-nav-panel-group-font-size: var(--rt-text-xs);
     --rt-nav-panel-group-font-weight: var(--rt-font-weight-medium);
 
-    /* Заголовок группы светлее пункта, но оба берут порог AA на белой панели:
-       4.95:1 у пункта и 4.54:1 у заголовка. */
-    --rt-nav-panel-group-color: var(--rt-neutral-510);
-    --rt-nav-panel-group-content-gap: var(--rt-space-1-5);
+    /* Заголовок группы светлее пункта, и оба берут порог контраста на белой панели.
+       Отношения обеих пар считает проверка тёмной темы; таблица замера — на странице
+       «Colors» витрины. */
+    --rt-nav-panel-group-color: var(--rt-neutral-600);
+    --rt-nav-panel-group-content-gap: var(--rt-space-2);
 
     /* Маркер непросмотренного. Точка стоит в потоке следом за подписью — и в ряду
        разделов, и в панели, и на узком экране: место ей даёт общий зазор
        содержимого пункта. */
-    --rt-nav-caret-size: 12px;
-    --rt-nav-marker-size: 4px;
+    --rt-nav-caret-size: var(--rt-size-3);
+    --rt-nav-marker-size: var(--rt-size-1);
     --rt-nav-marker-color: var(--rt-color-state-danger);
 
     /* Form field (rt-field) — обёртка анатомии поля: label / help / hint / error /

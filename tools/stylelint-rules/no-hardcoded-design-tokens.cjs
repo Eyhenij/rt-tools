@@ -633,23 +633,57 @@ function checkTransitionOrAnimationList(parsed, propName, report) {
     }
 }
 
-const ruleFunction = (primary, _options, _context) => {
+/* Объявление своего свойства блока судится отдельным обходом и только на цвет.
+
+   Общий обход сюда не годится: он же судит размеры числом и приставку имени, а
+   своё свойство блока законно держит и `40px`, и локальное `var(--lift)` внутри
+   кадров анимации. Цвет — другое дело: код цвета в своём свойстве красит экран
+   ровно так же, как в обычном объявлении, и до сих пор не судился вовсе. */
+function checkCustomPropertyColor(nodes, report) {
+    for (const node of nodes) {
+        if (node.type === 'function') {
+            if (isAllowedVar(node) || isSafeColorFunc(node) || isModernColorWithVarSource(node)) continue;
+            if (['rgb', 'rgba', 'hsl', 'hsla', 'hwb', 'lab', 'lch', 'oklab', 'oklch'].includes(node.value)) {
+                report({ msg: messages.hardcodedColor(valueParser.stringify(node)), word: valueParser.stringify(node) });
+                continue;
+            }
+            checkCustomPropertyColor(node.nodes, report);
+            continue;
+        }
+
+        if (node.type !== 'word') continue;
+        if (isUniversalKeyword(node.value)) continue;
+        if (isHexColor(node.value) || isNamedColor(node.value)) {
+            report({ msg: messages.hardcodedColor(node.value), word: node.value });
+        }
+    }
+}
+
+const ruleFunction = (primary, secondary, _context) => {
     return (root, result) => {
-        const validOptions = stylelint.utils.validateOptions(result, RULE_NAME, {
-            actual: primary,
-            possible: [true, false],
-        });
+        const validOptions = stylelint.utils.validateOptions(
+            result,
+            RULE_NAME,
+            {
+                actual: primary,
+                possible: [true, false],
+            },
+            {
+                actual: secondary,
+                possible: { customProperties: [true, false] },
+                optional: true,
+            }
+        );
         if (!validOptions || !primary) return;
+
+        /* Суд над объявлением своего свойства включается набором, а не идёт всегда:
+           первый кит выпущен, его токены и его проверки эта работа не трогает, а
+           накопленное у него покраснело бы в тот же день. Второй кит включает. */
+        const inspectCustomProperties = secondary?.customProperties === true;
 
         root.walkDecls((decl) => {
             const propName = decl.prop.toLowerCase();
-            if (propName.startsWith('--')) return;
             if (propName.startsWith('$')) return;
-
-            const group = classifyProperty(propName);
-            if (!group) return;
-
-            const parsed = valueParser(decl.value);
 
             const report = ({ msg, word }) => {
                 stylelint.utils.report({
@@ -660,6 +694,18 @@ const ruleFunction = (primary, _options, _context) => {
                     ruleName: RULE_NAME,
                 });
             };
+
+            if (propName.startsWith('--')) {
+                if (inspectCustomProperties) {
+                    checkCustomPropertyColor(valueParser(decl.value).nodes, report);
+                }
+                return;
+            }
+
+            const group = classifyProperty(propName);
+            if (!group) return;
+
+            const parsed = valueParser(decl.value);
 
             if (group === 'composite') {
                 checkComposite(parsed, propName, report);

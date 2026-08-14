@@ -1,58 +1,64 @@
-/* rt-section-nav — ViewEncapsulation.None: правила таргетируют BEM-класс блока.
-   `.rt-section-nav` — сам хост (шаблон начинается с ng-container, класс ставит host). */
+@layer rt-kit.components {
+    /* rt-section-nav — ViewEncapsulation.None: правила таргетируют BEM-класс блока.
+       `.rt-section-nav` — сам хост (шаблон начинается с ng-container, класс ставит host). */
 
-.rt-section-nav {
-    display: flex;
-    gap: var(--rt-space-md);
+    .rt-section-nav {
+        --rt-section-nav-tile-radius: var(--rt-radius-xl);
+        --rt-section-nav-tile-shadow: var(--rt-shadow-card-soft);
+        --rt-section-nav-transition-duration: var(--rt-duration-fast);
 
-    &__tile {
         display: flex;
-        min-width: 0;
-        flex: 1 0 0;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: var(--rt-space-md);
-        border: 0;
-        border-radius: var(--rt-radius-xl);
-        background: transparent;
-        box-shadow: none;
-        color: var(--rt-color-text-primary);
-        cursor: pointer;
-        gap: var(--rt-space-2-5);
-        transition:
-            background var(--rt-duration-fast) ease,
-            box-shadow var(--rt-duration-fast) ease;
+        gap: var(--rt-space-md);
 
-        &:not(.rt-section-nav__tile--active):hover {
-            background: var(--rt-color-bg-surface-subtle);
-            box-shadow: var(--rt-shadow-card-soft);
+        &__tile {
+            display: flex;
+            min-width: 0;
+            flex: 1 0 0;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--rt-space-md);
+            border: 0;
+            border-radius: var(--rt-section-nav-tile-radius);
+            background: transparent;
+            box-shadow: none;
+            color: var(--rt-color-text-primary);
+            cursor: pointer;
+            gap: var(--rt-space-2);
+            transition:
+                background var(--rt-section-nav-transition-duration) ease,
+                box-shadow var(--rt-section-nav-transition-duration) ease;
+
+            &:not(.rt-section-nav__tile--active):hover {
+                background: var(--rt-color-bg-surface-subtle);
+                box-shadow: var(--rt-section-nav-tile-shadow);
+            }
+
+            &--active {
+                background: var(--rt-color-bg-surface);
+                box-shadow: var(--rt-section-nav-tile-shadow);
+                cursor: default;
+            }
         }
 
-        &--active {
-            background: var(--rt-color-bg-surface);
-            box-shadow: var(--rt-shadow-card-soft);
-            cursor: default;
+        &__icon {
+            color: inherit;
+        }
+
+        &__label {
+            color: inherit;
+            font-family: var(--rt-font-family-sans);
+            font-size: var(--rt-text-sm);
+            font-weight: var(--rt-font-weight-bold);
+            letter-spacing: var(--rt-letter-spacing-wide);
+            line-height: var(--rt-leading-snug);
         }
     }
 
-    &__icon {
-        color: inherit;
+    /* Тёмная тема: активная плитка на тёмной поверхности берёт свой фон.
+       Раньше правило было записано через `:host-context`, который под None не
+       совпадает ни с чем, — тема задаётся атрибутом на предке, и им же адресуется. */
+    [data-theme='dark'] .rt-section-nav__tile--active {
+        background: var(--rt-color-bg-nav);
     }
-
-    &__label {
-        color: inherit;
-        font-family: var(--rt-font-family-sans);
-        font-size: var(--rt-text-sm);
-        font-weight: var(--rt-font-weight-bold);
-        letter-spacing: var(--rt-letter-spacing-wide);
-        line-height: var(--rt-leading-snug);
-    }
-}
-
-/* Тёмная тема: активная плитка на тёмной поверхности берёт свой фон.
-   Раньше правило было записано через `:host-context`, который под None не
-   совпадает ни с чем, — тема задаётся атрибутом на предке, и им же адресуется. */
-[data-theme='dark'] .rt-section-nav__tile--active {
-    background: var(--rt-blue-900);
 }

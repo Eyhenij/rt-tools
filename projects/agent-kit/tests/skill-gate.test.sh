@@ -12,7 +12,7 @@ export CLAUDE_PROJECT_DIR="$TREE"
 # Правила, которые в этом дереве есть. Всё, что карта назовёт сверх них, гейт требовать не
 # вправе: дерево отказалось от предметного слоя списком, и загружать такое имя нечем.
 for rule in testing component-structure styling-bem typescript-conventions angular-patterns \
-    doc-style spec-driven task-flow dependencies platform-access git-workflow; do
+    doc-style spec-driven task-flow dependencies platform-access git-workflow shared-code; do
     mkdir -p "$TREE/.claude/skills/$rule"
     printf -- '---\nname: %s\nkind: rule\n---\n' "$rule" > "$TREE/.claude/skills/$rule/SKILL.md"
 done
@@ -36,6 +36,21 @@ g "сервис" "$TREE/libs/site/x/data-access/src/lib/a.service.ts" angular-pa
 g "документ" "$TREE/docs/adr/0001-x.md" doc-style
 g "спек домена" "$TREE/docs/specs/bookings/spec.md" spec-driven
 g "папка задачи" "$TREE/docs/tasks/RT-1-x/plan.md" task-flow
+
+# SC-AK-43 — текст правила и текст паттерна устроены как спек, а не как файл агента.
+g "SC-AK-43 — правило" "$TREE/.claude/skills/testing/SKILL.md" spec-driven
+g "SC-AK-43 — компаньон правила" "$TREE/.claude/skills/testing/implementation.md" spec-driven
+# SC-AK-44 — остальное хозяйство агента правится без правила: правило на него — оно само.
+g "SC-AK-44 — роль" "$TREE/.claude/agents/qa-engineer.md" PASS
+g "SC-AK-44 — команда" "$TREE/.claude/commands/plan.md" PASS
+g "SC-AK-44 — конвейер" "$TREE/.claude/workflows/plan.js" PASS
+# SC-AK-45 — запреты линтера и есть исполнение правил про типы и про оформление.
+g "SC-AK-45 — линтер кода" "$TREE/eslint.config.mjs" typescript-conventions
+g "SC-AK-45 — линтер стилей" "$TREE/stylelint.config.js" styling-bem
+# SC-AK-46 — проверка повторов требует одно правило, а не два подряд.
+g "SC-AK-46 — проверка повторов" "$TREE/tools/check-dupes.mjs" shared-code
+g "SC-AK-46 — её список исключений" "$TREE/tools/dupes-allowlist.json" shared-code
+
 g "манифест зависимостей" "$TREE/package.json" dependencies '"prettier": "3.9.6"'
 # Правка скриптов зависимостью не является: правило про точные версии, снимок дерева и подмены
 # на неё не вступает. Снимок правится тем же коммитом и правило потребует уже он.
@@ -82,6 +97,81 @@ g "после загрузки правила" "$TREE/libs/site/x/ui/src/lib/b.c
 # Имя с областью каталога принимается наравне с голым.
 gate_session_load 'projects/ui:styling-bem'
 g "правило загружено с областью каталога" "$TREE/libs/site/x/ui/src/lib/b.component.scss" PASS
+
+# --- слои поверх доменного правила -------------------------------------------------------
+#
+# Доменное правило выбирается по пути, слой приходит сверх него. Проверяется это на дереве, где
+# доменное правило уже загружено: гейт требует первое незагруженное, и без этого слой был бы не
+# виден за доменным.
+
+# Состояние загруженного набралось выше: слои проверяются с чистого листа, иначе доменное
+# правило уже загружено и слой за ним не виден.
+gate_session_reset
+
+# SC-AK-99 — слой требует правило ПОВЕРХ доменного, а не вместо него.
+mkdir -p "$TREE/.claude/skills/observability"
+printf -- '---\nname: observability\nkind: rule\n---\n' > "$TREE/.claude/skills/observability/SKILL.md"
+g "SC-AK-99 — доменное правило остаётся первым" "$TREE/libs/site/x/ui/src/lib/b.component.ts" \
+    component-structure 'const w = globalThis.innerWidth;'
+gate_session_load component-structure angular-patterns
+g "SC-AK-99 — слой приходит вторым, а не вместо" "$TREE/libs/site/x/ui/src/lib/b.component.ts" \
+    platform-access 'const w = globalThis.innerWidth;'
+
+# SC-AK-100 — признак, невидимый по пути, судится по тексту правки.
+gate_session_load typescript-conventions
+g "SC-AK-100 — обращение к среде видно только в тексте" "$TREE/libs/site/x/util/src/lib/e.ts" \
+    platform-access 'const view = document.defaultView;'
+g "SC-AK-100 — чтение окружения зовёт наблюдаемость" "$TREE/libs/site/x/util/src/lib/f.ts" \
+    observability 'const url = process.env["API_URL"];'
+
+# SC-AK-101 — место, где признак разрешён, слоя не получает. Какое место разрешено, говорит
+# само дерево: слои адресов не знают.
+printf 'skill_layer_skip() { [ "$1" = "platform-access" ] && case "$2" in */lib/g.ts) return 0 ;; esac; return 1; }\n' \
+    >> "$TREE/.claude/rt-kit/defaults/gate-map.sh"
+g "SC-AK-101 — снятый деревом слой не требуется" "$TREE/libs/site/x/util/src/lib/g.ts" \
+    PASS 'const view = document.defaultView;'
+g "SC-AK-101 — соседний файл слой получает" "$TREE/libs/site/x/util/src/lib/h.ts" \
+    platform-access 'const view = document.defaultView;'
+
+# SC-AK-102 — слой без разборщика входа отпускает правку: разбор здесь побочная работа.
+no_jq_dir="$(mktemp -d)"
+printf '#!/bin/sh\nexit 1\n' > "$no_jq_dir/jq"
+chmod +x "$no_jq_dir/jq"
+layers_code="$(PATH="$no_jq_dir:$PATH" sh -c "printf '%s' '$(input_edit "$TREE/libs/site/x/util/src/lib/i.ts" 'const view = document.defaultView;')' | '$HOOKS/skill-gate.sh' >/dev/null 2>&1"; printf '%s' "$?")"
+report "SC-AK-102 — без разборщика входа правка проходит" "код:$layers_code" "код:0"
+rm -rf "$no_jq_dir"
+
+# Дальше идут сценарии, которым нужен незагруженный набор: состояние возвращается чистым.
+gate_session_reset
+
+# --- правило под инструмент и второй слой команды ------------------------------------------
+#
+# Проверка через браузер — единственная область, где правило требуется не под правку файла, а под
+# инструмент: врут там не файлы, а стенд и координаты.
+mkdir -p "$TREE/.claude/skills/browser-verification"
+printf -- '---\nname: browser-verification\nkind: rule\n---\n' \
+    > "$TREE/.claude/skills/browser-verification/SKILL.md"
+expect_skill "SC-AK-111 — инструмент браузера требует своё правило" \
+    "$(jq -n '{session_id:"tests",tool_name:"mcp__claude-in-chrome__navigate",tool_input:{url:"http://localhost:4200"}}')" \
+    browser-verification
+
+# Слияние отчёта требует два правила подряд: поставку и разбор папки задачи. Требуется первое
+# незагруженное — отказ, перечисляющий оба, читается как «загрузи оба», и однократность теряется.
+c "SC-AK-110 — слияние отчёта: первым правило поставки" 'gh pr merge 12 --merge'
+gate_session_load git-workflow
+c "SC-AK-110 — слияние отчёта: следом ведение работы" 'gh pr merge 12 --merge' Bash task-flow
+# Упоминание команды в тексте вызовом не является: пока карта судила по подстроке, гейт отбивал
+# строку о коммите в теле самого коммита.
+c "SC-AK-109 — упоминание команды вызовом не считается" 'echo "потом git commit -m x" >> notes.md' Bash PASS
+
+# Запасной ход назван прямо в отказе: правило, заведённое в этой же ветке, реестру правил
+# неизвестно — он собирается на запуске сессии, а гейт читает диск.
+gate_session_reset
+expect_reason "отказ называет запасной ход" skill-gate.sh \
+    "$(input_edit "$TREE/libs/site/x/ui/src/lib/z.component.ts")" \
+    'SKILL\.md'
+
+gate_session_reset
 
 # --- отказ в пользу работы --------------------------------------------------------------
 # Сломанный гейт не имеет права остановить работу совсем: любой неразобранный вход пропускается.

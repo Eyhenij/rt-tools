@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file
+# Требует: hooks/profile-check.sh
 # Гард якоря для спек. PreToolUse на правке разметки.
 #
 # Спеки адресуют элементы только через этот атрибут. Классы оформления меняются вместе с
@@ -56,10 +57,16 @@ for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../d
     [ -f "$profile" ] && . "$profile" 2>/dev/null
 done
 
+# Слово о нехватке функции профиля: хук, вышедший молча, неотличим от работающего. Файл может
+# быть не разложен — тогда остаётся прежнее поведение, молчаливое.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
+command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
+
 # Разметка приложения живёт там же, где его код. Без этой положительной проверки гард
 # распространялся на любой файл разметки на диске — черновик вне дерева отклонялся требованием
 # проставить якоря.
-if command -v rt_is_app_code >/dev/null 2>&1; then
+if rt_needs rt_is_app_code qa-dataid-guard; then
     rt_is_app_code "$path" || exit 0
 fi
 
@@ -75,7 +82,7 @@ added="$(printf '%s' "$input" | jq -r '
 ' 2>/dev/null)"
 [ -z "$added" ] && exit 0
 
-decorative="$(command -v rt_qa_decorative >/dev/null 2>&1 && rt_qa_decorative 2>/dev/null)"
+decorative="$(rt_needs rt_qa_decorative qa-dataid-guard && rt_qa_decorative 2>/dev/null)"
 component_re="${RT_QA_COMPONENT_RE:--}"
 
 # Открывающие теги разбираются ЦЕЛИКОМ: тег занимает несколько строк, и якорь часто стоит не в

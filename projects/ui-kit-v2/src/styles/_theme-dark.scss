@@ -1,19 +1,26 @@
-/* Dark theme — переопределение СЕМАНТИЧЕСКИХ токенов (примитивы неизменны).
+/* Собрано генератором `tools/build-tokens-v2.mjs` из `tokens.source.mjs` — правится там, не здесь:
+   правка на месте теряется на следующей сборке, и её называет `pnpm run check:tokens-build`. */
 
-   Тело токенов вынесено в @mixin, чтобы тот же набор переопределений можно было
+/* Тёмная тема — переопределение назначений; ступени шкалы неизменны.
+
+   Тело вынесено в @mixin, чтобы тот же набор переопределений можно было
    применить не только на html-уровне (тема приложения), но и к локальному
    контейнеру (side-by-side light/dark в Storybook) — без дублирования значений.
 
    База (`rt-theme-dark-tokens`) — тёплый графит для приложений и всех
    CDK-overlay'ев (асайды/диалоги/меню рендерятся на уровне body, вне
    host-классов шеллов — поэтому графит держим на :root, иначе overlay'и
-   не наследовали бы палитру). */
+   не наследовали бы палитру).
+
+   Значения ответов живут в источнике рядом со своим светлым назначением: забытая половина
+   пары видна там же, а не вылавливается сверкой двух файлов. */
 
 @mixin rt-theme-dark-tokens {
     /* Background — тёплый графит */
     --rt-color-bg-page: var(--rt-charcoal-900);
     --rt-color-bg-surface: var(--rt-charcoal-800);
     --rt-color-bg-surface-subtle: var(--rt-charcoal-950);
+    --rt-color-bg-surface-subtle-2: var(--rt-charcoal-950);
     --rt-color-bg-hover: var(--rt-charcoal-700);
     --rt-color-bg-subtle: var(--rt-charcoal-950);
     --rt-color-bg-overlay: rgb(0 0 0 / 70%);
@@ -24,14 +31,14 @@
     --rt-color-text-muted: var(--rt-overlay-white-40);
     --rt-color-text-disabled: var(--rt-overlay-white-25);
     --rt-color-text-inverse: var(--rt-neutral-900);
-    --rt-color-text-link: var(--rt-blue-300);
-    --rt-color-text-link-hover: var(--rt-blue-500);
+    --rt-color-text-link: var(--rt-brand-300);
+    --rt-color-text-link-hover: var(--rt-brand-500);
 
     /* Border — приглушённые на графите */
     --rt-color-border-default: var(--rt-charcoal-border);
     --rt-color-border-strong: var(--rt-charcoal-border-strong);
     --rt-color-border-subtle: var(--rt-charcoal-border);
-    --rt-color-border-focus: var(--rt-blue-500);
+    --rt-color-border-focus: var(--rt-brand-500);
 
     /* Input border видим в dark (в light — transparent). */
     --rt-input-color-border: var(--rt-charcoal-border);
@@ -49,21 +56,45 @@
     --rt-nav-item-color-bg: var(--rt-charcoal-950);
     --rt-nav-item-color-border: var(--rt-charcoal-950);
     --rt-nav-item-color-bg-active: var(--rt-charcoal-800);
-    --rt-nav-item-color-caret: var(--rt-neutral-520);
+    --rt-nav-item-color-caret: var(--rt-neutral-600);
     --rt-nav-panel-color-bg: var(--rt-charcoal-800);
-    --rt-nav-panel-color-border: var(--rt-neutral-520);
-    --rt-nav-panel-item-color: var(--rt-neutral-280);
+    --rt-nav-panel-color-border: var(--rt-neutral-600);
+    --rt-nav-panel-item-color: var(--rt-neutral-200);
     --rt-nav-panel-item-color-bg-hover: var(--rt-charcoal-950);
-    --rt-nav-panel-group-color: var(--rt-neutral-420);
-    --rt-nav-color-disabled: var(--rt-neutral-520);
+    --rt-nav-panel-group-color: var(--rt-neutral-400);
+    --rt-nav-color-disabled: var(--rt-neutral-600);
 
-    /* Action — primary остаётся синим в обеих темах */
-    --rt-color-action-primary-subtle: rgb(21 93 252 / 16%);
+    /* Action — сам цвет марки один в обеих темах, а доля оттенка на графите вдвое
+       больше: слабый оттенок на тёмном фоне просто не виден. Считается от ступени
+       бренда, как и в светлой теме. */
+    --rt-color-action-primary-subtle: color-mix(in srgb, var(--rt-brand-500) 16%, transparent);
 
     /* Focus-ring в dark — ярче для контрастности на тёмных фонах. */
-    --rt-color-action-primary-soft: rgb(21 93 252 / 32%);
+    --rt-color-action-primary-soft: color-mix(in srgb, var(--rt-brand-500) 32%, transparent);
+
+    /* Вторичное действие нейтрально, и на графите вся его тройка разворачивается:
+       подложка садится на приподнятую поверхность, а наведение и нажатие идут вверх
+       по светлоте, а не вниз, — иначе они тонут в фоне страницы. */
     --rt-color-action-secondary: var(--rt-charcoal-700);
+    --rt-color-action-secondary-hover: var(--rt-charcoal-border);
+    --rt-color-action-secondary-active: var(--rt-charcoal-border-strong);
     --rt-color-action-on-secondary: var(--rt-neutral-50);
+
+    /* Пятый член роли идёт против всей её тройки: подложка садится на поверхность,
+       а цвет на поверхности обязан от неё оторваться. Ступень нейтрали, а не графита:
+       графит кончается границей, и любая его ступень на карточке даёт меньше двух к
+       одному. Светлая тема красит тем же именем, что и подложку, и разъехаться они
+       могут только здесь. */
+    --rt-color-action-secondary-on-surface: var(--rt-neutral-400);
+
+    /* Отключённое действие на графите — та же приподнятая поверхность; подпись
+       наследует ответ тёмной темы по ссылке на приглушённый текст. */
+    --rt-color-action-disabled: var(--rt-charcoal-700);
+
+    /* Оттенок наведения на графите вдвое насыщеннее: слабый след на тёмном фоне
+       не виден — та же причина, что и у оттенка марки выше. */
+    --rt-btn-tint-hover: 16%;
+    --rt-btn-tint-active: 32%;
 
     /* Soft card-shadow в dark — насыщеннее для отделения от фона. */
     --rt-shadow-card-soft: 0 0 40px rgb(0 0 0 / 25%);
@@ -79,45 +110,33 @@
     --rt-toggle-color-thumb: var(--rt-neutral-50);
     --rt-toggle-shadow-thumb: var(--rt-shadow-none);
 
-    /* State — surfaces под dark + ярче error-text */
-    --rt-color-state-success-bg: rgb(5 150 105 / 12%);
-    --rt-color-state-warning-bg: rgb(217 119 6 / 12%);
-    --rt-color-state-danger-bg: rgb(220 38 38 / 12%);
+    /* State — surfaces под dark + ярче error-text.
+
+       Подложка считается от ступени своего статуса, а не повторяет её код цвета
+       тройкой каналов: повторённое значение расходится с источником молча, и
+       правка ступени оставляла подложку прежней. */
+    --rt-color-state-success-bg: color-mix(in srgb, var(--rt-success-500) 12%, transparent);
+    --rt-color-state-warning-bg: color-mix(in srgb, var(--rt-warning-500) 12%, transparent);
+    --rt-color-state-danger-bg: color-mix(in srgb, var(--rt-danger-500) 12%, transparent);
     --rt-color-state-error-text: var(--rt-danger-500);
-    --rt-color-state-info-bg: rgb(37 99 235 / 12%);
+    --rt-color-state-warning-text: var(--rt-warning-500);
+    --rt-color-state-info-bg: color-mix(in srgb, var(--rt-info-500) 12%, transparent);
 
     /* Chat — на графите светлые фоны пузырей нечитаемы: входящее уходит в
        полупрозрачный синий, своё — в глубокий графит. */
-    --rt-chat-bubble-in-bg: rgb(37 99 235 / 12%);
-    --rt-chat-bubble-in-author: var(--rt-blue-300);
+    --rt-chat-bubble-in-bg: color-mix(in srgb, var(--rt-brand-500) 12%, transparent);
+    --rt-chat-bubble-in-author: var(--rt-brand-300);
     --rt-chat-bubble-own-bg: var(--rt-charcoal-950);
     --rt-chat-bubble-own-author: var(--rt-overlay-white-40);
     --rt-chat-bubble-date: var(--rt-overlay-white-40);
-    --rt-chat-status-read: var(--rt-blue-300);
+    --rt-chat-status-read: var(--rt-brand-300);
 
     /* Special — Auth surface (градиентный фон логина + прозрачная карточка). */
-    --rt-color-bg-page-auth: linear-gradient(156deg, #122341 12.68%, #182142 99.28%);
+    --rt-color-bg-page-auth: linear-gradient(156deg, var(--rt-neutral-950) 12.68%, var(--rt-navy-900) 99.28%);
     --rt-color-bg-surface-auth-card: transparent;
 }
 
 :root[data-theme='dark'],
 html.rt-theme-dark {
     @include rt-theme-dark-tokens;
-}
-
-/* Body-level градиент — подложка экранов авторизации: их вьюпорт прозрачен
-   (`--rt-color-bg-surface-auth-card: transparent`) и просвечивает body.
-   Остальные экраны его не видят — rt-container кроет body непрозрачным фоном
-   страницы. Не shorthand `background:`, чтобы не сбросить body{}'ный
-   `background-color`. */
-:root[data-theme='dark'] body,
-html.rt-theme-dark body {
-    background-attachment: fixed;
-    background-image: linear-gradient(156deg, #122341 12.68%, #182142 99.28%);
-}
-
-/* rt-logo (чёрный SVG) — инверсия для читаемости на тёмном фоне */
-:root[data-theme='dark'] .rt-logo,
-html.rt-theme-dark .rt-logo {
-    filter: invert(1) brightness(1.5);
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.4.0 · checks/board.github.mjs · ad2cc3996aaf · правится надстройкой, не здесь
+// rt-kit v0.8.1 · checks/board.github.mjs · 48b7efc4cf90 · правится надстройкой, не здесь
 /**
  * Общая работа с очередью работ: борда проекта, тикеты и их состояние.
  *
@@ -20,10 +20,11 @@
  * функции возвращают `null`, командный режим печатает `{"offline":true}`.
  */
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { homedir } from 'node:os';
+import { join } from 'node:path';
 
-import { CONFIG } from './rt-kit-checks.config.mjs';
+import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 /**
  * Адрес борды и её колонки живут в `.claude/rt-kit/checks.json`: идентификаторы проекта, поля
@@ -217,6 +218,48 @@ export const BRANCH_NUMBER = new RegExp(`^${TASK_KEY}-(\\d+)-[a-z0-9][a-z0-9-]*$
 export function numberFromTitle(title) {
     const match = TITLE_NUMBER.exec(title ?? '');
     return match ? Number(match[1]) : null;
+}
+
+/**
+ * Номер задачи по имени папки. Ключ впереди необязателен: имя ветки вида `chore/312-slug`
+ * тоже законно, и папка под ним называется голым числом. Если сверка не распознает в имени
+ * номер, папка будет лежать среди текущих сколько угодно — одну такую нашли грепом, а не
+ * проверкой.
+ */
+export function numberFromTaskDir(name) {
+    // Ключ подставляем, только если дерево его задало: из пустого получилось бы `^(?:-)?`, и
+    // папка с ключом в имени вообще перестала бы распознаваться.
+    const prefix = TASK_KEY ? `(?:${TASK_KEY}-)?` : '';
+    const match = new RegExp(`^${prefix}(\\d+)-`).exec(name ?? '');
+    return match ? Number(match[1]) : null;
+}
+
+/**
+ * Папки задач, включая вложенные. Путь повторяет имя ветки целиком, вместе с косой, поэтому
+ * папка ветки `chore/312-slug` лежит на втором уровне — обход только по верхнему её не видит.
+ *
+ * Вглубь спускаемся ровно на один уровень: в имени ветки одна косая, а всё, что глубже, папкой
+ * задачи уже не будет — зато туда попал бы архив, если дерево держит его внутри.
+ */
+export function taskDirs(dir = join(ROOT, CONFIG.tasksDir), prefix = '') {
+    if (!existsSync(dir)) {
+        return [];
+    }
+    const found = [];
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+        if (!entry.isDirectory() || entry.name === '_template') {
+            continue;
+        }
+        const name = prefix ? `${prefix}/${entry.name}` : entry.name;
+        if (entry.name.startsWith('_draft-') || numberFromTaskDir(entry.name) !== null) {
+            found.push(name);
+            continue;
+        }
+        if (!prefix) {
+            found.push(...taskDirs(join(dir, entry.name), name));
+        }
+    }
+    return found;
 }
 
 export function numberFromBranch(branch) {

@@ -1,7 +1,7 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, Signal, ViewEncapsulation } from '@angular/core';
 
-import { ElemDirective, ModDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { LIST_SORT_ORDER_ENUM, ListSortOrderType } from '@rt-tools/utils';
 
 import { RtIconComponent } from '../../icon/rt-icon.component';
@@ -41,6 +41,7 @@ const ICONS: Readonly<Record<ListSortOrderType | 'none', IRtIcon.Name>> = Object
         NgTemplateOutlet,
 
         // rt-tools
+        BlockDirective,
         ElemDirective,
         ModDirective,
 

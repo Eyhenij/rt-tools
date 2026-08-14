@@ -7,7 +7,7 @@
  */
 import { join } from 'node:path';
 
-import { IEntryOfCatalog, isChosen, readCatalog } from './catalog.js';
+import { chosenEntries, IEntryOfCatalog, readCatalog } from './catalog.js';
 import { IConfig, SKILL_FILE, SKILL_KINDS, TKind } from './config.js';
 
 export interface IAsset {
@@ -38,21 +38,19 @@ const extensionOf: (id: string) => string = (id: string): string => {
  * ресурса нет. У разложенного `git-workflow` хостинга в имени не остаётся: второго вида в этом
  * дереве нет, а агенту, который правило читает, различать их незачем.
  */
-export function targetOf(entry: IEntryOfCatalog, layout: Readonly<Record<TKind, string>>): string {
+export function targetOf(entry: Pick<IEntryOfCatalog, 'id' | 'kind' | 'name'>, layout: Readonly<Record<TKind, string>>): string {
     return SKILL_KINDS.includes(entry.kind)
         ? join(layout[entry.kind], entry.name, SKILL_FILE)
         : join(layout[entry.kind], `${entry.name}${extensionOf(entry.id)}`);
 }
 
 export function collectAssets(config: IConfig, assetsDir: string): readonly IAsset[] {
-    return readCatalog(assetsDir)
-        .filter((entry: IEntryOfCatalog): boolean => isChosen(entry, config))
-        .map((entry: IEntryOfCatalog): IAsset => ({
-            id: entry.id,
-            kind: entry.kind,
-            name: entry.name,
-            text: entry.text,
-            target: targetOf(entry, config.layout),
-            executable: entry.executable,
-        }));
+    return chosenEntries(readCatalog(assetsDir), config).map((entry: IEntryOfCatalog): IAsset => ({
+        id: entry.id,
+        kind: entry.kind,
+        name: entry.name,
+        text: entry.text,
+        target: targetOf(entry, config.layout),
+        executable: entry.executable,
+    }));
 }

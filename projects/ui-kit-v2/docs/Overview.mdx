@@ -53,6 +53,11 @@ export const bad = {
 
 <Source language="scss" code={`@use '@rt-tools/ui-kit-v2/styles/tokens.css';`} />
 
+Стили кита объявлены слоем каскада `rt-kit` — подслоями `vendor`, `base`, `components` именно в
+этом порядке. Правило приложения, объявленное вне слоя, выигрывает у правила кита независимо от
+специфичности; объявления свойств на корне страницы в слой не уходят и перебиваются порядком.
+Живой показ — страница «Cascade Layer» этого же раздела.
+
 ---
 
 ## Три слоя
@@ -90,7 +95,7 @@ export const bad = {
     <span style={badge('var(--rt-color-text-link)')}>Слой 1</span>
     <div style={body}>
         <div style={title}>Шкалы</div>
-        <div style={mono}>--rt-neutral-100, --rt-blue-500, --rt-space-4, --rt-radius-lg</div>
+        <div style={mono}>--rt-neutral-100, --rt-brand-500, --rt-space-4, --rt-radius-lg</div>
         <div style={note}>
             Литералы: hex, пиксели, числа. Никаких <code>var()</code> внутри. Их читает только слой назначений.
         </div>
@@ -130,20 +135,74 @@ export const bad = {
 
 ---
 
+## Свойства компонента
+
+Третий слой — то, чем компонент настраивается снаружи. Имя выводится из имени блока
+(`--rt-<блок>-<что>`), объявление стоит в корне блока, а значением по умолчанию — та самая
+ступень, которая стояла на месте до него. Поэтому кит без единой строки от приложения выглядит
+так же, как выглядел, а приложению есть за что взяться.
+
+<Source
+    language="scss"
+    code={`.rt-button {
+    --rt-btn-radius: var(--rt-radius-lg);
+    --rt-btn-border-width: var(--rt-border-width-thin);
+    --rt-btn-transition-duration: var(--rt-duration-fast);
+    border-radius: var(--rt-btn-radius);
+}`}
+/>
+
+Модификатор **переназначает свойство**, а не повторяет объявление свойства CSS: семь видов
+скругления у плашки — это семь строк, а не семь правил `border-radius`.
+
+Приложение объявляет своё значение правилом той же цели и большей силы. Наследования тут мало:
+объявление живёт на самом блоке и перебивает всё, что пришло сверху.
+
+<div style={good}>
+    <strong>✓ Так.</strong> Правило приложения целится в блок:
+    <Source
+        language="css"
+        code={`.my-app .rt-button {
+    --rt-btn-radius: 0;
+}`}
+    />
+</div>
+
+<div style={bad}>
+    <strong>✖ Не так.</strong> Объявление на предке до блока не доходит:
+    <Source
+        language="css"
+        code={`.my-app {
+    --rt-btn-radius: 0;   /* блок объявляет своё, и оно сильнее */
+}`}
+    />
+</div>
+
+Скругление, тень, толщина рамки и длительность перехода переведены на свои свойства целиком:
+ступень этих четырёх шкал в стилях компонента роняет `pnpm run check:tokens-styles`. Отступ,
+кегль и габариты остаются на ступенях — роль отступа одним словом не называется, и свойство под
+неё вышло бы именем места, а не именем роли.
+
+Как это выглядит на живом компоненте — <a href="./?path=/story/foundation-design-tokens-component-props--component-props">Component Props</a>.
+
+---
+
 ## Как читается имя
 
 `--rt-<род>-<роль>-<уточнение>`
 
-| Род                  | Примеры                                                 | О чём                                        |
-| -------------------- | ------------------------------------------------------- | -------------------------------------------- |
-| `--rt-color-*`       | `--rt-color-bg-page`, `--rt-color-action-primary-hover` | назначения цвета                             |
-| `--rt-space-*`       | `--rt-space-4`, `--rt-space-md`                         | отступы: числовая шкала и именованные алиасы |
-| `--rt-radius-*`      | `--rt-radius-lg`, `--rt-radius-full`                    | скругления                                   |
-| `--rt-text-*`        | `--rt-text-md`, `--rt-text-2xl`                         | кегль                                        |
-| `--rt-font-weight-*` | `--rt-font-weight-regular`, `--rt-font-weight-semibold` | начертание                                   |
-| `--rt-shadow-*`      | `--rt-shadow-sm`, `--rt-shadow-card`                    | тени                                         |
-| `--rt-z-*`           | `--rt-z-modal`, `--rt-z-tooltip`                        | ярусы наложения                              |
-| `--rt-duration-*`    | `--rt-duration-fast`, `--rt-duration-base`              | длительности переходов                       |
+| Род                     | Примеры                                                 | О чём                                        |
+| ----------------------- | ------------------------------------------------------- | -------------------------------------------- |
+| `--rt-color-*`          | `--rt-color-bg-page`, `--rt-color-action-primary-hover` | назначения цвета                             |
+| `--rt-space-*`          | `--rt-space-4`, `--rt-space-md`                         | отступы: числовая шкала и именованные алиасы |
+| `--rt-size-*`           | `--rt-size-6`, `--rt-size-60`                           | габариты: ширина, высота, сторона узла       |
+| `--rt-control-height-*` | `--rt-control-height-sm`, `--rt-control-height-md`      | высоты интерактивных контролов               |
+| `--rt-radius-*`         | `--rt-radius-lg`, `--rt-radius-full`                    | скругления                                   |
+| `--rt-text-*`           | `--rt-text-md`, `--rt-text-2xl`                         | кегль                                        |
+| `--rt-font-weight-*`    | `--rt-font-weight-regular`, `--rt-font-weight-semibold` | начертание                                   |
+| `--rt-shadow-*`         | `--rt-shadow-sm`, `--rt-shadow-card`                    | тени                                         |
+| `--rt-z-*`              | `--rt-z-modal`, `--rt-z-tooltip`                        | ярусы наложения                              |
+| `--rt-duration-*`       | `--rt-duration-fast`, `--rt-duration-base`              | длительности переходов                       |
 
 Пороги ширины — исключение: они остаются переменными препроцессора
 (`$rt-bp-sm … $rt-bp-xl` в `_breakpoints.scss`), потому что пользовательские свойства CSS

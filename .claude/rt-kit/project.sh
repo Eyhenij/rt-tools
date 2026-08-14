@@ -24,10 +24,17 @@ RT_STANDS='витрина ui-kit http://localhost:6006, витрина ui-kit-v2
 #
 # Зовётся именованным скриптом, а не разложенной командой: порог замечаний объявлен при нём один
 # раз, и гард, сквозной прогон и ручной вызов не расходятся между собой.
+#
+# Чем каждый шаг конвейера здесь закрыт — в `pushGate.steps` файла `.claude/rt-kit/checks.json`,
+# и `check-push-gate` отбивает пуш, если шаг не закрыт ни строкой отсюда, ни исключением с
+# причиной. Сборка и сверка собранных пакетов стоят здесь именно поэтому: без них набор был уже
+# конвейерного, и дважды подряд отчёт уходил со словом «проверено» о том, чего не гоняли.
 rt_push_checks() {
     cat <<'EOF'
-pnpm exec nx affected -t lint typecheck test --parallel
+pnpm exec nx affected -t lint typecheck test build --parallel
 pnpm run lint:styles
+pnpm exec nx affected -t verify --parallel
+node tools/check-push-gate.mjs
 EOF
 }
 
@@ -71,23 +78,12 @@ rt_task_branch_ok() {
 # Образцы узкие намеренно: гард сверяет только НОВЫЙ текст, и широкий образец отбивал бы
 # правку, которая ничего нового не заводит.
 rt_reinvented_in() {
-    case "$1" in
-        *.ts)
-            printf '%s\t%s\n' '@(Input|Output|ViewChild|ViewChildren|ContentChild)\(' 'input(), output(), viewChild(), contentChild() — реактивный вход и выход'
-            printf '%s\t%s\n' "from '(vitest|@vitest)" 'jest: describe/it/expect из @types/jest'
-            printf '%s\t%s\n' "from '\.\./\.\./\.\./(core|store|utils)" 'алиас пакета: @rt-tools/core, @rt-tools/store, @rt-tools/utils'
-            ;;
-        *.scss)
-            printf '%s\t%s\n' '#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?\b' 'токен оформления: var(--rt-…), список — в projects/ui-kit/src/styles/TOKENS.md'
-            ;;
-        *.html)
-            printf '%s\t%s\n' '\[ngClass\]|\[class\.' 'директивы класса: rtBlock, rtElem, [rtMod]'
-            ;;
-    esac
-
+    # Признаки этого дерева объявлены данными — `.claude/rt-kit/signals.json`, и читают их и гард,
+    # и сплошная сверка. Здесь остаётся то, что данными не выразить: признак, зависящий от места
+    # файла в дереве.
     case "$1" in
         */projects/ui-kit-v2/*.scss)
-            printf '%s\t%s\n' ':host' 'класс блока: .rt-<блок>, а под совпадением имён — селектор по имени элемента'
+            printf '%s\t%s\t%s\t%s\n' 'added' ':host' '' 'класс блока: .rt-<блок>, а под совпадением имён — селектор по имени элемента'
             ;;
     esac
 }

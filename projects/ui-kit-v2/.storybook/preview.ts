@@ -1,10 +1,12 @@
+import { registerLocaleData } from '@angular/common';
+import localeRu from '@angular/common/locales/ru';
 import { provideHttpClient } from '@angular/common/http';
 import { provideZonelessChangeDetection, signal, Signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { applicationConfig, Preview } from '@storybook/angular';
 
-import { provideRtStorage } from '@rt-tools/core';
+import { provideRtIDBStorage, provideRtStorage } from '@rt-tools/core';
 
 import { provideRtIcons } from '../src/lib/components/icon';
 import { provideRtKitLabels, RtKitLabelKey, RtKitLabelParams, RtKitTranslator } from '../src/lib/i18n';
@@ -34,6 +36,14 @@ const showcaseTranslator: Signal<RtKitTranslator> = signal<RtKitTranslator>((key
 });
 
 /**
+ * Данные русской локали для `DatePipe`. Кит их не везёт намеренно: дату он форматирует по
+ * активному языку приложения, а данные языка регистрирует само приложение. Витрина здесь и
+ * есть приложение — без этой строки переписка падала на `Missing locale data for "ru"` и
+ * рисовала пустоту вместо ленты сообщений.
+ */
+registerLocaleData(localeRu);
+
+/**
  * Тему кит держит на `<html data-theme>` — тот же признак, что ставит
  * `ThemeService` в приложении. Переключатель Storybook пишет туда же, поэтому
  * витрина показывает ровно то, что увидит потребитель, а не свою имитацию.
@@ -50,6 +60,10 @@ const preview: Preview = {
                 provideHttpClient(),
                 provideRouter([]),
                 provideRtStorage(),
+                // Настройки колонок таблица держит в IndexedDB и внедряет службу полем: без
+                // провайдера сама таблица не поднимается — истории падали на NG0201, показывая
+                // пустую разметку вместо строк.
+                provideRtIDBStorage(),
                 provideRtIcons('/icons'),
                 provideRtKitLabels({ translator: showcaseTranslator, locale: signal<string>('ru') }),
             ],

@@ -1,39 +1,41 @@
-/* rt-aside-unsaved-dialog — окно о несохранённых правках при закрытии панели.
-   ViewEncapsulation.None — селекторы префиксованы `.rt-aside-unsaved-dialog`.
-   Рамку (фон/радиус/тень) даёт rt-dialog; здесь — только раскладка контента. */
+@layer rt-kit.components {
+    /* rt-aside-unsaved-dialog — окно о несохранённых правках при закрытии панели.
+       ViewEncapsulation.None — селекторы префиксованы `.rt-aside-unsaved-dialog`.
+       Рамку (фон/радиус/тень) даёт rt-dialog; здесь — только раскладка контента. */
 
-.rt-aside-unsaved-dialog {
-    display: flex;
-    box-sizing: border-box;
-    flex-direction: column;
-    padding: var(--rt-space-xl);
-    gap: var(--rt-space-lg);
-
-    &__text {
+    .rt-aside-unsaved-dialog {
         display: flex;
+        box-sizing: border-box;
         flex-direction: column;
-        gap: var(--rt-space-sm);
-    }
+        padding: var(--rt-space-xl);
+        gap: var(--rt-space-lg);
 
-    &__title {
-        margin: 0;
-        color: var(--rt-color-text-primary);
-        font-size: var(--rt-text-md);
-        font-weight: var(--rt-font-weight-bold);
-    }
+        &__text {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-sm);
+        }
 
-    &__message {
-        margin: 0;
-        color: var(--rt-color-text-secondary);
-        font-size: var(--rt-text-sm);
-    }
+        &__title {
+            margin: 0;
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-md);
+            font-weight: var(--rt-font-weight-bold);
+        }
 
-    /* Три кнопки идут в одну строку, а когда она их не вмещает — переносятся и
-       выравниваются по правому краю, сохраняя порядок. */
-    &__footer {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-        gap: var(--rt-space-sm);
+        &__message {
+            margin: 0;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+        }
+
+        /* Три кнопки идут в одну строку, а когда она их не вмещает — переносятся и
+           выравниваются по правому краю, сохраняя порядок. */
+        &__footer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: var(--rt-space-sm);
+        }
     }
 }

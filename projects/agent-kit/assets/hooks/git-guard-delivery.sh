@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
+# Требует: hooks/profile-check.sh
 # Гард поставки. PreToolUse на заведении ветки и открытии заявки на слияние.
 #
 # Закон о поставке требует трёх вещей, которых обычно не проверяет ничто: правка начинается с
@@ -37,6 +38,7 @@ input="$(cat 2>/dev/null)"
 command -v jq >/dev/null 2>&1 || exit 0
 
 tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
 case "$tool" in
     # Терминал среды и универсальный исполнитель кладут команду в то же поле.
     Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool) ;;
@@ -73,23 +75,59 @@ for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../d
     # shellcheck disable=SC1090
     [ -f "$profile" ] && . "$profile" 2>/dev/null
 done
-command -v rt_task_branch_ok >/dev/null 2>&1 || exit 0
+
+# Слово о нехватке функции профиля: хук, вышедший молча, неотличим от работающего. Файл может
+# быть не разложен — тогда остаётся прежнее поведение, молчаливое.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
+command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
+rt_needs rt_task_branch_ok git-guard-delivery || exit 0
 
 title_re="${RT_TASK_TITLE_RE:-^\[[A-Za-z]+-[0-9]+\][[:space:]]+[^[:space:]]}"
 task_new="${RT_TASK_NEW_CMD:-npm run task:new}"
 board_check="${RT_BOARD_CHECK_CMD:-npm run check:board}"
 task_bot="${RT_TASK_BOT:-}"
+tasks_dir="${RT_TASKS_DIR:-}"
+archive_dir="${RT_ARCHIVE_DIR:-}"
+main_branch="${RT_MAIN_BRANCH:-main}"
+
+# Обход требования: строка с причиной. Причина видна тому, кто вливает, поэтому обход законен.
+# Без причины это просто молчаливый пропуск, поэтому она обязательна. Порог в три знака — тот
+# же, что у гарда документа: если сделать по-разному, две формы одного обхода разойдутся.
+folder_skip_re='Task-folder-skip:[[:space:]]*[^[:space:]"'"'"']{3,}'
 
 deny() {
+    # Отказ гарда — наблюдение: гард, отбивающий чаще прочих, говорит, какое место поставки
+    # раз за разом делают не так. Текст отказа в наблюдение не идёт: в нём стоят номера задач
+    # и имена веток этого дерева.
+    # shellcheck disable=SC1090
+    [ -f "$rt_hooks_dir/observe.sh" ] && . "$rt_hooks_dir/observe.sh" 2>/dev/null
+    command -v rt_note >/dev/null 2>&1 && rt_note guard-deny res=git-guard-delivery "sid=$sid"
+
     jq -n --arg r "$1" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
         || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Гард поставки."}}\n'
     exit 0
 }
 
+# Подсказка вместо отказа: на открытии отчёта папка ещё нужна. Решения подсказка не несёт,
+# команда идёт дальше своим ходом.
+hint() {
+    jq -n --arg c "$1" '{hookSpecificOutput:{hookEventName:"PreToolUse",additionalContext:$c}}' 2>/dev/null
+    exit 0
+}
+
+# Есть ли папка задачи в ветке. Смотрим содержимое ветки, а не рабочее дерево: если папку
+# удалили, но не закоммитили, проверка прошла бы, а папка всё равно уехала бы в main. Имя
+# ветки подставляем целиком, вместе с косой: у ветки вида `chore/312-slug` папка лежит во
+# вложенном каталоге.
+folder_in_branch() {
+    git ls-tree -d --name-only HEAD -- "$1" 2>/dev/null | head -1
+}
+
 check_task() {
     number="$1"
     where="$2"
-    command -v rt_task_state >/dev/null 2>&1 || return 0
+    rt_needs rt_task_state git-guard-delivery || return 0
     state="$(cd "$root" && rt_task_state "$number" 2>/dev/null)" || return 0
     [ -z "$state" ] && return 0
 
@@ -127,11 +165,62 @@ if [ -n "$branch_arg" ]; then
     exit 0
 fi
 
+# --- слияние заявки ----------------------------------------------------------------------
+#
+# Папку задачи разбирают тем же PR, что и работу. После слияния этого уже никто не сделает:
+# работа перешла к следующей задаче, а PR закрыт. Раньше слияния требовать нельзя — пока идёт
+# ревью, plan.md нужен на диске, иначе гард хода работы не даст править код.
+# Команду ищем от начала строки или после разделителя, а не где угодно в тексте. Иначе гард
+# отбивает сообщение, где `gh pr merge` просто упомянут в кавычках, — так он и сработал на
+# правке этого же текста. Полностью подстроку в кавычках так не отсечь, но случайное упоминание
+# внутри слова или пути мимо уже не пройдёт.
+if printf '%s' "$cmd" | grep -qE '(^|[;&|(]|&&|\|\|)[[:space:]]*(gh[[:space:]]+pr[[:space:]]+merge|glab[[:space:]]+mr[[:space:]]+merge|az[[:space:]]+repos[[:space:]]+pr[[:space:]]+update)([[:space:]]|$)'; then
+    [ -n "$tasks_dir" ] || exit 0   # ведения работы папкой в дереве нет
+
+    merge_branch="$(git branch --show-current 2>/dev/null)"
+    [ -z "$merge_branch" ] && exit 0
+    rt_task_branch_ok "$merge_branch" || exit 0   # за беззадачной веткой папки не стоит
+
+    folder="$tasks_dir/$merge_branch"
+
+    # Сначала ищем обход в самой команде — это работает и без сети. Если читать только
+    # тело PR, то без сети гард отбил бы слияние, причина которого в этом теле и написана.
+    printf '%s' "$cmd" | grep -qiE "$folder_skip_re" && exit 0
+
+    merge_number="$(printf '%s' "$cmd" | sed -nE 's/.*(pr|mr)[[:space:]]+(merge|update)[[:space:]]+([0-9]+).*/\3/p' | head -1)"
+    if [ -n "$merge_number" ] && rt_needs rt_report_body git-guard-delivery; then
+        body="$(cd "$root" && rt_report_body "$merge_number" 2>/dev/null)"
+        [ -n "$body" ] && printf '%s' "$body" | grep -qiE "$folder_skip_re" && exit 0
+    fi
+
+    lying="$(folder_in_branch "$folder")"
+    [ -n "$lying" ] \
+        && deny "BLOCKED: в ветке осталась папка задачи «${lying}» — она уедет в главную. Разобрать её потом будет некому: работа перейдёт к следующей задаче, а этот PR закроется. Перенеси в «${archive_dir:-архив}» то, что объясняет принятые решения, остальное удали и повтори. Если работа вливается частями, поставь в тело PR строку «Task-folder-skip: <причина>»."
+
+    # Запись в архиве спрашиваем только у ветки, которая папку удалила. Иначе проверка
+    # цеплялась бы к работе, у которой папки и не было. Без общего предка с главной веткой
+    # сравнивать не с чем — тогда молчим.
+    [ -n "$archive_dir" ] || exit 0
+    base="$(git merge-base "$main_branch" HEAD 2>/dev/null)"
+    [ -z "$base" ] && exit 0
+
+    had="$(git ls-tree -d --name-only "$base" -- "$folder" 2>/dev/null | head -1)"
+    [ -z "$had" ] && had="$(git log "$base..HEAD" --diff-filter=A --name-only --pretty=format: -- "$folder" 2>/dev/null | head -1)"
+    [ -z "$had" ] && exit 0
+
+    gained="$(git diff --name-only --diff-filter=A "$base" HEAD -- "$archive_dir" 2>/dev/null | head -1)"
+    [ -z "$gained" ] \
+        && deny "BLOCKED: папку задачи удалили, но в «${archive_dir}» ветка ничего не добавила. Удалить проще, чем разобрать, — и вместе с папкой пропадает разбор просьбы, единственная запись слов владельца. Перенеси то, что объясняет принятые решения, одним файлом с понятным именем и повтори."
+
+    exit 0
+fi
+
 # --- открытие заявки на слияние ----------------------------------------------------------
-case "$cmd" in
-    *gh\ pr\ create* | *glab\ mr\ create* | *az\ repos\ pr\ create*) ;;
-    *) exit 0 ;;
-esac
+# Команду ищем от начала строки или после разделителя — по той же причине, что и слияние:
+# упоминание в кавычках командой не является.
+printf '%s' "$cmd" \
+    | grep -qE '(^|[;&|(]|&&|\|\|)[[:space:]]*(gh[[:space:]]+pr[[:space:]]+create|glab[[:space:]]+mr[[:space:]]+create|az[[:space:]]+repos[[:space:]]+pr[[:space:]]+create)([[:space:]]|$)' \
+    || exit 0
 
 branch="$(git branch --show-current 2>/dev/null)"
 [ -z "$branch" ] && exit 0   # открепившийся HEAD — не про этот случай
@@ -162,6 +251,27 @@ if [ -n "$title" ]; then
     fi
 fi
 
+# Главная ветка влита до открытия отчёта. Отчёт от разошедшейся ветки показывает ревьюверу свою
+# правку вперемешку с чужой, а проверки на нём гоняются от устаревшего основания.
+#
+# Судится локальная вершина главной ветки, без сети: сетевой вызов в разборе команды падал бы
+# вместе со связью и отбивал бы работу вместо промаха. Отсюда и граница — гард ловит ветку,
+# отставшую заведомо; свежесть самой вершины держит `git fetch`, и требует его чеклист.
+if git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \
+    && ! git merge-base --is-ancestor "origin/${main_branch}" HEAD 2>/dev/null; then
+    behind="$(git rev-list --count "HEAD..origin/${main_branch}" 2>/dev/null)"
+    deny "BLOCKED: «${main_branch}» ушла вперёд на ${behind:-несколько} коммитов, а в ветку не влита. Отчёт от разошедшейся ветки показывает ревьюверу правку вперемешку с чужой, а проверки на нём идут от устаревшего основания. Влей и повтори: git fetch origin && git merge origin/${main_branch} — порядок и разбор конфликта в паттерне git-workflow-merge."
+fi
+
 check_task "$number" "заявка с ветки «${branch}»"
+
+# Сейчас папка ещё нужна: правки по замечаниям ревью идут в эту же ветку, а без plan.md их не
+# пропустит гард хода работы. Поэтому здесь только напоминание. Требование стоит на слиянии —
+# там папка уже не нужна, а вред от неё как раз и наступает.
+if [ -n "$tasks_dir" ]; then
+    lying="$(folder_in_branch "$tasks_dir/$branch")"
+    [ -n "$lying" ] \
+        && hint "В ветке лежит папка задачи «${lying}». Разбери её до слияния, этим же PR: потом за неё уже никто не возьмётся. На слиянии это будет отказ, а не напоминание."
+fi
 
 exit 0

@@ -3,17 +3,31 @@
  * а `process.exit` зовёт только точка входа — иначе ни одну из них нельзя было бы проверить
  * спекой, не перехватывая поток вывода.
  */
-import { existsSync, mkdirSync, renameSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { collectAssets } from './assets.js';
-import { IEntryOfCatalog, IGapOfVariant, isChosen, readCatalog } from './catalog.js';
+import { collectAssets, IAsset } from './assets.js';
+import { cascadeCuts, IBrokenLink, ICascadeCut, IEntryOfCatalog, IGapOfVariant, IIdleSkip, isChosen, readCatalog } from './catalog.js';
 import { ICompanion, isUnfilled, TCompanionState } from './companion.js';
-import { CONFIG_PATH, DEFAULT_LAYOUT, IConfig, KINDS, OVERRIDES_DIR, readConfig, TKind } from './config.js';
+import {
+    CONFIG_PATH,
+    DEFAULT_LAYOUT,
+    IConfig,
+    KINDS,
+    OVERRIDES_DIR,
+    PROFILE_FILE,
+    readConfig,
+    RT_KIT_DIR,
+    SKILL_KINDS,
+    TKind,
+} from './config.js';
 import { IStaleBuild } from './freshness.js';
 import { hooksSection, IHookBinding, SETTINGS_PATH } from './hooks-map.js';
+import { DEFAULT_DAYS, ICount, IReadResult, ISummary, KEEP_DAYS, OBSERVATIONS_DIR, readObservations, summarize } from './observations.js';
 import { IPlanned, isRefusal, TOutcome } from './plan.js';
-import { ISyncResult, pendingOf, planSync, runSync } from './sync.js';
+import { ILeak, IProposal, leaksIn, markSent, marksOf, PROPOSALS_DIR, readProposals, TO_PACKAGE } from './proposals.js';
+import { FEEDBACK_LABEL, TSubmit } from './submit.js';
+import { ICutFound, IRetiredFound, ISyncResult, pendingOf, planSync, runSync } from './sync.js';
 import { placeholdersOf } from './vars.js';
 import { IAxis, IOptionOfAxis, readAxes, unansweredAxes } from './variants.js';
 
@@ -33,6 +47,11 @@ export interface IEnvironment {
      * тем каталогом ресурсов, который им дали, и о существовании исходников не знают.
      */
     readonly stale?: IStaleBuild | null;
+    /**
+     * `владелец/репозиторий` пакета — куда уезжают предложения. Читается из его манифеста на
+     * краю: зашитый в код адрес назвал бы чужое дерево в текстах пакета.
+     */
+    readonly repository?: string;
 }
 
 /** Что с файлом сделала раскладка. Прошедшее время здесь правда: `sync` уже записал. */
@@ -58,6 +77,8 @@ const STATE_WORD: Readonly<Record<TOutcome, string>> = {
 };
 
 const NOT_CHOSEN: string = 'не выбран';
+/** Перечень отделяет снятое каскадом от невыбранного: дерево его не выбирало и не отвергало. */
+const CUT_BY_CASCADE: string = 'снят каскадом';
 const SKIPPED: string = 'пропущен';
 /** Ресурс чужого вида: в этом дереве его не существует, а не «от него отказались». */
 const OTHER_VARIANT: string = 'другой вид';
@@ -74,6 +95,7 @@ const KIND_TITLE: Readonly<Record<TKind, string>> = {
     commands: 'КОМАНДЫ',
     workflows: 'ВОРКФЛОУ',
     templates: 'ШАБЛОНЫ',
+    docs: 'ДОКУМЕНТЫ',
 };
 
 /** Состояние компаньона словами. У заполненного слова нет: о нём говорить нечего. */
@@ -87,6 +109,80 @@ const NO_CONFIG: string = `нет \`${CONFIG_PATH}\` — начни с \`agent-k
 
 /** Куда уезжает прежнее содержимое файла, отданного пакету. */
 export const KEPT_SUFFIX: string = '.before-rt-kit';
+
+/**
+ * Имя функции профиля, которую хук ждёт. Обе формы: голая проверка наличия и спрос через
+ * помощника, который о нехватке говорит вслух. Считать одну значило бы недосчитаться ровно тех
+ * хуков, которые перешли на второе.
+ */
+const PROFILE_CALL: RegExp = /(?:command -v|rt_needs)[ \t]+(rt_[a-z_]+)/g;
+
+/** Сам помощник функцией профиля не является: его везёт пакет, а не дерево. */
+const PROFILE_HELPER: string = 'rt_needs';
+
+/**
+ * Объявление функции: `rt_is_app_code() {`. Не с начала строки — хук объявляет запасной вариант
+ * прямо в условии, и не считать его объявлением значило бы звать недостающим то, что у хука
+ * есть.
+ */
+const PROFILE_DEFINE: RegExp = /(rt_[a-z_]+)\s*\(\)\s*\{/g;
+
+/**
+ * Функции профиля, которых ждут взятые хуки, и те из них, что дерево не определило.
+ *
+ * Отдельной строкой в разборе состояния потому, что на месте вызова нехватка не видна вовсе:
+ * хук выходит с нулём, стоит в настройке, виден в списке — и читается как работающий. Тишина
+ * при этом означает разом «нечего проверять», «проверять нечем» и «всё в порядке».
+ */
+function profileLines(root: string, assetsDir: string, config: IConfig): string[] {
+    const wanted: Set<string> = new Set();
+    const defined: Set<string> = new Set();
+    for (const asset of collectAssets(config, assetsDir)) {
+        if (asset.kind !== 'hooks') {
+            continue;
+        }
+        for (const found of asset.text.matchAll(PROFILE_CALL)) {
+            if (found[1] !== PROFILE_HELPER) {
+                wanted.add(found[1]);
+            }
+        }
+        // Часть общих функций живёт не в профиле, а в соседнем хуке: запись наблюдения объявлена
+        // в хуке наблюдений, и гарды зовут её через ту же проверку наличия. Не считать их
+        // определёнными значило бы требовать от дерева переписать в профиль чужой код.
+        for (const found of asset.text.matchAll(PROFILE_DEFINE)) {
+            defined.add(found[1]);
+        }
+    }
+    if (!wanted.size) {
+        return [];
+    }
+
+    // Профиль собирается из тех же файлов, что читает сам хук: сперва разложенное умолчание
+    // пакета, поверх — надстройка дерева. Судить по одной надстройке значило бы объявить мёртвым
+    // каждый гард дерева, которое умолчаний не переписывало.
+    const defaults: string = config.layout.defaults ?? DEFAULT_LAYOUT.defaults;
+    const sources: readonly string[] = [join(root, defaults, PROFILE_FILE), join(root, RT_KIT_DIR, PROFILE_FILE)];
+    for (const path of sources) {
+        if (!existsSync(path)) {
+            continue;
+        }
+        for (const found of readFileSync(path, 'utf8').matchAll(PROFILE_DEFINE)) {
+            defined.add(found[1]);
+        }
+    }
+
+    const absent: readonly string[] = [...wanted].filter((name: string): boolean => !defined.has(name)).sort();
+
+    return [
+        `функции профиля, которых ждут взятые хуки: ${wanted.size}`,
+        ...(absent.length
+            ? [
+                  ...absent.map((name: string): string => `  нет функции ${name} — её определяют в ${join(RT_KIT_DIR, PROFILE_FILE)}`),
+                  '  хук без своей функции проверку не делает и действие пропускает',
+              ]
+            : ['  все определены']),
+    ];
+}
 
 const holes: (result: ISyncResult) => string[] = (result: ISyncResult): string[] =>
     [...result.missing].map(
@@ -139,7 +235,9 @@ const unboundLines: (result: ISyncResult) => string[] = (result: ISyncResult): s
     result.unbound.length
         ? [
               `гарды разложены, но в \`${SETTINGS_PATH}\` их не зовёт никто: ${result.unbound.length}`,
-              ...result.unbound.map((binding: IHookBinding): string => `  ${binding.path} — ${binding.event} ${binding.matcher}`),
+              ...result.unbound.map(
+                  (binding: IHookBinding): string => `  ${binding.path} — ${binding.event}${binding.matcher ? ` ${binding.matcher}` : ''}`
+              ),
               `  вставь в \`${SETTINGS_PATH}\` раздел \`hooks\` — готовый кусок ниже:`,
               ...JSON.stringify({ hooks: hooksSection(result.unbound) }, null, 4)
                   .split('\n')
@@ -147,13 +245,110 @@ const unboundLines: (result: ISyncResult) => string[] = (result: ISyncResult): s
           ]
         : [];
 
+/**
+ * Разорванные связи между ресурсами.
+ *
+ * Печатается предупреждением и кода возврата не меняет: дерево вправе закрыть требование своим
+ * средством. Но и молчать нельзя — дерево, выбравшее паттерн без хука, которым тот живёт,
+ * выглядит исправным, а расходится с пакетом на целую волну работ.
+ */
+const brokenLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] =>
+    result.broken.length
+        ? [
+              `требования ресурсов, оставшиеся без ответа: ${result.broken.length}`,
+              ...result.broken.map(
+                  (link: IBrokenLink): string => `  ${link.id} — требует ${link.requires}: ${link.unknown ? 'нет в пакете' : NOT_CHOSEN}`
+              ),
+              '  это предупреждение, а не отказ: требование закрывается своим средством дерева либо выбором ресурса',
+          ]
+        : [];
+
+/**
+ * Строки отказа, которые ничего не снимают.
+ *
+ * Названы вместе с тем, из-за чего стали лишними: «строка ни на что не влияет» без этого читается
+ * как промах в имени, и дерево идёт искать опечатку там, где её нет.
+ */
+const idleLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] =>
+    result.idle.length
+        ? [
+              `строк отказа, которые ничего не снимают: ${result.idle.length}`,
+              ...result.idle.map((one: IIdleSkip): string => `  ${one.id} — ${one.by ? `снято отказом от ${one.by}` : 'нет в пакете'}`),
+              '  это предупреждение, а не отказ: строки убирает дерево, и раскладка идёт дальше',
+          ]
+        : [];
+
+/**
+ * Разложенное раньше, а теперь снятое каскадом.
+ *
+ * Отдельно от брошенного: от брошенного дерево отказалось само и знает, где искать причину, а
+ * снятое каскадом ушло вслед за родителем — в отказе его имени нет и не будет.
+ */
+const cutOnDiskLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] =>
+    result.cutOnDisk.length
+        ? [
+              `лежит от ресурсов, снятых вслед за родителем: ${result.cutOnDisk.length}`,
+              ...result.cutOnDisk.map(
+                  (one: ICutFound): string => `  ${one.path} — снят вслед за ${one.cut.parent}, отвергнут ${one.cut.root}`
+              ),
+              '  их не стирает никто: убирать вручную, как и брошенные',
+          ]
+        : [];
+
+/**
+ * Названное выбором, чего дерево всё равно не получит.
+ *
+ * Молчать здесь нельзя вдвойне: дерево не просто осталось без ресурса — оно попросило его
+ * поимённо и прочло бы отсутствие как промах раскладки.
+ */
+const namedCutLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] =>
+    result.namedCut.length
+        ? [
+              `названо выбором, но не приедет: ${result.namedCut.length}`,
+              ...result.namedCut.map((one: ICascadeCut): string => `  ${one.id} — снято вслед за ${one.parent}, отвергнут ${one.root}`),
+              '  это предупреждение, а не отказ: возьми родителя в выбор либо убери потомка из него',
+          ]
+        : [];
+
+/**
+ * Файлы ресурсов, ушедших из набора.
+ *
+ * Названы отдельно от брошенных: брошенный ресурс в наборе есть и вернётся, если дерево его
+ * выберет, а снятый не вернётся никогда — и правило, по которому агент работает, у него
+ * последнее.
+ */
+const retiredLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] =>
+    result.retired.length
+        ? [
+              `в дереве лежат файлы ресурсов, которых в пакете больше нет: ${result.retired.length}`,
+              ...result.retired.map((one: IRetiredFound): string => `  ${one.path} — снят в v${one.since}: ${one.why}`),
+              '  убирает их дерево: в чужие файлы пакет не пишет',
+          ]
+        : [];
+
+/**
+ * Предупреждения раскладки: кода возврата они не меняют и печатаются на любом её исходе.
+ *
+ * Иначе их не видит никто: на сошедшемся дереве проверка молчит, а удавшаяся раскладка называет
+ * положенные файлы — и лишняя строка отказа, снятый каскадом файл и ушедший из набора ресурс
+ * всплывали бы только там, где и без них уже красно.
+ */
+const warnings: (result: ISyncResult) => string[] = (result: ISyncResult): string[] => [
+    ...brokenLines(result),
+    ...idleLines(result),
+    ...namedCutLines(result),
+    ...retiredLines(result),
+    ...cutOnDiskLines(result),
+    ...abandonedLines(result),
+];
+
 const describe: (result: ISyncResult) => string[] = (result: ISyncResult): string[] => [
     ...holes(result),
     ...gapLines(result),
     ...unboundLines(result),
+    ...warnings(result),
     ...pendingOf(result).map((entry: IPlanned): string => `  ${entry.path} — ${STATE_WORD[entry.outcome]}`),
     ...unfilled(result).map((entry: ICompanion): string => `  ${entry.path} — ${COMPANION_WORD[entry.state]}`),
-    ...abandonedLines(result),
 ];
 
 /** Имена дырок во всех ресурсах, которые дерево берёт. Без конфига — ни одной: выбор неизвестен. */
@@ -257,9 +452,12 @@ export function sync(env: IEnvironment, check: boolean): IOutcomeOfCommand {
         const empty: readonly ICompanion[] = unfilled(result);
         // Гард, которого не зовёт настройка агента, — такое же расхождение, как отставший файл:
         // он разложен, он коммитится, и по дереву его не отличить от работающего.
+        // Разорванная связь в счёт расхождений не идёт: дерево вправе закрыть требование своим
+        // средством, и отказ отбивал бы законную раскладку. Но и сходство её не отменяет —
+        // предупреждение печатается и там, где расходиться больше нечему.
         const count: number = result.missing.size + result.gaps.length + pending.length + empty.length + result.unbound.length;
         if (!count) {
-            return { code: 0, lines: [`sync --check: разложенное сходится с пакетом v${version}`] };
+            return { code: 0, lines: [`sync --check: разложенное сходится с пакетом v${version}`, ...warnings(result)] };
         }
 
         return { code: 1, lines: [`sync --check: расхождений ${count}`, ...describe(result)] };
@@ -304,6 +502,7 @@ export function sync(env: IEnvironment, check: boolean): IOutcomeOfCommand {
                 ? [`разложено файлов: ${result.written.length}`, ...result.written.map((path: string): string => `  ${path}`)]
                 : ['всё уже разложено']),
             ...unboundLines(result),
+            ...warnings(result),
         ],
     };
 }
@@ -368,6 +567,274 @@ export function adopt(env: IEnvironment, names: readonly string[]): IOutcomeOfCo
     };
 }
 
+/**
+ * Сколько незагруженных правил называется поимённо. На коротком отрезке их бывает больше
+ * тридцати, и список во весь экран прячет всё остальное, ради чего сводку и открыли.
+ */
+const UNUSED_SHOWN: number = 12;
+
+/** Чем сводка отвечает: отрезок в днях, сегодняшний день и вид вывода. */
+export interface IStatsOptions {
+    readonly days: number;
+    /** Сегодняшний день, `ГГГГ-ММ-ДД`. Приходит с края: команду со своими часами не проверить. */
+    readonly today: string;
+    readonly json: boolean;
+}
+
+/** Столбиком: имя и счёт. Ширина по самому длинному имени — иначе счёт читается по одному. */
+const countLines: (counted: readonly ICount[]) => string[] = (counted: readonly ICount[]): string[] => {
+    const width: number = counted.reduce((found: number, entry: ICount): number => Math.max(found, entry.name.length), 0);
+
+    return counted.map((entry: ICount): string => `  ${entry.name.padEnd(width)}  ${entry.count}`);
+};
+
+/** Имена скилов, разложенных в это дерево: правила, паттерны и скилы без закона. */
+const skillsOf: (config: IConfig, assetsDir: string) => readonly string[] = (config: IConfig, assetsDir: string): readonly string[] =>
+    collectAssets(config, assetsDir)
+        .filter((asset: IAsset): boolean => SKILL_KINDS.includes(asset.kind))
+        .map((asset: IAsset): string => asset.name);
+
+/**
+ * Сводка наблюдений за отрезок дней.
+ *
+ * Отдельная строка про незагруженное — то, ради чего сводка вообще нужна: чем пользуются, видно
+ * и по работе, а вот правило, которое не открыли ни разу, ничем себя не выдаёт. Сокращать текст
+ * правил так же ценно, как дополнять.
+ */
+export function stats(env: IEnvironment, options: IStatsOptions): IOutcomeOfCommand {
+    const { root, version, assetsDir } = env;
+    const config: IConfig | null = readConfig(root);
+    if (!config) {
+        return { code: 1, lines: [NO_CONFIG] };
+    }
+
+    // Выключенная запись — не пустая сводка: нули на месте наблюдений читаются как «ничего не
+    // делали», тогда как на самом деле никто и не смотрел.
+    if (!config.observe) {
+        return {
+            code: 0,
+            lines: [
+                'запись наблюдений выключена ключом `observe` в конфиге',
+                `включить — убрать ключ или поставить \`"observe": true\`; пишутся они в ${OBSERVATIONS_DIR}/`,
+            ],
+        };
+    }
+
+    const days: number = options.days > 0 ? options.days : DEFAULT_DAYS;
+    const result: IReadResult = readObservations(root, options.today, days);
+    const summary: ISummary = summarize(result.observations, skillsOf(config, assetsDir), days);
+
+    if (options.json) {
+        return { code: 0, lines: [JSON.stringify({ ...summary, swept: result.swept })] };
+    }
+
+    if (result.silent) {
+        return {
+            code: 0,
+            lines: [
+                'наблюдений нет: записи не велось ни разу',
+                `их пишут гарды в ${OBSERVATIONS_DIR}/ — проверь, что гарды разложены и подключены в ${SETTINGS_PATH}`,
+            ],
+        };
+    }
+
+    if (!summary.total) {
+        return {
+            code: 0,
+            lines: [
+                `наблюдений за ${days} дн. нет ни одного, а записи велись раньше`,
+                ...(result.swept.length ? [`снято по сроку хранения (${KEEP_DAYS} дн.): ${result.swept.length}`] : []),
+                'возьми отрезок длиннее: `--days 14`',
+            ],
+        };
+    }
+
+    return {
+        code: 0,
+        lines: [
+            `наблюдения за ${days} дн., заходов ${summary.sessions}, событий ${summary.total}`,
+            ...(summary.versions.length ? [`версии пакета в записях: ${summary.versions.join(', ')}`] : []),
+            '',
+            `правил загружено: ${summary.loads.reduce((found: number, entry: ICount): number => found + entry.count, 0)}`,
+            ...countLines(summary.loads),
+            ...(summary.unused.length
+                ? [
+                      '',
+                      `разложено и не загружено ни разу: ${summary.unused.length} из ${skillsOf(config, assetsDir).length}`,
+                      ...summary.unused.slice(0, UNUSED_SHOWN).map((name: string): string => `  ${name}`),
+                      // Список говорится не весь, и об этом говорится вслух: молчаливый обрыв
+                      // читается как «вот они все», и правило, не попавшее в первую дюжину,
+                      // считалось бы работающим.
+                      ...(summary.unused.length > UNUSED_SHOWN
+                          ? [`  … и ещё ${summary.unused.length - UNUSED_SHOWN} — целиком в \`--json\``]
+                          : []),
+                  ]
+                : []),
+            ...(summary.denials.length
+                ? [
+                      '',
+                      `гейт отбивал: ${summary.denials.reduce((found: number, entry: ICount): number => found + entry.count, 0)}`,
+                      ...countLines(summary.denials),
+                      ...(summary.kinds.length
+                          ? ['  чаще всего на:', ...countLines(summary.kinds).map((line: string): string => `  ${line}`)]
+                          : []),
+                  ]
+                : []),
+            ...(summary.guards.length
+                ? [
+                      '',
+                      `гарды отказывали: ${summary.guards.reduce((found: number, entry: ICount): number => found + entry.count, 0)}`,
+                      ...countLines(summary.guards),
+                  ]
+                : []),
+            ...(result.swept.length ? ['', `снято по сроку хранения (${KEEP_DAYS} дн.): ${result.swept.length}`] : []),
+            '',
+            `пакет v${version}`,
+        ],
+    };
+}
+
+/** Чем отправка живёт: чем заводить запись, куда и чем себя выдаёт это дерево. */
+export interface IProposeOptions {
+    /** Печатать, что уехало бы, и ничего не отправлять. */
+    readonly dryRun: boolean;
+    readonly submit: TSubmit;
+    /** `владелец/репозиторий` пакета — из его манифеста, а не из кода. */
+    readonly repository: string;
+    /** Адрес удалённого репозитория этого дерева: он тоже называет дерево. */
+    readonly remote: string;
+    /** Сводка наблюдений, которая едет вместе с предложением: без цифр это мнение. */
+    readonly summary: readonly string[];
+}
+
+/** Тело записи: место, повод, готовый текст — и сводка под ними. */
+const issueBody: (proposal: IProposal, summary: readonly string[], version: string) => string = (
+    proposal: IProposal,
+    summary: readonly string[],
+    version: string
+): string =>
+    [
+        `Ресурс: \`${proposal.resource}\``,
+        `Пакет: v${version}`,
+        '',
+        proposal.body,
+        '',
+        '## Наблюдения дерева, из которого пришло предложение',
+        '',
+        '```',
+        ...summary,
+        '```',
+        '',
+        'Заведено `agent-kit propose`. Дерево, из которого оно пришло, здесь не называется намеренно.',
+    ].join('\n');
+
+/**
+ * Отправка предложений, адресованных пакету.
+ *
+ * Наружу уезжает только адрес «пакет»: «компаньон» и «дерево» — про имена и надстройки этого
+ * дерева, и в репозитории пакета им делать нечего. Перед отправкой текст сверяется на адрес
+ * дерева: файл уезжает в чужой репозиторий целиком, и проверка здесь дешевле, чем разбор потом.
+ */
+export function propose(env: IEnvironment, options: IProposeOptions): IOutcomeOfCommand {
+    const { root, version } = env;
+    const config: IConfig | null = readConfig(root);
+    if (!config) {
+        return { code: 1, lines: [NO_CONFIG] };
+    }
+    if (!options.repository) {
+        return { code: 1, lines: ['куда отправлять — неизвестно: в манифесте пакета нет адреса репозитория'] };
+    }
+
+    const all: readonly IProposal[] = readProposals(root);
+    const mine: readonly IProposal[] = all.filter((entry: IProposal): boolean => entry.address === TO_PACKAGE && !entry.sent);
+    if (!mine.length) {
+        const others: number = all.filter((entry: IProposal): boolean => entry.address !== TO_PACKAGE).length;
+        const sent: number = all.filter((entry: IProposal): boolean => Boolean(entry.sent)).length;
+
+        return {
+            code: 0,
+            lines: [
+                'отправлять нечего: предложений с адресом «пакет» и без пометки об отправке нет',
+                ...(others ? [`с другими адресами: ${others} — они правятся здесь же, надстройкой и компаньоном`] : []),
+                ...(sent ? [`уже отправлено: ${sent}`] : []),
+                ...(all.length ? [] : [`предложения кладутся в ${PROPOSALS_DIR}/ — форма в шаблоне \`proposal.md\``]),
+            ],
+        };
+    }
+
+    // Утечка отбивает отправку целиком, а не свой блок: файл разбирает человек, и «уехало два из
+    // трёх» он прочтёт как «всё в порядке».
+    const marks: readonly string[] = marksOf(root, options.remote);
+    const leaked: readonly { proposal: IProposal; leak: ILeak }[] = mine.flatMap(
+        (proposal: IProposal): { proposal: IProposal; leak: ILeak }[] =>
+            leaksIn(proposal.body, marks).map((leak: ILeak): { proposal: IProposal; leak: ILeak } => ({ proposal, leak }))
+    );
+    if (leaked.length) {
+        return {
+            code: 1,
+            lines: [
+                `отправка не начата: в тексте предложений назван адрес этого дерева — ${leaked.length}`,
+                ...leaked.map(
+                    ({ proposal, leak }: { proposal: IProposal; leak: ILeak }): string =>
+                        `  ${proposal.file}:${proposal.line + leak.line} — ${leak.why}\n      ${leak.text}`
+                ),
+                'предложение уезжает в чужой репозиторий целиком: правь текст, а не обходи проверку',
+            ],
+        };
+    }
+
+    if (options.dryRun) {
+        return {
+            code: 0,
+            lines: [
+                `уехало бы записей: ${mine.length} → ${options.repository}, метка ${FEEDBACK_LABEL}`,
+                ...mine.map((entry: IProposal): string => `  ${entry.resource} (${entry.file}:${entry.line})`),
+                'сводка наблюдений едет вместе с ними',
+            ],
+        };
+    }
+
+    const done: string[] = [];
+    for (const proposal of mine) {
+        let url: string = '';
+        try {
+            url = options.submit({
+                repository: options.repository,
+                title: `предложение: ${proposal.resource}`,
+                body: issueBody(proposal, options.summary, version),
+                label: FEEDBACK_LABEL,
+            });
+        } catch (error: unknown) {
+            return {
+                code: 1,
+                lines: [
+                    ...(done.length ? [`отправлено до отказа: ${done.length}`, ...done] : []),
+                    `отправка оборвалась на ${proposal.resource}: ${(error as Error).message.split('\n')[0]}`,
+                    // Три причины покрывают почти все отказы, и ни одну из них не видно из
+                    // сообщения помощника: он говорит про метку, доступ и сам себя одинаково глухо.
+                    `проверь: помощник хостинга стоит и вошёл в учётную запись; в ${options.repository} заведена метка ${FEEDBACK_LABEL}; у учётной записи есть право заводить записи`,
+                    'файл предложений остался на месте — отправленное помечено, остальное уедет повторным запуском',
+                ],
+            };
+        }
+
+        // Пометка ложится сразу, а не после всех: оборвавшаяся отправка иначе увозит половину
+        // предложений и не оставляет следа, по которому видно, какую именно.
+        const path: string = join(root, proposal.file);
+        writeFileSync(path, markSent(readFileSync(path, 'utf8'), proposal, url), 'utf8');
+        done.push(`  ${proposal.resource} → ${url}`);
+    }
+
+    return {
+        code: 0,
+        lines: [
+            `заведено записей: ${done.length} в ${options.repository}`,
+            ...done,
+            'разбирается сведением: `/agent-kit-digest` в репозитории пакета — оно и заводит задачу',
+        ],
+    };
+}
+
 export function doctor(env: IEnvironment): IOutcomeOfCommand {
     const { root, version, assetsDir } = env;
     const config: IConfig | null = readConfig(root);
@@ -397,9 +864,29 @@ export function doctor(env: IEnvironment): IOutcomeOfCommand {
         foreignVariant.every((entry: IEntryOfCatalog): boolean => entry.id !== id)
     ).length;
 
+    // Снятое каскадом считается и называется отдельно от невыбранного: дерево его не выбирало и
+    // не отвергало — оно ушло вслед за родителем, и искать его в отказе читатель пойдёт зря.
+    const cuts: readonly ICascadeCut[] = cascadeCuts(catalog, config);
+    const cut: ReadonlySet<string> = new Set(cuts.map((one: ICascadeCut): string => one.id));
+
+    // Невыбранное называется поимённо: число «не выбрано: 73» не отвечает ни на один вопрос,
+    // ради которого его читают, — ни какого ресурса не хватает, ни требуется ли он соседу.
+    const unchosen: readonly IEntryOfCatalog[] = catalog.filter(
+        (entry: IEntryOfCatalog): boolean =>
+            !isChosen(entry, config) &&
+            !config.skip.includes(entry.id) &&
+            foreignVariant.every((one: IEntryOfCatalog): boolean => one.id !== entry.id)
+    );
+
     const lines: string[] = [
         `пакет v${version}, везёт ресурсов ${catalog.length}, взято ${taken}`,
-        `не выбрано: ${catalog.length - taken - skipped - other}, пропущено: ${skipped}, другой вид: ${other}`,
+        `не выбрано: ${catalog.length - taken - skipped - other - cut.size}, пропущено: ${skipped}, другой вид: ${other}, снято каскадом: ${cut.size}`,
+        ...unchosen.map((entry: IEntryOfCatalog): string => `  не выбран: ${entry.id}`),
+        ...cuts.map(
+            (one: ICascadeCut): string =>
+                `  снят каскадом: ${one.id} — вслед за ${one.parent}${one.parent === one.root ? '' : `, отвергнут ${one.root}`}`
+        ),
+        ...profileLines(root, assetsDir, config),
         `значений в конфиге: ${Object.keys(config.vars).length}`,
         ...chosen,
         ...[...counted].map(([outcome, count]: [TOutcome, number]): string => `${STATE_WORD[outcome]}: ${count}`),
@@ -424,6 +911,7 @@ export function list(env: IEnvironment): IOutcomeOfCommand {
     const config: IConfig | null = readConfig(root);
     const catalog: readonly IEntryOfCatalog[] = readCatalog(assetsDir);
     const planned: Map<string, TOutcome> = new Map();
+    const cutByCascade: ReadonlySet<string> = new Set(config ? cascadeCuts(catalog, config).map((one: ICascadeCut): string => one.id) : []);
 
     if (config) {
         for (const entry of planSync(config, root, version, assetsDir).planned) {
@@ -443,6 +931,9 @@ export function list(env: IEnvironment): IOutcomeOfCommand {
         }
         if (!isChosen(entry, config)) {
             return NOT_CHOSEN;
+        }
+        if (cutByCascade.has(entry.id)) {
+            return CUT_BY_CASCADE;
         }
         const outcome: TOutcome | undefined = planned.get(entry.id);
 

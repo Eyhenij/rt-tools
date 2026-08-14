@@ -9,11 +9,24 @@ import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'n
 import { dirname, join } from 'node:path';
 
 import { collectAssets, IAsset, targetOf } from './assets.js';
-import { IEntryOfCatalog, IGapOfVariant, readCatalog, variantGaps } from './catalog.js';
+import {
+    brokenLinks,
+    cascadeCuts,
+    IBrokenLink,
+    ICascadeCut,
+    idleSkips,
+    IEntryOfCatalog,
+    IGapOfVariant,
+    IIdleSkip,
+    namedButCut,
+    readCatalog,
+    variantGaps,
+} from './catalog.js';
 import { ICompanion, pathOf, planCompanion } from './companion.js';
 import { IConfig, OVERRIDES_DIR } from './config.js';
-import { bindingOf, IHookBinding, unboundHooks } from './hooks-map.js';
+import { bindingsOf as declaredIn, IHookBinding, unboundHooks } from './hooks-map.js';
 import { IPlanned, isPending, isRefusal, planFile } from './plan.js';
+import { RETIRED } from './retired.js';
 import { mergeDocuments, parseDocument, renderDocument } from './sections.js';
 import { readStamped } from './stamp.js';
 import { IRenderResult, renderVars } from './vars.js';
@@ -49,6 +62,38 @@ export interface ISyncResult {
      * молчать нельзя: гард, который не зовут, неотличим от гарда, который всё пропускает.
      */
     readonly unbound: readonly IHookBinding[];
+    /**
+     * Выбранные ресурсы, чьи требования в дерево не поехали.
+     *
+     * Предупреждение, а не отказ: дерево вправе закрыть требование своим средством, но обязано
+     * знать, что закрывает. Молчание же оставляет его исправным на вид — сверка зелена на любом
+     * подмножестве, сколько бы связок ни было разорвано.
+     */
+    readonly broken: readonly IBrokenLink[];
+    /**
+     * Строки отказа, которые ничего не снимают.
+     *
+     * Предупреждение, а не отказ: строка становится лишней сама, обновлением пакета, без единой
+     * правки в дереве. Молчание же оставляет её в настройке навсегда — ровно так список отказа и
+     * дорастает до полусотни строк, ни одна из которых ни на что не влияет.
+     */
+    readonly idle: readonly IIdleSkip[];
+    /**
+     * Разложенные раньше файлы ресурсов, снятых теперь каскадом.
+     *
+     * Названы отдельно от брошенных: брошенное дерево отвергло само и знает об этом, а снятое
+     * каскадом ушло вслед за родителем — искать причину в отказе читатель пойдёт зря.
+     */
+    readonly cutOnDisk: readonly ICutFound[];
+    /**
+     * Ресурсы, названные выбором поимённо и снятые каскадом: дерево просило их прямо.
+     *
+     * Предупреждение, а не отказ: выбор с потомком при невыбранном родителе — состояние
+     * настройки, а не промах раскладки, и чинит его дерево у себя.
+     */
+    readonly namedCut: readonly ICascadeCut[];
+    /** Файлы ресурсов, которых в наборе больше нет: их убирает дерево, пакет только называет. */
+    readonly retired: readonly IRetiredFound[];
     readonly written: readonly string[];
 }
 
@@ -70,24 +115,85 @@ function renderAsset(asset: IAsset, config: IConfig, root: string): IRenderResul
     return renderVars(merged, config.vars);
 }
 
+/** Разложенный раньше файл ресурса, снятого теперь каскадом, и причина, по которой он снят. */
+export interface ICutFound {
+    /** Путь в дереве, где лежит файл. */
+    readonly path: string;
+    readonly cut: ICascadeCut;
+}
+
+/** Что дерево держит от ресурсов, которые больше не раскладываются. */
+interface ILeftOnDisk {
+    readonly abandoned: readonly string[];
+    readonly cut: readonly ICutFound[];
+}
+
 /**
- * Что лежит в дереве от ресурсов, которые проект больше не берёт.
+ * Что лежит в дереве от ресурсов, которые больше не раскладываются.
  *
  * Ищется по тем же правилам раскладки, что и всё остальное: путь ресурса вычисляется так, будто
  * его кладут, и проверяется, лежит ли там файл с шапкой пакета. Чужой файл на том же пути
  * брошенным не считается — его пакет не клал.
+ *
+ * Снятое каскадом отделяется здесь же: дерево от него не отказывалось, и, увидев его среди
+ * брошенного, читатель пойдёт искать строку отказа, которой нет.
  */
-function abandonedOf(config: IConfig, root: string, assetsDir: string): readonly string[] {
+function leftOnDisk(config: IConfig, root: string, assetsDir: string): ILeftOnDisk {
     const taken: ReadonlySet<string> = new Set(collectAssets(config, assetsDir).map((asset: IAsset): string => asset.id));
+    const catalog: readonly IEntryOfCatalog[] = readCatalog(assetsDir);
+    const cuts: Map<string, ICascadeCut> = new Map(
+        cascadeCuts(catalog, config).map((one: ICascadeCut): [string, ICascadeCut] => [one.id, one])
+    );
 
-    return readCatalog(assetsDir)
-        .filter((entry: IEntryOfCatalog): boolean => !taken.has(entry.id) && matchesVariant(entry.variant, config.variants))
-        .map((entry: IEntryOfCatalog): string => targetOf(entry, config.layout))
-        .filter((path: string): boolean => {
-            const existing: string | null = read(join(root, path));
+    const abandoned: string[] = [];
+    const cut: ICutFound[] = [];
+    for (const entry of catalog) {
+        if (taken.has(entry.id) || !matchesVariant(entry.variant, config.variants)) {
+            continue;
+        }
+        const path: string = targetOf(entry, config.layout);
+        const existing: string | null = read(join(root, path));
+        if (existing === null || readStamped(existing) === null) {
+            continue;
+        }
+        const found: ICascadeCut | undefined = cuts.get(entry.id);
+        if (found) {
+            cut.push({ path, cut: found });
+            continue;
+        }
+        abandoned.push(path);
+    }
 
-            return existing !== null && readStamped(existing) !== null;
-        });
+    return { abandoned, cut };
+}
+
+/**
+ * Что лежит в дереве от ресурсов, которых в наборе больше нет.
+ *
+ * Брошенным такой файл не назовёт никто: брошенное ищется по каталогу пакета, а снятого в
+ * каталоге нет вовсе. Поэтому его ищут по списку снятых имён — там же, где записано, почему
+ * ресурс ушёл.
+ */
+export interface IRetiredFound {
+    /** Путь в дереве, где лежит файл снятого ресурса. */
+    readonly path: string;
+    /** Редакция пакета, в которой ресурс снят. */
+    readonly since: string;
+    readonly why: string;
+}
+
+function retiredOf(config: IConfig, root: string): readonly IRetiredFound[] {
+    const found: IRetiredFound[] = [];
+
+    for (const entry of RETIRED) {
+        const path: string = targetOf(entry, config.layout);
+        const existing: string | null = read(join(root, path));
+        if (existing !== null && readStamped(existing) !== null) {
+            found.push({ path, since: entry.since, why: entry.why });
+        }
+    }
+
+    return found;
 }
 
 /**
@@ -100,10 +206,7 @@ function bindingsOf(config: IConfig, assetsDir: string): readonly IHookBinding[]
         if (asset.kind !== 'hooks') {
             continue;
         }
-        const binding: IHookBinding | null = bindingOf(asset.text, asset.target);
-        if (binding) {
-            bindings.push(binding);
-        }
+        bindings.push(...declaredIn(asset.text, asset.target));
     }
 
     return bindings;
@@ -129,13 +232,20 @@ export function planSync(config: IConfig, root: string, version: string, assetsD
         }
     }
 
+    const left: ILeftOnDisk = leftOnDisk(config, root, assetsDir);
+
     return {
         planned,
         missing,
         companions,
-        abandoned: abandonedOf(config, root, assetsDir),
+        abandoned: left.abandoned,
         gaps: variantGaps(readCatalog(assetsDir), config),
         unbound: unboundHooks(bindingsOf(config, assetsDir), root),
+        broken: brokenLinks(readCatalog(assetsDir), config),
+        idle: idleSkips(readCatalog(assetsDir), config),
+        cutOnDisk: left.cut,
+        namedCut: namedButCut(readCatalog(assetsDir), config),
+        retired: retiredOf(config, root),
         written: [],
     };
 }

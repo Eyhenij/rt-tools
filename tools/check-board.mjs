@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.4.0 · checks/check-board.github.mjs · 54ee77ca6fcd · правится надстройкой, не здесь
+// rt-kit v0.8.1 · checks/check-board.github.mjs · 7374ee61ba41 · правится надстройкой, не здесь
 /**
  * Сверка очереди работ с тем, что закон о поставке требует от задачи и её отчёта.
  *
@@ -25,7 +25,7 @@
  *
  * Ненулевой код возврата и перечень расхождений.
  */
-import { existsSync, readdirSync, statSync } from 'node:fs';
+import { statSync } from 'node:fs';
 import { join } from 'node:path';
 
 import {
@@ -37,7 +37,9 @@ import {
     fetchBoard,
     fetchIssues,
     fetchOpenPulls,
+    numberFromTaskDir,
     numberFromTitle,
+    taskDirs,
 } from './board.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
@@ -48,15 +50,6 @@ const DRAFT_DAYS = 7;
 
 const problems = [];
 const report = (message) => problems.push(message);
-
-function taskDirs() {
-    if (!existsSync(TASKS_DIR)) {
-        return [];
-    }
-    return readdirSync(TASKS_DIR, { withFileTypes: true })
-        .filter((entry) => entry.isDirectory() && entry.name !== '_template')
-        .map((entry) => entry.name);
-}
 
 /**
  * Разбор просьбы владельца идёт до заведения задачи и лежит в `_draft-<slug>`. Заглохший на
@@ -72,7 +65,7 @@ function checkDrafts() {
         }
         const age = Math.floor((now - statSync(join(TASKS_DIR, name)).mtimeMs) / 86400000);
         if (age >= DRAFT_DAYS) {
-            report(`docs/tasks/${name}/: разбор брошен ${age} дн. назад — заведи задачу или удали папку`);
+            report(`${CONFIG.tasksDir}/${name}/: разбор брошен ${age} дн. назад — заведи задачу или удали папку`);
         }
     }
 }
@@ -154,12 +147,12 @@ try {
     // в `docs/archive/`, остальное удаляется. Оставленная рядом с текущими, она читается как
     // текущая — тем убедительнее, чем старше.
     for (const name of taskDirs()) {
-        const number = Number(new RegExp(`^${TASK_KEY}-(\\d+)-`).exec(name)?.[1]);
-        if (!Number.isInteger(number) || openNumbers.has(number)) {
+        const number = numberFromTaskDir(name.split('/').pop());
+        if (number === null || openNumbers.has(number)) {
             continue;
         }
         if (issues.some((issue) => issue.number === number)) {
-            report(`docs/tasks/${name}/: задача #${number} закрыта, а папка лежит среди текущих — разбери её`);
+            report(`${CONFIG.tasksDir}/${name}/: задача #${number} закрыта, а папка лежит среди текущих — разбери её`);
         }
     }
 } catch (error) {

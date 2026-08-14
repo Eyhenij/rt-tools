@@ -18,6 +18,15 @@
           }
         ],
         "matcher": "Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file"
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/window-fill-guard.sh"
+          }
+        ]
       }
     ],
     "PreToolUse": [
@@ -53,6 +62,10 @@
           {
             "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/browser-guard-no-asking.sh",
             "type": "command"
+          },
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/grill-gate.sh"
           }
         ],
         "matcher": "AskUserQuestion"
@@ -118,6 +131,15 @@
             "type": "command"
           }
         ]
+      },
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/window-fill-guard.sh"
+          }
+        ]
       }
     ],
     "SessionStart": [
@@ -147,6 +169,23 @@
         ],
         "matcher": "startup|resume|compact|clear"
       }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/grill-gate.sh"
+          },
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/postmortem-guard.sh"
+          }
+        ]
+      }
     ]
+  },
+  "env": {
+    "RT_WINDOW_TOKENS": "1000000"
   }
 }

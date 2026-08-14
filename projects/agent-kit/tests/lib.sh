@@ -50,6 +50,46 @@ fixture_repo() {
     printf '%s' "$dir"
 }
 
+# Репозиторий с историей: главная ветка с коммитом и рабочая ветка от неё. Нужен там, где гард
+# судит содержимое ветки, а не рабочее дерево: `git ls-tree HEAD` и точка ветвления без
+# единого коммита не отвечают вовсе. Доводы: имя главной ветки, имя рабочей.
+#
+# Подпись и общий конфиг машины сюда не пускаются намеренно: включённая подпись уводит git в
+# агент ключей, а заблокированный агент роняет весь набор — со стороны это выглядит сломанным
+# гардом.
+fixture_repo_branched() {
+    local dir main work
+    main="${1:-main}"
+    work="$2"
+    dir="$(mktemp -d)"
+    git -C "$dir" init -q 2>/dev/null
+    git -C "$dir" checkout -q -b "$main" 2>/dev/null
+    printf '{"name":"probe"}\n' > "$dir/package.json"
+    git -C "$dir" add package.json 2>/dev/null
+    git -C "$dir" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false \
+        commit -q -m 'chore: старт' 2>/dev/null
+    git -C "$dir" checkout -q -b "$work" 2>/dev/null
+    printf '%s' "$dir"
+}
+
+# Файл в репозитории фикстуры и коммит с ним одной командой: путь, содержимое, заголовок.
+fixture_commit() {
+    local dir="$1" path="$2" body="$3" subject="$4"
+    mkdir -p "$dir/$(dirname "$path")"
+    printf '%s\n' "$body" > "$dir/$path"
+    git -C "$dir" add "$path" 2>/dev/null
+    git -C "$dir" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false \
+        commit -q -m "$subject" 2>/dev/null
+}
+
+# Снятие пути в репозитории фикстуры с коммитом: так папку задачи и разбирают.
+fixture_remove() {
+    local dir="$1" path="$2" subject="$3"
+    git -C "$dir" rm -r -q "$path" 2>/dev/null
+    git -C "$dir" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false \
+        commit -q -m "$subject" 2>/dev/null
+}
+
 # --- сборка входов --------------------------------------------------------------------
 
 # Вход PreToolUse для команды. Второй довод — имя инструмента, третий — рабочий каталог.
@@ -97,6 +137,21 @@ expect_reason() {
     if printf '%s' "$json" | "$HOOKS/$hook" 2>/dev/null \
         | jq -r '.hookSpecificOutput.permissionDecisionReason // ""' 2>/dev/null \
         | grep -qE "$pattern"; then got="есть"; else got="нет"; fi
+    report "$label" "$got" "есть"
+}
+
+# Сказанное вслух там, где решения нет. Подсказка идёт тем же полем вывода, что и отказ,
+# поэтому `expect_decision` приняла бы её за отказ: у неё нет `permissionDecision`, а умолчание
+# там — «deny». Проверяется отдельно: решения нет, а образец в сказанном есть.
+expect_hint() {
+    local label="$1" hook="$2" json="$3" pattern="$4" out got
+    out="$(printf '%s' "$json" | "$HOOKS/$hook" 2>/dev/null)"
+    if printf '%s' "$out" | jq -e '.hookSpecificOutput | has("permissionDecision") | not' >/dev/null 2>&1 \
+        && printf '%s' "$out" | jq -r '.hookSpecificOutput.additionalContext // ""' 2>/dev/null | grep -qE "$pattern"; then
+        got="есть"
+    else
+        got="нет"
+    fi
     report "$label" "$got" "есть"
 }
 

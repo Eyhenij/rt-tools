@@ -1,3 +1,60 @@
+# [0.6.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.5.0...rt-ui-kit-v2@0.6.0) (2026-08-13)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** кольцо фокуса не пропадает, а эталоны отвечают новым ступеням ([0cd9a55](https://github.com/Eyhenij/rt-tools/commit/0cd9a55a30a4dde42cb8be1f1fb756c6cd34e71d))
+- **rt:ui-kit-v2:** комментарий в MDX не ломает указатель историй витрины ([cc7c783](https://github.com/Eyhenij/rt-tools/commit/cc7c7835c24208b226bf9b00c1f54af81439cc7f))
+- **rt:ui-kit-v2:** приглушённый текст взял порог, а список принятого перестал врать ([580431f](https://github.com/Eyhenij/rt-tools/commit/580431ff08757ec5b20447bb9e708b68fa272988)), closes [#386](https://github.com/Eyhenij/rt-tools/issues/386)
+- **rt:ui-kit-v2:** роль действия обзавелась цветом на поверхности, и безфоновая кнопка перестала пропадать на графите ([3827eb1](https://github.com/Eyhenij/rt-tools/commit/3827eb14c229d288246685c5f3d22b948c8f9b5e))
+
+### Documentation
+
+- **rt:ui-kit-v2:** тексты кита называют слой каскада и переход на него ([495d81e](https://github.com/Eyhenij/rt-tools/commit/495d81e51cc43ab2c09e02204716d83820b5482c))
+
+### Features
+
+- **rt:ui-kit-v2:** бренд становится линейкой, а палитра синего снимается ([c774d0f](https://github.com/Eyhenij/rt-tools/commit/c774d0f1f345d80e8becc2e36d7a9042e10287c7)), closes [#385](https://github.com/Eyhenij/rt-tools/issues/385)
+- **rt:ui-kit-v2:** витрина показывает победу правила приложения над правилом кита ([33df955](https://github.com/Eyhenij/rt-tools/commit/33df95504778544ea1e2dd16ae58cf748e81113f))
+- **rt:ui-kit-v2:** контраст пар «текст и фон» считает машина, а не комментарий рядом со ступенью ([8a40c97](https://github.com/Eyhenij/rt-tools/commit/8a40c9707d2316c9bcad511ab8531d0dc4d1c2fa))
+- **rt:ui-kit-v2:** молчание тёмной темы отличается от намеренно общего цвета ([e7d5b83](https://github.com/Eyhenij/rt-tools/commit/e7d5b83113ad310fd862f7c53026c2b1a5eaf703))
+- **rt:ui-kit-v2:** основа кита объявлена подслоем rt-kit.base ([0c4b991](https://github.com/Eyhenij/rt-tools/commit/0c4b9912d3faa6b01edd8ff9d059c4f6df20277e))
+- **rt:ui-kit-v2:** палитра кнопки стала ролями действия, а отключённость перестала проигрывать ([14a3549](https://github.com/Eyhenij/rt-tools/commit/14a3549779553701629e618af93e904374681f36))
+- **rt:ui-kit-v2:** стили компонентов объявлены подслоем rt-kit.components ([eac99ec](https://github.com/Eyhenij/rt-tools/commit/eac99ec06dca80cf416df0a741e62a4c4464f638))
+- **rt:ui-kit-v2:** у имени токена ровно три состояния, и это проверяется ([905ed50](https://github.com/Eyhenij/rt-tools/commit/905ed505594c0fc70535e55b2ba7bc47ab3f74c6))
+
+### BREAKING CHANGES
+
+- **rt:ui-kit-v2:** стили кита объявлены слоем каскада rt-kit. Правило приложения теперь
+  выигрывает у правила кита независимо от специфичности, а правило кита проигрывает чужой
+  библиотеке, чей CSS объявлен вне слоя: тема редактора текста подключается в подслой
+  rt-kit.vendor, иначе панель редактора перестраивается. Таблица в карточном виде больше не
+  перебивает min-width приложения восклицательным знаком.
+
+# [0.5.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.4.0...rt-ui-kit-v2@0.5.0) (2026-08-10)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** витрина показывает то, что обещает подписью ([ecd66e1](https://github.com/Eyhenij/rt-tools/commit/ecd66e1dbb478f9ae7e1fa3b03a179da313ee258))
+- **rt:ui-kit-v2:** заголовок сортировки и контрол вкладок доезжают до потребителя ([1ab31eb](https://github.com/Eyhenij/rt-tools/commit/1ab31eb72dafc58efd6c2d716341ebaebb9ae649))
+- **rt:ui-kit-v2:** загрузка значков не отказывает, когда приложение снесли раньше неё ([f3884f1](https://github.com/Eyhenij/rt-tools/commit/f3884f189d57f505b9c62cd35a9ceee2a58c8821))
+- **rt:ui-kit-v2:** уход с route-панели спрашивает панель на экране ([0b11d2d](https://github.com/Eyhenij/rt-tools/commit/0b11d2d91f5d0d8708c5ddf00eb5a158b5f5fb81))
+
+### Features
+
+- **rt:ui-kit-v2:** витрина знает, что снимается, а что помечено причиной ([cbc9f5d](https://github.com/Eyhenij/rt-tools/commit/cbc9f5dd0a11dc5024ca68104a368fe15cc3bcf4))
+- **rt:ui-kit-v2:** вкладки, панель действий и шапка показаны матрицами ([ce5db27](https://github.com/Eyhenij/rt-tools/commit/ce5db27c66e0ee932b0468f0f78478b47d7371cc))
+- **rt:ui-kit-v2:** карточка, текст с обрезкой, список реквизитов и раздел панели показаны матрицами ([148087d](https://github.com/Eyhenij/rt-tools/commit/148087dc07ce6d7a3567ae95fb04aff1c0866b59))
+- **rt:ui-kit-v2:** полосы долей, суммы, листание и карточка файла показаны матрицами ([d2fd400](https://github.com/Eyhenij/rt-tools/commit/d2fd4009ce84f451af99f27b1a02b51b082bca97))
+- **rt:ui-kit-v2:** рабочий стол и панель подробностей показаны матрицами, волна закрыта ([633e509](https://github.com/Eyhenij/rt-tools/commit/633e509f5f4ec0cfc5227b7698991da279d78ec2))
+- **rt:ui-kit-v2:** сверять кадры витрины с эталонами ([a91378f](https://github.com/Eyhenij/rt-tools/commit/a91378f69e6f84949c9bbb43d0ea6ae5c309625f))
+- **rt:ui-kit-v2:** сообщение, колокольчик и сетка суток показаны матрицами ([8fb20cd](https://github.com/Eyhenij/rt-tools/commit/8fb20cd42c986e134b3c9dbab38bc33822979bf3))
+- **rt:ui-kit-v2:** список переписок, поле набора и сама переписка показаны матрицами ([721e318](https://github.com/Eyhenij/rt-tools/commit/721e3183faeeec5ef4f7371134259f03d9a302e8))
+- **rt:ui-kit-v2:** список файлов, заметка, просмотрщик и окно приветствия показаны матрицами ([69cb439](https://github.com/Eyhenij/rt-tools/commit/69cb43960c42c797dcfab764c65efc1e855d96c9))
+- **rt:ui-kit-v2:** степпер, лента событий и полоса разделов показаны матрицами ([a9bc904](https://github.com/Eyhenij/rt-tools/commit/a9bc904b69d361a34c209484e4a546dcf048f1b4))
+- **rt:ui-kit-v2:** таблица показана матрицами ([9419b12](https://github.com/Eyhenij/rt-tools/commit/9419b127991763f6b6fede628b1f78a0bba9e1d8))
+- **rt:ui-kit-v2:** уведомление, выезжающий лист и календарь показаны матрицами ([364a173](https://github.com/Eyhenij/rt-tools/commit/364a17370a506652c8d9e59a3aad75f8ed71e780))
+- **rt:ui-kit-v2:** эталоны на всю витрину и детерминированный кадр ([b6512f2](https://github.com/Eyhenij/rt-tools/commit/b6512f2194aac88bb9170e343e83bf623f845c24))
+
 # [0.4.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.3.0...rt-ui-kit-v2@0.4.0) (2026-08-07)
 
 ### Bug Fixes

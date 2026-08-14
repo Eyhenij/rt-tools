@@ -1,71 +1,78 @@
-/* rt-bottom-sheet — ViewEncapsulation.None: правила таргетируют BEM-класс блока.
-   `.rt-bottom-sheet` — сам хост (шаблон начинается с ng-container, класс и
-   модификатор `--open` ставит host). */
+@layer rt-kit.components {
+    /* rt-bottom-sheet — ViewEncapsulation.None: правила таргетируют BEM-класс блока.
+       `.rt-bottom-sheet` — сам хост (шаблон начинается с ng-container, класс и
+       модификатор `--open` ставит host). */
 
-.rt-bottom-sheet {
-    position: fixed;
-    z-index: 1000;
-    inset: 0;
-    pointer-events: none;
+    .rt-bottom-sheet {
+        --rt-bottom-sheet-radius: var(--rt-radius-2xl);
+        --rt-bottom-sheet-handle-radius: var(--rt-radius-xs);
+        --rt-bottom-sheet-shadow: var(--rt-shadow-card-soft);
+        --rt-bottom-sheet-transition-duration: var(--rt-duration-base);
 
-    &__backdrop {
-        position: absolute;
-        padding: 0;
-        border: none;
-        background: var(--rt-overlay-black-50);
-        cursor: pointer;
+        position: fixed;
+        z-index: 1000;
         inset: 0;
-        opacity: 0;
-        transition: opacity var(--rt-duration-base) ease;
-    }
+        pointer-events: none;
 
-    &__panel {
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        display: flex;
-        max-height: 80vh;
-        flex-direction: column;
-        border-radius: var(--rt-radius-2xl) var(--rt-radius-2xl) 0 0;
-        background: var(--rt-color-bg-surface);
-        box-shadow: var(--rt-shadow-card-soft);
-        transform: translateY(100%);
-        transition: transform var(--rt-duration-base) ease;
-
-        &--dragging {
-            transition: none;
-        }
-    }
-
-    &__handle {
-        width: 40px;
-        height: 4px;
-        align-self: center;
-        border-radius: var(--rt-radius-xs);
-        margin: var(--rt-space-3) 0;
-        background: var(--rt-color-border-default);
-        cursor: grab;
-        touch-action: none;
-    }
-
-    &__header {
-        display: flex;
-        justify-content: center;
-        padding: 0 var(--rt-space-5) var(--rt-space-3);
-        color: var(--rt-color-text-primary);
-        font-weight: var(--rt-font-weight-semibold);
-    }
-
-    &--open {
-        pointer-events: auto;
-
-        .rt-bottom-sheet__backdrop {
-            opacity: 1;
+        &__backdrop {
+            position: absolute;
+            padding: 0;
+            border: none;
+            background: var(--rt-overlay-black-50);
+            cursor: pointer;
+            inset: 0;
+            opacity: 0;
+            transition: opacity var(--rt-bottom-sheet-transition-duration) ease;
         }
 
-        .rt-bottom-sheet__panel {
-            transform: translateY(0);
+        &__panel {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            display: flex;
+            max-height: 80vh;
+            flex-direction: column;
+            border-radius: var(--rt-bottom-sheet-radius) var(--rt-bottom-sheet-radius) 0 0;
+            background: var(--rt-color-bg-surface);
+            box-shadow: var(--rt-bottom-sheet-shadow);
+            transform: translateY(100%);
+            transition: transform var(--rt-bottom-sheet-transition-duration) ease;
+
+            &--dragging {
+                transition: none;
+            }
+        }
+
+        &__handle {
+            width: 40px;
+            height: 4px;
+            align-self: center;
+            border-radius: var(--rt-bottom-sheet-handle-radius);
+            margin: var(--rt-space-4) 0;
+            background: var(--rt-color-border-default);
+            cursor: grab;
+            touch-action: none;
+        }
+
+        &__header {
+            display: flex;
+            justify-content: center;
+            padding: 0 var(--rt-space-5) var(--rt-space-4);
+            color: var(--rt-color-text-primary);
+            font-weight: var(--rt-font-weight-semibold);
+        }
+
+        &--open {
+            pointer-events: auto;
+
+            .rt-bottom-sheet__backdrop {
+                opacity: 1;
+            }
+
+            .rt-bottom-sheet__panel {
+                transform: translateY(0);
+            }
         }
     }
 }

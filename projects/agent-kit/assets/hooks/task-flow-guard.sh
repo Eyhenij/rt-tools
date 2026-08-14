@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit
+# Требует: hooks/profile-check.sh
 # PreToolUse guard for Edit|Write|MultiEdit: код не пишется раньше замысла.
 #
 # Работа идёт много заходов, и между ними исполнитель не помнит ничего. Замысел, лежащий на
@@ -45,11 +46,17 @@ for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../d
     [ -f "$profile" ] && . "$profile" 2>/dev/null
 done
 
+# Слово о нехватке функции профиля: хук, вышедший молча, неотличим от работающего. Файл может
+# быть не разложен — тогда остаётся прежнее поведение, молчаливое.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
+command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
+
 # Признак «правка меняет поведение» — путь, а не оценка на глаз: оценку назначает тот, кому
 # она мешает, и порог плывёт. Где живёт код приложения, знает профиль: правила, тексты, обвязка
 # и зависимости под требование не попадают — иначе разбор задачи нельзя было бы вести до
 # заведения ветки.
-command -v rt_is_app_code >/dev/null 2>&1 || exit 0
+rt_needs rt_is_app_code task-flow-guard || exit 0
 rt_is_app_code "$path" || exit 0
 
 # Каталог папок задач: у дерева он свой, но имя обычно общее.
@@ -70,7 +77,7 @@ git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 branch="$(git branch --show-current 2>/dev/null)"
 [ -z "$branch" ] && exit 0   # detached HEAD — не про наш случай
 
-if command -v rt_task_branch_ok >/dev/null 2>&1 && ! rt_task_branch_ok "$branch"; then
+if rt_needs rt_task_branch_ok task-flow-guard && ! rt_task_branch_ok "$branch"; then
     deny "BLOCKED by task-flow: правка кода идёт в ветке под задачу, а текущая ветка — '${branch}'. Заведи задачу (npm run task:new -- --title '…' --slug <slug>) и ветку под её номером, затем повтори. Правило — скил task-flow."
 fi
 
@@ -100,8 +107,19 @@ case "$draft" in
     *) draft_path="$root/$draft" ;;
 esac
 
-if [ ! -e "$draft_path" ]; then
-    deny "BLOCKED by task-flow: замысел называет договорённость '${draft}', а её на диске нет. Заведи её с образца (docs/specs/_template) или поправь путь в '${tasks_dir}/${branch}/plan.md'. Правило — скил task-flow."
+if [ -e "$draft_path" ]; then
+    exit 0
 fi
 
-exit 0
+# Договорённость, влитая в спек домена, с диска уходит — так и задумано: в главной ветке
+# директории «предложено» быть не должно. Но замысел на неё ссылается до конца работы, и без
+# этой развилки последний коммит отчёта запирал бы ветку: ни правки по замечаниям разбора, ни
+# записи в журнал изменений после вливания уже не сделать.
+#
+# Влитое от незаведённого отличает история ветки: путь, которого в ней никогда не было,
+# договорённостью не был. Спросить об этом нечем, кроме git, поэтому нет git — отказ остаётся.
+if git -C "$root" log --oneline -1 -- "$draft" 2>/dev/null | grep -q .; then
+    exit 0
+fi
+
+deny "BLOCKED by task-flow: замысел называет договорённость '${draft}', а её на диске нет и в истории ветки не было. Заведи её с образца (docs/specs/_template) или поправь путь в '${tasks_dir}/${branch}/plan.md'. Правило — скил task-flow."
