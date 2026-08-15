@@ -43,6 +43,7 @@ rt_push_checks() {
     cat <<'EOF'
 pnpm exec nx affected -t lint typecheck test build --parallel
 pnpm run lint:styles
+pnpm exec nx run message-bus-admin-e2e:e2e
 pnpm exec nx affected -t verify --parallel
 node tools/check-push-gate.mjs
 EOF
