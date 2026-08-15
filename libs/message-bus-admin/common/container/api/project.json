@@ -1,0 +1,13 @@
+{
+  "name": "message-bus-admin-common-container-api",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/message-bus-admin/common/container/api/src",
+  "prefix": "admin",
+  "projectType": "library",
+  "tags": ["scope:message-bus-admin-common-container-api"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}
