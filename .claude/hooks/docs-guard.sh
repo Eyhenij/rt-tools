@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.8.1 · hooks/docs-guard.sh · c313a7ac1689 · правится надстройкой, не здесь
+# rt-kit v0.8.1 · hooks/docs-guard.sh · dcfdde6a348a · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh
 # Гард пары «правка и её документ». PreToolUse.
@@ -124,7 +124,12 @@ esac
 
 # Причина обхода остаётся в истории, поэтому обход законен. Пустая строка обходом не считается:
 # «Docs-skip:» без причины — это тот же молчаливый пропуск, только с двоеточием.
-if printf '%s' "$cmd" | grep -qiE 'Docs-skip:[[:space:]]*[^[:space:]"'"'"']{3,}'; then
+#
+# Строка начинает строку — свою в теле коммита или комментарий в конце команды — и подстановки
+# не принимает. То же условие, что у обхода при слиянии: иначе текст, который ОБЪЯСНЯЕТ обход,
+# снимает требование сам собой. Тело коммита о правке гарда как раз называет эту строку, и без
+# привязки к началу гард пропускал бы такой коммит молча.
+if printf '%s' "$cmd" | grep -qiE '(^|#)[[:space:]]*Docs-skip:[[:space:]]*[^[:space:]<"'"'"'][^[:space:]"'"'"']{2,}'; then
     exit 0
 fi
 
