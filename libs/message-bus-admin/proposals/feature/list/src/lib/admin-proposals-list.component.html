@@ -1,0 +1,54 @@
+<admin-list-page
+    [choices]="choices()"
+    [fault]="fault()"
+    [loading]="loading()"
+    [pageModel]="pageModel()"
+    [title]="title"
+    [tree]="query().tree"
+    (columnsAsked)="openColumns()"
+    (pageChange)="goToPage($event)"
+    (retried)="retry()"
+    (sizeChange)="changeSize($event)"
+    (treeChange)="changeTree($event)">
+    <table
+        #rowsTable="rtTable"
+        rt-table
+        clickable
+        qa-dataid="proposals-table"
+        [ariaLabel]="title"
+        [columnsConfig]="columns"
+        [dataSource]="rows()"
+        [emptyMessage]="emptyMessage()"
+        [loading]="loading()"
+        [sort]="sortModel()"
+        [tableId]="tableId"
+        (sortChange)="changeSort($event)">
+        <ng-container cdkColumnDef="tree">
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="tree">{{ columns[0].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell qa-dataid="proposals-cell-tree">{{ row.tree.name }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="resource">
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="resource">{{ columns[1].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell qa-dataid="proposals-cell-resource">{{ row.resource }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="address">
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="address">{{ columns[2].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell qa-dataid="proposals-cell-address">{{ row.address }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="arrivedAt">
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="arrivedAt">{{ columns[3].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell qa-dataid="proposals-cell-arrived">{{ row.arrivedAt | adminMoment }}</td>
+        </ng-container>
+
+        <tr *cdkHeaderRowDef="rowsTable.displayedColumns()" cdk-header-row></tr>
+        <tr
+            *cdkRowDef="let row; columns: rowsTable.displayedColumns()"
+            cdk-row
+            qa-dataid="proposals-row"
+            rtTableRow
+            (activated)="openDetails(row.id)"></tr>
+    </table>
+</admin-list-page>

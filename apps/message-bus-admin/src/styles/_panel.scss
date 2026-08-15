@@ -1,0 +1,61 @@
+/**
+ * Содержимое панели подробностей: поля записи и её текст.
+ *
+ * Раскладка объявлена здесь, а не в стилях вида: панелей у админки три — по одной на раздел
+ * груза, — и объявленная у каждой она разошлась бы молча.
+ */
+.admin-panel {
+    display: flex;
+    flex-direction: column;
+    padding: var(--rt-space-5);
+    gap: var(--rt-space-5);
+
+    &__fields {
+        display: grid;
+        margin: 0;
+        gap: var(--rt-space-2) var(--rt-space-4);
+        grid-template-columns: max-content 1fr;
+    }
+
+    &__field-name {
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+    }
+
+    &__field-value {
+        margin: 0;
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-text-sm);
+    }
+
+    &__section {
+        margin: 0;
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-text-lg);
+        font-weight: var(--rt-font-weight-semibold);
+    }
+
+    /**
+     * Текст груза показывается как есть: переносы строк в нём значащие, а длинная строка
+     * ломается по месту, а не уезжает за край панели горизонтальной прокруткой.
+     */
+    &__text {
+        margin: 0;
+        color: var(--rt-color-text-primary);
+        font-family: var(--rt-font-family-mono);
+        font-size: var(--rt-text-sm);
+        line-height: var(--rt-leading-normal);
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
+    }
+
+    /**
+     * То, чего у записи нет: сказано словами и приглушено, чтобы не читаться содержимым.
+     * Пустое место на этом месте человек читает как незагрузившееся.
+     */
+    &__empty {
+        margin: 0;
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+    }
+}

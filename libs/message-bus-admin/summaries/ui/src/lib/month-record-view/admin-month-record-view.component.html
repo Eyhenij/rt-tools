@@ -1,0 +1,23 @@
+<ng-container rtBlock="admin-panel">
+    <dl rtElem="fields">
+        <dt rtElem="field-name">{{ treeLabel }}</dt>
+        <dd rtElem="field-value" qa-dataid="month-record-tree">{{ entity().tree.name }}</dd>
+
+        <dt rtElem="field-name">{{ monthLabel }}</dt>
+        <dd rtElem="field-value" qa-dataid="month-record-month">{{ entity().month }}</dd>
+
+        <dt rtElem="field-name">{{ sessionsLabel }}</dt>
+        <dd rtElem="field-value" qa-dataid="month-record-sessions">{{ entity().sessions }}</dd>
+
+        <dt rtElem="field-name">{{ ranAtLabel }}</dt>
+        <dd rtElem="field-value" qa-dataid="month-record-ran">{{ entity().ranAt | adminMoment }}</dd>
+    </dl>
+
+    <h2 rtElem="section">{{ summaryLabel }}</h2>
+
+    @if (entity().summary; as summary) {
+        <pre rtElem="text" qa-dataid="month-record-summary">{{ summary }}</pre>
+    } @else {
+        <p rtElem="empty" qa-dataid="month-record-summary-missing">{{ summaryMissing }}</p>
+    }
+</ng-container>

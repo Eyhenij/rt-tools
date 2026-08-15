@@ -142,6 +142,7 @@
     "@nx/webpack": "23.1.0-rc.0",
     "@nx/workspace": "23.1.0-rc.0",
     "@oxc-project/runtime": "^0.115.0",
+    "@playwright/test": "1.62.1",
     "@schematics/angular": "22.0.5",
     "@storybook/addon-docs": "^10.5.5",
     "@storybook/angular": "10.1.2",

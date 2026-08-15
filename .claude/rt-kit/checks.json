@@ -13,7 +13,9 @@
         ],
         "signals": ".claude/rt-kit/signals.json"
     },
-    "e2eRoots": [],
+    "e2eRoots": [
+        "apps/message-bus-admin-e2e"
+    ],
     "backendRoots": [
         "libs/message-bus-api/",
         "apps/message-bus/"
@@ -40,6 +42,7 @@
             },
             "Test, Lint, Typecheck, Build": "pnpm exec nx affected -t lint typecheck test build --parallel",
             "Stylelint": "pnpm run lint:styles",
+            "E2E admin": "pnpm exec nx run message-bus-admin-e2e:e2e",
             "Visual tests": {
                 "skip": "кадры ждут отсчётом времени и плавают под нагрузкой — снимается задачей RT-427"
             },

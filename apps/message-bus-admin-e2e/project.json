@@ -1,0 +1,26 @@
+{
+  "name": "message-bus-admin-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/message-bus-admin-e2e/src",
+  "tags": ["scope:admin-e2e"],
+  "implicitDependencies": ["message-bus-admin", "message-bus"],
+  "targets": {
+    "e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx playwright test",
+        "cwd": "apps/message-bus-admin-e2e"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx tsc -p apps/message-bus-admin-e2e/tsconfig.json --noEmit"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "allowJs": true,
+        "types": ["node"],
+        "outDir": "../../dist/out-tsc/message-bus-admin-e2e",
+        "noEmit": true
+    },
+    "include": ["src/**/*.ts", "stand/**/*.mjs", "playwright.config.ts"]
+}

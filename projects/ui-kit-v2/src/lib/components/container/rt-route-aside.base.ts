@@ -624,10 +624,20 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
         this.#relatedCommands = null;
     }
 
+    /**
+     * Уход с адреса при закрытии.
+     *
+     * Параметры адреса переносятся нетронутыми: панель открыта поверх экрана, чьё состояние в
+     * них и живёт — страница списка, порядок, отбор. Без переноса закрытая панель возвращает
+     * экран к его первой странице без отбора, и человек, открывший запись со второй страницы
+     * отобранного списка, теряет её просмотром одной записи. Свои параметры панель называет
+     * `openRelated` явно, и на них перенос не действует.
+     */
     #navigateAway(): void {
         this.#navigateAllowed((): Promise<boolean> =>
             this.router.navigate([{ outlets: this.closeOutlets() }], {
                 relativeTo: this.route.parent,
+                queryParamsHandling: 'preserve',
             })
         );
     }

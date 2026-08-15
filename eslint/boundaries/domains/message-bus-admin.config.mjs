@@ -27,12 +27,70 @@ const CONTAINER_UTIL = 'scope:message-bus-admin-common-container-util';
  */
 const PACKAGE = 'scope:package';
 
+/**
+ * Общий слой админки: словарь, обращение к операциям чтения, выборка в адресе, основа
+ * списочного стора и общий вид страницы списка. Механика, а не предмет: разделы груза зовут её
+ * все три, и разложенная по ним заново она расходилась бы молча.
+ */
+const CORE_UTIL = 'scope:message-bus-admin-common-core-util';
+const CORE_API = 'scope:message-bus-admin-common-core-api';
+const CORE_DATA_ACCESS = 'scope:message-bus-admin-common-core-data-access';
+const CORE_UI = 'scope:message-bus-admin-common-core-ui';
+const CORE_FEATURE = 'scope:message-bus-admin-common-core-feature';
+
+/**
+ * Форма того, что отдаёт приёмник: страница, выборка и дерево. Её знают обе стороны, и админка
+ * читает её у источника, а не заводит свою копию — копия разошлась бы с контрактом молча.
+ */
+const CONTRACT = 'scope:message-bus-common';
+
+/**
+ * Раздел разборов происшествий: модели и маппер, обращение к своим операциям, сторы списка и
+ * записи, вид записи, экран списка, панель подробностей и маршруты раздела. Общий слой он зовёт
+ * весь — механика списка живёт там; обратного пути нет.
+ */
+const POSTMORTEMS_UTIL = 'scope:message-bus-admin-postmortems-util';
+const POSTMORTEMS_API = 'scope:message-bus-admin-postmortems-api';
+const POSTMORTEMS_DATA_ACCESS = 'scope:message-bus-admin-postmortems-data-access';
+const POSTMORTEMS_UI = 'scope:message-bus-admin-postmortems-ui';
+
+/**
+ * Раздел предложений по слою правил. Устроен теми же семью слоями и теми же рёбрами, что и
+ * раздел разборов: собран он общей основой целиком, и своего у него только модели, столбцы и
+ * поля панели.
+ */
+const PROPOSALS_UTIL = 'scope:message-bus-admin-proposals-util';
+const PROPOSALS_API = 'scope:message-bus-admin-proposals-api';
+const PROPOSALS_DATA_ACCESS = 'scope:message-bus-admin-proposals-data-access';
+const PROPOSALS_UI = 'scope:message-bus-admin-proposals-ui';
+
+/**
+ * Раздел сводок деревьев. Устроен теми же семью слоями и теми же рёбрами, что и два соседних:
+ * своего у него только модели, столбцы и поля панели.
+ */
+const SUMMARIES_UTIL = 'scope:message-bus-admin-summaries-util';
+const SUMMARIES_API = 'scope:message-bus-admin-summaries-api';
+const SUMMARIES_DATA_ACCESS = 'scope:message-bus-admin-summaries-data-access';
+const SUMMARIES_UI = 'scope:message-bus-admin-summaries-ui';
+
 export const messageBusAdminBoundaries = [
     // Приложение видит маршруты домена входа и оболочку. Экраны оно не знает ни одного: их
-    // приносит отложенная загрузка по маршруту, объявленному тем, чей это экран
+    // приносит отложенная загрузка по маршруту, объявленному тем, чей это экран.
+    //
+    // Словарь общего слоя приложение видит потому, что кит настраивается здесь: подписи кита
+    // отдаются ему провайдером рядом с иконками, а лежат они там же, где подписи экранов, —
+    // разложенные по двум местам, они расходятся молча
     {
         sourceTag: 'scope:admin-app',
-        onlyDependOnLibsWithTags: ['scope:message-bus-admin-auth-shell', 'scope:message-bus-admin-common-container-feature', PACKAGE],
+        onlyDependOnLibsWithTags: [
+            'scope:message-bus-admin-auth-shell',
+            'scope:message-bus-admin-common-container-feature',
+            'scope:message-bus-admin-postmortems-shell',
+            'scope:message-bus-admin-proposals-shell',
+            'scope:message-bus-admin-summaries-shell',
+            CORE_UTIL,
+            PACKAGE,
+        ],
     },
 
     // Вход: экран берёт форму и состояние, состояние — обращение к приёмнику, обращение —
@@ -71,9 +129,11 @@ export const messageBusAdminBoundaries = [
         sourceTag: 'scope:message-bus-admin-auth-util',
         onlyDependOnLibsWithTags: [PACKAGE],
     },
+    // Меню видит словарь: подписи разделов оно берёт оттуда же, откуда их берут сами разделы, —
+    // переписанные в декларации литералом, они расходятся с заголовком экрана молча
     {
         sourceTag: 'scope:message-bus-admin-common-container-util',
-        onlyDependOnLibsWithTags: [PACKAGE],
+        onlyDependOnLibsWithTags: [CORE_UTIL, PACKAGE],
     },
     {
         sourceTag: 'scope:message-bus-admin-common-container-api',
@@ -86,5 +146,171 @@ export const messageBusAdminBoundaries = [
     {
         sourceTag: 'scope:message-bus-admin-common-container-ui',
         onlyDependOnLibsWithTags: [CONTAINER_UTIL, PACKAGE],
+    },
+
+    // Общий слой админки. Лесенка та же, что у домена: вид знает словарь, состояние — обращение,
+    // обращение — словарь и форму контракта. Предмета ни один из них не знает: разделы зовут их,
+    // а не наоборот
+    {
+        sourceTag: 'scope:message-bus-admin-common-core-util',
+        onlyDependOnLibsWithTags: [CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-common-core-api',
+        onlyDependOnLibsWithTags: [CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-common-core-data-access',
+        onlyDependOnLibsWithTags: [CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-common-core-ui',
+        onlyDependOnLibsWithTags: [CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-common-core-feature',
+        onlyDependOnLibsWithTags: [CORE_UI, CORE_DATA_ACCESS, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+
+    // Раздел разборов происшествий. Лесенка домена та же, а сверх неё каждый слой видит свой
+    // уровень общего слоя: экран — его основу и его вид, сторы — его основу стора, обращение —
+    // его запрос. Тем и держится обещание «все три раздела собраны одним экраном»
+    {
+        sourceTag: 'scope:message-bus-admin-postmortems-util',
+        onlyDependOnLibsWithTags: [CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-postmortems-api',
+        onlyDependOnLibsWithTags: [POSTMORTEMS_UTIL, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-postmortems-data-access',
+        onlyDependOnLibsWithTags: [POSTMORTEMS_API, POSTMORTEMS_UTIL, CORE_DATA_ACCESS, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-postmortems-ui',
+        onlyDependOnLibsWithTags: [POSTMORTEMS_UTIL, CORE_UI, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-postmortems-feature-list',
+        onlyDependOnLibsWithTags: [
+            POSTMORTEMS_DATA_ACCESS,
+            POSTMORTEMS_UI,
+            POSTMORTEMS_UTIL,
+            CORE_FEATURE,
+            CORE_UI,
+            CORE_DATA_ACCESS,
+            CORE_UTIL,
+            CONTRACT,
+            PACKAGE,
+        ],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-postmortems-feature-details-aside',
+        onlyDependOnLibsWithTags: [POSTMORTEMS_DATA_ACCESS, POSTMORTEMS_UI, POSTMORTEMS_UTIL, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-postmortems-shell',
+        onlyDependOnLibsWithTags: [
+            'scope:message-bus-admin-postmortems-feature-list',
+            'scope:message-bus-admin-postmortems-feature-details-aside',
+            POSTMORTEMS_UTIL,
+            CORE_UTIL,
+            PACKAGE,
+        ],
+    },
+
+    // Раздел предложений. Лесенка та же, что у разборов, и тем же перечислением: раздел, у
+    // которого рёбра выписаны иначе, собран не общей основой, а своим — а обещание всей работы
+    // ровно в том, что все три раздела собраны одним экраном
+    {
+        sourceTag: 'scope:message-bus-admin-proposals-util',
+        onlyDependOnLibsWithTags: [CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-proposals-api',
+        onlyDependOnLibsWithTags: [PROPOSALS_UTIL, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-proposals-data-access',
+        onlyDependOnLibsWithTags: [PROPOSALS_API, PROPOSALS_UTIL, CORE_DATA_ACCESS, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-proposals-ui',
+        onlyDependOnLibsWithTags: [PROPOSALS_UTIL, CORE_UI, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-proposals-feature-list',
+        onlyDependOnLibsWithTags: [
+            PROPOSALS_DATA_ACCESS,
+            PROPOSALS_UI,
+            PROPOSALS_UTIL,
+            CORE_FEATURE,
+            CORE_UI,
+            CORE_DATA_ACCESS,
+            CORE_UTIL,
+            CONTRACT,
+            PACKAGE,
+        ],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-proposals-feature-details-aside',
+        onlyDependOnLibsWithTags: [PROPOSALS_DATA_ACCESS, PROPOSALS_UI, PROPOSALS_UTIL, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-proposals-shell',
+        onlyDependOnLibsWithTags: [
+            'scope:message-bus-admin-proposals-feature-list',
+            'scope:message-bus-admin-proposals-feature-details-aside',
+            PROPOSALS_UTIL,
+            CORE_UTIL,
+            PACKAGE,
+        ],
+    },
+
+    // Раздел сводок деревьев. Лесенка та же и тем же перечислением, что у двух соседних
+    {
+        sourceTag: 'scope:message-bus-admin-summaries-util',
+        onlyDependOnLibsWithTags: [CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-summaries-api',
+        onlyDependOnLibsWithTags: [SUMMARIES_UTIL, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-summaries-data-access',
+        onlyDependOnLibsWithTags: [SUMMARIES_API, SUMMARIES_UTIL, CORE_DATA_ACCESS, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-summaries-ui',
+        onlyDependOnLibsWithTags: [SUMMARIES_UTIL, CORE_UI, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-summaries-feature-list',
+        onlyDependOnLibsWithTags: [
+            SUMMARIES_DATA_ACCESS,
+            SUMMARIES_UI,
+            SUMMARIES_UTIL,
+            CORE_FEATURE,
+            CORE_UI,
+            CORE_DATA_ACCESS,
+            CORE_UTIL,
+            CONTRACT,
+            PACKAGE,
+        ],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-summaries-feature-details-aside',
+        onlyDependOnLibsWithTags: [SUMMARIES_DATA_ACCESS, SUMMARIES_UI, SUMMARIES_UTIL, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-summaries-shell',
+        onlyDependOnLibsWithTags: [
+            'scope:message-bus-admin-summaries-feature-list',
+            'scope:message-bus-admin-summaries-feature-details-aside',
+            SUMMARIES_UTIL,
+            CORE_UTIL,
+            PACKAGE,
+        ],
     },
 ];
