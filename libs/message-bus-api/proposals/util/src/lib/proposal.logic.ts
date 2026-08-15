@@ -10,3 +10,11 @@ export const PROPOSALS_FIELDS: readonly string[] = ['schema', 'tree', 'items'];
 
 /** Обязательные поля одной записи. */
 export const PROPOSAL_ITEM_FIELDS: readonly string[] = ['text', 'address', 'resource'];
+
+/**
+ * Поля, по которым список предложений упорядочивается.
+ *
+ * Первое — умолчание домена: свежие сверху. Текста предложения здесь нет — порядок по колонке,
+ * которой нет в строке списка, человеку нечем объяснить.
+ */
+export const PROPOSAL_SORTABLE: readonly string[] = ['arrivedAt', 'resource', 'address', 'tree'];
