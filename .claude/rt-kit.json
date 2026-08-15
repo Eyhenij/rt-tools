@@ -10,19 +10,14 @@
   "variants": {
     "host": "github"
   },
-  "has": ["packages", "app"],
+  "has": ["packages", "app", "admin"],
   "skip": [
     "hooks/commit-msg.sh",
     "hooks/dev-server-guard.sh",
     "hooks/qa-dataid-guard.sh",
     "hooks/sql-guard.sh",
-    "laws/application/access.md",
     "laws/application/locales.md",
     "laws/application/search-visibility.md",
-    "laws/entity-editing.md",
-    "laws/entity-models.md",
-    "laws/lists.md",
-    "laws/navigation.md",
     "laws/shared-code.md",
     "patterns/browser-verification-stand.md",
     "patterns/git-workflow-migration.md",
