@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.8.1 · hooks/reuse-first-guard.sh · 992cc898e07e · правится надстройкой, не здесь
+# rt-kit v0.8.1 · hooks/reuse-first-guard.sh · 861e6fb8b748 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file
 # Требует: hooks/profile-check.sh
 # Гард «ничего не пишется с нуля». PreToolUse на правке кода и разметки.
@@ -39,14 +39,46 @@ command -v jq >/dev/null 2>&1 || exit 0
 command -v perl >/dev/null 2>&1 || exit 0
 
 tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+shell_cmd=""
 case "$tool" in
     # Инструмент среды заводит файл теми же двумя данными, только называет их иначе — без этой
     # ветки файл заводился мимо всех проверок.
     Edit | Write | MultiEdit | mcp__webstorm__create_new_file) ;;
+    # Команда оболочки, которая пишет файл, — та же правка. Без этой ветки гард обходится
+    # сменой не инструмента, а способа записи; текстом правки тогда служит сама команда, и
+    # заведённое ею в heredoc читается наравне с телом правки. Разбор —
+    # `2026-08-15-guard-denied-shell-wrote-anyway.md`.
+    Bash)
+        shell_cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
+        [ -z "$shell_cmd" ] && exit 0
+        ;;
     *) exit 0 ;;
 esac
 
-path="$(printf '%s' "$input" | jq -r '.tool_input.file_path // .tool_input.pathInProject // empty' 2>/dev/null)"
+# Профиль дерева: сперва умолчание пакета, поверх него — надстройка проекта, если она есть.
+# Читается до разбора пути: пути из команды оболочки вынимает как раз профиль.
+rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"; do
+    # shellcheck disable=SC1090
+    [ -f "$profile" ] && . "$profile" 2>/dev/null
+done
+
+if [ -n "$shell_cmd" ]; then
+    command -v rt_shell_writes >/dev/null 2>&1 && command -v rt_shell_paths >/dev/null 2>&1 || exit 0
+    rt_shell_writes "$shell_cmd" || exit 0
+    # Из команды берётся первый путь, чьё расширение гарду интересно: остальные ему безразличны.
+    path=""
+    while IFS= read -r candidate; do
+        case "$candidate" in
+            *.html | *.scss | *.ts) path="$candidate"; break ;;
+        esac
+    done <<EOF
+$(rt_shell_paths "$shell_cmd")
+EOF
+    [ -z "$path" ] && exit 0
+else
+    path="$(printf '%s' "$input" | jq -r '.tool_input.file_path // .tool_input.pathInProject // empty' 2>/dev/null)"
+fi
 # Путь от корня дерева приводится к абсолютному один раз, чтобы образцы не двоились.
 case "$path" in
     /*) ;;
@@ -56,13 +88,6 @@ case "$path" in
     *.html | *.scss | *.ts) ;;
     *) exit 0 ;;
 esac
-
-# Профиль дерева: сперва умолчание пакета, поверх него — надстройка проекта, если она есть.
-rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"; do
-    # shellcheck disable=SC1090
-    [ -f "$profile" ] && . "$profile" 2>/dev/null
-done
 
 # Слово о нехватке функции профиля: хук, вышедший молча, неотличим от работающего. Файл может
 # быть не разложен — тогда остаётся прежнее поведение, молчаливое.
@@ -83,11 +108,16 @@ if [ -n "${RT_REUSE_SKIP_RE:-}" ] && printf '%s' "$path" | grep -qE "$RT_REUSE_S
     exit 0
 fi
 
-# Только новый текст: строка, уже лежавшая в файле, этой правкой не заводилась.
-added="$(printf '%s' "$input" | jq -r '
-    [ .tool_input.content?, .tool_input.text?, .tool_input.new_string?, (.tool_input.edits[]?.new_string) ]
-    | map(select(. != null)) | join("\n")
-' 2>/dev/null)"
+# Только новый текст: строка, уже лежавшая в файле, этой правкой не заводилась. У команды
+# оболочки таким текстом служит она сама: что она кладёт в файл, лежит в ней же.
+if [ -n "$shell_cmd" ]; then
+    added="$shell_cmd"
+else
+    added="$(printf '%s' "$input" | jq -r '
+        [ .tool_input.content?, .tool_input.text?, .tool_input.new_string?, (.tool_input.edits[]?.new_string) ]
+        | map(select(. != null)) | join("\n")
+    ' 2>/dev/null)"
+fi
 [ -z "$added" ] && exit 0
 
 # Явный отказ от правила: готового такого нет, автор это осознал и пометил. Считается по
