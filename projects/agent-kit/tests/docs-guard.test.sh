@@ -75,6 +75,23 @@ printf '| Утверждение второе. | `a.ts:x` |\n' >> "$REPO/.claude
 git -C "$REPO" add .claude/skills/probe-rule/implementation.md >/dev/null 2>&1
 g "утверждения правила со спутником" 'git commit -m "docs: правило"' PASS
 
+# --- правка закона спрашивает владельца ---------------------------------------------------------
+# Закон описывает договорённость о продукте: менять её молча гард не даёт. Путей к тексту закона
+# два — сам файл и надстройка над ним, — и вопрос один на оба: разложенную копию переписывает
+# раскладка, поэтому правка надстройки и есть правка закона. Привязка статей к коду устаревает
+# при каждом переименовании и правится свободно с обеих сторон.
+e() { expect_decision "$1" docs-guard.sh "$(input_edit "$REPO/$2" "$3")" "$4"; }
+
+e "правка закона на месте" 'docs/constitution/verifiability.md' 'новая статья' ask
+e "привязка статей к коду" 'docs/constitution/verifiability.implementation.md' '| Статья | Где |' PASS
+e "правка закона надстройкой" '.claude/rt-kit/overrides/laws/verifiability.md' '## Ловушки' ask
+e "привязка статей в надстройке" '.claude/rt-kit/overrides/laws/verifiability.implementation.md' '| Статья | Где |' PASS
+e "надстройка над правилом" '.claude/rt-kit/overrides/rules/task-flow.md' '## Ловушки' PASS
+
+expect_reason "вопрос о надстройке называет закон" docs-guard.sh \
+    "$(input_edit "$REPO/.claude/rt-kit/overrides/laws/delivery.md" '## Ловушки')" \
+    'правка самого закона'
+
 # --- отказ в пользу работы -----------------------------------------------------------------------
 printf '' | "$HOOKS/docs-guard.sh" >/dev/null 2>&1
 report "пустой вход пропускается" "код:$?" "код:0"
