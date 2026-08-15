@@ -25,6 +25,10 @@ class TestListStore extends AdminListStoreBase<IRow> {
     constructor() {
         super();
     }
+
+    protected rowOf(raw: IRow): IRow {
+        return raw;
+    }
 }
 
 /**

@@ -75,7 +75,14 @@
       "@rt/message-bus-admin/common/container/ui": ["./libs/message-bus-admin/common/container/ui/src/index.ts"],
       "@rt/message-bus-admin/common/container/api": ["./libs/message-bus-admin/common/container/api/src/index.ts"],
       "@rt/message-bus-admin/common/container/data-access": ["./libs/message-bus-admin/common/container/data-access/src/index.ts"],
-      "@rt/message-bus-admin/common/container/feature": ["./libs/message-bus-admin/common/container/feature/src/index.ts"]
+      "@rt/message-bus-admin/common/container/feature": ["./libs/message-bus-admin/common/container/feature/src/index.ts"],
+      "@rt/message-bus-admin/postmortems/util": ["./libs/message-bus-admin/postmortems/util/src/index.ts"],
+      "@rt/message-bus-admin/postmortems/api": ["./libs/message-bus-admin/postmortems/api/src/index.ts"],
+      "@rt/message-bus-admin/postmortems/data-access": ["./libs/message-bus-admin/postmortems/data-access/src/index.ts"],
+      "@rt/message-bus-admin/postmortems/ui": ["./libs/message-bus-admin/postmortems/ui/src/index.ts"],
+      "@rt/message-bus-admin/postmortems/shell": ["./libs/message-bus-admin/postmortems/shell/src/index.ts"],
+      "@rt/message-bus-admin/postmortems/feature/list": ["./libs/message-bus-admin/postmortems/feature/list/src/index.ts"],
+      "@rt/message-bus-admin/postmortems/feature/details-aside": ["./libs/message-bus-admin/postmortems/feature/details-aside/src/index.ts"]
     },
     "noUncheckedSideEffectImports": false,
     "ignoreDeprecations": "6.0"

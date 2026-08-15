@@ -36,12 +36,23 @@ const CORE_UTIL = 'scope:message-bus-admin-common-core-util';
 const CORE_API = 'scope:message-bus-admin-common-core-api';
 const CORE_DATA_ACCESS = 'scope:message-bus-admin-common-core-data-access';
 const CORE_UI = 'scope:message-bus-admin-common-core-ui';
+const CORE_FEATURE = 'scope:message-bus-admin-common-core-feature';
 
 /**
  * Форма того, что отдаёт приёмник: страница, выборка и дерево. Её знают обе стороны, и админка
  * читает её у источника, а не заводит свою копию — копия разошлась бы с контрактом молча.
  */
 const CONTRACT = 'scope:message-bus-common';
+
+/**
+ * Раздел разборов происшествий: модели и маппер, обращение к своим операциям, сторы списка и
+ * записи, вид записи, экран списка, панель подробностей и маршруты раздела. Общий слой он зовёт
+ * весь — механика списка живёт там; обратного пути нет.
+ */
+const POSTMORTEMS_UTIL = 'scope:message-bus-admin-postmortems-util';
+const POSTMORTEMS_API = 'scope:message-bus-admin-postmortems-api';
+const POSTMORTEMS_DATA_ACCESS = 'scope:message-bus-admin-postmortems-data-access';
+const POSTMORTEMS_UI = 'scope:message-bus-admin-postmortems-ui';
 
 export const messageBusAdminBoundaries = [
     // Приложение видит маршруты домена входа и оболочку. Экраны оно не знает ни одного: их
@@ -135,5 +146,52 @@ export const messageBusAdminBoundaries = [
     {
         sourceTag: 'scope:message-bus-admin-common-core-feature',
         onlyDependOnLibsWithTags: [CORE_UI, CORE_DATA_ACCESS, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+
+    // Раздел разборов происшествий. Лесенка домена та же, а сверх неё каждый слой видит свой
+    // уровень общего слоя: экран — его основу и его вид, сторы — его основу стора, обращение —
+    // его запрос. Тем и держится обещание «все три раздела собраны одним экраном»
+    {
+        sourceTag: 'scope:message-bus-admin-postmortems-util',
+        onlyDependOnLibsWithTags: [CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-postmortems-api',
+        onlyDependOnLibsWithTags: [POSTMORTEMS_UTIL, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-postmortems-data-access',
+        onlyDependOnLibsWithTags: [POSTMORTEMS_API, POSTMORTEMS_UTIL, CORE_DATA_ACCESS, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-postmortems-ui',
+        onlyDependOnLibsWithTags: [POSTMORTEMS_UTIL, CORE_UI, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-postmortems-feature-list',
+        onlyDependOnLibsWithTags: [
+            POSTMORTEMS_DATA_ACCESS,
+            POSTMORTEMS_UI,
+            POSTMORTEMS_UTIL,
+            CORE_FEATURE,
+            CORE_UI,
+            CORE_DATA_ACCESS,
+            CORE_UTIL,
+            CONTRACT,
+            PACKAGE,
+        ],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-postmortems-feature-details-aside',
+        onlyDependOnLibsWithTags: [POSTMORTEMS_DATA_ACCESS, POSTMORTEMS_UI, POSTMORTEMS_UTIL, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-postmortems-shell',
+        onlyDependOnLibsWithTags: [
+            'scope:message-bus-admin-postmortems-feature-list',
+            'scope:message-bus-admin-postmortems-feature-details-aside',
+            POSTMORTEMS_UTIL,
+            PACKAGE,
+        ],
     },
 ];

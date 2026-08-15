@@ -36,7 +36,7 @@ export function initialListState<TRow>(): IAdminListState<TRow> {
  * последний названный, а не первый запрошенный. Ответ, догнавший свой список позже, до состояния
  * не доходит вовсе — его гасит сам оператор.
  */
-export abstract class AdminListStoreBase<TRow> extends BaseAsyncStoreService<IAdminListState<TRow>, TAdminListMessage> {
+export abstract class AdminListStoreBase<TRow, TApi = TRow> extends BaseAsyncStoreService<IAdminListState<TRow>, TAdminListMessage> {
     readonly #http: HttpClient = inject(HttpClient);
     readonly #readSource: Subject<IAdminListQuery> = new Subject<IAdminListQuery>();
 
@@ -57,10 +57,12 @@ export abstract class AdminListStoreBase<TRow> extends BaseAsyncStoreService<IAd
                     this.patchState((state: IAdminListState<TRow>) => ({ ...state, query, fault: null }));
                     this.startLoading();
                 }),
-                switchMap((query: IAdminListQuery): Observable<IPage<TRow>> =>
-                    readPage<TRow>(this.#http, this.path, query).pipe(
-                        tap((page: IPage<TRow>): void => {
-                            this.patchState((state: IAdminListState<TRow>) => ({ ...state, rows: page.rows, total: page.total }));
+                switchMap((query: IAdminListQuery): Observable<IPage<TApi>> =>
+                    readPage<TApi>(this.#http, this.path, query).pipe(
+                        tap((page: IPage<TApi>): void => {
+                            const rows: readonly TRow[] = page.rows.map((raw: TApi): TRow => this.rowOf(raw));
+
+                            this.patchState((state: IAdminListState<TRow>) => ({ ...state, rows, total: page.total }));
                             this.setLoadingSuccess();
                             this.dispatch({ type: 'page-read' });
                         }),
@@ -99,6 +101,15 @@ export abstract class AdminListStoreBase<TRow> extends BaseAsyncStoreService<IAd
             this.#readSource.next(asked);
         }
     }
+
+    /**
+     * Перевод строки ответа в строку экрана.
+     *
+     * Стоит основой, а не своим чтением у каждого раздела: перевод обязан случиться до того, как
+     * строки лягут в состояние, — иначе на экран попадает приехавшее по сети, со временем строкой
+     * и полями контракта. Разделу, которому переводить нечего, остаётся вернуть пришедшее.
+     */
+    protected abstract rowOf(raw: TApi): TRow;
 
     /**
      * Отказ в состояние. Строки прежнего чтения снимаются: показанное под отказом — ложь.

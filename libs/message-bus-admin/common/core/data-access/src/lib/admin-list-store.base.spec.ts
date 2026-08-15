@@ -23,6 +23,11 @@ class TestListStore extends AdminListStoreBase<IRow> {
     constructor() {
         super();
     }
+
+    /** Разделу этой спеки переводить нечего: строка ответа и есть строка экрана. */
+    protected rowOf(raw: IRow): IRow {
+        return raw;
+    }
 }
 
 function pageOf(rows: readonly IRow[], total: number): IPage<IRow> {
