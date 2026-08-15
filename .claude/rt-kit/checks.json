@@ -88,7 +88,6 @@
         },
         "taskKey": "RT",
         "bot": "rt-tools-agent",
-        "tokenPath": "~/.config/rt-tools-bot-token",
         "reviewer": "Eyhenij"
     },
     "apiFamily": "message-bus-api",
