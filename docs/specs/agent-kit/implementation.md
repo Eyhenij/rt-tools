@@ -78,6 +78,8 @@
 | Ресурс пакета не описывает состояние дерева как факт.                                                        | `projects/agent-kit/assets/rules/spec-driven.md:spec-driven`                  |
 | Признак кода приложения судится относительно корня дерева.                                                   | `projects/agent-kit/assets/defaults/project.sh:rt_is_app_code_default`        |
 | Ход, в котором исполнитель признал промах, не закрывается, пока записи о происшествии нет.                   | `projects/agent-kit/assets/hooks/postmortem-guard.sh:postmortem-guard`        |
+| Ход, в котором владелец сказал завести или отправить предложение, не закрывается, пока отправки не было.     | `projects/agent-kit/assets/hooks/proposal-guard.sh:proposal-guard`            |
+| Просьба о предложении ловится глаголом рядом со словом о слое правил, а не словом самим по себе.             | `projects/agent-kit/assets/hooks/proposal-guard.sh:asked_re`                  |
 | Ход с вопросом владельцу проверяется на инструменте вопроса, а не на завершении хода.                        | `projects/agent-kit/assets/hooks/grill-gate.sh:grill-gate`                    |
 | Заведение рабочего дерева грузит правило поставки.                                                           | `projects/agent-kit/assets/defaults/gate-map.sh:skill_for_default`            |
 | Наблюдение записывается в дерево, а не во временный каталог.                                                 | `projects/agent-kit/src/lib/observations.ts:OBSERVATIONS_DIR`                 |
