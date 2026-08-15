@@ -65,13 +65,24 @@ export function readToken(root: string, spoken: string): string {
     return existsSync(path) ? readFileSync(path, 'utf8').trim() : '';
 }
 
+/** Число из ответа приёма. Не число — пусто: поля есть только у предложений и не у всякого приёма. */
+function countOf(said: Record<string, unknown>, field: string): number | undefined {
+    return typeof said[field] === 'number' ? said[field] : undefined;
+}
+
 /** Дерево и месяц из ответа приёма. Ответ не тем — пусто: своё устройство приём не пересказывает. */
 function acceptedOf(text: string): IIntakeAccepted | null {
     try {
         const said: Record<string, unknown> = JSON.parse(text) as Record<string, unknown>;
 
         return typeof said['tree'] === 'string' && typeof said['month'] === 'string'
-            ? { tree: said['tree'], month: said['month'], created: said['created'] === true }
+            ? {
+                  tree: said['tree'],
+                  month: said['month'],
+                  created: said['created'] === true,
+                  added: countOf(said, 'added'),
+                  known: countOf(said, 'known'),
+              }
             : null;
     } catch {
         return null;

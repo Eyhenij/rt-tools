@@ -5,10 +5,11 @@
  * при этом шлёт файл предложений целиком, и без отбора уже приехавшего каждый прогон заводил бы
  * копии всего накопленного.
  *
- * Отбор держит уникальность пары «запись месяца — текст», а не проверка чтением: два прогона
+ * Отбор держит уникальность пары «дерево — признак», а не проверка чтением: два прогона
  * приезжают одновременно, и прочитанное первым устареет раньше, чем он допишет своё.
  */
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
+import { proposalDigest } from '@rt/message-bus-api/proposals/util';
 import { IPage, IPageAsked, ITreeChoice, pageSkip, TPageDirection } from '@rt/message-bus-common';
 
 /** Одно предложение, каким оно ложится в хранилище. */
@@ -137,24 +138,38 @@ export async function readProposal(prisma: PrismaService, id: string): Promise<I
     return found ? { ...listRowOf(found), text: found.text, month: found.record.month } : null;
 }
 
+/** Чем кончилась вставка: сколько записей легло и сколько приехало повторно. */
+export interface IProposalsWritten {
+    readonly added: number;
+    readonly known: number;
+}
+
 /**
- * Дописать к записи месяца те предложения, которых в ней ещё не было.
+ * Дописать к записи месяца те предложения, которых у дерева ещё не было.
  *
  * Все записи одной операции ложатся вместе: пять предложений, из которых упало третье, оставили
  * бы запись месяца в состоянии, которого не было ни до, ни после. Держится это одной командой
  * вставки — не пятью подряд.
  *
- * Возвращает, сколько записей легло: остальные приехали повторно и уже лежали.
+ * Уже приехавшее отбирается по паре «дерево — признак», а не по паре «запись месяца — текст»:
+ * повтор приезжает в любом месяце, и граница месяца от него не защищает.
  */
-export async function addProposals(prisma: PrismaService, recordId: string, items: readonly IProposalRow[]): Promise<number> {
+export async function addProposals(
+    prisma: PrismaService,
+    recordId: string,
+    treeId: string,
+    items: readonly IProposalRow[]
+): Promise<IProposalsWritten> {
     if (items.length === 0) {
-        return 0;
+        return { added: 0, known: 0 };
     }
 
     const written: { count: number } = await prisma.proposal.createMany({
         data: items.map((item: IProposalRow) => ({
             recordId,
+            treeId,
             text: item.text,
+            digest: proposalDigest(item.text),
             address: item.address,
             resource: item.resource,
         })),
@@ -163,5 +178,5 @@ export async function addProposals(prisma: PrismaService, recordId: string, item
         skipDuplicates: true,
     });
 
-    return written.count;
+    return { added: written.count, known: items.length - written.count };
 }
