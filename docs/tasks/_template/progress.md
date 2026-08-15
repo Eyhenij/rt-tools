@@ -1,5 +1,4 @@
 <!-- rt-kit v0.8.2 · samples/tasks/_template/progress.md · baf326afb38f · правится надстройкой, не здесь -->
-
 # Ход работы
 
 ## Где стоим
