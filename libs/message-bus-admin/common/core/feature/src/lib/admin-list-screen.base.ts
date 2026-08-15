@@ -31,7 +31,7 @@ import { IPageModel, ISortModel } from '@rt-tools/utils';
  * приёмом объявлена основа панели в ките.
  */
 @Directive()
-export abstract class AdminListScreenBase<TRow> {
+export abstract class AdminListScreenBase<TRow, TApi = TRow> {
     readonly #route: ActivatedRoute = inject(ActivatedRoute);
     readonly #router: Router = inject(Router);
     readonly #trees: TreesStore = inject(TreesStore);
@@ -59,7 +59,7 @@ export abstract class AdminListScreenBase<TRow> {
     );
 
     /** Стор раздела: он знает адрес операции и форму строки. */
-    protected abstract readonly store: AdminListStoreBase<TRow>;
+    protected abstract readonly store: AdminListStoreBase<TRow, TApi>;
 
     /**
      * Поля, по которым раздел даёт сортировать. Первое — порядок по умолчанию, и оно же

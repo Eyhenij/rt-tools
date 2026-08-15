@@ -47,6 +47,9 @@ export const ADMIN_LABELS = {
     listIncident: 'Обращение {{incident}}',
 
     detailsMissing: 'Записи нет: она могла быть удалена',
+    detailsFailed: 'Прочитать запись не удалось',
+    detailsClose: 'Закрыть',
+    detailsPostmortem: 'Разбор происшествия',
     detailsText: 'Текст',
     detailsSummary: 'Сводка',
 } as const;

@@ -66,6 +66,7 @@ export const messageBusAdminBoundaries = [
         onlyDependOnLibsWithTags: [
             'scope:message-bus-admin-auth-shell',
             'scope:message-bus-admin-common-container-feature',
+            'scope:message-bus-admin-postmortems-shell',
             CORE_UTIL,
             PACKAGE,
         ],
@@ -191,6 +192,7 @@ export const messageBusAdminBoundaries = [
             'scope:message-bus-admin-postmortems-feature-list',
             'scope:message-bus-admin-postmortems-feature-details-aside',
             POSTMORTEMS_UTIL,
+            CORE_UTIL,
             PACKAGE,
         ],
     },

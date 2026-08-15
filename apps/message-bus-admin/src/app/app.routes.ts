@@ -1,5 +1,6 @@
 import { Route } from '@angular/router';
 import { authRoutes, sessionGuard } from '@rt/message-bus-admin/auth/shell';
+import { POSTMORTEMS_ROUTE, postmortemsRoutes } from '@rt/message-bus-admin/postmortems/shell';
 
 /**
  * Маршруты админки.
@@ -21,13 +22,6 @@ export const appRoutes: Route[] = [
         canActivate: [sessionGuard],
         canActivateChild: [sessionGuard],
         loadComponent: async () => (await import('@rt/message-bus-admin/common/container/feature')).AdminContainerComponent,
-        children: [
-            {
-                path: 'overview',
-                title: 'Обзор',
-                loadComponent: async () => (await import('@rt/message-bus-admin/common/container/feature')).AdminOverviewComponent,
-            },
-            { path: '', pathMatch: 'full', redirectTo: 'overview' },
-        ],
+        children: [...postmortemsRoutes, { path: '', pathMatch: 'full', redirectTo: POSTMORTEMS_ROUTE }],
     },
 ];
