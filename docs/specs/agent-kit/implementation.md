@@ -151,6 +151,14 @@
 | Свойство, которого пакет не объявлял, роняет раскладку с обеих сторон.                                       | `projects/agent-kit/src/lib/commands.ts:strangeTraits`                        |
 | Требование стоит в имени файла рядом с видом и от него отличимо.                                             | `projects/agent-kit/src/lib/traits.ts:requirementOf`                          |
 | Перечень ресурсов называет неположенное требованием отдельно от снятого деревом.                             | `projects/agent-kit/src/lib/commands.ts:NEEDS_TRAIT`                          |
+| Подпись машинного коммита судится до того, как коммит уедет.                                                 | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:strangers`             |
+| Машинный коммит опознаётся по заявке, а не по почте.                                                         | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:bot_login`             |
+| Почта машинной записи сверяется целым значением.                                                             | `projects/agent-kit/assets/defaults/project.sh:RT_COMMIT_EMAIL`               |
+| Судится вклад ветки, а не вся история.                                                                       | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:main_branch`           |
+| Подпись читается на машине, без сети.                                                                        | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:strangers`             |
+| Отказ по подписи называет коммит поимённо и обе почты.                                                       | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:strangers`             |
+| Дерево, не назвавшее почты машинной записи, требования не получает.                                          | `projects/agent-kit/assets/defaults/project.sh:RT_COMMIT_EMAIL`               |
+| Личность машинной записи подтверждается ответом хостинга, а не узнаванием строки.                            | `projects/agent-kit/assets/rules/git-workflow.github.md:git-workflow`         |
 
 ## Что ещё стоит знать при чтении кода
 
