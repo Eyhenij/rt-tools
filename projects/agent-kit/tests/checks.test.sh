@@ -491,4 +491,34 @@ report "гейт: устаревшее объявление названо" "$(g
 
 rm -rf "$GATE_TREE"
 
+# --- SC-AK-198 — очередь работ обходится без токена машинной записи -----------------------
+#
+# Хостинг спрашивается подставным клиентом: он записывает, пришёл ли к нему свой токен, и
+# отвечает отказом. Проверяется не ответ борды, а то, докуда дошёл вызов: прежде он кончался
+# на требовании токена и до хостинга не доходил вовсе.
+BOARD_TREE="$(mktemp -d)"
+mkdir -p "$BOARD_TREE/tools" "$BOARD_TREE/.claude/rt-kit" "$BOARD_TREE/bin"
+cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/board.github.mjs" "$BOARD_TREE/tools/"
+mv "$BOARD_TREE/tools/board.github.mjs" "$BOARD_TREE/tools/board.mjs"
+
+printf '%s\n' '#!/usr/bin/env bash' \
+    'if [ -n "${GH_TOKEN:-}" ]; then echo "свой" > "$GH_SEEN"; else echo "залогиненный" > "$GH_SEEN"; fi' \
+    'echo "нет доступа" >&2' \
+    'exit 1' > "$BOARD_TREE/bin/gh"
+chmod +x "$BOARD_TREE/bin/gh"
+
+printf '%s\n' '{"board":{"owner":"o","repo":"r","projectId":"P","statusFieldId":"F","statusOptions":{"in-progress":{"id":"i","name":"In progress"}},"taskKey":"RT"}}' \
+    > "$BOARD_TREE/.claude/rt-kit/checks.json"
+
+board_move() {
+    (cd "$BOARD_TREE" && GH_BIN="$BOARD_TREE/bin/gh" GH_SEEN="$BOARD_TREE/seen" \
+        node tools/board.mjs move 1 in-progress 2>&1)
+}
+
+BOARD_SAID="$(board_move)"
+report "SC-AK-198 — токена не требует" "$(printf '%s' "$BOARD_SAID" | grep -c 'нет токена бота')" 0
+report "SC-AK-198 — хостинг спрошен" "$(cat "$BOARD_TREE/seen" 2>/dev/null)" 'залогиненный'
+
+rm -rf "$BOARD_TREE"
+
 suite_result "проверки"
