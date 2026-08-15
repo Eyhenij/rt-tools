@@ -54,6 +54,16 @@ const POSTMORTEMS_API = 'scope:message-bus-admin-postmortems-api';
 const POSTMORTEMS_DATA_ACCESS = 'scope:message-bus-admin-postmortems-data-access';
 const POSTMORTEMS_UI = 'scope:message-bus-admin-postmortems-ui';
 
+/**
+ * Раздел предложений по слою правил. Устроен теми же семью слоями и теми же рёбрами, что и
+ * раздел разборов: собран он общей основой целиком, и своего у него только модели, столбцы и
+ * поля панели.
+ */
+const PROPOSALS_UTIL = 'scope:message-bus-admin-proposals-util';
+const PROPOSALS_API = 'scope:message-bus-admin-proposals-api';
+const PROPOSALS_DATA_ACCESS = 'scope:message-bus-admin-proposals-data-access';
+const PROPOSALS_UI = 'scope:message-bus-admin-proposals-ui';
+
 export const messageBusAdminBoundaries = [
     // Приложение видит маршруты домена входа и оболочку. Экраны оно не знает ни одного: их
     // приносит отложенная загрузка по маршруту, объявленному тем, чей это экран.
@@ -67,6 +77,7 @@ export const messageBusAdminBoundaries = [
             'scope:message-bus-admin-auth-shell',
             'scope:message-bus-admin-common-container-feature',
             'scope:message-bus-admin-postmortems-shell',
+            'scope:message-bus-admin-proposals-shell',
             CORE_UTIL,
             PACKAGE,
         ],
@@ -108,9 +119,11 @@ export const messageBusAdminBoundaries = [
         sourceTag: 'scope:message-bus-admin-auth-util',
         onlyDependOnLibsWithTags: [PACKAGE],
     },
+    // Меню видит словарь: подписи разделов оно берёт оттуда же, откуда их берут сами разделы, —
+    // переписанные в декларации литералом, они расходятся с заголовком экрана молча
     {
         sourceTag: 'scope:message-bus-admin-common-container-util',
-        onlyDependOnLibsWithTags: [PACKAGE],
+        onlyDependOnLibsWithTags: [CORE_UTIL, PACKAGE],
     },
     {
         sourceTag: 'scope:message-bus-admin-common-container-api',
@@ -192,6 +205,54 @@ export const messageBusAdminBoundaries = [
             'scope:message-bus-admin-postmortems-feature-list',
             'scope:message-bus-admin-postmortems-feature-details-aside',
             POSTMORTEMS_UTIL,
+            CORE_UTIL,
+            PACKAGE,
+        ],
+    },
+
+    // Раздел предложений. Лесенка та же, что у разборов, и тем же перечислением: раздел, у
+    // которого рёбра выписаны иначе, собран не общей основой, а своим — а обещание всей работы
+    // ровно в том, что все три раздела собраны одним экраном
+    {
+        sourceTag: 'scope:message-bus-admin-proposals-util',
+        onlyDependOnLibsWithTags: [CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-proposals-api',
+        onlyDependOnLibsWithTags: [PROPOSALS_UTIL, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-proposals-data-access',
+        onlyDependOnLibsWithTags: [PROPOSALS_API, PROPOSALS_UTIL, CORE_DATA_ACCESS, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-proposals-ui',
+        onlyDependOnLibsWithTags: [PROPOSALS_UTIL, CORE_UI, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-proposals-feature-list',
+        onlyDependOnLibsWithTags: [
+            PROPOSALS_DATA_ACCESS,
+            PROPOSALS_UI,
+            PROPOSALS_UTIL,
+            CORE_FEATURE,
+            CORE_UI,
+            CORE_DATA_ACCESS,
+            CORE_UTIL,
+            CONTRACT,
+            PACKAGE,
+        ],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-proposals-feature-details-aside',
+        onlyDependOnLibsWithTags: [PROPOSALS_DATA_ACCESS, PROPOSALS_UI, PROPOSALS_UTIL, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-proposals-shell',
+        onlyDependOnLibsWithTags: [
+            'scope:message-bus-admin-proposals-feature-list',
+            'scope:message-bus-admin-proposals-feature-details-aside',
+            PROPOSALS_UTIL,
             CORE_UTIL,
             PACKAGE,
         ],

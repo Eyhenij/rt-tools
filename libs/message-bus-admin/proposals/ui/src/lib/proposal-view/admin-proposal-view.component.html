@@ -1,0 +1,22 @@
+<ng-container rtBlock="admin-panel">
+    <dl rtElem="fields">
+        <dt rtElem="field-name">{{ treeLabel }}</dt>
+        <dd rtElem="field-value" qa-dataid="proposal-tree">{{ entity().tree.name }}</dd>
+
+        <dt rtElem="field-name">{{ resourceLabel }}</dt>
+        <dd rtElem="field-value" qa-dataid="proposal-resource">{{ entity().resource }}</dd>
+
+        <dt rtElem="field-name">{{ addressLabel }}</dt>
+        <dd rtElem="field-value" qa-dataid="proposal-address">{{ entity().address }}</dd>
+
+        <dt rtElem="field-name">{{ monthLabel }}</dt>
+        <dd rtElem="field-value" qa-dataid="proposal-month">{{ entity().month }}</dd>
+
+        <dt rtElem="field-name">{{ arrivedLabel }}</dt>
+        <dd rtElem="field-value" qa-dataid="proposal-arrived">{{ entity().arrivedAt | adminMoment }}</dd>
+    </dl>
+
+    <h2 rtElem="section">{{ textLabel }}</h2>
+
+    <pre rtElem="text" qa-dataid="proposal-text">{{ entity().text }}</pre>
+</ng-container>

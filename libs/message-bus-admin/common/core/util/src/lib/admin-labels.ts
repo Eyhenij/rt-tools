@@ -50,6 +50,7 @@ export const ADMIN_LABELS = {
     detailsFailed: 'Прочитать запись не удалось',
     detailsClose: 'Закрыть',
     detailsPostmortem: 'Разбор происшествия',
+    detailsProposal: 'Предложение',
     detailsText: 'Текст',
     detailsSummary: 'Сводка',
 } as const;
