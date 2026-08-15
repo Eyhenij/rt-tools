@@ -179,6 +179,19 @@ const holes: (result: ISyncResult) => string[] = (result: ISyncResult): string[]
 const unfilled: (result: ISyncResult) => readonly ICompanion[] = (result: ISyncResult): readonly ICompanion[] =>
     result.companions.filter(isUnfilled);
 
+/**
+ * Строка про компаньон, которому нечего сказать.
+ *
+ * У правила, требующего свойства, которого дерево не назвало, это не черновик, а лишний файл:
+ * заполнять его нечем — ни одной статье такого правила здесь не отвечает ни файл, ни символ.
+ * Такое правило доезжает сюда только выбором поимённо, и верное действие тут обратное
+ * заполнению — снять ресурс строкой отказа.
+ */
+const companionLine: (entry: ICompanion) => string = (entry: ICompanion): string =>
+    entry.needs === null
+        ? `  ${entry.path} — ${COMPANION_WORD[entry.state]}`
+        : `  ${entry.path} — правилу нужно свойство «${entry.needs}»: заполнять нечем, снимай ресурс строкой в \`skip\``;
+
 /** Ось без ответа: чем её спрашивают и из чего выбирают. */
 const axisLines: (axes: readonly IAxis[]) => string[] = (axes: readonly IAxis[]): string[] =>
     axes.flatMap((axis: IAxis): string[] => [
@@ -356,7 +369,7 @@ const describe: (result: ISyncResult) => string[] = (result: ISyncResult): strin
     ...unboundLines(result),
     ...warnings(result),
     ...pendingOf(result).map((entry: IPlanned): string => `  ${entry.path} — ${STATE_WORD[entry.outcome]}`),
-    ...unfilled(result).map((entry: ICompanion): string => `  ${entry.path} — ${COMPANION_WORD[entry.state]}`),
+    ...unfilled(result).map(companionLine),
 ];
 
 /** Имена дырок во всех ресурсах, которые дерево берёт. Без конфига — ни одной: выбор неизвестен. */
