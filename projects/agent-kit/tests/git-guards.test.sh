@@ -58,6 +58,36 @@ d "заявка без номера в заголовке" 'gh pr create --title
 expect_reason "и отказ называет расхождение номеров" git-guard-delivery.sh \
     "$(input_cmd 'gh pr create --title "[RT-8] Сделано" --body x' Bash "$REPO_WORK")" 'номер 8.*у ветки'
 
+# --- свежесть локальной ссылки на главную ветку ------------------------------------------------
+#
+# Первый ярус читает локальную ссылку и молчит, пока она не старше ветки; второй спрашивает
+# удалённую. Без второго молчание гарда значит «ссылка не старше ветки», а читается как
+# «главная ветка влита» — так открытый отчёт и оказался конфликтующим.
+#
+# Состояние собирается откатом самой ссылки, а не вторым рабочим деревом: протухшая ссылка при
+# ушедшем вперёд удалённом — это ровно оно, и лишний клон ничего к сценарию не добавляет.
+STALE="$(fixture_repo_branched main RT-77-probe)"
+BARE_DIR="$(mktemp -d)"
+git init -q --bare "$BARE_DIR/o.git" 2>/dev/null
+git -C "$STALE" remote add origin "$BARE_DIR/o.git" 2>/dev/null
+git -C "$STALE" push -q origin RT-77-probe:main 2>/dev/null
+git -C "$STALE" fetch -q origin 2>/dev/null
+WAS="$(git -C "$STALE" rev-parse refs/remotes/origin/main 2>/dev/null)"
+git -C "$STALE" -c user.email=p@p -c user.name=p -c commit.gpgsign=false commit -q --allow-empty -m 'чужая правка' 2>/dev/null
+git -C "$STALE" push -q origin RT-77-probe:main 2>/dev/null
+git -C "$STALE" update-ref refs/remotes/origin/main "$WAS" 2>/dev/null
+
+expect_decision "SC-AK-178 — отставшая локальная ссылка отбивает открытие отчёта" git-guard-delivery.sh \
+    "$(input_cmd 'gh pr create --title "[RT-77] Сделано" --body x' Bash "$STALE")" deny
+expect_reason "SC-AK-178 — отказ называет обе стороны расхождения" git-guard-delivery.sh \
+    "$(input_cmd 'gh pr create --title "[RT-77] Сделано" --body x' Bash "$STALE")" 'отстала от удалённой'
+
+# Удалённого нет вовсе — ярус молчит: проверка, падающая в самолёте, работу не отбивает.
+NO_REMOTE="$(fixture_repo_branched main RT-78-probe)"
+expect_decision "SC-AK-179 — недоступный удалённый ярус не отбивает" git-guard-delivery.sh \
+    "$(input_cmd 'gh pr create --title "[RT-78] Сделано" --body x' Bash "$NO_REMOTE")" PASS
+rm -rf "$STALE" "$NO_REMOTE" "$BARE_DIR"
+
 # --- разобранная папка задачи как условие слияния ----------------------------------------------
 #
 # Требование стоит на слиянии, а не на открытии заявки: до слияния папка ещё нужна — правка по
