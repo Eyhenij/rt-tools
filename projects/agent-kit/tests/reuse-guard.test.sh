@@ -22,7 +22,7 @@ PROFILE
 
 declare_bundles() {
     cat > "$TREE/.claude/rt-kit/checks.json" <<JSON
-{ "reuse": { "bundles": [$1], "signals": "$2" } }
+{ "backendRoots": ["libs/api/", "apps/api/"], "reuse": { "bundles": [$1], "signals": "$2" } }
 JSON
 }
 
@@ -83,7 +83,42 @@ expect_reason "SC-AK-144 — свой признак дерева применя
 expect_reason "SC-AK-145 — свой признак замещает пакетный по ключу" reuse-first-guard.sh \
     "$(write_input 'src/f.html' '<input>')" 'поле именно этого дерева'
 
+# SC-AK-196, SC-AK-197 — поля, которые гард и сплошная проверка обязаны читать одинаково. Пока
+# гард их не читал, он отбивал ту самую правку, которую проверка пропускает: расхождение видно
+# только на гейте, а провести правку больше нечем.
+cat > "$TREE/tools/signals/layers.json" <<'JSON'
+{
+    "signals": [
+        {
+            "key": "mapper-base",
+            "ext": ".mapper.ts",
+            "skipBackendRoots": true,
+            "find": "class +\\w+Mapper",
+            "instead": "общая основа перевода"
+        },
+        {
+            "key": "site-only",
+            "ext": ".ts",
+            "onlyNamed": "^libs/site/",
+            "find": "fetch\\(",
+            "instead": "готовый клиент сайта"
+        }
+    ]
+}
+JSON
+declare_bundles '"layers"' ''
+mkdir -p "$TREE/libs/api/x" "$TREE/libs/site/x" "$TREE/libs/admin/x"
+expect_decision "SC-AK-196 — под корнем бэкенда признак с пропуском молчит" reuse-first-guard.sh \
+    "$(write_input 'libs/api/x/a.mapper.ts' 'export class UserMapper {}')" PASS
+expect_decision "SC-AK-196 — вне корней бэкенда тот же признак отбивает" reuse-first-guard.sh \
+    "$(write_input 'libs/admin/x/a.mapper.ts' 'export class UserMapper {}')" deny
+expect_decision "SC-AK-197 — образец имени сверяется с путём, а не с именем файла" reuse-first-guard.sh \
+    "$(write_input 'libs/site/x/b.ts' 'fetch("/api")')" deny
+expect_decision "SC-AK-197 — тот же файл в чужом корне признака не получает" reuse-first-guard.sh \
+    "$(write_input 'libs/admin/x/b.ts' 'fetch("/api")')" PASS
+
 # SC-AK-147 — область «файл целиком»: правка приносит строку без объявления класса, признак судит файл.
+declare_bundles '"kit"' ''
 declare_bundles '"kit"' ''
 printf 'export class FooComponent implements ControlValueAccessor {}\n' > "$TREE/src/g.component.ts"
 expect_decision "SC-AK-147 — признак области «файл целиком» видит содержимое файла" reuse-first-guard.sh \

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.8.1 · hooks/reuse-first-guard.sh · ff2282c1143c · правится надстройкой, не здесь
+# rt-kit v0.8.1 · hooks/reuse-first-guard.sh · 992cc898e07e · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file
 # Требует: hooks/profile-check.sh
 # Гард «ничего не пишется с нуля». PreToolUse на правке кода и разметки.
@@ -139,11 +139,19 @@ has_re() {
 rt_checks_json="${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/checks.json"
 rt_bundles=''
 rt_own_signals=''
+rt_backend_roots=''
 if [ -f "$rt_checks_json" ]; then
     rt_bundles="$(jq -r '.reuse.bundles[]? // empty' "$rt_checks_json" 2>/dev/null | tr '\n' ' ')"
     own="$(jq -r '.reuse.signals // empty' "$rt_checks_json" 2>/dev/null)"
     [ -n "$own" ] && rt_own_signals="${CLAUDE_PROJECT_DIR:-.}/$own"
+    # Тем же ключом, каким их читает сплошная проверка: второе объявление тех же корней
+    # разошлось бы с первым молча.
+    rt_backend_roots="$(jq -r '.backendRoots[]? // empty' "$rt_checks_json" 2>/dev/null | tr '\n' ' ')"
 fi
+
+# Путь от корня дерева: образец в признаке пишет дерево, и писать его от корня машины оно не
+# может. Абсолютный путь нужен только для чтения файла с диска.
+rel_path="${path#"${CLAUDE_PROJECT_DIR:-.}"/}"
 rt_signals_dir="${CLAUDE_PROJECT_DIR:-.}/${RT_REUSE_SIGNALS_DIR:-tools/signals}"
 
 # Признаки объявленных наборов: те же файлы читает сплошная проверка. Ключ признака совпал с
@@ -173,9 +181,25 @@ while IFS= read -r signal; do
         '') ;;
         *) case "$path" in *"$ext") ;; *) continue ;; esac ;;
     esac
+    # Пропуск корней бэкенда: признак, объявленный с ним, на бэкенде не действует вовсе — там
+    # принят другой способ, и базового класса, которого признак требует, у бэкенда нет. Поле
+    # читает и сплошная проверка; читать его одному из двоих значит отбивать гардом ту самую
+    # правку, которую проверка пропускает, — а провести её больше нечем: маркер отступления
+    # объявляет обход готового, а обхода тут не было.
+    if [ "$(field "$signal" '.skipBackendRoots')" = 'true' ] && [ -n "$rt_backend_roots" ]; then
+        skip_backend=''
+        for backend_root in $rt_backend_roots; do
+            case "$rel_path" in "$backend_root"*) skip_backend=1 ;; esac
+        done
+        [ -n "$skip_backend" ] && continue
+    fi
+
+    # Образец имени сверяется с путём от корня дерева, а не с именем файла: слои, которые
+    # признак и разделяет, зовут свои файлы одинаково, и по имени они неразличимы. Сплошная
+    # проверка сверяет с путём — расходиться им нельзя.
     only_named="$(field "$signal" '.onlyNamed')"
     if [ -n "$only_named" ]; then
-        printf '%s' "${path##*/}" | grep -qE "$only_named" || continue
+        printf '%s' "$rel_path" | grep -qE "$only_named" || continue
     fi
 
     case "$(field "$signal" '.scope')" in
