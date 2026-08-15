@@ -15,7 +15,7 @@ const ITEMS: ReadonlyArray<IRtPageHeader.Item> = [
         columns: [
             {
                 id: 'col-1',
-                groups: [{ id: 'group-1', label: 'Отчёты', items: [{ id: 'sales', label: 'Продажи', route: '/sales' }] }],
+                groups: [{ id: 'group-1', label: 'Отчёт', items: [{ id: 'sales', label: 'Продажи', route: '/sales' }] }],
             },
         ],
     },

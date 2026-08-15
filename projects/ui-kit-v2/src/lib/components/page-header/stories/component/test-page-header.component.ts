@@ -45,7 +45,7 @@ export class TestRtPageHeaderComponent {
                 },
             ],
         },
-        { id: 'reports', label: 'Отчёты', route: '/reports', disabled: true },
+        { id: 'reports', label: 'Отчёт', route: '/reports', disabled: true },
     ];
     public user: IRtPageHeader.User | null = { name: 'Иванов Иван', avatar: 'И' };
     public userTitle: string = '';
