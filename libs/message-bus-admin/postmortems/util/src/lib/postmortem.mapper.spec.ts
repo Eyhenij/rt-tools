@@ -1,0 +1,77 @@
+import { PostmortemMapper, PostmortemShortMapper } from './postmortem.mapper';
+import { IPostmortem } from './postmortem.model';
+
+/** Ответ приёмника строкой списка: времена в нём строки — так они переживают передачу. */
+function apiShort(patch: Partial<IPostmortem.Short.Api> = {}): IPostmortem.Short.Api {
+    return {
+        id: 'p1',
+        tree: { slug: 'a1b2', name: 'Приёмник' },
+        file: '2026-08-14-incident.md',
+        arrivedAt: '2026-08-14T21:30:00.000Z',
+        updatedAt: '2026-08-15T06:00:00.000Z',
+        ...patch,
+    };
+}
+
+describe('PostmortemShortMapper', () => {
+    const mapper: PostmortemShortMapper = new PostmortemShortMapper();
+
+    it('время приезжает строкой, а на экран уходит временем', () => {
+        const row: IPostmortem.Short.State = mapper.mapFrom(apiShort());
+
+        expect(row.arrivedAt).toBeInstanceOf(Date);
+        expect(row.arrivedAt.toISOString()).toBe('2026-08-14T21:30:00.000Z');
+        expect(row.updatedAt.toISOString()).toBe('2026-08-15T06:00:00.000Z');
+    });
+
+    it('дерево читается по полям: признак и имя', () => {
+        const row: IPostmortem.Short.State = mapper.mapFrom(apiShort());
+
+        expect(row.tree).toEqual({ slug: 'a1b2', name: 'Приёмник' });
+    });
+
+    it('поля, которых в ответе нет, не роняют перевод', () => {
+        const row: IPostmortem.Short.State = mapper.mapFrom({ ...apiShort(), tree: undefined, file: undefined } as never);
+
+        expect(row.tree).toEqual({ slug: '', name: '' });
+        expect(row.file).toBe('');
+    });
+
+    it('поле, которого модель не называла, на экран не переезжает', () => {
+        const row: IPostmortem.Short.State = mapper.mapFrom({ ...apiShort(), text: 'весь разбор' } as never);
+
+        expect(Object.keys(row).sort()).toEqual(['arrivedAt', 'file', 'id', 'tree', 'updatedAt']);
+    });
+
+    it('строка списка текста разбора не несёт', () => {
+        const row: IPostmortem.Short.State = mapper.mapFrom(apiShort());
+
+        expect(Reflect.has(row, 'text')).toBe(false);
+    });
+});
+
+describe('PostmortemMapper', () => {
+    const mapper: PostmortemMapper = new PostmortemMapper();
+
+    it('запись целиком повторяет строку списка и добавляет текст', () => {
+        const entity: IPostmortem.State = mapper.mapFrom({ ...apiShort(), text: '# Разбор\nупало ночью' });
+
+        expect(entity.file).toBe('2026-08-14-incident.md');
+        expect(entity.tree.name).toBe('Приёмник');
+        expect(entity.arrivedAt).toBeInstanceOf(Date);
+        expect(entity.text).toBe('# Разбор\nупало ночью');
+    });
+
+    it('запись без текста читается пустым текстом, а не поломкой', () => {
+        const entity: IPostmortem.State = mapper.mapFrom(apiShort() as IPostmortem.Api);
+
+        expect(entity.text).toBe('');
+    });
+
+    it('разметка, приехавшая с дерева, доезжает до экрана как есть', () => {
+        const raw: string = '<script>alert(1)</script>';
+        const entity: IPostmortem.State = mapper.mapFrom({ ...apiShort(), text: raw });
+
+        expect(entity.text).toBe(raw);
+    });
+});

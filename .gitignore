@@ -83,3 +83,9 @@ vitest.config.*.timestamp*
 libs/message-bus-api/persistence/util/src/generated
 
 __screenshots__/
+
+# След сквозного прогона: кадры, снимки следа и отчёт прогонщика. Предмет проверки — сами
+# спеки, а это то, что остаётся после падения и читается локально.
+test-results/
+playwright-report/
+

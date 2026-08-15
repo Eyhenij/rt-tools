@@ -220,6 +220,8 @@ export class RtContainerComponent {
         const backdropEl: HTMLElement | null = overlayRef.backdropElement;
         if (backdropEl !== null) {
             this.#renderer.addClass(backdropEl, 'rt-aside-backdrop--visible');
+            this.#renderer.removeStyle(backdropEl, 'opacity');
+            this.#renderer.removeStyle(backdropEl, 'pointer-events');
         }
 
         // Slide-in: на следующий paint добавляем --open.
@@ -247,9 +249,35 @@ export class RtContainerComponent {
 
         this.#listenTransitionEnd(overlayRef, (): void => {
             this.#blockScroll.disable();
+            // Объявления на узле возвращаются только после ухода: поставленные сразу, они
+            // обрывают затухание подложки на первом же кадре.
+            this.#hideBackdrop(overlayRef);
             this.rightOpen.set(false);
             this.rightClosed.emit();
         });
+    }
+
+    /**
+     * Подложка закрытой панели: невидима и нажатий не ловит.
+     *
+     * Стилями этого не сделать. Правила кита живут в слое каскада, а CDK кладёт свои прямо на
+     * страницу, вне слоя, — и `.cdk-overlay-backdrop-showing { opacity: 1 }` выигрывает у нашего
+     * `opacity: 0` независимо от специфичности: неслоевое правило сильнее слоевого всегда.
+     * Подложка при этом висит поверх страницы во весь экран — прозрачная и перехватывающая
+     * нажатия, а панель ещё не открывали. Объявление на самом узле сильнее обоих правил.
+     *
+     * Держится это ровно до открытия: там объявления снимаются, и дальше видом подложки
+     * заведуют классы.
+     */
+    #hideBackdrop(overlayRef: OverlayRef): void {
+        const backdropEl: HTMLElement | null = overlayRef.backdropElement;
+
+        if (backdropEl === null) {
+            return;
+        }
+
+        this.#renderer.setStyle(backdropEl, 'opacity', '0');
+        this.#renderer.setStyle(backdropEl, 'pointer-events', 'none');
     }
 
     #createRightOverlay(tpl: TemplateRef<unknown>): OverlayRef {
@@ -270,6 +298,7 @@ export class RtContainerComponent {
         const overlayRef: OverlayRef = this.#overlay.create(overlayConfig);
         const portal: TemplatePortal = new TemplatePortal(tpl, this.#vcr);
         overlayRef.attach(portal);
+        this.#hideBackdrop(overlayRef);
 
         // Backdrop-click / ESC подписки объявлены один раз в конструкторе —
         // здесь только эмит созданного OverlayRef (см. #rightOverlaySource-стрим).

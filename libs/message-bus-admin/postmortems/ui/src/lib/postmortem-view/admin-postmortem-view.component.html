@@ -1,0 +1,19 @@
+<ng-container rtBlock="admin-panel">
+    <dl rtElem="fields">
+        <dt rtElem="field-name">{{ treeLabel }}</dt>
+        <dd rtElem="field-value" qa-dataid="postmortem-tree">{{ entity().tree.name }}</dd>
+
+        <dt rtElem="field-name">{{ fileLabel }}</dt>
+        <dd rtElem="field-value" qa-dataid="postmortem-file">{{ entity().file }}</dd>
+
+        <dt rtElem="field-name">{{ arrivedLabel }}</dt>
+        <dd rtElem="field-value" qa-dataid="postmortem-arrived">{{ entity().arrivedAt | adminMoment }}</dd>
+
+        <dt rtElem="field-name">{{ updatedLabel }}</dt>
+        <dd rtElem="field-value" qa-dataid="postmortem-updated">{{ entity().updatedAt | adminMoment }}</dd>
+    </dl>
+
+    <h2 rtElem="section">{{ textLabel }}</h2>
+
+    <pre rtElem="text" qa-dataid="postmortem-text">{{ entity().text }}</pre>
+</ng-container>

@@ -1,5 +1,8 @@
 import { Route } from '@angular/router';
 import { authRoutes, sessionGuard } from '@rt/message-bus-admin/auth/shell';
+import { POSTMORTEMS_ROUTE, postmortemsRoutes } from '@rt/message-bus-admin/postmortems/shell';
+import { proposalsRoutes } from '@rt/message-bus-admin/proposals/shell';
+import { summariesRoutes } from '@rt/message-bus-admin/summaries/shell';
 
 /**
  * Маршруты админки.
@@ -22,12 +25,19 @@ export const appRoutes: Route[] = [
         canActivateChild: [sessionGuard],
         loadComponent: async () => (await import('@rt/message-bus-admin/common/container/feature')).AdminContainerComponent,
         children: [
+            ...postmortemsRoutes,
+            ...proposalsRoutes,
+            ...summariesRoutes,
+            // Настройка столбцов одна на все разделы: панель везёт кит, а какую таблицу
+            // настраивают, она берёт из своего реестра. Раздела в адресе поэтому нет — в
+            // отличие от подробностей записи, где он есть, потому что аутлет один на всю
+            // админку и `:id` без раздела забрал бы панели всех трёх.
             {
-                path: 'overview',
-                title: 'Обзор',
-                loadComponent: async () => (await import('@rt/message-bus-admin/common/container/feature')).AdminOverviewComponent,
+                path: 'table-settings',
+                outlet: 'ro',
+                loadComponent: async () => (await import('@rt/message-bus-admin/common/container/feature')).adminColumnsAside(),
             },
-            { path: '', pathMatch: 'full', redirectTo: 'overview' },
+            { path: '', pathMatch: 'full', redirectTo: POSTMORTEMS_ROUTE },
         ],
     },
 ];
