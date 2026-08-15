@@ -11,6 +11,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import process from 'node:process';
 
+import { unknownFlagsIn } from '../lib/argv.js';
 import { IEntryOfCatalog, readCatalog, resolveSelection } from '../lib/catalog.js';
 import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, list, stats, sync } from '../lib/commands.js';
 import { httpShip } from '../lib/ship.js';
@@ -49,6 +50,19 @@ const USAGE: readonly string[] = [
     '',
     '  --<ось> <вид>     например `--host gitlab`; оси и виды — из `agent-kit list`',
     '  без флага         спросить; без терминала — отказ, кроме `--all`',
+];
+
+/**
+ * Доводы отправки. Довод со значением помечен `<>`: за ним идёт отдельным словом путь, и без
+ * пометки этот путь читался бы как ещё один незнакомый довод.
+ */
+const PROPOSE_FLAGS: readonly string[] = ['--dry-run', '--root <>'];
+
+/** Что печатает отказ на незнакомом доводе: режимы команды, а не весь свод. */
+const PROPOSE_USAGE: readonly string[] = [
+    '  propose             отправить груз в приём',
+    '  propose --dry-run   показать, что уехало бы, и ничего не отправлять',
+    '  --root <путь>       корень проекта; по умолчанию текущий каталог',
 ];
 
 /**
@@ -234,7 +248,19 @@ export async function main(argv: readonly string[]): Promise<IOutcomeOfCommand> 
                 json: argv.includes('--json'),
             });
         }
-        case 'propose':
+        case 'propose': {
+            // Единственное действие этой команды необратимо и уходит наружу, поэтому незнакомый
+            // довод её кончает, а не пропускается молча: вызов ради списка режимов отправил в
+            // приём всё накопленное, и по выводу это не отличалось от «команда ничего не
+            // сделала». Прочие команды такого разбора не знают — их действие обратимо.
+            const unknown: readonly string[] = unknownFlagsIn(argv.slice(1), PROPOSE_FLAGS);
+            if (unknown.length) {
+                return {
+                    code: 1,
+                    lines: [`таких доводов у \`propose\` нет: ${unknown.join(', ')}`, '', ...PROPOSE_USAGE],
+                };
+            }
+
             return propose(env, {
                 dryRun: argv.includes('--dry-run'),
                 ship: httpShip,
@@ -243,6 +269,7 @@ export async function main(argv: readonly string[]): Promise<IOutcomeOfCommand> 
                 days: DEFAULT_DAYS,
                 today: new Date().toISOString().slice(0, 10),
             });
+        }
         case 'doctor':
             return doctor(env);
         case 'adopt':
