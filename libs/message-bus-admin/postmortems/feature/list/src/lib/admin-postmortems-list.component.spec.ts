@@ -105,11 +105,8 @@ describe('AdminPostmortemsListComponent', () => {
                 provideRtStorage(),
                 { provide: IDBStorageService, useClass: ColumnSettingsStub },
                 provideRouter([
-                    {
-                        path: 'postmortems',
-                        component: AdminPostmortemsListComponent,
-                        children: [{ path: ':id', outlet: 'ro', component: DetailsStubComponent }],
-                    },
+                    { path: 'postmortems', component: AdminPostmortemsListComponent },
+                    { path: 'postmortems/:id', pathMatch: 'full', outlet: 'ro', component: DetailsStubComponent },
                 ]),
             ],
         });
@@ -165,7 +162,7 @@ describe('AdminPostmortemsListComponent', () => {
         harness.fixture.debugElement.query(By.css('[qa-dataid="postmortems-row"]')).nativeElement.click();
         await harness.fixture.whenStable();
 
-        expect(router.url).toContain('(ro:p1)');
+        expect(router.url).toContain('(ro:postmortems/p1)');
         expect(router.url).toContain('page=2');
         expect(router.url).toContain('tree=a1b2');
     });

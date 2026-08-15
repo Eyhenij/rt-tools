@@ -1,6 +1,6 @@
 import { computed, Directive, effect, inject, Signal, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router, UrlSegment } from '@angular/router';
 import { AdminListStoreBase, TreesStore } from '@rt/message-bus-admin/common/core/data-access';
 import {
     adminLabel,
@@ -106,11 +106,20 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> {
     /**
      * Открыть запись панелью подробностей.
      *
-     * Панель живёт маршрутом в аутлете `ro`, а выборка остаётся в адресе нетронутой: закрытая
-     * панель возвращает тот же список — ту же страницу с тем же отбором и тем же порядком.
+     * Панель живёт маршрутом в аутлете `ro` рядом с экраном, а не под ним: рисует её правая
+     * шторка оболочки, и аутлет объявлен там же, где каркас. Поэтому и уход идёт от оболочки, а
+     * адрес панели называет раздел своими же сегментами — теми, которыми экран открыт сам.
+     *
+     * Выборка при этом остаётся в адресе нетронутой: закрытая панель возвращает тот же список —
+     * ту же страницу с тем же отбором и тем же порядком.
      */
     protected openDetails(id: string): void {
-        void this.#router.navigate([{ outlets: { ro: [id] } }], { relativeTo: this.#route, queryParamsHandling: 'preserve' });
+        const section: string[] = this.#route.snapshot.url.map((segment: UrlSegment): string => segment.path);
+
+        void this.#router.navigate([{ outlets: { ro: [...section, id] } }], {
+            relativeTo: this.#route.parent,
+            queryParamsHandling: 'preserve',
+        });
     }
 
     /**

@@ -11,6 +11,7 @@ import {
     RtContainerContentDirective,
     RtContainerHeaderDirective,
     RtContainerLeftSidenavDirective,
+    RtContainerRightSidenavDirective,
     RtHeaderComponent,
     RtSectionNavComponent,
 } from '@rt-tools/ui-kit-v2';
@@ -27,6 +28,10 @@ const BEM_BLOCK: string = 'admin-container';
  * Подсветку текущего раздела компонент не держит — она приходит набором, пересчитанным по адресу
  * после перехода. Адрес читается сигналом, поднятым из событий роутера: производное значение
  * следит только за прочитанными сигналами, и обычный вызов роутера зависимостью бы не стал.
+ *
+ * Правая шторка объявлена здесь же, и стоит в ней аутлет панелей: рисует шторку каркас, поверх
+ * страницы и через наложение, а рисует он только то, что объявлено этой зоной. Аутлет, спрятанный
+ * внутрь экрана раздела, оставлял бы панель стоять под таблицей — открытой, но не шторкой.
  */
 @Component({
     selector: 'admin-container',
@@ -36,6 +41,7 @@ const BEM_BLOCK: string = 'admin-container';
         RtContainerContentDirective,
         RtContainerHeaderDirective,
         RtContainerLeftSidenavDirective,
+        RtContainerRightSidenavDirective,
         RtHeaderComponent,
         RtSectionNavComponent,
     ],

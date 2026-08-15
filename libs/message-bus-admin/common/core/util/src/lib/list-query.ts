@@ -36,6 +36,16 @@ export const LIST_QUERY_PARAMS: Readonly<Record<'page' | 'size' | 'sort' | 'dir'
 /** Порядок по умолчанию: свежие сверху. Поле называет сам раздел — оно у всех своё. */
 export const DEFAULT_DIRECTION: TPageDirection = 'desc';
 
+/**
+ * Размеры страницы, которые экран предлагает человеку.
+ *
+ * Тот же набор получает переключатель страниц кита: он прячет себя, когда записей меньше, чем
+ * самый малый из предложенных, — и размер, которого в наборе нет, оставлял бы человека на второй
+ * странице без переключателя. Адрес такой размер получает руками или из прошлой редакции экрана,
+ * и читается он как несказанный.
+ */
+export const LIST_PAGE_SIZES: readonly number[] = Object.freeze([20, 50, 100]);
+
 /** Целое от единицы и выше; всё остальное — пусто, и на его место встаёт умолчание. */
 function positive(raw: unknown): number | null {
     const asked: string = typeof raw === 'string' ? raw.trim() : '';
@@ -45,6 +55,13 @@ function positive(raw: unknown): number | null {
     const value: number = Number(asked);
 
     return value >= 1 ? value : null;
+}
+
+/** Размер страницы из набора предложенных; всё остальное — пусто, и его место займёт умолчание. */
+function offeredSize(raw: unknown): number | null {
+    const value: number | null = positive(raw);
+
+    return value !== null && LIST_PAGE_SIZES.includes(value) ? value : null;
 }
 
 /** Направление порядка. Чужое слово читается как отсутствие ответа. */
@@ -70,7 +87,7 @@ export function listQueryOf(params: Readonly<Record<string, unknown>>, sortable:
 
     return {
         page: positive(params[LIST_QUERY_PARAMS.page]) ?? 1,
-        size: positive(params[LIST_QUERY_PARAMS.size]) ?? PAGE_SIZE_DEFAULT,
+        size: offeredSize(params[LIST_QUERY_PARAMS.size]) ?? PAGE_SIZE_DEFAULT,
         sort: sortable.includes(asked) ? asked : (sortable[0] ?? ''),
         dir: direction(params[LIST_QUERY_PARAMS.dir]) ?? DEFAULT_DIRECTION,
         tree: plain(params[LIST_QUERY_PARAMS.tree]),

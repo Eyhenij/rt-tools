@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting, TestRequest } from '@angular/common/http/testing';
 import { ChangeDetectionStrategy, Component, inject, Injectable } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter, Router, RouterOutlet } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { AdminListStoreBase } from '@rt/message-bus-admin/common/core/data-access';
 import { IPage } from '@rt/message-bus-common';
@@ -34,11 +34,12 @@ class TestListStore extends AdminListStoreBase<IRow> {
 /**
  * Раздел, собранный на основе. Своих решений у него нет — только стор, поля порядка и
  * публичные обёртки: методы основы защищённые, и спека зовёт их так же, как шаблон.
+ *
+ * Аутлета панели в шаблоне нет: в приложении он объявлен у оболочки, а не у экрана раздела.
  */
 @Component({
     selector: 'admin-test-list',
-    imports: [RouterOutlet],
-    template: '<router-outlet name="ro" />',
+    template: '',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 class TestScreenComponent extends AdminListScreenBase<IRow> {
@@ -109,11 +110,8 @@ describe('AdminListScreenBase', () => {
                 provideHttpClient(),
                 provideHttpClientTesting(),
                 provideRouter([
-                    {
-                        path: 'postmortems',
-                        component: TestScreenComponent,
-                        children: [{ path: ':id', outlet: 'ro', component: TestDetailsComponent }],
-                    },
+                    { path: 'postmortems', component: TestScreenComponent },
+                    { path: 'postmortems/:id', pathMatch: 'full', outlet: 'ro', component: TestDetailsComponent },
                 ]),
             ],
         });
@@ -198,7 +196,7 @@ describe('AdminListScreenBase', () => {
         screen.open('one');
         await harness.fixture.whenStable();
 
-        expect(router.url).toContain('(ro:one)');
+        expect(router.url).toContain('(ro:postmortems/one)');
         expect(router.url).toContain('page=2');
         expect(router.url).toContain('tree=a1b2');
     });

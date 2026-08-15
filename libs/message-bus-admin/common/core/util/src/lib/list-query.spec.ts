@@ -1,6 +1,6 @@
 import { PAGE_SIZE_DEFAULT } from '@rt/message-bus-common';
 
-import { IAdminListQuery, listQueryOf, listQueryParams, sameListQuery } from './list-query';
+import { IAdminListQuery, LIST_PAGE_SIZES, listQueryOf, listQueryParams, sameListQuery } from './list-query';
 
 /** Поля порядка, какими их объявляет раздел разборов: первое — умолчание. */
 const SORTABLE: readonly string[] = ['arrivedAt', 'updatedAt'];
@@ -33,6 +33,20 @@ describe('listQueryOf', () => {
     it('нулевая и отрицательная страница читаются первой', () => {
         expect(listQueryOf({ page: '0' }, SORTABLE).page).toBe(1);
         expect(listQueryOf({ page: '-2' }, SORTABLE).page).toBe(1);
+    });
+
+    it('размер страницы читается только из предложенных экраном', () => {
+        for (const size of LIST_PAGE_SIZES) {
+            expect(listQueryOf({ size: String(size) }, SORTABLE).size).toBe(size);
+        }
+    });
+
+    it('размер, которого экран не предлагает, читается умолчанием', () => {
+        // Переключатель страниц прячет себя при пяти записях на страницу, и человек остался бы
+        // на второй странице без него.
+        expect(listQueryOf({ size: '5' }, SORTABLE).size).toBe(PAGE_SIZE_DEFAULT);
+        expect(listQueryOf({ size: '1000' }, SORTABLE).size).toBe(PAGE_SIZE_DEFAULT);
+        expect(listQueryOf({ size: 'много' }, SORTABLE).size).toBe(PAGE_SIZE_DEFAULT);
     });
 
     it('поле порядка не из набора заменяется умолчанием раздела', () => {

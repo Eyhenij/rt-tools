@@ -41,6 +41,7 @@
     <rt-pagination
         [loading]="loading()"
         [pageModel]="pageModel()"
+        [perPageOptions]="pageSizes"
         (pageChange)="pageChange.emit($event)"
         (perPageChange)="sizeChange.emit($event)" />
 </ng-container>

@@ -55,6 +55,9 @@
       "continuous": true,
       "executor": "@angular/build:dev-server",
       "defaultConfiguration": "development",
+      "options": {
+        "proxyConfig": "apps/message-bus-admin/proxy.conf.json"
+      },
       "configurations": {
         "production": {
           "buildTarget": "message-bus-admin:build:production"

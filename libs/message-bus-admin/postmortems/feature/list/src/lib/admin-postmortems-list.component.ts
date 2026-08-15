@@ -10,7 +10,6 @@ import {
     CdkRowDef,
 } from '@angular/cdk/table';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 import { AdminListScreenBase } from '@rt/message-bus-admin/common/core/feature';
 import { AdminListPageComponent, AdminMomentPipe } from '@rt/message-bus-admin/common/core/ui';
 import { adminLabel } from '@rt/message-bus-admin/common/core/util';
@@ -23,8 +22,8 @@ const BEM_BLOCK: string = 'admin-postmortems-list';
 /**
  * Раздел разборов происшествий.
  *
- * Аутлет панели подробностей стоит здесь: панель — ребёнок этого маршрута, и открывается она
- * нажатием на строку. Рисует её при этом правая шторка оболочки — панель находит её сама.
+ * Панель подробностей открывается нажатием на строку и живёт своим маршрутом в аутлете `ro` —
+ * объявленном у оболочки, а не здесь: рисует её правая шторка каркаса.
  *
  * Своего у экрана трое: стор раздела, его столбцы и его поля порядка. Всё остальное —
  * общее: выборку из адреса, чтение, порядок, отбор, пустоту и уход в панель держит основа
@@ -50,7 +49,6 @@ const BEM_BLOCK: string = 'admin-postmortems-list';
         CdkHeaderRowDef,
         CdkRow,
         CdkRowDef,
-        RouterOutlet,
 
         // components
         AdminListPageComponent,

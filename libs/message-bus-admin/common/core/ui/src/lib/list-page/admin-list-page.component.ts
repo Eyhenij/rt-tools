@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input, InputSignal, output, OutputEmitterRef, Signal } from '@angular/core';
-import { adminLabel, EReadFault, IReadFault } from '@rt/message-bus-admin/common/core/util';
+import { adminLabel, EReadFault, IReadFault, LIST_PAGE_SIZES } from '@rt/message-bus-admin/common/core/util';
 import { ITreeChoice } from '@rt/message-bus-common';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { IPageModel } from '@rt-tools/utils';
@@ -56,6 +56,15 @@ const BEM_BLOCK: string = 'admin-page';
 export class AdminListPageComponent {
     protected readonly refreshLabel: string = adminLabel('listRefresh');
     protected readonly retryLabel: string = adminLabel('listRetry');
+
+    /**
+     * Размеры страницы, которые предлагает переключатель.
+     *
+     * Тот же набор, что признаёт разбор адреса: переключатель прячет себя, когда записей меньше
+     * самого малого из предложенных, и разошедшиеся наборы дали бы вторую страницу без
+     * переключателя.
+     */
+    protected readonly pageSizes: readonly number[] = LIST_PAGE_SIZES;
 
     /** Что сказать про отказ. Род `Session` — не поломка чтения, и текст у него свой. */
     protected readonly faultText: Signal<string> = computed(() => {

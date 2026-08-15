@@ -3,6 +3,7 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessC
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { sessionExpiredInterceptor } from '@rt/message-bus-admin/auth/shell';
 import { ADMIN_LOCALE, rtKitLabelsRu } from '@rt/message-bus-admin/common/core/util';
+import { provideRtIDBStorage, provideRtStorage, provideRtUtils } from '@rt-tools/core';
 import { provideRtIcons, provideRtKitLabels, RtKitTranslator } from '@rt-tools/ui-kit-v2';
 
 import { appRoutes } from './app.routes';
@@ -20,6 +21,11 @@ import { appRoutes } from './app.routes';
  * Перехватчик кончившегося входа стоит на всех обращениях сразу: вход обрывается посреди
  * работы, и узнаёт об этом то обращение, которое в этот момент ушло, — а не гвард, который
  * отвечает на переход.
+ *
+ * Основание кита — признак среды, пороги ширины и оба хранилища — ставится здесь целиком.
+ * Просят его сами компоненты кита: таблица держит выбор столбцов в базе браузера, а реестр
+ * значков и тема спрашивают среду. Без этих провайдеров экран поднимается заголовком и
+ * обрывается на первом же из них; сборка молчит — инжектор собирается в браузере.
  */
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -27,6 +33,9 @@ export const appConfig: ApplicationConfig = {
         provideZonelessChangeDetection(),
         provideRouter(appRoutes, withComponentInputBinding()),
         provideHttpClient(withFetch(), withInterceptors([sessionExpiredInterceptor])),
+        provideRtUtils(),
+        provideRtStorage(),
+        provideRtIDBStorage(),
         provideRtIcons('/icons'),
         provideRtKitLabels({ translator: signal<RtKitTranslator>(rtKitLabelsRu), locale: signal<string>(ADMIN_LOCALE) }),
     ],
