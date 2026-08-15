@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.8.1 · hooks/task-flow-guard.sh · 9b3382774631 · правится надстройкой, не здесь
+# rt-kit v0.8.1 · hooks/task-flow-guard.sh · b1df80704a13 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit
 # Требует: hooks/profile-check.sh
 # PreToolUse guard for Edit|Write|MultiEdit: код не пишется раньше замысла.
@@ -25,22 +25,8 @@ input="$(cat 2>/dev/null)"
 [ -z "$input" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0
 
-tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
-case "$tool" in
-    # Инструмент редактора заводит файл теми же двумя данными, только называет их иначе —
-    # без этой ветки правка шла бы мимо гарда сменой инструмента.
-    Edit | Write | MultiEdit | mcp__webstorm__create_new_file) ;;
-    *) exit 0 ;;
-esac
-
-path="$(printf '%s' "$input" | jq -r '.tool_input.file_path // .tool_input.pathInProject // empty' 2>/dev/null)"
-[ -z "$path" ] && exit 0
-case "$path" in
-    /*) ;;
-    ?*) path="${CLAUDE_PROJECT_DIR:-.}/$path" ;;
-esac
-
 # Профиль дерева: сперва умолчание пакета, поверх него — надстройка проекта, если она есть.
+# Читается до разбора пути: пути из команды оболочки вынимает как раз профиль.
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"; do
     # shellcheck disable=SC1090
@@ -53,12 +39,52 @@ done
 [ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
 command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
 
+tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+candidates=""
+case "$tool" in
+    # Инструмент редактора заводит файл теми же двумя данными, только называет их иначе —
+    # без этой ветки правка шла бы мимо гарда сменой инструмента.
+    Edit | Write | MultiEdit | mcp__webstorm__create_new_file)
+        candidates="$(printf '%s' "$input" | jq -r '.tool_input.file_path // .tool_input.pathInProject // empty' 2>/dev/null)"
+        ;;
+    # Второй ярус: та же правка, положенная командой оболочки. Без него отказ гарда обходится
+    # сменой не инструмента, а способа записи — перенаправлением, `sed -i`, интерпретатором с
+    # heredoc. Разбор — `2026-08-15-guard-denied-shell-wrote-anyway.md`.
+    Bash)
+        cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
+        [ -z "$cmd" ] && exit 0
+        rt_needs rt_shell_writes task-flow-guard || exit 0
+        rt_needs rt_shell_paths task-flow-guard || exit 0
+        rt_shell_writes "$cmd" || exit 0
+        candidates="$(rt_shell_paths "$cmd")"
+        ;;
+    *) exit 0 ;;
+esac
+[ -z "$candidates" ] && exit 0
+
 # Признак «правка меняет поведение» — путь, а не оценка на глаз: оценку назначает тот, кому
 # она мешает, и порог плывёт. Где живёт код приложения, знает профиль: правила, тексты, обвязка
 # и зависимости под требование не попадают — иначе разбор задачи нельзя было бы вести до
 # заведения ветки.
 rt_needs rt_is_app_code task-flow-guard || exit 0
-rt_is_app_code "$path" || exit 0
+
+# Судится каждый названный путь: команда пишет столько файлов, сколько в ней стоит, и одного
+# под требованием довольно, чтобы отбить её целиком.
+path=""
+while IFS= read -r candidate; do
+    [ -z "$candidate" ] && continue
+    case "$candidate" in
+        /*) ;;
+        *) candidate="${CLAUDE_PROJECT_DIR:-.}/$candidate" ;;
+    esac
+    if rt_is_app_code "$candidate"; then
+        path="$candidate"
+        break
+    fi
+done <<EOF
+$candidates
+EOF
+[ -z "$path" ] && exit 0
 
 # Каталог папок задач: у дерева он свой, но имя обычно общее.
 tasks_dir="${RT_TASKS_DIR:-docs/tasks}"
