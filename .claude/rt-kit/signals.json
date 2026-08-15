@@ -4,8 +4,10 @@
         {
             "key": "foreign-runner",
             "ext": ".ts",
+            "onlyNamed": "^projects/",
             "find": "from '(vitest|@vitest)",
-            "instead": "describe/it/expect из @types/jest — прогонщик здесь один"
+            "instead": "describe/it/expect из @types/jest — в публикуемых пакетах прогонщик Jest",
+            "why": "Прогонщик здесь не один: пакеты под projects/ гоняются Jest, либы приёмника под libs/ — Vitest, и у них свой vitest.config.mts на каждый слой. Без области признак отбивал бы у приёмника ровно тот импорт, которого требует его собственный паттерн спек."
         },
         {
             "key": "relative-package",

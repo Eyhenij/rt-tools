@@ -5,10 +5,12 @@
  * идёт индексом. Перебор со сверкой в коде стоил бы прохода по всем деревьям на каждом приёме.
  *
  * Записи здесь делают команды строки запуска: заведение и отзыв токена операцией запроса не
- * делаются — токен дерева зовёт только приём груза.
+ * делаются — токен дерева зовёт только приём груза. Операцией запроса читается одно: список
+ * деревьев для отбора в админке, и открыт он входом человека, а не токеном.
  */
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IRequestTree, ITreeSummaryRow } from '@rt/message-bus-api/trees/util';
+import { ITreeChoice } from '@rt/message-bus-common';
 
 /** Дерево, которое команда заводит: имя, признак и хеш первого токена. */
 export interface INewTree {
@@ -128,4 +130,17 @@ export async function listTrees(prisma: PrismaService): Promise<ITreeSummaryRow[
 
         return { slug: tree.slug, name: tree.name, tokenLive: withLiveToken.has(tree.id), ranAt: last?.ranAt ?? null };
     });
+}
+
+/**
+ * Деревья для отбора: признак и имя каждого.
+ *
+ * Страницами не приезжает: деревьев у приёмника единицы, а отбор — это один список выбора, и
+ * страница внутри него означала бы, что своё дерево ищут перебором.
+ *
+ * Отозванный токен из списка не убирает: груз, приехавший по нему, читается по-прежнему, и
+ * дерево, пропавшее из отбора вместе с токеном, выглядело бы потерянным грузом.
+ */
+export async function listTreeChoices(prisma: PrismaService): Promise<ITreeChoice[]> {
+    return prisma.tree.findMany({ select: { slug: true, name: true }, orderBy: { name: 'asc' } });
 }

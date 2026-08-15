@@ -12,6 +12,7 @@ import { BadRequestException, Body, Controller, HttpStatus, Post, Req, Res } fro
 
 import { ensureMonthRecord, IMonthRecordWritten } from '@rt/message-bus-api/observations/data-access';
 import { IIntakeAccepted } from '@rt-tools/agent-kit/cargo';
+import { TreeOperation } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IPostmortemRow, writePostmortems } from '@rt/message-bus-api/postmortems/data-access';
 import { POSTMORTEM_ITEM_FIELDS, POSTMORTEMS_FIELDS } from '@rt/message-bus-api/postmortems/util';
@@ -46,6 +47,7 @@ export class PostmortemsIntakeController {
     }
 
     @Post('postmortems')
+    @TreeOperation()
     public async accept(
         @Body() body: unknown,
         @Req() request: ITreeBearingRequest,
