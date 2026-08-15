@@ -109,14 +109,14 @@ report "карта: вызов после разделителя" "$(skill_for b
 report "карта: заведение ветки" "$(skill_for bash 'git checkout -b RT-9-x' '')" git-workflow
 report "карта: заведение ветки вторым именем команды" "$(skill_for bash 'git switch -c RT-9-x' '')" git-workflow
 report "карта: заведение задачи" "$(skill_for bash 'npm run task:new -- --title x' '')" git-workflow
-report "карта: заведение отчёта" "$(skill_for bash 'gh pr create --fill' '')" git-workflow
-# Правка тела отчёта ловится двумя признаками сразу: одного слова о заявке мало — оно попадает в
+report "карта: заведение PR" "$(skill_for bash 'gh pr create --fill' '')" git-workflow
+# Правка тела PR ловится двумя признаками сразу: одного слова о заявке мало — оно попадает в
 # строку любой команды, которая о ней пишет.
-report "карта: правка тела отчёта" "$(skill_for bash 'gh api -X PATCH repos/o/r/pulls/12 -f body=x' '')" git-workflow
-report "карта: чтение отчёта тем же клиентом" "$(skill_for bash 'gh api repos/o/r/pulls/12' '')" ''
-# Слияние отчёта требует два правила: поставку и разбор папки задачи — она разбирается тем же
-# отчётом, потому что после слияния отвечать за неё уже некому.
-report "SC-AK-110 — слияние отчёта тянет и ведение работы" \
+report "карта: правка тела PR" "$(skill_for bash 'gh api -X PATCH repos/o/r/pulls/12 -f body=x' '')" git-workflow
+report "карта: чтение PR тем же клиентом" "$(skill_for bash 'gh api repos/o/r/pulls/12' '')" ''
+# Слияние PR требует два правила: поставку и разбор папки задачи — она разбирается тем же
+# PR, потому что после слияния отвечать за неё уже некому.
+report "SC-AK-110 — слияние PR тянет и ведение работы" \
     "$(skill_for bash 'gh pr merge 12 --merge' '' | tr '\n' ' ')" 'git-workflow task-flow '
 # Образы и реестр уносят чужое безвозвратно; команды чтения остаются вне гейта — ими нехватку
 # места и разбирают.

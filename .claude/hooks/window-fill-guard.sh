@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.8.1 · hooks/window-fill-guard.sh · 37876366dac2 · правится надстройкой, не здесь
+# rt-kit v0.8.1 · hooks/window-fill-guard.sh · d16ed5716d13 · правится надстройкой, не здесь
 # rt-hook: PostToolUse .*
 # Требует: hooks/profile-check.sh
 # rt-hook: PreToolUse .*
@@ -132,7 +132,7 @@ case "$tool" in
         esac
         ;;
     Bash | mcp__webstorm__execute_terminal_command)
-        # Поставка и сверки: коммит, пуш, отчёт, колонка задачи, состояние дерева. Список
+        # Поставка и сверки: коммит, пуш, PR, колонка задачи, состояние дерева. Список
         # дописывается профилем дерева — клиент хостинга и имена команд у каждого свои.
         if rt_needs rt_handoff_allowed_cmd window-fill-guard && rt_handoff_allowed_cmd "$cmd"; then
             allowed=1

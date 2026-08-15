@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.8.1 · checks/board.github.mjs · 3514ab03d58d · правится надстройкой, не здесь
+// rt-kit v0.8.1 · checks/board.github.mjs · 260b294e4a2c · правится надстройкой, не здесь
 /**
  * Общая работа с очередью работ: борда проекта, тикеты и их состояние.
  *
@@ -46,7 +46,7 @@ export const STATUS_FIELD_ID = BOARD.statusFieldId ?? '';
 export const STATUS_OPTIONS = BOARD.statusOptions ?? {};
 /** Колонка вновь заведённой задачи */
 export const BACKLOG_OPTION_ID = STATUS_OPTIONS.backlog?.id ?? '';
-/** Колонка задачи, взятой в работу, и задачи, отчёт по которой ждёт разбора */
+/** Колонка задачи, взятой в работу, и задачи, PR по которой ждёт разбора */
 export const IN_PROGRESS_STATUS = 'in-progress';
 export const IN_REVIEW_STATUS = 'in-review';
 /** Учётная запись машинной работы — та же, от которой идут коммиты */
@@ -171,7 +171,7 @@ export function fetchBoard(options) {
 
 /**
  * Перевод задачи в другую колонку. Состояние задачи на борде — единственное, по чему
- * видно ход работы: ветку и открытый отчёт борда сама не читает.
+ * видно ход работы: ветку и открытый PR борда сама не читает.
  */
 export function moveTask(number, status, options) {
     const option = STATUS_OPTIONS[status];
