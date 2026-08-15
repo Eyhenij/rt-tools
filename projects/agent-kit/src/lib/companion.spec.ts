@@ -5,7 +5,8 @@
  * переписанный руками он расходится с правилом молча, а проверка спеков видит это как «правило
  * обещает то, чего в дереве нет».
  */
-import { COMPANION_MARK, debtLine, draftOf, IUnaddressed, unaddressedOf } from './companion.js';
+import { IAsset } from './assets.js';
+import { COMPANION_MARK, debtLine, draftOf, IUnaddressed, planCompanion, unaddressedOf } from './companion.js';
 
 const TEMPLATE: string = [
     '# <имя-правила> — что здесь своё',
@@ -108,5 +109,24 @@ describe('добавленный долг', (): void => {
 
         expect(line).toContain('статей без адреса: 2 в 1 компаньонах');
         expect(line).toContain('без компаньона вовсе');
+    });
+});
+
+describe('planCompanion', (): void => {
+    const asset: (id: string) => IAsset = (id: string): IAsset => ({
+        id,
+        kind: 'rules',
+        name: id.replace(/^rules\//, '').replace(/\..*$/, ''),
+        text: RULE,
+        target: `.claude/skills/${id.replace(/^rules\//, '').replace(/\..*$/, '')}/SKILL.md`,
+        executable: false,
+    });
+
+    it('SC-AK-177 — компаньон правила несёт требуемое им свойство', (): void => {
+        expect(planCompanion(asset('rules/observability.needs-app.md'), null, TEMPLATE).needs).toBe('app');
+    });
+
+    it('SC-AK-177 — у правила без требования свойства нет', (): void => {
+        expect(planCompanion(asset('rules/doc-style.md'), null, TEMPLATE).needs).toBeNull();
     });
 });
