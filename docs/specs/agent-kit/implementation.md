@@ -92,6 +92,7 @@
 | Отправленное предложение помечается принявшим его месяцем и второй раз не уезжает.                           | `projects/agent-kit/src/lib/proposals.ts:markSent`                            |
 | Адрес приёма читается из настройки дерева.                                                                   | `projects/agent-kit/src/lib/config.ts:intake`                                 |
 | Наружу не уходит ничего, чего не отправил человек командой.                                                  | `projects/agent-kit/src/lib/shipment.ts:propose`                              |
+| Незнакомый довод отправку кончает, а не пропускается молча.                                                  | `projects/agent-kit/src/lib/argv.ts:unknownFlagsIn`                           |
 | Сведение отделяет пришедшее из нескольких деревьев от пришедшего из одного.                                  | `projects/agent-kit/assets/commands/agent-kit-digest.md:overrides`            |
 | Выпуск версии остаётся отдельным решением владельца.                                                         | `projects/agent-kit/assets/commands/agent-kit-digest.md:ARGUMENTS`            |
 | Главная ветка влита в ветку задачи до открытия отчёта.                                                       | `projects/agent-kit/assets/rules/git-workflow.github.md:git-workflow`         |
