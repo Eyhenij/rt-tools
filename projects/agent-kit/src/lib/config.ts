@@ -79,6 +79,12 @@ export interface IConfig {
      */
     readonly variants: Readonly<Record<string, string>>;
     /**
+     * Что у дерева есть: `["packages", "app"]`. Свойства объявлены пакетом в `assets/traits.json`,
+     * а ресурс, требующий свойства именем файла, дереву без него не кладётся вовсе — ни сам, ни
+     * черновик его компаньона. Пусто — дерево о себе ничего не сказало, и помеченного не получает.
+     */
+    readonly has: readonly string[];
+    /**
      * Пишут ли гарды наблюдения о слое правил. Умолчание — да; выключает дерево, и целиком, а
      * не частями. Ключ читают двое: сводка — отсюда, гард — тем же именем прямо из файла, потому
      * что разборщика конфига у него нет.
@@ -229,6 +235,7 @@ export function parseConfig(text: string): IConfig {
         only,
         skip,
         variants: stringMap(raw['variants'], 'variants'),
+        has: idList(raw['has'], 'has'),
         // Выключателем считается только явное «нет»: ключа нет — запись идёт, как и у гарда.
         observe: raw['observe'] !== false,
         intake: textOf(raw['intake'], 'intake'),

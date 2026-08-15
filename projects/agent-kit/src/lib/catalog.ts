@@ -9,6 +9,7 @@ import { accessSync, constants, Dirent, readdirSync, readFileSync } from 'node:f
 import { join } from 'node:path';
 
 import { KINDS, TKind } from './config.js';
+import { answersRequirement, requirementOf, withoutRequirement } from './traits.js';
 import { IAxis, IVariant, matchesVariant, readAxes, variantOf, withoutVariant } from './variants.js';
 
 export interface IEntryOfCatalog {
@@ -24,6 +25,14 @@ export interface IEntryOfCatalog {
     readonly title: string;
     /** Вид ресурса, если он лежит в пакете в нескольких: `git-workflow.github.md`. */
     readonly variant: IVariant | null;
+    /**
+     * Свойство дерева, без которого этот ресурс дереву не нужен: `observability.needs-db.md`.
+     *
+     * От вида отличается вопросом. Вид спрашивает «какой из трёх» и выбирается один; требование
+     * спрашивает «есть ли», и у дерева таких свойств сразу несколько. Ресурс без требования —
+     * `null`: он верен всякому дереву.
+     */
+    readonly needs: string | null;
     readonly text: string;
     /**
      * Запускается ли файл сам по себе. Гард зовут по пути, а не через оболочку, и файл без
@@ -164,7 +173,8 @@ export function readCatalog(assetsDir: string): readonly IEntryOfCatalog[] {
             const path: string = join(assetsDir, kind, file);
             const text: string = readFileSync(path, 'utf8');
             const variant: IVariant | null = variantOf(file, axes);
-            const name: string = withoutVariant(file, variant).replace(/\.[^./]+$/, '');
+            const needs: string | null = requirementOf(withoutVariant(file, variant));
+            const name: string = withoutRequirement(withoutVariant(file, variant), needs).replace(/\.[^./]+$/, '');
             const executable: boolean = isExecutable(path);
             entries.push({
                 id: `${kind}/${file}`,
@@ -173,6 +183,7 @@ export function readCatalog(assetsDir: string): readonly IEntryOfCatalog[] {
                 title: titleOf(text, name),
                 variant,
                 text,
+                needs,
                 executable,
                 requires: requiresOf(text),
             });
@@ -182,11 +193,16 @@ export function readCatalog(assetsDir: string): readonly IEntryOfCatalog[] {
     return entries;
 }
 
-/** Чем проект ограничил раскладку: выбором, отказом и видами, которые он назвал. */
+/** Чем проект ограничил раскладку: выбором, отказом, видами и свойствами, которые он назвал. */
 export interface ISelection {
     readonly only: readonly string[];
     readonly skip: readonly string[];
     readonly variants: Readonly<Record<string, string>>;
+    /**
+     * Свойства дерева: что у него есть. Пусто и не названо вовсе — одно и то же: дерево о себе
+     * ничего не сказало и помеченного требованием не получает.
+     */
+    readonly has?: readonly string[];
 }
 
 /**
@@ -202,6 +218,10 @@ export interface ISelection {
  *
  * Вид отбирается раньше обоих: ресурс чужого хостинга не «не выбран» — его в этом дереве не
  * существует вовсе, и называть его в `skip` проекту незачем.
+ *
+ * Требование к свойству дерева слабее выбора поимённо: дерево, назвавшее ресурс словом, знает
+ * про своё дерево больше, чем пакет выводит по признаку. Молчаливым такое исключение не
+ * остаётся — неотвеченное требование называет перечень раскладки.
  */
 export function isChosen(entry: IEntryOfCatalog, selection: ISelection): boolean {
     if (!matchesVariant(entry.variant, selection.variants)) {
@@ -211,8 +231,11 @@ export function isChosen(entry: IEntryOfCatalog, selection: ISelection): boolean
         return false;
     }
     const restricted: boolean = selection.only.some((id: string): boolean => id.startsWith(`${entry.kind}/`));
+    if (restricted) {
+        return selection.only.includes(entry.id);
+    }
 
-    return !restricted || selection.only.includes(entry.id);
+    return answersRequirement(entry.needs, selection.has ?? []);
 }
 
 /** Ресурс, у которого виды есть, но ни один не отвечает тому, что выбрало дерево. */

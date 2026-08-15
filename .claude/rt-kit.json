@@ -10,6 +10,7 @@
   "variants": {
     "host": "github"
   },
+  "has": ["packages", "app"],
   "skip": [
     "hooks/commit-msg.sh",
     "hooks/dev-server-guard.sh",
