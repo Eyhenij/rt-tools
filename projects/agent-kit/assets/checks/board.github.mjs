@@ -45,7 +45,7 @@ export const STATUS_FIELD_ID = BOARD.statusFieldId ?? '';
 export const STATUS_OPTIONS = BOARD.statusOptions ?? {};
 /** Колонка вновь заведённой задачи */
 export const BACKLOG_OPTION_ID = STATUS_OPTIONS.backlog?.id ?? '';
-/** Колонка задачи, взятой в работу, и задачи, отчёт по которой ждёт разбора */
+/** Колонка задачи, взятой в работу, и задачи, PR по которой ждёт разбора */
 export const IN_PROGRESS_STATUS = 'in-progress';
 export const IN_REVIEW_STATUS = 'in-review';
 /** Учётная запись машинной работы — та же, от которой идут коммиты */
@@ -170,7 +170,7 @@ export function fetchBoard(options) {
 
 /**
  * Перевод задачи в другую колонку. Состояние задачи на борде — единственное, по чему
- * видно ход работы: ветку и открытый отчёт борда сама не читает.
+ * видно ход работы: ветку и открытый PR борда сама не читает.
  */
 export function moveTask(number, status, options) {
     const option = STATUS_OPTIONS[status];
