@@ -101,7 +101,7 @@ export class TestRtPageHeaderMatrixComponent {
     public readonly flatItems: ReadonlyArray<IRtPageHeader.Item> = [
         { id: 'tours', label: 'Туры', route: '/tours' },
         { id: 'orders', label: 'Заявки', route: '/orders', unread: true },
-        { id: 'reports', label: 'Отчёт', route: '/reports', disabled: true },
+        { id: 'reports', label: 'Отчёты', route: '/reports', disabled: true },
     ];
 
     /** Раздел с панелью второго уровня: ему некуда вести, он раскрывает панель. */
@@ -141,7 +141,7 @@ export class TestRtPageHeaderMatrixComponent {
                 },
             ],
         },
-        { id: 'reports', label: 'Отчёт', route: '/reports' },
+        { id: 'reports', label: 'Отчёты', route: '/reports' },
     ];
 
     public readonly itemsCases: readonly IPageHeaderItemsCase[] = [
