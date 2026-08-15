@@ -33,6 +33,57 @@ skill_for() {
                     printf '%s\n' 'testing'
                     return 0
                     ;;
+                # Гвард доступа приёмника: отбивку без входа и без права держит он, и правило
+                # доступа привязано сюда. Ветка стоит до общей серверной.
+                */libs/message-bus-api/access/*)
+                    printf '%s\n' 'permissions'
+                    return 0
+                    ;;
+
+                # Админка. Её либы лежат в семье `libs/message-bus-admin`, и общая серверная
+                # ветка ниже забирала бы их себе: имена начинаются одинаково. Частное — раньше.
+
+                # Гвард маршрута админки: он и есть здешняя отбивка без входа.
+                */libs/message-bus-admin/*.guard.ts)
+                    printf '%s\n' 'permissions'
+                    printf '%s\n' 'angular-patterns'
+                    return 0
+                    ;;
+
+                # Остальной вход записями не заведует: ни панели правки, ни модели сущности у
+                # него нет, и правила сущности требовать на нём нечего. Ветка уводит его в
+                # умолчание раньше, чем до него доберутся ветки сторов и моделей.
+                */libs/message-bus-admin/auth/*)
+                    command -v skill_for_default >/dev/null 2>&1 && skill_for_default "$kind" "$target" "$written"
+                    return 0
+                    ;;
+
+                # Списочный экран раздела.
+                */libs/message-bus-admin/*/feature/list/*)
+                    printf '%s\n' 'lists'
+                    return 0
+                    ;;
+
+                # Меню, оболочка и адреса разделов: пункт меню и маршрут заводятся одной
+                # декларацией, и правит их обоих одно правило.
+                */libs/message-bus-admin/common/container/* | */libs/message-bus-admin/*.routes.ts | */apps/message-bus-admin/src/app/app.routes.ts)
+                    printf '%s\n' 'navigation'
+                    return 0
+                    ;;
+
+                # Стор сущности и панель её правки.
+                */libs/message-bus-admin/*.store.ts | */libs/message-bus-admin/*/feature/*-aside/*)
+                    printf '%s\n' 'entity-conventions'
+                    printf '%s\n' 'angular-patterns'
+                    return 0
+                    ;;
+
+                # Модель записи и её маппер — что запрашивается на экране и чем переводится.
+                */libs/message-bus-admin/*.model.ts | */libs/message-bus-admin/*.mapper.ts | */libs/message-bus-common/*.model.ts | */libs/message-bus-common/*.mapper.ts)
+                    printf '%s\n' 'entity-models'
+                    return 0
+                    ;;
+
                 */apps/message-bus/* | */libs/message-bus*/*)
                     printf '%s\n' 'typescript-conventions'
                     return 0
