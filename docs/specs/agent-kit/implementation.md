@@ -21,7 +21,7 @@
 | Ветка, разобравшая папку, добавляет запись в каталог архива.                                                 | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:gained`                |
 | На открытии PR папка ещё нужна, поэтому там только напоминание.                                              | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:hint`                  |
 | Обход требования пишут с причиной, и он читается без сети.                                                   | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:folder_skip_re`        |
-| Открытый отчёт, чья ветка везёт папку своей задачи, — расхождение сверки.                                    | `projects/agent-kit/assets/checks/check-board.github.mjs:folderInBranch`      |
+| Открытый PR, чья ветка везёт папку своей задачи, — расхождение сверки.                                       | `projects/agent-kit/assets/checks/check-board.github.mjs:folderInBranch`      |
 | Строка обхода начинает строку и подстановки не принимает.                                                    | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:folder_skip_re`        |
 | Обход снимает отказ, но не убирает строку из сверки.                                                         | `projects/agent-kit/assets/checks/check-board.github.mjs:taskDirs`            |
 | Папку ищут по имени ветки целиком, вместе с косой.                                                           | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:folder_in_branch`      |
@@ -56,7 +56,7 @@
 | Компаньон правила без раздела привязок — отказ, а не молчание.                                               | `projects/agent-kit/assets/checks/check-specs.mjs:rowsOfMap`                  |
 | Заход закрывается одной командой.                                                                            | `projects/agent-kit/assets/commands/next-session.md:ARGUMENTS`                |
 | Команда закрытия захода сперва узнаёт, ведётся ли работа по правилу.                                         | `projects/agent-kit/assets/commands/next-session.md:rt_task_branch_ok`        |
-| У работы по правилу с влитым отчётом дерево переходит на главную ветку и подтягивает удалённую.              | `projects/agent-kit/assets/commands/next-session.md:switch`                   |
+| У работы по правилу с влитым PR дерево переходит на главную ветку и подтягивает удалённую.                   | `projects/agent-kit/assets/commands/next-session.md:switch`                   |
 | Во всех прочих случаях главная ветка вливается в текущую.                                                    | `projects/agent-kit/assets/commands/next-session.md:merge`                    |
 | Незакоммиченная правка останавливает закрытие захода до первого действия.                                    | `projects/agent-kit/assets/commands/next-session.md:status`                   |
 | Снимаются только влитые локальные ветки.                                                                     | `projects/agent-kit/assets/commands/next-session.md:merged`                   |
@@ -78,6 +78,8 @@
 | Ресурс пакета не описывает состояние дерева как факт.                                                        | `projects/agent-kit/assets/rules/spec-driven.md:spec-driven`                  |
 | Признак кода приложения судится относительно корня дерева.                                                   | `projects/agent-kit/assets/defaults/project.sh:rt_is_app_code_default`        |
 | Ход, в котором исполнитель признал промах, не закрывается, пока записи о происшествии нет.                   | `projects/agent-kit/assets/hooks/postmortem-guard.sh:postmortem-guard`        |
+| Ход, в котором владелец сказал завести или отправить предложение, не закрывается, пока отправки не было.     | `projects/agent-kit/assets/hooks/proposal-guard.sh:proposal-guard`            |
+| Просьба о предложении ловится глаголом рядом со словом о слое правил, а не словом самим по себе.             | `projects/agent-kit/assets/hooks/proposal-guard.sh:asked_re`                  |
 | Ход с вопросом владельцу проверяется на инструменте вопроса, а не на завершении хода.                        | `projects/agent-kit/assets/hooks/grill-gate.sh:grill-gate`                    |
 | Заведение рабочего дерева грузит правило поставки.                                                           | `projects/agent-kit/assets/defaults/gate-map.sh:skill_for_default`            |
 | Наблюдение записывается в дерево, а не во временный каталог.                                                 | `projects/agent-kit/src/lib/observations.ts:OBSERVATIONS_DIR`                 |
@@ -97,8 +99,8 @@
 | Незнакомый довод отправку кончает, а не пропускается молча.                                                  | `projects/agent-kit/src/lib/argv.ts:unknownFlagsIn`                           |
 | Сведение отделяет пришедшее из нескольких деревьев от пришедшего из одного.                                  | `projects/agent-kit/assets/commands/agent-kit-digest.md:overrides`            |
 | Выпуск версии остаётся отдельным решением владельца.                                                         | `projects/agent-kit/assets/commands/agent-kit-digest.md:ARGUMENTS`            |
-| Главная ветка влита в ветку задачи до открытия отчёта.                                                       | `projects/agent-kit/assets/rules/git-workflow.github.md:git-workflow`         |
-| Открытие отчёта отбивается, пока главная ветка не влита.                                                     | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:behind`                |
+| Главная ветка влита в ветку задачи до открытия PR.                                                           | `projects/agent-kit/assets/rules/git-workflow.github.md:git-workflow`         |
+| Открытие PR отбивается, пока главная ветка не влита.                                                         | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:behind`                |
 | Пакет не пишет в файлы, принадлежащие дереву.                                                                | `projects/agent-kit/README.md:observations`                                   |
 | Слои поверх доменного правила объявляются своим файлом, а не строками в гейте.                               | `projects/agent-kit/assets/hooks/skill-gate-layers.sh:rt_layer_add`           |
 | Слой требует правило дополнительно, а не вместо доменного.                                                   | `projects/agent-kit/assets/hooks/skill-gate.sh:want`                          |

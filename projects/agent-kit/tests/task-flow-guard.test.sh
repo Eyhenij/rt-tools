@@ -51,7 +51,7 @@ printf '# Замысел\n\n**Драфт:** `docs/specs/x/proposed/y/`\n' > "$TA
 t "договорённость названа и лежит" "$CODE" PASS
 
 # Влитая договорённость с диска уходит, а замысел на неё ссылается до конца работы: без этой
-# развилки последний коммит отчёта запирал бы ветку — ни правки по замечаниям разбора, ни
+# развилки последний коммит PR запирал бы ветку — ни правки по замечаниям разбора, ни
 # записи в журнал изменений после вливания. Влитое от незаведённого отличает история ветки.
 fixture_commit "$REPO" 'docs/specs/x/proposed/merged/spec.md' '# Договорённость' 'docs: договорённость'
 printf '# Замысел\n\n**Драфт:** `docs/specs/x/proposed/merged/`\n' > "$TASK/plan.md"
@@ -71,6 +71,41 @@ expect_reason "и отбивается именно за имя ветки" task
 git -C "$REPO" checkout -q -b fix/2-probe 2>/dev/null
 expect_reason "имя ветки принято — спрос идёт про замысел" task-flow-guard.sh "$(edit_in "$CODE")" 'нет замысла'
 git -C "$REPO" checkout -q RT-1-probe 2>/dev/null
+
+# --- вторая дверь: та же правка командой оболочки ------------------------------------------
+# Гард, подписанный на инструмент правки, обходится сменой способа записи. Отбитая правка
+# дважды за один заход легла командой — разбор `2026-08-15-guard-denied-shell-wrote-anyway.md`.
+rm -f "$TASK/plan.md"
+
+bash_in() {
+    jq -n --arg c "$1" --arg d "$REPO" \
+        '{session_id:"tests",tool_name:"Bash",tool_input:{command:$c},cwd:$d}'
+}
+b() { expect_decision "$1" task-flow-guard.sh "$(bash_in "$2")" "$3"; }
+
+b "перенаправление в код отбивается" "echo x > libs/site/x/ui/src/lib/a.component.ts" deny
+b "дописывание в код отбивается" "echo x >> libs/site/x/ui/src/lib/a.component.ts" deny
+b "правка на месте отбивается" "sed -i '' 's/a/b/' libs/site/x/ui/src/lib/a.component.ts" deny
+b "запись через tee отбивается" "cat f | tee libs/site/x/ui/src/lib/a.component.ts" deny
+b "интерпретатор с путём в heredoc отбивается" \
+    "python3 - <<'PY'
+import pathlib
+pathlib.Path('libs/site/x/ui/src/lib/a.component.ts').write_text('x')
+PY" deny
+b "копирование поверх кода отбивается" "cp /tmp/a libs/site/x/ui/src/lib/a.component.ts" deny
+b "возврат версии из истории отбивается" "git checkout HEAD -- libs/site/x/ui/src/lib/a.component.ts" deny
+b "абсолютный путь отбивается" "echo x > $CODE" deny
+
+# Чтение и поиск не отбиваются: гард судит запись, а не всякое упоминание пути.
+b "чтение кода пропускается" "cat libs/site/x/ui/src/lib/a.component.ts" PASS
+b "поиск по коду пропускается" "grep -rn xyz libs/site/x/ui/src/lib/" PASS
+# Текст под требование не подпадает — ни инструментом, ни командой.
+b "запись в текст проекта пропускается" "echo x > docs/adr/0001-x.md" PASS
+
+# Замысел на месте — обе двери открыты одинаково.
+printf '# Замысел\n\n**Поведение:** не меняется — переезд слоя. Подтверждено владельцем.\n' > "$TASK/plan.md"
+b "с замыслом команда оболочки пропускается" "echo x > libs/site/x/ui/src/lib/a.component.ts" PASS
+t "с замыслом инструмент правки пропускается" "$CODE" PASS
 
 # --- отказ в пользу работы ----------------------------------------------------------------
 # Сломанный гард не должен мешать работать: любой неразобранный вход пропускается.
