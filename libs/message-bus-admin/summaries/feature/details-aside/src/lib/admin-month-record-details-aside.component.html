@@ -1,0 +1,23 @@
+<ng-container rtContainerRightSidenavPanel #panel="rtContainerRightPanel" (cancelled)="onCancel()" (closed)="onClosed()" />
+
+<rt-aside [ariaLabel]="title">
+    <rt-aside-header [loading]="reading()" [overline]="overline()" [title]="title" (dismiss)="onClose()" />
+
+    @if (record(); as entity) {
+        <admin-month-record-view [entity]="entity" />
+    } @else if (missingText(); as reason) {
+        <rt-empty-state qa-dataid="month-record-details-missing" icon="ico-warning" [title]="reason" />
+    }
+
+    <rt-aside-footer>
+        <button
+            rtButton
+            asideDismiss
+            qa-dataid="month-record-details-close"
+            type="button"
+            appearance="text"
+            [attr.aria-label]="closeLabel"
+            [label]="closeLabel"
+            (click)="onClose()"></button>
+    </rt-aside-footer>
+</rt-aside>

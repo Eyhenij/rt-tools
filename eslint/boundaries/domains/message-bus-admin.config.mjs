@@ -64,6 +64,15 @@ const PROPOSALS_API = 'scope:message-bus-admin-proposals-api';
 const PROPOSALS_DATA_ACCESS = 'scope:message-bus-admin-proposals-data-access';
 const PROPOSALS_UI = 'scope:message-bus-admin-proposals-ui';
 
+/**
+ * Раздел сводок деревьев. Устроен теми же семью слоями и теми же рёбрами, что и два соседних:
+ * своего у него только модели, столбцы и поля панели.
+ */
+const SUMMARIES_UTIL = 'scope:message-bus-admin-summaries-util';
+const SUMMARIES_API = 'scope:message-bus-admin-summaries-api';
+const SUMMARIES_DATA_ACCESS = 'scope:message-bus-admin-summaries-data-access';
+const SUMMARIES_UI = 'scope:message-bus-admin-summaries-ui';
+
 export const messageBusAdminBoundaries = [
     // Приложение видит маршруты домена входа и оболочку. Экраны оно не знает ни одного: их
     // приносит отложенная загрузка по маршруту, объявленному тем, чей это экран.
@@ -78,6 +87,7 @@ export const messageBusAdminBoundaries = [
             'scope:message-bus-admin-common-container-feature',
             'scope:message-bus-admin-postmortems-shell',
             'scope:message-bus-admin-proposals-shell',
+            'scope:message-bus-admin-summaries-shell',
             CORE_UTIL,
             PACKAGE,
         ],
@@ -253,6 +263,52 @@ export const messageBusAdminBoundaries = [
             'scope:message-bus-admin-proposals-feature-list',
             'scope:message-bus-admin-proposals-feature-details-aside',
             PROPOSALS_UTIL,
+            CORE_UTIL,
+            PACKAGE,
+        ],
+    },
+
+    // Раздел сводок деревьев. Лесенка та же и тем же перечислением, что у двух соседних
+    {
+        sourceTag: 'scope:message-bus-admin-summaries-util',
+        onlyDependOnLibsWithTags: [CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-summaries-api',
+        onlyDependOnLibsWithTags: [SUMMARIES_UTIL, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-summaries-data-access',
+        onlyDependOnLibsWithTags: [SUMMARIES_API, SUMMARIES_UTIL, CORE_DATA_ACCESS, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-summaries-ui',
+        onlyDependOnLibsWithTags: [SUMMARIES_UTIL, CORE_UI, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-summaries-feature-list',
+        onlyDependOnLibsWithTags: [
+            SUMMARIES_DATA_ACCESS,
+            SUMMARIES_UI,
+            SUMMARIES_UTIL,
+            CORE_FEATURE,
+            CORE_UI,
+            CORE_DATA_ACCESS,
+            CORE_UTIL,
+            CONTRACT,
+            PACKAGE,
+        ],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-summaries-feature-details-aside',
+        onlyDependOnLibsWithTags: [SUMMARIES_DATA_ACCESS, SUMMARIES_UI, SUMMARIES_UTIL, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-summaries-shell',
+        onlyDependOnLibsWithTags: [
+            'scope:message-bus-admin-summaries-feature-list',
+            'scope:message-bus-admin-summaries-feature-details-aside',
+            SUMMARIES_UTIL,
             CORE_UTIL,
             PACKAGE,
         ],

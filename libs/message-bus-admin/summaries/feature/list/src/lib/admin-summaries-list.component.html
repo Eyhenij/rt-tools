@@ -1,0 +1,53 @@
+<admin-list-page
+    [choices]="choices()"
+    [fault]="fault()"
+    [loading]="loading()"
+    [pageModel]="pageModel()"
+    [title]="title"
+    [tree]="query().tree"
+    (pageChange)="goToPage($event)"
+    (retried)="retry()"
+    (sizeChange)="changeSize($event)"
+    (treeChange)="changeTree($event)">
+    <table
+        #rowsTable="rtTable"
+        rt-table
+        clickable
+        qa-dataid="summaries-table"
+        [ariaLabel]="title"
+        [columnsConfig]="columns"
+        [dataSource]="rows()"
+        [emptyMessage]="emptyMessage()"
+        [loading]="loading()"
+        [sort]="sortModel()"
+        [tableId]="tableId"
+        (sortChange)="changeSort($event)">
+        <ng-container cdkColumnDef="tree">
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="tree">{{ columns[0].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell qa-dataid="summaries-cell-tree">{{ row.tree.name }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="month">
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="month">{{ columns[1].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell qa-dataid="summaries-cell-month">{{ row.month }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="sessions">
+            <th *cdkHeaderCellDef cdk-header-cell>{{ columns[2].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell qa-dataid="summaries-cell-sessions">{{ row.sessions }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="ranAt">
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="ranAt">{{ columns[3].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell qa-dataid="summaries-cell-ran">{{ row.ranAt | adminMoment }}</td>
+        </ng-container>
+
+        <tr *cdkHeaderRowDef="rowsTable.displayedColumns()" cdk-header-row></tr>
+        <tr
+            *cdkRowDef="let row; columns: rowsTable.displayedColumns()"
+            cdk-row
+            qa-dataid="summaries-row"
+            rtTableRow
+            (activated)="openDetails(row.id)"></tr>
+    </table>
+</admin-list-page>

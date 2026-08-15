@@ -52,7 +52,9 @@ export const ADMIN_LABELS = {
     detailsPostmortem: 'Разбор происшествия',
     detailsProposal: 'Предложение',
     detailsText: 'Текст',
+    detailsMonthRecord: 'Запись месяца',
     detailsSummary: 'Сводка',
+    detailsSummaryMissing: 'Сводки в этом месяце ещё не было: запись завёл другой род груза',
 } as const;
 
 /** Ключ подписи админки. Опечатка в шаблоне не доживает до собранного экрана. */

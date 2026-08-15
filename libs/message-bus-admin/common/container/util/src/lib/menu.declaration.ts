@@ -23,4 +23,5 @@ export interface IAdminMenuItem {
 export const ADMIN_MENU: readonly IAdminMenuItem[] = Object.freeze([
     { title: adminLabel('sectionPostmortems'), path: '/postmortems', icon: 'list' } as const,
     { title: adminLabel('sectionProposals'), path: '/proposals', icon: 'comments' } as const,
+    { title: adminLabel('sectionSummaries'), path: '/summaries', icon: 'chart-bar' } as const,
 ]);

@@ -91,7 +91,14 @@
       "@rt/message-bus-admin/proposals/ui": ["./libs/message-bus-admin/proposals/ui/src/index.ts"],
       "@rt/message-bus-admin/proposals/shell": ["./libs/message-bus-admin/proposals/shell/src/index.ts"],
       "@rt/message-bus-admin/proposals/feature/list": ["./libs/message-bus-admin/proposals/feature/list/src/index.ts"],
-      "@rt/message-bus-admin/proposals/feature/details-aside": ["./libs/message-bus-admin/proposals/feature/details-aside/src/index.ts"]
+      "@rt/message-bus-admin/proposals/feature/details-aside": ["./libs/message-bus-admin/proposals/feature/details-aside/src/index.ts"],
+      "@rt/message-bus-admin/summaries/util": ["./libs/message-bus-admin/summaries/util/src/index.ts"],
+      "@rt/message-bus-admin/summaries/api": ["./libs/message-bus-admin/summaries/api/src/index.ts"],
+      "@rt/message-bus-admin/summaries/data-access": ["./libs/message-bus-admin/summaries/data-access/src/index.ts"],
+      "@rt/message-bus-admin/summaries/ui": ["./libs/message-bus-admin/summaries/ui/src/index.ts"],
+      "@rt/message-bus-admin/summaries/shell": ["./libs/message-bus-admin/summaries/shell/src/index.ts"],
+      "@rt/message-bus-admin/summaries/feature/list": ["./libs/message-bus-admin/summaries/feature/list/src/index.ts"],
+      "@rt/message-bus-admin/summaries/feature/details-aside": ["./libs/message-bus-admin/summaries/feature/details-aside/src/index.ts"]
     },
     "noUncheckedSideEffectImports": false,
     "ignoreDeprecations": "6.0"

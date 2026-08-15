@@ -48,4 +48,14 @@
         overflow-wrap: anywhere;
         white-space: pre-wrap;
     }
+
+    /**
+     * То, чего у записи нет: сказано словами и приглушено, чтобы не читаться содержимым.
+     * Пустое место на этом месте человек читает как незагрузившееся.
+     */
+    &__empty {
+        margin: 0;
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+    }
 }
