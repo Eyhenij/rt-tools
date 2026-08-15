@@ -21,6 +21,8 @@
 | Ветка, разобравшая папку, добавляет запись в каталог архива.                                                 | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:gained`                |
 | На открытии PR папка ещё нужна, поэтому там только напоминание.                                              | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:hint`                  |
 | Обход требования пишут с причиной, и он читается без сети.                                                   | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:folder_skip_re`        |
+| Открытый отчёт, чья ветка везёт папку своей задачи, — расхождение сверки.                                    | `projects/agent-kit/assets/checks/check-board.github.mjs:folderInBranch`      |
+| Строка обхода начинает строку и подстановки не принимает.                                                    | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:folder_skip_re`        |
 | Обход снимает отказ, но не убирает строку из сверки.                                                         | `projects/agent-kit/assets/checks/check-board.github.mjs:taskDirs`            |
 | Папку ищут по имени ветки целиком, вместе с косой.                                                           | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:folder_in_branch`      |
 | Сверка очереди работ видит папку задачи и во вложенном каталоге.                                             | `projects/agent-kit/assets/checks/board.github.mjs:taskDirs`                  |
@@ -92,6 +94,7 @@
 | Отправленное предложение помечается принявшим его месяцем и второй раз не уезжает.                           | `projects/agent-kit/src/lib/proposals.ts:markSent`                            |
 | Адрес приёма читается из настройки дерева.                                                                   | `projects/agent-kit/src/lib/config.ts:intake`                                 |
 | Наружу не уходит ничего, чего не отправил человек командой.                                                  | `projects/agent-kit/src/lib/shipment.ts:propose`                              |
+| Незнакомый довод отправку кончает, а не пропускается молча.                                                  | `projects/agent-kit/src/lib/argv.ts:unknownFlagsIn`                           |
 | Сведение отделяет пришедшее из нескольких деревьев от пришедшего из одного.                                  | `projects/agent-kit/assets/commands/agent-kit-digest.md:overrides`            |
 | Выпуск версии остаётся отдельным решением владельца.                                                         | `projects/agent-kit/assets/commands/agent-kit-digest.md:ARGUMENTS`            |
 | Главная ветка влита в ветку задачи до открытия отчёта.                                                       | `projects/agent-kit/assets/rules/git-workflow.github.md:git-workflow`         |
