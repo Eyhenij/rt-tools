@@ -321,6 +321,34 @@ describe('propose', () => {
         expect(said(second)).toContain(treeSlugOf(REMOTE, ''));
     });
 
+    it('SC-MB-84 — отправитель печатает принятое и уже лежавшее', async () => {
+        start();
+        proposals([forPackage]);
+
+        const counting: TShip = async (intake: string, token: string, shipment: IShipment): Promise<IShipped> => {
+            sent.push(shipment);
+            const counted: boolean = shipment.operation === 'proposals';
+
+            return {
+                ok: Boolean(intake && token),
+                status: 200,
+                said: '',
+                accepted: {
+                    tree: 'дерево',
+                    month: '2026-08',
+                    created: false,
+                    ...(counted ? { added: 1, known: 2 } : {}),
+                },
+            };
+        };
+
+        const outcome: IOutcomeOfCommand = await shipping(counting);
+
+        expect(said(outcome)).toContain('принято 1, уже лежало 2');
+        // Сводке считать нечего: счёт есть только у предложений, и её строка остаётся прежней.
+        expect(said(outcome)).toContain('сводка → 2026-08, запись дописана');
+    });
+
     it('SC-AK-80 — отправленное помечается и второй раз не уезжает', async () => {
         start();
         proposals([forPackage]);
