@@ -4,7 +4,7 @@ kind: pattern
 rule: lists
 description: Паттерн правила lists. Брать при сборке или правке списочного экрана админки — готовый порядок блоков, разметка <префикс>-table, клик по строке, меню строки с vmTableRowActionsRowType, сортируемый заголовок, слоты тулбара, тост отказа.
 ---
-<!-- rt-kit v0.8.1 · patterns/admin-lists-screen.md · 0aecb10d1985 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.8.2 · patterns/admin-lists-screen.md · 0aecb10d1985 · правится надстройкой, не здесь -->
 
 # Собрать списочный экран
 

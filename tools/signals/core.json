@@ -1,4 +1,4 @@
-# rt-kit v0.8.1 · checks/signals/core.json · be8674e17e13 · правится надстройкой, не здесь
+# rt-kit v0.8.2 · checks/signals/core.json · be8674e17e13 · правится надстройкой, не здесь
 {
   "about": "Признаки пакета @rt-tools/core: директивы BEM, доступ к среде и хранилищу браузера.",
   "signals": [

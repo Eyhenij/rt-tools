@@ -167,6 +167,10 @@
 | Личность машинной записи подтверждается ответом хостинга, а не узнаванием строки.                            | `projects/agent-kit/assets/rules/git-workflow.github.md:git-workflow`         |
 | Токен машинной записи очередь работ не требует.                                                              | `projects/agent-kit/assets/checks/board.github.mjs:botToken`                  |
 | Подпись коммита и работа с очередью — разные свойства машинной записи.                                       | `projects/agent-kit/assets/defaults/project.sh:RT_COMMIT_EMAIL`               |
+| Образец, названный текстом пакета, пакетом и везётся.                                                        | `projects/agent-kit/src/lib/config.ts:KINDS`                                  |
+| Образцы едут своим родом ресурса, а не вместе с шаблонами надстройки.                                        | `projects/agent-kit/src/lib/config.ts:TKind`                                  |
+| Дерево вправе назвать образцам свой путь и отказаться от них целиком.                                        | `projects/agent-kit/src/lib/config.ts:DEFAULT_LAYOUT`                         |
+| Образец несёт шапку раскладки наравне с остальным разложенным.                                               | `projects/agent-kit/src/lib/plan.ts:planFile`                                 |
 
 ## Что ещё стоит знать при чтении кода
 
