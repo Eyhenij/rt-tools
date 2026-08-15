@@ -41,6 +41,8 @@ export const ADMIN_LABELS = {
     listEmpty: 'Записей нет: ни одно дерево их пока не присылало',
     listEmptyByFilter: 'По этому отбору записей нет',
     listFailed: 'Прочитать не удалось',
+    listSessionEnded: 'Вход кончился: представьтесь заново',
+    listRefresh: 'Прочитать заново',
     listRetry: 'Повторить',
     listIncident: 'Обращение {{incident}}',
 

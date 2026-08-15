@@ -45,8 +45,8 @@ export class TreesStore extends BaseAsyncStoreService<ITreesState, TTreesMessage
                             this.setLoadingSuccess();
                             this.dispatch({ type: 'trees-read' });
                         }),
-                        catchError((): Observable<never> => {
-                            this.setLoadingFailure();
+                        catchError((fault: unknown): Observable<never> => {
+                            this.setLoadingFailureVoid(fault, { showNotification: false });
 
                             return EMPTY;
                         })

@@ -100,9 +100,14 @@ export abstract class AdminListStoreBase<TRow> extends BaseAsyncStoreService<IAd
         }
     }
 
-    /** Отказ в состояние. Строки прежнего чтения снимаются: показанное под отказом — ложь. */
+    /**
+     * Отказ в состояние. Строки прежнего чтения снимаются: показанное под отказом — ложь.
+     *
+     * Основа зовётся без оповещения: отказ чтения человек видит на месте списка вместе с
+     * повтором, а строка в журнале браузера рядом с ним ничего не прибавляет.
+     */
     #refuse(fault: IReadFault): void {
         this.patchState((state: IAdminListState<TRow>) => ({ ...state, rows: [], total: 0, fault }));
-        this.setLoadingFailure();
+        this.setLoadingFailureVoid(fault, { showNotification: false });
     }
 }

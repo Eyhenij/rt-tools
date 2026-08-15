@@ -1,0 +1,46 @@
+<ng-container rtBlock="admin-page">
+    <header rtElem="header">
+        <h1 rtElem="title">{{ title() }}</h1>
+    </header>
+
+    <rt-toolbar>
+        <ng-template rtToolbarLeft>
+            <admin-tree-filter [choices]="choices()" [tree]="tree()" (treeChange)="treeChange.emit($event)" />
+        </ng-template>
+
+        <ng-template rtToolbarRight>
+            <rt-icon-button
+                qa-dataid="list-refresh"
+                icon="sync"
+                variant="primary"
+                [ariaLabel]="refreshLabel"
+                [loading]="loading()"
+                [tooltip]="refreshLabel"
+                (clicked)="retried.emit()" />
+        </ng-template>
+    </rt-toolbar>
+
+    @if (fault() !== null) {
+        <rt-message qa-dataid="list-fault" severity="danger">
+            <div rtElem="fault">
+                <p>{{ faultText() }}</p>
+
+                @if (incidentText(); as incident) {
+                    <p>{{ incident }}</p>
+                }
+
+                <button rtButton qa-dataid="list-retry" type="button" appearance="text" (click)="retried.emit()">{{ retryLabel }}</button>
+            </div>
+        </rt-message>
+    } @else {
+        <div rtElem="scroll">
+            <ng-content />
+        </div>
+    }
+
+    <rt-pagination
+        [loading]="loading()"
+        [pageModel]="pageModel()"
+        (pageChange)="pageChange.emit($event)"
+        (perPageChange)="sizeChange.emit($event)" />
+</ng-container>

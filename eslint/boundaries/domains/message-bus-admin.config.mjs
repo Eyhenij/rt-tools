@@ -45,10 +45,19 @@ const CONTRACT = 'scope:message-bus-common';
 
 export const messageBusAdminBoundaries = [
     // Приложение видит маршруты домена входа и оболочку. Экраны оно не знает ни одного: их
-    // приносит отложенная загрузка по маршруту, объявленному тем, чей это экран
+    // приносит отложенная загрузка по маршруту, объявленному тем, чей это экран.
+    //
+    // Словарь общего слоя приложение видит потому, что кит настраивается здесь: подписи кита
+    // отдаются ему провайдером рядом с иконками, а лежат они там же, где подписи экранов, —
+    // разложенные по двум местам, они расходятся молча
     {
         sourceTag: 'scope:admin-app',
-        onlyDependOnLibsWithTags: ['scope:message-bus-admin-auth-shell', 'scope:message-bus-admin-common-container-feature', PACKAGE],
+        onlyDependOnLibsWithTags: [
+            'scope:message-bus-admin-auth-shell',
+            'scope:message-bus-admin-common-container-feature',
+            CORE_UTIL,
+            PACKAGE,
+        ],
     },
 
     // Вход: экран берёт форму и состояние, состояние — обращение к приёмнику, обращение —
