@@ -14,6 +14,15 @@ import {
 } from '@rt/message-bus-admin/common/core/util';
 import { ITreeChoice } from '@rt/message-bus-common';
 import { IPageModel, ISortModel } from '@rt-tools/utils';
+import { RtTableSettingsRegistry } from '@rt-tools/ui-kit-v2';
+
+/**
+ * Адрес панели настройки столбцов в аутлете `ro`.
+ *
+ * Раздела в нём нет намеренно — в отличие от адреса подробностей: настраиваемую таблицу панель
+ * берёт из реестра кита, а не из адреса, и второй ответ на тот же вопрос разошёлся бы с первым.
+ */
+const COLUMNS_ROUTE: string = 'table-settings';
 
 /**
  * Общая основа списочного экрана: связь адреса, стора и таблицы.
@@ -35,6 +44,7 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> {
     readonly #route: ActivatedRoute = inject(ActivatedRoute);
     readonly #router: Router = inject(Router);
     readonly #trees: TreesStore = inject(TreesStore);
+    readonly #tableSettings: RtTableSettingsRegistry = inject(RtTableSettingsRegistry);
 
     readonly #params: Signal<Params> = toSignal(this.#route.queryParams, { initialValue: this.#route.snapshot.queryParams });
 
@@ -67,6 +77,12 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> {
      * он отвечает отказом, незачем.
      */
     protected abstract readonly sortable: readonly string[];
+
+    /**
+     * Признак таблицы раздела: им кит узнаёт, чьи столбцы настраивают и под каким ключом их
+     * запомнить. Раздел объявляет его и так — этой же строкой таблица зовётся в шаблоне.
+     */
+    protected abstract readonly tableId: string;
 
     protected constructor() {
         effect((): void => {
@@ -117,6 +133,25 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> {
         const section: string[] = this.#route.snapshot.url.map((segment: UrlSegment): string => segment.path);
 
         void this.#router.navigate([{ outlets: { ro: [...section, id] } }], {
+            relativeTo: this.#route.parent,
+            queryParamsHandling: 'preserve',
+        });
+    }
+
+    /**
+     * Открыть настройку столбцов.
+     *
+     * Панель везёт кит и открывает её своим маршрутом в том же аутлете `ro`, что и подробности:
+     * какую таблицу настраивают, он берёт не из адреса, а из реестра — поэтому активная таблица
+     * называется до ухода на маршрут, а не после.
+     *
+     * Выборка при этом остаётся в адресе: закрытая панель настроек возвращает тот же список, что
+     * и панель подробностей.
+     */
+    protected openColumns(): void {
+        this.#tableSettings.setActive(this.tableId);
+
+        void this.#router.navigate([{ outlets: { ro: [COLUMNS_ROUTE] } }], {
             relativeTo: this.#route.parent,
             queryParamsHandling: 'preserve',
         });

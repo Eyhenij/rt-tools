@@ -10,6 +10,14 @@
 
         <ng-template rtToolbarRight>
             <rt-icon-button
+                qa-dataid="list-columns"
+                icon="sliders-v"
+                variant="ghost"
+                [ariaLabel]="columnsLabel"
+                [tooltip]="columnsLabel"
+                (clicked)="columnsAsked.emit()" />
+
+            <rt-icon-button
                 qa-dataid="list-refresh"
                 icon="sync"
                 variant="primary"

@@ -56,6 +56,7 @@ const BEM_BLOCK: string = 'admin-page';
 export class AdminListPageComponent {
     protected readonly refreshLabel: string = adminLabel('listRefresh');
     protected readonly retryLabel: string = adminLabel('listRetry');
+    protected readonly columnsLabel: string = adminLabel('listColumns');
 
     /**
      * Размеры страницы, которые предлагает переключатель.
@@ -98,4 +99,12 @@ export class AdminListPageComponent {
     public readonly pageChange: OutputEmitterRef<number> = output<number>();
     public readonly sizeChange: OutputEmitterRef<number> = output<number>();
     public readonly retried: OutputEmitterRef<void> = output<void>();
+
+    /**
+     * Человек просит настроить столбцы.
+     *
+     * Панель настройки везёт кит и открывает её маршрутом, а маршрут знает экран раздела — этот
+     * вид страницы роутера не касается вовсе и только передаёт просьбу дальше.
+     */
+    public readonly columnsAsked: OutputEmitterRef<void> = output<void>();
 }

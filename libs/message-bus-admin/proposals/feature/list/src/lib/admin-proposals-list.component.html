@@ -5,6 +5,7 @@
     [pageModel]="pageModel()"
     [title]="title"
     [tree]="query().tree"
+    (columnsAsked)="openColumns()"
     (pageChange)="goToPage($event)"
     (retried)="retry()"
     (sizeChange)="changeSize($event)"

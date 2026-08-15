@@ -28,6 +28,15 @@ export const appRoutes: Route[] = [
             ...postmortemsRoutes,
             ...proposalsRoutes,
             ...summariesRoutes,
+            // Настройка столбцов одна на все разделы: панель везёт кит, а какую таблицу
+            // настраивают, она берёт из своего реестра. Раздела в адресе поэтому нет — в
+            // отличие от подробностей записи, где он есть, потому что аутлет один на всю
+            // админку и `:id` без раздела забрал бы панели всех трёх.
+            {
+                path: 'table-settings',
+                outlet: 'ro',
+                loadComponent: async () => (await import('@rt/message-bus-admin/common/container/feature')).adminColumnsAside(),
+            },
             { path: '', pathMatch: 'full', redirectTo: POSTMORTEMS_ROUTE },
         ],
     },
