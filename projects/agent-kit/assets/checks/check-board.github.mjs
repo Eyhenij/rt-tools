@@ -29,13 +29,16 @@ import { join } from 'node:path';
 
 import {
     IN_REVIEW_STATUS,
+    OWNER,
     OfflineError,
+    REPO,
     STATUS_OPTIONS,
     TASK_KEY,
     botToken,
     fetchBoard,
     fetchIssues,
     fetchOpenPulls,
+    gh,
     numberFromTaskDir,
     numberFromTitle,
     taskDirs,
@@ -71,6 +74,34 @@ function checkDrafts() {
 
 function closesNumbers(body) {
     return [...String(body ?? '').matchAll(/\bCloses\s+#(\d+)\b/gi)].map((match) => Number(match[1]));
+}
+
+/**
+ * Строка обхода в теле отчёта. Форма та же, что читает гард поставки: строку она начинает и
+ * подстановки не принимает — иначе текст, называющий эту строку, снимает требование сам собой.
+ */
+const FOLDER_SKIP = /^[ \t]*Task-folder-skip:[ \t]*[^\s<"'][^\s"']{2,}/im;
+
+/**
+ * Везёт ли ветка отчёта папку своей задачи.
+ *
+ * Спрашивается ветка, а не рабочее дерево: папка, снесённая на машине и не закоммиченная,
+ * въедет вместе с веткой. Локальных ссылок тут мало — ветка отчёта может быть не подтянута
+ * сюда вовсе, — поэтому содержимое берётся у хостинга. Отказ «нет такого пути» означает, что
+ * папки нет; всё остальное поднимается выше и разбирается как отсутствие связи.
+ */
+function folderInBranch(branch, options) {
+    const path = `${CONFIG.tasksDir}/${branch}`;
+    try {
+        gh(['api', `repos/${OWNER}/${REPO}/contents/${path}?ref=${encodeURIComponent(branch)}`, '--jq', 'length'], options);
+        return path;
+    } catch (error) {
+        if (error instanceof OfflineError) {
+            throw error;
+        }
+
+        return null;
+    }
 }
 
 let checked = { issues: 0, pulls: 0 };
@@ -123,6 +154,19 @@ try {
             report(`PR #${pull.number}: задачу #${titleNumber} уже закрывает PR #${claimed.get(titleNumber)} — у задачи одна ветка`);
         } else {
             claimed.set(titleNumber, pull.number);
+        }
+
+        // Папка задачи, лежащая в ветке открытого отчёта, — единственное расхождение, которое
+        // сверка обязана назвать ДО слияния: гард судит её на слиянии, а слияние нажимает
+        // человек в браузере, где хуков нет вовсе. Сказанная после, эта строка уже не чинится
+        // тем же отчётом — работа перешла дальше, и на разбор заводится вторая задача.
+        if (!FOLDER_SKIP.test(String(pull.body ?? '')) && pull.headRefName) {
+            const folder = folderInBranch(pull.headRefName, options);
+            if (folder !== null) {
+                report(
+                    `PR #${pull.number}: ветка везёт папку задачи «${folder}/» — разбери её этим же отчётом или поставь в тело строку «Task-folder-skip: <причина>»`
+                );
+            }
         }
     }
 

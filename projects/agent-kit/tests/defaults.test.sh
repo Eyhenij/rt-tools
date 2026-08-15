@@ -92,6 +92,11 @@ report "карта: судит путь, а не текст правки" "$(ski
 # Текст правила устроен как спек, и правило под него есть; остальное хозяйство агента — нет.
 report "карта: правило и паттерн судятся как спек" "$(skill_for edit /r/.claude/skills/x/SKILL.md '')" spec-driven
 report "карта: правила на прочие файлы агента нет" "$(skill_for edit /r/.claude/agents/qa.md '')" ''
+# Разложенный текст на месте не правится — правится надстройка над ним, и предмет у неё тот же.
+# Пока карта её не знала, разделы законов и правил переписывались без единого требования.
+report "карта: надстройка над законом" "$(skill_for edit /r/.claude/rt-kit/overrides/laws/delivery.md '')" spec-driven
+report "карта: надстройка над правилом" "$(skill_for edit /r/.claude/rt-kit/overrides/rules/task-flow.md '')" spec-driven
+report "карта: прочая надстройка судится по роду файла" "$(skill_for edit /r/.claude/rt-kit/overrides/docs/GLOSSARY.md '')" doc-style
 report "карта: конфиг линтера кода" "$(skill_for edit /r/eslint.config.mjs '')" typescript-conventions
 report "карта: конфиг линтера стилей" "$(skill_for edit /r/stylelint.config.js '')" styling-bem
 report "карта: проверка повторов требует одно правило" "$(skill_for edit /r/tools/check-dupes.mjs '')" shared-code
