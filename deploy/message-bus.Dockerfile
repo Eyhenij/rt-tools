@@ -9,8 +9,11 @@ RUN corepack enable
 WORKDIR /workspace
 
 # Сначала манифесты: слой установки переживает правку исходников и берётся из кэша, пока не
-# изменился снимок дерева зависимостей.
+# изменился снимок дерева зависимостей. Схема хранилища едет вместе с ними, а не ниже: установка
+# зависимостей заканчивается генерацией клиента хранилища, и без схемы она отказывает — то есть
+# образ не собирается вовсе, ещё не дойдя до своего кода.
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY prisma ./prisma
 RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
     pnpm install --frozen-lockfile
 
@@ -19,9 +22,12 @@ RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
 COPY nx.json tsconfig.base.json eslint.config.mjs ./
 COPY eslint ./eslint
 COPY tools ./tools
-COPY prisma ./prisma
 COPY apps/message-bus ./apps/message-bus
 COPY libs ./libs
+# Форма груза объявлена в пакете правил, и серверная сторона зовёт её алиасом
+# `@rt-tools/agent-kit/cargo`. Алиас ведёт в исходник пакета, а не в собранный артефакт, поэтому
+# каталог нужен здесь целиком: без него сборка падает на пяти файлах приёма, а не на своём коде.
+COPY projects/agent-kit ./projects/agent-kit
 RUN npx prisma generate --schema prisma/schema.prisma
 RUN NX_DAEMON=false npx nx build message-bus
 
