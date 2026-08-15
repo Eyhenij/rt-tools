@@ -55,7 +55,8 @@
             "Upload visual diffs (ui-kit-v2)": {
                 "skip": "выгрузка следов прогона"
             },
-            "Verify built packages": "pnpm exec nx affected -t verify --parallel"
+            "Verify built packages": "pnpm exec nx affected -t verify --parallel",
+            "Build API image": "docker build -f deploy/message-bus.Dockerfile -t message-bus:gate ."
         }
     },
     "board": {

@@ -39,12 +39,18 @@ RT_COMMIT_EMAIL='314674161+rt-tools-agent@users.noreply.github.com'
 # и `check-push-gate` отбивает пуш, если шаг не закрыт ни строкой отсюда, ни исключением с
 # причиной. Сборка и сверка собранных пакетов стоят здесь именно поэтому: без них набор был уже
 # конвейерного, и дважды подряд PR уходил со словом «проверено» о том, чего не гоняли.
+#
+# Сборка образа стоит здесь по той же причине, но говорит о другом: `nx build` собирает из дерева
+# целиком, а образ — из своего набора копируемых каталогов, и недостающий каталог виден только
+# сборкой самого образа. Шаг требует поднятого демона; не поднят — команда отказывает, и это
+# честнее, чем пуш со словом «проверено» о том, чего не собирали.
 rt_push_checks() {
     cat <<'EOF'
 pnpm exec nx affected -t lint typecheck test build --parallel
 pnpm run lint:styles
 pnpm exec nx run message-bus-admin-e2e:e2e
 pnpm exec nx affected -t verify --parallel
+docker build -f deploy/message-bus.Dockerfile -t message-bus:gate .
 node tools/check-push-gate.mjs
 EOF
 }
