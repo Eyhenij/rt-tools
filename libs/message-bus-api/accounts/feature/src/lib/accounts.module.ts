@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { AccountStartupService } from './account-startup.service';
 import { AuthController } from './auth.controller';
+import { LoginAttemptsService } from './login-attempts.service';
 
 /**
  * Операции входа и то, что служба говорит об учётных записях при подъёме. Хранилища модуль не
@@ -13,6 +14,6 @@ import { AuthController } from './auth.controller';
  */
 @Module({
     controllers: [AuthController],
-    providers: [AccountStartupService],
+    providers: [AccountStartupService, LoginAttemptsService],
 })
 export class AccountsModule {}

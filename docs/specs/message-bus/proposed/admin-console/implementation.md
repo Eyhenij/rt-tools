@@ -20,7 +20,7 @@
 | Отказ входа не называет, что именно не сошлось, и отвечает за то же время.           | `libs/message-bus-api/accounts/util/src/lib/password.util.ts:burnAbsentAccountTime`               |
 | Пароль не попадает ни в журнал, ни в ответ, ни в адрес.                              | `libs/message-bus-api/accounts/feature/src/lib/auth.controller.ts:#refused`                       |
 | Неудачная попытка входа записывается в журнал с именем учётной записи.               | `libs/message-bus-api/accounts/feature/src/lib/auth.controller.ts:#refused`                       |
-| Неудачные попытки подряд удлиняют ответ.                                             | ждёт кода                                                                                         |
+| Неудачные попытки подряд удлиняют ответ.                                             | `libs/message-bus-api/accounts/feature/src/lib/auth.controller.ts:refusal`                        |
 | Вход живёт сроком и по его истечении перестаёт приниматься.                          | `libs/message-bus-api/accounts/util/src/lib/session-token.util.ts:sessionAlive`                   |
 | Входов у одной записи бывает несколько, и выход обрывает тот, которым пришли.        | `libs/message-bus-api/accounts/data-access/src/lib/account.queries.ts:revokeSession`              |
 | Токен дерева админки не открывает, а вход человека не открывает приёма груза.        | `libs/message-bus-api/access/feature/src/lib/access.guard.ts:#sessionOf`                          |
