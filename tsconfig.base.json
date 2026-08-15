@@ -59,7 +59,18 @@
       "@rt/message-bus-api/access/util": ["./libs/message-bus-api/access/util/src/index.ts"],
       "@rt/message-bus-api/access/data-access": ["./libs/message-bus-api/access/data-access/src/index.ts"],
       "@rt/message-bus-api/access/feature": ["./libs/message-bus-api/access/feature/src/index.ts"],
-      "@rt/message-bus-api/access/api": ["./libs/message-bus-api/access/api/src/index.ts"]
+      "@rt/message-bus-api/access/api": ["./libs/message-bus-api/access/api/src/index.ts"],
+      "@rt/message-bus-admin/auth/util": ["./libs/message-bus-admin/auth/util/src/index.ts"],
+      "@rt/message-bus-admin/auth/api": ["./libs/message-bus-admin/auth/api/src/index.ts"],
+      "@rt/message-bus-admin/auth/data-access": ["./libs/message-bus-admin/auth/data-access/src/index.ts"],
+      "@rt/message-bus-admin/auth/ui": ["./libs/message-bus-admin/auth/ui/src/index.ts"],
+      "@rt/message-bus-admin/auth/shell": ["./libs/message-bus-admin/auth/shell/src/index.ts"],
+      "@rt/message-bus-admin/auth/feature/sign-in": ["./libs/message-bus-admin/auth/feature/sign-in/src/index.ts"],
+      "@rt/message-bus-admin/common/container/util": ["./libs/message-bus-admin/common/container/util/src/index.ts"],
+      "@rt/message-bus-admin/common/container/ui": ["./libs/message-bus-admin/common/container/ui/src/index.ts"],
+      "@rt/message-bus-admin/common/container/api": ["./libs/message-bus-admin/common/container/api/src/index.ts"],
+      "@rt/message-bus-admin/common/container/data-access": ["./libs/message-bus-admin/common/container/data-access/src/index.ts"],
+      "@rt/message-bus-admin/common/container/feature": ["./libs/message-bus-admin/common/container/feature/src/index.ts"]
     },
     "noUncheckedSideEffectImports": false,
     "ignoreDeprecations": "6.0"

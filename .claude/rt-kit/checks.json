@@ -20,7 +20,7 @@
     ],
     "schemaFile": "",
     "migrationsDir": "",
-    "families": [],
+    "families": ["message-bus-admin"],
     "importScope": "@rt",
     "pushGate": {
         "pipelineFile": ".github/workflows/ci.yml",

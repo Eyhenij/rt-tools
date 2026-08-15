@@ -1,0 +1,86 @@
+{
+  "name": "message-bus-admin",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "admin",
+  "sourceRoot": "apps/message-bus-admin/src",
+  "tags": ["scope:admin-app"],
+  "targets": {
+    "build": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/message-bus-admin",
+        "browser": "apps/message-bus-admin/src/main.ts",
+        "tsConfig": "apps/message-bus-admin/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/message-bus-admin/public"
+          },
+          {
+            "glob": "**/*.svg",
+            "input": "projects/ui-kit-v2/src/assets/icons",
+            "output": "icons"
+          }
+        ],
+        "styles": ["apps/message-bus-admin/src/styles.scss"]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      }
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@angular/build:dev-server",
+      "defaultConfiguration": "development",
+      "configurations": {
+        "production": {
+          "buildTarget": "message-bus-admin:build:production"
+        },
+        "development": {
+          "buildTarget": "message-bus-admin:build:development"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@angular/build:unit-test",
+      "options": {
+        "watch": false
+      }
+    },
+    "serve-static": {
+      "continuous": true,
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "message-bus-admin:build",
+        "staticFilePath": "dist/apps/message-bus-admin/browser",
+        "spa": true
+      }
+    }
+  }
+}

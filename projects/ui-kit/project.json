@@ -2,6 +2,7 @@
   "name": "@rt-tools/ui-kit",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
+  "tags": ["scope:package"],
   "sourceRoot": "projects/ui-kit/src",
   "prefix": "rt",
   "implicitDependencies": ["@rt-tools/core", "@rt-tools/store", "@rt-tools/utils"],
