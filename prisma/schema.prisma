@@ -1,5 +1,5 @@
-// Хранилище приёмника груза. Пять сущностей договорённости
-// `docs/specs/message-bus/`; правила, которые выражают ограничения, там же.
+// Хранилище приёмника груза. Семь сущностей договорённостей `docs/specs/message-bus/` и
+// `docs/specs/message-bus/proposed/admin-console/`; правила, которые выражают ограничения, там же.
 
 generator client {
     provider            = "prisma-client"
@@ -109,4 +109,44 @@ model Postmortem {
     @@unique([treeId, file])
     @@index([treeId])
     @@map("postmortem")
+}
+
+/// Учётная запись человека, читающего груз. Заводится командой строки запуска: заведения из
+/// веба нет вовсе, и первую запись некому было бы завести.
+model Account {
+    id           String    @id @default(uuid())
+    /// Имя, как его назвал владелец: им запись показывается в списке команд.
+    name         String
+    /// То же имя, приведённое к одному виду. Уникальность держит хранилище по нему, а не по
+    /// `name`: `Иван` рядом с `иван` означает, что вход перестал отвечать, кто именно вошёл.
+    nameKey      String    @unique
+    /// Пароль лежит только хешем: снятый дамп базы входа не даёт.
+    passwordHash String
+    /// Пусто — запись действует. Отключённая входа не заводит, а её прежние входы обрываются.
+    disabledAt   DateTime?
+    createdAt    DateTime  @default(now())
+    /// Пусто — этой записью ещё не входили. Показывается командой списка.
+    lastLoginAt  DateTime?
+
+    sessions Session[]
+
+    @@map("account")
+}
+
+/// Вход: то, чем браузер представляется приёмнику между запросами. В хранилище лежит только
+/// хеш — по нему вход не подделывается, а сам он живёт в куке, недоступной скриптам.
+model Session {
+    id        String   @id @default(uuid())
+    accountId String
+    account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+    hash      String   @unique
+    issuedAt  DateTime @default(now())
+    /// После этого времени вход не принимается: человек представляется заново.
+    expiresAt DateTime
+    /// Пусто — вход жив. Ставится выходом и отключением записи; сам вход не удаляется, чтобы
+    /// оборванный отличался от неизвестного.
+    revokedAt DateTime?
+
+    @@index([accountId])
+    @@map("session")
 }

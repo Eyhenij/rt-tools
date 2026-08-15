@@ -1,15 +1,19 @@
 /**
- * Вход приёмника. Без доводов он поднимает службу, с доводом — исполняет команду деревьев и
- * выходит.
+ * Вход приёмника. Без доводов он поднимает службу, с доводом — исполняет команду деревьев или
+ * учётных записей и выходит.
  *
  * Одна точка входа на оба случая потому, что образ у приёмника один: `node main.js` поднимает
  * службу, `node main.js tree:list` спрашивает её же хранилище. Вторая сборка под команды
  * означала бы второй образ, который расходится с первым молча.
  */
+import { createInterface, Interface } from 'node:readline/promises';
+
 import { INestApplicationContext, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
+import { AccountCommandsService, IAccountCommandReport } from '@rt/message-bus-api/accounts/feature';
+import { isAccountCommand } from '@rt/message-bus-api/accounts/util';
 import { TreeCommandsService } from '@rt/message-bus-api/trees/feature';
 import { ITreeCommandReport } from '@rt/message-bus-api/trees/util';
 
@@ -41,6 +45,23 @@ async function serve(): Promise<void> {
 }
 
 /**
+ * Пароль спрашивается здесь, а не приходит доводом: строка запуска остаётся и в истории оболочки,
+ * и в списке процессов машины, и пароль, написанный доводом, виден там обоим.
+ *
+ * Эхо ввода не гасится: терминал контейнера отдаётся не всегда, а команда, молча не принимающая
+ * ввод, выглядит зависшей. Пароль при этом виден в окне того, кто его вводит, и больше нигде.
+ */
+async function askPassword(question: string): Promise<string> {
+    const input: Interface = createInterface({ input: process.stdin, output: process.stderr });
+
+    try {
+        return (await input.question(question)).trim();
+    } finally {
+        input.close();
+    }
+}
+
+/**
  * Команда деревьев.
  *
  * Каркас говорит здесь только о поломках: сводка о поднятых модулях затолкала бы напечатанный
@@ -53,7 +74,9 @@ async function runCommand(argv: readonly string[]): Promise<void> {
     });
 
     try {
-        const report: ITreeCommandReport = await context.get(TreeCommandsService).run(argv);
+        const report: ITreeCommandReport | IAccountCommandReport = isAccountCommand(argv[0] ?? '')
+            ? await context.get(AccountCommandsService).run(argv, askPassword)
+            : await context.get(TreeCommandsService).run(argv);
 
         process.stdout.write(`${report.lines.join('\n')}\n`);
         process.exitCode = report.failed ? EXIT_REFUSED : 0;

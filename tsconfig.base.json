@@ -51,7 +51,15 @@
       "@rt/message-bus-api/trees/util": ["./libs/message-bus-api/trees/util/src/index.ts"],
       "@rt/message-bus-api/trees/data-access": ["./libs/message-bus-api/trees/data-access/src/index.ts"],
       "@rt/message-bus-api/trees/feature": ["./libs/message-bus-api/trees/feature/src/index.ts"],
-      "@rt/message-bus-api/trees/api": ["./libs/message-bus-api/trees/api/src/index.ts"]
+      "@rt/message-bus-api/trees/api": ["./libs/message-bus-api/trees/api/src/index.ts"],
+      "@rt/message-bus-api/accounts/util": ["./libs/message-bus-api/accounts/util/src/index.ts"],
+      "@rt/message-bus-api/accounts/data-access": ["./libs/message-bus-api/accounts/data-access/src/index.ts"],
+      "@rt/message-bus-api/accounts/feature": ["./libs/message-bus-api/accounts/feature/src/index.ts"],
+      "@rt/message-bus-api/accounts/api": ["./libs/message-bus-api/accounts/api/src/index.ts"],
+      "@rt/message-bus-api/access/util": ["./libs/message-bus-api/access/util/src/index.ts"],
+      "@rt/message-bus-api/access/data-access": ["./libs/message-bus-api/access/data-access/src/index.ts"],
+      "@rt/message-bus-api/access/feature": ["./libs/message-bus-api/access/feature/src/index.ts"],
+      "@rt/message-bus-api/access/api": ["./libs/message-bus-api/access/api/src/index.ts"]
     },
     "noUncheckedSideEffectImports": false,
     "ignoreDeprecations": "6.0"

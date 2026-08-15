@@ -12,6 +12,7 @@ import { BadRequestException, Body, Controller, HttpStatus, Post, Req, Res } fro
 
 import { ensureMonthRecord, IMonthRecordWritten } from '@rt/message-bus-api/observations/data-access';
 import { IIntakeAccepted } from '@rt-tools/agent-kit/cargo';
+import { TreeOperation } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { addProposals, IProposalRow } from '@rt/message-bus-api/proposals/data-access';
 import { PROPOSAL_ITEM_FIELDS, PROPOSALS_FIELDS } from '@rt/message-bus-api/proposals/util';
@@ -46,6 +47,7 @@ export class ProposalsIntakeController {
     }
 
     @Post('proposals')
+    @TreeOperation()
     public async accept(
         @Body() body: unknown,
         @Req() request: ITreeBearingRequest,
