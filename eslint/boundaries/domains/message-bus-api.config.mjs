@@ -158,7 +158,15 @@ export const messageBusApiBoundaries = [
     // отказ и свои команды строки запуска. Груза он не касается — его спрашивают, чьё это
     {
         sourceTag: 'scope:message-bus-api-trees-feature',
-        onlyDependOnLibsWithTags: ['scope:message-bus-api-trees-data-access', TREES_UTIL, PERSISTENCE_DATA_ACCESS, COMMON],
+        onlyDependOnLibsWithTags: [
+            'scope:message-bus-api-trees-data-access',
+            TREES_UTIL,
+            // Список деревьев для отбора в админке объявляет, чем он закрыт: входом человека, а
+            // не токеном дерева — токен открывает приём и только своего дерева, а список называет все
+            ACCESS_UTIL,
+            PERSISTENCE_DATA_ACCESS,
+            COMMON,
+        ],
     },
     {
         sourceTag: 'scope:message-bus-api-trees-data-access',

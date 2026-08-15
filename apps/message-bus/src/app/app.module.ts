@@ -7,6 +7,7 @@ import { ObservationsModule } from '@rt/message-bus-api/observations/feature';
 import { PrismaModule } from '@rt/message-bus-api/persistence/feature';
 import { PostmortemsModule } from '@rt/message-bus-api/postmortems/feature';
 import { ProposalsModule } from '@rt/message-bus-api/proposals/feature';
+import { TreesModule } from '@rt/message-bus-api/trees/feature';
 
 import { HealthController } from './health/health.controller';
 import { IntakeFailureFilter } from './intake-failure.filter';
@@ -22,7 +23,7 @@ import { IntakeFailureFilter } from './intake-failure.filter';
  * поломкой хранилища, и разошлись бы на первой же незнакомой ошибке.
  */
 @Module({
-    imports: [PrismaModule, AccessModule, AccountsModule, ObservationsModule, ProposalsModule, PostmortemsModule],
+    imports: [PrismaModule, AccessModule, AccountsModule, ObservationsModule, ProposalsModule, PostmortemsModule, TreesModule],
     controllers: [HealthController],
     providers: [{ provide: APP_FILTER, useClass: IntakeFailureFilter }],
 })
