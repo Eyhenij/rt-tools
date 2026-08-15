@@ -16,6 +16,7 @@
  */
 import { IAsset } from './assets.js';
 import { COMPANION_FILE } from './config.js';
+import { requirementOf } from './traits.js';
 
 /**
  * Метка незаполненного места. Стоит в каждой строке черновика, которую должен заменить проект,
@@ -38,6 +39,14 @@ export interface ICompanion {
     readonly state: TCompanionState;
     /** Что записать; `null` — писать нечего, файл уже лежит. */
     readonly content: string | null;
+    /**
+     * Свойство дерева, которого требует правило, — `null`, если не требует ничего.
+     *
+     * Нужно ровно на отказе: пустой компаньон правила, которому дерево не отвечает, — не долг, а
+     * лишний файл, и предлагать его заполнить значит звать на работу, которой нет. Такое правило
+     * доезжает до дерева только выбором поимённо: требование само по себе его не кладёт.
+     */
+    readonly needs: string | null;
 }
 
 /** Путь компаньона: рядом с самим правилом, в каталоге его имени. */
@@ -95,8 +104,9 @@ export const draftOf: (template: string, rule: string, text?: string) => string 
 
 export function planCompanion(asset: IAsset, existing: string | null, template: string): ICompanion {
     const path: string = pathOf(asset);
+    const needs: string | null = requirementOf(asset.id);
     if (existing === null) {
-        return { rule: asset.name, path, state: 'missing', content: draftOf(template, asset.name, asset.text) };
+        return { rule: asset.name, path, state: 'missing', content: draftOf(template, asset.name, asset.text), needs };
     }
 
     return {
@@ -104,6 +114,7 @@ export function planCompanion(asset: IAsset, existing: string | null, template: 
         path,
         state: existing.includes(COMPANION_MARK) ? 'draft' : 'filled',
         content: null,
+        needs,
     };
 }
 

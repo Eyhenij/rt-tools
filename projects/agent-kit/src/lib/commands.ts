@@ -16,6 +16,7 @@ import { DEFAULT_DAYS, ICount, IReadResult, ISummary, KEEP_DAYS, OBSERVATIONS_DI
 import { IPlanned, isRefusal, TOutcome } from './plan.js';
 import { laidOutSkills } from './snapshot.js';
 import { ICutFound, IRetiredFound, ISyncResult, pendingOf, planSync, runSync } from './sync.js';
+import { answersRequirement, ITrait, readTraits, unknownTraits } from './traits.js';
 import { placeholdersOf } from './vars.js';
 import { IAxis, IOptionOfAxis, readAxes, unansweredAxes } from './variants.js';
 
@@ -65,6 +66,8 @@ const CUT_BY_CASCADE: string = 'снят каскадом';
 const SKIPPED: string = 'пропущен';
 /** Ресурс чужого вида: в этом дереве его не существует, а не «от него отказались». */
 const OTHER_VARIANT: string = 'другой вид';
+/** Ресурс, которому нужно свойство дерева: дерево его не отвергало — свойства у него нет. */
+const NEEDS_TRAIT: string = 'нужно свойство';
 
 const KIND_TITLE: Readonly<Record<TKind, string>> = {
     laws: 'ЗАКОНЫ',
@@ -176,6 +179,19 @@ const holes: (result: ISyncResult) => string[] = (result: ISyncResult): string[]
 const unfilled: (result: ISyncResult) => readonly ICompanion[] = (result: ISyncResult): readonly ICompanion[] =>
     result.companions.filter(isUnfilled);
 
+/**
+ * Строка про компаньон, которому нечего сказать.
+ *
+ * У правила, требующего свойства, которого дерево не назвало, это не черновик, а лишний файл:
+ * заполнять его нечем — ни одной статье такого правила здесь не отвечает ни файл, ни символ.
+ * Такое правило доезжает сюда только выбором поимённо, и верное действие тут обратное
+ * заполнению — снять ресурс строкой отказа.
+ */
+const companionLine: (entry: ICompanion) => string = (entry: ICompanion): string =>
+    entry.needs === null
+        ? `  ${entry.path} — ${COMPANION_WORD[entry.state]}`
+        : `  ${entry.path} — правилу нужно свойство «${entry.needs}»: заполнять нечем, снимай ресурс строкой в \`skip\``;
+
 /** Ось без ответа: чем её спрашивают и из чего выбирают. */
 const axisLines: (axes: readonly IAxis[]) => string[] = (axes: readonly IAxis[]): string[] =>
     axes.flatMap((axis: IAxis): string[] => [
@@ -207,6 +223,28 @@ const gapLines: (result: ISyncResult) => string[] = (result: ISyncResult): strin
         `  ${gap.kind}/${gap.name} — есть только под ${gap.axis}: ${gap.available.join(', ')}, а выбран «${gap.chosen}»`,
         `      либо заведи вид под «${gap.chosen}», либо назови в skip: ${gap.ids.join(', ')}`,
     ]);
+
+/**
+ * Свойства, названные не по перечню пакета, — и деревом, и ресурсами.
+ *
+ * Обе стороны собираются одной функцией, потому что промах у них общий: имя свойства написано
+ * так, как его никто не объявлял. Разница только в том, где оно написано, и потому в строке
+ * отказа стоит место, а не одно имя.
+ */
+function strangeTraits(config: IConfig, assetsDir: string): readonly string[] {
+    const traits: readonly ITrait[] = readTraits(assetsDir);
+    const lines: string[] = unknownTraits(config.has, traits).map(
+        (trait: string): string => `  \`${trait}\` — названо деревом в \`has\`, а пакет такого свойства не объявлял`
+    );
+
+    for (const entry of readCatalog(assetsDir)) {
+        if (entry.needs !== null && unknownTraits([entry.needs], traits).length) {
+            lines.push(`  \`${entry.needs}\` — требует ${entry.id}, а пакет такого свойства не объявлял`);
+        }
+    }
+
+    return lines.length ? [...lines, `  объявленные свойства: ${traits.map((trait: ITrait): string => trait.value).join(', ')}`] : [];
+}
 
 /**
  * Гарды, которых нет в настройке агента, и готовый кусок для неё.
@@ -331,7 +369,7 @@ const describe: (result: ISyncResult) => string[] = (result: ISyncResult): strin
     ...unboundLines(result),
     ...warnings(result),
     ...pendingOf(result).map((entry: IPlanned): string => `  ${entry.path} — ${STATE_WORD[entry.outcome]}`),
-    ...unfilled(result).map((entry: ICompanion): string => `  ${entry.path} — ${COMPANION_WORD[entry.state]}`),
+    ...unfilled(result).map(companionLine),
 ];
 
 /** Имена дырок во всех ресурсах, которые дерево берёт. Без конфига — ни одной: выбор неизвестен. */
@@ -447,6 +485,14 @@ export function sync(env: IEnvironment, check: boolean): IOutcomeOfCommand {
     const unanswered: readonly IAxis[] = unansweredAxes(readAxes(assetsDir), config.variants);
     if (unanswered.length) {
         return { code: 1, lines: ['раскладка не начата: не выбран вид', ...axisLines(unanswered)] };
+    }
+
+    // Незнакомое свойство — опечатка, и молчать о ней нельзя ни с одной стороны. У дерева она
+    // означает, что помеченного им ресурса оно не получит вовсе; у ресурса — что он не ляжет
+    // никуда и никогда, а причину в имени файла не разглядеть.
+    const strange: readonly string[] = strangeTraits(config, assetsDir);
+    if (strange.length) {
+        return { code: 1, lines: ['раскладка не начата: свойство дерева не объявлено пакетом', ...strange] };
     }
 
     if (check) {
@@ -728,19 +774,29 @@ export function doctor(env: IEnvironment): IOutcomeOfCommand {
     const cuts: readonly ICascadeCut[] = cascadeCuts(catalog, config);
     const cut: ReadonlySet<string> = new Set(cuts.map((one: ICascadeCut): string => one.id));
 
+    // Ресурс с неотвеченным требованием в «не выбрано» не идёт по той же причине, что и чужой
+    // вид: дерево его не отвергало — свойства, без которого он бессмыслен, у него просто нет.
+    const needing: readonly IEntryOfCatalog[] = catalog.filter(
+        (entry: IEntryOfCatalog): boolean =>
+            entry.needs !== null && !answersRequirement(entry.needs, config.has) && !config.skip.includes(entry.id)
+    );
+    const needsTrait: number = needing.length;
+
     // Невыбранное называется поимённо: число «не выбрано: 73» не отвечает ни на один вопрос,
     // ради которого его читают, — ни какого ресурса не хватает, ни требуется ли он соседу.
     const unchosen: readonly IEntryOfCatalog[] = catalog.filter(
         (entry: IEntryOfCatalog): boolean =>
             !isChosen(entry, config) &&
             !config.skip.includes(entry.id) &&
-            foreignVariant.every((one: IEntryOfCatalog): boolean => one.id !== entry.id)
+            foreignVariant.every((one: IEntryOfCatalog): boolean => one.id !== entry.id) &&
+            needing.every((one: IEntryOfCatalog): boolean => one.id !== entry.id)
     );
 
     const lines: string[] = [
         `пакет v${version}, везёт ресурсов ${catalog.length}, взято ${taken}`,
-        `не выбрано: ${catalog.length - taken - skipped - other - cut.size}, пропущено: ${skipped}, другой вид: ${other}, снято каскадом: ${cut.size}`,
+        `не выбрано: ${catalog.length - taken - skipped - other - cut.size - needsTrait}, пропущено: ${skipped}, другой вид: ${other}, снято каскадом: ${cut.size}, нужно свойство: ${needsTrait}`,
         ...unchosen.map((entry: IEntryOfCatalog): string => `  не выбран: ${entry.id}`),
+        ...needing.map((entry: IEntryOfCatalog): string => `  нужно свойство «${entry.needs}»: ${entry.id}`),
         ...cuts.map(
             (one: ICascadeCut): string =>
                 `  снят каскадом: ${one.id} — вслед за ${one.parent}${one.parent === one.root ? '' : `, отвергнут ${one.root}`}`
@@ -787,6 +843,11 @@ export function list(env: IEnvironment): IOutcomeOfCommand {
         }
         if (config.skip.includes(entry.id)) {
             return SKIPPED;
+        }
+        // Неотвеченное требование — не отказ дерева: оно этого ресурса не выбирало и не
+        // отвергало, а свойства, без которого ресурс бессмыслен, у него просто нет.
+        if (entry.needs !== null && !answersRequirement(entry.needs, config.has)) {
+            return `${NEEDS_TRAIT}: ${entry.needs}`;
         }
         if (!isChosen(entry, config)) {
             return NOT_CHOSEN;
