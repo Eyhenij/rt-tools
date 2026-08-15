@@ -1,9 +1,10 @@
 /**
  * `POST /api/intake/proposals` — предложения дерева по слою правил.
  *
- * Кладёт к записи месяца те, которых в ней ещё не было. Запись заводится этой же операцией,
- * если сводка в этом месяце ещё не приезжала: порядок запросов прогона приёмник не назначает, а
- * отказ «сводки ещё не было» превратил бы порядок в скрытое требование.
+ * Кладёт к записи месяца те, которых у дерева ещё не было, и отвечает счётом: сколько легло и
+ * сколько приехало повторно. Запись заводится этой же операцией, если сводка в этом месяце ещё
+ * не приезжала: порядок запросов прогона приёмник не назначает, а отказ «сводки ещё не было»
+ * превратил бы порядок в скрытое требование.
  *
  * Негодная запись отбивает операцию целиком: список из пяти предложений, из которых упало
  * третье, оставил бы запись месяца в состоянии, которого не было ни до, ни после.
@@ -14,7 +15,7 @@ import { ensureMonthRecord, IMonthRecordWritten } from '@rt/message-bus-api/obse
 import { IIntakeAccepted } from '@rt-tools/agent-kit/cargo';
 import { TreeOperation } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
-import { addProposals, IProposalRow } from '@rt/message-bus-api/proposals/data-access';
+import { addProposals, IProposalRow, IProposalsWritten } from '@rt/message-bus-api/proposals/data-access';
 import { PROPOSAL_ITEM_FIELDS, PROPOSALS_FIELDS } from '@rt/message-bus-api/proposals/util';
 import { IRequestTree, ITreeBearingRequest, treeOf } from '@rt/message-bus-api/trees/util';
 import {
@@ -63,11 +64,12 @@ export class ProposalsIntakeController {
         const cargo: TCargoBody = body as TCargoBody;
         const items: TCargoBody[] = this.#itemsOf(cargo);
         const ranAt: Date = new Date();
-        const written: IMonthRecordWritten = await this.#write(cargo, items, tree.id, ranAt);
+        const written: IMonthRecordWritten = await this.#write(cargo, tree.id, ranAt);
+        const laid: IProposalsWritten = await this.#lay(written.id, tree.id, items);
 
         response.status(written.created ? HttpStatus.CREATED : HttpStatus.OK);
 
-        return { tree: tree.slug, month: written.month, created: written.created };
+        return { tree: tree.slug, month: written.month, created: written.created, added: laid.added, known: laid.known };
     }
 
     /** Список записей и их форма. Проверяется до похода в базу: отбитая операция базы не касается. */
@@ -88,22 +90,23 @@ export class ProposalsIntakeController {
     }
 
     /**
-     * Запись месяца и предложения к ней.
+     * Запись месяца, к которой предложения крепятся.
      *
      * Отказ хранилища здесь не ловится: недоступную базу разбирает один разбор отказов на всё
      * приложение. Поймай его операция — каждая решала бы сама, что считать поломкой хранилища, и
      * три решения разошлись бы на первой же незнакомой ошибке.
      */
-    async #write(cargo: TCargoBody, items: TCargoBody[], treeId: string, ranAt: Date): Promise<IMonthRecordWritten> {
-        const record: IMonthRecordWritten = await ensureMonthRecord(this.#prisma, {
+    async #write(cargo: TCargoBody, treeId: string, ranAt: Date): Promise<IMonthRecordWritten> {
+        return ensureMonthRecord(this.#prisma, {
             treeId,
             month: monthOf(ranAt),
             schema: cargoSchemaOf(cargo),
             ranAt,
         });
+    }
 
-        await addProposals(this.#prisma, record.id, items.map(rowOf));
-
-        return record;
+    /** Сами предложения. Счёт легшего и уже лежавшего уезжает ответом: повтор отказом не бывает. */
+    async #lay(recordId: string, treeId: string, items: TCargoBody[]): Promise<IProposalsWritten> {
+        return addProposals(this.#prisma, recordId, treeId, items.map(rowOf));
     }
 }
