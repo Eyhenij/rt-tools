@@ -15,7 +15,7 @@
 | Дерево представляется токеном, а приёмник держит только его хеш.                             | `libs/message-bus-api/trees/util/src/lib/tree-token.util.ts:treeTokenHash`                        |
 | Токен печатается один раз, при выдаче.                                                       | `libs/message-bus-api/trees/util/src/lib/tree-report.util.ts:tokenIssuedLines`                    |
 | У дерева годен один токен: новый замещает прежний, помечая его отозванным.                   | `libs/message-bus-api/trees/data-access/src/lib/tree.queries.ts:replaceTreeToken`                 |
-| Отозванный токен перестаёт приниматься сразу.                                                | `libs/message-bus-api/trees/feature/src/lib/tree-token.guard.ts:canActivate`                      |
+| Отозванный токен перестаёт приниматься сразу.                                                | `libs/message-bus-api/access/feature/src/lib/access.guard.ts:canActivate`                         |
 | Отозванный токен не удаляется.                                                               | `libs/message-bus-api/trees/data-access/src/lib/tree.queries.ts:revokeTreeTokens`                 |
 | Признак дерева называется при заведении, а не берётся из первого груза.                      | `libs/message-bus-api/trees/data-access/src/lib/tree.queries.ts:createTreeWithToken`              |
 | Признак дерева в грузе сверяется с деревом токена.                                           | `libs/message-bus-common/src/lib/cargo-fault.ts:cargoFault`                                       |
@@ -32,7 +32,7 @@
 | Предложения и разборы, приехавшие раньше сводки, заводят запись месяца сами.                 | `libs/message-bus-api/proposals/feature/src/lib/proposals-intake.controller.ts:accept`            |
 | Отказ приёмника называет причину дереву, а не подробности своего устройства.                 | `apps/message-bus/src/app/intake-failure.filter.ts:catch`                                         |
 | Каждый отказ записывается в журнал приёмника с родом груза и признаком дерева.               | `apps/message-bus/src/app/intake-failure.filter.ts:IntakeFailureFilter`                           |
-| Приёмник ничего не отдаёт без токена дерева.                                                 | `libs/message-bus-api/trees/feature/src/lib/public.decorator.ts:PUBLIC_OPERATION`                 |
+| Приёмник ничего не отдаёт без токена дерева.                                                 | `libs/message-bus-api/access/util/src/lib/operation-access.ts:OPERATION_ACCESS`                   |
 | Проба живости отвечает только тогда, когда хранилище отвечает тоже.                          | `apps/message-bus/src/app/health/health.controller.ts:check`                                      |
 | Проба живости не называет ни редакции, ни состава — ни в теле, ни в заголовках ответа.       | `apps/message-bus/src/main.ts:serve`                                                              |
 | Разбор происшествия приезжает текстом целиком.                                               | `libs/message-bus-api/postmortems/util/src/lib/postmortem.logic.ts:POSTMORTEM_ITEM_FIELDS`        |
