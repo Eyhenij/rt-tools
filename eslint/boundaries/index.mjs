@@ -11,8 +11,14 @@
  * Порядок значим: первое подходящее правило выигрывает, поэтому общее разрешение публикуемых
  * пакетов стоит последним.
  */
+import { messageBusAdminBoundaries } from './domains/message-bus-admin.config.mjs';
 import { messageBusApiBoundaries } from './domains/message-bus-api.config.mjs';
 import { messageBusCommonBoundaries } from './domains/message-bus-common.config.mjs';
 import { packagesBoundaries } from './domains/packages.config.mjs';
 
-export const allBoundaries = [...messageBusApiBoundaries, ...messageBusCommonBoundaries, ...packagesBoundaries];
+export const allBoundaries = [
+    ...messageBusAdminBoundaries,
+    ...messageBusApiBoundaries,
+    ...messageBusCommonBoundaries,
+    ...packagesBoundaries,
+];
