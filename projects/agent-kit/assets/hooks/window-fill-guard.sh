@@ -131,7 +131,7 @@ case "$tool" in
         esac
         ;;
     Bash | mcp__webstorm__execute_terminal_command)
-        # Поставка и сверки: коммит, пуш, отчёт, колонка задачи, состояние дерева. Список
+        # Поставка и сверки: коммит, пуш, PR, колонка задачи, состояние дерева. Список
         # дописывается профилем дерева — клиент хостинга и имена команд у каждого свои.
         if rt_needs rt_handoff_allowed_cmd window-fill-guard && rt_handoff_allowed_cmd "$cmd"; then
             allowed=1
