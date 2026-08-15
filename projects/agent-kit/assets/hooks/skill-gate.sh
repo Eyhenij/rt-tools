@@ -90,6 +90,32 @@ case "$tool" in
         fi
         req="$(skill_for bash "$target" "" 2>/dev/null)"
         kind="command"
+        # Команда оболочки, которая пишет файл, — та же правка, и правило ей нужно то же.
+        # Без этого яруса гейт обходится сменой не инструмента, а способа записи: отбитая
+        # правка легла командой дважды за один заход. Разбор —
+        # `2026-08-15-guard-denied-shell-wrote-anyway.md`.
+        for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"; do
+            # shellcheck disable=SC1090
+            [ -f "$profile" ] && . "$profile" 2>/dev/null
+        done
+        if command -v rt_shell_writes >/dev/null 2>&1 && command -v rt_shell_paths >/dev/null 2>&1 \
+            && rt_shell_writes "$target"; then
+            while IFS= read -r written_path; do
+                [ -z "$written_path" ] && continue
+                case "$written_path" in
+                    /*) ;;
+                    *) written_path="${CLAUDE_PROJECT_DIR:-.}/$written_path" ;;
+                esac
+                case "$written_path" in
+                    "${CLAUDE_PROJECT_DIR:-.}"/*) ;;
+                    *) continue ;;
+                esac
+                more="$(skill_for edit "$written_path" "" 2>/dev/null)"
+                [ -n "$more" ] && req="$req $more"
+            done <<EOF
+$(rt_shell_paths "$target")
+EOF
+        fi
         ;;
     mcp__claude-in-chrome__*)
         req="$(skill_for browser "$tool" "" 2>/dev/null)"
