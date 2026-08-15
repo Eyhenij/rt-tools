@@ -144,6 +144,13 @@
 | Раскладка называет добавленный долг в тот же момент, когда его добавила.                                     | `projects/agent-kit/src/lib/commands.ts:debtLines`                            |
 | Статьи считаются по компаньону дерева, а не по черновику пакета.                                             | `projects/agent-kit/src/lib/companion.ts:unaddressedOf`                       |
 | Счёт добавленного долга складывается чистой функцией.                                                        | `projects/agent-kit/src/lib/companion.ts:debtLine`                            |
+| Ресурс с неотвеченным требованием дереву не кладётся.                                                        | `projects/agent-kit/src/lib/catalog.ts:isChosen`                              |
+| Молчание дерева о своих свойствах требованию не отвечает.                                                    | `projects/agent-kit/src/lib/traits.ts:answersRequirement`                     |
+| Выбор поимённо сильнее требования.                                                                           | `projects/agent-kit/src/lib/catalog.ts:isChosen`                              |
+| Отказ по компаньону называет требование, а не только состояние файла.                                        | `projects/agent-kit/src/lib/commands.ts:companionLine`                        |
+| Свойство, которого пакет не объявлял, роняет раскладку с обеих сторон.                                       | `projects/agent-kit/src/lib/commands.ts:strangeTraits`                        |
+| Требование стоит в имени файла рядом с видом и от него отличимо.                                             | `projects/agent-kit/src/lib/traits.ts:requirementOf`                          |
+| Перечень ресурсов называет неположенное требованием отдельно от снятого деревом.                             | `projects/agent-kit/src/lib/commands.ts:NEEDS_TRAIT`                          |
 
 ## Что ещё стоит знать при чтении кода
 
