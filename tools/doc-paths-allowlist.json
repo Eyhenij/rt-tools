@@ -35,11 +35,6 @@
     ".claude/rt-kit/overrides/skills/agent-kit.md",
     ".claude/rt-kit/observations/",
     ".claude/rt-kit/proposals/",
-    ".claude/rt-kit/proposals/2026-08-13-rules-layer-gaps.md",
-    ".claude/rt-kit/proposals/2026-08-13-question-before-recon.md",
-    ".claude/rt-kit/proposals/2026-08-14-questions-without-work.md",
-    ".claude/rt-kit/proposals/handled/2026-08-14-questions-without-work.md",
-    ".claude/rt-kit/proposals/2026-08-14-named-tool-substituted.md",
     "src/lib/i18n/rt-kit-translations.ts",
     "date-format.ts",
     "safe-comparator.ts"
