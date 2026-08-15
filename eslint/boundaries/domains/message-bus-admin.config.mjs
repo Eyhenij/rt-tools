@@ -27,6 +27,22 @@ const CONTAINER_UTIL = 'scope:message-bus-admin-common-container-util';
  */
 const PACKAGE = 'scope:package';
 
+/**
+ * Общий слой админки: словарь, обращение к операциям чтения, выборка в адресе, основа
+ * списочного стора и общий вид страницы списка. Механика, а не предмет: разделы груза зовут её
+ * все три, и разложенная по ним заново она расходилась бы молча.
+ */
+const CORE_UTIL = 'scope:message-bus-admin-common-core-util';
+const CORE_API = 'scope:message-bus-admin-common-core-api';
+const CORE_DATA_ACCESS = 'scope:message-bus-admin-common-core-data-access';
+const CORE_UI = 'scope:message-bus-admin-common-core-ui';
+
+/**
+ * Форма того, что отдаёт приёмник: страница, выборка и дерево. Её знают обе стороны, и админка
+ * читает её у источника, а не заводит свою копию — копия разошлась бы с контрактом молча.
+ */
+const CONTRACT = 'scope:message-bus-common';
+
 export const messageBusAdminBoundaries = [
     // Приложение видит маршруты домена входа и оболочку. Экраны оно не знает ни одного: их
     // приносит отложенная загрузка по маршруту, объявленному тем, чей это экран
@@ -86,5 +102,29 @@ export const messageBusAdminBoundaries = [
     {
         sourceTag: 'scope:message-bus-admin-common-container-ui',
         onlyDependOnLibsWithTags: [CONTAINER_UTIL, PACKAGE],
+    },
+
+    // Общий слой админки. Лесенка та же, что у домена: вид знает словарь, состояние — обращение,
+    // обращение — словарь и форму контракта. Предмета ни один из них не знает: разделы зовут их,
+    // а не наоборот
+    {
+        sourceTag: 'scope:message-bus-admin-common-core-util',
+        onlyDependOnLibsWithTags: [CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-common-core-api',
+        onlyDependOnLibsWithTags: [CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-common-core-data-access',
+        onlyDependOnLibsWithTags: [CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-common-core-ui',
+        onlyDependOnLibsWithTags: [CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-common-core-feature',
+        onlyDependOnLibsWithTags: [CORE_UI, CORE_DATA_ACCESS, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
     },
 ];
