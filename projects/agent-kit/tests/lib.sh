@@ -82,6 +82,18 @@ fixture_commit() {
         commit -q -m "$subject" 2>/dev/null
 }
 
+# То же, но с названной подписью: имя автора и почта. Нужен там, где гард судит саму подпись,
+# а не содержимое коммита. Имя и почта ставятся конфигом вызова, а не окружением: конфиг задаёт
+# разом автора и того, кто коммит записал, — гарду видны оба.
+fixture_commit_as() {
+    local dir="$1" name="$2" email="$3" path="$4" body="$5" subject="$6"
+    mkdir -p "$dir/$(dirname "$path")"
+    printf '%s\n' "$body" > "$dir/$path"
+    git -C "$dir" add "$path" 2>/dev/null
+    git -C "$dir" -c user.name="$name" -c user.email="$email" -c commit.gpgsign=false \
+        commit -q -m "$subject" 2>/dev/null
+}
+
 # Снятие пути в репозитории фикстуры с коммитом: так папку задачи и разбирают.
 fixture_remove() {
     local dir="$1" path="$2" subject="$3"
