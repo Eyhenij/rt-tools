@@ -22,9 +22,14 @@ interface ITestEntity {
 class RouterStub {
     public navigations: number = 0;
 
+    /** Довесок последней навигации: им и задаётся, что станет с параметрами адреса. */
+    public lastExtras: Record<string, unknown> | null = null;
+
     #settle: ((ok: boolean) => void) | null = null;
 
-    public navigate(): Promise<boolean> {
+    public navigate(_commands: readonly unknown[], extras?: Record<string, unknown>): Promise<boolean> {
+        this.lastExtras = extras ?? null;
+
         return this.#start();
     }
 
@@ -275,5 +280,14 @@ describe('RtRouteAsideComponent', () => {
 
         await expect(firstValueFrom(fixture.componentInstance.canDeactivate())).resolves.toBe(true);
         expect(dialog.opens).toBe(0);
+    });
+
+    it('SC-UKV-52 — закрытая панель возвращает экран с его параметрами адреса', () => {
+        const fixture: ComponentFixture<TestAsideComponent> = setup();
+
+        fixture.componentInstance.reportClosed();
+
+        expect(router.navigations).toBe(1);
+        expect(router.lastExtras?.['queryParamsHandling']).toBe('preserve');
     });
 });
