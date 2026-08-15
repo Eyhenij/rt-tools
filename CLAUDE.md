@@ -9,8 +9,13 @@ rt-tools is an Angular library providing utility types, functions, and UI compon
 ## Commands
 
 ```bash
-# Install dependencies (pnpm is required)
+# Install dependencies (pnpm is required).
+# Постустановка заодно генерирует клиент хранилища: он лежит вне истории, и без него
+# приёмник не собирается на свежем чекауте.
 pnpm install
+
+# Пересобрать один клиент хранилища — после правки схемы
+pnpm run prisma:generate
 
 # Build the library
 pnpm run build:ui-kit
