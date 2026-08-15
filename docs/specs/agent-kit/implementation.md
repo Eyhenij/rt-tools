@@ -22,6 +22,7 @@
 | На открытии PR папка ещё нужна, поэтому там только напоминание.                                              | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:hint`                  |
 | Обход требования пишут с причиной, и он читается без сети.                                                   | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:folder_skip_re`        |
 | Открытый отчёт, чья ветка везёт папку своей задачи, — расхождение сверки.                                    | `projects/agent-kit/assets/checks/check-board.github.mjs:folderInBranch`      |
+| Строка обхода начинает строку и подстановки не принимает.                                                    | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:folder_skip_re`        |
 | Обход снимает отказ, но не убирает строку из сверки.                                                         | `projects/agent-kit/assets/checks/check-board.github.mjs:taskDirs`            |
 | Папку ищут по имени ветки целиком, вместе с косой.                                                           | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:folder_in_branch`      |
 | Сверка очереди работ видит папку задачи и во вложенном каталоге.                                             | `projects/agent-kit/assets/checks/board.github.mjs:taskDirs`                  |
@@ -162,6 +163,8 @@
 | Отказ по подписи называет коммит поимённо и обе почты.                                                       | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:strangers`             |
 | Дерево, не назвавшее почты машинной записи, требования не получает.                                          | `projects/agent-kit/assets/defaults/project.sh:RT_COMMIT_EMAIL`               |
 | Личность машинной записи подтверждается ответом хостинга, а не узнаванием строки.                            | `projects/agent-kit/assets/rules/git-workflow.github.md:git-workflow`         |
+| Токен машинной записи очередь работ не требует.                                                              | `projects/agent-kit/assets/checks/board.github.mjs:botToken`                  |
+| Подпись коммита и работа с очередью — разные свойства машинной записи.                                       | `projects/agent-kit/assets/defaults/project.sh:RT_COMMIT_EMAIL`               |
 
 ## Что ещё стоит знать при чтении кода
 
