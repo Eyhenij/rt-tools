@@ -19,6 +19,7 @@ import {
     IAccountBearingRequest,
     IRequestAccount,
     issueSessionToken,
+    loginDelayMs,
     passwordMatches,
     SESSION_COOKIE,
     sessionExpiry,
@@ -26,6 +27,15 @@ import {
     sessionTtlMs,
 } from '@rt/message-bus-api/accounts/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
+
+import { LoginAttemptsService } from './login-attempts.service';
+
+/** Подождать перед ответом. Ноль ждать не заставляет: обещание разрешается тем же тактом. */
+async function hold(ms: number): Promise<void> {
+    if (ms > 0) {
+        await new Promise((done: (value: void) => void): unknown => setTimeout(done, ms));
+    }
+}
 
 /** Ответ о том, кто вошёл. Ни пароля, ни значения входа в нём нет и быть не может. */
 export interface ISessionAnswer {
@@ -67,9 +77,11 @@ export class AuthController {
      */
     readonly #log: Logger = new Logger(AuthController.name);
     readonly #prisma: PrismaService;
+    readonly #attempts: LoginAttemptsService;
 
-    constructor(prisma: PrismaService) {
+    constructor(prisma: PrismaService, attempts: LoginAttemptsService) {
         this.#prisma = prisma;
+        this.#attempts = attempts;
     }
 
     /**
@@ -83,8 +95,8 @@ export class AuthController {
     @HttpCode(HttpStatus.OK)
     public async login(@Body() body: unknown, @Res({ passthrough: true }) response: ICookieBearingResponse): Promise<ISessionAnswer> {
         const named: { name: string; password: string } = this.#credentials(body);
-        const account: IAccountForLogin = await this.#accountOfPair(named.name, named.password);
         const at: Date = new Date();
+        const account: IAccountForLogin = await this.#accountOfPair(named.name, named.password, at);
         const ttl: number = sessionTtlMs(process.env['SESSION_TTL_MS']);
         const token: string = issueSessionToken();
 
@@ -95,6 +107,7 @@ export class AuthController {
             at,
         });
 
+        this.#attempts.passed(accountNameKey(named.name));
         response.cookie(SESSION_COOKIE, token, cookieOptions(ttl));
 
         return { name: account.name };
@@ -150,27 +163,38 @@ export class AuthController {
      * отвечает на вопрос, заведена ли такая запись, — ровно то, что запрещает правило об отказе
      * входа. Отключённая запись отвечает тем же отказом по той же причине.
      */
-    async #accountOfPair(name: string, password: string): Promise<IAccountForLogin> {
+    async #accountOfPair(name: string, password: string, at: Date): Promise<IAccountForLogin> {
         const account: IAccountForLogin | null = await findAccountByNameKey(this.#prisma, accountNameKey(name));
 
         if (!account) {
             burnAbsentAccountTime(password);
-            this.#refused(name);
 
-            throw new UnauthorizedException('пара не принята');
+            throw await this.#refusal(name, at);
         }
 
         if (!passwordMatches(password, account.passwordHash) || account.disabledAt !== null) {
-            this.#refused(name);
-
-            throw new UnauthorizedException('пара не принята');
+            throw await this.#refusal(name, at);
         }
 
         return account;
     }
 
-    /** Строка о неудачной попытке. Отказ по вводу и правам пишется без стека: проверка сработала. */
-    #refused(name: string): void {
-        this.#log.warn({ event: 'login-refused', name: accountNameKey(name) });
+    /**
+     * Отказ паре: строка в журнал, удлинение ответа и сам отказ.
+     *
+     * Отказ по вводу и правам пишется без стека: проверка сработала. Ответ удлиняется тем
+     * больше, чем длиннее череда неудач подряд, — перебор, отвечающий с той же скоростью,
+     * ограничен только сетью. Считается это по имени, названному запросом, и одинаково для
+     * известного имени и для незаведённого: разное ожидание отвечало бы на вопрос, заведена ли
+     * запись, — ровно то, что запрещает правило об отказе входа.
+     */
+    async #refusal(name: string, at: Date): Promise<UnauthorizedException> {
+        const nameKey: string = accountNameKey(name);
+
+        this.#log.warn({ event: 'login-refused', name: nameKey });
+
+        await hold(loginDelayMs(this.#attempts.failed(nameKey, at)));
+
+        return new UnauthorizedException('пара не принята');
     }
 }
