@@ -95,6 +95,19 @@ export class AuthStore extends BaseAsyncStoreService<IAuthState, TAuthMessage> {
         );
     }
 
+    /**
+     * Забыть вход, которого больше нет.
+     *
+     * Приёмника при этом не спрашивают: он и сказал, что вход кончился, — отозванный, выключенный
+     * или просроченный, — и просить его оборвать уже оборванное значило бы отвечать отказом на
+     * отказ. Состояние без этого осталось бы при вошедшем: гвард пускал бы по разделам, которым
+     * приёмник уже отвечает отказом.
+     */
+    public forget(): void {
+        this.patchState((state: IAuthState) => ({ ...state, session: null }));
+        this.dispatch({ type: 'signed-out' });
+    }
+
     /** Выход обрывает тот вход, которым пришли, и только его: два браузера — два входа. */
     public signOut(): Observable<void> {
         return this.#api.signOut().pipe(
