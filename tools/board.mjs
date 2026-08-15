@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.8.1 · checks/board.github.mjs · ebeebe32e261 · правится надстройкой, не здесь
+// rt-kit v0.8.1 · checks/board.github.mjs · 3514ab03d58d · правится надстройкой, не здесь
 /**
  * Общая работа с очередью работ: борда проекта, тикеты и их состояние.
  *
@@ -70,12 +70,6 @@ if (PROJECT_ID && !TASK_KEY) {
 }
 /** Кого запрашивают на разбор: без ревьювера PR не попадает во входящие владельца. */
 export const REVIEWER = BOARD.reviewer ?? '';
-/**
- * Где лежит токен машинной учётной записи — так, как это назвало дерево. Идёт в текст отказа:
- * зашитый путь послал бы чужое дерево заводить файл, который никто не читает.
- */
-export const TOKEN_PATH = BOARD.tokenPath || 'путь не назван в .claude/rt-kit/checks.json';
-
 const BOT_TOKEN_FILE = BOARD.tokenPath ? BOARD.tokenPath.replace(/^~/, homedir()) : '';
 
 /**
@@ -90,7 +84,11 @@ function ghBinary() {
     return existsSync(homebrew) ? homebrew : 'gh';
 }
 
-/** Токен бота лежит вне репозитория и в вывод не попадает */
+/**
+ * Токен машинной записи лежит вне репозитория и в вывод не попадает. Его отсутствие — не отказ:
+ * дерево, не назвавшее токена в `board.tokenPath`, работает с очередью учётной записью, под
+ * которой залогинен клиент хостинга.
+ */
 export function botToken() {
     if (!existsSync(BOT_TOKEN_FILE)) {
         return null;
@@ -346,9 +344,12 @@ if (isEntryPoint && process.argv[2] === 'task') {
     }
 }
 
-// Перевод колонки правит борду, поэтому идёт под ботом: от владельца задача выглядела бы
-// взятой в работу им самим. Отсутствие связи здесь — отказ, а не пропуск: непереставленная
-// задача молча остаётся в прежней колонке, и расхождение всплывает только сверкой очереди.
+// Перевод колонки правит борду. Токен машинной записи здесь необязателен: не назвавшее его
+// дерево правит борду учётной записью, под которой залогинен клиент хостинга. Требование
+// токена держало бы очередь работ у дерева, машинной записи не заводившего, и у дерева, чью
+// запись ограничил хостинг. Отсутствие связи при этом — по-прежнему отказ, а не пропуск:
+// непереставленная задача молча остаётся в прежней колонке, и расхождение всплывает только
+// сверкой очереди.
 if (isEntryPoint && process.argv[2] === 'move') {
     const number = Number(process.argv[3]);
     const status = process.argv[4];
@@ -356,11 +357,7 @@ if (isEntryPoint && process.argv[2] === 'move') {
         console.error(`board: нужен номер задачи и колонка — node tools/board.mjs move 263 ${IN_PROGRESS_STATUS}`);
         process.exit(1);
     }
-    const token = botToken();
-    if (!token) {
-        console.error(`board: нет токена бота (${TOKEN_PATH}) — борда правится машинной учётной записью`);
-        process.exit(1);
-    }
+    const token = botToken() ?? undefined;
     try {
         const moved = moveTask(number, status, { token });
         console.log(`#${number}: ${moved.from ?? 'вне колонок'} → ${moved.to}`);
