@@ -40,7 +40,11 @@
 | Разбор опознаётся именем своего файла на дереве.                                             | `libs/message-bus-api/postmortems/data-access/src/lib/postmortem.queries.ts:IPostmortemRow`       |
 | Повторно приехавший разбор обновляет прежний, а не заводит второй.                           | `libs/message-bus-api/postmortems/data-access/src/lib/postmortem.queries.ts:writePostmortems`     |
 | Разбор, исчезнувший на дереве, у приёмника остаётся.                                         | `libs/message-bus-api/postmortems/feature/src/lib/postmortems-intake.controller.ts:accept`        |
-| Предложение отличается от прежних текстом в пределах записи месяца.                          | `libs/message-bus-api/proposals/data-access/src/lib/proposal.queries.ts:addProposals`             |
+| Предложение опознаётся признаком — хешем своего текста, а не текстом в ограничении.          | `libs/message-bus-api/proposals/util/src/lib/proposal.logic.ts:proposalDigest`                    |
+| Признак предложения уникален в пределах дерева, а не записи месяца.                          | `prisma/schema.prisma:Proposal`                                                                   |
+| Уже лежавшее пропускается, а не отбивает запрос.                                             | `libs/message-bus-api/proposals/data-access/src/lib/proposal.queries.ts:addProposals`             |
+| Ответ приёма на предложения называет, сколько записей легло и сколько уже лежало.            | `libs/message-bus-api/proposals/feature/src/lib/proposals-intake.controller.ts:accept`            |
+| Предложение остаётся при своей записи месяца.                                                | `libs/message-bus-api/proposals/feature/src/lib/proposals-intake.controller.ts:accept`            |
 | Предложение хранит ресурс, к которому относится.                                             | `libs/message-bus-api/proposals/util/src/lib/proposal.logic.ts:PROPOSAL_ITEM_FIELDS`              |
 | Пара «дерево — месяц» уникальна.                                                             | `prisma/schema.prisma:MonthRecord`                                                                |
 
