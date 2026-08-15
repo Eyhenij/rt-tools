@@ -1,5 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { IIntakeAccepted } from '@rt-tools/agent-kit/cargo';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
@@ -21,13 +21,15 @@ interface IRecordRow {
 
 interface IProposalRowStored {
     recordId: string;
+    treeId: string;
     text: string;
+    digest: string;
     address: string;
     resource: string;
 }
 
 /**
- * Двойник хранилища: запись месяца и предложения к ней. Уникальность пары «запись — текст» он
+ * Двойник хранилища: запись месяца и предложения к ней. Уникальность пары «дерево — признак» он
  * держит сам — ею же держится отбор уже приехавшего, и подделывать её проверкой в спеке значило
  * бы проверять не то правило.
  */
@@ -46,12 +48,17 @@ class PrismaDouble {
         return {
             createMany: async (args: Record<string, unknown>): Promise<{ count: number }> => {
                 const rows: IProposalRowStored[] = args['data'] as IProposalRowStored[];
-                const fresh: IProposalRowStored[] = rows.filter(
-                    (row: IProposalRowStored): boolean =>
-                        !this.proposals.some(
-                            (stored: IProposalRowStored): boolean => stored.recordId === row.recordId && stored.text === row.text
-                        )
-                );
+                const fresh: IProposalRowStored[] = [];
+
+                for (const row of rows) {
+                    const seen: boolean = [...this.proposals, ...fresh].some(
+                        (stored: IProposalRowStored): boolean => stored.treeId === row.treeId && stored.digest === row.digest
+                    );
+
+                    if (!seen) {
+                        fresh.push(row);
+                    }
+                }
                 this.proposals.push(...fresh);
 
                 return { count: fresh.length };
@@ -95,9 +102,9 @@ class ResponseDouble implements IIntakeResponse {
     }
 }
 
-function requestOf(): ITreeBearingRequest {
+function requestOf(tree: IRequestTree = TREE): ITreeBearingRequest {
     const request: ITreeBearingRequest = {};
-    rememberTree(request, TREE);
+    rememberTree(request, tree);
 
     return request;
 }
@@ -138,6 +145,59 @@ describe('ProposalsIntakeController', () => {
         await controller.accept(cargo([proposal('первое'), proposal('второе'), proposal('третье')]), requestOf(), new ResponseDouble());
 
         expect(prisma.proposals.map((row: IProposalRowStored): string => row.text)).toEqual(['первое', 'второе', 'третье']);
+    });
+
+    it('SC-MB-85 — то же предложение в новом месяце второй записью не становится', async () => {
+        const prisma: PrismaDouble = new PrismaDouble();
+        const controller: ProposalsIntakeController = controllerWith(prisma);
+
+        vi.useFakeTimers();
+        try {
+            vi.setSystemTime(new Date('2026-07-31T12:00:00Z'));
+            await controller.accept(cargo([proposal('первое')]), requestOf(), new ResponseDouble());
+
+            vi.setSystemTime(new Date('2026-08-01T12:00:00Z'));
+            const accepted: IIntakeAccepted = await controller.accept(cargo([proposal('первое')]), requestOf(), new ResponseDouble());
+
+            expect(prisma.records.map((row: IRecordRow): string => row.month)).toEqual(['2026-07', '2026-08']);
+            expect(prisma.proposals).toHaveLength(1);
+            expect(accepted.added).toBe(0);
+            expect(accepted.known).toBe(1);
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    it('SC-MB-81 — ответ приёма называет принятое и уже лежавшее', async () => {
+        const prisma: PrismaDouble = new PrismaDouble();
+        const controller: ProposalsIntakeController = controllerWith(prisma);
+
+        await controller.accept(cargo([proposal('первое'), proposal('второе')]), requestOf(), new ResponseDouble());
+        const accepted: IIntakeAccepted = await controller.accept(
+            cargo([proposal('первое'), proposal('второе'), proposal('третье')]),
+            requestOf(),
+            new ResponseDouble()
+        );
+
+        expect(accepted.added).toBe(1);
+        expect(accepted.known).toBe(2);
+    });
+
+    it('SC-MB-83 — одинаковый текст от двух деревьев лежит двумя записями', async () => {
+        const prisma: PrismaDouble = new PrismaDouble();
+        const controller: ProposalsIntakeController = controllerWith(prisma);
+        const other: IRequestTree = { id: 'id-2', slug: 'other-tree', name: 'Соседнее дерево' };
+
+        await controller.accept(cargo([proposal('первое')]), requestOf(), new ResponseDouble());
+        const accepted: IIntakeAccepted = await controller.accept(
+            { schema: '1', tree: other.slug, items: [proposal('первое')] },
+            requestOf(other),
+            new ResponseDouble()
+        );
+
+        expect(prisma.proposals).toHaveLength(2);
+        expect(accepted.added).toBe(1);
+        expect(accepted.known).toBe(0);
     });
 
     it('SC-MB-21 — предложения копятся, а не замещаются', async () => {

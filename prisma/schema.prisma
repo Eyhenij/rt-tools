@@ -27,6 +27,7 @@ model Tree {
     tokens      TreeToken[]
     months      MonthRecord[]
     postmortems Postmortem[]
+    proposals   Proposal[]
 
     @@map("tree")
 }
@@ -80,8 +81,16 @@ model Proposal {
     id       String      @id @default(uuid())
     recordId String
     record   MonthRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
-    /// Текст предложения. Им же предложение отличается от уже приехавшего.
+    /// Дерево, от которого предложение приехало. Стоит своей колонкой, а не читается через
+    /// запись месяца: ограничение хранилища читает колонки одной строки.
+    treeId   String
+    tree     Tree        @relation(fields: [treeId], references: [id], onDelete: Cascade)
+    /// Текст предложения целиком.
     text     String
+    /// Признак предложения: хеш его текста. Им предложение отличается от уже приехавшего — в
+    /// любом месяце, а не в одном. Хеш, а не сам текст: уникальность по полю в килобайты
+    /// упирается в предел размера строки индекса.
+    digest   String
     /// Адрес правки: пакет, дерево или компаньон.
     address  String
     /// Ресурс слоя правил, к которому предложение относится. По нему берётся счёт «сколько
@@ -89,8 +98,9 @@ model Proposal {
     resource String
     arrivedAt DateTime   @default(now())
 
-    @@unique([recordId, text])
+    @@unique([treeId, digest])
     @@index([recordId])
+    @@index([treeId])
     @@map("proposal")
 }
 

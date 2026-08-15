@@ -198,13 +198,23 @@ function markProposals(root: string, proposals: readonly IProposal[], shipped: I
     }
 }
 
-/** Что приём сказал о принятом: месяц записи и то, заведена она этим прогоном или дописана. */
+/**
+ * Что приём сказал о принятом: месяц записи, судьба самой записи и — у предложений — счёт
+ * легшего и уже лежавшего.
+ *
+ * Без счёта строка одинакова и у прогона, привёзшего новое, и у прогона, у которого всё уже
+ * лежало: человек читает второе как первое. Приём, счёта не приславший, оставляет строку
+ * прежней — так же читаются сводка и разборы, у которых счёта нет вовсе.
+ */
 function accepted(shipped: IShipped): string {
     if (!shipped.accepted) {
         return 'принято';
     }
 
-    return `${shipped.accepted.month}${shipped.accepted.created ? ', запись заведена' : ', запись дописана'}`;
+    const record: string = `${shipped.accepted.month}${shipped.accepted.created ? ', запись заведена' : ', запись дописана'}`;
+    const added: number | undefined = shipped.accepted.added;
+
+    return added === undefined ? record : `${record}, принято ${added}, уже лежало ${shipped.accepted.known ?? 0}`;
 }
 
 /**
