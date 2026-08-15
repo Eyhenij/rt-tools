@@ -1,0 +1,9 @@
+<ng-container rtBlock="login">
+    <section rtElem="card">
+        <rt-logo rtElem="logo" ariaLabel="Шина сообщений" [height]="32" />
+
+        <h1 rtElem="title">Вход в админку</h1>
+
+        <admin-sign-in-form [pending]="pending()" [fault]="fault()" (submitted)="submit($event)" />
+    </section>
+</ng-container>

@@ -81,3 +81,5 @@ vitest.config.*.timestamp*
 
 # Клиент хранилища: его переписывает генератор Prisma целиком.
 libs/message-bus-api/persistence/util/src/generated
+
+__screenshots__/
