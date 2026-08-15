@@ -10,7 +10,7 @@ import { ProposalsModule } from '@rt/message-bus-api/proposals/feature';
 import { TreesModule } from '@rt/message-bus-api/trees/feature';
 
 import { HealthController } from './health/health.controller';
-import { IntakeFailureFilter } from './intake-failure.filter';
+import { FailureFilter } from './failure.filter';
 
 /**
  * Состав приёмника.
@@ -19,12 +19,12 @@ import { IntakeFailureFilter } from './intake-failure.filter';
  * проверку на всё приложение: она закрыта по умолчанию, и операция, объявленная позже, закрыта с
  * того мгновения, как объявлена.
  *
- * Разбор отказов ставится приложением, а не доменом: три операции решали бы порознь, что считать
+ * Разбор отказов ставится приложением, а не доменом: операции решали бы порознь, что считать
  * поломкой хранилища, и разошлись бы на первой же незнакомой ошибке.
  */
 @Module({
     imports: [PrismaModule, AccessModule, AccountsModule, ObservationsModule, ProposalsModule, PostmortemsModule, TreesModule],
     controllers: [HealthController],
-    providers: [{ provide: APP_FILTER, useClass: IntakeFailureFilter }],
+    providers: [{ provide: APP_FILTER, useClass: FailureFilter }],
 })
 export class AppModule {}

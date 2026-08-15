@@ -30,8 +30,8 @@
 | Груз, не прошедший проверку формы, отбивается целиком в пределах своей операции.             | `libs/message-bus-common/src/lib/cargo-fault.ts:cargoFaultMessage`                                |
 | Все записи одной операции ложатся вместе или не ложатся вовсе.                               | `libs/message-bus-api/postmortems/data-access/src/lib/postmortem.queries.ts:writePostmortems`     |
 | Предложения и разборы, приехавшие раньше сводки, заводят запись месяца сами.                 | `libs/message-bus-api/proposals/feature/src/lib/proposals-intake.controller.ts:accept`            |
-| Отказ приёмника называет причину дереву, а не подробности своего устройства.                 | `apps/message-bus/src/app/intake-failure.filter.ts:catch`                                         |
-| Каждый отказ записывается в журнал приёмника с родом груза и признаком дерева.               | `apps/message-bus/src/app/intake-failure.filter.ts:IntakeFailureFilter`                           |
+| Отказ приёмника называет причину дереву, а не подробности своего устройства.                 | `apps/message-bus/src/app/failure.filter.ts:catch`                                                |
+| Каждый отказ записывается в журнал приёмника с родом груза и признаком дерева.               | `apps/message-bus/src/app/failure.filter.ts:FailureFilter`                                        |
 | Приёмник ничего не отдаёт без токена дерева.                                                 | `libs/message-bus-api/access/util/src/lib/operation-access.ts:OPERATION_ACCESS`                   |
 | Проба живости отвечает только тогда, когда хранилище отвечает тоже.                          | `apps/message-bus/src/app/health/health.controller.ts:check`                                      |
 | Проба живости не называет ни редакции, ни состава — ни в теле, ни в заголовках ответа.       | `apps/message-bus/src/main.ts:serve`                                                              |
