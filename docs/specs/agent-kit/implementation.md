@@ -139,6 +139,7 @@
 | Признак называет свою область.                                                                               | `projects/agent-kit/assets/hooks/reuse-first-guard.sh:scope`                  |
 | Пустое поле признака не съезжает в соседнее.                                                                 | `projects/agent-kit/assets/hooks/reuse-first-guard.sh:cancel`                 |
 | Гард, не получивший ни одного признака, говорит об этом.                                                     | `projects/agent-kit/assets/hooks/reuse-first-guard.sh:signals_seen`           |
+| Гард на правке и сплошная проверка читают у признака одни и те же поля.                                      | `projects/agent-kit/assets/hooks/reuse-first-guard.sh:rt_backend_roots`       |
 | Заведение задачи кончается ответом очереди работ, а не выводом команды.                                      | `projects/agent-kit/assets/checks/task-new.github.mjs:describeTaskState`      |
 | Задача, которой нет в очереди работ, кончает команду заведения ненулевым кодом.                              | `projects/agent-kit/assets/checks/board.github.mjs:describeTaskState`         |
 | Задача без исполнителя названа отдельной строкой.                                                            | `projects/agent-kit/assets/checks/board.github.mjs:assignees`                 |
