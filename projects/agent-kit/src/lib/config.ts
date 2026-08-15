@@ -22,7 +22,16 @@ export type TKind =
     | 'workflows'
     | 'templates'
     /** Документы дерева, которые читает и человек, и агент: словарь проекта. */
-    | 'docs';
+    | 'docs'
+    /**
+     * Образцы, которые копируют в рабочий файл и заполняют: папка задачи, спек домена.
+     *
+     * От шаблонов отличаются читателем и местом. Шаблон ложится в каталог слоя правил, и с него
+     * пишут ресурс этого слоя; образец ложится туда, где идёт работа, и копирует его тот, кто
+     * работу ведёт. Одним родом их не свести: дерево вправе отказаться от одних, оставив
+     * другие, и назвать им разные каталоги.
+     */
+    | 'samples';
 
 export const KINDS: readonly TKind[] = [
     'laws',
@@ -37,6 +46,7 @@ export const KINDS: readonly TKind[] = [
     'workflows',
     'templates',
     'docs',
+    'samples',
 ];
 
 /**
@@ -155,6 +165,9 @@ export const DEFAULT_LAYOUT: Readonly<Record<TKind, string>> = {
     workflows: '.claude/workflows',
     templates: '.claude/rt-kit/templates',
     docs: 'docs',
+    // Внутри рода путь повторяет раскладку дерева — папки задач и спеки, — поэтому одного
+    // умолчания хватает всем образцам сразу.
+    samples: 'docs',
 };
 
 export class ConfigError extends Error {}

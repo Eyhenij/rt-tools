@@ -2,6 +2,10 @@ import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { targetOf } from './assets.js';
+import { IEntryOfCatalog } from './catalog.js';
+import { DEFAULT_LAYOUT, TKind } from './config.js';
+
 /**
  * Наборы сценариев по исполняемым ресурсам пакета.
  *
@@ -65,4 +69,27 @@ describe('исполняемые ресурсы пакета', (): void => {
     it('SC-AK-04 — текст правила не называет чужого дерева', (): void => {
         expectGreen('texts.test.sh');
     }, 120_000);
+});
+
+/**
+ * Образцы — единственный род, у которого путь внутри рода значит место в дереве, а не слой:
+ * `tasks/_template/plan.md` ложится туда, где идёт работа. Отсюда и сценарии: умолчание рода и
+ * названный деревом каталог.
+ */
+describe('куда ложится образец', (): void => {
+    const sample: Pick<IEntryOfCatalog, 'id' | 'kind' | 'name'> = {
+        id: 'samples/tasks/_template/plan.md',
+        kind: 'samples',
+        name: 'tasks/_template/plan',
+    };
+
+    it('SC-AK-202 — образец ложится по своему пути внутри каталога документов', (): void => {
+        expect(targetOf(sample, DEFAULT_LAYOUT)).toBe('docs/tasks/_template/plan.md');
+    });
+
+    it('SC-AK-203 — дерево называет образцам свой каталог', (): void => {
+        const layout: Readonly<Record<TKind, string>> = { ...DEFAULT_LAYOUT, samples: 'работа/образцы' };
+
+        expect(targetOf(sample, layout)).toBe('работа/образцы/tasks/_template/plan.md');
+    });
 });

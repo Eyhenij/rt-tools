@@ -4,7 +4,7 @@ kind: pattern
 rule: permissions
 description: Паттерн правила permissions. Брать при заведении процедуры Connect и при закрытии раздела админки — готовые декораторы доступа, отбивка без входа и без права, декларация пункта меню с правом и флагом. Не брать для устройства самого меню — это правило navigation.
 ---
-<!-- rt-kit v0.8.1 · patterns/permissions-procedure.md · 60ac8c50dc6e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.8.2 · patterns/permissions-procedure.md · 60ac8c50dc6e · правится надстройкой, не здесь -->
 
 # Объявление доступа
 
