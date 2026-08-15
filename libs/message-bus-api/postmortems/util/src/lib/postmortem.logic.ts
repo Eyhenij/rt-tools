@@ -14,3 +14,11 @@ export const POSTMORTEMS_FIELDS: readonly string[] = ['schema', 'tree', 'items']
 
 /** Обязательные поля одной записи. */
 export const POSTMORTEM_ITEM_FIELDS: readonly string[] = ['file', 'text'];
+
+/**
+ * Поля, по которым список разборов упорядочивается.
+ *
+ * Первое — умолчание домена: свежие сверху. Текста разбора здесь нет и не будет — порядок по
+ * колонке, которой нет в строке списка, человеку нечем объяснить.
+ */
+export const POSTMORTEM_SORTABLE: readonly string[] = ['arrivedAt', 'updatedAt', 'file', 'tree'];

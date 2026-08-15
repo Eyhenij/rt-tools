@@ -1,7 +1,7 @@
 import { Controller, Get, ServiceUnavailableException } from '@nestjs/common';
 
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
-import { Public } from '@rt/message-bus-api/trees/feature';
+import { PublicOperation } from '@rt/message-bus-api/access/util';
 
 /**
  * Проба живости. Отвечает только тогда, когда отвечает и хранилище: служба считается поднятой,
@@ -12,7 +12,7 @@ import { Public } from '@rt/message-bus-api/trees/feature';
  * умолчанию, и без метки проба отвечала бы отказом, как всякая незаявленная операция.
  */
 @Controller('health')
-@Public()
+@PublicOperation()
 export class HealthController {
     readonly #prisma: PrismaService;
 

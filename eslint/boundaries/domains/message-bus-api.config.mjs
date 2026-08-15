@@ -25,6 +25,19 @@ const PERSISTENCE_FEATURE = 'scope:message-bus-api-persistence-feature';
  */
 const TREES_UTIL = 'scope:message-bus-api-trees-util';
 
+/**
+ * Слой утилит домена учётных записей. Стоит в списке у каждой операции чтения груза: вошедшего
+ * читают они все, и вторая копия этого чтения разошлась бы с первой в коде отказа.
+ */
+const ACCOUNTS_UTIL = 'scope:message-bus-api-accounts-util';
+
+/**
+ * Объявление доступа: чем закрыта операция — ничем, токеном дерева или входом человека. Стоит в
+ * списке у каждого домена с операциями: необъявленная операция не отвечает никому, и объявить её
+ * должен тот, кто её пишет.
+ */
+const ACCESS_UTIL = 'scope:message-bus-api-access-util';
+
 export const messageBusApiBoundaries = [
     // Приложение видит модули доменов и клиент хранилища. Проба живости спрашивает хранилище
     // напрямую: домена, чьей возможностью она была бы, у неё нет
@@ -35,6 +48,14 @@ export const messageBusApiBoundaries = [
             'scope:message-bus-api-proposals-feature',
             'scope:message-bus-api-postmortems-feature',
             'scope:message-bus-api-trees-feature',
+            // Единственная проверка доступа и операции входа: обе ставит приложение — цепочка
+            // проверок его решение, а не решение домена
+            'scope:message-bus-api-access-feature',
+            'scope:message-bus-api-accounts-feature',
+            // Признак команды учётных записей: точка входа разводит по нему две семьи команд
+            ACCOUNTS_UTIL,
+            // Метка открытой операции: пробу живости объявляет само приложение
+            ACCESS_UTIL,
             // Дерево запроса читает разбор отказа: в журнал уходит признак того дерева, чей
             // груз отбит, а не признак, названный самим грузом
             TREES_UTIL,
@@ -51,6 +72,8 @@ export const messageBusApiBoundaries = [
             'scope:message-bus-api-observations-data-access',
             'scope:message-bus-api-observations-api',
             'scope:message-bus-api-observations-util',
+            // объявление доступа: операция приёма закрыта токеном дерева и говорит об этом сама
+            ACCESS_UTIL,
             // дерево запроса: операция работает от токена, а не от признака, названного грузом
             TREES_UTIL,
             // клиент хранилища: запросы домена берут его доводом, а контроллер — из контейнера.
@@ -80,6 +103,8 @@ export const messageBusApiBoundaries = [
             // сводка и есть её тело. Предложения, приехавшие раньше сводки, заводят запись сами,
             // и второй upsert той же пары «дерево — месяц» разошёлся бы с первым при первой правке
             'scope:message-bus-api-observations-data-access',
+            // объявление доступа: операция приёма закрыта токеном дерева и говорит об этом сама
+            ACCESS_UTIL,
             // дерево запроса: операция работает от токена, а не от признака, названного грузом
             TREES_UTIL,
             // клиент хранилища: запросы домена берут его доводом, а контроллер — из контейнера.
@@ -109,6 +134,8 @@ export const messageBusApiBoundaries = [
             // а время прогона в записи говорит, отчитывается ли дерево, и разборами оно
             // отчитывается тоже. Владеет записью домен наблюдений
             'scope:message-bus-api-observations-data-access',
+            // объявление доступа: операция приёма закрыта токеном дерева и говорит об этом сама
+            ACCESS_UTIL,
             // дерево запроса: операция работает от токена, а не от признака, названного грузом
             TREES_UTIL,
             // клиент хранилища: запросы домена берут его доводом, а контроллер — из контейнера.
@@ -131,7 +158,15 @@ export const messageBusApiBoundaries = [
     // отказ и свои команды строки запуска. Груза он не касается — его спрашивают, чьё это
     {
         sourceTag: 'scope:message-bus-api-trees-feature',
-        onlyDependOnLibsWithTags: ['scope:message-bus-api-trees-data-access', TREES_UTIL, PERSISTENCE_DATA_ACCESS, COMMON],
+        onlyDependOnLibsWithTags: [
+            'scope:message-bus-api-trees-data-access',
+            TREES_UTIL,
+            // Список деревьев для отбора в админке объявляет, чем он закрыт: входом человека, а
+            // не токеном дерева — токен открывает приём и только своего дерева, а список называет все
+            ACCESS_UTIL,
+            PERSISTENCE_DATA_ACCESS,
+            COMMON,
+        ],
     },
     {
         sourceTag: 'scope:message-bus-api-trees-data-access',
@@ -145,6 +180,49 @@ export const messageBusApiBoundaries = [
     // раскладки ищет его буквально. За константой он от проверки прячется, и либа без описанных
     // границ выглядит описанной. В чужих списках прав константа остаётся — там тег упоминается
     { sourceTag: 'scope:message-bus-api-trees-util', onlyDependOnLibsWithTags: [COMMON] },
+
+    // Учётные записи и входы людей. Домен предметный и от деревьев отделён намеренно: токен
+    // дерева открывает приём груза, вход человека — чтение, и общая либа свела бы два способа
+    // представиться к одному
+    {
+        sourceTag: 'scope:message-bus-api-accounts-feature',
+        onlyDependOnLibsWithTags: [
+            'scope:message-bus-api-accounts-data-access',
+            ACCOUNTS_UTIL,
+            // Операции входа объявляют, чем они закрыты: вход открыт всем, выход и ответ о
+            // вошедшем — только вошедшему. Объявление общее у всех операций приёмника
+            ACCESS_UTIL,
+            PERSISTENCE_DATA_ACCESS,
+            COMMON,
+        ],
+    },
+    {
+        sourceTag: 'scope:message-bus-api-accounts-data-access',
+        onlyDependOnLibsWithTags: [ACCOUNTS_UTIL, PERSISTENCE_DATA_ACCESS, PERSISTENCE_UTIL, COMMON],
+    },
+    { sourceTag: 'scope:message-bus-api-accounts-api', onlyDependOnLibsWithTags: [ACCOUNTS_UTIL, COMMON] },
+    // Хеш пароля, значение входа и вошедший в запросе: чистые функции, ни базы, ни каркаса
+    { sourceTag: 'scope:message-bus-api-accounts-util', onlyDependOnLibsWithTags: [COMMON] },
+
+    // Объявление доступа и единственная проверка приёмника. Проверка одна на оба способа
+    // представиться: две глобальные подряд означали бы, что запрос с токеном дерева доходит до
+    // чтения груза, если вторая забыла отказать
+    {
+        sourceTag: 'scope:message-bus-api-access-feature',
+        onlyDependOnLibsWithTags: [
+            ACCESS_UTIL,
+            'scope:message-bus-api-accounts-data-access',
+            ACCOUNTS_UTIL,
+            'scope:message-bus-api-trees-data-access',
+            TREES_UTIL,
+            PERSISTENCE_DATA_ACCESS,
+            COMMON,
+        ],
+    },
+    { sourceTag: 'scope:message-bus-api-access-data-access', onlyDependOnLibsWithTags: [ACCESS_UTIL] },
+    { sourceTag: 'scope:message-bus-api-access-api', onlyDependOnLibsWithTags: [ACCESS_UTIL, COMMON] },
+    // Метки объявления: чистые декораторы каркаса, ни базы, ни доменов
+    { sourceTag: 'scope:message-bus-api-access-util', onlyDependOnLibsWithTags: [] },
 
     // Хранилище: клиент лежит в слое утилит, служба над ним, модуль над службой. Доменных либ
     // домен не видит вовсе — его зовут, а не он зовёт
