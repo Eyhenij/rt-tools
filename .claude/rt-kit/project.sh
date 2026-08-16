@@ -57,6 +57,7 @@ rt_push_checks() {
     cat <<'EOF'
 node tools/check-specs.mjs
 node tools/check-dupes.mjs
+node tools/check-hooks.mjs
 pnpm exec nx affected -t lint typecheck test build --parallel
 pnpm run lint:styles
 pnpm exec nx run message-bus-admin-e2e:e2e
