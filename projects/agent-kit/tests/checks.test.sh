@@ -602,4 +602,43 @@ report "SC-AK-198 — хостинг спрошен" "$(cat "$BOARD_TREE/seen" 2
 
 rm -rf "$BOARD_TREE"
 
+# --- SC-AK-244 и SC-AK-245 — внешние наборы ищутся разрешением модуля ------------------------
+#
+# Пакет, объявленный зависимостью подпроекта, в корневом `node_modules` не лежит вовсе: менеджер
+# держит его в своём хранилище, и зашитый путь на такой раскладке верным не бывает никогда. До
+# правки проверка кончалась отказом чтения каталога, не дойдя до сверки ни разу.
+
+DUPES_TREE="$(mktemp -d)"
+mkdir -p "$DUPES_TREE/tools" "$DUPES_TREE/.claude/rt-kit" \
+    "$DUPES_TREE/projects/kit/src" "$DUPES_TREE/projects/kit/node_modules/@ext/sets/decl"
+cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/check-dupes.mjs" "$DUPES_TREE/tools/"
+printf '{"accepted":[],"debt":[]}\n' > "$DUPES_TREE/tools/dupes-allowlist.json"
+printf '{"sourceRoots":["projects"],"externalEnums":[{"package":"@ext/sets","dir":"decl"}]}\n' \
+    > "$DUPES_TREE/.claude/rt-kit/checks.json"
+
+# Пакет объявлен подпроектом и лежит внутри него — в корне дерева его нет.
+printf '{"name":"kit","dependencies":{"@ext/sets":"^1.0.0"}}\n' > "$DUPES_TREE/projects/kit/package.json"
+printf '{"name":"@ext/sets","version":"1.0.0"}\n' \
+    > "$DUPES_TREE/projects/kit/node_modules/@ext/sets/package.json"
+printf 'export declare enum Direction { ASC = "asc", DESC = "desc" }\n' \
+    > "$DUPES_TREE/projects/kit/node_modules/@ext/sets/decl/order.d.ts"
+# Своё перечисление под тем же набором членов — та же копия, что и между двумя либами.
+printf 'export enum SortWay {\n    Asc = "asc",\n    Desc = "desc",\n}\n' \
+    > "$DUPES_TREE/projects/kit/src/sort.ts"
+
+dupes_says() {
+    (cd "$DUPES_TREE" && node tools/check-dupes.mjs 2>&1)
+}
+
+report "SC-AK-244 — набор из пакета подпроекта найден" "$(dupes_says | grep -c 'один набор членов')" 1
+report "SC-AK-244 — отказа чтения каталога нет" "$(dupes_says | grep -c 'ENOENT')" 0
+
+# SC-AK-245 — пакета нет вовсе: сверка своих повторов идёт, отказа нет.
+rm -rf "$DUPES_TREE/projects/kit/node_modules"
+report "SC-AK-245 — без пакета проверка не падает" "$(dupes_says | grep -c 'ENOENT')" 0
+(cd "$DUPES_TREE" && node tools/check-dupes.mjs >/dev/null 2>&1)
+report "SC-AK-245 — без пакета код нулевой" "$?" 0
+
+rm -rf "$DUPES_TREE"
+
 suite_result "проверки"

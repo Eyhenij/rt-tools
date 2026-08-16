@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.8.2 · checks/check-dupes.mjs · 67a66cbbb2fd · правится надстройкой, не здесь
+// rt-kit v0.8.2 · checks/check-dupes.mjs · a1b26e4aec1d · правится надстройкой, не здесь
 /**
  * Проверка того, что образец не написан второй раз.
  *
@@ -37,8 +37,9 @@
  *
  * Ненулевой код возврата и перечень расхождений.
  */
-import { readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { createRequire } from 'node:module';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 
 import { allowlistOf, CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
@@ -75,6 +76,56 @@ function collectFiles(dir) {
         }
     }
     return files;
+}
+
+/**
+ * Каталог объявлений внешнего пакета — разрешением модуля, а не путём в `node_modules`.
+ *
+ * Точек разрешения несколько: корень дерева и каждый его подпроект, объявивший этот пакет
+ * зависимостью. Пакет подпроекта в корне не лежит вовсе, и разрешение от корня его не находит;
+ * менеджер при этом вправе держать рядом несколько версий сразу, и обход хранилища по образцу
+ * пути выбрал бы ту, которую никто не ставит.
+ *
+ * Не нашлось — `null`, и внешние наборы просто не считаются: дерево без этого пакета должно
+ * получать сверку своих повторов, а не отказ чтения каталога.
+ */
+function resolveExternalDir({ package: name, dir }) {
+    for (const from of [ROOT, ...holdersOf(name)]) {
+        try {
+            const manifest = createRequire(join(from, 'package.json')).resolve(`${name}/package.json`);
+            const found = join(dirname(manifest), dir);
+            if (existsSync(found)) {
+                return found;
+            }
+        } catch {
+            // Эта точка пакета не видит — пробуется следующая.
+        }
+    }
+
+    return null;
+}
+
+/** Подпроекты, объявившие пакет зависимостью: их манифесты и есть точки разрешения. */
+function holdersOf(name) {
+    const found = [];
+    for (const root of SOURCE_ROOTS) {
+        if (!existsSync(join(ROOT, root))) {
+            continue;
+        }
+        for (const entry of readdirSync(join(ROOT, root), { withFileTypes: true })) {
+            const manifest = join(ROOT, root, entry.name, 'package.json');
+            if (!entry.isDirectory() || !existsSync(manifest)) {
+                continue;
+            }
+            const declared = JSON.parse(readFileSync(manifest, 'utf8'));
+            const fields = [declared.dependencies, declared.peerDependencies, declared.devDependencies];
+            if (fields.some((field) => field?.[name])) {
+                found.push(join(ROOT, root, entry.name));
+            }
+        }
+    }
+
+    return found;
 }
 
 /** Корень либы: путь до каталога `src`. Повтор внутри одной либы повтором не считается */
@@ -117,8 +168,13 @@ const MIN_TABLE_PAIRS = 2;
 /**
  * Пакеты, чьи наборы считаются наравне с либами. Своё перечисление под уже
  * объявленный там набор — такая же копия, как и между двумя либами.
+ *
+ * Имя пакета и каталог внутри него объявляет дерево; путь в `node_modules` здесь не
+ * зашивается. Пакет, объявленный зависимостью подпроекта, в корневом `node_modules` не лежит
+ * вовсе — менеджер держит его в своём хранилище, — и проверка кончалась отказом чтения
+ * каталога, не дойдя до сверки ни разу.
  */
-const EXTERNAL_ENUM_SOURCES = ['node_modules/@rt-tools/utils/esm/lib/interfaces'];
+const EXTERNAL_ENUM_SOURCES = CONFIG.externalEnums ?? [];
 
 const exportsByName = new Map();
 const settingsByName = new Map();
@@ -189,10 +245,14 @@ for (const path of SOURCE_ROOTS.flatMap((root) => collectFiles(root))) {
     collectEnums(text, lib);
 }
 
-for (const dir of EXTERNAL_ENUM_SOURCES) {
-    for (const entry of readdirSync(join(ROOT, dir), { withFileTypes: true })) {
+for (const source of EXTERNAL_ENUM_SOURCES) {
+    const dir = resolveExternalDir(source);
+    if (!dir) {
+        continue;
+    }
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
         if (entry.isFile() && entry.name.endsWith('.d.ts')) {
-            collectEnums(readFileSync(join(ROOT, dir, entry.name), 'utf8'), dir.replace('node_modules/', ''));
+            collectEnums(readFileSync(join(dir, entry.name), 'utf8'), `${source.package}/${source.dir}`);
         }
     }
 }

@@ -19,6 +19,8 @@
 | Разложенное, которому нужна запись в чужой настройке, доезжает до неё.                                       | `projects/agent-kit/src/lib/hooks-map.ts:unboundHooks`                        |
 | Надстройка настроек проверок сливается по вложенным ключам.                                                  | `projects/agent-kit/assets/checks/rt-kit-checks.config.mjs:mergeDeep`         |
 | Пакет не знает раскладки чужого дерева.                                                                      | `projects/agent-kit/assets/checks/check-lib-layers.mjs:LIBS_ROOT`             |
+| Каталог чужого пакета ищется разрешением модуля, а не путём в каталоге зависимостей.                         | `projects/agent-kit/assets/checks/check-dupes.mjs:resolveExternalDir`         |
+| Отсутствие чужого пакета проверку не роняет.                                                                 | `projects/agent-kit/assets/checks/check-dupes.mjs:holdersOf`                  |
 | Первая установка не требует писать прозу руками.                                                             | `projects/agent-kit/src/lib/companion.ts:draftOf`                             |
 | Папка задачи не уезжает в главную ветку.                                                                     | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:folder_in_branch`      |
 | Проверяется то, что уедет в главную ветку, а не то, что лежит на машине.                                     | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:folder_in_branch`      |
