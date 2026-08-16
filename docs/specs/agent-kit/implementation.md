@@ -171,6 +171,13 @@
 | Образцы едут своим родом ресурса, а не вместе с шаблонами надстройки.                                        | `projects/agent-kit/src/lib/config.ts:TKind`                                  |
 | Дерево вправе назвать образцам свой путь и отказаться от них целиком.                                        | `projects/agent-kit/src/lib/config.ts:DEFAULT_LAYOUT`                         |
 | Образец несёт шапку раскладки наравне с остальным разложенным.                                               | `projects/agent-kit/src/lib/plan.ts:planFile`                                 |
+| Команда кладёт блок на диск и в сеть не ходит.                                                               | `projects/agent-kit/assets/commands/feedback.md:propose`                      |
+| Блок собирает агент, а не человек.                                                                           | `projects/agent-kit/assets/commands/feedback.md:ARGUMENTS`                    |
+| Слово без ясного адреса не превращается в блок молча.                                                        | `projects/agent-kit/assets/commands/feedback.md:ARGUMENTS`                    |
+| Блок ложится в файл сегодняшнего дня, а не в свой.                                                           | `projects/agent-kit/assets/commands/feedback.md:date`                         |
+| Файл дня заводится с образца, если его ещё нет.                                                              | `projects/agent-kit/assets/commands/feedback.md:cp`                           |
+| Текст блока проверяется на адрес дерева тем же, чем проверяется всё остальное.                               | `projects/agent-kit/src/lib/proposals.ts:leaksIn`                             |
+| Команда говорит, куда лёг блок и чем он уедет.                                                               | `projects/agent-kit/assets/commands/feedback.md:dry-run`                      |
 
 ## Что ещё стоит знать при чтении кода
 
