@@ -77,6 +77,24 @@ fi
 report "SC-AK-226 — раздел из образца в наборе не спрашивается" \
     "$(sections_for rules | grep -c '^## Когда берётся$')" 0
 
+# Обратная сторона: сам образец обязан нести объявленный набор. Заводят по нему, и образец,
+# разошедшийся с набором, отдаёт новое правило сразу расхождением — так и вышло: он объявлял
+# раздел, которого нет ни в одном правиле, и молчал о трёх, которые несут все.
+template_gaps=''
+while IFS= read -r want; do
+    [ -n "$want" ] || continue
+    grep -qxF "$want" "$ASSETS/templates/rule.md" || template_gaps="$template_gaps $want"
+done <<< "$(sections_for rules)"
+if [ -z "${template_gaps// /}" ]; then
+    report "SC-AK-226 — образец правила несёт объявленный набор" PASS PASS
+else
+    report "SC-AK-226 — образец правила несёт объявленный набор" "$template_gaps" PASS
+fi
+
+# Образец паттерна судится тем же: у него свой набор.
+report "SC-AK-226 — образец паттерна несёт «Когда брать»" \
+    "$(grep -cxF '## Когда брать' "$ASSETS/templates/pattern.md")" 1
+
 # --- SC-AK-227 — род без объявленного набора молчит ---------------------------------------------
 noisy=0
 for kind in $KINDS_WITHOUT_SECTIONS; do
