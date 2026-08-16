@@ -51,7 +51,9 @@
             "Состав правки": {
                 "skip": "считает признак текстовой ветки для остальных шагов; сам ничего не проверяет"
             },
+            "Hook scenarios": "node tools/check-hooks.mjs",
             "Test, Lint, Typecheck, Build": "pnpm exec nx affected -t lint typecheck test build --parallel",
+            "Hook suites": "pnpm exec nx affected -t test-hooks",
             "Stylelint": "pnpm run lint:styles",
             "E2E admin": "pnpm exec nx run message-bus-admin-e2e:e2e",
             "Visual tests": {
