@@ -79,7 +79,7 @@ function journal(): IJournalRecord[] {
 
 /** Разобранная причина в полях строки: спека читает её теми же именами, что и журнал. */
 function causeOf(record: IJournalRecord): Record<string, unknown> {
-    return (record.fields.error ?? {}) as Record<string, unknown>;
+    return (record.fields['error'] ?? {}) as Record<string, unknown>;
 }
 
 /** Текст, ушедший спрашивавшему. */
