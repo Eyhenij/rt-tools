@@ -1,3 +1,30 @@
+## [0.8.3](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.8.2...rt-agent-kit@0.8.3) (2026-08-16)
+
+### Bug Fixes
+
+- **rt:agent-kit:** внешние наборы проверки повторов ищутся разрешением модуля ([eb8b0c3](https://github.com/Eyhenij/rt-tools/commit/eb8b0c376a59e106a32c912bf9c231183b671097))
+- **rt:agent-kit:** вторая дверь закрыта у трёх гардов и покрыта сценариями ([69724d4](https://github.com/Eyhenij/rt-tools/commit/69724d4d546b4aefe5ec5d9d25d411c0cefe9131))
+- **rt:agent-kit:** графы приведены к прозе по находкам первого прогона ревью ([aa3aff2](https://github.com/Eyhenij/rt-tools/commit/aa3aff2fca8b640accd302fdb5e79a729bf84103))
+- **rt:agent-kit:** два гарда зовутся и на команду оболочки ([1191c2c](https://github.com/Eyhenij/rt-tools/commit/1191c2c807d9fad61f9a8fd7a811b6a733b3bcf1))
+- **rt:agent-kit:** команда ревью не отвечает уверенно в дереве, где её нечем звать ([96d52b9](https://github.com/Eyhenij/rt-tools/commit/96d52b93248620477a93445caee53e18f06a593a)), closes [#735](https://github.com/Eyhenij/rt-tools/issues/735)
+- **rt:agent-kit:** один номер сценария снова означает один сценарий ([7c62dc6](https://github.com/Eyhenij/rt-tools/commit/7c62dc6b8628f7904caf31869fdafca76e091509)), closes [#726](https://github.com/Eyhenij/rt-tools/issues/726)
+- **rt:agent-kit:** правка сверки спеков перенесена в пакет ([9cee063](https://github.com/Eyhenij/rt-tools/commit/9cee063706afb0aabf999ae2bae23bb5bf1337ba))
+- **rt:agent-kit:** прогон убирает за собой, и мусор снимается отбором ([e444c08](https://github.com/Eyhenij/rt-tools/commit/e444c0804fdbd3295ff337258d7ac6d8d1492566))
+- **rt:agent-kit:** пропущенный деревом паттерн правило не краснит ([6481dfb](https://github.com/Eyhenij/rt-tools/commit/6481dfb54294d5a860c12a5483ca8a316096b44d))
+- **rt:agent-kit:** символом якоря привязки считается любая буква ([95bb2d9](https://github.com/Eyhenij/rt-tools/commit/95bb2d9978fce63f5c63d51e885a4f860da32fbb))
+- **rt:agent-kit:** слово якоря ищется границами любого алфавита ([33c1f36](https://github.com/Eyhenij/rt-tools/commit/33c1f36f60b31ae8c97e1a98853ef645214f0d5c))
+
+### Features
+
+- **rt:agent-kit:** гард ожидания и прогон наборов по гардам ([7cdf12d](https://github.com/Eyhenij/rt-tools/commit/7cdf12d18ae0ed2a65680b0592dc78a5046730dd))
+- **rt:agent-kit:** закон о документации проекта получил шесть статей ([f2eeabb](https://github.com/Eyhenij/rt-tools/commit/f2eeabb15906bc75a6fb638b8fbbdbbd7bdf4b06))
+- **rt:agent-kit:** образцы папки задачи и спека домена приезжают раскладкой ([c0d162b](https://github.com/Eyhenij/rt-tools/commit/c0d162b05fb58f6c368ae0d93570328d681cbe5f)), closes [#695](https://github.com/Eyhenij/rt-tools/issues/695)
+- **rt:agent-kit:** расхождения в текстах пакета находит проверка ([3a0a452](https://github.com/Eyhenij/rt-tools/commit/3a0a452a12d492d35300b340fb5ad9d4d106ce59))
+- **rt:agent-kit:** слово посреди работы ложится блоком в файл предложений ([5cc745e](https://github.com/Eyhenij/rt-tools/commit/5cc745e859579722f889a3f48ecfa19bcbd6b9cc))
+- **rt:agent-kit:** смысловое расхождение двух текстов находит роль ([134900a](https://github.com/Eyhenij/rt-tools/commit/134900a9ec09e67b3587af5937db0f1598cc830f))
+- **rt:agent-kit:** статья без места в коде закрывается вердиктом с причиной ([a18de4d](https://github.com/Eyhenij/rt-tools/commit/a18de4daf573f1a8862d1330ab1ba4b29d2d80c2))
+- **rt:agent-kit:** ход правила виден графом, а не только чтением прозы ([04ea8a9](https://github.com/Eyhenij/rt-tools/commit/04ea8a9e86fda81c3a0d40fe0125a0aa53fbbda0))
+
 ## [0.8.2](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.8.1...rt-agent-kit@0.8.2) (2026-08-15)
 
 ### Bug Fixes
