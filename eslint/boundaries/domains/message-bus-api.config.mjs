@@ -38,6 +38,13 @@ const ACCOUNTS_UTIL = 'scope:message-bus-api-accounts-util';
  */
 const ACCESS_UTIL = 'scope:message-bus-api-access-util';
 
+/**
+ * Слой утилит наблюдаемости: разбор ошибки в поля и вычистка полей строки журнала. Стоит в
+ * списке у приложения и у клиента хранилища — пишут о себе оба, а вторая копия разбора
+ * разошлась бы с первой ровно на том поле, ради которого её и заводили.
+ */
+const OBSERVABILITY_UTIL = 'scope:message-bus-api-observability-util';
+
 export const messageBusApiBoundaries = [
     // Приложение видит модули доменов и клиент хранилища. Проба живости спрашивает хранилище
     // напрямую: домена, чьей возможностью она была бы, у неё нет
@@ -59,6 +66,8 @@ export const messageBusApiBoundaries = [
             // Дерево запроса читает разбор отказа: в журнал уходит признак того дерева, чей
             // груз отбит, а не признак, названный самим грузом
             TREES_UTIL,
+            // Разбор ошибки в поля и вычистка: их зовут логгер приложения и разбор отказов
+            OBSERVABILITY_UTIL,
             PERSISTENCE_FEATURE,
             PERSISTENCE_DATA_ACCESS,
             COMMON,
@@ -227,7 +236,14 @@ export const messageBusApiBoundaries = [
     // Хранилище: клиент лежит в слое утилит, служба над ним, модуль над службой. Доменных либ
     // домен не видит вовсе — его зовут, а не он зовёт
     { sourceTag: 'scope:message-bus-api-persistence-util', onlyDependOnLibsWithTags: [] },
-    { sourceTag: 'scope:message-bus-api-persistence-data-access', onlyDependOnLibsWithTags: [PERSISTENCE_UTIL] },
+    // Клиент хранилища пишет о себе сам, и разбор ошибки ему нужен тот же, что и разбору отказов
+    { sourceTag: 'scope:message-bus-api-persistence-data-access', onlyDependOnLibsWithTags: [PERSISTENCE_UTIL, OBSERVABILITY_UTIL] },
+    // Наблюдаемость: разбор ошибки в поля и вычистка полей строки журнала. Кроме утилит слои
+    // пусты — своих записей, служб и выходов наружу у домена нет
+    { sourceTag: 'scope:message-bus-api-observability-util', onlyDependOnLibsWithTags: [] },
+    { sourceTag: 'scope:message-bus-api-observability-data-access', onlyDependOnLibsWithTags: [] },
+    { sourceTag: 'scope:message-bus-api-observability-feature', onlyDependOnLibsWithTags: [] },
+    { sourceTag: 'scope:message-bus-api-observability-api', onlyDependOnLibsWithTags: [] },
     { sourceTag: 'scope:message-bus-api-persistence-feature', onlyDependOnLibsWithTags: [PERSISTENCE_DATA_ACCESS] },
     // Наружу домен не ходит: класть сюда выход к чужой службе нечего, приёмник принимает
     { sourceTag: 'scope:message-bus-api-persistence-api', onlyDependOnLibsWithTags: [PERSISTENCE_UTIL] },
