@@ -14,6 +14,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 
 import { AccountCommandsService, IAccountCommandReport } from '@rt/message-bus-api/accounts/feature';
 import { isAccountCommand } from '@rt/message-bus-api/accounts/util';
+import { AppLoggerService } from '@rt/message-bus-api/observability/feature';
 import { TreeCommandsService } from '@rt/message-bus-api/trees/feature';
 import { ITreeCommandReport } from '@rt/message-bus-api/trees/util';
 
@@ -31,6 +32,10 @@ async function serve(): Promise<void> {
     const limit: string = cargoLimit();
     const app: NestExpressApplication = await NestFactory.create<NestExpressApplication>(AppModule);
 
+    // Журнал ставится на всё приложение: уже написанные вызовы в доменах и строки самого
+    // каркаса начинают писать машинно, ничего в них не правя
+    app.useLogger(app.get(AppLoggerService));
+
     app.setGlobalPrefix('api');
     app.useBodyParser('json', { limit });
 
@@ -41,7 +46,9 @@ async function serve(): Promise<void> {
     const port: number = Number(process.env['PORT']) || DEFAULT_PORT;
     await app.listen(port);
 
-    Logger.log(`приёмник поднят: порт ${port}, предел веса груза ${limit}`, 'Bootstrap');
+    // Сводка подъёма полями, а не текстом: по ней видно, с чем служба поднялась, и отобрать её
+    // из вывода можно по имени строки, а не поиском по подстроке
+    Logger.log('приёмник поднят', { port, cargoLimit: limit }, 'Bootstrap');
 }
 
 /**
