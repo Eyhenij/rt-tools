@@ -47,9 +47,23 @@ case "$tool" in
     # сменой не инструмента, а способа записи; текстом правки тогда служит сама команда, и
     # заведённое ею в heredoc читается наравне с телом правки. Разбор —
     # `2026-08-15-guard-denied-shell-wrote-anyway.md`.
-    Bash)
+    #
+    # Терминал среды исполняет ту же командную строку и кладёт её в то же поле: без этих двух
+    # имён гард стоял бы объявленным на них и молча пропускал — состояние хуже необъявленного,
+    # потому что снаружи выглядит закрытым.
+    Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool)
         shell_cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
         [ -z "$shell_cmd" ] && exit 0
+        # Универсальный исполнитель прячет настоящую команду во вложенной строке: без её разбора
+        # путь стоит за кавычкой, и до него не дотягивается ни один образец.
+        if [ "$tool" = "mcp__webstorm__execute_tool" ] && command -v perl >/dev/null 2>&1; then
+            inner="$(printf '%s' "$shell_cmd" | perl -0ne '
+                if (/--command(?:=|\s+)(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(.+))/s) {
+                    print defined $1 ? $1 : (defined $2 ? $2 : $3);
+                }
+            ' 2>/dev/null)"
+            [ -n "$inner" ] && shell_cmd="$inner"
+        fi
         ;;
     *) exit 0 ;;
 esac

@@ -171,6 +171,46 @@ expect_reason "отказ называет запасной ход" skill-gate.s
     "$(input_edit "$TREE/libs/site/x/ui/src/lib/z.component.ts")" \
     'SKILL\.md'
 
+# --- вторая дверь: тот же файл, записанный командой -----------------------------------------
+#
+# Гейт, подписанный на инструмент правки, обходится сменой способа записи: правило остаётся
+# незагруженным, а файл — записанным. Отбитая правка дважды за один заход легла командой —
+# разбор `2026-08-15-guard-denied-shell-wrote-anyway.md`. Требуется то же правило, что и под
+# правку того же файла инструментом.
+c "SC-AK-253 — перенаправление в класс компонента" \
+    'echo x > libs/site/x/ui/src/lib/a.component.ts' Bash component-structure
+c "SC-AK-253 — дописывание в шаблон" \
+    'echo x >> libs/site/x/ui/src/lib/a.component.html' Bash component-structure
+c "SC-AK-253 — правка стилей на месте" \
+    "sed -i '' 's/a/b/' libs/site/x/ui/src/lib/a.component.scss" Bash styling-bem
+c "SC-AK-253 — запись спеки через tee" \
+    'cat f | tee libs/site/x/util/src/lib/a.spec.ts' Bash testing
+c "SC-AK-253 — копирование поверх модуля" \
+    'cp /tmp/a libs/site/x/util/src/lib/a.ts' Bash typescript-conventions
+c "SC-AK-253 — возврат версии из истории" \
+    'git checkout HEAD -- libs/site/x/util/src/lib/b.ts' Bash typescript-conventions
+
+# Чтение и поиск правила не требуют: гейт судит запись, а не всякое упоминание пути.
+c "SC-AK-250 — чтение файла пропускается" \
+    'cat libs/site/x/ui/src/lib/a.component.ts' Bash PASS
+c "SC-AK-250 — поиск по каталогу пропускается" \
+    'grep -rn xyz libs/site/x/ui/src/lib/' Bash PASS
+
+# Правила этого дерева действуют на файлы этого дерева: соседний репозиторий на той же машине
+# им не подчиняется ни одной из дверей.
+c "SC-AK-255 — запись за пределы дерева пропускается" \
+    'echo x > /tmp/чужое/a.component.ts' Bash PASS
+
+# Терминал среды исполняет ту же командную строку и кладёт её в то же поле.
+c "SC-AK-251 — та же запись из терминала среды" \
+    'echo x > libs/site/x/ui/src/lib/a.component.ts' \
+    mcp__webstorm__execute_terminal_command component-structure
+
+# Универсальный исполнитель прячет настоящую команду во вложенной строке.
+c "SC-AK-252 — вложенная запись универсального исполнителя" \
+    'execute_terminal_command --command "echo x > libs/site/x/ui/src/lib/a.component.ts"' \
+    mcp__webstorm__execute_tool component-structure
+
 gate_session_reset
 
 # --- отказ в пользу работы --------------------------------------------------------------
