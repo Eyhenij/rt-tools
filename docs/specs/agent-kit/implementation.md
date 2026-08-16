@@ -178,6 +178,28 @@
 | Файл дня заводится с образца, если его ещё нет.                                                              | `projects/agent-kit/assets/commands/feedback.md:cp`                           |
 | Текст блока проверяется на адрес дерева тем же, чем проверяется всё остальное.                               | `projects/agent-kit/src/lib/proposals.ts:leaksIn`                             |
 | Команда говорит, куда лёг блок и чем он уедет.                                                               | `projects/agent-kit/assets/commands/feedback.md:dry-run`                      |
+| Тексты пакета судятся тем же набором требований, что и копии, разложенные в дерево.                          | `projects/agent-kit/tests/rules-review.test.sh:missing_sections`              |
+| Невыбранный вид судится наравне с выбранным.                                                                 | `projects/agent-kit/tests/rules-review.test.sh:KINDS_WITH_SECTIONS`           |
+| Ресурс без обязательного раздела своего рода — расхождение.                                                  | `projects/agent-kit/tests/rules-review.test.sh:missing_pitfalls`              |
+| Набор разделов объявлен на род и назван поимённо, а не выведен из образца.                                   | `projects/agent-kit/tests/rules-review.test.sh:sections_for`                  |
+| Образец рода судится объявленным набором наравне с корпусом.                                                 | `projects/agent-kit/tests/rules-review.test.sh:template_gaps`                 |
+| Род, которому набор не объявлен, молчит, а не краснеет.                                                      | `projects/agent-kit/tests/rules-review.test.sh:KINDS_WITHOUT_SECTIONS`        |
+| Пустой список долга называется вслух и с числом.                                                             | `projects/agent-kit/tests/rules-review.test.sh:rules_without_pattern`         |
+| Правило без паттерна — расхождение.                                                                          | `projects/agent-kit/tests/rules-review.test.sh:rules_without_pattern`         |
+| Имя соседнего ресурса, названное прозой, проверяется наравне со ссылкой шапки.                               | `projects/agent-kit/tests/rules-review.test.sh:unknown_neighbours`            |
+| Запреты текстов действуют и внутри блока кода.                                                               | `projects/agent-kit/tests/texts.test.sh:domains_in`                           |
+| Адресом конкретного дерева считается перечисленное, а не всё, что похоже на путь.                            | `projects/agent-kit/tests/texts.test.sh:COMMON_SEGMENTS`                      |
+| Вывод переносимого текста из сверки адресов старше нового требования.                                        | `projects/agent-kit/assets/checks/check-doc-paths.mjs:PORTABLE_DIRS`          |
+| Машинная половина краснеет только на считаемом.                                                              | `projects/agent-kit/tests/rules-review.test.sh:suite_result`                  |
+| Проверка текстов пакета стоит в наборе, который гоняется перед пушем.                                        | `projects/agent-kit/src/lib/assets.spec.ts:expectGreen`                       |
+| Ревью читает семью целиком, а не файл по одному.                                                             | `projects/agent-kit/assets/agents/rules-reviewer.md:law`                      |
+| Роль возвращает находки и ничего не правит.                                                                  | `projects/agent-kit/assets/agents/rules-reviewer.md:tools`                    |
+| Находка называет два места дословно и то, чем они расходятся.                                                | `projects/agent-kit/assets/agents/rules-reviewer.md:rule`                     |
+| Пробел ищется чтением, а не счётом привязок.                                                                 | `projects/agent-kit/assets/agents/rules-reviewer.md:Grep`                     |
+| Ревью зовётся двумя способами: командой вручную и машинной половиной в гейте.                                | `projects/agent-kit/assets/commands/rules-review.md:ARGUMENTS`                |
+| Граф изображает ход правила и лежит в тексте самого правила.                                                 | `projects/agent-kit/assets/templates/rule.md:mermaid`                         |
+| Граф заводится каждому правилу, а не только ветвящемуся.                                                     | `projects/agent-kit/tests/rules-review.test.sh:sections_for`                  |
+| Граф правится тем же изменением, что и проза, которую он изображает.                                         | `projects/agent-kit/assets/agents/rules-reviewer.md:mermaid`                  |
 
 ## Что ещё стоит знать при чтении кода
 
