@@ -77,7 +77,7 @@ export class ComponentNameComponent {
 ## `qa-dataid` — на каждый интерактивный элемент
 
 ```html
-<button vmButton qa-dataid="calendar-retry-prices" type="button" (click)="retryPrices.emit()">Повторить</button>
+<button <префикс>Button qa-dataid="calendar-retry-prices" type="button" (click)="retryPrices.emit()">Повторить</button>
 <div rtElem="grid" qa-dataid="admin-calendar-grid"></div>
 ```
 
