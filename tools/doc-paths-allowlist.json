@@ -9,6 +9,10 @@
     "projects/utils/CHANGELOG.md"
   ],
   "paths": [
+    "projects/agent-kit/assets/agents/rules-reviewer.md",
+    "projects/agent-kit/assets/commands/rules-review.md",
+    "assets/agents/rules-reviewer.md",
+    "assets/commands/rules-review.md",
     "rt/require-take-until-destroyed",
     "rt/require-source-suffix-for-subjects",
     "rt/require-host-bem-block",
