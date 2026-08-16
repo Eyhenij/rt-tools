@@ -94,7 +94,7 @@
 | Сводка отвечает за отрезок дней, а не за всё время.                                                          | `projects/agent-kit/src/lib/observations.ts:DEFAULT_DAYS`                     |
 | Наблюдения старше срока хранения снимаются сводкой.                                                          | `projects/agent-kit/src/lib/observations.ts:readObservations`                 |
 | Предложение выгружается файлом с адресом в заголовке.                                                        | `projects/agent-kit/src/lib/proposals.ts:parseProposals`                      |
-| Роль разбора закрытой задачи файлов не пишет.                                                                | `projects/agent-kit/assets/commands/skill-curator.md:proposals`               |
+| Роль разбора закрытой задачи файлов не пишет.                                                                | `projects/agent-kit/assets/commands/skill-curator.md:предложения`             |
 | Наружу уезжают только предложения с адресом «пакет».                                                         | `projects/agent-kit/src/lib/shipment.ts:propose`                              |
 | Отправка отказывает, если в тексте предложения найден адрес дерева.                                          | `projects/agent-kit/src/lib/proposals.ts:leaksIn`                             |
 | Отправленное предложение помечается принявшим его месяцем и второй раз не уезжает.                           | `projects/agent-kit/src/lib/proposals.ts:markSent`                            |
@@ -154,13 +154,6 @@
 | Раскладка называет добавленный долг в тот же момент, когда его добавила.                                     | `projects/agent-kit/src/lib/commands.ts:debtLines`                            |
 | Статьи считаются по компаньону дерева, а не по черновику пакета.                                             | `projects/agent-kit/src/lib/companion.ts:unaddressedOf`                       |
 | Счёт добавленного долга складывается чистой функцией.                                                        | `projects/agent-kit/src/lib/companion.ts:debtLine`                            |
-| Ресурс с неотвеченным требованием дереву не кладётся.                                                        | `projects/agent-kit/src/lib/catalog.ts:isChosen`                              |
-| Молчание дерева о своих свойствах требованию не отвечает.                                                    | `projects/agent-kit/src/lib/traits.ts:answersRequirement`                     |
-| Выбор поимённо сильнее требования.                                                                           | `projects/agent-kit/src/lib/catalog.ts:isChosen`                              |
-| Отказ по компаньону называет требование, а не только состояние файла.                                        | `projects/agent-kit/src/lib/commands.ts:companionLine`                        |
-| Свойство, которого пакет не объявлял, роняет раскладку с обеих сторон.                                       | `projects/agent-kit/src/lib/commands.ts:strangeTraits`                        |
-| Требование стоит в имени файла рядом с видом и от него отличимо.                                             | `projects/agent-kit/src/lib/traits.ts:requirementOf`                          |
-| Перечень ресурсов называет неположенное требованием отдельно от снятого деревом.                             | `projects/agent-kit/src/lib/commands.ts:NEEDS_TRAIT`                          |
 | Подпись машинного коммита судится до того, как коммит уедет.                                                 | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:strangers`             |
 | Машинный коммит опознаётся по заявке, а не по почте.                                                         | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:bot_login`             |
 | Почта машинной записи сверяется целым значением.                                                             | `projects/agent-kit/assets/defaults/project.sh:RT_COMMIT_EMAIL`               |
