@@ -57,6 +57,32 @@ jobs:
                       echo 'docs_only=false' >> "$GITHUB_OUTPUT"
                   fi
 
+            # Клиент докера без помощника хранения ключей.
+            #
+            # Раннер запущен службой, у неё нет сеанса пользователя, а в настройках владельца
+            # стоит `credsStore: desktop`. Клиент идёт в него на любой команде — даже за
+            # публичным образом, которому вход не нужен вовсе, — и получает отказ: «keychain
+            # cannot be accessed because the current session does not allow user interaction».
+            # Задание падает на первой же строке шага стенда, и выглядит это поломкой стенда.
+            #
+            # Свой каталог настроек пуст: ни помощника, ни записей входа. Всё, что тянет
+            # конвейер, лежит в открытых реестрах, и вход ему не нужен; понадобится — пароль
+            # пишется в этот же файл прямо, а не командой входа.
+            #
+            # `DOCKER_HOST` не для красоты: свой каталог уносит с собой и текущий контекст, а без
+            # него клиент идёт в общесистемный сокет, которого на машине с настольным клиентом
+            # нет вовсе, и отвечает «нет такого файла» на что угодно.
+            - name: Докер без помощника ключей
+              if: steps.scope.outputs.docs_only != 'true'
+              run: |
+                  dir="$RUNNER_TEMP/docker-config"
+                  mkdir -p "$dir"
+                  printf '{}' > "$dir/config.json"
+                  echo "DOCKER_CONFIG=$dir" >> "$GITHUB_ENV"
+                  echo "DOCKER_HOST=unix://$HOME/.docker/run/docker.sock" >> "$GITHUB_ENV"
+                  DOCKER_CONFIG="$dir" DOCKER_HOST="unix://$HOME/.docker/run/docker.sock" \
+                      docker info --format 'демон: {{.ServerVersion}}'
+
             # `typecheck` проверяет типы там, где их не проверяет ничто другое:
             # Jest транспилирует спеки без проверки типов, а ESLint здесь не
             # type-aware, так что спека могла годами гонять форму, которой по
