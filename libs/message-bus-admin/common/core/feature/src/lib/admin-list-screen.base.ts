@@ -4,6 +4,7 @@ import { ActivatedRoute, Params, Router, UrlSegment } from '@angular/router';
 import { AdminListStoreBase, TreesStore } from '@rt/message-bus-admin/common/core/data-access';
 import {
     adminLabel,
+    IAdminListHost,
     IAdminListQuery,
     IReadFault,
     listQueryOf,
@@ -38,9 +39,12 @@ const COLUMNS_ROUTE: string = 'table-settings';
  *
  * `@Directive()` без селектора — так основа передаёт наследнику и внедрение, и эффекты: тем же
  * приёмом объявлена основа панели в ките.
+ *
+ * Она же отвечает на всё, что общий вид страницы спрашивает у хоста: раздел только указывает
+ * провайдером на себя, а ответы лежат здесь — одни на все три раздела.
  */
 @Directive()
-export abstract class AdminListScreenBase<TRow, TApi = TRow> {
+export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminListHost {
     readonly #route: ActivatedRoute = inject(ActivatedRoute);
     readonly #router: Router = inject(Router);
     readonly #trees: TreesStore = inject(TreesStore);
@@ -51,11 +55,8 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> {
     protected readonly query: Signal<IAdminListQuery> = computed(() => listQueryOf(this.#params(), this.sortable));
 
     protected readonly rows: Signal<readonly TRow[]> = computed(() => this.store.rows());
-    protected readonly loading: Signal<boolean> = computed(() => this.store.pending());
-    protected readonly fault: Signal<IReadFault | null> = computed(() => this.store.fault());
     protected readonly choices: Signal<readonly ITreeChoice[]> = computed(() => this.#trees.choices());
 
-    protected readonly pageModel: Signal<IPageModel> = computed(() => pageModelOf(this.query(), this.store.total()));
     protected readonly sortModel: Signal<ISortModel<string>> = computed(() => sortModelOf(this.query()));
 
     /**
@@ -84,6 +85,16 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> {
      */
     protected abstract readonly tableId: string;
 
+    /**
+     * Состояние чтения — то, что страница списка спрашивает у хоста.
+     *
+     * Публичны эти трое ровно затем: их зовёт не только шаблон раздела, но и вид страницы через
+     * токен хоста, а внедрённое видно снаружи класса.
+     */
+    public readonly loading: Signal<boolean> = computed(() => this.store.pending());
+    public readonly fault: Signal<IReadFault | null> = computed(() => this.store.fault());
+    public readonly pageModel: Signal<IPageModel> = computed(() => pageModelOf(this.query(), this.store.total()));
+
     protected constructor() {
         effect((): void => {
             const asked: IAdminListQuery = this.query();
@@ -95,13 +106,37 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> {
     }
 
     /** Страница списка. Отбор и порядок при переходе остаются теми же — они лежат в том же адресе. */
-    protected goToPage(page: number): void {
+    public goToPage(page: number): void {
         this.#apply({ page });
     }
 
     /** Размер страницы. Считать с той же страницы нельзя: при большем размере её может не быть вовсе. */
-    protected changeSize(size: number): void {
+    public changeSize(size: number): void {
         this.#apply({ size, page: 1 });
+    }
+
+    /** Повторить чтение — то самое «одним действием», которого просит отказ. */
+    public retry(): void {
+        this.store.retry();
+    }
+
+    /**
+     * Открыть настройку столбцов.
+     *
+     * Панель везёт кит и открывает её своим маршрутом в том же аутлете `ro`, что и подробности:
+     * какую таблицу настраивают, он берёт не из адреса, а из реестра — поэтому активная таблица
+     * называется до ухода на маршрут, а не после.
+     *
+     * Выборка при этом остаётся в адресе: закрытая панель настроек возвращает тот же список, что
+     * и панель подробностей.
+     */
+    public openColumns(): void {
+        this.#tableSettings.setActive(this.tableId);
+
+        void this.#router.navigate([{ outlets: { ro: [COLUMNS_ROUTE] } }], {
+            relativeTo: this.#route.parent,
+            queryParamsHandling: 'preserve',
+        });
     }
 
     /** Порядок, названный заголовком столбца. */
@@ -112,11 +147,6 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> {
     /** Отбор по дереву. Страница сбрасывается: у суженного списка её может не быть. */
     protected changeTree(tree: string): void {
         this.#apply({ tree, page: 1 });
-    }
-
-    /** Повторить чтение — то самое «одним действием», которого просит отказ. */
-    protected retry(): void {
-        this.store.retry();
     }
 
     /**
@@ -133,25 +163,6 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> {
         const section: string[] = this.#route.snapshot.url.map((segment: UrlSegment): string => segment.path);
 
         void this.#router.navigate([{ outlets: { ro: [...section, id] } }], {
-            relativeTo: this.#route.parent,
-            queryParamsHandling: 'preserve',
-        });
-    }
-
-    /**
-     * Открыть настройку столбцов.
-     *
-     * Панель везёт кит и открывает её своим маршрутом в том же аутлете `ro`, что и подробности:
-     * какую таблицу настраивают, он берёт не из адреса, а из реестра — поэтому активная таблица
-     * называется до ухода на маршрут, а не после.
-     *
-     * Выборка при этом остаётся в адресе: закрытая панель настроек возвращает тот же список, что
-     * и панель подробностей.
-     */
-    protected openColumns(): void {
-        this.#tableSettings.setActive(this.tableId);
-
-        void this.#router.navigate([{ outlets: { ro: [COLUMNS_ROUTE] } }], {
             relativeTo: this.#route.parent,
             queryParamsHandling: 'preserve',
         });
