@@ -58,6 +58,9 @@
 | Расхождение указателя печатается своим списком со своим доводом.                                             | `projects/agent-kit/assets/checks/check-doc-paths.mjs:reportIndex`            |
 | Привязками считаются строки одной таблицы компаньона, а не всякая строка, похожая на строку таблицы.         | `projects/agent-kit/assets/checks/check-specs.mjs:rowsOfMap`                  |
 | Компаньон правила без раздела привязок — отказ, а не молчание.                                               | `projects/agent-kit/assets/checks/check-specs.mjs:rowsOfMap`                  |
+| Символом якоря считается любая буква, а не только латинская.                                                 | `projects/agent-kit/assets/checks/check-specs.mjs:ANCHOR`                     |
+| Алфавит не перечисляется списком.                                                                            | `projects/agent-kit/assets/checks/check-specs.mjs:ANCHOR`                     |
+| Путь пары разбирается по-прежнему.                                                                           | `projects/agent-kit/assets/checks/check-specs.mjs:ANCHOR`                     |
 | Заход закрывается одной командой.                                                                            | `projects/agent-kit/assets/commands/next-session.md:ARGUMENTS`                |
 | Команда закрытия захода сперва узнаёт, ведётся ли работа по правилу.                                         | `projects/agent-kit/assets/commands/next-session.md:rt_task_branch_ok`        |
 | У работы по правилу с влитым PR дерево переходит на главную ветку и подтягивает удалённую.                   | `projects/agent-kit/assets/commands/next-session.md:switch`                   |
