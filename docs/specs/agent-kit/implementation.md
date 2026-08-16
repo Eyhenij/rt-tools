@@ -200,6 +200,30 @@
 | Граф изображает ход правила и лежит в тексте самого правила.                                                 | `projects/agent-kit/assets/templates/rule.md:mermaid`                         |
 | Граф заводится каждому правилу, а не только ветвящемуся.                                                     | `projects/agent-kit/tests/rules-review.test.sh:sections_for`                  |
 | Граф правится тем же изменением, что и проза, которую он изображает.                                         | `projects/agent-kit/assets/agents/rules-reviewer.md:mermaid`                  |
+| Надстройка считается состоянием, а не событием.                                                              | `projects/agent-kit/src/lib/snapshot.ts:treeSnapshot`                         |
+| Снимок надстроек называет ресурс, раздел и род правки, а не содержимое правки.                               | `projects/agent-kit/src/lib/snapshot.ts:overridesOf`                          |
+| Заголовок своего раздела наружу не уезжает.                                                                  | `projects/agent-kit/src/lib/cargo.ts:TOverrideKind`                           |
+| Снимок называет невыбранное наравне с надстроенным.                                                          | `projects/agent-kit/src/lib/snapshot.ts:unpickedOf`                           |
+| Наблюдение несёт признак дерева, и адрес дерева по нему не восстанавливается.                                | `projects/agent-kit/src/lib/shipment.ts:treeSlugOf`                           |
+| Признак дерева одинаков у всех, кто работает с одним репозиторием.                                           | `projects/agent-kit/src/lib/shipment.ts:remoteMarkOf`                         |
+| Дерево без удалённого репозитория называет свой признак настройкой.                                          | `projects/agent-kit/src/lib/shipment.ts:treeSlugOf`                           |
+| Строка наблюдения несёт версию схемы записи.                                                                 | `projects/agent-kit/src/lib/cargo.ts:CARGO_SCHEMA_VERSION`                    |
+| Строки неизвестной версии схемы считаются отдельно и называются числом.                                      | `projects/agent-kit/src/lib/observations.ts:parseObservation`                 |
+| Груз уезжает при каждом прогоне отправки, а предложения — когда они есть.                                    | `projects/agent-kit/src/lib/shipment.ts:shipmentsOf`                          |
+| Проверка на адрес дерева накрывает сводку и предложения, но не разбор происшествия.                          | `projects/agent-kit/src/lib/shipment.ts:leaksOfCargo`                         |
+| Найденный в грузе адрес дерева отбивает отправку целиком, а не свой блок.                                    | `projects/agent-kit/src/lib/shipment.ts:propose`                              |
+| Груз уезжает в закрытый приём, а не в открытую очередь работ.                                                | `projects/agent-kit/src/lib/ship.ts:intakeUrl`                                |
+| Адрес приёма объявлен настройкой дерева, а не зашит в код пакета.                                            | `projects/agent-kit/src/lib/shipment.ts:IShipOptions`                         |
+| Дерево представляется приёму токеном, а реестр держит только его хеш.                                        | `projects/agent-kit/src/lib/cargo.ts:TREE_TOKEN_HEADER`                       |
+| Токен выдаётся и отзывается командами приёмника.                                                             | `projects/agent-kit/src/lib/shipment.ts:readToken`                            |
+| Одна запись на пару «дерево — месяц»: нашлась — дописывается, не нашлась — заводится.                        | `projects/agent-kit/src/lib/cargo.ts:IIntakeAccepted`                         |
+| Груз каждого рода принимается своей операцией.                                                               | `projects/agent-kit/src/lib/ship.ts:httpShip`                                 |
+| Выключатель наблюдений гасит и отправку целиком, вместе со снимком надстроек.                                | `projects/agent-kit/src/lib/observations.ts:OBSERVATIONS_DIR`                 |
+| Набор гейта пуша не бывает уже набора конвейера.                                                             | `tools/check-push-gate.mjs:pipelineSteps`                                     |
+| Полнота держится объявленным списком, а не разбором файла конвейера.                                         | `tools/check-push-gate.mjs:pushGate`                                          |
+| Исключение объявляется с причиной и рядом с набором.                                                         | `tools/check-push-gate.mjs:pipelineSteps`                                     |
+| Дерево без файла конвейера сверку не получает.                                                               | `tools/check-push-gate.mjs:pipelineSteps`                                     |
+| Проверка полноты сама стоит в наборе гейта.                                                                  | `.claude/rt-kit/project.sh:rt_push_checks`                                    |
 
 ## Что ещё стоит знать при чтении кода
 
