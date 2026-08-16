@@ -78,6 +78,25 @@ ssh message-bus 'bash /opt/message-bus/dump.sh load /opt/message-bus/dumps/<фа
 Копии дампа лежат на самом узле, в `/opt/message-bus/dumps`. За пределы узла они не уезжают: это
 отдельная работа, и она не сделана.
 
+Проверять загрузку боевым хранилищем нельзя: второго узла под пробу нет, а откатываться пришлось
+бы тем же путём, который и проверяют. Проба идёт на одноразовой базе рядом — тот же образ базы,
+то же окружение прода, и боевое хранилище не трогается вовсе:
+
+```bash
+ssh message-bus 'set -a; . /opt/message-bus/.env.prod; set +a
+docker run -d --name mb-dump-probe \
+    -e POSTGRES_USER="$POSTGRES_USER" -e POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
+    -e POSTGRES_DB="$POSTGRES_DB" postgres:18.3-alpine
+docker exec -i mb-dump-probe pg_restore -U "$POSTGRES_USER" -d "$POSTGRES_DB" \
+    --clean --if-exists --no-owner --no-privileges < $(ls -t /opt/message-bus/dumps/*.dump | head -1)'
+```
+
+Годность восстановленного судится отпечатками, а не взглядом: один и тот же запрос гоняется в
+пробе и в боевой базе, и сравниваются ответы. Годится любой набор, лишь бы он накрывал и груз, и
+права слать, — например `select md5(string_agg(hash, chr(44) order by hash)) from tree_token`
+для токенов и такие же по `proposal` и `postmortem`. Свод по таблицам смотрят там же счётом
+строк. Кончается проба сносом контейнера вместе с томом: `docker rm -f -v mb-dump-probe`.
+
 ## Когда приёмник молчит
 
 Порядок разбора — от дешёвого к дорогому:

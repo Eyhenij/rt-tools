@@ -901,9 +901,11 @@ for (const domain of domains) {
 
     const found = walk(base, (name) => name === 'scenarios.md').flatMap(parseScenarios);
 
-    // Префикс судится в пределах одного спека, а не всего дерева домена: у поддомена он свой, и
-    // по номеру видно, о чём сценарий. Два префикса в одном спеке по-прежнему означают, что
-    // предмет описан дважды.
+    // Префикс принадлежит домену вместе с его поддоменами, а не отдельному каталогу. Домен
+    // делится тогда, когда его спек перерос предел длины, и сценарии переезжают в поддомены
+    // прежними: номер — единственное, чем сценарий связан с заголовком теста, и своя нумерация
+    // у каждого поддомена означала бы пересчёт всех номеров разом. Два префикса в одном спеке
+    // по-прежнему означают, что предмет описан дважды.
     const prefixesOf = new Map();
     for (const scenario of found) {
         const dir = dirname(scenario.file);
@@ -924,11 +926,11 @@ for (const domain of domains) {
         }
         for (const prefix of prefixes) {
             const owner = prefixOwners.get(prefix);
-            if (owner && owner !== dir) {
+            if (owner && owner !== base) {
                 report(dir, `префикс \`SC-${prefix}\` уже занят — \`${owner}\`; по номеру не видно, чей сценарий`);
                 continue;
             }
-            prefixOwners.set(prefix, dir);
+            prefixOwners.set(prefix, base);
         }
     }
 
