@@ -68,6 +68,10 @@ rt_docs_pair_for() {
         # найти нечем: имена токенов нигде больше не перечислены.
         projects/ui-kit/src/styles/base/_tokens.scss | projects/ui-kit/src/styles/base/_color-scheme.scss)
             printf '%s' 'projects/ui-kit/src/styles/TOKENS\.md' ;;
+        # Устройство прода, путь запроса и разбор молчания описаны текстом, которого не читает
+        # ни линтер, ни сборка: расхождение состава с описанием копится молча.
+        docker-compose.prod.yml | deploy/Caddyfile | .github/workflows/deploy.yml)
+            printf '%s' 'docs/PROD\.md' ;;
     esac
 }
 
