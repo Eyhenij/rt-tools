@@ -21,6 +21,7 @@
  */
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
 
+import { describeError, isStorageFailure } from '@rt/message-bus-api/observability/util';
 import { ITreeBearingRequest, TREE_OF_REQUEST } from '@rt/message-bus-api/trees/util';
 
 import { cargoLimit } from './cargo-limit';
@@ -49,17 +50,6 @@ interface IFailingResponse {
 /** Источник строк лога: по нему отказы приёмника собираются вместе. */
 const LOG_CONTEXT: string = 'Failure';
 
-/**
- * Отказ клиента хранилища.
- *
- * Узнаётся по имени рода: генератор кладёт свои ошибки классами `PrismaClient*`, и это
- * единственное, что у них общего. Разбирать их по коду значило бы держать здесь список кодов
- * хранилища — он длиннее, чем разница, которая отсюда видна: база ответила или нет.
- */
-function isStorageFailure(error: unknown): boolean {
-    return error instanceof Error && error.name.startsWith('PrismaClient');
-}
-
 /** Отказ приёма груза: остальное — чтение принятого либо стук не в ту дверь. */
 function isIntake(request: TFailingRequest): boolean {
     return request.path.startsWith(INTAKE_PATH);
@@ -87,7 +77,7 @@ export class FailureFilter implements ExceptionFilter {
         // для журнала, он был бы двумя разными номерами, и связать их стало бы нечем.
         const incident: string | null = this.#incidentOf(error);
 
-        this.#log.warn(this.#journalLine(request, status, incident));
+        this.#log.warn(this.#journalName(request), this.#journalFields(error, request, status, incident));
 
         response.status(status).json({ message: this.#messageOf(error, status, request, incident) });
     }
@@ -112,19 +102,32 @@ export class FailureFilter implements ExceptionFilter {
     }
 
     /**
-     * Строка журнала.
+     * Имя строки журнала. Постоянное: у приёма своё, у всего остального своё, и по нему строки
+     * одного рода собираются вместе. Всё переменное уходит полями.
+     */
+    #journalName(request: TFailingRequest): string {
+        return isIntake(request) ? 'intake.failed' : 'request.failed';
+    }
+
+    /**
+     * Поля строки журнала.
      *
-     * У приёма в ней род груза и признак дерева — по ним видно, чей прогон потерян; у всякого
+     * У приёма в них род груза и признак дерева — по ним видно, чей прогон потерян; у всякого
      * другого отказа путь, потому что ни рода, ни дерева у него нет: так пишутся и чтение
      * принятого, и проба живости. Номер обращения стоит там же, где он ушёл в ответ, и только
      * тогда.
+     *
+     * Разобранная причина кладётся не всегда: отказ по вводу и правам — сработавшая проверка, и
+     * её стек забивал бы собой настоящие поломки.
      */
-    #journalLine(request: TFailingRequest, status: number, incident: string | null): string {
-        const named: string = isIntake(request)
-            ? `отказ приёма: род ${cargoKindOf(request)}, дерево ${treeSlugOf(request)}, код ${status}`
-            : `отказ: путь ${request.path}, код ${status}`;
+    #journalFields(error: unknown, request: TFailingRequest, status: number, incident: string | null): Record<string, unknown> {
+        const named: Record<string, unknown> = isIntake(request)
+            ? { cargoKind: cargoKindOf(request), treeSlug: treeSlugOf(request), status }
+            : { path: request.path, status };
 
-        return incident ? `${named}, обращение ${incident}` : named;
+        const withIncident: Record<string, unknown> = incident ? { ...named, incident } : named;
+
+        return error instanceof HttpException ? withIncident : { ...withIncident, error: { ...describeError(error) } };
     }
 
     /**

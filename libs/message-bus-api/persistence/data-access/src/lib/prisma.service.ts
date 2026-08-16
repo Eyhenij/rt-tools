@@ -1,6 +1,7 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
 
+import { describeError } from '@rt/message-bus-api/observability/util';
 import { PrismaClient } from '@rt/message-bus-api/persistence/util';
 
 /**
@@ -25,7 +26,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
 
     public async onModuleInit(): Promise<void> {
         await this.$connect();
-        this.#log.log('соединение с хранилищем открыто');
+        this.#log.log('db.connected');
     }
 
     public async onModuleDestroy(): Promise<void> {
@@ -42,7 +43,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
 
             return true;
         } catch (error: unknown) {
-            this.#log.error(`хранилище не отвечает: ${error instanceof Error ? error.message : 'причина неизвестна'}`);
+            // Причина полями, а не в тексте: по коду клиента и ответу драйвера видно, чем
+            // хранилище отказало, — из текста «хранилище не отвечает» этого не узнать вовсе
+            this.#log.error('db.unreachable', { error: { ...describeError(error) } });
 
             return false;
         }
