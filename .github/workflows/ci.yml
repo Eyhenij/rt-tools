@@ -165,3 +165,34 @@ jobs:
               if: steps.scope.outputs.docs_only != 'true'
               run: |
                   docker build -f deploy/message-bus-web.Dockerfile -t message-bus-web:ci .
+
+            # Уборка за прогоном. Раннер живёт между прогонами на машине владельца, и всё, что
+            # прогон оставляет, копится там до тех пор, пока место не кончится: сквозной набор
+            # упал на `could not extend file: No space left on device`, когда томов набралось
+            # 213 на 28 ГБ, а кэша сборки — почти 10 ГБ. Со стороны это выглядело поломкой
+            # хранилища, и по этому лицу чинили бы репозиторий.
+            #
+            # Убирается только своё, и отбор поимённый. Общая чистка запрещена: раннер делит
+            # машину с разработчиком и с другими проектами, и `docker system prune`,
+            # `docker volume prune` и снятие по маске унесли бы чужое молча.
+            #
+            # Идёт шагом `always()`: место кончается как раз тогда, когда прогон падает, и
+            # уборка, пропущенная на падении, не случается ровно в тот раз, когда она нужна.
+            - name: Убрать за прогоном
+              if: always() && steps.scope.outputs.docs_only != 'true'
+              run: |
+                  # Свои образы прогона: сняты по имени, а не по маске и не по возрасту.
+                  docker image rm -f message-bus:ci message-bus-web:ci 2>/dev/null || true
+
+                  # Анонимные тома без метки проекта — следы одноразовых контейнеров. Том с
+                  # меткой принадлежит чьему-то составу, в том числе чужому, и не трогается.
+                  for v in $(docker volume ls -q -f dangling=true); do
+                      label=$(docker volume inspect "$v" --format '{{index .Labels "com.docker.compose.project"}}' 2>/dev/null || true)
+                      [ -z "$label" ] && docker volume rm "$v" >/dev/null 2>&1 || true
+                  done
+
+                  # Кэш сборщика старше суток: свежий нужен следующему прогону, вчерашний уже
+                  # ничей. Порог, а не полная чистка, — иначе каждая сборка идёт с нуля.
+                  docker builder prune --force --filter until=24h >/dev/null 2>&1 || true
+
+                  docker system df
