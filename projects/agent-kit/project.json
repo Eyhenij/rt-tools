@@ -49,6 +49,12 @@
       "options": {
         "jestConfig": "projects/agent-kit/jest.config.ts"
       }
+    },
+    "test-hooks": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash projects/agent-kit/tests/run.sh"
+      }
     }
   }
 }
