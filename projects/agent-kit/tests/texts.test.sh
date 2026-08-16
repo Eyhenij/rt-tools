@@ -17,8 +17,19 @@ TEXTS="$ASSETS/rules $ASSETS/patterns"
 COMMON_SEGMENTS='common|util|proto|platform|i18n|core'
 
 # --- домены конкретного дерева ------------------------------------------------------------
-found_domains="$(grep -rhoE "libs/(site|admin|api)/[a-z][a-z0-9-]*" $TEXTS 2>/dev/null \
-    | grep -vE "libs/(site|admin|api)/($COMMON_SEGMENTS)\$" | sort -u)"
+#
+# Ограда блока кода запретов не снимает: узел графа и строка команды — тот же текст ресурса, и
+# путь чужого дерева в них остаётся путём чужого дерева. Поэтому перечень ищется по файлу
+# целиком, а не по одной прозе.
+#
+# Безымянный образец — `libs/<домен>`, `<Feature>Component` — под перечень не подпадает: имя в
+# угловых скобках не адресует ничего, и перечень признаков закрытый.
+domains_in() {
+    grep -rhoE "libs/(site|admin|api)/[a-z][a-z0-9-]*" "$@" 2>/dev/null \
+        | grep -vE "libs/(site|admin|api)/($COMMON_SEGMENTS)\$" | sort -u
+}
+
+found_domains="$(domains_in $TEXTS)"
 if [ -z "$found_domains" ]; then
     report "в текстах нет доменов конкретного дерева" PASS PASS
 else
@@ -93,5 +104,20 @@ if [ -z "$claims" ]; then
 else
     report "SC-AK-94 — о соседнем гарде сказано условно" "$(printf '%s' "$claims" | tr '\n' ' ')" PASS
 fi
+
+# --- SC-AK-215, SC-AK-228 — блок кода и безымянный образец --------------------------------------
+#
+# Набор, зелёный на своём же корпусе, зелен и тогда, когда ищет не там. Поэтому адрес дерева
+# подставляется в копию — сперва внутрь блока кода, потом безымянным образцом.
+probe="$(mktemp -d)"
+printf '# Проба\n\n```bash\nnx test libs/site/booking\n```\n' > "$probe/rule.md"
+report "SC-AK-215 — адрес дерева внутри блока кода найден" \
+    "$(domains_in "$probe" | grep -c 'libs/site/booking')" 1
+
+printf '# Проба\n\n```bash\nnx test libs/site/<домен>\n```\n' > "$probe/rule.md"
+report "SC-AK-228 — безымянный образец адресом не считается" \
+    "$(domains_in "$probe" | grep -c '[a-z]')" 0
+
+rm -rf "$probe"
 
 suite_result "тексты"

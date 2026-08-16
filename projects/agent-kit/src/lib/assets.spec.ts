@@ -66,8 +66,12 @@ describe('исполняемые ресурсы пакета', (): void => {
         expectGreen('reuse-guard.test.sh');
     }, 120_000);
 
-    it('SC-AK-04 — текст правила не называет чужого дерева', (): void => {
+    it('SC-AK-04, SC-AK-215, SC-AK-228 — текст правила не называет чужого дерева', (): void => {
         expectGreen('texts.test.sh');
+    }, 120_000);
+
+    it('SC-AK-211, SC-AK-212, SC-AK-219 — ресурс описан целиком, и у правила есть паттерн', (): void => {
+        expectGreen('rules-review.test.sh');
     }, 120_000);
 });
 
