@@ -183,6 +183,7 @@
 | Род, которому набор не объявлен, молчит, а не краснеет.                                                      | `projects/agent-kit/tests/rules-review.test.sh:KINDS_WITHOUT_SECTIONS`        |
 | Пустой список долга называется вслух и с числом.                                                             | `projects/agent-kit/tests/rules-review.test.sh:rules_without_pattern`         |
 | Правило без паттерна — расхождение.                                                                          | `projects/agent-kit/tests/rules-review.test.sh:rules_without_pattern`         |
+| Правило, чьи паттерны дерево пропустило при раскладке, паттерна не требует.                                  | `projects/agent-kit/assets/checks/check-specs.mjs:skippedPatterns`            |
 | Имя соседнего ресурса, названное прозой, проверяется наравне со ссылкой шапки.                               | `projects/agent-kit/tests/rules-review.test.sh:unknown_neighbours`            |
 | Запреты текстов действуют и внутри блока кода.                                                               | `projects/agent-kit/tests/texts.test.sh:domains_in`                           |
 | Адресом конкретного дерева считается перечисленное, а не всё, что похоже на путь.                            | `projects/agent-kit/tests/texts.test.sh:COMMON_SEGMENTS`                      |

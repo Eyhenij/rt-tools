@@ -269,6 +269,24 @@ report "SC-AK-239 — вердикт без причины не принят" "$
 
 rm -rf "$SPEC_TREE/.claude/skills/verdict-rule"
 
+# --- SC-AK-241 — паттерн, пропущенный деревом, правило не краснит ----------------------------
+#
+# Пропуск объявлен в настройке проекта и означает выбор дерева: правило о процедурах бэкенда
+# ложится и туда, где бэкенда нет вовсе. Требовать там паттерн значит требовать файл, которому
+# нечего сказать, и единственным способом позеленеть становится снятие пропуска.
+
+mkdir -p "$SPEC_TREE/.claude/skills/skipped-rule"
+printf -- '---\nname: skipped-rule\nkind: rule\nlaw: acting\n---\n\n# Правило\n\n## Как закон применяется здесь\n\n- **Раз.** Два.\n\n## Паттерны\n\n- `skipped-rule-do` — готовый код.\n' \
+    > "$SPEC_TREE/.claude/skills/skipped-rule/SKILL.md"
+printf '# Компаньон\n\n## Где исполняются статьи\n\n| Статья | Где исполняется |\n| --- | --- |\n| Раз. | `tools/check-specs.mjs:sectionOf` |\n' \
+    > "$SPEC_TREE/.claude/skills/skipped-rule/implementation.md"
+report "SC-AK-241 — правило без паттерна названо" "$(specs_says 'нет ни одного паттерна')" 1
+
+printf '{ "skip": ["patterns/skipped-rule-do.md"] }\n' > "$SPEC_TREE/.claude/rt-kit.json"
+report "SC-AK-241 — пропущенный паттерн правило не краснит" "$(specs_says 'нет ни одного паттерна')" 0
+
+rm -rf "$SPEC_TREE/.claude/skills/skipped-rule" "$SPEC_TREE/.claude/rt-kit.json"
+
 # --- SC-AK-65 и SC-AK-66 — номер сценария из одной цифры виден сверке ------------------------
 #
 # Идентификаторы фикстуры собираются из частей — и в самой фикстуре, и в строке, по которой

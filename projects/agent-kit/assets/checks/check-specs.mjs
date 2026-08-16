@@ -1034,12 +1034,52 @@ const isProposedLaw = (file) => /^\*\*Статус:\*\*\s*предложен/m.t
     .filter(([law, file]) => !ruled.has(law) && !isProposedLaw(file))
     .forEach(([, file]) => report(file, 'у закона нет ни одного правила — заведи скил с `law:` на него'));
 
-for (const file of walk('.claude/skills', (name) => name === 'SKILL.md')) {
-    const head = frontMatterOf(read(file));
-    const name = nameOf(head);
-    if (/^kind:\s*rule\s*$/m.test(head) && name && !patterned.has(name)) {
-        report(file, 'у правила нет ни одного паттерна — заведи скил с `rule:` на него');
+/**
+ * Имена паттернов, которые дерево при раскладке пропустило: ключ `skip` в настройке проекта.
+ *
+ * Пропуск — выбор дерева, а не забытая работа: правило о процедурах бэкенда ложится и в дерево,
+ * где бэкенда нет вовсе. Требовать там паттерн значит требовать завести файл, которому нечего
+ * сказать, — и единственным способом позеленеть становится снятие пропуска.
+ */
+const skippedPatterns = () => {
+    const path = '.claude/rt-kit.json';
+    if (!exists(path)) {
+        return new Set();
     }
+    try {
+        const skip = JSON.parse(read(path)).skip ?? [];
+
+        return new Set(skip.map((resource) => resource.match(/^patterns\/(.+)\.md$/)?.[1]).filter(Boolean));
+    } catch {
+        return new Set();
+    }
+};
+
+/**
+ * Раздел «Паттерны» самого правила — единственное место, где связь видна без файла паттерна:
+ * пропущенного файла в дереве нет, и поле `rule:` в нём спросить не у кого.
+ */
+// Флага `m` здесь нет намеренно: с ним `$` означает конец строки, и раздел кончается на первом
+// же переводе строки — пустым. Начало заголовка поэтому ищется своей парой, а не якорем.
+const PATTERNS_HEADING = /(?:^|\n)## Паттерны\n([\s\S]*?)(?=\n## |$)/;
+const patternsNamedBy = (text) => [...(text.match(PATTERNS_HEADING)?.[1] ?? '').matchAll(/^-\s+`([\w-]+)`/gm)].map(([, found]) => found);
+
+const skipped = skippedPatterns();
+
+for (const file of walk('.claude/skills', (name) => name === 'SKILL.md')) {
+    const text = read(file);
+    const head = frontMatterOf(text);
+    const name = nameOf(head);
+    if (!/^kind:\s*rule\s*$/m.test(head) || !name || patterned.has(name)) {
+        continue;
+    }
+
+    const named = patternsNamedBy(text);
+    if (named.length > 0 && named.every((pattern) => skipped.has(pattern))) {
+        continue;
+    }
+
+    report(file, 'у правила нет ни одного паттерна — заведи скил с `rule:` на него');
 }
 
 checkTracedAnchors();
