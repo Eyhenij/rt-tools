@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.8.2 · checks/check-specs.mjs · 656dc4942107 · правится надстройкой, не здесь
+// rt-kit v0.8.2 · checks/check-specs.mjs · b65d166a25e6 · правится надстройкой, не здесь
 /**
  * Проверка того, что спек домена не разошёлся с кодом.
  *
@@ -103,6 +103,23 @@ const E2E_ROOTS = CONFIG.e2eRoots;
  * адрес в дереве, а не слово текста.
  */
 const ANCHOR = /`([\w./-]+\.[A-Za-z]{2,10}):(\p{L}[\p{L}\p{N}_-]*|_[\w-]*)`/gu;
+/**
+ * Явный вердикт вместо якоря: статья, которой в дереве исполняться негде. Так бывает
+ * законно — правило говорит о службе, которой дерево не держит, или о движении человека,
+ * до которого проверке не дотянуться: кнопку слияния нажимают в браузере, где хуков нет
+ * вовсе. Якорь такой статье можно поставить только в файл, который её не исполняет, —
+ * проверка примет, а читателю совратёт.
+ *
+ * Принимается вердикт с причиной, а не одно слово: пустой он становится способом закрыть
+ * любую строку, и таблица за месяц превращается в список отговорок. Порог длины — та же
+ * мера, что у обхода гарда документов: причина короче его причиной не считается.
+ *
+ * Конец слова ищется отрицательным просмотром, а не `\b`: границей слова JavaScript знает
+ * только латиницу, и после кириллической буквы её нет вовсе — вердикт не опознавался ни
+ * разу.
+ */
+const VERDICT = /^\s*(?:\*\*)?Не (?:исполняется|применимо|проверяется)(?![\p{L}\p{N}_])/u;
+const VERDICT_MIN = 40;
 /** Строка шапки, объявляющая либы, чьи процедуры домен обслуживает */
 const PROCEDURE_ROOTS = /^\*\*Процедуры:\*\*\s*(.+)$/;
 const BACKTICKED = /`([^`]+)`/g;
@@ -305,7 +322,12 @@ function checkRuleImplementation(specFile, text, mapFile, heading = '## Прав
         if (!head || head === 'Правило' || head === 'Статья' || /^-+$/.test(head)) {
             continue;
         }
-        rows.set(head, { anchors: [...cells[2].matchAll(ANCHOR)], used: false });
+        const cell = cells[2].trim();
+        rows.set(head, {
+            anchors: [...cells[2].matchAll(ANCHOR)],
+            verdict: VERDICT.test(cell) && cell.length >= VERDICT_MIN,
+            used: false,
+        });
     }
 
     for (const bullet of bullets) {
@@ -319,13 +341,17 @@ function checkRuleImplementation(specFile, text, mapFile, heading = '## Прав
             report(
                 mapFile,
                 `правило без привязки: «${head.slice(0, 60)}…» — допиши строку с \`файл:символ\`, ` +
-                    'либо перенеси правило в «Открытые вопросы» как Q-N'
+                    'вердиктом «Не исполняется» с причиной либо перенеси правило в «Открытые вопросы» как Q-N'
             );
             continue;
         }
         row.used = true;
-        if (!row.anchors.length) {
-            report(mapFile, `у правила «${head.slice(0, 60)}…» пустая привязка`);
+        if (!row.anchors.length && !row.verdict) {
+            report(
+                mapFile,
+                `у правила «${head.slice(0, 60)}…» пустая привязка — поставь \`файл:символ\` ` +
+                    'либо вердикт «Не исполняется», «Не применимо», «Не проверяется» с причиной'
+            );
         }
         for (const [, path, symbol] of row.anchors) {
             if (!exists(path)) {
@@ -1028,12 +1054,52 @@ const isProposedLaw = (file) => /^\*\*Статус:\*\*\s*предложен/m.t
     .filter(([law, file]) => !ruled.has(law) && !isProposedLaw(file))
     .forEach(([, file]) => report(file, 'у закона нет ни одного правила — заведи скил с `law:` на него'));
 
-for (const file of walk('.claude/skills', (name) => name === 'SKILL.md')) {
-    const head = frontMatterOf(read(file));
-    const name = nameOf(head);
-    if (/^kind:\s*rule\s*$/m.test(head) && name && !patterned.has(name)) {
-        report(file, 'у правила нет ни одного паттерна — заведи скил с `rule:` на него');
+/**
+ * Имена паттернов, которые дерево при раскладке пропустило: ключ `skip` в настройке проекта.
+ *
+ * Пропуск — выбор дерева, а не забытая работа: правило о процедурах бэкенда ложится и в дерево,
+ * где бэкенда нет вовсе. Требовать там паттерн значит требовать завести файл, которому нечего
+ * сказать, — и единственным способом позеленеть становится снятие пропуска.
+ */
+const skippedPatterns = () => {
+    const path = '.claude/rt-kit.json';
+    if (!exists(path)) {
+        return new Set();
     }
+    try {
+        const skip = JSON.parse(read(path)).skip ?? [];
+
+        return new Set(skip.map((resource) => resource.match(/^patterns\/(.+)\.md$/)?.[1]).filter(Boolean));
+    } catch {
+        return new Set();
+    }
+};
+
+/**
+ * Раздел «Паттерны» самого правила — единственное место, где связь видна без файла паттерна:
+ * пропущенного файла в дереве нет, и поле `rule:` в нём спросить не у кого.
+ */
+// Флага `m` здесь нет намеренно: с ним `$` означает конец строки, и раздел кончается на первом
+// же переводе строки — пустым. Начало заголовка поэтому ищется своей парой, а не якорем.
+const PATTERNS_HEADING = /(?:^|\n)## Паттерны\n([\s\S]*?)(?=\n## |$)/;
+const patternsNamedBy = (text) => [...(text.match(PATTERNS_HEADING)?.[1] ?? '').matchAll(/^-\s+`([\w-]+)`/gm)].map(([, found]) => found);
+
+const skipped = skippedPatterns();
+
+for (const file of walk('.claude/skills', (name) => name === 'SKILL.md')) {
+    const text = read(file);
+    const head = frontMatterOf(text);
+    const name = nameOf(head);
+    if (!/^kind:\s*rule\s*$/m.test(head) || !name || patterned.has(name)) {
+        continue;
+    }
+
+    const named = patternsNamedBy(text);
+    if (named.length > 0 && named.every((pattern) => skipped.has(pattern))) {
+        continue;
+    }
+
+    report(file, 'у правила нет ни одного паттерна — заведи скил с `rule:` на него');
 }
 
 checkTracedAnchors();
