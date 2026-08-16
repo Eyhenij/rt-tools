@@ -4,6 +4,10 @@
 строки и строка без правила — расхождение: спек обещает то, чего в коде нет, либо в коде стоит
 то, о чём спек молчит.
 
+Якорь здесь — слово, которое утверждение и держит. Сверка ищет его по всему файлу и любым словом
+удовлетворяется, поэтому имя поля из чужой строки проходит её так же, как нужное предложение, — и
+утверждение остаётся зелёным, когда сам текст роли переписан целиком.
+
 | Правило                                                                                                      | Где исполняется                                                               |
 | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
 | Пакет проверяет то, что везёт, а не только то, чем везёт.                                                    | `projects/agent-kit/src/lib/assets.spec.ts:expectGreen`                       |
@@ -178,6 +182,52 @@
 | Файл дня заводится с образца, если его ещё нет.                                                              | `projects/agent-kit/assets/commands/feedback.md:cp`                           |
 | Текст блока проверяется на адрес дерева тем же, чем проверяется всё остальное.                               | `projects/agent-kit/src/lib/proposals.ts:leaksIn`                             |
 | Команда говорит, куда лёг блок и чем он уедет.                                                               | `projects/agent-kit/assets/commands/feedback.md:dry-run`                      |
+| Тексты пакета судятся тем же набором требований, что и копии, разложенные в дерево.                          | `projects/agent-kit/tests/rules-review.test.sh:missing_sections`              |
+| Невыбранный вид судится наравне с выбранным.                                                                 | `projects/agent-kit/tests/rules-review.test.sh:KINDS_WITH_SECTIONS`           |
+| Ресурс без обязательного раздела своего рода — расхождение.                                                  | `projects/agent-kit/tests/rules-review.test.sh:missing_pitfalls`              |
+| Набор разделов объявлен на род и назван поимённо, а не выведен из образца.                                   | `projects/agent-kit/tests/rules-review.test.sh:sections_for`                  |
+| Образец рода судится объявленным набором наравне с корпусом.                                                 | `projects/agent-kit/tests/rules-review.test.sh:template_gaps`                 |
+| Род, которому набор не объявлен, молчит, а не краснеет.                                                      | `projects/agent-kit/tests/rules-review.test.sh:KINDS_WITHOUT_SECTIONS`        |
+| Пустой список долга называется вслух и с числом.                                                             | `projects/agent-kit/tests/rules-review.test.sh:rules_without_pattern`         |
+| Правило без паттерна — расхождение.                                                                          | `projects/agent-kit/tests/rules-review.test.sh:rules_without_pattern`         |
+| Имя соседнего ресурса, названное прозой, проверяется наравне со ссылкой шапки.                               | `projects/agent-kit/tests/rules-review.test.sh:unknown_neighbours`            |
+| Запреты текстов действуют и внутри блока кода.                                                               | `projects/agent-kit/tests/texts.test.sh:domains_in`                           |
+| Адресом конкретного дерева считается перечисленное, а не всё, что похоже на путь.                            | `projects/agent-kit/tests/texts.test.sh:COMMON_SEGMENTS`                      |
+| Вывод переносимого текста из сверки адресов старше нового требования.                                        | `projects/agent-kit/assets/checks/check-doc-paths.mjs:PORTABLE_DIRS`          |
+| Машинная половина краснеет только на считаемом.                                                              | `projects/agent-kit/tests/rules-review.test.sh:suite_result`                  |
+| Проверка текстов пакета стоит в наборе, который гоняется перед пушем.                                        | `projects/agent-kit/src/lib/assets.spec.ts:expectGreen`                       |
+| Ревью читает семью целиком, а не файл по одному.                                                             | `projects/agent-kit/assets/agents/rules-reviewer.md:Семья`                    |
+| Роль возвращает находки и ничего не правит.                                                                  | `projects/agent-kit/assets/agents/rules-reviewer.md:tools`                    |
+| Находка называет два места дословно и то, чем они расходятся.                                                | `projects/agent-kit/assets/agents/rules-reviewer.md:дословно`                 |
+| Пробел ищется чтением, а не счётом привязок.                                                                 | `projects/agent-kit/assets/agents/rules-reviewer.md:Пробел`                   |
+| Ревью зовётся двумя способами: командой вручную и машинной половиной в гейте.                                | `projects/agent-kit/assets/commands/rules-review.md:ARGUMENTS`                |
+| Граф изображает ход правила и лежит в тексте самого правила.                                                 | `projects/agent-kit/assets/templates/rule.md:mermaid`                         |
+| Граф заводится каждому правилу, а не только ветвящемуся.                                                     | `projects/agent-kit/tests/rules-review.test.sh:sections_for`                  |
+| Граф правится тем же изменением, что и проза, которую он изображает.                                         | `projects/agent-kit/assets/agents/rules-reviewer.md:mermaid`                  |
+| Надстройка считается состоянием, а не событием.                                                              | `projects/agent-kit/src/lib/snapshot.ts:treeSnapshot`                         |
+| Снимок надстроек называет ресурс, раздел и род правки, а не содержимое правки.                               | `projects/agent-kit/src/lib/snapshot.ts:overridesOf`                          |
+| Заголовок своего раздела наружу не уезжает.                                                                  | `projects/agent-kit/src/lib/cargo.ts:TOverrideKind`                           |
+| Снимок называет невыбранное наравне с надстроенным.                                                          | `projects/agent-kit/src/lib/snapshot.ts:unpickedOf`                           |
+| Наблюдение несёт признак дерева, и адрес дерева по нему не восстанавливается.                                | `projects/agent-kit/src/lib/shipment.ts:treeSlugOf`                           |
+| Признак дерева одинаков у всех, кто работает с одним репозиторием.                                           | `projects/agent-kit/src/lib/shipment.ts:remoteMarkOf`                         |
+| Дерево без удалённого репозитория называет свой признак настройкой.                                          | `projects/agent-kit/src/lib/shipment.ts:treeSlugOf`                           |
+| Строка наблюдения несёт версию схемы записи.                                                                 | `projects/agent-kit/src/lib/cargo.ts:CARGO_SCHEMA_VERSION`                    |
+| Строки неизвестной версии схемы считаются отдельно и называются числом.                                      | `projects/agent-kit/src/lib/observations.ts:parseObservation`                 |
+| Груз уезжает при каждом прогоне отправки, а предложения — когда они есть.                                    | `projects/agent-kit/src/lib/shipment.ts:shipmentsOf`                          |
+| Проверка на адрес дерева накрывает сводку и предложения, но не разбор происшествия.                          | `projects/agent-kit/src/lib/shipment.ts:leaksOfCargo`                         |
+| Найденный в грузе адрес дерева отбивает отправку целиком, а не свой блок.                                    | `projects/agent-kit/src/lib/shipment.ts:propose`                              |
+| Груз уезжает в закрытый приём, а не в открытую очередь работ.                                                | `projects/agent-kit/src/lib/ship.ts:intakeUrl`                                |
+| Адрес приёма объявлен настройкой дерева, а не зашит в код пакета.                                            | `projects/agent-kit/src/lib/shipment.ts:IShipOptions`                         |
+| Дерево представляется приёму токеном, а реестр держит только его хеш.                                        | `projects/agent-kit/src/lib/cargo.ts:TREE_TOKEN_HEADER`                       |
+| Токен выдаётся и отзывается командами приёмника.                                                             | `projects/agent-kit/src/lib/shipment.ts:readToken`                            |
+| Одна запись на пару «дерево — месяц»: нашлась — дописывается, не нашлась — заводится.                        | `projects/agent-kit/src/lib/cargo.ts:IIntakeAccepted`                         |
+| Груз каждого рода принимается своей операцией.                                                               | `projects/agent-kit/src/lib/ship.ts:httpShip`                                 |
+| Выключатель наблюдений гасит и отправку целиком, вместе со снимком надстроек.                                | `projects/agent-kit/src/lib/observations.ts:OBSERVATIONS_DIR`                 |
+| Набор гейта пуша не бывает уже набора конвейера.                                                             | `tools/check-push-gate.mjs:pipelineSteps`                                     |
+| Полнота держится объявленным списком, а не разбором файла конвейера.                                         | `tools/check-push-gate.mjs:pushGate`                                          |
+| Исключение объявляется с причиной и рядом с набором.                                                         | `tools/check-push-gate.mjs:pipelineSteps`                                     |
+| Дерево без файла конвейера сверку не получает.                                                               | `tools/check-push-gate.mjs:pipelineSteps`                                     |
+| Проверка полноты сама стоит в наборе гейта.                                                                  | `.claude/rt-kit/project.sh:rt_push_checks`                                    |
 
 ## Что ещё стоит знать при чтении кода
 
