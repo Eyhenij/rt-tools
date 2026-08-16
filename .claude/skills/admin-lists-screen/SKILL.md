@@ -4,7 +4,7 @@ kind: pattern
 rule: lists
 description: Паттерн правила lists. Брать при сборке или правке списочного экрана админки — готовый порядок блоков, разметка <префикс>-table, клик по строке, меню строки с колонкой действий и предикатом строки, сортируемый заголовок, слоты тулбара, тост отказа.
 ---
-<!-- rt-kit v0.8.3 · patterns/admin-lists-screen.md · 0c0fd3b4cc87 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.8.3 · patterns/admin-lists-screen.md · 23769eaf4977 · правится надстройкой, не здесь -->
 
 # Собрать списочный экран
 
@@ -43,9 +43,9 @@ description: Паттерн правила lists. Брать при сборке
 ## Таблица
 
 ```html
-<<префикс>-table #rowsTable="<префикс>Table" rtElem="table" clickable [ariaLabel]="'recordsTableAria' | transloco" [emptyMessage]="'recordsEmpty'
-| transloco" [tableId]="tableId" [dataSource]="rows()" [columnsConfig]="columnsConfig()" [rowHasActions]="hasRowActions"
-[loading]="loading()">
+<<префикс>-table #rowsTable="<префикс>Table" rtElem="table" clickable [ariaLabel]="'recordsTableAria' | transloco"
+[emptyMessage]="'recordsEmpty' | transloco" [tableId]="tableId" [dataSource]="rows()" [columnsConfig]="columnsConfig()"
+[rowHasActions]="hasRowActions" [loading]="loading()">
 ```
 
 - `tableId` — ключ, под которым хранится выбор столбцов; он же уходит в асайд настроек.
