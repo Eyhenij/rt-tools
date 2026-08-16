@@ -20,12 +20,10 @@
     "laws/application/search-visibility.md",
     "laws/shared-code.md",
     "patterns/browser-verification-stand.md",
-    "patterns/git-workflow-migration.md",
-    "patterns/git-workflow-restart.md",
     "patterns/testing-e2e.md",
     "patterns/ts-procedure.md",
     "rules/api-layer.md"
   ],
-  "intake": "http://localhost:3000",
+  "intake": "https://message-bus.dev",
   "token": "~/.config/rt-tools-tree-token"
 }

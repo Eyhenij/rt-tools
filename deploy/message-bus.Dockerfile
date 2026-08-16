@@ -19,7 +19,10 @@ RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
 
 # Конфиг линтера читает tools/lint-rules и каталог границ, а плагин Nx строит по нему граф
 # проектов: без этих каталогов сборка падает на построении графа, а не на самом коде.
-COPY nx.json tsconfig.base.json eslint.config.mjs ./
+# Настройка Prisma идёт здесь, а не рядом с манифестами: она нужна накату на второй стадии, а
+# слой установки зависимостей ею не пользуется — поставленный выше, этот файл ронял бы кэш
+# установки при каждой своей правке.
+COPY nx.json tsconfig.base.json eslint.config.mjs prisma.config.ts ./
 COPY eslint ./eslint
 COPY tools ./tools
 COPY apps/message-bus ./apps/message-bus
@@ -39,6 +42,11 @@ ENV NODE_ENV=production
 COPY --from=build /workspace/dist/apps/message-bus ./
 # Схема и миграции нужны накату (`prisma migrate deploy`); сам приёмник их не читает.
 COPY --from=build /workspace/prisma ./prisma
+# Адрес хранилища седьмая редакция Prisma принимает только из настройки, а не из схемы и не из
+# одного лишь окружения: без этого файла накат отказывает строкой про обязательное свойство
+# `datasource.url` — при заданном `DATABASE_URL`. Приёмник настройку не читает вовсе, она нужна
+# только накату.
+COPY --from=build /workspace/prisma.config.ts ./prisma.config.ts
 # Установка идёт под архитектурой образа: здесь ставятся нативные модули, и сделать это на
 # стадии сборки нельзя.
 RUN --mount=type=cache,id=npm-cache,target=/root/.npm \

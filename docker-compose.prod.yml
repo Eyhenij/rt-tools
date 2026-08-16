@@ -1,0 +1,113 @@
+# Состав прода: то, из чего живёт приёмник на арендованном узле.
+#
+# Образы сюда приезжают из реестра готовыми — узлу 961 МБ памяти, и сборка на нём либо не
+# влезает, либо вытесняет базу. Собирает конвейер, узел только тянет собранное:
+#
+#   IMAGE_TAG=<sha> docker compose -f docker-compose.prod.yml --env-file .env.prod pull
+#   IMAGE_TAG=<sha> docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --no-build
+#
+# Метка образа — sha коммита, а не «последний»: подвижная метка отстаёт от главной ветки, и узел
+# молча остаётся на прежней версии, продолжая отвечать.
+name: message-bus-prod
+
+# Логи переживают перезапуск контейнера и не съедают диск: без этой секции драйвер держит их в
+# файле без потолка, а `up -d` при выкатке уносит их вместе со старым контейнером.
+x-logging: &logging
+    driver: json-file
+    options:
+        max-size: '10m'
+        max-file: '5'
+
+services:
+    db:
+        image: postgres:18.3-alpine
+        restart: unless-stopped
+        logging: *logging
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER:?set in .env.prod}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set in .env.prod}
+            POSTGRES_DB: ${POSTGRES_DB:?set in .env.prod}
+        volumes:
+            # Восемнадцатый Postgres ждёт одну точку монтирования на весь каталог, а не на
+            # `data` внутри него: иначе он отказывается подниматься и уходит в перезапуск.
+            #
+            # Том именованный: контейнер пересоздаётся каждой выкаткой, и хранилище внутри него
+            # прожило бы ровно до первой.
+            - message-bus-prod-db:/var/lib/postgresql
+        healthcheck:
+            test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+            interval: 5s
+            timeout: 3s
+            retries: 12
+        # Порт наружу не публикуется: в базу можно попасть только с самого узла.
+
+    # Накат миграций отдельным разовым контейнером, а не строкой в точке входа приёмника:
+    # приёмник, поднятый рядом с необновлённой базой, отвечает отказом на каждое обращение, и
+    # выглядит это поломкой приёма, а не незаконченной выкаткой.
+    migrate:
+        image: ghcr.io/eyhenij/message-bus-api:${IMAGE_TAG:-latest}
+        command: ['npx', 'prisma', 'migrate', 'deploy', '--schema', 'prisma/schema.prisma']
+        environment:
+            DATABASE_URL: ${DATABASE_URL:?set in .env.prod}
+        depends_on:
+            db:
+                condition: service_healthy
+        restart: 'no'
+        logging: *logging
+
+    api:
+        image: ghcr.io/eyhenij/message-bus-api:${IMAGE_TAG:-latest}
+        restart: unless-stopped
+        logging: *logging
+        environment:
+            NODE_ENV: production
+            DATABASE_URL: ${DATABASE_URL:?set in .env.prod}
+            PORT: '3000'
+            # Предел веса груза. Без него запрос произвольного размера кладёт службу на самом
+            # малом узле — правило договорённости приёмника.
+            CARGO_LIMIT: ${CARGO_LIMIT:-2mb}
+        depends_on:
+            migrate:
+                condition: service_completed_successfully
+        expose:
+            - '3000'
+        # Проба спрашивает ту же операцию, что и выкатка снаружи: она отвечает лишь тогда, когда
+        # хранилище отвечает приёмнику. В `node:22-alpine` нет ни curl, ни wget — отсюда `node -e`.
+        healthcheck:
+            test:
+                [
+                    'CMD',
+                    'node',
+                    '-e',
+                    "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+                ]
+            interval: 15s
+            timeout: 5s
+            retries: 4
+            start_period: 20s
+
+    # Дорога: имя, сертификат, статика админки и проксирование приёма. Единственный контейнер,
+    # который публикует порты наружу.
+    web:
+        image: ghcr.io/eyhenij/message-bus-web:${IMAGE_TAG:-latest}
+        restart: unless-stopped
+        logging: *logging
+        ports:
+            - '80:80'
+            - '443:443'
+        volumes:
+            # Сертификаты и состояние ACME переживают пересоздание контейнера: без тома каждая
+            # выкатка просила бы у Let's Encrypt новый сертификат и упёрлась бы в его предел
+            # выдач за неделю.
+            - message-bus-caddy-data:/data
+            - message-bus-caddy-config:/config
+        # Только «запущен»: ожидание чужой пробы живости означает, что ложное срабатывание у
+        # приёмника не даёт подняться дороге, то есть уносит и админку, и приём целиком. Дороге
+        # от приёмника нужен существующий контейнер, чтобы разрешилось имя, — это и даёт «запущен».
+        depends_on:
+            - api
+
+volumes:
+    message-bus-prod-db:
+    message-bus-caddy-data:
+    message-bus-caddy-config:

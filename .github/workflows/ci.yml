@@ -129,3 +129,11 @@ jobs:
             - name: Build API image
               run: |
                   docker build -f deploy/message-bus.Dockerfile -t message-bus:ci .
+
+            # Образ дороги: проксировщик со статикой админки внутри. Собирается он своим набором
+            # копируемых каталогов и своей целью сборки, и недостающий каталог виден только
+            # здесь — так же, как у образа приёмника. Выкатка тянет оба, и несобравшийся второй
+            # означал бы узел с новым приёмником за старой админкой.
+            - name: Build web image
+              run: |
+                  docker build -f deploy/message-bus-web.Dockerfile -t message-bus-web:ci .
