@@ -2,9 +2,9 @@
 name: admin-lists-screen
 kind: pattern
 rule: lists
-description: Паттерн правила lists. Брать при сборке или правке списочного экрана админки — готовый порядок блоков, разметка <префикс>-table, клик по строке, меню строки с vmTableRowActionsRowType, сортируемый заголовок, слоты тулбара, тост отказа.
+description: Паттерн правила lists. Брать при сборке или правке списочного экрана админки — готовый порядок блоков, разметка <префикс>-table, клик по строке, меню строки с колонкой действий и предикатом строки, сортируемый заголовок, слоты тулбара, тост отказа.
 ---
-<!-- rt-kit v0.8.3 · patterns/admin-lists-screen.md · 0aecb10d1985 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.8.3 · patterns/admin-lists-screen.md · 23769eaf4977 · правится надстройкой, не здесь -->
 
 # Собрать списочный экран
 
@@ -26,7 +26,7 @@ description: Паттерн правила lists. Брать при сборке
     <header rtElem="header">
         <!-- div rtElem="header-main" c h1 rtElem="title" + p rtElem="hint" -->
         <<префикс>-toolbar>
-        <!-- vmToolbarLeft / vmToolbarRight -->
+        <!-- <префикс>ToolbarLeft / <префикс>ToolbarRight -->
         <div rtElem="scroll">
             <!-- overflow-x: auto -->
             <<префикс>-table rtElem="table">
@@ -43,9 +43,9 @@ description: Паттерн правила lists. Брать при сборке
 ## Таблица
 
 ```html
-<<префикс>-table #rowsTable="vmTable" rtElem="table" clickable [ariaLabel]="'bookingsTableAria' | transloco" [emptyMessage]="'bookingsEmpty'
-| transloco" [tableId]="tableId" [dataSource]="rows()" [columnsConfig]="columnsConfig()" [rowHasActions]="hasRowActions"
-[loading]="loading()">
+<<префикс>-table #rowsTable="<префикс>Table" rtElem="table" clickable [ariaLabel]="'recordsTableAria' | transloco"
+[emptyMessage]="'recordsEmpty' | transloco" [tableId]="tableId" [dataSource]="rows()" [columnsConfig]="columnsConfig()"
+[rowHasActions]="hasRowActions" [loading]="loading()">
 ```
 
 - `tableId` — ключ, под которым хранится выбор столбцов; он же уходит в асайд настроек.
@@ -58,8 +58,8 @@ description: Паттерн правила lists. Брать при сборке
 <tr
     *cdkRowDef="let row; columns: rowsTable.displayedColumns()"
     cdk-row
-    qa-dataid="bookings-row"
-    vmTableRow
+    qa-dataid="records-row"
+    <префикс>TableRow
     (activated)="openAside(row)"></tr>
 ```
 
@@ -68,12 +68,23 @@ description: Паттерн правила lists. Брать при сборке
 ## Меню строки
 
 ```html
-<ng-template vmTableRowActions let-row [vmTableRowActionsRowType]="rows()"></ng-template>
+<<префикс>-table … [showRowActions]="true" [rowHasActions]="hasRowActions" [loading]="loading()">
+    <ng-template <префикс>TableRowActions let-row [<префикс>TableRowActionsRowType]="rows()"></ng-template>
 ```
 
 ```typescript
-protected readonly hasRowActions = (row: IBooking.State): boolean => row.canConfirm || row.canReject;
+protected readonly hasRowActions: I<Префикс>Table.RowActionsPredicate<IRecord.Row> = recordRowHasActions;
 ```
+
+Входа два, и они не заменяют друг друга. `showRowActions` заводит саму колонку действий — по
+умолчанию он опущен, и без него таблица рисует одни объявленные столбцы: ни шаблон действий, ни
+предикат колонки не добавляют. `rowHasActions` решает, показывать ли кнопку у конкретной
+строки, и колонки не заводит вовсе. Экран ролей так и вышел с четырьмя столбцами и
+недостижимыми действиями: сборка, линт и юниты на правилах строки при этом зелёные, а нашёл
+это прогон сквозной спеки.
+
+Ячейка действий скрыта, пока указатель не на строке, — сквозная спека наводит на строку до
+нажатия.
 
 Доступность действия лежит полем строки (`canConfirm`, `canReject`), а не вызовом метода
 компонента. Действие, которого записи нельзя сделать, из меню убирается целиком. Необратимое
@@ -83,7 +94,7 @@ protected readonly hasRowActions = (row: IBooking.State): boolean => row.canConf
 ## Сортируемый заголовок
 
 ```html
-<th *cdkHeaderCellDef cdk-header-cell vmSortHeader="checkIn">{{ 'bookingsCheckIn' | transloco }}</th>
+<th *cdkHeaderCellDef cdk-header-cell <префикс>SortHeader="createdAt">{{ 'recordsCreatedAt' | transloco }}</th>
 ```
 
 Колонка помечается `sortable: true` в `columnsConfig`. Заголовок переключает сортировку по
@@ -96,8 +107,8 @@ protected readonly hasRowActions = (row: IBooking.State): boolean => row.canConf
 
 ## Тулбар
 
-Тулбар поделён на две части слотами: `vmToolbarLeft` — то, что меняет выборку,
-`vmToolbarRight` — действия над списком. Своей раскладки внутри тулбара экран не заводит.
+Тулбар поделён на две части слотами: `<префикс>ToolbarLeft` — то, что меняет выборку,
+`<префикс>ToolbarRight` — действия над списком. Своей раскладки внутри тулбара экран не заводит.
 
 Левый слот — фильтры и поиск. Правый — иконки `<префикс>-icon-button variant="primary"` с парой
 `tooltip` + `ariaLabel` одного текста: обновление (`sync`), настройки столбцов (`sliders-v`),
@@ -106,7 +117,7 @@ protected readonly hasRowActions = (row: IBooking.State): boolean => row.canConf
 ## Отказ загрузки
 
 ```typescript
-this.#notifications.error(this.#transloco.translate(this.#store.errorKey() ?? 'bookingsLoadFailed'));
+this.#notifications.error(this.#transloco.translate(this.#store.errorKey() ?? 'recordsLoadFailed'));
 ```
 
 Ключ читается сразу после запроса, а не подпиской на сигнал стора: стор делят список и панель
@@ -119,7 +130,7 @@ this.#notifications.error(this.#transloco.translate(this.#store.errorKey() ?? 'b
 npx nx build admin
 ```
 
-Продовая сборка обязательна: без `[vmTableRowActionsRowType]` тип `let-row` выводится как
+Продовая сборка обязательна: без `[<префикс>TableRowActionsRowType]` тип `let-row` выводится как
 `unknown`, и падает только она — юниты и дев-сервер проходят.
 
 ## Частые промахи
