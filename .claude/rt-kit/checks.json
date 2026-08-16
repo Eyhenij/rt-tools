@@ -57,6 +57,7 @@
             "Убрать за прогоном": {
                 "skip": "уборка за раннером, а не проверка: на своей машине снимать нечего — образы и кэш нужны следующей сборке"
             },
+            "Hook scenarios": "node tools/check-hooks.mjs",
             "Test, Lint, Typecheck, Build": "pnpm exec nx affected -t lint typecheck test build --parallel",
             "Stylelint": "pnpm run lint:styles",
             "E2E admin": "pnpm exec nx run message-bus-admin-e2e:e2e",
