@@ -51,6 +51,7 @@ pnpm run lint:styles
 pnpm exec nx run message-bus-admin-e2e:e2e
 pnpm exec nx affected -t verify --parallel
 docker build -f deploy/message-bus.Dockerfile -t message-bus:gate .
+docker build -f deploy/message-bus-web.Dockerfile -t message-bus-web:gate .
 node tools/check-push-gate.mjs
 EOF
 }

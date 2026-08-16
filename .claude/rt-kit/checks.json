@@ -56,7 +56,8 @@
                 "skip": "выгрузка следов прогона"
             },
             "Verify built packages": "pnpm exec nx affected -t verify --parallel",
-            "Build API image": "docker build -f deploy/message-bus.Dockerfile -t message-bus:gate ."
+            "Build API image": "docker build -f deploy/message-bus.Dockerfile -t message-bus:gate .",
+            "Build web image": "docker build -f deploy/message-bus-web.Dockerfile -t message-bus-web:gate ."
         }
     },
     "board": {
