@@ -14,7 +14,8 @@ rt-tools is an Angular library providing utility types, functions, and UI compon
 # приёмник не собирается на свежем чекауте.
 pnpm install
 
-# Пересобрать один клиент хранилища — после правки схемы
+# Пересобрать один клиент хранилища — после правки схемы, а также когда сборка приёмника
+# остановилась строкой о его пропаже: она называет эту команду сама
 pnpm run prisma:generate
 
 # Build the library

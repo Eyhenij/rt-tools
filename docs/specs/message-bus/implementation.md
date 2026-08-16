@@ -141,3 +141,8 @@
 | Пароль, токен и хеш вырезаются целиком. | `libs/message-bus-api/observability/util/src/lib/redact.util.ts:redact` |
 | Текст ошибки внутри разобранной причины вычисткой не съедается. | `libs/message-bus-api/observability/util/src/lib/redact.util.ts:ERROR_BRANCH` |
 | Обход в глубину и в длину ограничен. | `libs/message-bus-api/observability/util/src/lib/redact.util.ts:MAX_DEPTH` |
+| Сборка приёмника отказывает, когда клиента хранилища нет. | `apps/message-bus/src/build/storage-client.check.mjs:storageClientFailure` |
+| Отказ называет и причину, и починку. | `apps/message-bus/src/build/storage-client.check.mjs:GENERATE_COMMAND` |
+| Проверка идёт до компиляции. | `apps/message-bus/webpack.config.mjs:failure` |
+| Решение живёт чистой функцией, а конфиг сборки её зовёт. | `apps/message-bus/src/build/storage-client.check.mjs:STORAGE_CLIENT_ENTRY` |
+| Конвейер собирает приёмник, и отказ сборки роняет прогон. | `.github/workflows/ci.yml:Test, Lint, Typecheck, Build` |
