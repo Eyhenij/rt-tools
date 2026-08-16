@@ -126,25 +126,25 @@ describe('признак дерева', () => {
 describe('снимок надстроек', () => {
     const packaged: string = ['# Правило', '', '## Первый', '', 'Пакетный текст.', '', '## Второй', '', 'И этот.'].join('\n');
 
-    it('SC-AK-152 — замещённый раздел пакета назван в снимке по имени', () => {
+    it('SC-AK-231 — замещённый раздел пакета назван в снимке по имени', () => {
         const found: readonly ICargoOverride[] = overridesOf('rules/probe.md', packaged, '## Первый\n\nСвой текст.');
 
         expect(found).toEqual([{ resource: 'rules/probe.md', section: '## Первый', kind: 'replace' }]);
     });
 
-    it('SC-AK-153 — свой раздел уезжает родом правки, а его заголовок — нет', () => {
+    it('SC-AK-232 — свой раздел уезжает родом правки, а его заголовок — нет', () => {
         const found: readonly ICargoOverride[] = overridesOf('rules/probe.md', packaged, '## Про свой домен\n\nСвой текст.');
 
         expect(found).toEqual([{ resource: 'rules/probe.md', section: null, kind: 'append' }]);
     });
 
-    it('SC-AK-155 — содержимое надстройки в снимок не попадает', () => {
+    it('SC-AK-234 — содержимое надстройки в снимок не попадает', () => {
         const found: readonly ICargoOverride[] = overridesOf('rules/probe.md', packaged, '## Первый\n\nСекрет дерева.');
 
         expect(JSON.stringify(found)).not.toContain('Секрет');
     });
 
-    it('SC-AK-152 — снятый раздел отличается от замещённого родом правки', () => {
+    it('SC-AK-231 — снятый раздел отличается от замещённого родом правки', () => {
         const found: readonly ICargoOverride[] = overridesOf('rules/probe.md', packaged, '## Второй\n');
 
         expect(found).toEqual([{ resource: 'rules/probe.md', section: '## Второй', kind: 'drop' }]);
@@ -225,7 +225,7 @@ describe('propose', () => {
         expect(summarySent().tree).toBe(treeSlugOf(REMOTE, ''));
     });
 
-    it('SC-AK-154 — невыбранный ресурс виден в снимке отдельно от надстроенного', async () => {
+    it('SC-AK-233 — невыбранный ресурс виден в снимке отдельно от надстроенного', async () => {
         start({ skip: ['rules/testing.md'] });
 
         await shipping();
@@ -234,7 +234,7 @@ describe('propose', () => {
         expect(summarySent().overrides).toEqual([]);
     });
 
-    it('SC-AK-152 — надстройка дерева уезжает вместе со сводкой', async () => {
+    it('SC-AK-231 — надстройка дерева уезжает вместе со сводкой', async () => {
         start();
         put(`${OVERRIDES_DIR}/rules/testing.md`, '## Ловушки\n\nСвой текст про ловушки.');
 
