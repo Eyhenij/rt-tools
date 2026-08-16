@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-hook: PreToolUse Edit|Write|MultiEdit
+# rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh
 # PreToolUse guard for Edit|Write|MultiEdit: код не пишется раньше замысла.
 #
@@ -49,9 +49,23 @@ case "$tool" in
     # Второй ярус: та же правка, положенная командой оболочки. Без него отказ гарда обходится
     # сменой не инструмента, а способа записи — перенаправлением, `sed -i`, интерпретатором с
     # heredoc. Разбор — `2026-08-15-guard-denied-shell-wrote-anyway.md`.
-    Bash)
+    #
+    # Терминал среды исполняет ту же командную строку и кладёт её в то же поле: без этих двух
+    # имён гард стоял бы объявленным на них и молча пропускал — состояние хуже необъявленного,
+    # потому что снаружи выглядит закрытым.
+    Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool)
         cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
         [ -z "$cmd" ] && exit 0
+        # Универсальный исполнитель прячет настоящую команду во вложенной строке: без её разбора
+        # путь стоит за кавычкой, и до него не дотягивается ни один образец.
+        if [ "$tool" = "mcp__webstorm__execute_tool" ] && command -v perl >/dev/null 2>&1; then
+            inner="$(printf '%s' "$cmd" | perl -0ne '
+                if (/--command(?:=|\s+)(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(.+))/s) {
+                    print defined $1 ? $1 : (defined $2 ? $2 : $3);
+                }
+            ' 2>/dev/null)"
+            [ -n "$inner" ] && cmd="$inner"
+        fi
         rt_needs rt_shell_writes task-flow-guard || exit 0
         rt_needs rt_shell_paths task-flow-guard || exit 0
         rt_shell_writes "$cmd" || exit 0

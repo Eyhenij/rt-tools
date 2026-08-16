@@ -96,6 +96,18 @@ b "копирование поверх кода отбивается" "cp /tmp/a
 b "возврат версии из истории отбивается" "git checkout HEAD -- libs/site/x/ui/src/lib/a.component.ts" deny
 b "абсолютный путь отбивается" "echo x > $CODE" deny
 
+# Терминал среды исполняет ту же командную строку и кладёт её в то же поле. Пока гард на него не
+# звался, объявление называло его, а тело пропускало: снаружи это выглядит закрытым.
+ide_in() {
+    jq -n --arg c "$1" --arg d "$REPO" --arg t "$2" \
+        '{session_id:"tests",tool_name:$t,tool_input:{command:$c},cwd:$d}'
+}
+
+expect_decision "SC-AK-251 — та же запись из терминала среды отбивается" task-flow-guard.sh \
+    "$(ide_in "echo x > libs/site/x/ui/src/lib/a.component.ts" mcp__webstorm__execute_terminal_command)" deny
+expect_decision "SC-AK-252 — вложенная запись универсального исполнителя отбивается" task-flow-guard.sh \
+    "$(ide_in "execute_terminal_command --command \"echo x > libs/site/x/ui/src/lib/a.component.ts\"" mcp__webstorm__execute_tool)" deny
+
 # Чтение и поиск не отбиваются: гард судит запись, а не всякое упоминание пути.
 b "чтение кода пропускается" "cat libs/site/x/ui/src/lib/a.component.ts" PASS
 b "поиск по коду пропускается" "grep -rn xyz libs/site/x/ui/src/lib/" PASS
