@@ -1,4 +1,4 @@
-<!-- rt-kit v0.8.2 · samples/tasks/_template/grill.md · bbcf7332ef07 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.8.3 · samples/tasks/_template/grill.md · bbcf7332ef07 · правится надстройкой, не здесь -->
 # Разбор просьбы
 
 ## Просьба владельца

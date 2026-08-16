@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Паттерн правила git-workflow. Брать при ручном перезапуске прода — после правки .env.prod, при разборе выкатки, при подъёме контейнера на сервере. Готовые команды с IMAGE_TAG по sha, способ узнать выкаченный sha и чем сверять результат. Не брать для коммита и миграций — это паттерны git-workflow-commit и git-workflow-migration.
 ---
-<!-- rt-kit v0.8.2 · patterns/git-workflow-restart.md · b5fbd4b5b34a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.8.3 · patterns/git-workflow-restart.md · b5fbd4b5b34a · правится надстройкой, не здесь -->
 
 # Ручной перезапуск прода
 

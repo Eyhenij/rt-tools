@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.8.2 · hooks/waiting-turn-guard.sh · 2c14c9bfd2dd · правится надстройкой, не здесь
+# rt-kit v0.8.3 · hooks/waiting-turn-guard.sh · 2c14c9bfd2dd · правится надстройкой, не здесь
 # rt-hook: Stop
 # Гард ожидания: ход, в котором открыт PR, не заканчивается, пока в нём не было ни одного
 # действия по следующей задаче. Stop.

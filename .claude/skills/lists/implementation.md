@@ -10,16 +10,16 @@
 
 ## Как это называется здесь
 
-| В правиле                         | Здесь                                                                                           |
-| --------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `<префикс>-`                      | `rt-` — префикс второго кита; первый кит с префиксом `rtui-` админку не собирает                |
-| `rt-table`, вход `[dataSource]`   | он же: `rt-table` принимает `dataSource` сеттером поверх `CdkTable`                             |
-| `vmToolbarLeft`, `vmToolbarRight` | `rtToolbarLeft`, `rtToolbarCenter`, `rtToolbarRight`                                            |
-| `vmTableRow`                      | `rtTableRow`                                                                                    |
-| `[vmTableRowActionsRowType]`      | `[rtTableRowActionsRowType]` на `ng-template[rtTableRowActions]`                                |
-| `<префикс>-page`                  | `admin-list-page` в общем слое админки: заголовок, тулбар, место таблицы, отказ и страницы      |
-| `IList.Query.State`               | `IListState<T, M>` из `@rt-tools/utils` — `pageModel`, `sortModel`, `filterModel`, `searchTerm` |
-| панель настройки столбцов         | `rt-table-settings-aside`; ключ хранения собирает сама таблица из `[tableId]`                   |
+| В правиле                                       | Здесь                                                                                           |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `<префикс>-`                                    | `rt-` — префикс второго кита; первый кит с префиксом `rtui-` админку не собирает                |
+| `rt-table`, вход `[dataSource]`                 | он же: `rt-table` принимает `dataSource` сеттером поверх `CdkTable`                             |
+| `<префикс>ToolbarLeft`, `<префикс>ToolbarRight` | `rtToolbarLeft`, `rtToolbarCenter`, `rtToolbarRight`                                            |
+| `<префикс>TableRow`                             | `rtTableRow`                                                                                    |
+| `[<префикс>TableRowActionsRowType]`             | `[rtTableRowActionsRowType]` на `ng-template[rtTableRowActions]`                                |
+| `<префикс>-page`                                | `admin-list-page` в общем слое админки: заголовок, тулбар, место таблицы, отказ и страницы      |
+| `IList.Query.State`                             | `IListState<T, M>` из `@rt-tools/utils` — `pageModel`, `sortModel`, `filterModel`, `searchTerm` |
+| панель настройки столбцов                       | `rt-table-settings-aside`; ключ хранения собирает сама таблица из `[tableId]`                   |
 
 ## Где это лежит
 
