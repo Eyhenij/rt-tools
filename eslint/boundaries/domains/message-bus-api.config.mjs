@@ -66,8 +66,10 @@ export const messageBusApiBoundaries = [
             // Дерево запроса читает разбор отказа: в журнал уходит признак того дерева, чей
             // груз отбит, а не признак, названный самим грузом
             TREES_UTIL,
-            // Разбор ошибки в поля и вычистка: их зовут логгер приложения и разбор отказов
+            // Разбор ошибки в поля: его зовёт разбор отказов, стоящий у самого приложения
             OBSERVABILITY_UTIL,
+            // Журнал приложения: его ставит приложение — вывод его решение, а не решение домена
+            'scope:message-bus-api-observability-feature',
             PERSISTENCE_FEATURE,
             PERSISTENCE_DATA_ACCESS,
             COMMON,
@@ -242,7 +244,8 @@ export const messageBusApiBoundaries = [
     // пусты — своих записей, служб и выходов наружу у домена нет
     { sourceTag: 'scope:message-bus-api-observability-util', onlyDependOnLibsWithTags: [] },
     { sourceTag: 'scope:message-bus-api-observability-data-access', onlyDependOnLibsWithTags: [] },
-    { sourceTag: 'scope:message-bus-api-observability-feature', onlyDependOnLibsWithTags: [] },
+    // Журнал зовёт вычистку: поля вычищаются всегда, а не по решению того, кто пишет строку
+    { sourceTag: 'scope:message-bus-api-observability-feature', onlyDependOnLibsWithTags: [OBSERVABILITY_UTIL] },
     { sourceTag: 'scope:message-bus-api-observability-api', onlyDependOnLibsWithTags: [] },
     { sourceTag: 'scope:message-bus-api-persistence-feature', onlyDependOnLibsWithTags: [PERSISTENCE_DATA_ACCESS] },
     // Наружу домен не ходит: класть сюда выход к чужой службе нечего, приёмник принимает
