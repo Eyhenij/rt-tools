@@ -45,6 +45,7 @@ class TestListStore extends AdminListStoreBase<IRow> {
 class TestScreenComponent extends AdminListScreenBase<IRow> {
     protected readonly store: TestListStore = inject(TestListStore);
     protected readonly sortable: readonly string[] = ['arrivedAt', 'updatedAt'];
+    protected readonly tableId: string = 'admin-test';
 
     constructor() {
         super();
@@ -112,6 +113,7 @@ describe('AdminListScreenBase', () => {
                 provideRouter([
                     { path: 'postmortems', component: TestScreenComponent },
                     { path: 'postmortems/:id', pathMatch: 'full', outlet: 'ro', component: TestDetailsComponent },
+                    { path: 'table-settings', pathMatch: 'full', outlet: 'ro', component: TestDetailsComponent },
                 ]),
             ],
         });
@@ -148,7 +150,7 @@ describe('AdminListScreenBase', () => {
         expect(screen.shownRows()).toEqual([{ id: 'third' }]);
     });
 
-    it('отбор по дереву возвращает список на первую страницу', async () => {
+    it('SC-MB-111 — отбор по дереву возвращает список на первую страницу', async () => {
         const harness: RouterTestingHarness = await RouterTestingHarness.create('/postmortems?page=4');
         const screen: TestScreenComponent = harness.routeDebugElement?.componentInstance;
 
@@ -197,6 +199,20 @@ describe('AdminListScreenBase', () => {
         await harness.fixture.whenStable();
 
         expect(router.url).toContain('(ro:postmortems/one)');
+        expect(router.url).toContain('page=2');
+        expect(router.url).toContain('tree=a1b2');
+    });
+
+    it('SC-MB-116 — настройка столбцов не трогает выборку: закрытая панель вернёт тот же список', async () => {
+        const harness: RouterTestingHarness = await RouterTestingHarness.create('/postmortems?page=2&tree=a1b2');
+        const screen: TestScreenComponent = harness.routeDebugElement?.componentInstance;
+
+        answerList();
+        http.expectOne(TREES_PATH).flush([]);
+        screen.openColumns();
+        await harness.fixture.whenStable();
+
+        expect(router.url).toContain('(ro:table-settings)');
         expect(router.url).toContain('page=2');
         expect(router.url).toContain('tree=a1b2');
     });

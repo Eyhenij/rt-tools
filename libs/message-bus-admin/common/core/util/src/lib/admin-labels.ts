@@ -25,6 +25,10 @@ export const ADMIN_LABELS = {
     sectionProposals: 'Предложения',
     sectionSummaries: 'Сводки деревьев',
 
+    hintPostmortems: 'Что и почему сломалось на деревьях — по разбору на происшествие',
+    hintProposals: 'Что деревья предлагают править в слое правил',
+    hintSummaries: 'Свод одного дерева за календарный месяц — по записи на пару',
+
     filterTree: 'Дерево',
     filterTreeAll: 'Все деревья',
 

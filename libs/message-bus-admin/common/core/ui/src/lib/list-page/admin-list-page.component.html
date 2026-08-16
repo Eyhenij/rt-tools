@@ -1,35 +1,51 @@
 <ng-container rtBlock="admin-page">
     <header rtElem="header">
         <h1 rtElem="title">{{ title() }}</h1>
+
+        @if (hint(); as hintText) {
+            <p rtElem="hint" [attr.qa-dataid]="hintId()">{{ hintText }}</p>
+        }
     </header>
 
     <rt-toolbar>
-        <ng-template rtToolbarLeft>
-            <admin-tree-filter [choices]="choices()" [tree]="tree()" (treeChange)="treeChange.emit($event)" />
-        </ng-template>
+        @if (leftTpl(); as left) {
+            <ng-template rtToolbarLeft>
+                <ng-container [ngTemplateOutlet]="left" />
+            </ng-template>
+        }
 
         <ng-template rtToolbarRight>
+            @if (rightTpl(); as right) {
+                <ng-container [ngTemplateOutlet]="right" />
+            }
+
             <rt-icon-button
-                qa-dataid="list-columns"
                 icon="sliders-v"
                 variant="ghost"
                 [ariaLabel]="columnsLabel"
+                [attr.qa-dataid]="columnsId()"
                 [tooltip]="columnsLabel"
-                (clicked)="columnsAsked.emit()" />
+                (clicked)="host.openColumns()" />
 
             <rt-icon-button
-                qa-dataid="list-refresh"
                 icon="sync"
                 variant="primary"
                 [ariaLabel]="refreshLabel"
-                [loading]="loading()"
+                [attr.qa-dataid]="refreshId()"
+                [loading]="host.loading()"
                 [tooltip]="refreshLabel"
-                (clicked)="retried.emit()" />
+                (clicked)="host.retry()" />
         </ng-template>
     </rt-toolbar>
 
-    @if (fault() !== null) {
-        <rt-message qa-dataid="list-fault" severity="danger">
+    @if (aboveTpl(); as above) {
+        <div rtElem="above">
+            <ng-container [ngTemplateOutlet]="above" />
+        </div>
+    }
+
+    @if (host.fault() !== null) {
+        <rt-message severity="danger" [attr.qa-dataid]="faultId()">
             <div rtElem="fault">
                 <p>{{ faultText() }}</p>
 
@@ -37,7 +53,9 @@
                     <p>{{ incident }}</p>
                 }
 
-                <button rtButton qa-dataid="list-retry" type="button" appearance="text" (click)="retried.emit()">{{ retryLabel }}</button>
+                <button rtButton type="button" appearance="text" [attr.qa-dataid]="retryId()" (click)="host.retry()">
+                    {{ retryLabel }}
+                </button>
             </div>
         </rt-message>
     } @else {
@@ -47,9 +65,9 @@
     }
 
     <rt-pagination
-        [loading]="loading()"
-        [pageModel]="pageModel()"
+        [loading]="host.loading()"
+        [pageModel]="host.pageModel()"
         [perPageOptions]="pageSizes"
-        (pageChange)="pageChange.emit($event)"
-        (perPageChange)="sizeChange.emit($event)" />
+        (pageChange)="host.goToPage($event)"
+        (perPageChange)="host.changeSize($event)" />
 </ng-container>
