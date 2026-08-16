@@ -58,6 +58,7 @@ rt_push_checks() {
 node tools/check-specs.mjs
 node tools/check-dupes.mjs
 pnpm exec nx affected -t lint typecheck test build --parallel
+pnpm exec nx affected -t test-hooks
 pnpm run lint:styles
 pnpm exec nx run message-bus-admin-e2e:e2e
 pnpm exec nx affected -t verify --parallel
