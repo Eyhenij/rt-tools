@@ -4,6 +4,10 @@
 строки и строка без правила — расхождение: спек обещает то, чего в коде нет, либо в коде стоит
 то, о чём спек молчит.
 
+Якорь здесь — слово, которое утверждение и держит. Сверка ищет его по всему файлу и любым словом
+удовлетворяется, поэтому имя поля из чужой строки проходит её так же, как нужное предложение, — и
+утверждение остаётся зелёным, когда сам текст роли переписан целиком.
+
 | Правило                                                                                                      | Где исполняется                                                               |
 | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
 | Пакет проверяет то, что везёт, а не только то, чем везёт.                                                    | `projects/agent-kit/src/lib/assets.spec.ts:expectGreen`                       |
@@ -192,10 +196,10 @@
 | Вывод переносимого текста из сверки адресов старше нового требования.                                        | `projects/agent-kit/assets/checks/check-doc-paths.mjs:PORTABLE_DIRS`          |
 | Машинная половина краснеет только на считаемом.                                                              | `projects/agent-kit/tests/rules-review.test.sh:suite_result`                  |
 | Проверка текстов пакета стоит в наборе, который гоняется перед пушем.                                        | `projects/agent-kit/src/lib/assets.spec.ts:expectGreen`                       |
-| Ревью читает семью целиком, а не файл по одному.                                                             | `projects/agent-kit/assets/agents/rules-reviewer.md:law`                      |
+| Ревью читает семью целиком, а не файл по одному.                                                             | `projects/agent-kit/assets/agents/rules-reviewer.md:Семья`                    |
 | Роль возвращает находки и ничего не правит.                                                                  | `projects/agent-kit/assets/agents/rules-reviewer.md:tools`                    |
-| Находка называет два места дословно и то, чем они расходятся.                                                | `projects/agent-kit/assets/agents/rules-reviewer.md:rule`                     |
-| Пробел ищется чтением, а не счётом привязок.                                                                 | `projects/agent-kit/assets/agents/rules-reviewer.md:Grep`                     |
+| Находка называет два места дословно и то, чем они расходятся.                                                | `projects/agent-kit/assets/agents/rules-reviewer.md:дословно`                 |
+| Пробел ищется чтением, а не счётом привязок.                                                                 | `projects/agent-kit/assets/agents/rules-reviewer.md:Пробел`                   |
 | Ревью зовётся двумя способами: командой вручную и машинной половиной в гейте.                                | `projects/agent-kit/assets/commands/rules-review.md:ARGUMENTS`                |
 | Граф изображает ход правила и лежит в тексте самого правила.                                                 | `projects/agent-kit/assets/templates/rule.md:mermaid`                         |
 | Граф заводится каждому правилу, а не только ветвящемуся.                                                     | `projects/agent-kit/tests/rules-review.test.sh:sections_for`                  |
