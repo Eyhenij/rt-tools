@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file
+# rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh
 # Гард «ничего не пишется с нуля». PreToolUse на правке кода и разметки.
 #
