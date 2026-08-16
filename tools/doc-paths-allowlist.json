@@ -41,6 +41,7 @@
     ".claude/rt-kit/proposals/",
     "src/lib/i18n/rt-kit-translations.ts",
     "date-format.ts",
-    "safe-comparator.ts"
+    "safe-comparator.ts",
+    "libs/common/util"
   ]
 }
