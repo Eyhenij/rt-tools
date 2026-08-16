@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.8.2 · hooks/browser-guard-no-listing.sh · 987c061e446d · правится надстройкой, не здесь
+# rt-kit v0.8.3 · hooks/browser-guard-no-listing.sh · 987c061e446d · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__claude-in-chrome__(list_connected_browsers|switch_browser)
 # Гард перечисления и переключения браузеров. PreToolUse.
 #
