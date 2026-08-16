@@ -29,7 +29,7 @@ describe('planFile', () => {
         expect(planned.content).toBeNull();
     });
 
-    it('пакет изменился — переложить', () => {
+    it('SC-AK-225 — пакет изменился, тело перекладывается целиком: граф едет вместе с правилом', () => {
         expect(plan('Новое тело.\n', laid('Тело.\n')).outcome).toBe('update');
     });
 

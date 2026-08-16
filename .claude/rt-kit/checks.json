@@ -7,6 +7,12 @@
     "portableDirs": [
         "projects/agent-kit/assets"
     ],
+    "externalEnums": [
+        {
+            "package": "@rt-tools/utils",
+            "dir": "esm/lib/interfaces"
+        }
+    ],
     "reuse": {
         "bundles": [
             "angular"

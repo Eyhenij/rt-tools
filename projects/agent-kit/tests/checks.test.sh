@@ -245,6 +245,47 @@ printf '# Привязка\n\n| Правило | Где исполняется |
 report "SC-AK-58 — компаньон спека без раздела читается" "$(specs_says 'нет раздела .*Где исполняются статьи')" 0
 report "SC-AK-58 — его привязка нашлась" "$(specs_says 'правило без привязки')" 0
 
+# --- SC-AK-242 и SC-AK-243 — вердикт вместо адреса ------------------------------------------
+#
+# Статье, которой в дереве исполняться негде, адрес можно поставить только в файл, который её
+# не исполняет. Поэтому вместо адреса принимается вердикт — но с причиной: без неё он закрывает
+# любую строку разом. Слово вердикта кириллическое, и конец его ищется просмотром, а не `\b`:
+# границей слова JavaScript знает одну латиницу.
+
+mkdir -p "$SPEC_TREE/.claude/skills/verdict-rule"
+printf -- '---\nname: verdict-rule\nkind: rule\nlaw: acting\n---\n\n# Правило\n\n## Как закон применяется здесь\n\n- **Раз.** Два.\n' \
+    > "$SPEC_TREE/.claude/skills/verdict-rule/SKILL.md"
+
+verdict_row() {
+    printf '# Компаньон\n\n## Где исполняются статьи\n\n| Статья | Где исполняется |\n| --- | --- |\n| Раз. | %s |\n' "$1" \
+        > "$SPEC_TREE/.claude/skills/verdict-rule/implementation.md"
+}
+
+verdict_row '**Не исполняется.** Службы, о которой говорит статья, дерево не держит вовсе.'
+report "SC-AK-242 — вердикт с причиной принят" "$(specs_says 'пустая привязка')" 0
+
+verdict_row '**Не исполняется.**'
+report "SC-AK-243 — вердикт без причины не принят" "$(specs_says 'пустая привязка')" 1
+
+rm -rf "$SPEC_TREE/.claude/skills/verdict-rule"
+
+# --- SC-AK-241 — паттерн, пропущенный деревом, правило не краснит ----------------------------
+#
+# Пропуск объявлен в настройке проекта и означает выбор дерева: правило о процедурах бэкенда
+# ложится и туда, где бэкенда нет вовсе. Требовать там паттерн значит требовать файл, которому
+# нечего сказать, и единственным способом позеленеть становится снятие пропуска.
+
+mkdir -p "$SPEC_TREE/.claude/skills/skipped-rule"
+printf -- '---\nname: skipped-rule\nkind: rule\nlaw: acting\n---\n\n# Правило\n\n## Как закон применяется здесь\n\n- **Раз.** Два.\n\n## Паттерны\n\n- `skipped-rule-do` — готовый код.\n' \
+    > "$SPEC_TREE/.claude/skills/skipped-rule/SKILL.md"
+printf '# Компаньон\n\n## Где исполняются статьи\n\n| Статья | Где исполняется |\n| --- | --- |\n| Раз. | `tools/check-specs.mjs:sectionOf` |\n' \
+    > "$SPEC_TREE/.claude/skills/skipped-rule/implementation.md"
+report "SC-AK-241 — правило без паттерна названо" "$(specs_says 'нет ни одного паттерна')" 1
+
+printf '{ "skip": ["patterns/skipped-rule-do.md"] }\n' > "$SPEC_TREE/.claude/rt-kit.json"
+report "SC-AK-241 — пропущенный паттерн правило не краснит" "$(specs_says 'нет ни одного паттерна')" 0
+
+rm -rf "$SPEC_TREE/.claude/skills/skipped-rule" "$SPEC_TREE/.claude/rt-kit.json"
 # --- SC-AK-238…240 — символом якоря считается любая буква ------------------------------------
 #
 # Тексты, которые исполняет модель, написаны своим языком, и латиницей в них называется ровно
@@ -560,5 +601,44 @@ report "SC-AK-198 — токена не требует" "$(printf '%s' "$BOARD_S
 report "SC-AK-198 — хостинг спрошен" "$(cat "$BOARD_TREE/seen" 2>/dev/null)" 'залогиненный'
 
 rm -rf "$BOARD_TREE"
+
+# --- SC-AK-244 и SC-AK-245 — внешние наборы ищутся разрешением модуля ------------------------
+#
+# Пакет, объявленный зависимостью подпроекта, в корневом `node_modules` не лежит вовсе: менеджер
+# держит его в своём хранилище, и зашитый путь на такой раскладке верным не бывает никогда. До
+# правки проверка кончалась отказом чтения каталога, не дойдя до сверки ни разу.
+
+DUPES_TREE="$(mktemp -d)"
+mkdir -p "$DUPES_TREE/tools" "$DUPES_TREE/.claude/rt-kit" \
+    "$DUPES_TREE/projects/kit/src" "$DUPES_TREE/projects/kit/node_modules/@ext/sets/decl"
+cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/check-dupes.mjs" "$DUPES_TREE/tools/"
+printf '{"accepted":[],"debt":[]}\n' > "$DUPES_TREE/tools/dupes-allowlist.json"
+printf '{"sourceRoots":["projects"],"externalEnums":[{"package":"@ext/sets","dir":"decl"}]}\n' \
+    > "$DUPES_TREE/.claude/rt-kit/checks.json"
+
+# Пакет объявлен подпроектом и лежит внутри него — в корне дерева его нет.
+printf '{"name":"kit","dependencies":{"@ext/sets":"^1.0.0"}}\n' > "$DUPES_TREE/projects/kit/package.json"
+printf '{"name":"@ext/sets","version":"1.0.0"}\n' \
+    > "$DUPES_TREE/projects/kit/node_modules/@ext/sets/package.json"
+printf 'export declare enum Direction { ASC = "asc", DESC = "desc" }\n' \
+    > "$DUPES_TREE/projects/kit/node_modules/@ext/sets/decl/order.d.ts"
+# Своё перечисление под тем же набором членов — та же копия, что и между двумя либами.
+printf 'export enum SortWay {\n    Asc = "asc",\n    Desc = "desc",\n}\n' \
+    > "$DUPES_TREE/projects/kit/src/sort.ts"
+
+dupes_says() {
+    (cd "$DUPES_TREE" && node tools/check-dupes.mjs 2>&1)
+}
+
+report "SC-AK-244 — набор из пакета подпроекта найден" "$(dupes_says | grep -c 'один набор членов')" 1
+report "SC-AK-244 — отказа чтения каталога нет" "$(dupes_says | grep -c 'ENOENT')" 0
+
+# SC-AK-245 — пакета нет вовсе: сверка своих повторов идёт, отказа нет.
+rm -rf "$DUPES_TREE/projects/kit/node_modules"
+report "SC-AK-245 — без пакета проверка не падает" "$(dupes_says | grep -c 'ENOENT')" 0
+(cd "$DUPES_TREE" && node tools/check-dupes.mjs >/dev/null 2>&1)
+report "SC-AK-245 — без пакета код нулевой" "$?" 0
+
+rm -rf "$DUPES_TREE"
 
 suite_result "проверки"

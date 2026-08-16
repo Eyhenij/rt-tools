@@ -1,4 +1,31 @@
 {
-  "accepted": [],
-  "debt": []
+    "accepted": [],
+    "debt": [
+        "export Default @ projects/ui-kit, projects/ui-kit-v2",
+        "export Header @ projects/ui-kit, projects/ui-kit-v2",
+        "export IMessageBusEvent @ projects/core, projects/ui-kit-v2",
+        "export Icon @ projects/ui-kit, projects/ui-kit-v2",
+        "export MessageBus @ projects/core, projects/ui-kit-v2",
+        "export Playground @ projects/ui-kit, projects/ui-kit-v2",
+        "export RtAsideService @ projects/ui-kit, projects/ui-kit-v2",
+        "export RtPopoverDirective @ projects/ui-kit, projects/ui-kit-v2",
+        "export SIGN_IN_PATH @ apps/message-bus-admin-e2e, libs/message-bus-admin/auth/shell",
+        "export Status @ projects/ui-kit, projects/ui-kit-v2",
+        "export pathOf @ projects/agent-kit, projects/ui-kit-v2",
+        "export qa @ apps/message-bus-admin-e2e, projects/ui-kit-v2",
+        "setting FAILURE_THRESHOLD @ projects/ui-kit-v2/.storybook/test-runner.ts, projects/ui-kit/.storybook/test-runner.ts",
+        "setting SETTLE_MS @ projects/ui-kit-v2/.storybook/test-runner.ts, projects/ui-kit/.storybook/test-runner.ts",
+        "table INITIAL_STATE @ libs/message-bus-admin/postmortems/data-access ~ INITIAL_STATE @ libs/message-bus-admin/proposals/data-access",
+        "table INITIAL_STATE @ libs/message-bus-admin/postmortems/data-access ~ INITIAL_STATE @ libs/message-bus-admin/summaries/data-access",
+        "table INITIAL_STATE @ libs/message-bus-admin/proposals/data-access ~ INITIAL_STATE @ libs/message-bus-admin/summaries/data-access",
+        "table STORY_SNAPSHOT_VIEWPORT @ projects/ui-kit-v2 ~ VIEWPORT @ projects/ui-kit-v2/.storybook/test-runner.ts",
+        "table STORY_SNAPSHOT_VIEWPORT @ projects/ui-kit-v2 ~ VIEWPORT @ projects/ui-kit/.storybook/test-runner.ts",
+        "table VIEWPORT @ projects/ui-kit-v2/.storybook/test-runner.ts ~ VIEWPORT @ projects/ui-kit/.storybook/test-runner.ts",
+        "value [address|arrivedAt|resource|tree] @ PROPOSALS_SORTABLE @ libs/message-bus-admin/proposals/util ~ PROPOSAL_SORTABLE @ libs/message-bus-api/proposals/util",
+        "value [arrivedAt|file|tree|updatedAt] @ POSTMORTEMS_SORTABLE @ libs/message-bus-admin/postmortems/util ~ POSTMORTEM_SORTABLE @ libs/message-bus-api/postmortems/util",
+        "value [items|schema|tree] @ POSTMORTEMS_FIELDS @ libs/message-bus-api/postmortems/util ~ PROPOSALS_FIELDS @ libs/message-bus-api/proposals/util",
+        "value [month|ranAt|tree] @ MONTH_RECORD_SORTABLE @ libs/message-bus-api/observations/util ~ SUMMARIES_SORTABLE @ libs/message-bus-admin/summaries/util",
+        "value admin-panel @ BEM_BLOCK @ libs/message-bus-admin/postmortems/ui ~ BEM_BLOCK @ libs/message-bus-admin/proposals/ui ~ BEM_BLOCK @ libs/message-bus-admin/summaries/ui",
+        "value rt-icon-sprite @ ICON_SPRITE_ID @ projects/ui-kit-v2/.storybook/test-runner.ts ~ SPRITE_ID @ projects/ui-kit-v2"
+    ]
 }

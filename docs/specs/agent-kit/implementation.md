@@ -19,6 +19,8 @@
 | Разложенное, которому нужна запись в чужой настройке, доезжает до неё.                                       | `projects/agent-kit/src/lib/hooks-map.ts:unboundHooks`                        |
 | Надстройка настроек проверок сливается по вложенным ключам.                                                  | `projects/agent-kit/assets/checks/rt-kit-checks.config.mjs:mergeDeep`         |
 | Пакет не знает раскладки чужого дерева.                                                                      | `projects/agent-kit/assets/checks/check-lib-layers.mjs:LIBS_ROOT`             |
+| Каталог чужого пакета ищется разрешением модуля, а не путём в каталоге зависимостей.                         | `projects/agent-kit/assets/checks/check-dupes.mjs:resolveExternalDir`         |
+| Отсутствие чужого пакета проверку не роняет.                                                                 | `projects/agent-kit/assets/checks/check-dupes.mjs:holdersOf`                  |
 | Первая установка не требует писать прозу руками.                                                             | `projects/agent-kit/src/lib/companion.ts:draftOf`                             |
 | Папка задачи не уезжает в главную ветку.                                                                     | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:folder_in_branch`      |
 | Проверяется то, что уедет в главную ветку, а не то, что лежит на машине.                                     | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:folder_in_branch`      |
@@ -97,7 +99,7 @@
 | Сводка отвечает за отрезок дней, а не за всё время.                                                          | `projects/agent-kit/src/lib/observations.ts:DEFAULT_DAYS`                     |
 | Наблюдения старше срока хранения снимаются сводкой.                                                          | `projects/agent-kit/src/lib/observations.ts:readObservations`                 |
 | Предложение выгружается файлом с адресом в заголовке.                                                        | `projects/agent-kit/src/lib/proposals.ts:parseProposals`                      |
-| Роль разбора закрытой задачи файлов не пишет.                                                                | `projects/agent-kit/assets/commands/skill-curator.md:proposals`               |
+| Роль разбора закрытой задачи файлов не пишет.                                                                | `projects/agent-kit/assets/commands/skill-curator.md:предложения`             |
 | Наружу уезжают только предложения с адресом «пакет».                                                         | `projects/agent-kit/src/lib/shipment.ts:propose`                              |
 | Отправка отказывает, если в тексте предложения найден адрес дерева.                                          | `projects/agent-kit/src/lib/proposals.ts:leaksIn`                             |
 | Отправленное предложение помечается принявшим его месяцем и второй раз не уезжает.                           | `projects/agent-kit/src/lib/proposals.ts:markSent`                            |
@@ -157,13 +159,6 @@
 | Раскладка называет добавленный долг в тот же момент, когда его добавила.                                     | `projects/agent-kit/src/lib/commands.ts:debtLines`                            |
 | Статьи считаются по компаньону дерева, а не по черновику пакета.                                             | `projects/agent-kit/src/lib/companion.ts:unaddressedOf`                       |
 | Счёт добавленного долга складывается чистой функцией.                                                        | `projects/agent-kit/src/lib/companion.ts:debtLine`                            |
-| Ресурс с неотвеченным требованием дереву не кладётся.                                                        | `projects/agent-kit/src/lib/catalog.ts:isChosen`                              |
-| Молчание дерева о своих свойствах требованию не отвечает.                                                    | `projects/agent-kit/src/lib/traits.ts:answersRequirement`                     |
-| Выбор поимённо сильнее требования.                                                                           | `projects/agent-kit/src/lib/catalog.ts:isChosen`                              |
-| Отказ по компаньону называет требование, а не только состояние файла.                                        | `projects/agent-kit/src/lib/commands.ts:companionLine`                        |
-| Свойство, которого пакет не объявлял, роняет раскладку с обеих сторон.                                       | `projects/agent-kit/src/lib/commands.ts:strangeTraits`                        |
-| Требование стоит в имени файла рядом с видом и от него отличимо.                                             | `projects/agent-kit/src/lib/traits.ts:requirementOf`                          |
-| Перечень ресурсов называет неположенное требованием отдельно от снятого деревом.                             | `projects/agent-kit/src/lib/commands.ts:NEEDS_TRAIT`                          |
 | Подпись машинного коммита судится до того, как коммит уедет.                                                 | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:strangers`             |
 | Машинный коммит опознаётся по заявке, а не по почте.                                                         | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:bot_login`             |
 | Почта машинной записи сверяется целым значением.                                                             | `projects/agent-kit/assets/defaults/project.sh:RT_COMMIT_EMAIL`               |
@@ -193,6 +188,7 @@
 | Род, которому набор не объявлен, молчит, а не краснеет.                                                      | `projects/agent-kit/tests/rules-review.test.sh:KINDS_WITHOUT_SECTIONS`        |
 | Пустой список долга называется вслух и с числом.                                                             | `projects/agent-kit/tests/rules-review.test.sh:rules_without_pattern`         |
 | Правило без паттерна — расхождение.                                                                          | `projects/agent-kit/tests/rules-review.test.sh:rules_without_pattern`         |
+| Правило, чьи паттерны дерево пропустило при раскладке, паттерна не требует.                                  | `projects/agent-kit/assets/checks/check-specs.mjs:skippedPatterns`            |
 | Имя соседнего ресурса, названное прозой, проверяется наравне со ссылкой шапки.                               | `projects/agent-kit/tests/rules-review.test.sh:unknown_neighbours`            |
 | Запреты текстов действуют и внутри блока кода.                                                               | `projects/agent-kit/tests/texts.test.sh:domains_in`                           |
 | Адресом конкретного дерева считается перечисленное, а не всё, что похоже на путь.                            | `projects/agent-kit/tests/texts.test.sh:COMMON_SEGMENTS`                      |
