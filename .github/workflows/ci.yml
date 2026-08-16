@@ -36,6 +36,27 @@ jobs:
             - name: Fetch main branch
               run: git fetch origin main
 
+            # Состав правки решает состав набора: ветка, не тронувшая ни строки кода, не
+            # поднимает стенда, не снимает кадров и не собирает образов. Признак считается
+            # один раз и объявляется выводом шага — переспрошенный в каждом условии, он
+            # разъезжается сам с собой при первой же правке одного из них.
+            #
+            # Текстовой считается ветка, у которой каждый задетый файл — либо `.md`, либо
+            # лежит под `docs/`. Всё остальное, включая обвязку и настройки, считается кодом:
+            # признак должен ошибаться в сторону лишнего прогона, а не пропущенного.
+            - name: Состав правки
+              id: scope
+              run: |
+                  changed=$(git diff --name-only origin/main...HEAD)
+                  code=$(printf '%s\n' "$changed" | grep -vE '(^docs/|\.md$)' || true)
+                  if [ -n "$changed" ] && [ -z "$code" ]; then
+                      echo 'docs_only=true' >> "$GITHUB_OUTPUT"
+                      echo 'Правка только текстовая: стенд, снимки витрин и образы пропускаются.'
+                      printf '%s\n' "$changed"
+                  else
+                      echo 'docs_only=false' >> "$GITHUB_OUTPUT"
+                  fi
+
             # `typecheck` проверяет типы там, где их не проверяет ничто другое:
             # Jest транспилирует спеки без проверки типов, а ESLint здесь не
             # type-aware, так что спека могла годами гонять форму, которой по
@@ -49,6 +70,7 @@ jobs:
             # отдельным прогоном. Порог замечаний объявлен при самом скрипте: правило,
             # включённое замечанием, обязано ронять прогон наравне с отказом.
             - name: Stylelint
+              if: steps.scope.outputs.docs_only != 'true'
               run: pnpm run lint:styles
 
             # Сквозной набор админки: единственная проверка дерева, идущая тем же путём, что и
@@ -57,6 +79,7 @@ jobs:
             # базы. Шаг стоит до витрин намеренно: они оставляют свои серверы работать, и стенд
             # соревновался бы с ними за машину.
             - name: E2E admin
+              if: steps.scope.outputs.docs_only != 'true'
               run: |
                   docker compose up -d db
                   node node_modules/.pnpm/playwright@*/node_modules/playwright/cli.js install chromium
@@ -69,6 +92,7 @@ jobs:
             # Порт свой: раннер делит машину с разработчиком, и прогон, прибитый к 6006,
             # подцепил бы витрину, поднятую руками, вместо своей.
             - name: Visual tests
+              if: steps.scope.outputs.docs_only != 'true'
               run: |
                   node node_modules/.pnpm/playwright@*/node_modules/playwright/cli.js install chromium
                   pnpm exec nx run @rt-tools/ui-kit:storybook --port 6106 --no-open > /tmp/storybook-ci.log 2>&1 &
@@ -98,6 +122,7 @@ jobs:
             # псевдосостояний, и витрина, поднятая с ним, теряет наведение, фокус и нажатие.
             # Ставит его сама команда прогона, и только себе.
             - name: Visual tests (ui-kit-v2)
+              if: steps.scope.outputs.docs_only != 'true'
               run: |
                   pnpm exec nx run @rt-tools/ui-kit-v2:storybook --port 6107 --no-open > /tmp/storybook-v2-ci.log 2>&1 &
                   for _ in $(seq 1 120); do
@@ -117,6 +142,7 @@ jobs:
             # Only @rt-tools/utils defines `verify`; it asserts the built package stays consumable
             # outside Angular. Projects without the target are skipped.
             - name: Verify built packages
+              if: steps.scope.outputs.docs_only != 'true'
               run: |
                   pnpm exec nx affected -t verify --parallel --base=origin/main --head=HEAD
 
@@ -127,6 +153,7 @@ jobs:
             # отказов в нём было два сразу: не копировался пакет правил и не копировалась схема
             # хранилища, без которой отказывает сама установка зависимостей.
             - name: Build API image
+              if: steps.scope.outputs.docs_only != 'true'
               run: |
                   docker build -f deploy/message-bus.Dockerfile -t message-bus:ci .
 
@@ -135,5 +162,6 @@ jobs:
             # здесь — так же, как у образа приёмника. Выкатка тянет оба, и несобравшийся второй
             # означал бы узел с новым приёмником за старой админкой.
             - name: Build web image
+              if: steps.scope.outputs.docs_only != 'true'
               run: |
                   docker build -f deploy/message-bus-web.Dockerfile -t message-bus-web:ci .
