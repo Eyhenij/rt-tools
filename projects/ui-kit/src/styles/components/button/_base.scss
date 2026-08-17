@@ -1,10 +1,9 @@
-@use '../../base/mixin' as mixins;
-@use 'map' as button;
-
 // Основа кнопки: объявление свойств вида на корне страницы и сам блок `.rtui-btn` — раскладка,
 // рамка, тень, состояния наведения, фокуса и отключённости.
-//
 // Часть стилей кнопки — входом остаётся `_rtui_button.scss`.
+
+@use '../../base/mixin' as mixins;
+@use 'map' as button;
 
 :root {
     @each $element, $elements in button.$rtui-button {
