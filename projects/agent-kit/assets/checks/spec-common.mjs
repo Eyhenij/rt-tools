@@ -7,7 +7,7 @@
  * гонять как отдельную проверку.
  */
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { join } from 'node:path';
 
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 

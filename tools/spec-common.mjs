@@ -1,4 +1,4 @@
-// rt-kit v0.8.3 · checks/spec-common.mjs · 265164b62884 · правится надстройкой, не здесь
+// rt-kit v0.8.3 · checks/spec-common.mjs · b92e9ae974cd · правится надстройкой, не здесь
 /**
  * Общее для всех предметов сверки спеков: что считается доменом, чем читается дерево и чем
  * режется документ на разделы и пункты.
@@ -8,7 +8,7 @@
  * гонять как отдельную проверку.
  */
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { join } from 'node:path';
 
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 

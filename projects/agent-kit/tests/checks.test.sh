@@ -654,7 +654,10 @@ rm -rf "$DUPES_TREE"
 
 LAYERS_TREE="$(mktemp -d)"
 mkdir -p "$LAYERS_TREE/tools" "$LAYERS_TREE/.claude/rt-kit" "$LAYERS_TREE/libs/alpha/auth/util/src"
-cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/check-lib-layers.mjs" "$LAYERS_TREE/tools/"
+cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/check-lib-layers.mjs" \
+    "$CHECKS/lib-common.mjs" "$CHECKS/lib-domains.mjs" "$CHECKS/lib-manifests.mjs" \
+    "$CHECKS/lib-boundaries.mjs" "$CHECKS/lib-reexports.mjs" \
+    "$LAYERS_TREE/tools/"
 printf '{"name":"alpha-auth-util","sourceRoot":"libs/alpha/auth/util/src","prefix":"own","tags":["scope:alpha-auth-util"]}\n' \
     > "$LAYERS_TREE/libs/alpha/auth/util/project.json"
 touch "$LAYERS_TREE/libs/alpha/auth/util/tsconfig.json" "$LAYERS_TREE/libs/alpha/auth/util/vitest.config.mts"

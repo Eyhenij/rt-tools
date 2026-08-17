@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.8.3 · checks/check-specs.mjs · fa121ac333a6 · правится надстройкой, не здесь
+// rt-kit v0.8.3 · checks/check-specs.mjs · 620329a4fce4 · правится надстройкой, не здесь
 /**
  * Проверка того, что спек домена не разошёлся с кодом.
  *
@@ -53,7 +53,6 @@ import { ROOT } from './rt-kit-checks.config.mjs';
 import { checkRuleImplementation, checkSpecLaws, checkTracedAnchors } from './spec-anchors.mjs';
 import {
     CONSTITUTION_DIR,
-    NOT_DOMAINS,
     REQUIRED_HEADINGS,
     SPECS_DIR,
     collectDomains,
@@ -61,7 +60,6 @@ import {
     problems,
     read,
     report,
-    sectionOf,
     walk,
 } from './spec-common.mjs';
 import { checkContract, checkRefusalCodes, procedureRootsOf } from './spec-contract.mjs';

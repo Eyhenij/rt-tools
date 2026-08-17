@@ -17,8 +17,8 @@
 | Переход чужого файла в управление пакетом делается командой, а не руками.                                    | `projects/agent-kit/src/lib/commands.ts:adopt`                                |
 | Разложенное, которому нужна запись в чужой настройке, доезжает до неё.                                       | `projects/agent-kit/src/lib/hooks-map.ts:unboundHooks`                        |
 | Надстройка настроек проверок сливается по вложенным ключам.                                                  | `projects/agent-kit/assets/checks/rt-kit-checks.config.mjs:mergeDeep`         |
-| Пакет не знает раскладки чужого дерева.                                                                      | `projects/agent-kit/assets/checks/check-lib-layers.mjs:LIBS_ROOT`             |
-| Пакет не знает и слов чужого дерева.                                                                         | `projects/agent-kit/assets/checks/check-lib-layers.mjs:LIB_PREFIX`            |
+| Пакет не знает раскладки чужого дерева.                                                                      | `projects/agent-kit/assets/checks/lib-common.mjs:LIBS_ROOT`             |
+| Пакет не знает и слов чужого дерева.                                                                         | `projects/agent-kit/assets/checks/lib-common.mjs:LIB_PREFIX`            |
 | Первая установка не требует писать прозу руками.                                                             | `projects/agent-kit/src/lib/companion.ts:draftOf`                             |
 | Требование ресурса названо в самом ресурсе, а не выводится чтением.                                          | `projects/agent-kit/src/lib/catalog.ts:requiresOf`                            |
 | Разорванная связь — предупреждение, а не отказ.                                                              | `projects/agent-kit/src/lib/catalog.ts:brokenLinks`                           |

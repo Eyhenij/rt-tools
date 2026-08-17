@@ -52,7 +52,6 @@ import { ROOT } from './rt-kit-checks.config.mjs';
 import { checkRuleImplementation, checkSpecLaws, checkTracedAnchors } from './spec-anchors.mjs';
 import {
     CONSTITUTION_DIR,
-    NOT_DOMAINS,
     REQUIRED_HEADINGS,
     SPECS_DIR,
     collectDomains,
@@ -60,7 +59,6 @@ import {
     problems,
     read,
     report,
-    sectionOf,
     walk,
 } from './spec-common.mjs';
 import { checkContract, checkRefusalCodes, procedureRootsOf } from './spec-contract.mjs';
