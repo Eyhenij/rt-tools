@@ -20,14 +20,6 @@
             }
 
             <rt-icon-button
-                icon="sliders-v"
-                variant="ghost"
-                [ariaLabel]="columnsLabel"
-                [attr.qa-dataid]="columnsId()"
-                [tooltip]="columnsLabel"
-                (clicked)="host.openColumns()" />
-
-            <rt-icon-button
                 icon="sync"
                 variant="primary"
                 [ariaLabel]="refreshLabel"
@@ -35,6 +27,14 @@
                 [loading]="host.loading()"
                 [tooltip]="refreshLabel"
                 (clicked)="host.retry()" />
+
+            <rt-icon-button
+                icon="sliders-v"
+                variant="primary"
+                [ariaLabel]="columnsLabel"
+                [attr.qa-dataid]="columnsId()"
+                [tooltip]="columnsLabel"
+                (clicked)="host.openColumns()" />
         </ng-template>
     </rt-toolbar>
 

@@ -24,7 +24,6 @@ const PAGE: IPageModel = { pageNumber: 1, pageSize: 20, totalCount: 137 };
  */
 @Component({
     selector: 'admin-list-page-host',
-    imports: [AdminListPageComponent, AdminListToolbarLeftDirective, AdminListToolbarRightDirective, AdminListAboveTableDirective],
     template: `
         <admin-list-page qaPrefix="postmortems" hint="Что и почему сломалось" title="Разборы происшествий">
             <ng-template adminListToolbarLeft>
@@ -43,6 +42,7 @@ const PAGE: IPageModel = { pageNumber: 1, pageSize: 20, totalCount: 137 };
         </admin-list-page>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [AdminListPageComponent, AdminListToolbarLeftDirective, AdminListToolbarRightDirective, AdminListAboveTableDirective],
     providers: [{ provide: ADMIN_LIST_HOST, useExisting: forwardRef((): typeof HostComponent => HostComponent) }],
 })
 class HostComponent implements IAdminListHost {
@@ -73,13 +73,13 @@ class HostComponent implements IAdminListHost {
 /** Тот же раздел, но слотов он не занимает и подсказки не называет. */
 @Component({
     selector: 'admin-list-page-bare-host',
-    imports: [AdminListPageComponent],
     template: `
         <admin-list-page qaPrefix="summaries" title="Сводки деревьев">
             <p qa-dataid="summaries-rows">строки раздела</p>
         </admin-list-page>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [AdminListPageComponent],
     providers: [{ provide: ADMIN_LIST_HOST, useExisting: forwardRef((): typeof BareHostComponent => BareHostComponent) }],
 })
 class BareHostComponent extends HostComponent {}
@@ -122,7 +122,7 @@ describe('AdminListPageComponent', () => {
             (node: Element): string => node.getAttribute('qa-dataid') ?? ''
         );
 
-        expect(order).toEqual(['postmortems-own', 'postmortems-columns', 'postmortems-refresh']);
+        expect(order).toEqual(['postmortems-own', 'postmortems-refresh', 'postmortems-columns']);
     });
 
     it('SC-MB-114 — заголовок раздела показывает подсказку, когда раздел её назвал', () => {

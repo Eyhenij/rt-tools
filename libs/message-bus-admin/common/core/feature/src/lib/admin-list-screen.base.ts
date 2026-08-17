@@ -4,6 +4,7 @@ import { ActivatedRoute, Params, Router, UrlSegment } from '@angular/router';
 import { AdminListStoreBase, TreesStore } from '@rt/message-bus-admin/common/core/data-access';
 import {
     adminLabel,
+    COLUMNS_ROUTE,
     IAdminListHost,
     IAdminListQuery,
     IReadFault,
@@ -16,14 +17,6 @@ import {
 import { ITreeChoice } from '@rt/message-bus-common';
 import { IPageModel, ISortModel } from '@rt-tools/utils';
 import { RtTableSettingsRegistry } from '@rt-tools/ui-kit-v2';
-
-/**
- * Адрес панели настройки столбцов в аутлете `ro`.
- *
- * Раздела в нём нет намеренно — в отличие от адреса подробностей: настраиваемую таблицу панель
- * берёт из реестра кита, а не из адреса, и второй ответ на тот же вопрос разошёлся бы с первым.
- */
-const COLUMNS_ROUTE: string = 'table-settings';
 
 /**
  * Общая основа списочного экрана: связь адреса, стора и таблицы.
@@ -123,9 +116,13 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
     /**
      * Открыть настройку столбцов.
      *
-     * Панель везёт кит и открывает её своим маршрутом в том же аутлете `ro`, что и подробности:
-     * какую таблицу настраивают, он берёт не из адреса, а из реестра — поэтому активная таблица
-     * называется до ухода на маршрут, а не после.
+     * Панель у каждой таблицы своя, и адрес её называет раздел — теми же сегментами, какими
+     * открыт сам экран. Общий адрес на три раздела давал бы одну панель на три таблицы: по
+     * ссылке было бы не сказать, чьи столбцы настраивают, а вернувшийся по ней человек попадал
+     * бы в настройки того раздела, который открылся первым.
+     *
+     * Рисует панель кит, и настраиваемую таблицу он берёт из своего реестра, а не из адреса —
+     * поэтому активная таблица называется до ухода на маршрут, а не после.
      *
      * Выборка при этом остаётся в адресе: закрытая панель настроек возвращает тот же список, что
      * и панель подробностей.
@@ -133,7 +130,7 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
     public openColumns(): void {
         this.#tableSettings.setActive(this.tableId);
 
-        void this.#router.navigate([{ outlets: { ro: [COLUMNS_ROUTE] } }], {
+        void this.#router.navigate([{ outlets: { ro: [...this.#section(), COLUMNS_ROUTE] } }], {
             relativeTo: this.#route.parent,
             queryParamsHandling: 'preserve',
         });
@@ -160,12 +157,20 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
      * ту же страницу с тем же отбором и тем же порядком.
      */
     protected openDetails(id: string): void {
-        const section: string[] = this.#route.snapshot.url.map((segment: UrlSegment): string => segment.path);
-
-        void this.#router.navigate([{ outlets: { ro: [...section, id] } }], {
+        void this.#router.navigate([{ outlets: { ro: [...this.#section(), id] } }], {
             relativeTo: this.#route.parent,
             queryParamsHandling: 'preserve',
         });
+    }
+
+    /**
+     * Сегменты адреса, которыми открыт сам экран.
+     *
+     * С них начинается адрес всякой панели раздела: аутлет `ro` один на всю админку, и без
+     * раздела впереди панели трёх разделов делили бы один адрес.
+     */
+    #section(): string[] {
+        return this.#route.snapshot.url.map((segment: UrlSegment): string => segment.path);
     }
 
     /**

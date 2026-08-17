@@ -112,8 +112,8 @@ describe('AdminListScreenBase', () => {
                 provideHttpClientTesting(),
                 provideRouter([
                     { path: 'postmortems', component: TestScreenComponent },
+                    { path: 'postmortems/table-settings', pathMatch: 'full', outlet: 'ro', component: TestDetailsComponent },
                     { path: 'postmortems/:id', pathMatch: 'full', outlet: 'ro', component: TestDetailsComponent },
-                    { path: 'table-settings', pathMatch: 'full', outlet: 'ro', component: TestDetailsComponent },
                 ]),
             ],
         });
@@ -212,7 +212,7 @@ describe('AdminListScreenBase', () => {
         screen.openColumns();
         await harness.fixture.whenStable();
 
-        expect(router.url).toContain('(ro:table-settings)');
+        expect(router.url).toContain('(ro:postmortems/table-settings)');
         expect(router.url).toContain('page=2');
         expect(router.url).toContain('tree=a1b2');
     });
