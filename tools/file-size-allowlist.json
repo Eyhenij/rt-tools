@@ -2,8 +2,6 @@
   "reason": "Накопленное на 17 августа 2026 года. Проверка не стояла ни в наборе гейта пуша, ни на прогоне, и файлы росли по строке за задачу, ни разу ни на чём не споткнувшись. Долг снимается задачей RT-807 эпика RT-806 — делением файлов, а не переносом предела. Новая строка сюда не заводится: файл, перешагнувший предел после этого дня, отбивает пуш.",
   "accepted": [],
   "debt": [
-    "docs/specs/agent-kit/scenarios.md",
-    "docs/specs/agent-kit/spec.md",
     "docs/specs/ui-kit-v2/spec.md",
     "projects/agent-kit/assets/checks/check-lib-layers.mjs",
     "projects/agent-kit/assets/checks/check-specs.mjs",
