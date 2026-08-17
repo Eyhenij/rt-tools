@@ -62,6 +62,13 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
         adminLabel(this.query().tree === '' ? 'listEmpty' : 'listEmptyByFilter')
     );
 
+    /**
+     * Якоря самого списка, собранные из префикса раздела. Ячейки раздел собирает в шаблоне тем
+     * же префиксом: их набор у каждого раздела свой, и общего поля под них нет.
+     */
+    protected readonly qaTable: Signal<string> = computed(() => `${this.qaPrefix}-table`);
+    protected readonly qaRow: Signal<string> = computed(() => `${this.qaPrefix}-row`);
+
     /** Стор раздела: он знает адрес операции и форму строки. */
     protected abstract readonly store: AdminListStoreBase<TRow, TApi>;
 
@@ -77,6 +84,17 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
      * запомнить. Раздел объявляет его и так — этой же строкой таблица зовётся в шаблоне.
      */
     protected abstract readonly tableId: string;
+
+    /**
+     * Префикс раздела — короткое слово, которым он зовётся в якорях проверки. Тем же словом его
+     * знает общий вид страницы: из него он собирает якоря подсказки, столбцов, обновления и
+     * отказа.
+     *
+     * Раздел называет его один раз здесь, а не строкой у каждого элемента разметки: разъехавшись
+     * с префиксом страницы, такие строки молчат — спека, открывшая соседний раздел, находит по
+     * ним свой же якорь и проходит зелёной.
+     */
+    protected abstract readonly qaPrefix: string;
 
     /**
      * Состояние чтения — то, что страница списка спрашивает у хоста.

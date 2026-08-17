@@ -78,6 +78,7 @@ export class AdminSummariesListComponent extends AdminListScreenBase<IMonthRecor
     protected readonly hint: string = adminLabel('hintSummaries');
     protected readonly columns: readonly IRtTable.ColumnConfig[] = SUMMARIES_COLUMNS;
     protected readonly tableId: string = SUMMARIES_TABLE_ID;
+    protected readonly qaPrefix: string = 'summaries';
 
     protected readonly store: MonthRecordsStore = inject(MonthRecordsStore);
     protected readonly sortable: readonly string[] = SUMMARIES_SORTABLE;

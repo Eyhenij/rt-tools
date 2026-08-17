@@ -16,6 +16,7 @@
 export class AdminProposalsListComponent extends AdminListScreenBase<IProposal.Short.State, IProposal.Short.Api> {
     protected readonly title: string = adminLabel('sectionProposals');
     protected readonly hint: string = adminLabel('hintProposals');
+    protected readonly qaPrefix: string = 'proposals';
     /* стор, столбцы, поля порядка и признак таблицы — как и было */
 }
 ```
@@ -25,12 +26,12 @@ export class AdminProposalsListComponent extends AdminListScreenBase<IProposal.S
 необъявленному.
 
 ```html
-<admin-list-page qaPrefix="proposals" [hint]="hint" [title]="title">
+<admin-list-page [hint]="hint" [qaPrefix]="qaPrefix" [title]="title">
     <ng-template adminListToolbarLeft>
         <admin-tree-filter [choices]="choices()" [tree]="query().tree" (treeChange)="changeTree($event)" />
     </ng-template>
 
-    <table #rowsTable="rtTable" rt-table clickable qa-dataid="proposals-table" [dataSource]="rows()"><!-- … --></table>
+    <rt-table #rowsTable="rtTable" clickable [attr.qa-dataid]="qaTable()" [dataSource]="rows()"><!-- … --></rt-table>
 </admin-list-page>
 ```
 
@@ -39,7 +40,19 @@ export class AdminProposalsListComponent extends AdminListScreenBase<IProposal.S
 экране не появляется вовсе, и высоты он не занимает: замер на трёх разделах даёт промежуток
 между тулбаром и таблицей ровно в шаг колонки страницы.
 
-`qaPrefix` — то же слово, что у таблицы раздела: из него страница собирает `<префикс>-hint`,
+**Таблица объявляется элементом кита, а не атрибутом на своей разметке.** У кита селектор один
+на две формы, и обе собираются: `<table rt-table>` даёт табличную семантику самим тегом, но
+скелетоны, оверлей чтения и карточки узкого экрана он рисует узлами, которые детьми `<table>`
+не бывают, — на этой форме их не видно вовсе. Элементная форма семантику получает ролью,
+которую кит ставит сам: `role="table"` на хосте, роли строк и ячеек — от CDK.
+
+**Якоря раздела собираются из его префикса, а не пишутся строкой у каждого элемента.** Префикс
+раздел называет один раз полем `qaPrefix`, из него общая основа даёт `qaTable()` и `qaRow()`, а
+ячейки собираются на месте — `[attr.qa-dataid]="qaPrefix + '-cell-tree'"`. Строки, написанные
+поимённо, расходятся с префиксом молча: спека, открывшая соседний раздел, находит по ним свой же
+якорь и проходит зелёной.
+
+Тем же словом префикс знает страница: из него она собирает `<префикс>-hint`,
 `<префикс>-columns`, `<префикс>-refresh`, `<префикс>-fault` и `<префикс>-retry`. Сквозной набор
 берёт их помощником `pageQa`, а не строкой на месте.
 

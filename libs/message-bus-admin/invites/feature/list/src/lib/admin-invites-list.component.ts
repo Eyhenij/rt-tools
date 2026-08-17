@@ -80,6 +80,7 @@ export class AdminInvitesListComponent extends AdminListScreenBase<IInvite.Short
     protected readonly hint: string = adminLabel('hintInvites');
     protected readonly columns: readonly IRtTable.ColumnConfig[] = INVITES_COLUMNS;
     protected readonly tableId: string = INVITES_TABLE_ID;
+    protected readonly qaPrefix: string = 'invites';
     protected readonly revokeLabel: string = adminLabel('inviteRevoke');
     protected readonly revokeTitle: string = adminLabel('inviteRevokeTitle');
 

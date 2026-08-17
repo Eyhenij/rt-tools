@@ -167,9 +167,9 @@ describe('AdminPostmortemsListComponent', () => {
         expect(router.url).toContain('tree=a1b2');
     });
 
-    it('таблица раздела стоит на месте: список показан ею, а не своей разметкой', async () => {
+    it('SC-MB-135 — таблица раздела объявлена элементом кита, а не атрибутом на своей разметке', async () => {
         await openSection();
 
-        expect(harness.fixture.debugElement.query(By.css('table[rt-table][qa-dataid="postmortems-table"]'))).not.toBeNull();
+        expect(harness.fixture.debugElement.query(By.css('rt-table[qa-dataid="postmortems-table"][role="table"]'))).not.toBeNull();
     });
 });
