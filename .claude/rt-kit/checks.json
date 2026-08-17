@@ -32,6 +32,9 @@
         "message-bus-admin"
     ],
     "importScope": "@rt",
+    "libPrefix": "admin",
+    "noDependencyTags": [],
+    "barrelFiles": ["index.ts", "public-api.ts"],
     "pushGate": {
         "pipelineFile": ".github/workflows/ci.yml",
         "stepPattern": "^\\s*-\\s*name:\\s*(.+?)\\s*$",
