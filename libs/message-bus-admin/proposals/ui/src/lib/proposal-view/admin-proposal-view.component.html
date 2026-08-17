@@ -1,22 +1,17 @@
 <ng-container rtBlock="admin-panel">
-    <dl rtElem="fields">
-        <dt rtElem="field-name">{{ treeLabel }}</dt>
-        <dd rtElem="field-value" qa-dataid="proposal-tree">{{ entity().tree.name }}</dd>
+    <rt-aside-section>
+        <rt-detail-list>
+            <rt-detail-row qa-dataid="proposal-tree" [label]="treeLabel">{{ entity().tree.name }}</rt-detail-row>
+            <rt-detail-row qa-dataid="proposal-resource" [label]="resourceLabel">{{ entity().resource }}</rt-detail-row>
+            <rt-detail-row qa-dataid="proposal-address" [label]="addressLabel">{{ entity().address }}</rt-detail-row>
+            <rt-detail-row qa-dataid="proposal-month" [label]="monthLabel">{{ entity().month }}</rt-detail-row>
+            <rt-detail-row qa-dataid="proposal-arrived" [label]="arrivedLabel">
+                {{ entity().arrivedAt | adminMoment }}
+            </rt-detail-row>
+        </rt-detail-list>
+    </rt-aside-section>
 
-        <dt rtElem="field-name">{{ resourceLabel }}</dt>
-        <dd rtElem="field-value" qa-dataid="proposal-resource">{{ entity().resource }}</dd>
-
-        <dt rtElem="field-name">{{ addressLabel }}</dt>
-        <dd rtElem="field-value" qa-dataid="proposal-address">{{ entity().address }}</dd>
-
-        <dt rtElem="field-name">{{ monthLabel }}</dt>
-        <dd rtElem="field-value" qa-dataid="proposal-month">{{ entity().month }}</dd>
-
-        <dt rtElem="field-name">{{ arrivedLabel }}</dt>
-        <dd rtElem="field-value" qa-dataid="proposal-arrived">{{ entity().arrivedAt | adminMoment }}</dd>
-    </dl>
-
-    <h2 rtElem="section">{{ textLabel }}</h2>
-
-    <pre rtElem="text" qa-dataid="proposal-text">{{ entity().text }}</pre>
+    <rt-aside-section [heading]="textLabel">
+        <pre rtElem="text" qa-dataid="proposal-text">{{ entity().text }}</pre>
+    </rt-aside-section>
 </ng-container>

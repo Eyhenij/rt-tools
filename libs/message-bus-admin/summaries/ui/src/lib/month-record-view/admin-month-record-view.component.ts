@@ -3,6 +3,7 @@ import { AdminMomentPipe } from '@rt/message-bus-admin/common/core/ui';
 import { adminLabel } from '@rt/message-bus-admin/common/core/util';
 import { IMonthRecord } from '@rt/message-bus-admin/summaries/util';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { RtAsideSectionComponent, RtDetailListComponent, RtDetailRowComponent } from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'admin-panel';
 
@@ -27,6 +28,9 @@ const BEM_BLOCK: string = 'admin-panel';
         // rt-tools
         BlockDirective,
         ElemDirective,
+        RtAsideSectionComponent,
+        RtDetailListComponent,
+        RtDetailRowComponent,
 
         // pipes
         AdminMomentPipe,

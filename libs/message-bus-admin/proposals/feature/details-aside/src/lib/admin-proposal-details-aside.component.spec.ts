@@ -53,9 +53,16 @@ describe('AdminProposalDetailsAsideComponent', () => {
     let http: HttpTestingController;
     let router: Router;
 
-    /** Разметка панели: она уезжает в шторку контейнера, и в дереве фикстуры её уже нет. */
+    /**
+     * Разметка панели: она уезжает в шторку контейнера, и в дереве фикстуры её уже нет.
+     * Значение свойства лежит внутри строки кита и носит её признак: свой признак у панели
+     * стоит на самой строке, а не на теге значения.
+     */
     function textOf(qaId: string): string {
-        return document.querySelector(`[qa-dataid="${qaId}"]`)?.textContent?.trim() ?? '';
+        const own: Element | null = document.querySelector(`[qa-dataid="${qaId}"]`);
+        const value: Element | null = own?.querySelector('[qa-dataid="detail-row-value"]') ?? null;
+
+        return (value ?? own)?.textContent?.trim() ?? '';
     }
 
     function shown(selector: string): Element | null {
