@@ -111,14 +111,22 @@ export default [
         },
     },
     {
-        // Node-контексты: приёмник (NestJS), обвязка сборки и конфиги.
+        // Node-контексты: приёмник (NestJS), обвязка сборки, конфиги стендов и прогонов,
+        // пакет слоя правил (он читает файловую систему и работает из командной строки),
+        // обвязка витрин и спеки — все они исполняются узлом, а не страницей.
         // Здесь легитимны process/Buffer/require и консольный лог в точках входа.
         files: [
             'apps/message-bus/**/*.{ts,js}',
             'libs/message-bus-api/**/*.ts',
             'tools/**/*.{ts,js,mjs,cjs}',
+            'projects/agent-kit/**/*.ts',
             '**/webpack.config.js',
+            '**/playwright.config.ts',
+            '**/.storybook/**/*.{ts,js,mjs,cjs}',
+            '**/*.spec.ts',
+            '**/*.test.ts',
             'stylelint.config.js',
+            'prisma.config.ts',
             'prisma/**/*.ts',
         ],
         languageOptions: {
@@ -147,6 +155,16 @@ export default [
         files: ['apps/message-bus/src/main.ts', 'tools/**/*.{mjs,ts,js}'],
         rules: {
             'no-console': 'off',
+        },
+    },
+    {
+        // Обвязка снимков витрины: утверждения приходят глобалями прогонщика, а не импортом.
+        files: ['**/.storybook/**/*.{ts,js,mjs,cjs}'],
+        languageOptions: {
+            globals: {
+                expect: 'readonly',
+                jest: 'readonly',
+            },
         },
     },
     {

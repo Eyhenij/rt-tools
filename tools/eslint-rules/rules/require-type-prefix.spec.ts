@@ -4,6 +4,7 @@
  * Parser: `@typescript-eslint/parser`. Раннер: Vitest.
  *
  * Coverage параллелен `require-interface-prefix.spec.ts`, заменён на `type X = ...`.
+ * Приставка рода здесь `T`: `I` занята интерфейсом, `E` — перечислением.
  */
 import { RuleTester } from '@typescript-eslint/rule-tester';
 
@@ -21,15 +22,15 @@ const ruleTester: RuleTester = new RuleTester({
 
 ruleTester.run(RULE_NAME, rule, {
     valid: [
-        { name: 'valid-1-canonical', code: "type IExportFormat = 'XLSX' | 'CSV';" },
-        { name: 'valid-2-multi-word', code: 'type IFooBar = { x: number };' },
-        { name: 'valid-3-trailing-digits', code: 'type IUser2024 = { y: number };' },
-        { name: 'valid-4-export', code: 'export type IHotel = { name: string };' },
-        { name: 'valid-5-generic-type-parameter', code: 'type IBox<T = string> = { value: T };' },
+        { name: 'valid-1-canonical', code: "type TExportFormat = 'XLSX' | 'CSV';" },
+        { name: 'valid-2-multi-word', code: 'type TFooBar = { x: number };' },
+        { name: 'valid-3-trailing-digits', code: 'type TUser2024 = { y: number };' },
+        { name: 'valid-4-export', code: 'export type THotel = { name: string };' },
+        { name: 'valid-5-generic-type-parameter', code: 'type TBox<T = string> = { value: T };' },
         {
             name: 'valid-6-skip-inside-namespace',
             code: `
-                export namespace ITurnstile {
+                export namespace IRtuiButton {
                     export type Theme = 'light' | 'dark';
                     export type Size = 'normal' | 'compact';
                 }
@@ -52,8 +53,8 @@ ruleTester.run(RULE_NAME, rule, {
             errors: [{ messageId: 'missingPrefix' }],
         },
         {
-            name: 'invalid-1b-missingPrefix-T-prefix',
-            code: "type TExportFormat = 'A' | 'B';",
+            name: 'invalid-1b-missingPrefix-I-prefix',
+            code: "type IExportFormat = 'A' | 'B';",
             errors: [{ messageId: 'missingPrefix' }],
         },
         {
@@ -62,18 +63,18 @@ ruleTester.run(RULE_NAME, rule, {
             errors: [{ messageId: 'missingPrefix' }],
         },
         {
-            name: 'invalid-2-invalidFormat-lowercase-after-I',
-            code: 'type Iuser = { id: string };',
+            name: 'invalid-2-invalidFormat-lowercase-after-T',
+            code: 'type Tuser = { id: string };',
             errors: [{ messageId: 'invalidFormat' }],
         },
         {
             name: 'invalid-2b-invalidFormat-all-caps-abbreviation',
-            code: 'type IAPI = string;',
+            code: 'type TAPI = string;',
             errors: [{ messageId: 'invalidFormat' }],
         },
         {
-            name: 'invalid-2c-invalidFormat-digit-after-I',
-            code: 'type I2Foo = string;',
+            name: 'invalid-2c-invalidFormat-digit-after-T',
+            code: 'type T2Foo = string;',
             errors: [{ messageId: 'invalidFormat' }],
         },
     ],

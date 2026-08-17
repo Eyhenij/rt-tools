@@ -1,17 +1,18 @@
 import { ESLintUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 /**
- * Требует префикс `I` на top-level `type`-алиасах (`IExportFormat`, `IReadonlyState`).
+ * Требует префикс `T` на top-level `type`-алиасах (`TExportFormat`, `TReadonlyState`) —
+ * приставка рода из конвенции этого дерева: `I` у интерфейса, `E` у перечисления, `T` у типа.
  * Type-алиасы внутри любого `TSModuleBlock` пропускаются — это сохраняет
- * flat-two-level namespace-конвенцию (`namespace ITurnstile { type Theme = ... }`
+ * flat-two-level namespace-конвенцию (`namespace IRtuiButton { type Theme = ... }`
  * остаётся `Theme`).
  *
  * Формат имени: строгий PascalCase без аббревиатур-капсом.
- *   ^I[A-Z][a-z]+([A-Z][a-z]+)*([0-9]+)?$
+ *   ^T[A-Z][a-z]+([A-Z][a-z]+)*([0-9]+)?$
  *
- * - `IExportFormat`, `IFoo`, `ISizeFn`  — valid
- * - `TExportFormat`, `ReadonlyState`    — invalid (`missingPrefix`)
- * - `Iuser`, `IAPI`, `I`                — invalid (`invalidFormat`)
+ * - `TExportFormat`, `TFoo`, `TSizeFn`  — valid
+ * - `IExportFormat`, `ReadonlyState`    — invalid (`missingPrefix`)
+ * - `Tuser`, `TAPI`, `T`                — invalid (`invalidFormat`)
  *
  * Без autofix — переименование существующих нарушений делается вручную (Rename Symbol).
  *
@@ -19,13 +20,13 @@ import { ESLintUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
  */
 export const RULE_NAME: string = 'require-type-prefix';
 
-const VALID_NAME_REGEX: RegExp = /^I[A-Z][a-z]+([A-Z][a-z]+)*([0-9]+)?$/;
-const HAS_I_PREFIX_REGEX: RegExp = /^I/;
+const VALID_NAME_REGEX: RegExp = /^T[A-Z][a-z]+([A-Z][a-z]+)*([0-9]+)?$/;
+const HAS_T_PREFIX_REGEX: RegExp = /^T/;
 
-type IMessageIds = 'missingPrefix' | 'invalidFormat';
-type IOptions = [];
+type TMessageIds = 'missingPrefix' | 'invalidFormat';
+type TOptions = [];
 
-export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = ESLintUtils.RuleCreator(() => __filename)<IOptions, IMessageIds>({
+export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = ESLintUtils.RuleCreator(() => __filename)<TOptions, TMessageIds>({
     name: RULE_NAME,
     meta: {
         type: 'problem',
@@ -41,7 +42,7 @@ export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = ESLintUtils.Rule
         },
     },
     defaultOptions: [],
-    create(context: Readonly<TSESLint.RuleContext<IMessageIds, IOptions>>): TSESLint.RuleListener {
+    create(context: Readonly<TSESLint.RuleContext<TMessageIds, TOptions>>): TSESLint.RuleListener {
         return {
             TSTypeAliasDeclaration(node: TSESTree.TSTypeAliasDeclaration): void {
                 const parent: TSESTree.Node | undefined = node.parent;
@@ -54,7 +55,7 @@ export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = ESLintUtils.Rule
 
                 const name: string = node.id.name;
 
-                if (!HAS_I_PREFIX_REGEX.test(name)) {
+                if (!HAS_T_PREFIX_REGEX.test(name)) {
                     context.report({ node: node.id, messageId: 'missingPrefix', data: { name } });
                     return;
                 }
