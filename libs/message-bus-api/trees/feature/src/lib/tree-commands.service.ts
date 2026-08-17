@@ -12,20 +12,33 @@ import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import {
+    createInvite,
     createTreeWithToken,
+    findLiveInviteByName,
     findTreeByName,
     findTreeClash,
+    IStoredInvite,
     ITreeClash,
+    listInvites,
     listTrees,
     replaceTreeToken,
+    revokeInvite,
     revokeTreeTokens,
 } from '@rt/message-bus-api/trees/data-access';
 import {
-    IRequestTree,
+    ETreeInviteState,
+    inviteCodeHash,
+    inviteExpiry,
+    inviteIssuedLines,
+    inviteListLines,
+    inviteState,
+    issueInviteCode,
     issueTreeToken,
+    IRequestTree,
     ITreeAddCommand,
     ITreeCommandParse,
     ITreeCommandReport,
+    ITreeInviteRow,
     parseTreeCommand,
     tokenIssuedLines,
     treeListLines,
@@ -73,6 +86,15 @@ export class TreeCommandsService {
             case 'revoke':
                 return this.#revoke(parse.command.name, at);
 
+            case 'invite':
+                return this.#invite(parse.command.name, at);
+
+            case 'uninvite':
+                return this.#uninvite(parse.command.name, at);
+
+            case 'invites':
+                return { lines: inviteListLines(this.#inviteRows(await listInvites(this.#prisma), at)), failed: false };
+
             default:
                 return { lines: treeListLines(await listTrees(this.#prisma)), failed: false };
         }
@@ -109,6 +131,58 @@ export class TreeCommandsService {
         await replaceTreeToken(this.#prisma, tree.id, treeTokenHash(token), at);
 
         return { lines: tokenIssuedLines(`новый токен дерева ${named(tree)}; прежний отозван`, token), failed: false };
+    }
+
+    /**
+     * Выдача приглашения. Код печатается один раз: в хранилище уходит только его хеш.
+     *
+     * Занятое имя отбивает выдачу целиком — и заведённым деревом, и годным приглашением: два
+     * дерева с одним именем ни завестись, ни различиться потом не смогут.
+     */
+    async #invite(name: string, at: Date): Promise<ITreeCommandReport> {
+        const tree: IRequestTree | null = await findTreeByName(this.#prisma, name);
+
+        if (tree) {
+            return refusal(`дерево ${named(tree)} уже заведено: приглашение ему не нужно, а имя занято`);
+        }
+
+        const live: IStoredInvite | null = await findLiveInviteByName(this.#prisma, name);
+
+        if (live && inviteState(live, at) === ETreeInviteState.Waiting) {
+            return refusal(
+                `приглашение для «${name}» уже выдано и годно до ${live.expiresAt.toISOString()}; отозвать — tree:uninvite «${name}»`
+            );
+        }
+
+        const code: string = issueInviteCode();
+        const until: Date = inviteExpiry(at);
+        await createInvite(this.#prisma, { name, hash: inviteCodeHash(code), expiresAt: until }, at);
+
+        return { lines: inviteIssuedLines(`приглашение выдано для «${name}»`, code, until), failed: false };
+    }
+
+    /** Отзыв приглашения до того, как им воспользовались: погашенное отзывать уже нечего. */
+    async #uninvite(name: string, at: Date): Promise<ITreeCommandReport> {
+        const live: IStoredInvite | null = await findLiveInviteByName(this.#prisma, name);
+
+        if (!live) {
+            return refusal(`годного приглашения для «${name}» нет: оно погашено, отозвано или не выдавалось`);
+        }
+
+        await revokeInvite(this.#prisma, live.id, at);
+
+        return { lines: [`приглашение для «${name}» отозвано`], failed: false };
+    }
+
+    /** Приглашения со состоянием на названный момент: просроченность решается им, а не часами. */
+    #inviteRows(invites: readonly IStoredInvite[], at: Date): ITreeInviteRow[] {
+        return invites.map((invite: IStoredInvite): ITreeInviteRow => ({
+            name: invite.name,
+            state: inviteState(invite, at),
+            issuedAt: invite.issuedAt,
+            expiresAt: invite.expiresAt,
+            treeSlug: invite.treeSlug,
+        }));
     }
 
     /** Отзыв токена. Записи дерева при этом не трогаются: приехавший груз читается по-прежнему. */
