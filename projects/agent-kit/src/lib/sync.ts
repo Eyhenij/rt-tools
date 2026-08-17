@@ -24,7 +24,7 @@ import {
 } from './catalog.js';
 import { ICompanion, pathOf, planCompanion } from './companion.js';
 import { IConfig, OVERRIDES_DIR } from './config.js';
-import { bindingsOf as declaredIn, IHookBinding, unboundHooks } from './hooks-map.js';
+import { bindingsOf as declaredIn, driftedMatchers, IHookBinding, IMatcherDrift, unboundHooks } from './hooks-map.js';
 import { IPlanned, isPending, isRefusal, planFile } from './plan.js';
 import { RETIRED } from './retired.js';
 import { mergeDocuments, parseDocument, renderDocument } from './sections.js';
@@ -62,6 +62,15 @@ export interface ISyncResult {
      * молчать нельзя: гард, который не зовут, неотличим от гарда, который всё пропускает.
      */
     readonly unbound: readonly IHookBinding[];
+    /**
+     * Гарды, подписанные не на то, что объявляют: их путь в настройке агента назван, а образец
+     * вызова разошёлся с объявлением.
+     *
+     * Хуже неподключённого: снаружи такой гард выглядит работающим, и вызов, ради которого его
+     * тело написано, до него не доходит никогда. Гейт правил так и разбирал вызовы браузера
+     * веткой, которая не исполнялась ни разу.
+     */
+    readonly drifted: readonly IMatcherDrift[];
     /**
      * Выбранные ресурсы, чьи требования в дерево не поехали.
      *
@@ -241,6 +250,7 @@ export function planSync(config: IConfig, root: string, version: string, assetsD
         abandoned: left.abandoned,
         gaps: variantGaps(readCatalog(assetsDir), config),
         unbound: unboundHooks(bindingsOf(config, assetsDir), root),
+        drifted: driftedMatchers(bindingsOf(config, assetsDir), root),
         broken: brokenLinks(readCatalog(assetsDir), config),
         idle: idleSkips(readCatalog(assetsDir), config),
         cutOnDisk: left.cut,

@@ -1,15 +1,8 @@
-<admin-list-page
-    [choices]="choices()"
-    [fault]="fault()"
-    [loading]="loading()"
-    [pageModel]="pageModel()"
-    [title]="title"
-    [tree]="query().tree"
-    (columnsAsked)="openColumns()"
-    (pageChange)="goToPage($event)"
-    (retried)="retry()"
-    (sizeChange)="changeSize($event)"
-    (treeChange)="changeTree($event)">
+<admin-list-page qaPrefix="summaries" [hint]="hint" [title]="title">
+    <ng-template adminListToolbarLeft>
+        <admin-tree-filter [choices]="choices()" [tree]="query().tree" (treeChange)="changeTree($event)" />
+    </ng-template>
+
     <table
         #rowsTable="rtTable"
         rt-table
