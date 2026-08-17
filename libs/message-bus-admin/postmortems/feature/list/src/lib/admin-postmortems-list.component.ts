@@ -78,6 +78,7 @@ export class AdminPostmortemsListComponent extends AdminListScreenBase<IPostmort
     protected readonly hint: string = adminLabel('hintPostmortems');
     protected readonly columns: readonly IRtTable.ColumnConfig[] = POSTMORTEMS_COLUMNS;
     protected readonly tableId: string = POSTMORTEMS_TABLE_ID;
+    protected readonly qaPrefix: string = 'postmortems';
 
     protected readonly store: PostmortemsStore = inject(PostmortemsStore);
     protected readonly sortable: readonly string[] = POSTMORTEMS_SORTABLE;

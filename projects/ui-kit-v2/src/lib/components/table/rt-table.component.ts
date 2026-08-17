@@ -22,6 +22,7 @@ import {
     contentChild,
     contentChildren,
     DestroyRef,
+    ElementRef,
     forwardRef,
     inject,
     input,
@@ -165,6 +166,7 @@ interface IRtTablePersistRequest {
         '[class.rt-table--fetching]': 'fetching()',
         '[class.rt-table--empty]': 'isEmpty()',
         '[class.rt-table--cards]': 'showCards()',
+        '[attr.role]': 'hostRole',
         '[attr.aria-label]': 'ariaLabel()',
         '[attr.aria-busy]': "isInitialLoading() || fetching() ? 'true' : null",
     },
@@ -235,6 +237,14 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
 
     @ViewChild(CdkHeaderCellDef, { static: true })
     private readonly actionsHeaderCellDef?: CdkHeaderCellDef;
+
+    /**
+     * Роль хоста: у native `<table rt-table>` она есть от самого тега, а элементному
+     * `<rt-table>` её ставим сами. Без неё скрин-ридер читает список строками текста: роли
+     * строк и ячеек CDK проставляет сам, а роли самой таблицы у него нет, и проставленные
+     * остаются висеть вне таблицы. Считается один раз — тег хоста по ходу жизни не меняется.
+     */
+    protected readonly hostRole: 'table' | null = (inject(ElementRef).nativeElement as HTMLElement).tagName === 'RT-TABLE' ? 'table' : null;
 
     /** `true` когда initial-load в полёте и entities ещё нет — рендерим skeleton rows. */
     protected readonly isInitialLoading: Signal<boolean> = computed((): boolean => this.loading() && this.#hasData() === false);

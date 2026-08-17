@@ -80,6 +80,7 @@ export class AdminInvitesListComponent extends AdminListScreenBase<IInvite.Short
     protected readonly hint: string = adminLabel('hintInvites');
     protected readonly columns: readonly IRtTable.ColumnConfig[] = INVITES_COLUMNS;
     protected readonly tableId: string = INVITES_TABLE_ID;
+    protected readonly qaPrefix: string = 'invites';
     protected readonly revokeLabel: string = adminLabel('inviteRevoke');
     protected readonly revokeTitle: string = adminLabel('inviteRevokeTitle');
 
@@ -94,6 +95,12 @@ export class AdminInvitesListComponent extends AdminListScreenBase<IInvite.Short
 
     /** Пустой список объясняет себя сам: отбора у раздела нет, и объяснять пустоту им нечем. */
     protected override readonly emptyMessage: Signal<string> = computed(() => adminLabel('listEmptyInvites'));
+
+    /**
+     * Откуда берутся приглашения. У груза их приносит дерево, а здесь — команда владельца, и
+     * человеку называется она сама: раздел выдачи в админке не заводит.
+     */
+    protected override readonly emptyDescription: Signal<string> = computed(() => adminLabel('listEmptyInvitesFrom'));
 
     constructor() {
         super();

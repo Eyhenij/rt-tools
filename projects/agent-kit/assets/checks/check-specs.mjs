@@ -50,17 +50,7 @@ import { dirname, join } from 'node:path';
 
 import { ROOT } from './rt-kit-checks.config.mjs';
 import { checkRuleImplementation, checkSpecLaws, checkTracedAnchors } from './spec-anchors.mjs';
-import {
-    CONSTITUTION_DIR,
-    REQUIRED_HEADINGS,
-    SPECS_DIR,
-    collectDomains,
-    exists,
-    problems,
-    read,
-    report,
-    walk,
-} from './spec-common.mjs';
+import { CONSTITUTION_DIR, REQUIRED_HEADINGS, SPECS_DIR, collectDomains, exists, problems, read, report, walk } from './spec-common.mjs';
 import { checkContract, checkRefusalCodes, procedureRootsOf } from './spec-contract.mjs';
 import { collectReferences, parseScenarios, promisesScreen } from './spec-scenarios.mjs';
 
