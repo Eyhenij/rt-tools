@@ -1,7 +1,7 @@
 import { expect, Page, Route, test } from '@playwright/test';
 
 import { TREES } from '../stand/stand.mjs';
-import { columnTexts, openSection, pickTree, qa, rowsOf, SECTION, signIn } from './support/admin';
+import { columnTexts, openSection, pageQa, pickTree, qa, rowsOf, SECTION, signIn } from './support/admin';
 
 /**
  * Состояния списка, которых на засеянном стенде не бывает: чтение, пустота вовсе, отказ службы,
@@ -77,15 +77,15 @@ test.describe('состояния списка', () => {
         await page.goto(SECTION.postmortems.path);
         await signIn(page);
 
-        await expect(qa(page, 'list-fault')).toContainText('Прочитать не удалось');
-        await expect(qa(page, 'list-fault')).toContainText('9f31c0d2');
+        await expect(pageQa(page, 'postmortems', 'fault')).toContainText('Прочитать не удалось');
+        await expect(pageQa(page, 'postmortems', 'fault')).toContainText('9f31c0d2');
         await expect(rowsOf(page, 'postmortems')).toHaveCount(0);
 
         refuse = false;
-        await qa(page, 'list-retry').click();
+        await pageQa(page, 'postmortems', 'retry').click();
 
         await expect(rowsOf(page, 'postmortems').first()).toBeVisible();
-        await expect(qa(page, 'list-fault')).toHaveCount(0);
+        await expect(pageQa(page, 'postmortems', 'fault')).toHaveCount(0);
         // страница не перезагружалась: повтор — это одно действие на экране
         expect(page.url()).toContain(SECTION.postmortems.path);
     });
@@ -104,8 +104,8 @@ test.describe('состояния списка', () => {
 
         await openSection(page, 'postmortems');
 
-        await expect(qa(page, 'list-fault')).toContainText('Прочитать не удалось', { timeout: TIMEOUT_WAIT_MS });
-        await expect(qa(page, 'list-retry')).toBeVisible();
+        await expect(pageQa(page, 'postmortems', 'fault')).toContainText('Прочитать не удалось', { timeout: TIMEOUT_WAIT_MS });
+        await expect(pageQa(page, 'postmortems', 'retry')).toBeVisible();
     });
 
     test('SC-MB-69 — ответ, догнавший свой список позже, не показывается', async ({ page }: { page: Page }) => {

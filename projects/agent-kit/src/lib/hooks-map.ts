@@ -135,3 +135,77 @@ export function unboundHooks(bindings: readonly IHookBinding[], root: string): r
 
     return bindings.filter((binding: IHookBinding): boolean => !bound.has(`${binding.event} ${binding.path}`) && !bound.has(binding.path));
 }
+
+/**
+ * Образцы, под которыми гарды стоят в настройке агента: ключ — «событие и путь».
+ *
+ * Настройку, которую не разобрать, читать здесь нечем: образец лежит полем объекта, и вынуть его
+ * из текста поиском значило бы гадать. Тогда карта пуста, и расхождений не находится ни одного —
+ * это честнее, чем назвать расхождением то, чего не прочитали.
+ */
+export function matchersInSettings(root: string): ReadonlyMap<string, string> {
+    const path: string = join(root, SETTINGS_PATH);
+    const found: Map<string, string> = new Map();
+    if (!existsSync(path)) {
+        return found;
+    }
+
+    try {
+        const settings: unknown = JSON.parse(readFileSync(path, 'utf8'));
+        const hooks: unknown = (settings as Record<string, unknown> | null)?.['hooks'];
+        for (const [event, records] of Object.entries((hooks ?? {}) as Record<string, unknown>)) {
+            for (const record of Array.isArray(records) ? records : []) {
+                const matcher: unknown = (record as Record<string, unknown> | null)?.['matcher'];
+                const commands: unknown = (record as Record<string, unknown> | null)?.['hooks'];
+                for (const command of Array.isArray(commands) ? commands : []) {
+                    const line: unknown = (command as Record<string, unknown> | null)?.['command'];
+                    if (typeof line === 'string') {
+                        found.set(`${event} ${line.replace(/^.*?(\.claude\/)/, '$1')}`, typeof matcher === 'string' ? matcher.trim() : '');
+                    }
+                }
+            }
+        }
+    } catch {
+        return new Map();
+    }
+
+    return found;
+}
+
+/** Гард, чьё объявление разошлось с образцом, под которым его зовут. */
+export interface IMatcherDrift {
+    readonly event: string;
+    readonly path: string;
+    /** Что гард объявляет о себе строкой `# rt-hook:`. */
+    readonly declared: string;
+    /** Под чем он на самом деле стоит в настройке агента. */
+    readonly bound: string;
+}
+
+/**
+ * Расхождения объявления гарда с образцом, под которым его зовут.
+ *
+ * Гард, подписанный не на то, что объявляет, хуже неподключённого: снаружи он выглядит
+ * работающим — путь его в настройке назван, файл разложен, набор сценариев зелёный, — а вызов,
+ * ради которого его тело и написано, до него не доходит никогда. Так гейт правил и разбирал
+ * вызовы браузера веткой, которая не исполнялась ни разу: набор звал гард напрямую с
+ * подставленным вводом и объявления не читал вовсе.
+ *
+ * Судятся только подключённые гарды: о неподключённых говорит своя строка, и назвать их дважды
+ * значило бы спрятать настоящее расхождение среди повторов.
+ */
+export function driftedMatchers(bindings: readonly IHookBinding[], root: string): readonly IMatcherDrift[] {
+    const bound: ReadonlyMap<string, string> = matchersInSettings(root);
+    const drifts: IMatcherDrift[] = [];
+
+    for (const binding of bindings) {
+        const key: string = `${binding.event} ${binding.path}`;
+        const inSettings: string | undefined = bound.get(key);
+        if (inSettings === undefined || inSettings === binding.matcher) {
+            continue;
+        }
+        drifts.push({ event: binding.event, path: binding.path, declared: binding.matcher, bound: inSettings });
+    }
+
+    return drifts;
+}

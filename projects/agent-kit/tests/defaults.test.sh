@@ -150,6 +150,18 @@ report "гейт пуша: сборка идёт наравне с линтом 
 report "гейт пуша: без удалённого гоняется всё" \
     "$(rt_push_checks '' | grep -c 'run-many -t lint test build --all')" 1
 report "SC-AK-113 — проверки, которой в дереве нет, гейт не зовёт" "$(rt_push_checks '' | grep -c 'check-specs')" 0
+# SC-AK-256, SC-AK-257. Расхождение разложенного с пакетом до этой строки не отбивало ничего:
+# правка, положенная в разложенную копию мимо источника, ничего не ломает в день, когда её
+# делают, а раскладка потом отказывает по правленому файлу целиком. Признак — сама настройка
+# раскладки: дерево без неё пакета не ставит, и звать в нём нечего.
+report "SC-AK-257 — дерево без настройки раскладки сверки не получает" \
+    "$(rt_push_checks '' | grep -c 'agent-kit sync --check')" 0
+mkdir -p "$TREE/.claude"
+printf '{}\n' > "$TREE/.claude/rt-kit.json"
+report "SC-AK-256 — сверка раскладки стоит в наборе гейта пуша" \
+    "$(rt_push_checks '' | grep -c 'agent-kit sync --check')" 1
+report "SC-AK-256 — сверка идёт раньше долгого прогона" \
+    "$(rt_push_checks '' | head -n 1 | grep -c 'agent-kit sync --check')" 1
 mkdir -p "$TREE/tools" "$TREE/.claude/hooks/tests"
 printf '' > "$TREE/tools/check-specs.mjs"
 printf '#!/bin/sh\nexit 0\n' > "$TREE/.claude/hooks/tests/run.sh"

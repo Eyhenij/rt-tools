@@ -11,7 +11,7 @@ import { cascadeCuts, IBrokenLink, ICascadeCut, IEntryOfCatalog, IGapOfVariant, 
 import { debtLine, ICompanion, isUnfilled, IUnaddressed, pathOf as companionPathOf, TCompanionState, unaddressedOf } from './companion.js';
 import { CONFIG_PATH, DEFAULT_LAYOUT, IConfig, KINDS, OVERRIDES_DIR, PROFILE_FILE, readConfig, RT_KIT_DIR, TKind } from './config.js';
 import { IStaleBuild } from './freshness.js';
-import { hooksSection, IHookBinding, SETTINGS_PATH } from './hooks-map.js';
+import { hooksSection, IHookBinding, IMatcherDrift, SETTINGS_PATH } from './hooks-map.js';
 import { DEFAULT_DAYS, ICount, IReadResult, ISummary, KEEP_DAYS, OBSERVATIONS_DIR, readObservations, summarize } from './observations.js';
 import { IPlanned, isRefusal, TOutcome } from './plan.js';
 import { laidOutSkills } from './snapshot.js';
@@ -268,6 +268,26 @@ const unboundLines: (result: ISyncResult) => string[] = (result: ISyncResult): s
         : [];
 
 /**
+ * Гарды, подписанные не на то, что объявляют.
+ *
+ * Называются обе стороны: объявленное гардом и стоящее в настройке. Одной стороной такую строку
+ * не починить — правится настройка, а верное значение лежит в гарде, и по разнице видно, что
+ * именно до него не доходит.
+ */
+const driftedLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] =>
+    result.drifted.length
+        ? [
+              `гарды подписаны не на то, что объявляют: ${result.drifted.length}`,
+              ...result.drifted.flatMap((drift: IMatcherDrift): string[] => [
+                  `  ${drift.path} — ${drift.event}`,
+                  `    объявлено: ${drift.declared || '(без образца)'}`,
+                  `    в настройке: ${drift.bound || '(без образца)'}`,
+              ]),
+              `  поправь образец в \`${SETTINGS_PATH}\` по объявлению гарда: тело его разбирает то, что объявлено`,
+          ]
+        : [];
+
+/**
  * Разорванные связи между ресурсами.
  *
  * Печатается предупреждением и кода возврата не меняет: дерево вправе закрыть требование своим
@@ -368,6 +388,7 @@ const describe: (result: ISyncResult) => string[] = (result: ISyncResult): strin
     ...holes(result),
     ...gapLines(result),
     ...unboundLines(result),
+    ...driftedLines(result),
     ...warnings(result),
     ...pendingOf(result).map((entry: IPlanned): string => `  ${entry.path} — ${STATE_WORD[entry.outcome]}`),
     ...unfilled(result).map(companionLine),
@@ -507,7 +528,12 @@ export function sync(env: IEnvironment, check: boolean): IOutcomeOfCommand {
         // Разорванная связь в счёт расхождений не идёт: дерево вправе закрыть требование своим
         // средством, и отказ отбивал бы законную раскладку. Но и сходство её не отменяет —
         // предупреждение печатается и там, где расходиться больше нечему.
-        const count: number = result.missing.size + result.gaps.length + pending.length + empty.length + result.unbound.length;
+        //
+        // Гард, подписанный не на то, что объявляет, идёт в счёт по той же причине и с большим
+        // основанием: неподключённый хотя бы не притворяется — этот выглядит работающим, и ветка
+        // его тела, ради которой всё писалось, не исполняется ни разу.
+        const count: number =
+            result.missing.size + result.gaps.length + pending.length + empty.length + result.unbound.length + result.drifted.length;
         if (!count) {
             return { code: 0, lines: [`sync --check: разложенное сходится с пакетом v${version}`, ...warnings(result)] };
         }
@@ -554,6 +580,7 @@ export function sync(env: IEnvironment, check: boolean): IOutcomeOfCommand {
                 ? [`разложено файлов: ${result.written.length}`, ...result.written.map((path: string): string => `  ${path}`)]
                 : ['всё уже разложено']),
             ...unboundLines(result),
+            ...driftedLines(result),
             ...debtLines(config, root, assetsDir),
             ...warnings(result),
         ],

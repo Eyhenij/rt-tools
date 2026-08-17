@@ -1,8 +1,25 @@
-import { ChangeDetectionStrategy, Component, computed, input, InputSignal, output, OutputEmitterRef, Signal } from '@angular/core';
-import { adminLabel, EReadFault, IReadFault, LIST_PAGE_SIZES } from '@rt/message-bus-admin/common/core/util';
-import { ITreeChoice } from '@rt/message-bus-common';
+import { NgTemplateOutlet } from '@angular/common';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    contentChild,
+    Directive,
+    inject,
+    input,
+    InputSignal,
+    Signal,
+    TemplateRef,
+} from '@angular/core';
+import {
+    ADMIN_LIST_HOST,
+    adminLabel,
+    EReadFault,
+    IAdminListHost,
+    IReadFault,
+    LIST_PAGE_SIZES,
+} from '@rt/message-bus-admin/common/core/util';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { IPageModel } from '@rt-tools/utils';
 import {
     RtButtonDirective,
     RtIconButtonComponent,
@@ -13,18 +30,63 @@ import {
     RtToolbarRightDirective,
 } from '@rt-tools/ui-kit-v2';
 
-import { AdminTreeFilterComponent } from '../tree-filter/admin-tree-filter.component';
-
 const BEM_BLOCK: string = 'admin-page';
 
 /**
- * Общий вид страницы списка: заголовок, тулбар с отбором, место под таблицу и переключатель
- * страниц.
+ * Слот левой части тулбара: там стоит отбор раздела.
+ *
+ * Отбор кладёт сюда сам раздел. Зашитый в страницу, он был одинаков у всех разделов по
+ * принуждению: разделу, которому нужен другой, положить его было некуда.
+ *
+ * @example
+ * ```html
+ * <admin-list-page qaPrefix="proposals" [title]="title">
+ *     <ng-template adminListToolbarLeft>
+ *         <admin-tree-filter [choices]="choices()" [tree]="query().tree" (treeChange)="changeTree($event)" />
+ *     </ng-template>
+ * </admin-list-page>
+ * ```
+ */
+@Directive({
+    selector: '[adminListToolbarLeft]',
+})
+export class AdminListToolbarLeftDirective {}
+
+/**
+ * Слот правой части тулбара: там стоят кнопки раздела.
+ *
+ * Обновление списка и настройка столбцов сюда не кладутся — их рисует сама страница, и стоят
+ * они правее: человек ищет их на одном и том же месте у края тулбара на всех трёх разделах.
+ */
+@Directive({
+    selector: '[adminListToolbarRight]',
+})
+export class AdminListToolbarRightDirective {}
+
+/**
+ * Слот над таблицей: там стоит то, что относится ко всему списку сразу.
+ *
+ * Сказанное о всём списке, поставленное строкой в сам список, читается как одна из записей.
+ * Незанятый слот места не занимает вовсе — пустая полоса над таблицей читается поломкой
+ * разметки.
+ */
+@Directive({
+    selector: '[adminListAboveTable]',
+})
+export class AdminListAboveTableDirective {}
+
+/**
+ * Общий вид страницы списка: заголовок с подсказкой, тулбар со слотами, место под таблицу и
+ * переключатель страниц.
  *
  * Таблицу страница не оборачивает, а принимает проекцией: столбцы таблица кита собирает
  * собственным запросом по содержимому, и через посредника они до неё не доходят. Раздел поэтому
  * объявляет таблицу у себя и кладёт сюда — а всё, что вокруг неё, одинаково у всех трёх
  * разделов и живёт здесь.
+ *
+ * Чтение, страницу, её размер и настройку столбцов страница спрашивает у хоста, а не отдаёт
+ * наружу событиями: событие на каждое действие росло числом с каждым новым действием, а забытое
+ * подключение было видно только на собранном экране.
  *
  * Отказ чтения занимает место списка, а не встаёт строкой над ним: показанные под отказом строки
  * — это прежнее чтение, и отличить их от приехавших только что нечем. Повтор стоит тут же,
@@ -37,12 +99,14 @@ const BEM_BLOCK: string = 'admin-page';
     styleUrl: './admin-list-page.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        // angular
+        NgTemplateOutlet,
+
         // rt-tools
         BlockDirective,
         ElemDirective,
 
         // components
-        AdminTreeFilterComponent,
         RtButtonDirective,
         RtIconButtonComponent,
         RtMessageComponent,
@@ -67,9 +131,38 @@ export class AdminListPageComponent {
      */
     protected readonly pageSizes: readonly number[] = LIST_PAGE_SIZES;
 
+    /** Раздел, который эту страницу показывает: у него она спрашивает всё, чего не умеет сама. */
+    protected readonly host: IAdminListHost = inject(ADMIN_LIST_HOST);
+
+    /**
+     * Что раздел положил в слоты. Незанятый слот на экране не появляется вовсе: пустая половина
+     * тулбара и пустая полоса над таблицей читаются поломкой разметки, а не свободным местом.
+     */
+    protected readonly leftTpl: Signal<TemplateRef<unknown> | undefined> = contentChild(AdminListToolbarLeftDirective, {
+        read: TemplateRef,
+    });
+    protected readonly rightTpl: Signal<TemplateRef<unknown> | undefined> = contentChild(AdminListToolbarRightDirective, {
+        read: TemplateRef,
+    });
+    protected readonly aboveTpl: Signal<TemplateRef<unknown> | undefined> = contentChild(AdminListAboveTableDirective, {
+        read: TemplateRef,
+    });
+
+    /**
+     * Якоря проверки, собранные из префикса раздела.
+     *
+     * Одинаковые якоря на трёх разделах не отвечают на вопрос, чей элемент нашла проверка: спека,
+     * открывшая не тот раздел, находит тот же якорь и проходит зелёной.
+     */
+    protected readonly hintId: Signal<string> = computed(() => `${this.qaPrefix()}-hint`);
+    protected readonly columnsId: Signal<string> = computed(() => `${this.qaPrefix()}-columns`);
+    protected readonly refreshId: Signal<string> = computed(() => `${this.qaPrefix()}-refresh`);
+    protected readonly faultId: Signal<string> = computed(() => `${this.qaPrefix()}-fault`);
+    protected readonly retryId: Signal<string> = computed(() => `${this.qaPrefix()}-retry`);
+
     /** Что сказать про отказ. Род `Session` — не поломка чтения, и текст у него свой. */
     protected readonly faultText: Signal<string> = computed(() => {
-        const fault: IReadFault | null = this.fault();
+        const fault: IReadFault | null = this.host.fault();
 
         if (fault === null) {
             return '';
@@ -83,28 +176,20 @@ export class AdminListPageComponent {
      * его, когда рассказывает о ней. Пусто — приёмник его не называл.
      */
     protected readonly incidentText: Signal<string> = computed(() => {
-        const fault: IReadFault | null = this.fault();
+        const fault: IReadFault | null = this.host.fault();
 
         return fault === null || fault.incident === '' ? '' : adminLabel('listIncident', { incident: fault.incident });
     });
 
     public readonly title: InputSignal<string> = input.required<string>();
-    public readonly pageModel: InputSignal<IPageModel> = input.required<IPageModel>();
-    public readonly choices: InputSignal<readonly ITreeChoice[]> = input<readonly ITreeChoice[]>([]);
-    public readonly tree: InputSignal<string> = input<string>('');
-    public readonly loading: InputSignal<boolean> = input<boolean>(false);
-    public readonly fault: InputSignal<IReadFault | null> = input<IReadFault | null>(null);
 
-    public readonly treeChange: OutputEmitterRef<string> = output<string>();
-    public readonly pageChange: OutputEmitterRef<number> = output<number>();
-    public readonly sizeChange: OutputEmitterRef<number> = output<number>();
-    public readonly retried: OutputEmitterRef<void> = output<void>();
+    /** Пояснение при названии раздела. Пусто — заголовок стоит один, и места под подсказку нет. */
+    public readonly hint: InputSignal<string> = input<string>('');
 
     /**
-     * Человек просит настроить столбцы.
-     *
-     * Панель настройки везёт кит и открывает её маршрутом, а маршрут знает экран раздела — этот
-     * вид страницы роутера не касается вовсе и только передаёт просьбу дальше.
+     * Короткое имя раздела, из которого собраны якоря его страницы. То же слово, что у его
+     * таблицы: второе имя означало бы, что по якорю не найти ни таблицу от страницы, ни
+     * страницу от таблицы.
      */
-    public readonly columnsAsked: OutputEmitterRef<void> = output<void>();
+    public readonly qaPrefix: InputSignal<string> = input.required<string>();
 }
