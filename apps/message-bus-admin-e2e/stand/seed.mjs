@@ -106,7 +106,9 @@ async function database() {
 
 /** Вычистка: набор начинает с пустого хранилища, чтобы числа на экране не зависели от прошлых прогонов. */
 async function wipe() {
-    await sql('TRUNCATE TABLE "session", "account", "postmortem", "proposal", "month_record", "tree_token", "tree" CASCADE;');
+    await sql(
+        'TRUNCATE TABLE "session", "account", "postmortem", "proposal", "month_record", "tree_invite", "tree_token", "tree" CASCADE;'
+    );
 }
 
 /**
