@@ -11,8 +11,6 @@
 import { frontMatterOf, IEntryOfCatalog, IFrontMatter } from './catalog.js';
 import { TKind } from './config.js';
 
-export { frontMatterOf, IFrontMatter };
-
 /** Расхождение в ресурсах пакета: кто ссылается, на что и чего не нашлось. */
 export interface IBrokenLink {
     readonly id: string;

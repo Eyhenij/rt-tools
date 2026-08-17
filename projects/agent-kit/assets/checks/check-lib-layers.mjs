@@ -25,6 +25,17 @@ const FAMILIES = CONFIG.families;
  */
 const LIBS_ROOT = CONFIG.libsRoot;
 const API_FAMILY = CONFIG.apiFamily;
+/**
+ * Приставка селекторов, обязательная либам фронта. Слово принадлежит дереву целиком; пусто —
+ * приставка здесь ничего не значит, и проверка о ней молчит.
+ */
+const LIB_PREFIX = CONFIG.libPrefix;
+/**
+ * Имена, под которыми в этом дереве лежит барель. Их несколько: публикуемый пакет зовёт свой
+ * `public-api.ts`, а либа доменной сетки — `index.ts`, и оба живут в одном дереве. Имя, не
+ * названное здесь, барелем не считается, и собственный файл в нём читается реэкспортом.
+ */
+const BARREL_FILES = CONFIG.barrelFiles;
 const FLAT_LAYERS = ['api', 'data-access', 'ui', 'util'];
 const FEATURE_DOMAIN_LAYERS = [...FLAT_LAYERS, 'feature', 'shell'].sort();
 const COMMON_DOMAIN_LAYERS = [...FLAT_LAYERS, 'feature'].sort();
@@ -310,9 +321,11 @@ function checkLib(libPath, { requirePrefix = true } = {}) {
     if (project.sourceRoot !== `${libPath}/src`) {
         report(libPath, `sourceRoot «${project.sourceRoot}» не совпадает с путём`);
     }
-    // Префикс — про селекторы компонентов, а у бэкенда компонентов нет
-    if (requirePrefix && project.prefix !== 'vm') {
-        report(libPath, `prefix «${project.prefix}» вместо обязательного «vm»`);
+    // Приставка — про селекторы компонентов, а у бэкенда компонентов нет. Само слово принадлежит
+    // дереву: у каждого оно своё, и зашитое здесь краснело бы на всех либах первого же дерева,
+    // назвавшего свои селекторы иначе. Дерево, не назвавшее приставки, этой проверки не получает.
+    if (requirePrefix && LIB_PREFIX && project.prefix !== LIB_PREFIX) {
+        report(libPath, `prefix «${project.prefix}» вместо обязательного «${LIB_PREFIX}»`);
     }
 
     const tags = project.tags ?? [];
@@ -371,8 +384,11 @@ function checkBoundaries(libs) {
  * Либы, у которых список зависимостей обязан оставаться пустым. Барель такой либы
  * уезжает в бандл бэкенда, а сборка API идёт без tree-shaking: любая зависимость
  * расходится оттуда по всему графу.
+ *
+ * Теги называет дерево: имя тега — его собственное слово, и зашитое здесь требовало бы описания
+ * границ под либу, которой в дереве нет вовсе. Пусто — таких либ дерево не держит.
  */
-const NO_DEPENDENCY_TAGS = ['scope:common-util'];
+const NO_DEPENDENCY_TAGS = CONFIG.noDependencyTags;
 
 function checkNoDependencyLibs() {
     if (!isDir(BOUNDARIES_DIR)) {
@@ -415,7 +431,7 @@ function checkNoDependencyLibs() {
 }
 
 /** Барель собирает наружу собственные файлы либы, и только они в нём законны */
-const isBarrel = (path) => path.endsWith('/index.ts');
+const isBarrel = (path) => BARREL_FILES.some((name) => path.endsWith(`/${name}`));
 
 /** Файл той же либы адресуется относительным путём, чужая либа — алиасом */
 const isOwnFile = (module) => module.startsWith('.');

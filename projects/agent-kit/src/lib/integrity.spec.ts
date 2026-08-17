@@ -4,8 +4,8 @@
  */
 import { join } from 'node:path';
 
-import { IEntryOfCatalog, readCatalog } from './catalog.js';
-import { ambiguousNames, brokenLinks, frontMatterOf, IAmbiguousName, IBrokenLink } from './integrity.js';
+import { frontMatterOf, IEntryOfCatalog, readCatalog } from './catalog.js';
+import { ambiguousNames, brokenLinks, IAmbiguousName, IBrokenLink } from './integrity.js';
 
 const ASSETS: string = join(__dirname, '..', '..', 'assets');
 
