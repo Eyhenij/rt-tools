@@ -1,0 +1,5 @@
+<ng-container rtBlock="admin-header">
+    <span rtElem="brand" qa-dataid="admin-brand">{{ appTitle }}</span>
+
+    <rt-page-header rtElem="nav" [ariaLabel]="navLabel" [items]="items()" [user]="user()" (userClick)="profileClick.emit()" />
+</ng-container>

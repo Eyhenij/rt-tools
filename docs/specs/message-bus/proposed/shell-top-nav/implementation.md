@@ -14,7 +14,8 @@
 | Пункт объявлен декларацией меню и несёт адрес раздела.            | `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts:ADMIN_MENU`                    |
 | Подсветку текущего раздела даёт маршрутизатор, а не оболочка.     | `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header.component.html`                        |
 | Панели второго уровня нет, пока нет вложенных разделов.           | `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts:IAdminMenuItem`                |
-| Логотип стоит в том же ряду, левее разделов.                      | `libs/message-bus-admin/common/container/ui/src/index.ts`                                                |
+| Название приложения стоит в том же ряду, левее разделов.          | `libs/message-bus-admin/common/container/ui/src/index.ts`                                                |
+| Приложение называет себя словом, а не знаком.                     | `libs/message-bus-admin/common/core/util/src/lib/admin-labels.ts:ADMIN_LABELS`                           |
 | На узком экране те же разделы открываются кнопкой-бургером.       | `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header-mobile.scss`                           |
 | Нажатие на профиль открывает попап, а не выходит.                 | `libs/message-bus-admin/common/container/ui/src/index.ts`                                                |
 | Попап профиля показывает имя вошедшего, тему, язык и выход.       | `libs/message-bus-admin/common/container/ui/src/index.ts`                                                |

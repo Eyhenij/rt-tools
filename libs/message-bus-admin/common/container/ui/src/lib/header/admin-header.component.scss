@@ -1,0 +1,25 @@
+.admin-header {
+    display: flex;
+    height: 100%;
+    box-sizing: border-box;
+    align-items: center;
+    padding: 0 var(--rt-space-5);
+    gap: var(--rt-space-4);
+
+    // Название приложения стоит словом, а не знаком: начертания знака у админки нет, и готовый
+    // логотип занимал бы место, ничего не рисуя
+    &__brand {
+        flex: 0 0 auto;
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-text-lg);
+        font-weight: var(--rt-font-weight-semibold);
+        white-space: nowrap;
+    }
+
+    // Верхний ряд кита занимает всё, что осталось: разделы идут от названия, профиль — у правого
+    // края, и своей раскладки для этого ряду не нужно
+    &__nav {
+        min-width: 0;
+        flex: 1 1 auto;
+    }
+}

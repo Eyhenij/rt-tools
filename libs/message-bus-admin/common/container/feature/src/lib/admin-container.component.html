@@ -1,10 +1,6 @@
-<rt-container height="viewport" mobileLeftNav="bottom">
+<rt-container height="viewport">
     <ng-template rtContainerHeader>
-        <rt-header (profileClick)="signOut()" />
-    </ng-template>
-
-    <ng-template rtContainerLeftSidenav>
-        <rt-section-nav [items]="sections()" (itemSelect)="goTo($event)" />
+        <admin-header [items]="sections()" [user]="user()" (profileClick)="signOut()" />
     </ng-template>
 
     <ng-template rtContainerContent>

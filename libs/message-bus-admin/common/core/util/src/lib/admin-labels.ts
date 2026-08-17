@@ -19,6 +19,7 @@ import { RtKitLabelKey, RtKitLabelParams } from '@rt-tools/ui-kit-v2';
 // eslint-disable-next-line @typescript-eslint/typedef -- аннотация стёрла бы литеральный тип, на котором стоит TAdminLabelKey
 export const ADMIN_LABELS = {
     appTitle: 'Приёмник',
+    navSections: 'Разделы',
     signOut: 'Выйти',
 
     sectionPostmortems: 'Разборы происшествий',
@@ -123,8 +124,10 @@ const RT_KIT_LABELS_RU: Partial<Record<RtKitLabelKey, string>> = Object.freeze({
     uiHide: 'Скрыть',
     uiHideColumn: 'Скрыть столбец',
     uiItemsPerPage: 'Строк на странице',
+    uiMainNav: 'Разделы',
     uiMore: 'Ещё',
     uiMoreActions: 'Другие действия',
+    uiNavMenu: 'Разделы',
     uiNextPage: 'Следующая страница',
     uiNoOptions: 'Выбирать не из чего',
     uiNoRows: 'Записей нет',
