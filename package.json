@@ -40,6 +40,7 @@
     "check:hooks": "node tools/check-hooks.mjs",
     "task:new": "node tools/task-new.mjs",
     "task:move": "node tools/board.mjs move",
+    "prod:api": "node tools/prod-api.mjs",
     "agent-kit:sync": "nx build @rt-tools/agent-kit && node dist/agent-kit/bin/agent-kit.js sync",
     "agent-kit:check": "nx build @rt-tools/agent-kit && node dist/agent-kit/bin/agent-kit.js sync --check",
     "packagr:core": "cd ./dist/core && npm pack && npm publish --access public",
