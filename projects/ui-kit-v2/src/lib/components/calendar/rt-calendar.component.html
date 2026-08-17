@@ -30,7 +30,8 @@
                         <span rtElem="weekday" qa-dataid="calendar-weekday">{{ weekday }}</span>
                     }
                     @for (blank of month.leadingBlanks; track blank) {
-                        <span rtElem="blank"></span>
+                        <!-- Пустая ячейка сетки до первого дня месяца: занимает место и ничего не красит. -->
+                        <span qa-dataid="calendar-blank" aria-hidden="true"></span>
                     }
                     @for (day of month.days; track day.key) {
                         <button

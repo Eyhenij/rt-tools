@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.8.3 · checks/check-styles.mjs · 78575de7ddee · правится надстройкой, не здесь
+// rt-kit v0.8.3 · checks/check-styles.mjs · 8abf6b3f572f · правится надстройкой, не здесь
 /**
  * Проверка того, что класс элемента BEM подкреплён правилом.
  *
@@ -43,6 +43,10 @@ const SKIPPED_DIRS = CONFIG.skippedDirs;
 const ELEM_RE = /rtElem="([a-z0-9-]+)"/g;
 /** Объявление элемента: и вложенное `&__item`, и полное `.<блок>__item` */
 const RULE_RE = /__([a-z0-9-]+)/g;
+/** Голова вложенности: строка, с которой начинается блок элемента */
+const HEAD_RE = /^&__([a-z0-9-]+)/;
+/** Колено вложенности: `&-<хвост>` внутри блока элемента дописывает имя, а не заводит своё */
+const TAIL_RE = /^&-([a-z0-9-]+)/;
 /** Подключение в файле стилей: `@use` и `@forward` берутся одним разбором */
 const USE_RE = /@(?:use|forward)\s+['"]([^'"]+)['"]/g;
 /** Строка списка известного: имя класса и перечень файлов при нём */
@@ -123,6 +127,47 @@ function fileOfPackage(from, { name, rest }) {
 }
 
 /**
+ * Имена элементов, объявленных файлом стилей. Имя собирается из вложенности: `&__head { &-icon }`
+ * объявляет `head-icon`, и колен у него бывает сколько угодно. Читая только то, что стоит после
+ * `__` целиком, проверка числила долгом исправную вёрстку — правило работает, класс красит, а
+ * снять его значило бы сломать экран.
+ *
+ * Хвост без головы именем не становится: `&-<хвост>`, стоящий вне блока элемента, принадлежит
+ * чужому селектору, и приписать его было бы выдумыванием объявления.
+ */
+function elementNames(text) {
+    const names = new Set();
+    const stack = [];
+    for (const raw of text.split('\n')) {
+        const line = raw.trim();
+        const parent = stack.length ? stack[stack.length - 1] : '';
+        const head = HEAD_RE.exec(line);
+        const tail = TAIL_RE.exec(line);
+        let current = parent;
+
+        if (head) {
+            current = head[1];
+        } else if (tail && parent) {
+            current = `${parent}-${tail[1]}`;
+            names.add(current);
+        }
+
+        for (const match of line.matchAll(RULE_RE)) {
+            names.add(match[1]);
+        }
+
+        for (let index = 0; index < (line.match(/{/g) ?? []).length; index += 1) {
+            stack.push(current);
+        }
+        for (let index = 0; index < (line.match(/}/g) ?? []).length && stack.length; index += 1) {
+            stack.pop();
+        }
+    }
+
+    return names;
+}
+
+/**
  * Объявления из пакетов, подключённых самим приложением. Читается ровно названный файл:
  * подключения внутри него не разбираются — объявленным считается то, что приложение назвало.
  */
@@ -135,9 +180,7 @@ function declarationsFromPackages(styleFiles) {
             if (!file) {
                 continue;
             }
-            for (const match of readFileSync(file, 'utf8').matchAll(RULE_RE)) {
-                names.add(match[1]);
-            }
+            elementNames(readFileSync(file, 'utf8')).forEach((name) => names.add(name));
         }
     }
 
@@ -150,9 +193,7 @@ const usedIn = new Map();
 for (const root of SOURCE_ROOTS) {
     const styleFiles = collectFiles(root, '.scss');
     for (const path of styleFiles) {
-        for (const match of readFileSync(join(ROOT, path), 'utf8').matchAll(RULE_RE)) {
-            declared.add(match[1]);
-        }
+        elementNames(readFileSync(join(ROOT, path), 'utf8')).forEach((name) => declared.add(name));
     }
     declarationsFromPackages(styleFiles).forEach((name) => declared.add(name));
 

@@ -1,7 +1,6 @@
 <ng-container rtBlock="rt-message-composer" [formGroup]="form">
     @if (formatting()) {
         <rt-rich-editor
-            rtElem="rich"
             qa-dataid="message-composer-rich"
             formControlName="delta"
             [placeholder]="placeholderText()"
@@ -41,7 +40,6 @@
         @if (attachments()) {
             <input
                 #fileEl
-                rtElem="native"
                 qa-dataid="message-composer-file-input"
                 type="file"
                 hidden
@@ -49,7 +47,6 @@
                 [attr.accept]="accept() || null"
                 (change)="onFilesPicked($event)" />
             <rt-icon-button
-                rtElem="attach"
                 qa-dataid="message-composer-attach"
                 icon="paperclip"
                 variant="ghost"

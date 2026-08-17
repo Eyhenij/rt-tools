@@ -49,3 +49,4 @@
 | Читается то, что приложение подключило само, и не глубже.                            | `projects/agent-kit/assets/checks/check-styles.mjs:USE_RE`                   |
 | Расхождение опознаётся по имени класса, а не по перечню файлов при нём.              | `projects/agent-kit/assets/checks/check-styles.mjs:knownByName`              |
 | Изменившийся перечень файлов называется своим родом.                                 | `projects/agent-kit/assets/checks/check-styles.mjs:changedFiles`             |
+| Имя элемента собирается из вложенности, а не читается одной строкой.                 | `projects/agent-kit/assets/checks/check-styles.mjs:elementNames`             |
