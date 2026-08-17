@@ -73,6 +73,14 @@ const SUMMARIES_API = 'scope:message-bus-admin-summaries-api';
 const SUMMARIES_DATA_ACCESS = 'scope:message-bus-admin-summaries-data-access';
 const SUMMARIES_UI = 'scope:message-bus-admin-summaries-ui';
 
+/**
+ * Раздел приглашений: модели и решения раздела, отзыв приглашения, стор списка, экран и маршрут.
+ * Слоя вида у него нет — ячейки строки показывают готовые поля, и своего вида разделу не нужно.
+ */
+const INVITES_UTIL = 'scope:message-bus-admin-invites-util';
+const INVITES_API = 'scope:message-bus-admin-invites-api';
+const INVITES_DATA_ACCESS = 'scope:message-bus-admin-invites-data-access';
+
 export const messageBusAdminBoundaries = [
     // Приложение видит маршруты домена входа и оболочку. Экраны оно не знает ни одного: их
     // приносит отложенная загрузка по маршруту, объявленному тем, чей это экран.
@@ -88,6 +96,7 @@ export const messageBusAdminBoundaries = [
             'scope:message-bus-admin-postmortems-shell',
             'scope:message-bus-admin-proposals-shell',
             'scope:message-bus-admin-summaries-shell',
+            'scope:message-bus-admin-invites-shell',
             CORE_UTIL,
             PACKAGE,
         ],
@@ -312,5 +321,44 @@ export const messageBusAdminBoundaries = [
             CORE_UTIL,
             PACKAGE,
         ],
+    },
+
+    // Раздел приглашений. Лесенка та же, что у трёх разделов груза, но слоёв пять, а не семь:
+    // вида своего у него нет — строка списка показывается готовыми ячейками, — и панели
+    // подробностей нет тоже, потому что всё известное о приглашении стоит в строке
+    {
+        sourceTag: 'scope:message-bus-admin-invites-util',
+        onlyDependOnLibsWithTags: [CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-invites-api',
+        onlyDependOnLibsWithTags: [INVITES_UTIL, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-invites-data-access',
+        onlyDependOnLibsWithTags: [INVITES_API, INVITES_UTIL, CORE_DATA_ACCESS, CORE_API, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    // Слой вида раздела пуст, но тег его выписан наравне с остальными: молчание про либу
+    // проверка раскладки читает как «прав ей не давали», а не как «прав ей не нужно»
+    {
+        sourceTag: 'scope:message-bus-admin-invites-ui',
+        onlyDependOnLibsWithTags: [INVITES_UTIL, CORE_UI, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-invites-feature-list',
+        onlyDependOnLibsWithTags: [
+            INVITES_DATA_ACCESS,
+            INVITES_UTIL,
+            CORE_FEATURE,
+            CORE_UI,
+            CORE_DATA_ACCESS,
+            CORE_UTIL,
+            CONTRACT,
+            PACKAGE,
+        ],
+    },
+    {
+        sourceTag: 'scope:message-bus-admin-invites-shell',
+        onlyDependOnLibsWithTags: ['scope:message-bus-admin-invites-feature-list', INVITES_UTIL, CORE_UTIL, PACKAGE],
     },
 ];

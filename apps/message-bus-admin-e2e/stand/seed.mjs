@@ -15,7 +15,7 @@
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
-import { ACCOUNT, API_ORIGIN, SERVER_DATABASE_URL, STAND_DATABASE, STAND_DATABASE_URL, TREES } from './stand.mjs';
+import { ACCOUNT, API_ORIGIN, ENROLLED_SLUG, INVITES, SERVER_DATABASE_URL, STAND_DATABASE, STAND_DATABASE_URL, TREES } from './stand.mjs';
 
 const ROOT = fileURLToPath(new URL('../../..', import.meta.url));
 
@@ -106,7 +106,9 @@ async function database() {
 
 /** Вычистка: набор начинает с пустого хранилища, чтобы числа на экране не зависели от прошлых прогонов. */
 async function wipe() {
-    await sql('TRUNCATE TABLE "session", "account", "postmortem", "proposal", "month_record", "tree_token", "tree" CASCADE;');
+    await sql(
+        'TRUNCATE TABLE "session", "account", "postmortem", "proposal", "month_record", "tree_invite", "tree_token", "tree" CASCADE;'
+    );
 }
 
 /**
@@ -235,6 +237,41 @@ async function summaries(tokens) {
 }
 
 /**
+ * Приглашения — по одному на каждое состояние.
+ *
+ * Идут теми же путями, какими они случаются в жизни: выдача и отзыв — командами владельца,
+ * погашение — обращением дерева за токеном. Мимо этих путей идёт одно просроченное: срок ему
+ * сдвигается прямым запросом, потому что ждать двое суток набор не может.
+ *
+ * Код приглашения забирается из вывода команды: печатается он один раз, и второй раз показать
+ * его неоткуда. Строка с ним у команды предпоследняя — последней идёт готовая команда заведения
+ * дерева, в которой тот же код стоит доводом.
+ */
+async function invites() {
+    await command(['tree:invite', INVITES.waiting]);
+    await command(['tree:invite', INVITES.revoked]);
+    await command(['tree:uninvite', INVITES.revoked]);
+    await command(['tree:invite', INVITES.expired]);
+
+    const issued = await command(['tree:invite', INVITES.redeemed]);
+    const lines = issued
+        .split('\n')
+        .map((line) => line.trim())
+        .filter(Boolean);
+    const code = lines[lines.length - 2];
+
+    const answer = await fetch(`${API_ORIGIN}/api/intake/enroll`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ code, tree: ENROLLED_SLUG }),
+    });
+
+    if (!answer.ok) {
+        throw new Error(`обращение за токеном отбито: ${answer.status} ${await answer.text()}`);
+    }
+}
+
+/**
  * Время приезда записей.
  *
  * Приёмник ставит его часами машины, и весь засев ложится в одну секунду: порядок «свежие
@@ -269,6 +306,16 @@ async function moments() {
             `UPDATE "month_record" SET "ranAt" = TIMESTAMP '2026-08-05 10:00:00' + (ordered.pos * INTERVAL '1 hour')`,
             'FROM (SELECT "id", row_number() OVER (ORDER BY "treeId") AS pos FROM "month_record") AS ordered',
             'WHERE "month_record"."id" = ordered."id";',
+            // приглашения: времена выдачи разведены по часу, чтобы порядок «выданные позже
+            // сверху» был виден и не зависел от того, за сколько прошёл засев
+            `UPDATE "tree_invite" SET "issuedAt" = TIMESTAMP '2026-08-06 08:00:00' + (ordered.pos * INTERVAL '1 hour')`,
+            'FROM (SELECT "id", row_number() OVER (ORDER BY "name") AS pos FROM "tree_invite") AS ordered',
+            'WHERE "tree_invite"."id" = ordered."id";',
+            // срок годности считается от нынешнего момента, а не датой: состояние приглашения
+            // приёмник считает на момент запроса, и написанная дата сделала бы ждущее
+            // просроченным через двое суток — набор покраснел бы сам, без единой правки
+            `UPDATE "tree_invite" SET "expiresAt" = now() + INTERVAL '2 days' WHERE "name" <> 'Стенд просроченный';`,
+            `UPDATE "tree_invite" SET "expiresAt" = now() - INTERVAL '1 day' WHERE "name" = 'Стенд просроченный';`,
         ].join('\n')
     );
 }
@@ -281,6 +328,7 @@ export async function seed() {
     await postmortems(tokens);
     await proposals(tokens);
     await summaries(tokens);
+    await invites();
     await moments();
 }
 

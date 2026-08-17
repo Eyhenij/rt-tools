@@ -50,6 +50,25 @@ describe('parseTreeCommand', () => {
         expect(parseTreeCommand(['tree:list']).command).toEqual({ kind: 'list' });
     });
 
+    it('выдача приглашения разбирается по имени будущего дерева', () => {
+        expect(parseTreeCommand(['tree:invite', 'Своё дерево']).command).toEqual({ kind: 'invite', name: 'Своё дерево' });
+    });
+
+    it('выдача приглашения без имени не разбирается: имя называет владелец, а не обращение', () => {
+        const parse: ITreeCommandParse = parseTreeCommand(['tree:invite']);
+
+        expect(parse.command).toBeNull();
+        expect(parse.fault).toContain('tree:invite');
+    });
+
+    it('отзыв приглашения разбирается по имени', () => {
+        expect(parseTreeCommand(['tree:uninvite', 'Своё дерево']).command).toEqual({ kind: 'uninvite', name: 'Своё дерево' });
+    });
+
+    it('SC-MB-128 — список приглашений разбирается без доводов', () => {
+        expect(parseTreeCommand(['tree:invites']).command).toEqual({ kind: 'invites' });
+    });
+
     it('незнакомая команда не разбирается, и отказ перечисляет команды деревьев', () => {
         const parse: ITreeCommandParse = parseTreeCommand(['tree:grant', 'Своё дерево']);
 

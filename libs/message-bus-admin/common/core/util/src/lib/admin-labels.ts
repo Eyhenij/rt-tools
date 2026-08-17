@@ -24,10 +24,12 @@ export const ADMIN_LABELS = {
     sectionPostmortems: 'Разборы происшествий',
     sectionProposals: 'Предложения',
     sectionSummaries: 'Сводки деревьев',
+    sectionInvites: 'Приглашения',
 
     hintPostmortems: 'Что и почему сломалось на деревьях — по разбору на происшествие',
     hintProposals: 'Что деревья предлагают править в слое правил',
     hintSummaries: 'Свод одного дерева за календарный месяц — по записи на пару',
+    hintInvites: 'Чем дерево заводит себя само. Выдаётся командой message-bus tree:invite <имя>',
 
     filterTree: 'Дерево',
     filterTreeAll: 'Все деревья',
@@ -41,7 +43,24 @@ export const ADMIN_LABELS = {
     columnMonth: 'Месяц',
     columnSessions: 'Заходов',
     columnRanAt: 'Прогон',
+    columnInviteName: 'Имя дерева',
+    columnInviteState: 'Состояние',
+    columnIssuedAt: 'Выдано',
+    columnExpiresAt: 'Годно до',
+    columnInviteTree: 'Заведённое дерево',
 
+    inviteStateWaiting: 'Ждёт',
+    inviteStateRedeemed: 'Погашено',
+    inviteStateExpired: 'Просрочено',
+    inviteStateRevoked: 'Отозвано',
+
+    inviteRevoke: 'Отозвать',
+    inviteRevokeTitle: 'Отозвать приглашение',
+    inviteRevokeQuestion: 'Приглашение для «{{name}}» перестанет действовать. Вернуть его нельзя: дереву понадобится новое.',
+    inviteRevokeDone: 'Приглашение для «{{name}}» отозвано',
+    inviteRevokeFailed: 'Отозвать приглашение не удалось',
+
+    listEmptyInvites: 'Приглашений нет: выдаются командой message-bus tree:invite <имя>',
     listEmpty: 'Записей нет: ни одно дерево их пока не присылало',
     listEmptyByFilter: 'По этому отбору записей нет',
     listFailed: 'Прочитать не удалось',

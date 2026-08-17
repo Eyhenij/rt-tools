@@ -80,6 +80,28 @@ export interface IPostmortemsCargo extends ICargoHead {
     readonly items: readonly IPostmortemItem[];
 }
 
+/**
+ * Обращение дерева за токеном.
+ *
+ * Имени дерева в нём нет вовсе: его приём берёт из приглашения — принятое из обращения, оно
+ * позволило бы назваться чужим именем тому, кто добыл код.
+ */
+export interface IEnrollCargo {
+    readonly schema: string;
+    /** Признак дерева: его дерево считает у себя, а приём только сверяет. */
+    readonly tree: string;
+    /** Код приглашения, выданный владельцем. Уходит один раз и в журнал не попадает. */
+    readonly code: string;
+}
+
+/** Ответ приёма на годное обращение: токен уходит дереву единственным этим ответом. */
+export interface IEnrollGranted {
+    readonly tree: string;
+    /** Имя дерева, как его назвал владелец в приглашении. */
+    readonly name: string;
+    readonly token: string;
+}
+
 /** Ответ приёма на принятый груз: дерево и месяц печатаются владельцу отправляющей стороной. */
 export interface IIntakeAccepted {
     readonly tree: string;
