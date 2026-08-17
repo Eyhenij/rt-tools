@@ -77,7 +77,7 @@
             "type": "command"
           }
         ],
-        "matcher": "Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool"
+        "matcher": "Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__claude-in-chrome__.*"
       },
       {
         "hooks": [

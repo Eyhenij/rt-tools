@@ -76,6 +76,32 @@ expect_stop "SC-AK-248 — PR не открывали" \
 expect_stop "SC-AK-248 — правка тела PR открытием не считается" \
     "$(input_stop "$(transcript "$(say 'перепиши тело')" "$(ran 'gh api -X PATCH repos/o/r/pulls/10 -f body=x')" "$(reply 'Переписал.')")")" PASS
 
+# --- SC-AK-262 — прочитанный красный прогон судится наравне с открытым PR ----------------------
+#
+# Признак лежит не в команде, а в её выводе: конец прогона читают и затем, чтобы пойти чинить.
+result() {
+    jq -c -n --arg t "$1" '{type:"user",message:{content:[{type:"tool_result",content:$t}]}}'
+}
+
+RED_LIST='completed	failure	[RT-9] Готово	CI	RT-9-probe	pull_request	31987106774	8m48s'
+GREEN_LIST='completed	success	[RT-9] Готово	CI	RT-9-probe	pull_request	31987106774	8m48s'
+
+expect_stop "SC-AK-262 — красный прогон прочитан, дальше ничего" \
+    "$(input_stop "$(transcript "$(say 'что там прогон')" "$(ran 'gh run list --branch RT-9-probe --limit 1')" "$(result "$RED_LIST")" "$(reply 'Прогон упал. Разберусь.')")")" BLOCK
+expect_stop "SC-AK-262 — красный ответ в форме поля тоже ловится" \
+    "$(input_stop "$(transcript "$(say 'что там прогон')" "$(ran 'gh run view 42 --json conclusion')" "$(result '{"conclusion":"failure"}')" "$(reply 'Красный.')")")" BLOCK
+expect_stop "SC-AK-262 — действие по следующей задаче снимает требование и здесь" \
+    "$(input_stop "$(transcript "$(say 'что там прогон')" "$(ran 'gh run list --limit 1')" "$(result "$RED_LIST")" "$(ran 'git checkout -b RT-11-next')")")" PASS
+
+# --- SC-AK-263 — зелёный прогон и чтение без красного ответа гард не судит ---------------------
+#
+# За зелёным прогоном идёт своя работа — уборка и снятие черновика, — а не чужой шаг.
+expect_stop "SC-AK-263 — зелёный прогон хода не судит" \
+    "$(input_stop "$(transcript "$(say 'что там прогон')" "$(ran 'gh run list --limit 1')" "$(result "$GREEN_LIST")" "$(reply 'Зелено.')")")" PASS
+# Слово «failure» без команды чтения прогона признаком не является: гард судит пару.
+expect_stop "SC-AK-263 — красное слово без чтения прогона признаком не является" \
+    "$(input_stop "$(transcript "$(say 'почини тест')" "$(ran 'pnpm test')" "$(result 'Tests: 1 failure')" "$(reply 'Чиню.')")")" PASS
+
 # --- отказ в пользу работы ------------------------------------------------------------------
 # Повторный заход по тому же ходу не судится: иначе ход не кончится никогда.
 expect_stop "повторный заход отпускается" \

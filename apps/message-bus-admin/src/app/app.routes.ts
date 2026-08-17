@@ -1,8 +1,29 @@
 import { Route } from '@angular/router';
 import { authRoutes, sessionGuard } from '@rt/message-bus-admin/auth/shell';
+import { COLUMNS_ROUTE } from '@rt/message-bus-admin/common/core/util';
 import { POSTMORTEMS_ROUTE, postmortemsRoutes } from '@rt/message-bus-admin/postmortems/shell';
-import { proposalsRoutes } from '@rt/message-bus-admin/proposals/shell';
-import { summariesRoutes } from '@rt/message-bus-admin/summaries/shell';
+import { PROPOSALS_ROUTE, proposalsRoutes } from '@rt/message-bus-admin/proposals/shell';
+import { SUMMARIES_ROUTE, summariesRoutes } from '@rt/message-bus-admin/summaries/shell';
+
+/**
+ * Панель настройки столбцов — своя у каждого раздела, и адрес её называет раздел.
+ *
+ * Одна панель на три таблицы не сказала бы по адресу, чьи столбцы настраивают: вернувшийся по
+ * ссылке человек попадал бы в настройки того раздела, который открылся первым. Настраиваемую
+ * таблицу кит берёт из своего реестра, но адрес — это ещё и место в истории браузера, и оно у
+ * каждого списка своё.
+ *
+ * Объявление собрано здесь, а не тремя строками в маршрутах разделов: панель грузится из
+ * оболочки админки, а раздел её либы не видит — граница раскладки говорит об этом прямо.
+ */
+function columnsRoute(section: string): Route {
+    return {
+        path: `${section}/${COLUMNS_ROUTE}`,
+        pathMatch: 'full',
+        outlet: 'ro',
+        loadComponent: async () => (await import('@rt/message-bus-admin/common/container/feature')).adminColumnsAside(),
+    };
+}
 
 /**
  * Маршруты админки.
@@ -25,18 +46,15 @@ export const appRoutes: Route[] = [
         canActivateChild: [sessionGuard],
         loadComponent: async () => (await import('@rt/message-bus-admin/common/container/feature')).AdminContainerComponent,
         children: [
+            // Впереди маршрутов разделов: у панели подробностей путь `<раздел>/:id`, и
+            // объявленная после неё настройка столбцов досталась бы ему — с именем маршрута
+            // вместо идентификатора записи
+            columnsRoute(POSTMORTEMS_ROUTE),
+            columnsRoute(PROPOSALS_ROUTE),
+            columnsRoute(SUMMARIES_ROUTE),
             ...postmortemsRoutes,
             ...proposalsRoutes,
             ...summariesRoutes,
-            // Настройка столбцов одна на все разделы: панель везёт кит, а какую таблицу
-            // настраивают, она берёт из своего реестра. Раздела в адресе поэтому нет — в
-            // отличие от подробностей записи, где он есть, потому что аутлет один на всю
-            // админку и `:id` без раздела забрал бы панели всех трёх.
-            {
-                path: 'table-settings',
-                outlet: 'ro',
-                loadComponent: async () => (await import('@rt/message-bus-admin/common/container/feature')).adminColumnsAside(),
-            },
             { path: '', pathMatch: 'full', redirectTo: POSTMORTEMS_ROUTE },
         ],
     },

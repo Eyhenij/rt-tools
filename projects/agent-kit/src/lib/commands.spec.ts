@@ -13,7 +13,7 @@ import { dirname, join } from 'node:path';
 import { IEntryOfCatalog, readCatalog } from './catalog.js';
 import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, KEPT_SUFFIX, list, stats, sync } from './commands.js';
 import { CONFIG_PATH, OVERRIDES_DIR } from './config.js';
-import { bindingsOf } from './hooks-map.js';
+import { bindingsOf, hooksSection, IHookBinding } from './hooks-map.js';
 import { OBSERVATIONS_DIR } from './observations.js';
 
 const VERSION: string = '0.1.0';
@@ -94,18 +94,16 @@ const bindHooks: () => void = (): void => {
     }
     // Гард подключается к тому событию, которое объявил сам, и гард с двумя объявлениями — к
     // обоим: настройка, где все они свалены под одно событие, половину из них не зовёт.
-    const events: Record<string, unknown[]> = {};
+    //
+    // Образец берётся у самого гарда, а не пишется звёздочкой: сверка судит и его, а настройка с
+    // чужим образцом — это ровно то расхождение, ради которого сверку и завели. Собирается она
+    // тем же куском, который пакет печатает дереву в подсказке.
+    const bindings: IHookBinding[] = [];
     for (const name of readdirSync(dir).filter((file: string): boolean => file.endsWith('.sh'))) {
         const path: string = `.claude/hooks/${name}`;
-        for (const binding of bindingsOf(readFileSync(join(root, path), 'utf8'), path)) {
-            events[binding.event] = [...(events[binding.event] ?? []), { type: 'command', command: `$CLAUDE_PROJECT_DIR/${path}` }];
-        }
+        bindings.push(...bindingsOf(readFileSync(join(root, path), 'utf8'), path));
     }
-    const hooks: Record<string, unknown> = {};
-    for (const [event, commands] of Object.entries(events)) {
-        hooks[event] = [{ matcher: '*', hooks: commands }];
-    }
-    put('.claude/settings.json', JSON.stringify({ hooks }, null, 4));
+    put('.claude/settings.json', JSON.stringify({ hooks: hooksSection(bindings) }, null, 4));
 };
 
 beforeEach((): void => {
