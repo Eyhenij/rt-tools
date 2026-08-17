@@ -1,7 +1,7 @@
 import { expect, Page, test } from '@playwright/test';
 
 import { TREES } from '../stand/stand.mjs';
-import { columnTexts, expectOnlyTree, openSection, pickTree, qa, queryOf, rowsOf, SECTION } from './support/admin';
+import { columnTexts, expectOnlyTree, openSection, pageQa, pickTree, qa, queryOf, rowsOf, SECTION } from './support/admin';
 
 /**
  * Разделы предложений и сводок — те же обещания на той же основе.
@@ -20,7 +20,7 @@ test.describe('разделы груза', () => {
         // переключатель страниц стоит на месте и называет, сколько записей показано; сами
         // страницы он прячет, пока их одна — тем же правилом, что и в разделе разборов
         await expect(qa(page, 'pagination-range')).toContainText('из 5');
-        await expect(qa(page, 'list-columns')).toBeVisible();
+        await expect(pageQa(page, 'proposals', 'columns')).toBeVisible();
 
         await pickTree(page, TREES[1].name);
 
@@ -46,7 +46,7 @@ test.describe('разделы груза', () => {
         await expect(rowsOf(page, 'summaries')).toHaveCount(2);
         await expect(qa(page, 'list-tree-filter')).toBeVisible();
         await expect(qa(page, 'pagination-range')).toContainText('из 2');
-        await expect(qa(page, 'list-columns')).toBeVisible();
+        await expect(pageQa(page, 'summaries', 'columns')).toBeVisible();
 
         const trees: string[] = await columnTexts(page, 'summaries-cell-tree');
 

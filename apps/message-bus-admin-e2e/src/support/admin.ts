@@ -21,10 +21,15 @@ export const SIGN_IN_PATH: string = '/sign-in';
 export interface ISectionMarks {
     readonly path: string;
     readonly title: string;
+    /** Короткое имя раздела: из него собраны метки его страницы — и здесь, и в разметке. */
+    readonly prefix: string;
     readonly table: string;
     readonly row: string;
     readonly details: string;
 }
+
+/** Что общая страница списка размечает своими метками, собирая их из префикса раздела. */
+export type TPageMark = 'hint' | 'columns' | 'refresh' | 'fault' | 'retry';
 
 /** Имя раздела: их три, и все три собраны одним и тем же списочным экраном. */
 export type TSectionName = 'postmortems' | 'proposals' | 'summaries';
@@ -34,6 +39,7 @@ export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.fre
     postmortems: Object.freeze({
         path: SECTIONS.postmortems,
         title: 'Разборы происшествий',
+        prefix: 'postmortems',
         table: 'postmortems-table',
         row: 'postmortems-row',
         details: 'postmortem-details-close',
@@ -41,6 +47,7 @@ export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.fre
     proposals: Object.freeze({
         path: SECTIONS.proposals,
         title: 'Предложения',
+        prefix: 'proposals',
         table: 'proposals-table',
         row: 'proposals-row',
         details: 'proposal-details-close',
@@ -48,6 +55,7 @@ export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.fre
     summaries: Object.freeze({
         path: SECTIONS.summaries,
         title: 'Сводки деревьев',
+        prefix: 'summaries',
         table: 'summaries-table',
         row: 'summaries-row',
         details: 'month-record-details-close',
@@ -57,6 +65,17 @@ export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.fre
 /** Узел по метке проверки: ею размечены все места, за которые набор держится. */
 export function qa(page: Page, id: string): Locator {
     return page.locator(`[qa-dataid="${id}"]`);
+}
+
+/**
+ * Метка на общей странице раздела.
+ *
+ * Страница собирает их из префикса, который называет экран: одинаковые на трёх разделах, они не
+ * отвечали бы на вопрос, чей элемент нашла проверка, — спека, открывшая не тот раздел, находила
+ * бы тот же якорь и проходила зелёной.
+ */
+export function pageQa(page: Page, section: TSectionName, mark: TPageMark): Locator {
+    return qa(page, `${SECTION[section].prefix}-${mark}`);
 }
 
 /** Строки списка раздела. */

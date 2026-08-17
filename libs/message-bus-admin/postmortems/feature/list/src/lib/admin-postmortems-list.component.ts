@@ -11,8 +11,13 @@ import {
 } from '@angular/cdk/table';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { AdminListScreenBase } from '@rt/message-bus-admin/common/core/feature';
-import { AdminListPageComponent, AdminMomentPipe } from '@rt/message-bus-admin/common/core/ui';
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
+import {
+    AdminListPageComponent,
+    AdminListToolbarLeftDirective,
+    AdminMomentPipe,
+    AdminTreeFilterComponent,
+} from '@rt/message-bus-admin/common/core/ui';
+import { adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
 import { PostmortemsStore } from '@rt/message-bus-admin/postmortems/data-access';
 import { IPostmortem, POSTMORTEMS_COLUMNS, POSTMORTEMS_SORTABLE, POSTMORTEMS_TABLE_ID } from '@rt/message-bus-admin/postmortems/util';
 import { IRtTable, RtTableComponent, RtTableRowDirective, RtTableSortHeaderComponent } from '@rt-tools/ui-kit-v2';
@@ -31,7 +36,11 @@ const BEM_BLOCK: string = 'admin-postmortems-list';
  * страницы.
  *
  * Таблица объявлена здесь, а не внутри вида: столбцы она собирает собственным запросом по
- * содержимому, и через посредника они до неё не доходят.
+ * содержимому, и через посредника они до неё не доходят. Отбор по дереву — тем же порядком:
+ * экран кладёт его в левый слот тулбара, а страница о видах отбора не знает ничего.
+ *
+ * Хостом страницы экран называет себя одной строкой провайдера; отвечает на спрошенное общая
+ * основа, и своего ответа он не пишет ни одного.
  */
 @Component({
     selector: 'admin-postmortems-list',
@@ -52,6 +61,8 @@ const BEM_BLOCK: string = 'admin-postmortems-list';
 
         // components
         AdminListPageComponent,
+        AdminListToolbarLeftDirective,
+        AdminTreeFilterComponent,
         RtTableComponent,
         RtTableRowDirective,
         RtTableSortHeaderComponent,
@@ -59,10 +70,12 @@ const BEM_BLOCK: string = 'admin-postmortems-list';
         // pipes
         AdminMomentPipe,
     ],
+    providers: [provideAdminListHost((): typeof AdminPostmortemsListComponent => AdminPostmortemsListComponent)],
     host: { class: BEM_BLOCK },
 })
 export class AdminPostmortemsListComponent extends AdminListScreenBase<IPostmortem.Short.State, IPostmortem.Short.Api> {
     protected readonly title: string = adminLabel('sectionPostmortems');
+    protected readonly hint: string = adminLabel('hintPostmortems');
     protected readonly columns: readonly IRtTable.ColumnConfig[] = POSTMORTEMS_COLUMNS;
     protected readonly tableId: string = POSTMORTEMS_TABLE_ID;
 

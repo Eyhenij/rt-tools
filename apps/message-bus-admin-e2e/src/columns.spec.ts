@@ -1,6 +1,6 @@
 import { expect, Locator, Page, test } from '@playwright/test';
 
-import { openSection, qa, SECTION } from './support/admin';
+import { openSection, pageQa, qa, SECTION } from './support/admin';
 
 /**
  * Настройка столбцов: убранный столбец переживает уход в другой раздел и возвращение.
@@ -16,7 +16,7 @@ function settingsRow(page: Page, key: string): Locator {
 
 /** Убрать столбец и сохранить выбор. */
 async function hideColumn(page: Page, key: string): Promise<void> {
-    await qa(page, 'list-columns').click();
+    await pageQa(page, 'postmortems', 'columns').click();
     await expect(qa(page, 'table-settings-list')).toBeVisible();
 
     await settingsRow(page, key).locator('[qa-dataid="table-settings-toggle"]').click();
@@ -48,7 +48,7 @@ test.describe('настройка столбцов', () => {
         await expect(qa(page, 'postmortems-cell-file').first()).toBeVisible();
 
         // и обратно: столбец возвращается тем же путём, каким был убран
-        await qa(page, 'list-columns').click();
+        await pageQa(page, 'postmortems', 'columns').click();
         await settingsRow(page, 'updatedAt').locator('[qa-dataid="table-settings-toggle"]').click();
         await qa(page, 'table-settings-save').click();
 
