@@ -280,8 +280,37 @@ fixture_commit_as "$MERGED_SIG" "$BOT_LOGIN" "$BOT_MAIL" src/new.ts 'export cons
 sig "SC-AK-182 — судится вклад ветки, а не вся история" "$MERGED_SIG" 'git push origin RT-71-merged' PASS
 rm -rf "$MERGED_SIG"
 
+# --- гард проверок перед пушем -----------------------------------------------------------------
+# SC-AK-258, SC-AK-259. Пуш здесь идёт с ключами между `git` и `push` — помощник учётных данных
+# и заголовок запроса, — и подстрокой «git push» его не поймать. Пока признаком была подстрока,
+# весь набор гейта на таком пуше не гонялся вовсе, а молчание гарда читалось как «зелено»:
+# наведённое расхождение раскладки прошло в удалённое дерево, не задев ни одной проверки.
+gate() {
+    local label="$1" dir="$2" cmd="$3" want="$4" out
+    out="$(CLAUDE_PROJECT_DIR="$dir" input_cmd "$cmd" Bash "$dir" \
+        | CLAUDE_PROJECT_DIR="$dir" "$HOOKS/git-guard-push-tests.sh" 2>/dev/null \
+        | jq -r '.hookSpecificOutput.permissionDecision // "PASS"' 2>/dev/null)"
+    report "$label" "${out:-PASS}" "$want"
+}
+
+RED_GATE="$(fixture_repo RT-72-gate)"
+mkdir -p "$RED_GATE/.claude/rt-kit"
+printf 'rt_push_checks() { printf "%%s\\n" false; }\n' > "$RED_GATE/.claude/rt-kit/project.sh"
+gate "SC-AK-258 — красная проверка отбивает пуш" "$RED_GATE" 'git push origin RT-72-gate' deny
+gate "SC-AK-259 — пуш с ключами между командой и подкомандой узнаётся" "$RED_GATE" \
+    'git -c credential.helper= -c http.extraheader="AUTHORIZATION: basic x" push -u origin RT-72-gate' deny
+gate "SC-AK-259 — пуш за разделителем узнаётся" "$RED_GATE" \
+    'TOKEN=$(cat t) && git -c http.extraheader="AUTHORIZATION: basic x" push origin RT-72-gate' deny
+gate "пробный пуш набора не гоняет" "$RED_GATE" 'git push --dry-run origin RT-72-gate' PASS
+gate "чтение истории пушем не считается" "$RED_GATE" 'git log --oneline -5' PASS
+gate "слово push без команды git пушем не считается" "$RED_GATE" 'npm run push' PASS
+
+printf 'rt_push_checks() { printf "%%s\\n" true; }\n' > "$RED_GATE/.claude/rt-kit/project.sh"
+gate "зелёный набор пуш не задерживает" "$RED_GATE" 'git push origin RT-72-gate' PASS
+rm -rf "$RED_GATE"
+
 # --- отказ в пользу работы ---------------------------------------------------------------------
-for hook in git-guard-main.sh git-guard-delivery.sh; do
+for hook in git-guard-main.sh git-guard-delivery.sh git-guard-push-tests.sh; do
     printf '' | "$HOOKS/$hook" >/dev/null 2>&1
     report "пустой вход пропускается: $hook" "код:$?" "код:0"
     printf 'не json' | "$HOOKS/$hook" >/dev/null 2>&1
