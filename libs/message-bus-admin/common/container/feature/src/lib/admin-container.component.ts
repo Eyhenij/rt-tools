@@ -35,6 +35,9 @@ const BEM_BLOCK: string = 'admin-container';
  */
 @Component({
     selector: 'admin-container',
+    templateUrl: './admin-container.component.html',
+    styleUrl: './admin-container.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         RouterOutlet,
         RtContainerComponent,
@@ -45,9 +48,6 @@ const BEM_BLOCK: string = 'admin-container';
         RtHeaderComponent,
         RtSectionNavComponent,
     ],
-    templateUrl: './admin-container.component.html',
-    styleUrl: './admin-container.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush,
     host: { class: BEM_BLOCK },
 })
 export class AdminContainerComponent {

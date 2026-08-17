@@ -8,6 +8,10 @@
 `@rt-tools/ui-kit-v2`: он ведёт таблицу, тулбар, переключатель страниц и настройку столбцов, и
 нарушить их правилами проекта нечем.
 
+Говорит раздел с общей страницей слотами и токеном хоста: отбор и свои кнопки он кладёт в слоты,
+а чтение, страницу, её размер и настройку столбцов страница спрашивает у него самого. Ни одного
+события у страницы нет.
+
 ## Как это называется здесь
 
 | В правиле                                       | Здесь                                                                                           |
@@ -18,6 +22,9 @@
 | `<префикс>TableRow`                             | `rtTableRow`                                                                                    |
 | `[<префикс>TableRowActionsRowType]`             | `[rtTableRowActionsRowType]` на `ng-template[rtTableRowActions]`                                |
 | `<префикс>-page`                                | `admin-list-page` в общем слое админки: заголовок, тулбар, место таблицы, отказ и страницы      |
+| слоты общей страницы                            | `adminListToolbarLeft`, `adminListToolbarRight`, `adminListAboveTable`                          |
+| хост списочной страницы                         | токен `ADMIN_LIST_HOST`, модель `IAdminListHost`, провайдер `provideAdminListHost`              |
+| префикс якорей раздела                          | вход `qaPrefix` у `admin-list-page`: `postmortems`, `proposals`, `summaries`                    |
 | `IList.Query.State`                             | `IListState<T, M>` из `@rt-tools/utils` — `pageModel`, `sortModel`, `filterModel`, `searchTerm` |
 | панель настройки столбцов                       | `rt-table-settings-aside`; ключ хранения собирает сама таблица из `[tableId]`                   |
 
@@ -40,6 +47,7 @@
 | общая механика экрана    | `libs/message-bus-admin/common/core/feature/src/lib/admin-list-screen.base.ts`                                      |
 | общая основа стора       | `libs/message-bus-admin/common/core/data-access/src/lib/admin-list-store.base.ts`                                   |
 | выборка в адресе         | `libs/message-bus-admin/common/core/util/src/lib/list-query.ts`                                                     |
+| токен хоста страницы     | `libs/message-bus-admin/common/core/util/src/lib/list-host.ts`                                                      |
 | отбор по дереву          | `libs/message-bus-admin/common/core/ui/src/lib/tree-filter/admin-tree-filter.component.ts`                          |
 | сквозные спеки списков   | `apps/message-bus-admin-e2e/src/postmortems-list.spec.ts`, `apps/message-bus-admin-e2e/src/list-states.spec.ts`     |
 
@@ -51,7 +59,7 @@
 
 | Статья                                                                          | Где исполняется                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Страница собирается общим компонентом страницы списка, а не своей разметкой.    | `libs/message-bus-admin/common/core/ui/src/lib/list-page/admin-list-page.component.ts:AdminListPageComponent` — заголовок, тулбар с отбором, место под таблицу, отказ с повтором и переключатель страниц; все три раздела кладут в него только свою таблицу.                                                                                                                                                          |
+| Страница собирается общим компонентом страницы списка, а не своей разметкой.    | `libs/message-bus-admin/common/core/ui/src/lib/list-page/admin-list-page.component.ts:AdminListPageComponent` — заголовок с подсказкой, тулбар со слотами, место под таблицу, отказ с повтором и переключатель страниц; своего у раздела остаются таблица и то, что он кладёт в слоты.                                                                                                                                |
 | Механика экрана берётся из общей основы списочного экрана, а не пишется заново. | `libs/message-bus-admin/common/core/feature/src/lib/admin-list-screen.base.ts:AdminListScreenBase` — выборка из адреса, чтение, порядок, отбор, уход в панель и открытие настройки столбцов; стор раздела наследует `libs/message-bus-admin/common/core/data-access/src/lib/admin-list-store.base.ts:AdminListStoreBase`.                                                                                             |
 | Таблицу экран объявляет сам и кладёт внутрь шаблона.                            | `projects/ui-kit-v2/src/lib/components/table/rt-table.component.ts:columnDefs` — `contentChildren(CdkColumnDef)`: столбцы таблица собирает запросом по содержимому, и через посредника они до неё не доходят.                                                                                                                                                                                                         |
 | Список собирается `<префикс>-table`, а не своей разметкой.                      | `projects/ui-kit-v2/src/lib/components/table/rt-table.component.ts:RtTableComponent` — скелетоны, пустое состояние, карточки и настройка столбцов её входы: `[loading]`, `[emptyMessage]`, `[cards]`, `[columnsConfig]`.                                                                                                                                                                                              |
@@ -75,6 +83,18 @@
   (`ERtStorageKeys.TableColumnsPrefix`). Своего ключа экран не заводит.
 - Типы выборки лежат в `@rt-tools/utils` и опубликованы наружу: их же читает `rt-pagination`.
   Второго набора этих типов в дереве нет, и заводить его в админке нельзя.
+- Статьи раздела «Чем экран говорит с общей страницей списка» дерево дописало к правилу
+  надстройкой, и сверка привязок их не видит: она читает пункты одного раздела правила, а
+  надстроечный раздел — второй. Привязки этих статей поэтому здесь, строками:
+    - слоты и их директивы, подсказка, якоря от префикса —
+      `libs/message-bus-admin/common/core/ui/src/lib/list-page/admin-list-page.component.ts`;
+      узлы слота, подсказки и места над таблицей стоят под `@if` в шаблоне рядом;
+    - токен хоста, модель спрошенного и провайдер —
+      `libs/message-bus-admin/common/core/util/src/lib/list-host.ts`; отвечает на спрошенное
+      `libs/message-bus-admin/common/core/feature/src/lib/admin-list-screen.base.ts`;
+    - отбор в левом слоте — шаблоны трёх экранов в `libs/message-bus-admin/*/feature/list/`;
+    - якоря страницы в сквозном наборе — `apps/message-bus-admin-e2e/src/support/admin.ts`,
+      помощник `pageQa`.
 
 ## Чем это проверяется
 
