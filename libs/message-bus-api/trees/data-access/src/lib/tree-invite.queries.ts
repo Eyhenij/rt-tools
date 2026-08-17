@@ -22,6 +22,31 @@ export interface IStoredInvite extends ITreeInviteRecord {
     readonly id: string;
 }
 
+/** Что приезжает на погашение: какое приглашение, каким именем и признаком заводится дерево. */
+export interface IRedemption {
+    readonly inviteId: string;
+    readonly name: string;
+    readonly slug: string;
+    /** Хеш первого токена дерева: сам токен уходит ответом и в хранилище не попадает. */
+    readonly hash: string;
+}
+
+/**
+ * Что нужно от клиента внутри сделки.
+ *
+ * Объявлено здесь, а не взято типом клиента: внутри сделки клиент другой — у него нет ни
+ * подключения, ни вложенных сделок, — и подпись службы врала бы о том, что там доступно.
+ */
+interface ITransactionClient {
+    readonly treeInvite: {
+        updateMany(args: Record<string, unknown>): Promise<{ count: number }>;
+        update(args: Record<string, unknown>): Promise<unknown>;
+    };
+    readonly tree: {
+        create(args: Record<string, unknown>): Promise<{ id: string }>;
+    };
+}
+
 /** Строка хранилища так, как её читают отсюда: кода в ней нет — в базе его нет тоже. */
 interface IInviteRow {
     readonly id: string;
@@ -109,6 +134,49 @@ export async function findLiveInviteByName(prisma: PrismaService, name: string):
  */
 export async function revokeInvite(prisma: PrismaService, id: string, at: Date): Promise<void> {
     await prisma.treeInvite.update({ where: { id }, data: { revokedAt: at, activeName: null } });
+}
+
+/**
+ * Погашение приглашения и заведение дерева с его первым токеном — одной сделкой.
+ *
+ * Погашение идёт условной правкой: строка правится только пока она не погашена и не отозвана, и
+ * ответ хранилища говорит, сколько строк сошлось. Двум обращениям, пришедшим разом, условие
+ * достаётся одному: между проверкой чтением и выдачей стоит сеть, и второе успело бы пройти
+ * проверку до того, как первое погасило код.
+ *
+ * Пусто в ответе означает «приглашение уже не годно» — и второму обращению отвечают тем же
+ * отказом, что и на ненайденный код.
+ */
+export async function redeemInvite(prisma: PrismaService, redemption: IRedemption, at: Date): Promise<boolean> {
+    try {
+        return await prisma.$transaction(async (tx: ITransactionClient): Promise<boolean> => {
+            const taken: { count: number } = await tx.treeInvite.updateMany({
+                where: { id: redemption.inviteId, redeemedAt: null, revokedAt: null },
+                data: { redeemedAt: at, activeName: null },
+            });
+
+            if (taken.count !== 1) {
+                return false;
+            }
+
+            const tree: { id: string } = await tx.tree.create({
+                data: {
+                    name: redemption.name,
+                    slug: redemption.slug,
+                    tokens: { create: { hash: redemption.hash } },
+                },
+                select: { id: true },
+            });
+
+            await tx.treeInvite.update({ where: { id: redemption.inviteId }, data: { treeId: tree.id } });
+
+            return true;
+        });
+    } catch {
+        // Признак или имя заняты — уникальность держит хранилище, и сделка откатилась целиком:
+        // приглашение осталось годным, а дерево не завелось. Вызывающий отвечает отказом.
+        return false;
+    }
 }
 
 /** Все приглашения, свежие сверху: список читает человек, и последнее выданное ему нужнее. */
