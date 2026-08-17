@@ -66,8 +66,9 @@
 - Порядок свойств держит `stylelint-config-idiomatic-order`, форматирование —
   `stylelint-prettier`. Комментарии-выключатели линтера стилей здесь не ставятся.
 - Набор `.c-button` снят с употребления вместе со своим файлом; действующий —
-  `.rtui-btn` в `projects/ui-kit/src/styles/components/_rtui_button.scss`, карта перехода — в
-  `projects/ui-kit/src/styles/TOKENS.md`.
+  `.rtui-btn`, и его правила лежат частями в `projects/ui-kit/src/styles/components/button/`, а
+  `projects/ui-kit/src/styles/components/_rtui_button.scss` остался входом и задаёт им порядок
+  каскада. Карта перехода — в `projects/ui-kit/src/styles/TOKENS.md`.
 
 ## Чем это проверяется
 
