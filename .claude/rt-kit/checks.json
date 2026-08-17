@@ -33,7 +33,7 @@
     ],
     "importScope": "@rt",
     "libPrefix": "admin",
-    "noDependencyTags": [],
+    "noDependencyTags": ["scope:message-bus-common"],
     "barrelFiles": ["index.ts", "public-api.ts"],
     "pushGate": {
         "pipelineFile": ".github/workflows/ci.yml",

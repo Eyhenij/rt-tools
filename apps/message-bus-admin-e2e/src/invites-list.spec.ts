@@ -37,6 +37,15 @@ test.describe('раздел приглашений', () => {
         await expect(qa(page, 'list-tree-filter')).toHaveCount(0);
     });
 
+    test('SC-MB-134 — раздел без своего отбора левого слота тулбара не занимает', async ({ page }: { page: Page }) => {
+        await openSection(page, 'invites');
+
+        // сперва положительное: тулбар раздела найден, и правая его часть на месте
+        await expect(pageQa(page, 'invites', 'refresh')).toBeVisible();
+        // и только потом отрицательное: пустой половины тулбара на экране нет вовсе
+        await expect(page.locator('[qa-dataid="toolbar-bar"][data-slot="left"]')).toHaveCount(0);
+    });
+
     test('SC-MB-128 — погашенное приглашение остаётся в списке и называет заведённое им дерево', async ({ page }: { page: Page }) => {
         await openSection(page, 'invites');
 

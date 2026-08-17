@@ -4,7 +4,7 @@ kind: pattern
 rule: lists
 description: Паттерн правила lists. Брать при сборке или правке списочного экрана админки — готовый порядок блоков, разметка <префикс>-table, клик по строке, меню строки с колонкой действий и предикатом строки, сортируемый заголовок, слоты тулбара, тост отказа.
 ---
-<!-- rt-kit v0.8.3 · patterns/admin-lists-screen.md · 176ad22ad462 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.8.3 · patterns/admin-lists-screen.md · 5e60182faf52 · правится надстройкой, не здесь -->
 
 # Собрать списочный экран
 
@@ -160,6 +160,7 @@ npx nx build admin
 export class AdminProposalsListComponent extends AdminListScreenBase<IProposal.Short.State, IProposal.Short.Api> {
     protected readonly title: string = adminLabel('sectionProposals');
     protected readonly hint: string = adminLabel('hintProposals');
+    protected readonly qaPrefix: string = 'proposals';
     /* стор, столбцы, поля порядка и признак таблицы — как и было */
 }
 ```
@@ -169,12 +170,12 @@ export class AdminProposalsListComponent extends AdminListScreenBase<IProposal.S
 необъявленному.
 
 ```html
-<admin-list-page qaPrefix="proposals" [hint]="hint" [title]="title">
+<admin-list-page [hint]="hint" [qaPrefix]="qaPrefix" [title]="title">
     <ng-template adminListToolbarLeft>
         <admin-tree-filter [choices]="choices()" [tree]="query().tree" (treeChange)="changeTree($event)" />
     </ng-template>
 
-    <table #rowsTable="rtTable" rt-table clickable qa-dataid="proposals-table" [dataSource]="rows()"><!-- … --></table>
+    <rt-table #rowsTable="rtTable" clickable [attr.qa-dataid]="qaTable()" [dataSource]="rows()"><!-- … --></rt-table>
 </admin-list-page>
 ```
 
@@ -183,7 +184,37 @@ export class AdminProposalsListComponent extends AdminListScreenBase<IProposal.S
 экране не появляется вовсе, и высоты он не занимает: замер на трёх разделах даёт промежуток
 между тулбаром и таблицей ровно в шаг колонки страницы.
 
-`qaPrefix` — то же слово, что у таблицы раздела: из него страница собирает `<префикс>-hint`,
+**Таблица объявляется элементом кита, а не атрибутом на своей разметке.** У кита селектор один
+на две формы, и обе собираются: `<table rt-table>` даёт табличную семантику самим тегом, но
+скелетоны, оверлей чтения и карточки узкого экрана он рисует узлами, которые детьми `<table>`
+не бывают, — на этой форме их не видно вовсе. Элементная форма семантику получает ролью,
+которую кит ставит сам: `role="table"` на хосте, роли строк и ячеек — от CDK.
+
+**Якоря раздела собираются из его префикса, а не пишутся строкой у каждого элемента.** Префикс
+раздел называет один раз полем `qaPrefix`, из него общая основа даёт `qaTable()` и `qaRow()`, а
+ячейки собираются на месте — `[attr.qa-dataid]="qaPrefix + '-cell-tree'"`. Строки, написанные
+поимённо, расходятся с префиксом молча: спека, открывшая соседний раздел, находит по ним свой же
+якорь и проходит зелёной.
+
+**Пустой список показывает вид пустоты, а не фразу на месте строк.** Вид даёт кит и только
+когда чтение кончилось: значок, заголовок и вторая строка о том, откуда записи приходят. Двумя
+строками, а не одной через двоеточие: кит рисует их разными узлами и разным начертанием.
+
+```typescript
+/* в общей основе — вторая строка одна на разделы груза, и отбор её меняет */
+protected readonly emptyDescription: Signal<string> = computed(() =>
+    adminLabel(this.query().tree === '' ? 'listEmptyFrom' : 'listEmptyByFilterFrom'),
+);
+
+/* раздел, которому она не подходит, перебивает её своей */
+protected override readonly emptyDescription: Signal<string> = computed(() => adminLabel('listEmptyInvitesFrom'));
+```
+
+Заголовок вида — вход `[emptyMessage]`, вторая строка — `[emptyDescription]`, значок —
+`[emptyIcon]`. Скелетоны идущего чтения и тост отказа остаются как были: три состояния —
+пусто, идёт чтение, отказало — на экране различимы, и одно другим не подменяется.
+
+Тем же словом префикс знает страница: из него она собирает `<префикс>-hint`,
 `<префикс>-columns`, `<префикс>-refresh`, `<префикс>-fault` и `<префикс>-retry`. Сквозной набор
 берёт их помощником `pageQa`, а не строкой на месте.
 
@@ -195,5 +226,8 @@ export class AdminProposalsListComponent extends AdminListScreenBase<IProposal.S
   и объявляется оно один раз в модели хоста.
 - Ответ хоста, написанный в самом экране, — на всё отвечает общая основа списочного экрана;
   экран только указывает на себя провайдером.
-- Якорь `list-*` на общей странице — он одинаков у трёх разделов, и спека, открывшая не тот
+- Якорь `list-*` на общей странице — он одинаков у всех разделов, и спека, открывшая не тот
   раздел, находит его же.
+- Фраза «записей нет», написанная в шаблоне под `@if` по длине списка, — экран, собранный так,
+  показывает её и на идущем чтении, и после отказа: пустоту от них отличает кит, а не длина
+  массива.

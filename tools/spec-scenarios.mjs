@@ -1,9 +1,21 @@
-// rt-kit v0.8.3 · checks/spec-scenarios.mjs · 313fc73b7187 · правится надстройкой, не здесь
+// rt-kit v0.8.3 · checks/spec-scenarios.mjs · e7c600e9aa78 · правится надстройкой, не здесь
 /**
  * Сценарии домена и уровень их привязки: что сценарий обещает, каким тестом это покрыто и не
  * выключен ли тест переменной окружения.
  */
-import { ACTOR, E2E_ROOTS, PARTIAL, PERCEIVES, PROMISE, SCENARIO_HEADING, SCENARIO_REFERENCE, TEST_ROOTS, UNCOVERED, read, walk } from './spec-common.mjs';
+import {
+    ACTOR,
+    E2E_ROOTS,
+    PARTIAL,
+    PERCEIVES,
+    PROMISE,
+    SCENARIO_HEADING,
+    SCENARIO_REFERENCE,
+    TEST_ROOTS,
+    UNCOVERED,
+    read,
+    walk,
+} from './spec-common.mjs';
 
 // ── 4. Сценарии и уровень привязки ────────────────────────────────────────────
 

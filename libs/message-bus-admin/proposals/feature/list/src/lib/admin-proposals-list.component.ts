@@ -78,6 +78,7 @@ export class AdminProposalsListComponent extends AdminListScreenBase<IProposal.S
     protected readonly hint: string = adminLabel('hintProposals');
     protected readonly columns: readonly IRtTable.ColumnConfig[] = PROPOSALS_COLUMNS;
     protected readonly tableId: string = PROPOSALS_TABLE_ID;
+    protected readonly qaPrefix: string = 'proposals';
 
     protected readonly store: ProposalsStore = inject(ProposalsStore);
     protected readonly sortable: readonly string[] = PROPOSALS_SORTABLE;

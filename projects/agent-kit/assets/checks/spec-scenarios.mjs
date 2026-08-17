@@ -2,7 +2,19 @@
  * Сценарии домена и уровень их привязки: что сценарий обещает, каким тестом это покрыто и не
  * выключен ли тест переменной окружения.
  */
-import { ACTOR, E2E_ROOTS, PARTIAL, PERCEIVES, PROMISE, SCENARIO_HEADING, SCENARIO_REFERENCE, TEST_ROOTS, UNCOVERED, read, walk } from './spec-common.mjs';
+import {
+    ACTOR,
+    E2E_ROOTS,
+    PARTIAL,
+    PERCEIVES,
+    PROMISE,
+    SCENARIO_HEADING,
+    SCENARIO_REFERENCE,
+    TEST_ROOTS,
+    UNCOVERED,
+    read,
+    walk,
+} from './spec-common.mjs';
 
 // ── 4. Сценарии и уровень привязки ────────────────────────────────────────────
 
