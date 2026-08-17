@@ -1,48 +1,26 @@
+import ngTemplate from '@angular-eslint/eslint-plugin-template';
+import ngParser from '@angular-eslint/template-parser';
 import nx from '@nx/eslint-plugin';
+import playwright from 'eslint-plugin-playwright';
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import sonarjs from 'eslint-plugin-sonarjs';
 
 import { backendConfig } from './eslint/backend.config.mjs';
+import { baseTemplateConfig, baseTypeScriptConfig } from './eslint/base.config.mjs';
 import { allBoundaries } from './eslint/boundaries/index.mjs';
-import rt from './tools/lint-rules/index.cjs';
+
+// Все правила eslint-plugin-sonarjs на максимально строгом уровне.
+// Динамическая сборка из плагина — переживёт минорные апдейты без правки конфига.
+const sonarjsStrictRules = Object.fromEntries(Object.keys(sonarjs.rules).map((ruleName) => [`sonarjs/${ruleName}`, 'error']));
 
 export default [
-    {
-        ignores: [
-            '**/.angular/**',
-            '**/node_modules/**',
-            '**/dist/**',
-            '**/tmp/**',
-            '**/coverage/**',
-            '**/test-setup.ts',
-            '**/jest.config.js',
-            '**/jest.config.ts',
-            '**/jest.preset.js',
-            '**/jest.setup.js',
-            '**/karma.conf.js',
-            '**/protractor.conf.js',
-            '**/.storybook',
-            '**/vitest.config.*.timestamp*',
-        ],
-    },
-
-    // Nx flat presets — these wire angular-eslint v22 (flat) for TS + templates,
-    // replacing the removed legacy `plugin:@nx/angular` / `plugin:@angular-eslint/recommended` configs.
-    ...nx.configs['flat/base'],
-    ...nx.configs['flat/typescript'],
-    ...nx.configs['flat/javascript'],
-    ...nx.configs['flat/angular'],
-    ...nx.configs['flat/angular-template'],
-
+    eslintPluginPrettierRecommended,
+    baseTypeScriptConfig,
     {
         files: ['**/*.ts'],
-        languageOptions: {
-            parserOptions: {
-                project: ['tsconfig.base.json', 'tsconfig.json'],
-            },
+        plugins: {
+            '@nx': nx,
         },
-    },
-
-    {
-        files: ['**/*.ts', '**/*.js'],
         rules: {
             '@nx/enforce-module-boundaries': [
                 'error',
@@ -52,7 +30,7 @@ export default [
                     // её у источника, а не заводит копию. Тегом это не выражается — у
                     // публикуемых пакетов меток нет вовсе, и заведённая ради одного файла метка
                     // стала бы вторым ответом на вопрос о направлении между пакетами.
-                    allow: ['@rt-tools/agent-kit/cargo'],
+                    allow: ['@rt-tools/agent-kit/cargo', '^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$'],
                     // Рёбра живут файлами доменов в `eslint/boundaries/domains`, а сюда приезжают
                     // сводом: проверка раскладки читает их модулем и требует, чтобы тег либы был
                     // объявлен там ровно один раз.
@@ -61,178 +39,186 @@ export default [
             ],
         },
     },
-
     {
         files: ['**/*.ts'],
+        ignores: ['**/*.spec.ts', '**/*.test.ts'],
+        plugins: {
+            '@nx': nx,
+        },
         rules: {
-            'semi-spacing': [
+            '@nx/workspace-require-take-until-destroyed': 'error',
+            '@nx/workspace-require-host-bem-block': 'error',
+            '@nx/workspace-require-mod-directive-import': 'error',
+            '@nx/workspace-require-source-suffix-for-subjects': 'error',
+            '@nx/workspace-no-subscribe-in-methods': 'error',
+            '@nx/workspace-require-list-store-base': 'error',
+            // Двухступенчатое приведение отключает проверку типа намеренно:
+            // одноступенчатое компилятор ещё сверяет на совместимость, двойное — нет.
+            // Тесты исключены этим же блоком: рукописный двойник базы — принятый здесь
+            // приём, и запрет пришлось бы обходить в каждом из них.
+            'no-restricted-syntax': [
                 'error',
                 {
-                    before: false,
-                    after: true,
+                    selector: 'TSAsExpression > TSAsExpression[typeAnnotation.type="TSUnknownKeyword"]',
+                    message:
+                        'Приведение через `as unknown as` отключает проверку типа: объяви честный тип, прочитай поле через `Reflect.get` или сузь его проверкой. Место, где иначе нельзя, помечается точечным отключением с причиной.',
                 },
             ],
-            'arrow-spacing': [
-                'error',
-                {
-                    before: true,
-                    after: true,
-                },
-            ],
-            'space-infix-ops': ['error'],
-            'semi-style': ['error', 'last'],
-            semi: ['error', 'always'],
-            // `avoidEscape` keeps this from contradicting Prettier: with `singleQuote: true` Prettier
-            // still emits double quotes around a string that contains an apostrophe, because that is
-            // the form with fewer escapes.
-            quotes: ['error', 'single', { avoidEscape: true }],
-            'no-bitwise': ['error'],
-            'template-curly-spacing': ['error', 'never'],
-            'object-curly-spacing': ['error', 'always'],
-            'spaced-comment': ['error', 'always'],
-            'prefer-const': ['error'],
-            'no-console': ['error'],
-            'no-debugger': ['error'],
-            'no-var': ['error'],
-            'no-unused-expressions': ['warn'],
-            'no-undef-init': ['error'],
-            'no-eval': ['error'],
-            'no-throw-literal': 'off',
-            'no-fallthrough': ['error'],
-            'no-invalid-this': ['error'],
-            'no-extra-boolean-cas': 'off',
-            'no-multiple-empty-lines': ['error'],
-            'constructor-super': ['error'],
-            'no-duplicate-case': ['error'],
-            'no-cond-assign': ['error'],
-            'no-extra-boolean-cast': 'off',
-            'dot-notation': 'off',
-            '@typescript-eslint/dot-notation': ['warn'],
-            '@typescript-eslint/no-empty-interface': 'off',
-            '@typescript-eslint/no-non-null-assertion': 'off',
-            '@typescript-eslint/no-inferrable-types': 'off',
-            '@typescript-eslint/no-namespace': 'off',
-            '@typescript-eslint/no-unused-vars': ['error'],
-            '@typescript-eslint/no-use-before-define': ['error'],
-            '@typescript-eslint/no-unnecessary-type-assertion': ['error'],
-            '@typescript-eslint/consistent-indexed-object-style': 'off',
-            '@typescript-eslint/explicit-function-return-type': ['error'],
-            '@typescript-eslint/prefer-function-type': ['error'],
-            '@typescript-eslint/explicit-member-accessibility': [
-                'error',
-                {
-                    accessibility: 'explicit',
-                    overrides: {
-                        accessors: 'explicit',
-                        constructors: 'no-public',
-                        methods: 'explicit',
-                        properties: 'explicit',
-                        parameterProperties: 'explicit',
-                    },
-                },
-            ],
-            '@typescript-eslint/typedef': [
-                'error',
-                {
-                    // 'callSignature': true,
-                    parameter: true,
-                    arrowParameter: true,
-                    propertyDeclaration: true,
-                    variableDeclaration: true,
-                    memberVariableDeclaration: true,
-                    objectDestructuring: false,
-                    arrayDestructuring: true,
-                },
-            ],
-            '@typescript-eslint/type-annotation-spacing': ['off'],
-            '@typescript-eslint/member-ordering': [
-                'error',
-                {
-                    default: {
-                        memberTypes: [
-                            'private-instance-field',
-                            'private-static-field',
-                            'protected-instance-field',
-                            'protected-static-field',
-                            'protected-abstract-field',
-                            'public-instance-field',
-                            'public-abstract-field',
-                            'public-static-field',
-                            'signature',
-                            'public-constructor',
-                            'protected-constructor',
-                            'private-constructor',
-                            'public-instance-method',
-                            'public-static-method',
-                            'public-abstract-method',
-                            'protected-instance-method',
-                            'protected-static-method',
-                            'protected-abstract-method',
-                            'private-static-method',
-                            'private-instance-method',
-                        ],
-                    },
-                },
-            ],
-            '@angular-eslint/no-output-native': ['error'],
-            '@angular-eslint/no-output-on-prefix': ['error'],
-            '@angular-eslint/no-output-rename': ['error'],
-            '@angular-eslint/no-input-rename': ['error'],
-            '@angular-eslint/prefer-output-readonly': ['error'],
-            // Newly in angular-eslint v22 tsRecommended; 3 pre-existing components violate it.
-            // Non-blocking during the framework bump — adopt OnPush as a separate follow-up.
-            '@angular-eslint/prefer-on-push-component-change-detection': 'warn',
         },
     },
-
     {
-        files: ['**/*.html'],
-        plugins: { rt },
+        files: ['**/*.ts'],
+        plugins: {
+            '@nx': nx,
+        },
         rules: {
-            '@angular-eslint/template/banana-in-box': ['error'],
-            '@angular-eslint/template/cyclomatic-complexity': [
+            '@nx/workspace-require-interface-prefix': 'error',
+            '@nx/workspace-require-type-prefix': 'error',
+            '@nx/workspace-require-enum-prefix': 'error',
+            '@nx/workspace-require-suffix-declaration': 'error',
+        },
+    },
+    {
+        // SonarJS — все правила на error. Исключения: spec/test (тесты намеренно
+        // дублируют код для читаемости), tools/** (нативный node, не application
+        // code) и сами конфиги линтеров.
+        files: ['**/*.ts', '**/*.js'],
+        ignores: [
+            '**/*.spec.ts',
+            '**/*.test.ts',
+            'tools/**',
+            'eslint.config.mjs',
+            'eslint/**',
+            '**/vitest.config.*',
+            '**/playwright.config.*',
+            '**/jest.config.*',
+            '**/.storybook/**',
+        ],
+        plugins: {
+            sonarjs,
+        },
+        rules: {
+            ...sonarjsStrictRules,
+            // Default headerFormat="" даёт false-positive для каждого TS-файла
+            // с import'ом на первой строке. File-header convention в репо нет.
+            'sonarjs/file-header': 'off',
+            'sonarjs/declarations-in-global-scope': 'off',
+            // nx-монорепо: deps декларируются в корневом package.json, не per-lib;
+            // правило не понимает workspace-resolution → ложные срабатывания.
+            'sonarjs/no-implicit-dependencies': 'off',
+            // Barrel-exports (`export *` в index.ts) — стандартный nx-паттерн.
+            'sonarjs/no-wildcard-import': 'off',
+        },
+    },
+    {
+        // Node-контексты: приёмник (NestJS), обвязка сборки и конфиги.
+        // Здесь легитимны process/Buffer/require и консольный лог в точках входа.
+        files: [
+            'apps/message-bus/**/*.{ts,js}',
+            'libs/message-bus-api/**/*.ts',
+            'tools/**/*.{ts,js,mjs,cjs}',
+            '**/webpack.config.js',
+            'stylelint.config.js',
+            'prisma/**/*.ts',
+        ],
+        languageOptions: {
+            globals: {
+                process: 'readonly',
+                Buffer: 'readonly',
+                require: 'readonly',
+                module: 'writable',
+                __dirname: 'readonly',
+                __filename: 'readonly',
+                global: 'readonly',
+                // Неймспейс типов node: `NodeJS.ProcessEnv`, `NodeJS.WriteStream`
+                NodeJS: 'readonly',
+            },
+        },
+        rules: {
+            'sonarjs/no-reference-error': 'off',
+            // У NestJS зависимости приходят параметрами конструктора — это его
+            // штатный способ, а не пережиток. Правило пришло из пресета Angular,
+            // где `inject()` действительно уместнее, и совпало по имени
+            // декоратора: `@Injectable` есть и там, и там.
+            '@angular-eslint/prefer-inject': 'off',
+        },
+    },
+    {
+        files: ['apps/message-bus/src/main.ts', 'tools/**/*.{mjs,ts,js}'],
+        rules: {
+            'no-console': 'off',
+        },
+    },
+    {
+        // Окружение браузера приходит внедрением, а не берётся с глобального объекта: когда
+        // страницу отдаёт сервер, глобального объекта нет, и прямое обращение падает уже у
+        // гостя. Правило `platform-access` называет места, где прямой доступ осознан, — они и
+        // стоят в исключениях: точка входа приложения работает раньше, чем появляется
+        // внедрение зависимостей, а код сквозных тестов исполняется на самой странице.
+        files: ['libs/message-bus-admin/**/*.ts', 'apps/message-bus-admin/src/**/*.ts'],
+        ignores: ['**/*.spec.ts', '**/*.test.ts', 'apps/message-bus-admin/src/main.ts'],
+        rules: {
+            'no-restricted-globals': [
                 'error',
-                {
-                    maxComplexity: 25,
-                },
+                ...[
+                    'window',
+                    'globalThis',
+                    'document',
+                    'location',
+                    'navigator',
+                    'history',
+                    'localStorage',
+                    'sessionStorage',
+                    'screen',
+                    'matchMedia',
+                    'getComputedStyle',
+                    'requestAnimationFrame',
+                    'cancelAnimationFrame',
+                    'ResizeObserver',
+                    'IntersectionObserver',
+                    'MutationObserver',
+                ].map((name) => ({
+                    name,
+                    message: `\`${name}\` берётся внедрением: окно — \`inject(WINDOW)\`, документ — \`inject(DOCUMENT)\`, среда — \`inject(PlatformService)\`. Прямое обращение падает там, где страницу отдаёт сервер. Правило — \`platform-access\`.`,
+                })),
             ],
-            /* rule @angular-eslint/template/no-call-expression off until
-             * https://github.com/angular-eslint/angular-eslint/issues/97 is closed
-             * waiting for add ability to disable eslint rules in templates
-             */
-            '@angular-eslint/template/no-call-expression': 'off',
-            '@angular-eslint/template/no-negated-async': 'error',
-
-            // angular-eslint v22 added these a11y rules to templateRecommended; existing templates
-            // predate them. Kept as warnings during the framework bump — adopt as a separate follow-up.
-            '@angular-eslint/template/click-events-have-key-events': 'warn',
-            '@angular-eslint/template/interactive-supports-focus': 'warn',
-
-            // Custom BEM-only rule. Warn while templates still use
-            // raw class= / [class.x] for the Material bridge; bump to error after migration.
-            'rt/require-bem-directives': 'warn',
         },
     },
-
     {
-        // Шапка страницы держит в одном шаблоне две навигации — широкую и
-        // мобильную, — и ветвлений там вдвое больше порога. Разнести их по
-        // компонентам — отдельное решение о разбиении публичного компонента,
-        // а не правка стиля; до него порог здесь снят точечно.
-        files: ['projects/ui-kit-v2/src/lib/components/page-header/rt-page-header.component.html'],
+        files: ['tools/eslint-rules/**/*.ts', 'tools/stylelint-rules/**/*.{js,cjs}'],
+        languageOptions: {
+            globals: {
+                module: 'readonly',
+                require: 'readonly',
+                __filename: 'readonly',
+                __dirname: 'readonly',
+            },
+        },
         rules: {
-            '@angular-eslint/template/cyclomatic-complexity': 'off',
+            '@typescript-eslint/no-require-imports': 'off',
         },
     },
-
     {
-        files: ['**/*.spec.ts', '**/*.spec.js'],
+        files: ['**/*.spec.ts', '**/*.test.ts', '**/*.spec.js'],
+        languageOptions: {
+            globals: {
+                describe: 'readonly',
+                it: 'readonly',
+                test: 'readonly',
+                expect: 'readonly',
+                beforeEach: 'readonly',
+                afterEach: 'readonly',
+                beforeAll: 'readonly',
+                afterAll: 'readonly',
+                vi: 'readonly',
+                vitest: 'readonly',
+                jest: 'readonly',
+            },
+        },
         rules: {
             // Параметр стрелки в спеке аннотации не требует. Спека сплошь состоит из коротких
             // стрелок — колбэк ожидания, двойник службы, обработчик выхода, — и тип у каждого
-            // параметра выводится из места вызова. Требование писать его руками не ловит ни
-            // одной ошибки и в каждой спеке обходится построчным выключением правила, то есть
-            // выключается всё равно — только россыпью и без объяснения.
+            // параметра выводится из места вызова.
             '@typescript-eslint/typedef': [
                 'error',
                 {
@@ -247,34 +233,87 @@ export default [
             ],
         },
     },
-
     {
-        // A package must not re-export another package's symbols. A re-export hides which package
-        // a symbol really belongs to, and it drags the whole source package into the import graph
-        // of anything that touches the barrel — which is how @rt-tools/utils would end up
-        // depending on Angular again. Every symbol has exactly one package it is imported from.
+        // Playwright: сквозной набор админки.
+        ...playwright.configs['flat/recommended'],
+        files: ['apps/message-bus-admin-e2e/**/*.ts'],
+        rules: {
+            ...playwright.configs['flat/recommended'].rules,
+            // Выключатель спеки здесь штатный приём, а не забытый долг: спека,
+            // необратимо меняющая данные стенда, и спека, которой нужен nginx
+            // перед приложением, просыпаются условием — правило `testing`.
+            'playwright/no-skipped-test': 'off',
+        },
+    },
+    baseTemplateConfig,
+    {
+        files: ['**/*.html'],
+        ignores: ['**/apps/*/src/index.html'],
+        plugins: {
+            '@angular-eslint/template': ngTemplate,
+            '@nx': nx,
+        },
+        languageOptions: {
+            parser: ngParser,
+        },
+        rules: {
+            '@nx/workspace-require-bem-directives': ['error'],
+            '@nx/workspace-no-method-call-in-template': ['error'],
+            '@angular-eslint/template/cyclomatic-complexity': ['error', { maxComplexity: 25 }],
+            '@angular-eslint/template/no-negated-async': 'error',
+        },
+    },
+    {
+        // Шапка страницы держит в одном шаблоне две навигации — широкую и
+        // мобильную, — и ветвлений там вдвое больше порога. Разнести их по
+        // компонентам — отдельное решение о разбиении публичного компонента,
+        // а не правка стиля; до него порог здесь снят точечно.
+        files: ['projects/ui-kit-v2/src/lib/components/page-header/rt-page-header.component.html'],
+        rules: {
+            '@angular-eslint/template/cyclomatic-complexity': 'off',
+        },
+    },
+    {
+        // Демонстрационная разметка витрины блоков BEM не несёт и никуда не шипится: гнать её
+        // через rtBlock/rtElem — театр. Гасится только правило BEM; правила доступности здесь
+        // остаются в силе — кнопка без доступного имени остаётся дефектом и в демонстрации.
+        files: ['**/stories/**/*.{ts,html}', '**/strories/**/*.{ts,html}', '**/showcase/**/*.{ts,html}'],
+        plugins: {
+            '@nx': nx,
+        },
+        rules: {
+            '@nx/workspace-require-bem-directives': 'off',
+            '@nx/workspace-require-host-bem-block': 'off',
+            // Обёртка истории — не компонент кита: она никуда не шипится, и её имя `test-*`
+            // говорит читателю витрины больше, чем приставка кита.
+            '@angular-eslint/component-selector': 'off',
+        },
+    },
+    {
+        // Пакет не реэкспортирует символы соседнего пакета. Реэкспорт прячет, какому пакету
+        // символ на самом деле принадлежит, и утаскивает весь исходный пакет в граф импортов
+        // всякого, кто тронул барель, — так `@rt-tools/utils` снова начал бы зависеть от
+        // Angular. У каждого символа ровно один пакет, из которого его импортируют.
         files: ['projects/**/*.ts'],
         rules: {
             'no-restricted-syntax': [
                 'error',
                 {
                     selector: 'ExportNamedDeclaration[source.value=/^@rt-tools\\//]',
-                    message: 'Do not re-export another @rt-tools package. Import the symbol from the package that owns it.',
+                    message: 'Не реэкспортируй символ соседнего пакета @rt-tools. Импортируй его из того пакета, которому он принадлежит.',
                 },
                 {
                     selector: 'ExportAllDeclaration[source.value=/^@rt-tools\\//]',
-                    message: 'Do not re-export another @rt-tools package. Import the symbol from the package that owns it.',
+                    message: 'Не реэкспортируй символ соседнего пакета @rt-tools. Импортируй его из того пакета, которому он принадлежит.',
                 },
             ],
         },
     },
-
     {
-        // @rt-tools/utils ships to Node consumers as well as to Angular apps: no framework, no
-        // partial compilation, no peer dependencies. A single import from any of these would put
-        // that back and the package would silently stop resolving outside Angular — so the ban is
-        // enforced where the import is written, not discovered later at publish time.
-        // Anything here that turns out to need one of them belongs in @rt-tools/core instead.
+        // `@rt-tools/utils` уезжает потребителям на Node наравне с приложениями Angular: ни
+        // фреймворка, ни частичной компиляции, ни одноранговых зависимостей. Один импорт вернул
+        // бы всё это назад, и пакет молча перестал бы разрешаться вне Angular — поэтому запрет
+        // стоит там, где импорт пишут, а не всплывает при публикации.
         files: ['projects/utils/**/*.ts'],
         rules: {
             'no-restricted-imports': [
@@ -284,21 +323,19 @@ export default [
                         {
                             group: ['@angular/*', '@angular/**', 'rxjs', 'rxjs/*'],
                             message:
-                                '@rt-tools/utils must stay framework-agnostic — it has no Angular or RxJS dependency. Put framework-bound code in @rt-tools/core.',
+                                '@rt-tools/utils остаётся без фреймворка — ни Angular, ни RxJS у него в зависимостях нет. Код, которому фреймворк нужен, живёт в @rt-tools/core.',
                         },
                     ],
                 },
             ],
         },
     },
-
     {
         files: ['**/bem/*.directive.ts'],
         rules: {
             '@angular-eslint/prefer-inject': 'off',
         },
     },
-
     // Серверная сторона, когда линт зовут от корня дерева: `lint-staged` перед коммитом идёт
     // именно так, и путь здесь совпадает. Тот же список стоит в `eslint/backend.config.mjs` —
     // его подключают конфиги самих проектов, потому что цель линта проекта зовётся из его
@@ -307,38 +344,43 @@ export default [
         ...entry,
         files: ['apps/message-bus/**/*.ts', 'libs/message-bus-api/**/*.ts', 'libs/message-bus-common/**/*.ts'],
     })),
-
     {
-        // Демонстрационная разметка витрины блоков BEM не несёт и никуда не шипится: гнать её
-        // через rtBlock/rtElem — театр. Гасится только правило BEM; правила доступности здесь
-        // остаются в силе — кнопка без доступного имени остаётся дефектом и в демонстрации.
-        files: ['**/stories/**/*.{ts,html}', '**/strories/**/*.{ts,html}', '**/showcase/**/*.{ts,html}'],
-        plugins: { rt },
+        // Предел длины файла — 500 строк, и считаются все строки: пустые и
+        // комментарии тоже. Файл, который не влезает на экран целиком, читают по
+        // частям, и правку в нём делают, не увидев остального.
+        //
+        // Правило ядра, а не `sonarjs/max-lines`: то считает только строки кода,
+        // и два файла одной длины на экране судились бы по-разному. Одно
+        // требование — одно правило, поэтому второе здесь выключено, иначе один
+        // и тот же файл приходил бы двумя замечаниями.
+        //
+        // Спеки судятся наравне с остальным: `*.spec.ts` выведены из блока
+        // sonarjs, но длинный тест читается так же плохо, как длинный класс.
+        files: ['**/*.ts'],
         rules: {
-            'rt/require-bem-directives': 'off',
+            'max-lines': ['error', { max: 500, skipBlankLines: false, skipComments: false }],
+            'sonarjs/max-lines': 'off',
         },
     },
-
     {
-        // Custom workspace rules (rt-tools conventions).
-        // The TS parser/projectService is contributed by the nx flat/typescript preset above.
-        // Story wrappers and the showcase harness are demo scaffolding: they carry no BEM block,
-        // ship nowhere, and their 80 `require-host-bem-block` warnings drown the 81st real one.
-        files: ['**/*.ts'],
-        ignores: ['**/*.spec.ts', '**/*.spec.js', '**/stories/**', '**/showcase/**'],
-        plugins: { rt },
-        rules: {
-            // 0 violations in the current codebase → safe at error.
-            'rt/require-source-suffix-for-subjects': 'error',
-            // 0 violations after adding take(1) to the idb-storage / aside subscriptions and
-            // disabling the rule on the non-RxJS Redux DevTools .subscribe(). Enforced at error.
-            'rt/require-take-until-destroyed': 'error',
-            // 0 violations after fixing 13 components that used rtMod without importing
-            // ModDirective (modifiers were silently dropped at runtime). Enforced at error.
-            'rt/require-mod-directive-import': 'error',
-            // rt-tools uses string-literal `host: { class: '...' }` (not a BEM_BLOCK const) and
-            // only on some components — warn to surface, not break, until a convention decision.
-            'rt/require-host-bem-block': 'warn',
-        },
+        ignores: [
+            '**/node_modules/**',
+            '**/dist/**',
+            '**/tmp/**',
+            '**/out-tsc/**',
+            '**/coverage/**',
+            '**/.angular/**',
+            '**/test-setup.ts',
+            '**/jest.config.js',
+            '**/jest.config.ts',
+            '**/jest.preset.js',
+            '**/jest.setup.js',
+            '**/vitest.config.*.timestamp*',
+            '**/apps/*/src/index.html',
+            // Сценарий конвейера — не модуль: он исполняется телом, с возвратом на верхнем
+            // уровне, и разбирать его как модуль нечем.
+            '.claude/workflows/**',
+            'projects/agent-kit/assets/workflows/**',
+        ],
     },
 ];
