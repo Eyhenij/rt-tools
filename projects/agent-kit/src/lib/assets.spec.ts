@@ -59,7 +59,27 @@ describe('исполняемые ресурсы пакета', (): void => {
     }, 120_000);
 
     it('SC-AK-07, SC-AK-09 — настройки сливаются по ключам, а корни проверок берутся из них', (): void => {
-        expectGreen('checks.test.sh');
+        expectGreen('checks-config.test.sh');
+    }, 120_000);
+
+    it('SC-AK-238, SC-AK-241 — сверка спеков судит якоря, паттерны и вердикты', (): void => {
+        expectGreen('checks-specs.test.sh');
+    }, 120_000);
+
+    it('SC-AK-47, SC-AK-52 — сверка адресов судит голое имя, каталог и полноту указателя', (): void => {
+        expectGreen('checks-doc-paths.test.sh');
+    }, 120_000);
+
+    it('SC-AK-103, SC-AK-108 — проверка длины судит предел, принятое и долг', (): void => {
+        expectGreen('checks-file-size.test.sh');
+    }, 120_000);
+
+    it('SC-AK-114, SC-AK-198 — набор гейта пуша судится против набора конвейера', (): void => {
+        expectGreen('checks-push-gate.test.sh');
+    }, 120_000);
+
+    it('SC-AK-264, SC-AK-267 — сверка раскладки берёт имена у дерева, а не у себя', (): void => {
+        expectGreen('checks-lib-layers.test.sh');
     }, 120_000);
 
     it('SC-AK-142, SC-AK-149 — гард единообразия берёт признаки у объявленных наборов', (): void => {
