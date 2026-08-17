@@ -1,0 +1,297 @@
+/* Назначения светлой темы: набор и контролы формы. Именованные отступы, кегль основного
+   текста, единый контракт семейства полей ввода, выпадающая панель, кнопка-значок, счётчик и
+   переключатель.
+
+   Часть источника свойств оформления — входом остаётся `tokens.source.mjs`. */
+
+export const lightForms = [
+    {
+        lead: `    /* Spacing aliases — named semantic aliases на primitive numeric scale */`,
+        space: true,
+        name: `--rt-space-2xs`,
+        value: `var(--rt-space-0-5)`,
+        note: `2px`,
+    },
+    {
+        name: `--rt-space-xs`,
+        value: `var(--rt-space-1)`,
+        note: `4px`,
+    },
+    {
+        name: `--rt-space-sm`,
+        value: `var(--rt-space-2)`,
+        note: `8px`,
+    },
+    {
+        name: `--rt-space-md`,
+        value: `var(--rt-space-4)`,
+        note: `16px`,
+    },
+    {
+        name: `--rt-space-lg`,
+        value: `var(--rt-space-6)`,
+        note: `24px`,
+    },
+    {
+        name: `--rt-space-xl`,
+        value: `var(--rt-space-8)`,
+        note: `32px`,
+    },
+    {
+        name: `--rt-space-2xl`,
+        value: `var(--rt-space-12)`,
+        note: `48px`,
+    },
+    {
+        name: `--rt-space-3xl`,
+        value: `var(--rt-space-16)`,
+        note: `64px`,
+    },
+    {
+        lead: `    /* Text size base — semantic alias для default body text */`,
+        space: true,
+        name: `--rt-text-base`,
+        value: `var(--rt-text-md)`,
+    },
+    {
+        lead: `    /* Form input — composition tokens. Единый контракт для всего input-семейства
+       (rt-input, rt-input-number, rt-autocomplete, rt-select, rt-multiselect,
+       rt-textarea). Namespace --rt-input-* / --rt-textarea-*. Компоненты
+       потребляют ТОЛЬКО эти токены, не primitives и не литералы. */
+
+    /* Colors */`,
+        space: true,
+        name: `--rt-input-color-bg`,
+        value: `var(--rt-color-bg-surface-subtle)`,
+    },
+    {
+        name: `--rt-input-color-bg-disabled`,
+        value: `var(--rt-color-bg-surface-subtle)`,
+    },
+    {
+        name: `--rt-input-color-bg-hover`,
+        value: `var(--rt-overlay-black-4)`,
+        dark: `var(--rt-overlay-white-4)`,
+    },
+    {
+        name: `--rt-input-color-border`,
+        value: `var(--rt-color-border-default)`,
+        dark: `var(--rt-charcoal-border)`,
+    },
+    {
+        name: `--rt-input-color-border-focus`,
+        value: `var(--rt-color-action-primary)`,
+    },
+    {
+        name: `--rt-input-color-border-error`,
+        value: `var(--rt-color-state-danger)`,
+    },
+    {
+        name: `--rt-input-color-text`,
+        value: `var(--rt-color-text-primary)`,
+    },
+    {
+        name: `--rt-input-color-text-placeholder`,
+        value: `var(--rt-color-text-muted)`,
+    },
+    {
+        lead: `    /* Sizes (single-line height scale) */`,
+        space: true,
+        name: `--rt-input-height-sm`,
+        value: `var(--rt-control-height-sm)`,
+    },
+    {
+        name: `--rt-input-height-md`,
+        value: `var(--rt-control-height-md)`,
+    },
+    {
+        name: `--rt-input-height-lg`,
+        value: `var(--rt-control-height-lg)`,
+    },
+    {
+        name: `--rt-input-height`,
+        value: `var(--rt-input-height-md)`,
+    },
+    {
+        lead: `    /* Кап ширины одиночного контрола (input/select) в тулбарах list-страниц —
+       внутри flex-баров контрол без ограничения растягивается на всю строку. */`,
+        space: true,
+        name: `--rt-input-max-width`,
+        value: `var(--rt-control-max-width)`,
+    },
+    {
+        lead: `    /* Radius / spacing / border */`,
+        space: true,
+        name: `--rt-input-radius`,
+        value: `var(--rt-radius-lg)`,
+    },
+    {
+        name: `--rt-input-padding-x`,
+        value: `var(--rt-space-4)`,
+    },
+    {
+        name: `--rt-input-padding-y`,
+        value: `var(--rt-space-0)`,
+    },
+    {
+        name: `--rt-input-border-width`,
+        value: `var(--rt-border-width-thin)`,
+    },
+    {
+        name: `--rt-input-focus-outline-offset`,
+        value: `var(--rt-border-width-thin)`,
+    },
+    {
+        lead: `    /* Typography */`,
+        space: true,
+        name: `--rt-input-font-size`,
+        value: `var(--rt-text-sm)`,
+    },
+    {
+        name: `--rt-input-line-height`,
+        value: `var(--rt-leading-none)`,
+    },
+    {
+        lead: `    /* State / motion */`,
+        space: true,
+        name: `--rt-input-disabled-opacity`,
+        value: `var(--rt-opacity-disabled)`,
+    },
+    {
+        name: `--rt-input-focus-shadow`,
+        value: `var(--rt-shadow-focus-ring)`,
+    },
+    {
+        name: `--rt-input-focus-shadow-error`,
+        value: `var(--rt-shadow-focus-ring-danger)`,
+    },
+    {
+        name: `--rt-input-transition`,
+        value: `border-color var(--rt-duration-fast) ease, box-shadow var(--rt-duration-fast) ease`,
+    },
+    {
+        lead: `    /* Textarea overrides (multi-line) */`,
+        space: true,
+        name: `--rt-textarea-min-height-sm`,
+        value: `var(--rt-control-textarea-min-height-sm)`,
+    },
+    {
+        name: `--rt-textarea-min-height-md`,
+        value: `var(--rt-control-textarea-min-height-md)`,
+    },
+    {
+        name: `--rt-textarea-min-height-lg`,
+        value: `var(--rt-control-textarea-min-height-lg)`,
+    },
+    {
+        name: `--rt-textarea-min-height`,
+        value: `var(--rt-textarea-min-height-md)`,
+    },
+    {
+        name: `--rt-textarea-padding-y`,
+        value: `var(--rt-space-sm)`,
+    },
+    {
+        name: `--rt-textarea-line-height`,
+        value: `var(--rt-leading-snug)`,
+    },
+    {
+        lead: `    /* Dropdown panel (select / multiselect / autocomplete popup). */`,
+        space: true,
+        name: `--rt-input-panel-max-height`,
+        value: `var(--rt-control-panel-max-height)`,
+    },
+    {
+        lead: `    /* Icon-button hover-overlay — отдельный namespace (вне input-family),
+       тот же primitive-источник. */`,
+        space: true,
+        name: `--rt-icon-button-color-bg-hover`,
+        value: `var(--rt-overlay-black-4)`,
+        dark: `var(--rt-overlay-white-4)`,
+    },
+    {
+        lead: `    /* Counter (rt-counter) и строка вокруг него (rt-counter-row). Значение
+       набирается табличными цифрами и держит ширину, иначе кнопки прыгают
+       при переходе через десяток. */`,
+        space: true,
+        name: `--rt-counter-gap`,
+        value: `var(--rt-space-sm)`,
+    },
+    {
+        name: `--rt-counter-value-min-width`,
+        value: `var(--rt-size-6)`,
+    },
+    {
+        name: `--rt-counter-value-font-size`,
+        value: `var(--rt-text-md)`,
+    },
+    {
+        name: `--rt-counter-value-color`,
+        value: `var(--rt-color-text-primary)`,
+    },
+    {
+        name: `--rt-counter-row-gap`,
+        value: `var(--rt-space-md)`,
+    },
+    {
+        name: `--rt-counter-row-padding-y`,
+        value: `var(--rt-space-md)`,
+    },
+    {
+        name: `--rt-counter-row-color-border`,
+        value: `var(--rt-color-border-subtle)`,
+    },
+    {
+        name: `--rt-counter-row-label-font-size`,
+        value: `var(--rt-text-md)`,
+    },
+    {
+        name: `--rt-counter-row-label-color`,
+        value: `var(--rt-color-text-primary)`,
+    },
+    {
+        name: `--rt-counter-row-hint-font-size`,
+        value: `var(--rt-text-sm)`,
+    },
+    {
+        name: `--rt-counter-row-hint-color`,
+        value: `var(--rt-color-text-muted)`,
+    },
+    {
+        lead: `    /* Toggle-switch (rt-toggle-switch) — трек, бегунок и иконки состояния. */`,
+        space: true,
+        name: `--rt-toggle-color-track`,
+        value: `var(--rt-color-bg-surface-subtle-2)`,
+        dark: `var(--rt-charcoal-950)`,
+    },
+    {
+        name: `--rt-toggle-color-track-on`,
+        value: `var(--rt-color-action-primary)`,
+    },
+    {
+        name: `--rt-toggle-color-border`,
+        value: `var(--rt-color-border-strong)`,
+    },
+    {
+        name: `--rt-toggle-color-thumb`,
+        value: `var(--rt-color-bg-surface)`,
+        dark: `var(--rt-neutral-50)`,
+    },
+    {
+        name: `--rt-toggle-color-icon`,
+        value: `var(--rt-amber-400)`,
+        note: `rt-theme-shared: янтарь иконки один в обеих темах`,
+    },
+    {
+        name: `--rt-toggle-shadow-thumb`,
+        value: `var(--rt-shadow-md)`,
+        dark: `var(--rt-shadow-none)`,
+    },
+    {
+        lead: `    /* Рамка off-трека — inset-тенью, а не border: у border своя коробка, и
+       отступы бегунка с иконками пришлось бы пересчитывать на её толщину. */`,
+        space: true,
+        name: `--rt-toggle-shadow-border`,
+        value: `inset 0 0 0 var(--rt-border-width-thin) var(--rt-toggle-color-border)`,
+    },
+];

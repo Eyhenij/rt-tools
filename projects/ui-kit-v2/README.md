@@ -70,9 +70,12 @@ export const appConfig: ApplicationConfig = {
 
 **Дизайн-система** — `src/styles`:
 
-- `tokens.source.mjs` — источник: ступени шкал, назначения и ответ тёмной темы рядом со своим
-  назначением. Три файла ниже и имена в `src/lib/tokens/rt-design-tokens.ts` собираются отсюда
-  командой `pnpm run build:tokens-source` и руками не правятся;
+- `tokens.source.mjs` — вход источника: ступени шкал, назначения и ответ тёмной темы рядом со
+  своим назначением. Сами узлы лежат частями рядом — `tokens.scale-*.mjs` для шкал,
+  `tokens.light-*.mjs` для назначений, `tokens.dark-layout.mjs` и `tokens.coarse-pointer.mjs`
+  для порядка тёмного файла и грубого указателя, — а вход складывает их в два ряда. Три файла
+  ниже и имена в `src/lib/tokens/rt-design-tokens.ts` собираются отсюда командой
+  `pnpm run build:tokens-source` и руками не правятся;
 - `_primitives.scss` — шкалы: нейтральные и цветные ряды, отступы, радиусы, тени, типографика;
 - `_semantic.scss` — назначения поверх шкал (`--rt-color-bg-surface`, `--rt-color-text-muted`);
 - `_theme-dark.scss` — переопределения назначений для `[data-theme='dark']`;

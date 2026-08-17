@@ -1,0 +1,29 @@
+// Размеры кнопки и её растяжение по ширине родителя.
+// Часть стилей кнопки — входом остаётся `_rtui_button.scss`.
+
+/* size */
+.rtui-btn-sm {
+    --gap: var(--rt-rtui-btn-size-sm-gap);
+    --padding: var(--rt-rtui-btn-size-sm-padding);
+    --font-size: var(--rt-rtui-btn-size-sm-font-size);
+}
+
+.rtui-btn-md {
+    --gap: var(--rt-rtui-btn-size-md-gap);
+    --padding: var(--rt-rtui-btn-size-md-padding);
+    --font-size: var(--rt-rtui-btn-size-md-font-size);
+}
+
+.rtui-btn-lg {
+    --gap: var(--rt-rtui-btn-size-lg-gap);
+    --padding: var(--rt-rtui-btn-size-lg-padding);
+    --font-size: var(--rt-rtui-btn-size-lg-font-size);
+}
+
+.rtui-btn-full {
+    --width: var(--rt-rtui-btn-size-full-width);
+    --display: var(--rt-rtui-btn-size-full-display);
+    --gap: var(--rt-rtui-btn-size-full-gap);
+    --padding: var(--rt-rtui-btn-size-full-padding);
+    --font-size: var(--rt-rtui-btn-size-full-font-size);
+}
