@@ -1,7 +1,17 @@
-import { ChangeDetectionStrategy, Component, InputSignal, OutputEmitterRef, input, output } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    InputSignal,
+    OutputEmitterRef,
+    Signal,
+    TemplateRef,
+    input,
+    output,
+    viewChild,
+} from '@angular/core';
 import { adminLabel } from '@rt/message-bus-admin/common/core/util';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { IRtPageHeader, RtPageHeaderComponent } from '@rt-tools/ui-kit-v2';
+import { IRtPageHeader, RtButtonDirective, RtPageHeaderComponent } from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'admin-header';
 
@@ -16,9 +26,12 @@ const BEM_BLOCK: string = 'admin-header';
  * Приложение называет себя словом, а не знаком: начертание знака кит не везёт, оно приходит от
  * приложения, и пока файлов нет, готовый логотип занимает место и не рисует ничего.
  *
- * Кто вошёл и что делать с нажатием на профиль, шапка не решает: имя приходит входом, а нажатие
- * уходит выходом. Состояние входа живёт в одном месте, и второй ответ на вопрос «кто вошёл»
- * разошёлся бы с первым.
+ * Нажатие на профиль открывает попап, а не выходит: выход, случающийся от одного нажатия рядом с
+ * разделами, теряется промахом мимо кнопки. Содержимое попапа шапка объявляет шаблоном, а рисует
+ * его кит — в наложении у конца страницы.
+ *
+ * Кто вошёл и что делать с выходом, шапка не решает: имя приходит входом, а выход уходит выходом.
+ * Состояние входа живёт в одном месте, и второй ответ на вопрос «кто вошёл» разошёлся бы с первым.
  */
 @Component({
     selector: 'admin-header',
@@ -31,6 +44,7 @@ const BEM_BLOCK: string = 'admin-header';
         ElemDirective,
 
         // components
+        RtButtonDirective,
         RtPageHeaderComponent,
     ],
     host: { class: BEM_BLOCK },
@@ -40,9 +54,18 @@ export class AdminHeaderComponent {
 
     protected readonly navLabel: string = adminLabel('navSections');
 
+    protected readonly signOutLabel: string = adminLabel('signOut');
+
+    /**
+     * Шаблон попапа профиля. Рисует попап кит, а его содержимое приходит отсюда: до первой
+     * отрисовки шаблона ещё нет, и ряд получает пустое значение — своего попапа он тогда не
+     * открывает вовсе.
+     */
+    protected readonly profileMenu: Signal<TemplateRef<unknown> | undefined> = viewChild<TemplateRef<unknown>>('profileMenuTpl');
+
     public readonly items: InputSignal<ReadonlyArray<IRtPageHeader.Item>> = input<ReadonlyArray<IRtPageHeader.Item>>([]);
 
     public readonly user: InputSignal<IRtPageHeader.User | null> = input<IRtPageHeader.User | null>(null);
 
-    public readonly profileClick: OutputEmitterRef<void> = output<void>();
+    public readonly signOut: OutputEmitterRef<void> = output<void>();
 }

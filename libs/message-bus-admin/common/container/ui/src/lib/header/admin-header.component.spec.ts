@@ -1,4 +1,4 @@
-import { provideZonelessChangeDetection } from '@angular/core';
+import { ApplicationRef, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
@@ -18,6 +18,15 @@ describe('AdminHeaderComponent', () => {
         fixture.componentRef.setInput('items', items);
         fixture.componentRef.setInput('user', user);
         fixture.detectChanges();
+    }
+
+    /**
+     * Содержимое наложения само не рисуется: попап живёт вне фикстуры, у конца страницы, и
+     * появляется он после того, как приложение отрисовало свой ход.
+     */
+    async function openOverlay(): Promise<void> {
+        TestBed.inject(ApplicationRef).tick();
+        await fixture.whenStable();
     }
 
     beforeEach(() => {
@@ -61,21 +70,58 @@ describe('AdminHeaderComponent', () => {
         expect(fixture.debugElement.query(By.css('rt-logo'))).toBeNull();
     });
 
-    it('имя вошедшего видно в ряду, а нажатие на профиль уходит выходом', () => {
+    it('имя вошедшего видно в ряду', () => {
         show(SECTIONS, { name: 'owner' });
-
-        let clicks: number = 0;
-        fixture.componentInstance.profileClick.subscribe((): void => {
-            clicks += 1;
-        });
 
         const name: HTMLElement = fixture.debugElement.query(By.css('[qa-dataid="header-user-name"]')).nativeElement as HTMLElement;
 
         expect(name.textContent?.trim()).toBe('owner');
+    });
 
-        (fixture.debugElement.query(By.css('.rt-page-header__user')).nativeElement as HTMLElement).click();
+    it('SC-MB-145 — нажатие на профиль открывает попап, а не выходит', async () => {
+        show(SECTIONS, { name: 'owner' });
 
-        expect(clicks).toBe(1);
+        let signOuts: number = 0;
+        fixture.componentInstance.signOut.subscribe((): void => {
+            signOuts += 1;
+        });
+
+        (fixture.debugElement.query(By.css('[qa-dataid="header-user-menu"]')).nativeElement as HTMLElement).click();
+        await openOverlay();
+
+        expect(document.querySelector('[qa-dataid="profile-menu"]')).not.toBeNull();
+        expect(signOuts).toBe(0);
+    });
+
+    it('SC-MB-146 — выход идёт пунктом попапа', async () => {
+        show(SECTIONS, { name: 'owner' });
+
+        let signOuts: number = 0;
+        fixture.componentInstance.signOut.subscribe((): void => {
+            signOuts += 1;
+        });
+
+        (fixture.debugElement.query(By.css('[qa-dataid="header-user-menu"]')).nativeElement as HTMLElement).click();
+        await openOverlay();
+
+        const action: HTMLElement | null = document.querySelector('[qa-dataid="profile-sign-out"]');
+
+        expect(action).not.toBeNull();
+        expect(action?.textContent?.trim()).toBe('Выйти');
+
+        action?.click();
+
+        expect(signOuts).toBe(1);
+    });
+
+    it('попап называет вошедшего и не обещает смены пароля', async () => {
+        show(SECTIONS, { name: 'owner' });
+
+        (fixture.debugElement.query(By.css('[qa-dataid="header-user-menu"]')).nativeElement as HTMLElement).click();
+        await openOverlay();
+
+        expect(document.querySelector('[qa-dataid="profile-name"]')?.textContent?.trim()).toBe('owner');
+        expect(document.body.textContent).not.toContain('пароль');
     });
 
     it('без вошедшего профиля в ряду нет вовсе', () => {

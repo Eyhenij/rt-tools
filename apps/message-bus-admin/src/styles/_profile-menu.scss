@@ -1,0 +1,28 @@
+/**
+ * Попап профиля: имя вошедшего и выход.
+ *
+ * Раскладка объявлена здесь, а не в стилях шапки: попап уезжает в наложение к концу страницы, и
+ * правила компонента, заскоупленные его атрибутом, до него не достают вовсе — файл выглядел бы
+ * рабочим и не красил ничего.
+ */
+.admin-profile-menu {
+    display: flex;
+    min-width: 200px;
+    flex-direction: column;
+    padding: var(--rt-space-2);
+    gap: var(--rt-space-1);
+
+    &__name {
+        padding: var(--rt-space-2);
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+        overflow-wrap: anywhere;
+    }
+
+    // Выход стоит под именем и во всю ширину попапа: пункт, занимающий часть строки, читается
+    // подписью, а не действием
+    &__action {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
