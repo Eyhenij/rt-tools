@@ -78,6 +78,10 @@ class TestScreenComponent extends AdminListScreenBase<IRow> {
     public shownEmptyMessage(): string {
         return this.emptyMessage();
     }
+
+    public shownEmptyDescription(): string {
+        return this.emptyDescription();
+    }
 }
 
 /** Панель подробностей: своего содержимого спеке не нужно — нужен маршрут в аутлете `ro`. */
@@ -224,12 +228,14 @@ describe('AdminListScreenBase', () => {
         answerList();
         http.expectOne(TREES_PATH).flush([]);
 
-        expect(screen.shownEmptyMessage()).toBe('Записей нет: ни одно дерево их пока не присылало');
+        expect(screen.shownEmptyMessage()).toBe('Записей нет');
+        expect(screen.shownEmptyDescription()).toBe('Ни одно дерево их пока не присылало');
 
         screen.askTree('a1b2');
         await harness.fixture.whenStable();
         answerList();
 
         expect(screen.shownEmptyMessage()).toBe('По этому отбору записей нет');
+        expect(screen.shownEmptyDescription()).toBe('Снимите отбор по дереву или выберите другое');
     });
 });

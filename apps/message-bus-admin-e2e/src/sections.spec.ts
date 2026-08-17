@@ -11,12 +11,18 @@ import { columnTexts, expectOnlyTree, openSection, pageQa, pickTree, qa, queryOf
  * раздел соберут своей разметкой, спека упадёт здесь, а не через месяц на первом расхождении.
  */
 test.describe('разделы груза', () => {
-    test('SC-MB-74 — раздел предложений собран тем же списочным экраном', async ({ page }: { page: Page }) => {
+    test('SC-MB-74, SC-MB-133 — раздел предложений собран тем же списочным экраном, а свой отбор кладёт в слот тулбара', async ({
+        page,
+    }: {
+        page: Page;
+    }) => {
         await openSection(page, 'proposals');
 
         await expect(page.getByRole('heading', { name: SECTION.proposals.title })).toBeVisible();
         await expect(rowsOf(page, 'proposals')).toHaveCount(5);
         await expect(qa(page, 'list-tree-filter')).toBeVisible();
+        // отбор стоит именно в левой части тулбара: там, где живёт всё, что меняет выборку
+        await expect(page.locator('[qa-dataid="toolbar-bar"][data-slot="left"] [qa-dataid="list-tree-filter"]')).toBeVisible();
         // переключатель страниц стоит на месте и называет, сколько записей показано; сами
         // страницы он прячет, пока их одна — тем же правилом, что и в разделе разборов
         await expect(qa(page, 'pagination-range')).toContainText('из 5');
