@@ -1,0 +1,219 @@
+// Палитры кнопки: пятнадцать классов вида — сплошное оформление, обводка и светлое у каждой из
+// пяти ролей. Каждый класс только переназначает свойства основы.
+//
+// Часть стилей кнопки — входом остаётся `_rtui_button.scss`.
+
+/* accent */
+.rtui-btn-accent {
+    --border: var(--rt-rtui-btn-accent-border);
+    --color: var(--rt-rtui-btn-accent-color);
+    --bg: var(--rt-rtui-btn-accent-bg);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-accent-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-accent-active-shadow);
+    }
+}
+
+.rtui-btn-accent-outline {
+    --border: var(--rt-rtui-btn-accent-outline-border);
+    --bg: var(--rt-rtui-btn-accent-outline-bg);
+    --color: var(--rt-rtui-btn-accent-outline-color);
+
+    &:hover {
+        --border: var(--rt-rtui-btn-accent-outline-hover-border);
+        --bg: var(--rt-rtui-btn-accent-outline-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-accent-outline-active-shadow);
+    }
+}
+
+.rtui-btn-accent-light {
+    --color: var(--rt-rtui-btn-accent-light-color);
+    --bg: var(--rt-rtui-btn-accent-light-bg);
+
+    &:hover {
+        --color: var(--rt-rtui-btn-accent-light-hover-color);
+        --bg: var(--rt-rtui-btn-accent-light-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-accent-light-active-shadow);
+    }
+}
+
+/* success */
+.rtui-btn-success {
+    --border: var(--rt-rtui-btn-success-border);
+    --color: var(--rt-rtui-btn-success-color);
+    --bg: var(--rt-rtui-btn-success-bg);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-success-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-success-active-shadow);
+    }
+}
+
+.rtui-btn-success-outline {
+    --border: var(--rt-rtui-btn-success-outline-border);
+    --bg: var(--rt-rtui-btn-success-outline-bg);
+    --color: var(--rt-rtui-btn-success-outline-color);
+
+    &:hover {
+        --border: var(--rt-rtui-btn-success-outline-hover-border);
+        --bg: var(--rt-rtui-btn-success-outline-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-success-outline-active-shadow);
+    }
+}
+
+.rtui-btn-success-light {
+    --color: var(--rt-rtui-btn-success-light-color);
+    --bg: var(--rt-rtui-btn-success-light-bg);
+
+    &:hover {
+        --color: var(--rt-rtui-btn-success-light-hover-color);
+        --bg: var(--rt-rtui-btn-success-light-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-success-light-active-shadow);
+    }
+}
+
+/* secondary */
+.rtui-btn-secondary {
+    --border: var(--rt-rtui-btn-secondary-border);
+    --color: var(--rt-rtui-btn-secondary-color);
+    --bg: var(--rt-rtui-btn-secondary-bg);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-secondary-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-secondary-active-shadow);
+    }
+}
+
+.rtui-btn-secondary-outline {
+    --border: var(--rt-rtui-btn-secondary-outline-border);
+    --bg: var(--rt-rtui-btn-secondary-outline-bg);
+    --color: var(--rt-rtui-btn-secondary-outline-color);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-secondary-outline-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-secondary-outline-active-shadow);
+    }
+}
+
+.rtui-btn-secondary-light {
+    --color: var(--rt-rtui-btn-secondary-light-color);
+    --bg: var(--rt-rtui-btn-secondary-light-bg);
+
+    &:hover {
+        --color: var(--rt-rtui-btn-secondary-light-hover-color);
+        --bg: var(--rt-rtui-btn-secondary-light-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-secondary-light-active-shadow);
+    }
+}
+
+/* error */
+.rtui-btn-error {
+    --border: var(--rt-rtui-btn-error-border);
+    --color: var(--rt-rtui-btn-error-color);
+    --bg: var(--rt-rtui-btn-error-bg);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-error-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-error-active-shadow);
+    }
+}
+
+.rtui-btn-error-outline {
+    --border: var(--rt-rtui-btn-error-outline-border);
+    --bg: var(--rt-rtui-btn-error-outline-bg);
+    --color: var(--rt-rtui-btn-error-outline-color);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-error-outline-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-error-outline-active-shadow);
+    }
+}
+
+.rtui-btn-error-light {
+    --color: var(--rt-rtui-btn-error-light-color);
+    --bg: var(--rt-rtui-btn-error-light-bg);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-error-light-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-error-light-active-shadow);
+    }
+}
+
+/* warning */
+.rtui-btn-warning {
+    --border: var(--rt-rtui-btn-warning-border);
+    --color: var(--rt-rtui-btn-warning-color);
+    --bg: var(--rt-rtui-btn-warning-bg);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-warning-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-warning-active-shadow);
+    }
+}
+
+.rtui-btn-warning-outline {
+    --border: var(--rt-rtui-btn-warning-outline-border);
+    --bg: var(--rt-rtui-btn-warning-outline-bg);
+    --color: var(--rt-rtui-btn-warning-outline-color);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-warning-outline-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-warning-outline-active-shadow);
+    }
+}
+
+.rtui-btn-warning-light {
+    --color: var(--rt-rtui-btn-warning-light-color);
+    --bg: var(--rt-rtui-btn-warning-light-bg);
+
+    &:hover {
+        --bg: var(--rt-rtui-btn-warning-light-hover-bg);
+    }
+
+    &:active {
+        --shadow: var(--rt-rtui-btn-warning-light-active-shadow);
+    }
+}
