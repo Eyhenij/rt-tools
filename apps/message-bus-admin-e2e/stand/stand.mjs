@@ -11,25 +11,50 @@
  * Хранилище — своя база в том же контейнере, что и рабочая. Набор чистит её перед каждым
  * прогоном целиком, и общая с рабочей база означала бы, что прогон стирает данные, на которых
  * владелец только что мерил.
+ *
+ * Все три имени читаются из окружения, а записанные здесь значения — умолчание. Причина —
+ * второй прогон на той же машине: раннер конвейера стоит у владельца, гейт пуша зовёт ту же
+ * команду, и два стенда ложатся на один порт. Второй падает целиком строкой «4310 is already
+ * used», а в отчёте это выглядит четырнадцатью красными спеками про вход и списки — то есть
+ * дефектом правки, которого нет. База сталкивается тем же порядком и тише: набор чистит её
+ * перед каждым прогоном, и два прогона стирают данные друг у друга.
+ *
+ * Умолчание оставлено прежним намеренно: прогон без переменных ведёт себя как до правки, а своё
+ * имя задаёт тот, кто знает, что идёт не один, — конвейер. Настройка прогонщика и подъём стенда
+ * живут в разных процессах, но окружение у них общее, и оба читают одно и то же.
  */
 
+/** Целое из окружения. Пусто, не число или не положительное — умолчание. */
+function intFromEnv(name, fallback) {
+    const raw = Number(process.env[name]);
+
+    return Number.isInteger(raw) && raw > 0 ? raw : fallback;
+}
+
+/** Непустая строка из окружения; иначе умолчание. */
+function textFromEnv(name, fallback) {
+    const raw = process.env[name]?.trim();
+
+    return raw ? raw : fallback;
+}
+
 /** Порт приёмника стенда. */
-export const API_PORT = 3310;
+export const API_PORT = intFromEnv('E2E_API_PORT', 3310);
 
 /** Порт админки стенда: её отдаёт своя раздача статики, она же проксирует `/api` приёмнику. */
-export const ADMIN_PORT = 4310;
+export const ADMIN_PORT = intFromEnv('E2E_ADMIN_PORT', 4310);
 
 export const API_ORIGIN = `http://localhost:${API_PORT}`;
 export const ADMIN_ORIGIN = `http://localhost:${ADMIN_PORT}`;
 
+/** Имя базы стенда. Названо отдельно: `CREATE DATABASE` не принимает адреса. */
+export const STAND_DATABASE = textFromEnv('E2E_DATABASE', 'message_bus_e2e');
+
 /** Адрес хранилища стенда. Имя базы своё, пользователь и порт — те же, что у рабочей. */
-export const STAND_DATABASE_URL = 'postgresql://message_bus:message_bus@localhost:55432/message_bus_e2e';
+export const STAND_DATABASE_URL = `postgresql://message_bus:message_bus@localhost:55432/${STAND_DATABASE}`;
 
 /** Адрес того же хранилища для служебных команд: заведение базы стенда идёт не изнутри неё. */
 export const SERVER_DATABASE_URL = 'postgresql://message_bus:message_bus@localhost:55432/message_bus';
-
-/** Имя базы стенда. Названо отдельно: `CREATE DATABASE` не принимает адреса. */
-export const STAND_DATABASE = 'message_bus_e2e';
 
 /**
  * Пара входа стенда.
