@@ -1,18 +1,24 @@
 <ng-container rtBlock="admin-panel">
     <rt-aside-section>
         <rt-detail-list>
-            <rt-detail-row qa-dataid="postmortem-tree" [label]="treeLabel">{{ entity().tree.name }}</rt-detail-row>
-            <rt-detail-row qa-dataid="postmortem-file" [label]="fileLabel">{{ entity().file }}</rt-detail-row>
-            <rt-detail-row qa-dataid="postmortem-arrived" [label]="arrivedLabel">
-                {{ entity().arrivedAt | adminMoment }}
+            <rt-detail-row qa-dataid="postmortem-tree" [label]="treeLabel" [loading]="reading()">
+                {{ entity()?.tree?.name }}
             </rt-detail-row>
-            <rt-detail-row qa-dataid="postmortem-updated" [label]="updatedLabel">
-                {{ entity().updatedAt | adminMoment }}
+            <rt-detail-row qa-dataid="postmortem-file" [label]="fileLabel" [loading]="reading()">
+                {{ entity()?.file }}
+            </rt-detail-row>
+            <rt-detail-row qa-dataid="postmortem-arrived" [label]="arrivedLabel" [loading]="reading()">
+                {{ entity()?.arrivedAt ?? null | adminMoment }}
+            </rt-detail-row>
+            <rt-detail-row qa-dataid="postmortem-updated" [label]="updatedLabel" [loading]="reading()">
+                {{ entity()?.updatedAt ?? null | adminMoment }}
             </rt-detail-row>
         </rt-detail-list>
     </rt-aside-section>
 
-    <rt-aside-section [heading]="textLabel">
-        <pre rtElem="text" qa-dataid="postmortem-text">{{ entity().text }}</pre>
-    </rt-aside-section>
+    @if (!reading() && entity(); as record) {
+        <rt-aside-section [heading]="textLabel">
+            <pre rtElem="text" qa-dataid="postmortem-text">{{ record.text }}</pre>
+        </rt-aside-section>
+    }
 </ng-container>

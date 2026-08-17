@@ -1,20 +1,28 @@
 <ng-container rtBlock="admin-panel">
     <rt-aside-section>
         <rt-detail-list>
-            <rt-detail-row qa-dataid="month-record-tree" [label]="treeLabel">{{ entity().tree.name }}</rt-detail-row>
-            <rt-detail-row qa-dataid="month-record-month" [label]="monthLabel">{{ entity().month }}</rt-detail-row>
-            <rt-detail-row qa-dataid="month-record-sessions" [label]="sessionsLabel">
-                {{ entity().sessions }}
+            <rt-detail-row qa-dataid="month-record-tree" [label]="treeLabel" [loading]="reading()">
+                {{ entity()?.tree?.name }}
             </rt-detail-row>
-            <rt-detail-row qa-dataid="month-record-ran" [label]="ranAtLabel">{{ entity().ranAt | adminMoment }}</rt-detail-row>
+            <rt-detail-row qa-dataid="month-record-month" [label]="monthLabel" [loading]="reading()">
+                {{ entity()?.month }}
+            </rt-detail-row>
+            <rt-detail-row qa-dataid="month-record-sessions" [label]="sessionsLabel" [loading]="reading()">
+                {{ entity()?.sessions }}
+            </rt-detail-row>
+            <rt-detail-row qa-dataid="month-record-ran" [label]="ranAtLabel" [loading]="reading()">
+                {{ entity()?.ranAt ?? null | adminMoment }}
+            </rt-detail-row>
         </rt-detail-list>
     </rt-aside-section>
 
-    <rt-aside-section [heading]="summaryLabel">
-        @if (entity().summary; as summary) {
-            <pre rtElem="text" qa-dataid="month-record-summary">{{ summary }}</pre>
-        } @else {
-            <p rtElem="empty" qa-dataid="month-record-summary-missing">{{ summaryMissing }}</p>
-        }
-    </rt-aside-section>
+    @if (!reading() && entity(); as record) {
+        <rt-aside-section [heading]="summaryLabel">
+            @if (record.summary; as summary) {
+                <pre rtElem="text" qa-dataid="month-record-summary">{{ summary }}</pre>
+            } @else {
+                <p rtElem="empty" qa-dataid="month-record-summary-missing">{{ summaryMissing }}</p>
+            }
+        </rt-aside-section>
+    }
 </ng-container>

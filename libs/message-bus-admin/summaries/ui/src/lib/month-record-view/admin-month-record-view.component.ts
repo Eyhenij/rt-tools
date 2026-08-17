@@ -10,6 +10,10 @@ const BEM_BLOCK: string = 'admin-panel';
 /**
  * Вид одной записи месяца: поля записи и сводка последнего прогона.
  *
+ * Пока запись читается, названия свойств уже стоят, а на месте значений — скелетоны: их даёт
+ * готовая строка кита. Записи при этом ещё нет вовсе, поэтому вход принимает и пустоту; слово
+ * о пустой сводке в это время не показывается — иначе чтение читалось бы отсутствием сводки.
+ *
  * Сводка показывается текстом, а не размеченным содержимым: приёмник содержимого груза не
  * разбирает, и дерево, у которого есть токен, иначе получало бы исполнение своего тела в
  * браузере вошедшего.
@@ -45,5 +49,6 @@ export class AdminMonthRecordViewComponent {
     protected readonly summaryLabel: string = adminLabel('detailsSummary');
     protected readonly summaryMissing: string = adminLabel('detailsSummaryMissing');
 
-    public readonly entity: InputSignal<IMonthRecord.State> = input.required<IMonthRecord.State>();
+    public readonly entity: InputSignal<IMonthRecord.State | null> = input.required<IMonthRecord.State | null>();
+    public readonly reading: InputSignal<boolean> = input<boolean>(false);
 }

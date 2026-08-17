@@ -7,9 +7,9 @@
 привязка здесь законна ровно до последнего коммита PR, которым договорённость въезжает в спек
 поддомена.
 
-| Правило                                                                                 | Где исполняется                                                                                             |
-| --------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| Разделы панели рисует готовый компонент кита, а не свой заголовок.                      | `projects/ui-kit-v2/src/lib/components/aside-section/rt-aside-section.component.ts:RtAsideSectionComponent` |
-| Свойства записи показаны готовым списком кита, а не своей разметкой списка определений. | `projects/ui-kit-v2/src/lib/components/detail-list/rt-detail-list.component.ts:RtDetailListComponent`       |
-| Пока запись читается, на месте значения виден скелетон.                                 | `projects/ui-kit-v2/src/lib/components/detail-list/rt-detail-row.component.ts:loading`                      |
-| Признак проверки стоит на панели, её шапке и каждой строке свойства.                    | `libs/message-bus-admin/postmortems/ui/src/lib/postmortem-view/admin-postmortem-view.component.html`        |
+| Правило                                                                                 | Где исполняется                                                                                                                                                                                           |
+| --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Разделы панели рисует готовый компонент кита, а не свой заголовок.                      | `projects/ui-kit-v2/src/lib/components/aside-section/rt-aside-section.component.ts:RtAsideSectionComponent`                                                                                               |
+| Свойства записи показаны готовым списком кита, а не своей разметкой списка определений. | `projects/ui-kit-v2/src/lib/components/detail-list/rt-detail-list.component.ts:RtDetailListComponent`                                                                                                     |
+| Пока запись читается, на месте значения виден скелетон.                                 | `projects/ui-kit-v2/src/lib/components/detail-list/rt-detail-row.component.ts:loading` — признак чтения панель получает от асайда входом `reading`                                                        |
+| Признак проверки стоит на панели, её шапке и каждой строке свойства.                    | `libs/message-bus-admin/postmortems/feature/details-aside/src/lib/admin-postmortem-details-aside.component.html` — метки панели и её шапки; метка строки — в `admin-postmortem-view.component.html` рядом |

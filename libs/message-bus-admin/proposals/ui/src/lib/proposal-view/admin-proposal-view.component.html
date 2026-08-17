@@ -1,17 +1,27 @@
 <ng-container rtBlock="admin-panel">
     <rt-aside-section>
         <rt-detail-list>
-            <rt-detail-row qa-dataid="proposal-tree" [label]="treeLabel">{{ entity().tree.name }}</rt-detail-row>
-            <rt-detail-row qa-dataid="proposal-resource" [label]="resourceLabel">{{ entity().resource }}</rt-detail-row>
-            <rt-detail-row qa-dataid="proposal-address" [label]="addressLabel">{{ entity().address }}</rt-detail-row>
-            <rt-detail-row qa-dataid="proposal-month" [label]="monthLabel">{{ entity().month }}</rt-detail-row>
-            <rt-detail-row qa-dataid="proposal-arrived" [label]="arrivedLabel">
-                {{ entity().arrivedAt | adminMoment }}
+            <rt-detail-row qa-dataid="proposal-tree" [label]="treeLabel" [loading]="reading()">
+                {{ entity()?.tree?.name }}
+            </rt-detail-row>
+            <rt-detail-row qa-dataid="proposal-resource" [label]="resourceLabel" [loading]="reading()">
+                {{ entity()?.resource }}
+            </rt-detail-row>
+            <rt-detail-row qa-dataid="proposal-address" [label]="addressLabel" [loading]="reading()">
+                {{ entity()?.address }}
+            </rt-detail-row>
+            <rt-detail-row qa-dataid="proposal-month" [label]="monthLabel" [loading]="reading()">
+                {{ entity()?.month }}
+            </rt-detail-row>
+            <rt-detail-row qa-dataid="proposal-arrived" [label]="arrivedLabel" [loading]="reading()">
+                {{ entity()?.arrivedAt ?? null | adminMoment }}
             </rt-detail-row>
         </rt-detail-list>
     </rt-aside-section>
 
-    <rt-aside-section [heading]="textLabel">
-        <pre rtElem="text" qa-dataid="proposal-text">{{ entity().text }}</pre>
-    </rt-aside-section>
+    @if (!reading() && entity(); as record) {
+        <rt-aside-section [heading]="textLabel">
+            <pre rtElem="text" qa-dataid="proposal-text">{{ record.text }}</pre>
+        </rt-aside-section>
+    }
 </ng-container>
