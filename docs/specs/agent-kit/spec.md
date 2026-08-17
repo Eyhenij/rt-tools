@@ -112,6 +112,7 @@
 | -------------------- | ------------------------------------- |
 | сводка               | `agent-kit stats [--days N] [--json]` |
 | отправка груза       | `agent-kit propose [--dry-run]`       |
+| заведение дерева     | `agent-kit enroll --code <код>`       |
 | сведение             | `/agent-kit-digest [--days N]`        |
 | выгрузка предложений | шаг команды `/skill-curator`          |
 
