@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { ETreeInviteState } from './tree-invite.util';
+import { ETreeInviteView } from '@rt/message-bus-common';
+
 import { inviteIssuedLines, inviteListLines, ITreeInviteRow, ITreeSummaryRow, tokenIssuedLines, treeListLines } from './tree-report.util';
 
 /** Дерево списка: годный токен, признак и день последнего прогона. */
@@ -15,7 +16,7 @@ const UNTIL: Date = new Date('2026-08-19T10:00:00.000Z');
 function inviteRow(patch: Partial<ITreeInviteRow> = {}): ITreeInviteRow {
     return {
         name: 'Своё дерево',
-        state: ETreeInviteState.Waiting,
+        state: ETreeInviteView.Waiting,
         issuedAt: new Date('2026-08-17T10:00:00.000Z'),
         expiresAt: UNTIL,
         treeSlug: null,
@@ -78,15 +79,15 @@ describe('inviteListLines', () => {
     });
 
     it('SC-MB-128 — погашенное приглашение из списка не выпадает и называет своё дерево', () => {
-        const printed: string = inviteListLines([inviteRow({ state: ETreeInviteState.Redeemed, treeSlug: 'own-tree' })]).join('\n');
+        const printed: string = inviteListLines([inviteRow({ state: ETreeInviteView.Redeemed, treeSlug: 'own-tree' })]).join('\n');
 
         expect(printed).toContain('погашено');
         expect(printed).toContain('дерево own-tree');
     });
 
     it('SC-MB-128 — просроченное и отозванное названы своими словами', () => {
-        expect(inviteListLines([inviteRow({ state: ETreeInviteState.Expired })]).join('\n')).toContain('просрочено');
-        expect(inviteListLines([inviteRow({ state: ETreeInviteState.Revoked })]).join('\n')).toContain('отозвано');
+        expect(inviteListLines([inviteRow({ state: ETreeInviteView.Expired })]).join('\n')).toContain('просрочено');
+        expect(inviteListLines([inviteRow({ state: ETreeInviteView.Revoked })]).join('\n')).toContain('отозвано');
     });
 
     it('SC-MB-128 — пустой список говорит, что приглашений нет, и называет команду выдачи', () => {

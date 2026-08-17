@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
+import { ETreeInviteView } from '@rt/message-bus-common';
+
 import {
-    ETreeInviteState,
     INVITE_HOURS,
     inviteCodeHash,
     inviteExpiry,
@@ -59,33 +60,33 @@ describe('inviteExpiry', () => {
 
 describe('inviteState', () => {
     it('свежее приглашение ждёт', () => {
-        expect(inviteState(invite(), NOW)).toBe(ETreeInviteState.Waiting);
+        expect(inviteState(invite(), NOW)).toBe(ETreeInviteView.Waiting);
     });
 
     it('приглашение, которым воспользовались, погашено', () => {
-        expect(inviteState(invite({ redeemedAt: NOW, treeSlug: 'own-tree' }), NOW)).toBe(ETreeInviteState.Redeemed);
+        expect(inviteState(invite({ redeemedAt: NOW, treeSlug: 'own-tree' }), NOW)).toBe(ETreeInviteView.Redeemed);
     });
 
     it('снятое владельцем приглашение отозвано', () => {
-        expect(inviteState(invite({ revokedAt: NOW }), NOW)).toBe(ETreeInviteState.Revoked);
+        expect(inviteState(invite({ revokedAt: NOW }), NOW)).toBe(ETreeInviteView.Revoked);
     });
 
     it('приглашение просрочено в тот же миг, когда срок вышел', () => {
         const at: Date = inviteExpiry(NOW);
 
-        expect(inviteState(invite(), at)).toBe(ETreeInviteState.Expired);
+        expect(inviteState(invite(), at)).toBe(ETreeInviteView.Expired);
     });
 
     it('погашенное остаётся погашенным и после того, как срок вышел', () => {
         const at: Date = inviteExpiry(NOW, INVITE_HOURS * 2);
 
-        expect(inviteState(invite({ redeemedAt: NOW, treeSlug: 'own-tree' }), at)).toBe(ETreeInviteState.Redeemed);
+        expect(inviteState(invite({ redeemedAt: NOW, treeSlug: 'own-tree' }), at)).toBe(ETreeInviteView.Redeemed);
     });
 
     it('отозванное остаётся отозванным и после того, как срок вышел', () => {
         const at: Date = inviteExpiry(NOW, INVITE_HOURS * 2);
 
-        expect(inviteState(invite({ revokedAt: NOW }), at)).toBe(ETreeInviteState.Revoked);
+        expect(inviteState(invite({ revokedAt: NOW }), at)).toBe(ETreeInviteView.Revoked);
     });
 });
 

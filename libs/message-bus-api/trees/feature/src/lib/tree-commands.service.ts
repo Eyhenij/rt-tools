@@ -11,6 +11,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
+import { ETreeInviteView } from '@rt/message-bus-common';
 import {
     createInvite,
     createTreeWithToken,
@@ -26,7 +27,6 @@ import {
     revokeTreeTokens,
 } from '@rt/message-bus-api/trees/data-access';
 import {
-    ETreeInviteState,
     inviteCodeHash,
     inviteExpiry,
     inviteIssuedLines,
@@ -148,7 +148,7 @@ export class TreeCommandsService {
 
         const live: IStoredInvite | null = await findLiveInviteByName(this.#prisma, name);
 
-        if (live && inviteState(live, at) === ETreeInviteState.Waiting) {
+        if (live && inviteState(live, at) === ETreeInviteView.Waiting) {
             return refusal(
                 `приглашение для «${name}» уже выдано и годно до ${live.expiresAt.toISOString()}; отозвать — tree:uninvite «${name}»`
             );

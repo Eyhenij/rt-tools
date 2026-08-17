@@ -5,12 +5,12 @@
  * проверяется вызовом. Токен при этом остаётся доводом функции и в хранилище не попадает — туда
  * уходит только его хеш.
  */
-import { ETreeInviteState } from './tree-invite.util';
+import { ETreeInviteView } from '@rt/message-bus-common';
 
 /** Приглашение в списке: сам код сюда не попадает — в хранилище его нет. */
 export interface ITreeInviteRow {
     readonly name: string;
-    readonly state: ETreeInviteState;
+    readonly state: ETreeInviteView;
     readonly issuedAt: Date;
     readonly expiresAt: Date;
     /** Признак дерева, заведённого этим приглашением; пусто — приглашение не погашено. */
@@ -18,11 +18,11 @@ export interface ITreeInviteRow {
 }
 
 /** Состояние приглашения словом: список читает человек, а не разбирает машина. */
-const INVITE_STATE_WORDS: Readonly<Record<ETreeInviteState, string>> = {
-    [ETreeInviteState.Waiting]: 'ждёт',
-    [ETreeInviteState.Redeemed]: 'погашено',
-    [ETreeInviteState.Expired]: 'просрочено',
-    [ETreeInviteState.Revoked]: 'отозвано',
+const INVITE_STATE_WORDS: Readonly<Record<ETreeInviteView, string>> = {
+    [ETreeInviteView.Waiting]: 'ждёт',
+    [ETreeInviteView.Redeemed]: 'погашено',
+    [ETreeInviteView.Expired]: 'просрочено',
+    [ETreeInviteView.Revoked]: 'отозвано',
 };
 
 /** Дерево в списке: чем оно называется и когда отчитывалось в последний раз. */

@@ -10,6 +10,11 @@
  */
 import { createHash, randomBytes } from 'node:crypto';
 
+// Состояние приглашения живёт в общей либе: набор один на обе стороны, и своя копия разошлась
+// бы с оригиналом молча. Наружу отсюда он не реэкспортируется: потребители берут его там же,
+// где он объявлен.
+import { ETreeInviteView } from '@rt/message-bus-common';
+
 /**
  * Длина кода приглашения в байтах. Тридцать два — столько же, сколько у токена: код ходит
  * перепиской и живёт до первого использования, поэтому подбирать его должно быть не дешевле.
@@ -26,18 +31,6 @@ const HOUR_MS: number = 60 * 60 * 1000;
  * лежащий месяцами код ничем не отличается от общего секрета установки.
  */
 export const INVITE_HOURS: number = 48;
-
-/** Состояние приглашения: то, чем оно показывается владельцу и в админке. */
-export enum ETreeInviteState {
-    /** Приглашением ещё не воспользовались, и срок не вышел. */
-    Waiting = 'waiting',
-    /** По приглашению выдан токен: дерево заведено. */
-    Redeemed = 'redeemed',
-    /** Срок вышел, а приглашением так и не воспользовались. */
-    Expired = 'expired',
-    /** Владелец снял приглашение до того, как им воспользовались. */
-    Revoked = 'revoked',
-}
 
 /** Приглашение так, как его читают команда и экран: сам код сюда не попадает никогда. */
 export interface ITreeInviteRecord {
@@ -77,16 +70,16 @@ export function inviteExpiry(at: Date, hours: number = INVITE_HOURS): Date {
  * Порядок проверок неслучаен: погашенное и отозванное остаются собой и после того, как срок
  * вышел, — иначе запись о заведённом дереве через двое суток читалась бы как просроченная.
  */
-export function inviteState(invite: ITreeInviteRecord, at: Date): ETreeInviteState {
+export function inviteState(invite: ITreeInviteRecord, at: Date): ETreeInviteView {
     if (invite.redeemedAt) {
-        return ETreeInviteState.Redeemed;
+        return ETreeInviteView.Redeemed;
     }
 
     if (invite.revokedAt) {
-        return ETreeInviteState.Revoked;
+        return ETreeInviteView.Revoked;
     }
 
-    return invite.expiresAt.getTime() <= at.getTime() ? ETreeInviteState.Expired : ETreeInviteState.Waiting;
+    return invite.expiresAt.getTime() <= at.getTime() ? ETreeInviteView.Expired : ETreeInviteView.Waiting;
 }
 
 /**
@@ -96,5 +89,5 @@ export function inviteState(invite: ITreeInviteRecord, at: Date): ETreeInviteSta
  * просроченным и отозванным он не показывает — она сказала бы, какие коды заведены.
  */
 export function inviteUsable(invite: ITreeInviteRecord, at: Date): boolean {
-    return inviteState(invite, at) === ETreeInviteState.Waiting;
+    return inviteState(invite, at) === ETreeInviteView.Waiting;
 }

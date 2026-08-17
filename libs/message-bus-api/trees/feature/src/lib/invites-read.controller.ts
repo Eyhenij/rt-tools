@@ -16,16 +16,8 @@ import { Controller, Delete, Get, NotFoundException, Param } from '@nestjs/commo
 import { SessionOperation } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { findLiveInviteByName, IStoredInvite, listInvites, revokeInvite } from '@rt/message-bus-api/trees/data-access';
-import { ETreeInviteState, inviteState } from '@rt/message-bus-api/trees/util';
+import { inviteState } from '@rt/message-bus-api/trees/util';
 import { ETreeInviteView, ITreeInviteView } from '@rt/message-bus-common';
-
-/** Состояние домена в состояние, которое читает экран: наборы одинаковы по составу и по смыслу. */
-const VIEW_OF_STATE: Readonly<Record<ETreeInviteState, ETreeInviteView>> = {
-    [ETreeInviteState.Waiting]: ETreeInviteView.Waiting,
-    [ETreeInviteState.Redeemed]: ETreeInviteView.Redeemed,
-    [ETreeInviteState.Expired]: ETreeInviteView.Expired,
-    [ETreeInviteState.Revoked]: ETreeInviteView.Revoked,
-};
 
 @Controller('invites')
 export class InvitesReadController {
@@ -61,7 +53,7 @@ export class InvitesReadController {
         const at: Date = new Date();
         const live: IStoredInvite | null = await findLiveInviteByName(this.#prisma, name);
 
-        if (!live || inviteState(live, at) !== ETreeInviteState.Waiting) {
+        if (!live || inviteState(live, at) !== ETreeInviteView.Waiting) {
             throw new NotFoundException(`годного приглашения для «${name}» нет`);
         }
 
@@ -74,7 +66,7 @@ export class InvitesReadController {
     #view(invite: IStoredInvite, at: Date): ITreeInviteView {
         return {
             name: invite.name,
-            state: VIEW_OF_STATE[inviteState(invite, at)],
+            state: inviteState(invite, at),
             issuedAt: invite.issuedAt.toISOString(),
             expiresAt: invite.expiresAt.toISOString(),
             treeSlug: invite.treeSlug,
