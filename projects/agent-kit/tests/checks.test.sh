@@ -154,7 +154,9 @@ done
 
 SPEC_TREE="$(mktemp -d)"
 mkdir -p "$SPEC_TREE/tools" "$SPEC_TREE/docs/constitution" "$SPEC_TREE/.claude/skills"
-cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/check-specs.mjs" "$SPEC_TREE/tools/"
+cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/check-specs.mjs" \
+    "$CHECKS/spec-common.mjs" "$CHECKS/spec-anchors.mjs" "$CHECKS/spec-contract.mjs" "$CHECKS/spec-scenarios.mjs" \
+    "$SPEC_TREE/tools/"
 
 # Заготовка спека: все обязательные разделы на месте, чтобы в выводе оставалось только то,
 # ради чего сценарий заведён.
@@ -225,7 +227,7 @@ companion() {
     {
         printf '# Компаньон\n\n## Где это лежит\n\n| Что | Где |\n| --- | --- |\n| механизм | `tools/check-specs.mjs` |\n\n'
         [ "$1" = 'без раздела' ] ||
-            printf '## Где исполняются статьи\n\n| Статья | Где исполняется |\n| --- | --- |\n| Раз. | `tools/check-specs.mjs:sectionOf` |\n'
+            printf '## Где исполняются статьи\n\n| Статья | Где исполняется |\n| --- | --- |\n| Раз. | `tools/check-specs.mjs:checkSpecHeadings` |\n'
     } > "$SPEC_TREE/.claude/skills/acting-rule/implementation.md"
 }
 
@@ -240,7 +242,7 @@ report "SC-AK-57 — строка описательной таблицы при
 
 # SC-AK-58 — у компаньона спека домена раздел не требуется: там таблица одна
 rm -rf "$SPEC_TREE/.claude/skills/acting-rule"
-printf '# Привязка\n\n| Правило | Где исполняется |\n| --- | --- |\n| Не применимо. | `tools/check-specs.mjs:sectionOf` |\n' \
+printf '# Привязка\n\n| Правило | Где исполняется |\n| --- | --- |\n| Не применимо. | `tools/check-specs.mjs:checkSpecHeadings` |\n' \
     > "$SPEC_TREE/docs/specs/alpha/implementation.md"
 report "SC-AK-58 — компаньон спека без раздела читается" "$(specs_says 'нет раздела .*Где исполняются статьи')" 0
 report "SC-AK-58 — его привязка нашлась" "$(specs_says 'правило без привязки')" 0
@@ -278,7 +280,7 @@ rm -rf "$SPEC_TREE/.claude/skills/verdict-rule"
 mkdir -p "$SPEC_TREE/.claude/skills/skipped-rule"
 printf -- '---\nname: skipped-rule\nkind: rule\nlaw: acting\n---\n\n# Правило\n\n## Как закон применяется здесь\n\n- **Раз.** Два.\n\n## Паттерны\n\n- `skipped-rule-do` — готовый код.\n' \
     > "$SPEC_TREE/.claude/skills/skipped-rule/SKILL.md"
-printf '# Компаньон\n\n## Где исполняются статьи\n\n| Статья | Где исполняется |\n| --- | --- |\n| Раз. | `tools/check-specs.mjs:sectionOf` |\n' \
+printf '# Компаньон\n\n## Где исполняются статьи\n\n| Статья | Где исполняется |\n| --- | --- |\n| Раз. | `tools/check-specs.mjs:checkSpecHeadings` |\n' \
     > "$SPEC_TREE/.claude/skills/skipped-rule/implementation.md"
 report "SC-AK-241 — правило без паттерна названо" "$(specs_says 'нет ни одного паттерна')" 1
 

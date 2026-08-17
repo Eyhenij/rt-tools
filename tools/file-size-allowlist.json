@@ -3,12 +3,10 @@
   "accepted": [],
   "debt": [
     "projects/agent-kit/assets/checks/check-lib-layers.mjs",
-    "projects/agent-kit/assets/checks/check-specs.mjs",
     "projects/agent-kit/assets/hooks/sql-guard.sh",
     "projects/agent-kit/tests/checks.test.sh",
     "projects/ui-kit-v2/src/styles/tokens.source.mjs",
     "projects/ui-kit/src/styles/components/_rtui_button.scss",
-    "tools/check-lib-layers.mjs",
-    "tools/check-specs.mjs"
+    "tools/check-lib-layers.mjs"
   ]
 }

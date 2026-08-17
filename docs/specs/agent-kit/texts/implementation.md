@@ -24,12 +24,12 @@
 | Переносимый текст из сверки адресов выведен.                                                                 | `projects/agent-kit/assets/checks/check-doc-paths.mjs:isPortable`             |
 | Полнота указателя каталога сверяется обеими сторонами.                                                       | `projects/agent-kit/assets/checks/check-doc-paths.mjs:checkIndex`             |
 | Расхождение указателя печатается своим списком со своим доводом.                                             | `projects/agent-kit/assets/checks/check-doc-paths.mjs:reportIndex`            |
-| Привязками считаются строки одной таблицы компаньона, а не всякая строка, похожая на строку таблицы.         | `projects/agent-kit/assets/checks/check-specs.mjs:rowsOfMap`                  |
-| Компаньон правила без раздела привязок — отказ, а не молчание.                                               | `projects/agent-kit/assets/checks/check-specs.mjs:rowsOfMap`                  |
-| Символом якоря считается любая буква, а не только латинская.                                                 | `projects/agent-kit/assets/checks/check-specs.mjs:ANCHOR`                     |
-| Алфавит не перечисляется списком.                                                                            | `projects/agent-kit/assets/checks/check-specs.mjs:ANCHOR`                     |
-| Путь пары разбирается по-прежнему.                                                                           | `projects/agent-kit/assets/checks/check-specs.mjs:ANCHOR`                     |
-| Номер сценария из одной цифры сверка видит наравне с двумя и тремя.                                          | `projects/agent-kit/assets/checks/check-specs.mjs:SCENARIO_HEADING`           |
+| Привязками считаются строки одной таблицы компаньона, а не всякая строка, похожая на строку таблицы.         | `projects/agent-kit/assets/checks/spec-anchors.mjs:rowsOfMap`                  |
+| Компаньон правила без раздела привязок — отказ, а не молчание.                                               | `projects/agent-kit/assets/checks/spec-anchors.mjs:rowsOfMap`                  |
+| Символом якоря считается любая буква, а не только латинская.                                                 | `projects/agent-kit/assets/checks/spec-common.mjs:ANCHOR`                     |
+| Алфавит не перечисляется списком.                                                                            | `projects/agent-kit/assets/checks/spec-common.mjs:ANCHOR`                     |
+| Путь пары разбирается по-прежнему.                                                                           | `projects/agent-kit/assets/checks/spec-common.mjs:ANCHOR`                     |
+| Номер сценария из одной цифры сверка видит наравне с двумя и тремя.                                          | `projects/agent-kit/assets/checks/spec-common.mjs:SCENARIO_HEADING`           |
 | Шаги работы пронумерованы сплошь, и весь их список лежит в правиле ведения работы.                           | `projects/agent-kit/assets/rules/task-flow.md:task-flow`                      |
 | Номер сценария выдаётся один раз и повторно не используется.                                                 | `projects/agent-kit/assets/rules/spec-driven.md:spec-driven`                  |
 | Сценарий и заголовок его теста правятся одним изменением.                                                    | `projects/agent-kit/assets/patterns/spec-driven-domain.md:spec-driven-domain` |
