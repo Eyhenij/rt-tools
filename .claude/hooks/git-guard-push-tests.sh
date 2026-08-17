@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.8.3 · hooks/git-guard-push-tests.sh · 01a5c9673064 · правится надстройкой, не здесь
+# rt-kit v0.8.3 · hooks/git-guard-push-tests.sh · eac31556b6ce · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh
 # Гард проверок перед пушем. PreToolUse на вызове пуша.
@@ -37,10 +37,14 @@ case "$tool" in
 esac
 
 cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
-case "$cmd" in
-    *git\ push*) ;;
-    *) exit 0 ;;
-esac
+
+# Вызов пуша узнаётся по двум признакам сразу — команда `git` в начале строки или за
+# разделителем и слово `push` отдельным словом. Тем же приёмом, что у гарда поставки: одной
+# подстрокой «git push» пуш не поймать — помощник учётных данных и заголовок запроса ставятся
+# ключами `-c` между ними, и ровно этой формой здесь и пушат. Пока признаком была подстрока,
+# весь набор гейта на таком пуше не гонялся вовсе, а молчание гарда читалось как «зелено».
+printf '%s' "$cmd" | grep -qE '(^|[;&|(]|&&|\|\|)[[:space:]]*git([[:space:]]|$)' || exit 0
+printf '%s' "$cmd" | grep -qE '(^|[[:space:]])push([[:space:]]|$)' || exit 0
 
 # Пробный пуш ничего не отправляет: гонять ради него весь набор незачем.
 case "$cmd" in
