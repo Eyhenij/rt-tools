@@ -11,13 +11,13 @@
  * Состояние считается на момент запроса, а не хранится колонкой: просроченность наступает сама
  * собой, и записанная однажды она соврала бы через час после того, как её записали.
  */
-import { Controller, Delete, Get, NotFoundException, Param } from '@nestjs/common';
+import { BadRequestException, Controller, Delete, Get, NotFoundException, Param, Query } from '@nestjs/common';
 
 import { SessionOperation } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
-import { findLiveInviteByName, IStoredInvite, listInvites, revokeInvite } from '@rt/message-bus-api/trees/data-access';
+import { findLiveInviteByName, IStoredInvite, readInvites, revokeInvite } from '@rt/message-bus-api/trees/data-access';
 import { inviteState } from '@rt/message-bus-api/trees/util';
-import { ETreeInviteView, ITreeInviteView } from '@rt/message-bus-common';
+import { ETreeInviteView, IPage, ITreeInviteView, pageAsked, pageFault, TREE_INVITE_SORTABLE } from '@rt/message-bus-common';
 
 @Controller('invites')
 export class InvitesReadController {
@@ -28,16 +28,27 @@ export class InvitesReadController {
     }
 
     /**
-     * Все приглашения, свежие сверху. Страницами не приезжают: их столько же, сколько деревьев,
-     * то есть единицы, — а погашенные остаются, потому что по ним читается, что дерево завелось.
+     * Страница приглашений, свежие сверху.
+     *
+     * Приезжают страницей, как и остальные списки админки, хотя приглашений единицы: страницу,
+     * порядок и повтор чтения экрану даёт одна общая основа, и список, отвечающий не её формой,
+     * пришлось бы читать в обход неё.
+     *
+     * Погашенные из списка не уходят: по ним читается, что дерево завелось и каким приглашением.
      */
     @Get()
     @SessionOperation()
-    public async all(): Promise<ITreeInviteView[]> {
-        const at: Date = new Date();
-        const invites: IStoredInvite[] = await listInvites(this.#prisma);
+    public async page(@Query() query: Record<string, unknown>): Promise<IPage<ITreeInviteView>> {
+        const fault: string | null = pageFault(query, TREE_INVITE_SORTABLE);
 
-        return invites.map((invite: IStoredInvite): ITreeInviteView => this.#view(invite, at));
+        if (fault) {
+            throw new BadRequestException(fault);
+        }
+
+        const at: Date = new Date();
+        const page: IPage<IStoredInvite> = await readInvites(this.#prisma, pageAsked(query, TREE_INVITE_SORTABLE));
+
+        return { ...page, rows: page.rows.map((invite: IStoredInvite): ITreeInviteView => this.#view(invite, at)) };
     }
 
     /**

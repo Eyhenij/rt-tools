@@ -31,8 +31,11 @@ export interface ISectionMarks {
 /** Что общая страница списка размечает своими метками, собирая их из префикса раздела. */
 export type TPageMark = 'hint' | 'columns' | 'refresh' | 'fault' | 'retry';
 
-/** Имя раздела: их три, и все три собраны одним и тем же списочным экраном. */
-export type TSectionName = 'postmortems' | 'proposals' | 'summaries';
+/**
+ * Имя раздела. Три раздела груза собраны одним и тем же списочным экраном; четвёртый — тем же,
+ * но без отбора по дереву и без панели: приглашение ждёт дерева, которого ещё нет.
+ */
+export type TSectionName = 'postmortems' | 'proposals' | 'summaries' | 'invites';
 
 /** Разделы админки: адрес, заголовок экрана и `qa-dataid` его таблицы и строк. */
 export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.freeze({
@@ -59,6 +62,17 @@ export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.fre
         table: 'summaries-table',
         row: 'summaries-row',
         details: 'month-record-details-close',
+    }),
+    invites: Object.freeze({
+        path: SECTIONS.invites,
+        title: 'Приглашения',
+        prefix: 'invites',
+        table: 'invites-table',
+        row: 'invites-row',
+        // Панели подробностей у приглашения нет: всё известное о нём стоит в строке. Метка
+        // объявлена пустой, а не выдуманной, — по выдуманной спека искала бы то, чего нет, и
+        // молча ничего не находила.
+        details: '',
     }),
 });
 

@@ -1,9 +1,9 @@
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { inviteExpiry } from '@rt/message-bus-api/trees/util';
-import { ETreeInviteView, ITreeInviteView } from '@rt/message-bus-common';
+import { ETreeInviteView, IPage, ITreeInviteView } from '@rt/message-bus-common';
 
 import { InvitesReadController } from './invites-read.controller';
 
@@ -32,8 +32,16 @@ class PrismaDouble {
 
     public get treeInvite(): Record<string, TQuery> {
         return {
-            findMany: async (): Promise<unknown> =>
-                [...this.invites].sort((left: IInviteRow, right: IInviteRow): number => right.issuedAt.getTime() - left.issuedAt.getTime()),
+            count: async (): Promise<unknown> => this.invites.length,
+            findMany: async (args: Record<string, unknown>): Promise<unknown> => {
+                const ordered: IInviteRow[] = [...this.invites].sort(
+                    (left: IInviteRow, right: IInviteRow): number => right.issuedAt.getTime() - left.issuedAt.getTime()
+                );
+                const skip: number = (args['skip'] as number | undefined) ?? 0;
+                const take: number = (args['take'] as number | undefined) ?? ordered.length;
+
+                return ordered.slice(skip, skip + take);
+            },
             findUnique: async (args: Record<string, unknown>): Promise<unknown> => {
                 const where: Record<string, unknown> = (args['where'] ?? {}) as Record<string, unknown>;
 
@@ -83,28 +91,48 @@ describe('InvitesReadController', () => {
     it('SC-MB-128 — список называет имя, состояние и сроки, а кода в нём нет', async () => {
         db.invite();
 
-        const rows: ITreeInviteView[] = await invites.all();
+        const page: IPage<ITreeInviteView> = await invites.page({});
 
-        expect(rows).toHaveLength(1);
-        expect(rows[0].name).toBe('Своё дерево');
-        expect(rows[0].state).toBe(ETreeInviteView.Waiting);
-        expect(rows[0].issuedAt).toBe(NOW.toISOString());
-        expect(JSON.stringify(rows)).not.toContain('hash');
+        expect(page.rows).toHaveLength(1);
+        expect(page.rows[0].name).toBe('Своё дерево');
+        expect(page.rows[0].state).toBe(ETreeInviteView.Waiting);
+        expect(page.rows[0].issuedAt).toBe(NOW.toISOString());
+        expect(JSON.stringify(page.rows)).toContain('Своё дерево');
+        expect(JSON.stringify(page.rows)).not.toContain('hash');
     });
 
     it('SC-MB-128 — погашенное приглашение из списка не выпадает и называет своё дерево', async () => {
         db.invite({ redeemedAt: NOW, activeName: null, tree: { slug: 'own-tree' } });
 
-        const rows: ITreeInviteView[] = await invites.all();
+        const page: IPage<ITreeInviteView> = await invites.page({});
 
-        expect(rows[0].state).toBe(ETreeInviteView.Redeemed);
-        expect(rows[0].treeSlug).toBe('own-tree');
+        expect(page.rows[0].state).toBe(ETreeInviteView.Redeemed);
+        expect(page.rows[0].treeSlug).toBe('own-tree');
     });
 
     it('SC-MB-128 — просроченность считается на момент запроса, а не хранится колонкой', async () => {
         db.invite({ expiresAt: new Date(Date.now() - 1000) });
 
-        expect((await invites.all())[0].state).toBe(ETreeInviteView.Expired);
+        expect((await invites.page({})).rows[0].state).toBe(ETreeInviteView.Expired);
+    });
+
+    it('SC-MB-128 — список приезжает страницей: строки режутся размером, а общее число называет все', async () => {
+        db.invite({ issuedAt: new Date('2026-08-17T12:00:00.000Z') });
+        db.invite({ issuedAt: new Date('2026-08-17T11:00:00.000Z'), activeName: 'Второе дерево', name: 'Второе дерево' });
+        db.invite({ issuedAt: new Date('2026-08-17T10:00:00.000Z'), activeName: 'Третье дерево', name: 'Третье дерево' });
+
+        const second: IPage<ITreeInviteView> = await invites.page({ page: '2', size: '2' });
+
+        expect(second.total).toBe(3);
+        expect(second.page).toBe(2);
+        expect(second.size).toBe(2);
+        expect(second.rows).toHaveLength(1);
+        expect(second.rows[0].name).toBe('Третье дерево');
+    });
+
+    it('SC-MB-128 — выборка, которая не разобралась, отбивается с именем параметра', async () => {
+        await expect(invites.page({ sort: 'state' })).rejects.toThrow(BadRequestException);
+        await expect(invites.page({ page: 'вторая' })).rejects.toThrow(BadRequestException);
     });
 
     it('SC-MB-120 — отзыв снимает приглашение, а запись о нём остаётся', async () => {
@@ -125,7 +153,10 @@ describe('InvitesReadController', () => {
         await expect(invites.revoke('Чужое дерево')).rejects.toThrow(NotFoundException);
     });
 
-    it('пустой список приглашений — это пустой список, а не отказ', async () => {
-        expect(await invites.all()).toEqual([]);
+    it('пустой список приглашений — это пустая страница, а не отказ', async () => {
+        const page: IPage<ITreeInviteView> = await invites.page({});
+
+        expect(page.rows).toEqual([]);
+        expect(page.total).toBe(0);
     });
 });

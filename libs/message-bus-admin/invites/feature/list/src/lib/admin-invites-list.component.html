@@ -1,0 +1,58 @@
+<admin-list-page qaPrefix="invites" [hint]="hint" [title]="title">
+    <table
+        #rowsTable="rtTable"
+        rt-table
+        qa-dataid="invites-table"
+        [ariaLabel]="title"
+        [columnsConfig]="columns"
+        [dataSource]="rows()"
+        [emptyMessage]="emptyMessage()"
+        [loading]="loading()"
+        [rowHasActions]="hasRowActions"
+        [showRowActions]="true"
+        [sort]="sortModel()"
+        [tableId]="tableId"
+        (sortChange)="changeSort($event)">
+        <ng-container cdkColumnDef="name">
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="name">{{ columns[0].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell qa-dataid="invites-cell-name">{{ row.name }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="state">
+            <th *cdkHeaderCellDef cdk-header-cell>{{ columns[1].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell qa-dataid="invites-cell-state">{{ row.stateLabel }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="issuedAt">
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="issuedAt">{{ columns[2].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell qa-dataid="invites-cell-issued">{{ row.issuedAt | adminMoment }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="expiresAt">
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="expiresAt">{{ columns[3].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell qa-dataid="invites-cell-expires">{{ row.expiresAt | adminMoment }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="tree">
+            <th *cdkHeaderCellDef cdk-header-cell>{{ columns[4].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell qa-dataid="invites-cell-tree">{{ row.treeSlug }}</td>
+        </ng-container>
+
+        <ng-template rtTableRowActions let-row [rtTableRowActionsRowType]="rows()">
+            @if (row.canRevoke) {
+                <rt-menu-item
+                    danger
+                    icon="times-circle"
+                    qa-dataid="invites-revoke"
+                    [confirmLabel]="revokeLabel"
+                    [confirmMessage]="row.revokeQuestion"
+                    [confirmTitle]="revokeTitle"
+                    [label]="revokeLabel"
+                    (selected)="revoke(row.name)" />
+            }
+        </ng-template>
+
+        <tr *cdkHeaderRowDef="rowsTable.displayedColumns()" cdk-header-row></tr>
+        <tr *cdkRowDef="let row; columns: rowsTable.displayedColumns()" cdk-row qa-dataid="invites-row"></tr>
+    </table>
+</admin-list-page>

@@ -9,6 +9,7 @@
  */
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { ITreeInviteRecord } from '@rt/message-bus-api/trees/util';
+import { IPage, IPageAsked, pageSkip, TPageDirection } from '@rt/message-bus-common';
 
 /** Приглашение, которое команда выдаёт: имя будущего дерева, хеш кода и срок годности. */
 export interface INewInvite {
@@ -58,6 +59,30 @@ interface IInviteRow {
     readonly tree: { readonly slug: string } | null;
 }
 
+/**
+ * Что читается у приглашения. Один список на все чтения домена: хеш кода в него не входит ни при
+ * одном из них — из хранилища он не выходит вовсе.
+ */
+interface IInviteSelect {
+    readonly id: true;
+    readonly name: true;
+    readonly issuedAt: true;
+    readonly expiresAt: true;
+    readonly redeemedAt: true;
+    readonly revokedAt: true;
+    readonly tree: { readonly select: { readonly slug: true } };
+}
+
+const INVITE_SELECT: IInviteSelect = {
+    id: true,
+    name: true,
+    issuedAt: true,
+    expiresAt: true,
+    redeemedAt: true,
+    revokedAt: true,
+    tree: { select: { slug: true } },
+};
+
 /** Строка хранилища в то, чем приглашение читают команда, приём и экран. */
 function record(row: IInviteRow): IStoredInvite {
     return {
@@ -94,15 +119,7 @@ export async function createInvite(prisma: PrismaService, invite: INewInvite, at
 export async function findInviteByHash(prisma: PrismaService, hash: string): Promise<IStoredInvite | null> {
     const row: IInviteRow | null = await prisma.treeInvite.findUnique({
         where: { hash },
-        select: {
-            id: true,
-            name: true,
-            issuedAt: true,
-            expiresAt: true,
-            redeemedAt: true,
-            revokedAt: true,
-            tree: { select: { slug: true } },
-        },
+        select: INVITE_SELECT,
     });
 
     return row ? record(row) : null;
@@ -112,15 +129,7 @@ export async function findInviteByHash(prisma: PrismaService, hash: string): Pro
 export async function findLiveInviteByName(prisma: PrismaService, name: string): Promise<IStoredInvite | null> {
     const row: IInviteRow | null = await prisma.treeInvite.findUnique({
         where: { activeName: name },
-        select: {
-            id: true,
-            name: true,
-            issuedAt: true,
-            expiresAt: true,
-            redeemedAt: true,
-            revokedAt: true,
-            tree: { select: { slug: true } },
-        },
+        select: INVITE_SELECT,
     });
 
     return row ? record(row) : null;
@@ -182,17 +191,46 @@ export async function redeemInvite(prisma: PrismaService, redemption: IRedemptio
 /** Все приглашения, свежие сверху: список читает человек, и последнее выданное ему нужнее. */
 export async function listInvites(prisma: PrismaService): Promise<IStoredInvite[]> {
     const rows: IInviteRow[] = await prisma.treeInvite.findMany({
-        select: {
-            id: true,
-            name: true,
-            issuedAt: true,
-            expiresAt: true,
-            redeemedAt: true,
-            revokedAt: true,
-            tree: { select: { slug: true } },
-        },
+        select: INVITE_SELECT,
         orderBy: { issuedAt: 'desc' },
     });
 
     return rows.map(record);
+}
+
+/** Первая ступень порядка. Вторая — всегда признак записи, и её ставит сам запрос. */
+type TInviteOrder = { readonly issuedAt: TPageDirection } | { readonly expiresAt: TPageDirection } | { readonly name: TPageDirection };
+
+/** Порядок по названному полю. Умолчание — время выдачи: последнее выданное человеку нужнее. */
+function orderOf(asked: IPageAsked): TInviteOrder {
+    switch (asked.sort) {
+        case 'expiresAt':
+            return { expiresAt: asked.dir };
+        case 'name':
+            return { name: asked.dir };
+        default:
+            return { issuedAt: asked.dir };
+    }
+}
+
+/**
+ * Страница приглашений — то, что читает админка.
+ *
+ * Отбора по дереву здесь нет, хотя выборка его несёт: приглашение ждёт дерева, которого ещё нет,
+ * и сузить им можно было бы одни погашенные. Экран приглашений отбора поэтому не показывает
+ * вовсе, и параметр до этого запроса не доходит.
+ *
+ * Порядок идёт двумя ступенями: приглашения одной выдачи ложатся с одним временем, и без второго
+ * ключа одна и та же запись видна на двух страницах подряд, а соседняя не видна ни на одной.
+ */
+export async function readInvites(prisma: PrismaService, asked: IPageAsked): Promise<IPage<IStoredInvite>> {
+    const total: number = await prisma.treeInvite.count();
+    const rows: IInviteRow[] = await prisma.treeInvite.findMany({
+        select: INVITE_SELECT,
+        orderBy: [orderOf(asked), { id: asked.dir }],
+        skip: pageSkip(asked),
+        take: asked.size,
+    });
+
+    return { rows: rows.map(record), total, page: asked.page, size: asked.size };
 }
