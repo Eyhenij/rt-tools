@@ -2,6 +2,7 @@ import { Module, Provider } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 
 import { AccessGuard } from './access.guard';
+import { RateLimitService } from './rate-limit.service';
 
 /**
  * Проверка доступа ставится на всё приложение сразу, а не на каждый контроллер.
@@ -12,10 +13,10 @@ import { AccessGuard } from './access.guard';
  *
  * Модуль подключается приложением: цепочка проверок — его решение, а не решение домена.
  */
-const OWN_PROVIDERS: Provider[] = [AccessGuard, { provide: APP_GUARD, useExisting: AccessGuard }];
+const OWN_PROVIDERS: Provider[] = [AccessGuard, RateLimitService, { provide: APP_GUARD, useExisting: AccessGuard }];
 
 @Module({
     providers: OWN_PROVIDERS,
-    exports: [AccessGuard],
+    exports: [AccessGuard, RateLimitService],
 })
 export class AccessModule {}

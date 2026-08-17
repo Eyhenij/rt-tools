@@ -1,0 +1,33 @@
+/**
+ * Чем раздел приглашений отличается от разделов груза: столбцы, поля порядка и адрес операций.
+ *
+ * Лежит отдельно от экрана: тот же набор читают и таблица, и панель настройки столбцов, и спека
+ * — объявленный в шаблоне, он был бы известен только шаблону.
+ */
+import { adminLabel } from '@rt/message-bus-admin/common/core/util';
+import { IRtTable } from '@rt-tools/ui-kit-v2';
+
+/** Адрес операций над приглашениями: чтение списка и отзыв одного. */
+export const INVITES_PATH: string = '/api/invites';
+
+/**
+ * Ключ, под которым хранится выбор столбцов.
+ *
+ * Свой у каждого раздела: столбцы у них разные, и общий ключ переносил бы скрытое в одном
+ * разделе на остальные.
+ */
+export const INVITES_TABLE_ID: string = 'admin-invites';
+
+/**
+ * Столбцы таблицы. Подписи идут из словаря, а порядок — тот, в котором они здесь стоят.
+ *
+ * Закреплено имя: приглашение зовётся именем будущего дерева, и без него список перестаёт
+ * называть свои строки.
+ */
+export const INVITES_COLUMNS: readonly IRtTable.ColumnConfig[] = Object.freeze([
+    { key: 'name', label: adminLabel('columnInviteName'), sortable: true, locked: true },
+    { key: 'state', label: adminLabel('columnInviteState') },
+    { key: 'issuedAt', label: adminLabel('columnIssuedAt'), sortable: true },
+    { key: 'expiresAt', label: adminLabel('columnExpiresAt'), sortable: true },
+    { key: 'tree', label: adminLabel('columnInviteTree') },
+]);

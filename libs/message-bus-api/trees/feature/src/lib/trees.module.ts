@@ -1,5 +1,9 @@
 import { Module } from '@nestjs/common';
 
+import { AccessModule } from '@rt/message-bus-api/access/feature';
+
+import { EnrollController } from './enroll.controller';
+import { InvitesReadController } from './invites-read.controller';
 import { TreesReadController } from './trees-read.controller';
 
 /**
@@ -10,6 +14,7 @@ import { TreesReadController } from './trees-read.controller';
  * порт не слушают.
  */
 @Module({
-    controllers: [TreesReadController],
+    imports: [AccessModule],
+    controllers: [TreesReadController, EnrollController, InvitesReadController],
 })
 export class TreesModule {}

@@ -1,6 +1,7 @@
 import { Route } from '@angular/router';
 import { authRoutes, sessionGuard } from '@rt/message-bus-admin/auth/shell';
 import { COLUMNS_ROUTE } from '@rt/message-bus-admin/common/core/util';
+import { INVITES_ROUTE, invitesRoutes } from '@rt/message-bus-admin/invites/shell';
 import { POSTMORTEMS_ROUTE, postmortemsRoutes } from '@rt/message-bus-admin/postmortems/shell';
 import { PROPOSALS_ROUTE, proposalsRoutes } from '@rt/message-bus-admin/proposals/shell';
 import { SUMMARIES_ROUTE, summariesRoutes } from '@rt/message-bus-admin/summaries/shell';
@@ -52,9 +53,11 @@ export const appRoutes: Route[] = [
             columnsRoute(POSTMORTEMS_ROUTE),
             columnsRoute(PROPOSALS_ROUTE),
             columnsRoute(SUMMARIES_ROUTE),
+            columnsRoute(INVITES_ROUTE),
             ...postmortemsRoutes,
             ...proposalsRoutes,
             ...summariesRoutes,
+            ...invitesRoutes,
             { path: '', pathMatch: 'full', redirectTo: POSTMORTEMS_ROUTE },
         ],
     },

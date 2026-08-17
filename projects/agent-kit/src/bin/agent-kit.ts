@@ -14,8 +14,10 @@ import process from 'node:process';
 import { unknownFlagsIn } from '../lib/argv.js';
 import { IEntryOfCatalog, readCatalog, resolveSelection } from '../lib/catalog.js';
 import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, list, stats, sync } from '../lib/commands.js';
+import { CONFIG_PATH, IConfig, readConfig } from '../lib/config.js';
+import { enroll, httpEnroll } from '../lib/enroll.js';
 import { httpShip } from '../lib/ship.js';
-import { propose } from '../lib/shipment.js';
+import { propose, treeSlugOf } from '../lib/shipment.js';
 import { DEFAULT_DAYS } from '../lib/observations.js';
 import { staleBuild } from '../lib/freshness.js';
 import { packageRootFrom } from '../lib/package-root.js';
@@ -37,6 +39,8 @@ const USAGE: readonly string[] = [
     '  propose         отправить груз в приём: сводку со снимком надстроек, предложения и разборы',
     '  propose --dry-run   показать, что уехало бы, и ничего не отправлять',
     '  adopt [файлы]   отдать пакету файлы, лежащие на его путях не от него',
+    '  enroll --code <код>  завести дерево по приглашению владельца и положить его токен',
+    '  enroll --force       перезаписать уже лежащий токен намеренно',
     '',
     '  --root <путь>   корень проекта; по умолчанию текущий каталог',
     '',
@@ -268,6 +272,23 @@ export async function main(argv: readonly string[]): Promise<IOutcomeOfCommand> 
                 // Отрезок тот же, что у сводки по умолчанию: отправку зовут по свежей задаче.
                 days: DEFAULT_DAYS,
                 today: new Date().toISOString().slice(0, 10),
+            });
+        }
+        case 'enroll': {
+            const config: IConfig | null = readConfig(env.root);
+
+            if (!config) {
+                return { code: 1, lines: [`настройки дерева нет: ${CONFIG_PATH}. Заведите её командой \`init\``] };
+            }
+
+            return enroll({
+                root: env.root,
+                intake: config.intake,
+                code: optionOf(argv, '--code', ''),
+                tree: treeSlugOf(remoteOf(env.root), config.tree),
+                token: config.token,
+                force: argv.includes('--force'),
+                call: httpEnroll,
             });
         }
         case 'doctor':

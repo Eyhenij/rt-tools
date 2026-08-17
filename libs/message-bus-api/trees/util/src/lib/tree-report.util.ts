@@ -5,6 +5,25 @@
  * проверяется вызовом. Токен при этом остаётся доводом функции и в хранилище не попадает — туда
  * уходит только его хеш.
  */
+import { ETreeInviteView } from '@rt/message-bus-common';
+
+/** Приглашение в списке: сам код сюда не попадает — в хранилище его нет. */
+export interface ITreeInviteRow {
+    readonly name: string;
+    readonly state: ETreeInviteView;
+    readonly issuedAt: Date;
+    readonly expiresAt: Date;
+    /** Признак дерева, заведённого этим приглашением; пусто — приглашение не погашено. */
+    readonly treeSlug: string | null;
+}
+
+/** Состояние приглашения словом: список читает человек, а не разбирает машина. */
+const INVITE_STATE_WORDS: Readonly<Record<ETreeInviteView, string>> = {
+    [ETreeInviteView.Waiting]: 'ждёт',
+    [ETreeInviteView.Redeemed]: 'погашено',
+    [ETreeInviteView.Expired]: 'просрочено',
+    [ETreeInviteView.Revoked]: 'отозвано',
+};
 
 /** Дерево в списке: чем оно называется и когда отчитывалось в последний раз. */
 export interface ITreeSummaryRow {
@@ -29,6 +48,41 @@ function day(at: Date): string {
  */
 export function tokenIssuedLines(headline: string, token: string): string[] {
     return [headline, 'токен печатается один раз — второй раз показать его неоткуда:', token];
+}
+
+/**
+ * Код приглашения, напечатанный один раз.
+ *
+ * Второй раз показать его неоткуда — в хранилище лежит только хеш, — поэтому рядом сразу стоит
+ * команда, которой дерево себя заводит: код и способ им воспользоваться передаются вместе.
+ */
+export function inviteIssuedLines(headline: string, code: string, until: Date): string[] {
+    return [
+        headline,
+        `годно до ${day(until)}; код печатается один раз — второй раз показать его неоткуда:`,
+        code,
+        `дерево заводит себя командой: npx agent-kit enroll --code ${code}`,
+    ];
+}
+
+/**
+ * Список приглашений: имя будущего дерева, состояние и сроки.
+ *
+ * Погашенное из списка не выпадает: по нему читается, когда и какое дерево завелось.
+ */
+export function inviteListLines(rows: readonly ITreeInviteRow[]): string[] {
+    if (rows.length === 0) {
+        return ['приглашений нет ни одного', 'выдать: tree:invite <имя>'];
+    }
+
+    return [
+        `приглашений: ${rows.length}`,
+        ...rows.map((row: ITreeInviteRow): string => {
+            const tail: string = row.treeSlug ? `, дерево ${row.treeSlug}` : '';
+
+            return `  ${row.name} — ${INVITE_STATE_WORDS[row.state]}, выдано ${day(row.issuedAt)}, годно до ${day(row.expiresAt)}${tail}`;
+        }),
+    ];
 }
 
 /**
