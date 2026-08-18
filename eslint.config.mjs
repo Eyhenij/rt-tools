@@ -14,6 +14,11 @@ import { allBoundaries } from './eslint/boundaries/index.mjs';
 const sonarjsStrictRules = Object.fromEntries(Object.keys(sonarjs.rules).map((ruleName) => [`sonarjs/${ruleName}`, 'error']));
 
 export default [
+    // Клиент хранилища собирает генератор, и в историю он не едет: править его нечем — правка
+    // пропадает на следующей сборке. Выходит он вдобавок не байт в байт: на одной машине
+    // первой строкой пустая, на другой нет, и линтер краснел на шестнадцати его файлах у
+    // конвейера, оставаясь зелёным у того, кто пушил.
+    { ignores: ['**/src/generated/**'] },
     eslintPluginPrettierRecommended,
     baseTypeScriptConfig,
     {
