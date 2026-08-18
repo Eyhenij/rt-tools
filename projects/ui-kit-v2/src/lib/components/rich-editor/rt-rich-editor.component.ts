@@ -11,8 +11,10 @@ import {
     output,
     OutputEmitterRef,
     Signal,
+    signal,
     viewChild,
     ViewEncapsulation,
+    WritableSignal,
 } from '@angular/core';
 
 import type Quill from 'quill';
@@ -74,6 +76,10 @@ type IQuillContentsArg = Parameters<Quill['setContents']>[0];
     ],
     host: {
         class: BEM_BLOCK,
+        // Пока начинка редактора не смонтирована, хост несёт признак недостроенности: снаружи
+        // недостроенный редактор ничем не отличается от достроенного пустого, и съёмка витрины
+        // ловила именно этот промежуток — кадр выходил втрое ниже эталона.
+        '[attr.data-rt-pending]': 'mounted() ? null : ""',
     },
 })
 export class RtRichEditorComponent extends RtFormControlBase<IQuillDelta | null> implements AfterViewInit, OnDestroy {
@@ -84,6 +90,13 @@ export class RtRichEditorComponent extends RtFormControlBase<IQuillDelta | null>
 
     /** Значение, пришедшее через writeValue до готовности Quill. */
     #pending: IQuillDelta | null = null;
+
+    /**
+     * Смонтирована ли начинка редактора. Пока нет, хост несёт признак недостроенности: съёмке
+     * витрины и любой другой проверке снаружи иначе нечем отличить недостроенный редактор от
+     * достроенного пустого — оба выглядят пустым местом.
+     */
+    protected readonly mounted: WritableSignal<boolean> = signal<boolean>(false);
 
     protected readonly hasValue: Signal<boolean> = computed((): boolean => this.value() !== null);
 
@@ -136,10 +149,12 @@ export class RtRichEditorComponent extends RtFormControlBase<IQuillDelta | null>
             quill.disable();
         }
         quill.on('text-change', (): void => this.#onEditorChange());
+        this.mounted.set(true);
     }
 
     public ngOnDestroy(): void {
         this.#quill = null;
+        this.mounted.set(false);
     }
 
     public override writeValue(value: IQuillDelta | null): void {
