@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.8.3 · hooks/skill-gate.sh · a97234965dd5 · правится надстройкой, не здесь
+# rt-kit v0.9.0 · hooks/skill-gate.sh · a97234965dd5 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__claude-in-chrome__.*
 # Гейт правил: не даёт править файл, пока не загружено правило, под которое он подпадает.
 #

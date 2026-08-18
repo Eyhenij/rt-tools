@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.8.3 · checks/check-styles.mjs · 8abf6b3f572f · правится надстройкой, не здесь
+// rt-kit v0.9.0 · checks/check-styles.mjs · 8abf6b3f572f · правится надстройкой, не здесь
 /**
  * Проверка того, что класс элемента BEM подкреплён правилом.
  *
