@@ -43,6 +43,7 @@ export class RtTableCardDirective<TRow = unknown> {
     /** Type-guard: сужает контекст шаблона до строки таблицы при проверке шаблонов. */
     public static ngTemplateContextGuard<TRow>(
         _directive: RtTableCardDirective<TRow>,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars -- второй довод стража контекста шаблона стоит только в типе-предикате; убрать его нечем, подпись задаёт каркас
         context: unknown
     ): context is IRtTableCardContext<TRow> {
         return true;

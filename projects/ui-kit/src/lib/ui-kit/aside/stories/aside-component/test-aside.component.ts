@@ -20,9 +20,9 @@ import { MatTab, MatTabContent, MatTabGroup, MatTabLabel } from '@angular/materi
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 import { ASIDE_REF, AsideRef } from '../../aside.types';
-import { ASIDE_BUTTONS_ENUM } from '../../aside.enums';
+import { EAsideButtons } from '../../aside.enums';
 import { IAside } from '../../aside.interfaces';
 import { RtuiAsideContainerComponent, RtuiAsideContainerHeaderDirective } from '../../components/container/aside-container.component';
 
@@ -68,8 +68,8 @@ export class TestAsideComponent implements OnInit {
     public readonly appearance: MatFormFieldAppearance = 'outline';
 
     public readonly headerActionsButtons: Signal<IAside.HeaderActionButton[]> = signal([
-        { name: ASIDE_BUTTONS_ENUM.DELETE, icon: 'delete', color: 'red', tooltip: 'Button example' },
-        { name: ASIDE_BUTTONS_ENUM.RESET, icon: 'undo', color: 'gray', tooltip: 'Button example' },
+        { name: EAsideButtons.DELETE, icon: 'delete', color: 'red', tooltip: 'Button example' },
+        { name: EAsideButtons.RESET, icon: 'undo', color: 'gray', tooltip: 'Button example' },
     ]);
     /** any failure shape is accepted — the container only serialises the value */
     public readonly requestError: Signal<unknown> = signal({
@@ -82,11 +82,11 @@ export class TestAsideComponent implements OnInit {
 
     public ngOnInit(): void {
         this.form = this.#fb.group({
-            name: this.#fb.control<INullable<string>>(null, Validators.required),
-            email: this.#fb.control<INullable<string>>(null, [Validators.required, Validators.email]),
-            statuses: this.#fb.control<INullable<string>>(null, Validators.required),
-            description: this.#fb.control<INullable<string>>(null),
-            description1: this.#fb.control<INullable<string>>(null),
+            name: this.#fb.control<TNullable<string>>(null, Validators.required),
+            email: this.#fb.control<TNullable<string>>(null, [Validators.required, Validators.email]),
+            statuses: this.#fb.control<TNullable<string>>(null, Validators.required),
+            description: this.#fb.control<TNullable<string>>(null),
+            description1: this.#fb.control<TNullable<string>>(null),
         });
 
         this.form.valueChanges.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe(() => {

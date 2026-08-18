@@ -12,7 +12,7 @@ import {
 } from '../../rt-container.directives';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type ContainerMatrixPart = 'zones' | 'themes';
+export type TContainerMatrixPart = 'zones' | 'themes';
 
 /** Какие зоны объявлены: необъявленная зона не создаёт пустого узла, и каркас меняет вид. */
 interface IContainerZonesCase {
@@ -136,7 +136,7 @@ interface IContainerZonesCase {
     ],
 })
 export class TestRtContainerMatrixComponent {
-    public part: ContainerMatrixPart = 'zones';
+    public part: TContainerMatrixPart = 'zones';
 
     /** Ширина ячейки: каркас тянется на всю ширину родителя и по содержимому схлопнулся бы. */
     public readonly frameWidth: string = '20rem';

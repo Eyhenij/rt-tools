@@ -132,7 +132,7 @@ pnpm run check:affected                                # то же, что сп�
 | Обвязка снимков    | `projects/ui-kit/.storybook/test-runner.ts`    | `projects/ui-kit-v2/.storybook/test-runner.ts`   |
 | Эталоны            | `projects/ui-kit/.storybook/__snapshots__`     | `projects/ui-kit-v2/.storybook/__snapshots__`    |
 | Сверка             | `pnpm run test:visual`                         | `pnpm run test:visual:v2`                        |
-| Пересъёмка точечно | —                                              | `pnpm run test:visual:v2:update '<образец пути>'` |
+| Пересъёмка точечно | `pnpm run test:visual:update <образец пути>`   | `pnpm run test:visual:v2:update '<образец пути>'` |
 | Пересъёмка всего   | `pnpm run test:visual:update`                  | `pnpm run test:visual:v2:update-all`             |
 | Что снимается      | каждая история                                 | всё, кроме помеченного `storySnapshotSkip`       |
 | Область кадра      | вся страница                                   | корень показа `[data-story-root]`                |

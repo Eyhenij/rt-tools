@@ -15,6 +15,6 @@ export default {
     },
 } as Meta<TestRtThemeToggleMatrixComponent>;
 
-type Story = StoryObj<TestRtThemeToggleMatrixComponent>;
+type TStory = StoryObj<TestRtThemeToggleMatrixComponent>;
 
-export const Appearance: Story = { args: { part: 'appearance' } };
+export const Appearance: TStory = { args: { part: 'appearance' } };

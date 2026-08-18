@@ -18,14 +18,14 @@ export default {
     },
 } as Meta<TestRtToastMatrixComponent>;
 
-type Story = StoryObj<TestRtToastMatrixComponent>;
+type TStory = StoryObj<TestRtToastMatrixComponent>;
 
-export const Severity: Story = { args: { part: 'severity' } };
+export const Severity: TStory = { args: { part: 'severity' } };
 
-export const Parts: Story = { args: { part: 'parts' } };
+export const Parts: TStory = { args: { part: 'parts' } };
 
-export const Actions: Story = { args: { part: 'actions' } };
+export const Actions: TStory = { args: { part: 'actions' } };
 
-export const Edges: Story = { args: { part: 'edges' } };
+export const Edges: TStory = { args: { part: 'edges' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

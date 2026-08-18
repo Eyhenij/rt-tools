@@ -15,10 +15,10 @@ export default {
     },
 } as Meta<TestRtEmptyStateMatrixComponent>;
 
-type Story = StoryObj<TestRtEmptyStateMatrixComponent>;
+type TStory = StoryObj<TestRtEmptyStateMatrixComponent>;
 
-export const Parts: Story = { args: { part: 'parts' } };
+export const Parts: TStory = { args: { part: 'parts' } };
 
-export const Slots: Story = { args: { part: 'slots' } };
+export const Slots: TStory = { args: { part: 'slots' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

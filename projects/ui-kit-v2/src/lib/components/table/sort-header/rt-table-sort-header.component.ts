@@ -2,20 +2,20 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, Signal, ViewEncapsulation } from '@angular/core';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
-import { LIST_SORT_ORDER_ENUM, ListSortOrderType } from '@rt-tools/utils';
+import { EListSortOrder, TListSortOrderType } from '@rt-tools/utils';
 
 import { RtIconComponent } from '../../icon/rt-icon.component';
 import { IRtIcon } from '../../icon/rt-icon.model';
-import { ariaSortOf, IRtTableAriaSort, isColumnSortable, sortDirectionOf } from '../rt-table-sort.logic';
+import { ariaSortOf, TRtTableAriaSort, isColumnSortable, sortDirectionOf } from '../rt-table-sort.logic';
 import { RtTableComponent } from '../rt-table.component';
 
 const BEM_BLOCK: string = 'rt-table-sort-header';
 
 /** Иконка направления: без сортировки — обе стрелки, иначе стрелка выбранного порядка. */
-const ICONS: Readonly<Record<ListSortOrderType | 'none', IRtIcon.Name>> = Object.freeze({
+const ICONS: Readonly<Record<TListSortOrderType | 'none', IRtIcon.Name>> = Object.freeze({
     none: 'sort-alt',
-    [LIST_SORT_ORDER_ENUM.ASC]: 'arrow-up',
-    [LIST_SORT_ORDER_ENUM.DESC]: 'arrow-down',
+    [EListSortOrder.ASC]: 'arrow-up',
+    [EListSortOrder.DESC]: 'arrow-down',
 });
 
 /**
@@ -57,7 +57,7 @@ export class RtTableSortHeaderComponent {
     readonly #table: RtTableComponent<unknown> = inject<RtTableComponent<unknown>>(RtTableComponent);
 
     /** Направление сортировки по этой колонке; `null` — сортирует другая либо никакая. */
-    protected readonly direction: Signal<ListSortOrderType | null> = computed((): ListSortOrderType | null =>
+    protected readonly direction: Signal<TListSortOrderType | null> = computed((): TListSortOrderType | null =>
         sortDirectionOf(this.#table.currentSort(), this.rtSortHeader())
     );
 
@@ -70,7 +70,7 @@ export class RtTableSortHeaderComponent {
     /** Ключ колонки — тот же, что в `cdkColumnDef` и в `[columnsConfig]`. */
     public readonly rtSortHeader: InputSignal<string> = input.required<string>();
 
-    public readonly ariaSort: Signal<IRtTableAriaSort> = computed((): IRtTableAriaSort =>
+    public readonly ariaSort: Signal<TRtTableAriaSort> = computed((): TRtTableAriaSort =>
         ariaSortOf(this.#table.currentSort(), this.rtSortHeader())
     );
 

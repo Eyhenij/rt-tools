@@ -13,9 +13,9 @@ export default {
     },
 } as Meta<TestRtMoneyRowComponent>;
 
-type Story = StoryObj<TestRtMoneyRowComponent>;
+type TStory = StoryObj<TestRtMoneyRowComponent>;
 
-export const Default: Story = {
+export const Default: TStory = {
     args: {
         label: 'Сохранить',
         total: false,

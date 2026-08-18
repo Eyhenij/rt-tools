@@ -6,7 +6,7 @@ import { RtChatComponent } from '../../rt-chat.component';
 import { ERtChatMessageStatus, IRtChat } from '../../rt-chat.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type ChatMatrixPart = 'thread' | 'messageKind' | 'status' | 'reply' | 'header' | 'loading' | 'themes';
+export type TChatMatrixPart = 'thread' | 'messageKind' | 'status' | 'reply' | 'header' | 'loading' | 'themes';
 
 const NOW: string = '2026-03-14T16:02:00.000Z';
 
@@ -144,7 +144,7 @@ const MESSAGES: readonly IRtChat.Message[] = [
     ],
 })
 export class TestRtChatMatrixComponent {
-    public part: ChatMatrixPart = 'thread';
+    public part: TChatMatrixPart = 'thread';
 
     public readonly messages: readonly IRtChat.Message[] = MESSAGES;
     public readonly none: readonly IRtChat.Message[] = [];

@@ -1,3 +1,3 @@
-import { POSITION_ENUM } from '@rt-tools/core';
+import { EPosition } from '@rt-tools/core';
 
-export type IconSideType = POSITION_ENUM.LEFT | POSITION_ENUM.RIGHT;
+export type TIconSideType = EPosition.LEFT | EPosition.RIGHT;

@@ -12,9 +12,9 @@ export default {
     },
 } as Meta<TestRtFileListComponent>;
 
-type Story = StoryObj<TestRtFileListComponent>;
+type TStory = StoryObj<TestRtFileListComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         showActions: true,

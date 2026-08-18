@@ -1,8 +1,8 @@
 import { FormControl } from '@angular/forms';
 
-import { FilterOperatorType, ISortModel } from '@rt-tools/utils';
+import { TFilterOperatorType, ISortModel } from '@rt-tools/utils';
 
-export enum TABLE_COLUMN_TYPES_ENUM {
+export enum ETableColumnTypes {
     DATE = 'date',
     PERCENT = 'percent',
     ARRAY = 'array',
@@ -12,14 +12,14 @@ export enum TABLE_COLUMN_TYPES_ENUM {
     CUSTOM = 'custom',
 }
 
-export enum TABLE_COLUMN_FILTER_TYPES_ENUM {
+export enum ETableColumnFilterTypes {
     TEXT = 'text',
     NUMBER = 'number',
     SELECT = 'select',
     DATE = 'date',
 }
 
-export enum TEXT_CELL_COLOR_ENUM {
+export enum ETextCellColor {
     NEUTRAL = 'neutral',
     DANGER = 'danger',
     WARNING = 'warning',
@@ -29,26 +29,19 @@ export enum TEXT_CELL_COLOR_ENUM {
 
 export namespace ITable {
     export type TextCellColor =
-        | TEXT_CELL_COLOR_ENUM.NEUTRAL
-        | TEXT_CELL_COLOR_ENUM.DANGER
-        | TEXT_CELL_COLOR_ENUM.WARNING
-        | TEXT_CELL_COLOR_ENUM.SUCCESS
-        | TEXT_CELL_COLOR_ENUM.EMPTY;
+        ETextCellColor.NEUTRAL | ETextCellColor.DANGER | ETextCellColor.WARNING | ETextCellColor.SUCCESS | ETextCellColor.EMPTY;
 
     export type Type =
-        | TABLE_COLUMN_TYPES_ENUM.DATE
-        | TABLE_COLUMN_TYPES_ENUM.PERCENT
-        | TABLE_COLUMN_TYPES_ENUM.ARRAY
-        | TABLE_COLUMN_TYPES_ENUM.BOOLEAN
-        | TABLE_COLUMN_TYPES_ENUM.TEXT
-        | TABLE_COLUMN_TYPES_ENUM.CURRENCY
-        | TABLE_COLUMN_TYPES_ENUM.CUSTOM;
+        | ETableColumnTypes.DATE
+        | ETableColumnTypes.PERCENT
+        | ETableColumnTypes.ARRAY
+        | ETableColumnTypes.BOOLEAN
+        | ETableColumnTypes.TEXT
+        | ETableColumnTypes.CURRENCY
+        | ETableColumnTypes.CUSTOM;
 
     export type FilterType =
-        | TABLE_COLUMN_FILTER_TYPES_ENUM.TEXT
-        | TABLE_COLUMN_FILTER_TYPES_ENUM.NUMBER
-        | TABLE_COLUMN_FILTER_TYPES_ENUM.SELECT
-        | TABLE_COLUMN_FILTER_TYPES_ENUM.DATE;
+        ETableColumnFilterTypes.TEXT | ETableColumnFilterTypes.NUMBER | ETableColumnFilterTypes.SELECT | ETableColumnFilterTypes.DATE;
 
     export interface Column<T = Record<string, unknown>> extends Record<string, unknown> {
         align: 'right' | 'left' | 'center';
@@ -74,8 +67,8 @@ export namespace ITable {
 
         // Additional properties for filters
         filterType?: FilterType;
-        defaultFilterOperator?: FilterOperatorType;
-        filterOperators?: FilterOperatorType[];
+        defaultFilterOperator?: TFilterOperatorType;
+        filterOperators?: TFilterOperatorType[];
         filterSelectOptions?: string[];
 
         // Additional properties for table configuration service

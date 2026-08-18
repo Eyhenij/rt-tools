@@ -12,10 +12,10 @@ import { IRtInput } from '../../../input/rt-input.model';
 import { RtAutocompleteComponent } from '../../rt-autocomplete.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type AutocompleteMatrixPart = 'size' | 'filling' | 'bordered' | 'states' | 'themes' | 'panel';
+export type TAutocompleteMatrixPart = 'size' | 'filling' | 'bordered' | 'states' | 'themes' | 'panel';
 
 /** Что показывает открытая панель: подсказки, своя разметка подсказки, ничего не найдено. */
-export type AutocompletePanelCase = 'suggestions' | 'template' | 'empty';
+export type TAutocompletePanelCase = 'suggestions' | 'template' | 'empty';
 
 /** Наполненность поля: она решает, видно ли крестик очистки и текст вместо подсказки. */
 interface IAutocompleteFillingCase {
@@ -225,8 +225,8 @@ function invalid(): FormControl<string | null> {
     ],
 })
 export class TestRtAutocompleteMatrixComponent {
-    public part: AutocompleteMatrixPart = 'size';
-    public panel: AutocompletePanelCase = 'suggestions';
+    public part: TAutocompleteMatrixPart = 'size';
+    public panel: TAutocompletePanelCase = 'suggestions';
 
     public readonly fieldWidth: string = STORY_FIELD_WIDTH;
     public readonly triggerAttribute: string = STORY_TRIGGER_ATTRIBUTE;

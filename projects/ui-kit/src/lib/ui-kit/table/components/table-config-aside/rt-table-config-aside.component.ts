@@ -6,7 +6,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 import { areArraysEqual } from '@rt-tools/utils';
 import { BreakpointService, RtIconOutlinedDirective } from '@rt-tools/core';
 import { ASIDE_REF, AsideRef } from '../../../aside/aside.types';
@@ -14,6 +14,7 @@ import { RtuiAsideContainerComponent, RtuiAsideContainerHeaderDirective } from '
 import { RtuiDynamicSelectorAdditionalControlDirective, RtuiDynamicSelectorComponent } from '../../../dynamic-selectors';
 import { RtuiToggleComponent } from '../../../toggle';
 import { ITable } from '../../util';
+import { comparePropNames } from '../../util/compare-prop-names';
 
 const BEM_BLOCK: string = 'rtui-test-aside';
 
@@ -60,9 +61,7 @@ export class RtTableConfigAsideComponent<ENTITY_TYPE> implements OnInit {
     >;
 
     public readonly selectedColumns: WritableSignal<ITable.Column<ENTITY_TYPE>[]> = signal(this.asideRef.data.columns);
-    public readonly isMobile: Signal<boolean> = computed(() => {
-        return !!this.#breakpointService.isMobile();
-    });
+    public readonly isMobile: Signal<boolean> = computed(() => !!this.#breakpointService.isMobile());
     public readonly isVisibilityChanged: Signal<boolean> = computed(() => {
         const initValues: (keyof ENTITY_TYPE)[] = this.asideRef.data.columns
             .filter((el: ITable.Column<ENTITY_TYPE>) => el.hidden)
@@ -70,7 +69,7 @@ export class RtTableConfigAsideComponent<ENTITY_TYPE> implements OnInit {
         const currentValues: (keyof ENTITY_TYPE)[] = this.selectedColumns()
             .filter((el: ITable.Column<ENTITY_TYPE>) => el.hidden)
             .map((el: ITable.Column<ENTITY_TYPE>) => el.propName);
-        return !areArraysEqual(initValues.sort(), currentValues.sort());
+        return !areArraysEqual(initValues.toSorted(comparePropNames), currentValues.toSorted(comparePropNames));
     });
     public readonly isOrderChanged: Signal<boolean> = computed(() => {
         const initValues: (keyof ENTITY_TYPE)[] = this.asideRef.data.columns.map((el: ITable.Column<ENTITY_TYPE>) => el.propName);
@@ -97,7 +96,7 @@ export class RtTableConfigAsideComponent<ENTITY_TYPE> implements OnInit {
             ) => {
                 const updatedList: (ITable.Column<ENTITY_TYPE> & { orderIndex: number })[] = [];
                 value?.columns?.forEach((item: keyof ENTITY_TYPE, index: number) => {
-                    const currentItem: INullable<ITable.Column<ENTITY_TYPE>> = this.selectedColumns().find(
+                    const currentItem: TNullable<ITable.Column<ENTITY_TYPE>> = this.selectedColumns().find(
                         (el: ITable.Column<ENTITY_TYPE>) => el.propName === item
                     );
                     if (currentItem) {
@@ -105,7 +104,7 @@ export class RtTableConfigAsideComponent<ENTITY_TYPE> implements OnInit {
                     }
                 });
                 this.selectedColumns.set(
-                    updatedList.sort(
+                    updatedList.toSorted(
                         (a: ITable.Column<ENTITY_TYPE> & { orderIndex: number }, b: ITable.Column<ENTITY_TYPE> & { orderIndex: number }) =>
                             a.orderIndex - b.orderIndex
                     )
@@ -127,10 +126,8 @@ export class RtTableConfigAsideComponent<ENTITY_TYPE> implements OnInit {
     }
 
     public visibilityChange(entity: ITable.Column<ENTITY_TYPE>): void {
-        this.selectedColumns.update((list: ITable.Column<ENTITY_TYPE>[]) => {
-            return list.map((el: ITable.Column<ENTITY_TYPE>) => {
-                return entity.propName === el.propName ? { ...el, hidden: !el.hidden } : el;
-            });
-        });
+        this.selectedColumns.update((list: ITable.Column<ENTITY_TYPE>[]) =>
+            list.map((el: ITable.Column<ENTITY_TYPE>) => (entity.propName === el.propName ? { ...el, hidden: !el.hidden } : el))
+        );
     }
 }

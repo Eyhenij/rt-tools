@@ -1,17 +1,17 @@
-import { INullable } from '../../interfaces/nullable.type.js';
+import { TNullable } from '../../interfaces/nullable.type.js';
 
-export enum HAS_OWN_SCOPE_ENUM {
+export enum EHasOwnScope {
     ANY = 'any',
     OWN = 'own',
     INHERITED = 'inherited',
 }
 
-export type IHasScopeType = HAS_OWN_SCOPE_ENUM.ANY | HAS_OWN_SCOPE_ENUM.OWN | HAS_OWN_SCOPE_ENUM.INHERITED;
+export type THasScopeType = EHasOwnScope.ANY | EHasOwnScope.OWN | EHasOwnScope.INHERITED;
 
 /** Internal: cross-runtime own-property check (uses Object.hasOwn if available, otherwise falls back to hasOwnProperty.call). */
-type HasOwnFn = (o: object, k: PropertyKey) => boolean;
-const safetyHasOwn: HasOwnFn = (o: object, k: PropertyKey) => {
-    const native: INullable<HasOwnFn> = (Object as unknown as { hasOwn?: HasOwnFn }).hasOwn;
+type THasOwnFn = (o: object, k: PropertyKey) => boolean;
+const safetyHasOwn: THasOwnFn = (o: object, k: PropertyKey) => {
+    const native: TNullable<THasOwnFn> = (Object as unknown as { hasOwn?: THasOwnFn }).hasOwn;
     return typeof native === 'function' ? native(o, k) : Object.prototype.hasOwnProperty.call(o, k);
 };
 
@@ -26,26 +26,26 @@ const safetyHasOwn: HasOwnFn = (o: object, k: PropertyKey) => {
  *
  * @param obj {unknown} - Value to check. `null`/`undefined` short-circuit to `false`.
  * @param key {PropertyKey} - Property key (string | number | symbol).
- * @param scope {IHasScopeType} - Check mode: `'any'` (default), `'own'`, or `'inherited'`.
+ * @param scope {THasScopeType} - Check mode: `'any'` (default), `'own'`, or `'inherited'`.
  *
  * @returns `true` if the property exists under the selected scope.
  *
  * @example
  * hasPropertyInChain({ a: 1 }, 'a'); // true (ANY)
- * hasPropertyInChain(Object.create({ a: 1 }), 'a', HAS_OWN_SCOPE_ENUM.INHERITED); // true
- * hasPropertyInChain({ a: 1 }, 'b', HAS_OWN_SCOPE_ENUM.OWN); // false
+ * hasPropertyInChain(Object.create({ a: 1 }), 'a', EHasOwnScope.INHERITED); // true
+ * hasPropertyInChain({ a: 1 }, 'b', EHasOwnScope.OWN); // false
  */
-export function hasPropertyInChain(obj: unknown, key: PropertyKey, scope: IHasScopeType = HAS_OWN_SCOPE_ENUM.OWN): boolean {
+export function hasPropertyInChain(obj: unknown, key: PropertyKey, scope: THasScopeType = EHasOwnScope.OWN): boolean {
     if (obj === undefined || obj === null) {
         return false;
     }
     const o: object = Object(obj);
 
     switch (scope) {
-        case HAS_OWN_SCOPE_ENUM.OWN:
+        case EHasOwnScope.OWN:
             return safetyHasOwn(o, key);
 
-        case HAS_OWN_SCOPE_ENUM.INHERITED:
+        case EHasOwnScope.INHERITED:
             return key in o && !safetyHasOwn(o, key);
 
         default:

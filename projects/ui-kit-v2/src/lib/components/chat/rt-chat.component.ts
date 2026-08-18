@@ -1,3 +1,4 @@
+/* eslint-disable max-lines -- файл делится задачей RT-849: набор токенов собирается сборщиком, а таблица и переписка режутся по смыслу */
 import { BooleanInput } from '@angular/cdk/coercion';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { DatePipe } from '@angular/common';
@@ -26,7 +27,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RT_KIT_LOCALE, RtKitLabelKey, RtKitLabelMap, rtKitLabel } from '../../i18n';
+import { RT_KIT_LABELS, RT_KIT_LOCALE, TRtKitLabelKey, TRtKitLabelMap, rtKitLabel } from '../../i18n';
 import { RtChatStatusLabelPipe } from '../../pipes/rt-chat-status-label.pipe';
 import { RtButtonDirective } from '../button/rt-button.directive';
 import { RtConfirmDirective } from '../confirm-popover/rt-confirm.directive';
@@ -38,7 +39,7 @@ import { RtIconComponent } from '../icon/rt-icon.component';
 import { RtMessageComposerComponent } from '../message-composer/rt-message-composer.component';
 import { IRtMessageComposer } from '../message-composer/rt-message-composer.model';
 import { RtNoteComponent } from '../note/rt-note.component';
-import { IRtRichEditorToolbar } from '../rich-editor/rt-rich-editor.component';
+import { TRtRichEditorToolbar } from '../rich-editor/rt-rich-editor.component';
 import { RtSkeletonWrapperComponent } from '../skeleton-wrapper/rt-skeleton-wrapper.component';
 import { RtSpinnerComponent } from '../spinner/rt-spinner.component';
 import { RtToolbarComponent, RtToolbarLeftDirective, RtToolbarRightDirective } from '../toolbar/rt-toolbar.component';
@@ -47,7 +48,7 @@ import { ERtChatMessageStatus, IRtChat } from './rt-chat.model';
 const BEM_BLOCK: string = 'rt-chat';
 
 /** Ключ заглушки имени вложения, когда домен не отдал `fileName` (только URL). */
-const ATTACHMENT_FALLBACK_KEY: RtKitLabelKey = 'chatAttachmentFallback';
+const ATTACHMENT_FALLBACK_KEY: TRtKitLabelKey = 'chatAttachmentFallback';
 
 /** Зазор от низа треда, в пределах которого считаем пользователя «у нижнего края». */
 const NEAR_BOTTOM_THRESHOLD_PX: number = 64;
@@ -121,7 +122,7 @@ export class RtChatComponent {
      * Данные локали для `DatePipe` регистрирует приложение: без них пайп падает
      * `Missing locale data`, и кит за это не отвечает.
      */
-    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly locale: Signal<string> = inject(RT_KIT_LOCALE);
 
@@ -201,7 +202,7 @@ export class RtChatComponent {
 
     /** Подпись кнопки fullscreen: тернарник в шаблоне переводом не покрыть. */
     protected readonly expandLabel: Signal<string> = rtKitLabel(
-        computed((): RtKitLabelKey => (this.expanded() ? 'chatCollapse' : 'chatExpand'))
+        computed((): TRtKitLabelKey => (this.expanded() ? 'chatCollapse' : 'chatExpand'))
     );
 
     /** Выбранные, но ещё не отправленные файлы — карточки над полем ввода. */
@@ -292,7 +293,7 @@ export class RtChatComponent {
     });
 
     /** Набор кнопок rich-редактора (проброс до `rt-rich-editor` через композер). */
-    public readonly formattingToolbar: InputSignal<IRtRichEditorToolbar> = input<IRtRichEditorToolbar>('full');
+    public readonly formattingToolbar: InputSignal<TRtRichEditorToolbar> = input<TRtRichEditorToolbar>('full');
 
     /**
      * Растягивать чат на всю высоту контейнера: тред занимает свободное место,

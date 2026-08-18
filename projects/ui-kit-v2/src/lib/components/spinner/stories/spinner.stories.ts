@@ -15,9 +15,9 @@ export default {
     },
 } as Meta<TestRtSpinnerComponent>;
 
-type Story = StoryObj<TestRtSpinnerComponent>;
+type TStory = StoryObj<TestRtSpinnerComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         diameter: 32,

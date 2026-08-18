@@ -1,4 +1,4 @@
-export enum INFO_BADGE_PROPERTY_ENUM {
+export enum EInfoBadgeProperty {
     COLOR = 'color',
     SIZE = 'size',
     ICON = 'icon',
@@ -6,9 +6,5 @@ export enum INFO_BADGE_PROPERTY_ENUM {
     ELLIPSIS = 'ellipsis',
 }
 
-export type InfoBadgePropertyType =
-    | INFO_BADGE_PROPERTY_ENUM.BOLD
-    | INFO_BADGE_PROPERTY_ENUM.COLOR
-    | INFO_BADGE_PROPERTY_ENUM.ICON
-    | INFO_BADGE_PROPERTY_ENUM.SIZE
-    | INFO_BADGE_PROPERTY_ENUM.ELLIPSIS;
+export type TInfoBadgePropertyType =
+    EInfoBadgeProperty.BOLD | EInfoBadgeProperty.COLOR | EInfoBadgeProperty.ICON | EInfoBadgeProperty.SIZE | EInfoBadgeProperty.ELLIPSIS;

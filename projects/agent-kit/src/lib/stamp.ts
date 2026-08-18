@@ -92,7 +92,7 @@ export function readStamped(text: string): IStamped | null {
     }
 
     const index: number = from + offset;
-    const found: RegExpMatchArray = lines[index].match(STAMP_LINE) as RegExpMatchArray;
+    const found: RegExpExecArray = STAMP_LINE.exec(lines[index]) as RegExpExecArray;
     const [, version, asset, hash]: string[] = found;
     const body: string = [...lines.slice(0, index), ...lines.slice(index + 1)].join('\n');
 

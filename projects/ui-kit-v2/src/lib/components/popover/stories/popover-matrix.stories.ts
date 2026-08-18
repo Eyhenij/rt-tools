@@ -18,13 +18,13 @@ export default {
     },
 } as Meta<TestRtPopoverMatrixComponent>;
 
-type Story = StoryObj<TestRtPopoverMatrixComponent>;
+type TStory = StoryObj<TestRtPopoverMatrixComponent>;
 
 /** Панель прижата к левому или правому краю триггера. Видно на панели шире триггера. */
-export const Align: Story = { args: { part: 'align' } };
+export const Align: TStory = { args: { part: 'align' } };
 
 /** Ширина: панель повторяет ширину триггера или растёт по содержимому. */
-export const Width: Story = { args: { part: 'width' } };
+export const Width: TStory = { args: { part: 'width' } };
 
 /** Отступ панели от триггера — вниз и вбок. */
-export const Offset: Story = { args: { part: 'offset' } };
+export const Offset: TStory = { args: { part: 'offset' } };

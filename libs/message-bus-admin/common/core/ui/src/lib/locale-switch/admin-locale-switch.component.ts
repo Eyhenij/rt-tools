@@ -25,7 +25,6 @@ const OPTIONS: ReadonlyArray<IRtToggleButtonGroup.Option<EAdminLocale>> = Object
 @Component({
     selector: 'admin-locale-switch',
     templateUrl: './admin-locale-switch.component.html',
-    styleUrl: './admin-locale-switch.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components

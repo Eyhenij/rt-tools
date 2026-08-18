@@ -31,9 +31,9 @@ export default {
     },
 } as Meta<TestRtButtonComponent>;
 
-type Story = StoryObj<TestRtButtonComponent>;
+type TStory = StoryObj<TestRtButtonComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     // Значения по умолчанию уже стоят ячейкой внутри матрицы этого же компонента: отдельный кадр
     // проверял бы то же самое второй раз, а меняется он от любой правки аргументов.
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),

@@ -44,7 +44,7 @@ export class QuillMock {
     public enabled: boolean = true;
     public focused: boolean = false;
 
-    constructor(host?: unknown, options?: IQuillMockOptions) {
+    constructor(_host?: unknown, options?: IQuillMockOptions) {
         this.bindings = options?.modules?.keyboard?.bindings ?? {};
         quillInstances.push(this);
     }

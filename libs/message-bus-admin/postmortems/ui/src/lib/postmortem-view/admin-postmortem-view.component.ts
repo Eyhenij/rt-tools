@@ -23,7 +23,6 @@ const BEM_BLOCK: string = 'admin-panel';
 @Component({
     selector: 'admin-postmortem-view',
     templateUrl: './admin-postmortem-view.component.html',
-    styleUrl: './admin-postmortem-view.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // rt-tools

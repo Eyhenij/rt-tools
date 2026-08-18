@@ -17,24 +17,24 @@ export default {
     },
 } as Meta<TestRtAutocompleteMatrixComponent>;
 
-type Story = StoryObj<TestRtAutocompleteMatrixComponent>;
+type TStory = StoryObj<TestRtAutocompleteMatrixComponent>;
 
-export const Size: Story = { args: { part: 'size' } };
+export const Size: TStory = { args: { part: 'size' } };
 
-export const Filling: Story = { args: { part: 'filling' } };
+export const Filling: TStory = { args: { part: 'filling' } };
 
-export const Bordered: Story = { args: { part: 'bordered' } };
+export const Bordered: TStory = { args: { part: 'bordered' } };
 
 /**
  * Рамку рисует коробка вокруг `<input>`, а признак стоит на хосте — аддону передан спуск до неё:
  * без него класс лёг бы на элемент, у которого этих правил нет.
  */
-export const States: Story = {
+export const States: TStory = {
     args: { part: 'states' },
     parameters: { pseudo: storyPseudoParameters('.rt-autocomplete__field') },
 };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };
 
 /**
  * Раскрытые подсказки. Открывает их `play`-функция набором текста, а не щелчком: поле с
@@ -43,7 +43,7 @@ export const Themes: Story = { args: { part: 'themes' } };
  * Панель рисуется в контейнере оверлеев CDK — за пределами блока истории. Поэтому её нет ни в
  * светло-тёмной паре, ни в матрице состояний: тёмную панель смотрят переключателем темы.
  */
-export const Panel: Story = {
+export const Panel: TStory = {
     parameters: { snapshot: { fullPage: true } },
     args: { part: 'panel', panel: 'suggestions' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
@@ -52,7 +52,7 @@ export const Panel: Story = {
 };
 
 /** Своя разметка подсказки: вход `itemTemplate` рисует иконку рядом с названием. */
-export const PanelWithTemplate: Story = {
+export const PanelWithTemplate: TStory = {
     parameters: { snapshot: { fullPage: true } },
     args: { part: 'panel', panel: 'template' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
@@ -61,7 +61,7 @@ export const PanelWithTemplate: Story = {
 };
 
 /** Подсказок не нашлось: строка `rtKit.uiNothingFound` вместо списка. */
-export const PanelEmpty: Story = {
+export const PanelEmpty: TStory = {
     parameters: { snapshot: { fullPage: true } },
     args: { part: 'panel', panel: 'empty' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {

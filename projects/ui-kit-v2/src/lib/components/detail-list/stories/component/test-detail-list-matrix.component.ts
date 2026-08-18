@@ -6,7 +6,7 @@ import { RtDetailListComponent } from '../../rt-detail-list.component';
 import { RtDetailRowComponent } from '../../rt-detail-row.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type DetailListMatrixPart = 'loading' | 'value' | 'length' | 'edges' | 'themes';
+export type TDetailListMatrixPart = 'loading' | 'value' | 'length' | 'edges' | 'themes';
 
 /**
  * Матрицы состояний `rt-detail-list` и `rt-detail-row` для витрины.
@@ -127,7 +127,7 @@ export type DetailListMatrixPart = 'loading' | 'value' | 'length' | 'edges' | 't
     ],
 })
 export class TestRtDetailListMatrixComponent {
-    public part: DetailListMatrixPart = 'loading';
+    public part: TDetailListMatrixPart = 'loading';
 
     public readonly rows: readonly { label: string; value: string }[] = [
         { label: 'Договор', value: '№2024-118' },

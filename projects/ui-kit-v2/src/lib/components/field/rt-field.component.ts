@@ -18,7 +18,7 @@ import { ValidationErrors } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RtKitLabelKey, RtKitLabelMap, rtKitLabel } from '../../i18n';
+import { RT_KIT_LABELS, TRtKitLabelKey, TRtKitLabelMap, rtKitLabel } from '../../i18n';
 import { RtFormControlBase } from '../form-control/rt-form-control.base';
 import { RtIconComponent } from '../icon';
 import { RtPopoverDirective } from '../popover/rt-popover.directive';
@@ -70,7 +70,7 @@ function nextAutoId(): string {
 export class RtFieldComponent implements AfterContentInit {
     // contentChild нельзя объявлять на ES-private (#) поле — Angular это запрещает,
     // поэтому проекция контрола живёт в protected-поле.
-    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly projectedControl: Signal<RtFormControlBase<unknown> | undefined> = contentChild(RtFormControlBase);
 
@@ -101,7 +101,7 @@ export class RtFieldComponent implements AfterContentInit {
      * на лету, и текст ошибки обязан переключиться вместе с формой.
      */
     readonly #defaultErrorText: Signal<string> = rtKitLabel(
-        computed((): RtKitLabelKey | '' => RT_FIELD_DEFAULT_ERROR_KEYS[this.#failedValidator()] ?? '')
+        computed((): TRtKitLabelKey | '' => RT_FIELD_DEFAULT_ERROR_KEYS[this.#failedValidator()] ?? '')
     );
 
     /** Сообщение об ошибке: текст, переданный формой, важнее умолчания */

@@ -26,6 +26,8 @@ export type TOperationAccess =
 /** Ключ, под которым объявление лежит в метаданных операции. */
 export const OPERATION_ACCESS: string = 'message-bus.operation-access';
 
+/* eslint-disable sonarjs/function-name -- фабрики декораторов зовутся с прописной буквы: так их называет сам каркас, и так они читаются в месте применения */
+
 /** Операция, открытая без токена и без входа. */
 export function PublicOperation(): CustomDecorator<string> {
     return SetMetadata(OPERATION_ACCESS, 'public');

@@ -15,6 +15,6 @@ export default {
     },
 } as Meta<TestRtCascadeLayerComponent>;
 
-type Story = StoryObj<TestRtCascadeLayerComponent>;
+type TStory = StoryObj<TestRtCascadeLayerComponent>;
 
-export const CascadeLayer: Story = {};
+export const CascadeLayer: TStory = {};

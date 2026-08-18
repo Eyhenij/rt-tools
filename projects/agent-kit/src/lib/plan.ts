@@ -41,9 +41,9 @@ export function planFile(input: IPlanInput): IPlanned {
     const stamp: IStamp = { version: input.version, asset: input.asset, hash: digestOf(input.rendered) };
     const content: string = applyStamp(input.rendered, stamp, input.path);
     const planned: (outcome: TOutcome, write: boolean) => IPlanned = (outcome: TOutcome, write: boolean): IPlanned => ({
+        outcome,
         path: input.path,
         asset: input.asset,
-        outcome,
         content: write ? content : null,
     });
 

@@ -1,6 +1,6 @@
-export enum TOGGLE_SIZE_TYPE_ENUM {
+export enum EToggleSizeType {
     SM = 'sm',
     MD = 'md',
 }
 
-export type ToggleSizeType = TOGGLE_SIZE_TYPE_ENUM.SM | TOGGLE_SIZE_TYPE_ENUM.MD;
+export type TToggleSizeType = EToggleSizeType.SM | EToggleSizeType.MD;

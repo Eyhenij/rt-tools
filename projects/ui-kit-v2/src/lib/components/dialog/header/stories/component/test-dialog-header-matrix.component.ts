@@ -5,7 +5,7 @@ import { StoryThemesComponent } from '../../../../../../showcase/story-themes.co
 import { RtDialogHeaderComponent } from '../../rt-dialog-header.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type DialogHeaderMatrixPart = 'closable' | 'title' | 'themes';
+export type TDialogHeaderMatrixPart = 'closable' | 'title' | 'themes';
 
 /** Крестик: он единственное, чем шапка отличается сама от себя. */
 interface IDialogHeaderClosableCase {
@@ -69,7 +69,7 @@ interface IDialogHeaderTitleCase {
     ],
 })
 export class TestRtDialogHeaderMatrixComponent {
-    public part: DialogHeaderMatrixPart = 'closable';
+    public part: TDialogHeaderMatrixPart = 'closable';
 
     /** Ширина ячейки: шапка занимает всю ширину окна, и по содержимому она бы схлопнулась. */
     public readonly headerWidth: string = '18rem';

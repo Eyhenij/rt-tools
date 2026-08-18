@@ -10,7 +10,7 @@ const BEM_BLOCK: string = 'rt-aside';
  * - `md` — 540px (`--rt-aside-width-md`, дефолт)
  * - `lg` — 720px (`--rt-aside-width-lg`)
  */
-export type IRtAsideSize = 'sm' | 'md' | 'lg';
+export type TRtAsideSize = 'sm' | 'md' | 'lg';
 
 /**
  * Раскладка контентной зоны side-sheet:
@@ -19,7 +19,7 @@ export type IRtAsideSize = 'sm' | 'md' | 'lg';
  *   полоса вкладок прибита, скроллится только контент активной вкладки
  *   (`rt-tabs__content`).
  */
-export type IRtAsideContentLayout = 'default' | 'tabs';
+export type TRtAsideContentLayout = 'default' | 'tabs';
 
 /**
  * Презентационный styled-frame для side-sheet.
@@ -53,8 +53,8 @@ export type IRtAsideContentLayout = 'default' | 'tabs';
     },
 })
 export class RtAsideComponent {
-    public readonly size: InputSignal<IRtAsideSize> = input<IRtAsideSize>('md');
-    public readonly contentLayout: InputSignal<IRtAsideContentLayout> = input<IRtAsideContentLayout>('default');
+    public readonly size: InputSignal<TRtAsideSize> = input<TRtAsideSize>('md');
+    public readonly contentLayout: InputSignal<TRtAsideContentLayout> = input<TRtAsideContentLayout>('default');
     public readonly width: InputSignal<string | null> = input<string | null>(null);
     public readonly ariaLabel: InputSignal<string | null> = input<string | null>(null);
 }

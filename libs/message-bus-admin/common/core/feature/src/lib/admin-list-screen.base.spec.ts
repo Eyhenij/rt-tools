@@ -6,7 +6,7 @@ import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { AdminListStoreBase } from '@rt/message-bus-admin/common/core/data-access';
 import { IPage } from '@rt/message-bus-common';
-import { LIST_SORT_ORDER_ENUM } from '@rt-tools/utils';
+import { EListSortOrder } from '@rt-tools/utils';
 
 import { AdminListScreenBase } from './admin-list-screen.base';
 
@@ -64,7 +64,7 @@ class TestScreenComponent extends AdminListScreenBase<IRow> {
     }
 
     public askSort(field: string): void {
-        this.changeSort({ propertyName: field, sortDirection: LIST_SORT_ORDER_ENUM.ASC });
+        this.changeSort({ propertyName: field, sortDirection: EListSortOrder.ASC });
     }
 
     public open(id: string): void {

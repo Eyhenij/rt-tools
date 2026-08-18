@@ -3,7 +3,7 @@ import { computed, effect, Injectable, Signal, WritableSignal, inject, signal } 
 
 import { PlatformService, StorageService } from '@rt-tools/core';
 
-import { ERtStorageKeys } from './storage-keys.const';
+import { ERtStorageKeys } from './storage-keys.enum';
 import { ITheme } from './theme.model';
 
 const DEFAULT_THEME: ITheme.Mode = 'light';

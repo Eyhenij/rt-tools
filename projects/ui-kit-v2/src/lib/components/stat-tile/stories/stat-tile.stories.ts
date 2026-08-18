@@ -16,9 +16,9 @@ export default {
     },
 } as Meta<TestRtStatTileComponent>;
 
-type Story = StoryObj<TestRtStatTileComponent>;
+type TStory = StoryObj<TestRtStatTileComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         label: 'Визиты',

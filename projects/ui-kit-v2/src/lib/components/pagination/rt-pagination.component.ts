@@ -17,7 +17,7 @@ import { FormsModule } from '@angular/forms';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { IPageModel } from '@rt-tools/utils';
 
-import { RT_KIT_LABELS, RtKitLabelMap, RtKitLabelParams, rtKitLabel } from '../../i18n';
+import { RT_KIT_LABELS, TRtKitLabelMap, TRtKitLabelParams, rtKitLabel } from '../../i18n';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtSelectComponent } from '../select/rt-select.component';
 import { IRtSelect } from '../select/rt-select.model';
@@ -50,7 +50,7 @@ const NEIGHBOURS: number = 1; // соседей вокруг открытой с
     },
 })
 export class RtPaginationComponent {
-    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly perPageSelectOptions: Signal<ReadonlyArray<IRtSelect.Option<number>>> = computed(
         (): ReadonlyArray<IRtSelect.Option<number>> =>
@@ -63,12 +63,12 @@ export class RtPaginationComponent {
      */
     protected readonly rangeLabel: Signal<string> = rtKitLabel(
         'uiRangeOf',
-        computed((): RtKitLabelParams => ({ from: this.rangeFrom(), to: this.rangeTo(), total: this.pageModel().totalCount }))
+        computed((): TRtKitLabelParams => ({ from: this.rangeFrom(), to: this.rangeTo(), total: this.pageModel().totalCount }))
     );
 
     protected readonly pageLabel: Signal<string> = rtKitLabel(
         'uiPageOf',
-        computed((): RtKitLabelParams => ({ page: this.pageModel().pageNumber, last: this.lastPage() }))
+        computed((): TRtKitLabelParams => ({ page: this.pageModel().pageNumber, last: this.lastPage() }))
     );
 
     protected readonly isFirst: Signal<boolean> = computed((): boolean => this.pageModel().pageNumber <= 1);

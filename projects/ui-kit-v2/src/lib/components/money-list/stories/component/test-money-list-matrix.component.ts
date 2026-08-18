@@ -6,7 +6,7 @@ import { RtMoneyListComponent } from '../../rt-money-list.component';
 import { RtMoneyRowComponent } from '../../rt-money-row.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type MoneyListMatrixPart = 'total' | 'loading' | 'length' | 'edges' | 'themes';
+export type TMoneyListMatrixPart = 'total' | 'loading' | 'length' | 'edges' | 'themes';
 
 /**
  * Матрицы состояний `rt-money-list` и `rt-money-row` для витрины.
@@ -129,7 +129,7 @@ export type MoneyListMatrixPart = 'total' | 'loading' | 'length' | 'edges' | 'th
     ],
 })
 export class TestRtMoneyListMatrixComponent {
-    public part: MoneyListMatrixPart = 'total';
+    public part: TMoneyListMatrixPart = 'total';
 
     public readonly rows: readonly { label: string; value: string }[] = [
         { label: 'Работы', value: '120 000 ₽' },

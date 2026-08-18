@@ -12,10 +12,10 @@ import { IRtSelect } from '../../../select/rt-select.model';
 import { RtMultiselectComponent } from '../../rt-multiselect.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type MultiselectMatrixPart = 'size' | 'chips' | 'bordered' | 'states' | 'themes' | 'panel';
+export type TMultiselectMatrixPart = 'size' | 'chips' | 'bordered' | 'states' | 'themes' | 'panel';
 
 /** Что показывает открытая панель: набор вариантов или его отсутствие. */
-export type MultiselectPanelCase = 'options' | 'empty';
+export type TMultiselectPanelCase = 'options' | 'empty';
 
 /** Наполненность триггера: сколько фишек влезло и с какого места пошёл счётчик `+N`. */
 interface IMultiselectChipsCase {
@@ -196,8 +196,8 @@ function invalid(): FormControl<readonly string[] | null> {
     ],
 })
 export class TestRtMultiselectMatrixComponent {
-    public part: MultiselectMatrixPart = 'size';
-    public panel: MultiselectPanelCase = 'options';
+    public part: TMultiselectMatrixPart = 'size';
+    public panel: TMultiselectPanelCase = 'options';
 
     public readonly fieldWidth: string = STORY_FIELD_WIDTH;
     public readonly triggerAttribute: string = STORY_TRIGGER_ATTRIBUTE;

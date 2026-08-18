@@ -23,7 +23,6 @@ const BEM_BLOCK: string = 'admin-panel';
 @Component({
     selector: 'admin-proposal-view',
     templateUrl: './admin-proposal-view.component.html',
-    styleUrl: './admin-proposal-view.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // rt-tools

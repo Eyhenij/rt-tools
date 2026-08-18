@@ -11,7 +11,7 @@ export default {
     },
 } as Meta<TestRtPhotoViewerComponent>;
 
-type Story = StoryObj<TestRtPhotoViewerComponent>;
+type TStory = StoryObj<TestRtPhotoViewerComponent>;
 
 /** Три кадра, открыт первый: видны счётчик, крестик и обе стрелки. */
-export const Playground: Story = {};
+export const Playground: TStory = {};

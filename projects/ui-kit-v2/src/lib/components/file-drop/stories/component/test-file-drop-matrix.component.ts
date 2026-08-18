@@ -7,7 +7,7 @@ import { RtFileDropComponent } from '../../rt-file-drop.component';
 import { IRtFileDrop } from '../../rt-file-drop.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type FileDropMatrixPart = 'resting' | 'dragging' | 'zones' | 'themes';
+export type TFileDropMatrixPart = 'resting' | 'dragging' | 'zones' | 'themes';
 
 /** Область в покое: пока файл не тащат, видно только содержимое — и отключённость на нём не видна. */
 interface IFileDropRestingCase {
@@ -125,7 +125,7 @@ interface IFileDropDraggingCase {
     ],
 })
 export class TestRtFileDropMatrixComponent {
-    public part: FileDropMatrixPart = 'resting';
+    public part: TFileDropMatrixPart = 'resting';
 
     public readonly dragAttribute: string = STORY_DRAG_ATTRIBUTE;
 

@@ -8,7 +8,7 @@ import { IRtToggleButtonGroup } from '../../rt-toggle-button-group.model';
 import { RtToggleButtonGroupComponent } from '../../rt-toggle-button-group.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type ToggleButtonGroupMatrixPart = 'size' | 'options' | 'value' | 'fullWidth' | 'states' | 'themes';
+export type TToggleButtonGroupMatrixPart = 'size' | 'options' | 'value' | 'fullWidth' | 'states' | 'themes';
 
 /** Набор сегментов: подписи, подписи с иконками, две штуки против пяти. */
 interface IGroupOptionsCase {
@@ -119,7 +119,7 @@ const VIEW: ReadonlyArray<IRtToggleButtonGroup.Option> = [
     ],
 })
 export class TestRtToggleButtonGroupMatrixComponent {
-    public part: ToggleButtonGroupMatrixPart = 'size';
+    public part: TToggleButtonGroupMatrixPart = 'size';
 
     public readonly groupWidth: string = STORY_FIELD_WIDTH_WIDE;
     public readonly sizes: readonly IRtToggleButtonGroup.Size[] = ['sm', 'md', 'lg'];
@@ -147,6 +147,7 @@ export class TestRtToggleButtonGroupMatrixComponent {
     ];
 
     public readonly valueCases: readonly IGroupValueCase[] = [
+        // eslint-disable-next-line sonarjs/no-undefined-assignment -- вход кита объявлен `string | undefined`, и «ничего не выбрано» на нём выражается только пустотой
         { name: 'ничего не выбрано', value: undefined },
         { name: 'первый', value: 'day' },
         { name: 'средний', value: 'week' },

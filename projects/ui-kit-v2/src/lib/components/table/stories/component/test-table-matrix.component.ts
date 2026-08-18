@@ -11,7 +11,7 @@ import {
 } from '@angular/cdk/table';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { ISortModel, LIST_SORT_ORDER_ENUM } from '@rt-tools/utils';
+import { ISortModel, EListSortOrder } from '@rt-tools/utils';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
@@ -19,8 +19,11 @@ import { RtTableCardDirective } from '../../rt-table-card.directive';
 import { RtTableComponent } from '../../rt-table.component';
 import { IRtTable } from '../../rt-table.model';
 
+/** Текст пустой таблицы — один на все ячейки матрицы. */
+const EMPTY_MESSAGE: string = 'Договоров пока нет';
+
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TableMatrixPart = 'density' | 'loading' | 'sort' | 'empty' | 'clickable' | 'cards' | 'themes';
+export type TTableMatrixPart = 'density' | 'loading' | 'sort' | 'empty' | 'clickable' | 'cards' | 'themes';
 
 /** Строка витрины: то, что показывают ячейки. */
 interface ITableRow {
@@ -292,7 +295,7 @@ const COLUMNS_CONFIG: readonly IRtTable.ColumnConfig[] = [
     ],
 })
 export class TestRtTableMatrixComponent {
-    public part: TableMatrixPart = 'density';
+    public part: TTableMatrixPart = 'density';
 
     public readonly rows: readonly ITableRow[] = ROWS;
     public readonly noRows: readonly ITableRow[] = [];
@@ -311,15 +314,15 @@ export class TestRtTableMatrixComponent {
 
     public readonly sorts: readonly { name: string; sort: ISortModel<string> | null }[] = [
         { name: 'без порядка', sort: null },
-        { name: 'по возрастанию', sort: { propertyName: 'city', sortDirection: LIST_SORT_ORDER_ENUM.ASC } },
-        { name: 'по убыванию', sort: { propertyName: 'city', sortDirection: LIST_SORT_ORDER_ENUM.DESC } },
+        { name: 'по возрастанию', sort: { propertyName: 'city', sortDirection: EListSortOrder.ASC } },
+        { name: 'по убыванию', sort: { propertyName: 'city', sortDirection: EListSortOrder.DESC } },
     ];
 
     public readonly empties: readonly { name: string; message: string; icon: 'inbox' | null; description: string | null }[] = [
         { name: 'переведённый текст', message: '', icon: 'inbox', description: null },
-        { name: 'свой текст', message: 'Договоров пока нет', icon: 'inbox', description: null },
-        { name: 'текст и пояснение', message: 'Договоров пока нет', icon: 'inbox', description: 'Создайте первый — он появится здесь.' },
-        { name: 'без иконки', message: 'Договоров пока нет', icon: null, description: null },
+        { name: 'свой текст', message: EMPTY_MESSAGE, icon: 'inbox', description: null },
+        { name: 'текст и пояснение', message: EMPTY_MESSAGE, icon: 'inbox', description: 'Создайте первый — он появится здесь.' },
+        { name: 'без иконки', message: EMPTY_MESSAGE, icon: null, description: null },
     ];
 
     /** Своя карточка против авто-карточки: на широком кадре обе ячейки — обычная таблица. */

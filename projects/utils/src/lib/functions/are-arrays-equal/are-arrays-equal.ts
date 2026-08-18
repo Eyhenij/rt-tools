@@ -1,5 +1,18 @@
 import { areObjectsEqual } from '../are-objects-equal/index.js';
 
+/** Non-null object, arrays included: `areObjectsEqual` sorts out which of the two kinds it is. */
+function isRecord(value: unknown): value is object {
+    return typeof value === 'object' && value != null;
+}
+
+/**
+ * Two elements read as identical: anything object-shaped goes structural, everything else is
+ * compared by identity.
+ */
+function sameElement<T>(one: T, other: T): boolean {
+    return isRecord(one) && isRecord(other) ? areObjectsEqual(one, other) : one === other;
+}
+
 /**
  * Indicates whether two arrays hold identical content at identical positions.
  *
@@ -27,24 +40,5 @@ export function areArraysEqual<T>(f: T[], s: T[]): boolean {
         return false;
     }
 
-    for (let i: number = 0; i < f.length; i++) {
-        const valueF: T = f[i];
-        const valueS: T = s[i];
-
-        if (Array.isArray(valueF) && Array.isArray(valueS)) {
-            if (!areArraysEqual(valueF, valueS)) {
-                return false;
-            }
-        }
-
-        if (typeof valueF === 'object' && valueF != null && typeof valueS === 'object' && valueS != null) {
-            if (!areObjectsEqual(valueF, valueS)) {
-                return false;
-            }
-        } else if (valueF !== valueS) {
-            return false;
-        }
-    }
-
-    return true;
+    return f.every((valueF: T, index: number): boolean => sameElement(valueF, s[index]));
 }

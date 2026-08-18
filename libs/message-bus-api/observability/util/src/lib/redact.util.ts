@@ -50,11 +50,25 @@ function hideFreeText(value: unknown): string {
 }
 
 /**
- * Значение после вычистки — одной функцией на все роды сразу.
- *
- * Объект и его элементы разбирает одна и та же ветка рекурсии: разведённые по двум функциям,
- * они зовут друг друга, и одна из двух неизбежно объявляется позже, чем её зовут.
+ * Значение одного поля записи после вычистки: секрет прячется целиком, свободный текст — длиной,
+ * остальное идёт тем же разбором, что и всё вложенное.
  */
+function redactField(key: string, value: unknown, depth: number, insideError: boolean): unknown {
+    if (SECRET_KEY.test(key)) {
+        return REDACTED;
+    }
+
+    const errorBranch: boolean = insideError || ERROR_BRANCH.has(key);
+
+    if (!errorBranch && FREE_TEXT_KEY.test(key)) {
+        return hideFreeText(value);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define -- поле и значение зовут друг друга, и объявления функций поднимаются
+    return redactValue(value, depth + 1, errorBranch);
+}
+
+/** Значение после вычистки — одной функцией на все роды сразу. */
 function redactValue(value: unknown, depth: number, insideError: boolean): unknown {
     if (typeof value === 'string') {
         return truncate(value);
@@ -73,18 +87,7 @@ function redactValue(value: unknown, depth: number, insideError: boolean): unkno
 
     const result: Record<string, unknown> = {};
     for (const [key, nested] of Object.entries(value)) {
-        if (SECRET_KEY.test(key)) {
-            result[key] = REDACTED;
-            continue;
-        }
-
-        const errorBranch: boolean = insideError || ERROR_BRANCH.has(key);
-        if (!errorBranch && FREE_TEXT_KEY.test(key)) {
-            result[key] = hideFreeText(nested);
-            continue;
-        }
-
-        result[key] = redactValue(nested, depth + 1, errorBranch);
+        result[key] = redactField(key, nested, depth, insideError);
     }
 
     return result;

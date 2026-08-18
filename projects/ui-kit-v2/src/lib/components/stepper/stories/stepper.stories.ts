@@ -12,9 +12,9 @@ export default {
     },
 } as Meta<TestRtStepperComponent>;
 
-type Story = StoryObj<TestRtStepperComponent>;
+type TStory = StoryObj<TestRtStepperComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     // Тот же набор стоит ячейкой «середина — 50 %» в матрице положения: отдельный кадр проверял
     // бы то же самое второй раз, а меняется он от любой правки аргументов.
     parameters: storySnapshotSkip('этот набор уже стоит ячейкой в матрице положения шага'),

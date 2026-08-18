@@ -31,10 +31,10 @@ const BEM_BLOCK: string = 'rt-rich-editor';
  * Режим тулбара: `full` — весь whitelist, `minimal` — жирный + два списка
  * (G113: чаты оператора/админа/саппорта).
  */
-export type IRtRichEditorToolbar = 'full' | 'minimal';
+export type TRtRichEditorToolbar = 'full' | 'minimal';
 
 /** Модули тулбара — строго whitelist (без link/image/color/script). */
-const TOOLBAR: Record<IRtRichEditorToolbar, readonly unknown[]> = {
+const TOOLBAR: Record<TRtRichEditorToolbar, readonly unknown[]> = {
     full: [
         ['bold', 'italic', 'underline', 'strike'],
         [{ header: 1 }, { header: 2 }, { header: 3 }],
@@ -45,12 +45,12 @@ const TOOLBAR: Record<IRtRichEditorToolbar, readonly unknown[]> = {
 };
 
 /** Форматы, которые Quill вообще примет (вставленное из буфера лишнее вырезается). */
-const FORMATS: Record<IRtRichEditorToolbar, readonly string[]> = {
+const FORMATS: Record<TRtRichEditorToolbar, readonly string[]> = {
     full: ['bold', 'italic', 'underline', 'strike', 'header', 'list', 'blockquote', 'code-block'],
     minimal: ['bold', 'list'],
 };
 
-type IQuillContentsArg = Parameters<Quill['setContents']>[0];
+type TQuillContentsArg = Parameters<Quill['setContents']>[0];
 
 /**
  * Rich-редактор чата на Quill. Наследует CVA-ядро input-семейства
@@ -103,7 +103,7 @@ export class RtRichEditorComponent extends RtFormControlBase<IQuillDelta | null>
     public readonly placeholder: InputSignal<string> = input<string>('');
 
     /** Набор кнопок форматирования; сужает и принимаемые форматы (вставка из буфера). */
-    public readonly toolbar: InputSignal<IRtRichEditorToolbar> = input<IRtRichEditorToolbar>('full');
+    public readonly toolbar: InputSignal<TRtRichEditorToolbar> = input<TRtRichEditorToolbar>('full');
 
     /** Enter без Shift в редакторе — сигнал отправки (Shift+Enter остаётся переносом). */
     public readonly enterPressed: OutputEmitterRef<void> = output<void>();
@@ -142,7 +142,7 @@ export class RtRichEditorComponent extends RtFormControlBase<IQuillDelta | null>
         });
         this.#quill = quill;
         if (this.#pending !== null) {
-            quill.setContents(this.#pending as unknown as IQuillContentsArg);
+            quill.setContents(this.#pending as unknown as TQuillContentsArg);
             this.#pending = null;
         }
         if (this.isDisabled()) {
@@ -163,7 +163,7 @@ export class RtRichEditorComponent extends RtFormControlBase<IQuillDelta | null>
             this.#pending = value;
             return;
         }
-        this.#quill.setContents((value ?? { ops: [] }) as unknown as IQuillContentsArg);
+        this.#quill.setContents((value ?? { ops: [] }) as unknown as TQuillContentsArg);
     }
 
     public override setDisabledState(isDisabled: boolean): void {

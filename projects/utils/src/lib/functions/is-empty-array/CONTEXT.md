@@ -1,7 +1,7 @@
 # isEmptyArray
 
 ```ts
-isEmptyArray<T>(value: INullable<T[]>): boolean
+isEmptyArray<T>(value: TNullable<T[]>): boolean
 ```
 
 Reports whether an array holds no elements. Nullish counts as empty.

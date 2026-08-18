@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 
 import { NAVIGATOR } from '../tokens/navigator.token';
 import { WINDOW } from '../tokens/window.token';
@@ -15,13 +15,27 @@ export namespace OSTypes {
     export const UNKNOWN: string = 'Unknown';
 }
 
+/**
+ * Признаки операционной системы в строке обозревателя, в порядке проверки.
+ *
+ * Порядок значим и оставлен прежним: строка обозревателя на Android несёт и `Android`, и
+ * `Linux`, и до правки первым срабатывал `Linux` — таблица это поведение сохраняет.
+ */
+const OS_SIGNATURES: ReadonlyArray<[RegExp, string]> = [
+    [/Windows/i, OSTypes.WINDOWS],
+    [/Macintosh|Mac OS/i, OSTypes.MAC_OS],
+    [/Linux/i, OSTypes.LINUX],
+    [/Android/i, OSTypes.ANDROID],
+    [/iOS/i, OSTypes.IOS],
+];
+
 @Injectable()
 export class DeviceDetectorService {
     readonly #windowRef: Window = inject(WINDOW);
     readonly #navigatorRef: Navigator = inject(NAVIGATOR);
     readonly #platformService: PlatformService = inject(PlatformService);
 
-    public userAgent: INullable<string> = null;
+    public userAgent: TNullable<string> = null;
 
     constructor() {
         if (
@@ -47,22 +61,9 @@ export class DeviceDetectorService {
     }
 
     public getOS(): string {
-        let os: string;
+        const agent: string = this.userAgent ?? '';
+        const known: TNullable<[RegExp, string]> = OS_SIGNATURES.find(([pattern]: [RegExp, string]) => pattern.test(agent));
 
-        if (this.userAgent && /Windows/i.test(this.userAgent)) {
-            os = OSTypes.WINDOWS;
-        } else if (this.userAgent && /Macintosh|Mac OS/i.test(this.userAgent)) {
-            os = OSTypes.MAC_OS;
-        } else if (this.userAgent && /Linux/i.test(this.userAgent)) {
-            os = OSTypes.LINUX;
-        } else if (this.userAgent && /Android/i.test(this.userAgent)) {
-            os = OSTypes.ANDROID;
-        } else if (this.userAgent && /iOS/i.test(this.userAgent)) {
-            os = OSTypes.IOS;
-        } else {
-            os = OSTypes.UNKNOWN;
-        }
-
-        return os;
+        return known ? known[1] : OSTypes.UNKNOWN;
     }
 }

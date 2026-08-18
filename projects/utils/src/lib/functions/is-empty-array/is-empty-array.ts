@@ -1,4 +1,4 @@
-import { INullable } from '../../interfaces/nullable.type.js';
+import { TNullable } from '../../interfaces/nullable.type.js';
 import { isNil } from '../is-nil/index.js';
 
 /**
@@ -14,6 +14,6 @@ import { isNil } from '../is-nil/index.js';
  * isEmptyArray(null); // true
  * isEmptyArray([undefined]); // false — one element, and it is present as a slot
  */
-export function isEmptyArray<T>(value: INullable<T[]>): boolean {
+export function isEmptyArray<T>(value: TNullable<T[]>): boolean {
     return isNil(value) || value.length === 0;
 }

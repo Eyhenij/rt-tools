@@ -5,7 +5,7 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtNoteComponent } from '../../rt-note.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type NoteMatrixPart = 'content' | 'width' | 'edges' | 'themes';
+export type TNoteMatrixPart = 'content' | 'width' | 'edges' | 'themes';
 
 /**
  * Матрицы состояний `rt-note` для витрины.
@@ -108,7 +108,7 @@ export type NoteMatrixPart = 'content' | 'width' | 'edges' | 'themes';
     ],
 })
 export class TestRtNoteMatrixComponent {
-    public part: NoteMatrixPart = 'content';
+    public part: TNoteMatrixPart = 'content';
 
     public readonly contents: readonly { name: string; kind: string }[] = [
         { name: 'одна строка', kind: 'plain' },

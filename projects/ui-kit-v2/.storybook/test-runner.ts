@@ -1,4 +1,4 @@
-import type { TestRunnerConfig } from '@storybook/test-runner';
+import type { TestContext, TestRunnerConfig } from '@storybook/test-runner';
 import { getStoryContext } from '@storybook/test-runner';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import { appendFileSync, existsSync } from 'node:fs';
@@ -100,6 +100,70 @@ interface ISnapshotParameters {
 }
 
 /** Записать снятый кадр в реестр, чтобы сверка каталога знала, что он ожидаем. */
+/**
+ * Ждёт, пока показ не встанет: размеры его корня должны совпасть в двух перерисовках подряд.
+ *
+ * Часть компонентов кита приезжает динамическим импортом уже после первой отрисовки — редактор
+ * так и устроен, — и до его появления на месте показа стоит пустое место. Отсчёт времени тут не
+ * мерило: на свободной машине он проходит, на занятой нет, и кадр выходит втрое ниже эталона.
+ * Снимок редактора падал этим стабильно, а читалось это как плавающие кадры.
+ *
+ * Ждётся именно тот узел, который снимается: страница целиком успокаивается и тогда, когда
+ * внутри корня показа ещё пусто.
+ */
+async function settled(page: Page): Promise<void> {
+    if ((await page.locator(ROOT_SELECTOR).count()) === 0) {
+        return;
+    }
+
+    // Компонент, чья начинка приезжает динамическим импортом, держит на хосте признак
+    // недостроенности и снимает его, смонтировавшись. Ждётся именно он: пустое место на месте
+    // такого компонента стоит секундами и всё это время не меняет размеров — то есть выглядит
+    // вставшим показом. Снимок редактора падал ровно этим, а читалось это как плавающий кадр.
+    await page.waitForSelector(PENDING_SELECTOR, { state: 'detached', timeout: LAYOUT_TIMEOUT_MS });
+
+    // Динамический чанк едет по сети, и до его прихода показ стоит пустым — то есть неизменным.
+    // Одни только совпавшие размеры принимают такую пустоту за вставший показ: сравнивать их
+    // имеет смысл после того, как сеть замолчала.
+    await page.waitForLoadState('networkidle');
+
+    await page.waitForFunction(
+        ([selector, frames]: [string, number]) =>
+            new Promise<boolean>((resolve: (settled: boolean) => void) => {
+                const root: Element | null = document.querySelector(selector);
+                if (root === null) {
+                    resolve(true);
+                    return;
+                }
+
+                const size: () => string = (): string => {
+                    const box: DOMRect = root.getBoundingClientRect();
+                    return `${Math.round(box.width)}x${Math.round(box.height)}`;
+                };
+
+                let previous: string = size();
+                let same: number = 0;
+
+                const step: () => void = (): void => {
+                    const current: string = size();
+                    same = current === previous ? same + 1 : 0;
+                    previous = current;
+
+                    if (same >= frames) {
+                        resolve(true);
+                        return;
+                    }
+
+                    requestAnimationFrame(step);
+                };
+
+                requestAnimationFrame(step);
+            }),
+        [ROOT_SELECTOR, STILL_FRAMES] as [string, number],
+        { timeout: LAYOUT_TIMEOUT_MS }
+    );
+}
+
 function remember(identifier: string): void {
     if (TAKEN_REGISTRY !== undefined) {
         appendFileSync(TAKEN_REGISTRY, `${identifier}\n`);
@@ -177,70 +241,6 @@ async function quiet(page: Page): Promise<void> {
 }
 
 /**
- * Ждёт, пока показ не встанет: размеры его корня должны совпасть в двух перерисовках подряд.
- *
- * Часть компонентов кита приезжает динамическим импортом уже после первой отрисовки — редактор
- * так и устроен, — и до его появления на месте показа стоит пустое место. Отсчёт времени тут не
- * мерило: на свободной машине он проходит, на занятой нет, и кадр выходит втрое ниже эталона.
- * Снимок редактора падал этим стабильно, а читалось это как плавающие кадры.
- *
- * Ждётся именно тот узел, который снимается: страница целиком успокаивается и тогда, когда
- * внутри корня показа ещё пусто.
- */
-async function settled(page: Page): Promise<void> {
-    if ((await page.locator(ROOT_SELECTOR).count()) === 0) {
-        return;
-    }
-
-    // Компонент, чья начинка приезжает динамическим импортом, держит на хосте признак
-    // недостроенности и снимает его, смонтировавшись. Ждётся именно он: пустое место на месте
-    // такого компонента стоит секундами и всё это время не меняет размеров — то есть выглядит
-    // вставшим показом. Снимок редактора падал ровно этим, а читалось это как плавающий кадр.
-    await page.waitForSelector(PENDING_SELECTOR, { state: 'detached', timeout: LAYOUT_TIMEOUT_MS });
-
-    // Динамический чанк едет по сети, и до его прихода показ стоит пустым — то есть неизменным.
-    // Одни только совпавшие размеры принимают такую пустоту за вставший показ: сравнивать их
-    // имеет смысл после того, как сеть замолчала.
-    await page.waitForLoadState('networkidle');
-
-    await page.waitForFunction(
-        ([selector, frames]: [string, number]) =>
-            new Promise<boolean>((resolve) => {
-                const root: Element | null = document.querySelector(selector);
-                if (root === null) {
-                    resolve(true);
-                    return;
-                }
-
-                const size = (): string => {
-                    const box: DOMRect = root.getBoundingClientRect();
-                    return `${Math.round(box.width)}x${Math.round(box.height)}`;
-                };
-
-                let previous: string = size();
-                let same: number = 0;
-
-                const step = (): void => {
-                    const current: string = size();
-                    same = current === previous ? same + 1 : 0;
-                    previous = current;
-
-                    if (same >= frames) {
-                        resolve(true);
-                        return;
-                    }
-
-                    requestAnimationFrame(step);
-                };
-
-                requestAnimationFrame(step);
-            }),
-        [ROOT_SELECTOR, STILL_FRAMES] as [string, number],
-        { timeout: LAYOUT_TIMEOUT_MS }
-    );
-}
-
-/**
  * Отказывает, если история открывает перекрытие сама, а оно не открылось.
  *
  * Кадр с закрытым перекрытием неотличим от исправной истории, у которой перекрытия и не должно
@@ -306,8 +306,8 @@ const config: TestRunnerConfig = {
         expect.extend({ toMatchImageSnapshot });
     },
 
-    async preVisit(page, context): Promise<void> {
-        const story = await getStoryContext(page, context);
+    async preVisit(page: Page, context: TestContext): Promise<void> {
+        const story: Awaited<ReturnType<typeof getStoryContext>> = await getStoryContext(page, context);
         const snapshot: ISnapshotParameters = (story.parameters?.snapshot as ISnapshotParameters | undefined) ?? {};
 
         // Пометка без причины возвращает молчаливый пропуск, ради которого набор и задан
@@ -319,8 +319,8 @@ const config: TestRunnerConfig = {
         await page.setViewportSize(VIEWPORT);
     },
 
-    async postVisit(page, context): Promise<void> {
-        const story = await getStoryContext(page, context);
+    async postVisit(page: Page, context: TestContext): Promise<void> {
+        const story: Awaited<ReturnType<typeof getStoryContext>> = await getStoryContext(page, context);
         const snapshot: ISnapshotParameters = (story.parameters?.snapshot as ISnapshotParameters | undefined) ?? {};
 
         // Снимается всё, кроме помеченного. Обратный порядок — «снимается помеченное» — дал бы

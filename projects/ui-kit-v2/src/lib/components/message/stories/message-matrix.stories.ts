@@ -15,14 +15,14 @@ export default {
     },
 } as Meta<TestRtMessageMatrixComponent>;
 
-type Story = StoryObj<TestRtMessageMatrixComponent>;
+type TStory = StoryObj<TestRtMessageMatrixComponent>;
 
-export const Severity: Story = { args: { part: 'severity' } };
+export const Severity: TStory = { args: { part: 'severity' } };
 
-export const Icon: Story = { args: { part: 'icon' } };
+export const Icon: TStory = { args: { part: 'icon' } };
 
-export const Closable: Story = { args: { part: 'closable' } };
+export const Closable: TStory = { args: { part: 'closable' } };
 
-export const Content: Story = { args: { part: 'content' } };
+export const Content: TStory = { args: { part: 'content' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

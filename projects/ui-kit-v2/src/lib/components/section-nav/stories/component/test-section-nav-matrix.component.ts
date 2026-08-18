@@ -7,7 +7,7 @@ import { RtSectionNavComponent } from '../../rt-section-nav.component';
 import { IRtSectionNav } from '../../rt-section-nav.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type SectionNavMatrixPart = 'active' | 'length' | 'states' | 'edges' | 'themes';
+export type TSectionNavMatrixPart = 'active' | 'length' | 'states' | 'edges' | 'themes';
 
 /** Случай набора плиток: имя для подписи ячейки и сам набор. */
 interface ISectionNavCase {
@@ -88,7 +88,7 @@ const ITEMS: readonly IRtSectionNav.Item[] = [
     ],
 })
 export class TestRtSectionNavMatrixComponent {
-    public part: SectionNavMatrixPart = 'active';
+    public part: TSectionNavMatrixPart = 'active';
 
     public readonly items: readonly IRtSectionNav.Item[] = ITEMS;
 

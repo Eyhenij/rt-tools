@@ -1,8 +1,8 @@
-export enum STORAGE_TYPES_ENUM {
+export enum EStorageTypes {
     LOCAL = 'local',
     SESSION = 'session',
     IN_MEMORY = 'inMemory',
     CUSTOM = 'custom',
 }
 
-export type StorageType = STORAGE_TYPES_ENUM.LOCAL | STORAGE_TYPES_ENUM.SESSION | STORAGE_TYPES_ENUM.IN_MEMORY | STORAGE_TYPES_ENUM.CUSTOM;
+export type TStorageType = EStorageTypes.LOCAL | EStorageTypes.SESSION | EStorageTypes.IN_MEMORY | EStorageTypes.CUSTOM;

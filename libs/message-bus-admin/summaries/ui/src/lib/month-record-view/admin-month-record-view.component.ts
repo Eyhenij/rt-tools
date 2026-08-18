@@ -26,7 +26,6 @@ const BEM_BLOCK: string = 'admin-panel';
 @Component({
     selector: 'admin-month-record-view',
     templateUrl: './admin-month-record-view.component.html',
-    styleUrl: './admin-month-record-view.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // rt-tools

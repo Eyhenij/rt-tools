@@ -3,20 +3,15 @@
  * с собой шаблоны — иначе проект, выбравший девять законов, остался бы без шаблона правила и
  * узнал бы об этом, только пойдя за ним.
  */
+import { cascadeCuts, chosenEntries, ICascadeCut, idleSkips, IIdleSkip, namedButCut } from './cascade.js';
 import {
     brokenLinks,
-    cascadeCuts,
-    chosenEntries,
     IBrokenLink,
-    ICascadeCut,
     IEntryOfCatalog,
-    idleSkips,
     idOf,
     IGapOfVariant,
-    IIdleSkip,
     isChosen,
     ISelection,
-    namedButCut,
     requiresOf,
     resolveSelection,
     titleOf,

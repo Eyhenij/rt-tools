@@ -46,7 +46,6 @@ const BEM_BLOCK: string = 'admin-postmortems-list';
 @Component({
     selector: 'admin-postmortems-list',
     templateUrl: './admin-postmortems-list.component.html',
-    styleUrl: './admin-postmortems-list.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // angular

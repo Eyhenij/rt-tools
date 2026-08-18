@@ -26,7 +26,6 @@ const FAULT_TEXT: Readonly<Record<ESignInFault, string>> = Object.freeze({
         RtMessageComponent,
     ],
     templateUrl: './admin-sign-in-form.component.html',
-    styleUrl: './admin-sign-in-form.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: { class: BEM_BLOCK },
 })

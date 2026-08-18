@@ -67,13 +67,13 @@ export class SummaryIntakeController {
     async #write(cargo: TCargoBody, treeId: string, ranAt: Date): Promise<IMonthRecordWritten> {
         return writeMonthSummary(this.#prisma, {
             treeId,
+            ranAt,
             month: monthOf(ranAt),
             // Сводка ложится целиком, как приехала: незнакомое поле остаётся в записи, а
             // незнакомая версия схемы помечает её собой — отказ терял бы отрезок целиком, а
             // дерево о новой редакции пакета узнаёт не сразу и не всегда
             summary: cargo,
             schema: cargoSchemaOf(cargo),
-            ranAt,
         });
     }
 }

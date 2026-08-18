@@ -31,20 +31,21 @@ export function unknownFlagsIn(argv: readonly string[], known: readonly string[]
 
     for (let index: number = 0; index < argv.length; index += 1) {
         const spoken: string = argv[index];
+
         if (!FLAG.test(spoken)) {
             continue;
         }
 
         const name: string = spoken.split('=')[0];
+
         if (!names.has(name)) {
             unknown.push(name);
-            continue;
-        }
-
-        // Значение через пробел пропускается вместе со своим доводом: без этого путь, начатый
-        // с дефиса, читался бы как ещё один незнакомый довод.
-        if (withValue.has(name) && !spoken.includes('=')) {
+        } else if (withValue.has(name) && !spoken.includes('=')) {
+            // Значение через пробел пропускается вместе со своим доводом: без этого путь, начатый
+            // с дефиса, читался бы как ещё один незнакомый довод.
             index += 1;
+        } else {
+            // Знакомый довод, у которого значения нет или оно написано через равенство
         }
     }
 

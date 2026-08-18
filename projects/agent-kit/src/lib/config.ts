@@ -143,6 +143,9 @@ export const DEFAULT_POSTMORTEMS_DIR: string = 'docs/postmortems';
  * тестов есть не у всех. Объявленная в ней функция замещает умолчание целиком и вправе позвать
  * его обратно суффиксом `_default` — так дерево дописывает своё, не теряя общего.
  */
+/** Каталог правил дерева: законы туда не идут, а правила, паттерны и скилы лежат вместе. */
+export const SKILLS_DIR: string = '.claude/skills';
+
 export const DEFAULTS_DIR: string = '.claude/rt-kit/defaults';
 export const GATE_MAP_FILE: string = 'gate-map.sh';
 export const PROFILE_FILE: string = 'project.sh';
@@ -154,9 +157,9 @@ export const PROFILE_FILE: string = 'project.sh';
  */
 export const DEFAULT_LAYOUT: Readonly<Record<TKind, string>> = {
     laws: 'docs/constitution',
-    rules: '.claude/skills',
-    patterns: '.claude/skills',
-    skills: '.claude/skills',
+    rules: SKILLS_DIR,
+    patterns: SKILLS_DIR,
+    skills: SKILLS_DIR,
     hooks: '.claude/hooks',
     defaults: DEFAULTS_DIR,
     checks: 'tools',
@@ -243,10 +246,10 @@ export function parseConfig(text: string): IConfig {
     }
 
     return {
-        vars: { ...derived, ...stringMap(raw['vars'], 'vars') },
-        layout: layout as Record<TKind, string>,
         only,
         skip,
+        vars: { ...derived, ...stringMap(raw['vars'], 'vars') },
+        layout: layout as Record<TKind, string>,
         variants: stringMap(raw['variants'], 'variants'),
         has: idList(raw['has'], 'has'),
         // Выключателем считается только явное «нет»: ключа нет — запись идёт, как и у гарда.

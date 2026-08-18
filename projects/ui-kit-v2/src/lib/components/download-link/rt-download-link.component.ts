@@ -12,7 +12,7 @@ import {
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RtKitLabelParams, rtKitLabel } from '../../i18n';
+import { TRtKitLabelParams, rtKitLabel } from '../../i18n';
 import { RtIconComponent } from '../icon/rt-icon.component';
 
 const BEM_BLOCK: string = 'rt-download-link';
@@ -40,7 +40,7 @@ export class RtDownloadLinkComponent {
      */
     protected readonly downloadAriaLabel: Signal<string> = rtKitLabel(
         'uiDownloadFile',
-        computed((): RtKitLabelParams => ({ name: this.label() }))
+        computed((): TRtKitLabelParams => ({ name: this.label() }))
     );
 
     public readonly label: InputSignal<string> = input.required<string>();

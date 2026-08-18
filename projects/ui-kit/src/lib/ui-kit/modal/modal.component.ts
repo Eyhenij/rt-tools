@@ -14,7 +14,7 @@ import { IModal } from './modal.types';
 const BEM_BLOCK: string = 'rtui-modal';
 
 @Component({
-    selector: 'rtui-modal',
+    selector: BEM_BLOCK,
     templateUrl: './modal.component.html',
     styleUrls: ['./modal.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,7 +45,7 @@ export class RtuiModalComponent<T> implements OnInit {
     public control: FormControl | undefined;
     public selectControl: FormControl | undefined;
 
-    public readonly bemBlock: string = 'rtui-modal';
+    public readonly bemBlock: string = BEM_BLOCK;
 
     @HostBinding('class')
     public get hostClasses(): Record<string, boolean> {

@@ -6,7 +6,7 @@ import { RtTabDirective } from '../../rt-tab.directive';
 import { RtTabsComponent } from '../../rt-tabs.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TabsMatrixPart = 'direction' | 'title' | 'tabState' | 'stretch' | 'edges' | 'themes';
+export type TTabsMatrixPart = 'direction' | 'title' | 'tabState' | 'stretch' | 'edges' | 'themes';
 
 /**
  * Матрицы состояний `rt-tabs` и `[rtTab]` для витрины.
@@ -161,7 +161,7 @@ export type TabsMatrixPart = 'direction' | 'title' | 'tabState' | 'stretch' | 'e
     ],
 })
 export class TestRtTabsMatrixComponent {
-    public part: TabsMatrixPart = 'direction';
+    public part: TTabsMatrixPart = 'direction';
 
     public readonly directions: readonly string[] = ['horizontal', 'vertical'];
     public readonly titles: readonly string[] = ['только подпись', 'с иконкой', 'со значком', 'иконка и значок'];

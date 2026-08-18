@@ -19,7 +19,7 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RtKitLabelMap } from '../../i18n';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
 import { NotificationBus } from '../../platform';
 
 import { RtAsideSectionComponent } from '../aside-section/rt-aside-section.component';
@@ -105,7 +105,7 @@ export class RtWorkspaceDetailsComponent {
 
     #lastPanelError: string | null = null;
 
-    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly editingAgent: WritableSignal<boolean> = signal<boolean>(false);
 

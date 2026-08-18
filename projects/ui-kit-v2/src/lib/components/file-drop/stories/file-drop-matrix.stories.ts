@@ -20,13 +20,13 @@ export default {
     },
 } as Meta<TestRtFileDropMatrixComponent>;
 
-type Story = StoryObj<TestRtFileDropMatrixComponent>;
+type TStory = StoryObj<TestRtFileDropMatrixComponent>;
 
 /** Пока файл не тащат, видно только содержимое: отключённость на нём не видна намеренно. */
-export const Resting: Story = { args: { part: 'resting' } };
+export const Resting: TStory = { args: { part: 'resting' } };
 
 /** Подсказка поверх содержимого: подпись кита, своя подпись и отключённая область без подсказки. */
-export const Dragging: Story = {
+export const Dragging: TStory = {
     args: { part: 'dragging' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await startStoryFileDrag(canvasElement);
@@ -37,14 +37,14 @@ export const Dragging: Story = {
  * Зоны — стопка равных полос; подсвечена та, над которой курсор. Курсор здесь висит на трети
  * высоты: в двух зонах это первая, в трёх — тоже первая, и рядом видно, что доля высоты решает.
  */
-export const Zones: Story = {
+export const Zones: TStory = {
     args: { part: 'zones' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await startStoryFileDrag(canvasElement, 0.3);
     },
 };
 
-export const Themes: Story = {
+export const Themes: TStory = {
     args: { part: 'themes' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await startStoryFileDrag(canvasElement);

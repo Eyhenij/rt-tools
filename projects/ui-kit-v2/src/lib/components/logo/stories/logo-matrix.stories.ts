@@ -15,12 +15,12 @@ export default {
     },
 } as Meta<TestRtLogoMatrixComponent>;
 
-type Story = StoryObj<TestRtLogoMatrixComponent>;
+type TStory = StoryObj<TestRtLogoMatrixComponent>;
 
-export const Variant: Story = { args: { part: 'variant' } };
+export const Variant: TStory = { args: { part: 'variant' } };
 
-export const Height: Story = { args: { part: 'height' } };
+export const Height: TStory = { args: { part: 'height' } };
 
-export const Aspect: Story = { args: { part: 'aspect' } };
+export const Aspect: TStory = { args: { part: 'aspect' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

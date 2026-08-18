@@ -1,11 +1,11 @@
 /**
  * @description Enumeration indicates the current state of a request.
- * @value ModelStatus.Success - The request was successful.
- * @value ModelStatus.Error - The request failed.
- * @value ModelStatus.Init - The request has not been made yet.
- * @value ModelStatus.Pending - The request is in progress.
+ * @value EModelStatus.Success - The request was successful.
+ * @value EModelStatus.Error - The request failed.
+ * @value EModelStatus.Init - The request has not been made yet.
+ * @value EModelStatus.Pending - The request is in progress.
  */
-export enum ModelStatus {
+export enum EModelStatus {
     Init,
     Pending,
     Success,

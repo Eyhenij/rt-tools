@@ -46,7 +46,6 @@ export class DevToolsManagerService {
      */
     public register<T>(name: string, store: Signal<T>, setState: (state: T) => void): () => void {
         if (!this.isEnabled) {
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
             return (): void => {};
         }
 
@@ -75,7 +74,9 @@ export class DevToolsManagerService {
      * @param payload - Optional action payload
      */
     public send(storeName: string, actionName: string, payload?: unknown): void {
-        if (!this.#devTools) return;
+        if (!this.#devTools) {
+            return;
+        }
 
         const action: { type: string; payload?: unknown } = {
             type: `[${storeName}] ${actionName}`,
@@ -103,8 +104,9 @@ export class DevToolsManagerService {
         this.#devTools.init(this.#getAggregatedState());
         this.#isInitialized = true;
 
-        // Redux DevTools extension API — not an RxJS Observable, so no terminating operator applies.
-        // eslint-disable-next-line rt/require-take-until-destroyed
+        // Redux DevTools extension API — not an RxJS Observable, so no terminating operator applies,
+        // and this is not the subscription the method-placement rule is about.
+        // eslint-disable-next-line @nx/workspace-require-take-until-destroyed, @nx/workspace-no-subscribe-in-methods
         this.#devTools.subscribe((message: IDevToolsMessage) => {
             if (message.type === 'DISPATCH') {
                 switch (message.payload?.type) {
@@ -141,7 +143,9 @@ export class DevToolsManagerService {
     }
 
     #sendState(actionType: string): void {
-        if (!this.#devTools) return;
+        if (!this.#devTools) {
+            return;
+        }
         this.#devTools.send({ type: actionType }, this.#getAggregatedState());
     }
 

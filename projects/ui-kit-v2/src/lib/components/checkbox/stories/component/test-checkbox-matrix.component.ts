@@ -8,7 +8,7 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtCheckboxComponent } from '../../rt-checkbox.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type CheckboxMatrixPart = 'value' | 'label' | 'states' | 'themes';
+export type TCheckboxMatrixPart = 'value' | 'label' | 'states' | 'themes';
 
 /**
  * Положение чекбокса: значение и смешанность вместе, потому что порознь они не бывают —
@@ -122,7 +122,7 @@ function checked(value: boolean): FormControl<boolean> {
     ],
 })
 export class TestRtCheckboxMatrixComponent {
-    public part: CheckboxMatrixPart = 'value';
+    public part: TCheckboxMatrixPart = 'value';
 
     public readonly states: readonly IStoryState[] = STORY_CONTROL_STATES;
     public readonly stateLabel: (value: IStoryState) => string = storyStateLabel;

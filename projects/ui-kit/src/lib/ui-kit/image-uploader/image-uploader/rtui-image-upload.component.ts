@@ -22,14 +22,14 @@ import { MatTooltip, TooltipPosition } from '@angular/material/tooltip';
 import { ImageCroppedEvent, ImageCropperComponent } from 'ngx-image-cropper';
 
 import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 import { transformStringInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtuiFileUploadComponent } from '../../file-uploader';
 import { RtuiSpinnerComponent } from '../../spinner';
 import { BooleanInput } from '@angular/cdk/coercion';
 
-export type IImageUploadFormat = 'png' | 'jpeg' | 'webp';
+export type TImageUploadFormat = 'png' | 'jpeg' | 'webp';
 
 const BEM_BLOCK: string = 'rtui-image-upload';
 
@@ -63,7 +63,7 @@ export class RtuiImageUploadComponent {
     readonly #breakpoints: BreakpointService = inject(BreakpointService);
     readonly #documentRef: Document = inject(DOCUMENT);
 
-    readonly #formats: Record<string, IImageUploadFormat> = {
+    readonly #formats: Record<string, TImageUploadFormat> = {
         ['png']: 'png',
         ['jpg']: 'jpeg',
         ['jpeg']: 'jpeg',
@@ -72,24 +72,25 @@ export class RtuiImageUploadComponent {
     readonly #originalMimeType: WritableSignal<string | null> = signal(null);
 
     /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
     protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
-    protected readonly imageFormat: Signal<IImageUploadFormat> = computed((): IImageUploadFormat => {
-        const type: INullable<string> = this.#originalMimeType();
+    protected readonly imageFormat: Signal<TImageUploadFormat> = computed((): TImageUploadFormat => {
+        const type: TNullable<string> = this.#originalMimeType();
         return this.#formats[type?.toLowerCase() || ''] || 'png';
     });
 
-    public imageUrl: ModelSignal<INullable<string>> = model.required<INullable<string>>();
+    public imageUrl: ModelSignal<TNullable<string>> = model.required<TNullable<string>>();
     /**
      * Признак узкого экрана.
      *
      * @deprecated Кит определяет его сам — `RtuiBreakpointsService`. Вход оставлен ради
      * приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
      */
-    public isMobile: InputSignalWithTransform<INullable<boolean>, INullable<boolean> | string> = input<
-        INullable<boolean>,
-        INullable<boolean> | string
+    public isMobile: InputSignalWithTransform<TNullable<boolean>, TNullable<boolean> | string> = input<
+        TNullable<boolean>,
+        TNullable<boolean> | string
     >(null, {
-        transform: (value: INullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
+        transform: (value: TNullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
     });
     public fileName: InputSignalWithTransform<string, string> = input<string, string>('image', {
         transform: transformStringInput,
@@ -117,8 +118,8 @@ export class RtuiImageUploadComponent {
     public imageQuality: InputSignal<number> = input<number>(92);
 
     public originalImage: WritableSignal<File | undefined> = signal(undefined);
-    public croppedImage: WritableSignal<INullable<File>> = signal(null);
-    public tempImage: WritableSignal<INullable<string>> = signal(null);
+    public croppedImage: WritableSignal<TNullable<File>> = signal(null);
+    public tempImage: WritableSignal<TNullable<string>> = signal(null);
 
     public readonly imageChanged: OutputEmitterRef<File> = output<File>();
     public readonly save: OutputEmitterRef<void> = output<void>();

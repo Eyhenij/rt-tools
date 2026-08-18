@@ -15,17 +15,17 @@ export default {
     },
 } as Meta<TestRtTabsMatrixComponent>;
 
-type Story = StoryObj<TestRtTabsMatrixComponent>;
+type TStory = StoryObj<TestRtTabsMatrixComponent>;
 
-export const Direction: Story = { args: { part: 'direction' } };
+export const Direction: TStory = { args: { part: 'direction' } };
 
-export const Title: Story = { args: { part: 'title' } };
+export const Title: TStory = { args: { part: 'title' } };
 
 /** Все виды вкладки в одной полосе: порознь их не сравнить. */
-export const TabState: Story = { args: { part: 'tabState' }, parameters: { snapshot: { fullPage: true } } };
+export const TabState: TStory = { args: { part: 'tabState' }, parameters: { snapshot: { fullPage: true } } };
 
-export const Stretch: Story = { args: { part: 'stretch' } };
+export const Stretch: TStory = { args: { part: 'stretch' } };
 
-export const Edges: Story = { args: { part: 'edges' } };
+export const Edges: TStory = { args: { part: 'edges' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

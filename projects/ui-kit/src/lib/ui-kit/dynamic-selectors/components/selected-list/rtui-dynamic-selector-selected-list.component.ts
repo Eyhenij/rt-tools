@@ -24,7 +24,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import { BreakStringPipe, EntityToStringPipe, RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtHideTooltipDirective } from '../../../tooltip';
@@ -88,10 +88,11 @@ export class RtuiDynamicSelectorSelectedListComponent<ENTITY extends Record<stri
     readonly #breakpoints: BreakpointService = inject(BreakpointService);
 
     /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
     protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
-    protected readonly editedItemIndex: WritableSignal<INullable<number>> = signal(null);
+    protected readonly editedItemIndex: WritableSignal<TNullable<number>> = signal(null);
 
-    public readonly inputRef: Signal<INullable<MatInput>> = viewChild(MatInput);
+    public readonly inputRef: Signal<TNullable<MatInput>> = viewChild(MatInput);
 
     /**
      * Признак узкого экрана.
@@ -99,11 +100,11 @@ export class RtuiDynamicSelectorSelectedListComponent<ENTITY extends Record<stri
      * @deprecated Кит определяет его сам — `RtuiBreakpointsService`. Вход оставлен ради
      * приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
      */
-    public isMobile: InputSignalWithTransform<INullable<boolean>, INullable<boolean> | string> = input<
-        INullable<boolean>,
-        INullable<boolean> | string
+    public isMobile: InputSignalWithTransform<TNullable<boolean>, TNullable<boolean> | string> = input<
+        TNullable<boolean>,
+        TNullable<boolean> | string
     >(null, {
-        transform: (value: INullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
+        transform: (value: TNullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
     });
     /** A model's field, which should be used for http-requests */
     public keyExp: InputSignal<KEY> = input.required();
@@ -145,14 +146,14 @@ export class RtuiDynamicSelectorSelectedListComponent<ENTITY extends Record<stri
     public readonly changeValueAction: OutputEmitterRef<{ prev: ENTITY[KEY]; new: string }> = output<{ prev: ENTITY[KEY]; new: string }>();
 
     /** Additional control for entity */
-    public readonly additionalControlTpl: Signal<INullable<TemplateRef<{ $implicit: ENTITY }>>> = contentChild(
+    public readonly additionalControlTpl: Signal<TNullable<TemplateRef<{ $implicit: ENTITY }>>> = contentChild(
         RtuiDynamicSelectorItemAdditionalControlDirective,
         {
             read: TemplateRef,
         }
     );
     /** Custom item title template */
-    public readonly itemTitleTpl: Signal<INullable<TemplateRef<{ $implicit: ENTITY }>>> = contentChild(
+    public readonly itemTitleTpl: Signal<TNullable<TemplateRef<{ $implicit: ENTITY }>>> = contentChild(
         RtuiDynamicSelectorItemTitleDirective,
         {
             read: TemplateRef,
@@ -174,7 +175,7 @@ export class RtuiDynamicSelectorSelectedListComponent<ENTITY extends Record<stri
         this.setEditModState(null);
     }
 
-    protected setEditModState(index: INullable<number>): void {
+    protected setEditModState(index: TNullable<number>): void {
         this.editedItemIndex.set(index);
     }
 }

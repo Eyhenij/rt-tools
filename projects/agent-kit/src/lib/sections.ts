@@ -29,7 +29,7 @@ const SECTION_HEADING: RegExp = /^##\s+\S/;
 const FENCE: RegExp = /^\s*(```|~~~)/;
 
 const trimEdges: (lines: readonly string[]) => string = (lines: readonly string[]): string =>
-    lines.join('\n').replace(/^\n+/, '').replace(/\s+$/, '');
+    lines.join('\n').replace(/^\n+/, '').trimEnd();
 
 export function parseDocument(text: string): IDocument {
     const preamble: string[] = [];

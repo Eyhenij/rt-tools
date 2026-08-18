@@ -9,19 +9,8 @@ import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'n
 import { dirname, join } from 'node:path';
 
 import { collectAssets, IAsset, targetOf } from './assets.js';
-import {
-    brokenLinks,
-    cascadeCuts,
-    IBrokenLink,
-    ICascadeCut,
-    idleSkips,
-    IEntryOfCatalog,
-    IGapOfVariant,
-    IIdleSkip,
-    namedButCut,
-    readCatalog,
-    variantGaps,
-} from './catalog.js';
+import { ICascadeCut, IIdleSkip, cascadeCuts, idleSkips, namedButCut } from './cascade.js';
+import { brokenLinks, IBrokenLink, IEntryOfCatalog, IGapOfVariant, readCatalog, variantGaps } from './catalog.js';
 import { ICompanion, pathOf, planCompanion } from './companion.js';
 import { IConfig, OVERRIDES_DIR } from './config.js';
 import { bindingsOf as declaredIn, driftedMatchers, IHookBinding, IMatcherDrift, unboundHooks } from './hooks-map.js';
@@ -157,20 +146,21 @@ function leftOnDisk(config: IConfig, root: string, assetsDir: string): ILeftOnDi
     const abandoned: string[] = [];
     const cut: ICutFound[] = [];
     for (const entry of catalog) {
-        if (taken.has(entry.id) || !matchesVariant(entry.variant, config.variants)) {
-            continue;
-        }
         const path: string = targetOf(entry, config.layout);
-        const existing: string | null = read(join(root, path));
-        if (existing === null || readStamped(existing) === null) {
+        const existing: string | null = taken.has(entry.id) ? null : read(join(root, path));
+        const stamped: boolean = existing !== null && readStamped(existing) !== null;
+
+        if (!stamped || !matchesVariant(entry.variant, config.variants)) {
             continue;
         }
+
         const found: ICascadeCut | undefined = cuts.get(entry.id);
+
         if (found) {
             cut.push({ path, cut: found });
-            continue;
+        } else {
+            abandoned.push(path);
         }
-        abandoned.push(path);
     }
 
     return { abandoned, cut };
@@ -234,7 +224,7 @@ export function planSync(config: IConfig, root: string, version: string, assetsD
             continue;
         }
         planned.push(
-            planFile({ path: asset.target, asset: asset.id, version, rendered: rendered.text, existing: read(join(root, asset.target)) })
+            planFile({ version, path: asset.target, asset: asset.id, rendered: rendered.text, existing: read(join(root, asset.target)) })
         );
         if (asset.kind === 'rules' && template !== null) {
             companions.push(planCompanion(asset, read(join(root, pathOf(asset))), template));

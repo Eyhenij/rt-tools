@@ -16,14 +16,14 @@ export default {
     },
 } as Meta<TestRtNotificationsBellMatrixComponent>;
 
-type Story = StoryObj<TestRtNotificationsBellMatrixComponent>;
+type TStory = StoryObj<TestRtNotificationsBellMatrixComponent>;
 
-export const Unread: Story = { args: { part: 'unread' } };
+export const Unread: TStory = { args: { part: 'unread' } };
 
 /** Наведение и фокус стилизованы у кнопки внутри — аддон псевдосостояний получает спуск до неё. */
-export const States: Story = {
+export const States: TStory = {
     args: { part: 'states' },
     parameters: { pseudo: storyPseudoParameters('button') },
 };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

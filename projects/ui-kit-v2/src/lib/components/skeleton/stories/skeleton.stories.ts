@@ -25,9 +25,9 @@ export default {
     },
 } as Meta<TestRtSkeletonComponent>;
 
-type Story = StoryObj<TestRtSkeletonComponent>;
+type TStory = StoryObj<TestRtSkeletonComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         shape: 'rectangle',

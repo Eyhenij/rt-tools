@@ -17,9 +17,9 @@ export default {
     },
 } as Meta<TestRtCounterComponent>;
 
-type Story = StoryObj<TestRtCounterComponent>;
+type TStory = StoryObj<TestRtCounterComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         ariaLabel: null,

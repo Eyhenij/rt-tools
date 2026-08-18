@@ -1,3 +1,27 @@
+## [Unreleased]
+
+### BREAKING CHANGES
+
+- **rt:ui-kit:** псевдонимы типа получили приставку `T`: в этом дереве `I` носит интерфейс, а `T` — псевдоним типа, и
+  правило линтера требует именно её. Псевдонимов под прежними именами не оставлено — у символа одно имя, и переход
+  состоит в правке импортов. Переименовано 15:
+
+    - `AsideButtonsType` → `TAsideButtonsType`
+    - `AsidePositions` → `TAsidePositions`
+    - `IImageUploadFormat` → `TImageUploadFormat`
+    - `IInfoBadgeSizeType` → `TInfoBadgeSizeType`
+    - `IconSideType` → `TIconSideType`
+    - `InfoBadgeType` → `TInfoBadgeType`
+    - `MenuItemTrigger` → `TMenuItemTrigger`
+    - `ModalWindowSizeType` → `TModalWindowSizeType`
+    - `RtAccentRole` → `TRtAccentRole`
+    - `RtColorSchemeRamp` → `TRtColorSchemeRamp`
+    - `RtThemeType` → `TRtThemeType`
+    - `RtUiDesign` → `TRtUiDesign`
+    - `RtuiIconSizeType` → `TRtuiIconSizeType`
+    - `RtuiIconThemeType` → `TRtuiIconThemeType`
+    - `ToggleSizeType` → `TToggleSizeType`
+
 # [0.4.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.3.1...rt-tools@0.4.0) (2026-08-10)
 
 ### Bug Fixes
@@ -29,6 +53,21 @@
 - **rt:ui-kit:** the deprecated `.c-button` set is gone — `styles/components/_button.scss` no longer ships, and with it the `--rt-button-*` custom properties. Map your classes with the table in `src/styles/TOKENS.md`; an app that overrode `--rt-button-*` (dark mode included) overrides `--rt-rtui-btn-*` instead. `button { cursor: pointer; line-height: 1 }` rode along with that file and stays, now in `styles/base/_base.scss`.
 - **rt:ui-kit:** the kit's own buttons no longer carry `.c-button`, so a few labels inside composite components read at Material's own 14px instead of the set's 16px: `rtui-file-upload`, the `rtui-image-upload` cropper actions, the `rtui-multi-selector-popup` footer and the `rtui-dynamic-selector` placeholder. The text buttons of `rtui-aside-error-box`, `rtui-dynamic-input` and `rtui-dynamic-selector` moved onto `.rtui-btn .rtui-btn-secondary-text` and sit 2px taller.
 - **rt:ui-kit:** three pagination custom properties were renamed to say what they do: `--rt-table-pagination-container-mobile-gap`, `-paging-mobile-margin` and `-size-toggle-selector-mobile-margin` are now `--rt-table-pagination-container-clipped-gap`, `-paging-clipped-margin` and `-size-toggle-selector-clipped-margin`. They drive the clipped layout, which applies above the mobile breakpoint, not below it.
+
+- **rt:ui-kit:** перечисления получили приставку `E` и имя в PascalCase: приставка рода в этом дереве одна на все
+  объявления, и правило линтера требует её у перечисления так же, как у интерфейса и псевдонима типа. Значения внутри
+  перечислений не тронуты. Переименовано 10:
+
+    - `ASIDE_BUTTONS_ENUM` → `EAsideButtons`
+    - `INFO_BADGE_SIZE_ENUM` → `EInfoBadgeSize`
+    - `INFO_BADGE_TYPE_ENUM` → `EInfoBadgeType`
+    - `MODAL_WINDOW_SIZE_ENUM` → `EModalWindowSize`
+    - `RT_ACCENT_ROLE_ENUM` → `ERtAccentRole`
+    - `RT_THEME_ENUM` → `ERtTheme`
+    - `TABLE_COLUMN_FILTER_TYPES_ENUM` → `ETableColumnFilterTypes`
+    - `TABLE_COLUMN_TYPES_ENUM` → `ETableColumnTypes`
+    - `TEXT_CELL_COLOR_ENUM` → `ETextCellColor`
+    - `TOGGLE_SIZE_TYPE_ENUM` → `EToggleSizeType`
 
 ## [0.3.1](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.3.0...rt-tools@0.3.1) (2026-08-02)
 

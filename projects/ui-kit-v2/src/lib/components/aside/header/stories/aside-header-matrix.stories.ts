@@ -15,15 +15,15 @@ export default {
     },
 } as Meta<TestRtAsideHeaderMatrixComponent>;
 
-type Story = StoryObj<TestRtAsideHeaderMatrixComponent>;
+type TStory = StoryObj<TestRtAsideHeaderMatrixComponent>;
 
 /** Заголовок, надзаголовок и стрелка возврата. */
-export const Heading: Story = { args: { part: 'heading' } };
+export const Heading: TStory = { args: { part: 'heading' } };
 
 /** Ряд бэйджей: без них, один, несколько, со ссылкой наружу. */
-export const Badges: Story = { args: { part: 'badges' } };
+export const Badges: TStory = { args: { part: 'badges' } };
 
 /** Загрузка: заголовок подменяется заглушкой, остальное остаётся на месте. */
-export const States: Story = { args: { part: 'states' } };
+export const States: TStory = { args: { part: 'states' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

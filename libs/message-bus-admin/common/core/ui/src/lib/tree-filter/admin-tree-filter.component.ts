@@ -22,7 +22,6 @@ const ALL_TREES: string = '';
 @Component({
     selector: 'admin-tree-filter',
     templateUrl: './admin-tree-filter.component.html',
-    styleUrl: './admin-tree-filter.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // angular

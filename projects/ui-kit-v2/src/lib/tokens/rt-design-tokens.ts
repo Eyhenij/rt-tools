@@ -1,7 +1,8 @@
+/* eslint-disable max-lines -- файл делится задачей RT-849: набор токенов собирается сборщиком, а таблица и переписка режутся по смыслу */
 /* Собрано генератором `tools/build-tokens-v2.mjs` из `tokens.source.mjs` — правится там, не здесь. */
 
 /** Имя свойства оформления, которое кит объявляет сам. */
-export type RtDesignTokenName =
+export type TRtDesignTokenName =
     | '--rt-amber-400'
     | '--rt-border-width-medium'
     | '--rt-border-width-thick'
@@ -380,7 +381,7 @@ export type RtDesignTokenName =
     | '--rt-z-tooltip';
 
 /** Имя ручки потребителя — свойства, которое кит намеренно не объявляет. */
-export type RtConsumerHandleName =
+export type TRtConsumerHandleName =
     | '--rt-aside-width'
     | '--rt-dialog-width'
     | '--rt-header-content-max-width'
@@ -394,7 +395,7 @@ export type RtConsumerHandleName =
     | '--rt-workspace-list-size';
 
 /** Все свойства оформления, объявленные китом. */
-export const RT_DESIGN_TOKEN_NAMES: readonly RtDesignTokenName[] = [
+export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-amber-400',
     '--rt-border-width-medium',
     '--rt-border-width-thick',
@@ -774,7 +775,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly RtDesignTokenName[] = [
 ];
 
 /** Все ручки потребителя: значение приходит от приложения, до него работает запасное. */
-export const RT_CONSUMER_HANDLE_NAMES: readonly RtConsumerHandleName[] = [
+export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-aside-width',
     '--rt-dialog-width',
     '--rt-header-content-max-width',

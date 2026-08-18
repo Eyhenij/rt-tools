@@ -11,9 +11,9 @@ export default {
     },
 } as Meta<TestRtTimelineComponent>;
 
-type Story = StoryObj<TestRtTimelineComponent>;
+type TStory = StoryObj<TestRtTimelineComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     // Та же лента стоит ячейкой «все три состояния» в матрице состояния шага: отдельный кадр
     // проверял бы то же самое второй раз, а меняется он от любой правки аргументов.
     parameters: storySnapshotSkip('эта лента уже стоит ячейкой в матрице состояния шага'),

@@ -108,7 +108,7 @@ describe('RtRichEditorComponent', (): void => {
         it('значение формы уходит в редактор', async (): Promise<void> => {
             const fixture: ComponentFixture<RichEditorHostComponent> = await setupHost();
 
-            fixture.componentInstance.control.setValue({ ops: [{ insert: 'Из формы' }] } as IQuillDelta);
+            fixture.componentInstance.control.setValue({ ops: [{ insert: 'Из формы' }] });
             fixture.detectChanges();
 
             expect(editor().getText()).toBe('Из формы');
@@ -124,7 +124,7 @@ describe('RtRichEditorComponent', (): void => {
                     skipInitialDetect: true,
                 }
             );
-            fixture.componentInstance.control.setValue({ ops: [{ insert: 'Раннее' }] } as IQuillDelta);
+            fixture.componentInstance.control.setValue({ ops: [{ insert: 'Раннее' }] });
             fixture.detectChanges();
 
             // Ждём именно очередь задач: редактор приходит динамическим
@@ -198,7 +198,7 @@ describe('RtRichEditorComponent', (): void => {
     it('плоский текст значения читается для режима только для чтения', async (): Promise<void> => {
         const fixture: ComponentFixture<RtRichEditorComponent> = await setup();
 
-        fixture.componentInstance.writeValue({ ops: [{ insert: 'Простой текст' }] } as IQuillDelta);
+        fixture.componentInstance.writeValue({ ops: [{ insert: 'Простой текст' }] });
         fixture.detectChanges();
 
         expect(fixture.componentInstance.displayText()).toBe('Простой текст');

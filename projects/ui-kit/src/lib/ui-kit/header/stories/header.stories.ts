@@ -1,3 +1,4 @@
+// eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
@@ -8,14 +9,15 @@ export default {
     component: TestHeaderComponent,
     decorators: [
         applicationConfig({
+            // eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
             providers: [provideAnimations()],
         }),
     ],
 } as Meta<TestHeaderComponent>;
 
-type Story = StoryObj<TestHeaderComponent>;
+type TStory = StoryObj<TestHeaderComponent>;
 
-export const Header: Story = {
+export const Header: TStory = {
     args: {
         isMobile: false,
         isTabs: false,

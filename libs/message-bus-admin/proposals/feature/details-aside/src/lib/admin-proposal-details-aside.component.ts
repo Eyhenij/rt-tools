@@ -31,7 +31,6 @@ const BEM_BLOCK: string = 'admin-proposal-details-aside';
 @Component({
     selector: 'admin-proposal-details-aside',
     templateUrl: './admin-proposal-details-aside.component.html',
-    styleUrl: './admin-proposal-details-aside.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components

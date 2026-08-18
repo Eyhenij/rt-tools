@@ -16,21 +16,21 @@ export default {
     },
 } as Meta<TestRtToggleSwitchMatrixComponent>;
 
-type Story = StoryObj<TestRtToggleSwitchMatrixComponent>;
+type TStory = StoryObj<TestRtToggleSwitchMatrixComponent>;
 
-export const Size: Story = { args: { part: 'size' } };
+export const Size: TStory = { args: { part: 'size' } };
 
-export const Value: Story = { args: { part: 'value' } };
+export const Value: TStory = { args: { part: 'value' } };
 
-export const Icons: Story = { args: { part: 'icons' } };
+export const Icons: TStory = { args: { part: 'icons' } };
 
 /**
  * Кольцо фокуса рисует кнопка внутри хоста, а признак стоит на хосте — аддону передан спуск
  * до неё: без него класс лёг бы на элемент, у которого этих правил нет.
  */
-export const States: Story = {
+export const States: TStory = {
     args: { part: 'states' },
     parameters: { pseudo: storyPseudoParameters('.rt-toggle-switch') },
 };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

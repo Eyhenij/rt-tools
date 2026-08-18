@@ -4,20 +4,20 @@ import { Observable } from 'rxjs';
 
 import { BaseAsyncStoreService } from './base-async-store.service';
 import { BASE_INITIAL_STATE } from './constants/base-initial-state.const';
-import { ModelStatus } from './enums/async-state-status.enum';
+import { EModelStatus } from './enums/async-state-status.enum';
 import { IStateBase } from './interfaces/state-base.interface';
 
 interface ITestState extends IStateBase.Async {
     value: string;
 }
 
-type TestMsg = 'LOAD';
+type TTestMsg = 'LOAD';
 
 const INITIAL_STATE: ITestState = { ...BASE_INITIAL_STATE.ASYNC, value: '' };
 
 /** @description Consumer that never declares an error type — the failure argument stays `unknown`. */
 @Injectable()
-class DefaultErrorStore extends BaseAsyncStoreService<ITestState, TestMsg> {
+class DefaultErrorStore extends BaseAsyncStoreService<ITestState, TTestMsg> {
     constructor() {
         super(INITIAL_STATE, { name: 'DefaultErrorStore' });
     }
@@ -31,7 +31,7 @@ interface ITransportFailure {
 
 /** @description Consumer on a non-HTTP transport declaring its own failure type. */
 @Injectable()
-class TransportErrorStore extends BaseAsyncStoreService<ITestState, TestMsg, ITransportFailure> {
+class TransportErrorStore extends BaseAsyncStoreService<ITestState, TTestMsg, ITransportFailure> {
     constructor() {
         super(INITIAL_STATE, { name: 'TransportErrorStore' });
     }
@@ -80,8 +80,8 @@ describe('BaseAsyncStoreService', () => {
             const result$: Observable<never> = store.setLoadingFailure(error);
 
             expect(store.loading()).toBe(false);
-            expect(store.loadingStatus()).toBe(ModelStatus.Error);
-            expect(store.requestStatus()).toBe(ModelStatus.Error);
+            expect(store.loadingStatus()).toBe(EModelStatus.Error);
+            expect(store.requestStatus()).toBe(EModelStatus.Error);
 
             result$.subscribe({
                 error: (thrown: unknown): void => {
@@ -95,26 +95,26 @@ describe('BaseAsyncStoreService', () => {
             store.setLoadingFailureVoid({ code: 1, reason: 'aborted' }, { showNotification: false });
 
             expect(consoleErrorSpy).not.toHaveBeenCalled();
-            expect(store.loadingStatus()).toBe(ModelStatus.Error);
+            expect(store.loadingStatus()).toBe(EModelStatus.Error);
         });
 
         it('marks fetching as failed', () => {
             store.setFetchingFailureVoid({ code: 2, reason: 'timeout' });
 
             expect(store.fetching()).toBe(false);
-            expect(store.fetchingStatus()).toBe(ModelStatus.Error);
+            expect(store.fetchingStatus()).toBe(EModelStatus.Error);
         });
 
         it('marks upsert as failed', () => {
             store.setUpsertFailureVoid({ code: 3, reason: 'rejected' });
 
-            expect(store.upsertStatus()).toBe(ModelStatus.Error);
+            expect(store.upsertStatus()).toBe(EModelStatus.Error);
         });
 
         it('marks delete as failed', () => {
             store.setDeleteFailureVoid({ code: 4, reason: 'conflict' });
 
-            expect(store.deleteStatus()).toBe(ModelStatus.Error);
+            expect(store.deleteStatus()).toBe(EModelStatus.Error);
         });
     });
 
@@ -126,7 +126,7 @@ describe('BaseAsyncStoreService', () => {
             transportStore.setUpsertFailureVoid(error);
 
             expect(consoleErrorSpy).toHaveBeenCalledWith(error);
-            expect(transportStore.upsertStatus()).toBe(ModelStatus.Error);
+            expect(transportStore.upsertStatus()).toBe(EModelStatus.Error);
         });
 
         it('reports the declared shape as the handleError argument type', () => {
@@ -149,8 +149,8 @@ describe('BaseAsyncStoreService', () => {
             store.resetAsyncState();
 
             expect(store.loading()).toBe(false);
-            expect(store.requestStatus()).toBe(ModelStatus.Init);
-            expect(store.upsertStatus()).toBe(ModelStatus.Init);
+            expect(store.requestStatus()).toBe(EModelStatus.Init);
+            expect(store.upsertStatus()).toBe(EModelStatus.Init);
         });
     });
 });

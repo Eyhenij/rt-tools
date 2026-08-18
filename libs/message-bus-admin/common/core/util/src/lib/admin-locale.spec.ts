@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRtStorage, provideRtUtils, StorageService } from '@rt-tools/core';
-import { RtKitTranslator } from '@rt-tools/ui-kit-v2';
+import { TRtKitTranslator } from '@rt-tools/ui-kit-v2';
 
 import { AdminLocaleService, EAdminLocale, EAdminStorageKeys } from './admin-locale';
 
@@ -56,13 +56,13 @@ describe('AdminLocaleService', () => {
     it('SC-MB-149 — русский выбор отвечает подписями приложения, английский не отвечает вовсе', () => {
         const service: AdminLocaleService = localeService();
 
-        const ru: RtKitTranslator = service.translator();
+        const ru: TRtKitTranslator = service.translator();
 
         expect(ru('uiClose')).toBe('Закрыть');
 
         service.setLocale(EAdminLocale.En);
 
-        const en: RtKitTranslator = service.translator();
+        const en: TRtKitTranslator = service.translator();
 
         expect(en('uiClose')).toBe('');
     });

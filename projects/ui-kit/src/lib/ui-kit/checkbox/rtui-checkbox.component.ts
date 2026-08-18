@@ -45,10 +45,12 @@ export class RtuiCheckboxComponent implements ControlValueAccessor {
         transform: transformStringInput,
     });
 
+    // eslint-disable-next-line sonarjs/function-name -- имя публичное, переименование ломает разметку потребителя; идёт задачей RT-846
     public get Value(): boolean {
         return this.value;
     }
 
+    // eslint-disable-next-line sonarjs/function-name -- имя публичное, переименование ломает разметку потребителя; идёт задачей RT-846
     public set Value(v: boolean) {
         if (this.disabled) {
             return;

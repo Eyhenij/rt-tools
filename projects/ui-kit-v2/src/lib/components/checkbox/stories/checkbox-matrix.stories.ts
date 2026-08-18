@@ -16,19 +16,19 @@ export default {
     },
 } as Meta<TestRtCheckboxMatrixComponent>;
 
-type Story = StoryObj<TestRtCheckboxMatrixComponent>;
+type TStory = StoryObj<TestRtCheckboxMatrixComponent>;
 
-export const Value: Story = { args: { part: 'value' } };
+export const Value: TStory = { args: { part: 'value' } };
 
-export const Label: Story = { args: { part: 'label' } };
+export const Label: TStory = { args: { part: 'label' } };
 
 /**
  * Кольцо фокуса рисует кнопка внутри хоста, а признак стоит на хосте — аддону передан спуск
  * до неё: без него класс лёг бы на элемент, у которого этих правил нет.
  */
-export const States: Story = {
+export const States: TStory = {
     args: { part: 'states' },
     parameters: { pseudo: storyPseudoParameters('.rt-checkbox') },
 };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

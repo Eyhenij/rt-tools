@@ -5,7 +5,7 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtCollapsibleTextComponent } from '../../rt-collapsible-text.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type CollapsibleTextMatrixPart = 'clamp' | 'paragraphs' | 'width' | 'edges' | 'themes';
+export type TCollapsibleTextMatrixPart = 'clamp' | 'paragraphs' | 'width' | 'edges' | 'themes';
 
 /** Случай текста: имя для подписи ячейки, абзацы и предел строк. */
 interface ICollapsibleTextCase {
@@ -91,7 +91,7 @@ const SHORT: string = 'Подписан 14 марта.';
     ],
 })
 export class TestRtCollapsibleTextMatrixComponent {
-    public part: CollapsibleTextMatrixPart = 'clamp';
+    public part: TCollapsibleTextMatrixPart = 'clamp';
 
     public readonly longParagraph: readonly string[] = [LONG];
 

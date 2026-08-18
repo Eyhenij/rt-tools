@@ -7,7 +7,7 @@ import { IRtPageHeader } from '../../rt-page-header.model';
 import { RtPageHeaderComponent } from '../../rt-page-header.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type PageHeaderMatrixPart = 'items' | 'user' | 'themes' | 'panel';
+export type TPageHeaderMatrixPart = 'items' | 'user' | 'themes' | 'panel';
 
 /** Набор пунктов: вид пункта решают его собственные поля, а не входы шапки. */
 interface IPageHeaderItemsCase {
@@ -88,7 +88,7 @@ interface IPageHeaderUserCase {
     ],
 })
 export class TestRtPageHeaderMatrixComponent {
-    public part: PageHeaderMatrixPart = 'items';
+    public part: TPageHeaderMatrixPart = 'items';
 
     public readonly triggerAttribute: string = STORY_TRIGGER_ATTRIBUTE;
 

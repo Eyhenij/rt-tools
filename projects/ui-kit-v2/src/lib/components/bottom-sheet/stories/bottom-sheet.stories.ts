@@ -11,10 +11,10 @@ export default {
     },
 } as Meta<TestRtBottomSheetComponent>;
 
-type Story = StoryObj<TestRtBottomSheetComponent>;
+type TStory = StoryObj<TestRtBottomSheetComponent>;
 
 /** Лист показан открытым: закрытый не рисует ничего, и кадр закрепил бы пустую страницу. */
-export const Playground: Story = {
+export const Playground: TStory = {
     args: {
         open: true,
     },

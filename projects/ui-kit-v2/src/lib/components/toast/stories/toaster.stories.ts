@@ -17,9 +17,9 @@ export default {
     },
 } as Meta<TestRtToasterComponent>;
 
-type Story = StoryObj<TestRtToasterComponent>;
+type TStory = StoryObj<TestRtToasterComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip(
         'плашки живут по таймеру и к моменту кадра успевают уйти по-разному; вид самой плашки проверяют матрицы `Components/Toast`'
     ),

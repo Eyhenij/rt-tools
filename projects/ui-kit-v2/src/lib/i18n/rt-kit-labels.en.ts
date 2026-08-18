@@ -8,12 +8,12 @@
  * среди ключей много `aria`-подписей, и пустая там означает кнопку без имени
  * для скринридера.
  *
- * Набор задаёт и **перечень ключей**: `RtKitLabelKey` выводится отсюда, поэтому
+ * Набор задаёт и **перечень ключей**: `TRtKitLabelKey` выводится отсюда, поэтому
  * опечатка в ключе не доживает до рантайма.
  *
  * Места вида `{{name}}` заполняются параметрами — их принимает `rtKitLabel()`.
  */
-// eslint-disable-next-line @typescript-eslint/typedef -- аннотация стёрла бы литеральный тип, на котором стоит RtKitLabelKey
+// eslint-disable-next-line @typescript-eslint/typedef -- аннотация стёрла бы литеральный тип, на котором стоит TRtKitLabelKey
 export const RT_KIT_LABELS_EN = {
     bottomSheetClose: 'Close',
     chatAttachAria: 'Attach a file',

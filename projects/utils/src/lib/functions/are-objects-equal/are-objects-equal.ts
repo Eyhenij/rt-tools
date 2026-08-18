@@ -1,5 +1,15 @@
 import { areArraysEqual } from '../are-arrays-equal/index.js';
 
+/** Non-null object — the only kind this function compares key by key. */
+function isRecord(value: unknown): value is object {
+    return typeof value === 'object' && value != null;
+}
+
+/** An array against a non-array: different kinds of value, nothing to compare. */
+function kindsDiffer(f: unknown, s: unknown): boolean {
+    return Array.isArray(f) !== Array.isArray(s);
+}
+
 /**
  * Indicates whether two values are structurally equal.
  *
@@ -27,27 +37,28 @@ export function areObjectsEqual<T>(f: T, s: T): boolean {
         return true;
     }
 
-    if (Array.isArray(f) || Array.isArray(s)) {
-        return Array.isArray(f) && Array.isArray(s) ? areArraysEqual(f, s) : false;
+    if (kindsDiffer(f, s)) {
+        return false;
+    }
+
+    if (Array.isArray(f) && Array.isArray(s)) {
+        return areArraysEqual(f, s);
     }
 
     /** If one of the objects is null or undefined - no need to compare */
-    if (typeof f === 'object' && f != null && typeof s === 'object' && s != null) {
-        const keysF: string[] = Object.keys(f);
-        const keysS: string[] = Object.keys(s);
-
-        if (keysF.length != keysS.length) {
-            return false;
-        }
-
-        for (const key in f) {
-            if (!areObjectsEqual(f[key], s[key])) {
-                return false;
-            }
-        }
-
-        return true;
+    if (!isRecord(f) || !isRecord(s)) {
+        return false;
     }
 
-    return false;
+    if (Object.keys(f).length !== Object.keys(s).length) {
+        return false;
+    }
+
+    for (const key in f) {
+        if (!areObjectsEqual(f[key], s[key])) {
+            return false;
+        }
+    }
+
+    return true;
 }

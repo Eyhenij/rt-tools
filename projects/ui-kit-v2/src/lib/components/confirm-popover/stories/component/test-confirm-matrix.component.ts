@@ -9,7 +9,7 @@ import { IRtConfirmPopover } from '../../rt-confirm-popover.model';
 import { RtConfirmDirective } from '../../rt-confirm.directive';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type ConfirmMatrixPart = 'tone' | 'content' | 'themes' | 'panel';
+export type TConfirmMatrixPart = 'tone' | 'content' | 'themes' | 'panel';
 
 /** Тон подтверждающей кнопки — единственное, что окрашивает панель. */
 interface IConfirmToneCase {
@@ -113,7 +113,7 @@ interface IConfirmContentCase {
     ],
 })
 export class TestRtConfirmMatrixComponent {
-    public part: ConfirmMatrixPart = 'tone';
+    public part: TConfirmMatrixPart = 'tone';
 
     public readonly triggerAttribute: string = STORY_TRIGGER_ATTRIBUTE;
 

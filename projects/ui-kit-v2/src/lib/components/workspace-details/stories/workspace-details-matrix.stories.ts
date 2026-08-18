@@ -15,17 +15,17 @@ export default {
     },
 } as Meta<TestRtWorkspaceDetailsMatrixComponent>;
 
-type Story = StoryObj<TestRtWorkspaceDetailsMatrixComponent>;
+type TStory = StoryObj<TestRtWorkspaceDetailsMatrixComponent>;
 
-export const Blocks: Story = { args: { part: 'blocks' } };
+export const Blocks: TStory = { args: { part: 'blocks' } };
 
 /** Вкладки появляются только вместе с переходом или историей — рядом это видно. */
-export const Tabs: Story = { args: { part: 'tabs' } };
+export const Tabs: TStory = { args: { part: 'tabs' } };
 
-export const Loading: Story = { args: { part: 'loading' } };
+export const Loading: TStory = { args: { part: 'loading' } };
 
-export const Actions: Story = { args: { part: 'actions' } };
+export const Actions: TStory = { args: { part: 'actions' } };
 
-export const Audit: Story = { args: { part: 'audit' } };
+export const Audit: TStory = { args: { part: 'audit' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

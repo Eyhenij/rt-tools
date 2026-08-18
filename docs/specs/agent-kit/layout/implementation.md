@@ -24,22 +24,22 @@
 | Разорванная связь — предупреждение, а не отказ.                                         | `projects/agent-kit/src/lib/catalog.ts:brokenLinks`                   |
 | Разбор состояния называет невыбранное поимённо, а не числом.                            | `projects/agent-kit/src/lib/commands.ts:doctor`                       |
 | Пакет не пишет в файлы, принадлежащие дереву.                                           | `projects/agent-kit/README.md:observations`                           |
-| Отказ от родителя снимает потомков, а лишняя строка отказа объявляется предупреждением. | `projects/agent-kit/src/lib/catalog.ts:cascadeCuts`                   |
+| Отказ от родителя снимает потомков, а лишняя строка отказа объявляется предупреждением. | `projects/agent-kit/src/lib/cascade.ts:cascadeCuts`                   |
 | Закон, не попавший в выбор, отвергнут наравне с названным в отказе.                     | `projects/agent-kit/src/lib/catalog.ts:isChosen`                      |
-| Каскад идёт сверху вниз и только.                                                       | `projects/agent-kit/src/lib/catalog.ts:cascadeCuts`                   |
+| Каскад идёт сверху вниз и только.                                                       | `projects/agent-kit/src/lib/cascade.ts:cascadeCuts`                   |
 | Связь берётся из вступления самих ресурсов.                                             | `projects/agent-kit/src/lib/catalog.ts:frontMatterOf`                 |
 | Снятое каскадом называется вместе с родителем.                                          | `projects/agent-kit/src/lib/commands.ts:doctor`                       |
 | Пакет везёт закон, верный любому дереву своего класса.                                  | `projects/agent-kit/src/lib/retired.ts:RETIRED`                       |
-| Отказ дерева от предметного закона — одна строка.                                       | `projects/agent-kit/src/lib/catalog.ts:chosenEntries`                 |
+| Отказ дерева от предметного закона — одна строка.                                       | `projects/agent-kit/src/lib/cascade.ts:chosenEntries`                 |
 | Ресурс, ушедший из пакета, уходит вместе с потомками.                                   | `projects/agent-kit/src/lib/integrity.ts:brokenLinks`                 |
 | Пакет помнит имена, которые из него ушли.                                               | `projects/agent-kit/src/lib/sync.ts:retiredOf`                        |
 | Снятое каскадом остаётся на диске и называется отдельно от брошенного.                  | `projects/agent-kit/src/lib/sync.ts:leftOnDisk`                       |
-| Короткое имя из вступления разрешается по последнему звену имени внутри своего рода.    | `projects/agent-kit/src/lib/catalog.ts:shortNameOf`                   |
+| Короткое имя из вступления разрешается по последнему звену имени внутри своего рода.    | `projects/agent-kit/src/lib/cascade.ts:shortNameOf`                   |
 | Два ресурса одного рода с одинаковым последним звеном имени — отказ набора.             | `projects/agent-kit/src/lib/integrity.ts:ambiguousNames`              |
-| Родитель с несколькими видами отвергнут, только когда не выбран ни один его вид.        | `projects/agent-kit/src/lib/catalog.ts:cascadeCuts`                   |
-| Снятый внук называется обоими: ближайшим родителем и отвергнутым корнем.                | `projects/agent-kit/src/lib/catalog.ts:ICascadeCut`                   |
-| Выбор, который после каскада ничего не берёт, называется вслух.                         | `projects/agent-kit/src/lib/catalog.ts:namedButCut`                   |
-| Родителя нет в каталоге — каскад молчит.                                                | `projects/agent-kit/src/lib/catalog.ts:cascadeCuts`                   |
+| Родитель с несколькими видами отвергнут, только когда не выбран ни один его вид.        | `projects/agent-kit/src/lib/cascade.ts:cascadeCuts`                   |
+| Снятый внук называется обоими: ближайшим родителем и отвергнутым корнем.                | `projects/agent-kit/src/lib/cascade.ts:ICascadeCut`                   |
+| Выбор, который после каскада ничего не берёт, называется вслух.                         | `projects/agent-kit/src/lib/cascade.ts:namedButCut`                   |
+| Родителя нет в каталоге — каскад молчит.                                                | `projects/agent-kit/src/lib/cascade.ts:cascadeCuts`                   |
 | Связь, порванную самим каскадом, предупреждением не считают.                            | `projects/agent-kit/src/lib/catalog.ts:brokenLinks`                   |
 | Предупреждение раскладки печатается на любом её исходе.                                 | `projects/agent-kit/src/lib/commands.ts:warnings`                     |
 | Раскладка называет добавленный долг в тот же момент, когда его добавила.                | `projects/agent-kit/src/lib/commands.ts:debtLines`                    |

@@ -11,10 +11,10 @@ export default {
     },
 } as Meta<TestRtTableSortHeaderComponent>;
 
-type Story = StoryObj<TestRtTableSortHeaderComponent>;
+type TStory = StoryObj<TestRtTableSortHeaderComponent>;
 
 /** Ключ колонки — тот же, что двойник таблицы объявил сортируемым: пустой ключ рисует подпись без кнопки. */
-export const Default: Story = {
+export const Default: TStory = {
     parameters: storySnapshotSkip(
         'подпись заголовок берёт из проекции, а обёртка её не отдаёт: в кадре пустая страница; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
     ),

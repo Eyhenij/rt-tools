@@ -14,7 +14,7 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RtKitLabelMap } from '../../i18n';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
 import { RtIconButtonComponent } from '../icon-button';
 import { RtLogoComponent } from '../logo';
 
@@ -58,7 +58,7 @@ const BEM_BLOCK: string = 'rt-header';
     },
 })
 export class RtHeaderComponent {
-    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     public readonly canGoBack: InputSignal<boolean> = input<boolean>(false);
 

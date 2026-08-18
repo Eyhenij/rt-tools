@@ -5,7 +5,7 @@ import { Event, NavigationEnd, Router } from '@angular/router';
 import { merge, Observable, of, Subject } from 'rxjs';
 import { delay, filter, take, tap } from 'rxjs/operators';
 
-import { ASIDE_REF, AsidePositions, AsideRef } from './aside.types';
+import { ASIDE_REF, TAsidePositions, AsideRef } from './aside.types';
 import { RtuiAsidePanelComponent } from './components/panel/aside-panel.component';
 
 @Injectable()
@@ -26,9 +26,10 @@ export class RtAsideService {
      *
      * @returns An observable that emits the response from the aside panel when it is closed.
      */
+    // eslint-disable-next-line sonarjs/function-name -- имя публичное, переименование ломает разметку потребителя; идёт задачей RT-846
     public Open<COMPONENT = null, DATA = null, ANSWER = null>(
         component: ComponentType<COMPONENT>,
-        position: AsidePositions,
+        position: TAsidePositions,
         data: DATA
     ): Observable<ANSWER | null> {
         const answer: Subject<ANSWER | null> = new Subject<ANSWER | null>();
@@ -37,6 +38,7 @@ export class RtAsideService {
         const portal: ComponentPortal<RtuiAsidePanelComponent> = this.#createPortal(asideRef);
         const componentRef: ComponentRef<RtuiAsidePanelComponent> = overlayRef.attach(portal);
 
+        // eslint-disable-next-line @nx/workspace-no-subscribe-in-methods -- подписка переезжает в объявленный поток задачей RT-845
         merge(
             overlayRef.backdropClick(),
             overlayRef.keydownEvents().pipe(filter((keyEvent: KeyboardEvent): boolean => keyEvent.key === 'Escape')),
@@ -68,7 +70,7 @@ export class RtAsideService {
      *
      * @returns An `OverlayConfig` object with the specified settings.
      */
-    #createOverlayConfig(position: AsidePositions): OverlayConfig {
+    #createOverlayConfig(position: TAsidePositions): OverlayConfig {
         const config: Partial<OverlayConfig> = {
             width: 'auto',
             scrollStrategy: this.#overlay.scrollStrategies.block(),
@@ -76,9 +78,7 @@ export class RtAsideService {
             hasBackdrop: true,
         };
 
-        if (position === 'left') {
-            config.positionStrategy = this.#overlay.position().global().left();
-        } else if (position === 'right') {
+        if (position === 'right') {
             config.positionStrategy = this.#overlay.position().global().right();
         }
 
@@ -92,7 +92,7 @@ export class RtAsideService {
      *
      * @returns An `OverlayRef` object that manages the overlay's lifecycle.
      */
-    #createOverlay(position: AsidePositions): OverlayRef {
+    #createOverlay(position: TAsidePositions): OverlayRef {
         const overlayConfig: OverlayConfig = this.#createOverlayConfig(position);
         return this.#overlay.create(overlayConfig);
     }

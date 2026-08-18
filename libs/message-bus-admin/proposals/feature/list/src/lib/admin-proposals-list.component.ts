@@ -46,7 +46,6 @@ const BEM_BLOCK: string = 'admin-proposals-list';
 @Component({
     selector: 'admin-proposals-list',
     templateUrl: './admin-proposals-list.component.html',
-    styleUrl: './admin-proposals-list.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // angular

@@ -6,7 +6,7 @@ import { IPageModel } from '@rt-tools/utils';
 
 @Component({
     selector: 'app-test-pagination-component',
-    templateUrl: './test-pagination-component.html',
+    templateUrl: './test-pagination.component.html',
     styleUrls: ['./test-pagination-component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [

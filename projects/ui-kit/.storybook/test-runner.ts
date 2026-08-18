@@ -1,4 +1,4 @@
-import type { TestRunnerConfig } from '@storybook/test-runner';
+import type { TestContext, TestRunnerConfig } from '@storybook/test-runner';
 import { getStoryContext } from '@storybook/test-runner';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import type { Page } from 'playwright';
@@ -64,8 +64,8 @@ async function settled(page: Page): Promise<void> {
 
     await page.waitForFunction(
         (frames: number) =>
-            new Promise<boolean>((resolve) => {
-                const size = (): string => {
+            new Promise<boolean>((resolve: (settled: boolean) => void) => {
+                const size: () => string = (): string => {
                     const box: DOMRect = document.documentElement.getBoundingClientRect();
                     return `${Math.round(box.width)}x${Math.round(box.height)}`;
                 };
@@ -73,7 +73,7 @@ async function settled(page: Page): Promise<void> {
                 let previous: string = size();
                 let same: number = 0;
 
-                const step = (): void => {
+                const step: () => void = (): void => {
                     const current: string = size();
                     same = current === previous ? same + 1 : 0;
                     previous = current;
@@ -98,12 +98,13 @@ const config: TestRunnerConfig = {
         expect.extend({ toMatchImageSnapshot });
     },
 
-    async preVisit(page, context): Promise<void> {
+    async preVisit(page: Page, context: TestContext): Promise<void> {
         // Содержимое в перекрытии живёт вне потока страницы, и полный снимок его не
         // достраивает: попап или панель выше кадра просто обрезаются. Кадр под такую
         // историю задаётся ею самой — параметром `snapshotViewport`.
-        const story = await getStoryContext(page, context);
-        const requested = story.parameters?.snapshotViewport as { width?: number; height?: number } | undefined;
+        const story: Awaited<ReturnType<typeof getStoryContext>> = await getStoryContext(page, context);
+        const requested: { width?: number; height?: number } | undefined = story.parameters?.snapshotViewport as
+            { width?: number; height?: number } | undefined;
 
         await page.setViewportSize({
             width: requested?.width ?? VIEWPORT.width,
@@ -111,7 +112,7 @@ const config: TestRunnerConfig = {
         });
     },
 
-    async postVisit(page, context): Promise<void> {
+    async postVisit(page: Page, context: TestContext): Promise<void> {
         // Шрифт значков грузится с внешнего адреса, а `rtui-icon` до его загрузки держит
         // себя невидимой. Снимок, сделанный раньше, отличается от эталона всегда.
         await page.evaluate(() => document.fonts.ready);
@@ -143,8 +144,8 @@ const config: TestRunnerConfig = {
         // Состояние под наведением наводится настоящим указателем, а не событием из истории:
         // полный снимок перекладывает страницу заново, и наведение, разыгранное событием,
         // до кадра не доживает.
-        const story = await getStoryContext(page, context);
-        const hovered = story.parameters?.snapshotHover as string | undefined;
+        const story: Awaited<ReturnType<typeof getStoryContext>> = await getStoryContext(page, context);
+        const hovered: string | undefined = story.parameters?.snapshotHover as string | undefined;
 
         if (hovered) {
             await page.locator(hovered).first().hover();

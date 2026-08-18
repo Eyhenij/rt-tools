@@ -15,12 +15,12 @@ export default {
     },
 } as Meta<TestRtHeaderMatrixComponent>;
 
-type Story = StoryObj<TestRtHeaderMatrixComponent>;
+type TStory = StoryObj<TestRtHeaderMatrixComponent>;
 
-export const Back: Story = { args: { part: 'back' } };
+export const Back: TStory = { args: { part: 'back' } };
 
-export const Invite: Story = { args: { part: 'invite' } };
+export const Invite: TStory = { args: { part: 'invite' } };
 
-export const Bell: Story = { args: { part: 'bell' } };
+export const Bell: TStory = { args: { part: 'bell' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

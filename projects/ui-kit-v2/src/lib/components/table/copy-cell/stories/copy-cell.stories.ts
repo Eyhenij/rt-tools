@@ -16,9 +16,9 @@ export default {
     },
 } as Meta<TestRtCopyCellComponent>;
 
-type Story = StoryObj<TestRtCopyCellComponent>;
+type TStory = StoryObj<TestRtCopyCellComponent>;
 
-export const Default: Story = {
+export const Default: TStory = {
     parameters: storySnapshotSkip(
         'обёртка отдаёт пустое значение, и ячейка не рисует ничего; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
     ),

@@ -105,7 +105,7 @@ class PrismaDouble {
 
     /** Отбор по дереву: пусто в `where` — все деревья. */
     #picked(args: Record<string, unknown>): IStoredPostmortem[] {
-        const where: { tree?: { slug: string } } = (args['where'] ?? {}) as { tree?: { slug: string } };
+        const where: { tree?: { slug: string } } = args['where'] ?? {};
         const slug: string | undefined = where.tree?.slug;
 
         return this.#rows.filter((row: IStoredPostmortem): boolean => !slug || row.tree.slug === slug);
@@ -123,7 +123,7 @@ class PrismaDouble {
     }
 
     #one(args: Record<string, unknown>): Record<string, unknown> | null {
-        const where: { id?: string } = (args['where'] ?? {}) as { id?: string };
+        const where: { id?: string } = args['where'] ?? {};
         const found: IStoredPostmortem | undefined = this.#rows.find((row: IStoredPostmortem): boolean => row.id === where.id);
 
         return found ? projected(found, selectOf(args)) : null;

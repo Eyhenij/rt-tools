@@ -19,7 +19,7 @@ describe(isNil.name, () => {
     });
 
     it('should narrow the type for the caller', () => {
-        const value: string | null = 'text' as string | null;
+        const value: string | null = 'text';
 
         if (!isNil(value)) {
             expect(value.length).toBe(4);

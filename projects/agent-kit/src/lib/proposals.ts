@@ -11,6 +11,7 @@
  */
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
+import { byText } from './order.js';
 
 /** Куда главный агент кладёт предложения. Путь от корня дерева. */
 export const PROPOSALS_DIR: string = '.claude/rt-kit/proposals';
@@ -22,8 +23,35 @@ export const TO_TREE: string = 'дерево';
 
 const ADDRESSES: readonly string[] = [TO_PACKAGE, TO_COMPANION, TO_TREE];
 
-/** Заголовок блока: `## <адрес> · <ресурс>`. Разделитель — тот же, что в шаблоне. */
-const HEADING: RegExp = /^##\s+(\S+)\s+·\s+(\S.*?)\s*$/;
+/** Разобранный заголовок блока. */
+interface IHeading {
+    readonly address: string;
+    readonly resource: string;
+}
+
+/**
+ * Заголовок блока: `## <адрес> · <ресурс>`. Разделитель — тот же, что в шаблоне.
+ *
+ * Разбирается строкой, а не образцом: образец на «слово, разделитель, остаток» перебирает
+ * границу слова столько раз, сколько в строке знаков.
+ */
+function headingOf(line: string): IHeading | null {
+    if (!line.startsWith('## ')) {
+        return null;
+    }
+
+    const rest: string = line.slice(3);
+    const at: number = rest.indexOf('·');
+
+    if (at < 0) {
+        return null;
+    }
+
+    const address: string = rest.slice(0, at).trim();
+    const resource: string = rest.slice(at + 1).trim();
+
+    return address && !address.includes(' ') && resource ? { address, resource } : null;
+}
 
 /** Пометка об отправке. По ней же предложение узнаётся отправленным. */
 const SENT: RegExp = /^-\s+\*\*отправлено:\*\*\s*(\S+)/m;
@@ -56,15 +84,14 @@ export function parseProposals(text: string, file: string): readonly IProposal[]
         if (at < 0) {
             return;
         }
-        const heading: RegExpExecArray = HEADING.exec(lines[at]) as RegExpExecArray;
+        const heading: IHeading = headingOf(lines[at]) as IHeading;
         const body: string = lines
             .slice(at + 1, end)
             .join('\n')
             .trim();
-        const address: string = heading[1];
-        const resource: string = heading[2];
+        const { address, resource }: IHeading = heading;
         if (ADDRESSES.includes(address) && !resource.includes('<')) {
-            found.push({ address, resource, body, sent: SENT.exec(body)?.[1] ?? '', file, line: at + 1 });
+            found.push({ address, resource, body, file, sent: SENT.exec(body)?.[1] ?? '', line: at + 1 });
         }
         at = -1;
     };
@@ -72,7 +99,7 @@ export function parseProposals(text: string, file: string): readonly IProposal[]
     lines.forEach((line: string, index: number): void => {
         if (line.startsWith('## ')) {
             close(index);
-            if (HEADING.test(line)) {
+            if (headingOf(line) !== null) {
                 at = index;
             }
         }
@@ -91,7 +118,7 @@ export function readProposals(root: string): readonly IProposal[] {
 
     return readdirSync(dir)
         .filter((name: string): boolean => name.endsWith('.md'))
-        .sort()
+        .sort(byText)
         .flatMap((name: string): readonly IProposal[] => parseProposals(readFileSync(join(dir, name), 'utf8'), join(PROPOSALS_DIR, name)));
 }
 

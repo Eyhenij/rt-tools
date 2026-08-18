@@ -17,7 +17,7 @@ description: Правило под «Закон об общем коде при�
 | общий пакет               | `@rt-tools/utils` — собран без фреймворка, зависит от одного `tslib`, грузится под голым Node |
 | общая либа проекта        | `@<область>/common/util`; её тег входит в набор `UNIVERSAL` и виден всем трём приложениям     |
 | число-настройка           | `DEFAULT_PAGE_SIZE`, `MAX_PAGE_SIZE`                                                          |
-| набор значений            | `FILTER_OPERATOR_TYPE_ENUM`, `LIST_SORT_ORDER_ENUM`                                           |
+| набор значений            | `EFilterOperatorType`, `EListSortOrder`                                                       |
 | сверка значения с набором | `listSortOrderOf`, `listFilterOperatorOf`                                                     |
 | выборка списка            | `IPageModel`, `ISortModel`, `IFilterModel`, `IListState`                                      |
 

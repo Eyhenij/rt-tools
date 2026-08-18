@@ -1,6 +1,23 @@
 import { areObjectsEqual } from '../are-objects-equal/index.js';
 
 /**
+ * Two elements read as the same value: nested arrays stay order-insensitive, objects go structural,
+ * everything else is compared by identity.
+ */
+function sameElement<T>(one: T, other: T): boolean {
+    if (Array.isArray(one) && Array.isArray(other)) {
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define -- the two declarations recurse into each other, and function declarations are hoisted
+        return areArraysEqualUnordered(one, other);
+    }
+
+    if (typeof one === 'object' && one != null && typeof other === 'object' && other != null) {
+        return areObjectsEqual(one, other);
+    }
+
+    return one === other;
+}
+
+/**
  * Indicates whether two arrays hold the same elements regardless of order.
  *
  * Each element of the first array is matched against an as-yet-unused element of the second, so
@@ -29,41 +46,17 @@ export function areArraysEqualUnordered<T>(f: T[], s: T[]): boolean {
         return false;
     }
 
-    const used: boolean[] = new Array<boolean>(s.length).fill(false);
+    const used: boolean[] = Array.from({ length: s.length }, (): boolean => false);
 
-    for (const valueF of f) {
-        let found: boolean = false;
+    return f.every((valueF: T): boolean => {
+        const partner: number = s.findIndex((valueS: T, index: number): boolean => !used[index] && sameElement(valueF, valueS));
 
-        for (let i: number = 0; i < s.length; i++) {
-            if (used[i]) {
-                continue;
-            }
-
-            const valueS: T = s[i];
-
-            if (Array.isArray(valueF) && Array.isArray(valueS)) {
-                if (areArraysEqualUnordered(valueF, valueS)) {
-                    used[i] = true;
-                    found = true;
-                    break;
-                }
-            } else if (typeof valueF === 'object' && valueF != null && typeof valueS === 'object' && valueS != null) {
-                if (areObjectsEqual(valueF, valueS)) {
-                    used[i] = true;
-                    found = true;
-                    break;
-                }
-            } else if (valueF === valueS) {
-                used[i] = true;
-                found = true;
-                break;
-            }
-        }
-
-        if (!found) {
+        if (partner === -1) {
             return false;
         }
-    }
 
-    return true;
+        used[partner] = true;
+
+        return true;
+    });
 }

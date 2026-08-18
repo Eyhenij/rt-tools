@@ -9,7 +9,7 @@ import {
     ViewEncapsulation,
 } from '@angular/core';
 
-import { RtSkeletonComponent, IRtSkeletonRadius, IRtSkeletonShape, IRtSkeletonSize } from '../skeleton/rt-skeleton.component';
+import { RtSkeletonComponent, TRtSkeletonRadius, TRtSkeletonShape, TRtSkeletonSize } from '../skeleton/rt-skeleton.component';
 
 const BEM_BLOCK: string = 'rt-skeleton-wrapper';
 
@@ -41,12 +41,12 @@ export class RtSkeletonWrapperComponent {
 
     public readonly height: InputSignal<string> = input<string>('15px');
 
-    public readonly shape: InputSignal<IRtSkeletonShape> = input<IRtSkeletonShape>('rectangle');
+    public readonly shape: InputSignal<TRtSkeletonShape> = input<TRtSkeletonShape>('rectangle');
 
-    public readonly size: InputSignal<IRtSkeletonSize> = input<IRtSkeletonSize>('md');
+    public readonly size: InputSignal<TRtSkeletonSize> = input<TRtSkeletonSize>('md');
 
     /** Как у `rt-skeleton`: `null` — «по фигуре», а не «без скругления». */
-    public readonly borderRadius: InputSignal<IRtSkeletonRadius | null> = input<IRtSkeletonRadius | null>(null);
+    public readonly borderRadius: InputSignal<TRtSkeletonRadius | null> = input<TRtSkeletonRadius | null>(null);
 
     public readonly animation: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,

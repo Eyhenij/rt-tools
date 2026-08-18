@@ -16,7 +16,7 @@ export default {
     },
 } as Meta<TestRtTooltipMatrixComponent>;
 
-type Story = StoryObj<TestRtTooltipMatrixComponent>;
+type TStory = StoryObj<TestRtTooltipMatrixComponent>;
 
 /**
  * Подсказки показаны все сразу: их оверлей не слушает ни указателя снаружи, ни backdrop'а,
@@ -31,13 +31,13 @@ const showAll: (context: { canvasElement: HTMLElement }) => Promise<void> = asyn
     await openStoryOverlays(canvasElement, { event: 'mouseenter', wait: 400 });
 };
 
-export const Placement: Story = {
+export const Placement: TStory = {
     parameters: { snapshot: { fullPage: true } },
     args: { part: 'placement' },
     play: showAll,
 };
 
-export const Text: Story = {
+export const Text: TStory = {
     parameters: { snapshot: { fullPage: true } },
     args: { part: 'text' },
     play: showAll,
@@ -47,7 +47,7 @@ export const Text: Story = {
  * На чём висит подсказка: на кнопке — директивой, на иконочной кнопке — её входом `tooltip`.
  * Третья ячейка намеренно пуста: пустой текст выключает директиву целиком, и панели не будет.
  */
-export const Hosts: Story = {
+export const Hosts: TStory = {
     parameters: { snapshot: { fullPage: true } },
     args: { part: 'hosts' },
     play: showAll,
@@ -58,4 +58,4 @@ export const Hosts: Story = {
  * контейнер CDK — за пределы блока, которому пара назначает свойства темы. Подложка панели
  * инверсная, и в паре видно, что инверсия разворачивается вместе с темой.
  */
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

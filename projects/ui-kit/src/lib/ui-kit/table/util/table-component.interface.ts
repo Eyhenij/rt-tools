@@ -1,7 +1,7 @@
 import { InjectionToken, Signal, TemplateRef, WritableSignal } from '@angular/core';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
 
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 import { IFilterModel, ISortModel } from '@rt-tools/utils';
 import { ITable } from './table-column.interface';
 
@@ -16,18 +16,18 @@ export interface IRtuiTable<
 > {
     columns: Signal<Array<ITable.Column<ENTITY_TYPE>>>;
     customCellsTpl: Signal<
-        INullable<{
+        TNullable<{
             getTemplateByPropName(propName: keyof ENTITY_TYPE): TemplateRef<{ $implicit: ENTITY_TYPE }>;
         }>
     >;
-    rowActionsTpl: Signal<INullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>>;
-    additionalRowActionsTpl: Signal<INullable<TemplateRef<unknown>>>;
+    rowActionsTpl: Signal<TNullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>>;
+    additionalRowActionsTpl: Signal<TNullable<TemplateRef<unknown>>>;
 
     narrow: Signal<boolean>;
     isTableRowsClickable: Signal<boolean>;
     keyExp: Signal<NonNullable<KEY>>;
     entities: Signal<ENTITY_TYPE[]>;
-    currentSortModel: Signal<INullable<ISortModel<SORT_PROPERTY>>>;
+    currentSortModel: Signal<TNullable<ISortModel<SORT_PROPERTY>>>;
     appearance: Signal<MatFormFieldAppearance>;
     filterAppearance: Signal<MatFormFieldAppearance>;
     filterModel: Signal<IFilterModel<KEY>[]>;
@@ -38,7 +38,7 @@ export interface IRtuiTable<
     isMultiSelect: WritableSignal<boolean>;
     isSelectorsColumnShown: WritableSignal<boolean>;
     isSelectorsColumnDisabled: WritableSignal<boolean>;
-    activeRowIndex: WritableSignal<INullable<number>>;
+    activeRowIndex: WritableSignal<TNullable<number>>;
 
     onSortChange(sortModel: ISortModel): void;
     onFilterChange(filterModel: IFilterModel<KEY>[]): void;

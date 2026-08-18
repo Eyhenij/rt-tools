@@ -1,4 +1,4 @@
-import { expect, Page, Route, test } from '@playwright/test';
+import { Locator, Page, Route, expect, test } from '@playwright/test';
 
 import { TREES } from '../stand/stand.mjs';
 import { columnTexts, openSection, pageQa, pickTree, qa, rowsOf, SECTION, signIn } from './support/admin';
@@ -98,7 +98,10 @@ test.describe('состояния списка', () => {
         await expectScreen(page, 'list-fault');
 
         refuse = false;
-        await pageQa(page, 'postmortems', 'retry').click();
+
+        const retry: Locator = pageQa(page, 'postmortems', 'retry');
+
+        await retry.click();
 
         await expect(rowsOf(page, 'postmortems').first()).toBeVisible();
         await expect(pageQa(page, 'postmortems', 'fault')).toHaveCount(0);
@@ -126,6 +129,10 @@ test.describe('состояния списка', () => {
 
     test('SC-MB-69 — ответ, догнавший свой список позже, не показывается', async ({ page }: { page: Page }) => {
         const late: string = 'опоздавший-ответ.md';
+        let delivered: () => void = (): void => {};
+        const lateAnswer: Promise<void> = new Promise<void>((resolve: () => void): void => {
+            delivered = resolve;
+        });
 
         await page.route(POSTMORTEMS_API, async (route: Route): Promise<void> => {
             const asked: string = new URL(route.request().url()).searchParams.get('tree') ?? '';
@@ -157,6 +164,7 @@ test.describe('состояния списка', () => {
                     size: 20,
                 },
             });
+            delivered();
         });
 
         await openSection(page, 'postmortems');
@@ -167,8 +175,8 @@ test.describe('состояния списка', () => {
             .poll(async (): Promise<string[]> => columnTexts(page, 'postmortems-cell-tree'))
             .toEqual(Array.from({ length: 5 }, (): string => TREES[1].name));
 
-        // опоздавший ответ приходит сюда — и экрана не касается
-        await page.waitForTimeout(6_000);
+        // ждётся сам ответ, а не отсчёт времени: отсчёт проверял бы загрузку машины
+        await lateAnswer;
 
         expect(await columnTexts(page, 'postmortems-cell-file')).not.toContain(late);
         expect(new Set(await columnTexts(page, 'postmortems-cell-tree'))).toEqual(new Set([TREES[1].name]));

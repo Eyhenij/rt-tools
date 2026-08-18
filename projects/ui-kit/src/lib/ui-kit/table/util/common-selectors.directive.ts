@@ -31,9 +31,10 @@ export class RtCommonSelectorsDirective<ENTITY_TYPE extends Record<string, unkno
 
     /** Add page entities to list exclude duplicates */
     public addPageEntitiesToListExcludeDuplicates(list: ENTITY_TYPE[]): ENTITY_TYPE[] {
-        return [...list, ...this.entities()].filter((el: ENTITY_TYPE, index: number, self: ENTITY_TYPE[]) => {
-            return index === self.findIndex((_: ENTITY_TYPE) => _[this.keyExp()] === el[this.keyExp()]);
-        });
+        return [...list, ...this.entities()].filter(
+            (el: ENTITY_TYPE, index: number, self: ENTITY_TYPE[]) =>
+                index === self.findIndex((_: ENTITY_TYPE) => _[this.keyExp()] === el[this.keyExp()])
+        );
     }
 
     /** Remove page entities from list */

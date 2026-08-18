@@ -29,7 +29,7 @@ function open(data: Partial<IRtPhotoViewer.Data> = {}): RtDialogRef<number> {
     TestBed.configureTestingModule({ providers: [...provideRtKitTesting()] });
     const ref: RtDialogRef<number> = TestBed.inject(RtDialogService).open<RtPhotoViewerComponent, IRtPhotoViewer.Data, number>(
         RtPhotoViewerComponent,
-        { data: { photos: PHOTOS, startIndex: 0, ...data } as IRtPhotoViewer.Data }
+        { data: { photos: PHOTOS, startIndex: 0, ...data } }
     );
     TestBed.inject(ApplicationRef).tick();
     return ref;

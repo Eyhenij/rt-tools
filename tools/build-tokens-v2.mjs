@@ -151,19 +151,19 @@ function renderTypes() {
     return (
         `/* Собрано генератором \`tools/build-tokens-v2.mjs\` из \`tokens.source.mjs\` — правится там, не здесь. */\n\n` +
         `/** Имя свойства оформления, которое кит объявляет сам. */\n` +
-        `export type RtDesignTokenName =\n` +
+        `export type TRtDesignTokenName =\n` +
         unique.map((name) => `    | '${name}'`).join('\n') +
         `;\n\n` +
         `/** Имя ручки потребителя — свойства, которое кит намеренно не объявляет. */\n` +
-        `export type RtConsumerHandleName =\n` +
+        `export type TRtConsumerHandleName =\n` +
         handleNames.map((name) => `    | '${name}'`).join('\n') +
         `;\n\n` +
         `/** Все свойства оформления, объявленные китом. */\n` +
-        `export const RT_DESIGN_TOKEN_NAMES: readonly RtDesignTokenName[] = [\n` +
+        `export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [\n` +
         unique.map((name) => `    '${name}',`).join('\n') +
         `\n];\n\n` +
         `/** Все ручки потребителя: значение приходит от приложения, до него работает запасное. */\n` +
-        `export const RT_CONSUMER_HANDLE_NAMES: readonly RtConsumerHandleName[] = [\n` +
+        `export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [\n` +
         handleNames.map((name) => `    '${name}',`).join('\n') +
         `\n];\n`
     );

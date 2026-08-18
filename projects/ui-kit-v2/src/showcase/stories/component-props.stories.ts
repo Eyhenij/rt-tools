@@ -15,6 +15,6 @@ export default {
     },
 } as Meta<TestRtComponentPropsComponent>;
 
-type Story = StoryObj<TestRtComponentPropsComponent>;
+type TStory = StoryObj<TestRtComponentPropsComponent>;
 
-export const ComponentProps: Story = {};
+export const ComponentProps: TStory = {};

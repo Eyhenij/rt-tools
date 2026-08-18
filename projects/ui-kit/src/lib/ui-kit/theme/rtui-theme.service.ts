@@ -5,16 +5,16 @@ import { LOCAL_STORAGE, PlatformService } from '@rt-tools/core';
 
 import { IRtUiConfig, RT_UI_CONFIG } from '../config';
 import {
-    RT_ACCENT_ROLE_ENUM,
+    ERtAccentRole,
     RT_COLOR_SCHEME_STORAGE_KEY,
     RT_DARK_CLASS,
     RT_DEFAULT_SCHEME,
     RT_SCHEME_ATTRIBUTE,
     RT_THEME_AUTO_CLASS,
-    RT_THEME_ENUM,
+    ERtTheme,
     RT_THEME_STORAGE_KEY,
-    RtColorSchemeRamp,
-    RtThemeType,
+    TRtColorSchemeRamp,
+    TRtThemeType,
 } from './rtui-theme.types';
 
 /**
@@ -40,10 +40,10 @@ export class RtThemeService {
     // app-wide defaults (provideRtUi(config)); a persisted user choice always wins over them
     readonly #config: IRtUiConfig.Config = inject(RT_UI_CONFIG);
 
-    readonly #theme: WritableSignal<RtThemeType> = signal<RtThemeType>(this.#restore());
+    readonly #theme: WritableSignal<TRtThemeType> = signal<TRtThemeType>(this.#restore());
     readonly #colorScheme: WritableSignal<string | null> = signal<string | null>(this.#restoreScheme());
 
-    public readonly theme: Signal<RtThemeType> = this.#theme.asReadonly();
+    public readonly theme: Signal<TRtThemeType> = this.#theme.asReadonly();
     public readonly colorScheme: Signal<string | null> = this.#colorScheme.asReadonly();
 
     constructor() {
@@ -56,7 +56,7 @@ export class RtThemeService {
         });
     }
 
-    public setTheme(theme: RtThemeType): void {
+    public setTheme(theme: TRtThemeType): void {
         this.#theme.set(theme);
 
         if (this.#platformService.isPlatformBrowser && this.#storage) {
@@ -66,7 +66,7 @@ export class RtThemeService {
 
     /** Toggles between light and dark (auto resolves to its opposite visual state). */
     public toggle(): void {
-        this.setTheme(this.#isDarkApplied() ? RT_THEME_ENUM.LIGHT : RT_THEME_ENUM.DARK);
+        this.setTheme(this.#isDarkApplied() ? ERtTheme.LIGHT : ERtTheme.DARK);
     }
 
     /**
@@ -92,7 +92,7 @@ export class RtThemeService {
      * for SSR/brand-critical schemes prefer the Sass path). Does not activate the
      * scheme — call {@link setColorScheme} afterwards.
      */
-    public registerColorScheme(name: string, ramp: RtColorSchemeRamp): void {
+    public registerColorScheme(name: string, ramp: TRtColorSchemeRamp): void {
         this.#validateRamp(name, ramp);
 
         if (!this.#platformService.isPlatformBrowser) {
@@ -111,8 +111,8 @@ export class RtThemeService {
         }
     }
 
-    #restore(): RtThemeType {
-        const fallback: RtThemeType = this.#config.global?.theme ?? RT_THEME_ENUM.LIGHT;
+    #restore(): TRtThemeType {
+        const fallback: TRtThemeType = this.#config.global?.theme ?? ERtTheme.LIGHT;
 
         if (!this.#platformService.isPlatformBrowser || !this.#storage) {
             return fallback;
@@ -120,7 +120,7 @@ export class RtThemeService {
 
         const stored: string | null = this.#storage.getItem(RT_THEME_STORAGE_KEY);
 
-        return Object.values(RT_THEME_ENUM).includes(stored as RT_THEME_ENUM) ? (stored as RtThemeType) : fallback;
+        return Object.values(ERtTheme).includes(stored as ERtTheme) ? (stored as TRtThemeType) : fallback;
     }
 
     #restoreScheme(): string | null {
@@ -135,15 +135,15 @@ export class RtThemeService {
         return stored && stored !== RT_DEFAULT_SCHEME ? stored : fallback;
     }
 
-    #apply(theme: RtThemeType): void {
+    #apply(theme: TRtThemeType): void {
         if (!this.#platformService.isPlatformBrowser) {
             return;
         }
 
         const classList: DOMTokenList = this.#document.documentElement.classList;
 
-        classList.toggle(RT_DARK_CLASS, theme === RT_THEME_ENUM.DARK);
-        classList.toggle(RT_THEME_AUTO_CLASS, theme === RT_THEME_ENUM.AUTO);
+        classList.toggle(RT_DARK_CLASS, theme === ERtTheme.DARK);
+        classList.toggle(RT_THEME_AUTO_CLASS, theme === ERtTheme.AUTO);
     }
 
     #applyScheme(name: string | null): void {
@@ -165,19 +165,19 @@ export class RtThemeService {
      * role or out-of-range tone (must be an integer 0–100) throws. Keeps the JS twin
      * at parity with the build-time generator instead of silently emitting bad rows.
      */
-    #validateRamp(name: string, ramp: RtColorSchemeRamp): void {
+    #validateRamp(name: string, ramp: TRtColorSchemeRamp): void {
         if (!name || name === RT_DEFAULT_SCHEME) {
             throw new Error(`registerColorScheme: name must be a non-empty string other than '${RT_DEFAULT_SCHEME}'.`);
         }
 
-        const roles: string[] = Object.values(RT_ACCENT_ROLE_ENUM);
+        const roles: string[] = Object.values(ERtAccentRole);
 
         for (const role of Object.keys(ramp)) {
             if (!roles.includes(role)) {
                 throw new Error(`registerColorScheme("${name}"): unknown role "${role}". Allowed roles: ${roles.join(', ')}.`);
             }
 
-            for (const tone of Object.keys(ramp[role as RT_ACCENT_ROLE_ENUM] ?? {})) {
+            for (const tone of Object.keys(ramp[role as ERtAccentRole] ?? {})) {
                 const step: number = Number(tone);
 
                 if (!Number.isInteger(step) || step < 0 || step > 100) {
@@ -188,7 +188,7 @@ export class RtThemeService {
     }
 
     /** Builds the `:root[data-rt-scheme="<name>"] { --rt-color-{role}-{N}: … }` block (mirrors the Sass mixin). */
-    #buildSchemeCss(name: string, ramp: RtColorSchemeRamp): string {
+    #buildSchemeCss(name: string, ramp: TRtColorSchemeRamp): string {
         const declarations: string = Object.entries(ramp)
             .flatMap(([role, tones]: [string, Record<number, string> | undefined]): string[] =>
                 Object.entries(tones ?? {}).map(([tone, value]: [string, string]): string => `--rt-color-${role}-${tone}:${value};`)
@@ -199,12 +199,12 @@ export class RtThemeService {
     }
 
     #isDarkApplied(): boolean {
-        if (this.#theme() === RT_THEME_ENUM.AUTO) {
+        if (this.#theme() === ERtTheme.AUTO) {
             return this.#platformService.isPlatformBrowser && this.#document.defaultView
                 ? this.#document.defaultView.matchMedia('(prefers-color-scheme: dark)').matches
                 : false;
         }
 
-        return this.#theme() === RT_THEME_ENUM.DARK;
+        return this.#theme() === ERtTheme.DARK;
     }
 }

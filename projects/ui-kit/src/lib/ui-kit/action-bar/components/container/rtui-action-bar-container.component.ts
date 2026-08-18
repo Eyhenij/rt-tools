@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843 */
 import { animate, keyframes, state, style, transition, trigger } from '@angular/animations';
 import { Component, inject, Signal, ChangeDetectionStrategy } from '@angular/core';
 
@@ -6,6 +7,15 @@ import { RtActionBarService } from '../../rt-action-bar.service';
 import { RtuiActionBarComponent } from '../bar/rtui-action-bar.component';
 
 const BEM_BLOCK: string = 'rtui-action-bar-container';
+
+/** Конечное положение панели действий: она стоит на своём месте. */
+const AT_REST: string = 'translateY(0)';
+
+/** Начальное и конечное положение: панель убрана за нижнюю кромку экрана. */
+const BELOW_SCREEN: string = 'translateY(100%)';
+
+/** Проскок выше места: он и делает выезд живым, а не равномерным. */
+const OVERSHOT: string = 'translateY(-15px)';
 
 @Component({
     selector: 'rtui-action-bar-container',
@@ -16,14 +26,14 @@ const BEM_BLOCK: string = 'rtui-action-bar-container';
     changeDetection: ChangeDetectionStrategy.OnPush,
     animations: [
         trigger('barState', [
-            state('opened', style({ transform: 'translateY(0)' })),
+            state('opened', style({ transform: AT_REST })),
             transition('void => *', [
                 animate(
                     300,
                     keyframes([
-                        style({ opacity: 0, transform: 'translateY(100%)', offset: 0 }),
-                        style({ opacity: 1, transform: 'translateY(-15px)', offset: 0.3 }),
-                        style({ opacity: 1, transform: 'translateY(0)', offset: 1.0 }),
+                        style({ opacity: 0, transform: BELOW_SCREEN, offset: 0 }),
+                        style({ opacity: 1, transform: OVERSHOT, offset: 0.3 }),
+                        style({ opacity: 1, transform: AT_REST, offset: 1.0 }),
                     ])
                 ),
             ]),
@@ -31,9 +41,9 @@ const BEM_BLOCK: string = 'rtui-action-bar-container';
                 animate(
                     300,
                     keyframes([
-                        style({ opacity: 1, transform: 'translateY(0)', offset: 0 }),
-                        style({ opacity: 1, transform: 'translateY(-15px)', offset: 0.7 }),
-                        style({ opacity: 0, transform: 'translateY(100%)', offset: 1.0 }),
+                        style({ opacity: 1, transform: AT_REST, offset: 0 }),
+                        style({ opacity: 1, transform: OVERSHOT, offset: 0.7 }),
+                        style({ opacity: 0, transform: BELOW_SCREEN, offset: 1.0 }),
                     ])
                 ),
             ]),

@@ -1,5 +1,5 @@
 import { Directive, effect, input, InputSignal, InputSignalWithTransform } from '@angular/core';
-import { INullable, transformArrayInput } from '@rt-tools/utils';
+import { TNullable, transformArrayInput } from '@rt-tools/utils';
 
 @Directive({
     selector: '[rtScrollToElement]',
@@ -20,7 +20,7 @@ export class RtScrollToElementDirective {
 
     #scrollToTarget(): void {
         const targetId: string | number = this.rtScrollToElement();
-        const targetElement: INullable<HTMLElement> = document.getElementById(targetId.toString());
+        const targetElement: TNullable<HTMLElement> = document.getElementById(targetId.toString());
         targetElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 }

@@ -1,4 +1,4 @@
-import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import {
     ApplicationConfig,
     inject,
@@ -48,7 +48,7 @@ export const appConfig: ApplicationConfig = {
         provideBrowserGlobalErrorListeners(),
         provideZonelessChangeDetection(),
         provideRouter(appRoutes, withComponentInputBinding()),
-        provideHttpClient(withFetch(), withInterceptors([sessionExpiredInterceptor])),
+        provideHttpClient(withInterceptors([sessionExpiredInterceptor])),
         provideRtUtils(),
         provideRtStorage(),
         provideRtIDBStorage(),

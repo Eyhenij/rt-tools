@@ -15,12 +15,12 @@ export default {
     },
 } as Meta<TestRtDeltaViewMatrixComponent>;
 
-type Story = StoryObj<TestRtDeltaViewMatrixComponent>;
+type TStory = StoryObj<TestRtDeltaViewMatrixComponent>;
 
-export const Formats: Story = { args: { part: 'formats' } };
+export const Formats: TStory = { args: { part: 'formats' } };
 
-export const Blocks: Story = { args: { part: 'blocks' } };
+export const Blocks: TStory = { args: { part: 'blocks' } };
 
-export const Empty: Story = { args: { part: 'empty' } };
+export const Empty: TStory = { args: { part: 'empty' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

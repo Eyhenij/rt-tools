@@ -13,7 +13,7 @@ export default {
     },
 } as Meta<TestRtTableSettingsPanelComponent>;
 
-type Story = StoryObj<TestRtTableSettingsPanelComponent>;
+type TStory = StoryObj<TestRtTableSettingsPanelComponent>;
 
 /** Закреплённая колонка, обычные и скрытая — все четыре случая строки панели сразу. */
-export const Playground: Story = {};
+export const Playground: TStory = {};

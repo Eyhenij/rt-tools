@@ -14,9 +14,9 @@ export default {
     },
 } as Meta<TestRtFileInputComponent>;
 
-type Story = StoryObj<TestRtFileInputComponent>;
+type TStory = StoryObj<TestRtFileInputComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         multiple: false,

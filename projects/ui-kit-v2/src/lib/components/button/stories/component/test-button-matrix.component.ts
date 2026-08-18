@@ -8,7 +8,7 @@ import { RtButtonDirective } from '../../rt-button.directive';
 import { IButton } from '../../rt-button.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type ButtonMatrixPart = 'appearance' | 'disabled' | 'size' | 'icon' | 'rounded' | 'loading' | 'states' | 'themes';
+export type TButtonMatrixPart = 'appearance' | 'disabled' | 'size' | 'icon' | 'rounded' | 'loading' | 'states' | 'themes';
 
 /** Случай иконки — не значение оси, а различимая комбинация подписи и стороны. */
 interface IButtonIconCase {
@@ -127,7 +127,7 @@ interface IButtonIconCase {
     ],
 })
 export class TestRtButtonMatrixComponent {
-    public part: ButtonMatrixPart = 'appearance';
+    public part: TButtonMatrixPart = 'appearance';
 
     public readonly themes: readonly IButton.Theme[] = ['primary', 'secondary', 'success', 'warning', 'danger', 'info'];
     public readonly appearances: readonly IButton.Appearance[] = ['filled', 'outlined', 'text'];

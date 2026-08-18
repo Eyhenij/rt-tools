@@ -16,25 +16,25 @@ export default {
     },
 } as Meta<TestRtTextareaMatrixComponent>;
 
-type Story = StoryObj<TestRtTextareaMatrixComponent>;
+type TStory = StoryObj<TestRtTextareaMatrixComponent>;
 
-export const Size: Story = { args: { part: 'size' } };
+export const Size: TStory = { args: { part: 'size' } };
 
-export const Rows: Story = { args: { part: 'rows' } };
+export const Rows: TStory = { args: { part: 'rows' } };
 
-export const Resize: Story = { args: { part: 'resize' } };
+export const Resize: TStory = { args: { part: 'resize' } };
 
-export const Filling: Story = { args: { part: 'filling' } };
+export const Filling: TStory = { args: { part: 'filling' } };
 
-export const Bordered: Story = { args: { part: 'bordered' } };
+export const Bordered: TStory = { args: { part: 'bordered' } };
 
 /**
  * Рамку рисует сам `<textarea>`, а признак стоит на хосте — поэтому аддону передан спуск
  * до контрола: без него класс лёг бы на элемент, у которого этих правил нет.
  */
-export const States: Story = {
+export const States: TStory = {
     args: { part: 'states' },
     parameters: { pseudo: storyPseudoParameters('.rt-textarea__control') },
 };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

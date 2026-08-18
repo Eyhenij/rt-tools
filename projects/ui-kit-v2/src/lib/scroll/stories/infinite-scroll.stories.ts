@@ -12,9 +12,9 @@ export default {
     },
 } as Meta<TestRtInfiniteScrollComponent>;
 
-type Story = StoryObj<TestRtInfiniteScrollComponent>;
+type TStory = StoryObj<TestRtInfiniteScrollComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip(
         'число догрузок зависит от того, сколько раз маяк успел войти в область видимости, и от кадра к кадру не повторяется'
     ),

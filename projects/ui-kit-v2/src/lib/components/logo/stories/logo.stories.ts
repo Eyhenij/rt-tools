@@ -17,9 +17,9 @@ export default {
     },
 } as Meta<TestRtLogoComponent>;
 
-type Story = StoryObj<TestRtLogoComponent>;
+type TStory = StoryObj<TestRtLogoComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         variant: 'lockup',

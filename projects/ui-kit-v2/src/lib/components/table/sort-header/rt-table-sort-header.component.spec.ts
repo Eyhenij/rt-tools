@@ -12,7 +12,7 @@ import {
 import { ChangeDetectionStrategy, Component, WritableSignal, signal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
-import { ISortModel, LIST_SORT_ORDER_ENUM } from '@rt-tools/utils';
+import { ISortModel, EListSortOrder } from '@rt-tools/utils';
 
 import { createRtFixture, el, qa, textOf } from '../../../../testing/rt-kit-testing';
 import { IRtTable } from '../rt-table.model';
@@ -116,17 +116,17 @@ describe('RtTableSortHeaderComponent', (): void => {
     it('выбранный порядок виден и скринридеру, и глазом', (): void => {
         const fixture: ComponentFixture<SortHeaderHostComponent> = setup();
 
-        fixture.componentInstance.sort.set({ propertyName: 'title', sortDirection: LIST_SORT_ORDER_ENUM.ASC });
+        fixture.componentInstance.sort.set({ propertyName: 'title', sortDirection: EListSortOrder.ASC });
         fixture.detectChanges();
 
         expect(header(fixture, 'title').getAttribute('aria-sort')).toBe('ascending');
-        expect(sortButton(fixture, 'title')?.getAttribute('data-direction')).toBe(LIST_SORT_ORDER_ENUM.ASC);
+        expect(sortButton(fixture, 'title')?.getAttribute('data-direction')).toBe(EListSortOrder.ASC);
     });
 
     it('сортировка по соседней колонке эту колонку не помечает', (): void => {
         const fixture: ComponentFixture<SortHeaderHostComponent> = setup();
 
-        fixture.componentInstance.sort.set({ propertyName: 'city', sortDirection: LIST_SORT_ORDER_ENUM.ASC });
+        fixture.componentInstance.sort.set({ propertyName: 'city', sortDirection: EListSortOrder.ASC });
         fixture.detectChanges();
 
         expect(header(fixture, 'title').getAttribute('aria-sort')).toBe('none');

@@ -1,6 +1,9 @@
 // const
 export * from './table-stop-row-click-attribute.const';
 
+// functions
+export * from './compare-prop-names';
+
 // models
 export * from './default-pagination';
 export * from './table-column.interface';

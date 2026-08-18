@@ -1,4 +1,4 @@
-import { signal, Signal } from '@angular/core';
+import { Signal, signal } from '@angular/core';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
 import { storyWidthAtMost } from '../../../../showcase';
@@ -12,12 +12,14 @@ import { TestRtFilterControlMatrixComponent } from './component/test-filter-cont
  * ней. Подменяется поэтому источник ответа, а не окно: компонент спрашивает `narrow`, и в этой
  * истории ответ — «да».
  */
-const NARROW_BREAKPOINTS: BreakpointsService = {
-    mobile: signal(true) as Signal<boolean>,
-    tablet: signal(false) as Signal<boolean>,
-    desktop: signal(false) as Signal<boolean>,
-    narrow: signal(true) as Signal<boolean>,
-} as BreakpointsService;
+const NARROW_ANSWERS: Record<keyof BreakpointsService, Signal<boolean>> = {
+    mobile: signal(true),
+    tablet: signal(false),
+    desktop: signal(false),
+    narrow: signal(true),
+};
+
+const NARROW_BREAKPOINTS: BreakpointsService = NARROW_ANSWERS as BreakpointsService;
 
 /**
  * Матрицы состояний — то, чего не показывает `Playground`: все значения оси сразу.
@@ -38,18 +40,18 @@ export default {
     },
 } as Meta<TestRtFilterControlMatrixComponent>;
 
-type Story = StoryObj<TestRtFilterControlMatrixComponent>;
+type TStory = StoryObj<TestRtFilterControlMatrixComponent>;
 
-export const Size: Story = { args: { part: 'size' } };
+export const Size: TStory = { args: { part: 'size' } };
 
-export const Options: Story = { args: { part: 'options' } };
+export const Options: TStory = { args: { part: 'options' } };
 
-export const Value: Story = { args: { part: 'value' } };
+export const Value: TStory = { args: { part: 'value' } };
 
-export const FullWidth: Story = { args: { part: 'fullWidth' } };
+export const FullWidth: TStory = { args: { part: 'fullWidth' } };
 
 /** Второе представление того же набора: на экране ≤1080px сегменты уступают место списку. */
-export const Narrow: Story = {
+export const Narrow: TStory = {
     args: { part: 'narrow' },
     decorators: [
         applicationConfig({
@@ -58,6 +60,6 @@ export const Narrow: Story = {
     ],
 };
 
-export const States: Story = { args: { part: 'states' } };
+export const States: TStory = { args: { part: 'states' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

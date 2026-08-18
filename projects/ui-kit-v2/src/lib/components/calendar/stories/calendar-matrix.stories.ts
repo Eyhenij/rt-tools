@@ -20,18 +20,18 @@ export default {
     },
 } as Meta<TestRtCalendarMatrixComponent>;
 
-type Story = StoryObj<TestRtCalendarMatrixComponent>;
+type TStory = StoryObj<TestRtCalendarMatrixComponent>;
 
-export const DayState: Story = { args: { part: 'dayState' } };
+export const DayState: TStory = { args: { part: 'dayState' } };
 
-export const Range: Story = { args: { part: 'range' } };
+export const Range: TStory = { args: { part: 'range' } };
 
-export const Months: Story = { args: { part: 'months' } };
+export const Months: TStory = { args: { part: 'months' } };
 
-export const Nav: Story = { args: { part: 'nav' } };
+export const Nav: TStory = { args: { part: 'nav' } };
 
-export const Sublabels: Story = { args: { part: 'sublabels' } };
+export const Sublabels: TStory = { args: { part: 'sublabels' } };
 
-export const Edges: Story = { args: { part: 'edges' } };
+export const Edges: TStory = { args: { part: 'edges' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

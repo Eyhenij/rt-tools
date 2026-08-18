@@ -1,13 +1,13 @@
 import { Attribute, Directive, ElementRef, InputSignal, Optional, Renderer2, effect, input } from '@angular/core';
 
-import { IModsObject, TMods } from './bem.types';
+import { TModsObject, TMods } from './bem.types';
 import { generateClass, parseMods, setMods } from './bem.utils';
 
 @Directive({
     selector: '[rtBlock]',
 })
 export class BlockDirective {
-    #mods: IModsObject = {};
+    #mods: TModsObject = {};
 
     public readonly rtMod: InputSignal<TMods | undefined> = input<TMods | undefined>(undefined);
 
@@ -22,7 +22,7 @@ export class BlockDirective {
         }
 
         effect((): void => {
-            const mods: IModsObject = parseMods(this.rtMod());
+            const mods: TModsObject = parseMods(this.rtMod());
 
             this.#applyMods(mods);
         });
@@ -32,7 +32,7 @@ export class BlockDirective {
      * Имя блока на том же узле, что и имя элемента, значит: узел рисует элемент, а не блок, —
      * модификаторы на нём ставит директива элемента. Узел-комментарий классов не носит вовсе.
      */
-    #applyMods(mods: IModsObject): void {
+    #applyMods(mods: TModsObject): void {
         if (this.elem || this.element.nativeElement instanceof Comment) {
             return;
         }

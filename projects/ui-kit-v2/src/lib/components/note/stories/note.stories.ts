@@ -11,9 +11,9 @@ export default {
     },
 } as Meta<TestRtNoteComponent>;
 
-type Story = StoryObj<TestRtNoteComponent>;
+type TStory = StoryObj<TestRtNoteComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         text: 'Тариф меняется со следующего месяца.',

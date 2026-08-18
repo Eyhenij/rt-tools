@@ -4,7 +4,7 @@ import { BlockDirective, ModDirective } from '@rt-tools/core';
 
 const BEM_BLOCK: string = 'rt-dialog';
 
-export type IRtDialogSize = 'sm' | 'md' | 'lg';
+export type TRtDialogSize = 'sm' | 'md' | 'lg';
 
 /**
  * Презентационный styled-frame для модалки поверх CDK Overlay.
@@ -52,7 +52,7 @@ export class RtDialogComponent {
      * - `md` — 660px (`--rt-dialog-width-md`, дефолт)
      * - `lg` — 860px (`--rt-dialog-width-lg`)
      */
-    public readonly size: InputSignal<IRtDialogSize> = input<IRtDialogSize>('md');
+    public readonly size: InputSignal<TRtDialogSize> = input<TRtDialogSize>('md');
 
     /** Override ширины через CSS-property `--rt-dialog-width`. Имеет приоритет над `size`. */
     public readonly width: InputSignal<string | null> = input<string | null>(null);

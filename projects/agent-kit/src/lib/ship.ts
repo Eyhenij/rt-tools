@@ -43,9 +43,20 @@ export interface IShipped {
 /** Чем груз уезжает. Двойник в спеке — того же вида. */
 export type TShip = (intake: string, token: string, shipment: IShipment) => Promise<IShipped>;
 
+/** Адрес без косых черт в конце: их считает сам вызывающий, а не движок разбора образцов. */
+function withoutTrailingSlash(address: string): string {
+    let end: number = address.length;
+
+    while (end > 0 && address[end - 1] === '/') {
+        end -= 1;
+    }
+
+    return address.slice(0, end);
+}
+
 /** Адрес операции приёма. Косая черта в конце адреса приёма второй не становится. */
 export function intakeUrl(intake: string, operation: string): string {
-    return `${intake.replace(/\/+$/, '')}/api/intake/${operation}`;
+    return `${withoutTrailingSlash(intake)}/api/intake/${operation}`;
 }
 
 /**

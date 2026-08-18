@@ -10,8 +10,11 @@ import { IRtInput } from '../../../input/rt-input.model';
 import { IRtDatePicker } from '../../rt-date-picker.model';
 import { RtDatePickerComponent } from '../../rt-date-picker.component';
 
+/** Дата, на которой показаны все состояния поля. */
+const SAMPLE_DATE: string = '2026-03-15';
+
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type DatePickerMatrixPart = 'size' | 'type' | 'filling' | 'bordered' | 'states' | 'themes';
+export type TDatePickerMatrixPart = 'size' | 'type' | 'filling' | 'bordered' | 'states' | 'themes';
 
 /** Случай с подписью и своим значением — ISO-строкой, ровно такой, какую отдаёт нативное поле. */
 interface IDatePickerCase {
@@ -156,44 +159,44 @@ function invalid(): FormControl<string> {
     ],
 })
 export class TestRtDatePickerMatrixComponent {
-    public part: DatePickerMatrixPart = 'size';
+    public part: TDatePickerMatrixPart = 'size';
 
     public readonly fieldWidth: string = STORY_FIELD_WIDTH;
     public readonly sizes: readonly IRtInput.Size[] = ['sm', 'md', 'lg'];
     public readonly states: readonly IStoryState[] = STORY_FIELD_STATES;
     public readonly stateLabel: (value: IStoryState) => string = storyStateLabel;
 
-    public readonly sizeValue: FormControl<string> = iso('2026-03-15');
-    public readonly stateValue: FormControl<string> = iso('2026-03-15');
+    public readonly sizeValue: FormControl<string> = iso(SAMPLE_DATE);
+    public readonly stateValue: FormControl<string> = iso(SAMPLE_DATE);
 
     public readonly typeCases: readonly IDatePickerTypeCase[] = [
-        { name: 'date', type: 'date', control: iso('2026-03-15') },
+        { name: 'date', type: 'date', control: iso(SAMPLE_DATE) },
         { name: 'datetime-local', type: 'datetime-local', control: iso('2026-03-15T09:30') },
         { name: 'time', type: 'time', control: iso('09:30') },
     ];
 
     public readonly fillingCases: readonly IDatePickerCase[] = [
         { name: 'пусто', control: iso('') },
-        { name: 'со значением', control: iso('2026-03-15') },
+        { name: 'со значением', control: iso(SAMPLE_DATE) },
     ];
 
     public readonly borderedCases: readonly IDatePickerBorderedCase[] = [
-        { name: 'с рамкой', bordered: true, control: iso('2026-03-15') },
-        { name: 'без рамки', bordered: false, control: iso('2026-03-15') },
+        { name: 'с рамкой', bordered: true, control: iso(SAMPLE_DATE) },
+        { name: 'без рамки', bordered: false, control: iso(SAMPLE_DATE) },
     ];
 
     public readonly stateCases: readonly IDatePickerStateCase[] = [
         { name: 'ошибка', control: invalid(), disabled: false, flat: false },
-        { name: 'отключено', control: iso('2026-03-15'), disabled: true, flat: false },
-        { name: 'только чтение', control: iso('2026-03-15'), disabled: false, flat: true },
+        { name: 'отключено', control: iso(SAMPLE_DATE), disabled: true, flat: false },
+        { name: 'только чтение', control: iso(SAMPLE_DATE), disabled: false, flat: true },
         { name: 'только чтение без значения', control: iso(''), disabled: false, flat: true },
     ];
 
     public readonly themeCases: readonly IDatePickerThemeCase[] = [
         { name: 'пустое', control: iso(''), disabled: false },
-        { name: 'со значением', control: iso('2026-03-15'), disabled: false },
+        { name: 'со значением', control: iso(SAMPLE_DATE), disabled: false },
         { name: 'ошибка', control: invalid(), disabled: false },
-        { name: 'отключено', control: iso('2026-03-15'), disabled: true },
+        { name: 'отключено', control: iso(SAMPLE_DATE), disabled: true },
     ];
 
     /** Подпись случая: у всех наборов этой матрицы имя лежит в одном поле. */

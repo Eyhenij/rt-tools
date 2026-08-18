@@ -1,28 +1,30 @@
+// eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
 import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { Meta, StoryObj, applicationConfig } from '@storybook/angular';
 
-import { LIST_SORT_ORDER_ENUM } from '@rt-tools/utils';
+import { EListSortOrder } from '@rt-tools/utils';
 import TestDynamicListComponent from '../dynamic-list/test-dynamic-list.component';
 import { createPersonList } from '../mocks';
-import { Person } from '../types';
+import { TPerson } from '../types';
 
-const manyItems: Person[] = createPersonList(20);
-const fewItems: Person[] = createPersonList(11);
+const manyItems: TPerson[] = createPersonList(20);
+const fewItems: TPerson[] = createPersonList(11);
 
 export default {
     title: 'Components/DynamicList',
     component: TestDynamicListComponent,
     decorators: [
         applicationConfig({
+            // eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
             providers: [provideAnimations()],
         }),
     ],
 } as Meta<TestDynamicListComponent>;
 
-type Story = StoryObj<TestDynamicListComponent>;
+type TStory = StoryObj<TestDynamicListComponent>;
 
-export const ManyItems: Story = {
+export const ManyItems: TStory = {
     args: {
         isMobile: false,
         loading: false,
@@ -44,13 +46,13 @@ export const ManyItems: Story = {
         },
         currentSortModel: {
             propertyName: 'id',
-            sortDirection: LIST_SORT_ORDER_ENUM.ASC,
+            sortDirection: EListSortOrder.ASC,
         },
         searchTerm: 'fgddfg',
     },
 };
 
-export const FewItems: Story = {
+export const FewItems: TStory = {
     args: {
         isMobile: false,
         loading: false,
@@ -71,13 +73,13 @@ export const FewItems: Story = {
         },
         currentSortModel: {
             propertyName: 'id',
-            sortDirection: LIST_SORT_ORDER_ENUM.ASC,
+            sortDirection: EListSortOrder.ASC,
         },
         searchTerm: '',
     },
 };
 
-export const NoItems: Story = {
+export const NoItems: TStory = {
     args: {
         isMobile: false,
         loading: false,
@@ -98,7 +100,7 @@ export const NoItems: Story = {
         },
         currentSortModel: {
             propertyName: 'id',
-            sortDirection: LIST_SORT_ORDER_ENUM.ASC,
+            sortDirection: EListSortOrder.ASC,
         },
         searchTerm: '',
     },

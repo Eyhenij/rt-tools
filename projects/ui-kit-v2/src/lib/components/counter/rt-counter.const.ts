@@ -1,0 +1,16 @@
+import { TRtKitLabelKey } from '../../i18n';
+
+/** Контракт счётчика common/ui. */
+
+/**
+ * Ключи подписей кнопок для скринридера.
+ *
+ * Здесь именно ключи, а не готовый текст: константа вычисляется один раз при
+ * загрузке модуля, а язык страницы известен только после старта приложения —
+ * переведённая на этом этапе строка застряла бы на языке по умолчанию. Перевод
+ * берёт компонент, у которого есть доступ к текущей локали; перекрываются
+ * поштучно через input'ы `decreaseLabel` / `increaseLabel`.
+ */
+export const RT_COUNTER_DECREASE_KEY: TRtKitLabelKey = 'counterDecrease';
+
+export const RT_COUNTER_INCREASE_KEY: TRtKitLabelKey = 'counterIncrease';
