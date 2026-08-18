@@ -1,6 +1,7 @@
 import type { TestRunnerConfig } from '@storybook/test-runner';
 import { getStoryContext } from '@storybook/test-runner';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
+import type { Page } from 'playwright';
 
 /**
  * Визуальная проверка витрины: каждая история снимается и сверяется с эталоном.
@@ -26,8 +27,71 @@ const FONT_TIMEOUT_MS: number = 10_000;
 /** Пауза после глушения движения — кадру нужно успеть встать. */
 const SETTLE_MS: number = 150;
 
+/**
+ * Поздняя граница ожидания вставшей страницы. Не мерило готовности, а предел: страница, которая
+ * не встала и за это время, — поломка истории, и снимать её нечего.
+ */
+const LAYOUT_TIMEOUT_MS: number = 15_000;
+
+/**
+ * Сколько кадров подряд размеры страницы должны совпасть, чтобы считать её вставшей. Двух
+ * хватает: между ними проходит перерисовка, и растущий блок успевает изменить высоту.
+ */
+const STILL_FRAMES: number = 2;
+
 /** Размер кадра по умолчанию. Истории, которым нужен другой, называют его параметром. */
 const VIEWPORT: { width: number; height: number } = { width: 1280, height: 720 };
+
+/**
+ * Ждёт вставшую страницу событием, а не отсчётом времени.
+ *
+ * Отсчёт проверяет машину, а не вёрстку: на свободной он всегда достаточен, на занятой — нет, и
+ * какой именно кадр не успел, оказывается делом случая. Здесь ждутся два признака, и ни один из
+ * них от загрузки машины не зависит.
+ *
+ * Приём повторён из обвязки второго кита, а не вынесен в общий с ней модуль: киты разведены
+ * намеренно, и общий файл связал бы их там, где связи нет, — правка ради второго роняла бы
+ * эталоны первого. В согласии эти две копии держит правило дерева, а не импорт.
+ *
+ * Снимок здесь берётся целой страницей, поэтому и размер считается по корневому узлу документа,
+ * а не по корню показа: растёт и меняет высоту именно страница.
+ */
+async function settled(page: Page): Promise<void> {
+    // Шрифт значков и картинки историй едут по сети, и до их прихода страница стоит неизменной —
+    // то есть выглядит вставшей. Одни только совпавшие размеры принимают такую пустоту за
+    // готовый кадр: сравнивать их имеет смысл после того, как сеть замолчала.
+    await page.waitForLoadState('networkidle');
+
+    await page.waitForFunction(
+        (frames: number) =>
+            new Promise<boolean>((resolve) => {
+                const size = (): string => {
+                    const box: DOMRect = document.documentElement.getBoundingClientRect();
+                    return `${Math.round(box.width)}x${Math.round(box.height)}`;
+                };
+
+                let previous: string = size();
+                let same: number = 0;
+
+                const step = (): void => {
+                    const current: string = size();
+                    same = current === previous ? same + 1 : 0;
+                    previous = current;
+
+                    if (same >= frames) {
+                        resolve(true);
+                        return;
+                    }
+
+                    requestAnimationFrame(step);
+                };
+
+                requestAnimationFrame(step);
+            }),
+        STILL_FRAMES,
+        { timeout: LAYOUT_TIMEOUT_MS }
+    );
+}
 
 const config: TestRunnerConfig = {
     setup(): void {
@@ -91,6 +155,7 @@ const config: TestRunnerConfig = {
         }
 
         await page.waitForTimeout(SETTLE_MS);
+        await settled(page);
 
         const image: Buffer = await page.screenshot({ fullPage: true });
 

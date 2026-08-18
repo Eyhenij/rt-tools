@@ -99,6 +99,8 @@ pnpm exec nx affected -t lint typecheck test build --parallel
 pnpm exec nx affected -t test-hooks
 pnpm run lint:styles
 pnpm exec nx run message-bus-admin-e2e:e2e
+node tools/visual-gate.mjs ui-kit
+node tools/visual-gate.mjs ui-kit-v2
 pnpm exec nx affected -t verify --parallel
 docker build -f deploy/message-bus.Dockerfile -t message-bus:gate .
 docker build -f deploy/message-bus-web.Dockerfile -t message-bus-web:gate .
