@@ -5,10 +5,8 @@ import { Injectable, InjectionToken, inject } from '@angular/core';
 import { Observable, forkJoin, map, of, shareReplay, tap } from 'rxjs';
 
 import { iconsName } from './rt-icon-names';
+import { RT_ICON_SPRITE_ID, RT_ICON_SYMBOL_ID_PREFIX } from './rt-icon.const';
 import { IRtIcon } from './rt-icon.model';
-
-/** Префикс `id` для inline-sprite символов. Изолирует от внешних `id` на странице. */
-const SYMBOL_ID_PREFIX: string = 'rt-icon-';
 
 /**
  * Адрес, по которому приложение публикует набор из `assets/icons` пакета.
@@ -19,9 +17,6 @@ export const RT_ICONS_BASE_URL: InjectionToken<string> = new InjectionToken<stri
     providedIn: 'root',
     factory: (): string => '/icons',
 });
-
-/** Селектор inline-sprite, создаваемого один раз при первом обращении. */
-const SPRITE_ID: string = 'rt-icon-sprite';
 
 @Injectable({ providedIn: 'root' })
 export class RtIconRegistry {
@@ -35,7 +30,7 @@ export class RtIconRegistry {
      * Имя symbol для `<use href="#X">`. Возвращает строку с ведущим `#`.
      */
     public symbolHref(name: IRtIcon.Name): string {
-        return `#${SYMBOL_ID_PREFIX}${name}`;
+        return `#${RT_ICON_SYMBOL_ID_PREFIX}${name}`;
     }
 
     /**
@@ -48,7 +43,7 @@ export class RtIconRegistry {
         }
         // Sprite уже в DOM (другая Angular app instance в той же странице,
         // e.g. Storybook между stories) — пропускаем 313 HTTP-запросов.
-        if (this.#doc.getElementById(SPRITE_ID)) {
+        if (this.#doc.getElementById(RT_ICON_SPRITE_ID)) {
             this.#preloadAll$ = of(undefined).pipe(shareReplay(1));
             return this.#preloadAll$;
         }
@@ -76,16 +71,16 @@ export class RtIconRegistry {
             .replace(/<svg\b[^>]*>/i, '')
             .replace(/<\/svg>\s*$/i, '')
             .trim();
-        return `<symbol id="${SYMBOL_ID_PREFIX}${name}" viewBox="${viewBox}">${inner}</symbol>`;
+        return `<symbol id="${RT_ICON_SYMBOL_ID_PREFIX}${name}" viewBox="${viewBox}">${inner}</symbol>`;
     }
 
     #mountSprite(symbols: string[]): void {
-        const existing: HTMLElement | null = this.#doc.getElementById(SPRITE_ID);
+        const existing: HTMLElement | null = this.#doc.getElementById(RT_ICON_SPRITE_ID);
         if (existing) {
             existing.remove();
         }
         const sprite: SVGSVGElement = this.#doc.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        sprite.id = SPRITE_ID;
+        sprite.id = RT_ICON_SPRITE_ID;
         sprite.setAttribute('aria-hidden', 'true');
         sprite.setAttribute('style', 'position:absolute;width:0;height:0;overflow:hidden;');
         sprite.innerHTML = symbols.join('');
