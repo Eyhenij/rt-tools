@@ -2,6 +2,7 @@ import { expect, Page, test } from '@playwright/test';
 
 import { TREES } from '../stand/stand.mjs';
 import { columnTexts, detailValue, expectOnlyTree, openSection, pageQa, pickTree, qa, queryOf, rowsOf, SECTION } from './support/admin';
+import { expectScreen } from './support/shot';
 
 /**
  * Разделы предложений и сводок — те же обещания на той же основе.
@@ -28,6 +29,8 @@ test.describe('разделы груза', () => {
         await expect(qa(page, 'pagination-range')).toContainText('из 5');
         await expect(pageQa(page, 'proposals', 'columns')).toBeVisible();
 
+        await expectScreen(page, 'list-proposals');
+
         await pickTree(page, TREES[1].name);
 
         expect(queryOf(page).get('tree')).toBe(TREES[1].slug);
@@ -53,6 +56,8 @@ test.describe('разделы груза', () => {
         await expect(qa(page, 'list-tree-filter')).toBeVisible();
         await expect(qa(page, 'pagination-range')).toContainText('из 2');
         await expect(pageQa(page, 'summaries', 'columns')).toBeVisible();
+
+        await expectScreen(page, 'list-summaries');
 
         const trees: string[] = await columnTexts(page, 'summaries-cell-tree');
 

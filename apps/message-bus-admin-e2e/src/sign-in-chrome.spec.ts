@@ -1,6 +1,7 @@
 import { expect, Page, test } from '@playwright/test';
 
 import { qa, SECTION, SIGN_IN_PATH, signIn } from './support/admin';
+import { expectScreen } from './support/shot';
 
 /**
  * Экран входа: тема, язык и поля.
@@ -18,6 +19,8 @@ test.describe('тема и язык на экране входа', () => {
 
         await qa(page, 'sign-in-theme').locator('button').click();
         await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+
+        await expectScreen(page, 'sign-in-dark');
 
         await signIn(page);
         await expect(qa(page, SECTION.postmortems.table)).toBeVisible();

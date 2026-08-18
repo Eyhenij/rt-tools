@@ -1,6 +1,7 @@
 import { expect, Locator, Page, test } from '@playwright/test';
 
 import { openSection, pageQa, qa, SECTION } from './support/admin';
+import { expectScreen } from './support/shot';
 
 /**
  * Настройка столбцов: убранный столбец переживает уход в другой раздел и возвращение.
@@ -20,6 +21,8 @@ async function hideColumn(page: Page, key: string): Promise<void> {
 
     await columns.click();
     await expect(qa(page, 'table-settings-list')).toBeVisible();
+
+    await expectScreen(page, 'columns-panel');
 
     await settingsRow(page, key).locator('[qa-dataid="table-settings-toggle"]').click();
     await qa(page, 'table-settings-save').click();

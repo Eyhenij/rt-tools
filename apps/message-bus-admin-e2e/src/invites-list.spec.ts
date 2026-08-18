@@ -2,6 +2,7 @@ import { expect, Page, test } from '@playwright/test';
 
 import { ENROLLED_SLUG, INVITES } from '../stand/stand.mjs';
 import { columnTexts, openSection, pageQa, qa, rowsOf, SECTION } from './support/admin';
+import { expectScreen } from './support/shot';
 
 /**
  * Раздел приглашений: то, что владелец видит и делает, проверяется нажатиями.
@@ -35,6 +36,12 @@ test.describe('раздел приглашений', () => {
 
         // Отбора по дереву у раздела нет: приглашение ждёт дерева, которого ещё нет
         await expect(qa(page, 'list-tree-filter')).toHaveCount(0);
+
+        // Маски на кадре нет: все даты раздела, включая срок годности, засеяны постоянными.
+        // Закрытая маской колонка всё равно занимала бы в кадре свою ширину, а ширину столбцов
+        // таблица раскладывает по содержимому — плывущее значение двигало бы весь кадр и мимо
+        // маски.
+        await expectScreen(page, 'list-invites');
     });
 
     test('SC-MB-134 — раздел без своего отбора левого слота тулбара не занимает', async ({ page }: { page: Page }) => {

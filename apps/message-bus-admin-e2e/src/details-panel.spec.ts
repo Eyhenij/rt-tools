@@ -1,6 +1,7 @@
 import { expect, Locator, Page, Route, test } from '@playwright/test';
 
 import { detailValue, openSection, qa, rowsOf, TSectionName } from './support/admin';
+import { expectScreen } from './support/shot';
 
 /**
  * Панель подробностей: три раздела груза показывают запись одной и той же панелью.
@@ -49,6 +50,8 @@ test.describe('панель подробностей', () => {
             await expect(qa(page, panelQa(panel.row, 'header'))).toBeVisible();
             await expect(qa(page, panel.row)).toBeVisible();
             await expect(detailValue(page, panel.row)).not.toHaveText('');
+
+            await expectScreen(page, `details-panel-${panel.section}`);
         });
 
         test(`SC-MB-139 — пока запись раздела ${panel.section} читается, на месте значения виден скелетон`, async ({

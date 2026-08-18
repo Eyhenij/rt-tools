@@ -1,6 +1,7 @@
 import { expect, Page, test } from '@playwright/test';
 
 import { openSection, qa, rowsOf } from './support/admin';
+import { expectScreen } from './support/shot';
 
 /**
  * Узкий экран: запись показана карточкой таблицы кита, а не обрезанной строкой.
@@ -30,5 +31,7 @@ test.describe('список на узком экране', () => {
 
         expect(card.width).toBeGreaterThan(0);
         expect(card.width).toBeLessThanOrEqual(viewport);
+
+        await expectScreen(page, 'list-narrow-cards');
     });
 });
