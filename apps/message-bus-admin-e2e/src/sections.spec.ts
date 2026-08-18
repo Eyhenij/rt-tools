@@ -1,7 +1,7 @@
 import { expect, Page, test } from '@playwright/test';
 
 import { TREES } from '../stand/stand.mjs';
-import { columnTexts, expectOnlyTree, openSection, pageQa, pickTree, qa, queryOf, rowsOf, SECTION } from './support/admin';
+import { columnTexts, detailValue, expectOnlyTree, openSection, pageQa, pickTree, qa, queryOf, rowsOf, SECTION } from './support/admin';
 
 /**
  * Разделы предложений и сводок — те же обещания на той же основе.
@@ -35,7 +35,7 @@ test.describe('разделы груза', () => {
 
         await rowsOf(page, 'proposals').first().click();
 
-        await expect(qa(page, 'proposal-tree')).toHaveText(TREES[1].name);
+        await expect(detailValue(page, 'proposal-tree')).toHaveText(TREES[1].name);
         await expect(qa(page, 'proposal-text')).not.toHaveText('');
         expect(page.url()).toContain('ro:proposals');
 
@@ -64,7 +64,7 @@ test.describe('разделы груза', () => {
 
         await rowsOf(page, 'summaries').first().click();
 
-        await expect(qa(page, 'month-record-tree')).toHaveText(TREES[0].name);
+        await expect(detailValue(page, 'month-record-tree')).toHaveText(TREES[0].name);
         // сводка приехала телом груза и показана текстом целиком
         await expect(qa(page, 'month-record-summary')).toContainText('sessions');
         expect(page.url()).toContain('ro:summaries');
@@ -85,7 +85,7 @@ test.describe('разделы груза', () => {
         // второму дереву запись месяца завели предложения, а сводки оно не присылало
         await expect(qa(page, 'month-record-summary-missing')).toContainText('Сводки в этом месяце ещё не было');
         await expect(qa(page, 'month-record-summary')).toHaveCount(0);
-        await expect(qa(page, 'month-record-sessions')).toHaveText('0');
+        await expect(detailValue(page, 'month-record-sessions')).toHaveText('0');
     });
 
     test('SC-MB-78 — подписи кита идут из словаря приложения', async ({ page }: { page: Page }) => {

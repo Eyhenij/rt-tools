@@ -4,8 +4,15 @@
             <rt-message severity="danger" qa-dataid="sign-in-fault">{{ text }}</rt-message>
         }
 
+        <!-- Иконка и подсказка внутри поля: подпись сбоку на узкой ширине уходит первой, а
+             спросить, что здесь пишут, человеку тогда не у кого -->
         <rt-field label="Учётная запись">
-            <rt-input formControlName="name" autocomplete="username" qa-dataid="sign-in-name" />
+            <rt-input
+                formControlName="name"
+                autocomplete="username"
+                qa-dataid="sign-in-name"
+                placeholder="Имя дерева или владельца"
+                iconLeft="user" />
         </rt-field>
 
         <rt-field label="Пароль">
@@ -14,6 +21,8 @@
                 type="password"
                 autocomplete="current-password"
                 qa-dataid="sign-in-password"
+                placeholder="Пароль учётной записи"
+                iconLeft="lock"
                 [passwordToggle]="true" />
         </rt-field>
 
