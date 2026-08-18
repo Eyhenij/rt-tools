@@ -7,7 +7,7 @@ import { createRtFixture, hostClasses, provideRtKitTesting, qa, textOf } from '.
 import { RtDialogFooterComponent } from './footer/rt-dialog-footer.component';
 import { RtDialogHeaderComponent } from './header/rt-dialog-header.component';
 import { RtDialogRef } from './rt-dialog-ref';
-import { IRtDialogSize, RtDialogComponent } from './rt-dialog.component';
+import { TRtDialogSize, RtDialogComponent } from './rt-dialog.component';
 import { RtDialogService } from './rt-dialog.service';
 import { RT_DIALOG_DATA } from './rt-dialog.tokens';
 
@@ -64,7 +64,7 @@ describe('RtDialogComponent', (): void => {
         expect(hostClasses(setup())).toContain('rt-dialog');
     });
 
-    it.each<IRtDialogSize>(['sm', 'md', 'lg'])('размер %s выводит модификатор', (size: IRtDialogSize): void => {
+    it.each<TRtDialogSize>(['sm', 'md', 'lg'])('размер %s выводит модификатор', (size: TRtDialogSize): void => {
         const fixture: ComponentFixture<RtDialogComponent> = setup({ size });
 
         expect(Array.from((qa(fixture, 'dialog')?.nativeElement as HTMLElement).classList)).toContain(`rt-dialog--size--${size}`);

@@ -1,9 +1,9 @@
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 import { IStorageConverter } from './storage-converter';
-import { StorageType } from '../enums/storage-types.enum';
+import { TStorageType } from '../enums/storage-types.enum';
 
 export interface IStorageConfig {
-    ctx: INullable<StorageType>;
-    storageRef: INullable<Storage>;
-    converter: INullable<IStorageConverter>;
+    ctx: TNullable<TStorageType>;
+    storageRef: TNullable<Storage>;
+    converter: TNullable<IStorageConverter>;
 }

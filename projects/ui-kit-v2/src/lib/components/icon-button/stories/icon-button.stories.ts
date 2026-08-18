@@ -39,9 +39,9 @@ export default {
     },
 } as Meta<TestRtIconButtonComponent>;
 
-type Story = StoryObj<TestRtIconButtonComponent>;
+type TStory = StoryObj<TestRtIconButtonComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         icon: 'alarm-clock',

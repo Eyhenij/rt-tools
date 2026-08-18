@@ -1,14 +1,14 @@
 import { ESLintUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
 
-type IMessageIds = 'notAllowed';
-type IOptions = [];
+type TMessageIds = 'notAllowed';
+type TOptions = [];
 
 // Доступно в ESLint-конфигах как "@nx/workspace-no-subscribe-in-methods".
 export const RULE_NAME: string = 'no-subscribe-in-methods';
 
 const ALLOWED_METHOD_NAMES: ReadonlySet<string> = new Set(['ngOnInit']);
 
-export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = ESLintUtils.RuleCreator(() => __filename)<IOptions, IMessageIds>({
+export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = ESLintUtils.RuleCreator(() => __filename)<TOptions, TMessageIds>({
     name: RULE_NAME,
     meta: {
         type: 'problem',
@@ -23,10 +23,10 @@ export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = ESLintUtils.Rule
         },
     },
     defaultOptions: [],
-    create(context: Readonly<TSESLint.RuleContext<IMessageIds, IOptions>>): TSESLint.RuleListener {
-        type IClassMember = TSESTree.MethodDefinition | TSESTree.PropertyDefinition;
+    create(context: Readonly<TSESLint.RuleContext<TMessageIds, TOptions>>): TSESLint.RuleListener {
+        type TClassMember = TSESTree.MethodDefinition | TSESTree.PropertyDefinition;
 
-        function findEnclosingClassMember(node: TSESTree.Node): IClassMember | null {
+        function findEnclosingClassMember(node: TSESTree.Node): TClassMember | null {
             let current: TSESTree.Node | undefined = node.parent;
             while (current) {
                 if (current.type === 'MethodDefinition' || current.type === 'PropertyDefinition') {
@@ -53,7 +53,7 @@ export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = ESLintUtils.Rule
 
         return {
             'CallExpression[callee.type="MemberExpression"][callee.property.name="subscribe"]'(node: TSESTree.CallExpression): void {
-                const member: IClassMember | null = findEnclosingClassMember(node);
+                const member: TClassMember | null = findEnclosingClassMember(node);
 
                 if (!member) {
                     return;

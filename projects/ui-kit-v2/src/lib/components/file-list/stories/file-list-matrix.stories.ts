@@ -17,13 +17,13 @@ export default {
     },
 } as Meta<TestRtFileListMatrixComponent>;
 
-type Story = StoryObj<TestRtFileListMatrixComponent>;
+type TStory = StoryObj<TestRtFileListMatrixComponent>;
 
-export const Count: Story = { args: { part: 'count' } };
+export const Count: TStory = { args: { part: 'count' } };
 
-export const Cards: Story = { args: { part: 'cards' } };
+export const Cards: TStory = { args: { part: 'cards' } };
 
 /** Пустой столбец стоит рядом с длинным именем: обе крайности видны только вместе. */
-export const Edges: Story = { args: { part: 'edges' } };
+export const Edges: TStory = { args: { part: 'edges' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

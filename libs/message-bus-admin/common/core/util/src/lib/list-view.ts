@@ -8,13 +8,13 @@
  * Функции чистые: решение о том, что уедет в адрес, проверяется без поднятого экрана.
  */
 import { TPageDirection } from '@rt/message-bus-common';
-import { IPageModel, ISortModel, LIST_SORT_ORDER_ENUM, ListSortOrderType } from '@rt-tools/utils';
+import { IPageModel, ISortModel, EListSortOrder, TListSortOrderType } from '@rt-tools/utils';
 
 import { DEFAULT_DIRECTION, IAdminListQuery } from './list-query';
 
 /** Порядок выборки в направление кита. */
-function orderOf(dir: TPageDirection): ListSortOrderType {
-    return dir === 'asc' ? LIST_SORT_ORDER_ENUM.ASC : LIST_SORT_ORDER_ENUM.DESC;
+function orderOf(dir: TPageDirection): TListSortOrderType {
+    return dir === 'asc' ? EListSortOrder.ASC : EListSortOrder.DESC;
 }
 
 /**
@@ -50,5 +50,5 @@ export function sortAskedOf(sort: ISortModel<string> | null, sortable: readonly 
         return { sort: sortable[0] ?? '', dir: DEFAULT_DIRECTION };
     }
 
-    return { sort: sort.propertyName, dir: sort.sortDirection === LIST_SORT_ORDER_ENUM.ASC ? 'asc' : 'desc' };
+    return { sort: sort.propertyName, dir: sort.sortDirection === EListSortOrder.ASC ? 'asc' : 'desc' };
 }

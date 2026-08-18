@@ -5,8 +5,14 @@ import { StoryThemesComponent } from '../../../../../../showcase/story-themes.co
 import { RtAsideHeaderComponent } from '../../rt-aside-header.component';
 import { IRtAsideHeader } from '../../rt-aside-header.model';
 
+/** Заголовок записи, на которой показаны все состояния шапки. */
+const TOUR_TITLE: string = 'Тур в Сочи';
+
+/** Надзаголовок той же записи. */
+const REQUEST_OVERLINE: string = 'Заявка № 1024';
+
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type AsideHeaderMatrixPart = 'heading' | 'badges' | 'states' | 'themes';
+export type TAsideHeaderMatrixPart = 'heading' | 'badges' | 'states' | 'themes';
 
 /** Заголовок вместе с надзаголовком: порознь они не бывают — надзаголовок стоит над заголовком. */
 interface IAsideHeaderHeadingCase {
@@ -106,7 +112,7 @@ interface IAsideHeaderBadgeCase {
     ],
 })
 export class TestRtAsideHeaderMatrixComponent {
-    public part: AsideHeaderMatrixPart = 'heading';
+    public part: TAsideHeaderMatrixPart = 'heading';
 
     /** Ширина ячейки: шапка занимает всю ширину панели, и по содержимому она бы схлопнулась. */
     public readonly headerWidth: string = '20rem';
@@ -118,13 +124,13 @@ export class TestRtAsideHeaderMatrixComponent {
     ];
 
     public readonly headingCases: readonly IAsideHeaderHeadingCase[] = [
-        { name: 'заголовок', title: 'Тур в Сочи', overline: null, closable: true },
-        { name: 'с надзаголовком', title: 'Тур в Сочи', overline: 'Заявка № 1024', closable: true },
-        { name: 'без стрелки', title: 'Тур в Сочи', overline: 'Заявка № 1024', closable: false },
+        { name: 'заголовок', title: TOUR_TITLE, overline: null, closable: true },
+        { name: 'с надзаголовком', title: TOUR_TITLE, overline: REQUEST_OVERLINE, closable: true },
+        { name: 'без стрелки', title: TOUR_TITLE, overline: REQUEST_OVERLINE, closable: false },
         {
             name: 'длинный заголовок',
             title: 'Тур в Сочи с перелётом, трансфером и экскурсионной программой',
-            overline: 'Заявка № 1024',
+            overline: REQUEST_OVERLINE,
             closable: true,
         },
     ];

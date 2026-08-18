@@ -11,8 +11,8 @@ export default {
     },
 } as Meta<TestRtWelcomeDialogComponent>;
 
-type Story = StoryObj<TestRtWelcomeDialogComponent>;
+type TStory = StoryObj<TestRtWelcomeDialogComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('тот же случай уже стоит ячейкой «заголовок и два абзаца» в матрице этого компонента'),
 };

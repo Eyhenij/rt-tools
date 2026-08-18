@@ -13,9 +13,9 @@ export default {
     },
 } as Meta<TestRtPaginationComponent>;
 
-type Story = StoryObj<TestRtPaginationComponent>;
+type TStory = StoryObj<TestRtPaginationComponent>;
 
-export const Default: Story = {
+export const Default: TStory = {
     args: {
         pageModel: { pageNumber: 1, pageSize: 20, totalCount: 137 },
         perPageOptions: [20, 50, 100],

@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 
 import { PlatformService } from '../services';
-import { INullable } from '@rt-tools/utils';
-import { STORAGE_TYPES_ENUM, StorageType } from './enums/storage-types.enum';
+import { TNullable } from '@rt-tools/utils';
+import { EStorageTypes, TStorageType } from './enums/storage-types.enum';
 import { IStorageConfig } from './interfaces/storage-config';
 import { JsonConverter } from './json-converter';
 import { CUSTOM_STORAGE } from './tokens/custom-storage.token';
@@ -11,7 +11,7 @@ import { LOCAL_STORAGE } from './tokens/local-storage.token';
 import { SESSION_STORAGE } from './tokens/session-storage.token';
 
 const defaultStorageConfig: IStorageConfig = {
-    ctx: STORAGE_TYPES_ENUM.LOCAL,
+    ctx: EStorageTypes.LOCAL,
     storageRef: null,
     converter: new JsonConverter(),
 };
@@ -29,7 +29,7 @@ export class StorageService {
     readonly #localStorageRef: Storage = inject(LOCAL_STORAGE);
     readonly #sessionStorageRef: Storage = inject(SESSION_STORAGE);
     readonly #inMemoryStorageRef: Storage = inject(IN_MEMORY_STORAGE);
-    readonly #customStorageRef: INullable<Storage> = inject(CUSTOM_STORAGE, { optional: true });
+    readonly #customStorageRef: TNullable<Storage> = inject(CUSTOM_STORAGE, { optional: true });
 
     /**
      * Retrieves an item from the specified storage context.
@@ -38,9 +38,9 @@ export class StorageService {
      * @param config - Optional configuration for the storage context and data conversion.
      * @returns The retrieved item, converted from storage if a converter is provided, or `null` if the item does not exist.
      */
-    public getItem<T>(key: string, config?: Partial<IStorageConfig>): INullable<T> {
+    public getItem<T>(key: string, config?: Partial<IStorageConfig>): TNullable<T> {
         const fullConfig: IStorageConfig = { ...defaultStorageConfig, ...config };
-        const item: INullable<T> = this.#storage(fullConfig.ctx)?.getItem(key) as T;
+        const item: TNullable<T> = this.#storage(fullConfig.ctx)?.getItem(key) as T;
         return fullConfig.converter?.convertFrom(item) ?? item ?? null;
     }
 
@@ -65,7 +65,7 @@ export class StorageService {
      * @param ctx - The storage context to search in (local, session, or in-memory).
      * @returns `true` if the key exists, `false` otherwise.
      */
-    public hasKey(key: string, ctx: INullable<StorageType> = defaultStorageConfig.ctx): boolean {
+    public hasKey(key: string, ctx: TNullable<TStorageType> = defaultStorageConfig.ctx): boolean {
         return Object.prototype.hasOwnProperty.call(this.#storage(ctx), key);
     }
 
@@ -77,13 +77,15 @@ export class StorageService {
      * @param onHasNot - The optional callback to execute if the key does not exist.
      * @param config - Optional configuration for the storage context and data conversion.
      */
-    public onHasKey<T>(key: string, onHas: (value: INullable<T>) => void, onHasNot?: () => void, config?: Partial<IStorageConfig>): void {
+    public onHasKey<T>(key: string, onHas: (value: TNullable<T>) => void, onHasNot?: () => void, config?: Partial<IStorageConfig>): void {
         const fullConfig: IStorageConfig = { ...defaultStorageConfig, ...config };
 
         if (this.hasKey(key, fullConfig.ctx)) {
             onHas(this.getItem<T>(key, fullConfig));
         } else if (onHasNot !== void 0) {
             onHasNot();
+        } else {
+            // Ключа нет, и что делать в этом случае, вызывающий не сказал.
         }
     }
 
@@ -93,7 +95,7 @@ export class StorageService {
      * @param key - The key of the item to remove.
      * @param ctx - The storage context from which to remove the item.
      */
-    public removeItem(key: string, ctx: INullable<StorageType> = defaultStorageConfig.ctx): void {
+    public removeItem(key: string, ctx: TNullable<TStorageType> = defaultStorageConfig.ctx): void {
         this.#storage(ctx)?.removeItem(key);
     }
 
@@ -102,7 +104,7 @@ export class StorageService {
      *
      * @param ctx - The storage context to clear.
      */
-    public clear(ctx: INullable<StorageType> = defaultStorageConfig.ctx): void {
+    public clear(ctx: TNullable<TStorageType> = defaultStorageConfig.ctx): void {
         this.#storage(ctx)?.clear();
     }
 
@@ -112,7 +114,7 @@ export class StorageService {
      * @param ctx - The storage context to use (local, session, custom, or in-memory).
      * @returns The corresponding `Storage` object, or `null` if not available.
      */
-    #storage(ctx: INullable<StorageType>): INullable<Storage> {
+    #storage(ctx: TNullable<TStorageType>): TNullable<Storage> {
         if (this.#platformService.isPlatformBrowser) {
             switch (ctx) {
                 case 'local':

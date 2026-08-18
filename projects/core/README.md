@@ -10,7 +10,7 @@ message bus and the BEM helpers the kit's templates are built on.
 
 `@rt-tools/store` and `@rt-tools/ui-kit` build on it. The framework-free half — pure functions, list
 models, type helpers — lives in [`@rt-tools/utils`](https://www.npmjs.com/package/@rt-tools/utils),
-which this package depends on. Neither re-exports the other: `isNil` and `INullable` are imported
+which this package depends on. Neither re-exports the other: `isNil` and `TNullable` are imported
 from `@rt-tools/utils`, always.
 
 ## Installation
@@ -135,7 +135,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 ### Tokens and helpers
 
 ```typescript
-import { WINDOW, NAVIGATOR, OVERLAY_POSITIONS, POSITION_ENUM, isHTMLElement } from '@rt-tools/core';
+import { WINDOW, NAVIGATOR, OVERLAY_POSITIONS, EPosition, isHTMLElement } from '@rt-tools/core';
 
 const win = inject(WINDOW); // safe on the server
 ```

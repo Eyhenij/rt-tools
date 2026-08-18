@@ -6,7 +6,7 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtNotificationsBellComponent } from '../../rt-notifications-bell.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type NotificationsBellMatrixPart = 'unread' | 'states' | 'themes';
+export type TNotificationsBellMatrixPart = 'unread' | 'states' | 'themes';
 
 /**
  * Матрицы состояний `rt-notifications-bell` для витрины.
@@ -58,7 +58,7 @@ export type NotificationsBellMatrixPart = 'unread' | 'states' | 'themes';
     ],
 })
 export class TestRtNotificationsBellMatrixComponent {
-    public part: NotificationsBellMatrixPart = 'unread';
+    public part: TNotificationsBellMatrixPart = 'unread';
 
     public readonly unreads: readonly boolean[] = [false, true];
 

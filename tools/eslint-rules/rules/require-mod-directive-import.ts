@@ -48,8 +48,8 @@ const RT_MOD_PATTERN: RegExp = /(?:^|[\s[])\[?rtMod\]?(?:[\]=>"\s])/;
 /** Strips HTML comments before scanning for rtMod. */
 const HTML_COMMENT_PATTERN: RegExp = /<!--[\s\S]*?-->/g;
 
-type IMessageIds = 'missingModDirective';
-type IOptions = [];
+type TMessageIds = 'missingModDirective';
+type TOptions = [];
 
 /**
  * Returns the template text from an `ObjectExpression` metadata node, or `null` if not
@@ -150,7 +150,7 @@ function importsArrayLacksModDirective(importsProperty: TSESTree.Property): bool
     return true;
 }
 
-export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = ESLintUtils.RuleCreator(() => __filename)<IOptions, IMessageIds>({
+export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = ESLintUtils.RuleCreator(() => __filename)<TOptions, TMessageIds>({
     name: RULE_NAME,
     meta: {
         type: 'problem',
@@ -169,7 +169,7 @@ export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = ESLintUtils.Rule
         },
     },
     defaultOptions: [],
-    create(context: Readonly<TSESLint.RuleContext<IMessageIds, IOptions>>): TSESLint.RuleListener {
+    create(context: Readonly<TSESLint.RuleContext<TMessageIds, TOptions>>): TSESLint.RuleListener {
         return {
             'Decorator[expression.callee.name="Component"]'(node: TSESTree.Decorator): void {
                 const expr: TSESTree.Node = node.expression;

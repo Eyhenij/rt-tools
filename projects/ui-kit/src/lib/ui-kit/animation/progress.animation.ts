@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843 */
 import { animate, AnimationTriggerMetadata, state, style, transition, trigger } from '@angular/animations';
 
 export const progressIncreaseAnimation: AnimationTriggerMetadata[] = [

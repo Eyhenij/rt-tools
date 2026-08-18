@@ -15,7 +15,7 @@
  * умолчанием, и пустой подписи на экране не бывает никогда. Переводится то, что админка
  * показывает, — таблица, страницы, столбцы, панель.
  */
-import { RtKitLabelKey, RtKitLabelParams } from '@rt-tools/ui-kit-v2';
+import { TRtKitLabelKey, TRtKitLabelParams } from '@rt-tools/ui-kit-v2';
 
 /** Подписи экранов админки. Ключ читается в шаблоне, значение правится здесь. */
 // eslint-disable-next-line @typescript-eslint/typedef -- аннотация стёрла бы литеральный тип, на котором стоит TAdminLabelKey
@@ -101,7 +101,7 @@ export type TAdminLabelKey = keyof typeof ADMIN_LABELS;
  * пустой подписи на экране не бывает. Дописывается он тогда, когда админка начинает показывать
  * ещё один его компонент, — а не наперёд.
  */
-const RT_KIT_LABELS_RU: Partial<Record<RtKitLabelKey, string>> = Object.freeze({
+const RT_KIT_LABELS_RU: Partial<Record<TRtKitLabelKey, string>> = Object.freeze({
     bottomSheetClose: 'Закрыть',
     fieldErrorEmail: 'Неверный адрес почты',
     fieldErrorMax: 'Значение слишком велико',
@@ -151,7 +151,7 @@ const RT_KIT_LABELS_RU: Partial<Record<RtKitLabelKey, string>> = Object.freeze({
 });
 
 /** Места вида `{{name}}` — их заполняет `fill`. Тот же вид, что у подписей кита. */
-const PLACEHOLDER: RegExp = /\{\{\s*([A-Za-z0-9_]+)\s*\}\}/g;
+const PLACEHOLDER: RegExp = /\{\{\s*(\w+)\s*\}\}/g;
 
 /**
  * Подставляет параметры в подпись.
@@ -159,20 +159,16 @@ const PLACEHOLDER: RegExp = /\{\{\s*([A-Za-z0-9_]+)\s*\}\}/g;
  * Место, для которого параметра не дали, остаётся как есть: пустота на его месте прочиталась бы
  * как законченная фраза, а `{{name}}` виден и чинится.
  */
-export function fill(text: string, params?: RtKitLabelParams): string {
+export function fill(text: string, params?: TRtKitLabelParams): string {
     if (params === undefined) {
         return text;
     }
 
-    return text.replace(PLACEHOLDER, (match: string, name: string): string => {
-        const value: string | number | undefined = params[name];
-
-        return value === undefined ? match : String(value);
-    });
+    return text.replace(PLACEHOLDER, (match: string, name: string): string => (Object.hasOwn(params, name) ? String(params[name]) : match));
 }
 
 /** Подпись админки с подстановками. */
-export function adminLabel(key: TAdminLabelKey, params?: RtKitLabelParams): string {
+export function adminLabel(key: TAdminLabelKey, params?: TRtKitLabelParams): string {
     return fill(ADMIN_LABELS[key], params);
 }
 
@@ -182,7 +178,7 @@ export function adminLabel(key: TAdminLabelKey, params?: RtKitLabelParams): stri
  * Ключа, которого в русском наборе нет, она не отвечает вовсе — кит берёт своё английское
  * умолчание. Пустая строка тут и означает «ответа нет»: так договорился сам кит.
  */
-export function rtKitLabelsRu(key: RtKitLabelKey, params?: RtKitLabelParams): string {
+export function rtKitLabelsRu(key: TRtKitLabelKey, params?: TRtKitLabelParams): string {
     const found: string | undefined = RT_KIT_LABELS_RU[key];
 
     return found === undefined ? '' : fill(found, params);

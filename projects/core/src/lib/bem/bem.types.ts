@@ -1,4 +1,4 @@
-export type IModsObject = Record<string, unknown>;
+export type TModsObject = Record<string, unknown>;
 
 export interface IBemConfig {
     separators: {
@@ -9,3 +9,6 @@ export interface IBemConfig {
     ignoreValues?: boolean;
     modCase?: string;
 }
+
+/** Как модификаторы приходят снаружи: строкой, списком строк, списком с выключенными или объектом. */
+export type TModsInput = string | string[] | (string | false)[] | TModsObject;

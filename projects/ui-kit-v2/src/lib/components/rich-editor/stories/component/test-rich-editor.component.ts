@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { RtRichEditorComponent } from '../../rt-rich-editor.component';
-import { IRtRichEditorToolbar } from '../../rt-rich-editor.component';
+import { TRtRichEditorToolbar } from '../../rt-rich-editor.component';
 
 /**
  * Демонстрационная обёртка для витрины: держит изменяемое состояние, на которое
@@ -21,5 +21,5 @@ import { IRtRichEditorToolbar } from '../../rt-rich-editor.component';
 })
 export class TestRtRichEditorComponent {
     public placeholder: string = 'Введите значение';
-    public toolbar: IRtRichEditorToolbar = 'full';
+    public toolbar: TRtRichEditorToolbar = 'full';
 }

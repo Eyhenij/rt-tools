@@ -4,12 +4,12 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideZonelessChangeDetection, signal, Signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
-import { applicationConfig, Preview } from '@storybook/angular';
+import { applicationConfig, Preview, StoryContext, StoryFn } from '@storybook/angular';
 
 import { provideRtIDBStorage, provideRtStorage } from '@rt-tools/core';
 
 import { provideRtIcons } from '../src/lib/components/icon';
-import { provideRtKitLabels, RtKitLabelKey, RtKitLabelParams, RtKitTranslator } from '../src/lib/i18n';
+import { provideRtKitLabels, TRtKitLabelKey, TRtKitLabelParams, TRtKitTranslator } from '../src/lib/i18n';
 import { RT_KIT_LABELS_RU } from './showcase-labels.ru';
 
 /**
@@ -22,7 +22,7 @@ import { RT_KIT_LABELS_RU } from './showcase-labels.ru';
  * Русский набор лежит рядом с витриной, а не в пакете: потребителю кита он не
  * достаётся, и формулировки продукта кит по-прежнему не знает.
  */
-const showcaseTranslator: Signal<RtKitTranslator> = signal<RtKitTranslator>((key: RtKitLabelKey, params?: RtKitLabelParams): string => {
+const showcaseTranslator: Signal<TRtKitTranslator> = signal<TRtKitTranslator>((key: TRtKitLabelKey, params?: TRtKitLabelParams): string => {
     const text: string | undefined = RT_KIT_LABELS_RU[key];
     if (text === undefined) {
         return '';
@@ -48,7 +48,7 @@ registerLocaleData(localeRu);
  * `ThemeService` в приложении. Переключатель Storybook пишет туда же, поэтому
  * витрина показывает ровно то, что увидит потребитель, а не свою имитацию.
  */
-const applyTheme = (theme: string): void => {
+const applyTheme: (theme: string) => void = (theme: string): void => {
     document.documentElement.dataset['theme'] = theme === 'dark' ? 'dark' : 'light';
 };
 
@@ -68,7 +68,7 @@ const preview: Preview = {
                 provideRtKitLabels({ translator: showcaseTranslator, locale: signal<string>('ru') }),
             ],
         }),
-        (story, context) => {
+        (story: StoryFn, context: StoryContext): ReturnType<StoryFn> => {
             applyTheme(String(context.globals['theme'] ?? 'light'));
 
             return story();

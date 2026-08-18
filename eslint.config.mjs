@@ -266,7 +266,9 @@ export default [
     baseTemplateConfig,
     {
         files: ['**/*.html'],
-        ignores: ['**/apps/*/src/index.html'],
+        // Разметка витрины не является шаблоном Angular: `preview-head.html` — фрагмент головы
+        // страницы, и разбор шаблонов на нём отказывает на первом же объявлении типа документа.
+        ignores: ['**/apps/*/src/index.html', '**/.storybook/*.html'],
         plugins: {
             '@angular-eslint/template': ngTemplate,
             '@nx': nx,

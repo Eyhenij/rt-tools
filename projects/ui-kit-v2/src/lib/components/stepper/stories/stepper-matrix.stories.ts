@@ -15,14 +15,14 @@ export default {
     },
 } as Meta<TestRtStepperMatrixComponent>;
 
-type Story = StoryObj<TestRtStepperMatrixComponent>;
+type TStory = StoryObj<TestRtStepperMatrixComponent>;
 
-export const Position: Story = { args: { part: 'position' } };
+export const Position: TStory = { args: { part: 'position' } };
 
-export const Length: Story = { args: { part: 'length' } };
+export const Length: TStory = { args: { part: 'length' } };
 
-export const Description: Story = { args: { part: 'description' } };
+export const Description: TStory = { args: { part: 'description' } };
 
-export const Edges: Story = { args: { part: 'edges' } };
+export const Edges: TStory = { args: { part: 'edges' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

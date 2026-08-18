@@ -2,17 +2,17 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
-import { CATEGORY_ORDER, categoryOf, IIconCategory } from '../../icon-categories';
+import { CATEGORY_ORDER, categoryOf, TIconCategory } from '../../icon-categories';
 import { iconsName } from '../../rt-icon-names';
 import { RtIconComponent } from '../../rt-icon.component';
 import { IRtIcon } from '../../rt-icon.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type IconMatrixPart = 'catalog' | 'size' | 'color' | 'rotate' | 'themes';
+export type TIconMatrixPart = 'catalog' | 'size' | 'color' | 'rotate' | 'themes';
 
 /** Категория набора со своими именами — строка каталога. */
 interface IIconCategoryGroup {
-    readonly category: IIconCategory;
+    readonly category: TIconCategory;
     readonly names: readonly IRtIcon.Name[];
 }
 
@@ -98,14 +98,14 @@ interface IIconCategoryGroup {
     ],
 })
 export class TestRtIconMatrixComponent {
-    public part: IconMatrixPart = 'catalog';
+    public part: TIconMatrixPart = 'catalog';
 
     public readonly sizes: readonly IRtIcon.Size[] = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
     public readonly colors: readonly IRtIcon.Color[] = ['current', 'muted', 'info', 'success', 'warning', 'danger', 'inverse'];
     public readonly rotations: readonly (number | null)[] = [null, 90, 180, 270];
 
     /** Весь набор, разложенный по категориям в порядке `CATEGORY_ORDER`. */
-    public readonly catalog: readonly IIconCategoryGroup[] = CATEGORY_ORDER.map((category: IIconCategory): IIconCategoryGroup => ({
+    public readonly catalog: readonly IIconCategoryGroup[] = CATEGORY_ORDER.map((category: TIconCategory): IIconCategoryGroup => ({
         category,
         names: iconsName.filter((name: IRtIcon.Name): boolean => categoryOf(name) === category),
     })).filter((group: IIconCategoryGroup): boolean => group.names.length > 0);

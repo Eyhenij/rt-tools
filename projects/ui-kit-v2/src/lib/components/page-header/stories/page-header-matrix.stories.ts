@@ -20,22 +20,22 @@ export default {
     },
 } as Meta<TestRtPageHeaderMatrixComponent>;
 
-type Story = StoryObj<TestRtPageHeaderMatrixComponent>;
+type TStory = StoryObj<TestRtPageHeaderMatrixComponent>;
 
 /** Виды пунктов: плоские ссылки против раздела с панелью второго уровня. */
-export const Items: Story = { args: { part: 'items' } };
+export const Items: TStory = { args: { part: 'items' } };
 
 /** Блок пользователя справа: без него, с инициалом, без инициала. */
-export const User: Story = { args: { part: 'user' } };
+export const User: TStory = { args: { part: 'user' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };
 
 /**
  * Раскрытая панель второго уровня. Открывает её `play`-функция наведением: раздел с панелью
  * раскрывается по наведению, а до него панели в документе нет вовсе. Триггер здесь — не первая
  * кнопка полосы, поэтому аддону передан спуск до неё.
  */
-export const Panel: Story = {
+export const Panel: TStory = {
     parameters: { snapshot: { fullPage: true } },
     args: { part: 'panel' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {

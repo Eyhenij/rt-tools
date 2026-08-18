@@ -47,14 +47,14 @@ export const DEFAULT_PAGE_SIZE: number = 20;
 решает вызывающий.
 
 ```typescript
-const operator: FilterOperatorType | null = listFilterOperatorOf(filter.operatorType);
+const operator: TFilterOperatorType | null = listFilterOperatorOf(filter.operatorType);
 if (!operator) {
     throw new ConnectError(`filter operator is required: ${filter.propertyName}`, Code.InvalidArgument);
 }
 ```
 
 ```typescript
-const direction: ListSortOrderType = listSortOrderOf(rawDirection) ?? LIST_SORT_ORDER_ENUM.ASC;
+const direction: TListSortOrderType = listSortOrderOf(rawDirection) ?? EListSortOrder.ASC;
 ```
 
 Сервер отбивает запрос, экран берёт умолчание. Общий маппер здесь не годится: он подал бы

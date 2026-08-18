@@ -2,7 +2,7 @@ import { inject, ChangeDetectionStrategy, Component, Signal, ViewEncapsulation }
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RtKitLabelMap } from '../../i18n';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
 import { RtButtonDirective } from '../button/rt-button.directive';
 import { RtDialogRef } from '../dialog/rt-dialog-ref';
 import { RtDialogComponent } from '../dialog/rt-dialog.component';
@@ -39,7 +39,7 @@ const BEM_BLOCK: string = 'rt-menu-confirm-dialog';
     },
 })
 export class RtMenuConfirmDialogComponent {
-    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly data: IRtMenu.ConfirmData = inject(RT_DIALOG_DATA) as IRtMenu.ConfirmData;
 

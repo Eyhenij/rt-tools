@@ -6,7 +6,7 @@ import { RtBarListComponent } from '../../rt-bar-list.component';
 import { IRtBarList } from '../../rt-bar-list.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type BarListMatrixPart = 'share' | 'meta' | 'length' | 'empty' | 'themes';
+export type TBarListMatrixPart = 'share' | 'meta' | 'length' | 'empty' | 'themes';
 
 /** Случай списка: имя для подписи ячейки и сами строки. */
 interface IBarListCase {
@@ -31,6 +31,11 @@ const ROWS: readonly IRtBarList.Row[] = [
  *
  * В пакет не уезжает: `tsconfig.lib.json` исключает папки историй.
  */
+/** Строка без приписки: ключа `meta` в ней нет вовсе, а не пустое значение. */
+function withoutMeta(row: IRtBarList.Row): IRtBarList.Row {
+    return { id: row.id, title: row.title, value: row.value, sharePercent: row.sharePercent };
+}
+
 @Component({
     selector: 'app-bar-list-matrix',
     template: `
@@ -96,7 +101,7 @@ const ROWS: readonly IRtBarList.Row[] = [
     ],
 })
 export class TestRtBarListMatrixComponent {
-    public part: BarListMatrixPart = 'share';
+    public part: TBarListMatrixPart = 'share';
 
     public readonly rows: readonly IRtBarList.Row[] = ROWS;
     public readonly none: readonly IRtBarList.Row[] = [];
@@ -124,7 +129,7 @@ export class TestRtBarListMatrixComponent {
     /** Приписка рисуется, только когда передана. */
     public readonly metas: readonly IBarListCase[] = [
         { name: 'с припиской', rows: ROWS.slice(0, 2) },
-        { name: 'без приписки', rows: ROWS.slice(0, 2).map((row: IRtBarList.Row): IRtBarList.Row => ({ ...row, meta: undefined })) },
+        { name: 'без приписки', rows: ROWS.slice(0, 2).map(withoutMeta) },
         {
             name: 'длинное название',
             rows: [{ id: 'long', title: 'Заявки из отдалённых районов области', meta: '4 заявки', value: '1%', sharePercent: 1 }],

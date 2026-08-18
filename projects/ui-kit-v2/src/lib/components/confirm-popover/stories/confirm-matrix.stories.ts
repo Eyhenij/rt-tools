@@ -20,22 +20,22 @@ export default {
     },
 } as Meta<TestRtConfirmMatrixComponent>;
 
-type Story = StoryObj<TestRtConfirmMatrixComponent>;
+type TStory = StoryObj<TestRtConfirmMatrixComponent>;
 
 /** Тон подтверждающей кнопки — единственное, что окрашивает панель. */
-export const Tone: Story = { args: { part: 'tone' } };
+export const Tone: TStory = { args: { part: 'tone' } };
 
 /** Заголовок и длина вопроса. */
-export const Content: Story = { args: { part: 'content' } };
+export const Content: TStory = { args: { part: 'content' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };
 
 /**
  * Панель под кнопкой — то, ради чего директива и нужна. Открывает её `play`-функция.
  * Кнопка сдвинута вправо: панель прижата к её правому краю, и у левого края окна этого не
  * увидеть.
  */
-export const Panel: Story = {
+export const Panel: TStory = {
     parameters: { snapshot: { fullPage: true } },
     args: { part: 'panel' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {

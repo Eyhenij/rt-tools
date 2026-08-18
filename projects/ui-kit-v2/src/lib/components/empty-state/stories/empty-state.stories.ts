@@ -13,9 +13,9 @@ export default {
     },
 } as Meta<TestRtEmptyStateComponent>;
 
-type Story = StoryObj<TestRtEmptyStateComponent>;
+type TStory = StoryObj<TestRtEmptyStateComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         icon: null,

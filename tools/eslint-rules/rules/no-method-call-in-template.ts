@@ -23,8 +23,8 @@ import * as ts from 'typescript';
  */
 export const RULE_NAME: string = 'no-method-call-in-template';
 
-type IMessageIds = 'noMethodCall';
-type IOptions = [];
+type TMessageIds = 'noMethodCall';
+type TOptions = [];
 
 interface IComponentMembers {
     readonly signals: ReadonlySet<string>;
@@ -211,7 +211,7 @@ function getComponentMembers(tsPath: string): IComponentMembers {
     return members;
 }
 
-export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = ESLintUtils.RuleCreator(() => __filename)<IOptions, IMessageIds>({
+export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = ESLintUtils.RuleCreator(() => __filename)<TOptions, TMessageIds>({
     name: RULE_NAME,
     meta: {
         type: 'problem',
@@ -228,7 +228,7 @@ export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = ESLintUtils.Rule
         },
     },
     defaultOptions: [],
-    create(context: Readonly<TSESLint.RuleContext<IMessageIds, IOptions>>): TSESLint.RuleListener {
+    create(context: Readonly<TSESLint.RuleContext<TMessageIds, TOptions>>): TSESLint.RuleListener {
         const tsPath: string | null = resolveSiblingTsPath(context.filename);
         if (!tsPath) {
             return {};

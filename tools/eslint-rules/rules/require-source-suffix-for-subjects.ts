@@ -26,8 +26,8 @@ const SUBJECT_CONSTRUCTORS: ReadonlySet<string> = new Set(['Subject', 'BehaviorS
 
 const REQUIRED_SUFFIX: string = 'Source';
 
-type IMessageIds = 'missingSourceSuffix';
-type IOptions = [];
+type TMessageIds = 'missingSourceSuffix';
+type TOptions = [];
 
 function getPropertyName(prop: TSESTree.PropertyDefinition): string | null {
     const key: TSESTree.Node = prop.key;
@@ -51,7 +51,7 @@ function isSubjectInitializer(node: TSESTree.Node | null | undefined): boolean {
     return SUBJECT_CONSTRUCTORS.has(callee.name);
 }
 
-export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = ESLintUtils.RuleCreator(() => __filename)<IOptions, IMessageIds>({
+export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = ESLintUtils.RuleCreator(() => __filename)<TOptions, TMessageIds>({
     name: RULE_NAME,
     meta: {
         type: 'problem',
@@ -71,7 +71,7 @@ export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = ESLintUtils.Rule
         },
     },
     defaultOptions: [],
-    create(context: Readonly<TSESLint.RuleContext<IMessageIds, IOptions>>): TSESLint.RuleListener {
+    create(context: Readonly<TSESLint.RuleContext<TMessageIds, TOptions>>): TSESLint.RuleListener {
         return {
             PropertyDefinition(node: TSESTree.PropertyDefinition): void {
                 if (!isSubjectInitializer(node.value)) {

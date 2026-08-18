@@ -34,7 +34,7 @@ describe('RtuiButtonComponent', () => {
 
     /** Ветка Material рисует свою кнопку — она элемент блока, и класс лежит на ней. */
     function controlClasses(fixture: ComponentFixture<RtuiButtonComponent>): DOMTokenList {
-        return (fixture.nativeElement as HTMLElement).querySelector('button')!.classList;
+        return ((fixture.nativeElement as HTMLElement).querySelector('button') as HTMLButtonElement).classList;
     }
 
     function matButton(fixture: ComponentFixture<RtuiButtonComponent>): MatButton | undefined {
@@ -113,7 +113,7 @@ describe('RtuiButtonComponent', () => {
             const fixture: ComponentFixture<ProjectionHostComponent> = TestBed.createComponent(ProjectionHostComponent);
             fixture.detectChanges();
 
-            const button: HTMLButtonElement = (fixture.nativeElement as HTMLElement).querySelector('button')!;
+            const button: HTMLButtonElement = (fixture.nativeElement as HTMLElement).querySelector('button') as HTMLButtonElement;
             expect(button.textContent).toContain('Projected label');
         }
     });

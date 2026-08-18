@@ -15,9 +15,9 @@ export default {
     },
 } as Meta<TestRtRichEditorComponent>;
 
-type Story = StoryObj<TestRtRichEditorComponent>;
+type TStory = StoryObj<TestRtRichEditorComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         placeholder: 'Введите значение',

@@ -7,7 +7,7 @@ import { IRtFilterControl } from '../../rt-filter-control.model';
 import { RtFilterControlComponent } from '../../rt-filter-control.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type FilterControlMatrixPart = 'size' | 'options' | 'value' | 'fullWidth' | 'narrow' | 'states' | 'themes';
+export type TFilterControlMatrixPart = 'size' | 'options' | 'value' | 'fullWidth' | 'narrow' | 'states' | 'themes';
 
 /** Набор вариантов фильтра: с иконками и без, короткий и длинный. */
 interface IFilterOptionsCase {
@@ -117,7 +117,7 @@ const VIEW: ReadonlyArray<IRtFilterControl.Option> = [
     ],
 })
 export class TestRtFilterControlMatrixComponent {
-    public part: FilterControlMatrixPart = 'size';
+    public part: TFilterControlMatrixPart = 'size';
 
     public readonly controlWidth: string = STORY_FIELD_WIDTH_WIDE;
     public readonly sizes: readonly IRtFilterControl.Size[] = ['sm', 'md', 'lg'];

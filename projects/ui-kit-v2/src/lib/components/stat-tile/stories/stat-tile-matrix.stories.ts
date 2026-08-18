@@ -15,12 +15,12 @@ export default {
     },
 } as Meta<TestRtStatTileMatrixComponent>;
 
-type Story = StoryObj<TestRtStatTileMatrixComponent>;
+type TStory = StoryObj<TestRtStatTileMatrixComponent>;
 
-export const Delta: Story = { args: { part: 'delta' } };
+export const Delta: TStory = { args: { part: 'delta' } };
 
-export const Baseline: Story = { args: { part: 'baseline' } };
+export const Baseline: TStory = { args: { part: 'baseline' } };
 
-export const Parts: Story = { args: { part: 'parts' } };
+export const Parts: TStory = { args: { part: 'parts' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

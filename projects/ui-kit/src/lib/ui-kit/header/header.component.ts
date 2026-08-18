@@ -21,7 +21,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatToolbar } from '@angular/material/toolbar';
 
 import { BlockDirective, BreakpointService, ElemDirective } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 import { RtuiToolbarCenterDirective, RtuiToolbarComponent, RtuiToolbarLeftDirective, RtuiToolbarRightDirective } from '../toolbar';
 
 @Directive({
@@ -71,6 +71,7 @@ export class RtuiHeaderComponent {
     readonly #breakpoints: BreakpointService = inject(BreakpointService);
 
     /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
     protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
     /**
      * Признак узкого экрана.
@@ -78,27 +79,28 @@ export class RtuiHeaderComponent {
      * @deprecated Кит определяет его сам — `BreakpointService` из `@rt-tools/core`. Вход
      * оставлен ради приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
      */
-    public isMobile: InputSignal<INullable<boolean>> = input<INullable<boolean>>(null);
-    public isMobileMenuButtonShown: InputSignalWithTransform<INullable<boolean>, INullable<boolean>> = input<
-        INullable<boolean>,
-        INullable<boolean>
+    public isMobile: InputSignal<TNullable<boolean>> = input<TNullable<boolean>>(null);
+    public isMobileMenuButtonShown: InputSignalWithTransform<TNullable<boolean>, TNullable<boolean>> = input<
+        TNullable<boolean>,
+        TNullable<boolean>
     >(true, {
         transform: booleanAttribute,
     });
 
-    public readonly leftHeaderTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiHeaderLeftDirective, {
+    public readonly leftHeaderTpl: Signal<TNullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiHeaderLeftDirective, {
         read: TemplateRef,
     });
-    public readonly centerHeaderTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiHeaderCenterDirective, {
+    public readonly centerHeaderTpl: Signal<TNullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiHeaderCenterDirective, {
         read: TemplateRef,
     });
-    public readonly rightHeaderTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiHeaderRightDirective, {
+    public readonly rightHeaderTpl: Signal<TNullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiHeaderRightDirective, {
         read: TemplateRef,
     });
 
     public readonly openMobileMenuAction: OutputEmitterRef<void> = output<void>();
 
     public openSideMenu(): void {
+        // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
         if (this.isMobile() && this.isMobileMenuButtonShown()) {
             this.openMobileMenuAction.emit();
         }

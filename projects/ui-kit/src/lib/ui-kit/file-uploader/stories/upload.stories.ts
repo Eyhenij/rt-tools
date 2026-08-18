@@ -1,3 +1,4 @@
+// eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
@@ -8,13 +9,14 @@ export default {
     component: TestFileUploadComponent,
     decorators: [
         applicationConfig({
+            // eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
             providers: [provideAnimations()],
         }),
     ],
 } as Meta<TestFileUploadComponent>;
 
-type Story = StoryObj<TestFileUploadComponent>;
+type TStory = StoryObj<TestFileUploadComponent>;
 
-export const FileUpload: Story = {
+export const FileUpload: TStory = {
     args: {},
 };

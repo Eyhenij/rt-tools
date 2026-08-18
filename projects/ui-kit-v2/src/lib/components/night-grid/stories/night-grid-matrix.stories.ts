@@ -16,18 +16,18 @@ export default {
     },
 } as Meta<TestRtNightGridMatrixComponent>;
 
-type Story = StoryObj<TestRtNightGridMatrixComponent>;
+type TStory = StoryObj<TestRtNightGridMatrixComponent>;
 
-export const State: Story = { args: { part: 'state' } };
+export const State: TStory = { args: { part: 'state' } };
 
-export const Length: Story = { args: { part: 'length' } };
+export const Length: TStory = { args: { part: 'length' } };
 
 /** Наведение и фокус стилизованы у самой клетки — аддон псевдосостояний получает спуск до неё. */
-export const States: Story = {
+export const States: TStory = {
     args: { part: 'states' },
     parameters: { pseudo: storyPseudoParameters('button') },
 };
 
-export const Edges: Story = { args: { part: 'edges' } };
+export const Edges: TStory = { args: { part: 'edges' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

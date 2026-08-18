@@ -7,7 +7,7 @@ import { RtThreadListRowDirective } from '../../rt-thread-list.directives';
 import { IRtThreadList } from '../../rt-thread-list.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type ThreadListMatrixPart = 'rowState' | 'loading' | 'more' | 'empty' | 'themes';
+export type TThreadListMatrixPart = 'rowState' | 'loading' | 'more' | 'empty' | 'themes';
 
 /** Строка списка витрины: к обязательным полям добавлены подпись и приписка. */
 interface IThreadRow extends IRtThreadList.Row {
@@ -137,7 +137,7 @@ const ROWS: readonly IThreadRow[] = [
     ],
 })
 export class TestRtThreadListMatrixComponent {
-    public part: ThreadListMatrixPart = 'rowState';
+    public part: TThreadListMatrixPart = 'rowState';
 
     public readonly rows: readonly IThreadRow[] = ROWS;
     public readonly none: readonly IThreadRow[] = [];

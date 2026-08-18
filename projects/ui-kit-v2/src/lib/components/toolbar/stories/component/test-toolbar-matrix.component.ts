@@ -6,7 +6,7 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtToolbarCenterDirective, RtToolbarComponent, RtToolbarLeftDirective, RtToolbarRightDirective } from '../../rt-toolbar.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type ToolbarMatrixPart = 'slots' | 'fill' | 'dense' | 'themes';
+export type TToolbarMatrixPart = 'slots' | 'fill' | 'dense' | 'themes';
 
 /**
  * Матрицы состояний `rt-toolbar` для витрины.
@@ -166,7 +166,7 @@ export type ToolbarMatrixPart = 'slots' | 'fill' | 'dense' | 'themes';
     ],
 })
 export class TestRtToolbarMatrixComponent {
-    public part: ToolbarMatrixPart = 'slots';
+    public part: TToolbarMatrixPart = 'slots';
 
     public readonly slotCases: readonly string[] = ['ни одного — панели нет', 'только левый', 'левый и правый', 'все три'];
     public readonly fillCases: readonly string[] = ['по кнопке', 'несколько кнопок', 'длинный текст в центре'];

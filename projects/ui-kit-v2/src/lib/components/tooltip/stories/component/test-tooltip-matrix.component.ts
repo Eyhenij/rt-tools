@@ -10,7 +10,7 @@ import { RtTooltipDirective } from '../../rt-tooltip.directive';
 import { IRtTooltip } from '../../rt-tooltip.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TooltipMatrixPart = 'placement' | 'text' | 'hosts' | 'themes';
+export type TTooltipMatrixPart = 'placement' | 'text' | 'hosts' | 'themes';
 
 /** Сторона вместе с подписью: значение оси — строка, а подпись должна называть её по-русски. */
 interface ITooltipPlacementCase {
@@ -153,7 +153,7 @@ export class TestRtTooltipMatrixComponent implements AfterViewInit {
     /** Панели светло-тёмной пары: текст им ставится сигналом, входа у панели нет. */
     protected readonly panels: Signal<readonly RtTooltipComponent[]> = viewChildren(RtTooltipComponent);
 
-    public part: TooltipMatrixPart = 'placement';
+    public part: TTooltipMatrixPart = 'placement';
 
     public readonly triggerAttribute: string = STORY_TRIGGER_ATTRIBUTE;
 

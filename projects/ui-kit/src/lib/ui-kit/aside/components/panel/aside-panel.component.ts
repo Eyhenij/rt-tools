@@ -1,12 +1,25 @@
+/* eslint-disable sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843 */
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { PortalModule } from '@angular/cdk/portal';
 import { ChangeDetectorRef, Component, HostBinding, inject, Injector, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 
 import { BlockDirective } from '@rt-tools/core';
-import { ASIDE_REF, AsidePositions, AsideRef } from '../../aside.types';
+import { ASIDE_REF, TAsidePositions, AsideRef } from '../../aside.types';
 
 const BEM_BLOCK: string = 'rtui-aside-panel';
+
+/** Время и кривая выезда шторки — одни на обе стороны. */
+const SLIDE_TIMING: string = '200ms ease-in';
+
+/** Шторка убрана за левую кромку экрана. */
+const OFF_SCREEN_LEFT: string = 'translateX(-100%)';
+
+/** Шторка убрана за правую кромку экрана. */
+const OFF_SCREEN_RIGHT: string = 'translateX(100%)';
+
+/** Шторка на своём месте. */
+const ON_SCREEN: string = 'translateX(0%)';
 
 @Component({
     selector: 'rtui-aside-panel',
@@ -19,17 +32,14 @@ const BEM_BLOCK: string = 'rtui-aside-panel';
     animations: [
         trigger('aside', [
             state('enter-left', style({ transform: 'none' })),
-            transition('* => enter-left', [
-                style({ transform: 'translateX(-100%)' }),
-                animate('200ms ease-in', style({ transform: 'translateX(0%)' })),
-            ]),
-            transition('enter-left => *', animate('200ms ease-in', style({ transform: 'translateX(-100%)' }))),
+            transition('* => enter-left', [style({ transform: OFF_SCREEN_LEFT }), animate(SLIDE_TIMING, style({ transform: ON_SCREEN }))]),
+            transition('enter-left => *', animate(SLIDE_TIMING, style({ transform: OFF_SCREEN_LEFT }))),
             state('enter-right', style({ transform: 'none' })),
             transition('* => enter-right', [
-                style({ transform: 'translateX(100%)' }),
-                animate('200ms ease-in', style({ transform: 'translateX(0%)' })),
+                style({ transform: OFF_SCREEN_RIGHT }),
+                animate(SLIDE_TIMING, style({ transform: ON_SCREEN })),
             ]),
-            transition('enter-right => *', animate('200ms ease-in', style({ transform: 'translateX(100%)' }))),
+            transition('enter-right => *', animate(SLIDE_TIMING, style({ transform: OFF_SCREEN_RIGHT }))),
         ]),
     ],
 })
@@ -40,7 +50,7 @@ export class RtuiAsidePanelComponent {
     @HostBinding('@aside') protected _state: string = `enter-${this.#asideRef.position}`;
 
     public portal: ComponentPortal<unknown> = this.#createPortal(this.#asideRef);
-    public position: AsidePositions = this.#asideRef.position;
+    public position: TAsidePositions = this.#asideRef.position;
 
     public close(): void {
         this.#asideRef.close();

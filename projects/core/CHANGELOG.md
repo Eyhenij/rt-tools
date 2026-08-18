@@ -1,3 +1,22 @@
+## [Unreleased]
+
+### BREAKING CHANGES
+
+- **rt:core:** псевдонимы типа получили приставку `T`: в этом дереве `I` носит интерфейс, а `T` — псевдоним типа, и
+  правило линтера требует именно её. Псевдонимов под прежними именами не оставлено — у символа одно имя, и переход
+  состоит в правке импортов. Переименовано 3:
+
+    - `IModsObject` → `TModsObject`
+    - `IPrimitive` → `TPrimitive`
+    - `StorageType` → `TStorageType`
+
+- **rt:core:** перечисления получили приставку `E` и имя в PascalCase: приставка рода в этом дереве одна на все
+  объявления, и правило линтера требует её у перечисления так же, как у интерфейса и псевдонима типа. Значения внутри
+  перечислений не тронуты. Переименовано 2:
+
+    - `POSITION_ENUM` → `EPosition`
+    - `STORAGE_TYPES_ENUM` → `EStorageTypes`
+
 ## [0.3.1](https://github.com/Eyhenij/rt-tools/compare/rt-core@0.3.0...rt-core@0.3.1) (2026-08-02)
 
 # [0.3.0](https://github.com/Eyhenij/rt-tools/compare/rt-core@0.2.0...rt-core@0.3.0) (2026-08-02)

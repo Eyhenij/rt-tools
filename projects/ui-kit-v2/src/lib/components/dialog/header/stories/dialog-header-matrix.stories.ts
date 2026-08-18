@@ -15,10 +15,10 @@ export default {
     },
 } as Meta<TestRtDialogHeaderMatrixComponent>;
 
-type Story = StoryObj<TestRtDialogHeaderMatrixComponent>;
+type TStory = StoryObj<TestRtDialogHeaderMatrixComponent>;
 
-export const Closable: Story = { args: { part: 'closable' } };
+export const Closable: TStory = { args: { part: 'closable' } };
 
-export const Title: Story = { args: { part: 'title' } };
+export const Title: TStory = { args: { part: 'title' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

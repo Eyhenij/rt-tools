@@ -15,14 +15,14 @@ export default {
     },
 } as Meta<TestRtTimelineMatrixComponent>;
 
-type Story = StoryObj<TestRtTimelineMatrixComponent>;
+type TStory = StoryObj<TestRtTimelineMatrixComponent>;
 
-export const Status: Story = { args: { part: 'status' } };
+export const Status: TStory = { args: { part: 'status' } };
 
-export const Fields: Story = { args: { part: 'fields' } };
+export const Fields: TStory = { args: { part: 'fields' } };
 
-export const Length: Story = { args: { part: 'length' } };
+export const Length: TStory = { args: { part: 'length' } };
 
-export const Edges: Story = { args: { part: 'edges' } };
+export const Edges: TStory = { args: { part: 'edges' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

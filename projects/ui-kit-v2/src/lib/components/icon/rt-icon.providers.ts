@@ -47,6 +47,7 @@ export function provideRtIcons(baseUrl?: string): EnvironmentProviders {
             // необработанным `no elements in sequence`. Видно это там, где приложения живут
             // коротко: витрина роняла на этом по одной-две истории за заход, и причина читалась
             // как дефект обвязки снимков.
+            // eslint-disable-next-line sonarjs/no-undefined-assignment -- значение потока не читается вовсе: ждут только его завершения
             void firstValueFrom(registry.preloadAll(), { defaultValue: undefined });
         }),
     ]);

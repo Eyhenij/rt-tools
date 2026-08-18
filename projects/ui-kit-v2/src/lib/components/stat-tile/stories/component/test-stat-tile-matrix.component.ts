@@ -5,8 +5,11 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtStatTileComponent } from '../../rt-stat-tile.component';
 import { IRtStatTile } from '../../rt-stat-tile.model';
 
+/** Подпись изменения — одна на все ячейки матрицы. */
+const DELTA_LABEL: string = 'к прошлой неделе';
+
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type StatTileMatrixPart = 'delta' | 'baseline' | 'parts' | 'themes';
+export type TStatTileMatrixPart = 'delta' | 'baseline' | 'parts' | 'themes';
 
 /** Случай изменения — подпись для ряда и само значение входа. */
 interface IStatTileDeltaCase {
@@ -87,22 +90,22 @@ interface IStatTilePartsCase {
     ],
 })
 export class TestRtStatTileMatrixComponent {
-    public part: StatTileMatrixPart = 'delta';
+    public part: TStatTileMatrixPart = 'delta';
 
-    public readonly growth: IRtStatTile.Delta = { percent: 12.5, label: 'к прошлой неделе' };
+    public readonly growth: IRtStatTile.Delta = { percent: 12.5, label: DELTA_LABEL };
 
     /** Четыре исхода знака, включая два разных «ничего»: `null` и ноль. */
     public readonly deltaCases: readonly IStatTileDeltaCase[] = [
-        { name: 'рост', delta: { percent: 12.5, label: 'к прошлой неделе' } },
-        { name: 'падение', delta: { percent: -8.4, label: 'к прошлой неделе' } },
-        { name: 'без изменений', delta: { percent: 0, label: 'к прошлой неделе' } },
-        { name: 'сравнить не с чем', delta: { percent: null, label: 'к прошлой неделе' } },
+        { name: 'рост', delta: { percent: 12.5, label: DELTA_LABEL } },
+        { name: 'падение', delta: { percent: -8.4, label: DELTA_LABEL } },
+        { name: 'без изменений', delta: { percent: 0, label: DELTA_LABEL } },
+        { name: 'сравнить не с чем', delta: { percent: null, label: DELTA_LABEL } },
         { name: 'изменения нет вовсе', delta: null },
     ];
 
     public readonly baselineCases: readonly IStatTileDeltaCase[] = [
-        { name: 'без базы', delta: { percent: 12.5, label: 'к прошлой неделе' } },
-        { name: 'с базой', delta: { percent: 12.5, label: 'к прошлой неделе', baseline: '1 100' } },
+        { name: 'без базы', delta: { percent: 12.5, label: DELTA_LABEL } },
+        { name: 'с базой', delta: { percent: 12.5, label: DELTA_LABEL, baseline: '1 100' } },
     ];
 
     public readonly partsCases: readonly IStatTilePartsCase[] = [

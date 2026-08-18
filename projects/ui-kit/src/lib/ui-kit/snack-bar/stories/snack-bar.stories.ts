@@ -1,3 +1,4 @@
+// eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
 import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { Meta, StoryObj, applicationConfig } from '@storybook/angular';
@@ -30,39 +31,40 @@ export default {
     component: TestSnackBarComponent,
     decorators: [
         applicationConfig({
+            // eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
             providers: [provideAnimations()],
         }),
     ],
 } as Meta<TestSnackBarComponent>;
 
-type Story = StoryObj<TestSnackBarComponent>;
+type TStory = StoryObj<TestSnackBarComponent>;
 
-export const SnackBarDefault: Story = {
+export const SnackBarDefault: TStory = {
     args: { ...defaultArgs },
 };
 
-export const SnackBarColored: Story = {
+export const SnackBarColored: TStory = {
     args: {
         ...defaultArgs,
         isColoredBackground: true,
     },
 };
 
-export const SnackBarWithProgressBar: Story = {
+export const SnackBarWithProgressBar: TStory = {
     args: {
         ...defaultArgs,
         isProgressBarShown: true,
     },
 };
 
-export const SnackBarWithActions: Story = {
+export const SnackBarWithActions: TStory = {
     args: {
         ...defaultArgs,
         action: 'Action button title',
     },
 };
 
-export const SnackBarWithLongTitles: Story = {
+export const SnackBarWithLongTitles: TStory = {
     args: {
         ...defaultArgs,
         defaultMessage: longMsg,
@@ -72,7 +74,7 @@ export const SnackBarWithLongTitles: Story = {
     },
 };
 
-export const SnackBarWithLongTitlesAndActions: Story = {
+export const SnackBarWithLongTitlesAndActions: TStory = {
     args: {
         ...defaultArgs,
         action: 'Action button title',

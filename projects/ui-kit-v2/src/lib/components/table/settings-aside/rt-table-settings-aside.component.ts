@@ -12,7 +12,7 @@ import {
 
 import { Observable, of } from 'rxjs';
 
-import { RT_KIT_LABELS, RtKitLabelMap } from '../../../i18n';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '../../../i18n';
 import { RtAsideFooterComponent } from '../../aside/footer/rt-aside-footer.component';
 import { RtAsideHeaderComponent } from '../../aside/header/rt-aside-header.component';
 import { RtAsideComponent } from '../../aside/rt-aside.component';
@@ -72,7 +72,7 @@ export class RtTableSettingsAsideComponent extends RtRouteAsideComponent<never> 
     });
 
     /** Рабочая копия списка колонок (сидится из регистрации, редактируется телом-панелью). */
-    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly items: WritableSignal<ReadonlyArray<IRtTable.ColumnSettingItem>> = signal<ReadonlyArray<IRtTable.ColumnSettingItem>>(
         []

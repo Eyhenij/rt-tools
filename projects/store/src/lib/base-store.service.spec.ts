@@ -3,17 +3,17 @@ import { TestBed } from '@angular/core/testing';
 
 import { BaseStoreService } from './base-store.service';
 import { DevToolsManagerService } from './services/devtools-manager.service';
-import { provideStoreDevTools } from './tokens/devtools.token';
+import { provideStoreDevTools } from './tokens/devtools.provider';
 
 interface ITestState {
     count: number;
     name: string;
 }
 
-type TestMsg = 'INCREMENT' | 'DECREMENT' | 'SET_NAME';
+type TTestMsg = 'INCREMENT' | 'DECREMENT' | 'SET_NAME';
 
 @Injectable()
-class TestStore extends BaseStoreService<ITestState, TestMsg> {
+class TestStore extends BaseStoreService<ITestState, TTestMsg> {
     constructor() {
         super({ count: 0, name: '' }, { name: 'TestStore' });
     }
@@ -186,7 +186,7 @@ describe('BaseStoreService', () => {
         });
 
         it('should emit events via dispatch', (done: jest.DoneCallback) => {
-            store.onDispatch('INCREMENT').subscribe((action: { type: TestMsg; payload?: unknown }) => {
+            store.onDispatch('INCREMENT').subscribe((action: { type: TTestMsg; payload?: unknown }) => {
                 expect(action.type).toBe('INCREMENT');
                 expect(action.payload).toBe(5);
                 done();
@@ -198,7 +198,7 @@ describe('BaseStoreService', () => {
         it('should filter events by type', (done: jest.DoneCallback) => {
             const receivedTypes: string[] = [];
 
-            store.onDispatch('SET_NAME').subscribe((action: { type: TestMsg; payload?: unknown }) => {
+            store.onDispatch('SET_NAME').subscribe((action: { type: TTestMsg; payload?: unknown }) => {
                 receivedTypes.push(action.type);
                 expect(action.type).toBe('SET_NAME');
                 done();

@@ -21,8 +21,8 @@ import { ESLintUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
  */
 export const RULE_NAME: string = 'require-suffix-declaration';
 
-type IMessageIds = 'missingDeclaration';
-type IOptions = [];
+type TMessageIds = 'missingDeclaration';
+type TOptions = [];
 
 /** Что суффикс обещает: метка, имя объявления, род объявления или вызов конструктора. */
 interface ISuffixPromise {
@@ -75,7 +75,7 @@ function suffixOf(filename: string): string {
     return at < 0 ? '' : name.slice(at + 1);
 }
 
-export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = ESLintUtils.RuleCreator(() => __filename)<IOptions, IMessageIds>({
+export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = ESLintUtils.RuleCreator(() => __filename)<TOptions, TMessageIds>({
     name: RULE_NAME,
     meta: {
         type: 'problem',
@@ -90,7 +90,7 @@ export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = ESLintUtils.Rule
         },
     },
     defaultOptions: [],
-    create(context: Readonly<TSESLint.RuleContext<IMessageIds, IOptions>>): TSESLint.RuleListener {
+    create(context: Readonly<TSESLint.RuleContext<TMessageIds, TOptions>>): TSESLint.RuleListener {
         const suffix: string = suffixOf(context.filename);
         const promise: ISuffixPromise | undefined = PROMISES[suffix];
         if (!promise) {

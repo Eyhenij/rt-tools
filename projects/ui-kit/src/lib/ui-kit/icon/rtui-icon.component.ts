@@ -20,8 +20,8 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { transformStringInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 
-export type RtuiIconSizeType = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | '3xl';
-export type RtuiIconThemeType =
+export type TRtuiIconSizeType = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | '3xl';
+export type TRtuiIconThemeType =
     'inherit' | 'primary' | 'primary-strong' | 'neutral' | 'disabled' | 'muted' | 'white' | 'danger' | 'success';
 
 const BEM_BLOCK: string = 'rtui-icon';
@@ -70,8 +70,8 @@ export class RtuiIconComponent {
         return classes.join(' ');
     });
 
-    public readonly size: InputSignal<RtuiIconSizeType> = input<RtuiIconSizeType>('md');
-    public readonly theme: InputSignal<RtuiIconThemeType> = input<RtuiIconThemeType>('inherit');
+    public readonly size: InputSignal<TRtuiIconSizeType> = input<TRtuiIconSizeType>('md');
+    public readonly theme: InputSignal<TRtuiIconThemeType> = input<TRtuiIconThemeType>('inherit');
     public readonly glyph: InputSignalWithTransform<string, unknown> = input<string, unknown>('', { transform: transformStringInput });
     public readonly outlined: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,

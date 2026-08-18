@@ -23,9 +23,9 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 
 import { BlockDirective, BreakpointService, ElemDirective } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
-import { AsideButtonsType } from '../../aside.enums';
+import { TAsideButtonsType } from '../../aside.enums';
 import { IAside } from '../../aside.interfaces';
 import {
     RtuiScrollableContainerComponent,
@@ -87,19 +87,20 @@ export class RtuiAsideContainerComponent {
     readonly #breakpoints: BreakpointService = inject(BreakpointService);
 
     /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
     protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
-    public title: InputSignal<INullable<string>> = input<INullable<string>>(null);
+    public title: InputSignal<TNullable<string>> = input<TNullable<string>>(null);
     /**
      * Признак узкого экрана.
      *
      * @deprecated Кит определяет его сам — `RtuiBreakpointsService`. Вход оставлен ради
      * приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
      */
-    public isMobile: InputSignalWithTransform<INullable<boolean>, INullable<boolean> | string> = input<
-        INullable<boolean>,
-        INullable<boolean> | string
+    public isMobile: InputSignalWithTransform<TNullable<boolean>, TNullable<boolean> | string> = input<
+        TNullable<boolean>,
+        TNullable<boolean> | string
     >(null, {
-        transform: (value: INullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
+        transform: (value: TNullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
     });
     public isSubmitButtonDisabled: InputSignalWithTransform<boolean, boolean> = input.required<boolean, boolean>({
         transform: booleanAttribute,
@@ -121,16 +122,16 @@ export class RtuiAsideContainerComponent {
         transform: (value: IAside.HeaderActionButton[]) => transformArrayInput(value),
     });
 
-    public requestError: InputSignal<INullable<unknown>> = input<INullable<unknown>>(null);
+    public requestError: InputSignal<TNullable<unknown>> = input<TNullable<unknown>>(null);
     public submitButtonTitle: InputSignal<string> = input<string>('Save');
     public cancelButtonTitle: InputSignal<string> = input<string>('Discard Changes');
     public submitButtonTooltip: InputSignal<string> = input<string>('');
 
     public readonly submitAction: OutputEmitterRef<void> = output<void>();
     public readonly cancelAction: OutputEmitterRef<void> = output<void>();
-    public readonly headerAction: OutputEmitterRef<AsideButtonsType> = output<AsideButtonsType>();
+    public readonly headerAction: OutputEmitterRef<TAsideButtonsType> = output<TAsideButtonsType>();
 
-    public readonly headerTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiAsideContainerHeaderDirective, {
+    public readonly headerTpl: Signal<TNullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiAsideContainerHeaderDirective, {
         read: TemplateRef,
     });
 
@@ -142,7 +143,7 @@ export class RtuiAsideContainerComponent {
         this.cancelAction.emit();
     }
 
-    public onHeaderActionClick(buttonName: AsideButtonsType): void {
+    public onHeaderActionClick(buttonName: TAsideButtonsType): void {
         this.headerAction.emit(buttonName);
     }
 }

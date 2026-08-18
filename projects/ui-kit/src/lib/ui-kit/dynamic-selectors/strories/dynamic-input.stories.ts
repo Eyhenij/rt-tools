@@ -1,3 +1,4 @@
+// eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
@@ -8,15 +9,16 @@ export default {
     component: TestDynamicInputComponent,
     decorators: [
         applicationConfig({
+            // eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
             providers: [provideAnimations()],
         }),
     ],
     argTypes: {},
 } as Meta<TestDynamicInputComponent>;
 
-type Story = StoryObj<TestDynamicInputComponent>;
+type TStory = StoryObj<TestDynamicInputComponent>;
 
-export const Input: Story = {
+export const Input: TStory = {
     args: {
         isMobile: false,
         isSingleSelection: false,
@@ -25,7 +27,7 @@ export const Input: Story = {
     },
 };
 
-export const InputWithAdditional: Story = {
+export const InputWithAdditional: TStory = {
     args: {
         isMobile: false,
         isSingleSelection: false,
@@ -34,7 +36,7 @@ export const InputWithAdditional: Story = {
     },
 };
 
-export const InputEditable: Story = {
+export const InputEditable: TStory = {
     args: {
         isMobile: false,
         isSingleSelection: false,

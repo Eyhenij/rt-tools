@@ -15,16 +15,16 @@ export default {
     },
 } as Meta<TestRtTagMatrixComponent>;
 
-type Story = StoryObj<TestRtTagMatrixComponent>;
+type TStory = StoryObj<TestRtTagMatrixComponent>;
 
-export const Severity: Story = { args: { part: 'severity' } };
+export const Severity: TStory = { args: { part: 'severity' } };
 
-export const Shape: Story = { args: { part: 'shape' } };
+export const Shape: TStory = { args: { part: 'shape' } };
 
-export const Radius: Story = { args: { part: 'radius' } };
+export const Radius: TStory = { args: { part: 'radius' } };
 
-export const Icon: Story = { args: { part: 'icon' } };
+export const Icon: TStory = { args: { part: 'icon' } };
 
-export const Closable: Story = { args: { part: 'closable' } };
+export const Closable: TStory = { args: { part: 'closable' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

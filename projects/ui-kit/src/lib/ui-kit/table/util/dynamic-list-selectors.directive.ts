@@ -16,6 +16,10 @@ import {
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { filter, switchMap, take } from 'rxjs/operators';
 
+import { TNullable } from '@rt-tools/utils';
+
+import { RtuiTableContainerComponent } from '../components/table-container/table-container.component';
+import { RtuiTableComponent } from '../components/table/rtui-table.component';
 import { RtuiDynamicListComponent } from '../dynamic-list.component';
 import { RtCommonSelectorsDirective } from './common-selectors.directive';
 
@@ -62,13 +66,13 @@ export class RtDynamicListSelectorsDirective<
     /** List of excluded entities */
     public readonly excludedEntities: Signal<ENTITY_TYPE[]> = this.#excludedEntities.asReadonly();
     /** List of selected entities ids */
-    public readonly selectedEntitiesIds: Signal<ENTITY_TYPE[KEY][]> = computed(() => {
-        return this.selectedEntities().map((el: ENTITY_TYPE) => el[this.keyExp()]);
-    });
+    public readonly selectedEntitiesIds: Signal<ENTITY_TYPE[KEY][]> = computed(() =>
+        this.selectedEntities().map((el: ENTITY_TYPE) => el[this.keyExp()])
+    );
     /** List of excluded entities ids */
-    public readonly excludedEntitiesIds: Signal<ENTITY_TYPE[KEY][]> = computed(() => {
-        return this.excludedEntities().map((el: ENTITY_TYPE) => el[this.keyExp()]);
-    });
+    public readonly excludedEntitiesIds: Signal<ENTITY_TYPE[KEY][]> = computed(() =>
+        this.excludedEntities().map((el: ENTITY_TYPE) => el[this.keyExp()])
+    );
     /** Indicates is 'Select All' checkbox selected */
     public readonly isAllEntitiesSelected: Signal<boolean> = this.#isAllEntitiesSelected.asReadonly();
     /** Indicates is all page entities checkbox selected */
@@ -89,11 +93,11 @@ export class RtDynamicListSelectorsDirective<
                 this.entities.set(list);
 
                 if (this.isMultiSelectExtendedModEnabled()) {
-                    this.#selectedEntities.update((selected: ENTITY_TYPE[]) => {
-                        return this.addPageEntitiesToListExcludeDuplicates(selected).filter(
+                    this.#selectedEntities.update((selected: ENTITY_TYPE[]) =>
+                        this.addPageEntitiesToListExcludeDuplicates(selected).filter(
                             (el: ENTITY_TYPE) => !this.excludedEntitiesIds().includes(el[this.keyExp()])
-                        );
-                    });
+                        )
+                    );
                     this.#isAllEntitiesSelected.set(!this.excludedEntities().length);
                 }
 
@@ -139,9 +143,10 @@ export class RtDynamicListSelectorsDirective<
         effect(
             () => {
                 /** Set 'onToggleAllEntities' method in TableContainerComponent  */
-                if (this.#dynamicListRef.tableContainerTpl()?.onToggleAllEntities) {
-                    this.#dynamicListRef.tableContainerTpl()!.onToggleAllEntities = (checked: boolean): void =>
-                        this.toggleAllEntities(checked);
+                const containerTpl: TNullable<RtuiTableContainerComponent<ENTITY_TYPE>> = this.#dynamicListRef.tableContainerTpl();
+
+                if (containerTpl?.onToggleAllEntities) {
+                    containerTpl.onToggleAllEntities = (checked: boolean): void => this.toggleAllEntities(checked);
                 }
             },
             { injector: this.#injector }
@@ -197,13 +202,12 @@ export class RtDynamicListSelectorsDirective<
         effect(
             () => {
                 /** Set 'onToggleExistingEntities' and 'onToggleEntity' methods and 'isSelectorsColumnShown' indicator state in TableComponent  */
-                if (this.#dynamicListRef.tableTpl()) {
-                    this.#dynamicListRef.tableTpl()?.isSelectorsColumnShown.set(true);
+                const tableTpl: TNullable<RtuiTableComponent<ENTITY_TYPE, SORT_PROPERTY, KEY>> = this.#dynamicListRef.tableTpl();
 
-                    this.#dynamicListRef.tableTpl()!.onToggleEntity = (entity: ENTITY_TYPE, checked: boolean): void =>
-                        this.toggleEntity(entity, checked);
-
-                    this.#dynamicListRef.tableTpl()!.onTogglePageEntities = (checked: boolean): void => this.togglePageEntities(checked);
+                if (tableTpl) {
+                    tableTpl.isSelectorsColumnShown.set(true);
+                    tableTpl.onToggleEntity = (entity: ENTITY_TYPE, checked: boolean): void => this.toggleEntity(entity, checked);
+                    tableTpl.onTogglePageEntities = (checked: boolean): void => this.togglePageEntities(checked);
                 }
             },
             { injector: this.#injector }

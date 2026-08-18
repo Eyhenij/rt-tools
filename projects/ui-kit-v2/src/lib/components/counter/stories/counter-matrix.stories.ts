@@ -18,12 +18,12 @@ export default {
     },
 } as Meta<TestRtCounterMatrixComponent>;
 
-type Story = StoryObj<TestRtCounterMatrixComponent>;
+type TStory = StoryObj<TestRtCounterMatrixComponent>;
 
-export const Bounds: Story = { args: { part: 'bounds' } };
+export const Bounds: TStory = { args: { part: 'bounds' } };
 
-export const Value: Story = { args: { part: 'value' } };
+export const Value: TStory = { args: { part: 'value' } };
 
-export const States: Story = { args: { part: 'states' } };
+export const States: TStory = { args: { part: 'states' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

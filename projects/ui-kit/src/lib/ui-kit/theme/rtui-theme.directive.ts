@@ -1,6 +1,6 @@
 import { Directive, input, InputSignal } from '@angular/core';
 
-import { RtThemeType } from './rtui-theme.types';
+import { TRtThemeType } from './rtui-theme.types';
 
 /**
  * Local theme context (GMT `data-theme` analogue).
@@ -24,5 +24,5 @@ import { RtThemeType } from './rtui-theme.types';
     },
 })
 export class RtThemeDirective {
-    public readonly rtTheme: InputSignal<RtThemeType | ''> = input<RtThemeType | ''>('');
+    public readonly rtTheme: InputSignal<TRtThemeType | ''> = input<TRtThemeType | ''>('');
 }

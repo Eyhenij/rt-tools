@@ -23,12 +23,12 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RtKitLabelMap, rtKitLabel } from '../../i18n';
+import { RT_KIT_LABELS, TRtKitLabelMap, rtKitLabel } from '../../i18n';
 import { IQuillDelta } from '../../util';
 
 import { RtFileCardComponent } from '../file-card/rt-file-card.component';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
-import { RtRichEditorComponent, IRtRichEditorToolbar } from '../rich-editor/rt-rich-editor.component';
+import { RtRichEditorComponent, TRtRichEditorToolbar } from '../rich-editor/rt-rich-editor.component';
 import { IRtMessageComposer } from './rt-message-composer.model';
 
 const BEM_BLOCK: string = 'rt-message-composer';
@@ -76,7 +76,7 @@ export class RtMessageComposerComponent {
 
     readonly #t_chatPlaceholder: Signal<string> = rtKitLabel('chatPlaceholder');
 
-    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly placeholderText: Signal<string> = computed((): string => this.placeholder() || this.#t_chatPlaceholder());
 
@@ -131,7 +131,7 @@ export class RtMessageComposerComponent {
     });
 
     /** Набор кнопок rich-редактора (проброс в `rt-rich-editor`). */
-    public readonly toolbar: InputSignal<IRtRichEditorToolbar> = input<IRtRichEditorToolbar>('full');
+    public readonly toolbar: InputSignal<TRtRichEditorToolbar> = input<TRtRichEditorToolbar>('full');
 
     /** Минимальная высота textarea в строках. */
     public readonly minRows: InputSignalWithTransform<number, NumberInput> = input<number, NumberInput>(1, { transform: numberAttribute });

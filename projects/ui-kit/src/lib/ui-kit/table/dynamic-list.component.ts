@@ -19,7 +19,7 @@ import {
 } from '@angular/core';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
 
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 import { IFilterModel, IPageModel, ISortModel, transformArrayInput, transformStringInput } from '@rt-tools/utils';
 import {
     RtuiCustomTableCellsDirective,
@@ -110,8 +110,9 @@ export class RtuiDynamicListComponent<
      * @deprecated Кит определяет его сам — `BreakpointService` из `@rt-tools/core`. Вход
      * оставлен ради приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
      */
-    public isMobile: InputSignal<INullable<boolean>> = input<INullable<boolean>>(null);
+    public isMobile: InputSignal<TNullable<boolean>> = input<TNullable<boolean>>(null);
     /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
     public readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
     /** Indicates is loading in progress */
     public loading: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
@@ -151,9 +152,9 @@ export class RtuiDynamicListComponent<
     /** Current page model from store */
     public pageModel: InputSignal<IPageModel> = input.required();
     /** Current search term from store */
-    public searchTerm: InputSignal<INullable<string>> = input.required();
+    public searchTerm: InputSignal<TNullable<string>> = input.required();
     /** Current sort model from store */
-    public currentSortModel: InputSignal<INullable<ISortModel<NonNullable<KEY>>>> = input.required();
+    public currentSortModel: InputSignal<TNullable<ISortModel<NonNullable<KEY>>>> = input.required();
     /** Inputs appearance */
     public appearance: InputSignal<MatFormFieldAppearance> = input.required({
         transform: (value: MatFormFieldAppearance) => (value === 'fill' ? 'fill' : 'outline'),
@@ -177,7 +178,7 @@ export class RtuiDynamicListComponent<
     /** Page model change output action */
     public readonly pageModelChange: OutputEmitterRef<Partial<IPageModel>> = output<Partial<IPageModel>>();
     /** Search change output action */
-    public readonly searchChange: OutputEmitterRef<INullable<string>> = output<INullable<string>>();
+    public readonly searchChange: OutputEmitterRef<TNullable<string>> = output<TNullable<string>>();
     /** Refresh output action */
     public readonly refresh: OutputEmitterRef<void> = output<void>();
     /** Clear filters output action */
@@ -191,32 +192,32 @@ export class RtuiDynamicListComponent<
     public readonly filterChange: OutputEmitterRef<IFilterModel<KEY>[]> = output<IFilterModel<KEY>[]>();
 
     /** Toolbar selectors template */
-    public readonly toolbarSelectorsTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(
+    public readonly toolbarSelectorsTpl: Signal<TNullable<TemplateRef<Type<unknown>>>> = contentChild(
         RtuiDynamicListToolbarSelectorsDirective,
         {
             read: TemplateRef,
         }
     );
     /** Toolbar actions template */
-    public readonly toolbarActionsTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(
+    public readonly toolbarActionsTpl: Signal<TNullable<TemplateRef<Type<unknown>>>> = contentChild(
         RtuiDynamicListToolbarActionsDirective,
         {
             read: TemplateRef,
         }
     );
     /** Custom cells template */
-    public readonly customCellsTpl: Signal<INullable<RtuiDynamicListCustomTableCellsDirective<{ $implicit: ENTITY_TYPE }>>> = contentChild(
+    public readonly customCellsTpl: Signal<TNullable<RtuiDynamicListCustomTableCellsDirective<{ $implicit: ENTITY_TYPE }>>> = contentChild(
         RtuiDynamicListCustomTableCellsDirective
     );
     /** Row actions template */
-    public readonly rowActionsTpl: Signal<INullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>> = contentChild(
+    public readonly rowActionsTpl: Signal<TNullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>> = contentChild(
         RtuiDynamicListRowActionsDirective,
         {
             read: TemplateRef,
         }
     );
     /** Additional row actions template */
-    public readonly additionalRowActionsTpl: Signal<INullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>> = contentChild(
+    public readonly additionalRowActionsTpl: Signal<TNullable<TemplateRef<{ $implicit: ENTITY_TYPE }>>> = contentChild(
         RtuiDynamicListRowAdditionalActionsDirective,
         {
             read: TemplateRef,
@@ -224,14 +225,14 @@ export class RtuiDynamicListComponent<
     );
 
     /** Table container for selectors directive usage */
-    public readonly tableContainerTpl: Signal<INullable<RtuiTableContainerComponent<ENTITY_TYPE>>> =
+    public readonly tableContainerTpl: Signal<TNullable<RtuiTableContainerComponent<ENTITY_TYPE>>> =
         viewChild<RtuiTableContainerComponent<ENTITY_TYPE>>(RtuiTableContainerComponent);
     /** Table selector for selectors directive usage */
-    public readonly tableTpl: Signal<INullable<RtuiTableComponent<ENTITY_TYPE, SORT_PROPERTY, KEY>>> =
+    public readonly tableTpl: Signal<TNullable<RtuiTableComponent<ENTITY_TYPE, SORT_PROPERTY, KEY>>> =
         viewChild<RtuiTableComponent<ENTITY_TYPE, SORT_PROPERTY, KEY>>(RtuiTableComponent);
 
     /** Search change output action */
-    public onSearchChange(value: INullable<string>): void {
+    public onSearchChange(value: TNullable<string>): void {
         this.searchChange.emit(value);
     }
 

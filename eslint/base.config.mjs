@@ -43,7 +43,18 @@ export const baseTypeScriptConfig = {
             // Корневые скрипты и обвязка не входят ни в один tsconfig-проект — парсим их
             // дефолтным проектом.
             projectService: {
-                allowDefaultProject: ['tools/*.ts', 'tools/*.mts', 'prisma.config.ts', '*/.storybook/*.ts', '*/*/.storybook/*.ts'],
+                // Обвязка витрин уже стоит в tsconfig своего пакета, и второе объявление здесь
+                // отбивает её разбор целиком: разбор отказывает строкой о двойном включении.
+                // Страницы-обзоры второго кита, наоборот, ни в один tsconfig не входят.
+                allowDefaultProject: [
+                    'tools/*.ts',
+                    'tools/*.mts',
+                    'prisma.config.ts',
+                    '*/*/docs/*.ts',
+                    'projects/ui-kit/.storybook/main.ts',
+                    'projects/ui-kit/.storybook/test-runner.ts',
+                    'projects/ui-kit-v2/.storybook/test-runner.ts',
+                ],
             },
             tsconfigRootDir: repoRoot,
             ecmaVersion: 2022,
@@ -190,7 +201,7 @@ export const baseTypeScriptConfig = {
  */
 export const baseTemplateConfig = {
     files: ['**/*.html'],
-    ignores: ['**/apps/*/src/index.html'],
+    ignores: ['**/apps/*/src/index.html', '**/.storybook/*.html'],
     plugins: {
         '@angular-eslint/template': ngTemplate,
     },

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal, Signal, WritableSignal } from '@angular/core';
 
-import { LIST_SORT_ORDER_ENUM, ISortModel } from '@rt-tools/utils';
+import { EListSortOrder, ISortModel } from '@rt-tools/utils';
 
 import { RtTableSortHeaderComponent } from '../../rt-table-sort-header.component';
 import { IRtTable } from '../../../rt-table.model';
@@ -29,12 +29,10 @@ class StoryTable {
     public toggleSort(propertyName: string): void {
         const current: ISortModel<string> | null = this.sort();
         if (current === null || current.propertyName !== propertyName) {
-            this.sort.set({ propertyName, sortDirection: LIST_SORT_ORDER_ENUM.ASC });
+            this.sort.set({ propertyName, sortDirection: EListSortOrder.ASC });
             return;
         }
-        this.sort.set(
-            current.sortDirection === LIST_SORT_ORDER_ENUM.ASC ? { propertyName, sortDirection: LIST_SORT_ORDER_ENUM.DESC } : null
-        );
+        this.sort.set(current.sortDirection === EListSortOrder.ASC ? { propertyName, sortDirection: EListSortOrder.DESC } : null);
     }
 }
 

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
  * Abstract StorageService class for interacting with a storage system.
  * Uses Observable to handle asynchronous operations.
  */
-export interface IIDBStorageServiceInterface<T> {
+export interface IIdbStorageService<T> {
     /**
      * Retrieves a value from storage by the given key.
      * @param key - The key to retrieve the value.

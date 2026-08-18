@@ -19,9 +19,9 @@ export default {
     },
 } as Meta<TestRtToggleSwitchComponent>;
 
-type Story = StoryObj<TestRtToggleSwitchComponent>;
+type TStory = StoryObj<TestRtToggleSwitchComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         inputId: null,

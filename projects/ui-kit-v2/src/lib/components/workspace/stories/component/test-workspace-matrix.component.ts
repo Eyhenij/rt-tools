@@ -6,7 +6,7 @@ import { RtWorkspaceComponent } from '../../rt-workspace.component';
 import { RtWorkspaceAsideDirective, RtWorkspaceCenterDirective, RtWorkspaceListDirective } from '../../rt-workspace.directives';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type WorkspaceMatrixPart = 'slots' | 'active' | 'widths' | 'themes';
+export type TWorkspaceMatrixPart = 'slots' | 'active' | 'widths' | 'themes';
 
 /**
  * Матрицы состояний `rt-workspace` для витрины.
@@ -145,7 +145,7 @@ export type WorkspaceMatrixPart = 'slots' | 'active' | 'widths' | 'themes';
     ],
 })
 export class TestRtWorkspaceMatrixComponent {
-    public part: WorkspaceMatrixPart = 'slots';
+    public part: TWorkspaceMatrixPart = 'slots';
 
     public readonly slotCases: readonly string[] = ['список и центр', 'все три', 'только центр'];
     public readonly activeCases: readonly boolean[] = [false, true];

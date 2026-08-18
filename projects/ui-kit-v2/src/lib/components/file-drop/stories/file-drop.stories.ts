@@ -15,9 +15,9 @@ export default {
     },
 } as Meta<TestRtFileDropComponent>;
 
-type Story = StoryObj<TestRtFileDropComponent>;
+type TStory = StoryObj<TestRtFileDropComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         disabled: false,
@@ -34,7 +34,7 @@ export const Playground: Story = {
  * обычную область в покое — то есть ровно то же, что `Playground`. Курсор «висит» на верхней
  * трети, поэтому активна первая зона: активную выбирает координата, а не вход.
  */
-export const Zoned: Story = {
+export const Zoned: TStory = {
     parameters: { snapshot: { fullPage: true } },
     args: {
         ...Playground.args,

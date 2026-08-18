@@ -27,9 +27,9 @@ export default {
     },
 } as Meta<TestRtTagComponent>;
 
-type Story = StoryObj<TestRtTagComponent>;
+type TStory = StoryObj<TestRtTagComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         value: 'Значение',

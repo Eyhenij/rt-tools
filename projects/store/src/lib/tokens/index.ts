@@ -1,1 +1,1 @@
-export * from './devtools.token';
+export * from './devtools.provider';

@@ -24,10 +24,10 @@ export const RULE_NAME: string = 'require-interface-prefix';
 const VALID_NAME_REGEX: RegExp = /^I[A-Z][a-z]+([A-Z][a-z]+)*([0-9]+)?$/;
 const HAS_I_PREFIX_REGEX: RegExp = /^I/;
 
-type IMessageIds = 'missingPrefix' | 'invalidFormat';
-type IOptions = [];
+type TMessageIds = 'missingPrefix' | 'invalidFormat';
+type TOptions = [];
 
-export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = ESLintUtils.RuleCreator(() => __filename)<IOptions, IMessageIds>({
+export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = ESLintUtils.RuleCreator(() => __filename)<TOptions, TMessageIds>({
     name: RULE_NAME,
     meta: {
         type: 'problem',
@@ -43,7 +43,7 @@ export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = ESLintUtils.Rule
         },
     },
     defaultOptions: [],
-    create(context: Readonly<TSESLint.RuleContext<IMessageIds, IOptions>>): TSESLint.RuleListener {
+    create(context: Readonly<TSESLint.RuleContext<TMessageIds, TOptions>>): TSESLint.RuleListener {
         return {
             TSInterfaceDeclaration(node: TSESTree.TSInterfaceDeclaration): void {
                 const parent: TSESTree.Node | undefined = node.parent;

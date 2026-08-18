@@ -10,7 +10,7 @@ import { RtMenuComponent } from '../../rt-menu.component';
 import { IRtMenu } from '../../rt-menu.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type MenuMatrixPart = 'trigger' | 'states' | 'themes' | 'panel';
+export type TMenuMatrixPart = 'trigger' | 'states' | 'themes' | 'panel';
 
 /** Триггер: иконка и недоступность вместе — недоступный триггер меню не раскрывает. */
 interface IMenuTriggerCase {
@@ -113,7 +113,7 @@ interface IMenuTriggerCase {
     ],
 })
 export class TestRtMenuMatrixComponent {
-    public part: MenuMatrixPart = 'trigger';
+    public part: TMenuMatrixPart = 'trigger';
     public align: IRtMenu.Align = 'end';
 
     public readonly triggerAttribute: string = STORY_TRIGGER_ATTRIBUTE;

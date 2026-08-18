@@ -3,7 +3,7 @@ import { ComponentFixture } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { createRtFixture, hostClasses, qa, textOf } from '../../../testing/rt-kit-testing';
-import { IRtTextareaResize, RtTextareaComponent } from './rt-textarea.component';
+import { TRtTextareaResize, RtTextareaComponent } from './rt-textarea.component';
 
 @Component({
     selector: 'rt-textarea-host',
@@ -64,7 +64,7 @@ describe('RtTextareaComponent', (): void => {
             expect(field(setup()).style.resize).toBe('vertical');
         });
 
-        it.each<IRtTextareaResize>(['none', 'vertical'])('режим %s уезжает в стиль поля', (resize: IRtTextareaResize): void => {
+        it.each<TRtTextareaResize>(['none', 'vertical'])('режим %s уезжает в стиль поля', (resize: TRtTextareaResize): void => {
             expect(field(setup({ resize })).style.resize).toBe(resize);
         });
     });

@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 
-import { Person, Status } from './types';
+import { TPerson, TStatus } from './types';
 
 /**
  * Картинки строк встроены в адрес, а не берутся из сети: внешний источник отдаёт каждый раз
@@ -14,10 +14,10 @@ const sampleImage: (index: number) => string = (index: number): string =>
         <rect width="100" height="40" fill="${SAMPLE_IMAGE_COLORS[index]}"/>
     </svg>`);
 
-export const createPerson: () => Person = (): Person => {
+export const createPerson: () => TPerson = (): TPerson => {
     const gender: 'male' | 'female' = faker.number.int({ min: 0, max: 1 }) ? 'male' : 'female';
     const birthday: Date = faker.date.between({ from: '1995-01-01', to: '2018-01-01' });
-    const status: Status = faker.helpers.arrayElement(['active', 'inactive', 'invited', 'deleted']);
+    const status: TStatus = faker.helpers.arrayElement(['active', 'inactive', 'invited', 'deleted']);
 
     return {
         id: faker.number.int(),
@@ -40,4 +40,4 @@ export const createPerson: () => Person = (): Person => {
     };
 };
 
-export const createPersonList: (size: number) => Person[] = (size: number) => Array.from({ length: size }, createPerson);
+export const createPersonList: (size: number) => TPerson[] = (size: number) => Array.from({ length: size }, createPerson);

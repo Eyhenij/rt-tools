@@ -3,7 +3,7 @@ import { Observable, throwError } from 'rxjs';
 
 import { BaseStoreService } from './base-store.service';
 import { BASE_INITIAL_STATE } from './constants/base-initial-state.const';
-import { ModelStatus } from './enums/async-state-status.enum';
+import { EModelStatus } from './enums/async-state-status.enum';
 import { IBaseAsyncStoreService, ISetPropertiesConfig } from './interfaces/async-store-service.interface';
 import { IStoreConfig } from './interfaces/devtools.interface';
 import { IStateBase } from './interfaces/state-base.interface';
@@ -24,11 +24,11 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
     public readonly loading: Signal<boolean> = computed(() => this.store().loading);
     public readonly fetching: Signal<boolean> = computed(() => this.store().fetching);
     public readonly pending: Signal<boolean> = computed(() => this.loading() || this.fetching());
-    public readonly requestStatus: Signal<ModelStatus> = computed(() => this.store().requestStatus || ModelStatus.Init);
-    public readonly loadingStatus: Signal<ModelStatus> = computed(() => this.store().loadingStatus || ModelStatus.Init);
-    public readonly fetchingStatus: Signal<ModelStatus> = computed(() => this.store().fetchingStatus || ModelStatus.Init);
-    public readonly upsertStatus: Signal<ModelStatus> = computed(() => this.store().upsertStatus || ModelStatus.Init);
-    public readonly deleteStatus: Signal<ModelStatus> = computed(() => this.store().deleteStatus || ModelStatus.Init);
+    public readonly requestStatus: Signal<EModelStatus> = computed(() => this.store().requestStatus || EModelStatus.Init);
+    public readonly loadingStatus: Signal<EModelStatus> = computed(() => this.store().loadingStatus || EModelStatus.Init);
+    public readonly fetchingStatus: Signal<EModelStatus> = computed(() => this.store().fetchingStatus || EModelStatus.Init);
+    public readonly upsertStatus: Signal<EModelStatus> = computed(() => this.store().upsertStatus || EModelStatus.Init);
+    public readonly deleteStatus: Signal<EModelStatus> = computed(() => this.store().deleteStatus || EModelStatus.Init);
 
     protected constructor(initialState: STATE_TYPE, config?: IStoreConfig) {
         super(initialState, config);
@@ -68,8 +68,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
                 loading: true,
-                requestStatus: ModelStatus.Pending,
-                loadingStatus: ModelStatus.Pending,
+                requestStatus: EModelStatus.Pending,
+                loadingStatus: EModelStatus.Pending,
             }),
             'startLoading'
         );
@@ -80,8 +80,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
                 loading: false,
-                requestStatus: ModelStatus.Success,
-                loadingStatus: ModelStatus.Success,
+                requestStatus: EModelStatus.Success,
+                loadingStatus: EModelStatus.Success,
             }),
             'setLoadingSuccess'
         );
@@ -92,8 +92,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
                 loading: false,
-                requestStatus: ModelStatus.Error,
-                loadingStatus: ModelStatus.Error,
+                requestStatus: EModelStatus.Error,
+                loadingStatus: EModelStatus.Error,
             }),
             'setLoadingFailure'
         );
@@ -109,8 +109,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
                 loading: false,
-                requestStatus: ModelStatus.Error,
-                loadingStatus: ModelStatus.Error,
+                requestStatus: EModelStatus.Error,
+                loadingStatus: EModelStatus.Error,
             }),
             'setLoadingFailure'
         );
@@ -131,8 +131,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
                 fetching: true,
-                requestStatus: ModelStatus.Pending,
-                fetchingStatus: ModelStatus.Pending,
+                requestStatus: EModelStatus.Pending,
+                fetchingStatus: EModelStatus.Pending,
             }),
             'startFetching'
         );
@@ -143,8 +143,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
             (store: STATE_TYPE): STATE_TYPE => ({
                 ...store,
                 fetching: false,
-                requestStatus: ModelStatus.Success,
-                fetchingStatus: ModelStatus.Success,
+                requestStatus: EModelStatus.Success,
+                fetchingStatus: EModelStatus.Success,
             }),
             'setFetchingSuccess'
         );
@@ -155,8 +155,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
                 fetching: false,
-                requestStatus: ModelStatus.Error,
-                fetchingStatus: ModelStatus.Error,
+                requestStatus: EModelStatus.Error,
+                fetchingStatus: EModelStatus.Error,
             }),
             'setFetchingFailure'
         );
@@ -172,8 +172,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
                 fetching: false,
-                requestStatus: ModelStatus.Error,
-                fetchingStatus: ModelStatus.Error,
+                requestStatus: EModelStatus.Error,
+                fetchingStatus: EModelStatus.Error,
             }),
             'setFetchingFailure'
         );
@@ -193,8 +193,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
         this.patchState(
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
-                requestStatus: ModelStatus.Init,
-                upsertStatus: ModelStatus.Init,
+                requestStatus: EModelStatus.Init,
+                upsertStatus: EModelStatus.Init,
             }),
             'resetUpsertStatus'
         );
@@ -204,8 +204,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
         this.patchState(
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
-                requestStatus: ModelStatus.Pending,
-                upsertStatus: ModelStatus.Pending,
+                requestStatus: EModelStatus.Pending,
+                upsertStatus: EModelStatus.Pending,
             }),
             'startUpsert'
         );
@@ -215,8 +215,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
         this.patchState(
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
-                requestStatus: ModelStatus.Success,
-                upsertStatus: ModelStatus.Success,
+                requestStatus: EModelStatus.Success,
+                upsertStatus: EModelStatus.Success,
             }),
             'setUpsertSuccess'
         );
@@ -226,8 +226,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
         this.patchState(
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
-                requestStatus: ModelStatus.Error,
-                upsertStatus: ModelStatus.Error,
+                requestStatus: EModelStatus.Error,
+                upsertStatus: EModelStatus.Error,
             }),
             'setUpsertFailure'
         );
@@ -242,8 +242,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
         this.patchState(
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
-                requestStatus: ModelStatus.Error,
-                upsertStatus: ModelStatus.Error,
+                requestStatus: EModelStatus.Error,
+                upsertStatus: EModelStatus.Error,
             }),
             'setUpsertFailure'
         );
@@ -263,8 +263,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
         this.patchState(
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
-                requestStatus: ModelStatus.Init,
-                deleteStatus: ModelStatus.Init,
+                requestStatus: EModelStatus.Init,
+                deleteStatus: EModelStatus.Init,
             }),
             'resetDeleteStatus'
         );
@@ -274,8 +274,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
         this.patchState(
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
-                requestStatus: ModelStatus.Pending,
-                deleteStatus: ModelStatus.Pending,
+                requestStatus: EModelStatus.Pending,
+                deleteStatus: EModelStatus.Pending,
             }),
             'startDelete'
         );
@@ -285,8 +285,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
         this.patchState(
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
-                requestStatus: ModelStatus.Success,
-                deleteStatus: ModelStatus.Success,
+                requestStatus: EModelStatus.Success,
+                deleteStatus: EModelStatus.Success,
             }),
             'setDeleteSuccess'
         );
@@ -296,8 +296,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
         this.patchState(
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
-                requestStatus: ModelStatus.Error,
-                deleteStatus: ModelStatus.Error,
+                requestStatus: EModelStatus.Error,
+                deleteStatus: EModelStatus.Error,
             }),
             'setDeleteFailure'
         );
@@ -312,8 +312,8 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
         this.patchState(
             (state: STATE_TYPE): STATE_TYPE => ({
                 ...state,
-                requestStatus: ModelStatus.Error,
-                deleteStatus: ModelStatus.Error,
+                requestStatus: EModelStatus.Error,
+                deleteStatus: EModelStatus.Error,
             }),
             'setDeleteFailure'
         );

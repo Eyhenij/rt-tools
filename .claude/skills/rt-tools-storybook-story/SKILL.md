@@ -40,7 +40,7 @@ toggle/
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
-import { TOGGLE_SIZE_TYPE_ENUM } from '../toggle-size.type.enum';
+import { EToggleSizeType } from '../toggle-size.type.enum';
 import { TestToggleComponent } from './component/test-toggle.component';
 
 export default {
@@ -54,7 +54,7 @@ export default {
     argTypes: {
         size: {
             type: 'string',
-            options: [TOGGLE_SIZE_TYPE_ENUM.MD, TOGGLE_SIZE_TYPE_ENUM.SM, 'fat'],
+            options: [EToggleSizeType.MD, EToggleSizeType.SM, 'fat'],
             control: { type: 'select' },
         },
     },
@@ -66,7 +66,7 @@ export const Toggle: Story = {
     args: {
         value: true,
         disabled: false,
-        size: TOGGLE_SIZE_TYPE_ENUM.MD,
+        size: EToggleSizeType.MD,
         label: 'Label Example',
     },
 };
@@ -100,7 +100,7 @@ export const Toggle: Story = {
 })
 export class TestToggleComponent {
     public value: boolean = true;
-    public size: ToggleSizeType = TOGGLE_SIZE_TYPE_ENUM.MD;
+    public size: TToggleSizeType = EToggleSizeType.MD;
 }
 ```
 

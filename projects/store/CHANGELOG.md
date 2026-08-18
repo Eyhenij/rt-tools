@@ -1,3 +1,13 @@
+## [Unreleased]
+
+### BREAKING CHANGES
+
+- **rt:store:** перечисления получили приставку `E` и имя в PascalCase: приставка рода в этом дереве одна на все
+  объявления, и правило линтера требует её у перечисления так же, как у интерфейса и псевдонима типа. Значения внутри
+  перечислений не тронуты. Переименовано 1:
+
+    - `ModelStatus` → `EModelStatus`
+
 ## [0.3.1](https://github.com/Eyhenij/rt-tools/compare/rt-store@0.3.0...rt-store@0.3.1) (2026-08-02)
 
 # [0.3.0](https://github.com/Eyhenij/rt-tools/compare/rt-store@0.2.0...rt-store@0.3.0) (2026-08-02)

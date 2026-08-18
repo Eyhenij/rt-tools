@@ -17,30 +17,30 @@ export default {
     },
 } as Meta<TestRtSplitButtonMatrixComponent>;
 
-type Story = StoryObj<TestRtSplitButtonMatrixComponent>;
+type TStory = StoryObj<TestRtSplitButtonMatrixComponent>;
 
-export const Theme: Story = { args: { part: 'theme' } };
+export const Theme: TStory = { args: { part: 'theme' } };
 
-export const Size: Story = { args: { part: 'size' } };
+export const Size: TStory = { args: { part: 'size' } };
 
 /**
  * Стилизованы обе кнопки внутри хоста, а признак стоит на хосте — аддону передан спуск до них:
  * без него класс лёг бы на элемент, у которого этих правил нет. Наведение показано сразу на
  * обеих половинах: они красятся заодно, хотя нажимаются порознь.
  */
-export const States: Story = {
+export const States: TStory = {
     args: { part: 'states' },
     parameters: { pseudo: storyPseudoParameters('button') },
 };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };
 
 /**
  * Раскрытое меню второстепенных действий. Открывает его `play`-функция, нажимая **каретку**:
  * основная кнопка меню не открывает — это два независимых действия, и щелчок по ней просто
  * поднял бы `faceClick`.
  */
-export const Panel: Story = {
+export const Panel: TStory = {
     parameters: { snapshot: { fullPage: true } },
     args: { part: 'panel' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {

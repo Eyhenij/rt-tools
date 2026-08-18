@@ -11,9 +11,9 @@ export default {
     },
 } as Meta<TestRtAsideSectionComponent>;
 
-type Story = StoryObj<TestRtAsideSectionComponent>;
+type TStory = StoryObj<TestRtAsideSectionComponent>;
 
-export const Default: Story = {
+export const Default: TStory = {
     args: {
         heading: 'Заголовок',
     },

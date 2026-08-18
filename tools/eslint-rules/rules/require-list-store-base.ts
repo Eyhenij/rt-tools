@@ -1,7 +1,7 @@
 import { ESLintUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
 
-type IMessageIds = 'missingBase';
-type IOptions = [];
+type TMessageIds = 'missingBase';
+type TOptions = [];
 
 // Доступно в ESLint-конфигах как "@nx/workspace-require-list-store-base".
 export const RULE_NAME: string = 'require-list-store-base';
@@ -11,7 +11,7 @@ const BASE_CLASS_NAME: string = 'AdminListStoreBase';
 /** Вход за списком один — `readPage`: по нему списочный стор и узнаётся */
 const LIST_CALL_NAME: string = 'readPage';
 
-export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = ESLintUtils.RuleCreator(() => __filename)<IOptions, IMessageIds>({
+export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = ESLintUtils.RuleCreator(() => __filename)<TOptions, TMessageIds>({
     name: RULE_NAME,
     meta: {
         type: 'problem',
@@ -26,7 +26,7 @@ export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = ESLintUtils.Rule
         },
     },
     defaultOptions: [],
-    create(context: Readonly<TSESLint.RuleContext<IMessageIds, IOptions>>): TSESLint.RuleListener {
+    create(context: Readonly<TSESLint.RuleContext<TMessageIds, TOptions>>): TSESLint.RuleListener {
         if (!context.filename.endsWith('.store.ts')) {
             return {};
         }

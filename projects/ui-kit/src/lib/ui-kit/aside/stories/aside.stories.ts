@@ -1,3 +1,4 @@
+// eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 import { expect, fn, userEvent, waitFor } from 'storybook/test';
@@ -9,6 +10,7 @@ const meta: Meta<OpenAsideButtonComponent> = {
     component: OpenAsideButtonComponent,
     decorators: [
         applicationConfig({
+            // eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
             providers: [provideAnimations()],
         }),
     ],
@@ -17,9 +19,9 @@ const meta: Meta<OpenAsideButtonComponent> = {
 };
 
 export default meta;
-type Story = StoryObj<OpenAsideButtonComponent>;
+type TStory = StoryObj<OpenAsideButtonComponent>;
 
-export const Aside: Story = {
+export const Aside: TStory = {
     args: {},
 };
 
@@ -27,7 +29,7 @@ export const Aside: Story = {
  * Панель, открытая нажатием. До нажатия в кадре одна кнопка: ни шапка, ни подвал, ни блок
  * ошибки запроса со своей кнопкой копирования на витрине не показаны ничем.
  */
-export const AsideOpened: Story = {
+export const AsideOpened: TStory = {
     args: {},
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         const trigger: HTMLElement | null = canvasElement.querySelector('button');

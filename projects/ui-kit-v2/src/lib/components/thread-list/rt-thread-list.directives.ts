@@ -20,6 +20,7 @@ export class RtThreadListRowDirective<TRow extends IRtThreadList.Row> {
 
     public static ngTemplateContextGuard<TRow extends IRtThreadList.Row>(
         _directive: RtThreadListRowDirective<TRow>,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars -- второй довод стража контекста шаблона стоит только в типе-предикате; убрать его нечем, подпись задаёт каркас
         context: unknown
     ): context is IRtThreadList.RowContext<TRow> {
         return true;

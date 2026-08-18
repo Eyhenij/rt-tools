@@ -1,3 +1,4 @@
+/* eslint-disable max-lines -- файл делится задачей RT-849 */
 import {
     computed,
     DestroyRef,

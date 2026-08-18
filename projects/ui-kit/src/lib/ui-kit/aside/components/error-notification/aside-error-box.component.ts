@@ -4,7 +4,7 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
 import { BlockDirective, ConcatClassesPipe, ElemDirective, ModDirective } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 
 const BEM_BLOCK: string = 'rtui-aside-error-box';
 
@@ -28,7 +28,7 @@ const BEM_BLOCK: string = 'rtui-aside-error-box';
 export class AsideErrorBoxComponent {
     readonly #clipboard: Clipboard = inject(Clipboard);
 
-    public error: InputSignal<INullable<unknown>> = input.required<INullable<unknown>>();
+    public error: InputSignal<TNullable<unknown>> = input.required<TNullable<unknown>>();
 
     public isErrorCopied: WritableSignal<boolean> = signal(false);
 

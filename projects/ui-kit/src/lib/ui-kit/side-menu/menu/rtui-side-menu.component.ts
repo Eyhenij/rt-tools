@@ -24,7 +24,7 @@ import { MatListItem, MatListItemIcon, MatNavList } from '@angular/material/list
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 
 import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective, RtNavigationDirective, RtScrollToElementDirective } from '@rt-tools/core';
 import { ISideMenu } from '../side-menu.types';
@@ -83,18 +83,19 @@ export class RtuiSideMenuComponent {
     readonly #breakpoints: BreakpointService = inject(BreakpointService);
 
     /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
     protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
-    public readonly headerTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiSideMenuHeaderDirective, {
+    public readonly headerTpl: Signal<TNullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiSideMenuHeaderDirective, {
         read: TemplateRef,
     });
-    public readonly footerTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiSideMenuFooterDirective, {
+    public readonly footerTpl: Signal<TNullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiSideMenuFooterDirective, {
         read: TemplateRef,
     });
-    public readonly subMenuRef: Signal<INullable<MatDrawer>> = viewChild(MatDrawer);
+    public readonly subMenuRef: Signal<TNullable<MatDrawer>> = viewChild(MatDrawer);
 
     public readonly backToMainMenuButton: Signal<ISideMenu.Item> = signal({ id: 0, icon: 'arrow_back', name: 'Main Menu', link: ' ' });
-    public readonly selectedItem: WritableSignal<INullable<ISideMenu.Item>> = signal(null);
-    public readonly selectedSubMenu: WritableSignal<INullable<ISideMenu.Item[]>> = signal(null);
+    public readonly selectedItem: WritableSignal<TNullable<ISideMenu.Item>> = signal(null);
+    public readonly selectedSubMenu: WritableSignal<TNullable<ISideMenu.Item[]>> = signal(null);
 
     public activeMenuIds: InputSignal<Array<string | number>> = input.required();
     public menuItems: InputSignalWithTransform<ISideMenu.Item[], ISideMenu.Item[]> = input<ISideMenu.Item[], ISideMenu.Item[]>([], {
@@ -106,7 +107,7 @@ export class RtuiSideMenuComponent {
      * @deprecated Кит определяет его сам — `BreakpointService` из `@rt-tools/core`. Вход
      * оставлен ради приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
      */
-    public isMobile: InputSignal<INullable<boolean>> = input<INullable<boolean>>(null);
+    public isMobile: InputSignal<TNullable<boolean>> = input<TNullable<boolean>>(null);
     public isSubMenuXScrollEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
@@ -123,9 +124,9 @@ export class RtuiSideMenuComponent {
         transform: booleanAttribute,
     });
 
-    public activeMenuId: Signal<number | string> = computed(() => {
-        return this.activeMenuIds()?.length ? this.activeMenuIds()[this.activeMenuIds()?.length - 1] : '';
-    });
+    public activeMenuId: Signal<number | string> = computed(() =>
+        this.activeMenuIds()?.length ? this.activeMenuIds()[this.activeMenuIds()?.length - 1] : ''
+    );
 
     public readonly closeMobileMenuAction: OutputEmitterRef<void> = output<void>();
     public readonly clickSubMenuAction: OutputEmitterRef<{ item: ISideMenu.Item; event: MouseEvent }> = output<{
@@ -145,6 +146,8 @@ export class RtuiSideMenuComponent {
             this.#openSubMenu();
         } else if (this.selectedSubMenu()) {
             this.closeSubMenu();
+        } else {
+            // У пункта нет подменю, и открытого подменю тоже нет — закрывать нечего.
         }
 
         if (item?.link) {
@@ -183,6 +186,7 @@ export class RtuiSideMenuComponent {
     }
 
     public closeMobileMenu(): void {
+        // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
         if (this.isMobile()) {
             this.closeMobileMenuAction.emit();
         }

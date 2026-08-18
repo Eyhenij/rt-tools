@@ -74,8 +74,8 @@ export class RtIconComponent {
 
     public readonly color: InputSignal<IRtIcon.Color> = input<IRtIcon.Color>('current');
 
-    public readonly rotate: InputSignalWithTransform<number | null, IRotateInput> = input<number | null, IRotateInput>(null, {
-        transform: (v: IRotateInput): number | null => {
+    public readonly rotate: InputSignalWithTransform<number | null, TRotateInput> = input<number | null, TRotateInput>(null, {
+        transform: (v: TRotateInput): number | null => {
             if (v === null || v === '') {
                 return null;
             }
@@ -84,4 +84,4 @@ export class RtIconComponent {
     });
 }
 
-type IRotateInput = number | string | null;
+type TRotateInput = number | string | null;

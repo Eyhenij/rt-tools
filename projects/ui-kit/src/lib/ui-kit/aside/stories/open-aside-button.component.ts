@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
-import { AsidePositions } from '../aside.types';
+import { TAsidePositions } from '../aside.types';
 import { RtAsideService } from '../aside.service';
 import { TestAsideComponent } from './aside-component/test-aside.component';
 
@@ -18,7 +18,7 @@ export class OpenAsideButtonComponent {
     readonly #asideService: RtAsideService = inject(RtAsideService);
 
     public onClick(): void {
-        this.#asideService.Open<TestAsideComponent, { statuses: string[] }, AsidePositions>(TestAsideComponent, 'right', {
+        this.#asideService.Open<TestAsideComponent, { statuses: string[] }, TAsidePositions>(TestAsideComponent, 'right', {
             statuses: ['Administrator', 'User'],
         });
     }

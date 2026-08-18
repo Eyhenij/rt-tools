@@ -16,14 +16,14 @@ export default {
     },
 } as Meta<TestRtDownloadLinkMatrixComponent>;
 
-type Story = StoryObj<TestRtDownloadLinkMatrixComponent>;
+type TStory = StoryObj<TestRtDownloadLinkMatrixComponent>;
 
-export const Label: Story = { args: { part: 'label' } };
+export const Label: TStory = { args: { part: 'label' } };
 
 /** Признак ставится на хост, а стилизована `<button>` внутри шаблона — отсюда спуск до неё. */
-export const States: Story = {
+export const States: TStory = {
     args: { part: 'states' },
     parameters: { pseudo: storyPseudoParameters('button') },
 };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

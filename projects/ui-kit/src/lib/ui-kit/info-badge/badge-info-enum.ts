@@ -1,7 +1,7 @@
-export enum INFO_BADGE_SIZE_ENUM {
+export enum EInfoBadgeSize {
     LARGE = 'l',
     MEDIUM = 'm',
     SMALL = 's',
 }
 
-export type IInfoBadgeSizeType = INFO_BADGE_SIZE_ENUM.LARGE | INFO_BADGE_SIZE_ENUM.MEDIUM | INFO_BADGE_SIZE_ENUM.SMALL;
+export type TInfoBadgeSizeType = EInfoBadgeSize.LARGE | EInfoBadgeSize.MEDIUM | EInfoBadgeSize.SMALL;

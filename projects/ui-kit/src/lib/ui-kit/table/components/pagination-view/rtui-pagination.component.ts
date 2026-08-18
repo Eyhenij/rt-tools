@@ -25,7 +25,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { BlockDirective, BreakpointService, ElemDirective, ModDirective, WINDOW } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 import { isNumber, IPageModel } from '@rt-tools/utils';
 import { DEFAULT_PAGE_SIZE } from '../../util/default-pagination';
 
@@ -48,6 +48,7 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
     readonly #windowRef: Window = inject(WINDOW);
 
     /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
     protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
 
     /** Current Page Model */
@@ -58,11 +59,11 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
      * @deprecated Кит определяет его сам — `RtuiBreakpointsService`. Вход оставлен ради
      * приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
      */
-    public isMobile: InputSignalWithTransform<INullable<boolean>, INullable<boolean> | string> = input<
-        INullable<boolean>,
-        INullable<boolean> | string
+    public isMobile: InputSignalWithTransform<TNullable<boolean>, TNullable<boolean> | string> = input<
+        TNullable<boolean>,
+        TNullable<boolean> | string
     >(null, {
-        transform: (value: INullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
+        transform: (value: TNullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
     });
 
     /** Output action when Page Model changed */
@@ -80,14 +81,14 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
     /** Array of current page numbers */
     public readonly numbers: WritableSignal<Array<number | string>> = signal([]);
     /** Page Model for compare */
-    public readonly previousPageModel: WritableSignal<INullable<IPageModel>> = signal(null);
+    public readonly previousPageModel: WritableSignal<TNullable<IPageModel>> = signal(null);
     /** Value of full content width */
     public readonly minContentFitWidth: WritableSignal<number> = signal(0);
     /** Indicates is content clipped */
     public readonly isContentClipped: WritableSignal<boolean> = signal(false);
 
     /** Container template ref */
-    public readonly containerRef: Signal<INullable<ElementRef<HTMLElement>>> = viewChild<ElementRef<HTMLElement>>('containerRef');
+    public readonly containerRef: Signal<TNullable<ElementRef<HTMLElement>>> = viewChild<ElementRef<HTMLElement>>('containerRef');
 
     /** Set 'isContentClipped' when widow resize */
     @HostListener('window:resize')
@@ -96,6 +97,8 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
             this.isContentClipped.set(false);
         } else if (!this.isContentClipped() && this.#windowRef.innerWidth && this.minContentFitWidth() + 36 > this.#windowRef.innerWidth) {
             this.isContentClipped.set(true);
+        } else {
+            // Ширина порога не пересекла — признак усечения остаётся прежним.
         }
         this.#setMinContentFitWidth();
     }
@@ -123,7 +126,7 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
 
     /** Set 'isContentClipped' on init */
     public ngAfterViewInit(): void {
-        const currentContainerWidth: INullable<number> = this.containerRef()?.nativeElement?.scrollWidth;
+        const currentContainerWidth: TNullable<number> = this.containerRef()?.nativeElement?.scrollWidth;
 
         if (currentContainerWidth && this.#windowRef?.innerWidth) {
             this.minContentFitWidth.set(currentContainerWidth);
@@ -133,13 +136,13 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
 
     /** Action for change Page Model */
     public changePageSize(pageSize: number): void {
-        const current_total: number = Math.ceil(this.currentPageModel().totalCount / pageSize);
-        const previous_total: number = Math.ceil(this.currentPageModel().totalCount / this.currentPageModel().pageSize);
+        const currentTotal: number = Math.ceil(this.currentPageModel().totalCount / pageSize);
+        const previousTotal: number = Math.ceil(this.currentPageModel().totalCount / this.currentPageModel().pageSize);
         const correction: number = Math.floor(
-            ((previous_total - this.currentPageModel().pageNumber) * this.currentPageModel().pageSize) / pageSize
+            ((previousTotal - this.currentPageModel().pageNumber) * this.currentPageModel().pageSize) / pageSize
         );
 
-        this.pageModelChange.emit({ pageNumber: current_total - correction, pageSize });
+        this.pageModelChange.emit({ pageNumber: currentTotal - correction, pageSize });
     }
 
     /** Action for select page */
@@ -163,7 +166,7 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
         const total: number = Math.ceil(this.currentPageModel().totalCount / this.currentPageModel().pageSize);
         const result: Array<number | string> = Array(total)
             .fill(0, 0, total)
-            .map((x: number | string, i: number) => i + 1);
+            .map((_value: number | string, index: number) => index + 1);
 
         if (total <= 6) {
             return result;
@@ -200,7 +203,7 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
 
     /** Set 'isContentClipped' when content changed */
     #setMinContentFitWidth(): void {
-        const currentContainerWidth: INullable<number> = this.containerRef()?.nativeElement?.scrollWidth;
+        const currentContainerWidth: TNullable<number> = this.containerRef()?.nativeElement?.scrollWidth;
 
         if (currentContainerWidth && this.minContentFitWidth() && this.minContentFitWidth() < currentContainerWidth) {
             this.minContentFitWidth.set(currentContainerWidth);

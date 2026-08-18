@@ -133,8 +133,8 @@ with a required-check. `debounce` is a **method decorator** taking a timeout, tr
 ### Models and type helpers
 
 ```typescript
-import { IListState, ISortModel, IPageModel, IFilterModel, FILTER_OPERATORS, LIST_SORT_ORDER_ENUM } from '@rt-tools/utils';
-import { INullable, IOptional, IPartialOmit, IIntersectionType, IValuesType } from '@rt-tools/utils';
+import { IListState, ISortModel, IPageModel, IFilterModel, FILTER_OPERATORS, EListSortOrder } from '@rt-tools/utils';
+import { TNullable, TOptional, TPartialOmit, TIntersectionType, TValuesType } from '@rt-tools/utils';
 import { BaseMapper, TypeCastHelper } from '@rt-tools/utils';
 ```
 

@@ -28,10 +28,10 @@ import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { MatRadioButton } from '@angular/material/radio';
 
 import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
-import { FILTER_OPERATOR_TYPE_ENUM, IFilterModel, ISortModel, transformArrayInput } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
+import { EFilterOperatorType, IFilterModel, ISortModel, transformArrayInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
-import { IRtuiTable, ITable, RTUI_TABLE_COMPONENT_TOKEN, RtTableConfigService, TABLE_COLUMN_TYPES_ENUM } from '../../util';
+import { IRtuiTable, ITable, RTUI_TABLE_COMPONENT_TOKEN, RtTableConfigService, ETableColumnTypes } from '../../util';
 import { TableBaseCellComponent } from '../table-base-cell/table-base-cell.component';
 import { RtuiTableHeaderCellComponent } from '../table-header-cell/table-header-cell.component';
 import { RtuiTableHeaderFilterCellComponent } from '../table-header-filter-cell/table-header-filter-cell.component';
@@ -113,18 +113,18 @@ export class RtuiTableComponent<
 >
     implements IRtuiTable<ENTITY_TYPE, SORT_PROPERTY, KEY>, AfterViewChecked
 {
-    protected readonly rowActions: Signal<INullable<ElementRef<HTMLElement>>> = viewChild<ElementRef<HTMLElement>>('rowActions');
-    protected readonly rowActionsHeaderPaddingHelper: Signal<INullable<ElementRef<HTMLElement>>> =
+    protected readonly rowActions: Signal<TNullable<ElementRef<HTMLElement>>> = viewChild<ElementRef<HTMLElement>>('rowActions');
+    protected readonly rowActionsHeaderPaddingHelper: Signal<TNullable<ElementRef<HTMLElement>>> =
         viewChild<ElementRef<HTMLElement>>('rowActionsHeaderPaddingHelper');
-    protected readonly rowActionsPaddingHelper: Signal<INullable<ElementRef<HTMLElement>>> =
+    protected readonly rowActionsPaddingHelper: Signal<TNullable<ElementRef<HTMLElement>>> =
         viewChild<ElementRef<HTMLElement>>('rowActionsRowPaddingHelper');
 
     readonly #breakpoints: BreakpointService = inject(BreakpointService);
 
     readonly #tableConfigService: RtTableConfigService<ENTITY_TYPE> = inject(RtTableConfigService);
 
-    protected readonly columnTypes: typeof TABLE_COLUMN_TYPES_ENUM = TABLE_COLUMN_TYPES_ENUM;
-    protected readonly filterOperators: typeof FILTER_OPERATOR_TYPE_ENUM = FILTER_OPERATOR_TYPE_ENUM;
+    protected readonly columnTypes: typeof ETableColumnTypes = ETableColumnTypes;
+    protected readonly filterOperators: typeof EFilterOperatorType = EFilterOperatorType;
 
     /** Indicates is mobile view */
     /**
@@ -133,8 +133,9 @@ export class RtuiTableComponent<
      * @deprecated Кит определяет его сам — `BreakpointService` из `@rt-tools/core`. Вход
      * оставлен ради приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
      */
-    public isMobile: InputSignal<INullable<boolean>> = input<INullable<boolean>>(null);
+    public isMobile: InputSignal<TNullable<boolean>> = input<TNullable<boolean>>(null);
     /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
     public readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
     /** Indicates are table rows clickable */
     public isTableRowsClickable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
@@ -148,7 +149,7 @@ export class RtuiTableComponent<
         transform: (value: ENTITY_TYPE[]) => transformArrayInput(value),
     });
     /** Current page model from store */
-    public currentSortModel: InputSignal<INullable<ISortModel<SORT_PROPERTY>>> = input.required();
+    public currentSortModel: InputSignal<TNullable<ISortModel<SORT_PROPERTY>>> = input.required();
     /** Current elements appearance */
     public appearance: InputSignal<MatFormFieldAppearance> = input.required({
         transform: (value: MatFormFieldAppearance) => (value === 'fill' ? 'fill' : 'outline'),
@@ -178,16 +179,14 @@ export class RtuiTableComponent<
     public readonly filterChange: OutputEmitterRef<IFilterModel<KEY>[]> = output<IFilterModel<KEY>[]>();
 
     /** Columns config for table */
-    public columns: Signal<Array<ITable.Column<ENTITY_TYPE>>> = computed(() => {
-        return this.#tableConfigService.tableConfig().columns;
-    });
+    public columns: Signal<Array<ITable.Column<ENTITY_TYPE>>> = computed(() => this.#tableConfigService.tableConfig().columns);
 
     /** Custom cells template */
-    public readonly customCellsTpl: Signal<INullable<RtuiCustomTableCellsDirective<ENTITY_TYPE>>> =
+    public readonly customCellsTpl: Signal<TNullable<RtuiCustomTableCellsDirective<ENTITY_TYPE>>> =
         contentChild(RtuiCustomTableCellsDirective);
     /** Row actions template */
     public readonly rowActionsTpl: Signal<
-        INullable<
+        TNullable<
             TemplateRef<{
                 $implicit: ENTITY_TYPE;
             }>
@@ -196,7 +195,7 @@ export class RtuiTableComponent<
         read: TemplateRef,
     });
     /** Additional row actions template */
-    public readonly additionalRowActionsTpl: Signal<INullable<TemplateRef<RtuiTableAdditionalRowActionsDirective>>> = contentChild(
+    public readonly additionalRowActionsTpl: Signal<TNullable<TemplateRef<RtuiTableAdditionalRowActionsDirective>>> = contentChild(
         RtuiTableAdditionalRowActionsDirective,
         {
             read: TemplateRef,
@@ -217,7 +216,7 @@ export class RtuiTableComponent<
     /** Indicates is selectors column disabled */
     public readonly isSelectorsColumnDisabled: WritableSignal<boolean> = signal(false);
     /** Current row index */
-    public readonly activeRowIndex: WritableSignal<INullable<number>> = signal(null);
+    public readonly activeRowIndex: WritableSignal<TNullable<number>> = signal(null);
 
     public ngAfterViewChecked(): void {
         this.#setPaddingHelperWidth();
@@ -225,7 +224,8 @@ export class RtuiTableComponent<
 
     /** Sort change output action */
     public onSortChange(sortModel: ISortModel<string>): void {
-        // TODO: add type guard
+        // Имя колонки приходит строкой и приводится к набору домена: проверка вместо приведения —
+        // задача RT-848.
         this.sortChange.emit(sortModel as ISortModel<SORT_PROPERTY>);
     }
 
@@ -275,8 +275,8 @@ export class RtuiTableComponent<
             const paddingWidth: number = parseInt(this.rowActionsPaddingHelper()?.nativeElement?.style.width || '0', 10);
 
             if (rowActionsWidth !== headerWidth || rowActionsWidth !== paddingWidth) {
-                const headerEl: INullable<HTMLElement> = this.rowActionsHeaderPaddingHelper()?.nativeElement;
-                const paddingEl: INullable<HTMLElement> = this.rowActionsPaddingHelper()?.nativeElement;
+                const headerEl: TNullable<HTMLElement> = this.rowActionsHeaderPaddingHelper()?.nativeElement;
+                const paddingEl: TNullable<HTMLElement> = this.rowActionsPaddingHelper()?.nativeElement;
 
                 if (headerEl) {
                     headerEl.style.width = `${rowActionsWidth}px`;

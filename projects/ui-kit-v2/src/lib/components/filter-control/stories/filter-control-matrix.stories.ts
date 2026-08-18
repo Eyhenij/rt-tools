@@ -1,4 +1,4 @@
-import { signal } from '@angular/core';
+import { Signal, signal } from '@angular/core';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
 import { storyWidthAtMost } from '../../../../showcase';
@@ -12,12 +12,14 @@ import { TestRtFilterControlMatrixComponent } from './component/test-filter-cont
  * ней. Подменяется поэтому источник ответа, а не окно: компонент спрашивает `narrow`, и в этой
  * истории ответ — «да».
  */
-const NARROW_BREAKPOINTS: BreakpointsService = {
+const NARROW_ANSWERS: Record<keyof BreakpointsService, Signal<boolean>> = {
     mobile: signal(true),
     tablet: signal(false),
     desktop: signal(false),
     narrow: signal(true),
-} as BreakpointsService;
+};
+
+const NARROW_BREAKPOINTS: BreakpointsService = NARROW_ANSWERS as BreakpointsService;
 
 /**
  * Матрицы состояний — то, чего не показывает `Playground`: все значения оси сразу.

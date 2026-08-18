@@ -11,9 +11,7 @@ import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtuiDynamicInputAdditionalControlDirective } from '../../../components';
 import { RtuiDynamicInputComponent } from '../../../components/dynamic-input/rtui-dynamic-input.component';
 
-export const createEmail: () => string = (): string => {
-    return faker.internet.email();
-};
+export const createEmail: () => string = (): string => faker.internet.email();
 export const createEmailsList: (size: number) => string[] = (size: number) => Array.from({ length: size }, createEmail);
 
 const BEM_BLOCK: string = 'app-dynamic-input';

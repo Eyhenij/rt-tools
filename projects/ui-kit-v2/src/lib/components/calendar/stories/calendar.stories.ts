@@ -17,9 +17,9 @@ export default {
     },
 } as Meta<TestRtCalendarComponent>;
 
-type Story = StoryObj<TestRtCalendarComponent>;
+type TStory = StoryObj<TestRtCalendarComponent>;
 
-export const Default: Story = {
+export const Default: TStory = {
     parameters: storySnapshotSkip(
         'обёртка отдаёт пустой `months`, и в кадре только стрелки перелистывания; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
     ),

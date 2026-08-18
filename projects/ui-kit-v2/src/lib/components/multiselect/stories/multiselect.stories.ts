@@ -13,9 +13,9 @@ export default {
     },
 } as Meta<TestRtMultiselectComponent>;
 
-type Story = StoryObj<TestRtMultiselectComponent>;
+type TStory = StoryObj<TestRtMultiselectComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         placeholder: 'Выберите города',

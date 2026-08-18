@@ -16,7 +16,7 @@ import {
 // rt-tools
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RtKitLabelMap } from '../../i18n';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
 import { clampDragDelta, shouldDismissDrag } from './rt-bottom-sheet.logic';
 
 const BEM_BLOCK: string = 'rt-bottom-sheet';
@@ -53,7 +53,7 @@ export class RtBottomSheetComponent {
 
     #dragStartY: number = 0;
 
-    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly dragDeltaY: WritableSignal<number> = signal<number>(0);
     protected readonly dragging: WritableSignal<boolean> = signal<boolean>(false);

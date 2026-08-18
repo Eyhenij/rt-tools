@@ -17,9 +17,9 @@ export default {
     },
 } as Meta<TestRtSplitButtonComponent>;
 
-type Story = StoryObj<TestRtSplitButtonComponent>;
+type TStory = StoryObj<TestRtSplitButtonComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         label: 'Сохранить',

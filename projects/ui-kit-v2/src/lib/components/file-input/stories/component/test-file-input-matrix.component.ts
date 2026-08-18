@@ -7,8 +7,11 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtFieldComponent } from '../../../field/rt-field.component';
 import { RtFileInputComponent } from '../../rt-file-input.component';
 
+/** Имя вложения, на котором показаны состояния поля файлов. */
+const CONTRACT_FILE: string = 'Договор №4512.pdf';
+
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type FileInputMatrixPart = 'filling' | 'button' | 'states' | 'themes';
+export type TFileInputMatrixPart = 'filling' | 'button' | 'states' | 'themes';
 
 /** Случай с подписью и своим набором файлов: значение поля — массив `File`. */
 interface IFileInputCase {
@@ -131,16 +134,16 @@ function invalid(): FormControl<File[]> {
     ],
 })
 export class TestRtFileInputMatrixComponent {
-    public part: FileInputMatrixPart = 'filling';
+    public part: TFileInputMatrixPart = 'filling';
 
     public readonly fieldWidth: string = STORY_FIELD_WIDTH_WIDE;
 
     public readonly fillingCases: readonly IFileInputCase[] = [
         { name: 'пусто', control: files([]) },
-        { name: 'один файл', control: files([sample('Договор №4512.pdf', 480)]) },
+        { name: 'один файл', control: files([sample(CONTRACT_FILE, 480)]) },
         {
             name: 'несколько файлов',
-            control: files([sample('Договор №4512.pdf', 480), sample('Приложение 1.docx', 120), sample('Скан подписи.png', 64)]),
+            control: files([sample(CONTRACT_FILE, 480), sample('Приложение 1.docx', 120), sample('Скан подписи.png', 64)]),
         },
     ];
 
@@ -152,15 +155,15 @@ export class TestRtFileInputMatrixComponent {
     public readonly stateCases: readonly IFileInputStateCase[] = [
         { name: 'ошибка', control: invalid(), disabled: false, flat: false },
         { name: 'отключено без файлов', control: files([]), disabled: true, flat: false },
-        { name: 'отключено с файлом', control: files([sample('Договор №4512.pdf', 480)]), disabled: true, flat: false },
-        { name: 'только чтение', control: files([sample('Договор №4512.pdf', 480)]), disabled: false, flat: true },
+        { name: 'отключено с файлом', control: files([sample(CONTRACT_FILE, 480)]), disabled: true, flat: false },
+        { name: 'только чтение', control: files([sample(CONTRACT_FILE, 480)]), disabled: false, flat: true },
         { name: 'только чтение без файлов', control: files([]), disabled: false, flat: true },
     ];
 
     public readonly themeCases: readonly IFileInputThemeCase[] = [
         { name: 'пусто', control: files([]), disabled: false },
-        { name: 'с файлом', control: files([sample('Договор №4512.pdf', 480)]), disabled: false },
-        { name: 'отключено', control: files([sample('Договор №4512.pdf', 480)]), disabled: true },
+        { name: 'с файлом', control: files([sample(CONTRACT_FILE, 480)]), disabled: false },
+        { name: 'отключено', control: files([sample(CONTRACT_FILE, 480)]), disabled: true },
     ];
 
     /** Подпись случая: у всех наборов этой матрицы имя лежит в одном поле. */

@@ -15,13 +15,13 @@ export default {
     },
 } as Meta<TestRtAsideSectionMatrixComponent>;
 
-type Story = StoryObj<TestRtAsideSectionMatrixComponent>;
+type TStory = StoryObj<TestRtAsideSectionMatrixComponent>;
 
-export const Heading: Story = { args: { part: 'heading' } };
+export const Heading: TStory = { args: { part: 'heading' } };
 
-export const Content: Story = { args: { part: 'content' } };
+export const Content: TStory = { args: { part: 'content' } };
 
 /** Разделы друг под другом: расстояние между ними — то, ради чего компонент заведён. */
-export const Stack: Story = { args: { part: 'stack' }, parameters: { snapshot: { fullPage: true } } };
+export const Stack: TStory = { args: { part: 'stack' }, parameters: { snapshot: { fullPage: true } } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

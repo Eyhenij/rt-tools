@@ -44,16 +44,16 @@
 
 Три вещи в `src/lib/i18n/`:
 
-| что                 | зачем                                                                                   |
-| ------------------- | --------------------------------------------------------------------------------------- |
-| `RT_KIT_TRANSLATOR` | `Signal<RtKitTranslator>` — то, что даёт приложение. Умолчание читает английский набор  |
-| `RT_KIT_LABELS`     | `Signal<RtKitLabelMap>` — производная карта всех ключей, root-scoped: строится один раз |
-| `RT_KIT_LOCALE`     | `Signal<string>` — активная локаль; ею кит форматирует даты. Умолчание `'en'`           |
+| что                 | зачем                                                                                    |
+| ------------------- | ---------------------------------------------------------------------------------------- |
+| `RT_KIT_TRANSLATOR` | `Signal<TRtKitTranslator>` — то, что даёт приложение. Умолчание читает английский набор  |
+| `RT_KIT_LABELS`     | `Signal<TRtKitLabelMap>` — производная карта всех ключей, root-scoped: строится один раз |
+| `RT_KIT_LOCALE`     | `Signal<string>` — активная локаль; ею кит форматирует даты. Умолчание `'en'`            |
 
 ```typescript
-export type RtKitLabelKey = keyof typeof RT_KIT_LABELS_EN;
-export type RtKitLabelParams = Readonly<Record<string, string | number>>;
-export type RtKitTranslator = (key: RtKitLabelKey, params?: RtKitLabelParams) => string;
+export type TRtKitLabelKey = keyof typeof RT_KIT_LABELS_EN;
+export type TRtKitLabelParams = Readonly<Record<string, string | number>>;
+export type TRtKitTranslator = (key: TRtKitLabelKey, params?: TRtKitLabelParams) => string;
 ```
 
 Функция сигнальная не сама по себе — сигналом объявлен **токен**: при смене языка приложение
@@ -62,7 +62,7 @@ export type RtKitTranslator = (key: RtKitLabelKey, params?: RtKitLabelParams) =>
 **Компонент читает карту целиком, а не ключ по одному:**
 
 ```typescript
-protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 ```
 
 ```html

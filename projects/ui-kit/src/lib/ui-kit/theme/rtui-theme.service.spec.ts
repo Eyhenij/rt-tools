@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as sass from 'sass';
 
 import { RtThemeService } from './rtui-theme.service';
-import { RT_COLOR_SCHEME_STORAGE_KEY, RT_DARK_CLASS, RT_SCHEME_ATTRIBUTE, RtColorSchemeRamp } from './rtui-theme.types';
+import { RT_COLOR_SCHEME_STORAGE_KEY, RT_DARK_CLASS, RT_SCHEME_ATTRIBUTE, TRtColorSchemeRamp } from './rtui-theme.types';
 
 const STYLES_DIR: string = path.join(__dirname, '../../../styles');
 
@@ -101,7 +101,7 @@ describe('RtThemeService', () => {
     });
 
     describe('registerColorScheme', () => {
-        const teal: RtColorSchemeRamp = {
+        const teal: TRtColorSchemeRamp = {
             primary: { 20: '#b3e3e1', 40: '#5cb8b5', 60: '#1a9d99', 100: '#008582' },
             brand: { 20: '#e8e8e8', 100: '#008582' },
         };
@@ -113,8 +113,11 @@ describe('RtThemeService', () => {
 
             const style: HTMLElement | null = document.getElementById('rt-color-scheme-teal');
             expect(style).not.toBeNull();
-            expect(style!.textContent).toContain(`[${RT_SCHEME_ATTRIBUTE}="teal"]`);
-            expect(style!.textContent).toContain('--rt-color-primary-100:#008582');
+
+            const styleText: string = style?.textContent ?? '';
+
+            expect(styleText).toContain(`[${RT_SCHEME_ATTRIBUTE}="teal"]`);
+            expect(styleText).toContain('--rt-color-primary-100:#008582');
         });
 
         it('replaces an existing scheme style instead of duplicating it', () => {
@@ -132,7 +135,7 @@ describe('RtThemeService', () => {
             const service: RtThemeService = setup();
             service.registerColorScheme('teal', teal);
 
-            const jsBlock: string = document.getElementById('rt-color-scheme-teal')!.textContent ?? '';
+            const jsBlock: string = document.getElementById('rt-color-scheme-teal')?.textContent ?? '';
             const sassCss: string = sass.compileString(
                 '@use "main" as rt;\n@include rt.color-scheme("teal", (' +
                     'primary: (20: #b3e3e1, 40: #5cb8b5, 60: #1a9d99, 100: #008582),' +
@@ -148,7 +151,7 @@ describe('RtThemeService', () => {
         it('validates its input like the Sass mixin (parity)', () => {
             const service: RtThemeService = setup();
 
-            expect(() => service.registerColorScheme('x', { bogus: { 100: '#000' } } as RtColorSchemeRamp)).toThrow(/unknown role/i);
+            expect(() => service.registerColorScheme('x', { bogus: { 100: '#000' } } as TRtColorSchemeRamp)).toThrow(/unknown role/i);
             expect(() => service.registerColorScheme('x', { primary: { 150: '#000' } })).toThrow(/integer 0–100/i);
             expect(() => service.registerColorScheme('', teal)).toThrow(/non-empty string/i);
             expect(() => service.registerColorScheme('default', teal)).toThrow(/non-empty string/i);

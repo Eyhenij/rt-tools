@@ -8,7 +8,7 @@ import { RtTagComponent } from '../../rt-tag.component';
 import { IRtTag } from '../../rt-tag.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TagMatrixPart = 'severity' | 'shape' | 'radius' | 'icon' | 'closable' | 'themes';
+export type TTagMatrixPart = 'severity' | 'shape' | 'radius' | 'icon' | 'closable' | 'themes';
 
 /** Случай иконки — не значение оси, а различимая комбинация сторон. */
 interface ITagIconCase {
@@ -93,7 +93,7 @@ interface ITagIconCase {
     ],
 })
 export class TestRtTagMatrixComponent {
-    public part: TagMatrixPart = 'severity';
+    public part: TTagMatrixPart = 'severity';
 
     public readonly severities: readonly IRtTag.Severity[] = ['neutral', 'info', 'success', 'warning', 'danger', 'secondary'];
     public readonly appearances: readonly IRtTag.Appearance[] = ['solid', 'outlined'];

@@ -1,10 +1,10 @@
 import { computed, EnvironmentProviders, inject, InjectionToken, makeEnvironmentProviders, Provider, Signal, signal } from '@angular/core';
 
 import { RT_KIT_LABELS_EN } from './rt-kit-labels.en';
-import { RtKitLabelKey, RtKitLabelMap, RtKitLabelParams, RtKitTranslator } from './rt-kit-labels.model';
+import { TRtKitLabelKey, TRtKitLabelMap, TRtKitLabelParams, TRtKitTranslator } from './rt-kit-labels.model';
 
 /** Места вида `{{name}}` — их заполняет `interpolate`. */
-const PLACEHOLDER: RegExp = /\{\{\s*([A-Za-z0-9_]+)\s*\}\}/g;
+const PLACEHOLDER: RegExp = /\{\{\s*(\w+)\s*\}\}/g;
 
 /**
  * Подставляет параметры в подпись.
@@ -14,20 +14,16 @@ const PLACEHOLDER: RegExp = /\{\{\s*([A-Za-z0-9_]+)\s*\}\}/g;
  * параметра не дали, остаётся как есть: пустота на его месте прочиталась бы как
  * законченная фраза, а `{{name}}` виден и чинится.
  */
-function interpolate(text: string, params: RtKitLabelParams | undefined): string {
+function interpolate(text: string, params: TRtKitLabelParams | undefined): string {
     if (params === undefined) {
         return text;
     }
 
-    return text.replace(PLACEHOLDER, (match: string, name: string): string => {
-        const value: string | number | undefined = params[name];
-
-        return value === undefined ? match : String(value);
-    });
+    return text.replace(PLACEHOLDER, (match: string, name: string): string => (Object.hasOwn(params, name) ? String(params[name]) : match));
 }
 
 /** Английское умолчание: кит без единой настройки рисует текст, а не пустоты. */
-const DEFAULT_TRANSLATOR: RtKitTranslator = (key: RtKitLabelKey, params?: RtKitLabelParams): string =>
+const defaultTranslator: TRtKitTranslator = (key: TRtKitLabelKey, params?: TRtKitLabelParams): string =>
     interpolate(RT_KIT_LABELS_EN[key], params);
 
 /**
@@ -38,10 +34,13 @@ const DEFAULT_TRANSLATOR: RtKitTranslator = (key: RtKitLabelKey, params?: RtKitL
  * на ходу, кладёт в него новую функцию, и всё, что от неё считано,
  * пересчитывается само.
  */
-export const RT_KIT_TRANSLATOR: InjectionToken<Signal<RtKitTranslator>> = new InjectionToken<Signal<RtKitTranslator>>('RT_KIT_TRANSLATOR', {
-    providedIn: 'root',
-    factory: (): Signal<RtKitTranslator> => signal<RtKitTranslator>(DEFAULT_TRANSLATOR).asReadonly(),
-});
+export const RT_KIT_TRANSLATOR: InjectionToken<Signal<TRtKitTranslator>> = new InjectionToken<Signal<TRtKitTranslator>>(
+    'RT_KIT_TRANSLATOR',
+    {
+        providedIn: 'root',
+        factory: (): Signal<TRtKitTranslator> => signal<TRtKitTranslator>(defaultTranslator).asReadonly(),
+    }
+);
 
 /**
  * Активная локаль. Ею кит форматирует даты — больше ни для чего она ему не
@@ -65,19 +64,19 @@ export const RT_KIT_LOCALE: InjectionToken<Signal<string>> = new InjectionToken<
  * Подпись, которой переводчик не дал (вернул пустое или упал), берётся
  * английской: пустая `aria`-подпись означает кнопку без имени для скринридера.
  */
-export const RT_KIT_LABELS: InjectionToken<Signal<RtKitLabelMap>> = new InjectionToken<Signal<RtKitLabelMap>>('RT_KIT_LABELS', {
+export const RT_KIT_LABELS: InjectionToken<Signal<TRtKitLabelMap>> = new InjectionToken<Signal<TRtKitLabelMap>>('RT_KIT_LABELS', {
     providedIn: 'root',
-    factory: (): Signal<RtKitLabelMap> => {
-        const translator: Signal<RtKitTranslator> = inject(RT_KIT_TRANSLATOR);
+    factory: (): Signal<TRtKitLabelMap> => {
+        const translator: Signal<TRtKitTranslator> = inject(RT_KIT_TRANSLATOR);
 
-        return computed((): RtKitLabelMap => {
-            const translate: RtKitTranslator = translator();
+        return computed((): TRtKitLabelMap => {
+            const translate: TRtKitTranslator = translator();
             const map: Record<string, string> = {};
             for (const key of Object.keys(RT_KIT_LABELS_EN)) {
-                map[key] = translate(key as RtKitLabelKey) || RT_KIT_LABELS_EN[key as RtKitLabelKey];
+                map[key] = translate(key as TRtKitLabelKey) || RT_KIT_LABELS_EN[key as TRtKitLabelKey];
             }
 
-            return map as RtKitLabelMap;
+            return map as TRtKitLabelMap;
         });
     },
 });
@@ -101,19 +100,19 @@ export const RT_KIT_LABELS: InjectionToken<Signal<RtKitLabelMap>> = new Injectio
  * @param params Подстановки — значением или сигналом, если они меняются.
  */
 export function rtKitLabel(
-    key: RtKitLabelKey | '' | Signal<RtKitLabelKey | ''>,
-    params?: RtKitLabelParams | Signal<RtKitLabelParams>
+    key: TRtKitLabelKey | '' | Signal<TRtKitLabelKey | ''>,
+    params?: TRtKitLabelParams | Signal<TRtKitLabelParams>
 ): Signal<string> {
-    const translator: Signal<RtKitTranslator> = inject(RT_KIT_TRANSLATOR);
+    const translator: Signal<TRtKitTranslator> = inject(RT_KIT_TRANSLATOR);
 
     return computed((): string => {
-        const resolvedKey: RtKitLabelKey | '' = typeof key === 'function' ? key() : key;
+        const resolvedKey: TRtKitLabelKey | '' = typeof key === 'function' ? key() : key;
         if (resolvedKey === '') {
             return '';
         }
-        const resolved: RtKitLabelParams | undefined = typeof params === 'function' ? params() : params;
+        const resolved: TRtKitLabelParams | undefined = typeof params === 'function' ? params() : params;
 
-        return translator()(resolvedKey, resolved) || DEFAULT_TRANSLATOR(resolvedKey, resolved);
+        return translator()(resolvedKey, resolved) || defaultTranslator(resolvedKey, resolved);
     });
 }
 
@@ -141,7 +140,7 @@ export function rtKitLabel(
  *   без неё кит форматирует даты по-английски.
  */
 export function provideRtKitLabels(source: {
-    readonly translator: Signal<RtKitTranslator>;
+    readonly translator: Signal<TRtKitTranslator>;
     readonly locale?: Signal<string>;
 }): EnvironmentProviders {
     const providers: Provider[] = [{ provide: RT_KIT_TRANSLATOR, useValue: source.translator }];

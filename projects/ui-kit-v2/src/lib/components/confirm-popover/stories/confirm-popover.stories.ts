@@ -18,9 +18,9 @@ export default {
     },
 } as Meta<TestRtConfirmPopoverComponent>;
 
-type Story = StoryObj<TestRtConfirmPopoverComponent>;
+type TStory = StoryObj<TestRtConfirmPopoverComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     args: {
         message: 'Удалить запись? Действие необратимо.',
         title: 'Удаление',

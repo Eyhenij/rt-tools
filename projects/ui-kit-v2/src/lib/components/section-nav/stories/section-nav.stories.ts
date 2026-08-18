@@ -11,9 +11,9 @@ export default {
     },
 } as Meta<TestRtSectionNavComponent>;
 
-type Story = StoryObj<TestRtSectionNavComponent>;
+type TStory = StoryObj<TestRtSectionNavComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     // Тот же набор стоит ячейкой «первая плитка» в матрице подсветки: отдельный кадр проверял бы
     // то же самое второй раз, а меняется он от любой правки аргументов.
     parameters: storySnapshotSkip('этот набор уже стоит ячейкой в матрице подсветки'),

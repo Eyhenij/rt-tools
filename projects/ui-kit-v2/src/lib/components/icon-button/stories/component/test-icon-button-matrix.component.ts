@@ -9,7 +9,7 @@ import { RtIconButtonComponent } from '../../rt-icon-button.component';
 import { IRtIconButton } from '../../rt-icon-button.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type IconButtonMatrixPart = 'variant' | 'size' | 'iconSize' | 'shape' | 'flags' | 'states' | 'themes';
+export type TIconButtonMatrixPart = 'variant' | 'size' | 'iconSize' | 'shape' | 'flags' | 'states' | 'themes';
 
 /** Случай признака: какой из булевых входов включён и как он называется словами. */
 interface IIconButtonFlagCase {
@@ -125,7 +125,7 @@ interface IIconButtonFlagCase {
     ],
 })
 export class TestRtIconButtonMatrixComponent {
-    public part: IconButtonMatrixPart = 'variant';
+    public part: TIconButtonMatrixPart = 'variant';
 
     public readonly variants: readonly IRtIconButton.Variant[] = ['ghost', 'primary', 'secondary', 'danger', 'success', 'warning'];
     public readonly sizes: readonly IRtIconButton.Size[] = ['sm', 'md', 'lg', 'xl', '2xl'];

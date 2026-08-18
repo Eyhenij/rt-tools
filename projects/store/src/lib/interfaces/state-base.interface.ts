@@ -1,7 +1,7 @@
-import { IDictionary, IPrimitive } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
+import { IDictionary, TPrimitive } from '@rt-tools/core';
+import { TNullable } from '@rt-tools/utils';
 
-import { ModelStatus } from '../enums';
+import { EModelStatus } from '../enums';
 
 export namespace IStateBase {
     export interface Async {
@@ -12,20 +12,20 @@ export namespace IStateBase {
         /** @description Indicates status of all the requests for getting list of Entities */
         pending: boolean;
 
-        requestStatus: ModelStatus;
-        loadingStatus: ModelStatus;
-        fetchingStatus: ModelStatus;
+        requestStatus: EModelStatus;
+        loadingStatus: EModelStatus;
+        fetchingStatus: EModelStatus;
         /** @description Indicates statuses of create/update requests */
-        upsertStatus: ModelStatus;
+        upsertStatus: EModelStatus;
         /** @description Indicates statuses of delete requests */
-        deleteStatus: ModelStatus;
+        deleteStatus: EModelStatus;
     }
 
     export interface List<ENTITY_TYPE extends object, PAGE_MODEL_TYPE extends object, SORT_MODEL_TYPE extends object> extends Async {
         entities: ENTITY_TYPE[];
         pageModel: PAGE_MODEL_TYPE;
-        sortModel: INullable<SORT_MODEL_TYPE>;
-        searchTerm: INullable<string>;
-        params: IDictionary<IPrimitive>;
+        sortModel: TNullable<SORT_MODEL_TYPE>;
+        searchTerm: TNullable<string>;
+        params: IDictionary<TPrimitive>;
     }
 }

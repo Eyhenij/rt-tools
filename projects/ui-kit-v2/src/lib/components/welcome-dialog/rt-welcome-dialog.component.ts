@@ -2,7 +2,7 @@ import { computed, inject, ChangeDetectionStrategy, Component, Signal, ViewEncap
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RtKitLabelKey, RtKitLabelMap, rtKitLabel } from '../../i18n';
+import { RT_KIT_LABELS, TRtKitLabelKey, TRtKitLabelMap, rtKitLabel } from '../../i18n';
 import { RtButtonDirective } from '../button/rt-button.directive';
 import { RtDialogRef } from '../dialog/rt-dialog-ref';
 import { RtDialogComponent } from '../dialog/rt-dialog.component';
@@ -11,7 +11,7 @@ import { RT_DIALOG_DATA } from '../dialog/rt-dialog.tokens';
 const BEM_BLOCK: string = 'rt-welcome-dialog';
 
 /** Ключ подписи CTA по умолчанию: язык известен только после старта приложения */
-const DEFAULT_CTA_KEY: RtKitLabelKey = 'uiContinue';
+const DEFAULT_CTA_KEY: TRtKitLabelKey = 'uiContinue';
 
 export namespace IRtWelcomeDialog {
     /** Payload модалки: настраиваемый текст приветствия + подпись CTA-кнопки. */
@@ -52,7 +52,7 @@ export class RtWelcomeDialogComponent {
 
     readonly #defaultCtaLabel: Signal<string> = rtKitLabel(DEFAULT_CTA_KEY);
 
-    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly title: string;
 

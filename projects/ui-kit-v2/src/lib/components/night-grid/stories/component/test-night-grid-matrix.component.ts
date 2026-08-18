@@ -7,7 +7,7 @@ import { RtNightGridComponent } from '../../rt-night-grid.component';
 import { IRtNightGrid } from '../../rt-night-grid.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type NightGridMatrixPart = 'state' | 'length' | 'states' | 'edges' | 'themes';
+export type TNightGridMatrixPart = 'state' | 'length' | 'states' | 'edges' | 'themes';
 
 /** Случай сетки: имя для подписи ячейки и сами клетки. */
 interface INightGridCase {
@@ -17,13 +17,20 @@ interface INightGridCase {
 
 const STATES: readonly IRtNightGrid.State[] = ['free', 'primary', 'secondary'];
 
+/** Что показывает клетка: подпись на каждое состояние. */
+const STATE_LABELS: Readonly<Record<IRtNightGrid.State, string>> = {
+    free: 'свободно',
+    primary: 'занято',
+    secondary: 'бронь под вопросом',
+};
+
 /** Собирает месяц клеток, раздавая состояния по кругу. */
 function month(count: number, pick: (index: number) => IRtNightGrid.State): readonly IRtNightGrid.Cell[] {
     return Array.from({ length: count }, (_: unknown, index: number): IRtNightGrid.Cell => {
         const state: IRtNightGrid.State = pick(index);
         const day: number = index + 1;
-        const what: string = state === 'free' ? 'свободно' : state === 'primary' ? 'занято' : 'бронь под вопросом';
-        return { id: `day-${day}`, state, title: `${day} марта — ${what}` };
+
+        return { state, id: `day-${day}`, title: `${day} марта — ${STATE_LABELS[state]}` };
     });
 }
 
@@ -96,7 +103,7 @@ function month(count: number, pick: (index: number) => IRtNightGrid.State): read
     ],
 })
 export class TestRtNightGridMatrixComponent {
-    public part: NightGridMatrixPart = 'state';
+    public part: TNightGridMatrixPart = 'state';
 
     public readonly mixed: readonly IRtNightGrid.Cell[] = month(31, (index: number): IRtNightGrid.State => STATES[index % 3]);
 

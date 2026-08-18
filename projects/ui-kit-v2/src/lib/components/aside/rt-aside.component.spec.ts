@@ -5,7 +5,7 @@ import { firstValueFrom } from 'rxjs';
 
 import { createRtFixture, hostClasses, provideRtKitTesting, qa, textOf } from '../../../testing/rt-kit-testing';
 import { RtAsideRef } from './rt-aside-ref';
-import { IRtAsideContentLayout, IRtAsideSize, RtAsideComponent } from './rt-aside.component';
+import { TRtAsideContentLayout, TRtAsideSize, RtAsideComponent } from './rt-aside.component';
 import { RtAsideService } from './rt-aside.service';
 import { RT_ASIDE_DATA } from './rt-aside.tokens';
 
@@ -56,13 +56,13 @@ describe('RtAsideComponent', (): void => {
         expect(hostClasses(setup())).toContain('rt-aside');
     });
 
-    it.each<IRtAsideSize>(['sm', 'md', 'lg'])('размер %s выводит модификатор', (size: IRtAsideSize): void => {
+    it.each<TRtAsideSize>(['sm', 'md', 'lg'])('размер %s выводит модификатор', (size: TRtAsideSize): void => {
         expect(Array.from((qa(setup({ size }), 'aside')?.nativeElement as HTMLElement).classList)).toContain(`rt-aside--size--${size}`);
     });
 
-    it.each<IRtAsideContentLayout>(['default', 'tabs'])(
+    it.each<TRtAsideContentLayout>(['default', 'tabs'])(
         'раскладка содержимого %s выводит модификатор',
-        (layout: IRtAsideContentLayout): void => {
+        (layout: TRtAsideContentLayout): void => {
             expect(Array.from((qa(setup({ contentLayout: layout }), 'aside')?.nativeElement as HTMLElement).classList)).toContain(
                 `rt-aside--content--${layout}`
             );

@@ -16,25 +16,25 @@ export default {
     },
 } as Meta<TestRtIconButtonMatrixComponent>;
 
-type Story = StoryObj<TestRtIconButtonMatrixComponent>;
+type TStory = StoryObj<TestRtIconButtonMatrixComponent>;
 
-export const Variant: Story = { args: { part: 'variant' } };
+export const Variant: TStory = { args: { part: 'variant' } };
 
-export const Size: Story = { args: { part: 'size' } };
+export const Size: TStory = { args: { part: 'size' } };
 
-export const IconSize: Story = { args: { part: 'iconSize' } };
+export const IconSize: TStory = { args: { part: 'iconSize' } };
 
-export const Shape: Story = { args: { part: 'shape' } };
+export const Shape: TStory = { args: { part: 'shape' } };
 
-export const Flags: Story = { args: { part: 'flags' } };
+export const Flags: TStory = { args: { part: 'flags' } };
 
 /**
  * Признак ставится на хост, а стилизована `<button>` внутри шаблона — поэтому аддону
  * псевдосостояний передан спуск до неё.
  */
-export const States: Story = {
+export const States: TStory = {
     args: { part: 'states' },
     parameters: { pseudo: storyPseudoParameters('button') },
 };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

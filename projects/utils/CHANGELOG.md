@@ -1,3 +1,37 @@
+## [Unreleased]
+
+### BREAKING CHANGES
+
+- **rt:utils:** псевдонимы типа получили приставку `T`: в этом дереве `I` носит интерфейс, а `T` — псевдоним типа, и
+  правило линтера требует именно её. Псевдонимов под прежними именами не оставлено — у символа одно имя, и переход
+  состоит в правке импортов. Переименовано 17:
+
+    - `FilterOperatorType` → `TFilterOperatorType`
+    - `IAnyObject` → `TAnyObject`
+    - `IComparatorType` → `TComparatorType`
+    - `IEmptyObject` → `TEmptyObject`
+    - `IHasScopeType` → `THasScopeType`
+    - `IIntersectionType` → `TIntersectionType`
+    - `IModify` → `TModify`
+    - `INullable` → `TNullable`
+    - `IOptional` → `TOptional`
+    - `IPartialOmit` → `TPartialOmit`
+    - `IScriptable` → `TScriptable`
+    - `IScriptableAndArray` → `TScriptableAndArray`
+    - `IScriptableAndArrayOptions` → `TScriptableAndArrayOptions`
+    - `IScriptableAndScriptableOptions` → `TScriptableAndScriptableOptions`
+    - `IScriptableOptions` → `TScriptableOptions`
+    - `IValuesType` → `TValuesType`
+    - `ListSortOrderType` → `TListSortOrderType`
+
+- **rt:utils:** перечисления получили приставку `E` и имя в PascalCase: приставка рода в этом дереве одна на все
+  объявления, и правило линтера требует её у перечисления так же, как у интерфейса и псевдонима типа. Значения внутри
+  перечислений не тронуты. Переименовано 3:
+
+    - `FILTER_OPERATOR_TYPE_ENUM` → `EFilterOperatorType`
+    - `HAS_OWN_SCOPE_ENUM` → `EHasOwnScope`
+    - `LIST_SORT_ORDER_ENUM` → `EListSortOrder`
+
 ## [0.3.2](https://github.com/nickmdf/rt-tools/compare/rt-utils@0.3.1...rt-utils@0.3.2) (2026-08-10)
 
 ## [0.3.1](https://github.com/nickmdf/rt-tools/compare/rt-utils@0.3.0...rt-utils@0.3.1) (2026-08-02)

@@ -23,7 +23,7 @@ import { distinctUntilChanged, map } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RtKitLabelMap, rtKitLabel } from '../../i18n';
+import { RT_KIT_LABELS, TRtKitLabelMap, rtKitLabel } from '../../i18n';
 import { searchDebounce } from '../../util';
 
 import { RtInfiniteScrollDirective } from '../../scroll/infinite-scroll.directive';
@@ -85,7 +85,7 @@ export class RtThreadListComponent<TRow extends IRtThreadList.Row> implements On
     readonly #t_uiSearch: Signal<string> = rtKitLabel('uiSearch');
     readonly #t_uiNothingFound: Signal<string> = rtKitLabel('uiNothingFound');
 
-    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly searchPlaceholderText: Signal<string> = computed((): string => this.searchPlaceholder() || this.#t_uiSearch());
     protected readonly emptyTitle: Signal<string> = computed((): string => this.emptyText() || this.#t_uiNothingFound());

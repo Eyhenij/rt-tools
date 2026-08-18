@@ -6,7 +6,7 @@ import { RtWorkspaceDetailsComponent } from '../../rt-workspace-details.componen
 import { IRtWorkspaceDetails } from '../../rt-workspace-details.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type WorkspaceDetailsMatrixPart = 'blocks' | 'tabs' | 'loading' | 'actions' | 'audit' | 'themes';
+export type TWorkspaceDetailsMatrixPart = 'blocks' | 'tabs' | 'loading' | 'actions' | 'audit' | 'themes';
 
 const ROWS: readonly IRtWorkspaceDetails.Row[] = [
     { label: 'Номер', value: '2024-118' },
@@ -153,7 +153,7 @@ const AUDIT: IRtWorkspaceDetails.Audit = {
     ],
 })
 export class TestRtWorkspaceDetailsMatrixComponent {
-    public part: WorkspaceDetailsMatrixPart = 'blocks';
+    public part: TWorkspaceDetailsMatrixPart = 'blocks';
 
     public readonly rows: readonly IRtWorkspaceDetails.Row[] = ROWS;
     public readonly money: readonly IRtWorkspaceDetails.MoneyRow[] = MONEY;

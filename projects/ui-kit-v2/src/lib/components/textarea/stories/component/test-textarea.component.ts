@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { RtTextareaComponent } from '../../rt-textarea.component';
-import { IRtTextareaResize } from '../../rt-textarea.component';
+import { TRtTextareaResize } from '../../rt-textarea.component';
 
 /**
  * Демонстрационная обёртка для витрины: держит изменяемое состояние, на которое
@@ -23,5 +23,5 @@ export class TestRtTextareaComponent {
     public placeholder: string = 'Введите значение';
     public readonly: boolean = false;
     public rows: number = 3;
-    public resize: IRtTextareaResize = 'vertical';
+    public resize: TRtTextareaResize = 'vertical';
 }

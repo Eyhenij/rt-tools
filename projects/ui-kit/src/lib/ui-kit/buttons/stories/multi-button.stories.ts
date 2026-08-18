@@ -1,7 +1,7 @@
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { RtuiMultiButtonComponent } from '../multi-button/rtui-multi-button.component';
 
-interface HorecaMultiButtonArgs {
+interface IMultiButtonArgs {
     actions: string[];
     activeAction: string;
 }
@@ -36,14 +36,14 @@ const meta: Meta<RtuiMultiButtonComponent> = {
 };
 
 export default meta;
-type Story = StoryObj<RtuiMultiButtonComponent>;
+type TStory = StoryObj<RtuiMultiButtonComponent>;
 
-export const FewAction: Story = {
+export const FewAction: TStory = {
     args: {
         actions: ['Opened', 'Closed'],
         activeAction: 'Opened',
     },
-    render: (args: HorecaMultiButtonArgs) => ({
+    render: (args: IMultiButtonArgs) => ({
         props: {
             ...args,
             // eslint-disable-next-line
@@ -60,12 +60,12 @@ export const FewAction: Story = {
     }),
 };
 
-export const SeveralActions: Story = {
+export const SeveralActions: TStory = {
     args: {
         actions: ['Yesterday', 'Today', 'Week', 'Month', 'Year', 'All'],
         activeAction: 'Today',
     },
-    render: (args: HorecaMultiButtonArgs) => ({
+    render: (args: IMultiButtonArgs) => ({
         props: {
             ...args,
             // eslint-disable-next-line

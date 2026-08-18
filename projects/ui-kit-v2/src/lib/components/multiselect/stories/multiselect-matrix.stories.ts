@@ -17,24 +17,24 @@ export default {
     },
 } as Meta<TestRtMultiselectMatrixComponent>;
 
-type Story = StoryObj<TestRtMultiselectMatrixComponent>;
+type TStory = StoryObj<TestRtMultiselectMatrixComponent>;
 
-export const Size: Story = { args: { part: 'size' } };
+export const Size: TStory = { args: { part: 'size' } };
 
-export const Chips: Story = { args: { part: 'chips' } };
+export const Chips: TStory = { args: { part: 'chips' } };
 
-export const Bordered: Story = { args: { part: 'bordered' } };
+export const Bordered: TStory = { args: { part: 'bordered' } };
 
 /**
  * Рамку и кольцо рисует `<button>` внутри хоста, а признак стоит на хосте — аддону передан
  * спуск до него: без него класс лёг бы на элемент, у которого этих правил нет.
  */
-export const States: Story = {
+export const States: TStory = {
     args: { part: 'states' },
     parameters: { pseudo: storyPseudoParameters('.rt-multiselect__trigger') },
 };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };
 
 /**
  * Раскрытый список. Открывает его `play`-функция клавишей, а не щелчком: клавиша заодно
@@ -44,7 +44,7 @@ export const Themes: Story = { args: { part: 'themes' } };
  * ни в светло-тёмной паре, ни в матрице состояний: тёмную панель смотрят переключателем
  * темы в тулбаре.
  */
-export const Panel: Story = {
+export const Panel: TStory = {
     parameters: { snapshot: { fullPage: true } },
     args: { part: 'panel', panel: 'options' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
@@ -53,7 +53,7 @@ export const Panel: Story = {
 };
 
 /** Пустой набор опций: строка `rtKit.uiNoOptions` вместо списка. */
-export const PanelEmpty: Story = {
+export const PanelEmpty: TStory = {
     parameters: { snapshot: { fullPage: true } },
     args: { part: 'panel', panel: 'empty' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {

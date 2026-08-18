@@ -16,24 +16,24 @@ export default {
     },
 } as Meta<TestRtButtonMatrixComponent>;
 
-type Story = StoryObj<TestRtButtonMatrixComponent>;
+type TStory = StoryObj<TestRtButtonMatrixComponent>;
 
-export const Appearance: Story = { args: { part: 'appearance' } };
+export const Appearance: TStory = { args: { part: 'appearance' } };
 
-export const Size: Story = { args: { part: 'size' } };
+export const Size: TStory = { args: { part: 'size' } };
 
-export const Icon: Story = { args: { part: 'icon' } };
+export const Icon: TStory = { args: { part: 'icon' } };
 
-export const Rounded: Story = { args: { part: 'rounded' } };
+export const Rounded: TStory = { args: { part: 'rounded' } };
 
-export const Loading: Story = { args: { part: 'loading' } };
+export const Loading: TStory = { args: { part: 'loading' } };
 
-export const Disabled: Story = { args: { part: 'disabled' } };
+export const Disabled: TStory = { args: { part: 'disabled' } };
 
 /** Наведение, нажатие и фокус проставляет аддон псевдосостояний по признаку `data-story-state`. */
-export const States: Story = {
+export const States: TStory = {
     args: { part: 'states' },
     parameters: { pseudo: STORY_PSEUDO_PARAMETERS },
 };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

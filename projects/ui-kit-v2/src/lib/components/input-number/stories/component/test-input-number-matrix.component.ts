@@ -11,7 +11,7 @@ import { IRtInput } from '../../../input/rt-input.model';
 import { RtInputNumberComponent } from '../../rt-input-number.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type InputNumberMatrixPart = 'size' | 'prefix' | 'fraction' | 'filling' | 'bordered' | 'states' | 'themes';
+export type TInputNumberMatrixPart = 'size' | 'prefix' | 'fraction' | 'filling' | 'bordered' | 'states' | 'themes';
 
 /** Случай с подписью и своим значением: у числового поля значение приходит только формой. */
 interface IInputNumberCase {
@@ -181,7 +181,7 @@ function invalid(): FormControl<number | null> {
     ],
 })
 export class TestRtInputNumberMatrixComponent {
-    public part: InputNumberMatrixPart = 'size';
+    public part: TInputNumberMatrixPart = 'size';
 
     public readonly fieldWidth: string = STORY_FIELD_WIDTH;
     public readonly sizes: readonly IRtInput.Size[] = ['sm', 'md', 'lg'];

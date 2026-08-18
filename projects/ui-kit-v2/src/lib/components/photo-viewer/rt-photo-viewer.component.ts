@@ -18,7 +18,7 @@ import {
 // rt-tools
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RtKitLabelMap } from '../../i18n';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
 import { RtDialogRef } from '../dialog/rt-dialog-ref';
 import { RT_DIALOG_DATA } from '../dialog/rt-dialog.tokens';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
@@ -76,7 +76,7 @@ export class RtPhotoViewerComponent {
     readonly #dialogRef: RtDialogRef<number> = inject(RtDialogRef<number>);
     readonly #host: ElementRef<HTMLElement> = inject(ElementRef<HTMLElement>);
 
-    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly track: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('track');
 

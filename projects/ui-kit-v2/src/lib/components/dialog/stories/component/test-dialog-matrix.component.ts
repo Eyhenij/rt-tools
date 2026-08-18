@@ -6,10 +6,10 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtDialogFooterComponent } from '../../footer/rt-dialog-footer.component';
 import { RtDialogHeaderComponent } from '../../header/rt-dialog-header.component';
 import { RtDialogComponent } from '../../rt-dialog.component';
-import { IRtDialogSize } from '../../rt-dialog.component';
+import { TRtDialogSize } from '../../rt-dialog.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type DialogMatrixPart = 'size' | 'width' | 'parts' | 'themes';
+export type TDialogMatrixPart = 'size' | 'width' | 'parts' | 'themes';
 
 /** Наполнение окна: шапка и подвал необязательны, и без них окно выглядит иначе. */
 interface IDialogPartsCase {
@@ -140,9 +140,9 @@ interface IDialogPartsCase {
     ],
 })
 export class TestRtDialogMatrixComponent {
-    public part: DialogMatrixPart = 'size';
+    public part: TDialogMatrixPart = 'size';
 
-    public readonly sizes: readonly IRtDialogSize[] = ['sm', 'md', 'lg'];
+    public readonly sizes: readonly TRtDialogSize[] = ['sm', 'md', 'lg'];
 
     /** Своя ширина: вход перекрывает размер, и рядом видно, что размер он и правда перекрывает. */
     public readonly widths: readonly string[] = ['280px', '440px'];

@@ -1,3 +1,4 @@
+/* eslint-disable max-lines -- файл делится задачей RT-849: набор токенов собирается сборщиком, а таблица и переписка режутся по смыслу */
 import { BooleanInput, NumberInput } from '@angular/cdk/coercion';
 import {
     CDK_TABLE,
@@ -46,7 +47,7 @@ import { mergeMap, Observable, Subject } from 'rxjs';
 import { BlockDirective, ElemDirective, IDBStorageService, ModDirective } from '@rt-tools/core';
 import { ISortModel } from '@rt-tools/utils';
 
-import { RtKitLabelKey, rtKitLabel } from '../../i18n';
+import { TRtKitLabelKey, rtKitLabel } from '../../i18n';
 import { BreakpointsService } from '../../platform';
 import { ERtStorageKeys } from '../../platform';
 
@@ -71,7 +72,7 @@ function settingsKey(tableId: string): string {
 
 const DEFAULT_SKELETON_ROWS: number = 5;
 /** Ключ подписи пустой таблицы: язык известен только после старта приложения */
-const DEFAULT_EMPTY_KEY: RtKitLabelKey = 'uiNoRows';
+const DEFAULT_EMPTY_KEY: TRtKitLabelKey = 'uiNoRows';
 
 /** Имя внутренней «…»-колонки действий, добавляемой при `[showRowActions]`. */
 export const RT_TABLE_ROW_ACTIONS_COLUMN: string = 'rtRowActions';

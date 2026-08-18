@@ -6,7 +6,7 @@ import { RtFileCardComponent } from '../../../file-card/rt-file-card.component';
 import { RtFileListComponent } from '../../rt-file-list.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type FileListMatrixPart = 'count' | 'cards' | 'edges' | 'themes';
+export type TFileListMatrixPart = 'count' | 'cards' | 'edges' | 'themes';
 
 /** Файл витрины: имя и вес — всё, что карточке нужно, чтобы выглядеть настоящей. */
 interface IStoryFile {
@@ -108,7 +108,7 @@ const FILES: readonly IStoryFile[] = [
     ],
 })
 export class TestRtFileListMatrixComponent {
-    public part: FileListMatrixPart = 'count';
+    public part: TFileListMatrixPart = 'count';
 
     public readonly files: readonly IStoryFile[] = FILES;
 

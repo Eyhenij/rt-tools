@@ -7,7 +7,7 @@ export interface IListState<T extends string, M extends object> {
 
 export interface ISortModel<T = string> {
     propertyName: T;
-    sortDirection: ListSortOrderType;
+    sortDirection: TListSortOrderType;
 }
 
 export interface IPageModel {
@@ -24,13 +24,13 @@ export interface IPageModel {
 }
 
 export interface IFilterModel<M = string> {
-    operatorType: FilterOperatorType;
+    operatorType: TFilterOperatorType;
     propertyName: M;
     value?: string | number | boolean;
     values?: Array<string | number>;
 }
 
-export enum FILTER_OPERATOR_TYPE_ENUM {
+export enum EFilterOperatorType {
     EQUALS = 'equals',
     NOT_EQUALS = 'notEquals',
     STARTS_WITH = 'startsWith',
@@ -40,28 +40,28 @@ export enum FILTER_OPERATOR_TYPE_ENUM {
     LESS_THAN = 'lessThan',
 }
 
-export type FilterOperatorType =
-    | FILTER_OPERATOR_TYPE_ENUM.EQUALS
-    | FILTER_OPERATOR_TYPE_ENUM.NOT_EQUALS
-    | FILTER_OPERATOR_TYPE_ENUM.STARTS_WITH
-    | FILTER_OPERATOR_TYPE_ENUM.ENDS_WITH
-    | FILTER_OPERATOR_TYPE_ENUM.CONTAINS
-    | FILTER_OPERATOR_TYPE_ENUM.GREATER_THAN
-    | FILTER_OPERATOR_TYPE_ENUM.LESS_THAN;
+export type TFilterOperatorType =
+    | EFilterOperatorType.EQUALS
+    | EFilterOperatorType.NOT_EQUALS
+    | EFilterOperatorType.STARTS_WITH
+    | EFilterOperatorType.ENDS_WITH
+    | EFilterOperatorType.CONTAINS
+    | EFilterOperatorType.GREATER_THAN
+    | EFilterOperatorType.LESS_THAN;
 
-export const FILTER_OPERATORS: ReadonlyArray<FilterOperatorType> = Object.freeze([
-    FILTER_OPERATOR_TYPE_ENUM.EQUALS,
-    FILTER_OPERATOR_TYPE_ENUM.NOT_EQUALS,
-    FILTER_OPERATOR_TYPE_ENUM.STARTS_WITH,
-    FILTER_OPERATOR_TYPE_ENUM.ENDS_WITH,
-    FILTER_OPERATOR_TYPE_ENUM.CONTAINS,
-    FILTER_OPERATOR_TYPE_ENUM.GREATER_THAN,
-    FILTER_OPERATOR_TYPE_ENUM.LESS_THAN,
+export const FILTER_OPERATORS: ReadonlyArray<TFilterOperatorType> = Object.freeze([
+    EFilterOperatorType.EQUALS,
+    EFilterOperatorType.NOT_EQUALS,
+    EFilterOperatorType.STARTS_WITH,
+    EFilterOperatorType.ENDS_WITH,
+    EFilterOperatorType.CONTAINS,
+    EFilterOperatorType.GREATER_THAN,
+    EFilterOperatorType.LESS_THAN,
 ]);
 
-export enum LIST_SORT_ORDER_ENUM {
+export enum EListSortOrder {
     ASC = 'asc',
     DESC = 'desc',
 }
 
-export type ListSortOrderType = LIST_SORT_ORDER_ENUM.ASC | LIST_SORT_ORDER_ENUM.DESC;
+export type TListSortOrderType = EListSortOrder.ASC | EListSortOrder.DESC;

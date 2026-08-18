@@ -1,7 +1,7 @@
 import { ESLintUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
 
-type IMessageIds = 'missing';
-type IOptions = [];
+type TMessageIds = 'missing';
+type TOptions = [];
 
 // NOTE: The rule будет доступен в ESLint-конфигах как "@nx/workspace-require-take-until-destroyed"
 export const RULE_NAME: string = 'require-take-until-destroyed';
@@ -19,7 +19,7 @@ const TERMINATING_OPERATORS: ReadonlySet<string> = new Set([
 
 const createRule: ReturnType<typeof ESLintUtils.RuleCreator> = ESLintUtils.RuleCreator(() => __filename);
 
-export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = createRule<IOptions, IMessageIds>({
+export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = createRule<TOptions, TMessageIds>({
     name: RULE_NAME,
     meta: {
         type: 'problem',
@@ -34,7 +34,7 @@ export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = createRule<IOpti
         },
     },
     defaultOptions: [],
-    create(context: Readonly<TSESLint.RuleContext<IMessageIds, IOptions>>): TSESLint.RuleListener {
+    create(context: Readonly<TSESLint.RuleContext<TMessageIds, TOptions>>): TSESLint.RuleListener {
         function findPipeArguments(node: TSESTree.Node | undefined): TSESTree.CallExpressionArgument[] | null {
             let current: TSESTree.Node | undefined = node;
             while (current && current.type === 'CallExpression' && current.callee.type === 'MemberExpression') {

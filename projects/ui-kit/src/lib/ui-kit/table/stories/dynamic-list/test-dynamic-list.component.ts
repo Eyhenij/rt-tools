@@ -19,7 +19,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective } from '@rt-tools/core';
 import { IDBStorageService, PlatformService } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtActionBarService, RtuiActionBarContainerComponent } from '../../../action-bar';
 import { RtuiToggleComponent } from '../../../toggle';
@@ -31,12 +31,12 @@ import {
     RtuiDynamicListToolbarActionsDirective,
     RtuiDynamicListToolbarSelectorsDirective,
 } from '../../dynamic-list.component';
-import { FILTER_OPERATOR_TYPE_ENUM, IFilterModel, LIST_SORT_ORDER_ENUM, IPageModel, ISortModel } from '@rt-tools/utils';
+import { EFilterOperatorType, IFilterModel, EListSortOrder, IPageModel, ISortModel } from '@rt-tools/utils';
 import { RtDynamicListSelectorsDirective } from '../../util/dynamic-list-selectors.directive';
 import { RtTableConfigService } from '../../util/table-config.service';
 import { COLUMNS } from '../constants';
 import { createPersonList } from '../mocks';
-import { Person } from '../types';
+import { TPerson } from '../types';
 import { RtuiStopTableRowClickDirective } from '../../directives';
 
 @Component({
@@ -75,7 +75,7 @@ import { RtuiStopTableRowClickDirective } from '../../directives';
 export default class TestDynamicListComponent implements OnInit {
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #injector: Injector = inject(Injector);
-    readonly #tableConfigService: RtTableConfigService<Person> = inject(RtTableConfigService);
+    readonly #tableConfigService: RtTableConfigService<TPerson> = inject(RtTableConfigService);
     readonly #actionBarService: RtActionBarService = inject(RtActionBarService);
 
     public isMultiSelect: boolean = true;
@@ -91,7 +91,7 @@ export default class TestDynamicListComponent implements OnInit {
     public isTableRowsClickable: boolean = false;
     public isFiltersShown: boolean = false;
     public searchTerm: string = '';
-    public data: Person[] = [];
+    public data: TPerson[] = [];
     public selectedEntitiesIds: number[] = [];
     public pageModel: IPageModel = {
         pageNumber: 1,
@@ -100,22 +100,20 @@ export default class TestDynamicListComponent implements OnInit {
     };
     public currentSortModel: ISortModel<string> = {
         propertyName: 'id',
-        sortDirection: LIST_SORT_ORDER_ENUM.ASC,
+        sortDirection: EListSortOrder.ASC,
     };
     public filterModel: IFilterModel[] = [
         {
             propertyName: 'name',
-            operatorType: FILTER_OPERATOR_TYPE_ENUM.EQUALS,
+            operatorType: EFilterOperatorType.EQUALS,
             value: '111',
         },
     ];
     public storageKey: string = 'dynamicListManyItemsKey';
 
-    public readonly dynamicListTpl: Signal<INullable<RtDynamicListSelectorsDirective<Person, keyof Person, 'id'>>> =
-        viewChild<RtDynamicListSelectorsDirective<Person, keyof Person, 'id'>>(RtDynamicListSelectorsDirective);
-    public readonly selectedEntities: Signal<Person[]> = computed(() => {
-        return this.dynamicListTpl()?.selectedEntities() ?? [];
-    });
+    public readonly dynamicListTpl: Signal<TNullable<RtDynamicListSelectorsDirective<TPerson, keyof TPerson, 'id'>>> =
+        viewChild<RtDynamicListSelectorsDirective<TPerson, keyof TPerson, 'id'>>(RtDynamicListSelectorsDirective);
+    public readonly selectedEntities: Signal<TPerson[]> = computed(() => this.dynamicListTpl()?.selectedEntities() ?? []);
 
     public ngOnInit(): void {
         this.#tableConfigService.initConfig(this.storageKey, COLUMNS);
@@ -157,6 +155,8 @@ export default class TestDynamicListComponent implements OnInit {
                     this.#actionBarService.setCounts(this.selectedEntities().length, this.pageModel.totalCount);
                 } else if (this.#actionBarService.config()?.selected) {
                     this.#actionBarService.closeActionBar();
+                } else {
+                    // Выбранных нет, и панель действий не открыта — закрывать нечего.
                 }
             });
 
@@ -201,43 +201,43 @@ export default class TestDynamicListComponent implements OnInit {
         console.warn('Filters', this.filterModel);
     }
 
-    public onRowClick(data: { row: Person; event: MouseEvent }): void {
+    public onRowClick(data: { row: TPerson; event: MouseEvent }): void {
         // eslint-disable-next-line no-console
         console.warn('Row Click', data);
     }
 
-    public onRowDoubleClick(row: Person): void {
+    public onRowDoubleClick(row: TPerson): void {
         // eslint-disable-next-line no-console
         console.warn('Row Double Click', row);
     }
 
-    public onEdit(row: Person): void {
+    public onEdit(row: TPerson): void {
         // eslint-disable-next-line no-console
         console.warn('Edit', row);
     }
 
-    public onDelete(row: Person): void {
+    public onDelete(row: TPerson): void {
         // eslint-disable-next-line no-console
         console.warn('Delete', row);
     }
 
-    public onCustomCellButtonClick(row: Person): void {
+    public onCustomCellButtonClick(row: TPerson): void {
         // eslint-disable-next-line no-console
         console.warn('Custom Cell Button', row);
     }
 
-    public onCustomCellToggle(row: Person): void {
+    public onCustomCellToggle(row: TPerson): void {
         row.active = !row.active;
         // eslint-disable-next-line no-console
         console.warn('Custom Cell Toggle', row);
     }
 
-    public onInfo(row: Person): void {
+    public onInfo(row: TPerson): void {
         // eslint-disable-next-line no-console
         console.warn('Info', row);
     }
 
-    public onOpenNewTab(row: Person): void {
+    public onOpenNewTab(row: TPerson): void {
         // eslint-disable-next-line no-console
         console.warn('Open new tab', row);
     }

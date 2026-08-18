@@ -32,9 +32,9 @@ export class RtTableSelectorsDirective<
     /** List of selected entities */
     public readonly selectedEntities: Signal<ENTITY_TYPE[]> = this.#selectedEntities.asReadonly();
     /** List of selected entities ids */
-    public readonly selectedEntitiesIds: Signal<ENTITY_TYPE[KEY][]> = computed(() => {
-        return this.selectedEntities().map((el: ENTITY_TYPE) => el[this.keyExp()]);
-    });
+    public readonly selectedEntitiesIds: Signal<ENTITY_TYPE[KEY][]> = computed(() =>
+        this.selectedEntities().map((el: ENTITY_TYPE) => el[this.keyExp()])
+    );
     /** Indicates is all page entities checkbox selected */
     public readonly isPageEntitiesSelected: Signal<boolean> = this.#isPageEntitiesSelected.asReadonly();
     /** Indicates is page entities checkbox indeterminate */

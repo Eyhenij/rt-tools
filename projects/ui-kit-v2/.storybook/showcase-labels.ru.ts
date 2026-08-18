@@ -1,4 +1,4 @@
-import { RtKitLabelKey } from '../src/lib/i18n';
+import { TRtKitLabelKey } from '../src/lib/i18n';
 
 /**
  * Русские подписи кита — для витрины, не для пакета.
@@ -10,7 +10,7 @@ import { RtKitLabelKey } from '../src/lib/i18n';
  * Лежит рядом с витриной намеренно: потребителю кита формулировки этого
  * продукта не достаются.
  */
-export const RT_KIT_LABELS_RU: Readonly<Record<RtKitLabelKey, string>> = {
+export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     bottomSheetClose: 'Закрыть',
     chatAttachAria: 'Прикрепить файл',
     chatAttachTooltip: 'Прикрепить файл',

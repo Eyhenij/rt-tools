@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryGridComponent } from '../../../../../showcase/story-grid.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
-import { IRtSkeletonShape } from '../../../skeleton/rt-skeleton.component';
+import { TRtSkeletonShape } from '../../../skeleton/rt-skeleton.component';
 import { RtSkeletonWrapperComponent } from '../../rt-skeleton-wrapper.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type SkeletonWrapperMatrixPart = 'loading' | 'themes';
+export type TSkeletonWrapperMatrixPart = 'loading' | 'themes';
 
 /**
  * Матрицы `rt-skeleton-wrapper` для витрины.
@@ -54,10 +54,10 @@ export type SkeletonWrapperMatrixPart = 'loading' | 'themes';
     ],
 })
 export class TestRtSkeletonWrapperMatrixComponent {
-    public part: SkeletonWrapperMatrixPart = 'loading';
+    public part: TSkeletonWrapperMatrixPart = 'loading';
 
     public readonly loadingStates: readonly boolean[] = [true, false];
-    public readonly shapes: readonly IRtSkeletonShape[] = ['rectangle', 'circle', 'square'];
+    public readonly shapes: readonly TRtSkeletonShape[] = ['rectangle', 'circle', 'square'];
 
     public readonly loadingLabel: (value: boolean) => string = (value: boolean): string => (value ? 'загрузка' : 'содержимое');
 }

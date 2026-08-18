@@ -43,7 +43,7 @@ import { noop } from 'rxjs';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 
 import { BlockDirective, BreakpointService, ConcatClassesPipe, ElemDirective } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 import { areArraysEqual, areArraysEqualUnordered, checkIsEntityInArrayByKey, sortByAlphabet, transformArrayInput } from '@rt-tools/utils';
 import { OVERLAY_POSITIONS, RtEscapeKeyDirective } from '@rt-tools/core';
 import { RtuiDynamicSelectorListActionsComponent } from '../actions/rtui-dynamic-selector-list-actions.component';
@@ -57,8 +57,19 @@ import {
 } from '../selected-list/rtui-dynamic-selector-selected-list.component';
 import { BooleanInput } from '@angular/cdk/coercion';
 
-interface FormModel {
-    autocompleteControl: FormControl<INullable<string>>;
+/**
+ * Порядок ключей для сверки двух списков.
+ *
+ * Какой именно порядок, значения не имеет — оба списка выстраиваются одним и тем же, и сравнивают их
+ * на равенство. Важно лишь, чтобы порядок был один: умолчание `sort()` зависит от вида значения и на
+ * числах даёт лексикографический.
+ */
+function compareKeys(a: unknown, b: unknown): number {
+    return String(a).localeCompare(String(b));
+}
+
+interface IFormModel {
+    autocompleteControl: FormControl<TNullable<string>>;
 }
 
 /** Directive for row actions located outside a row menu button */
@@ -126,11 +137,11 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     /** Config for overlay selector */
     protected readonly connectedOverlayPositions: ConnectedPosition[] = [...OVERLAY_POSITIONS];
 
-    public form: FormGroup<FormModel> = this.#fb.group<FormModel>({
-        autocompleteControl: this.#fb.control<INullable<string>>(null), // used only for UI
+    public form: FormGroup<IFormModel> = this.#fb.group<IFormModel>({
+        autocompleteControl: this.#fb.control<TNullable<string>>(null), // used only for UI
     });
     /** Target element for overlay selector */
-    public selectedOverlayTrigger: INullable<CdkOverlayOrigin> = null;
+    public selectedOverlayTrigger: TNullable<CdkOverlayOrigin> = null;
 
     /** A model's field which should be used for http-requests */
     public keyExp: InputSignal<KEY> = input.required();
@@ -195,7 +206,7 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     /** Indicates that an additional control has been changed */
     public additionalControlChanged: InputSignal<boolean> = input(false);
     /** Custom sort function for entities list in popup */
-    public sortFn: InputSignal<INullable<(a: ENTITY, b: ENTITY) => number>> = input<INullable<(a: ENTITY, b: ENTITY) => number>>(null);
+    public sortFn: InputSignal<TNullable<(a: ENTITY, b: ENTITY) => number>> = input<TNullable<(a: ENTITY, b: ENTITY) => number>>(null);
 
     /** Output search action */
     public readonly searchAction: OutputEmitterRef<string> = output<string>();
@@ -216,49 +227,50 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     /** Current selected entities ids */
     readonly #selectedEntityIds: WritableSignal<Array<ENTITY[KEY]>> = signal([]);
     /** Current selected entities */
-    public readonly selectedEntities: Signal<ENTITY[]> = computed(() => {
-        return this.#selectedEntityIds()
+    public readonly selectedEntities: Signal<ENTITY[]> = computed(() =>
+        this.#selectedEntityIds()
             .map((id: ENTITY[KEY]) => this.entities().find((el: ENTITY) => id === el[this.keyExp()]))
-            .filter((el: INullable<ENTITY>): el is ENTITY => !!el);
-    });
+            .filter((el: TNullable<ENTITY>): el is ENTITY => !!el)
+    );
     /** Indicates is popup selector visible */
     public readonly isSelectionControlShown: WritableSignal<boolean> = signal(false);
     /** Indicates is no data */
-    public readonly isNoDataPlaceholderShown: Signal<boolean> = computed(() => {
-        return !this.selectedEntities().length && !this.searchTerm() && (!this.entitiesToSelect()?.length || !this.isSelectionAvailable());
-    });
+    public readonly isNoDataPlaceholderShown: Signal<boolean> = computed(
+        () => !this.selectedEntities().length && !this.searchTerm() && (!this.entitiesToSelect()?.length || !this.isSelectionAvailable())
+    );
     /** Indicates reset selected button is disabled */
-    public readonly isResetButtonDisabled: Signal<boolean> = computed(() => {
-        return areArraysEqual(this.#selectedEntityIds(), this.#initialEntityIds()) && !this.additionalControlChanged();
-    });
+    public readonly isResetButtonDisabled: Signal<boolean> = computed(
+        () => areArraysEqual(this.#selectedEntityIds(), this.#initialEntityIds()) && !this.additionalControlChanged()
+    );
     /** Indicates clear selected button is disabled */
-    public readonly isClearButtonDisabled: Signal<boolean> = computed(() => {
-        return areArraysEqualUnordered(this.#selectedEntityIds(), this.readonlyEntitiesKeys()) && !this.additionalControlChanged();
-    });
+    public readonly isClearButtonDisabled: Signal<boolean> = computed(
+        () => areArraysEqualUnordered(this.#selectedEntityIds(), this.readonlyEntitiesKeys()) && !this.additionalControlChanged()
+    );
     /** Entities can be chosen, except selected on init */
-    public readonly entitiesToSelect: Signal<ENTITY[]> = computed(() => {
-        return this.#entities()
+    public readonly entitiesToSelect: Signal<ENTITY[]> = computed(() =>
+        this.#entities()
             .filter((entity: ENTITY) => !checkIsEntityInArrayByKey<ENTITY, KEY>(this.selectedEntities(), entity, this.keyExp()))
-            .filter((entity: ENTITY) => {
-                return (
+            .filter(
+                (entity: ENTITY) =>
                     (typeof entity[this.displayExp()] === 'string' || typeof entity[this.displayExp()] === 'number') &&
                     entity[this.displayExp()]?.toString().toLowerCase().includes(this.#autocompleteControlValue().toLowerCase())
-                );
-            })
+            )
             .sort((a: ENTITY, b: ENTITY) => {
-                return this.sortFn() ? this.sortFn()!(a, b) : sortByAlphabet(a, b, this.displayExp());
-            });
-    });
+                const sortFn: TNullable<(a: ENTITY, b: ENTITY) => number> = this.sortFn();
+
+                return sortFn ? sortFn(a, b) : sortByAlphabet(a, b, this.displayExp());
+            })
+    );
 
     /** Additional control for entity */
-    public readonly additionalControlTpl: Signal<INullable<TemplateRef<{ $implicit: ENTITY }>>> = contentChild(
+    public readonly additionalControlTpl: Signal<TNullable<TemplateRef<{ $implicit: ENTITY }>>> = contentChild(
         RtuiDynamicSelectorAdditionalControlDirective,
         {
             read: TemplateRef,
         }
     );
     /** Custom item title template */
-    public readonly itemTitleTpl: Signal<INullable<TemplateRef<{ $implicit: ENTITY }>>> = contentChild(
+    public readonly itemTitleTpl: Signal<TNullable<TemplateRef<{ $implicit: ENTITY }>>> = contentChild(
         RtuiDynamicSelectorItemTitleProjectionDirective,
         {
             read: TemplateRef,
@@ -277,7 +289,7 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     public ngOnInit(): void {
         this.form.controls.autocompleteControl.valueChanges
             .pipe(distinctUntilChanged(), takeUntilDestroyed(this.#destroyRef))
-            .subscribe((value: INullable<string>): void => {
+            .subscribe((value: TNullable<string>): void => {
                 this.#autocompleteControlValue.set(value || '');
             });
 
@@ -299,8 +311,8 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
             .subscribe((list: ENTITY[]) => {
                 const chosenListIds: ReadonlyArray<ENTITY[KEY]> = list.map((entity: ENTITY) => entity[this.keyExp()]);
                 const selectedEntityIds: ReadonlyArray<ENTITY[KEY]> = this.#selectedEntityIds();
-                const chosenListIdsForCompare: ENTITY[KEY][] = [...chosenListIds].sort();
-                const selectedEntityIdsForCompare: ENTITY[KEY][] = [...selectedEntityIds].sort();
+                const chosenListIdsForCompare: ENTITY[KEY][] = [...chosenListIds].sort(compareKeys);
+                const selectedEntityIdsForCompare: ENTITY[KEY][] = [...selectedEntityIds].sort(compareKeys);
 
                 if (!areArraysEqual(chosenListIdsForCompare, selectedEntityIdsForCompare)) {
                     this.#selectedEntityIds.set([...chosenListIds]);
@@ -311,9 +323,7 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
         /** Set list of selected entities ids for compare */
         effect(
             () => {
-                const selectedEntityIds: Array<ENTITY[KEY]> = this.selectedEntities().map((entity: ENTITY) => {
-                    return entity[this.keyExp()];
-                });
+                const selectedEntityIds: Array<ENTITY[KEY]> = this.selectedEntities().map((entity: ENTITY) => entity[this.keyExp()]);
 
                 if (!areArraysEqual(this.#selectedEntityIdsForCompare, selectedEntityIds) && this.#isFormInit) {
                     this.#selectedEntityIdsForCompare = selectedEntityIds;
@@ -323,6 +333,8 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
                 } else if (!this.#isFormInit && this.#entities().length) {
                     this.#selectedEntityIdsForCompare = selectedEntityIds;
                     this.#isFormInit = true;
+                } else {
+                    // Форма уже собрана, а список выбранного не менялся — сообщать ей нечего.
                 }
             },
             { injector: this.#injector }
@@ -331,10 +343,8 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
         /** Set list of values */
         effect(
             () => {
-                if (this.entities() && Array.isArray(this.entities())) {
-                    if (!areArraysEqual(this.entities(), this.#entities())) {
-                        this.#entities.set(this.entities());
-                    }
+                if (Array.isArray(this.entities()) && !areArraysEqual(this.entities(), this.#entities())) {
+                    this.#entities.set(this.entities());
                 }
             },
             { injector: this.#injector }
@@ -344,11 +354,9 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     // ––––––––––––– Value Accessor –––––––––––––––
 
     public writeValue(value: Array<ENTITY[KEY]>): void {
-        if (Array.isArray(value)) {
-            if (value.length) {
-                this.#selectedEntityIds.set(value);
-                this.#initialEntityIds.set(value);
-            }
+        if (Array.isArray(value) && value.length) {
+            this.#selectedEntityIds.set(value);
+            this.#initialEntityIds.set(value);
         }
     }
 
@@ -383,28 +391,22 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
 
     /** Add entity to or delete entity from list of selected */
     public toggleEntity(keyValue: ENTITY[KEY]): void {
-        const entity: INullable<ENTITY> = this.entities().find((entity: ENTITY) => {
-            return entity[this.keyExp()] === keyValue;
-        });
+        const entity: TNullable<ENTITY> = this.entities().find((entity: ENTITY) => entity[this.keyExp()] === keyValue);
 
         if (!entity) {
             return;
         }
 
-        const isRemoveSelected: boolean = !!this.selectedEntities().find((selectedEntity: ENTITY) => {
-            return selectedEntity[this.keyExp()] === keyValue;
-        });
+        const isRemoveSelected: boolean = !!this.selectedEntities().find(
+            (selectedEntity: ENTITY) => selectedEntity[this.keyExp()] === keyValue
+        );
 
         if (isRemoveSelected) {
-            this.#selectedEntityIds.update((selectedEntityIds: ENTITY[KEY][]) => {
-                return selectedEntityIds.filter((id: ENTITY[KEY]) => {
-                    return id !== keyValue;
-                });
-            });
+            this.#selectedEntityIds.update((selectedEntityIds: ENTITY[KEY][]) =>
+                selectedEntityIds.filter((id: ENTITY[KEY]) => id !== keyValue)
+            );
         } else {
-            this.#selectedEntityIds.update((selectedEntityIds: ENTITY[KEY][]) => {
-                return [...selectedEntityIds, entity[this.keyExp()]];
-            });
+            this.#selectedEntityIds.update((selectedEntityIds: ENTITY[KEY][]) => [...selectedEntityIds, entity[this.keyExp()]]);
 
             this.form.controls.autocompleteControl.setValue(null);
             this.hideSelectionControl();
@@ -413,9 +415,7 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
 
     /** Clear list of selected entities ids */
     public clearList(): void {
-        this.#selectedEntityIds.update((list: ENTITY[KEY][]) => {
-            return list.filter((el: ENTITY[KEY]) => this.readonlyEntitiesKeys().includes(el));
-        });
+        this.#selectedEntityIds.update((list: ENTITY[KEY][]) => list.filter((el: ENTITY[KEY]) => this.readonlyEntitiesKeys().includes(el)));
     }
 
     /** Reset list of selected entities ids to init value */
@@ -427,9 +427,7 @@ export class RtuiDynamicSelectorComponent<ENTITY extends Record<string, unknown>
     /** Proceed selected entities ids */
     public select(values: ENTITY[KEY][]): void {
         if (this.isSingleSelection()) {
-            const entity: INullable<ENTITY> = this.entities().find((entity: ENTITY) => {
-                return entity[this.keyExp()] === values[0];
-            });
+            const entity: TNullable<ENTITY> = this.entities().find((entity: ENTITY) => entity[this.keyExp()] === values[0]);
 
             if (entity) {
                 this.#selectedEntityIds.set([entity[this.keyExp()]]);

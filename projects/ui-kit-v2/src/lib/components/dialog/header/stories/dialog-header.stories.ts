@@ -12,9 +12,9 @@ export default {
     },
 } as Meta<TestRtDialogHeaderComponent>;
 
-type Story = StoryObj<TestRtDialogHeaderComponent>;
+type TStory = StoryObj<TestRtDialogHeaderComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         title: 'Заголовок',

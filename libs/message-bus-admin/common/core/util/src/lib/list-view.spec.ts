@@ -1,4 +1,4 @@
-import { LIST_SORT_ORDER_ENUM } from '@rt-tools/utils';
+import { EListSortOrder } from '@rt-tools/utils';
 
 import { IAdminListQuery, listQueryOf } from './list-query';
 import { pageModelOf, sortAskedOf, sortModelOf } from './list-view';
@@ -17,21 +17,21 @@ describe('sortModelOf', () => {
     it('порядок выборки читается таблицей до первого нажатия', () => {
         expect(sortModelOf(listQueryOf({}, SORTABLE))).toEqual({
             propertyName: 'arrivedAt',
-            sortDirection: LIST_SORT_ORDER_ENUM.DESC,
+            sortDirection: EListSortOrder.DESC,
         });
     });
 
     it('порядок по возрастанию доезжает до таблицы своим направлением', () => {
         expect(sortModelOf(listQueryOf({ sort: 'updatedAt', dir: 'asc' }, SORTABLE))).toEqual({
             propertyName: 'updatedAt',
-            sortDirection: LIST_SORT_ORDER_ENUM.ASC,
+            sortDirection: EListSortOrder.ASC,
         });
     });
 });
 
 describe('sortAskedOf', () => {
     it('названный заголовком порядок уходит в выборку', () => {
-        expect(sortAskedOf({ propertyName: 'updatedAt', sortDirection: LIST_SORT_ORDER_ENUM.ASC }, SORTABLE)).toEqual({
+        expect(sortAskedOf({ propertyName: 'updatedAt', sortDirection: EListSortOrder.ASC }, SORTABLE)).toEqual({
             sort: 'updatedAt',
             dir: 'asc',
         });
@@ -42,7 +42,7 @@ describe('sortAskedOf', () => {
     });
 
     it('поле не из набора сортируемых до приёмника не доезжает', () => {
-        expect(sortAskedOf({ propertyName: 'file', sortDirection: LIST_SORT_ORDER_ENUM.ASC }, SORTABLE)).toEqual({
+        expect(sortAskedOf({ propertyName: 'file', sortDirection: EListSortOrder.ASC }, SORTABLE)).toEqual({
             sort: 'arrivedAt',
             dir: 'desc',
         });

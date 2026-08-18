@@ -18,7 +18,7 @@
 | `accept`               | `string`               | `''`                     |
 | `sending` / `disabled` | `boolean`              | `false`                  |
 | `formatting`           | `boolean`              | `false`                  |
-| `toolbar`              | `IRtRichEditorToolbar` | `'full'`                 |
+| `toolbar`              | `TRtRichEditorToolbar` | `'full'`                 |
 | `minRows` / `maxRows`  | `number`               | 1 / 6                    |
 | `droppedFiles`         | `File[] \| null`       | `null`                   |
 

@@ -6,10 +6,10 @@ import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { IQuillDelta } from '../../../../util';
 import { RtFieldComponent } from '../../../field/rt-field.component';
-import { IRtRichEditorToolbar, RtRichEditorComponent } from '../../rt-rich-editor.component';
+import { TRtRichEditorToolbar, RtRichEditorComponent } from '../../rt-rich-editor.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type RichEditorMatrixPart = 'toolbar' | 'filling' | 'states' | 'themes';
+export type TRichEditorMatrixPart = 'toolbar' | 'filling' | 'states' | 'themes';
 
 /** Случай с подписью и своим значением — моделью Quill, а не HTML. */
 interface IRichEditorCase {
@@ -19,7 +19,7 @@ interface IRichEditorCase {
 
 /** Набор кнопок форматирования; он же сужает форматы, принимаемые из буфера. */
 interface IRichEditorToolbarCase extends IRichEditorCase {
-    readonly toolbar: IRtRichEditorToolbar;
+    readonly toolbar: TRtRichEditorToolbar;
 }
 
 /** Состояние, которое задаётся значением, формой или обёрткой. */
@@ -136,7 +136,7 @@ function invalid(): FormControl<IQuillDelta | null> {
     ],
 })
 export class TestRtRichEditorMatrixComponent {
-    public part: RichEditorMatrixPart = 'toolbar';
+    public part: TRichEditorMatrixPart = 'toolbar';
 
     public readonly editorWidth: string = STORY_FIELD_WIDTH_WIDE;
 

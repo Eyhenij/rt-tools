@@ -35,7 +35,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
 
 import { BlockDirective, ConcatClassesPipe, ElemDirective, ModDirective, PlatformService, WINDOW } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 import { isString, IPageModel, transformStringInput } from '@rt-tools/utils';
 import { BreakpointService, RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtAsideService } from '../../../aside';
@@ -119,9 +119,10 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     readonly #asideService: RtAsideService = inject(RtAsideService);
     readonly #tableConfigService: RtTableConfigService<ENTITY_TYPE> = inject(RtTableConfigService);
 
-    readonly #style: INullable<CSSStyleDeclaration> = this.#documentRef?.documentElement?.style;
+    readonly #style: TNullable<CSSStyleDeclaration> = this.#documentRef?.documentElement?.style;
 
     /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
     protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
 
     public appearance: InputSignal<MatFormFieldAppearance> = input.required();
@@ -137,11 +138,11 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
      * @deprecated Кит определяет его сам — `RtuiBreakpointsService`. Вход оставлен ради
      * приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
      */
-    public isMobile: InputSignalWithTransform<INullable<boolean>, INullable<boolean> | string> = input<
-        INullable<boolean>,
-        INullable<boolean> | string
+    public isMobile: InputSignalWithTransform<TNullable<boolean>, TNullable<boolean> | string> = input<
+        TNullable<boolean>,
+        TNullable<boolean> | string
     >(null, {
-        transform: (value: INullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
+        transform: (value: TNullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
     });
     /** Indicates is loading in progress */
     public loading: InputSignalWithTransform<boolean, BooleanInput> = input.required<boolean, BooleanInput>({
@@ -180,8 +181,8 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
         transform: booleanAttribute,
     });
     /** Current search term from store */
-    public searchTerm: InputSignalWithTransform<INullable<string>, INullable<string>> = input<INullable<string>, INullable<string>>('', {
-        transform: (value: INullable<string>) => (isString(value) ? value.trim() : ''),
+    public searchTerm: InputSignalWithTransform<TNullable<string>, TNullable<string>> = input<TNullable<string>, TNullable<string>>('', {
+        transform: (value: TNullable<string>) => (isString(value) ? value.trim() : ''),
     });
 
     /** Current placeholder icon */
@@ -190,25 +191,25 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     public placeholderTitle: InputSignal<string> = input<string>('No Data Found');
 
     /** Indicates is a small tablet view */
-    public readonly isSmallTablet: Signal<INullable<boolean>> = this.#breakpointService.isSmallTablet;
+    public readonly isSmallTablet: Signal<TNullable<boolean>> = this.#breakpointService.isSmallTablet;
     /** Config for table */
     public readonly tableConfig: Signal<ITable.Config.Data<ENTITY_TYPE>> = this.#tableConfigService.tableConfig;
 
     /** Page model change output action */
     public readonly pageModelChange: OutputEmitterRef<Partial<IPageModel>> = output<Partial<IPageModel>>();
     /** Search change output action */
-    public readonly searchChange: OutputEmitterRef<INullable<string>> = output<INullable<string>>();
+    public readonly searchChange: OutputEmitterRef<TNullable<string>> = output<TNullable<string>>();
     /** Refresh output action */
     public readonly refreshAction: OutputEmitterRef<void> = output<void>();
     /** Clear filters output action */
     public readonly clearFiltersAction: OutputEmitterRef<void> = output<void>();
 
     /** Toolbar selectors template */
-    public readonly toolbarSelectorsTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiTableToolbarSelectorsDirective, {
+    public readonly toolbarSelectorsTpl: Signal<TNullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiTableToolbarSelectorsDirective, {
         read: TemplateRef,
     });
     /** Toolbar actions template */
-    public readonly toolbarActionsTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiTableToolbarActionsDirective, {
+    public readonly toolbarActionsTpl: Signal<TNullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiTableToolbarActionsDirective, {
         read: TemplateRef,
     });
 
@@ -227,7 +228,7 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     public readonly selectedEntitiesCount: WritableSignal<number> = signal(0);
 
     /** Control for search */
-    public readonly searchControl: FormControl<INullable<string>> = new FormControl(null);
+    public readonly searchControl: FormControl<TNullable<string>> = new FormControl(null);
 
     public ngOnInit(): void {
         /** Set scrollbar initial styles by config */
@@ -246,10 +247,10 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
             .pipe(
                 debounceTime(500),
                 distinctUntilChanged(),
-                map((value: INullable<string>) => (!!value ? value.trim() : value)),
+                map((value: TNullable<string>) => (!!value ? value.trim() : value)),
                 takeUntilDestroyed(this.#destroyRef)
             )
-            .subscribe((value: INullable<string>) => {
+            .subscribe((value: TNullable<string>) => {
                 if (value !== null) {
                     this.searchChange.emit(value);
                 }
@@ -283,6 +284,7 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
 
     /** Open table config aside */
     public onOpenConfigAside(): void {
+        // eslint-disable-next-line @nx/workspace-no-subscribe-in-methods -- подписка переезжает в объявленный поток задачей RT-845
         this.#asideService
             .Open<RtTableConfigAsideComponent<ENTITY_TYPE>, ITable.Config.Data<ENTITY_TYPE>, ITable.Config.Data<ENTITY_TYPE>>(
                 RtTableConfigAsideComponent,
@@ -308,8 +310,8 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
         const horizontal: string = this.tableConfig().isHorizontalScrollbarShown ? '12px' : '0';
 
         if (this.#platformService?.isPlatformBrowser && this.#windowRef && this.#style) {
-            const safeVerticalValue: INullable<string> = this.#sanitizer.sanitize(0, vertical);
-            const safeHorizontalValue: INullable<string> = this.#sanitizer.sanitize(0, horizontal);
+            const safeVerticalValue: TNullable<string> = this.#sanitizer.sanitize(0, vertical);
+            const safeHorizontalValue: TNullable<string> = this.#sanitizer.sanitize(0, horizontal);
             this.#style.setProperty('--rt-table-container-content-scrollbar-vertical-width', safeVerticalValue);
             this.#style.setProperty('--rt-table-container-content-scrollbar-horizontal-height', safeHorizontalValue);
         }

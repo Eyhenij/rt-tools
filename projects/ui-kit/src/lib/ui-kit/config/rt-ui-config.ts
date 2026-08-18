@@ -1,7 +1,7 @@
 import { InjectionToken } from '@angular/core';
 
 import type { IRtuiButton } from '../buttons/unified-button/rtui-button.component';
-import type { RtThemeType } from '../theme/rtui-theme.types';
+import type { TRtThemeType } from '../theme/rtui-theme.types';
 
 /**
  * Design system a control renders with:
@@ -10,22 +10,22 @@ import type { RtThemeType } from '../theme/rtui-theme.types';
  *   (e.g. the button pill becomes a real `matButton`), for apps that have not
  *   migrated their visual language yet or need to match surrounding Material controls.
  */
-export type RtUiDesign = 'material' | 'custom';
+export type TRtUiDesign = 'material' | 'custom';
 
 export namespace IRtUiConfig {
     /** Global defaults applied app-wide unless a component-level setting or an input overrides them. */
     export interface Global {
         /** Initial theme used when the user has no persisted preference. */
-        theme?: RtThemeType;
+        theme?: TRtThemeType;
         /** Initial brand color scheme (see `RtThemeService.registerColorScheme`) when none is persisted. */
         colorScheme?: string;
         /** Default design for every design-aware control. */
-        design?: RtUiDesign;
+        design?: TRtUiDesign;
     }
 
     /** Per-instance-overridable defaults for `rtui-button`. */
     export interface Button {
-        design?: RtUiDesign;
+        design?: TRtUiDesign;
         size?: IRtuiButton.Size;
         radius?: IRtuiButton.Radius;
         appearance?: IRtuiButton.Appearance;

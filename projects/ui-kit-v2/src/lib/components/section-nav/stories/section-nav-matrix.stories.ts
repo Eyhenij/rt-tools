@@ -16,21 +16,21 @@ export default {
     },
 } as Meta<TestRtSectionNavMatrixComponent>;
 
-type Story = StoryObj<TestRtSectionNavMatrixComponent>;
+type TStory = StoryObj<TestRtSectionNavMatrixComponent>;
 
-export const Active: Story = { args: { part: 'active' } };
+export const Active: TStory = { args: { part: 'active' } };
 
-export const Length: Story = { args: { part: 'length' } };
+export const Length: TStory = { args: { part: 'length' } };
 
 /**
  * Наведение и фокус стилизованы у самой плитки, а не у хоста навигации, — аддон псевдосостояний
  * получает спуск до неё. Без спуска признак встал бы на контейнер, и ни одно правило не сработало.
  */
-export const States: Story = {
+export const States: TStory = {
     args: { part: 'states' },
     parameters: { pseudo: storyPseudoParameters('.rt-section-nav__tile') },
 };
 
-export const Edges: Story = { args: { part: 'edges' } };
+export const Edges: TStory = { args: { part: 'edges' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

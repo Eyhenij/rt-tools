@@ -20,8 +20,8 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 import { BlockDirective, ConcatClassesPipe, ElemDirective, ModDirective } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
-import { LIST_SORT_ORDER_ENUM, ListSortOrderType, ISortModel } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
+import { EListSortOrder, TListSortOrderType, ISortModel } from '@rt-tools/utils';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { ITable } from '../../util/table-column.interface';
 
@@ -54,11 +54,11 @@ const BEM_BLOCK: string = 'rtui-table-header-cell';
 })
 export class RtuiTableHeaderCellComponent {
     readonly #sanitizer: DomSanitizer = inject(DomSanitizer);
-    protected readonly sortOrderTypes: typeof LIST_SORT_ORDER_ENUM = LIST_SORT_ORDER_ENUM;
+    protected readonly sortOrderTypes: typeof EListSortOrder = EListSortOrder;
 
     public headerModel: InputSignal<ITable.Header> = input.required<ITable.Header>();
-    public sortModel: InputSignal<INullable<ISortModel<string>>> = input.required<INullable<ISortModel<string>>>();
-    public currentSortModel: InputSignal<INullable<ISortModel<string>>> = input.required<INullable<ISortModel<string>>>();
+    public sortModel: InputSignal<TNullable<ISortModel<string>>> = input.required<TNullable<ISortModel<string>>>();
+    public currentSortModel: InputSignal<TNullable<ISortModel<string>>> = input.required<TNullable<ISortModel<string>>>();
     public headerDataEllipsisMaxLines: InputSignalWithTransform<number, number> = input<number, number>(1, {
         transform: numberAttribute,
     });
@@ -75,12 +75,13 @@ export class RtuiTableHeaderCellComponent {
 
     @HostBinding('style')
     protected get style(): SafeStyle {
+        // eslint-disable-next-line sonarjs/no-angular-bypass-sanitization -- строка стиля собрана китом из настройки колонок, а не из значения, введённого пользователем
         return this.#sanitizer.bypassSecurityTrustStyle(`text-align: ${this.headerModel().align};`);
     }
 
     @HostListener('click')
     protected handleClick(): void {
-        const sortPropertyName: INullable<string> = this.sortModel()?.propertyName;
+        const sortPropertyName: TNullable<string> = this.sortModel()?.propertyName;
 
         if (sortPropertyName) {
             this.sortChange.emit({
@@ -90,11 +91,11 @@ export class RtuiTableHeaderCellComponent {
         }
     }
 
-    private getNextSortOrder(): ListSortOrderType {
-        if (this.currentSortModel()?.sortDirection?.toLowerCase() === LIST_SORT_ORDER_ENUM.ASC) {
-            return LIST_SORT_ORDER_ENUM.DESC;
+    private getNextSortOrder(): TListSortOrderType {
+        if (this.currentSortModel()?.sortDirection?.toLowerCase() === EListSortOrder.ASC) {
+            return EListSortOrder.DESC;
         }
 
-        return LIST_SORT_ORDER_ENUM.ASC;
+        return EListSortOrder.ASC;
     }
 }

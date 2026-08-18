@@ -1,3 +1,4 @@
+// eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 import { expect, userEvent, waitFor } from 'storybook/test';
@@ -9,12 +10,13 @@ export default {
     component: TestImageUploadComponent,
     decorators: [
         applicationConfig({
+            // eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
             providers: [provideAnimations()],
         }),
     ],
 } as Meta<TestImageUploadComponent>;
 
-type Story = StoryObj<TestImageUploadComponent>;
+type TStory = StoryObj<TestImageUploadComponent>;
 
 /**
  * Картинка встроена в адрес, а не берётся из сети: внешний источник отдаёт каждый раз новое
@@ -44,7 +46,7 @@ const SAMPLE_PNG_BASE64: string =
     'S2BZQWAJLIElgSWwBJYElsASWBJYAktgSWAJLIElgSWwBJYElsASWBJYAktgSWAJLIElgSWwBJYElsASWBJYAktgSWAJLIElgSWw' +
     'BJYElsASWBJYAktgSWAJLIElgSWwBJYElsASWBJYAktgSWAJLIElgSWwBJYElsASWNJfN7zSiwJt72CeAAAAAElFTkSuQmCC';
 
-export const ImageUpload: Story = {
+export const ImageUpload: TStory = {
     args: { imageUrl: SAMPLE_IMAGE },
 };
 
@@ -55,7 +57,7 @@ export const ImageUpload: Story = {
  * Файл встроен в историю, а не берётся из сети: обрезчик рисует его сам, и внешний
  * источник давал бы каждый раз другой кадр.
  */
-export const ImageCropper: Story = {
+export const ImageCropper: TStory = {
     args: { imageUrl: SAMPLE_IMAGE },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         const input: HTMLInputElement | null = canvasElement.querySelector('input[type="file"]');

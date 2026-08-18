@@ -1,1 +1,1 @@
-export type IModify<T, R> = Omit<T, keyof R> & R;
+export type TModify<T, R> = Omit<T, keyof R> & R;

@@ -16,8 +16,8 @@ import { ESLintUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
  */
 export const RULE_NAME: string = 'require-host-bem-block';
 
-type IMessageIds = 'missingHost' | 'missingClassKey' | 'stringLiteralClass' | 'wrongIdentifier' | 'complexValue';
-type IOptions = [];
+type TMessageIds = 'missingHost' | 'missingClassKey' | 'stringLiteralClass' | 'wrongIdentifier' | 'complexValue';
+type TOptions = [];
 
 const REQUIRED_IDENTIFIER: string = 'BEM_BLOCK';
 
@@ -41,7 +41,7 @@ function findProperty(obj: TSESTree.ObjectExpression, targetKey: string): TSESTr
     return null;
 }
 
-export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = createRule<IOptions, IMessageIds>({
+export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = createRule<TOptions, TMessageIds>({
     name: RULE_NAME,
     meta: {
         type: 'problem',
@@ -72,7 +72,7 @@ export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = createRule<IOpti
         },
     },
     defaultOptions: [],
-    create(context: Readonly<TSESLint.RuleContext<IMessageIds, IOptions>>): TSESLint.RuleListener {
+    create(context: Readonly<TSESLint.RuleContext<TMessageIds, TOptions>>): TSESLint.RuleListener {
         return {
             Decorator(node: TSESTree.Decorator): void {
                 const expr: TSESTree.Expression = node.expression;

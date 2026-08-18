@@ -16,24 +16,24 @@ export default {
     },
 } as Meta<TestRtToggleButtonGroupMatrixComponent>;
 
-type Story = StoryObj<TestRtToggleButtonGroupMatrixComponent>;
+type TStory = StoryObj<TestRtToggleButtonGroupMatrixComponent>;
 
-export const Size: Story = { args: { part: 'size' } };
+export const Size: TStory = { args: { part: 'size' } };
 
-export const Options: Story = { args: { part: 'options' } };
+export const Options: TStory = { args: { part: 'options' } };
 
-export const Value: Story = { args: { part: 'value' } };
+export const Value: TStory = { args: { part: 'value' } };
 
-export const FullWidth: Story = { args: { part: 'fullWidth' } };
+export const FullWidth: TStory = { args: { part: 'fullWidth' } };
 
 /**
  * Состояния принадлежат сегменту, а не группе, — аддону передан спуск до кнопки. Признак стоит
  * на хосте, поэтому подсвечиваются сразу все сегменты ячейки: так видно, что делает наведение,
  * не заставляя искать, по какому из них навели.
  */
-export const States: Story = {
+export const States: TStory = {
     args: { part: 'states' },
     parameters: { pseudo: storyPseudoParameters('.rt-toggle-button-group__button') },
 };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

@@ -1,37 +1,39 @@
+// eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
 import { TestInfoBadgeComponent } from './component/test-info-badge/test-info-badge.component';
-import { INFO_BADGE_PROPERTY_ENUM } from './utils/enum/info-badge-property.enum';
+import { EInfoBadgeProperty } from './utils/enum/info-badge-property.enum';
 
 export default {
     title: 'Components/InfoBadge',
     component: TestInfoBadgeComponent,
     decorators: [
         applicationConfig({
+            // eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
             providers: [provideAnimations()],
         }),
     ],
 } as Meta<TestInfoBadgeComponent>;
 
-type Story = StoryObj<TestInfoBadgeComponent>;
+type TStory = StoryObj<TestInfoBadgeComponent>;
 
-export const InfoBadgeColors: Story = {
-    args: { property: INFO_BADGE_PROPERTY_ENUM.COLOR },
+export const InfoBadgeColors: TStory = {
+    args: { property: EInfoBadgeProperty.COLOR },
 };
 
-export const InfoBadgeSizes: Story = {
-    args: { property: INFO_BADGE_PROPERTY_ENUM.SIZE },
+export const InfoBadgeSizes: TStory = {
+    args: { property: EInfoBadgeProperty.SIZE },
 };
 
-export const InfoBadgeWithIcon: Story = {
-    args: { property: INFO_BADGE_PROPERTY_ENUM.ICON },
+export const InfoBadgeWithIcon: TStory = {
+    args: { property: EInfoBadgeProperty.ICON },
 };
 
-export const InfoBadgeBold: Story = {
-    args: { property: INFO_BADGE_PROPERTY_ENUM.BOLD },
+export const InfoBadgeBold: TStory = {
+    args: { property: EInfoBadgeProperty.BOLD },
 };
 
-export const InfoBadgeEllipsis: Story = {
-    args: { property: INFO_BADGE_PROPERTY_ENUM.ELLIPSIS },
+export const InfoBadgeEllipsis: TStory = {
+    args: { property: EInfoBadgeProperty.ELLIPSIS },
 };

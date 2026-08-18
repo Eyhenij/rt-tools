@@ -4,9 +4,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { take } from 'rxjs/operators';
 
 import { IDBStorageService } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 import { areArraysEqual } from '@rt-tools/utils';
 import { ITable } from './index';
+import { comparePropNames } from './compare-prop-names';
 
 @Injectable()
 export class RtTableConfigService<ENTITY_TYPE> {
@@ -25,12 +26,13 @@ export class RtTableConfigService<ENTITY_TYPE> {
     public readonly tableConfig: Signal<ITable.Config.Data<ENTITY_TYPE>> = this.#tableConfig.asReadonly();
 
     public initConfig(storageKey: string, config: Array<ITable.Column<ENTITY_TYPE>>): void {
+        // eslint-disable-next-line @nx/workspace-no-subscribe-in-methods -- подписка переезжает в объявленный поток задачей RT-845
         this.#iDBStorageService
             .get(storageKey)
             .pipe(take(1), takeUntilDestroyed(this.#destroyRef))
             .subscribe(
                 (
-                    savedConfig: INullable<{
+                    savedConfig: TNullable<{
                         isVerticalScrollbarShown: boolean;
                         isHorizontalScrollbarShown: boolean;
                         columns: Array<Partial<ITable.Column<ENTITY_TYPE>>>;
@@ -39,7 +41,7 @@ export class RtTableConfigService<ENTITY_TYPE> {
                     if (savedConfig?.columns && this.#checkIsSavedConfigConsistent(config, savedConfig.columns)) {
                         const updatedColumns: Array<ITable.Column<ENTITY_TYPE> & { orderIndex: number }> = savedConfig?.columns.map(
                             (el: Partial<ITable.Column<ENTITY_TYPE> & { orderIndex: number }>) => {
-                                const oldConfigIem: INullable<ITable.Column<ENTITY_TYPE>> = config.find(
+                                const oldConfigIem: TNullable<ITable.Column<ENTITY_TYPE>> = config.find(
                                     (item: ITable.Column<ENTITY_TYPE>) => el.propName === item.propName
                                 );
                                 return {
@@ -82,6 +84,7 @@ export class RtTableConfigService<ENTITY_TYPE> {
             hidden: !!el?.hidden,
             fixed: !!el?.fixed,
         }));
+        // eslint-disable-next-line @nx/workspace-no-subscribe-in-methods -- подписка переезжает в объявленный поток задачей RT-845
         this.#iDBStorageService
             .set(storageKey, { ...config, columns: idbConfigColumns })
             .pipe(take(1), takeUntilDestroyed(this.#destroyRef))
@@ -90,6 +93,7 @@ export class RtTableConfigService<ENTITY_TYPE> {
     }
 
     public deleteConfig(storageKey: string): void {
+        // eslint-disable-next-line @nx/workspace-no-subscribe-in-methods -- подписка переезжает в объявленный поток задачей RT-845
         this.#iDBStorageService.remove(storageKey).pipe(take(1), takeUntilDestroyed(this.#destroyRef)).subscribe();
     }
 
@@ -102,8 +106,8 @@ export class RtTableConfigService<ENTITY_TYPE> {
             !!savedConfig?.length &&
             defaultConfig.length === savedConfig.length &&
             areArraysEqual(
-                defaultConfig.map((el: ITable.Column<ENTITY_TYPE>) => el.propName).sort(),
-                savedConfig.map((el: Partial<ITable.Column<ENTITY_TYPE>>) => el.propName).sort()
+                defaultConfig.map((el: ITable.Column<ENTITY_TYPE>) => el.propName).toSorted(comparePropNames),
+                savedConfig.map((el: Partial<ITable.Column<ENTITY_TYPE>>) => el.propName).toSorted(comparePropNames)
             )
         );
     }

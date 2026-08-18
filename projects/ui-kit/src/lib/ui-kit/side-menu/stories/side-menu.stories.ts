@@ -1,3 +1,4 @@
+// eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
@@ -8,14 +9,15 @@ export default {
     component: TestSideMenuWrapperComponent,
     decorators: [
         applicationConfig({
+            // eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
             providers: [provideAnimations()],
         }),
     ],
 } as Meta<TestSideMenuWrapperComponent>;
 
-type Story = StoryObj<TestSideMenuWrapperComponent>;
+type TStory = StoryObj<TestSideMenuWrapperComponent>;
 
-export const Default: Story = {
+export const Default: TStory = {
     args: {
         isMobile: false,
         isSubMenuXScrollEnabled: true,
@@ -26,7 +28,7 @@ export const Default: Story = {
     },
 };
 
-export const Mobile: Story = {
+export const Mobile: TStory = {
     args: {
         isMobile: true,
         isSubMenuXScrollEnabled: true,
@@ -37,7 +39,7 @@ export const Mobile: Story = {
     },
 };
 
-export const DefaultActiveMenu: Story = {
+export const DefaultActiveMenu: TStory = {
     args: {
         isMobile: false,
         activeMenuIds: [24, 26, 29, 33, 35],
@@ -49,7 +51,7 @@ export const DefaultActiveMenu: Story = {
     },
 };
 
-export const MobileActiveMenu: Story = {
+export const MobileActiveMenu: TStory = {
     args: {
         isMobile: true,
         activeMenuIds: [24, 26, 29, 33, 35],

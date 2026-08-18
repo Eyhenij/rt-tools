@@ -12,10 +12,10 @@ import { RtSelectComponent } from '../../rt-select.component';
 import { IRtSelect } from '../../rt-select.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type SelectMatrixPart = 'size' | 'filling' | 'bordered' | 'states' | 'themes' | 'panel';
+export type TSelectMatrixPart = 'size' | 'filling' | 'bordered' | 'states' | 'themes' | 'panel';
 
 /** Что показывает открытая панель: обычный список, список с фильтром, пустой набор. */
-export type SelectPanelCase = 'options' | 'filter' | 'empty';
+export type TSelectPanelCase = 'options' | 'filter' | 'empty';
 
 /** Наполненность триггера: она решает, видно ли крестик очистки и подпись вместо подсказки. */
 interface ISelectFillingCase {
@@ -202,8 +202,8 @@ function invalid(): FormControl<string | null> {
     ],
 })
 export class TestRtSelectMatrixComponent {
-    public part: SelectMatrixPart = 'size';
-    public panel: SelectPanelCase = 'options';
+    public part: TSelectMatrixPart = 'size';
+    public panel: TSelectPanelCase = 'options';
 
     public readonly fieldWidth: string = STORY_FIELD_WIDTH;
     public readonly triggerAttribute: string = STORY_TRIGGER_ATTRIBUTE;

@@ -15,7 +15,7 @@ import {
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RtKitLabelMap } from '../../../i18n';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '../../../i18n';
 import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
 import { RtSkeletonWrapperComponent } from '../../skeleton-wrapper/rt-skeleton-wrapper.component';
 import { RtTagComponent } from '../../tag/rt-tag.component';
@@ -77,7 +77,7 @@ export class RtAsideHeaderComponent {
 
     /** Текст заголовка — рендерится в `<h2>`. Null/пустая строка вместе с
      *  `[loading]=true` показывают skeleton вместо title. */
-    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     public readonly title: InputSignal<string | null> = input<string | null>(null);
 

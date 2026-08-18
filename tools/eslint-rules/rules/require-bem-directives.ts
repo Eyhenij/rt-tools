@@ -16,8 +16,8 @@ import { ESLintUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
  */
 export const RULE_NAME: string = 'require-bem-directives';
 
-type IMessageIds = 'nakedClass' | 'boundClass' | 'boundClassDot' | 'ngClass';
-type IOptions = [];
+type TMessageIds = 'nakedClass' | 'boundClass' | 'boundClassDot' | 'ngClass';
+type TOptions = [];
 
 interface IBindingPipeAst {
     readonly name: string;
@@ -81,7 +81,7 @@ function isAllowedConcatPipe(ast: unknown): boolean {
     return typeof pipeName === 'string' && pipeName === ALLOWED_PIPE_NAME;
 }
 
-export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = createRule<IOptions, IMessageIds>({
+export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = createRule<TOptions, TMessageIds>({
     name: RULE_NAME,
     meta: {
         type: 'problem',
@@ -109,13 +109,13 @@ export const rule: TSESLint.RuleModule<IMessageIds, IOptions> = createRule<IOpti
         },
     },
     defaultOptions: [],
-    create(context: Readonly<TSESLint.RuleContext<IMessageIds, IOptions>>): TSESLint.RuleListener {
+    create(context: Readonly<TSESLint.RuleContext<TMessageIds, TOptions>>): TSESLint.RuleListener {
         // NOTE: template-parser visitor-узлы (`TextAttribute`, `BoundAttribute`, `BindingPipe`)
         // не соответствуют TSESTree.* — это узлы AST `@angular/compiler`. ESLint-узел
         // приводим к `TSESTree.Node` локально только для сигнатуры `context.report`, при этом
         // фактический шаблон-парсер прокидывает свой sourceSpan, и ESLint штатно использует
         // template-parser conversions через `loc`-fallback.
-        function reportNode(node: unknown, messageId: IMessageIds): void {
+        function reportNode(node: unknown, messageId: TMessageIds): void {
             context.report({
                 node: node as TSESTree.Node,
                 messageId,

@@ -16,19 +16,19 @@ export default {
     },
 } as Meta<TestRtMenuItemMatrixComponent>;
 
-type Story = StoryObj<TestRtMenuItemMatrixComponent>;
+type TStory = StoryObj<TestRtMenuItemMatrixComponent>;
 
 /** Виды пункта: с иконкой и без, деструктивный, недоступный, с подтверждением. */
-export const Kinds: Story = { args: { part: 'kinds' } };
+export const Kinds: TStory = { args: { part: 'kinds' } };
 
 /**
  * Стилизован сам хост пункта, поэтому спуск аддону не нужен: признак и правила стоят на одном
  * элементе. Второй ряд показывает, что у недоступного пункта наведение намеренно ничего не
  * красит.
  */
-export const States: Story = {
+export const States: TStory = {
     args: { part: 'states' },
     parameters: { pseudo: storyPseudoParameters() },
 };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

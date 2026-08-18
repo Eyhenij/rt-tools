@@ -17,12 +17,12 @@ export default {
     },
 } as Meta<TestRtPhotoViewerMatrixComponent>;
 
-type Story = StoryObj<TestRtPhotoViewerMatrixComponent>;
+type TStory = StoryObj<TestRtPhotoViewerMatrixComponent>;
 
 /** Открыт последний кадр: счётчик показывает конец набора, а листать вперёд некуда. */
-export const LastPhoto: Story = { args: { part: 'start' } };
+export const LastPhoto: TStory = { args: { part: 'start' } };
 
 /** Один кадр: стрелок нет вовсе — рядом с историей выше видно, что их убирает сам просмотрщик. */
-export const SinglePhoto: Story = { args: { part: 'single' } };
+export const SinglePhoto: TStory = { args: { part: 'single' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };
