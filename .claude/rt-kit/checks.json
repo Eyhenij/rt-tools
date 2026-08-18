@@ -66,13 +66,13 @@
             "Stylelint": "pnpm run lint:styles",
             "E2E admin": "pnpm exec nx run message-bus-admin-e2e:e2e",
             "Visual tests": {
-                "skip": "кадры ждут отсчётом времени и плавают под нагрузкой — снимается задачей RT-427"
+                "skip": "кадры ждут отсчётом времени и плавают под нагрузкой — снимается задачей RT-857"
             },
             "Upload visual diffs": {
                 "skip": "выгрузка следов прогона; смотреть их локально не на чем"
             },
             "Visual tests (ui-kit-v2)": {
-                "skip": "та же причина, что у снимков первой витрины — RT-427"
+                "skip": "та же причина, что у снимков первой витрины — RT-857"
             },
             "Upload visual diffs (ui-kit-v2)": {
                 "skip": "выгрузка следов прогона"
