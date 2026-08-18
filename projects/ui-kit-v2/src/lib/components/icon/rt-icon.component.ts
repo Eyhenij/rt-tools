@@ -37,11 +37,7 @@ const BEM_BLOCK: string = 'rt-icon';
 
 @Component({
     selector: 'rt-icon',
-    template: `
-        <svg focusable="false" aria-hidden="true" [attr.viewBox]="'0 0 24 24'">
-            <use [attr.href]="href()"></use>
-        </svg>
-    `,
+    templateUrl: './rt-icon.component.html',
     styleUrls: ['./rt-icon.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,

@@ -223,6 +223,7 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
      * резолвится слишком поздно). Не `#private`: декоратор требует ключевое
      * слово `private`.
      */
+    // native-ok: сигнальный viewChild() резолвится после первой отрисовки строк, а колонка действий должна попасть в реестр CdkTable до неё
     @ViewChild(CdkColumnDef, { static: true })
     private readonly actionsColumnDef?: CdkColumnDef;
 
@@ -232,9 +233,11 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
      * `CdkColumnDef` ещё не отработал к моменту первого рендера view-колонки —
      * без ручного присвоения CdkTable падает на `extractCellTemplate`.
      */
+    // native-ok: то же, что у объявления колонки выше: def присваивается вручную в ngOnInit, до первой отрисовки
     @ViewChild(CdkCellDef, { static: true })
     private readonly actionsCellDef?: CdkCellDef;
 
+    // native-ok: то же, что у объявления колонки выше: def присваивается вручную в ngOnInit, до первой отрисовки
     @ViewChild(CdkHeaderCellDef, { static: true })
     private readonly actionsHeaderCellDef?: CdkHeaderCellDef;
 
