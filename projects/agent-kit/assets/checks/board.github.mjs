@@ -203,8 +203,29 @@ export function fetchIssue(number, options) {
     }
 }
 
+/**
+ * Вершина берётся вместе с остальным: спросить её потом значило бы второй вызов на каждый PR,
+ * а судят по ней и папку задачи, и прогон.
+ */
 export function fetchOpenPulls(options) {
-    return ghJson(['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,title,headRefName,body'], options);
+    return ghJson(['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,title,headRefName,headRefOid,body'], options);
+}
+
+/**
+ * Сколько прогонов завелось на этой вершине.
+ *
+ * Спрашивается вершина, а не ветка: прогон промежуточного коммита о состоянии вершины не
+ * говорит ничего, а список прогонов ветки отдаёт их вперемешку.
+ */
+export function runsOnHead(sha, options) {
+    const answer = gh(['api', `repos/${OWNER}/${REPO}/actions/runs?head_sha=${sha}&per_page=1`, '--jq', '.total_count'], options);
+    return Number(String(answer).trim());
+}
+
+/** Когда вершина легла в ветку — по времени коммита у хостинга, а не по местным часам ветки. */
+export function headCommittedAt(sha, options) {
+    const answer = gh(['api', `repos/${OWNER}/${REPO}/commits/${sha}`, '--jq', '.commit.committer.date'], options);
+    return Date.parse(String(answer).trim());
 }
 
 /** `[<КЛЮЧ>-<номер>]` в начале заголовка — единственная форма номера в названиях */

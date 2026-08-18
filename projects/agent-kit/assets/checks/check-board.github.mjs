@@ -19,12 +19,16 @@
  * Момент, когда задачу берут в работу, отсюда не виден вовсе — ветки на борде нет, —
  * и «In progress» здесь не требуется ни от кого.
  *
+ * Прогон на вершине спрашивает тоже она: страница PR без прогона выглядит так же, как
+ * страница с зелёным, — цвета у неё нет ни там, ни там, — и вершина, за которой прогон
+ * не встал, узнаётся только тем, что кто-то открыл список прогонов руками.
+ *
  * Нет сети или нет токена — код возврата ноль: проверка, падающая в самолёте,
  * перестаёт что-либо значить.
  *
  * Ненулевой код возврата и перечень расхождений.
  */
-import { statSync } from 'node:fs';
+import { existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 import {
@@ -39,8 +43,10 @@ import {
     fetchIssues,
     fetchOpenPulls,
     gh,
+    headCommittedAt,
     numberFromTaskDir,
     numberFromTitle,
+    runsOnHead,
     taskDirs,
 } from './board.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
@@ -49,6 +55,17 @@ const IN_REVIEW = STATUS_OPTIONS[IN_REVIEW_STATUS].name;
 const TASKS_DIR = join(ROOT, CONFIG.tasksDir);
 /** Возраст брошенного черновика, после которого он перестаёт выглядеть начатым сегодня. */
 const DRAFT_DAYS = 7;
+/**
+ * Сколько времени вершине даётся на то, чтобы прогон за ней встал. Событие доходит до хостинга
+ * не мгновенно, и сверка, позванная сразу после пуша, иначе краснела бы на здоровой ветке.
+ */
+const RUN_GRACE_MINUTES = 10;
+/**
+ * Конвейер дерева. Прогоны спрашиваются только там, где ему есть откуда взяться: дерево без
+ * конвейера получило бы строку на каждый открытый PR, и не о чём.
+ */
+const PIPELINE = CONFIG.pushGate?.pipelineFile ?? '';
+const HAS_PIPELINE = PIPELINE !== '' && existsSync(join(ROOT, PIPELINE));
 
 const problems = [];
 const report = (message) => problems.push(message);
@@ -102,6 +119,36 @@ function folderInBranch(branch, options) {
 
         return null;
     }
+}
+
+/**
+ * Прогон на вершине открытого PR.
+ *
+ * Молчание страницы и зелёный прогон читаются одинаково, а событие до хостинга доходит не
+ * всегда: в час его отказов пуш прошёл, а прогона за ним не встало. Сверка называет такую
+ * вершину, пока PR ещё открыт, — после слияния об этом узнавать поздно.
+ *
+ * Считается сам факт прогона, а не его цвет. Идущий и упавший прогон видны на странице PR оба;
+ * невидимо только отсутствие, и говорит сверка ровно о нём.
+ *
+ * Свежая вершина не судится: между пушем и прогоном проходит время, и красная строка на этом
+ * промежутке значила бы «подожди», а не «чини».
+ */
+function checkHeadRun(pull, options) {
+    if (runsOnHead(pull.headRefOid, options) > 0) {
+        return;
+    }
+
+    const minutes = Math.floor((Date.now() - headCommittedAt(pull.headRefOid, options)) / 60000);
+    if (minutes < RUN_GRACE_MINUTES) {
+        return;
+    }
+
+    report(
+        `PR #${pull.number}: на вершине ${pull.headRefOid.slice(0, 8)} прогона нет, а лежит она ${minutes} мин — ` +
+            `конвейер события не получил; верни его новым коммитом либо перезакрытием PR ` +
+            `(gh pr close ${pull.number} && gh pr reopen ${pull.number})`
+    );
 }
 
 let checked = { issues: 0, pulls: 0 };
@@ -160,6 +207,10 @@ try {
         // сверка обязана назвать ДО слияния: гард судит её на слиянии, а слияние нажимает
         // человек в браузере, где хуков нет вовсе. Сказанная после, эта строка уже не чинится
         // тем же PR — работа перешла дальше, и на разбор заводится вторая задача.
+        if (HAS_PIPELINE && pull.headRefOid) {
+            checkHeadRun(pull, options);
+        }
+
         if (!FOLDER_SKIP.test(String(pull.body ?? '')) && pull.headRefName) {
             const folder = folderInBranch(pull.headRefName, options);
             if (folder !== null) {
@@ -208,6 +259,11 @@ try {
         console.error(`check-board: ${String(error.message ?? error)}`);
         process.exit(1);
     }
+}
+
+// Непроверенное называется вслух: молчание о прогонах читалось бы как «прогоны на месте».
+if (!offline && !HAS_PIPELINE) {
+    console.log('check-board: прогоны на вершинах не спрашивались — файла конвейера в дереве нет');
 }
 
 if (problems.length > 0) {
