@@ -114,7 +114,7 @@
             }
         },
         "taskKey": "RT",
-        "bot": "rt-tools-agent",
+        "bot": "rt-tools-dev",
         "reviewer": "Eyhenij"
     },
     "apiFamily": "message-bus-api",
