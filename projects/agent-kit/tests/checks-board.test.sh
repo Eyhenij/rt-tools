@@ -29,6 +29,7 @@ case "$args" in
     "issue list"*) printf '%s' "$STUB_ISSUES" ;;
     "pr list"*) printf '%s' "$STUB_PULLS" ;;
     *contents*) printf 'Not Found\n' >&2; exit 1 ;;
+    *actions/runs*per_page=20*) printf '%s\n' "$STUB_VERDICT" ;;
     *actions/runs*) printf '%s\n' "$STUB_RUNS" ;;
     */commits/*) printf '%s\n' "$STUB_HEAD_DATE" ;;
     *) printf 'неожиданный вызов: %s\n' "$args" >&2; exit 1 ;;
@@ -56,13 +57,17 @@ board_says() {
 
 export STUB_BOARD='{"data":{"node":{"items":{"pageInfo":{"hasNextPage":false,"endCursor":null},"nodes":[{"id":"item-1","status":{"name":"In review","optionId":"r"},"content":{"__typename":"Issue","number":700}}]}}}}'
 export STUB_ISSUES='[{"number":700,"title":"[RT-700] Задача","state":"OPEN","assignees":[{"login":"probe"}],"labels":[]}]'
-export STUB_PULLS="[{\"number\":701,\"title\":\"[RT-700] Правка\",\"headRefName\":\"RT-700-probe\",\"headRefOid\":\"$HEAD_SHA\",\"body\":\"Closes #700\"}]"
+pulls_json() {
+    printf '[{"number":701,"title":"[RT-700] Правка","headRefName":"RT-700-probe","headRefOid":"%s","isDraft":%s,"body":"Closes #700"}]' "$HEAD_SHA" "$1"
+}
+export STUB_PULLS="$(pulls_json false)"
 
 BOARD_CONFIG='{"tasksDir":"docs/tasks","pushGate":{"pipelineFile":".github/workflows/ci.yml"},"board":{"owner":"probe","repo":"tree","projectId":"P","statusFieldId":"F","statusOptions":{"in-review":{"id":"r","name":"In review"}},"taskKey":"RT","bot":"probe-bot","tokenPath":"","reviewer":"probe"}}'
 board_config "$BOARD_CONFIG"
 
 # SC-AK-279 — прогон на вершине есть: сверка молчит
 export STUB_RUNS=1
+export STUB_VERDICT=success
 export STUB_HEAD_DATE="$(minutes_ago 60)"
 report "SC-AK-279 — прогон на вершине есть: расхождений нет" "$(board_code)" 0
 
@@ -82,6 +87,21 @@ export STUB_HEAD_DATE="$(minutes_ago 600)"
 board_config "${BOARD_CONFIG/.github\/workflows\/ci.yml/.github\/workflows\/nope.yml}"
 report "SC-AK-280 — конвейера нет: расхождений нет" "$(board_code)" 0
 report "SC-AK-280 — сказано, почему пропущено" "$(board_says 'файла конвейера в дереве нет')" 1
+
+# SC-AK-281 — готовая работа, оставленная черновиком, названа отдельной строкой
+board_config "$BOARD_CONFIG"
+export STUB_RUNS=1
+export STUB_VERDICT=success
+export STUB_PULLS="$(pulls_json true)"
+report "SC-AK-281 — зелёный прогон при черновике отбит" "$(board_code)" 1
+report "SC-AK-281 — сказано, что прогон зелёный, а PR черновик" "$(board_says 'прогон на вершине 01234567 зелёный, а PR черновик')" 1
+report "SC-AK-281 — назван способ снять черновик" "$(board_says 'gh pr ready 701')" 1
+
+# SC-AK-282 — черновик при незелёном прогоне не судится
+export STUB_VERDICT=failure
+report "SC-AK-282 — красный прогон при черновике не отбит" "$(board_code)" 0
+export STUB_VERDICT=running
+report "SC-AK-282 — идущий прогон при черновике не отбит" "$(board_code)" 0
 
 rm -rf "$BOARD_TREE"
 
