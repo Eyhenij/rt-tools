@@ -1,10 +1,16 @@
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
+import {
+    ApplicationConfig,
+    inject,
+    provideAppInitializer,
+    provideBrowserGlobalErrorListeners,
+    provideZonelessChangeDetection,
+} from '@angular/core';
 import { provideRouter, TitleStrategy, withComponentInputBinding } from '@angular/router';
 import { sessionExpiredInterceptor } from '@rt/message-bus-admin/auth/shell';
 import { AdminTitleStrategy, provideAdminKitLabels } from '@rt/message-bus-admin/common/core/util';
 import { provideRtIDBStorage, provideRtStorage, provideRtUtils } from '@rt-tools/core';
-import { provideRtIcons } from '@rt-tools/ui-kit-v2';
+import { provideRtIcons, ThemeService } from '@rt-tools/ui-kit-v2';
 
 import { appRoutes } from './app.routes';
 
@@ -18,6 +24,11 @@ import { appRoutes } from './app.routes';
  * заголовками, и видно это только на собранном экране. Языка два, и выбирает между ними человек:
  * и переводчик, и локаль приезжают сигналами службы языка, поэтому смена языка в попапе профиля
  * или на экране входа перерисовывает подписи кита без перезагрузки.
+ *
+ * Служба темы поднимается на старте, а не первым переключателем: выбор живёт на устройстве, а
+ * применяет его эффект службы — пока её никто не спросил, страница после перезагрузки стоит
+ * светлой, хотя выбрана тёмная. Единственный переключатель админки лежит в попапе профиля, то
+ * есть до первого его открытия спрашивать службу некому.
  *
  * Заголовок вкладки собирает своя стратегия: раздел объявляет своё название маршрутом, а имя
  * приложения дописывается к нему здесь — вкладок у человека десяток, и по одному названию раздела
@@ -43,6 +54,9 @@ export const appConfig: ApplicationConfig = {
         provideRtIDBStorage(),
         provideRtIcons('/icons'),
         provideAdminKitLabels(),
+        provideAppInitializer((): void => {
+            inject(ThemeService);
+        }),
         { provide: TitleStrategy, useClass: AdminTitleStrategy },
     ],
 };
