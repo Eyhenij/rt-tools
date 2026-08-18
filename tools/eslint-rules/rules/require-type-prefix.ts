@@ -32,13 +32,13 @@ export const rule: TSESLint.RuleModule<TMessageIds, TOptions> = ESLintUtils.Rule
         type: 'problem',
         docs: {
             description:
-                'Enforce the `I` prefix on top-level `type` alias declarations. Skipped for type aliases inside any `TSModuleBlock` — preserves the flat-two-level namespace convention (`ITurnstile.Theme`).',
+                'Enforce the `T` prefix on top-level `type` alias declarations. Skipped for type aliases inside any `TSModuleBlock` — preserves the flat-two-level namespace convention (`IRtuiButton.Theme`).',
         },
         schema: [],
         messages: {
-            missingPrefix: 'Type alias `{{name}}` must be prefixed with `I` (e.g. `I{{name}}`).',
+            missingPrefix: 'Type alias `{{name}}` must be prefixed with `T` — `I` is the interface prefix in this tree.',
             invalidFormat:
-                'Type alias `{{name}}` must match strict PascalCase with the `I` prefix and no all-caps abbreviations (e.g. `IApi`, not `IAPI`).',
+                'Type alias `{{name}}` must match strict PascalCase with the `T` prefix and no all-caps abbreviations (e.g. `TApi`, not `TAPI`).',
         },
     },
     defaultOptions: [],

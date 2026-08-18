@@ -18,7 +18,7 @@ function message(patch: Partial<IRtChat.Message> = {}): IRtChat.Message {
         text: 'Здравствуйте',
         createdAt: '2026-03-15T10:00:00Z',
         ...patch,
-    } as IRtChat.Message;
+    };
 }
 
 /**

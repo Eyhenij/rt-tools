@@ -152,5 +152,5 @@ export function fileListOf(files: readonly File[]): FileList {
         ...files,
         length: files.length,
         item: (index: number): File | null => files[index] ?? null,
-    } as unknown as FileList;
+    };
 }

@@ -1,23 +1,23 @@
 import { HAS_OWN_SCOPE_ENUM, hasPropertyInChain } from './has-property-in-chain.js';
 
-type Parent = { p: number };
-type Child = { o?: number } & Parent;
+type TParent = { p: number };
+type TChild = { o?: number } & TParent;
 
-const makeParentChild: () => { parent: Parent; obj: Child } = (): { parent: Parent; obj: Child } => {
-    const parent: Parent = { p: 1 };
-    const obj: Child = Object.create(parent);
+const makeParentChild: () => { parent: TParent; obj: TChild } = (): { parent: TParent; obj: TChild } => {
+    const parent: TParent = { p: 1 };
+    const obj: TChild = Object.create(parent);
     obj.o = 2;
     return { parent, obj };
 };
 
-interface ShadowObj {
+interface IShadowObj {
     hasOwnProperty: string;
     a: number;
 }
-const makeShadow: () => { obj: ShadowObj; proto: { b: number } } = (): { obj: ShadowObj; proto: { b: number } } => {
+const makeShadow: () => { obj: IShadowObj; proto: { b: number } } = (): { obj: IShadowObj; proto: { b: number } } => {
     const proto: { b: number } = { b: 2 };
-    const obj: ShadowObj = { hasOwnProperty: 'oops', a: 1 };
-    Object.setPrototypeOf(obj as object, proto);
+    const obj: IShadowObj = { hasOwnProperty: 'oops', a: 1 };
+    Object.setPrototypeOf(obj, proto);
     return { obj, proto };
 };
 
@@ -41,7 +41,7 @@ export const makeSymbols: () => {
 describe(hasPropertyInChain.name, () => {
     describe(HAS_OWN_SCOPE_ENUM.ANY, () => {
         it('should return false for null/undefined', () => {
-            expect(hasPropertyInChain(null as unknown, 'x', HAS_OWN_SCOPE_ENUM.ANY)).toBe(false);
+            expect(hasPropertyInChain(null, 'x', HAS_OWN_SCOPE_ENUM.ANY)).toBe(false);
             expect(hasPropertyInChain(undefined as unknown, 'x', HAS_OWN_SCOPE_ENUM.ANY)).toBe(false);
         });
 
@@ -65,7 +65,7 @@ describe(hasPropertyInChain.name, () => {
         });
 
         it('should work with primitives and arrays', () => {
-            expect(hasPropertyInChain(0 as unknown, 'toFixed', HAS_OWN_SCOPE_ENUM.ANY)).toBe(true); // inherited
+            expect(hasPropertyInChain(0, 'toFixed', HAS_OWN_SCOPE_ENUM.ANY)).toBe(true); // inherited
             const arr: number[] = [1, 2];
             expect(hasPropertyInChain(arr, 0, HAS_OWN_SCOPE_ENUM.ANY)).toBe(true); // own index
             expect(hasPropertyInChain(arr, 'map', HAS_OWN_SCOPE_ENUM.ANY)).toBe(true); // inherited
@@ -101,7 +101,7 @@ describe(hasPropertyInChain.name, () => {
         });
 
         it('should not invoke throwing getter when checking presence (own)', () => {
-            const obj: Record<string, unknown> = {} as Record<string, unknown>;
+            const obj: Record<string, unknown> = {};
             Object.defineProperty(obj, 'a', {
                 get() {
                     throw new Error('boom');
@@ -112,7 +112,7 @@ describe(hasPropertyInChain.name, () => {
         });
 
         it('should not invoke throwing getter when checking presence (inherited)', () => {
-            const proto: Record<string, unknown> = {} as Record<string, unknown>;
+            const proto: Record<string, unknown> = {};
             Object.defineProperty(proto, 'b', {
                 get() {
                     throw new Error('boom');
@@ -145,12 +145,12 @@ describe(hasPropertyInChain.name, () => {
 
         it('should support symbol keys', () => {
             const sym: unique symbol = Symbol('own');
-            const obj: Record<string, unknown> = { [sym]: 1 } as Record<PropertyKey, unknown>;
+            const obj: Record<string, unknown> = { [sym]: 1 };
             expect(hasPropertyInChain(obj, sym, HAS_OWN_SCOPE_ENUM.OWN)).toBe(true);
         });
 
         it('should work with primitives and arrays', () => {
-            expect(hasPropertyInChain(0 as unknown, 'toFixed', HAS_OWN_SCOPE_ENUM.OWN)).toBe(false);
+            expect(hasPropertyInChain(0, 'toFixed', HAS_OWN_SCOPE_ENUM.OWN)).toBe(false);
             const arr: number[] = [1, 2];
             expect(hasPropertyInChain(arr, 0, HAS_OWN_SCOPE_ENUM.OWN)).toBe(true);
             expect(hasPropertyInChain(arr, 'length', HAS_OWN_SCOPE_ENUM.OWN)).toBe(true);
@@ -170,8 +170,8 @@ describe(hasPropertyInChain.name, () => {
         });
 
         it('should treat string primitive indices and length as own', () => {
-            expect(hasPropertyInChain('ab' as unknown, 0, HAS_OWN_SCOPE_ENUM.OWN)).toBe(true);
-            expect(hasPropertyInChain('ab' as unknown, 'length', HAS_OWN_SCOPE_ENUM.OWN)).toBe(true);
+            expect(hasPropertyInChain('ab', 0, HAS_OWN_SCOPE_ENUM.OWN)).toBe(true);
+            expect(hasPropertyInChain('ab', 'length', HAS_OWN_SCOPE_ENUM.OWN)).toBe(true);
         });
 
         it('should not report array hole as own', () => {
@@ -216,7 +216,7 @@ describe(hasPropertyInChain.name, () => {
         });
 
         it('should work with primitives and arrays', () => {
-            expect(hasPropertyInChain(0 as unknown, 'toFixed', HAS_OWN_SCOPE_ENUM.INHERITED)).toBe(true);
+            expect(hasPropertyInChain(0, 'toFixed', HAS_OWN_SCOPE_ENUM.INHERITED)).toBe(true);
             const arr: number[] = [1, 2];
             expect(hasPropertyInChain(arr, 'map', HAS_OWN_SCOPE_ENUM.INHERITED)).toBe(true);
             expect(hasPropertyInChain(arr, 0, HAS_OWN_SCOPE_ENUM.INHERITED)).toBe(false);
@@ -239,8 +239,8 @@ describe(hasPropertyInChain.name, () => {
         });
 
         it('should detect string methods as inherited', () => {
-            expect(hasPropertyInChain('ab' as unknown, 'includes', HAS_OWN_SCOPE_ENUM.INHERITED)).toBe(true);
-            expect(hasPropertyInChain('ab' as unknown, 'toUpperCase', HAS_OWN_SCOPE_ENUM.INHERITED)).toBe(true);
+            expect(hasPropertyInChain('ab', 'includes', HAS_OWN_SCOPE_ENUM.INHERITED)).toBe(true);
+            expect(hasPropertyInChain('ab', 'toUpperCase', HAS_OWN_SCOPE_ENUM.INHERITED)).toBe(true);
         });
 
         it('should detect function methods as inherited', () => {
@@ -252,7 +252,7 @@ describe(hasPropertyInChain.name, () => {
         });
 
         it('should not invoke throwing getter on prototype when checking inherited', () => {
-            const proto: Record<string, unknown> = {} as Record<string, unknown>;
+            const proto: Record<string, unknown> = {};
             Object.defineProperty(proto, 'z', {
                 get() {
                     throw new Error('boom');
@@ -290,7 +290,7 @@ describe(hasPropertyInChain.name, () => {
     });
 
     describe('fallback to hasOwnProperty.call', () => {
-        const O: { hasOwn?: unknown } = Object as unknown as { hasOwn?: unknown };
+        const O: { hasOwn?: unknown } = Object;
         let orig: unknown;
 
         beforeAll(() => {

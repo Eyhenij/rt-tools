@@ -68,7 +68,7 @@ class PrismaDouble {
 
     /** Отбор идёт по дереву записи месяца: пусто в `where` — все деревья. */
     #picked(args: Record<string, unknown>): IStoredProposal[] {
-        const where: { record?: { tree: { slug: string } } } = (args['where'] ?? {}) as { record?: { tree: { slug: string } } };
+        const where: { record?: { tree: { slug: string } } } = args['where'] ?? {};
         const slug: string | undefined = where.record?.tree.slug;
 
         return this.#rows.filter((row: IStoredProposal): boolean => !slug || row.record.tree.slug === slug);
@@ -85,7 +85,7 @@ class PrismaDouble {
     }
 
     #one(args: Record<string, unknown>): Record<string, unknown> | null {
-        const where: { id?: string } = (args['where'] ?? {}) as { id?: string };
+        const where: { id?: string } = args['where'] ?? {};
         const found: IStoredProposal | undefined = this.#rows.find((row: IStoredProposal): boolean => row.id === where.id);
 
         return found ? projected(found, selectOf(args)) : null;

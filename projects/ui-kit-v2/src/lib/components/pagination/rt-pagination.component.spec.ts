@@ -7,7 +7,7 @@ import { createRtFixture, el, qa, qaAll, setInputs, textOf } from '../../../test
 import { RtPaginationComponent } from './rt-pagination.component';
 
 function page(patch: Partial<IPageModel> = {}): IPageModel {
-    return { pageNumber: 1, pageSize: 20, totalCount: 100, ...patch } as IPageModel;
+    return { pageNumber: 1, pageSize: 20, totalCount: 100, ...patch };
 }
 
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtPaginationComponent> {
