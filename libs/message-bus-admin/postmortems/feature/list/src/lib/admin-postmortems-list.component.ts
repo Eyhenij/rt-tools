@@ -19,8 +19,9 @@ import {
 } from '@rt/message-bus-admin/common/core/ui';
 import { adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
 import { PostmortemsStore } from '@rt/message-bus-admin/postmortems/data-access';
-import { IPostmortem, POSTMORTEMS_COLUMNS, POSTMORTEMS_SORTABLE, POSTMORTEMS_TABLE_ID } from '@rt/message-bus-admin/postmortems/util';
+import { IPostmortem, POSTMORTEMS_COLUMNS, POSTMORTEMS_TABLE_ID } from '@rt/message-bus-admin/postmortems/util';
 import { IRtTable, RtTableComponent, RtTableRowDirective, RtTableSortHeaderComponent } from '@rt-tools/ui-kit-v2';
+import { POSTMORTEM_SORTABLE } from '@rt/message-bus-common';
 
 const BEM_BLOCK: string = 'admin-postmortems-list';
 
@@ -81,7 +82,7 @@ export class AdminPostmortemsListComponent extends AdminListScreenBase<IPostmort
     protected readonly qaPrefix: string = 'postmortems';
 
     protected readonly store: PostmortemsStore = inject(PostmortemsStore);
-    protected readonly sortable: readonly string[] = POSTMORTEMS_SORTABLE;
+    protected readonly sortable: readonly string[] = POSTMORTEM_SORTABLE;
 
     constructor() {
         super();

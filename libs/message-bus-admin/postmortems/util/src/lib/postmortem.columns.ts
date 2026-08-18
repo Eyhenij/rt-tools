@@ -18,13 +18,6 @@ export const POSTMORTEMS_PATH: string = '/api/postmortems';
  */
 export const POSTMORTEMS_TABLE_ID: string = 'admin-postmortems';
 
-/**
- * Поля, по которым раздел даёт упорядочить список. Первое — умолчание: свежие сверху.
- *
- * Набор повторяет тот, что принимает приёмник: поле не из него он отбивает отказом.
- */
-export const POSTMORTEMS_SORTABLE: readonly string[] = ['arrivedAt', 'updatedAt', 'file', 'tree'];
-
 /** Столбцы таблицы. Подписи идут из словаря, а порядок — тот, в котором они здесь стоят. */
 export const POSTMORTEMS_COLUMNS: readonly IRtTable.ColumnConfig[] = Object.freeze([
     { key: 'tree', label: adminLabel('columnTree'), sortable: true },

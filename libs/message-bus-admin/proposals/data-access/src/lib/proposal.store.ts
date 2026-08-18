@@ -1,21 +1,18 @@
 import { computed, inject, Injectable, Signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { IReadFault } from '@rt/message-bus-admin/common/core/util';
+import { detailsInitialState, IDetailsState, IReadFault } from '@rt/message-bus-admin/common/core/util';
 import { ProposalsApiService } from '@rt/message-bus-admin/proposals/api';
 import { IProposal } from '@rt/message-bus-admin/proposals/util';
-import { BASE_INITIAL_STATE, BaseAsyncStoreService, IStateBase } from '@rt-tools/store';
+import { BaseAsyncStoreService } from '@rt-tools/store';
 import { catchError, EMPTY, Observable, Subject, switchMap, tap } from 'rxjs';
 
-/** Что знает панель подробностей: запись, чем кончилось её чтение. */
-export interface IProposalState extends IStateBase.Async {
-    entity: IProposal.State | null;
-    fault: IReadFault | null;
-}
+/** Что знает панель подробностей: запись, чем кончилось её чтение. Общее объявление — в основании семейства. */
+export type IProposalState = IDetailsState<IProposal.State>;
 
 /** Сообщения шины стора: по ним панель узнаёт, что запись прочитана. */
 export type TProposalMessage = 'proposal-read';
 
-const INITIAL_STATE: IProposalState = { ...BASE_INITIAL_STATE.ASYNC, entity: null, fault: null };
+const INITIAL_STATE: IProposalState = detailsInitialState<IProposal.State>();
 
 /**
  * Одно предложение — то, что показывает панель подробностей.

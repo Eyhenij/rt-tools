@@ -12,9 +12,9 @@ import { BadRequestException, Controller, Get, NotFoundException, Param, Query }
 
 import { SessionOperation } from '@rt/message-bus-api/access/util';
 import { IMonthRecordFullRow, IMonthRecordListRow, readMonthRecord, readMonthRecords } from '@rt/message-bus-api/observations/data-access';
-import { MONTH_RECORD_SORTABLE } from '@rt/message-bus-api/observations/util';
+
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
-import { IPage, pageAsked, pageFault } from '@rt/message-bus-common';
+import { IPage, MONTH_RECORD_SORTABLE, pageAsked, pageFault } from '@rt/message-bus-common';
 
 @Controller('summaries')
 export class SummariesReadController {
