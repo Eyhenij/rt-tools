@@ -1,39 +1,17 @@
 /**
- * Содержимое панели подробностей: поля записи и её текст.
+ * Содержимое панели подробностей: разделы записи и её текст.
  *
  * Раскладка объявлена здесь, а не в стилях вида: панелей у админки три — по одной на раздел
  * груза, — и объявленная у каждой она разошлась бы молча.
+ *
+ * Своих отступов от края панель не держит: зазор до края и ритм между разделами задаёт зона
+ * содержимого шторки, и панель берёт у неё тот же шаг — иначе разделы стоят вдвое реже, чем
+ * во всех остальных шторках приложения.
  */
 .admin-panel {
     display: flex;
     flex-direction: column;
-    padding: var(--rt-space-5);
-    gap: var(--rt-space-5);
-
-    &__fields {
-        display: grid;
-        margin: 0;
-        gap: var(--rt-space-2) var(--rt-space-4);
-        grid-template-columns: max-content 1fr;
-    }
-
-    &__field-name {
-        color: var(--rt-color-text-muted);
-        font-size: var(--rt-text-sm);
-    }
-
-    &__field-value {
-        margin: 0;
-        color: var(--rt-color-text-primary);
-        font-size: var(--rt-text-sm);
-    }
-
-    &__section {
-        margin: 0;
-        color: var(--rt-color-text-primary);
-        font-size: var(--rt-text-lg);
-        font-weight: var(--rt-font-weight-semibold);
-    }
+    gap: var(--rt-aside-content-gap);
 
     /**
      * Текст груза показывается как есть: переносы строк в нём значащие, а длинная строка

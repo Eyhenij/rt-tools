@@ -1,8 +1,18 @@
 <ng-container rtBlock="login">
-    <section rtElem="card">
-        <rt-logo rtElem="logo" ariaLabel="Шина сообщений" [height]="32" />
+    <!-- Полосу управления над карточкой везёт кит: вход — единственный экран, где человек
+         оказывается до попапа профиля, и тёмная тема нужна на нём тем же глазам -->
+    <div rtElem="chrome" qa-dataid="sign-in-chrome">
+        <admin-locale-switch qa-dataid="sign-in-language" />
 
-        <h1 rtElem="title">Вход в админку</h1>
+        <rt-theme-toggle qa-dataid="sign-in-theme" />
+    </div>
+
+    <section rtElem="card">
+        <!-- Приложение называет себя словом: начертания знака у админки нет, и готовый логотип
+             занимал здесь место, ничего не рисуя -->
+        <span rtElem="brand" qa-dataid="sign-in-brand">{{ appTitle }}</span>
+
+        <h1 rtElem="title" qa-dataid="sign-in-title">{{ signInTitle }}</h1>
 
         <admin-sign-in-form [pending]="pending()" [fault]="fault()" (submitted)="submit($event)" />
     </section>

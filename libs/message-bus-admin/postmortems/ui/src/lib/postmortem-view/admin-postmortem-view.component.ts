@@ -3,11 +3,16 @@ import { AdminMomentPipe } from '@rt/message-bus-admin/common/core/ui';
 import { adminLabel } from '@rt/message-bus-admin/common/core/util';
 import { IPostmortem } from '@rt/message-bus-admin/postmortems/util';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { RtAsideSectionComponent, RtDetailListComponent, RtDetailRowComponent } from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'admin-panel';
 
 /**
  * Вид одного разбора: поля записи и её текст.
+ *
+ * Пока запись читается, названия свойств уже стоят, а на месте значений — скелетоны: их даёт
+ * готовая строка кита. Записи при этом ещё нет вовсе, поэтому вход принимает и пустоту; текст
+ * в это время не показывается — прежний принадлежит прежней записи, а нового ещё нет.
  *
  * Текст показывается текстом, а не размеченным содержимым: приёмник содержимого груза не
  * разбирает, и дерево, у которого есть токен, иначе получало бы исполнение своей разметки в
@@ -24,6 +29,9 @@ const BEM_BLOCK: string = 'admin-panel';
         // rt-tools
         BlockDirective,
         ElemDirective,
+        RtAsideSectionComponent,
+        RtDetailListComponent,
+        RtDetailRowComponent,
 
         // pipes
         AdminMomentPipe,
@@ -37,5 +45,6 @@ export class AdminPostmortemViewComponent {
     protected readonly updatedLabel: string = adminLabel('columnUpdatedAt');
     protected readonly textLabel: string = adminLabel('detailsText');
 
-    public readonly entity: InputSignal<IPostmortem.State> = input.required<IPostmortem.State>();
+    public readonly entity: InputSignal<IPostmortem.State | null> = input.required<IPostmortem.State | null>();
+    public readonly reading: InputSignal<boolean> = input<boolean>(false);
 }

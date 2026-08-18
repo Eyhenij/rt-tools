@@ -1,3 +1,4 @@
+import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { IProposal } from '@rt/message-bus-admin/proposals/util';
@@ -20,8 +21,15 @@ function entityOf(patch: Partial<IProposal.State> = {}): IProposal.State {
 describe('AdminProposalViewComponent', () => {
     let fixture: ComponentFixture<AdminProposalViewComponent>;
 
+    /**
+     * Значение свойства лежит внутри строки кита и носит её признак: свой признак у панели
+     * теперь на самой строке, а не на теге значения.
+     */
     function textOf(qaId: string): string {
-        return fixture.debugElement.query(By.css(`[qa-dataid="${qaId}"]`))?.nativeElement.textContent.trim() ?? '';
+        const own: DebugElement | null = fixture.debugElement.query(By.css(`[qa-dataid="${qaId}"]`));
+        const value: DebugElement | null = own?.query(By.css('[qa-dataid="detail-row-value"]')) ?? null;
+
+        return (value ?? own)?.nativeElement.textContent.trim() ?? '';
     }
 
     function show(entity: IProposal.State): void {
@@ -73,5 +81,22 @@ describe('AdminProposalViewComponent', () => {
         expect(textOf('proposal-text')).toBe('<script>alert(1)</script><b>жирным</b>');
         expect(fixture.debugElement.query(By.css('[qa-dataid="proposal-text"] script'))).toBeNull();
         expect(fixture.debugElement.query(By.css('[qa-dataid="proposal-text"] b'))).toBeNull();
+    });
+
+    it('SC-MB-137, SC-MB-141 — свойства стоят в готовом списке кита, а своего списка определений в панели нет', () => {
+        show(entityOf());
+
+        expect(fixture.debugElement.queryAll(By.css('rt-detail-list rt-detail-row')).length).toBe(5);
+        expect(fixture.debugElement.query(By.css('dl'))).toBeNull();
+        expect(fixture.debugElement.query(By.css('dt'))).toBeNull();
+        expect(fixture.debugElement.query(By.css('dd'))).toBeNull();
+    });
+
+    it('SC-MB-138, SC-MB-141 — разделы панели нарисованы разделом кита, а своего заголовка в ней нет', () => {
+        show(entityOf());
+
+        expect(fixture.debugElement.queryAll(By.css('rt-aside-section')).length).toBe(2);
+        expect(fixture.debugElement.query(By.css('[qa-dataid="aside-section-heading"]')).nativeElement.textContent.trim()).not.toBe('');
+        expect(fixture.debugElement.query(By.css('h2'))).toBeNull();
     });
 });
