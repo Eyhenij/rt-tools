@@ -1,3 +1,29 @@
+# [0.9.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.8.3...rt-agent-kit@0.9.0) (2026-08-18)
+
+### Bug Fixes
+
+- **rt:agent-kit:** гард проверок узнаёт пуш, идущий с ключами перед подкомандой ([8080ae5](https://github.com/Eyhenij/rt-tools/commit/8080ae58643d63c07b89fcab72397b2a0e12f00c))
+- **rt:agent-kit:** гейт правил зовётся на вызовы браузера, а расхождение объявления находится сверкой ([1aff264](https://github.com/Eyhenij/rt-tools/commit/1aff2649e5969fab53ff24708d62d141e2e1ca5d))
+- **rt:agent-kit:** готовый код пакета зовёт директивы кита, а не чужого дерева ([407161b](https://github.com/Eyhenij/rt-tools/commit/407161b00511d4480e9fe78ed0595246a38d898f)), closes [#771](https://github.com/Eyhenij/rt-tools/issues/771)
+- **rt:agent-kit:** образец сообщения владельцу кончается взятым, а не обещанием ([0adbc54](https://github.com/Eyhenij/rt-tools/commit/0adbc5495407b5b95c0ce59b355d4bd0673f8f8a))
+- **rt:agent-kit:** проверка классов вёрстки собирает имя из вложенности, а долг разобран до нуля ([95f28c8](https://github.com/Eyhenij/rt-tools/commit/95f28c83e4736061acfde8cc3a361a652513fff1))
+- **rt:agent-kit:** проверка классов вёрстки читает пакетное правило и не путает разросшийся долг с новым ([a13cbab](https://github.com/Eyhenij/rt-tools/commit/a13cbab948b88ffb45a5ebe266c9f82e0de7eee8))
+- **rt:agent-kit:** следы деления сняты по всему набору гейта ([16138fa](https://github.com/Eyhenij/rt-tools/commit/16138fa0f4607b1f97cb3bc03830844bc7123880))
+- **rt:agent-kit:** у отказа от необратимого действия есть безопасная часть ([cad7a40](https://github.com/Eyhenij/rt-tools/commit/cad7a40ebbac4f81746cb8e10e4652f6e786b264))
+- **rt:message-bus:** панель настройки столбцов открывается своим адресом у каждого раздела ([647df99](https://github.com/Eyhenij/rt-tools/commit/647df993170f8109b9c4414748c509013fbdcf89))
+- **rt:message-bus:** стенд сквозной спеки берёт свои имена, а прогоны идут по очереди ([992e45a](https://github.com/Eyhenij/rt-tools/commit/992e45a3a53fe345b7ba0666b190497ebe72f594))
+
+### Features
+
+- **rt:agent-kit:** дерево заводит себя командой пакета по приглашению ([b6b641e](https://github.com/Eyhenij/rt-tools/commit/b6b641e39b1bcaa93e5d59e6da6af90bf804fec7))
+- **rt:agent-kit:** запись предложения называет надстройки, которые снимет его правка ([24a182b](https://github.com/Eyhenij/rt-tools/commit/24a182bfe5c8b23e7ded8ae66af914ea7f993f18))
+- **rt:agent-kit:** сверка очереди работ называет вершину открытого PR, за которой прогона нет ([02e5bd0](https://github.com/Eyhenij/rt-tools/commit/02e5bd077964f4a72ebade37c9daa32752387d30))
+- **rt:agent-kit:** сверка очереди работ называет готовое, оставленное черновиком ([79cfd09](https://github.com/Eyhenij/rt-tools/commit/79cfd090adf057918eac03c4e7ef6a1e2d5bd360))
+- **rt:agent-kit:** сверка раскладки стоит в наборе гейта пуша ([c9641ba](https://github.com/Eyhenij/rt-tools/commit/c9641ba190b8ca1a9fb9c33812ee8436a1a34c88))
+- **rt:agent-kit:** ход о чужом шаге называет своё следующее действие и начинает его ([658a045](https://github.com/Eyhenij/rt-tools/commit/658a045f203ca7b6655043abce151e71907aba2f))
+- **rt:agent-kit:** шесть находок эпика встали статьями и ловушками слоя правил ([3b252f4](https://github.com/Eyhenij/rt-tools/commit/3b252f4432380112d32459786811dae07414750b))
+- **rt:message-bus:** дерево получает токен по приглашению, обращение закрыто пределом частоты ([bdc677a](https://github.com/Eyhenij/rt-tools/commit/bdc677a68429f14ff27c9b0ef53a3f86c7d5a55f))
+
 ## [0.8.3](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.8.2...rt-agent-kit@0.8.3) (2026-08-16)
 
 ### Bug Fixes
