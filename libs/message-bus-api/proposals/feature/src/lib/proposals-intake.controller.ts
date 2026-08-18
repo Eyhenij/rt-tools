@@ -16,19 +16,20 @@ import { IIntakeAccepted } from '@rt-tools/agent-kit/cargo';
 import { TreeOperation } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { addProposals, IProposalRow, IProposalsWritten } from '@rt/message-bus-api/proposals/data-access';
-import { PROPOSAL_ITEM_FIELDS, PROPOSALS_FIELDS } from '@rt/message-bus-api/proposals/util';
+import { PROPOSAL_ITEM_FIELDS } from '@rt/message-bus-api/proposals/util';
 import { IRequestTree, ITreeBearingRequest, treeOf } from '@rt/message-bus-api/trees/util';
 import {
+    CARGO_ITEMS_FIELDS,
+    ICargoFault,
+    IIntakeResponse,
+    TCargoBody,
     cargoFault,
     cargoFaultMessage,
     cargoItemFaultMessage,
     cargoItemsOf,
     cargoSchemaOf,
     faultyCargoItems,
-    ICargoFault,
-    IIntakeResponse,
     monthOf,
-    TCargoBody,
 } from '@rt/message-bus-common';
 
 /** Как род груза зовётся в отказе: дерево шлёт три рода и должно знать, какой из них отбит. */
@@ -55,7 +56,7 @@ export class ProposalsIntakeController {
         @Res({ passthrough: true }) response: IIntakeResponse
     ): Promise<IIntakeAccepted> {
         const tree: IRequestTree = treeOf(request);
-        const fault: ICargoFault | null = cargoFault(body, tree.slug, PROPOSALS_FIELDS);
+        const fault: ICargoFault | null = cargoFault(body, tree.slug, CARGO_ITEMS_FIELDS);
 
         if (fault) {
             throw new BadRequestException(cargoFaultMessage(fault, CARGO_KIND));

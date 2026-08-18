@@ -15,19 +15,20 @@ import { IIntakeAccepted } from '@rt-tools/agent-kit/cargo';
 import { TreeOperation } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IPostmortemRow, writePostmortems } from '@rt/message-bus-api/postmortems/data-access';
-import { POSTMORTEM_ITEM_FIELDS, POSTMORTEMS_FIELDS } from '@rt/message-bus-api/postmortems/util';
+import { POSTMORTEM_ITEM_FIELDS } from '@rt/message-bus-api/postmortems/util';
 import { IRequestTree, ITreeBearingRequest, treeOf } from '@rt/message-bus-api/trees/util';
 import {
+    CARGO_ITEMS_FIELDS,
+    ICargoFault,
+    IIntakeResponse,
+    TCargoBody,
     cargoFault,
     cargoFaultMessage,
     cargoItemFaultMessage,
     cargoItemsOf,
     cargoSchemaOf,
     faultyCargoItems,
-    ICargoFault,
-    IIntakeResponse,
     monthOf,
-    TCargoBody,
 } from '@rt/message-bus-common';
 
 /** Как род груза зовётся в отказе: дерево шлёт три рода и должно знать, какой из них отбит. */
@@ -54,7 +55,7 @@ export class PostmortemsIntakeController {
         @Res({ passthrough: true }) response: IIntakeResponse
     ): Promise<IIntakeAccepted> {
         const tree: IRequestTree = treeOf(request);
-        const fault: ICargoFault | null = cargoFault(body, tree.slug, POSTMORTEMS_FIELDS);
+        const fault: ICargoFault | null = cargoFault(body, tree.slug, CARGO_ITEMS_FIELDS);
 
         if (fault) {
             throw new BadRequestException(cargoFaultMessage(fault, CARGO_KIND));

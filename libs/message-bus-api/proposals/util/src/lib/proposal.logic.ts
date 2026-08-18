@@ -17,16 +17,5 @@ export function proposalDigest(text: string): string {
     return createHash('sha256').update(text, 'utf8').digest('hex');
 }
 
-/** Обязательные поля запроса: голова груза и список записей. */
-export const PROPOSALS_FIELDS: readonly string[] = ['schema', 'tree', 'items'];
-
 /** Обязательные поля одной записи. */
 export const PROPOSAL_ITEM_FIELDS: readonly string[] = ['text', 'address', 'resource'];
-
-/**
- * Поля, по которым список предложений упорядочивается.
- *
- * Первое — умолчание домена: свежие сверху. Текста предложения здесь нет — порядок по колонке,
- * которой нет в строке списка, человеку нечем объяснить.
- */
-export const PROPOSAL_SORTABLE: readonly string[] = ['arrivedAt', 'resource', 'address', 'tree'];

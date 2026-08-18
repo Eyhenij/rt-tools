@@ -10,8 +10,8 @@ import { BadRequestException, Controller, Get, NotFoundException, Param, Query }
 import { SessionOperation } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IProposalFullRow, IProposalListRow, readProposal, readProposals } from '@rt/message-bus-api/proposals/data-access';
-import { PROPOSAL_SORTABLE } from '@rt/message-bus-api/proposals/util';
-import { IPage, pageAsked, pageFault } from '@rt/message-bus-common';
+
+import { IPage, PROPOSAL_SORTABLE, pageAsked, pageFault } from '@rt/message-bus-common';
 
 @Controller('proposals')
 export class ProposalsReadController {

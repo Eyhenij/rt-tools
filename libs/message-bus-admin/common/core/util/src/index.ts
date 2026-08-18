@@ -1,6 +1,7 @@
 export * from './lib/admin-labels';
 export * from './lib/admin-locale';
 export * from './lib/admin-title.strategy';
+export * from './lib/details-state';
 export * from './lib/list-host';
 export * from './lib/list-query';
 export * from './lib/list-view';
