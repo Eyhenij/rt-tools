@@ -4,7 +4,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideZonelessChangeDetection, signal, Signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
-import { applicationConfig, Preview, StoryContext, StoryFn } from '@storybook/angular';
+import { applicationConfig, Decorator, Preview } from '@storybook/angular';
 
 import { provideRtIDBStorage, provideRtStorage } from '@rt-tools/core';
 
@@ -48,6 +48,12 @@ registerLocaleData(localeRu);
  * `ThemeService` в приложении. Переключатель Storybook пишет туда же, поэтому
  * витрина показывает ровно то, что увидит потребитель, а не свою имитацию.
  */
+/** История, поданная декоратору: частичное применение, которое зовут без аргументов. */
+type TDecoratorStory = Parameters<Decorator>[0];
+
+/** Обстановка истории так, как её объявляет сама витрина. */
+type TDecoratorContext = Parameters<Decorator>[1];
+
 const applyTheme: (theme: string) => void = (theme: string): void => {
     document.documentElement.dataset['theme'] = theme === 'dark' ? 'dark' : 'light';
 };
@@ -68,7 +74,10 @@ const preview: Preview = {
                 provideRtKitLabels({ translator: showcaseTranslator, locale: signal<string>('ru') }),
             ],
         }),
-        (story: StoryFn, context: StoryContext): ReturnType<StoryFn> => {
+        // Типы берутся у самого декоратора витрины, а не собираются рядом: `StoryFn` описывает
+        // историю целиком и требует аргументов, а декоратору приходит её частичное применение —
+        // уже с подставленными значениями, и зовут его без аргументов.
+        (story: TDecoratorStory, context: TDecoratorContext): ReturnType<Decorator> => {
             applyTheme(String(context.globals['theme'] ?? 'light'));
 
             return story();
