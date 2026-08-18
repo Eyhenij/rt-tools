@@ -26,6 +26,7 @@ export const ADMIN_LABELS = {
     theme: 'Тема',
     language: 'Язык',
     languageSwitch: 'Язык подписей',
+    signInTitle: 'Вход в админку',
 
     sectionPostmortems: 'Разборы происшествий',
     sectionProposals: 'Предложения',
