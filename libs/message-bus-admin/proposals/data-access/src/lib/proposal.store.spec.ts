@@ -2,10 +2,11 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting, TestRequest } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { EReadFault, IAdminListQuery, listQueryOf } from '@rt/message-bus-admin/common/core/util';
-import { IProposal, PROPOSALS_PATH, PROPOSALS_SORTABLE } from '@rt/message-bus-admin/proposals/util';
+import { IProposal, PROPOSALS_PATH } from '@rt/message-bus-admin/proposals/util';
 
 import { ProposalStore } from './proposal.store';
 import { ProposalsStore } from './proposals.store';
+import { PROPOSAL_SORTABLE } from '@rt/message-bus-common';
 
 /** Ответ приёмника на одну запись: время в нём строка, текст и месяц приезжают только здесь. */
 function apiOne(patch: Partial<IProposal.Api> = {}): IProposal.Api {
@@ -25,7 +26,7 @@ describe('ProposalsStore', () => {
     let store: ProposalsStore;
     let http: HttpTestingController;
 
-    const QUERY: IAdminListQuery = listQueryOf({}, PROPOSALS_SORTABLE);
+    const QUERY: IAdminListQuery = listQueryOf({}, PROPOSAL_SORTABLE);
 
     beforeEach(() => {
         TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });

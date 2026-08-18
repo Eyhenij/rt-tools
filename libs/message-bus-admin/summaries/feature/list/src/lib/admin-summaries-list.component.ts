@@ -19,8 +19,9 @@ import {
 } from '@rt/message-bus-admin/common/core/ui';
 import { adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
 import { MonthRecordsStore } from '@rt/message-bus-admin/summaries/data-access';
-import { IMonthRecord, SUMMARIES_COLUMNS, SUMMARIES_SORTABLE, SUMMARIES_TABLE_ID } from '@rt/message-bus-admin/summaries/util';
+import { IMonthRecord, SUMMARIES_COLUMNS, SUMMARIES_TABLE_ID } from '@rt/message-bus-admin/summaries/util';
 import { IRtTable, RtTableComponent, RtTableRowDirective, RtTableSortHeaderComponent } from '@rt-tools/ui-kit-v2';
+import { MONTH_RECORD_SORTABLE } from '@rt/message-bus-common';
 
 const BEM_BLOCK: string = 'admin-summaries-list';
 
@@ -81,7 +82,7 @@ export class AdminSummariesListComponent extends AdminListScreenBase<IMonthRecor
     protected readonly qaPrefix: string = 'summaries';
 
     protected readonly store: MonthRecordsStore = inject(MonthRecordsStore);
-    protected readonly sortable: readonly string[] = SUMMARIES_SORTABLE;
+    protected readonly sortable: readonly string[] = MONTH_RECORD_SORTABLE;
 
     constructor() {
         super();

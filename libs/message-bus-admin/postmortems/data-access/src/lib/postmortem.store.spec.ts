@@ -2,10 +2,11 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting, TestRequest } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { EReadFault, IAdminListQuery, listQueryOf } from '@rt/message-bus-admin/common/core/util';
-import { IPostmortem, POSTMORTEMS_PATH, POSTMORTEMS_SORTABLE } from '@rt/message-bus-admin/postmortems/util';
+import { IPostmortem, POSTMORTEMS_PATH } from '@rt/message-bus-admin/postmortems/util';
 
 import { PostmortemStore } from './postmortem.store';
 import { PostmortemsStore } from './postmortems.store';
+import { POSTMORTEM_SORTABLE } from '@rt/message-bus-common';
 
 /** Ответ приёмника на одну запись: времена в нём строки, текст приезжает только здесь. */
 function apiOne(patch: Partial<IPostmortem.Api> = {}): IPostmortem.Api {
@@ -24,7 +25,7 @@ describe('PostmortemsStore', () => {
     let store: PostmortemsStore;
     let http: HttpTestingController;
 
-    const QUERY: IAdminListQuery = listQueryOf({}, POSTMORTEMS_SORTABLE);
+    const QUERY: IAdminListQuery = listQueryOf({}, POSTMORTEM_SORTABLE);
 
     beforeEach(() => {
         TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });

@@ -2,10 +2,11 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting, TestRequest } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { EReadFault, IAdminListQuery, listQueryOf } from '@rt/message-bus-admin/common/core/util';
-import { IMonthRecord, SUMMARIES_PATH, SUMMARIES_SORTABLE } from '@rt/message-bus-admin/summaries/util';
+import { IMonthRecord, SUMMARIES_PATH } from '@rt/message-bus-admin/summaries/util';
 
 import { MonthRecordStore } from './month-record.store';
 import { MonthRecordsStore } from './month-records.store';
+import { MONTH_RECORD_SORTABLE } from '@rt/message-bus-common';
 
 /** Ответ приёмника на одну запись: время в нём строка, сводка приезжает только здесь. */
 function apiOne(patch: Partial<IMonthRecord.Api> = {}): IMonthRecord.Api {
@@ -25,7 +26,7 @@ describe('MonthRecordsStore', () => {
     let store: MonthRecordsStore;
     let http: HttpTestingController;
 
-    const QUERY: IAdminListQuery = listQueryOf({}, SUMMARIES_SORTABLE);
+    const QUERY: IAdminListQuery = listQueryOf({}, MONTH_RECORD_SORTABLE);
 
     beforeEach(() => {
         TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
