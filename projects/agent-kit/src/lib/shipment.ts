@@ -28,6 +28,7 @@ import { IReadResult, ISummary, readObservations, summarize } from './observatio
 import { ILeak, IProposal, leaksIn, markSent, marksOf, readProposals, TO_PACKAGE } from './proposals.js';
 import { IShipment, IShipped, readToken, TShip } from './ship.js';
 import { laidOutSkills, packagedNames, treeSnapshot, unpickedOf } from './snapshot.js';
+import { byText } from './order.js';
 
 /** Длина признака дерева. Двенадцати знаков хватает, чтобы деревья не сталкивались числом. */
 const SLUG_LENGTH: number = 12;
@@ -58,14 +59,19 @@ export interface IShipOptions {
  * непривёденные формы дали бы два.
  */
 export function remoteMarkOf(remote: string): string {
-    return remote
+    const named: string = remote
         .trim()
         .replace(/\.git$/, '')
         .replace(/^[a-z+]+:\/\//i, '')
         .replace(/^[^@/]+@/, '')
-        .replace(/:/g, '/')
-        .replace(/\/+$/, '')
-        .toLowerCase();
+        .replace(/:/g, '/');
+    let end: number = named.length;
+
+    while (end > 0 && named[end - 1] === '/') {
+        end -= 1;
+    }
+
+    return named.slice(0, end).toLowerCase();
 }
 
 /**
@@ -101,8 +107,10 @@ export function summaryCargo(
     known: ReadonlySet<string>
 ): ISummaryCargo {
     return {
-        schema: CARGO_SCHEMA_VERSION,
         tree,
+        unpicked,
+        overrides,
+        schema: CARGO_SCHEMA_VERSION,
         days: summary.days,
         sessions: summary.sessions,
         loads: knownCounts(summary.loads, known),
@@ -112,8 +120,6 @@ export function summaryCargo(
         kinds: summary.kinds,
         guards: knownCounts(summary.guards, known),
         unused: summary.unused,
-        unpicked,
-        overrides,
         versions: summary.versions,
         total: summary.total,
     };
@@ -137,7 +143,7 @@ export function readPostmortems(root: string, dir: string): IPostmortemItem[] {
             // Описание каталога разбором не является: оно объясняет, что здесь лежит, а не механизм
             // промаха, — и в приёме встало бы записью, которой нечего сказать.
             .filter((file: string): boolean => file.endsWith('.md') && file !== 'README.md')
-            .sort()
+            .sort(byText)
             .map((file: string): IPostmortemItem => ({ file, text: readFileSync(join(path, file), 'utf8') }))
     );
 }
@@ -316,11 +322,11 @@ export async function propose(env: IEnvironment, options: IShipOptions): Promise
         (entry: IProposal): boolean => entry.address === TO_PACKAGE && !entry.sent
     );
     const proposals: IProposalsCargo = {
-        schema: CARGO_SCHEMA_VERSION,
         tree,
+        schema: CARGO_SCHEMA_VERSION,
         items: mine.map((entry: IProposal): IProposalItem => ({ text: entry.body, address: entry.address, resource: entry.resource })),
     };
-    const postmortems: IPostmortemsCargo = { schema: CARGO_SCHEMA_VERSION, tree, items: readPostmortems(root, config.postmortems) };
+    const postmortems: IPostmortemsCargo = { tree, schema: CARGO_SCHEMA_VERSION, items: readPostmortems(root, config.postmortems) };
 
     const leaked: readonly string[] = leaksOfCargo(cargo, mine, marksOf(root, options.remote));
     if (leaked.length) {

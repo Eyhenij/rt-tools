@@ -7,7 +7,8 @@
  */
 import { join } from 'node:path';
 
-import { chosenEntries, IEntryOfCatalog, readCatalog } from './catalog.js';
+import { chosenEntries } from './cascade.js';
+import { IEntryOfCatalog, readCatalog } from './catalog.js';
 import { IConfig, SKILL_FILE, SKILL_KINDS, TKind } from './config.js';
 
 export interface IAsset {

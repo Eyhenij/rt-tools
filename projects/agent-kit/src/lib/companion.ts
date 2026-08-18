@@ -50,7 +50,8 @@ export interface ICompanion {
 }
 
 /** Путь компаньона: рядом с самим правилом, в каталоге его имени. */
-export const pathOf: (asset: IAsset) => string = (asset: IAsset): string => asset.target.replace(/[^/]+$/, COMPANION_FILE);
+export const pathOf: (asset: IAsset) => string = (asset: IAsset): string =>
+    asset.target.slice(0, asset.target.lastIndexOf('/') + 1) + COMPANION_FILE;
 
 /**
  * Место имени правила в шаблоне. Угловые скобки, а не `{{дырка}}`: дырка без значения отказывает
@@ -66,8 +67,8 @@ const STATEMENT_ROW: string = '| <статья дословно> | `<путь>:<
  * Раздел называется по-разному у правила пакета и у развёрнутого в дереве, поэтому берутся оба.
  */
 function statementsOf(rule: string): readonly string[] {
-    const section: RegExpMatchArray | null = rule.match(
-        /^## (?:Как закон применяется здесь|Что здесь действует)$([\s\S]*?)(?=^## |$(?![\s\S]))/m
+    const section: RegExpExecArray | null = /^## (?:Как закон применяется здесь|Что здесь действует)$([\s\S]*?)(?=^## |$(?![\s\S]))/m.exec(
+        rule
     );
     if (!section) {
         return [];
@@ -106,15 +107,15 @@ export function planCompanion(asset: IAsset, existing: string | null, template: 
     const path: string = pathOf(asset);
     const needs: string | null = requirementOf(asset.id);
     if (existing === null) {
-        return { rule: asset.name, path, state: 'missing', content: draftOf(template, asset.name, asset.text), needs };
+        return { path, needs, rule: asset.name, state: 'missing', content: draftOf(template, asset.name, asset.text) };
     }
 
     return {
-        rule: asset.name,
         path,
+        needs,
+        rule: asset.name,
         state: existing.includes(COMPANION_MARK) ? 'draft' : 'filled',
         content: null,
-        needs,
     };
 }
 

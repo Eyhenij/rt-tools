@@ -15,7 +15,8 @@ import { join } from 'node:path';
 
 import { collectAssets, IAsset } from './assets.js';
 import { ICargoOverride } from './cargo.js';
-import { chosenEntries, IEntryOfCatalog, readCatalog } from './catalog.js';
+import { chosenEntries } from './cascade.js';
+import { IEntryOfCatalog, readCatalog } from './catalog.js';
 import { IConfig, OVERRIDES_DIR, SKILL_KINDS } from './config.js';
 import { IDocument, ISection, parseDocument } from './sections.js';
 

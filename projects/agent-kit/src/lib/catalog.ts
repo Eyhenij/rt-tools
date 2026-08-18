@@ -63,7 +63,7 @@ export interface IFrontMatter {
     readonly rule: string;
 }
 
-const FIELD: RegExp = /^([a-z]+):\s*(\S.*?)\s*$/;
+const FIELD: RegExp = /^([a-z]+):(.*)$/;
 
 /**
  * Вступление между `---` в начале файла; его нет — вернётся пустая шапка.
@@ -71,6 +71,15 @@ const FIELD: RegExp = /^([a-z]+):\s*(\S.*?)\s*$/;
  * Живёт при каталоге, потому что связь родителя с потомком читают двое: сверка связности пакета
  * и каскад отказа. Объявление у одного из них заводило бы круговой импорт между ними.
  */
+function rememberField(found: Record<string, string>, line: string): void {
+    const match: RegExpExecArray | null = FIELD.exec(line);
+    const value: string = match ? match[2].trim() : '';
+
+    if (match && value) {
+        found[match[1]] = value;
+    }
+}
+
 export function frontMatterOf(text: string): IFrontMatter {
     const lines: readonly string[] = text.split('\n');
     const found: Record<string, string> = {};
@@ -80,10 +89,7 @@ export function frontMatterOf(text: string): IFrontMatter {
             if (line.trim() === '---') {
                 break;
             }
-            const match: RegExpMatchArray | null = line.match(FIELD);
-            if (match) {
-                found[match[1]] = match[2];
-            }
+            rememberField(found, line);
         }
     }
 
@@ -94,7 +100,7 @@ export function frontMatterOf(text: string): IFrontMatter {
  * Строка требования в шапке ресурса. Двух видов, потому что ресурсы двух родов: у разметки
  * `**Требует:**`, у исполняемого файла — комментарий `# Требует:`.
  */
-const REQUIRES: RegExp = /^(?:#\s*Требует:|\*\*Требует:\*\*)\s*(.+)$/m;
+const REQUIRES: RegExp = /^(?:#[^\S\n]*Требует:|\*\*Требует:\*\*)([^\n]*)$/m;
 
 /**
  * Что ресурс о себе объявил. Имена читаются идентификаторами — `hooks/observe.sh`: короткая
@@ -102,7 +108,7 @@ const REQUIRES: RegExp = /^(?:#\s*Требует:|\*\*Требует:\*\*)\s*(.+
  * ненайденного.
  */
 export function requiresOf(text: string): readonly string[] {
-    const found: RegExpMatchArray | null = text.match(REQUIRES);
+    const found: RegExpExecArray | null = REQUIRES.exec(text);
     if (!found) {
         return [];
     }
@@ -126,7 +132,7 @@ function isExecutable(path: string): boolean {
 
 /** Заголовок нужен человеку, который выбирает: имена законов ему ни о чём не говорят. */
 export function titleOf(text: string, fallback: string): string {
-    const found: RegExpMatchArray | null = text.match(TITLE);
+    const found: RegExpExecArray | null = TITLE.exec(text);
 
     return found ? found[1].trim() : fallback;
 }
@@ -153,6 +159,8 @@ function filesOf(dir: string, prefix: string = ''): readonly string[] {
             files.push(`${prefix}${entry.name}`);
         } else if (entry.isDirectory()) {
             files.push(...filesOf(join(dir, entry.name), `${prefix}${entry.name}/`));
+        } else {
+            // Ни файл, ни каталог — связь или узел устройства: ресурсом пакета это не бывает
         }
     }
 
@@ -178,14 +186,14 @@ export function readCatalog(assetsDir: string): readonly IEntryOfCatalog[] {
             const executable: boolean = isExecutable(path);
             entries.push({
                 id: `${kind}/${file}`,
+                title: titleOf(text, name),
+                requires: requiresOf(text),
                 kind,
                 name,
-                title: titleOf(text, name),
                 variant,
                 text,
                 needs,
                 executable,
-                requires: requiresOf(text),
             });
         }
     }
@@ -264,6 +272,27 @@ export interface IGapOfVariant {
  * Снимается он двумя способами, и оба явные: завести недостающий вид в пакете либо назвать
  * существующие в `skip` — дерево тем самым говорит, что обходится без этого ресурса.
  */
+/**
+ * Закрыт ли ресурс выбором: подходящий вид взят, все виды отвергнуты либо род сужен мимо него.
+ *
+ * Отказ от ресурса — законный ответ, и повторять его отказом раскладки незачем: дерево уже
+ * сказало, что обходится без него. Род, суженный через `only`, отбирает ресурсы поимённо: не
+ * названный в нём ресурс не пропал — его не просили.
+ */
+function closedBySelection(entries: readonly IEntryOfCatalog[], selection: ISelection): boolean {
+    if (entries.some((entry: IEntryOfCatalog): boolean => matchesVariant(entry.variant, selection.variants))) {
+        return true;
+    }
+
+    if (entries.every((entry: IEntryOfCatalog): boolean => selection.skip.includes(entry.id))) {
+        return true;
+    }
+
+    const restricted: boolean = selection.only.some((id: string): boolean => id.startsWith(`${entries[0].kind}/`));
+
+    return restricted && !entries.some((entry: IEntryOfCatalog): boolean => selection.only.includes(entry.id));
+}
+
 export function variantGaps(catalog: readonly IEntryOfCatalog[], selection: ISelection): readonly IGapOfVariant[] {
     const groups: Map<string, IEntryOfCatalog[]> = new Map();
     for (const entry of catalog) {
@@ -275,26 +304,12 @@ export function variantGaps(catalog: readonly IEntryOfCatalog[], selection: ISel
     }
 
     const gaps: IGapOfVariant[] = [];
-    for (const entries of groups.values()) {
+    for (const entries of [...groups.values()].filter((one: IEntryOfCatalog[]): boolean => !closedBySelection(one, selection))) {
         const axis: string = entries[0].variant?.axis ?? '';
-        if (entries.some((entry: IEntryOfCatalog): boolean => matchesVariant(entry.variant, selection.variants))) {
-            continue;
-        }
-        // Отказ от ресурса — законный ответ, и повторять его отказом раскладки незачем: дерево
-        // уже сказало, что обходится без него.
-        if (entries.every((entry: IEntryOfCatalog): boolean => selection.skip.includes(entry.id))) {
-            continue;
-        }
-        // Род, суженный через `only`, отбирает ресурсы поимённо: не названный в нём ресурс не
-        // пропал — его не просили.
-        const restricted: boolean = selection.only.some((id: string): boolean => id.startsWith(`${entries[0].kind}/`));
-        if (restricted && !entries.some((entry: IEntryOfCatalog): boolean => selection.only.includes(entry.id))) {
-            continue;
-        }
         gaps.push({
+            axis,
             kind: entries[0].kind,
             name: entries[0].name,
-            axis,
             chosen: selection.variants[axis] ?? '',
             available: entries.map((entry: IEntryOfCatalog): string => entry.variant?.value ?? ''),
             ids: entries.map((entry: IEntryOfCatalog): string => entry.id),
@@ -302,139 +317,6 @@ export function variantGaps(catalog: readonly IEntryOfCatalog[], selection: ISel
     }
 
     return gaps;
-}
-
-/** Ресурс, снятый вслед за отвергнутым родителем. */
-export interface ICascadeCut {
-    readonly id: string;
-    /** Ближайший родитель: у правила — его закон, у паттерна — его правило. */
-    readonly parent: string;
-    /**
-     * Отвергнутый корень цепочки — то, что дерево действительно отвергло или не выбрало.
-     * Ближайшего родителя мало: паттерн уходит вслед за правилом, которого в отказе нет, и
-     * искать его там читатель пойдёт зря.
-     */
-    readonly root: string;
-}
-
-/** Последнее звено имени: `application/money` → `money`. Им ресурсы и ссылаются друг на друга. */
-const shortNameOf: (entry: IEntryOfCatalog) => string = (entry: IEntryOfCatalog): string => entry.name.split('/').pop() ?? entry.name;
-
-/**
- * Ресурсы, снятые каскадом: правила при невзятом законе и паттерны при невзятых правилах.
- *
- * Связь читается из вступления самого ресурса — отдельный список при пакете разошёлся бы с
- * ресурсами молча, тем же молчанием, ради которого каскад и заводится. Родитель ищется по
- * последнему звену имени: полного пути в шапке нет, потому что переезд закона между слоями
- * переписывал бы шапки всех правил при нём.
- *
- * Родителя в каталоге нет вовсе — каскад молчит: снимать не по чему, а промах в шапке судит
- * сверка связности пакета, до всякой раскладки в дереве.
- */
-export function cascadeCuts(catalog: readonly IEntryOfCatalog[], selection: ISelection): readonly ICascadeCut[] {
-    const takenOf: (kind: TKind) => ReadonlySet<string> = (kind: TKind): ReadonlySet<string> =>
-        new Set(catalog.filter((entry: IEntryOfCatalog): boolean => entry.kind === kind && isChosen(entry, selection)).map(shortNameOf));
-    const knownOf: (kind: TKind) => ReadonlySet<string> = (kind: TKind): ReadonlySet<string> =>
-        new Set(catalog.filter((entry: IEntryOfCatalog): boolean => entry.kind === kind).map(shortNameOf));
-
-    const takenLaws: ReadonlySet<string> = takenOf('laws');
-    const knownLaws: ReadonlySet<string> = knownOf('laws');
-    const takenRules: ReadonlySet<string> = takenOf('rules');
-    const knownRules: ReadonlySet<string> = knownOf('rules');
-
-    const cuts: ICascadeCut[] = [];
-    /** Правило, снятое законом: для паттернов при нём корнем цепочки будет этот закон. */
-    const rootByRule: Map<string, string> = new Map<string, string>();
-
-    for (const entry of catalog) {
-        if (entry.kind !== 'rules' || !isChosen(entry, selection)) {
-            continue;
-        }
-        const law: string = frontMatterOf(entry.text).law;
-        if (!law || !knownLaws.has(law) || takenLaws.has(law)) {
-            continue;
-        }
-        cuts.push({ id: entry.id, parent: law, root: law });
-        rootByRule.set(shortNameOf(entry), law);
-    }
-
-    for (const entry of catalog) {
-        if (entry.kind !== 'patterns' || !isChosen(entry, selection)) {
-            continue;
-        }
-        const rule: string = frontMatterOf(entry.text).rule;
-        if (!rule || !knownRules.has(rule) || (takenRules.has(rule) && !rootByRule.has(rule))) {
-            continue;
-        }
-        cuts.push({ id: entry.id, parent: rule, root: rootByRule.get(rule) ?? rule });
-    }
-
-    return cuts;
-}
-
-/**
- * Ресурсы, названные выбором поимённо и всё равно снятые каскадом.
- *
- * Дерево, назвавшее правило в выборе при невыбранном законе, не получает его молча — то самое
- * молчание, ради которого каскад и заводится, только с другой стороны: там о снятии не знал тот,
- * кто ничего не просил, здесь — тот, кто попросил прямо.
- */
-export function namedButCut(catalog: readonly IEntryOfCatalog[], selection: ISelection): readonly ICascadeCut[] {
-    return cascadeCuts(catalog, selection).filter((one: ICascadeCut): boolean => selection.only.includes(one.id));
-}
-
-/**
- * Что ложится в дерево: прямой отбор за вычетом снятого каскадом.
- *
- * Отдельной функцией, а не внутри `isChosen`, потому что каскад знает весь каталог, а отбор —
- * один ресурс: связь родителя с потомком по одной записи не видна.
- */
-export function chosenEntries(catalog: readonly IEntryOfCatalog[], selection: ISelection): readonly IEntryOfCatalog[] {
-    const cut: ReadonlySet<string> = new Set(cascadeCuts(catalog, selection).map((one: ICascadeCut): string => one.id));
-
-    return catalog.filter((entry: IEntryOfCatalog): boolean => isChosen(entry, selection) && !cut.has(entry.id));
-}
-
-/** Строка отказа, которая ничего не снимает. */
-export interface IIdleSkip {
-    readonly id: string;
-    /** Чем названное ею уже снято: имя отвергнутого родителя, либо пусто — такого ресурса нет. */
-    readonly by: string;
-}
-
-/**
- * Строки отказа, которые ничего не снимают: названное ими снято каскадом или в каталоге не
- * значится вовсе.
- *
- * Не отказ, а предупреждение: настройка, верная до обновления пакета, становится лишней сама,
- * без единой правки в дереве, и отбивать за это раскладку значило бы наказывать за вчерашнюю
- * правоту.
- *
- * Строка на ресурс чужого вида лишней не считается никогда: ею дерево гасит отказ о ресурсе,
- * у которого нет подходящего вида, — то есть работу она делает.
- */
-export function idleSkips(catalog: readonly IEntryOfCatalog[], selection: ISelection): readonly IIdleSkip[] {
-    const idle: IIdleSkip[] = [];
-
-    for (const id of selection.skip) {
-        const entry: IEntryOfCatalog | undefined = catalog.find((one: IEntryOfCatalog): boolean => one.id === id);
-        if (!entry) {
-            idle.push({ id, by: '' });
-            continue;
-        }
-        if (!matchesVariant(entry.variant, selection.variants)) {
-            continue;
-        }
-        // Каскад считается от отбора без этой строки: иначе снятое ею самой читалось бы как
-        // снятое родителем, и лишней оказалась бы любая строка отказа подряд.
-        const without: ISelection = { ...selection, skip: selection.skip.filter((one: string): boolean => one !== id) };
-        const cut: ICascadeCut | undefined = cascadeCuts(catalog, without).find((one: ICascadeCut): boolean => one.id === id);
-        if (cut) {
-            idle.push({ id, by: cut.root });
-        }
-    }
-
-    return idle;
 }
 
 /** Выбранный ресурс, чьё требование в дерево не поехало. */
@@ -483,12 +365,12 @@ export function brokenLinks(catalog: readonly IEntryOfCatalog[], selection: ISel
  */
 export function idOf(spoken: string, kind: TKind, catalog: readonly IEntryOfCatalog[]): string | null {
     const wanted: string = spoken.trim();
-    const shortOf: (entry: IEntryOfCatalog) => string = (entry: IEntryOfCatalog): string => entry.name.split('/').pop() ?? entry.name;
-    const found: IEntryOfCatalog | undefined = catalog.find(
-        (entry: IEntryOfCatalog): boolean =>
-            entry.kind === kind &&
-            (entry.id === wanted || entry.name === wanted || shortOf(entry) === wanted || entry.id.endsWith(`/${wanted}`))
-    );
+    const named: (entry: IEntryOfCatalog) => boolean = (entry: IEntryOfCatalog): boolean => {
+        const short: string = entry.name.split('/').pop() ?? entry.name;
+
+        return entry.id === wanted || entry.name === wanted || short === wanted || entry.id.endsWith(`/${wanted}`);
+    };
+    const found: IEntryOfCatalog | undefined = catalog.find((entry: IEntryOfCatalog): boolean => entry.kind === kind && named(entry));
 
     return found ? found.id : null;
 }
@@ -510,6 +392,8 @@ export function resolveSelection(spoken: readonly string[], kind: TKind, catalog
             unknown.push(name.trim());
         } else if (!ids.includes(id)) {
             ids.push(id);
+        } else {
+            // Тот же ресурс назван дважды: повтор в списке ничего не меняет
         }
     }
 
