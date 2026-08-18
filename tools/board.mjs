@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.8.3 · checks/board.github.mjs · 9565a61f5832 · правится надстройкой, не здесь
+// rt-kit v0.8.3 · checks/board.github.mjs · faeffbbee9b1 · правится надстройкой, не здесь
 /**
  * Общая работа с очередью работ: борда проекта, тикеты и их состояние.
  *
@@ -209,7 +209,10 @@ export function fetchIssue(number, options) {
  * а судят по ней и папку задачи, и прогон.
  */
 export function fetchOpenPulls(options) {
-    return ghJson(['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,title,headRefName,headRefOid,body'], options);
+    return ghJson(
+        ['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,title,headRefName,headRefOid,isDraft,body'],
+        options
+    );
 }
 
 /**
@@ -221,6 +224,29 @@ export function fetchOpenPulls(options) {
 export function runsOnHead(sha, options) {
     const answer = gh(['api', `repos/${OWNER}/${REPO}/actions/runs?head_sha=${sha}&per_page=1`, '--jq', '.total_count'], options);
     return Number(String(answer).trim());
+}
+
+/**
+ * Чем кончились прогоны на этой вершине: `success`, если все завершились успехом, `running`,
+ * если хоть один ещё идёт, `failure` — если хоть один упал. Прогонов нет вовсе — `none`.
+ *
+ * Цвет спрашивается отдельно от факта: факт отвечает на вопрос «событие дошло», цвет — на
+ * вопрос «работу можно отдавать». Второй вопрос задаётся там, где готовое стоит черновиком.
+ */
+export function verdictOnHead(sha, options) {
+    const answer = gh(
+        [
+            'api',
+            `repos/${OWNER}/${REPO}/actions/runs?head_sha=${sha}&per_page=20`,
+            '--jq',
+            '[.workflow_runs[] | {status, conclusion}] | if length == 0 then "none"' +
+                ' elif any(.status != "completed") then "running"' +
+                ' elif any(.conclusion != "success") then "failure"' +
+                ' else "success" end',
+        ],
+        options
+    );
+    return String(answer).trim();
 }
 
 /** Когда вершина легла в ветку — по времени коммита у хостинга, а не по местным часам ветки. */

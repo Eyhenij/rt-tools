@@ -42,3 +42,5 @@
 | Свежая вершина без прогона не судится.                                                     | `projects/agent-kit/assets/checks/check-board.github.mjs:RUN_GRACE_MINUTES` |
 | Дерево без файла конвейера прогонов не спрашивает.                                         | `projects/agent-kit/assets/checks/check-board.github.mjs:HAS_PIPELINE`      |
 | Дерево, у которого прогоны не спрашивались, слышит об этом отдельной строкой.              | `projects/agent-kit/assets/checks/check-board.github.mjs:HAS_PIPELINE`      |
+| Черновик при зелёном прогоне на вершине — расхождение сверки.                              | `projects/agent-kit/assets/checks/check-board.github.mjs:checkReadyDraft`   |
+| Цвет прогона спрашивается отдельно от его наличия.                                         | `projects/agent-kit/assets/checks/board.github.mjs:verdictOnHead`           |

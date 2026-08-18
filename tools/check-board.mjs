@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.8.3 · checks/check-board.github.mjs · d5b7f949fb64 · правится надстройкой, не здесь
+// rt-kit v0.8.3 · checks/check-board.github.mjs · 551fbeac5457 · правится надстройкой, не здесь
 /**
  * Сверка очереди работ с тем, что закон о поставке требует от задачи и её PR.
  *
@@ -49,6 +49,7 @@ import {
     numberFromTitle,
     runsOnHead,
     taskDirs,
+    verdictOnHead,
 } from './board.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
@@ -137,6 +138,7 @@ function folderInBranch(branch, options) {
  */
 function checkHeadRun(pull, options) {
     if (runsOnHead(pull.headRefOid, options) > 0) {
+        checkReadyDraft(pull, options);
         return;
     }
 
@@ -149,6 +151,31 @@ function checkHeadRun(pull, options) {
         `PR #${pull.number}: на вершине ${pull.headRefOid.slice(0, 8)} прогона нет, а лежит она ${minutes} мин — ` +
             `конвейер события не получил; верни его новым коммитом либо перезакрытием PR ` +
             `(gh pr close ${pull.number} && gh pr reopen ${pull.number})`
+    );
+}
+
+/**
+ * Готовая работа, оставленная черновиком.
+ *
+ * У черновика кнопка слияния заблокирована самим хостингом, поэтому зелёная страница PR
+ * владельцу ничего не разрешает: список, в котором всё серое, читается как «работа не сделана».
+ * Гард снятия черновика сюда не достаёт — он судит один ход и молчит, пока ветка везёт папку
+ * своей задачи; сверка же смотрит на состояние очереди целиком.
+ *
+ * Четыре PR так и простояли черновиками двое суток — разбор
+ * `docs/postmortems/2026-08-18-ready-work-left-in-drafts.md`.
+ */
+function checkReadyDraft(pull, options) {
+    if (pull.isDraft !== true) {
+        return;
+    }
+    if (verdictOnHead(pull.headRefOid, options) !== 'success') {
+        return;
+    }
+
+    report(
+        `PR #${pull.number}: прогон на вершине ${pull.headRefOid.slice(0, 8)} зелёный, а PR черновик — ` +
+            `разбери папку задачи и сними черновик (gh pr ready ${pull.number}) либо скажи владельцу, чего ждёшь`
     );
 }
 
