@@ -1,5 +1,3 @@
-import type { Page } from 'playwright';
-
 import type { TestContext, TestRunnerConfig } from '@storybook/test-runner';
 import { getStoryContext } from '@storybook/test-runner';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
@@ -66,8 +64,8 @@ async function settled(page: Page): Promise<void> {
 
     await page.waitForFunction(
         (frames: number) =>
-            new Promise<boolean>((resolve) => {
-                const size = (): string => {
+            new Promise<boolean>((resolve: (settled: boolean) => void) => {
+                const size: () => string = (): string => {
                     const box: DOMRect = document.documentElement.getBoundingClientRect();
                     return `${Math.round(box.width)}x${Math.round(box.height)}`;
                 };
@@ -75,7 +73,7 @@ async function settled(page: Page): Promise<void> {
                 let previous: string = size();
                 let same: number = 0;
 
-                const step = (): void => {
+                const step: () => void = (): void => {
                     const current: string = size();
                     same = current === previous ? same + 1 : 0;
                     previous = current;
