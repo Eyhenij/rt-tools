@@ -302,20 +302,28 @@ async function moments() {
             `UPDATE "proposal" SET "arrivedAt" = TIMESTAMP '2026-08-04 09:00:00' + (ordered.pos * INTERVAL '1 hour')`,
             'FROM (SELECT "id", row_number() OVER (ORDER BY "text") AS pos FROM "proposal") AS ordered',
             'WHERE "proposal"."id" = ordered."id";',
-            // записи месяца: у каждой свой прогон, чтобы порядок по времени прогона был виден
+            // записи месяца: у каждой свой прогон, чтобы порядок по времени прогона был виден.
+            // Раздаются времена по признаку дерева, а не по его ключу: ключ — uuid, заводится
+            // засевом заново каждый прогон, и порядок по нему случаен. Список сводок идёт по
+            // времени прогона, поэтому строки менялись местами через прогон, а с ними — кадр
+            // списка и кадр панели подробностей, которая открывается по первой строке
             `UPDATE "month_record" SET "ranAt" = TIMESTAMP '2026-08-05 10:00:00' + (ordered.pos * INTERVAL '1 hour')`,
-            'FROM (SELECT "id", row_number() OVER (ORDER BY "treeId") AS pos FROM "month_record") AS ordered',
+            'FROM (SELECT record."id", row_number() OVER (ORDER BY tree."slug") AS pos',
+            '      FROM "month_record" AS record JOIN "tree" AS tree ON tree."id" = record."treeId") AS ordered',
             'WHERE "month_record"."id" = ordered."id";',
             // приглашения: времена выдачи разведены по часу, чтобы порядок «выданные позже
             // сверху» был виден и не зависел от того, за сколько прошёл засев
             `UPDATE "tree_invite" SET "issuedAt" = TIMESTAMP '2026-08-06 08:00:00' + (ordered.pos * INTERVAL '1 hour')`,
             'FROM (SELECT "id", row_number() OVER (ORDER BY "name") AS pos FROM "tree_invite") AS ordered',
             'WHERE "tree_invite"."id" = ordered."id";',
-            // срок годности считается от нынешнего момента, а не датой: состояние приглашения
-            // приёмник считает на момент запроса, и написанная дата сделала бы ждущее
+            // срок годности написан датой, а не отсчитан от нынешнего момента: он показан
+            // колонкой, ширину столбцов таблица раскладывает по содержимому, и значение,
+            // менявшееся от прогона к прогону, двигало на пиксель весь кадр списка — вместе с
+            // теми столбцами, где ничего не менялось. Годная дата взята далёкой: состояние
+            // приглашения приёмник считает на момент запроса, и близкая сделала бы ждущее
             // просроченным через двое суток — набор покраснел бы сам, без единой правки
-            `UPDATE "tree_invite" SET "expiresAt" = now() + INTERVAL '2 days' WHERE "name" <> 'Стенд просроченный';`,
-            `UPDATE "tree_invite" SET "expiresAt" = now() - INTERVAL '1 day' WHERE "name" = 'Стенд просроченный';`,
+            `UPDATE "tree_invite" SET "expiresAt" = TIMESTAMP '2099-08-06 12:00:00' WHERE "name" <> 'Стенд просроченный';`,
+            `UPDATE "tree_invite" SET "expiresAt" = TIMESTAMP '2026-08-07 12:00:00' WHERE "name" = 'Стенд просроченный';`,
         ].join('\n')
     );
 }
