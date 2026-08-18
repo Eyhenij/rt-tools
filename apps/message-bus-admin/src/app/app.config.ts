@@ -1,10 +1,10 @@
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection, signal } from '@angular/core';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { sessionExpiredInterceptor } from '@rt/message-bus-admin/auth/shell';
-import { ADMIN_LOCALE, rtKitLabelsRu } from '@rt/message-bus-admin/common/core/util';
+import { provideAdminKitLabels } from '@rt/message-bus-admin/common/core/util';
 import { provideRtIDBStorage, provideRtStorage, provideRtUtils } from '@rt-tools/core';
-import { provideRtIcons, provideRtKitLabels, RtKitTranslator } from '@rt-tools/ui-kit-v2';
+import { provideRtIcons } from '@rt-tools/ui-kit-v2';
 
 import { appRoutes } from './app.routes';
 
@@ -15,8 +15,9 @@ import { appRoutes } from './app.routes';
  *
  * Подписи кита приходят функцией-переводчиком из словаря приложения. Без неё переключатель
  * страниц, пустое состояние и настройка столбцов встают английским умолчанием рядом с русскими
- * заголовками, и видно это только на собранном экране. Язык один, поэтому и переводчик, и
- * локаль — постоянные сигналы: следить здесь не за чем.
+ * заголовками, и видно это только на собранном экране. Языка два, и выбирает между ними человек:
+ * и переводчик, и локаль приезжают сигналами службы языка, поэтому смена языка в попапе профиля
+ * или на экране входа перерисовывает подписи кита без перезагрузки.
  *
  * Перехватчик кончившегося входа стоит на всех обращениях сразу: вход обрывается посреди
  * работы, и узнаёт об этом то обращение, которое в этот момент ушло, — а не гвард, который
@@ -37,6 +38,6 @@ export const appConfig: ApplicationConfig = {
         provideRtStorage(),
         provideRtIDBStorage(),
         provideRtIcons('/icons'),
-        provideRtKitLabels({ translator: signal<RtKitTranslator>(rtKitLabelsRu), locale: signal<string>(ADMIN_LOCALE) }),
+        provideAdminKitLabels(),
     ],
 };

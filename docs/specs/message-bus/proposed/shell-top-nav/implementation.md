@@ -24,12 +24,13 @@
 | Выход обрывает тот вход, которым пришли, и уводит на экран входа. | `libs/message-bus-admin/auth/data-access/src/lib/auth.store.ts:signOut`                                  |
 | Тем две, и человек выбирает между ними.                           | `projects/ui-kit-v2/src/lib/components/theme-toggle/rt-theme-toggle.component.ts:RtThemeToggleComponent` |
 | Выбор темы живёт на устройстве и переживает перезагрузку.         | `projects/ui-kit-v2/src/lib/components/theme-toggle/rt-theme-toggle.component.ts:RtThemeToggleComponent` |
-| Переключатель стоит и в попапе профиля, и на экране входа.        | `libs/message-bus-admin/auth/feature/sign-in/src/lib/admin-sign-in.component.html`                       |
+| Переключатель стоит и в попапе профиля, и на экране входа.        | `libs/message-bus-admin/common/container/ui/src/lib/header/admin-header.component.html`                  |
 | Обе темы проверяются замером, а не взглядом.                      | `apps/message-bus-admin-e2e/src`                                                                         |
-| Человек выбирает язык подписей, которые рисует кит.               | `libs/message-bus-admin/common/core/util/src/lib/admin-labels.ts`                                        |
+| Человек выбирает язык подписей, которые рисует кит.               | `libs/message-bus-admin/common/core/ui/src/lib/locale-switch/admin-locale-switch.component.ts`           |
+| Даты в списках показываются одним видом при любом выборе.         | `libs/message-bus-admin/common/core/ui/src/lib/moment/admin-moment.pipe.ts:AdminMomentPipe`              |
 | Подписи админки остаются русскими при любом выборе.               | `libs/message-bus-admin/common/core/util/src/lib/admin-labels.ts:ADMIN_LABELS`                           |
 | Выбор языка стоит на экране входа и в попапе профиля.             | `libs/message-bus-admin/auth/feature/sign-in/src/lib/admin-sign-in.component.html`                       |
-| Выбор языка живёт на устройстве и переживает перезагрузку.        | `apps/message-bus-admin/src/app/app.config.ts`                                                           |
+| Выбор языка живёт на устройстве и переживает перезагрузку.        | `libs/message-bus-admin/common/core/util/src/lib/admin-locale.ts:AdminLocaleService`                     |
 | Форма входа остаётся той же.                                      | `libs/message-bus-admin/auth/ui/src/lib/sign-in-form/admin-sign-in-form.component.ts`                    |
 | Общую часть экрана входа держит его оболочка, а не сама форма.    | `libs/message-bus-admin/auth/feature/sign-in/src/lib/admin-sign-in.component.html`                       |
 | Поля входа несут иконку и плейсхолдер.                            | `libs/message-bus-admin/auth/ui/src/lib/sign-in-form/admin-sign-in-form.component.html`                  |

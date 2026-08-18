@@ -103,10 +103,14 @@ export const messageBusAdminBoundaries = [
     },
 
     // Вход: экран берёт форму и состояние, состояние — обращение к приёмнику, обращение —
-    // модели. Лесенка домена выписана ребро за ребром
+    // модели. Лесенка домена выписана ребро за ребром.
+    //
+    // Общий слой экран видит ради переключателей темы и языка: они стоят и здесь, и в попапе
+    // профиля, а выбор у них один на приложение. Собранные на входе заново, они разошлись бы с
+    // попапом набором языков и видом
     {
         sourceTag: 'scope:message-bus-admin-auth-feature-sign-in',
-        onlyDependOnLibsWithTags: ['scope:message-bus-admin-auth-ui', AUTH_DATA_ACCESS, AUTH_UTIL, PACKAGE],
+        onlyDependOnLibsWithTags: ['scope:message-bus-admin-auth-ui', AUTH_DATA_ACCESS, AUTH_UTIL, CORE_UI, CORE_UTIL, PACKAGE],
     },
     {
         sourceTag: 'scope:message-bus-admin-auth-shell',
@@ -162,10 +166,11 @@ export const messageBusAdminBoundaries = [
     },
     // Шапка видит словарь по той же причине, что и меню: название приложения и подпись ряда
     // разделов лежат там, где подписи экранов, — написанные в шапке литералом, они расходятся с
-    // заголовком вкладки и заголовком экрана молча
+    // заголовком вкладки и заголовком экрана молча. Общий слой вида она видит ради выбора языка
+    // в попапе профиля: тот же выбор стоит на экране входа, и собран он один раз
     {
         sourceTag: 'scope:message-bus-admin-common-container-ui',
-        onlyDependOnLibsWithTags: [CONTAINER_UTIL, CORE_UTIL, PACKAGE],
+        onlyDependOnLibsWithTags: [CONTAINER_UTIL, CORE_UI, CORE_UTIL, PACKAGE],
     },
 
     // Общий слой админки. Лесенка та же, что у домена: вид знает словарь, состояние — обращение,

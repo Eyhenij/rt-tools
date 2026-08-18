@@ -1,4 +1,12 @@
 <ng-container rtBlock="login">
+    <!-- Полосу управления над карточкой везёт кит: вход — единственный экран, где человек
+         оказывается до попапа профиля, и тёмная тема нужна на нём тем же глазам -->
+    <div rtElem="chrome" qa-dataid="sign-in-chrome">
+        <admin-locale-switch qa-dataid="sign-in-language" />
+
+        <rt-theme-toggle qa-dataid="sign-in-theme" />
+    </div>
+
     <section rtElem="card">
         <rt-logo rtElem="logo" ariaLabel="Шина сообщений" [height]="32" />
 

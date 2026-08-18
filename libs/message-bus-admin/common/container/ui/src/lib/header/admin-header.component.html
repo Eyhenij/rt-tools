@@ -15,6 +15,18 @@
     <div rtBlock="admin-profile-menu" qa-dataid="profile-menu">
         <span rtElem="name" qa-dataid="profile-name">{{ user()?.name }}</span>
 
+        <!-- Тема и язык стоят строками «что меняем — чем меняем»: переключатель без подписи в
+             попапе читается значком неизвестно чего -->
+        <div rtElem="row">
+            <span rtElem="row-label">{{ themeLabel }}</span>
+            <rt-theme-toggle qa-dataid="profile-theme" />
+        </div>
+
+        <div rtElem="row">
+            <span rtElem="row-label">{{ languageLabel }}</span>
+            <admin-locale-switch qa-dataid="profile-language" />
+        </div>
+
         <!-- Подпись кнопке рисует директива кита: содержимое ей отдавать нельзя, оно будет затёрто -->
         <button
             rtButton

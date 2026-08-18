@@ -2,6 +2,7 @@ import { ApplicationRef, provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
+import { provideRtStorage, provideRtUtils } from '@rt-tools/core';
 import { IRtPageHeader } from '@rt-tools/ui-kit-v2';
 
 import { AdminHeaderComponent } from './admin-header.component';
@@ -32,7 +33,7 @@ describe('AdminHeaderComponent', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [AdminHeaderComponent],
-            providers: [provideZonelessChangeDetection(), provideRouter([])],
+            providers: [provideZonelessChangeDetection(), provideRouter([]), provideRtUtils(), provideRtStorage()],
         });
 
         fixture = TestBed.createComponent(AdminHeaderComponent);
@@ -112,6 +113,29 @@ describe('AdminHeaderComponent', () => {
         action?.click();
 
         expect(signOuts).toBe(1);
+    });
+
+    it('SC-MB-147 — попап несёт переключатель темы, а не одно только имя с выходом', async () => {
+        show(SECTIONS, { name: 'owner' });
+
+        (fixture.debugElement.query(By.css('[qa-dataid="header-user-menu"]')).nativeElement as HTMLElement).click();
+        await openOverlay();
+
+        expect(document.querySelector('[qa-dataid="profile-menu"]')).not.toBeNull();
+        expect(document.querySelector('[qa-dataid="profile-theme"]')).not.toBeNull();
+    });
+
+    it('SC-MB-150 — язык выбирается в попапе обоими значениями сразу', async () => {
+        show(SECTIONS, { name: 'owner' });
+
+        (fixture.debugElement.query(By.css('[qa-dataid="header-user-menu"]')).nativeElement as HTMLElement).click();
+        await openOverlay();
+
+        const options: ReadonlyArray<Element> = Array.from(
+            document.querySelectorAll('[qa-dataid="profile-language"] [qa-dataid="toggle-button-group-option"]')
+        );
+
+        expect(options.map((option: Element): string => option.textContent?.trim() ?? '')).toEqual(['RU', 'EN']);
     });
 
     it('попап называет вошедшего и не обещает смены пароля', async () => {

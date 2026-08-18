@@ -9,9 +9,10 @@ import {
     output,
     viewChild,
 } from '@angular/core';
+import { AdminLocaleSwitchComponent } from '@rt/message-bus-admin/common/core/ui';
 import { adminLabel } from '@rt/message-bus-admin/common/core/util';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { IRtPageHeader, RtButtonDirective, RtPageHeaderComponent } from '@rt-tools/ui-kit-v2';
+import { IRtPageHeader, RtButtonDirective, RtPageHeaderComponent, RtThemeToggleComponent } from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'admin-header';
 
@@ -30,6 +31,10 @@ const BEM_BLOCK: string = 'admin-header';
  * разделами, теряется промахом мимо кнопки. Содержимое попапа шапка объявляет шаблоном, а рисует
  * его кит — в наложении у конца страницы.
  *
+ * В попапе стоят тема и язык: место, где их меняют, у приложения одно, а второе — экран входа, до
+ * которого попапа ещё нет. Ни тем, ни языком шапка не владеет — оба переключателя держат свой
+ * выбор сами, на устройстве.
+ *
  * Кто вошёл и что делать с выходом, шапка не решает: имя приходит входом, а выход уходит выходом.
  * Состояние входа живёт в одном месте, и второй ответ на вопрос «кто вошёл» разошёлся бы с первым.
  */
@@ -44,8 +49,10 @@ const BEM_BLOCK: string = 'admin-header';
         ElemDirective,
 
         // components
+        AdminLocaleSwitchComponent,
         RtButtonDirective,
         RtPageHeaderComponent,
+        RtThemeToggleComponent,
     ],
     host: { class: BEM_BLOCK },
 })
@@ -55,6 +62,10 @@ export class AdminHeaderComponent {
     protected readonly navLabel: string = adminLabel('navSections');
 
     protected readonly signOutLabel: string = adminLabel('signOut');
+
+    protected readonly themeLabel: string = adminLabel('theme');
+
+    protected readonly languageLabel: string = adminLabel('language');
 
     /**
      * Шаблон попапа профиля. Рисует попап кит, а его содержимое приходит отсюда: до первой

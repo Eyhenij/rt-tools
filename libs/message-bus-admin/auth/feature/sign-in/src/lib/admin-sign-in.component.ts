@@ -4,8 +4,9 @@ import { Router } from '@angular/router';
 import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
 import { AdminSignInFormComponent } from '@rt/message-bus-admin/auth/ui';
 import { ESignInFault, ISignInPair } from '@rt/message-bus-admin/auth/util';
+import { AdminLocaleSwitchComponent } from '@rt/message-bus-admin/common/core/ui';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { RtLogoComponent } from '@rt-tools/ui-kit-v2';
+import { RtLogoComponent, RtThemeToggleComponent } from '@rt-tools/ui-kit-v2';
 import { filter } from 'rxjs';
 
 /**
@@ -26,7 +27,7 @@ const HOME_PATH: string = '/';
  */
 @Component({
     selector: 'admin-sign-in',
-    imports: [AdminSignInFormComponent, BlockDirective, ElemDirective, RtLogoComponent],
+    imports: [AdminLocaleSwitchComponent, AdminSignInFormComponent, BlockDirective, ElemDirective, RtLogoComponent, RtThemeToggleComponent],
     templateUrl: './admin-sign-in.component.html',
     styleUrl: './admin-sign-in.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
