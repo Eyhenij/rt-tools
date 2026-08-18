@@ -1,19 +1,20 @@
-<rt-container height="viewport" mobileLeftNav="bottom">
-    <ng-template rtContainerHeader>
-        <rt-header (profileClick)="signOut()" />
-    </ng-template>
+<!--
+    Зоны каркаса объявлены структурной формой директив — той, какой их показывает сам кит: она
+    короче на строку и не даёт спутать зону с обычным шаблоном, который куда-то вставляют.
 
-    <ng-template rtContainerLeftSidenav>
-        <rt-section-nav [items]="sections()" (itemSelect)="goTo($event)" />
-    </ng-template>
+    Стопки тостов здесь нет намеренно: её рисует каркас, внизу по центру, и вторая показывала бы
+    тот же тост второй раз в другом углу экрана — шину слушает каждая.
+-->
+<rt-container height="viewport">
+    <ng-container *rtContainerHeader>
+        <admin-header [items]="sections()" [user]="user()" (signOut)="signOut()" />
+    </ng-container>
 
-    <ng-template rtContainerContent>
+    <ng-container *rtContainerContent>
         <router-outlet />
-    </ng-template>
+    </ng-container>
 
-    <ng-template rtContainerRightSidenav>
+    <ng-container *rtContainerRightSidenav>
         <router-outlet name="ro" />
-    </ng-template>
+    </ng-container>
 </rt-container>
-
-<rt-toaster />
