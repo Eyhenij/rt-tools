@@ -16,7 +16,9 @@ function settingsRow(page: Page, key: string): Locator {
 
 /** Убрать столбец и сохранить выбор. */
 async function hideColumn(page: Page, key: string): Promise<void> {
-    await pageQa(page, 'postmortems', 'columns').click();
+    const columns: Locator = pageQa(page, 'postmortems', 'columns');
+
+    await columns.click();
     await expect(qa(page, 'table-settings-list')).toBeVisible();
 
     await settingsRow(page, key).locator('[qa-dataid="table-settings-toggle"]').click();
@@ -48,7 +50,9 @@ test.describe('настройка столбцов', () => {
         await expect(qa(page, 'postmortems-cell-file').first()).toBeVisible();
 
         // и обратно: столбец возвращается тем же путём, каким был убран
-        await pageQa(page, 'postmortems', 'columns').click();
+        const columns: Locator = pageQa(page, 'postmortems', 'columns');
+
+        await columns.click();
         await settingsRow(page, 'updatedAt').locator('[qa-dataid="table-settings-toggle"]').click();
         await qa(page, 'table-settings-save').click();
 
