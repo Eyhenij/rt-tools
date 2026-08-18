@@ -65,15 +65,11 @@
             "Hook suites": "pnpm exec nx affected -t test-hooks",
             "Stylelint": "pnpm run lint:styles",
             "E2E admin": "pnpm exec nx run message-bus-admin-e2e:e2e",
-            "Visual tests": {
-                "skip": "кадры ждут отсчётом времени и плавают под нагрузкой — снимается задачей RT-427"
-            },
+            "Visual tests": "node tools/visual-gate.mjs ui-kit",
             "Upload visual diffs": {
                 "skip": "выгрузка следов прогона; смотреть их локально не на чем"
             },
-            "Visual tests (ui-kit-v2)": {
-                "skip": "та же причина, что у снимков первой витрины — RT-427"
-            },
+            "Visual tests (ui-kit-v2)": "node tools/visual-gate.mjs ui-kit-v2",
             "Upload visual diffs (ui-kit-v2)": {
                 "skip": "выгрузка следов прогона"
             },
