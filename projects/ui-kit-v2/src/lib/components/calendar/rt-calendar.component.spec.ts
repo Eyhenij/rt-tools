@@ -57,7 +57,7 @@ describe('RtCalendarComponent', (): void => {
     it('пустые клетки начала месяца рисуются отдельно от дней', (): void => {
         const fixture: ComponentFixture<RtCalendarComponent> = setup();
 
-        expect((fixture.nativeElement as HTMLElement).querySelectorAll('.rt-calendar__blank').length).toBe(2);
+        expect(qaAll(fixture, 'calendar-blank').length).toBe(2);
     });
 
     describe('день', (): void => {

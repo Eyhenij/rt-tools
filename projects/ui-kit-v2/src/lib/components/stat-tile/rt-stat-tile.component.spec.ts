@@ -37,14 +37,14 @@ describe('RtStatTileComponent', (): void => {
             const fixture: ComponentFixture<RtStatTileComponent> = setup({ deltaPrimary: delta(12.5) });
 
             expect(deltaText(fixture)).toBe('+12,5 %');
-            expect(el(fixture, '.rt-stat-tile__delta-icon use')?.attributes['href']).toBe('#rt-icon-arrow-up');
+            expect(el(fixture, '[qa-dataid="stat-tile-delta-icon"] use')?.attributes['href']).toBe('#rt-icon-arrow-up');
         });
 
         it('падение показывается со своим знаком и стрелкой вниз', (): void => {
             const fixture: ComponentFixture<RtStatTileComponent> = setup({ deltaPrimary: delta(-4) });
 
             expect(deltaText(fixture)).toBe('-4 %');
-            expect(el(fixture, '.rt-stat-tile__delta-icon use')?.attributes['href']).toBe('#rt-icon-arrow-down');
+            expect(el(fixture, '[qa-dataid="stat-tile-delta-icon"] use')?.attributes['href']).toBe('#rt-icon-arrow-down');
         });
 
         it('ноль — это не рост и не падение, а ровная линия', (): void => {

@@ -97,7 +97,7 @@
                     </div>
 
                     @if (isPaginationShown()) {
-                        <div rtElem="pagination">
+                        <div>
                             <rtui-pagination [currentPageModel]="pageModel()" (pageModelChange)="onPageModelChange($event)" />
                         </div>
                     }
