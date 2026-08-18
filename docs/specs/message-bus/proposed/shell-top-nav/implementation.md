@@ -36,5 +36,5 @@
 | Поля входа несут иконку и плейсхолдер.                            | `libs/message-bus-admin/auth/ui/src/lib/sign-in-form/admin-sign-in-form.component.html`                  |
 | Отказ входа остаётся сообщением в форме.                          | `libs/message-bus-admin/auth/ui/src/lib/sign-in-form/admin-sign-in-form.component.html`                  |
 | Стопка тостов одна, и рисует её каркас.                           | `projects/ui-kit-v2/src/lib/components/container/rt-container.component.html`                            |
-| Заголовок вкладки называет приложение, а не проект сборки.        | `apps/message-bus-admin/src/index.html`                                                                  |
+| Заголовок вкладки называет приложение, а не проект сборки.        | `libs/message-bus-admin/common/core/util/src/lib/admin-title.strategy.ts:AdminTitleStrategy`             |
 | Страница объявляет язык документа тем, на котором написана.       | `apps/message-bus-admin/src/index.html`                                                                  |

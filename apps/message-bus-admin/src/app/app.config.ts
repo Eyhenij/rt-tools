@@ -1,8 +1,8 @@
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { provideRouter, TitleStrategy, withComponentInputBinding } from '@angular/router';
 import { sessionExpiredInterceptor } from '@rt/message-bus-admin/auth/shell';
-import { provideAdminKitLabels } from '@rt/message-bus-admin/common/core/util';
+import { AdminTitleStrategy, provideAdminKitLabels } from '@rt/message-bus-admin/common/core/util';
 import { provideRtIDBStorage, provideRtStorage, provideRtUtils } from '@rt-tools/core';
 import { provideRtIcons } from '@rt-tools/ui-kit-v2';
 
@@ -18,6 +18,10 @@ import { appRoutes } from './app.routes';
  * заголовками, и видно это только на собранном экране. Языка два, и выбирает между ними человек:
  * и переводчик, и локаль приезжают сигналами службы языка, поэтому смена языка в попапе профиля
  * или на экране входа перерисовывает подписи кита без перезагрузки.
+ *
+ * Заголовок вкладки собирает своя стратегия: раздел объявляет своё название маршрутом, а имя
+ * приложения дописывается к нему здесь — вкладок у человека десяток, и по одному названию раздела
+ * не видно, чьё оно.
  *
  * Перехватчик кончившегося входа стоит на всех обращениях сразу: вход обрывается посреди
  * работы, и узнаёт об этом то обращение, которое в этот момент ушло, — а не гвард, который
@@ -39,5 +43,6 @@ export const appConfig: ApplicationConfig = {
         provideRtIDBStorage(),
         provideRtIcons('/icons'),
         provideAdminKitLabels(),
+        { provide: TitleStrategy, useClass: AdminTitleStrategy },
     ],
 };

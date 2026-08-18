@@ -12,7 +12,6 @@ import {
     RtContainerContentDirective,
     RtContainerHeaderDirective,
     RtContainerRightSidenavDirective,
-    RtToasterComponent,
 } from '@rt-tools/ui-kit-v2';
 import { exhaustMap, Observable, Subject } from 'rxjs';
 
@@ -32,8 +31,9 @@ const BEM_BLOCK: string = 'admin-container';
  * страницы и через наложение, а рисует он только то, что объявлено этой зоной. Аутлет, спрятанный
  * внутрь экрана раздела, оставлял бы панель стоять под таблицей — открытой, но не шторкой.
  *
- * Тостами оболочка не заведует и подписки на них не держит: она только ставит их место. Кому что
- * сказать, решают сторы разделов, и говорят они общей шиной кита — тостер её слушает сам.
+ * Тостами оболочка не заведует вовсе — и места им не ставит: стопку рисует каркас сам, внизу по
+ * центру. Своя, стоявшая здесь, показывала тот же тост второй раз и в другом углу экрана: шину
+ * кита слушает каждая. Кому что сказать, решают сторы разделов, и говорят они той же шиной.
  */
 @Component({
     selector: 'admin-container',
@@ -47,7 +47,6 @@ const BEM_BLOCK: string = 'admin-container';
         RtContainerContentDirective,
         RtContainerHeaderDirective,
         RtContainerRightSidenavDirective,
-        RtToasterComponent,
     ],
     host: { class: BEM_BLOCK },
 })
