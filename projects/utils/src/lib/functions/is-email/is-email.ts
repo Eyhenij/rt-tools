@@ -7,11 +7,18 @@
  * label to start and end with an alphanumeric.
  */
 export const EMAIL_REGEXP: RegExp =
+    // eslint-disable-next-line sonarjs/regex-complexity -- the pattern is kept character-for-character identical to Angular's `Validators.email`; simplifying it would change verdicts
     /^(?=.{1,254}$)(?=.{1,64}@)[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isEmptyInputValue(value: any): boolean {
-    return value === null || value === undefined || ((typeof value === 'string' || Array.isArray(value)) && value.length === 0);
+    if (value === null || value === undefined) {
+        return true;
+    }
+
+    const countable: boolean = typeof value === 'string' || Array.isArray(value);
+
+    return countable && value.length === 0;
 }
 
 /**

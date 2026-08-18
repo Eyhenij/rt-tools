@@ -65,10 +65,13 @@ export class TypeCastHelper {
         return data.map(cb);
     }
 
-    public getAsDate(date: string | number | Date, asString?: boolean, parseFormatOptions?: string, formatOptions?: string): Date | string {
-        formatOptions = formatOptions ?? 'dd.MM.yyyy';
-        asString = asString ?? true;
-
+    // eslint-disable-next-line sonarjs/function-return-type -- the `asString` flag is what the caller asks the kind of answer with; splitting the method in two would break every consumer of the published package
+    public getAsDate(
+        date: string | number | Date,
+        asString: boolean = true,
+        parseFormatOptions?: string,
+        formatOptions: string = 'dd.MM.yyyy'
+    ): Date | string {
         const type: string | number | object = typeof date;
 
         switch (type) {

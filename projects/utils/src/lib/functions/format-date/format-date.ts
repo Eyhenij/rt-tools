@@ -58,7 +58,8 @@ export function formatDate(date: Date, formatStr: string): string {
     let placeholderIndex: number = 0;
 
     const createPlaceholder: (value: string) => string = (value: string): string => {
-        const placeholder: string = `\x00${placeholderIndex++}\x00`;
+        const placeholder: string = `\x00${placeholderIndex}\x00`;
+        placeholderIndex += 1;
         placeholders.set(placeholder, value);
         return placeholder;
     };

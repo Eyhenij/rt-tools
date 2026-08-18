@@ -1,26 +1,59 @@
 import { MONTHS_LONG, MONTHS_SHORT } from '../internal/date-locale.js';
 
-interface TokenPattern {
+interface ITokenPattern {
     token: string;
     pattern: string;
     handler: (val: string) => void;
 }
 
-interface PlaceholderItem {
+interface IPlaceholderItem {
     placeholder: string;
     pattern: string;
     handler: (val: string) => void;
 }
 
-interface LiteralItem {
+interface ILiteralItem {
     placeholder: string;
     literal: string;
 }
 
-interface PositionedHandler {
+interface IPositionedHandler {
     placeholder: string;
     handler: (val: string) => void;
     position: number;
+}
+
+/**
+ * Feeds every capture group to the handler that asked for it — they stand in the same order.
+ */
+function applyHandlers(handlers: ((val: string) => void)[], match: RegExpExecArray): void {
+    handlers.forEach((handler: (val: string) => void, index: number): void => {
+        const captured: string | undefined = match[index + 1];
+
+        /* istanbul ignore else -- @preserve: every token contributes exactly one mandatory capture
+           group, so a pattern that matched always filled it. The guard stays as a safety net. */
+        if (captured) {
+            handler(captured);
+        }
+    });
+}
+
+/**
+ * Hour of a 12-hour clock read on the 24-hour scale.
+ *
+ * Noon and the hour before it are the two the shift does not touch: `12 PM` already is the hour it
+ * names, and `12 AM` is midnight.
+ */
+function hoursOn24Scale(hours: number, isPM: boolean = false): number {
+    if (isPM && hours < 12) {
+        return hours + 12;
+    }
+
+    if (!isPM && hours === 12) {
+        return 0;
+    }
+
+    return hours;
 }
 
 /**
@@ -67,7 +100,7 @@ export function parseDate(dateString: string, formatStr: string, referenceDate: 
     let isPM: boolean = false;
     let hasAMPM: boolean = false;
 
-    const tokenPatterns: TokenPattern[] = [
+    const tokenPatterns: ITokenPattern[] = [
         {
             token: 'yyyy',
             pattern: '(\\d{4})',
@@ -199,18 +232,27 @@ export function parseDate(dateString: string, formatStr: string, referenceDate: 
     ];
 
     // Sort by token length (longer first) to avoid partial matches
-    const sortedPatterns: TokenPattern[] = [...tokenPatterns].sort((a: TokenPattern, b: TokenPattern) => b.token.length - a.token.length);
+    const sortedPatterns: ITokenPattern[] = [...tokenPatterns].sort(
+        (a: ITokenPattern, b: ITokenPattern) => b.token.length - a.token.length
+    );
 
     // Build regex from format string using placeholders to avoid double-replacement
     // First, replace all tokens in the original format string with placeholders
-    const placeholderList: PlaceholderItem[] = [];
-    const literalList: LiteralItem[] = [];
+    const placeholderList: IPlaceholderItem[] = [];
+    const literalList: ILiteralItem[] = [];
     let placeholderIndex: number = 0;
+
+    const nextPlaceholder: () => string = (): string => {
+        const placeholder: string = `\x00${placeholderIndex}\x00`;
+        placeholderIndex += 1;
+
+        return placeholder;
+    };
 
     // Quoted text is literal: park it before any token is looked at, so its letters are matched as
     // themselves rather than read as tokens. `''` is an escaped apostrophe.
     let workingFormat: string = formatStr.replace(/'([^']*)'/g, (_match: string, literal: string): string => {
-        const placeholder: string = `\x00${placeholderIndex++}\x00`;
+        const placeholder: string = nextPlaceholder();
         literalList.push({ placeholder, literal: literal === '' ? "'" : literal });
 
         return placeholder;
@@ -220,7 +262,7 @@ export function parseDate(dateString: string, formatStr: string, referenceDate: 
     // second occurrence stays in the pattern as a literal placeholder and can never match.
     for (const { token, pattern, handler } of sortedPatterns) {
         while (workingFormat.includes(token)) {
-            const placeholder: string = `\x00${placeholderIndex++}\x00`;
+            const placeholder: string = nextPlaceholder();
             workingFormat = workingFormat.replace(token, placeholder);
             placeholderList.push({ placeholder, pattern, handler });
         }
@@ -242,39 +284,28 @@ export function parseDate(dateString: string, formatStr: string, referenceDate: 
 
     // Sort handlers by their placeholder position in the original working format
     // to match capture group order (left-to-right in the regex)
-    const sortedByPosition: PositionedHandler[] = placeholderList
-        .map((item: PlaceholderItem): PositionedHandler => ({
+    const sortedByPosition: IPositionedHandler[] = placeholderList
+        .map((item: IPlaceholderItem): IPositionedHandler => ({
             placeholder: item.placeholder,
             handler: item.handler,
             position: escapeRegExp(workingFormat).indexOf(escapeRegExp(item.placeholder)),
         }))
-        .sort((a: PositionedHandler, b: PositionedHandler) => a.position - b.position);
+        .sort((a: IPositionedHandler, b: IPositionedHandler) => a.position - b.position);
 
-    const handlers: ((val: string) => void)[] = sortedByPosition.map((item: PositionedHandler) => item.handler);
+    const handlers: ((val: string) => void)[] = sortedByPosition.map((item: IPositionedHandler) => item.handler);
 
     const regex: RegExp = new RegExp(`^${regexStr}$`, 'i');
-    const match: RegExpMatchArray | null = dateString.match(regex);
+    const match: RegExpExecArray | null = regex.exec(dateString);
 
     if (!match) {
         return new Date(NaN);
     }
 
-    // Apply handlers in order
-    for (let i: number = 0; i < handlers.length; i++) {
-        /* istanbul ignore else -- @preserve: every token contributes exactly one mandatory capture
-           group, so a pattern that matched always filled it. The guard stays as a safety net. */
-        if (match[i + 1]) {
-            handlers[i](match[i + 1]);
-        }
-    }
+    applyHandlers(handlers, match);
 
     // Apply AM/PM adjustment after all handlers
     if (hasAMPM) {
-        if (isPM && hours < 12) {
-            hours += 12;
-        } else if (!isPM && hours === 12) {
-            hours = 0;
-        }
+        hours = hoursOn24Scale(hours, isPM);
     }
 
     return new Date(year, month, day, hours, minutes, seconds, milliseconds);
