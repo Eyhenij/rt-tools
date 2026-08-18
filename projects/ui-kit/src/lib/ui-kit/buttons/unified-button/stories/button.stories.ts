@@ -1,3 +1,4 @@
+// eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
@@ -9,6 +10,7 @@ export default {
     component: TestButtonComponent,
     decorators: [
         applicationConfig({
+            // eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
             providers: [provideAnimations()],
         }),
     ],
@@ -44,9 +46,9 @@ export default {
     },
 } as Meta<TestButtonComponent>;
 
-type Story = StoryObj<TestButtonComponent>;
+type TStory = StoryObj<TestButtonComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     args: {
         type: 'pill',
         variant: 'default',

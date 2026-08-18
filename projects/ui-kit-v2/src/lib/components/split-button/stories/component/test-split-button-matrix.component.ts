@@ -8,7 +8,7 @@ import { RtSplitButtonComponent } from '../../rt-split-button.component';
 import { IRtSplitButton } from '../../rt-split-button.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type SplitButtonMatrixPart = 'theme' | 'size' | 'states' | 'themes' | 'panel';
+export type TSplitButtonMatrixPart = 'theme' | 'size' | 'states' | 'themes' | 'panel';
 
 /** Состояние, которое задаётся не псевдоклассом, а входом. */
 interface ISplitButtonStateCase {
@@ -103,7 +103,7 @@ interface ISplitButtonStateCase {
     ],
 })
 export class TestRtSplitButtonMatrixComponent {
-    public part: SplitButtonMatrixPart = 'theme';
+    public part: TSplitButtonMatrixPart = 'theme';
 
     public readonly triggerAttribute: string = STORY_TRIGGER_ATTRIBUTE;
     public readonly states: readonly IStoryState[] = STORY_STATES;

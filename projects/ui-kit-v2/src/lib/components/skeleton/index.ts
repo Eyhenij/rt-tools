@@ -1,1 +1,1 @@
-export { RtSkeletonComponent, type IRtSkeletonRadius, type IRtSkeletonShape, type IRtSkeletonSize } from './rt-skeleton.component';
+export { RtSkeletonComponent, type TRtSkeletonRadius, type TRtSkeletonShape, type TRtSkeletonSize } from './rt-skeleton.component';

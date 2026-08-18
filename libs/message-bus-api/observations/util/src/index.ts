@@ -1,1 +1,1 @@
-export * from './lib/summary.logic';
+export * from './lib/summary.const';

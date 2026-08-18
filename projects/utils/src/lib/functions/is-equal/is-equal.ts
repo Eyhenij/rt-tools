@@ -1,3 +1,11 @@
+/** Serialisation with its characters put in code-unit order: the same multiset always yields the same string. */
+function canonical<T>(value: T): string {
+    return JSON.stringify(value)
+        .split('')
+        .sort((one: string, other: string): number => one.charCodeAt(0) - other.charCodeAt(0))
+        .join('');
+}
+
 /**
  * Indicates whether two values serialise to the same multiset of characters.
  *
@@ -17,7 +25,8 @@
  * isEqual({ ab: 1 }, { ba: 1 }); // true — anagram collision
  */
 export function isEqual<T>(f: T, s: T): boolean {
-    const s1: string = JSON.stringify(f).split('').sort().join('');
-    const s2: string = JSON.stringify(s).split('').sort().join('');
+    const s1: string = canonical(f);
+    const s2: string = canonical(s);
+
     return s1 === s2;
 }

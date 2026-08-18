@@ -1,4 +1,4 @@
-import { RtKitLabelKey } from '../../i18n';
+import { TRtKitLabelKey } from '../../i18n';
 
 /** Контракт поля-обёртки common/ui. */
 export namespace IRtField {
@@ -14,7 +14,7 @@ export namespace IRtField {
  * страницы ещё неизвестен, и готовый текст остался бы на языке по умолчанию
  * даже под переведённой подписью поля. Переводит сам компонент поля.
  */
-export const RT_FIELD_DEFAULT_ERROR_KEYS: Readonly<Record<string, RtKitLabelKey>> = {
+export const RT_FIELD_DEFAULT_ERROR_KEYS: Readonly<Record<string, TRtKitLabelKey>> = {
     required: 'fieldErrorRequired',
     email: 'fieldErrorEmail',
     minlength: 'fieldErrorMinLength',

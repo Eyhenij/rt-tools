@@ -6,7 +6,7 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtCardComponent } from '../../rt-card.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type CardMatrixPart = 'header' | 'slots' | 'clickable' | 'states' | 'themes';
+export type TCardMatrixPart = 'header' | 'slots' | 'clickable' | 'states' | 'themes';
 
 /** Случай шапки: имя для подписи ячейки и значение входа. */
 interface ICardHeaderCase {
@@ -108,7 +108,7 @@ interface ICardHeaderCase {
     ],
 })
 export class TestRtCardMatrixComponent {
-    public part: CardMatrixPart = 'header';
+    public part: TCardMatrixPart = 'header';
 
     public readonly headers: readonly ICardHeaderCase[] = [
         { name: 'без заголовка', header: null },

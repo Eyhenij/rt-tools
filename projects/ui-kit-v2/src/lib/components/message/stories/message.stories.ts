@@ -17,9 +17,9 @@ export default {
     },
 } as Meta<TestRtMessageComponent>;
 
-type Story = StoryObj<TestRtMessageComponent>;
+type TStory = StoryObj<TestRtMessageComponent>;
 
-export const Default: Story = {
+export const Default: TStory = {
     args: {
         severity: 'info',
         icon: null,

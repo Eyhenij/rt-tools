@@ -6,15 +6,15 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtAsideSectionComponent } from '../../../aside-section/rt-aside-section.component';
 import { RtAsideFooterComponent } from '../../footer/rt-aside-footer.component';
 import { RtAsideHeaderComponent } from '../../header/rt-aside-header.component';
-import { IRtAsideContentLayout, IRtAsideSize, RtAsideComponent } from '../../rt-aside.component';
+import { TRtAsideContentLayout, TRtAsideSize, RtAsideComponent } from '../../rt-aside.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type AsideMatrixPart = 'size' | 'width' | 'layout' | 'themes';
+export type TAsideMatrixPart = 'size' | 'width' | 'layout' | 'themes';
 
 /** Раскладка содержимого: с вкладками содержимое не прокручивается целиком, а отдаёт прокрутку внутрь. */
 interface IAsideLayoutCase {
     readonly name: string;
-    readonly layout: IRtAsideContentLayout;
+    readonly layout: TRtAsideContentLayout;
 }
 
 /**
@@ -128,9 +128,9 @@ interface IAsideLayoutCase {
     ],
 })
 export class TestRtAsideMatrixComponent {
-    public part: AsideMatrixPart = 'size';
+    public part: TAsideMatrixPart = 'size';
 
-    public readonly sizes: readonly IRtAsideSize[] = ['sm', 'md', 'lg'];
+    public readonly sizes: readonly TRtAsideSize[] = ['sm', 'md', 'lg'];
 
     /** Своя ширина: вход перекрывает размер, и рядом видно, что размер он и правда перекрывает. */
     public readonly widths: readonly string[] = ['260px', '420px'];

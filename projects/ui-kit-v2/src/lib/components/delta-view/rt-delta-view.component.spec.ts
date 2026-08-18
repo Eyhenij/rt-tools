@@ -5,7 +5,7 @@ import { IQuillDelta } from '../../util';
 import { RtDeltaViewComponent } from './rt-delta-view.component';
 
 function delta(ops: { insert: string; attributes?: Record<string, unknown> }[]): IQuillDelta {
-    return { ops } as unknown as IQuillDelta;
+    return { ops };
 }
 
 function setup(value: IQuillDelta | null = null): ComponentFixture<RtDeltaViewComponent> {

@@ -16,7 +16,7 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RtKitLabelMap, rtKitLabel } from '../../i18n';
+import { RT_KIT_LABELS, TRtKitLabelMap, rtKitLabel } from '../../i18n';
 import { RtFormControlBase } from '../form-control/rt-form-control.base';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtIconComponent } from '../icon/rt-icon.component';
@@ -87,7 +87,7 @@ function nextPanelId(): number {
 export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyArray<TValue>> {
     readonly #t_uiSelectValues: Signal<string> = rtKitLabel('uiSelectValues');
 
-    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly panelId: string = `rt-multiselect-panel-${nextPanelId()}`;
 

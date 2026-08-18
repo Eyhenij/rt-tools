@@ -6,7 +6,7 @@ import { RtSpinnerComponent } from '../../rt-spinner.component';
 import { IRtSpinner } from '../../rt-spinner.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type SpinnerMatrixPart = 'color' | 'diameter' | 'themes';
+export type TSpinnerMatrixPart = 'color' | 'diameter' | 'themes';
 
 /**
  * Матрицы `rt-spinner` для витрины.
@@ -74,7 +74,7 @@ export type SpinnerMatrixPart = 'color' | 'diameter' | 'themes';
     ],
 })
 export class TestRtSpinnerMatrixComponent {
-    public part: SpinnerMatrixPart = 'color';
+    public part: TSpinnerMatrixPart = 'color';
 
     public readonly colors: readonly IRtSpinner.Color[] = ['primary', 'neutral', 'on-primary'];
 

@@ -7,7 +7,7 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtPaginationComponent } from '../../rt-pagination.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type PaginationMatrixPart = 'position' | 'total' | 'loading' | 'container' | 'edges' | 'themes';
+export type TPaginationMatrixPart = 'position' | 'total' | 'loading' | 'container' | 'edges' | 'themes';
 
 /** Случай полосы: имя для подписи ячейки и модель страницы. */
 interface IPaginationCase {
@@ -96,7 +96,7 @@ const PER_PAGE: readonly number[] = [20, 50, 100];
     ],
 })
 export class TestRtPaginationMatrixComponent {
-    public part: PaginationMatrixPart = 'position';
+    public part: TPaginationMatrixPart = 'position';
 
     public readonly perPage: readonly number[] = PER_PAGE;
     public readonly middle: IPageModel = { pageNumber: 5, pageSize: 20, totalCount: 400 };

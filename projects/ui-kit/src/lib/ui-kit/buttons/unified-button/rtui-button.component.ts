@@ -20,8 +20,8 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { transformStringInput } from '@rt-tools/utils';
 
-import { IRtUiConfig, RT_UI_CONFIG, RtUiDesign } from '../../config';
-import { RtuiIconComponent, RtuiIconSizeType } from '../../icon';
+import { IRtUiConfig, RT_UI_CONFIG, TRtUiDesign } from '../../config';
+import { RtuiIconComponent, TRtuiIconSizeType } from '../../icon';
 import { RtuiSpinnerComponent } from '../../spinner';
 
 export namespace IRtuiButton {
@@ -79,8 +79,8 @@ export class RtuiButtonComponent {
     readonly #config: IRtUiConfig.Config = inject(RT_UI_CONFIG);
     readonly #buttonConfig: IRtUiConfig.Button | undefined = this.#config.components?.button;
 
-    /** Design system the button renders with — see {@link RtUiDesign}. */
-    protected readonly resolvedDesign: Signal<RtUiDesign> = computed(
+    /** Design system the button renders with — see {@link TRtUiDesign}. */
+    protected readonly resolvedDesign: Signal<TRtUiDesign> = computed(
         () => this.design() ?? this.#buttonConfig?.design ?? this.#config.global?.design ?? 'custom'
     );
     protected readonly resolvedSize: Signal<IRtuiButton.Size> = computed(() => this.size() ?? this.#buttonConfig?.size ?? 'md');
@@ -98,14 +98,14 @@ export class RtuiButtonComponent {
         };
         return appearanceMap[this.resolvedAppearance() ?? 'solid'];
     });
-    protected readonly resolvedIconSize: Signal<RtuiIconSizeType> = computed(() => {
-        const iconSize: RtuiIconSizeType | undefined = this.iconSize();
+    protected readonly resolvedIconSize: Signal<TRtuiIconSizeType> = computed(() => {
+        const iconSize: TRtuiIconSizeType | undefined = this.iconSize();
 
         if (iconSize) {
             return iconSize;
         }
 
-        const sizeMap: Record<IRtuiButton.Size, RtuiIconSizeType> = {
+        const sizeMap: Record<IRtuiButton.Size, TRtuiIconSizeType> = {
             xs: 'xs',
             sm: 'sm',
             md: 'sm',
@@ -144,14 +144,14 @@ export class RtuiButtonComponent {
     );
 
     public readonly type: InputSignal<IRtuiButton.Type> = input<IRtuiButton.Type>('icon');
-    public readonly design: InputSignal<RtUiDesign | undefined> = input<RtUiDesign>();
+    public readonly design: InputSignal<TRtUiDesign | undefined> = input<TRtUiDesign>();
     public readonly variant: InputSignal<IRtuiButton.Variant> = input<IRtuiButton.Variant>('default');
     public readonly appearance: InputSignal<IRtuiButton.Appearance | undefined> = input<IRtuiButton.Appearance>();
     public readonly size: InputSignal<IRtuiButton.Size | undefined> = input<IRtuiButton.Size>();
     public readonly radius: InputSignal<IRtuiButton.Radius | undefined> = input<IRtuiButton.Radius>();
     public readonly icon: InputSignalWithTransform<string, unknown> = input<string, unknown>('', { transform: transformStringInput });
     public readonly iconPosition: InputSignal<IRtuiButton.IconPosition> = input<IRtuiButton.IconPosition>('start');
-    public readonly iconSize: InputSignal<RtuiIconSizeType | undefined> = input<RtuiIconSizeType>();
+    public readonly iconSize: InputSignal<TRtuiIconSizeType | undefined> = input<TRtuiIconSizeType>();
     public readonly text: InputSignalWithTransform<string, unknown> = input<string, unknown>('', { transform: transformStringInput });
     public readonly loading: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,

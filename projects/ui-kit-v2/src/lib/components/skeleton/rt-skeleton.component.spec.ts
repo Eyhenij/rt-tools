@@ -1,7 +1,7 @@
 import { ComponentFixture } from '@angular/core/testing';
 
 import { createRtFixture, hostClasses } from '../../../testing/rt-kit-testing';
-import { IRtSkeletonRadius, IRtSkeletonShape, IRtSkeletonSize, RtSkeletonComponent } from './rt-skeleton.component';
+import { TRtSkeletonRadius, TRtSkeletonShape, TRtSkeletonSize, RtSkeletonComponent } from './rt-skeleton.component';
 
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtSkeletonComponent> {
     return createRtFixture(RtSkeletonComponent, inputs);
@@ -30,7 +30,7 @@ describe('RtSkeletonComponent', (): void => {
     });
 
     describe('форма', (): void => {
-        it.each<IRtSkeletonShape>(['rectangle', 'circle', 'square'])('форма %s даёт свой модификатор', (shape: IRtSkeletonShape): void => {
+        it.each<TRtSkeletonShape>(['rectangle', 'circle', 'square'])('форма %s даёт свой модификатор', (shape: TRtSkeletonShape): void => {
             expect(hostClasses(setup({ shape }))).toContain(`rt-skeleton--${shape}`);
         });
 
@@ -74,23 +74,23 @@ describe('RtSkeletonComponent', (): void => {
     });
 
     describe('размер', (): void => {
-        it.each<[IRtSkeletonSize, string]>([
+        it.each<[TRtSkeletonSize, string]>([
             ['sm', '10px'],
             ['md', '15px'],
             ['lg', '20px'],
-        ])('размер %s задаёт сторону круга %s', (size: IRtSkeletonSize, expected: string): void => {
+        ])('размер %s задаёт сторону круга %s', (size: TRtSkeletonSize, expected: string): void => {
             expect(style(setup({ shape: 'circle', size }), 'width')).toBe(expected);
         });
     });
 
     describe('скругление', (): void => {
-        it.each<[IRtSkeletonRadius, string]>([
+        it.each<[TRtSkeletonRadius, string]>([
             ['xs', '2px'],
             ['sm', '4px'],
             ['md', '6px'],
             ['lg', '10px'],
             ['xl', '999px'],
-        ])('шаг %s даёт радиус %s', (borderRadius: IRtSkeletonRadius, expected: string): void => {
+        ])('шаг %s даёт радиус %s', (borderRadius: TRtSkeletonRadius, expected: string): void => {
             expect(style(setup({ borderRadius }), 'border-radius')).toBe(expected);
         });
 

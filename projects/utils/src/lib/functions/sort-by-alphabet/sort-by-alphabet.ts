@@ -20,10 +20,15 @@ export const sortByAlphabet: <T extends object>(a: T, b: T, field: keyof T) => n
     field: keyof T
 ): number => {
     if (a[field] && typeof a[field] === 'string' && b[field] && typeof b[field] === 'string') {
-        if ((a[field] as string).toLowerCase() < (b[field] as string).toLowerCase()) {
+        const one: string = (a[field] as string).toLowerCase();
+        const other: string = (b[field] as string).toLowerCase();
+
+        // eslint-disable-next-line sonarjs/strings-comparison -- code-unit order is this comparator's documented contract; `safeStrCompare` is the locale-aware one
+        if (one < other) {
             return -1;
         }
-        if ((a[field] as string).toLowerCase() > (b[field] as string).toLowerCase()) {
+        // eslint-disable-next-line sonarjs/strings-comparison -- same contract as the branch above
+        if (one > other) {
             return 1;
         }
     }

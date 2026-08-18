@@ -18,14 +18,14 @@ export default {
     },
 } as Meta<TestRtDialogMatrixComponent>;
 
-type Story = StoryObj<TestRtDialogMatrixComponent>;
+type TStory = StoryObj<TestRtDialogMatrixComponent>;
 
-export const Size: Story = { args: { part: 'size' } };
+export const Size: TStory = { args: { part: 'size' } };
 
 /** Своя ширина перекрывает размер — рядом видно, что перекрывает и правда. */
-export const Width: Story = { args: { part: 'width' } };
+export const Width: TStory = { args: { part: 'width' } };
 
 /** Шапка и подвал необязательны: без них окно выглядит иначе. */
-export const Parts: Story = { args: { part: 'parts' } };
+export const Parts: TStory = { args: { part: 'parts' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

@@ -98,9 +98,9 @@ export class PostmortemsIntakeController {
     async #write(cargo: TCargoBody, items: TCargoBody[], treeId: string, ranAt: Date): Promise<IMonthRecordWritten> {
         const record: IMonthRecordWritten = await ensureMonthRecord(this.#prisma, {
             treeId,
+            ranAt,
             month: monthOf(ranAt),
             schema: cargoSchemaOf(cargo),
-            ranAt,
         });
 
         await writePostmortems(this.#prisma, treeId, items.map(rowOf));

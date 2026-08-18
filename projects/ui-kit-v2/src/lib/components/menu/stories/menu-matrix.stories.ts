@@ -17,28 +17,28 @@ export default {
     },
 } as Meta<TestRtMenuMatrixComponent>;
 
-type Story = StoryObj<TestRtMenuMatrixComponent>;
+type TStory = StoryObj<TestRtMenuMatrixComponent>;
 
 /** Закрытое меню: иконка триггера и недоступность. */
-export const Trigger: Story = { args: { part: 'trigger' } };
+export const Trigger: TStory = { args: { part: 'trigger' } };
 
 /**
  * Триггер рисует `rt-icon-button`, а признак стоит на хосте меню — аддону передан спуск до
  * кнопки: без него класс лёг бы на элемент, у которого этих правил нет.
  */
-export const States: Story = {
+export const States: TStory = {
     args: { part: 'states' },
     parameters: { pseudo: storyPseudoParameters('button') },
 };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };
 
 /**
  * Раскрытое меню, прижатое к правому краю триггера (умолчание). Открывает его `play`-функция.
  * Виды пунктов показаны набором внутри одной панели: второе меню открыть некуда — жест по его
  * триггеру достался бы backdrop'у первого.
  */
-export const PanelAlignEnd: Story = {
+export const PanelAlignEnd: TStory = {
     // Панель живёт в контейнере перекрытий CDK — за пределами корня показа, и кадром по сетке её
     // не снять вовсе. Такой истории кадр берётся целой страницей.
     parameters: { snapshot: { fullPage: true } },
@@ -49,7 +49,7 @@ export const PanelAlignEnd: Story = {
 };
 
 /** То же меню, прижатое к левому краю триггера. */
-export const PanelAlignStart: Story = {
+export const PanelAlignStart: TStory = {
     parameters: { snapshot: { fullPage: true } },
     args: { part: 'panel', align: 'start' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {

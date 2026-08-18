@@ -21,16 +21,16 @@ import { MatIcon } from '@angular/material/icon';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerModule, MatDatepickerToggle } from '@angular/material/datepicker';
 
 import {
-    FILTER_OPERATOR_TYPE_ENUM,
+    EFilterOperatorType,
     FILTER_OPERATORS,
-    FilterOperatorType,
+    TFilterOperatorType,
     IFilterModel,
-    INullable,
+    TNullable,
     isString,
     transformArrayInput,
 } from '@rt-tools/utils';
 import { BreakpointService, ConcatClassesPipe, RtIconOutlinedDirective } from '@rt-tools/core';
-import { ITable, TABLE_COLUMN_FILTER_TYPES_ENUM } from '../../util/table-column.interface';
+import { ITable, ETableColumnFilterTypes } from '../../util/table-column.interface';
 import { MatFormField, MatFormFieldAppearance, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
@@ -93,10 +93,11 @@ export class RtuiTableHeaderFilterCellComponent<
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
 
     /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
     protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
 
-    protected readonly filterTypes: typeof TABLE_COLUMN_FILTER_TYPES_ENUM = TABLE_COLUMN_FILTER_TYPES_ENUM;
-    protected readonly filterOperatorTypes: typeof FILTER_OPERATOR_TYPE_ENUM = FILTER_OPERATOR_TYPE_ENUM;
+    protected readonly filterTypes: typeof ETableColumnFilterTypes = ETableColumnFilterTypes;
+    protected readonly filterOperatorTypes: typeof EFilterOperatorType = EFilterOperatorType;
 
     /** Current elements appearance */
     public appearance: InputSignal<MatFormFieldAppearance> = input.required();
@@ -114,19 +115,19 @@ export class RtuiTableHeaderFilterCellComponent<
         transform: (value: IFilterModel<KEY>[]) => transformArrayInput(value),
     });
     /** Filter property */
-    public defaultFilterOperator: InputSignalWithTransform<FilterOperatorType, FilterOperatorType> = input.required<
-        FilterOperatorType,
-        FilterOperatorType
+    public defaultFilterOperator: InputSignalWithTransform<TFilterOperatorType, TFilterOperatorType> = input.required<
+        TFilterOperatorType,
+        TFilterOperatorType
     >({
-        transform: (value: FilterOperatorType): FilterOperatorType =>
-            value && FILTER_OPERATORS.includes(value) ? value : FILTER_OPERATOR_TYPE_ENUM.EQUALS,
+        transform: (value: TFilterOperatorType): TFilterOperatorType =>
+            value && FILTER_OPERATORS.includes(value) ? value : EFilterOperatorType.EQUALS,
     });
     /** Available filter operators */
-    public filterOperators: InputSignalWithTransform<FilterOperatorType[], FilterOperatorType[]> = input<
-        FilterOperatorType[],
-        FilterOperatorType[]
+    public filterOperators: InputSignalWithTransform<TFilterOperatorType[], TFilterOperatorType[]> = input<
+        TFilterOperatorType[],
+        TFilterOperatorType[]
     >([], {
-        transform: (value: FilterOperatorType[]) => transformArrayInput(value),
+        transform: (value: TFilterOperatorType[]) => transformArrayInput(value),
     });
     /** List of selected filter models */
     public filterSelectOptions: InputSignalWithTransform<string[], string[]> = input<string[], string[]>([], {
@@ -138,14 +139,14 @@ export class RtuiTableHeaderFilterCellComponent<
      * @deprecated Кит определяет его сам — `BreakpointService` из `@rt-tools/core`. Вход
      * оставлен ради приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
      */
-    public isMobile: InputSignal<INullable<boolean>> = input<INullable<boolean>>(null);
+    public isMobile: InputSignal<TNullable<boolean>> = input<TNullable<boolean>>(null);
 
     /** Filter change output action */
     public readonly filterChange: OutputEmitterRef<IFilterModel<KEY>[]> = output<IFilterModel<KEY>[]>();
 
     public readonly currentFilter: WritableSignal<IFilterModel<KEY>> = signal({
         propertyName: '' as KEY,
-        operatorType: FILTER_OPERATOR_TYPE_ENUM.EQUALS,
+        operatorType: EFilterOperatorType.EQUALS,
         value: '',
     });
 
@@ -167,43 +168,41 @@ export class RtuiTableHeaderFilterCellComponent<
 
     /** Change filter value */
     public onFilterValueChange(value: number | string | Date): void {
-        if (value === this.currentFilter().value) {
+        // Дата хранится строкой, и сверять её надо в том же виде: `Date` не равен строке никогда,
+        // и без приведения повторный выбор той же даты каждый раз считался бы новым значением.
+        const nextValue: string | number | boolean = isDate(value) ? value.toISOString() : value;
+
+        if (nextValue === this.currentFilter().value) {
             return;
         }
 
         let updatedFilterModel: IFilterModel<KEY>[] = this.filterModel();
 
         if (updatedFilterModel.find((el: IFilterModel<KEY>) => el.propertyName === this.filterProperty())) {
-            if (value) {
+            if (nextValue) {
                 updatedFilterModel = updatedFilterModel.map((el: IFilterModel<KEY>) =>
-                    el.propertyName === this.filterProperty()
-                        ? {
-                              ...el,
-                              value: isDate(value) ? value.toISOString() : value,
-                          }
-                        : el
+                    el.propertyName === this.filterProperty() ? { ...el, value: nextValue } : el
                 );
             } else {
                 updatedFilterModel = updatedFilterModel.filter((el: IFilterModel<KEY>) => el.propertyName !== this.filterProperty());
             }
             this.filterChange.emit(updatedFilterModel);
-        } else if (value) {
+        } else if (nextValue) {
             updatedFilterModel.push({
                 propertyName: this.filterProperty(),
                 operatorType: this.currentFilter().operatorType,
-                value: isDate(value) ? value.toISOString() : value,
+                value: nextValue,
             });
             this.filterChange.emit(updatedFilterModel);
+        } else {
+            // Отбора по этой колонке ещё нет, и значения тоже — списку отбора менять нечего.
         }
 
-        this.currentFilter.update((filter: IFilterModel<KEY>) => ({
-            ...filter,
-            value: isDate(value) ? value.toISOString() : value,
-        }));
+        this.currentFilter.update((filter: IFilterModel<KEY>) => ({ ...filter, value: nextValue }));
     }
 
     /** Change filter operator */
-    public onFilterOperatorChange(operatorType: FilterOperatorType): void {
+    public onFilterOperatorChange(operatorType: TFilterOperatorType): void {
         if (operatorType === this.currentFilter().operatorType) {
             return;
         }
@@ -227,6 +226,8 @@ export class RtuiTableHeaderFilterCellComponent<
                 value: this.currentFilter().value,
             });
             this.filterChange.emit(updatedFilterModel);
+        } else {
+            // Отбора по этой колонке нет и значения тоже — менять вид сравнения не у чего.
         }
 
         this.currentFilter.update((filter: IFilterModel<KEY>) => ({ ...filter, operatorType }));

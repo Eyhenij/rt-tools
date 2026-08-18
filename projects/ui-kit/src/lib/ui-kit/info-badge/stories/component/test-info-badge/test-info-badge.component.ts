@@ -5,14 +5,14 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatSelect } from '@angular/material/select';
 
-import { POSITION_ENUM } from '@rt-tools/core';
+import { EPosition } from '@rt-tools/core';
 import { ElemDirective } from '@rt-tools/core';
-import { INFO_BADGE_SIZE_ENUM } from '../../../badge-info-enum';
-import { IconSideType } from '../../../icon-side.type';
+import { EInfoBadgeSize } from '../../../badge-info-enum';
+import { TIconSideType } from '../../../icon-side.type';
 import { RtuiInfoBadgeComponent } from '../../../info-badge.component';
-import { INFO_BADGE_TYPE_ENUM } from '../../../info-badge-types.enum';
+import { EInfoBadgeType } from '../../../info-badge-types.enum';
 import { TestInfoBadgeDirective } from '../../directives/test-info-badge.directive';
-import { InfoBadgePropertyType } from '../../utils/enum/info-badge-property.enum';
+import { TInfoBadgePropertyType } from '../../utils/enum/info-badge-property.enum';
 
 @Component({
     selector: 'rtui-test-info-badge',
@@ -32,7 +32,7 @@ import { InfoBadgePropertyType } from '../../utils/enum/info-badge-property.enum
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TestInfoBadgeComponent {
-    public property: InputSignal<InfoBadgePropertyType> = input.required();
+    public property: InputSignal<TInfoBadgePropertyType> = input.required();
     public text: Signal<string> = signal('Test info');
     public textLengthy: Signal<string> = signal(
         'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias autem illo iure nulla porro, reiciendis.'
@@ -40,11 +40,11 @@ export class TestInfoBadgeComponent {
 
     public isFontBold: boolean = false;
     public isWithIcon: string = '';
-    public iconSide: IconSideType = POSITION_ENUM.RIGHT;
+    public iconSide: TIconSideType = EPosition.RIGHT;
 
-    public readonly badgeSizes: typeof INFO_BADGE_SIZE_ENUM = INFO_BADGE_SIZE_ENUM;
-    public readonly badgeTypes: typeof INFO_BADGE_TYPE_ENUM = INFO_BADGE_TYPE_ENUM;
-    public readonly positions: typeof POSITION_ENUM = POSITION_ENUM;
+    public readonly badgeSizes: typeof EInfoBadgeSize = EInfoBadgeSize;
+    public readonly badgeTypes: typeof EInfoBadgeType = EInfoBadgeType;
+    public readonly positions: typeof EPosition = EPosition;
 
     public toggleFontBold(): void {
         this.isFontBold = !this.isFontBold;
@@ -55,6 +55,6 @@ export class TestInfoBadgeComponent {
     }
 
     public toggleIconLocation(): void {
-        this.iconSide = this.iconSide == POSITION_ENUM.RIGHT ? POSITION_ENUM.LEFT : POSITION_ENUM.RIGHT;
+        this.iconSide = this.iconSide == EPosition.RIGHT ? EPosition.LEFT : EPosition.RIGHT;
     }
 }

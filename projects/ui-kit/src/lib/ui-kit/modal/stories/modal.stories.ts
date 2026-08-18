@@ -1,14 +1,19 @@
+// eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 import { fn } from 'storybook/test';
 
 import { TestModalComponent } from './test-modal.component';
 
+/** Заголовок-рыба: он один на все истории окна. */
+const LOREM_TITLE: string = 'The standard Lorem Ipsum passage, used since the 1500s';
+
 const meta: Meta<TestModalComponent> = {
     title: 'Components/Modal',
     component: TestModalComponent,
     decorators: [
         applicationConfig({
+            // eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
             providers: [provideAnimations()],
         }),
     ],
@@ -17,24 +22,24 @@ const meta: Meta<TestModalComponent> = {
 };
 
 export default meta;
-type Story = StoryObj<TestModalComponent>;
+type TStory = StoryObj<TestModalComponent>;
 
-export const Small: Story = {
+export const Small: TStory = {
     args: {
         icon: 'warning',
         iconColor: '#F2994A',
-        title: 'The standard Lorem Ipsum passage, used since the 1500s',
-        text: 'The standard Lorem Ipsum passage, used since the 1500s <div class="--highlighted">"TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest"</div> written by Cicero in 45 BC <div class="--warn">1914 translation by H. Rackham</div>',
+        title: LOREM_TITLE,
+        text: `${LOREM_TITLE} <div class="--highlighted">"TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest"</div> written by Cicero in 45 BC <div class="--warn">1914 translation by H. Rackham</div>`,
     },
 };
 
-export const Big: Story = {
+export const Big: TStory = {
     args: {
         icon: 'warning',
         iconColor: '#F2994A',
-        title: 'The standard Lorem Ipsum passage, used since the 1500s',
+        title: LOREM_TITLE,
         text:
-            'The standard Lorem Ipsum passage, used since the 1500s\n' +
+            `${LOREM_TITLE}\n` +
             '"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."\n' +
             '\n' +
             'Section 1.10.32 of <div class="--highlighted">"de Finibus Bonorum et Malorum"</div>, written by Cicero in 45 BC\n' +

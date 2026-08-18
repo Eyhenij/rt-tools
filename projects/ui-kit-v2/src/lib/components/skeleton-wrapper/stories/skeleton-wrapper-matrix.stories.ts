@@ -15,8 +15,8 @@ export default {
     },
 } as Meta<TestRtSkeletonWrapperMatrixComponent>;
 
-type Story = StoryObj<TestRtSkeletonWrapperMatrixComponent>;
+type TStory = StoryObj<TestRtSkeletonWrapperMatrixComponent>;
 
-export const Loading: Story = { args: { part: 'loading' } };
+export const Loading: TStory = { args: { part: 'loading' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

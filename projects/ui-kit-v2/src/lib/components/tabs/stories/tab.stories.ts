@@ -21,9 +21,9 @@ export default {
     },
 } as Meta<TestRtTabComponent>;
 
-type Story = StoryObj<TestRtTabComponent>;
+type TStory = StoryObj<TestRtTabComponent>;
 
-export const Default: Story = {
+export const Default: TStory = {
     args: {
         id: 'first',
         label: 'Сохранить',

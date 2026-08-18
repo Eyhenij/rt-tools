@@ -106,16 +106,16 @@ export const appConfig: ApplicationConfig = {
 отдаёт функцией-переводчиком:
 
 ```typescript
-import { provideRtKitLabels, RtKitLabelKey, RtKitLabelParams } from '@rt-tools/ui-kit-v2';
+import { provideRtKitLabels, TRtKitLabelKey, TRtKitLabelParams } from '@rt-tools/ui-kit-v2';
 
 provideRtKitLabels({
-    translator: computed(() => (key: RtKitLabelKey, params?: RtKitLabelParams) => myDictionary(key, params)),
+    translator: computed(() => (key: TRtKitLabelKey, params?: TRtKitLabelParams) => myDictionary(key, params)),
     locale: myLocale, // Signal<string>; ею кит форматирует даты
 });
 ```
 
 Способ доставки — дело приложения: Transloco, `$localize`, собственный словарь. Кит знает
-только ключи (`RtKitLabelKey` — перечень выводится из английского набора, поэтому опечатка не
+только ключи (`TRtKitLabelKey` — перечень выводится из английского набора, поэтому опечатка не
 доживает до рантайма) и то, что на них отвечают готовой строкой: подстановки вида `{{name}}`
 переводчик делает сам. Подпись, которой он не дал, берётся английской — поштучно, не набором.
 

@@ -28,9 +28,9 @@ export default {
     },
 } as Meta<TestRtPopoverComponent>;
 
-type Story = StoryObj<TestRtPopoverComponent>;
+type TStory = StoryObj<TestRtPopoverComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         trigger: 'click',
@@ -51,7 +51,7 @@ export const Playground: Story = {
  * то же, что `Playground`, — режим объявлен входом и ничем не показан. Жест уходит самой кнопке:
  * директива слушает `mouseenter` на своём хосте.
  */
-export const HoverTrigger: Story = {
+export const HoverTrigger: TStory = {
     parameters: { snapshot: { fullPage: true } },
     args: {
         ...Playground.args,

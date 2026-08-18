@@ -19,7 +19,7 @@ import {
     WritableSignal,
 } from '@angular/core';
 import { StorageService } from '@rt-tools/core';
-import { RT_KIT_LOCALE, RT_KIT_TRANSLATOR, RtKitTranslator } from '@rt-tools/ui-kit-v2';
+import { RT_KIT_LOCALE, RT_KIT_TRANSLATOR, TRtKitTranslator } from '@rt-tools/ui-kit-v2';
 
 import { rtKitLabelsRu } from './admin-labels';
 
@@ -46,7 +46,7 @@ const DEFAULT_LOCALE: EAdminLocale = EAdminLocale.Ru;
  * Пустая строка у кита означает «ответа нет» — он берёт своё английское умолчание, вшитое и
  * покрывающее все ключи. Своего английского набора приложение поэтому не держит.
  */
-const NO_LABELS: RtKitTranslator = (): string => '';
+const noLabels: TRtKitTranslator = (): string => '';
 
 /**
  * Выбранный язык кита.
@@ -66,8 +66,8 @@ export class AdminLocaleService {
     public readonly tag: Signal<string> = computed((): string => this.#locale());
 
     /** Функция, которой кит получает подписи. Меняется вместе с выбором. */
-    public readonly translator: Signal<RtKitTranslator> = computed((): RtKitTranslator =>
-        this.#locale() === EAdminLocale.Ru ? rtKitLabelsRu : NO_LABELS
+    public readonly translator: Signal<TRtKitTranslator> = computed((): TRtKitTranslator =>
+        this.#locale() === EAdminLocale.Ru ? rtKitLabelsRu : noLabels
     );
 
     public setLocale(locale: EAdminLocale): void {
@@ -91,7 +91,7 @@ export class AdminLocaleService {
  */
 export function provideAdminKitLabels(): EnvironmentProviders {
     return makeEnvironmentProviders([
-        { provide: RT_KIT_TRANSLATOR, useFactory: (): Signal<RtKitTranslator> => inject(AdminLocaleService).translator },
+        { provide: RT_KIT_TRANSLATOR, useFactory: (): Signal<TRtKitTranslator> => inject(AdminLocaleService).translator },
         { provide: RT_KIT_LOCALE, useFactory: (): Signal<string> => inject(AdminLocaleService).tag },
     ]);
 }

@@ -21,9 +21,9 @@ export default {
     },
 } as Meta<TestRtContainerMatrixComponent>;
 
-type Story = StoryObj<TestRtContainerMatrixComponent>;
+type TStory = StoryObj<TestRtContainerMatrixComponent>;
 
 /** Необъявленная зона не создаёт пустого узла — каркас состоит ровно из того, что передали. */
-export const Zones: Story = { args: { part: 'zones' } };
+export const Zones: TStory = { args: { part: 'zones' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

@@ -6,8 +6,11 @@ import { RtDialogRef } from '../../../dialog/rt-dialog-ref';
 import { RT_DIALOG_DATA } from '../../../dialog/rt-dialog.tokens';
 import { IRtWelcomeDialog, RtWelcomeDialogComponent } from '../../rt-welcome-dialog.component';
 
+/** Разметка обёртки: сам случай приходит входом. */
+const CASE_TEMPLATE: string = '<app-welcome-dialog-case />';
+
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type WelcomeDialogMatrixPart = 'text' | 'cta' | 'edges' | 'themes';
+export type TWelcomeDialogMatrixPart = 'text' | 'cta' | 'edges' | 'themes';
 
 /**
  * Ссылка на окно, ничего не закрывающая.
@@ -35,7 +38,7 @@ class WelcomeDialogCaseComponent {}
 
 @Component({
     selector: 'app-welcome-dialog-full',
-    template: '<app-welcome-dialog-case />',
+    template: CASE_TEMPLATE,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [WelcomeDialogCaseComponent],
     providers: [
@@ -47,7 +50,7 @@ class WelcomeDialogFullComponent {}
 
 @Component({
     selector: 'app-welcome-dialog-title-only',
-    template: '<app-welcome-dialog-case />',
+    template: CASE_TEMPLATE,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [WelcomeDialogCaseComponent],
     providers: [
@@ -59,7 +62,7 @@ class WelcomeDialogTitleOnlyComponent {}
 
 @Component({
     selector: 'app-welcome-dialog-custom-cta',
-    template: '<app-welcome-dialog-case />',
+    template: CASE_TEMPLATE,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [WelcomeDialogCaseComponent],
     providers: [
@@ -74,7 +77,7 @@ class WelcomeDialogCustomCtaComponent {}
 
 @Component({
     selector: 'app-welcome-dialog-empty',
-    template: '<app-welcome-dialog-case />',
+    template: CASE_TEMPLATE,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [WelcomeDialogCaseComponent],
     providers: [
@@ -168,7 +171,7 @@ class WelcomeDialogEmptyComponent {}
     ],
 })
 export class TestRtWelcomeDialogMatrixComponent {
-    public part: WelcomeDialogMatrixPart = 'text';
+    public part: TWelcomeDialogMatrixPart = 'text';
 
     public readonly textCases: readonly { name: string; kind: string }[] = [
         { name: 'заголовок и два абзаца', kind: 'full' },

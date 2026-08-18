@@ -7,10 +7,13 @@ import { IStoryState, STORY_CONTROL_STATES, storyStateLabel } from '../../../../
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtFieldComponent } from '../../../field/rt-field.component';
 import { IRtInput } from '../../../input/rt-input.model';
-import { IRtTextareaResize, RtTextareaComponent } from '../../rt-textarea.component';
+import { TRtTextareaResize, RtTextareaComponent } from '../../rt-textarea.component';
+
+/** Короткий текст — им показаны состояния поля. */
+const SHORT_TEXT: string = 'Согласовано.';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TextareaMatrixPart = 'size' | 'rows' | 'resize' | 'filling' | 'bordered' | 'states' | 'themes';
+export type TTextareaMatrixPart = 'size' | 'rows' | 'resize' | 'filling' | 'bordered' | 'states' | 'themes';
 
 /** Случай с подписью и своим значением: без набранного текста ось высоты не видно. */
 interface ITextareaCase {
@@ -170,11 +173,11 @@ function invalid(): FormControl<string> {
     ],
 })
 export class TestRtTextareaMatrixComponent {
-    public part: TextareaMatrixPart = 'size';
+    public part: TTextareaMatrixPart = 'size';
 
     public readonly fieldWidth: string = STORY_FIELD_WIDTH_WIDE;
     public readonly sizes: readonly IRtInput.Size[] = ['sm', 'md', 'lg'];
-    public readonly resizes: readonly IRtTextareaResize[] = ['none', 'vertical'];
+    public readonly resizes: readonly TRtTextareaResize[] = ['none', 'vertical'];
     public readonly states: readonly IStoryState[] = STORY_CONTROL_STATES;
     public readonly stateLabel: (value: IStoryState) => string = storyStateLabel;
 
@@ -186,13 +189,13 @@ export class TestRtTextareaMatrixComponent {
 
     public readonly fillingCases: readonly ITextareaCase[] = [
         { name: 'пусто', control: filled('') },
-        { name: 'одна строка', control: filled('Согласовано.') },
+        { name: 'одна строка', control: filled(SHORT_TEXT) },
         { name: 'несколько строк', control: filled(`${SAMPLE}\nОригинал придёт почтой.`) },
     ];
 
     public readonly borderedCases: readonly ITextareaBorderedCase[] = [
-        { name: 'с рамкой', bordered: true, control: filled('Согласовано.') },
-        { name: 'без рамки', bordered: false, control: filled('Согласовано.') },
+        { name: 'с рамкой', bordered: true, control: filled(SHORT_TEXT) },
+        { name: 'без рамки', bordered: false, control: filled(SHORT_TEXT) },
     ];
 
     public readonly stateCases: readonly ITextareaStateCase[] = [

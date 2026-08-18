@@ -16,7 +16,7 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RtKitLabelMap } from '../../i18n';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtIconComponent } from '../icon/rt-icon.component';
 import { IRtIcon } from '../icon/rt-icon.model';
@@ -82,7 +82,7 @@ export class RtMessageComponent {
      * передайте пустую строку как `[icon]` — она будет falsy и не «победит» default.
      * Полное отключение делается через severity `secondary` / `neutral`.
      */
-    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly effectiveIcon: Signal<IRtIcon.Name | null> = computed((): IRtIcon.Name | null => {
         if (this.hideIcon()) {

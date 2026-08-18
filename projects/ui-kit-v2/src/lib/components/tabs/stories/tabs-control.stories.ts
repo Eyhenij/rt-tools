@@ -15,9 +15,9 @@ export default {
     },
 } as Meta<TestRtTabsControlComponent>;
 
-type Story = StoryObj<TestRtTabsControlComponent>;
+type TStory = StoryObj<TestRtTabsControlComponent>;
 
-export const Default: Story = {
+export const Default: TStory = {
     args: {
         side: 'right',
     },

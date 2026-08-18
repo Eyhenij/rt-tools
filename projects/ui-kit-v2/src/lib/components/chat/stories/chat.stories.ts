@@ -34,9 +34,9 @@ export default {
     },
 } as Meta<TestRtChatComponent>;
 
-type Story = StoryObj<TestRtChatComponent>;
+type TStory = StoryObj<TestRtChatComponent>;
 
-export const Default: Story = {
+export const Default: TStory = {
     args: {
         messages: [],
         loading: false,

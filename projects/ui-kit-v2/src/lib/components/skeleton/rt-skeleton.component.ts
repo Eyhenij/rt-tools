@@ -10,9 +10,9 @@ import {
     ViewEncapsulation,
 } from '@angular/core';
 
-export type IRtSkeletonShape = 'rectangle' | 'circle' | 'square';
-export type IRtSkeletonSize = 'sm' | 'md' | 'lg';
-export type IRtSkeletonRadius = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+export type TRtSkeletonShape = 'rectangle' | 'circle' | 'square';
+export type TRtSkeletonSize = 'sm' | 'md' | 'lg';
+export type TRtSkeletonRadius = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 const BEM_BLOCK: string = 'rt-skeleton';
 
@@ -37,13 +37,13 @@ const BEM_BLOCK: string = 'rt-skeleton';
     },
 })
 export class RtSkeletonComponent {
-    readonly #sizeMap: Record<IRtSkeletonSize, string> = {
+    readonly #sizeMap: Record<TRtSkeletonSize, string> = {
         sm: '10px',
         md: '15px',
         lg: '20px',
     };
 
-    readonly #radiusMap: Record<IRtSkeletonRadius, string> = {
+    readonly #radiusMap: Record<TRtSkeletonRadius, string> = {
         xs: '2px',
         sm: '4px',
         md: '6px',
@@ -51,9 +51,9 @@ export class RtSkeletonComponent {
         xl: '999px',
     };
 
-    public readonly shape: InputSignal<IRtSkeletonShape> = input<IRtSkeletonShape>('rectangle');
+    public readonly shape: InputSignal<TRtSkeletonShape> = input<TRtSkeletonShape>('rectangle');
 
-    public readonly size: InputSignal<IRtSkeletonSize> = input<IRtSkeletonSize>('md');
+    public readonly size: InputSignal<TRtSkeletonSize> = input<TRtSkeletonSize>('md');
 
     public readonly width: InputSignal<string> = input<string>('100%');
 
@@ -65,7 +65,7 @@ export class RtSkeletonComponent {
      * `xl`: тогда явный `xl` неотличим от невыставленного, и квадрату
      * приходилось прибивать `sm` жёстко — вход у него молча пропадал.
      */
-    public readonly borderRadius: InputSignal<IRtSkeletonRadius | null> = input<IRtSkeletonRadius | null>(null);
+    public readonly borderRadius: InputSignal<TRtSkeletonRadius | null> = input<TRtSkeletonRadius | null>(null);
 
     public readonly animation: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
@@ -140,7 +140,7 @@ export class RtSkeletonComponent {
             return '50%';
         }
 
-        const requested: IRtSkeletonRadius | null = this.borderRadius();
+        const requested: TRtSkeletonRadius | null = this.borderRadius();
         if (requested !== null) {
             return this.#radiusMap[requested];
         }

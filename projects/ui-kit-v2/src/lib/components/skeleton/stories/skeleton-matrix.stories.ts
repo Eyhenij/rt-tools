@@ -15,12 +15,12 @@ export default {
     },
 } as Meta<TestRtSkeletonMatrixComponent>;
 
-type Story = StoryObj<TestRtSkeletonMatrixComponent>;
+type TStory = StoryObj<TestRtSkeletonMatrixComponent>;
 
-export const Shape: Story = { args: { part: 'shape' } };
+export const Shape: TStory = { args: { part: 'shape' } };
 
-export const Radius: Story = { args: { part: 'radius' } };
+export const Radius: TStory = { args: { part: 'radius' } };
 
-export const Animation: Story = { args: { part: 'animation' } };
+export const Animation: TStory = { args: { part: 'animation' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

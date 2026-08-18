@@ -15,17 +15,17 @@ export default {
     },
 } as Meta<TestRtInfoItemMatrixComponent>;
 
-type Story = StoryObj<TestRtInfoItemMatrixComponent>;
+type TStory = StoryObj<TestRtInfoItemMatrixComponent>;
 
-export const Loading: Story = { args: { part: 'loading' } };
+export const Loading: TStory = { args: { part: 'loading' } };
 
 /** Полосы этот показ рисует сам, без сетки витрины, — корня показа на странице нет, и кадр
  * берётся целой страницей. */
-export const Grow: Story = {
+export const Grow: TStory = {
     parameters: { snapshot: { fullPage: true } },
     args: { part: 'grow' },
 };
 
-export const Content: Story = { args: { part: 'content' } };
+export const Content: TStory = { args: { part: 'content' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

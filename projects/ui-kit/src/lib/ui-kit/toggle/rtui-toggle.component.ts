@@ -21,9 +21,9 @@ import { noop } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 import { BreakpointService } from '@rt-tools/core';
-import { TOGGLE_SIZE_TYPE_ENUM, ToggleSizeType } from './toggle-size.type.enum';
+import { EToggleSizeType, TToggleSizeType } from './toggle-size.type.enum';
 import { BooleanInput } from '@angular/cdk/coercion';
 
 const BEM_BLOCK: string = 'rtui-toggle';
@@ -60,9 +60,9 @@ export class RtuiToggleComponent implements OnInit, ControlValueAccessor {
 
     public formControl: FormControl<boolean> = new FormControl<boolean>(false, { nonNullable: true });
 
-    public label: InputSignal<INullable<string>> = input();
+    public label: InputSignal<TNullable<string>> = input();
     public tooltip: InputSignal<string> = input('');
-    public size: InputSignal<ToggleSizeType> = input<ToggleSizeType>(TOGGLE_SIZE_TYPE_ENUM.MD);
+    public size: InputSignal<TToggleSizeType> = input<TToggleSizeType>(EToggleSizeType.MD);
     public tooltipPosition: InputSignal<TooltipPosition> = input<TooltipPosition>('above');
     public isDisabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
@@ -71,7 +71,7 @@ export class RtuiToggleComponent implements OnInit, ControlValueAccessor {
         transform: booleanAttribute,
     });
 
-    public readonly isMobile: Signal<INullable<boolean>> = this.#breakpointService.isMobile;
+    public readonly isMobile: Signal<TNullable<boolean>> = this.#breakpointService.isMobile;
 
     #onTouched: () => void = noop;
     #onChanged: (value: boolean) => void = noop;

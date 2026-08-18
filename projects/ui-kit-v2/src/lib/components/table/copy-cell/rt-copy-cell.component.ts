@@ -19,7 +19,7 @@ import {
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RtKitLabelKey, rtKitLabel } from '../../../i18n';
+import { TRtKitLabelKey, rtKitLabel } from '../../../i18n';
 import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
 import { IRtIconButton } from '../../icon-button/rt-icon-button.model';
 import { IRtIcon } from '../../icon/rt-icon.model';
@@ -27,7 +27,7 @@ import { IRtIcon } from '../../icon/rt-icon.model';
 const BEM_BLOCK: string = 'rt-copy-cell';
 
 /** Значение для буфера: явная строка/число либо `null` (тогда берётся отображаемый текст). */
-type ICopyValue = string | number | null;
+type TCopyValue = string | number | null;
 
 /**
  * Ключи подписей действия в покое и после копирования (tooltip и aria-label).
@@ -35,8 +35,8 @@ type ICopyValue = string | number | null;
  * Здесь ключи, а не готовый текст: константа вычисляется при загрузке чанка,
  * когда язык страницы ещё не выбран, — переводит сам компонент.
  */
-const COPY_KEY: RtKitLabelKey = 'uiCopy';
-const COPIED_KEY: RtKitLabelKey = 'uiCopied';
+const COPY_KEY: TRtKitLabelKey = 'uiCopy';
+const COPIED_KEY: TRtKitLabelKey = 'uiCopied';
 
 /** Сколько держать состояние «скопировано» перед сбросом иконки/подписи. */
 const RESET_DELAY_MS: number = 2000;
@@ -98,7 +98,7 @@ export class RtCopyCellComponent {
      * Строка для буфера. Если не задана — копируется отображаемый текст
      * (textContent проецируемого контента). Число приводится к строке.
      */
-    public readonly value: InputSignal<ICopyValue> = input<ICopyValue>(null);
+    public readonly value: InputSignal<TCopyValue> = input<TCopyValue>(null);
 
     /** Палитра кнопки копирования. В таблицах — `ghost`; вне таблиц удобнее `secondary`. */
     public readonly variant: InputSignal<IRtIconButton.Variant> = input<IRtIconButton.Variant>('ghost');
@@ -130,7 +130,7 @@ export class RtCopyCellComponent {
 
     /** Явный `value` приоритетнее; иначе — отображаемый текст со схлопнутыми пробелами. */
     #resolveText(): string {
-        const explicit: ICopyValue = this.value();
+        const explicit: TCopyValue = this.value();
         if (explicit !== null) {
             return String(explicit);
         }

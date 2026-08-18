@@ -6,7 +6,7 @@ import { RtTagComponent } from '../../../tag/rt-tag.component';
 import { RtInfoItemComponent } from '../../rt-info-item.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type InfoItemMatrixPart = 'loading' | 'grow' | 'content' | 'themes';
+export type TInfoItemMatrixPart = 'loading' | 'grow' | 'content' | 'themes';
 
 /**
  * Матрицы `rt-info-item` для витрины.
@@ -114,7 +114,7 @@ export type InfoItemMatrixPart = 'loading' | 'grow' | 'content' | 'themes';
     ],
 })
 export class TestRtInfoItemMatrixComponent {
-    public part: InfoItemMatrixPart = 'loading';
+    public part: TInfoItemMatrixPart = 'loading';
 
     public readonly loadingStates: readonly boolean[] = [true, false];
     public readonly growStates: readonly boolean[] = [false, true];

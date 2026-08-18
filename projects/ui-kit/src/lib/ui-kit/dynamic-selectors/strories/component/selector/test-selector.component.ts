@@ -14,12 +14,12 @@ import {
     RtuiDynamicSelectorItemTitleProjectionDirective,
 } from '../../../components';
 
-export type Person = {
+export type TPerson = {
     id: number;
     name: string;
 };
 
-export const createPerson: (index: number) => Person = (index: number): Person => {
+export const createPerson: (index: number) => TPerson = (index: number): TPerson => {
     const gender: 'male' | 'female' = faker.number.int({ min: 0, max: 1 }) ? 'male' : 'female';
 
     return {
@@ -28,10 +28,10 @@ export const createPerson: (index: number) => Person = (index: number): Person =
     };
 };
 
-export const createPersonList: (size: number) => Person[] = (size: number) =>
+export const createPersonList: (size: number) => TPerson[] = (size: number) =>
     Array.from({ length: size }, (_: number, index: number) => createPerson(index + 1));
 
-export const listOfPersons: Person[] = createPersonList(20);
+export const listOfPersons: TPerson[] = createPersonList(20);
 
 const BEM_BLOCK: string = 'app-selector';
 
@@ -74,13 +74,13 @@ export class TestSelectorComponent implements OnInit {
     public isSingleMode: boolean = false;
     public isSelectAllButtonShown: boolean = true;
     public isOpenPopupButtonShown: boolean = true;
-    public entities: Person[] = [];
+    public entities: TPerson[] = [];
     public readonlyEntitiesKeys: number[] = [1, 3, 5];
 
-    public chosenEntities: WritableSignal<Person[]> = signal(listOfPersons.slice(0, 5));
+    public chosenEntities: WritableSignal<TPerson[]> = signal(listOfPersons.slice(0, 5));
 
     public ngOnInit(): void {
-        this.form.patchValue(listOfPersons.slice(0, 5).map((el: Person) => el.id));
+        this.form.patchValue(listOfPersons.slice(0, 5).map((el: TPerson) => el.id));
 
         this.form.valueChanges.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((value: number[]) => {
             // eslint-disable-next-line no-console
@@ -88,12 +88,12 @@ export class TestSelectorComponent implements OnInit {
         });
     }
 
-    public onAdditionalControlClick(entity: Person): void {
+    public onAdditionalControlClick(entity: TPerson): void {
         // eslint-disable-next-line no-console
         console.log('Additional control action: ', entity);
     }
 
-    public onSelectionChange(list: Person[]): void {
+    public onSelectionChange(list: TPerson[]): void {
         // eslint-disable-next-line no-console
         console.log('Model signal: ', this.chosenEntities());
         // eslint-disable-next-line no-console

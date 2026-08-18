@@ -173,6 +173,15 @@ export const pressChunk: (state: IPickerState, chunk: string) => IPickerState = 
 const widest: (choices: readonly IChoice[]) => number = (choices: readonly IChoice[]): number =>
     choices.reduce((width: number, choice: IChoice): number => Math.max(width, choice.name.length), 0);
 
+/** Отметка выбора: одиночный выбор рисуется точкой в скобках, множественный — крестиком. */
+function markOf(marked: boolean, single: boolean): string {
+    if (single) {
+        return marked ? '(•)' : '( )';
+    }
+
+    return marked ? '[x]' : '[ ]';
+}
+
 /** Разметка выбиралки строками. Курсор — стрелкой, выбранное — крестиком или точкой в скобках. */
 export function renderPicker(state: IPickerState, question: string): readonly string[] {
     const width: number = widest(state.choices);
@@ -185,8 +194,7 @@ export function renderPicker(state: IPickerState, question: string): readonly st
         help,
         '',
         ...state.choices.map((choice: IChoice, index: number): string => {
-            const marked: boolean = state.chosen.has(choice.id);
-            const mark: string = state.single ? (marked ? '(•)' : '( )') : marked ? '[x]' : '[ ]';
+            const mark: string = markOf(state.chosen.has(choice.id), state.single);
 
             return `${index === state.cursor ? '❯' : ' '} ${mark} ${choice.name.padEnd(width)}  ${choice.title}`;
         }),

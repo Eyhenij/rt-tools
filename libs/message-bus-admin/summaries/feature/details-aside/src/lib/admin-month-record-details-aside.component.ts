@@ -31,7 +31,6 @@ const BEM_BLOCK: string = 'admin-month-record-details-aside';
 @Component({
     selector: 'admin-month-record-details-aside',
     templateUrl: './admin-month-record-details-aside.component.html',
-    styleUrl: './admin-month-record-details-aside.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components

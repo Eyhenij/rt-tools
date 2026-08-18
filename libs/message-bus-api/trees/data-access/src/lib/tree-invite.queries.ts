@@ -232,5 +232,5 @@ export async function readInvites(prisma: PrismaService, asked: IPageAsked): Pro
         take: asked.size,
     });
 
-    return { rows: rows.map(record), total, page: asked.page, size: asked.size };
+    return { rows: rows.map(record), page: asked.page, size: asked.size, total };
 }

@@ -17,9 +17,9 @@ export default {
     },
 } as Meta<TestRtMenuComponent>;
 
-type Story = StoryObj<TestRtMenuComponent>;
+type TStory = StoryObj<TestRtMenuComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         icon: 'ellipsis-h',

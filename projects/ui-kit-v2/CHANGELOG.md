@@ -1,3 +1,29 @@
+## [Unreleased]
+
+### BREAKING CHANGES
+
+- **rt:ui-kit-v2:** псевдонимы типа получили приставку `T`: в этом дереве `I` носит интерфейс, а `T` — псевдоним типа,
+  и правило линтера требует именно её. Псевдонимов под прежними именами не оставлено — у символа одно имя, и переход
+  состоит в правке импортов. Переименовано 17:
+
+    - `IIconCategory` → `TIconCategory`
+    - `IRtAsideContentLayout` → `TRtAsideContentLayout`
+    - `IRtAsidePosition` → `TRtAsidePosition`
+    - `IRtAsideSize` → `TRtAsideSize`
+    - `IRtDialogSize` → `TRtDialogSize`
+    - `IRtRichEditorToolbar` → `TRtRichEditorToolbar`
+    - `IRtSkeletonRadius` → `TRtSkeletonRadius`
+    - `IRtSkeletonShape` → `TRtSkeletonShape`
+    - `IRtSkeletonSize` → `TRtSkeletonSize`
+    - `IRtTableAriaSort` → `TRtTableAriaSort`
+    - `IRtTextareaResize` → `TRtTextareaResize`
+    - `RtConsumerHandleName` → `TRtConsumerHandleName`
+    - `RtDesignTokenName` → `TRtDesignTokenName`
+    - `RtKitLabelKey` → `TRtKitLabelKey`
+    - `RtKitLabelMap` → `TRtKitLabelMap`
+    - `RtKitLabelParams` → `TRtKitLabelParams`
+    - `RtKitTranslator` → `TRtKitTranslator`
+
 # [0.6.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.5.0...rt-ui-kit-v2@0.6.0) (2026-08-13)
 
 ### Bug Fixes

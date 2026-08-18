@@ -74,7 +74,7 @@ class PrismaDouble {
     }
 
     #account(args: Record<string, unknown>): IAccountRow | undefined {
-        const where: { nameKey?: string; id?: string } = (args['where'] ?? {}) as { nameKey?: string; id?: string };
+        const where: { nameKey?: string; id?: string } = args['where'] ?? {};
 
         return this.accounts.find((row: IAccountRow): boolean => row.nameKey === where.nameKey || row.id === where.id);
     }

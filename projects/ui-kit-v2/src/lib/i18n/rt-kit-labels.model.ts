@@ -5,14 +5,14 @@ import { RT_KIT_LABELS_EN } from './rt-kit-labels.en';
  * что стоит умолчанием, — поэтому ключа, которого кит не рисует, не существует,
  * а опечатка не доживает до рантайма.
  */
-export type RtKitLabelKey = keyof typeof RT_KIT_LABELS_EN;
+export type TRtKitLabelKey = keyof typeof RT_KIT_LABELS_EN;
 
 /**
  * Подстановки в места вида `{{name}}`. Их просят пять подписей: строка
  * сравнения, имя скачиваемого файла, «страница N из M», диапазон записей и
  * подпись раздела в разработке.
  */
-export type RtKitLabelParams = Readonly<Record<string, string | number>>;
+export type TRtKitLabelParams = Readonly<Record<string, string | number>>;
 
 /**
  * Чем кит получает подпись. Даёт её приложение — оно одно знает и язык
@@ -23,7 +23,7 @@ export type RtKitLabelParams = Readonly<Record<string, string | number>>;
  * английское умолчание, потому что пустая `aria`-подпись означает кнопку без
  * имени для скринридера, а это хуже чужого языка.
  */
-export type RtKitTranslator = (key: RtKitLabelKey, params?: RtKitLabelParams) => string;
+export type TRtKitTranslator = (key: TRtKitLabelKey, params?: TRtKitLabelParams) => string;
 
 /**
  * Все подписи разом, ключ → готовая строка.
@@ -33,4 +33,4 @@ export type RtKitTranslator = (key: RtKitLabelKey, params?: RtKitLabelParams) =>
  * Подписи с подстановками в карту не входят — им нужны параметры, и они берутся
  * через `rtKitLabel()`.
  */
-export type RtKitLabelMap = Readonly<Record<RtKitLabelKey, string>>;
+export type TRtKitLabelMap = Readonly<Record<TRtKitLabelKey, string>>;

@@ -7,7 +7,6 @@
  * inserted, so the docs page re-renders never conflict. The click handler is
  * delegated from `document`. Code blocks (`<pre>`) are skipped on purpose.
  */
-/* eslint-disable */
 
 const TOKEN_RE: RegExp = /^--(rt|clr)-[a-z0-9]+(-[a-z0-9]+)*$/;
 const TOKEN_ATTR: string = 'data-rt-token';

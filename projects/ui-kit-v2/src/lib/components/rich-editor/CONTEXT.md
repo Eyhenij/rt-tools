@@ -13,7 +13,7 @@
 | вход          | тип                    | умолчание |
 | ------------- | ---------------------- | --------- |
 | `placeholder` | `string`               | `''`      |
-| `toolbar`     | `IRtRichEditorToolbar` | `'full'`  |
+| `toolbar`     | `TRtRichEditorToolbar` | `'full'`  |
 
 Выход: `enterPressed` — Enter без Shift (перенос при этом гасится).
 

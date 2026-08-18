@@ -18,9 +18,9 @@ export default {
     },
 } as Meta<TestRtThreadListComponent>;
 
-type Story = StoryObj<TestRtThreadListComponent>;
+type TStory = StoryObj<TestRtThreadListComponent>;
 
-export const Default: Story = {
+export const Default: TStory = {
     args: {
         rows: [],
         activeId: null,

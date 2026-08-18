@@ -3,10 +3,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { StoryGridComponent } from '../../../../../showcase/story-grid.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
-import { IRtSkeletonRadius, IRtSkeletonShape, IRtSkeletonSize, RtSkeletonComponent } from '../../rt-skeleton.component';
+import { TRtSkeletonRadius, TRtSkeletonShape, TRtSkeletonSize, RtSkeletonComponent } from '../../rt-skeleton.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type SkeletonMatrixPart = 'shape' | 'radius' | 'animation' | 'themes';
+export type TSkeletonMatrixPart = 'shape' | 'radius' | 'animation' | 'themes';
 
 /**
  * Матрицы `rt-skeleton` для витрины.
@@ -68,17 +68,17 @@ export type SkeletonMatrixPart = 'shape' | 'radius' | 'animation' | 'themes';
     ],
 })
 export class TestRtSkeletonMatrixComponent {
-    public part: SkeletonMatrixPart = 'shape';
+    public part: TSkeletonMatrixPart = 'shape';
 
-    public readonly shapes: readonly IRtSkeletonShape[] = ['rectangle', 'circle', 'square'];
-    public readonly sizes: readonly IRtSkeletonSize[] = ['sm', 'md', 'lg'];
+    public readonly shapes: readonly TRtSkeletonShape[] = ['rectangle', 'circle', 'square'];
+    public readonly sizes: readonly TRtSkeletonSize[] = ['sm', 'md', 'lg'];
 
     /** `null` — не отсутствие значения, а «по фигуре»: у него своя ячейка. */
-    public readonly radii: readonly (IRtSkeletonRadius | null)[] = [null, 'xs', 'sm', 'md', 'lg', 'xl'];
+    public readonly radii: readonly (TRtSkeletonRadius | null)[] = [null, 'xs', 'sm', 'md', 'lg', 'xl'];
 
     public readonly animations: readonly boolean[] = [true, false];
 
-    public readonly radiusLabel: (value: IRtSkeletonRadius | null) => string = (value: IRtSkeletonRadius | null): string =>
+    public readonly radiusLabel: (value: TRtSkeletonRadius | null) => string = (value: TRtSkeletonRadius | null): string =>
         value === null ? 'по фигуре' : value;
 
     public readonly animationLabel: (value: boolean) => string = (value: boolean): string => (value ? 'включено' : 'выключено');

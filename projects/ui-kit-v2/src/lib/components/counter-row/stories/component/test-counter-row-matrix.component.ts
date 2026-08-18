@@ -9,7 +9,7 @@ import { RtToggleSwitchComponent } from '../../../toggle-switch/rt-toggle-switch
 import { RtCounterRowComponent } from '../../rt-counter-row.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type CounterRowMatrixPart = 'anatomy' | 'content' | 'list' | 'themes';
+export type TCounterRowMatrixPart = 'anatomy' | 'content' | 'list' | 'themes';
 
 /** Случай анатомии: есть ли под подписью пояснение и насколько длинна подпись. */
 interface ICounterRowCase {
@@ -125,7 +125,7 @@ function count(value: number): FormControl<number> {
     ],
 })
 export class TestRtCounterRowMatrixComponent {
-    public part: CounterRowMatrixPart = 'anatomy';
+    public part: TCounterRowMatrixPart = 'anatomy';
 
     public readonly rowWidth: string = STORY_FIELD_WIDTH_WIDE;
     public readonly contentNames: readonly string[] = ['счётчик', 'тумблер'];

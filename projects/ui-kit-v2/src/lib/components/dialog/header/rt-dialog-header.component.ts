@@ -13,7 +13,7 @@ import {
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RtKitLabelMap } from '../../../i18n';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '../../../i18n';
 import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
 import { RtDialogRef } from '../rt-dialog-ref';
 
@@ -61,7 +61,7 @@ export class RtDialogHeaderComponent {
     readonly #dialogRef: RtDialogRef | null = inject(RtDialogRef, { optional: true });
 
     /** Текст заголовка — рендерится в `<h2>`. */
-    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     public readonly title: InputSignal<string> = input.required<string>();
 

@@ -5,8 +5,11 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtStepperComponent } from '../../rt-stepper.component';
 import { IRtStepper } from '../../rt-stepper.model';
 
+/** Пояснение шага — одно на все ячейки матрицы. */
+const STEP_DESCRIPTION: string = 'Готовим договор и согласуем условия.';
+
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type StepperMatrixPart = 'position' | 'length' | 'description' | 'edges' | 'themes';
+export type TStepperMatrixPart = 'position' | 'length' | 'description' | 'edges' | 'themes';
 
 /** Случай набора шагов: имя для подписи ячейки, сам набор и номер текущего шага. */
 interface IStepperCase {
@@ -17,14 +20,14 @@ interface IStepperCase {
 
 const STEPS_THREE: readonly IRtStepper.Step[] = [
     { label: 'Заявка', description: 'Проверяем данные организации.' },
-    { label: 'Договор', description: 'Готовим договор и согласуем условия.' },
+    { label: 'Договор', description: STEP_DESCRIPTION },
     { label: 'Подключение', description: 'Открываем доступ и передаём ключи.' },
 ];
 
 const STEPS_FIVE: readonly IRtStepper.Step[] = [
     { label: 'Заявка', description: 'Проверяем данные организации.' },
     { label: 'Проверка', description: 'Сверяем реквизиты с реестром.' },
-    { label: 'Договор', description: 'Готовим договор и согласуем условия.' },
+    { label: 'Договор', description: STEP_DESCRIPTION },
     { label: 'Оплата', description: 'Ждём поступления по счёту.' },
     { label: 'Подключение', description: 'Открываем доступ и передаём ключи.' },
 ];
@@ -97,7 +100,7 @@ const STEPS_FIVE: readonly IRtStepper.Step[] = [
     ],
 })
 export class TestRtStepperMatrixComponent {
-    public part: StepperMatrixPart = 'position';
+    public part: TStepperMatrixPart = 'position';
 
     public readonly stepsThree: readonly IRtStepper.Step[] = STEPS_THREE;
 
@@ -118,7 +121,7 @@ export class TestRtStepperMatrixComponent {
     public readonly descriptions: readonly IStepperCase[] = [
         {
             name: 'один абзац',
-            steps: [{ label: 'Договор', description: 'Готовим договор и согласуем условия.' }],
+            steps: [{ label: 'Договор', description: STEP_DESCRIPTION }],
             currentIndex: 0,
         },
         {

@@ -116,8 +116,8 @@
                 [matDatepicker]="picker"
                 [ngModel]="currentFilter().value"
                 (ngModelChange)="onFilterValueChange($event)" />
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
+            <mat-datepicker-toggle matSuffix [for]="picker" />
+            <mat-datepicker #picker />
         </mat-form-field>
     }
     @case (filterTypes.SELECT) {

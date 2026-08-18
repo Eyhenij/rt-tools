@@ -7,12 +7,12 @@ import { BaseAsyncStoreService } from '@rt-tools/store';
 import { catchError, EMPTY, Observable, Subject, switchMap, tap } from 'rxjs';
 
 /** Что знает панель подробностей: запись, чем кончилось её чтение. Общее объявление — в основании семейства. */
-export type IMonthRecordState = IDetailsState<IMonthRecord.State>;
+export type TMonthRecordState = IDetailsState<IMonthRecord.State>;
 
 /** Сообщения шины стора: по ним панель узнаёт, что запись прочитана. */
 export type TMonthRecordMessage = 'month-record-read';
 
-const INITIAL_STATE: IMonthRecordState = detailsInitialState<IMonthRecord.State>();
+const INITIAL_STATE: TMonthRecordState = detailsInitialState<IMonthRecord.State>();
 
 /**
  * Одна запись месяца — то, что показывает панель подробностей.
@@ -24,7 +24,7 @@ const INITIAL_STATE: IMonthRecordState = detailsInitialState<IMonthRecord.State>
  * которую назвал последней.
  */
 @Injectable({ providedIn: 'root' })
-export class MonthRecordStore extends BaseAsyncStoreService<IMonthRecordState, TMonthRecordMessage> {
+export class MonthRecordStore extends BaseAsyncStoreService<TMonthRecordState, TMonthRecordMessage> {
     readonly #api: SummariesApiService = inject(SummariesApiService);
     readonly #readSource: Subject<string> = new Subject<string>();
 
@@ -37,13 +37,13 @@ export class MonthRecordStore extends BaseAsyncStoreService<IMonthRecordState, T
         this.#readSource
             .pipe(
                 tap((): void => {
-                    this.patchState((state: IMonthRecordState) => ({ ...state, entity: null, fault: null }));
+                    this.patchState((state: TMonthRecordState) => ({ ...state, entity: null, fault: null }));
                     this.startLoading();
                 }),
                 switchMap((id: string): Observable<IMonthRecord.State> =>
                     this.#api.one(id).pipe(
                         tap((entity: IMonthRecord.State): void => {
-                            this.patchState((state: IMonthRecordState) => ({ ...state, entity }));
+                            this.patchState((state: TMonthRecordState) => ({ ...state, entity }));
                             this.setLoadingSuccess();
                             this.dispatch({ type: 'month-record-read' });
                         }),
@@ -71,7 +71,7 @@ export class MonthRecordStore extends BaseAsyncStoreService<IMonthRecordState, T
      * чтения. Пустой панели при этом не бывает ни в одном из случаев.
      */
     #refuse(fault: IReadFault): void {
-        this.patchState((state: IMonthRecordState) => ({ ...state, entity: null, fault }));
+        this.patchState((state: TMonthRecordState) => ({ ...state, entity: null, fault }));
         this.setLoadingFailureVoid(fault, { showNotification: false });
     }
 }

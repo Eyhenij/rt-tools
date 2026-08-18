@@ -1,2 +1,2 @@
 export * from './rt-counter.component';
-export * from './rt-counter.model';
+export * from './rt-counter.const';

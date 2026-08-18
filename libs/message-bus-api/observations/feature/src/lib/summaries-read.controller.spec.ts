@@ -67,7 +67,7 @@ class PrismaDouble {
     }
 
     #picked(args: Record<string, unknown>): IStoredMonthRecord[] {
-        const where: { tree?: { slug: string } } = (args['where'] ?? {}) as { tree?: { slug: string } };
+        const where: { tree?: { slug: string } } = args['where'] ?? {};
         const slug: string | undefined = where.tree?.slug;
 
         return this.#rows.filter((row: IStoredMonthRecord): boolean => !slug || row.tree.slug === slug);
@@ -84,7 +84,7 @@ class PrismaDouble {
     }
 
     #one(args: Record<string, unknown>): Record<string, unknown> | null {
-        const where: { id?: string } = (args['where'] ?? {}) as { id?: string };
+        const where: { id?: string } = args['where'] ?? {};
         const found: IStoredMonthRecord | undefined = this.#rows.find((row: IStoredMonthRecord): boolean => row.id === where.id);
 
         return found ? projected(found, selectOf(args)) : null;

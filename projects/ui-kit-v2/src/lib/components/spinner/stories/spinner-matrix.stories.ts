@@ -15,10 +15,10 @@ export default {
     },
 } as Meta<TestRtSpinnerMatrixComponent>;
 
-type Story = StoryObj<TestRtSpinnerMatrixComponent>;
+type TStory = StoryObj<TestRtSpinnerMatrixComponent>;
 
-export const Color: Story = { args: { part: 'color' } };
+export const Color: TStory = { args: { part: 'color' } };
 
-export const Diameter: Story = { args: { part: 'diameter' } };
+export const Diameter: TStory = { args: { part: 'diameter' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

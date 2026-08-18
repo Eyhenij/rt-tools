@@ -22,14 +22,14 @@ export default {
     },
 } as Meta<TestRtAsideMatrixComponent>;
 
-type Story = StoryObj<TestRtAsideMatrixComponent>;
+type TStory = StoryObj<TestRtAsideMatrixComponent>;
 
-export const Size: Story = { args: { part: 'size' } };
+export const Size: TStory = { args: { part: 'size' } };
 
 /** Своя ширина перекрывает размер — рядом видно, что перекрывает и правда. */
-export const Width: Story = { args: { part: 'width' } };
+export const Width: TStory = { args: { part: 'width' } };
 
 /** Раскладка содержимого: обычная прокручивается целиком, «под вкладки» отдаёт прокрутку внутрь. */
-export const Layout: Story = { args: { part: 'layout' } };
+export const Layout: TStory = { args: { part: 'layout' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

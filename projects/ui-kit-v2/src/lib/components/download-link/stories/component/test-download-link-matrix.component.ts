@@ -6,7 +6,7 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtDownloadLinkComponent } from '../../rt-download-link.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type DownloadLinkMatrixPart = 'label' | 'states' | 'themes';
+export type TDownloadLinkMatrixPart = 'label' | 'states' | 'themes';
 
 /**
  * Матрицы `rt-download-link` для витрины.
@@ -57,7 +57,7 @@ export type DownloadLinkMatrixPart = 'label' | 'states' | 'themes';
     ],
 })
 export class TestRtDownloadLinkMatrixComponent {
-    public part: DownloadLinkMatrixPart = 'label';
+    public part: TDownloadLinkMatrixPart = 'label';
 
     /** Подпись — свободная строка: ряд показывает края, короткое имя и длинное. */
     public readonly labels: readonly string[] = ['Акт.pdf', 'Договор.pdf', 'Выгрузка операций за сентябрь 2026.xlsx'];

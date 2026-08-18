@@ -1,8 +1,9 @@
+// eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
 import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { Meta, StoryObj, applicationConfig } from '@storybook/angular';
 
-import { TOGGLE_SIZE_TYPE_ENUM } from '../toggle-size.type.enum';
+import { EToggleSizeType } from '../toggle-size.type.enum';
 import { TestToggleComponent } from './component/test-toggle.component';
 
 export default {
@@ -10,26 +11,27 @@ export default {
     component: TestToggleComponent,
     decorators: [
         applicationConfig({
+            // eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
             providers: [provideAnimations()],
         }),
     ],
     argTypes: {
         size: {
             type: 'string',
-            options: [TOGGLE_SIZE_TYPE_ENUM.MD, TOGGLE_SIZE_TYPE_ENUM.SM, 'fat'],
+            options: [EToggleSizeType.MD, EToggleSizeType.SM, 'fat'],
             control: { type: 'select' },
         },
     },
 } as Meta<TestToggleComponent>;
 
-type Story = StoryObj<TestToggleComponent>;
+type TStory = StoryObj<TestToggleComponent>;
 
-export const Toggle: Story = {
+export const Toggle: TStory = {
     args: {
         value: true,
         disabled: false,
         tooltipDisabled: false,
-        size: TOGGLE_SIZE_TYPE_ENUM.MD,
+        size: EToggleSizeType.MD,
         label: 'Label Example',
         tooltip: 'Tooltip Example',
         tooltipPosition: 'below',

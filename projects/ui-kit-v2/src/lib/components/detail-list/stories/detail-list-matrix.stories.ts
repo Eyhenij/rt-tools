@@ -15,14 +15,14 @@ export default {
     },
 } as Meta<TestRtDetailListMatrixComponent>;
 
-type Story = StoryObj<TestRtDetailListMatrixComponent>;
+type TStory = StoryObj<TestRtDetailListMatrixComponent>;
 
-export const Loading: Story = { args: { part: 'loading' } };
+export const Loading: TStory = { args: { part: 'loading' } };
 
-export const Value: Story = { args: { part: 'value' } };
+export const Value: TStory = { args: { part: 'value' } };
 
-export const Length: Story = { args: { part: 'length' } };
+export const Length: TStory = { args: { part: 'length' } };
 
-export const Edges: Story = { args: { part: 'edges' } };
+export const Edges: TStory = { args: { part: 'edges' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

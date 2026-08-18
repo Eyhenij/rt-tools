@@ -20,12 +20,13 @@ export default {
     },
 } as Meta<TestRtFilterControlComponent>;
 
-type Story = StoryObj<TestRtFilterControlComponent>;
+type TStory = StoryObj<TestRtFilterControlComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         options: [],
+        // eslint-disable-next-line sonarjs/no-undefined-assignment -- вход кита объявлен с пустотой, и «ничего не выбрано» на нём выражается только ею
         value: undefined,
         ariaLabel: null,
         placeholder: 'Введите значение',

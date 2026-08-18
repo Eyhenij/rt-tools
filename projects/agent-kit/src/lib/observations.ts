@@ -12,6 +12,7 @@
  */
 import { existsSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
+import { byText } from './order.js';
 
 /** Куда `observe.sh` пишет наблюдения. Путь от корня дерева. */
 export const OBSERVATIONS_DIR: string = '.claude/rt-kit/observations';
@@ -108,6 +109,26 @@ export interface IReadResult {
     readonly silent: boolean;
 }
 
+/** Раньше ли день черты. Дни записаны `ГГГГ-ММ-ДД`, и порядок строк у них хронологический. */
+function isBefore(day: string, edge: string): boolean {
+    return byText(day, edge) < 0;
+}
+
+/** Записи одного дня из его файла. Строка, которая не разбирается, пропускается молча. */
+function observationsOfDay(path: string): readonly IObservation[] {
+    const found: IObservation[] = [];
+
+    for (const line of readFileSync(path, 'utf8').split('\n')) {
+        const one: IObservation | null = parseObservation(line);
+
+        if (one) {
+            found.push(one);
+        }
+    }
+
+    return found;
+}
+
 /**
  * Наблюдения за отрезок и уборка того, что старше срока хранения.
  *
@@ -125,24 +146,21 @@ export function readObservations(root: string, today: string, days: number): IRe
     const observations: IObservation[] = [];
     const swept: string[] = [];
 
-    for (const name of readdirSync(dir).sort()) {
+    for (const name of readdirSync(dir).sort(byText)) {
         const day: string | null = dayOf(name);
+
         if (!day) {
             continue;
         }
-        if (day < keepFrom) {
+
+        if (isBefore(day, keepFrom)) {
             rmSync(join(dir, name), { force: true });
             swept.push(name);
-            continue;
-        }
-        if (day < since) {
-            continue;
-        }
-        for (const line of readFileSync(join(dir, name), 'utf8').split('\n')) {
-            const found: IObservation | null = parseObservation(line);
-            if (found) {
-                observations.push(found);
-            }
+        } else if (isBefore(day, since)) {
+            // День старше запрошенного отрезка, но моложе черты хранения: файл остаётся лежать,
+            // а в этот отчёт не идёт
+        } else {
+            observations.push(...observationsOfDay(join(dir, name)));
         }
     }
 
@@ -186,8 +204,8 @@ export function summarize(observations: readonly IObservation[], known: readonly
         denials: countBy(denials.map((entry: IObservation): string => entry.resource)),
         kinds: countBy(denials.map((entry: IObservation): string => entry.kind)),
         guards: countBy(of(observations, 'guard-deny').map((entry: IObservation): string => entry.resource)),
-        unused: known.filter((name: string): boolean => !loaded.has(name)).sort(),
-        versions: [...new Set(observations.map((entry: IObservation): string => entry.version).filter(Boolean))].sort(),
+        unused: known.filter((name: string): boolean => !loaded.has(name)).sort(byText),
+        versions: [...new Set(observations.map((entry: IObservation): string => entry.version).filter(Boolean))].sort(byText),
         total: observations.length,
     };
 }

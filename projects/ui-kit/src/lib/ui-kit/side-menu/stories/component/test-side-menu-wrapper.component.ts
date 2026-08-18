@@ -8,6 +8,9 @@ import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { ISideMenu } from '../../side-menu.types';
 import { RtuiSideMenuComponent, RtuiSideMenuFooterDirective, RtuiSideMenuHeaderDirective } from '../../menu/rtui-side-menu.component';
 
+/** Длинное имя пункта: им показывают, как меню переносит текст. */
+const LONG_ITEM_NAME: string = 'Item 2 Lorem Ipsum is simply dummy text of the printing and typesetting industry';
+
 export const MENU_ITEMS: Readonly<ISideMenu.Item[]> = Object.freeze([
     {
         id: 1,
@@ -61,7 +64,7 @@ export const MENU_ITEMS: Readonly<ISideMenu.Item[]> = Object.freeze([
                     { id: 27, name: 'Item 1', link: '/test/level1/1', iconButton: { icon: 'add', data: 'data' } },
                     {
                         id: 28,
-                        name: 'Item 2 Lorem Ipsum is simply dummy text of the printing and typesetting industry',
+                        name: LONG_ITEM_NAME,
                         link: '/test/level1/2',
                         iconButton: { icon: 'edit', data: 'data' },
                     },
@@ -78,7 +81,7 @@ export const MENU_ITEMS: Readonly<ISideMenu.Item[]> = Object.freeze([
                             },
                             {
                                 id: 31,
-                                name: 'Item 2 Lorem Ipsum is simply dummy text of the printing and typesetting industry',
+                                name: LONG_ITEM_NAME,
                                 link: '/test/level1/level2/2',
                             },
                             {
@@ -101,7 +104,7 @@ export const MENU_ITEMS: Readonly<ISideMenu.Item[]> = Object.freeze([
                                     },
                                     {
                                         id: 35,
-                                        name: 'Item 2 Lorem Ipsum is simply dummy text of the printing and typesetting industry',
+                                        name: LONG_ITEM_NAME,
                                         link: '/test/level1/level2/level3/2',
                                     },
                                 ],

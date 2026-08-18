@@ -76,7 +76,9 @@
                                                             <span
                                                                 rtElem="disabled-slot"
                                                                 role="none"
-                                                                [rtTooltip]="sectionInProgressLabel(entry.label)">
+                                                                [rtTooltip]="
+                                                                    'uiSectionInProgress' | rtKitLabel: translate() : { label: entry.label }
+                                                                ">
                                                                 <button
                                                                     rtElem="link"
                                                                     role="menuitem"
@@ -137,7 +139,10 @@
                         }
                         @default {
                             @if (section.disabled) {
-                                <span rtElem="disabled-slot" role="none" [rtTooltip]="sectionInProgressLabel(section.label)">
+                                <span
+                                    rtElem="disabled-slot"
+                                    role="none"
+                                    [rtTooltip]="'uiSectionInProgress' | rtKitLabel: translate() : { label: section.label }">
                                     <button rtElem="link" type="button" [rtMod]="{ disabled: true }" [attr.aria-disabled]="true">
                                         @if (section.icon) {
                                             <rt-icon rtElem="icon" size="sm" [name]="section.icon" />
@@ -250,7 +255,10 @@
                                                     }
                                                 </a>
                                             } @else if (entry.disabled) {
-                                                <span rtElem="disabled-slot" role="none" [rtTooltip]="sectionInProgressLabel(entry.label)">
+                                                <span
+                                                    rtElem="disabled-slot"
+                                                    role="none"
+                                                    [rtTooltip]="'uiSectionInProgress' | rtKitLabel: translate() : { label: entry.label }">
                                                     <button
                                                         rtElem="link"
                                                         type="button"
@@ -314,7 +322,10 @@
                     }
                     @default {
                         @if (section.disabled) {
-                            <span rtElem="disabled-slot" role="none" [rtTooltip]="sectionInProgressLabel(section.label)">
+                            <span
+                                rtElem="disabled-slot"
+                                role="none"
+                                [rtTooltip]="'uiSectionInProgress' | rtKitLabel: translate() : { label: section.label }">
                                 <button
                                     rtElem="link"
                                     type="button"

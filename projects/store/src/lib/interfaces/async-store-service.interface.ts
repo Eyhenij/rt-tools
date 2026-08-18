@@ -1,7 +1,7 @@
 import { Signal } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { ModelStatus } from '../enums';
+import { EModelStatus } from '../enums';
 import { IBaseStoreService } from './base-store-service.interface';
 
 export interface ISetPropertiesConfig {
@@ -29,15 +29,15 @@ export interface IBaseAsyncStoreService<STATE_TYPE extends object, MSG_TYPE exte
     pending: Signal<boolean>;
 
     /** @description Indicates failure status of the first request for getting list of Entities */
-    requestStatus: Signal<ModelStatus>;
+    requestStatus: Signal<EModelStatus>;
     /** @description Indicates statuses of the first request for getting list of Entities */
-    loadingStatus: Signal<ModelStatus>;
+    loadingStatus: Signal<EModelStatus>;
     /** @description Indicates statuses of the following requests for getting list of Entities */
-    fetchingStatus: Signal<ModelStatus>;
+    fetchingStatus: Signal<EModelStatus>;
     /** @description Indicates statuses of create/update requests */
-    upsertStatus: Signal<ModelStatus>;
+    upsertStatus: Signal<EModelStatus>;
     /** @description Indicates statuses of delete requests */
-    deleteStatus: Signal<ModelStatus>;
+    deleteStatus: Signal<EModelStatus>;
     // endregion
 
     // ================================

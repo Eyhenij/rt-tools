@@ -7,12 +7,12 @@ import { BaseAsyncStoreService } from '@rt-tools/store';
 import { catchError, EMPTY, Observable, Subject, switchMap, tap } from 'rxjs';
 
 /** Что знает панель подробностей: запись, чем кончилось её чтение. Общее объявление — в основании семейства. */
-export type IProposalState = IDetailsState<IProposal.State>;
+export type TProposalState = IDetailsState<IProposal.State>;
 
 /** Сообщения шины стора: по ним панель узнаёт, что запись прочитана. */
 export type TProposalMessage = 'proposal-read';
 
-const INITIAL_STATE: IProposalState = detailsInitialState<IProposal.State>();
+const INITIAL_STATE: TProposalState = detailsInitialState<IProposal.State>();
 
 /**
  * Одно предложение — то, что показывает панель подробностей.
@@ -24,7 +24,7 @@ const INITIAL_STATE: IProposalState = detailsInitialState<IProposal.State>();
  * которую назвал последней.
  */
 @Injectable({ providedIn: 'root' })
-export class ProposalStore extends BaseAsyncStoreService<IProposalState, TProposalMessage> {
+export class ProposalStore extends BaseAsyncStoreService<TProposalState, TProposalMessage> {
     readonly #api: ProposalsApiService = inject(ProposalsApiService);
     readonly #readSource: Subject<string> = new Subject<string>();
 
@@ -37,13 +37,13 @@ export class ProposalStore extends BaseAsyncStoreService<IProposalState, TPropos
         this.#readSource
             .pipe(
                 tap((): void => {
-                    this.patchState((state: IProposalState) => ({ ...state, entity: null, fault: null }));
+                    this.patchState((state: TProposalState) => ({ ...state, entity: null, fault: null }));
                     this.startLoading();
                 }),
                 switchMap((id: string): Observable<IProposal.State> =>
                     this.#api.one(id).pipe(
                         tap((entity: IProposal.State): void => {
-                            this.patchState((state: IProposalState) => ({ ...state, entity }));
+                            this.patchState((state: TProposalState) => ({ ...state, entity }));
                             this.setLoadingSuccess();
                             this.dispatch({ type: 'proposal-read' });
                         }),
@@ -71,7 +71,7 @@ export class ProposalStore extends BaseAsyncStoreService<IProposalState, TPropos
      * чтения. Пустой панели при этом не бывает ни в одном из случаев.
      */
     #refuse(fault: IReadFault): void {
-        this.patchState((state: IProposalState) => ({ ...state, entity: null, fault }));
+        this.patchState((state: TProposalState) => ({ ...state, entity: null, fault }));
         this.setLoadingFailureVoid(fault, { showNotification: false });
     }
 }

@@ -13,9 +13,9 @@ export default {
     },
 } as Meta<TestRtNotificationsBellComponent>;
 
-type Story = StoryObj<TestRtNotificationsBellComponent>;
+type TStory = StoryObj<TestRtNotificationsBellComponent>;
 
-export const Default: Story = {
+export const Default: TStory = {
     args: {
         unread: false,
         ariaLabel: '',

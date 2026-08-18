@@ -20,13 +20,13 @@ export default {
     },
 } as Meta<TestRtToolbarMatrixComponent>;
 
-type Story = StoryObj<TestRtToolbarMatrixComponent>;
+type TStory = StoryObj<TestRtToolbarMatrixComponent>;
 
-export const Slots: Story = { args: { part: 'slots' } };
+export const Slots: TStory = { args: { part: 'slots' } };
 
-export const Fill: Story = { args: { part: 'fill' } };
+export const Fill: TStory = { args: { part: 'fill' } };
 
 /** Разницу видно только на узком кадре: в широком обе панели одинаковы. */
-export const Dense: Story = { args: { part: 'dense' } };
+export const Dense: TStory = { args: { part: 'dense' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

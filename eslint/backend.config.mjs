@@ -13,6 +13,22 @@
 export const backendConfig = [
     {
         files: ['**/*.ts'],
+        languageOptions: {
+            // Узловые глобали объявлены здесь по той же причине, что и правила ниже: цель линта
+            // зовётся из каталога проекта, и путь от корня дерева не совпадает там ни с одним
+            // файлом. Корневой конфиг их объявляет тоже — для того, что линтуется от корня.
+            globals: {
+                process: 'readonly',
+                Buffer: 'readonly',
+                require: 'readonly',
+                module: 'writable',
+                __dirname: 'readonly',
+                __filename: 'readonly',
+                global: 'readonly',
+                // Неймспейс типов node: `NodeJS.ProcessEnv`, `NodeJS.WriteStream`
+                NodeJS: 'readonly',
+            },
+        },
         rules: {
             // `inject()` — это функция каркаса фронта; в приёмнике её нет вовсе, и правка,
             // которую предлагает правило, не компилируется.

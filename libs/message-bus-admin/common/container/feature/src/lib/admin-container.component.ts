@@ -38,7 +38,6 @@ const BEM_BLOCK: string = 'admin-container';
 @Component({
     selector: 'admin-container',
     templateUrl: './admin-container.component.html',
-    styleUrl: './admin-container.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         RouterOutlet,

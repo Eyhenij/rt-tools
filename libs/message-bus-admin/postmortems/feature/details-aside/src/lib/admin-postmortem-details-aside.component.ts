@@ -31,7 +31,6 @@ const BEM_BLOCK: string = 'admin-postmortem-details-aside';
 @Component({
     selector: 'admin-postmortem-details-aside',
     templateUrl: './admin-postmortem-details-aside.component.html',
-    styleUrl: './admin-postmortem-details-aside.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components

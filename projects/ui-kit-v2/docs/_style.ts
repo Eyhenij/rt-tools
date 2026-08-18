@@ -1,3 +1,5 @@
+/** Подложка карточек страницы-обзора — одна на все блоки. */
+const SURFACE_SUBTLE: string = 'var(--rt-color-bg-surface-subtle)';
 /**
  * Общее оформление страниц документации.
  *
@@ -14,7 +16,7 @@ export const intro: object = { fontSize: 14, lineHeight: 1.6, opacity: 0.9 };
 /** Выноска с правилом: левая полоса вместо рамки — она не спорит с таблицами. */
 export const callout: object = {
     borderLeft: '3px solid var(--rt-color-action-primary)',
-    background: 'var(--rt-color-bg-surface-subtle)',
+    background: SURFACE_SUBTLE,
     padding: '10px 14px',
     fontSize: 13,
     marginBlock: 14,
@@ -56,7 +58,7 @@ export const table: object = {
 export const th: object = {
     textAlign: 'left',
     padding: '11px 14px',
-    background: 'var(--rt-color-bg-surface-subtle)',
+    background: SURFACE_SUBTLE,
     borderBottom: RULE,
     fontWeight: 600,
 };
@@ -81,7 +83,7 @@ export const scaleRow: (odd: boolean) => object = (odd: boolean): object => ({
     gap: 12,
     padding: '5px 10px',
     borderBottom: HAIRLINE,
-    background: odd ? 'var(--rt-color-bg-surface-subtle)' : 'transparent',
+    background: odd ? SURFACE_SUBTLE : 'transparent',
 });
 export const scaleName: object = { fontFamily: MONO, fontSize: 11.5 };
 export const scaleValue: object = { fontFamily: MONO, fontSize: 11.5, opacity: 0.7, textAlign: 'right' };

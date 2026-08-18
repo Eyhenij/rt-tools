@@ -16,22 +16,22 @@ export default {
     },
 } as Meta<TestRtFileCardMatrixComponent>;
 
-type Story = StoryObj<TestRtFileCardMatrixComponent>;
+type TStory = StoryObj<TestRtFileCardMatrixComponent>;
 
-export const Size: Story = { args: { part: 'size' } };
+export const Size: TStory = { args: { part: 'size' } };
 
-export const Actions: Story = { args: { part: 'actions' } };
+export const Actions: TStory = { args: { part: 'actions' } };
 
-export const Name: Story = { args: { part: 'name' } };
+export const Name: TStory = { args: { part: 'name' } };
 
-export const Weight: Story = { args: { part: 'weight' } };
+export const Weight: TStory = { args: { part: 'weight' } };
 
 /** Наведение и фокус стилизованы у самой карточки — аддон псевдосостояний получает спуск до неё. */
-export const States: Story = {
+export const States: TStory = {
     args: { part: 'states' },
     parameters: { pseudo: storyPseudoParameters('.rt-file-card') },
 };
 
-export const Disabled: Story = { args: { part: 'disabled' } };
+export const Disabled: TStory = { args: { part: 'disabled' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

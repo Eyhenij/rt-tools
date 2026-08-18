@@ -13,9 +13,9 @@ export default {
     },
 } as Meta<TestRtBarListComponent>;
 
-type Story = StoryObj<TestRtBarListComponent>;
+type TStory = StoryObj<TestRtBarListComponent>;
 
-export const Default: Story = {
+export const Default: TStory = {
     parameters: storySnapshotSkip(
         'обёртка отдаёт пустой `rows`, и вместо списка в кадре пустое состояние; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
     ),

@@ -18,7 +18,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 import { BlockDirective, BreakpointService, ConcatClassesPipe, ElemDirective, ModDirective } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 import { isNumber, isString } from '@rt-tools/utils';
 import { EmptyToDashPipe, RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtHideTooltipDirective } from '../../../tooltip';
@@ -56,14 +56,16 @@ export class TableBaseCellComponent<T = { [key: string]: unknown }> {
     readonly #sanitizer: DomSanitizer = inject(DomSanitizer);
 
     /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
     protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
 
     protected readonly cellValue: Signal<T[keyof T] | string | number> = computed(() => {
-        const transformFn: INullable<(value: T[keyof T]) => string | number> = this.column()?.transform;
+        const transformFn: TNullable<(value: T[keyof T]) => string | number> = this.column()?.transform;
         return transformFn ? transformFn(this.row()[this.column().propName]) : this.row()[this.column().propName];
     });
     protected readonly cellIconStyle: Signal<SafeStyle | undefined> = computed(() => {
         const transformFn: ((value: T[keyof T]) => string) | undefined = this.column()?.iconTransform;
+        // eslint-disable-next-line sonarjs/no-angular-bypass-sanitization -- строка стиля собрана китом из настройки колонок, а не из значения, введённого пользователем
         return transformFn ? this.#sanitizer.bypassSecurityTrustStyle(transformFn(this.row()[this.column().propName])) : undefined;
     });
     protected readonly tooltipValue: Signal<string> = computed(() => this.#covertCellValueToString(this.cellValue()));
@@ -78,7 +80,7 @@ export class TableBaseCellComponent<T = { [key: string]: unknown }> {
      * @deprecated Кит определяет его сам — `BreakpointService` из `@rt-tools/core`. Вход
      * оставлен ради приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
      */
-    public isMobile: InputSignal<INullable<boolean>> = input<INullable<boolean>>(null);
+    public isMobile: InputSignal<TNullable<boolean>> = input<TNullable<boolean>>(null);
 
     @HostBinding('style')
     public get style(): SafeStyle | undefined {
@@ -92,6 +94,7 @@ export class TableBaseCellComponent<T = { [key: string]: unknown }> {
             style += `min-width: ${this.column().minWidth};`;
         }
 
+        // eslint-disable-next-line sonarjs/no-angular-bypass-sanitization -- строка стиля собрана китом из настройки колонок, а не из значения, введённого пользователем
         return !!style.length ? this.#sanitizer.bypassSecurityTrustStyle(style) : undefined;
     }
 

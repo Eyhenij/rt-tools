@@ -15,10 +15,10 @@ export default {
     },
 } as Meta<TestRtLiveBadgeMatrixComponent>;
 
-type Story = StoryObj<TestRtLiveBadgeMatrixComponent>;
+type TStory = StoryObj<TestRtLiveBadgeMatrixComponent>;
 
-export const Active: Story = { args: { part: 'active' } };
+export const Active: TStory = { args: { part: 'active' } };
 
-export const Label: Story = { args: { part: 'label' } };
+export const Label: TStory = { args: { part: 'label' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

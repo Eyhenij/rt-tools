@@ -91,7 +91,7 @@ The button is fully configurable through inputs (all with sensible defaults):
 | `radius` | `'none' \| 'sm' \| 'md' \| 'lg' \| 'full'` | config / `'full'` |
 | `design` | `'custom' \| 'material'` | config / `'custom'` |
 | `icon` / `iconPosition` | `string` / `'start' \| 'end'` | `''` / `'start'` |
-| `iconSize` | `RtuiIconSizeType` | derived from `size` |
+| `iconSize` | `TRtuiIconSizeType` | derived from `size` |
 | `text` | `string` | `''` |
 | `loading` / `disabled` | `boolean` | `false` |
 

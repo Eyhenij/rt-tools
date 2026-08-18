@@ -6,7 +6,7 @@ import { IQuillDelta } from '../../../../util/quill-delta.model';
 import { RtDeltaViewComponent } from '../../rt-delta-view.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type DeltaViewMatrixPart = 'formats' | 'blocks' | 'empty' | 'themes';
+export type TDeltaViewMatrixPart = 'formats' | 'blocks' | 'empty' | 'themes';
 
 /** Случай модели: подпись для ряда и сама модель. */
 interface IDeltaCase {
@@ -82,7 +82,7 @@ interface IDeltaCase {
     ],
 })
 export class TestRtDeltaViewMatrixComponent {
-    public part: DeltaViewMatrixPart = 'formats';
+    public part: TDeltaViewMatrixPart = 'formats';
 
     public readonly inlineCases: readonly IDeltaCase[] = [
         { name: 'обычный', delta: { ops: [{ insert: 'Обычный текст\n' }] } },

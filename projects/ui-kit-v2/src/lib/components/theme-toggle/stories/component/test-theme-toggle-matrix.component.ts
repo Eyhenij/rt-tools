@@ -5,7 +5,7 @@ import { RtThemeToggleComponent } from '../../rt-theme-toggle.component';
 import { IRtThemeToggle } from '../../rt-theme-toggle.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type ThemeToggleMatrixPart = 'appearance';
+export type TThemeToggleMatrixPart = 'appearance';
 
 /**
  * Матрицы `rt-theme-toggle` для витрины.
@@ -54,7 +54,7 @@ export type ThemeToggleMatrixPart = 'appearance';
     ],
 })
 export class TestRtThemeToggleMatrixComponent {
-    public part: ThemeToggleMatrixPart = 'appearance';
+    public part: TThemeToggleMatrixPart = 'appearance';
 
     public readonly appearances: readonly IRtThemeToggle.Appearance[] = ['icon', 'switch'];
 }

@@ -1,7 +1,7 @@
 # isEmptyObject
 
 ```ts
-isEmptyObject(value: INullable<Record<string, unknown>>): boolean
+isEmptyObject(value: TNullable<Record<string, unknown>>): boolean
 ```
 
 Reports whether an object has no own enumerable string keys. Nullish counts as empty.

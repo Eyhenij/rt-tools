@@ -16,22 +16,22 @@ export default {
     },
 } as Meta<TestRtInputMatrixComponent>;
 
-type Story = StoryObj<TestRtInputMatrixComponent>;
+type TStory = StoryObj<TestRtInputMatrixComponent>;
 
-export const Size: Story = { args: { part: 'size' } };
+export const Size: TStory = { args: { part: 'size' } };
 
-export const Type: Story = { args: { part: 'type' } };
+export const Type: TStory = { args: { part: 'type' } };
 
-export const Icons: Story = { args: { part: 'icons' } };
+export const Icons: TStory = { args: { part: 'icons' } };
 
-export const Filling: Story = { args: { part: 'filling' } };
+export const Filling: TStory = { args: { part: 'filling' } };
 
-export const Bordered: Story = { args: { part: 'bordered' } };
+export const Bordered: TStory = { args: { part: 'bordered' } };
 
 /** Наведение и фокус внутри проставляет аддон псевдосостояний по признаку `data-story-state`. */
-export const States: Story = {
+export const States: TStory = {
     args: { part: 'states' },
     parameters: { pseudo: STORY_PSEUDO_PARAMETERS },
 };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

@@ -6,7 +6,7 @@ import { RtCalendarComponent } from '../../rt-calendar.component';
 import { ERtCalendarDayState, IRtCalendar } from '../../rt-calendar.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type CalendarMatrixPart = 'dayState' | 'range' | 'months' | 'nav' | 'sublabels' | 'edges' | 'themes';
+export type TCalendarMatrixPart = 'dayState' | 'range' | 'months' | 'nav' | 'sublabels' | 'edges' | 'themes';
 
 const WEEKDAYS: readonly string[] = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
@@ -115,7 +115,7 @@ function month(key: string, label: string, leading: number, pick: (index: number
     ],
 })
 export class TestRtCalendarMatrixComponent {
-    public part: CalendarMatrixPart = 'dayState';
+    public part: TCalendarMatrixPart = 'dayState';
 
     public readonly weekdays: readonly string[] = WEEKDAYS;
 
@@ -207,8 +207,17 @@ export class TestRtCalendarMatrixComponent {
 
     public readonly countLabel: (value: number) => string = (value: number): string => `${value} мес.`;
 
-    public readonly navLabel: (value: { prev: boolean; next: boolean }) => string = (value: { prev: boolean; next: boolean }): string =>
-        value.prev && value.next ? 'обе стрелки' : value.prev ? 'только назад' : value.next ? 'только вперёд' : 'обе выключены';
+    public readonly navLabel: (value: { prev: boolean; next: boolean }) => string = (value: { prev: boolean; next: boolean }): string => {
+        if (value.prev && value.next) {
+            return 'обе стрелки';
+        }
+
+        if (value.prev) {
+            return 'только назад';
+        }
+
+        return value.next ? 'только вперёд' : 'обе выключены';
+    };
 
     public readonly sublabelLabel: (value: boolean) => string = (value: boolean): string =>
         value ? 'подписи грузятся' : 'подписи на месте';

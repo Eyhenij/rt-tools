@@ -11,7 +11,7 @@ import { RtInputComponent } from '../../rt-input.component';
 import { IRtInput } from '../../rt-input.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type InputMatrixPart = 'size' | 'type' | 'icons' | 'filling' | 'bordered' | 'states' | 'themes';
+export type TInputMatrixPart = 'size' | 'type' | 'icons' | 'filling' | 'bordered' | 'states' | 'themes';
 
 /** Тип поля вместе с правдоподобным значением: пустое поле всех четырёх типов выглядит одинаково. */
 interface IInputTypeCase {
@@ -201,7 +201,7 @@ function invalid(): FormControl<string> {
     ],
 })
 export class TestRtInputMatrixComponent {
-    public part: InputMatrixPart = 'size';
+    public part: TInputMatrixPart = 'size';
 
     public readonly fieldWidth: string = STORY_FIELD_WIDTH;
     public readonly sizes: readonly IRtInput.Size[] = ['sm', 'md', 'lg'];

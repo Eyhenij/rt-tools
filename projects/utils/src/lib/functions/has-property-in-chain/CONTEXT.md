@@ -1,10 +1,10 @@
-# hasPropertyInChain / HAS_OWN_SCOPE_ENUM
+# hasPropertyInChain / EHasOwnScope
 
 ```ts
-enum HAS_OWN_SCOPE_ENUM { ANY = 'any', OWN = 'own', INHERITED = 'inherited' }
-type IHasScopeType = HAS_OWN_SCOPE_ENUM.ANY | HAS_OWN_SCOPE_ENUM.OWN | HAS_OWN_SCOPE_ENUM.INHERITED;
+enum EHasOwnScope { ANY = 'any', OWN = 'own', INHERITED = 'inherited' }
+type THasScopeType = EHasOwnScope.ANY | EHasOwnScope.OWN | EHasOwnScope.INHERITED;
 
-hasPropertyInChain(obj: unknown, key: PropertyKey, scope?: IHasScopeType): boolean
+hasPropertyInChain(obj: unknown, key: PropertyKey, scope?: THasScopeType): boolean
 ```
 
 Property-existence check with an explicit answer to "own, inherited, or either?".

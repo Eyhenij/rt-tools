@@ -18,12 +18,12 @@ export default {
     },
 } as Meta<TestRtFileInputMatrixComponent>;
 
-type Story = StoryObj<TestRtFileInputMatrixComponent>;
+type TStory = StoryObj<TestRtFileInputMatrixComponent>;
 
-export const Filling: Story = { args: { part: 'filling' } };
+export const Filling: TStory = { args: { part: 'filling' } };
 
-export const Button: Story = { args: { part: 'button' } };
+export const Button: TStory = { args: { part: 'button' } };
 
-export const States: Story = { args: { part: 'states' } };
+export const States: TStory = { args: { part: 'states' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

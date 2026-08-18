@@ -11,7 +11,7 @@ import { RT_ASIDE_DATA } from './rt-aside.tokens';
 /**
  * Позиционирование side-sheet — у какого края viewport "приклеена" панель.
  */
-export type IRtAsidePosition = 'right' | 'left';
+export type TRtAsidePosition = 'right' | 'left';
 
 /**
  * Конфигурация открытия side-sheet через `RtAsideService.open()`.
@@ -33,7 +33,7 @@ export interface IRtAsideConfig<TData = unknown> {
     closeOnEscape?: boolean;
 
     /** К какому краю viewport "приклеить" панель. По дефолту `"right"`. */
-    position?: IRtAsidePosition;
+    position?: TRtAsidePosition;
 }
 
 /**
@@ -151,7 +151,7 @@ export class RtAsideService {
         component: ComponentType<TComponent>,
         config?: IRtAsideConfig<TData>
     ): RtAsideRef<TResult> {
-        const position: IRtAsidePosition = config?.position ?? 'right';
+        const position: TRtAsidePosition = config?.position ?? 'right';
         const positionStrategy: PositionStrategy =
             position === 'right'
                 ? this.#overlay.position().global().right('0').top('0')

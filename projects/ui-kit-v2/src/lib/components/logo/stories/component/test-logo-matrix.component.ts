@@ -6,7 +6,7 @@ import { RtLogoComponent } from '../../rt-logo.component';
 import { IRtLogo } from '../../rt-logo.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type LogoMatrixPart = 'variant' | 'height' | 'aspect' | 'themes';
+export type TLogoMatrixPart = 'variant' | 'height' | 'aspect' | 'themes';
 
 /**
  * Матрицы `rt-logo` для витрины.
@@ -66,7 +66,7 @@ export type LogoMatrixPart = 'variant' | 'height' | 'aspect' | 'themes';
     ],
 })
 export class TestRtLogoMatrixComponent {
-    public part: LogoMatrixPart = 'variant';
+    public part: TLogoMatrixPart = 'variant';
 
     public readonly variants: readonly IRtLogo.Variant[] = ['wordmark', 'lockup'];
 

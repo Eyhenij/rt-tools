@@ -22,7 +22,7 @@ import { filter, map } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RT_KIT_TRANSLATOR, RtKitLabelMap, RtKitTranslator, rtKitLabel } from '../../i18n';
+import { RT_KIT_LABELS, RT_KIT_TRANSLATOR, RtKitLabelPipe, TRtKitLabelMap, TRtKitTranslator, rtKitLabel } from '../../i18n';
 import { BreakpointsService } from '../../platform';
 
 import { RtIconComponent } from '../icon';
@@ -57,6 +57,7 @@ const BEM_BLOCK: string = 'rt-page-header';
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
+        RtKitLabelPipe,
         // Angular
         RouterLink,
         RouterLinkActive,
@@ -90,9 +91,12 @@ export class RtPageHeaderComponent {
 
     readonly #breakpoints: BreakpointsService = inject(BreakpointsService);
 
-    readonly #translate: Signal<RtKitTranslator> = inject(RT_KIT_TRANSLATOR);
+    readonly #translate: Signal<TRtKitTranslator> = inject(RT_KIT_TRANSLATOR);
 
-    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+    /** Переводчик для чистого пайпа подписи: шаблон отдаёт его вторым доводом. */
+    protected readonly translate: Signal<TRtKitTranslator> = this.#translate;
+
+    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly mobileNavPopoverRef: Signal<RtPopoverDirective | undefined> = viewChild('mobileNavPopover', {
         read: RtPopoverDirective,
@@ -160,15 +164,6 @@ export class RtPageHeaderComponent {
                 this.mobileNavPopoverRef()?.close();
             }
         });
-    }
-
-    /**
-     * Подпись раздела в разработке. Методом, а не сигналом: имя раздела приходит
-     * элементом цикла, и до него подписи ещё нет. Метод читает сигнал
-     * переводчика, поэтому смена языка перерисовывает разметку и зовёт его заново.
-     */
-    protected sectionInProgressLabel(label: string): string {
-        return this.#translate()('uiSectionInProgress', { label });
     }
 
     protected onItemClick(id: string): void {

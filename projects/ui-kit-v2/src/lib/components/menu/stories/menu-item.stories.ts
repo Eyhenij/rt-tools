@@ -22,9 +22,9 @@ export default {
     },
 } as Meta<TestRtMenuItemComponent>;
 
-type Story = StoryObj<TestRtMenuItemComponent>;
+type TStory = StoryObj<TestRtMenuItemComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         icon: null,

@@ -78,7 +78,7 @@ export const storyStateLabel: (value: IStoryState) => string = (value: IStorySta
  */
 export function storyPseudoParameters(target: string = ''): Readonly<Record<string, string>> {
     const at: (state: string) => string = (state: string): string =>
-        `[${STORY_STATE_ATTRIBUTE}='${state}']${target === '' ? '' : ` ${target}`}`;
+        `[${STORY_STATE_ATTRIBUTE}='${state}']${target === '' ? '' : ' ' + target}`;
 
     return {
         hover: at('hover'),

@@ -7,8 +7,11 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtToastComponent } from '../../rt-toast.component';
 import { IRtToaster } from '../../rt-toaster.model';
 
+/** Сообщение всплывающей подсказки — одно на все ячейки матрицы. */
+const TOAST_MESSAGE: string = 'Договор сохранён';
+
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type ToastMatrixPart = 'severity' | 'parts' | 'actions' | 'edges' | 'themes';
+export type TToastMatrixPart = 'severity' | 'parts' | 'actions' | 'edges' | 'themes';
 
 /**
  * Ничего не делающее действие: в витрине важен вид кнопки, а не её последствие.
@@ -18,7 +21,7 @@ export type ToastMatrixPart = 'severity' | 'parts' | 'actions' | 'edges' | 'them
  * она остаётся, но с признаком «удалена» и нулевой прозрачностью, и все ячейки матрицы
  * выходили пустыми при живой разметке.
  */
-const NOOP: () => void = (): void => undefined;
+const noop: () => void = (): void => undefined;
 
 /**
  * Матрицы состояний `rt-toast` для витрины.
@@ -148,7 +151,7 @@ const NOOP: () => void = (): void => undefined;
     ],
 })
 export class TestRtToastMatrixComponent {
-    public part: ToastMatrixPart = 'severity';
+    public part: TToastMatrixPart = 'severity';
 
     /**
      * Высоты соседей по стопке. Плашка требует их обязательным входом: по ним она считает своё
@@ -162,26 +165,26 @@ export class TestRtToastMatrixComponent {
 
     /** Из чего плашка собрана: всё, кроме сообщения, необязательно. */
     public readonly partCases: readonly { name: string; toast: IRtToaster.Toast }[] = [
-        { name: 'только сообщение', toast: { id: 1, severity: 'info', message: 'Договор сохранён' } },
+        { name: 'только сообщение', toast: { id: 1, severity: 'info', message: TOAST_MESSAGE } },
         {
             name: 'с описанием',
             toast: {
                 id: 2,
                 severity: 'info',
-                message: 'Договор сохранён',
+                message: TOAST_MESSAGE,
                 description: 'Изменения увидят все участники после обновления страницы.',
             },
         },
         {
             name: 'с надстрочником',
-            toast: { id: 3, severity: 'info', message: 'Договор сохранён', meta: 'Иванов И. И. · 14 марта, 16:02' },
+            toast: { id: 3, severity: 'info', message: TOAST_MESSAGE, meta: 'Иванов И. И. · 14 марта, 16:02' },
         },
         {
             name: 'всё вместе',
             toast: {
                 id: 4,
                 severity: 'info',
-                message: 'Договор сохранён',
+                message: TOAST_MESSAGE,
                 meta: 'Иванов И. И. · 14 марта, 16:02',
                 description: 'Изменения увидят все участники после обновления страницы.',
             },
@@ -192,7 +195,7 @@ export class TestRtToastMatrixComponent {
         { name: 'без действий', toast: { id: 5, severity: 'warning', message: 'Черновик не сохранён' } },
         {
             name: 'одно действие',
-            toast: { id: 6, severity: 'warning', message: 'Черновик не сохранён', action: { label: 'Сохранить', handler: NOOP } },
+            toast: { id: 6, severity: 'warning', message: 'Черновик не сохранён', action: { label: 'Сохранить', handler: noop } },
         },
         {
             name: 'два действия',
@@ -200,8 +203,8 @@ export class TestRtToastMatrixComponent {
                 id: 7,
                 severity: 'danger',
                 message: 'Не удалось отправить',
-                action: { label: 'Повторить', handler: NOOP },
-                secondaryAction: { label: 'Отменить', handler: NOOP },
+                action: { label: 'Повторить', handler: noop },
+                secondaryAction: { label: 'Отменить', handler: noop },
             },
         },
     ];
@@ -220,7 +223,7 @@ export class TestRtToastMatrixComponent {
             toast: {
                 id: 9,
                 severity: 'info',
-                message: 'Договор сохранён',
+                message: TOAST_MESSAGE,
                 description:
                     'Изменения увидят все участники после обновления страницы. Уведомления о правке уйдут на почту, указанную в карточке организации.',
             },
@@ -234,6 +237,6 @@ export class TestRtToastMatrixComponent {
 
     /** Плашка одной важности: заливка приходит признаком `filled` в самом тосте. */
     public toastOf(severity: INotification.Severity, filled: boolean): IRtToaster.Toast {
-        return { id: 1, severity, message: `Сообщение «${severity}»`, filled };
+        return { severity, filled, id: 1, message: `Сообщение «${severity}»` };
     }
 }

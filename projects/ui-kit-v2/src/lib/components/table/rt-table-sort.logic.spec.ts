@@ -3,13 +3,13 @@
 // утверждении.
 import '@angular/compiler';
 
-import { LIST_SORT_ORDER_ENUM, ISortModel } from '@rt-tools/utils';
+import { EListSortOrder, ISortModel } from '@rt-tools/utils';
 
 import { ariaSortOf, isColumnSortable, nextSort, sortDirectionOf } from './rt-table-sort.logic';
 import { IRtTable } from './rt-table.model';
 
 function sort(overrides: Partial<ISortModel<string>> = {}): ISortModel<string> {
-    return { propertyName: 'checkIn', sortDirection: LIST_SORT_ORDER_ENUM.ASC, ...overrides };
+    return { propertyName: 'checkIn', sortDirection: EListSortOrder.ASC, ...overrides };
 }
 
 function column(overrides: Partial<IRtTable.ColumnConfig> = {}): IRtTable.ColumnConfig {
@@ -22,21 +22,21 @@ describe('nextSort', () => {
     });
 
     it('заголовок по возрастанию переключается на убывание', () => {
-        expect(nextSort(sort(), 'checkIn')).toEqual(sort({ sortDirection: LIST_SORT_ORDER_ENUM.DESC }));
+        expect(nextSort(sort(), 'checkIn')).toEqual(sort({ sortDirection: EListSortOrder.DESC }));
     });
 
     it('заголовок по убыванию снимает сортировку', () => {
-        expect(nextSort(sort({ sortDirection: LIST_SORT_ORDER_ENUM.DESC }), 'checkIn')).toBe(null);
+        expect(nextSort(sort({ sortDirection: EListSortOrder.DESC }), 'checkIn')).toBe(null);
     });
 
     it('соседний заголовок забирает сортировку себе и начинает с возрастания', () => {
-        expect(nextSort(sort({ sortDirection: LIST_SORT_ORDER_ENUM.DESC }), 'guest')).toEqual(sort({ propertyName: 'guest' }));
+        expect(nextSort(sort({ sortDirection: EListSortOrder.DESC }), 'guest')).toEqual(sort({ propertyName: 'guest' }));
     });
 });
 
 describe('sortDirectionOf', () => {
     it('направление показывает та колонка, по которой идёт сортировка', () => {
-        expect(sortDirectionOf(sort(), 'checkIn')).toBe(LIST_SORT_ORDER_ENUM.ASC);
+        expect(sortDirectionOf(sort(), 'checkIn')).toBe(EListSortOrder.ASC);
     });
 
     it('у прочих колонок направления нет', () => {
@@ -50,7 +50,7 @@ describe('ariaSortOf', () => {
     });
 
     it('порядок по убыванию читается с колонки как descending', () => {
-        expect(ariaSortOf(sort({ sortDirection: LIST_SORT_ORDER_ENUM.DESC }), 'checkIn')).toBe('descending');
+        expect(ariaSortOf(sort({ sortDirection: EListSortOrder.DESC }), 'checkIn')).toBe('descending');
     });
 
     it('колонка без сортировки читается как none', () => {

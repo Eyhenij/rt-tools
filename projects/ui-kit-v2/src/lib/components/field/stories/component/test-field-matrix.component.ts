@@ -8,8 +8,11 @@ import { RtInputComponent } from '../../../input/rt-input.component';
 import { RtFieldHintDirective } from '../../rt-field-hint.directive';
 import { RtFieldComponent } from '../../rt-field.component';
 
+/** Подсказка поля — одна на все ячейки матрицы. */
+const HINT_TEXT: string = 'Рабочая, не личная';
+
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type FieldMatrixPart = 'anatomy' | 'required' | 'error' | 'hint' | 'modes' | 'states' | 'themes';
+export type TFieldMatrixPart = 'anatomy' | 'required' | 'error' | 'hint' | 'modes' | 'states' | 'themes';
 
 /** Случай анатомии: какие части поля объявлены. */
 interface IFieldAnatomyCase {
@@ -190,7 +193,7 @@ function failing(validators: ValidatorFn[] = [Validators.required], value: strin
     ],
 })
 export class TestRtFieldMatrixComponent {
-    public part: FieldMatrixPart = 'anatomy';
+    public part: TFieldMatrixPart = 'anatomy';
 
     public readonly fieldWidth: string = STORY_FIELD_WIDTH;
     public readonly emailErrors: Record<string, string> = { email: 'Проверьте адрес: нужен знак @' };
@@ -235,14 +238,14 @@ export class TestRtFieldMatrixComponent {
         },
         {
             name: 'ошибка вместо подсказки',
-            hint: 'Рабочая, не личная',
+            hint: HINT_TEXT,
             reserve: false,
             errors: {},
             control: failing(),
         },
         {
             name: 'с резервом строки',
-            hint: 'Рабочая, не личная',
+            hint: HINT_TEXT,
             reserve: true,
             errors: {},
             control: failing(),
@@ -257,11 +260,11 @@ export class TestRtFieldMatrixComponent {
     ];
 
     public readonly stateCases: readonly IFieldErrorCase[] = [
-        { name: 'подсказка', hint: 'Рабочая, не личная', reserve: false, errors: {}, control: filled('ivanov@example.com') },
+        { name: 'подсказка', hint: HINT_TEXT, reserve: false, errors: {}, control: filled('ivanov@example.com') },
         { name: 'резерв без сообщения', hint: '', reserve: true, errors: {}, control: filled('ivanov@example.com') },
         { name: 'ошибка', hint: '', reserve: false, errors: {}, control: failing() },
-        { name: 'ошибка поверх подсказки', hint: 'Рабочая, не личная', reserve: false, errors: {}, control: failing() },
-        { name: 'ошибка с резервом', hint: 'Рабочая, не личная', reserve: true, errors: {}, control: failing() },
+        { name: 'ошибка поверх подсказки', hint: HINT_TEXT, reserve: false, errors: {}, control: failing() },
+        { name: 'ошибка с резервом', hint: HINT_TEXT, reserve: true, errors: {}, control: failing() },
     ];
 
     /** Подпись случая: у всех наборов этой матрицы имя лежит в одном поле. */

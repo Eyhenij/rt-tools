@@ -15,13 +15,13 @@ export default {
     },
 } as Meta<TestRtWelcomeDialogMatrixComponent>;
 
-type Story = StoryObj<TestRtWelcomeDialogMatrixComponent>;
+type TStory = StoryObj<TestRtWelcomeDialogMatrixComponent>;
 
-export const Text: Story = { args: { part: 'text' } };
+export const Text: TStory = { args: { part: 'text' } };
 
-export const Cta: Story = { args: { part: 'cta' } };
+export const Cta: TStory = { args: { part: 'cta' } };
 
 /** Пустой текст стоит рядом с одним абзацем: без пары пустое окно выглядит исправным. */
-export const Edges: Story = { args: { part: 'edges' } };
+export const Edges: TStory = { args: { part: 'edges' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

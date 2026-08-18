@@ -20,7 +20,7 @@ import {
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RtKitLabelMap } from '../../i18n';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
 import { INotification } from '../../platform';
 
 import { RtButtonDirective } from '../button/rt-button.directive';
@@ -92,7 +92,7 @@ export class RtToastComponent implements AfterViewInit, OnDestroy {
 
     #closeTimerPausedAt: number = 0;
 
-    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly icon: Signal<IRtIcon.Name> = computed((): IRtIcon.Name => this.#severityIcon[this.toast().severity]);
 

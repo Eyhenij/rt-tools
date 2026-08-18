@@ -96,7 +96,6 @@ export class AdminListAboveTableDirective {}
 @Component({
     selector: 'admin-list-page',
     templateUrl: './admin-list-page.component.html',
-    styleUrl: './admin-list-page.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // angular

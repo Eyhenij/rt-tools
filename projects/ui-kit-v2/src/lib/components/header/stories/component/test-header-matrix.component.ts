@@ -7,7 +7,7 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtHeaderComponent } from '../../rt-header.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type HeaderMatrixPart = 'back' | 'invite' | 'bell' | 'themes';
+export type THeaderMatrixPart = 'back' | 'invite' | 'bell' | 'themes';
 
 /**
  * Матрицы состояний `rt-header` для витрины.
@@ -93,7 +93,7 @@ export type HeaderMatrixPart = 'back' | 'invite' | 'bell' | 'themes';
     ],
 })
 export class TestRtHeaderMatrixComponent {
-    public part: HeaderMatrixPart = 'back';
+    public part: THeaderMatrixPart = 'back';
 
     public readonly backs: readonly boolean[] = [false, true];
     public readonly invites: readonly boolean[] = [false, true];

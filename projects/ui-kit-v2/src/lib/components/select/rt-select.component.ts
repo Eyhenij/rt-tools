@@ -21,7 +21,7 @@ import { FormsModule } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RtKitLabelMap, rtKitLabel } from '../../i18n';
+import { RT_KIT_LABELS, TRtKitLabelMap, rtKitLabel } from '../../i18n';
 import { RtFormControlBase } from '../form-control/rt-form-control.base';
 import { RtIconComponent, IRtIcon } from '../icon';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
@@ -34,7 +34,7 @@ const BEM_BLOCK: string = 'rt-select';
 /** Клавиши, открывающие закрытый dropdown с фокуса на trigger'е. */
 const OPEN_KEYS: ReadonlySet<string> = new Set<string>(['ArrowDown', 'ArrowUp', 'Enter', ' ']);
 
-type IBooleanInput = boolean | string;
+type TBooleanInput = boolean | string;
 
 let panelIdSeed: number = 0;
 
@@ -93,7 +93,7 @@ function nextPanelId(): number {
 export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> {
     readonly #t_uiSearch: Signal<string> = rtKitLabel('uiSearch');
 
-    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly panelId: string = `rt-select-panel-${nextPanelId()}`;
 
@@ -138,7 +138,7 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
 
     public readonly iconLeft: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
 
-    public readonly filter: InputSignalWithTransform<boolean, IBooleanInput> = input<boolean, IBooleanInput>(false, {
+    public readonly filter: InputSignalWithTransform<boolean, TBooleanInput> = input<boolean, TBooleanInput>(false, {
         transform: booleanAttribute,
     });
 

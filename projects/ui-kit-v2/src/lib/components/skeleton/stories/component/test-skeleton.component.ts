@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { RtSkeletonComponent } from '../../rt-skeleton.component';
-import { IRtSkeletonShape } from '../../rt-skeleton.component';
-import { IRtSkeletonSize } from '../../rt-skeleton.component';
-import { IRtSkeletonRadius } from '../../rt-skeleton.component';
+import { TRtSkeletonShape } from '../../rt-skeleton.component';
+import { TRtSkeletonSize } from '../../rt-skeleton.component';
+import { TRtSkeletonRadius } from '../../rt-skeleton.component';
 
 /**
  * Демонстрационная обёртка для витрины: держит изменяемое состояние, на которое
@@ -28,10 +28,10 @@ import { IRtSkeletonRadius } from '../../rt-skeleton.component';
     ],
 })
 export class TestRtSkeletonComponent {
-    public shape: IRtSkeletonShape = 'rectangle';
-    public size: IRtSkeletonSize = 'md';
+    public shape: TRtSkeletonShape = 'rectangle';
+    public size: TRtSkeletonSize = 'md';
     public width: string = '100%';
     public height: string = '';
-    public borderRadius: IRtSkeletonRadius = 'xl';
+    public borderRadius: TRtSkeletonRadius = 'xl';
     public animation: boolean = true;
 }

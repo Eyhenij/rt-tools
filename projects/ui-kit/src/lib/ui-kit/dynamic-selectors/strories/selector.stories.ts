@@ -1,3 +1,4 @@
+// eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, Routes } from '@angular/router';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
@@ -18,6 +19,7 @@ export default {
     component: TestSelectorComponent,
     decorators: [
         applicationConfig({
+            // eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
             providers: [provideAnimations(), provideRouter(routes), PlatformService],
         }),
     ],
@@ -41,7 +43,7 @@ export default {
 - \`rtuiDynamicSelectorItemTitleProjectionDirective\` — **полная замена** дефолтного title-блока кастомной разметкой. Контекст темплейта: \`{ $implicit: ENTITY }\`.
 
 ### Истории
-| Story | Что показывает |
+| TStory | Что показывает |
 | --- | --- |
 | **Selector** | Базовый multi-select с drag & drop |
 | **Selector With Additional** | Доп. контролы в строке (info / star / Label) |
@@ -55,9 +57,9 @@ export default {
     },
 } as Meta<TestSelectorComponent>;
 
-type Story = StoryObj<TestSelectorComponent>;
+type TStory = StoryObj<TestSelectorComponent>;
 
-export const Selector: Story = {
+export const Selector: TStory = {
     args: {
         loading: false,
         fetching: false,
@@ -71,7 +73,7 @@ export const Selector: Story = {
     },
 };
 
-export const SelectorWithAdditional: Story = {
+export const SelectorWithAdditional: TStory = {
     args: {
         loading: false,
         fetching: false,
@@ -83,7 +85,7 @@ export const SelectorWithAdditional: Story = {
     },
 };
 
-export const SelectorWithCustomTitle: Story = {
+export const SelectorWithCustomTitle: TStory = {
     args: {
         loading: false,
         fetching: false,
@@ -120,7 +122,7 @@ export const SelectorWithCustomTitle: Story = {
     },
 };
 
-export const SelectorWithReadonly: Story = {
+export const SelectorWithReadonly: TStory = {
     args: {
         loading: false,
         fetching: false,
@@ -132,7 +134,7 @@ export const SelectorWithReadonly: Story = {
     },
 };
 
-export const SelectorSingleMode: Story = {
+export const SelectorSingleMode: TStory = {
     args: {
         loading: false,
         fetching: false,
@@ -142,7 +144,7 @@ export const SelectorSingleMode: Story = {
     },
 };
 
-export const NoData: Story = {
+export const NoData: TStory = {
     args: {
         entities: [],
     },
@@ -155,7 +157,7 @@ export const NoData: Story = {
  * Список очищается нажатием, а не значением входа: обёртка задаёт начальный выбор при
  * запуске, а значения истории приходят к ней позже.
  */
-export const SelectorPlaceholder: Story = {
+export const SelectorPlaceholder: TStory = {
     args: {
         entities: listOfPersons,
         isOpenPopupButtonShown: true,
@@ -179,7 +181,7 @@ export const SelectorPlaceholder: Story = {
  * Попап выбора, открытый нажатием. Его подвал живёт в перекрытии и в кадр сам не попадает:
  * без нажатия проверить оформление кнопок «Cancel» и «SUBMIT» нечем.
  */
-export const SelectorPopup: Story = {
+export const SelectorPopup: TStory = {
     args: {
         // Список короткий намеренно: с полным попап уходит за нижний край кадра вместе с
         // подвалом, ради которого история и заведена.

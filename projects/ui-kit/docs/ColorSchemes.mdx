@@ -84,9 +84,9 @@ identical `[data-rt-scheme]` `<style>` block (no-op on the server — prefer the
 path for brand-critical, SSR-rendered schemes):
 
 ```typescript
-import { RtThemeService, RtColorSchemeRamp } from 'rt-tools';
+import { RtThemeService, TRtColorSchemeRamp } from 'rt-tools';
 
-const teal: RtColorSchemeRamp = {
+const teal: TRtColorSchemeRamp = {
     primary: { 20: '#b3e3e1', 40: '#5cb8b5', 60: '#1a9d99', 100: '#008582' },
     brand: { 20: '#e8e8e8', 100: '#008582' },
 };

@@ -17,24 +17,24 @@ export default {
     },
 } as Meta<TestRtSelectMatrixComponent>;
 
-type Story = StoryObj<TestRtSelectMatrixComponent>;
+type TStory = StoryObj<TestRtSelectMatrixComponent>;
 
-export const Size: Story = { args: { part: 'size' } };
+export const Size: TStory = { args: { part: 'size' } };
 
-export const Filling: Story = { args: { part: 'filling' } };
+export const Filling: TStory = { args: { part: 'filling' } };
 
-export const Bordered: Story = { args: { part: 'bordered' } };
+export const Bordered: TStory = { args: { part: 'bordered' } };
 
 /**
  * Рамку и кольцо рисует `<button>` внутри хоста, а признак стоит на хосте — аддону передан
  * спуск до него: без него класс лёг бы на элемент, у которого этих правил нет.
  */
-export const States: Story = {
+export const States: TStory = {
     args: { part: 'states' },
     parameters: { pseudo: storyPseudoParameters('.rt-select__trigger') },
 };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };
 
 /**
  * Раскрытый список. Открывает его `play`-функция клавишей, а не щелчком: клавиша заодно
@@ -44,7 +44,7 @@ export const Themes: Story = { args: { part: 'themes' } };
  * ни в светло-тёмной паре, ни в матрице состояний: тёмную панель смотрят переключателем
  * темы в тулбаре.
  */
-export const Panel: Story = {
+export const Panel: TStory = {
     parameters: { snapshot: { fullPage: true } },
     args: { part: 'panel', panel: 'options' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
@@ -53,7 +53,7 @@ export const Panel: Story = {
 };
 
 /** Тот же список со строкой фильтра: она занимает первую строку панели и сужает набор. */
-export const PanelWithFilter: Story = {
+export const PanelWithFilter: TStory = {
     parameters: { snapshot: { fullPage: true } },
     args: { part: 'panel', panel: 'filter' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
@@ -62,7 +62,7 @@ export const PanelWithFilter: Story = {
 };
 
 /** Пустой набор опций: строка `rtKit.uiNoOptions` вместо списка. */
-export const PanelEmpty: Story = {
+export const PanelEmpty: TStory = {
     parameters: { snapshot: { fullPage: true } },
     args: { part: 'panel', panel: 'empty' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {

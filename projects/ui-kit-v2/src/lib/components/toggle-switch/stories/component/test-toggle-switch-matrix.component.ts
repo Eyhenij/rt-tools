@@ -10,7 +10,7 @@ import { IRtToggleSwitch } from '../../rt-toggle-switch.model';
 import { RtToggleSwitchComponent } from '../../rt-toggle-switch.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type ToggleSwitchMatrixPart = 'size' | 'value' | 'icons' | 'states' | 'themes';
+export type TToggleSwitchMatrixPart = 'size' | 'value' | 'icons' | 'states' | 'themes';
 
 /** Положение тумблера: выключено или включено. */
 interface IToggleValueCase {
@@ -130,7 +130,7 @@ function on(value: boolean): FormControl<boolean> {
     ],
 })
 export class TestRtToggleSwitchMatrixComponent {
-    public part: ToggleSwitchMatrixPart = 'size';
+    public part: TToggleSwitchMatrixPart = 'size';
 
     public readonly sizes: readonly IRtToggleSwitch.Size[] = ['sm', 'md', 'lg'];
     public readonly states: readonly IStoryState[] = STORY_CONTROL_STATES;

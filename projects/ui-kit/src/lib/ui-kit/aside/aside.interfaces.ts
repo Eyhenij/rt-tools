@@ -1,8 +1,8 @@
-import { AsideButtonsType } from './aside.enums';
+import { TAsideButtonsType } from './aside.enums';
 
 export namespace IAside {
     export interface HeaderActionButton {
-        name: AsideButtonsType;
+        name: TAsideButtonsType;
         icon: string;
         color: string;
         tooltip: string;

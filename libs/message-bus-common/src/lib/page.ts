@@ -69,14 +69,21 @@ function wholeOf(value: unknown): number | null {
  * Отказ называет параметр и его границы: «неверный запрос» без имени параметра означает, что
  * причину ищут перебором.
  */
-export function pageFault(query: Record<string, unknown>, sortable: readonly string[]): string | null {
+/** Отказ по числовым параметрам страницы. */
+function countFault(query: Record<string, unknown>): string | null {
     if (query['page'] !== undefined && wholeOf(query['page']) === null) {
         return 'параметр page ожидается целым числом от 1';
     }
+
     if (query['size'] !== undefined && wholeOf(query['size']) === null) {
         return `параметр size ожидается целым числом от 1 до ${PAGE_SIZE_MAX}`;
     }
 
+    return null;
+}
+
+/** Отказ по полю и направлению порядка. */
+function orderFault(query: Record<string, unknown>, sortable: readonly string[]): string | null {
     const sort: unknown = query['sort'];
 
     if (sort !== undefined && (typeof sort !== 'string' || !sortable.includes(sort))) {
@@ -88,11 +95,21 @@ export function pageFault(query: Record<string, unknown>, sortable: readonly str
     if (dir !== undefined && dir !== 'asc' && dir !== 'desc') {
         return 'параметр dir ожидается одним из: asc, desc';
     }
+
+    return null;
+}
+
+/** Отказ по сужению на одно дерево. */
+function treeFault(query: Record<string, unknown>): string | null {
     if (query['tree'] !== undefined && typeof query['tree'] !== 'string') {
         return 'параметр tree ожидается признаком одного дерева';
     }
 
     return null;
+}
+
+export function pageFault(query: Record<string, unknown>, sortable: readonly string[]): string | null {
+    return countFault(query) ?? orderFault(query, sortable) ?? treeFault(query);
 }
 
 /**

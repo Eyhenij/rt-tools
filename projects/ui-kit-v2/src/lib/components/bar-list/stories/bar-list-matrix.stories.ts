@@ -15,14 +15,14 @@ export default {
     },
 } as Meta<TestRtBarListMatrixComponent>;
 
-type Story = StoryObj<TestRtBarListMatrixComponent>;
+type TStory = StoryObj<TestRtBarListMatrixComponent>;
 
-export const Share: Story = { args: { part: 'share' } };
+export const Share: TStory = { args: { part: 'share' } };
 
-export const Meta_: Story = { name: 'Meta', args: { part: 'meta' } };
+export const MetaPart: TStory = { name: 'Meta', args: { part: 'meta' } };
 
-export const Length: Story = { args: { part: 'length' } };
+export const Length: TStory = { args: { part: 'length' } };
 
-export const Empty: Story = { args: { part: 'empty' } };
+export const Empty: TStory = { args: { part: 'empty' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

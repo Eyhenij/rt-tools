@@ -1,3 +1,3 @@
-export function isNumber<T>(value: T | number | unknown | undefined): value is number {
+export function isNumber<T>(value: T | unknown): value is number {
     return typeof value === 'number';
 }

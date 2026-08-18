@@ -16,21 +16,21 @@ export default {
     },
 } as Meta<TestRtCardMatrixComponent>;
 
-type Story = StoryObj<TestRtCardMatrixComponent>;
+type TStory = StoryObj<TestRtCardMatrixComponent>;
 
-export const Header: Story = { args: { part: 'header' } };
+export const Header: TStory = { args: { part: 'header' } };
 
-export const Slots: Story = { args: { part: 'slots' } };
+export const Slots: TStory = { args: { part: 'slots' } };
 
-export const Clickable: Story = { args: { part: 'clickable' } };
+export const Clickable: TStory = { args: { part: 'clickable' } };
 
 /**
  * Наведение и фокус стилизованы у самой карточки — статья с модификатором нажимаемости, — и
  * аддон псевдосостояний получает спуск до неё: признак стоит на хосте компонента.
  */
-export const States: Story = {
+export const States: TStory = {
     args: { part: 'states' },
     parameters: { pseudo: storyPseudoParameters('.rt-card') },
 };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

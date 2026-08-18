@@ -1,12 +1,12 @@
-import { FILTER_OPERATOR_TYPE_ENUM, LIST_SORT_ORDER_ENUM } from '@rt-tools/utils';
-import { ITable, TABLE_COLUMN_FILTER_TYPES_ENUM, TABLE_COLUMN_TYPES_ENUM, TEXT_CELL_COLOR_ENUM } from '../util/table-column.interface';
-import { Person, ResponsiblePerson } from './types';
+import { EFilterOperatorType, EListSortOrder } from '@rt-tools/utils';
+import { ITable, ETableColumnFilterTypes, ETableColumnTypes, ETextCellColor } from '../util/table-column.interface';
+import { TPerson, TResponsiblePerson } from './types';
 
-export const COLUMNS: Array<ITable.Column<Person>> = [
+export const COLUMNS: Array<ITable.Column<TPerson>> = [
     {
         align: 'left',
         propName: 'id',
-        type: TABLE_COLUMN_TYPES_ENUM.TEXT,
+        type: ETableColumnTypes.TEXT,
         copyable: true,
         header: {
             align: 'left',
@@ -14,7 +14,7 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
         },
         sorting: {
             propertyName: 'id',
-            sortDirection: LIST_SORT_ORDER_ENUM.ASC,
+            sortDirection: EListSortOrder.ASC,
         },
         width: '100px',
         minWidth: '100px',
@@ -23,7 +23,7 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
     {
         align: 'left',
         propName: 'button',
-        type: TABLE_COLUMN_TYPES_ENUM.CUSTOM,
+        type: ETableColumnTypes.CUSTOM,
         copyable: false,
         header: {
             align: 'left',
@@ -35,7 +35,7 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
     {
         align: 'left',
         propName: 'active',
-        type: TABLE_COLUMN_TYPES_ENUM.CUSTOM,
+        type: ETableColumnTypes.CUSTOM,
         copyable: false,
         header: {
             align: 'left',
@@ -47,7 +47,7 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
     {
         align: 'left',
         propName: 'image',
-        type: TABLE_COLUMN_TYPES_ENUM.CUSTOM,
+        type: ETableColumnTypes.CUSTOM,
         copyable: false,
         header: {
             align: 'left',
@@ -59,66 +59,64 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
     {
         align: 'left',
         propName: 'name',
-        type: TABLE_COLUMN_TYPES_ENUM.TEXT,
+        type: ETableColumnTypes.TEXT,
         copyable: true,
         header: {
             align: 'left',
             label: 'Name',
             icon: {
                 glyph: 'info',
-                color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
+                color: ETextCellColor.NEUTRAL,
                 placement: 'right',
             },
         },
         sorting: {
             propertyName: 'name',
-            sortDirection: LIST_SORT_ORDER_ENUM.ASC,
+            sortDirection: EListSortOrder.ASC,
         },
         icon: {
             glyph: 'priority_high',
-            color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
+            color: ETextCellColor.NEUTRAL,
             placement: 'right',
         },
-        iconTransform: (): string => {
-            return 'font-size: 1rem; width: 1rem; height: 1rem';
-        },
+        iconTransform: (): string => 'font-size: 1rem; width: 1rem; height: 1rem',
         width: '200px',
         minWidth: '200px',
-        filterType: TABLE_COLUMN_FILTER_TYPES_ENUM.TEXT,
-        filterOperators: [FILTER_OPERATOR_TYPE_ENUM.EQUALS, FILTER_OPERATOR_TYPE_ENUM.NOT_EQUALS, FILTER_OPERATOR_TYPE_ENUM.CONTAINS],
+        filterType: ETableColumnFilterTypes.TEXT,
+        filterOperators: [EFilterOperatorType.EQUALS, EFilterOperatorType.NOT_EQUALS, EFilterOperatorType.CONTAINS],
     },
     {
         align: 'left',
         propName: 'email',
-        type: TABLE_COLUMN_TYPES_ENUM.TEXT,
+        type: ETableColumnTypes.TEXT,
         copyable: true,
         header: {
             align: 'left',
             label: 'Email',
             icon: {
                 glyph: 'email',
-                color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
+                color: ETextCellColor.NEUTRAL,
                 placement: 'left',
             },
         },
         sorting: {
             propertyName: 'email',
-            sortDirection: LIST_SORT_ORDER_ENUM.ASC,
+            sortDirection: EListSortOrder.ASC,
         },
         icon: {
             glyph: 'priority_high',
-            color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
+            color: ETextCellColor.NEUTRAL,
             placement: 'left',
         },
         width: '200px',
         minWidth: '200px',
-        filterType: TABLE_COLUMN_FILTER_TYPES_ENUM.TEXT,
-        filterOperators: [FILTER_OPERATOR_TYPE_ENUM.EQUALS, FILTER_OPERATOR_TYPE_ENUM.NOT_EQUALS, FILTER_OPERATOR_TYPE_ENUM.CONTAINS],
+        filterType: ETableColumnFilterTypes.TEXT,
+        filterOperators: [EFilterOperatorType.EQUALS, EFilterOperatorType.NOT_EQUALS, EFilterOperatorType.CONTAINS],
     },
     {
         align: 'left',
         propName: 'status',
-        type: TABLE_COLUMN_TYPES_ENUM.TEXT,
+        type: ETableColumnTypes.TEXT,
         copyable: false,
         header: {
             align: 'left',
@@ -126,14 +124,14 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
         },
         sorting: {
             propertyName: 'status',
-            sortDirection: LIST_SORT_ORDER_ENUM.ASC,
+            sortDirection: EListSortOrder.ASC,
         },
         icon: {
             glyph: 'circle',
-            color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
+            color: ETextCellColor.NEUTRAL,
             placement: 'left',
         },
-        iconTransform: (value: Person[keyof Person]): string => {
+        iconTransform: (value: TPerson[keyof TPerson]): string => {
             let style: string = '';
 
             switch (value) {
@@ -150,7 +148,7 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
                     style = 'color: red;';
                     break;
                 default:
-                    style = `color: ${TEXT_CELL_COLOR_ENUM.NEUTRAL}`;
+                    style = `color: ${ETextCellColor.NEUTRAL}`;
                     break;
             }
 
@@ -159,13 +157,13 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
             return style;
         },
         minWidth: '120px',
-        filterType: TABLE_COLUMN_FILTER_TYPES_ENUM.SELECT,
+        filterType: ETableColumnFilterTypes.SELECT,
         filterSelectOptions: ['active', 'inactive', 'invited', 'deleted'],
     },
     {
         align: 'right',
         propName: 'age',
-        type: TABLE_COLUMN_TYPES_ENUM.TEXT,
+        type: ETableColumnTypes.TEXT,
         copyable: false,
         header: {
             align: 'right',
@@ -173,23 +171,23 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
         },
         sorting: {
             propertyName: 'age',
-            sortDirection: LIST_SORT_ORDER_ENUM.ASC,
+            sortDirection: EListSortOrder.ASC,
         },
         width: '150px',
         minWidth: '100px',
-        filterType: TABLE_COLUMN_FILTER_TYPES_ENUM.NUMBER,
+        filterType: ETableColumnFilterTypes.NUMBER,
         filterOperators: [
-            FILTER_OPERATOR_TYPE_ENUM.EQUALS,
-            FILTER_OPERATOR_TYPE_ENUM.NOT_EQUALS,
-            FILTER_OPERATOR_TYPE_ENUM.CONTAINS,
-            FILTER_OPERATOR_TYPE_ENUM.GREATER_THAN,
-            FILTER_OPERATOR_TYPE_ENUM.LESS_THAN,
+            EFilterOperatorType.EQUALS,
+            EFilterOperatorType.NOT_EQUALS,
+            EFilterOperatorType.CONTAINS,
+            EFilterOperatorType.GREATER_THAN,
+            EFilterOperatorType.LESS_THAN,
         ],
     },
     {
         align: 'left',
         propName: 'birthdate',
-        type: TABLE_COLUMN_TYPES_ENUM.DATE,
+        type: ETableColumnTypes.DATE,
         copyable: false,
         header: {
             align: 'left',
@@ -197,35 +195,35 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
         },
         sorting: {
             propertyName: 'birthdate',
-            sortDirection: LIST_SORT_ORDER_ENUM.ASC,
+            sortDirection: EListSortOrder.ASC,
         },
         width: '150px',
         minWidth: '100px',
-        filterType: TABLE_COLUMN_FILTER_TYPES_ENUM.DATE,
+        filterType: ETableColumnFilterTypes.DATE,
         filterOperators: [
-            FILTER_OPERATOR_TYPE_ENUM.EQUALS,
-            FILTER_OPERATOR_TYPE_ENUM.NOT_EQUALS,
-            FILTER_OPERATOR_TYPE_ENUM.GREATER_THAN,
-            FILTER_OPERATOR_TYPE_ENUM.LESS_THAN,
+            EFilterOperatorType.EQUALS,
+            EFilterOperatorType.NOT_EQUALS,
+            EFilterOperatorType.GREATER_THAN,
+            EFilterOperatorType.LESS_THAN,
         ],
     },
     {
         align: 'left',
         propName: 'sex',
-        type: TABLE_COLUMN_TYPES_ENUM.TEXT,
+        type: ETableColumnTypes.TEXT,
         copyable: false,
         header: {
             align: 'left',
             label: 'Sex',
             icon: {
                 glyph: 'wc',
-                color: TEXT_CELL_COLOR_ENUM.NEUTRAL,
+                color: ETextCellColor.NEUTRAL,
                 placement: 'left',
             },
         },
         sorting: {
             propertyName: 'sex',
-            sortDirection: LIST_SORT_ORDER_ENUM.ASC,
+            sortDirection: EListSortOrder.ASC,
         },
         width: '150px',
         minWidth: '100px',
@@ -233,7 +231,7 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
     {
         align: 'left',
         propName: 'bio',
-        type: TABLE_COLUMN_TYPES_ENUM.TEXT,
+        type: ETableColumnTypes.TEXT,
         copyable: false,
         header: {
             align: 'left',
@@ -245,7 +243,7 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
     {
         align: 'right',
         propName: 'bill',
-        type: TABLE_COLUMN_TYPES_ENUM.CURRENCY,
+        type: ETableColumnTypes.CURRENCY,
         copyable: false,
         header: {
             align: 'right',
@@ -253,7 +251,7 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
         },
         sorting: {
             propertyName: 'bill',
-            sortDirection: LIST_SORT_ORDER_ENUM.ASC,
+            sortDirection: EListSortOrder.ASC,
         },
         width: '150px',
         minWidth: '100px',
@@ -261,7 +259,7 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
     {
         align: 'left',
         propName: 'items',
-        type: TABLE_COLUMN_TYPES_ENUM.ARRAY,
+        type: ETableColumnTypes.ARRAY,
         copyable: false,
         header: {
             align: 'left',
@@ -273,14 +271,14 @@ export const COLUMNS: Array<ITable.Column<Person>> = [
     {
         align: 'left',
         propName: 'responsible',
-        type: TABLE_COLUMN_TYPES_ENUM.TEXT,
+        type: ETableColumnTypes.TEXT,
         copyable: false,
         header: {
             align: 'left',
             label: 'Responsible Person',
         },
-        transform: (value: Person[keyof Person]): string => {
-            const name: { firstname: string; lastname: string } = (value as ResponsiblePerson).name;
+        transform: (value: TPerson[keyof TPerson]): string => {
+            const name: { firstname: string; lastname: string } = (value as TResponsiblePerson).name;
             return `${name.firstname} ${name.lastname}`;
         },
         width: '150px',

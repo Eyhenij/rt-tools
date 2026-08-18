@@ -4,7 +4,7 @@ import { RtButtonDirective } from '../../../button/rt-button.directive';
 import { RtAsideSectionComponent } from '../../../aside-section/rt-aside-section.component';
 import { RtAsideFooterComponent } from '../../footer/rt-aside-footer.component';
 import { RtAsideHeaderComponent } from '../../header/rt-aside-header.component';
-import { IRtAsideContentLayout, IRtAsideSize, RtAsideComponent } from '../../rt-aside.component';
+import { TRtAsideContentLayout, TRtAsideSize, RtAsideComponent } from '../../rt-aside.component';
 
 /**
  * Демонстрационная обёртка для витрины: держит изменяемое состояние, на которое
@@ -51,8 +51,8 @@ import { IRtAsideContentLayout, IRtAsideSize, RtAsideComponent } from '../../rt-
     ],
 })
 export class TestRtAsideComponent {
-    public size: IRtAsideSize = 'md';
-    public contentLayout: IRtAsideContentLayout = 'default';
+    public size: TRtAsideSize = 'md';
+    public contentLayout: TRtAsideContentLayout = 'default';
     public width: string | null = null;
     public ariaLabel: string | null = null;
 }

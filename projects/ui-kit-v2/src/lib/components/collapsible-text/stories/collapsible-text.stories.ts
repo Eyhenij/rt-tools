@@ -12,9 +12,9 @@ export default {
     },
 } as Meta<TestRtCollapsibleTextComponent>;
 
-type Story = StoryObj<TestRtCollapsibleTextComponent>;
+type TStory = StoryObj<TestRtCollapsibleTextComponent>;
 
-export const Default: Story = {
+export const Default: TStory = {
     args: {
         paragraphs: ['Первый абзац.', 'Второй абзац.'],
         clampLines: 6,

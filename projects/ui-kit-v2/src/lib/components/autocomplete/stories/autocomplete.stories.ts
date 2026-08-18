@@ -17,9 +17,9 @@ export default {
     },
 } as Meta<TestRtAutocompleteComponent>;
 
-type Story = StoryObj<TestRtAutocompleteComponent>;
+type TStory = StoryObj<TestRtAutocompleteComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         placeholder: 'Начните вводить город',
@@ -35,7 +35,7 @@ export const Playground: Story = {
  * ровно то же, что `Playground`, — режим объявлен входом и ничем не показан.
  * Жест уходит полю внутри обёртки: раскрытие слушает `<input>`, а не хост.
  */
-export const OpenOnFocus: Story = {
+export const OpenOnFocus: TStory = {
     parameters: { snapshot: { fullPage: true } },
     args: {
         ...Playground.args,

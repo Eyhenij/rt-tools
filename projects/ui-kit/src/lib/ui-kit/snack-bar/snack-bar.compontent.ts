@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843 */
 import { animate, AnimationBuilder, AnimationFactory, AnimationPlayer, style } from '@angular/animations';
 import { afterNextRender, ChangeDetectionStrategy, Component, ElementRef, HostListener, inject, Signal, viewChild } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -5,7 +6,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { IRtSnackBar } from './snack-bar-config.interface';
 
@@ -26,7 +27,7 @@ export class RtuiSnackBarComponent {
 
     public player: AnimationPlayer | undefined;
 
-    public readonly progressTplRef: Signal<INullable<ElementRef<HTMLElement>>> = viewChild<ElementRef<HTMLElement>>('progressTpl');
+    public readonly progressTplRef: Signal<TNullable<ElementRef<HTMLElement>>> = viewChild<ElementRef<HTMLElement>>('progressTpl');
 
     constructor() {
         afterNextRender(() => {

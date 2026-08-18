@@ -18,9 +18,9 @@ export default {
     },
 } as Meta<TestRtContainerComponent>;
 
-type Story = StoryObj<TestRtContainerComponent>;
+type TStory = StoryObj<TestRtContainerComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         mobileLeftNav: 'keep',

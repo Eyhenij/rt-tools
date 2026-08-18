@@ -44,6 +44,15 @@ export const ACCOUNT_COMMANDS_USAGE: readonly string[] = [
     '  account:list           — перечислить записи',
 ];
 
+/** Род команды по её глаголу: разбор до этого места отсеял всё, кроме трёх. */
+function namedKindOf(verb: string): 'add' | 'passwd' | 'disable' {
+    if (verb === 'account:add') {
+        return 'add';
+    }
+
+    return verb === 'account:passwd' ? 'passwd' : 'disable';
+}
+
 /** Довод без окружающих пробелов. Пустой довод считается неназванным. */
 function argument(argv: readonly string[], at: number): string {
     return (argv[at] ?? '').trim();
@@ -71,9 +80,7 @@ export function parseAccountCommand(argv: readonly string[]): IAccountCommandPar
                 return { command: null, fault: `${verb} требует имя учётной записи` };
             }
 
-            const kind: 'add' | 'passwd' | 'disable' = verb === 'account:add' ? 'add' : verb === 'account:passwd' ? 'passwd' : 'disable';
-
-            return { command: { kind, name }, fault: null };
+            return { command: { kind: namedKindOf(verb), name }, fault: null };
         }
 
         case 'account:list':

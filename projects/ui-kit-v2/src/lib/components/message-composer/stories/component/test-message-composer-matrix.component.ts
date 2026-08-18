@@ -5,7 +5,7 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtMessageComposerComponent } from '../../rt-message-composer.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type MessageComposerMatrixPart = 'state' | 'attachments' | 'formatting' | 'rows' | 'themes';
+export type TMessageComposerMatrixPart = 'state' | 'attachments' | 'formatting' | 'rows' | 'themes';
 
 /**
  * Матрицы состояний `rt-message-composer` для витрины.
@@ -78,7 +78,7 @@ export type MessageComposerMatrixPart = 'state' | 'attachments' | 'formatting' |
     ],
 })
 export class TestRtMessageComposerMatrixComponent {
-    public part: MessageComposerMatrixPart = 'state';
+    public part: TMessageComposerMatrixPart = 'state';
 
     /** Отправка в пути и выключенное снаружи поле блокируют одно и то же, а означают разное. */
     public readonly states: readonly { name: string; sending: boolean; disabled: boolean }[] = [

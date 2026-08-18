@@ -113,7 +113,8 @@ export function listQueryParams(query: IAdminListQuery, sortable: readonly strin
 
 /** Та же выборка или другая. Сравнивается по значениям: по ней экран решает, читать ли заново. */
 export function sameListQuery(one: IAdminListQuery, other: IAdminListQuery): boolean {
-    return (
-        one.page === other.page && one.size === other.size && one.sort === other.sort && one.dir === other.dir && one.tree === other.tree
-    );
+    const samePlace: boolean = one.page === other.page && one.size === other.size;
+    const sameOrder: boolean = one.sort === other.sort && one.dir === other.dir;
+
+    return samePlace && sameOrder && one.tree === other.tree;
 }

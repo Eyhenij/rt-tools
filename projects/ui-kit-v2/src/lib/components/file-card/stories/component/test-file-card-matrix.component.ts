@@ -8,7 +8,7 @@ import { RtFileCardComponent } from '../../rt-file-card.component';
 import { IRtFileCard } from '../../rt-file-card.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type FileCardMatrixPart = 'size' | 'actions' | 'name' | 'weight' | 'states' | 'disabled' | 'themes';
+export type TFileCardMatrixPart = 'size' | 'actions' | 'name' | 'weight' | 'states' | 'disabled' | 'themes';
 
 /** Случай имени файла: имя для подписи ячейки, само имя и вес. */
 interface IFileNameCase {
@@ -126,7 +126,7 @@ interface IFileNameCase {
     ],
 })
 export class TestRtFileCardMatrixComponent {
-    public part: FileCardMatrixPart = 'size';
+    public part: TFileCardMatrixPart = 'size';
 
     public readonly sizes: readonly IRtFileCard.Size[] = ['sm', 'md', 'lg'];
     public readonly actionSets: readonly string[] = ['без кнопок', 'только скачать', 'все три'];
@@ -151,8 +151,17 @@ export class TestRtFileCardMatrixComponent {
 
     public readonly nameLabel: (value: IFileNameCase) => string = (value: IFileNameCase): string => value.name;
 
-    public readonly weightLabel: (value: number | null) => string = (value: number | null): string =>
-        value === null ? 'вес неизвестен' : value === 0 ? 'нулевой' : value < 1_000_000 ? 'килобайты' : 'мегабайты';
+    public readonly weightLabel: (value: number | null) => string = (value: number | null): string => {
+        if (value === null) {
+            return 'вес неизвестен';
+        }
+
+        if (value === 0) {
+            return 'нулевой';
+        }
+
+        return value < 1_000_000 ? 'килобайты' : 'мегабайты';
+    };
 
     public readonly disabledLabel: (value: boolean) => string = (value: boolean): string =>
         value ? 'disabled — кнопки не нажимаются' : 'обычная';

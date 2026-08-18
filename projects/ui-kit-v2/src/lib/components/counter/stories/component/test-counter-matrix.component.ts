@@ -6,7 +6,7 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtCounterComponent } from '../../rt-counter.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type CounterMatrixPart = 'bounds' | 'value' | 'states' | 'themes';
+export type TCounterMatrixPart = 'bounds' | 'value' | 'states' | 'themes';
 
 /** Положение счётчика относительно границ — оно и решает, какая кнопка погашена. */
 interface ICounterCase {
@@ -100,7 +100,7 @@ function count(value: number): FormControl<number> {
     ],
 })
 export class TestRtCounterMatrixComponent {
-    public part: CounterMatrixPart = 'bounds';
+    public part: TCounterMatrixPart = 'bounds';
 
     public readonly boundCases: readonly ICounterCase[] = [
         { name: 'на нижней границе', min: 1, max: 4, disabled: false, control: count(1) },

@@ -54,6 +54,8 @@ function newestIn(dir: string): INewest | null {
                 walk(path);
             } else if (!found || stats.mtimeMs > found.at) {
                 found = { at: stats.mtimeMs, path };
+            } else {
+                // Файл старше уже найденного: самым свежим он не станет
             }
         }
     };
@@ -83,24 +85,42 @@ function workspaceOf(start: string): string | null {
     }
 }
 
+/** Имя пакета из его описания. Описания нет или оно не разбирается — имени нет. */
+function namedPackage(dir: string): string | null {
+    try {
+        return JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')).name ?? null;
+    } catch {
+        return null;
+    }
+}
+
 /** Каталог исходников пакета с этим именем внутри рабочего пространства. */
+function sourceInGroup(dir: string, name: string): string | null {
+    let entries: readonly string[];
+
+    try {
+        entries = readdirSync(dir);
+    } catch {
+        return null;
+    }
+
+    for (const entry of entries) {
+        const candidate: string = join(dir, entry);
+
+        if (namedPackage(candidate) === name) {
+            return candidate;
+        }
+    }
+
+    return null;
+}
+
 function sourceOf(workspace: string, name: string): string | null {
     for (const group of PROJECT_DIRS) {
-        let entries: readonly string[];
-        try {
-            entries = readdirSync(join(workspace, group));
-        } catch {
-            continue;
-        }
-        for (const entry of entries) {
-            const candidate: string = join(workspace, group, entry);
-            try {
-                if (JSON.parse(readFileSync(join(candidate, 'package.json'), 'utf8')).name === name) {
-                    return candidate;
-                }
-            } catch {
-                continue;
-            }
+        const found: string | null = sourceInGroup(join(workspace, group), name);
+
+        if (found !== null) {
+            return found;
         }
     }
 

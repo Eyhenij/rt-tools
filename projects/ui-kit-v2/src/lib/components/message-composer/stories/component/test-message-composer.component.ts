@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { RtMessageComposerComponent } from '../../rt-message-composer.component';
-import { IRtRichEditorToolbar } from '../../../rich-editor/rt-rich-editor.component';
+import { TRtRichEditorToolbar } from '../../../rich-editor/rt-rich-editor.component';
 
 /**
  * Демонстрационная обёртка для витрины: держит изменяемое состояние, на которое
@@ -36,7 +36,7 @@ export class TestRtMessageComposerComponent {
     public sending: boolean = false;
     public disabled: boolean = false;
     public formatting: boolean = false;
-    public toolbar: IRtRichEditorToolbar = 'full';
+    public toolbar: TRtRichEditorToolbar = 'full';
     public minRows: number = 1;
     public maxRows: number = 6;
     public droppedFiles: File[] | null = null;

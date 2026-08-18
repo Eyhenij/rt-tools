@@ -7,8 +7,11 @@ import { IRtPhotoViewer } from '../../rt-photo-viewer.model';
 import { RtPhotoViewerComponent } from '../../rt-photo-viewer.component';
 import { STORY_PHOTOS } from './test-photo-viewer.component';
 
+/** Разметка обёртки: сам просмотрщик берёт всё из данных окна. */
+const VIEWER_TEMPLATE: string = '<rt-photo-viewer />';
+
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type PhotoViewerMatrixPart = 'start' | 'single' | 'themes';
+export type TPhotoViewerMatrixPart = 'start' | 'single' | 'themes';
 
 /** Ссылка на окно, ничего не закрывающая: настоящая убрала бы показ от первого нажатия. */
 const STORY_DIALOG_REF: Pick<RtDialogRef, 'close'> = { close: (): void => undefined };
@@ -16,7 +19,7 @@ const STORY_DIALOG_REF: Pick<RtDialogRef, 'close'> = { close: (): void => undefi
 /** Просмотрщик, открытый на первом кадре: стрелка «назад» есть, но листать назад некуда. */
 @Component({
     selector: 'app-photo-viewer-first',
-    template: '<rt-photo-viewer />',
+    template: VIEWER_TEMPLATE,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RtPhotoViewerComponent],
     providers: [
@@ -29,7 +32,7 @@ class PhotoViewerFirstComponent {}
 /** Просмотрщик, открытый на последнем кадре: счётчик показывает конец набора. */
 @Component({
     selector: 'app-photo-viewer-last',
-    template: '<rt-photo-viewer />',
+    template: VIEWER_TEMPLATE,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RtPhotoViewerComponent],
     providers: [
@@ -45,7 +48,7 @@ class PhotoViewerLastComponent {}
 /** Один кадр: стрелок нет вовсе — листать нечего. */
 @Component({
     selector: 'app-photo-viewer-single',
-    template: '<rt-photo-viewer />',
+    template: VIEWER_TEMPLATE,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RtPhotoViewerComponent],
     providers: [
@@ -99,5 +102,5 @@ class PhotoViewerSingleComponent {}
     ],
 })
 export class TestRtPhotoViewerMatrixComponent {
-    public part: PhotoViewerMatrixPart = 'start';
+    public part: TPhotoViewerMatrixPart = 'start';
 }

@@ -15,15 +15,15 @@ export default {
     },
 } as Meta<TestRtThreadListMatrixComponent>;
 
-type Story = StoryObj<TestRtThreadListMatrixComponent>;
+type TStory = StoryObj<TestRtThreadListMatrixComponent>;
 
 /** Все виды строки в одном списке: выбранная читается только рядом с невыбранными. */
-export const RowState: Story = { args: { part: 'rowState' }, parameters: { snapshot: { fullPage: true } } };
+export const RowState: TStory = { args: { part: 'rowState' }, parameters: { snapshot: { fullPage: true } } };
 
-export const Loading: Story = { args: { part: 'loading' } };
+export const Loading: TStory = { args: { part: 'loading' } };
 
-export const More: Story = { args: { part: 'more' } };
+export const More: TStory = { args: { part: 'more' } };
 
-export const Empty: Story = { args: { part: 'empty' } };
+export const Empty: TStory = { args: { part: 'empty' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

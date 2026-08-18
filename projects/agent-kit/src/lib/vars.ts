@@ -23,8 +23,7 @@ export function renderVars(text: string, vars: Readonly<Record<string, string>>)
     const missing: string[] = [];
 
     const rendered: string = text.replace(PLACEHOLDER, (whole: string, name: string): string => {
-        const value: string | undefined = vars[name];
-        if (value === undefined) {
+        if (!Object.hasOwn(vars, name)) {
             if (!missing.includes(name)) {
                 missing.push(name);
             }
@@ -32,7 +31,7 @@ export function renderVars(text: string, vars: Readonly<Record<string, string>>)
             return whole;
         }
 
-        return value;
+        return vars[name];
     });
 
     return { text: rendered, missing };

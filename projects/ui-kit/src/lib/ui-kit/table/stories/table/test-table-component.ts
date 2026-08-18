@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy, Component, effect, inject, Injector, OnInit, Signal, viewChild } from '@angular/core';
 
 import { IDBStorageService } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
-import { LIST_SORT_ORDER_ENUM, ISortModel } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
+import { EListSortOrder, ISortModel } from '@rt-tools/utils';
 import { RtuiTableComponent } from '../../components';
 import { RtTableSelectorsDirective } from '../../util/table-selectors.directive';
 import { RtTableConfigService } from '../../util/table-config.service';
 import { COLUMNS } from '../constants';
-import { Person } from '../types';
+import { TPerson } from '../types';
 
 @Component({
     selector: 'app-test-table-component',
-    templateUrl: './test-table-component.html',
+    templateUrl: './test-table.component.html',
     styleUrls: ['./test-table-component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -22,23 +22,23 @@ import { Person } from '../types';
     providers: [IDBStorageService, RtTableConfigService],
 })
 export default class TestTableComponent implements OnInit {
-    readonly #tableConfigService: RtTableConfigService<Person> = inject(RtTableConfigService);
+    readonly #tableConfigService: RtTableConfigService<TPerson> = inject(RtTableConfigService);
     readonly #injector: Injector = inject(Injector);
 
     public isMultiSelect: boolean = true;
     public isSelectorsColumnShown: boolean = true;
     public isSelectorsColumnDisabled: boolean = false;
     public isMobile: boolean = false;
-    public data: Person[] = [];
+    public data: TPerson[] = [];
     public selectedEntitiesIds: number[] = [];
-    public sortModel: ISortModel<keyof Person> = {
+    public sortModel: ISortModel<keyof TPerson> = {
         propertyName: 'id',
-        sortDirection: LIST_SORT_ORDER_ENUM.ASC,
+        sortDirection: EListSortOrder.ASC,
     };
     public storageKey: string = 'tableManyItemsKey';
 
-    public readonly dynamicListTpl: Signal<INullable<RtTableSelectorsDirective<Person, keyof Person, 'id'>>> =
-        viewChild<RtTableSelectorsDirective<Person, keyof Person, 'id'>>(RtTableSelectorsDirective);
+    public readonly dynamicListTpl: Signal<TNullable<RtTableSelectorsDirective<TPerson, keyof TPerson, 'id'>>> =
+        viewChild<RtTableSelectorsDirective<TPerson, keyof TPerson, 'id'>>(RtTableSelectorsDirective);
 
     public ngOnInit(): void {
         this.#tableConfigService.initConfig(this.storageKey, COLUMNS);
@@ -54,7 +54,7 @@ export default class TestTableComponent implements OnInit {
         );
     }
 
-    public sortChange(sortModel: ISortModel<keyof Person>): ISortModel<keyof Person> {
+    public sortChange(sortModel: ISortModel<keyof TPerson>): ISortModel<keyof TPerson> {
         return sortModel;
     }
 }

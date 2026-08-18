@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { RtChatComponent } from '../../rt-chat.component';
 import { IRtChat } from '../../rt-chat.model';
-import { IRtRichEditorToolbar } from '../../../rich-editor/rt-rich-editor.component';
+import { TRtRichEditorToolbar } from '../../../rich-editor/rt-rich-editor.component';
 
 /**
  * Демонстрационная обёртка для витрины: держит изменяемое состояние, на которое
@@ -53,7 +53,7 @@ export class TestRtChatComponent {
     public accept: string = '';
     public richComposer: boolean = false;
     public formatting: boolean = false;
-    public formattingToolbar: IRtRichEditorToolbar = 'full';
+    public formattingToolbar: TRtRichEditorToolbar = 'full';
     public fill: boolean = false;
     public showRefresh: boolean = false;
     public showExpand: boolean = false;

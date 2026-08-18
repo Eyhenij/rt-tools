@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RtButtonDirective } from '../../../button/rt-button.directive';
 import { RtDialogFooterComponent } from '../../footer/rt-dialog-footer.component';
 import { RtDialogHeaderComponent } from '../../header/rt-dialog-header.component';
-import { IRtDialogSize, RtDialogComponent } from '../../rt-dialog.component';
+import { TRtDialogSize, RtDialogComponent } from '../../rt-dialog.component';
 
 /**
  * Демонстрационная обёртка для витрины: держит изменяемое состояние, на которое
@@ -42,7 +42,7 @@ import { IRtDialogSize, RtDialogComponent } from '../../rt-dialog.component';
     ],
 })
 export class TestRtDialogComponent {
-    public size: IRtDialogSize = 'md';
+    public size: TRtDialogSize = 'md';
     public width: string | null = null;
     public ariaLabel: string | null = null;
 }

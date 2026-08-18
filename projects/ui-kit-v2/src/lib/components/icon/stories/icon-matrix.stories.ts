@@ -15,15 +15,15 @@ export default {
     },
 } as Meta<TestRtIconMatrixComponent>;
 
-type Story = StoryObj<TestRtIconMatrixComponent>;
+type TStory = StoryObj<TestRtIconMatrixComponent>;
 
 /** Весь набор по категориям: имя — ось с тремя сотнями значений, выборкой её не показать. */
-export const Catalog: Story = { args: { part: 'catalog' } };
+export const Catalog: TStory = { args: { part: 'catalog' } };
 
-export const Size: Story = { args: { part: 'size' } };
+export const Size: TStory = { args: { part: 'size' } };
 
-export const Color: Story = { args: { part: 'color' } };
+export const Color: TStory = { args: { part: 'color' } };
 
-export const Rotate: Story = { args: { part: 'rotate' } };
+export const Rotate: TStory = { args: { part: 'rotate' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

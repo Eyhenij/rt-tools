@@ -23,9 +23,9 @@ export default {
     },
 } as Meta<TestRtToastComponent>;
 
-type Story = StoryObj<TestRtToastComponent>;
+type TStory = StoryObj<TestRtToastComponent>;
 
-export const Default: Story = {
+export const Default: TStory = {
     args: {
         toast: { id: 1, severity: 'info', message: 'Сообщение' },
         index: 0,

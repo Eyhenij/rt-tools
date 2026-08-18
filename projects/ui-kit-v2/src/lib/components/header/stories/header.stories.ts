@@ -12,9 +12,9 @@ export default {
     },
 } as Meta<TestRtHeaderComponent>;
 
-type Story = StoryObj<TestRtHeaderComponent>;
+type TStory = StoryObj<TestRtHeaderComponent>;
 
-export const Default: Story = {
+export const Default: TStory = {
     args: {
         canGoBack: false,
         showInvite: false,

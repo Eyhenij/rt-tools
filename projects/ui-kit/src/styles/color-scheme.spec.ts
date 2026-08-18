@@ -230,7 +230,10 @@ describe('rt-tools color schemes', () => {
             const scheme: Record<string, string> = extractDeclarations(css, '--rt-color-primary-\\d+');
             // bg-accent-primary-solid === var(--rt-color-primary-100); under the teal scheme that is #008582
             expect(scheme['--rt-color-primary-100']).toBe('#008582');
-            expect(normalize(stripMat(css.match(/--rt-bg-accent-primary-solid:\s*([^;]+);/)![1]))).toBe('var(--rt-color-primary-100)');
+            const solid: RegExpMatchArray | null = css.match(/--rt-bg-accent-primary-solid:\s*([^;]+);/);
+
+            expect(solid).not.toBeNull();
+            expect(normalize(stripMat(solid?.[1] ?? ''))).toBe('var(--rt-color-primary-100)');
         });
     });
 });

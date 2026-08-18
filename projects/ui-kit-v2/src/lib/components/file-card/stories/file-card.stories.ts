@@ -20,9 +20,9 @@ export default {
     },
 } as Meta<TestRtFileCardComponent>;
 
-type Story = StoryObj<TestRtFileCardComponent>;
+type TStory = StoryObj<TestRtFileCardComponent>;
 
-export const Default: Story = {
+export const Default: TStory = {
     args: {
         name: 'Название',
         sizeBytes: null,

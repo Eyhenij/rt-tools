@@ -15,14 +15,14 @@ export default {
     },
 } as Meta<TestRtCollapsibleTextMatrixComponent>;
 
-type Story = StoryObj<TestRtCollapsibleTextMatrixComponent>;
+type TStory = StoryObj<TestRtCollapsibleTextMatrixComponent>;
 
-export const Clamp: Story = { args: { part: 'clamp' } };
+export const Clamp: TStory = { args: { part: 'clamp' } };
 
-export const Paragraphs: Story = { args: { part: 'paragraphs' } };
+export const Paragraphs: TStory = { args: { part: 'paragraphs' } };
 
-export const Width: Story = { args: { part: 'width' } };
+export const Width: TStory = { args: { part: 'width' } };
 
-export const Edges: Story = { args: { part: 'edges' } };
+export const Edges: TStory = { args: { part: 'edges' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

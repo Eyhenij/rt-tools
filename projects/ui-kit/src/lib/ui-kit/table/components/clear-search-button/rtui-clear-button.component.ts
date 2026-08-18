@@ -16,7 +16,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip, TooltipPosition } from '@angular/material/tooltip';
 
 import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 import { isString } from '@rt-tools/utils';
 
 const BEM_BLOCK: string = 'rtui-clear-button';
@@ -44,6 +44,7 @@ export class RtuiClearButtonComponent {
     readonly #breakpoints: BreakpointService = inject(BreakpointService);
 
     /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
     protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
     readonly #defaultTooltipPosition: TooltipPosition = 'above';
 
@@ -53,12 +54,12 @@ export class RtuiClearButtonComponent {
      * @deprecated Кит определяет его сам — `BreakpointService` из `@rt-tools/core`. Вход
      * оставлен ради приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
      */
-    public isMobile: InputSignal<INullable<boolean>> = input<INullable<boolean>>(null);
-    public isButtonShown: InputSignalWithTransform<INullable<boolean>, boolean> = input<INullable<boolean>, boolean>(true, {
+    public isMobile: InputSignal<TNullable<boolean>> = input<TNullable<boolean>>(null);
+    public isButtonShown: InputSignalWithTransform<TNullable<boolean>, boolean> = input<TNullable<boolean>, boolean>(true, {
         transform: booleanAttribute,
     });
-    public tooltip: InputSignalWithTransform<INullable<string>, string> = input<INullable<string>, string>(null, {
-        transform: (value: INullable<string>) => (isString(value) ? value.trim() : ''),
+    public tooltip: InputSignalWithTransform<TNullable<string>, string> = input<TNullable<string>, string>(null, {
+        transform: (value: TNullable<string>) => (isString(value) ? value.trim() : ''),
     });
     public tooltipPosition: InputSignal<TooltipPosition> = input(this.#defaultTooltipPosition);
 

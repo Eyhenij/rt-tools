@@ -26,9 +26,9 @@ export default {
     },
 } as Meta<TestRtSkeletonWrapperComponent>;
 
-type Story = StoryObj<TestRtSkeletonWrapperComponent>;
+type TStory = StoryObj<TestRtSkeletonWrapperComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         width: '100%',

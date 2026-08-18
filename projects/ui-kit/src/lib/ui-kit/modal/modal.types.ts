@@ -2,21 +2,23 @@ import { Type } from '@angular/core';
 import { ThemePalette } from '@angular/material/core';
 import { Observable } from 'rxjs';
 
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 
 // Modal enums
-export enum MODAL_WINDOW_SIZE_ENUM {
+export enum EModalWindowSize {
     SM = '25rem',
     MD = '45rem',
     LG = '65rem',
     FULL = '100%',
 }
 
-export type ModalWindowSizeType =
-    MODAL_WINDOW_SIZE_ENUM.SM | MODAL_WINDOW_SIZE_ENUM.MD | MODAL_WINDOW_SIZE_ENUM.LG | MODAL_WINDOW_SIZE_ENUM.FULL;
+export type TModalWindowSizeType = EModalWindowSize.SM | EModalWindowSize.MD | EModalWindowSize.LG | EModalWindowSize.FULL;
+
+/** Вид кнопки окна — набор Material, перечисленный один раз. */
+export type TModalButtonAppearance = 'standard' | 'raised' | 'flat' | 'stroked' | 'fab' | 'mini-fab';
 
 // Modal data interfaces
-export interface Icon {
+export interface IModalIcon {
     value: string;
     style?: { [className: string]: string };
 }
@@ -36,8 +38,8 @@ export namespace IModal {
     export interface Button<T> {
         text: string;
         color?: ThemePalette;
-        value: INullable<T>;
-        appearance?: 'standard' | 'raised' | 'flat' | 'stroked' | 'fab' | 'mini-fab';
+        value: TNullable<T>;
+        appearance?: TModalButtonAppearance;
         validateSelect?: boolean;
         assignSelectedValue?: boolean;
         style?: { [className: string]: string };
@@ -50,7 +52,7 @@ export namespace IModal {
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         component?: Type<any>;
-        icon?: Icon;
+        icon?: IModalIcon;
         title?: string;
         text?: string;
         confirmation?: string;
@@ -72,13 +74,13 @@ export namespace IModal {
         message: string;
     }
 
-    export type ConfirmResponsePredicate<T> = (answer: INullable<IModal.DataAnswer<T>>) => boolean;
+    export type ConfirmResponsePredicate<T> = (answer: TNullable<IModal.DataAnswer<T>>) => boolean;
 
     export interface ConfirmResponse<T> {
-        on(predicate: ConfirmResponsePredicate<T>): Observable<INullable<IModal.DataAnswer<T>>>;
+        on(predicate: ConfirmResponsePredicate<T>): Observable<TNullable<IModal.DataAnswer<T>>>;
 
-        onCancel(cancel?: ConfirmResponsePredicate<T>): Observable<INullable<IModal.DataAnswer<T>>>;
+        onCancel(cancel?: ConfirmResponsePredicate<T>): Observable<TNullable<IModal.DataAnswer<T>>>;
 
-        onConfirm(confirm?: ConfirmResponsePredicate<T>): Observable<INullable<IModal.DataAnswer<T>>>;
+        onConfirm(confirm?: ConfirmResponsePredicate<T>): Observable<TNullable<IModal.DataAnswer<T>>>;
     }
 }

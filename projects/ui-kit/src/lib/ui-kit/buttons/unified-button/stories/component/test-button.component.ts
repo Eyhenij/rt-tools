@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { RtuiIconSizeType } from '../../../../icon/rtui-icon.component';
+import { TRtuiIconSizeType } from '../../../../icon/rtui-icon.component';
 import { IRtuiButton, RtuiButtonComponent } from '../../rtui-button.component';
 
 @Component({
@@ -19,7 +19,7 @@ export class TestButtonComponent {
     public radius: IRtuiButton.Radius | undefined = undefined;
     public appearance: IRtuiButton.Appearance | undefined = undefined;
     public iconPosition: IRtuiButton.IconPosition = 'start';
-    public iconSize: RtuiIconSizeType | undefined = undefined;
+    public iconSize: TRtuiIconSizeType | undefined = undefined;
     public icon: string = 'add';
     public text: string = 'Button';
     public loading: boolean = false;

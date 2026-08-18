@@ -15,13 +15,13 @@ export default {
     },
 } as Meta<TestRtNoteMatrixComponent>;
 
-type Story = StoryObj<TestRtNoteMatrixComponent>;
+type TStory = StoryObj<TestRtNoteMatrixComponent>;
 
-export const Content: Story = { args: { part: 'content' } };
+export const Content: TStory = { args: { part: 'content' } };
 
-export const Width: Story = { args: { part: 'width' } };
+export const Width: TStory = { args: { part: 'width' } };
 
 /** Пустая заметка стоит рядом с полной: подложка остаётся, и пропуск виден только парой. */
-export const Edges: Story = { args: { part: 'edges' } };
+export const Edges: TStory = { args: { part: 'edges' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

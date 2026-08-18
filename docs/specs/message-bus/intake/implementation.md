@@ -8,7 +8,7 @@
 | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | Форма груза объявлена одним местом, и приёмник её не переобъявляет.                           | `libs/message-bus-common/src/lib/cargo.ts:IIntakeResponse`                                        |
 | Груз каждого рода принимается своей операцией.                                                | `libs/message-bus-api/observations/feature/src/lib/summary-intake.controller.ts:accept`           |
-| Приёмник не разбирает содержимого сводки.                                                     | `libs/message-bus-api/observations/util/src/lib/summary.logic.ts:SUMMARY_FIELDS`                  |
+| Приёмник не разбирает содержимого сводки.                                                     | `libs/message-bus-api/observations/util/src/lib/summary.const.ts:SUMMARY_FIELDS`                  |
 | Версия схемы груза обязательна, а версии схемы строк наблюдения — часть содержимого.          | `libs/message-bus-common/src/lib/cargo-shape.ts:cargoSchemaOf`                                    |
 | Груз незнакомой версии схемы принимается и помечается ею.                                     | `libs/message-bus-api/observations/data-access/src/lib/month-record.queries.ts:writeMonthSummary` |
 | Груз тяжелее предела не принимается.                                                          | `apps/message-bus/src/app/cargo-limit.ts:cargoLimit`                                              |
@@ -36,7 +36,7 @@
 | Приёмник ничего не отдаёт без токена дерева.                                                  | `libs/message-bus-api/access/util/src/lib/operation-access.ts:OPERATION_ACCESS`                   |
 | Проба живости отвечает только тогда, когда хранилище отвечает тоже.                           | `apps/message-bus/src/app/health/health.controller.ts:check`                                      |
 | Проба живости не называет ни редакции, ни состава — ни в теле, ни в заголовках ответа.        | `apps/message-bus/src/main.ts:serve`                                                              |
-| Разбор происшествия приезжает текстом целиком.                                                | `libs/message-bus-api/postmortems/util/src/lib/postmortem.logic.ts:POSTMORTEM_ITEM_FIELDS`        |
+| Разбор происшествия приезжает текстом целиком.                                                | `libs/message-bus-api/postmortems/util/src/lib/postmortem.const.ts:POSTMORTEM_ITEM_FIELDS`        |
 | Проверка на адрес дерева разбор происшествия не накрывает.                                    | `projects/agent-kit/src/lib/shipment.ts:leaksOfCargo`                                             |
 | Разбор опознаётся именем своего файла на дереве.                                              | `libs/message-bus-api/postmortems/data-access/src/lib/postmortem.queries.ts:IPostmortemRow`       |
 | Повторно приехавший разбор обновляет прежний, а не заводит второй.                            | `libs/message-bus-api/postmortems/data-access/src/lib/postmortem.queries.ts:writePostmortems`     |

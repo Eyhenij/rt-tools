@@ -15,14 +15,14 @@ export default {
     },
 } as Meta<TestRtMoneyListMatrixComponent>;
 
-type Story = StoryObj<TestRtMoneyListMatrixComponent>;
+type TStory = StoryObj<TestRtMoneyListMatrixComponent>;
 
-export const Total: Story = { args: { part: 'total' } };
+export const Total: TStory = { args: { part: 'total' } };
 
-export const Loading: Story = { args: { part: 'loading' } };
+export const Loading: TStory = { args: { part: 'loading' } };
 
-export const Length: Story = { args: { part: 'length' } };
+export const Length: TStory = { args: { part: 'length' } };
 
-export const Edges: Story = { args: { part: 'edges' } };
+export const Edges: TStory = { args: { part: 'edges' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

@@ -23,9 +23,9 @@ export default {
     },
 } as Meta<TestRtMessageComposerComponent>;
 
-type Story = StoryObj<TestRtMessageComposerComponent>;
+type TStory = StoryObj<TestRtMessageComposerComponent>;
 
-export const Default: Story = {
+export const Default: TStory = {
     args: {
         placeholder: 'Введите значение',
         accept: '',

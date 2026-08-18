@@ -1,4 +1,4 @@
-export enum POSITION_ENUM {
+export enum EPosition {
     LEFT = 'left',
     RIGHT = 'right',
     TOP = 'top',

@@ -1,7 +1,7 @@
 /**
  * A two-argument comparison function of the shape `Array.prototype.sort` expects.
  */
-export type IComparatorType<T> = (aa: T, bb: T) => number;
+export type TComparatorType<T> = (aa: T, bb: T) => number;
 
 /**
  * Compares two values with the supplied comparator, handling nullish operands first.
@@ -18,7 +18,7 @@ export type IComparatorType<T> = (aa: T, bb: T) => number;
  * @example
  * [3, null, 1].sort((a, b) => safeCompare(a, b, (x, y) => x - y)); // [1, 3, null]
  */
-export function safeCompare<T>(a: T, b: T, comparator: IComparatorType<T>): number {
+export function safeCompare<T>(a: T, b: T, comparator: TComparatorType<T>): number {
     if (a == null) {
         if (b == null) {
             return 0;

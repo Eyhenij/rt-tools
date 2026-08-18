@@ -2,7 +2,7 @@ import { computed, inject, input, ChangeDetectionStrategy, Component, InputSigna
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RtKitLabelMap, rtKitLabel } from '../../i18n';
+import { RT_KIT_LABELS, TRtKitLabelMap, rtKitLabel } from '../../i18n';
 import { IRtIcon, RtIconComponent } from '../icon';
 import { IRtStatTile } from './rt-stat-tile.model';
 
@@ -109,7 +109,7 @@ export class RtStatTileComponent {
      * = null) не рисуется вовсе: «—» рядом с цифрой читается как поломка, а не
      * как «сравнивать не с чем».
      */
-    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly primaryDelta: Signal<IDeltaRow | null> = computed((): IDeltaRow | null => this.#visibleDelta(this.deltaPrimary()));
 

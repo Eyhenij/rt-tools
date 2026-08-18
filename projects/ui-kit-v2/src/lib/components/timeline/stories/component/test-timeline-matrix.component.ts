@@ -5,8 +5,23 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtTimelineComponent } from '../../rt-timeline.component';
 import { IRtTimeline } from '../../rt-timeline.model';
 
+/** Первый шаг ленты. */
+const FIRST_STEP: string = 'Заявка принята';
+
+/** Время первого шага. */
+const FIRST_TIME: string = '12 марта, 09:14';
+
+/** Второй шаг ленты. */
+const SECOND_STEP: string = 'Договор подписан';
+
+/** Время второго шага. */
+const SECOND_TIME: string = '14 марта, 16:02';
+
+/** Кто сделал второй шаг. */
+const LEGAL_ACTOR: string = 'Юридический отдел';
+
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TimelineMatrixPart = 'status' | 'fields' | 'length' | 'edges' | 'themes';
+export type TTimelineMatrixPart = 'status' | 'fields' | 'length' | 'edges' | 'themes';
 
 /** Случай ленты: имя для подписи ячейки и сам набор шагов. */
 interface ITimelineCase {
@@ -15,8 +30,8 @@ interface ITimelineCase {
 }
 
 const STEPS_MIXED: readonly IRtTimeline.Step[] = [
-    { label: 'Заявка принята', meta: '12 марта, 09:14', actor: 'Отдел продаж', status: 'complete' },
-    { label: 'Договор подписан', meta: '14 марта, 16:02', actor: 'Юридический отдел', status: 'complete' },
+    { label: FIRST_STEP, meta: FIRST_TIME, actor: 'Отдел продаж', status: 'complete' },
+    { label: SECOND_STEP, meta: SECOND_TIME, actor: LEGAL_ACTOR, status: 'complete' },
     { label: 'Ожидает оплаты', meta: '15 марта, 10:30', actor: 'Бухгалтерия', status: 'current' },
     { label: 'Подключение', status: 'pending' },
 ];
@@ -88,7 +103,7 @@ const STEPS_MIXED: readonly IRtTimeline.Step[] = [
     ],
 })
 export class TestRtTimelineMatrixComponent {
-    public part: TimelineMatrixPart = 'status';
+    public part: TTimelineMatrixPart = 'status';
 
     public readonly stepsMixed: readonly IRtTimeline.Step[] = STEPS_MIXED;
 
@@ -98,8 +113,8 @@ export class TestRtTimelineMatrixComponent {
         {
             name: 'только пройденные',
             steps: [
-                { label: 'Заявка принята', meta: '12 марта, 09:14', status: 'complete' },
-                { label: 'Договор подписан', meta: '14 марта, 16:02', status: 'complete' },
+                { label: FIRST_STEP, meta: FIRST_TIME, status: 'complete' },
+                { label: SECOND_STEP, meta: SECOND_TIME, status: 'complete' },
             ],
         },
         {
@@ -115,16 +130,16 @@ export class TestRtTimelineMatrixComponent {
     public readonly fields: readonly ITimelineCase[] = [
         {
             name: 'время и исполнитель',
-            steps: [{ label: 'Договор подписан', meta: '14 марта, 16:02', actor: 'Юридический отдел', status: 'complete' }],
+            steps: [{ label: SECOND_STEP, meta: SECOND_TIME, actor: LEGAL_ACTOR, status: 'complete' }],
         },
-        { name: 'только время', steps: [{ label: 'Договор подписан', meta: '14 марта, 16:02', status: 'complete' }] },
-        { name: 'только исполнитель', steps: [{ label: 'Договор подписан', actor: 'Юридический отдел', status: 'complete' }] },
-        { name: 'одна подпись', steps: [{ label: 'Договор подписан', status: 'complete' }] },
+        { name: 'только время', steps: [{ label: SECOND_STEP, meta: SECOND_TIME, status: 'complete' }] },
+        { name: 'только исполнитель', steps: [{ label: SECOND_STEP, actor: LEGAL_ACTOR, status: 'complete' }] },
+        { name: 'одна подпись', steps: [{ label: SECOND_STEP, status: 'complete' }] },
     ];
 
     /** Соединительная линия рисуется между пунктами и не рисуется после последнего. */
     public readonly lengths: readonly ITimelineCase[] = [
-        { name: 'один шаг — линии нет', steps: [{ label: 'Заявка принята', meta: '12 марта, 09:14', status: 'current' }] },
+        { name: 'один шаг — линии нет', steps: [{ label: FIRST_STEP, meta: FIRST_TIME, status: 'current' }] },
         { name: 'два шага', steps: STEPS_MIXED.slice(0, 2) },
         { name: 'четыре шага', steps: STEPS_MIXED },
     ];
@@ -137,7 +152,7 @@ export class TestRtTimelineMatrixComponent {
             steps: [
                 {
                     label: 'Заявка на подключение дополнительного рабочего места принята к рассмотрению',
-                    meta: '12 марта, 09:14',
+                    meta: FIRST_TIME,
                     actor: 'Отдел продаж',
                     status: 'current',
                 },

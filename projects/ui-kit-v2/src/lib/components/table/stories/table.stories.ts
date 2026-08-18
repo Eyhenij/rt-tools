@@ -29,9 +29,9 @@ export default {
     },
 } as Meta<TestRtTableComponent>;
 
-type Story = StoryObj<TestRtTableComponent>;
+type TStory = StoryObj<TestRtTableComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         ariaLabel: 'Договоры',

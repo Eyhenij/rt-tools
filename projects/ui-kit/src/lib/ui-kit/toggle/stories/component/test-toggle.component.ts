@@ -4,7 +4,7 @@ import { TooltipPosition } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { RtuiToggleComponent } from '../../rtui-toggle.component';
-import { TOGGLE_SIZE_TYPE_ENUM, ToggleSizeType } from '../../toggle-size.type.enum';
+import { EToggleSizeType, TToggleSizeType } from '../../toggle-size.type.enum';
 
 @Component({
     selector: 'app-toggle',
@@ -25,7 +25,7 @@ export class TestToggleComponent {
     public value: boolean = true;
     public disabled: boolean = false;
     public tooltipDisabled: boolean = false;
-    public size: ToggleSizeType = TOGGLE_SIZE_TYPE_ENUM.MD;
+    public size: TToggleSizeType = EToggleSizeType.MD;
     public label: string = 'Label Example';
     public tooltip: string = 'Tooltip Example';
     public tooltipPosition: TooltipPosition = 'below';

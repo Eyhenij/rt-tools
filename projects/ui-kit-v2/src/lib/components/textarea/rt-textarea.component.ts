@@ -21,7 +21,7 @@ import { RtFormControlBase } from '../form-control/rt-form-control.base';
 
 const BEM_BLOCK: string = 'rt-textarea';
 
-export type IRtTextareaResize = 'none' | 'vertical';
+export type TRtTextareaResize = 'none' | 'vertical';
 
 /**
  * Шеренный textarea common/ui. CVA через общий `RtFormControlBase` —
@@ -72,7 +72,7 @@ export class RtTextareaComponent extends RtFormControlBase<string> {
         transform: booleanAttribute,
     });
     public readonly rows: InputSignalWithTransform<number, NumberInput> = input<number, NumberInput>(3, { transform: numberAttribute });
-    public readonly resize: InputSignal<IRtTextareaResize> = input<IRtTextareaResize>('vertical');
+    public readonly resize: InputSignal<TRtTextareaResize> = input<TRtTextareaResize>('vertical');
 
     protected getEmptyValue(): string {
         return '';

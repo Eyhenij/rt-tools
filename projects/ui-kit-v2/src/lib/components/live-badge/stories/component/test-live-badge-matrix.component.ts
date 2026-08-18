@@ -6,7 +6,7 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtLiveBadgeComponent } from '../../rt-live-badge.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type LiveBadgeMatrixPart = 'active' | 'label' | 'themes';
+export type TLiveBadgeMatrixPart = 'active' | 'label' | 'themes';
 
 /** Случай подписи — не значение оси, а различимая пара «что передали → что нарисовано». */
 interface ILiveBadgeLabelCase {
@@ -71,7 +71,7 @@ interface ILiveBadgeLabelCase {
     ],
 })
 export class TestRtLiveBadgeMatrixComponent {
-    public part: LiveBadgeMatrixPart = 'active';
+    public part: TLiveBadgeMatrixPart = 'active';
 
     public readonly activeStates: readonly boolean[] = [true, false];
 

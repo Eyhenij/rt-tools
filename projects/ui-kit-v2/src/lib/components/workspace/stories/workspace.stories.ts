@@ -19,9 +19,9 @@ export default {
     },
 } as Meta<TestRtWorkspaceComponent>;
 
-type Story = StoryObj<TestRtWorkspaceComponent>;
+type TStory = StoryObj<TestRtWorkspaceComponent>;
 
-export const Default: Story = {
+export const Default: TStory = {
     parameters: storySnapshotSkip(
         'обёртка не заполняет ни одной зоны, и в кадре только разделители колонок; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
     ),

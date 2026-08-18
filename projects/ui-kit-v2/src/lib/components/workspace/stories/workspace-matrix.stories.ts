@@ -21,12 +21,12 @@ export default {
     },
 } as Meta<TestRtWorkspaceMatrixComponent>;
 
-type Story = StoryObj<TestRtWorkspaceMatrixComponent>;
+type TStory = StoryObj<TestRtWorkspaceMatrixComponent>;
 
-export const Slots: Story = { args: { part: 'slots' } };
+export const Slots: TStory = { args: { part: 'slots' } };
 
-export const Active: Story = { args: { part: 'active' } };
+export const Active: TStory = { args: { part: 'active' } };
 
-export const Widths: Story = { args: { part: 'widths' } };
+export const Widths: TStory = { args: { part: 'widths' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

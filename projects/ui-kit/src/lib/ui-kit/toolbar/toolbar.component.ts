@@ -14,7 +14,7 @@ import {
 import { MatToolbar } from '@angular/material/toolbar';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 
 @Directive({
     selector: '[rtuiToolbarLeft]',
@@ -44,16 +44,16 @@ const BEM_BLOCK: string = 'rtui-toolbar';
 export class RtuiToolbarComponent {
     public isVisibleToolbar: Signal<boolean> = input(true);
 
-    public readonly leftToolTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiToolbarLeftDirective, {
+    public readonly leftToolTpl: Signal<TNullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiToolbarLeftDirective, {
         read: TemplateRef,
     });
-    public readonly centerToolTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiToolbarCenterDirective, {
+    public readonly centerToolTpl: Signal<TNullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiToolbarCenterDirective, {
         read: TemplateRef,
     });
-    public readonly rightToolTpl: Signal<INullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiToolbarRightDirective, {
+    public readonly rightToolTpl: Signal<TNullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiToolbarRightDirective, {
         read: TemplateRef,
     });
-    public sticky: InputSignalWithTransform<INullable<boolean>, boolean> = input<INullable<boolean>, boolean>(false, {
+    public sticky: InputSignalWithTransform<TNullable<boolean>, boolean> = input<TNullable<boolean>, boolean>(false, {
         transform: booleanAttribute,
     });
 }

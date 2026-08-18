@@ -15,10 +15,10 @@ export default {
     },
 } as Meta<TestRtBottomSheetMatrixComponent>;
 
-type Story = StoryObj<TestRtBottomSheetMatrixComponent>;
+type TStory = StoryObj<TestRtBottomSheetMatrixComponent>;
 
-export const Open: Story = { args: { part: 'open' } };
+export const Open: TStory = { args: { part: 'open' } };
 
-export const Content: Story = { args: { part: 'content' } };
+export const Content: TStory = { args: { part: 'content' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

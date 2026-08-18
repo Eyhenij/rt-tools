@@ -1,10 +1,10 @@
-export enum RT_THEME_ENUM {
+export enum ERtTheme {
     LIGHT = 'light',
     DARK = 'dark',
     AUTO = 'auto',
 }
 
-export type RtThemeType = `${RT_THEME_ENUM}`;
+export type TRtThemeType = `${ERtTheme}`;
 
 export const RT_THEME_STORAGE_KEY: string = 'rt-theme';
 export const RT_DARK_CLASS: string = 'rt-dark';
@@ -16,7 +16,7 @@ export const RT_THEME_ATTRIBUTE: string = 'data-rt-theme';
  * color scheme may override. The semantic accent tier
  * (`--rt-bg/text/icon/border-accent-*`) derives entirely from these rows.
  */
-export enum RT_ACCENT_ROLE_ENUM {
+export enum ERtAccentRole {
     PRIMARY = 'primary',
     INFO = 'info',
     SUCCESS = 'success',
@@ -25,7 +25,7 @@ export enum RT_ACCENT_ROLE_ENUM {
     BRAND = 'brand',
 }
 
-export type RtAccentRole = `${RT_ACCENT_ROLE_ENUM}`;
+export type TRtAccentRole = `${ERtAccentRole}`;
 
 /**
  * A brand palette: per accent role, a tonal ramp mapping tone step (0–100)
@@ -33,12 +33,12 @@ export type RtAccentRole = `${RT_ACCENT_ROLE_ENUM}`;
  * Partial ramps are allowed — unset tones keep the rt-tools defaults.
  *
  * @example
- * const teal: RtColorSchemeRamp = {
+ * const teal: TRtColorSchemeRamp = {
  *     primary: { 20: '#b3e3e1', 40: '#5cb8b5', 60: '#1a9d99', 100: '#008582' },
  *     brand:   { 20: '#e8e8e8', 100: '#008582' },
  * };
  */
-export type RtColorSchemeRamp = Partial<Record<RtAccentRole, Record<number, string>>>;
+export type TRtColorSchemeRamp = Partial<Record<TRtAccentRole, Record<number, string>>>;
 
 /** `'default'`/`null` clears the active scheme (back to the rt-tools palette). */
 export const RT_DEFAULT_SCHEME: string = 'default';

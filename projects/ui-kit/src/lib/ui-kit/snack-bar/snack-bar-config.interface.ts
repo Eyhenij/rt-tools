@@ -1,12 +1,10 @@
 import { MatSnackBarConfig } from '@angular/material/snack-bar';
 
-import { INullable } from '@rt-tools/utils';
-
 export namespace IRtSnackBar {
     export interface Config extends MatSnackBarConfig {
-        icon?: INullable<string>;
+        icon?: string | null;
         isColoredBackground?: boolean;
-        action?: INullable<string>;
+        action?: string | null;
         isProgressBarShown?: boolean;
     }
 

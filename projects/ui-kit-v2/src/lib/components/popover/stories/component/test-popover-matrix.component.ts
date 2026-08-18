@@ -6,7 +6,7 @@ import { RtPopoverDirective } from '../../rt-popover.directive';
 import { IRtPopover } from '../../rt-popover.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type PopoverMatrixPart = 'align' | 'width' | 'offset';
+export type TPopoverMatrixPart = 'align' | 'width' | 'offset';
 
 /** Выравнивание панели относительно триггера. */
 interface IPopoverAlignCase {
@@ -135,7 +135,7 @@ export class TestRtPopoverMatrixComponent {
     /** Директивы ряда: панели открываются вызовом, а не жестом. */
     protected readonly popovers: Signal<readonly RtPopoverDirective[]> = viewChildren(RtPopoverDirective);
 
-    public part: PopoverMatrixPart = 'align';
+    public part: TPopoverMatrixPart = 'align';
 
     public readonly alignCases: readonly IPopoverAlignCase[] = [
         { name: 'start', align: 'start' },

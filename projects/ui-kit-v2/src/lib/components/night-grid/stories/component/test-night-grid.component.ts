@@ -3,14 +3,23 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RtNightGridComponent } from '../../rt-night-grid.component';
 import { IRtNightGrid } from '../../rt-night-grid.model';
 
+/** Раздаёт видам занятости по кругу: каждая седьмая ночь занята, каждая пятая — под вопросом. */
+function nightState(day: number): IRtNightGrid.State {
+    if (day % 7 === 0) {
+        return 'primary';
+    }
+
+    return day % 5 === 0 ? 'secondary' : 'free';
+}
+
 /** Занятость марта: свободные ночи вперемежку с двумя видами занятых. */
 const MARCH: readonly IRtNightGrid.Cell[] = Array.from({ length: 31 }, (_: unknown, index: number): IRtNightGrid.Cell => {
     const day: number = index + 1;
-    const state: IRtNightGrid.State = day % 7 === 0 ? 'primary' : day % 5 === 0 ? 'secondary' : 'free';
+    const state: IRtNightGrid.State = nightState(day);
 
     return {
-        id: `2026-03-${String(day).padStart(2, '0')}`,
         state,
+        id: `2026-03-${String(day).padStart(2, '0')}`,
         title: state === 'free' ? `${day} марта — свободно` : `${day} марта — занято`,
     };
 });

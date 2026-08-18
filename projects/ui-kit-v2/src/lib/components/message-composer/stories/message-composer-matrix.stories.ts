@@ -15,14 +15,14 @@ export default {
     },
 } as Meta<TestRtMessageComposerMatrixComponent>;
 
-type Story = StoryObj<TestRtMessageComposerMatrixComponent>;
+type TStory = StoryObj<TestRtMessageComposerMatrixComponent>;
 
-export const State: Story = { args: { part: 'state' } };
+export const State: TStory = { args: { part: 'state' } };
 
-export const Attachments: Story = { args: { part: 'attachments' } };
+export const Attachments: TStory = { args: { part: 'attachments' } };
 
-export const Formatting: Story = { args: { part: 'formatting' } };
+export const Formatting: TStory = { args: { part: 'formatting' } };
 
-export const Rows: Story = { args: { part: 'rows' } };
+export const Rows: TStory = { args: { part: 'rows' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

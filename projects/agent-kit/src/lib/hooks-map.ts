@@ -16,6 +16,7 @@
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { byKey } from './order.js';
 
 /** Настройка агента, в которой живёт карта. Путь от корня дерева. */
 export const SETTINGS_PATH: string = '.claude/settings.json';
@@ -65,8 +66,8 @@ export function hooksSection(bindings: readonly IHookBinding[]): Record<string, 
     }
 
     const section: Record<string, unknown> = {};
-    for (const [event, byMatcher] of [...events].sort()) {
-        section[event] = [...byMatcher].sort().map(([matcher, paths]: [string, readonly string[]]): unknown => {
+    for (const [event, byMatcher] of [...events].sort(byKey)) {
+        section[event] = [...byMatcher].sort(byKey).map(([matcher, paths]: [string, readonly string[]]): unknown => {
             const hooks: unknown[] = paths.map((path: string): unknown => ({
                 type: 'command',
                 command: `$CLAUDE_PROJECT_DIR/${path}`,
@@ -79,6 +80,53 @@ export function hooksSection(bindings: readonly IHookBinding[]): Record<string, 
     }
 
     return section;
+}
+
+/** Одна команда гарда в настройке агента: событие, путь и образец, под которым она стоит. */
+interface ISettingsHook {
+    readonly event: string;
+    readonly path: string;
+    readonly matcher: string;
+}
+
+/** Команды одной записи настройки: у всех у них общий образец — он объявлен записью, а не командой. */
+function hooksOfRecord(event: string, record: unknown): readonly ISettingsHook[] {
+    const asked: unknown = (record as Record<string, unknown> | null)?.['matcher'];
+    const matcher: string = typeof asked === 'string' ? asked.trim() : '';
+    const commands: unknown = (record as Record<string, unknown> | null)?.['hooks'];
+    const found: ISettingsHook[] = [];
+
+    for (const command of Array.isArray(commands) ? commands : []) {
+        const line: unknown = (command as Record<string, unknown> | null)?.['command'];
+
+        if (typeof line === 'string') {
+            const at: number = line.indexOf('.claude/');
+
+            found.push({ event, matcher, path: at < 0 ? line : line.slice(at) });
+        }
+    }
+
+    return found;
+}
+
+/** Все команды гардов из настройки агента плоским списком. Текст не разбирается — отказ разбора. */
+function hooksInSettings(text: string): readonly ISettingsHook[] {
+    const settings: unknown = JSON.parse(text);
+    const hooks: unknown = (settings as Record<string, unknown> | null)?.['hooks'];
+    const found: ISettingsHook[] = [];
+
+    for (const [event, records] of Object.entries((hooks ?? {}) as Record<string, unknown>)) {
+        for (const record of Array.isArray(records) ? records : []) {
+            found.push(...hooksOfRecord(event, record));
+        }
+    }
+
+    return found;
+}
+
+/** Ключ, которым гард узнаётся: событие и путь вместе — на двух событиях он стоит дважды. */
+function keyOf(hook: ISettingsHook): string {
+    return `${hook.event} ${hook.path}`;
 }
 
 /** Пути гардов, названные в настройке агента этого дерева. Нет файла — ни одного. */
@@ -97,29 +145,12 @@ export function boundInSettings(root: string): readonly string[] {
     // Сперва разбором: гард, стоящий на двух событиях, подключается к каждому отдельно, и по
     // одному имени файла этого не увидеть — подключённый к первому событию выглядел бы
     // подключённым и ко второму.
-    const byEvent: string[] = [];
     try {
-        const settings: unknown = JSON.parse(text);
-        const hooks: unknown = (settings as Record<string, unknown> | null)?.['hooks'];
-        for (const [event, records] of Object.entries((hooks ?? {}) as Record<string, unknown>)) {
-            for (const record of Array.isArray(records) ? records : []) {
-                const commands: unknown = (record as Record<string, unknown> | null)?.['hooks'];
-                for (const command of Array.isArray(commands) ? commands : []) {
-                    const line: unknown = (command as Record<string, unknown> | null)?.['command'];
-                    if (typeof line === 'string') {
-                        byEvent.push(`${event} ${line.replace(/^.*?(\.claude\/)/, '$1')}`);
-                    }
-                }
-            }
-        }
-
-        return byEvent;
+        return hooksInSettings(text).map(keyOf);
     } catch {
         // Настройку дерево вправе держать так, как ему удобно, — вплоть до комментариев, которых
         // JSON не разбирает. Тогда ищется одно: назван ли путь гарда хоть где-нибудь в ней.
-        return [...text.matchAll(/[\w./$-]*\.claude\/hooks\/[\w.-]+\.sh/g)].map((found: RegExpMatchArray): string =>
-            found[0].replace(/^.*?(\.claude\/)/, '$1')
-        );
+        return [...text.matchAll(/\.claude\/hooks\/[\w.-]+\.sh/g)].map((found: RegExpMatchArray): string => found[0]);
     }
 }
 
@@ -145,31 +176,17 @@ export function unboundHooks(bindings: readonly IHookBinding[], root: string): r
  */
 export function matchersInSettings(root: string): ReadonlyMap<string, string> {
     const path: string = join(root, SETTINGS_PATH);
-    const found: Map<string, string> = new Map();
     if (!existsSync(path)) {
-        return found;
-    }
-
-    try {
-        const settings: unknown = JSON.parse(readFileSync(path, 'utf8'));
-        const hooks: unknown = (settings as Record<string, unknown> | null)?.['hooks'];
-        for (const [event, records] of Object.entries((hooks ?? {}) as Record<string, unknown>)) {
-            for (const record of Array.isArray(records) ? records : []) {
-                const matcher: unknown = (record as Record<string, unknown> | null)?.['matcher'];
-                const commands: unknown = (record as Record<string, unknown> | null)?.['hooks'];
-                for (const command of Array.isArray(commands) ? commands : []) {
-                    const line: unknown = (command as Record<string, unknown> | null)?.['command'];
-                    if (typeof line === 'string') {
-                        found.set(`${event} ${line.replace(/^.*?(\.claude\/)/, '$1')}`, typeof matcher === 'string' ? matcher.trim() : '');
-                    }
-                }
-            }
-        }
-    } catch {
         return new Map();
     }
 
-    return found;
+    try {
+        return new Map(
+            hooksInSettings(readFileSync(path, 'utf8')).map((one: ISettingsHook): [string, string] => [keyOf(one), one.matcher])
+        );
+    } catch {
+        return new Map();
+    }
 }
 
 /** Гард, чьё объявление разошлось с образцом, под которым его зовут. */

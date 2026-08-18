@@ -13,7 +13,7 @@ import { IRtIcon } from '../../../icon/rt-icon.model';
 import { RtMenuItemComponent } from '../../rt-menu-item.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type MenuItemMatrixPart = 'kinds' | 'states' | 'themes';
+export type TMenuItemMatrixPart = 'kinds' | 'states' | 'themes';
 
 /** Вид пункта: иконка, деструктивность и недоступность вместе — порознь они не бывают. */
 interface IMenuItemKindCase {
@@ -91,7 +91,7 @@ interface IMenuItemKindCase {
     ],
 })
 export class TestRtMenuItemMatrixComponent {
-    public part: MenuItemMatrixPart = 'kinds';
+    public part: TMenuItemMatrixPart = 'kinds';
 
     /** Ширина ячейки: пункт занимает всю ширину родителя, и по содержимому он бы схлопнулся. */
     public readonly itemWidth: string = '12rem';

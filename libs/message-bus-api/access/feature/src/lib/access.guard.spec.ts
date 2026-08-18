@@ -52,10 +52,7 @@ class PrismaDouble {
     public get treeToken(): { findFirst: (args: Record<string, unknown>) => Promise<unknown> } {
         return {
             findFirst: async (args: Record<string, unknown>): Promise<unknown> => {
-                const where: { hash?: string; revokedAt?: Date | null } = (args['where'] ?? {}) as {
-                    hash?: string;
-                    revokedAt?: Date | null;
-                };
+                const where: { hash?: string; revokedAt?: Date | null } = args['where'] ?? {};
                 const found: ITokenRow | undefined = this.#tokens.find(
                     (row: ITokenRow): boolean => row.hash === where.hash && row.revokedAt === where.revokedAt
                 );
@@ -68,7 +65,7 @@ class PrismaDouble {
     public get session(): { findUnique: (args: Record<string, unknown>) => Promise<unknown> } {
         return {
             findUnique: async (args: Record<string, unknown>): Promise<unknown> => {
-                const where: { hash?: string } = (args['where'] ?? {}) as { hash?: string };
+                const where: { hash?: string } = args['where'] ?? {};
                 const found: ISessionRow | undefined = this.#sessions.find((row: ISessionRow): boolean => row.hash === where.hash);
 
                 if (!found) {
@@ -120,7 +117,7 @@ function requestWith(headers: Record<string, string | string[] | undefined> = {}
         ? { ...headers, cookie: `other=1; message_bus_session=${session}` }
         : headers;
 
-    return { headers: carried } as TRequest;
+    return { headers: carried };
 }
 
 function contextOf(request: TRequest): ExecutionContext {

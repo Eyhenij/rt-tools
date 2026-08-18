@@ -13,9 +13,9 @@ export default {
     },
 } as Meta<TestRtCardComponent>;
 
-type Story = StoryObj<TestRtCardComponent>;
+type TStory = StoryObj<TestRtCardComponent>;
 
-export const Default: Story = {
+export const Default: TStory = {
     args: {
         header: null,
         ariaLabel: null,

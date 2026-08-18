@@ -7,9 +7,7 @@ import { BooleanInput } from '@angular/cdk/coercion';
 export class RtIconOutlinedDirective {
     public isOutlined: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         alias: 'rtIconOutlined',
-        transform: (value: BooleanInput) => {
-            return Boolean(value);
-        },
+        transform: (value: BooleanInput) => Boolean(value),
     });
 
     @HostBinding('style.fontVariationSettings')

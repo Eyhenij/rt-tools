@@ -5,8 +5,11 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtButtonDirective } from '../../../button/rt-button.directive';
 import { RtEmptyStateComponent } from '../../rt-empty-state.component';
 
+/** Заголовок пустого состояния — один на все ячейки матрицы. */
+const EMPTY_TITLE: string = 'Файлов нет';
+
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type EmptyStateMatrixPart = 'parts' | 'slots' | 'themes';
+export type TEmptyStateMatrixPart = 'parts' | 'slots' | 'themes';
 
 /** Случай состава: какие из необязательных частей заполнены. */
 interface IEmptyStatePartsCase {
@@ -83,17 +86,17 @@ interface IEmptyStatePartsCase {
     ],
 })
 export class TestRtEmptyStateMatrixComponent {
-    public part: EmptyStateMatrixPart = 'parts';
+    public part: TEmptyStateMatrixPart = 'parts';
 
     /** Картинку витрина рисует своей заглушкой: своих иллюстраций кит не везёт. */
     public readonly illustration: string =
         "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 72'%3E%3Crect width='96' height='72' rx='8' fill='%23cbd5e1'/%3E%3C/svg%3E";
 
     public readonly partsCases: readonly IEmptyStatePartsCase[] = [
-        { name: 'всё сразу', icon: 'folder', title: 'Файлов нет', description: 'Прикрепите первый документ' },
-        { name: 'без описания', icon: 'folder', title: 'Файлов нет', description: null },
-        { name: 'без иконки', icon: null, title: 'Файлов нет', description: 'Прикрепите первый документ' },
-        { name: 'только заголовок', icon: null, title: 'Файлов нет', description: null },
+        { name: 'всё сразу', icon: 'folder', title: EMPTY_TITLE, description: 'Прикрепите первый документ' },
+        { name: 'без описания', icon: 'folder', title: EMPTY_TITLE, description: null },
+        { name: 'без иконки', icon: null, title: EMPTY_TITLE, description: 'Прикрепите первый документ' },
+        { name: 'только заголовок', icon: null, title: EMPTY_TITLE, description: null },
         { name: 'без единого входа', icon: null, title: '', description: null },
     ];
 

@@ -18,7 +18,7 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RtKitLabelMap } from '../../i18n';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
 
 const BEM_BLOCK: string = 'rt-collapsible-text';
 
@@ -41,7 +41,7 @@ const BEM_BLOCK: string = 'rt-collapsible-text';
 export class RtCollapsibleTextComponent implements OnDestroy {
     #resizeObserver: ResizeObserver | null = null;
 
-    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly textRef: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('text');
 

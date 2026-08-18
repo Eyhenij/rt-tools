@@ -18,18 +18,18 @@ export default {
     },
 } as Meta<TestRtFieldMatrixComponent>;
 
-type Story = StoryObj<TestRtFieldMatrixComponent>;
+type TStory = StoryObj<TestRtFieldMatrixComponent>;
 
-export const Anatomy: Story = { args: { part: 'anatomy' } };
+export const Anatomy: TStory = { args: { part: 'anatomy' } };
 
-export const Required: Story = { args: { part: 'required' } };
+export const Required: TStory = { args: { part: 'required' } };
 
-export const Error: Story = { args: { part: 'error' } };
+export const ErrorPart: TStory = { name: 'Error', args: { part: 'error' } };
 
-export const Hint: Story = { args: { part: 'hint' } };
+export const Hint: TStory = { args: { part: 'hint' } };
 
-export const Modes: Story = { args: { part: 'modes' } };
+export const Modes: TStory = { args: { part: 'modes' } };
 
-export const States: Story = { args: { part: 'states' } };
+export const States: TStory = { args: { part: 'states' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

@@ -36,7 +36,7 @@ export function incidentOf(body: unknown): string {
         return '';
     }
 
-    return message.match(INCIDENT)?.[1] ?? '';
+    return INCIDENT.exec(message)?.[1] ?? '';
 }
 
 /**

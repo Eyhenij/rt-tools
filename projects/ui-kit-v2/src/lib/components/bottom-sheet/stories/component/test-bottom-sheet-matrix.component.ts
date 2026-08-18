@@ -6,7 +6,7 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtBottomSheetComponent } from '../../rt-bottom-sheet.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type BottomSheetMatrixPart = 'open' | 'content' | 'themes';
+export type TBottomSheetMatrixPart = 'open' | 'content' | 'themes';
 
 /**
  * Матрицы состояний `rt-bottom-sheet` для витрины.
@@ -100,7 +100,7 @@ export type BottomSheetMatrixPart = 'open' | 'content' | 'themes';
     ],
 })
 export class TestRtBottomSheetMatrixComponent {
-    public part: BottomSheetMatrixPart = 'open';
+    public part: TBottomSheetMatrixPart = 'open';
 
     public readonly opens: readonly boolean[] = [false, true];
     public readonly contents: readonly string[] = ['без шапки', 'с шапкой', 'длинное содержимое', 'пусто'];

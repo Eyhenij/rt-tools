@@ -12,9 +12,9 @@ export default {
     },
 } as Meta<TestRtNightGridComponent>;
 
-type Story = StoryObj<TestRtNightGridComponent>;
+type TStory = StoryObj<TestRtNightGridComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         ariaLabel: 'Март',

@@ -18,12 +18,12 @@ export default {
     },
 } as Meta<TestRtRichEditorMatrixComponent>;
 
-type Story = StoryObj<TestRtRichEditorMatrixComponent>;
+type TStory = StoryObj<TestRtRichEditorMatrixComponent>;
 
-export const Toolbar: Story = { args: { part: 'toolbar' } };
+export const Toolbar: TStory = { args: { part: 'toolbar' } };
 
-export const Filling: Story = { args: { part: 'filling' } };
+export const Filling: TStory = { args: { part: 'filling' } };
 
-export const States: Story = { args: { part: 'states' } };
+export const States: TStory = { args: { part: 'states' } };
 
-export const Themes: Story = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };

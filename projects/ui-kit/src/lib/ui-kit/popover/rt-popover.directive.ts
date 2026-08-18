@@ -19,10 +19,10 @@ import {
 import { computePosition, ComputePositionReturn, flip, offset, shift } from '@floating-ui/dom';
 
 import { PlatformService, WINDOW } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 import { RtuiPopoverContainerComponent } from './rtui-popover-container.component';
 
-export type MenuItemTrigger = 'click' | 'hover';
+export type TMenuItemTrigger = 'click' | 'hover';
 
 @Directive({
     selector: '[rtPopover]',
@@ -43,14 +43,14 @@ export class RtPopoverDirective implements OnInit, OnDestroy {
 
     public xOffset: InputSignalWithTransform<number, NumberInput> = input<number, NumberInput>(0, { transform: numberAttribute });
     public yOffset: InputSignalWithTransform<number, NumberInput> = input<number, NumberInput>(-20, { transform: numberAttribute });
-    public trigger: InputSignalWithTransform<MenuItemTrigger, MenuItemTrigger> = input<MenuItemTrigger, MenuItemTrigger>('hover', {
+    public trigger: InputSignalWithTransform<TMenuItemTrigger, TMenuItemTrigger> = input<TMenuItemTrigger, TMenuItemTrigger>('hover', {
         transform: (value: unknown) => (value === 'click' ? 'click' : 'hover'),
     });
-    public template: InputSignalWithTransform<INullable<TemplateRef<HTMLElement>>, INullable<TemplateRef<HTMLElement>>> = input<
-        INullable<TemplateRef<HTMLElement>>,
-        INullable<TemplateRef<HTMLElement>>
+    public template: InputSignalWithTransform<TNullable<TemplateRef<HTMLElement>>, TNullable<TemplateRef<HTMLElement>>> = input<
+        TNullable<TemplateRef<HTMLElement>>,
+        TNullable<TemplateRef<HTMLElement>>
     >(null, {
-        transform: (value: INullable<TemplateRef<HTMLElement>>) => value || null,
+        transform: (value: TNullable<TemplateRef<HTMLElement>>) => value || null,
     });
     public isMouseHoverAllowed: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,

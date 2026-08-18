@@ -12,9 +12,9 @@ export default {
     },
 } as Meta<TestRtDetailRowComponent>;
 
-type Story = StoryObj<TestRtDetailRowComponent>;
+type TStory = StoryObj<TestRtDetailRowComponent>;
 
-export const Default: Story = {
+export const Default: TStory = {
     args: {
         label: 'Сохранить',
         loading: false,

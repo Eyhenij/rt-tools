@@ -5,9 +5,9 @@ import { IRtIcon } from './rt-icon.model';
  * Порядок фиксирован — соответствует порядку отображения в Catalog story (rt-icon.stories.ts).
  *
  * Аннотация типа намеренно не указывается: явный `readonly string[]` потерял бы узкий
- * литеральный тип, нужный для {@link IIconCategory}. `as const` сохраняет литеральные ключи.
+ * литеральный тип, нужный для {@link TIconCategory}. `as const` сохраняет литеральные ключи.
  */
-// eslint-disable-next-line @typescript-eslint/typedef -- аннотация стёрла бы литеральный тип, на котором стоит IIconCategory
+// eslint-disable-next-line @typescript-eslint/typedef -- аннотация стёрла бы литеральный тип, на котором стоит TIconCategory
 export const CATEGORY_ORDER = [
     'Navigation',
     'Alignment & Sorting',
@@ -22,14 +22,14 @@ export const CATEGORY_ORDER = [
 ] as const;
 
 /** Литеральный union из {@link CATEGORY_ORDER}. */
-export type IIconCategory = (typeof CATEGORY_ORDER)[number];
+export type TIconCategory = (typeof CATEGORY_ORDER)[number];
 
 /**
  * Правило маппинга имени иконки в категорию.
  * Порядок правил в {@link ICON_CATEGORY_RULES} важен: первое совпавшее правило выигрывает.
  */
 interface IIconCategoryRule {
-    readonly category: IIconCategory;
+    readonly category: TIconCategory;
     readonly match: (name: string) => boolean;
 }
 
@@ -91,7 +91,7 @@ export const ICON_CATEGORY_RULES: readonly IIconCategoryRule[] = [
  * Возвращает категорию для имени иконки.
  * Первое совпавшее правило в {@link ICON_CATEGORY_RULES} выигрывает; иначе — `Misc`.
  */
-export function categoryOf(name: IRtIcon.Name): IIconCategory {
+export function categoryOf(name: IRtIcon.Name): TIconCategory {
     for (const rule of ICON_CATEGORY_RULES) {
         if (rule.match(name)) {
             return rule.category;

@@ -2,7 +2,7 @@ import { Directive, HostBinding, inject, input, InputSignal, OnInit } from '@ang
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 import { getColorBasedOnBackground } from '../../calculate-text-color-based-on-back';
-import { InfoBadgeType } from '../../info-badge-types.enum';
+import { TInfoBadgeType } from '../../info-badge-types.enum';
 
 @Directive({
     selector: '[rtTestInfoBadge]',
@@ -11,7 +11,7 @@ export class TestInfoBadgeDirective implements OnInit {
     readonly #sanitizer: DomSanitizer = inject(DomSanitizer);
 
     private infoBadgeColors: { [key: string]: string } | null = null;
-    public type: InputSignal<InfoBadgeType> = input.required();
+    public type: InputSignal<TInfoBadgeType> = input.required();
 
     public ngOnInit(): void {
         /**
@@ -42,10 +42,13 @@ export class TestInfoBadgeDirective implements OnInit {
         let style: string = '';
 
         if (this.infoBadgeColors) {
-            style += `color: ${getColorBasedOnBackground(this.infoBadgeColors[`${this.type()}`])};`;
-            style += `background: ${this.infoBadgeColors[`${this.type()}`]};`;
+            const background: string = this.infoBadgeColors[this.type()];
+
+            style += `color: ${getColorBasedOnBackground(background)};`;
+            style += `background: ${background};`;
         }
 
+        // eslint-disable-next-line sonarjs/no-angular-bypass-sanitization -- строка стиля собрана витриной из своего набора цветов, ввода пользователя в ней нет
         return !!style.length ? this.#sanitizer.bypassSecurityTrustStyle(style) : undefined;
     }
 }

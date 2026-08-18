@@ -14,9 +14,9 @@ export default {
     },
 } as Meta<TestRtCheckboxComponent>;
 
-type Story = StoryObj<TestRtCheckboxComponent>;
+type TStory = StoryObj<TestRtCheckboxComponent>;
 
-export const Playground: Story = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         inputId: null,

@@ -7,7 +7,7 @@ import { IRtTag } from '../../../tag/rt-tag.model';
 import { RtMessageComponent } from '../../rt-message.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type MessageMatrixPart = 'severity' | 'icon' | 'closable' | 'content' | 'themes';
+export type TMessageMatrixPart = 'severity' | 'icon' | 'closable' | 'content' | 'themes';
 
 /**
  * Матрицы состояний `rt-message` для витрины.
@@ -103,7 +103,7 @@ export type MessageMatrixPart = 'severity' | 'icon' | 'closable' | 'content' | '
     ],
 })
 export class TestRtMessageMatrixComponent {
-    public part: MessageMatrixPart = 'severity';
+    public part: TMessageMatrixPart = 'severity';
 
     public readonly severities: readonly IRtTag.Severity[] = ['info', 'success', 'warning', 'danger', 'secondary', 'neutral'];
 

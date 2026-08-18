@@ -25,7 +25,7 @@ import {
 import { StorageService } from '@rt-tools/core';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RtKitLabelMap } from '../../i18n';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtWorkspaceAsideDirective, RtWorkspaceCenterDirective, RtWorkspaceListDirective } from './rt-workspace.directives';
 import { IRtWorkspace } from './rt-workspace.model';
@@ -90,7 +90,7 @@ export class RtWorkspaceComponent implements IRtWorkspace.PanelApi {
 
     #detachDragListeners: (() => void) | null = null;
 
-    protected readonly t: Signal<RtKitLabelMap> = inject(RT_KIT_LABELS);
+    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly listSlot: Signal<RtWorkspaceListDirective | undefined> = contentChild(RtWorkspaceListDirective);
 

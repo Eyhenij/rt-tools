@@ -35,7 +35,7 @@ import { RouterLink } from '@angular/router';
 import { debounceTime } from 'rxjs/operators';
 
 import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import {
     BreakStringPipe,
@@ -98,6 +98,7 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
     readonly #injector: Injector = inject(Injector);
 
     /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
     protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
     readonly #deviceService: DeviceDetectorService = inject(DeviceDetectorService);
 
@@ -109,11 +110,11 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
      * @deprecated Кит определяет его сам — `RtuiBreakpointsService`. Вход оставлен ради
      * приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
      */
-    public isMobile: InputSignalWithTransform<INullable<boolean>, INullable<boolean> | string> = input<
-        INullable<boolean>,
-        INullable<boolean> | string
+    public isMobile: InputSignalWithTransform<TNullable<boolean>, TNullable<boolean> | string> = input<
+        TNullable<boolean>,
+        TNullable<boolean> | string
     >(null, {
-        transform: (value: INullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
+        transform: (value: TNullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
     });
     public entitiesToSelect: InputSignalWithTransform<ENTITY[], ENTITY[]> = input.required<ENTITY[], ENTITY[]>({
         transform: (value: unknown) => transformArrayInput(value),
@@ -155,11 +156,11 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
         transform: booleanAttribute,
     });
     /** Indicates lazy loading is used */
-    public isLazyLoad: InputSignalWithTransform<INullable<boolean>, boolean> = input<INullable<boolean>, boolean>(false, {
+    public isLazyLoad: InputSignalWithTransform<TNullable<boolean>, boolean> = input<TNullable<boolean>, boolean>(false, {
         transform: booleanAttribute,
     });
     /** Indicates local search is used */
-    public isLocalSearch: InputSignalWithTransform<INullable<boolean>, boolean> = input<INullable<boolean>, boolean>(true, {
+    public isLocalSearch: InputSignalWithTransform<TNullable<boolean>, boolean> = input<TNullable<boolean>, boolean>(true, {
         transform: booleanAttribute,
     });
     /** Keys of a pinned group kept at the top of the list — a trailing divider is drawn after the last visible one */
@@ -179,11 +180,11 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
     public readonly temporarySelectAction: OutputEmitterRef<ENTITY[]> = output<ENTITY[]>();
 
     /** Search input Ref for set focus on init */
-    public readonly searchInputRef: Signal<INullable<ElementRef<HTMLInputElement>>> =
+    public readonly searchInputRef: Signal<TNullable<ElementRef<HTMLInputElement>>> =
         viewChild<ElementRef<HTMLInputElement>>('searchInputTpl');
 
     /** Form control for search */
-    public readonly searchControl: FormControl<INullable<string>> = new FormControl('');
+    public readonly searchControl: FormControl<TNullable<string>> = new FormControl('');
     /** Form control for select */
     public readonly selectionControl: FormControl<ENTITY[KEY][]> = new FormControl<ENTITY[KEY][]>([], { nonNullable: true });
     /** Entities filtered by local search */
@@ -197,7 +198,7 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
     /** Indicates is macOS used */
     public readonly isMacOS: Signal<boolean> = signal(this.#deviceService.getOS() === this.oSTypes.MAC_OS);
     /** Key of the last visible pinned option — its row gets a trailing divider */
-    public readonly lastSeparatedKey: Signal<INullable<ENTITY[KEY]>> = computed(() => {
+    public readonly lastSeparatedKey: Signal<TNullable<ENTITY[KEY]>> = computed(() => {
         const keys: ENTITY[KEY][] = this.pinnedKeys();
 
         if (!keys.length) {
@@ -224,10 +225,10 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
         /** Filter list of entities by search  */
         this.searchControl.valueChanges
             .pipe(debounceTime(this.isLocalSearch() ? 0 : 500), takeUntilDestroyed(this.#destroyRef))
-            .subscribe((value: INullable<string>): void => {
-                const selectedEntities: ENTITY[] = this.entitiesToSelect().filter((el: ENTITY) => {
-                    return this.selectionControl.value.includes(el[this.keyExp()]);
-                });
+            .subscribe((value: TNullable<string>): void => {
+                const selectedEntities: ENTITY[] = this.entitiesToSelect().filter((el: ENTITY) =>
+                    this.selectionControl.value.includes(el[this.keyExp()])
+                );
                 this.selectedEntities.set(selectedEntities);
                 this.temporarySelectAction.emit(selectedEntities);
 
@@ -235,21 +236,22 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
                     const searchTerms: string[] = value.toLowerCase().trim().split(' ');
 
                     this.filteredEntities.set(
-                        this.entitiesToSelect().filter((el: ENTITY) => {
-                            return (
+                        this.entitiesToSelect().filter(
+                            (el: ENTITY) =>
                                 (typeof el[this.displayExp()] === 'string' || typeof el[this.displayExp()] === 'number') &&
                                 searchTerms.every(
                                     (term: string) =>
                                         el[this.displayExp()]?.toString().toLowerCase().includes(term) &&
                                         !this.selectedEntities().includes(el)
                                 )
-                            );
-                        })
+                        )
                     );
                 } else if (this.isLocalSearch()) {
                     this.filteredEntities.set(this.entitiesToSelect());
                 } else if (value !== null && typeof value === 'string') {
                     this.searchAction.emit(value);
+                } else {
+                    // Строка пуста, а поиск не местный — запрашивать нечего.
                 }
             });
 
@@ -258,9 +260,9 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
             () => {
                 if (this.entitiesToSelect() && Array.isArray(this.entitiesToSelect())) {
                     if (this.searchControl?.value) {
-                        const filteredEntities: ENTITY[] = this.entitiesToSelect().filter((el: ENTITY) => {
-                            return !this.selectionControl.value.includes(el[this.keyExp()]);
-                        });
+                        const filteredEntities: ENTITY[] = this.entitiesToSelect().filter(
+                            (el: ENTITY) => !this.selectionControl.value.includes(el[this.keyExp()])
+                        );
                         this.filteredEntities.set(filteredEntities);
                     } else {
                         this.filteredEntities.set(this.entitiesToSelect());
@@ -326,9 +328,7 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
             this.selectionControl.patchValue([...this.selectionControl.value, entity[this.keyExp()]]);
         } else {
             this.selectionControl.patchValue(
-                this.selectionControl.value.filter((el: ENTITY[KEY]): boolean => {
-                    return el !== entity[this.keyExp()];
-                })
+                this.selectionControl.value.filter((el: ENTITY[KEY]): boolean => el !== entity[this.keyExp()])
             );
         }
 

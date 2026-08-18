@@ -5,7 +5,7 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtAsideSectionComponent } from '../../rt-aside-section.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type AsideSectionMatrixPart = 'heading' | 'content' | 'stack' | 'themes';
+export type TAsideSectionMatrixPart = 'heading' | 'content' | 'stack' | 'themes';
 
 /**
  * Матрицы состояний `rt-aside-section` для витрины.
@@ -80,11 +80,16 @@ export type AsideSectionMatrixPart = 'heading' | 'content' | 'stack' | 'themes';
     ],
 })
 export class TestRtAsideSectionMatrixComponent {
-    public part: AsideSectionMatrixPart = 'heading';
+    public part: TAsideSectionMatrixPart = 'heading';
 
     public readonly headings: readonly (string | null)[] = [null, 'Договор', 'Условия продления и расторжения'];
     public readonly contents: readonly string[] = ['строка', 'несколько абзацев', 'пусто'];
 
-    public readonly headingLabel: (value: string | null) => string = (value: string | null): string =>
-        value === null ? 'без заголовка' : value.length > 12 ? 'длинный заголовок' : 'короткий заголовок';
+    public readonly headingLabel: (value: string | null) => string = (value: string | null): string => {
+        if (value === null) {
+            return 'без заголовка';
+        }
+
+        return value.length > 12 ? 'длинный заголовок' : 'короткий заголовок';
+    };
 }

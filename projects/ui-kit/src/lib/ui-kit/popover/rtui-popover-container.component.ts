@@ -2,7 +2,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, HostBinding, inject, input, InputSignalWithTransform, TemplateRef } from '@angular/core';
 import { DomSanitizer, SafeValue } from '@angular/platform-browser';
 
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 import { isString } from '@rt-tools/utils';
 
 const BEM_BLOCK: string = 'rtui-popover-container';
@@ -18,14 +18,14 @@ const BEM_BLOCK: string = 'rtui-popover-container';
 export class RtuiPopoverContainerComponent {
     readonly #sanitizer: DomSanitizer = inject(DomSanitizer);
 
-    public popoverTemplate: InputSignalWithTransform<INullable<TemplateRef<HTMLElement>>, INullable<TemplateRef<HTMLElement>>> = input<
-        INullable<TemplateRef<HTMLElement>>,
-        INullable<TemplateRef<HTMLElement>>
+    public popoverTemplate: InputSignalWithTransform<TNullable<TemplateRef<HTMLElement>>, TNullable<TemplateRef<HTMLElement>>> = input<
+        TNullable<TemplateRef<HTMLElement>>,
+        TNullable<TemplateRef<HTMLElement>>
     >(undefined, {
-        transform: (value: INullable<TemplateRef<HTMLElement>>) => value ?? null,
+        transform: (value: TNullable<TemplateRef<HTMLElement>>) => value ?? null,
     });
 
-    public popoverClass: InputSignalWithTransform<INullable<string>, string | undefined> = input<INullable<string>, string | undefined>(
+    public popoverClass: InputSignalWithTransform<TNullable<string>, string | undefined> = input<TNullable<string>, string | undefined>(
         undefined,
         {
             transform: (value: unknown) => (isString(value) ? value : undefined),

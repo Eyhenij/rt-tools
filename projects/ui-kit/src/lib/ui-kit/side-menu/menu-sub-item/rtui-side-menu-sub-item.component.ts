@@ -18,7 +18,7 @@ import { MatListItem, MatListItemIcon, MatListItemTitle, MatNavList } from '@ang
 import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '@rt-tools/core';
-import { INullable } from '@rt-tools/utils';
+import { TNullable } from '@rt-tools/utils';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtHideTooltipDirective } from '../../tooltip';
 import { ISideMenu } from '../side-menu.types';
@@ -63,6 +63,7 @@ export class RtuiSideMenuSubItemComponent {
     readonly #breakpoints: BreakpointService = inject(BreakpointService);
 
     /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
+    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
     protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
     public readonly menuRef: RtuiSideMenuComponent = inject(RtuiSideMenuComponent);
 
@@ -73,7 +74,7 @@ export class RtuiSideMenuSubItemComponent {
      * @deprecated Кит определяет его сам — `BreakpointService` из `@rt-tools/core`. Вход
      * оставлен ради приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
      */
-    public isMobile: InputSignal<INullable<boolean>> = input<INullable<boolean>>(null);
+    public isMobile: InputSignal<TNullable<boolean>> = input<TNullable<boolean>>(null);
     public isSubMenuXScrollEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });

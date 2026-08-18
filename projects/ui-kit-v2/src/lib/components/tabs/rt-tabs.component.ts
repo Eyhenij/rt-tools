@@ -44,7 +44,7 @@ const REST_DEBOUNCE_MS: number = 50;
 
 const BEM_BLOCK: string = 'rt-tabs';
 
-type IScrollDirection = 'before' | 'after';
+type TScrollDirection = 'before' | 'after';
 
 /**
  * Полоса вкладок с проекцией контента. Вкладки декларируются через
@@ -228,7 +228,7 @@ export class RtTabsComponent {
     }
 
     /** Старт прокрутки полосы по удержанию ЛКМ на стрелке. */
-    protected onRestPointerDown(direction: IScrollDirection, event: MouseEvent): void {
+    protected onRestPointerDown(direction: TScrollDirection, event: MouseEvent): void {
         if (event.button !== 0 || this.#scrollIntervalId !== null || !this.#win) {
             return;
         }
@@ -254,7 +254,7 @@ export class RtTabsComponent {
         }
     }
 
-    #scrollStep(direction: IScrollDirection): void {
+    #scrollStep(direction: TScrollDirection): void {
         const list: HTMLElement | undefined = this.tabListRef()?.nativeElement;
         if (!list) {
             return;
