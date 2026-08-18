@@ -203,4 +203,19 @@ describe('RtRichEditorComponent', (): void => {
 
         expect(fixture.componentInstance.displayText()).toBe('Простой текст');
     });
+    it('SC-UKV-53 — до монтирования начинки хост несёт признак недостроенности, после — снимает', async (): Promise<void> => {
+        // Признак читает съёмка витрины: пустое место на месте недостроенного редактора стоит
+        // секундами и размеров не меняет, то есть от вставшего показа неотличимо.
+        const fixture: ComponentFixture<RtRichEditorComponent> = createRtFixture(RtRichEditorComponent);
+        fixture.detectChanges();
+
+        expect(fixture.nativeElement.hasAttribute('data-rt-pending')).toBe(true);
+
+        await fixture.whenStable();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+
+        expect(fixture.nativeElement.hasAttribute('data-rt-pending')).toBe(false);
+    });
 });
