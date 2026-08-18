@@ -5,6 +5,9 @@ import { appendFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Page } from 'playwright';
 
+import { RT_ICON_SPRITE_ID } from '../src/lib/components/icon/rt-icon.const.ts';
+import { STORY_SNAPSHOT_VIEWPORT } from '../src/showcase/story-snapshot.ts';
+
 /**
  * Визуальная проверка витрины второго кита: каждая история снимается и сверяется с эталоном.
  *
@@ -34,8 +37,12 @@ const FAILURE_THRESHOLD: number = 0.0002;
  */
 const ICONS_TIMEOUT_MS: number = 30_000;
 
-/** Признак, по которому со страницы видно, что набор значков доехал. */
-const ICON_SPRITE_ID: string = 'rt-icon-sprite';
+/**
+ * Признак, по которому со страницы видно, что набор значков доехал. Берётся там же, где его
+ * объявляет реестр: своя копия ждала бы узла с другим именем, а прогон при этом оставался бы
+ * зелёным — кадр просто выходил бы без значков.
+ */
+const ICON_SPRITE_ID: string = RT_ICON_SPRITE_ID;
 
 /** Пауза после глушения движения — кадру нужно успеть встать. */
 const SETTLE_MS: number = 150;
@@ -52,8 +59,11 @@ const LAYOUT_TIMEOUT_MS: number = 15_000;
  */
 const STILL_FRAMES: number = 2;
 
-/** Размер базового кадра. История, которой нужен другой, называет его сама. */
-const VIEWPORT: { width: number; height: number } = { width: 1280, height: 720 };
+/**
+ * Размер базового кадра берётся там же, где его объявляет витрина: второе объявление расходилось
+ * бы с первым молча — кадр снят одним размером, а история сверстана под другой.
+ */
+const VIEWPORT: { readonly width: number; readonly height: number } = STORY_SNAPSHOT_VIEWPORT;
 
 /** Признак корня показа: его ставят сетка, ряд и сравнение тем из `src/showcase/`. */
 const ROOT_SELECTOR: string = '[data-story-root]';

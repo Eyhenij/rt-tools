@@ -1,5 +1,8 @@
 export type TModsObject = Record<string, unknown>;
 
+/** Модификаторы так, как их пишут в разметке: строкой, списком, списком с пропусками или объектом. */
+export type TMods = string | string[] | (string | false)[] | TModsObject;
+
 export interface IBemConfig {
     separators: {
         el: string;
@@ -9,6 +12,3 @@ export interface IBemConfig {
     ignoreValues?: boolean;
     modCase?: string;
 }
-
-/** Как модификаторы приходят снаружи: строкой, списком строк, списком с выключенными или объектом. */
-export type TModsInput = string | string[] | (string | false)[] | TModsObject;

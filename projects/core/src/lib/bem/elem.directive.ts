@@ -1,17 +1,17 @@
-import { Attribute, Directive, ElementRef, Input, OnChanges, Renderer2 } from '@angular/core';
+import { Attribute, Directive, ElementRef, InputSignal, Renderer2, effect, input } from '@angular/core';
 
-import { TModsInput, TModsObject } from './bem.types';
+import { TModsObject, TMods } from './bem.types';
 import { generateClass, parseMods, setMods } from './bem.utils';
 import { BlockDirective } from './block.directive';
 
 @Directive({
     selector: '[rtElem]',
 })
-export class ElemDirective implements OnChanges {
-    @Input() public rtMod?: TModsInput;
-    public blockName: string;
+export class ElemDirective {
     #mods: TModsObject = {};
-    #modSerialized: string = '';
+
+    public readonly rtMod: InputSignal<TMods | undefined> = input<TMods | undefined>(undefined);
+    public blockName: string;
 
     constructor(
         public readonly element: ElementRef,
@@ -22,21 +22,13 @@ export class ElemDirective implements OnChanges {
         this.blockName = rtBlock.name;
 
         renderer.addClass(element.nativeElement, generateClass(rtBlock.name, name));
-    }
 
-    public ngOnChanges(): void {
-        if (JSON.stringify(this.rtMod) !== this.#modSerialized) {
-            this.#modSerialized = JSON.stringify(this.rtMod);
+        effect((): void => {
+            const mods: TModsObject = parseMods(this.rtMod());
 
-            let mods: TModsInput | undefined = this.rtMod;
-
-            const { renderer, element, blockName, name } = this;
-
-            mods = parseMods(mods);
-
-            setMods(blockName, name, mods, this.#mods || {}, element, renderer);
+            setMods(this.blockName, this.name, mods, this.#mods, this.element, this.renderer);
 
             this.#mods = this.#mods === mods ? Object.assign({}, mods) : mods;
-        }
+        });
     }
 }

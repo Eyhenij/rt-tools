@@ -1,21 +1,18 @@
 import { computed, inject, Injectable, Signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { IReadFault } from '@rt/message-bus-admin/common/core/util';
+import { detailsInitialState, IDetailsState, IReadFault } from '@rt/message-bus-admin/common/core/util';
 import { PostmortemsApiService } from '@rt/message-bus-admin/postmortems/api';
 import { IPostmortem } from '@rt/message-bus-admin/postmortems/util';
-import { BASE_INITIAL_STATE, BaseAsyncStoreService, IStateBase } from '@rt-tools/store';
+import { BaseAsyncStoreService } from '@rt-tools/store';
 import { catchError, EMPTY, Observable, Subject, switchMap, tap } from 'rxjs';
 
-/** Что знает панель подробностей: запись, чем кончилось её чтение. */
-export interface IPostmortemState extends IStateBase.Async {
-    entity: IPostmortem.State | null;
-    fault: IReadFault | null;
-}
+/** Что знает панель подробностей: запись, чем кончилось её чтение. Общее объявление — в основании семейства. */
+export type TPostmortemState = IDetailsState<IPostmortem.State>;
 
 /** Сообщения шины стора: по ним панель узнаёт, что запись прочитана. */
 export type TPostmortemMessage = 'postmortem-read';
 
-const INITIAL_STATE: IPostmortemState = { ...BASE_INITIAL_STATE.ASYNC, entity: null, fault: null };
+const INITIAL_STATE: TPostmortemState = detailsInitialState<IPostmortem.State>();
 
 /**
  * Одна запись разбора — то, что показывает панель подробностей.
@@ -27,7 +24,7 @@ const INITIAL_STATE: IPostmortemState = { ...BASE_INITIAL_STATE.ASYNC, entity: n
  * которую назвал последней.
  */
 @Injectable({ providedIn: 'root' })
-export class PostmortemStore extends BaseAsyncStoreService<IPostmortemState, TPostmortemMessage> {
+export class PostmortemStore extends BaseAsyncStoreService<TPostmortemState, TPostmortemMessage> {
     readonly #api: PostmortemsApiService = inject(PostmortemsApiService);
     readonly #readSource: Subject<string> = new Subject<string>();
 
@@ -40,13 +37,13 @@ export class PostmortemStore extends BaseAsyncStoreService<IPostmortemState, TPo
         this.#readSource
             .pipe(
                 tap((): void => {
-                    this.patchState((state: IPostmortemState) => ({ ...state, entity: null, fault: null }));
+                    this.patchState((state: TPostmortemState) => ({ ...state, entity: null, fault: null }));
                     this.startLoading();
                 }),
                 switchMap((id: string): Observable<IPostmortem.State> =>
                     this.#api.one(id).pipe(
                         tap((entity: IPostmortem.State): void => {
-                            this.patchState((state: IPostmortemState) => ({ ...state, entity }));
+                            this.patchState((state: TPostmortemState) => ({ ...state, entity }));
                             this.setLoadingSuccess();
                             this.dispatch({ type: 'postmortem-read' });
                         }),
@@ -74,7 +71,7 @@ export class PostmortemStore extends BaseAsyncStoreService<IPostmortemState, TPo
      * чтения. Пустой панели при этом не бывает ни в одном из случаев.
      */
     #refuse(fault: IReadFault): void {
-        this.patchState((state: IPostmortemState) => ({ ...state, entity: null, fault }));
+        this.patchState((state: TPostmortemState) => ({ ...state, entity: null, fault }));
         this.setLoadingFailureVoid(fault, { showNotification: false });
     }
 }

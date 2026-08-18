@@ -1,7 +1,7 @@
 import { ElementRef, Renderer2 } from '@angular/core';
 
 import { BEM_MODULE_CONFIG } from './bem.const';
-import { TModsInput, TModsObject } from './bem.types';
+import { TMods, TModsObject } from './bem.types';
 
 export function modNameHandler(str: string): string {
     switch (BEM_MODULE_CONFIG.modCase) {
@@ -52,7 +52,7 @@ export function generateClass(blockName: string, elemName?: string, modName?: st
     return cls;
 }
 
-export function parseMods(mods?: TModsInput): TModsObject {
+export function parseMods(mods?: TMods): TModsObject {
     if (typeof mods === 'string') {
         mods = mods.split(/\s+/);
     }

@@ -19,8 +19,9 @@ import {
 } from '@rt/message-bus-admin/common/core/ui';
 import { adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
 import { ProposalsStore } from '@rt/message-bus-admin/proposals/data-access';
-import { IProposal, PROPOSALS_COLUMNS, PROPOSALS_SORTABLE, PROPOSALS_TABLE_ID } from '@rt/message-bus-admin/proposals/util';
+import { IProposal, PROPOSALS_COLUMNS, PROPOSALS_TABLE_ID } from '@rt/message-bus-admin/proposals/util';
 import { IRtTable, RtTableComponent, RtTableRowDirective, RtTableSortHeaderComponent } from '@rt-tools/ui-kit-v2';
+import { PROPOSAL_SORTABLE } from '@rt/message-bus-common';
 
 const BEM_BLOCK: string = 'admin-proposals-list';
 
@@ -80,7 +81,7 @@ export class AdminProposalsListComponent extends AdminListScreenBase<IProposal.S
     protected readonly qaPrefix: string = 'proposals';
 
     protected readonly store: ProposalsStore = inject(ProposalsStore);
-    protected readonly sortable: readonly string[] = PROPOSALS_SORTABLE;
+    protected readonly sortable: readonly string[] = PROPOSAL_SORTABLE;
 
     constructor() {
         super();

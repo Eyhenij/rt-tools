@@ -1,8 +1,6 @@
 {
-  "accepted": [],
-  "debt": [
-    "enum EFilterOperatorType @ projects/utils ~ FILTER_OPERATOR_TYPE_ENUM @ @rt-tools/utils/esm/lib/interfaces",
-    "enum EListSortOrder @ projects/utils ~ LIST_SORT_ORDER_ENUM @ @rt-tools/utils/esm/lib/interfaces",
+  "reason": "Принятое — совпадения имён, за которыми нет общего символа. Роды такие.\n\nПакеты, которые кода не делят: два кита стоят в одном приложении рядом, у каждого свои селекторы, свой набор токенов оформления и свой список компонентов, а второй кит везёт ещё и свою шину событий, чтобы не зависеть от ядра. Витрины у китов тоже свои — общего файла между ними нет ни одного, и порог расхождения с паузой съёмки каждая называет сама. Половина совпавших имён — заголовки историй витрины (Default, Playground, Header), совпадают они по её договорённости; pathOf в двух пакетах означает разное — путь ресурса и путь адреса.\n\nСквозной набор против кода, который он проверяет: адрес входа и способ найти узел по признаку он объявляет своими значениями намеренно — вывезенные из проверяемой либы, они делали бы прогон зелёным при любом значении. Функция qa у них к тому же разная: в наборе она берёт узел со страницы, в ките — из фикстуры.\n\nИмя блока вёрстки: правило линтера дерева rt/require-host-bem-block требует локальную константу ровно с именем BEM_BLOCK в каждом компоненте, и общее объявление оно отбивает. Три вида записи потому и называют admin-panel порознь.\n\nНовая строка сюда заводится только под совпадение одного из этих родов и только с причиной.",
+  "accepted": [
     "export Default @ projects/ui-kit, projects/ui-kit-v2",
     "export Header @ projects/ui-kit, projects/ui-kit-v2",
     "export IMessageBusEvent @ projects/core, projects/ui-kit-v2",
@@ -15,17 +13,11 @@
     "export qa @ apps/message-bus-admin-e2e, projects/ui-kit-v2",
     "setting FAILURE_THRESHOLD @ projects/ui-kit-v2/.storybook/test-runner.ts, projects/ui-kit/.storybook/test-runner.ts",
     "setting SETTLE_MS @ projects/ui-kit-v2/.storybook/test-runner.ts, projects/ui-kit/.storybook/test-runner.ts",
-    "table INITIAL_STATE @ libs/message-bus-admin/postmortems/data-access ~ INITIAL_STATE @ libs/message-bus-admin/proposals/data-access",
-    "table INITIAL_STATE @ libs/message-bus-admin/postmortems/data-access ~ INITIAL_STATE @ libs/message-bus-admin/summaries/data-access",
-    "table INITIAL_STATE @ libs/message-bus-admin/proposals/data-access ~ INITIAL_STATE @ libs/message-bus-admin/summaries/data-access",
-    "table STORY_SNAPSHOT_VIEWPORT @ projects/ui-kit-v2 ~ VIEWPORT @ projects/ui-kit-v2/.storybook/test-runner.ts",
     "table STORY_SNAPSHOT_VIEWPORT @ projects/ui-kit-v2 ~ VIEWPORT @ projects/ui-kit/.storybook/test-runner.ts",
-    "table VIEWPORT @ projects/ui-kit-v2/.storybook/test-runner.ts ~ VIEWPORT @ projects/ui-kit/.storybook/test-runner.ts",
-    "value [address|arrivedAt|resource|tree] @ PROPOSALS_SORTABLE @ libs/message-bus-admin/proposals/util ~ PROPOSAL_SORTABLE @ libs/message-bus-api/proposals/util",
-    "value [arrivedAt|file|tree|updatedAt] @ POSTMORTEMS_SORTABLE @ libs/message-bus-admin/postmortems/util ~ POSTMORTEM_SORTABLE @ libs/message-bus-api/postmortems/util",
-    "value [items|schema|tree] @ POSTMORTEMS_FIELDS @ libs/message-bus-api/postmortems/util ~ PROPOSALS_FIELDS @ libs/message-bus-api/proposals/util",
-    "value [month|ranAt|tree] @ MONTH_RECORD_SORTABLE @ libs/message-bus-api/observations/util ~ SUMMARIES_SORTABLE @ libs/message-bus-admin/summaries/util",
-    "value admin-panel @ BEM_BLOCK @ libs/message-bus-admin/postmortems/ui ~ BEM_BLOCK @ libs/message-bus-admin/proposals/ui ~ BEM_BLOCK @ libs/message-bus-admin/summaries/ui",
-    "value rt-icon-sprite @ ICON_SPRITE_ID @ projects/ui-kit-v2/.storybook/test-runner.ts ~ SPRITE_ID @ projects/ui-kit-v2"
+    "value admin-panel @ BEM_BLOCK @ libs/message-bus-admin/postmortems/ui ~ BEM_BLOCK @ libs/message-bus-admin/proposals/ui ~ BEM_BLOCK @ libs/message-bus-admin/summaries/ui"
+  ],
+  "debt": [
+    "enum EFilterOperatorType @ projects/utils ~ FILTER_OPERATOR_TYPE_ENUM @ @rt-tools/utils/esm/lib/interfaces",
+    "enum EListSortOrder @ projects/utils ~ LIST_SORT_ORDER_ENUM @ @rt-tools/utils/esm/lib/interfaces"
   ]
 }

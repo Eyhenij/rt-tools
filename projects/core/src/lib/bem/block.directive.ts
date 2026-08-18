@@ -1,15 +1,15 @@
-import { Attribute, Directive, ElementRef, Input, OnChanges, Optional, Renderer2 } from '@angular/core';
+import { Attribute, Directive, ElementRef, InputSignal, Optional, Renderer2, effect, input } from '@angular/core';
 
-import { TModsInput, TModsObject } from './bem.types';
+import { TModsObject, TMods } from './bem.types';
 import { generateClass, parseMods, setMods } from './bem.utils';
 
 @Directive({
     selector: '[rtBlock]',
 })
-export class BlockDirective implements OnChanges {
-    @Input() public rtMod?: TModsInput;
+export class BlockDirective {
     #mods: TModsObject = {};
-    #modSerialized: string = '';
+
+    public readonly rtMod: InputSignal<TMods | undefined> = input<TMods | undefined>(undefined);
 
     constructor(
         public readonly element: ElementRef,
@@ -20,23 +20,25 @@ export class BlockDirective implements OnChanges {
         if (!elem && !(element.nativeElement instanceof Comment)) {
             renderer.addClass(element.nativeElement, generateClass(name));
         }
+
+        effect((): void => {
+            const mods: TModsObject = parseMods(this.rtMod());
+
+            this.#applyMods(mods);
+        });
     }
 
-    public ngOnChanges(): void {
-        if (JSON.stringify(this.rtMod) !== this.#modSerialized && !this.elem) {
-            this.#modSerialized = JSON.stringify(this.rtMod);
-
-            let mods: TModsInput | undefined = this.rtMod;
-
-            const { renderer, element, name } = this;
-
-            mods = parseMods(mods);
-
-            if (!(element.nativeElement instanceof Comment)) {
-                setMods(name, '', mods, this.#mods || {}, element, renderer);
-            }
-
-            this.#mods = this.#mods === mods ? Object.assign({}, mods) : mods;
+    /**
+     * Имя блока на том же узле, что и имя элемента, значит: узел рисует элемент, а не блок, —
+     * модификаторы на нём ставит директива элемента. Узел-комментарий классов не носит вовсе.
+     */
+    #applyMods(mods: TModsObject): void {
+        if (this.elem || this.element.nativeElement instanceof Comment) {
+            return;
         }
+
+        setMods(this.name, '', mods, this.#mods, this.element, this.renderer);
+
+        this.#mods = this.#mods === mods ? Object.assign({}, mods) : mods;
     }
 }
