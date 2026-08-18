@@ -1,6 +1,7 @@
 import { expect, Page, test } from '@playwright/test';
 
 import { openSection, qa, SECTION } from './support/admin';
+import { expectScreen } from './support/shot';
 
 /**
  * Верхний ряд на узком экране: те же разделы приходят кнопкой.
@@ -20,6 +21,8 @@ test.describe('разделы на узком экране', () => {
         const items: ReturnType<Page['locator']> = qa(page, 'header-nav-mobile-item');
 
         await expect(items).toHaveCount(4);
+
+        await expectScreen(page, 'shell-narrow-nav');
 
         await items.filter({ hasText: SECTION.proposals.title }).click();
 

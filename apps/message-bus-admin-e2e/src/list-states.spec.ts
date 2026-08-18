@@ -2,6 +2,7 @@ import { expect, Page, Route, test } from '@playwright/test';
 
 import { TREES } from '../stand/stand.mjs';
 import { columnTexts, openSection, pageQa, pickTree, qa, rowsOf, SECTION, signIn } from './support/admin';
+import { expectScreen } from './support/shot';
 
 /**
  * Состояния списка, которых на засеянном стенде не бывает: чтение, пустота вовсе, отказ службы,
@@ -60,6 +61,8 @@ test.describe('состояния списка', () => {
         await expect(qa(page, 'empty-state-title')).toHaveText('Записей нет');
         await expect(qa(page, 'empty-state-description')).toHaveText('Ни одно дерево их пока не присылало');
         await expect(rowsOf(page, 'postmortems')).toHaveCount(0);
+
+        await expectScreen(page, 'list-empty');
     });
 
     test('SC-MB-51, SC-MB-72, SC-MB-131 — не прочитавшийся список называет номер обращения, отличим от пустоты и повторяется одним действием', async ({
@@ -91,6 +94,8 @@ test.describe('состояния списка', () => {
         await expect(rowsOf(page, 'postmortems')).toHaveCount(0);
         // поломка и пустота выглядят по-разному: пустого состояния здесь нет вовсе
         await expect(qa(page, 'empty-state-title')).toHaveCount(0);
+
+        await expectScreen(page, 'list-fault');
 
         refuse = false;
         await pageQa(page, 'postmortems', 'retry').click();

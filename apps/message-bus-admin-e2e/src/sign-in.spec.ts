@@ -2,6 +2,7 @@ import { BrowserContext, expect, Page, test } from '@playwright/test';
 
 import { ACCOUNT } from '../stand/stand.mjs';
 import { openSection, qa, SECTION, SIGN_IN_PATH, signIn } from './support/admin';
+import { expectScreen } from './support/shot';
 
 /**
  * Вход в админку и адреса разделов.
@@ -17,6 +18,11 @@ test.describe('вход и адреса разделов', () => {
         await expect(page).toHaveURL(new RegExp(`${SIGN_IN_PATH}\\b`));
         await expect(qa(page, 'sign-in-submit')).toBeVisible();
         await expect(qa(page, SECTION.postmortems.table)).toHaveCount(0);
+
+        // Кадр стоит там, где экран уже открыт проверкой поведения: отдельная спека «про
+        // снимки» открывала бы те же экраны второй раз и расходилась бы с этой при первой же
+        // правке адресов.
+        await expectScreen(page, 'sign-in');
     });
 
     test('SC-MB-45 — после входа человек попадает туда, куда шёл', async ({ page }: { page: Page }) => {

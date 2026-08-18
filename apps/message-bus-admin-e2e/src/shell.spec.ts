@@ -2,6 +2,7 @@ import { expect, Page, test } from '@playwright/test';
 
 import { SECTIONS } from '../stand/stand.mjs';
 import { openSection, qa, SECTION, SIGN_IN_PATH, signIn } from './support/admin';
+import { expectScreen } from './support/shot';
 
 /**
  * Оболочка админки: разделы верхним рядом, попап профиля, тема и язык.
@@ -17,6 +18,8 @@ test.describe('оболочка админки', () => {
         await expect(qa(page, 'container-header')).toBeVisible();
         await expect(page.locator('rt-section-nav')).toHaveCount(0);
         await expect(qa(page, 'header-nav-item')).toHaveCount(Object.keys(SECTIONS).length);
+
+        await expectScreen(page, 'shell');
     });
 
     test('SC-MB-143 — подсвечен тот пункт, чей раздел открыт, и после перехода, и по прямой ссылке', async ({ page }: { page: Page }) => {
@@ -41,6 +44,8 @@ test.describe('оболочка админки', () => {
         await expect(qa(page, 'profile-menu')).toBeVisible();
         await expect(qa(page, 'profile-name')).toBeVisible();
         await expect(page).toHaveURL(new RegExp(`${SECTION.postmortems.path}$`));
+
+        await expectScreen(page, 'shell-profile-menu');
     });
 
     test('SC-MB-146 — выход идёт из попапа и уводит на экран входа', async ({ page }: { page: Page }) => {
@@ -66,6 +71,8 @@ test.describe('оболочка админки', () => {
         await page.reload();
 
         await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+
+        await expectScreen(page, 'shell-dark');
     });
 
     test('SC-MB-150 — язык выбирается в попапе профиля и переживает перезагрузку', async ({ page }: { page: Page }) => {
