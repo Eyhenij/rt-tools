@@ -1,7 +1,7 @@
 import { expect, Page, Route, test } from '@playwright/test';
 
 import { TREES } from '../stand/stand.mjs';
-import { columnTexts, openSection, pickTree, qa, rowsOf, SECTION, signIn } from './support/admin';
+import { columnTexts, openSection, pageQa, pickTree, qa, rowsOf, SECTION, signIn } from './support/admin';
 
 /**
  * Состояния списка, которых на засеянном стенде не бывает: чтение, пустота вовсе, отказ службы,
@@ -23,7 +23,7 @@ const TIMEOUT_WAIT_MS: number = 25_000;
 const POSTMORTEMS_API: string = '**/api/postmortems?*';
 
 test.describe('состояния списка', () => {
-    test('SC-MB-48 — пока список читается, на месте строк видно чтение', async ({ page }: { page: Page }) => {
+    test('SC-MB-48, SC-MB-130 — пока список читается, на месте строк видно чтение, а не пустоту', async ({ page }: { page: Page }) => {
         await page.route(POSTMORTEMS_API, async (route: Route): Promise<void> => {
             await new Promise((resolve: (value: unknown) => void): void => {
                 setTimeout(resolve, 3_000);
@@ -36,24 +36,33 @@ test.describe('состояния списка', () => {
 
         await expect(qa(page, 'table-skeleton-row').first()).toBeVisible();
         await expect(rowsOf(page, 'postmortems')).toHaveCount(0);
+        // пустота ещё не установлена: показывать её, пока ответа нет, значило бы врать
+        await expect(qa(page, 'empty-state-title')).toHaveCount(0);
 
         // и то же место занимают строки, когда чтение кончилось: признак чтения не остаётся
         await expect(rowsOf(page, 'postmortems').first()).toBeVisible({ timeout: 15_000 });
         await expect(qa(page, 'table-skeleton-row')).toHaveCount(0);
     });
 
-    test('SC-MB-49 — пустой список объясняет, почему он пуст', async ({ page }: { page: Page }) => {
+    test('SC-MB-49, SC-MB-129 — пустой список показывает пустое состояние и объясняет, почему он пуст', async ({
+        page,
+    }: {
+        page: Page;
+    }) => {
         await page.route(POSTMORTEMS_API, async (route: Route): Promise<void> => {
             await route.fulfill({ json: { rows: [], total: 0, page: 1, size: 20 } });
         });
 
         await openSection(page, 'postmortems');
 
-        await expect(qa(page, 'table-empty')).toContainText('Записей нет: ни одно дерево их пока не присылало');
+        // вид, а не серая фраза в середине таблицы: значок, заголовок и слово о том, откуда записи
+        await expect(qa(page, 'empty-state-icon')).toBeVisible();
+        await expect(qa(page, 'empty-state-title')).toHaveText('Записей нет');
+        await expect(qa(page, 'empty-state-description')).toHaveText('Ни одно дерево их пока не присылало');
         await expect(rowsOf(page, 'postmortems')).toHaveCount(0);
     });
 
-    test('SC-MB-51, SC-MB-72 — не прочитавшийся список называет номер обращения и повторяется одним действием', async ({
+    test('SC-MB-51, SC-MB-72, SC-MB-131 — не прочитавшийся список называет номер обращения, отличим от пустоты и повторяется одним действием', async ({
         page,
     }: {
         page: Page;
@@ -77,15 +86,17 @@ test.describe('состояния списка', () => {
         await page.goto(SECTION.postmortems.path);
         await signIn(page);
 
-        await expect(qa(page, 'list-fault')).toContainText('Прочитать не удалось');
-        await expect(qa(page, 'list-fault')).toContainText('9f31c0d2');
+        await expect(pageQa(page, 'postmortems', 'fault')).toContainText('Прочитать не удалось');
+        await expect(pageQa(page, 'postmortems', 'fault')).toContainText('9f31c0d2');
         await expect(rowsOf(page, 'postmortems')).toHaveCount(0);
+        // поломка и пустота выглядят по-разному: пустого состояния здесь нет вовсе
+        await expect(qa(page, 'empty-state-title')).toHaveCount(0);
 
         refuse = false;
-        await qa(page, 'list-retry').click();
+        await pageQa(page, 'postmortems', 'retry').click();
 
         await expect(rowsOf(page, 'postmortems').first()).toBeVisible();
-        await expect(qa(page, 'list-fault')).toHaveCount(0);
+        await expect(pageQa(page, 'postmortems', 'fault')).toHaveCount(0);
         // страница не перезагружалась: повтор — это одно действие на экране
         expect(page.url()).toContain(SECTION.postmortems.path);
     });
@@ -104,8 +115,8 @@ test.describe('состояния списка', () => {
 
         await openSection(page, 'postmortems');
 
-        await expect(qa(page, 'list-fault')).toContainText('Прочитать не удалось', { timeout: TIMEOUT_WAIT_MS });
-        await expect(qa(page, 'list-retry')).toBeVisible();
+        await expect(pageQa(page, 'postmortems', 'fault')).toContainText('Прочитать не удалось', { timeout: TIMEOUT_WAIT_MS });
+        await expect(pageQa(page, 'postmortems', 'retry')).toBeVisible();
     });
 
     test('SC-MB-69 — ответ, догнавший свой список позже, не показывается', async ({ page }: { page: Page }) => {

@@ -1,23 +1,28 @@
 <ng-container rtBlock="admin-panel">
-    <dl rtElem="fields">
-        <dt rtElem="field-name">{{ treeLabel }}</dt>
-        <dd rtElem="field-value" qa-dataid="month-record-tree">{{ entity().tree.name }}</dd>
+    <rt-aside-section>
+        <rt-detail-list>
+            <rt-detail-row qa-dataid="month-record-tree" [label]="treeLabel" [loading]="reading()">
+                {{ entity()?.tree?.name }}
+            </rt-detail-row>
+            <rt-detail-row qa-dataid="month-record-month" [label]="monthLabel" [loading]="reading()">
+                {{ entity()?.month }}
+            </rt-detail-row>
+            <rt-detail-row qa-dataid="month-record-sessions" [label]="sessionsLabel" [loading]="reading()">
+                {{ entity()?.sessions }}
+            </rt-detail-row>
+            <rt-detail-row qa-dataid="month-record-ran" [label]="ranAtLabel" [loading]="reading()">
+                {{ entity()?.ranAt ?? null | adminMoment }}
+            </rt-detail-row>
+        </rt-detail-list>
+    </rt-aside-section>
 
-        <dt rtElem="field-name">{{ monthLabel }}</dt>
-        <dd rtElem="field-value" qa-dataid="month-record-month">{{ entity().month }}</dd>
-
-        <dt rtElem="field-name">{{ sessionsLabel }}</dt>
-        <dd rtElem="field-value" qa-dataid="month-record-sessions">{{ entity().sessions }}</dd>
-
-        <dt rtElem="field-name">{{ ranAtLabel }}</dt>
-        <dd rtElem="field-value" qa-dataid="month-record-ran">{{ entity().ranAt | adminMoment }}</dd>
-    </dl>
-
-    <h2 rtElem="section">{{ summaryLabel }}</h2>
-
-    @if (entity().summary; as summary) {
-        <pre rtElem="text" qa-dataid="month-record-summary">{{ summary }}</pre>
-    } @else {
-        <p rtElem="empty" qa-dataid="month-record-summary-missing">{{ summaryMissing }}</p>
+    @if (!reading() && entity(); as record) {
+        <rt-aside-section [heading]="summaryLabel">
+            @if (record.summary; as summary) {
+                <pre rtElem="text" qa-dataid="month-record-summary">{{ summary }}</pre>
+            } @else {
+                <p rtElem="empty" qa-dataid="month-record-summary-missing">{{ summaryMissing }}</p>
+            }
+        </rt-aside-section>
     }
 </ng-container>

@@ -11,8 +11,13 @@ import {
 } from '@angular/cdk/table';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { AdminListScreenBase } from '@rt/message-bus-admin/common/core/feature';
-import { AdminListPageComponent, AdminMomentPipe } from '@rt/message-bus-admin/common/core/ui';
-import { adminLabel } from '@rt/message-bus-admin/common/core/util';
+import {
+    AdminListPageComponent,
+    AdminListToolbarLeftDirective,
+    AdminMomentPipe,
+    AdminTreeFilterComponent,
+} from '@rt/message-bus-admin/common/core/ui';
+import { adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
 import { MonthRecordsStore } from '@rt/message-bus-admin/summaries/data-access';
 import { IMonthRecord, SUMMARIES_COLUMNS, SUMMARIES_SORTABLE, SUMMARIES_TABLE_ID } from '@rt/message-bus-admin/summaries/util';
 import { IRtTable, RtTableComponent, RtTableRowDirective, RtTableSortHeaderComponent } from '@rt-tools/ui-kit-v2';
@@ -31,7 +36,11 @@ const BEM_BLOCK: string = 'admin-summaries-list';
  * страницы.
  *
  * Таблица объявлена здесь, а не внутри вида: столбцы она собирает собственным запросом по
- * содержимому, и через посредника они до неё не доходят.
+ * содержимому, и через посредника они до неё не доходят. Отбор по дереву — тем же порядком:
+ * экран кладёт его в левый слот тулбара, а страница о видах отбора не знает ничего.
+ *
+ * Хостом страницы экран называет себя одной строкой провайдера; отвечает на спрошенное общая
+ * основа, и своего ответа он не пишет ни одного.
  */
 @Component({
     selector: 'admin-summaries-list',
@@ -52,6 +61,8 @@ const BEM_BLOCK: string = 'admin-summaries-list';
 
         // components
         AdminListPageComponent,
+        AdminListToolbarLeftDirective,
+        AdminTreeFilterComponent,
         RtTableComponent,
         RtTableRowDirective,
         RtTableSortHeaderComponent,
@@ -59,12 +70,15 @@ const BEM_BLOCK: string = 'admin-summaries-list';
         // pipes
         AdminMomentPipe,
     ],
+    providers: [provideAdminListHost((): typeof AdminSummariesListComponent => AdminSummariesListComponent)],
     host: { class: BEM_BLOCK },
 })
 export class AdminSummariesListComponent extends AdminListScreenBase<IMonthRecord.Short.State, IMonthRecord.Short.Api> {
     protected readonly title: string = adminLabel('sectionSummaries');
+    protected readonly hint: string = adminLabel('hintSummaries');
     protected readonly columns: readonly IRtTable.ColumnConfig[] = SUMMARIES_COLUMNS;
     protected readonly tableId: string = SUMMARIES_TABLE_ID;
+    protected readonly qaPrefix: string = 'summaries';
 
     protected readonly store: MonthRecordsStore = inject(MonthRecordsStore);
     protected readonly sortable: readonly string[] = SUMMARIES_SORTABLE;

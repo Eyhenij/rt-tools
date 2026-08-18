@@ -21,19 +21,28 @@ export const SIGN_IN_PATH: string = '/sign-in';
 export interface ISectionMarks {
     readonly path: string;
     readonly title: string;
+    /** Короткое имя раздела: из него собраны метки его страницы — и здесь, и в разметке. */
+    readonly prefix: string;
     readonly table: string;
     readonly row: string;
     readonly details: string;
 }
 
-/** Имя раздела: их три, и все три собраны одним и тем же списочным экраном. */
-export type TSectionName = 'postmortems' | 'proposals' | 'summaries';
+/** Что общая страница списка размечает своими метками, собирая их из префикса раздела. */
+export type TPageMark = 'hint' | 'columns' | 'refresh' | 'fault' | 'retry';
+
+/**
+ * Имя раздела. Три раздела груза собраны одним и тем же списочным экраном; четвёртый — тем же,
+ * но без отбора по дереву и без панели: приглашение ждёт дерева, которого ещё нет.
+ */
+export type TSectionName = 'postmortems' | 'proposals' | 'summaries' | 'invites';
 
 /** Разделы админки: адрес, заголовок экрана и `qa-dataid` его таблицы и строк. */
 export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.freeze({
     postmortems: Object.freeze({
         path: SECTIONS.postmortems,
         title: 'Разборы происшествий',
+        prefix: 'postmortems',
         table: 'postmortems-table',
         row: 'postmortems-row',
         details: 'postmortem-details-close',
@@ -41,6 +50,7 @@ export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.fre
     proposals: Object.freeze({
         path: SECTIONS.proposals,
         title: 'Предложения',
+        prefix: 'proposals',
         table: 'proposals-table',
         row: 'proposals-row',
         details: 'proposal-details-close',
@@ -48,15 +58,48 @@ export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.fre
     summaries: Object.freeze({
         path: SECTIONS.summaries,
         title: 'Сводки деревьев',
+        prefix: 'summaries',
         table: 'summaries-table',
         row: 'summaries-row',
         details: 'month-record-details-close',
+    }),
+    invites: Object.freeze({
+        path: SECTIONS.invites,
+        title: 'Приглашения',
+        prefix: 'invites',
+        table: 'invites-table',
+        row: 'invites-row',
+        // Панели подробностей у приглашения нет: всё известное о нём стоит в строке. Метка
+        // объявлена пустой, а не выдуманной, — по выдуманной спека искала бы то, чего нет, и
+        // молча ничего не находила.
+        details: '',
     }),
 });
 
 /** Узел по метке проверки: ею размечены все места, за которые набор держится. */
 export function qa(page: Page, id: string): Locator {
     return page.locator(`[qa-dataid="${id}"]`);
+}
+
+/**
+ * Значение свойства в панели подробностей.
+ *
+ * Метка панели стоит на строке свойства целиком, а название и значение внутри неё размечает
+ * кит: взятая строкой, она читалась бы вместе с названием.
+ */
+export function detailValue(page: Page, id: string): Locator {
+    return qa(page, id).locator('[qa-dataid="detail-row-value"]');
+}
+
+/**
+ * Метка на общей странице раздела.
+ *
+ * Страница собирает их из префикса, который называет экран: одинаковые на трёх разделах, они не
+ * отвечали бы на вопрос, чей элемент нашла проверка, — спека, открывшая не тот раздел, находила
+ * бы тот же якорь и проходила зелёной.
+ */
+export function pageQa(page: Page, section: TSectionName, mark: TPageMark): Locator {
+    return qa(page, `${SECTION[section].prefix}-${mark}`);
 }
 
 /** Строки списка раздела. */

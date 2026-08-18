@@ -1,0 +1,14 @@
+/**
+ * Экран входа: название приложения над заголовком карточки.
+ *
+ * Раскладку карточки, полосы управления и формы везёт кит блоком `login` — здесь только то, чего
+ * у него нет: приложение называет себя словом, а не знаком, и место знака заняла строка.
+ */
+.login__brand {
+    color: var(--rt-color-text-muted);
+    font-size: var(--rt-text-sm);
+    font-weight: var(--rt-font-weight-semibold);
+    letter-spacing: var(--rt-letter-spacing-wide);
+    text-align: center;
+    text-transform: uppercase;
+}

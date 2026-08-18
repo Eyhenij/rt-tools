@@ -1,0 +1,58 @@
+<admin-list-page [hint]="hint" [qaPrefix]="qaPrefix" [title]="title">
+    <rt-table
+        #rowsTable="rtTable"
+        [ariaLabel]="title"
+        [attr.qa-dataid]="qaTable()"
+        [columnsConfig]="columns"
+        [dataSource]="rows()"
+        [emptyDescription]="emptyDescription()"
+        [emptyMessage]="emptyMessage()"
+        [loading]="loading()"
+        [rowHasActions]="hasRowActions"
+        [showRowActions]="true"
+        [sort]="sortModel()"
+        [tableId]="tableId"
+        (sortChange)="changeSort($event)">
+        <ng-container cdkColumnDef="name">
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="name">{{ columns[0].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-name'">{{ row.name }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="state">
+            <th *cdkHeaderCellDef cdk-header-cell>{{ columns[1].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-state'">{{ row.stateLabel }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="issuedAt">
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="issuedAt">{{ columns[2].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-issued'">{{ row.issuedAt | adminMoment }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="expiresAt">
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="expiresAt">{{ columns[3].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-expires'">{{ row.expiresAt | adminMoment }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="tree">
+            <th *cdkHeaderCellDef cdk-header-cell>{{ columns[4].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-tree'">{{ row.treeSlug }}</td>
+        </ng-container>
+
+        <ng-template rtTableRowActions let-row [rtTableRowActionsRowType]="rows()">
+            @if (row.canRevoke) {
+                <rt-menu-item
+                    danger
+                    icon="times-circle"
+                    [confirmLabel]="revokeLabel"
+                    [confirmMessage]="row.revokeQuestion"
+                    [confirmTitle]="revokeTitle"
+                    [label]="revokeLabel"
+                    [attr.qa-dataid]="qaPrefix + '-revoke'"
+                    (selected)="revoke(row.name)" />
+            }
+        </ng-template>
+
+        <tr *cdkHeaderRowDef="rowsTable.displayedColumns()" cdk-header-row></tr>
+        <tr *cdkRowDef="let row; columns: rowsTable.displayedColumns()" cdk-row [attr.qa-dataid]="qaRow()"></tr>
+    </rt-table>
+</admin-list-page>

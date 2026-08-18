@@ -45,6 +45,7 @@ class TestListStore extends AdminListStoreBase<IRow> {
 class TestScreenComponent extends AdminListScreenBase<IRow> {
     protected readonly store: TestListStore = inject(TestListStore);
     protected readonly sortable: readonly string[] = ['arrivedAt', 'updatedAt'];
+    protected readonly tableId: string = 'admin-test';
 
     constructor() {
         super();
@@ -76,6 +77,10 @@ class TestScreenComponent extends AdminListScreenBase<IRow> {
 
     public shownEmptyMessage(): string {
         return this.emptyMessage();
+    }
+
+    public shownEmptyDescription(): string {
+        return this.emptyDescription();
     }
 }
 
@@ -111,6 +116,7 @@ describe('AdminListScreenBase', () => {
                 provideHttpClientTesting(),
                 provideRouter([
                     { path: 'postmortems', component: TestScreenComponent },
+                    { path: 'postmortems/table-settings', pathMatch: 'full', outlet: 'ro', component: TestDetailsComponent },
                     { path: 'postmortems/:id', pathMatch: 'full', outlet: 'ro', component: TestDetailsComponent },
                 ]),
             ],
@@ -148,7 +154,7 @@ describe('AdminListScreenBase', () => {
         expect(screen.shownRows()).toEqual([{ id: 'third' }]);
     });
 
-    it('отбор по дереву возвращает список на первую страницу', async () => {
+    it('SC-MB-111 — отбор по дереву возвращает список на первую страницу', async () => {
         const harness: RouterTestingHarness = await RouterTestingHarness.create('/postmortems?page=4');
         const screen: TestScreenComponent = harness.routeDebugElement?.componentInstance;
 
@@ -201,6 +207,20 @@ describe('AdminListScreenBase', () => {
         expect(router.url).toContain('tree=a1b2');
     });
 
+    it('SC-MB-116 — настройка столбцов не трогает выборку: закрытая панель вернёт тот же список', async () => {
+        const harness: RouterTestingHarness = await RouterTestingHarness.create('/postmortems?page=2&tree=a1b2');
+        const screen: TestScreenComponent = harness.routeDebugElement?.componentInstance;
+
+        answerList();
+        http.expectOne(TREES_PATH).flush([]);
+        screen.openColumns();
+        await harness.fixture.whenStable();
+
+        expect(router.url).toContain('(ro:postmortems/table-settings)');
+        expect(router.url).toContain('page=2');
+        expect(router.url).toContain('tree=a1b2');
+    });
+
     it('пустой список объясняет себя по-разному с отбором и без него', async () => {
         const harness: RouterTestingHarness = await RouterTestingHarness.create('/postmortems');
         const screen: TestScreenComponent = harness.routeDebugElement?.componentInstance;
@@ -208,12 +228,14 @@ describe('AdminListScreenBase', () => {
         answerList();
         http.expectOne(TREES_PATH).flush([]);
 
-        expect(screen.shownEmptyMessage()).toBe('Записей нет: ни одно дерево их пока не присылало');
+        expect(screen.shownEmptyMessage()).toBe('Записей нет');
+        expect(screen.shownEmptyDescription()).toBe('Ни одно дерево их пока не присылало');
 
         screen.askTree('a1b2');
         await harness.fixture.whenStable();
         answerList();
 
         expect(screen.shownEmptyMessage()).toBe('По этому отбору записей нет');
+        expect(screen.shownEmptyDescription()).toBe('Снимите отбор по дереву или выберите другое');
     });
 });

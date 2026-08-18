@@ -80,6 +80,45 @@ class TableHostComponent {
     public readonly emptyMessage: WritableSignal<string> = signal<string>('');
 }
 
+/**
+ * Та же таблица своим тегом. Форма законная — на ней рисуются оверлей чтения и карточки узкого
+ * экрана, — и роль таблицы кит на ней ставит сам: у своего тега её нет.
+ */
+@Component({
+    selector: 'rt-table-element-host',
+    template: `
+        <rt-table ariaLabel="Туры" [dataSource]="rows" [columns]="columns">
+            <ng-container cdkColumnDef="title">
+                <th *cdkHeaderCellDef cdk-header-cell>Название</th>
+                <td *cdkCellDef="let row" cdk-cell qa-dataid="cell-title">{{ row.title }}</td>
+            </ng-container>
+            <ng-container cdkColumnDef="city">
+                <th *cdkHeaderCellDef cdk-header-cell>Город</th>
+                <td *cdkCellDef="let row" cdk-cell qa-dataid="cell-city">{{ row.city }}</td>
+            </ng-container>
+            <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
+            <tr *cdkRowDef="let row; columns: columns" cdk-row qa-dataid="table-row"></tr>
+        </rt-table>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        RtTableComponent,
+        CdkColumnDef,
+        CdkHeaderCellDef,
+        CdkHeaderCell,
+        CdkCellDef,
+        CdkCell,
+        CdkHeaderRowDef,
+        CdkHeaderRow,
+        CdkRowDef,
+        CdkRow,
+    ],
+})
+class ElementTableHostComponent {
+    public readonly columns: ReadonlyArray<string> = COLUMNS;
+    public readonly rows: ReadonlyArray<ITourRow> = ROWS;
+}
+
 /** Подмена наблюдателя ширины: в тестовой среде он ничего не измеряет. */
 class NarrowBreakpointsService {
     public readonly narrow: () => boolean = (): boolean => true;
@@ -120,6 +159,22 @@ describe('RtTableComponent', (): void => {
 
     it('подпись для скринридера уезжает на таблицу', (): void => {
         expect(table(render(setup())).getAttribute('aria-label')).toBe('Туры');
+    });
+
+    describe('роль хоста', (): void => {
+        it('на своём теге роль ставится сама: без неё строки читаются вне таблицы', (): void => {
+            const fixture: ComponentFixture<ElementTableHostComponent> = createRtFixture(ElementTableHostComponent, {}, {});
+            fixture.detectChanges();
+
+            const host: HTMLElement = el(fixture, 'rt-table')?.nativeElement as HTMLElement;
+
+            expect(host).not.toBeNull();
+            expect(host.getAttribute('role')).toBe('table');
+        });
+
+        it('на нативной таблице роль не дублируется — её несёт сам тег', (): void => {
+            expect(table(render(setup())).getAttribute('role')).toBeNull();
+        });
     });
 
     describe('состояния', (): void => {

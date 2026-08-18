@@ -10,7 +10,7 @@
  */
 
 /** Что команда делает. Набор закрыт: доводом, которого здесь нет, приёмник не управляется. */
-export type TTreeCommandKind = 'add' | 'token' | 'revoke' | 'list';
+export type TTreeCommandKind = 'add' | 'token' | 'revoke' | 'list' | 'invite' | 'uninvite' | 'invites';
 
 /** Заведение дерева: читаемое имя и признак, которым дерево называет себя в грузе. */
 export interface ITreeAddCommand {
@@ -19,15 +19,19 @@ export interface ITreeAddCommand {
     readonly slug: string;
 }
 
-/** Команда, которой довод — одно только имя дерева: выдача нового токена и отзыв прежнего. */
+/**
+ * Команда, которой довод — одно только имя: выдача нового токена, отзыв прежнего, выдача
+ * приглашения и его отзыв. Имя будущего дерева называет владелец здесь, а не обращение: принятое
+ * из обращения, оно позволило бы назваться чужим именем тому, кто добыл код.
+ */
 export interface ITreeNamedCommand {
-    readonly kind: 'token' | 'revoke';
+    readonly kind: 'token' | 'revoke' | 'invite' | 'uninvite';
     readonly name: string;
 }
 
-/** Список деревьев: доводов у него нет вовсе. */
+/** Перечисление без доводов: список деревьев и список приглашений. */
 export interface ITreeListCommand {
-    readonly kind: 'list';
+    readonly kind: 'list' | 'invites';
 }
 
 /** Разобранная команда деревьев. */
@@ -55,7 +59,18 @@ export const TREE_COMMANDS_USAGE: readonly string[] = [
     '  tree:token <имя>          — выдать новый токен, отозвав прежний',
     '  tree:revoke <имя>         — отозвать токен дерева',
     '  tree:list                 — перечислить деревья',
+    '  tree:invite <имя>         — выдать приглашение и напечатать код один раз',
+    '  tree:uninvite <имя>       — отозвать приглашение, пока им не воспользовались',
+    '  tree:invites              — перечислить приглашения с их состоянием',
 ];
+
+/** Команды, у которых довод один — имя, и разбор у всех одинаковый. */
+const NAMED_VERBS: Readonly<Record<string, ITreeNamedCommand['kind']>> = {
+    'tree:token': 'token',
+    'tree:revoke': 'revoke',
+    'tree:invite': 'invite',
+    'tree:uninvite': 'uninvite',
+};
 
 /** Довод без окружающих пробелов. Пустой довод считается неназванным. */
 function argument(argv: readonly string[], at: number): string {
@@ -97,18 +112,19 @@ export function parseTreeCommand(argv: readonly string[]): ITreeCommandParse {
     const verb: string = argument(argv, 0);
     const name: string = argument(argv, 1);
 
-    switch (verb) {
-        case 'tree:add':
-            return parseAdd(name, argument(argv, 2));
-
-        case 'tree:token':
-        case 'tree:revoke':
-            return name ? parsed({ kind: verb === 'tree:token' ? 'token' : 'revoke', name }) : refused(`${verb} требует имя дерева`);
-
-        case 'tree:list':
-            return parsed({ kind: 'list' });
-
-        default:
-            return refused([`незнакомая команда: ${verb || '(не названа)'}`, ...TREE_COMMANDS_USAGE].join('\n'));
+    if (verb === 'tree:add') {
+        return parseAdd(name, argument(argv, 2));
     }
+
+    const named: ITreeNamedCommand['kind'] | undefined = NAMED_VERBS[verb];
+
+    if (named) {
+        return name ? parsed({ kind: named, name }) : refused(`${verb} требует имя дерева`);
+    }
+
+    if (verb === 'tree:list' || verb === 'tree:invites') {
+        return parsed({ kind: verb === 'tree:list' ? 'list' : 'invites' });
+    }
+
+    return refused([`незнакомая команда: ${verb || '(не названа)'}`, ...TREE_COMMANDS_USAGE].join('\n'));
 }

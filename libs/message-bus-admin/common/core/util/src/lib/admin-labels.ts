@@ -6,8 +6,10 @@
  * пустое состояние, настройку столбцов, — и без своего набора ставит английское умолчание рядом
  * с русскими заголовками. Видно это только на собранном экране.
  *
- * Язык один — русский. Второй заводится вторым таким объектом и сменой функции-переводчика:
- * ставить ради одного языка загрузчик словарей значит завести настройку, которую нечем наполнить.
+ * Подписи экранов русские при любом выборе языка: многоязычия админка не делает, и словарь у неё
+ * один. Выбор языка меняет только то, что рисует кит, — русский набор ниже сменяется его
+ * английским умолчанием, вшитым в него самого. Загрузчика словарей здесь нет: ставить его ради
+ * двух наборов значит завести настройку, которую нечем наполнить.
  *
  * Ключей у кита сто тридцать один, и переведены здесь не все: неназванный он берёт английским
  * умолчанием, и пустой подписи на экране не бывает никогда. Переводится то, что админка
@@ -19,11 +21,22 @@ import { RtKitLabelKey, RtKitLabelParams } from '@rt-tools/ui-kit-v2';
 // eslint-disable-next-line @typescript-eslint/typedef -- аннотация стёрла бы литеральный тип, на котором стоит TAdminLabelKey
 export const ADMIN_LABELS = {
     appTitle: 'Приёмник',
+    navSections: 'Разделы',
     signOut: 'Выйти',
+    theme: 'Тема',
+    language: 'Язык',
+    languageSwitch: 'Язык подписей',
+    signInTitle: 'Вход в админку',
 
     sectionPostmortems: 'Разборы происшествий',
     sectionProposals: 'Предложения',
     sectionSummaries: 'Сводки деревьев',
+    sectionInvites: 'Приглашения',
+
+    hintPostmortems: 'Что и почему сломалось на деревьях — по разбору на происшествие',
+    hintProposals: 'Что деревья предлагают править в слое правил',
+    hintSummaries: 'Свод одного дерева за календарный месяц — по записи на пару',
+    hintInvites: 'Чем дерево заводит себя само. Выдаётся командой message-bus tree:invite <имя>',
 
     filterTree: 'Дерево',
     filterTreeAll: 'Все деревья',
@@ -37,9 +50,29 @@ export const ADMIN_LABELS = {
     columnMonth: 'Месяц',
     columnSessions: 'Заходов',
     columnRanAt: 'Прогон',
+    columnInviteName: 'Имя дерева',
+    columnInviteState: 'Состояние',
+    columnIssuedAt: 'Выдано',
+    columnExpiresAt: 'Годно до',
+    columnInviteTree: 'Заведённое дерево',
 
-    listEmpty: 'Записей нет: ни одно дерево их пока не присылало',
+    inviteStateWaiting: 'Ждёт',
+    inviteStateRedeemed: 'Погашено',
+    inviteStateExpired: 'Просрочено',
+    inviteStateRevoked: 'Отозвано',
+
+    inviteRevoke: 'Отозвать',
+    inviteRevokeTitle: 'Отозвать приглашение',
+    inviteRevokeQuestion: 'Приглашение для «{{name}}» перестанет действовать. Вернуть его нельзя: дереву понадобится новое.',
+    inviteRevokeDone: 'Приглашение для «{{name}}» отозвано',
+    inviteRevokeFailed: 'Отозвать приглашение не удалось',
+
+    listEmptyInvites: 'Приглашений нет',
+    listEmptyInvitesFrom: 'Выдаются командой message-bus tree:invite <имя>',
+    listEmpty: 'Записей нет',
+    listEmptyFrom: 'Ни одно дерево их пока не присылало',
     listEmptyByFilter: 'По этому отбору записей нет',
+    listEmptyByFilterFrom: 'Снимите отбор по дереву или выберите другое',
     listFailed: 'Прочитать не удалось',
     listSessionEnded: 'Вход кончился: представьтесь заново',
     listColumns: 'Настроить столбцы',
@@ -97,8 +130,10 @@ const RT_KIT_LABELS_RU: Partial<Record<RtKitLabelKey, string>> = Object.freeze({
     uiHide: 'Скрыть',
     uiHideColumn: 'Скрыть столбец',
     uiItemsPerPage: 'Строк на странице',
+    uiMainNav: 'Разделы',
     uiMore: 'Ещё',
     uiMoreActions: 'Другие действия',
+    uiNavMenu: 'Разделы',
     uiNextPage: 'Следующая страница',
     uiNoOptions: 'Выбирать не из чего',
     uiNoRows: 'Записей нет',
@@ -153,5 +188,8 @@ export function rtKitLabelsRu(key: RtKitLabelKey, params?: RtKitLabelParams): st
     return found === undefined ? '' : fill(found, params);
 }
 
-/** Локаль админки. Ею кит форматирует даты, и ею же они показываются в поясе смотрящего. */
-export const ADMIN_LOCALE: string = 'ru';
+/**
+ * Язык, на котором кит рисует свои подписи, выбирает человек, и постоянной здесь больше нет:
+ * выбор живёт в `AdminLocaleService` рядом. Русский набор выше — один из двух, а второй
+ * английский, и он у кита свой.
+ */

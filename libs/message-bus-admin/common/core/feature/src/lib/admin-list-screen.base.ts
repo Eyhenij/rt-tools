@@ -4,6 +4,8 @@ import { ActivatedRoute, Params, Router, UrlSegment } from '@angular/router';
 import { AdminListStoreBase, TreesStore } from '@rt/message-bus-admin/common/core/data-access';
 import {
     adminLabel,
+    COLUMNS_ROUTE,
+    IAdminListHost,
     IAdminListQuery,
     IReadFault,
     listQueryOf,
@@ -15,14 +17,6 @@ import {
 import { ITreeChoice } from '@rt/message-bus-common';
 import { IPageModel, ISortModel } from '@rt-tools/utils';
 import { RtTableSettingsRegistry } from '@rt-tools/ui-kit-v2';
-
-/**
- * Адрес панели настройки столбцов в аутлете `ro`.
- *
- * Раздела в нём нет намеренно — в отличие от адреса подробностей: настраиваемую таблицу панель
- * берёт из реестра кита, а не из адреса, и второй ответ на тот же вопрос разошёлся бы с первым.
- */
-const COLUMNS_ROUTE: string = 'table-settings';
 
 /**
  * Общая основа списочного экрана: связь адреса, стора и таблицы.
@@ -38,9 +32,12 @@ const COLUMNS_ROUTE: string = 'table-settings';
  *
  * `@Directive()` без селектора — так основа передаёт наследнику и внедрение, и эффекты: тем же
  * приёмом объявлена основа панели в ките.
+ *
+ * Она же отвечает на всё, что общий вид страницы спрашивает у хоста: раздел только указывает
+ * провайдером на себя, а ответы лежат здесь — одни на все три раздела.
  */
 @Directive()
-export abstract class AdminListScreenBase<TRow, TApi = TRow> {
+export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminListHost {
     readonly #route: ActivatedRoute = inject(ActivatedRoute);
     readonly #router: Router = inject(Router);
     readonly #trees: TreesStore = inject(TreesStore);
@@ -51,11 +48,8 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> {
     protected readonly query: Signal<IAdminListQuery> = computed(() => listQueryOf(this.#params(), this.sortable));
 
     protected readonly rows: Signal<readonly TRow[]> = computed(() => this.store.rows());
-    protected readonly loading: Signal<boolean> = computed(() => this.store.pending());
-    protected readonly fault: Signal<IReadFault | null> = computed(() => this.store.fault());
     protected readonly choices: Signal<readonly ITreeChoice[]> = computed(() => this.#trees.choices());
 
-    protected readonly pageModel: Signal<IPageModel> = computed(() => pageModelOf(this.query(), this.store.total()));
     protected readonly sortModel: Signal<ISortModel<string>> = computed(() => sortModelOf(this.query()));
 
     /**
@@ -67,6 +61,24 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> {
     protected readonly emptyMessage: Signal<string> = computed(() =>
         adminLabel(this.query().tree === '' ? 'listEmpty' : 'listEmptyByFilter')
     );
+
+    /**
+     * Вторая строка пустого состояния: откуда записи приходят и что человеку сделать.
+     *
+     * Заголовок отвечает на вопрос «сломано ли», а этот ответ — на вопрос «что теперь»: записи
+     * приносит дерево, а пустоту по отбору снимает сам человек. Одной строкой оба ответа стояли
+     * через двоеточие и читались как одна длинная подпись.
+     */
+    protected readonly emptyDescription: Signal<string> = computed(() =>
+        adminLabel(this.query().tree === '' ? 'listEmptyFrom' : 'listEmptyByFilterFrom')
+    );
+
+    /**
+     * Якоря самого списка, собранные из префикса раздела. Ячейки раздел собирает в шаблоне тем
+     * же префиксом: их набор у каждого раздела свой, и общего поля под них нет.
+     */
+    protected readonly qaTable: Signal<string> = computed(() => `${this.qaPrefix}-table`);
+    protected readonly qaRow: Signal<string> = computed(() => `${this.qaPrefix}-row`);
 
     /** Стор раздела: он знает адрес операции и форму строки. */
     protected abstract readonly store: AdminListStoreBase<TRow, TApi>;
@@ -84,6 +96,27 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> {
      */
     protected abstract readonly tableId: string;
 
+    /**
+     * Префикс раздела — короткое слово, которым он зовётся в якорях проверки. Тем же словом его
+     * знает общий вид страницы: из него он собирает якоря подсказки, столбцов, обновления и
+     * отказа.
+     *
+     * Раздел называет его один раз здесь, а не строкой у каждого элемента разметки: разъехавшись
+     * с префиксом страницы, такие строки молчат — спека, открывшая соседний раздел, находит по
+     * ним свой же якорь и проходит зелёной.
+     */
+    protected abstract readonly qaPrefix: string;
+
+    /**
+     * Состояние чтения — то, что страница списка спрашивает у хоста.
+     *
+     * Публичны эти трое ровно затем: их зовёт не только шаблон раздела, но и вид страницы через
+     * токен хоста, а внедрённое видно снаружи класса.
+     */
+    public readonly loading: Signal<boolean> = computed(() => this.store.pending());
+    public readonly fault: Signal<IReadFault | null> = computed(() => this.store.fault());
+    public readonly pageModel: Signal<IPageModel> = computed(() => pageModelOf(this.query(), this.store.total()));
+
     protected constructor() {
         effect((): void => {
             const asked: IAdminListQuery = this.query();
@@ -95,13 +128,41 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> {
     }
 
     /** Страница списка. Отбор и порядок при переходе остаются теми же — они лежат в том же адресе. */
-    protected goToPage(page: number): void {
+    public goToPage(page: number): void {
         this.#apply({ page });
     }
 
     /** Размер страницы. Считать с той же страницы нельзя: при большем размере её может не быть вовсе. */
-    protected changeSize(size: number): void {
+    public changeSize(size: number): void {
         this.#apply({ size, page: 1 });
+    }
+
+    /** Повторить чтение — то самое «одним действием», которого просит отказ. */
+    public retry(): void {
+        this.store.retry();
+    }
+
+    /**
+     * Открыть настройку столбцов.
+     *
+     * Панель у каждой таблицы своя, и адрес её называет раздел — теми же сегментами, какими
+     * открыт сам экран. Общий адрес на три раздела давал бы одну панель на три таблицы: по
+     * ссылке было бы не сказать, чьи столбцы настраивают, а вернувшийся по ней человек попадал
+     * бы в настройки того раздела, который открылся первым.
+     *
+     * Рисует панель кит, и настраиваемую таблицу он берёт из своего реестра, а не из адреса —
+     * поэтому активная таблица называется до ухода на маршрут, а не после.
+     *
+     * Выборка при этом остаётся в адресе: закрытая панель настроек возвращает тот же список, что
+     * и панель подробностей.
+     */
+    public openColumns(): void {
+        this.#tableSettings.setActive(this.tableId);
+
+        void this.#router.navigate([{ outlets: { ro: [...this.#section(), COLUMNS_ROUTE] } }], {
+            relativeTo: this.#route.parent,
+            queryParamsHandling: 'preserve',
+        });
     }
 
     /** Порядок, названный заголовком столбца. */
@@ -112,11 +173,6 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> {
     /** Отбор по дереву. Страница сбрасывается: у суженного списка её может не быть. */
     protected changeTree(tree: string): void {
         this.#apply({ tree, page: 1 });
-    }
-
-    /** Повторить чтение — то самое «одним действием», которого просит отказ. */
-    protected retry(): void {
-        this.store.retry();
     }
 
     /**
@@ -130,31 +186,20 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> {
      * ту же страницу с тем же отбором и тем же порядком.
      */
     protected openDetails(id: string): void {
-        const section: string[] = this.#route.snapshot.url.map((segment: UrlSegment): string => segment.path);
-
-        void this.#router.navigate([{ outlets: { ro: [...section, id] } }], {
+        void this.#router.navigate([{ outlets: { ro: [...this.#section(), id] } }], {
             relativeTo: this.#route.parent,
             queryParamsHandling: 'preserve',
         });
     }
 
     /**
-     * Открыть настройку столбцов.
+     * Сегменты адреса, которыми открыт сам экран.
      *
-     * Панель везёт кит и открывает её своим маршрутом в том же аутлете `ro`, что и подробности:
-     * какую таблицу настраивают, он берёт не из адреса, а из реестра — поэтому активная таблица
-     * называется до ухода на маршрут, а не после.
-     *
-     * Выборка при этом остаётся в адресе: закрытая панель настроек возвращает тот же список, что
-     * и панель подробностей.
+     * С них начинается адрес всякой панели раздела: аутлет `ro` один на всю админку, и без
+     * раздела впереди панели трёх разделов делили бы один адрес.
      */
-    protected openColumns(): void {
-        this.#tableSettings.setActive(this.tableId);
-
-        void this.#router.navigate([{ outlets: { ro: [COLUMNS_ROUTE] } }], {
-            relativeTo: this.#route.parent,
-            queryParamsHandling: 'preserve',
-        });
+    #section(): string[] {
+        return this.#route.snapshot.url.map((segment: UrlSegment): string => segment.path);
     }
 
     /**

@@ -1,23 +1,16 @@
-<admin-list-page
-    [choices]="choices()"
-    [fault]="fault()"
-    [loading]="loading()"
-    [pageModel]="pageModel()"
-    [title]="title"
-    [tree]="query().tree"
-    (columnsAsked)="openColumns()"
-    (pageChange)="goToPage($event)"
-    (retried)="retry()"
-    (sizeChange)="changeSize($event)"
-    (treeChange)="changeTree($event)">
-    <table
+<admin-list-page [hint]="hint" [qaPrefix]="qaPrefix" [title]="title">
+    <ng-template adminListToolbarLeft>
+        <admin-tree-filter [choices]="choices()" [tree]="query().tree" (treeChange)="changeTree($event)" />
+    </ng-template>
+
+    <rt-table
         #rowsTable="rtTable"
-        rt-table
         clickable
-        qa-dataid="summaries-table"
         [ariaLabel]="title"
+        [attr.qa-dataid]="qaTable()"
         [columnsConfig]="columns"
         [dataSource]="rows()"
+        [emptyDescription]="emptyDescription()"
         [emptyMessage]="emptyMessage()"
         [loading]="loading()"
         [sort]="sortModel()"
@@ -25,30 +18,30 @@
         (sortChange)="changeSort($event)">
         <ng-container cdkColumnDef="tree">
             <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="tree">{{ columns[0].label }}</th>
-            <td *cdkCellDef="let row" cdk-cell qa-dataid="summaries-cell-tree">{{ row.tree.name }}</td>
+            <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-tree'">{{ row.tree.name }}</td>
         </ng-container>
 
         <ng-container cdkColumnDef="month">
             <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="month">{{ columns[1].label }}</th>
-            <td *cdkCellDef="let row" cdk-cell qa-dataid="summaries-cell-month">{{ row.month }}</td>
+            <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-month'">{{ row.month }}</td>
         </ng-container>
 
         <ng-container cdkColumnDef="sessions">
             <th *cdkHeaderCellDef cdk-header-cell>{{ columns[2].label }}</th>
-            <td *cdkCellDef="let row" cdk-cell qa-dataid="summaries-cell-sessions">{{ row.sessions }}</td>
+            <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-sessions'">{{ row.sessions }}</td>
         </ng-container>
 
         <ng-container cdkColumnDef="ranAt">
             <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="ranAt">{{ columns[3].label }}</th>
-            <td *cdkCellDef="let row" cdk-cell qa-dataid="summaries-cell-ran">{{ row.ranAt | adminMoment }}</td>
+            <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-ran'">{{ row.ranAt | adminMoment }}</td>
         </ng-container>
 
         <tr *cdkHeaderRowDef="rowsTable.displayedColumns()" cdk-header-row></tr>
         <tr
             *cdkRowDef="let row; columns: rowsTable.displayedColumns()"
             cdk-row
-            qa-dataid="summaries-row"
             rtTableRow
+            [attr.qa-dataid]="qaRow()"
             (activated)="openDetails(row.id)"></tr>
-    </table>
+    </rt-table>
 </admin-list-page>
