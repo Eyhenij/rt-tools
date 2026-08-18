@@ -1,10 +1,16 @@
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection, signal } from '@angular/core';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import {
+    ApplicationConfig,
+    inject,
+    provideAppInitializer,
+    provideBrowserGlobalErrorListeners,
+    provideZonelessChangeDetection,
+} from '@angular/core';
+import { provideRouter, TitleStrategy, withComponentInputBinding } from '@angular/router';
 import { sessionExpiredInterceptor } from '@rt/message-bus-admin/auth/shell';
-import { ADMIN_LOCALE, rtKitLabelsRu } from '@rt/message-bus-admin/common/core/util';
+import { AdminTitleStrategy, provideAdminKitLabels } from '@rt/message-bus-admin/common/core/util';
 import { provideRtIDBStorage, provideRtStorage, provideRtUtils } from '@rt-tools/core';
-import { provideRtIcons, provideRtKitLabels, RtKitTranslator } from '@rt-tools/ui-kit-v2';
+import { provideRtIcons, ThemeService } from '@rt-tools/ui-kit-v2';
 
 import { appRoutes } from './app.routes';
 
@@ -15,8 +21,18 @@ import { appRoutes } from './app.routes';
  *
  * Подписи кита приходят функцией-переводчиком из словаря приложения. Без неё переключатель
  * страниц, пустое состояние и настройка столбцов встают английским умолчанием рядом с русскими
- * заголовками, и видно это только на собранном экране. Язык один, поэтому и переводчик, и
- * локаль — постоянные сигналы: следить здесь не за чем.
+ * заголовками, и видно это только на собранном экране. Языка два, и выбирает между ними человек:
+ * и переводчик, и локаль приезжают сигналами службы языка, поэтому смена языка в попапе профиля
+ * или на экране входа перерисовывает подписи кита без перезагрузки.
+ *
+ * Служба темы поднимается на старте, а не первым переключателем: выбор живёт на устройстве, а
+ * применяет его эффект службы — пока её никто не спросил, страница после перезагрузки стоит
+ * светлой, хотя выбрана тёмная. Единственный переключатель админки лежит в попапе профиля, то
+ * есть до первого его открытия спрашивать службу некому.
+ *
+ * Заголовок вкладки собирает своя стратегия: раздел объявляет своё название маршрутом, а имя
+ * приложения дописывается к нему здесь — вкладок у человека десяток, и по одному названию раздела
+ * не видно, чьё оно.
  *
  * Перехватчик кончившегося входа стоит на всех обращениях сразу: вход обрывается посреди
  * работы, и узнаёт об этом то обращение, которое в этот момент ушло, — а не гвард, который
@@ -37,6 +53,10 @@ export const appConfig: ApplicationConfig = {
         provideRtStorage(),
         provideRtIDBStorage(),
         provideRtIcons('/icons'),
-        provideRtKitLabels({ translator: signal<RtKitTranslator>(rtKitLabelsRu), locale: signal<string>(ADMIN_LOCALE) }),
+        provideAdminKitLabels(),
+        provideAppInitializer((): void => {
+            inject(ThemeService);
+        }),
+        { provide: TitleStrategy, useClass: AdminTitleStrategy },
     ],
 };

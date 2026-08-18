@@ -4,8 +4,10 @@ import { Router } from '@angular/router';
 import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
 import { AdminSignInFormComponent } from '@rt/message-bus-admin/auth/ui';
 import { ESignInFault, ISignInPair } from '@rt/message-bus-admin/auth/util';
+import { AdminLocaleSwitchComponent } from '@rt/message-bus-admin/common/core/ui';
+import { adminLabel } from '@rt/message-bus-admin/common/core/util';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { RtLogoComponent } from '@rt-tools/ui-kit-v2';
+import { RtThemeToggleComponent } from '@rt-tools/ui-kit-v2';
 import { filter } from 'rxjs';
 
 /**
@@ -26,7 +28,7 @@ const HOME_PATH: string = '/';
  */
 @Component({
     selector: 'admin-sign-in',
-    imports: [AdminSignInFormComponent, BlockDirective, ElemDirective, RtLogoComponent],
+    imports: [AdminLocaleSwitchComponent, AdminSignInFormComponent, BlockDirective, ElemDirective, RtThemeToggleComponent],
     templateUrl: './admin-sign-in.component.html',
     styleUrl: './admin-sign-in.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,6 +37,10 @@ const HOME_PATH: string = '/';
 export class AdminSignInComponent {
     readonly #store: AuthStore = inject(AuthStore);
     readonly #router: Router = inject(Router);
+
+    protected readonly appTitle: string = adminLabel('appTitle');
+
+    protected readonly signInTitle: string = adminLabel('signInTitle');
 
     protected readonly pending: Signal<boolean> = this.#store.pending;
     protected readonly fault: Signal<ESignInFault | null> = this.#store.fault;

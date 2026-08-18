@@ -73,7 +73,11 @@ test.describe('раздел приглашений', () => {
         await expect(revoked.locator('[qa-dataid="menu-trigger"]')).toHaveCount(0);
     });
 
-    test('SC-MB-120 — отзыв спрашивает согласия и снимает приглашение из ждущих', async ({ page }: { page: Page }) => {
+    test('SC-MB-120, SC-MB-153 — отзыв спрашивает согласия, снимает приглашение из ждущих и говорит об этом одним тостом', async ({
+        page,
+    }: {
+        page: Page;
+    }) => {
         await openSection(page, 'invites');
 
         const waiting: ReturnType<Page['locator']> = page
@@ -98,5 +102,11 @@ test.describe('раздел приглашений', () => {
 
         await expect(waiting.locator('[qa-dataid="invites-cell-state"]')).toHaveText('Отозвано');
         await expect(waiting.locator('[qa-dataid="menu-trigger"]')).toHaveCount(0);
+
+        // Стопка тостов на странице одна — та, что рисует каркас, — и тост об исходе в ней один:
+        // вторая стопка показывала бы тот же тост второй раз и в другом углу экрана
+        await expect(page.locator('rt-toaster')).toHaveCount(1);
+        await expect(qa(page, 'toast')).toHaveCount(1);
+        await expect(qa(page, 'toast-message')).toContainText('отозвано');
     });
 });
