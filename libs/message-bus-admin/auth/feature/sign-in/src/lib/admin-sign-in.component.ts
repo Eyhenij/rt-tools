@@ -30,7 +30,6 @@ const HOME_PATH: string = '/';
     selector: 'admin-sign-in',
     imports: [AdminLocaleSwitchComponent, AdminSignInFormComponent, BlockDirective, ElemDirective, RtThemeToggleComponent],
     templateUrl: './admin-sign-in.component.html',
-    styleUrl: './admin-sign-in.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: { class: BEM_BLOCK },
 })

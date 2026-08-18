@@ -48,7 +48,6 @@ const BEM_BLOCK: string = 'admin-invites-list';
 @Component({
     selector: 'admin-invites-list',
     templateUrl: './admin-invites-list.component.html',
-    styleUrl: './admin-invites-list.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // angular

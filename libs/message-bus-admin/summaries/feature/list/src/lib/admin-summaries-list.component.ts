@@ -45,7 +45,6 @@ const BEM_BLOCK: string = 'admin-summaries-list';
 @Component({
     selector: 'admin-summaries-list',
     templateUrl: './admin-summaries-list.component.html',
-    styleUrl: './admin-summaries-list.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // angular
