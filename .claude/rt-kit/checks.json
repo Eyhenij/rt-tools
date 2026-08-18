@@ -114,7 +114,8 @@
             }
         },
         "taskKey": "RT",
-        "bot": "rt-tools-agent",
+        "bot": "rt-tools-dev",
+        "tokenPath": "~/.config/rt-tools-bot-token",
         "reviewer": "Eyhenij"
     },
     "apiFamily": "message-bus-api",
