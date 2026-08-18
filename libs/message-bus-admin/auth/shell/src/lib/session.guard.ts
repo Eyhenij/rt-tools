@@ -27,6 +27,7 @@ export const sessionGuard: CanActivateFn = (_route: ActivatedRouteSnapshot, stat
     const asked: Observable<IAdminSession | null> = store.signedIn() ? of(store.session()) : store.restore();
 
     return asked.pipe(
+        // eslint-disable-next-line sonarjs/function-return-type -- гард маршрута отвечает каркасу либо согласием, либо адресом ухода: это его договорённость, а не два разных ответа
         map((session: IAdminSession | null): boolean | UrlTree => {
             if (session !== null) {
                 return true;

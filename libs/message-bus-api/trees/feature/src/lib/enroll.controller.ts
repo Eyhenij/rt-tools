@@ -100,7 +100,7 @@ export class EnrollController {
         const token: string = issueTreeToken();
         const taken: boolean = await redeemInvite(
             this.#prisma,
-            { inviteId: invite.id, name: invite.name, slug, hash: treeTokenHash(token) },
+            { slug, inviteId: invite.id, name: invite.name, hash: treeTokenHash(token) },
             at
         );
 

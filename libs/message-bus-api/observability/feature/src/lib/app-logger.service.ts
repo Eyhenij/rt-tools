@@ -60,7 +60,7 @@ function splitTail(tail: readonly unknown[]): ISplitTail {
         }
     }
 
-    return { context, detail: texts.length ? texts.join('\n') : undefined, fields };
+    return { context, fields, detail: texts.length ? texts.join('\n') : undefined };
 }
 
 /** Имя строки: то, что пришло первым доводом. Не строка — приводится, иначе запись безымянна. */

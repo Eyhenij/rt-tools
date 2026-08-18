@@ -111,7 +111,7 @@ export async function readProposals(prisma: PrismaService, asked: IPageAsked): P
         take: asked.size,
     });
 
-    return { rows: rows.map(listRowOf), total, page: asked.page, size: asked.size };
+    return { rows: rows.map(listRowOf), page: asked.page, size: asked.size, total };
 }
 
 /** Одно предложение целиком. Пусто — записи с таким признаком нет, и это отдельный ответ, а не пустая панель. */

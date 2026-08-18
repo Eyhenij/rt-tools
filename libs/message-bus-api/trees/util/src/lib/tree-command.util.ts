@@ -24,8 +24,10 @@ export interface ITreeAddCommand {
  * приглашения и его отзыв. Имя будущего дерева называет владелец здесь, а не обращение: принятое
  * из обращения, оно позволило бы назваться чужим именем тому, кто добыл код.
  */
+export type TTreeNamedKind = 'token' | 'revoke' | 'invite' | 'uninvite';
+
 export interface ITreeNamedCommand {
-    readonly kind: 'token' | 'revoke' | 'invite' | 'uninvite';
+    readonly kind: TTreeNamedKind;
     readonly name: string;
 }
 

@@ -99,9 +99,9 @@ export class ProposalsIntakeController {
     async #write(cargo: TCargoBody, treeId: string, ranAt: Date): Promise<IMonthRecordWritten> {
         return ensureMonthRecord(this.#prisma, {
             treeId,
+            ranAt,
             month: monthOf(ranAt),
             schema: cargoSchemaOf(cargo),
-            ranAt,
         });
     }
 

@@ -277,6 +277,10 @@ export default [
             parser: ngParser,
         },
         rules: {
+            // Форматом шаблонов ведает сам форматтер — `npm run prettier`. Через линтер он
+            // разбирает шаблон не своим парсером: `<router-outlet />` читается как выражение
+            // кода, и правило требует дописать в разметку точку с запятой.
+            'prettier/prettier': 'off',
             '@nx/workspace-require-bem-directives': ['error'],
             '@nx/workspace-no-method-call-in-template': ['error'],
             '@angular-eslint/template/cyclomatic-complexity': ['error', { maxComplexity: 25 }],

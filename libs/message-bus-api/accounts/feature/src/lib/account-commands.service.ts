@@ -108,7 +108,7 @@ export class AccountCommandsService {
             return refusal('пароль не назван: запись не заведена');
         }
 
-        await createAccount(this.#prisma, { name: command.name.trim(), nameKey, passwordHash: passwordHash(password) });
+        await createAccount(this.#prisma, { nameKey, name: command.name.trim(), passwordHash: passwordHash(password) });
 
         return { lines: [`учётная запись заведена: «${command.name.trim()}»`], failed: false };
     }

@@ -1,1 +1,1 @@
-export * from './lib/postmortem.logic';
+export * from './lib/postmortem.const';

@@ -67,9 +67,9 @@ export async function writeMonthSummary(
         create: {
             treeId: input.treeId,
             month: input.month,
-            summary,
             schema: input.schema,
             ranAt: input.ranAt,
+            summary,
         },
         update: { summary, schema: input.schema, ranAt: input.ranAt },
         select: { id: true },
@@ -202,7 +202,7 @@ export async function readMonthRecords(prisma: PrismaService, asked: IPageAsked)
             take: asked.size,
         });
 
-    return { rows: rows.map(listRowOf), total, page: asked.page, size: asked.size };
+    return { rows: rows.map(listRowOf), page: asked.page, size: asked.size, total };
 }
 
 /** Одна запись месяца целиком. Пусто — записи с таким признаком нет, и это отдельный ответ, а не пустая панель. */
