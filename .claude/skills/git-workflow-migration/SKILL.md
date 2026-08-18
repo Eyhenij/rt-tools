@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Паттерн правила git-workflow. Брать при правке prisma/schema.prisma и prisma/migrations/** — готовые команды одноразового контейнера, написание файла миграции через migrate diff, накат локальной базы. Не брать для коммита и PR — это паттерн git-workflow-commit.
 ---
-<!-- rt-kit v0.8.3 · patterns/git-workflow-migration.md · f8ac4335b422 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.9.0 · patterns/git-workflow-migration.md · f8ac4335b422 · правится надстройкой, не здесь -->
 
 # Миграция и прогон цепочки
 
