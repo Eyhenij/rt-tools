@@ -16,8 +16,8 @@
                 [attr.data-direction]="row.direction"
                 [rtMod]="{ direction: row.direction }"
                 [attr.title]="row.label">
-                <rt-icon rtElem="delta-icon" size="xs" [name]="row.icon" />
-                <span rtElem="delta-percent" qa-dataid="stat-tile-delta-percent">{{ row.text }}</span>
+                <rt-icon qa-dataid="stat-tile-delta-icon" size="xs" [name]="row.icon" />
+                <span qa-dataid="stat-tile-delta-percent">{{ row.text }}</span>
             </span>
         }
 

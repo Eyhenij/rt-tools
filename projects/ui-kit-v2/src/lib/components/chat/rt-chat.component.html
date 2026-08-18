@@ -150,7 +150,6 @@
                                                 @if (m.status === MessageStatus.Failed) {
                                                     <rt-icon rtElem="status-icon" name="exclamation-circle" size="sm" />
                                                     <rt-icon-button
-                                                        rtElem="status-retry"
                                                         qa-dataid="chat-message-retry"
                                                         icon="sync"
                                                         variant="ghost"
@@ -171,7 +170,7 @@
                                 </div>
                             </div>
                         } @empty {
-                            <rt-note rtElem="empty-thread" qa-dataid="chat-empty-thread">{{ t().chatEmptyThread }}</rt-note>
+                            <rt-note qa-dataid="chat-empty-thread">{{ t().chatEmptyThread }}</rt-note>
                         }
                     </div>
                 }
@@ -216,7 +215,6 @@
                             @if (attachments()) {
                                 <input
                                     #composerFileEl
-                                    rtElem="composer-native"
                                     qa-dataid="chat-composer-file-input"
                                     type="file"
                                     hidden
@@ -224,7 +222,6 @@
                                     [attr.accept]="accept() || null"
                                     (change)="onFilesPicked($event)" />
                                 <rt-icon-button
-                                    rtElem="composer-attach"
                                     qa-dataid="chat-composer-attach"
                                     icon="paperclip"
                                     variant="ghost"

@@ -79,6 +79,33 @@ printf '.card {\n    &__head {\n        color: red;\n    }\n\n    &__foot {\n   
 report "SC-AK-273 — подкреплённый класс отбивает строкой списка" "$(styles_code)" 1
 report "SC-AK-273 — сказано убрать строку" "$(styles_says 'строку убрать')" 1
 
+# SC-AK-274 — правило, собранное вложенностью, читается объявлением
+#
+# Разметка прежних случаев снимается: их классы без правила дали бы расхождение и здесь, а
+# проверяется тут другое.
+rm -f "$STYLES_TREE/apps/web/a.html" "$STYLES_TREE/apps/web/b.html"
+printf '{"accepted":[],"debt":[]}\n' > "$STYLES_TREE/tools/styles-allowlist.json"
+printf '<div rtBlock="card"><b rtElem="head"></b><i rtElem="head-icon"></i></div>\n' \
+    > "$STYLES_TREE/apps/web/screen.html"
+printf '.card {\n    &__head {\n        color: red;\n\n        &-icon {\n            color: blue;\n        }\n    }\n}\n' \
+    > "$STYLES_TREE/apps/web/screen.scss"
+report "SC-AK-274 — конкатенация считается объявлением" "$(styles_code)" 0
+
+# SC-AK-275 — вложенность собирается на любую глубину
+printf '<div rtBlock="card"><b rtElem="head"></b><i rtElem="head-icon-mark"></i></div>\n' \
+    > "$STYLES_TREE/apps/web/screen.html"
+printf '.card {\n    &__head {\n        color: red;\n\n        &-icon {\n            color: blue;\n\n            &-mark {\n                color: green;\n            }\n        }\n    }\n}\n' \
+    > "$STYLES_TREE/apps/web/screen.scss"
+report "SC-AK-275 — третье колено вложенности собирается" "$(styles_code)" 0
+
+# SC-AK-276 — конкатенация не выдумывает имён за пределами своего блока
+printf '<div rtBlock="card"><b rtElem="head"></b><i rtElem="lonely"></i></div>\n' \
+    > "$STYLES_TREE/apps/web/screen.html"
+printf '.card {\n    &__head {\n        color: red;\n    }\n}\n\n.other {\n    &-lonely {\n        color: gray;\n    }\n}\n' \
+    > "$STYLES_TREE/apps/web/screen.scss"
+report "SC-AK-276 — хвост без головы объявлением не становится" "$(styles_code)" 1
+report "SC-AK-276 — назван именно этот класс" "$(styles_says 'rtElem="lonely"')" 1
+
 rm -rf "$STYLES_TREE"
 
 suite_result "проверки: классы вёрстки"

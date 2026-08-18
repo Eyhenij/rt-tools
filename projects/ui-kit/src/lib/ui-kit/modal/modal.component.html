@@ -19,7 +19,7 @@
         }
 
         @if (data.confirmation) {
-            <div rtElem="confirmation" [innerHTML]="data.confirmation | sanitize"></div>
+            <div [innerHTML]="data.confirmation | sanitize"></div>
         }
 
         @if (data.input) {
