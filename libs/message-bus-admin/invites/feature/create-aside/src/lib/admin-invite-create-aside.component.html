@@ -21,17 +21,20 @@
         <rt-message severity="info" qa-dataid="invite-create-warn">{{ warnText }}</rt-message>
     }
 
+    <!-- Кнопки футера проецируются по атрибутам, и условие вокруг них проекцию рвёт: узел
+         внутри блока `@if` до слота футера не доходит вовсе. Поэтому выдача не прячется после
+         удачи, а отключается — приглашение уже выдано, и второе на то же имя приёмник отобьёт -->
     <rt-aside-footer>
-        @if (issued() === null) {
-            <button
-                rtButton
-                qa-dataid="invite-create-submit"
-                type="button"
-                [attr.aria-label]="submitLabel"
-                [label]="submitLabel"
-                [loading]="submitting()"
-                (click)="submit()"></button>
-        }
+        <button
+            rtButton
+            asidePrimary
+            qa-dataid="invite-create-submit"
+            type="button"
+            [attr.aria-label]="submitLabel"
+            [disabled]="issued() !== null"
+            [label]="submitLabel"
+            [loading]="submitting()"
+            (click)="submit()"></button>
 
         <button
             rtButton
