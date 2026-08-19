@@ -11,6 +11,21 @@ TURNS="$(mktemp -d)"
 cleanup() { rm -rf "$TURNS"; }
 trap cleanup EXIT
 
+# Дерево с настройкой: гард ищет список выключенных ролей в `.claude/rt-kit.json` от корня
+# дерева. Печатает путь к дереву.
+tree_with_config() {
+    local dir
+    dir="$(mktemp -d "$TURNS/tree-XXXXXX")"
+    mkdir -p "$dir/.claude"
+    printf '%s\n' "$1" >"$dir/.claude/rt-kit.json"
+    printf '%s' "$dir"
+}
+
+# Своё дерево на весь набор: иначе гард прочитал бы настройку того дерева, из которого набор
+# запустили, и в дереве с выключенным экзаменатором каждый отказ ниже стал бы пропуском.
+CLAUDE_PROJECT_DIR="$(tree_with_config '{}')"
+export CLAUDE_PROJECT_DIR
+
 transcript() {
     local path
     path="$TURNS/turn-$RANDOM.jsonl"
@@ -75,6 +90,21 @@ r "SC-AK-319 — без открытого PR второй экзамен не �
 # Команда, не снимающая черновик, гарду безразлична: он судит снятие, а не всякий вызов клиента.
 expect_decision "SC-AK-320 — прочие команды клиента не судятся" exam-guard.sh \
     "$(jq -n --arg p "$(transcript "$(say 'x')")" '{session_id:"tests",tool_name:"Bash",tool_input:{command:"gh pr view 917"},transcript_path:$p}')" PASS
+
+# --- роль выключена деревом ----------------------------------------------------------------
+# Дерево называет выключенные роли списком в своей настройке. При выключенном экзаменаторе гард
+# молчит: та же правка, которую он отбивал бы, проходит. Выключение соседней роли, пустая
+# настройка и настройка, которую не разобрать, экзамена не отменяют.
+NO_EXAM="$(transcript "$(say 'правь файл')")"
+
+CLAUDE_PROJECT_DIR="$(tree_with_config '{"rolesOff":["strict-teacher"]}')" \
+    e "SC-AK-327 — выключенный деревом экзаменатор правку пропускает" "$NO_EXAM" PASS
+CLAUDE_PROJECT_DIR="$(tree_with_config '{"rolesOff":["conscience"]}')" \
+    e "SC-AK-328 — выключенная соседняя роль экзамен не отменяет" "$NO_EXAM" deny
+CLAUDE_PROJECT_DIR="$(tree_with_config '{"vars":{}}')" \
+    e "и без списка выключенных ролей экзамен спрашивается как прежде" "$NO_EXAM" deny
+CLAUDE_PROJECT_DIR="$(tree_with_config '{"rolesOff": ["strict-teacher"')" \
+    e "SC-AK-329 — настройка, которую не разобрать, роль не выключает" "$NO_EXAM" deny
 
 # --- отказ в пользу работы ---------------------------------------------------------------------
 exit_code_of() {

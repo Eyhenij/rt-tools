@@ -30,5 +30,7 @@
 | Правка не идёт, пока за сессию не сдан экзамен по загруженным правилам.                                      | `projects/agent-kit/assets/hooks/exam-guard.sh:verdict`                 |
 | Сдачей считается только полный балл.                                                                         | `projects/agent-kit/assets/hooks/exam-guard.sh:verdict`                 |
 | Судится последний вердикт роли, а не первый.                                                                 | `projects/agent-kit/assets/hooks/exam-guard.sh:verdict`                 |
+| Роль, выключенная деревом, гарда при ней не держит.                                                          | `projects/agent-kit/assets/hooks/roles.sh:rt_role_off`                  |
+| Настройка, которую не прочитать, роль не выключает.                                                          | `projects/agent-kit/assets/hooks/roles.sh:rt_role_off`                  |
 | Экзамен спрашивается дважды: на старте сессии и перед снятием черновика.                                     | `projects/agent-kit/assets/hooks/exam-guard.sh:ready`                   |
 | Записи хода сводятся в один поток по порядку.                                                                | `projects/agent-kit/assets/hooks/exam-guard.sh:after`                   |
