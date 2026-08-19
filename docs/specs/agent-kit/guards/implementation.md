@@ -45,3 +45,5 @@
 | Работой считаются правка файла и команда, меняющая дерево.                                                   | `projects/agent-kit/assets/hooks/turn-exit-guard.sh:work_re`            |
 | Слово об остановке судится по реплике владельца, а не по словам исполнителя.                                 | `projects/agent-kit/assets/hooks/turn-exit-guard.sh:told_stop`          |
 | Отданная и влитая работа стражем не судится.                                                                 | `projects/agent-kit/assets/hooks/turn-exit-guard.sh:state`              |
+| Этап, объявленный закрытым, подтверждается выводом команды.                                                  | `projects/agent-kit/assets/hooks/turn-exit-guard.sh:stage_was`          |
+| Приём, записанный прозой, страж не читает.                                                                   | `projects/agent-kit/assets/hooks/turn-exit-guard.sh:contract`           |

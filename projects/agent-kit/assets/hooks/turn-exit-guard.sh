@@ -100,10 +100,55 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re
           | if type == "string" then . elif type == "array"
             then (map(if type == "object" then (.text // "") else "" end) | join("\n")) else "" end] | join("\n")) as $said
     | ($said | test("останов|стоп|хватит|подожди|не надо|прерв|отложи")) as $told_stop
-    | if $edited or $ran_work or $asked or $denied or $handed or $told_stop then "pass" else "block" end
+    | { worked: ($edited or $ran_work), released: ($asked or $denied or $handed or $told_stop), ran: $ran }
 ' 2>/dev/null)"
 
-[ "$verdict" = "block" ] || exit 0
+[ -z "$verdict" ] && exit 0
+
+worked="$(printf '%s' "$verdict" | jq -r '.worked // false' 2>/dev/null)"
+released="$(printf '%s' "$verdict" | jq -r '.released // false' 2>/dev/null)"
+commands="$(printf '%s' "$verdict" | jq -r '.ran // ""' 2>/dev/null)"
+
+[ "$released" = "true" ] && exit 0
+
+# Контракт этапа. Отметка «этап сделан» — утверждение о дереве, и подтверждается оно выводом
+# команды, а не словами: этап, отмеченный по памяти, через заход неотличим от проверенного.
+# Страж сравнивает номер этапа с тем, что лежит в истории ветки, и на выросшем номере требует
+# команды из строки «Чем проверяется» — она стоит в замысле обратными кавычками. Приём, записанный
+# прозой, страж не читает: подтвердить его выводом нечем, и это его известная граница.
+stage_now="$(sed -n 's/^[[:space:]]*[-*][[:space:]]*\*\*Этап:\*\*[[:space:]]*\([0-9][0-9]*\).*/\1/p' "$progress" 2>/dev/null | head -1)"
+stage_was="$(git -C "$root" show "HEAD:$tasks_dir/$branch/progress.md" 2>/dev/null | sed -n 's/^[[:space:]]*[-*][[:space:]]*\*\*Этап:\*\*[[:space:]]*\([0-9][0-9]*\).*/\1/p' | head -1)"
+
+if [ -n "$stage_now" ] && [ -n "$stage_was" ] && [ "$stage_now" -gt "$stage_was" ] 2>/dev/null; then
+    plan="$root/$tasks_dir/$branch/plan.md"
+    # Контракт закрытого этапа, а не начатого: подтверждается то, что объявлено сделанным.
+    contract="$(awk -v n="$stage_was" '
+        $0 ~ "^### " n "\\." { inside = 1; next }
+        /^### / { inside = 0 }
+        inside && /\*\*Чем проверяется:\*\*/ { print }
+    ' "$plan" 2>/dev/null)"
+    missing=""
+    while IFS= read -r cmd; do
+        [ -z "$cmd" ] && continue
+        printf '%s' "$commands" | grep -qF -- "$cmd" || missing="$missing\n    $cmd"
+    done <<EOF
+$(printf '%s' "$contract" | grep -o '`[^`]*`' | tr -d '`')
+EOF
+    if [ -n "$missing" ]; then
+        reason="BLOCKED by turn-exit-guard: этап ${stage_was} объявлен закрытым, а команды, которыми он проверяется, за этот ход не запускались:$(printf '%b' "$missing")
+
+Отметка «этап сделан» — утверждение о дереве, и подтверждается оно выводом команды, а не словами: через заход отмеченное по памяти неотличимо от проверенного.
+
+Запусти их этим же ходом либо верни прежний номер этапа в ход работы.
+
+Страж судит один ход: следующий заход не отбивается."
+        jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
+            || printf '{"decision":"block","reason":"turn-exit-guard: закрытый этап не подтверждён выводом команды."}\n'
+        exit 0
+    fi
+fi
+
+[ "$worked" = "true" ] && exit 0
 
 reason="BLOCKED by turn-exit-guard: работа в состоянии '${state}', а за этот ход по ней не сделано ничего — ни правки, ни команды, меняющей дерево.
 
