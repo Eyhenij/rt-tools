@@ -1,4 +1,4 @@
-<!-- rt-kit v0.9.0 · samples/tasks/_template/progress.md · baf326afb38f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.9.1 · samples/tasks/_template/progress.md · baf326afb38f · правится надстройкой, не здесь -->
 # Ход работы
 
 ## Где стоим
