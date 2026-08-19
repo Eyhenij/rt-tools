@@ -137,10 +137,15 @@ describe('AdminInvitesListComponent', () => {
         expect(cells('invites-cell-tree')).toEqual(['own-tree']);
     });
 
-    it('SC-MB-128 — пустой список объясняет, какой командой выдаётся приглашение', async () => {
+    it('SC-MB-128, SC-MB-162 — пустой список называет кнопку, которой выдаётся приглашение', async () => {
         await openSection([]);
 
-        expect(harness.fixture.nativeElement.textContent).toContain('message-bus tree:invite');
+        const text: string = harness.fixture.nativeElement.textContent;
+
+        // сперва положительное: пустое состояние показано и называет, откуда берутся записи
+        expect(text).toContain('Пригласить дерево');
+        // и только потом отрицательное: команды узла в нём больше нет
+        expect(text).not.toContain('tree:invite');
     });
 
     it('SC-MB-120 — у ждущего приглашения есть чем открыть действия строки', async () => {
