@@ -1,4 +1,4 @@
-import { computed, DestroyRef, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { computed, DestroyRef, inject, Injectable, InjectionToken, Signal, signal, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { delay, Observable, of, Subject, switchMap, tap } from 'rxjs';
@@ -24,8 +24,39 @@ import { EBookingMailBadge, EBookingSortProperty, EBookingStatus, IBooking } fro
 /** Насколько долго «идёт» чтение списка. Столько же занимают запись, снятие и смена состояния. */
 const RESPONSE_DELAY_MS: number = 450;
 
+/** Чем отвечает демонстрационный сервер: какими записями и отдаёт ли он их вообще. */
+export interface IBookingsFixture {
+    /** Что «лежит на сервере» к открытию экрана. */
+    readonly bookings: ReadonlyArray<IBooking.State>;
+
+    /** Чтение списка кончается отказом: экран показывает тост и пустую таблицу. */
+    readonly failing: boolean;
+}
+
+/**
+ * Ответ демонстрационного сервера. Объявляется историей витрины, а не экраном: пустой список и
+ * отказ чтения — такие же виды экрана, как список с записями, и достаётся до них только отсюда.
+ * Умолчание — полный набор и работающий сервер, поэтому экран поднимается и без объявления.
+ */
+export const BOOKINGS_FIXTURE: InjectionToken<IBookingsFixture> = new InjectionToken<IBookingsFixture>('BOOKINGS_FIXTURE', {
+    providedIn: 'root',
+    factory: (): IBookingsFixture => ({ bookings: SHOWCASE_BOOKINGS, failing: false }),
+});
+
+/** Ключ подписи, под которой владелец видит отказ чтения списка. */
+const LIST_ERROR_KEY: string = 'bookingsLoadFailed';
+
+/** Ответ сервера на чтение списка: страница записей и сколько их всего под отбором. */
+interface IListAnswer {
+    readonly page: ReadonlyArray<IBooking.State>;
+    readonly totalCount: number;
+}
+
+/** До первого ответа список пуст: пока чтение идёт, таблица показывает скелетоны. */
+const EMPTY_ANSWER: IListAnswer = { page: [], totalCount: 0 };
+
 /** Размер страницы по умолчанию — первая ступень переключателя страниц кита. */
-const DEFAULT_PAGE_SIZE: number = 20;
+const SHOWCASE_PAGE_SIZE: number = 20;
 
 /** Выборка списка: отбор, порядок и страница. Всё, что экран кладёт в адрес. */
 export interface IBookingsQuery {
@@ -39,7 +70,7 @@ const INITIAL_QUERY: IBookingsQuery = {
     status: EBookingStatus.Unspecified,
     sort: null,
     pageNumber: 1,
-    pageSize: DEFAULT_PAGE_SIZE,
+    pageSize: SHOWCASE_PAGE_SIZE,
 };
 
 /**
@@ -74,8 +105,11 @@ function compareBookings(left: IBooking.State, right: IBooking.State, property: 
 export class BookingsStore {
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
 
+    /** Чем отвечает сервер: набор записей и признак отказа. Объявляется историей витрины. */
+    readonly #fixture: IBookingsFixture = inject(BOOKINGS_FIXTURE);
+
     /** Всё, что «лежит на сервере». Правки записываются сюда и переживают перечитывание списка. */
-    readonly #source: WritableSignal<ReadonlyArray<IBooking.State>> = signal<ReadonlyArray<IBooking.State>>(SHOWCASE_BOOKINGS);
+    readonly #source: WritableSignal<ReadonlyArray<IBooking.State>> = signal<ReadonlyArray<IBooking.State>>(this.#fixture.bookings);
 
     readonly #query: WritableSignal<IBookingsQuery> = signal<IBookingsQuery>(INITIAL_QUERY);
 
@@ -89,6 +123,13 @@ export class BookingsStore {
 
     /** Отказ загрузки — событием, а не признаком: один и тот же отказ подряд обязан показаться дважды. */
     readonly #listErrorSource: Subject<string> = new Subject<string>();
+
+    /**
+     * Последний ответ сервера. Список живёт здесь, а не вычисляется из набора прямо в таблицу:
+     * набор лежит в памяти, и без этого шага страница появлялась бы в кадре раньше ответа —
+     * скелетонов первого чтения не видел бы никто.
+     */
+    readonly #answer: WritableSignal<IListAnswer> = signal<IListAnswer>(EMPTY_ANSWER);
 
     /** Записи, прошедшие отбор и порядок, — до нарезки на страницы. */
     readonly #selected: Signal<ReadonlyArray<IBooking.State>> = computed((): ReadonlyArray<IBooking.State> => {
@@ -124,13 +165,8 @@ export class BookingsStore {
 
     public readonly listError: Observable<string> = this.#listErrorSource.asObservable();
 
-    /** Страница списка: то, что видит таблица. */
-    public readonly entities: Signal<IBooking.State[]> = computed((): IBooking.State[] => {
-        const query: IBookingsQuery = this.#query();
-        const start: number = (query.pageNumber - 1) * query.pageSize;
-
-        return this.#selected().slice(start, start + query.pageSize);
-    });
+    /** Страница списка: то, что видит таблица. Приезжает ответом, а не выбирается на месте. */
+    public readonly entities: Signal<IBooking.State[]> = computed((): IBooking.State[] => [...this.#answer().page]);
 
     public readonly pageModel: Signal<IPageModel> = computed((): IPageModel => {
         const query: IBookingsQuery = this.#query();
@@ -138,7 +174,7 @@ export class BookingsStore {
         return {
             pageNumber: query.pageNumber,
             pageSize: query.pageSize,
-            totalCount: this.#selected().length,
+            totalCount: this.#answer().totalCount,
         };
     });
 
@@ -156,6 +192,18 @@ export class BookingsStore {
                 tap((): void => {
                     this.#pending.set(false);
                     this.#loaded.set(true);
+
+                    // Отказ приходит признаком и событием сразу: признак держит вид экрана, а
+                    // событие показывает тост — один и тот же отказ подряд обязан показаться дважды.
+                    if (this.#fixture.failing) {
+                        this.#answer.set(EMPTY_ANSWER);
+                        this.#errorKey.set(LIST_ERROR_KEY);
+                        this.#listErrorSource.next(LIST_ERROR_KEY);
+
+                        return;
+                    }
+
+                    this.#answer.set(this.#answerNow());
                 }),
                 takeUntilDestroyed(this.#destroyRef)
             )
@@ -246,6 +294,15 @@ export class BookingsStore {
 
     public clearError(): void {
         this.#errorKey.set(null);
+    }
+
+    /** Ответ, который «отдаёт сервер»: отбор и порядок уже применены, осталось нарезать страницу. */
+    #answerNow(): IListAnswer {
+        const query: IBookingsQuery = this.#query();
+        const selected: ReadonlyArray<IBooking.State> = this.#selected();
+        const start: number = (query.pageNumber - 1) * query.pageSize;
+
+        return { page: selected.slice(start, start + query.pageSize), totalCount: selected.length };
     }
 
     /** Номер следующей заявки: на единицу больше самого большого из существующих. */

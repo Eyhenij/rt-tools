@@ -18,6 +18,7 @@ export const SHOWCASE_MESSAGES_RU: Readonly<Record<string, string>> = {
     bookingsHint: 'Брони объектов: заезд, гости и состояние обработки.',
     bookingsAdd: 'Завести заявку',
     bookingsEmpty: 'Заявок пока нет',
+    bookingsLoadFailed: 'Не удалось прочитать список заявок',
     bookingsTableAria: 'Таблица заявок',
 
     // Колонки и поля

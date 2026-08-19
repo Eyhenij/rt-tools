@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { Router, RouterOutlet, Routes } from '@angular/router';
 
@@ -5,13 +6,10 @@ import { RtContainerComponent } from '../../../../lib/components/container/rt-co
 import {
     RtContainerContentDirective,
     RtContainerHeaderDirective,
-    RtContainerLeftSidenavDirective,
     RtContainerRightSidenavDirective,
 } from '../../../../lib/components/container/rt-container.directives';
 import { RtPageHeaderComponent } from '../../../../lib/components/page-header/rt-page-header.component';
 import { IRtPageHeader } from '../../../../lib/components/page-header/rt-page-header.model';
-import { RtSectionNavComponent } from '../../../../lib/components/section-nav/rt-section-nav.component';
-import { IRtSectionNav } from '../../../../lib/components/section-nav/rt-section-nav.model';
 import { bookingsRoute } from '../../bookings/bookings.routes';
 
 /**
@@ -22,8 +20,9 @@ import { bookingsRoute } from '../../bookings/bookings.routes';
  * правки открывается адресом в аутлете `ro`, а этот аутлет живёт в правом сайднаве каркаса — без
  * него панель не показалась бы вовсе.
  *
- * Верхняя навигация и левое меню — те же компоненты кита, что стоят в приложении; данные для них
- * демонстрационные.
+ * Верхняя навигация — тот же компонент кита, что стоит в приложении; данные для неё
+ * демонстрационные. Левого меню у каркаса нет: разделы живут в шапке, и колонка слева отняла бы
+ * у списка ширину, которой у него и так нет.
  *
  * В пакет обёртка не уезжает: `src/showcase/**` исключён из сборки библиотеки.
  */
@@ -39,6 +38,9 @@ import { bookingsRoute } from '../../bookings/bookings.routes';
  */
 const SHOWCASE_ROUTES: Routes = [{ path: 'bookings', children: [bookingsRoute] }];
 
+/** Адрес раздела: с него начинается показ, и по нему же узнаётся уже открытая панель. */
+const SECTION_URL: string = '/bookings';
+
 /** Разделы верхней навигации. Живой из них один — заявки; остальные показывают, как выглядит ряд. */
 const HEADER_ITEMS: ReadonlyArray<IRtPageHeader.Item> = [
     { id: 'dashboard', label: 'Сводка', route: '/dashboard' },
@@ -47,23 +49,15 @@ const HEADER_ITEMS: ReadonlyArray<IRtPageHeader.Item> = [
     { id: 'properties', label: 'Объекты', route: '/properties' },
 ];
 
-/** Пункты левого меню раздела. Открытый — заявки: именно его экран и показывает история. */
-const NAV_ITEMS: ReadonlyArray<IRtSectionNav.Item> = [
-    { id: 'bookings', label: 'Заявки', icon: 'inbox', active: true },
-    { id: 'guests', label: 'Гости', icon: 'user', active: false },
-    { id: 'payments', label: 'Платежи', icon: 'wallet', active: false },
-];
-
 @Component({
     selector: 'app-bookings-template',
     template: `
-        <rt-container height="viewport">
+        <!-- Высота каркаса не прибита к вьюпорту: страница растёт под содержимое и скроллится
+             целиком, а не зонами по отдельности — иначе переключатель страниц уезжает под
+             нижний край и достать его нечем. -->
+        <rt-container>
             <ng-container *rtContainerHeader>
                 <rt-page-header ariaLabel="Разделы" [items]="headerItems" [user]="user" />
-            </ng-container>
-
-            <ng-container *rtContainerLeftSidenav>
-                <rt-section-nav [items]="navItems" />
             </ng-container>
 
             <ng-container *rtContainerContent>
@@ -85,18 +79,15 @@ const NAV_ITEMS: ReadonlyArray<IRtSectionNav.Item> = [
         RtContainerComponent,
         RtContainerContentDirective,
         RtContainerHeaderDirective,
-        RtContainerLeftSidenavDirective,
         RtContainerRightSidenavDirective,
         RtPageHeaderComponent,
-        RtSectionNavComponent,
     ],
 })
 export class TestRtBookingsTemplateComponent implements OnInit {
     readonly #router: Router = inject(Router);
+    readonly #location: Location = inject(Location);
 
     public readonly headerItems: ReadonlyArray<IRtPageHeader.Item> = HEADER_ITEMS;
-
-    public readonly navItems: ReadonlyArray<IRtSectionNav.Item> = NAV_ITEMS;
 
     public readonly user: IRtPageHeader.User = { name: 'Евгения Крумина', avatar: 'Е' };
 
@@ -107,6 +98,10 @@ export class TestRtBookingsTemplateComponent implements OnInit {
 
         // Витрина открывает историю по своему адресу, а не по адресу раздела: без этого перехода
         // в аутлете каркаса не нарисовалось бы ничего, и история показала бы пустой каркас.
-        void this.#router.navigateByUrl('/bookings');
+        // Уже набранный адрес при этом сохраняется: переход на раздел без разбора стирал бы
+        // открытую панель, и на перезагрузке страницы она не возвращалась бы никогда.
+        const requested: string = this.#location.path();
+
+        void this.#router.navigateByUrl(requested.startsWith(SECTION_URL) ? requested : SECTION_URL);
     }
 }

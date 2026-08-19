@@ -6,5 +6,6 @@
 // В пакет ничего отсюда не уезжает: `src/showcase/**` исключён из сборки библиотеки.
 
 @forward 'page';
+@forward 'shell';
 @forward 'panel';
 @forward 'sort-header';

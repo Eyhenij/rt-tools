@@ -194,7 +194,8 @@
     "inline-template ×1 @ projects/ui-kit-v2/src/showcase/story-themes.component.ts",
     "inline-template ×1 @ projects/ui-kit/src/lib/ui-kit/aside/stories/open-aside-button.component.ts",
     "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/photo-viewer/stories/component/test-photo-viewer-matrix.component.ts",
-    "inline-template ×2 @ projects/ui-kit-v2/src/lib/components/welcome-dialog/stories/component/test-welcome-dialog-matrix.component.ts"
+    "inline-template ×2 @ projects/ui-kit-v2/src/lib/components/welcome-dialog/stories/component/test-welcome-dialog-matrix.component.ts",
+    "inline-template ×1 @ projects/ui-kit-v2/src/showcase/templates/stories/component/test-bookings-template.component.ts"
   ],
   "debt": []
 }

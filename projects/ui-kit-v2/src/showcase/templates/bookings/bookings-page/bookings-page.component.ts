@@ -27,6 +27,8 @@ import { RtTableRowDirective } from '../../../../lib/components/table/rt-table-r
 import { IRtTable } from '../../../../lib/components/table/rt-table.model';
 import { RtTagComponent } from '../../../../lib/components/tag/rt-tag.component';
 import { IRtTag } from '../../../../lib/components/tag/rt-tag.model';
+import { NotificationBus } from '../../../../lib/platform/notification-bus.service';
+import { APP_PAGE_BLOCK } from '../../app-layout.const';
 import { AppSortHeaderDirective } from '../app-sort-header.directive';
 import { SHOWCASE_PROPERTIES } from '../booking.data';
 import {
@@ -44,8 +46,12 @@ import { AppListPageComponent } from '../list-page/app-list-page.component';
 import { IListPage } from '../list-page/list-page.model';
 import { provideListPage } from '../list-page/list-page.token';
 
-/** Раскладка экрана — общий блок слоя, а не своя: `src/showcase/templates/styles/_page.scss`. */
-const BEM_BLOCK: string = 'app-bookings-page';
+/**
+ * Раскладка экрана — общий блок слоя, а не своя: `src/showcase/templates/styles/_page.scss`.
+ * Своё имя (`app-bookings-page`) носит только полоса подтверждения: она принадлежит одному
+ * этому списку и объявляется директивой в шаблоне.
+ */
+const BEM_BLOCK: string = APP_PAGE_BLOCK;
 
 /**
  * Свой ключ настроек таблицы: выбор столбцов лежит в хранилище под ним, и общий с другой
@@ -198,6 +204,7 @@ export class BookingsPageComponent implements IListPage.Host<IBooking.State, EBo
     readonly #transloco: TranslocoService = inject(TranslocoService);
     readonly #router: Router = inject(Router);
     readonly #route: ActivatedRoute = inject(ActivatedRoute);
+    readonly #notificationBus: NotificationBus = inject(NotificationBus);
 
     /** Смена состояния заявки: запросы идут по одному, в порядке нажатий. */
     readonly #statusSource: Subject<IStatusRequest> = new Subject<IStatusRequest>();
@@ -243,7 +250,11 @@ export class BookingsPageComponent implements IListPage.Host<IBooking.State, EBo
 
     protected readonly loading: Signal<boolean> = computed((): boolean => this.store.pending());
 
-    protected readonly listEmpty: Signal<boolean> = computed((): boolean => this.store.loaded() && this.store.entities().length === 0);
+    /**
+     * «Заявок пока нет» — утверждение о списке, а не о том, что таблица пуста: пока чтение не
+     * кончилось или кончилось отказом, известно только, что показывать нечего.
+     */
+    protected readonly listEmpty: Signal<boolean> = computed((): boolean => this.store.loaded() && !this.store.listFailed());
 
     /** Пока запрос состояния идёт, действия над строками недоступны: второй клик отправил бы второе письмо. */
     protected readonly actionsDisabled: Signal<boolean> = computed((): boolean => this.store.busy());
@@ -322,6 +333,12 @@ export class BookingsPageComponent implements IListPage.Host<IBooking.State, EBo
     }
 
     public ngOnInit(): void {
+        // Отказ чтения подаётся тостом, а повторить владелец может кнопкой обновления: список
+        // при этом остаётся пустым, и молчаливая пустая таблица читалась бы как «записей нет».
+        this.store.listError
+            .pipe(takeUntilDestroyed(this.#destroyRef))
+            .subscribe((key: string): void => this.#notificationBus.error(this.#transloco.translate(key)));
+
         this.store.loadList();
     }
 
