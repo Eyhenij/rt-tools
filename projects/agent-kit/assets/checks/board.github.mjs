@@ -204,6 +204,39 @@ export function fetchIssue(number, options) {
 }
 
 /**
+ * Состояние заявки в терминах поставки: существует, черновик ли она и есть ли у неё разбор —
+ * запрошенный ревьювер либо уже оставленный отзыв.
+ *
+ * Ревьювера до этой правки не спрашивал никто: он жил прозой в паттерне о коммите и PR, и
+ * запрос разбора на самого себя хостинг принимает молча — разбор при этом выглядит
+ * запрошенным, а его нет.
+ */
+export function pullState(number, options) {
+    let pull;
+    try {
+        pull = ghJson(['pr', 'view', String(number), '--json', 'number,isDraft,reviewRequests,latestReviews,author'], options);
+    } catch (error) {
+        if (error instanceof OfflineError) {
+            throw error;
+        }
+        return { exists: false };
+    }
+    if (!pull) {
+        return { exists: false };
+    }
+    const requested = (pull.reviewRequests ?? []).map((entry) => entry.login ?? entry.name ?? '').filter(Boolean);
+    const reviewed = (pull.latestReviews ?? []).map((entry) => entry.author?.login ?? '').filter(Boolean);
+    const reviewers = [...new Set([...requested, ...reviewed])];
+    return {
+        exists: true,
+        draft: pull.isDraft === true,
+        author: pull.author?.login ?? null,
+        reviewers,
+        reviewed: reviewers.filter((login) => login !== (pull.author?.login ?? null)).length > 0,
+    };
+}
+
+/**
  * Вершина берётся вместе с остальным: спросить её потом значило бы второй вызов на каждый PR,
  * а судят по ней и папку задачи, и прогон.
  */
@@ -380,6 +413,19 @@ const isEntryPoint = process.argv[1] && import.meta.url === `file://${process.ar
 if (isEntryPoint && process.argv[2] === 'task') {
     try {
         process.stdout.write(`${JSON.stringify(taskState(Number(process.argv[3])))}\n`);
+    } catch (error) {
+        if (error instanceof OfflineError) {
+            process.stdout.write('{"offline":true}\n');
+        } else {
+            process.stdout.write(`${JSON.stringify({ error: String(error.message ?? error) })}\n`);
+            process.exit(1);
+        }
+    }
+}
+
+if (isEntryPoint && process.argv[2] === 'pr') {
+    try {
+        process.stdout.write(`${JSON.stringify(pullState(Number(process.argv[3])))}\n`);
     } catch (error) {
         if (error instanceof OfflineError) {
             process.stdout.write('{"offline":true}\n');

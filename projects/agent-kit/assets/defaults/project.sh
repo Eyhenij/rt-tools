@@ -274,6 +274,18 @@ rt_task_state_default() {
     printf '%s' "$state"
 }
 
+# Состояние заявки одним объектом: exists, draft, author, reviewers, reviewed. Спрашивает того
+# же помощника очереди работ, что и состояние задачи, — чтобы гард и сверка одинаково понимали
+# «у заявки есть разбор». Нет узла, нет помощника, нет сети — молчание, и ярус пропускается.
+rt_pull_state_default() {
+    command -v node >/dev/null 2>&1 || return 1
+    [ -f "${RT_BOARD_HELPER:-tools/board.mjs}" ] || return 1
+    state="$(node "${RT_BOARD_HELPER:-tools/board.mjs}" pr "$1" 2>/dev/null)" || return 1
+    [ -z "$state" ] && return 1
+    printf '%s' "$state" | jq -e 'has("offline") | not' >/dev/null 2>&1 || return 1
+    printf '%s' "$state"
+}
+
 # Что в этом дереве считается переизобретением. По строке «образец<таб>чем заменить».
 # Образцы узкие намеренно: гард сверяет только НОВЫЙ текст, и широкий образец отбивал бы
 # правку, которая ничего нового не заводит.
@@ -321,5 +333,6 @@ rt_shell_writes() { rt_shell_writes_default "$@"; }
 rt_shell_paths() { rt_shell_paths_default "$@"; }
 rt_qa_decorative() { rt_qa_decorative_default "$@"; }
 rt_task_state() { rt_task_state_default "$@"; }
+rt_pull_state() { rt_pull_state_default "$@"; }
 rt_report_body() { rt_report_body_default "$@"; }
 rt_handoff_allowed_cmd() { rt_handoff_allowed_cmd_default "$@"; }
