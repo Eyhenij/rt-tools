@@ -8,7 +8,7 @@ import { TestRtDeltaViewMatrixComponent } from './component/test-delta-view-matr
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/DeltaView',
+    title: 'Molecules/Data/DeltaView',
     component: TestRtDeltaViewMatrixComponent,
     parameters: {
         controls: { disable: true },

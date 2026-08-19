@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtInfoItemComponent } from './component/test-info-item.component';
 
 export default {
-    title: 'Components/InfoItem',
+    title: 'Molecules/Data/InfoItem',
     component: TestRtInfoItemComponent,
     argTypes: {
         label: { control: { type: 'text' } },

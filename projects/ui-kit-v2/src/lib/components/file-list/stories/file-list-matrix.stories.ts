@@ -10,7 +10,7 @@ import { TestRtFileListMatrixComponent } from './component/test-file-list-matrix
  * Своих входов у столбца нет: ось здесь одна — что в него положили.
  */
 export default {
-    title: 'Components/FileList',
+    title: 'Molecules/Files/FileList',
     component: TestRtFileListMatrixComponent,
     parameters: {
         controls: { disable: true },

@@ -9,7 +9,7 @@ import { TestRtFileCardMatrixComponent } from './component/test-file-card-matrix
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/FileCard',
+    title: 'Molecules/Files/FileCard',
     component: TestRtFileCardMatrixComponent,
     parameters: {
         controls: { disable: true },

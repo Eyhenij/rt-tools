@@ -8,7 +8,7 @@ import { TestRtMessageComposerMatrixComponent } from './component/test-message-c
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/MessageComposer',
+    title: 'Organisms/Chat/MessageComposer',
     component: TestRtMessageComposerMatrixComponent,
     parameters: {
         controls: { disable: true },

@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtFileInputComponent } from './component/test-file-input.component';
 
 export default {
-    title: 'Components/FileInput',
+    title: 'Molecules/Forms/FileInput',
     component: TestRtFileInputComponent,
     argTypes: {
         multiple: { control: { type: 'boolean' } },

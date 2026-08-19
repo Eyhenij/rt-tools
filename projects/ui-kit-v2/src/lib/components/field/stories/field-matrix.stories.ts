@@ -11,7 +11,7 @@ import { TestRtFieldMatrixComponent } from './component/test-field-matrix.compon
  * они принадлежат контролу внутри и показаны в его матрице.
  */
 export default {
-    title: 'Components/Field',
+    title: 'Molecules/Forms/Field',
     component: TestRtFieldMatrixComponent,
     parameters: {
         controls: { disable: true },

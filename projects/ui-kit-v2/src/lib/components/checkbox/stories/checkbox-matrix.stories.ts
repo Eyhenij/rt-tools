@@ -9,7 +9,7 @@ import { TestRtCheckboxMatrixComponent } from './component/test-checkbox-matrix.
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/Checkbox',
+    title: 'Atoms/Forms/Checkbox',
     component: TestRtCheckboxMatrixComponent,
     parameters: {
         controls: { disable: true },

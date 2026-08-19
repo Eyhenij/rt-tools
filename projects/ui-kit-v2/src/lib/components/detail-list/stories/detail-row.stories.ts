@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { TestRtDetailRowComponent } from './component/test-detail-row.component';
 
 export default {
-    title: 'Components/DetailRow',
+    title: 'Molecules/Data/DetailRow',
     component: TestRtDetailRowComponent,
     parameters: { snapshot: { fullPage: true } },
     argTypes: {

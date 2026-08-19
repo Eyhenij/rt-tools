@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { TestRtThreadListComponent } from './component/test-thread-list.component';
 
 export default {
-    title: 'Components/ThreadList',
+    title: 'Organisms/Chat/ThreadList',
     component: TestRtThreadListComponent,
     parameters: { snapshot: { fullPage: true } },
     argTypes: {

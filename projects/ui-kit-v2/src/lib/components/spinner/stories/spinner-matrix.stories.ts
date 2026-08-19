@@ -8,7 +8,7 @@ import { TestRtSpinnerMatrixComponent } from './component/test-spinner-matrix.co
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/Spinner',
+    title: 'Atoms/Feedback/Spinner',
     component: TestRtSpinnerMatrixComponent,
     parameters: {
         controls: { disable: true },

@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtWelcomeDialogComponent } from './component/test-welcome-dialog.component';
 
 export default {
-    title: 'Components/WelcomeDialog',
+    title: 'Organisms/Dialog/WelcomeDialog',
     component: TestRtWelcomeDialogComponent,
     parameters: {
         controls: { disable: true },

@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtDownloadLinkComponent } from './component/test-download-link.component';
 
 export default {
-    title: 'Components/DownloadLink',
+    title: 'Atoms/Buttons/DownloadLink',
     component: TestRtDownloadLinkComponent,
     argTypes: {
         label: { control: { type: 'text' } },

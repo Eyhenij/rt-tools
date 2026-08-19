@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtEmptyStateComponent } from './component/test-empty-state.component';
 
 export default {
-    title: 'Components/EmptyState',
+    title: 'Molecules/EmptyState',
     component: TestRtEmptyStateComponent,
     argTypes: {
         icon: { control: false },

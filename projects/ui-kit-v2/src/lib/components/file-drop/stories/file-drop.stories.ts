@@ -5,7 +5,7 @@ import { startStoryFileDrag } from '../../../../showcase/story-drag';
 import { TestRtFileDropComponent } from './component/test-file-drop.component';
 
 export default {
-    title: 'Components/FileDrop',
+    title: 'Organisms/FileDrop',
     component: TestRtFileDropComponent,
     argTypes: {
         disabled: { control: { type: 'boolean' } },

@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtSkeletonComponent } from './component/test-skeleton.component';
 
 export default {
-    title: 'Components/Skeleton',
+    title: 'Atoms/Feedback/Skeleton',
     component: TestRtSkeletonComponent,
     argTypes: {
         shape: {

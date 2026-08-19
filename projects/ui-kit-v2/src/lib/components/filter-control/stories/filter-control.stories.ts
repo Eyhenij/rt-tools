@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtFilterControlComponent } from './component/test-filter-control.component';
 
 export default {
-    title: 'Components/FilterControl',
+    title: 'Molecules/Forms/FilterControl',
     component: TestRtFilterControlComponent,
     argTypes: {
         options: { control: false },

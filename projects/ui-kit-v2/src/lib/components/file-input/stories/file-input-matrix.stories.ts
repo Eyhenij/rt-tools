@@ -11,7 +11,7 @@ import { TestRtFileInputMatrixComponent } from './component/test-file-input-matr
  * принадлежат кнопке выбора и карточкам файлов и показаны в их матрицах.
  */
 export default {
-    title: 'Components/FileInput',
+    title: 'Molecules/Forms/FileInput',
     component: TestRtFileInputMatrixComponent,
     parameters: {
         controls: { disable: true },

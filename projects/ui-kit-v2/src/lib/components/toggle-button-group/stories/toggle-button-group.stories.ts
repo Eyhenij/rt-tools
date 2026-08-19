@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtToggleButtonGroupComponent } from './component/test-toggle-button-group.component';
 
 export default {
-    title: 'Components/ToggleButtonGroup',
+    title: 'Molecules/Forms/ToggleButtonGroup',
     component: TestRtToggleButtonGroupComponent,
     argTypes: {
         options: { control: false },

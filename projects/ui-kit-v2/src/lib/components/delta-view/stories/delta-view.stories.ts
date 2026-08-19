@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtDeltaViewComponent } from './component/test-delta-view.component';
 
 export default {
-    title: 'Components/DeltaView',
+    title: 'Molecules/Data/DeltaView',
     component: TestRtDeltaViewComponent,
     argTypes: {
         delta: { control: false },

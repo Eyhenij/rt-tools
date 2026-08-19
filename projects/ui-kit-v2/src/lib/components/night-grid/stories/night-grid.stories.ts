@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtNightGridComponent } from './component/test-night-grid.component';
 
 export default {
-    title: 'Components/NightGrid',
+    title: 'Molecules/Data/NightGrid',
     component: TestRtNightGridComponent,
     argTypes: {
         cells: { control: false },

@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtRichEditorComponent } from './component/test-rich-editor.component';
 
 export default {
-    title: 'Components/RichEditor',
+    title: 'Organisms/Chat/RichEditor',
     component: TestRtRichEditorComponent,
     argTypes: {
         placeholder: { control: { type: 'text' } },

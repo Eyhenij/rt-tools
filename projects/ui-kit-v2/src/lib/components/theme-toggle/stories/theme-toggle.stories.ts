@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtThemeToggleComponent } from './component/test-theme-toggle.component';
 
 export default {
-    title: 'Components/ThemeToggle',
+    title: 'Molecules/ThemeToggle',
     component: TestRtThemeToggleComponent,
     argTypes: {
         appearance: {

@@ -115,7 +115,19 @@ export class TestToggleComponent {
 # `@rt-tools/ui-kit-v2`
 
 Second kit, own showcase. Selectors are `rt-*`, wrappers are named
-`TestRt*Component`, and story titles are `Components/<PascalName>`.
+`TestRt*Component`, and story titles are `<Level>/<Group>/<PascalName>` — level is
+`Atoms`, `Molecules` or `Organisms`, and the group is optional:
+
+```typescript
+title: 'Atoms/Buttons/IconButton';
+title: 'Molecules/Navigation/Pagination';
+title: 'Organisms/Dialog/DialogHeader'; // дочерняя часть — в группе своего родителя
+title: 'Molecules/Card'; // группы нет — имя стоит прямо под уровнем
+```
+
+Страница обзора компонента идёт под тем же заголовком с хвостом `/Overview`, а имя эталона
+снимка — слаг всего заголовка: `atoms-buttons-iconbutton--states.png`. Уровень нового компонента
+берётся из раскладки в правиле `rt-tools-storybook`.
 
 ```bash
 pnpm run storybook:ui-kit-v2        # nx run @rt-tools/ui-kit-v2:storybook — port 6007

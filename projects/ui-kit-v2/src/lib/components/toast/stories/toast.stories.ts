@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { TestRtToastComponent } from './component/test-toast.component';
 
 export default {
-    title: 'Components/Toast',
+    title: 'Atoms/Feedback/Toast',
     component: TestRtToastComponent,
     parameters: { snapshot: { fullPage: true } },
     argTypes: {

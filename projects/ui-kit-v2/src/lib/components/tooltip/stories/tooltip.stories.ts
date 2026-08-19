@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtTooltipComponent } from './component/test-tooltip.component';
 
 export default {
-    title: 'Components/Tooltip',
+    title: 'Atoms/Tooltip',
     component: TestRtTooltipComponent,
     argTypes: {
         text: { control: { type: 'text' } },

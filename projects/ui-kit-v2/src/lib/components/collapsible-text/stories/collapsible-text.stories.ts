@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { TestRtCollapsibleTextComponent } from './component/test-collapsible-text.component';
 
 export default {
-    title: 'Components/CollapsibleText',
+    title: 'Molecules/CollapsibleText',
     component: TestRtCollapsibleTextComponent,
     parameters: { snapshot: { fullPage: true } },
     argTypes: {

@@ -11,7 +11,7 @@ import { TestRtContainerMatrixComponent } from './component/test-container-matri
  * Каркас показан уменьшенным: настоящий занимает окно целиком, и рядом два таких не поставить.
  */
 export default {
-    title: 'Components/Container',
+    title: 'Organisms/Layout/Container',
     component: TestRtContainerMatrixComponent,
     parameters: {
         controls: { disable: true },

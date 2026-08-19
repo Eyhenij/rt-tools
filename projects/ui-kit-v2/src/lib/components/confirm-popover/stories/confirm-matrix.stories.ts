@@ -13,7 +13,7 @@ import { TestRtConfirmMatrixComponent } from './component/test-confirm-matrix.co
  * второму триггеру закрыл бы первую панель.
  */
 export default {
-    title: 'Components/Confirm',
+    title: 'Organisms/Dialog/Confirm',
     component: TestRtConfirmMatrixComponent,
     parameters: {
         controls: { disable: true },

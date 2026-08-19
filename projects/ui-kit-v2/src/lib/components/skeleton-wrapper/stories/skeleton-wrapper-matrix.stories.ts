@@ -8,7 +8,7 @@ import { TestRtSkeletonWrapperMatrixComponent } from './component/test-skeleton-
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/SkeletonWrapper',
+    title: 'Molecules/SkeletonWrapper',
     component: TestRtSkeletonWrapperMatrixComponent,
     parameters: {
         controls: { disable: true },

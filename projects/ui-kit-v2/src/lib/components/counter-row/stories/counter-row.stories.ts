@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtCounterRowComponent } from './component/test-counter-row.component';
 
 export default {
-    title: 'Components/CounterRow',
+    title: 'Molecules/Forms/CounterRow',
     component: TestRtCounterRowComponent,
     argTypes: {
         label: { control: { type: 'text' } },

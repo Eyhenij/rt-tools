@@ -12,7 +12,7 @@ import { TestRtCalendarMatrixComponent } from './component/test-calendar-matrix.
  * на обоих: на них сетка месяца ужимается.
  */
 export default {
-    title: 'Components/Calendar',
+    title: 'Molecules/Forms/Calendar',
     component: TestRtCalendarMatrixComponent,
     parameters: {
         controls: { disable: true },

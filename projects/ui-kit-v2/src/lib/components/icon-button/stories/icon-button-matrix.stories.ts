@@ -9,7 +9,7 @@ import { TestRtIconButtonMatrixComponent } from './component/test-icon-button-ma
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/IconButton',
+    title: 'Atoms/Buttons/IconButton',
     component: TestRtIconButtonMatrixComponent,
     parameters: {
         controls: { disable: true },

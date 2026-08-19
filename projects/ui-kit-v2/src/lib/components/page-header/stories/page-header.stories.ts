@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtPageHeaderComponent } from './component/test-page-header.component';
 
 export default {
-    title: 'Components/PageHeader',
+    title: 'Molecules/Navigation/PageHeader',
     component: TestRtPageHeaderComponent,
     argTypes: {
         items: { control: false },

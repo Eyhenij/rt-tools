@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtSplitButtonComponent } from './component/test-split-button.component';
 
 export default {
-    title: 'Components/SplitButton',
+    title: 'Molecules/Forms/SplitButton',
     component: TestRtSplitButtonComponent,
     argTypes: {
         label: { control: { type: 'text' } },

@@ -9,7 +9,7 @@ import { TestRtToggleSwitchMatrixComponent } from './component/test-toggle-switc
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/ToggleSwitch',
+    title: 'Atoms/Forms/ToggleSwitch',
     component: TestRtToggleSwitchMatrixComponent,
     parameters: {
         controls: { disable: true },

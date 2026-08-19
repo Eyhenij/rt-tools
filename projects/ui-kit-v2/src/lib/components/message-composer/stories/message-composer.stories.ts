@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { TestRtMessageComposerComponent } from './component/test-message-composer.component';
 
 export default {
-    title: 'Components/MessageComposer',
+    title: 'Organisms/Chat/MessageComposer',
     component: TestRtMessageComposerComponent,
     parameters: { snapshot: { fullPage: true } },
     argTypes: {

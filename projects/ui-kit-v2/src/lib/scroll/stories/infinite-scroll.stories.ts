@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../showcase';
 import { TestRtInfiniteScrollComponent } from './component/test-infinite-scroll.component';
 
 export default {
-    title: 'Components/InfiniteScroll',
+    title: 'Atoms/InfiniteScroll',
     component: TestRtInfiniteScrollComponent,
     argTypes: {
         disabled: { control: { type: 'boolean' } },

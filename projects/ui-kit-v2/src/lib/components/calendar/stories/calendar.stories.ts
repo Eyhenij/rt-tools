@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtCalendarComponent } from './component/test-calendar.component';
 
 export default {
-    title: 'Components/Calendar',
+    title: 'Molecules/Forms/Calendar',
     component: TestRtCalendarComponent,
     argTypes: {
         months: { control: false },

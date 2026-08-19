@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtCheckboxComponent } from './component/test-checkbox.component';
 
 export default {
-    title: 'Components/Checkbox',
+    title: 'Atoms/Forms/Checkbox',
     component: TestRtCheckboxComponent,
     argTypes: {
         inputId: { control: { type: 'text' } },

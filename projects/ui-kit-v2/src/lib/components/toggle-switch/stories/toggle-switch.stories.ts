@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtToggleSwitchComponent } from './component/test-toggle-switch.component';
 
 export default {
-    title: 'Components/ToggleSwitch',
+    title: 'Atoms/Forms/ToggleSwitch',
     component: TestRtToggleSwitchComponent,
     argTypes: {
         inputId: { control: { type: 'text' } },

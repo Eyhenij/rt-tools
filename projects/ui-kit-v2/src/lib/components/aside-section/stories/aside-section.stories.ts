@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { TestRtAsideSectionComponent } from './component/test-aside-section.component';
 
 export default {
-    title: 'Components/AsideSection',
+    title: 'Organisms/Aside/AsideSection',
     component: TestRtAsideSectionComponent,
     parameters: { snapshot: { fullPage: true } },
     argTypes: {

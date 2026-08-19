@@ -11,7 +11,7 @@ import { TestRtCounterRowMatrixComponent } from './component/test-counter-row-ma
  * принадлежат контролу, который в неё положили.
  */
 export default {
-    title: 'Components/CounterRow',
+    title: 'Molecules/Forms/CounterRow',
     component: TestRtCounterRowMatrixComponent,
     parameters: {
         controls: { disable: true },

@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtStatTileComponent } from './component/test-stat-tile.component';
 
 export default {
-    title: 'Components/StatTile',
+    title: 'Molecules/Data/StatTile',
     component: TestRtStatTileComponent,
     argTypes: {
         label: { control: { type: 'text' } },

@@ -9,7 +9,7 @@ import { TestRtButtonMatrixComponent } from './component/test-button-matrix.comp
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/Button',
+    title: 'Atoms/Buttons/Button',
     component: TestRtButtonMatrixComponent,
     parameters: {
         controls: { disable: true },

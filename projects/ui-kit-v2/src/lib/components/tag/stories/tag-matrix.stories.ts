@@ -8,7 +8,7 @@ import { TestRtTagMatrixComponent } from './component/test-tag-matrix.component'
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/Tag',
+    title: 'Atoms/Tag',
     component: TestRtTagMatrixComponent,
     parameters: {
         controls: { disable: true },

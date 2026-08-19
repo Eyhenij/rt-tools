@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { TestRtMoneyRowComponent } from './component/test-money-row.component';
 
 export default {
-    title: 'Components/MoneyRow',
+    title: 'Molecules/Data/MoneyRow',
     component: TestRtMoneyRowComponent,
     parameters: { snapshot: { fullPage: true } },
     argTypes: {

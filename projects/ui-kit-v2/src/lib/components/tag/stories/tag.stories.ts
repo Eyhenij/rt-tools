@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtTagComponent } from './component/test-tag.component';
 
 export default {
-    title: 'Components/Tag',
+    title: 'Atoms/Tag',
     component: TestRtTagComponent,
     argTypes: {
         value: { control: { type: 'text' } },

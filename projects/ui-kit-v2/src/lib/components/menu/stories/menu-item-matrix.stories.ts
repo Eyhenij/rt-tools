@@ -9,7 +9,7 @@ import { TestRtMenuItemMatrixComponent } from './component/test-menu-item-matrix
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/MenuItem',
+    title: 'Molecules/Navigation/MenuItem',
     component: TestRtMenuItemMatrixComponent,
     parameters: {
         controls: { disable: true },

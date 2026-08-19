@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtToasterComponent } from './component/test-toaster.component';
 
 export default {
-    title: 'Components/Toaster',
+    title: 'Molecules/Toaster',
     component: TestRtToasterComponent,
     argTypes: {
         position: {
@@ -21,7 +21,7 @@ type TStory = StoryObj<TestRtToasterComponent>;
 
 export const Playground: TStory = {
     parameters: storySnapshotSkip(
-        'плашки живут по таймеру и к моменту кадра успевают уйти по-разному; вид самой плашки проверяют матрицы `Components/Toast`'
+        'плашки живут по таймеру и к моменту кадра успевают уйти по-разному; вид самой плашки проверяют матрицы `Atoms/Feedback/Toast`'
     ),
     args: {
         position: 'bottom-right',

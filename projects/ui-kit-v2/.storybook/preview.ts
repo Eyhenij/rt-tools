@@ -108,8 +108,18 @@ const preview: Preview = {
             },
         },
         options: {
+            // Разделы идут по уровням атомарного дизайна: сначала основы, потом атомы, молекулы и
+            // организмы. Порядок задаётся здесь, а не именами разделов: по алфавиту молекулы встали
+            // бы перед организмами, а атомы — после обоих.
             storySort: {
-                order: ['Foundation', ['Design Tokens', ['Overview', 'Colors', 'Semantic', 'Spacing', 'Theming']], 'Components', '*'],
+                order: [
+                    'Foundation',
+                    ['Design Tokens', ['Overview', 'Colors', 'Semantic', 'Spacing', 'Theming']],
+                    'Atoms',
+                    'Molecules',
+                    'Organisms',
+                    '*',
+                ],
             },
         },
     },

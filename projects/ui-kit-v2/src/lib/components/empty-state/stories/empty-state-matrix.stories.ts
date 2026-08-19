@@ -8,7 +8,7 @@ import { TestRtEmptyStateMatrixComponent } from './component/test-empty-state-ma
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/EmptyState',
+    title: 'Molecules/EmptyState',
     component: TestRtEmptyStateMatrixComponent,
     parameters: {
         controls: { disable: true },

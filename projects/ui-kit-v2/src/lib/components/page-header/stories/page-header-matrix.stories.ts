@@ -10,7 +10,7 @@ import { TestRtPageHeaderMatrixComponent } from './component/test-page-header-ma
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/PageHeader',
+    title: 'Molecules/Navigation/PageHeader',
     component: TestRtPageHeaderMatrixComponent,
     parameters: {
         controls: { disable: true },

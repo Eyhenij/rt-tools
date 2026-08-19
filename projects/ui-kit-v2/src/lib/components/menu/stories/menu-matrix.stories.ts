@@ -10,7 +10,7 @@ import { TestRtMenuMatrixComponent } from './component/test-menu-matrix.componen
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/Menu',
+    title: 'Molecules/Navigation/Menu',
     component: TestRtMenuMatrixComponent,
     parameters: {
         controls: { disable: true },

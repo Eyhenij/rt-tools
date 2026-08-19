@@ -8,7 +8,7 @@ import { TestRtLiveBadgeMatrixComponent } from './component/test-live-badge-matr
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/LiveBadge',
+    title: 'Atoms/LiveBadge',
     component: TestRtLiveBadgeMatrixComponent,
     parameters: {
         controls: { disable: true },

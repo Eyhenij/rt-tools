@@ -10,7 +10,7 @@ import { TestRtAutocompleteMatrixComponent } from './component/test-autocomplete
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/Autocomplete',
+    title: 'Molecules/Forms/Autocomplete',
     component: TestRtAutocompleteMatrixComponent,
     parameters: {
         controls: { disable: true },

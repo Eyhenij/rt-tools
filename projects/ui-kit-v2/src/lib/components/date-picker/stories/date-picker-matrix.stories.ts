@@ -9,7 +9,7 @@ import { TestRtDatePickerMatrixComponent } from './component/test-date-picker-ma
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/DatePicker',
+    title: 'Molecules/Forms/DatePicker',
     component: TestRtDatePickerMatrixComponent,
     parameters: {
         controls: { disable: true },

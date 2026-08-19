@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtLogoComponent } from './component/test-logo.component';
 
 export default {
-    title: 'Components/Logo',
+    title: 'Atoms/Logo',
     component: TestRtLogoComponent,
     argTypes: {
         variant: {

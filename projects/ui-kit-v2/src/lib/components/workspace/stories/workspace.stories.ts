@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtWorkspaceComponent } from './component/test-workspace.component';
 
 export default {
-    title: 'Components/Workspace',
+    title: 'Organisms/Workspace/Workspace',
     component: TestRtWorkspaceComponent,
     argTypes: {
         storageKey: { control: { type: 'text' } },

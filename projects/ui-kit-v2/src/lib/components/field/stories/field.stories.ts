@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtFieldComponent } from './component/test-field.component';
 
 export default {
-    title: 'Components/Field',
+    title: 'Molecules/Forms/Field',
     component: TestRtFieldComponent,
     argTypes: {
         label: { control: { type: 'text' } },

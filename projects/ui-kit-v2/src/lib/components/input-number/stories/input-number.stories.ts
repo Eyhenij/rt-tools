@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtInputNumberComponent } from './component/test-input-number.component';
 
 export default {
-    title: 'Components/InputNumber',
+    title: 'Atoms/Forms/InputNumber',
     component: TestRtInputNumberComponent,
     argTypes: {
         iconLeft: { control: false },

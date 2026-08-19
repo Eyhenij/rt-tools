@@ -13,7 +13,7 @@ import { TestRtWorkspaceMatrixComponent } from './component/test-workspace-matri
  * можно только на кадре порога.
  */
 export default {
-    title: 'Components/Workspace',
+    title: 'Organisms/Workspace/Workspace',
     component: TestRtWorkspaceMatrixComponent,
     parameters: {
         controls: { disable: true },

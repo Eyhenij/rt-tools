@@ -8,7 +8,7 @@ import { TestRtIconMatrixComponent } from './component/test-icon-matrix.componen
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/Icon',
+    title: 'Atoms/Icon',
     component: TestRtIconMatrixComponent,
     parameters: {
         controls: { disable: true },
