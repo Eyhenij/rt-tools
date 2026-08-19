@@ -122,8 +122,11 @@ pull_tree() {
     printf '%s\n' '{"board":{"owner":"probe","repo":"tree","taskKey":"RT","tokenPath":""}}' \
         > "$dir/.claude/rt-kit/checks.json"
     # Помощник хостинга: отдаёт то, что положил сценарий, а с непустой жалобой — отказывает.
+    # Заодно записывает свои доводы: ссылка на заявку необязательна, и то, что при её нехватке
+    # клиент зовётся вовсе без довода, из одного ответа не видно.
     cat > "$dir/gh" <<'STUB'
 #!/usr/bin/env bash
+printf '%s' "$*" > "${STUB_ARGS:-/dev/null}"
 if [ -n "$STUB_PULL_ERR" ]; then
     printf '%s\n' "$STUB_PULL_ERR" >&2
     exit 1
@@ -134,9 +137,16 @@ STUB
     printf '%s' "$dir"
 }
 
-# Состояние заявки одной строкой JSON: дерево, ответ хостинга, жалоба вместо ответа.
+# Состояние заявки одной строкой JSON: дерево, ответ хостинга, жалоба вместо ответа, ссылка на
+# заявку. Ссылка передаётся всегда, в том числе пустой строкой: профиль зовёт помощника именно
+# так, и вызов без четвёртого довода проверял бы не ту форму.
 pull_state() {
-    (cd "$1" && GH_BIN="$1/gh" STUB_PULL="$2" STUB_PULL_ERR="$3" node tools/board.mjs pr 701 2>/dev/null)
+    (cd "$1" && GH_BIN="$1/gh" STUB_PULL="$2" STUB_PULL_ERR="$3" STUB_ARGS="$1/доводы" \
+        node tools/board.mjs pr "${4-701}" 2>/dev/null)
+}
+# Чем позвали клиента хостинга в последний раз.
+pull_args() {
+    cat "$1/доводы" 2>/dev/null
 }
 
 PULL_TREE="$(pull_tree)"
@@ -175,6 +185,32 @@ report "SC-AK-346 — и приговора о разборе в таком от
 # Отказ входа сетевым тоже считается: проверить нечем, и работу это не отбивает.
 report "SC-AK-346 — отказ входа считается офлайном" \
     "$(pull_state "$PULL_TREE" '' 'gh: Bad credentials (HTTP 401)' | jq -r '.offline')" true
+
+# --- SC-AK-358…359 — заявка называется чем угодно, а то и не называется вовсе -----------------
+#
+# Ссылка на заявку необязательна: клиент хостинга без неё берёт заявку текущей ветки, и это
+# самая короткая форма вызова. Пока помощник требовал номер, всё требование о разборе снималось
+# одним пробелом — `gh pr ready` без довода проходил мимо гарда.
+NUMBERED='{"number":701,"isDraft":true,"author":{"login":"probe-bot"},"reviewRequests":[],"latestReviews":[]}'
+
+report "SC-AK-358 — без ссылки клиент зовётся вовсе без довода" \
+    "$(pull_state "$PULL_TREE" "$NUMBERED" '' '' >/dev/null; pull_args "$PULL_TREE")" \
+    'pr view --json number,isDraft,reviewRequests,latestReviews,author'
+report "SC-AK-358 — и заявка при этом найдена" \
+    "$(pull_state "$PULL_TREE" "$NUMBERED" '' '' | jq -r '.exists')" true
+# Номер приходит из ответа: заявку, названную не номером, в отказе гарда узнают по нему.
+report "SC-AK-358 — номер берётся из ответа хостинга" \
+    "$(pull_state "$PULL_TREE" "$NUMBERED" '' '' | jq -r '.number')" 701
+
+# Ссылка любого рода уходит клиенту как есть: разбирать адрес и имя ветки — его работа, не наша.
+report "SC-AK-359 — имя ветки уходит клиенту доводом" \
+    "$(pull_state "$PULL_TREE" "$NUMBERED" '' 'RT-700-probe' >/dev/null; pull_args "$PULL_TREE")" \
+    'pr view RT-700-probe --json number,isDraft,reviewRequests,latestReviews,author'
+report "SC-AK-359 — и адрес заявки тоже" \
+    "$(pull_state "$PULL_TREE" "$NUMBERED" '' 'https://example.invalid/o/r/pull/701' >/dev/null; pull_args "$PULL_TREE")" \
+    'pr view https://example.invalid/o/r/pull/701 --json number,isDraft,reviewRequests,latestReviews,author'
+report "SC-AK-359 — по имени ветки заявка тоже находится" \
+    "$(pull_state "$PULL_TREE" "$NUMBERED" '' 'RT-700-probe' | jq -r '.exists')" true
 
 rm -rf "$PULL_TREE"
 

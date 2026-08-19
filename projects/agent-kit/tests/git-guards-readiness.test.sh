@@ -197,4 +197,115 @@ MISSING="$(ready_repo "printf '%s' '{\"exists\":false}';")"
 dlv "SC-AK-343 — неизвестная заявка снятие не задерживает" "$MISSING" 'gh pr ready 917' PASS
 rm -rf "$MISSING"
 
+# --- заявка, названная не номером или не названная вовсе -----------------------------------------
+#
+# Ссылка на заявку у клиента необязательна: без неё он берёт заявку текущей ветки. Пока гард
+# требовал номер, всё требование о разборе снималось одним пробелом — `gh pr ready` проходил
+# мимо него молча, а это самая короткая и самая обычная форма вызова.
+BARE="$(ready_repo "printf '%s' '{\"exists\":true,\"number\":917,\"draft\":true,\"reviewed\":false}';")"
+dlv "SC-AK-350 — снятие черновика без ссылки на заявку отбито" "$BARE" 'gh pr ready' deny
+dlv_reason "SC-AK-350 — отказ тот же, что и с номером" "$BARE" 'gh pr ready' \
+    'у заявки #917 нет разбора'
+dlv "SC-AK-350 — то же у второго клиента хостинга" "$BARE" 'glab mr update --ready' deny
+
+# Заявку называют адресом и именем ветки не реже, чем номером: разбирать их — работа клиента,
+# а гарду довод передаётся как есть.
+dlv "SC-AK-351 — заявка, названная адресом, судится наравне с номером" "$BARE" \
+    'gh pr ready https://github.com/o/r/pull/917' deny
+dlv "SC-AK-351 — и заявка, названная именем ветки" "$BARE" 'gh pr ready RT-98-ready' deny
+dlv_reason "SC-AK-351 — номер в отказе берётся из ответа, а не из команды" "$BARE" \
+    'gh pr ready RT-98-ready' 'у заявки #917 нет разбора'
+
+# Возврат в черновик делает ровно то, чего гард добивается, — снимает с работы вид готовой.
+dlv "SC-AK-352 — возврат заявки в черновик проходит" "$BARE" 'gh pr ready 917 --undo' PASS
+dlv "SC-AK-352 — и возврат без ссылки тоже" "$BARE" 'gh pr ready --undo' PASS
+rm -rf "$BARE"
+
+# Номера в ответе нет — в отказ идёт то, чем заявку назвали в команде: без этого заявка,
+# названная веткой, в отказе становится безымянной. Решётка при этом стоит только у числа:
+# перед именем ветки или адресом она читается как опечатка.
+NAMELESS="$(ready_repo "printf '%s' '{\"exists\":true,\"draft\":true,\"reviewed\":false}';")"
+dlv_reason "SC-AK-351 — без номера в ответе в отказ идёт довод команды" "$NAMELESS" \
+    'gh pr ready RT-98-ready' 'у заявки «RT-98-ready» нет разбора'
+rm -rf "$NAMELESS"
+
+# --- основание, названное в самой команде ---------------------------------------------------------
+#
+# Судится названное основание, а не вершина рабочей копии: `git checkout -b <ветка> origin/main` —
+# это и есть команда, которой основание берут свежим, и отбивать её наравне с веткой от вчерашнего
+# дерева значит отбивать починку вместе с промахом.
+NAMED="$(fixture_repo_branched main RT-100-named)"
+git -C "$NAMED" checkout -q main 2>/dev/null
+fixture_commit "$NAMED" docs/чужое.md 'правка соседней ветки' 'docs: чужая правка'
+git -C "$NAMED" update-ref refs/remotes/origin/main main 2>/dev/null
+git -C "$NAMED" checkout -q RT-100-named 2>/dev/null
+
+dlv "SC-AK-353 — ветка от названного свежего основания заводится" "$NAMED" \
+    'git checkout -b RT-101-new origin/main' PASS
+dlv "SC-AK-353 — то же через switch" "$NAMED" 'git switch -c RT-101-new origin/main' PASS
+# Без названного основания судится вершина рабочей копии, и она отстала.
+dlv "SC-AK-354 — ветка от вершины рабочей копии отбита" "$NAMED" \
+    'git checkout -b RT-101-new' deny
+# Названное основание тоже бывает вчерашним: отставшая ветка названа явно.
+dlv "SC-AK-354 — названное вчерашнее основание отбито" "$NAMED" \
+    'git checkout -b RT-101-new RT-100-named' deny
+dlv_reason "SC-AK-354 — отказ зовёт взять основание от главной ветки" "$NAMED" \
+    'git checkout -b RT-101-new RT-100-named' 'git checkout -b RT-101-new origin/main'
+# Основания, которого в дереве нет вовсе, судить нечем: гард молчит, а не выдумывает отказ.
+dlv "SC-AK-354 — неизвестное основание гард не судит" "$NAMED" \
+    'git checkout -b RT-101-new origin/нет-такой-ветки' PASS
+rm -rf "$NAMED"
+
+# --- второй ярус: локальная ссылка сама протухла ----------------------------------------------------
+#
+# Первый ярус читает то, что лежит в дереве, и его молчание значит «основание не старше моей
+# ссылки», а не «основание свежее». Без второго яруса ветка от вчерашнего дерева заводилась бы
+# молча — и увидел бы это владелец на открытии заявки.
+#
+# Состояние собирается откатом самой ссылки: протухшая ссылка при ушедшем вперёд удалённом — это
+# ровно оно, и второе рабочее дерево ничего к сценарию не добавляет. Удалённый набирает ветку
+# сам, забирая её из фикстуры: своих проверок у голого репозитория нет, и отдача туда завела бы
+# набор в гард гейта.
+STALE_REF="$(fixture_repo_branched main RT-102-stale)"
+BARE_REMOTE="$(mktemp -d)"
+git init -q --bare "$BARE_REMOTE/o.git" 2>/dev/null
+git -C "$STALE_REF" remote add origin "$BARE_REMOTE/o.git" 2>/dev/null
+git -C "$BARE_REMOTE/o.git" fetch -q "$STALE_REF" RT-102-stale:refs/heads/main 2>/dev/null
+git -C "$STALE_REF" fetch -q origin 2>/dev/null
+WAS_REF="$(git -C "$STALE_REF" rev-parse refs/remotes/origin/main 2>/dev/null)"
+git -C "$STALE_REF" -c user.email=p@p -c user.name=p -c commit.gpgsign=false \
+    commit -q --allow-empty -m 'чужая правка' 2>/dev/null
+git -C "$BARE_REMOTE/o.git" fetch -q "$STALE_REF" RT-102-stale:refs/heads/main 2>/dev/null
+git -C "$STALE_REF" update-ref refs/remotes/origin/main "$WAS_REF" 2>/dev/null
+
+dlv "SC-AK-355 — отставшая локальная ссылка отбивает заведение ветки" "$STALE_REF" \
+    'git checkout -b RT-103-new' deny
+dlv_reason "SC-AK-355 — отказ называет обе стороны расхождения" "$STALE_REF" \
+    'git checkout -b RT-103-new' 'ссылка origin/main отстала от удалённой'
+dlv_reason "SC-AK-355 — и чем она подтягивается" "$STALE_REF" \
+    'git checkout -b RT-103-new' 'git fetch origin'
+rm -rf "$STALE_REF" "$BARE_REMOTE"
+
+# Удалённого нет вовсе — спросить некого, и ярус молчит: проверка, падающая в самолёте, работу
+# не отбивает.
+NO_ANSWER="$(fixture_repo_branched main RT-104-alone)"
+git -C "$NO_ANSWER" update-ref refs/remotes/origin/main main 2>/dev/null
+dlv "SC-AK-356 — молчание опроса заведение ветки не задерживает" "$NO_ANSWER" \
+    'git checkout -b RT-105-new' PASS
+rm -rf "$NO_ANSWER"
+
+# --- колонка спрашивается там, где её уже должны были переставить -------------------------------------
+#
+# На заведении ветки задача ещё стоит в первой колонке: её переставляют следующей командой. Пока
+# колонку судили и здесь, гард отбивал первую же команду работы — вместе с той, которая его
+# требование и снимает.
+COLUMN_BOTH="$(task_repo 'Backlog' 'Backlog')"
+dlv "SC-AK-357 — задача в первой колонке заведению ветки не мешает" "$COLUMN_BOTH" \
+    'git checkout -b RT-91-column' PASS
+dlv "SC-AK-357 — а открытие заявки той же задачей отбивается" "$COLUMN_BOTH" \
+    'gh pr create --title "[RT-91] Сделано" --body x' deny
+dlv_reason "SC-AK-357 — и отбивается именно колонкой" "$COLUMN_BOTH" \
+    'gh pr create --title "[RT-91] Сделано" --body x' 'стоит в колонке «Backlog»'
+rm -rf "$COLUMN_BOTH"
+
 suite_result "готовность к поставке"
