@@ -93,13 +93,13 @@ export class InvitesReadController {
         const name: string = typeof raw === 'string' ? raw.trim() : '';
 
         if (!name) {
-            throw new BadRequestException('выдача ждёт имя будущего дерева');
+            throw new BadRequestException('выдача ждёт имя будущего проекта');
         }
 
         const outcome: IInviteOutcome = await issueInvite(this.#prisma, name, at);
 
         if (outcome.refusal === EInviteRefusal.TreeExists) {
-            throw new ConflictException(`дерево «${name}» уже заведено: приглашение ему не нужно, а имя занято`);
+            throw new ConflictException(`проект «${name}» уже заведён: приглашение ему не нужно, а имя занято`);
         }
 
         if (outcome.refusal === EInviteRefusal.InviteLive || !outcome.issued) {

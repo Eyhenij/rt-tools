@@ -49,7 +49,7 @@ test.describe('тема и язык на экране входа', () => {
         await expect(qa(page, 'sign-in-name').locator('.rt-input__icon-left')).toBeVisible();
         await expect(qa(page, 'sign-in-password').locator('.rt-input__icon-left')).toBeVisible();
 
-        await expect(qa(page, 'sign-in-name').locator('input')).toHaveAttribute('placeholder', 'Имя дерева или владельца');
+        await expect(qa(page, 'sign-in-name').locator('input')).toHaveAttribute('placeholder', 'Имя проекта или владельца');
         await expect(qa(page, 'sign-in-password').locator('input')).toHaveAttribute('placeholder', 'Пароль учётной записи');
     });
 });

@@ -57,7 +57,7 @@ export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.fre
     }),
     summaries: Object.freeze({
         path: SECTIONS.summaries,
-        title: 'Сводки деревьев',
+        title: 'Сводки проектов',
         prefix: 'summaries',
         table: 'summaries-table',
         row: 'summaries-row',

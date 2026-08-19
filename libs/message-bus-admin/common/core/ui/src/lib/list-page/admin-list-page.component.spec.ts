@@ -74,7 +74,7 @@ class HostComponent implements IAdminListHost {
 @Component({
     selector: 'admin-list-page-bare-host',
     template: `
-        <admin-list-page qaPrefix="summaries" title="Сводки деревьев">
+        <admin-list-page qaPrefix="summaries" title="Сводки проектов">
             <p qa-dataid="summaries-rows">строки раздела</p>
         </admin-list-page>
     `,

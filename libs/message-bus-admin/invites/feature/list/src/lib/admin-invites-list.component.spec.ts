@@ -143,7 +143,7 @@ describe('AdminInvitesListComponent', () => {
         const text: string = harness.fixture.nativeElement.textContent;
 
         // сперва положительное: пустое состояние показано и называет, откуда берутся записи
-        expect(text).toContain('Пригласить дерево');
+        expect(text).toContain('Пригласить проект');
         // и только потом отрицательное: команды узла в нём больше нет
         expect(text).not.toContain('tree:invite');
     });
