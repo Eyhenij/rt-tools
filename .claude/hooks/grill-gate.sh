@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.9.0 · hooks/grill-gate.sh · 550716afd9ec · правится надстройкой, не здесь
+# rt-kit v0.9.1 · hooks/grill-gate.sh · 550716afd9ec · правится надстройкой, не здесь
 # rt-hook: PreToolUse AskUserQuestion
 # rt-hook: Stop
 # Гард разговора: вопрос владельцу не задаётся, пока за этот же ход не читались законы и
