@@ -229,13 +229,13 @@ describe('AdminListScreenBase', () => {
         http.expectOne(TREES_PATH).flush([]);
 
         expect(screen.shownEmptyMessage()).toBe('Записей нет');
-        expect(screen.shownEmptyDescription()).toBe('Ни одно дерево их пока не присылало');
+        expect(screen.shownEmptyDescription()).toBe('Ни один проект их пока не присылал');
 
         screen.askTree('a1b2');
         await harness.fixture.whenStable();
         answerList();
 
         expect(screen.shownEmptyMessage()).toBe('По этому отбору записей нет');
-        expect(screen.shownEmptyDescription()).toBe('Снимите отбор по дереву или выберите другое');
+        expect(screen.shownEmptyDescription()).toBe('Снимите отбор по проекту или выберите другой');
     });
 });
