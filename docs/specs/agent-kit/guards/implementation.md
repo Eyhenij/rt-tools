@@ -27,3 +27,7 @@
 | Отказ по состоянию называет обязательное действие того состояния, которое объявлено.                         | `projects/agent-kit/assets/hooks/task-flow-guard.sh:state_action`       |
 | Именем состояния считается только слово из перечня.                                                          | `projects/agent-kit/assets/hooks/task-flow-guard.sh:state_action`       |
 | Состояние судится раньше договорённости и её обхода.                                                         | `projects/agent-kit/assets/hooks/task-flow-guard.sh:progress`           |
+| Канцелярит и слова, которых в дереве не пишут, не уезжают в документ.                                        | `projects/agent-kit/assets/hooks/prose-style-guard.sh:found`            |
+| Каждая находка названа вместе с заменой.                                                                     | `projects/agent-kit/assets/checks/check-prose-style.mjs:MARKS`          |
+| Судится только новый текст правки.                                                                           | `projects/agent-kit/assets/hooks/prose-style-guard.sh:added`            |
+| Границы слова считаются по буквам, а не классом `\w`.                                                        | `projects/agent-kit/assets/checks/check-prose-style.mjs:GLOSSARY_BANS`  |
