@@ -41,3 +41,7 @@
 | Отказ по состоянию называет обязательное действие того состояния, которое объявлено.                         | `projects/agent-kit/assets/hooks/task-flow-guard.sh:state_action`       |
 | Именем состояния считается только слово из перечня.                                                          | `projects/agent-kit/assets/hooks/task-flow-guard.sh:state_action`       |
 | Состояние судится раньше договорённости и её обхода.                                                         | `projects/agent-kit/assets/hooks/task-flow-guard.sh:progress`           |
+| Ход, в котором по работе не сделано ничего, не заканчивается.                                                | `projects/agent-kit/assets/hooks/turn-exit-guard.sh:verdict`            |
+| Работой считаются правка файла и команда, меняющая дерево.                                                   | `projects/agent-kit/assets/hooks/turn-exit-guard.sh:work_re`            |
+| Слово об остановке судится по реплике владельца, а не по словам исполнителя.                                 | `projects/agent-kit/assets/hooks/turn-exit-guard.sh:told_stop`          |
+| Отданная и влитая работа стражем не судится.                                                                 | `projects/agent-kit/assets/hooks/turn-exit-guard.sh:state`              |
