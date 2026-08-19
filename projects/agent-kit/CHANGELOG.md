@@ -1,3 +1,9 @@
+## [0.9.1](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.9.0...rt-agent-kit@0.9.1) (2026-08-19)
+
+### Features
+
+- **rt:agent-kit:** дерево заводится токеном, выданным в админке приёма ([a117d8a](https://github.com/Eyhenij/rt-tools/commit/a117d8a2889e2081e40451c2269166563df2db61))
+
 # [0.9.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.8.3...rt-agent-kit@0.9.0) (2026-08-18)
 
 ### Bug Fixes
