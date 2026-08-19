@@ -1,0 +1,85 @@
+// Раскладка содержимого панели правки. Саму панель рисует компонент кита `rt-aside`: он держит
+// ширину, инсет и ритм между разделами, а сюда переезжает то, что экраны рисуют внутри — данные
+// записи, подписи, ссылка на связанную запись, полоса действий над записью.
+// Блок называется `app-panel`, чтобы не спутать его с `rt-aside` из кита.
+
+@use 'text';
+
+.app-panel {
+    // Форма только собирает поля: ритм между разделами задаёт зона содержимого панели.
+    display: contents;
+
+    &__hint {
+        @include text.hint;
+    }
+
+    // Данные записи, которую только смотрят: `<dl>` с парами «подпись — значение»,
+    // разведёнными по краям панели.
+    &__list {
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        gap: var(--rt-space-sm);
+    }
+
+    &__row {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--rt-space-md);
+    }
+
+    &__term {
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+    }
+
+    &__value {
+        margin: 0;
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-text-sm);
+        text-align: right;
+    }
+
+    // Одиночная пара «подпись — значение» строкой, внутри раздела с полями.
+    &__fact {
+        display: flex;
+        min-width: 0;
+        flex-flow: row wrap;
+        align-items: baseline;
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-text-sm);
+        gap: var(--rt-space-xs);
+    }
+
+    &__fact-label {
+        color: var(--rt-color-text-muted);
+    }
+
+    &__fact-value {
+        overflow-wrap: anywhere;
+    }
+
+    // Ссылка на связанную запись: обычный `<a>` со значком перехода.
+    &__related {
+        display: inline-flex;
+        align-items: center;
+        align-self: flex-start;
+        color: var(--rt-color-text-link);
+        font-size: var(--rt-text-sm);
+        gap: var(--rt-space-xs);
+    }
+
+    &__actions {
+        display: flex;
+        flex-flow: row wrap;
+        align-items: center;
+        gap: var(--rt-space-sm);
+    }
+}
+
+// Хост панели стоит между перекрытием и `rt-aside`: без блочного бокса рамка панели теряет
+// высоту перекрытия. Правило живёт здесь, а не в файле стилей панели: раскладка объявлена общим
+// слоем, и файл стилей у компонента экрана остаётся пустым.
+app-booking-aside {
+    display: block;
+}

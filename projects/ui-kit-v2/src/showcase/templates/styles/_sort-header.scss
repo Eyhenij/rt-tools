@@ -1,0 +1,63 @@
+// Заголовок сортируемой колонки. Класс вешает директива `adminSortHeader`, направление приходит
+// атрибутом `data-direction` — модификатора у блока нет намеренно: атрибут уже несёт и признак
+// «сортирует», и сторону.
+// Живёт в общем слое, а не рядом с директивой: у директивы своего файла стилей не бывает, а
+// ячейку шапки рисует таблица кита — свои правила ложатся поверх её `.cdk-header-cell`.
+// Стрелка стоит абсолютом у правого края ячейки: ячейка шапки объявлена `position: relative` в
+// стилях таблицы кита. Флексом её не поставить — `display: flex` вывел бы ячейку из табличной
+// раскладки, и колонки перестали бы считаться по содержимому.
+
+.admin-sort-header {
+    // Точка отсчёта для стрелки объявляется здесь, а не берётся у ячейки таблицы: то правило
+    // принадлежит киту, и стрелка уехала бы к краю страницы, если бы он его снял.
+    position: relative;
+
+    // Место под стрелку у правого края: без резерва длинная подпись уходит под неё.
+    padding-right: var(--rt-space-8);
+    cursor: pointer;
+    user-select: none;
+
+    &:hover {
+        color: var(--rt-color-text-primary);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--rt-color-action-primary);
+        outline-offset: -2px;
+    }
+
+    // Стрелка: треугольник вверх у правого края. Пока колонка не сортирует, её не видно — она
+    // проявляется под курсором и при фокусе с клавиатуры.
+    &:after {
+        position: absolute;
+        top: 50%;
+        right: var(--rt-space-5);
+        width: 0;
+        height: 0;
+        border-right: var(--rt-space-1) solid transparent;
+        border-bottom: var(--rt-space-1) solid currentcolor;
+        border-left: var(--rt-space-1) solid transparent;
+        content: '';
+        opacity: 0;
+        transform: translateY(-50%);
+        transition:
+            opacity var(--rt-duration-fast),
+            transform var(--rt-duration-fast);
+    }
+
+    &:hover:after,
+    &:focus-visible:after {
+        opacity: 0.54;
+    }
+
+    // Колонка, по которой список отсортирован сейчас: стрелка видна всегда и окрашена цветом
+    // действия — на неё смотрят, чтобы понять текущий порядок.
+    &[data-direction]:after {
+        border-bottom-color: var(--rt-color-action-primary);
+        opacity: 1;
+    }
+
+    &[data-direction='desc']:after {
+        transform: translateY(-50%) rotate(180deg);
+    }
+}

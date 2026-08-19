@@ -1,0 +1,177 @@
+<ng-container rtContainerRightSidenavPanel #panel="rtContainerRightPanel" (cancelled)="onCancel()" (closed)="onClosed()" />
+
+<rt-aside qa-dataid="booking-aside" [ariaLabel]="'navBookingsTitle' | transloco">
+    <rt-aside-header
+        qa-dataid="booking-aside-header"
+        [title]="title() | transloco"
+        [overline]="overline()"
+        [loading]="bookingLoading()"
+        (dismiss)="onClose()" />
+
+    <!-- Поля собраны формой: из неё берётся признак нетронутости, который гейтит кнопку записи и
+         вопрос о несохранённых правках при закрытии. -->
+    <form rtBlock="app-panel" qa-dataid="booking-form">
+        <rt-aside-section [heading]="'bookingStaySection' | transloco">
+            <rt-field [label]="'bookingProperty' | transloco" [hint]="'bookingPropertyHint' | transloco" [loading]="bookingLoading()">
+                <rt-select
+                    name="property"
+                    qa-dataid="booking-property-select"
+                    [options]="propertyOptions"
+                    [ngModel]="propertyId()"
+                    (ngModelChange)="propertyId.set($event)" />
+            </rt-field>
+
+            <p rtElem="hint">{{ 'bookingPeriodHint' | transloco }}</p>
+
+            <rt-field [label]="'bookingCheckIn' | transloco" [loading]="bookingLoading()">
+                <rt-date-picker name="checkIn" qa-dataid="booking-check-in" [ngModel]="checkIn()" (ngModelChange)="checkIn.set($event)" />
+            </rt-field>
+
+            <rt-field [label]="'bookingCheckOut' | transloco" [loading]="bookingLoading()">
+                <rt-date-picker
+                    name="checkOut"
+                    qa-dataid="booking-check-out"
+                    [ngModel]="checkOut()"
+                    (ngModelChange)="checkOut.set($event)" />
+            </rt-field>
+
+            <!-- Состояние заявки — метка, а не поле: его меняют действиями из списка, где рядом
+                 стоит сумма и вопрос о письме гостю -->
+            @if (!isCreateMode()) {
+                <div rtElem="fact">
+                    <span rtElem="fact-label">{{ 'bookingStatus' | transloco }}</span>
+                    <span rtElem="fact-value" qa-dataid="booking-aside-status">
+                        <rt-tag [severity]="statusSeverity()" [value]="statusLabel()" />
+                    </span>
+                </div>
+            }
+        </rt-aside-section>
+
+        <rt-aside-section [heading]="'bookingGuestSection' | transloco">
+            <rt-field [label]="'bookingName' | transloco" [loading]="bookingLoading()">
+                <rt-input
+                    name="guestName"
+                    type="text"
+                    qa-dataid="booking-guest-name"
+                    [ngModel]="guestName()"
+                    (ngModelChange)="updateGuestName($event)" />
+            </rt-field>
+
+            <rt-field [label]="'bookingEmail' | transloco" [loading]="bookingLoading()">
+                <rt-input
+                    name="guestEmail"
+                    type="email"
+                    qa-dataid="booking-guest-email"
+                    [ngModel]="guestEmail()"
+                    (ngModelChange)="guestEmail.set($event)" />
+            </rt-field>
+
+            <rt-field [label]="'bookingMessenger' | transloco" [loading]="bookingLoading()">
+                <rt-input
+                    name="guestMessenger"
+                    type="text"
+                    qa-dataid="booking-guest-messenger"
+                    [ngModel]="guestMessenger()"
+                    (ngModelChange)="guestMessenger.set($event)" />
+            </rt-field>
+
+            <rt-field [label]="'bookingAdults' | transloco" [loading]="bookingLoading()">
+                <rt-input-number
+                    name="adults"
+                    qa-dataid="booking-adults"
+                    [min]="1"
+                    [maxFractionDigits]="0"
+                    [ngModel]="adults()"
+                    (ngModelChange)="adults.set($event ?? 1)" />
+            </rt-field>
+
+            <rt-field [label]="'bookingChildren' | transloco" [loading]="bookingLoading()">
+                <rt-input-number
+                    name="children"
+                    qa-dataid="booking-children"
+                    [min]="0"
+                    [maxFractionDigits]="0"
+                    [ngModel]="children()"
+                    (ngModelChange)="children.set($event ?? 0)" />
+            </rt-field>
+        </rt-aside-section>
+
+        <rt-aside-section [heading]="'bookingMoneySection' | transloco">
+            <rt-field [label]="'bookingSource' | transloco" [loading]="bookingLoading()">
+                <rt-select
+                    name="source"
+                    qa-dataid="booking-source-select"
+                    [options]="sourceOptions()"
+                    [ngModel]="source()"
+                    (ngModelChange)="source.set($event)" />
+            </rt-field>
+
+            <rt-field [label]="'bookingTotalThb' | transloco" [hint]="'bookingTotalHint' | transloco" [loading]="bookingLoading()">
+                <rt-input-number
+                    name="totalThb"
+                    qa-dataid="booking-total"
+                    [min]="0"
+                    [maxFractionDigits]="0"
+                    [ngModel]="totalThb()"
+                    (ngModelChange)="totalThb.set($event ?? 0)" />
+            </rt-field>
+
+            <rt-field [label]="'bookingComment' | transloco" [hint]="'bookingCommentHint' | transloco" [loading]="bookingLoading()">
+                <rt-input
+                    name="comment"
+                    type="text"
+                    qa-dataid="booking-comment"
+                    [ngModel]="comment()"
+                    (ngModelChange)="comment.set($event)" />
+            </rt-field>
+        </rt-aside-section>
+
+        @if (problemKey(); as problem) {
+            <rt-message severity="danger" qa-dataid="booking-problem">{{ problem | transloco }}</rt-message>
+        }
+
+        @if (submitError(); as key) {
+            <rt-message severity="danger" qa-dataid="booking-error">{{ key | transloco }}</rt-message>
+        }
+
+        @if (!isCreateMode()) {
+            <div rtElem="actions">
+                <button
+                    rtButton
+                    type="button"
+                    theme="danger"
+                    appearance="text"
+                    qa-dataid="booking-delete"
+                    [label]="'bookingDelete' | transloco"
+                    [attr.aria-label]="'bookingDelete' | transloco"
+                    [disabled]="submitting()"
+                    [rtConfirm]="'bookingDeleteConfirm' | transloco"
+                    [rtConfirmLabel]="'bookingDelete' | transloco"
+                    (confirmed)="remove()"></button>
+            </div>
+        }
+    </form>
+
+    <rt-aside-footer>
+        <button
+            rtButton
+            asideDismiss
+            type="button"
+            theme="secondary"
+            appearance="text"
+            qa-dataid="booking-cancel"
+            [label]="'uiCloseWithoutSaving' | transloco"
+            [attr.aria-label]="'uiCloseWithoutSaving' | transloco"
+            (click)="onClose()"></button>
+        <button
+            rtButton
+            asidePrimary
+            type="button"
+            qa-dataid="booking-save"
+            [label]="'commonSave' | transloco"
+            [attr.aria-label]="'commonSave' | transloco"
+            [loading]="submitting()"
+            [disabled]="!canSave()"
+            (click)="save()"></button>
+    </rt-aside-footer>
+</rt-aside>

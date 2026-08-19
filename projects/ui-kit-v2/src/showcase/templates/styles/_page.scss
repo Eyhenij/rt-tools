@@ -1,0 +1,101 @@
+// Раскладка экрана раздела: отступы страницы, шапка, заголовок, зона содержимого.
+// Живёт в общем слое, а не в стилях экрана: заголовок иначе объявляется заново в каждом
+// экране, и три списка набирают его тремя разными кеглями.
+// Экран вешает классы директивами: `rtBlock="app-page"` на обёртке, `rtElem="header"`,
+// `rtElem="title"` и так далее внутри. Свой файл стилей экрана при этом остаётся пустым.
+
+@use '../../../styles/breakpoints' as bp;
+@use 'text';
+
+.app-page {
+    display: flex;
+    flex-direction: column;
+    padding: var(--rt-space-5);
+    gap: var(--rt-space-md);
+
+    &__header {
+        display: flex;
+        flex-flow: row wrap;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: var(--rt-space-md);
+    }
+
+    // Заголовок слева от действий шапки. Рядом с ним встаёт признак записи — метка состояния
+    // объекта, — а подсказка уходит на свою строку: ей задана вся ширина колонки. Колонкой
+    // это не сделать: метка ушла бы под заголовок.
+    &__header-main {
+        display: flex;
+        min-width: 0;
+        flex-flow: row wrap;
+        align-items: center;
+        gap: var(--rt-space-sm);
+
+        .app-page__hint {
+            flex-basis: 100%;
+        }
+    }
+
+    &__title {
+        margin: 0;
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-text-3xl);
+        font-weight: var(--rt-font-weight-bold);
+        line-height: var(--rt-leading-none);
+    }
+
+    &__hint {
+        @include text.hint;
+    }
+
+    // Действия шапки: значки и кнопки справа от заголовка.
+    &__actions {
+        display: flex;
+        align-items: center;
+        gap: var(--rt-space-sm);
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rt-space-md);
+    }
+
+    // Горизонтальная прокрутка таблицы. Работает только в паре с `min-width: max-content` у
+    // самой таблицы: без него столбцы сжимаются вместо сдвига.
+    &__scroll {
+        overflow-x: auto;
+    }
+
+    &__table {
+        width: 100%;
+        min-width: max-content;
+    }
+
+    // Таблица внутри шаблона списка правил прокрутки не носит: она приходит от экрана
+    // проекцией, а директива BEM ищет блок по месту объявления и до шаблона не дотягивается —
+    // `rtElem` на такой таблице роняет отрисовку. Правило вешается на класс кита.
+    &__scroll > .rt-table {
+        width: 100%;
+        min-width: max-content;
+    }
+
+    &__footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: var(--rt-space-sm);
+    }
+
+    @media (max-width: bp.$rt-bp-md) {
+        padding: var(--rt-space-md);
+    }
+}
+
+// Шаблон списка из раскладки убран: колонку страницы держит блок `app-page`, который он же и
+// объявляет, а лишний узел между ним и его частями разорвал бы и промежутки, и прокрутку
+// таблицы. Правило стоит здесь, а не в файле стилей шаблона: раскладка живёт в общем слое, и
+// файл стилей у компонента экрана остаётся пустым.
+app-list-page {
+    display: contents;
+}

@@ -1,0 +1,195 @@
+<app-list-page
+    qa-dataid="bookings-page"
+    qaPrefix="bookings"
+    [title]="'navBookingsTitle' | transloco"
+    [hint]="'bookingsHint' | transloco"
+    [createLabel]="'bookingsAdd' | transloco">
+    <rt-filter-control
+        appListToolbarLeft
+        qa-dataid="bookings-status-filter"
+        [ariaLabel]="'bookingStatus' | transloco"
+        [options]="statusFilterOptions()"
+        [value]="activeFilter()"
+        (valueChange)="selectFilter($event)" />
+
+    <!-- Подтверждение идёт с суммой, поэтому живёт полосой над таблицей, а не в меню строки:
+         владелец видит и правит число до того, как оно уйдёт гостю письмом -->
+    @if (confirming(); as booking) {
+        <div appListAboveTable rtBlock="app-bookings-page" rtElem="confirm" qa-dataid="booking-confirm-panel">
+            <p rtElem="confirm-title">{{ 'bookingConfirmTitle' | transloco }}: {{ booking.guestName }}</p>
+            <rt-field [label]="'bookingConfirmTotal' | transloco" [hint]="'bookingConfirmTotalHint' | transloco">
+                <rt-input-number
+                    name="confirmTotalThb"
+                    qa-dataid="booking-confirm-total"
+                    [min]="0"
+                    [maxFractionDigits]="0"
+                    [ngModel]="confirmTotalThb()"
+                    (ngModelChange)="onConfirmTotalChange($event)" />
+            </rt-field>
+            @if (zeroTotalPending()) {
+                <p rtElem="confirm-warning" qa-dataid="booking-confirm-zero-warning">
+                    {{ 'bookingConfirmZeroWarning' | transloco }}
+                </p>
+            }
+            <div rtElem="confirm-actions">
+                <button
+                    rtButton
+                    qa-dataid="booking-confirm-cancel"
+                    type="button"
+                    theme="secondary"
+                    appearance="text"
+                    [label]="'uiCancel' | transloco"
+                    [attr.aria-label]="'uiCancel' | transloco"
+                    (click)="cancelConfirm()"></button>
+                <button
+                    rtButton
+                    qa-dataid="booking-confirm-apply"
+                    type="button"
+                    theme="primary"
+                    [label]="'uiConfirm' | transloco"
+                    [attr.aria-label]="'uiConfirm' | transloco"
+                    [disabled]="actionsDisabled()"
+                    (click)="applyConfirm(booking)"></button>
+            </div>
+        </div>
+    }
+
+    <rt-table
+        #bookingsTable="rtTable"
+        qa-dataid="bookings-table"
+        clickable
+        [ariaLabel]="'bookingsTableAria' | transloco"
+        [tableId]="tableId"
+        [dataSource]="rows()"
+        [columnsConfig]="columnsConfig()"
+        [sort]="sortModel()"
+        [showRowActions]="true"
+        [rowHasActions]="hasRowActions"
+        [loading]="loading()">
+        <!-- «Заявок пока нет» — утверждение, а не заглушка: пока список не доехал или отказ его
+             не отдал, известно только, что показывать нечего -->
+        <ng-template #rtTableEmpty>
+            @if (listEmpty()) {
+                <rt-empty-state qa-dataid="bookings-empty" icon="inbox" [title]="'bookingsEmpty' | transloco" />
+            }
+        </ng-template>
+
+        <ng-container cdkColumnDef="dates">
+            <th *cdkHeaderCellDef cdk-header-cell [adminSortHeader]="sortProperties.CheckIn">{{ 'bookingDates' | transloco }}</th>
+            <td *cdkCellDef="let row" cdk-cell qa-dataid="bookings-cell-dates">
+                <rt-copy-cell qa-dataid="bookings-dates">{{ row.booking.checkIn }} → {{ row.booking.checkOut }}</rt-copy-cell>
+            </td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="property">
+            <th *cdkHeaderCellDef cdk-header-cell>{{ 'bookingProperty' | transloco }}</th>
+            <td *cdkCellDef="let row" cdk-cell qa-dataid="bookings-property">{{ row.propertyLabel }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="guest">
+            <th *cdkHeaderCellDef cdk-header-cell [adminSortHeader]="sortProperties.Guest">{{ 'bookingGuest' | transloco }}</th>
+            <td *cdkCellDef="let row" cdk-cell qa-dataid="bookings-cell-guest">
+                <rt-copy-cell qa-dataid="bookings-guest">{{ row.booking.guestName || '—' }}</rt-copy-cell>
+            </td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="contact">
+            <th *cdkHeaderCellDef cdk-header-cell>{{ 'bookingContact' | transloco }}</th>
+            <td *cdkCellDef="let row" cdk-cell qa-dataid="bookings-cell-contact">
+                @if (row.booking.guestEmail || row.booking.guestMessenger) {
+                    <rt-copy-cell qa-dataid="bookings-contact">
+                        @if (row.booking.guestEmail) {
+                            <div>{{ row.booking.guestEmail }}</div>
+                        }
+                        @if (row.booking.guestMessenger) {
+                            <div>{{ row.booking.guestMessenger }}</div>
+                        }
+                    </rt-copy-cell>
+                } @else {
+                    —
+                }
+            </td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="party">
+            <th *cdkHeaderCellDef cdk-header-cell>{{ 'bookingParty' | transloco }}</th>
+            <td *cdkCellDef="let row" cdk-cell qa-dataid="bookings-party">{{ row.booking.adults }} + {{ row.booking.children }}</td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="source">
+            <th *cdkHeaderCellDef cdk-header-cell>{{ 'bookingSource' | transloco }}</th>
+            <td *cdkCellDef="let row" cdk-cell qa-dataid="bookings-cell-source">
+                <rt-tag qa-dataid="bookings-source" severity="info" [value]="row.sourceLabel" />
+            </td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="status">
+            <th *cdkHeaderCellDef cdk-header-cell>{{ 'bookingStatus' | transloco }}</th>
+            <td *cdkCellDef="let row" cdk-cell qa-dataid="bookings-cell-status">
+                <rt-tag qa-dataid="bookings-status" [severity]="row.statusSeverity" [value]="row.statusLabel" />
+                @if (row.mailBadge !== 'none') {
+                    <rt-tag qa-dataid="bookings-mail-badge" [severity]="row.mailSeverity" [value]="row.mailLabel" />
+                }
+            </td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="total">
+            <th *cdkHeaderCellDef cdk-header-cell [adminSortHeader]="sortProperties.Total">{{ 'bookingTotalThb' | transloco }}</th>
+            <td *cdkCellDef="let row" cdk-cell qa-dataid="bookings-total">
+                @if (row.booking.totalThb > 0) {
+                    {{ row.booking.totalThb | number }}
+                } @else {
+                    —
+                }
+            </td>
+        </ng-container>
+
+        <!-- Заявка открывается кликом по строке, поэтому в меню остаются только действия над
+             ней. Строке без единого доступного действия таблица кнопку «…» не рисует — это
+             `[rowHasActions]`. -->
+        <ng-template rtTableRowActions let-row [rtTableRowActionsRowType]="rows()">
+            @if (row.canConfirm) {
+                <rt-menu-item
+                    icon="check"
+                    qa-dataid="booking-action-confirm"
+                    [disabled]="actionsDisabled()"
+                    [label]="'uiConfirm' | transloco"
+                    (selected)="startConfirm(row.booking)" />
+            }
+            @if (row.canReject) {
+                <!-- Отказ и отмена шлют гостю письмо, которое не отозвать: промах в меню стоит
+                     дороже лишнего клика, поэтому оба спрашивают подтверждение -->
+                <rt-menu-item
+                    icon="ban"
+                    danger
+                    qa-dataid="booking-action-reject"
+                    [disabled]="actionsDisabled()"
+                    [label]="'bookingReject' | transloco"
+                    [confirmTitle]="'bookingReject' | transloco"
+                    [confirmMessage]="'bookingRejectConfirm' | transloco"
+                    (selected)="changeStatus(row.booking, BookingStatus.Rejected)" />
+            }
+            @if (row.canCancel) {
+                <rt-menu-item
+                    icon="ban"
+                    danger
+                    qa-dataid="booking-action-cancel"
+                    [disabled]="actionsDisabled()"
+                    [label]="'bookingCancelShort' | transloco"
+                    [confirmTitle]="'bookingCancelShort' | transloco"
+                    [confirmMessage]="'bookingCancelConfirm' | transloco"
+                    (selected)="changeStatus(row.booking, BookingStatus.Cancelled)" />
+            }
+        </ng-template>
+
+        <tr *cdkHeaderRowDef="bookingsTable.displayedColumns()" cdk-header-row></tr>
+        <tr
+            *cdkRowDef="let row; columns: bookingsTable.displayedColumns()"
+            cdk-row
+            qa-dataid="bookings-row"
+            rtTableRow
+            [attr.data-booking-id]="row.booking.id"
+            [attr.data-status]="row.booking.status"
+            (activated)="openBooking(row.booking)"></tr>
+    </rt-table>
+</app-list-page>
