@@ -211,10 +211,13 @@ export function fetchIssue(number, options) {
  * запрос разбора на самого себя хостинг принимает молча — разбор при этом выглядит
  * запрошенным, а его нет.
  */
-export function pullState(number, options) {
+export function pullState(ref, options) {
+    // Ссылка на заявку необязательна: клиент хостинга без неё берёт заявку текущей ветки, и
+    // это самая короткая форма вызова. Требовать номер значило бы молча пропускать её.
+    const target = ref === undefined || ref === null || `${ref}`.trim() === '' ? [] : [`${ref}`.trim()];
     let pull;
     try {
-        pull = ghJson(['pr', 'view', String(number), '--json', 'number,isDraft,reviewRequests,latestReviews,author'], options);
+        pull = ghJson(['pr', 'view', ...target, '--json', 'number,isDraft,reviewRequests,latestReviews,author'], options);
     } catch (error) {
         if (error instanceof OfflineError) {
             throw error;
@@ -229,6 +232,7 @@ export function pullState(number, options) {
     const reviewers = [...new Set([...requested, ...reviewed])];
     return {
         exists: true,
+        number: pull.number ?? null,
         draft: pull.isDraft === true,
         author: pull.author?.login ?? null,
         reviewers,
@@ -425,7 +429,7 @@ if (isEntryPoint && process.argv[2] === 'task') {
 
 if (isEntryPoint && process.argv[2] === 'pr') {
     try {
-        process.stdout.write(`${JSON.stringify(pullState(Number(process.argv[3])))}\n`);
+        process.stdout.write(`${JSON.stringify(pullState(process.argv[3]))}\n`);
     } catch (error) {
         if (error instanceof OfflineError) {
             process.stdout.write('{"offline":true}\n');

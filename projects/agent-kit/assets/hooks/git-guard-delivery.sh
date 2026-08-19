@@ -163,6 +163,10 @@ folder_in_branch() {
 check_task() {
     number="$1"
     where="$2"
+    # Колонку спрашивают там, где она уже должна быть переставлена. На заведении ветки её ещё
+    # не двигали — паттерн работы переставляет колонку следующей командой, — и требование здесь
+    # отбивало бы первую же команду работы вместе с той, которая его и снимает.
+    judge_column="${3:-нет}"
     rt_needs rt_task_state git-guard-delivery || return 0
     state="$(cd "$root" && rt_task_state "$number" 2>/dev/null)" || return 0
     [ -z "$state" ] && return 0
@@ -181,7 +185,7 @@ check_task() {
     # Колонка задачи. Ответ очереди работ отдаёт её давно, и не читал её никто: колонку судила
     # только сверка очереди, то есть уже после того, как PR открыт. Задача, оставшаяся в первой
     # колонке, читается по очереди как невзятая — работа при этом сделана и выложена.
-    if [ -n "$backlog_column" ]; then
+    if [ -n "$backlog_column" ] && [ "$judge_column" = "да" ]; then
         column="$(printf '%s' "$state" | jq -r '.status // empty' 2>/dev/null)"
         [ "$column" = "$backlog_column" ] \
             && fault "задача #${number} стоит в колонке «${column}» — по очереди работ она не взята, хотя работа по ней идёт. Переставь её: ${task_move}."
@@ -214,10 +218,27 @@ if [ -n "$branch_arg" ]; then
         # Основание: вершина главной ветки обязана лежать в том, от чего растёт новая ветка.
         # Ветка, заведённая от вчерашнего основания, узнаёт об этом на открытии PR — и узнаёт
         # так, что владелец видит её конфликтующей.
+        #
+        # Судится названное основание, а не вершина рабочей копии: команда, которой основание
+        # как раз и берут свежим — `git checkout -b <ветка> origin/<главная>`, — иначе
+        # отбивалась бы наравне с той, у которой основание вчерашнее.
+        base_arg="$(printf '%s' "$cmd" | sed -nE 's/.*git[[:space:]]+(checkout[[:space:]]+-b|switch[[:space:]]+-c)[[:space:]]+[^[:space:];&|]+[[:space:]]+([^[:space:];&|-][^[:space:];&|]*).*/\2/p' | head -1)"
+        base_ref="${base_arg:-HEAD}"
         if git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \
-            && ! git merge-base --is-ancestor "origin/${main_branch}" HEAD 2>/dev/null; then
-            behind="$(git rev-list --count "HEAD..origin/${main_branch}" 2>/dev/null)"
-            fault "ветка вырастет из основания, в котором нет вершины «${main_branch}» — она ушла вперёд на ${behind:-несколько} коммитов. Возьми свежее основание: git fetch origin && git checkout ${main_branch} && git merge --ff-only origin/${main_branch}."
+            && git rev-parse --verify --quiet "$base_ref" >/dev/null 2>&1 \
+            && ! git merge-base --is-ancestor "origin/${main_branch}" "$base_ref" 2>/dev/null; then
+            behind="$(git rev-list --count "${base_ref}..origin/${main_branch}" 2>/dev/null)"
+            fault "ветка вырастет из основания, в котором нет вершины «${main_branch}» — она ушла вперёд на ${behind:-несколько} коммитов. Возьми свежее основание: git fetch origin && git checkout -b ${branch_arg} origin/${main_branch}."
+        fi
+
+        # Второй ярус: локальная ссылка на главную ветку сама могла протухнуть, и тогда молчание
+        # первого яруса значит «основание не старше моей ссылки», а не «основание свежее».
+        # Ответа нет — ярус молчит, как и везде, где гард ходит в сеть.
+        remote_head="$(GIT_HTTP_LOW_SPEED_LIMIT=1000 GIT_HTTP_LOW_SPEED_TIME=5 GIT_TERMINAL_PROMPT=0 \
+            git ls-remote origin "refs/heads/${main_branch}" 2>/dev/null | cut -f1)"
+        local_head="$(git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" 2>/dev/null)"
+        if [ -n "$remote_head" ] && [ -n "$local_head" ] && [ "$remote_head" != "$local_head" ]; then
+            fault "твоя ссылка origin/${main_branch} отстала от удалённой — ${local_head:0:8} против ${remote_head:0:8}. Ветка вырастет из вчерашнего дерева, и увидит это владелец на открытии заявки. Подтяни и повтори: git fetch origin."
         fi
 
         # Подпись: почта машинной записи объявлена деревом, а рабочая копия её не знает —
@@ -303,13 +324,25 @@ fi
 # снятие и есть тот ход, которым работа объявляется готовой.
 #
 # Ярус сетевой, и молчит он так же, как ярус состояния задачи: нет ответа — нет требования.
-if printf '%s' "$cmd" | grep -qE '(^|[;&|(]|&&|\|\|)[[:space:]]*(gh[[:space:]]+pr[[:space:]]+ready|glab[[:space:]]+mr[[:space:]]+update[^|;&]*--ready)([[:space:]]|$)'; then
-    pull_number="$(printf '%s' "$cmd" | sed -nE 's/.*(gh[[:space:]]+pr[[:space:]]+ready|glab[[:space:]]+mr[[:space:]]+update)[[:space:]]+([0-9]+).*/\2/p' | head -1)"
-    if [ -n "$pull_number" ] && rt_needs rt_pull_state git-guard-delivery; then
-        pull="$(cd "$root" && rt_pull_state "$pull_number" 2>/dev/null)" || pull=''
+#
+# Возврат заявки в черновик под требование не подпадает: он делает ровно то, чего гард и
+# добивается, — снимает с работы вид готовой.
+if printf '%s' "$cmd" | grep -qE '(^|[;&|(]|&&|\|\|)[[:space:]]*(gh[[:space:]]+pr[[:space:]]+ready|glab[[:space:]]+mr[[:space:]]+update[^|;&]*--ready)([[:space:]]|$)' \
+    && ! printf '%s' "$cmd" | grep -q -- '--undo'; then
+    # Ссылка на заявку необязательна: без неё клиент берёт заявку текущей ветки, и это самая
+    # короткая форма вызова. Требовать номер значило бы снимать всё требование одним пробелом.
+    # Поэтому берётся первый довод, каким бы он ни был — номер, адрес или имя ветки, — а его
+    # отсутствие означает «спроси про текущую ветку».
+    pull_ref="$(printf '%s' "$cmd" | sed -nE 's/.*(gh[[:space:]]+pr[[:space:]]+ready|glab[[:space:]]+mr[[:space:]]+update)[[:space:]]+([^[:space:];&|-][^[:space:];&|]*).*/\2/p' | head -1)"
+    if rt_needs rt_pull_state git-guard-delivery; then
+        pull="$(cd "$root" && rt_pull_state "$pull_ref" 2>/dev/null)" || pull=''
         if [ -n "$pull" ] && printf '%s' "$pull" | jq -e '.exists' >/dev/null 2>&1; then
+            # Номер берётся из ответа, а если его там нет — из самой команды: заявка,
+            # названная адресом или именем ветки, в отказе должна остаться узнаваемой.
+            pull_name="$(printf '%s' "$pull" | jq -r '.number // empty' 2>/dev/null)"
+            [ -z "$pull_name" ] && pull_name="$pull_ref"
             printf '%s' "$pull" | jq -e '.reviewed' >/dev/null 2>&1 \
-                || fault "у заявки #${pull_number} нет разбора: ревьювер не запрошен и отзыва никто не оставлял. Снятый черновик читается как «можно вливать», а вливать некому — назначь ревьювера и повтори."
+                || fault "у заявки${pull_name:+ #}${pull_name} нет разбора: ревьювер не запрошен и отзыва никто не оставлял. Снятый черновик читается как «можно вливать», а вливать некому — назначь ревьювера и повтори."
         fi
     fi
     deny_faults
@@ -435,7 +468,7 @@ if [ -n "$remote_main" ] && [ -n "$local_main" ] && [ "$remote_main" != "$local_
     fault "твоя ссылка origin/${main_branch} отстала от удалённой — ${local_main:0:8} против ${remote_main:0:8}.${age} Гард сравнивает ветку с тем, что лежит в дереве, поэтому молчание первого яруса значит «ссылка не старше ветки», а не «главная ветка влита». Влей и повтори: git fetch origin && git merge origin/${main_branch}."
 fi
 
-check_task "$number" "заявка с ветки «${branch}»"
+check_task "$number" "заявка с ветки «${branch}»" да
 
 # Всё несошедшееся названо здесь, разом: до этой строки собирались условия, каждое из которых
 # прежде отбивало вызов в одиночку.

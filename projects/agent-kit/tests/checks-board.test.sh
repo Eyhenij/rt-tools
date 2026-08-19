@@ -105,4 +105,77 @@ report "SC-AK-282 — идущий прогон при черновике не �
 
 rm -rf "$BOARD_TREE"
 
+# --- SC-AK-344…346 — состояние заявки: разбор у неё есть или нет ------------------------------
+#
+# Ревьювера не спрашивал никто: он жил прозой в паттерне о коммите и PR, а запрос разбора на
+# самого себя хостинг принимает молча и не создаёт — разбор при этом выглядит запрошенным.
+# Теперь его читает гард поставки на снятии черновика, и ответ ему собирает эта функция.
+#
+# Дерево своё, одноразовое: помощник ищет настройки от своего же каталога, и общий стенд соседних
+# сценариев здесь означал бы, что набор проверяет их подстановки, а не разбор ответа хостинга.
+pull_tree() {
+    local dir
+    dir="$(mktemp -d)"
+    mkdir -p "$dir/tools" "$dir/.claude/rt-kit"
+    cp "$CHECKS/rt-kit-checks.config.mjs" "$dir/tools/"
+    cp "$CHECKS/board.github.mjs" "$dir/tools/board.mjs"
+    printf '%s\n' '{"board":{"owner":"probe","repo":"tree","taskKey":"RT","tokenPath":""}}' \
+        > "$dir/.claude/rt-kit/checks.json"
+    # Помощник хостинга: отдаёт то, что положил сценарий, а с непустой жалобой — отказывает.
+    cat > "$dir/gh" <<'STUB'
+#!/usr/bin/env bash
+if [ -n "$STUB_PULL_ERR" ]; then
+    printf '%s\n' "$STUB_PULL_ERR" >&2
+    exit 1
+fi
+printf '%s' "$STUB_PULL"
+STUB
+    chmod +x "$dir/gh"
+    printf '%s' "$dir"
+}
+
+# Состояние заявки одной строкой JSON: дерево, ответ хостинга, жалоба вместо ответа.
+pull_state() {
+    (cd "$1" && GH_BIN="$1/gh" STUB_PULL="$2" STUB_PULL_ERR="$3" node tools/board.mjs pr 701 2>/dev/null)
+}
+
+PULL_TREE="$(pull_tree)"
+
+# Разбором считается и запрошенный ревьювер, и уже оставленный отзыв: до слияния годится любой
+# из двух, а запрошенный после отзыва из списка запросов пропадает.
+BOTH_SIDES='{"number":701,"isDraft":true,"author":{"login":"probe-bot"},"reviewRequests":[{"login":"alice"}],"latestReviews":[{"author":{"login":"bob"}}]}'
+report "SC-AK-344 — разбор есть" \
+    "$(pull_state "$PULL_TREE" "$BOTH_SIDES" | jq -r '.reviewed')" true
+report "SC-AK-344 — запрошенный ревьювер в списке" \
+    "$(pull_state "$PULL_TREE" "$BOTH_SIDES" | jq -r '.reviewers | index("alice") != null')" true
+report "SC-AK-344 — оставивший отзыв в том же списке" \
+    "$(pull_state "$PULL_TREE" "$BOTH_SIDES" | jq -r '.reviewers | index("bob") != null')" true
+report "SC-AK-344 — заявка найдена" \
+    "$(pull_state "$PULL_TREE" "$BOTH_SIDES" | jq -r '.exists')" true
+
+# Отзыв самого автора разбором не считается: заявку, разобранную ею же написавшим, не разбирал
+# никто, а снятый черновик читается как «можно вливать».
+SELF_REVIEW='{"number":701,"isDraft":true,"author":{"login":"probe-bot"},"reviewRequests":[],"latestReviews":[{"author":{"login":"probe-bot"}}]}'
+report "SC-AK-345 — отзыв автора разбором не считается" \
+    "$(pull_state "$PULL_TREE" "$SELF_REVIEW" | jq -r '.reviewed')" false
+# Сам он при этом из списка не исчезает: список говорит, кто трогал заявку, а приговор — отдельно.
+report "SC-AK-345 — автор из списка не пропадает" \
+    "$(pull_state "$PULL_TREE" "$SELF_REVIEW" | jq -r '.reviewers | index("probe-bot") != null')" true
+
+# Заявки с таким номером нет — это ответ по существу, а не молчание.
+report "SC-AK-345 — неизвестная заявка отвечает отсутствием" \
+    "$(pull_state "$PULL_TREE" '' 'no pull requests found for branch' | jq -r '.exists')" false
+
+# Сети нет, токена нет, клиента нет — спросить некого. Такой ответ не смеет читаться как «разбора
+# нет»: по нему заявку без ревьювера не отличить от заявки, о которой не спросили.
+report "SC-AK-346 — офлайн назван офлайном" \
+    "$(pull_state "$PULL_TREE" '' 'dial tcp 140.82.121.5:443: connect: network is unreachable' | jq -r '.offline')" true
+report "SC-AK-346 — и приговора о разборе в таком ответе нет" \
+    "$(pull_state "$PULL_TREE" '' 'dial tcp 140.82.121.5:443: connect: network is unreachable' | jq -r 'has("reviewed")')" false
+# Отказ входа сетевым тоже считается: проверить нечем, и работу это не отбивает.
+report "SC-AK-346 — отказ входа считается офлайном" \
+    "$(pull_state "$PULL_TREE" '' 'gh: Bad credentials (HTTP 401)' | jq -r '.offline')" true
+
+rm -rf "$PULL_TREE"
+
 suite_result "сверка очереди работ"
