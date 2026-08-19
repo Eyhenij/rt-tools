@@ -1,16 +1,20 @@
 import { registerLocaleData } from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
 import { provideHttpClient } from '@angular/common/http';
-import { provideZonelessChangeDetection, signal, Signal } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { Injectable, provideZonelessChangeDetection, signal, Signal } from '@angular/core';
+import { provideRouter, withHashLocation } from '@angular/router';
 
 import { applicationConfig, Decorator, Preview } from '@storybook/angular';
+
+import { provideTransloco, Translation, TranslocoLoader } from '@jsverse/transloco';
+import { Observable, of } from 'rxjs';
 
 import { provideRtIDBStorage, provideRtStorage } from '@rt-tools/core';
 
 import { provideRtIcons } from '../src/lib/components/icon';
 import { provideRtKitLabels, TRtKitLabelKey, TRtKitLabelParams, TRtKitTranslator } from '../src/lib/i18n';
 import { RT_KIT_LABELS_RU } from './showcase-labels.ru';
+import { SHOWCASE_MESSAGES_RU } from './showcase-messages.ru';
 
 /**
  * Подписи кита в витрине — русские, как и всё демонстрационное содержимое.
@@ -34,6 +38,22 @@ const showcaseTranslator: Signal<TRtKitTranslator> = signal<TRtKitTranslator>((k
               params[name] === undefined ? match : String(params[name])
           );
 });
+
+/**
+ * Загрузчик словаря экрана. Словарь лежит рядом готовым объектом, а не файлом, который тянут по
+ * сети: витрина собирается в статику, и запрос за переводом на снимке уходил бы в никуда —
+ * страница снималась бы с ключами вместо подписей.
+ *
+ * Нужен он ради целых экранов уровня `Templates`: они берут подписи так же, как настоящее
+ * приложение, — ключом через `| transloco`. Компонентам кита он не нужен и ничего им не меняет:
+ * свои подписи кит берёт функцией-переводчиком из `provideRtKitLabels`.
+ */
+@Injectable({ providedIn: 'root' })
+class ShowcaseTranslocoLoader implements TranslocoLoader {
+    public getTranslation(): Observable<Translation> {
+        return of(SHOWCASE_MESSAGES_RU);
+    }
+}
 
 /**
  * Данные русской локали для `DatePipe`. Кит их не везёт намеренно: дату он форматирует по
@@ -64,7 +84,15 @@ const preview: Preview = {
             providers: [
                 provideZonelessChangeDetection(),
                 provideHttpClient(),
-                provideRouter([]),
+                // Адрес витрины живёт в хеше: путь страницы занят самой витриной — она открывает
+                // историю адресом `iframe.html`, — и роутер, пишущий туда же, перезагружал бы
+                // показ на каждом переходе.
+                //
+                // Набор маршрутов пуст: истории целых экранов объявляют свои сами, уже на
+                // поднятом роутере. Внесённые сюда, они тянут за собой компоненты кита в момент
+                // разбора настройки показа — раньше, чем те успевают объявиться, — и витрина
+                // падает на круговом импорте вся целиком, а не одной историей.
+                provideRouter([], withHashLocation()),
                 provideRtStorage(),
                 // Настройки колонок таблица держит в IndexedDB и внедряет службу полем: без
                 // провайдера сама таблица не поднимается — истории падали на NG0201, показывая
@@ -72,6 +100,18 @@ const preview: Preview = {
                 provideRtIDBStorage(),
                 provideRtIcons('/icons'),
                 provideRtKitLabels({ translator: showcaseTranslator, locale: signal<string>('ru') }),
+                // Подписи целых экранов уровня `Templates`. Стоят здесь, а не декоратором той
+                // истории, которой понадобились: `| transloco` без провайдера роняет отрисовку
+                // целиком, и следующая такая история падала бы заново.
+                provideTransloco({
+                    config: {
+                        availableLangs: ['ru'],
+                        defaultLang: 'ru',
+                        reRenderOnLangChange: false,
+                        prodMode: true,
+                    },
+                    loader: ShowcaseTranslocoLoader,
+                }),
             ],
         }),
         // Типы берутся у самого декоратора витрины, а не собираются рядом: `StoryFn` описывает
@@ -108,9 +148,9 @@ const preview: Preview = {
             },
         },
         options: {
-            // Разделы идут по уровням атомарного дизайна: сначала основы, потом атомы, молекулы и
-            // организмы. Порядок задаётся здесь, а не именами разделов: по алфавиту молекулы встали
-            // бы перед организмами, а атомы — после обоих.
+            // Разделы идут по уровням атомарного дизайна: сначала основы, потом атомы, молекулы,
+            // организмы и целые экраны. Порядок задаётся здесь, а не именами разделов: по алфавиту
+            // молекулы встали бы перед организмами, а атомы — после обоих.
             storySort: {
                 order: [
                     'Foundation',
@@ -118,6 +158,7 @@ const preview: Preview = {
                     'Atoms',
                     'Molecules',
                     'Organisms',
+                    'Templates',
                     '*',
                 ],
             },

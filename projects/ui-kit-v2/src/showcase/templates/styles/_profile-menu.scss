@@ -1,0 +1,103 @@
+// Попап профиля в шапке. Рисуется в перекрытии — до узла, вынесенного к `<body>`, стили
+// компонента не достают, — поэтому правила живут здесь, в общем слое показа. Отсюда же красится
+// круг под значком темы: он рисуется разметкой `rt-menu-item`, и правило, заскоупленное на
+// компонент попапа, до чужого шаблона не дотянулось бы.
+// Подложку блок берёт у панели навигации кита, а тень своя: узкой панели нужен очерченный край.
+
+.app-profile-menu {
+    display: flex;
+    min-width: var(--rt-profile-menu-min-width);
+    box-sizing: border-box;
+    flex-direction: column;
+    padding: var(--rt-profile-menu-padding);
+    border: var(--rt-border-width-thin) solid var(--rt-nav-panel-color-border);
+    border-radius: var(--rt-radius-md);
+    background-color: var(--rt-nav-panel-color-bg);
+    box-shadow: var(--rt-profile-menu-shadow);
+    gap: var(--rt-space-2);
+
+    &__user {
+        display: flex;
+        flex-direction: column;
+        padding-bottom: var(--rt-space-2);
+        gap: var(--rt-space-2-5);
+    }
+
+    &__avatar {
+        display: inline-flex;
+        width: var(--rt-profile-avatar-size);
+        height: var(--rt-profile-avatar-size);
+        align-items: center;
+        justify-content: center;
+        border: var(--rt-border-width-medium) solid var(--rt-nav-header-color-bg);
+        border-radius: var(--rt-radius-full);
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-profile-avatar-font-size);
+        font-weight: var(--rt-font-weight-semibold);
+        line-height: var(--rt-leading-none);
+    }
+
+    &__name {
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-text-md);
+        font-weight: var(--rt-font-weight-semibold);
+        line-height: var(--rt-leading-tight);
+    }
+
+    // Название заведения и слово-пояснение стоят в одной строке: без него непонятно, что это за
+    // вторая строка под именем.
+    &__organization {
+        color: var(--rt-nav-panel-item-color);
+        font-size: var(--rt-text-md);
+        font-weight: var(--rt-font-weight-regular);
+        line-height: var(--rt-leading-tight);
+    }
+
+    &__organization-label {
+        color: var(--rt-nav-panel-group-color);
+    }
+
+    // Строки выступают за содержимое панели на половину её отступа: подсветка на наведении иначе
+    // упирается в рамку. Выступ и горизонтальный отступ строки — одно число, поэтому значок
+    // стоит на краю содержимого панели.
+    &__nav {
+        display: flex;
+        width: calc(100% + var(--rt-profile-row-inset) + var(--rt-profile-row-inset));
+        flex-direction: column;
+        margin-left: calc(-1 * var(--rt-profile-row-inset));
+    }
+
+    // Строки просторнее и крупнее пунктов обычного меню кита: их четыре, и они читаются как
+    // список действий, а не как выпадающее меню.
+    // Правила строк идут потомком блока: свои умолчания кит объявляет одним классом, и без
+    // лишнего веса исход решал бы порядок подключения стилей.
+    & &__item,
+    & &__theme {
+        border-radius: var(--rt-profile-item-radius);
+        color: var(--rt-nav-panel-item-color);
+        font-size: var(--rt-profile-item-font-size);
+        font-weight: var(--rt-profile-item-font-weight);
+        gap: var(--rt-profile-item-content-gap);
+    }
+
+    & &__item {
+        padding: var(--rt-profile-item-padding-y) var(--rt-profile-row-inset);
+    }
+
+    // Переключатель темы выделен из списка акцентом: значок садится в круг на подложке акцента,
+    // подпись красится им же. Круг набирается отступом по content-box — размер самого значка
+    // приходит инлайном от `rt-icon`.
+    & &__theme {
+        width: calc(100% + var(--rt-profile-row-inset) + var(--rt-profile-row-inset));
+        padding: var(--rt-profile-row-inset);
+        margin-left: calc(-1 * var(--rt-profile-row-inset));
+        color: var(--rt-color-action-primary);
+
+        .rt-menu-item__icon {
+            box-sizing: content-box;
+            padding: var(--rt-profile-theme-icon-padding);
+            border-radius: var(--rt-radius-full);
+            background-color: var(--rt-color-action-primary-subtle);
+        }
+    }
+}
