@@ -89,7 +89,7 @@ export class TestRtBookingsTemplateComponent implements OnInit {
 
     public readonly headerItems: ReadonlyArray<IRtPageHeader.Item> = HEADER_ITEMS;
 
-    public readonly user: IRtPageHeader.User = { name: 'Евгения Крумина', avatar: 'Е' };
+    public readonly user: IRtPageHeader.User = { name: 'Мария Ветрова', avatar: 'М' };
 
     public ngOnInit(): void {
         // Маршруты вносятся в уже поднятый роутер: набор, объявленный при его создании, разбирался
