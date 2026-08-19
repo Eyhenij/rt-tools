@@ -2,7 +2,10 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { ChangeDetectionStrategy, Component, WritableSignal, signal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
+import { By } from '@angular/platform-browser';
+
 import { classesOf, createRtFixture, el, qa, textOf } from '../../../../testing/rt-kit-testing';
+import { RtTooltipDirective } from '../../tooltip/rt-tooltip.directive';
 import { RtCopyCellComponent } from './rt-copy-cell.component';
 
 /** Двойник буфера: настоящий в среде без браузера ничего не кладёт и молчит об этом. */
@@ -37,6 +40,23 @@ function setup(): ComponentFixture<CopyCellHostComponent> {
     clipboard = new ClipboardDouble();
 
     return createRtFixture(CopyCellHostComponent, {}, { providers: [{ provide: Clipboard, useValue: clipboard }] });
+}
+
+/**
+ * Наведение с подменёнными ширинами: раскладку среда без браузера не считает, и обрезка сама по
+ * себе не наступает. Подменяются ровно те две величины, по которым её меряет компонент.
+ */
+function hoverWith(fixture: ComponentFixture<CopyCellHostComponent>, scrollWidth: number, clientWidth: number): string {
+    const content: HTMLElement = qa(fixture, 'copy-cell-content')?.nativeElement as HTMLElement;
+    const host: HTMLElement = el(fixture, 'rt-copy-cell')?.nativeElement as HTMLElement;
+
+    Object.defineProperty(content, 'scrollWidth', { configurable: true, value: scrollWidth });
+    Object.defineProperty(content, 'clientWidth', { configurable: true, value: clientWidth });
+
+    host.dispatchEvent(new MouseEvent('mouseenter'));
+    fixture.detectChanges();
+
+    return fixture.debugElement.query(By.directive(RtTooltipDirective)).injector.get(RtTooltipDirective).text();
 }
 
 function pressCopy(fixture: ComponentFixture<CopyCellHostComponent>): void {
@@ -95,6 +115,16 @@ describe('RtCopyCellComponent', (): void => {
         pressCopy(fixture);
 
         expect(bubbled).toBe(0);
+    });
+
+    it('обрезанное значение показывает подсказку целиком, а помещающееся — нет', (): void => {
+        // Обрезок без подсказки читается как целое значение: человеку нечем узнать, что текст
+        // кончается не здесь. У помещающегося подсказка повторяла бы видимое и всплывала бы над
+        // каждой ячейкой таблицы.
+        const fixture: ComponentFixture<CopyCellHostComponent> = setup();
+
+        expect(hoverWith(fixture, 400, 400)).toBe('');
+        expect(hoverWith(fixture, 400, 120)).toBe('#7 — Тур в Сочи');
     });
 
     it('вне таблицы кнопка держится видимой — строки для наведения там нет', (): void => {
