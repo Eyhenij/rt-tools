@@ -141,6 +141,27 @@ jobs:
               if: steps.scope.outputs.docs_only != 'true'
               run: |
                   docker compose up -d db
+
+                  # База стенда спрашивается до самого набора и своим отказом. Кончившееся в
+                  # томе Docker место валит не тот шаг, который его съел, а тот, которому оно
+                  # понадобилось следующим: контейнер базы уходит в вечный перезапуск с
+                  # `No space left on device`, а красным становится набор — полтора десятка
+                  # спек про экраны у ветки, не тронувшей ни строки кода приёмника. По этому
+                  # лицу дважды подряд перезапускали прогон и искали причину в правке.
+                  # Имя контейнера спрашивается у состава, а не пишется строкой: оно
+                  # собирается из имени каталога, а на раннере оно своё.
+                  db=$(docker compose ps -q db)
+                  for _ in $(seq 1 30); do
+                      [ "$(docker inspect --format '{{.State.Health.Status}}' "$db" 2>/dev/null || echo none)" = healthy ] && break
+                      sleep 2
+                  done
+                  if [ "$(docker inspect --format '{{.State.Health.Status}}' "$db" 2>/dev/null || echo none)" != healthy ]; then
+                      echo '::error::База стенда не поднялась. Ниже — её лог и занятое место: набор дальше не идёт, и красное в нём было бы не про правку.'
+                      docker logs --tail 20 "$db" 2>&1 || true
+                      docker system df
+                      exit 1
+                  fi
+
                   node node_modules/.pnpm/playwright@*/node_modules/playwright/cli.js install chromium
                   pnpm exec nx run message-bus-admin-e2e:e2e
 
@@ -253,5 +274,12 @@ jobs:
                   # Кэш сборщика старше суток: свежий нужен следующему прогону, вчерашний уже
                   # ничей. Порог, а не полная чистка, — иначе каждая сборка идёт с нуля.
                   docker builder prune --force --filter until=24h >/dev/null 2>&1 || true
+
+                  # Возраст один места не гарантирует: кончается оно от того, что накопилось
+                  # сегодня, а порог по возрасту такого кэша не видит. За заход, набравший
+                  # двадцать один гигабайт свежего кэша, уборка по суткам освободила девяносто
+                  # пять мегабайт, и следующий прогон встал на нехватке места. Поэтому у кэша
+                  # есть ещё и предел размера — он держит его в берегах независимо от возраста.
+                  docker builder prune --force --max-used-space 10GB >/dev/null 2>&1 || true
 
                   docker system df
