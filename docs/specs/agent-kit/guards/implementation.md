@@ -27,3 +27,5 @@
 | Отказ по состоянию называет обязательное действие того состояния, которое объявлено.                         | `projects/agent-kit/assets/hooks/task-flow-guard.sh:state_action`       |
 | Именем состояния считается только слово из перечня.                                                          | `projects/agent-kit/assets/hooks/task-flow-guard.sh:state_action`       |
 | Состояние судится раньше договорённости и её обхода.                                                         | `projects/agent-kit/assets/hooks/task-flow-guard.sh:progress`           |
+| Заход, начатый с передачи, не правит файлов, пока не загружено правило ведения работы.                       | `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:verdict`        |
+| Передача узнаётся и по пути к ней, и по слову о ней.                                                         | `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:from_handoff`   |
