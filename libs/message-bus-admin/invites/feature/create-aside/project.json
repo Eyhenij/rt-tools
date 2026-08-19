@@ -1,0 +1,13 @@
+{
+  "name": "message-bus-admin-invites-feature-create-aside",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/message-bus-admin/invites/feature/create-aside/src",
+  "prefix": "admin",
+  "projectType": "library",
+  "tags": ["scope:message-bus-admin-invites-feature-create-aside"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

@@ -13,7 +13,8 @@ import { expectScreen } from './support/shot';
  * лежит вся отрисовка — здесь она и проверяется.
  *
  * Стенд засевает по одному приглашению на каждое состояние: ждущее, погашенное, отозванное и
- * просроченное.
+ * просроченное. Выдача заводит пятое, своим именем: засеянные строки остаются теми же для
+ * соседних спек, а кадр списка снимается раньше — до того, как выдача добавит строку.
  */
 test.describe('раздел приглашений', () => {
     test('SC-MB-128 — список называет имя, состояние и сроки, а кода приглашения на экране нет', async ({ page }: { page: Page }) => {
@@ -78,6 +79,76 @@ test.describe('раздел приглашений', () => {
 
         await expect(waiting.locator('[qa-dataid="menu-trigger"]')).toBeVisible();
         await expect(revoked.locator('[qa-dataid="menu-trigger"]')).toHaveCount(0);
+    });
+
+    test('SC-MB-154, SC-MB-155 — выдача стоит в тулбаре раздела и открывает панель своим адресом', async ({ page }: { page: Page }) => {
+        await openSection(page, 'invites');
+
+        // сперва положительное: кнопка раздела найдена и стоит рядом с общими кнопками страницы
+        await expect(qa(page, 'invites-create')).toBeVisible();
+        await expect(pageQa(page, 'invites', 'refresh')).toBeVisible();
+
+        await qa(page, 'invites-create').click();
+
+        await expect(qa(page, 'invite-create-panel')).toBeVisible();
+        expect(page.url()).toContain('ro:invites/new');
+
+        // Перезагрузка панель не гасит: она живёт адресом, а не вызовом
+        await page.reload();
+
+        await expect(qa(page, 'invite-create-panel')).toBeVisible();
+    });
+
+    test('SC-MB-156, SC-MB-157, SC-MB-158 — выдача показывает код один раз, а список сразу несёт новую строку', async ({
+        page,
+    }: {
+        page: Page;
+    }) => {
+        const name: string = 'Дерево из панели';
+
+        await openSection(page, 'invites');
+        await qa(page, 'invites-create').click();
+
+        // До выдачи панель говорит, что показ будет один
+        await expect(qa(page, 'invite-create-warn')).toBeVisible();
+        await expect(qa(page, 'invite-create-code')).toHaveCount(0);
+
+        await qa(page, 'invite-create-name').locator('input').fill(name);
+        await qa(page, 'invite-create-submit').click();
+
+        // Код виден в самой панели, и панель остаётся открытой: закрытая, она унесла бы его
+        await expect(qa(page, 'invite-create-code')).toBeVisible();
+
+        const code: string = ((await qa(page, 'invite-create-code').textContent()) ?? '').trim();
+
+        expect(code).toMatch(/[0-9a-f]{64}/);
+        await expect(qa(page, 'invite-create-panel')).toBeVisible();
+
+        await qa(page, 'invite-create-close').click();
+
+        const created: ReturnType<Page['locator']> = page.locator(`[qa-dataid="${SECTION.invites.row}"]`).filter({ hasText: name });
+
+        await expect(created.locator('[qa-dataid="invites-cell-state"]')).toHaveText('Ждёт');
+
+        // Кода нет ни в строке списка, ни в панели, открытой заново
+        await expect(page.locator('body')).not.toContainText(code);
+
+        await qa(page, 'invites-create').click();
+
+        await expect(qa(page, 'invite-create-warn')).toBeVisible();
+        await expect(qa(page, 'invite-create-code')).toHaveCount(0);
+    });
+
+    test('SC-MB-159 — занятое имя отбивается с названной причиной, а введённое остаётся в поле', async ({ page }: { page: Page }) => {
+        await openSection(page, 'invites');
+        await qa(page, 'invites-create').click();
+
+        await qa(page, 'invite-create-name').locator('input').fill(INVITES.waiting);
+        await qa(page, 'invite-create-submit').click();
+
+        await expect(qa(page, 'invite-create-fault')).toContainText('приглашение');
+        await expect(qa(page, 'invite-create-name').locator('input')).toHaveValue(INVITES.waiting);
+        await expect(qa(page, 'invite-create-code')).toHaveCount(0);
     });
 
     test('SC-MB-120, SC-MB-153 — отзыв спрашивает согласия, снимает приглашение из ждущих и говорит об этом одним тостом', async ({

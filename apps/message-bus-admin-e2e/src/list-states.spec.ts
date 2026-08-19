@@ -59,7 +59,7 @@ test.describe('состояния списка', () => {
         // вид, а не серая фраза в середине таблицы: значок, заголовок и слово о том, откуда записи
         await expect(qa(page, 'empty-state-icon')).toBeVisible();
         await expect(qa(page, 'empty-state-title')).toHaveText('Записей нет');
-        await expect(qa(page, 'empty-state-description')).toHaveText('Ни одно дерево их пока не присылало');
+        await expect(qa(page, 'empty-state-description')).toHaveText('Ни один проект их пока не присылал');
         await expect(rowsOf(page, 'postmortems')).toHaveCount(0);
 
         await expectScreen(page, 'list-empty');

@@ -38,7 +38,7 @@ describe('AdminTreeFilterComponent', () => {
 
     it('деревья названы именами, а сужают признаком', () => {
         expect(optionsOf(fixture)).toEqual([
-            { label: 'Все деревья', value: '' },
+            { label: 'Все проекты', value: '' },
             { label: 'Приёмник', value: 'a1b2' },
             { label: 'Витрина', value: 'c3d4' },
         ]);

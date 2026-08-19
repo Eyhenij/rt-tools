@@ -23,6 +23,7 @@ import { TRtKitLabelKey, rtKitLabel } from '../../../i18n';
 import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
 import { IRtIconButton } from '../../icon-button/rt-icon-button.model';
 import { IRtIcon } from '../../icon/rt-icon.model';
+import { RtTooltipDirective } from '../../tooltip/rt-tooltip.directive';
 
 const BEM_BLOCK: string = 'rt-copy-cell';
 
@@ -72,10 +73,13 @@ const RESET_DELAY_MS: number = 2000;
         RtIconButtonComponent,
         BlockDirective,
         ElemDirective,
+        RtTooltipDirective,
     ],
     host: {
         class: BEM_BLOCK,
         '[class.rt-copy-cell--static]': '!revealOnHover()',
+        '(mouseenter)': 'measureTruncation()',
+        '(focusin)': 'measureTruncation()',
     },
 })
 export class RtCopyCellComponent {
@@ -89,6 +93,14 @@ export class RtCopyCellComponent {
     readonly #copiedLabel: Signal<string> = rtKitLabel(COPIED_KEY);
 
     protected readonly copied: WritableSignal<boolean> = signal(false);
+
+    /**
+     * Подсказка со значением целиком — только у обрезанного.
+     *
+     * У помещающегося она повторяла бы то, что человек и так читает, и всплывала бы над каждой
+     * ячейкой таблицы; пустая строка директиву подсказки выключает.
+     */
+    protected readonly hint: WritableSignal<string> = signal('');
 
     protected readonly iconName: Signal<IRtIcon.Name> = computed((): IRtIcon.Name => (this.copied() ? 'check' : 'copy'));
 
@@ -116,6 +128,19 @@ export class RtCopyCellComponent {
         this.#destroyRef.onDestroy((): void => this.#clearTimer());
     }
 
+    /**
+     * Замер обрезки в момент наведения.
+     *
+     * Ширина известна только отрисованному узлу, а меняется она и от переезда столбца, и от
+     * ширины окна: посчитанная один раз при заведении, она соврала бы при первом же изменении.
+     */
+    protected measureTruncation(): void {
+        const content: HTMLElement | null = this.#host.nativeElement.querySelector(`.${BEM_BLOCK}__content`);
+        const truncated: boolean = content !== null && content.scrollWidth > content.clientWidth;
+
+        this.hint.set(truncated ? this.#displayedText() : '');
+    }
+
     protected onCopy(event: MouseEvent): void {
         // Гасим всплытие, чтобы клик/Enter по кнопке не активировал кликабельную
         // строку (rtTableRow) и не дошёл до прочих row-level слушателей.
@@ -135,7 +160,13 @@ export class RtCopyCellComponent {
             return String(explicit);
         }
 
+        return this.#displayedText();
+    }
+
+    /** Отображаемый текст со схлопнутыми пробелами: он же уходит в подсказку обрезанного. */
+    #displayedText(): string {
         const content: Element | null = this.#host.nativeElement.querySelector(`.${BEM_BLOCK}__content`);
+
         return (content?.textContent ?? '').replace(/\s+/g, ' ').trim();
     }
 

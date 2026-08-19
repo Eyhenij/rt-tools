@@ -1,4 +1,15 @@
 <admin-list-page [hint]="hint" [qaPrefix]="qaPrefix" [title]="title">
+    <ng-template adminListToolbarRight>
+        <button
+            rtButton
+            icon="plus-circle"
+            type="button"
+            qa-dataid="invites-create"
+            [attr.aria-label]="createLabel"
+            [label]="createLabel"
+            (click)="openCreate()"></button>
+    </ng-template>
+
     <rt-table
         #rowsTable="rtTable"
         [ariaLabel]="title"
