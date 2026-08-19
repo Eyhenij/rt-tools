@@ -91,3 +91,17 @@ export function inviteState(invite: ITreeInviteRecord, at: Date): ETreeInviteVie
 export function inviteUsable(invite: ITreeInviteRecord, at: Date): boolean {
     return inviteState(invite, at) === ETreeInviteView.Waiting;
 }
+
+/**
+ * Чем отбита выдача приглашения.
+ *
+ * Набор закрыт: оба случая — про занятое имя, и различает их то, чем именно оно занято.
+ * Строкой на месте это писать нельзя — причину читают и команда строки запуска, и операция
+ * запроса, и каждая говорит её своими словами.
+ */
+export enum EInviteRefusal {
+    /** Дерево с этим именем уже заведено: приглашение ему не нужно. */
+    TreeExists = 'tree-exists',
+    /** Годное приглашение на это имя уже выдано и ещё не погашено. */
+    InviteLive = 'invite-live',
+}

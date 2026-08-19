@@ -12,8 +12,13 @@
         align-items: center;
         gap: var(--rt-space-xs);
 
+        /* Значение длиннее места обрезается многоточием, а не наезжает на кнопку:
+           min-width: 0 разрешает flex-элементу сжаться, но сам по себе ничего не прячет. */
         &__content {
+            overflow: hidden;
             min-width: 0;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         &__button {

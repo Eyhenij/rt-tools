@@ -28,7 +28,7 @@ describe('AdminSignInFormComponent', () => {
     });
 
     it('SC-MB-151 — у обоих полей есть подсказка внутри поля и значок слева', () => {
-        expect(inputOf(fixture, 'sign-in-name').placeholder).toBe('Имя дерева или владельца');
+        expect(inputOf(fixture, 'sign-in-name').placeholder).toBe('Имя проекта или владельца');
         expect(inputOf(fixture, 'sign-in-password').placeholder).toBe('Пароль учётной записи');
 
         expect(fixture.debugElement.query(By.css('[qa-dataid="sign-in-name"] .rt-input__icon-left'))).not.toBeNull();

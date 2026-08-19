@@ -1,9 +1,10 @@
 /**
  * Команды деревьев: заведение, выдача нового токена, отзыв и список.
  *
- * Операциями запроса они не делаются намеренно: токен дерева зовёт только приём груза, а
- * выдавать и отзывать токены — дело команд, которые ходят к хранилищу напрямую. Токен дерева
- * поэтому не открывает ни одной из них — такой операции у приёмника нет вовсе.
+ * Токены операциями запроса не выдаются и не отзываются намеренно: токен дерева зовёт только
+ * приём груза, а выдавать и отзывать его — дело команд, которые ходят к хранилищу напрямую.
+ * Приглашение — другое дело: его выдаёт ещё и админка, и решает выдачу общая с ней функция, а
+ * не своя копия проверок здесь.
  *
  * Служба ничего не печатает: она отвечает строками, а печатает их вызывающий. Так решение
  * проверяется вызовом, а токен не уходит в журнал вместе с выводом.
@@ -11,9 +12,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
-import { ETreeInviteView } from '@rt/message-bus-common';
 import {
-    createInvite,
     createTreeWithToken,
     findLiveInviteByName,
     findTreeByName,
@@ -27,12 +26,10 @@ import {
     revokeTreeTokens,
 } from '@rt/message-bus-api/trees/data-access';
 import {
-    inviteCodeHash,
-    inviteExpiry,
+    EInviteRefusal,
     inviteIssuedLines,
     inviteListLines,
     inviteState,
-    issueInviteCode,
     issueTreeToken,
     IRequestTree,
     ITreeAddCommand,
@@ -44,6 +41,8 @@ import {
     treeListLines,
     treeTokenHash,
 } from '@rt/message-bus-api/trees/util';
+
+import { IInviteOutcome, issueInvite } from './invite-issue';
 
 /** Отказ команды: одна строка причины и признак, по которому вызывающий выберет код выхода. */
 function refusal(cause: string): ITreeCommandReport {
@@ -140,25 +139,26 @@ export class TreeCommandsService {
      * дерева с одним именем ни завестись, ни различиться потом не смогут.
      */
     async #invite(name: string, at: Date): Promise<ITreeCommandReport> {
-        const tree: IRequestTree | null = await findTreeByName(this.#prisma, name);
+        const outcome: IInviteOutcome = await issueInvite(this.#prisma, name, at);
 
-        if (tree) {
-            return refusal(`дерево ${named(tree)} уже заведено: приглашение ему не нужно, а имя занято`);
+        if (outcome.refusal === EInviteRefusal.TreeExists && outcome.tree) {
+            return refusal(`дерево ${named(outcome.tree)} уже заведено: приглашение ему не нужно, а имя занято`);
         }
 
-        const live: IStoredInvite | null = await findLiveInviteByName(this.#prisma, name);
-
-        if (live && inviteState(live, at) === ETreeInviteView.Waiting) {
+        if (outcome.refusal === EInviteRefusal.InviteLive && outcome.live) {
             return refusal(
-                `приглашение для «${name}» уже выдано и годно до ${live.expiresAt.toISOString()}; отозвать — tree:uninvite «${name}»`
+                `приглашение для «${name}» уже выдано и годно до ${outcome.live.expiresAt.toISOString()}; отозвать — tree:uninvite «${name}»`
             );
         }
 
-        const code: string = issueInviteCode();
-        const until: Date = inviteExpiry(at);
-        await createInvite(this.#prisma, { name, hash: inviteCodeHash(code), expiresAt: until }, at);
+        if (!outcome.issued) {
+            return refusal(`приглашение для «${name}» не выдано: имя занято`);
+        }
 
-        return { lines: inviteIssuedLines(`приглашение выдано для «${name}»`, code, until), failed: false };
+        return {
+            lines: inviteIssuedLines(`приглашение выдано для «${name}»`, outcome.issued.code, outcome.issued.expiresAt),
+            failed: false,
+        };
     }
 
     /** Отзыв приглашения до того, как им воспользовались: погашенное отзывать уже нечего. */

@@ -27,17 +27,18 @@
 
 ## Где это лежит
 
-| Что                     | Где                                                                                                                                                                            |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| декларация меню         | `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts`                                                                                                     |
-| оболочка с меню         | `libs/message-bus-admin/common/container/feature/src/lib/admin-container.component.ts`                                                                                         |
-| адреса разделов груза   | `libs/message-bus-admin/postmortems/shell/src/lib/postmortems.routes.ts`, `.../proposals/shell/src/lib/proposals.routes.ts`, `.../summaries/shell/src/lib/summaries.routes.ts` |
-| адреса приложения       | `apps/message-bus-admin/src/app/app.routes.ts`                                                                                                                                 |
-| адреса домена входа     | `libs/message-bus-admin/auth/shell/src/lib/auth.routes.ts`                                                                                                                     |
-| каркас страницы из кита | `projects/ui-kit-v2/src/lib/components/container/rt-container.component.ts` и его директивы                                                                                    |
-| шапка админки           | `libs/message-bus-admin/common/container/ui/src/lib/header/admin-header.component.ts`                                                                                          |
-| сквозные спеки адресов  | `apps/message-bus-admin-e2e/src/sign-in.spec.ts`, `apps/message-bus-admin-e2e/src/shell.spec.ts`, `apps/message-bus-admin-e2e/src/shell.narrow.spec.ts`                        |
-| верхний ряд из кита     | `projects/ui-kit-v2/src/lib/components/page-header/`                                                                                                                           |
+| Что                        | Где                                                                                                                                                                            |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| декларация меню            | `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts`                                                                                                     |
+| оболочка с меню            | `libs/message-bus-admin/common/container/feature/src/lib/admin-container.component.ts`                                                                                         |
+| адреса разделов груза      | `libs/message-bus-admin/postmortems/shell/src/lib/postmortems.routes.ts`, `.../proposals/shell/src/lib/proposals.routes.ts`, `.../summaries/shell/src/lib/summaries.routes.ts` |
+| адреса раздела приглашений | `libs/message-bus-admin/invites/shell/src/lib/invites.routes.ts` — список и панель создания в аутлете `ro`                                                                     |
+| адреса приложения          | `apps/message-bus-admin/src/app/app.routes.ts`                                                                                                                                 |
+| адреса домена входа        | `libs/message-bus-admin/auth/shell/src/lib/auth.routes.ts`                                                                                                                     |
+| каркас страницы из кита    | `projects/ui-kit-v2/src/lib/components/container/rt-container.component.ts` и его директивы                                                                                    |
+| шапка админки              | `libs/message-bus-admin/common/container/ui/src/lib/header/admin-header.component.ts`                                                                                          |
+| сквозные спеки адресов     | `apps/message-bus-admin-e2e/src/sign-in.spec.ts`, `apps/message-bus-admin-e2e/src/shell.spec.ts`, `apps/message-bus-admin-e2e/src/shell.narrow.spec.ts`                        |
+| верхний ряд из кита        | `projects/ui-kit-v2/src/lib/components/page-header/`                                                                                                                           |
 
 ## Где исполняются статьи
 

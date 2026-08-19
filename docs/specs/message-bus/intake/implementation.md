@@ -60,3 +60,6 @@
 | Пакет не перезаписывает уже лежащий токен, не спросив.                                        | `projects/agent-kit/src/lib/enroll.ts:enroll`                                                     |
 | Годное приглашение на имя одно, и держит это хранилище.                                       | `prisma/schema.prisma:TreeInvite`                                                                 |
 | Ссылка на заведённое дерево заполняется в момент погашения.                                   | `libs/message-bus-api/trees/data-access/src/lib/tree-invite.queries.ts:redeemInvite`              |
+| Приглашение выдают двое — команда узла и операция админки, — и решают они одно и то же.       | `libs/message-bus-api/trees/feature/src/lib/invite-issue.ts:issueInvite`                          |
+| Занятое имя отбивает выдачу целиком.                                                          | `libs/message-bus-api/trees/feature/src/lib/invite-issue.ts:issueInvite`                          |
+| Код уходит тому, кто позвал выдачу, и никуда больше.                                          | `libs/message-bus-api/trees/feature/src/lib/invites-read.controller.ts:issue`                     |
