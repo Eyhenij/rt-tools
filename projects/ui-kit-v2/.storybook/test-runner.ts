@@ -97,6 +97,7 @@ interface ISnapshotParameters {
     skip?: string;
     widths?: readonly number[];
     fullPage?: boolean;
+    overlay?: string;
 }
 
 /** Записать снятый кадр в реестр, чтобы сверка каталога знала, что он ожидаем. */
@@ -246,7 +247,19 @@ async function quiet(page: Page): Promise<void> {
  * Кадр с закрытым перекрытием неотличим от исправной истории, у которой перекрытия и не должно
  * быть: эталон такого кадра узаконил бы поломку молча и снял бы её с учёта навсегда.
  */
-async function requireOpenedOverlay(page: Page, identifier: string): Promise<void> {
+async function requireOpenedOverlay(page: Page, identifier: string, overlay: string | undefined): Promise<void> {
+    // История назвала узел, который обещает показать: сверяется он, а не число панелей. Панель на
+    // странице есть и без перекрытия — её держит шина оповещений, — и счётом открытое от закрытого
+    // не отличить нигде, кроме историй, где кроме перекрытия нет ничего.
+    if (overlay !== undefined) {
+        if ((await page.locator(`${overlay}:visible`).count()) === 0) {
+            throw new Error(
+                `${identifier}: история обещала показать ${overlay}, а к моменту съёмки его на странице нет. Кадр не снимается.`
+            );
+        }
+        return;
+    }
+
     const expectsOverlay: boolean = (await page.locator(TRIGGER_SELECTOR).count()) > 0;
     if (!expectsOverlay) {
         return;
@@ -258,6 +271,33 @@ async function requireOpenedOverlay(page: Page, identifier: string): Promise<voi
             `${identifier}: история отмечена триггером перекрытия, но к моменту съёмки панель не открылась. Кадр не снимается.`
         );
     }
+}
+
+/**
+ * Глушит уход указателя на странице истории, показывающей раскрытую панель.
+ *
+ * Панель кита, открытая наведением, закрывается не сразу, а с отсрочкой в сотую долю секунды
+ * после ухода указателя. Подготовка кадра до съёмки уводит указатель в угол, и этой отсрочки
+ * хватало ровно на то, чтобы панель погасла между открытием и снимком: эталон выходил с закрытой
+ * панелью, а прогон при этом был зелёный. Глушится событие целиком, а не одно движение мыши:
+ * уход указателя приходит и от перерисовки под ним, и от разметки, приехавшей поверх.
+ *
+ * Слушатель ставится на перехвате: событие ухода не всплывает, но вниз к своей цели идёт через
+ * документ, и остановленное здесь до обработчика кита не доходит.
+ */
+async function freezeHover(page: Page): Promise<void> {
+    await page.evaluate(() => {
+        const flag: string = 'rtHoverFrozen';
+        const host: Window & Record<string, unknown> = window as unknown as Window & Record<string, unknown>;
+        if (host[flag] === true) {
+            return;
+        }
+        host[flag] = true;
+
+        const swallow: (event: Event) => void = (event: Event): void => event.stopPropagation();
+        document.addEventListener('mouseleave', swallow, true);
+        document.addEventListener('mouseout', swallow, true);
+    });
 }
 
 /**
@@ -316,6 +356,12 @@ const config: TestRunnerConfig = {
             throw new Error(`${context.id}: история помечена исключением без причины. Назови причину в storySnapshotSkip().`);
         }
 
+        // Глушение ухода указателя ставится до отрисовки: панель, открытая в шаге истории,
+        // успевала погаснуть уже к его концу, и подготовка кадра заставала пустую страницу.
+        if (snapshot.overlay !== undefined) {
+            await freezeHover(page);
+        }
+
         await page.setViewportSize(VIEWPORT);
     },
 
@@ -330,7 +376,7 @@ const config: TestRunnerConfig = {
         }
 
         await quiet(page);
-        await requireOpenedOverlay(page, context.id);
+        await requireOpenedOverlay(page, context.id, snapshot.overlay);
         await shoot(page, context.id, snapshot.fullPage === true);
 
         // Кадр порога — по одному на каждый порог, который называет сам компонент. Один общий

@@ -1,0 +1,64 @@
+<ng-container rtBlock="app-profile-menu">
+    <div rtElem="user">
+        <span rtElem="avatar" aria-hidden="true">{{ avatar() }}</span>
+        <span rtElem="name" qa-dataid="profile-user-name">{{ userName() }}</span>
+        <span rtElem="organization" qa-dataid="profile-organization">
+            {{ organizationName() }}
+            <span rtElem="organization-label">{{ 'profileOrganizationLabel' | transloco }}</span>
+        </span>
+    </div>
+
+    <div rtElem="nav" role="menu">
+        <!--
+            Смена заведения — работа того, кто ведёт их несколько. У остальных пункт стоит
+            недоступным, и подсказка объясняет, почему: заведение приходит им из принадлежности,
+            и выбирать нечего.
+        -->
+        @if (canChangeOrganization()) {
+            <rt-menu-item
+                rtElem="item"
+                qa-dataid="profile-change-organization"
+                icon="refresh"
+                [label]="'profileChangeOrganization' | transloco"
+                (selected)="changeOrganization.emit()" />
+        } @else {
+            <rt-menu-item
+                rtElem="item"
+                qa-dataid="profile-change-organization"
+                icon="refresh"
+                disabled
+                [label]="'profileChangeOrganization' | transloco"
+                [tooltip]="'profileChangeOrganizationDenied' | transloco" />
+        }
+
+        <rt-menu-item
+            rtElem="item"
+            qa-dataid="profile-password-change"
+            icon="ico-lock"
+            [label]="'profilePasswordChange' | transloco"
+            (selected)="passwordChange.emit()" />
+
+        <rt-menu-item
+            rtElem="item"
+            qa-dataid="profile-logout"
+            icon="ico-exit"
+            [label]="'profileLogout' | transloco"
+            (selected)="logout.emit()" />
+    </div>
+
+    <!-- Своего правила у переключателя языка нет: ширину ему задаёт колонка блока, а имя
+         элемента без правила выглядело бы рабочим и ничего не делало. -->
+    <rt-select
+        qa-dataid="profile-locale-select"
+        name="showcaseLocale"
+        [options]="localeOptions()"
+        [ngModel]="locale()"
+        (ngModelChange)="localeChange.emit($event)" />
+
+    <rt-menu-item
+        rtElem="theme"
+        qa-dataid="profile-theme-toggle"
+        [icon]="themeIcon()"
+        [label]="'profileSwitchTheme' | transloco"
+        (selected)="themeToggled.emit()" />
+</ng-container>

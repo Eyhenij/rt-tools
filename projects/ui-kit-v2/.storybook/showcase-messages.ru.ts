@@ -13,6 +13,34 @@
  * Обвязка витрины: `.storybook/` в пакет не уезжает вовсе.
  */
 export const SHOWCASE_MESSAGES_RU: Readonly<Record<string, string>> = {
+    // Разделы верхней навигации
+    navDashboard: 'Сводка',
+    navBookings: 'Заявки',
+    navCalendar: 'Календарь',
+    navGuests: 'Гости',
+    navGuestsList: 'Список гостей',
+    navGuestGroups: 'Группы гостей',
+    navFinance: 'Финансы',
+    navSettings: 'Настройки',
+    navProperties: 'Объекты',
+    navUsers: 'Сотрудники',
+    navRoles: 'Роли',
+    navGroupDirectories: 'Справочники',
+    navGuestTags: 'Метки гостей',
+    navContractors: 'Подрядчики',
+    navGroupMail: 'Почта',
+    navMailTemplates: 'Шаблоны писем',
+    navMailSent: 'Отправленные',
+
+    // Попап профиля
+    profileOrganizationLabel: '— заведение',
+    profileChangeOrganization: 'Сменить заведение',
+    profileChangeOrganizationDenied: 'Заведение приходит из принадлежности: менять его некому.',
+    profilePasswordChange: 'Сменить пароль',
+    profileLogout: 'Выйти',
+    profileSwitchTheme: 'Сменить тему',
+    profileActionDemo: 'Показ: настоящее приложение здесь ушло бы своей дорогой',
+
     // Раздел
     navBookingsTitle: 'Заявки',
     bookingsHint: 'Брони объектов: заезд, гости и состояние обработки.',

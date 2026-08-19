@@ -1,5 +1,6 @@
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
+import { SHOWCASE_BOOKINGS } from '../bookings/booking.data';
 import { BOOKINGS_FIXTURE, IBookingsFixture } from '../bookings/bookings.store';
 import { TestRtBookingsTemplateComponent } from './component/test-bookings-template.component';
 
@@ -37,6 +38,9 @@ function fixture(value: IBookingsFixture): ReturnType<typeof applicationConfig> 
     return applicationConfig({ providers: [{ provide: BOOKINGS_FIXTURE, useValue: value }] });
 }
 
+/** Признак того, что список приехал: первая ячейка строки. До него в кадре стоят скелетоны. */
+const LIST_READY_SELECTOR: string = '[qa-dataid="bookings-cell-dates"]';
+
 /** Сколько ждать обещанного состояния, прежде чем сдаться и оставить кадр как есть. */
 const AWAIT_TIMEOUT_MS: number = 10_000;
 
@@ -66,13 +70,20 @@ async function awaitScreen(canvas: HTMLElement, ready: (root: HTMLElement) => bo
 }
 
 /**
+ * Короткий набор для историй с раскрытым меню: страница при нём умещается в кадр целиком.
+ * Кадр целой страницы прокручивает её, а перекрытие кита от прокрутки закрывается — на длинном
+ * списке попап уезжал из кадра, и оба эталона закрепили бы шапку без него.
+ */
+const SHORT_BOOKINGS: IBookingsFixture = { bookings: SHOWCASE_BOOKINGS.slice(0, 3), failing: false };
+
+/**
  * Список заявок с открытым разделом. Панель заведения открывается кнопкой в тулбаре, панель
  * правки — кликом по строке; обе живут своим адресом и переживают перезагрузку страницы.
  */
 export const Screen: TStory = {
     parameters: SCREEN_PARAMETERS,
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
-        await awaitScreen(canvasElement, (root: HTMLElement): boolean => root.querySelector('[qa-dataid="bookings-cell-dates"]') !== null);
+        await awaitScreen(canvasElement, (root: HTMLElement): boolean => root.querySelector(LIST_READY_SELECTOR) !== null);
     },
 };
 
@@ -105,5 +116,52 @@ export const Failed: TStory = {
         // тоста в начале ничего не значит — экран в этот момент даже не смонтирован.
         await awaitScreen(canvasElement, (root: HTMLElement): boolean => root.querySelector('[qa-dataid="toast"]') !== null);
         await awaitScreen(canvasElement, (root: HTMLElement): boolean => root.querySelector('[qa-dataid="toast"]') === null);
+    },
+};
+
+/**
+ * Панель второго уровня раскрыта. Кит открывает её наведением на раздел, а нажатие остаётся
+ * запасным путём для касания — им и пользуется история: наведение, разыгранное из кода, до кадра
+ * не доживает.
+ */
+export const SectionMenu: TStory = {
+    decorators: [fixture(SHORT_BOOKINGS)],
+    parameters: { ...SCREEN_PARAMETERS, snapshot: { fullPage: true, overlay: '[qa-dataid="header-nav-column"]' } },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await awaitScreen(canvasElement, (root: HTMLElement): boolean => root.querySelector(LIST_READY_SELECTOR) !== null);
+
+        const trigger: HTMLElement | null = canvasElement.querySelector('[data-id="settings"] [qa-dataid="header-nav-trigger"]');
+
+        if (trigger === null) {
+            throw new Error('Раздел с панелью второго уровня в шапке не отрисован');
+        }
+
+        trigger.click();
+
+        // Панель живёт в перекрытии, а не внутри показа: ждётся она по документу целиком.
+        await awaitScreen(document.body, (root: HTMLElement): boolean => root.querySelector('[qa-dataid="header-nav-column"]') !== null);
+    },
+};
+
+/**
+ * Попап профиля раскрыт: кто вошёл и в каком заведении, смена заведения, смена пароля, выход,
+ * язык и тема. Открывается тем же движением, что и панель раздела, — весь верхний ряд ведёт себя
+ * одинаково.
+ */
+export const ProfileMenu: TStory = {
+    decorators: [fixture(SHORT_BOOKINGS)],
+    parameters: { ...SCREEN_PARAMETERS, snapshot: { fullPage: true, overlay: '[qa-dataid="header-profile-menu"]' } },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await awaitScreen(canvasElement, (root: HTMLElement): boolean => root.querySelector(LIST_READY_SELECTOR) !== null);
+
+        const trigger: HTMLElement | null = canvasElement.querySelector('[qa-dataid="header-user-menu"]');
+
+        if (trigger === null) {
+            throw new Error('Юзер-блок в шапке не отрисован');
+        }
+
+        trigger.click();
+
+        await awaitScreen(document.body, (root: HTMLElement): boolean => root.querySelector('[qa-dataid="header-profile-menu"]') !== null);
     },
 };
