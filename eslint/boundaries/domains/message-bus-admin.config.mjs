@@ -339,9 +339,10 @@ export const messageBusAdminBoundaries = [
         ],
     },
 
-    // Раздел приглашений. Лесенка та же, что у трёх разделов груза, но слоёв пять, а не семь:
-    // вида своего у него нет — строка списка показывается готовыми ячейками, — и панели
-    // подробностей нет тоже, потому что всё известное о приглашении стоит в строке
+    // Раздел приглашений. Лесенка та же, что у трёх разделов груза, но слоёв шесть, а не семь:
+    // вида своего у него нет — строка списка показывается готовыми ячейками. Панель у раздела
+    // одна и другого рода: не подробности записи, а её создание — всё известное о приглашении
+    // стоит в строке, а выдать новое из строки нечем
     {
         sourceTag: 'scope:message-bus-admin-invites-util',
         onlyDependOnLibsWithTags: [CORE_UTIL, CONTRACT, PACKAGE],
@@ -374,7 +375,17 @@ export const messageBusAdminBoundaries = [
         ],
     },
     {
+        sourceTag: 'scope:message-bus-admin-invites-feature-create-aside',
+        onlyDependOnLibsWithTags: [INVITES_DATA_ACCESS, INVITES_UTIL, CORE_UTIL, CONTRACT, PACKAGE],
+    },
+    {
         sourceTag: 'scope:message-bus-admin-invites-shell',
-        onlyDependOnLibsWithTags: ['scope:message-bus-admin-invites-feature-list', INVITES_UTIL, CORE_UTIL, PACKAGE],
+        onlyDependOnLibsWithTags: [
+            'scope:message-bus-admin-invites-feature-list',
+            'scope:message-bus-admin-invites-feature-create-aside',
+            INVITES_UTIL,
+            CORE_UTIL,
+            PACKAGE,
+        ],
     },
 ];

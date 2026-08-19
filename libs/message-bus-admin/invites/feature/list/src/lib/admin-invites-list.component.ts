@@ -11,13 +11,14 @@ import {
 } from '@angular/cdk/table';
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { AdminListScreenBase } from '@rt/message-bus-admin/common/core/feature';
-import { AdminListPageComponent, AdminMomentPipe } from '@rt/message-bus-admin/common/core/ui';
+import { AdminListPageComponent, AdminListToolbarRightDirective, AdminMomentPipe } from '@rt/message-bus-admin/common/core/ui';
 import { adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
 import { InvitesStore } from '@rt/message-bus-admin/invites/data-access';
-import { IInvite, INVITES_COLUMNS, INVITES_TABLE_ID, inviteRowHasActions } from '@rt/message-bus-admin/invites/util';
+import { IInvite, INVITE_CREATE_ROUTE, INVITES_COLUMNS, INVITES_TABLE_ID, inviteRowHasActions } from '@rt/message-bus-admin/invites/util';
 import { TREE_INVITE_SORTABLE } from '@rt/message-bus-common';
 import {
     IRtTable,
+    RtButtonDirective,
     RtMenuItemComponent,
     RtTableComponent,
     RtTableRowActionsDirective,
@@ -29,9 +30,9 @@ const BEM_BLOCK: string = 'admin-invites-list';
 /**
  * Раздел приглашений.
  *
- * Приглашение — то, чем дерево заводит себя само: владелец выдаёт его командой строки запуска, а
- * здесь видно, что с ним сталось. Самого кода на экране нет никогда — в хранилище лежит только
- * его хеш, и показать код второй раз неоткуда.
+ * Приглашение — то, чем дерево заводит себя само: владелец выдаёт его кнопкой над списком, а
+ * здесь видно, что с ним сталось. Кода в списке нет никогда — в хранилище лежит только его хеш,
+ * и показывает код одна панель создания, один раз сразу после выдачи.
  *
  * Своего у экрана трое: стор раздела, его столбцы и его поля порядка. Выборку из адреса, чтение,
  * порядок и повтор держит основа списочного экрана, а заголовок, тулбар, переключатель страниц и
@@ -42,8 +43,11 @@ const BEM_BLOCK: string = 'admin-invites-list';
  * строкой — общая говорит про отбор, которого у раздела не бывает.
  *
  * Панели подробностей у приглашения нет: всё, что о нём известно, стоит в строке. Строка поэтому
- * не нажимается, а единственное действие — отзыв — живёт меню строки и спрашивает подтверждение:
- * отозванное приглашение не возвращается, дереву понадобится новое.
+ * не нажимается, а действие над строкой одно — отзыв: он живёт меню строки и спрашивает
+ * подтверждение, потому что отозванное приглашение не возвращается, дереву понадобится новое.
+ *
+ * Действие над списком целиком — выдача — стоит в правом слоте тулбара, левее обновления и
+ * настройки столбцов: те есть у всех разделов и одинаковы, а эта кнопка своя.
  */
 @Component({
     selector: 'admin-invites-list',
@@ -63,6 +67,8 @@ const BEM_BLOCK: string = 'admin-invites-list';
 
         // components
         AdminListPageComponent,
+        AdminListToolbarRightDirective,
+        RtButtonDirective,
         RtMenuItemComponent,
         RtTableComponent,
         RtTableRowActionsDirective,
@@ -80,6 +86,7 @@ export class AdminInvitesListComponent extends AdminListScreenBase<IInvite.Short
     protected readonly columns: readonly IRtTable.ColumnConfig[] = INVITES_COLUMNS;
     protected readonly tableId: string = INVITES_TABLE_ID;
     protected readonly qaPrefix: string = 'invites';
+    protected readonly createLabel: string = adminLabel('inviteCreate');
     protected readonly revokeLabel: string = adminLabel('inviteRevoke');
     protected readonly revokeTitle: string = adminLabel('inviteRevokeTitle');
 
@@ -103,6 +110,17 @@ export class AdminInvitesListComponent extends AdminListScreenBase<IInvite.Short
 
     constructor() {
         super();
+    }
+
+    /**
+     * Открыть панель создания.
+     *
+     * Панель живёт тем же аутлетом, что и панели подробностей соседних разделов, и открывается
+     * тем же движением: на месте признака записи у неё стоит слово создания — записи, которую
+     * она заводит, ещё нет. Выборка списка при этом остаётся в адресе нетронутой.
+     */
+    protected openCreate(): void {
+        this.openDetails(INVITE_CREATE_ROUTE);
     }
 
     /** Отозвать приглашение. Список после удачи перечитывает стор, а не экран. */

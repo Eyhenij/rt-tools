@@ -108,7 +108,8 @@
       "@rt/message-bus-admin/invites/data-access": ["./libs/message-bus-admin/invites/data-access/src/index.ts"],
       "@rt/message-bus-admin/invites/ui": ["./libs/message-bus-admin/invites/ui/src/index.ts"],
       "@rt/message-bus-admin/invites/shell": ["./libs/message-bus-admin/invites/shell/src/index.ts"],
-      "@rt/message-bus-admin/invites/feature/list": ["./libs/message-bus-admin/invites/feature/list/src/index.ts"]
+      "@rt/message-bus-admin/invites/feature/list": ["./libs/message-bus-admin/invites/feature/list/src/index.ts"],
+      "@rt/message-bus-admin/invites/feature/create-aside": ["./libs/message-bus-admin/invites/feature/create-aside/src/index.ts"]
     },
     "noUncheckedSideEffectImports": false,
     "ignoreDeprecations": "6.0"

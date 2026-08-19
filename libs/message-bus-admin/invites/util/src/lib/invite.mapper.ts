@@ -44,3 +44,19 @@ export class InviteShortMapper extends BaseMapper<IInvite.Short.State> {
         };
     }
 }
+
+/**
+ * Выданное приглашение.
+ *
+ * Срок становится временем здесь, как и у строки списка. Код переносится как есть: показать его
+ * второй раз неоткуда, и трогать его переводом нечем.
+ */
+export class InviteIssuedMapper extends BaseMapper<IInvite.Issued.State> {
+    public override mapFrom(data: IInvite.Issued.Api): IInvite.Issued.State {
+        return {
+            name: this.typeCast.getAsString(data.name),
+            code: this.typeCast.getAsString(data.code),
+            expiresAt: new Date(this.typeCast.getAsString(data.expiresAt)),
+        };
+    }
+}
