@@ -25,3 +25,6 @@
 | Приём, записанный прозой, страж не читает.                                                                 | `projects/agent-kit/assets/hooks/turn-exit-guard.sh:contract`          |
 | Размер окна берётся из настройки дерева, а не из записи захода.                                            | `projects/agent-kit/assets/defaults/project.sh:RT_WINDOW_TOKENS`       |
 | Один файл гарда вправе объявить несколько событий.                                                         | `projects/agent-kit/src/lib/hooks-map.ts:bindingsOf`                   |
+| Ход, в котором совесть нашла повтор разобранного промаха, не заканчивается.                                | `projects/agent-kit/assets/hooks/conscience-guard.sh:verdict`          |
+| Находку снимает действие, а не слова о ней.                                                                | `projects/agent-kit/assets/hooks/conscience-guard.sh:verdict`          |
+| Верность находки гард не судит.                                                                            | `projects/agent-kit/assets/hooks/conscience-guard.sh:reason`           |
