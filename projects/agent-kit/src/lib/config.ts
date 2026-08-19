@@ -101,6 +101,14 @@ export interface IConfig {
      */
     readonly observe: boolean;
     /**
+     * Роли слоя правил, которые дерево выключило, именами файлов без расширения:
+     * `["strict-teacher"]`. Выключается обязательность вызова, а не сама роль: файл роли
+     * остаётся разложенным и зовётся руками, а гард при выключенной роли выходит молча.
+     * Ключ читают двое: сводка — отсюда, гард — тем же именем прямо из файла, потому что
+     * разборщика конфига у него нет.
+     */
+    readonly rolesOff: readonly string[];
+    /**
      * Адрес приёма, куда уезжает груз: `https://…`. Пусто — отправлять некуда, и отправка
      * отказывает вместо молчания. Зашитый в код адрес назвал бы чужое дерево в текстах пакета.
      */
@@ -254,6 +262,7 @@ export function parseConfig(text: string): IConfig {
         has: idList(raw['has'], 'has'),
         // Выключателем считается только явное «нет»: ключа нет — запись идёт, как и у гарда.
         observe: raw['observe'] !== false,
+        rolesOff: idList(raw['rolesOff'], 'rolesOff'),
         intake: textOf(raw['intake'], 'intake'),
         token: textOf(raw['token'], 'token'),
         tree: textOf(raw['tree'], 'tree'),
