@@ -1,0 +1,40 @@
+// Раскладка страницы — блок `app-page` из общего слоя. Здесь остаётся полоса подтверждения: она
+// принадлежит одному этому списку и в общий слой не просится.
+
+.app-bookings-page {
+    // Подтверждение идёт с суммой, поэтому живёт полосой над таблицей, а не в меню строки:
+    // владелец видит и правит число до того, как оно уйдёт гостю письмом.
+    &__confirm {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        padding: var(--rt-space-md);
+        border-radius: var(--rt-radius-md);
+        background: var(--rt-color-bg-surface-subtle);
+        gap: var(--rt-space-md);
+    }
+
+    &__confirm-title {
+        flex-basis: 100%;
+        margin: 0;
+        font-weight: var(--rt-font-weight-semibold);
+    }
+
+    // Предупреждение — единственное, что отделяет владельца от письма без цены, поэтому тон
+    // несёт подложка, а текст остаётся основным цветом: янтарь по светлой подложке панели не
+    // дотягивает до контраста 4.5:1 и теряется.
+    &__confirm-warning {
+        flex-basis: 100%;
+        padding: var(--rt-space-2) var(--rt-space-md);
+        border-radius: var(--rt-radius-sm);
+        margin: 0;
+        background: var(--rt-color-state-warning-bg);
+        color: var(--rt-color-text-primary);
+        font-weight: var(--rt-font-weight-semibold);
+    }
+
+    &__confirm-actions {
+        display: flex;
+        gap: var(--rt-space-sm);
+    }
+}

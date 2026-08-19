@@ -1,0 +1,70 @@
+<ng-container rtBlock="app-page">
+    <header rtElem="header">
+        <div rtElem="header-main">
+            <h1 rtElem="title" [attr.qa-dataid]="qaPrefix() + '-title'">{{ title() }}</h1>
+            @if (hint()) {
+                <p rtElem="hint">{{ hint() }}</p>
+            }
+        </div>
+    </header>
+
+    <rt-toolbar>
+        <!-- Отбор и поиск слева, действия над списком справа: вперемешку они читаются как один
+             набор кнопок, и непонятно, что меняет показанное -->
+        <ng-template rtToolbarLeft>
+            <ng-content select="[appListToolbarLeft]" />
+        </ng-template>
+
+        <ng-template rtToolbarRight>
+            <ng-content select="[appListToolbarRight]" />
+
+            <rt-icon-button
+                icon="sync"
+                variant="primary"
+                [attr.qa-dataid]="qaPrefix() + '-reload'"
+                [tooltip]="'commonRefresh' | transloco"
+                [ariaLabel]="'commonRefresh' | transloco"
+                [disabled]="loading()"
+                (clicked)="host.reload()" />
+
+            @if (configurable()) {
+                <rt-icon-button
+                    icon="sliders-v"
+                    variant="primary"
+                    [attr.qa-dataid]="qaPrefix() + '-column-settings'"
+                    [tooltip]="'uiColumnSettings' | transloco"
+                    [ariaLabel]="'uiColumnSettings' | transloco"
+                    (clicked)="host.openColumnSettings()" />
+            }
+
+            @if (createLabel()) {
+                <rt-icon-button
+                    icon="ico-plus"
+                    variant="primary"
+                    [attr.qa-dataid]="qaPrefix() + '-add'"
+                    [tooltip]="createLabel()"
+                    [ariaLabel]="createLabel()"
+                    [disabled]="busy()"
+                    (clicked)="host.openCreate()" />
+            }
+        </ng-template>
+    </rt-toolbar>
+
+    <!-- Над таблицей — то, что относится ко всему списку сразу: сводка последнего действия,
+         предупреждение, подсказка. Шаблон о содержимом не знает: у каждого списка оно своё, а у
+         большинства его нет вовсе -->
+    <ng-content select="[appListAboveTable]" />
+
+    <!-- Таблица приходит от экрана целиком: её столбцы собираются её собственным запросом по
+         контенту, и обёртка их до неё не донесёт -->
+    <div rtElem="scroll">
+        <ng-content />
+    </div>
+
+    <rt-pagination
+        [attr.qa-dataid]="qaPrefix() + '-pagination'"
+        [pageModel]="pageModel()"
+        [loading]="loading()"
+        (pageChange)="host.onPageChange($event)"
+        (perPageChange)="host.onPageSizeChange($event)" />
+</ng-container>
