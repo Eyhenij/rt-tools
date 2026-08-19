@@ -10,6 +10,9 @@ const CODE: string = 'b'.repeat(64);
 /** Токен, который отдаёт приём годному обращению. */
 const TOKEN: string = 'c'.repeat(64);
 
+/** Токен, выданный человеку прямо в админке приёма: он приходит доводом, а не ответом. */
+const ISSUED: string = 'd'.repeat(64);
+
 /** Что уехало в приём: спека смотрит тело обращения, а в сеть не ходит. */
 let sent: IEnrollBody[] = [];
 
@@ -63,6 +66,7 @@ describe('enroll', () => {
             root,
             intake: 'https://message-bus.dev',
             code: CODE,
+            issued: '',
             tree: 'a1b2c3d4',
             token: 'секреты/токен',
             force: false,
@@ -131,11 +135,64 @@ describe('enroll', () => {
         expect(readFileSync(join(root, 'прежний'), 'utf8').trim()).toBe(TOKEN);
     });
 
-    it('обращение без кода до сети не доходит', async () => {
+    it('SC-AK-283 — выданный токен ложится на диск, и в сеть команда не идёт', async () => {
+        const outcome: IEnrollOutcome = await enroll(options({ code: '', issued: ISSUED }));
+
+        expect(outcome.code).toBe(0);
+        expect(readFileSync(join(root, 'секреты/токен'), 'utf8').trim()).toBe(ISSUED);
+        expect(sent).toHaveLength(0);
+    });
+
+    it('SC-AK-283 — файл выданного токена читает и пишет только владелец файла', async () => {
+        await enroll(options({ code: '', issued: ISSUED }));
+
+        const mode: string = (statSync(join(root, 'секреты/токен')).mode % 0o1000).toString(8);
+
+        expect(mode).toBe('600');
+    });
+
+    it('SC-AK-284 — код приглашения и выданный токен вместе не идут', async () => {
+        const outcome: IEnrollOutcome = await enroll(options({ issued: ISSUED }));
+
+        expect(outcome.code).toBe(1);
+        expect(outcome.lines.join('\n')).toContain('--token');
+        expect(outcome.lines.join('\n')).toContain('--code');
+        expect(sent).toHaveLength(0);
+    });
+
+    it('SC-AK-285 — заведение без единого довода называет оба пути', async () => {
         const outcome: IEnrollOutcome = await enroll(options({ code: '' }));
 
         expect(outcome.code).toBe(1);
-        expect(outcome.lines.join('\n')).toContain('код приглашения');
+        expect(outcome.lines.join('\n')).toContain('--code');
+        expect(outcome.lines.join('\n')).toContain('--token');
+        expect(sent).toHaveLength(0);
+    });
+
+    it('SC-AK-286 — лежащий токен защищён и у пути с рук', async () => {
+        writeFileSync(join(root, 'прежний'), 'прежний токен\n');
+
+        const outcome: IEnrollOutcome = await enroll(options({ code: '', issued: ISSUED, token: 'прежний' }));
+
+        expect(outcome.code).toBe(1);
+        expect(outcome.lines.join('\n')).toContain('--force');
+        expect(readFileSync(join(root, 'прежний'), 'utf8').trim()).toBe('прежний токен');
+    });
+
+    it('SC-AK-286 — с прямым доводом выданный токен перезаписывает лежащий', async () => {
+        writeFileSync(join(root, 'прежний'), 'прежний токен\n');
+
+        const outcome: IEnrollOutcome = await enroll(options({ code: '', issued: ISSUED, token: 'прежний', force: true }));
+
+        expect(outcome.code).toBe(0);
+        expect(readFileSync(join(root, 'прежний'), 'utf8').trim()).toBe(ISSUED);
+    });
+
+    it('SC-AK-287 — путь без сети не требует ни адреса приёма, ни TLS', async () => {
+        const outcome: IEnrollOutcome = await enroll(options({ code: '', issued: ISSUED, intake: '' }));
+
+        expect(outcome.code).toBe(0);
+        expect(readFileSync(join(root, 'секреты/токен'), 'utf8').trim()).toBe(ISSUED);
         expect(sent).toHaveLength(0);
     });
 

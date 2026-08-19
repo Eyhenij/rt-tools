@@ -1,9 +1,15 @@
 /**
- * Заведение дерева по приглашению: дерево просит у приёма свой токен и кладёт его на диск.
+ * Заведение дерева: токен ложится на диск правами «читает и пишет только владелец файла».
  *
- * Вторая и последняя команда пакета, которая ходит в сеть, — и единственная, которая ходит туда
- * без токена: токена у дерева ещё нет, за ним и обращаются. Взамен обращение несёт одноразовый
- * код, выданный владельцем.
+ * Путей два, и человек выбирает доводом.
+ *
+ * Обмен по коду — дерево просит токен у приёма, неся одноразовый код. Это вторая и последняя
+ * команда пакета, которая ходит в сеть, и единственная, которая ходит туда без токена: токена у
+ * дерева ещё нет, за ним и обращаются.
+ *
+ * Выданный токен — тот, что человек получил прямо в админке приёма. Обменивать не на что, и в
+ * сеть команда не идёт вовсе: она кладёт полученное на диск теми же правами. Отсюда и разный
+ * набор проверок — адрес приёма и запрет открытого пути этому пути не нужны.
  *
  * Ходит она только по слову человека. Гарды в сеть не ходят вовсе, и заведение — не исключение:
  * дерево заводят один раз, руками.
@@ -46,6 +52,13 @@ export interface IEnrollOptions {
     readonly root: string;
     readonly intake: string;
     readonly code: string;
+    /**
+     * Токен, выданный человеку прямо в админке приёма.
+     *
+     * Второй путь завести дерево, и сети он не требует вовсе: токен уже на руках, обменивать не
+     * на что. С кодом приглашения не сочетается — это два пути к одному и тому же.
+     */
+    readonly issued: string;
     /** Признак дерева, посчитанный от адреса репозитория. */
     readonly tree: string;
     /** Файл токена — путь от корня дерева или от домашнего каталога. */
@@ -112,6 +125,26 @@ export function tokenPath(root: string, spoken: string): string {
     return spoken.startsWith('~/') ? join(homedir(), spoken.slice(2)) : join(root, spoken);
 }
 
+/** Запись токена на диск: у обоих путей она одна, и права файла у неё одни. */
+function lay(path: string, token: string): void {
+    mkdirSync(dirname(path), { recursive: true });
+    writeFileSync(path, `${token}\n`, { encoding: 'utf8', mode: TOKEN_MODE });
+}
+
+/** Токен с рук: приём о нём не спрашивается — он же его и выдал, и обменивать не на что. */
+function accept(options: IEnrollOptions, path: string): IEnrollOutcome {
+    lay(path, options.issued);
+
+    return {
+        code: 0,
+        lines: [
+            'дерево заведено токеном, выданным в админке приёма',
+            `токен лежит в ${path}, читать и писать его может только владелец файла`,
+            'проверить связь с приёмом: `agent-kit propose --dry-run`',
+        ],
+    };
+}
+
 /** Обращение и запись токена: сюда доходит только то, что прошло проверки у себя. */
 async function grant(options: IEnrollOptions, path: string): Promise<IEnrollOutcome> {
     const answer: IEnrollAnswer = await options.call(options.intake, { schema: '1', tree: options.tree, code: options.code });
@@ -120,8 +153,7 @@ async function grant(options: IEnrollOptions, path: string): Promise<IEnrollOutc
         return refusal(answer.status === 0 ? `приём не ответил: ${answer.said}` : `приём отказал (${answer.status}): ${answer.said}`);
     }
 
-    mkdirSync(dirname(path), { recursive: true });
-    writeFileSync(path, `${answer.granted.token}\n`, { encoding: 'utf8', mode: TOKEN_MODE });
+    lay(path, answer.granted.token);
 
     return {
         code: 0,
@@ -134,22 +166,34 @@ async function grant(options: IEnrollOptions, path: string): Promise<IEnrollOutc
 }
 
 /**
- * Заведение дерева.
+ * Выбран ли путь: отказ, когда доводов два или ни одного, и пусто, когда выбран ровно один.
  *
- * Порядок проверок такой, что до сети доходит только то, что имеет шанс: незаполненная настройка,
- * открытый адрес и уже лежащий токен отбиваются здесь, у себя.
+ * Стоит отдельно от самого заведения: разбор довода и порядок проверок — два разных решения, и
+ * вместе они не читаются.
  */
-export async function enroll(options: IEnrollOptions): Promise<IEnrollOutcome> {
-    if (!options.code) {
-        return refusal('заведение ждёт код приглашения: `agent-kit enroll --code <код>`');
+function pathChosen(options: IEnrollOptions): IEnrollOutcome | null {
+    if (options.code && options.issued) {
+        return refusal(
+            'код приглашения и выданный токен — два разных пути завести дерево, и вместе они не идут',
+            'оставьте один довод: --code <код> либо --token <токен>'
+        );
     }
 
+    if (!options.code && !options.issued) {
+        return refusal(
+            'заведение ждёт одно из двух:',
+            '  --code <код>     код приглашения, выданный владельцем приёма',
+            '  --token <токен>  токен, выданный человеку прямо в админке приёма'
+        );
+    }
+
+    return null;
+}
+
+/** Годен ли приём для обмена по коду. Пути с рук эти проверки не касаются: он в сеть не идёт. */
+function intakeReady(options: IEnrollOptions): IEnrollOutcome | null {
     if (!options.intake) {
         return refusal('в настройке дерева не назван адрес приёма: заполните ключ `intake`');
-    }
-
-    if (!options.token) {
-        return refusal('в настройке дерева не назван файл токена: заполните ключ `token`');
     }
 
     if (!intakeAllowed(options.intake)) {
@@ -159,16 +203,43 @@ export async function enroll(options: IEnrollOptions): Promise<IEnrollOutcome> {
         );
     }
 
-    const path: string = tokenPath(options.root, options.token);
+    return null;
+}
 
-    if (existsSync(path) && !options.force) {
+/**
+ * Заведение дерева.
+ *
+ * Порядок проверок такой, что до сети доходит только то, что имеет шанс: незаполненная настройка,
+ * открытый адрес и уже лежащий токен отбиваются здесь, у себя. Общие обоим путям проверки стоят
+ * до развилки: поставленные после, они защищали бы только один из них.
+ */
+export async function enroll(options: IEnrollOptions): Promise<IEnrollOutcome> {
+    const chosen: IEnrollOutcome | null = pathChosen(options);
+
+    if (chosen) {
+        return chosen;
+    }
+
+    if (!options.token) {
+        return refusal('в настройке дерева не назван файл токена: заполните ключ `token`');
+    }
+
+    const laid: string = tokenPath(options.root, options.token);
+
+    if (existsSync(laid) && !options.force) {
         return refusal(
-            `токен уже лежит в ${path}: заведённое дерево потеряло бы связь со своим прежним грузом`,
+            `токен уже лежит в ${laid}: заведённое дерево потеряло бы связь со своим прежним грузом`,
             'если это намеренно — позовите ту же команду с доводом --force'
         );
     }
 
-    return grant(options, path);
+    if (options.issued) {
+        return accept(options, laid);
+    }
+
+    const reachable: IEnrollOutcome | null = intakeReady(options);
+
+    return reachable ?? grant(options, laid);
 }
 
 /** Обращение в приём по-настоящему. Код уезжает телом и в заголовки не попадает. */
