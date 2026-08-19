@@ -8,7 +8,7 @@ import { TestRtThreadListMatrixComponent } from './component/test-thread-list-ma
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/ThreadList',
+    title: 'Organisms/Chat/ThreadList',
     component: TestRtThreadListMatrixComponent,
     parameters: {
         controls: { disable: true },

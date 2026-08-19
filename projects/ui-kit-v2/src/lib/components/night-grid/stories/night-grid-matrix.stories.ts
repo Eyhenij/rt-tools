@@ -9,7 +9,7 @@ import { TestRtNightGridMatrixComponent } from './component/test-night-grid-matr
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/NightGrid',
+    title: 'Molecules/Data/NightGrid',
     component: TestRtNightGridMatrixComponent,
     parameters: {
         controls: { disable: true },

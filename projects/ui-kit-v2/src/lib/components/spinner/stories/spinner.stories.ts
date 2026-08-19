@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtSpinnerComponent } from './component/test-spinner.component';
 
 export default {
-    title: 'Components/Spinner',
+    title: 'Atoms/Feedback/Spinner',
     component: TestRtSpinnerComponent,
     argTypes: {
         diameter: { control: { type: 'number' } },

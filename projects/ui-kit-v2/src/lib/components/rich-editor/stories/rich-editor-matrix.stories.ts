@@ -11,7 +11,7 @@ import { TestRtRichEditorMatrixComponent } from './component/test-rich-editor-ma
  * и её состояния приходят из его темы, а не из SCSS кита.
  */
 export default {
-    title: 'Components/RichEditor',
+    title: 'Organisms/Chat/RichEditor',
     component: TestRtRichEditorMatrixComponent,
     parameters: {
         controls: { disable: true },

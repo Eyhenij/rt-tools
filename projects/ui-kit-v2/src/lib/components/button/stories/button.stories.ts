@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtButtonComponent } from './component/test-button.component';
 
 export default {
-    title: 'Components/Button',
+    title: 'Atoms/Buttons/Button',
     component: TestRtButtonComponent,
     argTypes: {
         label: { control: { type: 'text' } },

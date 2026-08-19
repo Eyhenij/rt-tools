@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { TestRtPhotoViewerComponent } from './component/test-photo-viewer.component';
 
 export default {
-    title: 'Components/PhotoViewer',
+    title: 'Organisms/PhotoViewer',
     component: TestRtPhotoViewerComponent,
     parameters: {
         controls: { disable: true },

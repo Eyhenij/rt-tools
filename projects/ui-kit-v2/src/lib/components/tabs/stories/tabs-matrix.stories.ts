@@ -8,7 +8,7 @@ import { TestRtTabsMatrixComponent } from './component/test-tabs-matrix.componen
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/Tabs',
+    title: 'Molecules/Navigation/Tabs',
     component: TestRtTabsMatrixComponent,
     parameters: {
         controls: { disable: true },

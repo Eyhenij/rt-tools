@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtContainerComponent } from './component/test-container.component';
 
 export default {
-    title: 'Components/Container',
+    title: 'Organisms/Layout/Container',
     component: TestRtContainerComponent,
     argTypes: {
         mobileLeftNav: {

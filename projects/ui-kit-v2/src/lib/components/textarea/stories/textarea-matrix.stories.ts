@@ -9,7 +9,7 @@ import { TestRtTextareaMatrixComponent } from './component/test-textarea-matrix.
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/Textarea',
+    title: 'Atoms/Forms/Textarea',
     component: TestRtTextareaMatrixComponent,
     parameters: {
         controls: { disable: true },

@@ -8,7 +8,7 @@ import { TestRtWorkspaceDetailsMatrixComponent } from './component/test-workspac
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/WorkspaceDetails',
+    title: 'Organisms/Workspace/WorkspaceDetails',
     component: TestRtWorkspaceDetailsMatrixComponent,
     parameters: {
         controls: { disable: true },

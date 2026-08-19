@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtStepperComponent } from './component/test-stepper.component';
 
 export default {
-    title: 'Components/Stepper',
+    title: 'Atoms/Feedback/Stepper',
     component: TestRtStepperComponent,
     argTypes: {
         steps: { control: 'object' },

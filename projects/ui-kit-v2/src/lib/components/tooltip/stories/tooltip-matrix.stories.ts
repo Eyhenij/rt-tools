@@ -9,7 +9,7 @@ import { TestRtTooltipMatrixComponent } from './component/test-tooltip-matrix.co
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/Tooltip',
+    title: 'Atoms/Tooltip',
     component: TestRtTooltipMatrixComponent,
     parameters: {
         controls: { disable: true },

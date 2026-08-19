@@ -9,7 +9,7 @@ import { TestRtDownloadLinkMatrixComponent } from './component/test-download-lin
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/DownloadLink',
+    title: 'Atoms/Buttons/DownloadLink',
     component: TestRtDownloadLinkMatrixComponent,
     parameters: {
         controls: { disable: true },

@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../../showcase';
 import { TestRtAsideHeaderComponent } from './component/test-aside-header.component';
 
 export default {
-    title: 'Components/AsideHeader',
+    title: 'Organisms/Aside/AsideHeader',
     component: TestRtAsideHeaderComponent,
     argTypes: {
         title: { control: { type: 'text' } },

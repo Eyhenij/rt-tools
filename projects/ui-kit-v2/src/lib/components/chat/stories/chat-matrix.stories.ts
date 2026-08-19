@@ -11,7 +11,7 @@ import { TestRtChatMatrixComponent } from './component/test-chat-matrix.componen
  * Переписка объявляет свой порог ширины сама — 1441 px, — поэтому у матриц есть второй кадр.
  */
 export default {
-    title: 'Components/Chat',
+    title: 'Organisms/Chat/Chat',
     component: TestRtChatMatrixComponent,
     parameters: {
         controls: { disable: true },

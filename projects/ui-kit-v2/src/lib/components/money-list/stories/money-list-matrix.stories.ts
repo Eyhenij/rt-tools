@@ -8,7 +8,7 @@ import { TestRtMoneyListMatrixComponent } from './component/test-money-list-matr
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/MoneyList',
+    title: 'Molecules/Data/MoneyList',
     component: TestRtMoneyListMatrixComponent,
     parameters: {
         controls: { disable: true },

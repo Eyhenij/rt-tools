@@ -8,7 +8,7 @@ import { TestRtSkeletonMatrixComponent } from './component/test-skeleton-matrix.
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/Skeleton',
+    title: 'Atoms/Feedback/Skeleton',
     component: TestRtSkeletonMatrixComponent,
     parameters: {
         controls: { disable: true },

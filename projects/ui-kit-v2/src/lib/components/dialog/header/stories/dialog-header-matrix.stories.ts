@@ -8,7 +8,7 @@ import { TestRtDialogHeaderMatrixComponent } from './component/test-dialog-heade
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/DialogHeader',
+    title: 'Organisms/Dialog/DialogHeader',
     component: TestRtDialogHeaderMatrixComponent,
     parameters: {
         controls: { disable: true },

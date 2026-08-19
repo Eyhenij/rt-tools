@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { TestRtNotificationsBellComponent } from './component/test-notifications-bell.component';
 
 export default {
-    title: 'Components/NotificationsBell',
+    title: 'Molecules/NotificationsBell',
     component: TestRtNotificationsBellComponent,
     parameters: { snapshot: { fullPage: true } },
     argTypes: {

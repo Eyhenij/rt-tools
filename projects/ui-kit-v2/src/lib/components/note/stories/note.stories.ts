@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtNoteComponent } from './component/test-note.component';
 
 export default {
-    title: 'Components/Note',
+    title: 'Atoms/Feedback/Note',
     component: TestRtNoteComponent,
     argTypes: {
         text: { control: { type: 'text' } },

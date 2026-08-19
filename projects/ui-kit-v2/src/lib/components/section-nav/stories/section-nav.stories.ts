@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtSectionNavComponent } from './component/test-section-nav.component';
 
 export default {
-    title: 'Components/SectionNav',
+    title: 'Molecules/Navigation/SectionNav',
     component: TestRtSectionNavComponent,
     argTypes: {
         items: { control: 'object' },

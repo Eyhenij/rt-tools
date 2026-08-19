@@ -8,7 +8,7 @@ import { TestRtBottomSheetMatrixComponent } from './component/test-bottom-sheet-
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/BottomSheet',
+    title: 'Organisms/Aside/BottomSheet',
     component: TestRtBottomSheetMatrixComponent,
     parameters: {
         controls: { disable: true },

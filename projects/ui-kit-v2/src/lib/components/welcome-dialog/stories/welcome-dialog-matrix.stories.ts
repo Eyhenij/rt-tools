@@ -8,7 +8,7 @@ import { TestRtWelcomeDialogMatrixComponent } from './component/test-welcome-dia
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/WelcomeDialog',
+    title: 'Organisms/Dialog/WelcomeDialog',
     component: TestRtWelcomeDialogMatrixComponent,
     parameters: {
         controls: { disable: true },

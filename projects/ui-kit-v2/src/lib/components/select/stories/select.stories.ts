@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtSelectComponent } from './component/test-select.component';
 
 export default {
-    title: 'Components/Select',
+    title: 'Molecules/Forms/Select',
     component: TestRtSelectComponent,
     argTypes: {
         options: { control: false },

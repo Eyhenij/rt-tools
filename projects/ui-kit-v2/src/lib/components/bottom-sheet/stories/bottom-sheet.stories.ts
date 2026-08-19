@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { TestRtBottomSheetComponent } from './component/test-bottom-sheet.component';
 
 export default {
-    title: 'Components/BottomSheet',
+    title: 'Organisms/Aside/BottomSheet',
     component: TestRtBottomSheetComponent,
     parameters: { snapshot: { fullPage: true } },
     argTypes: {

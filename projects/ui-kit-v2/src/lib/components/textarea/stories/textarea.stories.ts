@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtTextareaComponent } from './component/test-textarea.component';
 
 export default {
-    title: 'Components/Textarea',
+    title: 'Atoms/Forms/Textarea',
     component: TestRtTextareaComponent,
     argTypes: {
         placeholder: { control: { type: 'text' } },

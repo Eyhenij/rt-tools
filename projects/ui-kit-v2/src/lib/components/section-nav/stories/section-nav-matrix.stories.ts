@@ -9,7 +9,7 @@ import { TestRtSectionNavMatrixComponent } from './component/test-section-nav-ma
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/SectionNav',
+    title: 'Molecules/Navigation/SectionNav',
     component: TestRtSectionNavMatrixComponent,
     parameters: {
         controls: { disable: true },

@@ -8,7 +8,7 @@ import { TestRtAsideSectionMatrixComponent } from './component/test-aside-sectio
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/AsideSection',
+    title: 'Organisms/Aside/AsideSection',
     component: TestRtAsideSectionMatrixComponent,
     parameters: {
         controls: { disable: true },

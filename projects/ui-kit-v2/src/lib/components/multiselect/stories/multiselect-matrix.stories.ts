@@ -10,7 +10,7 @@ import { TestRtMultiselectMatrixComponent } from './component/test-multiselect-m
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/Multiselect',
+    title: 'Molecules/Forms/Multiselect',
     component: TestRtMultiselectMatrixComponent,
     parameters: {
         controls: { disable: true },

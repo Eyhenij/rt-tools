@@ -8,7 +8,7 @@ import { TestRtTimelineMatrixComponent } from './component/test-timeline-matrix.
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/Timeline',
+    title: 'Organisms/Chat/Timeline',
     component: TestRtTimelineMatrixComponent,
     parameters: {
         controls: { disable: true },

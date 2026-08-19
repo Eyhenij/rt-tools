@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtLiveBadgeComponent } from './component/test-live-badge.component';
 
 export default {
-    title: 'Components/LiveBadge',
+    title: 'Atoms/LiveBadge',
     component: TestRtLiveBadgeComponent,
     argTypes: {
         label: { control: { type: 'text' } },

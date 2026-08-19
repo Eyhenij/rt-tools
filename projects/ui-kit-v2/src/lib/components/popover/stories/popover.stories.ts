@@ -5,7 +5,7 @@ import { openStoryOverlay } from '../../../../showcase/story-overlay';
 import { TestRtPopoverComponent } from './component/test-popover.component';
 
 export default {
-    title: 'Components/Popover',
+    title: 'Atoms/Popover',
     component: TestRtPopoverComponent,
     argTypes: {
         trigger: {

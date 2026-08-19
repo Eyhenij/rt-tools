@@ -11,7 +11,7 @@ import { TestRtPopoverMatrixComponent } from './component/test-popover-matrix.co
  * Жестом это не показать — щелчок по второму триггеру закрыл бы первую панель.
  */
 export default {
-    title: 'Components/Popover',
+    title: 'Atoms/Popover',
     component: TestRtPopoverMatrixComponent,
     parameters: {
         controls: { disable: true },

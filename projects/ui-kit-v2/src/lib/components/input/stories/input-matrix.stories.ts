@@ -9,7 +9,7 @@ import { TestRtInputMatrixComponent } from './component/test-input-matrix.compon
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/Input',
+    title: 'Atoms/Forms/Input',
     component: TestRtInputMatrixComponent,
     parameters: {
         controls: { disable: true },

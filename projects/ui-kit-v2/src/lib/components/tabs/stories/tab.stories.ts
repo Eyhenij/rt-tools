@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { TestRtTabComponent } from './component/test-tab.component';
 
 export default {
-    title: 'Components/Tab',
+    title: 'Molecules/Navigation/Tab',
     component: TestRtTabComponent,
     // Показ рисует не сетка витрины, а сам составной компонент, поэтому кадр целой страницей.
     parameters: { snapshot: { fullPage: true } },

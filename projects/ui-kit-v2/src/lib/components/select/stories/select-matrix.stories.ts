@@ -10,7 +10,7 @@ import { TestRtSelectMatrixComponent } from './component/test-select-matrix.comp
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/Select',
+    title: 'Molecules/Forms/Select',
     component: TestRtSelectMatrixComponent,
     parameters: {
         controls: { disable: true },

@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtAsideComponent } from './component/test-aside.component';
 
 export default {
-    title: 'Components/Aside',
+    title: 'Organisms/Aside/Aside',
     component: TestRtAsideComponent,
     argTypes: {
         size: {

@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtMenuItemComponent } from './component/test-menu-item.component';
 
 export default {
-    title: 'Components/MenuItem',
+    title: 'Molecules/Navigation/MenuItem',
     component: TestRtMenuItemComponent,
     argTypes: {
         icon: { control: false },

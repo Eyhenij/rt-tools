@@ -9,7 +9,7 @@ import { TestRtCardMatrixComponent } from './component/test-card-matrix.componen
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/Card',
+    title: 'Molecules/Card',
     component: TestRtCardMatrixComponent,
     parameters: {
         controls: { disable: true },

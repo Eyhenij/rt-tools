@@ -4,7 +4,7 @@ import { storyWidthAtLeast } from '../../../../showcase';
 import { TestRtChatComponent } from './component/test-chat.component';
 
 export default {
-    title: 'Components/Chat',
+    title: 'Organisms/Chat/Chat',
     component: TestRtChatComponent,
     // Показ рисует не сетка витрины, поэтому кадр целой страницей. Переписка называет ширину
     // сама: `@media (width >= 1441px)` расширяет колонку сообщений. Кадр — в окне ровно 1441.

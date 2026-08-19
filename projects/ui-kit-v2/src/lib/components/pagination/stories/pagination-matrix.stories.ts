@@ -11,7 +11,7 @@ import { TestRtPaginationMatrixComponent } from './component/test-pagination-mat
  * окна, и порогом кадра это не проверяется. Обе формы стоят рядом в истории `Container`.
  */
 export default {
-    title: 'Components/Pagination',
+    title: 'Molecules/Navigation/Pagination',
     component: TestRtPaginationMatrixComponent,
     parameters: {
         controls: { disable: true },

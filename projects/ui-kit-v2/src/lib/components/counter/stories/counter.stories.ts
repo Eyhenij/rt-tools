@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtCounterComponent } from './component/test-counter.component';
 
 export default {
-    title: 'Components/Counter',
+    title: 'Molecules/Forms/Counter',
     component: TestRtCounterComponent,
     argTypes: {
         ariaLabel: { control: { type: 'text' } },

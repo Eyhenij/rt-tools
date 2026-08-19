@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtDialogComponent } from './component/test-dialog.component';
 
 export default {
-    title: 'Components/Dialog',
+    title: 'Organisms/Dialog/Dialog',
     component: TestRtDialogComponent,
     argTypes: {
         size: {

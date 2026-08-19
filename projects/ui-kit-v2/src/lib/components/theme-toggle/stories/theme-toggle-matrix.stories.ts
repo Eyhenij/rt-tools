@@ -8,7 +8,7 @@ import { TestRtThemeToggleMatrixComponent } from './component/test-theme-toggle-
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/ThemeToggle',
+    title: 'Molecules/ThemeToggle',
     component: TestRtThemeToggleMatrixComponent,
     parameters: {
         controls: { disable: true },

@@ -8,7 +8,7 @@ import { TestRtMessageMatrixComponent } from './component/test-message-matrix.co
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/Message',
+    title: 'Molecules/Message',
     component: TestRtMessageMatrixComponent,
     parameters: {
         controls: { disable: true },

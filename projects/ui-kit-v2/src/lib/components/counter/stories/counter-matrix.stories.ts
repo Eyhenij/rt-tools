@@ -11,7 +11,7 @@ import { TestRtCounterMatrixComponent } from './component/test-counter-matrix.co
  * они принадлежат его кнопкам и показаны в матрице `IconButton`.
  */
 export default {
-    title: 'Components/Counter',
+    title: 'Molecules/Forms/Counter',
     component: TestRtCounterMatrixComponent,
     parameters: {
         controls: { disable: true },

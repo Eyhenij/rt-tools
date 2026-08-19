@@ -8,7 +8,7 @@ import { TestRtCollapsibleTextMatrixComponent } from './component/test-collapsib
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/CollapsibleText',
+    title: 'Molecules/CollapsibleText',
     component: TestRtCollapsibleTextMatrixComponent,
     parameters: {
         controls: { disable: true },

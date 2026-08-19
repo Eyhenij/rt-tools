@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtMultiselectComponent } from './component/test-multiselect.component';
 
 export default {
-    title: 'Components/Multiselect',
+    title: 'Molecules/Forms/Multiselect',
     component: TestRtMultiselectComponent,
     argTypes: {
         options: { control: false },

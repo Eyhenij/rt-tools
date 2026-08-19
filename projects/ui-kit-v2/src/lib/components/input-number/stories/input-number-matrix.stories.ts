@@ -9,7 +9,7 @@ import { TestRtInputNumberMatrixComponent } from './component/test-input-number-
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/InputNumber',
+    title: 'Atoms/Forms/InputNumber',
     component: TestRtInputNumberMatrixComponent,
     parameters: {
         controls: { disable: true },

@@ -8,7 +8,7 @@ import { TestRtAsideHeaderMatrixComponent } from './component/test-aside-header-
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/AsideHeader',
+    title: 'Organisms/Aside/AsideHeader',
     component: TestRtAsideHeaderMatrixComponent,
     parameters: {
         controls: { disable: true },

@@ -81,7 +81,16 @@ pnpm run build-storybook    # dist/storybook/@rt-tools/ui-kit
 - The theme toolbar writes `<html data-theme>` — the same attribute `ThemeService`
   sets in an application, so the showcase renders what a consumer gets.
 - Sidebar order is fixed by `storySort`: `Foundation` (Design Tokens: Overview,
-  Colors, Semantic, Spacing, Theming) → `Components` → the rest.
+  Colors, Semantic, Spacing, Theming) → `Atoms` → `Molecules` → `Organisms` → the rest.
+- **Заголовок истории начинается уровнем атомарного дизайна, а не общим разделом.** Уровней три
+  — атомы, молекулы, организмы, — и между уровнем и именем компонента стоит необязательная
+  предметная группа: кнопки, поля формы, навигация, данные, файлы, окно, боковая панель, таблица,
+  переписка, рабочий стол, каркас. Дочерняя часть стоит в группе своего родителя и на его уровне:
+  шапка окна — рядом с окном, пункт меню — рядом с меню. Общего корня над уровнями нет, порядок
+  разделов задаёт `storySort` — по алфавиту молекулы встали бы перед организмами.
+- **Имя эталона снимка — слаг заголовка, поэтому уровень переносится вместе с ним.** Перекладка
+  заголовка без переименования эталонов оставляет 445 файлов, которым не отвечает ни одна
+  история: прогон снимает всё заново, а сверка каталога краснеет на каждый.
 
 ## State-coverage contract
 

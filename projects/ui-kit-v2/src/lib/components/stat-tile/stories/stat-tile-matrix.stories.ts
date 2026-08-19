@@ -8,7 +8,7 @@ import { TestRtStatTileMatrixComponent } from './component/test-stat-tile-matrix
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/StatTile',
+    title: 'Molecules/Data/StatTile',
     component: TestRtStatTileMatrixComponent,
     parameters: {
         controls: { disable: true },

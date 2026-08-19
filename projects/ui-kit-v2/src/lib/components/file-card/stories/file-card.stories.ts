@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { TestRtFileCardComponent } from './component/test-file-card.component';
 
 export default {
-    title: 'Components/FileCard',
+    title: 'Molecules/Files/FileCard',
     component: TestRtFileCardComponent,
     parameters: { snapshot: { fullPage: true } },
     argTypes: {

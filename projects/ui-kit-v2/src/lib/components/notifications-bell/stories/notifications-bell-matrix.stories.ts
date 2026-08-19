@@ -9,7 +9,7 @@ import { TestRtNotificationsBellMatrixComponent } from './component/test-notific
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/NotificationsBell',
+    title: 'Molecules/NotificationsBell',
     component: TestRtNotificationsBellMatrixComponent,
     parameters: {
         controls: { disable: true },

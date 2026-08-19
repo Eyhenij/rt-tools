@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../../showcase';
 import { TestRtDialogHeaderComponent } from './component/test-dialog-header.component';
 
 export default {
-    title: 'Components/DialogHeader',
+    title: 'Organisms/Dialog/DialogHeader',
     component: TestRtDialogHeaderComponent,
     argTypes: {
         title: { control: { type: 'text' } },

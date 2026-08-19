@@ -8,7 +8,7 @@ import { TestRtStepperMatrixComponent } from './component/test-stepper-matrix.co
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/Stepper',
+    title: 'Atoms/Feedback/Stepper',
     component: TestRtStepperMatrixComponent,
     parameters: {
         controls: { disable: true },

@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtDatePickerComponent } from './component/test-date-picker.component';
 
 export default {
-    title: 'Components/DatePicker',
+    title: 'Molecules/Forms/DatePicker',
     component: TestRtDatePickerComponent,
     argTypes: {
         type: {

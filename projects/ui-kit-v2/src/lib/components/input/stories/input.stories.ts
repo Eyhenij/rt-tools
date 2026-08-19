@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtInputComponent } from './component/test-input.component';
 
 export default {
-    title: 'Components/Input',
+    title: 'Atoms/Forms/Input',
     component: TestRtInputComponent,
     argTypes: {
         type: {

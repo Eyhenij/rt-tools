@@ -12,7 +12,7 @@ import { TestRtAsideMatrixComponent } from './component/test-aside-matrix.compon
  * Так размеры встают рядом, а светло-тёмная пара ловит панель целиком.
  */
 export default {
-    title: 'Components/Aside',
+    title: 'Organisms/Aside/Aside',
     component: TestRtAsideMatrixComponent,
     parameters: {
         // Панель называет ширину сама: `@media (width <= 768px)` растягивает её на весь экран

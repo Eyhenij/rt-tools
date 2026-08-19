@@ -10,7 +10,7 @@ import { TestRtSplitButtonMatrixComponent } from './component/test-split-button-
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/SplitButton',
+    title: 'Molecules/Forms/SplitButton',
     component: TestRtSplitButtonMatrixComponent,
     parameters: {
         controls: { disable: true },

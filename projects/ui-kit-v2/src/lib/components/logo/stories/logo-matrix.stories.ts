@@ -8,7 +8,7 @@ import { TestRtLogoMatrixComponent } from './component/test-logo-matrix.componen
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/Logo',
+    title: 'Atoms/Logo',
     component: TestRtLogoMatrixComponent,
     parameters: {
         controls: { disable: true },

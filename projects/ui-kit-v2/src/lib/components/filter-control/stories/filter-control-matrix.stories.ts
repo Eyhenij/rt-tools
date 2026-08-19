@@ -30,7 +30,7 @@ const NARROW_BREAKPOINTS: BreakpointsService = NARROW_ANSWERS as BreakpointsServ
  * матрицы, — фильтр только выбирает, какой из двух контролов рисовать.
  */
 export default {
-    title: 'Components/FilterControl',
+    title: 'Molecules/Forms/FilterControl',
     component: TestRtFilterControlMatrixComponent,
     parameters: {
         // Фильтр называет ширину сам двумя правилами: на 1080 включается кап ширины поля, на

@@ -8,7 +8,7 @@ import { TestRtHeaderMatrixComponent } from './component/test-header-matrix.comp
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/Header',
+    title: 'Organisms/Layout/Header',
     component: TestRtHeaderMatrixComponent,
     parameters: {
         controls: { disable: true },

@@ -8,7 +8,7 @@ import { TestRtBarListMatrixComponent } from './component/test-bar-list-matrix.c
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/BarList',
+    title: 'Molecules/Data/BarList',
     component: TestRtBarListMatrixComponent,
     parameters: {
         controls: { disable: true },

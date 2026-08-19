@@ -8,7 +8,7 @@ import { TestRtInfoItemMatrixComponent } from './component/test-info-item-matrix
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/InfoItem',
+    title: 'Molecules/Data/InfoItem',
     component: TestRtInfoItemMatrixComponent,
     parameters: {
         controls: { disable: true },

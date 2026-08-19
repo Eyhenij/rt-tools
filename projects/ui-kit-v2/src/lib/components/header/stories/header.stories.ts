@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { TestRtHeaderComponent } from './component/test-header.component';
 
 export default {
-    title: 'Components/Header',
+    title: 'Organisms/Layout/Header',
     component: TestRtHeaderComponent,
     parameters: { snapshot: { fullPage: true } },
     argTypes: {

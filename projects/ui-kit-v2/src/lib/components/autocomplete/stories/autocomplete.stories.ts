@@ -5,7 +5,7 @@ import { openStoryOverlay } from '../../../../showcase/story-overlay';
 import { TestRtAutocompleteComponent } from './component/test-autocomplete.component';
 
 export default {
-    title: 'Components/Autocomplete',
+    title: 'Molecules/Forms/Autocomplete',
     component: TestRtAutocompleteComponent,
     argTypes: {
         placeholder: { control: { type: 'text' } },

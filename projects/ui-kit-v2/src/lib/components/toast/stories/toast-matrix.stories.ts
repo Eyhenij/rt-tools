@@ -11,7 +11,7 @@ import { TestRtToastMatrixComponent } from './component/test-toast-matrix.compon
  * уметь показать без шины, таймеров и накопления.
  */
 export default {
-    title: 'Components/Toast',
+    title: 'Atoms/Feedback/Toast',
     component: TestRtToastMatrixComponent,
     parameters: {
         controls: { disable: true },

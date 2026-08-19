@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtTabsComponent } from './component/test-tabs.component';
 
 export default {
-    title: 'Components/Tabs',
+    title: 'Molecules/Navigation/Tabs',
     component: TestRtTabsComponent,
     argTypes: {
         activeId: { control: false },

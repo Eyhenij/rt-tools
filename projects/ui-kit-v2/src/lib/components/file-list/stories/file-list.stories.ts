@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtFileListComponent } from './component/test-file-list.component';
 
 export default {
-    title: 'Components/FileList',
+    title: 'Molecules/Files/FileList',
     component: TestRtFileListComponent,
     argTypes: {
         showActions: { control: { type: 'boolean' } },

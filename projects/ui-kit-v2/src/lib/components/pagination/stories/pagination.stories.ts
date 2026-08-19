@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { TestRtPaginationComponent } from './component/test-pagination.component';
 
 export default {
-    title: 'Components/Pagination',
+    title: 'Molecules/Navigation/Pagination',
     component: TestRtPaginationComponent,
     parameters: { snapshot: { fullPage: true } },
     argTypes: {

@@ -9,7 +9,7 @@ import { TestRtToggleButtonGroupMatrixComponent } from './component/test-toggle-
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/ToggleButtonGroup',
+    title: 'Molecules/Forms/ToggleButtonGroup',
     component: TestRtToggleButtonGroupMatrixComponent,
     parameters: {
         controls: { disable: true },

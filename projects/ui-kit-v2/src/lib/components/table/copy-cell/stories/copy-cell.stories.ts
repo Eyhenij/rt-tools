@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../../showcase';
 import { TestRtCopyCellComponent } from './component/test-copy-cell.component';
 
 export default {
-    title: 'Components/CopyCell',
+    title: 'Atoms/CopyCell',
     component: TestRtCopyCellComponent,
     argTypes: {
         value: { control: { type: 'text' } },

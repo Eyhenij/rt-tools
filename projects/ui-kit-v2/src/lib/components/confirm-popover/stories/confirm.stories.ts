@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtConfirmComponent } from './component/test-confirm.component';
 
 export default {
-    title: 'Components/Confirm',
+    title: 'Organisms/Dialog/Confirm',
     component: TestRtConfirmComponent,
     argTypes: {
         message: { control: { type: 'text' } },

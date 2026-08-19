@@ -8,7 +8,7 @@ import { TestRtDetailListMatrixComponent } from './component/test-detail-list-ma
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/DetailList',
+    title: 'Molecules/Data/DetailList',
     component: TestRtDetailListMatrixComponent,
     parameters: {
         controls: { disable: true },

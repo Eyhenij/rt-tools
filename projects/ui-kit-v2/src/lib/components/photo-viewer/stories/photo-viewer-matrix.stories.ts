@@ -9,7 +9,7 @@ import { TestRtPhotoViewerMatrixComponent } from './component/test-photo-viewer-
  * бы друг на друга. Каждый случай показан своей историей на весь кадр.
  */
 export default {
-    title: 'Components/PhotoViewer',
+    title: 'Organisms/PhotoViewer',
     component: TestRtPhotoViewerMatrixComponent,
     parameters: {
         controls: { disable: true },

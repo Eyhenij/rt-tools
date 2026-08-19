@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtBarListComponent } from './component/test-bar-list.component';
 
 export default {
-    title: 'Components/BarList',
+    title: 'Molecules/Data/BarList',
     component: TestRtBarListComponent,
     argTypes: {
         rows: { control: false },

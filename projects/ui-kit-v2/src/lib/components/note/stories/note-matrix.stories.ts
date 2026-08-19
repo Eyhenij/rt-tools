@@ -8,7 +8,7 @@ import { TestRtNoteMatrixComponent } from './component/test-note-matrix.componen
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Components/Note',
+    title: 'Atoms/Feedback/Note',
     component: TestRtNoteMatrixComponent,
     parameters: {
         controls: { disable: true },

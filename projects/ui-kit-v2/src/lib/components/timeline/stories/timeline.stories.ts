@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtTimelineComponent } from './component/test-timeline.component';
 
 export default {
-    title: 'Components/Timeline',
+    title: 'Organisms/Chat/Timeline',
     component: TestRtTimelineComponent,
     argTypes: {
         steps: { control: 'object' },

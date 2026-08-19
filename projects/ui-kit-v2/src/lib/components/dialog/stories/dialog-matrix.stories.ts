@@ -11,7 +11,7 @@ import { TestRtDialogMatrixComponent } from './component/test-dialog-matrix.comp
  * Так размеры встают рядом, а светло-тёмная пара ловит окно целиком.
  */
 export default {
-    title: 'Components/Dialog',
+    title: 'Organisms/Dialog/Dialog',
     component: TestRtDialogMatrixComponent,
     parameters: {
         controls: { disable: true },

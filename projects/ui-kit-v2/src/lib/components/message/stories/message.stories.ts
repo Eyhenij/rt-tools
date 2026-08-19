@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { TestRtMessageComponent } from './component/test-message.component';
 
 export default {
-    title: 'Components/Message',
+    title: 'Molecules/Message',
     component: TestRtMessageComponent,
     parameters: { snapshot: { fullPage: true } },
     argTypes: {

@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtIconComponent } from './component/test-icon.component';
 
 export default {
-    title: 'Components/Icon',
+    title: 'Atoms/Icon',
     component: TestRtIconComponent,
     argTypes: {
         name: { control: false },
