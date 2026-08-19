@@ -58,17 +58,20 @@ export class InvitesReadController {
      * пришлось бы читать в обход неё.
      *
      * Погашенные из списка не уходят: по ним читается, что дерево завелось и каким приглашением.
+     *
+     * Момент приходит последним доводом, а не читается часами внутри: им считается
+     * просроченность каждой строки, и спека проверяет её вызовом. Каркас отдачи этот довод не
+     * заполняет — у него нет метки, — и в бою работает умолчание.
      */
     @Get()
     @SessionOperation()
-    public async page(@Query() query: Record<string, unknown>): Promise<IPage<ITreeInviteView>> {
+    public async page(@Query() query: Record<string, unknown>, at: Date = new Date()): Promise<IPage<ITreeInviteView>> {
         const fault: string | null = pageFault(query, TREE_INVITE_SORTABLE);
 
         if (fault) {
             throw new BadRequestException(fault);
         }
 
-        const at: Date = new Date();
         const page: IPage<IStoredInvite> = await readInvites(this.#prisma, pageAsked(query, TREE_INVITE_SORTABLE));
 
         return { ...page, rows: page.rows.map((invite: IStoredInvite): ITreeInviteView => this.#view(invite, at)) };
@@ -124,11 +127,13 @@ export class InvitesReadController {
      * Погашенное и уже отозванное отзывать нечего — на них отвечает «не найдено»: годного
      * приглашения с этим именем нет, и разницы между «не было вовсе» и «стало негодным» для
      * этого действия не существует.
+     *
+     * Момент приходит последним доводом тем же приёмом, что и у выдачи: им решается годность
+     * отзываемого, и он же становится временем отзыва.
      */
     @Delete(':name')
     @SessionOperation()
-    public async revoke(@Param('name') name: string): Promise<ITreeInviteView> {
-        const at: Date = new Date();
+    public async revoke(@Param('name') name: string, at: Date = new Date()): Promise<ITreeInviteView> {
         const live: IStoredInvite | null = await findLiveInviteByName(this.#prisma, name);
 
         if (!live || inviteState(live, at) !== ETreeInviteView.Waiting) {

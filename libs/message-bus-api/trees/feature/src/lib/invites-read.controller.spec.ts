@@ -24,7 +24,13 @@ interface IInviteRow {
 /** Запрос двойника: то же, что у клиента хранилища, — доводы объектом и обещание ответа. */
 type TQuery = (args: Record<string, unknown>) => Promise<unknown>;
 
-/** Момент, от которого считаются сроки строк образца. */
+/**
+ * Момент, от которого считаются сроки строк образца и на который спрашивается список.
+ *
+ * Тем же моментом зовутся сами методы: просроченность считается на момент запроса, и приёмник,
+ * читающий часы машины, сделал бы образец годным ровно двое суток. Так и вышло — прогон,
+ * начавшийся через сорок восемь часов после этой даты, покраснел тремя сценариями сразу.
+ */
 const NOW: Date = new Date('2026-08-17T10:00:00.000Z');
 
 /** Строка дерева у двойника: столько, сколько читает поиск дерева по имени. */
@@ -147,7 +153,7 @@ describe('InvitesReadController', () => {
     it('SC-MB-128 — список называет имя, состояние и сроки, а кода в нём нет', async () => {
         db.invite();
 
-        const page: IPage<ITreeInviteView> = await invites.page({});
+        const page: IPage<ITreeInviteView> = await invites.page({}, NOW);
 
         expect(page.rows).toHaveLength(1);
         expect(page.rows[0].name).toBe('Своё дерево');
@@ -160,16 +166,16 @@ describe('InvitesReadController', () => {
     it('SC-MB-128 — погашенное приглашение из списка не выпадает и называет своё дерево', async () => {
         db.invite({ redeemedAt: NOW, activeName: null, tree: { slug: 'own-tree' } });
 
-        const page: IPage<ITreeInviteView> = await invites.page({});
+        const page: IPage<ITreeInviteView> = await invites.page({}, NOW);
 
         expect(page.rows[0].state).toBe(ETreeInviteView.Redeemed);
         expect(page.rows[0].treeSlug).toBe('own-tree');
     });
 
     it('SC-MB-128 — просроченность считается на момент запроса, а не хранится колонкой', async () => {
-        db.invite({ expiresAt: new Date(Date.now() - 1000) });
+        db.invite({ expiresAt: new Date(NOW.getTime() - 1000) });
 
-        expect((await invites.page({})).rows[0].state).toBe(ETreeInviteView.Expired);
+        expect((await invites.page({}, NOW)).rows[0].state).toBe(ETreeInviteView.Expired);
     });
 
     it('SC-MB-128 — список приезжает страницей: строки режутся размером, а общее число называет все', async () => {
@@ -177,7 +183,7 @@ describe('InvitesReadController', () => {
         db.invite({ issuedAt: new Date('2026-08-17T11:00:00.000Z'), activeName: 'Второе дерево', name: 'Второе дерево' });
         db.invite({ issuedAt: new Date('2026-08-17T10:00:00.000Z'), activeName: 'Третье дерево', name: 'Третье дерево' });
 
-        const second: IPage<ITreeInviteView> = await invites.page({ page: '2', size: '2' });
+        const second: IPage<ITreeInviteView> = await invites.page({ page: '2', size: '2' }, NOW);
 
         expect(second.total).toBe(3);
         expect(second.page).toBe(2);
@@ -187,14 +193,14 @@ describe('InvitesReadController', () => {
     });
 
     it('SC-MB-128 — выборка, которая не разобралась, отбивается с именем параметра', async () => {
-        await expect(invites.page({ sort: 'state' })).rejects.toThrow(BadRequestException);
-        await expect(invites.page({ page: 'вторая' })).rejects.toThrow(BadRequestException);
+        await expect(invites.page({ sort: 'state' }, NOW)).rejects.toThrow(BadRequestException);
+        await expect(invites.page({ page: 'вторая' }, NOW)).rejects.toThrow(BadRequestException);
     });
 
     it('SC-MB-120 — отзыв снимает приглашение, а запись о нём остаётся', async () => {
         db.invite();
 
-        const revoked: ITreeInviteView = await invites.revoke('Своё дерево');
+        const revoked: ITreeInviteView = await invites.revoke('Своё дерево', NOW);
 
         expect(revoked.state).toBe(ETreeInviteView.Revoked);
         expect(db.invites).toHaveLength(1);
@@ -205,8 +211,8 @@ describe('InvitesReadController', () => {
     it('SC-MB-120 — отзыв погашенного и несуществующего отвечает одинаково', async () => {
         db.invite({ redeemedAt: NOW, activeName: null });
 
-        await expect(invites.revoke('Своё дерево')).rejects.toThrow(NotFoundException);
-        await expect(invites.revoke('Чужое дерево')).rejects.toThrow(NotFoundException);
+        await expect(invites.revoke('Своё дерево', NOW)).rejects.toThrow(NotFoundException);
+        await expect(invites.revoke('Чужое дерево', NOW)).rejects.toThrow(NotFoundException);
     });
 
     it('SC-MB-156 — выдача отдаёт код один раз, а в хранилище кладёт только его хеш', async () => {
@@ -224,7 +230,7 @@ describe('InvitesReadController', () => {
 
     it('SC-MB-157 — выданное приглашение сразу стоит в списке ждущим', async () => {
         const issued: ITreeInviteIssued = await invites.issue({ name: 'Своё дерево' }, NOW);
-        const page: IPage<ITreeInviteView> = await invites.page({});
+        const page: IPage<ITreeInviteView> = await invites.page({}, NOW);
 
         expect(page.rows).toHaveLength(1);
         expect(page.rows[0].name).toBe(issued.name);
@@ -233,7 +239,7 @@ describe('InvitesReadController', () => {
 
     it('SC-MB-158 — кода выданного приглашения нет ни в одной строке списка', async () => {
         const issued: ITreeInviteIssued = await invites.issue({ name: 'Своё дерево' }, NOW);
-        const page: IPage<ITreeInviteView> = await invites.page({});
+        const page: IPage<ITreeInviteView> = await invites.page({}, NOW);
 
         expect(page.rows[0].name).toBe('Своё дерево');
         expect(JSON.stringify(page.rows)).not.toContain(issued.code);
@@ -275,7 +281,7 @@ describe('InvitesReadController', () => {
     });
 
     it('пустой список приглашений — это пустая страница, а не отказ', async () => {
-        const page: IPage<ITreeInviteView> = await invites.page({});
+        const page: IPage<ITreeInviteView> = await invites.page({}, NOW);
 
         expect(page.rows).toEqual([]);
         expect(page.total).toBe(0);
