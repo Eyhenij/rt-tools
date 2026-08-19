@@ -53,6 +53,19 @@ jobs:
                   VERSION=$(jq -r .version projects/agent-kit/package.json)
                   echo "VERSION=$VERSION" >> $GITHUB_ENV
 
+            - name: Build agent-kit
+              run: pnpm run build:agent-kit
+
+            # Раскладка идёт до коммита и зовётся собранным пакетом: версия стоит в шапке каждой
+            # разложенной копии, и без этого шага сверка раскладки краснеет на главной ветке сразу
+            # после публикации — то есть отбивает пуш у всех, пока её не догонит чужая ветка.
+            - name: Lay out the new edition into the tree
+              run: |
+                  node dist/agent-kit/bin/agent-kit.js sync
+                  node dist/agent-kit/bin/agent-kit.js sync --check
+
+            # Один коммит на подъём версии, журнал изменений и раскладку: два коммита оставили бы
+            # главную ветку в промежуточном состоянии — том самом красном, ради которого шаг заведён.
             - uses: EndBug/add-and-commit@v10
               with:
                   default_author: github_actions
@@ -62,9 +75,6 @@ jobs:
               run: |
                   git tag "rt-agent-kit@${{ env.VERSION }}"
                   git push origin "rt-agent-kit@${{ env.VERSION }}"
-
-            - name: Build agent-kit
-              run: pnpm run build:agent-kit
 
             - name: Publish
               run: pnpm run packagr:agent-kit
