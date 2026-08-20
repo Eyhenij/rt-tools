@@ -14,6 +14,12 @@
 | Отсутствие чужого пакета проверку не роняет.                                         | `projects/agent-kit/assets/checks/check-dupes.mjs:holdersOf`                 |
 | Главная ветка влита в ветку задачи до открытия PR.                                   | `projects/agent-kit/assets/rules/git-workflow.github.md:git-workflow`        |
 | Открытие PR отбивается, пока главная ветка не влита.                                 | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:behind`               |
+| Несошедшиеся условия поставки называются одним отказом.                              | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:deny_faults`          |
+| Каждое несошедшееся условие названо вместе с тем, чем оно снимается.                 | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:fault`                |
+| Условие, известное в начале работы, спрашивается в начале.                           | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:branch_arg`           |
+| Судится то основание, которое названо командой, а не вершина рабочей копии.          | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:base_ref`             |
+| Свежесть локальной ссылки на главную ветку спрашивается и при заведении ветки.       | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:remote_head`          |
+| Ветка без номера задачи условий поставки не получает.                                | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:branch_arg`           |
 | Гейт пуша зовёт то, что дерево разложило.                                            | `projects/agent-kit/assets/defaults/project.sh:rt_push_checks_default`       |
 | Предел длины объявлен одним числом на все роды файлов.                               | `projects/agent-kit/assets/checks/check-file-size.mjs:LIMIT`                 |
 | Накопленное до объявления предела перечислено поимённо.                              | `projects/agent-kit/assets/checks/check-file-size.mjs:readKnown`             |
