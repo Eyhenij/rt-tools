@@ -39,6 +39,13 @@ export namespace IProposal {
             readonly address: string;
             /** На каком шаге разбора стоит запись. Пустым это поле не приходит никогда. */
             readonly state: ECargoState;
+            /**
+             * Состояние по-русски: показывается оно этой строкой.
+             *
+             * Лежит полем, а не считается в шаблоне: шаблон методов не зовёт, а пайп ради одного
+             * перевода потребовал бы разделу своего слоя вида.
+             */
+            readonly stateLabel: string;
             readonly arrivedAt: Date;
         }
     }

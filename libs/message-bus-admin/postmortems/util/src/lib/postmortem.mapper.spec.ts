@@ -43,12 +43,17 @@ describe('PostmortemShortMapper', () => {
     it('поле, которого модель не называла, на экран не переезжает', () => {
         const row: IPostmortem.Short.State = mapper.mapFrom({ ...apiShort(), text: 'весь разбор' } as never);
 
-        expect(Object.keys(row).sort()).toEqual(['arrivedAt', 'file', 'id', 'state', 'tree', 'updatedAt']);
+        expect(Object.keys(row).sort()).toEqual(['arrivedAt', 'file', 'id', 'state', 'stateLabel', 'tree', 'updatedAt']);
     });
 
     it('SC-MB-167 — состояние приезжает строкой, а на экран уходит значением набора', () => {
         expect(mapper.mapFrom(apiShort()).state).toBe(ECargoState.InWork);
         expect(mapper.mapFrom(apiShort({ state: 'new' })).state).toBe(ECargoState.New);
+    });
+
+    it('SC-MB-171 — рядом с состоянием строка несёт его слово человека', () => {
+        expect(mapper.mapFrom(apiShort()).stateLabel).toBe('В работе');
+        expect(mapper.mapFrom(apiShort({ state: 'released' })).stateLabel).toBe('Выпущено');
     });
 
     it('состояние вне набора читается как новое, а не уходит на экран машинной строкой', () => {

@@ -48,12 +48,17 @@ describe('ProposalShortMapper', () => {
     it('поле, которого модель не называла, на экран не переезжает', () => {
         const row: IProposal.Short.State = mapper.mapFrom({ ...apiShort(), text: 'всё предложение' } as never);
 
-        expect(Object.keys(row).sort()).toEqual(['address', 'arrivedAt', 'id', 'resource', 'state', 'tree']);
+        expect(Object.keys(row).sort()).toEqual(['address', 'arrivedAt', 'id', 'resource', 'state', 'stateLabel', 'tree']);
     });
 
     it('SC-MB-167 — состояние приезжает строкой, а на экран уходит значением набора', () => {
         expect(mapper.mapFrom(apiShort()).state).toBe(ECargoState.InWork);
         expect(mapper.mapFrom(apiShort({ state: 'new' })).state).toBe(ECargoState.New);
+    });
+
+    it('SC-MB-171 — рядом с состоянием строка несёт его слово человека', () => {
+        expect(mapper.mapFrom(apiShort()).stateLabel).toBe('В работе');
+        expect(mapper.mapFrom(apiShort({ state: 'released' })).stateLabel).toBe('Выпущено');
     });
 
     it('состояние вне набора читается как новое, а не уходит на экран машинной строкой', () => {

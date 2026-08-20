@@ -328,6 +328,25 @@ async function moments() {
     );
 }
 
+/**
+ * Состояния записей груза.
+ *
+ * Приём ставит всем приехавшим «новое», и на таких данных столбец состояния показывал бы одно
+ * слово во всех строках: сценарий про разные состояния проверить было бы нечем. Раздаются они
+ * поимённо, а не по счётчику: значение стоит в ячейке, ширину столбцов таблица раскладывает по
+ * содержимому, и плывущее слово двигало бы соседние столбцы от прогона к прогону.
+ */
+async function states() {
+    await sql(
+        [
+            `UPDATE "postmortem" SET "state" = 'released' WHERE "file" = 'markup-case.md';`,
+            `UPDATE "postmortem" SET "state" = 'in_work' WHERE "file" IN ('stand-case-23.md', 'stand-case-11.md');`,
+            `UPDATE "postmortem" SET "state" = 'fixed' WHERE "file" = 'stand-case-22.md';`,
+            `UPDATE "proposal" SET "state" = 'in_work' WHERE "resource" = 'rules/lists.md';`,
+        ].join('\n')
+    );
+}
+
 /** Засев целиком. Зовётся подъёмом стенда после того, как приёмник поднят. */
 export async function seed() {
     await wipe();
@@ -338,6 +357,7 @@ export async function seed() {
     await summaries(tokens);
     await invites();
     await moments();
+    await states();
 }
 
 /** Подготовка хранилища: база и схема. Идёт до подъёма приёмника — он ждёт готовой схемы. */

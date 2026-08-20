@@ -7,7 +7,8 @@
  * Время приезжает строкой и становится временем здесь: дальше по экрану ходит уже `Date`, и
  * разбор строки не повторяется в каждой ячейке таблицы.
  */
-import { cargoStateOf, ITreeChoice } from '@rt/message-bus-common';
+import { cargoStateLabel } from '@rt/message-bus-admin/common/core/util';
+import { cargoStateOf, ECargoState, ITreeChoice } from '@rt/message-bus-common';
 import { BaseMapper } from '@rt-tools/utils';
 
 import { IProposal } from './proposal.model';
@@ -20,14 +21,17 @@ function treeOf(mapper: BaseMapper<unknown>, raw: ITreeChoice): ITreeChoice {
 /** Строка списка. */
 export class ProposalShortMapper extends BaseMapper<IProposal.Short.State> {
     public override mapFrom(data: IProposal.Short.Api): IProposal.Short.State {
+        // Состояние сверяется с набором явно: `getAsType` умолчания не принимает, а значение вне
+        // набора отдаёт строкой, которой на экране не бывает.
+        const cargoState: ECargoState = cargoStateOf(this.typeCast.getAsString(data.state));
+
         return {
             id: this.typeCast.getAsString(data.id),
             tree: treeOf(this, data.tree),
             resource: this.typeCast.getAsString(data.resource),
             address: this.typeCast.getAsString(data.address),
-            // Состояние сверяется с набором явно: `getAsType` умолчания не принимает, а значение
-            // вне набора отдаёт строкой, которой на экране не бывает.
-            state: cargoStateOf(this.typeCast.getAsString(data.state)),
+            state: cargoState,
+            stateLabel: cargoStateLabel(cargoState),
             arrivedAt: new Date(this.typeCast.getAsString(data.arrivedAt)),
         };
     }
