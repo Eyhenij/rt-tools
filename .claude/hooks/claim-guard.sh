@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.9.1 · hooks/claim-guard.sh · 1b4a292bff80 · правится надстройкой, не здесь
+# rt-kit v0.9.1 · hooks/claim-guard.sh · f6a0b2c67839 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Гард утверждения: сказанное владельцу о состоянии дерева несёт команду, показавшую это. Stop.
 #
@@ -94,6 +94,17 @@ for row in "${claims[@]}"; do
 Запусти ${name} этим же ходом и назови её вывод — либо убери утверждение из ответа.
 
 Гард судит один ход: следующий заход не отбивается."
+
+    # Общий хвост отказа: два законных хода. Файл может быть не разложен — тогда хвоста нет,
+    # а причина отказа остаётся прежней.
+    # shellcheck disable=SC1090
+    [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+        && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+    command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+    deny_tail_text="$(rt_deny_tail "")"
+    [ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
 
     jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
         || printf '{"decision":"block","reason":"claim-guard: утверждение о дереве не подтверждено командой."}\n'
