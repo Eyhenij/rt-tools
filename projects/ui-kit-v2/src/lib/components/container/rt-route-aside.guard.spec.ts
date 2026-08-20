@@ -3,7 +3,8 @@ import { ActivatedRouteSnapshot, GuardResult, MaybeAsync, Route } from '@angular
 
 import { firstValueFrom, isObservable, Observable, of, throwError } from 'rxjs';
 
-import { IRtAsideDeactivate, rtAsideUnsavedGuard } from './rt-route-aside.guard';
+import { rtAsideUnsavedGuard } from './rt-route-aside.guard';
+import { IRtAsideDeactivate } from './rt-route-aside.registry';
 import { RtRouteAsideRegistry } from './rt-route-aside.registry';
 
 const ROUTE: Route = { path: 'edit/:id', outlet: 'ro' };

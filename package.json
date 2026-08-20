@@ -27,6 +27,7 @@
     "check:specs": "node tools/check-specs.mjs",
     "check:docs": "node tools/check-doc-paths.mjs",
     "check:dupes": "node tools/check-dupes.mjs",
+    "check:cycles": "node tools/check-cycles.mjs",
     "check:styles": "node tools/check-styles.mjs",
     "check:tokens-styles": "node tools/check-tokens-styles.mjs",
     "check:tokens-graph": "node tools/check-tokens-graph.mjs",

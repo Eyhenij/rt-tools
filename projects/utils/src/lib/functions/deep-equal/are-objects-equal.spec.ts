@@ -1,4 +1,4 @@
-import { areObjectsEqual } from './are-objects-equal.js';
+import { areObjectsEqual } from './deep-equal.js';
 
 describe(areObjectsEqual.name, () => {
     it('should return true for the same reference', () => {

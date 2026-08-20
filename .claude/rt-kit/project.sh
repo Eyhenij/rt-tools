@@ -101,6 +101,7 @@ pnpm run agent-kit:check
 node tools/check-specs.mjs
 node tools/check-dupes.mjs
 node tools/check-hooks.mjs
+node tools/check-cycles.mjs
 EOF
 
     rt_push_checks_default "$1" \

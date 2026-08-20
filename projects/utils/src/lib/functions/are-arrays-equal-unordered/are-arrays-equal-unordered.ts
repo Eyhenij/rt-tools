@@ -1,4 +1,4 @@
-import { areObjectsEqual } from '../are-objects-equal/index.js';
+import { areObjectsEqual } from '../deep-equal/index.js';
 
 /**
  * Two elements read as the same value: nested arrays stay order-insensitive, objects go structural,

@@ -1,7 +1,17 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Route } from '@angular/router';
 
-import { IRtAsideDeactivate } from './rt-route-aside.guard';
+import { Observable } from 'rxjs';
+
+/**
+ * Панель, которая умеет ответить на вопрос «можно ли уступить место».
+ *
+ * Объявлена рядом с учётом панелей, а не рядом с гардом: гард берёт учёт значением, и
+ * объявление у него замыкало круг «учёт → гард → учёт».
+ */
+export interface IRtAsideDeactivate {
+    canDeactivate(): Observable<boolean>;
+}
 
 /**
  * Учёт панелей, стоящих на экране: из него роутерный гард узнаёт, кого спрашивать
