@@ -142,6 +142,15 @@
         ]
       },
       {
+        "matcher": "Edit|Write|MultiEdit|mcp__webstorm__create_new_file|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/exam-guard.sh"
+          }
+        ]
+      },
+      {
         "matcher": "Edit|Write|MultiEdit",
         "hooks": [
           {
@@ -205,6 +214,10 @@
           {
             "type": "command",
             "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/turn-exit-guard.sh"
+          },
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/conscience-guard.sh"
           }
         ]
       }
