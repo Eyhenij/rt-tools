@@ -28,3 +28,5 @@
 | Ход, в котором совесть нашла повтор разобранного промаха, не заканчивается.                                | `projects/agent-kit/assets/hooks/conscience-guard.sh:verdict`          |
 | Находку снимает действие, а не слова о ней.                                                                | `projects/agent-kit/assets/hooks/conscience-guard.sh:verdict`          |
 | Верность находки гард не судит.                                                                            | `projects/agent-kit/assets/hooks/conscience-guard.sh:reason`           |
+| Роль, выключенная деревом, гарда при ней не держит.                                                        | `projects/agent-kit/assets/hooks/roles.sh:rt_role_off`                 |
+| Настройка, которую не прочитать, роль не выключает.                                                        | `projects/agent-kit/assets/hooks/roles.sh:rt_role_off`                 |
