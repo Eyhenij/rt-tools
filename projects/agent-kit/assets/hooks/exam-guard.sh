@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file|Bash
-# Требует: agents/strict-teacher.md
+# Требует: agents/strict-teacher.md, hooks/roles.sh
 # Гард экзамена: правка не идёт, пока за сессию не сдан экзамен по загруженным правилам.
 #
 # Зачем именно так. Гейт правил требует загрузить правило перед правкой и на этом кончается:
@@ -21,6 +21,14 @@
 input="$(cat 2>/dev/null)"
 [ -z "$input" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0
+
+# Роль, выключенная деревом, гарда не держит: список выключенных лежит в настройке дерева, а
+# читает его помощник рядом. Нечитаемая настройка выключением не считается — гард работает как
+# прежде.
+rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/roles.sh" ] && . "$rt_hooks_dir/roles.sh" 2>/dev/null
+command -v rt_role_off >/dev/null 2>&1 && rt_role_off strict-teacher && exit 0
 
 tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
 # Второй экзамен спрашивается на снятии черновика: работа кончилась, и правила поставки к этому
