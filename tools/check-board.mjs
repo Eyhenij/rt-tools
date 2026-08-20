@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.9.1 · checks/check-board.github.mjs · 551fbeac5457 · правится надстройкой, не здесь
+// rt-kit v0.9.1 · checks/check-board.github.mjs · 6a24bb6dc471 · правится надстройкой, не здесь
 /**
  * Сверка очереди работ с тем, что закон о поставке требует от задачи и её PR.
  *
@@ -179,6 +179,28 @@ function checkReadyDraft(pull, options) {
     );
 }
 
+/**
+ * Заявка, конфликтующая с главной веткой.
+ *
+ * Конфликт приезжает в отданную заявку чужим слиянием, без единого действия её автора: основание,
+ * проверенное на открытии, устаревает в ту минуту, когда владелец влил соседнюю работу. Гард
+ * снятия черновика сюда не достаёт — он судит один ход, а заявка стоит в очереди днями.
+ *
+ * Судится только прямое «конфликтует»: `UNKNOWN` означает, что хостинг сливаемость ещё считает,
+ * и строка о нём краснела бы на каждой свежей вершине. Две заявки так и ушли в разбор с
+ * конфликтом — разбор `docs/postmortems/2026-08-20-drafts-cleared-without-re-reading-pr-state.md`.
+ */
+function checkConflicting(pull) {
+    if (pull.mergeable !== 'CONFLICTING') {
+        return;
+    }
+
+    report(
+        `PR #${pull.number}: конфликтует с главной веткой — влей её в ветку задачи, разбери конфликт и запушь; ` +
+            `слить эту заявку владелец не может, а по странице это видно только внутри неё`
+    );
+}
+
 let checked = { issues: 0, pulls: 0 };
 
 // Черновики судятся по диску и потому проверяются всегда: связи для этого не нужно.
@@ -238,6 +260,8 @@ try {
         if (HAS_PIPELINE && pull.headRefOid) {
             checkHeadRun(pull, options);
         }
+
+        checkConflicting(pull);
 
         if (!FOLDER_SKIP.test(String(pull.body ?? '')) && pull.headRefName) {
             const folder = folderInBranch(pull.headRefName, options);

@@ -217,7 +217,7 @@ export function pullState(ref, options) {
     const target = ref === undefined || ref === null || `${ref}`.trim() === '' ? [] : [`${ref}`.trim()];
     let pull;
     try {
-        pull = ghJson(['pr', 'view', ...target, '--json', 'number,isDraft,reviewRequests,latestReviews,author'], options);
+        pull = ghJson(['pr', 'view', ...target, '--json', 'number,isDraft,reviewRequests,latestReviews,author,mergeable'], options);
     } catch (error) {
         if (error instanceof OfflineError) {
             throw error;
@@ -237,6 +237,11 @@ export function pullState(ref, options) {
         author: pull.author?.login ?? null,
         reviewers,
         reviewed: reviewers.filter((login) => login !== (pull.author?.login ?? null)).length > 0,
+        // Конфликт приезжает в отданную заявку чужим слиянием, без единого действия её автора:
+        // хостинг считает сливаемость заново после каждой правки главной ветки. Судится только
+        // прямое «конфликтует»: `UNKNOWN` означает, что хостинг ещё считает, и читать его как
+        // конфликт значило бы отбивать работу на каждой свежей вершине.
+        conflicting: pull.mergeable === 'CONFLICTING',
     };
 }
 
@@ -246,7 +251,7 @@ export function pullState(ref, options) {
  */
 export function fetchOpenPulls(options) {
     return ghJson(
-        ['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,title,headRefName,headRefOid,isDraft,body'],
+        ['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,title,headRefName,headRefOid,isDraft,body,mergeable'],
         options
     );
 }
