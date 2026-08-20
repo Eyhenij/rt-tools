@@ -1,6 +1,8 @@
 import { computed, Signal } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 
+import { isNil } from '@rt-tools/utils';
+
 import { BaseStoreService } from './base-store.service';
 import { BASE_INITIAL_STATE } from './constants/base-initial-state.const';
 import { EModelStatus } from './enums/async-state-status.enum';
@@ -21,14 +23,24 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
     // Selectors
     // ================================
 
-    public readonly loading: Signal<boolean> = computed(() => this.store().loading);
-    public readonly fetching: Signal<boolean> = computed(() => this.store().fetching);
+    /**
+     * Selectors answer with the type they declare even when the field is missing from the state.
+     *
+     * A descendant builds the state object itself, so a flag may simply not be there. Read as
+     * `undefined`, a waiting flag looks like "not waiting" and the screen shows an empty list
+     * instead of a spinner; neither the build nor the linter sees it — the type promises a value.
+     *
+     * The fallback is chosen by emptiness, not by truthiness: `EModelStatus.Init` is the first
+     * member of the enum, and `||` cannot tell it from a missing field.
+     */
+    public readonly loading: Signal<boolean> = computed(() => this.store().loading ?? false);
+    public readonly fetching: Signal<boolean> = computed(() => this.store().fetching ?? false);
     public readonly pending: Signal<boolean> = computed(() => this.loading() || this.fetching());
-    public readonly requestStatus: Signal<EModelStatus> = computed(() => this.store().requestStatus || EModelStatus.Init);
-    public readonly loadingStatus: Signal<EModelStatus> = computed(() => this.store().loadingStatus || EModelStatus.Init);
-    public readonly fetchingStatus: Signal<EModelStatus> = computed(() => this.store().fetchingStatus || EModelStatus.Init);
-    public readonly upsertStatus: Signal<EModelStatus> = computed(() => this.store().upsertStatus || EModelStatus.Init);
-    public readonly deleteStatus: Signal<EModelStatus> = computed(() => this.store().deleteStatus || EModelStatus.Init);
+    public readonly requestStatus: Signal<EModelStatus> = computed(() => this.store().requestStatus ?? EModelStatus.Init);
+    public readonly loadingStatus: Signal<EModelStatus> = computed(() => this.store().loadingStatus ?? EModelStatus.Init);
+    public readonly fetchingStatus: Signal<EModelStatus> = computed(() => this.store().fetchingStatus ?? EModelStatus.Init);
+    public readonly upsertStatus: Signal<EModelStatus> = computed(() => this.store().upsertStatus ?? EModelStatus.Init);
+    public readonly deleteStatus: Signal<EModelStatus> = computed(() => this.store().deleteStatus ?? EModelStatus.Init);
 
     protected constructor(initialState: STATE_TYPE, config?: IStoreConfig) {
         super(initialState, config);
@@ -38,8 +50,12 @@ export abstract class BaseAsyncStoreService<STATE_TYPE extends IStateBase.Async,
     // Actions
     // ================================
 
+    /**
+     * A failure equal to `0` or to an empty string is a failure all the same: judged by
+     * truthiness, it was dropped together with the callback that was supposed to follow it.
+     */
     public handleError(error?: ERROR_TYPE, callbackFn?: () => void): void {
-        if (error) {
+        if (!isNil(error)) {
             // eslint-disable-next-line no-console
             console.error(error);
 
