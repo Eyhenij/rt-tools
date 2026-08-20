@@ -10,7 +10,7 @@
  * его целиком; запись, которой у дерева нет, и переход, которого порядок не разрешает,
  * отбиваются построчно — их видно только в хранилище.
  */
-import { BadRequestException, Body, Controller, Post, Req } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Logger, Post, Req } from '@nestjs/common';
 
 import { TreeOperation } from '@rt/message-bus-api/access/util';
 import { ECargoStateDenial, ICargoStateAccepted, ICargoStateDenied } from '@rt/message-bus-api/cargo-state/api';
@@ -38,6 +38,20 @@ import {
 /** Как род груза зовётся в отказе: дерево шлёт правку по двум родам и должно знать, какой отбит. */
 const CARGO_KIND: string = 'состояния записей груза';
 
+/**
+ * Источник строк журнала этого домена. Задаётся константой, а не литералом в вызове: по нему
+ * строки домена собираются вместе, и соседний класс писал бы под тем же именем.
+ */
+const LOG_CONTEXT: string = 'CargoState';
+
+/**
+ * Имя строки о неисполненной строке пакета.
+ *
+ * Постоянное: значения идут полями. Ответ с отбитыми строками виден одному дереву, и без этой
+ * строки правка, не легшая ни разу, не видна никому — ни владельцу, ни разбору происшествия.
+ */
+const DENIED_LINE: string = 'intake.state.denied';
+
 /** Поля пакета правки: те же, что у приёма груза. */
 const STATE_FIELDS: readonly string[] = ['schema', 'tree', 'items'];
 
@@ -61,6 +75,7 @@ function bodyFaultMessage(fault: ECargoStateBodyFault, at: number | null): strin
 
 @Controller('intake')
 export class CargoStateController {
+    readonly #log: Logger = new Logger(LOG_CONTEXT);
     readonly #prisma: PrismaService;
 
     constructor(prisma: PrismaService) {
@@ -132,6 +147,22 @@ export class CargoStateController {
             }
         }
 
+        this.#told(tree, denied);
+
         return { tree: tree.slug, changed, same, denied };
+    }
+
+    /**
+     * Отбитые строки — в журнал приёмника, по строке на каждую.
+     *
+     * Уровень ниже отказа: приложение работает, а отбой — это сработавшая проверка. В полях род
+     * записи, признак дерева и причина; ни токена, ни текста записи в них нет — журнал читают,
+     * чтобы понять, что сломалось, а не чтобы прочитать чужое. Ключ записи туда тоже не идёт:
+     * у предложения им служит признак его текста, и по нему текст находится у самого дерева.
+     */
+    #told(tree: IRequestTree, denied: readonly ICargoStateDenied[]): void {
+        for (const line of denied) {
+            this.#log.warn(DENIED_LINE, { tree: tree.slug, kind: line.kind, denial: line.denial });
+        }
     }
 }

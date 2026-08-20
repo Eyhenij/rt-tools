@@ -1,5 +1,5 @@
-import { BadRequestException } from '@nestjs/common';
-import { describe, expect, it } from 'vitest';
+import { BadRequestException, Logger } from '@nestjs/common';
+import { describe, expect, it, MockInstance, vi } from 'vitest';
 
 import { OPERATION_ACCESS, TOperationAccess } from '@rt/message-bus-api/access/util';
 import { ECargoStateDenial, ICargoStateAccepted } from '@rt/message-bus-api/cargo-state/api';
@@ -184,5 +184,27 @@ describe('CargoStateController', () => {
         const access: TOperationAccess | undefined = Reflect.getMetadata(OPERATION_ACCESS, CargoStateController.prototype.move);
 
         expect(access).toBe('tree');
+    });
+
+    it('SC-MB-180 — отбитая строка попадает в журнал приёмника без токена и текста записи', async () => {
+        const prisma: PrismaDouble = new PrismaDouble();
+        prisma.postmortems.push({ treeId: NEIGHBOUR.id, key: 'a.md', state: ECargoState.New });
+        const written: unknown[][] = [];
+        const warn: MockInstance = vi.spyOn(Logger.prototype, 'warn').mockImplementation((...tail: unknown[]): void => {
+            written.push(tail);
+        });
+
+        try {
+            await controllerWith(prisma).move(packet([{ kind: 'postmortem', key: 'a.md', state: 'in_work' }]), requestOf());
+        } finally {
+            warn.mockRestore();
+        }
+
+        expect(written).toHaveLength(1);
+        expect(written[0][0]).toBe('intake.state.denied');
+        expect(written[0][1]).toEqual({ tree: TREE.slug, kind: 'postmortem', denial: ECargoStateDenial.Missing });
+        // Отрицательное утверждение идёт в паре с положительным: сперва строка найдена, и только
+        // потом сказано, чего в ней нет
+        expect(JSON.stringify(written[0])).not.toContain('a.md');
     });
 });
