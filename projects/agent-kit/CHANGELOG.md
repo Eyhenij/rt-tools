@@ -1,3 +1,10 @@
+## [Unreleased]
+
+### Features
+
+- **rt:agent-kit:** сводка наблюдений называет вес загруженного слоя правил и цену одного захода
+- **rt:agent-kit:** доля отбитий гейта, пришедших не на правку файла, стоит в сводке своей строкой
+
 # [0.10.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.9.1...rt-agent-kit@0.10.0) (2026-08-20)
 
 ### Bug Fixes

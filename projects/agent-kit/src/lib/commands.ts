@@ -4,7 +4,7 @@
  * а `process.exit` зовёт только точка входа — иначе ни одну из них нельзя было бы проверить
  * спекой, не перехватывая поток вывода.
  */
-import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { IAsset, collectAssets } from './assets.js';
@@ -14,7 +14,17 @@ import { debtLine, ICompanion, isUnfilled, IUnaddressed, pathOf as companionPath
 import { CONFIG_PATH, DEFAULT_LAYOUT, IConfig, KINDS, OVERRIDES_DIR, PROFILE_FILE, readConfig, RT_KIT_DIR, TKind } from './config.js';
 import { IStaleBuild } from './freshness.js';
 import { hooksSection, IHookBinding, IMatcherDrift, SETTINGS_PATH } from './hooks-map.js';
-import { DEFAULT_DAYS, ICount, IReadResult, ISummary, KEEP_DAYS, OBSERVATIONS_DIR, readObservations, summarize } from './observations.js';
+import {
+    DEFAULT_DAYS,
+    ICount,
+    IReadResult,
+    ISummary,
+    KEEP_DAYS,
+    OBSERVATIONS_DIR,
+    readObservations,
+    summarize,
+    TWeights,
+} from './observations.js';
 import { IPlanned, isRefusal, TOutcome } from './plan.js';
 import { laidOutSkills } from './snapshot.js';
 import { ICutFound, IRetiredFound, ISyncResult, pendingOf, planSync, runSync } from './sync.js';
@@ -712,6 +722,61 @@ const countLines: (counted: readonly ICount[]) => string[] = (counted: readonly 
     return counted.map((entry: ICount): string => `  ${entry.name.padEnd(width)}  ${entry.count}`);
 };
 
+/**
+ * Вес разложенных правил на диске: имя правила в сумму байт его текстов.
+ *
+ * Считается здесь, а не в сводке: сводка разбирает наблюдения и диска не знает. Складываются все
+ * `.md` папки правила — само правило, компаньон с именами дерева и всё, что дерево положило
+ * рядом: загрузка правила тянет их не поодиночке, и раздельный счёт врал бы в меньшую сторону.
+ *
+ * Правило, которого в дереве нет, в карту не попадает вовсе. Ноль от него неотличим по числу, но
+ * отличим по смыслу: не «ничего не весит», а «весить нечему».
+ */
+function weightsOfSkills(root: string, dir: string, names: readonly string[]): TWeights {
+    const at: string = join(root, dir);
+    const found: Record<string, number> = {};
+
+    for (const name of names) {
+        const folder: string = join(at, name);
+
+        if (!existsSync(folder)) {
+            continue;
+        }
+
+        found[name] = readdirSync(folder)
+            .filter((file: string): boolean => file.endsWith('.md'))
+            .reduce((sum: number, file: string): number => sum + statSync(join(folder, file)).size, 0);
+    }
+
+    return found;
+}
+
+/** Байты человеку: килобайтами, потому что счёт идёт на сотни тысяч и читается по одному. */
+function kbOf(bytes: number): string {
+    return `${Math.round(bytes / 1024)} КБ`;
+}
+
+/**
+ * Строка о том, сколько отбитий пришло не на правку файла.
+ *
+ * Своей строкой, а не долей, выведенной читателем из разбивки по родам: гейт стоит ради правки, и
+ * доля, пришедшая на команду оболочки и на браузер, говорит, сколько раз правило потребовали под
+ * то, что правкой не является. Сложенная глазами из десятка строк, эта доля не складывается
+ * никогда.
+ *
+ * Молчит, когда отбитий не было вовсе: «0 процентов» при нуле отбитий — ответ на незаданный
+ * вопрос.
+ */
+function offFileLines(summary: ISummary): string[] {
+    const total: number = summary.denials.reduce((found: number, entry: ICount): number => found + entry.count, 0);
+
+    if (total === 0) {
+        return [];
+    }
+
+    return [`  не на правке файла: ${summary.denialsOffFile} из ${total} — ${Math.round((summary.denialsOffFile / total) * 100)}%`];
+}
+
 /** Сводка строками: загруженное, незагруженное, отбивки гейта и отказы гардов. */
 function statsLines(summary: ISummary, swept: readonly string[], days: number, version: string, laidOut: number): string[] {
     return [
@@ -719,6 +784,14 @@ function statsLines(summary: ISummary, swept: readonly string[], days: number, v
         ...(summary.versions.length ? [`версии пакета в записях: ${summary.versions.join(', ')}`] : []),
         '',
         `правил загружено: ${summary.loads.reduce((found: number, entry: ICount): number => found + entry.count, 0)}`,
+        // Вес молчит, когда весить нечем: каталог правил не разложен или пуст. Ноль килобайт при
+        // сотне загрузок читался бы как «правила ничего не стоят», а это не то же самое.
+        ...(summary.bytes > 0
+            ? [
+                  `  весом ${kbOf(summary.bytes)}, на один заход ${kbOf(summary.bytesPerSession)}`,
+                  '  — столько текста заход прочитал прежде, чем взяться за работу',
+              ]
+            : []),
         ...countLines(summary.loads),
         ...(summary.unused.length
             ? [
@@ -737,9 +810,10 @@ function statsLines(summary: ISummary, swept: readonly string[], days: number, v
             ? [
                   '',
                   `гейт отбивал: ${summary.denials.reduce((found: number, entry: ICount): number => found + entry.count, 0)}`,
+                  ...offFileLines(summary),
                   ...countLines(summary.denials),
                   ...(summary.kinds.length
-                      ? ['  чаще всего на:', ...countLines(summary.kinds).map((line: string): string => `  ${line}`)]
+                      ? ['  по роду правки:', ...countLines(summary.kinds).map((line: string): string => `  ${line}`)]
                       : []),
               ]
             : []),
@@ -784,7 +858,10 @@ export function stats(env: IEnvironment, options: IStatsOptions): IOutcomeOfComm
 
     const days: number = options.days > 0 ? options.days : DEFAULT_DAYS;
     const result: IReadResult = readObservations(root, options.today, days);
-    const summary: ISummary = summarize(result.observations, laidOutSkills(config, assetsDir), days);
+    const known: readonly string[] = laidOutSkills(config, assetsDir);
+    // Вес спрашивается у дерева, а не у пакета: правило дерево могло переписать надстройкой, и
+    // заход читал то, что лежит здесь, а не то, что уехало бы из пакета.
+    const summary: ISummary = summarize(result.observations, known, days, weightsOfSkills(root, config.layout.rules, known));
 
     if (options.json) {
         return { code: 0, lines: [JSON.stringify({ ...summary, swept: result.swept })] };
