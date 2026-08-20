@@ -112,7 +112,7 @@ DUPES_TREE="$(mktemp -d)"
 mkdir -p "$DUPES_TREE/tools" "$DUPES_TREE/.claude/rt-kit" \
     "$DUPES_TREE/projects/kit/src" "$DUPES_TREE/projects/kit/node_modules/@ext/sets/decl"
 cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/check-dupes.mjs" "$DUPES_TREE/tools/"
-printf '{"accepted":[],"debt":[]}\n' > "$DUPES_TREE/tools/dupes-allowlist.json"
+printf '{"accepted":{},"debt":{}}\n' > "$DUPES_TREE/tools/dupes-allowlist.json"
 printf '{"sourceRoots":["projects"],"externalEnums":[{"package":"@ext/sets","dir":"decl"}]}\n' \
     > "$DUPES_TREE/.claude/rt-kit/checks.json"
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file
-# Требует: hooks/profile-check.sh
+# Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # Гард якоря для спек. PreToolUse на правке разметки.
 #
 # Спеки адресуют элементы только через этот атрибут. Классы оформления меняются вместе с
@@ -121,6 +121,17 @@ missing="$(printf '%s' "$added" | RT_QA_DECORATIVE="$decorative" RT_QA_COMPONENT
 [ -z "$missing" ] && exit 0
 
 reason="BLOCKED: интерактивные элементы без якоря для спек в ${path##*/}: ${missing}. Спеки адресуют элементы только через этот атрибут: классы оформления меняются вместе с вёрсткой, а поиск по роли и тексту ломается на переводах — оба вида селекторов делают сквозные спеки хрупкими. Проставь якорь через дефис по смыслу элемента; повторяющиеся элементы списка носят ОДИН якорь и различаются атрибутами данных. Если элемент чисто декоративный и спека его никогда не тронет — поставь атрибут пропуска НА САМ ЭТОТ ТЕГ, соседние элементы правки при этом продолжают проверяться."
+
+# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
+# Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+deny_tail_text="$(rt_deny_tail "атрибут пропуска на самом декоративном теге")"
+[ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
 
 jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
     || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Интерактивный элемент без якоря для спек."}}\n'

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: Stop
+# Требует: hooks/deny-tail.sh
 # Гард ожидания: ход, сообщающий владельцу о чужом шаге, не заканчивается, пока в нём не было ни
 # одного действия по следующей задаче. Stop.
 #
@@ -109,6 +110,17 @@ reason="BLOCKED by waiting-turn-guard: ${said}, а действия по сле�
 Конец прогона узнаётся возвратом фоновой команды, а не взглядом на страницу.
 
 Гард судит один ход: следующий заход не отбивается."
+
+# Общий хвост отказа: два законных хода. Файл может быть не разложен — тогда хвоста нет,
+# а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+deny_tail_text="$(rt_deny_tail "")"
+[ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
 
 jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
     || printf '{"decision":"block","reason":"waiting-turn-guard: PR открыт — тем же ходом берётся следующая задача."}\n'

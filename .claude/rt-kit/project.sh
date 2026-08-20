@@ -111,14 +111,44 @@ EOF
 pnpm exec nx affected -t lint typecheck test build --parallel
 pnpm exec nx affected -t test-hooks
 pnpm run lint:styles
+pnpm exec nx affected -t verify --parallel
+node tools/check-push-gate.mjs
+EOF
+
+    # Тяжёлые шаги идут по составу правки, а не подряд.
+    #
+    # Признак тот же, что у конвейера: текстовой считается ветка, у которой каждый задетый файл
+    # — либо `.md`, либо лежит под `docs/`. Всё остальное, включая обвязку и настройки, считается
+    # кодом: признак обязан ошибаться в сторону лишнего прогона, а не пропущенного. Пустая база
+    # означает, что сравнивать не с чем, — тогда гоняется всё; той же пустой базой зовёт функцию
+    # сверка полноты набора, и список она видит целиком.
+    #
+    # Стоило отсутствие признака дорого: пуш коммита, менявшего одну строку в таблице markdown,
+    # поднимал стенд, снимал две витрины и собирал два образа — около десяти минут на текстовую
+    # правку. Владелец трижды за заход отбил такой пуш, приняв его за зависший.
+    if [ -n "$1" ] && rt_push_docs_only "$1"; then
+        return 0
+    fi
+
+    cat <<'EOF'
 pnpm exec nx run message-bus-admin-e2e:e2e
 node tools/visual-gate.mjs ui-kit
 node tools/visual-gate.mjs ui-kit-v2
-pnpm exec nx affected -t verify --parallel
 docker build -f deploy/message-bus.Dockerfile -t message-bus:gate .
 docker build -f deploy/message-bus-web.Dockerfile -t message-bus-web:gate .
-node tools/check-push-gate.mjs
 EOF
+}
+
+# Тронула ли ветка только тексты. Нулевой код — только тексты, иначе — код.
+#
+# Пустой список задетого текстовой правкой не считается: сравнивать не с чем, и молчание тут
+# читалось бы как «менять нечего».
+rt_push_docs_only() {
+    changed="$(git diff --name-only "$1"...HEAD 2>/dev/null)"
+    [ -z "$changed" ] && return 1
+    printf '%s\n' "$changed" | grep -qvE '(^docs/|\.md$)' && return 1
+
+    return 0
 }
 
 # Какой документ обязан ехать тем же коммитом, что и этот файл. Печатает образец пути или молчит.

@@ -29,7 +29,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { CONFIG, ROOT, allowlistOf, readAllowlist } from './rt-kit-checks.config.mjs';
+import { CONFIG, ROOT, allowlistOf, baselineOf, parseAllowlist } from './rt-kit-checks.config.mjs';
 
 /** Слой оформления: шкала, назначения светлой темы, переопределения тёмной. */
 const STYLES = 'projects/ui-kit-v2/src/styles';
@@ -240,8 +240,8 @@ const contrast = (first, second) => {
  * Список принятого — пары «место и причина, почему оно принято». Причина обязательна: без неё
  * список через месяц читается как перечень мест, которые кто-то когда-то решил не чинить.
  */
-const acceptedReasons = readAllowlist('tokens-theme').accepted ?? {};
-const accepted = new Set(Object.keys(acceptedReasons));
+const allowlist = parseAllowlist('tokens-theme', ['accepted']);
+const accepted = new Set(allowlist.accepted.keys());
 const findings = [];
 const add = (key, text) => findings.push({ key, text });
 
@@ -339,7 +339,7 @@ for (const pair of pairs) {
 
 if (process.argv.includes('--baseline')) {
     const keys = [...new Set(findings.map((finding) => finding.key))].sort();
-    console.log(JSON.stringify({ accepted: Object.fromEntries(keys.map((key) => [key, acceptedReasons[key] ?? ''])) }, null, 4));
+    console.log(baselineOf(keys, allowlist, 'accepted'));
     process.exit(0);
 }
 
@@ -356,9 +356,6 @@ const problems = [
     ...[...accepted]
         .filter((key) => !seen.has(key))
         .map((key) => `${key}: значится в ${ALLOWLIST}, но в стилях этого больше нет — строку убрать`),
-    ...[...accepted]
-        .filter((key) => !acceptedReasons[key]?.trim())
-        .map((key) => `${key}: стоит в ${ALLOWLIST} без причины — принятое место называет, чем и когда оно чинится`),
 ];
 
 if (problems.length > 0) {

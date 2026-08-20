@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.9.1 · hooks/browser-guard-device-id.sh · 811389bf2ec2 · правится надстройкой, не здесь
+# rt-kit v0.9.1 · hooks/browser-guard-device-id.sh · 769a9949ec88 · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__claude-in-chrome__select_browser
+# Требует: hooks/deny-tail.sh
 # Гард выбора браузера. PreToolUse на выборе браузера расширением.
 #
 # Отклоняет любой профиль, кроме закреплённого: чужой стоит лишнего круга и приводит в браузер,
@@ -25,5 +26,12 @@ if [ "$requested" = "$device_id" ]; then
     exit 0
 fi
 
-echo "Профиль «${requested}» не тот, что закреплён за проектом. Бери ${device_id} — единственный профиль, где сделан вход." >&2
+# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть. Файл
+# может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+
+echo "Профиль «${requested}» не тот, что закреплён за проектом. Бери ${device_id} — единственный профиль, где сделан вход. $(rt_deny_tail)" >&2
 exit 2

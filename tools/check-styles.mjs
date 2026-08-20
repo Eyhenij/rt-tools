@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.9.1 · checks/check-styles.mjs · 8abf6b3f572f · правится надстройкой, не здесь
+// rt-kit v0.9.1 · checks/check-styles.mjs · 6ded11ca008c · правится надстройкой, не здесь
 /**
  * Проверка того, что класс элемента BEM подкреплён правилом.
  *
@@ -34,7 +34,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { basename, dirname, join } from 'node:path';
 
-import { allowlistOf, CONFIG, ROOT } from './rt-kit-checks.config.mjs';
+import { allowlistOf, baselineOf, CONFIG, ROOT, parseAllowlist } from './rt-kit-checks.config.mjs';
 
 const ALLOWLIST = allowlistOf('styles');
 const SOURCE_ROOTS = CONFIG.sourceRoots;
@@ -52,9 +52,9 @@ const USE_RE = /@(?:use|forward)\s+['"]([^'"]+)['"]/g;
 /** Строка списка известного: имя класса и перечень файлов при нём */
 const KEY_RE = /^elem (\S+) @ (.*)$/;
 
-const allowlist = JSON.parse(readFileSync(join(ROOT, ALLOWLIST), 'utf8'));
-const known = new Set([...(allowlist.accepted ?? []), ...(allowlist.debt ?? [])]);
-const debt = new Set(allowlist.debt ?? []);
+const allowlist = parseAllowlist('styles');
+const known = allowlist.keys;
+const debt = new Set(allowlist.debt.keys());
 
 /** Строки списка по имени класса: перечень файлов в ключ входит, но сверяется отдельно */
 const knownByName = new Map();
@@ -224,7 +224,7 @@ for (const [name, files] of [...usedIn].sort(([first], [second]) => first.locale
 }
 
 if (process.argv.includes('--baseline')) {
-    console.log(JSON.stringify({ ...allowlist, debt: findings.map((finding) => finding.key).sort() }, null, 4));
+    console.log(baselineOf(findings.map((finding) => finding.key).sort(), allowlist));
     process.exit(0);
 }
 

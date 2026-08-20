@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse AskUserQuestion
+# Требует: hooks/deny-tail.sh
 # PreToolUse guard for AskUserQuestion.
 #
 # The browser choice is already made and pinned in browser-device-id.sh — asking again is noise, and the
@@ -23,5 +24,12 @@ questions="$(printf '%s' "$input" | jq -r '[.tool_input.questions[]? | .question
 
 printf '%s' "$questions" | grep -qiE 'deviceid|device id|(which|what|pick|choose|select)[^.]{0,25}\bbrowser\b|\bbrowser\b[^.]{0,25}(profile|to use)|как(ой|ую)?[^.]{0,15}браузер|брауз[а-я]*[^.]{0,20}(использовать|выбрать|выбор|нужен|запустить)' || exit 0
 
-echo "Do not ask which browser to use — the profile is pinned. Call select_browser with deviceId ${device_id} ('Main' profile)." >&2
+# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть. Файл
+# может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+
+echo "Do not ask which browser to use — the profile is pinned. Call select_browser with deviceId ${device_id} ('Main' profile). $(rt_deny_tail)" >&2
 exit 2

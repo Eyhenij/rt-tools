@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: Stop
+# Требует: hooks/deny-tail.sh
 # Гард предложения: ход, в котором владелец сказал завести или отправить предложение слою правил,
 # не заканчивается, пока отправки не было. Stop.
 #
@@ -86,6 +87,17 @@ reason="BLOCKED by proposal-guard: владелец сказал завести 
 Сухой прогон отправкой не является: он показывает, что уехало бы, и следа наружу не оставляет. Отправка пишет отметки в файлы предложений и делает дерево грязным — при открытом PR они ложатся вторым коммитом в ту же ветку, и это их место, а не повод отложить.
 
 Гард судит один ход: следующий заход не отбивается."
+
+# Общий хвост отказа: два законных хода. Файл может быть не разложен — тогда хвоста нет,
+# а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+deny_tail_text="$(rt_deny_tail "")"
+[ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
 
 jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
     || printf '{"decision":"block","reason":"proposal-guard: владелец просил предложение — отправь его командой пакета."}\n'
