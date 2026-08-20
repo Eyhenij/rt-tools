@@ -32,7 +32,3 @@
 | Судится последний вердикт роли, а не первый.                                                                 | `projects/agent-kit/assets/hooks/exam-guard.sh:verdict`                 |
 | Экзамен спрашивается дважды: на старте сессии и перед снятием черновика.                                     | `projects/agent-kit/assets/hooks/exam-guard.sh:ready`                   |
 | Записи хода сводятся в один поток по порядку.                                                                | `projects/agent-kit/assets/hooks/exam-guard.sh:after`                   |
-| Канцелярит и слова, которых в дереве не пишут, не уезжают в документ.                                        | `projects/agent-kit/assets/hooks/prose-style-guard.sh:found`            |
-| Каждая находка названа вместе с заменой.                                                                     | `projects/agent-kit/assets/checks/check-prose-style.mjs:MARKS`          |
-| Судится только новый текст правки.                                                                           | `projects/agent-kit/assets/hooks/prose-style-guard.sh:added`            |
-| Границы слова считаются по буквам, а не классом `\w`.                                                        | `projects/agent-kit/assets/checks/check-prose-style.mjs:GLOSSARY_BANS`  |
