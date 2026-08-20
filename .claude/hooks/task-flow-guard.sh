@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.9.1 · hooks/task-flow-guard.sh · 3a3e2f568fdd · правится надстройкой, не здесь
+# rt-kit v0.10.0 · hooks/task-flow-guard.sh · 3a3e2f568fdd · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # PreToolUse guard for Edit|Write|MultiEdit: код не пишется раньше замысла.

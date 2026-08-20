@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.9.1 · checks/check-file-size.mjs · d6df879d3c56 · правится надстройкой, не здесь
+// rt-kit v0.10.0 · checks/check-file-size.mjs · d6df879d3c56 · правится надстройкой, не здесь
 /**
  * Проверка того, что файл не длиннее предела.
  *

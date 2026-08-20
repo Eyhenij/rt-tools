@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.9.1 · hooks/handoff-entry-guard.sh · 510fe8fb82b1 · правится надстройкой, не здесь
+# rt-kit v0.10.0 · hooks/handoff-entry-guard.sh · 510fe8fb82b1 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit
 # Требует: rules/task-flow.md, hooks/deny-tail.sh
 # Гард входа из передачи: заход, начатый с передачи, не правит файлов, пока не загружено правило

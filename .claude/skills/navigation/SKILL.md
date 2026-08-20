@@ -4,7 +4,7 @@ kind: rule
 law: navigation
 description: Правило под «Закон о навигации по разделам». Брать при правке декларации меню, libs/admin/common/container/**, apps/admin/src/app/app.routes.ts и любого libs/admin/**/*.routes.ts. Называет декларацию меню, колонки и группы панели, гейтинг и вложение адресов. Готовый код — в паттерне admin-nav-item.
 ---
-<!-- rt-kit v0.9.1 · rules/navigation.md · bd4655500e65 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.10.0 · rules/navigation.md · bd4655500e65 · правится надстройкой, не здесь -->
 
 # Навигация админки — как это устроено здесь
 
