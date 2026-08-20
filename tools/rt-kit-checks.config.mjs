@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.9.1 · checks/rt-kit-checks.config.mjs · 9507a3de7815 · правится надстройкой, не здесь
+// rt-kit v0.9.1 · checks/rt-kit-checks.config.mjs · f3dfb2bfee20 · правится надстройкой, не здесь
 /**
  * Настройки проверок: что считать исходниками, куда не ходить и где лежат списки долгов.
  *
@@ -188,8 +188,17 @@ export const allowlistOf = (name) => join(CONFIG.allowlistDir, `${name}-allowlis
  */
 export const readAllowlist = (name) => {
     const path = join(ROOT, allowlistOf(name));
-
-    return existsSync(path) ? JSON.parse(readFileSync(path, 'utf8')) : {};
+    if (!existsSync(path)) {
+        return {};
+    }
+    try {
+        return JSON.parse(readFileSync(path, 'utf8'));
+    } catch (error) {
+        // Нечитаемая настройка — это не пустой список, и молчать о ней нельзя: проверка,
+        // прочитавшая пустоту вместо перечня, назовёт долгом всё дерево разом.
+        console.error(`${allowlistOf(name)}: список известного не прочитан — не разбирается как JSON: ${error.message}`);
+        process.exit(1);
+    }
 };
 
 /**
