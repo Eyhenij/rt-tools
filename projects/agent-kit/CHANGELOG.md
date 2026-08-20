@@ -32,6 +32,40 @@
 - **rt:agent-kit:** утверждение владельцу о дереве подтверждается командой хода ([783a5b5](https://github.com/Eyhenij/rt-tools/commit/783a5b52df55c6dc82c02fc5a191e9e05e94079a))
 - **rt:agent-kit:** черновик не снимается с конфликтующей заявки ([04d2d50](https://github.com/Eyhenij/rt-tools/commit/04d2d5065f043ff5aeccf9420ba7b2c777072947))
 
+# [0.10.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.9.1...rt-agent-kit@0.10.0) (2026-08-20)
+
+### Bug Fixes
+
+- **rt:agent-kit:** дыры новой проверки поставки закрыты, ложные отказы сняты ([2feaa13](https://github.com/Eyhenij/rt-tools/commit/2feaa139110b289c1f415d70ff28b55474032277))
+- **rt:agent-kit:** имя обязательного раздела спека перестало быть канцеляритом ([0738acd](https://github.com/Eyhenij/rt-tools/commit/0738acd5485f1a3b2f019326c010e7de95d0ad35))
+- **rt:agent-kit:** номера сценариев гарда утверждения разведены с чужими ([bc9e7e1](https://github.com/Eyhenij/rt-tools/commit/bc9e7e1b63eaa147c58793e3e1fba728524606b7))
+- **rt:agent-kit:** отказ гарда утверждения зовёт общий хвост о двух ходах ([900749c](https://github.com/Eyhenij/rt-tools/commit/900749cc0d666350e8a2690fa2daaa6f4bca5d92))
+- **rt:agent-kit:** проверка слога берёт решение главной ветки о слове «данные» ([6780ada](https://github.com/Eyhenij/rt-tools/commit/6780ada6a460fceab2ed5edbe7324e3fc806855e))
+- **rt:agent-kit:** слово «данные» не канцелярит, а число в наборе печатается строкой ([d9f0293](https://github.com/Eyhenij/rt-tools/commit/d9f0293cb3f6df8624c7c8b62197613691960b0a))
+
+### Features
+
+- **rt:agent-kit:** гард при выключенной роли выходит молча ([f2c7a43](https://github.com/Eyhenij/rt-tools/commit/f2c7a431eab023df22156c5c0ca9b4a8b1e65f73))
+- **rt:agent-kit:** гарды поставки отвечают одной формой отказа и живут своим поддоменом ([81d3ebd](https://github.com/Eyhenij/rt-tools/commit/81d3ebdef161cd379211a950a2e508a8d813b788))
+- **rt:agent-kit:** дерево объявляет, какие роли слоя правил выключены ([ee3b623](https://github.com/Eyhenij/rt-tools/commit/ee3b623925717ccff40b96609515f048c0700374))
+- **rt:agent-kit:** закрытый этап подтверждается выводом команды, а не словами ([2d02ff4](https://github.com/Eyhenij/rt-tools/commit/2d02ff4d01933fe632c8448d2daa800a43f5c3c4))
+- **rt:agent-kit:** запись в списке принятого отвечает за себя сама ([c6bfc51](https://github.com/Eyhenij/rt-tools/commit/c6bfc5179904f803777c8121c71cad02a5554d96))
+- **rt:agent-kit:** заход из передачи входит в работу тем же правилом, что и всякий другой ([95e3928](https://github.com/Eyhenij/rt-tools/commit/95e3928ec35cab57d29a71f65ce8982575c250f9))
+- **rt:agent-kit:** канцелярит в новом тексте отбивается вместе с названной заменой ([e49c130](https://github.com/Eyhenij/rt-tools/commit/e49c13040a01078b314fc68f6615c9790d8011f8))
+- **rt:agent-kit:** отказ гарда называет два законных хода и форму обхода ([3bd7b97](https://github.com/Eyhenij/rt-tools/commit/3bd7b97ae214fce99a97600a696538385f68aeb2))
+- **rt:agent-kit:** отказ поставки называет несошедшееся целиком ([a899812](https://github.com/Eyhenij/rt-tools/commit/a899812ef3b5809b0f991bbd8d8506e89fd82205))
+- **rt:agent-kit:** пакет знает состав правки и отбивает пуш с переключением ветки ([2acbac9](https://github.com/Eyhenij/rt-tools/commit/2acbac94cbee37085a522afba047a832a1384c78))
+- **rt:agent-kit:** перезапуск упавшего задания ждёт прочитанного журнала ([d16bc05](https://github.com/Eyhenij/rt-tools/commit/d16bc05f09b877e71e3e017374e5ecf6f7d121f4))
+- **rt:agent-kit:** сверка очереди работ называет конфликтующую заявку ([9ecda1f](https://github.com/Eyhenij/rt-tools/commit/9ecda1f0d4dd698fb9b13ea549d24e808d312302))
+- **rt:agent-kit:** совесть называет промах, который повторяется прямо сейчас ([b24ef14](https://github.com/Eyhenij/rt-tools/commit/b24ef14d66af5caa01bcad5bfa3951f7db0178a7))
+- **rt:agent-kit:** состояние работы объявляется строкой, и гард судит переход ([c3f1bc8](https://github.com/Eyhenij/rt-tools/commit/c3f1bc817c4c03dcfbaed2da52ec0b6349021f05))
+- **rt:agent-kit:** списки принятого приведены к общей форме, проверки зовут разбор ([3e4c6a4](https://github.com/Eyhenij/rt-tools/commit/3e4c6a4ab8ba190e288ec48020d3c3010f781fd1))
+- **rt:agent-kit:** страж не выпускает ход, в котором по работе не сделано ничего ([0fefb06](https://github.com/Eyhenij/rt-tools/commit/0fefb063a8e8c5dafe43a1f755c1d4f054fbb84e))
+- **rt:agent-kit:** усвоение правил спрашивает роль экзаменатора, а вердикт судит гард ([cc87bc2](https://github.com/Eyhenij/rt-tools/commit/cc87bc2dda00428a4868503bb28f86cc58030cfd))
+- **rt:agent-kit:** условия поставки спрашиваются там, где их ещё дёшево починить ([58b4453](https://github.com/Eyhenij/rt-tools/commit/58b445366dcb79cb8222e3aa907fd717897c52af))
+- **rt:agent-kit:** утверждение владельцу о дереве подтверждается командой хода ([783a5b5](https://github.com/Eyhenij/rt-tools/commit/783a5b52df55c6dc82c02fc5a191e9e05e94079a))
+- **rt:agent-kit:** черновик не снимается с конфликтующей заявки ([04d2d50](https://github.com/Eyhenij/rt-tools/commit/04d2d5065f043ff5aeccf9420ba7b2c777072947))
+
 ## [0.9.1](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.9.0...rt-agent-kit@0.9.1) (2026-08-19)
 
 ### Features
