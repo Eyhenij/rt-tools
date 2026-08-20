@@ -21,6 +21,17 @@
 | Папку ищут по имени ветки целиком, вместе с косой.                                         | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:folder_in_branch`    |
 | Сверка очереди работ видит папку задачи и во вложенном каталоге.                           | `projects/agent-kit/assets/checks/board.github.mjs:taskDirs`                |
 | Дерево, не задавшее каталог задач, требования не получает.                                 | `projects/agent-kit/assets/defaults/project.sh:RT_TASKS_DIR`                |
+| Задача, оставшаяся в первой колонке очереди работ, к поставке не готова.                   | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:backlog_column`      |
+| Колонка спрашивается там, где её уже должны были переставить.                              | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:judge_column`        |
+| Имя первой колонки называет дерево, и без него колонка не судится.                         | `projects/agent-kit/assets/defaults/project.sh:RT_BOARD_BACKLOG`            |
+| Черновик не снимается, пока у PR нет разбора.                                              | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:pull_ref`            |
+| Ссылка на PR при снятии черновика необязательна.                                           | `projects/agent-kit/assets/checks/board.github.mjs:target`                  |
+| Возврат PR в черновик требования не получает.                                              | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:undo`                |
+| Номер PR в отказе берётся из ответа очереди работ, а не из команды.                        | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:pull_name`           |
+| Автор в разборе своего PR не считается.                                                    | `projects/agent-kit/assets/checks/board.github.mjs:reviewed`                |
+| Состояние PR спрашивается тем же помощником очереди работ, что и состояние задачи.         | `projects/agent-kit/assets/defaults/project.sh:rt_pull_state_default`       |
+| Ответ с меткой «сети не было» состоянием не является.                                      | `projects/agent-kit/assets/defaults/project.sh:offline`                     |
+| Ярус, которому нужен ответ очереди работ, без ответа молчит.                               | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:rt_pull_state`       |
 | Заход закрывается одной командой.                                                          | `projects/agent-kit/assets/commands/next-session.md:ARGUMENTS`              |
 | Команда закрытия захода сперва узнаёт, ведётся ли работа по правилу.                       | `projects/agent-kit/assets/commands/next-session.md:rt_task_branch_ok`      |
 | У работы по правилу с влитым PR дерево переходит на главную ветку и подтягивает удалённую. | `projects/agent-kit/assets/commands/next-session.md:switch`                 |
