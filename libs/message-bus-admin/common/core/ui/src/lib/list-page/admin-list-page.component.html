@@ -1,10 +1,15 @@
 <ng-container rtBlock="admin-page">
+    <!-- Название с подсказкой слева, место действий справа: шапка — строка с переносом, и
+         подсказка занимает в ней свою строку. Колонкой это не сложить — место действий ушло бы
+         под название -->
     <header rtElem="header">
-        <h1 rtElem="title">{{ title() }}</h1>
+        <div rtElem="header-main">
+            <h1 rtElem="title">{{ title() }}</h1>
 
-        @if (hint(); as hintText) {
-            <p rtElem="hint" [attr.qa-dataid]="hintId()">{{ hintText }}</p>
-        }
+            @if (hint(); as hintText) {
+                <p rtElem="hint" [attr.qa-dataid]="hintId()">{{ hintText }}</p>
+            }
+        </div>
     </header>
 
     <rt-toolbar>
