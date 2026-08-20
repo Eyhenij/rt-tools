@@ -197,20 +197,20 @@ pull_state_in() { (cd "$PULL_TREE" && rt_pull_state 701); }
 # То же дерево, но узла на нём нет: звать помощника нечем.
 pull_state_without_node() { (cd "$PULL_TREE" && PATH="/нет-такого-каталога" && rt_pull_state 701); }
 
-no "SC-AK-347 — без помощника очереди работ состояние молчит" pull_state_in
+no "SC-AK-380 — без помощника очереди работ состояние молчит" pull_state_in
 
 pull_helper '{"exists":true,"draft":true,"reviewed":true}'
-report "SC-AK-347 — ответивший помощник состояние отдаёт" "$(pull_state_in | jq -r '.reviewed')" true
+report "SC-AK-380 — ответивший помощник состояние отдаёт" "$(pull_state_in | jq -r '.reviewed')" true
 
 # Ответ с меткой «сети не было» состоянием не является: по нему заявку без ревьювера не отличить
 # от заявки, о которой не спросили.
 pull_helper '{"offline":true}'
-no "SC-AK-348 — ответ с меткой офлайна состоянием не считается" pull_state_in
-report "SC-AK-348 — и наружу такой ответ не выходит" "$(pull_state_in)" ''
+no "SC-AK-381 — ответ с меткой офлайна состоянием не считается" pull_state_in
+report "SC-AK-381 — и наружу такой ответ не выходит" "$(pull_state_in)" ''
 
 pull_helper '{"exists":true,"draft":true,"reviewed":true}'
-no "SC-AK-349 — без узла состояние молчит" pull_state_without_node
-report "SC-AK-349 — и наружу ничего не выходит" "$(pull_state_without_node)" ''
+no "SC-AK-382 — без узла состояние молчит" pull_state_without_node
+report "SC-AK-382 — и наружу ничего не выходит" "$(pull_state_without_node)" ''
 
 rm -rf "$PULL_TREE"
 

@@ -87,13 +87,13 @@ expect_stop "SC-AK-325 — молчание роли ход закрывает" 
 HANGING="$(input_stop "$(transcript "$(say 'продолжай')" "$(said "$FOUND")" "$(reply 'Понял.')")")"
 
 CLAUDE_PROJECT_DIR="$(tree_with_config '{"rolesOff":["conscience"]}')" \
-    expect_stop "SC-AK-330 — выключенная деревом совесть ход отпускает" "$HANGING" PASS
+    expect_stop "SC-AK-363 — выключенная деревом совесть ход отпускает" "$HANGING" PASS
 CLAUDE_PROJECT_DIR="$(tree_with_config '{"rolesOff":["strict-teacher"]}')" \
-    expect_stop "SC-AK-331 — выключенная соседняя роль находку не отменяет" "$HANGING" BLOCK
+    expect_stop "SC-AK-364 — выключенная соседняя роль находку не отменяет" "$HANGING" BLOCK
 CLAUDE_PROJECT_DIR="$(tree_with_config '{"vars":{}}')" \
     expect_stop "и без списка выключенных ролей находка держит ход как прежде" "$HANGING" BLOCK
 CLAUDE_PROJECT_DIR="$(tree_with_config '{"rolesOff": ["conscience"')" \
-    expect_stop "SC-AK-332 — настройка, которую не разобрать, роль не выключает" "$HANGING" BLOCK
+    expect_stop "SC-AK-365 — настройка, которую не разобрать, роль не выключает" "$HANGING" BLOCK
 
 # --- отказ в пользу работы ------------------------------------------------------------------
 expect_stop "SC-AK-326 — повторный заход по тому же ходу не судится" \

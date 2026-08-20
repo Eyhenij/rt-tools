@@ -34,3 +34,5 @@
 | Настройка, которую не прочитать, роль не выключает.                                                          | `projects/agent-kit/assets/hooks/roles.sh:rt_role_off`                  |
 | Экзамен спрашивается дважды: на старте сессии и перед снятием черновика.                                     | `projects/agent-kit/assets/hooks/exam-guard.sh:ready`                   |
 | Записи хода сводятся в один поток по порядку.                                                                | `projects/agent-kit/assets/hooks/exam-guard.sh:after`                   |
+| Заход, начатый с передачи, не правит файлов, пока не загружено правило ведения работы.                       | `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:verdict`        |
+| Передача узнаётся и по пути к ней, и по слову о ней.                                                         | `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:from_handoff`   |

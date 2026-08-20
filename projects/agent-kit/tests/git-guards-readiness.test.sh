@@ -51,12 +51,12 @@ fixture_commit "$BOTH" docs/чужое.md 'правка соседней вет�
 git -C "$BOTH" update-ref refs/remotes/origin/main main 2>/dev/null
 git -C "$BOTH" checkout -q RT-90-both 2>/dev/null
 BOTH_CMD='gh pr create --title "Сделано" --body x'
-dlv "SC-AK-333 — заявка с двумя несошедшимися условиями отбита" "$BOTH" "$BOTH_CMD" deny
-dlv_reason "SC-AK-333 — отказ начинается с неготовности к поставке" "$BOTH" "$BOTH_CMD" \
+dlv "SC-AK-366 — заявка с двумя несошедшимися условиями отбита" "$BOTH" "$BOTH_CMD" deny
+dlv_reason "SC-AK-366 — отказ начинается с неготовности к поставке" "$BOTH" "$BOTH_CMD" \
     'работа к поставке не готова'
-dlv_reason "SC-AK-333 — в том же отказе стоит заголовок заявки" "$BOTH" "$BOTH_CMD" \
+dlv_reason "SC-AK-366 — в том же отказе стоит заголовок заявки" "$BOTH" "$BOTH_CMD" \
     'заголовок заявки не начинается с номера задачи'
-dlv_reason "SC-AK-333 — и в нём же влитость главной ветки" "$BOTH" "$BOTH_CMD" \
+dlv_reason "SC-AK-366 — и в нём же влитость главной ветки" "$BOTH" "$BOTH_CMD" \
     'ушла вперёд на 1'
 rm -rf "$BOTH"
 
@@ -84,19 +84,19 @@ EOF
 COLUMN_CMD='gh pr create --title "[RT-91] Сделано" --body x'
 
 BACKLOG="$(task_repo 'Backlog' 'Backlog')"
-dlv "SC-AK-334 — задача, оставшаяся в первой колонке, отбивает заявку" "$BACKLOG" "$COLUMN_CMD" deny
-dlv_reason "SC-AK-334 — отказ называет колонку" "$BACKLOG" "$COLUMN_CMD" 'стоит в колонке «Backlog»'
-dlv_reason "SC-AK-334 — и чем её переставить" "$BACKLOG" "$COLUMN_CMD" 'npm run task:move'
+dlv "SC-AK-367 — задача, оставшаяся в первой колонке, отбивает заявку" "$BACKLOG" "$COLUMN_CMD" deny
+dlv_reason "SC-AK-367 — отказ называет колонку" "$BACKLOG" "$COLUMN_CMD" 'стоит в колонке «Backlog»'
+dlv_reason "SC-AK-367 — и чем её переставить" "$BACKLOG" "$COLUMN_CMD" 'npm run task:move'
 rm -rf "$BACKLOG"
 
 TAKEN="$(task_repo 'In progress' 'Backlog')"
-dlv "SC-AK-335 — задача, взятая в работу, заявку не задерживает" "$TAKEN" "$COLUMN_CMD" PASS
+dlv "SC-AK-368 — задача, взятая в работу, заявку не задерживает" "$TAKEN" "$COLUMN_CMD" PASS
 rm -rf "$TAKEN"
 
 # Дерево, не назвавшее первой колонки, требования не получает: имена колонок у каждой очереди
 # свои, и выдуманное имя не совпало бы ни с чем — проверка молча выключилась бы.
 UNNAMED="$(task_repo 'Backlog' '')"
-dlv "SC-AK-336 — без имени первой колонки колонка не судится" "$UNNAMED" "$COLUMN_CMD" PASS
+dlv "SC-AK-369 — без имени первой колонки колонка не судится" "$UNNAMED" "$COLUMN_CMD" PASS
 rm -rf "$UNNAMED"
 
 # --- условия, известные в начале работы ------------------------------------------------------------
@@ -110,22 +110,22 @@ git -C "$BEHIND" checkout -q main 2>/dev/null
 fixture_commit "$BEHIND" docs/чужое.md 'правка соседней ветки' 'docs: чужая правка'
 git -C "$BEHIND" update-ref refs/remotes/origin/main main 2>/dev/null
 git -C "$BEHIND" checkout -q RT-92-behind 2>/dev/null
-dlv "SC-AK-337 — ветка от основания без вершины главной отбита" "$BEHIND" \
+dlv "SC-AK-370 — ветка от основания без вершины главной отбита" "$BEHIND" \
     'git checkout -b RT-93-new' deny
-dlv "SC-AK-337 — то же через switch" "$BEHIND" 'git switch -c RT-93-new' deny
-dlv_reason "SC-AK-337 — отказ называет отставание числом" "$BEHIND" 'git checkout -b RT-93-new' \
+dlv "SC-AK-370 — то же через switch" "$BEHIND" 'git switch -c RT-93-new' deny
+dlv_reason "SC-AK-370 — отказ называет отставание числом" "$BEHIND" 'git checkout -b RT-93-new' \
     'нет вершины «main».*вперёд на 1'
-dlv_reason "SC-AK-337 — и чем берётся свежее основание" "$BEHIND" 'git checkout -b RT-93-new' \
+dlv_reason "SC-AK-370 — и чем берётся свежее основание" "$BEHIND" 'git checkout -b RT-93-new' \
     'git fetch origin'
 # Ветка под пробу без номера этого требования не получает: она живёт локально, и заявка с неё
 # не откроется.
-dlv "SC-AK-337 — беззадачная ветка основания не спрашивает" "$BEHIND" \
+dlv "SC-AK-370 — беззадачная ветка основания не спрашивает" "$BEHIND" \
     'git checkout -b probe-idea' PASS
 rm -rf "$BEHIND"
 
 FRESH_BASE="$(fixture_repo_branched main RT-94-fresh)"
 git -C "$FRESH_BASE" update-ref refs/remotes/origin/main main 2>/dev/null
-dlv "SC-AK-338 — ветка от свежего основания заводится" "$FRESH_BASE" \
+dlv "SC-AK-371 — ветка от свежего основания заводится" "$FRESH_BASE" \
     'git checkout -b RT-95-new' PASS
 rm -rf "$FRESH_BASE"
 
@@ -136,20 +136,20 @@ MAIL="$(fixture_repo_branched main RT-96-mail)"
 git -C "$MAIL" config user.email 'owner@example.com' 2>/dev/null
 mkdir -p "$MAIL/.claude/rt-kit"
 printf 'RT_COMMIT_EMAIL="%s"\n' "$BOT_MAIL" > "$MAIL/.claude/rt-kit/project.sh"
-dlv "SC-AK-339 — чужая почта рабочей копии отбивает заведение ветки" "$MAIL" \
+dlv "SC-AK-372 — чужая почта рабочей копии отбивает заведение ветки" "$MAIL" \
     'git checkout -b RT-97-new' deny
-dlv_reason "SC-AK-339 — отказ называет почту рабочей копии" "$MAIL" 'git checkout -b RT-97-new' \
+dlv_reason "SC-AK-372 — отказ называет почту рабочей копии" "$MAIL" 'git checkout -b RT-97-new' \
     'как «owner@example.com»'
-dlv_reason "SC-AK-339 — и объявленную деревом" "$MAIL" 'git checkout -b RT-97-new' \
+dlv_reason "SC-AK-372 — и объявленную деревом" "$MAIL" 'git checkout -b RT-97-new' \
     'машинной записи «424242'
 
 printf 'RT_COMMIT_EMAIL=""\n' > "$MAIL/.claude/rt-kit/project.sh"
-dlv "SC-AK-340 — дерево, не назвавшее почты, заведение ветки не судит" "$MAIL" \
+dlv "SC-AK-373 — дерево, не назвавшее почты, заведение ветки не судит" "$MAIL" \
     'git checkout -b RT-97-new' PASS
 
 printf 'RT_COMMIT_EMAIL="%s"\n' "$BOT_MAIL" > "$MAIL/.claude/rt-kit/project.sh"
 git -C "$MAIL" config user.email "$BOT_MAIL" 2>/dev/null
-dlv "SC-AK-340 — совпавшая почта заведение ветки не задерживает" "$MAIL" \
+dlv "SC-AK-373 — совпавшая почта заведение ветки не задерживает" "$MAIL" \
     'git checkout -b RT-97-new' PASS
 rm -rf "$MAIL"
 
@@ -172,29 +172,29 @@ EOF
 }
 
 NO_REVIEW="$(ready_repo "printf '%s' '{\"exists\":true,\"draft\":true,\"reviewed\":false}';")"
-dlv "SC-AK-341 — заявка без разбора черновик не снимает" "$NO_REVIEW" 'gh pr ready 917' deny
-dlv_reason "SC-AK-341 — отказ называет заявку и нехватку разбора" "$NO_REVIEW" 'gh pr ready 917' \
+dlv "SC-AK-374 — заявка без разбора черновик не снимает" "$NO_REVIEW" 'gh pr ready 917' deny
+dlv_reason "SC-AK-374 — отказ называет заявку и нехватку разбора" "$NO_REVIEW" 'gh pr ready 917' \
     'у заявки #917 нет разбора'
-dlv "SC-AK-341 — тот же отказ у второго клиента хостинга" "$NO_REVIEW" \
+dlv "SC-AK-374 — тот же отказ у второго клиента хостинга" "$NO_REVIEW" \
     'glab mr update 917 --ready' deny
 # Прочие команды клиента снятием черновика не являются.
-dlv "SC-AK-341 — чтение заявки снятием не считается" "$NO_REVIEW" 'gh pr view 917' PASS
+dlv "SC-AK-374 — чтение заявки снятием не считается" "$NO_REVIEW" 'gh pr view 917' PASS
 rm -rf "$NO_REVIEW"
 
 REVIEWED="$(ready_repo "printf '%s' '{\"exists\":true,\"draft\":true,\"reviewed\":true}';")"
-dlv "SC-AK-342 — заявка с разбором черновик снимает" "$REVIEWED" 'gh pr ready 917' PASS
+dlv "SC-AK-375 — заявка с разбором черновик снимает" "$REVIEWED" 'gh pr ready 917' PASS
 rm -rf "$REVIEWED"
 
 # Помощник очереди работ молчит — нет сети, нет токена, нет узла. Ярус сетевой, и молчание
 # работу не отбивает: проверка, падающая в самолёте, стоит дороже промаха, который она ловит.
 SILENT="$(ready_repo 'return 1;')"
-dlv "SC-AK-343 — молчание помощника снятие черновика не задерживает" "$SILENT" \
+dlv "SC-AK-376 — молчание помощника снятие черновика не задерживает" "$SILENT" \
     'gh pr ready 917' PASS
 rm -rf "$SILENT"
 
 # Заявки с таким номером нет вовсе — судить нечего.
 MISSING="$(ready_repo "printf '%s' '{\"exists\":false}';")"
-dlv "SC-AK-343 — неизвестная заявка снятие не задерживает" "$MISSING" 'gh pr ready 917' PASS
+dlv "SC-AK-376 — неизвестная заявка снятие не задерживает" "$MISSING" 'gh pr ready 917' PASS
 rm -rf "$MISSING"
 
 # --- заявка, названная не номером или не названная вовсе -----------------------------------------
@@ -203,29 +203,29 @@ rm -rf "$MISSING"
 # требовал номер, всё требование о разборе снималось одним пробелом — `gh pr ready` проходил
 # мимо него молча, а это самая короткая и самая обычная форма вызова.
 BARE="$(ready_repo "printf '%s' '{\"exists\":true,\"number\":917,\"draft\":true,\"reviewed\":false}';")"
-dlv "SC-AK-350 — снятие черновика без ссылки на заявку отбито" "$BARE" 'gh pr ready' deny
-dlv_reason "SC-AK-350 — отказ тот же, что и с номером" "$BARE" 'gh pr ready' \
+dlv "SC-AK-383 — снятие черновика без ссылки на заявку отбито" "$BARE" 'gh pr ready' deny
+dlv_reason "SC-AK-383 — отказ тот же, что и с номером" "$BARE" 'gh pr ready' \
     'у заявки #917 нет разбора'
-dlv "SC-AK-350 — то же у второго клиента хостинга" "$BARE" 'glab mr update --ready' deny
+dlv "SC-AK-383 — то же у второго клиента хостинга" "$BARE" 'glab mr update --ready' deny
 
 # Заявку называют адресом и именем ветки не реже, чем номером: разбирать их — работа клиента,
 # а гарду довод передаётся как есть.
-dlv "SC-AK-351 — заявка, названная адресом, судится наравне с номером" "$BARE" \
+dlv "SC-AK-384 — заявка, названная адресом, судится наравне с номером" "$BARE" \
     'gh pr ready https://github.com/o/r/pull/917' deny
-dlv "SC-AK-351 — и заявка, названная именем ветки" "$BARE" 'gh pr ready RT-98-ready' deny
-dlv_reason "SC-AK-351 — номер в отказе берётся из ответа, а не из команды" "$BARE" \
+dlv "SC-AK-384 — и заявка, названная именем ветки" "$BARE" 'gh pr ready RT-98-ready' deny
+dlv_reason "SC-AK-384 — номер в отказе берётся из ответа, а не из команды" "$BARE" \
     'gh pr ready RT-98-ready' 'у заявки #917 нет разбора'
 
 # Возврат в черновик делает ровно то, чего гард добивается, — снимает с работы вид готовой.
-dlv "SC-AK-352 — возврат заявки в черновик проходит" "$BARE" 'gh pr ready 917 --undo' PASS
-dlv "SC-AK-352 — и возврат без ссылки тоже" "$BARE" 'gh pr ready --undo' PASS
+dlv "SC-AK-385 — возврат заявки в черновик проходит" "$BARE" 'gh pr ready 917 --undo' PASS
+dlv "SC-AK-385 — и возврат без ссылки тоже" "$BARE" 'gh pr ready --undo' PASS
 rm -rf "$BARE"
 
 # Номера в ответе нет — в отказ идёт то, чем заявку назвали в команде: без этого заявка,
 # названная веткой, в отказе становится безымянной. Решётка при этом стоит только у числа:
 # перед именем ветки или адресом она читается как опечатка.
 NAMELESS="$(ready_repo "printf '%s' '{\"exists\":true,\"draft\":true,\"reviewed\":false}';")"
-dlv_reason "SC-AK-351 — без номера в ответе в отказ идёт довод команды" "$NAMELESS" \
+dlv_reason "SC-AK-384 — без номера в ответе в отказ идёт довод команды" "$NAMELESS" \
     'gh pr ready RT-98-ready' 'у заявки «RT-98-ready» нет разбора'
 rm -rf "$NAMELESS"
 
@@ -240,19 +240,19 @@ fixture_commit "$NAMED" docs/чужое.md 'правка соседней вет
 git -C "$NAMED" update-ref refs/remotes/origin/main main 2>/dev/null
 git -C "$NAMED" checkout -q RT-100-named 2>/dev/null
 
-dlv "SC-AK-353 — ветка от названного свежего основания заводится" "$NAMED" \
+dlv "SC-AK-386 — ветка от названного свежего основания заводится" "$NAMED" \
     'git checkout -b RT-101-new origin/main' PASS
-dlv "SC-AK-353 — то же через switch" "$NAMED" 'git switch -c RT-101-new origin/main' PASS
+dlv "SC-AK-386 — то же через switch" "$NAMED" 'git switch -c RT-101-new origin/main' PASS
 # Без названного основания судится вершина рабочей копии, и она отстала.
-dlv "SC-AK-354 — ветка от вершины рабочей копии отбита" "$NAMED" \
+dlv "SC-AK-387 — ветка от вершины рабочей копии отбита" "$NAMED" \
     'git checkout -b RT-101-new' deny
 # Названное основание тоже бывает вчерашним: отставшая ветка названа явно.
-dlv "SC-AK-354 — названное вчерашнее основание отбито" "$NAMED" \
+dlv "SC-AK-387 — названное вчерашнее основание отбито" "$NAMED" \
     'git checkout -b RT-101-new RT-100-named' deny
-dlv_reason "SC-AK-354 — отказ зовёт взять основание от главной ветки" "$NAMED" \
+dlv_reason "SC-AK-387 — отказ зовёт взять основание от главной ветки" "$NAMED" \
     'git checkout -b RT-101-new RT-100-named' 'git checkout -b RT-101-new origin/main'
 # Основания, которого в дереве нет вовсе, судить нечем: гард молчит, а не выдумывает отказ.
-dlv "SC-AK-354 — неизвестное основание гард не судит" "$NAMED" \
+dlv "SC-AK-387 — неизвестное основание гард не судит" "$NAMED" \
     'git checkout -b RT-101-new origin/нет-такой-ветки' PASS
 rm -rf "$NAMED"
 
@@ -278,11 +278,11 @@ git -C "$STALE_REF" -c user.email=p@p -c user.name=p -c commit.gpgsign=false \
 git -C "$BARE_REMOTE/o.git" fetch -q "$STALE_REF" RT-102-stale:refs/heads/main 2>/dev/null
 git -C "$STALE_REF" update-ref refs/remotes/origin/main "$WAS_REF" 2>/dev/null
 
-dlv "SC-AK-355 — отставшая локальная ссылка отбивает заведение ветки" "$STALE_REF" \
+dlv "SC-AK-388 — отставшая локальная ссылка отбивает заведение ветки" "$STALE_REF" \
     'git checkout -b RT-103-new' deny
-dlv_reason "SC-AK-355 — отказ называет обе стороны расхождения" "$STALE_REF" \
+dlv_reason "SC-AK-388 — отказ называет обе стороны расхождения" "$STALE_REF" \
     'git checkout -b RT-103-new' 'ссылка origin/main отстала от удалённой'
-dlv_reason "SC-AK-355 — и чем она подтягивается" "$STALE_REF" \
+dlv_reason "SC-AK-388 — и чем она подтягивается" "$STALE_REF" \
     'git checkout -b RT-103-new' 'git fetch origin'
 rm -rf "$STALE_REF" "$BARE_REMOTE"
 
@@ -290,7 +290,7 @@ rm -rf "$STALE_REF" "$BARE_REMOTE"
 # не отбивает.
 NO_ANSWER="$(fixture_repo_branched main RT-104-alone)"
 git -C "$NO_ANSWER" update-ref refs/remotes/origin/main main 2>/dev/null
-dlv "SC-AK-356 — молчание опроса заведение ветки не задерживает" "$NO_ANSWER" \
+dlv "SC-AK-389 — молчание опроса заведение ветки не задерживает" "$NO_ANSWER" \
     'git checkout -b RT-105-new' PASS
 rm -rf "$NO_ANSWER"
 
@@ -300,11 +300,11 @@ rm -rf "$NO_ANSWER"
 # колонку судили и здесь, гард отбивал первую же команду работы — вместе с той, которая его
 # требование и снимает.
 COLUMN_BOTH="$(task_repo 'Backlog' 'Backlog')"
-dlv "SC-AK-357 — задача в первой колонке заведению ветки не мешает" "$COLUMN_BOTH" \
+dlv "SC-AK-390 — задача в первой колонке заведению ветки не мешает" "$COLUMN_BOTH" \
     'git checkout -b RT-91-column' PASS
-dlv "SC-AK-357 — а открытие заявки той же задачей отбивается" "$COLUMN_BOTH" \
+dlv "SC-AK-390 — а открытие заявки той же задачей отбивается" "$COLUMN_BOTH" \
     'gh pr create --title "[RT-91] Сделано" --body x' deny
-dlv_reason "SC-AK-357 — и отбивается именно колонкой" "$COLUMN_BOTH" \
+dlv_reason "SC-AK-390 — и отбивается именно колонкой" "$COLUMN_BOTH" \
     'gh pr create --title "[RT-91] Сделано" --body x' 'стоит в колонке «Backlog»'
 rm -rf "$COLUMN_BOTH"
 
