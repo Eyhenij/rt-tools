@@ -9,7 +9,7 @@ export namespace IRtInput {
      * раскладку под локаль, а разбор строки руками означал бы своё поле ввода
      * времени рядом с китом.
      */
-    export type Type = 'text' | 'password' | 'email' | 'time';
+    export type Type = 'text' | 'password' | 'email' | 'time' | 'url';
 
     /** Размерный вариант поля (высота). Общий для всего input-семейства. */
     export type Size = 'sm' | 'md' | 'lg';

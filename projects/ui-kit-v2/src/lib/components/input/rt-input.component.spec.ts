@@ -51,9 +51,12 @@ describe('RtInputComponent', (): void => {
         expect(field(setup()).type).toBe('text');
     });
 
-    it.each<IRtInput.Type>(['text', 'password', 'email', 'time'])('тип %s уезжает на нативное поле', (inputType: IRtInput.Type): void => {
-        expect(field(setup({ type: inputType })).type).toBe(inputType);
-    });
+    it.each<IRtInput.Type>(['text', 'password', 'email', 'time', 'url'])(
+        'SC-UKV-55, SC-UKV-56: тип %s уезжает на нативное поле',
+        (inputType: IRtInput.Type): void => {
+            expect(field(setup({ type: inputType })).type).toBe(inputType);
+        }
+    );
 
     it('подсказка уезжает на нативное поле', (): void => {
         expect(field(setup({ placeholder: 'Введите имя' })).placeholder).toBe('Введите имя');
