@@ -164,7 +164,10 @@ report "SC-AK-403 — причина без номера задачи отбит
 # показывает всё найденное новым, и это честнее, чем молчать из-за отсутствия файла.
 empty="$(node --input-type=module -e "
     import { parseAllowlist } from '${TREE}/tools/rt-kit-checks.config.mjs';
-    console.log(parseAllowlist('nosuch').keys.size);
+    // Число печатается строкой: печать числа раскрашивает его, когда окружение просит
+    // цвета, и в сравнение приезжает значение вместе с управляющими последовательностями.
+    // Набор гоняется и из прогона спек, где цвет включён, — там это и всплыло.
+    console.log(String(parseAllowlist('nosuch').keys.size));
 " 2>&1)"
 report "SC-AK-404 — списка нет: разбор пуст" "$empty" '0'
 
