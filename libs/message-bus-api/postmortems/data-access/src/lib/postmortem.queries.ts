@@ -7,6 +7,7 @@
  * же дерева, переставшего слать.
  */
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
+import { IPostmortemArrivalUpdate, postmortemArrivalUpdate } from '@rt/message-bus-api/postmortems/util';
 import { IPage, IPageAsked, ITreeChoice, pageSkip, TPageDirection } from '@rt/message-bus-common';
 
 /** Один разбор, каким он ложится в хранилище. */
@@ -100,11 +101,31 @@ export async function readPostmortem(prisma: PrismaService, id: string): Promise
 }
 
 /**
+ * Тексты разборов, которые уже лежат: по ним решается, сбрасывать ли состояние.
+ *
+ * Читаются одним запросом на весь груз, а не по запросу на запись: прогон дерева везёт разборы
+ * десятками, и запрос на каждый стоил бы столько же, сколько сама запись.
+ */
+async function storedTexts(prisma: PrismaService, treeId: string, items: readonly IPostmortemRow[]): Promise<Map<string, string>> {
+    const rows: { file: string; text: string }[] = await prisma.postmortem.findMany({
+        where: { treeId, file: { in: items.map((item: IPostmortemRow): string => item.file) } },
+        select: { file: true, text: true },
+    });
+
+    return new Map(rows.map((row: { file: string; text: string }): [string, string] => [row.file, row.text]));
+}
+
+/**
  * Положить разборы дерева: каждый по своему имени файла заводится или обновляется.
  *
  * Все записи операции ложатся вместе или не ложатся вовсе, поэтому они идут одной сделкой:
  * упавший третий разбор оставил бы дерево в состоянии, которого не было ни до, ни после.
  * Одной командой это не выразить — обновление берёт текст каждой записи свой.
+ *
+ * Лежащие тексты читаются до сделки, потому что решение о сбросе состояния берёт оба текста
+ * сразу, а команда обновления прежнего не видит. Два прогона одного дерева, разошедшиеся между
+ * чтением и записью, дадут лишний сброс либо пропустят его: цена такой пары — одно состояние, а
+ * не связность хранилища, и ради неё чтение с записью в одну сделку не сводятся.
  *
  * Возвращает, сколько разборов положено.
  */
@@ -113,15 +134,19 @@ export async function writePostmortems(prisma: PrismaService, treeId: string, it
         return 0;
     }
 
+    const stored: Map<string, string> = await storedTexts(prisma, treeId, items);
+
     await prisma.$transaction(
-        items.map((item: IPostmortemRow) =>
-            prisma.postmortem.upsert({
+        items.map((item: IPostmortemRow) => {
+            const arrival: IPostmortemArrivalUpdate = postmortemArrivalUpdate(stored.get(item.file), item.text);
+
+            return prisma.postmortem.upsert({
                 where: { treeId_file: { treeId, file: item.file } },
                 create: { treeId, file: item.file, text: item.text },
-                update: { text: item.text },
+                update: arrival,
                 select: { id: true },
-            })
-        )
+            });
+        })
     );
 
     return items.length;
