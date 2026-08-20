@@ -98,13 +98,13 @@ expect_decision "SC-AK-320 — прочие команды клиента не �
 NO_EXAM="$(transcript "$(say 'правь файл')")"
 
 CLAUDE_PROJECT_DIR="$(tree_with_config '{"rolesOff":["strict-teacher"]}')" \
-    e "SC-AK-327 — выключенный деревом экзаменатор правку пропускает" "$NO_EXAM" PASS
+    e "SC-AK-360 — выключенный деревом экзаменатор правку пропускает" "$NO_EXAM" PASS
 CLAUDE_PROJECT_DIR="$(tree_with_config '{"rolesOff":["conscience"]}')" \
-    e "SC-AK-328 — выключенная соседняя роль экзамен не отменяет" "$NO_EXAM" deny
+    e "SC-AK-361 — выключенная соседняя роль экзамен не отменяет" "$NO_EXAM" deny
 CLAUDE_PROJECT_DIR="$(tree_with_config '{"vars":{}}')" \
     e "и без списка выключенных ролей экзамен спрашивается как прежде" "$NO_EXAM" deny
 CLAUDE_PROJECT_DIR="$(tree_with_config '{"rolesOff": ["strict-teacher"')" \
-    e "SC-AK-329 — настройка, которую не разобрать, роль не выключает" "$NO_EXAM" deny
+    e "SC-AK-362 — настройка, которую не разобрать, роль не выключает" "$NO_EXAM" deny
 
 # --- отказ в пользу работы ---------------------------------------------------------------------
 exit_code_of() {
