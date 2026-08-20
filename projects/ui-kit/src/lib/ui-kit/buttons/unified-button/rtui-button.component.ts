@@ -25,8 +25,6 @@ import { IRtuiButton } from './rtui-button.types';
 import { RtuiIconComponent, TRtuiIconSizeType } from '../../icon';
 import { RtuiSpinnerComponent } from '../../spinner';
 
-export { IRtuiButton };
-
 const BEM_BLOCK: string = 'rtui-button';
 
 @Component({

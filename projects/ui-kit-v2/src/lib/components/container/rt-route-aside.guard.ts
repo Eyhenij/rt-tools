@@ -6,7 +6,6 @@ import { catchError, defer, Observable, of } from 'rxjs';
 import { IRtAsideDeactivate, RtRouteAsideRegistry } from './rt-route-aside.registry';
 
 // Объявление переехало к учёту панелей; здесь оно остаётся видимым прежним потребителям.
-export type { IRtAsideDeactivate };
 
 /**
  * Панель с несохранёнными правками спрашивает о них и при смене маршрута, а не
