@@ -19,7 +19,7 @@ import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 import { BlockDirective, BreakpointService, ConcatClassesPipe, ElemDirective, ModDirective } from '@rt-tools/core';
 import { TNullable } from '@rt-tools/utils';
-import { isNumber, isString } from '@rt-tools/utils';
+import { isEmpty, isNumber, isString } from '@rt-tools/utils';
 import { EmptyToDashPipe, RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtHideTooltipDirective } from '../../../tooltip';
 import { ITable } from '../../util/table-column.interface';
@@ -68,6 +68,11 @@ export class TableBaseCellComponent<T = { [key: string]: unknown }> {
         // eslint-disable-next-line sonarjs/no-angular-bypass-sanitization -- строка стиля собрана китом из настройки колонок, а не из значения, введённого пользователем
         return transformFn ? this.#sanitizer.bypassSecurityTrustStyle(transformFn(this.row()[this.column().propName])) : undefined;
     });
+    /**
+     * Копировать нечего: значение ячейки пусто. Считается той же утилитой, что рисует прочерк
+     * вместо значения, — второй ответ на этот вопрос разошёлся бы с прочерком молча.
+     */
+    protected readonly isCellEmpty: Signal<boolean> = computed(() => isEmpty(this.cellValue()));
     protected readonly tooltipValue: Signal<string> = computed(() => this.#covertCellValueToString(this.cellValue()));
     protected readonly isMouseOver: WritableSignal<boolean> = signal(false);
     protected readonly isCopied: WritableSignal<boolean> = signal(false);
