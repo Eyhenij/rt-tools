@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.9.1 · checks/rt-kit-checks.config.mjs · 96be68151a7a · правится надстройкой, не здесь
+// rt-kit v0.9.1 · checks/rt-kit-checks.config.mjs · 28973f90d58c · правится надстройкой, не здесь
 /**
  * Настройки проверок: что считать исходниками, куда не ходить и где лежат списки долгов.
  *
@@ -190,6 +190,61 @@ export const readAllowlist = (name) => {
     const path = join(ROOT, allowlistOf(name));
 
     return existsSync(path) ? JSON.parse(readFileSync(path, 'utf8')) : {};
+};
+
+/**
+ * Разбор списка принятого: запись отвечает за себя сама.
+ *
+ * Причина, написанная прозой на весь список, за отдельную строку не отвечает: список пустеет и
+ * наполняется, а причина остаётся прежней — строка, внесённая позже, выглядит покрытой ею. Так
+ * и вышло у четырёх списков дерева: шапка говорила о разобранном долге, а под ней лежало
+ * принятое, которого в тот день ещё не было.
+ *
+ * Поэтому форма одна на все списки: `accepted` и `debt` — объекты, где ключ говорит, что
+ * принято, а значение несёт причину и номер задачи, которой запись внесена. Номер — это дорога
+ * к разговору, в котором заглушить разрешили: без него запись объясняет сама себя, а спросить
+ * о ней некого.
+ *
+ * Отказ называет файл и саму запись: список читают не целиком, а по строке, и «где-то здесь
+ * неверная запись» стоит того же, что и молчание.
+ */
+export const parseAllowlist = (name) => {
+    const file = allowlistOf(name);
+    const raw = readAllowlist(name);
+    const key = CONFIG.board.taskKey;
+    const taskForm = key ? new RegExp(`^${key}-\\d+$`) : /^[A-Za-z]+-\d+$/;
+    const refuse = (message) => {
+        console.error(`${file}: ${message}`);
+        process.exit(1);
+    };
+    const parseSide = (side) => {
+        const entries = raw[side];
+        if (entries === undefined) {
+            return new Map();
+        }
+        if (Array.isArray(entries) || typeof entries !== 'object' || entries === null) {
+            refuse(`«${side}» записан не объектом — у записи нет места ни для причины, ни для номера задачи`);
+        }
+        const parsed = new Map();
+        for (const [entry, value] of Object.entries(entries)) {
+            if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+                refuse(`«${entry}» записан без причины — рядом с записью стоят «reason» и «task»`);
+            }
+            if (typeof value.reason !== 'string' || value.reason.trim() === '') {
+                refuse(`у «${entry}» пустая причина — заглушённое без причины через месяц не отличить от забытого`);
+            }
+            if (typeof value.task !== 'string' || !taskForm.test(value.task)) {
+                refuse(`у «${entry}» нет номера задачи вида «${key || 'КЛЮЧ'}-<номер>» — спросить о записи будет некого`);
+            }
+            parsed.set(entry, { reason: value.reason, task: value.task });
+        }
+
+        return parsed;
+    };
+    const accepted = parseSide('accepted');
+    const debt = parseSide('debt');
+
+    return { accepted, debt, keys: new Set([...accepted.keys(), ...debt.keys()]) };
 };
 
 /** Есть ли в дереве то, без чего проверке нечего делать. Нет — она выходит с нулём и говорит это. */
