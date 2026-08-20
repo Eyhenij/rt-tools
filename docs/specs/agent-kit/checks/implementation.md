@@ -15,6 +15,10 @@
 | Предел длины объявлен одним числом на все роды файлов.                               | `projects/agent-kit/assets/checks/check-file-size.mjs:LIMIT`                 |
 | Накопленное до объявления предела перечислено поимённо.                              | `projects/agent-kit/assets/checks/check-file-size.mjs:parseAllowlist`        |
 | Принятое и долг в перечне различаются.                                               | `projects/agent-kit/assets/checks/check-file-size.mjs:known`                 |
+| Список принятого читает общий разбор, а не каждая проверка по-своему.                | `projects/agent-kit/assets/checks/rt-kit-checks.config.mjs:parseAllowlist`   |
+| У записи списка стоят своя причина и номер задачи, которой она внесена.              | `projects/agent-kit/assets/checks/rt-kit-checks.config.mjs:allowlistOf`      |
+| Сторона списка, записанная перечнем строк, отбивает разбор.                          | `projects/agent-kit/assets/checks/rt-kit-checks.config.mjs:parseAllowlist`   |
+| Списка нет вовсе — разбор отдаёт пустое и работу не отбивает.                        | `projects/agent-kit/assets/checks/rt-kit-checks.config.mjs:parseAllowlist`   |
 | Данные из счёта длины выведены.                                                      | `projects/agent-kit/assets/checks/check-file-size.mjs:JUDGED`                |
 | Описание прошлого и папка задачи из счёта выведены.                                  | `projects/agent-kit/assets/checks/check-file-size.mjs:SKIPPED_PREFIXES`      |
 | Сгенерированное выведено каталогом, а не именами.                                    | `projects/agent-kit/assets/checks/check-file-size.mjs:SKIPPED_PREFIXES`      |
