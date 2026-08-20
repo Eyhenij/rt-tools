@@ -7,9 +7,24 @@
  */
 .admin-profile-menu {
     display: flex;
-    min-width: 200px;
+    min-width: var(--rt-profile-menu-min-width);
+    box-sizing: border-box;
     flex-direction: column;
     padding: var(--rt-space-2);
+
+    /**
+     * Подложка, край и тень — свои. Перекрытие кита их не рисует: оно только выносит узел к
+     * концу страницы и ставит его на место, а чем попап отделён от страницы, решает тот, кто
+     * кладёт в него разметку. Без этих строк попап стоял прозрачным — подписи висели прямо
+     * поверх таблицы, и прочитать их было нечем.
+     *
+     * Подложка берётся у панели навигации кита, чтобы попап и панель второго уровня в шапке не
+     * расходились цветом; тень своя — узкой панели нужен очерченный край.
+     */
+    border: var(--rt-border-width-thin) solid var(--rt-nav-panel-color-border);
+    border-radius: var(--rt-radius-md);
+    background-color: var(--rt-nav-panel-color-bg);
+    box-shadow: var(--rt-profile-menu-shadow);
     gap: var(--rt-space-1);
 
     &__name {
