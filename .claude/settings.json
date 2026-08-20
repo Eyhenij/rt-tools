@@ -40,6 +40,15 @@
         "matcher": "mcp__claude-in-chrome__(list_connected_browsers|switch_browser)"
       },
       {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/handoff-entry-guard.sh"
+          }
+        ]
+      },
+      {
         "hooks": [
           {
             "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/browser-guard-device-id.sh",
@@ -147,6 +156,15 @@
           {
             "type": "command",
             "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/exam-guard.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/prose-style-guard.sh"
           }
         ]
       }
