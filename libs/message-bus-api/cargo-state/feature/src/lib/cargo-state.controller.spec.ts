@@ -2,7 +2,7 @@ import { BadRequestException, Logger } from '@nestjs/common';
 import { describe, expect, it, MockInstance, vi } from 'vitest';
 
 import { OPERATION_ACCESS, TOperationAccess } from '@rt/message-bus-api/access/util';
-import { ECargoStateDenial, ICargoStateAccepted } from '@rt/message-bus-api/cargo-state/api';
+import { ECargoStateDenial, ICargoStateResponse } from '@rt/message-bus-api/cargo-state/api';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IRequestTree, ITreeBearingRequest, rememberTree } from '@rt/message-bus-api/trees/util';
 import { ECargoState, TCargoBody } from '@rt/message-bus-common';
@@ -87,7 +87,7 @@ describe('CargoStateController', () => {
         const prisma: PrismaDouble = new PrismaDouble();
         prisma.postmortems.push({ treeId: TREE.id, key: 'a.md', state: ECargoState.New });
 
-        const answer: ICargoStateAccepted = await controllerWith(prisma).move(
+        const answer: ICargoStateResponse = await controllerWith(prisma).move(
             packet([{ kind: 'postmortem', key: 'a.md', state: 'in_work' }]),
             requestOf()
         );
@@ -101,7 +101,7 @@ describe('CargoStateController', () => {
         prisma.postmortems.push({ treeId: TREE.id, key: 'a.md', state: ECargoState.New });
         prisma.proposals.push({ treeId: TREE.id, key: 'digest-1', state: ECargoState.New });
 
-        const answer: ICargoStateAccepted = await controllerWith(prisma).move(
+        const answer: ICargoStateResponse = await controllerWith(prisma).move(
             packet([
                 { kind: 'postmortem', key: 'a.md', state: 'in_work' },
                 { kind: 'proposal', key: 'digest-1', state: 'in_work' },
@@ -120,7 +120,7 @@ describe('CargoStateController', () => {
         prisma.postmortems.push({ treeId: TREE.id, key: 'a.md', state: ECargoState.New });
         prisma.postmortems.push({ treeId: TREE.id, key: 'b.md', state: ECargoState.New });
 
-        const answer: ICargoStateAccepted = await controllerWith(prisma).move(
+        const answer: ICargoStateResponse = await controllerWith(prisma).move(
             packet([
                 { kind: 'postmortem', key: 'a.md', state: 'in_work' },
                 { kind: 'postmortem', key: 'b.md', state: 'released' },
@@ -138,7 +138,7 @@ describe('CargoStateController', () => {
         const prisma: PrismaDouble = new PrismaDouble();
         prisma.postmortems.push({ treeId: TREE.id, key: 'a.md', state: ECargoState.InWork });
 
-        const answer: ICargoStateAccepted = await controllerWith(prisma).move(
+        const answer: ICargoStateResponse = await controllerWith(prisma).move(
             packet([{ kind: 'postmortem', key: 'a.md', state: 'in_work' }]),
             requestOf()
         );
@@ -150,7 +150,7 @@ describe('CargoStateController', () => {
         const prisma: PrismaDouble = new PrismaDouble();
         prisma.postmortems.push({ treeId: NEIGHBOUR.id, key: 'a.md', state: ECargoState.New });
 
-        const answer: ICargoStateAccepted = await controllerWith(prisma).move(
+        const answer: ICargoStateResponse = await controllerWith(prisma).move(
             packet([{ kind: 'postmortem', key: 'a.md', state: 'in_work' }]),
             requestOf()
         );

@@ -2,11 +2,11 @@ import { describe, expect, it } from 'vitest';
 
 import { ECargoState } from '@rt/message-bus-common';
 
-import { cargoStateBody, ECargoStateBodyFault, ECargoStateKind, ICargoStateBody } from './cargo-state-body';
+import { cargoStateBody, ECargoStateBodyFault, ECargoStateKind, ICargoStateParsed } from './cargo-state-body';
 
 describe('cargoStateBody', () => {
     it('SC-MB-173 — пакет из двух родов разбирается в две строки', () => {
-        const body: ICargoStateBody = cargoStateBody([
+        const body: ICargoStateParsed = cargoStateBody([
             { kind: 'postmortem', key: '2026-08-20-guard.md', state: 'in_work' },
             { kind: 'proposal', key: 'ab12cd34', state: 'in_work' },
         ]);
@@ -19,7 +19,7 @@ describe('cargoStateBody', () => {
     });
 
     it('SC-MB-179 — незнакомое состояние отбивает запрос и называет строку', () => {
-        const body: ICargoStateBody = cargoStateBody([
+        const body: ICargoStateParsed = cargoStateBody([
             { kind: 'postmortem', key: 'a.md', state: 'new' },
             { kind: 'postmortem', key: 'b.md', state: 'разобрано наполовину' },
         ]);
@@ -30,7 +30,7 @@ describe('cargoStateBody', () => {
     });
 
     it('SC-MB-179 — незнакомый род записи отбивает запрос и называет строку', () => {
-        const body: ICargoStateBody = cargoStateBody([{ kind: 'month', key: 'a', state: 'new' }]);
+        const body: ICargoStateParsed = cargoStateBody([{ kind: 'month', key: 'a', state: 'new' }]);
 
         expect(body.lines).toBeNull();
         expect(body.fault).toBe(ECargoStateBodyFault.UnknownKind);
@@ -38,7 +38,7 @@ describe('cargoStateBody', () => {
     });
 
     it('SC-MB-179 — строка без обязательного поля отбивает запрос и называет своё место', () => {
-        const body: ICargoStateBody = cargoStateBody([
+        const body: ICargoStateParsed = cargoStateBody([
             { kind: 'postmortem', key: 'a.md', state: 'new' },
             { kind: 'postmortem', state: 'new' },
         ]);

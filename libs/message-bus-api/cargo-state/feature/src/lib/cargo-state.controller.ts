@@ -13,12 +13,12 @@
 import { BadRequestException, Body, Controller, Logger, Post, Req } from '@nestjs/common';
 
 import { TreeOperation } from '@rt/message-bus-api/access/util';
-import { ECargoStateDenial, ICargoStateAccepted, ICargoStateDenied } from '@rt/message-bus-api/cargo-state/api';
+import { ECargoStateDenial, ICargoStateResponse, ICargoStateDeniedLine } from '@rt/message-bus-api/cargo-state/api';
 import {
     cargoStateBody,
     ECargoStateBodyFault,
     ECargoStateKind,
-    ICargoStateBody,
+    ICargoStateParsed,
     ICargoStateLine,
 } from '@rt/message-bus-api/cargo-state/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
@@ -26,6 +26,7 @@ import { movePostmortemStates } from '@rt/message-bus-api/postmortems/data-acces
 import { moveProposalStates } from '@rt/message-bus-api/proposals/data-access';
 import { IRequestTree, ITreeBearingRequest, treeOf } from '@rt/message-bus-api/trees/util';
 import {
+    CARGO_ITEMS_FIELDS,
     cargoFault,
     cargoFaultMessage,
     ECargoStateMove,
@@ -51,9 +52,6 @@ const LOG_CONTEXT: string = 'CargoState';
  * строки правка, не легшая ни разу, не видна никому — ни владельцу, ни разбору происшествия.
  */
 const DENIED_LINE: string = 'intake.state.denied';
-
-/** Поля пакета правки: те же, что у приёма груза. */
-const STATE_FIELDS: readonly string[] = ['schema', 'tree', 'items'];
 
 /** Текст отказа по форме пакета: причина и место строки, если промах у неё. */
 function bodyFaultMessage(fault: ECargoStateBodyFault, at: number | null): string {
@@ -84,15 +82,15 @@ export class CargoStateController {
 
     @Post('states')
     @TreeOperation()
-    public async move(@Body() body: unknown, @Req() request: ITreeBearingRequest): Promise<ICargoStateAccepted> {
+    public async move(@Body() body: unknown, @Req() request: ITreeBearingRequest): Promise<ICargoStateResponse> {
         const tree: IRequestTree = treeOf(request);
-        const fault: ICargoFault | null = cargoFault(body, tree.slug, STATE_FIELDS);
+        const fault: ICargoFault | null = cargoFault(body, tree.slug, CARGO_ITEMS_FIELDS);
 
         if (fault) {
             throw new BadRequestException(cargoFaultMessage(fault, CARGO_KIND));
         }
 
-        const parsed: ICargoStateBody = cargoStateBody((body as TCargoBody)['items']);
+        const parsed: ICargoStateParsed = cargoStateBody((body as TCargoBody)['items']);
 
         if (parsed.fault !== null || parsed.lines === null) {
             throw new BadRequestException(bodyFaultMessage(parsed.fault as ECargoStateBodyFault, parsed.at));
@@ -115,7 +113,7 @@ export class CargoStateController {
      * Одной сделкой на оба рода это не сводится — и не должно: строки правки друг от друга не
      * зависят, отметка по одной записи верна независимо от соседней.
      */
-    async #applied(tree: IRequestTree, lines: readonly ICargoStateLine[]): Promise<ICargoStateAccepted> {
+    async #applied(tree: IRequestTree, lines: readonly ICargoStateLine[]): Promise<ICargoStateResponse> {
         const [postmortems, proposals]: [ICargoStateOutcome[], ICargoStateOutcome[]] = await Promise.all([
             movePostmortemStates(this.#prisma, tree.id, this.#asked(lines, ECargoStateKind.Postmortem)),
             moveProposalStates(this.#prisma, tree.id, this.#asked(lines, ECargoStateKind.Proposal)),
@@ -126,7 +124,7 @@ export class CargoStateController {
             moves.set(outcome.key, outcome.move);
         }
 
-        const denied: ICargoStateDenied[] = [];
+        const denied: ICargoStateDeniedLine[] = [];
         let changed: number = 0;
         let same: number = 0;
 
@@ -160,7 +158,7 @@ export class CargoStateController {
      * чтобы понять, что сломалось, а не чтобы прочитать чужое. Ключ записи туда тоже не идёт:
      * у предложения им служит признак его текста, и по нему текст находится у самого дерева.
      */
-    #told(tree: IRequestTree, denied: readonly ICargoStateDenied[]): void {
+    #told(tree: IRequestTree, denied: readonly ICargoStateDeniedLine[]): void {
         for (const line of denied) {
             this.#log.warn(DENIED_LINE, { tree: tree.slug, kind: line.kind, denial: line.denial });
         }

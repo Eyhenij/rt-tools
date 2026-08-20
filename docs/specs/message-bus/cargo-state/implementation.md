@@ -22,8 +22,8 @@
 | Правка приезжает пакетом: одна операция на несколько строк.                                                 | `libs/message-bus-api/cargo-state/util/src/lib/cargo-state-body.ts:cargoStateBody`                |
 | Записи обоих родов едут одним пакетом.                                                                      | `libs/message-bus-api/cargo-state/util/src/lib/cargo-state-body.ts:cargoStateBody`                |
 | Строка пакета отбивается сама по себе, а не уносит пакет целиком.                                           | `libs/message-bus-api/cargo-state/feature/src/lib/cargo-state.controller.ts:CargoStateController` |
-| Ответ называет, сколько записей переведено, сколько уже стояло в названном состоянии и какие строки отбиты. | `libs/message-bus-api/cargo-state/api/src/lib/cargo-state.response.ts:ICargoStateAccepted`        |
-| Отбитая строка называется местом в пакете, ключом и причиной.                                               | `libs/message-bus-api/cargo-state/api/src/lib/cargo-state.response.ts:ICargoStateAccepted`        |
+| Ответ называет, сколько записей переведено, сколько уже стояло в названном состоянии и какие строки отбиты. | `libs/message-bus-api/cargo-state/api/src/lib/cargo-state.response.ts:ICargoStateResponse`        |
+| Отбитая строка называется местом в пакете, ключом и причиной.                                               | `libs/message-bus-api/cargo-state/api/src/lib/cargo-state.response.ts:ICargoStateResponse`        |
 | Пакет без строк отбивается по форме.                                                                        | `libs/message-bus-api/cargo-state/util/src/lib/cargo-state-body.ts:cargoStateBody`                |
 | Отбитая строка пишется в журнал приёмника наравне с отказом операции.                                       | `libs/message-bus-api/cargo-state/feature/src/lib/cargo-state.controller.ts:CargoStateController` |
 | Строка журнала несёт род записи, признак дерева и причину.                                                  | `libs/message-bus-api/cargo-state/feature/src/lib/cargo-state.controller.ts:CargoStateController` |

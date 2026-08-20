@@ -15,7 +15,7 @@ export enum ECargoStateDenial {
 }
 
 /** Отбитая строка: место в пакете, род записи, ключ и причина. */
-export interface ICargoStateDenied {
+export interface ICargoStateDeniedLine {
     readonly at: number;
     readonly kind: ECargoStateKind;
     readonly key: string;
@@ -23,7 +23,7 @@ export interface ICargoStateDenied {
 }
 
 /** Чем кончилась правка: признак дерева, два числа и список отбитых строк. */
-export interface ICargoStateAccepted {
+export interface ICargoStateResponse {
     /** Признак дерева, взятый из токена, а не из тела запроса. */
     readonly tree: string;
     /** Сколько записей переведено. */
@@ -31,5 +31,5 @@ export interface ICargoStateAccepted {
     /** Сколько уже стояло в названном состоянии: переходом это не считается. */
     readonly same: number;
     /** Строки, которые приёмник не исполнил. */
-    readonly denied: readonly ICargoStateDenied[];
+    readonly denied: readonly ICargoStateDeniedLine[];
 }

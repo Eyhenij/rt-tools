@@ -39,7 +39,7 @@ export enum ECargoStateBodyFault {
 }
 
 /** Чем кончился разбор пакета: либо строки, либо причина с местом промаха. */
-export interface ICargoStateBody {
+export interface ICargoStateParsed {
     readonly lines: readonly ICargoStateLine[] | null;
     readonly fault: ECargoStateBodyFault | null;
     /** Место строки, на которой разбор встал; у промаха всего пакета — пусто. */
@@ -56,7 +56,7 @@ const KINDS: readonly ECargoStateKind[] = Object.values(ECargoStateKind);
 const STATES: readonly ECargoState[] = Object.values(ECargoState);
 
 /** Отказ разбора: причина и место, если промах у строки. */
-function faulty(fault: ECargoStateBodyFault, at: number | null): ICargoStateBody {
+function faulty(fault: ECargoStateBodyFault, at: number | null): ICargoStateParsed {
     return { lines: null, fault, at };
 }
 
@@ -79,7 +79,7 @@ function isLine(raw: unknown): raw is TCargoBody {
  * запись, которой у дерева нет, и переход, которого порядок не разрешает, — но это видно уже
  * в хранилище.
  */
-export function cargoStateBody(items: unknown): ICargoStateBody {
+export function cargoStateBody(items: unknown): ICargoStateParsed {
     if (!Array.isArray(items)) {
         return faulty(ECargoStateBodyFault.NotAList, null);
     }
