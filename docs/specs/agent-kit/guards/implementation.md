@@ -36,3 +36,6 @@
 | Записи хода сводятся в один поток по порядку.                                                                | `projects/agent-kit/assets/hooks/exam-guard.sh:after`                   |
 | Заход, начатый с передачи, не правит файлов, пока не загружено правило ведения работы.                       | `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:verdict`        |
 | Передача узнаётся и по пути к ней, и по слову о ней.                                                         | `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:from_handoff`   |
+| Отказ гарда называет два законных хода.                                                                      | `projects/agent-kit/assets/hooks/deny-tail.sh:rt_deny_tail`             |
+| Законная форма обхода называется тем же хвостом, а её отсутствие — тоже.                                     | `projects/agent-kit/assets/hooks/deny-tail.sh:rt_deny_tail`             |
+| Хвост отказа собирает общая функция, а не каждый текст сам.                                                  | `projects/agent-kit/assets/hooks/git-guard-main.sh:deny_tail_text`      |

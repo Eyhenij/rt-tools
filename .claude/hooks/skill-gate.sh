@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.9.1 · hooks/skill-gate.sh · a97234965dd5 · правится надстройкой, не здесь
+# rt-kit v0.9.1 · hooks/skill-gate.sh · 6d9134750918 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__claude-in-chrome__.*
+# Требует: hooks/deny-tail.sh
 # Гейт правил: не даёт править файл, пока не загружено правило, под которое он подпадает.
 #
 # Закон и правило, которых никто не открывает, не действуют. Напоминание в подсказке помогает
@@ -172,6 +173,17 @@ if [ -n "$law" ]; then
     [ -f "$root/$law_path" ] \
         && reason="Отбито гейтом правил: загрузи правило «${req}» инструментом Skill — оно применяет закон ${law_path} к этому дереву — и повтори действие. ${fallback} Для этой области это происходит один раз за сессию."
 fi
+
+# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
+# Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+deny_tail_text="$(rt_deny_tail "")"
+[ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
 
 jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
     || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Загрузи правило %s и повтори."}}\n' "$req"

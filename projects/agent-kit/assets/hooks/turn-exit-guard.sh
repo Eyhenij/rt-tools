@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: Stop
+# Требует: hooks/deny-tail.sh
 # Страж выходов хода: ход, в котором по работе не сделано ничего, не заканчивается, пока работа
 # не отдана. Stop.
 #
@@ -142,6 +143,17 @@ EOF
 Запусти их этим же ходом либо верни прежний номер этапа в ход работы.
 
 Страж судит один ход: следующий заход не отбивается."
+        # Общий хвост отказа: два законных хода. Файл может быть не разложен — тогда хвоста нет,
+        # а причина отказа остаётся прежней.
+        # shellcheck disable=SC1090
+        [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+            && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+        command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+        deny_tail_text="$(rt_deny_tail "")"
+        [ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
+
         jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
             || printf '{"decision":"block","reason":"turn-exit-guard: закрытый этап не подтверждён выводом команды."}\n'
         exit 0
@@ -159,6 +171,17 @@ reason="BLOCKED by turn-exit-guard: работа в состоянии '${state}
 Сделай его этим же ходом. Владелец сказал остановиться — так и напиши: страж читает его слово, а не пересказ.
 
 Страж судит один ход: следующий заход не отбивается."
+
+# Общий хвост отказа: два законных хода. Файл может быть не разложен — тогда хвоста нет,
+# а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+deny_tail_text="$(rt_deny_tail "")"
+[ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
 
 jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
     || printf '{"decision":"block","reason":"turn-exit-guard: работа не кончена — следующий шаг стоит в ходе работы."}\n'

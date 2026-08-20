@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/profile-check.sh
+# Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # Гард проверок перед пушем. PreToolUse на вызове пуша.
 #
 # Пуш — это вход в конвейер: слияние в главную ветку запускает выкатку, и всё, что не
@@ -70,6 +70,17 @@ esac
 if printf '%s' "$cmd" | grep -qE '(^|[;&|(]|&&|\|\|)[[:space:]]*git[[:space:]]+(checkout|switch)[[:space:]]+' &&
     ! printf '%s' "$cmd" | grep -qE 'git[[:space:]]+(checkout[[:space:]]+-b|switch[[:space:]]+-c)([[:space:]]|$)'; then
     reason="BLOCKED: переключение ветки и пуш одной командой. Набор гейта гоняется в том дереве, какое лежит на момент разбора команды, — то есть по ПРЕЖНЕЙ ветке, а не по той, что уходит на хостинг. Зелёный набор при этом читается как проверка ушедшего, хотя проверял он другое. Раздели вызовы: сперва переключись, затем отдельной командой пушь."
+    # Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
+    # Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+    # shellcheck disable=SC1090
+    [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+        && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+    command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+    deny_tail_text="$(rt_deny_tail "")"
+    [ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
+
     jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
         || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Переключение ветки и пуш одной командой."}}\n'
     exit 0
@@ -123,6 +134,17 @@ tail_out="$(printf '%s' "$output" | tail -n 40 | tr -d '\000')"
 reason="BLOCKED: пуш без зелёного локального прогона. «${failed}» упала — почини и пушь снова, обходить гард нельзя. Пуш — вход в конвейер, и красное отсюда проверяется уже на проде. Хвост вывода:
 
 ${tail_out}"
+
+# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
+# Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+deny_tail_text="$(rt_deny_tail "")"
+[ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
 
 jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
     || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Проверки перед пушем не прошли."}}\n'

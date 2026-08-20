@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.9.1 · hooks/exam-guard.sh · 9d6dff0318b3 · правится надстройкой, не здесь
+# rt-kit v0.9.1 · hooks/exam-guard.sh · 17dff658eb06 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file|Bash
-# Требует: agents/strict-teacher.md, hooks/roles.sh
+# Требует: agents/strict-teacher.md, hooks/roles.sh, hooks/deny-tail.sh
 # Гард экзамена: правка не идёт, пока за сессию не сдан экзамен по загруженным правилам.
 #
 # Зачем именно так. Гейт правил требует загрузить правило перед правкой и на этом кончается:
@@ -49,9 +49,19 @@ transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/nu
 [ -z "$transcript" ] && exit 0
 [ -f "$transcript" ] || exit 0
 
+# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть. Файл
+# может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+
 deny() {
-    jq -n --arg r "$1" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}\n' "$1"
+    reason="$1"
+    tail_text="$(rt_deny_tail "$2")"
+    [ -n "$tail_text" ] && reason="$1 ${tail_text}"
+    jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
+        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}\n' "$reason"
     exit 0
 }
 
