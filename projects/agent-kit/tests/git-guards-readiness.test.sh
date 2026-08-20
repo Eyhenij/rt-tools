@@ -185,6 +185,20 @@ REVIEWED="$(ready_repo "printf '%s' '{\"exists\":true,\"draft\":true,\"reviewed\
 dlv "SC-AK-375 — заявка с разбором черновик снимает" "$REVIEWED" 'gh pr ready 917' PASS
 rm -rf "$REVIEWED"
 
+# Конфликт приезжает в отданную заявку чужим слиянием: основание, проверенное на открытии, к
+# моменту снятия черновика уже вчерашнее.
+CONFLICT="$(ready_repo "printf '%s' '{\"exists\":true,\"number\":917,\"draft\":true,\"reviewed\":true,\"conflicting\":true}';")"
+dlv "SC-AK-423 — конфликтующая заявка черновик не снимает" "$CONFLICT" 'gh pr ready 917' deny
+dlv_reason "SC-AK-423 — отказ называет заявку и конфликт" "$CONFLICT" 'gh pr ready 917' \
+    'заявка #917 конфликтует'
+rm -rf "$CONFLICT"
+
+# Дерево, чей помощник о сливаемости молчит вовсе, работает как прежде: поля нет — требования
+# нет. Иначе правка пакета отбивала бы снятие черновика у всех, кто помощника ещё не поправил.
+NO_FIELD="$(ready_repo "printf '%s' '{\"exists\":true,\"number\":917,\"draft\":true,\"reviewed\":true}';")"
+dlv "SC-AK-424 — молчание о сливаемости снятие не задерживает" "$NO_FIELD" 'gh pr ready 917' PASS
+rm -rf "$NO_FIELD"
+
 # Помощник очереди работ молчит — нет сети, нет токена, нет узла. Ярус сетевой, и молчание
 # работу не отбивает: проверка, падающая в самолёте, стоит дороже промаха, который она ловит.
 SILENT="$(ready_repo 'return 1;')"

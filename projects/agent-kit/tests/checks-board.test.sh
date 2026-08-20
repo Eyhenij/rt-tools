@@ -103,6 +103,25 @@ report "SC-AK-282 — красный прогон при черновике не
 export STUB_VERDICT=running
 report "SC-AK-282 — идущий прогон при черновике не отбит" "$(board_code)" 0
 
+# SC-AK-425 — конфликт приезжает в отданную заявку чужим слиянием, и своего хода у него нет:
+# гард судит один ход, а заявка стоит в очереди днями.
+export STUB_RUNS=1
+export STUB_VERDICT=success
+conflicting_json() {
+    printf '[{"number":701,"title":"[RT-700] Правка","headRefName":"RT-700-probe","headRefOid":"%s","isDraft":false,"body":"Closes #700","mergeable":"%s"}]' \
+        "$HEAD_SHA" "$1"
+}
+export STUB_PULLS="$(conflicting_json CONFLICTING)"
+report "SC-AK-425 — конфликтующая заявка названа расхождением" "$(board_code)" 1
+report "SC-AK-425 — сказано, с чем конфликт" "$(board_says 'конфликтует с главной веткой')" 1
+
+# SC-AK-426 — «ещё не посчитано» конфликтом не считается: хостинг считает сливаемость заново
+# после каждой правки главной ветки, и строка краснела бы на каждой свежей вершине.
+export STUB_PULLS="$(conflicting_json UNKNOWN)"
+report "SC-AK-426 — неизвестная сливаемость расхождением не считается" "$(board_code)" 0
+export STUB_PULLS="$(conflicting_json MERGEABLE)"
+report "SC-AK-426 — сливаемая заявка молчит" "$(board_code)" 0
+
 rm -rf "$BOARD_TREE"
 
 # --- SC-AK-377…346 — состояние заявки: разбор у неё есть или нет ------------------------------
@@ -195,7 +214,7 @@ NUMBERED='{"number":701,"isDraft":true,"author":{"login":"probe-bot"},"reviewReq
 
 report "SC-AK-391 — без ссылки клиент зовётся вовсе без довода" \
     "$(pull_state "$PULL_TREE" "$NUMBERED" '' '' >/dev/null; pull_args "$PULL_TREE")" \
-    'pr view --json number,isDraft,reviewRequests,latestReviews,author'
+    'pr view --json number,isDraft,reviewRequests,latestReviews,author,mergeable'
 report "SC-AK-391 — и заявка при этом найдена" \
     "$(pull_state "$PULL_TREE" "$NUMBERED" '' '' | jq -r '.exists')" true
 # Номер приходит из ответа: заявку, названную не номером, в отказе гарда узнают по нему.
@@ -205,10 +224,10 @@ report "SC-AK-391 — номер берётся из ответа хостинг
 # Ссылка любого рода уходит клиенту как есть: разбирать адрес и имя ветки — его работа, не наша.
 report "SC-AK-392 — имя ветки уходит клиенту доводом" \
     "$(pull_state "$PULL_TREE" "$NUMBERED" '' 'RT-700-probe' >/dev/null; pull_args "$PULL_TREE")" \
-    'pr view RT-700-probe --json number,isDraft,reviewRequests,latestReviews,author'
+    'pr view RT-700-probe --json number,isDraft,reviewRequests,latestReviews,author,mergeable'
 report "SC-AK-392 — и адрес заявки тоже" \
     "$(pull_state "$PULL_TREE" "$NUMBERED" '' 'https://example.invalid/o/r/pull/701' >/dev/null; pull_args "$PULL_TREE")" \
-    'pr view https://example.invalid/o/r/pull/701 --json number,isDraft,reviewRequests,latestReviews,author'
+    'pr view https://example.invalid/o/r/pull/701 --json number,isDraft,reviewRequests,latestReviews,author,mergeable'
 report "SC-AK-392 — по имени ветки заявка тоже находится" \
     "$(pull_state "$PULL_TREE" "$NUMBERED" '' 'RT-700-probe' | jq -r '.exists')" true
 

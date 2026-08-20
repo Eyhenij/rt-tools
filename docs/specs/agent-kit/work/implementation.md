@@ -25,6 +25,8 @@
 | Колонка спрашивается там, где её уже должны были переставить.                              | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:judge_column`        |
 | Имя первой колонки называет дерево, и без него колонка не судится.                         | `projects/agent-kit/assets/defaults/project.sh:RT_BOARD_BACKLOG`            |
 | Черновик не снимается, пока у PR нет разбора.                                              | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:pull_ref`            |
+| Черновик не снимается и с PR, который не сливается.                                        | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:conflicting`         |
+| Молчание о сливаемости снятия не задерживает.                                              | `projects/agent-kit/assets/checks/board.github.mjs:conflicting`             |
 | Ссылка на PR при снятии черновика необязательна.                                           | `projects/agent-kit/assets/checks/board.github.mjs:target`                  |
 | Возврат PR в черновик требования не получает.                                              | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:undo`                |
 | Номер PR в отказе берётся из ответа очереди работ, а не из команды.                        | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:pull_name`           |
@@ -55,3 +57,5 @@
 | Дерево, у которого прогоны не спрашивались, слышит об этом отдельной строкой.              | `projects/agent-kit/assets/checks/check-board.github.mjs:HAS_PIPELINE`      |
 | Черновик при зелёном прогоне на вершине — расхождение сверки.                              | `projects/agent-kit/assets/checks/check-board.github.mjs:checkReadyDraft`   |
 | Цвет прогона спрашивается отдельно от его наличия.                                         | `projects/agent-kit/assets/checks/board.github.mjs:verdictOnHead`           |
+| Конфликтующий открытый PR — расхождение сверки.                                            | `projects/agent-kit/assets/checks/check-board.github.mjs:checkConflicting`  |
+| Непосчитанная сливаемость конфликтом не считается.                                         | `projects/agent-kit/assets/checks/board.github.mjs:conflicting`             |
