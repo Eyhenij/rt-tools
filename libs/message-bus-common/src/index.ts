@@ -1,6 +1,7 @@
 export * from './lib/cargo';
 export * from './lib/cargo-fault';
 export * from './lib/cargo-shape';
+export * from './lib/cargo-state';
 export * from './lib/month';
 export * from './lib/page';
 export * from './lib/sortable';
