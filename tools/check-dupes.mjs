@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.9.1 · checks/check-dupes.mjs · a1b26e4aec1d · правится надстройкой, не здесь
+// rt-kit v0.9.1 · checks/check-dupes.mjs · d4aa7fb0c16f · правится надстройкой, не здесь
 /**
  * Проверка того, что образец не написан второй раз.
  *
@@ -41,7 +41,7 @@ import { createRequire } from 'node:module';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
-import { allowlistOf, CONFIG, ROOT } from './rt-kit-checks.config.mjs';
+import { allowlistOf, baselineOf, CONFIG, ROOT, parseAllowlist } from './rt-kit-checks.config.mjs';
 
 const ALLOWLIST = allowlistOf('dupes');
 /**
@@ -58,9 +58,9 @@ const SKIPPED_DIRS = CONFIG.skippedDirs;
 /** Минимум членов, при котором совпадение набора перечислений о чём-то говорит */
 const MIN_ENUM_MEMBERS = 2;
 
-const allowlist = JSON.parse(readFileSync(join(ROOT, ALLOWLIST), 'utf8'));
-const known = new Set([...(allowlist.accepted ?? []), ...(allowlist.debt ?? [])]);
-const debt = new Set(allowlist.debt ?? []);
+const allowlist = parseAllowlist('dupes');
+const known = allowlist.keys;
+const debt = new Set(allowlist.debt.keys());
 
 function collectFiles(dir) {
     const files = [];
@@ -319,8 +319,7 @@ const fresh = findings.filter((finding) => !known.has(finding.key));
 const staleKeys = [...known].filter((key) => !findings.some((finding) => finding.key === key));
 
 if (process.argv.includes('--baseline')) {
-    const keys = findings.map((finding) => finding.key).sort();
-    console.log(JSON.stringify({ ...allowlist, debt: keys }, null, 4));
+    console.log(baselineOf(findings.map((finding) => finding.key).sort(), allowlist));
     process.exit(0);
 }
 

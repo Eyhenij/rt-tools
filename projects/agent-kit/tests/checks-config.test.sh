@@ -123,6 +123,57 @@ report "SC-AK-155 — задачи нет вовсе" "$(answer_for '{"exists":f
 
 rm -f "$TREE/tools/board.mjs"
 
+# --- разбор списка принятого -------------------------------------------------------------------
+#
+# Заглушить проверку дешевле всего, поэтому запись отвечает за себя сама: причина и номер
+# задачи стоят при ней, а не прозой в шапке списка. Причина в шапке за отдельную строку не
+# отвечает — список наполняется, а она остаётся прежней.
+printf '{"board":{"taskKey":"RT"},"allowlistDir":"tools"}\n' > "$TREE/.claude/rt-kit/checks.json"
+
+# Разбор списка: печатает разобранное либо отказ.
+parse_of() {
+    printf '%s\n' "$2" > "$TREE/tools/$1-allowlist.json"
+    node --input-type=module -e "
+        import { parseAllowlist } from '${TREE}/tools/rt-kit-checks.config.mjs';
+        const parsed = parseAllowlist(process.argv[1]);
+        console.log(JSON.stringify({ accepted: [...parsed.accepted], debt: [...parsed.debt], keys: [...parsed.keys] }));
+    " "$1" 2>&1
+}
+
+GOOD='{"accepted":{"две копии перечисления":{"reason":"киты кода не делят","task":"RT-807"}},"debt":{"третья копия":{"reason":"разбирается отдельной задачей","task":"RT-849"}}}'
+report "SC-AK-400 — годная запись разобрана: принятое" "$(parse_of good "$GOOD" | grep -c 'две копии перечисления')" '1'
+report "SC-AK-400 — годная запись разобрана: долг" "$(parse_of good "$GOOD" | grep -c 'третья копия')" '1'
+report "SC-AK-400 — ключи считаются вместе" "$(parse_of good "$GOOD" | grep -c '"keys":\["две копии перечисления","третья копия"\]')" '1'
+
+NO_REASON='{"accepted":{"две копии перечисления":{"reason":"  ","task":"RT-807"}}}'
+report "SC-AK-401 — пустая причина отбита" "$(parse_of noreason "$NO_REASON" | grep -c 'пустая причина')" '1'
+report "SC-AK-401 — отказ называет запись" "$(parse_of noreason "$NO_REASON" | grep -c 'две копии перечисления')" '1'
+
+NO_TASK='{"accepted":{"две копии перечисления":{"reason":"киты кода не делят"}}}'
+report "SC-AK-402 — запись без номера задачи отбита" "$(parse_of notask "$NO_TASK" | grep -c 'нет номера задачи')" '1'
+FOREIGN_TASK='{"accepted":{"две копии перечисления":{"reason":"киты кода не делят","task":"807"}}}'
+report "SC-AK-402 — номер не той формы отбит" "$(parse_of foreign "$FOREIGN_TASK" | grep -c 'нет номера задачи')" '1'
+
+FLAT='{"accepted":["две копии перечисления"]}'
+report "SC-AK-403 — перечень без причин отбит" "$(parse_of flat "$FLAT" | grep -c 'записан не объектом')" '1'
+report "SC-AK-403 — отказ называет файл" "$(parse_of flat "$FLAT" | grep -c 'tools/flat-allowlist.json')" '1'
+STRING_VALUE='{"accepted":{"две копии перечисления":"киты кода не делят"}}'
+report "SC-AK-403 — причина без номера задачи отбита" "$(parse_of strval "$STRING_VALUE" | grep -c 'записан без причины')" '1'
+
+# Списка нет вовсе — разбор отдаёт пустое и работу не отбивает: проверка, встреченная впервые,
+# показывает всё найденное новым, и это честнее, чем молчать из-за отсутствия файла.
+empty="$(node --input-type=module -e "
+    import { parseAllowlist } from '${TREE}/tools/rt-kit-checks.config.mjs';
+    // Число печатается строкой: печать числа раскрашивает его, когда окружение просит
+    // цвета, и в сравнение приезжает значение вместе с управляющими последовательностями.
+    // Набор гоняется и из прогона спек, где цвет включён, — там это и всплыло.
+    console.log(String(parseAllowlist('nosuch').keys.size));
+" 2>&1)"
+report "SC-AK-404 — списка нет: разбор пуст" "$empty" '0'
+
+rm -f "$TREE/tools"/*-allowlist.json
+rm -f "$TREE/.claude/rt-kit/checks.json"
+
 # --- список замещается целиком ----------------------------------------------------------------
 # Дописывать в список нельзя: убрать из него стало бы невозможно вовсе.
 printf '{"skippedDirs":["dist"]}\n' > "$TREE/.claude/rt-kit/checks.json"

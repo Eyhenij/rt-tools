@@ -26,7 +26,7 @@ styles_code() {
 # Класс со своим правилом расхождением не бывает — это основание, на котором стоит остальное.
 printf '<div rtBlock="card"><b rtElem="head"></b></div>\n' > "$STYLES_TREE/apps/web/screen.html"
 printf '.card {\n    &__head {\n        color: red;\n    }\n}\n' > "$STYLES_TREE/apps/web/screen.scss"
-printf '{"accepted":[],"debt":[]}\n' > "$STYLES_TREE/tools/styles-allowlist.json"
+printf '{"accepted":{},"debt":{}}\n' > "$STYLES_TREE/tools/styles-allowlist.json"
 report "классы: своё правило проходит" "$(styles_code)" 0
 
 # SC-AK-268 — правило, приехавшее подключённым пакетом, расхождением не считается
@@ -57,7 +57,7 @@ report "SC-AK-270 — ненайденный пакет не роняет про
 
 # SC-AK-271 — разросшийся долг называется разросшимся
 printf '<div rtBlock="card"><b rtElem="foot"></b></div>\n' > "$STYLES_TREE/apps/web/a.html"
-printf '{"accepted":[],"debt":["elem foot @ apps/web/a.html"]}\n' > "$STYLES_TREE/tools/styles-allowlist.json"
+printf '{"accepted":{},"debt":{"elem foot @ apps/web/a.html":{"reason":"фикстура набора","task":"RT-900"}}}\n' > "$STYLES_TREE/tools/styles-allowlist.json"
 report "классы: долг в списке не отбивает" "$(styles_code)" 0
 printf '<div rtBlock="card"><b rtElem="foot"></b></div>\n' > "$STYLES_TREE/apps/web/b.html"
 report "SC-AK-271 — разросшийся долг отбивает" "$(styles_code)" 1
@@ -66,7 +66,7 @@ report "SC-AK-271 — строку убрать не советует" "$(styles
 report "SC-AK-271 — новой строки не предлагает" "$(styles_says 'правила нет ни в одном файле стилей')" 0
 
 # SC-AK-272 — сократившийся перечень называется сократившимся
-printf '{"accepted":[],"debt":["elem foot @ apps/web/a.html, apps/web/b.html"]}\n' \
+printf '{"accepted":{},"debt":{"elem foot @ apps/web/a.html, apps/web/b.html":{"reason":"фикстура набора","task":"RT-900"}}}\n' \
     > "$STYLES_TREE/tools/styles-allowlist.json"
 rm "$STYLES_TREE/apps/web/b.html"
 report "SC-AK-272 — сокращение долга не отбивает" "$(styles_code)" 0
@@ -84,7 +84,7 @@ report "SC-AK-273 — сказано убрать строку" "$(styles_says '
 # Разметка прежних случаев снимается: их классы без правила дали бы расхождение и здесь, а
 # проверяется тут другое.
 rm -f "$STYLES_TREE/apps/web/a.html" "$STYLES_TREE/apps/web/b.html"
-printf '{"accepted":[],"debt":[]}\n' > "$STYLES_TREE/tools/styles-allowlist.json"
+printf '{"accepted":{},"debt":{}}\n' > "$STYLES_TREE/tools/styles-allowlist.json"
 printf '<div rtBlock="card"><b rtElem="head"></b><i rtElem="head-icon"></i></div>\n' \
     > "$STYLES_TREE/apps/web/screen.html"
 printf '.card {\n    &__head {\n        color: red;\n\n        &-icon {\n            color: blue;\n        }\n    }\n}\n' \
