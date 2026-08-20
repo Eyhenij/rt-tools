@@ -28,5 +28,13 @@
 | Ход, в котором совесть нашла повтор разобранного промаха, не заканчивается.                                | `projects/agent-kit/assets/hooks/conscience-guard.sh:verdict`          |
 | Находку снимает действие, а не слова о ней.                                                                | `projects/agent-kit/assets/hooks/conscience-guard.sh:verdict`          |
 | Верность находки гард не судит.                                                                            | `projects/agent-kit/assets/hooks/conscience-guard.sh:reason`           |
+| Утверждение о состоянии дерева, сказанное владельцу, подтверждается командой того же хода.                 | `projects/agent-kit/assets/hooks/claim-guard.sh:claims`                |
+| У каждого слова-утверждения назван свой род команды.                                                       | `projects/agent-kit/assets/hooks/claim-guard.sh:proof`                 |
+| Команда ищется в том же ходе, а не в прошлых.                                                              | `projects/agent-kit/assets/hooks/claim-guard.sh:turn`                  |
+| Судится сказанное владельцу, а не вывод инструмента.                                                       | `projects/agent-kit/assets/hooks/claim-guard.sh:said`                  |
+| Обещание утверждением не считается.                                                                        | `projects/agent-kit/assets/hooks/claim-guard.sh:claims`                |
+| Отказ называет найденное утверждение.                                                                      | `projects/agent-kit/assets/hooks/claim-guard.sh:found`                 |
+| Неверный вывод гард не судит.                                                                              | `projects/agent-kit/assets/hooks/claim-guard.sh:claim-guard`           |
+| Гард утверждения пропускает работу при любой поломке.                                                      | `projects/agent-kit/assets/hooks/claim-guard.sh:transcript`            |
 | Роль, выключенная деревом, гарда при ней не держит.                                                        | `projects/agent-kit/assets/hooks/roles.sh:rt_role_off`                 |
 | Настройка, которую не прочитать, роль не выключает.                                                        | `projects/agent-kit/assets/hooks/roles.sh:rt_role_off`                 |
