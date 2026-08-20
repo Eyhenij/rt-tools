@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: Stop
-# Требует: agents/conscience.md, hooks/roles.sh
+# Требует: agents/conscience.md, hooks/roles.sh, hooks/deny-tail.sh
 # Гард совести: ход, в котором роль совести нашла повтор разобранного промаха, не заканчивается,
 # пока повтор не разобран или не назван владельцу.
 #
@@ -80,6 +80,17 @@ ${detail}
 Находка неверна — так и скажи владельцу: ложная находка тоже стоит хода, и молчанием она не чинится.
 
 Гард судит один ход: следующий заход не отбивается."
+
+# Общий хвост отказа: два законных хода. Файл может быть не разложен — тогда хвоста нет,
+# а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+deny_tail_text="$(rt_deny_tail "")"
+[ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
 
 jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
     || printf '{"decision":"block","reason":"conscience-guard: найден повтор разобранного промаха — разбери его или назови владельцу."}\n'

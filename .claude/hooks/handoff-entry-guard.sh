@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.9.1 · hooks/handoff-entry-guard.sh · 0eabc16c5707 · правится надстройкой, не здесь
+# rt-kit v0.9.1 · hooks/handoff-entry-guard.sh · 510fe8fb82b1 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit
-# Требует: rules/task-flow.md
+# Требует: rules/task-flow.md, hooks/deny-tail.sh
 # Гард входа из передачи: заход, начатый с передачи, не правит файлов, пока не загружено правило
 # ведения работы.
 #
@@ -55,6 +55,17 @@ reason="BLOCKED by handoff-entry-guard: заход начат с передач�
     4. следующий шаг берётся из хода работы.
 
 Загрузи правило и повтори правку."
+
+# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
+# Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+deny_tail_text="$(rt_deny_tail "")"
+[ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
 
 jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
     || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"handoff-entry-guard: правило ведения работы не загружено."}}\n'

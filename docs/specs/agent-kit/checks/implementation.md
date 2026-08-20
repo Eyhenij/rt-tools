@@ -1,4 +1,4 @@
-# Проверки дерева и гейт пуша — где исполняются правила
+# Проверки дерева — где исполняются правила
 
 Первая колонка — правило дословно, как оно написано в разделе «Правила» спека рядом. Правило без
 строки и строка без правила — расхождение: спек обещает то, чего в коде нет, либо в коде стоит
@@ -12,18 +12,13 @@
 | ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
 | Каталог чужого пакета ищется разрешением модуля, а не путём в каталоге зависимостей. | `projects/agent-kit/assets/checks/check-dupes.mjs:resolveExternalDir`        |
 | Отсутствие чужого пакета проверку не роняет.                                         | `projects/agent-kit/assets/checks/check-dupes.mjs:holdersOf`                 |
-| Главная ветка влита в ветку задачи до открытия PR.                                   | `projects/agent-kit/assets/rules/git-workflow.github.md:git-workflow`        |
-| Открытие PR отбивается, пока главная ветка не влита.                                 | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:behind`               |
-| Несошедшиеся условия поставки называются одним отказом.                              | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:deny_faults`          |
-| Каждое несошедшееся условие названо вместе с тем, чем оно снимается.                 | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:fault`                |
-| Условие, известное в начале работы, спрашивается в начале.                           | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:branch_arg`           |
-| Судится то основание, которое названо командой, а не вершина рабочей копии.          | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:base_ref`             |
-| Свежесть локальной ссылки на главную ветку спрашивается и при заведении ветки.       | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:remote_head`          |
-| Ветка без номера задачи условий поставки не получает.                                | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:branch_arg`           |
-| Гейт пуша зовёт то, что дерево разложило.                                            | `projects/agent-kit/assets/defaults/project.sh:rt_push_checks_default`       |
 | Предел длины объявлен одним числом на все роды файлов.                               | `projects/agent-kit/assets/checks/check-file-size.mjs:LIMIT`                 |
-| Накопленное до объявления предела перечислено поимённо.                              | `projects/agent-kit/assets/checks/check-file-size.mjs:readKnown`             |
+| Накопленное до объявления предела перечислено поимённо.                              | `projects/agent-kit/assets/checks/check-file-size.mjs:parseAllowlist`        |
 | Принятое и долг в перечне различаются.                                               | `projects/agent-kit/assets/checks/check-file-size.mjs:known`                 |
+| Список принятого читает общий разбор, а не каждая проверка по-своему.                | `projects/agent-kit/assets/checks/rt-kit-checks.config.mjs:parseAllowlist`   |
+| У записи списка стоят своя причина и номер задачи, которой она внесена.              | `projects/agent-kit/assets/checks/rt-kit-checks.config.mjs:allowlistOf`      |
+| Сторона списка, записанная перечнем строк, отбивает разбор.                          | `projects/agent-kit/assets/checks/rt-kit-checks.config.mjs:parseAllowlist`   |
+| Списка нет вовсе — разбор отдаёт пустое и работу не отбивает.                        | `projects/agent-kit/assets/checks/rt-kit-checks.config.mjs:parseAllowlist`   |
 | Данные из счёта длины выведены.                                                      | `projects/agent-kit/assets/checks/check-file-size.mjs:JUDGED`                |
 | Описание прошлого и папка задачи из счёта выведены.                                  | `projects/agent-kit/assets/checks/check-file-size.mjs:SKIPPED_PREFIXES`      |
 | Сгенерированное выведено каталогом, а не именами.                                    | `projects/agent-kit/assets/checks/check-file-size.mjs:SKIPPED_PREFIXES`      |
@@ -36,21 +31,6 @@
 | Пустое поле признака не съезжает в соседнее.                                         | `projects/agent-kit/assets/hooks/reuse-first-guard.sh:cancel`                |
 | Гард, не получивший ни одного признака, говорит об этом.                             | `projects/agent-kit/assets/hooks/reuse-first-guard.sh:signals_seen`          |
 | Гард на правке и сплошная проверка читают у признака одни и те же поля.              | `projects/agent-kit/assets/hooks/reuse-first-guard.sh:rt_backend_roots`      |
-| Подпись машинного коммита судится до того, как коммит уедет.                         | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:strangers`            |
-| Машинный коммит опознаётся по заявке, а не по почте.                                 | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:bot_login`            |
-| Почта машинной записи сверяется целым значением.                                     | `projects/agent-kit/assets/defaults/project.sh:RT_COMMIT_EMAIL`              |
-| Судится вклад ветки, а не вся история.                                               | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:main_branch`          |
-| Подпись читается на машине, без сети.                                                | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:strangers`            |
-| Отказ по подписи называет коммит поимённо и обе почты.                               | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:strangers`            |
-| Дерево, не назвавшее почты машинной записи, требования не получает.                  | `projects/agent-kit/assets/defaults/project.sh:RT_COMMIT_EMAIL`              |
-| Личность машинной записи подтверждается ответом хостинга, а не узнаванием строки.    | `projects/agent-kit/assets/rules/git-workflow.github.md:git-workflow`        |
-| Токен машинной записи очередь работ не требует.                                      | `projects/agent-kit/assets/checks/board.github.mjs:botToken`                 |
-| Подпись коммита и работа с очередью — разные свойства машинной записи.               | `projects/agent-kit/assets/defaults/project.sh:RT_COMMIT_EMAIL`              |
-| Набор гейта пуша не бывает уже набора конвейера.                                     | `tools/check-push-gate.mjs:pipelineSteps`                                    |
-| Полнота держится объявленным списком, а не разбором файла конвейера.                 | `tools/check-push-gate.mjs:pushGate`                                         |
-| Исключение объявляется с причиной и рядом с набором.                                 | `tools/check-push-gate.mjs:pipelineSteps`                                    |
-| Дерево без файла конвейера сверку не получает.                                       | `tools/check-push-gate.mjs:pipelineSteps`                                    |
-| Проверка полноты сама стоит в наборе гейта.                                          | `.claude/rt-kit/project.sh:rt_push_checks`                                   |
 | Объявление, приехавшее подключённым пакетом, читается наравне со своим.              | `projects/agent-kit/assets/checks/check-styles.mjs:declarationsFromPackages` |
 | Читается то, что приложение подключило само, и не глубже.                            | `projects/agent-kit/assets/checks/check-styles.mjs:USE_RE`                   |
 | Расхождение опознаётся по имени класса, а не по перечню файлов при нём.              | `projects/agent-kit/assets/checks/check-styles.mjs:knownByName`              |

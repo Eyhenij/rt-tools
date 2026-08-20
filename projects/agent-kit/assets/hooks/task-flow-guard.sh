@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/profile-check.sh
+# Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # PreToolUse guard for Edit|Write|MultiEdit: код не пишется раньше замысла.
 #
 # Работа идёт много заходов, и между ними исполнитель не помнит ничего. Замысел, лежащий на
@@ -107,9 +107,20 @@ EOF
 # Каталог папок задач: у дерева он свой, но имя обычно общее.
 tasks_dir="${RT_TASKS_DIR:-docs/tasks}"
 
+# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть. Файл
+# может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh"
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+
+# Отказ: причина первым параметром, законная форма обхода — вторым. Хвост дописывается здесь, а
+# не в каждом тексте: пропущенный в одном месте, он читается как «у этого отказа ходов нет».
 deny() {
-    jq -n --arg r "$1" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}\n' "$1"
+    reason="$1"
+    tail_text="$(rt_deny_tail "$2")"
+    [ -n "$tail_text" ] && reason="$1 ${tail_text}"
+    jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
+        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}\n' "$reason"
     exit 0
 }
 
@@ -191,7 +202,8 @@ fi
 draft="$(sed -n 's/^\*\*Драфт:\*\*[[:space:]]*`\([^`]*\)`.*/\1/p' "$plan" 2>/dev/null | head -1)"
 
 if [ -z "$draft" ]; then
-    deny "BLOCKED by task-flow: в '${tasks_dir}/${branch}/plan.md' не названа договорённость о продукте. Заведи её в docs/specs/<домен>/proposed/<фича>/ и укажи строкой '**Драфт:** \`путь\`'. Если правка поведения не меняет — поставь '**Поведение:** не меняется — <причина владельца>'. Правило — скил task-flow."
+    deny "BLOCKED by task-flow: в '${tasks_dir}/${branch}/plan.md' не названа договорённость о продукте. Заведи её в docs/specs/<домен>/proposed/<фича>/ и укажи строкой '**Драфт:** \`путь\`'. Правило — скил task-flow." \
+        "строка '**Поведение:** не меняется — <причина владельца>' в замысле; пустая причина не принимается"
 fi
 
 case "$draft" in

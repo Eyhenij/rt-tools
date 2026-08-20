@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/profile-check.sh
+# Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # Гард «ничего не пишется с нуля». PreToolUse на правке кода и разметки.
 #
 # Линтеры знают правила, но не знают ИНВЕНТАРЬ: линтер стилей поймает сырой цвет, линтер кода —
@@ -311,6 +311,17 @@ ${found}
 
 Порядок действий: 1) открой готовое — барель кита или базовый класс — и используй его; 2) найди в дереве экран, где этот случай уже собран, и повтори сборку; 3) если готового правда не хватает — расширяй его на месте, у готового, а не клонируй рядом: клон забирает правки на себя и расходится с оригиналом с первой же.
 Свой примитив, своя основа и свои инлайновые стили заводятся только с явного одобрения владельца, и спрашивается это до первого написанного файла. Разовое исключение помечается маркером отступления в той же строке, с объяснением, чего именно нет в готовом. Переименованием файла это не обходится."
+
+# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
+# Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+deny_tail_text="$(rt_deny_tail "маркер отступления в той же строке, с объяснением, чего именно нет в готовом")"
+[ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
 
 jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
     || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Написано своё там, где готовое уже есть."}}\n'

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.9.1 · hooks/prose-style-guard.sh · bca4998e1694 · правится надстройкой, не здесь
+# rt-kit v0.9.1 · hooks/prose-style-guard.sh · 9d6ff4204c7d · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit
-# Требует: checks/check-prose-style.mjs
+# Требует: checks/check-prose-style.mjs, hooks/deny-tail.sh
 # Гард слога: канцелярит и слова, которых в этом дереве не пишут, не уезжают в файл.
 #
 # Правило о текстах требует простых слов, а держалось это памятью того, кто пишет: ни одна
@@ -57,6 +57,17 @@ reason="BLOCKED by prose-style-guard: в новом тексте канцеля�
 ${found}
 
 Правь текст, а не обходи находку: замена названа у каждой. Слог — правило о текстах, и проверка видит перечисленные признаки, а не стиль вообще: чистый по ней абзац может быть плохим, но грязный плохой точно."
+
+# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
+# Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+deny_tail_text="$(rt_deny_tail "")"
+[ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
 
 jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
     || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"prose-style-guard: канцелярит в новом тексте."}}\n'

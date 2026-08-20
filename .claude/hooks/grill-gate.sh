@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.9.1 · hooks/grill-gate.sh · 550716afd9ec · правится надстройкой, не здесь
+# rt-kit v0.9.1 · hooks/grill-gate.sh · 1862a5d93716 · правится надстройкой, не здесь
 # rt-hook: PreToolUse AskUserQuestion
+# Требует: hooks/deny-tail.sh
 # rt-hook: Stop
 # Гард разговора: вопрос владельцу не задаётся, пока за этот же ход не читались законы и
 # правила. Стоит на двух событиях, и это не дублирование.
@@ -105,6 +106,17 @@ reason="$head Вопрос, ответ на который уже записан
     grep -rn -i \"<слово темы>\" $laws_dir $rules_dir $specs_dir
 
 Гард судит один ход: следующий заход не отбивается."
+
+# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
+# Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+deny_tail_text="$(rt_deny_tail "")"
+[ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
 
 # Форма отказа у двух событий разная: вызов инструмента отбивается решением о доступе, а
 # завершение хода — решением о ходе. Одна форма на оба события молча не срабатывает.

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.9.1 · hooks/browser-guard-no-other-drivers.sh · 4a975aa93627 · правится надстройкой, не здесь
+# rt-kit v0.9.1 · hooks/browser-guard-no-other-drivers.sh · 2b187a508bd3 · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__playwright__.*|mcp__chrome-devtools__.*|Bash
+# Требует: hooks/deny-tail.sh
 # Гард обходных путей к браузеру. PreToolUse.
 #
 # Закрепление профиля чего-то стоит только тогда, когда дверь одна. Здесь перечислены двери,
@@ -20,8 +21,13 @@ device_id="$("${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/browser-device-id.sh" 2>/de
 
 tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
 
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+
 deny() {
-    echo "$1 Води браузер закреплённым расширением: выбери профиль ${device_id} и работай его инструментами." >&2
+    echo "$1 Води браузер закреплённым расширением: выбери профиль ${device_id} и работай его инструментами. $(rt_deny_tail)" >&2
     exit 2
 }
 
