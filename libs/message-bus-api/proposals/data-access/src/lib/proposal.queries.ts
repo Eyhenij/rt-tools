@@ -10,7 +10,19 @@
  */
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { proposalDigest } from '@rt/message-bus-api/proposals/util';
-import { cargoStateOf, ECargoState, IPage, IPageAsked, ITreeChoice, pageSkip, TPageDirection } from '@rt/message-bus-common';
+import {
+    cargoStateMove,
+    cargoStateOf,
+    ECargoState,
+    ECargoStateMove,
+    ICargoStateAsk,
+    ICargoStateOutcome,
+    IPage,
+    IPageAsked,
+    ITreeChoice,
+    pageSkip,
+    TPageDirection,
+} from '@rt/message-bus-common';
 
 /** Одно предложение, каким оно ложится в хранилище. */
 export interface IProposalRow {
@@ -198,4 +210,56 @@ export async function addProposals(
     });
 
     return { added: written.count, known: items.length - written.count };
+}
+
+/**
+ * Перевести предложения дерева в названные состояния.
+ *
+ * Ключ здесь — признак текста, а не имя файла: тем же признаком предложение опознаётся на
+ * приёме, и второго способа назвать свою запись у дерева нет.
+ *
+ * Прежнее состояние читается из хранилища одним запросом на весь пакет: присланное деревом
+ * успевает устареть между чтением и правкой, а запрос на строку стоил бы столько же, сколько
+ * сам разбор груза. Ложатся только разрешённые переходы и все вместе; исход возвращается по
+ * каждой строке — из него собираются и ответ дереву, и строка журнала.
+ */
+export async function moveProposalStates(
+    prisma: PrismaService,
+    treeId: string,
+    asked: readonly ICargoStateAsk[]
+): Promise<ICargoStateOutcome[]> {
+    if (asked.length === 0) {
+        return [];
+    }
+
+    const rows: { digest: string; state: string }[] = await prisma.proposal.findMany({
+        where: { treeId, digest: { in: asked.map((one: ICargoStateAsk): string => one.key) } },
+        select: { digest: true, state: true },
+    });
+    const stored: Map<string, ECargoState> = new Map(
+        rows.map((row: { digest: string; state: string }): [string, ECargoState] => [row.digest, cargoStateOf(row.state)])
+    );
+    const judged: { ask: ICargoStateAsk; outcome: ICargoStateOutcome }[] = asked.map((ask: ICargoStateAsk) => {
+        const was: ECargoState | undefined = stored.get(ask.key);
+        const move: ECargoStateMove | null = was === undefined ? null : cargoStateMove(was, ask.state);
+
+        return { ask, outcome: { key: ask.key, move } };
+    });
+    const allowed: ICargoStateAsk[] = judged
+        .filter((one: { outcome: ICargoStateOutcome }): boolean => one.outcome.move === ECargoStateMove.Allowed)
+        .map((one: { ask: ICargoStateAsk }): ICargoStateAsk => one.ask);
+
+    if (allowed.length > 0) {
+        await prisma.$transaction(
+            allowed.map((ask: ICargoStateAsk) =>
+                prisma.proposal.update({
+                    where: { treeId_digest: { treeId, digest: ask.key } },
+                    data: { state: ask.state },
+                    select: { id: true },
+                })
+            )
+        );
+    }
+
+    return judged.map((one: { outcome: ICargoStateOutcome }): ICargoStateOutcome => one.outcome);
 }

@@ -50,3 +50,26 @@ export function cargoStateMove(from: ECargoState, to: ECargoState): ECargoStateM
 
     return to === next ? ECargoStateMove.Allowed : ECargoStateMove.Denied;
 }
+
+/** Строка правки: чью запись и в какое состояние её переводят. */
+export interface ICargoStateAsk {
+    /** Ключ записи: имя файла у разбора происшествия, признак текста у предложения. */
+    readonly key: string;
+    /** Состояние, в которое дерево просит перевести запись. */
+    readonly state: ECargoState;
+}
+
+/**
+ * Чем кончилась одна строка правки.
+ *
+ * Пустой переход означает, что записи с таким ключом у дерева нет. Четвёртым значением набора он
+ * не заводится нарочно: переход судится между двумя состояниями, а у ненайденной записи второго
+ * состояния нет вовсе — и набор, куда его дописали, пришлось бы разбирать в каждом месте, где
+ * решают о переходе.
+ */
+export interface ICargoStateOutcome {
+    /** Ключ записи, каким его прислало дерево. */
+    readonly key: string;
+    /** Решение о переходе либо пусто, когда записи у дерева нет. */
+    readonly move: ECargoStateMove | null;
+}
