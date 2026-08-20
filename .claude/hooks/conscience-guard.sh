@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.9.1 · hooks/conscience-guard.sh · 0f3c9424ee3e · правится надстройкой, не здесь
+# rt-kit v0.9.1 · hooks/conscience-guard.sh · 2c0ada958134 · правится надстройкой, не здесь
 # rt-hook: Stop
-# Требует: agents/conscience.md
+# Требует: agents/conscience.md, hooks/roles.sh
 # Гард совести: ход, в котором роль совести нашла повтор разобранного промаха, не заканчивается,
 # пока повтор не разобран или не назван владельцу.
 #
@@ -23,6 +23,14 @@
 input="$(cat 2>/dev/null)"
 [ -z "$input" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0
+
+# Роль, выключенная деревом, гарда не держит: список выключенных лежит в настройке дерева, а
+# читает его помощник рядом. Нечитаемая настройка выключением не считается — гард работает как
+# прежде.
+rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/roles.sh" ] && . "$rt_hooks_dir/roles.sh" 2>/dev/null
+command -v rt_role_off >/dev/null 2>&1 && rt_role_off conscience && exit 0
 
 active="$(printf '%s' "$input" | jq -r '.stop_hook_active // false' 2>/dev/null)"
 [ "$active" = "true" ] && exit 0

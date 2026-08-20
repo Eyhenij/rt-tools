@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.9.1 · defaults/project.sh · 52283b09340b · правится надстройкой, не здесь
+# rt-kit v0.9.1 · defaults/project.sh · 9bca964f6b09 · правится надстройкой, не здесь
 # Профиль дерева: чем здесь проверяется правка и что считается переизобретением.
 #
 # Умолчание пакета. Всё, что общего у деревьев этой мастерской, живёт здесь: запускатель Nx,
@@ -240,6 +240,12 @@ RT_BOARD_CHECK_CMD="${RT_BOARD_CHECK_CMD:-npm run check:board}"
 # Учётная запись, которую ставят исполнителем. Умолчание молчит: у каждого дерева она своя.
 RT_TASK_BOT="${RT_TASK_BOT:-}"
 
+# Команда перевода задачи между колонками очереди работ и имя первой колонки — той, из которой
+# задача уходит, когда её берут в работу. Имя без умолчания: колонки дерево называет своими
+# словами, а выдуманное не совпало бы ни с чем и молча выключило бы проверку колонки.
+RT_TASK_MOVE_CMD="${RT_TASK_MOVE_CMD:-npm run task:move}"
+RT_BOARD_BACKLOG="${RT_BOARD_BACKLOG:-}"
+
 # Почта, которой подписан коммит машинной учётной записи. Целым значением, а не образцом:
 # служебный адрес хостинга состоит из числа, логина и домена, а сопоставляется по числу — логин
 # рядом с ним не сверяет никто. Образец «число, плюс, логин» прошёл бы с чужим числом, то есть
@@ -265,6 +271,18 @@ rt_task_state_default() {
     [ -z "$state" ] && return 1
     # Ответ с меткой «сети не было» состоянием не является: по нему нельзя отличить задачу,
     # которой нет, от задачи, о которой не спросили.
+    printf '%s' "$state" | jq -e 'has("offline") | not' >/dev/null 2>&1 || return 1
+    printf '%s' "$state"
+}
+
+# Состояние заявки одним объектом: exists, draft, author, reviewers, reviewed. Спрашивает того
+# же помощника очереди работ, что и состояние задачи, — чтобы гард и сверка одинаково понимали
+# «у заявки есть разбор». Нет узла, нет помощника, нет сети — молчание, и ярус пропускается.
+rt_pull_state_default() {
+    command -v node >/dev/null 2>&1 || return 1
+    [ -f "${RT_BOARD_HELPER:-tools/board.mjs}" ] || return 1
+    state="$(node "${RT_BOARD_HELPER:-tools/board.mjs}" pr "$1" 2>/dev/null)" || return 1
+    [ -z "$state" ] && return 1
     printf '%s' "$state" | jq -e 'has("offline") | not' >/dev/null 2>&1 || return 1
     printf '%s' "$state"
 }
@@ -316,5 +334,6 @@ rt_shell_writes() { rt_shell_writes_default "$@"; }
 rt_shell_paths() { rt_shell_paths_default "$@"; }
 rt_qa_decorative() { rt_qa_decorative_default "$@"; }
 rt_task_state() { rt_task_state_default "$@"; }
+rt_pull_state() { rt_pull_state_default "$@"; }
 rt_report_body() { rt_report_body_default "$@"; }
 rt_handoff_allowed_cmd() { rt_handoff_allowed_cmd_default "$@"; }
