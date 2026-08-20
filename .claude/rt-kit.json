@@ -7,6 +7,7 @@
     "agents": ".claude/agents",
     "templates": ".claude/rt-kit/templates"
   },
+  "rolesOff": ["strict-teacher"],
   "variants": {
     "host": "github"
   },
