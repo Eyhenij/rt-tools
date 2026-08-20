@@ -11,6 +11,21 @@ TURNS="$(mktemp -d)"
 cleanup() { rm -rf "$TURNS"; }
 trap cleanup EXIT
 
+# Дерево с настройкой: гард ищет список выключенных ролей в `.claude/rt-kit.json` от корня
+# дерева. Печатает путь к дереву.
+tree_with_config() {
+    local dir
+    dir="$(mktemp -d "$TURNS/tree-XXXXXX")"
+    mkdir -p "$dir/.claude"
+    printf '%s\n' "$1" >"$dir/.claude/rt-kit.json"
+    printf '%s' "$dir"
+}
+
+# Своё дерево на весь набор: иначе гард прочитал бы настройку того дерева, из которого набор
+# запустили, и в дереве с выключенной совестью каждая блокировка ниже стала бы пропуском.
+CLAUDE_PROJECT_DIR="$(tree_with_config '{}')"
+export CLAUDE_PROJECT_DIR
+
 transcript() {
     local path
     path="$TURNS/turn-$RANDOM.jsonl"
@@ -64,6 +79,21 @@ expect_stop "SC-AK-324 — при чистом ответе роли ход за
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(said 'СОВЕСТЬ: чисто')")")" PASS
 expect_stop "SC-AK-325 — молчание роли ход закрывает" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply 'сделал')")")" PASS
+
+# --- роль выключена деревом -------------------------------------------------------------------
+# Дерево называет выключенные роли списком в своей настройке. При выключенной совести гард
+# молчит: тот же ход, который он держал бы, закрывается. Выключение соседней роли, пустая
+# настройка и настройка, которую не разобрать, находку не отменяют.
+HANGING="$(input_stop "$(transcript "$(say 'продолжай')" "$(said "$FOUND")" "$(reply 'Понял.')")")"
+
+CLAUDE_PROJECT_DIR="$(tree_with_config '{"rolesOff":["conscience"]}')" \
+    expect_stop "SC-AK-363 — выключенная деревом совесть ход отпускает" "$HANGING" PASS
+CLAUDE_PROJECT_DIR="$(tree_with_config '{"rolesOff":["strict-teacher"]}')" \
+    expect_stop "SC-AK-364 — выключенная соседняя роль находку не отменяет" "$HANGING" BLOCK
+CLAUDE_PROJECT_DIR="$(tree_with_config '{"vars":{}}')" \
+    expect_stop "и без списка выключенных ролей находка держит ход как прежде" "$HANGING" BLOCK
+CLAUDE_PROJECT_DIR="$(tree_with_config '{"rolesOff": ["conscience"')" \
+    expect_stop "SC-AK-365 — настройка, которую не разобрать, роль не выключает" "$HANGING" BLOCK
 
 # --- отказ в пользу работы ------------------------------------------------------------------
 expect_stop "SC-AK-326 — повторный заход по тому же ходу не судится" \
