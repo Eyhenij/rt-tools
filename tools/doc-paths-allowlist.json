@@ -1,47 +1,166 @@
 {
-  "note": "Что сюда вносится: имя, названное затем, чтобы сказать «его нет», и строка, которая выглядит адресом, адресом не являясь, — правило линтера, кусок кода, имя ветки, атрибут разметки, файл, появляющийся только после сборки. Настоящий переехавший путь сюда не вносится: он правится в тексте.",
-  "files": [
-    "projects/agent-kit/CHANGELOG.md",
-    "projects/core/CHANGELOG.md",
-    "projects/store/CHANGELOG.md",
-    "projects/ui-kit-v2/CHANGELOG.md",
-    "projects/ui-kit/CHANGELOG.md",
-    "projects/utils/CHANGELOG.md"
-  ],
-  "paths": [
-    "projects/agent-kit/assets/agents/rules-reviewer.md",
-    "projects/agent-kit/assets/commands/rules-review.md",
-    "assets/agents/rules-reviewer.md",
-    "assets/commands/rules-review.md",
-    "rt/require-take-until-destroyed",
-    "rt/require-source-suffix-for-subjects",
-    "rt/require-host-bem-block",
-    "rt/require-bem-directives",
-    "rt/require-mod-directive-import",
-    "rt/no-host-selector",
-    "rt-tools/no-hardcoded-design-tokens",
-    "provideRtIcons('/icons')",
-    "provideRtIcons('/my/icons')",
-    "aria-valuemin/max/now",
-    "aria-valuenow/min/max",
-    "feat/ui-kit-v2",
-    "chore/312-slug",
-    "tokens.css",
-    "styles/tokens.css",
-    "index.html",
-    "iframe.html",
-    "documentation.json",
-    "hosts.yml",
-    "dd/dd",
-    "image/file-uploader",
-    "docs/ColorSchemes.mdx",
-    "docs/tasks/RT-334-archive-closed-task-folders/",
-    ".claude/rt-kit/overrides/skills/agent-kit.md",
-    ".claude/rt-kit/observations/",
-    ".claude/rt-kit/proposals/",
-    "src/lib/i18n/rt-kit-translations.ts",
-    "date-format.ts",
-    "safe-comparator.ts",
-    "libs/common/util"
-  ]
+  "files": {
+    "projects/agent-kit/CHANGELOG.md": {
+      "reason": "журнал изменений собирается командой выпуска: адреса в нём описывают день записи, править их нельзя, а сверять нечем",
+      "task": "RT-362"
+    },
+    "projects/core/CHANGELOG.md": {
+      "reason": "журнал изменений собирается командой выпуска: адреса в нём описывают день записи, править их нельзя, а сверять нечем",
+      "task": "RT-362"
+    },
+    "projects/store/CHANGELOG.md": {
+      "reason": "журнал изменений собирается командой выпуска: адреса в нём описывают день записи, править их нельзя, а сверять нечем",
+      "task": "RT-362"
+    },
+    "projects/ui-kit-v2/CHANGELOG.md": {
+      "reason": "журнал изменений собирается командой выпуска: адреса в нём описывают день записи, править их нельзя, а сверять нечем",
+      "task": "RT-362"
+    },
+    "projects/ui-kit/CHANGELOG.md": {
+      "reason": "журнал изменений собирается командой выпуска: адреса в нём описывают день записи, править их нельзя, а сверять нечем",
+      "task": "RT-362"
+    },
+    "projects/utils/CHANGELOG.md": {
+      "reason": "журнал изменений собирается командой выпуска: адреса в нём описывают день записи, править их нельзя, а сверять нечем",
+      "task": "RT-362"
+    }
+  },
+  "paths": {
+    "projects/agent-kit/assets/agents/rules-reviewer.md": {
+      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "task": "RT-703"
+    },
+    "projects/agent-kit/assets/commands/rules-review.md": {
+      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "task": "RT-703"
+    },
+    "assets/agents/rules-reviewer.md": {
+      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "task": "RT-703"
+    },
+    "assets/commands/rules-review.md": {
+      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "task": "RT-703"
+    },
+    "rt/require-take-until-destroyed": {
+      "reason": "имя правила линтера, а не адрес в дереве",
+      "task": "RT-362"
+    },
+    "rt/require-source-suffix-for-subjects": {
+      "reason": "имя правила линтера, а не адрес в дереве",
+      "task": "RT-362"
+    },
+    "rt/require-host-bem-block": {
+      "reason": "имя правила линтера, а не адрес в дереве",
+      "task": "RT-362"
+    },
+    "rt/require-bem-directives": {
+      "reason": "имя правила линтера, а не адрес в дереве",
+      "task": "RT-362"
+    },
+    "rt/require-mod-directive-import": {
+      "reason": "имя правила линтера, а не адрес в дереве",
+      "task": "RT-362"
+    },
+    "rt/no-host-selector": {
+      "reason": "имя правила линтера, а не адрес в дереве",
+      "task": "RT-362"
+    },
+    "rt-tools/no-hardcoded-design-tokens": {
+      "reason": "имя правила линтера, а не адрес в дереве",
+      "task": "RT-384"
+    },
+    "provideRtIcons('/icons')": {
+      "reason": "кусок кода, приведённый в тексте примером, а не адрес",
+      "task": "RT-362"
+    },
+    "provideRtIcons('/my/icons')": {
+      "reason": "кусок кода, приведённый в тексте примером, а не адрес",
+      "task": "RT-362"
+    },
+    "aria-valuemin/max/now": {
+      "reason": "атрибут разметки, а не адрес",
+      "task": "RT-362"
+    },
+    "aria-valuenow/min/max": {
+      "reason": "атрибут разметки, а не адрес",
+      "task": "RT-362"
+    },
+    "feat/ui-kit-v2": {
+      "reason": "имя ветки, а не адрес",
+      "task": "RT-362"
+    },
+    "chore/312-slug": {
+      "reason": "имя ветки, а не адрес",
+      "task": "RT-362"
+    },
+    "tokens.css": {
+      "reason": "файл появляется только после сборки, и в дереве его нет никогда",
+      "task": "RT-362"
+    },
+    "styles/tokens.css": {
+      "reason": "файл появляется только после сборки, и в дереве его нет никогда",
+      "task": "RT-362"
+    },
+    "index.html": {
+      "reason": "файл появляется только после сборки, и в дереве его нет никогда",
+      "task": "RT-362"
+    },
+    "iframe.html": {
+      "reason": "файл появляется только после сборки, и в дереве его нет никогда",
+      "task": "RT-362"
+    },
+    "documentation.json": {
+      "reason": "файл появляется только после сборки, и в дереве его нет никогда",
+      "task": "RT-362"
+    },
+    "hosts.yml": {
+      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "task": "RT-362"
+    },
+    "dd/dd": {
+      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "task": "RT-362"
+    },
+    "image/file-uploader": {
+      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "task": "RT-362"
+    },
+    "docs/ColorSchemes.mdx": {
+      "reason": "имя ветки, а не адрес",
+      "task": "RT-362"
+    },
+    "docs/tasks/RT-334-archive-closed-task-folders/": {
+      "reason": "имя ветки, а не адрес",
+      "task": "RT-362"
+    },
+    ".claude/rt-kit/overrides/skills/agent-kit.md": {
+      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "task": "RT-362"
+    },
+    ".claude/rt-kit/observations/": {
+      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "task": "RT-396"
+    },
+    ".claude/rt-kit/proposals/": {
+      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "task": "RT-396"
+    },
+    "src/lib/i18n/rt-kit-translations.ts": {
+      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "task": "RT-362"
+    },
+    "date-format.ts": {
+      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "task": "RT-362"
+    },
+    "safe-comparator.ts": {
+      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "task": "RT-697"
+    },
+    "libs/common/util": {
+      "reason": "строка названа затем, чтобы сказать, что в дереве её нет: текст предупреждает именно о снятом или о ещё не заведённом",
+      "task": "RT-697"
+    }
+  }
 }

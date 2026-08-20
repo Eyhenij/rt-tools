@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PostToolUse .*
-# Требует: hooks/profile-check.sh
+# Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # rt-hook: PreToolUse .*
 # Заполнение окна: заход доводится до логической точки заранее, а не обрывается на середине.
 #
@@ -149,6 +149,17 @@ reason="BLOCKED by window-fill-guard: заполнение окна ${pct}% (${f
 3. Напиши передачу в ${handoff_dir}/ и отдай владельцу путь к ней — что в неё входит, говорит паттерн task-flow-handoff.
 
 Пропускаются при этом: правка ${tasks_dir}/**, запись передачи, команды поставки и сверки, чтение файлов и вопрос владельцу."
+
+# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
+# Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+deny_tail_text="$(rt_deny_tail "")"
+[ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
 
 jq -n --arg r "$reason" \
     '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \

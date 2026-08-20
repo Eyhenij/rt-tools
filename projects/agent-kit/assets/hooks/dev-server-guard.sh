@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_run_configuration|mcp__webstorm__execute_tool
+# Требует: hooks/deny-tail.sh
 # Гард второго сервера разработки. PreToolUse.
 #
 # Приложения уже подняты владельцем, и всякая проверка через браузер идёт туда. Второй
@@ -75,11 +76,16 @@ for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../d
 done
 stands="${RT_STANDS:-}"
 
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+
 deny() {
     if [ -n "$stands" ]; then
-        echo "$1 Приложения уже подняты владельцем: ${stands} — проверяй их. Свой экземпляр не поднимай; если порт не отвечает, скажи владельцу, а не запускай второй." >&2
+        echo "$1 Приложения уже подняты владельцем: ${stands} — проверяй их. Свой экземпляр не поднимай; если порт не отвечает, скажи владельцу, а не запускай второй. $(rt_deny_tail)" >&2
     else
-        echo "$1 Приложения уже подняты владельцем — проверяй их. Свой экземпляр не поднимай; если порт не отвечает, скажи владельцу, а не запускай второй." >&2
+        echo "$1 Приложения уже подняты владельцем — проверяй их. Свой экземпляр не поднимай; если порт не отвечает, скажи владельцу, а не запускай второй. $(rt_deny_tail)" >&2
     fi
     exit 2
 }

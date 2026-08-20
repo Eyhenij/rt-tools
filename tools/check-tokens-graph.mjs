@@ -30,7 +30,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { allowlistOf, readAllowlist } from './rt-kit-checks.config.mjs';
+import { allowlistOf, baselineOf, parseAllowlist } from './rt-kit-checks.config.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -146,11 +146,11 @@ for (const name of namesIn(theming, /`(--rt-[a-z0-9-]+)`/g)) {
 }
 
 if (process.argv.includes('--baseline')) {
-    console.log(JSON.stringify({ accepted: [...new Set(findings.map((finding) => finding.key))].sort() }, null, 4));
+    console.log(baselineOf([...new Set(findings.map((finding) => finding.key))].sort(), parseAllowlist('tokens-graph')));
     process.exit(0);
 }
 
-const known = new Set(readAllowlist('tokens-graph').accepted ?? []);
+const known = parseAllowlist('tokens-graph').keys;
 const seen = new Set(findings.map((finding) => finding.key));
 
 const problems = [

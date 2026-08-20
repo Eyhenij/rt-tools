@@ -31,7 +31,7 @@ import { fileURLToPath } from 'node:url';
 
 import stylelint from 'stylelint';
 
-import { allowlistOf, readAllowlist } from './rt-kit-checks.config.mjs';
+import { allowlistOf, baselineOf, parseAllowlist } from './rt-kit-checks.config.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -86,13 +86,11 @@ for (const result of results) {
 }
 
 if (process.argv.includes('--baseline')) {
-    const accepted = [...new Set(findings.map((finding) => finding.key))].sort();
-    console.log(JSON.stringify({ accepted }, null, 4));
+    console.log(baselineOf([...new Set(findings.map((finding) => finding.key))].sort(), parseAllowlist('tokens-styles')));
     process.exit(0);
 }
 
-const allowlist = readAllowlist('tokens-styles');
-const known = new Set(allowlist.accepted ?? []);
+const known = parseAllowlist('tokens-styles').keys;
 const seen = new Set(findings.map((finding) => finding.key));
 
 const fresh = findings.filter((finding) => !known.has(finding.key));

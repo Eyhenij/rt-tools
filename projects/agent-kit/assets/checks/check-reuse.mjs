@@ -25,7 +25,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { allowlistOf, CONFIG, ROOT } from './rt-kit-checks.config.mjs';
+import { allowlistOf, baselineOf, CONFIG, ROOT, parseAllowlist } from './rt-kit-checks.config.mjs';
 import { loadSignals } from './signals.mjs';
 
 const ALLOWLIST = allowlistOf('reuse');
@@ -97,9 +97,9 @@ function withoutMarked(text) {
     return lines.filter((line, index) => !line.includes('native-ok') && !lines[index - 1]?.includes('native-ok')).join('\n');
 }
 
-const allowlist = JSON.parse(readFileSync(join(ROOT, ALLOWLIST), 'utf8'));
-const known = new Set([...(allowlist.accepted ?? []), ...(allowlist.debt ?? [])]);
-const debt = new Set(allowlist.debt ?? []);
+const allowlist = parseAllowlist('reuse');
+const known = allowlist.keys;
+const debt = new Set(allowlist.debt.keys());
 
 const findings = [];
 for (const root of SOURCE_ROOTS) {
@@ -122,7 +122,7 @@ const fresh = findings.filter((finding) => !known.has(finding.key));
 const stale = [...known].filter((key) => !findings.some((finding) => finding.key === key));
 
 if (process.argv.includes('--baseline')) {
-    console.log(JSON.stringify({ ...allowlist, debt: findings.map((finding) => finding.key).sort() }, null, 4));
+    console.log(baselineOf(findings.map((finding) => finding.key).sort(), allowlist));
     process.exit(0);
 }
 

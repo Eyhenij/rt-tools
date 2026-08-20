@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.9.1 · hooks/browser-guard-require-select.sh · 2cdd36f475d2 · правится надстройкой, не здесь
+# rt-kit v0.9.1 · hooks/browser-guard-require-select.sh · 4d680202080d · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__claude-in-chrome__.*
+# Требует: hooks/deny-tail.sh
 # Гард свежести выбора браузера. PreToolUse на всех остальных вызовах расширения.
 #
 # ЗАЧЕМ ОН ЕСТЬ — отказ, из которого он вырос: расширение действует на тот браузер, который
@@ -36,8 +37,16 @@ ttl=300
 sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
 marker="${TMPDIR:-/tmp}/claude-browser-guard/${sid}"
 
+# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть. Файл
+# может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+
+
 if [ ! -f "$marker" ]; then
-    echo "В этой сессии браузер не выбран. Вызови выбор браузера с профилем ${device_id} до любого другого вызова." >&2
+    echo "В этой сессии браузер не выбран. Вызови выбор браузера с профилем ${device_id} до любого другого вызова. $(rt_deny_tail)" >&2
     exit 2
 fi
 
@@ -47,7 +56,7 @@ age=$(( now - stamped ))
 
 if [ "$age" -gt "$ttl" ]; then
     rm -f "$marker" 2>/dev/null
-    echo "Последний выбор браузера был ${age} с назад (предел ${ttl} с) — на таких перерывах активный браузер расширения уплывает, и это может быть уже не закреплённый профиль. Вызови выбор с профилем ${device_id} заново и повтори." >&2
+    echo "Последний выбор браузера был ${age} с назад (предел ${ttl} с) — на таких перерывах активный браузер расширения уплывает, и это может быть уже не закреплённый профиль. Вызови выбор с профилем ${device_id} заново и повтори. $(rt_deny_tail)" >&2
     exit 2
 fi
 

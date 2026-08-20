@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/profile-check.sh
+# Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # Гард пары «правка и её документ». PreToolUse.
 #
 # Расхождение кода с текстом беззвучно. Ни линтер, ни сборка, ни тесты не читают правила,
@@ -43,7 +43,19 @@ decide() {
             && rt_note guard-deny res=docs-guard "sid=$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
     fi
 
-    jq -n --arg d "$1" --arg r "$2" \
+    reason="$2"
+    if [ "$1" = "deny" ]; then
+        # shellcheck disable=SC1090
+        [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+            && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+        if command -v rt_deny_tail >/dev/null 2>&1; then
+            reason="$2
+
+$(rt_deny_tail "строка \`Docs-skip: <причина>\` в теле коммита; пустая причина не принимается")"
+        fi
+    fi
+
+    jq -n --arg d "$1" --arg r "$reason" \
         '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:$d,permissionDecisionReason:$r}}' 2>/dev/null \
         || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Документ едет тем же коммитом."}}\n'
     exit 0

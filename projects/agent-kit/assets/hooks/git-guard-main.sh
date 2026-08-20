@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
+# Требует: hooks/deny-tail.sh
 # Гард главной ветки. PreToolUse на вызове коммита.
 #
 # Коммит в главную ветку минует ветку, PR и разбор, а поставка построена на них целиком —
@@ -74,6 +75,17 @@ rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 [ -f "$rt_hooks_dir/observe.sh" ] && . "$rt_hooks_dir/observe.sh" 2>/dev/null
 command -v rt_note >/dev/null 2>&1 \
     && rt_note guard-deny res=git-guard-main "sid=$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
+
+# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
+# Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+deny_tail_text="$(rt_deny_tail "")"
+[ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
 
 jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
     || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Коммит в главную ветку отбит. Заведи ветку."}}\n'

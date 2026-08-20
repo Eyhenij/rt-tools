@@ -229,7 +229,7 @@ r "SC-AK-252 — вложенная команда универсального 
 # форматировщик уводит первый атрибут со строки имени тега. Фикстура повторяет раскладку дерева:
 # `tools/` с проверкой и списком принятых долгов, `src/` с кодом.
 cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/signals.mjs" "$CHECKS/check-reuse.mjs" "$TREE/tools/"
-printf '{ "accepted": [], "debt": [] }\n' > "$TREE/tools/reuse-allowlist.json"
+printf '{ "accepted": {}, "debt": {} }\n' > "$TREE/tools/reuse-allowlist.json"
 cat > "$TREE/.claude/rt-kit/checks.json" <<'JSON'
 { "sourceRoots": ["src"], "reuse": { "bundles": [], "signals": "tools/signals/kit.json" } }
 JSON

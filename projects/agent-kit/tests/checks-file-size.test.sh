@@ -40,7 +40,7 @@ size_code() {
 # что кладут сценарии, а не обвязка, которой они запускаются.
 printf '{"fileSizeLimit":10,"allowlistDir":"tools","archiveDir":"docs/archive/","tasksDir":"docs/tasks","generatedDirs":["gen/","tools/"]}\n' \
     > "$SIZE_TREE/.claude/rt-kit/checks.json"
-printf '{"accepted":[],"debt":[]}\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
+printf '{"accepted":{},"debt":{}}\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
 size_file short.md 5
 git -C "$SIZE_TREE" add -A
 report "длина: короткий файл проходит" "$(size_code)" 0
@@ -55,29 +55,29 @@ report "SC-AK-103 — отказ называет путь и предел" "$(s
 report "SC-AK-108 — длина равна числу разрывов плюс один" "$(size_says ': 21 строк')" 1
 
 # SC-AK-104 — накопленное названо и не отбивает
-printf '{"accepted":["long.md"],"debt":[]}\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
+printf '{"accepted":{"long.md":{"reason":"фикстура набора","task":"RT-900"}},"debt":{}}\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
 git -C "$SIZE_TREE" add -A
 report "SC-AK-104 — принятое не отбивает" "$(size_code)" 0
 report "SC-AK-104 — сводка называет принятое" "$(size_says 'принято 1')" 1
 
 # SC-AK-105 — долг назван отдельно от принятого
 size_file debt.md 20
-printf '{"accepted":["long.md"],"debt":["debt.md"]}\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
+printf '{"accepted":{"long.md":{"reason":"фикстура набора","task":"RT-900"}},"debt":{"debt.md":{"reason":"фикстура набора","task":"RT-900"}}}\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
 git -C "$SIZE_TREE" add -A
 report "SC-AK-105 — долг не отбивает" "$(size_code)" 0
 report "SC-AK-105 — долг назван своим числом" "$(size_says 'принято 1, долг 1')" 1
 
 # SC-AK-106 — строка перечня, у которой нет файла, отбивает
-printf '{"accepted":["long.md","gone.md"],"debt":["debt.md"]}\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
+printf '{"accepted":{"long.md":{"reason":"фикстура набора","task":"RT-900"},"gone.md":{"reason":"фикстура набора","task":"RT-900"}},"debt":{"debt.md":{"reason":"фикстура набора","task":"RT-900"}}}\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
 report "SC-AK-106 — устаревшая строка отбита" "$(size_code)" 1
 report "SC-AK-106 — отказ говорит, что файла нет" "$(size_says 'gone\.md: строка .* устарела')" 1
 
 # Поделённый файл строку в перечне не сохраняет: иначе перечень перестаёт отвечать за состав.
-printf '{"accepted":["long.md","short.md"],"debt":["debt.md"]}\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
+printf '{"accepted":{"long.md":{"reason":"фикстура набора","task":"RT-900"},"short.md":{"reason":"фикстура набора","task":"RT-900"}},"debt":{"debt.md":{"reason":"фикстура набора","task":"RT-900"}}}\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
 report "длина: поделённый файл требует снять строку" "$(size_says 'short\.md: значится .* короче предела')" 1
 
 # SC-AK-107 — данные, описание прошлого, папка задачи и сгенерированное не судятся
-printf '{"accepted":["long.md"],"debt":["debt.md"]}\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
+printf '{"accepted":{"long.md":{"reason":"фикстура набора","task":"RT-900"}},"debt":{"debt.md":{"reason":"фикстура набора","task":"RT-900"}}}\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
 size_file locale.json 40
 size_file docs/archive/old.md 40
 size_file docs/tasks/RT-1-work/progress.md 40

@@ -187,8 +187,92 @@ export const allowlistOf = (name) => join(CONFIG.allowlistDir, `${name}-allowlis
  */
 export const readAllowlist = (name) => {
     const path = join(ROOT, allowlistOf(name));
+    if (!existsSync(path)) {
+        return {};
+    }
+    try {
+        return JSON.parse(readFileSync(path, 'utf8'));
+    } catch (error) {
+        // Нечитаемая настройка — это не пустой список, и молчать о ней нельзя: проверка,
+        // прочитавшая пустоту вместо перечня, назовёт долгом всё дерево разом.
+        console.error(`${allowlistOf(name)}: список известного не прочитан — не разбирается как JSON: ${error.message}`);
+        process.exit(1);
+    }
+};
 
-    return existsSync(path) ? JSON.parse(readFileSync(path, 'utf8')) : {};
+/**
+ * Разбор списка принятого: запись отвечает за себя сама.
+ *
+ * Причина, написанная прозой на весь список, за отдельную строку не отвечает: список пустеет и
+ * наполняется, а причина остаётся прежней — строка, внесённая позже, выглядит покрытой ею. Так
+ * и вышло у четырёх списков дерева: шапка говорила о разобранном долге, а под ней лежало
+ * принятое, которого в тот день ещё не было.
+ *
+ * Поэтому форма одна на все списки: сторона — объект, где ключ говорит, что принято, а
+ * значение несёт причину и номер задачи, которой запись внесена. Стороны называет зовущий:
+ * у большинства списков это `accepted` и `debt`, у иных свои имена, а разбор у всех один. Номер — это дорога
+ * к разговору, в котором заглушить разрешили: без него запись объясняет сама себя, а спросить
+ * о ней некого.
+ *
+ * Отказ называет файл и саму запись: список читают не целиком, а по строке, и «где-то здесь
+ * неверная запись» стоит того же, что и молчание.
+ */
+export const parseAllowlist = (name, sides = ['accepted', 'debt']) => {
+    const file = allowlistOf(name);
+    const raw = readAllowlist(name);
+    const key = CONFIG.board.taskKey;
+    const taskForm = key ? new RegExp(`^${key}-\\d+$`) : /^[A-Za-z]+-\d+$/;
+    const refuse = (message) => {
+        console.error(`${file}: ${message}`);
+        process.exit(1);
+    };
+    const parseSide = (side) => {
+        const entries = raw[side];
+        if (entries === undefined) {
+            return new Map();
+        }
+        if (Array.isArray(entries) || typeof entries !== 'object' || entries === null) {
+            refuse(`«${side}» записан не объектом — у записи нет места ни для причины, ни для номера задачи`);
+        }
+        const parsed = new Map();
+        for (const [entry, value] of Object.entries(entries)) {
+            if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+                refuse(`«${entry}» записан без причины — рядом с записью стоят «reason» и «task»`);
+            }
+            if (typeof value.reason !== 'string' || value.reason.trim() === '') {
+                refuse(`у «${entry}» пустая причина — заглушённое без причины через месяц не отличить от забытого`);
+            }
+            if (typeof value.task !== 'string' || !taskForm.test(value.task)) {
+                refuse(`у «${entry}» нет номера задачи вида «${key || 'КЛЮЧ'}-<номер>» — спросить о записи будет некого`);
+            }
+            parsed.set(entry, { reason: value.reason, task: value.task });
+        }
+
+        return parsed;
+    };
+    const parsed = Object.fromEntries(sides.map((side) => [side, parseSide(side)]));
+
+    return { ...parsed, keys: new Set(sides.flatMap((side) => [...parsed[side].keys()])) };
+};
+
+/**
+ * Заготовка списка принятого для режима пересъёмки: прежние записи сохраняются целиком, а
+ * новые приходят с пустой причиной и пустым номером задачи.
+ *
+ * Пустые поля здесь намеренны. Пересъёмка — это помощник, а не разрешение: заглушить проверку
+ * можно только словом владельца, и записать его должен человек. Разбор такую запись отбивает,
+ * поэтому список, снятый пересъёмкой и не заполненный, дальше гейта не проходит.
+ */
+export const baselineOf = (keys, parsed, side = 'debt') => {
+    const entryOf = (key) => parsed.debt?.get(key) ?? parsed.accepted?.get(key) ?? { reason: '', task: '' };
+    const fresh = keys.filter((key) => !parsed.keys.has(key));
+    if (fresh.length > 0) {
+        console.error(`новых записей ${fresh.length} — у каждой заполняются «reason» и «task», иначе разбор списка отбивает прогон`);
+    }
+    const filled = Object.fromEntries(keys.map((key) => [key, entryOf(key)]));
+    const rest = Object.fromEntries([...(parsed.accepted ?? new Map())].filter(([key]) => !keys.includes(key)));
+
+    return JSON.stringify(side === 'accepted' ? { accepted: filled } : { accepted: rest, debt: filled }, null, 4);
 };
 
 /** Есть ли в дереве то, без чего проверке нечего делать. Нет — она выходит с нулём и говорит это. */

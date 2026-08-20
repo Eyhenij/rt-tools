@@ -309,6 +309,46 @@ printf 'rt_push_checks() { printf "%%s\\n" true; }\n' > "$RED_GATE/.claude/rt-ki
 gate "зелёный набор пуш не задерживает" "$RED_GATE" 'git push origin RT-72-gate' PASS
 rm -rf "$RED_GATE"
 
+# SC-AK-405…407. Составная «переключиться и запушить» проходила гейт молча: набор гоняется в том
+# дереве, какое лежит на момент разбора команды, то есть по прежней ветке. Зелёный набор при этом
+# читается как проверка ушедшего. Набор здесь зелёный намеренно — судится не он, а сама форма
+# команды: отказ обязан прийти раньше, чем гард дойдёт до прогона.
+SWITCH_GATE="$(fixture_repo RT-73-switch)"
+mkdir -p "$SWITCH_GATE/.claude/rt-kit"
+printf 'rt_push_checks() { printf "%%s\\n" true; }\n' > "$SWITCH_GATE/.claude/rt-kit/project.sh"
+gate "SC-AK-405 — переключение и пуш одной командой отбиваются" "$SWITCH_GATE" \
+    'git checkout RT-73-switch && git push origin RT-73-switch' deny
+gate "SC-AK-405 — то же через switch" "$SWITCH_GATE" \
+    'git switch RT-73-switch && git push origin RT-73-switch' deny
+gate "SC-AK-406 — заведение новой ветки в той же команде пуш не отбивает" "$SWITCH_GATE" \
+    'git checkout -b RT-74-fresh && git push -u origin RT-74-fresh' PASS
+gate "SC-AK-406 — то же через switch -c" "$SWITCH_GATE" \
+    'git switch -c RT-74-fresh && git push -u origin RT-74-fresh' PASS
+gate "SC-AK-407 — пробный пуш формы команды не судит" "$SWITCH_GATE" \
+    'git checkout RT-73-switch && git push --dry-run origin RT-73-switch' PASS
+
+# SC-AK-408. Отложенная правка наружу ничего не отправляет, а слово `push` в ней стоит отдельным:
+# набор гейта гонялся на ней целиком и отбивал вызов первой же красной проверкой.
+gate "SC-AK-408 — отложенная правка пушем не считается" "$SWITCH_GATE" \
+    'git stash push -u -m проба' PASS
+
+# Тайник рядом с настоящим пушем признака не гасит: вырезается он, а не вся команда. Набор здесь
+# красный намеренно — иначе «прошло» значило бы только, что гонять было нечего.
+STASH_GATE="$(fixture_repo RT-75-stash)"
+mkdir -p "$STASH_GATE/.claude/rt-kit"
+printf 'rt_push_checks() { printf "%%s\\n" false; }\n' > "$STASH_GATE/.claude/rt-kit/project.sh"
+gate "SC-AK-408 — тайник признака настоящего пуша не гасит" "$STASH_GATE" \
+    'git stash push -u && git push origin RT-75-stash' deny
+gate "SC-AK-408 — один тайник набора не гоняет" "$STASH_GATE" \
+    'git stash push -u -m проба' PASS
+rm -rf "$STASH_GATE"
+
+CLAUDE_PROJECT_DIR="$SWITCH_GATE" expect_reason "SC-AK-405 — отказ называет законный ход" \
+    git-guard-push-tests.sh \
+    "$(input_cmd 'git checkout RT-73-switch && git push origin RT-73-switch' Bash "$SWITCH_GATE")" \
+    'Раздели вызовы'
+rm -rf "$SWITCH_GATE"
+
 # --- отказ в пользу работы ---------------------------------------------------------------------
 for hook in git-guard-main.sh git-guard-delivery.sh git-guard-push-tests.sh; do
     printf '' | "$HOOKS/$hook" >/dev/null 2>&1
