@@ -53,3 +53,11 @@
 | Одна запись на пару «дерево — месяц»: нашлась — дописывается, не нашлась — заводится. | `projects/agent-kit/src/lib/cargo.ts:IIntakeAccepted`              |
 | Груз каждого рода принимается своей операцией.                                        | `projects/agent-kit/src/lib/ship.ts:httpShip`                      |
 | Выключатель наблюдений гасит и отправку целиком, вместе со снимком надстроек.         | `projects/agent-kit/src/lib/observations.ts:OBSERVATIONS_DIR`      |
+| Дерево заводится двумя путями, и человек выбирает доводом.                            | `projects/agent-kit/src/lib/enroll.ts:pathChosen`                  |
+| Выданный токен в сеть не уходит.                                                      | `projects/agent-kit/src/lib/enroll.ts:accept`                      |
+| Два довода вместе отбиваются.                                                         | `projects/agent-kit/src/lib/enroll.ts:pathChosen`                  |
+| Ни одного довода — отказ называет оба пути.                                           | `projects/agent-kit/src/lib/enroll.ts:pathChosen`                  |
+| Токен ложится на диск одинаково, каким бы путём ни пришёл.                            | `projects/agent-kit/src/lib/enroll.ts:lay`                         |
+| Лежащий токен не перезаписывается молча ни у одного из путей.                         | `projects/agent-kit/src/lib/enroll.ts:enroll`                      |
+| Проверки, общие обоим путям, стоят до развилки.                                       | `projects/agent-kit/src/lib/enroll.ts:enroll`                      |
+| Адрес приёма и запрет открытого пути требуются только обмену по коду.                 | `projects/agent-kit/src/lib/enroll.ts:intakeAllowed`               |
