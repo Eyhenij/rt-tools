@@ -14,7 +14,7 @@
  * оттуда же. На стороне экрана это видно так же, как у разбора, — полем `tree`, потому что
  * отбирают им обоих одинаково.
  */
-import { ITreeChoice } from '@rt/message-bus-common';
+import { ECargoState, ITreeChoice } from '@rt/message-bus-common';
 
 export namespace IProposal {
     /** Строка списка: то, что видно в таблице. */
@@ -25,6 +25,7 @@ export namespace IProposal {
             readonly tree: ITreeChoice;
             readonly resource: string;
             readonly address: string;
+            readonly state: string;
             readonly arrivedAt: string;
         }
 
@@ -36,6 +37,8 @@ export namespace IProposal {
             readonly resource: string;
             /** Адрес внутри ресурса — раздел или строка, к которой предложение относится. */
             readonly address: string;
+            /** На каком шаге разбора стоит запись. Пустым это поле не приходит никогда. */
+            readonly state: ECargoState;
             readonly arrivedAt: Date;
         }
     }

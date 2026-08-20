@@ -7,7 +7,7 @@
  * Время приезжает строкой и становится временем здесь: дальше по экрану ходит уже `Date`, и
  * разбор строки не повторяется в каждой ячейке таблицы.
  */
-import { ITreeChoice } from '@rt/message-bus-common';
+import { cargoStateOf, ITreeChoice } from '@rt/message-bus-common';
 import { BaseMapper } from '@rt-tools/utils';
 
 import { IPostmortem } from './postmortem.model';
@@ -24,6 +24,9 @@ export class PostmortemShortMapper extends BaseMapper<IPostmortem.Short.State> {
             id: this.typeCast.getAsString(data.id),
             tree: treeOf(this, data.tree),
             file: this.typeCast.getAsString(data.file),
+            // Состояние сверяется с набором явно: `getAsType` умолчания не принимает, а значение
+            // вне набора отдаёт строкой, которой на экране не бывает.
+            state: cargoStateOf(this.typeCast.getAsString(data.state)),
             arrivedAt: new Date(this.typeCast.getAsString(data.arrivedAt)),
             updatedAt: new Date(this.typeCast.getAsString(data.updatedAt)),
         };

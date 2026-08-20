@@ -24,3 +24,20 @@ export enum ECargoState {
     /** Починка уехала выпуском. */
     Released = 'released',
 }
+
+/** Набор целиком: по нему и сверяется пришедшее значение. */
+const CARGO_STATES: readonly ECargoState[] = Object.values(ECargoState);
+
+/**
+ * Состояние из значения, пришедшего строкой.
+ *
+ * Зовут её обе стороны: приёмник — переводя колонку хранилища, где набор объявлен своим
+ * перечислением, админка — разбирая ответ чтения. Значение вне набора читается как «новое», а не
+ * роняет список: пустого состояния у записи не бывает, и показать нечитаемое было бы хуже, чем
+ * показать её неразобранной.
+ */
+export function cargoStateOf(raw: string): ECargoState {
+    const found: ECargoState | undefined = CARGO_STATES.find((state: ECargoState): boolean => state === raw);
+
+    return found ?? ECargoState.New;
+}

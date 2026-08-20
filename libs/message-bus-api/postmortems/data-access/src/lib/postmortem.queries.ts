@@ -8,7 +8,7 @@
  */
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IPostmortemArrivalUpdate, postmortemArrivalUpdate } from '@rt/message-bus-api/postmortems/util';
-import { IPage, IPageAsked, ITreeChoice, pageSkip, TPageDirection } from '@rt/message-bus-common';
+import { cargoStateOf, ECargoState, IPage, IPageAsked, ITreeChoice, pageSkip, TPageDirection } from '@rt/message-bus-common';
 
 /** Один разбор, каким он ложится в хранилище. */
 export interface IPostmortemRow {
@@ -26,6 +26,8 @@ export interface IPostmortemListRow {
     readonly id: string;
     readonly tree: ITreeChoice;
     readonly file: string;
+    /** На каком шаге разбора стоит запись: пустым это поле не приезжает никогда. */
+    readonly state: ECargoState;
     readonly arrivedAt: Date;
     readonly updatedAt: Date;
 }
@@ -62,6 +64,30 @@ function whereOf(asked: IPageAsked): { tree?: { slug: string } } {
 }
 
 /**
+ * Строка списка из того, что отдало хранилище.
+ *
+ * Состояние приезжает значением колонки и переводится в набор общей либы: набор объявлен дважды —
+ * хранилищем и общей либой, — и читающая сторона знает только второй.
+ */
+function listRowOf(row: {
+    id: string;
+    file: string;
+    state: string;
+    arrivedAt: Date;
+    updatedAt: Date;
+    tree: ITreeChoice;
+}): IPostmortemListRow {
+    return {
+        id: row.id,
+        tree: row.tree,
+        file: row.file,
+        state: cargoStateOf(row.state),
+        arrivedAt: row.arrivedAt,
+        updatedAt: row.updatedAt,
+    };
+}
+
+/**
  * Страница разборов.
  *
  * Общее число берётся вторым запросом, а не одной сделкой со строками: список, укоротившийся
@@ -74,30 +100,48 @@ function whereOf(asked: IPageAsked): { tree?: { slug: string } } {
 export async function readPostmortems(prisma: PrismaService, asked: IPageAsked): Promise<IPage<IPostmortemListRow>> {
     const where: { tree?: { slug: string } } = whereOf(asked);
     const total: number = await prisma.postmortem.count({ where });
-    const rows: IPostmortemListRow[] = await prisma.postmortem.findMany({
+    const rows: {
+        id: string;
+        file: string;
+        state: string;
+        arrivedAt: Date;
+        updatedAt: Date;
+        tree: ITreeChoice;
+    }[] = await prisma.postmortem.findMany({
         where,
-        select: { id: true, file: true, arrivedAt: true, updatedAt: true, tree: { select: { slug: true, name: true } } },
+        select: { id: true, file: true, state: true, arrivedAt: true, updatedAt: true, tree: { select: { slug: true, name: true } } },
         orderBy: [orderOf(asked), { id: asked.dir }],
         skip: pageSkip(asked),
         take: asked.size,
     });
 
-    return { rows, total, page: asked.page, size: asked.size };
+    return { rows: rows.map(listRowOf), page: asked.page, size: asked.size, total };
 }
 
 /** Один разбор целиком. Пусто — записи с таким признаком нет, и это отдельный ответ, а не пустая панель. */
 export async function readPostmortem(prisma: PrismaService, id: string): Promise<IPostmortemFullRow | null> {
-    return prisma.postmortem.findUnique({
+    const found: {
+        id: string;
+        file: string;
+        text: string;
+        state: string;
+        arrivedAt: Date;
+        updatedAt: Date;
+        tree: ITreeChoice;
+    } | null = await prisma.postmortem.findUnique({
         where: { id },
         select: {
             id: true,
             file: true,
             text: true,
+            state: true,
             arrivedAt: true,
             updatedAt: true,
             tree: { select: { slug: true, name: true } },
         },
     });
+
+    return found ? { ...listRowOf(found), text: found.text } : null;
 }
 
 /**

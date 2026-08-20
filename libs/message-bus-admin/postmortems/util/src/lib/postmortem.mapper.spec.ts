@@ -1,3 +1,5 @@
+import { ECargoState } from '@rt/message-bus-common';
+
 import { PostmortemMapper, PostmortemShortMapper } from './postmortem.mapper';
 import { IPostmortem } from './postmortem.model';
 
@@ -7,6 +9,7 @@ function apiShort(patch: Partial<IPostmortem.Short.Api> = {}): IPostmortem.Short
         id: 'p1',
         tree: { slug: 'a1b2', name: 'Приёмник' },
         file: '2026-08-14-incident.md',
+        state: 'in_work',
         arrivedAt: '2026-08-14T21:30:00.000Z',
         updatedAt: '2026-08-15T06:00:00.000Z',
         ...patch,
@@ -40,7 +43,17 @@ describe('PostmortemShortMapper', () => {
     it('поле, которого модель не называла, на экран не переезжает', () => {
         const row: IPostmortem.Short.State = mapper.mapFrom({ ...apiShort(), text: 'весь разбор' } as never);
 
-        expect(Object.keys(row).sort()).toEqual(['arrivedAt', 'file', 'id', 'tree', 'updatedAt']);
+        expect(Object.keys(row).sort()).toEqual(['arrivedAt', 'file', 'id', 'state', 'tree', 'updatedAt']);
+    });
+
+    it('SC-MB-167 — состояние приезжает строкой, а на экран уходит значением набора', () => {
+        expect(mapper.mapFrom(apiShort()).state).toBe(ECargoState.InWork);
+        expect(mapper.mapFrom(apiShort({ state: 'new' })).state).toBe(ECargoState.New);
+    });
+
+    it('состояние вне набора читается как новое, а не уходит на экран машинной строкой', () => {
+        expect(mapper.mapFrom(apiShort({ state: 'разобрано наполовину' })).state).toBe(ECargoState.New);
+        expect(mapper.mapFrom({ ...apiShort(), state: undefined } as never).state).toBe(ECargoState.New);
     });
 
     it('строка списка текста разбора не несёт', () => {
