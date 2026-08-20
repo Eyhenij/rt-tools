@@ -55,6 +55,12 @@ export const ADMIN_LABELS = {
     columnIssuedAt: 'Выдано',
     columnExpiresAt: 'Годно до',
     columnInviteTree: 'Заведённый проект',
+    columnState: 'Состояние',
+
+    cargoStateNew: 'Новое',
+    cargoStateInWork: 'В работе',
+    cargoStateFixed: 'Готово',
+    cargoStateReleased: 'Выпущено',
 
     inviteStateWaiting: 'Ждёт',
     inviteStateRedeemed: 'Погашено',

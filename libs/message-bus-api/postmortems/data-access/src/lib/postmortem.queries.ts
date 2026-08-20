@@ -7,7 +7,8 @@
  * же дерева, переставшего слать.
  */
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
-import { IPage, IPageAsked, ITreeChoice, pageSkip, TPageDirection } from '@rt/message-bus-common';
+import { IPostmortemArrivalUpdate, postmortemArrivalUpdate } from '@rt/message-bus-api/postmortems/util';
+import { cargoStateOf, ECargoState, IPage, IPageAsked, ITreeChoice, pageSkip, TPageDirection } from '@rt/message-bus-common';
 
 /** Один разбор, каким он ложится в хранилище. */
 export interface IPostmortemRow {
@@ -25,6 +26,8 @@ export interface IPostmortemListRow {
     readonly id: string;
     readonly tree: ITreeChoice;
     readonly file: string;
+    /** На каком шаге разбора стоит запись: пустым это поле не приезжает никогда. */
+    readonly state: ECargoState;
     readonly arrivedAt: Date;
     readonly updatedAt: Date;
 }
@@ -61,6 +64,30 @@ function whereOf(asked: IPageAsked): { tree?: { slug: string } } {
 }
 
 /**
+ * Строка списка из того, что отдало хранилище.
+ *
+ * Состояние приезжает значением колонки и переводится в набор общей либы: набор объявлен дважды —
+ * хранилищем и общей либой, — и читающая сторона знает только второй.
+ */
+function listRowOf(row: {
+    id: string;
+    file: string;
+    state: string;
+    arrivedAt: Date;
+    updatedAt: Date;
+    tree: ITreeChoice;
+}): IPostmortemListRow {
+    return {
+        id: row.id,
+        tree: row.tree,
+        file: row.file,
+        state: cargoStateOf(row.state),
+        arrivedAt: row.arrivedAt,
+        updatedAt: row.updatedAt,
+    };
+}
+
+/**
  * Страница разборов.
  *
  * Общее число берётся вторым запросом, а не одной сделкой со строками: список, укоротившийся
@@ -73,30 +100,63 @@ function whereOf(asked: IPageAsked): { tree?: { slug: string } } {
 export async function readPostmortems(prisma: PrismaService, asked: IPageAsked): Promise<IPage<IPostmortemListRow>> {
     const where: { tree?: { slug: string } } = whereOf(asked);
     const total: number = await prisma.postmortem.count({ where });
-    const rows: IPostmortemListRow[] = await prisma.postmortem.findMany({
+    const rows: {
+        id: string;
+        file: string;
+        state: string;
+        arrivedAt: Date;
+        updatedAt: Date;
+        tree: ITreeChoice;
+    }[] = await prisma.postmortem.findMany({
         where,
-        select: { id: true, file: true, arrivedAt: true, updatedAt: true, tree: { select: { slug: true, name: true } } },
+        select: { id: true, file: true, state: true, arrivedAt: true, updatedAt: true, tree: { select: { slug: true, name: true } } },
         orderBy: [orderOf(asked), { id: asked.dir }],
         skip: pageSkip(asked),
         take: asked.size,
     });
 
-    return { rows, total, page: asked.page, size: asked.size };
+    return { rows: rows.map(listRowOf), page: asked.page, size: asked.size, total };
 }
 
 /** Один разбор целиком. Пусто — записи с таким признаком нет, и это отдельный ответ, а не пустая панель. */
 export async function readPostmortem(prisma: PrismaService, id: string): Promise<IPostmortemFullRow | null> {
-    return prisma.postmortem.findUnique({
+    const found: {
+        id: string;
+        file: string;
+        text: string;
+        state: string;
+        arrivedAt: Date;
+        updatedAt: Date;
+        tree: ITreeChoice;
+    } | null = await prisma.postmortem.findUnique({
         where: { id },
         select: {
             id: true,
             file: true,
             text: true,
+            state: true,
             arrivedAt: true,
             updatedAt: true,
             tree: { select: { slug: true, name: true } },
         },
     });
+
+    return found ? { ...listRowOf(found), text: found.text } : null;
+}
+
+/**
+ * Тексты разборов, которые уже лежат: по ним решается, сбрасывать ли состояние.
+ *
+ * Читаются одним запросом на весь груз, а не по запросу на запись: прогон дерева везёт разборы
+ * десятками, и запрос на каждый стоил бы столько же, сколько сама запись.
+ */
+async function storedTexts(prisma: PrismaService, treeId: string, items: readonly IPostmortemRow[]): Promise<Map<string, string>> {
+    const rows: { file: string; text: string }[] = await prisma.postmortem.findMany({
+        where: { treeId, file: { in: items.map((item: IPostmortemRow): string => item.file) } },
+        select: { file: true, text: true },
+    });
+
+    return new Map(rows.map((row: { file: string; text: string }): [string, string] => [row.file, row.text]));
 }
 
 /**
@@ -106,6 +166,11 @@ export async function readPostmortem(prisma: PrismaService, id: string): Promise
  * упавший третий разбор оставил бы дерево в состоянии, которого не было ни до, ни после.
  * Одной командой это не выразить — обновление берёт текст каждой записи свой.
  *
+ * Лежащие тексты читаются до сделки, потому что решение о сбросе состояния берёт оба текста
+ * сразу, а команда обновления прежнего не видит. Два прогона одного дерева, разошедшиеся между
+ * чтением и записью, дадут лишний сброс либо пропустят его: цена такой пары — одно состояние, а
+ * не связность хранилища, и ради неё чтение с записью в одну сделку не сводятся.
+ *
  * Возвращает, сколько разборов положено.
  */
 export async function writePostmortems(prisma: PrismaService, treeId: string, items: readonly IPostmortemRow[]): Promise<number> {
@@ -113,15 +178,19 @@ export async function writePostmortems(prisma: PrismaService, treeId: string, it
         return 0;
     }
 
+    const stored: Map<string, string> = await storedTexts(prisma, treeId, items);
+
     await prisma.$transaction(
-        items.map((item: IPostmortemRow) =>
-            prisma.postmortem.upsert({
+        items.map((item: IPostmortemRow) => {
+            const arrival: IPostmortemArrivalUpdate = postmortemArrivalUpdate(stored.get(item.file), item.text);
+
+            return prisma.postmortem.upsert({
                 where: { treeId_file: { treeId, file: item.file } },
                 create: { treeId, file: item.file, text: item.text },
-                update: { text: item.text },
+                update: arrival,
                 select: { id: true },
-            })
-        )
+            });
+        })
     );
 
     return items.length;
