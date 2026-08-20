@@ -37,7 +37,7 @@ import {
     RtContainerToolbarCenterDirective,
     RtContainerToolbarLeftDirective,
     RtContainerToolbarRightDirective,
-} from './rt-container.directives';
+} from './rt-container.markers';
 
 /** Запас поверх длительности transition'а для страховочного таймера. */
 const ASIDE_TRANSITION_BUFFER_MS: number = 80;

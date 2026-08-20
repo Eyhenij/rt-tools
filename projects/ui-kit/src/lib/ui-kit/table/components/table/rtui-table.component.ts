@@ -31,13 +31,15 @@ import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '
 import { TNullable } from '@rt-tools/utils';
 import { EFilterOperatorType, IFilterModel, ISortModel, transformArrayInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
-import { IRtuiTable, ITable, RTUI_TABLE_COMPONENT_TOKEN, RtTableConfigService, ETableColumnTypes } from '../../util';
+import { ETableColumnTypes, ITable } from '../../util/table-column.interface';
+import { IRtuiTable, RTUI_TABLE_COMPONENT_TOKEN } from '../../util/table-component.interface';
+import { RtTableConfigService } from '../../util/table-config.service';
 import { TableBaseCellComponent } from '../table-base-cell/table-base-cell.component';
 import { RtuiTableHeaderCellComponent } from '../table-header-cell/table-header-cell.component';
 import { RtuiTableHeaderFilterCellComponent } from '../table-header-filter-cell/table-header-filter-cell.component';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
 import { BooleanInput } from '@angular/cdk/coercion';
-import { RtuiTableRowClickDirective } from '../../directives';
+import { RtuiTableRowClickDirective } from '../../directives/rtui-table-row-click-directive';
 
 /** Directive for custom table cells */
 @Directive({

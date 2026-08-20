@@ -1,6 +1,6 @@
 import { InjectionToken } from '@angular/core';
 
-import type { IRtuiButton } from '../buttons/unified-button/rtui-button.component';
+import type { IRtuiButton } from '../buttons/unified-button/rtui-button.types';
 import type { TRtThemeType } from '../theme/rtui-theme.types';
 
 /**

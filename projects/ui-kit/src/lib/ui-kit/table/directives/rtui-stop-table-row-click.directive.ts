@@ -1,7 +1,7 @@
 import { Directive, ElementRef, inject, OnInit } from '@angular/core';
 
 import { PlatformService } from '@rt-tools/core';
-import { RTUI_TABLE_STOP_ROW_CLICK_ATTRIBUTE } from '../util';
+import { RTUI_TABLE_STOP_ROW_CLICK_ATTRIBUTE } from '../util/table-stop-row-click-attribute.const';
 
 @Directive({
     standalone: true,

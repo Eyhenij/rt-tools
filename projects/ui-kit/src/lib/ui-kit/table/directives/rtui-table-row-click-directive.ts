@@ -1,7 +1,8 @@
 import { Directive, inject, input, InputSignal, InputSignalWithTransform, HostListener, booleanAttribute } from '@angular/core';
 import { BooleanInput } from '@angular/cdk/coercion';
 
-import { IRtuiTable, RTUI_TABLE_COMPONENT_TOKEN, RTUI_TABLE_STOP_ROW_CLICK_ATTRIBUTE } from '../util';
+import { RTUI_TABLE_STOP_ROW_CLICK_ATTRIBUTE } from '../util/table-stop-row-click-attribute.const';
+import { IRtuiTable, RTUI_TABLE_COMPONENT_TOKEN } from '../util/table-component.interface';
 
 @Directive({
     selector: '[rtuiTableRowClickDirective]',

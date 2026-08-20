@@ -46,7 +46,7 @@ import {
     RtScrollDirective,
 } from '@rt-tools/core';
 import { RtuiSpinnerComponent } from '../../../spinner';
-import { RtuiClearButtonComponent } from '../../../table';
+import { RtuiClearButtonComponent } from '../../../table/components/clear-search-button/rtui-clear-button.component';
 import { RtuiToggleComponent } from '../../../toggle';
 import { BooleanInput } from '@angular/cdk/coercion';
 

@@ -3,12 +3,10 @@ import { ActivatedRouteSnapshot, CanDeactivateFn } from '@angular/router';
 
 import { catchError, defer, Observable, of } from 'rxjs';
 
-import { RtRouteAsideRegistry } from './rt-route-aside.registry';
+import { IRtAsideDeactivate, RtRouteAsideRegistry } from './rt-route-aside.registry';
 
-/** Панель, которая умеет ответить на вопрос «можно ли уступить место». */
-export interface IRtAsideDeactivate {
-    canDeactivate(): Observable<boolean>;
-}
+// Объявление переехало к учёту панелей; здесь оно остаётся видимым прежним потребителям.
+export type { IRtAsideDeactivate };
 
 /**
  * Панель с несохранёнными правками спрашивает о них и при смене маршрута, а не
