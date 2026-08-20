@@ -2,7 +2,7 @@ import { ActivatedRouteSnapshot, Route } from '@angular/router';
 
 import { Observable, of } from 'rxjs';
 
-import { IRtAsideDeactivate } from './rt-route-aside.guard';
+import { IRtAsideDeactivate } from './rt-route-aside.registry';
 import { RtRouteAsideRegistry } from './rt-route-aside.registry';
 
 function panel(answer: boolean): IRtAsideDeactivate {

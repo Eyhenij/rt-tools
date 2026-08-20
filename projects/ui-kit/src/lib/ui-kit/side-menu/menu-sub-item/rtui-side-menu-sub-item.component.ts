@@ -21,8 +21,7 @@ import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '
 import { TNullable } from '@rt-tools/utils';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtHideTooltipDirective } from '../../tooltip';
-import { ISideMenu } from '../side-menu.types';
-import { RtuiSideMenuComponent } from '../menu/rtui-side-menu.component';
+import { IRtuiSideMenuHost, ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
 
 const BEM_BLOCK: string = 'rtui-side-menu-sub-item';
 
@@ -65,7 +64,7 @@ export class RtuiSideMenuSubItemComponent {
     /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
     // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
     protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
-    public readonly menuRef: RtuiSideMenuComponent = inject(RtuiSideMenuComponent);
+    public readonly menuRef: IRtuiSideMenuHost = inject(RTUI_SIDE_MENU);
 
     public item: InputSignal<ISideMenu.Item> = input.required<ISideMenu.Item>();
     /**

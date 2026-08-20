@@ -1,4 +1,4 @@
-import { areArraysEqual } from './are-arrays-equal.js';
+import { areArraysEqual } from './deep-equal.js';
 
 describe(areArraysEqual.name, () => {
     it('should return true for identical primitive arrays', () => {

@@ -27,7 +27,7 @@ import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '
 import { TNullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective, RtNavigationDirective, RtScrollToElementDirective } from '@rt-tools/core';
-import { ISideMenu } from '../side-menu.types';
+import { ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
 import {
     RtuiScrollableContainerComponent,
     RtuiScrollableContainerContentDirective,
@@ -53,7 +53,7 @@ const BEM_BLOCK: string = 'rtui-side-menu';
     host: { class: BEM_BLOCK },
     templateUrl: './rtui-side-menu.component.html',
     styleUrls: ['./rtui-side-menu.component.scss'],
-    providers: [BreakpointService],
+    providers: [BreakpointService, { provide: RTUI_SIDE_MENU, useExisting: RtuiSideMenuComponent }],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         NgTemplateOutlet,

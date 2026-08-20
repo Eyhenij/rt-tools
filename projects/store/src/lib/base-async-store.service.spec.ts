@@ -37,13 +37,24 @@ class TransportErrorStore extends BaseAsyncStoreService<ITestState, TTestMsg, IT
     }
 }
 
+/**
+ * @description Consumer that built its state on its own and left the base fields out — exactly
+ * what makes the selectors answer with `undefined` where the type promises a value.
+ */
+@Injectable()
+class BareStateStore extends BaseAsyncStoreService<ITestState, TTestMsg> {
+    constructor() {
+        super({ value: '' } as ITestState, { name: 'BareStateStore' });
+    }
+}
+
 describe('BaseAsyncStoreService', () => {
     let store: DefaultErrorStore;
     let consoleErrorSpy: jest.SpyInstance;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [DefaultErrorStore, TransportErrorStore],
+            providers: [DefaultErrorStore, TransportErrorStore, BareStateStore],
         });
         store = TestBed.inject(DefaultErrorStore);
         consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
@@ -53,7 +64,45 @@ describe('BaseAsyncStoreService', () => {
         consoleErrorSpy.mockRestore();
     });
 
+    describe('selectors on a state without the base fields', () => {
+        it('SC-ST-01: waiting flags answer false, not undefined', () => {
+            const bare: BareStateStore = TestBed.inject(BareStateStore);
+
+            expect(bare.loading()).toBe(false);
+            expect(bare.fetching()).toBe(false);
+            expect(bare.pending()).toBe(false);
+        });
+
+        it('SC-ST-02: request statuses answer with the initial status', () => {
+            const bare: BareStateStore = TestBed.inject(BareStateStore);
+
+            expect(bare.requestStatus()).toBe(EModelStatus.Init);
+            expect(bare.loadingStatus()).toBe(EModelStatus.Init);
+            expect(bare.fetchingStatus()).toBe(EModelStatus.Init);
+            expect(bare.upsertStatus()).toBe(EModelStatus.Init);
+            expect(bare.deleteStatus()).toBe(EModelStatus.Init);
+        });
+
+        it('SC-ST-03: a legitimate initial status is not swapped for the fallback', () => {
+            store.startLoading();
+            store.setLoadingSuccess();
+            store.resetAsyncState();
+
+            expect(store.requestStatus()).toBe(EModelStatus.Init);
+            expect(store.loading()).toBe(false);
+        });
+    });
+
     describe('handleError', () => {
+        it('SC-ST-04: a failure equal to zero still reaches the handler', () => {
+            const callbackFn: jest.Mock<void, []> = jest.fn();
+
+            store.handleError(0, callbackFn);
+
+            expect(consoleErrorSpy).toHaveBeenCalledWith(0);
+            expect(callbackFn).toHaveBeenCalledTimes(1);
+        });
+
         it('logs the failure and invokes the callback', () => {
             const callbackFn: jest.Mock<void, []> = jest.fn();
             const error: ITransportFailure = { code: 7, reason: 'transport closed' };
@@ -64,7 +113,7 @@ describe('BaseAsyncStoreService', () => {
             expect(callbackFn).toHaveBeenCalledTimes(1);
         });
 
-        it('does nothing without a failure', () => {
+        it('SC-ST-05: does nothing without a failure', () => {
             const callbackFn: jest.Mock<void, []> = jest.fn();
 
             store.handleError(undefined, callbackFn);

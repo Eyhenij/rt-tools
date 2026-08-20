@@ -2,10 +2,10 @@ import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal, ComponentType } from '@angular/cdk/portal';
 import { ComponentRef, inject, Injectable, Injector } from '@angular/core';
 import { Event, NavigationEnd, Router } from '@angular/router';
-import { merge, Observable, of, Subject } from 'rxjs';
+import { EMPTY, merge, Observable, of, Subject } from 'rxjs';
 import { delay, filter, take, tap } from 'rxjs/operators';
 
-import { ASIDE_REF, TAsidePositions, AsideRef } from './aside.types';
+import { ASIDE_REF, IAsideConfig, TAsidePositions, AsideRef } from './aside.types';
 import { RtuiAsidePanelComponent } from './components/panel/aside-panel.component';
 
 @Injectable()
@@ -30,7 +30,8 @@ export class RtAsideService {
     public Open<COMPONENT = null, DATA = null, ANSWER = null>(
         component: ComponentType<COMPONENT>,
         position: TAsidePositions,
-        data: DATA
+        data: DATA,
+        config: IAsideConfig = {}
     ): Observable<ANSWER | null> {
         const answer: Subject<ANSWER | null> = new Subject<ANSWER | null>();
         const overlayRef: OverlayRef = this.#createOverlay(position);
@@ -40,8 +41,7 @@ export class RtAsideService {
 
         // eslint-disable-next-line @nx/workspace-no-subscribe-in-methods -- подписка переезжает в объявленный поток задачей RT-845
         merge(
-            overlayRef.backdropClick(),
-            overlayRef.keydownEvents().pipe(filter((keyEvent: KeyboardEvent): boolean => keyEvent.key === 'Escape')),
+            this.#closesOf(overlayRef, config),
             this.#router.events.pipe(filter((e: Event): boolean => e instanceof NavigationEnd)),
             answer.pipe(delay(10))
         )
@@ -61,6 +61,21 @@ export class RtAsideService {
             });
 
         return answer ? answer.asObservable() : of(null);
+    }
+
+    /**
+     * Источники закрытия, которые потребитель разрешил настройкой открытия.
+     *
+     * Запрещённый источник не подписывается вовсе: подписка, которая приходит и ничего не
+     * делает, читается работающей и оживает при первой правке рядом.
+     */
+    #closesOf(overlayRef: OverlayRef, config: IAsideConfig): Observable<unknown> {
+        const backdrop$: Observable<MouseEvent> = config.closeOnBackdropClick === false ? EMPTY : overlayRef.backdropClick();
+        const escape$: Observable<KeyboardEvent> = config.closeOnEscape
+            ? overlayRef.keydownEvents().pipe(filter((keyEvent: KeyboardEvent): boolean => keyEvent.key === 'Escape'))
+            : EMPTY;
+
+        return merge(backdrop$, escape$);
     }
 
     /**

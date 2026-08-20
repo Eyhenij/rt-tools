@@ -6,7 +6,7 @@ import { take } from 'rxjs/operators';
 import { IDBStorageService } from '@rt-tools/core';
 import { TNullable } from '@rt-tools/utils';
 import { areArraysEqual } from '@rt-tools/utils';
-import { ITable } from './index';
+import { ITable } from './table-column.interface';
 import { comparePropNames } from './compare-prop-names';
 
 @Injectable()

@@ -21,17 +21,9 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { transformStringInput } from '@rt-tools/utils';
 
 import { IRtUiConfig, RT_UI_CONFIG, TRtUiDesign } from '../../config';
+import { IRtuiButton } from './rtui-button.types';
 import { RtuiIconComponent, TRtuiIconSizeType } from '../../icon';
 import { RtuiSpinnerComponent } from '../../spinner';
-
-export namespace IRtuiButton {
-    export type Type = 'icon' | 'fab' | 'pill';
-    export type Variant = 'default' | 'primary' | 'danger' | 'success' | 'warning' | 'accent';
-    export type Size = 'xs' | 'sm' | 'md' | 'lg';
-    export type Radius = 'none' | 'sm' | 'md' | 'lg' | 'full';
-    export type Appearance = 'solid' | 'outline' | 'light' | 'text';
-    export type IconPosition = 'start' | 'end';
-}
 
 const BEM_BLOCK: string = 'rtui-button';
 
