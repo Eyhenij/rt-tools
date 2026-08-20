@@ -1,7 +1,9 @@
-<ng-container rtBlock="rtui-spinner">
-    <div rtElem="container" [rtMod]="{ 'bgr-color': showBackground() }">
-        <div rtElem="wrapper" [rtMod]="{ 'bgr-color': showBox() }">
-            <mat-spinner [diameter]="diameter()" />
+@if (visible()) {
+    <ng-container rtBlock="rtui-spinner">
+        <div rtElem="container" [rtMod]="{ 'bgr-color': showBackground() }">
+            <div rtElem="wrapper" [rtMod]="{ 'bgr-color': showBox() }">
+                <mat-spinner [diameter]="diameter()" />
+            </div>
         </div>
-    </div>
-</ng-container>
+    </ng-container>
+}
