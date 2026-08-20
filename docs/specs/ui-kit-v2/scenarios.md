@@ -7,6 +7,7 @@
 | [Снимки витрины](snapshots/scenarios.md)  | `SC-UKV-01`…`SC-UKV-20`              |
 | [Уход с route-панели](aside/scenarios.md) | `SC-UKV-21`…`SC-UKV-34`, `SC-UKV-52` |
 | [Оформление кита](tokens/scenarios.md)    | `SC-UKV-35`…`SC-UKV-51`              |
+| [Поле ввода](input/scenarios.md)          | `SC-UKV-55`, `SC-UKV-56`             |
 
 Префикс общий на домен, и номера при переезде не пересчитывались: номер связывает сценарий с
 заголовком теста.
