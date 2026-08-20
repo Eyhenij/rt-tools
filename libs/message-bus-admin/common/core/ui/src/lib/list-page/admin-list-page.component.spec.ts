@@ -109,6 +109,21 @@ describe('AdminListPageComponent', () => {
         expect(fixture.debugElement.query(By.css('.admin-page__title')).nativeElement.textContent.trim()).toBe('Разборы происшествий');
     });
 
+    it('SC-MB-166 — подсказка стоит под названием, а не рядом с ним', () => {
+        const main: HTMLElement = fixture.debugElement.query(By.css('.admin-page__header-main')).nativeElement;
+        const title: HTMLElement | null = main.querySelector('.admin-page__title');
+        const hint: HTMLElement | null = main.querySelector('.admin-page__hint');
+
+        // Обе части лежат в обёртке шапки, и подсказка идёт за названием: свою строку ей даёт
+        // правило раскладки, а порядок в разметке — то, что от компонента и зависит.
+        expect(title).not.toBeNull();
+        expect(hint).not.toBeNull();
+
+        const order: Element[] = [...main.children];
+
+        expect(order.indexOf(hint as Element)).toBeGreaterThan(order.indexOf(title as Element));
+    });
+
     it('SC-MB-110 — отбор на списочной странице стоит тот, который положил раздел', () => {
         const left: HTMLElement = fixture.debugElement.query(By.css('[data-slot="left"]')).nativeElement;
 
@@ -208,6 +223,13 @@ describe('AdminListPageComponent', () => {
 
         it('раздел без подсказки показывает один заголовок', () => {
             expect(bare.debugElement.query(By.css('.admin-page__title'))).not.toBeNull();
+            expect(bare.debugElement.query(By.css('.admin-page__hint'))).toBeNull();
+        });
+
+        it('SC-MB-165 — раздел без подсказки места под неё не оставляет', () => {
+            // Сначала — что шапку вообще нашли: утверждение об отсутствии зелено и тогда, когда
+            // ищут не то.
+            expect(bare.debugElement.query(By.css('.admin-page__header-main'))).not.toBeNull();
             expect(bare.debugElement.query(By.css('.admin-page__hint'))).toBeNull();
         });
     });
