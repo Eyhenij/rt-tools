@@ -4,7 +4,7 @@ kind: pattern
 rule: entity-models
 description: Паттерн правила entity-models. Брать при объявлении новой модели сущности и её маппера — готовый неймспейс I<Сущность> с Api, State и Draft, короткий и полный уровни, наследник BaseMapper с typeCast, что делать после правки .proto.
 ---
-<!-- rt-kit v0.9.1 · patterns/entity-models-new.md · b478222bbcf2 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.10.0 · patterns/entity-models-new.md · b478222bbcf2 · правится надстройкой, не здесь -->
 
 # Объявить модель сущности и её перевод
 

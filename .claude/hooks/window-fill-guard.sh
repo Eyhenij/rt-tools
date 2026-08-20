@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.9.1 · hooks/window-fill-guard.sh · 2c1c4790f25c · правится надстройкой, не здесь
+# rt-kit v0.10.0 · hooks/window-fill-guard.sh · 2c1c4790f25c · правится надстройкой, не здесь
 # rt-hook: PostToolUse .*
 # Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # rt-hook: PreToolUse .*

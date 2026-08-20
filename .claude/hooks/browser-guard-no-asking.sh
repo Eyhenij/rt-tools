@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.9.1 · hooks/browser-guard-no-asking.sh · b412964aa45e · правится надстройкой, не здесь
+# rt-kit v0.10.0 · hooks/browser-guard-no-asking.sh · b412964aa45e · правится надстройкой, не здесь
 # rt-hook: PreToolUse AskUserQuestion
 # Требует: hooks/deny-tail.sh
 # PreToolUse guard for AskUserQuestion.
