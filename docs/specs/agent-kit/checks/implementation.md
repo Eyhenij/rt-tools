@@ -22,7 +22,7 @@
 | Ветка без номера задачи условий поставки не получает.                                | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:branch_arg`           |
 | Гейт пуша зовёт то, что дерево разложило.                                            | `projects/agent-kit/assets/defaults/project.sh:rt_push_checks_default`       |
 | Предел длины объявлен одним числом на все роды файлов.                               | `projects/agent-kit/assets/checks/check-file-size.mjs:LIMIT`                 |
-| Накопленное до объявления предела перечислено поимённо.                              | `projects/agent-kit/assets/checks/check-file-size.mjs:readKnown`             |
+| Накопленное до объявления предела перечислено поимённо.                              | `projects/agent-kit/assets/checks/check-file-size.mjs:parseAllowlist`        |
 | Принятое и долг в перечне различаются.                                               | `projects/agent-kit/assets/checks/check-file-size.mjs:known`                 |
 | Данные из счёта длины выведены.                                                      | `projects/agent-kit/assets/checks/check-file-size.mjs:JUDGED`                |
 | Описание прошлого и папка задачи из счёта выведены.                                  | `projects/agent-kit/assets/checks/check-file-size.mjs:SKIPPED_PREFIXES`      |

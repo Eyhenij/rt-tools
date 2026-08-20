@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.9.1 · checks/check-file-size.mjs · 58f600b9489f · правится надстройкой, не здесь
+// rt-kit v0.9.1 · checks/check-file-size.mjs · d6df879d3c56 · правится надстройкой, не здесь
 /**
  * Проверка того, что файл не длиннее предела.
  *
@@ -33,7 +33,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { allowlistOf, CONFIG, ROOT } from './rt-kit-checks.config.mjs';
+import { allowlistOf, baselineOf, CONFIG, ROOT, parseAllowlist } from './rt-kit-checks.config.mjs';
 
 const ALLOWLIST = allowlistOf('file-size');
 /** Предел один на все роды файлов: своё число каждому роду — спор о числе на каждой правке. */
@@ -70,23 +70,9 @@ function lineCount(path) {
  * не пустой список, а нечитаемая настройка, и молчать о ней нельзя. Пустой список законен
  * ровно один раз — в дереве, где длинных файлов нет вовсе.
  */
-function readKnown() {
-    const path = join(ROOT, ALLOWLIST);
-    if (!existsSync(path)) {
-        return { accepted: [], debt: [] };
-    }
-    try {
-        const parsed = JSON.parse(readFileSync(path, 'utf8'));
-
-        return { accepted: parsed.accepted ?? [], debt: parsed.debt ?? [] };
-    } catch (error) {
-        console.error(`check-file-size: список известного не прочитан — ${ALLOWLIST}: ${error.message}`);
-        process.exit(1);
-    }
-}
-
-const { accepted, debt } = readKnown();
-const known = new Map([...accepted.map((path) => [path, 'принято']), ...debt.map((path) => [path, 'долг'])]);
+const allowlist = parseAllowlist('file-size');
+const { accepted, debt } = allowlist;
+const known = new Map([...[...accepted.keys()].map((path) => [path, 'принято']), ...[...debt.keys()].map((path) => [path, 'долг'])]);
 
 const tooLong = new Map();
 const tracked = trackedFiles().filter(judged);
@@ -99,7 +85,7 @@ for (const path of tracked) {
 }
 
 if (process.argv.includes('--baseline')) {
-    console.log(JSON.stringify({ accepted, debt: [...tooLong.keys()].sort() }, null, 4));
+    console.log(baselineOf([...tooLong.keys()].sort(), allowlist));
     process.exit(0);
 }
 
@@ -124,5 +110,5 @@ if (problems.length > 0) {
 
 console.log(
     `check-file-size: проверено ${tracked.length} файлов, длиннее ${LIMIT} строк ${tooLong.size}, ` +
-        `из них принято ${accepted.length}, долг ${debt.length} — новых нет`
+        `из них принято ${accepted.size}, долг ${debt.size} — новых нет`
 );

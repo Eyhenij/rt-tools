@@ -29,7 +29,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 
-import { ROOT, allowlistOf, readAllowlist } from './rt-kit-checks.config.mjs';
+import { ROOT, allowlistOf, baselineOf, parseAllowlist } from './rt-kit-checks.config.mjs';
 
 /** Набор стилей компонентов и слой оформления, объявляющий порядок подслоёв. */
 const COMPONENTS = 'projects/ui-kit-v2/src/lib';
@@ -138,11 +138,11 @@ for (const file of scssIn(STYLES).sort()) {
 }
 
 if (process.argv.includes('--baseline')) {
-    console.log(JSON.stringify({ accepted: [...new Set(findings.map((finding) => finding.key))].sort() }, null, 4));
+    console.log(baselineOf([...new Set(findings.map((finding) => finding.key))].sort(), parseAllowlist('cascade-layer')));
     process.exit(0);
 }
 
-const known = new Set(readAllowlist('cascade-layer').accepted ?? []);
+const known = parseAllowlist('cascade-layer').keys;
 const seen = new Set(findings.map((finding) => finding.key));
 
 const problems = [

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.9.1 · checks/rt-kit-checks.config.mjs · 28973f90d58c · правится надстройкой, не здесь
+// rt-kit v0.9.1 · checks/rt-kit-checks.config.mjs · 9507a3de7815 · правится надстройкой, не здесь
 /**
  * Настройки проверок: что считать исходниками, куда не ходить и где лежат списки долгов.
  *
@@ -200,15 +200,16 @@ export const readAllowlist = (name) => {
  * и вышло у четырёх списков дерева: шапка говорила о разобранном долге, а под ней лежало
  * принятое, которого в тот день ещё не было.
  *
- * Поэтому форма одна на все списки: `accepted` и `debt` — объекты, где ключ говорит, что
- * принято, а значение несёт причину и номер задачи, которой запись внесена. Номер — это дорога
+ * Поэтому форма одна на все списки: сторона — объект, где ключ говорит, что принято, а
+ * значение несёт причину и номер задачи, которой запись внесена. Стороны называет зовущий:
+ * у большинства списков это `accepted` и `debt`, у иных свои имена, а разбор у всех один. Номер — это дорога
  * к разговору, в котором заглушить разрешили: без него запись объясняет сама себя, а спросить
  * о ней некого.
  *
  * Отказ называет файл и саму запись: список читают не целиком, а по строке, и «где-то здесь
  * неверная запись» стоит того же, что и молчание.
  */
-export const parseAllowlist = (name) => {
+export const parseAllowlist = (name, sides = ['accepted', 'debt']) => {
     const file = allowlistOf(name);
     const raw = readAllowlist(name);
     const key = CONFIG.board.taskKey;
@@ -241,10 +242,29 @@ export const parseAllowlist = (name) => {
 
         return parsed;
     };
-    const accepted = parseSide('accepted');
-    const debt = parseSide('debt');
+    const parsed = Object.fromEntries(sides.map((side) => [side, parseSide(side)]));
 
-    return { accepted, debt, keys: new Set([...accepted.keys(), ...debt.keys()]) };
+    return { ...parsed, keys: new Set(sides.flatMap((side) => [...parsed[side].keys()])) };
+};
+
+/**
+ * Заготовка списка принятого для режима пересъёмки: прежние записи сохраняются целиком, а
+ * новые приходят с пустой причиной и пустым номером задачи.
+ *
+ * Пустые поля здесь намеренны. Пересъёмка — это помощник, а не разрешение: заглушить проверку
+ * можно только словом владельца, и записать его должен человек. Разбор такую запись отбивает,
+ * поэтому список, снятый пересъёмкой и не заполненный, дальше гейта не проходит.
+ */
+export const baselineOf = (keys, parsed, side = 'debt') => {
+    const entryOf = (key) => parsed.debt?.get(key) ?? parsed.accepted?.get(key) ?? { reason: '', task: '' };
+    const fresh = keys.filter((key) => !parsed.keys.has(key));
+    if (fresh.length > 0) {
+        console.error(`новых записей ${fresh.length} — у каждой заполняются «reason» и «task», иначе разбор списка отбивает прогон`);
+    }
+    const filled = Object.fromEntries(keys.map((key) => [key, entryOf(key)]));
+    const rest = Object.fromEntries([...(parsed.accepted ?? new Map())].filter(([key]) => !keys.includes(key)));
+
+    return JSON.stringify(side === 'accepted' ? { accepted: filled } : { accepted: rest, debt: filled }, null, 4);
 };
 
 /** Есть ли в дереве то, без чего проверке нечего делать. Нет — она выходит с нулём и говорит это. */

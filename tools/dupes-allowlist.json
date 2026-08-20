@@ -1,25 +1,78 @@
 {
-  "reason": "Принятое — совпадения имён, за которыми нет общего символа. Роды такие.\n\nПакеты, которые кода не делят: два кита стоят в одном приложении рядом, у каждого свои селекторы, свой набор токенов оформления и свой список компонентов, а второй кит везёт ещё и свою шину событий, чтобы не зависеть от ядра. Витрины у китов тоже свои — общего файла между ними нет ни одного, и порог расхождения, паузу съёмки и признаки вставшего кадра каждая называет сама: ожидание повторено в обеих обвязках намеренно, потому что правка ради одного кита сдвинула бы момент съёмки у другого и уронила бы его эталоны. Половина совпавших имён — заголовки историй витрины (Default, Playground, Header), совпадают они по её договорённости; pathOf в двух пакетах означает разное — путь ресурса и путь адреса.\n\nСквозной набор против кода, который он проверяет: адрес входа и способ найти узел по признаку он объявляет своими значениями намеренно — вывезенные из проверяемой либы, они делали бы прогон зелёным при любом значении. Функция qa у них к тому же разная: в наборе она берёт узел со страницы, в ките — из фикстуры.\n\nИмя блока вёрстки: правило линтера дерева rt/require-host-bem-block требует локальную константу ровно с именем BEM_BLOCK в каждом компоненте, и общее объявление оно отбивает. Три вида записи потому и называют admin-panel порознь.\n\nНовая строка сюда заводится только под совпадение одного из этих родов и только с причиной.",
-  "accepted": [
-    "export Default @ projects/ui-kit, projects/ui-kit-v2",
-    "export Header @ projects/ui-kit, projects/ui-kit-v2",
-    "export IMessageBusEvent @ projects/core, projects/ui-kit-v2",
-    "export MessageBus @ projects/core, projects/ui-kit-v2",
-    "export Playground @ projects/ui-kit, projects/ui-kit-v2",
-    "export RtAsideService @ projects/ui-kit, projects/ui-kit-v2",
-    "export RtPopoverDirective @ projects/ui-kit, projects/ui-kit-v2",
-    "export SIGN_IN_PATH @ apps/message-bus-admin-e2e, libs/message-bus-admin/auth/shell",
-    "export pathOf @ projects/agent-kit, projects/ui-kit-v2",
-    "export qa @ apps/message-bus-admin-e2e, projects/ui-kit-v2",
-    "setting FAILURE_THRESHOLD @ projects/ui-kit-v2/.storybook/test-runner.ts, projects/ui-kit/.storybook/test-runner.ts",
-    "setting LAYOUT_TIMEOUT_MS @ projects/ui-kit-v2/.storybook/test-runner.ts, projects/ui-kit/.storybook/test-runner.ts",
-    "setting SETTLE_MS @ projects/ui-kit-v2/.storybook/test-runner.ts, projects/ui-kit/.storybook/test-runner.ts",
-    "setting STILL_FRAMES @ projects/ui-kit-v2/.storybook/test-runner.ts, projects/ui-kit/.storybook/test-runner.ts",
-    "table STORY_SNAPSHOT_VIEWPORT @ projects/ui-kit-v2 ~ VIEWPORT @ projects/ui-kit/.storybook/test-runner.ts",
-    "value admin-panel @ BEM_BLOCK @ libs/message-bus-admin/postmortems/ui ~ BEM_BLOCK @ libs/message-bus-admin/proposals/ui ~ BEM_BLOCK @ libs/message-bus-admin/summaries/ui"
-  ],
-  "debt": [
-    "enum EFilterOperatorType @ projects/utils ~ FILTER_OPERATOR_TYPE_ENUM @ @rt-tools/utils/esm/lib/interfaces",
-    "enum EListSortOrder @ projects/utils ~ LIST_SORT_ORDER_ENUM @ @rt-tools/utils/esm/lib/interfaces"
-  ]
+  "accepted": {
+    "export Default @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "заголовок истории витрины: витрины у китов свои, и имена историй совпадают по договорённости показа",
+      "task": "RT-764"
+    },
+    "export Header @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "заголовок истории витрины: витрины у китов свои, и имена историй совпадают по договорённости показа",
+      "task": "RT-764"
+    },
+    "export IMessageBusEvent @ projects/core, projects/ui-kit-v2": {
+      "reason": "второй кит везёт свою шину событий, чтобы не зависеть от ядра",
+      "task": "RT-764"
+    },
+    "export MessageBus @ projects/core, projects/ui-kit-v2": {
+      "reason": "второй кит везёт свою шину событий, чтобы не зависеть от ядра",
+      "task": "RT-764"
+    },
+    "export Playground @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "заголовок истории витрины: витрины у китов свои, и имена историй совпадают по договорённости показа",
+      "task": "RT-764"
+    },
+    "export RtAsideService @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "два кита стоят в одном приложении рядом и кода не делят: свои селекторы, свой набор токенов оформления, свой список компонентов",
+      "task": "RT-764"
+    },
+    "export RtPopoverDirective @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "два кита стоят в одном приложении рядом и кода не делят: свои селекторы, свой набор токенов оформления, свой список компонентов",
+      "task": "RT-764"
+    },
+    "export SIGN_IN_PATH @ apps/message-bus-admin-e2e, libs/message-bus-admin/auth/shell": {
+      "reason": "сквозной набор объявляет адрес входа и поиск узла своими значениями намеренно: вывезенные из проверяемой либы, они зеленели бы при любом значении",
+      "task": "RT-764"
+    },
+    "export pathOf @ projects/agent-kit, projects/ui-kit-v2": {
+      "reason": "одно имя над разными понятиями: путь ресурса у пакета правил и путь адреса у кита",
+      "task": "RT-764"
+    },
+    "export qa @ apps/message-bus-admin-e2e, projects/ui-kit-v2": {
+      "reason": "сквозной набор объявляет адрес входа и поиск узла своими значениями намеренно: вывезенные из проверяемой либы, они зеленели бы при любом значении",
+      "task": "RT-764"
+    },
+    "setting FAILURE_THRESHOLD @ projects/ui-kit-v2/.storybook/test-runner.ts, projects/ui-kit/.storybook/test-runner.ts": {
+      "reason": "обвязки витрин у китов свои: правка ради одного кита сдвинула бы момент съёмки у другого и уронила его эталоны",
+      "task": "RT-764"
+    },
+    "setting LAYOUT_TIMEOUT_MS @ projects/ui-kit-v2/.storybook/test-runner.ts, projects/ui-kit/.storybook/test-runner.ts": {
+      "reason": "обвязки витрин у китов свои: правка ради одного кита сдвинула бы момент съёмки у другого и уронила его эталоны",
+      "task": "RT-857"
+    },
+    "setting SETTLE_MS @ projects/ui-kit-v2/.storybook/test-runner.ts, projects/ui-kit/.storybook/test-runner.ts": {
+      "reason": "обвязки витрин у китов свои: правка ради одного кита сдвинула бы момент съёмки у другого и уронила его эталоны",
+      "task": "RT-764"
+    },
+    "setting STILL_FRAMES @ projects/ui-kit-v2/.storybook/test-runner.ts, projects/ui-kit/.storybook/test-runner.ts": {
+      "reason": "обвязки витрин у китов свои: правка ради одного кита сдвинула бы момент съёмки у другого и уронила его эталоны",
+      "task": "RT-857"
+    },
+    "table STORY_SNAPSHOT_VIEWPORT @ projects/ui-kit-v2 ~ VIEWPORT @ projects/ui-kit/.storybook/test-runner.ts": {
+      "reason": "обвязки витрин у китов свои: правка ради одного кита сдвинула бы момент съёмки у другого и уронила его эталоны",
+      "task": "RT-764"
+    },
+    "value admin-panel @ BEM_BLOCK @ libs/message-bus-admin/postmortems/ui ~ BEM_BLOCK @ libs/message-bus-admin/proposals/ui ~ BEM_BLOCK @ libs/message-bus-admin/summaries/ui": {
+      "reason": "линтер дерева требует локальную константу имени блока в каждом компоненте и общее объявление отбивает",
+      "task": "RT-841"
+    }
+  },
+  "debt": {
+    "enum EFilterOperatorType @ projects/utils ~ FILTER_OPERATOR_TYPE_ENUM @ @rt-tools/utils/esm/lib/interfaces": {
+      "reason": "перечисление повторяет набор внешнего пакета: разведение идёт отдельной задачей",
+      "task": "RT-796"
+    },
+    "enum EListSortOrder @ projects/utils ~ LIST_SORT_ORDER_ENUM @ @rt-tools/utils/esm/lib/interfaces": {
+      "reason": "перечисление повторяет набор внешнего пакета: разведение идёт отдельной задачей",
+      "task": "RT-796"
+    }
+  }
 }
