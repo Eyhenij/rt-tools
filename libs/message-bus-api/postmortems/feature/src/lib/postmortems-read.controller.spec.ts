@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IPostmortemFullRow, IPostmortemListRow } from '@rt/message-bus-api/postmortems/data-access';
-import { IPage, PAGE_SIZE_DEFAULT, PAGE_SIZE_MAX } from '@rt/message-bus-common';
+import { ECargoState, IPage, PAGE_SIZE_DEFAULT, PAGE_SIZE_MAX } from '@rt/message-bus-common';
 
 import { PostmortemsReadController } from './postmortems-read.controller';
 
@@ -12,6 +12,8 @@ interface IStoredPostmortem {
     readonly id: string;
     readonly file: string;
     readonly text: string;
+    /** Значение колонки состояния — строкой, как его и отдаёт хранилище. */
+    readonly state: string;
     readonly arrivedAt: Date;
     readonly updatedAt: Date;
     readonly tree: { readonly slug: string; readonly name: string };
@@ -23,6 +25,9 @@ const OTHER_COUNT: number = 10;
 
 /** Время, с которого разборы расставлены по минуте. Час стоит в прошлом: часы машины не читаются. */
 const FIRST_AT: Date = new Date('2026-08-01T10:00:00Z');
+
+/** Каждый пятый разбор взят в работу: иначе чтение, зашившее «новое», отвечало бы верно всегда. */
+const IN_WORK_EVERY: number = 5;
 
 function selectOf(args: Record<string, unknown>): Record<string, unknown> {
     return (args['select'] ?? {}) as Record<string, unknown>;
@@ -148,6 +153,9 @@ function storage(): PrismaService {
             id: `pm-${String(at).padStart(2, '0')}`,
             file: `docs/postmortems/промах-${at}.md`,
             text: `текст разбора номер ${at}`,
+            // Лежащие записи несут значение умолчания, а взятые в работу — своё: так их и
+            // отдаёт хранилище после миграции.
+            state: at % IN_WORK_EVERY === 0 && at > 0 ? 'in_work' : 'new',
             arrivedAt: new Date(FIRST_AT.getTime() + minutes * 60_000),
             updatedAt: new Date(FIRST_AT.getTime() + minutes * 60_000),
             tree: own ? { slug: 'own-tree', name: 'Своё дерево' } : { slug: 'other-tree', name: 'Чужое дерево' },
@@ -241,6 +249,28 @@ describe('PostmortemsReadController.page', () => {
         expect(answered.rows[0]).toHaveProperty('file');
         expect(answered.rows[0]).not.toHaveProperty('text');
     });
+
+    it('SC-MB-167 — разбор, с которым ничего не делали, читается строкой списка как новый', async () => {
+        const answered: IPage<IPostmortemListRow> = await controller().page({ size: '1' });
+
+        expect(answered.rows[0].state).toBe(ECargoState.New);
+    });
+
+    it('SC-MB-168 — состояние есть у каждой строки страницы, и пустого нет ни у одной', async () => {
+        const answered: IPage<IPostmortemListRow> = await controller().page({ size: String(PAGE_SIZE_MAX) });
+        const states: ECargoState[] = answered.rows.map((row: IPostmortemListRow): ECargoState => row.state);
+
+        expect(states).toHaveLength(OWN_COUNT + OTHER_COUNT);
+        expect(states.every((state: ECargoState): boolean => Object.values(ECargoState).includes(state))).toBe(true);
+    });
+
+    it('строка списка несёт то состояние, в котором запись лежит, а не одно на всех', async () => {
+        const answered: IPage<IPostmortemListRow> = await controller().page({ size: String(PAGE_SIZE_MAX) });
+        const inWork: IPostmortemListRow[] = answered.rows.filter((row: IPostmortemListRow): boolean => row.state === ECargoState.InWork);
+
+        // Порядок по умолчанию ставит свежие сверху, поэтому имена идут от старшего номера.
+        expect(inWork.map((row: IPostmortemListRow): string => row.id)).toEqual(['pm-20', 'pm-15', 'pm-10', 'pm-05']);
+    });
 });
 
 describe('PostmortemsReadController.one', () => {
@@ -248,6 +278,11 @@ describe('PostmortemsReadController.one', () => {
         const found: IPostmortemFullRow = await controller().one('pm-03');
 
         expect(found).toMatchObject({ id: 'pm-03', text: 'текст разбора номер 3' });
+    });
+
+    it('SC-MB-167 — чтение одной записи несёт то же состояние, что и строка списка', async () => {
+        expect((await controller().one('pm-03')).state).toBe(ECargoState.New);
+        expect((await controller().one('pm-05')).state).toBe(ECargoState.InWork);
     });
 
     it('SC-MB-71 — записи, которой нет, отвечает отказ, а не пустая запись', async () => {

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IProposalFullRow, IProposalListRow } from '@rt/message-bus-api/proposals/data-access';
-import { IPage } from '@rt/message-bus-common';
+import { ECargoState, IPage } from '@rt/message-bus-common';
 
 import { ProposalsReadController } from './proposals-read.controller';
 
@@ -13,6 +13,8 @@ interface IStoredProposal {
     readonly text: string;
     readonly address: string;
     readonly resource: string;
+    /** Значение колонки состояния — строкой, как его и отдаёт хранилище. */
+    readonly state: string;
     readonly arrivedAt: Date;
     readonly record: { readonly month: string; readonly tree: { readonly slug: string; readonly name: string } };
 }
@@ -100,6 +102,7 @@ function storage(): PrismaService {
             text: 'дописать в правило строку о втором ключе порядка',
             address: 'пакет',
             resource: 'rules/testing.md',
+            state: 'new',
             arrivedAt: FIRST_AT,
             record: { month: '2026-08', tree: OWN },
         },
@@ -108,6 +111,8 @@ function storage(): PrismaService {
             text: 'завести паттерн под списочный экран',
             address: 'дерево',
             resource: 'patterns/list-screen.md',
+            // Взятое в разбор: иначе чтение, зашившее «новое», отвечало бы верно всегда.
+            state: 'in_work',
             arrivedAt: new Date(FIRST_AT.getTime() + 60_000),
             record: { month: '2026-08', tree: OWN },
         },
@@ -116,6 +121,7 @@ function storage(): PrismaService {
             text: 'разнести закон о доступе и правило под него',
             address: 'компаньон',
             resource: 'laws/access.md',
+            state: 'new',
             arrivedAt: new Date(FIRST_AT.getTime() + 120_000),
             record: { month: '2026-08', tree: OTHER },
         },
@@ -124,6 +130,7 @@ function storage(): PrismaService {
             text: 'снять с правила строку, которую не исполняет ничто',
             address: 'пакет',
             resource: 'rules/doc-style.md',
+            state: 'new',
             arrivedAt: new Date(FIRST_AT.getTime() + 180_000),
             record: { month: '2026-07', tree: OTHER },
         },
@@ -167,6 +174,27 @@ describe('ProposalsReadController.page', () => {
 
         expect(answered.rows[0]).toMatchObject({ resource: 'rules/doc-style.md', address: 'пакет' });
         expect(answered.rows[0]).not.toHaveProperty('text');
+    });
+
+    it('SC-MB-167 — предложение, с которым ничего не делали, читается строкой списка как новое', async () => {
+        const answered: IPage<IProposalListRow> = await controller().page({ size: '1' });
+
+        expect(answered.rows[0].state).toBe(ECargoState.New);
+    });
+
+    it('SC-MB-168 — состояние есть у каждой строки страницы, и пустого нет ни у одной', async () => {
+        const answered: IPage<IProposalListRow> = await controller().page({});
+        const states: ECargoState[] = answered.rows.map((row: IProposalListRow): ECargoState => row.state);
+
+        expect(states).toHaveLength(4);
+        expect(states.every((state: ECargoState): boolean => Object.values(ECargoState).includes(state))).toBe(true);
+    });
+
+    it('строка списка несёт то состояние, в котором запись лежит, а не одно на всех', async () => {
+        const answered: IPage<IProposalListRow> = await controller().page({});
+        const inWork: IProposalListRow[] = answered.rows.filter((row: IProposalListRow): boolean => row.state === ECargoState.InWork);
+
+        expect(inWork.map((row: IProposalListRow): string => row.id)).toEqual(['pr-2']);
     });
 });
 

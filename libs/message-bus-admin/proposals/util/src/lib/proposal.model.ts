@@ -14,7 +14,7 @@
  * оттуда же. На стороне экрана это видно так же, как у разбора, — полем `tree`, потому что
  * отбирают им обоих одинаково.
  */
-import { ITreeChoice } from '@rt/message-bus-common';
+import { ECargoState, ITreeChoice } from '@rt/message-bus-common';
 
 export namespace IProposal {
     /** Строка списка: то, что видно в таблице. */
@@ -25,6 +25,7 @@ export namespace IProposal {
             readonly tree: ITreeChoice;
             readonly resource: string;
             readonly address: string;
+            readonly state: string;
             readonly arrivedAt: string;
         }
 
@@ -36,6 +37,15 @@ export namespace IProposal {
             readonly resource: string;
             /** Адрес внутри ресурса — раздел или строка, к которой предложение относится. */
             readonly address: string;
+            /** На каком шаге разбора стоит запись. Пустым это поле не приходит никогда. */
+            readonly state: ECargoState;
+            /**
+             * Состояние по-русски: показывается оно этой строкой.
+             *
+             * Лежит полем, а не считается в шаблоне: шаблон методов не зовёт, а пайп ради одного
+             * перевода потребовал бы разделу своего слоя вида.
+             */
+            readonly stateLabel: string;
             readonly arrivedAt: Date;
         }
     }

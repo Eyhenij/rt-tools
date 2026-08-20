@@ -26,13 +26,18 @@
             <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-file'">{{ row.file }}</td>
         </ng-container>
 
+        <ng-container cdkColumnDef="state">
+            <th *cdkHeaderCellDef cdk-header-cell>{{ columns[2].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-state'">{{ row.stateLabel }}</td>
+        </ng-container>
+
         <ng-container cdkColumnDef="arrivedAt">
-            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="arrivedAt">{{ columns[2].label }}</th>
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="arrivedAt">{{ columns[3].label }}</th>
             <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-arrived'">{{ row.arrivedAt | adminMoment }}</td>
         </ng-container>
 
         <ng-container cdkColumnDef="updatedAt">
-            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="updatedAt">{{ columns[3].label }}</th>
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="updatedAt">{{ columns[4].label }}</th>
             <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-updated'">{{ row.updatedAt | adminMoment }}</td>
         </ng-container>
 

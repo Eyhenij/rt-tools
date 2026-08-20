@@ -10,7 +10,7 @@
  */
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { proposalDigest } from '@rt/message-bus-api/proposals/util';
-import { IPage, IPageAsked, ITreeChoice, pageSkip, TPageDirection } from '@rt/message-bus-common';
+import { cargoStateOf, ECargoState, IPage, IPageAsked, ITreeChoice, pageSkip, TPageDirection } from '@rt/message-bus-common';
 
 /** Одно предложение, каким оно ложится в хранилище. */
 export interface IProposalRow {
@@ -30,6 +30,8 @@ export interface IProposalListRow {
     readonly tree: ITreeChoice;
     readonly resource: string;
     readonly address: string;
+    /** На каком шаге разбора стоит запись: пустым это поле не приезжает никогда. */
+    readonly state: ECargoState;
     readonly arrivedAt: Date;
 }
 
@@ -66,15 +68,28 @@ function whereOf(asked: IPageAsked): { record?: { tree: { slug: string } } } {
     return asked.tree ? { record: { tree: { slug: asked.tree } } } : {};
 }
 
-/** Строка списка из того, что отдало хранилище: дерево лежит внутри записи месяца. */
+/**
+ * Строка списка из того, что отдало хранилище: дерево лежит внутри записи месяца.
+ *
+ * Состояние приезжает значением колонки и переводится в набор общей либы: набор объявлен дважды —
+ * хранилищем и общей либой, — и читающая сторона знает только второй.
+ */
 function listRowOf(row: {
     id: string;
     resource: string;
     address: string;
+    state: string;
     arrivedAt: Date;
     record: { tree: ITreeChoice };
 }): IProposalListRow {
-    return { id: row.id, tree: row.record.tree, resource: row.resource, address: row.address, arrivedAt: row.arrivedAt };
+    return {
+        id: row.id,
+        tree: row.record.tree,
+        resource: row.resource,
+        address: row.address,
+        state: cargoStateOf(row.state),
+        arrivedAt: row.arrivedAt,
+    };
 }
 
 /**
@@ -95,6 +110,7 @@ export async function readProposals(prisma: PrismaService, asked: IPageAsked): P
         id: string;
         resource: string;
         address: string;
+        state: string;
         arrivedAt: Date;
         record: { tree: ITreeChoice };
     }[] = await prisma.proposal.findMany({
@@ -103,6 +119,7 @@ export async function readProposals(prisma: PrismaService, asked: IPageAsked): P
             id: true,
             resource: true,
             address: true,
+            state: true,
             arrivedAt: true,
             record: { select: { tree: { select: { slug: true, name: true } } } },
         },
@@ -121,6 +138,7 @@ export async function readProposal(prisma: PrismaService, id: string): Promise<I
         text: string;
         resource: string;
         address: string;
+        state: string;
         arrivedAt: Date;
         record: { month: string; tree: ITreeChoice };
     } | null = await prisma.proposal.findUnique({
@@ -130,6 +148,7 @@ export async function readProposal(prisma: PrismaService, id: string): Promise<I
             text: true,
             resource: true,
             address: true,
+            state: true,
             arrivedAt: true,
             record: { select: { month: true, tree: { select: { slug: true, name: true } } } },
         },
