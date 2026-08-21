@@ -1,0 +1,108 @@
+<ng-container rtBlock="rt-markdown-text">
+    @for (item of blocks(); track $index) {
+        <ng-container *ngTemplateOutlet="blockTpl; context: { $implicit: item }" />
+    }
+
+    <ng-template #blockTpl let-item>
+        @switch (item.kind) {
+            @case (blockKind.Heading) {
+                <div
+                    rtElem="heading"
+                    qa-dataid="markdown-heading"
+                    role="heading"
+                    [attr.aria-level]="item.level"
+                    [rtMod]="{ level: item.level }">
+                    <ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: item.content }" />
+                </div>
+            }
+            @case (blockKind.List) {
+                <ul rtElem="list" qa-dataid="markdown-list" [rtMod]="{ ordered: item.ordered }">
+                    @for (point of item.items; track $index) {
+                        <li rtElem="item" qa-dataid="markdown-item" [rtMod]="{ level: point.level }">
+                            <ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: point.content }" />
+                        </li>
+                    }
+                </ul>
+            }
+            @case (blockKind.Quote) {
+                <blockquote rtElem="quote" qa-dataid="markdown-quote">
+                    <ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: item.content }" />
+                </blockquote>
+            }
+            @case (blockKind.Code) {
+                <pre rtElem="code" qa-dataid="markdown-code"><code>{{ item.code }}</code></pre>
+            }
+            @case (blockKind.Table) {
+                <ng-container *ngTemplateOutlet="tableTpl; context: { $implicit: item }" />
+            }
+            @default {
+                <p rtElem="paragraph" qa-dataid="markdown-paragraph">
+                    <ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: item.content }" />
+                </p>
+            }
+        }
+    </ng-template>
+
+    <ng-template #tableTpl let-item>
+        <div rtElem="table-scroll" qa-dataid="markdown-table-scroll">
+            <table rtElem="table" qa-dataid="markdown-table">
+                <thead>
+                    <tr>
+                        @for (cell of item.head; track $index) {
+                            <th rtElem="head-cell" qa-dataid="markdown-head-cell">
+                                <ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: cell }" />
+                            </th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (row of item.rows; track $index) {
+                        <tr>
+                            @for (cell of row; track $index) {
+                                <td rtElem="cell" qa-dataid="markdown-cell">
+                                    <ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: cell }" />
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </ng-template>
+
+    <ng-template #inlineTpl let-nodes>
+        @for (node of nodes; track $index) {
+            @switch (node.kind) {
+                @case (inlineKind.Strong) {
+                    <strong rtElem="strong">
+                        <ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: node.children }" />
+                    </strong>
+                }
+                @case (inlineKind.Emphasis) {
+                    <em rtElem="emphasis">
+                        <ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: node.children }" />
+                    </em>
+                }
+                @case (inlineKind.Strike) {
+                    <s rtElem="strike">
+                        <ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: node.children }" />
+                    </s>
+                }
+                @case (inlineKind.Code) {
+                    <code rtElem="code-inline" qa-dataid="markdown-code-inline">{{ node.text }}</code>
+                }
+                @case (inlineKind.Link) {
+                    <a rtElem="link" qa-dataid="markdown-link" rel="noopener noreferrer" target="_blank" [href]="node.href">
+                        <ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: node.children }" />
+                    </a>
+                }
+                @case (inlineKind.Break) {
+                    <br />
+                }
+                @default {
+                    {{ node.text }}
+                }
+            }
+        }
+    </ng-template>
+</ng-container>
