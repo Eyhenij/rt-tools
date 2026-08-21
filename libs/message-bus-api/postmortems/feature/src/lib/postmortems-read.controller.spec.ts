@@ -14,6 +14,8 @@ interface IStoredPostmortem {
     readonly text: string;
     /** Значение колонки состояния — строкой, как его и отдаёт хранилище. */
     readonly state: string;
+    /** Версия выпуска. Пусто у записи, которую никто не выпускал, — а таких в хранилище большинство. */
+    readonly releaseVersion: string | null;
     readonly arrivedAt: Date;
     readonly updatedAt: Date;
     readonly tree: { readonly slug: string; readonly name: string };
@@ -61,6 +63,20 @@ function stateAt(at: number): string {
     }
 
     return at % RELEASED_EVERY === 0 ? 'released' : 'new';
+}
+
+/**
+ * Версия выпуска по номеру записи: она есть только у выпущенных, как и в самом хранилище.
+ *
+ * Версии стоят в обратном порядке номеров нарочно: `0.9.0` лежит ниже `0.10.0` и по времени
+ * приезда, и по признаку записи, — поэтому порядок по номерам версии отличим от обоих.
+ */
+function versionAt(at: number): string | null {
+    if (stateAt(at) !== 'released') {
+        return null;
+    }
+
+    return at === RELEASED_EVERY ? '0.10.0' : '0.9.0';
 }
 
 function selectOf(args: Record<string, unknown>): Record<string, unknown> {
@@ -144,13 +160,28 @@ class PrismaDouble {
         };
     }
 
-    /** Отбор: пусто в `where` — все деревья и все состояния, названное складывается. */
+    /**
+     * Отбор: пусто в `where` — все деревья, все состояния и все версии, названное складывается.
+     *
+     * Версия сверяется вместе с пустотой: `null` в запросе — это отбор «без версии», а не снятый
+     * отбор, и двойник, читающий пустоту как «всё равно», отвечал бы на него целым списком.
+     * Перечень признаков стоит рядом с ними: им берётся страница в порядке по версии.
+     */
     #picked(args: Record<string, unknown>): IStoredPostmortem[] {
-        const where: { tree?: { slug: string }; state?: string } = args['where'] ?? {};
+        const where: { tree?: { slug: string }; state?: string; releaseVersion?: string | null; id?: { in: string[] } } =
+            args['where'] ?? {};
         const slug: string | undefined = where.tree?.slug;
         const state: string | undefined = where.state;
+        const version: string | null | undefined = where.releaseVersion;
+        const ids: string[] | undefined = where.id?.in;
 
-        return this.#rows.filter((row: IStoredPostmortem): boolean => (!slug || row.tree.slug === slug) && (!state || row.state === state));
+        return this.#rows.filter(
+            (row: IStoredPostmortem): boolean =>
+                (!slug || row.tree.slug === slug) &&
+                (!state || row.state === state) &&
+                (version === undefined || row.releaseVersion === version) &&
+                (ids === undefined || ids.includes(row.id))
+        );
     }
 
     #page(args: Record<string, unknown>): Record<string, unknown>[] {
@@ -193,6 +224,7 @@ function storage(): PrismaService {
             // Лежащие записи несут значение умолчания, а сдвинутые деревом — своё: так их и
             // отдаёт хранилище.
             state: stateAt(at),
+            releaseVersion: versionAt(at),
             arrivedAt: new Date(FIRST_AT.getTime() + minutes * 60_000),
             updatedAt: new Date(FIRST_AT.getTime() + minutes * 60_000),
             tree: own ? { slug: 'own-tree', name: 'Своё дерево' } : { slug: 'other-tree', name: 'Чужое дерево' },
@@ -346,6 +378,88 @@ describe('PostmortemsReadController.page', () => {
     it('SC-MB-232 — слово вне набора состояний отбивается с именем параметра', async () => {
         await expect(controller().page({ state: 'починен-наверное' })).rejects.toBeInstanceOf(BadRequestException);
         await expect(controller().page({ state: 'починен-наверное' })).rejects.toThrow('параметр state');
+    });
+
+    it('SC-MB-237 — строка списка несёт версию выпуска: столбцу есть что показать', async () => {
+        const answered: IPage<IPostmortemListRow> = await controller().page({ state: 'released', size: String(PAGE_SIZE_MAX) });
+
+        expect(answered.rows.map((row: IPostmortemListRow): string | null => row.releaseVersion)).toEqual(['0.9.0', '0.10.0']);
+    });
+
+    it('SC-MB-238 — у записи, которую никто не выпускал, версия пуста, а не подставлена словом', async () => {
+        const answered: IPage<IPostmortemListRow> = await controller().page({ state: 'new', size: '1' });
+
+        expect(answered.rows[0]).toHaveProperty('releaseVersion');
+        expect(answered.rows[0].releaseVersion).toBeNull();
+    });
+
+    it('SC-MB-241 — отбор по версии сужает и строки, и общее число', async () => {
+        const answered: IPage<IPostmortemListRow> = await controller().page({ version: '0.10.0', size: String(PAGE_SIZE_MAX) });
+
+        expect(answered.rows.map((row: IPostmortemListRow): string => row.id)).toEqual(['pm-11']);
+        expect(answered.total).toBe(1);
+    });
+
+    it('SC-MB-242 — пустой параметр версии список не сужает', async () => {
+        expect((await controller().page({ version: '', size: String(PAGE_SIZE_MAX) })).total).toBe(OWN_COUNT + OTHER_COUNT);
+    });
+
+    it('SC-MB-243 — «без версии» сужает список до записей, которых никто не выпускал', async () => {
+        const answered: IPage<IPostmortemListRow> = await controller().page({ version: 'none', size: String(PAGE_SIZE_MAX) });
+
+        expect(answered.total).toBe(OWN_COUNT + OTHER_COUNT - 2);
+        expect(answered.rows.every((row: IPostmortemListRow): boolean => row.releaseVersion === null)).toBe(true);
+    });
+
+    it('SC-MB-244 — версия, состояние и дерево сужают список втроём, а не по очереди', async () => {
+        const answered: IPage<IPostmortemListRow> = await controller().page({
+            version: '0.9.0',
+            state: 'released',
+            tree: 'other-tree',
+            size: String(PAGE_SIZE_MAX),
+        });
+
+        // Двадцать вторая запись лежит у чужого дерева: своему принадлежат первые пятнадцать.
+        expect(answered.rows.map((row: IPostmortemListRow): string => row.id)).toEqual(['pm-22']);
+        expect((await controller().page({ version: '0.9.0', tree: 'own-tree' })).total).toBe(0);
+    });
+
+    it('SC-MB-247 — версия, которой нет ни у одной записи, отдаёт пустую страницу, а не отказ', async () => {
+        const answered: IPage<IPostmortemListRow> = await controller().page({ version: '9.9.9' });
+
+        expect(answered.rows).toEqual([]);
+        expect(answered.total).toBe(0);
+    });
+
+    it('SC-MB-249, SC-MB-251 — порядок по версии идёт номерами, а записи без версии стоят последними', async () => {
+        const answered: IPage<IPostmortemListRow> = await controller().page({
+            sort: 'releaseVersion',
+            dir: 'asc',
+            size: String(PAGE_SIZE_MAX),
+        });
+        const seen: (string | null)[] = answered.rows.map((row: IPostmortemListRow): string | null => row.releaseVersion);
+
+        expect(seen.slice(0, 2)).toEqual(['0.9.0', '0.10.0']);
+        expect(seen.slice(2).every((version: string | null): boolean => version === null)).toBe(true);
+    });
+
+    it('SC-MB-251 — убывание по версии ставит записи без версии первыми, а не последними', async () => {
+        const answered: IPage<IPostmortemListRow> = await controller().page({
+            sort: 'releaseVersion',
+            dir: 'desc',
+            size: String(PAGE_SIZE_MAX),
+        });
+        const seen: (string | null)[] = answered.rows.map((row: IPostmortemListRow): string | null => row.releaseVersion);
+
+        expect(seen[0]).toBeNull();
+        expect(seen.slice(-2)).toEqual(['0.10.0', '0.9.0']);
+    });
+
+    it('SC-MB-249 — страница в порядке по версии несёт ровно свой отрезок списка', async () => {
+        const answered: IPage<IPostmortemListRow> = await controller().page({ sort: 'releaseVersion', dir: 'asc', size: '2' });
+
+        expect(answered.rows.map((row: IPostmortemListRow): string => row.id)).toEqual(['pm-22', 'pm-11']);
+        expect(answered.total).toBe(OWN_COUNT + OTHER_COUNT);
     });
 
     it('строка списка несёт то состояние, в котором запись лежит, а не одно на всех', async () => {

@@ -9,6 +9,7 @@
  * Форму версии приёмник по-прежнему не навязывает: разбор идёт при чтении списка, а не при
  * приёме груза, и версия, не разобравшаяся числами, не отбивается — она уходит в конец порядка.
  */
+import { IPageAsked, pageSkip } from './page';
 
 /** Сколько частей версии сравнивается. Больше трёх не встречается, а хвост уходит в остаток. */
 const PARTS: number = 3;
@@ -89,4 +90,59 @@ export function compareReleaseVersions(left: string, right: string): number {
  */
 export function orderedReleaseVersions(versions: readonly string[]): readonly string[] {
     return [...versions].sort(compareReleaseVersions);
+}
+
+/**
+ * Запись, упорядочиваемая по версии: только то, чем решается её место.
+ *
+ * Признак нужен вторым ключом порядка — версия у записей одного выпуска одна и та же, и без него
+ * одна и та же запись видна на двух страницах подряд, а соседняя не видна ни на одной.
+ */
+export interface IReleaseVersionKeyed {
+    readonly id: string;
+    /** Версия выпуска. Пусто — запись, которую никто не выпускал. */
+    readonly releaseVersion: string | null;
+}
+
+/**
+ * Сравнение записей по версии выпуска, по возрастанию.
+ *
+ * Записи без версии идут последними: пустота — не наименьшая версия, а её отсутствие. Убывание
+ * переворачивает порядок целиком, вместе с ними, — и это то, чего человек ждёт от второго
+ * нажатия на заголовок.
+ */
+function compareKeyed(left: IReleaseVersionKeyed, right: IReleaseVersionKeyed): number {
+    if (left.releaseVersion === null || right.releaseVersion === null) {
+        if (left.releaseVersion === right.releaseVersion) {
+            return 0;
+        }
+
+        return left.releaseVersion === null ? 1 : -1;
+    }
+
+    return compareReleaseVersions(left.releaseVersion, right.releaseVersion);
+}
+
+/**
+ * Признаки записей одной страницы, упорядоченных по версии выпуска.
+ *
+ * Порядок по версии хранилище не строит: колонка строковая, и `0.10.0` встало бы в ней перед
+ * `0.9.0` — ровно тот сломанный список, ради которого работа и заведена. Правило сравнения при
+ * этом остаётся одно, здесь: своя копия его в языке запросов разошлась бы с этой молча, и порядок
+ * в списке разъехался бы с порядком версий в отборе.
+ *
+ * Отбор и счёт записей остаются за хранилищем — сюда приходит уже суженная выборка, и из неё
+ * читаются два поля на запись. Прочие поля берёт второй запрос по отданным признакам: страница
+ * несёт двадцать записей, а выборка — все, и тащить их целиком ради двадцати незачем.
+ */
+export function releaseVersionPageIds(keyed: readonly IReleaseVersionKeyed[], asked: IPageAsked): readonly string[] {
+    const step: number = asked.dir === 'asc' ? 1 : -1;
+    const sorted: IReleaseVersionKeyed[] = [...keyed].sort((left: IReleaseVersionKeyed, right: IReleaseVersionKeyed): number => {
+        const decided: number = step * compareKeyed(left, right);
+
+        return decided === 0 ? step * left.id.localeCompare(right.id) : decided;
+    });
+    const from: number = pageSkip(asked);
+
+    return sorted.slice(from, from + asked.size).map((row: IReleaseVersionKeyed): string => row.id);
 }

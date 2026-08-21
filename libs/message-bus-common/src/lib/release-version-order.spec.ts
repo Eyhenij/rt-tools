@@ -1,4 +1,25 @@
-import { compareReleaseVersions, orderedReleaseVersions, releaseVersionKey } from './release-version-order';
+import { IPageAsked, TPageDirection } from './page';
+import {
+    compareReleaseVersions,
+    IReleaseVersionKeyed,
+    orderedReleaseVersions,
+    releaseVersionKey,
+    releaseVersionPageIds,
+} from './release-version-order';
+
+/** Выборка страницы: порядок решают только направление, номер и размер — остальное здесь не участвует. */
+function asked(dir: TPageDirection, page: number = 1, size: number = 10): IPageAsked {
+    return { page, size, sort: 'releaseVersion', dir, tree: null };
+}
+
+/** Записи одного набора: две числовые версии, нечисловая и две без версии вовсе. */
+const KEYED: readonly IReleaseVersionKeyed[] = [
+    { id: 'a', releaseVersion: '0.10.0' },
+    { id: 'b', releaseVersion: null },
+    { id: 'c', releaseVersion: '0.9.0' },
+    { id: 'd', releaseVersion: 'hotfix-3' },
+    { id: 'e', releaseVersion: null },
+];
 
 describe('порядок версий выпуска', (): void => {
     describe('releaseVersionKey', (): void => {
@@ -46,6 +67,34 @@ describe('порядок версий выпуска', (): void => {
             orderedReleaseVersions(given);
 
             expect(given).toEqual(['0.10.0', '0.9.0']);
+        });
+    });
+
+    describe('releaseVersionPageIds', (): void => {
+        it('SC-MB-249, SC-MB-250, SC-MB-251 — возрастание идёт номерами, нечисловая стоит за ними, а записи без версии последними', (): void => {
+            expect(releaseVersionPageIds(KEYED, asked('asc'))).toEqual(['c', 'a', 'd', 'b', 'e']);
+        });
+
+        it('SC-MB-251 — убывание переворачивает порядок целиком: записи без версии встают первыми', (): void => {
+            expect(releaseVersionPageIds(KEYED, asked('desc'))).toEqual(['e', 'b', 'd', 'a', 'c']);
+        });
+
+        it('SC-MB-249 — записи одной версии разводятся признаком, а не остаются в порядке выборки', (): void => {
+            const sameVersion: readonly IReleaseVersionKeyed[] = [
+                { id: 'y', releaseVersion: '1.0.0' },
+                { id: 'x', releaseVersion: '1.0.0' },
+            ];
+
+            expect(releaseVersionPageIds(sameVersion, asked('asc'))).toEqual(['x', 'y']);
+        });
+
+        it('SC-MB-249 — вторая страница продолжает порядок, а не начинает его заново', (): void => {
+            expect(releaseVersionPageIds(KEYED, asked('asc', 2, 2))).toEqual(['d', 'b']);
+        });
+
+        it('SC-MB-249 — страница за пределом выборки пуста, а выборка не правится', (): void => {
+            expect(releaseVersionPageIds(KEYED, asked('asc', 9, 10))).toEqual([]);
+            expect(KEYED.map((row: IReleaseVersionKeyed): string => row.id)).toEqual(['a', 'b', 'c', 'd', 'e']);
         });
     });
 });

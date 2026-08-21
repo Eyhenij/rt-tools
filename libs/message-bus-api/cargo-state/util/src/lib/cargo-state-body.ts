@@ -5,21 +5,13 @@
  * решение «годен ли пакет» — чистое: у него нет ни хранилища, ни токена, и проверяется оно
  * вызовом, а не поднятым приложением.
  */
-import { CARGO_RELEASE_VERSION_LIMIT, ECargoState, TCargoBody } from '@rt/message-bus-common';
-
-/** Род записи груза, названный строкой правки. Набор закрыт: состояние есть у двух родов. */
-export enum ECargoStateKind {
-    /** Разбор происшествия: ключ — имя файла на дереве. */
-    Postmortem = 'postmortem',
-    /** Предложение: ключ — признак его текста. */
-    Proposal = 'proposal',
-}
+import { CARGO_RELEASE_VERSION_LIMIT, cargoKindOf, ECargoKind, ECargoState, TCargoBody } from '@rt/message-bus-common';
 
 /** Строка правки, разобранная из пакета: место в нём, род записи, ключ и целевое состояние. */
 export interface ICargoStateLine {
     /** Место строки в пакете, считая с нуля: им отбитая строка называется в ответе. */
     readonly at: number;
-    readonly kind: ECargoStateKind;
+    readonly kind: ECargoKind;
     readonly key: string;
     readonly state: ECargoState;
     /**
@@ -70,9 +62,6 @@ const FIX_NOTE_FIELD: string = 'fixNote';
 
 /** Поле версии выпуска. Стоит отдельно от обязательных по той же причине. */
 const RELEASE_VERSION_FIELD: string = 'releaseVersion';
-
-/** Набор родов целиком: по нему и сверяется присланное слово. */
-const KINDS: readonly ECargoStateKind[] = Object.values(ECargoStateKind);
 
 /** Набор состояний целиком. Незнакомое отбивает запрос, а не ложится в колонку опечаткой. */
 const STATES: readonly ECargoState[] = Object.values(ECargoState);
@@ -159,9 +148,9 @@ function lineOf(raw: unknown): { readonly line: Omit<ICargoStateLine, 'at'> | nu
         return { line: null, fault: ECargoStateBodyFault.BadLine };
     }
 
-    const kind: ECargoStateKind | undefined = KINDS.find((one: ECargoStateKind): boolean => one === raw['kind']);
+    const kind: ECargoKind | null = cargoKindOf(raw['kind']);
 
-    if (kind === undefined) {
+    if (kind === null) {
         return { line: null, fault: ECargoStateBodyFault.UnknownKind };
     }
 

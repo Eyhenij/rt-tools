@@ -4,7 +4,7 @@
  * Лежит в слое, которым домен говорит с чужими: эти же поля читает команда строки запуска
  * пакета, и вторая их копия при ней разошлась бы с этой молча.
  */
-import { ECargoStateKind } from '@rt/message-bus-api/cargo-state/util';
+import { ECargoKind } from '@rt/message-bus-common';
 
 /** Почему строка не исполнена. По причине исполнитель видит, что делать дальше. */
 export enum ECargoStateDenial {
@@ -25,7 +25,7 @@ export enum ECargoStateDenial {
 /** Отбитая строка: место в пакете, род записи, ключ и причина. */
 export interface ICargoStateDeniedLine {
     readonly at: number;
-    readonly kind: ECargoStateKind;
+    readonly kind: ECargoKind;
     readonly key: string;
     readonly denial: ECargoStateDenial;
 }
