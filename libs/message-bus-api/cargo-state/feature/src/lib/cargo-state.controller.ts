@@ -30,7 +30,10 @@ import {
     cargoFault,
     cargoFaultMessage,
     cargoFixNoteFault,
+    cargoReleaseVersionFault,
+    CARGO_RELEASE_VERSION_LIMIT,
     ECargoFixNoteFault,
+    ECargoReleaseVersionFault,
     ECargoStateMove,
     ICargoFault,
     ICargoStateAsk,
@@ -70,6 +73,10 @@ function bodyFaultMessage(fault: ECargoStateBodyFault, at: number | null): strin
             return `в грузе рода «${CARGO_KIND}»${where} род записи назван значением вне набора`;
         case ECargoStateBodyFault.BadFixNote:
             return `в грузе рода «${CARGO_KIND}»${where} поле fixNote ожидается строкой`;
+        case ECargoStateBodyFault.BadReleaseVersion:
+            return `в грузе рода «${CARGO_KIND}»${where} поле releaseVersion ожидается строкой`;
+        case ECargoStateBodyFault.LongReleaseVersion:
+            return `в грузе рода «${CARGO_KIND}»${where} версия выпуска длиннее ${CARGO_RELEASE_VERSION_LIMIT} знаков`;
         default:
             return `в грузе рода «${CARGO_KIND}»${where} состояние названо значением вне набора`;
     }
@@ -79,6 +86,12 @@ function bodyFaultMessage(fault: ECargoStateBodyFault, at: number | null): strin
 const FIX_NOTE_DENIAL: Readonly<Record<ECargoFixNoteFault, ECargoStateDenial>> = {
     [ECargoFixNoteFault.Missing]: ECargoStateDenial.NoFixNote,
     [ECargoFixNoteFault.Unexpected]: ECargoStateDenial.ExtraFixNote,
+};
+
+/** Причина отбоя по версии выпуска, названная так, как её читает дерево. */
+const RELEASE_VERSION_DENIAL: Readonly<Record<ECargoReleaseVersionFault, ECargoStateDenial>> = {
+    [ECargoReleaseVersionFault.Missing]: ECargoStateDenial.NoReleaseVersion,
+    [ECargoReleaseVersionFault.Unexpected]: ECargoStateDenial.ExtraReleaseVersion,
 };
 
 @Controller('intake')
@@ -113,24 +126,38 @@ export class CargoStateController {
     #asked(lines: readonly ICargoStateLine[], kind: ECargoStateKind): ICargoStateAsk[] {
         return lines
             .filter((line: ICargoStateLine): boolean => line.kind === kind)
-            .map((line: ICargoStateLine): ICargoStateAsk => ({ key: line.key, state: line.state, fixNote: line.fixNote }));
+            .map((line: ICargoStateLine): ICargoStateAsk => ({
+                key: line.key,
+                state: line.state,
+                fixNote: line.fixNote,
+                releaseVersion: line.releaseVersion,
+            }));
     }
 
     /**
-     * Строки, отбитые текстом починки: место в пакете и причина.
+     * Строки, отбитые приложенным значением: место в пакете и причина.
      *
-     * Судится это до похода в базу и своим решением: текст относится к переходу, а не к тому,
-     * что лежит в хранилище. Отбитая так строка до записи состояния не доходит вовсе — иначе
-     * запись, у которой текст не лёг, читалась бы починенной.
+     * Судится это до похода в базу и своими решениями: текст починки и версия выпуска относятся
+     * к переходу, а не к тому, что лежит в хранилище. Отбитая так строка до записи состояния не
+     * доходит вовсе — иначе запись, у которой значение не легло, читалась бы починенной либо
+     * выпущенной.
+     *
+     * Оба решения зовутся по каждой строке, а первая же найденная причина её и отбивает: строка,
+     * несущая разом текст починки и версию выпуска, законной не бывает ни при одном переходе —
+     * своё значение приезжает со своим, — и второй причиной дерево не узнало бы ничего нового.
      */
-    #byFixNote(lines: readonly ICargoStateLine[]): Map<number, ECargoStateDenial> {
+    #byValue(lines: readonly ICargoStateLine[]): Map<number, ECargoStateDenial> {
         const denials: Map<number, ECargoStateDenial> = new Map();
 
         for (const line of lines) {
-            const fault: ECargoFixNoteFault | null = cargoFixNoteFault(line.state, line.fixNote);
+            const byNote: ECargoFixNoteFault | null = cargoFixNoteFault(line.state, line.fixNote);
+            const byVersion: ECargoReleaseVersionFault | null = cargoReleaseVersionFault(line.state, line.releaseVersion);
 
-            if (fault !== null) {
-                denials.set(line.at, FIX_NOTE_DENIAL[fault]);
+            const byVersionDenial: ECargoStateDenial | null = byVersion === null ? null : RELEASE_VERSION_DENIAL[byVersion];
+            const denial: ECargoStateDenial | null = byNote === null ? byVersionDenial : FIX_NOTE_DENIAL[byNote];
+
+            if (denial !== null) {
+                denials.set(line.at, denial);
             }
         }
 
@@ -145,8 +172,8 @@ export class CargoStateController {
      * зависят, отметка по одной записи верна независимо от соседней.
      */
     async #applied(tree: IRequestTree, lines: readonly ICargoStateLine[]): Promise<ICargoStateResponse> {
-        const byFixNote: Map<number, ECargoStateDenial> = this.#byFixNote(lines);
-        const sound: readonly ICargoStateLine[] = lines.filter((line: ICargoStateLine): boolean => !byFixNote.has(line.at));
+        const byValue: Map<number, ECargoStateDenial> = this.#byValue(lines);
+        const sound: readonly ICargoStateLine[] = lines.filter((line: ICargoStateLine): boolean => !byValue.has(line.at));
         const [postmortems, proposals]: [ICargoStateOutcome[], ICargoStateOutcome[]] = await Promise.all([
             movePostmortemStates(this.#prisma, tree.id, this.#asked(sound, ECargoStateKind.Postmortem)),
             moveProposalStates(this.#prisma, tree.id, this.#asked(sound, ECargoStateKind.Proposal)),
@@ -162,10 +189,10 @@ export class CargoStateController {
         let same: number = 0;
 
         for (const line of lines) {
-            const byText: ECargoStateDenial | undefined = byFixNote.get(line.at);
+            const byAttached: ECargoStateDenial | undefined = byValue.get(line.at);
 
-            if (byText !== undefined) {
-                denied.push({ at: line.at, kind: line.kind, key: line.key, denial: byText });
+            if (byAttached !== undefined) {
+                denied.push({ at: line.at, kind: line.kind, key: line.key, denial: byAttached });
 
                 continue;
             }

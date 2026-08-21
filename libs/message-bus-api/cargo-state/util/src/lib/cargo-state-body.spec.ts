@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { ECargoState } from '@rt/message-bus-common';
+import { CARGO_RELEASE_VERSION_LIMIT, ECargoState } from '@rt/message-bus-common';
 
 import { cargoStateBody, ECargoStateBodyFault, ECargoStateKind, ICargoStateParsed } from './cargo-state-body';
 
@@ -13,8 +13,15 @@ describe('cargoStateBody', () => {
 
         expect(body.fault).toBeNull();
         expect(body.lines).toEqual([
-            { at: 0, kind: ECargoStateKind.Postmortem, key: '2026-08-20-guard.md', state: ECargoState.InWork, fixNote: null },
-            { at: 1, kind: ECargoStateKind.Proposal, key: 'ab12cd34', state: ECargoState.InWork, fixNote: null },
+            {
+                at: 0,
+                kind: ECargoStateKind.Postmortem,
+                key: '2026-08-20-guard.md',
+                state: ECargoState.InWork,
+                fixNote: null,
+                releaseVersion: null,
+            },
+            { at: 1, kind: ECargoStateKind.Proposal, key: 'ab12cd34', state: ECargoState.InWork, fixNote: null, releaseVersion: null },
         ]);
     });
 
@@ -82,5 +89,53 @@ describe('cargoStateBody', () => {
         expect(cargoStateBody([]).at).toBeNull();
         expect(cargoStateBody('строки').fault).toBe(ECargoStateBodyFault.NotAList);
         expect(cargoStateBody(undefined).fault).toBe(ECargoStateBodyFault.NotAList);
+    });
+
+    it('SC-MB-196 — версия выпуска из одних пробелов приходит пустотой', () => {
+        const body: ICargoStateParsed = cargoStateBody([
+            { kind: 'postmortem', key: 'a.md', state: 'released', releaseVersion: '   \n\t ' },
+            { kind: 'postmortem', key: 'b.md', state: 'released', releaseVersion: '  rt-agent-kit@0.10.1  ' },
+        ]);
+
+        expect(body.fault).toBeNull();
+        expect(body.lines?.[0]?.releaseVersion).toBeNull();
+        expect(body.lines?.[1]?.releaseVersion).toBe('rt-agent-kit@0.10.1');
+    });
+
+    it('SC-MB-201 — версия длиннее предела отбивает запрос и называет строку', () => {
+        const body: ICargoStateParsed = cargoStateBody([
+            { kind: 'postmortem', key: 'a.md', state: 'released', releaseVersion: 'rt-agent-kit@0.10.1' },
+            { kind: 'postmortem', key: 'b.md', state: 'released', releaseVersion: 'в'.repeat(CARGO_RELEASE_VERSION_LIMIT + 1) },
+        ]);
+
+        expect(body.lines).toBeNull();
+        expect(body.fault).toBe(ECargoStateBodyFault.LongReleaseVersion);
+        expect(body.at).toBe(1);
+    });
+
+    it('SC-MB-201 — версия ровно в предел проходит', () => {
+        const body: ICargoStateParsed = cargoStateBody([
+            { kind: 'postmortem', key: 'a.md', state: 'released', releaseVersion: 'в'.repeat(CARGO_RELEASE_VERSION_LIMIT) },
+        ]);
+
+        expect(body.fault).toBeNull();
+        expect(body.lines?.[0]?.releaseVersion).toHaveLength(CARGO_RELEASE_VERSION_LIMIT);
+    });
+
+    it('SC-MB-202 — формы версии разбор не судит', () => {
+        const body: ICargoStateParsed = cargoStateBody([
+            { kind: 'postmortem', key: 'a.md', state: 'released', releaseVersion: 'редакция' },
+        ]);
+
+        expect(body.fault).toBeNull();
+        expect(body.lines?.[0]?.releaseVersion).toBe('редакция');
+    });
+
+    it('SC-MB-201 — версия не строкой отбивает запрос и называет строку', () => {
+        const body: ICargoStateParsed = cargoStateBody([{ kind: 'postmortem', key: 'a.md', state: 'released', releaseVersion: 12 }]);
+
+        expect(body.lines).toBeNull();
+        expect(body.fault).toBe(ECargoStateBodyFault.BadReleaseVersion);
+        expect(body.at).toBe(0);
     });
 });

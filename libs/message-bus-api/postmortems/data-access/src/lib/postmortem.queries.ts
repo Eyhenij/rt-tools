@@ -9,6 +9,7 @@
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IPostmortemArrivalUpdate, postmortemArrivalUpdate } from '@rt/message-bus-api/postmortems/util';
 import {
+    cargoStateData,
     cargoStateMove,
     cargoStateOf,
     cargoStateWrites,
@@ -248,7 +249,9 @@ export async function movePostmortemStates(
         return { ask, outcome: { key: ask.key, move } };
     });
     const written: ICargoStateAsk[] = judged
-        .filter((one: { ask: ICargoStateAsk; outcome: ICargoStateOutcome }): boolean => cargoStateWrites(one.outcome.move, one.ask.fixNote))
+        .filter((one: { ask: ICargoStateAsk; outcome: ICargoStateOutcome }): boolean =>
+            cargoStateWrites(one.outcome.move, one.ask.fixNote, one.ask.releaseVersion)
+        )
         .map((one: { ask: ICargoStateAsk }): ICargoStateAsk => one.ask);
 
     if (written.length > 0) {
@@ -256,7 +259,7 @@ export async function movePostmortemStates(
             written.map((ask: ICargoStateAsk) =>
                 prisma.postmortem.update({
                     where: { treeId_file: { treeId, file: ask.key } },
-                    data: ask.fixNote === null ? { state: ask.state } : { state: ask.state, fixNote: ask.fixNote },
+                    data: cargoStateData(ask),
                     select: { id: true },
                 })
             )

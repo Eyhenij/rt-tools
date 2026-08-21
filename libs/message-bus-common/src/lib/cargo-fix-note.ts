@@ -1,5 +1,4 @@
 import { ECargoState } from './cargo-state';
-import { ECargoStateMove } from './cargo-state-move';
 
 /**
  * Решение о тексте починки: годится ли он при названном переходе.
@@ -35,17 +34,4 @@ export function cargoFixNoteFault(state: ECargoState, fixNote: string | null): E
     }
 
     return fixNote === null ? null : ECargoFixNoteFault.Unexpected;
-}
-
-/**
- * Ложится ли строка в хранилище.
- *
- * Разрешённый переход ложится всегда. Правка в то же состояние переходом не считается — и всё
- * же ложится, когда несёт текст: второй приезд затирает прежний, а без этого исправить в тексте
- * опечатку было бы нечем — запись уже стоит в «починено и не выпущено», и второго перехода туда
- * не бывает. Отбитая строка не ложится никогда: запись, у которой лёг текст без перехода,
- * читалась бы починенной.
- */
-export function cargoStateWrites(move: ECargoStateMove | null, fixNote: string | null): boolean {
-    return move === ECargoStateMove.Allowed || (move === ECargoStateMove.Same && fixNote !== null);
 }
