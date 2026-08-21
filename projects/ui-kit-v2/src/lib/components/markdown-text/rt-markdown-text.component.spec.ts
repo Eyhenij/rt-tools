@@ -1,7 +1,7 @@
 import { DebugElement } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
-import { createRtFixture, el, hostClasses, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
+import { classesOf, createRtFixture, el, hostClasses, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
 import { RtMarkdownTextComponent } from './rt-markdown-text.component';
 
 /**
@@ -49,6 +49,16 @@ describe('RtMarkdownTextComponent', (): void => {
             const items: DebugElement[] = qaAll(setup('- первое\n- второе'), 'markdown-item');
 
             expect(items.map((item: DebugElement): string => textOf(item))).toEqual(['первое', 'второе']);
+        });
+
+        it('простой список рисуется маркированным узлом, нумерованный — нумерованным', (): void => {
+            expect(qa(setup('- первое'), 'markdown-list')?.name).toBe('ul');
+            expect(qa(setup('1. первое'), 'markdown-list')?.name).toBe('ol');
+        });
+
+        it('уровень заголовка и вложенность пункта видны модификатором со значением', (): void => {
+            expect(classesOf(qa(setup('### Третий'), 'markdown-heading'))).toContain('rt-markdown-text__heading--level--3');
+            expect(classesOf(qaAll(setup('- первое\n  - вложенное'), 'markdown-item')[1])).toContain('rt-markdown-text__item--level--1');
         });
 
         it('таблица рисуется шапкой и ячейками', (): void => {

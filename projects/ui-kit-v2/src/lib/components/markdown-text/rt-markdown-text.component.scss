@@ -4,6 +4,8 @@
         --rt-markdown-text-border-width: var(--rt-border-width-thin);
 
         display: flex;
+        min-width: 0;
+        max-width: 100%;
         flex-direction: column;
         color: var(--rt-color-text-primary);
         font-family: var(--rt-font-family-sans);
@@ -18,15 +20,18 @@
             color: var(--rt-color-text-primary);
             font-weight: var(--rt-font-weight-semibold);
 
-            &--level-1 {
+            &--level--1 {
                 font-size: var(--rt-text-lg);
             }
 
-            &--level-2 {
+            &--level--2 {
                 font-size: var(--rt-text-md);
             }
 
-            &--level-3 {
+            &--level--3,
+            &--level--4,
+            &--level--5,
+            &--level--6 {
                 font-size: var(--rt-text-sm);
             }
         }
@@ -46,11 +51,11 @@
         }
 
         &__item {
-            &--level-1 {
+            &--level--1 {
                 margin-left: var(--rt-space-md);
             }
 
-            &--level-2 {
+            &--level--2 {
                 margin-left: var(--rt-space-lg);
             }
         }
@@ -63,6 +68,7 @@
         }
 
         &__code {
+            max-width: 100%;
             padding: var(--rt-space-sm);
             border-radius: var(--rt-markdown-text-radius);
             margin: 0;
@@ -83,6 +89,7 @@
         }
 
         &__table-scroll {
+            max-width: 100%;
             overflow-x: auto;
         }
 

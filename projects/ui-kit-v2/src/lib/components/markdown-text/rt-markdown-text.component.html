@@ -11,18 +11,20 @@
                     qa-dataid="markdown-heading"
                     role="heading"
                     [attr.aria-level]="item.level"
-                    [rtMod]="{ level: item.level }">
+                    [rtMod]="{ level: item.levelName }">
                     <ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: item.content }" />
                 </div>
             }
             @case (blockKind.List) {
-                <ul rtElem="list" qa-dataid="markdown-list" [rtMod]="{ ordered: item.ordered }">
-                    @for (point of item.items; track $index) {
-                        <li rtElem="item" qa-dataid="markdown-item" [rtMod]="{ level: point.level }">
-                            <ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: point.content }" />
-                        </li>
-                    }
-                </ul>
+                @if (item.ordered) {
+                    <ol rtElem="list" qa-dataid="markdown-list" [rtMod]="{ ordered: true }">
+                        <ng-container *ngTemplateOutlet="itemsTpl; context: { $implicit: item.items }" />
+                    </ol>
+                } @else {
+                    <ul rtElem="list" qa-dataid="markdown-list">
+                        <ng-container *ngTemplateOutlet="itemsTpl; context: { $implicit: item.items }" />
+                    </ul>
+                }
             }
             @case (blockKind.Quote) {
                 <blockquote rtElem="quote" qa-dataid="markdown-quote">
@@ -40,6 +42,14 @@
                     <ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: item.content }" />
                 </p>
             }
+        }
+    </ng-template>
+
+    <ng-template #itemsTpl let-items>
+        @for (point of items; track $index) {
+            <li rtElem="item" qa-dataid="markdown-item" [rtMod]="{ level: point.levelName }">
+                <ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: point.content }" />
+            </li>
         }
     </ng-template>
 
@@ -70,39 +80,11 @@
         </div>
     </ng-template>
 
-    <ng-template #inlineTpl let-nodes>
-        @for (node of nodes; track $index) {
-            @switch (node.kind) {
-                @case (inlineKind.Strong) {
-                    <strong rtElem="strong">
-                        <ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: node.children }" />
-                    </strong>
-                }
-                @case (inlineKind.Emphasis) {
-                    <em rtElem="emphasis">
-                        <ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: node.children }" />
-                    </em>
-                }
-                @case (inlineKind.Strike) {
-                    <s rtElem="strike">
-                        <ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: node.children }" />
-                    </s>
-                }
-                @case (inlineKind.Code) {
-                    <code rtElem="code-inline" qa-dataid="markdown-code-inline">{{ node.text }}</code>
-                }
-                @case (inlineKind.Link) {
-                    <a rtElem="link" qa-dataid="markdown-link" rel="noopener noreferrer" target="_blank" [href]="node.href">
-                        <ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: node.children }" />
-                    </a>
-                }
-                @case (inlineKind.Break) {
-                    <br />
-                }
-                @default {
-                    {{ node.text }}
-                }
-            }
-        }
-    </ng-template>
+    <!--
+        Ветки шаблона кусков пишутся без переносов, а форматтер отключён для них нарочно: перенос
+        строки в разметке становится пробелом, и размеченный кусок отъезжает от соседнего знака —
+        «жирно , а рядом».
+    -->
+    <!-- prettier-ignore -->
+    <ng-template #inlineTpl let-nodes>@for (node of nodes; track $index) {@switch (node.kind) {@case (inlineKind.Strong) {<strong rtElem="strong"><ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: node.children }" /></strong>}@case (inlineKind.Emphasis) {<em rtElem="emphasis"><ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: node.children }" /></em>}@case (inlineKind.Strike) {<s rtElem="strike"><ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: node.children }" /></s>}@case (inlineKind.Code) {<code rtElem="code-inline" qa-dataid="markdown-code-inline">{{ node.text }}</code>}@case (inlineKind.Link) {<a rtElem="link" qa-dataid="markdown-link" rel="noopener noreferrer" target="_blank" [href]="node.href"><ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: node.children }" /></a>}@case (inlineKind.Break) {<br />}@default {{{ node.text }}}}}</ng-template>
 </ng-container>

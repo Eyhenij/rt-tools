@@ -41,6 +41,13 @@ export interface IRtMarkdownInlineNode {
 /** Пункт списка: свои куски строки и уровень вложенности, считая от нуля. */
 export interface IRtMarkdownListItem {
     readonly level: number;
+    /**
+     * Тот же уровень строкой — для модификатора разметки.
+     *
+     * Директива модификатора числа не принимает: любое нестроковое значение она сводит к
+     * признаку и даёт класс без значения, то есть один и тот же на все уровни.
+     */
+    readonly levelName: string;
     readonly content: readonly IRtMarkdownInlineNode[];
 }
 
@@ -49,6 +56,8 @@ export interface IRtMarkdownBlockNode {
     readonly kind: ERtMarkdownBlock;
     /** Уровень заголовка, от 1 до 6. У остальных родов — 0. */
     readonly level: number;
+    /** Тот же уровень строкой — для модификатора разметки; у остальных родов пусто. */
+    readonly levelName: string;
     /** Куски строки у заголовка, абзаца и цитаты. */
     readonly content: readonly IRtMarkdownInlineNode[];
     /** Пункты списка. */

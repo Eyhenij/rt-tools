@@ -51,6 +51,7 @@ function makeBlock(kind: ERtMarkdownBlock, patch: Partial<IRtMarkdownBlockNode>)
     return {
         kind,
         level: 0,
+        levelName: '',
         content: [],
         items: [],
         ordered: false,
@@ -95,7 +96,13 @@ function joinLines(lines: readonly string[]): IRtMarkdownInlineNode[] {
 function listItemOf(line: string, ordered: boolean): IRtMarkdownListItem | null {
     const match: RegExpExecArray | null = (ordered ? ORDERED_LINE : BULLET_LINE).exec(line);
 
-    return match === null ? null : { level: Math.floor(match[1].length / SPACES_PER_LEVEL), content: parseInline(match[2]) };
+    if (match === null) {
+        return null;
+    }
+
+    const level: number = Math.floor(match[1].length / SPACES_PER_LEVEL);
+
+    return { level, levelName: String(level), content: parseInline(match[2]) };
 }
 
 /** Блок кода: от ограды до ограды либо до конца текста. */
@@ -130,7 +137,11 @@ function readHeading(lines: readonly string[], start: number): IReadBlock | null
 
     return {
         next: start + 1,
-        block: makeBlock(ERtMarkdownBlock.Heading, { level: match[1].length, content: parseInline(match[2]) }),
+        block: makeBlock(ERtMarkdownBlock.Heading, {
+            level: match[1].length,
+            levelName: String(match[1].length),
+            content: parseInline(match[2]),
+        }),
     };
 }
 
