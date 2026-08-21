@@ -59,3 +59,5 @@
 | Цвет прогона спрашивается отдельно от его наличия.                                         | `projects/agent-kit/assets/checks/board.github.mjs:verdictOnHead`           |
 | Конфликтующий открытый PR — расхождение сверки.                                            | `projects/agent-kit/assets/checks/check-board.github.mjs:checkConflicting`  |
 | Непосчитанная сливаемость конфликтом не считается.                                         | `projects/agent-kit/assets/checks/board.github.mjs:conflicting`             |
+| У каждого состояния работы есть раздел в том паттерне, который его ведёт.                  | `projects/agent-kit/assets/checks/check-states.mjs:sectionsOf`              |
+| Раздел про состояние вне перечня — такое же расхождение, как состояние без раздела.        | `projects/agent-kit/assets/checks/check-states.mjs:known`                   |
