@@ -87,7 +87,8 @@ rt_push_checks_default() {
     [ -x "$root/$RT_HOOKS_TESTS" ] && printf '%s\n' "bash $RT_HOOKS_TESTS"
 
     for check in check-doc-paths check-specs check-file-size check-dupes check-styles \
-        check-lib-layers check-reuse check-schema-drift check-states check-turn-map check-push-gate; do
+        check-lib-layers check-reuse check-schema-drift check-states check-state-next \
+        check-turn-map check-push-gate; do
         [ -f "$root/$RT_CHECKS_DIR/$check.mjs" ] && printf '%s\n' "node $RT_CHECKS_DIR/$check.mjs"
     done
 
