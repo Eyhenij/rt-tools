@@ -119,3 +119,41 @@ export interface IIntakeAccepted {
     readonly added?: number;
     readonly known?: number;
 }
+
+/** Род записи груза, у которой есть состояние. Набор закрыт: сводка месяца состояния не несёт. */
+export type TCargoStateKind = 'postmortem' | 'proposal';
+
+/** Состояния записи груза по порядку: шаг идёт вперёд на соседнее, назад — только из «в работе». */
+export const CARGO_STATES: readonly string[] = ['new', 'in_work', 'fixed', 'released'];
+
+/** Одна строка правки состояния: род записи, ключ и состояние, в которое её переводят. */
+export interface ICargoStateItem {
+    readonly kind: TCargoStateKind;
+    /** Ключ записи: имя файла у разбора происшествия, признак текста у предложения. */
+    readonly key: string;
+    readonly state: string;
+}
+
+/** Пакет правки состояния: то же общее, что у всякого груза, плюс строки правки. */
+export interface ICargoStateBody extends ICargoHead {
+    readonly items: readonly ICargoStateItem[];
+}
+
+/** Строка, которую приём не исполнил: место в пакете, род записи, ключ и причина. */
+export interface ICargoStateDenied {
+    readonly at: number;
+    readonly kind: TCargoStateKind;
+    readonly key: string;
+    /** Почему не исполнена: записи у дерева нет либо переход не разрешён. */
+    readonly denial: string;
+}
+
+/** Ответ приёма на правку состояния: признак дерева, два числа и отбитые строки. */
+export interface ICargoStateAccepted {
+    readonly tree: string;
+    /** Сколько записей переведено. */
+    readonly changed: number;
+    /** Сколько уже стояло в названном состоянии: переходом это не считается. */
+    readonly same: number;
+    readonly denied: readonly ICargoStateDenied[];
+}

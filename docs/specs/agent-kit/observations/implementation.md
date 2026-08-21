@@ -61,3 +61,16 @@
 | Лежащий токен не перезаписывается молча ни у одного из путей.                         | `projects/agent-kit/src/lib/enroll.ts:enroll`                      |
 | Проверки, общие обоим путям, стоят до развилки.                                       | `projects/agent-kit/src/lib/enroll.ts:enroll`                      |
 | Адрес приёма и запрет открытого пути требуются только обмену по коду.                 | `projects/agent-kit/src/lib/enroll.ts:intakeAllowed`               |
+| Отметка ставится командой пакета, а не запросом руками.                               | `projects/agent-kit/src/bin/agent-kit.ts:runMark`                  |
+| Одна отметка несёт одно состояние и сколько угодно записей.                           | `projects/agent-kit/src/lib/cargo-state.ts:itemsOf`                |
+| Записи обоих родов уезжают одним запросом.                                            | `projects/agent-kit/src/lib/cargo-state.ts:mark`                   |
+| Записи называются теми же ключами, которыми приехали.                                 | `projects/agent-kit/src/lib/cargo-state.ts:itemsOf`                |
+| Признак предложения считается тем же способом, что и у приёма.                        | `projects/agent-kit/src/lib/cargo-state.ts:itemsOf`                |
+| Незнакомое состояние отбивается до сети.                                              | `projects/agent-kit/src/lib/cargo-state.ts:mark`                   |
+| Вызов без записей отбивается и называет, чего не хватает.                             | `projects/agent-kit/src/lib/cargo-state.ts:mark`                   |
+| Без токена дерева команда в сеть не идёт.                                             | `projects/agent-kit/src/lib/cargo-state.ts:mark`                   |
+| Холостой ход печатает, что уехало бы, и в сеть не идёт.                               | `projects/agent-kit/src/lib/cargo-state.ts:mark`                   |
+| Отбитые приёмом записи печатаются поимённо, с причиной.                               | `projects/agent-kit/src/lib/cargo-state.ts:mark`                   |
+| Отметка, которая ничего не перевела, кончается ненулевым кодом.                       | `projects/agent-kit/src/lib/cargo-state.ts:mark`                   |
+| Ни токен дерева, ни текст записи в вывод не попадают.                                 | `projects/agent-kit/src/lib/ship.ts:httpMark`                      |
+| Приём отвечает счётом, и команда пересказывает его человеку.                          | `projects/agent-kit/src/lib/cargo.ts:ICargoStateBody`              |
