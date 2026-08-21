@@ -8,7 +8,19 @@
  */
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IPostmortemArrivalUpdate, postmortemArrivalUpdate } from '@rt/message-bus-api/postmortems/util';
-import { cargoStateOf, ECargoState, IPage, IPageAsked, ITreeChoice, pageSkip, TPageDirection } from '@rt/message-bus-common';
+import {
+    cargoStateMove,
+    cargoStateOf,
+    ECargoState,
+    ECargoStateMove,
+    ICargoStateAsk,
+    ICargoStateOutcome,
+    IPage,
+    IPageAsked,
+    ITreeChoice,
+    pageSkip,
+    TPageDirection,
+} from '@rt/message-bus-common';
 
 /** Один разбор, каким он ложится в хранилище. */
 export interface IPostmortemRow {
@@ -194,4 +206,57 @@ export async function writePostmortems(prisma: PrismaService, treeId: string, it
     );
 
     return items.length;
+}
+
+/**
+ * Перевести разборы дерева в названные состояния.
+ *
+ * Прежнее состояние читается из хранилища, а не берётся из запроса: между чтением дерева и его
+ * правкой стоит сеть, и присланное прежнее состояние успевает устареть. Читается оно одним
+ * запросом на весь пакет — дерево разбирает груз пачкой, и запрос на строку стоил бы столько
+ * же, сколько сам разбор.
+ *
+ * Ложатся только разрешённые переходы, и все вместе: строка, отбитая порядком переходов, до
+ * сделки не доходит вовсе. Исход возвращается по каждой строке — ответ дерева и строка журнала
+ * собираются из него, а не считаются заново.
+ */
+export async function movePostmortemStates(
+    prisma: PrismaService,
+    treeId: string,
+    asked: readonly ICargoStateAsk[]
+): Promise<ICargoStateOutcome[]> {
+    if (asked.length === 0) {
+        return [];
+    }
+
+    const rows: { file: string; state: string }[] = await prisma.postmortem.findMany({
+        where: { treeId, file: { in: asked.map((one: ICargoStateAsk): string => one.key) } },
+        select: { file: true, state: true },
+    });
+    const stored: Map<string, ECargoState> = new Map(
+        rows.map((row: { file: string; state: string }): [string, ECargoState] => [row.file, cargoStateOf(row.state)])
+    );
+    const judged: { ask: ICargoStateAsk; outcome: ICargoStateOutcome }[] = asked.map((ask: ICargoStateAsk) => {
+        const was: ECargoState | undefined = stored.get(ask.key);
+        const move: ECargoStateMove | null = was === undefined ? null : cargoStateMove(was, ask.state);
+
+        return { ask, outcome: { key: ask.key, move } };
+    });
+    const allowed: ICargoStateAsk[] = judged
+        .filter((one: { outcome: ICargoStateOutcome }): boolean => one.outcome.move === ECargoStateMove.Allowed)
+        .map((one: { ask: ICargoStateAsk }): ICargoStateAsk => one.ask);
+
+    if (allowed.length > 0) {
+        await prisma.$transaction(
+            allowed.map((ask: ICargoStateAsk) =>
+                prisma.postmortem.update({
+                    where: { treeId_file: { treeId, file: ask.key } },
+                    data: { state: ask.state },
+                    select: { id: true },
+                })
+            )
+        );
+    }
+
+    return judged.map((one: { outcome: ICargoStateOutcome }): ICargoStateOutcome => one.outcome);
 }

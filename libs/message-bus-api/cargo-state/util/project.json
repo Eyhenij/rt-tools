@@ -1,0 +1,9 @@
+{
+  "name": "message-bus-api-cargo-state-util",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/message-bus-api/cargo-state/util/src",
+  "projectType": "library",
+  "tags": ["scope:message-bus-api-cargo-state-util"],
+  "// targets": "to see all targets run: nx show project message-bus-api-cargo-state-util --web",
+  "targets": {}
+}
