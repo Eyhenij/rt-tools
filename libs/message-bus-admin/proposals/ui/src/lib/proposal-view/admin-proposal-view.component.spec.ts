@@ -88,6 +88,16 @@ describe('AdminProposalViewComponent', () => {
         expect(fixture.debugElement.query(By.css('[qa-dataid="proposal-text"] b'))).toBeNull();
     });
 
+    it('SC-MB-219 — текста из одних пробелов панель разделом не показывает', () => {
+        show(entityOf({ text: '   \n  \n' }));
+
+        // Сначала — что найдено то самое место: панель поднята и свойства записи на ней стоят,
+        // а раздела с текстом нет
+        expect(textOf('proposal-resource')).toBe('rules/lists.md');
+        expect(fixture.debugElement.query(By.css('[qa-dataid="proposal-text"]'))).toBeNull();
+        expect(fixture.debugElement.queryAll(By.css('rt-aside-section')).length).toBe(1);
+    });
+
     it('SC-MB-137, SC-MB-141 — свойства стоят в готовом списке кита, а своего списка определений в панели нет', () => {
         show(entityOf());
 

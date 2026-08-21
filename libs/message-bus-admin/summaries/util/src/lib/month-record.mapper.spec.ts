@@ -68,6 +68,15 @@ describe('MonthRecordMapper', () => {
         expect(entity.summary.split('\n').length).toBeGreaterThan(1);
     });
 
+    it('тело объявлено блоком кода: разметкой сводка не приезжает, а отступы её раскладки видны', () => {
+        const entity: IMonthRecord.State = mapper.mapFrom({ ...apiShort(), summary: { days: 3, tree: 'a1b2' } });
+        const lines: string[] = entity.summary.split('\n');
+
+        expect(lines[0]).toBe('```json');
+        expect(lines[lines.length - 1]).toBe('```');
+        expect(entity.summary).toContain('    "days": 3');
+    });
+
     it('месяц без сводки читается пустым текстом, а не строкой «null»', () => {
         const entity: IMonthRecord.State = mapper.mapFrom({ ...apiShort(), summary: null });
 
