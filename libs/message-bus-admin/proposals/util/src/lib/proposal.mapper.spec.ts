@@ -101,4 +101,16 @@ describe('ProposalMapper', () => {
 
         expect(entity.text).toBe(raw);
     });
+
+    it('SC-MB-189 — текст починки доезжает до экрана как есть', () => {
+        const entity: IProposal.State = mapper.mapFrom({ ...apiShort(), text: 'предложение', month: '2026-08', fixNote: 'гардом' });
+
+        expect(entity.fixNote).toBe('гардом');
+    });
+
+    it('SC-MB-190 — запись без текста починки читается пустой строкой, а не пустотой', () => {
+        const entity: IProposal.State = mapper.mapFrom({ ...apiShort(), text: 'предложение', month: '2026-08', fixNote: null });
+
+        expect(entity.fixNote).toBe('');
+    });
 });

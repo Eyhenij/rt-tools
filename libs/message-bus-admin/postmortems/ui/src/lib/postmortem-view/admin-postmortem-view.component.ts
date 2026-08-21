@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular
 import { AdminMomentPipe } from '@rt/message-bus-admin/common/core/ui';
 import { adminLabel } from '@rt/message-bus-admin/common/core/util';
 import { IPostmortem } from '@rt/message-bus-admin/postmortems/util';
-import { BlockDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { RtAsideSectionComponent, RtDetailListComponent, RtDetailRowComponent, RtMarkdownTextComponent } from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'admin-panel';
@@ -17,6 +17,9 @@ const BEM_BLOCK: string = 'admin-panel';
  * Текст показывается разметкой — компонентом кита: разбирается закрытый перечень разметки
  * `.md`, а сырой HTML узлом не становится вовсе и виден текстом как есть.
  *
+ * Текст починки показывается как есть, отдельным разделом выше: он приходит строкой правки
+ * состояния, разметкой не бывает, и у записи без починки раздела нет вовсе.
+ *
  * Своего состояния у вида нет — запись приходит входом: читает её панель, а показывает он.
  */
 @Component({
@@ -26,6 +29,7 @@ const BEM_BLOCK: string = 'admin-panel';
     imports: [
         // rt-tools
         BlockDirective,
+        ElemDirective,
         RtAsideSectionComponent,
         RtDetailListComponent,
         RtDetailRowComponent,
@@ -42,6 +46,7 @@ export class AdminPostmortemViewComponent {
     protected readonly arrivedLabel: string = adminLabel('columnArrivedAt');
     protected readonly updatedLabel: string = adminLabel('columnUpdatedAt');
     protected readonly textLabel: string = adminLabel('detailsText');
+    protected readonly fixNoteLabel: string = adminLabel('detailsFixNote');
 
     public readonly entity: InputSignal<IPostmortem.State | null> = input.required<IPostmortem.State | null>();
     public readonly reading: InputSignal<boolean> = input<boolean>(false);
