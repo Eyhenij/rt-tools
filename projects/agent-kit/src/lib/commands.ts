@@ -28,6 +28,7 @@ import {
 import { IPlanned, isRefusal, TOutcome } from './plan.js';
 import { laidOutSkills } from './snapshot.js';
 import { ICutFound, IRetiredFound, ISyncResult, pendingOf, planSync, runSync } from './sync.js';
+import { thresholdLines } from './thresholds.js';
 import { answersRequirement, ITrait, readTraits, unknownTraits } from './traits.js';
 import { placeholdersOf } from './vars.js';
 import { IAxis, IOptionOfAxis, readAxes, unansweredAxes } from './variants.js';
@@ -957,6 +958,7 @@ export function doctor(env: IEnvironment): IOutcomeOfCommand {
             return `  снят каскадом: ${one.id} — вслед за ${one.parent}${root}`;
         }),
         ...profileLines(root, assetsDir, config),
+        ...thresholdLines(root),
         `значений в конфиге: ${Object.keys(config.vars).length}`,
         ...chosen,
         ...[...counted].map(([outcome, count]: [TOutcome, number]): string => `${STATE_WORD[outcome]}: ${count}`),

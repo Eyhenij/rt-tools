@@ -24,6 +24,9 @@
 | Этап, объявленный закрытым, подтверждается выводом команды.                                                | `projects/agent-kit/assets/hooks/turn-exit-guard.sh:stage_was`         |
 | Приём, записанный прозой, страж не читает.                                                                 | `projects/agent-kit/assets/hooks/turn-exit-guard.sh:contract`          |
 | Размер окна берётся из настройки дерева, а не из записи захода.                                            | `projects/agent-kit/assets/defaults/project.sh:RT_WINDOW_TOKENS`       |
+| Порог сжатия задан деревом теми же числами, что и пороги стража.                                           | `projects/agent-kit/src/lib/thresholds.ts:readThresholds`              |
+| Пара стража сверяется с парой сжатия, и разошедшееся называется числами обеих сторон.                      | `projects/agent-kit/src/lib/thresholds.ts:thresholdDrift`              |
+| Дерево, не объявившее порога сжатия, отказа не получает.                                                   | `projects/agent-kit/src/lib/thresholds.ts:thresholdLines`              |
 | Один файл гарда вправе объявить несколько событий.                                                         | `projects/agent-kit/src/lib/hooks-map.ts:bindingsOf`                   |
 | Ход, в котором совесть нашла повтор разобранного промаха, не заканчивается.                                | `projects/agent-kit/assets/hooks/conscience-guard.sh:verdict`          |
 | Находку снимает действие, а не слова о ней.                                                                | `projects/agent-kit/assets/hooks/conscience-guard.sh:verdict`          |
