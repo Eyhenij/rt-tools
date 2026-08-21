@@ -6,6 +6,7 @@ import { AccountsModule } from '@rt/message-bus-api/accounts/feature';
 import { ObservationsModule } from '@rt/message-bus-api/observations/feature';
 import { AppLoggerService } from '@rt/message-bus-api/observability/feature';
 import { PrismaModule } from '@rt/message-bus-api/persistence/feature';
+import { CargoStateModule } from '@rt/message-bus-api/cargo-state/feature';
 import { PostmortemsModule } from '@rt/message-bus-api/postmortems/feature';
 import { ProposalsModule } from '@rt/message-bus-api/proposals/feature';
 import { TreesModule } from '@rt/message-bus-api/trees/feature';
@@ -27,7 +28,16 @@ import { FailureFilter } from './failure.filter';
  * каркас, и вторая служба журнала рядом писала бы вывод, расходящийся с первым.
  */
 @Module({
-    imports: [PrismaModule, AccessModule, AccountsModule, ObservationsModule, ProposalsModule, PostmortemsModule, TreesModule],
+    imports: [
+        PrismaModule,
+        AccessModule,
+        AccountsModule,
+        ObservationsModule,
+        ProposalsModule,
+        PostmortemsModule,
+        CargoStateModule,
+        TreesModule,
+    ],
     controllers: [HealthController],
     providers: [AppLoggerService, { provide: APP_FILTER, useClass: FailureFilter }],
 })
