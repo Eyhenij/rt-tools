@@ -62,6 +62,7 @@ export const messageBusApiBoundaries = [
             'scope:message-bus-api-proposals-feature',
             'scope:message-bus-api-postmortems-feature',
             'scope:message-bus-api-trees-feature',
+            'scope:message-bus-api-cargo-state-feature',
             // Единственная проверка доступа и операции входа: обе ставит приложение — цепочка
             // проверок его решение, а не решение домена
             'scope:message-bus-api-access-feature',
@@ -171,6 +172,36 @@ export const messageBusApiBoundaries = [
         onlyDependOnLibsWithTags: ['scope:message-bus-api-postmortems-util', COMMON],
     },
     { sourceTag: 'scope:message-bus-api-postmortems-util', onlyDependOnLibsWithTags: [COMMON] },
+
+    // Состояние груза: путь записи, которым дерево двигает свои разборы и предложения. Домен
+    // заведён отдельно потому, что пакет правки везёт оба рода записей разом, а домену одного
+    // рода не видно либ другого — и не должно быть видно: таблицу правит тот домен, чья она
+    {
+        sourceTag: 'scope:message-bus-api-cargo-state-feature',
+        onlyDependOnLibsWithTags: [
+            'scope:message-bus-api-cargo-state-util',
+            'scope:message-bus-api-cargo-state-api',
+            // Запись состояния у каждого рода своя: операция зовёт обе, а таблиц не касается
+            'scope:message-bus-api-postmortems-data-access',
+            'scope:message-bus-api-proposals-data-access',
+            // объявление доступа: операция закрыта токеном дерева и говорит об этом сама
+            ACCESS_UTIL,
+            // дерево запроса: чьи записи правятся, берётся из токена, а не из тела запроса
+            TREES_UTIL,
+            // клиент хранилища: контроллер берёт его из контейнера и отдаёт запросам доводом
+            PERSISTENCE_DATA_ACCESS,
+            COMMON,
+        ],
+    },
+    { sourceTag: 'scope:message-bus-api-cargo-state-util', onlyDependOnLibsWithTags: [COMMON] },
+    {
+        sourceTag: 'scope:message-bus-api-cargo-state-api',
+        onlyDependOnLibsWithTags: ['scope:message-bus-api-cargo-state-util', COMMON],
+    },
+    {
+        sourceTag: 'scope:message-bus-api-cargo-state-data-access',
+        onlyDependOnLibsWithTags: [PERSISTENCE_DATA_ACCESS, COMMON],
+    },
 
     // Деревья и их токены. Домен предметный, а не механика: у него своя пара сущностей, свой
     // отказ и свои команды строки запуска. Груза он не касается — его спрашивают, чьё это
