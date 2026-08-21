@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.10.0 · checks/check-turn-map.mjs · ce94520a5d9b · правится надстройкой, не здесь
+// rt-kit v0.10.0 · checks/check-turn-map.mjs · 920541b22988 · правится надстройкой, не здесь
 /**
  * Сверка карты хода: её размер и её полнота.
  *
@@ -138,8 +138,7 @@ function main() {
     }
 
     console.log(
-        `check-turn-map: ${inMap.length} состояний, ${EXITS.length} выхода хода, ` +
-            `${bytes} байт при пределе ${LIMIT_BYTES} — сошлось`,
+        `check-turn-map: ${inMap.length} состояний, ${EXITS.length} выхода хода, ` + `${bytes} байт при пределе ${LIMIT_BYTES} — сошлось`
     );
 
     return 0;
