@@ -368,6 +368,9 @@ async function states() {
     await sql(
         [
             `UPDATE "postmortem" SET "state" = 'released' WHERE "file" = 'markup-case.md';`,
+            // Выпущенной записи ставится версия выпуска: без неё состояние «выпущено» на стенде
+            // есть, а ответа «где искать фикс» нет, и панель нечем проверить
+            `UPDATE "postmortem" SET "releaseVersion" = 'rt-agent-kit@0.10.1' WHERE "file" = 'markup-case.md';`,
             `UPDATE "postmortem" SET "state" = 'in_work' WHERE "file" IN ('stand-case-23.md', 'stand-case-11.md');`,
             `UPDATE "postmortem" SET "state" = 'fixed' WHERE "file" = 'stand-case-22.md';`,
             `UPDATE "proposal" SET "state" = 'in_work' WHERE "resource" = 'rules/lists.md';`,
