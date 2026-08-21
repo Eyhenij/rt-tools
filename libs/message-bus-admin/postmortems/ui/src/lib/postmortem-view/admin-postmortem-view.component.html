@@ -16,6 +16,12 @@
         </rt-detail-list>
     </rt-aside-section>
 
+    @if (!reading() && entity()?.fixNote; as fixNote) {
+        <rt-aside-section [heading]="fixNoteLabel">
+            <pre rtElem="fix-note" qa-dataid="postmortem-fix-note">{{ fixNote }}</pre>
+        </rt-aside-section>
+    }
+
     @if (!reading() && entity()?.text?.trim(); as text) {
         <rt-aside-section [heading]="textLabel">
             <rt-markdown-text qa-dataid="postmortem-text" [text]="text" />

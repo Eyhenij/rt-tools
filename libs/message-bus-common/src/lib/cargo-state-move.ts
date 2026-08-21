@@ -57,6 +57,11 @@ export interface ICargoStateAsk {
     readonly key: string;
     /** Состояние, в которое дерево просит перевести запись. */
     readonly state: ECargoState;
+    /**
+     * Чем недочёт исправлен. Приезжает только с переходом в «починено и не выпущено» — при
+     * остальных здесь пусто, и лежащий у записи текст правка не трогает.
+     */
+    readonly fixNote: string | null;
 }
 
 /**

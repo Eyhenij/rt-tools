@@ -12,6 +12,7 @@ function entityOf(patch: Partial<IPostmortem.State> = {}): IPostmortem.State {
         file: '2026-08-14-incident.md',
         arrivedAt: new Date('2026-08-14T21:30:00.000Z'),
         updatedAt: new Date('2026-08-15T06:00:00.000Z'),
+        fixNote: '',
         text: '# Разбор',
         ...patch,
     };
@@ -115,5 +116,23 @@ describe('AdminPostmortemViewComponent', () => {
         expect(fixture.debugElement.queryAll(By.css('rt-aside-section')).length).toBe(2);
         expect(fixture.debugElement.query(By.css('[qa-dataid="aside-section-heading"]')).nativeElement.textContent.trim()).not.toBe('');
         expect(fixture.debugElement.query(By.css('h2'))).toBeNull();
+    });
+
+    it('SC-MB-189 — панель показывает текст починки отдельной секцией', () => {
+        show(entityOf({ fixNote: 'статьёй правила о выемке путей' }));
+
+        const note: DebugElement | null = fixture.debugElement.query(By.css('[qa-dataid="postmortem-fix-note"]'));
+
+        expect(note).not.toBeNull();
+        expect(note?.nativeElement.textContent.trim()).toBe('статьёй правила о выемке путей');
+    });
+
+    it('SC-MB-190 — у записи без текста починки секции нет вовсе', () => {
+        show(entityOf({ fixNote: '' }));
+
+        // Отрицательное утверждение идёт в паре с положительным: сперва показано, что панель
+        // отрисована, и только потом — что секции починки в ней нет
+        expect(fixture.debugElement.query(By.css('[qa-dataid="postmortem-text"]'))).not.toBeNull();
+        expect(fixture.debugElement.query(By.css('[qa-dataid="postmortem-fix-note"]'))).toBeNull();
     });
 });

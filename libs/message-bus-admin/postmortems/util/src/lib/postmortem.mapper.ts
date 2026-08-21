@@ -42,6 +42,10 @@ export class PostmortemMapper extends BaseMapper<IPostmortem.State> {
     readonly #short: PostmortemShortMapper = new PostmortemShortMapper();
 
     public override mapFrom(data: IPostmortem.Api): IPostmortem.State {
-        return { ...this.#short.mapFrom(data), text: this.typeCast.getAsString(data.text) };
+        return {
+            ...this.#short.mapFrom(data),
+            text: this.typeCast.getAsString(data.text),
+            fixNote: this.typeCast.getAsString(data.fixNote),
+        };
     }
 }

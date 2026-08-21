@@ -22,6 +22,11 @@ export interface ICargoStateLine {
     readonly kind: ECargoStateKind;
     readonly key: string;
     readonly state: ECargoState;
+    /**
+     * Чем недочёт исправлен. Поле необязательное: строка без него законна, а строка из одних
+     * пробелов приходит сюда пустотой — иначе требование текста обходилось бы одним пробелом.
+     */
+    readonly fixNote: string | null;
 }
 
 /** Почему пакет не разобрался. Отбивает он весь запрос: годных строк в нём ещё не выделено. */
@@ -36,6 +41,8 @@ export enum ECargoStateBodyFault {
     UnknownKind = 'unknown-kind',
     /** Состояние названо значением вне набора. */
     UnknownState = 'unknown-state',
+    /** Текст починки прислан не строкой. Форма запроса при этом неверна, и отбивается он весь. */
+    BadFixNote = 'bad-fix-note',
 }
 
 /** Чем кончился разбор пакета: либо строки, либо причина с местом промаха. */
@@ -46,8 +53,11 @@ export interface ICargoStateParsed {
     readonly at: number | null;
 }
 
-/** Поля, которые несёт строка правки. */
+/** Поля, которые строка правки несёт всегда. */
 const LINE_FIELDS: readonly string[] = ['kind', 'key', 'state'];
+
+/** Поле текста починки. Стоит отдельно от обязательных: строка без него законна. */
+const FIX_NOTE_FIELD: string = 'fixNote';
 
 /** Набор родов целиком: по нему и сверяется присланное слово. */
 const KINDS: readonly ECargoStateKind[] = Object.values(ECargoStateKind);
@@ -60,7 +70,7 @@ function faulty(fault: ECargoStateBodyFault, at: number | null): ICargoStatePars
     return { lines: null, fault, at };
 }
 
-/** Строка пакета: все три поля на месте и строками. */
+/** Строка пакета: все три обязательных поля на месте и строками. */
 function isLine(raw: unknown): raw is TCargoBody {
     return (
         typeof raw === 'object' &&
@@ -68,6 +78,29 @@ function isLine(raw: unknown): raw is TCargoBody {
         !Array.isArray(raw) &&
         LINE_FIELDS.every((field: string): boolean => typeof (raw as TCargoBody)[field] === 'string')
     );
+}
+
+/**
+ * Текст починки, приведённый к тому, чем его судят дальше.
+ *
+ * Поля нет вовсе — пусто; текст из одних пробелов — тоже пусто: строка из пробелов отбивается
+ * так же, как отсутствие поля, иначе требование текста обходится одним пробелом. Поле не
+ * строкой — промах формы, и его отличает от пустоты второй возврат.
+ */
+function fixNoteOf(raw: TCargoBody): { readonly value: string | null; readonly bad: boolean } {
+    const value: unknown = raw[FIX_NOTE_FIELD];
+
+    if (value === undefined || value === null) {
+        return { value: null, bad: false };
+    }
+
+    if (typeof value !== 'string') {
+        return { value: null, bad: true };
+    }
+
+    const trimmed: string = value.trim();
+
+    return { value: trimmed === '' ? null : trimmed, bad: false };
 }
 
 /**
@@ -109,7 +142,13 @@ export function cargoStateBody(items: unknown): ICargoStateParsed {
             return faulty(ECargoStateBodyFault.UnknownState, at);
         }
 
-        lines.push({ at, kind, state, key: String(raw['key']) });
+        const fixNote: { value: string | null; bad: boolean } = fixNoteOf(raw);
+
+        if (fixNote.bad) {
+            return faulty(ECargoStateBodyFault.BadFixNote, at);
+        }
+
+        lines.push({ at, kind, state, key: String(raw['key']), fixNote: fixNote.value });
     }
 
     return { lines, at: null, fault: null };
