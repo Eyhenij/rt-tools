@@ -11,6 +11,7 @@ import { IPostmortemArrivalUpdate, postmortemArrivalUpdate } from '@rt/message-b
 import {
     cargoStateMove,
     cargoStateOf,
+    cargoStateWrites,
     ECargoState,
     ECargoStateMove,
     ICargoStateAsk,
@@ -242,16 +243,16 @@ export async function movePostmortemStates(
 
         return { ask, outcome: { key: ask.key, move } };
     });
-    const allowed: ICargoStateAsk[] = judged
-        .filter((one: { outcome: ICargoStateOutcome }): boolean => one.outcome.move === ECargoStateMove.Allowed)
+    const written: ICargoStateAsk[] = judged
+        .filter((one: { ask: ICargoStateAsk; outcome: ICargoStateOutcome }): boolean => cargoStateWrites(one.outcome.move, one.ask.fixNote))
         .map((one: { ask: ICargoStateAsk }): ICargoStateAsk => one.ask);
 
-    if (allowed.length > 0) {
+    if (written.length > 0) {
         await prisma.$transaction(
-            allowed.map((ask: ICargoStateAsk) =>
+            written.map((ask: ICargoStateAsk) =>
                 prisma.postmortem.update({
                     where: { treeId_file: { treeId, file: ask.key } },
-                    data: { state: ask.state },
+                    data: ask.fixNote === null ? { state: ask.state } : { state: ask.state, fixNote: ask.fixNote },
                     select: { id: true },
                 })
             )

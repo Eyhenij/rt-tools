@@ -29,6 +29,8 @@ import {
     CARGO_ITEMS_FIELDS,
     cargoFault,
     cargoFaultMessage,
+    cargoFixNoteFault,
+    ECargoFixNoteFault,
     ECargoStateMove,
     ICargoFault,
     ICargoStateAsk,
@@ -66,10 +68,18 @@ function bodyFaultMessage(fault: ECargoStateBodyFault, at: number | null): strin
             return `в грузе рода «${CARGO_KIND}»${where} ожидаются поля kind, key и state строками`;
         case ECargoStateBodyFault.UnknownKind:
             return `в грузе рода «${CARGO_KIND}»${where} род записи назван значением вне набора`;
+        case ECargoStateBodyFault.BadFixNote:
+            return `в грузе рода «${CARGO_KIND}»${where} поле fixNote ожидается строкой`;
         default:
             return `в грузе рода «${CARGO_KIND}»${where} состояние названо значением вне набора`;
     }
 }
+
+/** Причина отбоя по тексту починки, названная так, как её читает дерево. */
+const FIX_NOTE_DENIAL: Readonly<Record<ECargoFixNoteFault, ECargoStateDenial>> = {
+    [ECargoFixNoteFault.Missing]: ECargoStateDenial.NoFixNote,
+    [ECargoFixNoteFault.Unexpected]: ECargoStateDenial.ExtraFixNote,
+};
 
 @Controller('intake')
 export class CargoStateController {
@@ -103,7 +113,28 @@ export class CargoStateController {
     #asked(lines: readonly ICargoStateLine[], kind: ECargoStateKind): ICargoStateAsk[] {
         return lines
             .filter((line: ICargoStateLine): boolean => line.kind === kind)
-            .map((line: ICargoStateLine): ICargoStateAsk => ({ key: line.key, state: line.state }));
+            .map((line: ICargoStateLine): ICargoStateAsk => ({ key: line.key, state: line.state, fixNote: line.fixNote }));
+    }
+
+    /**
+     * Строки, отбитые текстом починки: место в пакете и причина.
+     *
+     * Судится это до похода в базу и своим решением: текст относится к переходу, а не к тому,
+     * что лежит в хранилище. Отбитая так строка до записи состояния не доходит вовсе — иначе
+     * запись, у которой текст не лёг, читалась бы починенной.
+     */
+    #byFixNote(lines: readonly ICargoStateLine[]): Map<number, ECargoStateDenial> {
+        const denials: Map<number, ECargoStateDenial> = new Map();
+
+        for (const line of lines) {
+            const fault: ECargoFixNoteFault | null = cargoFixNoteFault(line.state, line.fixNote);
+
+            if (fault !== null) {
+                denials.set(line.at, FIX_NOTE_DENIAL[fault]);
+            }
+        }
+
+        return denials;
     }
 
     /**
@@ -114,9 +145,11 @@ export class CargoStateController {
      * зависят, отметка по одной записи верна независимо от соседней.
      */
     async #applied(tree: IRequestTree, lines: readonly ICargoStateLine[]): Promise<ICargoStateResponse> {
+        const byFixNote: Map<number, ECargoStateDenial> = this.#byFixNote(lines);
+        const sound: readonly ICargoStateLine[] = lines.filter((line: ICargoStateLine): boolean => !byFixNote.has(line.at));
         const [postmortems, proposals]: [ICargoStateOutcome[], ICargoStateOutcome[]] = await Promise.all([
-            movePostmortemStates(this.#prisma, tree.id, this.#asked(lines, ECargoStateKind.Postmortem)),
-            moveProposalStates(this.#prisma, tree.id, this.#asked(lines, ECargoStateKind.Proposal)),
+            movePostmortemStates(this.#prisma, tree.id, this.#asked(sound, ECargoStateKind.Postmortem)),
+            moveProposalStates(this.#prisma, tree.id, this.#asked(sound, ECargoStateKind.Proposal)),
         ]);
         const moves: Map<string, ECargoStateMove | null> = new Map();
 
@@ -129,6 +162,14 @@ export class CargoStateController {
         let same: number = 0;
 
         for (const line of lines) {
+            const byText: ECargoStateDenial | undefined = byFixNote.get(line.at);
+
+            if (byText !== undefined) {
+                denied.push({ at: line.at, kind: line.kind, key: line.key, denial: byText });
+
+                continue;
+            }
+
             const move: ECargoStateMove | null | undefined = moves.get(line.key);
 
             if (move === ECargoStateMove.Allowed) {
