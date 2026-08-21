@@ -148,12 +148,18 @@ test.describe('отбор по состоянию', () => {
 
         expect(dir === 'asc' || dir === 'desc').toBe(true);
 
-        // и показанный порядок — тот, который назван в адресе, а не какой-нибудь
+        // и показанный порядок — тот, который назван в адресе, а не какой-нибудь.
+        // Ждать обязательно: порядок уходит в адрес нажатием, а строки приезжают ответом
+        // приёмника, и прочитанные сразу — это ещё строки прежнего порядка.
         const forward: string[] = [STATE.new, STATE.inWork, STATE.fixed, STATE.released];
-        const shown: string[] = await columnTexts(page, STATE_CELL);
-        const steps: string[] = shown.filter((word: string, at: number): boolean => word !== shown[at - 1]);
 
-        expect(steps).toEqual(dir === 'asc' ? forward : [...forward].reverse());
+        await expect
+            .poll(async (): Promise<string[]> => {
+                const shown: string[] = await columnTexts(page, STATE_CELL);
+
+                return shown.filter((word: string, at: number): boolean => word !== shown[at - 1]);
+            })
+            .toEqual(dir === 'asc' ? forward : [...forward].reverse());
     });
 
     test('SC-MB-231 — порядок по состоянию идёт шагами разбора, а не алфавитом', async ({ page }: { page: Page }) => {
