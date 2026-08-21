@@ -13,9 +13,39 @@ describe('cargoStateBody', () => {
 
         expect(body.fault).toBeNull();
         expect(body.lines).toEqual([
-            { at: 0, kind: ECargoStateKind.Postmortem, key: '2026-08-20-guard.md', state: ECargoState.InWork },
-            { at: 1, kind: ECargoStateKind.Proposal, key: 'ab12cd34', state: ECargoState.InWork },
+            { at: 0, kind: ECargoStateKind.Postmortem, key: '2026-08-20-guard.md', state: ECargoState.InWork, fixNote: null },
+            { at: 1, kind: ECargoStateKind.Proposal, key: 'ab12cd34', state: ECargoState.InWork, fixNote: null },
         ]);
+    });
+
+    it('SC-MB-184 — текст починки из одних пробелов приходит пустотой', () => {
+        const body: ICargoStateParsed = cargoStateBody([
+            { kind: 'postmortem', key: 'a.md', state: 'fixed', fixNote: '   \n\t ' },
+            { kind: 'postmortem', key: 'b.md', state: 'fixed', fixNote: '  статьёй правила  ' },
+        ]);
+
+        expect(body.fault).toBeNull();
+        expect(body.lines?.[0]?.fixNote).toBeNull();
+        expect(body.lines?.[1]?.fixNote).toBe('статьёй правила');
+    });
+
+    it('SC-MB-188 — своего предела длины у текста починки нет', () => {
+        const long: string = 'п'.repeat(20000);
+        const body: ICargoStateParsed = cargoStateBody([{ kind: 'postmortem', key: 'a.md', state: 'fixed', fixNote: long }]);
+
+        expect(body.fault).toBeNull();
+        expect(body.lines?.[0]?.fixNote).toBe(long);
+    });
+
+    it('SC-MB-179 — текст починки не строкой отбивает запрос и называет строку', () => {
+        const body: ICargoStateParsed = cargoStateBody([
+            { kind: 'postmortem', key: 'a.md', state: 'fixed', fixNote: 'статьёй правила' },
+            { kind: 'postmortem', key: 'b.md', state: 'fixed', fixNote: 17 },
+        ]);
+
+        expect(body.lines).toBeNull();
+        expect(body.fault).toBe(ECargoStateBodyFault.BadFixNote);
+        expect(body.at).toBe(1);
     });
 
     it('SC-MB-179 — незнакомое состояние отбивает запрос и называет строку', () => {

@@ -52,10 +52,17 @@ export namespace IPostmortem {
     /** Запись целиком: то, что показывает панель подробностей. */
     export interface Api extends Short.Api {
         readonly text: string;
+        /** Чем недочёт исправлен. Пусто у записи, которую никто не чинил. */
+        readonly fixNote: string | null;
     }
 
     export interface State extends Short.State {
         /** Текст разбора целиком. Показывается текстом, а не разметкой. */
         readonly text: string;
+        /**
+         * Чем недочёт исправлен. Пустая строка означает, что починки не было: панель тогда не
+         * показывает ни подписи, ни пустого значения.
+         */
+        readonly fixNote: string;
     }
 }

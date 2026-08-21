@@ -18,6 +18,9 @@ export const POSTMORTEM_FLAG: string = '--postmortem';
 /** Довод, которым называется предложение. */
 export const PROPOSAL_FLAG: string = '--proposal';
 
+/** Довод текста починки: чем недочёт исправлен. */
+export const FIX_FLAG: string = '--fix';
+
 /** Что приём ответил на правку состояния. Отказ — такой же ответ, как принятое. */
 export interface IMarked {
     readonly ok: boolean;
@@ -52,7 +55,7 @@ function kindOfFlag(flag: string): TCargoStateKind | null {
 }
 
 /** Записи, названные доводами строки запуска: род у каждой свой, порядок — как их назвали. */
-export function itemsOf(argv: readonly string[], state: string): readonly ICargoStateItem[] {
+export function itemsOf(argv: readonly string[], state: string, fixNote: string = ''): readonly ICargoStateItem[] {
     const items: ICargoStateItem[] = [];
 
     for (let at: number = 0; at < argv.length; at += 1) {
@@ -60,7 +63,9 @@ export function itemsOf(argv: readonly string[], state: string): readonly ICargo
         const key: string = argv[at + 1] ?? '';
 
         if (kind && key && !key.startsWith('--')) {
-            items.push({ kind, key, state });
+            // Текст едет полем строки, а не своим вызовом: отметка о починке одна, и все её
+            // записи чинились одним разбором — второй текст на тот же вызов не задаётся
+            items.push(fixNote ? { kind, key, state, fixNote } : { kind, key, state });
         }
     }
 

@@ -40,6 +40,18 @@ describe('itemsOf', () => {
         ]);
     });
 
+    it('SC-MB-191 — довод текста ложится каждой записи вызова', () => {
+        expect(itemsOf(['mark', '--postmortem', 'a.md', '--proposal', 'digest-1'], 'fixed', 'статьёй правила')).toEqual([
+            { kind: 'postmortem', key: 'a.md', state: 'fixed', fixNote: 'статьёй правила' },
+            { kind: 'proposal', key: 'digest-1', state: 'fixed', fixNote: 'статьёй правила' },
+        ]);
+    });
+
+    it('SC-MB-191 — без довода строка едет прежней, без поля текста', () => {
+        expect(itemsOf(['mark', '--postmortem', 'a.md'], 'in_work')).toEqual([{ kind: 'postmortem', key: 'a.md', state: 'in_work' }]);
+        expect(itemsOf(['mark', '--postmortem', 'a.md'], 'in_work', '')).toEqual([{ kind: 'postmortem', key: 'a.md', state: 'in_work' }]);
+    });
+
     it('SC-AK-431 — довод без значения записью не считается', () => {
         expect(itemsOf(['mark', '--postmortem', '--dry-run'], 'new')).toEqual([]);
         expect(itemsOf(['mark', '--postmortem'], 'new')).toEqual([]);

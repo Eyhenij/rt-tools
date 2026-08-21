@@ -13,6 +13,7 @@ import { proposalDigest } from '@rt/message-bus-api/proposals/util';
 import {
     cargoStateMove,
     cargoStateOf,
+    cargoStateWrites,
     ECargoState,
     ECargoStateMove,
     ICargoStateAsk,
@@ -52,6 +53,8 @@ export interface IProposalFullRow extends IProposalListRow {
     readonly text: string;
     /** Месяц записи, к которой предложение приехало: в строке списка его нет. */
     readonly month: string;
+    /** Чем недочёт исправлен. Пусто у записи, которую никто не чинил: в строке списка его нет. */
+    readonly fixNote: string | null;
 }
 
 /** Первая ступень порядка. Вторая — всегда идентификатор записи, и её ставит сам запрос. */
@@ -151,6 +154,7 @@ export async function readProposal(prisma: PrismaService, id: string): Promise<I
         resource: string;
         address: string;
         state: string;
+        fixNote: string | null;
         arrivedAt: Date;
         record: { month: string; tree: ITreeChoice };
     } | null = await prisma.proposal.findUnique({
@@ -161,12 +165,13 @@ export async function readProposal(prisma: PrismaService, id: string): Promise<I
             resource: true,
             address: true,
             state: true,
+            fixNote: true,
             arrivedAt: true,
             record: { select: { month: true, tree: { select: { slug: true, name: true } } } },
         },
     });
 
-    return found ? { ...listRowOf(found), text: found.text, month: found.record.month } : null;
+    return found ? { ...listRowOf(found), text: found.text, month: found.record.month, fixNote: found.fixNote } : null;
 }
 
 /** Чем кончилась вставка: сколько записей легло и сколько приехало повторно. */
@@ -245,16 +250,16 @@ export async function moveProposalStates(
 
         return { ask, outcome: { key: ask.key, move } };
     });
-    const allowed: ICargoStateAsk[] = judged
-        .filter((one: { outcome: ICargoStateOutcome }): boolean => one.outcome.move === ECargoStateMove.Allowed)
+    const written: ICargoStateAsk[] = judged
+        .filter((one: { ask: ICargoStateAsk; outcome: ICargoStateOutcome }): boolean => cargoStateWrites(one.outcome.move, one.ask.fixNote))
         .map((one: { ask: ICargoStateAsk }): ICargoStateAsk => one.ask);
 
-    if (allowed.length > 0) {
+    if (written.length > 0) {
         await prisma.$transaction(
-            allowed.map((ask: ICargoStateAsk) =>
+            written.map((ask: ICargoStateAsk) =>
                 prisma.proposal.update({
                     where: { treeId_digest: { treeId, digest: ask.key } },
-                    data: { state: ask.state },
+                    data: ask.fixNote === null ? { state: ask.state } : { state: ask.state, fixNote: ask.fixNote },
                     select: { id: true },
                 })
             )

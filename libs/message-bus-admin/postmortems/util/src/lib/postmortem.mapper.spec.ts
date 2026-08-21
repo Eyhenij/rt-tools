@@ -92,4 +92,16 @@ describe('PostmortemMapper', () => {
 
         expect(entity.text).toBe(raw);
     });
+
+    it('SC-MB-189 — текст починки доезжает до экрана как есть', () => {
+        const entity: IPostmortem.State = mapper.mapFrom({ ...apiShort(), text: '# Разбор', fixNote: 'статьёй правила' });
+
+        expect(entity.fixNote).toBe('статьёй правила');
+    });
+
+    it('SC-MB-190 — запись без текста починки читается пустой строкой, а не пустотой', () => {
+        const entity: IPostmortem.State = mapper.mapFrom({ ...apiShort(), text: '# Разбор', fixNote: null });
+
+        expect(entity.fixNote).toBe('');
+    });
 });

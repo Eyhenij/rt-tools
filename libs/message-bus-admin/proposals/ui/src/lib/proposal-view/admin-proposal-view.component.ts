@@ -44,6 +44,7 @@ export class AdminProposalViewComponent {
     protected readonly monthLabel: string = adminLabel('columnMonth');
     protected readonly arrivedLabel: string = adminLabel('columnArrivedAt');
     protected readonly textLabel: string = adminLabel('detailsText');
+    protected readonly fixNoteLabel: string = adminLabel('detailsFixNote');
 
     public readonly entity: InputSignal<IProposal.State | null> = input.required<IProposal.State | null>();
     public readonly reading: InputSignal<boolean> = input<boolean>(false);
