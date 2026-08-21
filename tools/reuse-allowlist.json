@@ -779,6 +779,14 @@
     "inline-template ×1 @ projects/ui-kit-v2/src/showcase/templates/stories/component/test-bookings-template.component.ts": {
       "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
       "task": "RT-877"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/markdown-text/stories/component/test-markdown-text.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-912"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/markdown-text/stories/component/test-markdown-text-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-912"
     }
   },
   "debt": {}
