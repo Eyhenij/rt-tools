@@ -15,6 +15,7 @@ import {
     AdminListPageComponent,
     AdminListToolbarLeftDirective,
     AdminMomentPipe,
+    AdminStateFilterComponent,
     AdminTreeFilterComponent,
 } from '@rt/message-bus-admin/common/core/ui';
 import { adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
@@ -37,8 +38,9 @@ const BEM_BLOCK: string = 'admin-proposals-list';
  * страницы.
  *
  * Таблица объявлена здесь, а не внутри вида: столбцы она собирает собственным запросом по
- * содержимому, и через посредника они до неё не доходят. Отбор по дереву — тем же порядком:
- * экран кладёт его в левый слот тулбара, а страница о видах отбора не знает ничего.
+ * содержимому, и через посредника они до неё не доходят. Отборы — тем же порядком: экран кладёт
+ * их в левый слот тулбара, а страница о видах отбора не знает ничего. Их двое — по дереву и по
+ * состоянию записи, — и стоят они в том порядке, в каком объявлены в шаблоне.
  *
  * Хостом страницы экран называет себя одной строкой провайдера; отвечает на спрошенное общая
  * основа, и своего ответа он не пишет ни одного.
@@ -62,6 +64,7 @@ const BEM_BLOCK: string = 'admin-proposals-list';
         // components
         AdminListPageComponent,
         AdminListToolbarLeftDirective,
+        AdminStateFilterComponent,
         AdminTreeFilterComponent,
         RtTableComponent,
         RtTableRowDirective,

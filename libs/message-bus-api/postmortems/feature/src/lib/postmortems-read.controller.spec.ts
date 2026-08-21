@@ -29,6 +29,40 @@ const FIRST_AT: Date = new Date('2026-08-01T10:00:00Z');
 /** Каждый пятый разбор взят в работу: иначе чтение, зашившее «новое», отвечало бы верно всегда. */
 const IN_WORK_EVERY: number = 5;
 
+/**
+ * Починенные и выпущенные расставлены своими шагами.
+ *
+ * Три числа взаимно простые на длине хранилища, поэтому ни одна запись не попадает под два шага
+ * сразу: состояние у записи одно, и наложение сделало бы фикстуру неоднозначной.
+ */
+const FIXED_EVERY: number = 7;
+const RELEASED_EVERY: number = 11;
+
+/**
+ * Порядок значений колонки набора — тот, каким они объявлены в схеме хранилища.
+ *
+ * Написан здесь строкой, а не выведен из перечисления общей либы: хранилище упорядочивает набор
+ * по своему объявлению, и спека проверяет именно его, а не копию рядом.
+ */
+const STATE_RANK: readonly string[] = ['new', 'in_work', 'fixed', 'released'];
+
+/** Состояние записи по её номеру: шаги не пересекаются, поэтому порядок проверок значения не имеет. */
+function stateAt(at: number): string {
+    if (at === 0) {
+        return 'new';
+    }
+
+    if (at % IN_WORK_EVERY === 0) {
+        return 'in_work';
+    }
+
+    if (at % FIXED_EVERY === 0) {
+        return 'fixed';
+    }
+
+    return at % RELEASED_EVERY === 0 ? 'released' : 'new';
+}
+
 function selectOf(args: Record<string, unknown>): Record<string, unknown> {
     return (args['select'] ?? {}) as Record<string, unknown>;
 }
@@ -55,6 +89,8 @@ function keyOf(row: IStoredPostmortem, field: string): string | number {
     switch (field) {
         case 'tree':
             return row.tree.name;
+        case 'state':
+            return STATE_RANK.indexOf(row.state);
         case 'file':
             return row.file;
         case 'updatedAt':
@@ -108,12 +144,13 @@ class PrismaDouble {
         };
     }
 
-    /** Отбор по дереву: пусто в `where` — все деревья. */
+    /** Отбор: пусто в `where` — все деревья и все состояния, названное складывается. */
     #picked(args: Record<string, unknown>): IStoredPostmortem[] {
-        const where: { tree?: { slug: string } } = args['where'] ?? {};
+        const where: { tree?: { slug: string }; state?: string } = args['where'] ?? {};
         const slug: string | undefined = where.tree?.slug;
+        const state: string | undefined = where.state;
 
-        return this.#rows.filter((row: IStoredPostmortem): boolean => !slug || row.tree.slug === slug);
+        return this.#rows.filter((row: IStoredPostmortem): boolean => (!slug || row.tree.slug === slug) && (!state || row.state === state));
     }
 
     #page(args: Record<string, unknown>): Record<string, unknown>[] {
@@ -153,9 +190,9 @@ function storage(): PrismaService {
             id: `pm-${String(at).padStart(2, '0')}`,
             file: `docs/postmortems/промах-${at}.md`,
             text: `текст разбора номер ${at}`,
-            // Лежащие записи несут значение умолчания, а взятые в работу — своё: так их и
-            // отдаёт хранилище после миграции.
-            state: at % IN_WORK_EVERY === 0 && at > 0 ? 'in_work' : 'new',
+            // Лежащие записи несут значение умолчания, а сдвинутые деревом — своё: так их и
+            // отдаёт хранилище.
+            state: stateAt(at),
             arrivedAt: new Date(FIRST_AT.getTime() + minutes * 60_000),
             updatedAt: new Date(FIRST_AT.getTime() + minutes * 60_000),
             tree: own ? { slug: 'own-tree', name: 'Своё дерево' } : { slug: 'other-tree', name: 'Чужое дерево' },
@@ -262,6 +299,53 @@ describe('PostmortemsReadController.page', () => {
 
         expect(states).toHaveLength(OWN_COUNT + OTHER_COUNT);
         expect(states.every((state: ECargoState): boolean => Object.values(ECargoState).includes(state))).toBe(true);
+    });
+
+    it('SC-MB-223 — отбор по состоянию сужает и строки, и общее число', async () => {
+        const answered: IPage<IPostmortemListRow> = await controller().page({ state: 'in_work', size: String(PAGE_SIZE_MAX) });
+
+        expect(answered.rows.map((row: IPostmortemListRow): string => row.id)).toEqual(['pm-20', 'pm-15', 'pm-10', 'pm-05']);
+        expect(answered.total).toBe(4);
+    });
+
+    it('SC-MB-224 — пустой параметр состояния список не сужает', async () => {
+        const answered: IPage<IPostmortemListRow> = await controller().page({ state: '', size: String(PAGE_SIZE_MAX) });
+
+        expect(answered.total).toBe(OWN_COUNT + OTHER_COUNT);
+    });
+
+    it('SC-MB-225 — состояние и дерево сужают список вместе, а не по очереди', async () => {
+        const answered: IPage<IPostmortemListRow> = await controller().page({
+            state: 'in_work',
+            tree: 'own-tree',
+            size: String(PAGE_SIZE_MAX),
+        });
+
+        // У своего дерева лежат номера с нулевого по четырнадцатый: взятых в работу там двое.
+        expect(answered.rows.map((row: IPostmortemListRow): string => row.id)).toEqual(['pm-10', 'pm-05']);
+        expect(answered.total).toBe(2);
+    });
+
+    it('SC-MB-231 — порядок по состоянию идёт шагами разбора, а не алфавитом', async () => {
+        const answered: IPage<IPostmortemListRow> = await controller().page({
+            sort: 'state',
+            dir: 'asc',
+            size: String(PAGE_SIZE_MAX),
+        });
+        const seen: ECargoState[] = [];
+
+        for (const row of answered.rows) {
+            if (seen[seen.length - 1] !== row.state) {
+                seen.push(row.state);
+            }
+        }
+
+        expect(seen).toEqual([ECargoState.New, ECargoState.InWork, ECargoState.Fixed, ECargoState.Released]);
+    });
+
+    it('SC-MB-232 — слово вне набора состояний отбивается с именем параметра', async () => {
+        await expect(controller().page({ state: 'починен-наверное' })).rejects.toBeInstanceOf(BadRequestException);
+        await expect(controller().page({ state: 'починен-наверное' })).rejects.toThrow('параметр state');
     });
 
     it('строка списка несёт то состояние, в котором запись лежит, а не одно на всех', async () => {
