@@ -240,7 +240,11 @@
       }
     ]
   },
+  "autoCompactWindow": 1000000,
   "env": {
-    "RT_WINDOW_TOKENS": "1000000"
+    "RT_WINDOW_TOKENS": "1000000",
+    "RT_WINDOW_WARN_PCT": "40",
+    "RT_WINDOW_STOP_PCT": "50",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50"
   }
 }
