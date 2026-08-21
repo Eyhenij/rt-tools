@@ -46,6 +46,7 @@ export class ProposalMapper extends BaseMapper<IProposal.State> {
             ...this.#short.mapFrom(data),
             text: this.typeCast.getAsString(data.text),
             month: this.typeCast.getAsString(data.month),
+            fixNote: this.typeCast.getAsString(data.fixNote),
         };
     }
 }

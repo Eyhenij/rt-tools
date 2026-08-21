@@ -48,6 +48,8 @@ export interface IPostmortemListRow {
 /** Разбор целиком — то, что показывает панель подробностей. */
 export interface IPostmortemFullRow extends IPostmortemListRow {
     readonly text: string;
+    /** Чем недочёт исправлен. Пусто у записи, которую никто не чинил: в строке списка его нет. */
+    readonly fixNote: string | null;
 }
 
 /** Первая ступень порядка. Вторая — всегда идентификатор записи, и её ставит сам запрос. */
@@ -138,6 +140,7 @@ export async function readPostmortem(prisma: PrismaService, id: string): Promise
         file: string;
         text: string;
         state: string;
+        fixNote: string | null;
         arrivedAt: Date;
         updatedAt: Date;
         tree: ITreeChoice;
@@ -148,13 +151,14 @@ export async function readPostmortem(prisma: PrismaService, id: string): Promise
             file: true,
             text: true,
             state: true,
+            fixNote: true,
             arrivedAt: true,
             updatedAt: true,
             tree: { select: { slug: true, name: true } },
         },
     });
 
-    return found ? { ...listRowOf(found), text: found.text } : null;
+    return found ? { ...listRowOf(found), text: found.text, fixNote: found.fixNote } : null;
 }
 
 /**

@@ -17,6 +17,12 @@
     </rt-aside-section>
 
     @if (!reading() && entity(); as record) {
+        @if (record.fixNote) {
+            <rt-aside-section [heading]="fixNoteLabel">
+                <pre rtElem="text" qa-dataid="postmortem-fix-note">{{ record.fixNote }}</pre>
+            </rt-aside-section>
+        }
+
         <rt-aside-section [heading]="textLabel">
             <pre rtElem="text" qa-dataid="postmortem-text">{{ record.text }}</pre>
         </rt-aside-section>

@@ -54,6 +54,8 @@ export namespace IProposal {
     export interface Api extends Short.Api {
         readonly text: string;
         readonly month: string;
+        /** Чем недочёт исправлен. Пусто у записи, которую никто не чинил. */
+        readonly fixNote: string | null;
     }
 
     export interface State extends Short.State {
@@ -61,5 +63,10 @@ export namespace IProposal {
         readonly text: string;
         /** Месяц записи, при которой предложение приехало. В строке списка его нет. */
         readonly month: string;
+        /**
+         * Чем недочёт исправлен. Пустая строка означает, что починки не было: панель тогда не
+         * показывает ни подписи, ни пустого значения.
+         */
+        readonly fixNote: string;
     }
 }
