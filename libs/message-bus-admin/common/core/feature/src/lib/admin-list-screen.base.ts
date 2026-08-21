@@ -53,14 +53,21 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
     protected readonly sortModel: Signal<ISortModel<string>> = computed(() => sortModelOf(this.query()));
 
     /**
+     * Сужен ли список хоть чем-нибудь.
+     *
+     * Отборов у раздела бывает несколько, и пустое состояние отвечает на вопрос «сужено ли», а
+     * не «каким именно отбором»: считать их порознь значило бы объяснять пустоту по-разному в
+     * зависимости от того, какой отбор человек тронул последним.
+     */
+    protected readonly narrowed: Signal<boolean> = computed(() => this.query().tree !== '' || this.query().state !== '');
+
+    /**
      * Чем объяснить пустой список.
      *
      * Отбор, не давший ни строки, и дерево, не приславшее ни одной записи, — разные ответы, и
      * второй означает исправную службу.
      */
-    protected readonly emptyMessage: Signal<string> = computed(() =>
-        adminLabel(this.query().tree === '' ? 'listEmpty' : 'listEmptyByFilter')
-    );
+    protected readonly emptyMessage: Signal<string> = computed(() => adminLabel(this.narrowed() ? 'listEmptyByFilter' : 'listEmpty'));
 
     /**
      * Вторая строка пустого состояния: откуда записи приходят и что человеку сделать.
@@ -70,7 +77,7 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
      * через двоеточие и читались как одна длинная подпись.
      */
     protected readonly emptyDescription: Signal<string> = computed(() =>
-        adminLabel(this.query().tree === '' ? 'listEmptyFrom' : 'listEmptyByFilterFrom')
+        adminLabel(this.narrowed() ? 'listEmptyByFilterFrom' : 'listEmptyFrom')
     );
 
     /**
@@ -173,6 +180,16 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
     /** Отбор по дереву. Страница сбрасывается: у суженного списка её может не быть. */
     protected changeTree(tree: string): void {
         this.#apply({ tree, page: 1 });
+    }
+
+    /**
+     * Отбор по состоянию записи. Страница сбрасывается тем же доводом, что и у отбора по дереву.
+     *
+     * Отбор по дереву при этом не трогается: два условия сужают список вместе, а снятый вторым
+     * первый человек заметил бы не сразу и прочитал бы чужие строки как свои.
+     */
+    protected changeState(state: string): void {
+        this.#apply({ state, page: 1 });
     }
 
     /**

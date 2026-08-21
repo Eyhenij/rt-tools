@@ -130,6 +130,25 @@ describe('AdminProposalsListComponent', () => {
         answerTrees();
     });
 
+    it('SC-MB-222 — в тулбаре раздела стоят два отбора, и по состоянию — правее', async () => {
+        await openSection();
+
+        const filters: string[] = Array.from(
+            harness.fixture.nativeElement.querySelectorAll('[qa-dataid="list-tree-filter"], [qa-dataid="list-state-filter"]')
+        ).map((node: Element): string => String(node.getAttribute('qa-dataid')));
+
+        expect(filters).toEqual(['list-tree-filter', 'list-state-filter']);
+    });
+
+    it('SC-MB-223 — отбор по состоянию из адреса уходит в запрос списка', async () => {
+        harness = await RouterTestingHarness.create('/proposals?state=released');
+
+        const list: TestRequest = answerList();
+
+        expect(list.request.params.get('state')).toBe('released');
+        answerTrees();
+    });
+
     it('выборка из адреса уходит в запрос списка', async () => {
         harness = await RouterTestingHarness.create('/proposals?page=2&size=50&sort=resource&dir=asc&tree=a1b2');
 
