@@ -68,12 +68,19 @@ class PrismaDouble {
         };
     }
 
-    /** Отбор идёт по дереву записи месяца: пусто в `where` — все деревья. */
+    /**
+     * Отбор: дерево берётся через запись месяца, состояние лежит колонкой самого предложения.
+     *
+     * Пусто в `where` — все деревья и все состояния; названное складывается, а не заменяет.
+     */
     #picked(args: Record<string, unknown>): IStoredProposal[] {
-        const where: { record?: { tree: { slug: string } } } = args['where'] ?? {};
+        const where: { record?: { tree: { slug: string } }; state?: string } = args['where'] ?? {};
         const slug: string | undefined = where.record?.tree.slug;
+        const state: string | undefined = where.state;
 
-        return this.#rows.filter((row: IStoredProposal): boolean => !slug || row.record.tree.slug === slug);
+        return this.#rows.filter(
+            (row: IStoredProposal): boolean => (!slug || row.record.tree.slug === slug) && (!state || row.state === state)
+        );
     }
 
     #page(args: Record<string, unknown>): Record<string, unknown>[] {
@@ -121,7 +128,8 @@ function storage(): PrismaService {
             text: 'разнести закон о доступе и правило под него',
             address: 'компаньон',
             resource: 'laws/access.md',
-            state: 'new',
+            // Починенное: без третьего состояния отбор проверялся бы на двух словах из четырёх.
+            state: 'fixed',
             arrivedAt: new Date(FIRST_AT.getTime() + 120_000),
             record: { month: '2026-08', tree: OTHER },
         },
@@ -188,6 +196,29 @@ describe('ProposalsReadController.page', () => {
 
         expect(states).toHaveLength(4);
         expect(states.every((state: ECargoState): boolean => Object.values(ECargoState).includes(state))).toBe(true);
+    });
+
+    it('SC-MB-223 — отбор по состоянию сужает и строки, и общее число', async () => {
+        const answered: IPage<IProposalListRow> = await controller().page({ state: 'fixed' });
+
+        expect(answered.rows.map((row: IProposalListRow): string => row.id)).toEqual(['pr-3']);
+        expect(answered.total).toBe(1);
+    });
+
+    it('SC-MB-224 — пустой параметр состояния список не сужает', async () => {
+        expect((await controller().page({ state: '' })).total).toBe(4);
+    });
+
+    it('SC-MB-225 — состояние и дерево сужают список вместе, а не по очереди', async () => {
+        const answered: IPage<IProposalListRow> = await controller().page({ state: 'new', tree: 'own-tree' });
+
+        expect(answered.rows.map((row: IProposalListRow): string => row.id)).toEqual(['pr-1']);
+        expect(answered.total).toBe(1);
+    });
+
+    it('SC-MB-232 — слово вне набора состояний отбивается с именем параметра', async () => {
+        await expect(controller().page({ state: 'разобрано-наполовину' })).rejects.toBeInstanceOf(BadRequestException);
+        await expect(controller().page({ state: 'разобрано-наполовину' })).rejects.toThrow('параметр state');
     });
 
     it('строка списка несёт то состояние, в котором запись лежит, а не одно на всех', async () => {

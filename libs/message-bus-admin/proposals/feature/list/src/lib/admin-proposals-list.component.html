@@ -1,6 +1,7 @@
 <admin-list-page [hint]="hint" [qaPrefix]="qaPrefix" [title]="title">
     <ng-template adminListToolbarLeft>
         <admin-tree-filter [choices]="choices()" [tree]="query().tree" (treeChange)="changeTree($event)" />
+        <admin-state-filter [state]="query().state" (stateChange)="changeState($event)" />
     </ng-template>
 
     <rt-table
@@ -32,7 +33,7 @@
         </ng-container>
 
         <ng-container cdkColumnDef="state">
-            <th *cdkHeaderCellDef cdk-header-cell>{{ columns[3].label }}</th>
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="state">{{ columns[3].label }}</th>
             <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-state'">{{ row.stateLabel }}</td>
         </ng-container>
 

@@ -13,17 +13,32 @@ describe('listQueryOf', () => {
             sort: 'arrivedAt',
             dir: 'desc',
             tree: '',
+            state: '',
         });
     });
 
-    it('названные страница, размер, порядок и отбор читаются как есть', () => {
-        expect(listQueryOf({ page: '3', size: '50', sort: 'updatedAt', dir: 'asc', tree: 'a1b2' }, SORTABLE)).toEqual<IAdminListQuery>({
+    it('названные страница, размер, порядок и оба отбора читаются как есть', () => {
+        const asked: Record<string, string> = { page: '3', size: '50', sort: 'updatedAt', dir: 'asc', tree: 'a1b2', state: 'in_work' };
+
+        expect(listQueryOf(asked, SORTABLE)).toEqual<IAdminListQuery>({
             page: 3,
             size: 50,
             sort: 'updatedAt',
             dir: 'asc',
             tree: 'a1b2',
+            state: 'in_work',
         });
+    });
+
+    it('SC-MB-233 — состояние вне набора читается как несказанное: список не сужен', () => {
+        expect(listQueryOf({ state: 'починен-наверное' }, SORTABLE).state).toBe('');
+        expect(listQueryOf({ state: ['new', 'fixed'] }, SORTABLE).state).toBe('');
+    });
+
+    it('SC-MB-233 — состояние из набора читается тем словом, каким стоит в адресе', () => {
+        for (const state of ['new', 'in_work', 'fixed', 'released']) {
+            expect(listQueryOf({ state }, SORTABLE).state).toBe(state);
+        }
     });
 
     it('номер страницы не числом заменяется первой страницей, а не роняет разбор', () => {
@@ -70,17 +85,30 @@ describe('listQueryParams', () => {
     it('выборка умолчаний снимает все параметры адреса', () => {
         const query: IAdminListQuery = listQueryOf({}, SORTABLE);
 
-        expect(listQueryParams(query, SORTABLE)).toEqual({ page: null, size: null, sort: null, dir: null, tree: null });
+        expect(listQueryParams(query, SORTABLE)).toEqual({ page: null, size: null, sort: null, dir: null, tree: null, state: null });
     });
 
     it('в адрес уходит только то, что отличается от умолчания', () => {
         const query: IAdminListQuery = listQueryOf({ page: '2', tree: 'a1b2' }, SORTABLE);
 
-        expect(listQueryParams(query, SORTABLE)).toEqual({ page: '2', size: null, sort: null, dir: null, tree: 'a1b2' });
+        expect(listQueryParams(query, SORTABLE)).toEqual({ page: '2', size: null, sort: null, dir: null, tree: 'a1b2', state: null });
+    });
+
+    it('SC-MB-224 — снятый отбор по состоянию уходит из адреса пустотой', () => {
+        const query: IAdminListQuery = listQueryOf({ state: 'fixed' }, SORTABLE);
+
+        expect(listQueryParams(query, SORTABLE).state).toBe('fixed');
+        expect(listQueryParams({ ...query, state: '' }, SORTABLE).state).toBeNull();
+    });
+
+    it('SC-MB-225 — оба отбора стоят в адресе рядом, а не вместо друг друга', () => {
+        const query: IAdminListQuery = listQueryOf({ tree: 'a1b2', state: 'released' }, SORTABLE);
+
+        expect(listQueryParams(query, SORTABLE)).toMatchObject({ tree: 'a1b2', state: 'released' });
     });
 
     it('разобранное и собранное сходятся: адрес переживает круг', () => {
-        const asked: Record<string, string> = { page: '3', size: '50', sort: 'updatedAt', dir: 'asc', tree: 'a1b2' };
+        const asked: Record<string, string> = { page: '3', size: '50', sort: 'updatedAt', dir: 'asc', tree: 'a1b2', state: 'new' };
         const query: IAdminListQuery = listQueryOf(asked, SORTABLE);
 
         expect(listQueryParams(query, SORTABLE)).toEqual(asked);
@@ -94,5 +122,6 @@ describe('sameListQuery', () => {
 
     it('разошедшийся отбор делает выборку другой', () => {
         expect(sameListQuery(listQueryOf({}, SORTABLE), listQueryOf({ tree: 'a1b2' }, SORTABLE))).toBe(false);
+        expect(sameListQuery(listQueryOf({}, SORTABLE), listQueryOf({ state: 'fixed' }, SORTABLE))).toBe(false);
     });
 });
