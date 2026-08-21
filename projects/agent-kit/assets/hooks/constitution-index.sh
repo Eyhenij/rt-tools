@@ -12,6 +12,8 @@
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: любая ошибка начинает сессию без добавленного контекста (exit 0).
 # Сломанный вход не имеет права остановить сессию.
 
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+
 dir="${CLAUDE_PROJECT_DIR:-.}/docs/constitution"
 [ -d "$dir" ] || exit 0
 
