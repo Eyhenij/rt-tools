@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular
 import { AdminMomentPipe } from '@rt/message-bus-admin/common/core/ui';
 import { adminLabel } from '@rt/message-bus-admin/common/core/util';
 import { IPostmortem } from '@rt/message-bus-admin/postmortems/util';
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { RtAsideSectionComponent, RtDetailListComponent, RtDetailRowComponent } from '@rt-tools/ui-kit-v2';
+import { BlockDirective } from '@rt-tools/core';
+import { RtAsideSectionComponent, RtDetailListComponent, RtDetailRowComponent, RtMarkdownTextComponent } from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'admin-panel';
 
@@ -14,9 +14,8 @@ const BEM_BLOCK: string = 'admin-panel';
  * готовая строка кита. Записи при этом ещё нет вовсе, поэтому вход принимает и пустоту; текст
  * в это время не показывается — прежний принадлежит прежней записи, а нового ещё нет.
  *
- * Текст показывается текстом, а не размеченным содержимым: приёмник содержимого груза не
- * разбирает, и дерево, у которого есть токен, иначе получало бы исполнение своей разметки в
- * браузере вошедшего.
+ * Текст показывается разметкой — компонентом кита: разбирается закрытый перечень разметки
+ * `.md`, а сырой HTML узлом не становится вовсе и виден текстом как есть.
  *
  * Своего состояния у вида нет — запись приходит входом: читает её панель, а показывает он.
  */
@@ -27,10 +26,10 @@ const BEM_BLOCK: string = 'admin-panel';
     imports: [
         // rt-tools
         BlockDirective,
-        ElemDirective,
         RtAsideSectionComponent,
         RtDetailListComponent,
         RtDetailRowComponent,
+        RtMarkdownTextComponent,
 
         // pipes
         AdminMomentPipe,

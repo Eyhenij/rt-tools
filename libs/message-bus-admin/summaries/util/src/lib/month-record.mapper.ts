@@ -15,17 +15,27 @@ import { IMonthRecord } from './month-record.model';
 /** Отступ, которым сводка раскладывается по строкам. Без него всё тело идёт одной строкой. */
 const SUMMARY_INDENT: number = 4;
 
+/** Ограда, которой сводка объявляется блоком кода. Язык назван читателю: на вид он не влияет. */
+const SUMMARY_FENCE_OPEN: string = '```json';
+
+/** Ограда, закрывающая блок кода сводки. */
+const SUMMARY_FENCE_CLOSE: string = '```';
+
 /** Дерево из ответа. Поля читаются по одному: чужой объект приводить целиком нельзя. */
 function treeOf(mapper: BaseMapper<unknown>, raw: ITreeChoice): ITreeChoice {
     return { slug: mapper.typeCast.getAsString(raw?.slug), name: mapper.typeCast.getAsString(raw?.name) };
 }
 
 /**
- * Сводка в текст.
+ * Сводка в текст, объявленный блоком кода.
  *
  * Тело у неё произвольной формы, и приведением к строке из него вышло бы `[object Object]`.
  * Пустая строка означает «сводки в этом месяце ещё не было» — то же, что ноль заходов; тело,
  * которое не разложить в текст, тоже даёт пустоту, а не роняет панель.
+ *
+ * Разметкой сводка не приезжает и приезжать не начнёт: дерево шлёт её полями, а текстом она
+ * становится здесь. Ограда поэтому ставится здесь же — без неё панель показала бы тело абзацем,
+ * а абзац схлопывает отступы, которыми оно и разложено.
  */
 function summaryOf(raw: unknown): string {
     if (raw === null || raw === undefined) {
@@ -33,7 +43,9 @@ function summaryOf(raw: unknown): string {
     }
 
     try {
-        return JSON.stringify(raw, null, SUMMARY_INDENT) ?? '';
+        const body: string = JSON.stringify(raw, null, SUMMARY_INDENT) ?? '';
+
+        return body === '' ? '' : `${SUMMARY_FENCE_OPEN}\n${body}\n${SUMMARY_FENCE_CLOSE}`;
     } catch {
         return '';
     }

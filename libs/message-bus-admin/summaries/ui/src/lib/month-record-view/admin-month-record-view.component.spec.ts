@@ -12,7 +12,7 @@ function entityOf(patch: Partial<IMonthRecord.State> = {}): IMonthRecord.State {
         month: '2026-08',
         sessions: 19,
         ranAt: new Date('2026-08-15T09:20:05.257Z'),
-        summary: '{\n    "days": 3\n}',
+        summary: '```json\n{\n    "days": 3\n}\n```',
         ...patch,
     };
 }
@@ -62,14 +62,26 @@ describe('AdminMonthRecordViewComponent', () => {
     });
 
     it('сводка показана целиком', () => {
-        show(entityOf({ summary: '{\n    "days": 3,\n    "tree": "a1b2"\n}' }));
+        show(entityOf({ summary: '```json\n{\n    "days": 3,\n    "tree": "a1b2"\n}\n```' }));
 
         expect(textOf('month-record-summary')).toContain('"days": 3');
         expect(textOf('month-record-summary')).toContain('"tree": "a1b2"');
     });
 
-    it('разметка, приехавшая с дерева, показана текстом и в разметку страницы не попадает', () => {
-        show(entityOf({ summary: '{\n    "note": "<script>alert(1)</script><b>жирным</b>"\n}' }));
+    it('SC-MB-214 — тело сводки показано блоком кода, и отступы его раскладки видны', () => {
+        show(entityOf({ summary: '```json\n{\n    "days": 3\n}\n```' }));
+
+        const code: HTMLElement = fixture.debugElement.query(
+            By.css('[qa-dataid="month-record-summary"] [qa-dataid="markdown-code"]')
+        ).nativeElement;
+
+        expect(code.textContent).toContain('    "days": 3');
+        // Ограда — разметка, а не содержимое: показанной она быть не должна
+        expect(code.textContent).not.toContain('```');
+    });
+
+    it('сырой HTML, приехавший с дерева, показан текстом и в разметку страницы не попадает', () => {
+        show(entityOf({ summary: '```json\n{\n    "note": "<script>alert(1)</script><b>жирным</b>"\n}\n```' }));
 
         expect(textOf('month-record-summary')).toContain('<script>alert(1)</script>');
         expect(fixture.debugElement.query(By.css('[qa-dataid="month-record-summary"] script'))).toBeNull();

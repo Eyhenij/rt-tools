@@ -16,9 +16,9 @@
         </rt-detail-list>
     </rt-aside-section>
 
-    @if (!reading() && entity(); as record) {
+    @if (!reading() && entity()?.text?.trim(); as text) {
         <rt-aside-section [heading]="textLabel">
-            <pre rtElem="text" qa-dataid="postmortem-text">{{ record.text }}</pre>
+            <rt-markdown-text qa-dataid="postmortem-text" [text]="text" />
         </rt-aside-section>
     }
 </ng-container>
