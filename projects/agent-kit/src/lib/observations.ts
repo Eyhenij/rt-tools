@@ -43,15 +43,45 @@ export interface ICount {
     readonly count: number;
 }
 
+/**
+ * Вес ресурса на диске, байтами: имя правила в число.
+ *
+ * Приходит доводом, а не читается здесь, по той же причине, что и день: разбор отделён от диска,
+ * и сводку, читающую каталог правил сама, пришлось бы проверять подложенными файлами.
+ */
+export type TWeights = Readonly<Record<string, number>>;
+
 export interface ISummary {
     readonly days: number;
     /** Сколько заходов оставило хоть одно наблюдение. */
     readonly sessions: number;
     readonly loads: readonly ICount[];
+    /**
+     * Вес того, что заходы прочитали за отрезок, байтами. Каждая загрузка считается своим весом:
+     * правило, открытое в трёх заходах, стоило места трижды — тем, что оно одно, это не дешевле.
+     * Ресурс, веса которого не назвали, считается нулём: врать числом хуже, чем не знать его.
+     */
+    readonly bytes: number;
+    /**
+     * Тот же вес, приходящийся на один заход, — цена входа в работу.
+     *
+     * Ноль заходов даёт ноль, а не отказ: сводка за пустой отрезок печатается наравне с полной,
+     * и деление на ноль уронило бы её на том единственном случае, ради которого её и зовут, —
+     * «а было ли вообще что-нибудь».
+     */
+    readonly bytesPerSession: number;
     /** Отбития гейта по правилам. */
     readonly denials: readonly ICount[];
     /** Род правки, на котором гейт отбивал. */
     readonly kinds: readonly ICount[];
+    /**
+     * Отбития, пришедшие не на правку файла: род правки — команда оболочки или браузер.
+     *
+     * Считается здесь, а не выводится читателем из разбивки по родам: доля, которую надо
+     * сложить глазами из десятка строк, не читается вовсе — а именно она говорит, требует ли
+     * гейт правило под то, что правкой не является.
+     */
+    readonly denialsOffFile: number;
     readonly guards: readonly ICount[];
     /**
      * Правила, разложенные в дерево и не загруженные за отрезок ни разу. Мёртвый ресурс иначе
@@ -185,24 +215,37 @@ const of: (observations: readonly IObservation[], event: TEvent) => readonly IOb
     event: TEvent
 ): readonly IObservation[] => observations.filter((entry: IObservation): boolean => entry.event === event);
 
+/** Роды правки, которые правкой файла не являются: гейт сработал не на файле. */
+const OFF_FILE_KINDS: readonly string[] = ['command', 'browser'];
+
 /**
  * Сводка за отрезок.
  *
  * `known` — имена правил, разложенных в это дерево. Без них сводка отвечает только на вопрос
  * «чем пользовались», а самое ценное — чем не пользовались ни разу — сказать нечем: в самих
  * наблюдениях незагруженного правила нет по определению.
+ *
+ * `weights` — вес этих правил на диске. Без них сводка говорит, сколько раз правило открывали, и
+ * молчит о том, во что это обошлось: тридцать загрузок паттерна и тридцать загрузок правила на
+ * пятьсот строк стоят разного, а в счёте выглядят одинаково. Не назван — вес считается нулём, и
+ * строки о нём в выводе не будет вовсе.
  */
-export function summarize(observations: readonly IObservation[], known: readonly string[], days: number): ISummary {
+export function summarize(observations: readonly IObservation[], known: readonly string[], days: number, weights: TWeights = {}): ISummary {
     const loads: readonly IObservation[] = of(observations, 'skill-load');
     const denials: readonly IObservation[] = of(observations, 'gate-deny');
     const loaded: Set<string> = new Set(loads.map((entry: IObservation): string => entry.resource));
+    const sessions: number = new Set(observations.map((entry: IObservation): string => entry.session).filter(Boolean)).size;
+    const bytes: number = loads.reduce((found: number, entry: IObservation): number => found + (weights[entry.resource] ?? 0), 0);
 
     return {
         days,
-        sessions: new Set(observations.map((entry: IObservation): string => entry.session).filter(Boolean)).size,
+        sessions,
+        bytes,
         loads: countBy(loads.map((entry: IObservation): string => entry.resource)),
+        bytesPerSession: sessions > 0 ? Math.round(bytes / sessions) : 0,
         denials: countBy(denials.map((entry: IObservation): string => entry.resource)),
         kinds: countBy(denials.map((entry: IObservation): string => entry.kind)),
+        denialsOffFile: denials.filter((entry: IObservation): boolean => OFF_FILE_KINDS.includes(entry.kind)).length,
         guards: countBy(of(observations, 'guard-deny').map((entry: IObservation): string => entry.resource)),
         unused: known.filter((name: string): boolean => !loaded.has(name)).sort(byText),
         versions: [...new Set(observations.map((entry: IObservation): string => entry.version).filter(Boolean))].sort(byText),

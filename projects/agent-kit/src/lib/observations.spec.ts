@@ -13,6 +13,7 @@ import { join } from 'node:path';
 
 import {
     dayBefore,
+    ICount,
     IObservation,
     IReadResult,
     ISummary,
@@ -150,5 +151,62 @@ describe('сводка', (): void => {
 
     it('версии пакета в записях перечисляются', (): void => {
         expect(summarize(observations, [], 3).versions).toEqual(['0.5.1']);
+    });
+
+    it('доля отбитий не на правке файла считается сводкой, а не читателем', (): void => {
+        // Отбития набора: одно на `scss`, одно на `ts` — оба на файле. Правкой не являются
+        // команда оболочки и браузер, и их здесь нет.
+        expect(summarize(observations, [], 3).denialsOffFile).toBe(0);
+    });
+
+    it('команда оболочки и браузер считаются отбитиями не на правке файла', (): void => {
+        const mixed: readonly IObservation[] = [
+            ...observations,
+            { event: 'gate-deny', resource: 'git-workflow', kind: 'command', session: '1', version: '0.5.1' },
+            { event: 'gate-deny', resource: 'doc-style', kind: 'command', session: '2', version: '0.5.1' },
+            { event: 'gate-deny', resource: 'browser-verification', kind: 'browser', session: '2', version: '0.5.1' },
+        ];
+
+        const summary: ISummary = summarize(mixed, [], 3);
+
+        // Положительная сторона рядом с долей: без неё «три из пяти» сходится и тогда, когда
+        // отбитий не нашлось вовсе.
+        expect(summary.denials.reduce((found: number, entry: ICount): number => found + entry.count, 0)).toBe(5);
+        expect(summary.denialsOffFile).toBe(3);
+    });
+});
+
+describe('вес загруженного', (): void => {
+    const loads: readonly IObservation[] = [
+        { event: 'skill-load', resource: 'task-flow', kind: '', session: '1', version: '0.5.1' },
+        { event: 'skill-load', resource: 'task-flow', kind: '', session: '2', version: '0.5.1' },
+        { event: 'skill-load', resource: 'styling-bem', kind: '', session: '2', version: '0.5.1' },
+    ];
+
+    it('каждая загрузка считается своим весом, а не одним на правило', (): void => {
+        // `task-flow` открыт дважды, в двух заходах: место он занял дважды.
+        expect(summarize(loads, [], 3, { 'task-flow': 1000, 'styling-bem': 500 }).bytes).toBe(2500);
+    });
+
+    it('правило, веса которого не назвали, считается нулём', (): void => {
+        expect(summarize(loads, [], 3, { 'task-flow': 1000 }).bytes).toBe(2000);
+    });
+
+    it('веса не назвали вовсе — сводка отвечает нулём, а не падает', (): void => {
+        expect(summarize(loads, [], 3).bytes).toBe(0);
+    });
+
+    it('цена захода — вес, делённый на число заходов', (): void => {
+        const summary: ISummary = summarize(loads, [], 3, { 'task-flow': 1000, 'styling-bem': 500 });
+
+        expect(summary.sessions).toBe(2);
+        expect(summary.bytesPerSession).toBe(1250);
+    });
+
+    it('пустой отрезок цену захода не считает и на ноль не делит', (): void => {
+        const summary: ISummary = summarize([], [], 3, { 'task-flow': 1000 });
+
+        expect(summary.sessions).toBe(0);
+        expect(summary.bytesPerSession).toBe(0);
     });
 });
