@@ -18,7 +18,7 @@
 
     @if (!reading() && entity(); as record) {
         <rt-aside-section [heading]="textLabel">
-            <pre rtElem="text" qa-dataid="postmortem-text">{{ record.text }}</pre>
+            <rt-markdown-text qa-dataid="postmortem-text" [text]="record.text" />
         </rt-aside-section>
     }
 </ng-container>

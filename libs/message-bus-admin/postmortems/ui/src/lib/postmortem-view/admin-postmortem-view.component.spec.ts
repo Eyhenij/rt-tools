@@ -67,13 +67,22 @@ describe('AdminPostmortemViewComponent', () => {
         expect(textOf('postmortem-updated')).toBe('—');
     });
 
-    it('текст разбора показан целиком', () => {
-        show(entityOf({ text: '# Разбор\nупало ночью' }));
+    it('текст разбора показан разметкой: заголовок — заголовком, остальное — абзацем', () => {
+        show(entityOf({ text: '# Разбор\n\nупало ночью' }));
 
-        expect(textOf('postmortem-text')).toBe('# Разбор\nупало ночью');
+        expect(
+            fixture.debugElement
+                .query(By.css('[qa-dataid="postmortem-text"] [qa-dataid="markdown-heading"]'))
+                .nativeElement.textContent.trim()
+        ).toBe('Разбор');
+        expect(
+            fixture.debugElement
+                .query(By.css('[qa-dataid="postmortem-text"] [qa-dataid="markdown-paragraph"]'))
+                .nativeElement.textContent.trim()
+        ).toBe('упало ночью');
     });
 
-    it('разметка, приехавшая с дерева, показана текстом и в разметку страницы не попадает', () => {
+    it('сырой HTML, приехавший с дерева, показан текстом и в разметку страницы не попадает', () => {
         show(entityOf({ text: '<script>alert(1)</script><b>жирным</b>' }));
 
         expect(textOf('postmortem-text')).toBe('<script>alert(1)</script><b>жирным</b>');

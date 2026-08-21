@@ -68,7 +68,7 @@ describe('AdminMonthRecordViewComponent', () => {
         expect(textOf('month-record-summary')).toContain('"tree": "a1b2"');
     });
 
-    it('разметка, приехавшая с дерева, показана текстом и в разметку страницы не попадает', () => {
+    it('сырой HTML, приехавший с дерева, показан текстом и в разметку страницы не попадает', () => {
         show(entityOf({ summary: '{\n    "note": "<script>alert(1)</script><b>жирным</b>"\n}' }));
 
         expect(textOf('month-record-summary')).toContain('<script>alert(1)</script>');
