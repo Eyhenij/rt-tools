@@ -3,7 +3,7 @@ import { AdminMomentPipe } from '@rt/message-bus-admin/common/core/ui';
 import { adminLabel } from '@rt/message-bus-admin/common/core/util';
 import { IProposal } from '@rt/message-bus-admin/proposals/util';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { RtAsideSectionComponent, RtDetailListComponent, RtDetailRowComponent } from '@rt-tools/ui-kit-v2';
+import { RtAsideSectionComponent, RtDetailListComponent, RtDetailRowComponent, RtMarkdownTextComponent } from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'admin-panel';
 
@@ -14,9 +14,11 @@ const BEM_BLOCK: string = 'admin-panel';
  * готовая строка кита. Записи при этом ещё нет вовсе, поэтому вход принимает и пустоту; текст
  * в это время не показывается — прежний принадлежит прежней записи, а нового ещё нет.
  *
- * Текст показывается текстом, а не размеченным содержимым: приёмник содержимого груза не
- * разбирает, и дерево, у которого есть токен, иначе получало бы исполнение своей разметки в
- * браузере вошедшего.
+ * Текст показывается разметкой — компонентом кита: разбирается закрытый перечень разметки
+ * `.md`, а сырой HTML узлом не становится вовсе и виден текстом как есть.
+ *
+ * Текст починки показывается как есть, своим разделом: он приходит строкой правки состояния,
+ * разметкой не бывает, и у записи без починки раздела нет вовсе.
  *
  * Своего состояния у вида нет — запись приходит входом: читает её панель, а показывает он.
  */
@@ -31,6 +33,7 @@ const BEM_BLOCK: string = 'admin-panel';
         RtAsideSectionComponent,
         RtDetailListComponent,
         RtDetailRowComponent,
+        RtMarkdownTextComponent,
 
         // pipes
         AdminMomentPipe,

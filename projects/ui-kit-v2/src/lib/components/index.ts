@@ -42,6 +42,7 @@ export * from './input';
 export * from './input-number';
 export * from './live-badge';
 export * from './logo';
+export * from './markdown-text';
 export * from './menu';
 export * from './message';
 export * from './message-composer';

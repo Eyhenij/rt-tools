@@ -71,18 +71,33 @@ describe('AdminProposalViewComponent', () => {
         expect(textOf('proposal-arrived')).toBe('—');
     });
 
-    it('текст предложения показан целиком', () => {
+    it('текст предложения показан целиком и одним абзацем: переносы в нём значащие', () => {
         show(entityOf({ text: 'ловушку стоит назвать\nи привести пример' }));
 
-        expect(textOf('proposal-text')).toBe('ловушку стоит назвать\nи привести пример');
+        const paragraph: HTMLElement = fixture.debugElement.query(
+            By.css('[qa-dataid="proposal-text"] [qa-dataid="markdown-paragraph"]')
+        ).nativeElement;
+
+        expect(paragraph.textContent?.trim()).toBe('ловушку стоит назватьи привести пример');
+        expect(paragraph.querySelectorAll('br').length).toBe(1);
     });
 
-    it('разметка, приехавшая с дерева, показана текстом и в разметку страницы не попадает', () => {
+    it('сырой HTML, приехавший с дерева, показан текстом и в разметку страницы не попадает', () => {
         show(entityOf({ text: '<script>alert(1)</script><b>жирным</b>' }));
 
         expect(textOf('proposal-text')).toBe('<script>alert(1)</script><b>жирным</b>');
         expect(fixture.debugElement.query(By.css('[qa-dataid="proposal-text"] script'))).toBeNull();
         expect(fixture.debugElement.query(By.css('[qa-dataid="proposal-text"] b'))).toBeNull();
+    });
+
+    it('SC-MB-219 — текста из одних пробелов панель разделом не показывает', () => {
+        show(entityOf({ text: '   \n  \n' }));
+
+        // Сначала — что найдено то самое место: панель поднята и свойства записи на ней стоят,
+        // а раздела с текстом нет
+        expect(textOf('proposal-resource')).toBe('rules/lists.md');
+        expect(fixture.debugElement.query(By.css('[qa-dataid="proposal-text"]'))).toBeNull();
+        expect(fixture.debugElement.queryAll(By.css('rt-aside-section')).length).toBe(1);
     });
 
     it('SC-MB-137, SC-MB-141 — свойства стоят в готовом списке кита, а своего списка определений в панели нет', () => {
