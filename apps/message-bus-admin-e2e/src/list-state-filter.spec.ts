@@ -131,7 +131,8 @@ test.describe('отбор по состоянию', () => {
     test('SC-MB-229 — список, пустой по отбору состояния, объясняет это отбором', async ({ page }: { page: Page }) => {
         await openSection(page, 'proposals');
 
-        await pickState(page, STATE.released);
+        // Готовых предложений на стенде нет: выпущенное там есть — им проверяется отбор по версии
+        await pickState(page, STATE.fixed);
 
         await expect(qa(page, 'empty-state-title')).toHaveText('По этому отбору записей нет');
         await expect(qa(page, 'empty-state-description')).toHaveText('Снимите отбор над списком или выберите в нём другое значение');
