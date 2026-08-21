@@ -23,6 +23,8 @@
 | Слой, которому нечем прочитать текст правки, отпускает действие.                                             | `projects/agent-kit/assets/hooks/skill-gate-layers.sh:rt_layer_is_spec` |
 | Файл слоёв гейт зовёт в своей оболочке, а не отдельным процессом.                                            | `projects/agent-kit/assets/hooks/skill-gate.sh:rt_hooks_dir`            |
 | Карта гейта считает командой вызов, а не упоминание.                                                         | `projects/agent-kit/assets/defaults/gate-map.sh:rt_gate_invokes`        |
+| Перенаправление в пустое устройство и в поток ошибок записью не считается.                                   | `projects/agent-kit/assets/defaults/project.sh:rt_shell_writes_default` |
+| Пути берутся из заголовка команды, а не из тела документа на месте.                                          | `projects/agent-kit/assets/defaults/project.sh:rt_shell_paths_default`  |
 | Гард замысла судит объявленный переход, а не наличие файлов.                                                 | `projects/agent-kit/assets/hooks/task-flow-guard.sh:state`              |
 | Отказ по состоянию называет обязательное действие того состояния, которое объявлено.                         | `projects/agent-kit/assets/hooks/task-flow-guard.sh:state_action`       |
 | Именем состояния считается только слово из перечня.                                                          | `projects/agent-kit/assets/hooks/task-flow-guard.sh:state_action`       |
