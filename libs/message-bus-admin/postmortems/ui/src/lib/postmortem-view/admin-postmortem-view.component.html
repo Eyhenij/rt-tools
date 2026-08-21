@@ -10,6 +10,11 @@
             <rt-detail-row qa-dataid="postmortem-arrived" [label]="arrivedLabel" [loading]="reading()">
                 {{ entity()?.arrivedAt ?? null | adminMoment }}
             </rt-detail-row>
+            @if (entity()?.releaseVersion; as version) {
+                <rt-detail-row qa-dataid="postmortem-release-version" [label]="releaseVersionLabel" [loading]="reading()">
+                    {{ version }}
+                </rt-detail-row>
+            }
             <rt-detail-row qa-dataid="postmortem-updated" [label]="updatedLabel" [loading]="reading()">
                 {{ entity()?.updatedAt ?? null | adminMoment }}
             </rt-detail-row>

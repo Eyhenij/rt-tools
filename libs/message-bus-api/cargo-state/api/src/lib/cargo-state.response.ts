@@ -16,6 +16,10 @@ export enum ECargoStateDenial {
     NoFixNote = 'no-fix-note',
     /** Текст починки приехал с переходом, который к починке не относится. */
     ExtraFixNote = 'extra-fix-note',
+    /** Запись переводят в «выпущено», а в какой версии искать фикс — не сказано. */
+    NoReleaseVersion = 'no-release-version',
+    /** Версия выпуска приехала с переходом, который к выпуску не относится. */
+    ExtraReleaseVersion = 'extra-release-version',
 }
 
 /** Отбитая строка: место в пакете, род записи, ключ и причина. */

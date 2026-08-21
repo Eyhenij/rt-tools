@@ -75,3 +75,4 @@
 | Ни токен дерева, ни текст записи в вывод не попадают.                                 | `projects/agent-kit/src/lib/ship.ts:httpMark`                                                                        |
 | Приём отвечает счётом, и команда пересказывает его человеку.                          | `projects/agent-kit/src/lib/cargo.ts:ICargoStateBody`                                                                |
 | Команда строки запуска несёт текст починки доводом.                                   | `projects/agent-kit/src/lib/cargo-state.ts:FIX_FLAG` — довод читается строкой запуска и ложится каждой записи вызова |
+| Команда строки запуска несёт версию выпуска доводом.                                  | `projects/agent-kit/src/lib/cargo-state.ts:RELEASE_FLAG` — довод читается строкой запуска и ложится каждой записи вызова |

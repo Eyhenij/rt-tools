@@ -106,6 +106,7 @@ export const ADMIN_LABELS = {
     detailsProposal: 'Предложение',
     detailsText: 'Текст',
     detailsFixNote: 'Чем исправлено',
+    detailsReleaseVersion: 'В какой версии',
     detailsMonthRecord: 'Запись месяца',
     detailsSummary: 'Сводка',
     detailsSummaryMissing: 'Сводки в этом месяце ещё не было: запись завёл другой род груза',

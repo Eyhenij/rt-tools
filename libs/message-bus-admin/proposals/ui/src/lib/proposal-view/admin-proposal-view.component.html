@@ -16,6 +16,11 @@
             <rt-detail-row qa-dataid="proposal-arrived" [label]="arrivedLabel" [loading]="reading()">
                 {{ entity()?.arrivedAt ?? null | adminMoment }}
             </rt-detail-row>
+            @if (entity()?.releaseVersion; as version) {
+                <rt-detail-row qa-dataid="proposal-release-version" [label]="releaseVersionLabel" [loading]="reading()">
+                    {{ version }}
+                </rt-detail-row>
+            }
         </rt-detail-list>
     </rt-aside-section>
 

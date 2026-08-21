@@ -9,6 +9,7 @@
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IPostmortemArrivalUpdate, postmortemArrivalUpdate } from '@rt/message-bus-api/postmortems/util';
 import {
+    cargoStateData,
     cargoStateMove,
     cargoStateOf,
     cargoStateWrites,
@@ -50,6 +51,8 @@ export interface IPostmortemFullRow extends IPostmortemListRow {
     readonly text: string;
     /** Чем недочёт исправлен. Пусто у записи, которую никто не чинил: в строке списка его нет. */
     readonly fixNote: string | null;
+    /** В какой версии искать фикс. Пусто у записи, которую никто не выпускал. */
+    readonly releaseVersion: string | null;
 }
 
 /** Первая ступень порядка. Вторая — всегда идентификатор записи, и её ставит сам запрос. */
@@ -141,6 +144,7 @@ export async function readPostmortem(prisma: PrismaService, id: string): Promise
         text: string;
         state: string;
         fixNote: string | null;
+        releaseVersion: string | null;
         arrivedAt: Date;
         updatedAt: Date;
         tree: ITreeChoice;
@@ -152,13 +156,14 @@ export async function readPostmortem(prisma: PrismaService, id: string): Promise
             text: true,
             state: true,
             fixNote: true,
+            releaseVersion: true,
             arrivedAt: true,
             updatedAt: true,
             tree: { select: { slug: true, name: true } },
         },
     });
 
-    return found ? { ...listRowOf(found), text: found.text, fixNote: found.fixNote } : null;
+    return found ? { ...listRowOf(found), text: found.text, fixNote: found.fixNote, releaseVersion: found.releaseVersion } : null;
 }
 
 /**
@@ -248,7 +253,9 @@ export async function movePostmortemStates(
         return { ask, outcome: { key: ask.key, move } };
     });
     const written: ICargoStateAsk[] = judged
-        .filter((one: { ask: ICargoStateAsk; outcome: ICargoStateOutcome }): boolean => cargoStateWrites(one.outcome.move, one.ask.fixNote))
+        .filter((one: { ask: ICargoStateAsk; outcome: ICargoStateOutcome }): boolean =>
+            cargoStateWrites(one.outcome.move, one.ask.fixNote, one.ask.releaseVersion)
+        )
         .map((one: { ask: ICargoStateAsk }): ICargoStateAsk => one.ask);
 
     if (written.length > 0) {
@@ -256,7 +263,7 @@ export async function movePostmortemStates(
             written.map((ask: ICargoStateAsk) =>
                 prisma.postmortem.update({
                     where: { treeId_file: { treeId, file: ask.key } },
-                    data: ask.fixNote === null ? { state: ask.state } : { state: ask.state, fixNote: ask.fixNote },
+                    data: cargoStateData(ask),
                     select: { id: true },
                 })
             )

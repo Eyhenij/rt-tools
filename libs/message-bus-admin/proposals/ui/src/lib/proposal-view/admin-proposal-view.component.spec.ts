@@ -13,6 +13,7 @@ function entityOf(patch: Partial<IProposal.State> = {}): IProposal.State {
         address: 'Ловушки',
         arrivedAt: new Date('2026-08-14T21:30:00.000Z'),
         fixNote: '',
+        releaseVersion: '',
         text: 'ловушку стоит назвать',
         month: '2026-08',
         ...patch,
@@ -132,5 +133,23 @@ describe('AdminProposalViewComponent', () => {
         // отрисована, и только потом — что секции починки в ней нет
         expect(fixture.debugElement.query(By.css('[qa-dataid="proposal-text"]'))).not.toBeNull();
         expect(fixture.debugElement.query(By.css('[qa-dataid="proposal-fix-note"]'))).toBeNull();
+    });
+
+    it('SC-MB-205 — панель показывает версию выпуска строкой свойства', () => {
+        show(entityOf({ releaseVersion: 'rt-agent-kit@0.10.1' }));
+
+        const row: DebugElement | null = fixture.debugElement.query(By.css('[qa-dataid="proposal-release-version"]'));
+
+        expect(row).not.toBeNull();
+        expect(row?.nativeElement.textContent).toContain('rt-agent-kit@0.10.1');
+    });
+
+    it('SC-MB-206 — у записи без версии выпуска строки нет вовсе', () => {
+        show(entityOf({ releaseVersion: '' }));
+
+        // Отрицательное утверждение идёт в паре с положительным: сперва показано, что панель
+        // отрисована, и только потом — что строки версии в ней нет
+        expect(fixture.debugElement.query(By.css('[qa-dataid="proposal-text"]'))).not.toBeNull();
+        expect(fixture.debugElement.query(By.css('[qa-dataid="proposal-release-version"]'))).toBeNull();
     });
 });

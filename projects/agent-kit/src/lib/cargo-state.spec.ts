@@ -41,15 +41,34 @@ describe('itemsOf', () => {
     });
 
     it('SC-MB-191 — довод текста ложится каждой записи вызова', () => {
-        expect(itemsOf(['mark', '--postmortem', 'a.md', '--proposal', 'digest-1'], 'fixed', 'статьёй правила')).toEqual([
+        expect(
+            itemsOf(['mark', '--postmortem', 'a.md', '--proposal', 'digest-1'], 'fixed', {
+                fixNote: 'статьёй правила',
+                releaseVersion: '',
+            })
+        ).toEqual([
             { kind: 'postmortem', key: 'a.md', state: 'fixed', fixNote: 'статьёй правила' },
             { kind: 'proposal', key: 'digest-1', state: 'fixed', fixNote: 'статьёй правила' },
         ]);
     });
 
-    it('SC-MB-191 — без довода строка едет прежней, без поля текста', () => {
+    it('SC-MB-207 — довод версии ложится каждой записи вызова', () => {
+        expect(
+            itemsOf(['mark', '--postmortem', 'a.md', '--proposal', 'digest-1'], 'released', {
+                fixNote: '',
+                releaseVersion: 'rt-agent-kit@0.10.1',
+            })
+        ).toEqual([
+            { kind: 'postmortem', key: 'a.md', state: 'released', releaseVersion: 'rt-agent-kit@0.10.1' },
+            { kind: 'proposal', key: 'digest-1', state: 'released', releaseVersion: 'rt-agent-kit@0.10.1' },
+        ]);
+    });
+
+    it('SC-MB-191 — без довода строка едет прежней, без приложенных полей', () => {
         expect(itemsOf(['mark', '--postmortem', 'a.md'], 'in_work')).toEqual([{ kind: 'postmortem', key: 'a.md', state: 'in_work' }]);
-        expect(itemsOf(['mark', '--postmortem', 'a.md'], 'in_work', '')).toEqual([{ kind: 'postmortem', key: 'a.md', state: 'in_work' }]);
+        expect(itemsOf(['mark', '--postmortem', 'a.md'], 'in_work', { fixNote: '', releaseVersion: '' })).toEqual([
+            { kind: 'postmortem', key: 'a.md', state: 'in_work' },
+        ]);
     });
 
     it('SC-AK-431 — довод без значения записью не считается', () => {

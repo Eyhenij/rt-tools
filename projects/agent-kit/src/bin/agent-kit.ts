@@ -15,7 +15,7 @@ import { unknownFlagsIn } from '../lib/argv.js';
 import { IEntryOfCatalog, readCatalog, resolveSelection } from '../lib/catalog.js';
 import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, list, stats, sync } from '../lib/commands.js';
 import { CONFIG_PATH, IConfig, readConfig } from '../lib/config.js';
-import { FIX_FLAG, itemsOf, mark, POSTMORTEM_FLAG, PROPOSAL_FLAG } from '../lib/cargo-state.js';
+import { FIX_FLAG, itemsOf, mark, POSTMORTEM_FLAG, PROPOSAL_FLAG, RELEASE_FLAG } from '../lib/cargo-state.js';
 import { enroll, httpEnroll } from '../lib/enroll.js';
 import { httpMark, httpShip, readToken } from '../lib/ship.js';
 import { propose, treeSlugOf } from '../lib/shipment.js';
@@ -47,6 +47,8 @@ const USAGE: readonly string[] = [
     '                  перевести свои записи груза в названное состояние',
     '  mark --fix <чем исправлено>',
     '                  чем недочёт исправлен; обязателен при переходе в `fixed`, иначе не берётся',
+    '  mark --release <версия выпуска>',
+    '                  в какой версии искать фикс; обязателен при переходе в `released`, иначе не берётся',
     '  mark --dry-run  показать, что уехало бы, и ничего не отправлять',
     '',
     '  --root <путь>   корень проекта; по умолчанию текущий каталог',
@@ -284,7 +286,7 @@ async function runPropose(env: IEnvironment, argv: readonly string[]): Promise<I
 
 /** Приписка дерева к приёмнику по коду приглашения. */
 /** Доводы отметки: незнакомый кончает команду — её действие уходит наружу и обратимо не всегда. */
-const MARK_FLAGS: readonly string[] = ['--state', POSTMORTEM_FLAG, PROPOSAL_FLAG, FIX_FLAG, '--dry-run', '--root'];
+const MARK_FLAGS: readonly string[] = ['--state', POSTMORTEM_FLAG, PROPOSAL_FLAG, FIX_FLAG, RELEASE_FLAG, '--dry-run', '--root'];
 
 /**
  * Отметка состояния записей груза.
@@ -311,7 +313,10 @@ async function runMark(env: IEnvironment, argv: readonly string[]): Promise<IOut
         intake: config.intake,
         tree: treeSlugOf(remoteOf(env.root), config.tree),
         token: readToken(env.root, config.token),
-        items: itemsOf(argv, state, optionOf(argv, FIX_FLAG, '')),
+        items: itemsOf(argv, state, {
+            fixNote: optionOf(argv, FIX_FLAG, ''),
+            releaseVersion: optionOf(argv, RELEASE_FLAG, ''),
+        }),
         dryRun: argv.includes('--dry-run'),
         call: httpMark,
     });

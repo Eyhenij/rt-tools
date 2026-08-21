@@ -56,6 +56,8 @@ export namespace IProposal {
         readonly month: string;
         /** Чем недочёт исправлен. Пусто у записи, которую никто не чинил. */
         readonly fixNote: string | null;
+        /** В какой версии искать фикс. Пусто у записи, которую никто не выпускал. */
+        readonly releaseVersion: string | null;
     }
 
     export interface State extends Short.State {
@@ -68,5 +70,10 @@ export namespace IProposal {
          * показывает ни подписи, ни пустого значения.
          */
         readonly fixNote: string;
+        /**
+         * В какой версии искать фикс. Пустая строка означает, что выпуска не было: панель тогда
+         * не показывает ни подписи, ни пустого значения.
+         */
+        readonly releaseVersion: string;
     }
 }
