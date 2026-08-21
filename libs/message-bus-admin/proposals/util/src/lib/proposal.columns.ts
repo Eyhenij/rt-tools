@@ -28,6 +28,6 @@ export const PROPOSALS_COLUMNS: readonly IRtTable.ColumnConfig[] = Object.freeze
     { key: 'tree', label: adminLabel('columnTree'), sortable: true },
     { key: 'resource', label: adminLabel('columnResource'), sortable: true, locked: true },
     { key: 'address', label: adminLabel('columnAddress'), sortable: true },
-    { key: 'state', label: adminLabel('columnState') },
+    { key: 'state', label: adminLabel('columnState'), sortable: true },
     { key: 'arrivedAt', label: adminLabel('columnArrivedAt'), sortable: true },
 ]);
