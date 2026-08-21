@@ -4,6 +4,9 @@
  * Живёт в адресе, а не в состоянии экрана: перезагрузка на второй странице отобранного списка
  * иначе возвращает на первую, а ссылка на увиденное не передаётся никому.
  *
+ * Отбор «без версии» стоит в адресе тем же словом, каким его читает приёмник: перевода между
+ * адресом и запросом здесь нет ни у одного отбора.
+ *
  * Разбор чистый и отказа не бросает. Значение, которое не читается, заменяется умолчанием: адрес
  * правит человек руками, и отказ на опечатку в нём означал бы пустой экран вместо списка. Тем же
  * решается и адрес, пришедший из прошлой редакции экрана.
@@ -29,16 +32,25 @@ export interface IAdminListQuery {
      * адрес и в запрос выборка уходит строками — переводить её туда и обратно было бы незачем.
      */
     readonly state: string;
+    /**
+     * Версия выпуска, которой сужен список. Пусто — все версии.
+     *
+     * Слово «без версии» стоит здесь тем же полем, а не своим признаком: набор версий открыт, и
+     * отличить его от версии всё равно некому, кроме приёмника, — он и отличает. Своё поле
+     * означало бы, что в адресе законна пара «версия и без версии сразу», а такого списка нет.
+     */
+    readonly version: string;
 }
 
 /** Имена параметров адреса. Названы здесь, чтобы разбор и сборка не расходились строками. */
-export const LIST_QUERY_PARAMS: Readonly<Record<'page' | 'size' | 'sort' | 'dir' | 'tree' | 'state', string>> = Object.freeze({
+export const LIST_QUERY_PARAMS: Readonly<Record<'page' | 'size' | 'sort' | 'dir' | 'tree' | 'state' | 'version', string>> = Object.freeze({
     page: 'page',
     size: 'size',
     sort: 'sort',
     dir: 'dir',
     tree: 'tree',
     state: 'state',
+    version: 'version',
 });
 
 /** Порядок по умолчанию: свежие сверху. Поле называет сам раздел — оно у всех своё. */
@@ -96,6 +108,17 @@ function state(raw: unknown): string {
 }
 
 /**
+ * Версия из адреса. Читается как есть — набора версий заранее не существует.
+ *
+ * Слово вне набора здесь отбросить нечем: версии называет дерево при выпуске, и вчерашняя,
+ * уехавшая вместе с вычищенными записями, от опечатки неотличима. Приёмник отвечает на такую
+ * версию пустым списком, а не отказом, и человек видит пустоту с объяснением.
+ */
+function version(raw: unknown): string {
+    return plain(raw);
+}
+
+/**
  * Выборка из параметров адреса.
  *
  * @param params Параметры адреса, как их отдаёт роутер.
@@ -113,6 +136,7 @@ export function listQueryOf(params: Readonly<Record<string, unknown>>, sortable:
         dir: direction(params[LIST_QUERY_PARAMS.dir]) ?? DEFAULT_DIRECTION,
         tree: plain(params[LIST_QUERY_PARAMS.tree]),
         state: state(params[LIST_QUERY_PARAMS.state]),
+        version: version(params[LIST_QUERY_PARAMS.version]),
     };
 }
 
@@ -131,6 +155,7 @@ export function listQueryParams(query: IAdminListQuery, sortable: readonly strin
         [LIST_QUERY_PARAMS.dir]: query.dir === DEFAULT_DIRECTION ? null : query.dir,
         [LIST_QUERY_PARAMS.tree]: query.tree === '' ? null : query.tree,
         [LIST_QUERY_PARAMS.state]: query.state === '' ? null : query.state,
+        [LIST_QUERY_PARAMS.version]: query.version === '' ? null : query.version,
     };
 }
 
@@ -138,6 +163,7 @@ export function listQueryParams(query: IAdminListQuery, sortable: readonly strin
 export function sameListQuery(one: IAdminListQuery, other: IAdminListQuery): boolean {
     const samePlace: boolean = one.page === other.page && one.size === other.size;
     const sameOrder: boolean = one.sort === other.sort && one.dir === other.dir;
+    const sameFilters: boolean = one.tree === other.tree && one.state === other.state && one.version === other.version;
 
-    return samePlace && sameOrder && one.tree === other.tree && one.state === other.state;
+    return samePlace && sameOrder && sameFilters;
 }

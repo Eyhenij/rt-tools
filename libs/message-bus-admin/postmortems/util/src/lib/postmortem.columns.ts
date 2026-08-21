@@ -23,6 +23,7 @@ export const POSTMORTEMS_COLUMNS: readonly IRtTable.ColumnConfig[] = Object.free
     { key: 'tree', label: adminLabel('columnTree'), sortable: true },
     { key: 'file', label: adminLabel('columnFile'), sortable: true, locked: true },
     { key: 'state', label: adminLabel('columnState'), sortable: true },
+    { key: 'releaseVersion', label: adminLabel('releaseVersion'), sortable: true },
     { key: 'arrivedAt', label: adminLabel('columnArrivedAt'), sortable: true },
     { key: 'updatedAt', label: adminLabel('columnUpdatedAt'), sortable: true },
 ]);

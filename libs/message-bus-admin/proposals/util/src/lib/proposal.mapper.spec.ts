@@ -11,6 +11,7 @@ function apiShort(patch: Partial<IProposal.Short.Api> = {}): IProposal.Short.Api
         resource: 'rules/lists.md',
         address: 'Ловушки',
         state: 'in_work',
+        releaseVersion: null,
         arrivedAt: '2026-08-14T21:30:00.000Z',
         ...patch,
     };
@@ -48,7 +49,24 @@ describe('ProposalShortMapper', () => {
     it('поле, которого модель не называла, на экран не переезжает', () => {
         const row: IProposal.Short.State = mapper.mapFrom({ ...apiShort(), text: 'всё предложение' } as never);
 
-        expect(Object.keys(row).sort()).toEqual(['address', 'arrivedAt', 'id', 'resource', 'state', 'stateLabel', 'tree']);
+        expect(Object.keys(row).sort()).toEqual([
+            'address',
+            'arrivedAt',
+            'id',
+            'releaseVersion',
+            'resource',
+            'state',
+            'stateLabel',
+            'tree',
+        ]);
+    });
+
+    it('SC-MB-237 — версия выпуска доезжает до строки списка как есть', () => {
+        expect(mapper.mapFrom(apiShort({ releaseVersion: '0.9.0' })).releaseVersion).toBe('0.9.0');
+    });
+
+    it('SC-MB-238 — строка записи без версии несёт пустую строку, а не пустоту', () => {
+        expect(mapper.mapFrom(apiShort()).releaseVersion).toBe('');
     });
 
     it('SC-MB-167 — состояние приезжает строкой, а на экран уходит значением набора', () => {
