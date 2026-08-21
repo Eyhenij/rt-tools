@@ -44,6 +44,7 @@ export class AdminPostmortemViewComponent {
     protected readonly updatedLabel: string = adminLabel('columnUpdatedAt');
     protected readonly textLabel: string = adminLabel('detailsText');
     protected readonly fixNoteLabel: string = adminLabel('detailsFixNote');
+    protected readonly releaseVersionLabel: string = adminLabel('detailsReleaseVersion');
 
     public readonly entity: InputSignal<IPostmortem.State | null> = input.required<IPostmortem.State | null>();
     public readonly reading: InputSignal<boolean> = input<boolean>(false);

@@ -104,4 +104,16 @@ describe('PostmortemMapper', () => {
 
         expect(entity.fixNote).toBe('');
     });
+
+    it('SC-MB-205 — версия выпуска доезжает до экрана как есть', () => {
+        const entity: IPostmortem.State = mapper.mapFrom({ ...apiShort(), text: '# Разбор', releaseVersion: 'rt-agent-kit@0.10.1' });
+
+        expect(entity.releaseVersion).toBe('rt-agent-kit@0.10.1');
+    });
+
+    it('SC-MB-206 — запись без версии читается пустой строкой, а не пустотой', () => {
+        const entity: IPostmortem.State = mapper.mapFrom({ ...apiShort(), text: '# Разбор', releaseVersion: null });
+
+        expect(entity.releaseVersion).toBe('');
+    });
 });

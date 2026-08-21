@@ -56,6 +56,8 @@ export interface IProposalFullRow extends IProposalListRow {
     readonly month: string;
     /** Чем недочёт исправлен. Пусто у записи, которую никто не чинил: в строке списка его нет. */
     readonly fixNote: string | null;
+    /** В какой версии искать фикс. Пусто у записи, которую никто не выпускал. */
+    readonly releaseVersion: string | null;
 }
 
 /** Первая ступень порядка. Вторая — всегда идентификатор записи, и её ставит сам запрос. */
@@ -156,6 +158,7 @@ export async function readProposal(prisma: PrismaService, id: string): Promise<I
         address: string;
         state: string;
         fixNote: string | null;
+        releaseVersion: string | null;
         arrivedAt: Date;
         record: { month: string; tree: ITreeChoice };
     } | null = await prisma.proposal.findUnique({
@@ -167,12 +170,21 @@ export async function readProposal(prisma: PrismaService, id: string): Promise<I
             address: true,
             state: true,
             fixNote: true,
+            releaseVersion: true,
             arrivedAt: true,
             record: { select: { month: true, tree: { select: { slug: true, name: true } } } },
         },
     });
 
-    return found ? { ...listRowOf(found), text: found.text, month: found.record.month, fixNote: found.fixNote } : null;
+    return found
+        ? {
+              ...listRowOf(found),
+              text: found.text,
+              month: found.record.month,
+              fixNote: found.fixNote,
+              releaseVersion: found.releaseVersion,
+          }
+        : null;
 }
 
 /** Чем кончилась вставка: сколько записей легло и сколько приехало повторно. */

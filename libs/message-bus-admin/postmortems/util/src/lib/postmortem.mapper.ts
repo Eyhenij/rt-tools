@@ -46,6 +46,7 @@ export class PostmortemMapper extends BaseMapper<IPostmortem.State> {
             ...this.#short.mapFrom(data),
             text: this.typeCast.getAsString(data.text),
             fixNote: this.typeCast.getAsString(data.fixNote),
+            releaseVersion: this.typeCast.getAsString(data.releaseVersion),
         };
     }
 }
