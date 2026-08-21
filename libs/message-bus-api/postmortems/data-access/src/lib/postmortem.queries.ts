@@ -15,6 +15,7 @@ import {
     cargoStateWrites,
     ECargoState,
     ECargoStateMove,
+    ICargoPageAsked,
     ICargoStateAsk,
     ICargoStateOutcome,
     IPage,
@@ -55,20 +56,35 @@ export interface IPostmortemFullRow extends IPostmortemListRow {
     readonly releaseVersion: string | null;
 }
 
+/** Чем сужен список: обе части необязательны и обе складываются в одно условие. */
+interface IPostmortemWhere {
+    readonly tree?: { readonly slug: string };
+    readonly state?: ECargoState;
+}
+
 /** Первая ступень порядка. Вторая — всегда идентификатор записи, и её ставит сам запрос. */
 type TPostmortemOrder =
     | { readonly arrivedAt: TPageDirection }
     | { readonly updatedAt: TPageDirection }
     | { readonly file: TPageDirection }
+    | { readonly state: TPageDirection }
     | { readonly tree: { readonly name: TPageDirection } };
 
-/** Порядок по названному полю. Дерево упорядочивается именем: признак человеку ни о чём не говорит. */
+/**
+ * Порядок по названному полю.
+ *
+ * Дерево упорядочивается именем: признак человеку ни о чём не говорит. Состояние — значением
+ * колонки набора, и хранилище упорядочивает набор по объявлению: слова объявлены шагами разбора,
+ * поэтому порядок выходит очередью работы, а не алфавитом.
+ */
 function orderOf(asked: IPageAsked): TPostmortemOrder {
     switch (asked.sort) {
         case 'updatedAt':
             return { updatedAt: asked.dir };
         case 'file':
             return { file: asked.dir };
+        case 'state':
+            return { state: asked.dir };
         case 'tree':
             return { tree: { name: asked.dir } };
         default:
@@ -76,9 +92,17 @@ function orderOf(asked: IPageAsked): TPostmortemOrder {
     }
 }
 
-/** Отбор по дереву. Пусто — груз всех деревьев: учётная запись принадлежит службе, а не дереву. */
-function whereOf(asked: IPageAsked): { tree?: { slug: string } } {
-    return asked.tree ? { tree: { slug: asked.tree } } : {};
+/**
+ * Отбор списка: дерево и состояние складываются, а не заменяют друг друга.
+ *
+ * Пусто по дереву — груз всех деревьев: учётная запись принадлежит службе, а не дереву. Пусто по
+ * состоянию — записи всех состояний.
+ */
+function whereOf(asked: ICargoPageAsked): IPostmortemWhere {
+    return {
+        ...(asked.tree ? { tree: { slug: asked.tree } } : {}),
+        ...(asked.state ? { state: asked.state } : {}),
+    };
 }
 
 /**
@@ -115,8 +139,8 @@ function listRowOf(row: {
  * Порядок идёт двумя ступенями: разборы одного прогона приезжают с одним временем, и без второго
  * ключа одна и та же запись видна на двух страницах подряд, а соседняя не видна ни на одной.
  */
-export async function readPostmortems(prisma: PrismaService, asked: IPageAsked): Promise<IPage<IPostmortemListRow>> {
-    const where: { tree?: { slug: string } } = whereOf(asked);
+export async function readPostmortems(prisma: PrismaService, asked: ICargoPageAsked): Promise<IPage<IPostmortemListRow>> {
+    const where: IPostmortemWhere = whereOf(asked);
     const total: number = await prisma.postmortem.count({ where });
     const rows: {
         id: string;

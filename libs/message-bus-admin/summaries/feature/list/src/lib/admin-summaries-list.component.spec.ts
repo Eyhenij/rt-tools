@@ -120,6 +120,18 @@ describe('AdminSummariesListComponent', () => {
         TestBed.resetTestingModule();
     });
 
+    it('SC-MB-234 — в тулбаре сводок стоит один отбор по дереву: состояния у записи месяца нет', async () => {
+        harness = await RouterTestingHarness.create('/summaries');
+
+        answerList([rowOf()]);
+        answerTrees();
+        await harness.fixture.whenStable();
+        harness.detectChanges();
+
+        expect(harness.fixture.nativeElement.querySelector('[qa-dataid="list-tree-filter"]')).not.toBeNull();
+        expect(harness.fixture.nativeElement.querySelector('[qa-dataid="list-state-filter"]')).toBeNull();
+    });
+
     it('раздел, открытый без выборки, читает свой список свежими сверху', async () => {
         harness = await RouterTestingHarness.create('/summaries');
 

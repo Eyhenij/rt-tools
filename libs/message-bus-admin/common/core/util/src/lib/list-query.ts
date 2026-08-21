@@ -1,5 +1,5 @@
 /**
- * Выборка списка: страница, размер, порядок и отбор по дереву — и её жизнь в адресе раздела.
+ * Выборка списка: страница, размер, порядок и отборы — и её жизнь в адресе раздела.
  *
  * Живёт в адресе, а не в состоянии экрана: перезагрузка на второй странице отобранного списка
  * иначе возвращает на первую, а ссылка на увиденное не передаётся никому.
@@ -11,9 +11,9 @@
  * Умолчания живут здесь, а не у каждого раздела: разошедшись, они дали бы разным спискам разный
  * первый экран при одном и том же пустом адресе.
  */
-import { PAGE_SIZE_DEFAULT, TPageDirection } from '@rt/message-bus-common';
+import { ECargoState, PAGE_SIZE_DEFAULT, TPageDirection } from '@rt/message-bus-common';
 
-/** Выборка, как её читает экран. Пустой отбор — груз всех деревьев. */
+/** Выборка, как её читает экран. Пустой отбор — груз всех деревьев во всех состояниях. */
 export interface IAdminListQuery {
     readonly page: number;
     readonly size: number;
@@ -22,15 +22,23 @@ export interface IAdminListQuery {
     readonly dir: TPageDirection;
     /** Признак дерева. Пусто — не сужено. */
     readonly tree: string;
+    /**
+     * Состояние записи, которым сужен список. Пусто — все состояния.
+     *
+     * Держится строкой, а не значением набора: разделу сводок состояние не приезжает вовсе, а в
+     * адрес и в запрос выборка уходит строками — переводить её туда и обратно было бы незачем.
+     */
+    readonly state: string;
 }
 
 /** Имена параметров адреса. Названы здесь, чтобы разбор и сборка не расходились строками. */
-export const LIST_QUERY_PARAMS: Readonly<Record<'page' | 'size' | 'sort' | 'dir' | 'tree', string>> = Object.freeze({
+export const LIST_QUERY_PARAMS: Readonly<Record<'page' | 'size' | 'sort' | 'dir' | 'tree' | 'state', string>> = Object.freeze({
     page: 'page',
     size: 'size',
     sort: 'sort',
     dir: 'dir',
     tree: 'tree',
+    state: 'state',
 });
 
 /** Порядок по умолчанию: свежие сверху. Поле называет сам раздел — оно у всех своё. */
@@ -75,6 +83,19 @@ function plain(raw: unknown): string {
 }
 
 /**
+ * Состояние из адреса. Слово вне набора читается как несказанное — список не сужен.
+ *
+ * Отбить его отказом здесь нельзя: адрес правит человек руками, и опечатка в нём оставила бы
+ * пустой экран вместо списка. Приёмнику такое слово не посылается вовсе — его отбивает уже он,
+ * а сюда оно не доходит.
+ */
+function state(raw: unknown): string {
+    const asked: string = plain(raw);
+
+    return Object.values(ECargoState).some((known: ECargoState): boolean => known === asked) ? asked : '';
+}
+
+/**
  * Выборка из параметров адреса.
  *
  * @param params Параметры адреса, как их отдаёт роутер.
@@ -91,6 +112,7 @@ export function listQueryOf(params: Readonly<Record<string, unknown>>, sortable:
         sort: sortable.includes(asked) ? asked : (sortable[0] ?? ''),
         dir: direction(params[LIST_QUERY_PARAMS.dir]) ?? DEFAULT_DIRECTION,
         tree: plain(params[LIST_QUERY_PARAMS.tree]),
+        state: state(params[LIST_QUERY_PARAMS.state]),
     };
 }
 
@@ -108,6 +130,7 @@ export function listQueryParams(query: IAdminListQuery, sortable: readonly strin
         [LIST_QUERY_PARAMS.sort]: query.sort === (sortable[0] ?? '') ? null : query.sort,
         [LIST_QUERY_PARAMS.dir]: query.dir === DEFAULT_DIRECTION ? null : query.dir,
         [LIST_QUERY_PARAMS.tree]: query.tree === '' ? null : query.tree,
+        [LIST_QUERY_PARAMS.state]: query.state === '' ? null : query.state,
     };
 }
 
@@ -116,5 +139,5 @@ export function sameListQuery(one: IAdminListQuery, other: IAdminListQuery): boo
     const samePlace: boolean = one.page === other.page && one.size === other.size;
     const sameOrder: boolean = one.sort === other.sort && one.dir === other.dir;
 
-    return samePlace && sameOrder && one.tree === other.tree;
+    return samePlace && sameOrder && one.tree === other.tree && one.state === other.state;
 }

@@ -41,7 +41,3 @@
 | Гард утверждения пропускает работу при любой поломке.                                                      | `projects/agent-kit/assets/hooks/claim-guard.sh:transcript`            |
 | Роль, выключенная деревом, гарда при ней не держит.                                                        | `projects/agent-kit/assets/hooks/roles.sh:rt_role_off`                 |
 | Настройка, которую не прочитать, роль не выключает.                                                        | `projects/agent-kit/assets/hooks/roles.sh:rt_role_off`                 |
-| Передача захода пишется перед сжатием контекста, а не рукой исполнителя.                                   | `projects/agent-kit/assets/hooks/handoff-write.sh:target`              |
-| Хук передачи ничего от себя не добавляет.                                                                  | `projects/agent-kit/assets/hooks/handoff-write.sh:line_of`             |
-| Написанное хуком — нижняя граница передачи.                                                                | `projects/agent-kit/assets/hooks/handoff-write.sh:handoff_dir`         |
-| Хук передачи сжатие не отбивает.                                                                           | `projects/agent-kit/assets/hooks/handoff-write.sh:trigger`             |

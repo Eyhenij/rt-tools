@@ -40,6 +40,8 @@ export const ADMIN_LABELS = {
 
     filterTree: 'Проект',
     filterTreeAll: 'Все проекты',
+    filterState: 'Состояние',
+    filterStateAll: 'Все состояния',
 
     columnTree: 'Проект',
     columnFile: 'Файл',
@@ -91,7 +93,7 @@ export const ADMIN_LABELS = {
     listEmpty: 'Записей нет',
     listEmptyFrom: 'Ни один проект их пока не присылал',
     listEmptyByFilter: 'По этому отбору записей нет',
-    listEmptyByFilterFrom: 'Снимите отбор по проекту или выберите другой',
+    listEmptyByFilterFrom: 'Снимите отбор над списком или выберите в нём другое значение',
     listFailed: 'Прочитать не удалось',
     listSessionEnded: 'Вход кончился: представьтесь заново',
     listColumns: 'Настроить столбцы',

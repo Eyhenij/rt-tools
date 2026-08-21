@@ -17,6 +17,7 @@ import {
     cargoStateWrites,
     ECargoState,
     ECargoStateMove,
+    ICargoPageAsked,
     ICargoStateAsk,
     ICargoStateOutcome,
     IPage,
@@ -60,20 +61,35 @@ export interface IProposalFullRow extends IProposalListRow {
     readonly releaseVersion: string | null;
 }
 
+/** Чем сужен список: обе части необязательны и обе складываются в одно условие. */
+interface IProposalWhere {
+    readonly record?: { readonly tree: { readonly slug: string } };
+    readonly state?: ECargoState;
+}
+
 /** Первая ступень порядка. Вторая — всегда идентификатор записи, и её ставит сам запрос. */
 type TProposalOrder =
     | { readonly arrivedAt: TPageDirection }
     | { readonly resource: TPageDirection }
     | { readonly address: TPageDirection }
+    | { readonly state: TPageDirection }
     | { readonly record: { readonly tree: { readonly name: TPageDirection } } };
 
-/** Порядок по названному полю. Дерево упорядочивается именем: признак человеку ни о чём не говорит. */
+/**
+ * Порядок по названному полю.
+ *
+ * Дерево упорядочивается именем: признак человеку ни о чём не говорит. Состояние — значением
+ * колонки набора, и хранилище упорядочивает набор по объявлению: слова объявлены шагами разбора,
+ * поэтому порядок выходит очередью работы, а не алфавитом.
+ */
 function orderOf(asked: IPageAsked): TProposalOrder {
     switch (asked.sort) {
         case 'resource':
             return { resource: asked.dir };
         case 'address':
             return { address: asked.dir };
+        case 'state':
+            return { state: asked.dir };
         case 'tree':
             return { record: { tree: { name: asked.dir } } };
         default:
@@ -81,9 +97,17 @@ function orderOf(asked: IPageAsked): TProposalOrder {
     }
 }
 
-/** Отбор по дереву идёт через запись месяца: своей связи с деревом у предложения нет. */
-function whereOf(asked: IPageAsked): { record?: { tree: { slug: string } } } {
-    return asked.tree ? { record: { tree: { slug: asked.tree } } } : {};
+/**
+ * Отбор списка: дерево и состояние складываются, а не заменяют друг друга.
+ *
+ * Отбор по дереву идёт через запись месяца: своей связи с деревом у предложения нет. Состояние
+ * лежит колонкой самого предложения, поэтому условия стоят на разных уровнях одного запроса.
+ */
+function whereOf(asked: ICargoPageAsked): IProposalWhere {
+    return {
+        ...(asked.tree ? { record: { tree: { slug: asked.tree } } } : {}),
+        ...(asked.state ? { state: asked.state } : {}),
+    };
 }
 
 /**
@@ -121,8 +145,8 @@ function listRowOf(row: {
  * второго ключа одна и та же запись видна на двух страницах подряд, а соседняя не видна ни на
  * одной.
  */
-export async function readProposals(prisma: PrismaService, asked: IPageAsked): Promise<IPage<IProposalListRow>> {
-    const where: { record?: { tree: { slug: string } } } = whereOf(asked);
+export async function readProposals(prisma: PrismaService, asked: ICargoPageAsked): Promise<IPage<IProposalListRow>> {
+    const where: IProposalWhere = whereOf(asked);
     const total: number = await prisma.proposal.count({ where });
     const rows: {
         id: string;

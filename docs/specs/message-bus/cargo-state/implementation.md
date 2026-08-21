@@ -30,7 +30,7 @@
 | Текст починки приезжает полем строки правки состояния, а не своей операцией.                                | `libs/message-bus-api/cargo-state/util/src/lib/cargo-state-body.ts:ICargoStateLine`               |
 | Переход в «починено и не выпущено» без текста починки отбивается построчно.                                 | `libs/message-bus-common/src/lib/cargo-fix-note.ts:cargoFixNoteFault`                             |
 | Текст починки принимается только со строкой, переводящей в «починено и не выпущено».                        | `libs/message-bus-common/src/lib/cargo-fix-note.ts:cargoFixNoteFault`                             |
-| Строка с текстом ложится и тогда, когда состояние ею не меняется.                                           | `libs/message-bus-common/src/lib/cargo-state-move.ts:cargoStateWrites`                              |
+| Строка с текстом ложится и тогда, когда состояние ею не меняется.                                           | `libs/message-bus-common/src/lib/cargo-state-move.ts:cargoStateWrites`                            |
 | Пустой текст текстом не считается.                                                                          | `libs/message-bus-api/cargo-state/util/src/lib/cargo-state-body.ts:cargoStateBody`                |
 | Приём починки заводится обоим родам записей груза.                                                          | `prisma/schema.prisma:Postmortem`                                                                 |
 | Отбитая строка не пишет ни состояния, ни текста.                                                            | `libs/message-bus-api/cargo-state/feature/src/lib/cargo-state.controller.ts:CargoStateController` |
