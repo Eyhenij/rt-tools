@@ -45,7 +45,8 @@ describe('readThresholds', () => {
                     RT_WINDOW_TOKENS: '1000000',
                     RT_WINDOW_WARN_PCT: '40',
                     RT_WINDOW_STOP_PCT: '50',
-                    CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: '50',
+                    RT_WINDOW_MARGIN_PCT: '5',
+                    CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: '45',
                 },
             })
         );
@@ -54,8 +55,9 @@ describe('readThresholds', () => {
             window: 1000000,
             warnPct: 40,
             stopPct: 50,
+            marginPct: 5,
             compactWindow: 1000000,
-            compactPct: 50,
+            compactPct: 45,
         });
     });
 
@@ -64,6 +66,7 @@ describe('readThresholds', () => {
 
         expect(thresholds?.warnPct).toBe(40);
         expect(thresholds?.stopPct).toBe(50);
+        expect(thresholds?.marginPct).toBe(5);
         expect(thresholds?.compactWindow).toBeNull();
         expect(thresholds?.compactPct).toBeNull();
     });
@@ -101,20 +104,58 @@ describe('thresholdDrift', () => {
         );
 
         expect(thresholdDrift(thresholds as IThresholds)).toEqual([
-            { what: 'размер окна', guard: '1000000', compact: '500000' },
-            { what: 'доля окна', guard: '50%', compact: '92%' },
+            { what: 'размер окна', guard: '1000000', compact: '500000', why: expect.stringContaining('не от того же окна') },
+            { what: 'доля окна', guard: '50%', compact: '92%', why: expect.stringContaining('выше остановки') },
         ]);
     });
 
-    it('сведённые пары расхождения не дают', (): void => {
+    it('SC-AK-469 — порог сжатия ниже порога остановки на запас и более расхождения не даёт', (): void => {
         const thresholds: IThresholds | null = readThresholds(
-            treeOf({ autoCompactWindow: 1000000, env: { RT_WINDOW_TOKENS: '1000000', CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: '50' } })
+            treeOf({ autoCompactWindow: 1000000, env: { RT_WINDOW_TOKENS: '1000000', CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: '45' } })
         );
 
         expect(thresholdDrift(thresholds as IThresholds)).toEqual([]);
     });
 
-    it('незаданный порог сжатия расхождением не считается: его назначает инструмент', (): void => {
+    it('SC-AK-470 — совпавшие пороги отбиваются: их гонку выигрывает страж', (): void => {
+        const thresholds: IThresholds | null = readThresholds(
+            treeOf({ autoCompactWindow: 1000000, env: { RT_WINDOW_TOKENS: '1000000', CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: '50' } })
+        );
+
+        expect(thresholdDrift(thresholds as IThresholds)).toEqual([
+            { what: 'доля окна', guard: '50%', compact: '50%', why: expect.stringContaining('пороги совпали') },
+        ]);
+    });
+
+    it('SC-AK-471 — порог сжатия выше порога остановки отбивается', (): void => {
+        const thresholds: IThresholds | null = readThresholds(
+            treeOf({ autoCompactWindow: 1000000, env: { RT_WINDOW_TOKENS: '1000000', CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: '60' } })
+        );
+
+        expect(thresholdDrift(thresholds as IThresholds)).toEqual([
+            { what: 'доля окна', guard: '50%', compact: '60%', why: expect.stringContaining('выше остановки') },
+        ]);
+    });
+
+    it('SC-AK-472 — запаса меньше объявленного не хватает, и отказ называет оба числа', (): void => {
+        const thresholds: IThresholds | null = readThresholds(
+            treeOf({
+                autoCompactWindow: 1000000,
+                env: { RT_WINDOW_TOKENS: '1000000', RT_WINDOW_MARGIN_PCT: '5', CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: '49' },
+            })
+        );
+
+        expect(thresholdDrift(thresholds as IThresholds)).toEqual([
+            {
+                what: 'запас между порогами',
+                guard: '5% объявлено',
+                compact: '1% на деле',
+                why: expect.stringContaining('не мгновенно'),
+            },
+        ]);
+    });
+
+    it('SC-AK-473 — незаданный порог сжатия расхождением не считается: его назначает инструмент', (): void => {
         const thresholds: IThresholds | null = readThresholds(treeOf({ env: { RT_WINDOW_TOKENS: '1000000' } }));
 
         expect(thresholdDrift(thresholds as IThresholds)).toEqual([]);
@@ -127,15 +168,15 @@ describe('thresholdLines', () => {
 
         expect(lines[0]).toContain('окно захода: 1000000 токенов');
         expect(lines.join('\n')).toContain('порог сжатия деревом не задан');
-        expect(lines.join('\n')).toContain('числом 50');
+        expect(lines.join('\n')).toContain('числом 45');
     });
 
-    it('сведённые пороги разбор называет одной строкой без расхождений', (): void => {
+    it('разведённые пороги разбор называет одной строкой без расхождений', (): void => {
         const lines: string[] = thresholdLines(
-            treeOf({ autoCompactWindow: 1000000, env: { RT_WINDOW_TOKENS: '1000000', CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: '50' } })
+            treeOf({ autoCompactWindow: 1000000, env: { RT_WINDOW_TOKENS: '1000000', CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: '45' } })
         );
 
-        expect(lines.join('\n')).toContain('порог сжатия сведён с порогом остановки');
+        expect(lines.join('\n')).toContain('порог сжатия ниже порога остановки на 5% и более');
         expect(lines.join('\n')).not.toContain('разошёлся');
     });
 
@@ -146,9 +187,10 @@ describe('thresholdLines', () => {
 
         expect(lines.join('\n')).toContain('порог сжатия разошёлся с порогом остановки');
         expect(lines.join('\n')).toContain('у стража 50%, у сжатия 92%');
+        expect(lines.join('\n')).toContain('выше остановки');
     });
 
-    it('дерево без размера окна раздела не получает вовсе', (): void => {
+    it('SC-AK-474 — дерево без размера окна раздела не получает вовсе', (): void => {
         expect(thresholdLines(treeOf({ env: {} }))).toEqual([]);
     });
 });

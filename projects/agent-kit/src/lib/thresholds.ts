@@ -11,6 +11,19 @@
  * выглядят настроенными, а расхождение видно только тому, кто положит их рядом. Здесь их и
  * кладут рядом — разбор состояния раскладки печатает числа и называет разошедшееся.
  *
+ * Сведёнными считаются РАЗВЕДЁННЫЕ доли, а не совпавшие. Порог сжатия обязан стоять ниже порога
+ * остановки: первым обязано срабатывать то, что заход продолжает, а не то, что его
+ * останавливает. Совпавшая пара — гонка, и выигрывает её страж: он стоит на вызове инструмента,
+ * а сжатие приходит между ходами. Ровно так заход и вставал на пороге вместо того, чтобы
+ * продолжиться сжатым, — при том что прежняя сверка обе стороны считала настроенными и молчала.
+ *
+ * Насколько ниже — своё число дерева, `RT_WINDOW_MARGIN_PCT`. Запас объявляется, а не выводится
+ * разницей: сжатие идёт не мгновенно, и разница в один процент требование «ниже» удовлетворяет,
+ * а работу не спасает.
+ *
+ * Размер окна при этом сверяется по-прежнему на равенство: это одно и то же окно, названное в
+ * двух местах, и разные числа там означают, что одна из сторон считает долю не от того.
+ *
  * Дерево, не объявившее размера окна, стража не получает вовсе, и судить у него нечего: раздел
  * молчит целиком, а не краснеет отсутствием.
  */
@@ -24,6 +37,9 @@ const WARN_PCT_DEFAULT: number = 40;
 /** Доля окна, на которой страж отбивает всё, кроме закрытия захода. Умолчание профиля. */
 const STOP_PCT_DEFAULT: number = 50;
 
+/** На сколько долей окна порог сжатия обязан стоять ниже порога остановки. Умолчание профиля. */
+const MARGIN_PCT_DEFAULT: number = 5;
+
 /** Пороги, объявленные деревом. Размер окна не объявлен — стража нет, и судить нечего. */
 export interface IThresholds {
     /** Размер окна захода в токенах: `RT_WINDOW_TOKENS`. */
@@ -32,13 +48,15 @@ export interface IThresholds {
     readonly warnPct: number;
     /** Доля окна, на которой страж отбивает работу: `RT_WINDOW_STOP_PCT`. */
     readonly stopPct: number;
+    /** Запас между порогом сжатия и порогом остановки: `RT_WINDOW_MARGIN_PCT`. */
+    readonly marginPct: number;
     /** Размер окна автосжатия: настройка `autoCompactWindow`. Не объявлен — `null`. */
     readonly compactWindow: number | null;
     /** Доля, на которой приходит сжатие: `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE`. Не объявлена — `null`. */
     readonly compactPct: number | null;
 }
 
-/** Расхождение пары: что с чем разъехалось и какими числами. */
+/** Расхождение пары: что с чем разъехалось, какими числами и чем это кончится для захода. */
 export interface IThresholdDrift {
     /** Что разошлось, словами читателя. */
     readonly what: string;
@@ -46,6 +64,8 @@ export interface IThresholdDrift {
     readonly guard: string;
     /** Что объявлено сжатию. */
     readonly compact: string;
+    /** Чем это кончится для захода. Пусто у расхождения, которое говорит само за себя. */
+    readonly why: string;
 }
 
 /**
@@ -88,6 +108,7 @@ export function readThresholds(root: string): IThresholds | null {
         window: windowTokens,
         warnPct: numberOf(env['RT_WINDOW_WARN_PCT']) ?? WARN_PCT_DEFAULT,
         stopPct: numberOf(env['RT_WINDOW_STOP_PCT']) ?? STOP_PCT_DEFAULT,
+        marginPct: numberOf(env['RT_WINDOW_MARGIN_PCT']) ?? MARGIN_PCT_DEFAULT,
         compactWindow: numberOf(settings['autoCompactWindow']),
         compactPct: numberOf(env['CLAUDE_AUTOCOMPACT_PCT_OVERRIDE']),
     };
@@ -98,6 +119,11 @@ export function readThresholds(root: string): IThresholds | null {
  *
  * Незаданное расхождением не считается: дерево вправе не задавать порога сжатия вовсе — тогда
  * его назначает инструмент, и сказать об этом надо один раз, а не двумя строками о разнице.
+ *
+ * Долю судит расстояние, а не равенство. Три случая дают расхождение, и у каждого свой исход
+ * для захода: сжатие выше остановки — страж отбивает раньше, чем клиент успевает начать;
+ * сжатие вровень с остановкой — гонка, которую страж выигрывает; сжатие ниже, но ближе
+ * объявленного запаса — клиент начать успевает, а докончить нет.
  */
 export function thresholdDrift(thresholds: IThresholds): readonly IThresholdDrift[] {
     const drift: IThresholdDrift[] = [];
@@ -107,14 +133,36 @@ export function thresholdDrift(thresholds: IThresholds): readonly IThresholdDrif
             what: 'размер окна',
             guard: String(thresholds.window),
             compact: String(thresholds.compactWindow),
+            why: 'доля считается не от того же окна',
         });
     }
 
-    if (thresholds.compactPct !== null && thresholds.compactPct !== thresholds.stopPct) {
+    const compactPct: number | null = thresholds.compactPct;
+    if (compactPct === null) {
+        return drift;
+    }
+
+    const gap: number = thresholds.stopPct - compactPct;
+    const tooHigh: string = 'сжатие стоит выше остановки: страж отбивает заход раньше, чем приходит сжатие';
+    const tied: string = 'пороги совпали: кто сработает первым, не назначено, и выигрывает страж';
+
+    if (gap <= 0) {
         drift.push({
             what: 'доля окна',
             guard: `${thresholds.stopPct}%`,
-            compact: `${thresholds.compactPct}%`,
+            compact: `${compactPct}%`,
+            why: gap < 0 ? tooHigh : tied,
+        });
+
+        return drift;
+    }
+
+    if (gap < thresholds.marginPct) {
+        drift.push({
+            what: 'запас между порогами',
+            guard: `${thresholds.marginPct}% объявлено`,
+            compact: `${gap}% на деле`,
+            why: 'сжатие идёт не мгновенно и может не успеть до порога остановки',
         });
     }
 
@@ -135,7 +183,7 @@ export function thresholdLines(root: string): string[] {
     if (thresholds.compactWindow === null && thresholds.compactPct === null) {
         lines.push(
             '  порог сжатия деревом не задан — его назначает инструмент, и передача пишется когда придётся',
-            `  объяви в \`${SETTINGS_PATH}\`: \`autoCompactWindow\` числом ${thresholds.window}, а \`CLAUDE_AUTOCOMPACT_PCT_OVERRIDE\` — числом ${thresholds.stopPct}`
+            `  объяви в \`${SETTINGS_PATH}\`: \`autoCompactWindow\` числом ${thresholds.window}, а \`CLAUDE_AUTOCOMPACT_PCT_OVERRIDE\` — числом ${thresholds.stopPct - thresholds.marginPct}`
         );
 
         return lines;
@@ -143,14 +191,16 @@ export function thresholdLines(root: string): string[] {
 
     const drift: readonly IThresholdDrift[] = thresholdDrift(thresholds);
     if (!drift.length) {
-        lines.push('  порог сжатия сведён с порогом остановки: сжатие приходит первым, страж остаётся страховкой');
+        lines.push(
+            `  порог сжатия ниже порога остановки на ${thresholds.marginPct}% и более: сжатие приходит первым, страж остаётся страховкой`
+        );
 
         return lines;
     }
 
     lines.push('  порог сжатия разошёлся с порогом остановки:');
     for (const one of drift) {
-        lines.push(`    ${one.what}: у стража ${one.guard}, у сжатия ${one.compact}`);
+        lines.push(`    ${one.what}: у стража ${one.guard}, у сжатия ${one.compact}`, `      ${one.why}`);
     }
 
     return lines;
