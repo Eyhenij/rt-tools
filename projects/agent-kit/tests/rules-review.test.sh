@@ -24,8 +24,9 @@ sections_for() {
         laws) printf '## Статьи\n' ;;
         rules)
             printf '## Как это называется здесь\n## Где это лежит\n## Ход\n'
-            printf '## Как закон применяется здесь\n## Чего из закона здесь нет\n## Паттерны\n## Ловушки\n'
+            printf '## Как закон применяется здесь\n## Чего из закона здесь нет\n## Паттерны\n'
             ;;
+        pitfalls) printf '## Ловушки\n' ;;
         patterns) printf '## Когда брать\n' ;;
         skills) printf '## Когда брать\n' ;;
     esac
@@ -35,7 +36,7 @@ sections_for() {
 # шаблоны, образцы и документы. Требований к их разделам не формулировал никто, и проверка о них
 # молчит — красная проверка на несформулированном гасится списком исключений, а список исключений
 # через месяц становится рабочим путём.
-KINDS_WITH_SECTIONS='laws rules patterns skills'
+KINDS_WITH_SECTIONS='laws rules pitfalls patterns skills'
 KINDS_WITHOUT_SECTIONS='hooks defaults checks agents commands workflows templates samples docs'
 
 # Ресурсы рода, у которых нет объявленного раздела. Доводы: корень набора и род. Печатает строки
@@ -106,15 +107,16 @@ for kind in $KINDS_WITHOUT_SECTIONS; do
     [ -n "$(sections_for "$kind")" ] && noisy=$((noisy + 1))
 done
 report "SC-AK-227 — роды без набора разделов молчат" "$noisy" 0
-report "SC-AK-227 — родов с набором четыре из тринадцати" \
-    "$(printf '%s %s' "$KINDS_WITH_SECTIONS" "$KINDS_WITHOUT_SECTIONS" | wc -w | tr -d ' ')" 13
+report "SC-AK-227 — родов с набором пять из четырнадцати" \
+    "$(printf '%s %s' "$KINDS_WITH_SECTIONS" "$KINDS_WITHOUT_SECTIONS" | wc -w | tr -d ' ')" 14
 
 # --- SC-AK-213 — невыбранный вид судится наравне с выбранным ------------------------------------
 #
 # Дерево раскладывает одну редакцию правила о поставке, остальные не читает никто. Проверка
 # обходит файлы, а не выбранные ресурсы: три редакции расходились бы между собой молча.
 walked="$(for kind in $KINDS_WITH_SECTIONS; do ls "$ASSETS/$kind"/*.md 2>/dev/null; done | wc -l | tr -d ' ')"
-on_disk="$(find "$ASSETS/laws" "$ASSETS/rules" "$ASSETS/patterns" "$ASSETS/skills" -maxdepth 1 -name '*.md' | wc -l | tr -d ' ')"
+on_disk="$(find "$ASSETS/laws" "$ASSETS/rules" "$ASSETS/pitfalls" "$ASSETS/patterns" "$ASSETS/skills" \
+    -maxdepth 1 -name '*.md' | wc -l | tr -d ' ')"
 report "SC-AK-213 — обойдены все файлы, включая невыбранные виды" "$walked" "$on_disk"
 
 variants="$(ls "$ASSETS"/rules/git-workflow.*.md 2>/dev/null | wc -l | tr -d ' ')"
@@ -186,22 +188,27 @@ fi
 # Набор, зелёный на своём же корпусе, проверяет собственное послушание: он зелен и тогда, когда
 # ищет не там. Поэтому раздел снимается в копии, и проверка обязана его недосчитаться.
 probe="$(mktemp -d)"
-mkdir -p "$probe/rules" "$probe/patterns"
+mkdir -p "$probe/rules" "$probe/pitfalls" "$probe/patterns"
 cp "$ASSETS/rules/doc-style.md" "$probe/rules/doc-style.md"
+cp "$ASSETS/pitfalls/doc-style.md" "$probe/pitfalls/doc-style.md"
 cp "$ASSETS/patterns/doc-style-write.md" "$probe/patterns/doc-style-write.md"
 
-grep -vxF '## Ловушки' "$ASSETS/rules/doc-style.md" > "$probe/rules/doc-style.md"
-report "SC-AK-217 — снятый раздел правила найден" \
-    "$(missing_sections "$probe" rules | grep -c 'Ловушки')" 1
+grep -vxF '## Ловушки' "$ASSETS/pitfalls/doc-style.md" > "$probe/pitfalls/doc-style.md"
+report "SC-AK-217 — снятый раздел холодной части найден" \
+    "$(missing_sections "$probe" pitfalls | grep -c 'Ловушки')" 1
+
+# Обратная сторона того же: правило, отдавшее раздел холодной части, полноту не роняет.
+report "SC-AK-519 — «Ловушки» у правила не спрашиваются" \
+    "$(missing_sections "$probe" rules | grep -c 'Ловушки')" 0
 
 grep -vxF '## Частые промахи' "$ASSETS/patterns/doc-style-write.md" > "$probe/patterns/doc-style-write.md"
 report "SC-AK-217 — снятый раздел о промахах найден" \
     "$(missing_pitfalls "$probe" | grep -c 'промахах')" 1
 
-cp "$ASSETS/rules/doc-style.md" "$probe/rules/doc-style.md"
+cp "$ASSETS/pitfalls/doc-style.md" "$probe/pitfalls/doc-style.md"
 cp "$ASSETS/patterns/doc-style-write.md" "$probe/patterns/doc-style-write.md"
 report "SC-AK-218 — возвращённый раздел расхождением не считается" \
-    "$(missing_sections "$probe" rules | grep -c 'Ловушки')" 0
+    "$(missing_sections "$probe" pitfalls | grep -c 'Ловушки')" 0
 
 # Правило без паттерна: в копии лежит правило, на которое не ссылается ни один паттерн.
 cp "$ASSETS/rules/task-flow.md" "$probe/rules/task-flow.md"
