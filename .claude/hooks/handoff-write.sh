@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.11.0 · hooks/handoff-write.sh · 24211a7e555d · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/handoff-write.sh · 9cfd7230550e · правится надстройкой, не здесь
 # rt-hook: PreCompact .*
 # Требует: hooks/profile-check.sh
 # Передача захода пишется перед сжатием контекста, а не рукой исполнителя.
@@ -39,8 +39,16 @@ workdir="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)"
 cd "$workdir" 2>/dev/null || exit 0
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 
+# Пустое имя ветки хук не останавливает. На отсоединённой голове имени нет, а всё, что едет в
+# передачу, лежит в дереве и доступно целиком: имя нужно только файлу. Прежний выход нулём был
+# полным молчанием — сжатие приходило без передачи, и заход после него начинал с пустого места.
 branch="$(git branch --show-current 2>/dev/null)"
-[ -z "$branch" ] && exit 0
+head_name=""
+if [ -z "$branch" ]; then
+    head_name="$(git rev-parse --short HEAD 2>/dev/null)"
+    [ -z "$head_name" ] && head_name='detached'
+    head_name="detached-$head_name"
+fi
 
 root="$(git rev-parse --show-toplevel 2>/dev/null)"
 [ -z "$root" ] && exit 0
@@ -57,7 +65,12 @@ mkdir -p "$root/$handoff_dir" 2>/dev/null || exit 0
 trigger="$(printf '%s' "$input" | jq -r '.trigger // "auto"' 2>/dev/null)"
 [ -z "$trigger" ] && trigger='auto'
 
-progress="$root/$tasks_dir/$branch/progress.md"
+# Файл передачи ищут по имени ветки; голове без имени он называется её коротким снимком.
+handoff_name="$branch"
+[ -z "$handoff_name" ] && handoff_name="$head_name"
+
+progress=""
+[ -n "$branch" ] && progress="$root/$tasks_dir/$branch/progress.md"
 
 # Строка раздела «Где стоим» по её названию. Пусто — работа идёт вне папки задачи, и выдумывать
 # за неё состояние нельзя: в передаче тогда стоит то, что известно дереву.
@@ -77,12 +90,16 @@ uncommitted="$(git status --short 2>/dev/null | head -20)"
 ahead="$(git log --oneline origin/main..HEAD 2>/dev/null | head -20)"
 [ -z "$ahead" ] && ahead='нет коммитов сверх главной'
 
-target="$root/$handoff_dir/$branch.md"
+target="$root/$handoff_dir/$handoff_name.md"
 
 {
     printf '# Передача захода — сжатие контекста (%s)\n\n' "$trigger"
     printf '**Рабочее дерево:** %s\n' "$root"
-    printf '**Ветка:** %s\n\n' "$branch"
+    if [ -n "$branch" ]; then
+        printf '**Ветка:** %s\n\n' "$branch"
+    else
+        printf '**Ветка:** имени нет — отсоединённая голова %s\n\n' "$head_name"
+    fi
 
     if [ -n "$state" ]; then
         printf '## Где стоим\n\n'
@@ -91,6 +108,8 @@ target="$root/$handoff_dir/$branch.md"
         [ -n "$next_step" ] && printf -- '- **Следующий шаг:** %s\n' "$next_step"
         [ -n "$pull" ] && printf -- '- **PR:** %s\n' "$pull"
         printf '\nХод работы целиком — `%s/%s/progress.md`; замысел рядом с ним.\n\n' "$tasks_dir" "$branch"
+    elif [ -z "$branch" ]; then
+        printf '## Где стоим\n\nИмени у головы нет, папки задачи при ней тоже: состояние работы взять неоткуда. Читающая сторона ищет передачу по имени ветки, а не найдя его — по последней записи каталога.\n\n'
     else
         printf '## Где стоим\n\nПапки задачи у этой ветки нет: состояние работы взять неоткуда.\n\n'
     fi

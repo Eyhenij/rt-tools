@@ -51,6 +51,34 @@ mv "$TASK/progress.md" "$TASK/progress.off"
 has_line 'работа вне папки задачи передачу тоже получает' "$(compact_in auto)" 'Папки задачи у этой ветки нет'
 mv "$TASK/progress.off" "$TASK/progress.md"
 
+# Отсоединённая голова: имени у ветки нет, а всё остальное дерево знает целиком. Прежде хук
+# выходил здесь нулём, и сжатие приходило без передачи — заход после него начинал с пустого
+# места, и молчание было полным. Дерево тут своё: отсоединиться можно только там, где коммит
+# уже есть.
+DREPO="$(fixture_repo_branched main RT-1-probe)"
+git -C "$DREPO" checkout -q --detach 2>/dev/null
+short="$(git -C "$DREPO" rev-parse --short HEAD 2>/dev/null)"
+DETACHED="$DREPO/.claude/handoff/detached-$short.md"
+printf '%s' "$(jq -n --arg d "$DREPO" '{session_id:"tests",hook_event_name:"PreCompact",trigger:"auto",cwd:$d}')" \
+    | "$HOOKS/handoff-write.sh" >/dev/null 2>&1
+
+detached_line() {
+    if [ -f "$DETACHED" ] && grep -qF "$2" "$DETACHED" 2>/dev/null; then
+        report "$1" 'есть' 'есть'
+    else
+        report "$1" 'нет' 'есть'
+    fi
+}
+
+if [ -f "$DETACHED" ]; then
+    report 'на отсоединённой голове передача пишется' 'есть' 'есть'
+else
+    report 'на отсоединённой голове передача пишется' 'нет' 'есть'
+fi
+detached_line 'передача называет голову вместо имени ветки' 'отсоединённая голова'
+detached_line 'передача говорит, как её искать' 'по последней записи каталога'
+rm -rf "$DREPO"
+
 # Незакоммиченное берётся из дерева, а не из хода работы: оно там устаревает первым.
 printf 'проба\n' > "$REPO/probe.txt"
 has_line 'незакоммиченное берётся из дерева' "$(compact_in auto)" 'probe.txt'
