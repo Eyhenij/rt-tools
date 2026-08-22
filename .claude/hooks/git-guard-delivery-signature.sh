@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.10.0 · hooks/git-guard-delivery-signature.sh · 44e59db69a8c · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/git-guard-delivery-signature.sh · 44e59db69a8c · правится надстройкой, не здесь
 # Подпись машинного коммита для гарда поставки: чей это коммит, той ли почтой он подписан и что
 # делать, если нет.
 #

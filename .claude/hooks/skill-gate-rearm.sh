@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.10.0 · hooks/skill-gate-rearm.sh · aface0e7ff17 · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/skill-gate-rearm.sh · aface0e7ff17 · правится надстройкой, не здесь
 # rt-hook: SessionStart compact|clear
 # Взвод гейта заново. SessionStart(compact|clear).
 #

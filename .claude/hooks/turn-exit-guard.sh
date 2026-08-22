@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.10.0 · hooks/turn-exit-guard.sh · 657f383613cb · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/turn-exit-guard.sh · 657f383613cb · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: hooks/deny-tail.sh
 # Страж выходов хода: ход, в котором по работе не сделано ничего, не заканчивается, пока работа
