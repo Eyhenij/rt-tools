@@ -11,4 +11,4 @@
 | Дерево, не объявившее сжатия, работает как прежде.       | `projects/agent-kit/src/lib/thresholds.ts:compactPct`              |
 | Отказ называет обе стороны числами.                      | `projects/agent-kit/src/lib/thresholds.ts:thresholdLines`          |
 | Страж после порога сжатия остаётся страховкой.           | `projects/agent-kit/assets/hooks/window-fill-guard.sh:compact_pct` |
-| Заполненное окно кончает ход только там, где сжатия нет. | Не исполняется — этап 4.                                           |
+| Заполненное окно кончает ход только там, где сжатия нет. | `projects/agent-kit/assets/checks/check-turn-map.mjs:EXITS`        |
