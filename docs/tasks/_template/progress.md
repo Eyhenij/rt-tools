@@ -1,4 +1,4 @@
-<!-- rt-kit v0.10.0 · samples/tasks/_template/progress.md · fc2dd20e34b0 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.11.0 · samples/tasks/_template/progress.md · fc2dd20e34b0 · правится надстройкой, не здесь -->
 # Ход работы
 
 ## Где стоим

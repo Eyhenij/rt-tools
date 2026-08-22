@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.10.0 · hooks/browser-guard-no-other-drivers.sh · 2b187a508bd3 · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/browser-guard-no-other-drivers.sh · 827bceaf4097 · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__playwright__.*|mcp__chrome-devtools__.*|Bash
 # Требует: hooks/deny-tail.sh
 # Гард обходных путей к браузеру. PreToolUse.
@@ -13,6 +13,8 @@
 # интерактивный браузер. Отбиваются только глаголы вождения.
 #
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: помощник не назвал профиль — пропуск.
+
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 
 input="$(cat 2>/dev/null)"
 

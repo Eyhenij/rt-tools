@@ -14,6 +14,8 @@
 #
 # FAIL-OPEN when browser-device-id.sh prints nothing.
 
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+
 input="$(cat 2>/dev/null)"
 
 device_id="$("${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/browser-device-id.sh" 2>/dev/null)"

@@ -26,6 +26,7 @@ export namespace IProposal {
             readonly resource: string;
             readonly address: string;
             readonly state: string;
+            readonly releaseVersion: string | null;
             readonly arrivedAt: string;
         }
 
@@ -46,6 +47,11 @@ export namespace IProposal {
              * перевода потребовал бы разделу своего слоя вида.
              */
             readonly stateLabel: string;
+            /**
+             * В какой версии искать фикс. Пустая строка означает, что выпуска не было: ячейка
+             * столбца тогда пуста — ни прочерка, ни слова «нет» в ней не стоит.
+             */
+            readonly releaseVersion: string;
             readonly arrivedAt: Date;
         }
     }
@@ -54,6 +60,8 @@ export namespace IProposal {
     export interface Api extends Short.Api {
         readonly text: string;
         readonly month: string;
+        /** Чем недочёт исправлен. Пусто у записи, которую никто не чинил. */
+        readonly fixNote: string | null;
     }
 
     export interface State extends Short.State {
@@ -61,5 +69,10 @@ export namespace IProposal {
         readonly text: string;
         /** Месяц записи, при которой предложение приехало. В строке списка его нет. */
         readonly month: string;
+        /**
+         * Чем недочёт исправлен. Пустая строка означает, что починки не было: панель тогда не
+         * показывает ни подписи, ни пустого значения.
+         */
+        readonly fixNote: string;
     }
 }

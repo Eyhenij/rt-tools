@@ -40,6 +40,10 @@ export const ADMIN_LABELS = {
 
     filterTree: 'Проект',
     filterTreeAll: 'Все проекты',
+    filterState: 'Состояние',
+    filterStateAll: 'Все состояния',
+    filterVersionAll: 'Все версии',
+    filterVersionNone: 'Без версии',
 
     columnTree: 'Проект',
     columnFile: 'Файл',
@@ -56,6 +60,9 @@ export const ADMIN_LABELS = {
     columnExpiresAt: 'Годно до',
     columnInviteTree: 'Заведённый проект',
     columnState: 'Состояние',
+    // Один ключ на все показы версии: столбец списка, отбор над ним и строка панели. Второе
+    // объявление разошлось бы с первым молча, и человек читал бы одно и то же поле двумя словами.
+    releaseVersion: 'В какой версии',
 
     cargoStateNew: 'Новое',
     cargoStateInWork: 'В работе',
@@ -91,7 +98,7 @@ export const ADMIN_LABELS = {
     listEmpty: 'Записей нет',
     listEmptyFrom: 'Ни один проект их пока не присылал',
     listEmptyByFilter: 'По этому отбору записей нет',
-    listEmptyByFilterFrom: 'Снимите отбор по проекту или выберите другой',
+    listEmptyByFilterFrom: 'Снимите отбор над списком или выберите в нём другое значение',
     listFailed: 'Прочитать не удалось',
     listSessionEnded: 'Вход кончился: представьтесь заново',
     listColumns: 'Настроить столбцы',
@@ -105,6 +112,7 @@ export const ADMIN_LABELS = {
     detailsPostmortem: 'Разбор происшествия',
     detailsProposal: 'Предложение',
     detailsText: 'Текст',
+    detailsFixNote: 'Чем исправлено',
     detailsMonthRecord: 'Запись месяца',
     detailsSummary: 'Сводка',
     detailsSummaryMissing: 'Сводки в этом месяце ещё не было: запись завёл другой род груза',

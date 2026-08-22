@@ -25,6 +25,8 @@
 #
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: не репозиторий, битый ввод, нет профиля — пропуск.
 
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+
 input="$(cat 2>/dev/null)"
 [ -z "$input" ] && exit 0
 

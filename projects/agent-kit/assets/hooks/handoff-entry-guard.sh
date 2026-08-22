@@ -14,6 +14,8 @@
 #
 # FAIL-OPEN: нет `jq`, нет записи хода, передачи в реплике нет → пропуск.
 
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+
 input="$(cat 2>/dev/null)"
 [ -z "$input" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0

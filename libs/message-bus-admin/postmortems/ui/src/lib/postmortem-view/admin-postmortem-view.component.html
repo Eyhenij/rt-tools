@@ -10,15 +10,26 @@
             <rt-detail-row qa-dataid="postmortem-arrived" [label]="arrivedLabel" [loading]="reading()">
                 {{ entity()?.arrivedAt ?? null | adminMoment }}
             </rt-detail-row>
+            @if (entity()?.releaseVersion; as version) {
+                <rt-detail-row qa-dataid="postmortem-release-version" [label]="releaseVersionLabel" [loading]="reading()">
+                    {{ version }}
+                </rt-detail-row>
+            }
             <rt-detail-row qa-dataid="postmortem-updated" [label]="updatedLabel" [loading]="reading()">
                 {{ entity()?.updatedAt ?? null | adminMoment }}
             </rt-detail-row>
         </rt-detail-list>
     </rt-aside-section>
 
-    @if (!reading() && entity(); as record) {
+    @if (!reading() && entity()?.fixNote; as fixNote) {
+        <rt-aside-section [heading]="fixNoteLabel">
+            <pre rtElem="fix-note" qa-dataid="postmortem-fix-note">{{ fixNote }}</pre>
+        </rt-aside-section>
+    }
+
+    @if (!reading() && entity()?.text?.trim(); as text) {
         <rt-aside-section [heading]="textLabel">
-            <pre rtElem="text" qa-dataid="postmortem-text">{{ record.text }}</pre>
+            <rt-markdown-text qa-dataid="postmortem-text" [text]="text" />
         </rt-aside-section>
     }
 </ng-container>

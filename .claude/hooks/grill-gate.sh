@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.10.0 · hooks/grill-gate.sh · 1862a5d93716 · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/grill-gate.sh · b4a9a9445434 · правится надстройкой, не здесь
 # rt-hook: PreToolUse AskUserQuestion
 # Требует: hooks/deny-tail.sh
 # rt-hook: Stop
@@ -22,6 +22,8 @@
 #
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: при любой ошибке, отсутствии записи хода и повторном заходе ход
 # РАЗРЕШАЕТСЯ (exit 0). Сломанный гард не имеет права заклинить разговор.
+
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 
 input="$(cat 2>/dev/null)"
 [ -z "$input" ] && exit 0

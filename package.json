@@ -39,6 +39,8 @@
     "check:schema": "node tools/check-schema-drift.mjs",
     "check:board": "node tools/check-board.mjs",
     "check:hooks": "node tools/check-hooks.mjs",
+    "check:turn-map": "node tools/check-turn-map.mjs",
+    "check:state-next": "node tools/check-state-next.mjs",
     "task:new": "node tools/task-new.mjs",
     "task:move": "node tools/board.mjs move",
     "prod:api": "node tools/prod-api.mjs",

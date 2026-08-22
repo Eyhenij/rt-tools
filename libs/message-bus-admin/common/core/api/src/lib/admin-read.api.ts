@@ -24,7 +24,14 @@ import { catchError, Observable, throwError, timeout, TimeoutError } from 'rxjs'
  */
 export const READ_TIMEOUT_MS: number = 15_000;
 
-/** Выборка в параметры запроса. Пустой отбор не посылается вовсе: приёмник читает его как «все». */
+/**
+ * Выборка в параметры запроса.
+ *
+ * Пустой отбор не посылается вовсе: приёмник читает его как «все». Разделу, у которого состояния
+ * и версии нет, отправлять нечего — его выборка приходит сюда с пустыми отборами и остаётся без
+ * их параметров. Слово «без версии» пустотой не является: оно едет как есть, и приёмник читает
+ * его условием на пустую колонку.
+ */
 function askedParams(query: IAdminListQuery): HttpParams {
     let params: HttpParams = new HttpParams()
         .set('page', String(query.page))
@@ -34,6 +41,14 @@ function askedParams(query: IAdminListQuery): HttpParams {
 
     if (query.tree !== '') {
         params = params.set('tree', query.tree);
+    }
+
+    if (query.state !== '') {
+        params = params.set('state', query.state);
+    }
+
+    if (query.version !== '') {
+        params = params.set('version', query.version);
     }
 
     return params;

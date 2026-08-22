@@ -6,14 +6,15 @@
  * разойдясь на одно поле, они дают отказ выборки там, где заголовок кликается. Ни сборка, ни
  * линтер, ни юниты этого не видят: каждая копия сама по себе исправна.
  *
- * Порядок полей значения не имеет — набор проверяется на вхождение.
+ * Первое поле набора — порядок по умолчанию: им же заменяется поле, которого в наборе нет.
+ * Остальные стоят в любом порядке — набор проверяется на вхождение.
  */
 
 /** Разборы: по чему сортируется их список. */
-export const POSTMORTEM_SORTABLE: readonly string[] = ['arrivedAt', 'updatedAt', 'file', 'tree'];
+export const POSTMORTEM_SORTABLE: readonly string[] = ['arrivedAt', 'updatedAt', 'file', 'tree', 'state', 'releaseVersion'];
 
 /** Предложения: по чему сортируется их список. */
-export const PROPOSAL_SORTABLE: readonly string[] = ['arrivedAt', 'resource', 'address', 'tree'];
+export const PROPOSAL_SORTABLE: readonly string[] = ['arrivedAt', 'resource', 'address', 'tree', 'state', 'releaseVersion'];
 
 /** Месячные сводки: по чему сортируется их список. */
 export const MONTH_RECORD_SORTABLE: readonly string[] = ['ranAt', 'month', 'tree'];

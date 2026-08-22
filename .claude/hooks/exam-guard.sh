@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.10.0 · hooks/exam-guard.sh · 17dff658eb06 · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/exam-guard.sh · cc1cd1cafd62 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file|Bash
 # Требует: agents/strict-teacher.md, hooks/roles.sh, hooks/deny-tail.sh
 # Гард экзамена: правка не идёт, пока за сессию не сдан экзамен по загруженным правилам.
@@ -18,6 +18,8 @@
 #
 # FAIL-OPEN: нет jq, нет записи хода, чужой инструмент → пропуск. Сломанный гард не должен
 # мешать работать.
+
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 
 input="$(cat 2>/dev/null)"
 [ -z "$input" ] && exit 0

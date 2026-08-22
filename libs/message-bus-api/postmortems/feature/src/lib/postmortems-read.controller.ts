@@ -14,7 +14,7 @@ import { SessionOperation } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IPostmortemFullRow, IPostmortemListRow, readPostmortem, readPostmortems } from '@rt/message-bus-api/postmortems/data-access';
 
-import { IPage, POSTMORTEM_SORTABLE, pageAsked, pageFault } from '@rt/message-bus-common';
+import { IPage, POSTMORTEM_SORTABLE, cargoPageAsked, cargoPageFault } from '@rt/message-bus-common';
 
 @Controller('postmortems')
 export class PostmortemsReadController {
@@ -34,13 +34,13 @@ export class PostmortemsReadController {
     @Get()
     @SessionOperation()
     public async page(@Query() query: Record<string, unknown>): Promise<IPage<IPostmortemListRow>> {
-        const fault: string | null = pageFault(query, POSTMORTEM_SORTABLE);
+        const fault: string | null = cargoPageFault(query, POSTMORTEM_SORTABLE);
 
         if (fault) {
             throw new BadRequestException(fault);
         }
 
-        return readPostmortems(this.#prisma, pageAsked(query, POSTMORTEM_SORTABLE));
+        return readPostmortems(this.#prisma, cargoPageAsked(query, POSTMORTEM_SORTABLE));
     }
 
     /** Один разбор целиком. Записи, которой нет, отвечает отказ, а не пустая панель. */

@@ -1,7 +1,7 @@
 import { computed, Directive, effect, inject, Signal, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Params, Router, UrlSegment } from '@angular/router';
-import { AdminListStoreBase, TreesStore } from '@rt/message-bus-admin/common/core/data-access';
+import { AdminListStoreBase, CargoVersionsStore, TreesStore } from '@rt/message-bus-admin/common/core/data-access';
 import {
     adminLabel,
     COLUMNS_ROUTE,
@@ -14,7 +14,7 @@ import {
     sortAskedOf,
     sortModelOf,
 } from '@rt/message-bus-admin/common/core/util';
-import { ITreeChoice } from '@rt/message-bus-common';
+import { ECargoKind, ITreeChoice } from '@rt/message-bus-common';
 import { IPageModel, ISortModel } from '@rt-tools/utils';
 import { RtTableSettingsRegistry } from '@rt-tools/ui-kit-v2';
 
@@ -41,6 +41,7 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
     readonly #route: ActivatedRoute = inject(ActivatedRoute);
     readonly #router: Router = inject(Router);
     readonly #trees: TreesStore = inject(TreesStore);
+    readonly #versions: CargoVersionsStore = inject(CargoVersionsStore);
     readonly #tableSettings: RtTableSettingsRegistry = inject(RtTableSettingsRegistry);
 
     readonly #params: Signal<Params> = toSignal(this.#route.queryParams, { initialValue: this.#route.snapshot.queryParams });
@@ -50,7 +51,30 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
     protected readonly rows: Signal<readonly TRow[]> = computed(() => this.store.rows());
     protected readonly choices: Signal<readonly ITreeChoice[]> = computed(() => this.#trees.choices());
 
+    /**
+     * Версии выпуска, встретившиеся в записях этого рода груза.
+     *
+     * Разделу, который род не назвал, они не нужны вовсе: у записи месяца версии нет, и отбора
+     * по ней раздел сводок не показывает.
+     */
+    protected readonly versions: Signal<readonly string[]> = computed(() => {
+        const kind: ECargoKind | null = this.cargoKind;
+
+        return kind === null ? [] : (this.#versions.byKind()[kind] ?? []);
+    });
+
     protected readonly sortModel: Signal<ISortModel<string>> = computed(() => sortModelOf(this.query()));
+
+    /**
+     * Сужен ли список хоть чем-нибудь.
+     *
+     * Отборов у раздела бывает несколько, и пустое состояние отвечает на вопрос «сужено ли», а
+     * не «каким именно отбором»: считать их порознь значило бы объяснять пустоту по-разному в
+     * зависимости от того, какой отбор человек тронул последним.
+     */
+    protected readonly narrowed: Signal<boolean> = computed(
+        () => this.query().tree !== '' || this.query().state !== '' || this.query().version !== ''
+    );
 
     /**
      * Чем объяснить пустой список.
@@ -58,9 +82,7 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
      * Отбор, не давший ни строки, и дерево, не приславшее ни одной записи, — разные ответы, и
      * второй означает исправную службу.
      */
-    protected readonly emptyMessage: Signal<string> = computed(() =>
-        adminLabel(this.query().tree === '' ? 'listEmpty' : 'listEmptyByFilter')
-    );
+    protected readonly emptyMessage: Signal<string> = computed(() => adminLabel(this.narrowed() ? 'listEmptyByFilter' : 'listEmpty'));
 
     /**
      * Вторая строка пустого состояния: откуда записи приходят и что человеку сделать.
@@ -70,7 +92,7 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
      * через двоеточие и читались как одна длинная подпись.
      */
     protected readonly emptyDescription: Signal<string> = computed(() =>
-        adminLabel(this.query().tree === '' ? 'listEmptyFrom' : 'listEmptyByFilterFrom')
+        adminLabel(this.narrowed() ? 'listEmptyByFilterFrom' : 'listEmptyFrom')
     );
 
     /**
@@ -79,6 +101,15 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
      */
     protected readonly qaTable: Signal<string> = computed(() => `${this.qaPrefix}-table`);
     protected readonly qaRow: Signal<string> = computed(() => `${this.qaPrefix}-row`);
+
+    /**
+     * Род груза, чьи версии выпуска раздел показывает отбором. Пусто — отбора по версии у
+     * раздела нет: у записи месяца версии не бывает вовсе.
+     *
+     * Пустота здесь и умолчанием стоит: раздел, которому отбор не нужен, не называет ничего, а
+     * не называет пустоту второй раз.
+     */
+    protected readonly cargoKind: ECargoKind | null = null;
 
     /** Стор раздела: он знает адрес операции и форму строки. */
     protected abstract readonly store: AdminListStoreBase<TRow, TApi>;
@@ -122,6 +153,17 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
             const asked: IAdminListQuery = this.query();
 
             untracked((): void => this.store.read(asked));
+        });
+
+        // Род груза называет наследник, а его поля готовы только после этого конструктора:
+        // прочитанный здесь, он был бы пуст у любого раздела. Сигналов эффект не читает, поэтому
+        // отрабатывает один раз.
+        effect((): void => {
+            const kind: ECargoKind | null = this.cargoKind;
+
+            if (kind !== null) {
+                untracked((): void => this.#versions.read(kind));
+            }
         });
 
         this.#trees.read();
@@ -173,6 +215,26 @@ export abstract class AdminListScreenBase<TRow, TApi = TRow> implements IAdminLi
     /** Отбор по дереву. Страница сбрасывается: у суженного списка её может не быть. */
     protected changeTree(tree: string): void {
         this.#apply({ tree, page: 1 });
+    }
+
+    /**
+     * Отбор по состоянию записи. Страница сбрасывается тем же доводом, что и у отбора по дереву.
+     *
+     * Отбор по дереву при этом не трогается: два условия сужают список вместе, а снятый вторым
+     * первый человек заметил бы не сразу и прочитал бы чужие строки как свои.
+     */
+    protected changeState(state: string): void {
+        this.#apply({ state, page: 1 });
+    }
+
+    /**
+     * Отбор по версии выпуска. Страница сбрасывается тем же доводом, что и у двух отборов рядом.
+     *
+     * Слово «без версии» приходит сюда наравне с самой версией: приёмник отличает их сам, а
+     * второе поле означало бы, что в адресе законна пара «версия и без версии сразу».
+     */
+    protected changeVersion(version: string): void {
+        this.#apply({ version, page: 1 });
     }
 
     /**

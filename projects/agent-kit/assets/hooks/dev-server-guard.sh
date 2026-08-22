@@ -14,6 +14,8 @@
 # Где именно подняты приложения, знает профиль проекта: .claude/rt-kit/project.sh, переменная
 # RT_STANDS. Нет профиля — текст отказа остаётся общим, сам гард работает.
 
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+
 input="$(cat 2>/dev/null)"
 
 tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"

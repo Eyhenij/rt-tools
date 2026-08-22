@@ -23,6 +23,7 @@
 | Требование ресурса названо в самом ресурсе, а не выводится чтением.                     | `projects/agent-kit/src/lib/catalog.ts:requiresOf`                    |
 | Разорванная связь — предупреждение, а не отказ.                                         | `projects/agent-kit/src/lib/catalog.ts:brokenLinks`                   |
 | Разбор состояния называет невыбранное поимённо, а не числом.                            | `projects/agent-kit/src/lib/commands.ts:doctor`                       |
+| Разбор состояния печатает пороги окна захода.                                           | `projects/agent-kit/src/lib/thresholds.ts:thresholdLines`             |
 | Пакет не пишет в файлы, принадлежащие дереву.                                           | `projects/agent-kit/README.md:observations`                           |
 | Отказ от родителя снимает потомков, а лишняя строка отказа объявляется предупреждением. | `projects/agent-kit/src/lib/cascade.ts:cascadeCuts`                   |
 | Закон, не попавший в выбор, отвергнут наравне с названным в отказе.                     | `projects/agent-kit/src/lib/catalog.ts:isChosen`                      |

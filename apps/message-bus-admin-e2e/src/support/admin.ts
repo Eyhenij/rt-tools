@@ -138,6 +138,18 @@ export async function pickTree(page: Page, name: string): Promise<void> {
     await page.getByRole('option', { name, exact: true }).click();
 }
 
+/** Выбрать состояние в отборе. Пустое имя — «Все состояния», то есть снять отбор. */
+export async function pickState(page: Page, name: string): Promise<void> {
+    await qa(page, 'list-state-filter').click();
+    await page.getByRole('option', { name, exact: true }).click();
+}
+
+/** Выбрать версию выпуска в отборе. Пустое имя — «Все версии», то есть снять отбор. */
+export async function pickVersion(page: Page, name: string): Promise<void> {
+    await qa(page, 'list-version-filter').click();
+    await page.getByRole('option', { name, exact: true }).click();
+}
+
 /** Нажать заголовок сортируемого столбца: нажатие по самому `th` порядка не меняет. */
 export async function sortBy(page: Page, column: string): Promise<void> {
     await page.locator(`[qa-dataid="table-sort-header"][data-column="${column}"]`).click();

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.10.0 · hooks/rerun-guard.sh · 7522b3f9342a · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/rerun-guard.sh · 12dbbe5f3bf5 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/deny-tail.sh
 # Гард перезапуска прогона: упавшее задание не перезапускается, пока его журнал не прочитан.
@@ -20,6 +20,8 @@
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: нет `jq`, нет записи хода, номер задания в команде не назван, вызов не
 # похож на перезапуск — пропуск. Гард без номера судить не берётся: перезапуск последнего
 # упавшего прогона зовут и без него, а угадывать, о каком задании речь, значит отбивать наугад.
+
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 
 input="$(cat 2>/dev/null)"
 [ -z "$input" ] && exit 0

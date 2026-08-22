@@ -12,6 +12,8 @@ function entityOf(patch: Partial<IPostmortem.State> = {}): IPostmortem.State {
         file: '2026-08-14-incident.md',
         arrivedAt: new Date('2026-08-14T21:30:00.000Z'),
         updatedAt: new Date('2026-08-15T06:00:00.000Z'),
+        fixNote: '',
+        releaseVersion: '',
         text: '# Разбор',
         ...patch,
     };
@@ -67,18 +69,37 @@ describe('AdminPostmortemViewComponent', () => {
         expect(textOf('postmortem-updated')).toBe('—');
     });
 
-    it('текст разбора показан целиком', () => {
-        show(entityOf({ text: '# Разбор\nупало ночью' }));
+    it('текст разбора показан разметкой: заголовок — заголовком, остальное — абзацем', () => {
+        show(entityOf({ text: '# Разбор\n\nупало ночью' }));
 
-        expect(textOf('postmortem-text')).toBe('# Разбор\nупало ночью');
+        expect(
+            fixture.debugElement
+                .query(By.css('[qa-dataid="postmortem-text"] [qa-dataid="markdown-heading"]'))
+                .nativeElement.textContent.trim()
+        ).toBe('Разбор');
+        expect(
+            fixture.debugElement
+                .query(By.css('[qa-dataid="postmortem-text"] [qa-dataid="markdown-paragraph"]'))
+                .nativeElement.textContent.trim()
+        ).toBe('упало ночью');
     });
 
-    it('разметка, приехавшая с дерева, показана текстом и в разметку страницы не попадает', () => {
+    it('сырой HTML, приехавший с дерева, показан текстом и в разметку страницы не попадает', () => {
         show(entityOf({ text: '<script>alert(1)</script><b>жирным</b>' }));
 
         expect(textOf('postmortem-text')).toBe('<script>alert(1)</script><b>жирным</b>');
         expect(fixture.debugElement.query(By.css('[qa-dataid="postmortem-text"] script'))).toBeNull();
         expect(fixture.debugElement.query(By.css('[qa-dataid="postmortem-text"] b'))).toBeNull();
+    });
+
+    it('SC-MB-219 — текста из одних пробелов панель разделом не показывает', () => {
+        show(entityOf({ text: '   \n  \n' }));
+
+        // Сначала — что найдено то самое место: панель поднята и свойства записи на ней стоят,
+        // а раздела с текстом нет
+        expect(textOf('postmortem-file')).toBe('2026-08-14-incident.md');
+        expect(fixture.debugElement.query(By.css('[qa-dataid="postmortem-text"]'))).toBeNull();
+        expect(fixture.debugElement.queryAll(By.css('rt-aside-section')).length).toBe(1);
     });
 
     it('SC-MB-137, SC-MB-141 — свойства стоят в готовом списке кита, а своего списка определений в панели нет', () => {
@@ -96,5 +117,41 @@ describe('AdminPostmortemViewComponent', () => {
         expect(fixture.debugElement.queryAll(By.css('rt-aside-section')).length).toBe(2);
         expect(fixture.debugElement.query(By.css('[qa-dataid="aside-section-heading"]')).nativeElement.textContent.trim()).not.toBe('');
         expect(fixture.debugElement.query(By.css('h2'))).toBeNull();
+    });
+
+    it('SC-MB-189 — панель показывает текст починки отдельной секцией', () => {
+        show(entityOf({ fixNote: 'статьёй правила о выемке путей' }));
+
+        const note: DebugElement | null = fixture.debugElement.query(By.css('[qa-dataid="postmortem-fix-note"]'));
+
+        expect(note).not.toBeNull();
+        expect(note?.nativeElement.textContent.trim()).toBe('статьёй правила о выемке путей');
+    });
+
+    it('SC-MB-190 — у записи без текста починки секции нет вовсе', () => {
+        show(entityOf({ fixNote: '' }));
+
+        // Отрицательное утверждение идёт в паре с положительным: сперва показано, что панель
+        // отрисована, и только потом — что секции починки в ней нет
+        expect(fixture.debugElement.query(By.css('[qa-dataid="postmortem-text"]'))).not.toBeNull();
+        expect(fixture.debugElement.query(By.css('[qa-dataid="postmortem-fix-note"]'))).toBeNull();
+    });
+
+    it('SC-MB-205 — панель показывает версию выпуска строкой свойства', () => {
+        show(entityOf({ releaseVersion: 'rt-agent-kit@0.10.1' }));
+
+        const row: DebugElement | null = fixture.debugElement.query(By.css('[qa-dataid="postmortem-release-version"]'));
+
+        expect(row).not.toBeNull();
+        expect(row?.nativeElement.textContent).toContain('rt-agent-kit@0.10.1');
+    });
+
+    it('SC-MB-206 — у записи без версии выпуска строки нет вовсе', () => {
+        show(entityOf({ releaseVersion: '' }));
+
+        // Отрицательное утверждение идёт в паре с положительным: сперва показано, что панель
+        // отрисована, и только потом — что строки версии в ней нет
+        expect(fixture.debugElement.query(By.css('[qa-dataid="postmortem-text"]'))).not.toBeNull();
+        expect(fixture.debugElement.query(By.css('[qa-dataid="postmortem-release-version"]'))).toBeNull();
     });
 });

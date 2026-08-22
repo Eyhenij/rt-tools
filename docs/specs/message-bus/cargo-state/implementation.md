@@ -27,6 +27,28 @@
 | Пакет без строк отбивается по форме.                                                                        | `libs/message-bus-api/cargo-state/util/src/lib/cargo-state-body.ts:cargoStateBody`                |
 | Отбитая строка пишется в журнал приёмника наравне с отказом операции.                                       | `libs/message-bus-api/cargo-state/feature/src/lib/cargo-state.controller.ts:CargoStateController` |
 | Строка журнала несёт род записи, признак дерева и причину.                                                  | `libs/message-bus-api/cargo-state/feature/src/lib/cargo-state.controller.ts:CargoStateController` |
+| Текст починки приезжает полем строки правки состояния, а не своей операцией.                                | `libs/message-bus-api/cargo-state/util/src/lib/cargo-state-body.ts:ICargoStateLine`               |
+| Переход в «починено и не выпущено» без текста починки отбивается построчно.                                 | `libs/message-bus-common/src/lib/cargo-fix-note.ts:cargoFixNoteFault`                             |
+| Текст починки принимается только со строкой, переводящей в «починено и не выпущено».                        | `libs/message-bus-common/src/lib/cargo-fix-note.ts:cargoFixNoteFault`                             |
+| Строка с текстом ложится и тогда, когда состояние ею не меняется.                                           | `libs/message-bus-common/src/lib/cargo-state-move.ts:cargoStateWrites`                            |
+| Пустой текст текстом не считается.                                                                          | `libs/message-bus-api/cargo-state/util/src/lib/cargo-state-body.ts:cargoStateBody`                |
+| Приём починки заводится обоим родам записей груза.                                                          | `prisma/schema.prisma:Postmortem`                                                                 |
+| Отбитая строка не пишет ни состояния, ни текста.                                                            | `libs/message-bus-api/cargo-state/feature/src/lib/cargo-state.controller.ts:CargoStateController` |
+| Второй приезд текста починки затирает прежний.                                                              | `libs/message-bus-api/postmortems/data-access/src/lib/postmortem.queries.ts:movePostmortemStates` |
+| Своего предела длины у текста починки нет.                                                                  | `libs/message-bus-api/cargo-state/util/src/lib/cargo-state-body.ts:cargoStateBody`                |
+| Отбой по недостающему тексту ложится строкой журнала наравне с прежними причинами.                          | `libs/message-bus-api/cargo-state/feature/src/lib/cargo-state.controller.ts:CargoStateController` |
+| Версия выпуска приезжает полем строки правки состояния, а не своей операцией.                               | `libs/message-bus-api/cargo-state/util/src/lib/cargo-state-body.ts:ICargoStateLine`               |
+| Переход в «выпущено» без версии выпуска отбивается построчно.                                               | `libs/message-bus-common/src/lib/cargo-release-version.ts:cargoReleaseVersionFault`               |
+| Версия выпуска принимается только со строкой, переводящей в «выпущено».                                     | `libs/message-bus-common/src/lib/cargo-release-version.ts:cargoReleaseVersionFault`               |
+| Строка с версией ложится и тогда, когда состояние ею не меняется.                                           | `libs/message-bus-common/src/lib/cargo-state-move.ts:cargoStateWrites`                            |
+| Пустая версия версией не считается.                                                                         | `libs/message-bus-api/cargo-state/util/src/lib/cargo-state-body.ts:cargoStateBody`                |
+| Формы версии приёмник не разбирает.                                                                         | `libs/message-bus-api/cargo-state/util/src/lib/cargo-state-body.ts:cargoStateBody`                |
+| У версии выпуска свой предел длины, и он короткий.                                                          | `libs/message-bus-common/src/lib/cargo-release-version.ts:CARGO_RELEASE_VERSION_LIMIT`            |
+| Версия выпуска заводится обоим родам записей груза.                                                         | `prisma/schema.prisma:Postmortem`                                                                 |
+| Отбитая строка не пишет ни состояния, ни версии.                                                            | `libs/message-bus-api/cargo-state/feature/src/lib/cargo-state.controller.ts:CargoStateController` |
+| Второй приезд версии затирает прежнюю.                                                                      | `libs/message-bus-api/postmortems/data-access/src/lib/postmortem.queries.ts:movePostmortemStates` |
+| Строка, несущая разом текст починки и версию выпуска, отбивается.                                           | `libs/message-bus-common/src/lib/cargo-release-version.ts:cargoReleaseVersionFault`               |
+| Отбой по недостающей версии ложится строкой журнала наравне с прежними причинами.                           | `libs/message-bus-api/cargo-state/feature/src/lib/cargo-state.controller.ts:CargoStateController` |
 
 Операция живёт своим домом на оба рода — `libs/message-bus-api/cargo-state/`: пакет везёт оба рода
 разом, а домену одного из них не видно либ другого. Порядок переходов стоит рядом с перечислением
@@ -37,7 +59,15 @@
 Команда строки запуска, которой дерево зовёт правку, лежит в `projects/agent-kit`: она часть слоя
 правил, а не приёмника, и договорённость о ней — в спеке того домена.
 
-Семь сценариев из девяти закрывает спека операции —
+Приём починки лежит там же: четвёртое поле строки разбирает разбор пакета, а годность текста при
+переходе судит своё решение — `libs/message-bus-common/src/lib/cargo-fix-note.ts`, — стоящее
+рядом с решением о переходе и зовомое до похода в хранилище. Девять его сценариев — с
+`SC-MB-181` по `SC-MB-188` и `SC-MB-192` — закрыты спекой операции, спекой разбора пакета и
+спекой самого решения: `libs/message-bus-common/src/lib/cargo-fix-note.spec.ts`. Десятый,
+`SC-MB-191`, живёт в пакете правил рядом с командой отметки:
+`projects/agent-kit/src/lib/cargo-state.spec.ts`.
+
+Семь сценариев из девяти прежних закрывает спека операции —
 `libs/message-bus-api/cargo-state/feature/src/lib/cargo-state.controller.spec.ts`, — и спека
 разбора пакета рядом: `libs/message-bus-api/cargo-state/util/src/lib/cargo-state-body.spec.ts`.
 
@@ -45,3 +75,9 @@
 переходе в `libs/message-bus-common/src/lib/cargo-state-move.spec.ts`, а путём запроса он не
 проходит. `SC-MB-178`: проверено объявление операции — она закрыта токеном дерева, — а саму
 отбивку без токена проходит спека стража входа.
+
+Версия выпуска лежит там же, где и остальное: пятое поле строки разбирает разбор пакета, а
+предел её длины и годность при переходе судит своё решение в общей либе — рядом с решением о
+переходе. Тринадцать её сценариев — с `SC-MB-193` по `SC-MB-204` и `SC-MB-207` — закрыты спекой
+решения, спекой разбора пакета и своей спекой операции о версии выпуска; последний из тринадцати
+живёт в пакете правил, рядом с командой отметки.

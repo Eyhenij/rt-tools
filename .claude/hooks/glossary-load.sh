@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.10.0 · hooks/glossary-load.sh · 4843d5926698 · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/glossary-load.sh · b5476d170e91 · правится надстройкой, не здесь
 # rt-hook: SessionStart startup|resume|compact|clear
 # SessionStart: словарь проекта уезжает в контекст целиком, на каждом запуске сессии.
 #
@@ -9,6 +9,8 @@
 # тексты, и на ответы.
 #
 # FAIL-OPEN: нет файла или нет `jq` — выходим молча. Сессия важнее словаря.
+
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 
 GLOSSARY="${CLAUDE_PROJECT_DIR:-.}/docs/GLOSSARY.md"
 [ -f "$GLOSSARY" ] || exit 0

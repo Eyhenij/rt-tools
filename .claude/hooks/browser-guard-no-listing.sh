@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.10.0 · hooks/browser-guard-no-listing.sh · 6c70552c6182 · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/browser-guard-no-listing.sh · 282a7fc5c94a · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__claude-in-chrome__(list_connected_browsers|switch_browser)
 # Требует: hooks/deny-tail.sh
 # Гард перечисления и переключения браузеров. PreToolUse.
@@ -10,6 +10,8 @@
 #
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: помощник не назвал профиль — пропуск. Гард, который не может назвать
 # нужный профиль, ничего не предлагает взамен, и слепой отказ только заводил бы работу в тупик.
+
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 
 cat >/dev/null 2>&1
 

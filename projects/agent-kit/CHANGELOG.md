@@ -1,9 +1,33 @@
-## [Unreleased]
+# [0.11.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.10.0...rt-agent-kit@0.11.0) (2026-08-22)
+
+### Bug Fixes
+
+- **rt:agent-kit:** гард объявляет локаль исполнения, а не наследует пустую ([82af4d6](https://github.com/Eyhenij/rt-tools/commit/82af4d6a551c61bc21a2d7de72e2d12565dba4fd))
+- **rt:agent-kit:** повтор раздела редакции снят, старые редакции уехали из журнала ([4dfbd5e](https://github.com/Eyhenij/rt-tools/commit/4dfbd5ec6503c3566c289957a93b1e6c160de089)), closes [#960](https://github.com/Eyhenij/rt-tools/issues/960)
+- **rt:agent-kit:** пустое устройство и поток ошибок не считаются записью файла ([db3206d](https://github.com/Eyhenij/rt-tools/commit/db3206da53f7c422b07397480b2e6481f785813d))
+- **rt:agent-kit:** пути берутся из заголовка команды, а не из тела документа на месте ([f51cb09](https://github.com/Eyhenij/rt-tools/commit/f51cb09ad4982a43c60172d67ac491b6f7f6ef3a))
 
 ### Features
 
-- **rt:agent-kit:** сводка наблюдений называет вес загруженного слоя правил и цену одного захода
-- **rt:agent-kit:** доля отбитий гейта, пришедших не на правку файла, стоит в сводке своей строкой
+- **rt:agent-kit:** дерево задаёт порог сжатия и сводит его с порогом остановки ([7b6de03](https://github.com/Eyhenij/rt-tools/commit/7b6de03d4e4321bfbafd02907b574c8d4c0db65c)), closes [#977](https://github.com/Eyhenij/rt-tools/issues/977)
+- **rt:agent-kit:** закон, правило и карта хода развели предел окна и порог сжатия ([347906a](https://github.com/Eyhenij/rt-tools/commit/347906a8e6348beaf174902919b1f0b51dd9e112))
+- **rt:agent-kit:** карта хода заведена ресурсом пакета ([0aa95a0](https://github.com/Eyhenij/rt-tools/commit/0aa95a0187d38e263a81dc4523d3a5f81c013f7d))
+- **rt:agent-kit:** карта хода сверяется размером и полнотой ([2b0f20f](https://github.com/Eyhenij/rt-tools/commit/2b0f20f5e6ef5d48e5f58d67c3d4884b802e1edc))
+- **rt:agent-kit:** команда отметки несёт версию выпуска доводом ([a8ca782](https://github.com/Eyhenij/rt-tools/commit/a8ca7820dda4f772d98a1842c2278b7117df257c))
+- **rt:agent-kit:** команда отметки несёт текст починки доводом ([067091c](https://github.com/Eyhenij/rt-tools/commit/067091cdc67ddcd3660bff4f7c281269559304d6)), closes [#910](https://github.com/Eyhenij/rt-tools/issues/910)
+- **rt:agent-kit:** отметка состояния груза командой строки запуска ([f1c20c7](https://github.com/Eyhenij/rt-tools/commit/f1c20c70bc8cfafe50ac885df86e1776755e929b))
+- **rt:agent-kit:** передача захода пишется перед сжатием контекста ([c6da546](https://github.com/Eyhenij/rt-tools/commit/c6da5463d472cbd9a8b8b2440c88f0a3cd7d52b8))
+- **rt:agent-kit:** передача и карта хода приходят в контекст на запуске ([a137fcb](https://github.com/Eyhenij/rt-tools/commit/a137fcbd15a50f90a9f63b391a115449cb033c5e))
+- **rt:agent-kit:** пороги сжатия и остановки разведены, запас объявлен числом ([a73b472](https://github.com/Eyhenij/rt-tools/commit/a73b4729b58694e8e3ebabe4550bc40174f93965))
+- **rt:agent-kit:** проверка читает строку следующего движения в каждом разделе ([8abd41d](https://github.com/Eyhenij/rt-tools/commit/8abd41dec775a6c50344b42f4e8c04d42c248212))
+- **rt:agent-kit:** разбор приехавшего груза объявлен правилом с готовыми вызовами ([3b1139f](https://github.com/Eyhenij/rt-tools/commit/3b1139f82d741e910e9c6fd4544a4f32e1294fb2))
+- **rt:agent-kit:** сверка порогов судит расстояние между ними, а не совпадение ([c2e85a7](https://github.com/Eyhenij/rt-tools/commit/c2e85a7349ec29ba8f6c4d8758bc1627ae8aeb6b))
+- **rt:agent-kit:** сводка называет цену входа в работу и долю отбитий не на правке файла ([612a041](https://github.com/Eyhenij/rt-tools/commit/612a0416c2f4aebefa273a303c4a9846d216c8ae))
+- **rt:agent-kit:** страж окна зовёт работать дальше там, где сжатие придёт само ([16bc442](https://github.com/Eyhenij/rt-tools/commit/16bc4426f315c1d0a30d88094047059046fc58e2))
+- **rt:agent-kit:** у каждого состояния работы есть раздел, и это сторожит сверка ([cb431d5](https://github.com/Eyhenij/rt-tools/commit/cb431d5f871bce896ece60235910977cfb909a9d))
+
+* **rt:agent-kit:** сводка наблюдений называет вес загруженного слоя правил и цену одного захода
+* **rt:agent-kit:** доля отбитий гейта, пришедших не на правку файла, стоит в сводке своей строкой
 
 # [0.10.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.9.1...rt-agent-kit@0.10.0) (2026-08-20)
 

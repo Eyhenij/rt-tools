@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.10.0 · hooks/browser-guard-device-id.sh · 769a9949ec88 · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/browser-guard-device-id.sh · 1d38bd16659e · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__claude-in-chrome__select_browser
 # Требует: hooks/deny-tail.sh
 # Гард выбора браузера. PreToolUse на выборе браузера расширением.
@@ -11,6 +11,8 @@
 # законной всю дальнейшую работу с браузером.
 #
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: помощник не назвал профиль — пропуск.
+
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 
 input="$(cat 2>/dev/null)"
 

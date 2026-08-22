@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.10.0 · hooks/conscience-guard.sh · a829941d8ef0 · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/conscience-guard.sh · 3e4bc9510126 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: agents/conscience.md, hooks/roles.sh, hooks/deny-tail.sh
 # Гард совести: ход, в котором роль совести нашла повтор разобранного промаха, не заканчивается,
@@ -19,6 +19,8 @@
 #
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: нет `jq`, нет записи хода, роль молчит или отвечает не по форме — ход
 # разрешается. Сломанная совесть не имеет права заклинить разговор.
+
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 
 input="$(cat 2>/dev/null)"
 [ -z "$input" ] && exit 0

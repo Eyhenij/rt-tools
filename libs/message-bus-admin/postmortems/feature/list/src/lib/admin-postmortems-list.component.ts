@@ -15,13 +15,15 @@ import {
     AdminListPageComponent,
     AdminListToolbarLeftDirective,
     AdminMomentPipe,
+    AdminStateFilterComponent,
     AdminTreeFilterComponent,
+    AdminVersionFilterComponent,
 } from '@rt/message-bus-admin/common/core/ui';
 import { adminLabel, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';
 import { PostmortemsStore } from '@rt/message-bus-admin/postmortems/data-access';
 import { IPostmortem, POSTMORTEMS_COLUMNS, POSTMORTEMS_TABLE_ID } from '@rt/message-bus-admin/postmortems/util';
 import { IRtTable, RtTableComponent, RtTableRowDirective, RtTableSortHeaderComponent } from '@rt-tools/ui-kit-v2';
-import { POSTMORTEM_SORTABLE } from '@rt/message-bus-common';
+import { ECargoKind, POSTMORTEM_SORTABLE } from '@rt/message-bus-common';
 
 const BEM_BLOCK: string = 'admin-postmortems-list';
 
@@ -37,8 +39,10 @@ const BEM_BLOCK: string = 'admin-postmortems-list';
  * страницы.
  *
  * Таблица объявлена здесь, а не внутри вида: столбцы она собирает собственным запросом по
- * содержимому, и через посредника они до неё не доходят. Отбор по дереву — тем же порядком:
- * экран кладёт его в левый слот тулбара, а страница о видах отбора не знает ничего.
+ * содержимому, и через посредника они до неё не доходят. Отборы — тем же порядком: экран кладёт
+ * их в левый слот тулбара, а страница о видах отбора не знает ничего. Их трое — по дереву, по
+ * состоянию записи и по версии выпуска, — и стоят они в том порядке, в каком объявлены в
+ * шаблоне: от общего к частному.
  *
  * Хостом страницы экран называет себя одной строкой провайдера; отвечает на спрошенное общая
  * основа, и своего ответа он не пишет ни одного.
@@ -62,7 +66,9 @@ const BEM_BLOCK: string = 'admin-postmortems-list';
         // components
         AdminListPageComponent,
         AdminListToolbarLeftDirective,
+        AdminStateFilterComponent,
         AdminTreeFilterComponent,
+        AdminVersionFilterComponent,
         RtTableComponent,
         RtTableRowDirective,
         RtTableSortHeaderComponent,
@@ -79,6 +85,7 @@ export class AdminPostmortemsListComponent extends AdminListScreenBase<IPostmort
     protected readonly columns: readonly IRtTable.ColumnConfig[] = POSTMORTEMS_COLUMNS;
     protected readonly tableId: string = POSTMORTEMS_TABLE_ID;
     protected readonly qaPrefix: string = 'postmortems';
+    protected override readonly cargoKind: ECargoKind = ECargoKind.Postmortem;
 
     protected readonly store: PostmortemsStore = inject(PostmortemsStore);
     protected readonly sortable: readonly string[] = POSTMORTEM_SORTABLE;

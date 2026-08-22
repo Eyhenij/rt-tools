@@ -31,6 +31,7 @@ export class PostmortemShortMapper extends BaseMapper<IPostmortem.Short.State> {
             file: this.typeCast.getAsString(data.file),
             state: cargoState,
             stateLabel: cargoStateLabel(cargoState),
+            releaseVersion: this.typeCast.getAsString(data.releaseVersion),
             arrivedAt: new Date(this.typeCast.getAsString(data.arrivedAt)),
             updatedAt: new Date(this.typeCast.getAsString(data.updatedAt)),
         };
@@ -42,6 +43,10 @@ export class PostmortemMapper extends BaseMapper<IPostmortem.State> {
     readonly #short: PostmortemShortMapper = new PostmortemShortMapper();
 
     public override mapFrom(data: IPostmortem.Api): IPostmortem.State {
-        return { ...this.#short.mapFrom(data), text: this.typeCast.getAsString(data.text) };
+        return {
+            ...this.#short.mapFrom(data),
+            text: this.typeCast.getAsString(data.text),
+            fixNote: this.typeCast.getAsString(data.fixNote),
+        };
     }
 }

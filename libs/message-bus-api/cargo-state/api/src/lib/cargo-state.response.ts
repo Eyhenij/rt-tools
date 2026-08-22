@@ -4,20 +4,28 @@
  * Лежит в слое, которым домен говорит с чужими: эти же поля читает команда строки запуска
  * пакета, и вторая их копия при ней разошлась бы с этой молча.
  */
-import { ECargoStateKind } from '@rt/message-bus-api/cargo-state/util';
+import { ECargoKind } from '@rt/message-bus-common';
 
-/** Почему строка не исполнена. Причин две, и по ним исполнитель видит, что делать дальше. */
+/** Почему строка не исполнена. По причине исполнитель видит, что делать дальше. */
 export enum ECargoStateDenial {
     /** Записи с таким ключом у дерева нет. Запись соседа отвечает так же. */
     Missing = 'missing',
     /** Порядок переходов такого шага не разрешает. */
     Forbidden = 'forbidden',
+    /** Запись переводят в «починено и не выпущено», а чем она починена — не сказано. */
+    NoFixNote = 'no-fix-note',
+    /** Текст починки приехал с переходом, который к починке не относится. */
+    ExtraFixNote = 'extra-fix-note',
+    /** Запись переводят в «выпущено», а в какой версии искать фикс — не сказано. */
+    NoReleaseVersion = 'no-release-version',
+    /** Версия выпуска приехала с переходом, который к выпуску не относится. */
+    ExtraReleaseVersion = 'extra-release-version',
 }
 
 /** Отбитая строка: место в пакете, род записи, ключ и причина. */
 export interface ICargoStateDeniedLine {
     readonly at: number;
-    readonly kind: ECargoStateKind;
+    readonly kind: ECargoKind;
     readonly key: string;
     readonly denial: ECargoStateDenial;
 }

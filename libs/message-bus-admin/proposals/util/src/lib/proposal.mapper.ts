@@ -32,6 +32,7 @@ export class ProposalShortMapper extends BaseMapper<IProposal.Short.State> {
             address: this.typeCast.getAsString(data.address),
             state: cargoState,
             stateLabel: cargoStateLabel(cargoState),
+            releaseVersion: this.typeCast.getAsString(data.releaseVersion),
             arrivedAt: new Date(this.typeCast.getAsString(data.arrivedAt)),
         };
     }
@@ -46,6 +47,7 @@ export class ProposalMapper extends BaseMapper<IProposal.State> {
             ...this.#short.mapFrom(data),
             text: this.typeCast.getAsString(data.text),
             month: this.typeCast.getAsString(data.month),
+            fixNote: this.typeCast.getAsString(data.fixNote),
         };
     }
 }

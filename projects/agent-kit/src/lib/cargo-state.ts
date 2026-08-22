@@ -18,6 +18,17 @@ export const POSTMORTEM_FLAG: string = '--postmortem';
 /** Довод, которым называется предложение. */
 export const PROPOSAL_FLAG: string = '--proposal';
 
+/** Довод текста починки: чем недочёт исправлен. */
+export const FIX_FLAG: string = '--fix';
+
+/**
+ * Довод версии выпуска: в какой версии искать фикс.
+ *
+ * Назван по выпуску, а не по версии: `--version` у команды строки запуска читается как «покажи
+ * свою версию», и заняв его под другое, пакет получил бы две разные вещи под одним словом.
+ */
+export const RELEASE_FLAG: string = '--release';
+
 /** Что приём ответил на правку состояния. Отказ — такой же ответ, как принятое. */
 export interface IMarked {
     readonly ok: boolean;
@@ -30,6 +41,14 @@ export interface IMarked {
 
 /** Чем отметка ходит в приём. Двойник в спеке — того же вида. */
 export type TMarkCall = (intake: string, token: string, body: ICargoStateBody) => Promise<IMarked>;
+
+/** Приложенные к строке значения: что едет вместе с состоянием. */
+export interface ICargoStateAttached {
+    /** Чем недочёт исправлен. Пустая строка — довода не было. */
+    readonly fixNote: string;
+    /** В какой версии искать фикс. Пустая строка — довода не было. */
+    readonly releaseVersion: string;
+}
 
 /** Всё, что отметке нужно знать: куда, чем представиться и что отмечать. */
 export interface IMarkOptions {
@@ -52,7 +71,11 @@ function kindOfFlag(flag: string): TCargoStateKind | null {
 }
 
 /** Записи, названные доводами строки запуска: род у каждой свой, порядок — как их назвали. */
-export function itemsOf(argv: readonly string[], state: string): readonly ICargoStateItem[] {
+export function itemsOf(
+    argv: readonly string[],
+    state: string,
+    attached: ICargoStateAttached = { fixNote: '', releaseVersion: '' }
+): readonly ICargoStateItem[] {
     const items: ICargoStateItem[] = [];
 
     for (let at: number = 0; at < argv.length; at += 1) {
@@ -60,7 +83,16 @@ export function itemsOf(argv: readonly string[], state: string): readonly ICargo
         const key: string = argv[at + 1] ?? '';
 
         if (kind && key && !key.startsWith('--')) {
-            items.push({ kind, key, state });
+            // Приложенное значение едет полем строки, а не своим вызовом: отметка одна, и все её
+            // записи чинились одним разбором либо уехали одним выпуском — второго значения на
+            // тот же вызов не задаётся
+            items.push({
+                kind,
+                key,
+                state,
+                ...(attached.fixNote ? { fixNote: attached.fixNote } : {}),
+                ...(attached.releaseVersion ? { releaseVersion: attached.releaseVersion } : {}),
+            });
         }
     }
 
@@ -79,9 +111,19 @@ function describe(items: readonly ICargoStateItem[], state: string): string {
     return `в «${state}»: разборов ${postmortems}, предложений ${items.length - postmortems}`;
 }
 
+/** Причина отбоя словами человека: их шесть, и по каждой видно, что делать дальше. */
+const DENIAL_WORDS: Readonly<Record<string, string>> = {
+    missing: 'такой записи у дерева нет',
+    forbidden: 'переход не разрешён порядком',
+    'no-fix-note': 'переход в починку без довода `--fix`',
+    'extra-fix-note': 'довод `--fix` приехал не с переходом в починку',
+    'no-release-version': 'переход в выпуск без довода `--release`',
+    'extra-release-version': 'довод `--release` приехал не с переходом в выпуск',
+};
+
 /** Отбитая строка человеку: род, ключ и причина словами. */
 function deniedLine(kind: string, key: string, denial: string): string {
-    const why: string = denial === 'missing' ? 'такой записи у дерева нет' : 'переход не разрешён порядком';
+    const why: string = DENIAL_WORDS[denial] ?? denial;
 
     return `  ${kind === 'postmortem' ? 'разбор' : 'предложение'} ${key} — ${why}`;
 }
