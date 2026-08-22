@@ -11,6 +11,7 @@
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { proposalDigest } from '@rt/message-bus-api/proposals/util';
 import {
+    CARGO_RELEASE_VERSION_FIELD,
     cargoStateData,
     cargoStateMove,
     cargoStateOf,
@@ -74,9 +75,6 @@ interface IProposalWhere {
 
 /** Чем сужен запрос строк: отбор списка либо перечень признаков одной страницы. */
 type TProposalPick = IProposalWhere | { readonly id: { readonly in: string[] } };
-
-/** Поле порядка, которого хранилище не строит: по нему страница собирается своим путём. */
-const RELEASE_VERSION_SORT: string = 'releaseVersion';
 
 /** Первая ступень порядка. Вторая — всегда идентификатор записи, и её ставит сам запрос. */
 type TProposalOrder =
@@ -237,7 +235,7 @@ export async function readProposals(prisma: PrismaService, asked: ICargoPageAske
     const where: IProposalWhere = whereOf(asked);
     const total: number = await prisma.proposal.count({ where });
     const rows: IProposalListRow[] =
-        asked.sort === RELEASE_VERSION_SORT ? await byVersion(prisma, where, asked) : await byColumn(prisma, where, asked);
+        asked.sort === CARGO_RELEASE_VERSION_FIELD ? await byVersion(prisma, where, asked) : await byColumn(prisma, where, asked);
 
     return { rows, total, page: asked.page, size: asked.size };
 }

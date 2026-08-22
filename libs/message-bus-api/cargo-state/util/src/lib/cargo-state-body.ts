@@ -5,7 +5,14 @@
  * решение «годен ли пакет» — чистое: у него нет ни хранилища, ни токена, и проверяется оно
  * вызовом, а не поднятым приложением.
  */
-import { CARGO_RELEASE_VERSION_LIMIT, cargoKindOf, ECargoKind, ECargoState, TCargoBody } from '@rt/message-bus-common';
+import {
+    CARGO_RELEASE_VERSION_FIELD,
+    CARGO_RELEASE_VERSION_LIMIT,
+    cargoKindOf,
+    ECargoKind,
+    ECargoState,
+    TCargoBody,
+} from '@rt/message-bus-common';
 
 /** Строка правки, разобранная из пакета: место в нём, род записи, ключ и целевое состояние. */
 export interface ICargoStateLine {
@@ -59,9 +66,6 @@ const LINE_FIELDS: readonly string[] = ['kind', 'key', 'state'];
 
 /** Поле текста починки. Стоит отдельно от обязательных: строка без него законна. */
 const FIX_NOTE_FIELD: string = 'fixNote';
-
-/** Поле версии выпуска. Стоит отдельно от обязательных по той же причине. */
-const RELEASE_VERSION_FIELD: string = 'releaseVersion';
 
 /** Набор состояний целиком. Незнакомое отбивает запрос, а не ложится в колонку опечаткой. */
 const STATES: readonly ECargoState[] = Object.values(ECargoState);
@@ -124,7 +128,7 @@ function attachedOf(raw: TCargoBody): {
         return { fixNote: null, releaseVersion: null, fault: ECargoStateBodyFault.BadFixNote };
     }
 
-    const releaseVersion: { value: string | null; bad: boolean } = stringOf(raw, RELEASE_VERSION_FIELD);
+    const releaseVersion: { value: string | null; bad: boolean } = stringOf(raw, CARGO_RELEASE_VERSION_FIELD);
 
     if (releaseVersion.bad) {
         return { fixNote: null, releaseVersion: null, fault: ECargoStateBodyFault.BadReleaseVersion };

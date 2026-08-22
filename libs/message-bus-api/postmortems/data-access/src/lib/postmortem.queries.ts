@@ -9,6 +9,7 @@
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IPostmortemArrivalUpdate, postmortemArrivalUpdate } from '@rt/message-bus-api/postmortems/util';
 import {
+    CARGO_RELEASE_VERSION_FIELD,
     cargoStateData,
     cargoStateMove,
     cargoStateOf,
@@ -66,9 +67,6 @@ interface IPostmortemWhere {
     /** Версия выпуска либо пустота: пустотой сужает список отбор «без версии». */
     readonly releaseVersion?: string | null;
 }
-
-/** Поле порядка, которого хранилище не строит: по нему страница собирается своим путём. */
-const RELEASE_VERSION_SORT: string = 'releaseVersion';
 
 /** Первая ступень порядка. Вторая — всегда идентификатор записи, и её ставит сам запрос. */
 type TPostmortemOrder =
@@ -233,7 +231,7 @@ export async function readPostmortems(prisma: PrismaService, asked: ICargoPageAs
     const where: IPostmortemWhere = whereOf(asked);
     const total: number = await prisma.postmortem.count({ where });
     const rows: IPostmortemListRow[] =
-        asked.sort === RELEASE_VERSION_SORT ? await byVersion(prisma, where, asked) : await byColumn(prisma, where, asked);
+        asked.sort === CARGO_RELEASE_VERSION_FIELD ? await byVersion(prisma, where, asked) : await byColumn(prisma, where, asked);
 
     return { rows, total, page: asked.page, size: asked.size };
 }
