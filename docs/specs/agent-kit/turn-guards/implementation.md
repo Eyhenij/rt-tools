@@ -50,3 +50,7 @@
 | Проверка пропускает дерево, где правила ведения работы нет.                                                | `projects/agent-kit/assets/checks/check-state-next.mjs:RULE`           |
 | Отказ называет состояние, ведущий паттерн и заголовок раздела.                                             | `projects/agent-kit/assets/checks/check-state-next.mjs:problems`       |
 | Проверка заводится своя, со своей командой и своей строкой в наборе гейта пуша.                            | `projects/agent-kit/assets/defaults/project.sh:rt_push_checks_default` |
+| Формулировка у каждого раздела своя.                                                                       | `projects/agent-kit/assets/checks/check-state-next.mjs:twin`           |
+| Карта хода говорит то же самое теми же словами по смыслу.                                                  | `projects/agent-kit/assets/checks/check-state-next.mjs:MAP`            |
+| Закон о ведении работы называет это статьёй.                                                               | `projects/agent-kit/assets/checks/check-state-next.mjs:LAW`            |
+| Раздел про состояние вне перечня эта проверка не судит.                                                    | `projects/agent-kit/assets/checks/check-states.mjs:known`              |
