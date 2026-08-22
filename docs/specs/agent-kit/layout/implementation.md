@@ -50,3 +50,4 @@
 | Образцы едут своим родом ресурса, а не вместе с шаблонами надстройки.                   | `projects/agent-kit/src/lib/config.ts:TKind`                          |
 | Дерево вправе назвать образцам свой путь и отказаться от них целиком.                   | `projects/agent-kit/src/lib/config.ts:DEFAULT_LAYOUT`                 |
 | Образец несёт шапку раскладки наравне с остальным разложенным.                          | `projects/agent-kit/src/lib/plan.ts:planFile`                         |
+| Холодная часть правила — свой род ресурса, а не имя внутри рода правил.                 | `projects/agent-kit/src/lib/config.ts:PITFALLS_FILE`                  |
