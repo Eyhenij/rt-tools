@@ -198,7 +198,7 @@ report "SC-AK-217 — снятый раздел холодной части на
     "$(missing_sections "$probe" pitfalls | grep -c 'Ловушки')" 1
 
 # Обратная сторона того же: правило, отдавшее раздел холодной части, полноту не роняет.
-report "SC-AK-505 — «Ловушки» у правила не спрашиваются" \
+report "SC-AK-512 — «Ловушки» у правила не спрашиваются" \
     "$(missing_sections "$probe" rules | grep -c 'Ловушки')" 0
 
 grep -vxF '## Частые промахи' "$ASSETS/patterns/doc-style-write.md" > "$probe/patterns/doc-style-write.md"
