@@ -31,11 +31,22 @@ export type TKind =
      * работу ведёт. Одним родом их не свести: дерево вправе отказаться от одних, оставив
      * другие, и назвать им разные каталоги.
      */
-    | 'samples';
+    | 'samples'
+    /**
+     * `pitfalls` — холодная часть правила: ловушки и поведение по разборам происшествий. Ложится
+     * третьим файлом рядом с правилом и грузится не вместе с ним, а по требованию: при обычном
+     * решении она не нужна — она нужна тому, кто разбирает промах или спорит с гардом.
+     *
+     * От спутника отличается хозяином. Спутник пишет проект, и пакет кладёт его черновиком один
+     * раз; холодная часть принадлежит пакету целиком, поэтому перекладывается на каждой
+     * раскладке и сверяется наравне с правилом.
+     */
+    | 'pitfalls';
 
 export const KINDS: readonly TKind[] = [
     'laws',
     'rules',
+    'pitfalls',
     'patterns',
     'skills',
     'hooks',
@@ -69,6 +80,12 @@ export const SKILL_FILE: string = 'SKILL.md';
  * раз и дальше не сверяется: это единственный файл раскладки, который принадлежит проекту.
  */
 export const COMPANION_FILE: string = 'implementation.md';
+
+/**
+ * Файл холодной части правила. Имя одно на все деревья: правило называет её строкой, и строка
+ * эта переносима ровно потому, что имя не выбирается на месте.
+ */
+export const PITFALLS_FILE: string = 'pitfalls.md';
 
 export interface IConfig {
     /** Значения дырок `{{имя}}`. */
@@ -166,6 +183,8 @@ export const PROFILE_FILE: string = 'project.sh';
 export const DEFAULT_LAYOUT: Readonly<Record<TKind, string>> = {
     laws: 'docs/constitution',
     rules: SKILLS_DIR,
+    // Холодная часть ложится в каталог своего правила, поэтому путь у неё тот же.
+    pitfalls: SKILLS_DIR,
     patterns: SKILLS_DIR,
     skills: SKILLS_DIR,
     hooks: '.claude/hooks',
