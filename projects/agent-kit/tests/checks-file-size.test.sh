@@ -90,7 +90,7 @@ printf 'не JSON\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
 report "длина: нечитаемый перечень отбивает" "$(size_code)" 1
 report "длина: отказ называет, где перечень" "$(size_says 'список известного не прочитан')" 1
 
-# --- SC-AK-513, SC-AK-514 — два предела ---------------------------------------------------------
+# --- SC-AK-520, SC-AK-521 — два предела ---------------------------------------------------------
 #
 # Тексту порог нужен раньше, чем коду, поэтому пределов два. Фикстура берёт файл, который длиннее
 # предела текста и короче предела кода: под одним пределом он законен, под двумя — нет.
@@ -101,14 +101,14 @@ rm -rf "${SIZE_TREE:?}/long.md" "${SIZE_TREE:?}/debt.md" "${SIZE_TREE:?}/locale.
 size_file prose/rule.md 20
 size_file code/tool.mjs 20
 git -C "$SIZE_TREE" add -A
-report "SC-AK-513 — текст судится своим пределом" "$(size_says 'prose/rule\.md: 21 строк, предел текста 10')" 1
-report "SC-AK-513 — код тем же числом не судится" "$(size_says 'code/tool\.mjs')" 0
+report "SC-AK-520 — текст судится своим пределом" "$(size_says 'prose/rule\.md: 21 строк, предел текста 10')" 1
+report "SC-AK-520 — код тем же числом не судится" "$(size_says 'code/tool\.mjs')" 0
 
 # Дерево, корней текста не назвавшее, работает как прежде: одно число и одна строка в сводке.
 printf '{"fileSizeLimit":40,"allowlistDir":"tools","archiveDir":"docs/archive/","tasksDir":"docs/tasks","generatedDirs":["gen/","tools/"]}\n' \
     > "$SIZE_TREE/.claude/rt-kit/checks.json"
-report "SC-AK-514 — без корней текста предел один" "$(size_code)" 0
-report "SC-AK-514 — сводка называет одно число" "$(size_says 'предел 40, длиннее предела 0')" 1
+report "SC-AK-521 — без корней текста предел один" "$(size_code)" 0
+report "SC-AK-521 — сводка называет одно число" "$(size_says 'предел 40, длиннее предела 0')" 1
 
 rm -rf "$SIZE_TREE"
 
