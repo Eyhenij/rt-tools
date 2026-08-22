@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.10.0 · hooks/postmortem-guard.sh · f9a3d389843e · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/postmortem-guard.sh · f9a3d389843e · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: hooks/deny-tail.sh
 # Гард происшествия: ход, в котором исполнитель признал промах, не заканчивается, пока записи о

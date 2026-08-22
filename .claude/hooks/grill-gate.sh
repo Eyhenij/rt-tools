@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.10.0 · hooks/grill-gate.sh · b4a9a9445434 · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/grill-gate.sh · b4a9a9445434 · правится надстройкой, не здесь
 # rt-hook: PreToolUse AskUserQuestion
 # Требует: hooks/deny-tail.sh
 # rt-hook: Stop

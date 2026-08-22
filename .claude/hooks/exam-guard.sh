@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.10.0 · hooks/exam-guard.sh · cc1cd1cafd62 · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/exam-guard.sh · cc1cd1cafd62 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file|Bash
 # Требует: agents/strict-teacher.md, hooks/roles.sh, hooks/deny-tail.sh
 # Гард экзамена: правка не идёт, пока за сессию не сдан экзамен по загруженным правилам.

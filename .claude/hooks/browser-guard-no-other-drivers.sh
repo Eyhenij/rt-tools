@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.10.0 · hooks/browser-guard-no-other-drivers.sh · 827bceaf4097 · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/browser-guard-no-other-drivers.sh · 827bceaf4097 · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__playwright__.*|mcp__chrome-devtools__.*|Bash
 # Требует: hooks/deny-tail.sh
 # Гард обходных путей к браузеру. PreToolUse.
