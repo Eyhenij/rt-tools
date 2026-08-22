@@ -86,6 +86,32 @@ function patternsCutByRules(
 }
 
 /**
+ * Холодные части, снятые вслед за своим правилом. Родитель ищется по имени, а не по полю шапки:
+ * холодная часть принадлежит одному правилу и называется так же, как оно, — второго имени у неё
+ * нет и быть не может.
+ */
+function pitfallsCutByRules(
+    catalog: readonly IEntryOfCatalog[],
+    selection: ISelection,
+    rootByRule: ReadonlyMap<string, string>
+): readonly ICascadeCut[] {
+    const taken: ReadonlySet<string> = takenNames(catalog, selection, 'rules');
+    const known: ReadonlySet<string> = knownNames(catalog, 'rules');
+    const cuts: ICascadeCut[] = [];
+
+    for (const entry of chosenOfKind(catalog, selection, 'pitfalls')) {
+        const rule: string = shortNameOf(entry);
+        const standing: boolean = taken.has(rule) && !rootByRule.has(rule);
+
+        if (known.has(rule) && !standing) {
+            cuts.push({ id: entry.id, parent: rule, root: rootByRule.get(rule) ?? rule });
+        }
+    }
+
+    return cuts;
+}
+
+/**
  * Ресурсы, снятые каскадом: правила при невзятом законе и паттерны при невзятых правилах.
  *
  * Связь читается из вступления самого ресурса — отдельный список при пакете разошёлся бы с
@@ -101,7 +127,7 @@ export function cascadeCuts(catalog: readonly IEntryOfCatalog[], selection: ISel
     const rootByRule: Map<string, string> = new Map<string, string>();
     const rules: readonly ICascadeCut[] = rulesCutByLaws(catalog, selection, rootByRule);
 
-    return [...rules, ...patternsCutByRules(catalog, selection, rootByRule)];
+    return [...rules, ...patternsCutByRules(catalog, selection, rootByRule), ...pitfallsCutByRules(catalog, selection, rootByRule)];
 }
 
 /**
