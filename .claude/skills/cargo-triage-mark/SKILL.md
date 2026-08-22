@@ -4,7 +4,6 @@ kind: pattern
 rule: cargo-triage
 description: Паттерн правила cargo-triage. Брать при разборе приехавшего груза — готовые вызовы отметки: сухой прогон, пачка записей за вызов, приём починки при переходе в готово, версия выпуска при выпуске, разбор отбитой строки. Не брать для сведения предложений в правки пакета — это своя команда.
 ---
-<!-- rt-kit v0.11.0 · patterns/cargo-triage-mark.md · f25ba2a52e50 · правится надстройкой, не здесь -->
 
 # Отметка записей груза
 
@@ -41,7 +40,7 @@ npm run task:new -- --title '<что не так>' --slug <короткое-им
 Отметка идёт следом, тем же ходом, и несёт все записи, которые эта задача закрывает:
 
 ```bash
-npx agent-kit mark --state in_work \
+npm run cargo:mark -- --state in_work \
     --postmortem 2026-08-14-structure-invented-beside-the-sample.md \
     --postmortem 2026-08-15-guard-denied-shell-wrote-anyway.md \
     --proposal <признак предложения>
@@ -53,7 +52,7 @@ npx agent-kit mark --state in_work \
 Сухим прогоном смотрят, что уехало бы, — он ничего не отправляет и следа наружу не оставляет:
 
 ```bash
-npx agent-kit mark --state in_work --postmortem <файл> --dry-run
+npm run cargo:mark -- --state in_work --postmortem <файл> --dry-run
 ```
 
 Сухой прогон вместо настоящего вызова оставляет запись в прежнем состоянии. Отметкой он не
@@ -64,7 +63,7 @@ npx agent-kit mark --state in_work --postmortem <файл> --dry-run
 Ставится после того, как правка влита в главную ветку, — не по открытой заявке:
 
 ```bash
-npx agent-kit mark --state fixed \
+npm run cargo:mark -- --state fixed \
     --postmortem <файл> \
     --fix 'заведена статья правила о разборе груза и паттерн с готовыми вызовами'
 ```
@@ -77,7 +76,7 @@ npx agent-kit mark --state fixed \
 Идёт тем же движением, что и публикация редакции:
 
 ```bash
-npx agent-kit mark --state released --postmortem <файл> --release 'rt-agent-kit@0.10.1'
+npm run cargo:mark -- --state released --postmortem <файл> --release 'rt-agent-kit@0.10.1'
 ```
 
 Версия — та, которой назван выпуск, увёзший починку. Не номер редакции приёмника и не время
