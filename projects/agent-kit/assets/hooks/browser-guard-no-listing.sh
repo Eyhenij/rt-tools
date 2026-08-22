@@ -10,6 +10,8 @@
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: помощник не назвал профиль — пропуск. Гард, который не может назвать
 # нужный профиль, ничего не предлагает взамен, и слепой отказ только заводил бы работу в тупик.
 
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+
 cat >/dev/null 2>&1
 
 device_id="$("${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/browser-device-id.sh" 2>/dev/null)"

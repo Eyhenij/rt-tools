@@ -19,6 +19,8 @@
 # Выключена ли роль. Успех — выключена.
 #
 #   rt_role_off strict-teacher && exit 0
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+
 rt_role_off() {
     local role="$1" config
     [ -n "$role" ] || return 1

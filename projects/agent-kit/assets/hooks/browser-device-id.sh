@@ -8,6 +8,8 @@
 #
 # Файл с идентификатором в репозиторий не коммитится: у каждой машины он свой.
 
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+
 if [ -n "${RT_BROWSER_DEVICE_ID:-}" ]; then
     printf '%s\n' "$RT_BROWSER_DEVICE_ID"
     exit 0

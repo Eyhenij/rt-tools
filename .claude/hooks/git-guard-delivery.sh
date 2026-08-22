@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.10.0 · hooks/git-guard-delivery.sh · d53b948d45ff · правится надстройкой, не здесь
+# rt-kit v0.10.0 · hooks/git-guard-delivery.sh · bfdd33946788 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # Гард поставки. PreToolUse на заведении ветки, пуше и открытии заявки на слияние.
@@ -37,6 +37,8 @@
 # Отказ называет и то, что не так, и чем это чинится: отказ без действия обходят, а не исполняют.
 #
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: не репозиторий, нет разборщика, битый ввод, нет профиля — пропуск.
+
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 
 input="$(cat 2>/dev/null)"
 [ -z "$input" ] && exit 0
