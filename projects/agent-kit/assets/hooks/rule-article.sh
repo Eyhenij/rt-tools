@@ -86,9 +86,12 @@ rt_rule_article_at() {
                 stop = i
             }
             if (!stop) { stop = start }
+            last = start
             for (i = start; i <= stop; i++) {
                 if (line[i] ~ /rt-when:/) { continue }
+                if (line[i] == "" && i == stop) { continue }
                 print line[i]
+                last = i
             }
             print ""
         }

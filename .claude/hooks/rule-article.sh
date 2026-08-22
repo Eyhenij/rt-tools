@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.11.0 · hooks/rule-article.sh · 52f53a9370a2 · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/rule-article.sh · 8b721d7e6d83 · правится надстройкой, не здесь
 # Разбор признака применимости у статьи правила. Помощник: своего события не объявляет, его
 # подключает тот, кому нужен текст статьи, — гейт правил в своём отказе.
 #
@@ -87,9 +87,12 @@ rt_rule_article_at() {
                 stop = i
             }
             if (!stop) { stop = start }
+            last = start
             for (i = start; i <= stop; i++) {
                 if (line[i] ~ /rt-when:/) { continue }
+                if (line[i] == "" && i == stop) { continue }
                 print line[i]
+                last = i
             }
             print ""
         }
