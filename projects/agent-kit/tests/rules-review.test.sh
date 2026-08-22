@@ -197,6 +197,10 @@ grep -vxF '## Ловушки' "$ASSETS/pitfalls/doc-style.md" > "$probe/pitfalls
 report "SC-AK-217 — снятый раздел холодной части найден" \
     "$(missing_sections "$probe" pitfalls | grep -c 'Ловушки')" 1
 
+# Обратная сторона того же: правило, отдавшее раздел холодной части, полноту не роняет.
+report "SC-AK-505 — «Ловушки» у правила не спрашиваются" \
+    "$(missing_sections "$probe" rules | grep -c 'Ловушки')" 0
+
 grep -vxF '## Частые промахи' "$ASSETS/patterns/doc-style-write.md" > "$probe/patterns/doc-style-write.md"
 report "SC-AK-217 — снятый раздел о промахах найден" \
     "$(missing_pitfalls "$probe" | grep -c 'промахах')" 1
