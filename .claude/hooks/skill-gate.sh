@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.10.0 · hooks/skill-gate.sh · 6d9134750918 · правится надстройкой, не здесь
+# rt-kit v0.10.0 · hooks/skill-gate.sh · 6593334ea553 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__claude-in-chrome__.*
 # Требует: hooks/deny-tail.sh
 # Гейт правил: не даёт править файл, пока не загружено правило, под которое он подпадает.
@@ -23,6 +23,8 @@
 #
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: любая ошибка и любой неопознанный путь пропускают правку (exit 0).
 # Сломанный гейт не имеет права остановить работу совсем.
+
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 
 input="$(cat 2>/dev/null)"
 [ -z "$input" ] && exit 0

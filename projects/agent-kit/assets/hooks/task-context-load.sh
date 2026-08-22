@@ -14,6 +14,8 @@
 # FAIL-OPEN: нет `jq`, не git-репозиторий, нет папки задачи — выходим молча. Сессия важнее
 # контекста.
 
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+
 ROOT="${CLAUDE_PROJECT_DIR:-.}"
 command -v jq >/dev/null 2>&1 || exit 0
 cd "$ROOT" 2>/dev/null || exit 0

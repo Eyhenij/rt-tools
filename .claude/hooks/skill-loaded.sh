@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.10.0 · hooks/skill-loaded.sh · 7cc481b750f9 · правится надстройкой, не здесь
+# rt-kit v0.10.0 · hooks/skill-loaded.sh · b3b8d51448d5 · правится надстройкой, не здесь
 # rt-hook: PostToolUse Skill
 # Запись о загруженном правиле. PostToolUse на инструменте `Skill`.
 #
@@ -7,6 +7,8 @@
 # своих прошлых вызовах не рассказывает. Поэтому загрузка записывается здесь, по сессии.
 #
 # Хук только наблюдает: он всегда пропускает и ничего не отбивает.
+
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 
 input="$(cat 2>/dev/null)"
 [ -z "$input" ] && exit 0
