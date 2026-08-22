@@ -3,8 +3,6 @@
   "accepted": {
     "projects/agent-kit/assets/rules/cargo-triage.md": "переезжает в правила дерева второй задачей эпика #1011",
     "projects/agent-kit/assets/patterns/cargo-triage-mark.md": "переезжает вместе со своим правилом второй задачей эпика #1011",
-    "projects/agent-kit/src/lib/cargo-state.ts": "переезжает вместе с командой отметки второй задачей эпика #1011",
-    "projects/agent-kit/assets/commands/agent-kit-digest.md": "переезжает третьей задачей эпика #1011",
-    "projects/agent-kit/assets/commands/rules-review.md": "переезжает третьей задачей эпика #1011"
+    "projects/agent-kit/src/lib/cargo-state.ts": "переезжает вместе с командой отметки второй задачей эпика #1011"
   }
 }
