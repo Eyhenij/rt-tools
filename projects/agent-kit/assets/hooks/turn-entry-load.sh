@@ -18,6 +18,8 @@
 # хук выходит нулём и молчит о той части, которой нет. Запуск он не отбивает никогда: сессия
 # важнее контекста.
 
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+
 ROOT="${CLAUDE_PROJECT_DIR:-.}"
 cd "$ROOT" 2>/dev/null || exit 0
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0

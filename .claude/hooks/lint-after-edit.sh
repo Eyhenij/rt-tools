@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.10.0 · hooks/lint-after-edit.sh · b86448df7851 · правится надстройкой, не здесь
+# rt-kit v0.10.0 · hooks/lint-after-edit.sh · 9890449394d1 · правится надстройкой, не здесь
 # rt-hook: PostToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file
 # Требует: hooks/profile-check.sh
 # Линтер по следам правки. PostToolUse.
@@ -30,6 +30,8 @@
 
 # Сколько файлов линтуется за один перенос. Переезд либы трогает десятки файлов, и прогон по
 # каждому превратил бы хук в минутную паузу; на нарушение границы хватает первых.
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+
 MAX_FILES=12
 
 input="$(cat 2>/dev/null)"

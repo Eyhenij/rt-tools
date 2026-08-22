@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.10.0 · hooks/skill-gate-rearm.sh · aec1777242a1 · правится надстройкой, не здесь
+# rt-kit v0.10.0 · hooks/skill-gate-rearm.sh · aface0e7ff17 · правится надстройкой, не здесь
 # rt-hook: SessionStart compact|clear
 # Взвод гейта заново. SessionStart(compact|clear).
 #
@@ -12,6 +12,8 @@
 #
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: любая ошибка пропускает. Хук удаляет временный файл и ничего не
 # отбивает.
+
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 
 input="$(cat 2>/dev/null)"
 [ -z "$input" ] && exit 0
