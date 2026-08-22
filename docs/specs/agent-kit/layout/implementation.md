@@ -51,3 +51,4 @@
 | Дерево вправе назвать образцам свой путь и отказаться от них целиком.                   | `projects/agent-kit/src/lib/config.ts:DEFAULT_LAYOUT`                 |
 | Образец несёт шапку раскладки наравне с остальным разложенным.                          | `projects/agent-kit/src/lib/plan.ts:planFile`                         |
 | Холодная часть правила — свой род ресурса, а не имя внутри рода правил.                 | `projects/agent-kit/src/lib/config.ts:PITFALLS_FILE`                  |
+| «Ловушки» — раздел холодной части, а не правила.                                        | `projects/agent-kit/tests/rules-review.test.sh:sections_for`          |
