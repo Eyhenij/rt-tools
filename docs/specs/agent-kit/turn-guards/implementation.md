@@ -42,3 +42,4 @@
 | Роль, выключенная деревом, гарда при ней не держит.                                                        | `projects/agent-kit/assets/hooks/roles.sh:rt_role_off`                 |
 | Настройка, которую не прочитать, роль не выключает.                                                        | `projects/agent-kit/assets/hooks/roles.sh:rt_role_off`                 |
 | Гард объявляет локаль исполнения, а не наследует её.                                                       | `projects/agent-kit/assets/hooks/utf8.sh:rt_use_utf8_locale`           |
+| Страж после порога сжатия остаётся страховкой.                                                             | `projects/agent-kit/assets/hooks/window-fill-guard.sh:compact_pct`     |
