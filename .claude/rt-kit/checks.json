@@ -122,5 +122,15 @@
         "reviewer": "Eyhenij"
     },
     "apiFamily": "message-bus-api",
-    "libsRoot": "libs"
+    "libsRoot": "libs",
+    "proseRoots": [
+        "docs/constitution/",
+        ".claude/skills/",
+        ".claude/rt-kit/templates/",
+        "projects/agent-kit/assets/laws/",
+        "projects/agent-kit/assets/rules/",
+        "projects/agent-kit/assets/patterns/",
+        "projects/agent-kit/assets/pitfalls/",
+        "projects/agent-kit/assets/skills/"
+    ]
 }
