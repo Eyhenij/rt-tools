@@ -18,3 +18,9 @@
 | Карта короче правила и этим отличается от него.                                     | `projects/agent-kit/assets/checks/check-turn-map.mjs:LIMIT_BYTES` |
 | Вход подаётся на всех четырёх запусках, а не только после сжатия.                   | `projects/agent-kit/assets/hooks/turn-entry-load.sh:rt-hook`      |
 | Хук входа запуск не отбивает.                                                       | `projects/agent-kit/assets/hooks/turn-entry-load.sh:rt_hooks_dir` |
+| Порог сжатия стоит ниже порога остановки.                                           | `projects/agent-kit/src/lib/thresholds.ts:thresholdDrift`         |
+| Совпадение порогов — расхождение, а не согласие.                                    | `projects/agent-kit/src/lib/thresholds.ts:tied`                   |
+| Расстояние между порогами объявлено, а не выведено.                                 | `projects/agent-kit/src/lib/thresholds.ts:marginPct`              |
+| Дерево, не объявившее сжатия, работает как прежде.                                  | `projects/agent-kit/src/lib/thresholds.ts:compactPct`             |
+| Отказ называет обе стороны числами.                                                 | `projects/agent-kit/src/lib/thresholds.ts:thresholdLines`         |
+| Заполненное окно кончает ход только там, где сжатия нет.                            | `projects/agent-kit/assets/checks/check-turn-map.mjs:EXITS`       |
