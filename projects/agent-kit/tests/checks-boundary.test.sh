@@ -63,4 +63,16 @@ gate_local() { grep -c '"Package boundary": "node tools/check-boundary.mjs"' "$T
 report "SC-AK-506 — шаг стоит в конвейере" "$(gate_step)" 1
 report "SC-AK-506 — у шага есть местная команда" "$(gate_local)" 1
 
+# SC-AK-505 — своё правило дерева гейт требует наравне с пакетным
+#
+# Карта гейта — своя, дерева: правило разбора груза пакет не везёт вовсе, а правку команды
+# отметки без него не кладут — порядок разбора знают раньше правки.
+own_rule() {
+    (CLAUDE_PROJECT_DIR="$TREE_ROOT" . "$TREE_ROOT/.claude/rt-kit/gate-map.sh"; skill_for edit "$1" '') | grep -cE 'cargo-triage'
+}
+report "SC-AK-505 — правка команды отметки требует своего правила" "$(own_rule "$TREE_ROOT/tools/cargo-mark.mjs")" 1
+report "SC-AK-505 — перечень долга ведёт то же правило" "$(own_rule "$TREE_ROOT/tools/boundary-debt.json")" 1
+report "SC-AK-505 — правило лежит своим, без шапки раскладки" \
+    "$(grep -c 'rt-kit v' "$TREE_ROOT/.claude/skills/cargo-triage/SKILL.md")" 0
+
 rm -rf "$BOUND_TREE"

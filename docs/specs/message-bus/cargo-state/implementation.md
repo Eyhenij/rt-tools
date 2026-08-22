@@ -65,7 +65,7 @@
 `SC-MB-181` по `SC-MB-188` и `SC-MB-192` — закрыты спекой операции, спекой разбора пакета и
 спекой самого решения: `libs/message-bus-common/src/lib/cargo-fix-note.spec.ts`. Десятый,
 `SC-MB-191`, живёт в пакете правил рядом с командой отметки:
-`projects/agent-kit/src/lib/cargo-state.spec.ts`.
+`projects/agent-kit/tests/cargo-mark.test.sh`.
 
 Семь сценариев из девяти прежних закрывает спека операции —
 `libs/message-bus-api/cargo-state/feature/src/lib/cargo-state.controller.spec.ts`, — и спека
