@@ -42,6 +42,8 @@ export const ADMIN_LABELS = {
     filterTreeAll: 'Все проекты',
     filterState: 'Состояние',
     filterStateAll: 'Все состояния',
+    filterVersionAll: 'Все версии',
+    filterVersionNone: 'Без версии',
 
     columnTree: 'Проект',
     columnFile: 'Файл',
@@ -58,6 +60,9 @@ export const ADMIN_LABELS = {
     columnExpiresAt: 'Годно до',
     columnInviteTree: 'Заведённый проект',
     columnState: 'Состояние',
+    // Один ключ на все показы версии: столбец списка, отбор над ним и строка панели. Второе
+    // объявление разошлось бы с первым молча, и человек читал бы одно и то же поле двумя словами.
+    releaseVersion: 'В какой версии',
 
     cargoStateNew: 'Новое',
     cargoStateInWork: 'В работе',
@@ -108,7 +113,6 @@ export const ADMIN_LABELS = {
     detailsProposal: 'Предложение',
     detailsText: 'Текст',
     detailsFixNote: 'Чем исправлено',
-    detailsReleaseVersion: 'В какой версии',
     detailsMonthRecord: 'Запись месяца',
     detailsSummary: 'Сводка',
     detailsSummaryMissing: 'Сводки в этом месяце ещё не было: запись завёл другой род груза',

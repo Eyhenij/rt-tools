@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { cargoPageAsked, cargoPageFault, cargoStateFault, ICargoPageAsked } from './cargo-page';
+import { CARGO_VERSION_NONE, cargoPageAsked, cargoPageFault, cargoStateFault, cargoVersionFault, ICargoPageAsked } from './cargo-page';
 import { ECargoState } from './cargo-state';
 
 /** Поля порядка списка груза: первое — умолчание домена, последнее — состояние записи. */
@@ -62,5 +62,46 @@ describe('cargoPageAsked', () => {
 
     it('страничная часть выборки остаётся той же, что и без отбора по состоянию', () => {
         expect(cargoPageAsked({ page: '3', size: '50' }, SORTABLE)).toMatchObject({ page: 3, size: 50 });
+    });
+});
+
+describe('cargoVersionFault', () => {
+    it('SC-MB-247 — версия, которой в записях нет, отказом не отбивается', () => {
+        expect(cargoVersionFault({ version: '9.9.9' })).toBeNull();
+    });
+
+    it('SC-MB-247 — снятый отбор по версии отказа не даёт', () => {
+        expect(cargoVersionFault({})).toBeNull();
+        expect(cargoVersionFault({ version: '' })).toBeNull();
+    });
+
+    it('SC-MB-241 — версия не строкой отбивается с именем параметра', () => {
+        expect(cargoVersionFault({ version: 7 })).toBe('параметр version ожидается строкой');
+    });
+
+    it('SC-MB-241 — версия длиннее предела отбивается с именем параметра', () => {
+        expect(cargoVersionFault({ version: 'v'.repeat(65) })).toBe('параметр version длиннее 64 знаков');
+    });
+});
+
+describe('cargoPageAsked — версия выпуска', () => {
+    it('SC-MB-242 — выборка без версии несёт пустоту и не считает список суженным', () => {
+        expect(cargoPageAsked({}, SORTABLE)).toMatchObject({ version: null, withoutVersion: false });
+    });
+
+    it('SC-MB-241 — названная версия приезжает значением выборки', () => {
+        expect(cargoPageAsked({ version: '0.10.0' }, SORTABLE).version).toBe('0.10.0');
+    });
+
+    it('SC-MB-243 — слово «без версии» читается признаком, а не значением версии', () => {
+        const asked: ICargoPageAsked = cargoPageAsked({ version: CARGO_VERSION_NONE }, SORTABLE);
+
+        expect(asked).toMatchObject({ version: null, withoutVersion: true });
+    });
+
+    it('SC-MB-244 — версия, состояние и дерево приезжают в выборке вместе', () => {
+        const asked: ICargoPageAsked = cargoPageAsked({ version: '1.0.0', state: 'released', tree: 'own-tree' }, SORTABLE);
+
+        expect(asked).toMatchObject({ version: '1.0.0', state: ECargoState.Released, tree: 'own-tree' });
     });
 });

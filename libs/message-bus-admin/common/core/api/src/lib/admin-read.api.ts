@@ -28,7 +28,9 @@ export const READ_TIMEOUT_MS: number = 15_000;
  * Выборка в параметры запроса.
  *
  * Пустой отбор не посылается вовсе: приёмник читает его как «все». Разделу, у которого состояния
- * нет, отправлять нечего — его выборка приходит сюда с пустым отбором и остаётся без параметра.
+ * и версии нет, отправлять нечего — его выборка приходит сюда с пустыми отборами и остаётся без
+ * их параметров. Слово «без версии» пустотой не является: оно едет как есть, и приёмник читает
+ * его условием на пустую колонку.
  */
 function askedParams(query: IAdminListQuery): HttpParams {
     let params: HttpParams = new HttpParams()
@@ -43,6 +45,10 @@ function askedParams(query: IAdminListQuery): HttpParams {
 
     if (query.state !== '') {
         params = params.set('state', query.state);
+    }
+
+    if (query.version !== '') {
+        params = params.set('version', query.version);
     }
 
     return params;

@@ -2,6 +2,7 @@
     <ng-template adminListToolbarLeft>
         <admin-tree-filter [choices]="choices()" [tree]="query().tree" (treeChange)="changeTree($event)" />
         <admin-state-filter [state]="query().state" (stateChange)="changeState($event)" />
+        <admin-version-filter [version]="query().version" [versions]="versions()" (versionChange)="changeVersion($event)" />
     </ng-template>
 
     <rt-table
@@ -32,13 +33,18 @@
             <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-state'">{{ row.stateLabel }}</td>
         </ng-container>
 
+        <ng-container cdkColumnDef="releaseVersion">
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="releaseVersion">{{ columns[3].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-version'">{{ row.releaseVersion }}</td>
+        </ng-container>
+
         <ng-container cdkColumnDef="arrivedAt">
-            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="arrivedAt">{{ columns[3].label }}</th>
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="arrivedAt">{{ columns[4].label }}</th>
             <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-arrived'">{{ row.arrivedAt | adminMoment }}</td>
         </ng-container>
 
         <ng-container cdkColumnDef="updatedAt">
-            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="updatedAt">{{ columns[4].label }}</th>
+            <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="updatedAt">{{ columns[5].label }}</th>
             <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-updated'">{{ row.updatedAt | adminMoment }}</td>
         </ng-container>
 
