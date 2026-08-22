@@ -54,7 +54,7 @@
 | Роль возвращает находки и ничего не правит.                                                          | `projects/agent-kit/assets/agents/rules-reviewer.md:tools`                    |
 | Находка называет два места дословно и то, чем они расходятся.                                        | `projects/agent-kit/assets/agents/rules-reviewer.md:дословно`                 |
 | Пробел ищется чтением, а не счётом привязок.                                                         | `projects/agent-kit/assets/agents/rules-reviewer.md:Пробел`                   |
-| Ревью зовётся двумя способами: командой вручную и машинной половиной в гейте.                        | `projects/agent-kit/assets/commands/rules-review.md:ARGUMENTS`                |
+| Ревью зовётся двумя способами: командой вручную и машинной половиной в гейте.                        | `.claude/commands/rules-review.md:ARGUMENTS`                                  |
 | Граф изображает ход правила и лежит в тексте самого правила.                                         | `projects/agent-kit/assets/templates/rule.md:mermaid`                         |
 | Граф заводится каждому правилу, а не только ветвящемуся.                                             | `projects/agent-kit/tests/rules-review.test.sh:sections_for`                  |
 | Граф правится тем же изменением, что и проза, которую он изображает.                                 | `projects/agent-kit/assets/agents/rules-reviewer.md:mermaid`                  |
