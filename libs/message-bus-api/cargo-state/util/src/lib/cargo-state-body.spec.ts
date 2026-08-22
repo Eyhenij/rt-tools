@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { CARGO_RELEASE_VERSION_LIMIT, ECargoState } from '@rt/message-bus-common';
+import { CARGO_RELEASE_VERSION_LIMIT, ECargoKind, ECargoState } from '@rt/message-bus-common';
 
-import { cargoStateBody, ECargoStateBodyFault, ECargoStateKind, ICargoStateParsed } from './cargo-state-body';
+import { cargoStateBody, ECargoStateBodyFault, ICargoStateParsed } from './cargo-state-body';
 
 describe('cargoStateBody', () => {
     it('SC-MB-173 — пакет из двух родов разбирается в две строки', () => {
@@ -15,13 +15,13 @@ describe('cargoStateBody', () => {
         expect(body.lines).toEqual([
             {
                 at: 0,
-                kind: ECargoStateKind.Postmortem,
+                kind: ECargoKind.Postmortem,
                 key: '2026-08-20-guard.md',
                 state: ECargoState.InWork,
                 fixNote: null,
                 releaseVersion: null,
             },
-            { at: 1, kind: ECargoStateKind.Proposal, key: 'ab12cd34', state: ECargoState.InWork, fixNote: null, releaseVersion: null },
+            { at: 1, kind: ECargoKind.Proposal, key: 'ab12cd34', state: ECargoState.InWork, fixNote: null, releaseVersion: null },
         ]);
     });
 

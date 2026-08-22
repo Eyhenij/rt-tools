@@ -14,13 +14,7 @@ import { BadRequestException, Body, Controller, Logger, Post, Req } from '@nestj
 
 import { TreeOperation } from '@rt/message-bus-api/access/util';
 import { ECargoStateDenial, ICargoStateResponse, ICargoStateDeniedLine } from '@rt/message-bus-api/cargo-state/api';
-import {
-    cargoStateBody,
-    ECargoStateBodyFault,
-    ECargoStateKind,
-    ICargoStateParsed,
-    ICargoStateLine,
-} from '@rt/message-bus-api/cargo-state/util';
+import { cargoStateBody, ECargoStateBodyFault, ICargoStateParsed, ICargoStateLine } from '@rt/message-bus-api/cargo-state/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { movePostmortemStates } from '@rt/message-bus-api/postmortems/data-access';
 import { moveProposalStates } from '@rt/message-bus-api/proposals/data-access';
@@ -33,6 +27,7 @@ import {
     cargoReleaseVersionFault,
     CARGO_RELEASE_VERSION_LIMIT,
     ECargoFixNoteFault,
+    ECargoKind,
     ECargoReleaseVersionFault,
     ECargoStateMove,
     ICargoFault,
@@ -123,7 +118,7 @@ export class CargoStateController {
     }
 
     /** Строки одного рода, каким их ждёт запись состояния этого домена. */
-    #asked(lines: readonly ICargoStateLine[], kind: ECargoStateKind): ICargoStateAsk[] {
+    #asked(lines: readonly ICargoStateLine[], kind: ECargoKind): ICargoStateAsk[] {
         return lines
             .filter((line: ICargoStateLine): boolean => line.kind === kind)
             .map((line: ICargoStateLine): ICargoStateAsk => ({
@@ -175,8 +170,8 @@ export class CargoStateController {
         const byValue: Map<number, ECargoStateDenial> = this.#byValue(lines);
         const sound: readonly ICargoStateLine[] = lines.filter((line: ICargoStateLine): boolean => !byValue.has(line.at));
         const [postmortems, proposals]: [ICargoStateOutcome[], ICargoStateOutcome[]] = await Promise.all([
-            movePostmortemStates(this.#prisma, tree.id, this.#asked(sound, ECargoStateKind.Postmortem)),
-            moveProposalStates(this.#prisma, tree.id, this.#asked(sound, ECargoStateKind.Proposal)),
+            movePostmortemStates(this.#prisma, tree.id, this.#asked(sound, ECargoKind.Postmortem)),
+            moveProposalStates(this.#prisma, tree.id, this.#asked(sound, ECargoKind.Proposal)),
         ]);
         const moves: Map<string, ECargoStateMove | null> = new Map();
 

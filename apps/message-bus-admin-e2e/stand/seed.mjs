@@ -431,7 +431,9 @@ async function moments() {
  * Состояния записей груза.
  *
  * Приём ставит всем приехавшим «новое», и на таких данных столбец состояния показывал бы одно
- * слово во всех строках: сценарий про разные состояния проверить было бы нечем. Раздаются они
+ * слово во всех строках: сценарий про разные состояния проверить было бы нечем. Версии выпуска
+ * раздаются тем же движением: числовые — двум записям, нечисловая — третьей, и порядок по номерам
+ * отличим от порядка по буквам. Раздаются они
  * поимённо, а не по счётчику: значение стоит в ячейке, ширину столбцов таблица раскладывает по
  * содержимому, и плывущее слово двигало бы соседние столбцы от прогона к прогону.
  */
@@ -444,7 +446,14 @@ async function states() {
             `UPDATE "postmortem" SET "releaseVersion" = 'rt-agent-kit@0.10.1' WHERE "file" = 'markup-case.md';`,
             `UPDATE "postmortem" SET "state" = 'in_work' WHERE "file" IN ('stand-case-23.md', 'stand-case-11.md');`,
             `UPDATE "postmortem" SET "state" = 'fixed' WHERE "file" = 'stand-case-22.md';`,
+            // Две числовые версии рядом: по ним видно, что порядок идёт номерами частей, а не
+            // буквами строки, — алфавит поставил бы 0.10.0 перед 0.9.0
+            `UPDATE "postmortem" SET "state" = 'released', "releaseVersion" = '0.9.0' WHERE "file" = 'stand-case-20.md';`,
+            `UPDATE "postmortem" SET "state" = 'released', "releaseVersion" = '0.10.0' WHERE "file" = 'stand-case-21.md';`,
             `UPDATE "proposal" SET "state" = 'in_work' WHERE "resource" = 'rules/lists.md';`,
+            // Своя версия у предложений: по ней видно, что набор отбора берётся по роду груза, а
+            // не один на оба
+            `UPDATE "proposal" SET "state" = 'released', "releaseVersion" = '1.4.0' WHERE "resource" = 'laws/verifiability.md';`,
         ].join('\n')
     );
 }

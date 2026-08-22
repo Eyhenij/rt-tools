@@ -131,7 +131,8 @@ test.describe('отбор по состоянию', () => {
     test('SC-MB-229 — список, пустой по отбору состояния, объясняет это отбором', async ({ page }: { page: Page }) => {
         await openSection(page, 'proposals');
 
-        await pickState(page, STATE.released);
+        // Готовых предложений на стенде нет: выпущенное там есть — им проверяется отбор по версии
+        await pickState(page, STATE.fixed);
 
         await expect(qa(page, 'empty-state-title')).toHaveText('По этому отбору записей нет');
         await expect(qa(page, 'empty-state-description')).toHaveText('Снимите отбор над списком или выберите в нём другое значение');
@@ -165,11 +166,17 @@ test.describe('отбор по состоянию', () => {
     test('SC-MB-231 — порядок по состоянию идёт шагами разбора, а не алфавитом', async ({ page }: { page: Page }) => {
         await openSection(page, 'postmortems', '?size=50&sort=state&dir=asc');
 
-        const shown: string[] = await columnTexts(page, STATE_CELL);
-        const steps: string[] = shown.filter((word: string, at: number): boolean => word !== shown[at - 1]);
-
+        // Ждать обязательно, тем же приёмом, что у соседней спеки: заход по прямому адресу
+        // поднимает приложение заново, строки приезжают ответом приёмника, и прочитанный
+        // сразу столбец приходит пустым.
         // алфавит поставил бы «В работе» перед «Выпущено» и «Готово» перед «Новое»
-        expect(steps).toEqual([STATE.new, STATE.inWork, STATE.fixed, STATE.released]);
+        await expect
+            .poll(async (): Promise<string[]> => {
+                const shown: string[] = await columnTexts(page, STATE_CELL);
+
+                return shown.filter((word: string, at: number): boolean => word !== shown[at - 1]);
+            })
+            .toEqual([STATE.new, STATE.inWork, STATE.fixed, STATE.released]);
     });
 
     test('SC-MB-233 — состояние, написанное в адресе с опечаткой, читается как снятый отбор', async ({ page }: { page: Page }) => {

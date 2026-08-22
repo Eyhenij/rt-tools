@@ -11,10 +11,10 @@
  */
 
 /** Разборы: по чему сортируется их список. */
-export const POSTMORTEM_SORTABLE: readonly string[] = ['arrivedAt', 'updatedAt', 'file', 'tree', 'state'];
+export const POSTMORTEM_SORTABLE: readonly string[] = ['arrivedAt', 'updatedAt', 'file', 'tree', 'state', 'releaseVersion'];
 
 /** Предложения: по чему сортируется их список. */
-export const PROPOSAL_SORTABLE: readonly string[] = ['arrivedAt', 'resource', 'address', 'tree', 'state'];
+export const PROPOSAL_SORTABLE: readonly string[] = ['arrivedAt', 'resource', 'address', 'tree', 'state', 'releaseVersion'];
 
 /** Месячные сводки: по чему сортируется их список. */
 export const MONTH_RECORD_SORTABLE: readonly string[] = ['ranAt', 'month', 'tree'];
