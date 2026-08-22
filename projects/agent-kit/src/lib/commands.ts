@@ -86,6 +86,7 @@ const NEEDS_TRAIT: string = 'нужно свойство';
 const KIND_TITLE: Readonly<Record<TKind, string>> = {
     laws: 'ЗАКОНЫ',
     rules: 'ПРАВИЛА',
+    pitfalls: 'ХОЛОДНЫЕ ЧАСТИ',
     patterns: 'ПАТТЕРНЫ',
     skills: 'СКИЛЫ',
     hooks: 'ХУКИ',

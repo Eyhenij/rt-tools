@@ -12,8 +12,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
-import { ICargoStateAccepted, ICargoStateBody, ICargoStateDenied, IIntakeAccepted, TCargoStateKind, TREE_TOKEN_HEADER } from './cargo.js';
-import { IMarked, TMarkCall } from './cargo-state.js';
+import { IIntakeAccepted, TREE_TOKEN_HEADER } from './cargo.js';
 
 /**
  * Предел ожидания приёма. Без него молчащая — не отказавшая — служба держит отправку до
@@ -132,65 +131,6 @@ export const httpShip: TShip = async (intake: string, token: string, shipment: I
     return { ok: answer.ok, status: answer.status, said: saidOf(text), accepted: answer.ok ? acceptedOf(text) : null };
 };
 
-/** Отбитые строки из ответа приёма. Не список — пусто: своё устройство приём не пересказывает. */
-function deniedOf(raw: unknown): readonly ICargoStateDenied[] {
-    if (!Array.isArray(raw)) {
-        return [];
-    }
-
-    return raw
-        .filter((one: unknown): boolean => typeof one === 'object' && one !== null)
-        .map((one: unknown): ICargoStateDenied => {
-            const line: Record<string, unknown> = one as Record<string, unknown>;
-
-            return {
-                at: typeof line['at'] === 'number' ? line['at'] : 0,
-                kind: String(line['kind']) as TCargoStateKind,
-                key: String(line['key']),
-                denial: String(line['denial']),
-            };
-        });
-}
-
 /** Два числа и отбитые строки из ответа приёма. Ответ не тем — пусто. */
-function stateAcceptedOf(text: string): ICargoStateAccepted | null {
-    try {
-        const said: Record<string, unknown> = JSON.parse(text) as Record<string, unknown>;
-
-        return typeof said['tree'] === 'string' && typeof said['changed'] === 'number'
-            ? {
-                  tree: said['tree'],
-                  changed: said['changed'],
-                  same: typeof said['same'] === 'number' ? said['same'] : 0,
-                  denied: deniedOf(said['denied']),
-              }
-            : null;
-    } catch {
-        return null;
-    }
-}
 
 /** Запрос правки состояния. Токен уезжает заголовком и в теле не появляется ни разу. */
-export const httpMark: TMarkCall = async (intake: string, token: string, body: ICargoStateBody): Promise<IMarked> => {
-    let answer: Response;
-
-    try {
-        answer = await fetch(intakeUrl(intake, 'states'), {
-            method: 'POST',
-            headers: { 'content-type': 'application/json', [TREE_TOKEN_HEADER]: token },
-            body: JSON.stringify(body),
-            signal: AbortSignal.timeout(SHIP_TIMEOUT_MS),
-        });
-    } catch (error: unknown) {
-        return { ok: false, status: 0, said: (error as Error).message, accepted: null };
-    }
-
-    const text: string = await answer.text();
-
-    return {
-        ok: answer.ok,
-        status: answer.status,
-        said: saidOf(text),
-        accepted: answer.ok ? stateAcceptedOf(text) : null,
-    };
-};

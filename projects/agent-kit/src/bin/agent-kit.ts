@@ -15,9 +15,8 @@ import { unknownFlagsIn } from '../lib/argv.js';
 import { IEntryOfCatalog, readCatalog, resolveSelection } from '../lib/catalog.js';
 import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, list, stats, sync } from '../lib/commands.js';
 import { CONFIG_PATH, IConfig, readConfig } from '../lib/config.js';
-import { FIX_FLAG, itemsOf, mark, POSTMORTEM_FLAG, PROPOSAL_FLAG, RELEASE_FLAG } from '../lib/cargo-state.js';
 import { enroll, httpEnroll } from '../lib/enroll.js';
-import { httpMark, httpShip, readToken } from '../lib/ship.js';
+import { httpShip } from '../lib/ship.js';
 import { propose, treeSlugOf } from '../lib/shipment.js';
 import { DEFAULT_DAYS } from '../lib/observations.js';
 import { staleBuild } from '../lib/freshness.js';
@@ -43,13 +42,6 @@ const USAGE: readonly string[] = [
     '  enroll --code <код>    завести дерево по приглашению владельца: обмен кода на токен',
     '  enroll --token <токен> завести дерево токеном, выданным в админке приёма; в сеть не идёт',
     '  enroll --force         перезаписать уже лежащий токен намеренно',
-    '  mark --state <состояние> --postmortem <файл> --proposal <признак>',
-    '                  перевести свои записи груза в названное состояние',
-    '  mark --fix <чем исправлено>',
-    '                  чем недочёт исправлен; обязателен при переходе в `fixed`, иначе не берётся',
-    '  mark --release <версия выпуска>',
-    '                  в какой версии искать фикс; обязателен при переходе в `released`, иначе не берётся',
-    '  mark --dry-run  показать, что уехало бы, и ничего не отправлять',
     '',
     '  --root <путь>   корень проекта; по умолчанию текущий каталог',
     '',
@@ -285,43 +277,6 @@ async function runPropose(env: IEnvironment, argv: readonly string[]): Promise<I
 }
 
 /** Приписка дерева к приёмнику по коду приглашения. */
-/** Доводы отметки: незнакомый кончает команду — её действие уходит наружу и обратимо не всегда. */
-const MARK_FLAGS: readonly string[] = ['--state', POSTMORTEM_FLAG, PROPOSAL_FLAG, FIX_FLAG, RELEASE_FLAG, '--dry-run', '--root'];
-
-/**
- * Отметка состояния записей груза.
- *
- * Всё, что видно без сети, отбивается без сети: незнакомое состояние, вызов без записей и
- * отсутствующий токен. Дерево при этом называется тем же признаком, что и у отправки груза, —
- * приём сверит его с деревом токена.
- */
-async function runMark(env: IEnvironment, argv: readonly string[]): Promise<IOutcomeOfCommand> {
-    const unknown: readonly string[] = unknownFlagsIn(argv.slice(1), MARK_FLAGS);
-    if (unknown.length) {
-        return { code: 1, lines: [`таких доводов у \`mark\` нет: ${unknown.join(', ')}`] };
-    }
-
-    const config: IConfig | null = readConfig(env.root);
-    if (!config) {
-        return { code: 1, lines: [`настройки дерева нет: ${CONFIG_PATH}. Заведите её командой \`init\``] };
-    }
-
-    const state: string = optionOf(argv, '--state', '');
-
-    return mark({
-        state,
-        intake: config.intake,
-        tree: treeSlugOf(remoteOf(env.root), config.tree),
-        token: readToken(env.root, config.token),
-        items: itemsOf(argv, state, {
-            fixNote: optionOf(argv, FIX_FLAG, ''),
-            releaseVersion: optionOf(argv, RELEASE_FLAG, ''),
-        }),
-        dryRun: argv.includes('--dry-run'),
-        call: httpMark,
-    });
-}
-
 async function runEnroll(env: IEnvironment, argv: readonly string[]): Promise<IOutcomeOfCommand> {
     const config: IConfig | null = readConfig(env.root);
 
@@ -352,7 +307,6 @@ const COMMANDS: Readonly<Record<string, TCommandRun>> = {
     stats: runStats,
     propose: runPropose,
     enroll: runEnroll,
-    mark: runMark,
     doctor: (env: IEnvironment): IOutcomeOfCommand => doctor(env),
     adopt: (env: IEnvironment, argv: readonly string[]): IOutcomeOfCommand =>
         adopt(

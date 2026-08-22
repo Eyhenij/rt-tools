@@ -117,3 +117,18 @@ describe('куда ложится образец', (): void => {
         expect(targetOf(sample, layout)).toBe('работа/образцы/tasks/_template/plan.md');
     });
 });
+
+describe('холодная часть правила', (): void => {
+    it('SC-AK-503 — холодная часть ложится третьим файлом в каталог своего правила', (): void => {
+        expect(targetOf({ id: 'pitfalls/task-flow.md', kind: 'pitfalls', name: 'task-flow' }, DEFAULT_LAYOUT)).toBe(
+            '.claude/skills/task-flow/pitfalls.md'
+        );
+    });
+
+    it('SC-AK-504 — холодная часть за имя файла с самим правилом не спорит', (): void => {
+        const rule: string = targetOf({ id: 'rules/task-flow.md', kind: 'rules', name: 'task-flow' }, DEFAULT_LAYOUT);
+        const pitfalls: string = targetOf({ id: 'pitfalls/task-flow.md', kind: 'pitfalls', name: 'task-flow' }, DEFAULT_LAYOUT);
+
+        expect(rule).not.toBe(pitfalls);
+    });
+});
