@@ -25,6 +25,8 @@
 # FAIL-OPEN: нет jq, не git-репозиторий, битый ввод, чужой инструмент → пропуск. Сломанный
 # гард не должен мешать работать.
 
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+
 input="$(cat 2>/dev/null)"
 [ -z "$input" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0

@@ -7,6 +7,8 @@
 #
 # Хук только наблюдает: он всегда пропускает и ничего не отбивает.
 
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+
 input="$(cat 2>/dev/null)"
 [ -z "$input" ] && exit 0
 

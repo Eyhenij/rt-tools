@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.10.0 · hooks/handoff-write.sh · dccb9f50aa6d · правится надстройкой, не здесь
+# rt-kit v0.10.0 · hooks/handoff-write.sh · 24211a7e555d · правится надстройкой, не здесь
 # rt-hook: PreCompact .*
 # Требует: hooks/profile-check.sh
 # Передача захода пишется перед сжатием контекста, а не рукой исполнителя.
@@ -19,6 +19,8 @@
 #
 # FAIL-OPEN: нет разборщика, пустой ввод, не репозиторий, нет каталога передачи — хук выходит
 # нулём и молчит. Сжатие он не отбивает никогда: остановленное сжатие оставит заход без места.
+
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 
 input="$(cat 2>/dev/null)"
 [ -z "$input" ] && exit 0
