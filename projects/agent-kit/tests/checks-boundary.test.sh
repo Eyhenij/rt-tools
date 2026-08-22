@@ -50,6 +50,13 @@ printf '{\n    "skip": [\n        "rules/cargo-triage.md"\n    ]\n}\n' > "$BOUND
 report "SC-AK-504 — ресурс в перечне всё равно назван" "$(bound_says 'cargo-triage\.md .* предмета нет')" 1
 report "SC-AK-504 — код возврата остался ненулевым" "$(bound_code)" 1
 
+# SC-AK-507 — известный долг держится перечнем, а не молчанием проверки
+mkdir -p "$BOUND_TREE/tools"
+printf '{\n    "accepted": {\n        "kit/assets/rules/cargo-triage.md": "переезжает своей задачей"\n    }\n}\n' > "$BOUND_TREE/tools/boundary-debt.json"
+report "SC-AK-507 — долг назван строкой долга" "$(bound_says 'известного долга')" 1
+report "SC-AK-507 — ресурс не из перечня всё равно краснеет" "$(bound_code)" 1
+rm "$BOUND_TREE/tools/boundary-debt.json"
+
 # SC-AK-506 — проверка входит в гейт пуша: шаг конвейера и его местная команда сходятся
 gate_step() { grep -c 'name: Package boundary' "$TREE_ROOT/.github/workflows/ci.yml"; }
 gate_local() { grep -c '"Package boundary": "node tools/check-boundary.mjs"' "$TREE_ROOT/.claude/rt-kit/checks.json"; }

@@ -28,6 +28,14 @@ import { join, relative, resolve } from 'node:path';
 const ROOT = resolve(process.argv[2] ?? 'projects/agent-kit');
 
 /**
+ * Известный долг: ресурсы не для везения, которые ещё лежат в пакете и переезжают своей задачей.
+ * Держится он перечнем, а не молчанием проверки: без перечня она краснела бы до конца переезда
+ * и отбивала бы пуш каждой ветки, включая те, что переезд и делают. Каждая строка называет,
+ * куда ресурс уедет, и вычёркивается тем же изменением, которым он уезжает.
+ */
+const DEBT = join(resolve('tools'), 'boundary-debt.json');
+
+/**
  * Судится то, что раскладка везёт: ресурсы и код. Описание пакета и его журнал изменений
  * потребителю не едут и о дереве пакета говорят законно — это их предмет.
  */
@@ -79,14 +87,18 @@ if (!existsSync(ROOT)) {
     process.exit(0);
 }
 
+const debt = existsSync(DEBT) ? (JSON.parse(readFileSync(DEBT, 'utf8')).accepted ?? {}) : {};
 const problems = [];
+const carried = [];
 
 for (const file of CARRIED.flatMap((dir) => (existsSync(join(ROOT, dir)) ? filesOf(join(ROOT, dir)) : []))) {
     const text = readFileSync(file, 'utf8');
     const hit = MARKS.find(([mark]) => text.includes(mark));
 
     if (hit) {
-        problems.push(`  ${relative(process.cwd(), file)} — ${hit[1]}`);
+        const where = relative(process.cwd(), file);
+
+        (Object.hasOwn(debt, where) ? carried : problems).push(`  ${where} — ${hit[1]}`);
     }
 }
 
@@ -95,7 +107,7 @@ for (const file of CARRIED.flatMap((dir) => (existsSync(join(ROOT, dir)) ? files
  * образцами ловится не всегда — готовые вызовы бывают короче любой оговорки.
  */
 const namesOfRules = new Set(
-    problems
+    [...problems, ...carried]
         .map((line) => /assets\/rules\/([\w-]+)\.md/.exec(line))
         .filter(Boolean)
         .map((found) => found[1])
@@ -109,14 +121,24 @@ if (namesOfRules.size > 0) {
             const rule = /^rule:\s*([\w-]+)\s*$/m.exec(readFileSync(file, 'utf8'));
 
             if (rule && namesOfRules.has(rule[1])) {
-                problems.push(`  ${relative(process.cwd(), file)} — паттерн правила \`${rule[1]}\`, которое не для везения`);
+                const where = relative(process.cwd(), file);
+
+                (Object.hasOwn(debt, where) ? carried : problems).push(
+                    `  ${where} — паттерн правила \`${rule[1]}\`, которое не для везения`
+                );
             }
         }
     }
 }
 
+if (carried.length > 0) {
+    console.log(`check-boundary: известного долга ${carried.length} — переезжает своими задачами\n`);
+    carried.forEach((line) => console.log(line));
+    console.log('');
+}
+
 if (problems.length === 0) {
-    console.log('check-boundary: пакет везёт только исполнимое потребителем');
+    console.log('check-boundary: нового ресурса не для везения нет');
     process.exit(0);
 }
 
