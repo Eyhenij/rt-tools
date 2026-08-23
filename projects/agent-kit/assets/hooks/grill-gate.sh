@@ -23,14 +23,16 @@
 # РАЗРЕШАЕТСЯ (exit 0). Сломанный гард не имеет права заклинить разговор.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
-input="$(cat 2>/dev/null)"
+rt_hook_read
+input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 
 command -v jq >/dev/null 2>&1 || exit 0
 
 # Какое событие пришло. У вызова инструмента есть его имя, у завершения хода — нет.
-tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+tool="$(rt_hook_tool)"
 
 # Повторный заход по тому же ходу не судится: иначе ход не кончится никогда — гард сказал своё
 # один раз и отпускает. К вызову инструмента это не относится: там судится сам вызов.

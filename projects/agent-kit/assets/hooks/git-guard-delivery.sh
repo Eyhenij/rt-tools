@@ -40,12 +40,14 @@
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: не репозиторий, нет разборщика, битый ввод, нет профиля — пропуск.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
-input="$(cat 2>/dev/null)"
+rt_hook_read
+input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0
 
-tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+tool="$(rt_hook_tool)"
 sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
 case "$tool" in
     # Терминал среды и универсальный исполнитель кладут команду в то же поле.
@@ -53,7 +55,7 @@ case "$tool" in
     *) exit 0 ;;
 esac
 
-cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
+cmd="$(rt_hook_cmd)"
 [ -z "$cmd" ] && exit 0
 
 # Универсальный исполнитель передаёт настоящую команду вложенной строкой. Разбирать надо её,
@@ -67,7 +69,7 @@ if [ "$tool" = "mcp__webstorm__execute_tool" ] && command -v perl >/dev/null 2>&
     [ -n "$inner" ] && cmd="$inner"
 fi
 
-workdir="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)"
+workdir="$(rt_hook_cwd)"
 [ -z "$workdir" ] && workdir="${CLAUDE_PROJECT_DIR:-.}"
 cd "$workdir" 2>/dev/null || exit 0
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0

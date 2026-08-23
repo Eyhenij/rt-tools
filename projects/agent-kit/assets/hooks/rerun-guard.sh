@@ -21,19 +21,21 @@
 # упавшего прогона зовут и без него, а угадывать, о каком задании речь, значит отбивать наугад.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
-input="$(cat 2>/dev/null)"
+rt_hook_read
+input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0
 
-tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+tool="$(rt_hook_tool)"
 case "$tool" in
     # Терминал среды и универсальный исполнитель кладут команду в то же поле.
     Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool) ;;
     *) exit 0 ;;
 esac
 
-cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
+cmd="$(rt_hook_cmd)"
 [ -z "$cmd" ] && exit 0
 
 # Профиль дерева: сперва умолчание пакета, поверх него — надстройка проекта, если она есть.

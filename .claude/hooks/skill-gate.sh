@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.11.0 · hooks/skill-gate.sh · 20e10303b90e · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/skill-gate.sh · cdb0443a4c9e · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__claude-in-chrome__.*
 # Требует: hooks/deny-tail.sh
 # Гейт правил: не даёт править файл, пока не загружено правило, под которое он подпадает.
@@ -25,12 +25,14 @@
 # Сломанный гейт не имеет права остановить работу совсем.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
-input="$(cat 2>/dev/null)"
+rt_hook_read
+input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 
 sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
-tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+tool="$(rt_hook_tool)"
 
 # Умолчание карты ищется и рядом с самим хуком: уезжают они вместе.
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

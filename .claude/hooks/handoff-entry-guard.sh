@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.11.0 · hooks/handoff-entry-guard.sh · f19744bca8a3 · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/handoff-entry-guard.sh · 2dd9e84cd2d6 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit
 # Требует: rules/task-flow.md, hooks/deny-tail.sh
 # Гард входа из передачи: заход, начатый с передачи, не правит файлов, пока не загружено правило
@@ -16,12 +16,14 @@
 # FAIL-OPEN: нет `jq`, нет записи хода, передачи в реплике нет → пропуск.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
-input="$(cat 2>/dev/null)"
+rt_hook_read
+input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0
 
-tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+tool="$(rt_hook_tool)"
 case "$tool" in
     Edit | Write | MultiEdit) ;;
     *) exit 0 ;;

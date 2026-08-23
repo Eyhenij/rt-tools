@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.11.0 · hooks/task-flow-guard.sh · 709843d09ef4 · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/task-flow-guard.sh · ea04770464a0 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # PreToolUse guard for Edit|Write|MultiEdit: код не пишется раньше замысла.
@@ -27,8 +27,10 @@
 # гард не должен мешать работать.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
-input="$(cat 2>/dev/null)"
+rt_hook_read
+input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0
 
@@ -46,7 +48,7 @@ done
 [ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
 command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
 
-tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+tool="$(rt_hook_tool)"
 candidates=""
 case "$tool" in
     # Инструмент редактора заводит файл теми же двумя данными, только называет их иначе —
@@ -62,7 +64,7 @@ case "$tool" in
     # имён гард стоял бы объявленным на них и молча пропускал — состояние хуже необъявленного,
     # потому что снаружи выглядит закрытым.
     Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool)
-        cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
+        cmd="$(rt_hook_cmd)"
         [ -z "$cmd" ] && exit 0
         # Универсальный исполнитель прячет настоящую команду во вложенной строке: без её разбора
         # путь стоит за кавычкой, и до него не дотягивается ни один образец.
@@ -128,7 +130,7 @@ deny() {
 }
 
 # Ветку смотрим там же, где пойдёт правка: у worktree она своя.
-workdir="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)"
+workdir="$(rt_hook_cwd)"
 [ -z "$workdir" ] && workdir="${CLAUDE_PROJECT_DIR:-.}"
 cd "$workdir" 2>/dev/null || exit 0
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
