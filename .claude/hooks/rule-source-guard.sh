@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.12.0 · hooks/rule-source-guard.sh · 89ab5574630a · правится надстройкой, не здесь
+# rt-kit v0.12.0 · hooks/rule-source-guard.sh · 95b71fc64535 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # Гард места правки: слой правил чинится там, где сломано, а не там, где виден.
@@ -60,9 +60,9 @@ rt_write_targets() {
         | sed -E 's/>>?/\n>/g' \
         | sed -nE '
             s/^>[[:space:]]*([^[:space:]|&;]+).*/\1/p
-            s/.*[[:space:]]tee[[:space:]]+(-a[[:space:]]+)?([^[:space:]|&;]+).*/\2/p
-            s/.*[[:space:]]sed[[:space:]]+-i[[:space:]]+([^[:space:]]+[[:space:]]+)*([^[:space:]|&;]+)$/\2/p
-            s/.*[[:space:]](cp|mv|install)[[:space:]]+([^[:space:]]+[[:space:]]+)+([^[:space:]|&;]+).*/\3/p
+            s/(^|.*[[:space:]])tee[[:space:]]+(-a[[:space:]]+)?([^[:space:]|&;]+).*/\3/p
+            s/(^|.*[[:space:]])sed[[:space:]]+-i[[:space:]]+([^[:space:]]+[[:space:]]+)*([^[:space:]|&;]+)$/\3/p
+            s/(^|.*[[:space:]])(cp|mv|install)[[:space:]]+([^[:space:]]+[[:space:]]+)+([^[:space:]|&;]+).*/\4/p
         ' \
         | sort -u
 }
@@ -106,7 +106,6 @@ while IFS= read -r candidate; do
         *) candidate="$root/$candidate" ;;
     esac
     [ -f "$candidate" ] || continue
-    case " $removed " in *" ${candidate#"$root"/} "* | *" $candidate "*) continue ;; esac
 
     # Шапка стоит в начале файла, но не первой строкой: у сценария её отодвигает `#!`, у
     # правила — заголовок с именем и родом ресурса. Десяти строк хватает обоим, а читать файл

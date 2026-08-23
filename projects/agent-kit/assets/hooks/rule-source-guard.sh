@@ -59,9 +59,9 @@ rt_write_targets() {
         | sed -E 's/>>?/\n>/g' \
         | sed -nE '
             s/^>[[:space:]]*([^[:space:]|&;]+).*/\1/p
-            s/.*[[:space:]]tee[[:space:]]+(-a[[:space:]]+)?([^[:space:]|&;]+).*/\2/p
-            s/.*[[:space:]]sed[[:space:]]+-i[[:space:]]+([^[:space:]]+[[:space:]]+)*([^[:space:]|&;]+)$/\2/p
-            s/.*[[:space:]](cp|mv|install)[[:space:]]+([^[:space:]]+[[:space:]]+)+([^[:space:]|&;]+).*/\3/p
+            s/(^|.*[[:space:]])tee[[:space:]]+(-a[[:space:]]+)?([^[:space:]|&;]+).*/\3/p
+            s/(^|.*[[:space:]])sed[[:space:]]+-i[[:space:]]+([^[:space:]]+[[:space:]]+)*([^[:space:]|&;]+)$/\3/p
+            s/(^|.*[[:space:]])(cp|mv|install)[[:space:]]+([^[:space:]]+[[:space:]]+)+([^[:space:]|&;]+).*/\4/p
         ' \
         | sort -u
 }
@@ -105,7 +105,6 @@ while IFS= read -r candidate; do
         *) candidate="$root/$candidate" ;;
     esac
     [ -f "$candidate" ] || continue
-    case " $removed " in *" ${candidate#"$root"/} "* | *" $candidate "*) continue ;; esac
 
     # Шапка стоит в начале файла, но не первой строкой: у сценария её отодвигает `#!`, у
     # правила — заголовок с именем и родом ресурса. Десяти строк хватает обоим, а читать файл
