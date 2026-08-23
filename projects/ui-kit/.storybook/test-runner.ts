@@ -1,7 +1,7 @@
 import type { TestContext, TestRunnerConfig } from '@storybook/test-runner';
 import { getStoryContext } from '@storybook/test-runner';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
-import type { Page } from 'playwright';
+import type { Page, Route } from 'playwright';
 
 /**
  * Визуальная проверка витрины: каждая история снимается и сверяется с эталоном.
@@ -21,8 +21,8 @@ const SNAPSHOT_DIR: string = `${process.cwd()}/projects/ui-kit/.storybook/__snap
  */
 const FAILURE_THRESHOLD: number = 0.0002;
 
-/** Сколько ждать шрифт значков: он приходит из сети, а до него иконка себя прячет. */
-const FONT_TIMEOUT_MS: number = 10_000;
+/** Семейства значков, которыми рисуются истории. Кадр без любого из них сравнивать не с чем. */
+const ICON_FONTS: readonly string[] = ['Material Icons', 'Material Icons Outlined'];
 
 /** Пауза после глушения движения — кадру нужно успеть встать. */
 const SETTLE_MS: number = 150;
@@ -41,6 +41,45 @@ const STILL_FRAMES: number = 2;
 
 /** Размер кадра по умолчанию. Истории, которым нужен другой, называют его параметром. */
 const VIEWPORT: { width: number; height: number } = { width: 1280, height: 720 };
+
+/** Машины, с которых съёмке разрешено брать что бы то ни было: витрина отдаёт всё сама. */
+const LOCAL_HOSTS: ReadonlySet<string> = new Set<string>(['localhost', '127.0.0.1', '[::1]']);
+
+/** Страницы с уже поставленным отсечением: обвязка проходит по одной странице много раз. */
+const cutOff: WeakSet<Page> = new WeakSet<Page>();
+
+/**
+ * Отсекает съёмку от чужой сети.
+ *
+ * Всё, из чего складывается кадр, лежит в дереве и отдаётся самой витриной — шрифт значков в
+ * том числе. Пока хоть что-то ехало снаружи, кадр зависел от чужой доступности: не приехав,
+ * шрифт оставлял значки невидимыми, подписи кнопок вставали на их место, и кадр расходился с
+ * эталоном там, где вёрстку никто не трогал. Отсечение держит это не памятью автора:
+ * вернувшийся внешний адрес роняет свою историю громко, а не гадает от прогона к прогону.
+ */
+async function cutOffNetwork(page: Page): Promise<void> {
+    if (cutOff.has(page)) {
+        return;
+    }
+
+    cutOff.add(page);
+
+    await page.route('**/*', async (route: Route): Promise<void> => {
+        const address: string = route.request().url();
+
+        if (!address.startsWith('http://') && !address.startsWith('https://')) {
+            await route.continue();
+            return;
+        }
+
+        if (LOCAL_HOSTS.has(new URL(address).hostname)) {
+            await route.continue();
+            return;
+        }
+
+        await route.abort();
+    });
+}
 
 /**
  * Ждёт вставшую страницу событием, а не отсчётом времени.
@@ -99,6 +138,8 @@ const config: TestRunnerConfig = {
     },
 
     async preVisit(page: Page, context: TestContext): Promise<void> {
+        await cutOffNetwork(page);
+
         // Содержимое в перекрытии живёт вне потока страницы, и полный снимок его не
         // достраивает: попап или панель выше кадра просто обрезаются. Кадр под такую
         // историю задаётся ею самой — параметром `snapshotViewport`.
@@ -113,23 +154,44 @@ const config: TestRunnerConfig = {
     },
 
     async postVisit(page: Page, context: TestContext): Promise<void> {
-        // Шрифт значков грузится с внешнего адреса, а `rtui-icon` до его загрузки держит
-        // себя невидимой. Снимок, сделанный раньше, отличается от эталона всегда.
+        // Шрифт значков отдаёт сама витрина, но и её ответа надо дождаться: `rtui-icon` до
+        // загрузки шрифта держит себя невидимой, и снимок, сделанный раньше, отличается от
+        // эталона всегда.
         //
-        // Ожидание не гасит свой отказ намеренно. Погашенный, он снимал кадр без шрифта:
-        // значки невидимы, подписи кнопок встают на их место, и кадр расходится с эталоном
-        // на одну и ту же сотую долю — то самое расхождение, которое три раза подряд отбивало
-        // гейт пуша и три раза проходило со второго вызова. Красное «шрифт не приехал» стоит
-        // одной строки разбора, красное «снимок разошёлся» — целого захода.
-        await page.evaluate(() => document.fonts.ready);
-        try {
-            await page.waitForFunction(() => document.querySelector('.rtui-icon--loading') === null, undefined, {
-                timeout: FONT_TIMEOUT_MS,
-            });
-        } catch {
+        // Ожидание идёт по самим семействам, а не по классу ожидания у иконки. Класс она
+        // снимает по `document.fonts.ready`, а тот разрешается и пустым набором: не приехали
+        // сами объявления шрифта — ждать нечего, значки остаются невидимыми, и кадр уходит в
+        // сравнение молча. Замером это и поймано: съёмка без объявлений дала 26 разошедшихся
+        // снимков и ни одного отказа по шрифту.
+        //
+        // Отказ не гасится намеренно. Красное «шрифт не встал» стоит одной строки разбора,
+        // красное «снимок разошёлся» — целого захода.
+        const missing: string[] = await page.evaluate(async (families: readonly string[]): Promise<string[]> => {
+            const absent: string[] = [];
+
+            for (const family of families) {
+                try {
+                    // Браузер грузит семейство лениво — только под тот текст, что им рисуется.
+                    // Контурного на большинстве историй нет вовсе, поэтому загрузка вызывается
+                    // явно: иначе непришедший шрифт неотличим от невостребованного.
+                    const faces: FontFace[] = await document.fonts.load(`1rem "${family}"`);
+
+                    if (faces.length === 0 || !document.fonts.check(`1rem "${family}"`)) {
+                        absent.push(family);
+                    }
+                } catch {
+                    absent.push(family);
+                }
+            }
+
+            return absent;
+        }, ICON_FONTS);
+
+        if (missing.length > 0) {
             throw new Error(
-                `Шрифт значков не приехал за ${FONT_TIMEOUT_MS} мс: история «${context.id}» осталась со значками-невидимками, ` +
-                    'и кадр с неё сравнивать не с чем. Это отказ сети до внешнего адреса шрифта, а не расхождение вёрстки.'
+                `Шрифт значков не встал: история «${context.id}» осталась со значками-невидимками, и кадр с неё сравнивать ` +
+                    `не с чем. Не поднялось: ${missing.join(', ')} — эти семейства лежат в дереве и едут от самой витрины, ` +
+                    'значит поломка в её настройке или в шапке показа, а не расхождение вёрстки.'
             );
         }
 
