@@ -202,10 +202,20 @@ export async function mark(options) {
 
     const body = { schema: options.schema, tree: options.tree, items: options.items };
 
+    // Перечень печатается обоими прогонами, и разделены они не окончанием глагола, а первой
+    // строкой: «уехало» и «уехало бы» отличаются двумя буквами в хвосте, а строки под ними
+    // одинаковы до знака, и вывод сухого прогона читается сделанной работой.
+    const listed = `  ${describe(options.items, options.state)}`;
+
     if (options.dryRun) {
         return {
             code: 0,
-            lines: [`уехало бы в ${options.intake}, дерево ${options.tree}:`, `  ${describe(options.items, options.state)}`],
+            lines: [
+                'СУХОЙ ПРОГОН — наружу не ушло ничего, в приёме не переведено ни одной записи',
+                `уехало бы в ${options.intake}, дерево ${options.tree}:`,
+                listed,
+                'отмечает это тот же вызов без `--dry-run`',
+            ],
         };
     }
 
@@ -220,7 +230,9 @@ export async function mark(options) {
     return {
         code: denied.length ? REFUSED : 0,
         lines: [
-            `отмечено в ${options.intake}, дерево ${options.tree}: переведено ${changed}, уже стояло ${same}, отбито ${denied.length}`,
+            `ОТМЕТКА — уходит в ${options.intake}, дерево ${options.tree}:`,
+            listed,
+            `отмечено: переведено ${changed}, уже стояло ${same}, отбито ${denied.length}`,
             ...denied.map((one) => deniedLine(one.kind, one.key, one.denial)),
         ],
     };

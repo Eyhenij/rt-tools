@@ -43,13 +43,11 @@ import {
     fetchIssues,
     fetchOpenPulls,
     gh,
-    headCommittedAt,
     numberFromTaskDir,
     numberFromTitle,
-    runsOnHead,
     taskDirs,
-    verdictOnHead,
 } from './board.mjs';
+import { deployLag, headCommittedAt, runsOnHead, verdictOnHead } from './board-runs.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 const IN_REVIEW = STATUS_OPTIONS[IN_REVIEW_STATUS].name;
@@ -67,6 +65,12 @@ const RUN_GRACE_MINUTES = 10;
  */
 const PIPELINE = CONFIG.pushGate?.pipelineFile ?? '';
 const HAS_PIPELINE = PIPELINE !== '' && existsSync(join(ROOT, PIPELINE));
+/**
+ * Рабочий поток выкатки и ветка, с которой прод сравнивают. Не назвав потока, дерево сверки
+ * прода не получает — и сверка говорит об этом вслух: молчание читалось бы как «прод сошёлся».
+ */
+const DEPLOY_WORKFLOW = CONFIG.deploy?.workflow ?? '';
+const MAIN_BRANCH = CONFIG.deploy?.mainBranch ?? 'main';
 
 const problems = [];
 const report = (message) => problems.push(message);
@@ -252,10 +256,11 @@ try {
             claimed.set(titleNumber, pull.number);
         }
 
-        // Папка задачи, лежащая в ветке открытого PR, — единственное расхождение, которое
-        // сверка обязана назвать ДО слияния: гард судит её на слиянии, а слияние нажимает
-        // человек в браузере, где хуков нет вовсе. Сказанная после, эта строка уже не чинится
-        // тем же PR — работа перешла дальше, и на разбор заводится вторая задача.
+        // Папка задачи, лежащая в ветке открытого PR, — расхождение с первой минуты заявки:
+        // уборка стоит до её открытия, и открытие с лежащей папкой отбивает гард поставки.
+        // Дошедшая сюда папка означает обход — либо заявку, открытую мимо гарда. Сказанная
+        // после слияния, эта строка уже не чинится тем же PR: работа перешла дальше, и на
+        // разбор заводится вторая задача.
         if (HAS_PIPELINE && pull.headRefOid) {
             checkHeadRun(pull, options);
         }
@@ -266,7 +271,7 @@ try {
             const folder = folderInBranch(pull.headRefName, options);
             if (folder !== null) {
                 report(
-                    `PR #${pull.number}: ветка везёт папку задачи «${folder}/» — разбери её этим же PR или поставь в тело строку «Task-folder-skip: <причина>»`
+                    `PR #${pull.number}: ветка везёт папку задачи «${folder}/» — заявка открывается после уборки. Разбери её этим же PR или поставь в тело строку «Task-folder-skip: <причина>»`
                 );
             }
         }
@@ -312,7 +317,33 @@ try {
     }
 }
 
+// Прод сверяется с главной веткой по последней успешной выкатке. Задача уходит из очереди
+// слиянием, но слияние — ещё не прод: там, где выкатку запускают рукой, между ними может лечь
+// сколько угодно коммитов, и заметить это неоткуда.
+if (!offline && DEPLOY_WORKFLOW) {
+    try {
+        const lag = deployLag(DEPLOY_WORKFLOW, MAIN_BRANCH, { token: botToken() ?? undefined });
+        if (lag === null) {
+            report(`выкаток по «${DEPLOY_WORKFLOW}» не было ни одной — сравнить прод не с чем`);
+        } else if (lag.behind > 0) {
+            report(
+                `прод отстал от «${MAIN_BRANCH}» на ${lag.behind} коммитов: последняя выкатка — ${lag.sha.slice(0, 8)} от ${String(lag.at).slice(0, 10)}`
+            );
+        }
+    } catch (error) {
+        if (error instanceof OfflineError) {
+            console.log(`check-board: прод не сверялся — ${error.message}`);
+        } else {
+            throw error;
+        }
+    }
+}
+
 // Непроверенное называется вслух: молчание о прогонах читалось бы как «прогоны на месте».
+if (!offline && !DEPLOY_WORKFLOW) {
+    console.log('check-board: прод с главной веткой не сверялся — рабочий поток выкатки в настройке дерева не назван');
+}
+
 if (!offline && !HAS_PIPELINE) {
     console.log('check-board: прогоны на вершинах не спрашивались — файла конвейера в дереве нет');
 }

@@ -8,36 +8,18 @@
 удовлетворяется, поэтому имя поля из чужой строки проходит её так же, как нужное предложение, — и
 утверждение остаётся зелёным, когда сам текст роли переписан целиком.
 
-| Правило                                                                                                      | Где исполняется                                                         |
-| ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
-| Конфиг линтера требует правило под собой.                                                                    | `projects/agent-kit/assets/defaults/gate-map.sh:skill_for_default`      |
-| Проверка повторов требует правило, чьи признаки исполняет, и только его.                                     | `projects/agent-kit/assets/defaults/gate-map.sh:skill_for_default`      |
-| Хук, которому не хватает функции профиля, говорит об этом вместо молчания.                                   | `projects/agent-kit/assets/hooks/profile-check.sh:rt_needs`             |
-| Сообщение о нехватке не превращает хук в отказ.                                                              | `projects/agent-kit/assets/hooks/profile-check.sh:rt_needs`             |
-| Разбор состояния перечисляет функции профиля, которых ждут разложенные хуки, и те из них, что не определены. | `projects/agent-kit/src/lib/commands.ts:profileLines`                   |
-| Признак кода приложения судится относительно корня дерева.                                                   | `projects/agent-kit/assets/defaults/project.sh:rt_is_app_code_default`  |
-| Заведение рабочего дерева грузит правило поставки.                                                           | `projects/agent-kit/assets/defaults/gate-map.sh:skill_for_default`      |
-| Слои поверх доменного правила объявляются своим файлом, а не строками в гейте.                               | `projects/agent-kit/assets/hooks/skill-gate-layers.sh:rt_layer_add`     |
-| Слой требует правило дополнительно, а не вместо доменного.                                                   | `projects/agent-kit/assets/hooks/skill-gate.sh:want`                    |
-| Признак, невидимый по пути, судится по тексту правки.                                                        | `projects/agent-kit/assets/hooks/skill-gate-layers.sh:rt_layer_payload` |
-| Слой, которому нечем прочитать текст правки, отпускает действие.                                             | `projects/agent-kit/assets/hooks/skill-gate-layers.sh:rt_layer_is_spec` |
-| Файл слоёв гейт зовёт в своей оболочке, а не отдельным процессом.                                            | `projects/agent-kit/assets/hooks/skill-gate.sh:rt_hooks_dir`            |
-| Карта гейта считает командой вызов, а не упоминание.                                                         | `projects/agent-kit/assets/defaults/gate-map.sh:rt_gate_invokes`        |
-| Перенаправление в пустое устройство и в поток ошибок записью не считается.                                   | `projects/agent-kit/assets/defaults/project.sh:rt_shell_writes_default` |
-| Пути берутся из заголовка команды, а не из тела документа на месте.                                          | `projects/agent-kit/assets/defaults/project.sh:rt_shell_paths_default`  |
-| Гард замысла судит объявленный переход, а не наличие файлов.                                                 | `projects/agent-kit/assets/hooks/task-flow-guard.sh:state`              |
-| Отказ по состоянию называет обязательное действие того состояния, которое объявлено.                         | `projects/agent-kit/assets/hooks/task-flow-guard.sh:state_action`       |
-| Именем состояния считается только слово из перечня.                                                          | `projects/agent-kit/assets/hooks/task-flow-guard.sh:state_action`       |
-| Состояние судится раньше договорённости и её обхода.                                                         | `projects/agent-kit/assets/hooks/task-flow-guard.sh:progress`           |
-| Правка не идёт, пока за сессию не сдан экзамен по загруженным правилам.                                      | `projects/agent-kit/assets/hooks/exam-guard.sh:verdict`                 |
-| Сдачей считается только полный балл.                                                                         | `projects/agent-kit/assets/hooks/exam-guard.sh:verdict`                 |
-| Судится последний вердикт роли, а не первый.                                                                 | `projects/agent-kit/assets/hooks/exam-guard.sh:verdict`                 |
-| Роль, выключенная деревом, гарда при ней не держит.                                                          | `projects/agent-kit/assets/hooks/roles.sh:rt_role_off`                  |
-| Настройка, которую не прочитать, роль не выключает.                                                          | `projects/agent-kit/assets/hooks/roles.sh:rt_role_off`                  |
-| Экзамен спрашивается дважды: на старте сессии и перед снятием черновика.                                     | `projects/agent-kit/assets/hooks/exam-guard.sh:ready`                   |
-| Записи хода сводятся в один поток по порядку.                                                                | `projects/agent-kit/assets/hooks/exam-guard.sh:after`                   |
-| Заход, начатый с передачи, не правит файлов, пока не загружено правило ведения работы.                       | `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:verdict`        |
-| Передача узнаётся и по пути к ней, и по слову о ней.                                                         | `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:from_handoff`   |
-| Отказ гарда называет два законных хода.                                                                      | `projects/agent-kit/assets/hooks/deny-tail.sh:rt_deny_tail`             |
-| Законная форма обхода называется тем же хвостом, а её отсутствие — тоже.                                     | `projects/agent-kit/assets/hooks/deny-tail.sh:rt_deny_tail`             |
-| Хвост отказа собирает общая функция, а не каждый текст сам.                                                  | `projects/agent-kit/assets/hooks/git-guard-main.sh:deny_tail_text`      |
+| Правило                                                                                                      | Где исполняется                                                        |
+| ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| Хук, которому не хватает функции профиля, говорит об этом вместо молчания.                                   | `projects/agent-kit/assets/hooks/profile-check.sh:rt_needs`            |
+| Сообщение о нехватке не превращает хук в отказ.                                                              | `projects/agent-kit/assets/hooks/profile-check.sh:rt_needs`            |
+| Разбор состояния перечисляет функции профиля, которых ждут разложенные хуки, и те из них, что не определены. | `projects/agent-kit/src/lib/commands.ts:profileLines`                  |
+| Признак кода приложения судится относительно корня дерева.                                                   | `projects/agent-kit/assets/defaults/project.sh:rt_is_app_code_default` |
+| Гард замысла судит объявленный переход, а не наличие файлов.                                                 | `projects/agent-kit/assets/hooks/task-flow-guard.sh:state`             |
+| Отказ по состоянию называет обязательное действие того состояния, которое объявлено.                         | `projects/agent-kit/assets/hooks/task-flow-guard.sh:state_action`      |
+| Именем состояния считается только слово из перечня.                                                          | `projects/agent-kit/assets/hooks/task-flow-guard.sh:state_action`      |
+| Состояние судится раньше договорённости и её обхода.                                                         | `projects/agent-kit/assets/hooks/task-flow-guard.sh:progress`          |
+| Заход, начатый с передачи, не правит файлов, пока не загружено правило ведения работы.                       | `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:verdict`       |
+| Передача узнаётся и по пути к ней, и по слову о ней.                                                         | `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:from_handoff`  |
+| Отказ гарда называет два законных хода.                                                                      | `projects/agent-kit/assets/hooks/deny-tail.sh:rt_deny_tail`            |
+| Законная форма обхода называется тем же хвостом, а её отсутствие — тоже.                                     | `projects/agent-kit/assets/hooks/deny-tail.sh:rt_deny_tail`            |
+| Хвост отказа собирает общая функция, а не каждый текст сам.                                                  | `projects/agent-kit/assets/hooks/git-guard-main.sh:deny_tail_text`     |

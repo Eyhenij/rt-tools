@@ -14,6 +14,7 @@ BOARD_TREE="$(mktemp -d)"
 mkdir -p "$BOARD_TREE/tools" "$BOARD_TREE/.claude/rt-kit" "$BOARD_TREE/docs/tasks" "$BOARD_TREE/.github/workflows"
 cp "$CHECKS/rt-kit-checks.config.mjs" "$BOARD_TREE/tools/"
 cp "$CHECKS/board.github.mjs" "$BOARD_TREE/tools/board.mjs"
+cp "$CHECKS/board-runs.github.mjs" "$BOARD_TREE/tools/board-runs.mjs"
 cp "$CHECKS/check-board.github.mjs" "$BOARD_TREE/tools/check-board.mjs"
 printf '%s\n' 'on: pull_request' 'jobs:' '    main:' '        steps:' '            - name: Lint' \
     > "$BOARD_TREE/.github/workflows/ci.yml"
@@ -29,8 +30,10 @@ case "$args" in
     "issue list"*) printf '%s' "$STUB_ISSUES" ;;
     "pr list"*) printf '%s' "$STUB_PULLS" ;;
     *contents*) printf 'Not Found\n' >&2; exit 1 ;;
+    *actions/workflows/*runs*) printf '%s\n' "$STUB_DEPLOY" ;;
     *actions/runs*per_page=20*) printf '%s\n' "$STUB_VERDICT" ;;
     *actions/runs*) printf '%s\n' "$STUB_RUNS" ;;
+    *compare/*) printf '%s\n' "$STUB_BEHIND" ;;
     */commits/*) printf '%s\n' "$STUB_HEAD_DATE" ;;
     *) printf 'неожиданный вызов: %s\n' "$args" >&2; exit 1 ;;
 esac
@@ -121,6 +124,36 @@ export STUB_PULLS="$(conflicting_json UNKNOWN)"
 report "SC-AK-426 — неизвестная сливаемость расхождением не считается" "$(board_code)" 0
 export STUB_PULLS="$(conflicting_json MERGEABLE)"
 report "SC-AK-426 — сливаемая заявка молчит" "$(board_code)" 0
+
+# --- SC-AK-531…532 — прод против главной ветки ------------------------------------------------
+#
+# Судится последняя успешная выкатка, а не последний прогон главной ветки: там, где выкатку
+# запускают рукой, слияние прода не двигает вовсе, и прогон о нём не говорит ничего.
+export STUB_PULLS="$(pulls_json false)"
+export STUB_RUNS=1
+export STUB_VERDICT=success
+export STUB_HEAD_DATE="$(minutes_ago 60)"
+export STUB_DEPLOY='{"sha":"fedcba9876543210fedcba9876543210fedcba98","at":"2026-08-20T10:00:00Z"}'
+DEPLOY_CONFIG='{"tasksDir":"docs/tasks","pushGate":{"pipelineFile":".github/workflows/ci.yml"},"deploy":{"workflow":"deploy.yml","mainBranch":"main"},"board":{"owner":"probe","repo":"tree","projectId":"P","statusFieldId":"F","statusOptions":{"in-review":{"id":"r","name":"In review"}},"taskKey":"RT","bot":"probe-bot","tokenPath":"","reviewer":"probe"}}'
+
+board_config "$DEPLOY_CONFIG"
+export STUB_BEHIND=0
+report "SC-AK-531 — сошедшийся прод расхождением не считается" "$(board_code)" 0
+
+export STUB_BEHIND=476
+report "SC-AK-531 — отставший прод отбит" "$(board_code)" 1
+report "SC-AK-531 — названо число коммитов" "$(board_says 'прод отстал от «main» на 476 коммитов')" 1
+report "SC-AK-531 — назван коммит последней выкатки" "$(board_says 'последняя выкатка — fedcba98 от 2026-08-20')" 1
+
+# Выкаток не было ни одной: сравнивать не с чем, и это тоже расхождение — прода нет вовсе.
+export STUB_DEPLOY=''
+report "SC-AK-531 — дерево без единой выкатки названо" "$(board_says 'выкаток по «deploy.yml» не было ни одной')" 1
+
+# SC-AK-532 — поток выкатки не назван: сверка молчит вслух, а не тихо
+board_config "$BOARD_CONFIG"
+export STUB_BEHIND=476
+report "SC-AK-532 — без названного потока прод не сверяется" "$(board_code)" 0
+report "SC-AK-532 — и сказано, почему" "$(board_says 'рабочий поток выкатки в настройке дерева не назван')" 1
 
 rm -rf "$BOARD_TREE"
 
