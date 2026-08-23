@@ -15,10 +15,12 @@
 # RT_STANDS. Нет профиля — текст отказа остаётся общим, сам гард работает.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
-input="$(cat 2>/dev/null)"
+rt_hook_read
+input="$RT_HOOK_INPUT"
 
-tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+tool="$(rt_hook_tool)"
 case "$tool" in
     Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool) ;;
     # Готовая конфигурация запуска командной строки не показывает — видно только её имя.
@@ -48,7 +50,7 @@ case "$tool" in
     *) exit 0 ;;
 esac
 
-cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
+cmd="$(rt_hook_cmd)"
 [ -z "$cmd" ] && exit 0
 
 # Универсальный исполнитель среды передаёт настоящую команду вложенной строкой. Разбирать надо

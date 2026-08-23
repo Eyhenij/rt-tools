@@ -27,12 +27,14 @@
 # пропуск.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
-input="$(cat 2>/dev/null)"
+rt_hook_read
+input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0
 
-tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+tool="$(rt_hook_tool)"
 
 decide() {
     # Наблюдение пишется только на отказе: подсказку гард раздаёт и там, где всё в порядке, и
@@ -117,7 +119,7 @@ case "$tool" in
     *) exit 0 ;;
 esac
 
-cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
+cmd="$(rt_hook_cmd)"
 
 # Универсальный исполнитель передаёт настоящую команду вложенной строкой. Разбирать надо её,
 # иначе имя команды стоит сразу за кавычкой и ни одно правило до него не дотягивается.
@@ -146,7 +148,7 @@ if printf '%s' "$cmd" | grep -qiE '(^|#)[[:space:]]*Docs-skip:[[:space:]]*[^[:sp
     exit 0
 fi
 
-workdir="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)"
+workdir="$(rt_hook_cwd)"
 [ -z "$workdir" ] && workdir="${CLAUDE_PROJECT_DIR:-.}"
 cd "$workdir" 2>/dev/null || exit 0
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0

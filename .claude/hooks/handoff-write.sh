@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.11.0 · hooks/handoff-write.sh · 9cfd7230550e · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/handoff-write.sh · 0852181be65f · правится надстройкой, не здесь
 # rt-hook: PreCompact .*
 # Требует: hooks/profile-check.sh
 # Передача захода пишется перед сжатием контекста, а не рукой исполнителя.
@@ -21,8 +21,10 @@
 # нулём и молчит. Сжатие он не отбивает никогда: остановленное сжатие оставит заход без места.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
-input="$(cat 2>/dev/null)"
+rt_hook_read
+input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 
 command -v jq >/dev/null 2>&1 || exit 0
@@ -34,7 +36,7 @@ for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../d
     [ -f "$profile" ] && . "$profile" 2>/dev/null
 done
 
-workdir="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)"
+workdir="$(rt_hook_cwd)"
 [ -z "$workdir" ] && workdir="${CLAUDE_PROJECT_DIR:-.}"
 cd "$workdir" 2>/dev/null || exit 0
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
