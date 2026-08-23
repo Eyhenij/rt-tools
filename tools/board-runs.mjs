@@ -38,7 +38,8 @@ export function deployLag(workflow, mainBranch, options) {
     const runs = gh(
         [
             'api',
-            `repos/${OWNER}/${REPO}/actions/workflows/${encodeURIComponent(workflow)}/runs` + '?status=success&per_page=1',
+            `repos/${OWNER}/${REPO}/actions/workflows/${encodeURIComponent(workflow)}/runs` +
+                '?status=success&per_page=1',
             '--jq',
             '[.workflow_runs[] | {sha: .head_sha, at: .created_at}] | first // empty',
         ],
