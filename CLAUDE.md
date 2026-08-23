@@ -69,9 +69,13 @@ start by `.claude/hooks/constitution-index.sh`. Read the whole law before a deci
 **Rules** live in `.claude/skills/` and say _by which technique_ a law is kept — `component-structure`,
 `styling-bem`, `testing`, `git-workflow` and the rest, laid out from the same package. What each of
 them is called in this tree sits in `implementation.md` next to the rule; patterns
-(`<rule>-<what>`) carry the ready-made code. Two rules are this tree's own, because the package
-ships neither: `rt-tools-storybook` for the showcase, and `ui-component-tests` for the ready-made
-spec, the visual snapshot and the choice between them.
+(`<rule>-<what>`) carry the ready-made code. Some rules are this tree's own, because the package
+carries only what a tree that installs it can execute: `rt-tools-storybook` for the showcase,
+`ui-component-tests` for the ready-made spec and the visual snapshot, `cargo-triage` with
+`cargo-triage-mark` for the intake of reports, and `agent-kit-source` for editing the rule
+package itself — alongside the `/agent-kit-digest` and `/rules-review` commands. What may live
+in the package and what stays here is decided by the boundary test in
+`docs/specs/agent-kit/package-boundary/`, and `npm run check:boundary` keeps it.
 
 Work itself is kept in `docs/tasks/<branch>/` — the owner's request verbatim in `grill.md`, the
 plan in `plan.md` (never edited after it is written), the running state in `progress.md`, the only
