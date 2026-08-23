@@ -4,171 +4,8 @@
       {
         "hooks": [
           {
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/skill-loaded.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": "Skill"
-      },
-      {
-        "hooks": [
-          {
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/lint-after-edit.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": "Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file"
-      },
-      {
-        "matcher": ".*",
-        "hooks": [
-          {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/window-fill-guard.sh"
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "hooks": [
-          {
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/browser-guard-no-listing.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": "mcp__claude-in-chrome__(list_connected_browsers|switch_browser)"
-      },
-      {
-        "matcher": "Edit|Write|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/handoff-entry-guard.sh"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/browser-guard-device-id.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": "mcp__claude-in-chrome__select_browser"
-      },
-      {
-        "hooks": [
-          {
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/browser-guard-require-select.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": "mcp__claude-in-chrome__.*"
-      },
-      {
-        "hooks": [
-          {
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/browser-guard-no-asking.sh",
-            "type": "command"
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/grill-gate.sh"
-          }
-        ],
-        "matcher": "AskUserQuestion"
-      },
-      {
-        "hooks": [
-          {
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/skill-gate.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": "Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__claude-in-chrome__.*"
-      },
-      {
-        "hooks": [
-          {
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/reuse-first-guard.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": "Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool"
-      },
-      {
-        "hooks": [
-          {
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/docs-guard.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": "Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool"
-      },
-      {
-        "hooks": [
-          {
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/git-guard-main.sh",
-            "type": "command"
-          },
-          {
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/git-guard-delivery.sh",
-            "type": "command"
-          },
-          {
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/git-guard-push-tests.sh",
-            "type": "command"
-          },
-          {
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/rerun-guard.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": "Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool"
-      },
-      {
-        "matcher": "mcp__playwright__.*|mcp__chrome-devtools__.*|Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/browser-guard-no-other-drivers.sh"
-          }
-        ]
-      },
-      {
-        "matcher": "Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool",
-        "hooks": [
-          {
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/task-flow-guard.sh",
-            "type": "command"
-          }
-        ]
-      },
-      {
-        "matcher": ".*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/window-fill-guard.sh"
-          }
-        ]
-      },
-      {
-        "matcher": "Edit|Write|MultiEdit|mcp__webstorm__create_new_file|Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/exam-guard.sh"
-          }
-        ]
-      },
-      {
-        "matcher": "Edit|Write|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/prose-style-guard.sh"
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/dispatch.sh PostToolUse"
           }
         ]
       }
@@ -178,42 +15,29 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/handoff-write.sh"
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/dispatch.sh PreCompact"
           }
-        ],
-        "matcher": ".*"
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/dispatch.sh PreToolUse"
+          }
+        ]
       }
     ],
     "SessionStart": [
       {
         "hooks": [
           {
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/skill-gate-rearm.sh",
-            "type": "command"
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/dispatch.sh SessionStart"
           }
-        ],
-        "matcher": "compact|clear"
-      },
-      {
-        "hooks": [
-          {
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/constitution-index.sh",
-            "type": "command"
-          },
-          {
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/task-context-load.sh",
-            "type": "command"
-          },
-          {
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/turn-entry-load.sh",
-            "type": "command"
-          },
-          {
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/glossary-load.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": "startup|resume|compact|clear"
+        ]
       }
     ],
     "Stop": [
@@ -221,35 +45,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/grill-gate.sh"
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/postmortem-guard.sh"
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/proposal-guard.sh"
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/git-guard-draft-ready.sh"
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/waiting-turn-guard.sh"
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/turn-exit-guard.sh"
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/conscience-guard.sh"
-          },
-          {
-            "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/claim-guard.sh"
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/dispatch.sh Stop"
           }
         ]
       }
@@ -261,6 +57,6 @@
     "RT_WINDOW_WARN_PCT": "40",
     "RT_WINDOW_STOP_PCT": "50",
     "RT_WINDOW_MARGIN_PCT": "5",
-    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "45"
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50"
   }
 }

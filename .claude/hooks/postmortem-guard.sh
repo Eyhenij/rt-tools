@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.11.0 · hooks/postmortem-guard.sh · f9a3d389843e · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/postmortem-guard.sh · 7651ccbd1759 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: hooks/deny-tail.sh
 # Гард происшествия: ход, в котором исполнитель признал промах, не заканчивается, пока записи о
@@ -23,8 +23,10 @@
 # РАЗРЕШАЕТСЯ (exit 0). Сломанный гард не имеет права заклинить разговор.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
-input="$(cat 2>/dev/null)"
+rt_hook_read
+input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 
 command -v jq >/dev/null 2>&1 || exit 0

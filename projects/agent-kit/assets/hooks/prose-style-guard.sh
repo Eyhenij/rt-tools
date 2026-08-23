@@ -13,19 +13,21 @@
 # FAIL-OPEN: нет узла, нет проверки, чужой инструмент, не `.md` → пропуск.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
-input="$(cat 2>/dev/null)"
+rt_hook_read
+input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0
 command -v node >/dev/null 2>&1 || exit 0
 
-tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+tool="$(rt_hook_tool)"
 case "$tool" in
     Edit | Write | MultiEdit) ;;
     *) exit 0 ;;
 esac
 
-path="$(printf '%s' "$input" | jq -r '.tool_input.file_path // empty' 2>/dev/null)"
+path="$(rt_hook_file)"
 case "$path" in
     *.md) ;;
     *) exit 0 ;;

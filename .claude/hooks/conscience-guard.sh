@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.11.0 · hooks/conscience-guard.sh · 3e4bc9510126 · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/conscience-guard.sh · 5c40388646db · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: agents/conscience.md, hooks/roles.sh, hooks/deny-tail.sh
 # Гард совести: ход, в котором роль совести нашла повтор разобранного промаха, не заканчивается,
@@ -21,8 +21,10 @@
 # разрешается. Сломанная совесть не имеет права заклинить разговор.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
-input="$(cat 2>/dev/null)"
+rt_hook_read
+input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0
 
