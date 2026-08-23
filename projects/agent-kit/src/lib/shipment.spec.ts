@@ -5,100 +5,54 @@
  * ли приём. Ресурсы берутся из дерева пакета — снимок надстроек иначе снимался бы с выдуманного
  * набора, а вся его суть в том, что дерево правит настоящий текст.
  *
+ * Обвязка — фикстура рядом: та же спека об отбое блоков читает её же, и двойник приёма у них
+ * один.
+ *
  * Сценарии договорённости `docs/specs/agent-kit/proposed/feedback-loop/`.
  */
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
-
 import { ICargoOverride, IPostmortemsCargo, IProposalsCargo, ISummaryCargo } from './cargo.js';
-import { IEnvironment, init, IOutcomeOfCommand } from './commands.js';
-import { CONFIG_PATH, OVERRIDES_DIR } from './config.js';
+import { IOutcomeOfCommand } from './commands.js';
+import { OVERRIDES_DIR } from './config.js';
 import { OBSERVATIONS_DIR } from './observations.js';
-import { PROPOSALS_DIR } from './proposals.js';
 import { IShipment, IShipped, TShip } from './ship.js';
-import { leaksOfCargo, propose, readPostmortems, remoteMarkOf, treeSlugOf } from './shipment.js';
+import {
+    accepting,
+    clearSent,
+    dropTree,
+    freshTree,
+    get,
+    INTAKE,
+    proposals,
+    PROPOSALS_FILE,
+    put,
+    refusing,
+    REMOTE,
+    said,
+    sent,
+    shipping,
+    start,
+    TODAY,
+    TOKEN_REFUSED,
+    treeRoot,
+} from './shipment.fixture.js';
+import { leaksOfCargo, readPostmortems, remoteMarkOf, treeSlugOf } from './shipment.js';
 import { overridesOf } from './snapshot.js';
-
-const VERSION: string = '0.1.0';
-const TODAY: string = '2026-08-14';
-/** Ресурсы берутся из дерева пакета: снимок надстроек снимается с настоящего текста. */
-const ASSETS: string = join(__dirname, '..', '..', 'assets');
-const INTAKE: string = 'https://intake.test';
-const REMOTE: string = 'git@github.test:owner/tree.git';
-const TOKEN_FILE: string = '.secret-token';
-const TOKEN: string = 'токен-этого-дерева';
-/** Ответ приёма о непринятом токене: им отвечает отозванный. */
-const TOKEN_REFUSED: number = 401;
-
-let root: string;
-let env: IEnvironment;
-/** Что уехало двойником — по запросу на строку, в том порядке, в каком уезжало. */
-let sent: IShipment[];
-
-const put: (path: string, text: string) => void = (path: string, text: string): void => {
-    mkdirSync(dirname(join(root, path)), { recursive: true });
-    writeFileSync(join(root, path), text, 'utf8');
-};
-const get: (path: string) => string = (path: string): string => readFileSync(join(root, path), 'utf8');
-const said: (outcome: IOutcomeOfCommand) => string = (outcome: IOutcomeOfCommand): string => outcome.lines.join('\n');
-
-/** Двойник приёма: отвечает принятым и называет месяц, как настоящий. */
-const accepting: (created?: boolean) => TShip =
-    (created: boolean = true): TShip =>
-    async (intake: string, token: string, shipment: IShipment): Promise<IShipped> => {
-        sent.push(shipment);
-
-        return {
-            ok: Boolean(intake && token),
-            status: created ? 201 : 200,
-            said: '',
-            accepted: { tree: 'дерево', month: '2026-08', created },
-        };
-    };
-
-/** Двойник приёма, который груз не принял: отозванный токен отвечает именно так. */
-const refusing: (status: number, message: string) => TShip =
-    (status: number, message: string): TShip =>
-    async (_intake: string, _token: string, shipment: IShipment): Promise<IShipped> => {
-        sent.push(shipment);
-
-        return { ok: false, status, said: message, accepted: null };
-    };
-
-/** Настройка дерева: конфиг заводится командой, а ключи отправки дописываются поверх. */
-const start: (patch?: Record<string, unknown>) => void = (patch: Record<string, unknown> = {}): void => {
-    init(root, [], { host: 'github' });
-    const config: Record<string, unknown> = JSON.parse(get(CONFIG_PATH)) as Record<string, unknown>;
-    writeFileSync(join(root, CONFIG_PATH), JSON.stringify({ ...config, intake: INTAKE, token: TOKEN_FILE, ...patch }, null, 4), 'utf8');
-    put(TOKEN_FILE, `${TOKEN}\n`);
-};
-
-const shipping: (ship?: TShip, dryRun?: boolean) => Promise<IOutcomeOfCommand> = (
-    ship: TShip = accepting(),
-    dryRun: boolean = false
-): Promise<IOutcomeOfCommand> => propose(env, { dryRun, ship, remote: REMOTE, today: TODAY, days: 3 });
 
 /** Тело сводки, как оно уехало: сводка всегда первая — ею заводится запись месяца. */
 const summarySent: () => ISummaryCargo = (): ISummaryCargo => sent[0].body as ISummaryCargo;
 
-const forPackage: string = ['## пакет · rules/styling-bem.md', '', '- **повод:** правило молчит про токены', '', '> Текст правки.'].join(
-    '\n'
-);
+beforeEach((): void => freshTree());
+afterEach((): void => dropTree());
+
+const forPackage: string = [
+    '## пакет · rules/styling-bem.md',
+    '',
+    '- **повод:** правило молчит про токены',
+    '- **ближайшее:** нет — про это правило не говорит вовсе',
+    '',
+    '> Текст правки.',
+].join('\n');
 const forTree: string = ['## дерево · .claude/rt-kit/gate-map.sh', '', '> Свой род файлов.'].join('\n');
-
-const proposals: (blocks: readonly string[]) => void = (blocks: readonly string[]): void =>
-    put(`${PROPOSALS_DIR}/2026-08-12-probe.md`, `# Предложения\n\n${blocks.join('\n\n')}\n`);
-
-beforeEach((): void => {
-    root = mkdtempSync(join(tmpdir(), 'agent-kit-ship-'));
-    env = { root, version: VERSION, assetsDir: ASSETS };
-    sent = [];
-});
-
-afterEach((): void => {
-    rmSync(root, { recursive: true, force: true });
-});
 
 describe('признак дерева', () => {
     it('две формы адреса одного репозитория дают один признак', () => {
@@ -157,18 +111,17 @@ describe('снимок надстроек', () => {
 
 describe('разборы происшествий', () => {
     it('читаются целиком и по именам файлов', () => {
-        root = mkdtempSync(join(tmpdir(), 'agent-kit-pm-'));
         put('docs/postmortems/2026-08-14-промах.md', '# Разбор\n\nМеханизм промаха.');
         put('docs/postmortems/README.txt', 'не разбор');
         put('docs/postmortems/README.md', '# Что здесь лежит\n\nОписание каталога, а не разбор.');
 
-        expect(readPostmortems(root, 'docs/postmortems')).toEqual([
+        expect(readPostmortems(treeRoot(), 'docs/postmortems')).toEqual([
             { file: '2026-08-14-промах.md', text: '# Разбор\n\nМеханизм промаха.' },
         ]);
     });
 
     it('каталога нет вовсе — это не отказ', () => {
-        expect(readPostmortems(root, 'docs/postmortems')).toEqual([]);
+        expect(readPostmortems(treeRoot(), 'docs/postmortems')).toEqual([]);
     });
 });
 
@@ -354,9 +307,9 @@ describe('propose', () => {
         proposals([forPackage]);
 
         expect((await shipping()).code).toBe(0);
-        expect(get(`${PROPOSALS_DIR}/2026-08-12-probe.md`)).toContain('**отправлено:** приём:2026-08');
+        expect(get(PROPOSALS_FILE)).toContain('**отправлено:** приём:2026-08');
 
-        sent = [];
+        clearSent();
         await shipping();
 
         expect(sent.map((shipment: IShipment): string => shipment.operation)).toEqual(['summary']);
@@ -408,7 +361,7 @@ describe('propose', () => {
         expect(said(outcome)).toContain('уехало бы');
         expect(said(outcome)).toContain('proposals');
         expect(sent).toHaveLength(0);
-        expect(get(`${PROPOSALS_DIR}/2026-08-12-probe.md`)).not.toContain('отправлено');
+        expect(get(PROPOSALS_FILE)).not.toContain('отправлено');
     });
 
     it('наблюдения за отрезок уезжают счётчиками', async () => {

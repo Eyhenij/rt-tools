@@ -76,3 +76,8 @@
 | Приём отвечает счётом, и команда пересказывает его человеку.                          | `tools/cargo-mark.mjs:mark`                                                                         |
 | Команда строки запуска несёт текст починки доводом.                                   | `tools/cargo-mark.mjs:FIX_FLAG` — довод читается строкой запуска и ложится каждой записи вызова     |
 | Команда строки запуска несёт версию выпуска доводом.                                  | `tools/cargo-mark.mjs:RELEASE_FLAG` — довод читается строкой запуска и ложится каждой записи вызова |
+| Блок предложения называет ближайшее утверждение ресурса, и цитата проверяется.        | `projects/agent-kit/src/lib/proposals.ts:nearestMissing`                                            |
+| Похожесть текстов повтора не отличает, и порогом она не судится.                      | `projects/agent-kit/src/lib/proposals.ts:NEAREST`                                                   |
+| Отбивается блок поимённо, а соседние едут.                                            | `projects/agent-kit/src/lib/shipment.ts:propose`                                                    |
+| Отбитый блок остаётся на диске с отметкой и причиной.                                 | `projects/agent-kit/src/lib/shipment.ts:markRefused`                                                |
+| Проверка на адрес дерева судит все готовые блоки, а не одни уезжающие.                | `projects/agent-kit/src/lib/shipment.ts:leaksOfCargo`                                               |
