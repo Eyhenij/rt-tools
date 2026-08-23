@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.12.0 · checks/check-board.github.mjs · 6a24bb6dc471 · правится надстройкой, не здесь
+// rt-kit v0.12.0 · checks/check-board.github.mjs · 045f58878502 · правится надстройкой, не здесь
 /**
  * Сверка очереди работ с тем, что закон о поставке требует от задачи и её PR.
  *
@@ -44,13 +44,11 @@ import {
     fetchIssues,
     fetchOpenPulls,
     gh,
-    headCommittedAt,
     numberFromTaskDir,
     numberFromTitle,
-    runsOnHead,
     taskDirs,
-    verdictOnHead,
 } from './board.mjs';
+import { deployLag, headCommittedAt, runsOnHead, verdictOnHead } from './board-runs.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 const IN_REVIEW = STATUS_OPTIONS[IN_REVIEW_STATUS].name;
@@ -68,6 +66,12 @@ const RUN_GRACE_MINUTES = 10;
  */
 const PIPELINE = CONFIG.pushGate?.pipelineFile ?? '';
 const HAS_PIPELINE = PIPELINE !== '' && existsSync(join(ROOT, PIPELINE));
+/**
+ * Рабочий поток выкатки и ветка, с которой прод сравнивают. Не назвав потока, дерево сверки
+ * прода не получает — и сверка говорит об этом вслух: молчание читалось бы как «прод сошёлся».
+ */
+const DEPLOY_WORKFLOW = CONFIG.deploy?.workflow ?? '';
+const MAIN_BRANCH = CONFIG.deploy?.mainBranch ?? 'main';
 
 const problems = [];
 const report = (message) => problems.push(message);
@@ -313,7 +317,33 @@ try {
     }
 }
 
+// Прод сверяется с главной веткой по последней успешной выкатке. Задача уходит из очереди
+// слиянием, но слияние — ещё не прод: там, где выкатку запускают рукой, между ними может лечь
+// сколько угодно коммитов, и заметить это неоткуда.
+if (!offline && DEPLOY_WORKFLOW) {
+    try {
+        const lag = deployLag(DEPLOY_WORKFLOW, MAIN_BRANCH, { token: botToken() ?? undefined });
+        if (lag === null) {
+            report(`выкаток по «${DEPLOY_WORKFLOW}» не было ни одной — сравнить прод не с чем`);
+        } else if (lag.behind > 0) {
+            report(
+                `прод отстал от «${MAIN_BRANCH}» на ${lag.behind} коммитов: последняя выкатка — ${lag.sha.slice(0, 8)} от ${String(lag.at).slice(0, 10)}`
+            );
+        }
+    } catch (error) {
+        if (error instanceof OfflineError) {
+            console.log(`check-board: прод не сверялся — ${error.message}`);
+        } else {
+            throw error;
+        }
+    }
+}
+
 // Непроверенное называется вслух: молчание о прогонах читалось бы как «прогоны на месте».
+if (!offline && !DEPLOY_WORKFLOW) {
+    console.log('check-board: прод с главной веткой не сверялся — рабочий поток выкатки в настройке дерева не назван');
+}
+
 if (!offline && !HAS_PIPELINE) {
     console.log('check-board: прогоны на вершинах не спрашивались — файла конвейера в дереве нет');
 }

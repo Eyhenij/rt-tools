@@ -85,6 +85,10 @@
             "Build web image": "docker build -f deploy/message-bus-web.Dockerfile -t message-bus-web:gate ."
         }
     },
+    "deploy": {
+        "workflow": "deploy.yml",
+        "mainBranch": "main"
+    },
     "board": {
         "owner": "Eyhenij",
         "repo": "rt-tools",

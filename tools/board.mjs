@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.12.0 · checks/board.github.mjs · 5d679821ef64 · правится надстройкой, не здесь
+// rt-kit v0.12.0 · checks/board.github.mjs · 9058a6d12142 · правится надстройкой, не здесь
 /**
  * Общая работа с очередью работ: борда проекта, тикеты и их состояние.
  *
@@ -255,46 +255,6 @@ export function fetchOpenPulls(options) {
         ['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,title,headRefName,headRefOid,isDraft,body,mergeable'],
         options
     );
-}
-
-/**
- * Сколько прогонов завелось на этой вершине.
- *
- * Спрашивается вершина, а не ветка: прогон промежуточного коммита о состоянии вершины не
- * говорит ничего, а список прогонов ветки отдаёт их вперемешку.
- */
-export function runsOnHead(sha, options) {
-    const answer = gh(['api', `repos/${OWNER}/${REPO}/actions/runs?head_sha=${sha}&per_page=1`, '--jq', '.total_count'], options);
-    return Number(String(answer).trim());
-}
-
-/**
- * Чем кончились прогоны на этой вершине: `success`, если все завершились успехом, `running`,
- * если хоть один ещё идёт, `failure` — если хоть один упал. Прогонов нет вовсе — `none`.
- *
- * Цвет спрашивается отдельно от факта: факт отвечает на вопрос «событие дошло», цвет — на
- * вопрос «работу можно отдавать». Второй вопрос задаётся там, где готовое стоит черновиком.
- */
-export function verdictOnHead(sha, options) {
-    const answer = gh(
-        [
-            'api',
-            `repos/${OWNER}/${REPO}/actions/runs?head_sha=${sha}&per_page=20`,
-            '--jq',
-            '[.workflow_runs[] | {status, conclusion}] | if length == 0 then "none"' +
-                ' elif any(.status != "completed") then "running"' +
-                ' elif any(.conclusion != "success") then "failure"' +
-                ' else "success" end',
-        ],
-        options
-    );
-    return String(answer).trim();
-}
-
-/** Когда вершина легла в ветку — по времени коммита у хостинга, а не по местным часам ветки. */
-export function headCommittedAt(sha, options) {
-    const answer = gh(['api', `repos/${OWNER}/${REPO}/commits/${sha}`, '--jq', '.commit.committer.date'], options);
-    return Date.parse(String(answer).trim());
 }
 
 /** `[<КЛЮЧ>-<номер>]` в начале заголовка — единственная форма номера в названиях */
