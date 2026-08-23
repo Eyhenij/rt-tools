@@ -1,13 +1,13 @@
 ---
 name: git-workflow-restart
 kind: pattern
-rule: git-workflow
-description: Паттерн правила git-workflow. Брать при ручном перезапуске прода — после правки .env.prod, при разборе выкатки, при подъёме контейнера на сервере. Готовые команды с IMAGE_TAG по sha, способ узнать выкаченный sha и чем сверять результат. Не брать для коммита и миграций — это паттерны git-workflow-commit и git-workflow-migration.
+rule: deploy-flow
+description: Паттерн правила deploy-flow. Брать при ручном перезапуске прода — после правки .env.prod, при разборе выкатки, при подъёме контейнера на сервере. Готовые команды с IMAGE_TAG по sha, способ узнать выкаченный sha и чем сверять результат. Не брать для коммита и миграций — это паттерны git-workflow-commit и git-workflow-migration.
 ---
 
 # Ручной перезапуск прода
 
-Паттерн правила `git-workflow`. Что при этом должно быть верно — закон
+Паттерн правила `deploy-flow`. Что при этом должно быть верно — закон
 `docs/constitution/delivery.md`.
 
 ## Когда брать
