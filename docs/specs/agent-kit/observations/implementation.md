@@ -25,8 +25,8 @@
 | Адрес приёма читается из настройки дерева.                                            | `projects/agent-kit/src/lib/config.ts:intake`                                                       |
 | Наружу не уходит ничего, чего не отправил человек командой.                           | `projects/agent-kit/src/lib/shipment.ts:propose`                                                    |
 | Незнакомый довод отправку кончает, а не пропускается молча.                           | `projects/agent-kit/src/lib/argv.ts:unknownFlagsIn`                                                 |
-| Сведение отделяет пришедшее из нескольких деревьев от пришедшего из одного.           | `projects/agent-kit/assets/commands/agent-kit-digest.md:overrides`                                  |
-| Выпуск версии остаётся отдельным решением владельца.                                  | `projects/agent-kit/assets/commands/agent-kit-digest.md:ARGUMENTS`                                  |
+| Сведение отделяет пришедшее из нескольких деревьев от пришедшего из одного.           | `.claude/commands/agent-kit-digest.md:overrides`                                                    |
+| Выпуск версии остаётся отдельным решением владельца.                                  | `.claude/commands/agent-kit-digest.md:ARGUMENTS`                                                    |
 | Команда кладёт блок на диск и в сеть не ходит.                                        | `projects/agent-kit/assets/commands/feedback.md:propose`                                            |
 | Блок собирает агент, а не человек.                                                    | `projects/agent-kit/assets/commands/feedback.md:ARGUMENTS`                                          |
 | Слово без ясного адреса не превращается в блок молча.                                 | `projects/agent-kit/assets/commands/feedback.md:ARGUMENTS`                                          |
