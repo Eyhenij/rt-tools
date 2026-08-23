@@ -48,7 +48,7 @@ report "длина: короткий файл проходит" "$(size_code)" 0
 # SC-AK-103 — файл длиннее предела отбивается, и отказ называет путь, длину и предел
 size_file long.md 20
 report "SC-AK-103 — длинный файл отбит" "$(size_code)" 1
-report "SC-AK-103 — отказ называет путь и предел" "$(size_says 'long\.md: 21 строк, предел 10')" 1
+report "SC-AK-103 — отказ называет путь и предел" "$(size_says 'long\.md: 21 строк, предел кода 10')" 1
 
 # SC-AK-108 — длина считается как у линтера: число разрывов плюс один
 # Файл из двадцати строк, кончающийся переводом, весит двадцать одну — на строку больше `wc -l`.
@@ -89,6 +89,26 @@ report "SC-AK-107 — данные и описание прошлого не с�
 printf 'не JSON\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
 report "длина: нечитаемый перечень отбивает" "$(size_code)" 1
 report "длина: отказ называет, где перечень" "$(size_says 'список известного не прочитан')" 1
+
+# --- SC-AK-520, SC-AK-521 — два предела ---------------------------------------------------------
+#
+# Тексту порог нужен раньше, чем коду, поэтому пределов два. Фикстура берёт файл, который длиннее
+# предела текста и короче предела кода: под одним пределом он законен, под двумя — нет.
+printf '{"fileSizeLimit":40,"proseSizeLimit":10,"proseRoots":["prose/"],"allowlistDir":"tools","archiveDir":"docs/archive/","tasksDir":"docs/tasks","generatedDirs":["gen/","tools/"]}\n' \
+    > "$SIZE_TREE/.claude/rt-kit/checks.json"
+printf '{"accepted":{},"debt":{}}\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
+rm -rf "${SIZE_TREE:?}/long.md" "${SIZE_TREE:?}/debt.md" "${SIZE_TREE:?}/locale.json" "${SIZE_TREE:?}/docs" "${SIZE_TREE:?}/gen"
+size_file prose/rule.md 20
+size_file code/tool.mjs 20
+git -C "$SIZE_TREE" add -A
+report "SC-AK-520 — текст судится своим пределом" "$(size_says 'prose/rule\.md: 21 строк, предел текста 10')" 1
+report "SC-AK-520 — код тем же числом не судится" "$(size_says 'code/tool\.mjs')" 0
+
+# Дерево, корней текста не назвавшее, работает как прежде: одно число и одна строка в сводке.
+printf '{"fileSizeLimit":40,"allowlistDir":"tools","archiveDir":"docs/archive/","tasksDir":"docs/tasks","generatedDirs":["gen/","tools/"]}\n' \
+    > "$SIZE_TREE/.claude/rt-kit/checks.json"
+report "SC-AK-521 — без корней текста предел один" "$(size_code)" 0
+report "SC-AK-521 — сводка называет одно число" "$(size_says 'предел 40, длиннее предела 0')" 1
 
 rm -rf "$SIZE_TREE"
 

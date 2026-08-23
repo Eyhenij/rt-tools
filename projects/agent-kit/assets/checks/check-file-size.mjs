@@ -35,8 +35,18 @@ import { join } from 'node:path';
 import { allowlistOf, baselineOf, CONFIG, ROOT, parseAllowlist } from './rt-kit-checks.config.mjs';
 
 const ALLOWLIST = allowlistOf('file-size');
-/** Предел один на все роды файлов: своё число каждому роду — спор о числе на каждой правке. */
+/** Пределов два: код и текст слоя правил. Какой из них применён, каждая строка отказа называет. */
 const LIMIT = CONFIG.fileSizeLimit;
+const PROSE_LIMIT = CONFIG.proseSizeLimit ?? CONFIG.fileSizeLimit;
+/** Корни текста слоя правил; дерево, их не назвавшее, судится одним пределом. */
+const PROSE_ROOTS = CONFIG.proseRoots ?? [];
+
+/** Предел для файла и имя предела для отказа: по корню, а не по расширению — код лежит и в `.md`. */
+function limitOf(path) {
+    return PROSE_ROOTS.some((root) => root && path.startsWith(root))
+        ? { limit: PROSE_LIMIT, title: 'предел текста' }
+        : { limit: LIMIT, title: 'предел кода' };
+}
 
 /** Роды файлов, которых не читает линтер. Код остаётся за ним. */
 const JUDGED = ['.md', '.scss', '.html', '.js', '.mjs', '.sh'];
@@ -78,7 +88,7 @@ const tracked = trackedFiles().filter(judged);
 
 for (const path of tracked) {
     const lines = lineCount(path);
-    if (lines > LIMIT) {
+    if (lines > limitOf(path).limit) {
         tooLong.set(path, lines);
     }
 }
@@ -95,7 +105,10 @@ const gone = [...known.keys()].filter((path) => !existsSync(join(ROOT, path)));
 const shrunk = [...known.keys()].filter((path) => !tooLong.has(path) && existsSync(join(ROOT, path)));
 
 const problems = [
-    ...fresh.map(([path, lines]) => `${path}: ${lines} строк, предел ${LIMIT} — делить, а не дописывать строку в ${ALLOWLIST}`),
+    ...fresh.map(([path, lines]) => {
+        const { limit, title } = limitOf(path);
+        return `${path}: ${lines} строк, ${title} ${limit} — делить, а не дописывать строку в ${ALLOWLIST}`;
+    }),
     ...gone.map((path) => `${path}: строка в ${ALLOWLIST} устарела — файла в дереве нет`),
     ...shrunk.map((path) => `${path}: значится в ${ALLOWLIST}, но уже короче предела — строку убрать`),
 ];
@@ -107,7 +120,9 @@ if (problems.length > 0) {
     process.exit(1);
 }
 
+const limits = PROSE_ROOTS.length > 0 ? `предел кода ${LIMIT}, предел текста ${PROSE_LIMIT}` : `предел ${LIMIT}`;
+
 console.log(
-    `check-file-size: проверено ${tracked.length} файлов, длиннее ${LIMIT} строк ${tooLong.size}, ` +
+    `check-file-size: проверено ${tracked.length} файлов, ${limits}, длиннее предела ${tooLong.size}, ` +
         `из них принято ${accepted.size}, долг ${debt.size} — новых нет`
 );
