@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+# Сценарии гарда места правки: разложенная копия правится в источнике, а не на своём месте.
+#
+# Дерево фикстуры собирается своё: у гарда два ответа — «правь источник» и «правь надстройку», —
+# и различает их наличие источника в дереве. Настоящее дерево знает один из двух.
+. "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
+
+echo "гард места правки"
+
+TREE="$(mktemp -d)"
+cleanup() { rm -rf "$TREE"; }
+trap cleanup EXIT
+
+mkdir -p "$TREE/.claude/rt-kit/defaults" "$TREE/.claude/skills/probe" "$TREE/tools" \
+    "$TREE/pkg/assets/rules" "$TREE/docs"
+cp "$ASSETS/defaults/project.sh" "$TREE/.claude/rt-kit/defaults/project.sh"
+
+# Разложенная копия правила: шапку отодвигает шапка самого правила, как в жизни.
+printf '%s\n' '---' 'name: probe' 'kind: rule' '---' \
+    '<!-- rt-kit v0.12.0 · rules/probe.md · abc123def456 · правится надстройкой, не здесь -->' \
+    '# Правило' > "$TREE/.claude/skills/probe/SKILL.md"
+# Разложенная проверка: шапку отодвигает строка запуска.
+printf '%s\n' '#!/usr/bin/env node' \
+    '// rt-kit v0.12.0 · checks/probe.mjs · 0123456789ab · правится надстройкой, не здесь' \
+    'export const x = 1;' > "$TREE/tools/probe.mjs"
+# Свой файл дерева: шапки нет.
+printf '%s\n' '# Замысел' > "$TREE/docs/plan.md"
+# Источник ресурса — он есть только у дерева, которое пакет и везёт.
+printf '%s\n' '# Правило' > "$TREE/pkg/assets/rules/probe.md"
+
+edit_in() {
+    jq -n --arg f "$TREE/$1" --arg d "$TREE" \
+        '{session_id:"tests",tool_name:"Edit",tool_input:{file_path:$f},cwd:$d}'
+}
+cmd_in() {
+    jq -n --arg c "$1" --arg d "$TREE" \
+        '{session_id:"tests",tool_name:"Bash",tool_input:{command:$c},cwd:$d}'
+}
+run() {
+    printf '%s' "$1" | CLAUDE_PROJECT_DIR="$TREE" "$HOOKS/rule-source-guard.sh" 2>/dev/null
+}
+decision() {
+    local out
+    out="$(run "$1")"
+    [ -z "$out" ] && { printf 'PASS'; return 0; }
+    printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision // "deny"' 2>/dev/null
+}
+says() {
+    run "$1" | jq -r '.hookSpecificOutput.permissionDecisionReason // ""' 2>/dev/null | grep -cE "$2"
+}
+
+# Дерево-потребитель: источника у него нет, и адрес правки один — надстройка.
+report "SC-AK-534 — правка разложенного правила отбивается" "$(decision "$(edit_in .claude/skills/probe/SKILL.md)")" deny
+report "SC-AK-534 — отказ называет ресурс" "$(says "$(edit_in .claude/skills/probe/SKILL.md)" 'rules/probe\.md')" 1
+report "SC-AK-534 — и адрес надстройки" "$(says "$(edit_in .claude/skills/probe/SKILL.md)" '\.claude/rt-kit/overrides/rules/probe\.md')" 1
+report "SC-AK-534 — разложенная проверка судится наравне" "$(decision "$(edit_in tools/probe.mjs)")" deny
+report "SC-AK-535 — свой файл дерева правится как обычно" "$(decision "$(edit_in docs/plan.md)")" PASS
+
+# Та же правка командой оболочки: гард судит запись, а не инструмент.
+report "SC-AK-536 — запись командой в разложенную копию отбивается" \
+    "$(decision "$(cmd_in 'printf x > tools/probe.mjs')")" deny
+report "SC-AK-536 — чтение разложенной копии проходит" \
+    "$(decision "$(cmd_in 'cat tools/probe.mjs')")" PASS
+# Снятие копии — законный приём: снятый файл раскладка кладёт заново, и так чинят копию,
+# которую переписал форматтер.
+report "SC-AK-537 — снятие разложенной копии проходит" \
+    "$(decision "$(cmd_in 'rm -f tools/probe.mjs')")" PASS
+
+# Дерево пакета: источник есть, и отказ посылает в него, а не в надстройку.
+printf '%s\n' 'rt_kit_sources_dir() { printf "pkg/assets"; }' >> "$TREE/.claude/rt-kit/defaults/project.sh"
+report "SC-AK-538 — дерево с источником посылается в источник" \
+    "$(says "$(edit_in .claude/skills/probe/SKILL.md)" 'pkg/assets/rules/probe\.md')" 1
+report "SC-AK-538 — и надстройка названа законной формой" \
+    "$(says "$(edit_in .claude/skills/probe/SKILL.md)" 'overrides/rules/probe\.md')" 1
+
+# Отказ в пользу работы: сломанный гард не заклинивает работу.
+exit_code_of() {
+    printf '%s' "$2" | "$HOOKS/rule-source-guard.sh" >/dev/null 2>&1
+    report "$1" "код:$?" "код:0"
+}
+exit_code_of "пустой вход пропускается" ''
+exit_code_of "неразбираемый вход пропускается" 'не json'
+exit_code_of "чтение файла гарду безразлично" "$(jq -n --arg d "$TREE" '{session_id:"tests",tool_name:"Read",tool_input:{file_path:"x"},cwd:$d}')"
+
+suite_result "гард места правки"
