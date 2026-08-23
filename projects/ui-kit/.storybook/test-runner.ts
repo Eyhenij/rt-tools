@@ -88,6 +88,37 @@ async function cutOffNetwork(page: Page): Promise<void> {
     });
 }
 
+/** Сколько раз пересъёмывать кадр в поисках двух одинаковых подряд. */
+const SHOT_ATTEMPTS: number = 5;
+
+/**
+ * Снимает кадр, пока два подряд не совпадут пиксель в пиксель, и отдаёт последний.
+ *
+ * Вставшая раскладка ещё не значит дорисованную страницу: замер поймал кадр, у которого
+ * совпало всё, что обвязка умеет ждать, — размеры, шрифты, завершённые анимации, — и который
+ * всё равно разошёлся с эталоном подпиксельными ореолами по подписям. Отличается там не
+ * вёрстка, а растеризация, и ждать её нечем: события «страница дорисована» браузер не даёт.
+ * Зато два одинаковых кадра подряд говорят то же самое и проверяются прямо.
+ *
+ * Приём повторён из прогонщика сквозных спек, а не вынесен в общий с ним модуль: киты и
+ * сквозной набор разведены, и общий файл связал бы их там, где связи нет.
+ */
+async function stableShot(page: Page): Promise<Buffer> {
+    let previous: Buffer = await page.screenshot({ fullPage: true });
+
+    for (let attempt: number = 1; attempt < SHOT_ATTEMPTS; attempt += 1) {
+        const current: Buffer = await page.screenshot({ fullPage: true });
+
+        if (current.equals(previous)) {
+            return current;
+        }
+
+        previous = current;
+    }
+
+    return previous;
+}
+
 /**
  * Ждёт вставшую страницу событием, а не отсчётом времени.
  *
@@ -257,7 +288,7 @@ const config: TestRunnerConfig = {
         await page.waitForTimeout(SETTLE_MS);
         await settled(page);
 
-        const image: Buffer = await page.screenshot({ fullPage: true });
+        const image: Buffer = await stableShot(page);
 
         expect(image).toMatchImageSnapshot({
             customSnapshotsDir: SNAPSHOT_DIR,
