@@ -67,6 +67,14 @@ MARK_PATTERN='разборов 1, предложений 0'
 report "SC-AK-428 — пакет разобран по родам" "$(mark_says --state new --postmortem x.md --dry-run)" 1
 report "SC-AK-428 — код возврата нулевой" "$(mark_code --state new --postmortem x.md --dry-run)" 0
 
+# SC-AK-544 — сухой прогон объявляется первой строкой, а не окончанием глагола
+MARK_PATTERN='^СУХОЙ ПРОГОН — наружу не ушло ничего'
+report "SC-AK-544 — сухой прогон назван первой строкой" \
+    "$(mark_says --state new --postmortem x.md --dry-run)" 1
+MARK_PATTERN='без `--dry-run`'
+report "SC-AK-544 — назван и вызов, которым это отмечают" \
+    "$(mark_says --state new --postmortem x.md --dry-run)" 1
+
 # SC-AK-427 — записи разных родов едут одним вызовом
 MARK_PATTERN='разборов 2, предложений 1'
 report "SC-AK-427 — пачка собрана целиком" \

@@ -398,6 +398,48 @@ describe('propose', () => {
         expect(where).toBe('https://иной.приём.test/');
     });
 
+    it('SC-AK-543 — отправка называет перечень груза до его результатов', async () => {
+        start();
+        proposals([forPackage]);
+
+        const outcome: IOutcomeOfCommand = await shipping();
+        const lines: readonly string[] = outcome.lines;
+
+        expect(lines[0]).toContain('ОТПРАВКА');
+        expect(lines[0]).toContain(INTAKE);
+        // Перечень стоит выше результатов: по нему видно, чего стоил отказ на втором запросе.
+        expect(lines.findIndex((line: string): boolean => line.includes('proposals — предложений 1'))).toBeLessThan(
+            lines.indexOf('уехало:')
+        );
+    });
+
+    it('SC-AK-543 — отказ приёма перечень груза не съедает', async () => {
+        start();
+        proposals([forPackage]);
+
+        const outcome: IOutcomeOfCommand = await shipping(refusing(TOKEN_REFUSED, 'токен не принят'));
+
+        expect(outcome.code).toBe(1);
+        expect(outcome.lines[0]).toContain('ОТПРАВКА');
+        expect(said(outcome)).toContain('proposals — предложений 1');
+        expect(said(outcome)).toContain('не уехало ничего');
+    });
+
+    it('SC-AK-544 — сухой прогон объявляется первой строкой, а не окончанием глагола', async () => {
+        start();
+        proposals([forPackage]);
+
+        const dry: IOutcomeOfCommand = await shipping(accepting(), true);
+        const real: IOutcomeOfCommand = await shipping();
+
+        expect(dry.lines[0]).toContain('СУХОЙ ПРОГОН');
+        expect(dry.lines[0]).toContain('наружу не ушло ничего');
+        expect(said(dry)).toContain('без `--dry-run`');
+        // Первые строки двух прогонов не совпадают даже началом: «уехало» и «уехало бы»
+        // отличаются двумя буквами в хвосте, и по ним прогоны путали.
+        expect(dry.lines[0]).not.toBe(real.lines[0]);
+    });
+
     it('пробный прогон ничего не отправляет и называет, что уехало бы', async () => {
         start();
         proposals([forPackage]);
