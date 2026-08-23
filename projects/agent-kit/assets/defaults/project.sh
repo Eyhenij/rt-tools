@@ -459,8 +459,14 @@ rt_lint_for() { rt_lint_for_default "$@"; }
 rt_task_branch_ok() { rt_task_branch_ok_default "$@"; }
 rt_reinvented_in() { rt_reinvented_in_default "$@"; }
 rt_is_app_code() { rt_is_app_code_default "$@"; }
+# Каталог источников пакета правил в этом дереве, от корня. Пусто — дерево пакета не везёт, и
+# адрес правки у него один: надстройка. Дерево, которое пакет и разрабатывает, называет каталог
+# сам — иначе гард места правки посылал бы его в надстройку вместо источника.
+rt_kit_sources_dir_default() { printf ''; }
+
 rt_shell_writes() { rt_shell_writes_default "$@"; }
 rt_shell_paths() { rt_shell_paths_default "$@"; }
+rt_kit_sources_dir() { rt_kit_sources_dir_default "$@"; }
 rt_qa_decorative() { rt_qa_decorative_default "$@"; }
 rt_task_state() { rt_task_state_default "$@"; }
 rt_pull_state() { rt_pull_state_default "$@"; }
