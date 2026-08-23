@@ -1,10 +1,6 @@
 {
   "accepted": {},
   "debt": {
-    ".claude/skills/git-workflow-commit/SKILL.md": {
-      "reason": "Паттерн ведёт весь путь от задачи до заявки: восемнадцать разделов, каждый со своими командами. Делится по границе «до пуша» и «после пуша».",
-      "task": "RT-1021"
-    },
     ".claude/skills/git-workflow/SKILL.md": {
       "reason": "Правило поставки: шестьдесят статей закона в одном файле. Делится по границе «работа с очередью» и «выкатка».",
       "task": "RT-1021"
@@ -19,18 +15,6 @@
     },
     ".claude/skills/task-flow/SKILL.md": {
       "reason": "Правило ведения работы: сорок восемь статей. Делится по границе «ход работы» и «выходы хода».",
-      "task": "RT-1021"
-    },
-    "projects/agent-kit/assets/patterns/git-workflow-commit.azure.md": {
-      "reason": "Паттерн ведёт весь путь от задачи до заявки: восемнадцать разделов, каждый со своими командами. Делится по границе «до пуша» и «после пуша».",
-      "task": "RT-1021"
-    },
-    "projects/agent-kit/assets/patterns/git-workflow-commit.github.md": {
-      "reason": "Паттерн ведёт весь путь от задачи до заявки: восемнадцать разделов, каждый со своими командами. Делится по границе «до пуша» и «после пуша».",
-      "task": "RT-1021"
-    },
-    "projects/agent-kit/assets/patterns/git-workflow-commit.gitlab.md": {
-      "reason": "Паттерн ведёт весь путь от задачи до заявки: восемнадцать разделов, каждый со своими командами. Делится по границе «до пуша» и «после пуша».",
       "task": "RT-1021"
     },
     "projects/agent-kit/assets/patterns/task-flow-close.md": {
