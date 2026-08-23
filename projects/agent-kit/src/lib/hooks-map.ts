@@ -56,7 +56,39 @@ export function bindingsOf(text: string, path: string): readonly IHookBinding[] 
  * Гарды с одинаковым образцом внутри события собираются в одну запись — так же, как это пишут
  * руками, и так же, как читает агент.
  */
+/** Диспетчер событий: одна запись в настройке вместо списка гардов. Путь от корня дерева. */
+export const DISPATCH_PATH: string = '.claude/hooks/dispatch.sh';
+
+/**
+ * Стоит ли в настройке диспетчер этого события. Он зовётся с именем события доводом, поэтому
+ * найденный путь без довода — не он: так стояла бы запись, зовущая диспетчер на всём подряд.
+ */
+function dispatchesEvent(text: string, event: string): boolean {
+    return text.includes(`${DISPATCH_PATH} ${event}`);
+}
+
+/**
+ * Кусок настройки агента: по строке на событие, и каждая зовёт диспетчер с именем события.
+ *
+ * Прежде здесь стоял список гардов — по записи на образец вызова, — и агент запускал каждый
+ * своим процессом, подавая всем один и тот же ввод. Восемнадцать гардов на вызове инструмента
+ * разбирали его восемнадцать раз; замер дерева, где это считали, дал восемьсот двадцать шесть
+ * миллисекунд на вызов против четырёхсот сорока одной после. Образец вызова никуда не делся:
+ * его по-прежнему несёт шапка самого гарда, только сверяет его теперь диспетчер, а не агент.
+ */
 export function hooksSection(bindings: readonly IHookBinding[]): Record<string, unknown> {
+    const events: Set<string> = new Set(bindings.map((binding: IHookBinding): string => binding.event));
+    const section: Record<string, unknown> = {};
+
+    for (const event of [...events].sort((left: string, right: string): number => left.localeCompare(right))) {
+        section[event] = [{ hooks: [{ type: 'command', command: `$CLAUDE_PROJECT_DIR/${DISPATCH_PATH} ${event}` }] }];
+    }
+
+    return section;
+}
+
+/** Прежний вид куска настройки: по записи на образец вызова. Остаётся ради разбора чужих настроек. */
+export function hooksSectionByMatcher(bindings: readonly IHookBinding[]): Record<string, unknown> {
     const events: Map<string, Map<string, string[]>> = new Map();
 
     for (const binding of bindings) {
@@ -163,8 +195,16 @@ export function boundInSettings(root: string): readonly string[] {
  */
 export function unboundHooks(bindings: readonly IHookBinding[], root: string): readonly IHookBinding[] {
     const bound: ReadonlySet<string> = new Set(boundInSettings(root));
+    const path: string = join(root, SETTINGS_PATH);
+    const text: string = existsSync(path) ? readFileSync(path, 'utf8') : '';
 
-    return bindings.filter((binding: IHookBinding): boolean => !bound.has(`${binding.event} ${binding.path}`) && !bound.has(binding.path));
+    // Событие, отданное диспетчеру, подключает все свои гарды разом: их пути в настройке не
+    // стоят вовсе — диспетчер собирает ветки по объявлениям в шапках. Искать там имя каждого
+    // гарда значило бы называть неподключённым весь набор.
+    return bindings.filter(
+        (binding: IHookBinding): boolean =>
+            !dispatchesEvent(text, binding.event) && !bound.has(`${binding.event} ${binding.path}`) && !bound.has(binding.path)
+    );
 }
 
 /**
