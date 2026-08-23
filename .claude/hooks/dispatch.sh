@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.11.0 · hooks/dispatch.sh · d6d540f5879e · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/dispatch.sh · d450ea42e8af · правится надстройкой, не здесь
 # Диспетчер событий агента. НЕ гард: объявления `rt-hook:` у него нет — наоборот, он читает
 # такие объявления у остальных. В настройке агента он стоит один на событие вместо списка.
 #
@@ -38,6 +38,9 @@ assignments="$(printf '%s' "$input" | jq -r '@sh "RT_HOOK_TOOL=\(.tool_name // "
 if [ -n "$assignments" ]; then
     eval "$assignments" 2>/dev/null || true
     export RT_HOOK_TOOL RT_HOOK_CMD RT_HOOK_FILE RT_HOOK_CWD
+    # Признак разбора: по нему ветки отличают готовое поле от пустой переменной, случайно
+    # оказавшейся в окружении прогона. Без него пустое значение читается как «поля нет».
+    export RT_HOOK_PARSED=1
 fi
 export RT_HOOK_INPUT="$input"
 
