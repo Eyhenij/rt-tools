@@ -76,3 +76,37 @@ tools/signals/
 # Клиент хранилища кладёт генератор, а не рука: форматировать нечего, и у разных машин он
 # выходит с разной первой строкой.
 **/src/generated/
+
+# Проверки и их модули раскладка кладёт в tools/ — тело каждого закрыто суммой в шапке. Форматтер
+# ходит по дереву целиком и переписывает их по-своему: сумма перестаёт сходиться, раскладка
+# читает файл правленным руками и отказывает по нему целиком, а цену платит тот, кто в этот день
+# правил соседний ресурс. Свои файлы дерева в tools/ форматируются как обычно — поэтому список
+# поимённый, а не каталогом.
+tools/board-runs.mjs
+tools/board.mjs
+tools/check-board.mjs
+tools/check-doc-paths.mjs
+tools/check-dupes.mjs
+tools/check-file-size.mjs
+tools/check-lib-layers.mjs
+tools/check-prose-style.mjs
+tools/check-push-gate.mjs
+tools/check-reuse.mjs
+tools/check-schema-drift.mjs
+tools/check-specs.mjs
+tools/check-state-next.mjs
+tools/check-states.mjs
+tools/check-styles.mjs
+tools/check-turn-map.mjs
+tools/lib-boundaries.mjs
+tools/lib-common.mjs
+tools/lib-domains.mjs
+tools/lib-manifests.mjs
+tools/lib-reexports.mjs
+tools/rt-kit-checks.config.mjs
+tools/signals.mjs
+tools/spec-anchors.mjs
+tools/spec-common.mjs
+tools/spec-contract.mjs
+tools/spec-scenarios.mjs
+tools/task-new.mjs
