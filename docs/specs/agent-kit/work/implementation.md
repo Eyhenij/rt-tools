@@ -50,13 +50,13 @@
 | Неспрошенная очередь работ подтверждением не является.                                     | `projects/agent-kit/assets/checks/task-new.github.mjs:OfflineError`                    |
 | Ответ очереди складывается в строки чистой функцией.                                       | `projects/agent-kit/assets/checks/board.github.mjs:describeTaskState`                  |
 | Открытый PR, чья вершина не несёт прогона, — расхождение сверки.                           | `projects/agent-kit/assets/checks/check-board.github.mjs:checkHeadRun`                 |
-| Прогон спрашивается на вершине PR, а не на его ветке.                                      | `projects/agent-kit/assets/checks/board.github.mjs:runsOnHead`                         |
-| Считается сам факт прогона, а не его цвет.                                                 | `projects/agent-kit/assets/checks/board.github.mjs:total_count`                        |
+| Прогон спрашивается на вершине PR, а не на его ветке.                                      | `projects/agent-kit/assets/checks/board-runs.github.mjs:runsOnHead`                    |
+| Считается сам факт прогона, а не его цвет.                                                 | `projects/agent-kit/assets/checks/board-runs.github.mjs:total_count`                   |
 | Свежая вершина без прогона не судится.                                                     | `projects/agent-kit/assets/checks/check-board.github.mjs:RUN_GRACE_MINUTES`            |
 | Дерево без файла конвейера прогонов не спрашивает.                                         | `projects/agent-kit/assets/checks/check-board.github.mjs:HAS_PIPELINE`                 |
 | Дерево, у которого прогоны не спрашивались, слышит об этом отдельной строкой.              | `projects/agent-kit/assets/checks/check-board.github.mjs:HAS_PIPELINE`                 |
 | Черновик при зелёном прогоне на вершине — расхождение сверки.                              | `projects/agent-kit/assets/checks/check-board.github.mjs:checkReadyDraft`              |
-| Цвет прогона спрашивается отдельно от его наличия.                                         | `projects/agent-kit/assets/checks/board.github.mjs:verdictOnHead`                      |
+| Цвет прогона спрашивается отдельно от его наличия.                                         | `projects/agent-kit/assets/checks/board-runs.github.mjs:verdictOnHead`                 |
 | Конфликтующий открытый PR — расхождение сверки.                                            | `projects/agent-kit/assets/checks/check-board.github.mjs:checkConflicting`             |
 | Непосчитанная сливаемость конфликтом не считается.                                         | `projects/agent-kit/assets/checks/board.github.mjs:conflicting`                        |
 | У каждого состояния работы есть раздел в том паттерне, который его ведёт.                  | `projects/agent-kit/assets/checks/check-states.mjs:sectionsOf`                         |
