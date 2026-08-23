@@ -1,8 +1,64 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <link
-            href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
-            rel="stylesheet" />
+        <!--
+            Шрифт значков лежит в дереве и отдаётся самой витриной, а не грузится с чужого
+            адреса. Кадр, снятый до прихода шрифта, расходится с эталоном всегда: значки
+            невидимы, подписи кнопок встают на их место. Пока шрифт ехал из сети, кадр зависел
+            от неё — и гейт пуша краснел на ветках, не тронувших ни строки показа. Правило
+            витрины требует того же от картинок: недетерминированное берётся байтами рядом, а
+            не загрузкой.
+
+            Семейства объявлены те два, что рисуются историями: обычное и контурное. Правила
+            классов повторяют то, что отдавал внешний адрес, — иначе кадр сдвинулся бы вместе
+            с ними, и эталоны пришлось бы пересъёмывать.
+        -->
+        <style>
+            @font-face {
+                font-family: 'Material Icons';
+                font-style: normal;
+                font-weight: 400;
+                src: url('/fonts/material-icons.woff2') format('woff2');
+            }
+
+            @font-face {
+                font-family: 'Material Icons Outlined';
+                font-style: normal;
+                font-weight: 400;
+                src: url('/fonts/material-icons-outlined.woff2') format('woff2');
+            }
+
+            .material-icons {
+                font-family: 'Material Icons';
+                font-weight: normal;
+                font-style: normal;
+                font-size: 24px;
+                line-height: 1;
+                letter-spacing: normal;
+                text-transform: none;
+                display: inline-block;
+                white-space: nowrap;
+                word-wrap: normal;
+                direction: ltr;
+                -webkit-font-feature-settings: 'liga';
+                -webkit-font-smoothing: antialiased;
+            }
+
+            .material-icons-outlined {
+                font-family: 'Material Icons Outlined';
+                font-weight: normal;
+                font-style: normal;
+                font-size: 24px;
+                line-height: 1;
+                letter-spacing: normal;
+                text-transform: none;
+                display: inline-block;
+                white-space: nowrap;
+                word-wrap: normal;
+                direction: ltr;
+                -webkit-font-feature-settings: 'liga';
+                -webkit-font-smoothing: antialiased;
+            }
+        </style>
     </head>
 </html>
