@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.11.0 · hooks/reuse-first-guard.sh · dbdb8250c00a · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/reuse-first-guard.sh · 4e9ba617c1ca · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # Гард «ничего не пишется с нуля». PreToolUse на правке кода и разметки.
@@ -34,13 +34,15 @@
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: нет разборщика, битый ввод, чужой инструмент — пропуск.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
-input="$(cat 2>/dev/null)"
+rt_hook_read
+input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0
 command -v perl >/dev/null 2>&1 || exit 0
 
-tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+tool="$(rt_hook_tool)"
 shell_cmd=""
 case "$tool" in
     # Инструмент среды заводит файл теми же двумя данными, только называет их иначе — без этой
@@ -55,7 +57,7 @@ case "$tool" in
     # имён гард стоял бы объявленным на них и молча пропускал — состояние хуже необъявленного,
     # потому что снаружи выглядит закрытым.
     Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool)
-        shell_cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
+        shell_cmd="$(rt_hook_cmd)"
         [ -z "$shell_cmd" ] && exit 0
         # Универсальный исполнитель прячет настоящую команду во вложенной строке: без её разбора
         # путь стоит за кавычкой, и до него не дотягивается ни один образец.

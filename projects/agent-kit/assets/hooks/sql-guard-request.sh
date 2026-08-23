@@ -11,6 +11,7 @@
 # Три вида ввода: запрос через подключение редактора, команда оболочки и та же команда,
 # завёрнутая в универсальный исполнитель. Инструмент, не названный здесь, гарда не касается.
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
 sql_read_request() {
     sql=""
@@ -25,7 +26,7 @@ sql_read_request() {
         # Терминал IDE исполняет ту же командную строку и кладёт её в то же поле, что и Bash:
         # без этой ветки весь гард обходился сменой инструмента.
         Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool)
-            cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
+            cmd="$(rt_hook_cmd)"
             [ -z "$cmd" ] && exit 0
 
             # Универсальный исполнитель зовёт ЛЮБОЙ инструмент редактора по имени, в том числе

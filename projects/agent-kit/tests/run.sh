@@ -12,6 +12,10 @@ command -v jq >/dev/null 2>&1 || {
     exit 1
 }
 
+# Та же причина, что и в обвязке: прогон бывает запущен изнутри живого захода, и набор обязан
+# судить фикстуру, а не ввод той сессии.
+unset RT_HOOK_INPUT RT_HOOK_TOOL RT_HOOK_CMD RT_HOOK_FILE RT_HOOK_CWD RT_HOOK_PARSED
+
 failed=0
 for suite in *.test.sh; do
     bash "$suite" || failed=$((failed + 1))

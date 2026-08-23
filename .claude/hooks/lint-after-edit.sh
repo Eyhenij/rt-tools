@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.11.0 · hooks/lint-after-edit.sh · 9890449394d1 · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/lint-after-edit.sh · 487680c8cea7 · правится надстройкой, не здесь
 # rt-hook: PostToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file
 # Требует: hooks/profile-check.sh
 # Линтер по следам правки. PostToolUse.
@@ -31,14 +31,16 @@
 # Сколько файлов линтуется за один перенос. Переезд либы трогает десятки файлов, и прогон по
 # каждому превратил бы хук в минутную паузу; на нарушение границы хватает первых.
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
 MAX_FILES=12
 
-input="$(cat 2>/dev/null)"
+rt_hook_read
+input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0
 
-tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+tool="$(rt_hook_tool)"
 case "$tool" in
     Edit | Write | MultiEdit | mcp__webstorm__create_new_file) mode="edit" ;;
     Bash) mode="move" ;;
@@ -55,7 +57,7 @@ if [ "$mode" = "move" ]; then
     esac
 fi
 
-workdir="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)"
+workdir="$(rt_hook_cwd)"
 [ -z "$workdir" ] && workdir="${CLAUDE_PROJECT_DIR:-.}"
 cd "$workdir" 2>/dev/null || exit 0
 [ -f package.json ] || exit 0

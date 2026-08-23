@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.11.0 · hooks/exam-guard.sh · cc1cd1cafd62 · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/exam-guard.sh · fe13e6db6fcd · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file|Bash
 # Требует: agents/strict-teacher.md, hooks/roles.sh, hooks/deny-tail.sh
 # Гард экзамена: правка не идёт, пока за сессию не сдан экзамен по загруженным правилам.
@@ -20,8 +20,10 @@
 # мешать работать.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
-input="$(cat 2>/dev/null)"
+rt_hook_read
+input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0
 
@@ -33,14 +35,14 @@ rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 [ -f "$rt_hooks_dir/roles.sh" ] && . "$rt_hooks_dir/roles.sh" 2>/dev/null
 command -v rt_role_off >/dev/null 2>&1 && rt_role_off strict-teacher && exit 0
 
-tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+tool="$(rt_hook_tool)"
 # Второй экзамен спрашивается на снятии черновика: работа кончилась, и правила поставки к этому
 # моменту читались давно — между их чтением и этой минутой прошёл весь заход.
 ready=0
 case "$tool" in
     Edit | Write | MultiEdit | mcp__webstorm__create_new_file) ;;
     Bash)
-        cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
+        cmd="$(rt_hook_cmd)"
         printf '%s' "$cmd" | grep -qE 'pr[[:space:]]+ready|mr[[:space:]]+update[^|;&]*--ready' || exit 0
         ready=1
         ;;

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.11.0 · hooks/git-guard-push-tests.sh · cdfe1290c22c · правится надстройкой, не здесь
+# rt-kit v0.11.0 · hooks/git-guard-push-tests.sh · 9a96cca54e55 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # Гард проверок перед пушем. PreToolUse на вызове пуша.
@@ -27,18 +27,20 @@
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: не репозиторий, битый ввод, нет профиля — пропуск.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
-input="$(cat 2>/dev/null)"
+rt_hook_read
+input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 
-tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+tool="$(rt_hook_tool)"
 case "$tool" in
     # Терминал среды и универсальный исполнитель кладут команду в то же поле.
     Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool) ;;
     *) exit 0 ;;
 esac
 
-cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
+cmd="$(rt_hook_cmd)"
 
 # Вызов пуша узнаётся по двум признакам сразу — команда `git` в начале строки или за
 # разделителем и слово `push` отдельным словом. Тем же приёмом, что у гарда поставки: одной
@@ -89,7 +91,7 @@ ${deny_tail_text}"
     exit 0
 fi
 
-workdir="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)"
+workdir="$(rt_hook_cwd)"
 [ -z "$workdir" ] && workdir="${CLAUDE_PROJECT_DIR:-.}"
 cd "$workdir" 2>/dev/null || exit 0
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
