@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.12.0 · defaults/project.sh · 32dccf2a929b · правится надстройкой, не здесь
+# rt-kit v0.12.0 · defaults/project.sh · 577ff7354b39 · правится надстройкой, не здесь
 # Профиль дерева: чем здесь проверяется правка и что считается переизобретением.
 #
 # Умолчание пакета. Всё, что общего у деревьев этой мастерской, живёт здесь: запускатель Nx,
@@ -278,11 +278,50 @@ rt_shell_paths_default() {
             }')"
     fi
 
-    printf '%s' "$text" \
-        | tr "(),;=" '     ' \
-        | tr '[:space:]' '\n' \
-        | grep -E '^[A-Za-z0-9_@.-]*/[A-Za-z0-9_@./-]+$' \
-        | sed 's|^\./||' \
+    # Пути берутся только у тех кусков команды, которые пишут. Прежде брались у всей строки
+    # целиком, и команда чтения, сцепленная с записью, отдавала свои пути как цели записи:
+    # `python3 <<PY … PY` рядом с `grep -n … projects/…` отбивался за правку кода, которой в нём
+    # не было. Отбитий, пришедшихся не на правку файла, набиралось большинство, и цену платил
+    # тот, кто просто читал соседний файл в той же строке.
+    #
+    # Кусок — строка верхнего уровня, а внутри неё `;`, `&&` и `||`. Тело heredoc от своей
+    # команды не отрывается: оно едет вместе с ней одним куском, потому что путь записи
+    # интерпретатора стоит именно там.
+    printf '%s' "$text" | awk '
+        function trim(s) { sub(/^[ \t]+/, "", s); sub(/[ \t]+$/, "", s); return s }
+        function flush(  n, i, part) {
+            if (chunk == "") { return }
+            if (tag != "") { part = chunk; gsub(/\n/, " ", part); print part; chunk = ""; return }
+            n = split(chunk, parts, /;|&&|\|\|/)
+            for (i = 1; i <= n; i++) { print parts[i] }
+            chunk = ""
+        }
+        tag != "" {
+            chunk = chunk "\n" $0
+            if (trim($0) == tag) { flush(); tag = "" }
+            next
+        }
+        {
+            chunk = $0
+            if (match($0, /<<-?[ \t]*[A-Za-z_][A-Za-z0-9_]*/)) {
+                t = substr($0, RSTART, RLENGTH)
+                sub(/^<<-?[ \t]*/, "", t)
+                tag = t
+                next
+            }
+            flush()
+        }
+        END { if (chunk != "") { part = chunk; gsub(/\n/, " ", part); print part } }
+    ' \
+        | while IFS= read -r piece; do
+            [ -z "$piece" ] && continue
+            rt_shell_writes "$piece" || continue
+            printf '%s' "$piece" \
+                | tr "(),;=" '     ' \
+                | tr '[:space:]' '\n' \
+                | grep -E '^[A-Za-z0-9_@.-]*/[A-Za-z0-9_@./-]+$' \
+                | sed 's|^\./||'
+        done \
         | sort -u
 }
 
