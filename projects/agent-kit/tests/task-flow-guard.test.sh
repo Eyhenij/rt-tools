@@ -182,6 +182,38 @@ printf '# Замысел\n\n**Поведение:** не меняется — п
 b "с замыслом команда оболочки пропускается" "echo x > libs/site/x/ui/src/lib/a.component.ts" PASS
 t "с замыслом инструмент правки пропускается" "$CODE" PASS
 
+# --- папка, разобранная коммитом ветки ------------------------------------------------------
+# Уборка стоит до открытия заявки, и замысла с этой минуты на диске нет намеренно. Правка
+# после неё — правка по замечаниям разбора: требовать под неё замысел значило бы запирать
+# ветку собственным порядком. Признак берётся из истории ветки, а не с диска.
+COMP='libs/site/x/ui/src/lib/a.component.ts'
+# Признак «правка кода приложения» считается от корня дерева, поэтому корнем на время вызова
+# объявляется сама фикстура: иначе путь под её каталогом не совпадёт ни с одним образцом и
+# гард пропустит правку, ничего не сказав.
+edit_at() {
+    local out
+    out="$(CLAUDE_PROJECT_DIR="$1" jq -n --arg f "$1/$COMP" --arg d "$1" \
+        '{session_id:"tests",tool_name:"Edit",tool_input:{file_path:$f},cwd:$d}' \
+        | CLAUDE_PROJECT_DIR="$1" "$HOOKS/task-flow-guard.sh" 2>/dev/null)"
+    [ -z "$out" ] && { printf 'PASS'; return 0; }
+    printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision // "PASS"' 2>/dev/null
+}
+
+ARCHIVED="$(fixture_repo_branched main RT-46-probe)"
+fixture_commit "$ARCHIVED" docs/tasks/RT-46-probe/plan.md 'замысел' 'docs: замысел'
+fixture_commit "$ARCHIVED" "$COMP" 'export class A {}' 'feat: правка'
+report "SC-AK-529 — папка на месте, а состояние не объявлено: правка отбивается" "$(edit_at "$ARCHIVED")" deny
+fixture_remove "$ARCHIVED" docs/tasks/RT-46-probe 'docs: папка разобрана'
+report "SC-AK-529 — после разбора папки правка проходит" "$(edit_at "$ARCHIVED")" PASS
+
+# Снос без коммита отданной работы не означает: судится история ветки, а не рабочее дерево.
+NOT_COMMITTED="$(fixture_repo_branched main RT-47-probe)"
+fixture_commit "$NOT_COMMITTED" docs/tasks/RT-47-probe/plan.md 'замысел' 'docs: замысел'
+fixture_commit "$NOT_COMMITTED" "$COMP" 'export class A {}' 'feat: правка'
+rm -rf "$NOT_COMMITTED/docs/tasks/RT-47-probe"
+report "SC-AK-530 — снос без коммита правку не пропускает" "$(edit_at "$NOT_COMMITTED")" deny
+rm -rf "$ARCHIVED" "$NOT_COMMITTED"
+
 # --- отказ в пользу работы ----------------------------------------------------------------
 # Сломанный гард не должен мешать работать: любой неразобранный вход пропускается.
 exit_code_of() {
