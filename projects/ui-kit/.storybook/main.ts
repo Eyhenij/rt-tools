@@ -5,6 +5,9 @@ import type { StorybookConfig } from '@storybook/angular';
 /* eslint-disable */
 const config: StorybookConfig = {
     stories: ['../docs/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+    // Шрифт значков отдаёт сама витрина: адрес `/fonts/...` из шапки показа ведёт сюда.
+    // Пока он ехал из чужой сети, кадр снимка зависел от неё.
+    staticDirs: ['./static'],
     addons: [
         {
             name: '@storybook/addon-docs',
