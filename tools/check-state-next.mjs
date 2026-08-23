@@ -32,6 +32,12 @@ import { join } from 'node:path';
 
 const ROOT = process.cwd();
 const RULE = join(ROOT, '.claude/skills/task-flow/SKILL.md');
+/**
+ * Правило хода захода: граница состояния живёт там, а не в правиле ведения работы.
+ * Разделились они, когда правило ведения работы вышло за предел длины: ход работы
+ * остался в одном, выходы хода уехали в другое.
+ */
+const TURN_RULE = join(ROOT, '.claude/skills/turn-conduct/SKILL.md');
 const SKILLS = join(ROOT, '.claude/skills');
 const MAP = join(ROOT, '.claude/rt-kit/defaults/turn-map.md');
 const LAW = join(ROOT, 'docs/constitution/work-conduct.md');
@@ -168,8 +174,9 @@ if (counted === 0) {
     problems.push('ни одного раздела состояния не нашлось: паттерны не разложены или заголовки в них другие');
 }
 
-if (!ruleText.includes(BOUNDARY)) {
-    problems.push(`правило ведения работы о границе состояния молчит: строки «${BOUNDARY}» в нём нет`);
+const turnText = existsSync(TURN_RULE) ? readFileSync(TURN_RULE, 'utf8') : '';
+if (!ruleText.includes(BOUNDARY) && !turnText.includes(BOUNDARY)) {
+    problems.push(`правило хода захода о границе состояния молчит: строки «${BOUNDARY}» в нём нет`);
 }
 
 for (const [file, what] of [
