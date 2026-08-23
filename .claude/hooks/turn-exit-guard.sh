@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.12.0 · hooks/turn-exit-guard.sh · ca80249a54fd · правится надстройкой, не здесь
+# rt-kit v0.12.0 · hooks/turn-exit-guard.sh · 0407bfc9080e · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: hooks/deny-tail.sh
 # Страж выходов хода: ход, в котором по работе не сделано ничего, не заканчивается, пока работа
@@ -74,6 +74,23 @@ fi
 case "$state" in
     работа-отдана | влито) exit 0 ;;
 esac
+
+# То же самое, но объявить это на диске уже нечем: папка задачи разбирается до открытия заявки,
+# и ход работы уезжает вместе с ней. Признак берётся из истории ветки — папка, снятая её
+# коммитом. Без этой ветки хвост работы судился бы вторым признаком, то есть отбивался бы за
+# ход, в котором исполнитель ждёт чужого прогона и ничего в дереве не двигает.
+folder_archived() {
+    [ -n "$branch" ] || return 1
+    [ -n "$(git ls-tree -d --name-only HEAD -- "$tasks_dir/$branch" 2>/dev/null | head -1)" ] && return 1
+    main_branch="${RT_MAIN_BRANCH:-main}"
+    base="$(git merge-base "$main_branch" HEAD 2>/dev/null)"
+    [ -z "$base" ] && return 1
+    had="$(git ls-tree -d --name-only "$base" -- "$tasks_dir/$branch" 2>/dev/null | head -1)"
+    [ -z "$had" ] && had="$(git log "$base..HEAD" --diff-filter=A --name-only --pretty=format: -- "$tasks_dir/$branch" 2>/dev/null | head -1)"
+    [ -n "$had" ]
+}
+
+[ -z "$progress" ] && folder_archived && exit 0
 
 # Следующий шаг из хода работы — его страж и называет в отказе: исполнитель, которому сказано
 # только «работа не кончена», перечитывает ту же строку сам.

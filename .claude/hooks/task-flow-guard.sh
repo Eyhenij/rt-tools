@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.12.0 · hooks/task-flow-guard.sh · ea04770464a0 · правится надстройкой, не здесь
+# rt-kit v0.12.0 · hooks/task-flow-guard.sh · 63f319c0a6f4 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # PreToolUse guard for Edit|Write|MultiEdit: код не пишется раньше замысла.
@@ -111,6 +111,7 @@ EOF
 
 # Каталог папок задач: у дерева он свой, но имя обычно общее.
 tasks_dir="${RT_TASKS_DIR:-docs/tasks}"
+main_branch="${RT_MAIN_BRANCH:-main}"
 
 # Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть. Файл
 # может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
@@ -146,6 +147,23 @@ root="$(git rev-parse --show-toplevel 2>/dev/null)"
 [ -z "$root" ] && exit 0
 dir="$root/$tasks_dir/$branch"
 plan="$dir/plan.md"
+
+# Папка, разобранная коммитом этой ветки, — признак того, что работа отдана. Замысел с диска к
+# этой минуте снят намеренно: уборка стоит до открытия заявки, потому что кнопку слияния
+# нажимает человек на хостинге и закрывающему коммиту места после одобрения не остаётся.
+# Правка после уборки — это правка по замечаниям разбора, и требовать под неё замысла значило
+# бы запирать ветку собственным порядком. Признак берётся из истории ветки, а не с диска:
+# снесённая, но не закоммиченная папка отданной работы не означает.
+folder_archived() {
+    [ -n "$(git ls-tree -d --name-only HEAD -- "$tasks_dir/$branch" 2>/dev/null | head -1)" ] && return 1
+    base="$(git merge-base "$main_branch" HEAD 2>/dev/null)"
+    [ -z "$base" ] && return 1
+    had="$(git ls-tree -d --name-only "$base" -- "$tasks_dir/$branch" 2>/dev/null | head -1)"
+    [ -z "$had" ] && had="$(git log "$base..HEAD" --diff-filter=A --name-only --pretty=format: -- "$tasks_dir/$branch" 2>/dev/null | head -1)"
+    [ -n "$had" ]
+}
+
+folder_archived && exit 0
 
 if [ ! -f "$plan" ]; then
     deny "BLOCKED by task-flow: нет замысла — '${tasks_dir}/${branch}/plan.md'. Собери папку задачи с образца (cp -r ${tasks_dir}/_template ${tasks_dir}/${branch}) и заполни шапку, след задачи и этапы, затем повтори. Правило — скил task-flow."

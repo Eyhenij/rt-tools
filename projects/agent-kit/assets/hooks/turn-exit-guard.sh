@@ -74,6 +74,23 @@ case "$state" in
     работа-отдана | влито) exit 0 ;;
 esac
 
+# То же самое, но объявить это на диске уже нечем: папка задачи разбирается до открытия заявки,
+# и ход работы уезжает вместе с ней. Признак берётся из истории ветки — папка, снятая её
+# коммитом. Без этой ветки хвост работы судился бы вторым признаком, то есть отбивался бы за
+# ход, в котором исполнитель ждёт чужого прогона и ничего в дереве не двигает.
+folder_archived() {
+    [ -n "$branch" ] || return 1
+    [ -n "$(git ls-tree -d --name-only HEAD -- "$tasks_dir/$branch" 2>/dev/null | head -1)" ] && return 1
+    main_branch="${RT_MAIN_BRANCH:-main}"
+    base="$(git merge-base "$main_branch" HEAD 2>/dev/null)"
+    [ -z "$base" ] && return 1
+    had="$(git ls-tree -d --name-only "$base" -- "$tasks_dir/$branch" 2>/dev/null | head -1)"
+    [ -z "$had" ] && had="$(git log "$base..HEAD" --diff-filter=A --name-only --pretty=format: -- "$tasks_dir/$branch" 2>/dev/null | head -1)"
+    [ -n "$had" ]
+}
+
+[ -z "$progress" ] && folder_archived && exit 0
+
 # Следующий шаг из хода работы — его страж и называет в отказе: исполнитель, которому сказано
 # только «работа не кончена», перечитывает ту же строку сам.
 next_step=""
