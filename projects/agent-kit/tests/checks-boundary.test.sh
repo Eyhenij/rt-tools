@@ -26,29 +26,29 @@ bound_code() {
     echo $?
 }
 
-# SC-AK-503 — отправляющая сторона проверку проходит
+# SC-AK-510 — отправляющая сторона проверку проходит
 printf '/** Форма груза: то, что уезжает с дерева в приём. */\nexport const V = "1";\n' > "$BOUND_TREE/kit/src/lib/cargo.ts"
 printf -- '---\nname: feedback\n---\n\nСлово о слое правил ложится блоком в файл предложений.\n' > "$BOUND_TREE/kit/assets/commands/feedback.md"
-report "SC-AK-503 — отправляющая сторона молчит" "$(bound_says 'cargo\.ts|feedback\.md')" 0
-report "SC-AK-503 — код возврата нулевой" "$(bound_code)" 0
+report "SC-AK-510 — отправляющая сторона молчит" "$(bound_says 'cargo\.ts|feedback\.md')" 0
+report "SC-AK-510 — код возврата нулевой" "$(bound_code)" 0
 
-# SC-AK-501 — ресурс, заговоривший о приёме, отбивается
+# SC-AK-508 — ресурс, заговоривший о приёме, отбивается
 printf -- '---\nname: cargo-triage\nkind: rule\n---\n\nГруз читается: админка приёма показывает столбец состояния.\n' > "$BOUND_TREE/kit/assets/rules/cargo-triage.md"
-report "SC-AK-501 — ресурс о приёме назван" "$(bound_says 'cargo-triage\.md .* предмета нет')" 1
-report "SC-AK-501 — код возврата ненулевой" "$(bound_code)" 1
+report "SC-AK-508 — ресурс о приёме назван" "$(bound_says 'cargo-triage\.md .* предмета нет')" 1
+report "SC-AK-508 — код возврата ненулевой" "$(bound_code)" 1
 
-# SC-AK-502 — ресурс, объявивший себя работой дерева пакета, отбивается
+# SC-AK-509 — ресурс, объявивший себя работой дерева пакета, отбивается
 printf -- '---\nname: digest\n---\n\nЗовётся **в репозитории самого пакета**, а не в дереве, где он стоит.\n' > "$BOUND_TREE/kit/assets/commands/digest.md"
-report "SC-AK-502 — ресурс дерева пакета назван" "$(bound_says 'digest\.md .* звать некому')" 1
+report "SC-AK-509 — ресурс дерева пакета назван" "$(bound_says 'digest\.md .* звать некому')" 1
 
-# SC-AK-501 — паттерн наследует судьбу своего правила: своих оговорок у него не бывает
+# SC-AK-508 — паттерн наследует судьбу своего правила: своих оговорок у него не бывает
 printf -- '---\nname: cargo-triage-mark\nkind: pattern\nrule: cargo-triage\n---\n\nГотовые вызовы.\n' > "$BOUND_TREE/kit/assets/patterns/cargo-triage-mark.md"
-report "SC-AK-501 — паттерн правила не для везения назван" "$(bound_says 'cargo-triage-mark\.md .* паттерн правила')" 1
+report "SC-AK-508 — паттерн правила не для везения назван" "$(bound_says 'cargo-triage-mark\.md .* паттерн правила')" 1
 
-# SC-AK-504 — перечень отменяемого границу не закрывает
+# SC-AK-511 — перечень отменяемого границу не закрывает
 printf '{\n    "skip": [\n        "rules/cargo-triage.md"\n    ]\n}\n' > "$BOUND_TREE/rt-kit.json"
-report "SC-AK-504 — ресурс в перечне всё равно назван" "$(bound_says 'cargo-triage\.md .* предмета нет')" 1
-report "SC-AK-504 — код возврата остался ненулевым" "$(bound_code)" 1
+report "SC-AK-511 — ресурс в перечне всё равно назван" "$(bound_says 'cargo-triage\.md .* предмета нет')" 1
+report "SC-AK-511 — код возврата остался ненулевым" "$(bound_code)" 1
 
 # SC-AK-507 — известный долг держится перечнем, а не молчанием проверки
 mkdir -p "$BOUND_TREE/tools"
@@ -62,5 +62,17 @@ gate_step() { grep -c 'name: Package boundary' "$TREE_ROOT/.github/workflows/ci.
 gate_local() { grep -c '"Package boundary": "node tools/check-boundary.mjs"' "$TREE_ROOT/.claude/rt-kit/checks.json"; }
 report "SC-AK-506 — шаг стоит в конвейере" "$(gate_step)" 1
 report "SC-AK-506 — у шага есть местная команда" "$(gate_local)" 1
+
+# SC-AK-505 — своё правило дерева гейт требует наравне с пакетным
+#
+# Карта гейта — своя, дерева: правило разбора груза пакет не везёт вовсе, а правку команды
+# отметки без него не кладут — порядок разбора знают раньше правки.
+own_rule() {
+    (CLAUDE_PROJECT_DIR="$TREE_ROOT" . "$TREE_ROOT/.claude/rt-kit/gate-map.sh"; skill_for edit "$1" '') | grep -cE 'cargo-triage'
+}
+report "SC-AK-505 — правка команды отметки требует своего правила" "$(own_rule "$TREE_ROOT/tools/cargo-mark.mjs")" 1
+report "SC-AK-505 — перечень долга ведёт то же правило" "$(own_rule "$TREE_ROOT/tools/boundary-debt.json")" 1
+report "SC-AK-505 — правило лежит своим, без шапки раскладки" \
+    "$(grep -c 'rt-kit v' "$TREE_ROOT/.claude/skills/cargo-triage/SKILL.md")" 0
 
 rm -rf "$BOUND_TREE"
