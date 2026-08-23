@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.11.0 · hooks/rerun-guard.sh · 656b9b5a9ee6 · правится надстройкой, не здесь
+# rt-kit v0.12.0 · hooks/rerun-guard.sh · 656b9b5a9ee6 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/deny-tail.sh
 # Гард перезапуска прогона: упавшее задание не перезапускается, пока его журнал не прочитан.

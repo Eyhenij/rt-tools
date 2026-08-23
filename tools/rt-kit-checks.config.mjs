@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.11.0 · checks/rt-kit-checks.config.mjs · 9b73e4a79e9d · правится надстройкой, не здесь
+// rt-kit v0.12.0 · checks/rt-kit-checks.config.mjs · 9b73e4a79e9d · правится надстройкой, не здесь
 /**
  * Настройки проверок: что считать исходниками, куда не ходить и где лежат списки долгов.
  *

@@ -1,3 +1,33 @@
+# [0.12.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.11.0...rt-agent-kit@0.12.0) (2026-08-23)
+
+### Bug Fixes
+
+- **rt:agent-kit:** готовому полю верят по признаку разбора ([53125f0](https://github.com/Eyhenij/rt-tools/commit/53125f0ef34da387dd082f6207296551bf2022eb))
+- **rt:agent-kit:** личность вызова, открывающего заявку, судит гард поставки ([0bd5565](https://github.com/Eyhenij/rt-tools/commit/0bd5565b9c104fc414d9b19be06864b8c5742b06))
+- **rt:agent-kit:** ложный конец хода судится и там, где нет ветки задачи ([1ac9458](https://github.com/Eyhenij/rt-tools/commit/1ac94584258ccddc82750f4a6b2ab1adf3b0b3fc))
+- **rt:agent-kit:** набор снимает с окружения поля живого захода ([b50aee0](https://github.com/Eyhenij/rt-tools/commit/b50aee0aad9509f63500aadeb64484e9f58eef87))
+- **rt:agent-kit:** проба на снятый перечень долга границы убрана ([b3de781](https://github.com/Eyhenij/rt-tools/commit/b3de7817c5ab39bfafd66e10c50ad56908ac1eaa))
+- **rt:agent-kit:** проверка границы состояния правится в источнике ([e1b7d2c](https://github.com/Eyhenij/rt-tools/commit/e1b7d2cad6754e0b60ed06b358b10fe81072470a))
+- **rt:agent-kit:** состояние разобранной папки ведёт свой паттерн ([a0338bd](https://github.com/Eyhenij/rt-tools/commit/a0338bd71727847bf0c2dfc64be2f45786ec44ec))
+- **rt:agent-kit:** сценарии двух пределов сдвинуты за занятый диапазон ([995836d](https://github.com/Eyhenij/rt-tools/commit/995836d89f0789d94a63830ba4427c90bbc12050))
+- **rt:agent-kit:** сценарии холодной части получили свободные номера ([a8888cf](https://github.com/Eyhenij/rt-tools/commit/a8888cf08c62c27742a232327fcca3af0914ae34))
+- **rt:agent-kit:** сценарии холодной части сдвинуты за занятый диапазон ([ff98e74](https://github.com/Eyhenij/rt-tools/commit/ff98e74bec10e507990cde8c037bece89edfc507))
+
+### Features
+
+- **rt:agent-kit:** известный долг границы держится перечнем, а проверка встала в гейт ([c1361b8](https://github.com/Eyhenij/rt-tools/commit/c1361b8c52e982127ba4eca90dd9a298a5dfc965)), closes [#1011](https://github.com/Eyhenij/rt-tools/issues/1011)
+- **rt:agent-kit:** настройка агента зовёт диспетчер, а не список гардов ([a5c865a](https://github.com/Eyhenij/rt-tools/commit/a5c865a8ee310df394ba7132ebf99b149dccc589))
+- **rt:agent-kit:** отказ гейта печатает статью, под которую подпадает правка ([10dbd92](https://github.com/Eyhenij/rt-tools/commit/10dbd92a03e2cc5ad4cf5e071789df820b6d4882))
+- **rt:agent-kit:** признак границы пакета объявлен правилом и проверяется машиной ([11a861b](https://github.com/Eyhenij/rt-tools/commit/11a861bc01addbefb85d7582967aa1eb9b872350)), closes [#1011](https://github.com/Eyhenij/rt-tools/issues/1011)
+- **rt:agent-kit:** статьи трёх правил размечены признаком применимости ([d502933](https://github.com/Eyhenij/rt-tools/commit/d502933b510cd51aea197c9efc48d4217313269c))
+- **rt:agent-kit:** статья правила говорит о своей применимости сама ([fed6ce4](https://github.com/Eyhenij/rt-tools/commit/fed6ce4d442871409c0874493aa05e30c03f9b64))
+- **rt:agent-kit:** у текста слоя правил свой предел длины ([ab07e2d](https://github.com/Eyhenij/rt-tools/commit/ab07e2d507d12212eb374d8729fda6580a751367))
+- **rt:agent-kit:** холодная часть правила объявлена родом ресурса ([4d51a28](https://github.com/Eyhenij/rt-tools/commit/4d51a28df4acdeecaf357f23c190a82ead4a903f))
+
+### Performance Improvements
+
+- **rt:agent-kit:** ввод хука разбирается один раз на событие ([e63bea3](https://github.com/Eyhenij/rt-tools/commit/e63bea38cdc1062c2d68ce64f07d907cd424c665))
+
 # [0.11.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.10.0...rt-agent-kit@0.11.0) (2026-08-22)
 
 ### Bug Fixes
