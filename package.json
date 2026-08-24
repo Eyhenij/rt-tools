@@ -196,6 +196,7 @@
     "lint-staged": "^17.2.0",
     "ng-packagr": "22.0.1",
     "nx": "23.1.0-rc.0",
+    "pg": "8.23.0",
     "postcss": "^8.5.25",
     "postcss-url": "~10.1.4",
     "prettier": "^3.9.6",
