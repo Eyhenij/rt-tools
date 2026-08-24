@@ -67,6 +67,54 @@ report "SC-AK-525 — без события выход нулём" "$(printf '%s
 report "SC-AK-525 — пустой ввод выход нулём" "$(dispatch_code PreToolUse '')" 0
 report "SC-AK-525 — битый ввод веток не роняет" "$(dispatch_code PreToolUse 'не JSON')" 0
 
+# --- SC-AK-577 — у файла читаются все объявления события ----------------------------------------
+#
+# Гард, стоящий и на вызове инструмента, и на завершении хода, называет оба события своими
+# строками. Пока читалась одна, вторая ветка не звалась ни разу — и снаружи это неотличимо от
+# гарда, который посмотрел и пропустил.
+{
+    printf '#!/usr/bin/env bash\n'
+    printf '# rt-hook: PreToolUse AskUserQuestion\n'
+    printf '# Требует: hooks/deny-tail.sh\n'
+    printf '# rt-hook: Stop\n'
+    printf 'printf "звали two_events\\n"\n'
+    printf 'exit 0\n'
+} > "$DISPATCH_DIR/two_events.sh"
+chmod +x "$DISPATCH_DIR/two_events.sh"
+
+INPUT_ASK='{"tool_name":"AskUserQuestion","tool_input":{},"cwd":"/tmp"}'
+INPUT_STOP='{"transcript_path":"/tmp/нет.jsonl","cwd":"/tmp"}'
+report "SC-AK-577 — ветка первого объявления позвана" "$(dispatch_says PreToolUse "$INPUT_ASK" | grep -c 'звали two_events')" 1
+report "SC-AK-577 — ветка второго объявления позвана" "$(dispatch_says Stop "$INPUT_STOP" | grep -c 'звали two_events')" 1
+report "SC-AK-577 — чужой вызов первое объявление не ловит" "$(dispatch_says PreToolUse "$INPUT_BASH" | grep -c 'звали two_events')" 0
+report "SC-AK-577 — на своём событии ветка зовётся один раз" "$(dispatch_says Stop "$INPUT_STOP" | grep -c 'звали two_events')" 1
+rm -f "$DISPATCH_DIR/two_events.sh"
+
+
+# --- SC-AK-578 — отбой в выводе ветки останавливает обход ---------------------------------------
+#
+# Гарды завершения хода отбивают решением в выводе, а выходят нулём. Склеенный с выводом
+# следующей ветки такой объект не разбирается вовсе — и отбой пропадает целиком.
+{
+    printf '#!/usr/bin/env bash\n'
+    printf '# rt-hook: Stop\n'
+    printf '%s\n' 'printf "{\"decision\":\"block\",\"reason\":\"aaa не пускает\"}\n"'
+    printf 'exit 0\n'
+} > "$DISPATCH_DIR/aaa_blocks.sh"
+{
+    printf '#!/usr/bin/env bash\n'
+    printf '# rt-hook: Stop\n'
+    printf '%s\n' 'printf "{\"decision\":\"block\",\"reason\":\"zzz тоже\"}\n"'
+    printf 'exit 0\n'
+} > "$DISPATCH_DIR/zzz_blocks.sh"
+chmod +x "$DISPATCH_DIR/aaa_blocks.sh" "$DISPATCH_DIR/zzz_blocks.sh"
+
+STOP_OUT="$(printf '%s' '{"transcript_path":"/tmp/нет.jsonl","cwd":"/tmp"}' | bash "$DISPATCH_DIR/dispatch.sh" Stop 2>/dev/null)"
+report "SC-AK-578 — вывод остаётся разбираемым" "$(printf '%s' "$STOP_OUT" | jq -r '.reason' 2>/dev/null)" 'aaa не пускает'
+report "SC-AK-578 — ветки за отбоем не зовутся" "$(printf '%s' "$STOP_OUT" | grep -c 'zzz тоже')" 0
+rm -f "$DISPATCH_DIR/aaa_blocks.sh" "$DISPATCH_DIR/zzz_blocks.sh"
+
+
 rm -rf "$DISPATCH_DIR"
 
 suite_result "диспетчер событий"
