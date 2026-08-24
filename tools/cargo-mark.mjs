@@ -14,7 +14,6 @@
  *
  * Ненулевой код возврата у всего, что не легло: отбитая строка кончает команду ненулевым кодом.
  */
-import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
@@ -22,7 +21,6 @@ import { join, resolve } from 'node:path';
 
 const REFUSED = 1;
 const TIMEOUT_MS = 15_000;
-const SLUG_LENGTH = 12;
 const TREE_TOKEN_HEADER = 'x-tree-token';
 
 const POSTMORTEM_FLAG = '--postmortem';
@@ -88,13 +86,21 @@ export function itemsOf(argv, state, attached = { fixNote: '', releaseVersion: '
     return items;
 }
 
-/** Имя дерева: снимок его удалённой ссылки, а не название каталога на чьей-то машине. */
-function treeSlug() {
+/**
+ * Признак дерева: снимок его удалённой ссылки, а не название каталога на чьей-то машине.
+ *
+ * Считается тем же приёмом, что и на отправке, и приём этот берётся у пакета, а не пишется
+ * здесь заново. Своя копия счёта уже разошлась с пакетной молча: она брала одно последнее слово
+ * адреса, а пакет — адрес целиком и в нижнем регистре, — и дерево слало груз под одним
+ * признаком, а отмечало его под другим. Приём отвечал на это «признак дерева в грузе
+ * принадлежит другому дереву», и ни одна запись не отметилась ни разу.
+ */
+async function treeSlug(shape) {
     try {
+        const { treeSlugOf } = await import(shape.replace(/cargo\.js$/, 'shipment.js'));
         const remote = execFileSync('git', ['remote', 'get-url', 'origin'], { cwd: ROOT, encoding: 'utf8' }).trim();
-        const mark = remote.replace(/^.*[:/]/, '').replace(/\.git$/, '');
 
-        return mark ? createHash('sha256').update(mark, 'utf8').digest('hex').slice(0, SLUG_LENGTH) : '';
+        return treeSlugOf(remote, '');
     } catch {
         return '';
     }
@@ -255,7 +261,7 @@ async function main() {
     // свой приём и проверяет разбор ответа, не ходя в настоящий.
     const outcome = await mark({
         intake: process.env.RT_INTAKE || (config.intake ?? ''),
-        tree: treeSlug(),
+        tree: await treeSlug(shape),
         token: process.env.RT_TREE_TOKEN ?? tokenOf(config.token ?? ''),
         state,
         schema: CARGO_SCHEMA_VERSION,
