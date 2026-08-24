@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.13.0 · hooks/hook-input.sh · 9ab94cb1b0fe · правится надстройкой, не здесь
+# rt-kit v0.13.0 · hooks/hook-input.sh · e5cb34b4b7e3 · правится надстройкой, не здесь
 # Общее чтение ввода хука. НЕ гард: объявления `rt-hook:` у него нет, к событиям агента он не
 # подключается. Его источают сами гарды — тем же приёмом, каким они источают общий хвост отказа.
 #
@@ -76,3 +76,42 @@ rt_hook_tool() { rt_hook_field RT_HOOK_TOOL '.tool_name'; }
 rt_hook_cmd() { rt_hook_field RT_HOOK_CMD '.tool_input.command'; }
 rt_hook_file() { rt_hook_field RT_HOOK_FILE '.tool_input.file_path'; }
 rt_hook_cwd() { rt_hook_field RT_HOOK_CWD '.cwd'; }
+
+# ЖДЁТ ПОСЛЕДНИЙ ТЕКСТ ХОДА В ЗАПИСИ. Гарды завершения судят то, что сказано владельцу, а запись
+# хода на этот момент бывает неполна: текст ответа ложится в файл не раньше, чем хост позовёт
+# хук, и гард читает ход, у которого текста нет вовсе. Молчит он при этом честно — и снаружи
+# неотличим от гарда, который посмотрел и пропустил. Ровно так ход, поставивший работу в
+# зависимость от слова владельца, ушёл мимо трёх гардов сразу, а тот же ход, поданный им
+# повторно, был отбит.
+#
+# Ждём короткими попытками: файл дописывается за миллисекунды, а ход и без того кончается не
+# мгновенно. Дождались — ноль; текста так и нет — единица, и решает уже гард.
+rt_turn_has_text() {
+    local transcript="$1" tries="${2:-20}" got
+
+    [ -n "$transcript" ] && [ -f "$transcript" ] || return 1
+    command -v jq >/dev/null 2>&1 || return 1
+
+    while [ "$tries" -gt 0 ]; do
+        got="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
+            def is_input:
+                .type == "user"
+                and (((.message.content // []) | if type == "array"
+                        then ([.[] | select(.type == "tool_result")] | length)
+                        else 0 end) == 0);
+
+            (map(is_input) | rindex(true)) as $i
+            | (if $i == null then . else .[$i + 1:] end)
+            | [.[] | select(.type == "assistant") | (.message.content // [])[]
+                 | select(.type == "text") | .text]
+            | length
+        ' 2>/dev/null)"
+
+        [ -n "$got" ] && [ "$got" != '0' ] && return 0
+
+        tries=$((tries - 1))
+        [ "$tries" -gt 0 ] && sleep 0.05
+    done
+
+    return 1
+}
