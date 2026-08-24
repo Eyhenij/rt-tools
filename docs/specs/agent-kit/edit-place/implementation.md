@@ -15,6 +15,7 @@
 | Дописывание в конец и правка по месту проходят.                                   | `projects/agent-kit/assets/hooks/override-write-guard.sh:rt_overwrite_targets` |
 | Снятие разложенной копии проходит.                                                | `projects/agent-kit/assets/hooks/rule-source-guard.sh:rt_write_targets`        |
 | Пустая надстройка и ненаписанная кладутся целиком.                                | `projects/agent-kit/assets/hooks/override-write-guard.sh:overrides_dir`        |
+| Копию образца под работу собирает команда, и шапку она снимает.                   | `projects/agent-kit/assets/checks/board.github.mjs:unstampFolder`              |
 
 Имена этого дерева: источник — `projects/agent-kit/assets/<ресурс>`, каталог надстроек —
 `.claude/rt-kit/overrides/`, профиль дерева — `.claude/rt-kit/project.sh`, настройка
