@@ -12,6 +12,8 @@ function entityOf(patch: Partial<IProposal.State> = {}): IProposal.State {
         resource: 'rules/lists.md',
         address: 'Ловушки',
         arrivedAt: new Date('2026-08-14T21:30:00.000Z'),
+        fixNote: '',
+        releaseVersion: '',
         text: 'ловушку стоит назвать',
         month: '2026-08',
         ...patch,
@@ -69,18 +71,33 @@ describe('AdminProposalViewComponent', () => {
         expect(textOf('proposal-arrived')).toBe('—');
     });
 
-    it('текст предложения показан целиком', () => {
+    it('текст предложения показан целиком и одним абзацем: переносы в нём значащие', () => {
         show(entityOf({ text: 'ловушку стоит назвать\nи привести пример' }));
 
-        expect(textOf('proposal-text')).toBe('ловушку стоит назвать\nи привести пример');
+        const paragraph: HTMLElement = fixture.debugElement.query(
+            By.css('[qa-dataid="proposal-text"] [qa-dataid="markdown-paragraph"]')
+        ).nativeElement;
+
+        expect(paragraph.textContent?.trim()).toBe('ловушку стоит назватьи привести пример');
+        expect(paragraph.querySelectorAll('br').length).toBe(1);
     });
 
-    it('разметка, приехавшая с дерева, показана текстом и в разметку страницы не попадает', () => {
+    it('сырой HTML, приехавший с дерева, показан текстом и в разметку страницы не попадает', () => {
         show(entityOf({ text: '<script>alert(1)</script><b>жирным</b>' }));
 
         expect(textOf('proposal-text')).toBe('<script>alert(1)</script><b>жирным</b>');
         expect(fixture.debugElement.query(By.css('[qa-dataid="proposal-text"] script'))).toBeNull();
         expect(fixture.debugElement.query(By.css('[qa-dataid="proposal-text"] b'))).toBeNull();
+    });
+
+    it('SC-MB-219 — текста из одних пробелов панель разделом не показывает', () => {
+        show(entityOf({ text: '   \n  \n' }));
+
+        // Сначала — что найдено то самое место: панель поднята и свойства записи на ней стоят,
+        // а раздела с текстом нет
+        expect(textOf('proposal-resource')).toBe('rules/lists.md');
+        expect(fixture.debugElement.query(By.css('[qa-dataid="proposal-text"]'))).toBeNull();
+        expect(fixture.debugElement.queryAll(By.css('rt-aside-section')).length).toBe(1);
     });
 
     it('SC-MB-137, SC-MB-141 — свойства стоят в готовом списке кита, а своего списка определений в панели нет', () => {
@@ -98,5 +115,41 @@ describe('AdminProposalViewComponent', () => {
         expect(fixture.debugElement.queryAll(By.css('rt-aside-section')).length).toBe(2);
         expect(fixture.debugElement.query(By.css('[qa-dataid="aside-section-heading"]')).nativeElement.textContent.trim()).not.toBe('');
         expect(fixture.debugElement.query(By.css('h2'))).toBeNull();
+    });
+
+    it('SC-MB-189 — панель показывает текст починки отдельной секцией', () => {
+        show(entityOf({ fixNote: 'статьёй правила о выемке путей' }));
+
+        const note: DebugElement | null = fixture.debugElement.query(By.css('[qa-dataid="proposal-fix-note"]'));
+
+        expect(note).not.toBeNull();
+        expect(note?.nativeElement.textContent.trim()).toBe('статьёй правила о выемке путей');
+    });
+
+    it('SC-MB-190 — у записи без текста починки секции нет вовсе', () => {
+        show(entityOf({ fixNote: '' }));
+
+        // Отрицательное утверждение идёт в паре с положительным: сперва показано, что панель
+        // отрисована, и только потом — что секции починки в ней нет
+        expect(fixture.debugElement.query(By.css('[qa-dataid="proposal-text"]'))).not.toBeNull();
+        expect(fixture.debugElement.query(By.css('[qa-dataid="proposal-fix-note"]'))).toBeNull();
+    });
+
+    it('SC-MB-205 — панель показывает версию выпуска строкой свойства', () => {
+        show(entityOf({ releaseVersion: 'rt-agent-kit@0.10.1' }));
+
+        const row: DebugElement | null = fixture.debugElement.query(By.css('[qa-dataid="proposal-release-version"]'));
+
+        expect(row).not.toBeNull();
+        expect(row?.nativeElement.textContent).toContain('rt-agent-kit@0.10.1');
+    });
+
+    it('SC-MB-206 — у записи без версии выпуска строки нет вовсе', () => {
+        show(entityOf({ releaseVersion: '' }));
+
+        // Отрицательное утверждение идёт в паре с положительным: сперва показано, что панель
+        // отрисована, и только потом — что строки версии в ней нет
+        expect(fixture.debugElement.query(By.css('[qa-dataid="proposal-text"]'))).not.toBeNull();
+        expect(fixture.debugElement.query(By.css('[qa-dataid="proposal-release-version"]'))).toBeNull();
     });
 });

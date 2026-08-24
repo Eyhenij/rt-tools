@@ -11,9 +11,12 @@ import { areArraysEqual } from '@rt-tools/utils';
 import { BreakpointService, RtIconOutlinedDirective } from '@rt-tools/core';
 import { ASIDE_REF, AsideRef } from '../../../aside/aside.types';
 import { RtuiAsideContainerComponent, RtuiAsideContainerHeaderDirective } from '../../../aside';
-import { RtuiDynamicSelectorAdditionalControlDirective, RtuiDynamicSelectorComponent } from '../../../dynamic-selectors';
+import {
+    RtuiDynamicSelectorAdditionalControlDirective,
+    RtuiDynamicSelectorComponent,
+} from '../../../dynamic-selectors/components/dynamic-selector/rtui-dynamic-selector.component';
 import { RtuiToggleComponent } from '../../../toggle';
-import { ITable } from '../../util';
+import { ITable } from '../../util/table-column.interface';
 import { comparePropNames } from '../../util/compare-prop-names';
 
 const BEM_BLOCK: string = 'rtui-test-aside';

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.9.1 · hooks/git-guard-main.sh · 6f3c2572229c · правится надстройкой, не здесь
+# rt-kit v0.13.0 · hooks/git-guard-main.sh · bc1bb8535795 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
+# Требует: hooks/deny-tail.sh
 # Гард главной ветки. PreToolUse на вызове коммита.
 #
 # Коммит в главную ветку минует ветку, PR и разбор, а поставка построена на них целиком —
@@ -13,10 +14,14 @@
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: не репозиторий, нет гита, открепившийся HEAD, битый ввод — пропуск.
 # Сломанный гард не должен мешать работать.
 
-input="$(cat 2>/dev/null)"
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
+
+rt_hook_read
+input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 
-tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+tool="$(rt_hook_tool)"
 # Терминал среды разработки исполняет ту же командную строку и кладёт её в то же поле. Пока
 # гард проверял только оболочку, весь его смысл обходился сменой инструмента.
 case "$tool" in
@@ -24,7 +29,7 @@ case "$tool" in
     *) exit 0 ;;
 esac
 
-cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
+cmd="$(rt_hook_cmd)"
 
 # Универсальный исполнитель среды передаёт настоящую команду вложенной строкой. Разбирать надо
 # её, а не обёртку: иначе имя команды стоит сразу за кавычкой и ни одно правило до него не
@@ -44,7 +49,7 @@ esac
 
 # Коммит выполнится в рабочем каталоге вызова, поэтому и ветку смотрим там же; корень проекта
 # — запасной вариант, и он важен для отдельного рабочего дерева, где ветка своя.
-workdir="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)"
+workdir="$(rt_hook_cwd)"
 [ -z "$workdir" ] && workdir="${CLAUDE_PROJECT_DIR:-.}"
 cd "$workdir" 2>/dev/null || exit 0
 
@@ -75,6 +80,17 @@ rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 [ -f "$rt_hooks_dir/observe.sh" ] && . "$rt_hooks_dir/observe.sh" 2>/dev/null
 command -v rt_note >/dev/null 2>&1 \
     && rt_note guard-deny res=git-guard-main "sid=$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
+
+# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
+# Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+deny_tail_text="$(rt_deny_tail "")"
+[ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
 
 jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
     || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Коммит в главную ветку отбит. Заведи ветку."}}\n'

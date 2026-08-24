@@ -63,6 +63,10 @@ class TestScreenComponent extends AdminListScreenBase<IRow> {
         this.changeTree(tree);
     }
 
+    public askState(state: string): void {
+        this.changeState(state);
+    }
+
     public askSort(field: string): void {
         this.changeSort({ propertyName: field, sortDirection: EListSortOrder.ASC });
     }
@@ -236,6 +240,51 @@ describe('AdminListScreenBase', () => {
         answerList();
 
         expect(screen.shownEmptyMessage()).toBe('По этому отбору записей нет');
-        expect(screen.shownEmptyDescription()).toBe('Снимите отбор по проекту или выберите другой');
+        expect(screen.shownEmptyDescription()).toBe('Снимите отбор над списком или выберите в нём другое значение');
+    });
+
+    it('SC-MB-229 — пустоту по отбору объясняет и один отбор по состоянию', async () => {
+        const harness: RouterTestingHarness = await RouterTestingHarness.create('/postmortems');
+        const screen: TestScreenComponent = harness.routeDebugElement?.componentInstance;
+
+        answerList();
+        http.expectOne(TREES_PATH).flush([]);
+
+        screen.askState('fixed');
+        await harness.fixture.whenStable();
+        answerList();
+
+        expect(screen.shownEmptyMessage()).toBe('По этому отбору записей нет');
+        expect(screen.shownEmptyDescription()).toBe('Снимите отбор над списком или выберите в нём другое значение');
+    });
+
+    it('SC-MB-225 — отбор по состоянию встаёт в адрес и не снимает отбора по дереву', async () => {
+        const harness: RouterTestingHarness = await RouterTestingHarness.create('/postmortems?tree=a1b2');
+        const screen: TestScreenComponent = harness.routeDebugElement?.componentInstance;
+
+        answerList();
+        http.expectOne(TREES_PATH).flush([]);
+
+        screen.askState('in_work');
+        await harness.fixture.whenStable();
+        answerList();
+
+        expect(router.url).toContain('tree=a1b2');
+        expect(router.url).toContain('state=in_work');
+    });
+
+    it('SC-MB-226 — выбранное состояние возвращает список на первую страницу', async () => {
+        const harness: RouterTestingHarness = await RouterTestingHarness.create('/postmortems?page=3');
+        const screen: TestScreenComponent = harness.routeDebugElement?.componentInstance;
+
+        answerList();
+        http.expectOne(TREES_PATH).flush([]);
+
+        screen.askState('released');
+        await harness.fixture.whenStable();
+        answerList();
+
+        expect(router.url).not.toContain('page=3');
+        expect(router.url).toContain('state=released');
     });
 });

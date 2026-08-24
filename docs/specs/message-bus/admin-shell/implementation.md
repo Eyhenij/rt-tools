@@ -34,3 +34,5 @@
 | Стопка тостов одна, и рисует её каркас.                           | `libs/message-bus-admin/common/container/feature/src/lib/admin-container.component.ts:AdminContainerComponent`                                               |
 | Заголовок вкладки называет приложение, а не проект сборки.        | `libs/message-bus-admin/common/core/util/src/lib/admin-title.strategy.ts:AdminTitleStrategy`                                                                 |
 | Страница объявляет язык документа тем, на котором написана.       | Не проверяется: признак стоит атрибутом разметки, и символа в ней нет; держится сквозной спекой SC-MB-152 и чтением `apps/message-bus-admin/src/index.html`. |
+| Закреплённая наверху шапка непрозрачна по всей ширине.            | `apps/message-bus-admin/src/styles/_header.scss:admin-header`                                                                                                |
+| То, что стоит поверх страницы, красит свою подложку само.         | `apps/message-bus-admin/src/styles/_profile-menu.scss:admin-profile-menu`                                                                                    |

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { IRtuiButton, RtuiButtonComponent } from '../../rtui-button.component';
+import { RtuiButtonComponent } from '../../rtui-button.component';
+import { IRtuiButton } from '../../rtui-button.types';
 
 /**
  * Все оси кнопки разом, каждая ячейка подписана и помечена `data-case`.

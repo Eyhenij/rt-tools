@@ -23,6 +23,9 @@ const TIMEOUT_WAIT_MS: number = 25_000;
 /** Адрес операции чтения разборов: его подменяют спеки состояний. */
 const POSTMORTEMS_API: string = '**/api/postmortems?*';
 
+/** Сколько разборов у второго дерева: пять с текстом и один, у которого текст — одни пробелы. */
+const SECOND_TREE_ROWS: number = 6;
+
 test.describe('состояния списка', () => {
     test('SC-MB-48, SC-MB-130 — пока список читается, на месте строк видно чтение, а не пустоту', async ({ page }: { page: Page }) => {
         await page.route(POSTMORTEMS_API, async (route: Route): Promise<void> => {
@@ -173,7 +176,7 @@ test.describe('состояния списка', () => {
 
         await expect
             .poll(async (): Promise<string[]> => columnTexts(page, 'postmortems-cell-tree'))
-            .toEqual(Array.from({ length: 5 }, (): string => TREES[1].name));
+            .toEqual(Array.from({ length: SECOND_TREE_ROWS }, (): string => TREES[1].name));
 
         // ждётся сам ответ, а не отсчёт времени: отсчёт проверял бы загрузку машины
         await lateAnswer;

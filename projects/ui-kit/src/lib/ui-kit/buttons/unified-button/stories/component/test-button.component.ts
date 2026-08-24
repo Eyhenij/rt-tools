@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { TRtuiIconSizeType } from '../../../../icon/rtui-icon.component';
-import { IRtuiButton, RtuiButtonComponent } from '../../rtui-button.component';
+import { RtuiButtonComponent } from '../../rtui-button.component';
+import { IRtuiButton } from '../../rtui-button.types';
 
 @Component({
     selector: 'app-button',

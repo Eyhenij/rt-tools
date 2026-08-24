@@ -1,3 +1,118 @@
+# [0.13.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.12.0...rt-agent-kit@0.13.0) (2026-08-24)
+
+### Bug Fixes
+
+- **rt:agent-kit:** папка задачи разбирается до открытия заявки, а не после одобрения ([166f3c0](https://github.com/Eyhenij/rt-tools/commit/166f3c09932fcc0cdc3e72579e0f2cd440fc817e))
+- **rt:agent-kit:** признак вызова считает присваивания частью команды ([d153839](https://github.com/Eyhenij/rt-tools/commit/d1538396ae1589e73caff9c1c53682e9905900d4))
+- **rt:agent-kit:** признак дерева считается одним приёмом на обеих сторонах ([ec98772](https://github.com/Eyhenij/rt-tools/commit/ec9877291d8b700b3e4fa040f56951d189c941b3))
+- **rt:agent-kit:** пробник набора судит слова, а не их порядок ([966bfa7](https://github.com/Eyhenij/rt-tools/commit/966bfa7297dde2a52bb98b98c409ba961deef91a))
+- **rt:agent-kit:** пути берутся у пишущего куска команды, а не у строки целиком ([5d7adb6](https://github.com/Eyhenij/rt-tools/commit/5d7adb6f1d179eea51828b45f69e19ea31365653))
+- **rt:agent-kit:** сломанная обвязка сверки схемы перестала быть пропуском ([6e6f38a](https://github.com/Eyhenij/rt-tools/commit/6e6f38a5bd58a73cd3f74d4ad429b376196b11d4))
+- **rt:agent-kit:** тяжёлые шаги гейта зовутся по своему предмету ([9a1e892](https://github.com/Eyhenij/rt-tools/commit/9a1e8920e0b6c03a73b39e3a217aff4bebce1de3))
+- **rt:agent-kit:** чем запускается выкатка, называет дерево, а не правило ([4600fc8](https://github.com/Eyhenij/rt-tools/commit/4600fc82f5300c6ea37a682f737061349b937bc1))
+
+### Features
+
+- **rt:agent-kit:** затирание надстройки отличается от её правки ([f618c41](https://github.com/Eyhenij/rt-tools/commit/f618c41a72a6d845c78da6094dc125e80bbfd575))
+- **rt:agent-kit:** правка разложенной копии отбивается в минуту правки ([e49037e](https://github.com/Eyhenij/rt-tools/commit/e49037ecc15ed8f308e84e3b74b0db68b6f15865))
+- **rt:agent-kit:** предложение называет ближайшее утверждение ресурса ([e88ed3e](https://github.com/Eyhenij/rt-tools/commit/e88ed3e2143faf79adc62865bf59c3145396ef87))
+- **rt:agent-kit:** сухой прогон и отправка не путаются в выводе ([4bce7b0](https://github.com/Eyhenij/rt-tools/commit/4bce7b0ecdac4b1b3da9e8b64a6b609650c26e70))
+
+# [0.12.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.11.0...rt-agent-kit@0.12.0) (2026-08-23)
+
+### Bug Fixes
+
+- **rt:agent-kit:** готовому полю верят по признаку разбора ([53125f0](https://github.com/Eyhenij/rt-tools/commit/53125f0ef34da387dd082f6207296551bf2022eb))
+- **rt:agent-kit:** личность вызова, открывающего заявку, судит гард поставки ([0bd5565](https://github.com/Eyhenij/rt-tools/commit/0bd5565b9c104fc414d9b19be06864b8c5742b06))
+- **rt:agent-kit:** ложный конец хода судится и там, где нет ветки задачи ([1ac9458](https://github.com/Eyhenij/rt-tools/commit/1ac94584258ccddc82750f4a6b2ab1adf3b0b3fc))
+- **rt:agent-kit:** набор снимает с окружения поля живого захода ([b50aee0](https://github.com/Eyhenij/rt-tools/commit/b50aee0aad9509f63500aadeb64484e9f58eef87))
+- **rt:agent-kit:** проба на снятый перечень долга границы убрана ([b3de781](https://github.com/Eyhenij/rt-tools/commit/b3de7817c5ab39bfafd66e10c50ad56908ac1eaa))
+- **rt:agent-kit:** проверка границы состояния правится в источнике ([e1b7d2c](https://github.com/Eyhenij/rt-tools/commit/e1b7d2cad6754e0b60ed06b358b10fe81072470a))
+- **rt:agent-kit:** состояние разобранной папки ведёт свой паттерн ([a0338bd](https://github.com/Eyhenij/rt-tools/commit/a0338bd71727847bf0c2dfc64be2f45786ec44ec))
+- **rt:agent-kit:** сценарии двух пределов сдвинуты за занятый диапазон ([995836d](https://github.com/Eyhenij/rt-tools/commit/995836d89f0789d94a63830ba4427c90bbc12050))
+- **rt:agent-kit:** сценарии холодной части получили свободные номера ([a8888cf](https://github.com/Eyhenij/rt-tools/commit/a8888cf08c62c27742a232327fcca3af0914ae34))
+- **rt:agent-kit:** сценарии холодной части сдвинуты за занятый диапазон ([ff98e74](https://github.com/Eyhenij/rt-tools/commit/ff98e74bec10e507990cde8c037bece89edfc507))
+
+### Features
+
+- **rt:agent-kit:** известный долг границы держится перечнем, а проверка встала в гейт ([c1361b8](https://github.com/Eyhenij/rt-tools/commit/c1361b8c52e982127ba4eca90dd9a298a5dfc965)), closes [#1011](https://github.com/Eyhenij/rt-tools/issues/1011)
+- **rt:agent-kit:** настройка агента зовёт диспетчер, а не список гардов ([a5c865a](https://github.com/Eyhenij/rt-tools/commit/a5c865a8ee310df394ba7132ebf99b149dccc589))
+- **rt:agent-kit:** отказ гейта печатает статью, под которую подпадает правка ([10dbd92](https://github.com/Eyhenij/rt-tools/commit/10dbd92a03e2cc5ad4cf5e071789df820b6d4882))
+- **rt:agent-kit:** признак границы пакета объявлен правилом и проверяется машиной ([11a861b](https://github.com/Eyhenij/rt-tools/commit/11a861bc01addbefb85d7582967aa1eb9b872350)), closes [#1011](https://github.com/Eyhenij/rt-tools/issues/1011)
+- **rt:agent-kit:** статьи трёх правил размечены признаком применимости ([d502933](https://github.com/Eyhenij/rt-tools/commit/d502933b510cd51aea197c9efc48d4217313269c))
+- **rt:agent-kit:** статья правила говорит о своей применимости сама ([fed6ce4](https://github.com/Eyhenij/rt-tools/commit/fed6ce4d442871409c0874493aa05e30c03f9b64))
+- **rt:agent-kit:** у текста слоя правил свой предел длины ([ab07e2d](https://github.com/Eyhenij/rt-tools/commit/ab07e2d507d12212eb374d8729fda6580a751367))
+- **rt:agent-kit:** холодная часть правила объявлена родом ресурса ([4d51a28](https://github.com/Eyhenij/rt-tools/commit/4d51a28df4acdeecaf357f23c190a82ead4a903f))
+
+### Performance Improvements
+
+- **rt:agent-kit:** ввод хука разбирается один раз на событие ([e63bea3](https://github.com/Eyhenij/rt-tools/commit/e63bea38cdc1062c2d68ce64f07d907cd424c665))
+
+# [0.11.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.10.0...rt-agent-kit@0.11.0) (2026-08-22)
+
+### Bug Fixes
+
+- **rt:agent-kit:** гард объявляет локаль исполнения, а не наследует пустую ([82af4d6](https://github.com/Eyhenij/rt-tools/commit/82af4d6a551c61bc21a2d7de72e2d12565dba4fd))
+- **rt:agent-kit:** повтор раздела редакции снят, старые редакции уехали из журнала ([4dfbd5e](https://github.com/Eyhenij/rt-tools/commit/4dfbd5ec6503c3566c289957a93b1e6c160de089)), closes [#960](https://github.com/Eyhenij/rt-tools/issues/960)
+- **rt:agent-kit:** пустое устройство и поток ошибок не считаются записью файла ([db3206d](https://github.com/Eyhenij/rt-tools/commit/db3206da53f7c422b07397480b2e6481f785813d))
+- **rt:agent-kit:** пути берутся из заголовка команды, а не из тела документа на месте ([f51cb09](https://github.com/Eyhenij/rt-tools/commit/f51cb09ad4982a43c60172d67ac491b6f7f6ef3a))
+
+### Features
+
+- **rt:agent-kit:** дерево задаёт порог сжатия и сводит его с порогом остановки ([7b6de03](https://github.com/Eyhenij/rt-tools/commit/7b6de03d4e4321bfbafd02907b574c8d4c0db65c)), closes [#977](https://github.com/Eyhenij/rt-tools/issues/977)
+- **rt:agent-kit:** закон, правило и карта хода развели предел окна и порог сжатия ([347906a](https://github.com/Eyhenij/rt-tools/commit/347906a8e6348beaf174902919b1f0b51dd9e112))
+- **rt:agent-kit:** карта хода заведена ресурсом пакета ([0aa95a0](https://github.com/Eyhenij/rt-tools/commit/0aa95a0187d38e263a81dc4523d3a5f81c013f7d))
+- **rt:agent-kit:** карта хода сверяется размером и полнотой ([2b0f20f](https://github.com/Eyhenij/rt-tools/commit/2b0f20f5e6ef5d48e5f58d67c3d4884b802e1edc))
+- **rt:agent-kit:** команда отметки несёт версию выпуска доводом ([a8ca782](https://github.com/Eyhenij/rt-tools/commit/a8ca7820dda4f772d98a1842c2278b7117df257c))
+- **rt:agent-kit:** команда отметки несёт текст починки доводом ([067091c](https://github.com/Eyhenij/rt-tools/commit/067091cdc67ddcd3660bff4f7c281269559304d6)), closes [#910](https://github.com/Eyhenij/rt-tools/issues/910)
+- **rt:agent-kit:** отметка состояния груза командой строки запуска ([f1c20c7](https://github.com/Eyhenij/rt-tools/commit/f1c20c70bc8cfafe50ac885df86e1776755e929b))
+- **rt:agent-kit:** передача захода пишется перед сжатием контекста ([c6da546](https://github.com/Eyhenij/rt-tools/commit/c6da5463d472cbd9a8b8b2440c88f0a3cd7d52b8))
+- **rt:agent-kit:** передача и карта хода приходят в контекст на запуске ([a137fcb](https://github.com/Eyhenij/rt-tools/commit/a137fcbd15a50f90a9f63b391a115449cb033c5e))
+- **rt:agent-kit:** пороги сжатия и остановки разведены, запас объявлен числом ([a73b472](https://github.com/Eyhenij/rt-tools/commit/a73b4729b58694e8e3ebabe4550bc40174f93965))
+- **rt:agent-kit:** проверка читает строку следующего движения в каждом разделе ([8abd41d](https://github.com/Eyhenij/rt-tools/commit/8abd41dec775a6c50344b42f4e8c04d42c248212))
+- **rt:agent-kit:** разбор приехавшего груза объявлен правилом с готовыми вызовами ([3b1139f](https://github.com/Eyhenij/rt-tools/commit/3b1139f82d741e910e9c6fd4544a4f32e1294fb2))
+- **rt:agent-kit:** сверка порогов судит расстояние между ними, а не совпадение ([c2e85a7](https://github.com/Eyhenij/rt-tools/commit/c2e85a7349ec29ba8f6c4d8758bc1627ae8aeb6b))
+- **rt:agent-kit:** сводка называет цену входа в работу и долю отбитий не на правке файла ([612a041](https://github.com/Eyhenij/rt-tools/commit/612a0416c2f4aebefa273a303c4a9846d216c8ae))
+- **rt:agent-kit:** страж окна зовёт работать дальше там, где сжатие придёт само ([16bc442](https://github.com/Eyhenij/rt-tools/commit/16bc4426f315c1d0a30d88094047059046fc58e2))
+- **rt:agent-kit:** у каждого состояния работы есть раздел, и это сторожит сверка ([cb431d5](https://github.com/Eyhenij/rt-tools/commit/cb431d5f871bce896ece60235910977cfb909a9d))
+
+* **rt:agent-kit:** сводка наблюдений называет вес загруженного слоя правил и цену одного захода
+* **rt:agent-kit:** доля отбитий гейта, пришедших не на правку файла, стоит в сводке своей строкой
+
+# [0.10.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.9.1...rt-agent-kit@0.10.0) (2026-08-20)
+
+### Bug Fixes
+
+- **rt:agent-kit:** дыры новой проверки поставки закрыты, ложные отказы сняты ([2feaa13](https://github.com/Eyhenij/rt-tools/commit/2feaa139110b289c1f415d70ff28b55474032277))
+- **rt:agent-kit:** имя обязательного раздела спека перестало быть канцеляритом ([0738acd](https://github.com/Eyhenij/rt-tools/commit/0738acd5485f1a3b2f019326c010e7de95d0ad35))
+- **rt:agent-kit:** номера сценариев гарда утверждения разведены с чужими ([bc9e7e1](https://github.com/Eyhenij/rt-tools/commit/bc9e7e1b63eaa147c58793e3e1fba728524606b7))
+- **rt:agent-kit:** отказ гарда утверждения зовёт общий хвост о двух ходах ([900749c](https://github.com/Eyhenij/rt-tools/commit/900749cc0d666350e8a2690fa2daaa6f4bca5d92))
+- **rt:agent-kit:** проверка слога берёт решение главной ветки о слове «данные» ([6780ada](https://github.com/Eyhenij/rt-tools/commit/6780ada6a460fceab2ed5edbe7324e3fc806855e))
+- **rt:agent-kit:** слово «данные» не канцелярит, а число в наборе печатается строкой ([d9f0293](https://github.com/Eyhenij/rt-tools/commit/d9f0293cb3f6df8624c7c8b62197613691960b0a))
+
+### Features
+
+- **rt:agent-kit:** гард при выключенной роли выходит молча ([f2c7a43](https://github.com/Eyhenij/rt-tools/commit/f2c7a431eab023df22156c5c0ca9b4a8b1e65f73))
+- **rt:agent-kit:** гарды поставки отвечают одной формой отказа и живут своим поддоменом ([81d3ebd](https://github.com/Eyhenij/rt-tools/commit/81d3ebdef161cd379211a950a2e508a8d813b788))
+- **rt:agent-kit:** дерево объявляет, какие роли слоя правил выключены ([ee3b623](https://github.com/Eyhenij/rt-tools/commit/ee3b623925717ccff40b96609515f048c0700374))
+- **rt:agent-kit:** закрытый этап подтверждается выводом команды, а не словами ([2d02ff4](https://github.com/Eyhenij/rt-tools/commit/2d02ff4d01933fe632c8448d2daa800a43f5c3c4))
+- **rt:agent-kit:** запись в списке принятого отвечает за себя сама ([c6bfc51](https://github.com/Eyhenij/rt-tools/commit/c6bfc5179904f803777c8121c71cad02a5554d96))
+- **rt:agent-kit:** заход из передачи входит в работу тем же правилом, что и всякий другой ([95e3928](https://github.com/Eyhenij/rt-tools/commit/95e3928ec35cab57d29a71f65ce8982575c250f9))
+- **rt:agent-kit:** канцелярит в новом тексте отбивается вместе с названной заменой ([e49c130](https://github.com/Eyhenij/rt-tools/commit/e49c13040a01078b314fc68f6615c9790d8011f8))
+- **rt:agent-kit:** отказ гарда называет два законных хода и форму обхода ([3bd7b97](https://github.com/Eyhenij/rt-tools/commit/3bd7b97ae214fce99a97600a696538385f68aeb2))
+- **rt:agent-kit:** отказ поставки называет несошедшееся целиком ([a899812](https://github.com/Eyhenij/rt-tools/commit/a899812ef3b5809b0f991bbd8d8506e89fd82205))
+- **rt:agent-kit:** пакет знает состав правки и отбивает пуш с переключением ветки ([2acbac9](https://github.com/Eyhenij/rt-tools/commit/2acbac94cbee37085a522afba047a832a1384c78))
+- **rt:agent-kit:** перезапуск упавшего задания ждёт прочитанного журнала ([d16bc05](https://github.com/Eyhenij/rt-tools/commit/d16bc05f09b877e71e3e017374e5ecf6f7d121f4))
+- **rt:agent-kit:** сверка очереди работ называет конфликтующую заявку ([9ecda1f](https://github.com/Eyhenij/rt-tools/commit/9ecda1f0d4dd698fb9b13ea549d24e808d312302))
+- **rt:agent-kit:** совесть называет промах, который повторяется прямо сейчас ([b24ef14](https://github.com/Eyhenij/rt-tools/commit/b24ef14d66af5caa01bcad5bfa3951f7db0178a7))
+- **rt:agent-kit:** состояние работы объявляется строкой, и гард судит переход ([c3f1bc8](https://github.com/Eyhenij/rt-tools/commit/c3f1bc817c4c03dcfbaed2da52ec0b6349021f05))
+- **rt:agent-kit:** списки принятого приведены к общей форме, проверки зовут разбор ([3e4c6a4](https://github.com/Eyhenij/rt-tools/commit/3e4c6a4ab8ba190e288ec48020d3c3010f781fd1))
+- **rt:agent-kit:** страж не выпускает ход, в котором по работе не сделано ничего ([0fefb06](https://github.com/Eyhenij/rt-tools/commit/0fefb063a8e8c5dafe43a1f755c1d4f054fbb84e))
+- **rt:agent-kit:** усвоение правил спрашивает роль экзаменатора, а вердикт судит гард ([cc87bc2](https://github.com/Eyhenij/rt-tools/commit/cc87bc2dda00428a4868503bb28f86cc58030cfd))
+- **rt:agent-kit:** условия поставки спрашиваются там, где их ещё дёшево починить ([58b4453](https://github.com/Eyhenij/rt-tools/commit/58b445366dcb79cb8222e3aa907fd717897c52af))
+- **rt:agent-kit:** утверждение владельцу о дереве подтверждается командой хода ([783a5b5](https://github.com/Eyhenij/rt-tools/commit/783a5b52df55c6dc82c02fc5a191e9e05e94079a))
+- **rt:agent-kit:** черновик не снимается с конфликтующей заявки ([04d2d50](https://github.com/Eyhenij/rt-tools/commit/04d2d5065f043ff5aeccf9420ba7b2c777072947))
+
 ## [0.9.1](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.9.0...rt-agent-kit@0.9.1) (2026-08-19)
 
 ### Features
@@ -30,432 +145,7 @@
 - **rt:agent-kit:** шесть находок эпика встали статьями и ловушками слоя правил ([3b252f4](https://github.com/Eyhenij/rt-tools/commit/3b252f4432380112d32459786811dae07414750b))
 - **rt:message-bus:** дерево получает токен по приглашению, обращение закрыто пределом частоты ([bdc677a](https://github.com/Eyhenij/rt-tools/commit/bdc677a68429f14ff27c9b0ef53a3f86c7d5a55f))
 
-## [0.8.3](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.8.2...rt-agent-kit@0.8.3) (2026-08-16)
+---
 
-### Bug Fixes
-
-- **rt:agent-kit:** внешние наборы проверки повторов ищутся разрешением модуля ([eb8b0c3](https://github.com/Eyhenij/rt-tools/commit/eb8b0c376a59e106a32c912bf9c231183b671097))
-- **rt:agent-kit:** вторая дверь закрыта у трёх гардов и покрыта сценариями ([69724d4](https://github.com/Eyhenij/rt-tools/commit/69724d4d546b4aefe5ec5d9d25d411c0cefe9131))
-- **rt:agent-kit:** графы приведены к прозе по находкам первого прогона ревью ([aa3aff2](https://github.com/Eyhenij/rt-tools/commit/aa3aff2fca8b640accd302fdb5e79a729bf84103))
-- **rt:agent-kit:** два гарда зовутся и на команду оболочки ([1191c2c](https://github.com/Eyhenij/rt-tools/commit/1191c2c807d9fad61f9a8fd7a811b6a733b3bcf1))
-- **rt:agent-kit:** команда ревью не отвечает уверенно в дереве, где её нечем звать ([96d52b9](https://github.com/Eyhenij/rt-tools/commit/96d52b93248620477a93445caee53e18f06a593a)), closes [#735](https://github.com/Eyhenij/rt-tools/issues/735)
-- **rt:agent-kit:** один номер сценария снова означает один сценарий ([7c62dc6](https://github.com/Eyhenij/rt-tools/commit/7c62dc6b8628f7904caf31869fdafca76e091509)), closes [#726](https://github.com/Eyhenij/rt-tools/issues/726)
-- **rt:agent-kit:** правка сверки спеков перенесена в пакет ([9cee063](https://github.com/Eyhenij/rt-tools/commit/9cee063706afb0aabf999ae2bae23bb5bf1337ba))
-- **rt:agent-kit:** прогон убирает за собой, и мусор снимается отбором ([e444c08](https://github.com/Eyhenij/rt-tools/commit/e444c0804fdbd3295ff337258d7ac6d8d1492566))
-- **rt:agent-kit:** пропущенный деревом паттерн правило не краснит ([6481dfb](https://github.com/Eyhenij/rt-tools/commit/6481dfb54294d5a860c12a5483ca8a316096b44d))
-- **rt:agent-kit:** символом якоря привязки считается любая буква ([95bb2d9](https://github.com/Eyhenij/rt-tools/commit/95bb2d9978fce63f5c63d51e885a4f860da32fbb))
-- **rt:agent-kit:** слово якоря ищется границами любого алфавита ([33c1f36](https://github.com/Eyhenij/rt-tools/commit/33c1f36f60b31ae8c97e1a98853ef645214f0d5c))
-
-### Features
-
-- **rt:agent-kit:** гард ожидания и прогон наборов по гардам ([7cdf12d](https://github.com/Eyhenij/rt-tools/commit/7cdf12d18ae0ed2a65680b0592dc78a5046730dd))
-- **rt:agent-kit:** закон о документации проекта получил шесть статей ([f2eeabb](https://github.com/Eyhenij/rt-tools/commit/f2eeabb15906bc75a6fb638b8fbbdbbd7bdf4b06))
-- **rt:agent-kit:** образцы папки задачи и спека домена приезжают раскладкой ([c0d162b](https://github.com/Eyhenij/rt-tools/commit/c0d162b05fb58f6c368ae0d93570328d681cbe5f)), closes [#695](https://github.com/Eyhenij/rt-tools/issues/695)
-- **rt:agent-kit:** расхождения в текстах пакета находит проверка ([3a0a452](https://github.com/Eyhenij/rt-tools/commit/3a0a452a12d492d35300b340fb5ad9d4d106ce59))
-- **rt:agent-kit:** слово посреди работы ложится блоком в файл предложений ([5cc745e](https://github.com/Eyhenij/rt-tools/commit/5cc745e859579722f889a3f48ecfa19bcbd6b9cc))
-- **rt:agent-kit:** смысловое расхождение двух текстов находит роль ([134900a](https://github.com/Eyhenij/rt-tools/commit/134900a9ec09e67b3587af5937db0f1598cc830f))
-- **rt:agent-kit:** статья без места в коде закрывается вердиктом с причиной ([a18de4d](https://github.com/Eyhenij/rt-tools/commit/a18de4daf573f1a8862d1330ab1ba4b29d2d80c2))
-- **rt:agent-kit:** ход правила виден графом, а не только чтением прозы ([04ea8a9](https://github.com/Eyhenij/rt-tools/commit/04ea8a9e86fda81c3a0d40fe0125a0aa53fbbda0))
-
-## [0.8.2](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.8.1...rt-agent-kit@0.8.2) (2026-08-15)
-
-### Bug Fixes
-
-- **rt:agent-kit:** гард документов спрашивает о правке закона надстройкой ([8b68e21](https://github.com/Eyhenij/rt-tools/commit/8b68e21a728d71ac4bb43a447b5b646d4a6df4b8))
-- **rt:agent-kit:** гард единообразия читает те же поля признака, что и сплошная проверка ([2a8619a](https://github.com/Eyhenij/rt-tools/commit/2a8619ae6a095d0b02de891e6414c94eca4c1010))
-- **rt:agent-kit:** гард поставки спрашивает свежесть главной ветки сам ([35210cc](https://github.com/Eyhenij/rt-tools/commit/35210cc10ec2531f50c6ff37f5bb97556127b488))
-- **rt:agent-kit:** незнакомый довод кончает отправку груза ([5b708e1](https://github.com/Eyhenij/rt-tools/commit/5b708e1c9a6acb01dccb5d0cf57e46ecddcc2fdb))
-- **rt:agent-kit:** обход требования не снимается собственным описанием ([4e641cf](https://github.com/Eyhenij/rt-tools/commit/4e641cf87d22d2cdb075430b94379cec2c6a92ee))
-- **rt:agent-kit:** очередь работ обходится без токена машинной записи ([9bf4d3a](https://github.com/Eyhenij/rt-tools/commit/9bf4d3a0530564ce9dc155cea1cb52c04a872303))
-- **rt:agent-kit:** правило называет имя черновика папки задачи ([4000330](https://github.com/Eyhenij/rt-tools/commit/4000330d342404614eed5ac8f56974c0dda210b8))
-- **rt:agent-kit:** снимок ждёт события, а не отсчёта времени ([7761d75](https://github.com/Eyhenij/rt-tools/commit/7761d75824bc4d54f6d11b3cd2c8e7bafe504b4a))
-- **rt:agent-kit:** стенд останавливается по идентификатору процесса ([42270b6](https://github.com/Eyhenij/rt-tools/commit/42270b6cce9f84e77bfe8652fae054d559a6ba1f))
-- **rt:message-bus:** предложение опознаётся признаком, а не текстом в записи месяца ([b6000a9](https://github.com/Eyhenij/rt-tools/commit/b6000a9dcfd2d4e74815bcb8590e2a19c6f77cf2))
-
-* **rt:agent-kit:** правило ведения работы называет имя черновика папки задачи. Черновик зовётся
-  тем же коротким именем, что и будущая ветка: не найдя его по этому имени, команда заведения
-  молча собирает папку с образца, и разбор просьбы остаётся в брошенном каталоге.
-* **rt:agent-kit:** правило проверки через браузер называет остановку стенда по идентификатору
-  процесса. Занятый порт, обнаружённый поздно, означает, что стенд уже есть; шаблон имени команды
-  не годится ни чтобы попасть в свой процесс, ни чтобы не задеть чужой — у обоих экземпляров имя
-  одно.
-* **rt:agent-kit:** правило проверок называет ожидание по времени негодным признаком устоявшейся
-  вёрстки. Кадр, ждущий отсчётом, проверяет загрузку машины, а не вёрстку; стенд, поднятый
-  предыдущим шагом, останавливается перед съёмкой.
-
-### Features
-
-- **rt:agent-kit:** гард поставки читает подпись машинного коммита ([fc31dae](https://github.com/Eyhenij/rt-tools/commit/fc31dae672436fe4ebebd9a19f875df6821753e0)), closes [#603](https://github.com/Eyhenij/rt-tools/issues/603)
-- **rt:agent-kit:** гарды судят команду оболочки, а папка задачи заводится без исключений ([4cdb322](https://github.com/Eyhenij/rt-tools/commit/4cdb3223dacb8b26dbb63b1004bb9586108c1dcc)), closes [#682](https://github.com/Eyhenij/rt-tools/issues/682)
-- **rt:agent-kit:** готовность работы объявляется словом исполнителя, а не зелёной страницей ([63345e2](https://github.com/Eyhenij/rt-tools/commit/63345e2514926ad865c8c9344df1aec4e63c6713)), closes [#685](https://github.com/Eyhenij/rt-tools/issues/685)
-- **rt:agent-kit:** груз трёх родов уезжает в закрытый приём вместо очереди работ ([c0cccdc](https://github.com/Eyhenij/rt-tools/commit/c0cccdc651a17099bd713a2dd05575465954deae))
-- **rt:agent-kit:** заведение задачи кончается ответом очереди работ ([1fa5179](https://github.com/Eyhenij/rt-tools/commit/1fa51792f3baa0391369ad2a08bdb46d93ed889a))
-- **rt:agent-kit:** незнакомое свойство роняет раскладку с обеих сторон ([cfcf464](https://github.com/Eyhenij/rt-tools/commit/cfcf464b5e19171e410c9cb2c671517e3b76fc66))
-- **rt:agent-kit:** отказ по компаньону называет свойство вместо предложения заполнить ([0249020](https://github.com/Eyhenij/rt-tools/commit/02490205e7c76d6387e5c9b4f08f23f493a82ec6))
-- **rt:agent-kit:** правило наблюдаемости требует приложения, а перечень это называет ([fcefa03](https://github.com/Eyhenij/rt-tools/commit/fcefa03449b5c102dadeb7a8f971a0ff917ccc0f))
-- **rt:agent-kit:** раскладка называет долг, который сама добавила ([7e781d9](https://github.com/Eyhenij/rt-tools/commit/7e781d9fbf526ecb6ac97c17c6f5299be214ab01))
-- **rt:agent-kit:** ресурс требует свойства дерева, и без него не кладётся ([547e05b](https://github.com/Eyhenij/rt-tools/commit/547e05b1ba46a0e6d043debb8590d62a65e6598e))
-- **rt:agent-kit:** сверка очереди видит папку задачи в открытом отчёте ([223fd6f](https://github.com/Eyhenij/rt-tools/commit/223fd6f13edf0d34bc1db51345720a32a2efb357))
-- **rt:agent-kit:** серия задач названа эпиком, и закон говорит, как её вести ([1e869b7](https://github.com/Eyhenij/rt-tools/commit/1e869b7c5eb37701aaa5cf08435e90d9ab7ff965))
-- **rt:agent-kit:** ход с просьбой о предложении не кончается без отправки ([15cbb66](https://github.com/Eyhenij/rt-tools/commit/15cbb668e75b99e48976b1ec71cc63150e294a7a))
-- **rt:message-bus:** админка заводится каркасом, входом и оболочкой с меню ([bc799ce](https://github.com/Eyhenij/rt-tools/commit/bc799ced936fc81f56d10b86dbee5b1ff0ce7859))
-
-* **rt:agent-kit:** заведение задачи кончается ответом очереди работ. Команда заведения после
-  четвёртого шага спрашивает очередь по номеру и печатает прочитанное — присутствие, колонку,
-  исполнителя; задача, которой в очереди нет, кончает команду ненулевым кодом. Решение о выводе
-  и коде вынесено в чистую функцию модуля борды и закрыто сценариями. Правило поставки и паттерн
-  PR во всех трёх редакциях называют ответ очереди тем, чем подтверждается заведение, а закон
-  о ведении работы — отрицание, полученное одним источником, отрицанием не считает.
-* **rt:agent-kit:** раскладка называет долг, который сама добавила. После списка разложенного она
-  печатает, сколько статей правил осталось без адреса в компаньонах дерева и в скольких файлах;
-  компаньон, которого нет вовсе, считается отдельно. Правило проверок при этом говорит, что
-  проверка приезжает раскладкой вместе со своим местом — именем команды и строкой набора.
-
-## [0.8.1](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.8.0...rt-agent-kit@0.8.1) (2026-08-14)
-
-### Bug Fixes
-
-- **rt:agent-kit:** маркер отступления снимает свою строку и следующую ([918103c](https://github.com/Eyhenij/rt-tools/commit/918103c3dd6e6a7059e05a19c656095bc4edbb67))
-
-# [0.8.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.7.0...rt-agent-kit@0.8.0) (2026-08-14)
-
-### Features
-
-- **rt:agent-kit:** признаки единообразия объявляются деревом, а не зашиты в проверку ([ad93a46](https://github.com/Eyhenij/rt-tools/commit/ad93a464eae3ab63751a441419fc145ab932c04c))
-
-* **rt:agent-kit:** признаки единообразия объявляются деревом. Наборы лежат при пакете по файлу
-  на пакет rt-tools; дерево называет нужные ключом `reuse.bundles` в настройке проверок и
-  дописывает свои файлом, названным ключом `reuse.signals`. Гард на правке и сплошная сверка
-  читают один и тот же список.
-
-### Bug Fixes
-
-- **rt:agent-kit:** гард единообразия снова отбивает переизобретение. Он читал четыре поля, а
-  профили деревьев печатали два, и пустое поле схлопывалось табом в `IFS` — совет уезжал в
-  образец отмены и гасил гард целиком. На гард заведён набор сценариев.
-
-### BREAKING CHANGES
-
-- **rt:agent-kit:** дерево, не объявившее ни одного набора признаков, теперь не получает их
-  вовсе — прежде список был зашит в проверку. Гард говорит об этом при первой правке и работу
-  пропускает, сплошная сверка молчит. Переход: объявить нужные наборы ключом `reuse.bundles` в
-  `checks.json`. Имена классов и компонентов, принадлежащие дереву-потребителю, из ресурсов
-  пакета ушли — их объявляет само дерево своими признаками.
-
-# [0.7.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.6.0...rt-agent-kit@0.7.0) (2026-08-14)
-
-### Features
-
-- **rt:agent-kit:** договорённость о каскаде исполнена целиком ([0fdd802](https://github.com/Eyhenij/rt-tools/commit/0fdd802fe02c711c4fc9f77b468ead7744890e61))
-- **rt:agent-kit:** отказ от закона снимает его правила и паттерны ([21d5089](https://github.com/Eyhenij/rt-tools/commit/21d5089b5bf49e439304e5cb35422c63335da859))
-- **rt:agent-kit:** расхождение гейта пуша с конвейером отбивает пуш ([1521d94](https://github.com/Eyhenij/rt-tools/commit/1521d947b7f7e30de0ff45cc292c48f6b2049be9))
-
-### BREAKING CHANGES
-
-- **rt:agent-kit:** дерево, выбравшее законы поимённо, получает теперь только
-  правила и паттерны выбранных законов. Прежде приезжали все, и часть из них
-  разложена в деревьях с прошлых редакций — раскладка назовёт их брошенными.
-
-Docs-skip: README пакета и линия работ правлены тем же коммитом
-
-# [0.6.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.5.3...rt-agent-kit@0.6.0) (2026-08-13)
-
-### Features
-
-- **rt:agent-kit:** гейт судит вызов, а гейт пуша зовёт разложенное ([d029c86](https://github.com/Eyhenij/rt-tools/commit/d029c86cd21dd9a356225bf37472dbe40d880060))
-- **rt:agent-kit:** слой гейта поверх доменного правила и проверка длины файла ([c5f2e91](https://github.com/Eyhenij/rt-tools/commit/c5f2e91cae78c2da3cc219a6d7d262535f6e4a77))
-
-## [0.5.3](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.5.2...rt-agent-kit@0.5.3) (2026-08-13)
-
-## [0.5.2](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.5.1...rt-agent-kit@0.5.2) (2026-08-13)
-
-### Bug Fixes
-
-- **rt:agent-kit:** вопрос владельцу идёт после разведки, а не вместо неё ([2ccd053](https://github.com/Eyhenij/rt-tools/commit/2ccd053d3c4a329ea2884436cfad63ba350046ef))
-- **rt:agent-kit:** гард без функции профиля больше не выходит молча ([9e1a55f](https://github.com/Eyhenij/rt-tools/commit/9e1a55f121d2af4a22a9a79928310a081321d8c7))
-- **rt:agent-kit:** отправка называет, чего ей не хватило, а метка заведена ([163609a](https://github.com/Eyhenij/rt-tools/commit/163609ad0a34e25075c3be8e880c09661844d413))
-- **rt:agent-kit:** ресурс не утверждает про дерево того, чего не знает ([925144f](https://github.com/Eyhenij/rt-tools/commit/925144f6f0fde7b7c03957ced6424b424cb7b390))
-- **rt:agent-kit:** спрос функции профиля считается в обеих формах ([0dbfd01](https://github.com/Eyhenij/rt-tools/commit/0dbfd014e2b1184c9db3d7f2dec1d050974c6558))
-- **rt:agent-kit:** ход с вопросом судится до того, как вопрос ушёл ([5387167](https://github.com/Eyhenij/rt-tools/commit/53871674ff6829a91e2cc37e8b4d411b7916d7c5))
-
-### Features
-
-- **rt:agent-kit:** гарды пишут наблюдения о слое правил ([aa8cc9d](https://github.com/Eyhenij/rt-tools/commit/aa8cc9d9ae963ad8da7a5b3c303cf200afa5c4ac))
-- **rt:agent-kit:** PR от разошедшейся ветки отбивается гардом поставки ([039e640](https://github.com/Eyhenij/rt-tools/commit/039e640a33578280885867b4e50b2586b836fd58))
-- **rt:agent-kit:** предложения уезжают в очередь работ пакета, а не остаются в переписке ([77b49d6](https://github.com/Eyhenij/rt-tools/commit/77b49d6aed8c639d379b18455f91fc2321ba5a44))
-- **rt:agent-kit:** происшествие кончается записью, а не извинением ([a1843be](https://github.com/Eyhenij/rt-tools/commit/a1843bed232ee65a68fe97079e3be7172619cc01))
-- **rt:agent-kit:** ресурс объявляет, без чего он неисполним ([5598ee2](https://github.com/Eyhenij/rt-tools/commit/5598ee23d7ef18e3a221cab33bcfecd46a2abce8))
-- **rt:agent-kit:** сведение разбирает пришедшее, а законы называют, зачем оно ([e229347](https://github.com/Eyhenij/rt-tools/commit/e229347793e5325cee610782057533a66defb72c))
-- **rt:agent-kit:** сводка отвечает, чем из слоя правил не пользовались ни разу ([e3c26c2](https://github.com/Eyhenij/rt-tools/commit/e3c26c2dc6a656530b9023aec56d556a455b1cc2))
-
-## [0.5.1](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.5.0...rt-agent-kit@0.5.1) (2026-08-12)
-
-### Bug Fixes
-
-- **rt:agent-kit:** привязками считается одна таблица компаньона, а не все ([3a9d049](https://github.com/Eyhenij/rt-tools/commit/3a9d049200c846f164b442d7cbf6c1522304aeb1))
-- **rt:agent-kit:** сверка спеков видит номер сценария из одной цифры ([c718a2d](https://github.com/Eyhenij/rt-tools/commit/c718a2d453616cfc5bc8e7bc0961c6f50fb71863))
-
-### Features
-
-- **rt:agent-kit:** гейт судит три рода файлов, сверка адресов видит имя и каталог ([d7a9616](https://github.com/Eyhenij/rt-tools/commit/d7a961665c760945a83a6728809d84c8b50e171a))
-- **rt:agent-kit:** заход закрывается одной командой ([3bba3b8](https://github.com/Eyhenij/rt-tools/commit/3bba3b84f086dc5f7564c7fb353d99118506133f))
-- **rt:agent-kit:** пакет везёт словарь, стража окна и передачу захода ([1bb3d66](https://github.com/Eyhenij/rt-tools/commit/1bb3d6616ce227f95ac73b8ae836129817a5444f))
-- **rt:agent-kit:** сверка адресов не судит переносимый текст, у архива появился указатель ([9379551](https://github.com/Eyhenij/rt-tools/commit/93795517f55f1c6454d83bd6815146ed47feaa25))
-
-# [0.5.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.4.0...rt-agent-kit@0.5.0) (2026-08-11)
-
-### Bug Fixes
-
-- **rt:agent-kit:** влитая договорённость больше не запирает ветку ([3ac50d0](https://github.com/Eyhenij/rt-tools/commit/3ac50d017e61a000e25f5387fdb402aa28410cc2))
-- **rt:agent-kit:** упоминание команды в тексте больше не считается командой ([170409a](https://github.com/Eyhenij/rt-tools/commit/170409a0ead6d3b8a321ade3e8757c6f4b6c69c4))
-
-* **rt:agent-kit:** гард замысла больше не запирает ветку после вливания договорённости.
-  Директории «предложено» на диске уже нет, а замысел ссылается на неё до конца работы: влитое
-  от незаведённого гард отличает по истории ветки. Прежде последний коммит PR закрывал
-  дорогу и правкам по замечаниям разбора, и записи в журнал изменений.
-* **rt:agent-kit:** сверка спеков не требует правила у закона со статусом «предложено»:
-  договорённость, записанную раньше кода, привязывать не к чему, и работа начиналась с отказа
-  проверки.
-
-### Features
-
-- **rt:agent-kit:** слияние отбивается, пока ветка везёт папку задачи ([381b3a6](https://github.com/Eyhenij/rt-tools/commit/381b3a66ee27665041a3c15b24338094a88fb513))
-- **rt:agent-kit:** чтение правил перед вопросом стережёт гард, а сверка видит поддомены ([c69bc35](https://github.com/Eyhenij/rt-tools/commit/c69bc356ccfb54f1201926425b14da9fb72d8276))
-
-* **rt:agent-kit:** дерево получает гард разговора: ход, в котором владельцу задан вопрос, а
-  законы и правила за этот же ход не читались, возвращается исполнителю с подсказкой, где
-  искать. Чтением считается загрузка правила, чтение файла законов и правил или поиск по ним.
-  Прежде требование «правила читаются до разговора» держалось одной памятью: гарды судят правку
-  файла или команду, а вопрос в чат ни тем, ни другим не является.
-* **rt:agent-kit:** сверка спеков обходит поддомены наравне с доменами и судит префикс
-  сценариев на занятость по всему дереву. Домен, у которого часть предмета вынесена в поддомен,
-  проходил зелёным с пустым каталогом внутри.
-* **rt:agent-kit:** карта хуков принимает объявление без образца вызова — им объявляются
-  события, которые не про инструмент.
-
-# [0.4.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.3.0...rt-agent-kit@0.4.0) (2026-08-09)
-
-### Bug Fixes
-
-- **rt:agent-kit:** дать проверкам право на запуск, обещанное их шебангом ([6dd4ed4](https://github.com/Eyhenij/rt-tools/commit/6dd4ed47a43375baebd1db1f8994d16d98855ccb))
-- **rt:agent-kit:** отказывать там, где раскладка молчала, и проверять то, что везём ([7d8eb97](https://github.com/Eyhenij/rt-tools/commit/7d8eb97bfd41db6093905b15f21f73b668df4c2c))
-
-### Features
-
-- **rt:agent-kit:** везти исполнителей — роли, конвейеры, проверки и умолчания ([d0187af](https://github.com/Eyhenij/rt-tools/commit/d0187af24ef185be0ea9bded078d111db744d2d6))
-- **rt:agent-kit:** виды ресурса, сверка шапок и новые рода в раскладке ([6aad63a](https://github.com/Eyhenij/rt-tools/commit/6aad63a387eb0839b8857d538347804cc065b9f4))
-- **rt:agent-kit:** второй слой законов и рост состава до 18 законов и 25 правил ([272dea7](https://github.com/Eyhenij/rt-tools/commit/272dea795bb9663a64a01bbbf462ff59e49c2e21))
-- **rt:agent-kit:** сделать ключ задач обязательным и вывести из него все три имени ([ed74eb9](https://github.com/Eyhenij/rt-tools/commit/ed74eb9f4f2b1daa6990b514463f8b8d047effcb)), closes [#317](https://github.com/Eyhenij/rt-tools/issues/317)
-
-# 0.4.0 (не выпущено)
-
-### Bug Fixes
-
-- **rt:agent-kit:** раскладка перестала молчать там, где дерево оставалось без работающего
-  слоя правил. Ресурс, у которого виды есть, а вида под выбор дерева нет, отбивает раскладку и
-  называет оба выхода — завести вид или отказаться списком: правило поставки едет тремя видами,
-  а команды заведения задачи и сверки очереди — одним, и дерево на чужом хостинге получало
-  правило без единого инструмента под ним. Ресурсы, правленные позже сборки, из которой идёт
-  раскладка, тоже отбивают её: прежде `sync` отвечал «всё уже разложено», и это была неправда.
-- **rt:agent-kit:** разложенный гард доезжает до настройки агента. Каждый гард несёт строку
-  `# rt-hook: <событие> <образец>` и сам говорит, когда его звать; `sync` собирает из этих строк
-  готовый раздел `hooks`, а `sync --check` считает неподключённый гард расхождением. Раньше
-  свежее дерево получало два десятка гардов, которых никто не звал, и узнавало об этом, когда
-  что-нибудь проходило мимо.
-- **rt:agent-kit:** файл, лежащий на пути пакета не от него, отдаётся ему командой `adopt`:
-  прежнее содержимое уезжает рядом под именем с пометкой `.before-rt-kit`, и раскладка проходит.
-  Прежде такой файл снимался только руками и останавливал раскладку целиком — установка в живое
-  дерево сводилась к ручной работе.
-- **rt:agent-kit:** надстройка настроек проверок сливается по вложенным ключам. Дерево,
-  назвавшее один ключ борды, теряло остальные и видело это отказом «нет токена бота» — то есть
-  читало неполный конфиг как неполадку машины.
-- **rt:agent-kit:** проверка слоёв берёт корень либ и семью бэкенда из настройки, а не из кода,
-  читает список принятых долгов помощником настроек и пропускает дерево, где доменной сетки или
-  свода границ нет. Прежде она падала отказом «нет такого файла» на первой же установке.
-- **rt:agent-kit:** гейт правил не требует правила, которого в дереве нет. Карта умолчания
-  называет и предметный слой, от которого дерево отказалось списком, и отказ «загрузи правило X»
-  на такое имя останавливал работу совсем: загружать было нечего.
-- **rt:agent-kit:** правила больше не везут адресность чужого дерева. Раздел «Где это лежит»
-  отсылает к компаньону, порты стендов стоят дырками со значениями из конфига, имена доменов
-  заменены безымянными образцами. Путь, названный в правиле, врал в первом же дереве, которое
-  держит код иначе, и врал молча.
-- **rt:agent-kit:** `init` называет значения, которых пакет ждёт от дерева, а черновик
-  компаньона приезжает со статьями правила в таблице привязки. Узнавать о значениях отказом
-  первой раскладки значило начинать установку с ошибки, а перепечатывать статьи руками —
-  расходиться с правилом молча: их текст и есть ключ связи.
-
-### Features
-
-- **rt:agent-kit:** у исполняемых ресурсов появились свои наборы сценариев — `tests/` в проекте
-  пакета, на том же языке, что и сами ресурсы. Восемь наборов: разбор всех ресурсов их же
-  исполнителем, гейт правил, гарды поставки, гард замысла, гард документов, умолчания, настройки
-  проверок и тексты. Гоняются прогоном пакета. Прежде сломанная строка в любом гарде уезжала в
-  чужое дерево зелёным прогоном: линтер в `assets/` не ходит, а спеки механизма исполняют
-  TypeScript, а не то, что он перекладывает.
-
-- **rt:agent-kit:** ключ задач стал статьёй закона о поставке, а не настройкой на усмотрение.
-  Закон говорит, что номер пишется всюду одной парой `<КЛЮЧ>-<номер>`: с неё начинается заголовок
-  задачи, имя ветки и заголовок PR. Само слово ключа дерево по-прежнему выбирает само — это
-  единственное, что в форме имени бывает разным, — но не назвать его больше нельзя: модуль борды
-  отказывает на первом вызове и говорит, где ключ задаётся. Умолчания у него нет намеренно: из
-  пустого значения собирался заголовок `[-317]`, и сверка очереди помечала неправильно названной
-  каждую задачу, топя настоящее расхождение в этих строках.
-
-- **rt:agent-kit:** правило называет настоящие пути, а не дырки. Пакет ставился в деревья одной
-  мастерской, устроенные одинаково, и обезличенный до `{{lawsDir}}` текст заставлял каждое из них
-  выписывать одно и то же заново. Теперь в правилах и паттернах стоят `docs/constitution/…`,
-  `libs/<семья>/<домен>/<слой>`, `.claude/hooks/…`, а компаньон держит только то, чего пакет знать
-  не может: ключ задач, адрес борды, префикс компонентов, валюту хранения и привязку статей к
-  символам.
-- **rt:agent-kit:** карта гейта и профиль дерева приезжают умолчанием, а не пустой формой. Род
-  `defaults` кладёт `.claude/rt-kit/defaults/{gate-map,project}.sh` с разобранными родами файлов,
-  линтерами и запускателем, выбираемым по локфайлу. Надстройка проекта осталась, стала
-  необязательной и вправе позвать умолчание обратно — тем же именем с суффиксом `_default`.
-- **rt:agent-kit:** виды одного ресурса и выбор при `init`. Правило поставки и его паттерн
-  коммита лежат в трёх видах — `github`, `gitlab`, `azure`, — а проект называет свой флагом
-  `--host` или ответом на вопрос. Разложен будет ровно один, под общим именем. Ось без ответа
-  отбивает раскладку целиком: дерево, не назвавшее хостинг, осталось бы вовсе без правила
-  поставки.
-- **rt:agent-kit:** второй слой законов — `docs/constitution/application/`. Деньги, локали,
-  доступ, владеющая сущность и видимость в поиске верны только приложению, у которого эти
-  предметы есть, и предметность в них законна. Слой в ссылке не отражается: `law:` называет закон
-  одним словом.
-- **rt:agent-kit:** гейт правил вправе требовать несколько правил и смотрит текст правки.
-  Карта печатает по имени в строке — доменное правило файла и те, что действуют вторым слоем;
-  гейт требует первое незагруженное. Обращение к среде исполнения и число-настройка по имени
-  файла не видны, поэтому карте приходит и текст правки.
-- **rt:agent-kit:** состав вырос до 18 законов, 25 правил и 38 паттернов. Приехали ведение
-  работы, зависимости, правка сущности, модели, списки, навигация, цены и владеющая сущность со
-  своими паттернами; остальные тексты обновлены до состояния дерева-донора.
-- **rt:agent-kit:** род `skills` — скил, у которого нет закона над собой. Витрина, генератор,
-  заведение самого скила: над таким нет утверждения о продукте, и выдумывать ему закон ради
-  лестницы нельзя. Первым таким приехал `write-a-skill`: объявление как единственное, что агент
-  видит при выборе, признак того, что скил пора делить, и чем скил вредит. Форма правила и
-  паттерна в него не входит — её держит `spec-driven-rule`, и дублировать её было бы вреднее,
-  чем не иметь вовсе.
-- **rt:agent-kit:** роли субагентов, слеш-команда и конвейеры — роды `agents`, `commands` и
-  `workflows` перестали быть пустыми. Шесть ролей: разбор ценности, декомпозиция и приёмка,
-  проверка, разбор закрытой задачи на предмет правил, написание договорённости о продукте и её
-  состязательный разбор. Конвейеры `plan` и `feature` собирают из них порядок: первый ведёт от
-  разбора просьбы до замысла, второй — от плана до приёмки. Роль сама вопросов владельцу не
-  задаёт, поэтому разбор остаётся за главным агентом, а роли стоят по обе стороны от него.
-
-- **rt:agent-kit:** род `checks` перестал быть пустым — одиннадцать проверок, которые зовёт гейт
-  пуша и на которые ссылаются правила: сверка спеков с тестами, повторы, слои либ, пути в
-  документах, переизобретение готового, классы без правила, расхождение схемы с миграциями,
-  очередь работ и заведение задачи. Пути и идентификаторы читаются из
-  `.claude/rt-kit/checks.json`, а не зашиты в код; те, чей ход зависит от хостинга, лежат видами.
-- **rt:agent-kit:** скил `agent-kit` — как работать с самим переносимым слоем: где что
-  настраивается, в каком порядке идёт правка, как ставить пакет туда, где хуки и проверки уже
-  свои. Дерево дописывает к нему свои надстройки надстройкой же — механизм применён к себе.
-- **rt:agent-kit:** профиль дерева вырос до всего, что гарды знали о проекте: боевые адреса и
-  подключения хранилища, диапазон одноразовых баз, исключения гардов якоря, переизобретения и
-  линтера, каталог законов, признак либы, главная ветка, форма номера в заголовке заявки,
-  команды заведения задачи и сверки очереди, состояние задачи. Договор двух функций сменился:
-  `rt_push_checks` получает базу сравнения, `rt_reinvented_in` печатает четыре поля вместо двух —
-  над чем, образец, образец отмены, чем заменить.
-- **rt:agent-kit:** гейт правил принимает три рода вызова — правку, команду и браузерный
-  инструмент — и сам находит закон правила в обоих слоях, чтобы назвать его в отказе.
-
-### Bug Fixes
-
-- **rt:agent-kit:** заведение задачи падало после того, как задача уже заведена. `adoptDraft`
-  звал `resolve`, `dirname` и `fileURLToPath`, а импортировались только `join` и функции файловой
-  системы: команда доходила до правки борды, роняла `ReferenceError` и выходила ненулевым кодом.
-  Со стороны это читается как «завести не удалось», и следующий заход заводит вторую задачу на ту
-  же работу.
-- **rt:agent-kit:** заведение задачи звало ключ задач, не взяв его. Пять мест в
-  `task-new` подставляли `TASK_KEY`, которого в области видимости не было, — команда упала бы на
-  первом же вызове с `ReferenceError`, и заметить это можно было только вызовом.
-- **rt:agent-kit:** отказ проверки называет настроенный путь к токену, а не путь дерева-донора.
-  Он читается из `board.tokenPath`, а в тексте отказа стоял зашитый: чужое дерево пошло бы
-  заводить файл, который никто не читает. Заодно из примера в проверке классов убран префикс
-  компонентов донора.
-- **rt:agent-kit:** сценарии на гарды из пакета убраны. Ответ гарда зависит от карты гейта,
-  портов, доменов и префикса задач, поэтому набор, написанный по одному дереву, на другом не
-  бесполезен, а красен: в разложенных наборах стояли имена либ, порт стенда и префикс ветки
-  донора. Место сценариев — сторона проекта, файлами без шапки, которых раскладка не трогает.
-- **rt:agent-kit:** раскладка переносит право на запуск. Гарда зовут по пути, и разложенный
-  режимом 644 отвечал отказом доступа — ненулевым кодом, который у гарда значит «правка отбита».
-  Набор отбивал подряд всё, включая сборку и тесты, и причина при этом нигде не называлась;
-  диагноз по последствиям стоил захода.
-- **rt:agent-kit:** хук ищет умолчание профиля и рядом с собой, а не только по корню проекта.
-  Сессия бывает запущена из другого каталога, а уезжают хук и его умолчание вместе — без этого
-  гард молча уходил в пропуск.
-- **rt:agent-kit:** умолчание формы имени ветки требует строчного хвоста после номера. Имя ветки
-  читают глазами в списке и набирают руками, а регистр различает две ветки, отличающиеся только
-  им, — и нужная при переключении находится не с первого раза.
-- **rt:agent-kit:** `doctor` считает ресурсы чужого вида отдельно. Сосчитанные как невыбранные,
-  они читались бы как забытые: от них никто не отказывался — их в этом дереве не существует.
-- **rt:agent-kit:** ссылки шапок сверяются с каталогом. Правило под переименованным законом
-  раскладку не роняло: она кладёт файлы, а не читает их шапки, — и промах уезжал к проектам.
-
-# [0.3.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.2.0...rt-agent-kit@0.3.0) (2026-08-07)
-
-### Features
-
-- **rt:agent-kit:** везти правила и паттерны, а не только законы ([cb20021](https://github.com/Eyhenij/rt-tools/commit/cb200213a7c3c28c7689bfc4f3a62041c6716792))
-- **rt:agent-kit:** везти хуки, которые зовут законы и правила ([ee1fd08](https://github.com/Eyhenij/rt-tools/commit/ee1fd088c4e099b6b51a3b6d17b467417c5aabf1))
-- **rt:agent-kit:** раскладывать правила, паттерны и то, что их зовёт ([8123774](https://github.com/Eyhenij/rt-tools/commit/8123774ae83858114301c7964340c3958d45a640))
-
-* **rt:agent-kit:** пакет везёт не только законы, но и правила, паттерны и хуки. Семнадцать правил про приём, двадцать семь паттернов при них и девятнадцать хуков — от гейта, который не даёт править файл без его правила, до сторожевых на главную ветку, поставку, пишущие запросы и второй сервер разработки.
-* **rt:agent-kit:** роды `rules`, `patterns`, `commands` и `workflows` в раскладке. Правило и паттерн ложатся каталогом по имени — `<род>/<имя>/SKILL.md`, потому что файл, названный по ресурсу, агент не находит вовсе.
-* **rt:agent-kit:** компаньон правила. Имена этого дерева живут не в правиле, а в `implementation.md` рядом: черновик кладётся один раз и дальше не сверяется, а `sync --check` отказывает, пока он не заполнен, — правило без имён дерева это закон, и работать по нему нельзя.
-* **rt:agent-kit:** дырки `{{gateMap}}` и `{{projectProfile}}` с умолчаниями, формы карты гейта и профиля проекта в шаблонах. Механизм везёт пакет, команды и пути пишет проект; нет файла — хук пропускает.
-
-### Bug Fixes
-
-- **rt:agent-kit:** шапка разложенного файла встаёт после вступления скила, а не первой строкой. Стоя перед `---`, она превращала вступление в обычный текст: скил терял имя и описание и переставал находиться — молча, потому что файл при этом оставался читаемым.
-
-# [0.2.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.1.0...rt-agent-kit@0.2.0) (2026-08-05)
-
-### Bug Fixes
-
-- **rt:agent-kit:** закон везёт только статьи ([4b71c75](https://github.com/Eyhenij/rt-tools/commit/4b71c75cb87f1e644005420efd8a32dc67141917))
-- **rt:agent-kit:** отзыв права и путь наверх — статьями ([e9191b1](https://github.com/Eyhenij/rt-tools/commit/e9191b1e4a3469d2763517da7ffe8e1209f3f170))
-- **rt:agent-kit:** снять «Ревизию» и «Историю изменений» из законов ([ffec030](https://github.com/Eyhenij/rt-tools/commit/ffec03036cfe1a19ad4c3efc26cee6d386dd5fe7))
-
-* `doctor` говорит о состоянии в настоящем времени. Прежде он брал слова у раскладки и на
-  неразложенном дереве отвечал «положен: 15», ничего при этом не положив.
-* Из законов сняты «Ревизия» и «История изменений». Раздел стоял у шести законов из пятнадцати,
-  и разный набор разделов читался не как «здесь ничего не менялось», а как «здесь забыли». Все
-  записи вдобавок ссылались на правила, которых в пакете нет и быть не может: правило по замыслу
-  остаётся в проекте. Историю пакета держит этот файл, дату правки — история коммитов.
-
-### Features
-
-- **rt:agent-kit:** проект выбирает, какие законы брать ([ad1c105](https://github.com/Eyhenij/rt-tools/commit/ad1c10519ffbf083aa027c540419ce0841e044cc))
-
-* Выбор законов при `init`: галочками в терминале, флагом `--laws a,b,c` или `--all`. Без
-  терминала и без флага — отказ: «взять всё» тоже решение, и принимать его молча пакет не вправе.
-* Ключ `only` в конфиге. Пусто — берётся всё; ограничивает только те роды ресурсов, которые сам
-  называет, поэтому выбор законов шаблоны при себе оставляет. `skip` вычитает из выбранного.
-* Команда `list` — что везёт пакет и что из этого взято здесь. Работает и без конфига: выбирать
-  приходится раньше, чем он заведён.
-* Закон везёт только статьи: раздел «Открытые вопросы» снят со всех пятнадцати. Он описывал
-  состояние того дерева, где вопрос заведён, — в чужом приложении это не просто лишнее, а
-  неверное, и приезжало оно с пометкой «закон». Восемнадцать вопросов несли решение или норму и
-  переписаны статьями, тринадцать сняты.
-* Отзыв права и путь наверх с вложенного экрана стали статьями: отобранное право перестаёт
-  действовать не позже, чем истекает вход, а вложенный экран говорит, из какого он раздела и
-  как вернуться. Оба лежали вопросами, написанными как описание, — и оттого прочитались как
-  состояние дерева, а не как норма.
-
-# 0.1.0 (2026-08-05)
-
-### Bug Fixes
-
-- **rt:agent-kit:** манифест указывает на собранное, а не на исходники ([e675f25](https://github.com/Eyhenij/rt-tools/commit/e675f254727906adfa991f815589031b9914b2a4))
-
-### Features
-
-- **rt:agent-kit:** переносимый слой правил для агента ([9ebf0a5](https://github.com/Eyhenij/rt-tools/commit/9ebf0a54fd170eed9612c6afa8a10a3b0d3e4a83))
-
-* Команды `init`, `sync`, `sync --check` и `doctor`.
-* Пятнадцать законов и шаблоны правила и паттерна в ресурсах пакета.
-* Надстройки проекта слиянием по разделам `## `: совпавший заголовок замещает, новый
-  дописывается, пустой снимает.
-* Подстановка значений проекта; неподставленная дырка отказывает раскладке, а не уезжает в
-  разложенный текст.
-* Шапка с версией и суммой тела у каждого разложенного файла: правку руками и отставание пакет
-  различает и на первую не покушается.
+Выпуски 0.1.0 … 0.8.3 вынесены в `projects/agent-kit/CHANGELOG-0.1-0.8.md`: журнал перерос предел
+длины документа, а делится он по выпускам. Новый выпуск генератор дописывает сюда, в начало.

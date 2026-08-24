@@ -11,13 +11,13 @@
 Свои входы поверх общих из [`RtFormControlBase`](../form-control/CONTEXT.md)
 (`size`, `disabled`, `controlId`, `ariaLabel`, `clearable`, `bordered`):
 
-| вход                     | тип                                         | умолчание |
-| ------------------------ | ------------------------------------------- | --------- |
-| `type`                   | `'text' \| 'password' \| 'email' \| 'time'` | `'text'`  |
-| `placeholder`            | `string`                                    | `''`      |
-| `iconLeft` / `iconRight` | `IRtIcon.Name \| null`                      | `null`    |
-| `passwordToggle`         | `boolean`                                   | `false`   |
-| `autocomplete`           | `string \| null`                            | `null`    |
+| вход                     | тип                                                  | умолчание |
+| ------------------------ | ---------------------------------------------------- | --------- |
+| `type`                   | `'text' \| 'password' \| 'email' \| 'time' \| 'url'` | `'text'`  |
+| `placeholder`            | `string`                                             | `''`      |
+| `iconLeft` / `iconRight` | `IRtIcon.Name \| null`                               | `null`    |
+| `passwordToggle`         | `boolean`                                            | `false`   |
+| `autocomplete`           | `string \| null`                                     | `null`    |
 
 Значение — `string`.
 
@@ -32,6 +32,8 @@
 
 ## Как этим пользоваться
 
+- `type="url"` объявляет браузеру род значения, а не требование к нему: на телефоне он даёт
+  клавиатуру для адреса и разбор вставленного, а проверка введённого остаётся за приложением.
 - `type="time"` заведён намеренно: браузер сам отдаёт `HH:MM` и раскладку под локаль, а разбор
   строки руками означал бы своё поле ввода времени рядом с китом.
 - Клик по рамке (падинги принадлежат host-у, а не `<input>`) переводит фокус в поле — кроме

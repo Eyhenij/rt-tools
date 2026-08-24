@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__claude-in-chrome__.*
+# Требует: hooks/deny-tail.sh
 # Гейт правил: не даёт править файл, пока не загружено правило, под которое он подпадает.
 #
 # Закон и правило, которых никто не открывает, не действуют. Напоминание в подсказке помогает
@@ -22,11 +23,15 @@
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: любая ошибка и любой неопознанный путь пропускают правку (exit 0).
 # Сломанный гейт не имеет права остановить работу совсем.
 
-input="$(cat 2>/dev/null)"
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
+
+rt_hook_read
+input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 
 sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
-tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+tool="$(rt_hook_tool)"
 
 # Умолчание карты ищется и рядом с самим хуком: уезжают они вместе.
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -171,6 +176,36 @@ if [ -n "$law" ]; then
     [ -f "$root/$law_path" ] \
         && reason="Отбито гейтом правил: загрузи правило «${req}» инструментом Skill — оно применяет закон ${law_path} к этому дереву — и повтори действие. ${fallback} Для этой области это происходит один раз за сессию."
 fi
+
+# Статья, под которую подпадает эта правка. Правило весит от двадцати до шестидесяти килобайт,
+# и отказ, зовущий его целиком, платит за решение полной ценой правила. Статья говорит о своей
+# применимости сама — разбирает её помощник рядом; нет помощника или нет размеченных статей,
+# отказ остаётся прежним, и это тот же отказ в пользу работы, что и везде.
+#
+# Загрузку правила статья не отменяет: она снимает чтение правила целиком, а не сам отказ.
+# Правило целиком остаётся вторым ходом — для того, кому статьи мало.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/rule-article.sh" ] && . "$rt_hooks_dir/rule-article.sh" 2>/dev/null
+if [ "$kind" != "command" ] && [ "$kind" != "browser" ] && command -v rt_rule_articles >/dev/null 2>&1; then
+    article="$(rt_rule_articles "$root/$rules_dir/${req}/SKILL.md" "$target" 2>/dev/null)"
+    if [ -n "$article" ]; then
+        reason="Отбито гейтом правил. Под эту правку подпадает статья правила «${req}»:
+
+${article}
+Статья снимает чтение правила целиком, а не отказ: загрузи правило «${req}» инструментом Skill и повтори действие. ${fallback} Для этой области это происходит один раз за сессию."
+    fi
+fi
+
+# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
+# Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+deny_tail_text="$(rt_deny_tail "")"
+[ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
 
 jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
     || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Загрузи правило %s и повтори."}}\n' "$req"

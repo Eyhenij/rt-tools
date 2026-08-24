@@ -11,7 +11,7 @@ import { SessionOperation } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IProposalFullRow, IProposalListRow, readProposal, readProposals } from '@rt/message-bus-api/proposals/data-access';
 
-import { IPage, PROPOSAL_SORTABLE, pageAsked, pageFault } from '@rt/message-bus-common';
+import { IPage, PROPOSAL_SORTABLE, cargoPageAsked, cargoPageFault } from '@rt/message-bus-common';
 
 @Controller('proposals')
 export class ProposalsReadController {
@@ -31,13 +31,13 @@ export class ProposalsReadController {
     @Get()
     @SessionOperation()
     public async page(@Query() query: Record<string, unknown>): Promise<IPage<IProposalListRow>> {
-        const fault: string | null = pageFault(query, PROPOSAL_SORTABLE);
+        const fault: string | null = cargoPageFault(query, PROPOSAL_SORTABLE);
 
         if (fault) {
             throw new BadRequestException(fault);
         }
 
-        return readProposals(this.#prisma, pageAsked(query, PROPOSAL_SORTABLE));
+        return readProposals(this.#prisma, cargoPageAsked(query, PROPOSAL_SORTABLE));
     }
 
     /** Одно предложение целиком. Записи, которой нет, отвечает отказ, а не пустая панель. */

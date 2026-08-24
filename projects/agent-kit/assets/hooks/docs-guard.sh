@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/profile-check.sh
+# Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # Гард пары «правка и её документ». PreToolUse.
 #
 # Расхождение кода с текстом беззвучно. Ни линтер, ни сборка, ни тесты не читают правила,
@@ -26,11 +26,15 @@
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: не репозиторий, нет разборщика, битый ввод, пустой список файлов —
 # пропуск.
 
-input="$(cat 2>/dev/null)"
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
+
+rt_hook_read
+input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0
 
-tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+tool="$(rt_hook_tool)"
 
 decide() {
     # Наблюдение пишется только на отказе: подсказку гард раздаёт и там, где всё в порядке, и
@@ -43,7 +47,19 @@ decide() {
             && rt_note guard-deny res=docs-guard "sid=$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
     fi
 
-    jq -n --arg d "$1" --arg r "$2" \
+    reason="$2"
+    if [ "$1" = "deny" ]; then
+        # shellcheck disable=SC1090
+        [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+            && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+        if command -v rt_deny_tail >/dev/null 2>&1; then
+            reason="$2
+
+$(rt_deny_tail "строка \`Docs-skip: <причина>\` в теле коммита; пустая причина не принимается")"
+        fi
+    fi
+
+    jq -n --arg d "$1" --arg r "$reason" \
         '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:$d,permissionDecisionReason:$r}}' 2>/dev/null \
         || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Документ едет тем же коммитом."}}\n'
     exit 0
@@ -103,7 +119,7 @@ case "$tool" in
     *) exit 0 ;;
 esac
 
-cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
+cmd="$(rt_hook_cmd)"
 
 # Универсальный исполнитель передаёт настоящую команду вложенной строкой. Разбирать надо её,
 # иначе имя команды стоит сразу за кавычкой и ни одно правило до него не дотягивается.
@@ -132,7 +148,7 @@ if printf '%s' "$cmd" | grep -qiE '(^|#)[[:space:]]*Docs-skip:[[:space:]]*[^[:sp
     exit 0
 fi
 
-workdir="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)"
+workdir="$(rt_hook_cwd)"
 [ -z "$workdir" ] && workdir="${CLAUDE_PROJECT_DIR:-.}"
 cd "$workdir" 2>/dev/null || exit 0
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0

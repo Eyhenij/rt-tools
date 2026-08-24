@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.9.1 · checks/check-doc-paths.mjs · 3832c9762191 · правится надстройкой, не здесь
+// rt-kit v0.13.0 · checks/check-doc-paths.mjs · 8971a897ffd3 · правится надстройкой, не здесь
 /**
  * Проверка того, что адреса, названные в документации, существуют.
  *
@@ -31,7 +31,7 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { allowlistOf, CONFIG, ROOT } from './rt-kit-checks.config.mjs';
+import { allowlistOf, CONFIG, ROOT, parseAllowlist } from './rt-kit-checks.config.mjs';
 
 const ALLOWLIST = allowlistOf('doc-paths');
 // `worktrees` — копии репозитория под каталогом агента: их документы описывают раскладку
@@ -76,17 +76,6 @@ const PATH_IN_BACKTICKS = /`([^`\n]+?)`/g;
 const problems = [];
 const indexProblems = [];
 const report = (doc, line, path) => problems.push(`${doc}:${line}: нет файла \`${path}\``);
-
-function readAllowlist() {
-    const path = join(ROOT, ALLOWLIST);
-    if (!existsSync(path)) {
-        return { files: [], paths: [] };
-    }
-
-    const raw = JSON.parse(readFileSync(path, 'utf8'));
-
-    return { files: raw.files ?? [], paths: raw.paths ?? [] };
-}
 
 function collectDocs(dir = '.') {
     const entries = readdirSync(join(ROOT, dir), { withFileTypes: true });
@@ -308,9 +297,9 @@ function reportIndex() {
     );
 }
 
-const allowlist = readAllowlist();
-const allowedPaths = new Set(allowlist.paths);
-const collected = collectDocs().filter((doc) => !allowlist.files.includes(doc) && !isSkipped(doc));
+const allowlist = parseAllowlist('doc-paths', ['files', 'paths']);
+const allowedPaths = new Set(allowlist.paths.keys());
+const collected = collectDocs().filter((doc) => !allowlist.files.has(doc) && !isSkipped(doc));
 const dropped = droppedByGit(collected);
 const docs = collected.filter((doc) => !dropped.has(doc));
 

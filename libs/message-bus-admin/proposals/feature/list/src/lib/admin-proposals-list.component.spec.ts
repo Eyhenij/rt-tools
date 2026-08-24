@@ -13,6 +13,7 @@ import { Observable, of } from 'rxjs';
 import { AdminProposalsListComponent } from './admin-proposals-list.component';
 
 const TREES_PATH: string = '/api/trees';
+const VERSIONS_PATH: string = '/api/cargo/versions';
 
 /**
  * Хранилище выбора столбцов, живущее в памяти.
@@ -54,6 +55,7 @@ function rowOf(patch: Partial<IProposal.Short.Api> = {}): IProposal.Short.Api {
         tree: { slug: 'a1b2', name: 'Приёмник' },
         resource: 'rules/lists.md',
         address: 'Ловушки',
+        releaseVersion: '0.9.0',
         arrivedAt: '2026-08-14T21:30:00.000Z',
         ...patch,
     };
@@ -82,10 +84,20 @@ describe('AdminProposalsListComponent', () => {
         http.expectOne(TREES_PATH).flush([{ slug: 'a1b2', name: 'Приёмник' }]);
     }
 
+    /** Версии отбора: их просит третий отбор тулбара, и отдаёт ушедший запрос — по нему виден род груза. */
+    function answerVersions(versions: readonly string[] = ['0.9.0', '0.10.0']): TestRequest {
+        const request: TestRequest = http.expectOne((candidate): boolean => candidate.url === VERSIONS_PATH);
+
+        request.flush(versions);
+
+        return request;
+    }
+
     async function openSection(url: string = '/proposals', rows: readonly IProposal.Short.Api[] = [rowOf()]): Promise<void> {
         harness = await RouterTestingHarness.create(url);
         answerList(rows);
         answerTrees();
+        answerVersions();
         await harness.fixture.whenStable();
         harness.detectChanges();
     }
@@ -127,6 +139,51 @@ describe('AdminProposalsListComponent', () => {
         expect(list.request.url).toBe(PROPOSALS_PATH);
         expect(list.request.params.get('sort')).toBe('arrivedAt');
         expect(list.request.params.get('dir')).toBe('desc');
+        answerTrees();
+    });
+
+    it('SC-MB-222, SC-MB-239 — в тулбаре раздела стоят три отбора, и по версии — правее всех', async () => {
+        await openSection();
+
+        const filters: string[] = Array.from(
+            harness.fixture.nativeElement.querySelectorAll(
+                '[qa-dataid="list-tree-filter"], [qa-dataid="list-state-filter"], [qa-dataid="list-version-filter"]'
+            )
+        ).map((node: Element): string => String(node.getAttribute('qa-dataid')));
+
+        expect(filters).toEqual(['list-tree-filter', 'list-state-filter', 'list-version-filter']);
+    });
+
+    it('SC-MB-254 — раздел просит версии своего рода груза, а не версии разборов', async () => {
+        harness = await RouterTestingHarness.create('/proposals');
+        answerList();
+        answerTrees();
+
+        expect(answerVersions().request.params.get('kind')).toBe('proposal');
+    });
+
+    it('SC-MB-241 — отбор по версии из адреса уходит в запрос списка', async () => {
+        harness = await RouterTestingHarness.create('/proposals?version=0.9.0');
+
+        const list: TestRequest = answerList();
+
+        expect(list.request.params.get('version')).toBe('0.9.0');
+        answerTrees();
+        answerVersions();
+    });
+
+    it('SC-MB-237, SC-MB-238 — столбец версии показывает выпущенную запись и оставляет ячейку пустой у невыпущенной', async () => {
+        await openSection('/proposals', [rowOf(), rowOf({ id: 'q2', resource: 'laws/lists.md', releaseVersion: null })]);
+
+        expect(cells('proposals-cell-version')).toEqual(['0.9.0', '']);
+    });
+
+    it('SC-MB-223 — отбор по состоянию из адреса уходит в запрос списка', async () => {
+        harness = await RouterTestingHarness.create('/proposals?state=released');
+
+        const list: TestRequest = answerList();
+
+        expect(list.request.params.get('state')).toBe('released');
         answerTrees();
     });
 

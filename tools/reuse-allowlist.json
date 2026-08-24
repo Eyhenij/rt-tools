@@ -1,201 +1,793 @@
 {
-  "reason": "Принятое — места, где готовое не обходили. Роды такие.\n\nОбёртки историй витрины и обвязка показа: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем. Обёртка держит демонстрационное состояние, живёт рядом со своей историей и в пакет не едет вовсе: её шаблон и её стили показывают компонент, а не собирают экран. Это договорённость витрины, записанная правилом показа кита.\n\nКомпоненты, у которых шаблона нет вовсе: у трёх стоит пустая строка, у подсказки — одна интерполяция своего же входа. Блок рисуется стилями на хосте, своей вёрстки за такой строкой нет, и выносить в отдельный файл нечего. Признак читает само наличие ключа template и пустоту от вёрстки не отличает.\n\nНовая строка сюда заводится только под совпадение одного из этих родов и только с причиной.",
-  "accepted": [
-    "decorator-io ×4 @ projects/ui-kit/src/lib/ui-kit/modal/stories/test-modal.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/aside/header/stories/component/test-aside-header-matrix.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/aside/stories/component/test-aside-matrix.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/aside/stories/component/test-aside.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/autocomplete/stories/component/test-autocomplete-matrix.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/confirm-popover/stories/component/test-confirm-matrix.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/container/stories/component/test-container-matrix.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/container/stories/component/test-container.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/counter-row/stories/component/test-counter-row-matrix.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/delta-view/stories/component/test-delta-view-matrix.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/dialog/stories/component/test-dialog-matrix.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/dialog/stories/component/test-dialog.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/file-drop/stories/component/test-file-drop-matrix.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/file-drop/stories/component/test-file-drop.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/icon-button/stories/component/test-icon-button-matrix.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/icon/stories/component/test-icon-matrix.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/info-item/stories/component/test-info-item-matrix.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/menu/stories/component/test-menu-matrix.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/multiselect/stories/component/test-multiselect-matrix.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/page-header/stories/component/test-page-header-matrix.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/popover/stories/component/test-popover-matrix.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/popover/stories/component/test-popover.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/select/stories/component/test-select-matrix.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/spinner/stories/component/test-spinner-matrix.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/split-button/stories/component/test-split-button-matrix.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/theme-toggle/stories/component/test-theme-toggle-matrix.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/tooltip/stories/component/test-tooltip-matrix.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/showcase/stories/component/test-cascade-layer.component.ts",
-    "inline-styles ×1 @ projects/ui-kit-v2/src/showcase/stories/component/test-component-props.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/aside-section/stories/component/test-aside-section-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/aside-section/stories/component/test-aside-section.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/aside/header/stories/component/test-aside-header-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/aside/header/stories/component/test-aside-header.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/aside/stories/component/test-aside-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/aside/stories/component/test-aside.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/autocomplete/stories/component/test-autocomplete-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/autocomplete/stories/component/test-autocomplete.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/bar-list/stories/component/test-bar-list-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/bar-list/stories/component/test-bar-list.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/component/test-bottom-sheet-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/component/test-bottom-sheet.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/button/stories/component/test-button-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/button/stories/component/test-button.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/calendar/stories/component/test-calendar-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/calendar/stories/component/test-calendar.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/card/stories/component/test-card-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/card/stories/component/test-card.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/chat/stories/component/test-chat-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/chat/stories/component/test-chat.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/checkbox/stories/component/test-checkbox-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/checkbox/stories/component/test-checkbox.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/collapsible-text/stories/component/test-collapsible-text-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/collapsible-text/stories/component/test-collapsible-text.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/confirm-popover/stories/component/test-confirm-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/confirm-popover/stories/component/test-confirm-popover.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/confirm-popover/stories/component/test-confirm.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/container/stories/component/test-container-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/container/stories/component/test-container.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/counter-row/stories/component/test-counter-row-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/counter-row/stories/component/test-counter-row.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/counter/stories/component/test-counter-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/counter/stories/component/test-counter.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/date-picker/stories/component/test-date-picker-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/date-picker/stories/component/test-date-picker.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/delta-view/rt-delta-view.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/delta-view/stories/component/test-delta-view-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/delta-view/stories/component/test-delta-view.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/detail-list/stories/component/test-detail-list-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/detail-list/stories/component/test-detail-row.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/dialog/header/stories/component/test-dialog-header-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/dialog/header/stories/component/test-dialog-header.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/dialog/stories/component/test-dialog-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/dialog/stories/component/test-dialog.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/download-link/stories/component/test-download-link-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/download-link/stories/component/test-download-link.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/empty-state/stories/component/test-empty-state-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/empty-state/stories/component/test-empty-state.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/field/stories/component/test-field-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/field/stories/component/test-field.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/file-card/stories/component/test-file-card-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/file-card/stories/component/test-file-card.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/file-drop/stories/component/test-file-drop-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/file-drop/stories/component/test-file-drop.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/file-input/stories/component/test-file-input-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/file-input/stories/component/test-file-input.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/file-list/stories/component/test-file-list-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/file-list/stories/component/test-file-list.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/filter-control/stories/component/test-filter-control-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/filter-control/stories/component/test-filter-control.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/header/stories/component/test-header-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/header/stories/component/test-header.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/icon-button/stories/component/test-icon-button-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/icon-button/stories/component/test-icon-button.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/icon/stories/component/test-icon-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/icon/stories/component/test-icon.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/info-item/stories/component/test-info-item-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/info-item/stories/component/test-info-item.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/input-number/stories/component/test-input-number-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/input-number/stories/component/test-input-number.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/input/stories/component/test-input-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/input/stories/component/test-input.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/live-badge/stories/component/test-live-badge-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/live-badge/stories/component/test-live-badge.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/logo/stories/component/test-logo-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/logo/stories/component/test-logo.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/menu/stories/component/test-menu-item-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/menu/stories/component/test-menu-item.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/menu/stories/component/test-menu-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/menu/stories/component/test-menu.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/message-composer/stories/component/test-message-composer-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/message-composer/stories/component/test-message-composer.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/message/stories/component/test-message-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/message/stories/component/test-message.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/money-list/stories/component/test-money-list-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/money-list/stories/component/test-money-row.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/multiselect/stories/component/test-multiselect-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/multiselect/stories/component/test-multiselect.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/night-grid/stories/component/test-night-grid-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/night-grid/stories/component/test-night-grid.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/note/stories/component/test-note-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/note/stories/component/test-note.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/notifications-bell/stories/component/test-notifications-bell-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/notifications-bell/stories/component/test-notifications-bell.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/page-header/stories/component/test-page-header-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/page-header/stories/component/test-page-header.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/pagination/stories/component/test-pagination-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/pagination/stories/component/test-pagination.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/photo-viewer/stories/component/test-photo-viewer.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/popover/stories/component/test-popover-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/popover/stories/component/test-popover.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/rich-editor/stories/component/test-rich-editor-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/rich-editor/stories/component/test-rich-editor.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/section-nav/stories/component/test-section-nav-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/section-nav/stories/component/test-section-nav.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/select/stories/component/test-select-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/select/stories/component/test-select.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/skeleton-wrapper/stories/component/test-skeleton-wrapper-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/skeleton-wrapper/stories/component/test-skeleton-wrapper.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/skeleton/rt-skeleton.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/skeleton/stories/component/test-skeleton-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/skeleton/stories/component/test-skeleton.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/spinner/rt-spinner.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/spinner/stories/component/test-spinner-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/spinner/stories/component/test-spinner.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/split-button/stories/component/test-split-button-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/split-button/stories/component/test-split-button.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/stat-tile/stories/component/test-stat-tile-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/stat-tile/stories/component/test-stat-tile.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/stepper/stories/component/test-stepper-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/stepper/stories/component/test-stepper.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/table/copy-cell/stories/component/test-copy-cell.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/table/settings-panel/stories/component/test-table-settings-panel.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/table/sort-header/stories/component/test-table-sort-header.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/table/stories/component/test-table-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/table/stories/component/test-table.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/tabs/stories/component/test-tab.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/tabs/stories/component/test-tabs-control.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/tabs/stories/component/test-tabs-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/tabs/stories/component/test-tabs.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/tag/stories/component/test-tag-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/tag/stories/component/test-tag.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/textarea/stories/component/test-textarea-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/textarea/stories/component/test-textarea.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/theme-toggle/stories/component/test-theme-toggle-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/theme-toggle/stories/component/test-theme-toggle.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/thread-list/stories/component/test-thread-list-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/thread-list/stories/component/test-thread-list.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/timeline/stories/component/test-timeline-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/timeline/stories/component/test-timeline.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/toast/stories/component/test-toast-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/toast/stories/component/test-toast.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/toast/stories/component/test-toaster.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/toggle-button-group/stories/component/test-toggle-button-group-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/toggle-button-group/stories/component/test-toggle-button-group.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/toggle-switch/stories/component/test-toggle-switch-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/toggle-switch/stories/component/test-toggle-switch.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/toolbar/stories/component/test-toolbar-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/tooltip/rt-tooltip.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/tooltip/stories/component/test-tooltip-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/tooltip/stories/component/test-tooltip.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/welcome-dialog/stories/component/test-welcome-dialog.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/workspace-details/stories/component/test-workspace-details-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/workspace-details/stories/component/test-workspace-details.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/workspace/stories/component/test-workspace-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/workspace/stories/component/test-workspace.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/scroll/stories/component/test-infinite-scroll.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/showcase/stories/component/test-cascade-layer.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/showcase/stories/component/test-component-props.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/showcase/story-grid.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/showcase/story-row.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/showcase/story-themes.component.ts",
-    "inline-template ×1 @ projects/ui-kit/src/lib/ui-kit/aside/stories/open-aside-button.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/photo-viewer/stories/component/test-photo-viewer-matrix.component.ts",
-    "inline-template ×2 @ projects/ui-kit-v2/src/lib/components/welcome-dialog/stories/component/test-welcome-dialog-matrix.component.ts",
-    "inline-template ×1 @ projects/ui-kit-v2/src/showcase/templates/stories/component/test-bookings-template.component.ts"
-  ],
-  "debt": []
+  "accepted": {
+    "decorator-io ×4 @ projects/ui-kit/src/lib/ui-kit/modal/stories/test-modal.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/aside/header/stories/component/test-aside-header-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/aside/stories/component/test-aside-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/aside/stories/component/test-aside.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/autocomplete/stories/component/test-autocomplete-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/confirm-popover/stories/component/test-confirm-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/container/stories/component/test-container-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/container/stories/component/test-container.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/counter-row/stories/component/test-counter-row-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/delta-view/stories/component/test-delta-view-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/dialog/stories/component/test-dialog-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/dialog/stories/component/test-dialog.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/file-drop/stories/component/test-file-drop-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/file-drop/stories/component/test-file-drop.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/icon-button/stories/component/test-icon-button-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/icon/stories/component/test-icon-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/info-item/stories/component/test-info-item-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/menu/stories/component/test-menu-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/multiselect/stories/component/test-multiselect-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/page-header/stories/component/test-page-header-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/popover/stories/component/test-popover-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/popover/stories/component/test-popover.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/select/stories/component/test-select-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/spinner/stories/component/test-spinner-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/split-button/stories/component/test-split-button-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/theme-toggle/stories/component/test-theme-toggle-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/lib/components/tooltip/stories/component/test-tooltip-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/showcase/stories/component/test-cascade-layer.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-styles ×1 @ projects/ui-kit-v2/src/showcase/stories/component/test-component-props.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/aside-section/stories/component/test-aside-section-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/aside-section/stories/component/test-aside-section.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/aside/header/stories/component/test-aside-header-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/aside/header/stories/component/test-aside-header.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/aside/stories/component/test-aside-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/aside/stories/component/test-aside.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/autocomplete/stories/component/test-autocomplete-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/autocomplete/stories/component/test-autocomplete.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/bar-list/stories/component/test-bar-list-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/bar-list/stories/component/test-bar-list.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/component/test-bottom-sheet-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/component/test-bottom-sheet.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/button/stories/component/test-button-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/button/stories/component/test-button.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/calendar/stories/component/test-calendar-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/calendar/stories/component/test-calendar.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/card/stories/component/test-card-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/card/stories/component/test-card.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/chat/stories/component/test-chat-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/chat/stories/component/test-chat.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/checkbox/stories/component/test-checkbox-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/checkbox/stories/component/test-checkbox.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/collapsible-text/stories/component/test-collapsible-text-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/collapsible-text/stories/component/test-collapsible-text.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/confirm-popover/stories/component/test-confirm-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/confirm-popover/stories/component/test-confirm-popover.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/confirm-popover/stories/component/test-confirm.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/container/stories/component/test-container-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/container/stories/component/test-container.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/counter-row/stories/component/test-counter-row-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/counter-row/stories/component/test-counter-row.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/counter/stories/component/test-counter-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/counter/stories/component/test-counter.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/date-picker/stories/component/test-date-picker-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/date-picker/stories/component/test-date-picker.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/delta-view/rt-delta-view.component.ts": {
+      "reason": "шаблона у компонента нет вовсе: блок рисуется стилями на хосте, и выносить в отдельный файл нечего",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/delta-view/stories/component/test-delta-view-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/delta-view/stories/component/test-delta-view.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/detail-list/stories/component/test-detail-list-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/detail-list/stories/component/test-detail-row.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/dialog/header/stories/component/test-dialog-header-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/dialog/header/stories/component/test-dialog-header.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/dialog/stories/component/test-dialog-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/dialog/stories/component/test-dialog.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/download-link/stories/component/test-download-link-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/download-link/stories/component/test-download-link.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/empty-state/stories/component/test-empty-state-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/empty-state/stories/component/test-empty-state.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/field/stories/component/test-field-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/field/stories/component/test-field.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/file-card/stories/component/test-file-card-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/file-card/stories/component/test-file-card.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/file-drop/stories/component/test-file-drop-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/file-drop/stories/component/test-file-drop.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/file-input/stories/component/test-file-input-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/file-input/stories/component/test-file-input.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/file-list/stories/component/test-file-list-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/file-list/stories/component/test-file-list.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/filter-control/stories/component/test-filter-control-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/filter-control/stories/component/test-filter-control.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/header/stories/component/test-header-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/header/stories/component/test-header.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/icon-button/stories/component/test-icon-button-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/icon-button/stories/component/test-icon-button.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/icon/stories/component/test-icon-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/icon/stories/component/test-icon.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/info-item/stories/component/test-info-item-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/info-item/stories/component/test-info-item.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/input-number/stories/component/test-input-number-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/input-number/stories/component/test-input-number.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/input/stories/component/test-input-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/input/stories/component/test-input.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/live-badge/stories/component/test-live-badge-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/live-badge/stories/component/test-live-badge.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/logo/stories/component/test-logo-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/logo/stories/component/test-logo.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/menu/stories/component/test-menu-item-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/menu/stories/component/test-menu-item.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/menu/stories/component/test-menu-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/menu/stories/component/test-menu.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/message-composer/stories/component/test-message-composer-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/message-composer/stories/component/test-message-composer.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/message/stories/component/test-message-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/message/stories/component/test-message.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/money-list/stories/component/test-money-list-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/money-list/stories/component/test-money-row.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/multiselect/stories/component/test-multiselect-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/multiselect/stories/component/test-multiselect.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/night-grid/stories/component/test-night-grid-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/night-grid/stories/component/test-night-grid.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/note/stories/component/test-note-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/note/stories/component/test-note.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/notifications-bell/stories/component/test-notifications-bell-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/notifications-bell/stories/component/test-notifications-bell.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/page-header/stories/component/test-page-header-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/page-header/stories/component/test-page-header.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/pagination/stories/component/test-pagination-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/pagination/stories/component/test-pagination.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/photo-viewer/stories/component/test-photo-viewer.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/popover/stories/component/test-popover-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/popover/stories/component/test-popover.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/rich-editor/stories/component/test-rich-editor-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/rich-editor/stories/component/test-rich-editor.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/section-nav/stories/component/test-section-nav-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/section-nav/stories/component/test-section-nav.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/select/stories/component/test-select-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/select/stories/component/test-select.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/skeleton-wrapper/stories/component/test-skeleton-wrapper-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/skeleton-wrapper/stories/component/test-skeleton-wrapper.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/skeleton/rt-skeleton.component.ts": {
+      "reason": "шаблона у компонента нет вовсе: блок рисуется стилями на хосте, и выносить в отдельный файл нечего",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/skeleton/stories/component/test-skeleton-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/skeleton/stories/component/test-skeleton.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/spinner/rt-spinner.component.ts": {
+      "reason": "шаблона у компонента нет вовсе: блок рисуется стилями на хосте, и выносить в отдельный файл нечего",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/spinner/stories/component/test-spinner-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/spinner/stories/component/test-spinner.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/split-button/stories/component/test-split-button-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/split-button/stories/component/test-split-button.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/stat-tile/stories/component/test-stat-tile-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/stat-tile/stories/component/test-stat-tile.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/stepper/stories/component/test-stepper-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/stepper/stories/component/test-stepper.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/table/copy-cell/stories/component/test-copy-cell.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/table/settings-panel/stories/component/test-table-settings-panel.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/table/sort-header/stories/component/test-table-sort-header.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/table/stories/component/test-table-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/table/stories/component/test-table.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/tabs/stories/component/test-tab.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/tabs/stories/component/test-tabs-control.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/tabs/stories/component/test-tabs-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/tabs/stories/component/test-tabs.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/tag/stories/component/test-tag-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/tag/stories/component/test-tag.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/textarea/stories/component/test-textarea-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/textarea/stories/component/test-textarea.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/theme-toggle/stories/component/test-theme-toggle-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/theme-toggle/stories/component/test-theme-toggle.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/thread-list/stories/component/test-thread-list-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/thread-list/stories/component/test-thread-list.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/timeline/stories/component/test-timeline-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/timeline/stories/component/test-timeline.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/toast/stories/component/test-toast-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/toast/stories/component/test-toast.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/toast/stories/component/test-toaster.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/toggle-button-group/stories/component/test-toggle-button-group-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/toggle-button-group/stories/component/test-toggle-button-group.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/toggle-switch/stories/component/test-toggle-switch-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/toggle-switch/stories/component/test-toggle-switch.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/toolbar/stories/component/test-toolbar-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/tooltip/rt-tooltip.component.ts": {
+      "reason": "шаблона у компонента нет вовсе: блок рисуется стилями на хосте, и выносить в отдельный файл нечего",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/tooltip/stories/component/test-tooltip-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/tooltip/stories/component/test-tooltip.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/welcome-dialog/stories/component/test-welcome-dialog.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/workspace-details/stories/component/test-workspace-details-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/workspace-details/stories/component/test-workspace-details.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/workspace/stories/component/test-workspace-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/workspace/stories/component/test-workspace.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/scroll/stories/component/test-infinite-scroll.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/showcase/stories/component/test-cascade-layer.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/showcase/stories/component/test-component-props.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/showcase/story-grid.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/showcase/story-row.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/showcase/story-themes.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit/src/lib/ui-kit/aside/stories/open-aside-button.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-476"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/photo-viewer/stories/component/test-photo-viewer-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-796"
+    },
+    "inline-template ×2 @ projects/ui-kit-v2/src/lib/components/welcome-dialog/stories/component/test-welcome-dialog-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-877"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/showcase/templates/stories/component/test-bookings-template.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-877"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/markdown-text/stories/component/test-markdown-text.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-912"
+    },
+    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/markdown-text/stories/component/test-markdown-text-matrix.component.ts": {
+      "reason": "обёртка истории витрины: история целит в обёртку, а не в компонент кита — вход компонента сигнальный, и привязать к нему изменяемое значение витрины нечем",
+      "task": "RT-912"
+    }
+  },
+  "debt": {}
 }

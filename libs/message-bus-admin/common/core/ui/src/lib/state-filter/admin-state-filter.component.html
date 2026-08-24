@@ -1,0 +1,8 @@
+<rt-select
+    qa-dataid="list-state-filter"
+    [ariaLabel]="label"
+    [clearable]="false"
+    [ngModel]="state()"
+    [ngModelOptions]="{ standalone: true }"
+    [options]="options()"
+    (selectionChange)="pick($event)" />

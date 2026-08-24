@@ -154,13 +154,65 @@ expect_decision "SC-AK-252 — вложенная запись универса�
 # Чтение и поиск не отбиваются: гард судит запись, а не всякое упоминание пути.
 b "чтение кода пропускается" "cat libs/site/x/ui/src/lib/a.component.ts" PASS
 b "поиск по коду пропускается" "grep -rn xyz libs/site/x/ui/src/lib/" PASS
+# Пустое устройство и поток ошибок файла не пишут: так глушат вывод команды чтения.
+b "поиск с заглушённым потоком ошибок пропускается" \
+    "grep -rn xyz libs/site/x/ui/src/lib/ 2>/dev/null" PASS
+b "чтение с выводом в пустое устройство пропускается" \
+    "cat libs/site/x/ui/src/lib/a.component.ts > /dev/null" PASS
+b "сведение потоков при чтении пропускается" \
+    "cat libs/site/x/ui/src/lib/a.component.ts 2>&1" PASS
+# Настоящая запись рядом с заглушённым потоком остаётся видной.
+b "запись рядом с пустым устройством отбивается" \
+    "echo x > libs/site/x/ui/src/lib/a.component.ts 2>/dev/null" deny
 # Текст под требование не подпадает — ни инструментом, ни командой.
 b "запись в текст проекта пропускается" "echo x > docs/adr/0001-x.md" PASS
+# Тело документа на месте — текст, а не команда: путь, названный в нём словами, правила под
+# запись не требует. Путь, куда команда пишет, стоит в её заголовке и судится по-прежнему.
+b "чужой путь в теле документа на месте правила не требует" \
+    "cat > docs/adr/0002-x.md <<'MD'
+Компонент лежит в libs/site/x/ui/src/lib/a.component.ts
+MD" PASS
+b "путь в заголовке команды с документом на месте отбивается" \
+    "cat > libs/site/x/ui/src/lib/a.component.ts <<'TS'
+export class A {}
+TS" deny
 
 # Замысел на месте — обе двери открыты одинаково.
 printf '# Замысел\n\n**Поведение:** не меняется — переезд слоя. Подтверждено владельцем.\n' > "$TASK/plan.md"
 b "с замыслом команда оболочки пропускается" "echo x > libs/site/x/ui/src/lib/a.component.ts" PASS
 t "с замыслом инструмент правки пропускается" "$CODE" PASS
+
+# --- папка, разобранная коммитом ветки ------------------------------------------------------
+# Уборка стоит до открытия заявки, и замысла с этой минуты на диске нет намеренно. Правка
+# после неё — правка по замечаниям разбора: требовать под неё замысел значило бы запирать
+# ветку собственным порядком. Признак берётся из истории ветки, а не с диска.
+COMP='libs/site/x/ui/src/lib/a.component.ts'
+# Признак «правка кода приложения» считается от корня дерева, поэтому корнем на время вызова
+# объявляется сама фикстура: иначе путь под её каталогом не совпадёт ни с одним образцом и
+# гард пропустит правку, ничего не сказав.
+edit_at() {
+    local out
+    out="$(CLAUDE_PROJECT_DIR="$1" jq -n --arg f "$1/$COMP" --arg d "$1" \
+        '{session_id:"tests",tool_name:"Edit",tool_input:{file_path:$f},cwd:$d}' \
+        | CLAUDE_PROJECT_DIR="$1" "$HOOKS/task-flow-guard.sh" 2>/dev/null)"
+    [ -z "$out" ] && { printf 'PASS'; return 0; }
+    printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision // "PASS"' 2>/dev/null
+}
+
+ARCHIVED="$(fixture_repo_branched main RT-46-probe)"
+fixture_commit "$ARCHIVED" docs/tasks/RT-46-probe/plan.md 'замысел' 'docs: замысел'
+fixture_commit "$ARCHIVED" "$COMP" 'export class A {}' 'feat: правка'
+report "SC-AK-529 — папка на месте, а состояние не объявлено: правка отбивается" "$(edit_at "$ARCHIVED")" deny
+fixture_remove "$ARCHIVED" docs/tasks/RT-46-probe 'docs: папка разобрана'
+report "SC-AK-529 — после разбора папки правка проходит" "$(edit_at "$ARCHIVED")" PASS
+
+# Снос без коммита отданной работы не означает: судится история ветки, а не рабочее дерево.
+NOT_COMMITTED="$(fixture_repo_branched main RT-47-probe)"
+fixture_commit "$NOT_COMMITTED" docs/tasks/RT-47-probe/plan.md 'замысел' 'docs: замысел'
+fixture_commit "$NOT_COMMITTED" "$COMP" 'export class A {}' 'feat: правка'
+rm -rf "$NOT_COMMITTED/docs/tasks/RT-47-probe"
+report "SC-AK-530 — снос без коммита правку не пропускает" "$(edit_at "$NOT_COMMITTED")" deny
+rm -rf "$ARCHIVED" "$NOT_COMMITTED"
 
 # --- отказ в пользу работы ----------------------------------------------------------------
 # Сломанный гард не должен мешать работать: любой неразобранный вход пропускается.

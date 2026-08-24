@@ -1,4 +1,4 @@
-// rt-kit v0.9.1 · checks/lib-common.mjs · df0d46805bb9 · правится надстройкой, не здесь
+// rt-kit v0.13.0 · checks/lib-common.mjs · 1d9de45dc1cf · правится надстройкой, не здесь
 /**
  * Общее для всех предметов сверки раскладки либ: состав слоёв каждой формы домена, чтение
  * дерева, список принятых долгов и то, как из пути либы получаются её имя, тег и алиас.
@@ -10,7 +10,7 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { CONFIG, ROOT, readAllowlist } from './rt-kit-checks.config.mjs';
+import { CONFIG, ROOT, parseAllowlist } from './rt-kit-checks.config.mjs';
 
 const FAMILIES = CONFIG.families;
 /**
@@ -61,8 +61,8 @@ const isLib = (path) => existsSync(join(ROOT, path, 'project.json'));
  * нет вовсе, и прямое чтение роняло проверку отказом «нет такого файла» — то есть первая же
  * установка получала поломку вместо отчёта о том, что долгов нет.
  */
-const allowlist = readAllowlist('lib-layers');
-const pathsOf = (key) => (allowlist[key] ?? []).map((exception) => exception.path);
+const allowlist = parseAllowlist('lib-layers', ['notDomains', 'legacyDomains', 'legacyLibs', 'singleLayerDomains', 'accepted', 'debt']);
+const pathsOf = (key) => [...allowlist[key].keys()];
 
 /** Паттерн `<корень>/x/*` покрывает и сам каталог `<корень>/x`: исключение снимается целиком */
 const matches = (patterns, path) =>

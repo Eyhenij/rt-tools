@@ -9,7 +9,7 @@ import { join } from 'node:path';
 
 import { chosenEntries } from './cascade.js';
 import { IEntryOfCatalog, readCatalog } from './catalog.js';
-import { IConfig, SKILL_FILE, SKILL_KINDS, TKind } from './config.js';
+import { IConfig, PITFALLS_FILE, SKILL_FILE, SKILL_KINDS, TKind } from './config.js';
 
 export interface IAsset {
     /** Идентификатор: `laws/application/money.md`. Он же путь надстройки и ключ в `only` и `skip`. */
@@ -40,6 +40,12 @@ const extensionOf: (id: string) => string = (id: string): string => {
  * дереве нет, а агенту, который правило читает, различать их незачем.
  */
 export function targetOf(entry: Pick<IEntryOfCatalog, 'id' | 'kind' | 'name'>, layout: Readonly<Record<TKind, string>>): string {
+    // Холодная часть ложится в каталог своего правила и под своим именем: правило читается как
+    // `<имя>/SKILL.md`, а её читают отдельно и по требованию — `<имя>/pitfalls.md`.
+    if (entry.kind === 'pitfalls') {
+        return join(layout[entry.kind], entry.name, PITFALLS_FILE);
+    }
+
     return SKILL_KINDS.includes(entry.kind)
         ? join(layout[entry.kind], entry.name, SKILL_FILE)
         : join(layout[entry.kind], `${entry.name}${extensionOf(entry.id)}`);

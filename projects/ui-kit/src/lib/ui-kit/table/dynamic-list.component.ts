@@ -26,7 +26,7 @@ import {
     RtuiTableAdditionalRowActionsDirective,
     RtuiTableComponent,
     RtuiTableRowActionsDirective,
-} from './components';
+} from './components/table/rtui-table.component';
 import {
     RtuiTableContainerComponent,
     RtuiTableToolbarActionsDirective,

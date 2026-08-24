@@ -19,7 +19,7 @@
  * функции возвращают `null`, командный режим печатает `{"offline":true}`.
  */
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
@@ -217,7 +217,7 @@ export function pullState(ref, options) {
     const target = ref === undefined || ref === null || `${ref}`.trim() === '' ? [] : [`${ref}`.trim()];
     let pull;
     try {
-        pull = ghJson(['pr', 'view', ...target, '--json', 'number,isDraft,reviewRequests,latestReviews,author'], options);
+        pull = ghJson(['pr', 'view', ...target, '--json', 'number,isDraft,reviewRequests,latestReviews,author,mergeable'], options);
     } catch (error) {
         if (error instanceof OfflineError) {
             throw error;
@@ -237,6 +237,11 @@ export function pullState(ref, options) {
         author: pull.author?.login ?? null,
         reviewers,
         reviewed: reviewers.filter((login) => login !== (pull.author?.login ?? null)).length > 0,
+        // Конфликт приезжает в отданную заявку чужим слиянием, без единого действия её автора:
+        // хостинг считает сливаемость заново после каждой правки главной ветки. Судится только
+        // прямое «конфликтует»: `UNKNOWN` означает, что хостинг ещё считает, и читать его как
+        // конфликт значило бы отбивать работу на каждой свежей вершине.
+        conflicting: pull.mergeable === 'CONFLICTING',
     };
 }
 
@@ -246,49 +251,9 @@ export function pullState(ref, options) {
  */
 export function fetchOpenPulls(options) {
     return ghJson(
-        ['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,title,headRefName,headRefOid,isDraft,body'],
+        ['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,title,headRefName,headRefOid,isDraft,body,mergeable'],
         options
     );
-}
-
-/**
- * Сколько прогонов завелось на этой вершине.
- *
- * Спрашивается вершина, а не ветка: прогон промежуточного коммита о состоянии вершины не
- * говорит ничего, а список прогонов ветки отдаёт их вперемешку.
- */
-export function runsOnHead(sha, options) {
-    const answer = gh(['api', `repos/${OWNER}/${REPO}/actions/runs?head_sha=${sha}&per_page=1`, '--jq', '.total_count'], options);
-    return Number(String(answer).trim());
-}
-
-/**
- * Чем кончились прогоны на этой вершине: `success`, если все завершились успехом, `running`,
- * если хоть один ещё идёт, `failure` — если хоть один упал. Прогонов нет вовсе — `none`.
- *
- * Цвет спрашивается отдельно от факта: факт отвечает на вопрос «событие дошло», цвет — на
- * вопрос «работу можно отдавать». Второй вопрос задаётся там, где готовое стоит черновиком.
- */
-export function verdictOnHead(sha, options) {
-    const answer = gh(
-        [
-            'api',
-            `repos/${OWNER}/${REPO}/actions/runs?head_sha=${sha}&per_page=20`,
-            '--jq',
-            '[.workflow_runs[] | {status, conclusion}] | if length == 0 then "none"' +
-                ' elif any(.status != "completed") then "running"' +
-                ' elif any(.conclusion != "success") then "failure"' +
-                ' else "success" end',
-        ],
-        options
-    );
-    return String(answer).trim();
-}
-
-/** Когда вершина легла в ветку — по времени коммита у хостинга, а не по местным часам ветки. */
-export function headCommittedAt(sha, options) {
-    const answer = gh(['api', `repos/${OWNER}/${REPO}/commits/${sha}`, '--jq', '.commit.committer.date'], options);
-    return Date.parse(String(answer).trim());
 }
 
 /** `[<КЛЮЧ>-<номер>]` в начале заголовка — единственная форма номера в названиях */
@@ -322,6 +287,48 @@ export function numberFromTaskDir(name) {
  * Вглубь спускаемся ровно на один уровень: в имени ветки одна косая, а всё, что глубже, папкой
  * задачи уже не будет — зато туда попал бы архив, если дерево держит его внутри.
  */
+/** Шапка раскладки: по ней разложенную копию узнаёт и гард места правки. */
+const STAMP = /^<!-- rt-kit v[^\n]*-->\n/m;
+
+/**
+ * Снять с копий образца шапку раскладки.
+ *
+ * Образец разложен пакетом и шапку несёт по праву: его кладёт и обновляет раскладка. Копия под
+ * задачу — уже текст проекта, тем же доводом, каким пакет кладёт без шапки черновик компаньона:
+ * с первой правки сверять в ней нечего.
+ *
+ * Оставленная в копии, шапка отбивает первую же правку разбора просьбы — то есть первое движение
+ * любой работы, — и отказ уводит править образец пакета вместо копии под задачу. Снималась она
+ * тремя строками руками, каждой работой заново.
+ *
+ * Возвращает имена файлов, с которых шапка снята: по ним сценарий и судит, что снятие работает,
+ * а вызывающий — что папка собрана.
+ */
+export function unstampFolder(folder) {
+    const cleaned = [];
+
+    if (!existsSync(folder)) {
+        return cleaned;
+    }
+
+    for (const name of readdirSync(folder)) {
+        if (!name.endsWith('.md')) {
+            continue;
+        }
+
+        const path = join(folder, name);
+        const before = readFileSync(path, 'utf8');
+        const after = before.replace(STAMP, '');
+
+        if (after !== before) {
+            writeFileSync(path, after);
+            cleaned.push(name);
+        }
+    }
+
+    return cleaned;
+}
+
 export function taskDirs(dir = join(ROOT, CONFIG.tasksDir), prefix = '') {
     if (!existsSync(dir)) {
         return [];

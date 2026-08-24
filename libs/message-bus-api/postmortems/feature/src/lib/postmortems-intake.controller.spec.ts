@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IRequestTree, ITreeBearingRequest, rememberTree } from '@rt/message-bus-api/trees/util';
-import { IIntakeResponse, TCargoBody } from '@rt/message-bus-common';
+import { ECargoState, IIntakeResponse, TCargoBody } from '@rt/message-bus-common';
 
 import { PostmortemsIntakeController } from './postmortems-intake.controller';
 
@@ -27,6 +27,7 @@ interface IPostmortemStored {
     treeId: string;
     file: string;
     text: string;
+    state: ECargoState;
     updatedAt: Date;
 }
 
@@ -42,8 +43,14 @@ class PrismaDouble {
         };
     }
 
-    public get postmortem(): { upsert: (args: Record<string, unknown>) => Promise<{ id: string }> } {
-        return { upsert: async (args: Record<string, unknown>): Promise<{ id: string }> => this.#upsertPostmortem(args) };
+    public get postmortem(): {
+        findMany: (args: Record<string, unknown>) => Promise<IPostmortemStored[]>;
+        upsert: (args: Record<string, unknown>) => Promise<{ id: string }>;
+    } {
+        return {
+            findMany: async (args: Record<string, unknown>): Promise<IPostmortemStored[]> => this.#foundPostmortems(args),
+            upsert: async (args: Record<string, unknown>): Promise<{ id: string }> => this.#upsertPostmortem(args),
+        };
     }
 
     /** Сделка двойника: команды приезжают уже собранными обещаниями и просто ждутся по очереди. */
@@ -76,6 +83,15 @@ class PrismaDouble {
         return { id: created.id };
     }
 
+    /** Разборы дерева по именам файлов: этим запросом приём берёт лежащие тексты до записи. */
+    #foundPostmortems(args: Record<string, unknown>): IPostmortemStored[] {
+        const where: { treeId: string; file: { in: string[] } } = args['where'] as { treeId: string; file: { in: string[] } };
+
+        return this.postmortems.filter(
+            (row: IPostmortemStored): boolean => row.treeId === where.treeId && where.file.in.includes(row.file)
+        );
+    }
+
     #upsertPostmortem(args: Record<string, unknown>): { id: string } {
         const key: { treeId: string; file: string } = (args['where'] as { treeId_file: { treeId: string; file: string } }).treeId_file;
         const found: IPostmortemStored | undefined = this.postmortems.find(
@@ -88,9 +104,12 @@ class PrismaDouble {
             return { id: `${found.treeId}:${found.file}` };
         }
 
+        // Состояние заведённой записи ставит умолчание колонки, а не приём: двойник повторяет его,
+        // иначе приезд читался бы состоянием, которого у настоящей записи не бывает.
         const created: IPostmortemStored = {
+            state: ECargoState.New,
             updatedAt: new Date('2026-08-14T00:00:00Z'),
-            ...(args['create'] as Omit<IPostmortemStored, 'updatedAt'>),
+            ...(args['create'] as Omit<IPostmortemStored, 'state' | 'updatedAt'>),
         };
         this.postmortems.push(created);
 
@@ -168,6 +187,39 @@ describe('PostmortemsIntakeController', () => {
 
         expect(prisma.records).toHaveLength(1);
         expect(prisma.records[0].summary).toBeNull();
+    });
+
+    it('SC-MB-169 — приезд с другим текстом возвращает взятый в работу разбор в «новое»', async () => {
+        const prisma: PrismaDouble = new PrismaDouble();
+        const controller: PostmortemsIntakeController = controllerWith(prisma);
+        const file: string = '2026-08-14-gate-map.md';
+
+        await controller.accept(cargo([{ file, text: 'первая редакция' }]), requestOf(), new ResponseDouble());
+        prisma.postmortems[0].state = ECargoState.InWork;
+        await controller.accept(cargo([{ file, text: 'исправленный текст' }]), requestOf(), new ResponseDouble());
+
+        expect(prisma.postmortems[0].state).toBe(ECargoState.New);
+        expect(prisma.postmortems[0].text).toBe('исправленный текст');
+    });
+
+    it('SC-MB-170 — приезд с тем же текстом состояния не трогает', async () => {
+        const prisma: PrismaDouble = new PrismaDouble();
+        const controller: PostmortemsIntakeController = controllerWith(prisma);
+        const file: string = '2026-08-14-gate-map.md';
+
+        await controller.accept(cargo([{ file, text: TEXT_WITH_PATHS }]), requestOf(), new ResponseDouble());
+        prisma.postmortems[0].state = ECargoState.InWork;
+        await controller.accept(cargo([{ file, text: TEXT_WITH_PATHS }]), requestOf(), new ResponseDouble());
+
+        expect(prisma.postmortems[0].state).toBe(ECargoState.InWork);
+    });
+
+    it('приехавший впервые разбор встаёт в «новое» умолчанием колонки', async () => {
+        const prisma: PrismaDouble = new PrismaDouble();
+
+        await controllerWith(prisma).accept(cargo([{ file: 'разбор.md', text: 'текст' }]), requestOf(), new ResponseDouble());
+
+        expect(prisma.postmortems[0].state).toBe(ECargoState.New);
     });
 
     it('SC-MB-13 — разбор без обязательного поля отбивает операцию целиком', async () => {

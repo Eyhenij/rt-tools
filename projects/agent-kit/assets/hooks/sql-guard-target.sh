@@ -18,6 +18,8 @@
 # подключения, и по одному SQL отличить прод от локальной копии невозможно. Поэтому
 # подключения опознаются в лицо. Список сверяется вызовом list_database_connections;
 # добавили новое — допишите сюда, иначе оно попадёт в «неизвестные» ниже.
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+
 sql_resolve_target() {
     is_prod=""
     PROD_CONNECTIONS="${RT_PROD_CONNECTIONS:-}"

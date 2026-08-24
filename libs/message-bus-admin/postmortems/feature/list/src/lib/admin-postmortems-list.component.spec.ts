@@ -5,6 +5,7 @@ import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
+import { AdminVersionFilterComponent } from '@rt/message-bus-admin/common/core/ui';
 import { IPostmortem, POSTMORTEMS_PATH } from '@rt/message-bus-admin/postmortems/util';
 import { IPage } from '@rt/message-bus-common';
 import { IDBStorageService, provideRtStorage, provideRtUtils } from '@rt-tools/core';
@@ -13,6 +14,7 @@ import { Observable, of } from 'rxjs';
 import { AdminPostmortemsListComponent } from './admin-postmortems-list.component';
 
 const TREES_PATH: string = '/api/trees';
+const VERSIONS_PATH: string = '/api/cargo/versions';
 
 /**
  * Хранилище выбора столбцов, живущее в памяти.
@@ -53,6 +55,7 @@ function rowOf(patch: Partial<IPostmortem.Short.Api> = {}): IPostmortem.Short.Ap
         id: 'p1',
         tree: { slug: 'a1b2', name: 'Приёмник' },
         file: '2026-08-14-incident.md',
+        releaseVersion: '0.10.0',
         arrivedAt: '2026-08-14T21:30:00.000Z',
         updatedAt: '2026-08-15T06:00:00.000Z',
         ...patch,
@@ -82,10 +85,20 @@ describe('AdminPostmortemsListComponent', () => {
         http.expectOne(TREES_PATH).flush([{ slug: 'a1b2', name: 'Приёмник' }]);
     }
 
+    /** Версии отбора: их просит третий отбор тулбара, и отдаёт ушедший запрос — по нему виден род груза. */
+    function answerVersions(versions: readonly string[] = ['0.9.0', '0.10.0']): TestRequest {
+        const request: TestRequest = http.expectOne((candidate): boolean => candidate.url === VERSIONS_PATH);
+
+        request.flush(versions);
+
+        return request;
+    }
+
     async function openSection(url: string = '/postmortems', rows: readonly IPostmortem.Short.Api[] = [rowOf()]): Promise<void> {
         harness = await RouterTestingHarness.create(url);
         answerList(rows);
         answerTrees();
+        answerVersions();
         await harness.fixture.whenStable();
         harness.detectChanges();
     }
@@ -140,6 +153,94 @@ describe('AdminPostmortemsListComponent', () => {
         expect(list.request.params.get('sort')).toBe('file');
         expect(list.request.params.get('dir')).toBe('asc');
         expect(list.request.params.get('tree')).toBe('a1b2');
+        answerTrees();
+    });
+
+    it('SC-MB-222, SC-MB-239 — в тулбаре раздела стоят три отбора, и по версии — правее всех', async () => {
+        await openSection();
+
+        const filters: string[] = Array.from(
+            harness.fixture.nativeElement.querySelectorAll(
+                '[qa-dataid="list-tree-filter"], [qa-dataid="list-state-filter"], [qa-dataid="list-version-filter"]'
+            )
+        ).map((node: Element): string => String(node.getAttribute('qa-dataid')));
+
+        expect(filters).toEqual(['list-tree-filter', 'list-state-filter', 'list-version-filter']);
+    });
+
+    it('SC-MB-254 — раздел просит версии своего рода груза, а не всех сразу', async () => {
+        harness = await RouterTestingHarness.create('/postmortems');
+        answerList();
+        answerTrees();
+
+        expect(answerVersions().request.params.get('kind')).toBe('postmortem');
+    });
+
+    it('SC-MB-241 — отбор по версии из адреса уходит в запрос списка вместе с двумя другими', async () => {
+        harness = await RouterTestingHarness.create('/postmortems?version=0.10.0&state=released&tree=a1b2');
+
+        const list: TestRequest = answerList();
+
+        expect(list.request.params.get('version')).toBe('0.10.0');
+        expect(list.request.params.get('state')).toBe('released');
+        expect(list.request.params.get('tree')).toBe('a1b2');
+        answerTrees();
+        answerVersions();
+    });
+
+    it('SC-MB-243 — «без версии» уходит в запрос тем же словом, каким стоит в адресе', async () => {
+        harness = await RouterTestingHarness.create('/postmortems?version=none');
+
+        const list: TestRequest = answerList();
+
+        expect(list.request.params.get('version')).toBe('none');
+        answerTrees();
+        answerVersions();
+    });
+
+    it('SC-MB-242 — снятый отбор по версии в запрос не уходит вовсе', async () => {
+        harness = await RouterTestingHarness.create('/postmortems');
+
+        const list: TestRequest = answerList();
+
+        expect(list.request.params.has('version')).toBe(false);
+        answerTrees();
+        answerVersions();
+    });
+
+    it('SC-MB-245 — выбранная версия возвращает список на первую страницу, а прочие отборы не трогает', async () => {
+        await openSection('/postmortems?page=2&tree=a1b2');
+
+        harness.fixture.debugElement.query(By.directive(AdminVersionFilterComponent)).componentInstance.versionChange.emit('0.10.0');
+        await harness.fixture.whenStable();
+
+        expect(router.url).toContain('version=0.10.0');
+        expect(router.url).toContain('tree=a1b2');
+        expect(router.url).not.toContain('page=2');
+    });
+
+    it('SC-MB-237, SC-MB-238 — столбец версии показывает выпущенную запись и оставляет ячейку пустой у невыпущенной', async () => {
+        await openSection('/postmortems', [rowOf(), rowOf({ id: 'p2', file: 'вторая.md', releaseVersion: null })]);
+
+        expect(cells('postmortems-cell-version')).toEqual(['0.10.0', '']);
+    });
+
+    it('SC-MB-223 — отбор по состоянию из адреса уходит в запрос списка', async () => {
+        harness = await RouterTestingHarness.create('/postmortems?state=in_work&tree=a1b2');
+
+        const list: TestRequest = answerList();
+
+        expect(list.request.params.get('state')).toBe('in_work');
+        expect(list.request.params.get('tree')).toBe('a1b2');
+        answerTrees();
+    });
+
+    it('SC-MB-224 — снятый отбор по состоянию в запрос не уходит вовсе', async () => {
+        harness = await RouterTestingHarness.create('/postmortems');
+
+        const list: TestRequest = answerList();
+
+        expect(list.request.params.has('state')).toBe(false);
         answerTrees();
     });
 

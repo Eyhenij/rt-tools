@@ -91,6 +91,41 @@ expect_window "колонка задачи" "$(input_window "$STOP" PreToolUse s
 expect_window "чтение файла" "$(input_window "$STOP" PreToolUse s3 Read "$CODE")" PASS
 expect_window "вопрос владельцу" "$(input_window "$STOP" PreToolUse s3 AskUserQuestion)" PASS
 
+# --- сжатие объявлено: напоминание зовёт работать дальше, а не закрывать заход --------------
+
+# Текст напоминания на первом пороге: закрывать заход или идти дальше.
+expect_hint_text() {
+    local label="$1" json="$2" want="$3" got
+    got="$(printf '%s' "$json" | "$HOOKS/window-fill-guard.sh" 2>/dev/null \
+        | jq -r '.hookSpecificOutput.additionalContext // ""' 2>/dev/null)"
+    if printf '%s' "$got" | grep -q "$want"; then
+        report "$label" "$want" "$want"
+    else
+        report "$label" "$got" "$want"
+    fi
+}
+
+# SC-AK-475 — страж напоминает до порога сжатия
+CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=45 \
+    expect_hint_text "сжатие объявлено — напоминание зовёт работать" "$(input_window "$WARN" PostToolUse c1)" 'Работай дальше'
+CLAUDE_AUTOCOMPACT_PCT_OVERRIDE='' \
+    expect_hint_text "сжатия нет — напоминание зовёт закрывать заход" "$(input_window "$WARN" PostToolUse c2)" 'выбирать точку остановки'
+
+# SC-AK-476 — между порогом сжатия и порогом остановки страж работу не отбивает
+CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=45 \
+    expect_window "запас между порогами" "$(input_window "$WARN" PreToolUse c3 Edit "$CODE")" PASS
+
+# SC-AK-477 — после порога остановки страж отбивает, как прежде
+CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=45 \
+    expect_window "сжатие не пришло — страховка сработала" "$(input_window "$STOP" PreToolUse c4 Edit "$CODE")" DENY
+CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=45 \
+    expect_hint_text "отказ называет несработавшее сжатие" "$(input_window "$STOP" PostToolUse c5)" 'не пришло'
+
+# Порог сжатия, объявленный не ниже порога остановки, стражем не читается: разводит их сверка,
+# а страж на такой паре ведёт себя как без сжатия вовсе.
+CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=50 \
+    expect_hint_text "сжатие вровень с остановкой — прежний текст" "$(input_window "$WARN" PostToolUse c6)" 'выбирать точку остановки'
+
 # --- отказ в пользу работы -----------------------------------------------------------------
 # SC-AK-40 — дерево без размера окна стража не получает
 RT_WINDOW_TOKENS='' expect_window "размер окна не задан" "$(input_window "$STOP" PreToolUse s4 Edit "$CODE")" PASS

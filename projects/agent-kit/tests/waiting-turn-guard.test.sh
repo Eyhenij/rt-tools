@@ -60,14 +60,26 @@ expect_stop "SC-AK-246 — форма третьего хостинга" \
     "$(input_stop "$(transcript "$(say 'открывай')" "$(ran 'az repos pr create --draft true --title x')" "$(reply 'Открыт.')")")" BLOCK
 
 # --- SC-AK-247 — первое действие по следующей задаче снимает требование ------------------------
+# Состояние отданной работы при этом спрошено: следующая задача берётся сверх доведения
+# отданного до снятого черновика, а не вместо него — это SC-AK-583 ниже.
 expect_stop "SC-AK-247 — задача заведена тем же ходом" \
-    "$(input_stop "$(transcript "$(say 'открывай PR')" "$(ran 'gh pr create --draft --title x')" "$(ran 'npm run task:new -- --title y --slug z')")")" PASS
+    "$(input_stop "$(transcript "$(say 'открывай PR')" "$(ran 'gh pr create --draft --title x')" "$(ran 'gh run list --branch RT-1-probe')" "$(ran 'npm run task:new -- --title y --slug z')")")" PASS
 expect_stop "SC-AK-247 — ветка заведена тем же ходом" \
-    "$(input_stop "$(transcript "$(say 'открывай PR')" "$(ran 'gh pr create --draft --title x')" "$(ran 'git checkout -b RT-11-next')")")" PASS
+    "$(input_stop "$(transcript "$(say 'открывай PR')" "$(ran 'gh pr create --draft --title x')" "$(ran 'gh run list --branch RT-1-probe')" "$(ran 'git checkout -b RT-11-next')")")" PASS
 expect_stop "SC-AK-247 — папка задачи заведена тем же ходом" \
-    "$(input_stop "$(transcript "$(say 'открывай PR')" "$(ran 'gh pr create --draft --title x')" "$(ran 'cp -r docs/tasks/_template docs/tasks/RT-11-next')")")" PASS
+    "$(input_stop "$(transcript "$(say 'открывай PR')" "$(ran 'gh pr create --draft --title x')" "$(ran 'gh run list --branch RT-1-probe')" "$(ran 'cp -r docs/tasks/_template docs/tasks/RT-11-next')")")" PASS
 expect_stop "SC-AK-247 — колонка очереди работ двинута тем же ходом" \
-    "$(input_stop "$(transcript "$(say 'открывай PR')" "$(ran 'gh pr create --draft --title x')" "$(ran 'npm run task:move -- 11 in-progress')")")" PASS
+    "$(input_stop "$(transcript "$(say 'открывай PR')" "$(ran 'gh pr create --draft --title x')" "$(ran 'gh run list --branch RT-1-probe')" "$(ran 'npm run task:move -- 11 in-progress')")")" PASS
+
+# --- SC-AK-583 — отданная работа доводится до снятого черновика --------------------------------
+# Следующая задача, взятая вместо доведения, оставляет готовое невидимым: у черновика кнопка
+# слияния заблокирована хостингом, и по списку заявок готовое от недоделанного не отличить.
+expect_stop "SC-AK-583 — следующая задача без спроса о прогоне ход не кончает" \
+    "$(input_stop "$(transcript "$(say 'открывай PR')" "$(ran 'gh pr create --draft --title x')" "$(ran 'npm run task:move -- 11 in-progress')")")" BLOCK
+expect_stop "SC-AK-583 — снятый черновик требование снимает" \
+    "$(input_stop "$(transcript "$(say 'открывай PR')" "$(ran 'gh pr create --draft --title x')" "$(ran 'gh pr ready 11')" "$(ran 'npm run task:move -- 11 in-progress')")")" PASS
+expect_stop "SC-AK-583 — сверка очереди работ показывает то же" \
+    "$(input_stop "$(transcript "$(say 'открывай PR')" "$(ran 'gh pr create --draft --title x')" "$(ran 'npm run check:board')" "$(ran 'npm run task:move -- 11 in-progress')")")" PASS
 
 # --- SC-AK-248 — ход без открытия PR гард ожидания не судит ------------------------------------
 expect_stop "SC-AK-248 — PR не открывали" \

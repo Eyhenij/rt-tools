@@ -40,12 +40,12 @@ import { distinctUntilChanged, filter } from 'rxjs/operators';
 import { BlockDirective, BreakpointService, ConcatClassesPipe, ElemDirective } from '@rt-tools/core';
 import { TNullable } from '@rt-tools/utils';
 import { areArraysEqual, transformArrayInput, transformStringInput } from '@rt-tools/utils';
+import { RtuiDynamicSelectorListActionsComponent } from '../actions/rtui-dynamic-selector-list-actions.component';
+import { RtuiDynamicSelectorPlaceholderComponent } from '../placeholder/rtui-dynamic-selector-placeholder.component';
 import {
     RtuiDynamicSelectorItemAdditionalControlDirective,
-    RtuiDynamicSelectorListActionsComponent,
-    RtuiDynamicSelectorPlaceholderComponent,
     RtuiDynamicSelectorSelectedListComponent,
-} from '../.';
+} from '../selected-list/rtui-dynamic-selector-selected-list.component';
 import { RtuiDynamicSelectorsDirective } from '../dynamic-selectors-directive';
 import { BooleanInput } from '@angular/cdk/coercion';
 

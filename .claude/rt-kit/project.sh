@@ -29,6 +29,17 @@ RT_STANDS='витрина ui-kit http://localhost:6006, витрина ui-kit-v2
 # владельца, — и с переходом на новую это отступление снято.
 RT_COMMIT_EMAIL='317887029+rt-tools-dev@users.noreply.github.com'
 
+# Чем вызову подставляют токен машинной записи и как эта подстановка выглядит целиком. Клиент
+# хостинга залогинен владельцем, поэтому вызов без подстановки идёт от него: заявка выходит от
+# владельца, ревьювером его тогда не назначить — автор заявки её ревьювером не бывает, — и
+# чинится это только переоткрытием. Гард поставки читает обе строки: первой он ищет подстановку
+# в тексте команды, вторую печатает в отказе готовой.
+# Учётная запись машинной работы: исполнителем задач и автором заявок стоит она.
+RT_TASK_BOT='rt-tools-dev'
+
+RT_PULL_TOKEN_VAR='GH_TOKEN'
+RT_PULL_TOKEN_HINT='GH_TOKEN=$(cat ~/.config/rt-tools-bot-token)'
+
 # Первая колонка борды — та, из которой задачу забирают в работу. Гард поставки сверяет её с
 # колонкой задачи и отбивает поставку, пока задача из неё не ушла: по очереди работ такая задача
 # читается как невзятая, хотя работа по ней уже выложена.
@@ -101,6 +112,8 @@ pnpm run agent-kit:check
 node tools/check-specs.mjs
 node tools/check-dupes.mjs
 node tools/check-hooks.mjs
+node tools/check-cycles.mjs
+node tools/check-boundary.mjs
 EOF
 
     rt_push_checks_default "$1" \
@@ -110,14 +123,95 @@ EOF
 pnpm exec nx affected -t lint typecheck test build --parallel
 pnpm exec nx affected -t test-hooks
 pnpm run lint:styles
-pnpm exec nx run message-bus-admin-e2e:e2e
-node tools/visual-gate.mjs ui-kit
-node tools/visual-gate.mjs ui-kit-v2
 pnpm exec nx affected -t verify --parallel
-docker build -f deploy/message-bus.Dockerfile -t message-bus:gate .
-docker build -f deploy/message-bus-web.Dockerfile -t message-bus-web:gate .
 node tools/check-push-gate.mjs
 EOF
+
+    # Тяжёлые шаги идут по своему предмету, а не по признаку «ветка тронула код».
+    #
+    # Прежде признак был «всё или ничего»: текстовой считалась ветка, у которой каждый задетый
+    # файл — либо `.md`, либо под `docs/`, а всё прочее тянуло полный набор. Довод рядом стоял
+    # верный — ошибаться в сторону лишнего прогона, — но между «гнать всё» и «не гнать ничего»
+    # пропущено третье: гнать то, чего ветка коснулась.
+    #
+    # Стоило это дважды. Пуш коммита с одной строкой в таблице markdown поднимал стенд, снимал
+    # две витрины и собирал два образа — владелец трижды за заход отбил такой пуш, приняв его за
+    # зависший. Позже ветка, поправившая один признак в хуках агента, заплатила тем же и была
+    # **отбита** непостоянным снимком чужой кнопки: правка гарда встала из-за кадра компонента,
+    # к которому не притрагивалась.
+    #
+    # Предмет у каждого шага свой, и объявлен он путями. Ветка, не задевшая путей предмета, за
+    # него не платит. Признак при этом ошибается в прежнюю сторону: путь, не попавший ни в один
+    # предмет, и общее основание дерева поднимают весь набор — незнакомое читается как «могло
+    # задеть что угодно». Пустая база означает, что сравнивать не с чем: гоняется всё, и той же
+    # пустой базой зовёт функцию сверка полноты набора — список она видит целиком.
+    e2e='pnpm exec nx run message-bus-admin-e2e:e2e'
+    shot_v1='node tools/visual-gate.mjs ui-kit'
+    shot_v2='node tools/visual-gate.mjs ui-kit-v2'
+    img_api='docker build -f deploy/message-bus.Dockerfile -t message-bus:gate .'
+    img_web='docker build -f deploy/message-bus-web.Dockerfile -t message-bus-web:gate .'
+
+    if [ -z "$1" ] || ! rt_push_touched "$1" >/dev/null 2>&1; then
+        printf '%s\n%s\n%s\n%s\n%s\n' "$e2e" "$shot_v1" "$shot_v2" "$img_api" "$img_web"
+
+        return 0
+    fi
+
+    _touched="$(rt_push_touched "$1")"
+
+    case " $_touched " in
+        *' всё '*)
+            printf '%s\n%s\n%s\n%s\n%s\n' "$e2e" "$shot_v1" "$shot_v2" "$img_api" "$img_web"
+
+            return 0
+            ;;
+    esac
+
+    case " $_touched " in *' приёмник '*) printf '%s\n%s\n%s\n' "$e2e" "$img_api" "$img_web" ;; esac
+    case " $_touched " in *' кит1 '*) printf '%s\n' "$shot_v1" ;; esac
+    case " $_touched " in *' кит2 '*) printf '%s\n' "$shot_v2" ;; esac
+}
+
+# Каких предметов коснулась ветка. Печатает слова предметов через пробел; `всё` означает, что
+# делить нечего — задето общее основание либо путь, которого признак не узнал.
+#
+# Пустой список задетого предметом не считается: сравнивать не с чем, и молчание тут читалось бы
+# как «менять нечего». Такой вызов кончается ненулевым кодом, и зовущий гонит весь набор.
+rt_push_touched() {
+    _changed="$(git diff --name-only "$1"...HEAD 2>/dev/null)"
+    [ -z "$_changed" ] && return 1
+
+    _subjects=''
+    _add() { case " $_subjects " in *" $1 "*) ;; *) _subjects="${_subjects}${_subjects:+ }$1" ;; esac; }
+
+    for _f in $_changed; do
+        case "$_f" in
+            # Тексты и обвязка агента: своего тяжёлого шага у них нет.
+            docs/*|*.md|.claude/*|projects/agent-kit/*) ;;
+            # Киты — каждый со своей витриной.
+            projects/ui-kit/*) _add кит1 ;;
+            projects/ui-kit-v2/*) _add кит2 ;;
+            # Приёмник, админка, её сквозной набор, выкатка и схема базы.
+            apps/message-bus*|deploy/*|prisma/*) _add приёмник ;;
+            # Всё прочее — общие библиотеки, корневые настройки, обвязка сборки, конвейер.
+            # Делить их между предметами нельзя: они влияют на любой из них.
+            *) _add всё ;;
+        esac
+    done
+
+    printf '%s' "$_subjects"
+}
+
+# Тронула ли ветка только тексты. Нулевой код — только тексты, иначе — код.
+#
+# Пустой список задетого текстовой правкой не считается: сравнивать не с чем, и молчание тут
+# читалось бы как «менять нечего».
+rt_push_docs_only() {
+    changed="$(git diff --name-only "$1"...HEAD 2>/dev/null)"
+    [ -z "$changed" ] && return 1
+    printf '%s\n' "$changed" | grep -qvE '(^docs/|\.md$)' && return 1
+
+    return 0
 }
 
 # Какой документ обязан ехать тем же коммитом, что и этот файл. Печатает образец пути или молчит.
@@ -173,3 +267,11 @@ rt_reinvented_in() {
             ;;
     esac
 }
+
+# Каталог источников пакета правил. Это дерево пакет и разрабатывает: разложенная копия здесь
+# чинится не надстройкой, а источником, из которого её кладут. У дерева-потребителя источника
+# нет вовсе, и умолчание пакета молчит — гард места правки посылает такое дерево в надстройку.
+rt_kit_sources_dir() {
+    printf 'projects/agent-kit/assets'
+}
+

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_run_configuration|mcp__webstorm__execute_tool
+# Требует: hooks/deny-tail.sh
 # Гард второго сервера разработки. PreToolUse.
 #
 # Приложения уже подняты владельцем, и всякая проверка через браузер идёт туда. Второй
@@ -13,9 +14,13 @@
 # Где именно подняты приложения, знает профиль проекта: .claude/rt-kit/project.sh, переменная
 # RT_STANDS. Нет профиля — текст отказа остаётся общим, сам гард работает.
 
-input="$(cat 2>/dev/null)"
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
-tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+rt_hook_read
+input="$RT_HOOK_INPUT"
+
+tool="$(rt_hook_tool)"
 case "$tool" in
     Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool) ;;
     # Готовая конфигурация запуска командной строки не показывает — видно только её имя.
@@ -45,7 +50,7 @@ case "$tool" in
     *) exit 0 ;;
 esac
 
-cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
+cmd="$(rt_hook_cmd)"
 [ -z "$cmd" ] && exit 0
 
 # Универсальный исполнитель среды передаёт настоящую команду вложенной строкой. Разбирать надо
@@ -75,11 +80,16 @@ for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../d
 done
 stands="${RT_STANDS:-}"
 
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+
 deny() {
     if [ -n "$stands" ]; then
-        echo "$1 Приложения уже подняты владельцем: ${stands} — проверяй их. Свой экземпляр не поднимай; если порт не отвечает, скажи владельцу, а не запускай второй." >&2
+        echo "$1 Приложения уже подняты владельцем: ${stands} — проверяй их. Свой экземпляр не поднимай; если порт не отвечает, скажи владельцу, а не запускай второй. $(rt_deny_tail)" >&2
     else
-        echo "$1 Приложения уже подняты владельцем — проверяй их. Свой экземпляр не поднимай; если порт не отвечает, скажи владельцу, а не запускай второй." >&2
+        echo "$1 Приложения уже подняты владельцем — проверяй их. Свой экземпляр не поднимай; если порт не отвечает, скажи владельцу, а не запускай второй. $(rt_deny_tail)" >&2
     fi
     exit 2
 }
@@ -90,7 +100,7 @@ RUNNER='((npx|pnpm|yarn|bun|npm)([[:space:]]+(exec|run|dlx))?[[:space:]]+)?'
 
 # Начало вызова: начало строки или разделитель команд. Кавычку в границы вносить нельзя — тогда
 # поиск по тексту и снятие процесса по шаблону читаются как запуск.
-BOUND='(^|[;&|(]|&&|\|\|)[[:space:]]*'
+BOUND="$RT_CMD_BOUND"
 
 printf '%s' "$cmd" | grep -qE "${BOUND}${RUNNER}(nx|ng)[[:space:]]+(run[[:space:]]+[^[:space:]]*:)?(serve|dev)" \
     && deny "Запуск ещё одного сервера разработки через каркас."

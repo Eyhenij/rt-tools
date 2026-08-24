@@ -130,3 +130,7 @@ export const httpShip: TShip = async (intake: string, token: string, shipment: I
 
     return { ok: answer.ok, status: answer.status, said: saidOf(text), accepted: answer.ok ? acceptedOf(text) : null };
 };
+
+/** Два числа и отбитые строки из ответа приёма. Ответ не тем — пусто. */
+
+/** Запрос правки состояния. Токен уезжает заголовком и в теле не появляется ни разу. */

@@ -9,6 +9,8 @@
 #
 # FAIL-OPEN: нет файла или нет `jq` — выходим молча. Сессия важнее словаря.
 
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+
 GLOSSARY="${CLAUDE_PROJECT_DIR:-.}/docs/GLOSSARY.md"
 [ -f "$GLOSSARY" ] || exit 0
 command -v jq >/dev/null 2>&1 || exit 0

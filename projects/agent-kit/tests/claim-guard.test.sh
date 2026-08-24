@@ -1,0 +1,132 @@
+#!/usr/bin/env bash
+# Сценарии гарда утверждения: что владельцу говорят о дереве и чем это подтверждают.
+#
+# Проверяется механика, а не карта дерева: стенограмма хода собирается здесь же. Гард судит
+# пару — сказанное владельцу и команды того же хода.
+. "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
+
+echo "гард утверждения"
+
+TURNS="$(mktemp -d)"
+cleanup() { rm -rf "$TURNS"; }
+trap cleanup EXIT
+
+transcript() {
+    local path
+    path="$TURNS/turn-$RANDOM.jsonl"
+    : >"$path"
+    for line in "$@"; do
+        printf '%s\n' "$line" >>"$path"
+    done
+    printf '%s' "$path"
+}
+
+say() { jq -c -n --arg t "$1" '{type:"user",message:{content:[{type:"text",text:$t}]}}'; }
+told() { jq -c -n --arg t "$1" '{type:"assistant",message:{content:[{type:"text",text:$t}]}}'; }
+ran() {
+    jq -c -n --arg c "$1" \
+        '{type:"assistant",message:{content:[{type:"tool_use",name:"Bash",input:{command:$c}}]}}'
+}
+answered() { jq -c -n --arg t "$1" '{type:"user",message:{content:[{type:"tool_result",content:$t}]}}'; }
+
+input_stop() {
+    jq -n --arg p "$1" --argjson a "${2:-false}" \
+        '{session_id:"tests",transcript_path:$p,stop_hook_active:$a}'
+}
+
+expect_claim() {
+    local label="$1" json="$2" want="$3" out got
+    out="$(printf '%s' "$json" | "$HOOKS/claim-guard.sh" 2>/dev/null)"
+    if [ -z "$out" ]; then
+        got="PASS"
+    else
+        got="$(printf '%s' "$out" | jq -r 'if .decision == "block" then "BLOCK" else "PASS" end' 2>/dev/null)"
+    fi
+    report "$label" "$got" "$want"
+}
+
+# --- утверждение без команды --------------------------------------------------------------
+# Ровно этим кончились восемь разборов: слово сказано, дерева за ним нет.
+expect_claim "SC-AK-415 — «проверено» без прогона набора ход не закрывает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(told 'Всё проверено, тесты зелёные.')")")" BLOCK
+expect_claim "SC-AK-416 — «запушено» без вызова пуша ход не закрывает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(told 'Ветка запушена.')")")" BLOCK
+expect_claim "SC-AK-395 — «ветки сняты» без вызова удаления ход не закрывает" \
+    "$(input_stop "$(transcript "$(say 'прибери')" "$(told 'Влитые ветки сняты.')")")" BLOCK
+expect_claim "SC-AK-396 — «прогон зелёный» без вызова о прогоне ход не закрывает" \
+    "$(input_stop "$(transcript "$(say 'что там')" "$(told 'Прогон зелёный, можно вливать.')")")" BLOCK
+expect_claim "SC-AK-397 — «в дереве этого нет» без поиска ход не закрывает" \
+    "$(input_stop "$(transcript "$(say 'есть такое?')" "$(told 'В дереве этого нет.')")")" BLOCK
+
+# SC-AK-459 — гард судит одинаково в любой локали
+#
+# Образцы гарда написаны кириллицей, и складывание регистра работает только под UTF-8: служба,
+# запускающая ту же работу, наследует пустую локаль, и гард молча пропускал ход. Сценарий гоняет
+# гард под локалью C и ждёт того же отказа, что и под UTF-8.
+locale_c_says() {
+    printf '%s' "$1" | LC_ALL=C LANG=C "$HOOKS/claim-guard.sh" 2>/dev/null | jq -r '.decision // ""' 2>/dev/null
+}
+report "SC-AK-459 — в локали C гард судит так же" \
+    "$(locale_c_says "$(input_stop "$(transcript "$(say 'есть такое?')" "$(told 'В дереве этого нет.')")")")" block
+
+# --- утверждение с командой ---------------------------------------------------------------
+expect_claim "SC-AK-398 — прогон набора «проверено» подтверждает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'pnpm run check:all')" "$(told 'Всё проверено, тесты зелёные.')")")" PASS
+expect_claim "SC-AK-399 — вызов пуша «запушено» подтверждает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git push -u origin RT-1-probe')" "$(told 'Ветка запушена.')")")" PASS
+expect_claim "SC-AK-417 — вызов удаления «ветки сняты» подтверждает" \
+    "$(input_stop "$(transcript "$(say 'прибери')" "$(ran 'git push origin --delete RT-1-probe')" "$(told 'Влитые ветки сняты.')")")" PASS
+expect_claim "SC-AK-418 — поиск по дереву отрицание подтверждает" \
+    "$(input_stop "$(transcript "$(say 'есть такое?')" "$(ran 'grep -rn claim docs')" "$(told 'В дереве этого нет.')")")" PASS
+
+# --- чего гард не судит --------------------------------------------------------------------
+# Обещание врать нечем: будущее время утверждением о дереве не является.
+expect_claim "SC-AK-419 — обещание проверить ход не задерживает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(told 'Сейчас прогоню набор и вернусь.')")")" PASS
+# Судится сказанное владельцу, а не вывод инструмента: за файл отвечает гейт. Текст ответа в ходе
+# при этом есть — без него гард отбивает раньше, за пустую запись.
+expect_claim "SC-AK-420 — те же слова в выводе инструмента ход не задерживают" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'cat report.md')" "$(answered 'Всё проверено, тесты зелёные.')" "$(told 'Отчёт прочитан.')")")" PASS
+
+# --- запись хода, не отдавшая текста ----------------------------------------------------------
+# Текст ложится в запись не раньше, чем хост зовёт хук. Прочитанная слишком рано, она выглядит
+# ходом, в котором владельцу ничего не сказано, — и все гарды, судящие сказанное, молчат.
+expect_claim "SC-AK-579 — ход без текста ответа возвращается" \
+    "$(input_stop "$(transcript "$(say 'ну что там?')" "$(ran 'git status')")")" BLOCK
+expect_claim "SC-AK-580 — повторный заход по тому же ходу не отбивается" \
+    "$(input_stop "$(transcript "$(say 'ну что там?')" "$(ran 'git status')")" true)" PASS
+
+# --- ожидание чужого шага ----------------------------------------------------------------------
+# «Жду прогона» говорит о состоянии хостинга, и врать ему есть чем: прогон бывает зелёным час, а
+# бывает не встав вовсе. Две готовые заявки простояли черновиками ровно на этих словах.
+expect_claim "SC-AK-581 — «жду прогона» без команды о прогоне ход возвращает" \
+    "$(input_stop "$(transcript "$(say 'что с заявкой?')" "$(told 'Черновик не снимаю: жду прогона на вершине.')")")" BLOCK
+expect_claim "SC-AK-581 — с прочитанным прогоном те же слова проходят" \
+    "$(input_stop "$(transcript "$(say 'что с заявкой?')" "$(ran 'gh run list --branch RT-1-probe')" "$(told 'Черновик не снимаю: жду прогона на вершине.')")")" PASS
+expect_claim "SC-AK-582 — «прогон ещё не встал» без команды ход возвращает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(told 'Прогон на вершине ещё не встал, поэтому черновик сниму позже.')")")" BLOCK
+expect_claim "SC-AK-582 — сверка очереди работ это показывает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'npm run check:board')" "$(told 'Прогон на вершине ещё не встал, поэтому черновик сниму позже.')")")" PASS
+
+# --- отказ в пользу работы ------------------------------------------------------------------
+expect_claim "SC-AK-421 — повторный заход по тому же ходу не судится" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(told 'Всё проверено, тесты зелёные.')")" true)" PASS
+
+exit_code_of() {
+    printf '%s' "$2" | "$HOOKS/claim-guard.sh" >/dev/null 2>&1
+    report "$1" "код:$?" "код:0"
+}
+exit_code_of "пустой вход пропускается" ''
+exit_code_of "неразбираемый вход пропускается" 'не json'
+exit_code_of "запись хода, которой нет, пропускается" "$(input_stop "$TURNS/нет-такой.jsonl")"
+
+# --- отказ называет само утверждение --------------------------------------------------------
+# «Не подтверждено» без слова исполнитель читает как придирку и переписывает соседнюю фразу.
+reason_of() {
+    printf '%s' "$1" | "$HOOKS/claim-guard.sh" 2>/dev/null | jq -r '.reason // ""' 2>/dev/null
+}
+if reason_of "$(input_stop "$(transcript "$(say 'продолжай')" "$(told 'Ветка запушена.')")")" \
+    | grep -qi 'запушена'; then got="есть"; else got="нет"; fi
+report "SC-AK-422 — отказ называет найденное утверждение" "$got" "есть"
+
+suite_result "гард утверждения"

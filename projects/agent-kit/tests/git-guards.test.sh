@@ -88,11 +88,13 @@ expect_decision "SC-AK-179 — недоступный удалённый яру�
     "$(input_cmd 'gh pr create --title "[RT-78] Сделано" --body x' Bash "$NO_REMOTE")" PASS
 rm -rf "$STALE" "$NO_REMOTE" "$BARE_DIR"
 
-# --- разобранная папка задачи как условие слияния ----------------------------------------------
+# --- разобранная папка задачи как условие поставки ---------------------------------------------
 #
-# Требование стоит на слиянии, а не на открытии заявки: до слияния папка ещё нужна — правка по
-# замечаниям разбора идёт в ту же ветку, и без замысла на диске её отбивает гард хода работы.
-# Судится содержимое ветки: снесённая, но не закоммиченная папка въехала бы вместе с ней.
+# Требование стоит на открытии заявки и остаётся вторым рубежом на слиянии. Прежде оно стояло
+# только на слиянии: считалось, что до одобрения папка ещё нужна — правка по замечаниям идёт в
+# ту же ветку. Но кнопку слияния нажимает человек на хостинге, и туда гард не достаёт: трижды
+# подряд папка уехала в главную неразобранной. Судится содержимое ветки: снесённая, но не
+# закоммиченная папка въехала бы вместе с ней.
 mg() { expect_decision "$1" git-guard-delivery.sh "$(input_cmd "$3" Bash "$2")" "$4"; }
 
 # Папка задачи лежит в ветке и уедет в главную.
@@ -101,9 +103,18 @@ fixture_commit "$LYING" docs/tasks/RT-42-probe/plan.md 'замысел' 'docs: �
 mg "SC-AK-12 — слияние с лежащей папкой задачи" "$LYING" 'gh pr merge 42 --merge' deny
 expect_reason "SC-AK-12 — отказ называет саму папку" git-guard-delivery.sh \
     "$(input_cmd 'gh pr merge 42 --merge' Bash "$LYING")" 'docs/tasks/RT-42-probe'
-# Открытие заявки той же папкой не отбивается — там ей ещё рано.
-expect_hint "SC-AK-16 — открытие заявки папкой не отбивается" git-guard-delivery.sh \
+# Открытие заявки той же папкой отбивается: уборка стоит до заявки, а не после одобрения.
+mg "SC-AK-526 — открытие заявки с лежащей папкой" "$LYING" 'gh pr create --title "[RT-42] Сделано" --body x' deny
+expect_reason "SC-AK-526 — отказ называет саму папку" git-guard-delivery.sh \
     "$(input_cmd 'gh pr create --title "[RT-42] Сделано" --body x' Bash "$LYING")" 'docs/tasks/RT-42-probe'
+mg "SC-AK-527 — обход с причиной действует и на открытии" "$LYING" \
+    'gh pr create --title "[RT-42] Сделано" --body x # Task-folder-skip: работа вливается частями' PASS
+# Клиента хостинга зовут с подстановкой токена — иначе из команды не видно, кто её делает.
+# Признак, не знавший о присваиваниях, снимал этой формой и запрет слияния, и уборку папки.
+mg "SC-AK-559 — слияние с подстановкой токена судится наравне с голым" "$LYING" \
+    'GH_TOKEN="$TOKEN" gh pr merge 42 --merge' deny
+mg "SC-AK-559 — открытие заявки с подстановкой токена судится наравне" "$LYING" \
+    'GH_TOKEN="$TOKEN" gh pr create --title "[RT-42] Сделано" --body x' deny
 # Обход из текста команды действует и тогда, когда очередь работ спросить некого.
 mg "SC-AK-17 — обход с причиной в тексте команды" "$LYING" 'gh pr merge 42 --merge # Task-folder-skip: работа вливается частями' PASS
 mg "SC-AK-18 — обход без причины обходом не считается" "$LYING" 'gh pr merge 42 --merge # Task-folder-skip:' deny
@@ -143,6 +154,8 @@ fixture_remove "$WIPED" docs/tasks/RT-44-probe 'docs: папка снесена'
 mg "SC-AK-15 — папка удалена, а в архиве пусто" "$WIPED" 'gh pr merge 44 --merge' deny
 expect_reason "SC-AK-15 — отказ называет каталог архива" git-guard-delivery.sh \
     "$(input_cmd 'gh pr merge 44 --merge' Bash "$WIPED")" 'docs/archive'
+mg "SC-AK-528 — снос без записи в архив отбивает и открытие заявки" "$WIPED" \
+    'gh pr create --title "[RT-44] Сделано" --body x' deny
 rm -rf "$WIPED"
 
 # Работа, у которой папки не было вовсе, прибыли в архиве не должна.
@@ -241,6 +254,17 @@ sig "пуш с ключами между командой и подкоманд�
     'git -c credential.helper= -c http.extraheader="AUTHORIZATION: basic x" push -u origin RT-70-signature' deny
 sig "SC-AK-184 — пробный пуш подписи не судит" "$WRONG_SIG" 'git push --dry-run origin RT-70-signature' PASS
 sig "чтение истории пушем не считается" "$WRONG_SIG" 'git log --oneline -5' PASS
+# Пуш набирают с подстановкой токена — этого требует соседняя проверка того же гарда. Признак,
+# считавший вызовом только команду в начале строки, пропускал ровно ту форму, ради которой
+# подпись и судится: коммит с чужим числом уехал в главную ветку мимо этого отказа.
+sig "SC-AK-559 — вызов с подстановкой переменной судится наравне с голым" "$WRONG_SIG" \
+    'GH_TOKEN="$TOKEN" git push origin RT-70-signature' deny
+sig "SC-AK-559 — несколько присваиваний подряд вызова не скрывают" "$WRONG_SIG" \
+    'TOKEN=x GH_TOKEN="$TOKEN" git push origin RT-70-signature' deny
+sig "SC-AK-559 — присваивание без команды за ним вызовом не считается" "$WRONG_SIG" \
+    'GH_TOKEN="$TOKEN"' PASS
+sig "SC-AK-559 — упоминание команды в кавычках вызовом не становится" "$WRONG_SIG" \
+    'echo "git push origin RT-70-signature"' PASS
 
 CLAUDE_PROJECT_DIR="$WRONG_SIG" expect_reason "SC-AK-179 — отказ называет коммит и найденную почту" \
     git-guard-delivery.sh "$(input_cmd 'git push origin RT-70-signature' Bash "$WRONG_SIG")" \
@@ -308,6 +332,122 @@ gate "слово push без команды git пушем не считаетс
 printf 'rt_push_checks() { printf "%%s\\n" true; }\n' > "$RED_GATE/.claude/rt-kit/project.sh"
 gate "зелёный набор пуш не задерживает" "$RED_GATE" 'git push origin RT-72-gate' PASS
 rm -rf "$RED_GATE"
+
+# SC-AK-405…407. Составная «переключиться и запушить» проходила гейт молча: набор гоняется в том
+# дереве, какое лежит на момент разбора команды, то есть по прежней ветке. Зелёный набор при этом
+# читается как проверка ушедшего. Набор здесь зелёный намеренно — судится не он, а сама форма
+# команды: отказ обязан прийти раньше, чем гард дойдёт до прогона.
+SWITCH_GATE="$(fixture_repo RT-73-switch)"
+mkdir -p "$SWITCH_GATE/.claude/rt-kit"
+printf 'rt_push_checks() { printf "%%s\\n" true; }\n' > "$SWITCH_GATE/.claude/rt-kit/project.sh"
+gate "SC-AK-405 — переключение и пуш одной командой отбиваются" "$SWITCH_GATE" \
+    'git checkout RT-73-switch && git push origin RT-73-switch' deny
+gate "SC-AK-405 — то же через switch" "$SWITCH_GATE" \
+    'git switch RT-73-switch && git push origin RT-73-switch' deny
+gate "SC-AK-406 — заведение новой ветки в той же команде пуш не отбивает" "$SWITCH_GATE" \
+    'git checkout -b RT-74-fresh && git push -u origin RT-74-fresh' PASS
+gate "SC-AK-406 — то же через switch -c" "$SWITCH_GATE" \
+    'git switch -c RT-74-fresh && git push -u origin RT-74-fresh' PASS
+gate "SC-AK-407 — пробный пуш формы команды не судит" "$SWITCH_GATE" \
+    'git checkout RT-73-switch && git push --dry-run origin RT-73-switch' PASS
+
+# SC-AK-408. Отложенная правка наружу ничего не отправляет, а слово `push` в ней стоит отдельным:
+# набор гейта гонялся на ней целиком и отбивал вызов первой же красной проверкой.
+gate "SC-AK-408 — отложенная правка пушем не считается" "$SWITCH_GATE" \
+    'git stash push -u -m проба' PASS
+
+# Тайник рядом с настоящим пушем признака не гасит: вырезается он, а не вся команда. Набор здесь
+# красный намеренно — иначе «прошло» значило бы только, что гонять было нечего.
+STASH_GATE="$(fixture_repo RT-75-stash)"
+mkdir -p "$STASH_GATE/.claude/rt-kit"
+printf 'rt_push_checks() { printf "%%s\\n" false; }\n' > "$STASH_GATE/.claude/rt-kit/project.sh"
+gate "SC-AK-408 — тайник признака настоящего пуша не гасит" "$STASH_GATE" \
+    'git stash push -u && git push origin RT-75-stash' deny
+gate "SC-AK-408 — один тайник набора не гоняет" "$STASH_GATE" \
+    'git stash push -u -m проба' PASS
+rm -rf "$STASH_GATE"
+
+CLAUDE_PROJECT_DIR="$SWITCH_GATE" expect_reason "SC-AK-405 — отказ называет законный ход" \
+    git-guard-push-tests.sh \
+    "$(input_cmd 'git checkout RT-73-switch && git push origin RT-73-switch' Bash "$SWITCH_GATE")" \
+    'Раздели вызовы'
+rm -rf "$SWITCH_GATE"
+
+# --- личность вызова, открывающего заявку -------------------------------------------------------
+# Клиент хостинга держит две записи сразу, и какая откроет заявку, из текста команды видно только
+# по явной подстановке токена. Промах всплывает шагом позже — на назначении ревьювера, — и чинится
+# переоткрытием: автора у заявки не сменить.
+#
+# Команда собирается переменной, а не пишется строкой: набор читает тот же гард поставки, и
+# написанная целиком, она отбивает правку этого файла как настоящее открытие заявки.
+OPEN='gh pr'' create'
+
+TOKEN_PR="$(fixture_repo RT-74-token)"
+mkdir -p "$TOKEN_PR/.claude/rt-kit"
+printf 'RT_PULL_TOKEN_VAR="GH_TOKEN"\nRT_PULL_TOKEN_HINT="GH_TOKEN=$(cat ~/.config/token)"\n' \
+    > "$TOKEN_PR/.claude/rt-kit/project.sh"
+
+pr_token() {
+    local label="$1" cmd="$2" want="$3" out
+    out="$(CLAUDE_PROJECT_DIR="$TOKEN_PR" input_cmd "$cmd" Bash "$TOKEN_PR" \
+        | CLAUDE_PROJECT_DIR="$TOKEN_PR" "$HOOKS/git-guard-delivery.sh" 2>/dev/null \
+        | jq -r '.hookSpecificOutput.permissionDecision // "PASS"' 2>/dev/null)"
+    report "$label" "${out:-PASS}" "$want"
+}
+
+pr_token "SC-AK-480 — заявка без подстановки токена отбивается" \
+    "$OPEN --title \"[RT-74] Сделано\" --body x" deny
+pr_token "SC-AK-481 — заявка с подстановкой токена проходит" \
+    "GH_TOKEN=\$(cat ~/.config/token) $OPEN --title \"[RT-74] Сделано\" --body x" PASS
+pr_token "SC-AK-482 — токен, выставленный отдельной строкой, засчитывается" \
+    "export GH_TOKEN=\$(cat ~/.config/token); $OPEN --title \"[RT-74] Сделано\" --body x" PASS
+
+CLAUDE_PROJECT_DIR="$TOKEN_PR" expect_reason "SC-AK-483 — отказ называет переменную токена" \
+    git-guard-delivery.sh \
+    "$(input_cmd "$OPEN --title \"[RT-74] Сделано\" --body x" Bash "$TOKEN_PR")" \
+    'GH_TOKEN'
+rm -rf "$TOKEN_PR"
+
+# Дерево без машинной записи требования не получает: у него личность вызова ничего не значит.
+NO_TOKEN_PR="$(fixture_repo RT-75-notoken)"
+mkdir -p "$NO_TOKEN_PR/.claude/rt-kit"
+printf 'RT_PULL_TOKEN_VAR=""\n' > "$NO_TOKEN_PR/.claude/rt-kit/project.sh"
+out="$(CLAUDE_PROJECT_DIR="$NO_TOKEN_PR" input_cmd "$OPEN --title \"[RT-75] Сделано\" --body x" Bash "$NO_TOKEN_PR" \
+    | CLAUDE_PROJECT_DIR="$NO_TOKEN_PR" "$HOOKS/git-guard-delivery.sh" 2>/dev/null \
+    | jq -r '.hookSpecificOutput.permissionDecision // "PASS"' 2>/dev/null)"
+report "SC-AK-484 — дерево без машинной записи автора не судит" "${out:-PASS}" PASS
+rm -rf "$NO_TOKEN_PR"
+
+# Второй ярус: автора заявки называет хостинг, и спрашивается он на снятии черновика — последнем
+# ходе, где промах ещё исправим. Сети набор не знает, поэтому состояние заявки подменяется
+# профилем дерева-пробы: судится решение гарда, а не работа клиента хостинга.
+AUTHOR_PR="$(fixture_repo RT-76-author)"
+mkdir -p "$AUTHOR_PR/.claude/rt-kit"
+author_profile() {
+    printf 'RT_TASK_BOT="bot"\nRT_PULL_TOKEN_HINT="GH_TOKEN=$(cat ~/.config/token)"\n' \
+        > "$AUTHOR_PR/.claude/rt-kit/project.sh"
+    printf 'rt_pull_state() { printf "%%s" %s; }\n' "'{\"exists\":true,\"number\":9,\"draft\":true,\"reviewed\":true,\"conflicting\":false,\"author\":\"$1\"}'" \
+        >> "$AUTHOR_PR/.claude/rt-kit/project.sh"
+}
+
+ready_author() {
+    local label="$1" want="$2" out
+    out="$(CLAUDE_PROJECT_DIR="$AUTHOR_PR" input_cmd 'gh pr ready 9' Bash "$AUTHOR_PR" \
+        | CLAUDE_PROJECT_DIR="$AUTHOR_PR" "$HOOKS/git-guard-delivery.sh" 2>/dev/null \
+        | jq -r '.hookSpecificOutput.permissionDecision // "PASS"' 2>/dev/null)"
+    report "$label" "${out:-PASS}" "$want"
+}
+
+author_profile owner
+ready_author "SC-AK-485 — черновик не снимается с заявки, открытой не машинной записью" deny
+CLAUDE_PROJECT_DIR="$AUTHOR_PR" expect_reason "SC-AK-486 — отказ называет обе записи и переоткрытие" \
+    git-guard-delivery.sh \
+    "$(input_cmd 'gh pr ready 9' Bash "$AUTHOR_PR")" \
+    'открой заново'
+
+author_profile bot
+ready_author "SC-AK-487 — заявка машинной записи черновик снимает" PASS
+rm -rf "$AUTHOR_PR"
 
 # --- отказ в пользу работы ---------------------------------------------------------------------
 for hook in git-guard-main.sh git-guard-delivery.sh git-guard-push-tests.sh; do

@@ -1,5 +1,4 @@
 import { IDictionary, TPrimitive } from '@rt-tools/core';
-import { TNullable } from '@rt-tools/utils';
 
 import { EModelStatus } from '../enums';
 
@@ -24,8 +23,9 @@ export namespace IStateBase {
     export interface List<ENTITY_TYPE extends object, PAGE_MODEL_TYPE extends object, SORT_MODEL_TYPE extends object> extends Async {
         entities: ENTITY_TYPE[];
         pageModel: PAGE_MODEL_TYPE;
-        sortModel: TNullable<SORT_MODEL_TYPE>;
-        searchTerm: TNullable<string>;
+        /** @description Absence is spelled one way — the stores of this tree spell it `null`. */
+        sortModel: SORT_MODEL_TYPE | null;
+        searchTerm: string | null;
         params: IDictionary<TPrimitive>;
     }
 }

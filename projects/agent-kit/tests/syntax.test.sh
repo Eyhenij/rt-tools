@@ -49,4 +49,25 @@ for file in "$HOOKS"/*.sh; do
     fi
 done
 
+# SC-AK-409. Гард, отбивающий вызов или ход, называет два законных хода — починить или принести
+# владельцу цену обхода. Хвост зовётся общей функцией, а не пишется в каждом тексте: написанный
+# по одному, он пропускается там, где отказ заводили позже, и пропуск читается как «у этого
+# отказа ходов нет». Отбор здесь по самому отказу: файл, который ничего не отбивает, требования
+# не получает.
+for file in "$HOOKS"/*.sh; do
+    [ -f "$file" ] || continue
+    case "${file##*/}" in
+        deny-tail.sh) continue ;;
+    esac
+    grep -qE 'permissionDecision:"deny"|decision:"block"|exit 2' "$file" || continue
+
+    # Гарды семьи запросов к хранилищу зовут общий отказ соседа и своего не объявляют.
+    if grep -q 'rt_deny_tail' "$file" || grep -q 'sql-guard-parse.sh' "$file" \
+        || grep -qE '^\. "\$\(dirname "\$\{BASH_SOURCE\[0\]\}"\)/sql-guard' "$file"; then
+        report "SC-AK-409 — отказ зовёт общий хвост: ${file##*/}" PASS PASS
+    else
+        report "SC-AK-409 — отказ зовёт общий хвост: ${file##*/}" FAIL PASS
+    fi
+done
+
 suite_result "разбор ресурсов"

@@ -102,13 +102,29 @@ state_is 'этап-идёт'
 expect_stop "SC-AK-306 — повторный заход по тому же ходу не судится" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)")" true)" PASS
 
+# --- работа без папки задачи ------------------------------------------------------------------
+# Состояния у неё нет, и первый признак взять неоткуда: судится второй — была ли за ход хоть
+# одна правка дерева. Раньше страж отпускал такую работу молча, и просьба владельца «разложи»
+# кончалась объявлением намерения.
 rm -f "$TASK/progress.md"
-expect_stop "SC-AK-307 — работа без хода работы не судится" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)")")" PASS
+expect_stop "SC-AK-307 — работа без хода работы судится вторым признаком" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)")")" BLOCK
+expect_stop "SC-AK-312 — правка дерева отпускает и работу без хода работы" \
+    "$(input_stop "$(transcript "$(say 'разложи файлы')" "$(edited)")")" PASS
+expect_stop "SC-AK-313 — слово владельца об остановке отпускает работу без хода работы" \
+    "$(input_stop "$(transcript "$(say 'останови, дальше сам')" "$(reply)")")" PASS
+
+# Отсоединённая голова — тот же случай: имени у ветки нет, и папку задачи искать негде.
+git -C "$REPO" checkout -q --detach 2>/dev/null
+expect_stop "SC-AK-314 — на отсоединённой голове пустой ход не закрывается" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)")")" BLOCK
+expect_stop "SC-AK-315 — на отсоединённой голове правка дерева ход отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" PASS
+git -C "$REPO" checkout -q - 2>/dev/null
 
 printf '# Ход работы\n\n## Где стоим\n\n- **Этап:** 1 из 2\n' > "$TASK/progress.md"
-expect_stop "SC-AK-308 — ход работы без объявленного состояния не судится" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)")")" PASS
+expect_stop "SC-AK-308 — ход работы без объявленного состояния судится вторым признаком" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)")")" BLOCK
 
 # --- проверка закрытого этапа ----------------------------------------------------------------
 # Отметка «этап сделан» — утверждение о дереве, и подтверждается оно выводом команды. Прежний
@@ -134,6 +150,28 @@ printf '# Ход работы\n\n## Где стоим\n\n- **Состояние:
     > "$TASK/progress.md"
 expect_stop "SC-AK-311 — при прежнем номере этапа команда проверки не спрашивается" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" PASS
+
+# --- снятая папка задачи ----------------------------------------------------------------------
+# Папка разбирается ДО открытия заявки, и между этими двумя движениями работа не отдана никому.
+# Прежде страж выходил здесь нулём — и ход, которому до отдачи оставался один шаг, закрывался
+# пустым. Теперь признак снимает только требование состояния: дальше судит второй признак.
+ARCHIVED="$(fixture_repo_branched main RT-2-archived)"
+fixture_commit "$ARCHIVED" docs/tasks/RT-2-archived/progress.md '# Ход работы' 'docs: папка задачи'
+fixture_remove "$ARCHIVED" docs/tasks/RT-2-archived 'docs: папка задачи разобрана'
+
+input_archived() {
+    jq -n --arg p "$1" --arg d "$ARCHIVED" \
+        '{session_id:"tests",transcript_path:$p,cwd:$d,stop_hook_active:false}'
+}
+
+expect_stop "SC-AK-574 — снятая папка задачи пустой ход не кончает" \
+    "$(input_archived "$(transcript "$(say 'ну что там?')" "$(reply)")")" BLOCK
+expect_stop "SC-AK-575 — при снятой папке открытие заявки ход отпускает" \
+    "$(input_archived "$(transcript "$(say 'продолжай')" "$(ran 'gh pr create --draft')")")" PASS
+expect_stop "SC-AK-576 — при снятой папке правка дерева ход отпускает" \
+    "$(input_archived "$(transcript "$(say 'продолжай')" "$(edited)")")" PASS
+
+rm -rf "$ARCHIVED"
 
 state_is 'этап-идёт'
 exit_code_of() {

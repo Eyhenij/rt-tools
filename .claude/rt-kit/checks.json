@@ -26,15 +26,20 @@
         "libs/message-bus-api/",
         "apps/message-bus/"
     ],
-    "schemaFile": "",
-    "migrationsDir": "",
+    "schemaFile": "prisma/schema.prisma",
+    "migrationsDir": "prisma/migrations",
     "families": [
         "message-bus-admin"
     ],
     "importScope": "@rt",
     "libPrefix": "admin",
-    "noDependencyTags": ["scope:message-bus-common"],
-    "barrelFiles": ["index.ts", "public-api.ts"],
+    "noDependencyTags": [
+        "scope:message-bus-common"
+    ],
+    "barrelFiles": [
+        "index.ts",
+        "public-api.ts"
+    ],
     "pushGate": {
         "pipelineFile": ".github/workflows/ci.yml",
         "stepPattern": "^\\s*-\\s*name:\\s*(.+?)\\s*$",
@@ -61,6 +66,8 @@
                 "skip": "уборка за раннером, а не проверка: на своей машине снимать нечего — образы и кэш нужны следующей сборке"
             },
             "Hook scenarios": "node tools/check-hooks.mjs",
+            "Package boundary": "node tools/check-boundary.mjs",
+            "Circular imports": "node tools/check-cycles.mjs",
             "Test, Lint, Typecheck, Build": "pnpm exec nx affected -t lint typecheck test build --parallel",
             "Hook suites": "pnpm exec nx affected -t test-hooks",
             "Stylelint": "pnpm run lint:styles",
@@ -77,6 +84,10 @@
             "Build API image": "docker build -f deploy/message-bus.Dockerfile -t message-bus:gate .",
             "Build web image": "docker build -f deploy/message-bus-web.Dockerfile -t message-bus-web:gate ."
         }
+    },
+    "deploy": {
+        "workflow": "deploy.yml",
+        "mainBranch": "main"
     },
     "board": {
         "owner": "Eyhenij",
@@ -115,5 +126,15 @@
         "reviewer": "Eyhenij"
     },
     "apiFamily": "message-bus-api",
-    "libsRoot": "libs"
+    "libsRoot": "libs",
+    "proseRoots": [
+        "docs/constitution/",
+        ".claude/skills/",
+        ".claude/rt-kit/templates/",
+        "projects/agent-kit/assets/laws/",
+        "projects/agent-kit/assets/rules/",
+        "projects/agent-kit/assets/patterns/",
+        "projects/agent-kit/assets/pitfalls/",
+        "projects/agent-kit/assets/skills/"
+    ]
 }

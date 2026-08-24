@@ -19,7 +19,7 @@
     @if (!reading() && entity(); as record) {
         <rt-aside-section [heading]="summaryLabel">
             @if (record.summary; as summary) {
-                <pre rtElem="text" qa-dataid="month-record-summary">{{ summary }}</pre>
+                <rt-markdown-text qa-dataid="month-record-summary" [text]="summary" />
             } @else {
                 <p rtElem="empty" qa-dataid="month-record-summary-missing">{{ summaryMissing }}</p>
             }

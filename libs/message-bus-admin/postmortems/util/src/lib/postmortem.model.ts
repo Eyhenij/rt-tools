@@ -14,7 +14,7 @@
  * временем — так его отдаёт хранилище, — и общее объявление лгало бы одной из сторон. Общее у них
  * то, что переживает передачу: страница и дерево, и они приходят из общей либы.
  */
-import { ITreeChoice } from '@rt/message-bus-common';
+import { ECargoState, ITreeChoice } from '@rt/message-bus-common';
 
 export namespace IPostmortem {
     /** Строка списка: то, что видно в таблице. */
@@ -24,6 +24,8 @@ export namespace IPostmortem {
             readonly id: string;
             readonly tree: ITreeChoice;
             readonly file: string;
+            readonly state: string;
+            readonly releaseVersion: string | null;
             readonly arrivedAt: string;
             readonly updatedAt: string;
         }
@@ -34,6 +36,20 @@ export namespace IPostmortem {
             readonly tree: ITreeChoice;
             /** Имя файла разбора на дереве: им разбор и опознаётся. */
             readonly file: string;
+            /** На каком шаге разбора стоит запись. Пустым это поле не приходит никогда. */
+            readonly state: ECargoState;
+            /**
+             * Состояние по-русски: показывается оно этой строкой.
+             *
+             * Лежит полем, а не считается в шаблоне: шаблон методов не зовёт, а пайп ради одного
+             * перевода потребовал бы разделу своего слоя вида.
+             */
+            readonly stateLabel: string;
+            /**
+             * В какой версии искать фикс. Пустая строка означает, что выпуска не было: ячейка
+             * столбца тогда пуста — ни прочерка, ни слова «нет» в ней не стоит.
+             */
+            readonly releaseVersion: string;
             readonly arrivedAt: Date;
             readonly updatedAt: Date;
         }
@@ -42,10 +58,17 @@ export namespace IPostmortem {
     /** Запись целиком: то, что показывает панель подробностей. */
     export interface Api extends Short.Api {
         readonly text: string;
+        /** Чем недочёт исправлен. Пусто у записи, которую никто не чинил. */
+        readonly fixNote: string | null;
     }
 
     export interface State extends Short.State {
         /** Текст разбора целиком. Показывается текстом, а не разметкой. */
         readonly text: string;
+        /**
+         * Чем недочёт исправлен. Пустая строка означает, что починки не было: панель тогда не
+         * показывает ни подписи, ни пустого значения.
+         */
+        readonly fixNote: string;
     }
 }

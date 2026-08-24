@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.9.1 · hooks/task-flow-guard.sh · bcfd95194a5f · правится надстройкой, не здесь
+# rt-kit v0.13.0 · hooks/task-flow-guard.sh · 63f319c0a6f4 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/profile-check.sh
+# Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # PreToolUse guard for Edit|Write|MultiEdit: код не пишется раньше замысла.
 #
 # Работа идёт много заходов, и между ними исполнитель не помнит ничего. Замысел, лежащий на
@@ -26,7 +26,11 @@
 # FAIL-OPEN: нет jq, не git-репозиторий, битый ввод, чужой инструмент → пропуск. Сломанный
 # гард не должен мешать работать.
 
-input="$(cat 2>/dev/null)"
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
+
+rt_hook_read
+input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0
 
@@ -44,7 +48,7 @@ done
 [ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
 command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
 
-tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+tool="$(rt_hook_tool)"
 candidates=""
 case "$tool" in
     # Инструмент редактора заводит файл теми же двумя данными, только называет их иначе —
@@ -60,7 +64,7 @@ case "$tool" in
     # имён гард стоял бы объявленным на них и молча пропускал — состояние хуже необъявленного,
     # потому что снаружи выглядит закрытым.
     Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool)
-        cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
+        cmd="$(rt_hook_cmd)"
         [ -z "$cmd" ] && exit 0
         # Универсальный исполнитель прячет настоящую команду во вложенной строке: без её разбора
         # путь стоит за кавычкой, и до него не дотягивается ни один образец.
@@ -107,15 +111,27 @@ EOF
 
 # Каталог папок задач: у дерева он свой, но имя обычно общее.
 tasks_dir="${RT_TASKS_DIR:-docs/tasks}"
+main_branch="${RT_MAIN_BRANCH:-main}"
 
+# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть. Файл
+# может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh"
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+
+# Отказ: причина первым параметром, законная форма обхода — вторым. Хвост дописывается здесь, а
+# не в каждом тексте: пропущенный в одном месте, он читается как «у этого отказа ходов нет».
 deny() {
-    jq -n --arg r "$1" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}\n' "$1"
+    reason="$1"
+    tail_text="$(rt_deny_tail "$2")"
+    [ -n "$tail_text" ] && reason="$1 ${tail_text}"
+    jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
+        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}\n' "$reason"
     exit 0
 }
 
 # Ветку смотрим там же, где пойдёт правка: у worktree она своя.
-workdir="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)"
+workdir="$(rt_hook_cwd)"
 [ -z "$workdir" ] && workdir="${CLAUDE_PROJECT_DIR:-.}"
 cd "$workdir" 2>/dev/null || exit 0
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
@@ -131,6 +147,23 @@ root="$(git rev-parse --show-toplevel 2>/dev/null)"
 [ -z "$root" ] && exit 0
 dir="$root/$tasks_dir/$branch"
 plan="$dir/plan.md"
+
+# Папка, разобранная коммитом этой ветки, — признак того, что работа отдана. Замысел с диска к
+# этой минуте снят намеренно: уборка стоит до открытия заявки, потому что кнопку слияния
+# нажимает человек на хостинге и закрывающему коммиту места после одобрения не остаётся.
+# Правка после уборки — это правка по замечаниям разбора, и требовать под неё замысла значило
+# бы запирать ветку собственным порядком. Признак берётся из истории ветки, а не с диска:
+# снесённая, но не закоммиченная папка отданной работы не означает.
+folder_archived() {
+    [ -n "$(git ls-tree -d --name-only HEAD -- "$tasks_dir/$branch" 2>/dev/null | head -1)" ] && return 1
+    base="$(git merge-base "$main_branch" HEAD 2>/dev/null)"
+    [ -z "$base" ] && return 1
+    had="$(git ls-tree -d --name-only "$base" -- "$tasks_dir/$branch" 2>/dev/null | head -1)"
+    [ -z "$had" ] && had="$(git log "$base..HEAD" --diff-filter=A --name-only --pretty=format: -- "$tasks_dir/$branch" 2>/dev/null | head -1)"
+    [ -n "$had" ]
+}
+
+folder_archived && exit 0
 
 if [ ! -f "$plan" ]; then
     deny "BLOCKED by task-flow: нет замысла — '${tasks_dir}/${branch}/plan.md'. Собери папку задачи с образца (cp -r ${tasks_dir}/_template ${tasks_dir}/${branch}) и заполни шапку, след задачи и этапы, затем повтори. Правило — скил task-flow."
@@ -192,7 +225,8 @@ fi
 draft="$(sed -n 's/^\*\*Драфт:\*\*[[:space:]]*`\([^`]*\)`.*/\1/p' "$plan" 2>/dev/null | head -1)"
 
 if [ -z "$draft" ]; then
-    deny "BLOCKED by task-flow: в '${tasks_dir}/${branch}/plan.md' не названа договорённость о продукте. Заведи её в docs/specs/<домен>/proposed/<фича>/ и укажи строкой '**Драфт:** \`путь\`'. Если правка поведения не меняет — поставь '**Поведение:** не меняется — <причина владельца>'. Правило — скил task-flow."
+    deny "BLOCKED by task-flow: в '${tasks_dir}/${branch}/plan.md' не названа договорённость о продукте. Заведи её в docs/specs/<домен>/proposed/<фича>/ и укажи строкой '**Драфт:** \`путь\`'. Правило — скил task-flow." \
+        "строка '**Поведение:** не меняется — <причина владельца>' в замысле; пустая причина не принимается"
 fi
 
 case "$draft" in

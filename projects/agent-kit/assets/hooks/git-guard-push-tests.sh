@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/profile-check.sh
+# Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # Гард проверок перед пушем. PreToolUse на вызове пуша.
 #
 # Пуш — это вход в конвейер: слияние в главную ветку запускает выкатку, и всё, что не
@@ -25,32 +25,72 @@
 #
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: не репозиторий, битый ввод, нет профиля — пропуск.
 
-input="$(cat 2>/dev/null)"
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
+
+rt_hook_read
+input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 
-tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+tool="$(rt_hook_tool)"
 case "$tool" in
     # Терминал среды и универсальный исполнитель кладут команду в то же поле.
     Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool) ;;
     *) exit 0 ;;
 esac
 
-cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
+cmd="$(rt_hook_cmd)"
 
 # Вызов пуша узнаётся по двум признакам сразу — команда `git` в начале строки или за
 # разделителем и слово `push` отдельным словом. Тем же приёмом, что у гарда поставки: одной
 # подстрокой «git push» пуш не поймать — помощник учётных данных и заголовок запроса ставятся
 # ключами `-c` между ними, и ровно этой формой здесь и пушат. Пока признаком была подстрока,
 # весь набор гейта на таком пуше не гонялся вовсе, а молчание гарда читалось как «зелено».
-printf '%s' "$cmd" | grep -qE '(^|[;&|(]|&&|\|\|)[[:space:]]*git([[:space:]]|$)' || exit 0
-printf '%s' "$cmd" | grep -qE '(^|[[:space:]])push([[:space:]]|$)' || exit 0
+printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}git([[:space:]]|\$)" || exit 0
+
+# Отложенная правка пушем не бывает: `git stash push` кладёт правку в тайник этой же машины и
+# наружу не отправляет ничего. Слово `push` в ней стоит отдельным, и без этой строки гард гонял
+# на ней весь набор, а потом отбивал вызов на первой красной проверке — то есть отбивал команду,
+# которая ничего никуда не отправляет. Тайник вырезается из строки, и признак считается по
+# остатку: в составной команде рядом с ним может стоять и настоящий пуш.
+probe="$(printf '%s' "$cmd" | sed -E 's/git[[:space:]]+stash[[:space:]]+push/git stash/g')"
+printf '%s' "$probe" | grep -qE '(^|[[:space:]])push([[:space:]]|$)' || exit 0
 
 # Пробный пуш ничего не отправляет: гонять ради него весь набор незачем.
 case "$cmd" in
     *--dry-run*) exit 0 ;;
 esac
 
-workdir="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)"
+# Переключение ветки в той же команде отбивается целиком.
+#
+# Гард — это разбор команды ДО её запуска: набор он гоняет в том дереве, какое лежит сейчас.
+# Составная «переключиться и запушить» проходит гейт по ПРЕЖНЕЙ ветке — молча, проверяя не то.
+# Отказа при этом нет, и зелёный набор читается как проверка того, что уходит на хостинг.
+# Поймано это было случайно: гейт отбил пуш красной проверкой длины файла, которого в пушимой
+# ветке нет вовсе — он смотрел ветку, с которой в этой же команде уходили.
+#
+# Судится переключение на существующую ветку. Заведение новой (`checkout -b`, `switch -c`)
+# сюда не попадает: у свежей ветки дерево то же самое, что и было.
+if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}git[[:space:]]+(checkout|switch)[[:space:]]+" &&
+    ! printf '%s' "$cmd" | grep -qE 'git[[:space:]]+(checkout[[:space:]]+-b|switch[[:space:]]+-c)([[:space:]]|$)'; then
+    reason="BLOCKED: переключение ветки и пуш одной командой. Набор гейта гоняется в том дереве, какое лежит на момент разбора команды, — то есть по ПРЕЖНЕЙ ветке, а не по той, что уходит на хостинг. Зелёный набор при этом читается как проверка ушедшего, хотя проверял он другое. Раздели вызовы: сперва переключись, затем отдельной командой пушь."
+    # Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
+    # Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+    # shellcheck disable=SC1090
+    [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+        && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+    command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+    deny_tail_text="$(rt_deny_tail "")"
+    [ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
+
+    jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
+        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Переключение ветки и пуш одной командой."}}\n'
+    exit 0
+fi
+
+workdir="$(rt_hook_cwd)"
 [ -z "$workdir" ] && workdir="${CLAUDE_PROJECT_DIR:-.}"
 cd "$workdir" 2>/dev/null || exit 0
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
@@ -98,6 +138,17 @@ tail_out="$(printf '%s' "$output" | tail -n 40 | tr -d '\000')"
 reason="BLOCKED: пуш без зелёного локального прогона. «${failed}» упала — почини и пушь снова, обходить гард нельзя. Пуш — вход в конвейер, и красное отсюда проверяется уже на проде. Хвост вывода:
 
 ${tail_out}"
+
+# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
+# Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+deny_tail_text="$(rt_deny_tail "")"
+[ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
 
 jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
     || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Проверки перед пушем не прошли."}}\n'

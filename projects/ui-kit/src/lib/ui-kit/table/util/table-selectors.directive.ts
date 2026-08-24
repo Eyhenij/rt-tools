@@ -2,7 +2,7 @@ import { computed, DestroyRef, Directive, effect, inject, Injector, OnInit, Sign
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { filter, switchMap, take } from 'rxjs/operators';
 
-import { RtuiTableComponent } from '../components';
+import { RtuiTableComponent } from '../components/table/rtui-table.component';
 import { RtCommonSelectorsDirective } from './common-selectors.directive';
 
 @Directive({

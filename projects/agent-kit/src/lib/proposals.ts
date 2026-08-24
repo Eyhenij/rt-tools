@@ -54,7 +54,45 @@ function headingOf(line: string): IHeading | null {
 }
 
 /** Пометка об отправке. По ней же предложение узнаётся отправленным. */
-const SENT: RegExp = /^-\s+\*\*отправлено:\*\*\s*(\S+)/m;
+const SENT: RegExp = /^- +\*\*отправлено:\*\* *(\S+)/m;
+
+/**
+ * Поле ближайшего утверждения: точная цитата строки ресурса, к которой блок относится, — либо
+ * слово о том, что ближайшего нет вовсе.
+ *
+ * Поле обязательно, и обязательно оно затем, чтобы ресурс был прочитан. Мерить похожесть текстов
+ * пробовали замером: законное соседство двух статей одного правила дало 0.345 общих значимых
+ * слов, а законный перенос удачной статьи на соседнее место — 0.355. Порога между ними нет, и
+ * назначенный наугад он отбивал бы правки вместо повторов. Названная цитата судится фактом: она
+ * в ресурсе либо есть, либо её там нет.
+ */
+const NEAREST: RegExp = /^- +\*\*ближайшее:\*\* *([^\n]+)/m;
+
+/**
+ * Слово о том, что ближайшего утверждения в ресурсе нет: цитировать нечего.
+ *
+ * Конец слова здесь проверяется отрицательным просмотром, а не границей слова: границу движок
+ * считает по латинице и цифрам, и между «т» и пробелом её нет вовсе — образец с `\b` не совпал
+ * бы ни с одним русским словом.
+ */
+const NOTHING_NEAR: RegExp = /^нет(?![а-яё])/i;
+
+/**
+ * Цитата ближайшего утверждения: кавычки-ёлочки, как в остальных текстах дерева.
+ *
+ * Ищется позициями, а не образцом: образец на «открыть, набрать не-закрывающих, закрыть» линтер
+ * отбивает как ветвящийся, и поводы у него есть — строка без закрывающей кавычки перебирается им
+ * до конца.
+ */
+function quotedIn(text: string): string {
+    const from: number = text.indexOf('«');
+    const to: number = from < 0 ? -1 : text.indexOf('»', from + 1);
+
+    return from >= 0 && to > from ? text.slice(from + 1, to) : '';
+}
+
+/** Пометка любого рода: по ней считается сдвиг, когда в файл вставляют ещё одну. */
+const MARKED: RegExp = /^- +\*\*(отправлено|отбито):\*\*/m;
 
 export interface IProposal {
     readonly address: string;
@@ -63,6 +101,8 @@ export interface IProposal {
     readonly body: string;
     /** Ссылка на заведённую запись; пусто — не отправлялось. */
     readonly sent: string;
+    /** Поле ближайшего утверждения, как его написали; пусто — поля нет вовсе. */
+    readonly nearest: string;
     /** Файл, в котором блок лежит, путём от корня дерева. */
     readonly file: string;
     /** Строка заголовка в файле, считая с единицы. */
@@ -91,7 +131,15 @@ export function parseProposals(text: string, file: string): readonly IProposal[]
             .trim();
         const { address, resource }: IHeading = heading;
         if (ADDRESSES.includes(address) && !resource.includes('<')) {
-            found.push({ address, resource, body, file, sent: SENT.exec(body)?.[1] ?? '', line: at + 1 });
+            found.push({
+                address,
+                resource,
+                body,
+                file,
+                sent: SENT.exec(body)?.[1] ?? '',
+                nearest: (NEAREST.exec(body)?.[1] ?? '').trim(),
+                line: at + 1,
+            });
         }
         at = -1;
     };
@@ -166,6 +214,37 @@ export function marksOf(root: string, remote: string): readonly string[] {
     return [root, name, remote].filter(Boolean);
 }
 
+/** Один пробел вместо любой пробельной вереницы: цитата в блоке перенесена по своей ширине. */
+function flat(text: string): string {
+    return text.replace(/\s+/g, ' ').trim();
+}
+
+/** Почему блок не уезжает; пустая строка — уезжает. */
+export function nearestMissing(proposal: IProposal, assetsDir: string): string {
+    if (!proposal.nearest) {
+        return 'поля «ближайшее» нет: назови точную строку ресурса, к которой это относится, и то, чего она не покрывает, — либо напиши «нет»';
+    }
+    if (NOTHING_NEAR.test(proposal.nearest)) {
+        return '';
+    }
+
+    const quoted: string = quotedIn(proposal.nearest);
+    if (!quoted) {
+        return 'ближайшее названо без цитаты: строка ресурса приводится в кавычках-ёлочках дословно — иначе проверить нечего';
+    }
+
+    const path: string = join(assetsDir, proposal.resource);
+    if (!existsSync(path)) {
+        // Ресурса у этого дерева нет — сверять не с чем, и отбивать нечего: блок про ресурс,
+        // которого пакет здесь не держит, судится на приёмной стороне.
+        return '';
+    }
+
+    return flat(readFileSync(path, 'utf8')).includes(flat(quoted))
+        ? ''
+        : `цитаты нет в «${proposal.resource}»: ${flat(quoted).slice(0, 60)}… — либо ресурс не читали, либо утверждение переписано с тех пор`;
+}
+
 /**
  * Пометка об отправке дописывается в блок, а не в конец файла: блоков в файле несколько.
  *
@@ -175,12 +254,14 @@ export function marksOf(root: string, remote: string): readonly string[] {
  * пятая — на четыре, то есть посреди готового текста правки, а последнему блоку её не достаётся
  * вовсе, и при следующей отправке он уезжает вторым разом.
  */
-export function markSent(text: string, proposal: IProposal, url: string): string {
+export function markSent(text: string, proposal: IProposal, url: string, field: string = 'отправлено'): string {
     const lines: string[] = text.split('\n');
-    const shift: number = lines.slice(0, proposal.line).filter((line: string): boolean => SENT.test(line)).length;
+    // Сдвиг считает пометки обоих родов: отбитый блок получает свою, и следующая за ним встала бы
+    // строкой выше своего места, если бы её не посчитали.
+    const shift: number = lines.slice(0, proposal.line).filter((line: string): boolean => MARKED.test(line)).length;
     // Пометка встаёт сразу под заголовок: конец блока определяется следующим заголовком, а его
     // может и не быть — тогда «конец» пришлось бы искать по пустым строкам в хвосте файла.
-    lines.splice(proposal.line + shift, 0, `- **отправлено:** ${url}`);
+    lines.splice(proposal.line + shift, 0, `- **${field}:** ${url}`);
 
     return lines.join('\n');
 }

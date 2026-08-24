@@ -9,7 +9,16 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 
-import { bindingsOf, driftedMatchers, hooksSection, IHookBinding, IMatcherDrift, SETTINGS_PATH, unboundHooks } from './hooks-map.js';
+import {
+    bindingsOf,
+    DISPATCH_PATH,
+    driftedMatchers,
+    hooksSection,
+    IHookBinding,
+    IMatcherDrift,
+    SETTINGS_PATH,
+    unboundHooks,
+} from './hooks-map.js';
 
 const GUARD: string = '.claude/hooks/window-fill-guard.sh';
 
@@ -24,8 +33,8 @@ describe('bindingsOf', () => {
         const section: Record<string, unknown> = hooksSection(bindings);
 
         expect(eventsOf(bindings)).toEqual(['PostToolUse', 'PreToolUse']);
-        expect(JSON.stringify(section['PreToolUse'])).toContain(GUARD);
-        expect(JSON.stringify(section['PostToolUse'])).toContain(GUARD);
+        expect(JSON.stringify(section['PreToolUse'])).toContain(`${DISPATCH_PATH} PreToolUse`);
+        expect(JSON.stringify(section['PostToolUse'])).toContain(`${DISPATCH_PATH} PostToolUse`);
     });
 
     it('гард без объявления к агенту не подключается вовсе', (): void => {

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.9.1 · hooks/proposal-guard.sh · 865bfb4a74a8 · правится надстройкой, не здесь
+# rt-kit v0.13.0 · hooks/proposal-guard.sh · a937e2a2ea15 · правится надстройкой, не здесь
 # rt-hook: Stop
+# Требует: hooks/deny-tail.sh
 # Гард предложения: ход, в котором владелец сказал завести или отправить предложение слою правил,
 # не заканчивается, пока отправки не было. Stop.
 #
@@ -20,7 +21,11 @@
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: при любой ошибке, нехватке `jq`, отсутствии записи хода и повторном
 # заходе ход РАЗРЕШАЕТСЯ (exit 0). Сломанный гард не имеет права заклинить разговор.
 
-input="$(cat 2>/dev/null)"
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
+
+rt_hook_read
+input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 
 command -v jq >/dev/null 2>&1 || exit 0
@@ -87,6 +92,17 @@ reason="BLOCKED by proposal-guard: владелец сказал завести 
 Сухой прогон отправкой не является: он показывает, что уехало бы, и следа наружу не оставляет. Отправка пишет отметки в файлы предложений и делает дерево грязным — при открытом PR они ложатся вторым коммитом в ту же ветку, и это их место, а не повод отложить.
 
 Гард судит один ход: следующий заход не отбивается."
+
+# Общий хвост отказа: два законных хода. Файл может быть не разложен — тогда хвоста нет,
+# а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+deny_tail_text="$(rt_deny_tail "")"
+[ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
 
 jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
     || printf '{"decision":"block","reason":"proposal-guard: владелец просил предложение — отправь его командой пакета."}\n'

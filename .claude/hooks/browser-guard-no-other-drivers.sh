@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.9.1 · hooks/browser-guard-no-other-drivers.sh · 4a975aa93627 · правится надстройкой, не здесь
+# rt-kit v0.13.0 · hooks/browser-guard-no-other-drivers.sh · c70d8cb0750d · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__playwright__.*|mcp__chrome-devtools__.*|Bash
+# Требует: hooks/deny-tail.sh
 # Гард обходных путей к браузеру. PreToolUse.
 #
 # Закрепление профиля чего-то стоит только тогда, когда дверь одна. Здесь перечислены двери,
@@ -13,15 +14,24 @@
 #
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: помощник не назвал профиль — пропуск.
 
-input="$(cat 2>/dev/null)"
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
+
+rt_hook_read
+input="$RT_HOOK_INPUT"
 
 device_id="$("${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/browser-device-id.sh" 2>/dev/null)"
 [ -z "$device_id" ] && exit 0
 
-tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+tool="$(rt_hook_tool)"
+
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
 
 deny() {
-    echo "$1 Води браузер закреплённым расширением: выбери профиль ${device_id} и работай его инструментами." >&2
+    echo "$1 Води браузер закреплённым расширением: выбери профиль ${device_id} и работай его инструментами. $(rt_deny_tail)" >&2
     exit 2
 }
 
@@ -38,7 +48,7 @@ case "$tool" in
     *) exit 0 ;;
 esac
 
-cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
+cmd="$(rt_hook_cmd)"
 [ -z "$cmd" ] && exit 0
 
 if [ "$tool" = "mcp__webstorm__execute_tool" ] && command -v perl >/dev/null 2>&1; then
@@ -71,7 +81,7 @@ esac
 # помечают движок в прогоне сквозных спек, — такой образец отбил бы сам прогон в день, когда
 # появился. Поэтому якорь на границе команды и требование похожего на исполняемый файл слова,
 # а не значения флага.
-printf '%s' "$cmd" | grep -qE '(^|[;&|(]|[[:space:]]&&|[[:space:]]\|\|)[[:space:]]*(/[^[:space:]]*/)?(google-chrome|chromium)([[:space:]]|$)' \
+printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}(/[^[:space:]]*/)?(google-chrome|chromium)([[:space:]]|\$)" \
     && deny "Прямой запуск бинарника браузера обходит закреплённый профиль."
 
 printf '%s' "$cmd" | grep -qF 'Google Chrome.app/Contents/MacOS' \

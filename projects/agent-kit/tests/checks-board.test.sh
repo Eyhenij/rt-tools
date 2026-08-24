@@ -14,6 +14,7 @@ BOARD_TREE="$(mktemp -d)"
 mkdir -p "$BOARD_TREE/tools" "$BOARD_TREE/.claude/rt-kit" "$BOARD_TREE/docs/tasks" "$BOARD_TREE/.github/workflows"
 cp "$CHECKS/rt-kit-checks.config.mjs" "$BOARD_TREE/tools/"
 cp "$CHECKS/board.github.mjs" "$BOARD_TREE/tools/board.mjs"
+cp "$CHECKS/board-runs.github.mjs" "$BOARD_TREE/tools/board-runs.mjs"
 cp "$CHECKS/check-board.github.mjs" "$BOARD_TREE/tools/check-board.mjs"
 printf '%s\n' 'on: pull_request' 'jobs:' '    main:' '        steps:' '            - name: Lint' \
     > "$BOARD_TREE/.github/workflows/ci.yml"
@@ -29,8 +30,10 @@ case "$args" in
     "issue list"*) printf '%s' "$STUB_ISSUES" ;;
     "pr list"*) printf '%s' "$STUB_PULLS" ;;
     *contents*) printf 'Not Found\n' >&2; exit 1 ;;
+    *actions/workflows/*runs*) printf '%s\n' "$STUB_DEPLOY" ;;
     *actions/runs*per_page=20*) printf '%s\n' "$STUB_VERDICT" ;;
     *actions/runs*) printf '%s\n' "$STUB_RUNS" ;;
+    *compare/*) printf '%s\n' "$STUB_BEHIND" ;;
     */commits/*) printf '%s\n' "$STUB_HEAD_DATE" ;;
     *) printf 'неожиданный вызов: %s\n' "$args" >&2; exit 1 ;;
 esac
@@ -102,6 +105,55 @@ export STUB_VERDICT=failure
 report "SC-AK-282 — красный прогон при черновике не отбит" "$(board_code)" 0
 export STUB_VERDICT=running
 report "SC-AK-282 — идущий прогон при черновике не отбит" "$(board_code)" 0
+
+# SC-AK-425 — конфликт приезжает в отданную заявку чужим слиянием, и своего хода у него нет:
+# гард судит один ход, а заявка стоит в очереди днями.
+export STUB_RUNS=1
+export STUB_VERDICT=success
+conflicting_json() {
+    printf '[{"number":701,"title":"[RT-700] Правка","headRefName":"RT-700-probe","headRefOid":"%s","isDraft":false,"body":"Closes #700","mergeable":"%s"}]' \
+        "$HEAD_SHA" "$1"
+}
+export STUB_PULLS="$(conflicting_json CONFLICTING)"
+report "SC-AK-425 — конфликтующая заявка названа расхождением" "$(board_code)" 1
+report "SC-AK-425 — сказано, с чем конфликт" "$(board_says 'конфликтует с главной веткой')" 1
+
+# SC-AK-426 — «ещё не посчитано» конфликтом не считается: хостинг считает сливаемость заново
+# после каждой правки главной ветки, и строка краснела бы на каждой свежей вершине.
+export STUB_PULLS="$(conflicting_json UNKNOWN)"
+report "SC-AK-426 — неизвестная сливаемость расхождением не считается" "$(board_code)" 0
+export STUB_PULLS="$(conflicting_json MERGEABLE)"
+report "SC-AK-426 — сливаемая заявка молчит" "$(board_code)" 0
+
+# --- SC-AK-531…532 — прод против главной ветки ------------------------------------------------
+#
+# Судится последняя успешная выкатка, а не последний прогон главной ветки: там, где выкатку
+# запускают рукой, слияние прода не двигает вовсе, и прогон о нём не говорит ничего.
+export STUB_PULLS="$(pulls_json false)"
+export STUB_RUNS=1
+export STUB_VERDICT=success
+export STUB_HEAD_DATE="$(minutes_ago 60)"
+export STUB_DEPLOY='{"sha":"fedcba9876543210fedcba9876543210fedcba98","at":"2026-08-20T10:00:00Z"}'
+DEPLOY_CONFIG='{"tasksDir":"docs/tasks","pushGate":{"pipelineFile":".github/workflows/ci.yml"},"deploy":{"workflow":"deploy.yml","mainBranch":"main"},"board":{"owner":"probe","repo":"tree","projectId":"P","statusFieldId":"F","statusOptions":{"in-review":{"id":"r","name":"In review"}},"taskKey":"RT","bot":"probe-bot","tokenPath":"","reviewer":"probe"}}'
+
+board_config "$DEPLOY_CONFIG"
+export STUB_BEHIND=0
+report "SC-AK-531 — сошедшийся прод расхождением не считается" "$(board_code)" 0
+
+export STUB_BEHIND=476
+report "SC-AK-531 — отставший прод отбит" "$(board_code)" 1
+report "SC-AK-531 — названо число коммитов" "$(board_says 'прод отстал от «main» на 476 коммитов')" 1
+report "SC-AK-531 — назван коммит последней выкатки" "$(board_says 'последняя выкатка — fedcba98 от 2026-08-20')" 1
+
+# Выкаток не было ни одной: сравнивать не с чем, и это тоже расхождение — прода нет вовсе.
+export STUB_DEPLOY=''
+report "SC-AK-531 — дерево без единой выкатки названо" "$(board_says 'выкаток по «deploy.yml» не было ни одной')" 1
+
+# SC-AK-532 — поток выкатки не назван: сверка молчит вслух, а не тихо
+board_config "$BOARD_CONFIG"
+export STUB_BEHIND=476
+report "SC-AK-532 — без названного потока прод не сверяется" "$(board_code)" 0
+report "SC-AK-532 — и сказано, почему" "$(board_says 'рабочий поток выкатки в настройке дерева не назван')" 1
 
 rm -rf "$BOARD_TREE"
 
@@ -195,7 +247,7 @@ NUMBERED='{"number":701,"isDraft":true,"author":{"login":"probe-bot"},"reviewReq
 
 report "SC-AK-391 — без ссылки клиент зовётся вовсе без довода" \
     "$(pull_state "$PULL_TREE" "$NUMBERED" '' '' >/dev/null; pull_args "$PULL_TREE")" \
-    'pr view --json number,isDraft,reviewRequests,latestReviews,author'
+    'pr view --json number,isDraft,reviewRequests,latestReviews,author,mergeable'
 report "SC-AK-391 — и заявка при этом найдена" \
     "$(pull_state "$PULL_TREE" "$NUMBERED" '' '' | jq -r '.exists')" true
 # Номер приходит из ответа: заявку, названную не номером, в отказе гарда узнают по нему.
@@ -205,10 +257,10 @@ report "SC-AK-391 — номер берётся из ответа хостинг
 # Ссылка любого рода уходит клиенту как есть: разбирать адрес и имя ветки — его работа, не наша.
 report "SC-AK-392 — имя ветки уходит клиенту доводом" \
     "$(pull_state "$PULL_TREE" "$NUMBERED" '' 'RT-700-probe' >/dev/null; pull_args "$PULL_TREE")" \
-    'pr view RT-700-probe --json number,isDraft,reviewRequests,latestReviews,author'
+    'pr view RT-700-probe --json number,isDraft,reviewRequests,latestReviews,author,mergeable'
 report "SC-AK-392 — и адрес заявки тоже" \
     "$(pull_state "$PULL_TREE" "$NUMBERED" '' 'https://example.invalid/o/r/pull/701' >/dev/null; pull_args "$PULL_TREE")" \
-    'pr view https://example.invalid/o/r/pull/701 --json number,isDraft,reviewRequests,latestReviews,author'
+    'pr view https://example.invalid/o/r/pull/701 --json number,isDraft,reviewRequests,latestReviews,author,mergeable'
 report "SC-AK-392 — по имени ветки заявка тоже находится" \
     "$(pull_state "$PULL_TREE" "$NUMBERED" '' 'RT-700-probe' | jq -r '.exists')" true
 

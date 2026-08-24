@@ -47,7 +47,8 @@ import {
 } from '../../../scrollable';
 import { RtuiSpinnerComponent } from '../../../spinner';
 import { RtuiToolbarComponent, RtuiToolbarLeftDirective, RtuiToolbarRightDirective } from '../../../toolbar';
-import { ITable, RtTableConfigService } from '../../util';
+import { ITable } from '../../util/table-column.interface';
+import { RtTableConfigService } from '../../util/table-config.service';
 import { RtuiClearButtonComponent } from '../clear-search-button/rtui-clear-button.component';
 import { RtuiPaginationComponent } from '../pagination-view/rtui-pagination.component';
 import { RtTableConfigAsideComponent } from '../table-config-aside/rt-table-config-aside.component';

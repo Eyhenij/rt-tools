@@ -14,7 +14,7 @@
  * оттуда же. На стороне экрана это видно так же, как у разбора, — полем `tree`, потому что
  * отбирают им обоих одинаково.
  */
-import { ITreeChoice } from '@rt/message-bus-common';
+import { ECargoState, ITreeChoice } from '@rt/message-bus-common';
 
 export namespace IProposal {
     /** Строка списка: то, что видно в таблице. */
@@ -25,6 +25,8 @@ export namespace IProposal {
             readonly tree: ITreeChoice;
             readonly resource: string;
             readonly address: string;
+            readonly state: string;
+            readonly releaseVersion: string | null;
             readonly arrivedAt: string;
         }
 
@@ -36,6 +38,20 @@ export namespace IProposal {
             readonly resource: string;
             /** Адрес внутри ресурса — раздел или строка, к которой предложение относится. */
             readonly address: string;
+            /** На каком шаге разбора стоит запись. Пустым это поле не приходит никогда. */
+            readonly state: ECargoState;
+            /**
+             * Состояние по-русски: показывается оно этой строкой.
+             *
+             * Лежит полем, а не считается в шаблоне: шаблон методов не зовёт, а пайп ради одного
+             * перевода потребовал бы разделу своего слоя вида.
+             */
+            readonly stateLabel: string;
+            /**
+             * В какой версии искать фикс. Пустая строка означает, что выпуска не было: ячейка
+             * столбца тогда пуста — ни прочерка, ни слова «нет» в ней не стоит.
+             */
+            readonly releaseVersion: string;
             readonly arrivedAt: Date;
         }
     }
@@ -44,6 +60,8 @@ export namespace IProposal {
     export interface Api extends Short.Api {
         readonly text: string;
         readonly month: string;
+        /** Чем недочёт исправлен. Пусто у записи, которую никто не чинил. */
+        readonly fixNote: string | null;
     }
 
     export interface State extends Short.State {
@@ -51,5 +69,10 @@ export namespace IProposal {
         readonly text: string;
         /** Месяц записи, при которой предложение приехало. В строке списка его нет. */
         readonly month: string;
+        /**
+         * Чем недочёт исправлен. Пустая строка означает, что починки не было: панель тогда не
+         * показывает ни подписи, ни пустого значения.
+         */
+        readonly fixNote: string;
     }
 }

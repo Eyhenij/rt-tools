@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.9.1 · hooks/grill-gate.sh · 550716afd9ec · правится надстройкой, не здесь
+# rt-kit v0.13.0 · hooks/grill-gate.sh · 2a8a2b43187d · правится надстройкой, не здесь
 # rt-hook: PreToolUse AskUserQuestion
+# Требует: hooks/deny-tail.sh
 # rt-hook: Stop
 # Гард разговора: вопрос владельцу не задаётся, пока за этот же ход не читались законы и
 # правила. Стоит на двух событиях, и это не дублирование.
@@ -22,13 +23,17 @@
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: при любой ошибке, отсутствии записи хода и повторном заходе ход
 # РАЗРЕШАЕТСЯ (exit 0). Сломанный гард не имеет права заклинить разговор.
 
-input="$(cat 2>/dev/null)"
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
+
+rt_hook_read
+input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 
 command -v jq >/dev/null 2>&1 || exit 0
 
 # Какое событие пришло. У вызова инструмента есть его имя, у завершения хода — нет.
-tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
+tool="$(rt_hook_tool)"
 
 # Повторный заход по тому же ходу не судится: иначе ход не кончится никогда — гард сказал своё
 # один раз и отпускает. К вызову инструмента это не относится: там судится сам вызов.
@@ -105,6 +110,17 @@ reason="$head Вопрос, ответ на который уже записан
     grep -rn -i \"<слово темы>\" $laws_dir $rules_dir $specs_dir
 
 Гард судит один ход: следующий заход не отбивается."
+
+# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
+# Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+deny_tail_text="$(rt_deny_tail "")"
+[ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
 
 # Форма отказа у двух событий разная: вызов инструмента отбивается решением о доступе, а
 # завершение хода — решением о ходе. Одна форма на оба события молча не срабатывает.

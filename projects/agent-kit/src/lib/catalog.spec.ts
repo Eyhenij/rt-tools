@@ -289,6 +289,18 @@ describe('cascadeCuts', () => {
         expect(cascadeCuts(FULL, picked([], [QUOTE.id]))).toEqual([]);
     });
 
+    it('SC-AK-515 — отказ от правила снимает его холодную часть', () => {
+        const cold: IEntryOfCatalog = entry('pitfalls', 'pricing');
+
+        expect(idsOf(cascadeCuts([...FULL, cold], picked([], [PRICING.id])))).toContain(cold.id);
+    });
+
+    it('SC-AK-516 — холодная часть чужого правила при этом остаётся', () => {
+        const cold: IEntryOfCatalog = entry('pitfalls', 'permissions');
+
+        expect(idsOf(cascadeCuts([...FULL, cold], picked([], [PRICING.id])))).not.toContain(cold.id);
+    });
+
     it('SC-AK-129 — пустой выбор берёт весь набор', () => {
         expect(cascadeCuts(FULL, picked())).toEqual([]);
     });

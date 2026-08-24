@@ -1,7 +1,8 @@
 import type { TestContext, TestRunnerConfig } from '@storybook/test-runner';
 import { getStoryContext } from '@storybook/test-runner';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
-import type { Page } from 'playwright';
+import { copyFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import type { Page, Route } from 'playwright';
 
 /**
  * Визуальная проверка витрины: каждая история снимается и сверяется с эталоном.
@@ -21,8 +22,15 @@ const SNAPSHOT_DIR: string = `${process.cwd()}/projects/ui-kit/.storybook/__snap
  */
 const FAILURE_THRESHOLD: number = 0.0002;
 
-/** Сколько ждать шрифт значков: он приходит из сети, а до него иконка себя прячет. */
-const FONT_TIMEOUT_MS: number = 10_000;
+/** Семейства значков, которыми рисуются истории. Кадр без любого из них сравнивать не с чем. */
+const ICON_FONTS: readonly string[] = ['Material Icons', 'Material Icons Outlined'];
+
+/**
+ * Сколько ждать перерисовку значков после того, как шрифт встал. Не мерило готовности, а
+ * предел: пришедший шрифт компонент замечает своим сигналом, и от загруженности машины эта
+ * перерисовка не зависит вовсе.
+ */
+const ICON_REPAINT_TIMEOUT_MS: number = 10_000;
 
 /** Пауза после глушения движения — кадру нужно успеть встать. */
 const SETTLE_MS: number = 150;
@@ -41,6 +49,153 @@ const STILL_FRAMES: number = 2;
 
 /** Размер кадра по умолчанию. Истории, которым нужен другой, называют его параметром. */
 const VIEWPORT: { width: number; height: number } = { width: 1280, height: 720 };
+
+/** Машины, с которых съёмке разрешено брать что бы то ни было: витрина отдаёт всё сама. */
+const LOCAL_HOSTS: ReadonlySet<string> = new Set<string>(['localhost', '127.0.0.1', '[::1]']);
+
+/** Страницы с уже поставленным отсечением: обвязка проходит по одной странице много раз. */
+const cutOff: WeakSet<Page> = new WeakSet<Page>();
+
+/**
+ * Отсекает съёмку от чужой сети.
+ *
+ * Всё, из чего складывается кадр, лежит в дереве и отдаётся самой витриной — шрифт значков в
+ * том числе. Пока хоть что-то ехало снаружи, кадр зависел от чужой доступности: не приехав,
+ * шрифт оставлял значки невидимыми, подписи кнопок вставали на их место, и кадр расходился с
+ * эталоном там, где вёрстку никто не трогал. Отсечение держит это не памятью автора:
+ * вернувшийся внешний адрес роняет свою историю громко, а не гадает от прогона к прогону.
+ */
+async function cutOffNetwork(page: Page): Promise<void> {
+    if (cutOff.has(page)) {
+        return;
+    }
+
+    cutOff.add(page);
+
+    await page.route('**/*', async (route: Route): Promise<void> => {
+        const address: string = route.request().url();
+
+        if (!address.startsWith('http://') && !address.startsWith('https://')) {
+            await route.continue();
+            return;
+        }
+
+        if (LOCAL_HOSTS.has(new URL(address).hostname)) {
+            await route.continue();
+            return;
+        }
+
+        await route.abort();
+    });
+}
+
+/** Сколько раз пересъёмывать кадр в поисках двух одинаковых подряд. */
+const SHOT_ATTEMPTS: number = 5;
+
+/**
+ * Сколько отрисованных кадров ждать перед съёмкой.
+ *
+ * Замер: кадр, снятый до первой отрисовки после глушения движения, устойчиво отличается от
+ * эталона — надписи растеризованы иначе при той же геометрии, 1141 пиксель. Одного отрисованного
+ * кадра хватает: ноль даёт ранний кадр пять раз из пяти, один и больше — эталонный, и так же на
+ * двух, трёх, четырёх, шести и десяти.
+ *
+ * Ждётся именно отрисовка, а не вызов `requestAnimationFrame`: его обработчик выполняется до
+ * кадра, поэтому ожидание вставших размеров, крутящее один такой цикл, отпускает съёмку раньше
+ * отрисовки — и в этот промежуток кадр попадал. Отрисованным кадр считается по второму
+ * `requestAnimationFrame`: он вызывается уже после того, как предыдущий нарисован.
+ *
+ * Берётся с запасом, а не впритык: замер называет достаточным одно, но стоит ожидание миллисекунды,
+ * а промах стоит красного прогона на ветке, показа не касавшейся.
+ */
+const PAINTED_FRAMES: number = 3;
+
+/**
+ * Куда складывается улика с разошедшегося прогона.
+ *
+ * Кадр различий библиотека сверки кладёт в `__diff_output__`, и следующий же зелёный прогон его
+ * стирает: расхождение, выпадающее раз на полсотни прогонов, не оставляет после себя ничего, и
+ * разбирать оказывается нечего. Замер это и показал — поймать кадр не удалось ни разу за
+ * пятьдесят восемь прогонов, потому что улику съедал следующий.
+ *
+ * Каталог лежит вне репозитория и вне каталога эталонов: улика — это состояние машины в минуту
+ * отказа, а не текст проекта.
+ */
+const EVIDENCE_DIR: string = `${process.cwd()}/.rt-snapshot-evidence`;
+
+/**
+ * Ждёт, пока страница отрисует несколько кадров подряд.
+ *
+ * Обработчик `requestAnimationFrame` выполняется перед отрисовкой, а не после неё, поэтому один
+ * его цикл ничего об отрисовке не говорит. Пара вложенных вызовов говорит: второй обработчик
+ * стоит уже за нарисованным кадром.
+ */
+async function painted(page: Page, frames: number): Promise<void> {
+    for (let frame: number = 0; frame < frames; frame += 1) {
+        await page.evaluate(
+            () =>
+                new Promise<boolean>((resolve: (painted: boolean) => void) => {
+                    requestAnimationFrame(() => requestAnimationFrame(() => resolve(true)));
+                })
+        );
+    }
+}
+
+/**
+ * Снимает кадр, пока два подряд не совпадут пиксель в пиксель, и отдаёт последний.
+ *
+ * Вставшая раскладка ещё не значит дорисованную страницу: замер поймал кадр, у которого
+ * совпало всё, что обвязка умеет ждать, — размеры, шрифты, завершённые анимации, — и который
+ * всё равно разошёлся с эталоном подпиксельными ореолами по подписям. Отличается там не
+ * вёрстка, а растеризация, и ждать её нечем: события «страница дорисована» браузер не даёт.
+ * Зато два одинаковых кадра подряд говорят то же самое и проверяются прямо.
+ *
+ * Приём повторён из прогонщика сквозных спек, а не вынесен в общий с ним модуль: киты и
+ * сквозной набор разведены, и общий файл связал бы их там, где связи нет.
+ */
+async function stableShot(page: Page): Promise<{ image: Buffer; attempts: number; settled: boolean }> {
+    let previous: Buffer = await page.screenshot({ fullPage: true });
+
+    for (let attempt: number = 1; attempt < SHOT_ATTEMPTS; attempt += 1) {
+        const current: Buffer = await page.screenshot({ fullPage: true });
+
+        if (current.equals(previous)) {
+            return { image: current, attempts: attempt + 1, settled: true };
+        }
+
+        previous = current;
+    }
+
+    return { image: previous, attempts: SHOT_ATTEMPTS, settled: false };
+}
+
+/**
+ * Складывает улику с разошедшегося прогона: кадр различий и условия, при которых он снят.
+ *
+ * Условия пишутся те, которых на самом кадре не видно и которые различают прогоны между собой:
+ * сошлись ли два кадра подряд и с какой попытки, размеры окна и страницы, плотность точек, номер
+ * рабочего потока. Расхождение, выпадающее редко, разбирают по этим числам, а не по памяти о
+ * том, что делала машина в ту минуту.
+ *
+ * Отказ съёмки улики съёмку кадра не роняет: сравнение уже провалилось, и второй отказ поверх
+ * первого только прячет его причину.
+ */
+function keepEvidence(id: string, facts: Record<string, unknown>): void {
+    try {
+        const stamp: string = new Date().toISOString().replace(/[:.]/g, '-');
+        const dir: string = `${EVIDENCE_DIR}/${id}--${stamp}`;
+        mkdirSync(dir, { recursive: true });
+        writeFileSync(`${dir}/условия.json`, JSON.stringify(facts, null, 4), 'utf8');
+
+        const diff: string = `${SNAPSHOT_DIR}/__diff_output__/${id}-diff.png`;
+
+        if (existsSync(diff)) {
+            copyFileSync(diff, `${dir}/${id}-diff.png`);
+        }
+    } catch {
+        // Улику не сложили — сравнение всё равно провалено, и его отказ важнее.
+    }
+}
 
 /**
  * Ждёт вставшую страницу событием, а не отсчётом времени.
@@ -99,6 +254,8 @@ const config: TestRunnerConfig = {
     },
 
     async preVisit(page: Page, context: TestContext): Promise<void> {
+        await cutOffNetwork(page);
+
         // Содержимое в перекрытии живёт вне потока страницы, и полный снимок его не
         // достраивает: попап или панель выше кадра просто обрезаются. Кадр под такую
         // историю задаётся ею самой — параметром `snapshotViewport`.
@@ -113,12 +270,63 @@ const config: TestRunnerConfig = {
     },
 
     async postVisit(page: Page, context: TestContext): Promise<void> {
-        // Шрифт значков грузится с внешнего адреса, а `rtui-icon` до его загрузки держит
-        // себя невидимой. Снимок, сделанный раньше, отличается от эталона всегда.
-        await page.evaluate(() => document.fonts.ready);
-        await page
-            .waitForFunction(() => document.querySelector('.rtui-icon--loading') === null, undefined, { timeout: FONT_TIMEOUT_MS })
-            .catch(() => undefined);
+        // Шрифт значков отдаёт сама витрина, но и её ответа надо дождаться: `rtui-icon` до
+        // загрузки шрифта держит себя невидимой, и снимок, сделанный раньше, отличается от
+        // эталона всегда.
+        //
+        // Ожидание идёт по самим семействам, а не по классу ожидания у иконки. Класс она
+        // снимает по `document.fonts.ready`, а тот разрешается и пустым набором: не приехали
+        // сами объявления шрифта — ждать нечего, значки остаются невидимыми, и кадр уходит в
+        // сравнение молча. Замером это и поймано: съёмка без объявлений дала 26 разошедшихся
+        // снимков и ни одного отказа по шрифту.
+        //
+        // Отказ не гасится намеренно. Красное «шрифт не встал» стоит одной строки разбора,
+        // красное «снимок разошёлся» — целого захода.
+        const missing: string[] = await page.evaluate(async (families: readonly string[]): Promise<string[]> => {
+            const absent: string[] = [];
+
+            for (const family of families) {
+                try {
+                    // Браузер грузит семейство лениво — только под тот текст, что им рисуется.
+                    // Контурного на большинстве историй нет вовсе, поэтому загрузка вызывается
+                    // явно: иначе непришедший шрифт неотличим от невостребованного.
+                    const faces: FontFace[] = await document.fonts.load(`1rem "${family}"`);
+
+                    if (faces.length === 0 || !document.fonts.check(`1rem "${family}"`)) {
+                        absent.push(family);
+                    }
+                } catch {
+                    absent.push(family);
+                }
+            }
+
+            return absent;
+        }, ICON_FONTS);
+
+        if (missing.length > 0) {
+            throw new Error(
+                `Шрифт значков не встал: история «${context.id}» осталась со значками-невидимками, и кадр с неё сравнивать ` +
+                    `не с чем. Не поднялось: ${missing.join(', ')} — эти семейства лежат в дереве и едут от самой витрины, ` +
+                    'значит поломка в её настройке или в шапке показа, а не расхождение вёрстки.'
+            );
+        }
+
+        // Встать шрифту мало: пока `rtui-icon` не заметил его своим сигналом, она держит себя
+        // невидимой, а подписи кнопок стоят на месте значков. Между приходом шрифта и
+        // перерисовкой — целая гонка, и кадр в неё попадает: сотня прогонов подряд поймала
+        // разошедшийся снимок при поднятом шрифте, тем же числом, каким расходились все
+        // встречи до правки. Поэтому ждутся оба — сам шрифт и снятый им класс ожидания.
+        try {
+            await page.waitForFunction(() => document.querySelector('.rtui-icon--loading') === null, undefined, {
+                timeout: ICON_REPAINT_TIMEOUT_MS,
+            });
+        } catch {
+            throw new Error(
+                `Значки не перерисовались за ${ICON_REPAINT_TIMEOUT_MS} мс: история «${context.id}» держит класс ожидания, ` +
+                    'хотя шрифт поднялся. Кадр с неё сравнивать не с чем — это поломка компонента значка, а не расхождение ' +
+                    'вёрстки.'
+            );
+        }
 
         // Рябь Material и анимации панелей дают недетерминированный кадр: движение
         // останавливается, а не пережидается — пережидать пришлось бы каждый раз дольше.
@@ -157,15 +365,39 @@ const config: TestRunnerConfig = {
 
         await page.waitForTimeout(SETTLE_MS);
         await settled(page);
+        // Вставшие размеры — ещё не нарисованная страница: цикл ожидания резолвится внутри
+        // обработчика кадра, то есть до самой отрисовки. Замер поймал ровно этот промежуток.
+        await painted(page, PAINTED_FRAMES);
 
-        const image: Buffer = await page.screenshot({ fullPage: true });
+        const shot: { image: Buffer; attempts: number; settled: boolean } = await stableShot(page);
 
-        expect(image).toMatchImageSnapshot({
-            customSnapshotsDir: SNAPSHOT_DIR,
-            customSnapshotIdentifier: context.id,
-            failureThreshold: FAILURE_THRESHOLD,
-            failureThresholdType: 'percent',
-        });
+        try {
+            expect(shot.image).toMatchImageSnapshot({
+                customSnapshotsDir: SNAPSHOT_DIR,
+                customSnapshotIdentifier: context.id,
+                failureThreshold: FAILURE_THRESHOLD,
+                failureThresholdType: 'percent',
+            });
+        } catch (failure: unknown) {
+            const box: { page: string; screen: number } = await page.evaluate(() => ({
+                page: `${Math.ceil(document.documentElement.scrollWidth)}x${Math.ceil(document.documentElement.scrollHeight)}`,
+                screen: window.devicePixelRatio,
+            }));
+            const view: { width: number; height: number } | null = page.viewportSize();
+
+            keepEvidence(context.id, {
+                история: context.id,
+                'кадры сошлись': shot.settled,
+                'попыток съёмки': shot.attempts,
+                окно: view === null ? 'неизвестно' : `${view.width}x${view.height}`,
+                страница: box.page,
+                'плотность точек': box.screen,
+                'рабочий поток': process.env.JEST_WORKER_ID ?? 'один',
+                отказ: failure instanceof Error ? failure.message.split('\n')[0] : String(failure),
+            });
+
+            throw failure;
+        }
     },
 };
 

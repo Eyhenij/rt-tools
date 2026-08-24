@@ -1,3 +1,5 @@
+import { ECargoState } from '@rt/message-bus-common';
+
 import { ProposalMapper, ProposalShortMapper } from './proposal.mapper';
 import { IProposal } from './proposal.model';
 
@@ -8,6 +10,8 @@ function apiShort(patch: Partial<IProposal.Short.Api> = {}): IProposal.Short.Api
         tree: { slug: 'a1b2', name: 'Приёмник' },
         resource: 'rules/lists.md',
         address: 'Ловушки',
+        state: 'in_work',
+        releaseVersion: null,
         arrivedAt: '2026-08-14T21:30:00.000Z',
         ...patch,
     };
@@ -45,7 +49,39 @@ describe('ProposalShortMapper', () => {
     it('поле, которого модель не называла, на экран не переезжает', () => {
         const row: IProposal.Short.State = mapper.mapFrom({ ...apiShort(), text: 'всё предложение' } as never);
 
-        expect(Object.keys(row).sort()).toEqual(['address', 'arrivedAt', 'id', 'resource', 'tree']);
+        expect(Object.keys(row).sort()).toEqual([
+            'address',
+            'arrivedAt',
+            'id',
+            'releaseVersion',
+            'resource',
+            'state',
+            'stateLabel',
+            'tree',
+        ]);
+    });
+
+    it('SC-MB-237 — версия выпуска доезжает до строки списка как есть', () => {
+        expect(mapper.mapFrom(apiShort({ releaseVersion: '0.9.0' })).releaseVersion).toBe('0.9.0');
+    });
+
+    it('SC-MB-238 — строка записи без версии несёт пустую строку, а не пустоту', () => {
+        expect(mapper.mapFrom(apiShort()).releaseVersion).toBe('');
+    });
+
+    it('SC-MB-167 — состояние приезжает строкой, а на экран уходит значением набора', () => {
+        expect(mapper.mapFrom(apiShort()).state).toBe(ECargoState.InWork);
+        expect(mapper.mapFrom(apiShort({ state: 'new' })).state).toBe(ECargoState.New);
+    });
+
+    it('SC-MB-171 — рядом с состоянием строка несёт его слово человека', () => {
+        expect(mapper.mapFrom(apiShort()).stateLabel).toBe('В работе');
+        expect(mapper.mapFrom(apiShort({ state: 'released' })).stateLabel).toBe('Выпущено');
+    });
+
+    it('состояние вне набора читается как новое, а не уходит на экран машинной строкой', () => {
+        expect(mapper.mapFrom(apiShort({ state: 'разобрано наполовину' })).state).toBe(ECargoState.New);
+        expect(mapper.mapFrom({ ...apiShort(), state: undefined } as never).state).toBe(ECargoState.New);
     });
 
     it('строка списка ни текста предложения, ни месяца не несёт', () => {
@@ -82,5 +118,34 @@ describe('ProposalMapper', () => {
         const entity: IProposal.State = mapper.mapFrom({ ...apiShort(), text: raw, month: '2026-08' });
 
         expect(entity.text).toBe(raw);
+    });
+
+    it('SC-MB-189 — текст починки доезжает до экрана как есть', () => {
+        const entity: IProposal.State = mapper.mapFrom({ ...apiShort(), text: 'предложение', month: '2026-08', fixNote: 'гардом' });
+
+        expect(entity.fixNote).toBe('гардом');
+    });
+
+    it('SC-MB-190 — запись без текста починки читается пустой строкой, а не пустотой', () => {
+        const entity: IProposal.State = mapper.mapFrom({ ...apiShort(), text: 'предложение', month: '2026-08', fixNote: null });
+
+        expect(entity.fixNote).toBe('');
+    });
+
+    it('SC-MB-205 — версия выпуска доезжает до экрана как есть', () => {
+        const entity: IProposal.State = mapper.mapFrom({
+            ...apiShort(),
+            text: 'предложение',
+            month: '2026-08',
+            releaseVersion: 'rt-agent-kit@0.10.1',
+        });
+
+        expect(entity.releaseVersion).toBe('rt-agent-kit@0.10.1');
+    });
+
+    it('SC-MB-206 — запись без версии читается пустой строкой, а не пустотой', () => {
+        const entity: IProposal.State = mapper.mapFrom({ ...apiShort(), text: 'предложение', month: '2026-08', releaseVersion: null });
+
+        expect(entity.releaseVersion).toBe('');
     });
 });

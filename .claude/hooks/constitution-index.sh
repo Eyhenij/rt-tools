@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.9.1 · hooks/constitution-index.sh · e2b6366c4773 · правится надстройкой, не здесь
+# rt-kit v0.13.0 · hooks/constitution-index.sh · 29e848e1b540 · правится надстройкой, не здесь
 # rt-hook: SessionStart startup|resume|compact|clear
 # Вход в слой законов. SessionStart.
 #
@@ -12,6 +12,8 @@
 #
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: любая ошибка начинает сессию без добавленного контекста (exit 0).
 # Сломанный вход не имеет права остановить сессию.
+
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 
 dir="${CLAUDE_PROJECT_DIR:-.}/docs/constitution"
 [ -d "$dir" ] || exit 0
