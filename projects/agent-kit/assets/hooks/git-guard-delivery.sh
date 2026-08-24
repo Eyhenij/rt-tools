@@ -283,7 +283,7 @@ command -v rt_delivery_signature >/dev/null 2>&1 && rt_delivery_signature
 #
 # Возврат заявки в черновик под требование не подпадает: он делает ровно то, чего гард и
 # добивается, — снимает с работы вид готовой.
-if printf '%s' "$cmd" | grep -qE '(^|[;&|(]|&&|\|\|)[[:space:]]*(gh[[:space:]]+pr[[:space:]]+ready|glab[[:space:]]+mr[[:space:]]+update[^|;&]*--ready)([[:space:]]|$)' \
+if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}(gh[[:space:]]+pr[[:space:]]+ready|glab[[:space:]]+mr[[:space:]]+update[^|;&]*--ready)([[:space:]]|\$)" \
     && ! printf '%s' "$cmd" | grep -q -- '--undo'; then
     # Ссылка на заявку необязательна: без неё клиент берёт заявку текущей ветки, и это самая
     # короткая форма вызова. Требовать номер значило бы снимать всё требование одним пробелом.
@@ -337,7 +337,7 @@ fi
 # отбивает сообщение, где `gh pr merge` просто упомянут в кавычках, — так он и сработал на
 # правке этого же текста. Полностью подстроку в кавычках так не отсечь, но случайное упоминание
 # внутри слова или пути мимо уже не пройдёт.
-if printf '%s' "$cmd" | grep -qE '(^|[;&|(]|&&|\|\|)[[:space:]]*(gh[[:space:]]+pr[[:space:]]+merge|glab[[:space:]]+mr[[:space:]]+merge|az[[:space:]]+repos[[:space:]]+pr[[:space:]]+update)([[:space:]]|$)'; then
+if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}(gh[[:space:]]+pr[[:space:]]+merge|glab[[:space:]]+mr[[:space:]]+merge|az[[:space:]]+repos[[:space:]]+pr[[:space:]]+update)([[:space:]]|\$)"; then
     rt_delivery_merge_folder
 fi
 
@@ -345,7 +345,7 @@ fi
 # Команду ищем от начала строки или после разделителя — по той же причине, что и слияние:
 # упоминание в кавычках командой не является.
 printf '%s' "$cmd" \
-    | grep -qE '(^|[;&|(]|&&|\|\|)[[:space:]]*(gh[[:space:]]+pr[[:space:]]+create|glab[[:space:]]+mr[[:space:]]+create|az[[:space:]]+repos[[:space:]]+pr[[:space:]]+create)([[:space:]]|$)' \
+    | grep -qE "${RT_CMD_BOUND}(gh[[:space:]]+pr[[:space:]]+create|glab[[:space:]]+mr[[:space:]]+create|az[[:space:]]+repos[[:space:]]+pr[[:space:]]+create)([[:space:]]|\$)" \
     || exit 0
 
 branch="$(git branch --show-current 2>/dev/null)"

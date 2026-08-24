@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.12.0 · hooks/rerun-guard.sh · 656b9b5a9ee6 · правится надстройкой, не здесь
+# rt-kit v0.12.0 · hooks/rerun-guard.sh · 513688a35ada · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/deny-tail.sh
 # Гард перезапуска прогона: упавшее задание не перезапускается, пока его журнал не прочитан.
@@ -50,7 +50,7 @@ done
 
 # Вызов перезапуска: слово перезапуска отдельным словом рядом со словом прогона.
 host_cli="${RT_HOST_CLI:-gh}"
-printf '%s' "$cmd" | grep -qE "(^|[;&|(]|&&|\|\|)[[:space:]]*${host_cli}([[:space:]]|$)" || exit 0
+printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}${host_cli}([[:space:]]|\$)" || exit 0
 printf '%s' "$cmd" | grep -qE '(^|[[:space:]])(run|workflow)([[:space:]]|$)' || exit 0
 printf '%s' "$cmd" | grep -qE '(^|[[:space:]])rerun([[:space:]]|$)' || exit 0
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.12.0 · hooks/browser-guard-no-other-drivers.sh · 250d4f125a3d · правится надстройкой, не здесь
+# rt-kit v0.12.0 · hooks/browser-guard-no-other-drivers.sh · c70d8cb0750d · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__playwright__.*|mcp__chrome-devtools__.*|Bash
 # Требует: hooks/deny-tail.sh
 # Гард обходных путей к браузеру. PreToolUse.
@@ -81,7 +81,7 @@ esac
 # помечают движок в прогоне сквозных спек, — такой образец отбил бы сам прогон в день, когда
 # появился. Поэтому якорь на границе команды и требование похожего на исполняемый файл слова,
 # а не значения флага.
-printf '%s' "$cmd" | grep -qE '(^|[;&|(]|[[:space:]]&&|[[:space:]]\|\|)[[:space:]]*(/[^[:space:]]*/)?(google-chrome|chromium)([[:space:]]|$)' \
+printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}(/[^[:space:]]*/)?(google-chrome|chromium)([[:space:]]|\$)" \
     && deny "Прямой запуск бинарника браузера обходит закреплённый профиль."
 
 printf '%s' "$cmd" | grep -qF 'Google Chrome.app/Contents/MacOS' \
