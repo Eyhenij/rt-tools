@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.13.0 · checks/board.github.mjs · 9058a6d12142 · правится надстройкой, не здесь
+// rt-kit v0.13.0 · checks/board.github.mjs · e01444fce792 · правится надстройкой, не здесь
 /**
  * Общая работа с очередью работ: борда проекта, тикеты и их состояние.
  *
@@ -20,7 +20,7 @@
  * функции возвращают `null`, командный режим печатает `{"offline":true}`.
  */
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
@@ -288,6 +288,48 @@ export function numberFromTaskDir(name) {
  * Вглубь спускаемся ровно на один уровень: в имени ветки одна косая, а всё, что глубже, папкой
  * задачи уже не будет — зато туда попал бы архив, если дерево держит его внутри.
  */
+/** Шапка раскладки: по ней разложенную копию узнаёт и гард места правки. */
+const STAMP = /^<!-- rt-kit v[^\n]*-->\n/m;
+
+/**
+ * Снять с копий образца шапку раскладки.
+ *
+ * Образец разложен пакетом и шапку несёт по праву: его кладёт и обновляет раскладка. Копия под
+ * задачу — уже текст проекта, тем же доводом, каким пакет кладёт без шапки черновик компаньона:
+ * с первой правки сверять в ней нечего.
+ *
+ * Оставленная в копии, шапка отбивает первую же правку разбора просьбы — то есть первое движение
+ * любой работы, — и отказ уводит править образец пакета вместо копии под задачу. Снималась она
+ * тремя строками руками, каждой работой заново.
+ *
+ * Возвращает имена файлов, с которых шапка снята: по ним сценарий и судит, что снятие работает,
+ * а вызывающий — что папка собрана.
+ */
+export function unstampFolder(folder) {
+    const cleaned = [];
+
+    if (!existsSync(folder)) {
+        return cleaned;
+    }
+
+    for (const name of readdirSync(folder)) {
+        if (!name.endsWith('.md')) {
+            continue;
+        }
+
+        const path = join(folder, name);
+        const before = readFileSync(path, 'utf8');
+        const after = before.replace(STAMP, '');
+
+        if (after !== before) {
+            writeFileSync(path, after);
+            cleaned.push(name);
+        }
+    }
+
+    return cleaned;
+}
+
 export function taskDirs(dir = join(ROOT, CONFIG.tasksDir), prefix = '') {
     if (!existsSync(dir)) {
         return [];

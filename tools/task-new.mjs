@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.13.0 · checks/task-new.github.mjs · 1cfdd02053b0 · правится надстройкой, не здесь
+// rt-kit v0.13.0 · checks/task-new.github.mjs · b2adf2f13c7d · правится надстройкой, не здесь
 /**
  * Заведение задачи, с которой начинается правка.
  *
@@ -18,7 +18,7 @@
  * Тело читается со стандартного ввода. Автор и исполнитель — учётная запись бота,
  * та же, от которой идут коммиты; `--assignee` перекрывает исполнителя.
  */
-import { existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -39,6 +39,7 @@ import {
     graphql,
     numberFromTitle,
     taskState,
+    unstampFolder,
 } from './board.mjs';
 
 function parseArgs(argv) {
@@ -162,6 +163,7 @@ const branch = args.slug ? `${TASK_KEY}-${number}-${args.slug}` : `${TASK_KEY}-$
  * `docs/tasks/_draft-<slug>`. Оставленный черновиком, он остаётся вне истории, а следующий
  * заход его не находит: хук запуска ищет папку по имени ветки.
  */
+
 function adoptDraft() {
     if (!args.slug) {
         console.log(`\nПапка задачи: --slug не задан, переименовать черновик нечем.`);
@@ -175,10 +177,20 @@ function adoptDraft() {
         console.log(`\nПапка задачи уже на месте: docs/tasks/${branch}/`);
     } else if (existsSync(draft)) {
         renameSync(draft, target);
+        // Черновик тоже собирают с образца, и шапка в нём та же: снимается она и здесь.
+        unstampFolder(target);
         console.log(`\nПапка задачи: docs/tasks/_draft-${args.slug}/ → docs/tasks/${branch}/`);
     } else {
-        console.log(`\nПапка задачи собирается с образца:\n  cp -r docs/tasks/_template docs/tasks/${branch}`);
-        return;
+        const template = join(root, 'docs/tasks/_template');
+
+        if (!existsSync(template)) {
+            console.log(`\nПапки задачи нет, и собрать её не с чего: образца ${'docs/tasks/_template'} в дереве не лежит`);
+            return;
+        }
+
+        cpSync(template, target, { recursive: true });
+        unstampFolder(target);
+        console.log(`\nПапка задачи собрана с образца: docs/tasks/${branch}/`);
     }
 
     // Шапку замысла читает гард: по ней он находит договорённость о продукте. Номер в ней

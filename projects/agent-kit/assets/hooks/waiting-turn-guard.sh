@@ -63,12 +63,19 @@ red_re='completed[[:space:]]+failure|"conclusion"[[:space:]]*:[[:space:]]*"failu
 # по следующей задаче не считается — она чинит прежнюю, а не двигает работу дальше.
 moved_re='task:new|task:move|checkout[[:space:]]+-b|docs/tasks/'
 
+# Чем ход показывает, что отданную работу он довёл до конца, а не бросил черновиком. Снятие
+# черновика — очевидный случай; чтение прогона — тот, где снимать ещё нечего, но исполнитель
+# посмотрел, а не сказал «жду». Две готовые заявки простояли черновиками именно потому, что
+# следующая задача была взята вместо этого, а не сверх этого.
+ready_re='pr[[:space:]]+ready|run[[:space:]]+(list|view|watch)|pr[[:space:]]+checks|check-runs|check:board|board\.mjs'
+
 # Ход — это всё, что записано после последнего настоящего ввода владельца. Ответ инструмента
 # приходит той же ролью, поэтому строки с `tool_result` вводом не считаются.
 #
 # Хвост в 400 строк: запись хода растёт всю сессию, а судится только последний ход.
 verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r \
-    --arg opened "$opened_re" --arg moved "$moved_re" --arg read "$read_re" --arg red "$red_re" '
+    --arg opened "$opened_re" --arg moved "$moved_re" --arg read "$read_re" --arg red "$red_re" \
+    --arg ready "$ready_re" '
     def is_input:
         .type == "user"
         and (((.message.content // []) | if type == "array"
@@ -90,11 +97,40 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r \
     | ($ran | test($opened; "i")) as $opened_pr
     | (($ran | test($read; "i")) and ($out | test($red; "i"))) as $red_run
     | ($ran | test($moved; "i")) as $went_on
-    | if $went_on then "pass"
-      elif $opened_pr then "owe:pr"
+    | ($ran | test($ready; "i")) as $checked
+    | if $opened_pr and ($went_on | not) then "owe:pr"
+      elif $opened_pr and ($checked | not) then "owe:draft"
+      elif $went_on then "pass"
       elif $red_run then "owe:run"
       else "pass" end
 ' 2>/dev/null)"
+
+# Черновик, оставленный при взятой следующей задаче, — отдельный отказ: там требование не про
+# следующую задачу, а про доведение отданной.
+if [ "$verdict" = "owe:draft" ]; then
+    reason="BLOCKED by waiting-turn-guard: в этом ходе открыт PR, следующая задача взята, а состояние отданной работы не спрошено ни одной командой.
+
+Черновик читается владельцем как «работа не кончена»: кнопка слияния у него заблокирована самим хостингом, и по списку заявок готовое от недоделанного не отличить — серое и там и там. Довести отданное до снятого черновика обязан тот, кто его отдал.
+
+Спроси прогон на вершине этим же ходом — `gh run list`, `gh pr checks` или сверку очереди работ — и сними черновик, когда он зелёный, а ветка сливается. Прогон ещё идёт — так и скажи владельцу, назвав его вывод.
+
+Следующая задача берётся сверх этого, а не вместо: обе готовые заявки простояли черновиками ровно на такой подмене.
+
+Гард судит один ход: следующий заход не отбивается."
+
+    # shellcheck disable=SC1090
+    [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+        && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+    command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+    deny_tail_text="$(rt_deny_tail "")"
+    [ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
+
+    jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
+        || printf '{"decision":"block","reason":"waiting-turn-guard: отданная работа осталась черновиком — спроси прогон и сними черновик."}\n'
+    exit 0
+fi
 
 case "$verdict" in
     owe:pr) said="в этом ходе открыт PR" ;;

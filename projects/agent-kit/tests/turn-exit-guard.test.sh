@@ -151,6 +151,28 @@ printf '# Ход работы\n\n## Где стоим\n\n- **Состояние:
 expect_stop "SC-AK-311 — при прежнем номере этапа команда проверки не спрашивается" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" PASS
 
+# --- снятая папка задачи ----------------------------------------------------------------------
+# Папка разбирается ДО открытия заявки, и между этими двумя движениями работа не отдана никому.
+# Прежде страж выходил здесь нулём — и ход, которому до отдачи оставался один шаг, закрывался
+# пустым. Теперь признак снимает только требование состояния: дальше судит второй признак.
+ARCHIVED="$(fixture_repo_branched main RT-2-archived)"
+fixture_commit "$ARCHIVED" docs/tasks/RT-2-archived/progress.md '# Ход работы' 'docs: папка задачи'
+fixture_remove "$ARCHIVED" docs/tasks/RT-2-archived 'docs: папка задачи разобрана'
+
+input_archived() {
+    jq -n --arg p "$1" --arg d "$ARCHIVED" \
+        '{session_id:"tests",transcript_path:$p,cwd:$d,stop_hook_active:false}'
+}
+
+expect_stop "SC-AK-574 — снятая папка задачи пустой ход не кончает" \
+    "$(input_archived "$(transcript "$(say 'ну что там?')" "$(reply)")")" BLOCK
+expect_stop "SC-AK-575 — при снятой папке открытие заявки ход отпускает" \
+    "$(input_archived "$(transcript "$(say 'продолжай')" "$(ran 'gh pr create --draft')")")" PASS
+expect_stop "SC-AK-576 — при снятой папке правка дерева ход отпускает" \
+    "$(input_archived "$(transcript "$(say 'продолжай')" "$(edited)")")" PASS
+
+rm -rf "$ARCHIVED"
+
 state_is 'этап-идёт'
 exit_code_of() {
     printf '%s' "$2" | "$HOOKS/turn-exit-guard.sh" >/dev/null 2>&1

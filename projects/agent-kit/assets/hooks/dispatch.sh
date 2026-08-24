@@ -46,24 +46,57 @@ export RT_HOOK_INPUT="$input"
 branches="$(grep -l '^# rt-hook:' "$here"/*.sh 2>/dev/null | sort)"
 [ -z "$branches" ] && exit 0
 
+# Объявлений у файла бывает несколько: гард, стоящий и на вызове инструмента, и на завершении
+# хода, называет оба события своими строками. Читалось прежде только первое — и вторая ветка не
+# звалась ни разу, молча: снаружи это неотличимо от гарда, который посмотрел и пропустил.
+collected=""
 for branch in $branches; do
-    declaration="$(sed -n 's/^# rt-hook:[[:space:]]*//p' "$branch" 2>/dev/null | head -1)"
-    [ -z "$declaration" ] && continue
+    matched=0
+    while IFS= read -r declaration; do
+        [ -z "$declaration" ] && continue
 
-    branch_event="${declaration%% *}"
-    [ "$branch_event" = "$event" ] || continue
+        branch_event="${declaration%% *}"
+        [ "$branch_event" = "$event" ] || continue
 
-    # Образец вызова: его нет вовсе — гард зовётся на любом; есть — сверяется с именем
-    # инструмента целиком, а не куском. Звёздочка и точка со звёздочкой значат одно: любой вызов.
-    matcher="${declaration#"$branch_event"}"
-    matcher="${matcher#"${matcher%%[![:space:]]*}"}"
-    if [ -n "$matcher" ] && [ "$matcher" != '*' ] && [ "$matcher" != '.*' ]; then
-        [[ "${RT_HOOK_TOOL:-}" =~ ^(${matcher})$ ]] || continue
+        # Образец вызова: его нет вовсе — гард зовётся на любом; есть — сверяется с именем
+        # инструмента целиком, а не куском. Звёздочка и точка со звёздочкой значат одно: любой
+        # вызов.
+        matcher="${declaration#"$branch_event"}"
+        matcher="${matcher#"${matcher%%[![:space:]]*}"}"
+        if [ -n "$matcher" ] && [ "$matcher" != '*' ] && [ "$matcher" != '.*' ]; then
+            [[ "${RT_HOOK_TOOL:-}" =~ ^(${matcher})$ ]] || continue
+        fi
+
+        matched=1
+        break
+    done <<EOF
+$(sed -n 's/^# rt-hook:[[:space:]]*//p' "$branch" 2>/dev/null)
+EOF
+
+    # Совпало хоть одно объявление — ветка зовётся один раз. Два объявления одного события в
+    # одном файле звали бы гард дважды на один ввод, и второй вызов судил бы то же самое.
+    [ "$matched" = 1 ] || continue
+
+    branch_out="$(printf '%s' "$input" | bash "$branch" 2>/dev/null)"
+    code=$?
+    if [ "$code" -ne 0 ]; then
+        [ -n "$branch_out" ] && printf '%s\n' "$branch_out"
+        exit "$code"
     fi
 
-    printf '%s' "$input" | bash "$branch"
-    code=$?
-    [ "$code" -ne 0 ] && exit "$code"
+    # Отбой ветки приходит не кодом возврата, а решением в выводе: гарды завершения хода
+    # печатают его и выходят нулём. Не остановившись здесь, диспетчер склеил бы этот объект с
+    # выводом следующей ветки — а склеенное не разбирается, и отбой пропадает целиком.
+    if [ -n "$branch_out" ] && printf '%s' "$branch_out" | jq -e '.decision == "block"' >/dev/null 2>&1; then
+        printf '%s\n' "$branch_out"
+        exit 0
+    fi
+
+    [ -n "$branch_out" ] && collected="${collected}${branch_out}
+"
 done
+
+# Ни одна ветка не отбила: отдаётся то, что они напечатали, — подсказки и сводки.
+[ -n "${collected:-}" ] && printf '%s' "$collected"
 
 exit 0
