@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.12.0 · checks/check-dupes.mjs · d4aa7fb0c16f · правится надстройкой, не здесь
+// rt-kit v0.13.0 · checks/check-dupes.mjs · d4aa7fb0c16f · правится надстройкой, не здесь
 /**
  * Проверка того, что образец не написан второй раз.
  *

@@ -1,3 +1,23 @@
+# [0.13.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.12.0...rt-agent-kit@0.13.0) (2026-08-24)
+
+### Bug Fixes
+
+- **rt:agent-kit:** папка задачи разбирается до открытия заявки, а не после одобрения ([166f3c0](https://github.com/Eyhenij/rt-tools/commit/166f3c09932fcc0cdc3e72579e0f2cd440fc817e))
+- **rt:agent-kit:** признак вызова считает присваивания частью команды ([d153839](https://github.com/Eyhenij/rt-tools/commit/d1538396ae1589e73caff9c1c53682e9905900d4))
+- **rt:agent-kit:** признак дерева считается одним приёмом на обеих сторонах ([ec98772](https://github.com/Eyhenij/rt-tools/commit/ec9877291d8b700b3e4fa040f56951d189c941b3))
+- **rt:agent-kit:** пробник набора судит слова, а не их порядок ([966bfa7](https://github.com/Eyhenij/rt-tools/commit/966bfa7297dde2a52bb98b98c409ba961deef91a))
+- **rt:agent-kit:** пути берутся у пишущего куска команды, а не у строки целиком ([5d7adb6](https://github.com/Eyhenij/rt-tools/commit/5d7adb6f1d179eea51828b45f69e19ea31365653))
+- **rt:agent-kit:** сломанная обвязка сверки схемы перестала быть пропуском ([6e6f38a](https://github.com/Eyhenij/rt-tools/commit/6e6f38a5bd58a73cd3f74d4ad429b376196b11d4))
+- **rt:agent-kit:** тяжёлые шаги гейта зовутся по своему предмету ([9a1e892](https://github.com/Eyhenij/rt-tools/commit/9a1e8920e0b6c03a73b39e3a217aff4bebce1de3))
+- **rt:agent-kit:** чем запускается выкатка, называет дерево, а не правило ([4600fc8](https://github.com/Eyhenij/rt-tools/commit/4600fc82f5300c6ea37a682f737061349b937bc1))
+
+### Features
+
+- **rt:agent-kit:** затирание надстройки отличается от её правки ([f618c41](https://github.com/Eyhenij/rt-tools/commit/f618c41a72a6d845c78da6094dc125e80bbfd575))
+- **rt:agent-kit:** правка разложенной копии отбивается в минуту правки ([e49037e](https://github.com/Eyhenij/rt-tools/commit/e49037ecc15ed8f308e84e3b74b0db68b6f15865))
+- **rt:agent-kit:** предложение называет ближайшее утверждение ресурса ([e88ed3e](https://github.com/Eyhenij/rt-tools/commit/e88ed3e2143faf79adc62865bf59c3145396ef87))
+- **rt:agent-kit:** сухой прогон и отправка не путаются в выводе ([4bce7b0](https://github.com/Eyhenij/rt-tools/commit/4bce7b0ecdac4b1b3da9e8b64a6b609650c26e70))
+
 # [0.12.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.11.0...rt-agent-kit@0.12.0) (2026-08-23)
 
 ### Bug Fixes
