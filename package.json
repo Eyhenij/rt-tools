@@ -38,6 +38,7 @@
     "check:layers": "node tools/check-lib-layers.mjs",
     "check:schema": "node tools/check-schema-drift.mjs",
     "cargo:mark": "node tools/cargo-mark.mjs",
+    "cargo:pull": "node tools/cargo-pull.mjs",
     "check:boundary": "node tools/check-boundary.mjs",
     "check:board": "node tools/check-board.mjs",
     "check:hooks": "node tools/check-hooks.mjs",

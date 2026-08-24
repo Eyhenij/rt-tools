@@ -30,5 +30,6 @@
     "rules/api-layer.md"
   ],
   "intake": "https://message-bus.dev",
-  "token": "~/.config/rt-tools-tree-token"
+  "token": "~/.config/rt-tools-tree-token",
+  "account": "~/.config/message-bus-cargo-account"
 }
