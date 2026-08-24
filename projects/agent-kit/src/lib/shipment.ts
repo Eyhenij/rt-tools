@@ -25,7 +25,7 @@ import {
 import { IEnvironment, IOutcomeOfCommand } from './commands.js';
 import { CONFIG_PATH, IConfig, readConfig } from './config.js';
 import { IReadResult, ISummary, readObservations, summarize } from './observations.js';
-import { ILeak, IProposal, leaksIn, markSent, marksOf, readProposals, TO_PACKAGE } from './proposals.js';
+import { ILeak, IProposal, leaksIn, markSent, marksOf, nearestMissing, readProposals, TO_PACKAGE } from './proposals.js';
 import { IShipment, IShipped, readToken, TShip } from './ship.js';
 import { laidOutSkills, packagedNames, treeSnapshot, unpickedOf } from './snapshot.js';
 import { byText } from './order.js';
@@ -194,6 +194,25 @@ function describe(shipment: IShipment, summary: ISummaryCargo, proposals: IPropo
     return `наблюдений ${summary.total} за ${summary.days} дн., надстроек ${summary.overrides.length}, невыбранного ${summary.unpicked.length}`;
 }
 
+/** Блок, который не уехал, и причина этого. */
+interface IRefusedProposal {
+    readonly proposal: IProposal;
+    readonly why: string;
+}
+
+/**
+ * Отметка об отбое: отбитый блок остаётся на диске и несёт причину.
+ *
+ * Удалённый блок пишется следующим заходом заново — следа разбора нет, и повтор возвращается.
+ * Отметка держит и то и другое: видно, что разбор был, и видно, почему он не стал правкой.
+ */
+function markRefused(root: string, refused: readonly IRefusedProposal[]): void {
+    for (const one of refused) {
+        const path: string = join(root, one.proposal.file);
+        writeFileSync(path, markSent(readFileSync(path, 'utf8'), one.proposal, one.why, 'отбито'), 'utf8');
+    }
+}
+
 /**
  * Перечень груза: что именно уедет и куда — строками, которые читаются до самой отправки.
  *
@@ -340,8 +359,18 @@ export async function propose(env: IEnvironment, options: IShipOptions): Promise
         packagedNames(config, assetsDir)
     );
 
-    const mine: readonly IProposal[] = readProposals(root).filter(
+    const ready: readonly IProposal[] = readProposals(root).filter(
         (entry: IProposal): boolean => entry.address === TO_PACKAGE && !entry.sent
+    );
+    // Блок, не назвавший ближайшего утверждения ресурса, не уезжает: разбор, кончившийся ещё
+    // одной статьёй о том, о чём статья уже стоит, снаружи неотличим от разбора, кончившегося
+    // исправлением. Отбивается он поимённо, а остальные едут: один непрочитанный ресурс не
+    // повод задержать чужую работу.
+    const refused: readonly IRefusedProposal[] = ready
+        .map((entry: IProposal): IRefusedProposal => ({ proposal: entry, why: nearestMissing(entry, assetsDir) }))
+        .filter((entry: IRefusedProposal): boolean => Boolean(entry.why));
+    const mine: readonly IProposal[] = ready.filter(
+        (entry: IProposal): boolean => !refused.some((one: IRefusedProposal): boolean => one.proposal === entry)
     );
     const proposals: IProposalsCargo = {
         tree,
@@ -350,7 +379,10 @@ export async function propose(env: IEnvironment, options: IShipOptions): Promise
     };
     const postmortems: IPostmortemsCargo = { tree, schema: CARGO_SCHEMA_VERSION, items: readPostmortems(root, config.postmortems) };
 
-    const leaked: readonly string[] = leaksOfCargo(cargo, mine, marksOf(root, options.remote));
+    // Проверка на адрес дерева судит все готовые блоки, а не одни уезжающие: отбитый по цитате
+    // лежит на диске и уедет, как только его починят, — а найденная в нём утечка отбивает
+    // отправку целиком и должна называться сразу.
+    const leaked: readonly string[] = leaksOfCargo(cargo, ready, marksOf(root, options.remote));
     if (leaked.length) {
         return refusal(
             `отправка не начата: в грузе назван адрес этого дерева — ${leaked.length}`,
@@ -362,6 +394,11 @@ export async function propose(env: IEnvironment, options: IShipOptions): Promise
     const going: readonly IShipment[] = shipmentsOf(cargo, proposals, postmortems);
 
     const listed: readonly string[] = manifest(going, cargo, proposals, postmortems);
+    // Отбитое называется обоими прогонами: сухой показывает, что уехало бы, — и отбитое к этому
+    // относится наравне с уезжающим.
+    const refusedLines: readonly string[] = refused.map(
+        (one: IRefusedProposal): string => `  отбито ${one.proposal.file}:${one.proposal.line} — ${one.why}`
+    );
 
     if (options.dryRun) {
         return {
@@ -370,11 +407,21 @@ export async function propose(env: IEnvironment, options: IShipOptions): Promise
                 'СУХОЙ ПРОГОН — наружу не ушло ничего, отметок об отправке не поставлено',
                 `уехало бы в ${config.intake}, дерево ${tree}:`,
                 ...listed,
+                ...refusedLines,
                 ...(read.silent ? ['наблюдений не велось ни разу — сводка уезжает снимком надстроек'] : []),
                 'отправляет это тот же вызов без `--dry-run`',
             ],
         };
     }
 
-    return send(root, config.intake, tree, token, options.ship, going, mine, listed);
+    // Отметка ставится до отправки: отбитое наружу не едет вовсе, и ждать ответа приёма ей
+    // незачем.
+    markRefused(root, refused);
+
+    const outcome: IOutcomeOfCommand = await send(root, config.intake, tree, token, options.ship, going, mine, [
+        ...listed,
+        ...refusedLines,
+    ]);
+
+    return outcome;
 }
