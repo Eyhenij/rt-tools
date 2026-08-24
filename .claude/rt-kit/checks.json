@@ -26,8 +26,8 @@
         "libs/message-bus-api/",
         "apps/message-bus/"
     ],
-    "schemaFile": "",
-    "migrationsDir": "",
+    "schemaFile": "prisma/schema.prisma",
+    "migrationsDir": "prisma/migrations",
     "families": [
         "message-bus-admin"
     ],
