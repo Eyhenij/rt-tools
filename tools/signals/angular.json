@@ -1,4 +1,4 @@
-# rt-kit v0.13.0 · checks/signals/angular.json · 53afa4f9feee · правится надстройкой, не здесь
+# rt-kit v0.14.0 · checks/signals/angular.json · 53afa4f9feee · правится надстройкой, не здесь
 {
     "about": "Признаки самого фреймворка: ничьих имён не называют и верны любому дереву на Angular.",
     "signals": [

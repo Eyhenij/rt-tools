@@ -1,3 +1,18 @@
+# [0.14.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.13.0...rt-agent-kit@0.14.0) (2026-08-24)
+
+### Bug Fixes
+
+- **rt:agent-kit:** запись о правке говорит на языке дерева ([03c3222](https://github.com/Eyhenij/rt-tools/commit/03c3222cb32e12ad1d778c0495acbbdb11b6b448))
+- **rt:agent-kit:** отданная работа не остаётся черновиком, а ожидание требует команды ([19f767a](https://github.com/Eyhenij/rt-tools/commit/19f767a8a6ac09a1d3eb6bd69063301385d54f36))
+- **rt:agent-kit:** папку задачи собирает команда и снимает с копий шапку ([6972e46](https://github.com/Eyhenij/rt-tools/commit/6972e4616f7bb168f2e8128020c323463db7ee05))
+- **rt:agent-kit:** стражи завершения хода перестали молчать на трёх дырах ([f8f4b69](https://github.com/Eyhenij/rt-tools/commit/f8f4b6905ae1c579b4684107d4a5557f3fcdd6ac))
+- **rt:agent-kit:** сценарий места правки взял свободный номер ([63376be](https://github.com/Eyhenij/rt-tools/commit/63376bed5d7c70456bbfc8cd3f385c69848baf57))
+
+### Features
+
+- **rt:agent-kit:** признак необратимости берётся из списка, а не из довода ([f002458](https://github.com/Eyhenij/rt-tools/commit/f00245883ee445f9af7189b2c0ca13c160de8df7))
+- **rt:agent-kit:** сверка очереди работ называет вытесненный из очереди прогон ([5644568](https://github.com/Eyhenij/rt-tools/commit/5644568cb98be4ad60bcf39ce309599613bdf080))
+
 # [0.13.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.12.0...rt-agent-kit@0.13.0) (2026-08-24)
 
 ### Bug Fixes

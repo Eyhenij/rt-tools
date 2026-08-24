@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.13.0 · hooks/browser-guard-device-id.sh · 9ca0497c096c · правится надстройкой, не здесь
+# rt-kit v0.14.0 · hooks/browser-guard-device-id.sh · 9ca0497c096c · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__claude-in-chrome__select_browser
 # Требует: hooks/deny-tail.sh
 # Гард выбора браузера. PreToolUse на выборе браузера расширением.

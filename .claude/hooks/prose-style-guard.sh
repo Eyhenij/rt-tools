@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.13.0 · hooks/prose-style-guard.sh · d4d00509d4a9 · правится надстройкой, не здесь
+# rt-kit v0.14.0 · hooks/prose-style-guard.sh · d4d00509d4a9 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit
 # Требует: checks/check-prose-style.mjs, hooks/deny-tail.sh
 # Гард слога: канцелярит и слова, которых в этом дереве не пишут, не уезжают в файл.
