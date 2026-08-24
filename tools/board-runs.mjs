@@ -1,4 +1,4 @@
-// rt-kit v0.13.0 · checks/board-runs.github.mjs · 5652347173ea · правится надстройкой, не здесь
+// rt-kit v0.13.0 · checks/board-runs.github.mjs · 5199e54dabd8 · правится надстройкой, не здесь
 /**
  * Состояние прогонов и выкатки у хостинга: что встало на вершине, чем кончилось и на сколько
  * прод отстал от главной ветки.
@@ -85,4 +85,49 @@ export function verdictOnHead(sha, options) {
 export function headCommittedAt(sha, options) {
     const answer = gh(['api', `repos/${OWNER}/${REPO}/commits/${sha}`, '--jq', '.commit.committer.date'], options);
     return Date.parse(String(answer).trim());
+}
+
+/**
+ * Прогоны вершины, вытесненные из очереди конвейера.
+ *
+ * Группа очереди бережёт идущий прогон и не бережёт ждущего: хостинг держит в группе один
+ * ждущий, и следующий встающий вытесняет прежний. Вытесненный завершается отменой и в списке
+ * неотличим от упавшего, хотя ветку не проверял ни строчкой.
+ *
+ * Отличает их число заданий. Отмена — общее слово для двух случаев: у прогона, остановленного
+ * на ходу, задания есть и журналы у них читаются; у вытесненного из очереди их ноль, потому что
+ * он не начинался. Замером по семи отменённым прогонам дерева: шесть с нулём заданий и один
+ * остановленный на ходу с одним.
+ *
+ * Число заданий спрашивается отдельным вызовом и только у отменённых: спрошенное у каждого
+ * прогона стоило бы вызова на прогон при каждой сверке.
+ *
+ * Зелёный прогон на той же вершине снимает ответ целиком — вытесненный за ним уже перезапущен,
+ * и говорить о нём нечего.
+ */
+export function evictedOnHead(sha, options) {
+    const answer = gh(
+        [
+            'api',
+            `repos/${OWNER}/${REPO}/actions/runs?head_sha=${sha}&per_page=20`,
+            '--jq',
+            '[.workflow_runs[] | {id, status, conclusion}] | tojson',
+        ],
+        options
+    );
+    const runs = JSON.parse(String(answer).trim() || '[]');
+    if (runs.some((run) => run.status === 'completed' && run.conclusion === 'success')) {
+        return [];
+    }
+
+    return runs
+        .filter((run) => run.status === 'completed' && run.conclusion === 'cancelled')
+        .filter((run) => jobCount(run.id, options) === 0)
+        .map((run) => run.id);
+}
+
+/** Сколько заданий завелось у прогона. Ноль означает, что он не начинался вовсе. */
+function jobCount(id, options) {
+    const answer = gh(['api', `repos/${OWNER}/${REPO}/actions/runs/${id}/jobs?per_page=1`, '--jq', '.total_count'], options);
+    return Number(String(answer).trim());
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.13.0 · checks/check-board.github.mjs · f1fc85bc9ff5 · правится надстройкой, не здесь
+// rt-kit v0.13.0 · checks/check-board.github.mjs · 62d21d3e2822 · правится надстройкой, не здесь
 /**
  * Сверка очереди работ с тем, что закон о поставке требует от задачи и её PR.
  *
@@ -48,7 +48,7 @@ import {
     numberFromTitle,
     taskDirs,
 } from './board.mjs';
-import { deployLag, headCommittedAt, runsOnHead, verdictOnHead } from './board-runs.mjs';
+import { deployLag, evictedOnHead, headCommittedAt, runsOnHead, verdictOnHead } from './board-runs.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 const IN_REVIEW = STATUS_OPTIONS[IN_REVIEW_STATUS].name;
@@ -141,6 +141,10 @@ function folderInBranch(branch, options) {
  * промежутке значила бы «подожди», а не «чини».
  */
 function checkHeadRun(pull, options) {
+    if (checkEvicted(pull, options)) {
+        return;
+    }
+
     if (runsOnHead(pull.headRefOid, options) > 0) {
         checkReadyDraft(pull, options);
         return;
@@ -156,6 +160,36 @@ function checkHeadRun(pull, options) {
             `конвейер события не получил; верни его новым коммитом либо перезакрытием PR ` +
             `(gh pr close ${pull.number} && gh pr reopen ${pull.number})`
     );
+}
+
+/**
+ * Прогон вершины, вытесненный из очереди конвейера.
+ *
+ * Группа очереди бережёт идущий прогон и не бережёт ждущего: хостинг держит в группе один
+ * ждущий, и следующий встающий вытесняет прежний. Ветка за таким прогоном не проверялась ни
+ * строчкой, а по очереди работ выглядит проверенной — прогон на вершине есть, и сверка считает
+ * именно факт.
+ *
+ * Судится раньше отсутствия прогона и раньше цвета: иначе одна вершина получает две строки об
+ * одном. Отвечает `true`, когда строка сказана, и остальные проверки вершины пропускаются.
+ *
+ * Строка называет обе команды и в том порядке, в каком их зовут. Перезапуск отбивает гард, пока
+ * за тот же ход не читался журнал этого задания, и порядок в строке выполняет требование сам:
+ * исполнитель зовёт написанное и не упирается в отказ на втором шаге.
+ */
+function checkEvicted(pull, options) {
+    const evicted = evictedOnHead(pull.headRefOid, options);
+    if (evicted.length === 0) {
+        return false;
+    }
+
+    const run = evicted[0];
+    report(
+        `PR #${pull.number}: прогон ${run} на вершине ${pull.headRefOid.slice(0, 8)} вытеснен из очереди конвейера — ` +
+            `заданий у него ноль, ветка не проверялась, а в списке он выглядит упавшим; ` +
+            `прочитай прогон и перезапусти его (gh run view ${run} && gh run rerun ${run})`
+    );
+    return true;
 }
 
 /**

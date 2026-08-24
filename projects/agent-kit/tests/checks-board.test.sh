@@ -25,12 +25,15 @@ HEAD_SHA='0123456789abcdef0123456789abcdef01234567'
 cat > "$BOARD_TREE/gh" <<'STUB'
 #!/usr/bin/env bash
 args="$*"
+printf '%s\n' "$args" >> "${STUB_CALLS:-/dev/null}"
 case "$args" in
     *graphql*) printf '%s' "$STUB_BOARD" ;;
     "issue list"*) printf '%s' "$STUB_ISSUES" ;;
     "pr list"*) printf '%s' "$STUB_PULLS" ;;
     *contents*) printf 'Not Found\n' >&2; exit 1 ;;
     *actions/workflows/*runs*) printf '%s\n' "$STUB_DEPLOY" ;;
+    *actions/runs/*/jobs*) printf '%s\n' "${STUB_JOBS:-0}" ;;
+    *actions/runs*tojson*) printf '%s\n' "${STUB_EVICTED:-[]}" ;;
     *actions/runs*per_page=20*) printf '%s\n' "$STUB_VERDICT" ;;
     *actions/runs*) printf '%s\n' "$STUB_RUNS" ;;
     *compare/*) printf '%s\n' "$STUB_BEHIND" ;;
@@ -124,6 +127,69 @@ export STUB_PULLS="$(conflicting_json UNKNOWN)"
 report "SC-AK-426 — неизвестная сливаемость расхождением не считается" "$(board_code)" 0
 export STUB_PULLS="$(conflicting_json MERGEABLE)"
 report "SC-AK-426 — сливаемая заявка молчит" "$(board_code)" 0
+
+# --- SC-AK-584…590 — прогон, вытесненный из очереди конвейера --------------------------------
+#
+# Группа очереди бережёт идущий прогон и не бережёт ждущего: следующий встающий вытесняет
+# прежний. Вытесненный завершается отменой и в списке неотличим от упавшего, хотя ветку не
+# проверял ни строчкой — заданий у него ноль.
+
+board_config "$BOARD_CONFIG"
+export STUB_PULLS="$(pulls_json false)"
+export STUB_RUNS=1
+export STUB_VERDICT=failure
+export STUB_HEAD_DATE="$(minutes_ago 60)"
+export STUB_CALLS="$BOARD_TREE/вызовы"
+evicted_json='[{"id":32701785738,"status":"completed","conclusion":"cancelled"}]'
+
+# SC-AK-584 — вытесненный прогон на вершине заявки назван строкой сверки
+export STUB_EVICTED="$evicted_json"
+export STUB_JOBS=0
+report "SC-AK-584 — вытесненный прогон отбит" "$(board_code)" 1
+report "SC-AK-584 — назван номер прогона и вершина" "$(board_says 'прогон 32701785738 на вершине 01234567 вытеснен из очереди конвейера')" 1
+report "SC-AK-584 — сказано, что ветка не проверялась" "$(board_says 'ветка не проверялась')" 1
+
+# SC-AK-585 — строка называет чтение прогона раньше его перезапуска
+report "SC-AK-585 — команды названы по порядку" "$(board_says 'gh run view 32701785738 && gh run rerun 32701785738')" 1
+
+# SC-AK-586 — отменённый на ходу прогон строки не даёт: журнал у него есть
+export STUB_JOBS=1
+report "SC-AK-586 — отменённый с заданиями не отбит" "$(board_code)" 0
+
+# SC-AK-587 — число заданий спрашивается только у отменённых прогонов вершины
+export STUB_EVICTED='[{"id":32702491780,"status":"completed","conclusion":"success"}]'
+export STUB_VERDICT=success
+: > "$STUB_CALLS"
+board_code > /dev/null
+report "SC-AK-587 — о числе заданий успешного прогона не спрашивали" "$(grep -c '/jobs' "$STUB_CALLS")" 0
+
+# SC-AK-588 — зелёный прогон на той же вершине снимает строку: вытесненный уже перезапущен
+export STUB_EVICTED='[{"id":32702491780,"status":"completed","conclusion":"success"},{"id":32701785738,"status":"completed","conclusion":"cancelled"}]'
+export STUB_JOBS=0
+: > "$STUB_CALLS"
+report "SC-AK-588 — зелёный рядом с вытесненным молчит" "$(board_code)" 0
+report "SC-AK-588 — и число заданий не спрашивалось" "$(grep -c '/jobs' "$STUB_CALLS")" 0
+
+# SC-AK-589 — вытеснение судится раньше отсутствия прогона: одна вершина — одна строка
+export STUB_EVICTED="$evicted_json"
+export STUB_RUNS=0
+export STUB_VERDICT=failure
+export STUB_HEAD_DATE="$(minutes_ago 600)"
+report "SC-AK-589 — строка одна, и она о вытеснении" "$(board_says 'вытеснен из очереди конвейера')" 1
+report "SC-AK-589 — об отсутствии прогона не сказано" "$(board_says 'прогона нет')" 0
+
+# SC-AK-590 — дерево без файла конвейера о вытеснении не судит
+board_config "${BOARD_CONFIG/.github\/workflows\/ci.yml/.github\/workflows\/nope.yml}"
+: > "$STUB_CALLS"
+report "SC-AK-590 — конвейера нет: расхождений нет" "$(board_code)" 0
+report "SC-AK-590 — прогоны не спрашивались вовсе" "$(grep -c 'actions/runs' "$STUB_CALLS")" 0
+
+board_config "$BOARD_CONFIG"
+export STUB_EVICTED='[]'
+unset STUB_CALLS
+export STUB_RUNS=1
+export STUB_VERDICT=success
+export STUB_HEAD_DATE="$(minutes_ago 60)"
 
 # --- SC-AK-531…532 — прод против главной ветки ------------------------------------------------
 #
