@@ -80,7 +80,7 @@ esac
 # помечают движок в прогоне сквозных спек, — такой образец отбил бы сам прогон в день, когда
 # появился. Поэтому якорь на границе команды и требование похожего на исполняемый файл слова,
 # а не значения флага.
-printf '%s' "$cmd" | grep -qE '(^|[;&|(]|[[:space:]]&&|[[:space:]]\|\|)[[:space:]]*(/[^[:space:]]*/)?(google-chrome|chromium)([[:space:]]|$)' \
+printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}(/[^[:space:]]*/)?(google-chrome|chromium)([[:space:]]|\$)" \
     && deny "Прямой запуск бинарника браузера обходит закреплённый профиль."
 
 printf '%s' "$cmd" | grep -qF 'Google Chrome.app/Contents/MacOS' \

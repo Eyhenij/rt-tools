@@ -49,7 +49,7 @@ done
 
 # Вызов перезапуска: слово перезапуска отдельным словом рядом со словом прогона.
 host_cli="${RT_HOST_CLI:-gh}"
-printf '%s' "$cmd" | grep -qE "(^|[;&|(]|&&|\|\|)[[:space:]]*${host_cli}([[:space:]]|$)" || exit 0
+printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}${host_cli}([[:space:]]|\$)" || exit 0
 printf '%s' "$cmd" | grep -qE '(^|[[:space:]])(run|workflow)([[:space:]]|$)' || exit 0
 printf '%s' "$cmd" | grep -qE '(^|[[:space:]])rerun([[:space:]]|$)' || exit 0
 

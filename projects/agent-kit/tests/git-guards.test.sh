@@ -109,6 +109,12 @@ expect_reason "SC-AK-526 — отказ называет саму папку" gi
     "$(input_cmd 'gh pr create --title "[RT-42] Сделано" --body x' Bash "$LYING")" 'docs/tasks/RT-42-probe'
 mg "SC-AK-527 — обход с причиной действует и на открытии" "$LYING" \
     'gh pr create --title "[RT-42] Сделано" --body x # Task-folder-skip: работа вливается частями' PASS
+# Клиента хостинга зовут с подстановкой токена — иначе из команды не видно, кто её делает.
+# Признак, не знавший о присваиваниях, снимал этой формой и запрет слияния, и уборку папки.
+mg "SC-AK-559 — слияние с подстановкой токена судится наравне с голым" "$LYING" \
+    'GH_TOKEN="$TOKEN" gh pr merge 42 --merge' deny
+mg "SC-AK-559 — открытие заявки с подстановкой токена судится наравне" "$LYING" \
+    'GH_TOKEN="$TOKEN" gh pr create --title "[RT-42] Сделано" --body x' deny
 # Обход из текста команды действует и тогда, когда очередь работ спросить некого.
 mg "SC-AK-17 — обход с причиной в тексте команды" "$LYING" 'gh pr merge 42 --merge # Task-folder-skip: работа вливается частями' PASS
 mg "SC-AK-18 — обход без причины обходом не считается" "$LYING" 'gh pr merge 42 --merge # Task-folder-skip:' deny
@@ -248,6 +254,17 @@ sig "пуш с ключами между командой и подкоманд�
     'git -c credential.helper= -c http.extraheader="AUTHORIZATION: basic x" push -u origin RT-70-signature' deny
 sig "SC-AK-184 — пробный пуш подписи не судит" "$WRONG_SIG" 'git push --dry-run origin RT-70-signature' PASS
 sig "чтение истории пушем не считается" "$WRONG_SIG" 'git log --oneline -5' PASS
+# Пуш набирают с подстановкой токена — этого требует соседняя проверка того же гарда. Признак,
+# считавший вызовом только команду в начале строки, пропускал ровно ту форму, ради которой
+# подпись и судится: коммит с чужим числом уехал в главную ветку мимо этого отказа.
+sig "SC-AK-559 — вызов с подстановкой переменной судится наравне с голым" "$WRONG_SIG" \
+    'GH_TOKEN="$TOKEN" git push origin RT-70-signature' deny
+sig "SC-AK-559 — несколько присваиваний подряд вызова не скрывают" "$WRONG_SIG" \
+    'TOKEN=x GH_TOKEN="$TOKEN" git push origin RT-70-signature' deny
+sig "SC-AK-559 — присваивание без команды за ним вызовом не считается" "$WRONG_SIG" \
+    'GH_TOKEN="$TOKEN"' PASS
+sig "SC-AK-559 — упоминание команды в кавычках вызовом не становится" "$WRONG_SIG" \
+    'echo "git push origin RT-70-signature"' PASS
 
 CLAUDE_PROJECT_DIR="$WRONG_SIG" expect_reason "SC-AK-179 — отказ называет коммит и найденную почту" \
     git-guard-delivery.sh "$(input_cmd 'git push origin RT-70-signature' Bash "$WRONG_SIG")" \
