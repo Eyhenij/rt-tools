@@ -213,6 +213,23 @@ function markRefused(root: string, refused: readonly IRefusedProposal[]): void {
     }
 }
 
+/**
+ * Перечень груза: что именно уедет и куда — строками, которые читаются до самой отправки.
+ *
+ * Печатается он обоими прогонами, и разделены они не окончанием глагола, а первой строкой:
+ * «уехало» и «уехало бы» отличаются двумя буквами в хвосте, а строки под ними одинаковы до
+ * знака. Прочитанный не тем прогоном, вывод сухого читается сделанной работой — и наоборот,
+ * настоящая отправка читается пробой, после которой ничего не делают.
+ */
+function manifest(
+    going: readonly IShipment[],
+    summary: ISummaryCargo,
+    proposals: IProposalsCargo,
+    postmortems: IPostmortemsCargo
+): readonly string[] {
+    return going.map((shipment: IShipment): string => `  ${shipment.operation} — ${describe(shipment, summary, proposals, postmortems)}`);
+}
+
 /** Пометка об отправке: по ней предложение второй раз не уезжает. */
 function markProposals(root: string, proposals: readonly IProposal[], shipped: IShipped): void {
     const mark: string = `приём:${shipped.accepted?.month ?? 'принято'}`;
@@ -253,8 +270,12 @@ async function send(
     token: string,
     ship: TShip,
     going: readonly IShipment[],
-    proposals: readonly IProposal[]
+    proposals: readonly IProposal[],
+    listed: readonly string[]
 ): Promise<IOutcomeOfCommand> {
+    // Что уедет, названо до того, как уехало: отказ на втором запросе иначе оставляет человека с
+    // одной строкой о нём и без перечня, из которого видно, чего этот отказ стоил.
+    const head: readonly string[] = [`ОТПРАВКА — груз уходит в ${intake}, дерево ${tree}:`, ...listed];
     const done: string[] = [];
 
     for (const shipment of going) {
@@ -264,6 +285,7 @@ async function send(
             return {
                 code: REFUSED,
                 lines: [
+                    ...head,
                     ...(done.length ? [`уехало до отказа: ${done.length}`, ...done] : ['не уехало ничего']),
                     `${shipment.kind}: ${intake} ответил ${shipped.status || 'молчанием'} — ${shipped.said}`,
                     ...(shipped.status === TOKEN_REFUSED
@@ -280,7 +302,7 @@ async function send(
         }
     }
 
-    return { code: 0, lines: [`уехало в ${intake}, дерево ${tree}:`, ...done] };
+    return { code: 0, lines: [...head, 'уехало:', ...done] };
 }
 
 /**
@@ -371,6 +393,7 @@ export async function propose(env: IEnvironment, options: IShipOptions): Promise
 
     const going: readonly IShipment[] = shipmentsOf(cargo, proposals, postmortems);
 
+    const listed: readonly string[] = manifest(going, cargo, proposals, postmortems);
     // Отбитое называется обоими прогонами: сухой показывает, что уехало бы, — и отбитое к этому
     // относится наравне с уезжающим.
     const refusedLines: readonly string[] = refused.map(
@@ -381,12 +404,12 @@ export async function propose(env: IEnvironment, options: IShipOptions): Promise
         return {
             code: 0,
             lines: [
+                'СУХОЙ ПРОГОН — наружу не ушло ничего, отметок об отправке не поставлено',
                 `уехало бы в ${config.intake}, дерево ${tree}:`,
-                ...going.map(
-                    (shipment: IShipment): string => `  ${shipment.operation} — ${describe(shipment, cargo, proposals, postmortems)}`
-                ),
+                ...listed,
                 ...refusedLines,
                 ...(read.silent ? ['наблюдений не велось ни разу — сводка уезжает снимком надстроек'] : []),
+                'отправляет это тот же вызов без `--dry-run`',
             ],
         };
     }
@@ -395,7 +418,10 @@ export async function propose(env: IEnvironment, options: IShipOptions): Promise
     // незачем.
     markRefused(root, refused);
 
-    const outcome: IOutcomeOfCommand = await send(root, config.intake, tree, token, options.ship, going, mine);
+    const outcome: IOutcomeOfCommand = await send(root, config.intake, tree, token, options.ship, going, mine, [
+        ...listed,
+        ...refusedLines,
+    ]);
 
-    return { ...outcome, lines: [...outcome.lines, ...refusedLines] };
+    return outcome;
 }

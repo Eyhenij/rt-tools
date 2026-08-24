@@ -81,3 +81,5 @@
 | Отбивается блок поимённо, а соседние едут.                                            | `projects/agent-kit/src/lib/shipment.ts:propose`                                                    |
 | Отбитый блок остаётся на диске с отметкой и причиной.                                 | `projects/agent-kit/src/lib/shipment.ts:markRefused`                                                |
 | Проверка на адрес дерева судит все готовые блоки, а не одни уезжающие.                | `projects/agent-kit/src/lib/shipment.ts:leaksOfCargo`                                               |
+| Настоящий прогон называет перечень груза до его результатов.                          | `projects/agent-kit/src/lib/shipment.ts:manifest`                                                   |
+| Сухой прогон объявляется первой строкой, а не окончанием глагола.                     | `projects/agent-kit/src/lib/shipment.ts:propose`                                                    |

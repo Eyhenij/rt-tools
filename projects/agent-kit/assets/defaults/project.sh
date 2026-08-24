@@ -277,11 +277,50 @@ rt_shell_paths_default() {
             }')"
     fi
 
-    printf '%s' "$text" \
-        | tr "(),;=" '     ' \
-        | tr '[:space:]' '\n' \
-        | grep -E '^[A-Za-z0-9_@.-]*/[A-Za-z0-9_@./-]+$' \
-        | sed 's|^\./||' \
+    # Пути берутся только у тех кусков команды, которые пишут. Прежде брались у всей строки
+    # целиком, и команда чтения, сцепленная с записью, отдавала свои пути как цели записи:
+    # `python3 <<PY … PY` рядом с `grep -n … projects/…` отбивался за правку кода, которой в нём
+    # не было. Отбитий, пришедшихся не на правку файла, набиралось большинство, и цену платил
+    # тот, кто просто читал соседний файл в той же строке.
+    #
+    # Кусок — строка верхнего уровня, а внутри неё `;`, `&&` и `||`. Тело heredoc от своей
+    # команды не отрывается: оно едет вместе с ней одним куском, потому что путь записи
+    # интерпретатора стоит именно там.
+    printf '%s' "$text" | awk '
+        function trim(s) { sub(/^[ \t]+/, "", s); sub(/[ \t]+$/, "", s); return s }
+        function flush(  n, i, part) {
+            if (chunk == "") { return }
+            if (tag != "") { part = chunk; gsub(/\n/, " ", part); print part; chunk = ""; return }
+            n = split(chunk, parts, /;|&&|\|\|/)
+            for (i = 1; i <= n; i++) { print parts[i] }
+            chunk = ""
+        }
+        tag != "" {
+            chunk = chunk "\n" $0
+            if (trim($0) == tag) { flush(); tag = "" }
+            next
+        }
+        {
+            chunk = $0
+            if (match($0, /<<-?[ \t]*[A-Za-z_][A-Za-z0-9_]*/)) {
+                t = substr($0, RSTART, RLENGTH)
+                sub(/^<<-?[ \t]*/, "", t)
+                tag = t
+                next
+            }
+            flush()
+        }
+        END { if (chunk != "") { part = chunk; gsub(/\n/, " ", part); print part } }
+    ' \
+        | while IFS= read -r piece; do
+            [ -z "$piece" ] && continue
+            rt_shell_writes "$piece" || continue
+            printf '%s' "$piece" \
+                | tr "(),;=" '     ' \
+                | tr '[:space:]' '\n' \
+                | grep -E '^[A-Za-z0-9_@.-]*/[A-Za-z0-9_@./-]+$' \
+                | sed 's|^\./||'
+        done \
         | sort -u
 }
 
@@ -420,8 +459,14 @@ rt_lint_for() { rt_lint_for_default "$@"; }
 rt_task_branch_ok() { rt_task_branch_ok_default "$@"; }
 rt_reinvented_in() { rt_reinvented_in_default "$@"; }
 rt_is_app_code() { rt_is_app_code_default "$@"; }
+# Каталог источников пакета правил в этом дереве, от корня. Пусто — дерево пакета не везёт, и
+# адрес правки у него один: надстройка. Дерево, которое пакет и разрабатывает, называет каталог
+# сам — иначе гард места правки посылал бы его в надстройку вместо источника.
+rt_kit_sources_dir_default() { printf ''; }
+
 rt_shell_writes() { rt_shell_writes_default "$@"; }
 rt_shell_paths() { rt_shell_paths_default "$@"; }
+rt_kit_sources_dir() { rt_kit_sources_dir_default "$@"; }
 rt_qa_decorative() { rt_qa_decorative_default "$@"; }
 rt_task_state() { rt_task_state_default "$@"; }
 rt_pull_state() { rt_pull_state_default "$@"; }
