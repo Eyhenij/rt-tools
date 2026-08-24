@@ -61,3 +61,8 @@
 | Непосчитанная сливаемость конфликтом не считается.                                         | `projects/agent-kit/assets/checks/board.github.mjs:conflicting`                        |
 | У каждого состояния работы есть раздел в том паттерне, который его ведёт.                  | `projects/agent-kit/assets/checks/check-states.mjs:sectionsOf`                         |
 | Раздел про состояние вне перечня — такое же расхождение, как состояние без раздела.        | `projects/agent-kit/assets/checks/check-states.mjs:known`                              |
+| Вытесненный из очереди конвейера прогон на вершине открытой заявки — расхождение сверки.   | `projects/agent-kit/assets/checks/check-board.github.mjs:checkEvicted`                 |
+| Вытеснение узнаётся по числу заданий прогона, а не по слову отмены.                        | `projects/agent-kit/assets/checks/board-runs.github.mjs:evictedOnHead`                 |
+| Число заданий спрашивается только у отменённых прогонов вершины.                           | `projects/agent-kit/assets/checks/board-runs.github.mjs:jobCount`                      |
+| Строка вытеснения называет обе команды и в том порядке, в каком их зовут                   | `projects/agent-kit/assets/checks/check-board.github.mjs:checkEvicted`                 |
+| Вытеснение судится раньше цвета и раньше отсутствия прогона.                               | `projects/agent-kit/assets/checks/check-board.github.mjs:checkHeadRun`                 |
