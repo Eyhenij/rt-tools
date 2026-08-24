@@ -55,6 +55,20 @@ MARK_PATTERN='состояния .* не бывает'
 report "SC-AK-430 — незнакомое состояние названо" "$(mark_says --state nowhere --postmortem x.md)" 1
 report "SC-AK-430 — код возврата ненулевой" "$(mark_code --state nowhere --postmortem x.md)" 1
 
+# SC-AK-558 — признак дерева считается тем же приёмом, что на отправке
+#
+# Своя копия счёта уже разошлась с пакетной: она брала последнее слово адреса, а отправка — адрес
+# целиком и в нижнем регистре. Сценарий сверяет напечатанный признак с тем, что даёт сам пакет.
+PACKAGE_SLUG="$(cd "$TREE_ROOT" && node -e "
+import('./dist/agent-kit/lib/shipment.js').then((m) => {
+    const remote = require('node:child_process').execFileSync('git', ['remote', 'get-url', 'origin'], { encoding: 'utf8' }).trim();
+    process.stdout.write(m.treeSlugOf(remote, ''));
+});
+" 2>/dev/null)"
+MARK_PATTERN="дерево ${PACKAGE_SLUG}:"
+report "SC-AK-558 — отметка называет тот же признак, что отправка" \
+    "$(mark_says --state new --postmortem x.md --dry-run)" 1
+
 # SC-AK-431 — вызов без записей отбивается до сети
 MARK_PATTERN='отмечать нечего'
 report "SC-AK-431 — пустой вызов назван" "$(mark_says --state new)" 1
