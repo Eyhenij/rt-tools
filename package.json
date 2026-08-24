@@ -42,6 +42,7 @@
     "check:boundary": "node tools/check-boundary.mjs",
     "check:board": "node tools/check-board.mjs",
     "check:hooks": "node tools/check-hooks.mjs",
+    "check:paint": "STORYBOOK_URL=${STORYBOOK_URL:-http://localhost:6006} node tools/snapshot-paint-probe.mjs",
     "check:turn-map": "node tools/check-turn-map.mjs",
     "check:state-next": "node tools/check-state-next.mjs",
     "task:new": "node tools/task-new.mjs",

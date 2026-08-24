@@ -1,6 +1,7 @@
 import type { TestContext, TestRunnerConfig } from '@storybook/test-runner';
 import { getStoryContext } from '@storybook/test-runner';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
+import { copyFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import type { Page, Route } from 'playwright';
 
 /**
@@ -92,6 +93,55 @@ async function cutOffNetwork(page: Page): Promise<void> {
 const SHOT_ATTEMPTS: number = 5;
 
 /**
+ * Сколько отрисованных кадров ждать перед съёмкой.
+ *
+ * Замер: кадр, снятый до первой отрисовки после глушения движения, устойчиво отличается от
+ * эталона — надписи растеризованы иначе при той же геометрии, 1141 пиксель. Одного отрисованного
+ * кадра хватает: ноль даёт ранний кадр пять раз из пяти, один и больше — эталонный, и так же на
+ * двух, трёх, четырёх, шести и десяти.
+ *
+ * Ждётся именно отрисовка, а не вызов `requestAnimationFrame`: его обработчик выполняется до
+ * кадра, поэтому ожидание вставших размеров, крутящее один такой цикл, отпускает съёмку раньше
+ * отрисовки — и в этот промежуток кадр попадал. Отрисованным кадр считается по второму
+ * `requestAnimationFrame`: он вызывается уже после того, как предыдущий нарисован.
+ *
+ * Берётся с запасом, а не впритык: замер называет достаточным одно, но стоит ожидание миллисекунды,
+ * а промах стоит красного прогона на ветке, показа не касавшейся.
+ */
+const PAINTED_FRAMES: number = 3;
+
+/**
+ * Куда складывается улика с разошедшегося прогона.
+ *
+ * Кадр различий библиотека сверки кладёт в `__diff_output__`, и следующий же зелёный прогон его
+ * стирает: расхождение, выпадающее раз на полсотни прогонов, не оставляет после себя ничего, и
+ * разбирать оказывается нечего. Замер это и показал — поймать кадр не удалось ни разу за
+ * пятьдесят восемь прогонов, потому что улику съедал следующий.
+ *
+ * Каталог лежит вне репозитория и вне каталога эталонов: улика — это состояние машины в минуту
+ * отказа, а не текст проекта.
+ */
+const EVIDENCE_DIR: string = `${process.cwd()}/.rt-snapshot-evidence`;
+
+/**
+ * Ждёт, пока страница отрисует несколько кадров подряд.
+ *
+ * Обработчик `requestAnimationFrame` выполняется перед отрисовкой, а не после неё, поэтому один
+ * его цикл ничего об отрисовке не говорит. Пара вложенных вызовов говорит: второй обработчик
+ * стоит уже за нарисованным кадром.
+ */
+async function painted(page: Page, frames: number): Promise<void> {
+    for (let frame: number = 0; frame < frames; frame += 1) {
+        await page.evaluate(
+            () =>
+                new Promise<boolean>((resolve: (painted: boolean) => void) => {
+                    requestAnimationFrame(() => requestAnimationFrame(() => resolve(true)));
+                })
+        );
+    }
+}
+
+/**
  * Снимает кадр, пока два подряд не совпадут пиксель в пиксель, и отдаёт последний.
  *
  * Вставшая раскладка ещё не значит дорисованную страницу: замер поймал кадр, у которого
@@ -103,20 +153,48 @@ const SHOT_ATTEMPTS: number = 5;
  * Приём повторён из прогонщика сквозных спек, а не вынесен в общий с ним модуль: киты и
  * сквозной набор разведены, и общий файл связал бы их там, где связи нет.
  */
-async function stableShot(page: Page): Promise<Buffer> {
+async function stableShot(page: Page): Promise<{ image: Buffer; attempts: number; settled: boolean }> {
     let previous: Buffer = await page.screenshot({ fullPage: true });
 
     for (let attempt: number = 1; attempt < SHOT_ATTEMPTS; attempt += 1) {
         const current: Buffer = await page.screenshot({ fullPage: true });
 
         if (current.equals(previous)) {
-            return current;
+            return { image: current, attempts: attempt + 1, settled: true };
         }
 
         previous = current;
     }
 
-    return previous;
+    return { image: previous, attempts: SHOT_ATTEMPTS, settled: false };
+}
+
+/**
+ * Складывает улику с разошедшегося прогона: кадр различий и условия, при которых он снят.
+ *
+ * Условия пишутся те, которых на самом кадре не видно и которые различают прогоны между собой:
+ * сошлись ли два кадра подряд и с какой попытки, размеры окна и страницы, плотность точек, номер
+ * рабочего потока. Расхождение, выпадающее редко, разбирают по этим числам, а не по памяти о
+ * том, что делала машина в ту минуту.
+ *
+ * Отказ съёмки улики съёмку кадра не роняет: сравнение уже провалилось, и второй отказ поверх
+ * первого только прячет его причину.
+ */
+function keepEvidence(id: string, facts: Record<string, unknown>): void {
+    try {
+        const stamp: string = new Date().toISOString().replace(/[:.]/g, '-');
+        const dir: string = `${EVIDENCE_DIR}/${id}--${stamp}`;
+        mkdirSync(dir, { recursive: true });
+        writeFileSync(`${dir}/условия.json`, JSON.stringify(facts, null, 4), 'utf8');
+
+        const diff: string = `${SNAPSHOT_DIR}/__diff_output__/${id}-diff.png`;
+
+        if (existsSync(diff)) {
+            copyFileSync(diff, `${dir}/${id}-diff.png`);
+        }
+    } catch {
+        // Улику не сложили — сравнение всё равно провалено, и его отказ важнее.
+    }
 }
 
 /**
@@ -287,15 +365,39 @@ const config: TestRunnerConfig = {
 
         await page.waitForTimeout(SETTLE_MS);
         await settled(page);
+        // Вставшие размеры — ещё не нарисованная страница: цикл ожидания резолвится внутри
+        // обработчика кадра, то есть до самой отрисовки. Замер поймал ровно этот промежуток.
+        await painted(page, PAINTED_FRAMES);
 
-        const image: Buffer = await stableShot(page);
+        const shot: { image: Buffer; attempts: number; settled: boolean } = await stableShot(page);
 
-        expect(image).toMatchImageSnapshot({
-            customSnapshotsDir: SNAPSHOT_DIR,
-            customSnapshotIdentifier: context.id,
-            failureThreshold: FAILURE_THRESHOLD,
-            failureThresholdType: 'percent',
-        });
+        try {
+            expect(shot.image).toMatchImageSnapshot({
+                customSnapshotsDir: SNAPSHOT_DIR,
+                customSnapshotIdentifier: context.id,
+                failureThreshold: FAILURE_THRESHOLD,
+                failureThresholdType: 'percent',
+            });
+        } catch (failure: unknown) {
+            const box: { page: string; screen: number } = await page.evaluate(() => ({
+                page: `${Math.ceil(document.documentElement.scrollWidth)}x${Math.ceil(document.documentElement.scrollHeight)}`,
+                screen: window.devicePixelRatio,
+            }));
+            const view: { width: number; height: number } | null = page.viewportSize();
+
+            keepEvidence(context.id, {
+                история: context.id,
+                'кадры сошлись': shot.settled,
+                'попыток съёмки': shot.attempts,
+                окно: view === null ? 'неизвестно' : `${view.width}x${view.height}`,
+                страница: box.page,
+                'плотность точек': box.screen,
+                'рабочий поток': process.env.JEST_WORKER_ID ?? 'один',
+                отказ: failure instanceof Error ? failure.message.split('\n')[0] : String(failure),
+            });
+
+            throw failure;
+        }
     },
 };
 

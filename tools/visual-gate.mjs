@@ -26,8 +26,8 @@ import { createServer } from 'node:net';
  * и правка ради одного не двигает кадров другого.
  */
 const KITS = {
-    'ui-kit': { target: '@rt-tools/ui-kit:storybook', snapshots: 'test:visual' },
-    'ui-kit-v2': { target: '@rt-tools/ui-kit-v2:storybook', snapshots: 'test:visual:v2' },
+    'ui-kit': { target: '@rt-tools/ui-kit:storybook', snapshots: 'test:visual', probes: ['check:paint'] },
+    'ui-kit-v2': { target: '@rt-tools/ui-kit-v2:storybook', snapshots: 'test:visual:v2', probes: [] },
 };
 
 /** Предел ожидания поднявшейся витрины. Не мерило готовности, а признак того, что она не встала. */
@@ -119,6 +119,26 @@ const run = spawnSync('pnpm', ['run', KITS[kit].snapshots], {
     env: { ...process.env, STORYBOOK_URL: url },
 });
 
+/**
+ * Пробы обвязки идут по той же поднятой витрине, а не своим шагом.
+ *
+ * Своим шагом они поднимали бы витрину второй раз — самое долгое в этом наборе, — а стоят
+ * секунды. Гоняются они и после красных снимков: проба говорит о самой обвязке, и её ответ
+ * нужен как раз тогда, когда снимки разошлись.
+ */
+let probesFailed = 0;
+
+for (const probe of KITS[kit].probes) {
+    const result = spawnSync('pnpm', ['run', probe], {
+        stdio: 'inherit',
+        env: { ...process.env, STORYBOOK_URL: url },
+    });
+
+    if ((result.status ?? 1) !== 0) {
+        probesFailed += 1;
+    }
+}
+
 stop();
 
-process.exit(run.status ?? 1);
+process.exit((run.status ?? 1) !== 0 || probesFailed > 0 ? 1 : 0);
