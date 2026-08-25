@@ -250,7 +250,12 @@ export const scaleEffects = [
     {
         name: `--rt-overlay-white-40`,
         value: `rgb(250 250 250 / 40%)`,
-        note: `muted-текст на графите`,
+        note: `приглушённый знак: порога не берёт`,
+    },
+    {
+        name: `--rt-overlay-white-50`,
+        value: `rgb(250 250 250 / 50%)`,
+        note: `приглушённый текст: слабее порог не берётся`,
     },
     {
         name: `--rt-overlay-black-50`,

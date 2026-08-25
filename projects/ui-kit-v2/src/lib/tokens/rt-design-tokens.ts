@@ -263,6 +263,7 @@ export type TRtDesignTokenName =
     | '--rt-overlay-white-25'
     | '--rt-overlay-white-4'
     | '--rt-overlay-white-40'
+    | '--rt-overlay-white-50'
     | '--rt-overlay-white-8'
     | '--rt-profile-avatar-font-size'
     | '--rt-profile-avatar-size'
@@ -658,6 +659,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-overlay-white-25',
     '--rt-overlay-white-4',
     '--rt-overlay-white-40',
+    '--rt-overlay-white-50',
     '--rt-overlay-white-8',
     '--rt-profile-avatar-font-size',
     '--rt-profile-avatar-size',
