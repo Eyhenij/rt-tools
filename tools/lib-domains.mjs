@@ -1,4 +1,4 @@
-// rt-kit v0.14.0 · checks/lib-domains.mjs · ed1c7684944a · правится надстройкой, не здесь
+// rt-kit v0.14.0 · checks/lib-domains.mjs · 5edef10b4a79 · правится надстройкой, не здесь
 /**
  * Доменная сетка: какие каталоги считаются доменами, из каких слоёв состоит каждая их форма и
  * какие либы в них лежат. Отсюда же выходят либы, оказавшиеся вне сетки, и плоские либы
@@ -197,7 +197,7 @@ function collectStrayLibs(knownLibs) {
  * `nx test` по ней молча не гонял ни одной спеки.
  */
 function collectFlatLibs() {
-    return (allowlist.flatLibRoots ?? [])
+    return [...(allowlist.flatLibRoots?.keys() ?? [])]
         .flatMap((root) => dirsIn(root).map((entry) => `${root}/${entry}`))
         .filter((path) => isLib(path))
         .sort();
