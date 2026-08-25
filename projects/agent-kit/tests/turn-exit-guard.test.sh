@@ -194,7 +194,7 @@ expect_stop "SC-AK-632 — чтение вперемешку с работой �
 expect_stop "SC-AK-633 — читающая часть коммит не отменяет" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git status --short')" "$(ran 'git commit -q -m fix')")")" PASS
 expect_stop "SC-AK-634 — открытие заявки чтением не считается" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'gh pr create --draft')")")" PASS
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'gh pr create --draft')" "$(ran 'npm run task:new -- следующая')")")" PASS
 
 # --- ход, кончившийся ожиданием ---------------------------------------------------------------
 # Работы в таком ходе было много — тем он и обманчив. Судится последнее действие, а не наличие
@@ -208,6 +208,34 @@ expect_stop "SC-AK-641 — ожидание в середине хода ход 
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'until [ -f готово ]; do sleep 5; done')" "$(ran 'git commit -q -m fix')")")" PASS
 expect_reason "SC-AK-642 — отказ об ожидании называет следующий шаг" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'gh run watch 12345')")")" 'дописать страж'
+
+# --- общий рубеж: последним действием хода бывает только работа ----------------------------------
+# Девять разборов происшествий за сутки описывают девять разных остановок, и во всех девяти
+# последним действием хода был текст владельцу. Ярус на каждый вид — гонка без конца.
+state_is 'этап-идёт'
+expect_stop "SC-AK-652 — работа была, а последним действием стало чтение — ход не кончается" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git commit -q -m fix')" "$(ran 'git log --oneline -5')")")" BLOCK
+expect_stop "SC-AK-653 — ход, кончившийся правкой файла, отпускается" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git log --oneline -5')" "$(edited)")")" PASS
+expect_stop "SC-AK-654 — заведение ветки разведкой не считается" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git checkout -b RT-3-next origin/main')")")" PASS
+expect_stop "SC-AK-655 — переключение на ветку разведкой остаётся" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git commit -q -m fix')" "$(ran 'git checkout main')")")" BLOCK
+
+# --- работа отдана, а следующая только названа ---------------------------------------------------
+# Работы в таком ходе больше, чем в любом другом, и вся она по сданной задаче. Отдача завершает
+# прошлую работу, а не ход: правило требует, чтобы по следующей было сделано действие.
+state_is 'этап-идёт'
+expect_stop "SC-AK-647 — отдача работы без начала следующей ход не кончает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git push origin HEAD')" "$(ran 'gh pr create --draft --title x')")")" BLOCK
+expect_stop "SC-AK-648 — заведённая следующая задача ход отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'gh pr create --draft --title x')" "$(ran 'npm run task:new -- следующая')")")" PASS
+expect_stop "SC-AK-649 — заведённая ветка следующей работы ход отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'gh pr create --draft --title x')" "$(ran 'git checkout -b RT-2-next origin/main')")")" PASS
+expect_stop "SC-AK-650 — ход без открытия заявки этим ярусом не судится" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git commit -q -m fix')")")" PASS
+expect_reason "SC-AK-651 — отказ об отдаче называет команду заведения следующей" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'gh pr create --draft --title x')")")" 'task:new'
 
 # --- снятая папка задачи ----------------------------------------------------------------------
 # Папка разбирается ДО открытия заявки, и между этими двумя движениями работа не отдана никому.
@@ -224,8 +252,8 @@ input_archived() {
 
 expect_stop "SC-AK-574 — снятая папка задачи пустой ход не кончает" \
     "$(input_archived "$(transcript "$(say 'ну что там?')" "$(reply)")")" BLOCK
-expect_stop "SC-AK-575 — при снятой папке открытие заявки ход отпускает" \
-    "$(input_archived "$(transcript "$(say 'продолжай')" "$(ran 'gh pr create --draft')")")" PASS
+expect_stop "SC-AK-575 — при снятой папке открытие заявки с начатой следующей ход отпускает" \
+    "$(input_archived "$(transcript "$(say 'продолжай')" "$(ran 'gh pr create --draft')" "$(ran 'npm run task:new -- следующая')")")" PASS
 expect_stop "SC-AK-576 — при снятой папке правка дерева ход отпускает" \
     "$(input_archived "$(transcript "$(say 'продолжай')" "$(edited)")")" PASS
 
