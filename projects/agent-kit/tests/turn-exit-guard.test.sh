@@ -173,6 +173,37 @@ expect_stop "SC-AK-576 — при снятой папке правка дере�
 
 rm -rf "$ARCHIVED"
 
+# --- взятая, но не начатая работа --------------------------------------------------------------
+# Ветка по номеру задачи заведена, папки при ней нет: работа объявлена взятой и не начата ни
+# одной строкой. Второй признак такой ход отпускал целиком — заведение ветки и перевод колонки
+# сами по себе команды, меняющие дерево.
+TAKEN="$(fixture_repo RT-7-taken)"
+input_taken() {
+    jq -n --arg p "$1" --arg d "$TAKEN" \
+        '{session_id:"tests",transcript_path:$p,cwd:$d,stop_hook_active:false}'
+}
+
+expect_stop "SC-AK-625 — взятая работа без папки задачи ход не кончает" \
+    "$(input_taken "$(transcript "$(say 'работай дальше')" "$(ran 'git checkout -b RT-7-taken origin/main')")")" BLOCK
+expect_stop "SC-AK-626 — перевод колонки взятую работу началом не делает" \
+    "$(input_taken "$(transcript "$(say 'работай дальше')" "$(ran 'npm run task:move -- 7 in-progress')")")" BLOCK
+expect_stop "SC-AK-627 — слово владельца об остановке отпускает и взятую работу" \
+    "$(input_taken "$(transcript "$(say 'останови, дальше сам')" "$(ran 'npm run task:move -- 7 in-progress')")")" PASS
+
+mkdir -p "$TAKEN/docs/tasks/RT-7-taken"
+printf '# Замысел\n' > "$TAKEN/docs/tasks/RT-7-taken/plan.md"
+expect_stop "SC-AK-628 — собранная папка задачи ярус снимает" \
+    "$(input_taken "$(transcript "$(say 'работай дальше')" "$(ran 'npm run task:move -- 7 in-progress')")")" PASS
+
+rm -rf "$TAKEN"
+
+# Ветка без номера задачи не судится: под пробу заводят и такие.
+PROBE="$(fixture_repo feat-probe)"
+expect_stop "SC-AK-629 — ветка без номера задачи этим ярусом не судится" \
+    "$(jq -n --arg p "$(transcript "$(say 'разложи')" "$(edited)")" --arg d "$PROBE" \
+        '{session_id:"tests",transcript_path:$p,cwd:$d,stop_hook_active:false}')" PASS
+rm -rf "$PROBE"
+
 state_is 'этап-идёт'
 exit_code_of() {
     printf '%s' "$2" | "$HOOKS/turn-exit-guard.sh" >/dev/null 2>&1

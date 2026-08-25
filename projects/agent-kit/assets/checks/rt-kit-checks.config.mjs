@@ -258,7 +258,10 @@ export const parseAllowlist = (name, sides = ['accepted', 'debt']) => {
             return new Map();
         }
         if (Array.isArray(entries) || typeof entries !== 'object' || entries === null) {
-            refuse(`«${side}» записан не объектом — у записи нет места ни для причины, ни для номера задачи`);
+            refuse(
+                `«${side}» записан не объектом — у записи нет места ни для причины, ни для номера задачи. ` +
+                    `Форма: {"${side}": {"<ключ>": {"reason": "<почему>", "task": "${key || 'КЛЮЧ'}-<номер>"}}}`,
+            );
         }
         const parsed = new Map();
         for (const [entry, value] of Object.entries(entries)) {
