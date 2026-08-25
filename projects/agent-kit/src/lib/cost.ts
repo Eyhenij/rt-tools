@@ -185,6 +185,21 @@ export function weigh(what: string, texts: readonly string[]): IWeighed {
     return { what, chars, bytes };
 }
 
+/**
+ * Печать цены: таблица человеку либо разбор машине.
+ *
+ * Обе живут здесь, а не в строке запуска: числа кладут в замысел эпика и в разбор закрытой
+ * работы, и та половина, что никем не покрыта, расходится с другой молча.
+ */
+export function costLines(cost: ICost, json: boolean): readonly string[] {
+    if (json) {
+        return [JSON.stringify(cost, null, 2)];
+    }
+    const row: (weighed: IWeighed) => string = (weighed: IWeighed): string =>
+        `  ${weighed.what.padEnd(34)} ${String(weighed.chars).padStart(9)} симв. ${String(weighed.bytes).padStart(10)} байт`;
+    return [`цена контекста — считано: ${cost.countedBy}`, '', row(cost.entry), row(cost.rule), row(cost.layer)];
+}
+
 /** Три числа цены: вход в работу, одно правило и весь слой. */
 export function costOf(root: string, rule: string | null): ICost {
     const named: string = rule ?? heaviestRule(root);
