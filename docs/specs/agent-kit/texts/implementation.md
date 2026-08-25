@@ -27,6 +27,7 @@
 | Привязками считаются строки одной таблицы компаньона, а не всякая строка, похожая на строку таблицы. | `projects/agent-kit/assets/checks/spec-anchors.mjs:rowsOfMap`                 |
 | Компаньон правила без раздела привязок — отказ, а не молчание.                                       | `projects/agent-kit/assets/checks/spec-anchors.mjs:rowsOfMap`                 |
 | Символом якоря считается любая буква, а не только латинская.                                         | `projects/agent-kit/assets/checks/spec-common.mjs:ANCHOR`                     |
+| Имя в якоре записывается так, как объявлено в коде, решётку включая.                                 | `projects/agent-kit/assets/checks/spec-common.mjs:ANCHOR`                     |
 | Алфавит не перечисляется списком.                                                                    | `projects/agent-kit/assets/checks/spec-common.mjs:ANCHOR`                     |
 | Путь пары разбирается по-прежнему.                                                                   | `projects/agent-kit/assets/checks/spec-common.mjs:ANCHOR`                     |
 | Номер сценария из одной цифры сверка видит наравне с двумя и тремя.                                  | `projects/agent-kit/assets/checks/spec-common.mjs:SCENARIO_HEADING`           |
