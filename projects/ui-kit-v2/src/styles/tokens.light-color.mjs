@@ -19,7 +19,7 @@ export const lightColor = [
     },
     {
         name: `--rt-color-bg-surface-subtle`,
-        value: `var(--rt-neutral-100)`,
+        value: `var(--rt-overlay-black-4)`,
         dark: `var(--rt-charcoal-950)`,
     },
     {
@@ -29,7 +29,7 @@ export const lightColor = [
     },
     {
         name: `--rt-color-bg-hover`,
-        value: `var(--rt-neutral-100)`,
+        value: `var(--rt-overlay-black-4)`,
         dark: `var(--rt-charcoal-700)`,
     },
     {
@@ -96,7 +96,7 @@ export const lightColor = [
         lead: `    /* Border */`,
         space: true,
         name: `--rt-color-border-default`,
-        value: `var(--rt-neutral-200)`,
+        value: `var(--rt-neutral-100)`,
         dark: `var(--rt-charcoal-border)`,
     },
     {
@@ -106,7 +106,7 @@ export const lightColor = [
     },
     {
         name: `--rt-color-border-subtle`,
-        value: `var(--rt-neutral-200)`,
+        value: `var(--rt-neutral-100)`,
         dark: `var(--rt-charcoal-border)`,
     },
     {

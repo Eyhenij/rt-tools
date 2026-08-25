@@ -229,8 +229,18 @@ export const scaleEffects = [
         value: `rgb(0 0 0 / 4%)`,
     },
     {
+        name: `--rt-overlay-black-8`,
+        value: `rgb(0 0 0 / 8%)`,
+        note: `наведение поверх приглушённой поверхности: она сама стоит на четырёх процентах`,
+    },
+    {
         name: `--rt-overlay-white-4`,
         value: `rgb(255 255 255 / 4%)`,
+    },
+    {
+        name: `--rt-overlay-white-8`,
+        value: `rgb(255 255 255 / 8%)`,
+        note: `то же на графите`,
     },
     {
         name: `--rt-overlay-white-25`,
