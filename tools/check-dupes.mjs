@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.14.0 · checks/check-dupes.mjs · d4aa7fb0c16f · правится надстройкой, не здесь
+// rt-kit v0.14.0 · checks/check-dupes.mjs · df82298a0bc4 · правится надстройкой, не здесь
 /**
  * Проверка того, что образец не написан второй раз.
  *
@@ -164,6 +164,12 @@ const PAIR_RE = /([\w'"[\].]+)\s*:\s*([^,\n]+)/g;
 const MIN_VALUE_LENGTH = 4;
 /** Минимум пар, при котором совпадение таблиц о чём-то говорит */
 const MIN_TABLE_PAIRS = 2;
+/**
+ * Доля совпавших пар, начиная с которой таблицы считаются одной. Полное равенство слепо ровно
+ * там, где копия разошлась с оригиналом на строку, — а это и есть тот случай, ради которого
+ * копии сводят. Порог высокий: таблицы одного домена делят по две-три пары без всякого родства.
+ */
+const MIN_TABLE_SHARE = 0.8;
 
 /**
  * Пакеты, чьи наборы считаются наравне с либами. Своё перечисление под уже
@@ -238,7 +244,7 @@ for (const path of SOURCE_ROOTS.flatMap((root) => collectFiles(root))) {
             ([, key, value]) => `${key.replaceAll(/['"[\]]/g, '')}:${value.trim().replace(/,$/, '')}`
         );
         if (pairs.length >= MIN_TABLE_PAIRS) {
-            tables.push({ name, lib, pairs: [...pairs].sort().join('|') });
+            tables.push({ name, lib, pairs: new Set(pairs) });
         }
     }
 
@@ -287,14 +293,36 @@ for (const [value, places] of [...namesByValue.entries()].sort()) {
     findings.push({ key: `value ${value} @ ${where}`, text: `значение ${value} объявлено в ${libs.size} либах: ${where}` });
 }
 
+/**
+ * Доля совпавших пар считается от большей таблицы: от меньшей таблица из двух пар, целиком
+ * лежащая внутри таблицы из двадцати, читалась бы полной копией.
+ */
+const tableOverlap = (first, second) => {
+    let same = 0;
+    for (const pair of first.pairs) {
+        if (second.pairs.has(pair)) {
+            same += 1;
+        }
+    }
+    const larger = Math.max(first.pairs.size, second.pairs.size);
+
+    return { same, larger, share: same / larger };
+};
+
 for (let i = 0; i < tables.length; i++) {
     for (let j = i + 1; j < tables.length; j++) {
         const [first, second] = [tables[i], tables[j]];
-        if (first.lib === second.lib || first.pairs !== second.pairs) {
+        if (first.lib === second.lib) {
+            continue;
+        }
+        const { same, larger, share } = tableOverlap(first, second);
+        if (share < MIN_TABLE_SHARE) {
             continue;
         }
         const key = `table ${[`${first.name} @ ${first.lib}`, `${second.name} @ ${second.lib}`].sort().join(' ~ ')}`;
-        findings.push({ key, text: `${first.name} (${first.lib}) и ${second.name} (${second.lib}) — одна таблица соответствий` });
+        const apart = larger - same;
+        const tail = apart === 0 ? 'одна таблица соответствий' : `одна таблица соответствий, разошедшаяся на ${apart} из ${larger} пар`;
+        findings.push({ key, text: `${first.name} (${first.lib}) и ${second.name} (${second.lib}) — ${tail}` });
     }
 }
 
