@@ -51,6 +51,7 @@
     "prod:api": "node tools/prod-api.mjs",
     "agent-kit:sync": "nx build @rt-tools/agent-kit && node dist/agent-kit/bin/agent-kit.js sync",
     "agent-kit:check": "nx build @rt-tools/agent-kit && node dist/agent-kit/bin/agent-kit.js sync --check",
+    "agent-kit:cost": "nx build @rt-tools/agent-kit && node dist/agent-kit/bin/agent-kit.js cost",
     "agent-kit:hooks": "bash projects/agent-kit/tests/run.sh",
     "packagr:core": "cd ./dist/core && npm pack && npm publish --access public",
     "packagr:store": "cd ./dist/store && npm pack && npm publish --access public",
