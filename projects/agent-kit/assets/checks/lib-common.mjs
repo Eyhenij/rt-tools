@@ -60,7 +60,18 @@ const isLib = (path) => existsSync(join(ROOT, path, 'project.json'));
  * нет вовсе, и прямое чтение роняло проверку отказом «нет такого файла» — то есть первая же
  * установка получала поломку вместо отчёта о том, что долгов нет.
  */
-const allowlist = parseAllowlist('lib-layers', ['notDomains', 'legacyDomains', 'legacyLibs', 'singleLayerDomains', 'accepted', 'debt']);
+// `flatLibRoots` стоит в перечне наравне с остальными: сбор плоских либ читает эту сторону, а
+// разбор её не собирал — значение выходило пустым и подставлялось пустым списком молча. Дерево с
+// непустым набором плоских корней получало ноль плоских либ и зелёную проверку.
+const allowlist = parseAllowlist('lib-layers', [
+    'notDomains',
+    'legacyDomains',
+    'legacyLibs',
+    'singleLayerDomains',
+    'flatLibRoots',
+    'accepted',
+    'debt',
+]);
 const pathsOf = (key) => [...allowlist[key].keys()];
 
 /** Паттерн `<корень>/x/*` покрывает и сам каталог `<корень>/x`: исключение снимается целиком */
