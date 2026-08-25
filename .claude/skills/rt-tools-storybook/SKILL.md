@@ -2,7 +2,7 @@
 name: rt-tools-storybook
 kind: rule
 law: verifiability
-description: Add or edit a Storybook story or MDX page for a kit component — the Test*Component wrapper convention, Meta/StoryObj typing, applicationConfig decorators, argTypes controls, and the ui-kit-v2 state-coverage contract. Use when creating any *.stories.ts or docs *.mdx, adding a demo variant for a component, or wiring token/theming docs into Storybook.
+description: Правило этого дерева про витрину: обёртка Test*Component, типизация истории, декораторы окружения, контролы, договор о покрытии состояний во второй витрине. Брать при заведении или правке любой истории и страницы документации витрины. Паттерн rt-tools-storybook-story.
 ---
 
 # Storybook

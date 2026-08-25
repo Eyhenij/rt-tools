@@ -114,6 +114,7 @@ node tools/check-dupes.mjs
 node tools/check-hooks.mjs
 node tools/check-cycles.mjs
 node tools/check-boundary.mjs
+node tools/check-descriptions.mjs
 EOF
 
     rt_push_checks_default "$1" \

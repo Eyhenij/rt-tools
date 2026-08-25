@@ -2,7 +2,7 @@
 name: rt-tools-storybook-story
 kind: pattern
 rule: rt-tools-storybook
-description: Паттерн правила rt-tools-storybook. Брать при заведении или правке *.stories.ts — обёртка Test*Component рядом с историей, типизация Meta и StoryObj, декораторы applicationConfig, контролы argTypes, механика матрицы состояний и параметры снимка второй витрины. Не брать для разбора упавшего снимка — это паттерн ui-component-tests-visual.
+description: Паттерн правила rt-tools-storybook. Брать при заведении или правке истории: обёртка Test*Component, типизация, декораторы окружения, контролы, матрица состояний и параметры снимка второй витрины. Разбор упавшего снимка — паттерн ui-component-tests-visual.
 ---
 
 # История витрины — готовый код

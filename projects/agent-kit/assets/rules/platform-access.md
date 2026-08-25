@@ -2,7 +2,7 @@
 name: platform-access
 kind: rule
 law: frontend-application
-description: Правило под «Закон о фронтовом приложении». Брать, когда правка задевает глобальный объект или среду исполнения — window, globalThis, PLATFORM_ID, isPlatformBrowser, document.defaultView, localStorage, IntersectionObserver. Называет токены DI, приведение типа и подводные камни отдачи страницы сервером. Не действует под libs/api и apps/api. Готовый код — в паттерне platform-access-di.
+description: Правило под «Закон о фронтовом приложении». Брать, когда правка задевает глобальный объект или среду исполнения — window, globalThis, PLATFORM_ID, localStorage. Называет токены DI и подводные камни отдачи страницы сервером. Под libs/api и apps/api не действует. Паттерн platform-access-di.
 ---
 
 # Окружение браузера — как это устроено здесь

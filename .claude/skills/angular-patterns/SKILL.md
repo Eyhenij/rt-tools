@@ -2,9 +2,9 @@
 name: angular-patterns
 kind: rule
 law: frontend-application
-description: Правило под «Закон о фронтовом приложении». Брать при правке любого класса Angular — компонента, стора админки, сервиса, директивы, пайпа, гарда, интерцептора. Называет сигнальный API входов, OnPush, zoneless, inject и место, где живёт подписка. Не действует под libs/api и apps/api. Готовый код — в паттерне angular-patterns-state.
+description: Правило под «Закон о фронтовом приложении». Брать при правке любого класса Angular — компонента, стора, сервиса, директивы, пайпа, гарда, интерцептора. Называет сигнальный API входов, OnPush, zoneless, inject и место подписки. Паттерн angular-patterns-state.
 ---
-<!-- rt-kit v0.14.0 · rules/angular-patterns.md · 909964eb2fe0 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.14.0 · rules/angular-patterns.md · 6f1c4bcdeff3 · правится надстройкой, не здесь -->
 
 # Реактивность экрана — как это устроено здесь
 
