@@ -88,6 +88,8 @@ echo "набор гейта по предмету правки (SC-AK-569)"
 probe 'только тексты' 'docs/x.md README.md' ''
 probe 'только обвязка агента' '.claude/hooks/probe.sh projects/agent-kit/assets/hooks/probe.sh' ''
 probe 'тексты и обвязка вместе' 'docs/x.md .claude/rt-kit/project.sh' ''
+probe 'проверки дерева' 'tools/probe.mjs' ''
+probe 'проверка рядом с китом' 'tools/probe.mjs projects/ui-kit/src/a.ts' 'кит1'
 probe 'первый кит' 'projects/ui-kit/src/lib/probe.ts' 'кит1'
 probe 'второй кит' 'projects/ui-kit-v2/src/lib/probe.ts' 'кит2'
 probe 'оба кита' 'projects/ui-kit/src/a.ts projects/ui-kit-v2/src/b.ts' 'кит1 кит2'
@@ -103,7 +105,6 @@ ALL='кит1 кит2 образ-админки образ-приёмника с�
 probe 'снимок зависимостей' 'pnpm-lock.yaml' "$ALL"
 probe 'корневая настройка' 'nx.json' "$ALL"
 probe 'общая библиотека' 'projects/core/src/probe.ts' "$ALL"
-probe 'обвязка проверок' 'tools/probe.mjs' "$ALL"
 probe 'конвейер' '.github/workflows/probe.yml' "$ALL"
 probe 'путь, которого признак не знает' 'внезапно/новое.ts' "$ALL"
 probe 'незнакомое рядом с китом' 'projects/ui-kit/src/a.ts внезапно/новое.ts' "$ALL"
