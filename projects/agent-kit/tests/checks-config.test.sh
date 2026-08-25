@@ -154,6 +154,22 @@ report "SC-AK-402 — запись без номера задачи отбита
 FOREIGN_TASK='{"accepted":{"две копии перечисления":{"reason":"киты кода не делят","task":"807"}}}'
 report "SC-AK-402 — номер не той формы отбит" "$(parse_of foreign "$FOREIGN_TASK" | grep -c 'нет номера задачи')" '1'
 
+# Сторона, названная в перечне разбора, приходит разобранной: прежде сбор плоских либ читал её
+# мимо разбора и получал пустоту молча.
+SIDE='{"flatLibRoots":{"libs/api":{"reason":"домен бэкенда — одна либа","task":"RT-1083"}}}'
+parse_side_of() {
+    printf '%s\n' "$2" > "$TREE/tools/$1-allowlist.json"
+    node --input-type=module -e "
+        import { parseAllowlist } from '${TREE}/tools/rt-kit-checks.config.mjs';
+        const parsed = parseAllowlist(process.argv[1], [process.argv[2]]);
+        console.log(JSON.stringify([...parsed[process.argv[2]].keys()]));
+    " "$1" "$3" 2>&1
+}
+report "SC-AK-594 — названная сторона разобрана" "$(parse_side_of side "$SIDE" flatLibRoots | grep -c 'libs/api')" '1'
+
+report "SC-AK-595 — отказ о стороне не объектом показывает форму записи" \
+    "$(parse_of flatform '{"accepted":["строка"]}' | grep -c 'reason')" '1'
+
 FLAT='{"accepted":["две копии перечисления"]}'
 report "SC-AK-403 — перечень без причин отбит" "$(parse_of flat "$FLAT" | grep -c 'записан не объектом')" '1'
 report "SC-AK-403 — отказ называет файл" "$(parse_of flat "$FLAT" | grep -c 'tools/flat-allowlist.json')" '1'
