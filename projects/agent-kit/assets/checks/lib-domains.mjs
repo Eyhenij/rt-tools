@@ -196,7 +196,7 @@ function collectStrayLibs(knownLibs) {
  * `nx test` по ней молча не гонял ни одной спеки.
  */
 function collectFlatLibs() {
-    return (allowlist.flatLibRoots ?? [])
+    return [...(allowlist.flatLibRoots?.keys() ?? [])]
         .flatMap((root) => dirsIn(root).map((entry) => `${root}/${entry}`))
         .filter((path) => isLib(path))
         .sort();
