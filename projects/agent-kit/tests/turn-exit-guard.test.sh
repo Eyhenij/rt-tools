@@ -61,6 +61,16 @@ expect_stop() {
     report "$label" "$got" "$want"
 }
 
+# Отказ читается тем, кому он адресован: страж называет первый этап замысла, а не общие слова.
+expect_reason() {
+    local label="$1" json="$2" want="$3" out
+    out="$(printf '%s' "$json" | "$HOOKS/turn-exit-guard.sh" 2>/dev/null | jq -r '.reason // ""' 2>/dev/null)"
+    case "$out" in
+        *"$want"*) report "$label" "есть:$want" "есть:$want" ;;
+        *) report "$label" "нет:$want" "есть:$want" ;;
+    esac
+}
+
 # --- ход, кончившийся отчётом ------------------------------------------------------------
 # Он выглядит работой лучше всякой другой: полон, называет номера и состояния, и пустоты за
 # ним не видно. Ровно его страж и ловит.
@@ -96,6 +106,25 @@ expect_stop "SC-AK-304 — в отданной работе ход закрыв�
 state_is 'влито'
 expect_stop "SC-AK-305 — во влитой работе ход закрывается" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)")")" PASS
+
+# --- записанный замысел -----------------------------------------------------------------------
+# Обязательное действие этого состояния — делать первый этап, а начавший его переводит состояние
+# той же правкой. Второй признак сюда не годится: заведение задачи, ветки, колонки и папки он
+# считает работой.
+plan_is() {
+    printf '# Замысел\n\n## Этапы\n\n### %s\n\n- **Что делается:** проба\n' "$1" > "$TASK/plan.md"
+}
+
+state_is 'замысел-записан'
+plan_is 'Правка стража'
+expect_stop "SC-AK-591 — записанный замысел ход не отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'npm run task:new -- --title проба')")")" BLOCK
+expect_reason "SC-AK-592 — отказ называет первый этап замысла" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)")")" 'Правка стража'
+state_is 'этап-идёт'
+expect_stop "SC-AK-593 — начатый этап судится прежним признаком" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" PASS
+rm -f "$TASK/plan.md"
 
 # --- отказ в пользу работы ---------------------------------------------------------------------
 state_is 'этап-идёт'
@@ -172,6 +201,37 @@ expect_stop "SC-AK-576 — при снятой папке правка дере�
     "$(input_archived "$(transcript "$(say 'продолжай')" "$(edited)")")" PASS
 
 rm -rf "$ARCHIVED"
+
+# --- взятая, но не начатая работа --------------------------------------------------------------
+# Ветка по номеру задачи заведена, папки при ней нет: работа объявлена взятой и не начата ни
+# одной строкой. Второй признак такой ход отпускал целиком — заведение ветки и перевод колонки
+# сами по себе команды, меняющие дерево.
+TAKEN="$(fixture_repo RT-7-taken)"
+input_taken() {
+    jq -n --arg p "$1" --arg d "$TAKEN" \
+        '{session_id:"tests",transcript_path:$p,cwd:$d,stop_hook_active:false}'
+}
+
+expect_stop "SC-AK-625 — взятая работа без папки задачи ход не кончает" \
+    "$(input_taken "$(transcript "$(say 'работай дальше')" "$(ran 'git checkout -b RT-7-taken origin/main')")")" BLOCK
+expect_stop "SC-AK-626 — перевод колонки взятую работу началом не делает" \
+    "$(input_taken "$(transcript "$(say 'работай дальше')" "$(ran 'npm run task:move -- 7 in-progress')")")" BLOCK
+expect_stop "SC-AK-627 — слово владельца об остановке отпускает и взятую работу" \
+    "$(input_taken "$(transcript "$(say 'останови, дальше сам')" "$(ran 'npm run task:move -- 7 in-progress')")")" PASS
+
+mkdir -p "$TAKEN/docs/tasks/RT-7-taken"
+printf '# Замысел\n' > "$TAKEN/docs/tasks/RT-7-taken/plan.md"
+expect_stop "SC-AK-628 — собранная папка задачи ярус снимает" \
+    "$(input_taken "$(transcript "$(say 'работай дальше')" "$(ran 'npm run task:move -- 7 in-progress')")")" PASS
+
+rm -rf "$TAKEN"
+
+# Ветка без номера задачи не судится: под пробу заводят и такие.
+PROBE="$(fixture_repo feat-probe)"
+expect_stop "SC-AK-629 — ветка без номера задачи этим ярусом не судится" \
+    "$(jq -n --arg p "$(transcript "$(say 'разложи')" "$(edited)")" --arg d "$PROBE" \
+        '{session_id:"tests",transcript_path:$p,cwd:$d,stop_hook_active:false}')" PASS
+rm -rf "$PROBE"
 
 state_is 'этап-идёт'
 exit_code_of() {
