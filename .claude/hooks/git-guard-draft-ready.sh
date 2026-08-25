@@ -25,6 +25,21 @@
 # Третье условие и есть то, что отделяет готовую работу от идущей. Без него гард пинал бы
 # посреди работы на каждом зелёном прогоне, и его выключили бы в первый же день.
 #
+# ЯРУСОВ ДВА, И ВТОРОЙ — ПРО ЧУЖИЕ ВЕТКИ.
+#
+# Первый ярус судит заявку текущей ветки и знает про неё всё: ход работы, папку, закрытость
+# этапов. Он же и был всем гардом целиком — и ровно поэтому не ловил самого дешёвого способа
+# бросить работу: перейти в соседнюю ветку. Заявка никуда не делась, прогон по ней дошёл,
+# черновик остался, а гард с этой минуты судил уже другую ветку и молчал. За один заход так
+# разошлись с главной четыре заявки подряд, и заметил это владелец, а не гард. Разбор —
+# `docs/postmortems/2026-08-25-run-left-unwatched.md`.
+#
+# Второй ярус спрашивает у хостинга все открытые черновики машинной записи и судит каждый по
+# двум признакам: прогон на вершине завершён успехом и ветка не везёт папки своей задачи. Хода
+# работы у чужой ветки он не читает — папка на месте означает, что работа там ещё идёт, и такой
+# черновик законен. Имя машинной записи берётся из профиля дерева; дерево, его не назвавшее,
+# второго яруса не получает вовсе.
+#
 # Ответ хостинга кладётся в кэш на минуту: гард срабатывает на каждом завершении хода, и вызов
 # сети на каждом из них платится временем владельца.
 #
@@ -47,7 +62,6 @@ git rev-parse --git-dir >/dev/null 2>&1 || exit 0
 
 branch="$(git branch --show-current 2>/dev/null)"
 [ -z "$branch" ] && exit 0
-[ "$branch" = "main" ] && exit 0
 
 # Помощник хостинга. Имя `gh` на машине владельца перехвачено чужим псевдонимом, поэтому сперва
 # ищется настоящий бинарь и только потом — то, что попалось в пути.
@@ -70,89 +84,124 @@ run_gh() {
         "$gh_bin" "$@" 2>/dev/null
     fi
 }
-
-# Кэш ответа хостинга. Ключ — ветка: вершина её меняется вместе с ответом, и держать её в ключе
+# Кэш ответов хостинга. Ключ — ветка: вершина её меняется вместе с ответом, и держать её в ключе
 # значило бы спрашивать хостинг на каждом коммите заново.
 cache_dir="${TMPDIR:-/tmp}"
-cache_file="$cache_dir/rt-draft-ready-$(printf '%s' "$branch" | tr -c 'A-Za-z0-9_.-' '_')"
 cache_ttl=60
 
+# Свежесть кэша по имени файла: ярусов два, и у каждого свой ответ хостинга.
 cache_fresh() {
-    [ -f "$cache_file" ] || return 1
+    [ -f "$1" ] || return 1
     now="$(date +%s 2>/dev/null)" || return 1
-    then_="$(cat "$cache_file.at" 2>/dev/null)" || return 1
+    then_="$(cat "$1.at" 2>/dev/null)" || return 1
     [ -n "$then_" ] || return 1
     [ "$((now - then_))" -lt "$cache_ttl" ]
 }
 
-if cache_fresh; then
-    pr_json="$(cat "$cache_file" 2>/dev/null)"
-else
-    pr_json="$(run_gh pr view "$branch" --json number,isDraft,state,headRefOid,url)"
-    printf '%s' "$pr_json" > "$cache_file" 2>/dev/null
-    date +%s > "$cache_file.at" 2>/dev/null
-fi
+cache_put() {
+    printf '%s' "$2" > "$1" 2>/dev/null
+    date +%s > "$1.at" 2>/dev/null
+}
 
-[ -z "$pr_json" ] && exit 0
+safe_name() { printf '%s' "$1" | tr -c 'A-Za-z0-9_.-' '_'; }
 
-state="$(printf '%s' "$pr_json" | jq -r '.state // empty' 2>/dev/null)"
-draft="$(printf '%s' "$pr_json" | jq -r '.isDraft // false' 2>/dev/null)"
-number="$(printf '%s' "$pr_json" | jq -r '.number // empty' 2>/dev/null)"
-head_sha="$(printf '%s' "$pr_json" | jq -r '.headRefOid // empty' 2>/dev/null)"
-
-[ "$state" = "OPEN" ] || exit 0
-[ "$draft" = "true" ] || exit 0
-[ -n "$number" ] || exit 0
-[ -n "$head_sha" ] || exit 0
-
-# Прогон именно на вершине PR. Последний прогон ветки может принадлежать промежуточному коммиту,
-# и его зелёный цвет о готовности не говорит ничего.
-verdict="$(run_gh run list --branch "$branch" --limit 20 \
-    --json headSha,status,conclusion 2>/dev/null \
-    | jq -r --arg sha "$head_sha" '
-        [.[] | select(.headSha == $sha)] as $mine
-        | if ($mine | length) == 0 then "none"
-          elif ($mine | map(select(.status != "completed")) | length) > 0 then "running"
-          elif ($mine | map(select(.conclusion != "success")) | length) > 0 then "failed"
-          else "green" end
-    ' 2>/dev/null)"
-
-[ "$verdict" = "green" ] || exit 0
-
-# Дальше решается, на каком именно шаге стоит работа, и оснований для отказа два.
-#
-# Прежняя редакция гарда знала одно: папки в ветке нет — значит остался один вызов. Молчание при
-# лежащей папке она считала законным всегда, и остановка просто переехала на шаг назад: работа
-# была готова, прогон зелёный, папка не разобрана — и гард молчал ровно так же, как раньше молчал
-# слой правил. Гард, закрывающий последний шаг, переносит остановку на предыдущий; закрывать надо
-# переход, а не точку. Разбор — `docs/postmortems/handled/2026-08-16-draft-guard-half-closed.md`.
 tasks_dir="${RT_TASKS_DIR-docs/tasks}"
-folder="$(git ls-tree -d --name-only HEAD "$tasks_dir/$branch" 2>/dev/null)"
 
-if [ -z "$folder" ]; then
-    step="ready"
-else
-    # Папка на месте. Готова работа или ещё идёт, машине видно только из хода работы: раздел «Где
-    # стоим» — единственное место, где отмечается сделанное. Читается он из ветки, а не из
-    # рабочего дерева: незакоммиченная правка въедет вместе с веткой, а судим мы то, что въедет.
-    #
-    # Ловится закрытость этапов образцами, а не пониманием смысла: оценку «работа готова»
-    # назначал бы тот, кому она мешает. Набор открыт, пополняется правкой и промахивается
-    # заметно — ход работы, написанный словами вне набора, гард пропускает, и это его граница, а
-    # не обещание.
-    stage_re='закрыт|кончил|сделаны все|этапов не осталось|последний этап'
-    stage_line="$(git show "HEAD:$tasks_dir/$branch/progress.md" 2>/dev/null \
-        | grep -m1 -i '^[[:space:]]*[-*][[:space:]]*\*\*Этап' 2>/dev/null)"
-    if printf '%s' "$stage_line" | grep -qiE "$stage_re" 2>/dev/null; then
-        step="teardown"
+# Прогон именно на вершине заявки. Последний прогон ветки может принадлежать промежуточному
+# коммиту, и его зелёный цвет о готовности не говорит ничего.
+run_verdict() {
+    run_gh run list --branch "$1" --limit 20 \
+        --json headSha,status,conclusion 2>/dev/null \
+        | jq -r --arg sha "$2" '
+            [.[] | select(.headSha == $sha)] as $mine
+            | if ($mine | length) == 0 then "none"
+              elif ($mine | map(select(.status != "completed")) | length) > 0 then "running"
+              elif ($mine | map(select(.conclusion != "success")) | length) > 0 then "failed"
+              else "green" end
+        ' 2>/dev/null
+}
+
+# Везёт ли ветка папку своей задачи. Читается ветка, а не рабочее дерево: судим то, что въедет.
+# Чужая ветка спрашивается сперва по удалённой ссылке — она и есть то, что видит владелец, — и
+# только потом по локальной копии. Ни одной ссылки нет — ветка не судится вовсе.
+carries_folder() {
+    for ref in "origin/$1" "$1"; do
+        git rev-parse --verify --quiet "$ref" >/dev/null 2>&1 || continue
+        if [ -n "$(git ls-tree -d --name-only "$ref" "$tasks_dir/$1" 2>/dev/null)" ]; then
+            printf 'yes'
+        else
+            printf 'no'
+        fi
+        return 0
+    done
+    printf 'unknown'
+}
+
+# ── Ярус первый: заявка текущей ветки ────────────────────────────────────────────────────────
+
+reason=''
+
+judge_current() {
+    [ -z "$branch" ] && return 0
+    [ "$branch" = "main" ] && return 0
+
+    cache_file="$cache_dir/rt-draft-ready-$(safe_name "$branch")"
+    if cache_fresh "$cache_file"; then
+        pr_json="$(cat "$cache_file" 2>/dev/null)"
     else
-        # Этапы ещё открыты — черновик при них законен, и гард молчит.
-        exit 0
+        pr_json="$(run_gh pr view "$branch" --json number,isDraft,state,headRefOid,url)"
+        cache_put "$cache_file" "$pr_json"
     fi
-fi
 
-if [ "$step" = "ready" ]; then
-    reason="BLOCKED by git-guard-draft-ready: работа готова, а PR #$number всё ещё черновик.
+    [ -z "$pr_json" ] && return 0
+
+    state="$(printf '%s' "$pr_json" | jq -r '.state // empty' 2>/dev/null)"
+    draft="$(printf '%s' "$pr_json" | jq -r '.isDraft // false' 2>/dev/null)"
+    number="$(printf '%s' "$pr_json" | jq -r '.number // empty' 2>/dev/null)"
+    head_sha="$(printf '%s' "$pr_json" | jq -r '.headRefOid // empty' 2>/dev/null)"
+
+    [ "$state" = "OPEN" ] || return 0
+    [ "$draft" = "true" ] || return 0
+    [ -n "$number" ] || return 0
+    [ -n "$head_sha" ] || return 0
+
+    [ "$(run_verdict "$branch" "$head_sha")" = "green" ] || return 0
+
+    # Дальше решается, на каком именно шаге стоит работа, и оснований для отказа два.
+    #
+    # Прежняя редакция гарда знала одно: папки в ветке нет — значит остался один вызов. Молчание
+    # при лежащей папке она считала законным всегда, и остановка просто переехала на шаг назад:
+    # работа была готова, прогон зелёный, папка не разобрана — и гард молчал ровно так же, как
+    # раньше молчал слой правил. Гард, закрывающий последний шаг, переносит остановку на
+    # предыдущий; закрывать надо переход, а не точку. Разбор —
+    # `docs/postmortems/handled/2026-08-16-draft-guard-half-closed.md`.
+    folder="$(git ls-tree -d --name-only HEAD "$tasks_dir/$branch" 2>/dev/null)"
+
+    if [ -z "$folder" ]; then
+        step="ready"
+    else
+        # Папка на месте. Готова работа или ещё идёт, машине видно только из хода работы: раздел
+        # «Где стоим» — единственное место, где отмечается сделанное. Читается он из ветки, а не
+        # из рабочего дерева: незакоммиченная правка въедет вместе с веткой, а судим мы то, что
+        # въедет.
+        #
+        # Ловится закрытость этапов образцами, а не пониманием смысла: оценку «работа готова»
+        # назначал бы тот, кому она мешает. Набор открыт, пополняется правкой и промахивается
+        # заметно — ход работы, написанный словами вне набора, гард пропускает, и это его
+        # граница, а не обещание.
+        stage_re='закрыт|кончил|сделаны все|этапов не осталось|последний этап'
+        stage_line="$(git show "HEAD:$tasks_dir/$branch/progress.md" 2>/dev/null \
+            | grep -m1 -i '^[[:space:]]*[-*][[:space:]]*\*\*Этап' 2>/dev/null)"
+        if printf '%s' "$stage_line" | grep -qiE "$stage_re" 2>/dev/null; then
+            step="teardown"
+        else
+            # Этапы ещё открыты — черновик при них законен, и гард молчит.
+            return 0
+        fi
+    fi
+
+    if [ "$step" = "ready" ]; then
+        reason="BLOCKED by git-guard-draft-ready: работа готова, а PR #$number всё ещё черновик.
 
 Прогон на вершине \`${head_sha:0:8}\` завершён успехом, папку задачи ветка больше не везёт — значит
 сделано всё, кроме одного вызова. У черновика кнопка слияния заблокирована хостингом: пока он
@@ -165,8 +214,8 @@ if [ "$step" = "ready" ]; then
 
 Черновик стоит намеренно — скажи владельцу, чего именно ждёшь, вслух: гард судит один ход и
 следующий заход не отбивает."
-else
-    reason="BLOCKED by git-guard-draft-ready: этапы закрыты, прогон зелёный, а работа не убрана.
+    else
+        reason="BLOCKED by git-guard-draft-ready: этапы закрыты, прогон зелёный, а работа не убрана.
 
 PR #$number черновик, прогон на вершине \`${head_sha:0:8}\` завершён успехом, а ход работы говорит,
 что этапов не осталось. Ветка при этом всё ещё везёт \`$tasks_dir/$branch/\` — значит стоит она
@@ -188,7 +237,74 @@ PR #$number черновик, прогон на вершине \`${head_sha:0:8}
 
 Этапы на самом деле не закрыты — поправь «Где стоим» в ходе работы: гард читает именно эту
 строку, и судит он один ход."
-fi
+    fi
+}
+
+# ── Ярус второй: черновики, брошенные в соседних ветках ──────────────────────────────────────
+
+judge_abandoned() {
+    # Имя машинной записи — из профиля дерева. Спрашивать `@me` нельзя: помощник хостинга на
+    # машине владельца залогинен им самим, и список вернулся бы чужим.
+    bot=''
+    if [ -n "${RT_BOT:-}" ]; then
+        bot="$RT_BOT"
+    elif [ -f .claude/rt-kit/checks.json ]; then
+        bot="$(jq -r '.board.bot // empty' .claude/rt-kit/checks.json 2>/dev/null)"
+    fi
+    [ -z "$bot" ] && return 0
+
+    cache_file="$cache_dir/rt-draft-abandoned-$(safe_name "$bot")"
+    if cache_fresh "$cache_file"; then
+        list_json="$(cat "$cache_file" 2>/dev/null)"
+    else
+        list_json="$(run_gh pr list --author "$bot" --state open --draft --limit 20 \
+            --json number,headRefName,headRefOid)"
+        cache_put "$cache_file" "$list_json"
+    fi
+
+    [ -z "$list_json" ] && return 0
+    printf '%s' "$list_json" | jq -e 'type == "array"' >/dev/null 2>&1 || return 0
+
+    left=''
+    count=0
+    while IFS='	' read -r number ref sha; do
+        [ -n "$number" ] || continue
+        [ -n "$ref" ] || continue
+        [ -n "$sha" ] || continue
+        [ "$ref" = "$branch" ] && continue
+
+        [ "$(carries_folder "$ref")" = "no" ] || continue
+        [ "$(run_verdict "$ref" "$sha")" = "green" ] || continue
+
+        left="$left
+    #$number  $ref  вершина ${sha:0:8}    $gh_bin pr ready $number"
+        count=$((count + 1))
+    done <<EOF
+$(printf '%s' "$list_json" | jq -r '.[] | [.number, .headRefName, .headRefOid] | @tsv' 2>/dev/null)
+EOF
+
+    [ "$count" -eq 0 ] && return 0
+
+    plural='заявка брошена черновиком'
+    [ "$count" -gt 1 ] && plural="заявок брошено черновиками"
+
+    reason="BLOCKED by git-guard-draft-ready: $count $plural — прогон по ним дошёл, а черновик не снят.
+$left
+
+Уход в соседнюю ветку заявку не закрывает: прогон по ней кончился успехом, папку задачи она
+больше не везёт, и остался один вызов. Пока черновик стоит, кнопка слияния у владельца
+заблокирована хостингом, а главная ветка уходит вперёд — чем дольше заявка ждёт, тем вероятнее
+конфликт, который придётся разбирать вторым мержем.
+
+Снятие черновика и просьба влить — один ход: сними и назови владельцу номер.
+
+Черновик стоит намеренно — скажи владельцу, по какой заявке и чего именно ждёшь, вслух: гард
+судит один ход и следующий заход не отбивает."
+}
+
+judge_current
+[ -z "$reason" ] && judge_abandoned
+[ -z "$reason" ] && exit 0
 
 jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
     || printf '{"decision":"block","reason":"git-guard-draft-ready: прогон зелёный, а PR всё ещё черновик — сними его."}\n'
