@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.14.0 · hooks/turn-exit-guard.sh · 993a4e2e5336 · правится надстройкой, не здесь
+# rt-kit v0.14.0 · hooks/turn-exit-guard.sh · a447cd663ba3 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: hooks/deny-tail.sh
 # Страж выходов хода: ход, в котором по работе не сделано ничего, не заканчивается, пока работа
@@ -13,7 +13,9 @@
 # нельзя, и запрет должна держать машина.
 #
 # Что считается работой: правка файла и команда, меняющая дерево или его состояние. Чтение,
-# поиск и разговор работой не считаются — именно ими и заполняется ход, который встал.
+# поиск и разговор работой не считаются — именно ими и заполняется ход, который встал. Читающая
+# подкоманда `git` и клиента хостинга работой не считается тоже, и судится это по частям
+# составной команды: чтение, соединённое с правкой через `&&`, работой остаётся.
 #
 # Что отпускает ход:
 #   1. Работа отдана либо влита — состояние работы говорит об этом само.
@@ -146,7 +148,21 @@ next_step=""
 # заполняется ход, который встал.
 work_re='git (add|commit|push|checkout|merge|rm)|npm run|pnpm (run|exec)|nx (build|test|run)|gh (pr|issue|api|run)|task:(new|move)|mkdir|cp |mv |rm |sed -i|tee |>>?[[:space:]]*[^|&]'
 
-verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re" '
+# Разведка. Те же слова, что и в образце работы, но подкоманда читающая: переключение ветки,
+# подтягивание, просмотр истории, чтение заявок и прогонов. Образец работы называет их работой,
+# потому что знает только первое слово — `git` и `gh` стоят в нём целиком, — и ход, в котором
+# исполнитель перешёл на главную ветку, прочитал историю и написал владельцу отчёт, выходил
+# отсюда нулём. Разбор — `docs/postmortems/2026-08-25-read-only-turn-counted-as-work.md`.
+#
+# Разведка выглядит работой лучше всего остального: в ней команды, числа и точные ответы. Тем
+# она и опасна — ход, набитый ею, читается как полный и владельцем, и самим заходом.
+read_re='^[[:space:]]*(([^[:space:]]*/)?git[[:space:]]+(show|log|ls-tree|ls-files|ls-remote|diff|status|branch|tag|rev-parse|remote|describe|blame|fetch|pull|checkout|switch)|([^[:space:]]*/)?gh[[:space:]]+(pr|issue|run|repo)[[:space:]]+(list|view|status|checks|diff|download|logs))([[:space:]]|$)'
+
+# Части составной команды судятся по одной: ход собирает чтение и работу в одну строку через
+# `&&`, и суждение целиком отпускало бы разведку по первой же меняющей части.
+part_re='&&|\|\||;|\n'
+
+verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re" --arg read "$read_re" --arg part "$part_re" '
     def is_input:
         .type == "user"
         and (((.message.content // []) | if type == "array"
@@ -160,7 +176,9 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re
     | ($uses | map(.name // "") | any(test("^(Edit|Write|MultiEdit|NotebookEdit)$"))) as $edited
     | ($uses | map(.name // "") | any(test("AskUserQuestion"))) as $asked
     | ($uses | map((.input.command // "")) | join("\n")) as $ran
-    | ($ran | test($work)) as $ran_work
+    # Работой считается часть команды, совпавшая с образцом работы и не совпавшая с образцом
+    # разведки: переключение ветки и чтение истории тем же ходом работой не становятся.
+    | ([$ran | splits($part)] | map(test($work) and (test($read) | not)) | any) as $ran_work
     # Отказ гарда и передача захода — оба кончают ход по правилу.
     | ([$turn[] | select(.type == "user") | .message.content // [] | select(type == "array") | .[]
           | select(.type == "tool_result") | .content
