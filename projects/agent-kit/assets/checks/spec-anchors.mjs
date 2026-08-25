@@ -210,8 +210,14 @@ function symbolOwners() {
 
     for (const file of SOURCE_ROOTS.flatMap((root) => walk(root, (name) => name.endsWith('.ts') || name.endsWith('.html')))) {
         const text = file.endsWith('.ts') ? codeOf(read(file)) : read(file);
-        for (const [token] of text.matchAll(/[A-Za-z_][\w-]*/g)) {
+        // Решётка входит в токен: приватное поле класса объявлено с ней, и якорь на него иначе
+        // не попадал бы в перечень владельцев ни разу. Имя без решётки помнится наравне с ним
+        // самим — привязки прежней формы остаются зелёными, и переходить разом не приходится.
+        for (const [token] of text.matchAll(/#?[A-Za-z_][\w-]*/g)) {
             remember(token, file);
+            if (token.startsWith('#')) {
+                remember(token.slice(1), file);
+            }
             if (token.includes('-')) {
                 token.split('-').forEach((part) => part && remember(part, file));
             }
@@ -242,7 +248,12 @@ function checkTracedAnchors() {
 
     const owners = symbolOwners();
     for (const { mapFile, path, symbol } of declared) {
-        const here = (codeAt(path).match(new RegExp(`\\b${escapeForRegExp(symbol)}\\b`, 'g')) || []).length;
+        // Граница слова ставится только там, где она есть: перед решёткой её нет, и образец с
+        // ней давал бы ноль вхождений у всякого приватного имени.
+        const bound = symbol.startsWith('#')
+            ? `${escapeForRegExp(symbol)}\\b`
+            : `\\b${escapeForRegExp(symbol)}\\b`;
+        const here = (codeAt(path).match(new RegExp(bound, 'g')) || []).length;
         const elsewhere = [...(owners.get(symbol) || [])].filter((file) => file !== path).length;
         if (here + elsewhere < 2) {
             report(
