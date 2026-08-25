@@ -74,6 +74,10 @@ describe('исполняемые ресурсы пакета', (): void => {
         expectGreen('checks-file-size.test.sh');
     }, 120_000);
 
+    it('SC-AK-613, SC-AK-614, SC-AK-615, SC-AK-616 — проверка описаний судит предел, пустую шапку и долг', (): void => {
+        expectGreen('checks-descriptions.test.sh');
+    }, 120_000);
+
     it('SC-AK-114, SC-AK-198 — набор гейта пуша судится против набора конвейера', (): void => {
         expectGreen('checks-push-gate.test.sh');
     }, 120_000);
