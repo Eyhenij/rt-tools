@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.14.0 · hooks/turn-exit-guard.sh · a447cd663ba3 · правится надстройкой, не здесь
+# rt-kit v0.14.0 · hooks/turn-exit-guard.sh · 5429dd50b210 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: hooks/deny-tail.sh
 # Страж выходов хода: ход, в котором по работе не сделано ничего, не заканчивается, пока работа
@@ -162,7 +162,17 @@ read_re='^[[:space:]]*(([^[:space:]]*/)?git[[:space:]]+(show|log|ls-tree|ls-file
 # `&&`, и суждение целиком отпускало бы разведку по первой же меняющей части.
 part_re='&&|\|\||;|\n'
 
-verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re" --arg read "$read_re" --arg part "$part_re" '
+# Ожидание чужого шага. Прогон, разбор владельцем и слияние идут без исполнителя и от взгляда
+# быстрее не становятся — правило прямо говорит, что состоянием работы это не бывает. Судится
+# только ПОСЛЕДНЕЕ действие хода: ожидание в середине законно, а запуск работы в фоне работой
+# остаётся. Разбор — `docs/postmortems/2026-08-25-turn-ended-on-waiting.md`.
+#
+# Прежний признак спрашивал одно: была ли за ход работа. Ход, где разобран конфликт, сделаны
+# коммит и пуш, а последним действием стал цикл до готовности прогона, проходил его целиком —
+# работа была, и много. Именно эта полнота и обманывает: пустоты за таким ходом не видно.
+wait_re='gh[[:space:]]+(run[[:space:]]+watch|pr[[:space:]]+checks[^|]*--watch)|until[[:space:]].*sleep|while[[:space:]].*sleep|^[[:space:]]*sleep[[:space:]]'
+
+verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re" --arg read "$read_re" --arg part "$part_re" --arg wait "$wait_re" '
     def is_input:
         .type == "user"
         and (((.message.content // []) | if type == "array"
@@ -179,6 +189,10 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re
     # Работой считается часть команды, совпавшая с образцом работы и не совпавшая с образцом
     # разведки: переключение ветки и чтение истории тем же ходом работой не становятся.
     | ([$ran | splits($part)] | map(test($work) and (test($read) | not)) | any) as $ran_work
+    # Последнее действие хода. Ожидание чужого шага концом хода не бывает, сколько бы работы ни
+    # было раньше: работа остаётся ровно там, где стояла.
+    | ([$uses[] | select((.name // "") == "Bash") | (.input.command // "")] | last // "") as $last
+    | ($last | test($wait)) as $waited
     # Отказ гарда и передача захода — оба кончают ход по правилу.
     | ([$turn[] | select(.type == "user") | .message.content // [] | select(type == "array") | .[]
           | select(.type == "tool_result") | .content
@@ -192,12 +206,13 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re
           | if type == "string" then . elif type == "array"
             then (map(if type == "object" then (.text // "") else "" end) | join("\n")) else "" end] | join("\n")) as $said
     | ($said | test("останов|стоп|хватит|подожди|не надо|прерв|отложи")) as $told_stop
-    | { worked: ($edited or $ran_work), released: ($asked or $denied or $handed or $told_stop), ran: $ran }
+    | { worked: ($edited or $ran_work), released: ($asked or $denied or $handed or $told_stop), waited: $waited, ran: $ran }
 ' 2>/dev/null)"
 
 [ -z "$verdict" ] && exit 0
 
 worked="$(printf '%s' "$verdict" | jq -r '.worked // false' 2>/dev/null)"
+waited="$(printf '%s' "$verdict" | jq -r '.waited // false' 2>/dev/null)"
 released="$(printf '%s' "$verdict" | jq -r '.released // false' 2>/dev/null)"
 commands="$(printf '%s' "$verdict" | jq -r '.ran // ""' 2>/dev/null)"
 
@@ -297,6 +312,33 @@ ${deny_tail_text}"
             || printf '{"decision":"block","reason":"turn-exit-guard: закрытый этап не подтверждён выводом команды."}\n'
         exit 0
     fi
+fi
+
+# Ход кончился ожиданием чужого шага. Работа в нём была — тем он и обманчив: полон, и пустоты за
+# ним не видно. Судится последнее действие, а не наличие работы.
+if [ "$waited" = "true" ]; then
+    reason="BLOCKED by turn-exit-guard: последним действием хода стало ожидание чужого шага, а оно состоянием работы не бывает.
+
+Прогон, разбор владельцем и слияние идут без исполнителя и от взгляда быстрее не становятся. Работы за ход могло быть много — она остаётся ровно там, где стояла, и владелец видит исполнителя стоящим.
+
+Следующий шаг записан в ходе работы: ${next_step}
+
+Сделай его этим же ходом либо возьми следующую задачу. Ожидание в середине хода законно — отбит именно конец.
+
+Страж судит один ход: следующий заход не отбивается."
+
+    # shellcheck disable=SC1090
+    [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+        && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+    command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+    deny_tail_text="$(rt_deny_tail "")"
+    [ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
+
+    jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
+        || printf '{"decision":"block","reason":"turn-exit-guard: ход кончился ожиданием чужого шага."}\n'
+    exit 0
 fi
 
 [ "$worked" = "true" ] && exit 0
