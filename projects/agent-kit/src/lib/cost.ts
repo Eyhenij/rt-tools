@@ -1,30 +1,24 @@
 /**
  * Цена контекста: чем заход платит за слой правил.
  *
- * Проверка длины считает строки, сводка наблюдений — загрузки и отбития. Токенов не считает
- * ничто, а окно захода кончается именно по ним, и байты за них не отвечают: тот же текст на
- * двух письменностях весит в байтах одинаково, а в токенах по-разному. Утверждение «стало
- * легче» без этого числа подтвердить нечем.
+ * Проверка длины считает строки одного файла, сводка наблюдений — загрузки и отбития. Сколько
+ * весит то, что заход получает целиком, не считает ничто, а окно кончается именно на этом.
  *
  * Считается не файл, а то, что заход получает: описание правила приходит ему полем, а не файлом
  * целиком, и словарь с картой хода — выводом хуков, а не своими исходниками. Вес файла назвал
  * бы не ту цену.
  *
- * Токенизатор у модели свой, и локального счёта, верного для неё, не существует. Сторонний
- * офлайн-счётчик занижает число и занижает тем сильнее, чем дальше текст от латиницы, — то есть
- * промахивается ровно на вопросе о письменности, ради которого счёт и заведён. Поэтому счёт
- * идёт у самой модели, а без доступа команда отказывает: молча перейти на приблизительное
- * нельзя, такое число выглядит точным и уезжает в замысел.
+ * Меряется в символах и байтах — тем, что считается на месте, без сети и без платы. Точный счёт
+ * токенов живёт у модели и стоит денег; работа его не требует. Цена этого решения названа
+ * прямо: число сравнимо только само с собой, и вопрос «дешевле ли та же мысль на другой
+ * письменности» этим счётом не решается — в символах письменности равны.
  */
 import { execFileSync } from 'node:child_process';
 import { Dirent, existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-/** Имя модели, чьим счётом меряется цена. Число, снятое другой, с этим несравнимо. */
-export const COST_MODEL: string = 'claude-opus-5';
-
-/** Пакет, которым зовётся счёт. Обязательной зависимостью не объявлен: см. `loadCounter`. */
-const COUNTER_PACKAGE: string = '@anthropic-ai/sdk';
+/** Чем считано. Стоит рядом с числами: снятое иначе с этим несравнимо. */
+export const COUNTED_BY: string = 'символы и байты, счёт на месте';
 
 /** Хуки старта захода, чей вывод заход получает целиком. */
 const ENTRY_HOOKS: readonly string[] = ['glossary-load', 'turn-entry-load', 'constitution-index'];
@@ -32,8 +26,10 @@ const ENTRY_HOOKS: readonly string[] = ['glossary-load', 'turn-entry-load', 'con
 export interface IWeighed {
     /** Что взвешено — строкой для человека. */
     readonly what: string;
-    /** Сколько это стоит заходу в токенах. */
-    readonly tokens: number;
+    /** Сколько в этом символов. */
+    readonly chars: number;
+    /** Сколько в этом байтов: у кириллицы их вдвое больше, чем символов. */
+    readonly bytes: number;
 }
 
 export interface ICost {
@@ -47,34 +43,11 @@ export interface ICost {
     readonly layer: IWeighed;
 }
 
-interface ICountAnswer {
-    readonly input_tokens: number;
-}
-
-interface ICountRequest {
-    readonly model: string;
-    readonly messages: readonly { readonly role: string; readonly content: string }[];
-}
-
-interface ICountingClient {
-    readonly messages: {
-        countTokens(body: ICountRequest): Promise<ICountAnswer>;
-    };
-}
-
-interface ICounterModule {
-    readonly default: new () => ICountingClient;
-}
-
-interface ICounter {
-    count(texts: readonly string[]): Promise<number>;
-}
-
-/** Отказ, который команда печатает вместо чисел: сказано, чего нет и чем это заводится. */
-export class CountUnavailableError extends Error {
+/** Отказ, который команда печатает вместо чисел: сказано, чего нет. */
+export class CostUnavailableError extends Error {
     constructor(reason: string) {
-        super(`счёт токенов недоступен: ${reason}`);
-        this.name = 'CountUnavailableError';
+        super(`цену посчитать не на чем: ${reason}`);
+        this.name = 'CostUnavailableError';
     }
 }
 
@@ -126,7 +99,7 @@ function ruleNames(root: string): readonly string[] {
     try {
         return readdirSync(skillsDir(root));
     } catch {
-        throw new CountUnavailableError('слой правил в дереве не разложен');
+        throw new CostUnavailableError('слой правил в дереве не разложен');
     }
 }
 
@@ -167,7 +140,7 @@ export function entryTexts(root: string): readonly string[] {
 export function ruleTexts(root: string, rule: string): readonly string[] {
     const dir: string = join(skillsDir(root), rule);
     if (!existsSync(join(dir, 'SKILL.md'))) {
-        throw new CountUnavailableError(`правила «${rule}» в дереве нет`);
+        throw new CostUnavailableError(`правила «${rule}» в дереве нет`);
     }
     return ['SKILL.md', 'implementation.md']
         .map((name: string): string => join(dir, name))
@@ -196,60 +169,29 @@ export function heaviestRule(root: string): string {
         }
     }
     if (heaviest === '') {
-        throw new CountUnavailableError('слой правил в дереве не разложен');
+        throw new CostUnavailableError('слой правил в дереве не разложен');
     }
     return heaviest;
 }
 
-/**
- * Счётчик токенов. Пакет грузится по требованию и обязательной зависимостью не объявлен: у
- * пакета правил их ноль, и тянуть клиента модели в каждое дерево ради команды, которую зовут
- * раз в неделю, дороже, чем отказать тому, кто её позвал.
- */
-export async function loadCounter(): Promise<ICounter> {
-    let loaded: ICounterModule;
-    try {
-        loaded = (await import(COUNTER_PACKAGE)) as ICounterModule;
-    } catch {
-        throw new CountUnavailableError(`нет пакета «${COUNTER_PACKAGE}» — поставь его в дерево, из которого зовёшь команду`);
+/** Вес набора текстов: символы и байты. Байты считаются кодировкой, в которой файлы и лежат. */
+export function weigh(what: string, texts: readonly string[]): IWeighed {
+    let chars: number = 0;
+    let bytes: number = 0;
+    for (const text of texts) {
+        chars += text.length;
+        bytes += Buffer.byteLength(text, 'utf8');
     }
-    const client: ICountingClient = new loaded.default();
-    return {
-        count: async (texts: readonly string[]): Promise<number> => {
-            let total: number = 0;
-            for (const text of texts) {
-                try {
-                    const answer: ICountAnswer = await client.messages.countTokens({
-                        model: COST_MODEL,
-                        messages: [{ role: 'user', content: text }],
-                    });
-                    total += answer.input_tokens;
-                } catch (failure: unknown) {
-                    const said: string = failure instanceof Error ? failure.message : String(failure);
-                    throw new CountUnavailableError(`счёт отказал: ${said}`);
-                }
-            }
-            return total;
-        },
-    };
+    return { what, chars, bytes };
 }
 
 /** Три числа цены: вход в работу, одно правило и весь слой. */
-export async function costOf(root: string, rule: string | null): Promise<ICost> {
-    const counter: ICounter = await loadCounter();
+export function costOf(root: string, rule: string | null): ICost {
     const named: string = rule ?? heaviestRule(root);
     return {
-        countedBy: `${COUNTER_PACKAGE} · ${COST_MODEL}`,
-        entry: { what: 'вход в работу', tokens: await counter.count(entryTexts(root)) },
-        rule: { what: `правило «${named}»`, tokens: await counter.count(ruleTexts(root, named)) },
-        layer: { what: 'весь слой', tokens: await counter.count(layerTexts(root)) },
+        countedBy: COUNTED_BY,
+        entry: weigh('вход в работу', entryTexts(root)),
+        rule: weigh(`правило «${named}»`, ruleTexts(root, named)),
+        layer: weigh('весь слой', layerTexts(root)),
     };
-}
-
-/** Разница между текстом и его переводом: столько стоит письменность. */
-export async function differenceOf(one: string, other: string): Promise<IWeighed> {
-    const counter: ICounter = await loadCounter();
-    const first: number = await counter.count([one]);
-    const second: number = await counter.count([other]);
-    return { what: 'разница между письменностями', tokens: first - second };
 }
