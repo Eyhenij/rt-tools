@@ -31,19 +31,36 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const GUARD = process.env.RT_GUARD_PATH || join(ROOT, '.claude/hooks/git-guard-draft-ready.sh');
 
 const BRANCH = 'RT-900-probe';
+/** Соседняя ветка сценария: её заявка и есть та, что бросают уходом. */
+const OTHER = 'RT-901-neighbour';
 /** Вершина известна только после коммита, поэтому в заготовках стоит метка, а не sha. */
 const HEAD_MARK = '__HEAD__';
+const OTHER_MARK = '__OTHER__';
 
-/** Подставной помощник хостинга: отвечает заготовкой сценария и в сеть не ходит. */
-function fakeGh(dir, repo, { pr, runs }) {
+/**
+ * Подставной помощник хостинга: отвечает заготовкой сценария и в сеть не ходит.
+ *
+ * Списка заявок сценарий может и не давать — тогда помощник отвечает отказом, как настоящий без
+ * сети, и второй ярус гарда обязан молчать. Прогоны различаются по ветке: у соседней заявки своя
+ * вершина и свой исход, иначе брошенный черновик было бы не отличить от текущего.
+ */
+function fakeGh(dir, repo, { pr, runs, prList, otherRuns }) {
     const path = join(dir, 'gh');
+    const subst = `sed "s/${HEAD_MARK}/$head/g;s/${OTHER_MARK}/$other/g"`;
     writeFileSync(
         path,
         `#!/usr/bin/env bash
 head="$(git -C '${repo}' rev-parse HEAD)"
+other="$(git -C '${repo}' rev-parse ${OTHER} 2>/dev/null)"
 case "$1 $2" in
-    'pr view') printf '%s' '${JSON.stringify(pr)}' | sed "s/${HEAD_MARK}/$head/g" ;;
-    'run list') printf '%s' '${JSON.stringify(runs)}' | sed "s/${HEAD_MARK}/$head/g" ;;
+    'pr view') printf '%s' '${JSON.stringify(pr)}' | ${subst} ;;
+    'pr list') ${prList ? `printf '%s' '${JSON.stringify(prList)}' | ${subst}` : 'exit 1'} ;;
+    'run list')
+        case "$4" in
+            '${OTHER}') printf '%s' '${JSON.stringify(otherRuns ?? [])}' | ${subst} ;;
+            *) printf '%s' '${JSON.stringify(runs)}' | ${subst} ;;
+        esac
+        ;;
     *) exit 1 ;;
 esac
 `,
@@ -53,7 +70,7 @@ esac
 }
 
 /** Репозиторий сценария: ветка, ход работы и папка задачи — ровно те, что сценарий описывает. */
-function makeRepo(dir, { taskFolder, stageLine }) {
+function makeRepo(dir, { taskFolder, stageLine, bot = 'rt-probe-bot', otherFolder }) {
     const repo = join(dir, 'repo');
     mkdirSync(repo, { recursive: true });
     const git = (...args) => execFileSync('git', ['-C', repo, ...args], { stdio: 'pipe' });
@@ -65,6 +82,33 @@ function makeRepo(dir, { taskFolder, stageLine }) {
     writeFileSync(join(repo, 'README.md'), '# проба\n');
     git('add', '-A');
     git('commit', '-q', '-m', 'основание');
+
+    // Имя машинной записи гард читает из профиля дерева. Сценарий, который его не кладёт,
+    // проверяет как раз дерево без машинной записи: второго яруса оно не получает.
+    if (bot) {
+        mkdirSync(join(repo, '.claude/rt-kit'), { recursive: true });
+        writeFileSync(join(repo, '.claude/rt-kit/checks.json'), JSON.stringify({ board: { bot } }));
+        git('add', '-A');
+        git('commit', '-q', '-m', 'профиль дерева');
+    }
+
+    // Соседняя ветка со своей заявкой: разобранная папка означает готовую работу, лежащая —
+    // идущую.
+    if (otherFolder !== undefined) {
+        git('checkout', '-q', '-b', OTHER);
+        if (otherFolder) {
+            const folder = join(repo, 'docs/tasks', OTHER);
+            mkdirSync(folder, { recursive: true });
+            writeFileSync(join(folder, 'plan.md'), '# Замысел\n');
+        } else {
+            mkdirSync(join(repo, 'docs'), { recursive: true });
+            writeFileSync(join(repo, 'docs/neighbour.md'), 'папка разобрана\n');
+        }
+        git('add', '-A');
+        git('commit', '-q', '-m', 'соседняя ветка');
+        git('checkout', '-q', 'main');
+    }
+
     git('checkout', '-q', '-b', BRANCH);
 
     if (taskFolder) {
@@ -120,6 +164,12 @@ const GREEN = [{ headSha: HEAD_MARK, status: 'completed', conclusion: 'success' 
 const RUNNING = [{ headSha: HEAD_MARK, status: 'in_progress', conclusion: null }];
 const FAILED = [{ headSha: HEAD_MARK, status: 'completed', conclusion: 'failure' }];
 const ALIEN = [{ headSha: '0'.repeat(40), status: 'completed', conclusion: 'success' }];
+
+/** Список открытых черновиков машинной записи — то, чем гард видит соседние ветки. */
+const OTHER_LIST = [{ number: 901, headRefName: OTHER, headRefOid: OTHER_MARK }];
+const SELF_LIST = [{ number: 900, headRefName: BRANCH, headRefOid: HEAD_MARK }];
+const GREEN_OTHER = [{ headSha: OTHER_MARK, status: 'completed', conclusion: 'success' }];
+const RUNNING_OTHER = [{ headSha: OTHER_MARK, status: 'in_progress', conclusion: null }];
 
 const PASS = 'ход разрешён';
 
@@ -196,6 +246,65 @@ const SCENARIOS = [
         runs: GREEN,
         taskFolder: false,
         noGh: true,
+        expect: PASS,
+    },
+    {
+        name: 'черновик соседней ветки брошен — отбивает и называет его номер',
+        pr: READY,
+        runs: GREEN,
+        taskFolder: false,
+        prList: OTHER_LIST,
+        otherRuns: GREEN_OTHER,
+        otherFolder: false,
+        expect: /брошена черновиком[\s\S]*pr ready 901/,
+    },
+    {
+        name: 'соседняя ветка везёт папку задачи — молчит: работа там ещё идёт',
+        pr: READY,
+        runs: GREEN,
+        taskFolder: false,
+        prList: OTHER_LIST,
+        otherRuns: GREEN_OTHER,
+        otherFolder: true,
+        expect: PASS,
+    },
+    {
+        name: 'прогон соседней заявки ещё идёт — молчит: о готовности он не говорит',
+        pr: READY,
+        runs: GREEN,
+        taskFolder: false,
+        prList: OTHER_LIST,
+        otherRuns: RUNNING_OTHER,
+        otherFolder: false,
+        expect: PASS,
+    },
+    {
+        name: 'машинная запись деревом не названа — молчит: спрашивать список не у кого',
+        pr: READY,
+        runs: GREEN,
+        taskFolder: false,
+        bot: '',
+        prList: OTHER_LIST,
+        otherRuns: GREEN_OTHER,
+        otherFolder: false,
+        expect: PASS,
+    },
+    {
+        name: 'списка заявок хостинг не дал — молчит: отказ в пользу работы',
+        pr: READY,
+        runs: GREEN,
+        taskFolder: false,
+        otherRuns: GREEN_OTHER,
+        otherFolder: false,
+        expect: PASS,
+    },
+    {
+        name: 'заявка текущей ветки в списке — вторым ярусом не судится дважды',
+        pr: DRAFT,
+        runs: GREEN,
+        taskFolder: true,
+        stageLine: '2 из 3, форвард положен',
+        prList: SELF_LIST,
         expect: PASS,
     },
 ];
