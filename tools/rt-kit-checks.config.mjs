@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.14.0 · checks/rt-kit-checks.config.mjs · a687aaf42afe · правится надстройкой, не здесь
+// rt-kit v0.14.0 · checks/rt-kit-checks.config.mjs · d22efdd9f6c6 · правится надстройкой, не здесь
 /**
  * Настройки проверок: что считать исходниками, куда не ходить и где лежат списки долгов.
  *
@@ -259,7 +259,10 @@ export const parseAllowlist = (name, sides = ['accepted', 'debt']) => {
             return new Map();
         }
         if (Array.isArray(entries) || typeof entries !== 'object' || entries === null) {
-            refuse(`«${side}» записан не объектом — у записи нет места ни для причины, ни для номера задачи`);
+            refuse(
+                `«${side}» записан не объектом — у записи нет места ни для причины, ни для номера задачи. ` +
+                    `Форма: {"${side}": {"<ключ>": {"reason": "<почему>", "task": "${key || 'КЛЮЧ'}-<номер>"}}}`,
+            );
         }
         const parsed = new Map();
         for (const [entry, value] of Object.entries(entries)) {
