@@ -186,13 +186,14 @@ fi
 # Правило целиком остаётся вторым ходом — для того, кому статьи мало.
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/rule-article.sh" ] && . "$rt_hooks_dir/rule-article.sh" 2>/dev/null
-if [ "$kind" != "command" ] && [ "$kind" != "browser" ] && command -v rt_rule_articles >/dev/null 2>&1; then
-    article="$(rt_rule_articles "$root/$rules_dir/${req}/SKILL.md" "$target" 2>/dev/null)"
+if [ "$kind" != "command" ] && [ "$kind" != "browser" ] && command -v rt_rule_article_heads >/dev/null 2>&1; then
+    article="$(rt_rule_article_heads "$root/$rules_dir/${req}/SKILL.md" "$target" 2>/dev/null)"
     if [ -n "$article" ]; then
-        reason="Отбито гейтом правил. Под эту правку подпадает статья правила «${req}»:
+        reason="Отбито гейтом правил. Под эту правку подпадают статьи правила «${req}»:
 
 ${article}
-Статья снимает чтение правила целиком, а не отказ: загрузи правило «${req}» инструментом Skill и повтори действие. ${fallback} Для этой области это происходит один раз за сессию."
+
+Текст этих статей придёт в контекст вместе с правилом, и пересказывать его здесь значило бы платить за один текст дважды: загрузи правило «${req}» инструментом Skill и повтори действие. ${fallback} Для этой области это происходит один раз за сессию."
     fi
 fi
 
