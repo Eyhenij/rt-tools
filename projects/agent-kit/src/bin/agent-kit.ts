@@ -15,6 +15,7 @@ import { unknownFlagsIn } from '../lib/argv.js';
 import { IEntryOfCatalog, readCatalog, resolveSelection } from '../lib/catalog.js';
 import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, list, stats, sync } from '../lib/commands.js';
 import { CONFIG_PATH, IConfig, readConfig } from '../lib/config.js';
+import { costLines, costOf, CostUnavailableError, ICost } from '../lib/cost.js';
 import { enroll, httpEnroll } from '../lib/enroll.js';
 import { httpShip } from '../lib/ship.js';
 import { propose, treeSlugOf } from '../lib/shipment.js';
@@ -33,6 +34,9 @@ const USAGE: readonly string[] = [
     '  sync            разложить ресурсы пакета в дерево проекта',
     '  sync --check    ничего не писать, отказать при расхождении — для гейта пуша',
     '  doctor          рассказать о состоянии раскладки, ничего не меняя',
+    '  cost            посчитать цену контекста: вход в работу, одно правило, весь слой',
+    '  cost --rule <имя>   какое правило взвесить; без довода берётся самое тяжёлое',
+    '  cost --json     то же машиночитаемо — этим числа кладут в замысел',
     '  stats           свести наблюдения: чем пользовались, чем ни разу, обо что спотыкались',
     '  stats --days N  за сколько дней; без довода — за три',
     '  stats --json    то же машиночитаемо — этим сводку прикладывают к предложению',
@@ -236,6 +240,27 @@ async function runInit(env: IEnvironment, argv: readonly string[]): Promise<IOut
         : init(env.root, selection, variants, env.assetsDir);
 }
 
+/**
+ * Цена контекста: три веса и то, чем они сняты.
+ *
+ * Отказ печатается тем же выводом, а не броском: команду зовут глазами, и трассировка стека
+ * говорит ей читателю меньше, чем строка о том, чего в дереве нет.
+ */
+function runCost(env: IEnvironment, argv: readonly string[]): IOutcomeOfCommand {
+    const named: string = optionOf(argv, '--rule', '');
+    let cost: ICost;
+    try {
+        cost = costOf(env.root, named === '' ? null : named);
+    } catch (failure: unknown) {
+        if (failure instanceof CostUnavailableError) {
+            return { code: 1, lines: [failure.message] };
+        }
+        throw failure;
+    }
+
+    return { code: 0, lines: [...costLines(cost, argv.includes('--json'))] };
+}
+
 /** Сводка наблюдений: отрезок из флага, сегодняшний день — с края. */
 function runStats(env: IEnvironment, argv: readonly string[]): IOutcomeOfCommand {
     const spoken: number = Number(optionOf(argv, '--days', ''));
@@ -304,6 +329,7 @@ const COMMANDS: Readonly<Record<string, TCommandRun>> = {
     init: runInit,
     list: (env: IEnvironment): IOutcomeOfCommand => list(env),
     sync: (env: IEnvironment, argv: readonly string[]): IOutcomeOfCommand => sync(env, argv.includes('--check')),
+    cost: runCost,
     stats: runStats,
     propose: runPropose,
     enroll: runEnroll,
