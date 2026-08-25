@@ -40,6 +40,7 @@
     "cargo:mark": "node tools/cargo-mark.mjs",
     "cargo:pull": "node tools/cargo-pull.mjs",
     "check:boundary": "node tools/check-boundary.mjs",
+    "check:descriptions": "node tools/check-descriptions.mjs",
     "check:board": "node tools/check-board.mjs",
     "check:hooks": "node tools/check-hooks.mjs",
     "check:paint": "STORYBOOK_URL=${STORYBOOK_URL:-http://localhost:6006} node tools/snapshot-paint-probe.mjs",

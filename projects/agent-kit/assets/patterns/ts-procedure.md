@@ -2,7 +2,7 @@
 name: ts-procedure
 kind: pattern
 rule: typescript-conventions
-description: Паттерн правила typescript-conventions. Брать при заведении или правке процедуры Connect на бэкенде — готовый класс с полем method и методом handle, зависимости конструктором, имя файла и класса, почему форма именно такая. Не брать для объявления доступа к процедуре — это паттерн permissions-procedure.
+description: Паттерн правила typescript-conventions. Брать при заведении или правке процедуры Connect на бэкенде: готовый класс с полем метода и обработчиком, зависимости конструктором, имена файла и класса. Доступ к процедуре — паттерн permissions-procedure.
 ---
 
 # Процедура Connect

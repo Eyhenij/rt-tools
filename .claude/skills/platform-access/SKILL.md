@@ -2,9 +2,9 @@
 name: platform-access
 kind: rule
 law: frontend-application
-description: Правило под «Закон о фронтовом приложении». Брать, когда правка задевает глобальный объект или среду исполнения — window, globalThis, PLATFORM_ID, isPlatformBrowser, document.defaultView, localStorage, IntersectionObserver. Называет токены DI, приведение типа и подводные камни отдачи страницы сервером. Не действует под libs/api и apps/api. Готовый код — в паттерне platform-access-di.
+description: Правило под «Закон о фронтовом приложении». Брать, когда правка задевает глобальный объект или среду исполнения — window, globalThis, PLATFORM_ID, localStorage. Называет токены DI и подводные камни отдачи страницы сервером. Под libs/api и apps/api не действует. Паттерн platform-access-di.
 ---
-<!-- rt-kit v0.14.0 · rules/platform-access.md · 982f95c4e4c6 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.14.0 · rules/platform-access.md · 043d00a452af · правится надстройкой, не здесь -->
 
 # Окружение браузера — как это устроено здесь
 
