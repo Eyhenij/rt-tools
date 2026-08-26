@@ -109,5 +109,41 @@ probe 'конвейер' '.github/workflows/probe.yml' "$ALL"
 probe 'путь, которого признак не знает' 'внезапно/новое.ts' "$ALL"
 probe 'незнакомое рядом с китом' 'projects/ui-kit/src/a.ts внезапно/новое.ts' "$ALL"
 
+# SC-AK-673 — проверки слоя оформления зовутся набором гейта при любом составе правки.
+#
+# Пять проверок слоя оформления второго кита не звал никто: ни гейт пуша, ни конвейер. Видно это
+# было по тому, как они себя ведут — сверка графа токенов стояла красной несколько дней подряд, и
+# ни один пуш об этом не сказал. Тяжёлыми они не считаются: вместе идут три секунды, поэтому
+# зовутся при любом составе правки, а не по предмету.
+checks_for() {
+    dir="$1"
+    (
+        cd "$dir" || exit 1
+        . "$root/.claude/rt-kit/defaults/project.sh" 2>/dev/null || true
+        . "$root/.claude/rt-kit/project.sh" 2>/dev/null || true
+        rt_push_checks main 2>/dev/null
+    )
+}
+
+style_probe() {
+    dir="$(probe_repo "$2")"
+    got="$(checks_for "$dir")"
+    rm -rf "$dir"
+    missing=''
+    for cmd in 'build-tokens-v2.mjs --check' 'check-tokens-graph.mjs' 'check-tokens-theme.mjs' \
+        'check-tokens-styles.mjs' 'check-cascade-layer.mjs'; do
+        case "$got" in *"$cmd"*) ;; *) missing="$missing $cmd" ;; esac
+    done
+    if [ -z "$missing" ]; then
+        ok=$((ok + 1))
+    else
+        bad=$((bad + 1))
+        printf '  РАЗОШЛОСЬ %s\n    не зовутся:%s\n' "$1" "$missing"
+    fi
+}
+
+style_probe 'SC-AK-673 — только тексты: проверки оформления всё равно зовутся' 'docs/x.md'
+style_probe 'SC-AK-673 — снимок зависимостей поднимает их наравне с остальным' 'pnpm-lock.yaml'
+
 printf 'набор гейта по предмету правки: %s ok, %s расхождений\n' "$ok" "$bad"
 [ "$bad" -eq 0 ]

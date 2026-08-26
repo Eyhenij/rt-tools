@@ -115,6 +115,11 @@ node tools/check-hooks.mjs
 node tools/check-cycles.mjs
 node tools/check-boundary.mjs
 node tools/check-descriptions.mjs
+node tools/build-tokens-v2.mjs --check
+node tools/check-tokens-graph.mjs
+node tools/check-tokens-theme.mjs
+node tools/check-tokens-styles.mjs
+node tools/check-cascade-layer.mjs
 EOF
 
     rt_push_checks_default "$1" \
