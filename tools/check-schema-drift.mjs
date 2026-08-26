@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.16.1 · checks/check-schema-drift.mjs · 87eb9fadb72b · правится надстройкой, не здесь
+// rt-kit v0.16.1 · checks/check-schema-drift.mjs · 1d0a528afb11 · правится надстройкой, не здесь
 /**
  * Проверка того, что миграции и `prisma/schema.prisma` описывают одну и ту же базу.
  *
@@ -77,6 +77,13 @@ function shadowAddresses(url) {
     return { shadowName, shadowUrl: shadow.toString(), serviceUrl: service.toString() };
 }
 
+// Код, которым проверка объявляет, что смотреть было не на что. Прежде каждый такой выход был
+// нулём: строка о пропуске уходила в вывод, а в сводке гейта пуша ноль стоял рядом с
+// пройденными проверками и ничем от них не отличался — набор читался как проверенный целиком.
+// Число знает и гард пуша: он называет пропущенное вслух, не отбивая пуш, потому что проверка,
+// которой нечего смотреть, поломкой не является.
+const SKIP = Number(process.env.RT_SKIP_CODE ?? 7);
+
 function prisma(args, url) {
     return spawnSync('npx', ['prisma', ...args], {
         cwd: ROOT,
@@ -99,7 +106,7 @@ async function withServiceClient(serviceUrl, run) {
         if (SERVER_DOWN_CODES.includes(error?.code)) {
             console.log('check-schema-drift: база недоступна — сверять негде');
 
-            return 0;
+            return SKIP;
         }
         throw error;
     }
@@ -118,26 +125,26 @@ async function main() {
     if (!CONFIG.schemaFile) {
         console.log('check-schema-drift: имя файла схемы не задано — сверять нечего');
 
-        return 0;
+        return SKIP;
     }
 
     if (!existsSync(join(ROOT, CONFIG.schemaFile))) {
         console.log('check-schema-drift: схемы нет — сверять нечего');
 
-        return 0;
+        return SKIP;
     }
 
     const url = databaseUrl();
     if (!url) {
         console.log('check-schema-drift: адрес базы не задан — сверять негде');
 
-        return 0;
+        return SKIP;
     }
 
     if (PRODUCTION_MARKS.some((mark) => url.includes(mark))) {
         console.log('check-schema-drift: адрес боевой — проверка туда не ходит');
 
-        return 0;
+        return SKIP;
     }
 
     const { shadowName, shadowUrl, serviceUrl } = shadowAddresses(url);

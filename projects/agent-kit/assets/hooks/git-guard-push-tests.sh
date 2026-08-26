@@ -119,17 +119,37 @@ if git fetch --quiet origin "$main_branch" 2>/dev/null && git rev-parse --verify
     base="origin/$main_branch"
 fi
 
+# Код, которым проверка объявляет, что смотреть было не на что: ни «сошлось», ни «расхождение».
+# Прежде такая проверка говорила о себе строкой вывода и выходила нулём — в наборе этот ноль
+# стоял рядом с пройденными и ничем от них не отличался, а сводка читалась как проверенная
+# целиком. Пуш он не отбивает: проверка, которой нечего смотреть, поломкой не является.
+rt_skip_code="${RT_SKIP_CODE:-7}"
+
 failed=""
 output=""
+skipped=""
 while IFS= read -r check; do
     [ -z "$check" ] && continue
-    out="$(eval "$check" 2>&1)" && continue
+    out="$(eval "$check" 2>&1)"
+    status=$?
+    [ "$status" -eq 0 ] && continue
+    if [ "$status" -eq "$rt_skip_code" ]; then
+        skipped="${skipped}${skipped:+
+}${check}"
+        continue
+    fi
     failed="$check"
     output="$out"
     break
 done <<EOF
 $(rt_push_checks "$base")
 EOF
+
+# Пропущенное называется вслух и тогда, когда набор прошёл: молчание о нём и есть та самая
+# неотличимость, ради которой код заведён. Пуш при этом идёт — отказа здесь нет.
+if [ -z "$failed" ] && [ -n "$skipped" ]; then
+    printf 'гейт пуша: набор прошёл, но эти проверки смотреть было не на что:\n%s\n' "$skipped" >&2
+fi
 
 [ -z "$failed" ] && exit 0
 
