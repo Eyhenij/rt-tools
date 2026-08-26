@@ -7,6 +7,7 @@
 | Правило                                                                        | Где исполняется                                                         |
 | ------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
 | Статья правила говорит о своей применимости сама, строкой признака при себе.   | `projects/agent-kit/assets/hooks/rule-article.sh:rt_rule_article_marks` |
+| Отказ называет подошедшие статьи заголовками, а не пересказывает их телом.     | `projects/agent-kit/assets/hooks/rule-article.sh:rt_rule_article_heads` |
 | Образец сверяется с путём правки как образец оболочки, а не поиском по словам. | `projects/agent-kit/assets/hooks/rule-article.sh:rt_rule_articles`      |
 | Образец без каталога сверяется и с именем файла.                               | `projects/agent-kit/assets/hooks/rule-article.sh:edited`                |
 | Раскрытие имён при разборе образцов выключено.                                 | `projects/agent-kit/assets/hooks/rule-article.sh:old_ifs`               |
