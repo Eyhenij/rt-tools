@@ -2,6 +2,7 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
+    effect,
     inject,
     input,
     InputSignal,
@@ -78,6 +79,14 @@ export class RtIconComponent {
             return numberAttribute(v, 0);
         },
     });
+
+    constructor() {
+        // Значок едет по запросу имени, а не вперёд всем набором: страница платит за то, что
+        // нарисовала. Смена имени просит новое — прежний символ остаётся в спрайте.
+        effect((): void => {
+            this.#registry.request(this.name());
+        });
+    }
 }
 
 type TRotateInput = number | string | null;

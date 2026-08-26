@@ -1,8 +1,33 @@
-import { ComponentFixture } from '@angular/core/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
+import { Component } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { RtButtonDirective } from '../button/rt-button.directive';
 import { classesOf, createRtFixture, el, hostClasses, setInputs } from '../../../testing/rt-kit-testing';
 import { RtIconComponent } from './rt-icon.component';
+import { RT_ICON_SPRITE_ID } from './rt-icon.const';
 import { IRtIcon } from './rt-icon.model';
+
+/** Хост с обеими разметками значка: своим компонентом и кнопкой, рисующей значок сама. */
+@Component({
+    selector: 'rt-test-two-markups',
+    imports: [RtIconComponent, RtButtonDirective],
+    template: `
+        <rt-icon name="check" />
+        <button rtButton icon="check" label="Скачать"></button>
+    `,
+})
+class TestTwoMarkupsComponent {}
+
+/** Хост с одной разметкой — кнопкой: её значок никто, кроме неё самой, не просит. */
+@Component({
+    selector: 'rt-test-button-only',
+    imports: [RtButtonDirective],
+    template: `
+        <button rtButton icon="wallet" label="Счёт"></button>
+    `,
+})
+class TestButtonOnlyComponent {}
 
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtIconComponent> {
     return createRtFixture(RtIconComponent, { name: 'check', ...inputs });
@@ -118,5 +143,43 @@ describe('RtIconComponent', (): void => {
         const fixture: ComponentFixture<RtIconComponent> = setup({ size: 'lg', color: 'danger' });
 
         expect(classesOf(fixture.nativeElement as HTMLElement)).toEqual(['rt-icon']);
+    });
+
+    describe('запрос имени у реестра', (): void => {
+        afterEach((): void => {
+            document.getElementById(RT_ICON_SPRITE_ID)?.remove();
+        });
+
+        it('SC-UKV-61 — значок, спрошенный двумя разметками сразу, едет одним запросом', (): void => {
+            createRtFixture(TestTwoMarkupsComponent, {});
+            const http: HttpTestingController = TestBed.inject(HttpTestingController);
+
+            http.expectOne('/icons/check.svg').flush('<svg viewBox="0 0 16 16"><path d="M0 0h16v16H0z"/></svg>');
+
+            http.verify();
+        });
+
+        it('кнопка просит значок сама, без компонента значка на странице', (): void => {
+            createRtFixture(TestButtonOnlyComponent, {});
+            const http: HttpTestingController = TestBed.inject(HttpTestingController);
+
+            http.expectOne('/icons/wallet.svg').flush('<svg viewBox="0 0 16 16"></svg>');
+
+            http.verify();
+        });
+
+        it('смена имени просит у реестра новое, а прежнее второй раз не просит', (): void => {
+            const fixture: ComponentFixture<RtIconComponent> = setup({ name: 'check' });
+            const http: HttpTestingController = TestBed.inject(HttpTestingController);
+            http.expectOne('/icons/check.svg').flush('<svg viewBox="0 0 16 16"></svg>');
+
+            setInputs(fixture, { name: 'wallet' });
+            fixture.detectChanges();
+            http.expectOne('/icons/wallet.svg').flush('<svg viewBox="0 0 16 16"></svg>');
+
+            setInputs(fixture, { name: 'check' });
+            fixture.detectChanges();
+            http.expectNone('/icons/check.svg');
+        });
     });
 });
