@@ -13,28 +13,25 @@
 
 ## Как это называется здесь
 
-| В правиле                                           | Здесь                                                                                      |
-| --------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `Api` — псевдоним типа из `@<область>/common/proto` | тип из `@rt/message-bus-common` — объявлен руками, генератора нет                          |
-| `State`, `Draft`, `Short`                           | `State` и `Short` у всех трёх записей груза; `Draft` нет ни у одной — груз не правится     |
-| `I<Сущность>`                                       | `IPostmortem`, `IProposal`, `IMonthRecord` — неймспейс с уровнями; вошедший вне их         |
-| маппер-наследник `BaseMapper`                       | он же: `BaseMapper<M>` из `@rt-tools/utils`                                                |
-| `this.typeCast`                                     | `TypeCastHelper` — поле `typeCast` самого `BaseMapper`                                     |
-| типы страницы, порядка и отбора                     | их здесь две редакции: `@rt-tools/utils` для кита и `@rt/message-bus-common` для контракта |
+- **В правиле** — Здесь
+- **`Api` — псевдоним типа из `@<область>/common/proto`** — тип из `@rt/message-bus-common` — объявлен руками, генератора нет
+- **`State`, `Draft`, `Short`** — `State` и `Short` у всех трёх записей груза; `Draft` нет ни у одной — груз не правится
+- **`I<Сущность>`** — `IPostmortem`, `IProposal`, `IMonthRecord` — неймспейс с уровнями; вошедший вне их
+- **маппер-наследник `BaseMapper`** — он же: `BaseMapper<M>` из `@rt-tools/utils`
+- **`this.typeCast`** — `TypeCastHelper` — поле `typeCast` самого `BaseMapper`
+- **типы страницы, порядка и отбора** — их здесь две редакции: `@rt-tools/utils` для кита и `@rt/message-bus-common` для контракта
 
 ## Где это лежит
 
-| Что                            | Где                                                                                                                                                                          |
-| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| основа маппера                 | `projects/utils/src/lib/helpers/base.mapper.ts`                                                                                                                              |
-| приведение типов               | `projects/utils/src/lib/helpers/type-cast.helper.ts`                                                                                                                         |
-| типы выборки для кита          | `projects/utils/src/lib/interfaces/list.interface.ts`                                                                                                                        |
-| типы страницы контракта        | `libs/message-bus-common/src/lib/page.ts`                                                                                                                                    |
-| форма груза                    | `projects/agent-kit/src/lib/cargo.ts` — её объявляет отправляющая сторона                                                                                                    |
-| что приёмник добавляет от себя | `libs/message-bus-common/src/lib/cargo.ts`                                                                                                                                   |
-| модель вошедшего               | `libs/message-bus-admin/auth/util/src/lib/session.model.ts`                                                                                                                  |
-| модели записей груза           | `libs/message-bus-admin/postmortems/util/src/lib/postmortem.model.ts`, `.../proposals/util/src/lib/proposal.model.ts`, `.../summaries/util/src/lib/month-record.model.ts`    |
-| мапперы записей груза          | `libs/message-bus-admin/postmortems/util/src/lib/postmortem.mapper.ts`, `.../proposals/util/src/lib/proposal.mapper.ts`, `.../summaries/util/src/lib/month-record.mapper.ts` |
+- **основа маппера** — `projects/utils/src/lib/helpers/base.mapper.ts`
+- **приведение типов** — `projects/utils/src/lib/helpers/type-cast.helper.ts`
+- **типы выборки для кита** — `projects/utils/src/lib/interfaces/list.interface.ts`
+- **типы страницы контракта** — `libs/message-bus-common/src/lib/page.ts`
+- **форма груза** — `projects/agent-kit/src/lib/cargo.ts` — её объявляет отправляющая сторона
+- **что приёмник добавляет от себя** — `libs/message-bus-common/src/lib/cargo.ts`
+- **модель вошедшего** — `libs/message-bus-admin/auth/util/src/lib/session.model.ts`
+- **модели записей груза** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.model.ts`, `.../proposals/util/src/lib/proposal.model.ts`, `.../summaries/util/src/lib/month-record.model.ts`
+- **мапперы записей груза** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.mapper.ts`, `.../proposals/util/src/lib/proposal.mapper.ts`, `.../summaries/util/src/lib/month-record.mapper.ts`
 
 ## Где исполняются статьи
 
@@ -42,14 +39,12 @@
 (жирная часть пункта). Статья без строки и строка без статьи — расхождение: правило обещает то,
 чего в дереве нет, либо в дереве стоит то, о чём правило молчит.
 
-| Статья                                                                               | Где исполняется                                                                                                                                                                                                                                                                                              |
-| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| У сущности две стороны, и обе лежат в неймспейсе `I<Сущность>`.                      | `libs/message-bus-admin/postmortems/util/src/lib/postmortem.model.ts:IPostmortem` — `Api` и `State` на каждом из двух уровней. Вошедший вне правила: `libs/message-bus-admin/auth/util/src/lib/session.model.ts:IAdminSession` — одна сторона, приёмник отдаёт имя, админка его же и показывает.             |
-| Сторона контракта руками не пишется — она объявляется псевдонимом.                   | Здесь иначе: генератора контракта нет, и сторона контракта написана руками — `libs/message-bus-common/src/lib/page.ts:IPage`. Молча разойтись она не может: объявление одно на обе стороны, и приёмник с админкой читают тот же файл, а не свою копию.                                                       |
-| Между сторонами стоит маппер-наследник `BaseMapper`, и экраны читают только `State`. | `libs/message-bus-admin/postmortems/util/src/lib/postmortem.mapper.ts:PostmortemMapper` — по паре мапперов на запись, строка списка и запись целиком порознь; экран видит только `State`, время в нём уже датой, а не строкой.                                                                               |
-| Пустое выражается пустой строкой или нулём, а не отсутствием поля.                   | `libs/message-bus-common/src/lib/page.ts:pageAsked` — разбор выборки подставляет умолчание, а не оставляет поле пустым. В `IPageAsked` единственное поле с `null` — признак дерева, и `null` там значит «не сужено», а не «нет значения».                                                                    |
-| Приведение идёт через `this.typeCast`, а не через `??`.                              | `libs/message-bus-admin/summaries/util/src/lib/month-record.mapper.ts:MonthRecordMapper` — приведение полей записи месяца идёт полем `typeCast` основы (`projects/utils/src/lib/helpers/type-cast.helper.ts:TypeCastHelper`). Проверки на это в дереве нет, держится разбором.                               |
-| Типы страницы, порядка и отбора берутся из `@rt-tools/utils`.                        | Здесь их две редакции, и обе законны: `projects/utils/src/lib/interfaces/list.interface.ts:IPageModel` — то, что читает переключатель страниц кита; `libs/message-bus-common/src/lib/page.ts:TPageDirection` — контракт приёмника. Третьей заводить нельзя: перевод между этими двумя и есть работа маппера. |
+- **У сущности две стороны, и обе лежат в неймспейсе `I<Сущность>`.** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.model.ts:IPostmortem` — `Api` и `State` на каждом из двух уровней. Вошедший вне правила: `libs/message-bus-admin/auth/util/src/lib/session.model.ts:IAdminSession` — одна сторона, приёмник отдаёт имя, админка его же и показывает.
+- **Сторона контракта руками не пишется — она объявляется псевдонимом.** — Здесь иначе: генератора контракта нет, и сторона контракта написана руками — `libs/message-bus-common/src/lib/page.ts:IPage`. Молча разойтись она не может: объявление одно на обе стороны, и приёмник с админкой читают тот же файл, а не свою копию.
+- **Между сторонами стоит маппер-наследник `BaseMapper`, и экраны читают только `State`.** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.mapper.ts:PostmortemMapper` — по паре мапперов на запись, строка списка и запись целиком порознь; экран видит только `State`, время в нём уже датой, а не строкой.
+- **Пустое выражается пустой строкой или нулём, а не отсутствием поля.** — `libs/message-bus-common/src/lib/page.ts:pageAsked` — разбор выборки подставляет умолчание, а не оставляет поле пустым. В `IPageAsked` единственное поле с `null` — признак дерева, и `null` там значит «не сужено», а не «нет значения».
+- **Приведение идёт через `this.typeCast`, а не через `??`.** — `libs/message-bus-admin/summaries/util/src/lib/month-record.mapper.ts:MonthRecordMapper` — приведение полей записи месяца идёт полем `typeCast` основы (`projects/utils/src/lib/helpers/type-cast.helper.ts:TypeCastHelper`). Проверки на это в дереве нет, держится разбором.
+- **Типы страницы, порядка и отбора берутся из `@rt-tools/utils`.** — Здесь их две редакции, и обе законны: `projects/utils/src/lib/interfaces/list.interface.ts:IPageModel` — то, что читает переключатель страниц кита; `libs/message-bus-common/src/lib/page.ts:TPageDirection` — контракт приёмника. Третьей заводить нельзя: перевод между этими двумя и есть работа маппера.
 
 ## Что ещё стоит знать при чтении кода
 

@@ -11,34 +11,31 @@
 
 ## Как это называется здесь
 
-| В правиле                          | Здесь                                                                                          |
-| ---------------------------------- | ---------------------------------------------------------------------------------------------- |
-| декларация пунктов                 | `ADMIN_MENU` в `menu.declaration.ts`, тип пункта — `IAdminMenuItem`                            |
-| пункт меню                         | запись `{ title, path, icon }`; `icon` — `IRtIcon.Name` из кита                                |
-| раздел с панелью                   | здесь такого нет: меню одноуровневое                                                           |
-| панель второго уровня              | здесь такого нет: у ряда кита её открывает пункт с колонками, а колонок ни у одного пункта нет |
-| признак непросмотренного           | здесь такого нет                                                                               |
-| флаг «экрана ещё нет» (`disabled`) | здесь такого нет: пункт заводится вместе со своим экраном                                      |
-| оболочка админки                   | `AdminContainerComponent` поверх `rt-container` из кита                                        |
-| шапка приложения                   | `AdminHeaderComponent`: название приложения словом и ряд кита рядом                            |
-| отрисовка меню                     | `rt-page-header` в зоне шапки каркаса, а не плитки в левой колонке                             |
-| подсветка текущего раздела         | `routerLinkActive` внутри ряда кита: пункт несёт адрес, а горит тот, чей адрес открыт          |
-| попап профиля                      | шаблон шапки, который рисует ряд кита: имя вошедшего, тема, язык, выход                        |
+- **В правиле** — Здесь
+- **декларация пунктов** — `ADMIN_MENU` в `menu.declaration.ts`, тип пункта — `IAdminMenuItem`
+- **пункт меню** — запись `{ title, path, icon }`; `icon` — `IRtIcon.Name` из кита
+- **раздел с панелью** — здесь такого нет: меню одноуровневое
+- **панель второго уровня** — здесь такого нет: у ряда кита её открывает пункт с колонками, а колонок ни у одного пункта нет
+- **признак непросмотренного** — здесь такого нет
+- **флаг «экрана ещё нет» (`disabled`)** — здесь такого нет: пункт заводится вместе со своим экраном
+- **оболочка админки** — `AdminContainerComponent` поверх `rt-container` из кита
+- **шапка приложения** — `AdminHeaderComponent`: название приложения словом и ряд кита рядом
+- **отрисовка меню** — `rt-page-header` в зоне шапки каркаса, а не плитки в левой колонке
+- **подсветка текущего раздела** — `routerLinkActive` внутри ряда кита: пункт несёт адрес, а горит тот, чей адрес открыт
+- **попап профиля** — шаблон шапки, который рисует ряд кита: имя вошедшего, тема, язык, выход
 
 ## Где это лежит
 
-| Что                        | Где                                                                                                                                                                            |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| декларация меню            | `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts`                                                                                                     |
-| оболочка с меню            | `libs/message-bus-admin/common/container/feature/src/lib/admin-container.component.ts`                                                                                         |
-| адреса разделов груза      | `libs/message-bus-admin/postmortems/shell/src/lib/postmortems.routes.ts`, `.../proposals/shell/src/lib/proposals.routes.ts`, `.../summaries/shell/src/lib/summaries.routes.ts` |
-| адреса раздела приглашений | `libs/message-bus-admin/invites/shell/src/lib/invites.routes.ts` — список и панель создания в аутлете `ro`                                                                     |
-| адреса приложения          | `apps/message-bus-admin/src/app/app.routes.ts`                                                                                                                                 |
-| адреса домена входа        | `libs/message-bus-admin/auth/shell/src/lib/auth.routes.ts`                                                                                                                     |
-| каркас страницы из кита    | `projects/ui-kit-v2/src/lib/components/container/rt-container.component.ts` и его директивы                                                                                    |
-| шапка админки              | `libs/message-bus-admin/common/container/ui/src/lib/header/admin-header.component.ts`                                                                                          |
-| сквозные спеки адресов     | `apps/message-bus-admin-e2e/src/sign-in.spec.ts`, `apps/message-bus-admin-e2e/src/shell.spec.ts`, `apps/message-bus-admin-e2e/src/shell.narrow.spec.ts`                        |
-| верхний ряд из кита        | `projects/ui-kit-v2/src/lib/components/page-header/`                                                                                                                           |
+- **декларация меню** — `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts`
+- **оболочка с меню** — `libs/message-bus-admin/common/container/feature/src/lib/admin-container.component.ts`
+- **адреса разделов груза** — `libs/message-bus-admin/postmortems/shell/src/lib/postmortems.routes.ts`, `.../proposals/shell/src/lib/proposals.routes.ts`, `.../summaries/shell/src/lib/summaries.routes.ts`
+- **адреса раздела приглашений** — `libs/message-bus-admin/invites/shell/src/lib/invites.routes.ts` — список и панель создания в аутлете `ro`
+- **адреса приложения** — `apps/message-bus-admin/src/app/app.routes.ts`
+- **адреса домена входа** — `libs/message-bus-admin/auth/shell/src/lib/auth.routes.ts`
+- **каркас страницы из кита** — `projects/ui-kit-v2/src/lib/components/container/rt-container.component.ts` и его директивы
+- **шапка админки** — `libs/message-bus-admin/common/container/ui/src/lib/header/admin-header.component.ts`
+- **сквозные спеки адресов** — `apps/message-bus-admin-e2e/src/sign-in.spec.ts`, `apps/message-bus-admin-e2e/src/shell.spec.ts`, `apps/message-bus-admin-e2e/src/shell.narrow.spec.ts`
+- **верхний ряд из кита** — `projects/ui-kit-v2/src/lib/components/page-header/`
 
 ## Где исполняются статьи
 
@@ -46,12 +43,10 @@
 (жирная часть пункта). Статья без строки и строка без статьи — расхождение: правило обещает то,
 чего в дереве нет, либо в дереве стоит то, о чём правило молчит.
 
-| Статья                                                                       | Где исполняется                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Пункт объявляется один раз и служит источником и меню, и гейтинга маршрутов. | `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts:ADMIN_MENU` — источник меню. Гейтинга маршрутов по нему нет: закрытая ветка закрыта одним гвардом на всех разделах сразу, и делить их нечем — прав в админке нет. Адрес при этом объявлен единожды и читается обеими сторонами: `libs/message-bus-admin/postmortems/shell/src/lib/postmortems.routes.ts:POSTMORTEMS_ROUTE` — константа маршрута, её же берёт пункт меню. |
-| Декларация не импортирует ни один `shell`.                                   | `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts:IAdminMenuItem` — импорт в файле ровно один, `IRtIcon` из кита. Держится границами: `common/container/util` помечен `type:util` и ребра на `type:shell` не имеет — `eslint/boundaries/`.                                                                                                                                                                                 |
-| Гейтинг двухслойный: право пользователя и флаг раздела.                      | Слой здесь один — вход: `apps/message-bus-admin/src/app/app.routes.ts:appRoutes` закрывает гвардом всё, кроме экрана входа. Ни прав, ни флага «экрана ещё нет» в дереве нет: пункт без экрана не заводится вовсе. Проверено нажатием: `apps/message-bus-admin-e2e/src/sign-in.spec.ts` — прямой адрес раздела без входа ведёт на вход, а после входа человек попадает туда, куда шёл.                                                              |
-| Данные домена приходят в шапку токеном, а не импортом.                       | Здесь иначе: `libs/message-bus-admin/common/container/feature/src/lib/admin-container.component.ts:AdminContainerComponent` берёт вошедшего прямым импортом стора домена входа. Токена под это нет — домен, дающий шапке данные, ровно один, и второй ответ на «кто вошёл» разошёлся бы с первым. Токен заводится, когда в шапку понадобится второй домен.                                                                                         |
+- **Пункт объявляется один раз и служит источником и меню, и гейтинга маршрутов.** — `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts:ADMIN_MENU` — источник меню. Гейтинга маршрутов по нему нет: закрытая ветка закрыта одним гвардом на всех разделах сразу, и делить их нечем — прав в админке нет. Адрес при этом объявлен единожды и читается обеими сторонами: `libs/message-bus-admin/postmortems/shell/src/lib/postmortems.routes.ts:POSTMORTEMS_ROUTE` — константа маршрута, её же берёт пункт меню.
+- **Декларация не импортирует ни один `shell`.** — `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts:IAdminMenuItem` — импорт в файле ровно один, `IRtIcon` из кита. Держится границами: `common/container/util` помечен `type:util` и ребра на `type:shell` не имеет — `eslint/boundaries/`.
+- **Гейтинг двухслойный: право пользователя и флаг раздела.** — Слой здесь один — вход: `apps/message-bus-admin/src/app/app.routes.ts:appRoutes` закрывает гвардом всё, кроме экрана входа. Ни прав, ни флага «экрана ещё нет» в дереве нет: пункт без экрана не заводится вовсе. Проверено нажатием: `apps/message-bus-admin-e2e/src/sign-in.spec.ts` — прямой адрес раздела без входа ведёт на вход, а после входа человек попадает туда, куда шёл.
+- **Данные домена приходят в шапку токеном, а не импортом.** — Здесь иначе: `libs/message-bus-admin/common/container/feature/src/lib/admin-container.component.ts:AdminContainerComponent` берёт вошедшего прямым импортом стора домена входа. Токена под это нет — домен, дающий шапке данные, ровно один, и второй ответ на «кто вошёл» разошёлся бы с первым. Токен заводится, когда в шапку понадобится второй домен.
 
 ## Что ещё стоит знать при чтении кода
 
