@@ -1,3 +1,9 @@
+## [0.16.1](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.16.0...rt-agent-kit@0.16.1) (2026-08-26)
+
+### Bug Fixes
+
+- **rt:agent-kit:** отказ гарда предложений называет команду по тому, что есть в дереве ([f10ba6e](https://github.com/Eyhenij/rt-tools/commit/f10ba6e55fe7de7d9e97027647336019b272a61c))
+
 # [0.16.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.15.0...rt-agent-kit@0.16.0) (2026-08-26)
 
 ### Features

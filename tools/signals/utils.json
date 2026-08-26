@@ -1,4 +1,4 @@
-# rt-kit v0.16.0 · checks/signals/utils.json · 10715edb0684 · правится надстройкой, не здесь
+# rt-kit v0.16.1 · checks/signals/utils.json · 10715edb0684 · правится надстройкой, не здесь
 {
   "about": "Признаки пакета @rt-tools/utils: основа перевода сущности и приведение типов.",
   "signals": [
