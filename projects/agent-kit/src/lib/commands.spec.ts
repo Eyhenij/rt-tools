@@ -14,7 +14,7 @@ import { dirname, join } from 'node:path';
 import { IEntryOfCatalog, readCatalog } from './catalog.js';
 import { adopt, doctor, IEnvironment, init, IOutcomeOfCommand, KEPT_SUFFIX, list, stats, sync } from './commands.js';
 import { CONFIG_PATH, OVERRIDES_DIR } from './config.js';
-import { bindingsOf, hooksSection, IHookBinding } from './hooks-map.js';
+import { DISPATCH_PATH } from './hooks-map.js';
 import { OBSERVATIONS_DIR } from './observations.js';
 
 const VERSION: string = '0.1.0';
@@ -82,29 +82,6 @@ const fillCompanions: () => void = (): void => {
             writeFileSync(path, `# ${name.name}\n\nВсё названо своими именами.\n`, 'utf8');
         }
     }
-};
-
-/**
- * Подключить разложенные гарды к агенту так, как это делает проект: пакет в чужую настройку не
- * пишет, а гард, которого в ней нет, считается расхождением наравне с отставшим файлом.
- */
-const bindHooks: () => void = (): void => {
-    const dir: string = join(root, '.claude/hooks');
-    if (!existsSync(dir)) {
-        return;
-    }
-    // Гард подключается к тому событию, которое объявил сам, и гард с двумя объявлениями — к
-    // обоим: настройка, где все они свалены под одно событие, половину из них не зовёт.
-    //
-    // Образец берётся у самого гарда, а не пишется звёздочкой: сверка судит и его, а настройка с
-    // чужим образцом — это ровно то расхождение, ради которого сверку и завели. Собирается она
-    // тем же куском, который пакет печатает дереву в подсказке.
-    const bindings: IHookBinding[] = [];
-    for (const name of readdirSync(dir).filter((file: string): boolean => file.endsWith('.sh'))) {
-        const path: string = `.claude/hooks/${name}`;
-        bindings.push(...bindingsOf(readFileSync(join(root, path), 'utf8'), path));
-    }
-    put('.claude/settings.json', JSON.stringify({ hooks: hooksSection(bindings) }, null, 4));
 };
 
 beforeEach((): void => {
@@ -300,20 +277,20 @@ describe('sync --check', () => {
         // Разложенного мало: у каждого правила рядом встаёт черновик компаньона, и до
         // заполнения проектом он сам по себе расхождение — набор про это ниже.
         fillCompanions();
-        bindHooks();
 
         expect(sync(env, true).code).toBe(0);
     });
 
     it('SC-AK-05 — разложенный гард доезжает до настройки агента', () => {
         start();
-        sync(env, false);
+        const laid: IOutcomeOfCommand = sync(env, false);
         fillCompanions();
-        const outcome: IOutcomeOfCommand = sync(env, true);
 
-        expect(outcome.code).toBe(1);
-        expect(said(outcome)).toContain('.claude/settings.json');
-        expect(said(outcome)).toContain('"PreToolUse"');
+        // Запись кладёт сама раскладка: гард, которого не зовёт никто, снаружи неотличим от
+        // работающего, и прежде она печатала кусок и просила вставить его рукой.
+        expect(said(laid)).toContain('.claude/settings.json');
+        expect(get('.claude/settings.json')).toContain(`${DISPATCH_PATH} PreToolUse`);
+        expect(sync(env, true).code).toBe(0);
     });
 
     it('ничего не пишет и отказывает, пока не разложено', () => {
@@ -398,7 +375,6 @@ describe('правило и его компаньон', () => {
         start(['rules/testing.md']);
         sync(env, false);
         writeFileSync(join(root, COMPANION), FILLED, 'utf8');
-        bindHooks();
 
         expect(sync(env, true).code).toBe(0);
     });
