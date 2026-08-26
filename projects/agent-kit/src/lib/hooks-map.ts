@@ -14,8 +14,8 @@
  * строке файла. Карта, выписанная отдельным списком, разошлась бы с набором гардов на первом же
  * добавленном, и заметить это было бы нечем: гард просто не звался бы.
  */
-import { existsSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { byKey } from './order.js';
 
 /** Настройка агента, в которой живёт карта. Путь от корня дерева. */
@@ -265,4 +265,82 @@ export function driftedMatchers(bindings: readonly IHookBinding[], root: string)
     }
 
     return drifts;
+}
+
+/** Отступ настройки: тот, которым она написана. Угаданный переписал бы файл целиком. */
+function indentOf(text: string): number {
+    const found: RegExpExecArray | null = /^([ \t]+)"/m.exec(text);
+
+    return found === null ? 2 : found[1].length;
+}
+
+/** Настройка целиком либо `null`, если её не разобрать. Комментарии дерева JSON не читает. */
+function readSettings(text: string): Record<string, unknown> | null {
+    try {
+        const parsed: unknown = JSON.parse(text);
+
+        return parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed) ? (parsed as Record<string, unknown>) : {};
+    } catch {
+        return null;
+    }
+}
+
+/** Что запись объявления сделала с настройкой дерева. */
+export interface IBindResult {
+    /** События, записи на которые дописаны. Пусто — настройка уже звала диспетчер на всё. */
+    readonly added: readonly string[];
+    /**
+     * Осталась ли настройка нетронутой не потому, что дописывать было нечего. Настройку, которую
+     * не разобрать, пакет не правит: дерево вправе держать её с комментариями, а переписанная
+     * своим разбором она их теряет молча.
+     */
+    readonly unreadable: boolean;
+}
+
+/**
+ * Запись объявления в настройку агента: событие, которого там нет, встаёт записью к диспетчеру.
+ *
+ * Прежде раскладка клала файл гарда и печатала готовый кусок, прося вставить его рукой. Свежая
+ * установка уезжала с полным набором разложенных гардов, которых не звал никто, и узнавала об
+ * этом на первом промахе, прошедшем мимо. Довод, по которому пакет в чужую настройку не писал,
+ * назывался прямо: слияние чужого JSON молча теряет несовпавшее. Записан он был тогда, когда
+ * куском была карта из двух десятков гардов по образцу вызова; с приходом диспетчера кусок стал
+ * строкой на событие, и терять стало нечего — запись только прибавляется.
+ *
+ * ЧТО ЗДЕСЬ НИКОГДА НЕ ДЕЛАЕТСЯ: ни одна стоящая запись не переписывается и не снимается — ни
+ * пакетная, ни чужая. Дерево, снявшее гард своим решением, правкой не наказывается: раскладка о
+ * снятом говорит, а не возвращает его.
+ */
+export function bindDispatch(bindings: readonly IHookBinding[], root: string): IBindResult {
+    const path: string = join(root, SETTINGS_PATH);
+    const text: string = existsSync(path) ? readFileSync(path, 'utf8') : '{}\n';
+    const settings: Record<string, unknown> | null = readSettings(text);
+
+    if (settings === null) {
+        return { added: [], unreadable: true };
+    }
+
+    const events: readonly string[] = [...new Set(bindings.map((binding: IHookBinding): string => binding.event))]
+        .filter((event: string): boolean => !dispatchesEvent(text, event))
+        .sort((left: string, right: string): number => left.localeCompare(right));
+
+    if (!events.length) {
+        return { added: [], unreadable: false };
+    }
+
+    const hooks: Record<string, unknown> = { ...((settings['hooks'] ?? {}) as Record<string, unknown>) };
+    for (const event of events) {
+        const records: unknown = hooks[event];
+        // Запись дописывается в конец, а не встаёт вместо чужой: у события бывают и свои гарды
+        // дерева, и порядок среди них — решение дерева.
+        hooks[event] = [
+            ...(Array.isArray(records) ? records : []),
+            { hooks: [{ type: 'command', command: `$CLAUDE_PROJECT_DIR/${DISPATCH_PATH} ${event}` }] },
+        ];
+    }
+
+    mkdirSync(dirname(path), { recursive: true });
+    writeFileSync(path, JSON.stringify({ ...settings, hooks }, null, indentOf(text)) + '\n', 'utf8');
+
+    return { added: events, unreadable: false };
 }
