@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.16.1 · hooks/task-flow-guard.sh · 0ae4914cb9ce · правится надстройкой, не здесь
+# rt-kit v0.16.1 · hooks/task-flow-guard.sh · d48d2f84ce8d · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # PreToolUse guard for Edit|Write|MultiEdit: код не пишется раньше замысла.
@@ -75,6 +75,17 @@ case "$tool" in
                 }
             ' 2>/dev/null)"
             [ -n "$inner" ] && cmd="$inner"
+        fi
+        # Команда заведения задачи не судится вовсе. Правкой кода она не является — пишет папку
+        # задачи и карточку в очереди, — а текст её несёт тело задачи целиком: цитата со знаком
+        # «больше» подходит под признак записи, путь к коду в прозе тела — под признак пути.
+        # Отбитая, она отбивается тем самым гардом, который сам же печатает её в тексте своего
+        # отказа, и заведение задачи становится невозможным ни с одной ветки.
+        task_new="${RT_TASK_NEW_CMD:-}"
+        if [ -n "$task_new" ]; then
+            case "$cmd" in
+                *"$task_new"*) exit 0 ;;
+            esac
         fi
         rt_needs rt_shell_writes task-flow-guard || exit 0
         rt_needs rt_shell_paths task-flow-guard || exit 0
