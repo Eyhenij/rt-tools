@@ -221,6 +221,18 @@ describe('requiresOf', () => {
     it('ресурс без строки ничего не требует', () => {
         expect(requiresOf('# Правило\n\nтекст\n')).toEqual([]);
     });
+
+    it('SC-AK-738 — строка требования внутри примера требованием не считается', () => {
+        const shown: string = '# Паттерн\n\n```markdown\n**Требует:** `hooks/<гард>.sh`\n```\n';
+
+        expect(requiresOf(shown)).toEqual([]);
+    });
+
+    it('SC-AK-738 — своя строка читается и тогда, когда ниже стоит пример', () => {
+        const both: string = '# Правило\n\n**Требует:** `hooks/a.sh`\n\n```markdown\n**Требует:** `hooks/b.sh`\n```\n';
+
+        expect(requiresOf(both)).toEqual(['hooks/a.sh']);
+    });
 });
 
 describe('brokenLinks', () => {
