@@ -19,7 +19,6 @@
 | Строка обхода начинает строку и подстановки не принимает.                                  | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:folder_skip_re`                 |
 | Обход снимает отказ, но не убирает строку из сверки.                                       | `projects/agent-kit/assets/checks/check-board.github.mjs:taskDirs`                     |
 | Папку ищут по имени ветки целиком, вместе с косой.                                         | `projects/agent-kit/assets/hooks/git-guard-delivery-folder.sh:rt_folder_in_branch`     |
-| Сверка очереди работ видит папку задачи и во вложенном каталоге.                           | `projects/agent-kit/assets/checks/board.github.mjs:taskDirs`                           |
 | Дерево, не задавшее каталог задач, требования не получает.                                 | `projects/agent-kit/assets/defaults/project.sh:RT_TASKS_DIR`                           |
 | Задача, оставшаяся в первой колонке очереди работ, к поставке не готова.                   | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:backlog_column`                 |
 | Колонка спрашивается там, где её уже должны были переставить.                              | `projects/agent-kit/assets/hooks/git-guard-delivery.sh:judge_column`                   |
@@ -49,16 +48,6 @@
 | Задача без исполнителя названа отдельной строкой.                                          | `projects/agent-kit/assets/checks/board.github.mjs:assignees`                          |
 | Неспрошенная очередь работ подтверждением не является.                                     | `projects/agent-kit/assets/checks/task-new.github.mjs:OfflineError`                    |
 | Ответ очереди складывается в строки чистой функцией.                                       | `projects/agent-kit/assets/checks/board.github.mjs:describeTaskState`                  |
-| Открытый PR, чья вершина не несёт прогона, — расхождение сверки.                           | `projects/agent-kit/assets/checks/check-board.github.mjs:checkHeadRun`                 |
-| Прогон спрашивается на вершине PR, а не на его ветке.                                      | `projects/agent-kit/assets/checks/board-runs.github.mjs:runsOnHead`                    |
-| Считается сам факт прогона, а не его цвет.                                                 | `projects/agent-kit/assets/checks/board-runs.github.mjs:total_count`                   |
-| Свежая вершина без прогона не судится.                                                     | `projects/agent-kit/assets/checks/check-board.github.mjs:RUN_GRACE_MINUTES`            |
-| Дерево без файла конвейера прогонов не спрашивает.                                         | `projects/agent-kit/assets/checks/check-board.github.mjs:HAS_PIPELINE`                 |
-| Дерево, у которого прогоны не спрашивались, слышит об этом отдельной строкой.              | `projects/agent-kit/assets/checks/check-board.github.mjs:HAS_PIPELINE`                 |
-| Черновик при зелёном прогоне на вершине — расхождение сверки.                              | `projects/agent-kit/assets/checks/check-board.github.mjs:checkReadyDraft`              |
-| Цвет прогона спрашивается отдельно от его наличия.                                         | `projects/agent-kit/assets/checks/board-runs.github.mjs:verdictOnHead`                 |
-| Конфликтующий открытый PR — расхождение сверки.                                            | `projects/agent-kit/assets/checks/check-board.github.mjs:checkConflicting`             |
-| Непосчитанная сливаемость конфликтом не считается.                                         | `projects/agent-kit/assets/checks/board.github.mjs:conflicting`                        |
 | У каждого состояния работы есть раздел в том паттерне, который его ведёт.                  | `projects/agent-kit/assets/checks/check-states.mjs:sectionsOf`                         |
 | Раздел про состояние вне перечня — такое же расхождение, как состояние без раздела.        | `projects/agent-kit/assets/checks/check-states.mjs:known`                              |
 | Вытесненный из очереди конвейера прогон на вершине открытой заявки — расхождение сверки.   | `projects/agent-kit/assets/checks/check-board.github.mjs:checkEvicted`                 |
