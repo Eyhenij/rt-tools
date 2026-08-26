@@ -96,6 +96,12 @@ t "договорённость названа и лежит" "$CODE" PASS
 # Влитая договорённость с диска уходит, а замысел на неё ссылается до конца работы: без этой
 # развилки последний коммит PR запирал бы ветку — ни правки по замечаниям разбора, ни
 # записи в журнал изменений после вливания. Влитое от незаведённого отличает история ветки.
+# Первый коммит фикстуры заводит историю, и с этой минуты гард спрашивает у неё папку задачи.
+# До него истории нет вовсе, и требование молчит: спросить нечем.
+git -C "$REPO" add docs/tasks/RT-1-probe >/dev/null 2>&1
+git -C "$REPO" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false \
+    commit -q -m 'docs: папка задачи заведена' >/dev/null 2>&1
+
 fixture_commit "$REPO" 'docs/specs/x/proposed/merged/spec.md' '# Договорённость' 'docs: договорённость'
 printf '# Замысел\n\n**Драфт:** `docs/specs/x/proposed/merged/`\n' > "$TASK/plan.md"
 fixture_remove "$REPO" 'docs/specs/x/proposed/merged' 'docs: договорённость влита'
@@ -213,6 +219,43 @@ fixture_commit "$NOT_COMMITTED" "$COMP" 'export class A {}' 'feat: правка'
 rm -rf "$NOT_COMMITTED/docs/tasks/RT-47-probe"
 report "SC-AK-530 — снос без коммита правку не пропускает" "$(edit_at "$NOT_COMMITTED")" deny
 rm -rf "$ARCHIVED" "$NOT_COMMITTED"
+
+# --- SC-AK-665…667 — папка задачи заводится в историю ветки --------------------------------
+#
+# Четыре требования выше смотрят диск, и папка, ни разу не закоммиченная, проходит их все без
+# единого отказа. Признак отданной работы гард берёт из истории — там её нет, и отказ приходит
+# в последней точке, на открытии заявки, когда папка уже разобрана своими руками.
+
+# Полная папка задачи в рабочем дереве: замысел с обходом договорённости и объявленное
+# состояние. Всё, чего требуют ярусы выше, на месте — не хватает только коммита.
+task_folder_at() {
+    mkdir -p "$1/docs/tasks/$2"
+    printf '# Замысел\n\n**Поведение:** не меняется — правка обвязки. Подтверждено владельцем.\n' \
+        > "$1/docs/tasks/$2/plan.md"
+    printf '# Ход работы\n\n## Где стоим\n\n- **Состояние:** `этап-идёт`\n' \
+        > "$1/docs/tasks/$2/progress.md"
+}
+
+edit_json_at() {
+    jq -n --arg f "$1/$COMP" --arg d "$1" \
+        '{session_id:"tests",tool_name:"Edit",tool_input:{file_path:$f},cwd:$d}'
+}
+
+IN_TREE_ONLY="$(fixture_repo_branched main RT-48-probe)"
+fixture_commit "$IN_TREE_ONLY" "$COMP" 'export class A {}' 'feat: правка'
+task_folder_at "$IN_TREE_ONLY" RT-48-probe
+report "SC-AK-665 — папка задачи только в рабочем дереве правку не пропускает" \
+    "$(edit_at "$IN_TREE_ONLY")" deny
+CLAUDE_PROJECT_DIR="$IN_TREE_ONLY" expect_reason "SC-AK-666 — отказ называет команду, которой снимается" \
+    task-flow-guard.sh "$(edit_json_at "$IN_TREE_ONLY")" 'git add docs/tasks/RT-48-probe'
+
+# Та же папка, заведённая в историю: правка проходит.
+git -C "$IN_TREE_ONLY" add docs/tasks/RT-48-probe >/dev/null 2>&1
+git -C "$IN_TREE_ONLY" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false \
+    commit -q -m 'docs: папка задачи заведена' >/dev/null 2>&1
+report "SC-AK-667 — папка, заведённая в историю, правку пропускает" \
+    "$(edit_at "$IN_TREE_ONLY")" PASS
+rm -rf "$IN_TREE_ONLY"
 
 # --- отказ в пользу работы ----------------------------------------------------------------
 # Сломанный гард не должен мешать работать: любой неразобранный вход пропускается.
