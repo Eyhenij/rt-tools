@@ -47,6 +47,8 @@
     "check:icons": "STORYBOOK_URL=${STORYBOOK_URL:-http://localhost:6007} node tools/snapshot-icon-probe.mjs",
     "check:turn-map": "node tools/check-turn-map.mjs",
     "check:state-next": "node tools/check-state-next.mjs",
+    "check:archive": "node tools/check-archive-age.mjs",
+    "archive:prune": "node tools/archive-prune.mjs",
     "task:new": "node tools/task-new.mjs",
     "task:move": "node tools/board.mjs move",
     "prod:api": "node tools/prod-api.mjs",
