@@ -106,7 +106,7 @@
 - **Дешёвый шаг закрытия идёт раньше дорогого, а прогон — после вливания.** — **Не проверяется.** Порядок шагов внутри ветки машине не виден: она читает коммиты, а не то, в каком порядке их делали. Держится порядком паттерна закрытия работы
 - **Договорённость вливается в спек домена одним из последних коммитов ветки, до открытия PR.** — `tools/check-specs.mjs:ripe` — готовые к вливанию перечисляет `npm run check:specs`
 - **Папка закрытой задачи разбирается, а не переносится целиком.** — `tools/check-board.mjs:numberFromTaskDir` — папка при закрытой задаче находится сверкой очереди работ
-- **Открытие PR отбивается, пока ветка везёт папку своей задачи.** — `.claude/hooks/git-guard-delivery-folder.sh:rt_delivery_open_folder` — ярус на `gh pr create`, второй рубеж на `gh pr merge`; каталог задач `docs/tasks`, главная `main`
+- **Открытие PR и снятие черновика отбиваются, пока ветка везёт папку своей задачи.** — `.claude/hooks/git-guard-delivery-folder.sh:rt_delivery_open_folder` — ярус на `gh pr create`, рядом `rt_delivery_ready_folder` на `gh pr ready` и `rt_delivery_merge_folder` на `gh pr merge`; каталог задач `docs/tasks`, главная `main`
 - **Ветка, снёсшая папку, обязана прибавить запись в архив.** — `.claude/hooks/git-guard-delivery-folder.sh:rt_folder_was_in_branch` — каталог архива здесь `docs/archive/`
 - **Обход — строка `Task-folder-skip: <причина>` в PR или в самой команде.** — `.claude/hooks/git-guard-delivery.sh:folder_skip_re`, тело PR — `.claude/rt-kit/defaults/project.sh:rt_report_body_default`
 - **Влитая договорённость ветку не запирает.** — `.claude/hooks/task-flow-guard.sh:draft_path` — история ветки отличает влитое от незаведённого

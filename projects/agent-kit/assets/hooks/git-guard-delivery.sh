@@ -327,6 +327,11 @@ if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}(gh[[:space:]]+pr[[:space:]]+re
             fi
         fi
     fi
+
+    # Папка задачи: тот же предмет, что на открытии и на слиянии, третьим рубежом. Условие
+    # местное — оно читает ветку, а не хостинг, — и потому стоит вне сетевого яруса выше.
+    command -v rt_delivery_ready_folder >/dev/null 2>&1 && rt_delivery_ready_folder
+
     deny_faults
 fi
 
