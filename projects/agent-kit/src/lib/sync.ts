@@ -13,7 +13,15 @@ import { ICascadeCut, IIdleSkip, cascadeCuts, idleSkips, namedButCut } from './c
 import { brokenLinks, IBrokenLink, IEntryOfCatalog, IGapOfVariant, readCatalog, variantGaps } from './catalog.js';
 import { ICompanion, pathOf, planCompanion } from './companion.js';
 import { IConfig, OVERRIDES_DIR } from './config.js';
-import { bindingsOf as declaredIn, driftedMatchers, IHookBinding, IMatcherDrift, unboundHooks } from './hooks-map.js';
+import {
+    bindDispatch,
+    bindingsOf as declaredIn,
+    driftedMatchers,
+    IBindResult,
+    IHookBinding,
+    IMatcherDrift,
+    unboundHooks,
+} from './hooks-map.js';
 import { IPlanned, isPending, isRefusal, planFile } from './plan.js';
 import { RETIRED } from './retired.js';
 import { mergeDocuments, parseDocument, renderDocument } from './sections.js';
@@ -47,8 +55,9 @@ export interface ISyncResult {
     /**
      * Разложенные гарды, которых нет в настройке агента: файл лежит, а позвать его некому.
      *
-     * Раскладку это не отбивает — настройка принадлежит дереву, и пакет в неё не пишет, — но и
-     * молчать нельзя: гард, который не зовут, неотличим от гарда, который всё пропускает.
+     * Раскладку это не отбивает: недостающую запись она дописывает сама и говорит, что дописала.
+     * Список остаётся тем, что видит планирование и сверка, — они на диск не пишут, — а также
+     * деревом, чью настройку не разобрать: там запись по-прежнему делает рука.
      */
     readonly unbound: readonly IHookBinding[];
     /**
@@ -93,6 +102,11 @@ export interface ISyncResult {
     /** Файлы ресурсов, которых в наборе больше нет: их убирает дерево, пакет только называет. */
     readonly retired: readonly IRetiredFound[];
     readonly written: readonly string[];
+    /**
+     * Что запись объявления сделала с настройкой агента. `null` — раскладки не было: планирование
+     * и сверка на диск не пишут вовсе.
+     */
+    readonly bound: IBindResult | null;
 }
 
 /** Шаблон черновика компаньона — тот же, что пакет кладёт проекту в шаблоны. */
@@ -247,6 +261,7 @@ export function planSync(config: IConfig, root: string, version: string, assetsD
         namedCut: namedButCut(readCatalog(assetsDir), config),
         retired: retiredOf(config, root),
         written: [],
+        bound: null,
     };
 }
 
@@ -292,7 +307,13 @@ export function runSync(config: IConfig, root: string, version: string, assetsDi
         written.push(companion.path);
     }
 
-    return { ...result, written };
+    // Объявление кладётся вместе с самим гардом, а не печатается просьбой вставить его рукой:
+    // разложенный и никем не зовомый гард снаружи неотличим от работающего. Идёт это последним —
+    // после того как файлы легли: запись, зовущая гард, которого на диске ещё нет, обещает
+    // больше, чем стоит.
+    const bound: IBindResult = bindDispatch(bindingsOf(config, assetsDir), root);
+
+    return { ...result, written, bound };
 }
 
 export const pendingOf: (result: ISyncResult) => readonly IPlanned[] = (result: ISyncResult): readonly IPlanned[] =>

@@ -5,15 +5,17 @@
  * объявлений: гард с двумя событиями доезжал до готового куска настройки одним из них, и увидеть
  * это на разложенном дереве было нечем — файл лежал и подключённым выглядел.
  */
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 
 import {
+    bindDispatch,
     bindingsOf,
     DISPATCH_PATH,
     driftedMatchers,
     hooksSection,
+    IBindResult,
     IHookBinding,
     IMatcherDrift,
     SETTINGS_PATH,
@@ -110,6 +112,100 @@ describe('driftedMatchers', () => {
             writeFileSync(join(root, SETTINGS_PATH), '{ // так JSON не разбирается\n"hooks": {}');
 
             expect(driftedMatchers(bindingsOf(ONE_EVENT, GUARD), root)).toEqual([]);
+        } finally {
+            rmSync(root, { recursive: true, force: true });
+        }
+    });
+});
+
+/** Дерево с настройкой названного содержимого. Текстом, а не объектом: судится и неразбираемая. */
+function treeWithSettings(text: string): string {
+    const root: string = mkdtempSync(join(tmpdir(), 'rt-hooks-'));
+    const path: string = join(root, SETTINGS_PATH);
+    mkdirSync(dirname(path), { recursive: true });
+    writeFileSync(path, text);
+
+    return root;
+}
+
+const settingsOf: (root: string) => string = (root: string): string => readFileSync(join(root, SETTINGS_PATH), 'utf8');
+
+describe('bindDispatch', () => {
+    it('SC-AK-682 — событие, которого в настройке нет, встаёт туда записью к диспетчеру', (): void => {
+        const root: string = treeWithSettings('{\n  "hooks": {}\n}\n');
+        try {
+            const bound: IBindResult = bindDispatch(bindingsOf(TWO_EVENTS, GUARD), root);
+
+            expect(bound.added).toEqual(['PostToolUse', 'PreToolUse']);
+            expect(settingsOf(root)).toContain(`${DISPATCH_PATH} PreToolUse`);
+            expect(settingsOf(root)).toContain(`${DISPATCH_PATH} PostToolUse`);
+        } finally {
+            rmSync(root, { recursive: true, force: true });
+        }
+    });
+
+    it('SC-AK-683 — чужая запись остаётся на месте: своя дописывается рядом', (): void => {
+        const root: string = treeWithSettings(
+            JSON.stringify(
+                {
+                    permissions: { allow: ['Bash'] },
+                    hooks: { PreToolUse: [{ matcher: 'Edit', hooks: [{ type: 'command', command: 'своя-команда-дерева' }] }] },
+                },
+                null,
+                2
+            )
+        );
+        try {
+            const bound: IBindResult = bindDispatch(bindingsOf(ONE_EVENT, GUARD), root);
+            const text: string = settingsOf(root);
+
+            expect(bound.added).toEqual(['PreToolUse']);
+            expect(text).toContain('своя-команда-дерева');
+            expect(text).toContain('"permissions"');
+            expect(text).toContain(`${DISPATCH_PATH} PreToolUse`);
+        } finally {
+            rmSync(root, { recursive: true, force: true });
+        }
+    });
+
+    it('SC-AK-684 — настройку, которую не разобрать, раскладка не правит', (): void => {
+        const broken: string = '{ // так JSON не разбирается\n"hooks": {}';
+        const root: string = treeWithSettings(broken);
+        try {
+            const bound: IBindResult = bindDispatch(bindingsOf(ONE_EVENT, GUARD), root);
+
+            expect(bound.unreadable).toBe(true);
+            expect(bound.added).toEqual([]);
+            expect(settingsOf(root)).toBe(broken);
+        } finally {
+            rmSync(root, { recursive: true, force: true });
+        }
+    });
+
+    it('событие, уже отданное диспетчеру, второй записи не получает', (): void => {
+        const root: string = treeWithSettings(
+            JSON.stringify(
+                { hooks: { PreToolUse: [{ hooks: [{ type: 'command', command: `$CLAUDE_PROJECT_DIR/${DISPATCH_PATH} PreToolUse` }] }] } },
+                null,
+                2
+            )
+        );
+        try {
+            const before: string = settingsOf(root);
+
+            expect(bindDispatch(bindingsOf(ONE_EVENT, GUARD), root).added).toEqual([]);
+            expect(settingsOf(root)).toBe(before);
+        } finally {
+            rmSync(root, { recursive: true, force: true });
+        }
+    });
+
+    it('отступ берётся у настройки, а не у пакета: иначе точечная правка переписывает весь файл', (): void => {
+        const root: string = treeWithSettings('{\n    "hooks": {}\n}\n');
+        try {
+            bindDispatch(bindingsOf(ONE_EVENT, GUARD), root);
+
+            expect(settingsOf(root)).toContain('\n    "hooks"');
         } finally {
             rmSync(root, { recursive: true, force: true });
         }
