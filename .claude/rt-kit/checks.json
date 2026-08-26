@@ -1,4 +1,5 @@
 {
+    "archiveRetentionDays": 7,
     "sourceRoots": [
         "projects",
         "apps",
