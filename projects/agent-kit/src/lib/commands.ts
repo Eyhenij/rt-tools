@@ -425,6 +425,19 @@ const retiredLines: (result: ISyncResult) => string[] = (result: ISyncResult): s
         : [];
 
 /**
+ * Надстройка, которой в пакете ничего не отвечает: она не применена, и молчание об этом читается
+ * как «всё применено».
+ */
+const strayLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] =>
+    result.strayOverrides.length
+        ? [
+              `надстроек, не подобранных ни к одному ресурсу: ${result.strayOverrides.length}`,
+              ...result.strayOverrides.map((id: string): string => `  ${join(OVERRIDES_DIR, id)} — применена не была`),
+              '  подбор идёт по идентификатору ресурса целиком, вместе с приставкой свойства',
+          ]
+        : [];
+
+/**
  * Предупреждения раскладки: кода возврата они не меняют и печатаются на любом её исходе.
  *
  * Иначе их не видит никто: на сошедшемся дереве проверка молчит, а удавшаяся раскладка называет
@@ -438,6 +451,7 @@ const warnings: (result: ISyncResult) => string[] = (result: ISyncResult): strin
     ...retiredLines(result),
     ...cutOnDiskLines(result),
     ...abandonedLines(result),
+    ...strayLines(result),
 ];
 
 const describe: (result: ISyncResult) => string[] = (result: ISyncResult): string[] => [
