@@ -34,6 +34,11 @@ g "стили" "$TREE/libs/site/x/ui/src/lib/a.component.scss" styling-bem
 g "обычный модуль" "$TREE/libs/site/x/util/src/lib/a.ts" typescript-conventions
 g "сервис" "$TREE/libs/site/x/data-access/src/lib/a.service.ts" angular-patterns
 g "документ" "$TREE/docs/adr/0001-x.md" doc-style
+
+# Собранное дерево кодом не бывает: путь к артефакту приходит из команды, которая его запускает.
+g "SC-AK-741 — собранный артефакт правила не требует" "$TREE/dist/site/a.component.ts" PASS
+g "SC-AK-741 — зависимость правила не требует" "$TREE/node_modules/pkg/lib/a.ts" PASS
+g "SC-AK-741 — тот же путь под исходниками правило требует" "$TREE/libs/site/x/ui/src/lib/a.component.ts" component-structure
 g "спек домена" "$TREE/docs/specs/bookings/spec.md" spec-driven
 g "папка задачи" "$TREE/docs/tasks/RT-1-x/plan.md" task-flow
 
