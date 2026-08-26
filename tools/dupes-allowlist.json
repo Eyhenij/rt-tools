@@ -44,15 +44,15 @@
       "reason": "обвязки витрин у китов свои: правка ради одного кита сдвинула бы момент съёмки у другого и уронила его эталоны",
       "task": "RT-764"
     },
-    "setting LAYOUT_TIMEOUT_MS @ projects/ui-kit-v2/.storybook/test-runner.ts, projects/ui-kit/.storybook/test-runner.ts": {
+    "setting LAYOUT_TIMEOUT_MS @ projects/ui-kit-v2/.storybook/snapshot-wait.ts, projects/ui-kit/.storybook/test-runner.ts": {
       "reason": "обвязки витрин у китов свои: правка ради одного кита сдвинула бы момент съёмки у другого и уронила его эталоны",
       "task": "RT-857"
     },
-    "setting SETTLE_MS @ projects/ui-kit-v2/.storybook/test-runner.ts, projects/ui-kit/.storybook/test-runner.ts": {
+    "setting SETTLE_MS @ projects/ui-kit-v2/.storybook/snapshot-wait.ts, projects/ui-kit/.storybook/test-runner.ts": {
       "reason": "обвязки витрин у китов свои: правка ради одного кита сдвинула бы момент съёмки у другого и уронила его эталоны",
       "task": "RT-764"
     },
-    "setting STILL_FRAMES @ projects/ui-kit-v2/.storybook/test-runner.ts, projects/ui-kit/.storybook/test-runner.ts": {
+    "setting STILL_FRAMES @ projects/ui-kit-v2/.storybook/snapshot-wait.ts, projects/ui-kit/.storybook/test-runner.ts": {
       "reason": "обвязки витрин у китов свои: правка ради одного кита сдвинула бы момент съёмки у другого и уронила его эталоны",
       "task": "RT-857"
     },
