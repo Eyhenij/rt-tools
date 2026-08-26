@@ -19,7 +19,7 @@ export const lightColor = [
     },
     {
         name: `--rt-color-bg-surface-subtle`,
-        value: `var(--rt-neutral-100)`,
+        value: `var(--rt-overlay-black-4)`,
         dark: `var(--rt-charcoal-950)`,
     },
     {
@@ -29,7 +29,7 @@ export const lightColor = [
     },
     {
         name: `--rt-color-bg-hover`,
-        value: `var(--rt-neutral-100)`,
+        value: `var(--rt-overlay-black-4)`,
         dark: `var(--rt-charcoal-700)`,
     },
     {
@@ -66,11 +66,17 @@ export const lightColor = [
     {
         lead: `    /* Ступень 600, а не 500: приглушённый текст обязан брать порог, а после
        пересчёта ряда самая светлая ступень, которая его берёт, — шестисотая.
-       Прежде эту роль держала off-grid ступень 510, заведённая ровно под неё. */`,
+       Прежде эту роль держала off-grid ступень 510, заведённая ровно под неё.
+
+       Тёмный ответ — пятьдесят процентов белого, а не сорок: на сорока он давал
+       3.6:1 над поверхностью, 3.7:1 над страницей и 3.7:1 над фоном поля, то есть
+       не брал порога ни над одной подложкой. Светлую сторону под порог подводили,
+       тёмную забыли, и держал её список принятого. Пятьдесят — самая слабая доля,
+       берущая порог над всеми тремя: 4.86, 5.02 и 5.09. */`,
         space: true,
         name: `--rt-color-text-muted`,
         value: `var(--rt-neutral-600)`,
-        dark: `var(--rt-overlay-white-40)`,
+        dark: `var(--rt-overlay-white-50)`,
     },
     {
         name: `--rt-color-text-disabled`,
@@ -96,7 +102,7 @@ export const lightColor = [
         lead: `    /* Border */`,
         space: true,
         name: `--rt-color-border-default`,
-        value: `var(--rt-neutral-200)`,
+        value: `var(--rt-neutral-100)`,
         dark: `var(--rt-charcoal-border)`,
     },
     {
@@ -106,7 +112,7 @@ export const lightColor = [
     },
     {
         name: `--rt-color-border-subtle`,
-        value: `var(--rt-neutral-200)`,
+        value: `var(--rt-neutral-100)`,
         dark: `var(--rt-charcoal-border)`,
     },
     {

@@ -12,9 +12,9 @@
     /* Background */
     --rt-color-bg-page: var(--rt-neutral-50);
     --rt-color-bg-surface: var(--rt-neutral-0);
-    --rt-color-bg-surface-subtle: var(--rt-neutral-100);
+    --rt-color-bg-surface-subtle: var(--rt-overlay-black-4);
     --rt-color-bg-surface-subtle-2: var(--rt-neutral-200);
-    --rt-color-bg-hover: var(--rt-neutral-100);
+    --rt-color-bg-hover: var(--rt-overlay-black-4);
     --rt-color-bg-subtle: var(--rt-neutral-100);
     --rt-color-bg-overlay: var(--rt-overlay-black-50);
     --rt-color-bg-inverse: var(--rt-neutral-900);
@@ -29,7 +29,13 @@
 
     /* Ступень 600, а не 500: приглушённый текст обязан брать порог, а после
        пересчёта ряда самая светлая ступень, которая его берёт, — шестисотая.
-       Прежде эту роль держала off-grid ступень 510, заведённая ровно под неё. */
+       Прежде эту роль держала off-grid ступень 510, заведённая ровно под неё.
+
+       Тёмный ответ — пятьдесят процентов белого, а не сорок: на сорока он давал
+       3.6:1 над поверхностью, 3.7:1 над страницей и 3.7:1 над фоном поля, то есть
+       не брал порога ни над одной подложкой. Светлую сторону под порог подводили,
+       тёмную забыли, и держал её список принятого. Пятьдесят — самая слабая доля,
+       берущая порог над всеми тремя: 4.86, 5.02 и 5.09. */
     --rt-color-text-muted: var(--rt-neutral-600);
     --rt-color-text-disabled: var(--rt-neutral-400);
     --rt-color-text-inverse: var(--rt-neutral-0);
@@ -37,9 +43,9 @@
     --rt-color-text-link-hover: var(--rt-brand-600);
 
     /* Border */
-    --rt-color-border-default: var(--rt-neutral-200);
+    --rt-color-border-default: var(--rt-neutral-100);
     --rt-color-border-strong: var(--rt-neutral-300);
-    --rt-color-border-subtle: var(--rt-neutral-200);
+    --rt-color-border-subtle: var(--rt-neutral-100);
     --rt-color-border-focus: var(--rt-brand-500);
 
     /* Action — роли действия.
@@ -190,7 +196,7 @@
     /* Colors */
     --rt-input-color-bg: var(--rt-color-bg-surface-subtle);
     --rt-input-color-bg-disabled: var(--rt-color-bg-surface-subtle);
-    --rt-input-color-bg-hover: var(--rt-overlay-black-4);
+    --rt-input-color-bg-hover: var(--rt-overlay-black-8);
     --rt-input-color-border: var(--rt-color-border-default);
     --rt-input-color-border-focus: var(--rt-color-action-primary);
     --rt-input-color-border-error: var(--rt-color-state-danger);

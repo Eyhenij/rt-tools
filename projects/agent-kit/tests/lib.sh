@@ -165,6 +165,16 @@ expect_reason() {
     report "$label" "$got" "есть"
 }
 
+# Чего в отказе быть не должно. Отказ, пересказывающий правило, читается как полный и полезный —
+# промах в нём виден только тем, что текст пришёл дважды: в отказе и вместе с правилом.
+expect_no_reason() {
+    local label="$1" hook="$2" json="$3" pattern="$4" got
+    if printf '%s' "$json" | "$HOOKS/$hook" 2>/dev/null \
+        | jq -r '.hookSpecificOutput.permissionDecisionReason // ""' 2>/dev/null \
+        | grep -qE "$pattern"; then got="есть"; else got="нет"; fi
+    report "$label" "$got" "нет"
+}
+
 # Сказанное вслух там, где решения нет. Подсказка идёт тем же полем вывода, что и отказ,
 # поэтому `expect_decision` приняла бы её за отказ: у неё нет `permissionDecision`, а умолчание
 # там — «deny». Проверяется отдельно: решения нет, а образец в сказанном есть.
