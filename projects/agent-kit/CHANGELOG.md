@@ -1,3 +1,44 @@
+# [0.15.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.14.0...rt-agent-kit@0.15.0) (2026-08-26)
+
+### Bug Fixes
+
+- **rt:agent-kit:** гард снятия черновика судит все свои заявки, а не одну текущую ([664ac81](https://github.com/Eyhenij/rt-tools/commit/664ac81a7055f759fec218472fff63af8b6adbe8))
+- **rt:agent-kit:** записанный замысел перестал проходить стража насквозь ([030f8e3](https://github.com/Eyhenij/rt-tools/commit/030f8e3141a98115a35abcc9d57275972357429c))
+- **rt:agent-kit:** не выпускать ход, кончившийся ожиданием чужого шага ([a0a564c](https://github.com/Eyhenij/rt-tools/commit/a0a564c7f474e894b79be1f7273522fdfce331a7))
+- **rt:agent-kit:** описание правила об ответе о состоянии влезло в предел ([883ac1b](https://github.com/Eyhenij/rt-tools/commit/883ac1b25a38eca7dfec17d9f8d09fafea88cf83))
+- **rt:agent-kit:** отделить признак разведки от признака работы у стража выходов хода ([0f8e93d](https://github.com/Eyhenij/rt-tools/commit/0f8e93d3ba5aab3c8f179581ed9bdce2e6fae84c))
+- **rt:agent-kit:** паттерн ответа о состоянии назвал, когда его брать ([03f53da](https://github.com/Eyhenij/rt-tools/commit/03f53da6b1fe4e8ba87fdb9272374e739455f917))
+- **rt:agent-kit:** перенумеровать сценарии предела описаний ([41095fa](https://github.com/Eyhenij/rt-tools/commit/41095fa605c16d74158d8f18f7c11c3487b231a2))
+- **rt:agent-kit:** признак интерпретатора читается у заголовка heredoc ([74345f7](https://github.com/Eyhenij/rt-tools/commit/74345f7b3c775437736191105e413cb144585219))
+- **rt:agent-kit:** признак повтора таблиц меряется долей совпавших пар ([5e3f6af](https://github.com/Eyhenij/rt-tools/commit/5e3f6af30528b1dee7152f9750f848305701698f))
+- **rt:agent-kit:** проверки дерева перестали поднимать весь набор гейта ([72c83fe](https://github.com/Eyhenij/rt-tools/commit/72c83fe18433927e66d33ecf357729bdfd17297a))
+- **rt:agent-kit:** пропавший прогон у конфликтующей заявки назван своей причиной ([05713fd](https://github.com/Eyhenij/rt-tools/commit/05713fd89cb5073df178e2a8fc8cc732301d104c))
+- **rt:agent-kit:** сторона плоских корней перечислена разбору списка ([4c94fb9](https://github.com/Eyhenij/rt-tools/commit/4c94fb9e200bfa7b298825fc0495a46057c813a4))
+- **rt:agent-kit:** страж выходов хода ловит взятую, но не начатую работу ([66bf768](https://github.com/Eyhenij/rt-tools/commit/66bf768588885ad451a9e9d49e76d8e03cff0c8b))
+- **rt:agent-kit:** судить последнее действие хода, а не объём работы в нём ([a3d409a](https://github.com/Eyhenij/rt-tools/commit/a3d409a476dfc26f3075137d3be599fd3db1fe52))
+- **rt:agent-kit:** холодная часть правила хода получила разделы своего рода ([8e27c3a](https://github.com/Eyhenij/rt-tools/commit/8e27c3a63d381229aa22c07152be0a42b7d8fe60))
+- **rt:agent-kit:** якорь принимает приватное имя так, как оно объявлено в коде ([0dbef37](https://github.com/Eyhenij/rt-tools/commit/0dbef373ec0d8e016336057ad1f404698b11b311))
+
+### Features
+
+- **rt:agent-kit:** гард требует папку задачи в истории ветки ([98d1184](https://github.com/Eyhenij/rt-tools/commit/98d1184e9fe5eefe30c06f828f8ed458dbf79764))
+- **rt:agent-kit:** задачи эпика заводятся все разом, тем же ходом, что и сам эпик ([2dffdce](https://github.com/Eyhenij/rt-tools/commit/2dffdceb513698aaeb9faffdb8ec545da0d6410e))
+- **rt:agent-kit:** закрепить сжатый слой пределом веса в знаках ([1905cab](https://github.com/Eyhenij/rt-tools/commit/1905cab8d9d84f43113c63ace42d38f210e9afef))
+- **rt:agent-kit:** описания правил обрезаны до трёхсот знаков, и предел считает проверка ([e46aeeb](https://github.com/Eyhenij/rt-tools/commit/e46aeeb235dba90472de22d6e83885e256650591))
+- **rt:agent-kit:** ответ о состоянии работы стал правилом с таблицей и абзацем об эпике ([382418b](https://github.com/Eyhenij/rt-tools/commit/382418bb4d02bd1ab4bb37024243023d2ef45cb1))
+- **rt:agent-kit:** подкоманда счёта, спека на девять сценариев и скрипт дерева ([8dced66](https://github.com/Eyhenij/rt-tools/commit/8dced661362858d1cc898dafbb50dfab2063c60f))
+- **rt:agent-kit:** проверки слоя оформления встали в гейт пуша и конвейер ([256d016](https://github.com/Eyhenij/rt-tools/commit/256d016547a4222e8620cf7838fc445b3db763c7))
+- **rt:agent-kit:** сверка спеков читает привязку строкой списка ([96c2f3e](https://github.com/Eyhenij/rt-tools/commit/96c2f3e139176a1ae79a26e41f3f992c68d178d7))
+- **rt:agent-kit:** связка команд перестала считаться одним движением ([2635d1c](https://github.com/Eyhenij/rt-tools/commit/2635d1cb355920b2e3da178e0e29441fd7b52268))
+- **rt:agent-kit:** счёт цены контекста — вход, правило и весь слой ([96c598e](https://github.com/Eyhenij/rt-tools/commit/96c598eae27330270ec0f7284202839abacadf90))
+- **rt:agent-kit:** цена контекста считается на месте — символы и байты ([8316709](https://github.com/Eyhenij/rt-tools/commit/8316709d238ca4a00b9e19ce465fef1d31cd5ed0))
+- **rt:agent-kit:** эпик ведётся по своему замыслу, а не по списку очереди работ ([6c05d78](https://github.com/Eyhenij/rt-tools/commit/6c05d78a39aecc6b9f1f25d024fd1984efca971f))
+
+### Performance Improvements
+
+- **rt:agent-kit:** отказ гейта называет статьи, а не пересказывает их ([6662c3e](https://github.com/Eyhenij/rt-tools/commit/6662c3ec1bbbbb5c608167519b8649c37adb67d2))
+- **rt:agent-kit:** срезать вход в работу на девять тысяч знаков формой словаря ([b7acace](https://github.com/Eyhenij/rt-tools/commit/b7acace3db5c8b86b5bd1310ac5cdbf9cc828558))
+
 # [0.14.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.13.0...rt-agent-kit@0.14.0) (2026-08-24)
 
 ### Bug Fixes
