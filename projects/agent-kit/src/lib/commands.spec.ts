@@ -151,6 +151,25 @@ describe('sync', () => {
         expect((): string => get(LAW)).toThrow();
     });
 
+    // Строка долга считала статьи пакетной редакции против компаньона дерева, а дерево эти
+    // разделы замещает надстройкой: в разложенном правиле таких статей нет, и привязывать
+    // нечего — долг при этом рос при каждой раскладке.
+    it('SC-AK-731 — статьи раздела, замещённого надстройкой, в долг не идут', () => {
+        start([VERIFIABILITY]);
+        sync(env, false);
+        // Компаньон дерева пуст: черновик пакета несёт все статьи в таблице, и долга при нём нет
+        // вовсе — а считается здесь именно долг.
+        put('.claude/skills/testing/implementation.md', '# testing — что здесь своё\n\n## Где исполняются статьи\n');
+        const packaged: string = said(sync(env, false));
+
+        put(join(OVERRIDES_DIR, TESTING), '## Как закон применяется здесь\n\n- **Своя статья дерева.** Текст.\n');
+        const merged: string = said(sync(env, false));
+
+        expect(packaged).toContain('статей без адреса');
+        expect(packaged).not.toContain('статей без адреса: 1 ');
+        expect(merged).toContain('статей без адреса: 1 ');
+    });
+
     it('правку руками не переписывает, а называет', () => {
         start();
         sync(env, false);

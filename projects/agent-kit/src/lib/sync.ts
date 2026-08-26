@@ -120,11 +120,22 @@ const read: (path: string) => string | null = (path: string): string | null => (
  * Порядок именно такой. Надстройка тоже пишется с дырками — иначе проект, дописавший раздел про
  * свою главную ветку, зашил бы её имя в двух местах: в конфиге и в тексте.
  */
-function renderAsset(asset: IAsset, config: IConfig, root: string): IRenderResult {
+/**
+ * Текст ресурса с наложенной надстройкой дерева — то, что ложится в дерево, без подстановки
+ * значений.
+ *
+ * Экспортируется потому, что о разложенном тексте спрашивает не одна раскладка: счёт долга
+ * привязок судит статьи компаньона против правила, и судить их по пакетной редакции значит
+ * называть долгом статьи, которых в разложенном правиле нет вовсе.
+ */
+export function mergedBody(asset: IAsset, root: string): string {
     const override: string | null = read(join(root, OVERRIDES_DIR, asset.id));
-    const merged: string = override ? renderDocument(mergeDocuments(parseDocument(asset.text), parseDocument(override))) : asset.text;
 
-    return renderVars(merged, config.vars);
+    return override ? renderDocument(mergeDocuments(parseDocument(asset.text), parseDocument(override))) : asset.text;
+}
+
+function renderAsset(asset: IAsset, config: IConfig, root: string): IRenderResult {
+    return renderVars(mergedBody(asset, root), config.vars);
 }
 
 /** Разложенный раньше файл ресурса, снятого теперь каскадом, и причина, по которой он снят. */
