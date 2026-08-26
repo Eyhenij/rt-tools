@@ -50,6 +50,11 @@ jobs:
               run: |
                   node update-version-agent-kit.cjs ${{ github.event.inputs.version }}
                   pnpm run changelog:agent-kit
+                  # Журнал делится тем же движением, которое его растит. Прежде длину его мерил
+                  # гейт пуша — то есть после того, как журнал уже приехал в главную ветку: он
+                  # встал на 530 строках при пределе 500, и из дерева перестала пушиться любая
+                  # ветка, причём у того, кто журнала не трогал.
+                  node tools/changelog-split.mjs projects/agent-kit/CHANGELOG.md
                   VERSION=$(jq -r .version projects/agent-kit/package.json)
                   echo "VERSION=$VERSION" >> $GITHUB_ENV
 
