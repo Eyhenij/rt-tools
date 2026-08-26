@@ -54,6 +54,7 @@ export const baseTypeScriptConfig = {
                     'projects/ui-kit/.storybook/main.ts',
                     'projects/ui-kit/.storybook/test-runner.ts',
                     'projects/ui-kit-v2/.storybook/test-runner.ts',
+                    'projects/ui-kit-v2/.storybook/snapshot-wait.ts',
                 ],
             },
             tsconfigRootDir: repoRoot,

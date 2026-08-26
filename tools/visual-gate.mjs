@@ -27,7 +27,7 @@ import { createServer } from 'node:net';
  */
 const KITS = {
     'ui-kit': { target: '@rt-tools/ui-kit:storybook', snapshots: 'test:visual', probes: ['check:paint'] },
-    'ui-kit-v2': { target: '@rt-tools/ui-kit-v2:storybook', snapshots: 'test:visual:v2', probes: [] },
+    'ui-kit-v2': { target: '@rt-tools/ui-kit-v2:storybook', snapshots: 'test:visual:v2', probes: ['check:icons'] },
 };
 
 /** Предел ожидания поднявшейся витрины. Не мерило готовности, а признак того, что она не встала. */
