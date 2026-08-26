@@ -131,6 +131,19 @@ jobs:
             - name: Circular imports
               run: node tools/check-cycles.mjs
 
+            # Слой оформления второго кита: собранные токены против источника, граф ссылок между
+            # ними, полнота тем и объявления в стилях, порядок каскадных слоёв. Ни одну из пяти не
+            # звал ни гейт пуша, ни конвейер — и `check-tokens-graph` стоял красным несколько дней
+            # подряд, а ни один пуш об этом не сказал. Вместе они идут три секунды, поэтому
+            # одним шагом и без признака состава правки.
+            - name: Style layer
+              run: |
+                  node tools/build-tokens-v2.mjs --check
+                  node tools/check-tokens-graph.mjs
+                  node tools/check-tokens-theme.mjs
+                  node tools/check-tokens-styles.mjs
+                  node tools/check-cascade-layer.mjs
+
             # `typecheck` проверяет типы там, где их не проверяет ничто другое:
             # Jest транспилирует спеки без проверки типов, а ESLint здесь не
             # type-aware, так что спека могла годами гонять форму, которой по
