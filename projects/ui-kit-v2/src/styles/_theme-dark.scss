@@ -28,7 +28,7 @@
 
     /* Text — почти белый на графите */
     --rt-color-text-primary: var(--rt-neutral-50);
-    --rt-color-text-muted: var(--rt-overlay-white-40);
+    --rt-color-text-muted: var(--rt-overlay-white-50);
     --rt-color-text-disabled: var(--rt-overlay-white-25);
     --rt-color-text-inverse: var(--rt-neutral-900);
     --rt-color-text-link: var(--rt-brand-300);
@@ -100,7 +100,7 @@
     --rt-shadow-card-soft: 0 0 40px rgb(0 0 0 / 25%);
 
     /* Hover-overlay инвертирован для dark (light overlay поверх тёмного фона). */
-    --rt-input-color-bg-hover: var(--rt-overlay-white-4);
+    --rt-input-color-bg-hover: var(--rt-overlay-white-8);
     --rt-icon-button-color-bg-hover: var(--rt-overlay-white-4);
 
     /* Toggle-switch — трек уходит в подложку, а бегунок остаётся светлым:

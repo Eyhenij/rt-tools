@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.14.0 · checks/check-turn-map.mjs · a3dc166fa4a7 · правится надстройкой, не здесь
+// rt-kit v0.14.0 · checks/check-turn-map.mjs · 35316b8bb267 · правится надстройкой, не здесь
 /**
  * Сверка карты хода: её размер и её полнота.
  *
@@ -42,11 +42,28 @@ const RULE = join(ROOT, '.claude/skills/task-flow/SKILL.md');
  */
 const LIMIT_BYTES = 6144;
 
-/** Имена состояний из таблицы: первая ячейка в обратных кавычках и всё, что за ней. */
-function statesOf(text) {
+/**
+ * Имена состояний: строка таблицы, у которой первая ячейка стоит в обратных кавычках, — а для
+ * карты хода ещё и строка списка «- `имя` — действие; ведёт `паттерн`». В правиле список так не
+ * читается: тем же видом там записаны паттерны, и они попали бы в состояния.
+ * у которой первая ячейка стоит в обратных кавычках.
+ *
+ * Обе формы читаются намеренно. Список дешевле таблицы на треть — форматтер добивает столбцы
+ * пробелами до общей ширины, и эти пробелы едут в контекст каждого захода, ничего не значая;
+ * таблица при этом остаётся законной, и дерево, которое её не переписывало, работает как
+ * прежде.
+ */
+function statesOf(text, { listed: readListed = false } = {}) {
     const states = [];
 
     for (const line of text.split('\n')) {
+        const listed = readListed && line.match(/^-\s+`([^`]+)`\s+—\s+(.+)$/);
+
+        if (listed) {
+            states.push({ name: listed[1], rest: listed[2].split(';').map((part) => part.trim()) });
+            continue;
+        }
+
         if (!line.startsWith('|')) {
             continue;
         }
@@ -88,7 +105,7 @@ function main() {
         faults.push(`карта выросла: ${bytes} байт при пределе ${LIMIT_BYTES}`);
     }
 
-    const inMap = statesOf(text);
+    const inMap = statesOf(text, { listed: true });
 
     if (inMap.length === 0) {
         faults.push('в карте нет ни одного состояния — таблица сломана');

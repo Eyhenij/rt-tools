@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.14.0 · hooks/skill-gate.sh · cdb0443a4c9e · правится надстройкой, не здесь
+# rt-kit v0.14.0 · hooks/skill-gate.sh · 0b6e3d273d26 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__claude-in-chrome__.*
 # Требует: hooks/deny-tail.sh
 # Гейт правил: не даёт править файл, пока не загружено правило, под которое он подпадает.
@@ -187,13 +187,14 @@ fi
 # Правило целиком остаётся вторым ходом — для того, кому статьи мало.
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/rule-article.sh" ] && . "$rt_hooks_dir/rule-article.sh" 2>/dev/null
-if [ "$kind" != "command" ] && [ "$kind" != "browser" ] && command -v rt_rule_articles >/dev/null 2>&1; then
-    article="$(rt_rule_articles "$root/$rules_dir/${req}/SKILL.md" "$target" 2>/dev/null)"
+if [ "$kind" != "command" ] && [ "$kind" != "browser" ] && command -v rt_rule_article_heads >/dev/null 2>&1; then
+    article="$(rt_rule_article_heads "$root/$rules_dir/${req}/SKILL.md" "$target" 2>/dev/null)"
     if [ -n "$article" ]; then
-        reason="Отбито гейтом правил. Под эту правку подпадает статья правила «${req}»:
+        reason="Отбито гейтом правил. Под эту правку подпадают статьи правила «${req}»:
 
 ${article}
-Статья снимает чтение правила целиком, а не отказ: загрузи правило «${req}» инструментом Skill и повтори действие. ${fallback} Для этой области это происходит один раз за сессию."
+
+Текст этих статей придёт в контекст вместе с правилом, и пересказывать его здесь значило бы платить за один текст дважды: загрузи правило «${req}» инструментом Skill и повтори действие. ${fallback} Для этой области это происходит один раз за сессию."
     fi
 fi
 

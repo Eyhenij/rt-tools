@@ -197,6 +197,18 @@ expect_reason "SC-AK-498 — отказ на правке стилей несё�
 gate_session_reset
 expect_reason "SC-AK-499 — правило целиком остаётся вторым ходом" skill-gate.sh     "$(input_edit "$TREE/libs/site/x/ui/src/lib/a.component.scss")"     'загрузи правило «styling-bem»'
 
+# Отказ называет статьи, а не пересказывает их: текст придёт в контекст вместе с правилом,
+# которое заход грузит следом. У правила текстов отказ печатал 4 134 знака одиннадцатью
+# статьями — их заголовки весят 718.
+gate_session_reset
+expect_reason "SC-AK-656 — отказ называет статью заголовком" skill-gate.sh \
+    "$(input_edit "$TREE/libs/site/x/ui/src/lib/a.component.scss")" \
+    'Оформление берётся ступенью'
+gate_session_reset
+expect_no_reason "SC-AK-657 — тела статьи в отказе нет" skill-gate.sh \
+    "$(input_edit "$TREE/libs/site/x/ui/src/lib/a.component.scss")" \
+    'живёт мимо шкалы'
+
 # Правило без размеченных статей отбивает прежним текстом: под правку кода в этом правиле-пробе
 # признака нет ни у одной статьи.
 gate_session_reset

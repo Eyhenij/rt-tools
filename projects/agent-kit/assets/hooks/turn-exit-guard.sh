@@ -155,7 +155,7 @@ work_re='git (add|commit|push|checkout|merge|rm)|npm run|pnpm (run|exec)|nx (bui
 #
 # Разведка выглядит работой лучше всего остального: в ней команды, числа и точные ответы. Тем
 # она и опасна — ход, набитый ею, читается как полный и владельцем, и самим заходом.
-read_re='^[[:space:]]*(([^[:space:]]*/)?git[[:space:]]+(show|log|ls-tree|ls-files|ls-remote|diff|status|branch|tag|rev-parse|remote|describe|blame|fetch|pull|checkout|switch)|([^[:space:]]*/)?gh[[:space:]]+(pr|issue|run|repo)[[:space:]]+(list|view|status|checks|diff|download|logs))([[:space:]]|$)'
+read_re='^[[:space:]]*(([^[:space:]]*/)?git[[:space:]]+(show|log|ls-tree|ls-files|ls-remote|diff|status|branch|tag|rev-parse|remote|describe|blame|fetch|pull|(checkout|switch)(?![[:space:]]+-[bc][[:space:]]))|([^[:space:]]*/)?gh[[:space:]]+(pr|issue|run|repo)[[:space:]]+(list|view|status|checks|diff|download|logs))([[:space:]]|$)'
 
 # Части составной команды судятся по одной: ход собирает чтение и работу в одну строку через
 # `&&`, и суждение целиком отпускало бы разведку по первой же меняющей части.
@@ -171,7 +171,12 @@ part_re='&&|\|\||;|\n'
 # работа была, и много. Именно эта полнота и обманывает: пустоты за таким ходом не видно.
 wait_re='gh[[:space:]]+(run[[:space:]]+watch|pr[[:space:]]+checks[^|]*--watch)|until[[:space:]].*sleep|while[[:space:]].*sleep|^[[:space:]]*sleep[[:space:]]'
 
-verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re" --arg read "$read_re" --arg part "$part_re" --arg wait "$wait_re" '
+# Отдача работы и начало следующей. Правило зовёт законным концом хода отданную работу — но с
+# условием: следующая начата, и по ней сделано ДЕЙСТВИЕ, а не сказано.
+handover_re='gh[[:space:]]+pr[[:space:]]+create'
+started_re='task:new|task:move|board\.mjs[[:space:]]+move|git[[:space:]]+checkout[[:space:]]+-b|git[[:space:]]+switch[[:space:]]+-c'
+
+verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re" --arg read "$read_re" --arg part "$part_re" --arg wait "$wait_re" --arg handover "$handover_re" --arg started "$started_re" '
     def is_input:
         .type == "user"
         and (((.message.content // []) | if type == "array"
@@ -192,6 +197,22 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re
     # было раньше: работа остаётся ровно там, где стояла.
     | ([$uses[] | select((.name // "") == "Bash") | (.input.command // "")] | last // "") as $last
     | ($last | test($wait)) as $waited
+    # Отдача работы: хвост хода после открытия заявки. Всё, что было до неё, сделано по сданной
+    # задаче и о следующей не говорит ничего.
+    | ([$uses[] | select((.name // "") == "Bash") | (.input.command // "")]) as $cmds
+    | (($cmds | map(test($handover)) | index(true))) as $handover_at
+    | ($handover_at != null) as $handed_over
+    | (if $handover_at == null then [] else $cmds[$handover_at:] end) as $tail
+    | (($tail | map(test($started)) | any)
+        or ($uses | map(.name // "") | any(test("^(Edit|Write|MultiEdit|NotebookEdit)$")))) as $started_next
+    # ПОСЛЕДНЕЕ ДЕЙСТВИЕ ХОДА — общий признак, из которого частные ярусы ниже только выводят
+    # понятный отказ. Девять разборов происшествий за сутки описывают девять разных остановок, и
+    # во всех девяти последним действием хода был текст владельцу: отчёт, сводка, объявление
+    # намерения. Ярус на каждый вид остановки — гонка без конца: видов столько, сколько бывает
+    # поводов заговорить. Признак поэтому один — работой должно быть ПОСЛЕДНЕЕ действие.
+    | ([$uses[] | (.name // "")] | last // "") as $last_tool
+    | (($last_tool | test("^(Edit|Write|MultiEdit|NotebookEdit)$"))
+        or ([$last | splits($part)] | map(test($work) and (test($read) | not)) | any)) as $ended_working
     # Отказ гарда и передача захода — оба кончают ход по правилу.
     | ([$turn[] | select(.type == "user") | .message.content // [] | select(type == "array") | .[]
           | select(.type == "tool_result") | .content
@@ -205,13 +226,16 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re
           | if type == "string" then . elif type == "array"
             then (map(if type == "object" then (.text // "") else "" end) | join("\n")) else "" end] | join("\n")) as $said
     | ($said | test("останов|стоп|хватит|подожди|не надо|прерв|отложи")) as $told_stop
-    | { worked: ($edited or $ran_work), released: ($asked or $denied or $handed or $told_stop), waited: $waited, ran: $ran }
+    | { worked: ($edited or $ran_work), released: ($asked or $denied or $handed or $told_stop), waited: $waited, handed_over: $handed_over, started_next: $started_next, ended_working: $ended_working, ran: $ran }
 ' 2>/dev/null)"
 
 [ -z "$verdict" ] && exit 0
 
 worked="$(printf '%s' "$verdict" | jq -r '.worked // false' 2>/dev/null)"
 waited="$(printf '%s' "$verdict" | jq -r '.waited // false' 2>/dev/null)"
+handed_over="$(printf '%s' "$verdict" | jq -r '.handed_over // false' 2>/dev/null)"
+started_next="$(printf '%s' "$verdict" | jq -r '.started_next // false' 2>/dev/null)"
+ended_working="$(printf '%s' "$verdict" | jq -r '.ended_working // false' 2>/dev/null)"
 released="$(printf '%s' "$verdict" | jq -r '.released // false' 2>/dev/null)"
 commands="$(printf '%s' "$verdict" | jq -r '.ran // ""' 2>/dev/null)"
 
@@ -313,6 +337,39 @@ ${deny_tail_text}"
     fi
 fi
 
+# Работа отдана, а следующая только названа. Работы в таком ходе больше, чем в любом другом, — и
+# вся она по сданной задаче: отдача завершает прошлую работу, а не ход. Девять разборов
+# происшествий за сутки описывают девять разных остановок, и во всех девяти последним действием
+# хода был текст владельцу: отчёт, сводка, объявление намерения.
+# Разбор — `docs/postmortems/2026-08-25-handover-turn-ends-on-intent.md`.
+if [ "$handed_over" = "true" ] && [ "$started_next" != "true" ]; then
+    reason="BLOCKED by turn-exit-guard: заявка открыта, а по следующей работе за этот ход не сделано ничего.
+
+Отданная работа кончает ход только вместе с начатой следующей — по ней должно быть сделано действие, а не сказано. «Беру такую-то» выходом не является: правило зовёт это объявлением намерения.
+
+Всё, что было до открытия заявки, сделано по сданной задаче и о следующей не говорит ничего.
+
+    npm run task:new -- <заголовок>            # завести следующую
+    git checkout -b <КЛЮЧ>-<номер>-<slug>      # взять её в работу
+
+Сделай первый шаг по следующей работе этим же ходом. Владелец сказал остановиться — так и напиши: страж читает его слово, а не пересказ.
+
+Страж судит один ход: следующий заход не отбивается."
+
+    # shellcheck disable=SC1090
+    [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+        && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+    command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+    deny_tail_text="$(rt_deny_tail "")"
+    [ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
+
+    jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
+        || printf '{"decision":"block","reason":"turn-exit-guard: работа отдана, а следующая не начата."}\n'
+    exit 0
+fi
+
 # Ход кончился ожиданием чужого шага. Работа в нём была — тем он и обманчив: полон, и пустоты за
 # ним не видно. Судится последнее действие, а не наличие работы.
 if [ "$waited" = "true" ]; then
@@ -337,6 +394,33 @@ ${deny_tail_text}"
 
     jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
         || printf '{"decision":"block","reason":"turn-exit-guard: ход кончился ожиданием чужого шага."}\n'
+    exit 0
+fi
+
+# Общий рубеж. Работа за ход была — но последним действием стал не она, а текст владельцу.
+# Частные ярусы выше называют вид остановки точнее; сюда доходит то, чего они не знают по имени.
+if [ "$worked" = "true" ] && [ "$ended_working" != "true" ]; then
+    reason="BLOCKED by turn-exit-guard: работа за ход была, но последним действием хода стала не она.
+
+Ход кончается работой, а не рассказом о ней. Отчёт, сводка и объявление намерения выходом не являются: они выглядят завершением тем убедительнее, чем больше сделано, — и ровно на это место встаёт следующее действие.
+
+Следующий шаг записан в ходе работы: ${next_step}
+
+Сделай его этим же ходом, а сказать о сделанном можно после. Владелец сказал остановиться — так и напиши: страж читает его слово, а не пересказ.
+
+Страж судит один ход: следующий заход не отбивается."
+
+    # shellcheck disable=SC1090
+    [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+        && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+    command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+    deny_tail_text="$(rt_deny_tail "")"
+    [ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
+
+    jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
+        || printf '{"decision":"block","reason":"turn-exit-guard: последним действием хода стала не работа."}\n'
     exit 0
 fi
 
