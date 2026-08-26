@@ -13,8 +13,6 @@
 - **Раскладка из устаревшей сборки не выдаёт себя за свежую.** — `projects/agent-kit/src/lib/freshness.ts:staleBuild`
 - **Разложенное сверяется по содержимому, а не по номеру редакции.** — `projects/agent-kit/src/lib/plan.ts:planFile`
 - **Переход чужого файла в управление пакетом делается командой, а не руками.** — `projects/agent-kit/src/lib/commands.ts:adopt`
-- **Разложенное, которому нужна запись в чужой настройке, доезжает до неё.** — `projects/agent-kit/src/lib/hooks-map.ts:bindDispatch`
-- **Запись в чужую настройку только прибавляет.** — `projects/agent-kit/src/lib/hooks-map.ts:bindDispatch`
 - **Надстройка настроек проверок сливается по вложенным ключам.** — `projects/agent-kit/assets/checks/rt-kit-checks.config.mjs:mergeDeep`
 - **Пакет не знает раскладки чужого дерева.** — `projects/agent-kit/assets/checks/lib-common.mjs:LIBS_ROOT`
 - **Пакет не знает и слов чужого дерева.** — `projects/agent-kit/assets/checks/lib-common.mjs:LIB_PREFIX`
