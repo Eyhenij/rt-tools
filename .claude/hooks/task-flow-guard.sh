@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.16.1 · hooks/task-flow-guard.sh · 0ae4914cb9ce · правится надстройкой, не здесь
+# rt-kit v0.16.1 · hooks/task-flow-guard.sh · aae12b78d47a · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # PreToolUse guard for Edit|Write|MultiEdit: код не пишется раньше замысла.
@@ -91,6 +91,16 @@ esac
 # заведения ветки.
 rt_needs rt_is_app_code task-flow-guard || exit 0
 
+# Разложенный слой правил судится наравне с кодом приложения. Путями кода он не покрыт нигде —
+# лежит в каталоге законов, в каталоге агента и среди проверок, — и полторы сотни его файлов
+# легли без единого отклика гарда; отбил он двумя ходами позже, на записи в папку задачи. Признак
+# тот же, по которому слой находит гейт правил: шапка раскладки в начале файла. Ресурс пакета,
+# из которого раскладка идёт, шапки не несёт и судится по-прежнему своим путём.
+laid_out() {
+    [ -f "$1" ] || return 1
+    head -n 3 "$1" 2>/dev/null | grep -q 'rt-kit v[^[:space:]]* ·'
+}
+
 # Судится каждый названный путь: команда пишет столько файлов, сколько в ней стоит, и одного
 # под требованием довольно, чтобы отбить её целиком.
 path=""
@@ -100,7 +110,7 @@ while IFS= read -r candidate; do
         /*) ;;
         *) candidate="${CLAUDE_PROJECT_DIR:-.}/$candidate" ;;
     esac
-    if rt_is_app_code "$candidate"; then
+    if rt_is_app_code "$candidate" || laid_out "$candidate"; then
         path="$candidate"
         break
     fi
