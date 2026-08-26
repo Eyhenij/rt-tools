@@ -1,3 +1,9 @@
+# [0.16.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.15.0...rt-agent-kit@0.16.0) (2026-08-26)
+
+### Features
+
+- **rt:agent-kit:** срок хранения описания прошлого везёт пакет, а число называет дерево ([0efaed8](https://github.com/Eyhenij/rt-tools/commit/0efaed81358fbb132d31577ffb866b35bd1ec748))
+
 # [0.15.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.14.0...rt-agent-kit@0.15.0) (2026-08-26)
 
 ### Bug Fixes
