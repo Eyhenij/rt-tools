@@ -13,5 +13,7 @@
 - **Файл слоёв гейт зовёт в своей оболочке, а не отдельным процессом.** — `projects/agent-kit/assets/hooks/skill-gate.sh:rt_hooks_dir`
 - **Карта гейта считает командой вызов, а не упоминание.** — `projects/agent-kit/assets/defaults/gate-map.sh:rt_gate_invokes`
 - **Перенаправление в пустое устройство и в поток ошибок записью не считается.** — `projects/agent-kit/assets/defaults/project.sh:rt_shell_writes_default`
+- **Стрелка в тексте команды перенаправлением не считается.** — `projects/agent-kit/assets/defaults/project.sh:rt_shell_writes_default` — сценарий `SC-AK-675`
+- **Цель перенаправления выглядит как путь, а не как слово словами.** — `projects/agent-kit/assets/defaults/project.sh:rt_shell_writes_default` — сценарии `SC-AK-676`, `SC-AK-677`
 - **Пути берутся из заголовка команды, а не из тела документа на месте.** — `projects/agent-kit/assets/defaults/project.sh:rt_shell_paths_default`
 - **Пути берутся у пишущего куска команды, а не у строки целиком.** — `projects/agent-kit/assets/defaults/project.sh:rt_shell_paths_default`
