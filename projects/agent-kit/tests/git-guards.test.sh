@@ -333,6 +333,23 @@ printf 'rt_push_checks() { printf "%%s\\n" true; }\n' > "$RED_GATE/.claude/rt-ki
 gate "зелёный набор пуш не задерживает" "$RED_GATE" 'git push origin RT-72-gate' PASS
 rm -rf "$RED_GATE"
 
+# SC-AK-678, SC-AK-679. Проверка, которой нечего смотреть, выходит кодом пропуска. Прежде такой
+# исход был нулём: в наборе он стоял рядом с пройденными и ничем от них не отличался, и сводка
+# читалась как проверенная целиком. Пуш он не отбивает — поломкой пропуск не является, — но
+# называется вслух, иначе всё вернулось бы к молчаливому нулю.
+SKIP_GATE="$(fixture_repo RT-1202-skip)"
+mkdir -p "$SKIP_GATE/.claude/rt-kit"
+printf 'rt_push_checks() { printf "%%s\\n" "exit 7"; }\n' > "$SKIP_GATE/.claude/rt-kit/project.sh"
+gate "SC-AK-679 — пропуск пуш не отбивает" "$SKIP_GATE" 'git push origin RT-1202-skip' PASS
+
+skip_says="$(CLAUDE_PROJECT_DIR="$SKIP_GATE" input_cmd 'git push origin RT-1202-skip' Bash "$SKIP_GATE" \
+    | CLAUDE_PROJECT_DIR="$SKIP_GATE" "$HOOKS/git-guard-push-tests.sh" 2>&1 >/dev/null)"
+case "$skip_says" in
+    *'exit 7'*) report "SC-AK-679 — пропущенная проверка названа вслух" да да ;;
+    *) report "SC-AK-679 — пропущенная проверка названа вслух" нет да ;;
+esac
+rm -rf "$SKIP_GATE"
+
 # SC-AK-405…407. Составная «переключиться и запушить» проходила гейт молча: набор гоняется в том
 # дереве, какое лежит на момент разбора команды, то есть по прежней ветке. Зелёный набор при этом
 # читается как проверка ушедшего. Набор здесь зелёный намеренно — судится не он, а сама форма
