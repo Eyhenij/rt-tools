@@ -104,9 +104,37 @@ git -C "$SIZE_TREE" add -A
 report "SC-AK-520 — текст судится своим пределом" "$(size_says 'prose/rule\.md: 21 строк, предел текста 10')" 1
 report "SC-AK-520 — код тем же числом не судится" "$(size_says 'code/tool\.mjs')" 0
 
+# --- SC-AK-658…661 — предел веса --------------------------------------------------------------
+#
+# Строки меряют, сколько текста помещается на экран, а веса не меряют вовсе: файл с короткими
+# строками проходит строковый предел, весив вдвое больше соседнего. Сжатие слоя срезает знаки и
+# оставляет число переносов прежним — без веса достигнутое не закрепляется.
+printf '{"fileSizeLimit":400,"proseSizeLimit":300,"proseCharLimit":200,"proseRoots":["prose/"],"allowlistDir":"tools","archiveDir":"docs/archive/","tasksDir":"docs/tasks","generatedDirs":["gen/","tools/"]}\n' \
+    > "$SIZE_TREE/.claude/rt-kit/checks.json"
+rm -rf "${SIZE_TREE:?}/prose" "${SIZE_TREE:?}/code"
+mkdir -p "$SIZE_TREE/prose"
+# Пять строк по сто знаков: строковый предел не тронут, вес превышен вдвое.
+{ for i in 1 2 3 4 5; do printf 'я%.0s' $(seq 1 100); printf '\n'; done; } > "$SIZE_TREE/prose/heavy.md"
+# Столько же строк, но лёгких: под обоими пределами законен.
+{ for i in 1 2 3 4 5; do printf 'я%.0s' $(seq 1 10); printf '\n'; done; } > "$SIZE_TREE/prose/light.md"
+# Спутник тяжелее предела: таблица связи, где заголовок дословно повторяет утверждение.
+{ for i in 1 2 3 4 5; do printf 'я%.0s' $(seq 1 100); printf '\n'; done; } > "$SIZE_TREE/prose/implementation.md"
+git -C "$SIZE_TREE" add -A
+report "SC-AK-658 — тяжёлый текст назван по весу" "$(size_says 'prose/heavy\.md: [0-9]+ знаков, предел веса текста 200')" 1
+report "SC-AK-659 — лёгкий текст той же длины молчит" "$(size_says 'prose/light\.md')" 0
+report "SC-AK-660 — спутник из счёта веса выведен" "$(size_says 'prose/implementation\.md')" 0
+# Дерево, числа не назвавшее, судится по-прежнему одними строками.
+printf '{"fileSizeLimit":400,"proseSizeLimit":300,"proseRoots":["prose/"],"allowlistDir":"tools","archiveDir":"docs/archive/","tasksDir":"docs/tasks","generatedDirs":["gen/","tools/"]}\n' \
+    > "$SIZE_TREE/.claude/rt-kit/checks.json"
+report "SC-AK-661 — без числа веса проверка молчит" "$(size_code)" 0
+
 # Дерево, корней текста не назвавшее, работает как прежде: одно число и одна строка в сводке.
+# Файлы предыдущей пробы уходят: они заводились под свои пределы, и под этим числом сводка
+# считала бы их наравне с остальными.
+rm -rf "${SIZE_TREE:?}/prose"
 printf '{"fileSizeLimit":40,"allowlistDir":"tools","archiveDir":"docs/archive/","tasksDir":"docs/tasks","generatedDirs":["gen/","tools/"]}\n' \
     > "$SIZE_TREE/.claude/rt-kit/checks.json"
+git -C "$SIZE_TREE" add -A
 report "SC-AK-521 — без корней текста предел один" "$(size_code)" 0
 report "SC-AK-521 — сводка называет одно число" "$(size_says 'предел 40, длиннее предела 0')" 1
 

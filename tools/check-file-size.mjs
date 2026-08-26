@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.14.0 · checks/check-file-size.mjs · 60bfdd886dd3 · правится надстройкой, не здесь
+// rt-kit v0.14.0 · checks/check-file-size.mjs · c8db1e234ef7 · правится надстройкой, не здесь
 /**
  * Проверка того, что файл не длиннее предела.
  *
@@ -39,6 +39,14 @@ const ALLOWLIST = allowlistOf('file-size');
 /** Пределов два: код и текст слоя правил. Какой из них применён, каждая строка отказа называет. */
 const LIMIT = CONFIG.fileSizeLimit;
 const PROSE_LIMIT = CONFIG.proseSizeLimit ?? CONFIG.fileSizeLimit;
+/**
+ * Второй предел текста — в знаках. Строки меряют, сколько текста помещается на экран, но веса
+ * не меряют вовсе: правило о заявках занимает 282 строки при 13 595 знаках, а правило поставки —
+ * 272 строки при 21 508. Сжатие слоя срезает знаки, а число переносов оставляет прежним, и
+ * строковый предел достигнутого не закрепляет. Дерево, не назвавшее этого числа, судится
+ * по-прежнему одними строками.
+ */
+const PROSE_CHARS = CONFIG.proseCharLimit ?? 0;
 /** Корни текста слоя правил; дерево, их не назвавшее, судится одним пределом. */
 const PROSE_ROOTS = CONFIG.proseRoots ?? [];
 
@@ -75,6 +83,16 @@ function lineCount(path) {
     return readFileSync(join(ROOT, path), 'utf8').split('\n').length;
 }
 
+/** Спутник — таблица связи, а не проза: компаньон правила и перечень сценариев спека. */
+function companion(path) {
+    return path.endsWith('/implementation.md') || path.endsWith('/scenarios.md');
+}
+
+/** Знаки, а не байты: кириллица весит по два байта, и байтовый счёт судил бы язык, а не текст. */
+function charCount(path) {
+    return readFileSync(join(ROOT, path), 'utf8').length;
+}
+
 /**
  * Список известного читается отдельно от общего читателя: у этой проверки нет файла — это
  * не пустой список, а нечитаемая настройка, и молчать о ней нельзя. Пустой список законен
@@ -87,15 +105,32 @@ const known = new Map([...[...accepted.keys()].map((path) => [path, 'приня�
 const tooLong = new Map();
 const tracked = trackedFiles().filter(judged);
 
+const overweight = new Map();
+
 for (const path of tracked) {
     const lines = lineCount(path);
     if (lines > limitOf(path).limit) {
         tooLong.set(path, lines);
     }
+
+    // Вес судится только у текста слоя правил и только там, где дерево назвало число: у кода
+    // длину стережёт ещё и линтер, а у прозы — одни эти два предела.
+    //
+    // Спутники из счёта веса выведены. Компаньон правила и перечень сценариев — таблицы связи:
+    // заголовок привязки дословно повторяет утверждение, потому что связь идёт по его тексту, и
+    // резать там нечего, не порвав саму связь. Вес такого файла растёт с числом утверждений, а
+    // не с многословием: у правила поставки семьдесят шесть привязок на 24 326 знаков, из них
+    // пояснений всего 5 729. Строковый предел на них остаётся — он ловит другое.
+    if (PROSE_CHARS > 0 && PROSE_ROOTS.length > 0 && limitOf(path).title === 'предел текста' && !companion(path)) {
+        const chars = charCount(path);
+        if (chars > PROSE_CHARS) {
+            overweight.set(path, chars);
+        }
+    }
 }
 
 if (process.argv.includes('--baseline')) {
-    console.log(baselineOf([...tooLong.keys()].sort(), allowlist));
+    console.log(baselineOf([...new Set([...tooLong.keys(), ...overweight.keys()])].sort(), allowlist));
     process.exit(0);
 }
 
@@ -105,7 +140,11 @@ const gone = [...known.keys()].filter((path) => !existsSync(join(ROOT, path)));
 /** Файл поделили, а строку оставили: список перестал бы отвечать за то, что в нём стоит. */
 const shrunk = [...known.keys()].filter((path) => !tooLong.has(path) && existsSync(join(ROOT, path)));
 
+/** Тяжёлое по знакам судится тем же списком известного: один долг на файл, а не два. */
+const heavy = [...overweight].filter(([path]) => !known.has(path) && !tooLong.has(path));
+
 const problems = [
+    ...heavy.map(([path, chars]) => `${path}: ${chars} знаков, предел веса текста ${PROSE_CHARS} — резать довод, а не дописывать строку в ${ALLOWLIST}`),
     ...fresh.map(([path, lines]) => {
         const { limit, title } = limitOf(path);
         return `${path}: ${lines} строк, ${title} ${limit} — делить, а не дописывать строку в ${ALLOWLIST}`;
@@ -122,8 +161,14 @@ if (problems.length > 0) {
 }
 
 const limits = PROSE_ROOTS.length > 0 ? `предел кода ${LIMIT}, предел текста ${PROSE_LIMIT}` : `предел ${LIMIT}`;
+/**
+ * Предел веса называется только там, где дерево задало и число, и корни текста: вес судится у
+ * прозы слоя правил, а дерево, её корней не назвавшее, судится одним числом строк — и вторая
+ * цифра в сводке говорила бы о проверке, которая там не работает.
+ */
+const weight = PROSE_CHARS > 0 && PROSE_ROOTS.length > 0 ? `, предел веса текста ${PROSE_CHARS} знаков` : '';
 
 console.log(
-    `check-file-size: проверено ${tracked.length} файлов, ${limits}, длиннее предела ${tooLong.size}, ` +
+    `check-file-size: проверено ${tracked.length} файлов, ${limits}${weight}, длиннее предела ${tooLong.size}, ` +
         `из них принято ${accepted.size}, долг ${debt.size} — новых нет`
 );

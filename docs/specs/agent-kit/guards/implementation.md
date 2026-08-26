@@ -8,20 +8,18 @@
 удовлетворяется, поэтому имя поля из чужой строки проходит её так же, как нужное предложение, — и
 утверждение остаётся зелёным, когда сам текст роли переписан целиком.
 
-| Правило                                                                                                      | Где исполняется                                                                                                                                                 |
-| ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Хук, которому не хватает функции профиля, говорит об этом вместо молчания.                                   | `projects/agent-kit/assets/hooks/profile-check.sh:rt_needs`                                                                                                     |
-| Сообщение о нехватке не превращает хук в отказ.                                                              | `projects/agent-kit/assets/hooks/profile-check.sh:rt_needs`                                                                                                     |
-| Разбор состояния перечисляет функции профиля, которых ждут разложенные хуки, и те из них, что не определены. | `projects/agent-kit/src/lib/commands.ts:profileLines`                                                                                                           |
-| Признак кода приложения судится относительно корня дерева.                                                   | `projects/agent-kit/assets/defaults/project.sh:rt_is_app_code_default`                                                                                          |
-| Гард замысла судит объявленный переход, а не наличие файлов.                                                 | `projects/agent-kit/assets/hooks/task-flow-guard.sh:state`                                                                                                      |
-| Отказ по состоянию называет обязательное действие того состояния, которое объявлено.                         | `projects/agent-kit/assets/hooks/task-flow-guard.sh:state_action`                                                                                               |
-| Именем состояния считается только слово из перечня.                                                          | `projects/agent-kit/assets/hooks/task-flow-guard.sh:state_action`                                                                                               |
-| Папка задачи спрашивается и у истории ветки, а не только у диска.                                            | `projects/agent-kit/assets/hooks/task-flow-guard.sh:in_tree`                                                                                                    |
-| Состояние судится раньше договорённости и её обхода.                                                         | `projects/agent-kit/assets/hooks/task-flow-guard.sh:progress`                                                                                                   |
-| Заход, начатый с передачи, не правит файлов, пока не загружено правило ведения работы.                       | `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:verdict`                                                                                                |
-| Передача узнаётся и по пути к ней, и по слову о ней.                                                         | `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:from_handoff`                                                                                           |
-| Отказ гарда называет два законных хода.                                                                      | `projects/agent-kit/assets/hooks/deny-tail.sh:rt_deny_tail`                                                                                                     |
-| Законная форма обхода называется тем же хвостом, а её отсутствие — тоже.                                     | `projects/agent-kit/assets/hooks/deny-tail.sh:rt_deny_tail`                                                                                                     |
-| Хвост отказа собирает общая функция, а не каждый текст сам.                                                  | `projects/agent-kit/assets/hooks/git-guard-main.sh:deny_tail_text`                                                                                              |
-| Начало вызова считает присваивания переменных частью команды, и объявлено оно одним местом.                  | `projects/agent-kit/assets/hooks/hook-input.sh:RT_CMD_BOUND` — образец приставки вызова; носители берут его оттуда, своих копий у них нет; сценарий `SC-AK-559` |
+- **Хук, которому не хватает функции профиля, говорит об этом вместо молчания.** — `projects/agent-kit/assets/hooks/profile-check.sh:rt_needs`
+- **Сообщение о нехватке не превращает хук в отказ.** — `projects/agent-kit/assets/hooks/profile-check.sh:rt_needs`
+- **Разбор состояния перечисляет функции профиля, которых ждут разложенные хуки, и те из них, что не определены.** — `projects/agent-kit/src/lib/commands.ts:profileLines`
+- **Признак кода приложения судится относительно корня дерева.** — `projects/agent-kit/assets/defaults/project.sh:rt_is_app_code_default`
+- **Гард замысла судит объявленный переход, а не наличие файлов.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:state`
+- **Отказ по состоянию называет обязательное действие того состояния, которое объявлено.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:state_action`
+- **Именем состояния считается только слово из перечня.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:state_action`
+- **Папка задачи спрашивается и у истории ветки, а не только у диска.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:in_tree`
+- **Состояние судится раньше договорённости и её обхода.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:progress`
+- **Заход, начатый с передачи, не правит файлов, пока не загружено правило ведения работы.** — `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:verdict`
+- **Передача узнаётся и по пути к ней, и по слову о ней.** — `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:from_handoff`
+- **Отказ гарда называет два законных хода.** — `projects/agent-kit/assets/hooks/deny-tail.sh:rt_deny_tail`
+- **Законная форма обхода называется тем же хвостом, а её отсутствие — тоже.** — `projects/agent-kit/assets/hooks/deny-tail.sh:rt_deny_tail`
+- **Хвост отказа собирает общая функция, а не каждый текст сам.** — `projects/agent-kit/assets/hooks/git-guard-main.sh:deny_tail_text`
+- **Начало вызова считает присваивания переменных частью команды, и объявлено оно одним местом.** — `projects/agent-kit/assets/hooks/hook-input.sh:RT_CMD_BOUND` — образец приставки вызова; носители берут его оттуда, своих копий у них нет; сценарий `SC-AK-559`
