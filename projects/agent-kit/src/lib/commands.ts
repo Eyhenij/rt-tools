@@ -276,6 +276,28 @@ function strangeTraits(config: IConfig, assetsDir: string): readonly string[] {
 }
 
 /**
+ * Что запись объявления сделала с настройкой агента.
+ *
+ * Дописанное называется поимённо: правка легла в файл дерева, и увидеть её оно должно тем же
+ * выводом, каким видит положенные файлы, — а не следующим просмотром истории.
+ */
+const boundLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] => {
+    if (result.bound === null || (!result.bound.added.length && !result.bound.unreadable)) {
+        return [];
+    }
+
+    return result.bound.unreadable
+        ? [
+              `\`${SETTINGS_PATH}\` не разбирается как JSON — записи в неё не делалось`,
+              '  дерево вправе держать её по-своему, вплоть до комментариев; тогда запись идёт рукой',
+          ]
+        : [
+              `в \`${SETTINGS_PATH}\` дописано событий: ${result.bound.added.length}`,
+              ...result.bound.added.map((event: string): string => `  ${event} — зовёт диспетчер`),
+          ];
+};
+
+/**
  * Гарды, которых нет в настройке агента, и готовый кусок для неё.
  *
  * Кусок печатается целиком, а не одними именами: правку в свою настройку делает проект, и
@@ -626,16 +648,18 @@ export function sync(env: IEnvironment, check: boolean): IOutcomeOfCommand {
         };
     }
 
-    // Раскладка удалась, а гарды могут остаться неподключёнными: настройка агента принадлежит
-    // дереву, и пакет в неё не пишет. Код возврата остаётся нулевым — файлы легли, — но молчать
-    // об этом нельзя: узнают иначе, когда что-нибудь пройдёт мимо гарда.
+    // Раскладка удалась, и объявление легло вместе с файлами. Остаётся оно неположенным ровно
+    // там, где настройку не разобрать: комментарии дерева пакет не сносит своим разбором, и
+    // тогда печатается прежний готовый кусок. Код возврата в обоих случаях нулевой — файлы
+    // легли, — но молчать нельзя: узнают иначе, когда что-нибудь пройдёт мимо гарда.
     return {
         code: 0,
         lines: [
             ...(result.written.length
                 ? [`разложено файлов: ${result.written.length}`, ...result.written.map((path: string): string => `  ${path}`)]
                 : ['всё уже разложено']),
-            ...unboundLines(result),
+            ...boundLines(result),
+            ...(result.bound?.unreadable === false ? [] : unboundLines(result)),
             ...driftedLines(result),
             ...debtLines(config, root, assetsDir),
             ...warnings(result),

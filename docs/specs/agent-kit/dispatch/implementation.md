@@ -12,3 +12,5 @@
 - **Гард, позванный напрямую, работает как прежде.** — `projects/agent-kit/assets/hooks/hook-input.sh:rt_hook_field` — поле спрашивается у окружения, разбор идёт только без него.
 - **Поток ввода читается командой, а не подстановкой.** — `projects/agent-kit/assets/hooks/hook-input.sh:rt_hook_read`
 - **Сломанный диспетчер работу не заклинивает.** — Не проверяется машиной: это ранние выходы в `projects/agent-kit/assets/hooks/dispatch.sh`. Держит это сценарий SC-AK-525.
+- **Разложенное, которому нужна запись в настройке агента, доезжает до неё.** — `projects/agent-kit/src/lib/hooks-map.ts:bindDispatch` — зовётся из `projects/agent-kit/src/lib/sync.ts:runSync`; сценарии SC-AK-05, SC-AK-682
+- **Запись в настройку агента только прибавляет.** — `projects/agent-kit/src/lib/hooks-map.ts:bindDispatch` — сценарии SC-AK-683, SC-AK-684
