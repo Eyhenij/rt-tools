@@ -36,8 +36,11 @@
 - **Расхождение опознаётся по имени класса, а не по перечню файлов при нём.** — `projects/agent-kit/assets/checks/check-styles.mjs:knownByName`
 - **Изменившийся перечень файлов называется своим родом.** — `projects/agent-kit/assets/checks/check-styles.mjs:changedFiles`
 - **Имя элемента собирается из вложенности, а не читается одной строкой.** — `projects/agent-kit/assets/checks/check-styles.mjs:elementNames`
-- **Привязка записывается двумя формами, и читаются обе.** — `projects/agent-kit/assets/checks/spec-anchors.mjs:checkRuleImplementation` — строка таблицы и строка списка разбираются одним образцом, связь идёт по тексту утверждения.
 - **Пределов длины два: код и текст слоя правил.** — `projects/agent-kit/assets/checks/check-file-size.mjs:limitOf` — предел выбирается по корню файла; корни и второе число объявлены в `projects/agent-kit/assets/checks/rt-kit-checks.config.mjs:DEFAULTS`.
+- **Привязка записывается двумя формами, и читаются обе.** — `projects/agent-kit/assets/checks/spec-anchors.mjs:cells` — строка списка разбирается тем же местом, что и строка таблицы; сценарии SC-AK-662…664
+- **У текста слоя правил есть третий предел — вес в знаках.** — `projects/agent-kit/assets/checks/check-file-size.mjs:charCount` — знаки, а не байты: кириллица весит по два байта, и байтовый счёт судил бы язык, а не текст.
+- **Спутники из счёта веса выведены.** — `projects/agent-kit/assets/checks/check-file-size.mjs:companion` — компаньон правила и перечень сценариев спека.
+- **Дерево, не назвавшее числа веса или корней текста, судится одними строками.** — `projects/agent-kit/assets/checks/check-file-size.mjs:PROSE_CHARS` — ноль выключает счёт веса вовсе, и вторая цифра в сводке не печатается.
 - **Проверка, не сумевшая отработать, отказывает, а не пропускает.** — `projects/agent-kit/assets/checks/check-schema-drift.mjs:main` — непредвиденный сбой и не отработавшее сравнение отдают ненулевой код; сценарий `SC-AK-549`
 - **Пустое имя в настройке спрашивается отдельно от несуществующего файла.** — `projects/agent-kit/assets/checks/check-schema-drift.mjs:main` — незаданное имя схемы отвечает своей строкой и нулём; сценарий `SC-AK-549`
 - **Тяжёлый шаг набора зовётся по своему предмету, а не по признаку «ветка тронула код».** — `.claude/rt-kit/project.sh:rt_push_touched` — предметы объявлены путями, незнакомое и общее поднимают весь набор; сценарий `SC-AK-569`
