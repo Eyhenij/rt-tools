@@ -25,6 +25,7 @@
     "check:all": "pnpm exec nx run-many -t lint typecheck test build verify --all --parallel && pnpm run lint:styles",
     "check:affected": "pnpm exec nx affected -t lint typecheck test build verify --parallel && pnpm run lint:styles",
     "check:specs": "node tools/check-specs.mjs",
+    "spec:next-id": "node tools/spec-next-id.mjs",
     "check:docs": "node tools/check-doc-paths.mjs",
     "check:dupes": "node tools/check-dupes.mjs",
     "check:cycles": "node tools/check-cycles.mjs",
