@@ -252,6 +252,10 @@ export class RtButtonDirective {
         svg.setAttribute('viewBox', '0 0 24 24');
         svg.classList.add(`${BEM_BLOCK}__icon`);
 
+        // Тот же путь, что и у компонента значка: имя просится у реестра, а он ходит за файлом
+        // один раз на страницу — значок, спрошенный обеими разметками сразу, едет одним запросом.
+        this.#iconRegistry.request(iconName as IRtIcon.Name);
+
         const use: SVGUseElement = this.#doc.createElementNS('http://www.w3.org/2000/svg', 'use');
         // Регистр типизирован через IRtIcon.Name; директива принимает arbitrary
         // string для совместимости со старыми потребителями. Если name неизвестен,
