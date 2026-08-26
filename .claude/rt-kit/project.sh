@@ -120,7 +120,6 @@ node tools/check-tokens-graph.mjs
 node tools/check-tokens-theme.mjs
 node tools/check-tokens-styles.mjs
 node tools/check-cascade-layer.mjs
-node tools/check-archive-age.mjs
 EOF
 
     rt_push_checks_default "$1" \

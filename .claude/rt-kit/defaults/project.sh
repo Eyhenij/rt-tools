@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.15.0 · defaults/project.sh · 53e00a170f65 · правится надстройкой, не здесь
+# rt-kit v0.15.0 · defaults/project.sh · ea64a1fda5b2 · правится надстройкой, не здесь
 # Профиль дерева: чем здесь проверяется правка и что считается переизобретением.
 #
 # Умолчание пакета. Всё, что общего у деревьев этой мастерской, живёт здесь: запускатель Nx,
@@ -89,7 +89,7 @@ rt_push_checks_default() {
 
     for check in check-doc-paths check-specs check-file-size check-dupes check-styles \
         check-lib-layers check-reuse check-schema-drift check-states check-state-next \
-        check-turn-map check-push-gate; do
+        check-turn-map check-archive-age check-push-gate; do
         [ -f "$root/$RT_CHECKS_DIR/$check.mjs" ] && printf '%s\n' "node $RT_CHECKS_DIR/$check.mjs"
     done
 
