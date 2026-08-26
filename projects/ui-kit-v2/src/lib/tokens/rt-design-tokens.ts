@@ -1,4 +1,3 @@
-/* eslint-disable max-lines -- файл делится задачей RT-849: набор токенов собирается сборщиком, а таблица и переписка режутся по смыслу */
 /* Собрано генератором `tools/build-tokens-v2.mjs` из `tokens.source.mjs` — правится там, не здесь. */
 
 /** Имя свойства оформления, которое кит объявляет сам. */
@@ -256,6 +255,7 @@ export type TRtDesignTokenName =
     | '--rt-overlay-amber-16'
     | '--rt-overlay-black-4'
     | '--rt-overlay-black-50'
+    | '--rt-overlay-black-8'
     | '--rt-overlay-brand-24'
     | '--rt-overlay-brand-8'
     | '--rt-overlay-danger-16'
@@ -263,6 +263,8 @@ export type TRtDesignTokenName =
     | '--rt-overlay-white-25'
     | '--rt-overlay-white-4'
     | '--rt-overlay-white-40'
+    | '--rt-overlay-white-50'
+    | '--rt-overlay-white-8'
     | '--rt-profile-avatar-font-size'
     | '--rt-profile-avatar-size'
     | '--rt-profile-item-content-gap'
@@ -649,6 +651,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-overlay-amber-16',
     '--rt-overlay-black-4',
     '--rt-overlay-black-50',
+    '--rt-overlay-black-8',
     '--rt-overlay-brand-24',
     '--rt-overlay-brand-8',
     '--rt-overlay-danger-16',
@@ -656,6 +659,8 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-overlay-white-25',
     '--rt-overlay-white-4',
     '--rt-overlay-white-40',
+    '--rt-overlay-white-50',
+    '--rt-overlay-white-8',
     '--rt-profile-avatar-font-size',
     '--rt-profile-avatar-size',
     '--rt-profile-item-content-gap',

@@ -70,8 +70,8 @@ export const lightForms = [
     },
     {
         name: `--rt-input-color-bg-hover`,
-        value: `var(--rt-overlay-black-4)`,
-        dark: `var(--rt-overlay-white-4)`,
+        value: `var(--rt-overlay-black-8)`,
+        dark: `var(--rt-overlay-white-8)`,
     },
     {
         name: `--rt-input-color-border`,
