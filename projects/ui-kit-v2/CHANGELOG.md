@@ -1,4 +1,35 @@
-## [Unreleased]
+# [0.7.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.6.0...rt-ui-kit-v2@0.7.0) (2026-08-26)
+
+### Bug Fixes
+
+- **rt:agent-kit:** правило приставки типа говорит про T, а узловые глобали доходят до серверных проектов ([a0bd361](https://github.com/Eyhenij/rt-tools/commit/a0bd361c1c6df5e8aeb3c5efc032b3dfc75fb1ce))
+- **rt:agent-kit:** проверка классов вёрстки собирает имя из вложенности, а долг разобран до нуля ([95f28c8](https://github.com/Eyhenij/rt-tools/commit/95f28c83e4736061acfde8cc3a361a652513fff1))
+- **rt:ui-kit-v2:** витрина второго кита снова собирается, а два эталона названы новыми именами ([5a83166](https://github.com/Eyhenij/rt-tools/commit/5a83166e00d115f75af290cbc213989e4b2e5e43))
+- **rt:ui-kit-v2:** длинное значение обрезается многоточием и показывается подсказкой ([8e660f5](https://github.com/Eyhenij/rt-tools/commit/8e660f583051e954b0935497c6fab04bcca70a32))
+- **rt:ui-kit-v2:** закрытая панель возвращает экран с его параметрами адреса ([d9b77f7](https://github.com/Eyhenij/rt-tools/commit/d9b77f7dd66e9b5706f375d9c2131aa7a8205adb))
+- **rt:ui-kit-v2:** закрытая шторка каркаса не перехватывает нажатий по странице ([d30cd6a](https://github.com/Eyhenij/rt-tools/commit/d30cd6a2e4d35d9dd7409c11676ada90ebeb9511))
+- **rt:ui-kit-v2:** имя в шапке показа выдумано, а не взято у машины ([c5955e2](https://github.com/Eyhenij/rt-tools/commit/c5955e27a76e6d5298969f33e77fcb4b46167b9f))
+- **rt:ui-kit-v2:** кадр целой страницы снимается раздвинутым окном ([bf0d39c](https://github.com/Eyhenij/rt-tools/commit/bf0d39c8bc059d597e8e9a51a56e07d7a3be3514))
+- **rt:ui-kit-v2:** нейтральный ряд перестал красить синевой три роли сразу ([561277e](https://github.com/Eyhenij/rt-tools/commit/561277e9bf135c524b2a4bb5c933c2b379d3ee92))
+- **rt:ui-kit-v2:** подпись пункта витрины вернулась во множественное число ([a31d0b7](https://github.com/Eyhenij/rt-tools/commit/a31d0b7eec425037725ad7a5221b18e7b4dded89)), closes [#687](https://github.com/Eyhenij/rt-tools/issues/687)
+- **rt:ui-kit-v2:** приглушённый текст тёмной темы взял порог контраста ([636eaf4](https://github.com/Eyhenij/rt-tools/commit/636eaf4b172f884c776bca3555a29d000e8f9923))
+- **rt:ui-kit-v2:** раскладка экрана входа доезжает до потребителя ([3c249c9](https://github.com/Eyhenij/rt-tools/commit/3c249c943d5a35799ec56f4d9bb5f1ebaa7e6edf))
+- **rt:ui-kit-v2:** съёмка витрины ждёт значок любой из двух разметок ([69e063d](https://github.com/Eyhenij/rt-tools/commit/69e063d32ab6a4ea3ab8839fdfcc0e83c5a4d02c))
+- **rt:ui-kit-v2:** съёмка витрины ждёт компонент, чья начинка приезжает позже ([c268837](https://github.com/Eyhenij/rt-tools/commit/c2688370058fbb28c713c3449d87ed1d9041a2ec))
+- **rt:ui-kit-v2:** тёмная тема отвечает на светло-серый фон поверхности ([6862bf9](https://github.com/Eyhenij/rt-tools/commit/6862bf998b0a6e3dc5bd6966f2ee557a79b490d9)), closes [#bfc7d6](https://github.com/Eyhenij/rt-tools/issues/bfc7d6) [#17181c](https://github.com/Eyhenij/rt-tools/issues/17181c)
+- **rt:ui-kit-v2:** шаблон витрины перестал звать ступень отступа, которой нет ([8bcc4d1](https://github.com/Eyhenij/rt-tools/commit/8bcc4d16b11e266264b98c9fcf6e9cc6ccd076a5))
+- **rt:ui-kit-v2:** экран витрины сходится с образцом раскладкой и показывает все три своих вида ([7c55ac9](https://github.com/Eyhenij/rt-tools/commit/7c55ac940e1e3d39ef596074dea0b98bc4f7ca17))
+
+### Features
+
+- **rt:message-bus:** админка заводится каркасом, входом и оболочкой с меню ([7736c6c](https://github.com/Eyhenij/rt-tools/commit/7736c6cf9f79e335c550ca5e41764ba265c23c75))
+- **rt:ui-kit-v2:** витрина показывает целый экран раздела с панелями заведения и правки ([a25f6e9](https://github.com/Eyhenij/rt-tools/commit/a25f6e9ea76c8fb1677c7c4842013bcf68ac2170)), closes [#877](https://github.com/Eyhenij/rt-tools/issues/877)
+- **rt:ui-kit-v2:** значок едет по запросу имени, а не всем набором вперёд ([a47087b](https://github.com/Eyhenij/rt-tools/commit/a47087b326361baa014f8974f17905f5cdea5f60))
+- **rt:ui-kit-v2:** показ разметки виден на витрине шестью историями ([55e79bf](https://github.com/Eyhenij/rt-tools/commit/55e79bfef5f7a06ee71021ce1ea34ad229955da9)), closes [#912](https://github.com/Eyhenij/rt-tools/issues/912)
+- **rt:ui-kit-v2:** слой оформления собирается из источника ([0b1769b](https://github.com/Eyhenij/rt-tools/commit/0b1769b718048696d2ac9144530d95815e083b09))
+- **rt:ui-kit-v2:** текст разметкой показывается узлами, а не строкой ([d13a1ec](https://github.com/Eyhenij/rt-tools/commit/d13a1ecf5c3ad6fb6c231c0b0311a328a0b5be08)), closes [#912](https://github.com/Eyhenij/rt-tools/issues/912)
+- **rt:ui-kit-v2:** у поля ввода есть тип адреса ([b7e42e2](https://github.com/Eyhenij/rt-tools/commit/b7e42e269ea2dcdc8a7e4da6706bb2eb7c4f1317))
+- **rt:ui-kit-v2:** шапка показа целая — меню второго уровня и попап профиля ([1ce47bb](https://github.com/Eyhenij/rt-tools/commit/1ce47bb6fcb95a0a3a9915b46de248ce2d392df5))
 
 ### BREAKING CHANGES
 
