@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.16.1 · hooks/task-flow-guard.sh · 0ae4914cb9ce · правится надстройкой, не здесь
+# rt-kit v0.16.1 · hooks/task-flow-guard.sh · 8dff9fd87404 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # PreToolUse guard for Edit|Write|MultiEdit: код не пишется раньше замысла.
@@ -91,11 +91,30 @@ esac
 # заведения ветки.
 rt_needs rt_is_app_code task-flow-guard || exit 0
 
+# Удаление отличается от записи одним: снимаемого может не быть в истории вовсе. Свой временный
+# каталог под корнем приложений правкой продукта не бывает — снимать его, восстанавливая ради
+# этого замысел на диске, значит исполнять требование, написанное про другое действие.
+# Отслеживаемый путь судится по-прежнему: снятый файл кода меняет поведение так же, как
+# переписанный.
+removes=0
+case "$cmd" in
+    *"rm "*) removes=1 ;;
+esac
+# Каталог правки: ветка и история смотрятся ниже, а спросить историю нужно уже здесь.
+askdir="$(rt_hook_cwd)"
+[ -z "$askdir" ] && askdir="${CLAUDE_PROJECT_DIR:-.}"
+
 # Судится каждый названный путь: команда пишет столько файлов, сколько в ней стоит, и одного
 # под требованием довольно, чтобы отбить её целиком.
 path=""
 while IFS= read -r candidate; do
     [ -z "$candidate" ] && continue
+    # Снятие того, чего в истории нет, — не правка продукта, а уборка за собой. Спрашивается
+    # путь, как он назван в команде: приклеенный корень уводит вопрос в чужое дерево.
+    if [ "$removes" = 1 ] && git -C "$askdir" rev-parse --is-inside-work-tree >/dev/null 2>&1 &&
+        ! git -C "$askdir" ls-files --error-unmatch -- "$candidate" >/dev/null 2>&1; then
+        continue
+    fi
     case "$candidate" in
         /*) ;;
         *) candidate="${CLAUDE_PROJECT_DIR:-.}/$candidate" ;;
