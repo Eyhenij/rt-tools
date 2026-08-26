@@ -452,6 +452,23 @@ describe('doctor', () => {
         expect(said(outcome)).not.toContain('положен:');
     });
 
+    it('SC-AK-739 — замещённый надстройкой раздел назван поимённо', () => {
+        start();
+        put(join(OVERRIDES_DIR, 'laws/delivery.md'), '## Статьи\n\nЗдесь своё.\n');
+        const said_: string = said(doctor(env));
+
+        expect(said_).toContain('надстройки замещают разделов: 1');
+        expect(said_).toContain('замещён: laws/delivery.md — ## Статьи');
+    });
+
+    it('SC-AK-739 — раздел, дописанный надстройкой, замещённым не считается', () => {
+        start();
+        put(join(OVERRIDES_DIR, 'laws/delivery.md'), '## Своё дерево\n\nЗдесь своё.\n');
+        const said_: string = said(doctor(env));
+
+        expect(said_).not.toContain('надстройки замещают разделов');
+    });
+
     it('SC-AK-125 — разбор состояния называет снятое вместе с родителем', () => {
         startSkipping([VERIFIABILITY]);
         const said_: string = said(doctor(env));

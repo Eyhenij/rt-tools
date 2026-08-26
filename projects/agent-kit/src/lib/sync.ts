@@ -24,7 +24,7 @@ import {
 } from './hooks-map.js';
 import { IPlanned, isPending, isRefusal, planFile } from './plan.js';
 import { RETIRED } from './retired.js';
-import { mergeDocuments, parseDocument, renderDocument } from './sections.js';
+import { ISection, mergeDocuments, parseDocument, renderDocument } from './sections.js';
 import { readStamped } from './stamp.js';
 import { IRenderResult, renderVars } from './vars.js';
 import { matchesVariant } from './variants.js';
@@ -125,6 +125,42 @@ function renderAsset(asset: IAsset, config: IConfig, root: string): IRenderResul
     const merged: string = override ? renderDocument(mergeDocuments(parseDocument(asset.text), parseDocument(override))) : asset.text;
 
     return renderVars(merged, config.vars);
+}
+
+/** Раздел ресурса, который надстройка дерева замещает своей редакцией. */
+export interface IShadowedSection {
+    /** Идентификатор ресурса, чей раздел замещён. */
+    readonly id: string;
+    /** Строка заголовка целиком, вместе с решётками. */
+    readonly heading: string;
+}
+
+/**
+ * Разделы, которые надстройки замещают у пакета.
+ *
+ * Слияние идёт по заголовку, и совпавший заголовок замещает раздел целиком: всё, что пакет
+ * дописал в такой раздел новой редакцией, до дерева не доезжает, а раскладка при этом сходится —
+ * она сравнивает разложенное с тем, что собрала сама. Читаются эти строки после подъёма версии:
+ * они называют места, где пакетного текста дерево не увидит.
+ */
+export function shadowedSections(config: IConfig, root: string, assetsDir: string): readonly IShadowedSection[] {
+    const found: IShadowedSection[] = [];
+
+    for (const asset of collectAssets(config, assetsDir)) {
+        const override: string | null = read(join(root, OVERRIDES_DIR, asset.id));
+        if (!override) {
+            continue;
+        }
+
+        const theirs: ReadonlySet<string> = new Set(parseDocument(asset.text).sections.map((section: ISection): string => section.heading));
+        for (const section of parseDocument(override).sections) {
+            if (theirs.has(section.heading)) {
+                found.push({ id: asset.id, heading: section.heading });
+            }
+        }
+    }
+
+    return found;
 }
 
 /** Разложенный раньше файл ресурса, снятого теперь каскадом, и причина, по которой он снят. */

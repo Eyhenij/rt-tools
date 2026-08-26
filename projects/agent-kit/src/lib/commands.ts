@@ -27,7 +27,7 @@ import {
 } from './observations.js';
 import { IPlanned, isRefusal, TOutcome } from './plan.js';
 import { laidOutSkills } from './snapshot.js';
-import { ICutFound, IRetiredFound, ISyncResult, pendingOf, planSync, runSync } from './sync.js';
+import { ICutFound, IRetiredFound, IShadowedSection, ISyncResult, pendingOf, planSync, runSync, shadowedSections } from './sync.js';
 import { thresholdLines } from './thresholds.js';
 import { answersRequirement, ITrait, readTraits, unknownTraits } from './traits.js';
 import { placeholdersOf } from './vars.js';
@@ -972,6 +972,11 @@ export function doctor(env: IEnvironment): IOutcomeOfCommand {
             needing.every((one: IEntryOfCatalog): boolean => one.id !== entry.id)
     );
 
+    // Замещённые разделы называются поимённо: пакетный текст такого раздела до дерева не
+    // доезжает вовсе, а раскладка при этом сходится — она сверяет разложенное с тем, что собрала
+    // сама. После подъёма версии это единственное место, где видно, что перечитать.
+    const shadowed: readonly IShadowedSection[] = shadowedSections(config, root, assetsDir);
+
     const lines: string[] = [
         `пакет v${version}, везёт ресурсов ${catalog.length}, взято ${taken}`,
         `не выбрано: ${catalog.length - taken - skipped - other - cut.size - needsTrait}, пропущено: ${skipped}, другой вид: ${other}, снято каскадом: ${cut.size}, нужно свойство: ${needsTrait}`,
@@ -992,6 +997,12 @@ export function doctor(env: IEnvironment): IOutcomeOfCommand {
         // Про устаревшую сборку `doctor` говорит, но отказом её не считает: он ничего не пишет,
         // и прочитать состояние дерева можно и из вчерашней сборки — знать бы, что она вчерашняя.
         ...(env.stale ? ['собранное отстало от исходников — раскладка откажет:', `  правлено: ${env.stale.newest}`] : []),
+        ...(shadowed.length
+            ? [
+                  `надстройки замещают разделов: ${shadowed.length} — пакетного текста в них дерево не видит`,
+                  ...shadowed.map((one: IShadowedSection): string => `  замещён: ${one.id} — ${one.heading}`),
+              ]
+            : []),
     ];
 
     return { code: 0, lines };
