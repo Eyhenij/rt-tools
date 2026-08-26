@@ -56,6 +56,28 @@ expect_stop "SC-AK-200 — команда позвана тем же ходом"
 expect_stop "SC-AK-200 — сухой прогон отправкой не считается" \
     "$(input_stop "$(transcript "$(say 'отправь пропозал')" "$(ran 'npx agent-kit propose --dry-run')")")" BLOCK
 
+# --- SC-AK-674 — отказ называет команду, исполнимую в этом дереве -----------------------------
+# Названная наугад команда стоит исполнителю хода: отказ читается как указание, и вызов бинаря,
+# которого в дереве нет, отвечает отказом установки. Проверяется текст отказа, а не вердикт.
+expect_command() {
+    local label="$1" tree="$2" want="$3" out got
+    out="$(printf '%s' "$(input_stop "$(transcript "$(say 'отправь пропозал')" "$(reply 'Написал файл.')")")" \
+        | CLAUDE_PROJECT_DIR="$tree" "$HOOKS/proposal-guard.sh" 2>/dev/null)"
+    got="$(printf '%s' "$out" | jq -r '.reason // ""' 2>/dev/null | grep -c -- "$want")"
+    report "$label" "$([ "$got" -gt 0 ] && echo FOUND || echo MISSING)" FOUND
+}
+
+with_bin="$(mktemp -d)"
+mkdir -p "$with_bin/node_modules/.bin"
+printf '#!/bin/sh\n' >"$with_bin/node_modules/.bin/agent-kit"
+chmod +x "$with_bin/node_modules/.bin/agent-kit"
+expect_command "SC-AK-674 — пакет зависимостью: зовётся бинарь" "$with_bin" "npx agent-kit propose"
+
+with_built="$(mktemp -d)"
+mkdir -p "$with_built/dist/agent-kit/bin"
+printf '' >"$with_built/dist/agent-kit/bin/agent-kit.js"
+expect_command "SC-AK-674 — пакет исходниками: зовётся собранный вход" "$with_built" "node dist/agent-kit/bin/agent-kit.js propose"
+
 # --- SC-AK-201 — работа над уже приехавшими предложениями требования не получает ---------------
 # Слово о предложении без глагола отправки — это разбор, а не просьба отправить.
 expect_stop "SC-AK-201 — «разбирай пропозалы» отправкой не кончается" \
