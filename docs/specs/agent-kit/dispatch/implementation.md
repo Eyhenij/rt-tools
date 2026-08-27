@@ -14,3 +14,4 @@
 - **Сломанный диспетчер работу не заклинивает.** — Не проверяется машиной: это ранние выходы в `projects/agent-kit/assets/hooks/dispatch.sh`. Держит это сценарий SC-AK-525.
 - **Разложенное, которому нужна запись в настройке агента, доезжает до неё.** — `projects/agent-kit/src/lib/hooks-map.ts:bindDispatch` — зовётся из `projects/agent-kit/src/lib/sync.ts:runSync`; сценарии SC-AK-05, SC-AK-682
 - **Запись в настройку агента только прибавляет.** — `projects/agent-kit/src/lib/hooks-map.ts:bindDispatch` — сценарии SC-AK-683, SC-AK-684
+- **Отказ гарда завершения проверяется на связке с диспетчером, а не только на самом гарде.** — `projects/agent-kit/tests/dispatch.test.sh:real_input` — настоящий страж выходов кладётся в фикстуру диспетчера и зовётся через него; сценарии SC-AK-700, SC-AK-701
