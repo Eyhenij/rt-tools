@@ -30,6 +30,7 @@ import {
     said,
     sent,
     shipping,
+    shippingWithout,
     start,
     TODAY,
     TOKEN_REFUSED,
@@ -313,6 +314,58 @@ describe('propose', () => {
         await shipping();
 
         expect(sent.map((shipment: IShipment): string => shipment.operation)).toEqual(['summary']);
+    });
+
+    it('SC-AK-715 — несколько удалённых репозиториев без `origin` названы в отказе поимённо', async () => {
+        start();
+        proposals([forPackage]);
+
+        const outcome: IOutcomeOfCommand = await shippingWithout(['github', 'gitlab']);
+
+        expect(outcome.code).toBe(1);
+        expect(said(outcome)).toContain('github, gitlab');
+        expect(said(outcome)).toContain('удалённых репозиториев несколько');
+    });
+
+    it('SC-AK-715 — дерево без удалённого репозитория отказывает прежними словами', async () => {
+        start();
+        proposals([forPackage]);
+
+        const outcome: IOutcomeOfCommand = await shippingWithout([]);
+
+        expect(outcome.code).toBe(1);
+        expect(said(outcome)).toContain('удалённого репозитория нет');
+    });
+
+    it('SC-AK-713 — нуль принятых отметку об отправке не отменяет', async () => {
+        start();
+        proposals([forPackage]);
+
+        // Приём различает принятое и уже лежавшее, потому что отправка повторяется. Отправителю
+        // эта разница ничего не меняет: оба исхода значат одно — груз доехал. Отметка, зависящая
+        // от числа принятых, объявила бы неотправленным то, что дошло раньше, и файл остался бы
+        // без неё навсегда: принятым он больше не станет никогда.
+        const known: TShip = async (intake: string, token: string, shipment: IShipment): Promise<IShipped> => {
+            sent.push(shipment);
+
+            return {
+                ok: Boolean(intake && token),
+                status: 200,
+                said: '',
+                accepted: {
+                    tree: 'дерево',
+                    month: '2026-08',
+                    created: false,
+                    ...(shipment.operation === 'proposals' ? { added: 0, known: 3 } : {}),
+                },
+            };
+        };
+
+        const outcome: IOutcomeOfCommand = await shipping(known);
+
+        expect(outcome.code).toBe(0);
+        expect(said(outcome)).toContain('принято 0, уже лежало 3');
+        expect(get(PROPOSALS_FILE)).toContain('**отправлено:** приём:2026-08');
     });
 
     it('разборы происшествий уезжают своей операцией и текстом целиком', async () => {
