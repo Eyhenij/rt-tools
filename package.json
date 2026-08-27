@@ -27,6 +27,7 @@
     "check:specs": "node tools/check-specs.mjs",
     "spec:next-id": "node tools/spec-next-id.mjs",
     "check:docs": "node tools/check-doc-paths.mjs",
+    "check:glossary": "node tools/check-glossary.mjs",
     "check:dupes": "node tools/check-dupes.mjs",
     "check:cycles": "node tools/check-cycles.mjs",
     "check:styles": "node tools/check-styles.mjs",

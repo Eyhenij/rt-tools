@@ -58,3 +58,6 @@
 - **Граф заводится каждому правилу, а не только ветвящемуся.** — `projects/agent-kit/tests/rules-review.test.sh:sections_for`
 - **Граф правится тем же изменением, что и проза, которую он изображает.** — `projects/agent-kit/assets/agents/rules-reviewer.md:mermaid`
 - **Таблица кодов отказа процедурой не считается.** — `projects/agent-kit/assets/checks/spec-contract.mjs:contractRows` — строка с числом во второй ячейке пропускается; сценарий SC-AK-688
+
+- **Слово, объявленное словарём запретным, краснеет проверкой, а не вычиткой.** — `projects/agent-kit/assets/checks/check-glossary.mjs:forbiddenWords` — левая колонка читается из раздела словаря, а не перечисляется пакетом; сценарий SC-AK-690
+- **Слово, у которого запрещено одно значение из двух, поиском не судится и называется вслух.** — `projects/agent-kit/assets/checks/check-glossary.mjs:HINT` — слово со скобочным уточнением уходит в перечень оставшегося читателю; сценарий SC-AK-691
