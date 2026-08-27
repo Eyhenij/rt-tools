@@ -52,7 +52,7 @@
 
 ### 2.2. По одной истории на компонент
 
-У каждого из 80 — единственный `Default`. Скилл `rt-tools-storybook` ждёт набора вариантов
+У каждого из 80 — единственный `Default`. Скил `rt-tools-storybook` ждёт набора вариантов
 (`Sizes`, `States`, `Themes`, `Accessibility`); их нет. Исключение — `Autocomplete`, у него
 два.
 
