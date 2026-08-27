@@ -57,3 +57,4 @@
 - **Граф изображает ход правила и лежит в тексте самого правила.** — `projects/agent-kit/assets/templates/rule.md:mermaid`
 - **Граф заводится каждому правилу, а не только ветвящемуся.** — `projects/agent-kit/tests/rules-review.test.sh:sections_for`
 - **Граф правится тем же изменением, что и проза, которую он изображает.** — `projects/agent-kit/assets/agents/rules-reviewer.md:mermaid`
+- **Таблица кодов отказа процедурой не считается.** — `projects/agent-kit/assets/checks/spec-contract.mjs:contractRows` — строка с числом во второй ячейке пропускается; сценарий SC-AK-688
