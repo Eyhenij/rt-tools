@@ -39,6 +39,7 @@
     "check:reuse": "node tools/check-reuse.mjs",
     "check:layers": "node tools/check-lib-layers.mjs",
     "check:schema": "node tools/check-schema-drift.mjs",
+    "cargo:fixed": "node tools/cargo-fixed.mjs",
     "cargo:mark": "node tools/cargo-mark.mjs",
     "cargo:pull": "node tools/cargo-pull.mjs",
     "check:boundary": "node tools/check-boundary.mjs",
