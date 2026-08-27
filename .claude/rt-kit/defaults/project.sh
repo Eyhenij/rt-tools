@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.16.1 · defaults/project.sh · 8a4c71fc132d · правится надстройкой, не здесь
+# rt-kit v0.16.1 · defaults/project.sh · df041eedc6fe · правится надстройкой, не здесь
 # Профиль дерева: чем здесь проверяется правка и что считается переизобретением.
 #
 # Умолчание пакета. Всё, что общего у деревьев этой мастерской, живёт здесь: запускатель Nx,
@@ -88,7 +88,7 @@ rt_push_checks_default() {
     [ -x "$root/$RT_HOOKS_TESTS" ] && printf '%s\n' "bash $RT_HOOKS_TESTS"
 
     for check in check-doc-paths check-specs check-file-size check-dupes check-styles \
-        check-lib-layers check-reuse check-schema-drift check-states check-state-next \
+        check-glossary check-lib-layers check-reuse check-schema-drift check-states check-state-next \
         check-turn-map check-archive-age check-push-gate; do
         [ -f "$root/$RT_CHECKS_DIR/$check.mjs" ] && printf '%s\n' "node $RT_CHECKS_DIR/$check.mjs"
     done
@@ -183,6 +183,13 @@ rt_handoff_allowed_cmd_default() {
 RT_LAWS_DIR="${RT_LAWS_DIR:-docs/constitution}"
 RT_RULES_DIR="${RT_RULES_DIR:-.claude/skills}"
 RT_SPECS_DIR="${RT_SPECS_DIR:-docs/specs}"
+
+# Каталог замыслов, переживающих одну задачу. Читается наравне с законами: решение, связывающее
+# задачи эпика, лежит именно там, а не в правилах, и прочитавший его получал отказ гарда
+# разговора наравне с не читавшим ничего. Описание прошлого читается по той же причине и берётся
+# из своей переменной выше. Пусто — у дерева таких замыслов нет, и в образец чтения оно не
+# входит.
+RT_PLANS_DIR="${RT_PLANS_DIR:-docs/plans}"
 
 # Главная ветка. Гарду она нужна, чтобы найти общего предка и понять, что ветка сделала с
 # папкой задачи и с архивом. Если общего предка нет, сравнивать не с чем — проверка молчит.
@@ -382,6 +389,12 @@ RT_TASK_BOT="${RT_TASK_BOT:-}"
 # машинной записи автора заявки не судит вовсе.
 RT_PULL_TOKEN_VAR="${RT_PULL_TOKEN_VAR:-}"
 RT_PULL_TOKEN_HINT="${RT_PULL_TOKEN_HINT:-}"
+
+# Раздел, который тело заявки обязано нести с минуты открытия: решение о слиянии принимается на
+# её странице, где переписки нет вовсе, и сказанного вслух там не остаётся. Умолчание молчит —
+# заголовок пишется языком заявки, а чужих слов пакет не знает: не названный деревом, раздел не
+# судится вовсе.
+RT_PULL_BODY_SECTION="${RT_PULL_BODY_SECTION:-}"
 
 # Команда перевода задачи между колонками очереди работ и имя первой колонки — той, из которой
 # задача уходит, когда её берут в работу. Имя без умолчания: колонки дерево называет своими
