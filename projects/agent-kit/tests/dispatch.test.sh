@@ -115,6 +115,52 @@ report "SC-AK-578 — ветки за отбоем не зовутся" "$(print
 rm -f "$DISPATCH_DIR/aaa_blocks.sh" "$DISPATCH_DIR/zzz_blocks.sh"
 
 
+# --- SC-AK-700, SC-AK-701 — отбой настоящего стража доходит до вывода --------------------------
+#
+# Сценарий выше судит плотницкую работу: рукописная ветка печатает решение, диспетчер его не
+# склеивает. Чего он не судит — что настоящий страж объявлен тем событием, что диспетчер его
+# находит и что его отказ доходит как есть. Гард, чей отказ теряется по дороге, защитой не
+# считается, а молчание его читается как согласие.
+cp "$ASSETS/hooks/turn-exit-guard.sh" "$DISPATCH_DIR/" 2>/dev/null
+
+REAL_REPO="$(fixture_repo RT-9-real)"
+mkdir -p "$REAL_REPO/docs/tasks/RT-9-real"
+printf '# Ход работы\n\n## Где стоим\n\n- **Состояние:** `этап-идёт`\n- **Следующий шаг:** делать первый\n' \
+    > "$REAL_REPO/docs/tasks/RT-9-real/progress.md"
+
+REAL_TURN="$(mktemp)"
+{
+    jq -c -n '{type:"user",message:{content:[{type:"text",text:"продолжай"}]}}'
+    jq -c -n '{type:"assistant",message:{content:[{type:"tool_use",name:"Read",input:{file_path:"a.md"}}]}}'
+} > "$REAL_TURN"
+
+WORK_TURN="$(mktemp)"
+{
+    jq -c -n '{type:"user",message:{content:[{type:"text",text:"продолжай"}]}}'
+    jq -c -n '{type:"assistant",message:{content:[{type:"tool_use",name:"Edit",input:{file_path:"a.md"}}]}}'
+} > "$WORK_TURN"
+
+# Ввод собирается тем же приёмом, что у самого стража: путь записи хода и корень дерева.
+real_input() {
+    jq -n --arg p "$1" --arg d "$REAL_REPO" \
+        '{session_id:"tests",transcript_path:$p,cwd:$d,stop_hook_active:false}'
+}
+
+REAL_OUT="$(printf '%s' "$(real_input "$REAL_TURN")" | bash "$DISPATCH_DIR/dispatch.sh" Stop 2>/dev/null)"
+report "SC-AK-700 — решение стража дошло до вывода" \
+    "$(printf '%s' "$REAL_OUT" | jq -r '.decision' 2>/dev/null)" 'block'
+report "SC-AK-700 — довод в выводе от стража, а не общий" \
+    "$(printf '%s' "$REAL_OUT" | jq -r '.reason' 2>/dev/null | grep -c 'делать первый')" 1
+report "SC-AK-700 — код возврата диспетчера нулевой" \
+    "$(printf '%s' "$(real_input "$REAL_TURN")" | bash "$DISPATCH_DIR/dispatch.sh" Stop >/dev/null 2>&1; printf '%s' "$?")" 0
+
+WORK_OUT="$(printf '%s' "$(real_input "$WORK_TURN")" | bash "$DISPATCH_DIR/dispatch.sh" Stop 2>/dev/null)"
+report "SC-AK-701 — ход с работой отбоя не получает" \
+    "$(printf '%s' "$WORK_OUT" | grep -c '"decision":"block"')" 0
+
+rm -f "$DISPATCH_DIR/turn-exit-guard.sh" "$REAL_TURN" "$WORK_TURN"
+rm -rf "$REAL_REPO"
+
 rm -rf "$DISPATCH_DIR"
 
 suite_result "диспетчер событий"
