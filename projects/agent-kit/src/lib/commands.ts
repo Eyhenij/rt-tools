@@ -194,6 +194,45 @@ function profileLines(root: string, assetsDir: string, config: IConfig): string[
     ];
 }
 
+/**
+ * Местное значение, которым живёт хук: путь от корня дерева и то, что перестаёт проверяться без
+ * него. Стоит строкой шапки, тем же приёмом, каким хук называет требуемые ресурсы.
+ */
+const LOCAL_VALUE: RegExp = /^# Местное значение: (\S+) — ([^\n]+)$/gm;
+
+/**
+ * Местные значения, которых ждут взятые хуки, и те из них, которых в дереве нет.
+ *
+ * Считать их приходится отдельно от файлов и функций: разложенный хук с пустым значением лежит
+ * на месте, зовётся и выходит нулём — сводка называет такое дерево настроенным, а проверять оно
+ * перестало. Хук, отказывающий в пользу работы, тем и опасен: снаружи это выглядит исправной
+ * работой.
+ */
+function localValueLines(root: string, assetsDir: string, config: IConfig): string[] {
+    const absent: string[] = [];
+    let wanted: number = 0;
+
+    for (const asset of collectAssets(config, assetsDir).filter((one: IAsset): boolean => one.kind === 'hooks')) {
+        for (const [, path, loss] of asset.text.matchAll(LOCAL_VALUE)) {
+            wanted += 1;
+            if (!existsSync(join(root, path))) {
+                absent.push(`  нет значения ${path} — его ждёт ${asset.id}: ${loss.trim()}`);
+            }
+        }
+    }
+
+    if (!wanted) {
+        return [];
+    }
+
+    return [
+        `местные значения, которых ждут взятые хуки: ${wanted}`,
+        ...(absent.length
+            ? [...absent.sort(byText), '  хук без своего значения проверку не делает и действие пропускает']
+            : ['  все на месте']),
+    ];
+}
+
 /** Дырка в тексте пакета, как она написана в самом тексте. */
 function holeOf(name: string): string {
     return `{{${name}}}`;
@@ -1008,6 +1047,7 @@ export function doctor(env: IEnvironment): IOutcomeOfCommand {
             return `  снят каскадом: ${one.id} — вслед за ${one.parent}${root}`;
         }),
         ...profileLines(root, assetsDir, config),
+        ...localValueLines(root, assetsDir, config),
         ...replacedLines(config, assetsDir, root),
         ...thresholdLines(root),
         `значений в конфиге: ${Object.keys(config.vars).length}`,

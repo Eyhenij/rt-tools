@@ -486,6 +486,27 @@ describe('doctor', () => {
         expect(said(doctor(env))).toContain(`не выбрано: ${laws - 1}`);
     });
 
+    // Разложенный хук с пустым местным значением лежит на месте, зовётся и выходит нулём:
+    // сводка называла такое дерево настроенным, а проверять оно перестало.
+    it('SC-AK-729 — сводка называет местное значение, которого в дереве нет', () => {
+        start(['hooks/browser-device-id.sh']);
+        const said_: string = said(doctor(env));
+
+        expect(said_).toContain('местные значения, которых ждут взятые хуки: 1');
+        expect(said_).toContain('нет значения .claude/rt-kit/browser-device-id');
+        expect(said_).toContain('hooks/browser-device-id.sh');
+    });
+
+    it('SC-AK-729 — о лежащем значении сводка молчит', () => {
+        start(['hooks/browser-device-id.sh']);
+        put('.claude/rt-kit/browser-device-id', 'профиль\n');
+        const said_: string = said(doctor(env));
+
+        expect(said_).toContain('местные значения, которых ждут взятые хуки: 1');
+        expect(said_).toContain('все на месте');
+        expect(said_).not.toContain('нет значения');
+    });
+
     // Ресурс чужого вида — не «не выбран»: проект от него не отказывался, его в этом дереве
     // не существует вовсе. Сосчитанный как невыбранный, он читался бы как забытый.
     it('ресурсы чужого вида считает отдельно', () => {
