@@ -42,6 +42,9 @@ describe('brokenLinks', () => {
                 name: 'x',
                 title: 'x',
                 variant: null,
+                needs: null,
+                executable: false,
+                requires: [],
                 text: '---\nname: x\nkind: rule\nlaw: нетакого\n---\n',
             },
         ];
@@ -57,6 +60,9 @@ describe('brokenLinks', () => {
                 name: 'application/money',
                 title: 'Деньги',
                 variant: null,
+                needs: null,
+                executable: false,
+                requires: [],
                 text: '# Деньги\n',
             },
             {
@@ -65,6 +71,9 @@ describe('brokenLinks', () => {
                 name: 'pricing',
                 title: 'Цены',
                 variant: null,
+                needs: null,
+                executable: false,
+                requires: [],
                 text: '---\nname: pricing\nkind: rule\nlaw: money\n---\n',
             },
         ];
@@ -82,13 +91,26 @@ describe('ambiguousNames', () => {
 
     it('SC-AK-141 — два закона с одинаковым последним звеном имени названы оба', () => {
         const catalog: readonly IEntryOfCatalog[] = [
-            { id: 'laws/access.md', kind: 'laws', name: 'access', title: 'Доступ', variant: null, text: '# Доступ\n' },
+            {
+                id: 'laws/access.md',
+                kind: 'laws',
+                name: 'access',
+                title: 'Доступ',
+                variant: null,
+                needs: null,
+                executable: false,
+                requires: [],
+                text: '# Доступ\n',
+            },
             {
                 id: 'laws/application/access.md',
                 kind: 'laws',
                 name: 'application/access',
                 title: 'Доступ приложения',
                 variant: null,
+                needs: null,
+                executable: false,
+                requires: [],
                 text: '# Доступ приложения\n',
             },
         ];
@@ -104,6 +126,9 @@ describe('ambiguousNames', () => {
                 name: 'git-workflow',
                 title: 'Поставка',
                 variant: { axis: 'forge', value: 'github' },
+                needs: null,
+                executable: false,
+                requires: [],
                 text: '# Поставка\n',
             },
             {
@@ -112,6 +137,9 @@ describe('ambiguousNames', () => {
                 name: 'git-workflow',
                 title: 'Поставка',
                 variant: { axis: 'forge', value: 'gitlab' },
+                needs: null,
+                executable: false,
+                requires: [],
                 text: '# Поставка\n',
             },
         ];
