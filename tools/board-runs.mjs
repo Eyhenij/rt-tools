@@ -1,4 +1,4 @@
-// rt-kit v0.16.1 · checks/board-runs.github.mjs · 5199e54dabd8 · правится надстройкой, не здесь
+// rt-kit v0.16.1 · checks/board-runs.github.mjs · 235873e6003a · правится надстройкой, не здесь
 /**
  * Состояние прогонов и выкатки у хостинга: что встало на вершине, чем кончилось и на сколько
  * прод отстал от главной ветки.
@@ -11,7 +11,15 @@
  * Нет сети или нет токена — вызовы бросают `OfflineError`, как и остальная работа с хостингом:
  * невозможность спросить расхождением не считается.
  */
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { OWNER, REPO, gh } from './board.mjs';
+import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
+
+/** Файл конвейера этого дерева; его нет — путей он не слушает вовсе. */
+const PIPELINE = CONFIG.pushGate?.pipelineFile ?? '';
+export const HAS_PIPELINE = PIPELINE !== '' && existsSync(join(ROOT, PIPELINE));
 
 /**
  * Сколько прогонов завелось на этой вершине.
@@ -130,4 +138,55 @@ export function evictedOnHead(sha, options) {
 function jobCount(id, options) {
     const answer = gh(['api', `repos/${OWNER}/${REPO}/actions/runs/${id}/jobs?per_page=1`, '--jq', '.total_count'], options);
     return Number(String(answer).trim());
+}
+
+/**
+ * Пути, которых конвейер не слушает: `paths-ignore` у его событий.
+ *
+ * Разбирается построчно, а не разборщиком разметки: у проверки его нет, а список — плоский
+ * перечень строк под одним ключом. Ключей в файле бывает несколько — по событию, — и все они
+ * складываются в один набор: ветка, чей вклад целиком лежит под ними, прогона не создаёт ни на
+ * одном событии.
+ */
+function ignoredPaths() {
+    if (!HAS_PIPELINE) {
+        return [];
+    }
+
+    const lines = readFileSync(join(ROOT, PIPELINE), 'utf8').split('\n');
+    const found = [];
+    let inside = false;
+
+    for (const line of lines) {
+        if (/^\s*paths-ignore:\s*$/.test(line)) {
+            inside = true;
+            continue;
+        }
+        if (!inside) {
+            continue;
+        }
+        const item = /^\s*-\s+['"]?([^'"\s]+)['"]?\s*$/.exec(line);
+        if (item) {
+            found.push(item[1]);
+            continue;
+        }
+        inside = false;
+    }
+
+    return found;
+}
+
+export const IGNORED_PATHS = ignoredPaths();
+
+/** Знаки образца, у которых в выражении своё значение: кроме звёздочек, они значат себя. */
+const escapeForRegExp = (value) => value.replace(/[.+?^${}()|[\]\\-]/g, '\\$&');
+
+/** Подпадает ли путь под образец конвейера: `**` — любой хвост, `*` — кусок имени. */
+export function underPattern(path, pattern) {
+    const body = pattern
+        .split('**')
+        .map((piece) => piece.split('*').map(escapeForRegExp).join('[^/]*'))
+        .join('.*');
+
+    return new RegExp(`^${body}$`).test(path);
 }
