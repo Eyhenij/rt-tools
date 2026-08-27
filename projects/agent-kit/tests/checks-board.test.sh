@@ -97,6 +97,28 @@ board_config "${BOARD_CONFIG/.github\/workflows\/ci.yml/.github\/workflows\/nope
 report "SC-AK-280 — конвейера нет: расхождений нет" "$(board_code)" 0
 report "SC-AK-280 — сказано, почему пропущено" "$(board_says 'файла конвейера в дереве нет')" 1
 
+# SC-AK-733 — открытые задачи с совпадающими заголовками перечисляются сводкой
+# Дубль по отдельности исправен: номер, исполнитель и колонка у обеих задач на месте, и сверка
+# принимает каждую. Отказом это не считается — серия однотипных задач эпика законна.
+board_config "$BOARD_CONFIG"
+export STUB_RUNS=1
+export STUB_VERDICT=success
+export STUB_HEAD_DATE="$(minutes_ago 60)"
+saved_issues="$STUB_ISSUES"
+saved_board="$STUB_BOARD"
+export STUB_BOARD='{"data":{"node":{"items":{"pageInfo":{"hasNextPage":false,"endCursor":null},"nodes":[{"id":"item-1","status":{"name":"In review","optionId":"r"},"content":{"__typename":"Issue","number":700}},{"id":"item-2","status":{"name":"In review","optionId":"r"},"content":{"__typename":"Issue","number":702}}]}}}}'
+export STUB_ISSUES='[{"number":700,"title":"[RT-700] Письма владельцу уходят молча","state":"OPEN","assignees":[{"login":"probe"}],"labels":[]},{"number":702,"title":"[RT-702] Письма владельцу уходят молча мимо очереди","state":"OPEN","assignees":[{"login":"probe"}],"labels":[]}]'
+report "SC-AK-733 — совпавшие заголовки названы" "$(board_says '#700, #702 — заголовки сильно совпадают')" 1
+# Отказом это не считается: строка стоит в сводке, а не среди расхождений.
+report "SC-AK-733 — расхождением это не считается" "$(board_run | sed -n '/расхождений/,$p' | grep -c 'сильно совпадают')" 0
+
+# Разные работы в сводку не идут: совпадения слов у них нет.
+export STUB_ISSUES='[{"number":700,"title":"[RT-700] Письма владельцу уходят молча","state":"OPEN","assignees":[{"login":"probe"}],"labels":[]},{"number":702,"title":"[RT-702] Кнопка сохранения теряет фокус","state":"OPEN","assignees":[{"login":"probe"}],"labels":[]}]'
+report "SC-AK-733 — разные заголовки молчат" "$(board_says 'заголовки сильно совпадают')" 0
+
+export STUB_ISSUES="$saved_issues"
+export STUB_BOARD="$saved_board"
+
 # SC-AK-732 — ветка, чей вклад конвейер не слушает, прогона не требует
 # Такой ветке события не будет никогда, и совет вернуть его не исполним: красная строка означает
 # «сверка не знает», а не «конвейер отказал», и стоит она рядом с настоящими расхождениями.
