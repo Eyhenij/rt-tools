@@ -125,6 +125,15 @@ mg "SC-AK-194 — упоминание обхода посреди строки 
     'gh pr merge 42 --merge # поставь строку Task-folder-skip: причина в тело PR' deny
 mg "SC-AK-195 — подстановка вместо причины обходом не считается" "$LYING" \
     'gh pr merge 42 --merge # Task-folder-skip: <причина>' deny
+# SC-AK-711 — снятие черновика той же папкой отбивается: рубеж между открытием и слиянием.
+# Снятый черновик читается владельцем как приглашение влить, и кнопку он нажимает, не дожидаясь
+# коммита уборки.
+mg "SC-AK-711 — снятие черновика с лежащей папкой" "$LYING" 'gh pr ready 42' deny
+expect_reason "SC-AK-711 — отказ называет саму папку" git-guard-delivery.sh \
+    "$(input_cmd 'gh pr ready 42' Bash "$LYING")" 'docs/tasks/RT-42-probe'
+mg "SC-AK-712 — обход с причиной действует и на снятии черновика" "$LYING" \
+    'gh pr ready 42 # Task-folder-skip: работа вливается частями' PASS
+
 # Рабочее дерево гарду не указ: судится то, что уедет.
 rm -rf "$LYING/docs/tasks/RT-42-probe"
 mg "SC-AK-14 — удаление без коммита требование не проходит" "$LYING" 'gh pr merge 42 --merge' deny
