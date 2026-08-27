@@ -90,6 +90,14 @@ export function shipping(ship: TShip = accepting(), dryRun: boolean = false): Pr
     return propose(env, { dryRun, ship, remote: REMOTE, today: TODAY, days: 3 });
 }
 
+/**
+ * Отправка дерева, у которого адреса нет. Имена удалённых репозиториев называются отдельно:
+ * между «репозитория нет вовсе» и «их несколько, а выбрать некому» отказ говорит разное.
+ */
+export function shippingWithout(remotes: readonly string[] = []): Promise<IOutcomeOfCommand> {
+    return propose(env, { remotes, dryRun: false, ship: accepting(), remote: '', today: TODAY, days: 3 });
+}
+
 /** Блоки предложений ложатся одним файлом дня: их порядок и есть порядок в файле. */
 export function proposals(blocks: readonly string[]): void {
     put(PROPOSALS_FILE, `# Предложения\n\n${blocks.join('\n\n')}\n`);
