@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/profile-check.sh, hooks/deny-tail.sh
+# Требует: hooks/task-flow-context.sh, hooks/profile-check.sh, hooks/deny-tail.sh
 # PreToolUse guard for Edit|Write|MultiEdit: код не пишется раньше замысла.
 #
 # Работа идёт много заходов, и между ними исполнитель не помнит ничего. Замысел, лежащий на
@@ -8,184 +8,47 @@
 # закоммичены, PR не открыт, а очередь работ показывает задачу начатой и молчит о том, что
 # внутри неё сделано.
 #
-# Гард требует четыре вещи и ровно их: папку задачи по имени ветки, замысел в ней, объявленное
-# в ходе работы состояние — из тех, в которых код правится, — и названную в замысле
-# договорённость о продукте. Полноту написанного он не судит — это за владельцем (решения в
-# законе `docs/constitution/work-conduct.md`).
+# Гард требует три вещи и ровно их: папку задачи по имени ветки, замысел в ней и объявленное в
+# ходе работы состояние — из тех, в которых код правится. Полноту написанного он не судит — это
+# за владельцем (решения в законе `docs/constitution/work-conduct.md`).
 #
-# Состояние судится раньше договорённости и её обхода: обход снимает требование договорённости,
-# а не требование дойти до правки кода. Судится объявленный переход, а не наличие файлов —
-# артефакт, положенный ради снятия отказа, лежит так же, как написанный.
+# Договорённость о продукте требует свой гард — `task-flow-draft-guard`, объявленный на те же
+# события. Разведены они затем, чтобы дерево могло отказаться от одного требования, сохранив
+# второе: пока оба ехали одним файлом, отказ от требования договорённости снимал заодно и
+# требование папки задачи, а держать их вместе дерево не просило никогда.
 #
 # Правило целиком — скил `task-flow`.
-#
-# Осознанный выход есть: строка `**Поведение:** не меняется — <причина>` в замысле снимает
-# требование договорённости. Пустая причина не принимается, как и у `Docs-skip:`.
 #
 # FAIL-OPEN: нет jq, не git-репозиторий, битый ввод, чужой инструмент → пропуск. Сломанный
 # гард не должен мешать работать.
 
-. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
-. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
-
-rt_hook_read
-input="$RT_HOOK_INPUT"
-[ -z "$input" ] && exit 0
-command -v jq >/dev/null 2>&1 || exit 0
-
-# Профиль дерева: сперва умолчание пакета, поверх него — надстройка проекта, если она есть.
-# Читается до разбора пути: пути из команды оболочки вынимает как раз профиль.
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"; do
-    # shellcheck disable=SC1090
-    [ -f "$profile" ] && . "$profile" 2>/dev/null
-done
 
-# Слово о нехватке функции профиля: хук, вышедший молча, неотличим от работающего. Файл может
-# быть не разложен — тогда остаётся прежнее поведение, молчаливое.
+# Разбор вызова — общий у обоих гардов хода работы. Файл может быть не разложен: тогда судить
+# нечем, и гард молчит.
 # shellcheck disable=SC1090
-[ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
-command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
-
-tool="$(rt_hook_tool)"
-candidates=""
-case "$tool" in
-    # Инструмент редактора заводит файл теми же двумя данными, только называет их иначе —
-    # без этой ветки правка шла бы мимо гарда сменой инструмента.
-    Edit | Write | MultiEdit | mcp__webstorm__create_new_file)
-        candidates="$(printf '%s' "$input" | jq -r '.tool_input.file_path // .tool_input.pathInProject // empty' 2>/dev/null)"
-        ;;
-    # Второй ярус: та же правка, положенная командой оболочки. Без него отказ гарда обходится
-    # сменой не инструмента, а способа записи — перенаправлением, `sed -i`, интерпретатором с
-    # heredoc. Разбор — `2026-08-15-guard-denied-shell-wrote-anyway.md`.
-    #
-    # Терминал среды исполняет ту же командную строку и кладёт её в то же поле: без этих двух
-    # имён гард стоял бы объявленным на них и молча пропускал — состояние хуже необъявленного,
-    # потому что снаружи выглядит закрытым.
-    Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool)
-        cmd="$(rt_hook_cmd)"
-        [ -z "$cmd" ] && exit 0
-        # Универсальный исполнитель прячет настоящую команду во вложенной строке: без её разбора
-        # путь стоит за кавычкой, и до него не дотягивается ни один образец.
-        if [ "$tool" = "mcp__webstorm__execute_tool" ] && command -v perl >/dev/null 2>&1; then
-            inner="$(printf '%s' "$cmd" | perl -0ne '
-                if (/--command(?:=|\s+)(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(.+))/s) {
-                    print defined $1 ? $1 : (defined $2 ? $2 : $3);
-                }
-            ' 2>/dev/null)"
-            [ -n "$inner" ] && cmd="$inner"
-        fi
-        # Команда заведения задачи не судится вовсе. Правкой кода она не является — пишет папку
-        # задачи и карточку в очереди, — а текст её несёт тело задачи целиком: цитата со знаком
-        # «больше» подходит под признак записи, путь к коду в прозе тела — под признак пути.
-        # Отбитая, она отбивается тем самым гардом, который сам же печатает её в тексте своего
-        # отказа, и заведение задачи становится невозможным ни с одной ветки.
-        task_new="${RT_TASK_NEW_CMD:-}"
-        if [ -n "$task_new" ]; then
-            case "$cmd" in
-                *"$task_new"*) exit 0 ;;
-            esac
-        fi
-        rt_needs rt_shell_writes task-flow-guard || exit 0
-        rt_needs rt_shell_paths task-flow-guard || exit 0
-        rt_shell_writes "$cmd" || exit 0
-        candidates="$(rt_shell_paths "$cmd")"
-        ;;
-    *) exit 0 ;;
-esac
-[ -z "$candidates" ] && exit 0
-
-# Признак «правка меняет поведение» — путь, а не оценка на глаз: оценку назначает тот, кому
-# она мешает, и порог плывёт. Где живёт код приложения, знает профиль: правила, тексты, обвязка
-# и зависимости под требование не попадают — иначе разбор задачи нельзя было бы вести до
-# заведения ветки.
-rt_needs rt_is_app_code task-flow-guard || exit 0
-
-# Удаление отличается от записи одним: снимаемого может не быть в истории вовсе. Свой временный
-# каталог под корнем приложений правкой продукта не бывает — снимать его, восстанавливая ради
-# этого замысел на диске, значит исполнять требование, написанное про другое действие.
-# Отслеживаемый путь судится по-прежнему: снятый файл кода меняет поведение так же, как
-# переписанный.
-removes=0
-case "$cmd" in
-    *"rm "*) removes=1 ;;
-esac
-# Каталог правки: ветка и история смотрятся ниже, а спросить историю нужно уже здесь.
-askdir="$(rt_hook_cwd)"
-[ -z "$askdir" ] && askdir="${CLAUDE_PROJECT_DIR:-.}"
-
-# Разложенный слой правил судится наравне с кодом приложения. Путями кода он не покрыт нигде —
-# лежит в каталоге законов, в каталоге агента и среди проверок, — и полторы сотни его файлов
-# легли без единого отклика гарда; отбил он двумя ходами позже, на записи в папку задачи. Признак
-# тот же, по которому слой находит гейт правил: шапка раскладки в начале файла. Ресурс пакета,
-# из которого раскладка идёт, шапки не несёт и судится по-прежнему своим путём.
-laid_out() {
-    [ -f "$1" ] || return 1
-    head -n 3 "$1" 2>/dev/null | grep -q 'rt-kit v[^[:space:]]* ·'
-}
-
-# Судится каждый названный путь: команда пишет столько файлов, сколько в ней стоит, и одного
-# под требованием довольно, чтобы отбить её целиком.
-path=""
-while IFS= read -r candidate; do
-    [ -z "$candidate" ] && continue
-    # Снятие того, чего в истории нет, — не правка продукта, а уборка за собой. Спрашивается
-    # путь, как он назван в команде: приклеенный корень уводит вопрос в чужое дерево.
-    if [ "$removes" = 1 ] && git -C "$askdir" rev-parse --is-inside-work-tree >/dev/null 2>&1 &&
-        ! git -C "$askdir" ls-files --error-unmatch -- "$candidate" >/dev/null 2>&1; then
-        continue
-    fi
-    case "$candidate" in
-        /*) ;;
-        *) candidate="${CLAUDE_PROJECT_DIR:-.}/$candidate" ;;
-    esac
-    if rt_is_app_code "$candidate" || laid_out "$candidate"; then
-        path="$candidate"
-        break
-    fi
-done <<EOF
-$candidates
-EOF
-[ -z "$path" ] && exit 0
-
-# Каталог папок задач: у дерева он свой, но имя обычно общее.
-tasks_dir="${RT_TASKS_DIR:-docs/tasks}"
-main_branch="${RT_MAIN_BRANCH:-main}"
+[ -f "$rt_hooks_dir/task-flow-context.sh" ] && . "$rt_hooks_dir/task-flow-context.sh"
+command -v rt_task_flow_context >/dev/null 2>&1 || exit 0
 
 # Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть. Файл
 # может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh"
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
 
-# Отказ: причина первым параметром, законная форма обхода — вторым. Хвост дописывается здесь, а
-# не в каждом тексте: пропущенный в одном месте, он читается как «у этого отказа ходов нет».
-deny() {
-    reason="$1"
-    tail_text="$(rt_deny_tail "$2")"
-    [ -n "$tail_text" ] && reason="$1 ${tail_text}"
-    jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}\n' "$reason"
-    exit 0
-}
+rt_task_flow_context || exit 0
 
-# Ветку смотрим там же, где пойдёт правка: у worktree она своя.
-workdir="$(rt_hook_cwd)"
-[ -z "$workdir" ] && workdir="${CLAUDE_PROJECT_DIR:-.}"
-cd "$workdir" 2>/dev/null || exit 0
-git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
+branch="$RT_TF_BRANCH"
+root="$RT_TF_ROOT"
+tasks_dir="$RT_TF_TASKS_DIR"
+main_branch="$RT_TF_MAIN_BRANCH"
+dir="$RT_TF_DIR"
+plan="$RT_TF_PLAN"
 
-branch="$(git branch --show-current 2>/dev/null)"
-[ -z "$branch" ] && exit 0   # detached HEAD — не про наш случай
+deny() { rt_task_flow_deny "$@"; }
 
 if rt_needs rt_task_branch_ok task-flow-guard && ! rt_task_branch_ok "$branch"; then
     deny "BLOCKED by task-flow: правка кода идёт в ветке под задачу, а текущая ветка — '${branch}'. Заведи задачу (npm run task:new -- --title '…' --slug <slug>) и ветку под её номером, затем повтори. Правило — скил task-flow."
 fi
-
-root="$(git rev-parse --show-toplevel 2>/dev/null)"
-[ -z "$root" ] && exit 0
-dir="$root/$tasks_dir/$branch"
-plan="$dir/plan.md"
 
 # Папка, разобранная коммитом этой ветки, — признак того, что работа отдана. Замысел с диска к
 # этой минуте снят намеренно: уборка стоит до открытия заявки, потому что кнопку слияния
@@ -194,11 +57,11 @@ plan="$dir/plan.md"
 # бы запирать ветку собственным порядком. Признак берётся из истории ветки, а не с диска:
 # снесённая, но не закоммиченная папка отданной работы не означает.
 folder_archived() {
-    [ -n "$(git ls-tree -d --name-only HEAD -- "$tasks_dir/$branch" 2>/dev/null | head -1)" ] && return 1
-    base="$(git merge-base "$main_branch" HEAD 2>/dev/null)"
+    [ -n "$(git -C "$root" ls-tree -d --name-only HEAD -- "$tasks_dir/$branch" 2>/dev/null | head -1)" ] && return 1
+    base="$(git -C "$root" merge-base "$main_branch" HEAD 2>/dev/null)"
     [ -z "$base" ] && return 1
-    had="$(git ls-tree -d --name-only "$base" -- "$tasks_dir/$branch" 2>/dev/null | head -1)"
-    [ -z "$had" ] && had="$(git log "$base..HEAD" --diff-filter=A --name-only --pretty=format: -- "$tasks_dir/$branch" 2>/dev/null | head -1)"
+    had="$(git -C "$root" ls-tree -d --name-only "$base" -- "$tasks_dir/$branch" 2>/dev/null | head -1)"
+    [ -z "$had" ] && had="$(git -C "$root" log "$base..HEAD" --diff-filter=A --name-only --pretty=format: -- "$tasks_dir/$branch" 2>/dev/null | head -1)"
     [ -n "$had" ]
 }
 
@@ -255,7 +118,7 @@ case "$state" in
         ;;
 esac
 
-# Папка задачи едет в ветку коммитом, а не живёт в одном рабочем дереве. Четыре требования выше
+# Папка задачи едет в ветку коммитом, а не живёт в одном рабочем дереве. Три требования выше
 # смотрят диск, и папка, ни разу не закоммиченная, проходит их все без единого отказа — а
 # признак отданной работы гард берёт из истории, и там её нет. Отказ приходит в последней точке,
 # на открытии заявки, когда папка уже разобрана своими руками: чинить нечего, замысел снят, и
@@ -268,52 +131,9 @@ esac
 #
 # Спрашивается та же история, что и у признака отданной работы: папка стоит в `HEAD` либо её
 # добавлял коммит ветки. Нет git — требования нет: спросить историю нечем.
-if [ -n "$(git rev-parse --verify HEAD 2>/dev/null)" ]; then
-    in_tree="$(git ls-tree -d --name-only HEAD -- "$tasks_dir/$branch" 2>/dev/null | head -1)"
+if [ -n "$(git -C "$root" rev-parse --verify HEAD 2>/dev/null)" ]; then
+    in_tree="$(git -C "$root" ls-tree -d --name-only HEAD -- "$tasks_dir/$branch" 2>/dev/null | head -1)"
     if [ -z "$in_tree" ]; then
         deny "BLOCKED by task-flow: папка задачи '${tasks_dir}/${branch}' лежит в рабочем дереве, а в историю ветки не заведена. Заведи её коммитом (git add ${tasks_dir}/${branch} && git commit), затем повтори: признак отданной работы гард берёт из истории, и с некоммиченной папкой отказ придёт на открытии заявки — когда папка уже разобрана и чинить нечего. Правило — скил task-flow."
     fi
 fi
-
-# Строка обхода: поведение не меняется, договорённость о продукте не нужна. Причина обязана
-# стоять — без неё обход становится умолчанием.
-if grep -qE '^\*\*Поведение:\*\*[[:space:]]*не меняется[[:space:]]*—[[:space:]]*\S' "$plan" 2>/dev/null; then
-    exit 0
-fi
-
-# Договорённость называется одним из двух видов. Первый — отдельный документ в каталоге
-# «предложено»: он переезжает в спек домена, когда работа закрывается. Второй — сам спек домена:
-# дерево, у которого отдельного каталога нет, пишет договорённость прямо в него, и переезжать там
-# нечему — черновик совпадает со спеком с первого дня. Требовать один вид значит навязывать
-# способ записи договорённостей вместе с проверкой того, что работа идёт по замыслу: дерево со
-# вторым способом отказывается от гарда целиком и остаётся без единственной машинной проверки под
-# правило.
-draft="$(sed -n 's/^\*\*Драфт:\*\*[[:space:]]*`\([^`]*\)`.*/\1/p' "$plan" 2>/dev/null | head -1)"
-[ -z "$draft" ] && draft="$(sed -n 's/^\*\*Спек:\*\*[[:space:]]*`\([^`]*\)`.*/\1/p' "$plan" 2>/dev/null | head -1)"
-
-if [ -z "$draft" ]; then
-    deny "BLOCKED by task-flow: в '${tasks_dir}/${branch}/plan.md' не названа договорённость о продукте. Назови её одной из двух строк: '**Драфт:** \`путь\`' — отдельный документ в docs/specs/<домен>/proposed/<фича>/, либо '**Спек:** \`путь\`' — спек домена, в который договорённость пишется прямо. Правило — скил task-flow." \
-        "строка '**Поведение:** не меняется — <причина владельца>' в замысле; пустая причина не принимается"
-fi
-
-case "$draft" in
-    /*) draft_path="$draft" ;;
-    *) draft_path="$root/$draft" ;;
-esac
-
-if [ -e "$draft_path" ]; then
-    exit 0
-fi
-
-# Договорённость, влитая в спек домена, с диска уходит — так и задумано: в главной ветке
-# директории «предложено» быть не должно. Но замысел на неё ссылается до конца работы, и без
-# этой развилки последний коммит PR запирал бы ветку: ни правки по замечаниям разбора, ни
-# записи в журнал изменений после вливания уже не сделать.
-#
-# Влитое от незаведённого отличает история ветки: путь, которого в ней никогда не было,
-# договорённостью не был. Спросить об этом нечем, кроме git, поэтому нет git — отказ остаётся.
-if git -C "$root" log --oneline -1 -- "$draft" 2>/dev/null | grep -q .; then
-    exit 0
-fi
-
-deny "BLOCKED by task-flow: замысел называет договорённость '${draft}', а её на диске нет и в истории ветки не было. Заведи её с образца (docs/specs/_template) или поправь путь в '${tasks_dir}/${branch}/plan.md'. Правило — скил task-flow."

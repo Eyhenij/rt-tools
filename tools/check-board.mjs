@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.16.1 · checks/check-board.github.mjs · b0bd2e860443 · правится надстройкой, не здесь
+// rt-kit v0.16.1 · checks/check-board.github.mjs · 20b545495042 · правится надстройкой, не здесь
 /**
  * Сверка очереди работ с тем, что закон о поставке требует от задачи и её PR.
  *
@@ -49,16 +49,8 @@ import {
     numberFromTitle,
     taskDirs,
 } from './board.mjs';
-import {
-    HAS_PIPELINE,
-    IGNORED_PATHS,
-    deployLag,
-    evictedOnHead,
-    headCommittedAt,
-    runsOnHead,
-    underPattern,
-    verdictOnHead,
-} from './board-runs.mjs';
+import { onlyIgnoredPaths } from './board-paths.mjs';
+import { HAS_PIPELINE, deployLag, evictedOnHead, headCommittedAt, runsOnHead, verdictOnHead } from './board-runs.mjs';
 import { similarTitles } from './board-titles.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
@@ -140,31 +132,6 @@ function folderInBranch(branch, options) {
 
         return null;
     }
-}
-
-/**
- * Вклад заявки целиком лежит под путями, которых конвейер не слушает.
- *
- * Такой ветке прогона не будет никогда, и требовать его — то же, что требовать его у ветки без
- * единого коммита: признак верен по букве и лжёт по существу, а действие, которое он советует,
- * не исполнимо. Красная строка при этом стоит рядом с настоящими расхождениями и учит
- * пропускать сверку целиком.
- *
- * Состав не прочитать — отвечаем «нет»: молчать наугад дороже одной лишней строки.
- */
-function onlyIgnoredPaths(pull, options) {
-    if (!IGNORED_PATHS.length) {
-        return false;
-    }
-
-    let files = [];
-    try {
-        files = ghJson(['pr', 'view', String(pull.number), '--json', 'files'], options).files ?? [];
-    } catch {
-        return false;
-    }
-
-    return files.length > 0 && files.every((file) => IGNORED_PATHS.some((pattern) => underPattern(file.path, pattern)));
 }
 
 /**
