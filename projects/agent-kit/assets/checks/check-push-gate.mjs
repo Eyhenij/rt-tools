@@ -18,7 +18,9 @@
  * `rt_push_checks` профиля; она сверяется с его выводом, потому что объявление
  * без исполнения — та же дыра. Исключение — причина, по которой шага в гейте
  * нет; пустая причина исключением не считается: она единственное, чем
- * постоянная дыра отличается от забытой строки.
+ * постоянная дыра отличается от забытой строки. Причина, называющая задачу,
+ * судится ещё и на живость этой задачи: отсрочка со сроком и отсрочка без срока
+ * выглядят одинаково, пока номер никто не спросил.
  *
  * Дерево без файла конвейера сверки не получает: проверка, падающая там, где
  * конвейера нет, отбивала бы работу вместо промаха.
@@ -34,6 +36,8 @@ import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 const GATE = CONFIG.pushGate ?? {};
 const PIPELINE = GATE.pipelineFile ?? '';
 const DECLARED = GATE.steps ?? {};
+/** Ключ задач дерева: по нему номер в причине отличается от версии, порта и года. */
+const TASK_KEY = CONFIG.board?.taskKey ?? '';
 
 /**
  * Профиль дерева ищется той же цепочкой, что и у гарда пуша: умолчание пакета, поверх него
@@ -85,9 +89,39 @@ rt_push_checks ""`;
     }
 }
 
+/**
+ * Номера задач, названные причиной. Ключ дерева обязателен: без него «663» неотличимо от порта,
+ * года и номера редакции, и проверка спрашивала бы очередь работ обо всём подряд.
+ */
+function taskNumbers(reason) {
+    if (!TASK_KEY) {
+        return [];
+    }
+    return [...reason.matchAll(new RegExp(`\\b${TASK_KEY}-(\\d+)\\b`, 'g'))].map((match) => Number(match[1]));
+}
+
+/**
+ * Очередь работ ищется разрешением модуля, а не собирается здесь: у каждого хостинга она своя, и
+ * дерево, у которого её нет, судится как прежде. Ярус тот же, что у гарда поставки: есть чем
+ * спросить — спрашивает, нет — молчит.
+ */
+async function boardModule() {
+    if (!TASK_KEY) {
+        return null;
+    }
+    try {
+        const module = await import('./board.mjs');
+        return typeof module.taskState === 'function' ? module : null;
+    } catch {
+        return null;
+    }
+}
+
 const steps = pipelineSteps();
 const checks = gateChecks();
 const problems = [];
+/** Задачи, названные причинами исключений: спрашиваются пачкой после разбора всех шагов. */
+const deferrals = [];
 
 for (const step of steps) {
     const declaration = DECLARED[step];
@@ -103,6 +137,10 @@ for (const step of steps) {
         const reason = String(declaration.skip ?? '').trim();
         if (!reason) {
             problems.push(`шаг конвейера «${step}» объявлен исключением без причины — пустая причина не считается`);
+            continue;
+        }
+        for (const number of taskNumbers(reason)) {
+            deferrals.push({ step, number });
         }
         continue;
     }
@@ -123,6 +161,26 @@ const known = new Set(steps);
 for (const step of Object.keys(DECLARED)) {
     if (!known.has(step)) {
         problems.push(`объявление «${step}» устарело — такого шага в ${PIPELINE} нет`);
+    }
+}
+
+/**
+ * Мёртвый номер в причине делает исключение бессрочным, не сказав об этом ни строкой. Первый же
+ * отказ сети кончает опрос целиком: спрашивать остальные незачем, а падать проверке, которую
+ * гоняют в самолёте, — тем более.
+ */
+const board = deferrals.length > 0 ? await boardModule() : null;
+if (board) {
+    for (const { step, number } of deferrals) {
+        let state;
+        try {
+            state = board.taskState(number);
+        } catch {
+            break;
+        }
+        if (state && state.exists === false) {
+            problems.push(`шаг конвейера «${step}» отложен до задачи ${TASK_KEY}-${number}, а такой задачи в очереди работ нет — отсрочка бессрочная`);
+        }
     }
 }
 

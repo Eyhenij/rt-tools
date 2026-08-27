@@ -78,6 +78,8 @@ expect_ask() {
 
 READ_RULES='{"pattern":"панель","path":".claude/skills"}'
 READ_ELSE='{"pattern":"панель","path":"projects/ui-kit/src"}'
+READ_PLANS='{"pattern":"панель","path":"docs/plans/эпик.md"}'
+READ_ARCHIVE='{"pattern":"панель","path":"docs/archive"}'
 
 # --- вопрос без чтения правил ----------------------------------------------------------
 # SC-AK-22 — вопрос владельцу без чтения правил ход не заканчивает
@@ -105,6 +107,15 @@ expect_stop "поиск по каталогу правил" \
     "$(input_stop "$(transcript "$(say 'почини панель')" "$(uses Grep "$READ_RULES")" "$(reply 'Панель починить или переписать?')")")" PASS
 expect_stop "поиск мимо правил чтением не считается" \
     "$(input_stop "$(transcript "$(say 'почини панель')" "$(uses Grep "$READ_ELSE")" "$(reply 'Панель починить или переписать?')")")" BLOCK
+
+# SC-AK-703 — замысел эпика читается наравне с законами
+# Решение, связывающее задачи эпика, лежит в замысле, а не в правилах: прочитавший его получал
+# отказ наравне с не читавшим ничего.
+expect_stop "SC-AK-703 — чтение замысла эпика вопрос разрешает" \
+    "$(input_stop "$(transcript "$(say 'почини панель')" "$(uses Read "$READ_PLANS")" "$(reply 'Панель починить или переписать?')")")" PASS
+# SC-AK-704 — описание прошлого читается наравне с законами
+expect_stop "SC-AK-704 — чтение описания прошлого вопрос разрешает" \
+    "$(input_stop "$(transcript "$(say 'почини панель')" "$(uses Grep "$READ_ARCHIVE")" "$(reply 'Панель починить или переписать?')")")" PASS
 
 # --- границы хода -----------------------------------------------------------------------
 expect_stop "чтение прошлого хода этот ход не покрывает" \
@@ -140,5 +151,10 @@ rm -f "$TREE/.claude/rt-kit/project.sh"
 out="$(input_stop "$(transcript "$(say 'почини панель')" "$(reply 'Панель починить или переписать?')")" | "$HOOKS/grill-gate.sh" 2>/dev/null)"
 if printf '%s' "$out" | jq -r '.reason // ""' | grep -q 'docs/constitution'; then got="есть"; else got="нет"; fi
 report "отказ называет, где искать" "$got" "есть"
+# SC-AK-705 — подсказка отказа называет замысел эпика и описание прошлого
+if printf '%s' "$out" | jq -r '.reason // ""' | grep -q 'docs/plans'; then got="есть"; else got="нет"; fi
+report "SC-AK-705 — подсказка называет каталог замыслов" "$got" "есть"
+if printf '%s' "$out" | jq -r '.reason // ""' | grep -q 'docs/archive'; then got="есть"; else got="нет"; fi
+report "SC-AK-705 — подсказка называет описание прошлого" "$got" "есть"
 
 suite_result "гард разговора"
