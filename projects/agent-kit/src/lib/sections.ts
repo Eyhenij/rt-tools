@@ -28,6 +28,28 @@ const SECTION_HEADING: RegExp = /^##\s+\S/;
 /** Ограда блока кода: заголовок внутри неё — часть примера, а не раздел документа. */
 const FENCE: RegExp = /^\s*(```|~~~)/;
 
+/**
+ * Строки текста вне ограды блоков кода. Строка примера — часть образца, а не утверждение
+ * документа о себе: прочитанная наравне с остальными, она заставляет ресурс требовать то, чего
+ * он показывает написание.
+ */
+export function linesOutsideFences(text: string): readonly string[] {
+    const kept: string[] = [];
+    let fenced: boolean = false;
+
+    for (const line of text.split('\n')) {
+        if (FENCE.test(line)) {
+            fenced = !fenced;
+            continue;
+        }
+        if (!fenced) {
+            kept.push(line);
+        }
+    }
+
+    return kept;
+}
+
 const trimEdges: (lines: readonly string[]) => string = (lines: readonly string[]): string =>
     lines.join('\n').replace(/^\n+/, '').trimEnd();
 
