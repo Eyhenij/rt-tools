@@ -14,6 +14,11 @@
  * Судится один заголовок и ничего сверх него. Запись, чьё предложение легло в дерево другими
  * словами, командой не находится и остаётся новой — это её граница, и она названа в выводе.
  *
+ * Вторым отбором идут записи, взятые в работу: отметка «готово» ставится шагом состояния
+ * `влито`, а ход о задаче кончается не всегда, и правка лежит в главной ветке при прежнем
+ * состоянии записи. Признаков там два — тот же заголовок в источниках либо полный ключ,
+ * названный в описании прошлого: второй ловит то, что легло в дерево другими словами.
+ *
  * Наружу команда не пишет ничего: она читает груз и печатает вызов отметки. Ставит отметку
  * `cargo:mark`, и ставит её человек, прочитавший перечень.
  */
@@ -104,15 +109,46 @@ export function sift(rows, text) {
     return { found, waiting, mute };
 }
 
-/** Все свои новые предложения: страницы дочитываются до конца, а не до первой. */
-async function everything(intake, cookie, tree, fetchOne, fetchTexts) {
+/**
+ * Полные ключи записей, названные в описаниях прошлого.
+ *
+ * Второй признак сделанной работы, кроме заголовка в источниках: предложение, легшее в дерево
+ * другими словами, по заголовку не находится, а ключ в описании прошлого говорит о нём прямо —
+ * запись назвала та работа, которая её закрыла. Ключ судится полным: восьми знаков команде
+ * отметки не хватает, и короткий здесь не считается вовсе.
+ */
+export function archiveKeys(dir) {
+    if (!existsSync(dir)) {
+        return new Set();
+    }
+
+    const found = new Set();
+
+    for (const name of readdirSync(dir)) {
+        const path = join(dir, name);
+
+        if (statSync(path).isDirectory()) {
+            archiveKeys(path).forEach((key) => found.add(key));
+            continue;
+        }
+
+        for (const key of readFileSync(path, 'utf8').match(/[0-9a-f]{64}/g) ?? []) {
+            found.add(key);
+        }
+    }
+
+    return found;
+}
+
+/** Все свои предложения названного состояния: страницы дочитываются до конца, а не до первой. */
+async function everything(intake, cookie, tree, fetchOne, fetchTexts, state = 'new') {
     const all = [];
 
     for (let page = 1; page <= PAGES_MAX; page += 1) {
         const got = await fetchOne(
             intake,
             cookie,
-            `proposals?page=${page}&size=${PAGE_SIZE}&sort=arrivedAt&dir=asc&state=new&tree=${encodeURIComponent(tree)}`
+            `proposals?page=${page}&size=${PAGE_SIZE}&sort=arrivedAt&dir=asc&state=${state}&tree=${encodeURIComponent(tree)}`
         );
 
         if (!got.ok || !got.body) {
@@ -140,6 +176,20 @@ const keyOf = (row) => (typeof row.text === 'string' ? createHash('sha256').upda
 /** Ключи отобранных записей доводами команды отметки: она принимает их сколько угодно за вызов. */
 const keys = (rows) => rows.map((one) => `--proposal ${keyOf(one.row)}`).join(' ');
 
+/**
+ * Записи, взятые в работу, у которых работа уже кончилась.
+ *
+ * Отметка «готово» ставится шагом состояния `влито`, а ход о задаче к тому времени кончается
+ * не всегда: сорок шесть записей простояли в «в работе» с правкой, лежащей в главной ветке.
+ * Признаков два и берётся любой — заголовок статьи стоит в источниках либо полный ключ назван
+ * в описании прошлого.
+ */
+export function stalled(rows, text, archived = new Set()) {
+    return rows
+        .map((row) => ({ row, title: titleOf(row.text), key: keyOf(row) }))
+        .filter(({ title, key }) => standsIn(title, text) || archived.has(key));
+}
+
 /** Забрать свои новые записи и разобрать их на готовые и ждущие. */
 export async function fixed(options) {
     if (!options.intake || !options.tree) {
@@ -159,6 +209,8 @@ export async function fixed(options) {
     }
 
     const { found, waiting, mute } = options.sift(got.rows, options.sources);
+    const taken = await everything(options.intake, entered.cookie, options.tree, options.fetchOne, options.fetchTexts, 'in_work');
+    const late = taken.ok ? stalled(taken.rows, options.sources, options.archived) : [];
 
     return {
         code: 0,
@@ -166,6 +218,17 @@ export async function fixed(options) {
             `ОТБОР — ${options.intake}, дерево ${options.tree}, состояние «new»`,
             `  своих записей ${got.rows.length}: статья уже стоит у ${found.length}, ждут задачи ${waiting.length}, без цитаты ${mute.length}`,
             '',
+            ...(late.length
+                ? [
+                      `взятых в работу с готовой правкой ${late.length} — отметка отстала от слияния:`,
+                      ...late.flatMap(({ row, title, key }) => [
+                          `  ${key}`,
+                          `    ${row.resource ?? '?'} · ${title || 'по ключу из описания прошлого'}`,
+                      ]),
+                      `  node tools/cargo-mark.mjs --state fixed --fix '<чем починено>' ${late.map(({ key }) => `--proposal ${key}`).join(' ')}`,
+                      '',
+                  ]
+                : []),
             ...found.flatMap(({ row, title }) => [`  ${keyOf(row)}`, `    ${row.resource ?? '?'} · ${title}`]),
             '',
             ...(found.length
@@ -194,6 +257,7 @@ async function main() {
             password: process.env.RT_ACCOUNT_PASSWORD || named.password,
         },
         sources: sourcesText(SOURCES),
+        archived: archiveKeys(join(ROOT, 'docs/archive')),
         enter: login,
         fetchOne: read,
         fetchTexts: withTexts,
