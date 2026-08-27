@@ -38,3 +38,6 @@
 - **Упавшее задание не перезапускается, пока его журнал не прочитан.** — `projects/agent-kit/assets/hooks/rerun-guard.sh:seen`
 - **Прочитанным считается журнал того самого задания.** — `projects/agent-kit/assets/hooks/rerun-guard.sh:run_id`
 - **Перезапуск без названного номера задания не судится.** — `projects/agent-kit/assets/hooks/rerun-guard.sh:run_id`
+- **Тело заявки несёт раздел об оставшемся шаге с минуты открытия.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:pull_body_section` — сценарий SC-AK-685
+- **Образец обязательного раздела называет дерево, а не пакет.** — `projects/agent-kit/assets/defaults/project.sh:RT_PULL_BODY_SECTION` — умолчание молчит; сценарий SC-AK-686
+- **Тело, переданное файлом, судится наравне с телом в доводе команды.** — Не проверяется машиной: тело вынимается выражением в `projects/agent-kit/assets/hooks/git-guard-delivery.sh`, и якоря на символ у него нет. Держит это сценарий SC-AK-687.

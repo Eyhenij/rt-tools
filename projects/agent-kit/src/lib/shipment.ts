@@ -46,6 +46,8 @@ export interface IShipOptions {
     readonly ship: TShip;
     /** Адрес удалённого репозитория этого дерева: из него считается признак. */
     readonly remote: string;
+    /** Имена удалённых репозиториев. Нужны отказу: выбор между несколькими делает человек. */
+    readonly remotes?: readonly string[];
     /** Сегодняшний день: своих часов у команды нет — иначе сводку за отрезок не проверить спекой. */
     readonly today: string;
     readonly days: number;
@@ -260,6 +262,26 @@ function accepted(shipped: IShipped): string {
 }
 
 /**
+ * Отказ, когда признак дерева считать не из чего. Случая два, и говорят они разное: репозитория
+ * нет вовсе — считать не из чего; репозиториев несколько и `origin` среди них нет — адрес есть, а
+ * выбрать его может только человек. Угаданное неверно сливает в сводке приёма два дерева в одно,
+ * и увидеть это нечем.
+ */
+function noTreeMark(names: readonly string[]): IOutcomeOfCommand {
+    if (names.length > 1) {
+        return refusal(
+            `признак дерева не считается: удалённых репозиториев несколько, а \`origin\` среди них нет — ${names.join(', ')}`,
+            `переименуй тот, что называет это дерево, в \`origin\` — либо назови признак ключом \`tree\` в ${CONFIG_PATH}`
+        );
+    }
+
+    return refusal(
+        'признак дерева не считается: удалённого репозитория нет',
+        `назови его ключом \`tree\` в ${CONFIG_PATH} — иначе деревья без репозитория сольются в одно`
+    );
+}
+
+/**
  * Сами запросы. Отправленное помечается сразу, а не после всех: оборвавшаяся отправка иначе
  * увозит половину и не оставляет следа, по которому видно, какую именно.
  */
@@ -334,10 +356,7 @@ export async function propose(env: IEnvironment, options: IShipOptions): Promise
 
     const tree: string = treeSlugOf(options.remote, config.tree);
     if (!tree) {
-        return refusal(
-            'признак дерева не считается: удалённого репозитория нет',
-            `назови его ключом \`tree\` в ${CONFIG_PATH} — иначе деревья без репозитория сольются в одно`
-        );
+        return noTreeMark(options.remotes ?? []);
     }
 
     const token: string = readToken(root, config.token);
