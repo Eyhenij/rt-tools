@@ -88,7 +88,7 @@ rt_push_checks_default() {
     [ -x "$root/$RT_HOOKS_TESTS" ] && printf '%s\n' "bash $RT_HOOKS_TESTS"
 
     for check in check-doc-paths check-specs check-file-size check-dupes check-styles \
-        check-lib-layers check-reuse check-schema-drift check-states check-state-next \
+        check-glossary check-lib-layers check-reuse check-schema-drift check-states check-state-next \
         check-turn-map check-archive-age check-push-gate; do
         [ -f "$root/$RT_CHECKS_DIR/$check.mjs" ] && printf '%s\n' "node $RT_CHECKS_DIR/$check.mjs"
     done
@@ -389,6 +389,12 @@ RT_TASK_BOT="${RT_TASK_BOT:-}"
 # машинной записи автора заявки не судит вовсе.
 RT_PULL_TOKEN_VAR="${RT_PULL_TOKEN_VAR:-}"
 RT_PULL_TOKEN_HINT="${RT_PULL_TOKEN_HINT:-}"
+
+# Раздел, который тело заявки обязано нести с минуты открытия: решение о слиянии принимается на
+# её странице, где переписки нет вовсе, и сказанного вслух там не остаётся. Умолчание молчит —
+# заголовок пишется языком заявки, а чужих слов пакет не знает: не названный деревом, раздел не
+# судится вовсе.
+RT_PULL_BODY_SECTION="${RT_PULL_BODY_SECTION:-}"
 
 # Команда перевода задачи между колонками очереди работ и имя первой колонки — той, из которой
 # задача уходит, когда её берут в работу. Имя без умолчания: колонки дерево называет своими
