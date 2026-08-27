@@ -236,7 +236,7 @@
   },
   "lint-staged": {
     "**/src/**/*.{js,ts}": "eslint --fix",
-    "**/src/**/*.{js,ts,json,mdx,md,html,scss,css}": "prettier . --write"
+    "**/src/**/*.{js,ts,json,mdx,md,html,scss,css}": "prettier --write"
   },
   "engines": {
     "node": ">=22.22.3",
