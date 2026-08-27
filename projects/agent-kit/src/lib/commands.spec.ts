@@ -452,6 +452,24 @@ describe('doctor', () => {
         expect(said(outcome)).not.toContain('положен:');
     });
 
+    it('SC-AK-716 — разбор состояния называет разделы, замещённые надстройками', () => {
+        start(['laws/delivery.md']);
+        // Совпавший заголовок замещает раздел целиком: всё, что пакет допишет в него новой
+        // версией, пропадёт молча, и других свидетелей у потери не бывает.
+        put(join(OVERRIDES_DIR, 'laws/delivery.md'), '## Статьи\n\nСвои статьи.\n');
+
+        const said_: string = said(doctor(env));
+
+        expect(said_).toContain('замещено надстройками разделов: 1');
+        expect(said_).toContain('laws/delivery.md · ## Статьи');
+    });
+
+    it('SC-AK-716 — дерево без надстроек о замещённом молчит', () => {
+        start(['laws/delivery.md']);
+
+        expect(said(doctor(env))).not.toContain('замещено надстройками разделов');
+    });
+
     it('SC-AK-125 — разбор состояния называет снятое вместе с родителем', () => {
         startSkipping([VERIFIABILITY]);
         const said_: string = said(doctor(env));
