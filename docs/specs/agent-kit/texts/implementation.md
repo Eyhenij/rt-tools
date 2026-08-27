@@ -11,7 +11,7 @@
 - **Текст правила не называет путей, доменов и портов дерева, которому он не принадлежит.** — `projects/agent-kit/tests/texts.test.sh:found_domains`
 - **Поддомен сверяется наравне с доменом.** — `projects/agent-kit/assets/checks/check-specs.mjs:collectSpecDirs`
 - **Предложенный закон правила не требует.** — `projects/agent-kit/assets/checks/check-specs.mjs:isProposedLaw`
-- **Влитая договорённость ветку не запирает.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:draft_path`
+- **Влитая договорённость ветку не запирает.** — `projects/agent-kit/assets/hooks/task-flow-draft-guard.sh:draft_path`
 - **Префикс сценариев занят одним спеком по всему дереву.** — `projects/agent-kit/assets/checks/check-specs.mjs:prefixOwners`
 - **Пакет везёт словарь как ресурс, а не только хук, который его читает.** — `projects/agent-kit/src/lib/config.ts:DEFAULT_LAYOUT`
 - **Пакет везёт общую часть словаря, дерево дописывает предметную.** — `projects/agent-kit/src/lib/sections.ts:mergeDocuments`
