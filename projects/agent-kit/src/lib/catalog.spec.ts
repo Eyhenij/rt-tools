@@ -32,6 +32,7 @@ const entry: (kind: TKind, name: string, variant?: IVariant) => IEntryOfCatalog 
     variant,
     needs: null,
     text: '',
+    executable: false,
     requires: [],
 });
 

@@ -30,6 +30,7 @@ import {
     said,
     sent,
     shipping,
+    shippingWithout,
     start,
     TODAY,
     TOKEN_REFUSED,
@@ -313,6 +314,27 @@ describe('propose', () => {
         await shipping();
 
         expect(sent.map((shipment: IShipment): string => shipment.operation)).toEqual(['summary']);
+    });
+
+    it('SC-AK-715 — несколько удалённых репозиториев без `origin` названы в отказе поимённо', async () => {
+        start();
+        proposals([forPackage]);
+
+        const outcome: IOutcomeOfCommand = await shippingWithout(['github', 'gitlab']);
+
+        expect(outcome.code).toBe(1);
+        expect(said(outcome)).toContain('github, gitlab');
+        expect(said(outcome)).toContain('удалённых репозиториев несколько');
+    });
+
+    it('SC-AK-715 — дерево без удалённого репозитория отказывает прежними словами', async () => {
+        start();
+        proposals([forPackage]);
+
+        const outcome: IOutcomeOfCommand = await shippingWithout([]);
+
+        expect(outcome.code).toBe(1);
+        expect(said(outcome)).toContain('удалённого репозитория нет');
     });
 
     it('SC-AK-713 — нуль принятых отметку об отправке не отменяет', async () => {
