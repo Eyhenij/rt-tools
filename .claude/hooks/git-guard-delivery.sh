@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.16.1 · hooks/git-guard-delivery.sh · 0612f8c5add8 · правится надстройкой, не здесь
+# rt-kit v0.17.0 · hooks/git-guard-delivery.sh · 0612f8c5add8 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/git-guard-delivery-folder.sh, hooks/profile-check.sh, hooks/deny-tail.sh
 # Гард поставки. PreToolUse на заведении ветки, пуше и открытии заявки на слияние.

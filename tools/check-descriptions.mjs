@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.16.1 · checks/check-descriptions.mjs · 540ba0bbcad1 · правится надстройкой, не здесь
+// rt-kit v0.17.0 · checks/check-descriptions.mjs · 540ba0bbcad1 · правится надстройкой, не здесь
 /**
  * Сверка длины описаний правил и паттернов.
  *

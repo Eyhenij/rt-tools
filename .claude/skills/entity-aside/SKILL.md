@@ -4,7 +4,7 @@ kind: pattern
 rule: entity-conventions
 description: Паттерн правила entity-conventions. Брать при сборке или правке панели создания и правки записи — готовый маршрут в аутлете ro, наследование общей основы, runMutation, гард несохранённых правок, шапка и футер, уход на связанную запись. Не брать для стора — это паттерн entity-store.
 ---
-<!-- rt-kit v0.16.1 · patterns/entity-aside.md · dbd6e98fe055 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.17.0 · patterns/entity-aside.md · dbd6e98fe055 · правится надстройкой, не здесь -->
 
 # Панель правки записи
 
