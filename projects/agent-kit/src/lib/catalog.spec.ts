@@ -32,6 +32,7 @@ const entry: (kind: TKind, name: string, variant?: IVariant) => IEntryOfCatalog 
     variant,
     needs: null,
     text: '',
+    executable: false,
     requires: [],
 });
 
@@ -222,14 +223,16 @@ describe('requiresOf', () => {
         expect(requiresOf('# Правило\n\nтекст\n')).toEqual([]);
     });
 
-    it('SC-AK-738 — строка требования внутри примера требованием не считается', () => {
-        const shown: string = '# Паттерн\n\n```markdown\n**Требует:** `hooks/<гард>.sh`\n```\n';
+    it('SC-AK-714 — строка требования внутри примера требованием не является', () => {
+        // Паттерн, показывающий образец такой строки, объявлял бы требование на `<гард>.sh` —
+        // имя, которого в пакете нет и быть не может.
+        const pattern: string = '# Паттерн\n\n```markdown\n**Требует:** `hooks/<гард>.sh`\n```\n';
 
-        expect(requiresOf(shown)).toEqual([]);
+        expect(requiresOf(pattern)).toEqual([]);
     });
 
-    it('SC-AK-738 — своя строка читается и тогда, когда ниже стоит пример', () => {
-        const both: string = '# Правило\n\n**Требует:** `hooks/a.sh`\n\n```markdown\n**Требует:** `hooks/b.sh`\n```\n';
+    it('SC-AK-714 — настоящая строка читается и при наличии примера ниже', () => {
+        const both: string = '# Правило\n\n**Требует:** `hooks/a.sh`\n\n```markdown\n**Требует:** `hooks/<гард>.sh`\n```\n';
 
         expect(requiresOf(both)).toEqual(['hooks/a.sh']);
     });
