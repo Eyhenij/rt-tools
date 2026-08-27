@@ -2,8 +2,7 @@
 //
 // Вынесено из сверки очереди отдельным модулем: разбор образцов конвейера к состоянию борды
 // отношения не имеет и читается сам по себе, а сверка от него росла быстрее предела длины.
-import { readFileSync } from 'node:fs';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { ghJson } from './board.mjs';

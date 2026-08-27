@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.16.1 · checks/check-board.github.mjs · 4461780187eb · правится надстройкой, не здесь
+// rt-kit v0.16.1 · checks/check-board.github.mjs · 20b545495042 · правится надстройкой, не здесь
 /**
  * Сверка очереди работ с тем, что закон о поставке требует от задачи и её PR.
  *
@@ -50,7 +50,8 @@ import {
     taskDirs,
 } from './board.mjs';
 import { onlyIgnoredPaths } from './board-paths.mjs';
-import { deployLag, evictedOnHead, headCommittedAt, runsOnHead, verdictOnHead } from './board-runs.mjs';
+import { HAS_PIPELINE, deployLag, evictedOnHead, headCommittedAt, runsOnHead, verdictOnHead } from './board-runs.mjs';
+import { similarTitles } from './board-titles.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 const IN_REVIEW = STATUS_OPTIONS[IN_REVIEW_STATUS].name;
@@ -66,8 +67,6 @@ const RUN_GRACE_MINUTES = 10;
  * Конвейер дерева. Прогоны спрашиваются только там, где ему есть откуда взяться: дерево без
  * конвейера получило бы строку на каждый открытый PR, и не о чём.
  */
-const PIPELINE = CONFIG.pushGate?.pipelineFile ?? '';
-const HAS_PIPELINE = PIPELINE !== '' && existsSync(join(ROOT, PIPELINE));
 /**
  * Рабочий поток выкатки и ветка, с которой прод сравнивают. Не назвав потока, дерево сверки
  * прода не получает — и сверка говорит об этом вслух: молчание читалось бы как «прод сошёлся».
@@ -103,68 +102,6 @@ function checkDrafts() {
  * Разбор нарочно грубый — совпадение слов здесь не приговор, а повод посмотреть: точное
  * сравнение заголовков не находит ничего, потому что дубль пишут другими словами.
  */
-function titleWords(title) {
-    return [
-        ...new Set(
-            String(title)
-                .replace(/^\s*\[[^\]]+\]\s*/, '')
-                .toLowerCase()
-                .split(/[^\p{L}\p{N}]+/u)
-                .filter((word) => word.length > 3)
-        ),
-    ];
-}
-
-/** Доля общих слов, начиная с которой две задачи стоит посмотреть глазами. */
-const TITLE_OVERLAP = 0.6;
-/** Меньше трёх общих слов совпадением не считается: два длинных слова совпадают у любой пары. */
-const TITLE_COMMON_MIN = 3;
-/** Больше скольких задач в группе — это серия эпика, а не дубль. */
-const TITLE_GROUP_MAX = 4;
-
-/**
- * Открытые задачи, чьи заголовки сильно совпали.
- *
- * Печатается строкой сводки, а не отказом: серия однотипных задач эпика — законное состояние
- * очереди, и отказ отбивал бы работу на каждой такой серии. Дубль же по отдельности исправен —
- * у обеих задач номер, исполнитель и колонка, — и не находит его ничто: разошлись они словами
- * заголовка, а совпадают дефектом и признаком закрытия.
- */
-function similarTitles(open) {
-    const words = new Map(open.map((issue) => [issue.number, titleWords(issue.title)]));
-    // Задачи сводятся в группы, а не в пары: серия однотипных задач эпика — законное состояние
-    // очереди, и парами она даёт по строке на каждое сочетание, то есть заглушает сама себя.
-    const groups = [];
-
-    for (const issue of open) {
-        const mine = words.get(issue.number);
-        const near = groups.find((group) =>
-            group.some((other) => {
-                const theirs = words.get(other.number);
-                const common = mine.filter((word) => theirs.includes(word)).length;
-                const smaller = Math.min(mine.length, theirs.length);
-
-                return smaller > 0 && common >= TITLE_COMMON_MIN && common / smaller >= TITLE_OVERLAP;
-            })
-        );
-        if (near) {
-            near.push(issue);
-            continue;
-        }
-        groups.push([issue]);
-    }
-
-    // Группа больше предела — это серия однотипных задач, а не дубль: у эпика их бывает
-    // полтора десятка, и строка о них говорит только то, что эпик существует.
-    for (const group of groups.filter((one) => one.length > 1 && one.length <= TITLE_GROUP_MAX)) {
-        const numbers = group.map((issue) => `#${issue.number}`).join(', ');
-        console.log(
-            `check-board: ${numbers} — заголовки сильно совпадают, посмотри, не одна ли это работа: ` +
-                `«${group[0].title}»`
-        );
-    }
-}
-
 function closesNumbers(body) {
     return [...String(body ?? '').matchAll(/\bCloses\s+#(\d+)\b/gi)].map((match) => Number(match[1]));
 }

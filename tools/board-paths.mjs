@@ -1,10 +1,9 @@
-// rt-kit v0.16.1 · checks/board-paths.github.mjs · 35018a03d1fa · правится надстройкой, не здесь
+// rt-kit v0.16.1 · checks/board-paths.github.mjs · 59b32cb13c66 · правится надстройкой, не здесь
 // Пути, которых не слушает конвейер, и заявка, чей вклад целиком под ними.
 //
 // Вынесено из сверки очереди отдельным модулем: разбор образцов конвейера к состоянию борды
 // отношения не имеет и читается сам по себе, а сверка от него росла быстрее предела длины.
-import { readFileSync } from 'node:fs';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { ghJson } from './board.mjs';

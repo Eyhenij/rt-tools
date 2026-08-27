@@ -10,7 +10,15 @@
  * Нет сети или нет токена — вызовы бросают `OfflineError`, как и остальная работа с хостингом:
  * невозможность спросить расхождением не считается.
  */
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { OWNER, REPO, gh } from './board.mjs';
+import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
+
+/** Файл конвейера этого дерева; его нет — путей он не слушает вовсе. */
+const PIPELINE = CONFIG.pushGate?.pipelineFile ?? '';
+export const HAS_PIPELINE = PIPELINE !== '' && existsSync(join(ROOT, PIPELINE));
 
 /**
  * Сколько прогонов завелось на этой вершине.
