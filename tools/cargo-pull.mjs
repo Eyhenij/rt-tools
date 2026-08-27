@@ -84,7 +84,7 @@ function wholeOf(argv, flag, fallback) {
  * одна с разделителем: пароль вправе держать любой знак, и разделитель, встретившийся в нём,
  * резал бы пару молча.
  */
-function accountOf(where) {
+export function accountOf(where) {
     if (!where) {
         return { name: '', password: '' };
     }
@@ -147,7 +147,7 @@ export async function login(intake, account) {
 }
 
 /** Запрос к приёму с кукой входа. Разбор ответа один на список и на одну запись. */
-async function read(intake, cookie, path) {
+export async function read(intake, cookie, path) {
     let answer;
 
     try {
@@ -244,7 +244,7 @@ function fullLines(kind, row, key) {
  * Запись, которая не дочиталась, из списка не выпадает: она приезжает без текста и без ключа, и
  * строка о ней это говорит. Молча пропав, она читалась бы разобранной.
  */
-async function withTexts(intake, cookie, kind, rows) {
+export async function withTexts(intake, cookie, kind, rows) {
     const full = [];
 
     for (const row of rows) {
