@@ -8,6 +8,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, statSync,
 import { join } from 'node:path';
 
 import { IAsset, collectAssets } from './assets.js';
+import { ICargoOverride } from './cargo.js';
 import { cascadeCuts, ICascadeCut, IIdleSkip } from './cascade.js';
 import { IBrokenLink, IEntryOfCatalog, IGapOfVariant, isChosen, readCatalog } from './catalog.js';
 import { debtLine, ICompanion, isUnfilled, IUnaddressed, pathOf as companionPathOf, TCompanionState, unaddressedOf } from './companion.js';
@@ -26,8 +27,8 @@ import {
     TWeights,
 } from './observations.js';
 import { IPlanned, isRefusal, TOutcome } from './plan.js';
-import { laidOutSkills } from './snapshot.js';
-import { ICutFound, IRetiredFound, IShadowedSection, ISyncResult, pendingOf, planSync, runSync, shadowedSections } from './sync.js';
+import { laidOutSkills, treeSnapshot } from './snapshot.js';
+import { ICutFound, IRetiredFound, ISyncResult, mergedBody, pendingOf, planSync, runSync } from './sync.js';
 import { thresholdLines } from './thresholds.js';
 import { answersRequirement, ITrait, readTraits, unknownTraits } from './traits.js';
 import { placeholdersOf } from './vars.js';
@@ -190,6 +191,45 @@ function profileLines(root: string, assetsDir: string, config: IConfig): string[
                   '  хук без своей функции проверку не делает и действие пропускает',
               ]
             : ['  все определены']),
+    ];
+}
+
+/**
+ * Местное значение, которым живёт хук: путь от корня дерева и то, что перестаёт проверяться без
+ * него. Стоит строкой шапки, тем же приёмом, каким хук называет требуемые ресурсы.
+ */
+const LOCAL_VALUE: RegExp = /^# Местное значение: (\S+) — ([^\n]+)$/gm;
+
+/**
+ * Местные значения, которых ждут взятые хуки, и те из них, которых в дереве нет.
+ *
+ * Считать их приходится отдельно от файлов и функций: разложенный хук с пустым значением лежит
+ * на месте, зовётся и выходит нулём — сводка называет такое дерево настроенным, а проверять оно
+ * перестало. Хук, отказывающий в пользу работы, тем и опасен: снаружи это выглядит исправной
+ * работой.
+ */
+function localValueLines(root: string, assetsDir: string, config: IConfig): string[] {
+    const absent: string[] = [];
+    let wanted: number = 0;
+
+    for (const asset of collectAssets(config, assetsDir).filter((one: IAsset): boolean => one.kind === 'hooks')) {
+        for (const [, path, loss] of asset.text.matchAll(LOCAL_VALUE)) {
+            wanted += 1;
+            if (!existsSync(join(root, path))) {
+                absent.push(`  нет значения ${path} — его ждёт ${asset.id}: ${loss.trim()}`);
+            }
+        }
+    }
+
+    if (!wanted) {
+        return [];
+    }
+
+    return [
+        `местные значения, которых ждут взятые хуки: ${wanted}`,
+        ...(absent.length
+            ? [...absent.sort(byText), '  хук без своего значения проверку не делает и действие пропускает']
+            : ['  все на месте']),
     ];
 }
 
@@ -425,6 +465,19 @@ const retiredLines: (result: ISyncResult) => string[] = (result: ISyncResult): s
         : [];
 
 /**
+ * Надстройка, которой в пакете ничего не отвечает: она не применена, и молчание об этом читается
+ * как «всё применено».
+ */
+const strayLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] =>
+    result.strayOverrides.length
+        ? [
+              `надстроек, не подобранных ни к одному ресурсу: ${result.strayOverrides.length}`,
+              ...result.strayOverrides.map((id: string): string => `  ${join(OVERRIDES_DIR, id)} — применена не была`),
+              '  подбор идёт по идентификатору ресурса целиком, вместе с приставкой свойства',
+          ]
+        : [];
+
+/**
  * Предупреждения раскладки: кода возврата они не меняют и печатаются на любом её исходе.
  *
  * Иначе их не видит никто: на сошедшемся дереве проверка молчит, а удавшаяся раскладка называет
@@ -438,6 +491,7 @@ const warnings: (result: ISyncResult) => string[] = (result: ISyncResult): strin
     ...retiredLines(result),
     ...cutOnDiskLines(result),
     ...abandonedLines(result),
+    ...strayLines(result),
 ];
 
 const describe: (result: ISyncResult) => string[] = (result: ISyncResult): string[] => [
@@ -526,7 +580,7 @@ function debtLines(config: IConfig, root: string, assetsDir: string): readonly s
         }
         const path: string = join(root, companionPathOf(asset));
         const existing: string | null = existsSync(path) ? readFileSync(path, 'utf8') : null;
-        found.push(unaddressedOf(asset.name, asset.text, existing));
+        found.push(unaddressedOf(asset.name, mergedBody(asset, root), existing));
     }
 
     const line: string | null = debtLine(found);
@@ -920,6 +974,30 @@ export function stats(env: IEnvironment, options: IStatsOptions): IOutcomeOfComm
     };
 }
 
+/**
+ * Разделы пакета, замещённые надстройками дерева.
+ *
+ * Совпавший заголовок замещает раздел целиком, и всё, что пакет дописал в такой раздел новой
+ * версией, пропадает молча: раскладка сходится, заголовки совпадают, а утверждений нет. Сверка
+ * заголовков ловит переименование раздела, а не пополнение, и других свидетелей у потери не
+ * бывает. Разбор состояния поэтому называет замещённое поимённо — это половина ответа, которую
+ * машина знает и без прежней редакции; вторую половину даёт снимок, снятый до установки.
+ */
+function replacedLines(config: IConfig, assetsDir: string, root: string): readonly string[] {
+    const replaced: readonly ICargoOverride[] = treeSnapshot(config, assetsDir, root).filter(
+        (one: ICargoOverride): boolean => one.kind === 'replace'
+    );
+
+    if (replaced.length === 0) {
+        return [];
+    }
+
+    return [
+        `замещено надстройками разделов: ${replaced.length} — что пакет дописал в них новой версией, теряется молча`,
+        ...replaced.map((one: ICargoOverride): string => `  ${one.resource} · ${one.section}`),
+    ];
+}
+
 export function doctor(env: IEnvironment): IOutcomeOfCommand {
     const { root, version, assetsDir } = env;
     const config: IConfig | null = readConfig(root);
@@ -972,11 +1050,6 @@ export function doctor(env: IEnvironment): IOutcomeOfCommand {
             needing.every((one: IEntryOfCatalog): boolean => one.id !== entry.id)
     );
 
-    // Замещённые разделы называются поимённо: пакетный текст такого раздела до дерева не
-    // доезжает вовсе, а раскладка при этом сходится — она сверяет разложенное с тем, что собрала
-    // сама. После подъёма версии это единственное место, где видно, что перечитать.
-    const shadowed: readonly IShadowedSection[] = shadowedSections(config, root, assetsDir);
-
     const lines: string[] = [
         `пакет v${version}, везёт ресурсов ${catalog.length}, взято ${taken}`,
         `не выбрано: ${catalog.length - taken - skipped - other - cut.size - needsTrait}, пропущено: ${skipped}, другой вид: ${other}, снято каскадом: ${cut.size}, нужно свойство: ${needsTrait}`,
@@ -988,6 +1061,8 @@ export function doctor(env: IEnvironment): IOutcomeOfCommand {
             return `  снят каскадом: ${one.id} — вслед за ${one.parent}${root}`;
         }),
         ...profileLines(root, assetsDir, config),
+        ...localValueLines(root, assetsDir, config),
+        ...replacedLines(config, assetsDir, root),
         ...thresholdLines(root),
         `значений в конфиге: ${Object.keys(config.vars).length}`,
         ...chosen,
@@ -997,12 +1072,6 @@ export function doctor(env: IEnvironment): IOutcomeOfCommand {
         // Про устаревшую сборку `doctor` говорит, но отказом её не считает: он ничего не пишет,
         // и прочитать состояние дерева можно и из вчерашней сборки — знать бы, что она вчерашняя.
         ...(env.stale ? ['собранное отстало от исходников — раскладка откажет:', `  правлено: ${env.stale.newest}`] : []),
-        ...(shadowed.length
-            ? [
-                  `надстройки замещают разделов: ${shadowed.length} — пакетного текста в них дерево не видит`,
-                  ...shadowed.map((one: IShadowedSection): string => `  замещён: ${one.id} — ${one.heading}`),
-              ]
-            : []),
     ];
 
     return { code: 0, lines };
