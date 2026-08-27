@@ -10,12 +10,13 @@ echo "проверки: чтение груза"
 
 TREE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 PULL="$TREE_ROOT/tools/cargo-pull.mjs"
-PORT=8919
-INTAKE="http://127.0.0.1:$PORT"
+# Порт берётся у системы: назначенный числом занят ровно тогда, когда рядом идёт второй прогон.
+PORT_FILE="$(mktemp)"
+INTAKE=''
 
 ASKED="$(mktemp)"
 FAKE_HOME="$(mktemp -d)"
-cleanup() { rm -rf "$ASKED" "$FAKE_HOME"; }
+cleanup() { rm -rf "$ASKED" "$FAKE_HOME" "$PORT_FILE"; }
 trap cleanup EXIT
 
 # Пара учётной записи: две строки файла вне дерева — так же, как её кладёт настоящее дерево.
@@ -49,15 +50,19 @@ const server = http.createServer((req, res) => {
     }
     res.end(JSON.stringify(post('id-1')));
 });
-server.listen($PORT, '127.0.0.1');
+server.listen(0, '127.0.0.1', () => {
+    fs.writeFileSync(process.argv[3], String(server.address().port));
+});
 setTimeout(() => server.close(), 20000);
-" "$ASKED" "$1" &
+" "$ASKED" "$1" "$PORT_FILE" &
     SERVER_PID=$!
-    sleep 1
+    PORT="$(wait_for_port "$PORT_FILE")" || { echo "двойник приёма не поднялся"; exit 1; }
+    INTAKE="http://127.0.0.1:$PORT"
 }
 
 stop() {
     kill "$SERVER_PID" 2>/dev/null
+    : > "$PORT_FILE"
     wait "$SERVER_PID" 2>/dev/null
     : > "$ASKED"
 }
