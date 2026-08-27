@@ -8,6 +8,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, statSync,
 import { join } from 'node:path';
 
 import { IAsset, collectAssets } from './assets.js';
+import { ICargoOverride } from './cargo.js';
 import { cascadeCuts, ICascadeCut, IIdleSkip } from './cascade.js';
 import { IBrokenLink, IEntryOfCatalog, IGapOfVariant, isChosen, readCatalog } from './catalog.js';
 import { debtLine, ICompanion, isUnfilled, IUnaddressed, pathOf as companionPathOf, TCompanionState, unaddressedOf } from './companion.js';
@@ -26,7 +27,7 @@ import {
     TWeights,
 } from './observations.js';
 import { IPlanned, isRefusal, TOutcome } from './plan.js';
-import { laidOutSkills } from './snapshot.js';
+import { laidOutSkills, treeSnapshot } from './snapshot.js';
 import { ICutFound, IRetiredFound, ISyncResult, pendingOf, planSync, runSync } from './sync.js';
 import { thresholdLines } from './thresholds.js';
 import { answersRequirement, ITrait, readTraits, unknownTraits } from './traits.js';
@@ -920,6 +921,30 @@ export function stats(env: IEnvironment, options: IStatsOptions): IOutcomeOfComm
     };
 }
 
+/**
+ * Разделы пакета, замещённые надстройками дерева.
+ *
+ * Совпавший заголовок замещает раздел целиком, и всё, что пакет дописал в такой раздел новой
+ * версией, пропадает молча: раскладка сходится, заголовки совпадают, а утверждений нет. Сверка
+ * заголовков ловит переименование раздела, а не пополнение, и других свидетелей у потери не
+ * бывает. Разбор состояния поэтому называет замещённое поимённо — это половина ответа, которую
+ * машина знает и без прежней редакции; вторую половину даёт снимок, снятый до установки.
+ */
+function replacedLines(config: IConfig, assetsDir: string, root: string): readonly string[] {
+    const replaced: readonly ICargoOverride[] = treeSnapshot(config, assetsDir, root).filter(
+        (one: ICargoOverride): boolean => one.kind === 'replace'
+    );
+
+    if (replaced.length === 0) {
+        return [];
+    }
+
+    return [
+        `замещено надстройками разделов: ${replaced.length} — что пакет дописал в них новой версией, теряется молча`,
+        ...replaced.map((one: ICargoOverride): string => `  ${one.resource} · ${one.section}`),
+    ];
+}
+
 export function doctor(env: IEnvironment): IOutcomeOfCommand {
     const { root, version, assetsDir } = env;
     const config: IConfig | null = readConfig(root);
@@ -983,6 +1008,7 @@ export function doctor(env: IEnvironment): IOutcomeOfCommand {
             return `  снят каскадом: ${one.id} — вслед за ${one.parent}${root}`;
         }),
         ...profileLines(root, assetsDir, config),
+        ...replacedLines(config, assetsDir, root),
         ...thresholdLines(root),
         `значений в конфиге: ${Object.keys(config.vars).length}`,
         ...chosen,
