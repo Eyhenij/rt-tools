@@ -30,6 +30,7 @@ case "$args" in
     *graphql*) printf '%s' "$STUB_BOARD" ;;
     "issue list"*) printf '%s' "$STUB_ISSUES" ;;
     "pr list"*) printf '%s' "$STUB_PULLS" ;;
+    "pr view"*files*) printf '%s' "${STUB_FILES}" ;;
     *contents*) printf 'Not Found\n' >&2; exit 1 ;;
     *actions/workflows/*runs*) printf '%s\n' "$STUB_DEPLOY" ;;
     *actions/runs/*/jobs*) printf '%s\n' "${STUB_JOBS:-0}" ;;
@@ -67,6 +68,8 @@ pulls_json() {
     printf '[{"number":701,"title":"[RT-700] Правка","headRefName":"RT-700-probe","headRefOid":"%s","isDraft":%s,"body":"Closes #700"}]' "$HEAD_SHA" "$1"
 }
 export STUB_PULLS="$(pulls_json false)"
+# Состав заявки: спрашивается только там, где конвейер называет пути, которых не слушает.
+export STUB_FILES='{"files":[]}'
 
 BOARD_CONFIG='{"tasksDir":"docs/tasks","pushGate":{"pipelineFile":".github/workflows/ci.yml"},"board":{"owner":"probe","repo":"tree","projectId":"P","statusFieldId":"F","statusOptions":{"in-review":{"id":"r","name":"In review"}},"taskKey":"RT","bot":"probe-bot","tokenPath":"","reviewer":"probe"}}'
 board_config "$BOARD_CONFIG"
@@ -93,6 +96,52 @@ export STUB_HEAD_DATE="$(minutes_ago 600)"
 board_config "${BOARD_CONFIG/.github\/workflows\/ci.yml/.github\/workflows\/nope.yml}"
 report "SC-AK-280 — конвейера нет: расхождений нет" "$(board_code)" 0
 report "SC-AK-280 — сказано, почему пропущено" "$(board_says 'файла конвейера в дереве нет')" 1
+
+# SC-AK-733 — открытые задачи с совпадающими заголовками перечисляются сводкой
+# Дубль по отдельности исправен: номер, исполнитель и колонка у обеих задач на месте, и сверка
+# принимает каждую. Отказом это не считается — серия однотипных задач эпика законна.
+board_config "$BOARD_CONFIG"
+export STUB_RUNS=1
+export STUB_VERDICT=success
+export STUB_HEAD_DATE="$(minutes_ago 60)"
+saved_issues="$STUB_ISSUES"
+saved_board="$STUB_BOARD"
+export STUB_BOARD='{"data":{"node":{"items":{"pageInfo":{"hasNextPage":false,"endCursor":null},"nodes":[{"id":"item-1","status":{"name":"In review","optionId":"r"},"content":{"__typename":"Issue","number":700}},{"id":"item-2","status":{"name":"In review","optionId":"r"},"content":{"__typename":"Issue","number":702}}]}}}}'
+export STUB_ISSUES='[{"number":700,"title":"[RT-700] Письма владельцу уходят молча","state":"OPEN","assignees":[{"login":"probe"}],"labels":[]},{"number":702,"title":"[RT-702] Письма владельцу уходят молча мимо очереди","state":"OPEN","assignees":[{"login":"probe"}],"labels":[]}]'
+report "SC-AK-733 — совпавшие заголовки названы" "$(board_says '#700, #702 — заголовки сильно совпадают')" 1
+# Отказом это не считается: строка стоит в сводке, а не среди расхождений.
+report "SC-AK-733 — расхождением это не считается" "$(board_run | sed -n '/расхождений/,$p' | grep -c 'сильно совпадают')" 0
+
+# Разные работы в сводку не идут: совпадения слов у них нет.
+export STUB_ISSUES='[{"number":700,"title":"[RT-700] Письма владельцу уходят молча","state":"OPEN","assignees":[{"login":"probe"}],"labels":[]},{"number":702,"title":"[RT-702] Кнопка сохранения теряет фокус","state":"OPEN","assignees":[{"login":"probe"}],"labels":[]}]'
+report "SC-AK-733 — разные заголовки молчат" "$(board_says 'заголовки сильно совпадают')" 0
+
+export STUB_ISSUES="$saved_issues"
+export STUB_BOARD="$saved_board"
+
+# SC-AK-732 — ветка, чей вклад конвейер не слушает, прогона не требует
+# Такой ветке события не будет никогда, и совет вернуть его не исполним: красная строка означает
+# «сверка не знает», а не «конвейер отказал», и стоит она рядом с настоящими расхождениями.
+board_config "$BOARD_CONFIG"
+printf '%s\n' 'on:' '    pull_request:' '        paths-ignore:' '            - "docs/**"' '            - "**.md"' \
+    'jobs:' '    main:' '        steps:' '            - name: Lint' \
+    > "$BOARD_TREE/.github/workflows/ci.yml"
+export STUB_RUNS=0
+export STUB_HEAD_DATE="$(minutes_ago 600)"
+export STUB_FILES='{"files":[{"path":"docs/specs/x/scenarios.md"},{"path":"README.md"}]}'
+report "SC-AK-732 — вклад целиком под игнорируемыми путями: расхождений нет" "$(board_code)" 0
+
+# Один файл вне списка — прогон требуется по-прежнему: конвейер на такую ветку встаёт.
+export STUB_FILES='{"files":[{"path":"docs/specs/x/scenarios.md"},{"path":"projects/kit/src/a.ts"}]}'
+report "SC-AK-732 — файл вне списка возвращает требование" "$(board_code)" 1
+
+# Состав заявки пустой — судим как прежде: молчать наугад дороже одной лишней строки.
+export STUB_FILES='{"files":[]}'
+report "SC-AK-732 — пустой состав судится как прежде" "$(board_code)" 1
+
+printf '%s\n' 'on: pull_request' 'jobs:' '    main:' '        steps:' '            - name: Lint' \
+    > "$BOARD_TREE/.github/workflows/ci.yml"
+unset STUB_FILES
 
 # SC-AK-281 — готовая работа, оставленная черновиком, названа отдельной строкой
 board_config "$BOARD_CONFIG"

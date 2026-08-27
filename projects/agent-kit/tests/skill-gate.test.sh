@@ -34,6 +34,11 @@ g "стили" "$TREE/libs/site/x/ui/src/lib/a.component.scss" styling-bem
 g "обычный модуль" "$TREE/libs/site/x/util/src/lib/a.ts" typescript-conventions
 g "сервис" "$TREE/libs/site/x/data-access/src/lib/a.service.ts" angular-patterns
 g "документ" "$TREE/docs/adr/0001-x.md" doc-style
+
+# Собранное дерево кодом не бывает: путь к артефакту приходит из команды, которая его запускает.
+g "SC-AK-741 — собранный артефакт правила не требует" "$TREE/dist/site/a.component.ts" PASS
+g "SC-AK-741 — зависимость правила не требует" "$TREE/node_modules/pkg/lib/a.ts" PASS
+g "SC-AK-741 — тот же путь под исходниками правило требует" "$TREE/libs/site/x/ui/src/lib/a.component.ts" component-structure
 g "спек домена" "$TREE/docs/specs/bookings/spec.md" spec-driven
 g "папка задачи" "$TREE/docs/tasks/RT-1-x/plan.md" task-flow
 
@@ -197,6 +202,15 @@ expect_reason "SC-AK-498 — отказ на правке стилей несё�
 gate_session_reset
 expect_reason "SC-AK-499 — правило целиком остаётся вторым ходом" skill-gate.sh     "$(input_edit "$TREE/libs/site/x/ui/src/lib/a.component.scss")"     'загрузи правило «styling-bem»'
 
+# SC-AK-706 — спутник правила назван в отказе безусловно
+#
+# Правило говорит, что должно быть верно, а спутник — чем это верно здесь и что здесь названо
+# невозможным. Прежде спутник стоял только в запасном ходе, и читатель, у которого имя правила
+# известно, до него не доходил.
+printf '%s\n' '# styling-bem — что здесь своё' > "$TREE/.claude/skills/styling-bem/implementation.md"
+gate_session_reset
+expect_reason "SC-AK-706 — отказ называет спутник правила" skill-gate.sh     "$(input_edit "$TREE/libs/site/x/ui/src/lib/a.component.scss")"     'styling-bem/implementation\.md'
+
 # Отказ называет статьи, а не пересказывает их: текст придёт в контекст вместе с правилом,
 # которое заход грузит следом. У правила текстов отказ печатал 4 134 знака одиннадцатью
 # статьями — их заголовки весят 718.
@@ -266,6 +280,16 @@ c "SC-AK-252 — вложенная запись универсального и
     'execute_terminal_command --command "echo x > libs/site/x/ui/src/lib/a.component.ts"' \
     mcp__webstorm__execute_tool component-structure
 
+gate_session_reset
+
+# SC-AK-734 — отказ называет, что потребуется дальше по этой же команде
+# Требуется по-прежнему одно правило за раз: перечень читается как «загрузи три», и однократность
+# теряется. Названное вперёд — не требование, а длина пути: тринадцать отказов подряд за одну
+# задачу читались как тринадцать разных требований.
+gate_session_reset
+expect_reason "SC-AK-734 — отказ называет следующее правило" skill-gate.sh \
+    "$(input_cmd 'printf x > libs/site/x/ui/src/lib/a.component.scss; printf y > docs/adr/0002-x.md' Bash)" \
+    'Дальше по этой команде потребуются'
 gate_session_reset
 
 # --- отказ в пользу работы --------------------------------------------------------------
