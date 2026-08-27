@@ -197,6 +197,15 @@ expect_reason "SC-AK-498 — отказ на правке стилей несё�
 gate_session_reset
 expect_reason "SC-AK-499 — правило целиком остаётся вторым ходом" skill-gate.sh     "$(input_edit "$TREE/libs/site/x/ui/src/lib/a.component.scss")"     'загрузи правило «styling-bem»'
 
+# SC-AK-706 — спутник правила назван в отказе безусловно
+#
+# Правило говорит, что должно быть верно, а спутник — чем это верно здесь и что здесь названо
+# невозможным. Прежде спутник стоял только в запасном ходе, и читатель, у которого имя правила
+# известно, до него не доходил.
+printf '%s\n' '# styling-bem — что здесь своё' > "$TREE/.claude/skills/styling-bem/implementation.md"
+gate_session_reset
+expect_reason "SC-AK-706 — отказ называет спутник правила" skill-gate.sh     "$(input_edit "$TREE/libs/site/x/ui/src/lib/a.component.scss")"     'styling-bem/implementation\.md'
+
 # Отказ называет статьи, а не пересказывает их: текст придёт в контекст вместе с правилом,
 # которое заход грузит следом. У правила текстов отказ печатал 4 134 знака одиннадцатью
 # статьями — их заголовки весят 718.
