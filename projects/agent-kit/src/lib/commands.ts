@@ -28,7 +28,7 @@ import {
 } from './observations.js';
 import { IPlanned, isRefusal, TOutcome } from './plan.js';
 import { laidOutSkills, treeSnapshot } from './snapshot.js';
-import { ICutFound, IRetiredFound, ISyncResult, pendingOf, planSync, runSync } from './sync.js';
+import { ICutFound, IRetiredFound, ISyncResult, mergedBody, pendingOf, planSync, runSync } from './sync.js';
 import { thresholdLines } from './thresholds.js';
 import { answersRequirement, ITrait, readTraits, unknownTraits } from './traits.js';
 import { placeholdersOf } from './vars.js';
@@ -580,7 +580,7 @@ function debtLines(config: IConfig, root: string, assetsDir: string): readonly s
         }
         const path: string = join(root, companionPathOf(asset));
         const existing: string | null = existsSync(path) ? readFileSync(path, 'utf8') : null;
-        found.push(unaddressedOf(asset.name, asset.text, existing));
+        found.push(unaddressedOf(asset.name, mergedBody(asset, root), existing));
     }
 
     const line: string | null = debtLine(found);
