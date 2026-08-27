@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Правило под «Закон о поставке» для дерева на GitHub — та его часть, что про выкатку. Брать, когда правка едет на прод: мерж в главную ветку, конвейер, образы и метки, миграции хранилища. Паттерны: git-workflow-migration, -restart, -docker, -secrets. Задача и ветка — правило git-workflow.
 ---
-<!-- rt-kit v0.16.1 · rules/deploy-flow.github.md · 3296fd6b2c04 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.16.1 · rules/deploy-flow.github.md · a71e218e2dc9 · правится надстройкой, не здесь -->
 
 # Выкатка — как это устроено здесь
 
