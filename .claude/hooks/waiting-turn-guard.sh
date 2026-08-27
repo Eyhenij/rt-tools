@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.16.1 · hooks/waiting-turn-guard.sh · 59d98275266e · правится надстройкой, не здесь
+# rt-kit v0.17.0 · hooks/waiting-turn-guard.sh · 59d98275266e · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: hooks/deny-tail.sh
 # Гард ожидания: ход, сообщающий владельцу о чужом шаге, не заканчивается, пока в нём не было ни
