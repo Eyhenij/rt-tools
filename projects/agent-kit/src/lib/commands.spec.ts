@@ -475,6 +475,24 @@ describe('doctor', () => {
         expect(said(outcome)).not.toContain('положен:');
     });
 
+    it('SC-AK-716 — разбор состояния называет разделы, замещённые надстройками', () => {
+        start(['laws/delivery.md']);
+        // Совпавший заголовок замещает раздел целиком: всё, что пакет допишет в него новой
+        // версией, пропадёт молча, и других свидетелей у потери не бывает.
+        put(join(OVERRIDES_DIR, 'laws/delivery.md'), '## Статьи\n\nСвои статьи.\n');
+
+        const said_: string = said(doctor(env));
+
+        expect(said_).toContain('замещено надстройками разделов: 1');
+        expect(said_).toContain('laws/delivery.md · ## Статьи');
+    });
+
+    it('SC-AK-716 — дерево без надстроек о замещённом молчит', () => {
+        start(['laws/delivery.md']);
+
+        expect(said(doctor(env))).not.toContain('замещено надстройками разделов');
+    });
+
     it('SC-AK-125 — разбор состояния называет снятое вместе с родителем', () => {
         startSkipping([VERIFIABILITY]);
         const said_: string = said(doctor(env));
@@ -489,6 +507,27 @@ describe('doctor', () => {
         start(['laws/delivery.md']);
 
         expect(said(doctor(env))).toContain(`не выбрано: ${laws - 1}`);
+    });
+
+    // Разложенный хук с пустым местным значением лежит на месте, зовётся и выходит нулём:
+    // сводка называла такое дерево настроенным, а проверять оно перестало.
+    it('SC-AK-729 — сводка называет местное значение, которого в дереве нет', () => {
+        start(['hooks/browser-device-id.sh']);
+        const said_: string = said(doctor(env));
+
+        expect(said_).toContain('местные значения, которых ждут взятые хуки: 1');
+        expect(said_).toContain('нет значения .claude/rt-kit/browser-device-id');
+        expect(said_).toContain('hooks/browser-device-id.sh');
+    });
+
+    it('SC-AK-729 — о лежащем значении сводка молчит', () => {
+        start(['hooks/browser-device-id.sh']);
+        put('.claude/rt-kit/browser-device-id', 'профиль\n');
+        const said_: string = said(doctor(env));
+
+        expect(said_).toContain('местные значения, которых ждут взятые хуки: 1');
+        expect(said_).toContain('все на месте');
+        expect(said_).not.toContain('нет значения');
     });
 
     // Ресурс чужого вида — не «не выбран»: проект от него не отказывался, его в этом дереве
