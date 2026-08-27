@@ -162,6 +162,7 @@ report "карта: своё правило линтера кода" "$(skill_fo
 report "карта: файл конвейера" "$(skill_for edit /r/.github/workflows/deploy.yml '')" git-workflow
 report "карта: состав образа" "$(skill_for edit /r/deploy/api.Dockerfile '')" git-workflow
 report "карта: миграция хранилища" "$(skill_for edit /r/prisma/migrations/20260101_x/migration.sql '')" git-workflow
+report "карта: настройка клиента хранилища" "$(skill_for edit /r/prisma.config.ts '')" git-workflow
 # Сквозная спека по имени файла от обычного модуля не отличается.
 report "карта: сквозная спека" "$(skill_for edit /r/apps/web-e2e/src/x.ts '')" testing
 
