@@ -20,8 +20,12 @@ mark_says() {
 
 # Тело, которое команда отправила: свой приём рядом печатает его и сразу отвечает счётом.
 mark_body() {
+    # Порт берётся у системы: назначенный числом занят ровно тогда, когда рядом идёт второй
+    # прогон, и сервер падает с отказом «адрес занят» вместе со всеми проверками этого набора.
+    : > "$BODY_PORT"
     node -e "
 const http = require('node:http');
+const fs = require('node:fs');
 const server = http.createServer((req, res) => {
     let raw = '';
     req.on('data', (part) => { raw += part; });
@@ -32,17 +36,21 @@ const server = http.createServer((req, res) => {
         server.close();
     });
 });
-server.listen(8918);
-" > "$BODY_SEEN" &
+server.listen(0, '127.0.0.1', () => {
+    fs.writeFileSync(process.argv[1], String(server.address().port));
+});
+" "$BODY_PORT" > "$BODY_SEEN" &
     local pid=$!
-    sleep 1
-    (cd "$TREE_ROOT" && node "$MARK" "$@" >/dev/null 2>&1)
+    local port
+    port="$(wait_for_port "$BODY_PORT")" || { echo "двойник приёма не поднялся"; return 1; }
+    (cd "$TREE_ROOT" && RT_INTAKE="http://127.0.0.1:$port" node "$MARK" "$@" >/dev/null 2>&1)
     sleep 1
     kill "$pid" 2>/dev/null
     grep -cE "$MARK_PATTERN" "$BODY_SEEN"
 }
 
 BODY_SEEN="$(mktemp)"
+BODY_PORT="$(mktemp)"
 
 # Код возврата отметки: ненулевой у всего, что не легло.
 mark_code() {
@@ -102,15 +110,15 @@ report "SC-AK-427 — переход в починку собран" \
 # SC-MB-191 — команда строки запуска несёт текст починки доводом
 MARK_PATTERN='"fixNote":"статья правила"'
 report "SC-MB-191 — текст починки лёг полем строки" \
-    "$(RT_INTAKE=http://127.0.0.1:8918 RT_TREE_TOKEN=x mark_body --state fixed --postmortem a.md --fix 'статья правила')" 1
+    "$(RT_TREE_TOKEN=x mark_body --state fixed --postmortem a.md --fix 'статья правила')" 1
 MARK_PATTERN='fixNote'
 report "SC-MB-191 — без довода поля нет" \
-    "$(RT_INTAKE=http://127.0.0.1:8918 RT_TREE_TOKEN=x mark_body --state fixed --postmortem a.md)" 0
+    "$(RT_TREE_TOKEN=x mark_body --state fixed --postmortem a.md)" 0
 
 # SC-MB-207 — команда строки запуска несёт версию выпуска доводом
 MARK_PATTERN='"releaseVersion":"rt-agent-kit@0.11.0"'
 report "SC-MB-207 — версия выпуска легла полем строки" \
-    "$(RT_INTAKE=http://127.0.0.1:8918 RT_TREE_TOKEN=x mark_body --state released --postmortem a.md --release 'rt-agent-kit@0.11.0')" 1
+    "$(RT_TREE_TOKEN=x mark_body --state released --postmortem a.md --release 'rt-agent-kit@0.11.0')" 1
 
 # SC-AK-429 — без токена дерева отметка отказывает до сети
 MARK_PATTERN='токена дерева нет'
@@ -121,16 +129,19 @@ report "SC-AK-429 — отсутствие токена названо" \
 #
 # Приём тут свой, поднятый рядом: он отвечает счётом и одной отбитой строкой. Настоящий для
 # этого не нужен, а двойник вызова изнутри команды подставить нечем — она зовётся строкой.
-FAKE_PORT=8917
+FAKE_PORT_FILE="$(mktemp)"
 node -e "
 const http = require('node:http');
+const fs = require('node:fs');
 http.createServer((req, res) => {
     res.writeHead(200, { 'content-type': 'application/json' });
     res.end(JSON.stringify({ changed: 1, same: 0, denied: [{ at: 1, kind: 'postmortem', key: 'b.md', denial: 'forbidden' }] }));
-}).listen($FAKE_PORT);
-" &
+}).listen(0, '127.0.0.1', function () {
+    fs.writeFileSync(process.argv[1], String(this.address().port));
+});
+" "$FAKE_PORT_FILE" &
 FAKE_PID=$!
-sleep 1
+FAKE_PORT="$(wait_for_port "$FAKE_PORT_FILE")" || { echo "двойник приёма не поднялся"; exit 1; }
 
 MARK_PATTERN='переведено 1, уже стояло 0, отбито 1'
 report "SC-AK-432 — счёт назван строкой" \
@@ -144,3 +155,11 @@ report "SC-AK-432 — код возврата ненулевой" \
     "$(RT_INTAKE=http://127.0.0.1:$FAKE_PORT RT_TREE_TOKEN=x mark_code --state in_work --postmortem a.md --postmortem b.md)" 1
 
 kill "$FAKE_PID" 2>/dev/null
+wait "$FAKE_PID" 2>/dev/null
+rm -f "$FAKE_PORT_FILE" "$BODY_PORT"
+
+# Итог набора и его код возврата. Без этой строки набор кончался снятием двойника — то есть
+# всегда нулём: провалившаяся проверка печаталась строкой и на цвет прогона не влияла никак,
+# а общий прогон считал набор зелёным всегда.
+suite_result "проверки: отметка груза"
+
