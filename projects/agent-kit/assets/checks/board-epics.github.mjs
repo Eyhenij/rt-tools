@@ -89,9 +89,8 @@ export function checkEpicLinks(open, report) {
         }
 
         const plan = readFileSync(join(ROOT, planPath), 'utf8');
-        const numbers = new Set(
-            [...planRows(plan).matchAll(new RegExp(`(?:#|${TASK_KEY}-)(\\d+)`, 'g'))].map((match) => Number(match[1]))
-        );
+        const mentions = planRows(plan).matchAll(new RegExp(`(?:#|${TASK_KEY}-)(\\d+)`, 'g'));
+        const numbers = new Set([...mentions].map((match) => Number(match[1])));
         for (const number of numbers) {
             if (number === epic.number || !byNumber.has(number)) {
                 continue;

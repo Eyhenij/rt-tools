@@ -1,4 +1,4 @@
-// rt-kit v0.17.0 · checks/board-epics.github.mjs · cbb7c8ebb09c · правится надстройкой, не здесь
+// rt-kit v0.17.0 · checks/board-epics.github.mjs · 69e87ef7764e · правится надстройкой, не здесь
 /**
  * Связь задачи с эпиком. Живёт своим файлом: сверка очереди работ и без неё стоит у предела
  * длины, а читают эти две проверки порознь.
@@ -90,7 +90,8 @@ export function checkEpicLinks(open, report) {
         }
 
         const plan = readFileSync(join(ROOT, planPath), 'utf8');
-        const numbers = new Set([...planRows(plan).matchAll(new RegExp(`(?:#|${TASK_KEY}-)(\\d+)`, 'g'))].map((match) => Number(match[1])));
+        const mentions = planRows(plan).matchAll(new RegExp(`(?:#|${TASK_KEY}-)(\\d+)`, 'g'));
+        const numbers = new Set([...mentions].map((match) => Number(match[1])));
         for (const number of numbers) {
             if (number === epic.number || !byNumber.has(number)) {
                 continue;
