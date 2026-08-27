@@ -23,3 +23,8 @@
 `libs/message-bus-api/accounts/feature/`, чтение списков — `libs/message-bus-api/proposals/feature/`
 и `libs/message-bus-api/postmortems/feature/`. Форма счёта признака предложения объявлена там же,
 в `libs/message-bus-api/proposals/util/`, и повторяется здесь дословно.
+
+- **Запись, чья статья уже стоит в источниках пакета, отбирается командой, а не глазами.** — `tools/cargo-fixed.mjs:fixed`
+- **Отбор идёт по заголовку предложенной статьи и ничему сверх него.** — `tools/cargo-fixed.mjs:titleOf` и `tools/cargo-fixed.mjs:standsIn`
+- **Отбор наружу не пишет ничего, а печатает вызовы отметки.** — `tools/cargo-fixed.mjs:fixed`
+- **Вызовов отметки печатается два: порядок состояний не перескакивается.** — `tools/cargo-fixed.mjs:keys`
