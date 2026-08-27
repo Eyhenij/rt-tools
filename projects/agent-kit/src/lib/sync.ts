@@ -5,14 +5,14 @@
  * только потом писать. `sync --check` отличается от `sync` ровно последним шагом — иначе гейт
  * пуша проверял бы не то, что кладёт раскладка.
  */
-import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { chmodSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join, relative } from 'node:path';
 
 import { collectAssets, IAsset, targetOf } from './assets.js';
 import { ICascadeCut, IIdleSkip, cascadeCuts, idleSkips, namedButCut } from './cascade.js';
 import { brokenLinks, IBrokenLink, IEntryOfCatalog, IGapOfVariant, readCatalog, variantGaps } from './catalog.js';
 import { ICompanion, pathOf, planCompanion } from './companion.js';
-import { IConfig, OVERRIDES_DIR } from './config.js';
+import { IConfig, KINDS, OVERRIDES_DIR, TKind } from './config.js';
 import {
     bindDispatch,
     bindingsOf as declaredIn,
@@ -22,6 +22,7 @@ import {
     IMatcherDrift,
     unboundHooks,
 } from './hooks-map.js';
+import { byText } from './order.js';
 import { IPlanned, isPending, isRefusal, planFile } from './plan.js';
 import { RETIRED } from './retired.js';
 import { mergeDocuments, parseDocument, renderDocument } from './sections.js';
@@ -101,6 +102,16 @@ export interface ISyncResult {
     readonly namedCut: readonly ICascadeCut[];
     /** Файлы ресурсов, которых в наборе больше нет: их убирает дерево, пакет только называет. */
     readonly retired: readonly IRetiredFound[];
+    /**
+     * Надстройки, не подобранные ни к одному ресурсу пакета.
+     *
+     * Подбор идёт по идентификатору ресурса целиком, вместе с приставкой свойства: надстройка,
+     * чьё имя приставку потеряло или носит чужую, не привязывается ни к чему, и раскладка
+     * молча кладёт пакетный текст. Сверка этого не видит и видеть не может — она сравнивает
+     * разложенное с тем, что собирает сама, а неподобранное в сборку не берёт: обе стороны
+     * сходятся, и молчание читается как «всё применено».
+     */
+    readonly strayOverrides: readonly string[];
     readonly written: readonly string[];
     /**
      * Что запись объявления сделала с настройкой агента. `null` — раскладки не было: планирование
@@ -236,6 +247,44 @@ function bindingsOf(config: IConfig, assetsDir: string): readonly IHookBinding[]
     return bindings;
 }
 
+/**
+ * Надстройки, которым в пакете ничего не отвечает.
+ *
+ * Ищутся по всему каталогу надстроек, а не по выбранным ресурсам: надстройка над ресурсом,
+ * от которого дерево отказалось, названа своей строкой отказа, а эта — про имя, которого у
+ * пакета нет вовсе.
+ */
+function strayOverrides(root: string, assetsDir: string): string[] {
+    const dir: string = join(root, OVERRIDES_DIR);
+    if (!existsSync(dir)) {
+        return [];
+    }
+
+    const known: ReadonlySet<string> = new Set(readCatalog(assetsDir).map((entry: IEntryOfCatalog): string => entry.id));
+    const found: string[] = [];
+
+    const walk: (at: string) => void = (at: string): void => {
+        for (const entry of readdirSync(at, { withFileTypes: true })) {
+            const path: string = join(at, entry.name);
+            if (entry.isDirectory()) {
+                walk(path);
+                continue;
+            }
+            const id: string = relative(dir, path);
+            // Файл вне рода ресурсов надстройкой не считается вовсе: рядом с ней законно лежит
+            // README каталога, и звать его неприменённым значило бы шуметь на каждой раскладке.
+            const kind: string = id.split('/')[0];
+            if (KINDS.includes(kind as TKind) && !known.has(id)) {
+                found.push(id);
+            }
+        }
+    };
+
+    walk(dir);
+
+    return found.sort(byText);
+}
+
 export function planSync(config: IConfig, root: string, version: string, assetsDir: string): ISyncResult {
     const planned: IPlanned[] = [];
     const missing: Map<string, readonly string[]> = new Map();
@@ -271,6 +320,7 @@ export function planSync(config: IConfig, root: string, version: string, assetsD
         cutOnDisk: left.cut,
         namedCut: namedButCut(readCatalog(assetsDir), config),
         retired: retiredOf(config, root),
+        strayOverrides: strayOverrides(root, assetsDir),
         written: [],
         bound: null,
     };
