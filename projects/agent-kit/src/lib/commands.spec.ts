@@ -151,6 +151,48 @@ describe('sync', () => {
         expect((): string => get(LAW)).toThrow();
     });
 
+    // Строка долга считала статьи пакетной редакции против компаньона дерева, а дерево эти
+    // разделы замещает надстройкой: в разложенном правиле таких статей нет, и привязывать
+    // нечего — долг при этом рос при каждой раскладке.
+    it('SC-AK-731 — статьи раздела, замещённого надстройкой, в долг не идут', () => {
+        start([VERIFIABILITY]);
+        sync(env, false);
+        // Компаньон дерева пуст: черновик пакета несёт все статьи в таблице, и долга при нём нет
+        // вовсе — а считается здесь именно долг.
+        put('.claude/skills/testing/implementation.md', '# testing — что здесь своё\n\n## Где исполняются статьи\n');
+        const packaged: string = said(sync(env, false));
+
+        put(join(OVERRIDES_DIR, TESTING), '## Как закон применяется здесь\n\n- **Своя статья дерева.** Текст.\n');
+        const merged: string = said(sync(env, false));
+
+        expect(packaged).toContain('статей без адреса');
+        expect(packaged).not.toContain('статей без адреса: 1 ');
+        expect(merged).toContain('статей без адреса: 1 ');
+    });
+
+    // Надстройка, чьё имя не совпало с идентификатором ресурса, не применяется ни к чему, а
+    // сверка на это слепа: она сравнивает разложенное с тем, что собирает сама.
+    it('SC-AK-730 — надстройка, не подобранная ни к одному ресурсу, называется', () => {
+        start();
+        sync(env, false);
+        put(join(OVERRIDES_DIR, 'rules/такого-правила-нет.md'), '## Свой раздел\n\nтекст\n');
+        const said_: string = said(sync(env, true));
+
+        expect(said_).toContain('надстроек, не подобранных ни к одному ресурсу: 1');
+        expect(said_).toContain('rules/такого-правила-нет.md');
+        expect(said_).toContain('применена не была');
+    });
+
+    // Рядом с надстройками законно лежит README каталога: звать его неприменённым значило бы
+    // шуметь на каждой раскладке.
+    it('SC-AK-730 — файл вне рода ресурсов надстройкой не считается', () => {
+        start();
+        sync(env, false);
+        put(join(OVERRIDES_DIR, 'README.md'), '# Надстройки\n');
+
+        expect(said(sync(env, true))).not.toContain('не подобранных');
+    });
+
     it('правку руками не переписывает, а называет', () => {
         start();
         sync(env, false);
@@ -452,21 +494,22 @@ describe('doctor', () => {
         expect(said(outcome)).not.toContain('положен:');
     });
 
-    it('SC-AK-739 — замещённый надстройкой раздел назван поимённо', () => {
-        start();
-        put(join(OVERRIDES_DIR, 'laws/delivery.md'), '## Статьи\n\nЗдесь своё.\n');
+    it('SC-AK-716 — разбор состояния называет разделы, замещённые надстройками', () => {
+        start(['laws/delivery.md']);
+        // Совпавший заголовок замещает раздел целиком: всё, что пакет допишет в него новой
+        // версией, пропадёт молча, и других свидетелей у потери не бывает.
+        put(join(OVERRIDES_DIR, 'laws/delivery.md'), '## Статьи\n\nСвои статьи.\n');
+
         const said_: string = said(doctor(env));
 
-        expect(said_).toContain('надстройки замещают разделов: 1');
-        expect(said_).toContain('замещён: laws/delivery.md — ## Статьи');
+        expect(said_).toContain('замещено надстройками разделов: 1');
+        expect(said_).toContain('laws/delivery.md · ## Статьи');
     });
 
-    it('SC-AK-739 — раздел, дописанный надстройкой, замещённым не считается', () => {
-        start();
-        put(join(OVERRIDES_DIR, 'laws/delivery.md'), '## Своё дерево\n\nЗдесь своё.\n');
-        const said_: string = said(doctor(env));
+    it('SC-AK-716 — дерево без надстроек о замещённом молчит', () => {
+        start(['laws/delivery.md']);
 
-        expect(said_).not.toContain('надстройки замещают разделов');
+        expect(said(doctor(env))).not.toContain('замещено надстройками разделов');
     });
 
     it('SC-AK-125 — разбор состояния называет снятое вместе с родителем', () => {
@@ -483,6 +526,27 @@ describe('doctor', () => {
         start(['laws/delivery.md']);
 
         expect(said(doctor(env))).toContain(`не выбрано: ${laws - 1}`);
+    });
+
+    // Разложенный хук с пустым местным значением лежит на месте, зовётся и выходит нулём:
+    // сводка называла такое дерево настроенным, а проверять оно перестало.
+    it('SC-AK-729 — сводка называет местное значение, которого в дереве нет', () => {
+        start(['hooks/browser-device-id.sh']);
+        const said_: string = said(doctor(env));
+
+        expect(said_).toContain('местные значения, которых ждут взятые хуки: 1');
+        expect(said_).toContain('нет значения .claude/rt-kit/browser-device-id');
+        expect(said_).toContain('hooks/browser-device-id.sh');
+    });
+
+    it('SC-AK-729 — о лежащем значении сводка молчит', () => {
+        start(['hooks/browser-device-id.sh']);
+        put('.claude/rt-kit/browser-device-id', 'профиль\n');
+        const said_: string = said(doctor(env));
+
+        expect(said_).toContain('местные значения, которых ждут взятые хуки: 1');
+        expect(said_).toContain('все на месте');
+        expect(said_).not.toContain('нет значения');
     });
 
     // Ресурс чужого вида — не «не выбран»: проект от него не отказывался, его в этом дереве

@@ -5,14 +5,14 @@
  * только потом писать. `sync --check` отличается от `sync` ровно последним шагом — иначе гейт
  * пуша проверял бы не то, что кладёт раскладка.
  */
-import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { chmodSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join, relative } from 'node:path';
 
 import { collectAssets, IAsset, targetOf } from './assets.js';
 import { ICascadeCut, IIdleSkip, cascadeCuts, idleSkips, namedButCut } from './cascade.js';
 import { brokenLinks, IBrokenLink, IEntryOfCatalog, IGapOfVariant, readCatalog, variantGaps } from './catalog.js';
 import { ICompanion, pathOf, planCompanion } from './companion.js';
-import { IConfig, OVERRIDES_DIR } from './config.js';
+import { IConfig, KINDS, OVERRIDES_DIR, TKind } from './config.js';
 import {
     bindDispatch,
     bindingsOf as declaredIn,
@@ -22,9 +22,10 @@ import {
     IMatcherDrift,
     unboundHooks,
 } from './hooks-map.js';
+import { byText } from './order.js';
 import { IPlanned, isPending, isRefusal, planFile } from './plan.js';
 import { RETIRED } from './retired.js';
-import { ISection, mergeDocuments, parseDocument, renderDocument } from './sections.js';
+import { mergeDocuments, parseDocument, renderDocument } from './sections.js';
 import { readStamped } from './stamp.js';
 import { IRenderResult, renderVars } from './vars.js';
 import { matchesVariant } from './variants.js';
@@ -101,6 +102,16 @@ export interface ISyncResult {
     readonly namedCut: readonly ICascadeCut[];
     /** Файлы ресурсов, которых в наборе больше нет: их убирает дерево, пакет только называет. */
     readonly retired: readonly IRetiredFound[];
+    /**
+     * Надстройки, не подобранные ни к одному ресурсу пакета.
+     *
+     * Подбор идёт по идентификатору ресурса целиком, вместе с приставкой свойства: надстройка,
+     * чьё имя приставку потеряло или носит чужую, не привязывается ни к чему, и раскладка
+     * молча кладёт пакетный текст. Сверка этого не видит и видеть не может — она сравнивает
+     * разложенное с тем, что собирает сама, а неподобранное в сборку не берёт: обе стороны
+     * сходятся, и молчание читается как «всё применено».
+     */
+    readonly strayOverrides: readonly string[];
     readonly written: readonly string[];
     /**
      * Что запись объявления сделала с настройкой агента. `null` — раскладки не было: планирование
@@ -120,47 +131,22 @@ const read: (path: string) => string | null = (path: string): string | null => (
  * Порядок именно такой. Надстройка тоже пишется с дырками — иначе проект, дописавший раздел про
  * свою главную ветку, зашил бы её имя в двух местах: в конфиге и в тексте.
  */
-function renderAsset(asset: IAsset, config: IConfig, root: string): IRenderResult {
-    const override: string | null = read(join(root, OVERRIDES_DIR, asset.id));
-    const merged: string = override ? renderDocument(mergeDocuments(parseDocument(asset.text), parseDocument(override))) : asset.text;
-
-    return renderVars(merged, config.vars);
-}
-
-/** Раздел ресурса, который надстройка дерева замещает своей редакцией. */
-export interface IShadowedSection {
-    /** Идентификатор ресурса, чей раздел замещён. */
-    readonly id: string;
-    /** Строка заголовка целиком, вместе с решётками. */
-    readonly heading: string;
-}
-
 /**
- * Разделы, которые надстройки замещают у пакета.
+ * Текст ресурса с наложенной надстройкой дерева — то, что ложится в дерево, без подстановки
+ * значений.
  *
- * Слияние идёт по заголовку, и совпавший заголовок замещает раздел целиком: всё, что пакет
- * дописал в такой раздел новой редакцией, до дерева не доезжает, а раскладка при этом сходится —
- * она сравнивает разложенное с тем, что собрала сама. Читаются эти строки после подъёма версии:
- * они называют места, где пакетного текста дерево не увидит.
+ * Экспортируется потому, что о разложенном тексте спрашивает не одна раскладка: счёт долга
+ * привязок судит статьи компаньона против правила, и судить их по пакетной редакции значит
+ * называть долгом статьи, которых в разложенном правиле нет вовсе.
  */
-export function shadowedSections(config: IConfig, root: string, assetsDir: string): readonly IShadowedSection[] {
-    const found: IShadowedSection[] = [];
+export function mergedBody(asset: IAsset, root: string): string {
+    const override: string | null = read(join(root, OVERRIDES_DIR, asset.id));
 
-    for (const asset of collectAssets(config, assetsDir)) {
-        const override: string | null = read(join(root, OVERRIDES_DIR, asset.id));
-        if (!override) {
-            continue;
-        }
+    return override ? renderDocument(mergeDocuments(parseDocument(asset.text), parseDocument(override))) : asset.text;
+}
 
-        const theirs: ReadonlySet<string> = new Set(parseDocument(asset.text).sections.map((section: ISection): string => section.heading));
-        for (const section of parseDocument(override).sections) {
-            if (theirs.has(section.heading)) {
-                found.push({ id: asset.id, heading: section.heading });
-            }
-        }
-    }
-
-    return found;
+function renderAsset(asset: IAsset, config: IConfig, root: string): IRenderResult {
+    return renderVars(mergedBody(asset, root), config.vars);
 }
 
 /** Разложенный раньше файл ресурса, снятого теперь каскадом, и причина, по которой он снят. */
@@ -261,6 +247,44 @@ function bindingsOf(config: IConfig, assetsDir: string): readonly IHookBinding[]
     return bindings;
 }
 
+/**
+ * Надстройки, которым в пакете ничего не отвечает.
+ *
+ * Ищутся по всему каталогу надстроек, а не по выбранным ресурсам: надстройка над ресурсом,
+ * от которого дерево отказалось, названа своей строкой отказа, а эта — про имя, которого у
+ * пакета нет вовсе.
+ */
+function strayOverrides(root: string, assetsDir: string): string[] {
+    const dir: string = join(root, OVERRIDES_DIR);
+    if (!existsSync(dir)) {
+        return [];
+    }
+
+    const known: ReadonlySet<string> = new Set(readCatalog(assetsDir).map((entry: IEntryOfCatalog): string => entry.id));
+    const found: string[] = [];
+
+    const walk: (at: string) => void = (at: string): void => {
+        for (const entry of readdirSync(at, { withFileTypes: true })) {
+            const path: string = join(at, entry.name);
+            if (entry.isDirectory()) {
+                walk(path);
+                continue;
+            }
+            const id: string = relative(dir, path);
+            // Файл вне рода ресурсов надстройкой не считается вовсе: рядом с ней законно лежит
+            // README каталога, и звать его неприменённым значило бы шуметь на каждой раскладке.
+            const kind: string = id.split('/')[0];
+            if (KINDS.includes(kind as TKind) && !known.has(id)) {
+                found.push(id);
+            }
+        }
+    };
+
+    walk(dir);
+
+    return found.sort(byText);
+}
+
 export function planSync(config: IConfig, root: string, version: string, assetsDir: string): ISyncResult {
     const planned: IPlanned[] = [];
     const missing: Map<string, readonly string[]> = new Map();
@@ -296,6 +320,7 @@ export function planSync(config: IConfig, root: string, version: string, assetsD
         cutOnDisk: left.cut,
         namedCut: namedButCut(readCatalog(assetsDir), config),
         retired: retiredOf(config, root),
+        strayOverrides: strayOverrides(root, assetsDir),
         written: [],
         bound: null,
     };
