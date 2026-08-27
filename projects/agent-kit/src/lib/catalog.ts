@@ -9,6 +9,7 @@ import { accessSync, constants, Dirent, readdirSync, readFileSync } from 'node:f
 import { join } from 'node:path';
 
 import { KINDS, TKind } from './config.js';
+import { linesOutsideFences } from './sections.js';
 import { answersRequirement, requirementOf, withoutRequirement } from './traits.js';
 import { IAxis, IVariant, matchesVariant, readAxes, variantOf, withoutVariant } from './variants.js';
 
@@ -103,35 +104,12 @@ export function frontMatterOf(text: string): IFrontMatter {
 const REQUIRES: RegExp = /^(?:#[^\S\n]*Требует:|\*\*Требует:\*\*)([^\n]*)$/m;
 
 /**
- * Текст без огороженных примеров. Строка требования, стоящая внутри примера, требованием не
- * является: паттерн, показывающий её образец, объявлял бы требование на `<гард>.sh` — имя,
- * которого в пакете нет и быть не может. Та же граница у разбора разделов надстройки, и по той
- * же причине.
- */
-function outsideFences(text: string): string {
-    let fenced: boolean = false;
-
-    return text
-        .split('\n')
-        .map((line: string): string => {
-            if (/^\s*(```|~~~)/.test(line)) {
-                fenced = !fenced;
-
-                return '';
-            }
-
-            return fenced ? '' : line;
-        })
-        .join('\n');
-}
-
-/**
  * Что ресурс о себе объявил. Имена читаются идентификаторами — `hooks/observe.sh`: короткая
  * форма совпала бы у закона и правила с одним именем, а требование, указавшее не туда, хуже
  * ненайденного.
  */
 export function requiresOf(text: string): readonly string[] {
-    const found: RegExpExecArray | null = REQUIRES.exec(outsideFences(text));
+    const found: RegExpExecArray | null = REQUIRES.exec(linesOutsideFences(text).join('\n'));
     if (!found) {
         return [];
     }
