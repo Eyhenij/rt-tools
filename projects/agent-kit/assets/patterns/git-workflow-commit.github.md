@@ -115,7 +115,7 @@ $GH api graphql -f query='mutation { deleteIssue(input: {issueId: "<node-id>"})
 составная команда отклоняется целиком — ветки в ней ещё нет:
 
 ```bash
-✗ git checkout -b <КЛЮЧ>-85-guest-token && git commit -m 'feat(admin): …'
+✗ git checkout -b <КЛЮЧ>-85-guest-token && git commit -m 'feat(<область>): …'
 ✓ git checkout -b <КЛЮЧ>-85-guest-token
 ✓ git commit -F -
 ```
@@ -166,8 +166,8 @@ GIT_COMMITTER_NAME="<бот>" GIT_COMMITTER_EMAIL="<номер>+<бот>@users.n
 конце заголовка не принимается, длина — до 150 знаков.
 
 ```
-feat(site): availability calendar with season prices
-fix(api): reject overlapping booking dates
+feat(<область>): availability calendar with season prices
+fix(<область>): reject overlapping booking dates
 chore(deploy): docker-compose for vps
 ```
 
