@@ -39,7 +39,9 @@
 - **Голое имя и каталог судятся наравне с полным путём.** — `tools/check-doc-paths.mjs:existsInTree`; дерево берётся у git — `tools/check-doc-paths.mjs:treeOfRepo`
 - **Описание прошлого из проверки путей выведено целиком.** — `tools/check-doc-paths.mjs:isSkipped` — `docs/archive/` и папки задач под `docs/tasks/`
 - **Переносимый текст из сверки адресов выведен, как архив.** — `tools/check-doc-paths.mjs:isPortable`; исходники — `portableDirs` в `.claude/rt-kit/checks.json`, здесь это `projects/agent-kit/assets`
+- **Указатель заводится каталогу, который читают по нему, а не обходом.** — `.claude/rt-kit/checks.json:indexedDirs` — здесь список пуст и перебивает умолчание пакета: у описания прошлого указателя нет, записи ищут именем файла.
 - **Указатель каталога сверяется с его содержимым обеими сторонами.** — `tools/check-doc-paths.mjs:checkIndex`; какие каталоги сверяются — `indexedDirs` в `tools/rt-kit-checks.config.mjs`, здесь это архив
+- **Запись указателя называется именем файла в обратных кавычках.** — `tools/check-doc-paths.mjs:PATH_IN_BACKTICKS` — из строки таблицы берётся первое имя в кавычках с расширением `.md`; во второй колонке стоит проза, и брать оттуда нечего.
 - **Имя, названное затем, чтобы сказать «его нет», стоит в списке исключений поимённо.** — `tools/check-doc-paths.mjs:parseAllowlist`; сам список — `tools/doc-paths-allowlist.json`: имена правил линтера, куски кода, имена веток, порождённое сборкой
 - **Документ едет в том же коммите, что и правка, которую он описывает.** — `.claude/rt-kit/project.sh:rt_docs_pair_for` — пары этого дерева; сторожит их `.claude/hooks/docs-guard.sh`, обход — строка `Docs-skip:` с причиной.
 - **Документ не длиннее предела длины.** — `tools/check-file-size.mjs:LIMIT` — предел общий с кодом и стилями; описание прошлого и папки задач из счёта выведены.

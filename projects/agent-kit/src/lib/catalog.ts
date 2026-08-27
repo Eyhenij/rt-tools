@@ -9,6 +9,7 @@ import { accessSync, constants, Dirent, readdirSync, readFileSync } from 'node:f
 import { join } from 'node:path';
 
 import { KINDS, TKind } from './config.js';
+import { linesOutsideFences } from './sections.js';
 import { answersRequirement, requirementOf, withoutRequirement } from './traits.js';
 import { IAxis, IVariant, matchesVariant, readAxes, variantOf, withoutVariant } from './variants.js';
 
@@ -108,7 +109,7 @@ const REQUIRES: RegExp = /^(?:#[^\S\n]*Требует:|\*\*Требует:\*\*)(
  * ненайденного.
  */
 export function requiresOf(text: string): readonly string[] {
-    const found: RegExpExecArray | null = REQUIRES.exec(text);
+    const found: RegExpExecArray | null = REQUIRES.exec(linesOutsideFences(text).join('\n'));
     if (!found) {
         return [];
     }
