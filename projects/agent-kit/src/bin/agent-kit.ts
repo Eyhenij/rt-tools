@@ -96,17 +96,42 @@ function environmentOf(root: string): IEnvironment {
     };
 }
 
-/** Чем это дерево себя выдаёт снаружи. Нет удалённого репозитория — нечем, и это не отказ. */
-function remoteOf(root: string): string {
+/** Вывод git в этом дереве. Отказ и пустота здесь одно и то же: адреса нет — и это не отказ. */
+function gitSays(root: string, args: readonly string[]): string {
     try {
         // eslint-disable-next-line sonarjs/no-os-command-from-path -- путь к git у каждой машины свой, и прибитый здесь сделал бы пакет непереносимым
-        return execFileSync('git', ['-C', root, 'remote', 'get-url', 'origin'], {
-            encoding: 'utf8',
-            stdio: ['ignore', 'pipe', 'ignore'],
-        }).trim();
+        return execFileSync('git', ['-C', root, ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
     } catch {
         return '';
     }
+}
+
+/** Имена удалённых репозиториев этого дерева, по одному в строке. */
+function remoteNames(root: string): readonly string[] {
+    return gitSays(root, ['remote'])
+        .split('\n')
+        .map((name: string): string => name.trim())
+        .filter(Boolean);
+}
+
+/**
+ * Чем это дерево себя выдаёт снаружи. Нет удалённого репозитория — нечем, и это не отказ.
+ *
+ * Имя `origin` — соглашение, а не устройство: рабочая копия, назвавшая свои remotes по хостам,
+ * на которые смотрит, оставалась без адреса вовсе, и отправка отказывала словами «удалённого
+ * репозитория нет» — при том что репозиторий у неё есть, и не один. Порядок поэтому такой:
+ * `origin`, если он есть; ровно один remote — он; несколько без `origin` — адреса нет, и выбор
+ * за человеком. Угадать здесь нельзя: угаданное неверно сливает в сводке приёма два дерева в
+ * одно, а увидеть это нечем.
+ */
+function remoteOf(root: string): string {
+    const names: readonly string[] = remoteNames(root);
+
+    if (names.includes('origin')) {
+        return gitSays(root, ['remote', 'get-url', 'origin']);
+    }
+
+    return names.length === 1 ? gitSays(root, ['remote', 'get-url', names[0]]) : '';
 }
 
 function optionOf(argv: readonly string[], name: string, fallback: string): string {
@@ -295,6 +320,9 @@ async function runPropose(env: IEnvironment, argv: readonly string[]): Promise<I
         dryRun: argv.includes('--dry-run'),
         ship: httpShip,
         remote: remoteOf(env.root),
+        // Имена доезжают до отказа: выбор за человеком, и отказ, не назвавший, из чего выбирать,
+        // отправляет его смотреть то же самое своими руками.
+        remotes: remoteNames(env.root),
         // Отрезок тот же, что у сводки по умолчанию: отправку зовут по свежей задаче.
         days: DEFAULT_DAYS,
         today: new Date().toISOString().slice(0, 10),
