@@ -147,6 +147,32 @@ expect_stop "дерево без текстов требования не пол
     "$(input_stop "$(transcript "$(say 'почини панель')" "$(reply 'Панель починить или переписать?')")")" PASS
 rm -f "$TREE/.claude/rt-kit/project.sh"
 
+# SC-AK-735 — половина гарда на инструменте вопроса судит тем же телом
+# Объявлена она своим ресурсом: у дерева на инструменте вопроса может стоять свой гард, и
+# половины отменяются порознь. Судить при этом обе половины обязаны одинаково — расходиться двум
+# редакциям одного требования нельзя.
+ask_via_thin() {
+    local label="$1" json="$2" want="$3" out got
+    out="$(printf '%s' "$json" | "$HOOKS/grill-gate-ask.sh" 2>/dev/null)"
+    if [ -z "$out" ]; then
+        got="PASS"
+    else
+        got="$(printf '%s' "$out" | jq -r 'if .hookSpecificOutput.permissionDecision == "deny" then "DENY" else "PASS" end' 2>/dev/null)"
+    fi
+    report "$label" "$got" "$want"
+}
+ask_via_thin "SC-AK-735 — вопрос без чтения отбит и через свой ресурс" \
+    "$(input_ask "$(transcript "$(say 'почини панель')")")" DENY
+ask_via_thin "SC-AK-735 — прочитанное правило вопрос пропускает" \
+    "$(input_ask "$(transcript "$(say 'почини панель')" "$(uses Skill '{"skill":"task-flow"}')")")" PASS
+
+# Тело потеряно — половина пропускает: гард, лишившийся тела, разговор не клинит.
+THIN="$(mktemp -d)"
+cp "$HOOKS/grill-gate-ask.sh" "$HOOKS/utf8.sh" "$HOOKS/hook-input.sh" "$THIN/"
+out="$(printf '%s' "$(input_ask "$(transcript "$(say 'почини панель')")")" | "$THIN/grill-gate-ask.sh" 2>/dev/null)"
+report "SC-AK-735 — половина без тела пропускает" "$out" ''
+rm -rf "$THIN"
+
 # --- текст отказа -------------------------------------------------------------------------
 out="$(input_stop "$(transcript "$(say 'почини панель')" "$(reply 'Панель починить или переписать?')")" | "$HOOKS/grill-gate.sh" 2>/dev/null)"
 if printf '%s' "$out" | jq -r '.reason // ""' | grep -q 'docs/constitution'; then got="есть"; else got="нет"; fi
