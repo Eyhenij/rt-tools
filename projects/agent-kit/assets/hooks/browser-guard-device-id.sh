@@ -17,13 +17,16 @@
 rt_hook_read
 input="$RT_HOOK_INPUT"
 
-device_id="$("${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/browser-device-id.sh" 2>/dev/null)"
+# Признак сессии помощнику передаётся: без него слово о ненастроенном дереве метится днём и
+# приходит один раз в сутки, а не один раз за заход.
+sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
+
+device_id="$("${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/browser-device-id.sh" "$sid")"
 [ -z "$device_id" ] && exit 0
 
 requested="$(printf '%s' "$input" | jq -r '.tool_input.deviceId // empty' 2>/dev/null)"
 
 if [ "$requested" = "$device_id" ]; then
-    sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
     marker_dir="${TMPDIR:-/tmp}/claude-browser-guard"
     mkdir -p "$marker_dir" 2>/dev/null && : >"$marker_dir/${sid}" 2>/dev/null
     exit 0

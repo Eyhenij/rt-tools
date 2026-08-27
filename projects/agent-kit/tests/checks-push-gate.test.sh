@@ -70,6 +70,32 @@ report "SC-AK-117 — строка в наборе принята" "$(gate_code)
 gate_config '{"pushGate":{"pipelineFile":".github/workflows/ci.yml","steps":{"Lint":"npm run lint","Build":"npm run build","Gone":"npm run gone"}}}'
 report "гейт: устаревшее объявление названо" "$(gate_says 'объявление «Gone» устарело')" 1
 
+# --- SC-AK-707…709 — живость задачи, названной причиной исключения ---------------------------
+#
+# Причина, называющая задачу сроком, читается как отсрочка с назначенным концом. Очередь работ
+# ищется разрешением модуля: дерева на другом хостинге у неё нет, и оно судится как прежде.
+gate_profile 'npm run lint
+    npm run build'
+gate_config '{"board":{"taskKey":"RT"},"pushGate":{"pipelineFile":".github/workflows/ci.yml","steps":{"Lint":"npm run lint","Build":{"skip":"до RT-663"}}}}'
+
+# SC-AK-709 — очереди работ у дерева нет: проверка судит как прежде
+report "SC-AK-709 — без очереди работ проверка молчит" "$(gate_code)" 0
+
+# Подставная очередь: живой номер один, остальные не заведены.
+printf '%s\n' 'export function taskState(number) {' '    return { exists: number === 663 };' '}' > "$GATE_TREE/tools/board.mjs"
+
+# SC-AK-707 — живой номер отсрочку не отбивает
+report "SC-AK-707 — живая задача в причине проходит" "$(gate_code)" 0
+
+# SC-AK-708 — мёртвый номер делает отсрочку бессрочной
+gate_config '{"board":{"taskKey":"RT"},"pushGate":{"pipelineFile":".github/workflows/ci.yml","steps":{"Lint":"npm run lint","Build":{"skip":"до RT-664"}}}}'
+report "SC-AK-708 — мёртвая задача в причине отбита" "$(gate_code)" 1
+report "SC-AK-708 — отказ называет номер" "$(gate_says 'отложен до задачи RT-664')" 1
+
+# Отказ очереди работ проверку не роняет: гоняют её и без сети.
+printf '%s\n' 'export function taskState() {' "    throw new Error('нет сети');" '}' > "$GATE_TREE/tools/board.mjs"
+report "SC-AK-709 — отказ очереди работ проверку не роняет" "$(gate_code)" 0
+
 rm -rf "$GATE_TREE"
 
 # --- SC-AK-198 — очередь работ обходится без токена машинной записи -----------------------
