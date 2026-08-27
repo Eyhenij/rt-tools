@@ -221,6 +221,20 @@ describe('requiresOf', () => {
     it('ресурс без строки ничего не требует', () => {
         expect(requiresOf('# Правило\n\nтекст\n')).toEqual([]);
     });
+
+    it('SC-AK-714 — строка требования внутри примера требованием не является', () => {
+        // Паттерн, показывающий образец такой строки, объявлял бы требование на `<гард>.sh` —
+        // имя, которого в пакете нет и быть не может.
+        const pattern: string = '# Паттерн\n\n```markdown\n**Требует:** `hooks/<гард>.sh`\n```\n';
+
+        expect(requiresOf(pattern)).toEqual([]);
+    });
+
+    it('SC-AK-714 — настоящая строка читается и при наличии примера ниже', () => {
+        const both: string = '# Правило\n\n**Требует:** `hooks/a.sh`\n\n```markdown\n**Требует:** `hooks/<гард>.sh`\n```\n';
+
+        expect(requiresOf(both)).toEqual(['hooks/a.sh']);
+    });
 });
 
 describe('brokenLinks', () => {
