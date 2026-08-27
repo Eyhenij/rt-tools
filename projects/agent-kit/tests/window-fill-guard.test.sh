@@ -126,6 +126,14 @@ CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=45 \
 CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=50 \
     expect_hint_text "сжатие вровень с остановкой — прежний текст" "$(input_window "$WARN" PostToolUse c6)" 'выбирать точку остановки'
 
+# SC-AK-728 — отказ называет форму вызова, а не только требование
+# Список разрешённых команд стоит в профиле дерева, а вызов судится по началу строки: требование
+# без формы разбирается перебором, и перебор стоит хода за попытку.
+expect_reason "отказ называет команды, которые проходят" window-fill-guard.sh \
+    "$(input_window "$STOP" PreToolUse s5 Edit "$CODE")" 'git'
+expect_reason "отказ говорит, что судит по началу строки" window-fill-guard.sh \
+    "$(input_window "$STOP" PreToolUse s5 Edit "$CODE")" 'вход в каталог'
+
 # --- отказ в пользу работы -----------------------------------------------------------------
 # SC-AK-40 — дерево без размера окна стража не получает
 RT_WINDOW_TOKENS='' expect_window "размер окна не задан" "$(input_window "$STOP" PreToolUse s4 Edit "$CODE")" PASS
