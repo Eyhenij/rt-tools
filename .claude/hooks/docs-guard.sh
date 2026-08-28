@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# rt-kit v0.17.0 · hooks/docs-guard.sh · ee22546cf983 · правится надстройкой, не здесь
-# rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
+# rt-kit v0.17.0 · hooks/docs-guard.sh · e65956d05b16 · правится надстройкой, не здесь
+# rt-hook: PreToolUse Edit|Write|MultiEdit|NotebookEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # Гард пары «правка и её документ». PreToolUse.
 #

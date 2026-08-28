@@ -105,8 +105,9 @@ rm -rf "$GATE_TREE"
 # на требовании токена и до хостинга не доходил вовсе.
 BOARD_TREE="$(mktemp -d)"
 mkdir -p "$BOARD_TREE/tools" "$BOARD_TREE/.claude/rt-kit" "$BOARD_TREE/bin"
-cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/board.github.mjs" "$BOARD_TREE/tools/"
+cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/board.github.mjs" "$CHECKS/board-gh.github.mjs" "$BOARD_TREE/tools/"
 mv "$BOARD_TREE/tools/board.github.mjs" "$BOARD_TREE/tools/board.mjs"
+mv "$BOARD_TREE/tools/board-gh.github.mjs" "$BOARD_TREE/tools/board-gh.mjs"
 
 printf '%s\n' '#!/usr/bin/env bash' \
     'if [ -n "${GH_TOKEN:-}" ]; then echo "свой" > "$GH_SEEN"; else echo "залогиненный" > "$GH_SEEN"; fi' \
