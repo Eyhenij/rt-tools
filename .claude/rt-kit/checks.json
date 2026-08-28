@@ -68,6 +68,7 @@
                 "skip": "уборка за раннером, а не проверка: на своей машине снимать нечего — образы и кэш нужны следующей сборке"
             },
             "Hook scenarios": "node tools/check-hooks.mjs",
+            "Profile drift": "node tools/check-profile-drift.mjs",
             "Package boundary": "node tools/check-boundary.mjs",
             "Rule descriptions": "node tools/check-descriptions.mjs",
             "Circular imports": "node tools/check-cycles.mjs",
