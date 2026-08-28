@@ -44,7 +44,14 @@ server.listen(0, '127.0.0.1', () => {
     local port
     port="$(wait_for_port "$BODY_PORT")" || { echo "двойник приёма не поднялся"; return 1; }
     (cd "$TREE_ROOT" && RT_INTAKE="http://127.0.0.1:$port" node "$MARK" "$@" >/dev/null 2>&1)
-    sleep 1
+    # Тело ждётся признаком, а не отсчётом: под нагрузкой секунды не хватает, и четыре проверки
+    # набора краснели там, где ни отметка, ни двойник не при чём. Двойник печатает тело и сразу
+    # закрывается — непустой файл вывода и означает, что печатать он уже кончил.
+    local left=50
+    while [ "$left" -gt 0 ] && [ ! -s "$BODY_SEEN" ]; do
+        sleep 0.1
+        left=$((left - 1))
+    done
     kill "$pid" 2>/dev/null
     grep -cE "$MARK_PATTERN" "$BODY_SEEN"
 }

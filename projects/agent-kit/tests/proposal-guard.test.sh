@@ -9,7 +9,15 @@
 echo "гард предложения"
 
 TURNS="$(mktemp -d)"
-cleanup() { rm -rf "$TURNS"; }
+
+# Дерево фикстуры: гард судит только там, где каталог предложений есть на диске, — а рабочий
+# каталог прогона у наборов свой, и в нём этого каталога не бывает. Без своего дерева набор
+# зеленел бы на пропуске: сценарии, ждущие отказа, проходили бы мимо гарда целиком.
+TREE="$(mktemp -d)"
+mkdir -p "$TREE/.claude/rt-kit/proposals"
+export CLAUDE_PROJECT_DIR="$TREE"
+
+cleanup() { rm -rf "$TURNS" "$TREE"; }
 trap cleanup EXIT
 
 transcript() {
@@ -68,15 +76,33 @@ expect_command() {
 }
 
 with_bin="$(mktemp -d)"
-mkdir -p "$with_bin/node_modules/.bin"
+mkdir -p "$with_bin/node_modules/.bin" "$with_bin/.claude/rt-kit/proposals"
 printf '#!/bin/sh\n' >"$with_bin/node_modules/.bin/agent-kit"
 chmod +x "$with_bin/node_modules/.bin/agent-kit"
 expect_command "SC-AK-674 — пакет зависимостью: зовётся бинарь" "$with_bin" "npx agent-kit propose"
 
 with_built="$(mktemp -d)"
-mkdir -p "$with_built/dist/agent-kit/bin"
+mkdir -p "$with_built/dist/agent-kit/bin" "$with_built/.claude/rt-kit/proposals"
 printf '' >"$with_built/dist/agent-kit/bin/agent-kit.js"
 expect_command "SC-AK-674 — пакет исходниками: зовётся собранный вход" "$with_built" "node dist/agent-kit/bin/agent-kit.js propose"
+
+# --- SC-AK-773 — просьба ловится и латиницей, а дерево без каталога не судится ----------------
+# Заход, который владелец ведёт по-английски, отличается от русского словами, а требование в нём
+# то же.
+expect_stop "SC-AK-773 — «send a proposal» — та же просьба" \
+    "$(input_stop "$(transcript "$(say 'send a proposal to the rule layer about this guard')" "$(reply 'Wrote the file.')")")" BLOCK
+expect_stop "SC-AK-773 — отправка тем же ходом снимает и её" \
+    "$(input_stop "$(transcript "$(say 'file a proposal upstream')" "$(ran 'npx agent-kit propose')")")" PASS
+# Слово без соседа о слое правил не считается и на латинице.
+expect_stop "SC-AK-773 — proposal не о слое правил не судится" \
+    "$(input_stop "$(transcript "$(say 'write a proposal section in the PR body')" "$(reply 'Added.')")")" PASS
+
+# Каталога предложений нет на диске — дерево механизмом не пользуется, и стража ему не навязывают.
+no_dir="$(mktemp -d)"
+out="$(printf '%s' "$(input_stop "$(transcript "$(say 'отправь пропозал')" "$(reply 'Написал файл.')")")" \
+    | CLAUDE_PROJECT_DIR="$no_dir" "$HOOKS/proposal-guard.sh" 2>/dev/null)"
+report "SC-AK-773 — дерево без каталога предложений не судится" "${out:-PASS}" PASS
+rm -rf "$no_dir"
 
 # --- SC-AK-201 — работа над уже приехавшими предложениями требования не получает ---------------
 # Слово о предложении без глагола отправки — это разбор, а не просьба отправить.

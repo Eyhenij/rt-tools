@@ -14,6 +14,7 @@ BOARD_TREE="$(mktemp -d)"
 mkdir -p "$BOARD_TREE/tools" "$BOARD_TREE/.claude/rt-kit" "$BOARD_TREE/docs/tasks" "$BOARD_TREE/.github/workflows"
 cp "$CHECKS/rt-kit-checks.config.mjs" "$BOARD_TREE/tools/"
 cp "$CHECKS/board.github.mjs" "$BOARD_TREE/tools/board.mjs"
+cp "$CHECKS/board-gh.github.mjs" "$BOARD_TREE/tools/board-gh.mjs"
 cp "$CHECKS/board-runs.github.mjs" "$BOARD_TREE/tools/board-runs.mjs"
 cp "$CHECKS/board-paths.github.mjs" "$BOARD_TREE/tools/board-paths.mjs"
 cp "$CHECKS/board-titles.github.mjs" "$BOARD_TREE/tools/board-titles.mjs"
@@ -369,6 +370,7 @@ report "SC-AK-752 — пустой ответ судится как ноль" "$
 export STUB_PULL_BEHIND=0
 
 
+
 rm -rf "$BOARD_TREE"
 
 # --- SC-AK-377…346 — состояние заявки: разбор у неё есть или нет ------------------------------
@@ -385,6 +387,7 @@ pull_tree() {
     mkdir -p "$dir/tools" "$dir/.claude/rt-kit"
     cp "$CHECKS/rt-kit-checks.config.mjs" "$dir/tools/"
     cp "$CHECKS/board.github.mjs" "$dir/tools/board.mjs"
+    cp "$CHECKS/board-gh.github.mjs" "$dir/tools/board-gh.mjs"
     printf '%s\n' '{"board":{"owner":"probe","repo":"tree","taskKey":"RT","tokenPath":""}}' \
         > "$dir/.claude/rt-kit/checks.json"
     # Помощник хостинга: отдаёт то, что положил сценарий, а с непустой жалобой — отказывает.

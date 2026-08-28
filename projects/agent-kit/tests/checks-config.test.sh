@@ -55,6 +55,7 @@ report "вложенное: сам объект не пропал" "$(value_of b
 # борды отдельно от запросов к ней.
 printf '{"board":{"taskKey":"RT"},"tasksDir":"docs/tasks"}\n' > "$TREE/.claude/rt-kit/checks.json"
 cp "$CHECKS/board.github.mjs" "$TREE/tools/board.mjs"
+cp "$CHECKS/board-gh.github.mjs" "$TREE/tools/board-gh.mjs"
 mkdir -p "$TREE/docs/tasks/RT-40-plain" "$TREE/docs/tasks/chore/41-nested" \
     "$TREE/docs/tasks/_template" "$TREE/docs/tasks/_draft-idea" "$TREE/docs/tasks/archive/2026"
 
@@ -95,6 +96,7 @@ rm -rf "$TREE/docs" "$TREE/tools/board.mjs"
 # кончиться, вынесено из вызовов сети — иначе оно проверяется только живой бордой.
 printf '{"board":{"taskKey":"RT"}}\n' > "$TREE/.claude/rt-kit/checks.json"
 cp "$CHECKS/board.github.mjs" "$TREE/tools/board.mjs"
+cp "$CHECKS/board-gh.github.mjs" "$TREE/tools/board-gh.mjs"
 
 answer_for() {
     node --input-type=module -e "

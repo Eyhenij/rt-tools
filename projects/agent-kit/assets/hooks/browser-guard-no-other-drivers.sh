@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-hook: PreToolUse mcp__playwright__.*|mcp__chrome-devtools__.*|Bash
+# rt-hook: PreToolUse mcp__playwright__.*|mcp__chrome-devtools__.*|Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/deny-tail.sh
 # Гард обходных путей к браузеру. PreToolUse.
 #
