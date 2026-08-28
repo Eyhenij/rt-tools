@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { CargoCloseController } from './cargo-close.controller';
 import { CargoStateController } from './cargo-state.controller';
 import { CargoVersionsController } from './cargo-versions.controller';
 
@@ -12,8 +13,13 @@ import { CargoVersionsController } from './cargo-versions.controller';
  *
  * Тем же приёмом здесь стоит чтение встретившихся версий выпуска: род груза оно принимает
  * параметром, и оба рода ему нужны разом.
+ *
+ * Операций правки состояния две, и они не заменяют друг друга: свою запись двигает приславшее её
+ * дерево токеном, а закрывает — издатель редакции под входом человека. Стоят рядом потому, что
+ * правят одну колонку и делят разбор пакета: разъехавшись по доменам, они разошлись бы и в том,
+ * что считают годной строкой.
  */
 @Module({
-    controllers: [CargoStateController, CargoVersionsController],
+    controllers: [CargoStateController, CargoCloseController, CargoVersionsController],
 })
 export class CargoStateModule {}

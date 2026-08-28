@@ -32,6 +32,7 @@ export class PostmortemShortMapper extends BaseMapper<IPostmortem.Short.State> {
             state: cargoState,
             stateLabel: cargoStateLabel(cargoState),
             releaseVersion: this.typeCast.getAsString(data.releaseVersion),
+            closedByPublisher: this.typeCast.getAsBoolean(data.closedByPublisher),
             arrivedAt: new Date(this.typeCast.getAsString(data.arrivedAt)),
             updatedAt: new Date(this.typeCast.getAsString(data.updatedAt)),
         };

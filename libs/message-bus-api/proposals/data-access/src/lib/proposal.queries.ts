@@ -12,12 +12,15 @@ import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { proposalDigest } from '@rt/message-bus-api/proposals/util';
 import {
     CARGO_RELEASE_VERSION_FIELD,
+    cargoCloseData,
+    cargoCloseMove,
     cargoStateData,
     cargoStateMove,
     cargoStateOf,
     cargoStateWrites,
     ECargoState,
     ECargoStateMove,
+    ICargoCloseOutcome,
     ICargoPageAsked,
     ICargoStateAsk,
     ICargoStateOutcome,
@@ -53,6 +56,13 @@ export interface IProposalListRow {
     readonly state: ECargoState;
     /** В какой версии искать фикс. Пусто у записи, которую никто не выпускал: столбец её не заполняет. */
     readonly releaseVersion: string | null;
+    /**
+     * Закрыл ли запись издатель редакции, а не приславшее её дерево.
+     *
+     * Едет строкой списка, а не одной записью: своё предложение отправитель видит именно списком,
+     * и без этого поля выпущенная запись читается им как его собственная отметка.
+     */
+    readonly closedByPublisher: boolean;
     readonly arrivedAt: Date;
 }
 
@@ -130,6 +140,7 @@ interface IProposalStored {
     address: string;
     state: string;
     releaseVersion: string | null;
+    closedByPublisher: boolean;
     arrivedAt: Date;
     record: { tree: ITreeChoice };
 }
@@ -162,6 +173,7 @@ async function storedRows(
             address: true,
             state: true,
             releaseVersion: true,
+            closedByPublisher: true,
             arrivedAt: true,
             record: { select: { tree: { select: { slug: true, name: true } } } },
         },
@@ -182,6 +194,7 @@ function listRowOf(row: IProposalStored): IProposalListRow {
         address: row.address,
         state: cargoStateOf(row.state),
         releaseVersion: row.releaseVersion,
+        closedByPublisher: row.closedByPublisher,
         arrivedAt: row.arrivedAt,
     };
 }
@@ -274,6 +287,7 @@ export async function readProposal(prisma: PrismaService, id: string): Promise<I
         state: string;
         fixNote: string | null;
         releaseVersion: string | null;
+        closedByPublisher: boolean;
         arrivedAt: Date;
         record: { month: string; tree: ITreeChoice };
     } | null = await prisma.proposal.findUnique({
@@ -286,6 +300,7 @@ export async function readProposal(prisma: PrismaService, id: string): Promise<I
             state: true,
             fixNote: true,
             releaseVersion: true,
+            closedByPublisher: true,
             arrivedAt: true,
             record: { select: { month: true, tree: { select: { slug: true, name: true } } } },
         },
@@ -389,4 +404,58 @@ export async function moveProposalStates(
     }
 
     return judged.map((one: { outcome: ICargoStateOutcome }): ICargoStateOutcome => one.outcome);
+}
+
+/** Предложение, каким его видит закрытие: признак, состояние и дерево, приславшее запись. */
+interface IProposalForClose {
+    id: string;
+    state: string;
+    tree: { slug: string };
+}
+
+/**
+ * Закрыть предложения любых деревьев: перевести их в починенное либо выпущенное.
+ *
+ * Стоит рядом с правкой состояния деревом, а не вместо неё: у отправителя своё право на свою
+ * запись, и закрытие его не отменяет. Разного здесь два. Первое — запись ищется признаком из
+ * чтения, а не ключом отправителя: имя файла и признак текста уникальны у своего дерева, а не в
+ * приёме, и названный ключ нашёл бы у двух деревьев две записи. Второе — отбора по дереву нет
+ * вовсе: издатель видит весь груз, и своего дерева у него в этой операции не бывает.
+ *
+ * Порядок переходов свой — `cargoCloseMove`: издатель ставит только два последних шага, зато
+ * ходит через «в работе», которого у него не было.
+ */
+export async function closeProposals(prisma: PrismaService, asked: readonly ICargoStateAsk[]): Promise<ICargoCloseOutcome[]> {
+    if (asked.length === 0) {
+        return [];
+    }
+
+    const rows: IProposalForClose[] = await prisma.proposal.findMany({
+        where: { id: { in: asked.map((one: ICargoStateAsk): string => one.key) } },
+        select: { id: true, state: true, tree: { select: { slug: true } } },
+    });
+    const stored: Map<string, IProposalForClose> = new Map(
+        rows.map((row: IProposalForClose): [string, IProposalForClose] => [row.id, row])
+    );
+    const judged: { ask: ICargoStateAsk; outcome: ICargoCloseOutcome }[] = asked.map((ask: ICargoStateAsk) => {
+        const found: IProposalForClose | undefined = stored.get(ask.key);
+        const move: ECargoStateMove | null = found === undefined ? null : cargoCloseMove(cargoStateOf(found.state), ask.state);
+
+        return { ask, outcome: { key: ask.key, tree: found?.tree.slug ?? null, move } };
+    });
+    const written: ICargoStateAsk[] = judged
+        .filter((one: { ask: ICargoStateAsk; outcome: ICargoCloseOutcome }): boolean =>
+            cargoStateWrites(one.outcome.move, one.ask.fixNote, one.ask.releaseVersion)
+        )
+        .map((one: { ask: ICargoStateAsk }): ICargoStateAsk => one.ask);
+
+    if (written.length > 0) {
+        await prisma.$transaction(
+            written.map((ask: ICargoStateAsk) =>
+                prisma.proposal.update({ where: { id: ask.key }, data: cargoCloseData(ask), select: { id: true } })
+            )
+        );
+    }
+
+    return judged.map((one: { outcome: ICargoCloseOutcome }): ICargoCloseOutcome => one.outcome);
 }

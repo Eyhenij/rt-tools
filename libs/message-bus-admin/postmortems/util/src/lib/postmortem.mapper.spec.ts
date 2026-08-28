@@ -44,7 +44,17 @@ describe('PostmortemShortMapper', () => {
     it('поле, которого модель не называла, на экран не переезжает', () => {
         const row: IPostmortem.Short.State = mapper.mapFrom({ ...apiShort(), text: 'весь разбор' } as never);
 
-        expect(Object.keys(row).sort()).toEqual(['arrivedAt', 'file', 'id', 'releaseVersion', 'state', 'stateLabel', 'tree', 'updatedAt']);
+        expect(Object.keys(row).sort()).toEqual([
+            'arrivedAt',
+            'closedByPublisher',
+            'file',
+            'id',
+            'releaseVersion',
+            'state',
+            'stateLabel',
+            'tree',
+            'updatedAt',
+        ]);
     });
 
     it('SC-MB-237 — версия выпуска доезжает до строки списка как есть', () => {

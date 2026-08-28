@@ -85,6 +85,8 @@ export class AdminProposalsListComponent extends AdminListScreenBase<IProposal.S
     protected readonly columns: readonly IRtTable.ColumnConfig[] = PROPOSALS_COLUMNS;
     protected readonly tableId: string = PROPOSALS_TABLE_ID;
     protected readonly qaPrefix: string = 'proposals';
+    /** Приписка к состоянию: запись, закрытую не своим деревом, отправитель иначе читает как свою отметку. */
+    protected readonly closedByPublisherLabel: string = adminLabel('closedByPublisher');
     protected override readonly cargoKind: ECargoKind = ECargoKind.Proposal;
 
     protected readonly store: ProposalsStore = inject(ProposalsStore);
