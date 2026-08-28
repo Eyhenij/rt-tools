@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.17.0 · checks/board.github.mjs · 3d9de154f17e · правится надстройкой, не здесь
+// rt-kit v0.17.0 · checks/board.github.mjs · b761919d6ada · правится надстройкой, не здесь
 /**
  * Общая работа с очередью работ: борда проекта, тикеты и их состояние.
  *
@@ -243,8 +243,7 @@ export function pullState(ref, options) {
         author: pull.author?.login ?? null,
         reviewers,
         reviewed: reviewers.filter((login) => login !== (pull.author?.login ?? null)).length > 0,
-        // Конфликт приезжает в отданную заявку чужим слиянием, без единого действия её автора:
-        // хостинг считает сливаемость заново после каждой правки главной ветки. Судится только
+        // Конфликт приезжает чужим слиянием, без единого действия автора заявки. Судится только
         // прямое «конфликтует»: `UNKNOWN` означает, что хостинг ещё считает, и читать его как
         // конфликт значило бы отбивать работу на каждой свежей вершине.
         conflicting: pull.mergeable === 'CONFLICTING',
@@ -252,9 +251,30 @@ export function pullState(ref, options) {
 }
 
 /**
- * Вершина берётся вместе с остальным: спросить её потом значило бы второй вызов на каждый PR,
- * а судят по ней и папку задачи, и прогон.
+ * На сколько коммитов ветка заявки позади главной. Гард судит основание в минуту открытия, а
+ * заявка стоит днями: влитого за это время не видит ни он, ни зелёный прогон. Сравнить нечем —
+ * ноль: сверка без доступа отбивала бы работу вместо промаха; без сети летит отказ, как везде.
  */
+export function behindMain(branch, mainBranch, options) {
+    if (!OWNER || !REPO || !branch || !mainBranch) {
+        return 0;
+    }
+    try {
+        const behind = gh(
+            ['api', `repos/${OWNER}/${REPO}/compare/${encodeURIComponent(mainBranch)}...${encodeURIComponent(branch)}`, '--jq', '.behind_by'],
+            options
+        );
+        return Number(String(behind).trim()) || 0;
+    } catch (error) {
+        if (error instanceof OfflineError) {
+            throw error;
+        }
+        return 0;
+    }
+}
+
+/** Вершина берётся вместе с остальным: по ней судят и папку задачи, и прогон, а спросить её
+ * потом значило бы второй вызов на каждый PR. */
 export function fetchOpenPulls(options) {
     return ghJson(
         ['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,title,headRefName,headRefOid,isDraft,body,mergeable'],

@@ -286,11 +286,24 @@ CLAUDE_PROJECT_DIR="$WRONG_SIG" expect_reason "SC-AK-179 — отказ назы
 printf 'RT_COMMIT_EMAIL=""\n' > "$WRONG_SIG/.claude/rt-kit/project.sh"
 sig "SC-AK-183 — дерево, не назвавшее почты, требования не получает" "$WRONG_SIG" \
     'git push origin RT-70-signature' PASS
+printf 'RT_COMMIT_EMAIL="%s"\n' "$BOT_MAIL" > "$WRONG_SIG/.claude/rt-kit/project.sh"
+
+# SC-AK-753 — подпись судится и на коммите, а не только на отправке
+# Промах делается на коммите и до отправки успевает лечь в несколько коммитов подряд: каждый
+# следующий берёт адрес у предыдущего. Судится при этом вклад, уже лежащий в ветке, а не текст
+# команды: почта задаётся её переменными.
+sig "SC-AK-753 — коммит поверх испорченного вклада отбивается" "$WRONG_SIG" \
+    'git commit -m "feat: следующая правка"' deny
+sig "SC-AK-753 — переписывание последнего коммита судится так же" "$WRONG_SIG" \
+    'git commit --amend --no-edit' deny
+sig "SC-AK-753 — слово команды внутри строки коммитом не считается" "$WRONG_SIG" \
+    'echo "git commit -m x"' PASS
 rm -rf "$WRONG_SIG"
 
 RIGHT_SIG="$(sig_repo)"
 fixture_commit_as "$RIGHT_SIG" "$BOT_LOGIN" "$BOT_MAIL" src/probe.ts 'export const x = 1;' 'feat: правка'
 sig "SC-AK-180 — верная подпись пуш не задерживает" "$RIGHT_SIG" 'git push origin RT-70-signature' PASS
+sig "SC-AK-753 — верная подпись коммит не задерживает" "$RIGHT_SIG" 'git commit -m "feat: ещё"' PASS
 rm -rf "$RIGHT_SIG"
 
 # Коммит, назвавшийся человеком, гард не судит: чужая работа своими руками в том же дереве.
