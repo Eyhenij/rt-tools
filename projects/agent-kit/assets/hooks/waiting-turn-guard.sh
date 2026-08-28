@@ -98,12 +98,40 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r \
     | (($ran | test($read; "i")) and ($out | test($red; "i"))) as $red_run
     | ($ran | test($moved; "i")) as $went_on
     | ($ran | test($ready; "i")) as $checked
-    | if $opened_pr and ($went_on | not) then "owe:pr"
+    | if $opened_pr and ($went_on | not) and ($checked | not) then "owe:both"
+      elif $opened_pr and ($went_on | not) then "owe:pr"
       elif $opened_pr and ($checked | not) then "owe:draft"
       elif $went_on then "pass"
       elif $red_run then "owe:run"
       else "pass" end
 ' 2>/dev/null)"
+
+# Ни одного из двух действий: отказ называет оба разом. Прежде он называл только первое, и
+# снимался тоже первым — исполнитель брал следующую задачу, признак открытой заявки уходил
+# вместе с ходом, и второе требование испарялось, ни разу не прозвучав.
+if [ "$verdict" = "owe:both" ]; then
+    reason="BLOCKED by waiting-turn-guard: в этом ходе открыт PR, а по отданной работе не сделано ни одного из двух действий — ни состояние её не спрошено, ни следующая задача не взята.
+
+Действий именно два, и снять отказ одним нельзя: отданное доводится до снятого черновика тем, кто его отдал, а следующая берётся сверх этого, а не вместо. Взятая следующая уносит признак открытой заявки с собой — второе требование после неё не прозвучит уже никогда.
+
+    gh run list                                # состояние отданного
+    npm run task:new -- <заголовок>            # следующая работа
+
+Гард судит один ход: следующий заход не отбивается."
+
+    # shellcheck disable=SC1090
+    [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+        && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+    command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+    deny_tail_text="$(rt_deny_tail "")"
+    [ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
+
+    jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
+        || printf '{"decision":"block","reason":"waiting-turn-guard: по отданной работе не сделано ни одного из двух действий."}\n'
+    exit 0
+fi
 
 # Черновик, оставленный при взятой следующей задаче, — отдельный отказ: там требование не про
 # следующую задачу, а про доведение отданной.
