@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.17.0 · checks/board.github.mjs · e01444fce792 · правится надстройкой, не здесь
+// rt-kit v0.17.0 · checks/board.github.mjs · dc28baaaba52 · правится надстройкой, не здесь
 /**
  * Общая работа с очередью работ: борда проекта, тикеты и их состояние.
  *
@@ -244,6 +244,32 @@ export function pullState(ref, options) {
         // конфликт значило бы отбивать работу на каждой свежей вершине.
         conflicting: pull.mergeable === 'CONFLICTING',
     };
+}
+
+/**
+ * На сколько коммитов ветка заявки позади главной. Гард судит основание в минуту открытия, а
+ * заявка стоит днями: влитое за это время не видит ни он, ни зелёный прогон — задания шли от
+ * основания, которого в главной ветке уже нет.
+ *
+ * Сравнить нечем — ноль: сверка без доступа отбивала бы работу вместо промаха. Без сети наружу
+ * летит отказ, как и у остальных вызовов, — там молчание значило бы «сошлось».
+ */
+export function behindMain(branch, mainBranch, options) {
+    if (!OWNER || !REPO || !branch || !mainBranch) {
+        return 0;
+    }
+    try {
+        const behind = gh(
+            ['api', `repos/${OWNER}/${REPO}/compare/${encodeURIComponent(mainBranch)}...${encodeURIComponent(branch)}`, '--jq', '.behind_by'],
+            options
+        );
+        return Number(String(behind).trim()) || 0;
+    } catch (error) {
+        if (error instanceof OfflineError) {
+            throw error;
+        }
+        return 0;
+    }
 }
 
 /**

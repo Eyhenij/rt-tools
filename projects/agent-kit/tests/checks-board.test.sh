@@ -39,6 +39,9 @@ case "$args" in
     *actions/runs*tojson*) printf '%s\n' "${STUB_EVICTED:-[]}" ;;
     *actions/runs*per_page=20*) printf '%s\n' "$STUB_VERDICT" ;;
     *actions/runs*) printf '%s\n' "$STUB_RUNS" ;;
+    # Отставание ветки заявки и отставание прода спрашиваются одним видом вызова, а отвечают
+    # на разное: у первого читается «позади», у второго — «впереди». Различает их ключ выборки.
+    *compare/*behind_by*) printf '%s\n' "${STUB_PULL_BEHIND:-0}" ;;
     *compare/*) printf '%s\n' "$STUB_BEHIND" ;;
     */commits/*) printf '%s\n' "$STUB_HEAD_DATE" ;;
     *) printf 'неожиданный вызов: %s\n' "$args" >&2; exit 1 ;;
@@ -291,6 +294,24 @@ export STUB_BEHIND=476
 report "SC-AK-532 — без названного потока прод не сверяется" "$(board_code)" 0
 report "SC-AK-532 — и сказано, почему" "$(board_says 'рабочий поток выкатки в настройке дерева не назван')" 1
 
+# SC-AK-752 — отставание ветки открытой заявки от главной называется сверкой
+# Гард судит основание один раз, в минуту открытия, а заявка стоит днями: влитого за это время
+# не видит ни он, ни зелёный прогон на её вершине.
+board_config "$BOARD_CONFIG"
+export STUB_RUNS=1
+export STUB_VERDICT=success
+export STUB_HEAD_DATE="$(minutes_ago 60)"
+export STUB_PULL_BEHIND=4
+report "SC-AK-752 — отставание названо числом" "$(board_says 'отстала от «main» на 4 коммитов')" 1
+report "SC-AK-752 — расхождением это считается" "$(board_code)" 1
+export STUB_PULL_BEHIND=0
+report "SC-AK-752 — ветка вровень с главной молчит" "$(board_says 'отстала от «main»')" 0
+# Сравнить нечем — молчание: сверка без доступа отбивала бы работу вместо промаха.
+export STUB_PULL_BEHIND=""
+report "SC-AK-752 — пустой ответ судится как ноль" "$(board_says 'отстала от «main»')" 0
+export STUB_PULL_BEHIND=0
+
+
 rm -rf "$BOARD_TREE"
 
 # --- SC-AK-377…346 — состояние заявки: разбор у неё есть или нет ------------------------------
@@ -401,5 +422,6 @@ report "SC-AK-392 — по имени ветки заявка тоже нахо�
     "$(pull_state "$PULL_TREE" "$NUMBERED" '' 'RT-700-probe' | jq -r '.exists')" true
 
 rm -rf "$PULL_TREE"
+
 
 suite_result "сверка очереди работ"

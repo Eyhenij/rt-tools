@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.17.0 · checks/check-board.github.mjs · 20b545495042 · правится надстройкой, не здесь
+// rt-kit v0.17.0 · checks/check-board.github.mjs · 29d100ab0414 · правится надстройкой, не здесь
 /**
  * Сверка очереди работ с тем, что закон о поставке требует от задачи и её PR.
  *
@@ -43,6 +43,7 @@ import {
     fetchBoard,
     fetchIssues,
     fetchOpenPulls,
+    behindMain,
     gh,
     ghJson,
     numberFromTaskDir,
@@ -330,6 +331,17 @@ try {
         }
 
         checkConflicting(pull);
+
+        // Отставание заявки от главной ветки: гард судит основание один раз, в минуту открытия,
+        // а заявка стоит днями. Влитая с отставанием, она везёт в главную сочетание, которого не
+        // проверял никто, — и по странице заявки этого не видно: прогон на ней зелёный.
+        const behind = behindMain(pull.headRefName, MAIN_BRANCH, options);
+        if (behind > 0) {
+            report(
+                `PR #${pull.number}: ветка отстала от «${MAIN_BRANCH}» на ${behind} коммитов — прогон шёл от основания, ` +
+                    `которого в главной ветке уже нет. Влей главную, пересмотри набор проверок по тому, что ветка везёт теперь, и прогони заново`
+            );
+        }
 
         if (!FOLDER_SKIP.test(String(pull.body ?? '')) && pull.headRefName) {
             const folder = folderInBranch(pull.headRefName, options);
