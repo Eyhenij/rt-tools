@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.17.0 · checks/board.github.mjs · e01444fce792 · правится надстройкой, не здесь
+// rt-kit v0.17.0 · checks/board.github.mjs · 3d9de154f17e · правится надстройкой, не здесь
 /**
  * Общая работа с очередью работ: борда проекта, тикеты и их состояние.
  *
@@ -190,7 +190,12 @@ export function moveTask(number, status, options) {
 }
 
 export function fetchIssues(state, options) {
-    return ghJson(['issue', 'list', '--state', state, '--limit', '400', '--json', 'number,title,state,assignees,labels'], options);
+    // Тело берётся вместе со списком, а не поштучным вызовом на задачу: связь с эпиком читается
+    // как раз в нём, а четыреста вызовов вида «покажи одну задачу» стоили бы дороже всей сверки.
+    return ghJson(
+        ['issue', 'list', '--state', state, '--limit', '400', '--json', 'number,title,state,assignees,labels,body'],
+        options,
+    );
 }
 
 export function fetchIssue(number, options) {
