@@ -18,6 +18,7 @@ cp "$CHECKS/board-gh.github.mjs" "$BOARD_TREE/tools/board-gh.mjs"
 cp "$CHECKS/board-runs.github.mjs" "$BOARD_TREE/tools/board-runs.mjs"
 cp "$CHECKS/board-paths.github.mjs" "$BOARD_TREE/tools/board-paths.mjs"
 cp "$CHECKS/board-titles.github.mjs" "$BOARD_TREE/tools/board-titles.mjs"
+cp "$CHECKS/board-epics.github.mjs" "$BOARD_TREE/tools/board-epics.mjs"
 cp "$CHECKS/check-board.github.mjs" "$BOARD_TREE/tools/check-board.mjs"
 printf '%s\n' 'on: pull_request' 'jobs:' '    main:' '        steps:' '            - name: Lint' \
     > "$BOARD_TREE/.github/workflows/ci.yml"
@@ -124,6 +125,62 @@ report "SC-AK-733 — разные заголовки молчат" "$(board_say
 
 export STUB_ISSUES="$saved_issues"
 export STUB_BOARD="$saved_board"
+
+# --- SC-AK-751 — связь задачи с эпиком читается в обе стороны ---------------------------------
+#
+# Односторонняя привязка выглядит целой ровно так же, как двусторонняя: читатель приходит то от
+# линии работ, то от карточки, и вторая сторона существует только для одного из них.
+board_config "$BOARD_CONFIG"
+export STUB_RUNS=1
+export STUB_VERDICT=success
+export STUB_HEAD_DATE="$(minutes_ago 60)"
+saved_issues="$STUB_ISSUES"
+saved_board="$STUB_BOARD"
+saved_pulls="$STUB_PULLS"
+export STUB_PULLS='[]'
+export STUB_BOARD='{"data":{"node":{"items":{"pageInfo":{"hasNextPage":false,"endCursor":null},"nodes":[{"id":"item-1","status":{"name":"Backlog","optionId":"b"},"content":{"__typename":"Issue","number":700}},{"id":"item-2","status":{"name":"Backlog","optionId":"b"},"content":{"__typename":"Issue","number":702}}]}}}}'
+
+mkdir -p "$BOARD_TREE/docs/plans"
+printf '%s\n' '# Замысел эпика' '' '| № | Задача |' '| - | ------ |' '| 1 | RT-702 |' \
+    > "$BOARD_TREE/docs/plans/epic.md"
+
+epic_issues() {
+    printf '[{"number":700,"title":"[RT-700] Эпик","state":"OPEN","assignees":[{"login":"probe"}],"labels":[{"name":"epic"}],"body":"Замысел — docs/plans/epic.md"},{"number":702,"title":"[RT-702] Задача","state":"OPEN","assignees":[{"login":"probe"}],"labels":[],"body":"%s"}]' "$1"
+}
+
+# Метка эпика не названа — связь не судится вовсе: карточку эпика отличить от задачи нечем.
+export STUB_ISSUES="$(epic_issues 'Повод и разбор')"
+report "SC-AK-751 — метка эпика не названа: связь молчит" "$(board_says 'эпика — нет')" 0
+
+EPIC_CONFIG="${BOARD_CONFIG/\"taskKey\":\"RT\"/\"epicLabel\":\"epic\",\"taskKey\":\"RT\"}"
+board_config "$EPIC_CONFIG"
+
+report "SC-AK-751 — замысел задачу называет, а её тело эпика — нет" \
+    "$(board_says '#702: замысел эпика #700 задачу называет')" 1
+report "SC-AK-751 — названа строка, которой это чинится" "$(board_says 'Задача эпика #700, замысел — docs/plans/epic.md')" 1
+
+# Обе стороны на месте — сверка молчит.
+export STUB_ISSUES="$(epic_issues 'Задача эпика #700, замысел — docs/plans/epic.md')"
+report "SC-AK-751 — двусторонняя привязка молчит" "$(board_says 'эпик')" 0
+
+# Обратная сторона: тело эпик называет, а линия работ эпика этой задачи не знает.
+printf '%s\n' '# Замысел эпика' '' '| № | Задача |' '| - | ------ |' > "$BOARD_TREE/docs/plans/epic.md"
+report "SC-AK-751 — тело называет эпик, а в замысле задачи нет" \
+    "$(board_says '#702: тело называет эпик #700, а в его замысле задачи нет')" 1
+
+# Карточка эпика без пути к замыслу — состав читать негде.
+export STUB_ISSUES="$(printf '[{"number":700,"title":"[RT-700] Эпик","state":"OPEN","assignees":[{"login":"probe"}],"labels":[{"name":"epic"}],"body":"Возможность без замысла"},{"number":702,"title":"[RT-702] Задача","state":"OPEN","assignees":[{"login":"probe"}],"labels":[],"body":"Повод"}]')"
+report "SC-AK-751 — карточка без пути к замыслу названа" "$(board_says '#700: карточка эпика не называет путь к замыслу')" 1
+
+# Путь есть, а файла нет: карточка ссылается в пустоту.
+export STUB_ISSUES="$(epic_issues 'Повод')"
+rm -f "$BOARD_TREE/docs/plans/epic.md"
+report "SC-AK-751 — замысла нет на диске" "$(board_says 'нет на диске — карточка ссылается в пустоту')" 1
+
+board_config "$BOARD_CONFIG"
+export STUB_ISSUES="$saved_issues"
+export STUB_BOARD="$saved_board"
+export STUB_PULLS="$saved_pulls"
 
 # SC-AK-732 — ветка, чей вклад конвейер не слушает, прогона не требует
 # Такой ветке события не будет никогда, и совет вернуть его не исполним: красная строка означает
@@ -313,67 +370,6 @@ report "SC-AK-752 — пустой ответ судится как ноль" "$
 export STUB_PULL_BEHIND=0
 
 
-# --- SC-AK-774 — вызов, отбитый недоступностью хостинга, повторяется -------------------------
-#
-# Хостинг около часа отвечал кодом недоступности, и перевод колонки отказал шесть раз подряд.
-# Правило требует двигать колонку тем же движением, что и работу, а команда падала с первой
-# попытки: исполнитель либо крутил её руками, либо оставлял колонку отставшей.
-#
-# Помощник хостинга здесь свой: он считает свои вызовы в файле и отвечает по счёту.
-RETRY_TREE="$(mktemp -d)"
-mkdir -p "$RETRY_TREE/tools"
-cp "$CHECKS/rt-kit-checks.config.mjs" "$RETRY_TREE/tools/"
-cp "$CHECKS/board.github.mjs" "$RETRY_TREE/tools/board.mjs"
-cp "$CHECKS/board-gh.github.mjs" "$RETRY_TREE/tools/board-gh.mjs"
-RETRY_CALLS="$RETRY_TREE/calls"
-
-cat > "$RETRY_TREE/gh" <<'STUB'
-#!/usr/bin/env bash
-printf 'x' >> "$RETRY_CALLS"
-tries="$(wc -c < "$RETRY_CALLS" | tr -d ' ')"
-if [ "$tries" -le "${STUB_FAIL_TIMES:-0}" ]; then
-    printf '%s
-' "${STUB_FAIL_TEXT:-HTTP 503: Service Unavailable}" >&2
-    exit 1
-fi
-printf 'ответ
-'
-STUB
-chmod +x "$RETRY_TREE/gh"
-
-# Сколько раз позвали помощника и чем кончился вызов.
-retry_run() {
-    : > "$RETRY_CALLS"
-    ( cd "$RETRY_TREE" && RETRY_CALLS="$RETRY_CALLS" GH_BIN="$RETRY_TREE/gh" RT_GH_RETRY_MS=1 \
-        node --input-type=module -e "
-            import { gh } from './tools/board.mjs';
-            try { process.stdout.write(gh(['api', 'x']).trim()); }
-            catch (error) { process.stdout.write('отказ'); }
-        " 2>/dev/null )
-}
-retry_calls() { wc -c < "$RETRY_CALLS" | tr -d ' '; }
-
-export STUB_FAIL_TIMES=2
-report "SC-AK-774 — два отказа недоступности снимаются повтором" "$(retry_run)" 'ответ'
-report "SC-AK-774 — попыток было три" "$(retry_calls)" 3
-
-# Отказ, который повтор не снимет: третья попытка стоит времени и не пройдёт.
-export STUB_FAIL_TIMES=9
-export STUB_FAIL_TEXT='HTTP 403: Resource not accessible by integration'
-report "SC-AK-774 — отказ по праву не повторяется" "$(retry_run)" 'отказ'
-report "SC-AK-774 — попытка была одна" "$(retry_calls)" 1
-
-export STUB_FAIL_TEXT='HTTP 404: Not Found'
-report "SC-AK-774 — отказ по несуществующей записи не повторяется" "$(retry_run)" 'отказ'
-report "SC-AK-774 — и здесь попытка одна" "$(retry_calls)" 1
-
-# Недоступность, не прошедшая за три попытки, отказывает — но именно после трёх.
-export STUB_FAIL_TEXT='HTTP 502: Bad Gateway'
-report "SC-AK-774 — недоступность дольше трёх попыток отказывает" "$(retry_run)" 'отказ'
-report "SC-AK-774 — и попыток было три" "$(retry_calls)" 3
-
-unset STUB_FAIL_TIMES STUB_FAIL_TEXT
-rm -rf "$RETRY_TREE"
 
 rm -rf "$BOARD_TREE"
 

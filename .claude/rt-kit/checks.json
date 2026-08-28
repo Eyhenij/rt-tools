@@ -130,7 +130,8 @@
         "taskKey": "RT",
         "bot": "rt-tools-dev",
         "tokenPath": "~/.config/rt-tools-bot-token",
-        "reviewer": "Eyhenij"
+        "reviewer": "Eyhenij",
+        "epicLabel": "epic"
     },
     "apiFamily": "message-bus-api",
     "libsRoot": "libs",
