@@ -72,4 +72,37 @@ case "$out" in
     *) report "SC-AK-723 — пустой каталог не перечисляется" да да ;;
 esac
 
+# SC-AK-754. Папку разобрала сама ветка — хук говорит о закрывающейся работе, а не велит
+# собрать её заново. Признак берётся в истории: снос папки коммитом ветки после общего предка
+# с главной.
+tree="$(tree_on main)"
+mkdir -p "$tree/docs/tasks/RT-5-closing"
+printf '# Замысел\n\nтело\n' > "$tree/docs/tasks/RT-5-closing/plan.md"
+git -C "$tree" add -A >/dev/null 2>&1
+git -C "$tree" -c user.name=probe -c user.email=probe@example commit -qm 'папка задачи' >/dev/null 2>&1
+git -C "$tree" checkout -q -b RT-5-closing 2>/dev/null
+git -C "$tree" rm -rq docs/tasks/RT-5-closing >/dev/null 2>&1
+git -C "$tree" -c user.name=probe -c user.email=probe@example commit -qm 'папка разобрана' >/dev/null 2>&1
+out="$(said "$tree")"
+case "$out" in
+    *'РАБОТА ЗАКРЫВАЕТСЯ'*) report "SC-AK-754 — разобранная папка названа закрытием работы" да да ;;
+    *) report "SC-AK-754 — разобранная папка названа закрытием работы" "$out" да ;;
+esac
+case "$out" in
+    *'РАБОТА БЕЗ ПАПКИ ЗАДАЧИ'*) report "SC-AK-754 — указания собрать папку заново нет" "$out" '' ;;
+    *) report "SC-AK-754 — указания собрать папку заново нет" да да ;;
+esac
+
+# Ветка, которая папку не заводила вовсе, судится прежним отказом: сносить было нечего.
+tree="$(tree_on main)"
+mkdir -p "$tree/docs/tasks/RT-6-other"
+printf '# Замысел\n' > "$tree/docs/tasks/RT-6-other/plan.md"
+git -C "$tree" add -A >/dev/null 2>&1
+git -C "$tree" -c user.name=probe -c user.email=probe@example commit -qm 'чужая папка' >/dev/null 2>&1
+git -C "$tree" checkout -q -b RT-7-never-had 2>/dev/null
+case "$(said "$tree")" in
+    *'РАБОТА БЕЗ ПАПКИ ЗАДАЧИ'*) report "SC-AK-754 — ветка без своей папки судится прежним отказом" да да ;;
+    *) report "SC-AK-754 — ветка без своей папки судится прежним отказом" "$(said "$tree")" да ;;
+esac
+
 suite_result "загрузка хода работы"

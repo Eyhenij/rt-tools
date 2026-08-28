@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.17.0 · hooks/grill-gate.sh · 611b1c95da97 · правится надстройкой, не здесь
+# rt-kit v0.17.0 · hooks/grill-gate.sh · 79aea2e578fc · правится надстройкой, не здесь
 # Требует: hooks/deny-tail.sh
 # rt-hook: Stop
 # Гард разговора: вопрос владельцу не задаётся, пока за этот же ход не читались законы и
@@ -21,6 +21,15 @@
 # Чтением правил считается любой из трёх путей: загрузка правила, чтение файла законов или
 # правил, поиск по ним. Требовать именно загрузку значило бы гнать на неё там, где хватило
 # одного поиска, — гард мешал бы работе вместо того, чтобы её выправлять.
+#
+# Но чтение чего угодно из слоя правил вопроса не закрывает: прочитанный разбор чужого промаха
+# и поиск по каталогу засчитывались наравне с правилом, которое этой работе и требуется, — а
+# ответ на заданный владельцу вопрос лежал ровно в нём. Поэтому, когда область работы этого хода
+# известна, чтением считается только правило этой области. Область берётся оттуда же, откуда её
+# берёт гейт правил: по путям правок хода.
+#
+# ОТКАЗ В ПОЛЬЗУ РАБОТЫ и здесь: правок в ходу нет, карты гейта нет, область не определилась —
+# засчитывается любое чтение, как прежде.
 #
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: при любой ошибке, отсутствии записи хода и повторном заходе ход
 # РАЗРЕШАЕТСЯ (exit 0). Сломанный гард не имеет права заклинить разговор.
@@ -69,10 +78,46 @@ archive_dir="${RT_ARCHIVE_DIR-docs/archive}"
 # Дерево, у которого нет ни законов, ни правил, требования не получает: читать нечего.
 [ -z "$laws_dir" ] && [ -z "$rules_dir" ] && exit 0
 
+# Карта гейта: по ней имя правила достаётся из пути правки. Нет её — область не определяется, и
+# всё остаётся прежним.
+rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+for map in "$rt_hooks_dir/../rt-kit/defaults/gate-map.sh" "$rt_hooks_dir/../defaults/gate-map.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/defaults/gate-map.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/gate-map.sh"; do
+    # shellcheck disable=SC1090
+    [ -f "$map" ] && . "$map" 2>/dev/null
+done
+
 # Образец, по которому вызов инструмента считается чтением правил. Каталоги идут в него как
 # есть: точка в `.claude` совпадает с любым знаком и лишнего сюда не приводит.
 read_re="$(printf '%s' "$laws_dir|$rules_dir|$specs_dir|$plans_dir|$archive_dir" | sed 's/^|*//; s/|*$//; s/||*/|/g')"
 [ -z "$read_re" ] && exit 0
+
+# Область работы этого хода: правила, которых требует гейт от путей, правленных в ходу. Пути
+# достаются тем же разбором хода, что и ниже, — своим вызовом, чтобы образец чтения был готов
+# к главному разбору.
+need_re=''
+if command -v skill_for >/dev/null 2>&1 && [ -n "$rules_dir" ]; then
+    edited="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
+        def is_input:
+            .type == "user"
+            and (((.message.content // []) | if type == "array"
+                    then ([.[] | select(.type == "tool_result")] | length)
+                    else 0 end) == 0);
+        (map(is_input) | rindex(true)) as $i
+        | (if $i == null then . else .[$i + 1:] end)
+        | [.[] | select(.type == "assistant") | (.message.content // [])[]
+            | select(.type == "tool_use") | select(.name == "Edit" or .name == "Write" or .name == "NotebookEdit")
+            | (.input.file_path // .input.notebook_path // "")]
+        | map(select(. != "")) | unique | .[]
+    ' 2>/dev/null)"
+    for path in $edited; do
+        for rule in $(skill_for edit "$path" '' 2>/dev/null); do
+            case "|$need_re|" in
+                *"|$rule|"*) ;;
+                *) need_re="${need_re}${need_re:+|}${rule}" ;;
+            esac
+        done
+    done
+fi
 
 # Ход — это всё, что записано после последнего настоящего ввода владельца. Ответ инструмента
 # приходит той же ролью `user`, поэтому строки с `tool_result` вводом не считаются: иначе ходом
@@ -83,7 +128,7 @@ read_re="$(printf '%s' "$laws_dir|$rules_dir|$specs_dir|$plans_dir|$archive_dir"
 # На событии вызова инструмента вопрос уже известен — он и есть вызов; судится только то,
 # читались ли за этот ход правила. На завершении хода вопрос ищется в тексте реплик: меню к
 # этому моменту уже отбито раньше.
-verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg re "$read_re" --arg tool "$tool" '
+verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg re "$read_re" --arg tool "$tool" --arg need "$need_re" --arg rules "$rules_dir" '
     def is_input:
         .type == "user"
         and (((.message.content // []) | if type == "array"
@@ -94,11 +139,23 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg re "$read_re" 
     | (if $i == null then . else .[$i + 1:] end) as $turn
     | [$turn[] | select(.type == "assistant") | (.message.content // [])[] | select(.type == "text") | .text] as $texts
     | [$turn[] | select(.type == "assistant") | (.message.content // [])[] | select(.type == "tool_use")] as $uses
-    | ($uses | map(
-          (.name == "Skill")
-          or ((.name // "") | test("^(Read|Grep|Glob)$")) and ((.input | tostring) | test($re))
-          or ((.name == "Bash") and ((.input.command // "") | test($re)))
-      ) | any) as $read
+    | (if $need == "" then
+          $uses | map(
+              (.name == "Skill")
+              or ((.name // "") | test("^(Read|Grep|Glob)$")) and ((.input | tostring) | test($re))
+              or ((.name == "Bash") and ((.input.command // "") | test($re)))
+          ) | any
+      else
+          # Область работы известна — засчитывается только правило этой области: прочитанный
+          # разбор чужого промаха на заданный вопрос не отвечает.
+          ($need | split("|")) as $rules_needed
+          | $uses | map(
+              ((.name == "Skill") and (((.input.skill // "") | tostring) as $s | $rules_needed | index($s) != null))
+              or (((.name // "") | test("^(Read|Grep|Glob|Bash)$"))
+                  and ((.input | tostring) as $text
+                       | $rules_needed | map(. as $rule | $text | test($rules + "/" + $rule + "(/|\\b)")) | any))
+          ) | any
+      end) as $read
     | (($texts | join("\n")) | test("\\?[[:space:]]*$"; "m")) as $asked_prose
     | ($tool != "") as $asking_now
     | if ($asked_prose or $asking_now) and ($read | not) then "ask" else "pass" end

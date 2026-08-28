@@ -183,4 +183,41 @@ report "SC-AK-705 — подсказка называет каталог зам�
 if printf '%s' "$out" | jq -r '.reason // ""' | grep -q 'docs/archive'; then got="есть"; else got="нет"; fi
 report "SC-AK-705 — подсказка называет описание прошлого" "$got" "есть"
 
+# SC-AK-756 — при известной области работы чтением считается правило этой области
+# Прочитанный разбор чужого промаха и поиск по каталогу правил на заданный вопрос не отвечают:
+# ответ лежал в том правиле, которого работа и требует. Область берётся оттуда же, откуда её
+# берёт гейт правил, — по путям правок хода.
+edited_spec='{"file_path":"libs/x/src/lib/x.spec.ts"}'
+expect_stop "SC-AK-756 — чужое правило области не закрывает" \
+    "$(input_stop "$(transcript \
+        "$(say 'почини проверку')" \
+        "$(uses Edit "$edited_spec")" \
+        "$(tool_result)" \
+        "$(uses Read '{"file_path":".claude/skills/styling-bem/SKILL.md"}')" \
+        "$(tool_result)" \
+        "$(reply 'Как быть с этим?')")")" BLOCK
+expect_stop "SC-AK-756 — правило области отказ снимает" \
+    "$(input_stop "$(transcript \
+        "$(say 'почини проверку')" \
+        "$(uses Edit "$edited_spec")" \
+        "$(tool_result)" \
+        "$(uses Read '{"file_path":".claude/skills/testing/SKILL.md"}')" \
+        "$(tool_result)" \
+        "$(reply 'Как быть с этим?')")")" PASS
+expect_stop "SC-AK-756 — загрузка правила области считается чтением" \
+    "$(input_stop "$(transcript \
+        "$(say 'почини проверку')" \
+        "$(uses Edit "$edited_spec")" \
+        "$(tool_result)" \
+        "$(uses Skill '{"skill":"testing"}')" \
+        "$(tool_result)" \
+        "$(reply 'Как быть с этим?')")")" PASS
+# Правок в ходу нет — область не определилась, и засчитывается любое чтение, как прежде.
+expect_stop "SC-AK-756 — без правок в ходу прежний признак чтения" \
+    "$(input_stop "$(transcript \
+        "$(say 'посоветуй')" \
+        "$(uses Read '{"file_path":".claude/skills/styling-bem/SKILL.md"}')" \
+        "$(tool_result)" \
+        "$(reply 'Как быть с этим?')")")" PASS
+
 suite_result "гард разговора"
