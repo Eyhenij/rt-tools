@@ -75,6 +75,32 @@ expect_reason() {
 # Он выглядит работой лучше всякой другой: полон, называет номера и состояния, и пустоты за
 # ним не видно. Ровно его страж и ловит.
 state_is 'этап-идёт'
+# --- SC-AK-748 — работа, оставшаяся в рабочем дереве, ход не кончает ---------------------------
+# Удалённая ссылка заводится здесь же: страж читает её локально, сети ему не нужно. Ветка,
+# ушедшая вперёд неё без открытой заявки, означает работу, которой не видит никто.
+git -C "$REPO" add -A >/dev/null 2>&1
+git -C "$REPO" -c user.name=t -c user.email=t@t commit -qm 'основание' >/dev/null 2>&1
+git -C "$REPO" config remote.origin.url . >/dev/null 2>&1
+git -C "$REPO" config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*' >/dev/null 2>&1
+git -C "$REPO" config branch.RT-1-probe.remote origin >/dev/null 2>&1
+git -C "$REPO" config branch.RT-1-probe.merge refs/heads/RT-1-probe >/dev/null 2>&1
+git -C "$REPO" update-ref refs/remotes/origin/RT-1-probe HEAD >/dev/null 2>&1
+state_is 'этап-идёт'
+expect_stop "SC-AK-748 — ветка вровень с удалённой: ярус молчит" \
+    "$(input_stop "$(transcript "$(say 'работай')" "$(edited)")")" PASS
+printf 'ещё строка\n' >> "$TASK/progress.md"
+git -C "$REPO" add -A >/dev/null 2>&1
+git -C "$REPO" -c user.name=t -c user.email=t@t commit -m 'проба' >/dev/null 2>&1
+expect_stop "SC-AK-748 — неотданный коммит ход не кончает" \
+    "$(input_stop "$(transcript "$(say 'работай')" "$(edited)")")" BLOCK
+expect_stop "SC-AK-748 — открытая заявка ярус снимает" \
+    "$(input_stop "$(transcript "$(say 'работай')" "$(ran 'gh pr create --draft --title x')" "$(ran 'gh run list')" "$(ran 'npm run task:new -- --title y --slug z')")")" PASS
+# Отслеживание снимается тем же блоком: оставленное, оно судило бы каждый следующий сценарий
+# ярусом неотданной работы, к которому те не относятся вовсе.
+git -C "$REPO" config --unset branch.RT-1-probe.remote >/dev/null 2>&1
+git -C "$REPO" config --unset branch.RT-1-probe.merge >/dev/null 2>&1
+
+
 expect_stop "SC-AK-296 — ход, в котором по работе не сделано ничего, не закрывается" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)" )")" BLOCK
 
