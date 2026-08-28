@@ -58,6 +58,20 @@ d "заявка без номера в заголовке" 'gh pr create --title
 expect_reason "и отказ называет расхождение номеров" git-guard-delivery.sh \
     "$(input_cmd 'gh pr create --title "[RT-8] Сделано" --body x' Bash "$REPO_WORK")" 'номер 8.*у ветки'
 
+# SC-AK-763. Номер вынимается из той части заголовка, которую признала сама форма. Дерево,
+# замостившее форму своей, получало пустой номер: сверка с номером ветки молча не выполнялась
+# вовсе и выглядела при этом сошедшейся.
+OWN_FORM='^[A-Za-z]+-[0-9]+[[:space:]]+[a-z]+(\([a-z0-9-]+\))?:[[:space:]]+[^[:space:]]'
+RT_TASK_TITLE_RE="$OWN_FORM" \
+    expect_decision "SC-AK-763 — замещённая форма с номером ветки проходит" git-guard-delivery.sh \
+    "$(input_cmd 'gh pr create --title "RT-7 fix: сделано" --body x' Bash "$REPO_WORK")" PASS
+RT_TASK_TITLE_RE="$OWN_FORM" \
+    expect_decision "SC-AK-763 — чужой номер в замещённой форме отбивается" git-guard-delivery.sh \
+    "$(input_cmd 'gh pr create --title "RT-8 fix: сделано" --body x' Bash "$REPO_WORK")" deny
+RT_TASK_TITLE_RE="$OWN_FORM" \
+    expect_reason "SC-AK-763 — и отказ называет оба номера" git-guard-delivery.sh \
+    "$(input_cmd 'gh pr create --title "RT-8 fix: сделано" --body x' Bash "$REPO_WORK")" 'номер 8.*у ветки'
+
 # --- свежесть локальной ссылки на главную ветку ------------------------------------------------
 #
 # Первый ярус читает локальную ссылку и молчит, пока она не старше ветки; второй спрашивает
