@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.17.0 · hooks/git-guard-delivery.sh · 0612f8c5add8 · правится надстройкой, не здесь
+# rt-kit v0.17.0 · hooks/git-guard-delivery.sh · 9999e25a1389 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/git-guard-delivery-folder.sh, hooks/profile-check.sh, hooks/deny-tail.sh
 # Гард поставки. PreToolUse на заведении ветки, пуше и открытии заявки на слияние.
@@ -381,7 +381,12 @@ fi
 if [ -n "$title" ]; then
     printf '%s' "$title" | grep -qE "$title_re" \
         || fault "заголовок заявки не начинается с номера задачи. В списке заявок тела не видно, а строка связи живёт именно там — без номера в заголовке PR с задачей не сопоставить."
-    title_number="$(printf '%s' "$title" | sed -nE 's/^\[[A-Za-z]+-([0-9]+)\].*/\1/p')"
+    # Номер вынимается из той части заголовка, которую признала сама форма, а не второй
+    # регуляркой рядом. Своя регулярка знает только пакетную форму: дерево, замостившее форму
+    # своей, получало пустой номер — и сверка номера заголовка с номером ветки молча не
+    # выполнялась вовсе, выглядя при этом сошедшейся.
+    title_matched="$(printf '%s' "$title" | grep -oE "$title_re" | head -1)"
+    title_number="$(printf '%s' "$title_matched" | grep -oE '[A-Za-z]+-[0-9]+' | head -1 | sed -E 's/^[A-Za-z]+-//')"
     if [ -n "$number" ] && [ -n "$title_number" ]; then
         [ "$title_number" = "$number" ] \
             || fault "в заголовке заявки номер ${title_number}, у ветки — ${number}. Задача, ветка и PR несут один и тот же номер."

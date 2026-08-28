@@ -14,5 +14,7 @@
 - **Судится сказанное владельцу, а не вывод инструмента.** — `projects/agent-kit/assets/hooks/claim-guard.sh:said`
 - **Обещание утверждением не считается.** — `projects/agent-kit/assets/hooks/claim-guard.sh:claims`
 - **Отказ называет найденное утверждение.** — `projects/agent-kit/assets/hooks/claim-guard.sh:found`
+- **Чужое слово утверждением о дереве не считается.** — `projects/agent-kit/assets/hooks/claim-guard.sh:judged` — строки цитирования и блоки кода уходят целиком, кавычки и код в строке гасятся, предложения со словом условия отбрасываются; сценарий SC-AK-764
+- **Отказ первым выходом называет снятие утверждения, а не запуск команды.** — `projects/agent-kit/assets/hooks/claim-guard.sh:reason`; сценарий SC-AK-764
 - **Неверный вывод гард не судит.** — `projects/agent-kit/assets/hooks/claim-guard.sh:claim-guard`
 - **Гард утверждения пропускает работу при любой поломке.** — `projects/agent-kit/assets/hooks/claim-guard.sh:transcript`

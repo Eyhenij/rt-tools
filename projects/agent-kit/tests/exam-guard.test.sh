@@ -118,4 +118,60 @@ exit_code_of "чтение файла гарду безразлично" \
 expect_decision "записи хода нет — правка проходит" exam-guard.sh \
     "$(edit_in "$TURNS/нет-такой.jsonl")" PASS
 
+# --- SC-AK-757 — вердикт виден при любой форме доставки, а подделка не считается ------------
+# Форму доставки выбирает хост: роль, работающая фоном, отдаёт вердикт уведомлением, а не
+# ответом инструмента, — и гард, привязанный к одной форме, запер дерево целиком.
+said_string() { jq -c -n --arg t "$1" '{type:"user",message:{content:$t}}'; }
+said_field() { jq -c -n --arg t "$1" '{type:"user",message:{content:[{type:"tool_result",tool_use_id:"agent-1",content:"готово"}]},toolUseResult:$t}'; }
+said_host() { jq -c -n --arg t "$1" '{type:"queue-operation",text:$t}'; }
+said_by_bash() {
+    jq -c -n --arg t "$1" '{type:"user",message:{content:[{type:"tool_result",tool_use_id:"bash-1",content:$t}]}}'
+}
+bash_call() {
+    jq -c -n '{type:"assistant",message:{content:[{type:"tool_use",id:"bash-1",name:"Bash",input:{command:"echo x"}}]}}'
+}
+assistant_says() { jq -c -n --arg t "$1" '{type:"assistant",message:{content:[{type:"text",text:$t}]}}'; }
+
+e "SC-AK-757 — вердикт строковым содержимым записи считается" \
+    "$(transcript "$(say 'экзамен')" "$(said_string 'ЭКЗАМЕН: сдано 5 из 5')")" PASS
+e "SC-AK-757 — вердикт полем результата вызова считается" \
+    "$(transcript "$(say 'экзамен')" "$(said_field 'ЭКЗАМЕН: сдано 5 из 5')")" PASS
+e "SC-AK-757 — вердикт записью хоста считается" \
+    "$(transcript "$(say 'экзамен')" "$(said_host 'ЭКЗАМЕН: сдано 5 из 5')")" PASS
+# Подделка: печать той же строки вызовом оболочки и слово самого помощника.
+e "SC-AK-757 — вердикт из ответа оболочки не считается" \
+    "$(transcript "$(say 'экзамен')" "$(bash_call)" "$(said_by_bash 'ЭКЗАМЕН: сдано 5 из 5')")" deny
+e "SC-AK-757 — вердикт в тексте помощника не считается" \
+    "$(transcript "$(say 'экзамен')" "$(assistant_says 'ЭКЗАМЕН: сдано 5 из 5')")" deny
+
+# --- SC-AK-758 — настройка, которой гард выключается, этим гардом не запирается ---------------
+free_edit() {
+    jq -n --arg p "$1" --arg f "$2" \
+        '{session_id:"tests",tool_name:"Edit",tool_input:{file_path:$f},transcript_path:$p}'
+}
+expect_decision "SC-AK-758 — правка настройки дерева проходит" exam-guard.sh \
+    "$(free_edit "$(transcript "$(say 'x')")" '.claude/rt-kit.json')" PASS
+expect_decision "SC-AK-758 — правка надстройки профиля проходит" exam-guard.sh \
+    "$(free_edit "$(transcript "$(say 'x')")" '.claude/rt-kit/gate-map.sh')" PASS
+expect_decision "SC-AK-758 — передача захода пишется без экзамена" exam-guard.sh \
+    "$(free_edit "$(transcript "$(say 'x')")" '.claude/handoff/RT-1-probe.md')" PASS
+expect_decision "SC-AK-758 — обычный файл судится как прежде" exam-guard.sh \
+    "$(free_edit "$(transcript "$(say 'x')")" 'libs/x/src/lib/x.ts')" deny
+
+# --- SC-AK-759 — запись файла вызовом оболочки судится наравне с правкой ----------------------
+# Честный путь был закрыт, обходной открыт: агент, который правилам следует, вставал; тот, кто
+# их обходит, работал.
+shell_in() {
+    jq -n --arg p "$1" --arg c "$2" \
+        '{session_id:"tests",tool_name:"Bash",tool_input:{command:$c},transcript_path:$p}'
+}
+expect_decision "SC-AK-759 — запись перенаправлением отбивается" exam-guard.sh \
+    "$(shell_in "$(transcript "$(say 'x')")" "printf 'x' > libs/x/src/lib/x.ts")" deny
+expect_decision "SC-AK-759 — правка на месте отбивается" exam-guard.sh \
+    "$(shell_in "$(transcript "$(say 'x')")" "sed -i '' s/a/b/ libs/x/src/lib/x.ts")" deny
+expect_decision "SC-AK-759 — запись в настройку дерева проходит" exam-guard.sh \
+    "$(shell_in "$(transcript "$(say 'x')")" "printf '{}' > .claude/rt-kit.json")" PASS
+expect_decision "SC-AK-759 — команда без записи файла не судится" exam-guard.sh \
+    "$(shell_in "$(transcript "$(say 'x')")" 'git status --short')" PASS
+
 suite_result "гард экзамена"

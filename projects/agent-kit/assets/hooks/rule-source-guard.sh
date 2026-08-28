@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/profile-check.sh, hooks/deny-tail.sh
+# Требует: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/write-targets.sh
 # Гард места правки: слой правил чинится там, где сломано, а не там, где виден.
 #
 # Слой правил правит тот же исполнитель, которым слой правил управляет, и разницы между
@@ -53,18 +53,13 @@ deny() {
     exit 0
 }
 
-# Цели записи, названные командой прямо. Печатает по одной в строке.
-rt_write_targets() {
-    tr "\"'\`" '   ' \
-        | sed -E 's/>>?/\n>/g' \
-        | sed -nE '
-            s/^>[[:space:]]*([^[:space:]|&;]+).*/\1/p
-            s/(^|.*[[:space:]])tee[[:space:]]+(-a[[:space:]]+)?([^[:space:]|&;]+).*/\3/p
-            s/(^|.*[[:space:]])sed[[:space:]]+-i[[:space:]]+([^[:space:]]+[[:space:]]+)*([^[:space:]|&;]+)$/\3/p
-            s/(^|.*[[:space:]])(cp|mv|install)[[:space:]]+([^[:space:]]+[[:space:]]+)+([^[:space:]|&;]+).*/\4/p
-        ' \
-        | sort -u
-}
+# Цели записи разбирает общий помощник: тот же признак нужен гарду экзамена, и разойдясь, две
+# копии пропустили бы разные формы записи. Файла нет — остаётся молчаливое умолчание, чтобы гард
+# не сломался на неполной раскладке.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/write-targets.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/write-targets.sh" 2>/dev/null
+command -v rt_write_targets >/dev/null 2>&1 || rt_write_targets() { cat >/dev/null; }
 
 tool="$(rt_hook_tool)"
 candidates=""
