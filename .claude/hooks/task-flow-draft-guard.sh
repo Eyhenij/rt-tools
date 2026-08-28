@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.17.0 · hooks/task-flow-draft-guard.sh · 54ed5da4ac7f · правится надстройкой, не здесь
+# rt-kit v0.17.0 · hooks/task-flow-draft-guard.sh · 2e13634b5168 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/task-flow-context.sh, hooks/task-flow-guard.sh, hooks/deny-tail.sh
 # PreToolUse guard for Edit|Write|MultiEdit: код не пишется раньше договорённости о продукте.
@@ -89,5 +89,22 @@ fi
 if git -C "$root" log --oneline -1 -- "$draft" 2>/dev/null | grep -q .; then
     exit 0
 fi
+
+# Вливание бывает и первым коммитом, который вообще завёл названный путь: черновик писали, не
+# коммитя, а в историю уехал уже спек домена. Тогда истории у пути нет, а работа сделана ровно
+# так, как велит паттерн закрытия, — и отказ запирал бы ветку на последнем шаге. Признак:
+# договорённость названа путём вида `<домен>/proposed/<фича>`, каталог домена в дереве есть, и
+# имя фичи в нём встречается. Пока такого спека нет, отказ остаётся прежним.
+case "$draft" in
+    */proposed/*)
+        domain_dir="${draft%%/proposed/*}"
+        feature="${draft##*/proposed/}"
+        feature="${feature%/}"
+        if [ -n "$feature" ] && [ -d "$root/$domain_dir" ] \
+            && grep -rq -- "$feature" "$root/$domain_dir" 2>/dev/null; then
+            exit 0
+        fi
+        ;;
+esac
 
 deny "BLOCKED by task-flow: замысел называет договорённость '${draft}', а её на диске нет и в истории ветки не было. Заведи её с образца (docs/specs/_template) или поправь путь в '${tasks_dir}/${branch}/plan.md'. Правило — скил task-flow."
