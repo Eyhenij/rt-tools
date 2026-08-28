@@ -238,4 +238,28 @@ report "SC-AK-382 — и наружу ничего не выходит" "$(pull_
 
 rm -rf "$PULL_TREE"
 
+# --- SC-AK-749 — гейт судит то, что команда пишет, а не то, что она называет ---------------
+#
+# Кусок, который пишет одним лишь перенаправлением, отдаёт цель записи. Имя файла, названное в
+# аргументе или в содержимом, правкой этого файла не является, а отказ по нему кончает ход:
+# обойти его нечем, и цена промаха равна цене настоящего срабатывания.
+paths_of() { rt_shell_paths_default "$1" | tr '\n' ' ' | sed 's/ $//'; }
+
+report "SC-AK-749 — чужое имя в аргументе целью записи не считается" \
+    "$(paths_of 'jq -n --arg c "libs/site/x/ui/a.probe.txt" "{}" > /tmp/in.json')" '/tmp/in.json'
+report "SC-AK-749 — цель перенаправления берётся" \
+    "$(paths_of 'echo x > libs/site/x/ui/a.probe.txt')" 'libs/site/x/ui/a.probe.txt'
+report "SC-AK-749 — цель дозаписи берётся" \
+    "$(paths_of 'echo x >> docs/notes.md')" 'docs/notes.md'
+report "SC-AK-749 — цель tee берётся" \
+    "$(paths_of 'cat f | tee libs/site/x/ui/a.probe.txt')" 'libs/site/x/ui/a.probe.txt'
+# Правка по месту разбирается по-прежнему: путь стоит в самой команде, а не за стрелкой.
+report "SC-AK-749 — правка по месту отдаёт свой файл" \
+    "$(paths_of "sed -i '' s/a/b/ libs/site/x/ui/a.probe.txt" | tr ' ' '\n' | grep -c 'a.probe.txt')" '1'
+# Интерпретатор получает код телом, и путь записи стоит именно там.
+report "SC-AK-749 — путь в теле интерпретатора берётся" \
+    "$(paths_of "python3 - <<PY
+open('libs/site/x/ui/a.probe.txt', 'w')
+PY" | tr ' ' '\n' | grep -c 'a.probe.txt')" '1'
+
 suite_result "умолчания"
