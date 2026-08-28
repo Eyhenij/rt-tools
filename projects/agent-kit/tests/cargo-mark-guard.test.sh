@@ -81,56 +81,55 @@ expect_reason() {
 
 grill_with_keys
 
-# SC-MB-281 — задача заведена по записи груза, а отметки нет
-T="$(transcript "$(say 'разбери приёмник')" "$(wrote "$TASK/grill.md")")"
-expect_stop "SC-MB-281 — взятие без отметки отбито" "$(input_stop "$T")" BLOCK
-expect_reason "SC-MB-281 — отказ называет ключ записи" "$(input_stop "$T")" "$KEY"
-expect_reason "SC-MB-281 — отказ называет состояние" "$(input_stop "$T")" "в работе"
-
-# SC-MB-281 — отметка тем же ходом отпускает
-T="$(transcript "$(say 'разбери приёмник')" "$(wrote "$TASK/grill.md")" \
-    "$(ran 'npm run cargo:mark -- --state in_work --proposal 515044e4-21f2-4bb5-b46a-b9f232116d75')")"
-expect_stop "SC-MB-261, SC-MB-281 — взятие с отметкой проходит" "$(input_stop "$T")" PASS
-
-# SC-MB-282 — работа отдана, а отметки нет
+# SC-MB-281 — работа отдана, а состояние записи прежнее
 T="$(transcript "$(say 'закрывай')" "$(ran 'gh pr create --draft --base main')")"
-expect_stop "SC-MB-282 — отдача без отметки отбита" "$(input_stop "$T")" BLOCK
-expect_reason "SC-MB-282 — отказ требует приём починки" "$(input_stop "$T")" "приём починки"
+expect_stop "SC-MB-281 — отдача без отметки отбита" "$(input_stop "$T")" BLOCK
+expect_reason "SC-MB-281 — отказ называет ключ записи" "$(input_stop "$T")" "$KEY"
+expect_reason "SC-MB-281 — отказ требует приём починки" "$(input_stop "$T")" "приём починки"
+
+# SC-MB-261, SC-MB-281 — отметка тем же ходом отпускает
+T="$(transcript "$(say 'закрывай')" "$(ran 'gh pr create --draft --base main')" \
+    "$(ran 'npm run cargo:mark -- --state fixed --fix статьёй --proposal 515044e4-21f2-4bb5-b46a-b9f232116d75')")"
+expect_stop "SC-MB-261, SC-MB-281 — отдача с отметкой проходит" "$(input_stop "$T")" PASS
+
+# SC-MB-282 — взятие в работу гардом не судится: чужой записи «в работе» не поставить
+T="$(transcript "$(say 'разбери приёмник')" "$(wrote "$TASK/grill.md")")"
+expect_stop "SC-MB-282 — заведение папки задачи проходит" "$(input_stop "$T")" PASS
 
 # SC-MB-282 — закрытие издателем считается отметкой наравне с обычной
-T="$(transcript "$(say 'закрывай')" "$(ran 'gh pr create --draft --base main')" \
+T="$(transcript "$(say 'закрывай')" "$(ran 'git rm -r docs/tasks/'"$BRANCH")" \
     "$(ran 'node tools/cargo-close.mjs --state fixed --fix статьёй --proposal 515044e4-21f2-4bb5-b46a-b9f232116d75')")"
-expect_stop "SC-MB-282 — отдача с закрытием проходит" "$(input_stop "$T")" PASS
+expect_stop "SC-MB-282 — разбор папки с закрытием проходит" "$(input_stop "$T")" PASS
 
 # SC-MB-283 — между взятием и отдачей отметки не требуется
 T="$(transcript "$(say 'делай этап')" "$(wrote "$REPO/libs/probe/thing.ts")" "$(ran 'git commit -m x')")"
 expect_stop "SC-MB-283 — обычный ход работы проходит" "$(input_stop "$T")" PASS
 
 # SC-MB-283 — сухой прогон отметкой не считается: он следа наружу не оставляет
-T="$(transcript "$(say 'разбери приёмник')" "$(wrote "$TASK/grill.md")" \
-    "$(ran 'npm run cargo:mark -- --state in_work --dry-run --proposal 515044e4-21f2-4bb5-b46a-b9f232116d75')")"
-expect_reason "SC-MB-283 — сухой прогон назван не отметкой" "$(input_stop "$T")" "Сухой прогон отметкой не считается"
+T="$(transcript "$(say 'закрывай')" "$(ran 'gh pr create --draft --base main')" \
+    "$(ran 'npm run cargo:mark -- --state fixed --dry-run --proposal 515044e4-21f2-4bb5-b46a-b9f232116d75')")"
+expect_stop "SC-MB-283 — сухой прогон отметкой не считается" "$(input_stop "$T")" BLOCK
 
 # SC-MB-284 — задача не из груза гарда не получает
 grill_without_keys
-T="$(transcript "$(say 'разбери приёмник')" "$(wrote "$TASK/grill.md")")"
-expect_stop "SC-MB-284 — разбор просьбы без ключей проходит" "$(input_stop "$T")" PASS
+T="$(transcript "$(say 'закрывай')" "$(ran 'gh pr create --draft --base main')")"
+expect_stop "SC-MB-284 — отдача работы без ключей груза проходит" "$(input_stop "$T")" PASS
 grill_with_keys
 
 # SC-MB-284 — короткий признак ключом не считается: отметка с ним отбивается приёмом
 printf '# Разбор просьбы\n\nЗапись 515044e4 — восьми знаков не хватает.\n' > "$TASK/grill.md"
-T="$(transcript "$(say 'разбери приёмник')" "$(wrote "$TASK/grill.md")")"
+T="$(transcript "$(say 'закрывай')" "$(ran 'gh pr create --draft --base main')")"
 expect_stop "SC-MB-284 — короткий признак ключом не считается" "$(input_stop "$T")" PASS
 grill_with_keys
 
 # SC-MB-285 — отказ в пользу работы: дерево команды отметки не объявило
-T="$(transcript "$(say 'разбери приёмник')" "$(wrote "$TASK/grill.md")")"
+T="$(transcript "$(say 'закрывай')" "$(ran 'gh pr create --draft --base main')")"
 report "SC-MB-285 — дерево без команды отметки проходит" \
     "$( (cd "$REPO" && RT_CARGO_MARK_CMD='' printf '%s' "$(input_stop "$T")" \
         | env RT_CARGO_MARK_CMD= CLAUDE_PROJECT_DIR="$REPO" bash "$GUARD" 2>/dev/null) | head -c 1 | wc -c | tr -d ' ')" 0
 
 # SC-MB-285 — повторный заход по тому же ходу не судится
-T="$(transcript "$(say 'разбери приёмник')" "$(wrote "$TASK/grill.md")")"
+T="$(transcript "$(say 'закрывай')" "$(ran 'gh pr create --draft --base main')")"
 expect_stop "SC-MB-285 — повторный заход проходит" "$(input_stop "$T" true)" PASS
 
 # SC-MB-285 — записи хода нет вовсе
