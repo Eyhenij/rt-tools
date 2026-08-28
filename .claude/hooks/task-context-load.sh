@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.17.0 · hooks/task-context-load.sh · 7a1af3c8d796 · правится надстройкой, не здесь
+# rt-kit v0.17.0 · hooks/task-context-load.sh · fdd123440694 · правится надстройкой, не здесь
 # rt-hook: SessionStart startup|resume|compact|clear
 # Требует: hooks/profile-check.sh
 # SessionStart: состояние незаконченной работы уезжает в контекст на каждом запуске сессии.
@@ -53,6 +53,28 @@ emit() {
 # Ветка под задачу без папки — работа идёт мимо. Сессию не рвём: SessionStart, отбивающий
 # запуск, оставляет владельца без агента вовсе, а правку кода поймает `task-flow-guard`.
 if [ ! -d "$DIR" ]; then
+    # Папки нет по двум разным причинам, и говорить о них надо разное. Первая — работа шла мимо
+    # правила. Вторая — папку разобрала сама ветка последним коммитом перед заявкой: это законный
+    # исход, и указание собрать её заново уводит заход с хвоста работы обратно в её начало.
+    #
+    # Различает их история ветки: снос папки её же коммитом после общего предка с главной. Ход
+    # работы к этой минуте уехал вместе с папкой, и состояние держат заявка и передача захода.
+    main_branch="${RT_MAIN_BRANCH:-main}"
+    base="$(git merge-base "origin/${main_branch}" HEAD 2>/dev/null || git merge-base "$main_branch" HEAD 2>/dev/null)"
+    dropped=''
+    [ -n "$base" ] && dropped="$(git log "${base}..HEAD" --diff-filter=D --name-only --pretty=format: -- "$DIR" 2>/dev/null | head -1)"
+
+    if [ -n "$dropped" ]; then
+        {
+            printf 'РАБОТА ЗАКРЫВАЕТСЯ — папка задачи разобрана этой веткой.\n\n'
+            printf 'Ход работы удалён вместе с папкой: состояние держат заявка и передача захода.\n'
+            printf 'Папка заново не собирается. Правка кода после разбора требует восстановить её\n'
+            printf 'на время правки и повторить разбор тем же коммитом. Порядок — скил `task-flow`,\n'
+            printf 'паттерны `task-flow-close` и `task-flow-archive`.\n'
+        } | emit
+        exit 0
+    fi
+
     if rt_needs rt_task_branch_ok task-context-load && rt_task_branch_ok "$branch"; then
         {
             printf 'РАБОТА БЕЗ ПАПКИ ЗАДАЧИ.\n\n'
