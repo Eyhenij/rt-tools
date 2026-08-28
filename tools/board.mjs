@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.17.0 · checks/board.github.mjs · dc28baaaba52 · правится надстройкой, не здесь
+// rt-kit v0.17.0 · checks/board.github.mjs · b761919d6ada · правится надстройкой, не здесь
 /**
  * Общая работа с очередью работ: борда проекта, тикеты и их состояние.
  *
@@ -190,7 +190,12 @@ export function moveTask(number, status, options) {
 }
 
 export function fetchIssues(state, options) {
-    return ghJson(['issue', 'list', '--state', state, '--limit', '400', '--json', 'number,title,state,assignees,labels'], options);
+    // Тело берётся вместе со списком, а не поштучным вызовом на задачу: связь с эпиком читается
+    // как раз в нём, а четыреста вызовов вида «покажи одну задачу» стоили бы дороже всей сверки.
+    return ghJson(
+        ['issue', 'list', '--state', state, '--limit', '400', '--json', 'number,title,state,assignees,labels,body'],
+        options,
+    );
 }
 
 export function fetchIssue(number, options) {
@@ -238,8 +243,7 @@ export function pullState(ref, options) {
         author: pull.author?.login ?? null,
         reviewers,
         reviewed: reviewers.filter((login) => login !== (pull.author?.login ?? null)).length > 0,
-        // Конфликт приезжает в отданную заявку чужим слиянием, без единого действия её автора:
-        // хостинг считает сливаемость заново после каждой правки главной ветки. Судится только
+        // Конфликт приезжает чужим слиянием, без единого действия автора заявки. Судится только
         // прямое «конфликтует»: `UNKNOWN` означает, что хостинг ещё считает, и читать его как
         // конфликт значило бы отбивать работу на каждой свежей вершине.
         conflicting: pull.mergeable === 'CONFLICTING',
@@ -248,11 +252,8 @@ export function pullState(ref, options) {
 
 /**
  * На сколько коммитов ветка заявки позади главной. Гард судит основание в минуту открытия, а
- * заявка стоит днями: влитое за это время не видит ни он, ни зелёный прогон — задания шли от
- * основания, которого в главной ветке уже нет.
- *
- * Сравнить нечем — ноль: сверка без доступа отбивала бы работу вместо промаха. Без сети наружу
- * летит отказ, как и у остальных вызовов, — там молчание значило бы «сошлось».
+ * заявка стоит днями: влитого за это время не видит ни он, ни зелёный прогон. Сравнить нечем —
+ * ноль: сверка без доступа отбивала бы работу вместо промаха; без сети летит отказ, как везде.
  */
 export function behindMain(branch, mainBranch, options) {
     if (!OWNER || !REPO || !branch || !mainBranch) {
@@ -272,10 +273,8 @@ export function behindMain(branch, mainBranch, options) {
     }
 }
 
-/**
- * Вершина берётся вместе с остальным: спросить её потом значило бы второй вызов на каждый PR,
- * а судят по ней и папку задачи, и прогон.
- */
+/** Вершина берётся вместе с остальным: по ней судят и папку задачи, и прогон, а спросить её
+ * потом значило бы второй вызов на каждый PR. */
 export function fetchOpenPulls(options) {
     return ghJson(
         ['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,title,headRefName,headRefOid,isDraft,body,mergeable'],
