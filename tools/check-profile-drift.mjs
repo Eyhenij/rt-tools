@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.17.0 · checks/check-profile-drift.mjs · 1a228661eb20 · правится надстройкой, не здесь
+// rt-kit v0.17.0 · checks/check-profile-drift.mjs · 9bc72a7850b6 · правится надстройкой, не здесь
 /**
  * Сверка надстроек профиля с таблицами компаньонов.
  *
@@ -19,8 +19,9 @@
  *
  * Ненулевой код возврата и перечень расхождений.
  */
+import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 
 const ROOT = process.cwd();
 const PROFILE = join(ROOT, '.claude/rt-kit/project.sh');
@@ -80,6 +81,65 @@ function companionsText() {
     return texts.length > 0 ? texts.join('\n') : null;
 }
 
+/**
+ * Набор гейта пуша, собранный оболочкой: с надстройкой дерева и без неё.
+ *
+ * Собирается вызовом, а не чтением текста: набор — функция, и она смотрит на дерево — есть ли
+ * настройка раскладки, лежит ли конфиг оформления, исполним ли набор сценариев. Прочитанный
+ * текстом, он назвал бы командами то, чего в этом дереве нет вовсе.
+ *
+ * Пусто — собрать нечем: нет оболочки, нет функции, отказ вызова. Сверять тогда нечего.
+ */
+function gateSet(withProfile) {
+    const source = withProfile ? `. '${DEFAULTS}'; . '${PROFILE}';` : `. '${DEFAULTS}';`;
+    const run = spawnSync('bash', ['-c', `${source} command -v rt_push_checks >/dev/null 2>&1 || exit 9; rt_push_checks ''`], {
+        cwd: ROOT,
+        encoding: 'utf8',
+    });
+
+    return run.status === 0 && typeof run.stdout === 'string' ? run.stdout.split('\n').filter(Boolean) : null;
+}
+
+/**
+ * Проверки, названные в наборе, — по имени файла, а не по всей строке команды.
+ *
+ * Строка целиком сверке не годится: дерево вправе позвать ту же проверку другим запускателем или
+ * с другим доводом, и расхождением это не является. Пропажа самой проверки — является.
+ */
+function checksIn(lines) {
+    const names = new Set();
+
+    for (const line of lines) {
+        for (const [word] of line.matchAll(/[\w./-]+\.(?:mjs|sh)/g)) {
+            names.add(basename(word));
+        }
+    }
+
+    return names;
+}
+
+/**
+ * Проверки, которые умолчание пакета зовёт, а набор дерева — нет.
+ *
+ * Набор гейта собирается умолчанием и надстройкой, и надстройка вправе объявить функцию заново.
+ * Выкушенная так проверка ничем не отличима от проверки, которой в дереве нет вовсе: гейт зелен,
+ * потому что её никто не звал, а сводка раскладки о наборе не знает ничего — она сличает
+ * переменные, а тут заменена функция.
+ *
+ * Отказ в пользу работы: собрать набор нечем — строк нет, и сверка идёт дальше своим делом.
+ */
+function cutFromGate() {
+    const packaged = gateSet(false);
+    const here = gateSet(true);
+    if (packaged === null || here === null) {
+        return [];
+    }
+
+    const mine = checksIn(here);
+
+    return [...checksIn(packaged)].filter((name) => !mine.has(name)).sort((first, second) => first.localeCompare(second, 'ru'));
+}
+
 function main() {
     if (!existsSync(PROFILE) || !existsSync(DEFAULTS)) {
         console.log('check-profile-drift: профиля дерева или умолчаний пакета нет — сверять нечего');
@@ -92,6 +152,21 @@ function main() {
         console.log('check-profile-drift: компаньонов правил в дереве нет — сверять не с чем');
 
         return 0;
+    }
+
+    const cut = cutFromGate();
+    if (cut.length > 0) {
+        console.log(`check-profile-drift: набор гейта пуша не зовёт проверок умолчания: ${cut.length}\n`);
+
+        for (const name of cut) {
+            console.log(`  ${name}`);
+        }
+
+        console.log('\nНабор гейта собирается умолчанием пакета и надстройкой дерева. Проверка, выкушенная');
+        console.log('надстройкой, ничем не отличима от проверки, которой в дереве нет: гейт зелен потому,');
+        console.log('что её никто не звал. Верни её в набор либо объясни отказ в компаньоне правила поставки.');
+
+        return 1;
     }
 
     const defaults = valuesOf(DEFAULTS);
