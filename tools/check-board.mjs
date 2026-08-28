@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.17.0 · checks/check-board.github.mjs · 29d100ab0414 · правится надстройкой, не здесь
+// rt-kit v0.17.0 · checks/check-board.github.mjs · 0ac5852470e1 · правится надстройкой, не здесь
 /**
  * Сверка очереди работ с тем, что закон о поставке требует от задачи и её PR.
  *
@@ -52,6 +52,7 @@ import {
 } from './board.mjs';
 import { onlyIgnoredPaths } from './board-paths.mjs';
 import { HAS_PIPELINE, deployLag, evictedOnHead, headCommittedAt, runsOnHead, verdictOnHead } from './board-runs.mjs';
+import { checkEpicLinks } from './board-epics.mjs';
 import { similarTitles } from './board-titles.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
@@ -300,6 +301,7 @@ try {
     }
 
     similarTitles(open);
+    checkEpicLinks(open, report);
 
     const openNumbers = new Set(open.map((issue) => issue.number));
     const claimed = new Map();
