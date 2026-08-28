@@ -85,6 +85,8 @@ export class AdminPostmortemsListComponent extends AdminListScreenBase<IPostmort
     protected readonly columns: readonly IRtTable.ColumnConfig[] = POSTMORTEMS_COLUMNS;
     protected readonly tableId: string = POSTMORTEMS_TABLE_ID;
     protected readonly qaPrefix: string = 'postmortems';
+    /** Приписка к состоянию: запись, закрытую не своим деревом, отправитель иначе читает как свою отметку. */
+    protected readonly closedByPublisherLabel: string = adminLabel('closedByPublisher');
     protected override readonly cargoKind: ECargoKind = ECargoKind.Postmortem;
 
     protected readonly store: PostmortemsStore = inject(PostmortemsStore);

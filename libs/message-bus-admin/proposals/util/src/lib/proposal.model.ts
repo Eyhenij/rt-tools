@@ -27,6 +27,7 @@ export namespace IProposal {
             readonly address: string;
             readonly state: string;
             readonly releaseVersion: string | null;
+            readonly closedByPublisher: boolean;
             readonly arrivedAt: string;
         }
 
@@ -52,6 +53,11 @@ export namespace IProposal {
              * столбца тогда пуста — ни прочерка, ни слова «нет» в ней не стоит.
              */
             readonly releaseVersion: string;
+            /**
+             * Закрыл ли запись издатель редакции, а не приславшее её дерево. Показывается там же,
+             * где состояние: без этого отправитель читает выпущенную запись как свою отметку.
+             */
+            readonly closedByPublisher: boolean;
             readonly arrivedAt: Date;
         }
     }

@@ -30,7 +30,12 @@
 
         <ng-container cdkColumnDef="state">
             <th *cdkHeaderCellDef cdk-header-cell rtSortHeader="state">{{ columns[2].label }}</th>
-            <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-state'">{{ row.stateLabel }}</td>
+            <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-state'">
+                {{ row.stateLabel }}
+                @if (row.closedByPublisher) {
+                    <span [attr.qa-dataid]="qaPrefix + '-cell-closed-by-publisher'">({{ closedByPublisherLabel }})</span>
+                }
+            </td>
         </ng-container>
 
         <ng-container cdkColumnDef="releaseVersion">

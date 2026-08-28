@@ -217,7 +217,17 @@ function listLine(kind, row, key, glimpse) {
     const title = KINDS[kind].titleOf(row);
     const named = title === key ? '' : `${title} · `;
 
-    return `  ${key || '(ключа нет: текст не дочитан)'}\n    ${named}${row.tree?.slug ?? '?'} · ${row.state}${tail}`;
+    return `  ${key || '(ключа нет: текст не дочитан)'}\n    ${named}${row.tree?.slug ?? '?'} · ${row.state}${closedMark(row)} · в приёме ${row.id ?? '?'}${tail}`;
+}
+
+/**
+ * Приписка о том, что запись закрыл издатель редакции, а не приславшее её дерево.
+ *
+ * Стоит рядом с состоянием, а своей строкой: выпущенную запись отправитель иначе читает как свою
+ * отметку — и ищет у себя работу, которой не делал.
+ */
+function closedMark(row) {
+    return row.closedByPublisher ? ' (закрыто издателем)' : '';
 }
 
 /** Запись целиком: то, что читают перед решением. */
@@ -225,7 +235,10 @@ function fullLines(kind, row, key) {
     return [
         `${KINDS[kind].word} ${KINDS[kind].titleOf(row)}`,
         `  ключ отметки: ${key}`,
-        `  дерево: ${row.tree?.slug ?? '?'} · состояние: ${row.state} · приехало: ${row.arrivedAt ?? '?'}`,
+        // Признак записи в приёме — не ключ отметки: тем ключом её двигает своё дерево, а этим
+        // закрывает издатель редакции, у которого чужого ключа нет и быть не может
+        `  признак в приёме: ${row.id ?? '?'}`,
+        `  дерево: ${row.tree?.slug ?? '?'} · состояние: ${row.state}${closedMark(row)} · приехало: ${row.arrivedAt ?? '?'}`,
         ...(row.fixNote ? [`  чем починено: ${row.fixNote}`] : []),
         ...(row.releaseVersion ? [`  выпущено в: ${row.releaseVersion}`] : []),
         '',

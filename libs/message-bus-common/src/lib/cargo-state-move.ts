@@ -51,6 +51,33 @@ export function cargoStateMove(from: ECargoState, to: ECargoState): ECargoStateM
     return to === next ? ECargoStateMove.Allowed : ECargoStateMove.Denied;
 }
 
+/** Шаги, которыми запись закрывают: их ставит тот, кто починил и опубликовал. */
+const CARGO_CLOSE_STATES: readonly ECargoState[] = [ECargoState.Fixed, ECargoState.Released];
+
+/**
+ * Решение о закрытии: можно ли издателю редакции перевести чужую запись в названное состояние.
+ *
+ * Порядок здесь свой, и это не послабление, а другое право. Дерево ведёт свою запись по шагам и
+ * отвечает за каждый; издатель видит её один раз — когда правка вошла в редакцию, — и шага «в
+ * работе» у него не было вовсе: работу брал не он. Поэтому «новое» закрывается сразу починенным,
+ * а «в работе» и «новое» издателю не ставятся ни из какого состояния: они говорят о работе,
+ * которую ведёт дерево, и поставить их значило бы распорядиться чужой очередью.
+ *
+ * Назад закрытие не ходит: выпущенное не возвращается в починенное ни у кого — иначе издатель
+ * отменял бы то, о чём уже сказал потребителю.
+ */
+export function cargoCloseMove(from: ECargoState, to: ECargoState): ECargoStateMove {
+    if (!CARGO_CLOSE_STATES.includes(to)) {
+        return ECargoStateMove.Denied;
+    }
+
+    if (from === to) {
+        return ECargoStateMove.Same;
+    }
+
+    return CARGO_STATE_ORDER.indexOf(to) > CARGO_STATE_ORDER.indexOf(from) ? ECargoStateMove.Allowed : ECargoStateMove.Denied;
+}
+
 /** Строка правки: чью запись и в какое состояние её переводят. */
 export interface ICargoStateAsk {
     /** Ключ записи: имя файла у разбора происшествия, признак текста у предложения. */
@@ -110,6 +137,23 @@ export function cargoStateData(ask: ICargoStateAsk): ICargoStateData {
     };
 }
 
+/** Что ложится в закрываемую запись: то же, что у правки деревом, и признак закрывшего. */
+export interface ICargoCloseData extends ICargoStateData {
+    /** Закрыл издатель. Ложится при каждом закрытии, а не только при первом: снимать признак нечем. */
+    readonly closedByPublisher: true;
+}
+
+/**
+ * Правка одной записи при закрытии.
+ *
+ * Собирается здесь, а не в каждом домене своим условием: признак закрывшего один на оба рода
+ * записей, и вторая его копия разошлась бы с первой молча — увидеть расхождение можно было бы
+ * только на записи, которую уже закрыли.
+ */
+export function cargoCloseData(ask: ICargoStateAsk): ICargoCloseData {
+    return { ...cargoStateData(ask), closedByPublisher: true };
+}
+
 /**
  * Чем кончилась одна строка правки.
  *
@@ -123,4 +167,15 @@ export interface ICargoStateOutcome {
     readonly key: string;
     /** Решение о переходе либо пусто, когда записи у дерева нет. */
     readonly move: ECargoStateMove | null;
+}
+
+/** Чем кончилась одна строка закрытия: то же решение и признак дерева, чью запись закрывали. */
+export interface ICargoCloseOutcome extends ICargoStateOutcome {
+    /**
+     * Признак дерева записи либо пусто, когда записи с таким признаком нет вовсе.
+     *
+     * Нужен журналу: закрытие правит чужие записи, и строка о нём без дерева не говорит, кому
+     * это видно, — а видно оно как раз соседу, который о закрытии не просил.
+     */
+    readonly tree: string | null;
 }

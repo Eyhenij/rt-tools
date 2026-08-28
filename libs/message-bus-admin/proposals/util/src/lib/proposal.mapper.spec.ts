@@ -52,6 +52,7 @@ describe('ProposalShortMapper', () => {
         expect(Object.keys(row).sort()).toEqual([
             'address',
             'arrivedAt',
+            'closedByPublisher',
             'id',
             'releaseVersion',
             'resource',

@@ -10,12 +10,15 @@ import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IPostmortemArrivalUpdate, postmortemArrivalUpdate } from '@rt/message-bus-api/postmortems/util';
 import {
     CARGO_RELEASE_VERSION_FIELD,
+    cargoCloseData,
+    cargoCloseMove,
     cargoStateData,
     cargoStateMove,
     cargoStateOf,
     cargoStateWrites,
     ECargoState,
     ECargoStateMove,
+    ICargoCloseOutcome,
     ICargoPageAsked,
     ICargoStateAsk,
     ICargoStateOutcome,
@@ -49,6 +52,13 @@ export interface IPostmortemListRow {
     readonly state: ECargoState;
     /** В какой версии искать фикс. Пусто у записи, которую никто не выпускал: столбец её не заполняет. */
     readonly releaseVersion: string | null;
+    /**
+     * Закрыл ли запись издатель редакции, а не приславшее её дерево.
+     *
+     * Едет строкой списка, а не одной записью: свой разбор отправитель видит именно списком, и
+     * без этого поля выпущенная запись читается им как его собственная отметка.
+     */
+    readonly closedByPublisher: boolean;
     readonly arrivedAt: Date;
     readonly updatedAt: Date;
 }
@@ -123,6 +133,7 @@ interface IPostmortemStored {
     file: string;
     state: string;
     releaseVersion: string | null;
+    closedByPublisher: boolean;
     arrivedAt: Date;
     updatedAt: Date;
     tree: ITreeChoice;
@@ -158,6 +169,7 @@ async function storedRows(
             file: true,
             state: true,
             releaseVersion: true,
+            closedByPublisher: true,
             arrivedAt: true,
             updatedAt: true,
             tree: { select: { slug: true, name: true } },
@@ -178,6 +190,7 @@ function listRowOf(row: IPostmortemStored): IPostmortemListRow {
         file: row.file,
         state: cargoStateOf(row.state),
         releaseVersion: row.releaseVersion,
+        closedByPublisher: row.closedByPublisher,
         arrivedAt: row.arrivedAt,
         updatedAt: row.updatedAt,
     };
@@ -271,6 +284,7 @@ export async function readPostmortem(prisma: PrismaService, id: string): Promise
             state: true,
             fixNote: true,
             releaseVersion: true,
+            closedByPublisher: true,
             arrivedAt: true,
             updatedAt: true,
             tree: { select: { slug: true, name: true } },
@@ -385,4 +399,54 @@ export async function movePostmortemStates(
     }
 
     return judged.map((one: { outcome: ICargoStateOutcome }): ICargoStateOutcome => one.outcome);
+}
+
+/** Разбор, каким его видит закрытие: признак, состояние и дерево, приславшее запись. */
+interface IPostmortemForClose {
+    id: string;
+    state: string;
+    tree: { slug: string };
+}
+
+/**
+ * Закрыть разборы любых деревьев: перевести их в починенное либо выпущенное.
+ *
+ * Устроено тем же приёмом, что и закрытие предложений, и стоит здесь по той же причине, по
+ * которой здесь стоит правка деревом: таблицу правит тот домен, чья она. Запись ищется признаком
+ * из чтения, а не именем файла: одно и то же имя лежит у нескольких деревьев, и названное именем
+ * закрытие попало бы не в ту запись.
+ */
+export async function closePostmortems(prisma: PrismaService, asked: readonly ICargoStateAsk[]): Promise<ICargoCloseOutcome[]> {
+    if (asked.length === 0) {
+        return [];
+    }
+
+    const rows: IPostmortemForClose[] = await prisma.postmortem.findMany({
+        where: { id: { in: asked.map((one: ICargoStateAsk): string => one.key) } },
+        select: { id: true, state: true, tree: { select: { slug: true } } },
+    });
+    const stored: Map<string, IPostmortemForClose> = new Map(
+        rows.map((row: IPostmortemForClose): [string, IPostmortemForClose] => [row.id, row])
+    );
+    const judged: { ask: ICargoStateAsk; outcome: ICargoCloseOutcome }[] = asked.map((ask: ICargoStateAsk) => {
+        const found: IPostmortemForClose | undefined = stored.get(ask.key);
+        const move: ECargoStateMove | null = found === undefined ? null : cargoCloseMove(cargoStateOf(found.state), ask.state);
+
+        return { ask, outcome: { key: ask.key, tree: found?.tree.slug ?? null, move } };
+    });
+    const written: ICargoStateAsk[] = judged
+        .filter((one: { ask: ICargoStateAsk; outcome: ICargoCloseOutcome }): boolean =>
+            cargoStateWrites(one.outcome.move, one.ask.fixNote, one.ask.releaseVersion)
+        )
+        .map((one: { ask: ICargoStateAsk }): ICargoStateAsk => one.ask);
+
+    if (written.length > 0) {
+        await prisma.$transaction(
+            written.map((ask: ICargoStateAsk) =>
+                prisma.postmortem.update({ where: { id: ask.key }, data: cargoCloseData(ask), select: { id: true } })
+            )
+        );
+    }
+
+    return judged.map((one: { outcome: ICargoCloseOutcome }): ICargoCloseOutcome => one.outcome);
 }
