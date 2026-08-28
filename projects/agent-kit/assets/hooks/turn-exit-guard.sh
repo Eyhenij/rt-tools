@@ -38,6 +38,27 @@
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
 rt_hook_read
+
+# Отказ печатается одной формой: причина, общий хвост о двух законных ходах и запасная строка
+# на случай, если разборщика нет. Прежде эти двенадцать строк стояли восемью копиями — файл рос
+# на каждом новом ярусе быстрее, чем на самом требовании.
+rt_te_deny() {
+    rt_te_reason="$1"
+    rt_te_short="$2"
+    # shellcheck disable=SC1090
+    [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+        && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+    command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+    rt_te_tail="$(rt_deny_tail "")"
+    [ -n "$rt_te_tail" ] && rt_te_reason="${rt_te_reason}
+
+${rt_te_tail}"
+
+    jq -n --arg r "$rt_te_reason" '{decision:"block",reason:$r}' 2>/dev/null \
+        || printf '{"decision":"block","reason":"turn-exit-guard: %s"}\n' "$rt_te_short"
+    exit 0
+}
+
 input="$RT_HOOK_INPUT"
 [ -z "$input" ] && exit 0
 command -v jq >/dev/null 2>&1 || exit 0
@@ -97,20 +118,7 @@ if [ "$state" = "замысел-записан" ]; then
 
 Страж судит один ход: следующий заход не отбивается."
 
-    # Общий хвост отказа: два законных хода. Файл может быть не разложен — тогда хвоста нет,
-    # а причина отказа остаётся прежней.
-    # shellcheck disable=SC1090
-    [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-        && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-    command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-    deny_tail_text="$(rt_deny_tail "")"
-    [ -n "$deny_tail_text" ] && reason="${reason}
-
-${deny_tail_text}"
-
-    jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-        || printf '{"decision":"block","reason":"turn-exit-guard: замысел записан, а первый этап не начат."}\n'
-    exit 0
+    rt_te_deny "$reason" "замысел записан, а первый этап не начат."
 fi
 
 # То же самое, но объявить это на диске уже нечем: папка задачи разбирается до открытия заявки,
@@ -277,18 +285,7 @@ if [ "$archived" != "true" ] && [ -z "$progress" ] && [ -n "$branch" ] && [ ! -d
 
 Страж судит один ход: следующий заход не отбивается."
 
-        # shellcheck disable=SC1090
-        [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-            && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-        command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-        deny_tail_text="$(rt_deny_tail "")"
-        [ -n "$deny_tail_text" ] && reason="${reason}
-
-${deny_tail_text}"
-
-        jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-            || printf '{"decision":"block","reason":"turn-exit-guard: работа взята и не начата — напиши замысел."}\n'
-        exit 0
+        rt_te_deny "$reason" "работа взята и не начата — напиши замысел."
     fi
 fi
 
@@ -327,20 +324,7 @@ EOF
 Запусти их этим же ходом либо верни прежний номер этапа в ход работы.
 
 Страж судит один ход: следующий заход не отбивается."
-        # Общий хвост отказа: два законных хода. Файл может быть не разложен — тогда хвоста нет,
-        # а причина отказа остаётся прежней.
-        # shellcheck disable=SC1090
-        [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-            && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-        command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-        deny_tail_text="$(rt_deny_tail "")"
-        [ -n "$deny_tail_text" ] && reason="${reason}
-
-${deny_tail_text}"
-
-        jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-            || printf '{"decision":"block","reason":"turn-exit-guard: закрытый этап не подтверждён выводом команды."}\n'
-        exit 0
+        rt_te_deny "$reason" "закрытый этап не подтверждён выводом команды."
     fi
 fi
 
@@ -363,18 +347,7 @@ if [ "$handed_over" = "true" ] && [ "$started_next" != "true" ]; then
 
 Страж судит один ход: следующий заход не отбивается."
 
-    # shellcheck disable=SC1090
-    [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-        && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-    command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-    deny_tail_text="$(rt_deny_tail "")"
-    [ -n "$deny_tail_text" ] && reason="${reason}
-
-${deny_tail_text}"
-
-    jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-        || printf '{"decision":"block","reason":"turn-exit-guard: работа отдана, а следующая не начата."}\n'
-    exit 0
+    rt_te_deny "$reason" "работа отдана, а следующая не начата."
 fi
 
 # Ход кончился ожиданием чужого шага. Работа в нём была — тем он и обманчив: полон, и пустоты за
@@ -390,18 +363,7 @@ if [ "$waited" = "true" ]; then
 
 Страж судит один ход: следующий заход не отбивается."
 
-    # shellcheck disable=SC1090
-    [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-        && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-    command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-    deny_tail_text="$(rt_deny_tail "")"
-    [ -n "$deny_tail_text" ] && reason="${reason}
-
-${deny_tail_text}"
-
-    jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-        || printf '{"decision":"block","reason":"turn-exit-guard: ход кончился ожиданием чужого шага."}\n'
-    exit 0
+    rt_te_deny "$reason" "ход кончился ожиданием чужого шага."
 fi
 
 # Общий рубеж. Работа за ход была — но последним действием стал не она, а текст владельцу.
@@ -417,18 +379,26 @@ if [ "$worked" = "true" ] && [ "$ended_working" != "true" ]; then
 
 Страж судит один ход: следующий заход не отбивается."
 
-    # shellcheck disable=SC1090
-    [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-        && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-    command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-    deny_tail_text="$(rt_deny_tail "")"
-    [ -n "$deny_tail_text" ] && reason="${reason}
+    rt_te_deny "$reason" "последним действием хода стала не работа."
+fi
 
-${deny_tail_text}"
+# Работа, оставшаяся в рабочем дереве. Ветка ушла вперёд своей удалённой ссылки, а заявки при
+# ней в этом ходе не открывали: сделанное лежит там, где его не видит никто, кроме сделавшего.
+# Признак читается без сети и молчит там, где ссылки нет вовсе — под пробу заводят и такие ветки.
+# Разбор — `docs/postmortems/2026-08-25-fifteen-branches-over-one-index.md`.
+if [ "$worked" = "true" ] && [ "$handed_over" != "true" ]; then
+    unpushed="$(git -C "$root" rev-list --count '@{u}..HEAD' 2>/dev/null)"
+    if [ -n "$unpushed" ] && [ "$unpushed" -gt 0 ] 2>/dev/null; then
+        reason="BLOCKED by turn-exit-guard: за ход была работа, но она осталась в рабочем дереве — неотданных коммитов ${unpushed}.
 
-    jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-        || printf '{"decision":"block","reason":"turn-exit-guard: последним действием хода стала не работа."}\n'
-    exit 0
+Владелец видит прежнее состояние и читает его как «не сделано ничего». Ходов отсюда два: довести работу до хостинга — запушить ветку и открыть заявку — либо снять сделанное, если оно не нужно.
+
+Оставшееся в дереве называется причиной — словом владельца, а не списком остатков.
+
+Страж судит один ход: следующий заход не отбивается."
+
+        rt_te_deny "$reason" "работа осталась в рабочем дереве."
+    fi
 fi
 
 [ "$worked" = "true" ] && exit 0
@@ -463,18 +433,6 @@ else
 Страж судит один ход: следующий заход не отбивается."
 fi
 
-# Общий хвост отказа: два законных хода. Файл может быть не разложен — тогда хвоста нет,
-# а причина отказа остаётся прежней.
-# shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-deny_tail_text="$(rt_deny_tail "")"
-[ -n "$deny_tail_text" ] && reason="${reason}
-
-${deny_tail_text}"
-
-jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-    || printf '{"decision":"block","reason":"turn-exit-guard: работа не кончена — следующий шаг стоит в ходе работы."}\n'
+rt_te_deny "$reason" "работа не кончена — следующий шаг стоит в ходе работы."
 
 exit 0

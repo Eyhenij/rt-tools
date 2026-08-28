@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.17.0 · hooks/waiting-turn-guard.sh · 2b115c756767 · правится надстройкой, не здесь
+# rt-kit v0.17.0 · hooks/waiting-turn-guard.sh · e419d22688d3 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: hooks/deny-tail.sh
 # Гард ожидания: ход, сообщающий владельцу о чужом шаге, не заканчивается, пока в нём не было ни
@@ -70,13 +70,20 @@ moved_re='task:new|task:move|checkout[[:space:]]+-b|docs/tasks/'
 # следующая задача была взята вместо этого, а не сверх этого.
 ready_re='pr[[:space:]]+ready|run[[:space:]]+(list|view|watch)|pr[[:space:]]+checks|check-runs|check:board|board\.mjs'
 
+# Своё названное действие. Пустой ход, объявивший, что сделает дальше, ничем себя не выдаёт:
+# заявку он не открывал, прогона не читал, и оба прежних признака молчат. Ловится он формой —
+# набором образцов будущего времени о собственном шаге, — а не пониманием смысла; за словами
+# при этом не должно стоять ни одного вызова, иначе объявление сказано по ходу работы, а не
+# вместо неё.
+vow_re='дальше беру|дальше возьму|дальше иду|следующим шагом|следующий шаг:|затем сделаю|затем возьму|потом сделаю|после этого сделаю|далее беру'
+
 # Ход — это всё, что записано после последнего настоящего ввода владельца. Ответ инструмента
 # приходит той же ролью, поэтому строки с `tool_result` вводом не считаются.
 #
 # Хвост в 400 строк: запись хода растёт всю сессию, а судится только последний ход.
 verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r \
     --arg opened "$opened_re" --arg moved "$moved_re" --arg read "$read_re" --arg red "$red_re" \
-    --arg ready "$ready_re" '
+    --arg ready "$ready_re" --arg vow "$vow_re" '
     def is_input:
         .type == "user"
         and (((.message.content // []) | if type == "array"
@@ -99,12 +106,68 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r \
     | (($ran | test($read; "i")) and ($out | test($red; "i"))) as $red_run
     | ($ran | test($moved; "i")) as $went_on
     | ($ran | test($ready; "i")) as $checked
-    | if $opened_pr and ($went_on | not) then "owe:pr"
+    | ([$turn[] | select(.type == "assistant") | (.message.content // [])[]
+          | select(.type == "text") | .text] | join("\n")) as $said
+    | ($said | test($vow; "i")) as $announced
+    | ($uses | length) as $tools
+    | if $opened_pr and ($went_on | not) and ($checked | not) then "owe:both"
+      elif $opened_pr and ($went_on | not) then "owe:pr"
       elif $opened_pr and ($checked | not) then "owe:draft"
       elif $went_on then "pass"
       elif $red_run then "owe:run"
+      elif $announced and $tools == 0 then "owe:vow"
       else "pass" end
 ' 2>/dev/null)"
+
+# Ни одного из двух действий: отказ называет оба разом. Прежде он называл только первое, и
+# снимался тоже первым — исполнитель брал следующую задачу, признак открытой заявки уходил
+# вместе с ходом, и второе требование испарялось, ни разу не прозвучав.
+if [ "$verdict" = "owe:both" ]; then
+    reason="BLOCKED by waiting-turn-guard: в этом ходе открыт PR, а по отданной работе не сделано ни одного из двух действий — ни состояние её не спрошено, ни следующая задача не взята.
+
+Действий именно два, и снять отказ одним нельзя: отданное доводится до снятого черновика тем, кто его отдал, а следующая берётся сверх этого, а не вместо. Взятая следующая уносит признак открытой заявки с собой — второе требование после неё не прозвучит уже никогда.
+
+    gh run list                                # состояние отданного
+    npm run task:new -- <заголовок>            # следующая работа
+
+Гард судит один ход: следующий заход не отбивается."
+
+    # shellcheck disable=SC1090
+    [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+        && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+    command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+    deny_tail_text="$(rt_deny_tail "")"
+    [ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
+
+    jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
+        || printf '{"decision":"block","reason":"waiting-turn-guard: по отданной работе не сделано ни одного из двух действий."}\n'
+    exit 0
+fi
+
+# Ход, объявивший своё следующее действие и не сделавший по нему ничего. Отказ называет само
+# объявление: исполнитель, которому сказано «ход пуст», перепишет слова, а не сделает шаг.
+if [ "$verdict" = "owe:vow" ]; then
+    reason="BLOCKED by waiting-turn-guard: за ход не сделано ни одной правки и не позвана ни одна команда, а следующее действие названо словами — «дальше беру», «следующим шагом», «затем сделаю».
+
+Объявление своего же шага работой не бывает: оно точнее всякого обещания и пустоты за ним не видно никому. Сделай названное этим же ходом — либо скажи владельцу, что работу останавливает, и назови, чем именно.
+
+Гард судит один ход: следующий заход не отбивается."
+
+    # shellcheck disable=SC1090
+    [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+        && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+    command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+    deny_tail_text="$(rt_deny_tail "")"
+    [ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
+
+    jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
+        || printf '{"decision":"block","reason":"waiting-turn-guard: следующее действие названо словами, а за ход не сделано ничего."}\n'
+    exit 0
+fi
 
 # Черновик, оставленный при взятой следующей задаче, — отдельный отказ: там требование не про
 # следующую задачу, а про доведение отданной.
