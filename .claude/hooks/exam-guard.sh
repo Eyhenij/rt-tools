@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.17.0 · hooks/exam-guard.sh · fe13e6db6fcd · правится надстройкой, не здесь
+# rt-kit v0.17.0 · hooks/exam-guard.sh · 8a91941224a1 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file|Bash
-# Требует: agents/strict-teacher.md, hooks/roles.sh, hooks/deny-tail.sh
+# Требует: agents/strict-teacher.md, hooks/roles.sh, hooks/deny-tail.sh, hooks/write-targets.sh
 # Гард экзамена: правка не идёт, пока за сессию не сдан экзамен по загруженным правилам.
 #
 # Зачем именно так. Гейт правил требует загрузить правило перед правкой и на этом кончается:
@@ -15,6 +15,21 @@
 # Списанный ответ экзаменом не считается. Отличить его от знания роль не может — а гард может:
 # между вопросами и ответами не должно быть чтения тех же правил. Признак грубый и своей границы
 # не скрывает: чтение соседнего правила он засчитает списыванием тоже.
+#
+# Вердикт ищется во всех формах записи хода, а не в одной. Форму доставки выбирает хост: роль,
+# работающая фоном, отдаёт результат уведомлением о завершении, и записи вида «ответ инструмента»
+# у неё нет вовсе. Дерево, где роль так и работает, гард запер целиком — пять кругов экзамена с
+# полным вердиктом не отпустили ни одной правки; разбор — в описаниях происшествий.
+#
+# Отброшены при этом две формы, и обе намеренно. Свой текст помощника вердиктом не бывает:
+# написать нужную строку в ответе стоит одного движения. Ответы инструментов чтения и записи —
+# тоже: печать той же строки эхом или чтение файла с нею проходили бы гард, то есть единственным
+# достижимым способом стала бы подделка. Засчитывается ответ инструмента, который читать и
+# писать файлы не умеет, — им роль и запускают.
+#
+# Из-под гарда выведены настройка дерева, её надстройки и передача захода: настройка, которой
+# гард выключается, этим гардом не запирается — иначе выхода из отказа нет вовсе. Отправка груза
+# в приём заперта была той же дырой: адрес приёма живёт в той же настройке.
 #
 # FAIL-OPEN: нет jq, нет записи хода, чужой инструмент → пропуск. Сломанный гард не должен
 # мешать работать.
@@ -35,16 +50,46 @@ rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 [ -f "$rt_hooks_dir/roles.sh" ] && . "$rt_hooks_dir/roles.sh" 2>/dev/null
 command -v rt_role_off >/dev/null 2>&1 && rt_role_off strict-teacher && exit 0
 
+# Цели записи разбирает общий помощник — тот же, которым их разбирает гард места правки.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/write-targets.sh" ] && . "$rt_hooks_dir/write-targets.sh" 2>/dev/null
+command -v rt_write_targets >/dev/null 2>&1 || rt_write_targets() { cat >/dev/null; }
+
+# Пути, которые гард не судит: настройка дерева, её надстройки и каталог передачи захода.
+# Печатает «да», если все названные цели выведены из-под гарда.
+rt_exam_free_paths() {
+    free=1
+    while IFS= read -r target; do
+        [ -z "$target" ] && continue
+        case "$target" in
+            *.claude/rt-kit.json | *.claude/rt-kit/* | *.claude/handoff/*) ;;
+            *) free=0 ;;
+        esac
+    done
+    [ "$free" = "1" ] && printf 'да'
+}
+
 tool="$(rt_hook_tool)"
 # Второй экзамен спрашивается на снятии черновика: работа кончилась, и правила поставки к этому
 # моменту читались давно — между их чтением и этой минутой прошёл весь заход.
 ready=0
 case "$tool" in
-    Edit | Write | MultiEdit | mcp__webstorm__create_new_file) ;;
-    Bash)
+    Edit | Write | MultiEdit | mcp__webstorm__create_new_file)
+        target="$(printf '%s' "$input" | jq -r '.tool_input.file_path // .tool_input.pathInProject // empty' 2>/dev/null)"
+        [ -n "$target" ] && [ "$(printf '%s\n' "$target" | rt_exam_free_paths)" = "да" ] && exit 0
+        ;;
+    Bash | mcp__webstorm__execute_terminal_command)
         cmd="$(rt_hook_cmd)"
-        printf '%s' "$cmd" | grep -qE 'pr[[:space:]]+ready|mr[[:space:]]+update[^|;&]*--ready' || exit 0
-        ready=1
+        if printf '%s' "$cmd" | grep -qE 'pr[[:space:]]+ready|mr[[:space:]]+update[^|;&]*--ready'; then
+            ready=1
+        else
+            # Запись файла вызовом оболочки судится наравне с правкой: закрытый честный путь при
+            # открытом обходном означает, что гард держит того, кто правилам следует, и пропускает
+            # того, кто их обходит.
+            targets="$(printf '%s' "$cmd" | rt_write_targets)"
+            [ -z "$targets" ] && exit 0
+            [ "$(printf '%s\n' "$targets" | rt_exam_free_paths)" = "да" ] && exit 0
+        fi
         ;;
     *) exit 0 ;;
 esac
@@ -71,11 +116,39 @@ deny() {
 
 # Судится вся сессия, а не последний ход: экзамен сдаётся один раз на старте и держится до конца.
 verdict="$(jq -s -r '
-    [.[] | select(.type == "user") | .message.content // [] | select(type == "array") | .[]
-       | select(.type == "tool_result") | .content
-       | if type == "string" then .
-         elif type == "array" then (map(if type == "object" then (.text // "") else tostring end) | join("\n"))
-         else tostring end] | join("\n")
+    def textof:
+        if type == "string" then .
+        elif type == "array" then (map(if type == "object" then (.text // "") else tostring end) | join("\n"))
+        else tostring end;
+
+    # Инструменты, читающие и пишущие файлы: их ответ вердиктом не считается — иначе печать той
+    # же строки эхом и чтение файла с нею проходят гард, а настоящий вердикт не проходит.
+    ["Bash", "Read", "Grep", "Glob", "Edit", "Write", "MultiEdit", "NotebookEdit"] as $mute
+    | [.[] | select(.type == "assistant") | (.message.content // [])[]
+         | select(.type == "tool_use") | select(.name as $n | $mute | index($n) != null) | (.id // "")] as $muted
+
+    | [ .[]
+        # Свой текст помощника вердиктом не бывает: написать нужную строку в ответе стоит одного
+        # движения.
+        | if .type == "assistant" then ""
+          elif .type == "user" then
+              ([ ((.message.content // []) | if type == "array" then .[] else empty end
+                    | select(.type == "tool_result")
+                    | select(((.tool_use_id // "") as $i | $muted | index($i)) == null)
+                    | .content | textof),
+                 ((.message.content // "") | if type == "string" then . else "" end),
+                 # Поле результата вызова: та же запись, другая форма. Отбрасывается, только
+                 # если этот результат принадлежит инструменту чтения или записи.
+                 (. as $rec
+                  | if ($rec.toolUseResult // null) == null then ""
+                    elif ([($rec.message.content // []) | if type == "array" then .[] else empty end
+                            | select(.type == "tool_result") | (.tool_use_id // "")]
+                          | map($muted | index(.)) | any(. != null)) then ""
+                    else ($rec.toolUseResult | textof) end)
+               ] | join("\n"))
+          # Записи хоста — уведомление о завершении роли и вложение: форму их выбирает хост, и
+          # засчитываются они целиком.
+          else tostring end ] | join("\n")
     | [scan("ЭКЗАМЕН:[[:space:]]*сдано[[:space:]]*([0-9]+)[[:space:]]*из[[:space:]]*([0-9]+)")]
     | if length == 0 then "нет"
       else (.[-1] | if .[0] == .[1] then "сдан" else "провален" end)
@@ -121,6 +194,6 @@ case "$verdict" in
         deny "BLOCKED by exam-guard: экзамен по загруженным правилам провален. Перечитай правило целиком — не тот кусок, о котором спрашивали, — и позови роль strict-teacher снова. Показанный ответ даёт знание одной строки, а не правила."
         ;;
     *)
-        deny "BLOCKED by exam-guard: за эту сессию экзамена по загруженным правилам не было. Позови роль strict-teacher, передай ей список загруженных правил, ответь на её вопросы по памяти и верни ей ответы — вердикт она отдаёт строкой «ЭКЗАМЕН: сдано N из 5». Загруженное правило и прочитанное правило — разные вещи, и цену этой разницы платит владелец."
+        deny "BLOCKED by exam-guard: за эту сессию экзамена по загруженным правилам не было. Позови роль strict-teacher, передай ей список загруженных правил, ответь на её вопросы по памяти и верни ей ответы — вердикт она отдаёт строкой «ЭКЗАМЕН: сдано N из 5». Засчитывается он из ответа роли в любой форме, какой его доставил хост, но не из вывода оболочки и не из твоего же текста: печать этой строки эхом гард не отпускает. Роль уже звали и вердикт получен — значит, он пришёл формой, которой гард не видит: это дефект гарда, и правка `.claude/rt-kit.json` из-под него выведена. Загруженное правило и прочитанное правило — разные вещи, и цену этой разницы платит владелец."
         ;;
 esac
