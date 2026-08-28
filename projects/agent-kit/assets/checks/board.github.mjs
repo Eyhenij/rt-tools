@@ -189,7 +189,12 @@ export function moveTask(number, status, options) {
 }
 
 export function fetchIssues(state, options) {
-    return ghJson(['issue', 'list', '--state', state, '--limit', '400', '--json', 'number,title,state,assignees,labels'], options);
+    // Тело берётся вместе со списком, а не поштучным вызовом на задачу: связь с эпиком читается
+    // как раз в нём, а четыреста вызовов вида «покажи одну задачу» стоили бы дороже всей сверки.
+    return ghJson(
+        ['issue', 'list', '--state', state, '--limit', '400', '--json', 'number,title,state,assignees,labels,body'],
+        options,
+    );
 }
 
 export function fetchIssue(number, options) {

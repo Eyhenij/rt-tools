@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Паттерн правила git-workflow. Брать на заведение задачи, ветки, коммит и пуш: команда заведения со всеми четырьмя шагами, перевод колонки, слияние двух задач в одну, работа от машинной записи, обход требования документа. Открытие PR — паттерн git-workflow-pr.
 ---
-<!-- rt-kit v0.17.0 · patterns/git-workflow-commit.github.md · d4f7a60b7363 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.17.0 · patterns/git-workflow-commit.github.md · 14dcab1b5a4d · правится надстройкой, не здесь -->
 
 # Задача, ветка и коммит
 
@@ -116,7 +116,7 @@ $GH api graphql -f query='mutation { deleteIssue(input: {issueId: "<node-id>"})
 составная команда отклоняется целиком — ветки в ней ещё нет:
 
 ```bash
-✗ git checkout -b <КЛЮЧ>-85-guest-token && git commit -m 'feat(admin): …'
+✗ git checkout -b <КЛЮЧ>-85-guest-token && git commit -m 'feat(<область>): …'
 ✓ git checkout -b <КЛЮЧ>-85-guest-token
 ✓ git commit -F -
 ```
@@ -167,8 +167,8 @@ GIT_COMMITTER_NAME="<бот>" GIT_COMMITTER_EMAIL="<номер>+<бот>@users.n
 конце заголовка не принимается, длина — до 150 знаков.
 
 ```
-feat(site): availability calendar with season prices
-fix(api): reject overlapping booking dates
+feat(<область>): availability calendar with season prices
+fix(<область>): reject overlapping booking dates
 chore(deploy): docker-compose for vps
 ```
 
