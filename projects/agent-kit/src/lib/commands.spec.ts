@@ -312,6 +312,65 @@ describe('sync', () => {
     });
 });
 
+describe('sync — расхождение редакций', () => {
+    /** Дерево объявляет пакет своей зависимостью — тем именем, каким он зовётся сам. */
+    const declares: (asked: string, where?: string) => void = (asked: string, where: string = 'devDependencies'): void => {
+        put('package.json', JSON.stringify({ name: 'дерево', [where]: { '@rt-tools/probe-kit': asked } }));
+    };
+
+    it('SC-AK-798 — раскладка отказывает и называет обе редакции', () => {
+        start();
+        declares('0.9.0');
+        const outcome: IOutcomeOfCommand = sync({ ...env, name: '@rt-tools/probe-kit' }, false);
+
+        expect(outcome.code).toBe(1);
+        expect(said(outcome)).toContain('объявлено деревом: 0.9.0');
+        expect(said(outcome)).toContain(`установлено:       ${VERSION}`);
+    });
+
+    it('SC-AK-798 — сверка отказывает тем же', () => {
+        start();
+        declares('0.9.0');
+
+        expect(sync({ ...env, name: '@rt-tools/probe-kit' }, true).code).toBe(1);
+    });
+
+    it('SC-AK-798 — совпавшая редакция раскладку пропускает', () => {
+        start();
+        declares(VERSION);
+
+        expect(sync({ ...env, name: '@rt-tools/probe-kit' }, false).code).toBe(0);
+    });
+
+    it('SC-AK-798 — редакция из обычных зависимостей судится так же', () => {
+        start();
+        declares('0.9.0', 'dependencies');
+
+        expect(sync({ ...env, name: '@rt-tools/probe-kit' }, false).code).toBe(1);
+    });
+
+    it('SC-AK-799 — диапазон отказа не даёт', () => {
+        start();
+        declares('^0.9.0');
+
+        expect(sync({ ...env, name: '@rt-tools/probe-kit' }, false).code).toBe(0);
+    });
+
+    it('SC-AK-799 — дерево, не объявившее пакет, раскладку получает', () => {
+        start();
+        put('package.json', JSON.stringify({ name: 'дерево' }));
+
+        expect(sync({ ...env, name: '@rt-tools/probe-kit' }, false).code).toBe(0);
+    });
+
+    it('SC-AK-799 — пакет, не назвавший себя, не судится вовсе', () => {
+        start();
+        declares('0.9.0');
+
+        expect(sync(env, false).code).toBe(0);
+    });
+});
+
 describe('sync --check', () => {
     it('на разложенном и заполненном молчит и пропускает', () => {
         start();
