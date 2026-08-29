@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/git-guard-delivery-folder.sh, hooks/profile-check.sh, hooks/deny-tail.sh
+# Требует: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh
 # Гард поставки. PreToolUse на заведении ветки, пуше и открытии заявки на слияние.
 #
 # Закон о поставке требует трёх вещей, которых обычно не проверяет ничто: правка начинается с
@@ -162,6 +162,14 @@ fault() {
 # Подключается он после `deny` и `fault` — обе зовутся изнутри.
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/git-guard-delivery-folder.sh" ] && . "$rt_hooks_dir/git-guard-delivery-folder.sh" 2>/dev/null
+
+# Конфликтующая своя заявка: тот же приём, что у папки и подписи, — свой предмет живёт
+# помощником рядом. Зовётся он до всех ярусов ниже и судит не готовность этой работы, а право
+# брать следующую: пока отданное конфликтует, его чинят первым действием хода. Нет помощника —
+# ярус не судится, а работа идёт дальше.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/git-guard-delivery-conflict.sh" ] && . "$rt_hooks_dir/git-guard-delivery-conflict.sh" 2>/dev/null
+command -v rt_delivery_conflict >/dev/null 2>&1 && rt_delivery_conflict
 
 # Отказ по накопленному. Пусто — вызывающая сторона идёт дальше.
 deny_faults() {

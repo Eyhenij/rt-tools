@@ -131,7 +131,10 @@
         "bot": "rt-tools-dev",
         "tokenPath": "~/.config/rt-tools-bot-token",
         "reviewer": "Eyhenij",
-        "epicLabel": "epic"
+        "epicLabel": "epic",
+        "cargoLabels": [
+            "agent-kit-feedback"
+        ]
     },
     "apiFamily": "message-bus-api",
     "libsRoot": "libs",
