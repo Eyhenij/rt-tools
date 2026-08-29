@@ -1,4 +1,4 @@
-<!-- rt-kit v0.19.0 · pitfalls/git-workflow.github.md · debbbc2b3ffd · правится надстройкой, не здесь -->
+<!-- rt-kit v0.20.0 · pitfalls/git-workflow.github.md · debbbc2b3ffd · правится надстройкой, не здесь -->
 # Поставка — холодная часть
 
 Ловушки: грабли, на которые уже наступали в дереве на GitHub. Грузится не вместе с

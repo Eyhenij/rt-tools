@@ -1,3 +1,9 @@
+# [0.20.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.19.0...rt-agent-kit@0.20.0) (2026-08-29)
+
+### Features
+
+- **rt:agent-kit:** раскладка отказывает на расхождении редакций ([3ab305b](https://github.com/Eyhenij/rt-tools/commit/3ab305b0a7d09cc453854d739258cf546372b43d))
+
 # [0.19.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.18.0...rt-agent-kit@0.19.0) (2026-08-29)
 
 # [0.18.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.17.0...rt-agent-kit@0.18.0) (2026-08-29)
