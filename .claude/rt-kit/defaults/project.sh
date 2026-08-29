@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.17.0 · defaults/project.sh · 2f610e52bfbf · правится надстройкой, не здесь
+# rt-kit v0.17.0 · defaults/project.sh · d9c01c3a9a22 · правится надстройкой, не здесь
 # Профиль дерева: чем здесь проверяется правка и что считается переизобретением.
 #
 # Умолчание пакета. Всё, что общего у деревьев этой мастерской, живёт здесь: запускатель Nx,
@@ -327,6 +327,21 @@ rt_pull_state_default() {
     printf '%s' "$state"
 }
 
+# Свои открытые заявки, помеченные конфликтующими, — по строке на заявку: «#номер ветка».
+# Спрашивает того же помощника очереди работ, что и два соседа выше. Пусто на выходе значит
+# «конфликтующих нет», отказ кода возврата — «спросить некого», и ярус гарда пропускается:
+# отбивать работу на молчании сети значило бы останавливать её всякий раз, когда её не с чем
+# сверить.
+rt_conflicting_pulls_default() {
+    command -v node >/dev/null 2>&1 || return 1
+    command -v jq >/dev/null 2>&1 || return 1
+    [ -f "${RT_BOARD_HELPER:-tools/board.mjs}" ] || return 1
+    state="$(node "${RT_BOARD_HELPER:-tools/board.mjs}" conflicts 2>/dev/null)" || return 1
+    [ -z "$state" ] && return 1
+    printf '%s' "$state" | jq -e 'has("conflicting")' >/dev/null 2>&1 || return 1
+    printf '%s' "$state" | jq -r '.conflicting[]? | "#\(.number) \(.branch)"'
+}
+
 # Что в этом дереве считается переизобретением. По строке «образец<таб>чем заменить».
 # Образцы узкие намеренно: гард сверяет только НОВЫЙ текст, и широкий образец отбивал бы
 # правку, которая ничего нового не заводит.
@@ -383,5 +398,6 @@ rt_kit_sources_dir() { rt_kit_sources_dir_default "$@"; }
 rt_qa_decorative() { rt_qa_decorative_default "$@"; }
 rt_task_state() { rt_task_state_default "$@"; }
 rt_pull_state() { rt_pull_state_default "$@"; }
+rt_conflicting_pulls() { rt_conflicting_pulls_default "$@"; }
 rt_report_body() { rt_report_body_default "$@"; }
 rt_handoff_allowed_cmd() { rt_handoff_allowed_cmd_default "$@"; }
