@@ -51,6 +51,11 @@ export interface IEnvironment {
      * тем каталогом ресурсов, который им дали, и о существовании исходников не знают.
      */
     readonly stale?: IStaleBuild | null;
+    /**
+     * Имя пакета из его собственного манифеста. Нужно, чтобы найти себя в зависимостях дерева:
+     * искать по угаданному имени значило бы промахнуться молча у всякого, кто пакет переименовал.
+     */
+    readonly name?: string;
 }
 
 /** Что с файлом сделала раскладка. Прошедшее время здесь правда: `sync` уже записал. */
@@ -612,9 +617,78 @@ const staleRefusal: (stale: IStaleBuild) => IOutcomeOfCommand = (stale: IStaleBu
  * означает, что помеченного им ресурса оно не получит вовсе; у ресурса — что он не ляжет
  * никуда и никогда, а причину в имени файла не разглядеть.
  */
+/**
+ * Редакция пакета, объявленная деревом: точный номер из его зависимостей либо пусто.
+ *
+ * Диапазон сюда не идёт вовсе. Правило зависимостей велит называть точный номер, но дерево
+ * вправе объявить иначе, и отказ по диапазону отбивал бы законную раскладку: `^0.19.0` покрывает
+ * и 0.19.3, и обе редакции при этом объявлены верно.
+ */
+function askedVersionOf(root: string, name: string): string | null {
+    const path: string = join(root, 'package.json');
+
+    if (!existsSync(path)) {
+        return null;
+    }
+
+    const manifest: string = readFileSync(path, 'utf8');
+
+    let parsed: { dependencies?: Record<string, string>; devDependencies?: Record<string, string> };
+
+    try {
+        parsed = JSON.parse(manifest) as { dependencies?: Record<string, string>; devDependencies?: Record<string, string> };
+    } catch {
+        return null;
+    }
+
+    const asked: string = parsed.dependencies?.[name] ?? parsed.devDependencies?.[name] ?? '';
+
+    return /^\d+\.\d+\.\d+$/.test(asked) ? asked : null;
+}
+
+/**
+ * Отказ на расхождение редакций: раскладка кладёт установленную, а не объявленную деревом.
+ *
+ * Зачем отказ, а не предупреждение. Установленной остаётся редакция соседней ветки — той, где её
+ * как раз поднимали, — и раскладка ложится ею целиком: в рабочем дереве оказывается две с лишним
+ * сотни правленых файлов чужой работы, а разобрать, какие из них свои, стоит получаса и риска
+ * потерять свою правку вместе с ними. Обратный случай тот же по цене: раскладка прежней редакцией
+ * откатывает дерево назад, и тоже молча. Успешный выход у обеих редакций одинаковый, а перечень
+ * положенных файлов называет файлы, а не редакцию, которой они собраны.
+ *
+ * Починка дешевле разбора: поставить зависимости и повторить вызов — одна команда.
+ */
+function versionRefusal(env: IEnvironment): IOutcomeOfCommand | null {
+    if (!env.name) {
+        return null;
+    }
+
+    const asked: string | null = askedVersionOf(env.root, env.name);
+
+    if (!asked || asked === env.version) {
+        return null;
+    }
+
+    return {
+        code: 1,
+        lines: [
+            'раскладка не начата: установленная редакция не та, что объявило дерево',
+            `  объявлено деревом: ${asked}`,
+            `  установлено:       ${env.version}`,
+            'раскладка легла бы установленной — целиком, и успешный выход у обеих редакций одинаковый',
+            'поставь зависимости дерева и повтори вызов',
+        ],
+    };
+}
+
 function refusalBeforeSync(env: IEnvironment, config: IConfig): IOutcomeOfCommand | null {
     if (env.stale) {
         return staleRefusal(env.stale);
+    }
+
+    const mismatch: IOutcomeOfCommand | null = versionRefusal(env);
+    if (mismatch) {
+        return mismatch;
     }
 
     const unanswered: readonly IAxis[] = unansweredAxes(readAxes(env.assetsDir), config.variants);
