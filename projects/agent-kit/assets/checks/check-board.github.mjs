@@ -72,6 +72,18 @@ const RUN_GRACE_MINUTES = 10;
  * Рабочий поток выкатки и ветка, с которой прод сравнивают. Не назвав потока, дерево сверки
  * прода не получает — и сверка говорит об этом вслух: молчание читалось бы как «прод сошёлся».
  */
+/**
+ * Метки, которыми в очереди работ помечен груз — присланные деревьями разборы происшествий и
+ * предложения. Задачами они не являются: заголовок у них без номера, исполнителя нет, на борде
+ * их нет, — и сверка печатала на каждую по три строки, среди которых настоящее расхождение уже
+ * не читалось. Заводить такие записи в очередь перестали, а заведённые прежним порядком оттуда
+ * никуда не денутся: закрывать их — решение владельца, а не сверки.
+ *
+ * Имя метки называет дерево: у каждого оно своё, а выдуманное умолчание не совпало бы ни с чем
+ * и молча выключило бы отсев. Дерево, метки не назвавшее, судится как прежде.
+ */
+const CARGO_LABELS = new Set(CONFIG.board?.cargoLabels ?? []);
+
 const DEPLOY_WORKFLOW = CONFIG.deploy?.workflow ?? '';
 const MAIN_BRANCH = CONFIG.deploy?.mainBranch ?? 'main';
 
@@ -267,7 +279,7 @@ function checkConflicting(pull) {
     );
 }
 
-let checked = { issues: 0, pulls: 0 };
+let checked = { issues: 0, pulls: 0, cargo: 0 };
 
 // Черновики судятся по диску и потому проверяются всегда: связи для этого не нужно.
 checkDrafts();
@@ -277,9 +289,13 @@ try {
     const options = { token: botToken() ?? undefined };
     const board = fetchBoard(options);
     const issues = fetchIssues('all', options);
-    const open = issues.filter((issue) => issue.state === 'OPEN');
+    const allOpen = issues.filter((issue) => issue.state === 'OPEN');
+    // Отсев идёт один раз и до всех проверок задачи: помеченная запись не задача целиком, а не
+    // наполовину, — её не судят ни заголовком, ни исполнителем, ни бордой, ни сводкой совпавших
+    // заголовков, ни связью с эпиком.
+    const open = CARGO_LABELS.size === 0 ? allOpen : allOpen.filter((issue) => !(issue.labels ?? []).some((label) => CARGO_LABELS.has(label.name)));
     const pulls = fetchOpenPulls(options);
-    checked = { issues: issues.length, pulls: pulls.length };
+    checked = { issues: issues.length, pulls: pulls.length, cargo: allOpen.length - open.length };
 
     for (const item of board.foreign) {
         report(`борда: ${item} — на борде стоят задачи, а не PR о них`);
@@ -419,6 +435,12 @@ if (!offline && DEPLOY_WORKFLOW) {
 // Непроверенное называется вслух: молчание о прогонах читалось бы как «прогоны на месте».
 if (!offline && !DEPLOY_WORKFLOW) {
     console.log('check-board: прод с главной веткой не сверялся — рабочий поток выкатки в настройке дерева не назван');
+}
+
+// Отсеянное называется числом: молчаливый отсев неотличим от сломанной сверки — метка,
+// названная с опечаткой, выключила бы проверку целиком и не сказала бы об этом.
+if (!offline && checked.cargo > 0) {
+    console.log(`check-board: записей груза в очереди ${checked.cargo} — задачами они не судятся`);
 }
 
 if (!offline && !HAS_PIPELINE) {
