@@ -6,6 +6,7 @@
 - **Надстройка профиля, о которой молчит компаньон правила, — расхождение.** — `projects/agent-kit/assets/checks/check-profile-drift.mjs:unnamed` — имя ищется по всем `implementation.md` каталога правил; сценарии SC-AK-765, SC-AK-766
 - **Замещением считается расхождение значения с умолчанием пакета, а не сама строка профиля.** — `projects/agent-kit/assets/checks/check-profile-drift.mjs:overridden`; сценарий SC-AK-767
 - **Имя надстройки ищется по всем компаньонам дерева, а не по компаньону одного правила.** — `projects/agent-kit/assets/checks/check-profile-drift.mjs:companionsText`; сценарий SC-AK-766
+- **Проверка, которую умолчание пакета зовёт, а набор дерева — нет, называется сверкой.** — `projects/agent-kit/assets/checks/check-profile-drift.mjs:cutFromGate` — набор собирается вызовом оболочки дважды, с надстройкой и без неё; сверяется имя файла проверки, а не строка команды; сценарии SC-AK-782, SC-AK-783, SC-AK-784, SC-AK-785
 - **Ветка тела, которой нет в объявлении гарда, — расхождение.** — `projects/agent-kit/assets/checks/check-hook-scope.mjs:branchedTools`; сценарии SC-AK-769, SC-AK-771
 - **Расхождение объявления чинится в пакете, а платит за него дерево.** — **Не проверяется ничем.** Сверка называет расхождение, а где его чинить, знает читатель отказа: строка о правке в источнике стоит в самом тексте отказа
 - **Образец объявления читается выражением, а не списком имён.** — `projects/agent-kit/assets/checks/check-hook-scope.mjs:covers`; сценарий SC-AK-770
