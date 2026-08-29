@@ -140,6 +140,15 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
 
     protected readonly submitError: WritableSignal<string | null> = signal<string | null>(null);
 
+    /**
+     * Удача мутации — тем же способом, что и отказ. Человек, работающий в панели,
+     * смотрит в панель, а не на экран за её краем: тост об успехе всплывает там,
+     * куда он в эту минуту не смотрит. Оба сигнала гасятся в начале каждой
+     * попытки и гасят друг друга — это ответы на один вопрос, и двух сразу не
+     * бывает.
+     */
+    protected readonly submitSuccess: WritableSignal<string | null> = signal<string | null>(null);
+
     protected readonly idParamName: string = 'id';
 
     /** id-only режим: нужен только id (например, смена пароля по userId), сущность не грузится. */
@@ -373,12 +382,20 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
      * `errorText` принимается и функцией: причина отказа известна только после
      * него — стор кладёт её в свой сигнал, а панель без стора выводит из ответа
      * сервера, — и готовой строкой на момент запуска мутации её не передать.
+     *
+     * `successMessage` — текст удачи, который панель показывает внутри себя,
+     * рядом с формой. Довод отделён от `successText` намеренно: переезд текста
+     * из тоста в панель сломал бы всякого потребителя, который тост и хотел, а
+     * сказать «мне нужен тост» ему после этого было бы нечем. Назван он по месту
+     * показа, а не по исходу: два довода с разницей в одном слоге читались бы
+     * как опечатка.
      */
     protected runMutation(
         op$: Observable<unknown>,
         opts?: {
             onSuccess?: () => void;
             successText?: string;
+            successMessage?: string;
             errorText?: string | ((error: unknown) => string);
             closeOnSuccess?: boolean;
             refreshOnSuccess?: boolean;
@@ -386,6 +403,7 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
     ): void {
         this.#submitting.set(true);
         this.submitError.set(null);
+        this.submitSuccess.set(null);
         // Подписка объявлена один раз в конструкторе (см. #mutationSource-стрим) —
         // здесь только эмит операции с handler'ами, замыкающими opts.
         this.#mutationSource.next({
@@ -394,6 +412,9 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
                 this.#submitting.set(false);
                 if (opts?.successText) {
                     this.#notificationBus.success(opts.successText);
+                }
+                if (opts?.successMessage) {
+                    this.submitSuccess.set(opts.successMessage);
                 }
                 // Пользователь шёл на связанную запись и по дороге согласился
                 // сохранить: панель уходит туда, куда он нажал.
@@ -411,7 +432,12 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
                 // несохранённых правках был бы задан ровно про то, что только что
                 // сохранилось; роутерный гард закрывает разрешение на уход,
                 // которое панель выдаёт себе перед вызовом роутера.
-                if (opts?.closeOnSuccess === true || this.#isCreateMode()) {
+                // Названный довод решает в обе стороны: панель создания остаётся
+                // открытой, панель правки закрывается. Не названный — умолчание
+                // считается по режиму: создавать в закрытой панели нечего.
+                // Прежде признак выводился из адреса и не управлялся ничем, и
+                // `closeOnSuccess: false` панель создания не удерживал.
+                if (opts?.closeOnSuccess ?? this.#isCreateMode()) {
                     this.#closePanel();
                     return;
                 }
@@ -421,6 +447,9 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
             },
             handleError: (error: unknown): void => {
                 this.#submitting.set(false);
+                // Отказ снимает прежнюю удачу: иначе «сохранено» осталось бы на
+                // панели рядом со свежим отказом.
+                this.submitSuccess.set(null);
                 // Отказ оставляет пользователю� в панели с его правками, поэтому
                 // намерение уйти на связанную запись снимается.
                 this.#relatedCommands = null;

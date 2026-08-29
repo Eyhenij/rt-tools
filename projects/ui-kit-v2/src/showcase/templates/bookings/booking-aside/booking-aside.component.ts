@@ -264,11 +264,16 @@ export class BookingAsideComponent extends RtRouteAsideComponent<IBooking.State>
         super.onClosed();
     }
 
-    /** Правка поля снимает отказ по прошлой попытке: он был про прежнее значение. */
+    /**
+     * Правка поля снимает исход прошлой попытки: он был про прежнее значение — и
+     * «сохранено» над изменённой формой говорит неправду ровно так же, как
+     * устаревший отказ.
+     */
     protected updateGuestName(value: string): void {
         this.guestName.set(value);
         this.#store.clearError();
         this.submitError.set(null);
+        this.submitSuccess.set(null);
     }
 
     protected save(): void {
@@ -276,10 +281,12 @@ export class BookingAsideComponent extends RtRouteAsideComponent<IBooking.State>
             return;
         }
 
+        // Удача приходит туда же, где задан вопрос, — в панель, рядом с формой.
+        // Панель остаётся открытой: закрывает её человек, он и решает, правит ли
+        // дальше.
         this.runMutation(this.#store.save(this.#draft()), {
-            successText: this.#transloco.translate('bookingSaved'),
+            successMessage: this.#transloco.translate('bookingSaved'),
             errorText: (): string => this.#store.errorKey() ?? 'bookingSaveFailed',
-            closeOnSuccess: true,
         });
     }
 
@@ -290,6 +297,9 @@ export class BookingAsideComponent extends RtRouteAsideComponent<IBooking.State>
             return;
         }
 
+        // Здесь наоборот: записи больше нет, и держать над ней панель правки
+        // нечего — сообщение внутри неё никто не увидит, поэтому об удаче
+        // говорит тост.
         this.runMutation(this.#store.remove(bookingId), {
             successText: this.#transloco.translate('bookingDeleted'),
             errorText: (): string => this.#store.errorKey() ?? 'bookingSaveFailed',

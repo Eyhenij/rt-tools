@@ -70,6 +70,19 @@ async function awaitScreen(canvas: HTMLElement, ready: (root: HTMLElement) => bo
 }
 
 /**
+ * То же ожидание, но с отказом: не дождавшись, оно роняет историю, а не отпускает съёмку
+ * дальше. Молчаливое ожидание отпускает кадр без того, чего ждали, и снимок уходит в сверку
+ * недоигранным — отличить его от верного нечем, пока эталон не снят с пустоты.
+ */
+async function requireScreen(canvas: HTMLElement, ready: (root: HTMLElement) => boolean, what: string): Promise<void> {
+    await awaitScreen(canvas, ready);
+
+    if (!ready(canvas)) {
+        throw new Error(`Не дождались: ${what}`);
+    }
+}
+
+/**
  * Короткий набор для историй с раскрытым меню: страница при нём умещается в кадр целиком.
  * Кадр целой страницы прокручивает её, а перекрытие кита от прокрутки закрывается — на длинном
  * списке попап уезжал из кадра, и оба эталона закрепили бы шапку без него.
@@ -116,6 +129,95 @@ export const Failed: TStory = {
         // тоста в начале ничего не значит — экран в этот момент даже не смонтирован.
         await awaitScreen(canvasElement, (root: HTMLElement): boolean => root.querySelector('[qa-dataid="toast"]') !== null);
         await awaitScreen(canvasElement, (root: HTMLElement): boolean => root.querySelector('[qa-dataid="toast"]') === null);
+    },
+};
+
+/**
+ * Панель правки после удачной записи. Ответ на вопрос «получилось ли» приходит туда же, где
+ * вопрос задан, — в панель, рядом с формой; панель при этом остаётся открытой, и закрывает её
+ * человек. Прежде об удаче говорил тост у края экрана, а панель исчезала вместе с формой.
+ *
+ * Своя история ей нужна потому, что в кадре соседних этого состояния нет вовсе: сообщение
+ * рисуется внутри панели и живёт ровно столько, сколько человек её не закрыл.
+ */
+export const EditSaved: TStory = {
+    decorators: [fixture(SHORT_BOOKINGS)],
+    parameters: SCREEN_PARAMETERS,
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        // Адрес показа запоминается до первого перехода и возвращается на место в конце.
+        // Панель живёт своим адресом, и роутер пишет его в адресную строку; обвязка снимков
+        // держит все истории файла на одной странице, а обёртка экрана нарочно сохраняет уже
+        // набранный адрес — чтобы панель переживала перезагрузку. Оставленный как есть, он
+        // открывает панель и на следующих историях: два соседних эталона разошлись на три
+        // четверти кадра, и виновата была не их вёрстка.
+        const showcaseHref: string = window.location.href;
+
+        await awaitScreen(canvasElement, (root: HTMLElement): boolean => root.querySelector(LIST_READY_SELECTOR) !== null);
+
+        const row: HTMLElement | null = canvasElement.querySelector(LIST_READY_SELECTOR);
+
+        if (row === null) {
+            window.history.replaceState(null, '', showcaseHref);
+            throw new Error('Строка списка не отрисована');
+        }
+
+        row.click();
+
+        // Панель живёт своим адресом: до её отрисовки роутер успевает сменить адрес и поднять
+        // компонент, а сущность приезжает ответом «сервера» ещё позже.
+        await requireScreen(
+            document.body,
+            (root: HTMLElement): boolean => root.querySelector('[qa-dataid="booking-guest-name"] input') !== null,
+            'панель правки с полями записи'
+        );
+
+        // Нетронутую форму панель не отправляет вовсе — кнопка записи у неё выключена, и
+        // нажатие на неё не сделало бы ничего. История правит поле тем же путём, каким его
+        // правит человек: значением и событием ввода, которое читает связка формы.
+        const guestName: HTMLInputElement | null = document.body.querySelector('[qa-dataid="booking-guest-name"] input');
+
+        if (guestName === null) {
+            window.history.replaceState(null, '', showcaseHref);
+            throw new Error('Поле имени гостя в панели не отрисовано');
+        }
+
+        guestName.value = 'Анна Северова-Ким';
+        guestName.dispatchEvent(new Event('input', { bubbles: true }));
+
+        // Ждётся не событие, а его следствие: кит собран без зоны, и признак тронутой формы
+        // доезжает до кнопки следующим кругом обнаружения изменений. Нажатие сразу после ввода
+        // приходится на ещё выключенную кнопку и не делает ничего — а ожидание, не знающее об
+        // этом, отпустило бы съёмку с панелью без сообщения.
+        await requireScreen(
+            document.body,
+            (root: HTMLElement): boolean => root.querySelector('[qa-dataid="booking-save"]:not([disabled])') !== null,
+            'кнопка записи, включённая правкой поля'
+        );
+
+        const save: HTMLElement | null = document.body.querySelector('[qa-dataid="booking-save"]');
+
+        if (save === null) {
+            window.history.replaceState(null, '', showcaseHref);
+            throw new Error('Кнопка записи в панели не отрисована');
+        }
+
+        save.click();
+
+        await requireScreen(
+            document.body,
+            (root: HTMLElement): boolean => root.querySelector('[qa-dataid="booking-saved"]') !== null,
+            'сообщение об удачной записи в панели'
+        );
+
+        // Сообщение доводится до видимой части: панель прокручивается внутри себя, и кадр целой
+        // страницы её прокрутку не разворачивает — состояние, ради которого история заведена,
+        // осталось бы за нижним краем панели, а снимок выглядел бы целым.
+        document.body.querySelector('[qa-dataid="booking-saved"]')?.scrollIntoView({ block: 'center' });
+
+        // Адресная строка возвращается на место, а показанное остаётся: роутер уже отрисовал
+        // панель, и подмена адреса её не трогает. Кадр снимается с открытой панелью, а соседняя
+        // история начинается с чистого раздела.
+        window.history.replaceState(null, '', showcaseHref);
     },
 };
 

@@ -134,6 +134,10 @@
             <rt-message severity="danger" qa-dataid="booking-error">{{ key | transloco }}</rt-message>
         }
 
+        @if (submitSuccess(); as text) {
+            <rt-message severity="success" qa-dataid="booking-saved">{{ text }}</rt-message>
+        }
+
         @if (!isCreateMode()) {
             <div rtElem="actions">
                 <button

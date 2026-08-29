@@ -1,13 +1,14 @@
-import { ChangeDetectionStrategy, Component, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Signal, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, Params, Router, UrlTree } from '@angular/router';
 
-import { firstValueFrom, Observable, of, Subject } from 'rxjs';
+import { firstValueFrom, Observable, of, Subject, throwError } from 'rxjs';
 
 import { NotificationBus } from '../../platform';
 
 import { ERtAsideUnsavedOutcome } from '../aside/unsaved-dialog/rt-aside-unsaved.logic';
 import { RtDialogService } from '../dialog/rt-dialog.service';
+import { RtContainerRightSidenavPanelDirective } from './rt-container.directives';
 import { RtRouteAsideComponent } from './rt-route-aside.base';
 
 interface ITestEntity {
@@ -91,8 +92,24 @@ class NotificationBusStub {
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 class TestAsideComponent extends RtRouteAsideComponent<ITestEntity> {
+    /**
+     * Двойник панели контейнера: у спеки пустой шаблон, и настоящий `viewChild`
+     * не находит ничего — закрытие уходило бы в пустоту, и отличить «панель
+     * закрылась» от «панели нет» было бы нечем. Открытие панель не изображает:
+     * `ready()` отвечает ложью, и основа за неё не берётся.
+     */
+    protected override readonly panel: Signal<RtContainerRightSidenavPanelDirective | undefined> = signal({
+        ready: (): boolean => false,
+        close: (): void => {
+            this.closes += 1;
+        },
+    } as unknown as RtContainerRightSidenavPanelDirective);
+
     public readonly pristineFlag: WritableSignal<boolean> = signal(true);
     public saves: number = 0;
+
+    /** Сколько раз панель просили закрыться. */
+    public closes: number = 0;
 
     /** Запись, которую спека доигрывает сама: исход решает, уйдёт панель или нет. */
     readonly #saveSource: Subject<unknown> = new Subject<unknown>();
@@ -131,6 +148,11 @@ class TestAsideComponent extends RtRouteAsideComponent<ITestEntity> {
         this.runMutation(op$, opts);
     }
 
+    /** Исход мутации глазами наследника: панель читает оба сигнала одинаково. */
+    public outcome(): { success: string | null; error: string | null } {
+        return { success: this.submitSuccess(), error: this.submitError() };
+    }
+
     protected resolve(id: string): Observable<ITestEntity | null> {
         return of({ id });
     }
@@ -139,22 +161,26 @@ class TestAsideComponent extends RtRouteAsideComponent<ITestEntity> {
 describe('RtRouteAsideComponent', () => {
     let router: RouterStub;
     let dialog: DialogStub;
+    let bus: NotificationBusStub;
 
-    function setup(): ComponentFixture<TestAsideComponent> {
+    function setup(entityId: string | null = 'e1'): ComponentFixture<TestAsideComponent> {
         router = new RouterStub();
         dialog = new DialogStub();
+        bus = new NotificationBusStub();
 
         TestBed.configureTestingModule({
             imports: [TestAsideComponent],
             providers: [
                 { provide: Router, useValue: router },
                 { provide: RtDialogService, useValue: dialog },
-                { provide: NotificationBus, useValue: new NotificationBusStub() },
+                { provide: NotificationBus, useValue: bus },
                 {
                     provide: ActivatedRoute,
                     useValue: {
-                        paramMap: of(convertToParamMap({ id: 'e1' })),
-                        snapshot: { routeConfig: { path: 'edit/:id', outlet: 'ro' } },
+                        // Режим создания — панель без идентификатора записи в адресе:
+                        // тем же признаком его выводит и сама основа.
+                        paramMap: of(convertToParamMap(entityId === null ? {} : { id: entityId })),
+                        snapshot: { routeConfig: { path: entityId === null ? 'create' : 'edit/:id', outlet: 'ro' } },
                         parent: null,
                     },
                 },
@@ -280,6 +306,77 @@ describe('RtRouteAsideComponent', () => {
 
         await expect(firstValueFrom(fixture.componentInstance.canDeactivate())).resolves.toBe(true);
         expect(dialog.opens).toBe(0);
+    });
+
+    it('SC-UKV-66 — удача кладётся в сигнал панели', () => {
+        const fixture: ComponentFixture<TestAsideComponent> = setup();
+
+        fixture.componentInstance.save(of({}), { successMessage: 'сохранено' });
+
+        expect(fixture.componentInstance.outcome().success).toBe('сохранено');
+    });
+
+    it('SC-UKV-67 — тост остаётся у своего довода', () => {
+        const fixture: ComponentFixture<TestAsideComponent> = setup();
+
+        fixture.componentInstance.save(of({}), { successText: 'тост' });
+
+        expect(bus.successes).toEqual(['тост']);
+        expect(fixture.componentInstance.outcome().success).toBeNull();
+    });
+
+    it('SC-UKV-68 — оба сигнала гаснут в начале каждой попытки', () => {
+        const fixture: ComponentFixture<TestAsideComponent> = setup();
+        const pending: Subject<unknown> = new Subject<unknown>();
+
+        fixture.componentInstance.save(of({}), { successMessage: 'сохранено' });
+        fixture.componentInstance.save(pending.asObservable(), { successMessage: 'сохранено' });
+
+        expect(fixture.componentInstance.outcome()).toEqual({ success: null, error: null });
+    });
+
+    it('SC-UKV-69 — отказ гасит удачу', () => {
+        const fixture: ComponentFixture<TestAsideComponent> = setup();
+
+        fixture.componentInstance.save(of({}), { successMessage: 'сохранено' });
+        fixture.componentInstance.save(
+            throwError((): Error => new Error('нет')),
+            { errorText: 'отказ' }
+        );
+
+        expect(fixture.componentInstance.outcome()).toEqual({ success: null, error: 'отказ' });
+    });
+
+    it('SC-UKV-70 — панель правки после удачи остаётся открытой', () => {
+        const fixture: ComponentFixture<TestAsideComponent> = setup();
+
+        fixture.componentInstance.save(of({}), { successMessage: 'сохранено' });
+
+        expect(fixture.componentInstance.closes).toBe(0);
+    });
+
+    it('SC-UKV-71 — панель создания после удачи закрывается по умолчанию', () => {
+        const fixture: ComponentFixture<TestAsideComponent> = setup(null);
+
+        fixture.componentInstance.save(of({}), { successMessage: 'сохранено' });
+
+        expect(fixture.componentInstance.closes).toBe(1);
+    });
+
+    it('SC-UKV-72 — довод удерживает панель создания открытой', () => {
+        const fixture: ComponentFixture<TestAsideComponent> = setup(null);
+
+        fixture.componentInstance.save(of({}), { closeOnSuccess: false });
+
+        expect(fixture.componentInstance.closes).toBe(0);
+    });
+
+    it('SC-UKV-72 — довод закрывает панель правки', () => {
+        const fixture: ComponentFixture<TestAsideComponent> = setup();
+
+        fixture.componentInstance.save(of({}), { closeOnSuccess: true });
+
+        expect(fixture.componentInstance.closes).toBe(1);
     });
 
     it('SC-UKV-52 — закрытая панель возвращает экран с его параметрами адреса', () => {
