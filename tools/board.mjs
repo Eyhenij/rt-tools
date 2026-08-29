@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.17.0 · checks/board.github.mjs · 79b891f6225c · правится надстройкой, не здесь
+// rt-kit v0.17.0 · checks/board.github.mjs · 27835e721622 · правится надстройкой, не здесь
 /**
  * Общая работа с очередью работ: борда проекта, тикеты и их состояние.
  *
@@ -219,6 +219,32 @@ export function fetchOpenPulls(options) {
     );
 }
 
+/**
+ * Свои открытые заявки, помеченные конфликтующими. Спрашивается это в минуту, когда берётся
+ * новая работа: пока отданное конфликтует, влить его человек не может, и каждая следующая
+ * заявка прибавляет к очереди ещё одну, которую придётся догонять.
+ *
+ * Свои — значит открытые машинной записью дерева. Дерево, её не назвавшее, не спрашивается
+ * вовсе: `@me` отвечал бы учётной записью, под которой залогинен клиент хостинга, а это чаще
+ * всего владелец, и его заявки исполнителю не чинить.
+ *
+ * Судится только прямое `CONFLICTING`. `UNKNOWN` означает, что хостинг ещё считает сливаемость
+ * — он пересчитывает её после каждой правки главной ветки, — и читать его как конфликт значило
+ * бы отбивать работу на каждой свежей вершине.
+ */
+export function conflictingPulls(options) {
+    if (!BOT) {
+        return null;
+    }
+    const pulls = ghJson(['pr', 'list', '--author', BOT, '--state', 'open', '--limit', '100', '--json', 'number,headRefName,mergeable'], options);
+    if (!Array.isArray(pulls)) {
+        return null;
+    }
+    return pulls
+        .filter((pull) => pull.mergeable === 'CONFLICTING')
+        .map((pull) => ({ number: pull.number ?? null, branch: pull.headRefName ?? '' }));
+}
+
 /** `[<КЛЮЧ>-<номер>]` в начале заголовка — единственная форма номера в названиях */
 export const TITLE_NUMBER = new RegExp(`^\\[${TASK_KEY}-(\\d+)\\]\\s+\\S`);
 /** `<КЛЮЧ>-<номер>-<slug>` — имя ветки, отведённой под задачу */
@@ -400,6 +426,22 @@ if (isEntryPoint && process.argv[2] === 'task') {
 if (isEntryPoint && process.argv[2] === 'pr') {
     try {
         process.stdout.write(`${JSON.stringify(pullState(process.argv[3]))}\n`);
+    } catch (error) {
+        if (error instanceof OfflineError) {
+            process.stdout.write('{"offline":true}\n');
+        } else {
+            process.stdout.write(`${JSON.stringify({ error: String(error.message ?? error) })}\n`);
+            process.exit(1);
+        }
+    }
+}
+
+// Свои конфликтующие заявки одной строкой JSON: `{"conflicting":[{"number":…,"branch":…}]}`.
+// Зовёт её гард поставки перед тем, как пустить взятие новой работы. Дерево без машинной записи
+// отвечает пустым списком: спрашивать не о ком.
+if (isEntryPoint && process.argv[2] === 'conflicts') {
+    try {
+        process.stdout.write(`${JSON.stringify({ conflicting: conflictingPulls() ?? [] })}\n`);
     } catch (error) {
         if (error instanceof OfflineError) {
             process.stdout.write('{"offline":true}\n');
