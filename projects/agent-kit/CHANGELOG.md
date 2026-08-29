@@ -1,3 +1,5 @@
+# [0.19.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.18.0...rt-agent-kit@0.19.0) (2026-08-29)
+
 # [0.18.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.17.0...rt-agent-kit@0.18.0) (2026-08-29)
 
 ### Bug Fixes

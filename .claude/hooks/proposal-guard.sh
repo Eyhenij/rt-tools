@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.18.0 · hooks/proposal-guard.sh · f075d438dc1f · правится надстройкой, не здесь
+# rt-kit v0.19.0 · hooks/proposal-guard.sh · f075d438dc1f · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: hooks/deny-tail.sh
 # Гард предложения: ход, в котором владелец сказал завести или отправить предложение слою правил,
