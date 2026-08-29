@@ -51,6 +51,7 @@ Thumbs.db
 .claude/rt-kit/observations/
 
 # Proposals awaiting `agent-kit propose`: correspondence with the package, not this tree's history
+.claude/rt-kit/postmortems/
 .claude/rt-kit/proposals/
 
 # Angular

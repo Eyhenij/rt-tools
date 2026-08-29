@@ -38,4 +38,4 @@ docker logs --tail 20 "$db"                                          # в отк
 docker system df                                                     # и это
 ```
 
-Разбор происшествия — `docs/postmortems/2026-08-19-red-run-blamed-on-a-busy-machine.md`.
+Разбор происшествия — запись «2026-08-19-red-run-blamed-on-a-busy-machine» в приёме.

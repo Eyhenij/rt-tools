@@ -40,9 +40,18 @@ transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/nu
 
 root="${CLAUDE_PROJECT_DIR:-.}"
 
-# Каталог записей у дерева свой. Заданный пустым — отказ дерева от требования: дереву, которое
-# записей не ведёт, гард не навязывается.
-notes_dir="${RT_POSTMORTEMS_DIR-docs/postmortems}"
+# Каталог записей у дерева свой, и называет его настройка дерева — тем же ключом, каким его
+# читает отправка груза. Одно имя на обе стороны: дерево, унёсшее каталог из истории, иначе
+# получало бы гард, ищущий записи по прежнему адресу, — и тот молчал бы всегда. Переменная
+# остаётся обходом на один запуск, а пустая строка в любой из двух — отказ дерева от требования:
+# дереву, которое записей не ведёт, гард не навязывается.
+if [ -n "${RT_POSTMORTEMS_DIR+set}" ]; then
+    notes_dir="$RT_POSTMORTEMS_DIR"
+elif [ -f "$root/.claude/rt-kit.json" ]; then
+    notes_dir="$(jq -r '.postmortems // "docs/postmortems"' "$root/.claude/rt-kit.json" 2>/dev/null)"
+else
+    notes_dir="docs/postmortems"
+fi
 [ -z "$notes_dir" ] && exit 0
 [ -d "$root/$notes_dir" ] || exit 0
 

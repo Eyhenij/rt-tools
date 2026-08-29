@@ -241,7 +241,7 @@ function checkEvicted(pull, options) {
  * своей задачи; сверка же смотрит на состояние очереди целиком.
  *
  * Четыре PR так и простояли черновиками двое суток — разбор
- * `docs/postmortems/2026-08-18-ready-work-left-in-drafts.md`.
+ * запись «2026-08-18-ready-work-left-in-drafts» в приёме.
  */
 function checkReadyDraft(pull, options) {
     if (pull.isDraft !== true) {
@@ -266,7 +266,7 @@ function checkReadyDraft(pull, options) {
  *
  * Судится только прямое «конфликтует»: `UNKNOWN` означает, что хостинг сливаемость ещё считает,
  * и строка о нём краснела бы на каждой свежей вершине. Две заявки так и ушли в разбор с
- * конфликтом — разбор `docs/postmortems/2026-08-20-drafts-cleared-without-re-reading-pr-state.md`.
+ * конфликтом — разбор запись «2026-08-20-drafts-cleared-without-re-reading-pr-state» в приёме.
  */
 function checkConflicting(pull) {
     if (pull.mergeable !== 'CONFLICTING') {
