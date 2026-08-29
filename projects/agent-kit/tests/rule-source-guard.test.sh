@@ -80,6 +80,14 @@ report "SC-AK-802 — интерпретатор без пути разложе�
 print("docs/plan.md")
 PY')")" PASS
 
+# Запуск разложенной проверки рядом с чужим heredoc целью записи не считается: берётся тело,
+# а не вся команда.
+report "SC-AK-802 — запуск разложенного рядом с heredoc проходит" \
+    "$(decision "$(cmd_in 'cat > docs/note.md <<EOF
+text
+EOF
+node tools/probe.mjs')")" PASS
+
 # Дерево пакета: источник есть, и отказ посылает в него, а не в надстройку.
 printf '%s\n' 'rt_kit_sources_dir() { printf "pkg/assets"; }' >> "$TREE/.claude/rt-kit/defaults/project.sh"
 report "SC-AK-538 — дерево с источником посылается в источник" \
