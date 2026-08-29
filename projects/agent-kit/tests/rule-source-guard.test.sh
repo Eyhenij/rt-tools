@@ -66,6 +66,28 @@ report "SC-AK-536 — чтение разложенной копии прохо�
 report "SC-AK-537 — снятие разложенной копии проходит" \
     "$(decision "$(cmd_in 'rm -f tools/probe.mjs')")" PASS
 
+# Правка тем же интерпретатором: путь стоит внутри кода, и снаружи команда выглядит запуском.
+report "SC-AK-801 — правка разложенной копии телом интерпретатора отбивается" \
+    "$(decision "$(cmd_in 'python3 - <<PY
+import pathlib
+pathlib.Path("tools/probe.mjs").write_text("x")
+PY')")" deny
+report "SC-AK-801 — то же доводом с кодом" \
+    "$(decision "$(cmd_in 'node -e "require(\"fs\").writeFileSync(\"tools/probe.mjs\", \"x\")"')")" deny
+# Цена признака названа прямо: интерпретатору, которому дали путь копии, верят на слово.
+report "SC-AK-802 — интерпретатор без пути разложенного проходит" \
+    "$(decision "$(cmd_in 'python3 - <<PY
+print("docs/plan.md")
+PY')")" PASS
+
+# Запуск разложенной проверки рядом с чужим heredoc целью записи не считается: берётся тело,
+# а не вся команда.
+report "SC-AK-802 — запуск разложенного рядом с heredoc проходит" \
+    "$(decision "$(cmd_in 'cat > docs/note.md <<EOF
+text
+EOF
+node tools/probe.mjs')")" PASS
+
 # Дерево пакета: источник есть, и отказ посылает в него, а не в надстройку.
 printf '%s\n' 'rt_kit_sources_dir() { printf "pkg/assets"; }' >> "$TREE/.claude/rt-kit/defaults/project.sh"
 report "SC-AK-538 — дерево с источником посылается в источник" \
