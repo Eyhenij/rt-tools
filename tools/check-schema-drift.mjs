@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.17.0 · checks/check-schema-drift.mjs · 1d0a528afb11 · правится надстройкой, не здесь
+// rt-kit v0.18.0 · checks/check-schema-drift.mjs · 1d0a528afb11 · правится надстройкой, не здесь
 /**
  * Проверка того, что миграции и `prisma/schema.prisma` описывают одну и ту же базу.
  *

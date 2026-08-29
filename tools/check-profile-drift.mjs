@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.17.0 · checks/check-profile-drift.mjs · 9bc72a7850b6 · правится надстройкой, не здесь
+// rt-kit v0.18.0 · checks/check-profile-drift.mjs · 9bc72a7850b6 · правится надстройкой, не здесь
 /**
  * Сверка надстроек профиля с таблицами компаньонов.
  *

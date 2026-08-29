@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.17.0 · checks/check-prose-style.mjs · 0f3e0c3a5f42 · правится надстройкой, не здесь
+// rt-kit v0.18.0 · checks/check-prose-style.mjs · 0f3e0c3a5f42 · правится надстройкой, не здесь
 /**
  * Проверка слога: канцелярит и обороты, которых в этом дереве не пишут.
  *
