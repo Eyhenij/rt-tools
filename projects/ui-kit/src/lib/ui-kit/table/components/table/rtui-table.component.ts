@@ -224,11 +224,31 @@ export class RtuiTableComponent<
         this.#setPaddingHelperWidth();
     }
 
-    /** Sort change output action */
+    /**
+     * Sort change output action.
+     *
+     * Имя колонки приходит строкой, а наружу уходит ключом домена. Приведение здесь принимало
+     * любую строку: колонка, которой в наборе нет, уезжала потребителю законным значением, и
+     * ни сборка, ни типы этого не видели. Сверяется оно с тем же набором колонок, который
+     * рисует таблица, — второго списка имён у неё нет; несовпавшее не отдаётся вовсе.
+     */
     public onSortChange(sortModel: ISortModel<string>): void {
-        // Имя колонки приходит строкой и приводится к набору домена: проверка вместо приведения —
-        // задача RT-848.
-        this.sortChange.emit(sortModel as ISortModel<SORT_PROPERTY>);
+        const known: ISortModel<SORT_PROPERTY> | null = this.#sortOfKnownColumn(sortModel);
+
+        if (known !== null) {
+            this.sortChange.emit(known);
+        }
+    }
+
+    /** Модель сортировки с ключом домена — либо `null`, если такой колонки у таблицы нет. */
+    #sortOfKnownColumn(sortModel: ISortModel<string>): ISortModel<SORT_PROPERTY> | null {
+        const names: Array<string> = this.columns().map((column: ITable.Column<ENTITY_TYPE>) => String(column.propName));
+
+        if (!names.includes(sortModel.propertyName)) {
+            return null;
+        }
+
+        return { ...sortModel, propertyName: sortModel.propertyName as SORT_PROPERTY };
     }
 
     /** Filter change output action */

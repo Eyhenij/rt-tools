@@ -1,7 +1,7 @@
 # Чем исполняется — первый кит
 
 Правило домена — слева, место, где оно исполняется, — справа. Пути даны от корня дерева: домен
-описывает три предмета из разных каталогов кита, и общего корня, от которого их считать, у них
+описывает четыре предмета из разных каталогов кита, и общего корня, от которого их считать, у них
 нет.
 
 - **Кнопка копирования не показывается у пустой ячейки.** — `projects/ui-kit/src/lib/ui-kit/table/components/table-base-cell/table-base-cell.component.ts:isCellEmpty`
@@ -18,6 +18,9 @@
 - **Клик по подложке и уход по маршруту закрывают шторку по-прежнему.** — `projects/ui-kit/src/lib/ui-kit/aside/aside.service.ts:closesOf`
 - **Запрещённый источник не подписывается вовсе.** — `projects/ui-kit/src/lib/ui-kit/aside/aside.service.ts:closesOf`
 - **Программное закрытие настройкой не гасится.** — `projects/ui-kit/src/lib/ui-kit/aside/aside.service.ts:Open`
+- **Таблица отдаёт сортировку только по той колонке, которую сама рисует.** — `projects/ui-kit/src/lib/ui-kit/table/components/table/rtui-table.component.ts:onSortChange`
+- **Имя сверяется с тем же набором колонок, который таблица рисует.** — `projects/ui-kit/src/lib/ui-kit/table/components/table/rtui-table.component.ts:sortOfKnownColumn`
+- **Несовпавшее имя не уходит наружу вовсе.** — `projects/ui-kit/src/lib/ui-kit/table/components/table/rtui-table.component.ts:sortOfKnownColumn`
 
 Сценарии домена связаны с тестами номером в заголовке теста, а не таблицей здесь: связь сверяется
 в обе стороны сверкой спеков.
