@@ -18,7 +18,7 @@ export class OpenAsideButtonComponent {
     readonly #asideService: RtAsideService = inject(RtAsideService);
 
     public onClick(): void {
-        this.#asideService.Open<TestAsideComponent, { statuses: string[] }, TAsidePositions>(TestAsideComponent, 'right', {
+        this.#asideService.open<TestAsideComponent, { statuses: string[] }, TAsidePositions>(TestAsideComponent, 'right', {
             statuses: ['Administrator', 'User'],
         });
     }

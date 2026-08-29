@@ -26,8 +26,7 @@ export class RtAsideService {
      *
      * @returns An observable that emits the response from the aside panel when it is closed.
      */
-    // eslint-disable-next-line sonarjs/function-name -- имя публичное, переименование ломает разметку потребителя; идёт задачей RT-846
-    public Open<COMPONENT = null, DATA = null, ANSWER = null>(
+    public open<COMPONENT = null, DATA = null, ANSWER = null>(
         component: ComponentType<COMPONENT>,
         position: TAsidePositions,
         data: DATA,

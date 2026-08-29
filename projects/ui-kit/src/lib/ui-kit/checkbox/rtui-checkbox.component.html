@@ -3,11 +3,11 @@
         #checkbox
         rtElem="input"
         type="checkbox"
-        [ngModel]="Value"
-        [checked]="Value"
-        [indeterminate]="!Value && isIndeterminate()"
+        [ngModel]="value"
+        [checked]="value"
+        [indeterminate]="!value && isIndeterminate()"
         [disabled]="disabled"
-        (ngModelChange)="Value = $event" />
+        (ngModelChange)="value = $event" />
 
     <div rtElem="box">
         @if (checkbox.indeterminate) {
