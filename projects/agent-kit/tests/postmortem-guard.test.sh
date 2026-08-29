@@ -83,4 +83,25 @@ CLAUDE_PROJECT_DIR="$BARE" expect_stop "дерево без каталога з�
     "$(input_stop "$(transcript "$(say 'почему так вышло?')" "$(reply 'Был неправ.')")")" PASS
 rm -rf "$BARE"
 
+# --- SC-AK-797 — каталог записей называет настройка дерева ------------------------------------
+# Дерево, унёсшее каталог из истории, называет его ключом настройки. Гард, знающий только прежний
+# адрес, молчал бы всегда: каталога по нему нет, а записи лежат рядом.
+MOVED="$(fixture_tree)"
+mkdir -p "$MOVED/.claude/rt-kit/postmortems"
+jq -n '{postmortems:".claude/rt-kit/postmortems"}' > "$MOVED/.claude/rt-kit.json"
+CLAUDE_PROJECT_DIR="$MOVED" expect_stop "SC-AK-797 — каталог из настройки судится" \
+    "$(input_stop "$(transcript "$(say 'почему так вышло?')" "$(reply 'Был неправ.')")")" BLOCK
+
+# Ключ, названный пустым, — отказ дерева от требования, и настройка тут говорит то же, что
+# переменная.
+jq -n '{postmortems:""}' > "$MOVED/.claude/rt-kit.json"
+CLAUDE_PROJECT_DIR="$MOVED" expect_stop "SC-AK-797 — пустой ключ снимает требование" \
+    "$(input_stop "$(transcript "$(say 'почему так вышло?')" "$(reply 'Был неправ.')")")" PASS
+
+# Переменная перебивает настройку: обход на один запуск.
+jq -n '{postmortems:".claude/rt-kit/postmortems"}' > "$MOVED/.claude/rt-kit.json"
+CLAUDE_PROJECT_DIR="$MOVED" RT_POSTMORTEMS_DIR="" expect_stop "SC-AK-797 — переменная перебивает настройку" \
+    "$(input_stop "$(transcript "$(say 'почему так вышло?')" "$(reply 'Был неправ.')")")" PASS
+rm -rf "$MOVED"
+
 suite_result "гард происшествия"

@@ -4,7 +4,7 @@ kind: pattern
 rule: deploy-flow
 description: Паттерн правила deploy-flow. Брать при работе с образами на своей машине: подъём и перезапуск демона, диагностика «висящей» команды, сборка под платформу прод-сервера, вход в реестр из службы. Команды прод-сервера — паттерн git-workflow-restart.
 ---
-<!-- rt-kit v0.19.0 · patterns/git-workflow-docker.md · 278c3611a319 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.19.0 · patterns/git-workflow-docker.md · 94f1e475f030 · правится надстройкой, не здесь -->
 
 # Образы на своей машине
 
@@ -295,4 +295,4 @@ docker logs --tail 20 "$db"                                          # в отк
 docker system df                                                     # и это
 ```
 
-Разбор происшествия — `docs/postmortems/2026-08-19-red-run-blamed-on-a-busy-machine.md`.
+Разбор происшествия — запись «2026-08-19-red-run-blamed-on-a-busy-machine» в приёме.
