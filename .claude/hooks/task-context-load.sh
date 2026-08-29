@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.17.0 · hooks/task-context-load.sh · fdd123440694 · правится надстройкой, не здесь
+# rt-kit v0.18.0 · hooks/task-context-load.sh · fdd123440694 · правится надстройкой, не здесь
 # rt-hook: SessionStart startup|resume|compact|clear
 # Требует: hooks/profile-check.sh
 # SessionStart: состояние незаконченной работы уезжает в контекст на каждом запуске сессии.

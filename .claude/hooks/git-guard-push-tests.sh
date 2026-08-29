@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.17.0 · hooks/git-guard-push-tests.sh · 8908ea1832be · правится надстройкой, не здесь
+# rt-kit v0.18.0 · hooks/git-guard-push-tests.sh · 8908ea1832be · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # Гард проверок перед пушем. PreToolUse на вызове пуша.

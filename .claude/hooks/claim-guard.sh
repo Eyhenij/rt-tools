@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.17.0 · hooks/claim-guard.sh · 092ff4db89be · правится надстройкой, не здесь
+# rt-kit v0.18.0 · hooks/claim-guard.sh · 092ff4db89be · правится надстройкой, не здесь
 # rt-hook: Stop
 # Гард утверждения: сказанное владельцу о состоянии дерева несёт команду, показавшую это. Stop.
 #

@@ -1,3 +1,37 @@
+# [0.18.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.17.0...rt-agent-kit@0.18.0) (2026-08-29)
+
+### Bug Fixes
+
+- **rt:agent-kit:** гард обходных путей судит и браузер, поднятый из кода ([0cad5c2](https://github.com/Eyhenij/rt-tools/commit/0cad5c231c61eb36a6834bc3e6966f27470773db))
+- **rt:agent-kit:** гард экзамена не запирает дерево и судит запись оболочкой ([dbc900c](https://github.com/Eyhenij/rt-tools/commit/dbc900c7832840e1bd712c8e8874fcccc000299c))
+- **rt:agent-kit:** номер заголовка вынимается формой, а цитата утверждением не считается ([ca30118](https://github.com/Eyhenij/rt-tools/commit/ca301184fbfe1882cb7ca8051233b803394f71df))
+- **rt:agent-kit:** строка проверки эпиков переписана так, чтобы форматтер её не двигал ([2c30f8b](https://github.com/Eyhenij/rt-tools/commit/2c30f8bf04bca166dbae99fa3584f41de82d97f4))
+- **rt:message-bus:** гард судит отдачу работы, а не взятие записи груза ([39d1a17](https://github.com/Eyhenij/rt-tools/commit/39d1a17e1859688e3c8569b4edc9f26607281476))
+
+### Features
+
+- **rt:agent-kit:** выкушенная из набора гейта проверка называется сверкой ([b3841db](https://github.com/Eyhenij/rt-tools/commit/b3841dbd9afb6e6eb2b6285ecf5a84d24885c386))
+- **rt:agent-kit:** гард ожидания ловит объявленный свой шаг, за которым ничего не сделано ([99d5d07](https://github.com/Eyhenij/rt-tools/commit/99d5d0755b6271c2237078e271e5d00573abc010))
+- **rt:agent-kit:** гейт судит то, что команда пишет, а не то, что она называет ([a5d6788](https://github.com/Eyhenij/rt-tools/commit/a5d678881ccef6736ab649922a75ff6263061e44))
+- **rt:agent-kit:** груз, стоящий в очереди работ, задачей не судится ([ca846c1](https://github.com/Eyhenij/rt-tools/commit/ca846c1ac6b0a869818cc98aee8f54237801a93f))
+- **rt:agent-kit:** действующее на дерево, а не на правку, лежит вне индекса ([31b3f73](https://github.com/Eyhenij/rt-tools/commit/31b3f7334911b12c457afcd0bf18acf0085ed29d))
+- **rt:agent-kit:** заявка и её старение названы правилом, а отставание считает сверка ([aa05863](https://github.com/Eyhenij/rt-tools/commit/aa05863f67e17fa327ac8bf9d4b9a8f942391dde))
+- **rt:agent-kit:** конфликтующая своя заявка чинится раньше новой работы ([4a237a1](https://github.com/Eyhenij/rt-tools/commit/4a237a110c3a92d03174963e44165c83d4545cd6))
+- **rt:agent-kit:** неполный текст правила и опустошённое дерево названы прямо ([b1d3367](https://github.com/Eyhenij/rt-tools/commit/b1d3367f3d72e37a6fd5792c843b9325914be710))
+- **rt:agent-kit:** обвязка пакета перестала обещать больше, чем делает ([757f8a2](https://github.com/Eyhenij/rt-tools/commit/757f8a2b155e47e9d5938690f66a4b2a0a434ba9))
+- **rt:agent-kit:** признак проверки отвечает на заданный вопрос ([8352b4f](https://github.com/Eyhenij/rt-tools/commit/8352b4f8a7185fe65ccd214fbc00f7db72614635))
+- **rt:agent-kit:** разбор решений спека получил два признака отбора и форму заголовка ([eacd491](https://github.com/Eyhenij/rt-tools/commit/eacd49198b341e12f67a01eb4c7c4bc2c3e8fb08))
+- **rt:agent-kit:** разобранная папка читается как закрытие работы, а шаги правила не ждут слова ([12ce922](https://github.com/Eyhenij/rt-tools/commit/12ce922c6ddfb918fc58e13bb7c6194988911e02))
+- **rt:agent-kit:** сверка называет надстройку профиля, о которой молчит компаньон ([5978581](https://github.com/Eyhenij/rt-tools/commit/59785816729be6acc6e614afc94eafbab527bc58))
+- **rt:agent-kit:** сверка очереди работ судит связь задачи с эпиком в обе стороны ([276aff7](https://github.com/Eyhenij/rt-tools/commit/276aff7267d0002caa5e6214cdf8b92a79289ac2))
+- **rt:agent-kit:** свои заявки перечитываются в трёх местах, а ход работы делается шагами целиком ([1f755ce](https://github.com/Eyhenij/rt-tools/commit/1f755ce5cb23c0b08f577e08430943be61b4461a))
+- **rt:agent-kit:** слово владельца об устройстве — постановка, а не решение ([9c4518f](https://github.com/Eyhenij/rt-tools/commit/9c4518f0ff558fe2275e442f6b4a05f62323d8af))
+- **rt:agent-kit:** стражи хода судят отданную работу и оба действия отказа ([e2d92bf](https://github.com/Eyhenij/rt-tools/commit/e2d92bf28c9b3460c8d70b316a94bf00f71286c9))
+- **rt:agent-kit:** ход, правивший код без просьбы владельца, не кончается ([32720b6](https://github.com/Eyhenij/rt-tools/commit/32720b6e7611f56291bbd1b3ca46363fab9fd057))
+- **rt:agent-kit:** чтением считается правило области работы, а влитая договорённость не запирает ветку ([73f75e4](https://github.com/Eyhenij/rt-tools/commit/73f75e4d42eb82e1c30191d99767c38c797a80b6))
+- **rt:message-bus:** гард не выпускает ход, взявший запись груза без отметки ([dfdaa05](https://github.com/Eyhenij/rt-tools/commit/dfdaa0530af326dbce63d589dddfa733042fa7c7))
+- **rt:message-bus:** издатель редакции закрывает записи соседнего дерева ([d5ee389](https://github.com/Eyhenij/rt-tools/commit/d5ee389494fa0c4ade626dc2be3a02cfc249a62c))
+
 # [0.17.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.16.1...rt-agent-kit@0.17.0) (2026-08-27)
 
 ### Bug Fixes
