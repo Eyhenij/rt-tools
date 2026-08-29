@@ -369,8 +369,6 @@ export STUB_PULL_BEHIND=""
 report "SC-AK-752 — пустой ответ судится как ноль" "$(board_says 'отстала от «main»')" 0
 export STUB_PULL_BEHIND=0
 
-
-
 rm -rf "$BOARD_TREE"
 
 # --- SC-AK-377…346 — состояние заявки: разбор у неё есть или нет ------------------------------
