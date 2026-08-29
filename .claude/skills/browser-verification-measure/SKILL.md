@@ -4,7 +4,7 @@ kind: pattern
 rule: browser-verification
 description: Паттерн правила browser-verification. Брать, когда вывод о вёрстке надо подкрепить числом — готовые замеры, разбивка вычисленного значения по всем узлам, узкий экран через iframe, ловушки инструмента computer. Не брать для подъёма стенда — это паттерн browser-verification-stand.
 ---
-<!-- rt-kit v0.18.0 · patterns/browser-verification-measure.md · 595caec8414e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.18.0 · patterns/browser-verification-measure.md · 80f10984da6b · правится надстройкой, не здесь -->
 
 # Замер вместо взгляда
 
@@ -48,6 +48,52 @@ description: Паттерн правила browser-verification. Брать, к�
 Так на дашборде админки нашёлся 91 контрол из 106, набранный не той гарнитурой, и 13 из 87 на
 главной сайта. Счёт годится любому наследуемому свойству: смотрится не одно значение, а число
 узлов с неожиданным.
+
+## Замер по всем порогам разом
+
+Замер по одной ширине за вызов даёт числа разных минут: между вызовами страница
+перерисовывается, и сравнивать их нельзя. Ширины поэтому гоняются пачкой в одном заходе —
+каждая живёт своим кадром, замер снимается со всех сразу:
+
+```javascript
+await (async (address, widths, row) => {
+    const frames = widths.map((width) => {
+        const frame = document.createElement('iframe');
+        frame.style.cssText = `width:${width}px;height:900px;border:0;position:fixed;left:-9999px`;
+        frame.src = address;
+        document.body.appendChild(frame);
+        return { width, frame };
+    });
+
+    await Promise.all(frames.map(({ frame }) => new Promise((done) => (frame.onload = done))));
+
+    return frames.map(({ width, frame }) => {
+        const view = frame.contentWindow;
+        const doc = frame.contentDocument;
+        const cells = [...doc.querySelectorAll(row)];
+
+        return {
+            asked: width,
+            got: view.innerWidth,
+            heights: [...new Set(cells.map((el) => Math.round(el.getBoundingClientRect().height)))],
+            scrolls: doc.documentElement.scrollWidth > doc.documentElement.clientWidth,
+            escaped: cells.filter((el) => el.getBoundingClientRect().left > view.innerWidth).length,
+        };
+    });
+})('/screen', [360, 599, 600, 904, 905, 1239, 1240, 1440], '.field');
+```
+
+Ответ читается по трём признакам, и первый не про вид:
+
+- **высоты соседей одной строки равны между собой** — набор значений в `heights` длиной больше
+  единицы означает, что поля встали разного размера;
+- **поперечной прокрутки нет** — `scrolls` истинно там, где содержимое шире кадра;
+- **ни одна левая граница не выходит за ширину кадра** — `escaped` больше нуля. На снимке этого
+  не видно вовсе: элемент за правым краем выглядит отсутствующим.
+
+Ширина кадра меньше заказанной на полосу прокрутки, поэтому сравнивают с `got`, а не с числом
+из списка: порог, названный по заказанной ширине, на кадре оказывается по другую сторону от
+себя.
 
 ## Узкий экран
 
