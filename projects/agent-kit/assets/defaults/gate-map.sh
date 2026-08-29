@@ -121,8 +121,13 @@ skill_for_default() {
                 # скриптов зависимостью не является, и правило про версии на неё не вступает.
                 # Оговорка: удаление зависимости приходит правкой без номера версии и сюда не
                 # попадает — его ловит снимок дерева, который правится тем же коммитом.
+                # Своя редакция зависимостью не является: строка `"version"` в собственном
+                # манифесте говорит о выпуске этого пакета, а не о чужой версии, которую он
+                # тянет. Признак номера её ловил наравне с зависимостью, и подъём своей версии
+                # вёл исполнителя в правило о чужих версиях — не туда, где сказано, как выпускают.
                 */package.json)
-                    printf '%s' "$written" | grep -qE '"(dependencies|devDependencies|peerDependencies|optionalDependencies|overrides|resolutions|packageManager)"|"[^"]+"[[:space:]]*:[[:space:]]*"[~^]?[0-9]+\.[0-9]+' \
+                    printf '%s' "$written" | grep -v '"version"[[:space:]]*:' \
+                        | grep -qE '"(dependencies|devDependencies|peerDependencies|optionalDependencies|overrides|resolutions|packageManager)"|"[^"]+"[[:space:]]*:[[:space:]]*"[~^]?[0-9]+\.[0-9]+' \
                         && printf '%s\n' 'dependencies' ;;
                 */pnpm-lock.yaml | */pnpm-workspace.yaml | */package-lock.json) printf '%s\n' 'dependencies' ;;
 
