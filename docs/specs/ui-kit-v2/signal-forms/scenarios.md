@@ -11,11 +11,15 @@
 Когда поле поднято
 Тогда разметка поля нарисована и отказа в запуске нет
 
+Покрыто: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.signal-forms.spec.ts`.
+
 ### SC-UKV-78 — негодность сигнальной привязки доходит до поля
 
 Дано поле на сигнальной привязке, и форма считает значение негодным
 Когда поле тронуто
 Тогда поле объявляет себя негодным
+
+Покрыто: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.signal-forms.spec.ts`.
 
 ### SC-UKV-79 — до касания негодность не показывается
 
@@ -23,11 +27,15 @@
 Когда поле ещё не тронуто и не правлено
 Тогда поле негодным себя не объявляет
 
+Покрыто: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.signal-forms.spec.ts`.
+
 ### SC-UKV-80 — ошибки сигнальной привязки видны обёртке
 
 Дано поле на сигнальной привязке, и форма назвала ошибку
 Когда поле тронуто
 Тогда обёртка показывает текст этой ошибки
+
+Покрыто: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.signal-forms.spec.ts`.
 
 ### SC-UKV-81 — обязательность сигнальной привязки даёт звёздочку
 
@@ -35,14 +43,20 @@
 Когда поле нарисовано в обёртке
 Тогда у подписи стоит звёздочка
 
+Покрыто: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.signal-forms.spec.ts`.
+
 ### SC-UKV-82 — отключение сигнальной привязкой отключает поле
 
 Дано поле на сигнальной привязке, и форма отключила значение
 Когда поле нарисовано
 Тогда поле ввода не принимает ввод
 
+Покрыто: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.signal-forms.spec.ts`.
+
 ### SC-UKV-83 — прежняя привязка работает как раньше
 
 Дано поле на прежней привязке с обязательным контролом
 Когда контрол тронут и негоден
 Тогда поле объявляет себя негодным, а обёртка показывает ошибку и звёздочку
+
+Покрыто: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.signal-forms.spec.ts`.
