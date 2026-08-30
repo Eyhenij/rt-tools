@@ -1,3 +1,9 @@
+# [0.22.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.21.0...rt-agent-kit@0.22.0) (2026-08-30)
+
+### Bug Fixes
+
+- **rt:agent-kit:** сводка сжатия репликой владельца не считается ([f1c9a0d](https://github.com/Eyhenij/rt-tools/commit/f1c9a0d1eb99bbaf80e707f2b413a009d7ccd476))
+
 # [0.21.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.20.0...rt-agent-kit@0.21.0) (2026-08-30)
 
 ### Bug Fixes

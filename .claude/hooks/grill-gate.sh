@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.21.0 · hooks/grill-gate.sh · b38af9f76163 · правится надстройкой, не здесь
+# rt-kit v0.22.0 · hooks/grill-gate.sh · b38af9f76163 · правится надстройкой, не здесь
 # Требует: hooks/deny-tail.sh
 # rt-hook: Stop
 # Гард разговора: вопрос владельцу не задаётся, пока за этот же ход не читались законы и
