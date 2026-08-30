@@ -22,6 +22,7 @@
 - **Ход, объявивший записанный замысел, не кончается вовсе.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:first_stage` — ветка отбивает ход до второго признака и берёт заголовок первого этапа из замысла; сценарии SC-AK-591…593
 - **Снятая папка задачи снимает требование состояния, а ход не кончает.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:archived` — признак уводит суд на второй, а ход не отпускает; сценарии SC-AK-574…576
 - **Ход, открывший заявку, не кончается, пока состояние отданной работы не спрошено командой.** — `projects/agent-kit/assets/hooks/waiting-turn-guard.sh:ready_re` — признак берётся из команд хода; сценарий SC-AK-583
+- **Шаг закрытия работы взятием следующей задачи не считается.** — `projects/agent-kit/assets/hooks/waiting-turn-guard.sh:taken_re` — перечень того, чем взятие бывает; путь правки судится образцом `taken_path_re`; сценарий SC-AK-812
 - **Этап, объявленный закрытым, подтверждается выводом команды.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:stage_was`
 - **Приём, записанный прозой, страж не читает.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:contract`
 - **Размер окна берётся из настройки дерева, а не из записи захода.** — `projects/agent-kit/assets/defaults/project.sh:RT_WINDOW_TOKENS`
