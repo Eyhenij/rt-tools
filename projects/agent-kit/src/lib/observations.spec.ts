@@ -210,3 +210,27 @@ describe('вес загруженного', (): void => {
         expect(summary.bytesPerSession).toBe(0);
     });
 });
+
+describe('молчащий гард', (): void => {
+    const denials: readonly IObservation[] = [
+        { event: 'guard-deny', resource: 'task-flow-guard', kind: '', session: '1', version: '0.5.1' },
+        { event: 'guard-deny', resource: 'task-flow-guard', kind: '', session: '2', version: '0.5.1' },
+    ];
+
+    it('SC-AK-809 — гард, не отбивший за отрезок ни разу, назван отдельно', (): void => {
+        const summary: ISummary = summarize(denials, [], 3, {}, ['task-flow-guard', 'docs-guard', 'git-guard-main']);
+
+        expect(summary.silentGuards).toEqual(['docs-guard', 'git-guard-main']);
+    });
+
+    it('SC-AK-809 — отбивавший гард в молчащие не попадает и счётчик его остаётся', (): void => {
+        const summary: ISummary = summarize(denials, [], 3, {}, ['task-flow-guard']);
+
+        expect(summary.silentGuards).toEqual([]);
+        expect(summary.guards).toEqual([{ name: 'task-flow-guard', count: 2 }]);
+    });
+
+    it('SC-AK-810 — перечня гардов не назвали: сводка молчит о них, а не зовёт молчащими всех', (): void => {
+        expect(summarize(denials, [], 3).silentGuards).toEqual([]);
+    });
+});
