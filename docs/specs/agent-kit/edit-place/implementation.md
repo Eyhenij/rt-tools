@@ -14,6 +14,9 @@
 - **Снятие разложенной копии проходит.** — `projects/agent-kit/assets/hooks/rule-source-guard.sh:rt_write_targets`
 - **Пустая надстройка и ненаписанная кладутся целиком.** — `projects/agent-kit/assets/hooks/override-write-guard.sh:overrides_dir`
 - **Копию образца под работу собирает команда, и шапку она снимает.** — `projects/agent-kit/assets/checks/board.github.mjs:unstampFolder`
+- **Разложенный файл прячется от форматтера, и это стережёт проверка.** — `tools/check-format-ignore.mjs:STAMP` — шапка ищется в голове каждого файла дерева, и найденный сверяется со списком исключений
+- **Судятся все файлы с шапкой раскладки, а не перечень каталогов.** — `tools/check-format-ignore.mjs:walk` — обход идёт по всему дереву, минуя сборку, зависимости и порождённое
+- **Проверка своя дереву, а не пакетная.** — `tools/check-format-ignore.mjs:IGNORE_FILE` — читается `.prettierignore`; нет его — сверять нечем, и проверка молчит
 
 Имена этого дерева: источник — `projects/agent-kit/assets/<ресурс>`, каталог надстроек —
 `.claude/rt-kit/overrides/`, профиль дерева — `.claude/rt-kit/project.sh`, настройка

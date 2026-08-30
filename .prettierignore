@@ -82,7 +82,13 @@ tools/signals/
 # читает файл правленным руками и отказывает по нему целиком, а цену платит тот, кто в этот день
 # правил соседний ресурс. Свои файлы дерева в tools/ форматируются как обычно — поэтому список
 # поимённый, а не каталогом.
+tools/archive-age.mjs
+tools/archive-prune.mjs
+tools/board-epics.mjs
+tools/board-gh.mjs
+tools/board-paths.mjs
 tools/board-runs.mjs
+tools/board-titles.mjs
 tools/board.mjs
 tools/check-board.mjs
 tools/check-doc-paths.mjs
