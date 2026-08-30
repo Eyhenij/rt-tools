@@ -8,13 +8,19 @@ import { IRtToggleButtonGroup } from '../../rt-toggle-button-group.model';
 import { RtToggleButtonGroupComponent } from '../../rt-toggle-button-group.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TToggleButtonGroupMatrixPart = 'size' | 'options' | 'value' | 'fullWidth' | 'states' | 'themes';
+export type TToggleButtonGroupMatrixPart = 'size' | 'options' | 'value' | 'fullWidth' | 'multiple' | 'disabledOption' | 'states' | 'themes';
 
 /** Набор сегментов: подписи, подписи с иконками, две штуки против пяти. */
 interface IGroupOptionsCase {
     readonly name: string;
     readonly options: ReadonlyArray<IRtToggleButtonGroup.Option>;
     readonly value: string;
+}
+
+/** Что выбрано в множественной группе: пусто, один, часть, всё. */
+interface IGroupMultipleCase {
+    readonly name: string;
+    readonly values: ReadonlyArray<string>;
 }
 
 /** Какой сегмент выбран: край группы и середина скругляются по-разному. */
@@ -25,6 +31,20 @@ interface IGroupValueCase {
 
 const PERIOD: ReadonlyArray<IRtToggleButtonGroup.Option> = [
     { value: 'day', label: 'День' },
+    { value: 'week', label: 'Неделя' },
+    { value: 'month', label: 'Месяц' },
+];
+
+/** Недоступен средний сегмент: видно, что группа не схлопывается и края остаются прежними. */
+const PERIOD_WITH_DISABLED: ReadonlyArray<IRtToggleButtonGroup.Option> = [
+    { value: 'day', label: 'День' },
+    { value: 'week', label: 'Неделя', disabled: true },
+    { value: 'month', label: 'Месяц' },
+];
+
+/** Недоступен выбранный сегмент: подсветка выбранного и приглушённость показаны вместе. */
+const PERIOD_DISABLED_CHOSEN: ReadonlyArray<IRtToggleButtonGroup.Option> = [
+    { value: 'day', label: 'День', disabled: true },
     { value: 'week', label: 'Неделя' },
     { value: 'month', label: 'Месяц' },
 ];
@@ -79,6 +99,26 @@ const VIEW: ReadonlyArray<IRtToggleButtonGroup.Option> = [
                             value="week"
                             [options]="period"
                             [fullWidth]="widthName === 'fullWidth'" />
+                    </ng-template>
+                </app-story-row>
+            }
+
+            @case ('multiple') {
+                <app-story-row caption="Множественный выбор" [items]="multipleCases" [itemLabel]="caseLabel">
+                    <ng-template let-multipleCase>
+                        <rt-toggle-button-group
+                            multiple
+                            [ariaLabel]="multipleCase.name"
+                            [options]="period"
+                            [values]="multipleCase.values" />
+                    </ng-template>
+                </app-story-row>
+            }
+
+            @case ('disabledOption') {
+                <app-story-row caption="Недоступный сегмент" [items]="disabledCases" [itemLabel]="caseLabel">
+                    <ng-template let-disabledCase>
+                        <rt-toggle-button-group ariaLabel="Период" value="day" [options]="disabledCase.options" />
                     </ng-template>
                 </app-story-row>
             }
@@ -144,6 +184,18 @@ export class TestRtToggleButtonGroupMatrixComponent {
             ],
             value: 'work',
         },
+    ];
+
+    public readonly multipleCases: readonly IGroupMultipleCase[] = [
+        { name: 'ничего не выбрано', values: [] },
+        { name: 'один', values: ['week'] },
+        { name: 'два', values: ['day', 'month'] },
+        { name: 'все', values: ['day', 'week', 'month'] },
+    ];
+
+    public readonly disabledCases: readonly IGroupOptionsCase[] = [
+        { name: 'недоступен средний', options: PERIOD_WITH_DISABLED, value: 'day' },
+        { name: 'недоступен выбранный', options: PERIOD_DISABLED_CHOSEN, value: 'day' },
     ];
 
     public readonly valueCases: readonly IGroupValueCase[] = [

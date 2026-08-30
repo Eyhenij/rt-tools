@@ -1,16 +1,15 @@
-# Привязка — сегментированный переключатель
+# Чем исполняется — сегментированный переключатель
 
-- **Одиночный и множественный выбор объявляются разными входами** — `rt-toggle-button-group.component.ts:values`
-- **В множественном выборе нажатие добавляет сегмент или снимает его** — `rt-toggle-button-group.component.ts:onOptionClick`
-- **Множественный выбор отдаёт весь набор выбранного, а не разницу** — `rt-toggle-button-group.component.ts:valuesChange`
-- **Недоступный сегмент остаётся видимым и нажатие не пропускает** — `rt-toggle-button-group.component.ts:isDisabled`
-- **Отключённая группа делает недоступными все свои сегменты** — `rt-toggle-button-group.component.ts:isDisabled`
-- **Недоступность сегмента объявлена рядом с его подписью, а не отдельным списком** — `rt-toggle-button-group.model.ts:Option`
+Первая колонка — правило спека рядом дословно. Вторая — где оно исполняется в дереве; там же
+назван сценарий, которым это проверяется, а чем именно покрыт каждый сценарий, сказано в
+`scenarios.md`.
 
-Пути от корня пакета: `projects/ui-kit-v2/src/lib/components/toggle-button-group/`.
+Правило без строки и строка без правила — расхождение: спек обещает то, чего в дереве нет, либо
+в дереве стоит то, о чём спек молчит.
 
-- **Сценарий** — Тест
-- **`SC-UKV-84`** — `rt-toggle-button-group.component.spec.ts`
-- **`SC-UKV-85`** — `rt-toggle-button-group.component.spec.ts`
-- **`SC-UKV-86`** — `rt-toggle-button-group.component.spec.ts`
-- **`SC-UKV-87`** — `rt-toggle-button-group.component.spec.ts`
+- **Одиночный и множественный выбор объявляются разными входами.** — `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group.component.ts:values`; сценарий `SC-UKV-84`
+- **В множественном выборе нажатие добавляет сегмент или снимает его.** — `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group.component.ts:onOptionClick`; сценарий `SC-UKV-85`
+- **Множественный выбор отдаёт весь набор выбранного, а не разницу.** — `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group.component.ts:valuesChange`; сценарий `SC-UKV-85`
+- **Недоступный сегмент остаётся видимым и нажатие не пропускает.** — `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group.component.ts:items`; сценарий `SC-UKV-86`
+- **Отключённая группа делает недоступными все свои сегменты.** — `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group.component.ts:items`; сценарий `SC-UKV-87`
+- **Недоступность сегмента объявлена рядом с его подписью, а не отдельным списком.** — `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group.model.ts:Option`; сценарий `SC-UKV-86`

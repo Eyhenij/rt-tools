@@ -73,10 +73,46 @@ const ICON_SIZE_BY_SIZE: Readonly<Record<IRtToggleButtonGroup.Size, IRtIcon.Size
 export class RtToggleButtonGroupComponent<T = string> {
     protected readonly iconSize: Signal<IRtIcon.Size> = computed((): IRtIcon.Size => ICON_SIZE_BY_SIZE[this.size()]);
 
+    /**
+     * Сегменты, готовые к отрисовке: подсветка и недоступность посчитаны здесь, а не в шаблоне.
+     *
+     * Подсветка читается по-разному в одиночном и множественном выборе, а недоступность приходит
+     * с двух сторон — от группы и от самого сегмента. Признак группы главнее: доступный сегмент
+     * внутри отключённой группы читался бы как её единственное живое место.
+     */
+    protected readonly items: Signal<ReadonlyArray<IRtToggleButtonGroup.Rendered<T>>> = computed(
+        (): ReadonlyArray<IRtToggleButtonGroup.Rendered<T>> => {
+            const multiple: boolean = this.multiple();
+            const chosen: ReadonlyArray<T> = this.values();
+            const single: T | undefined = this.value();
+            const groupDisabled: boolean = this.disabled();
+
+            return this.options().map((option: IRtToggleButtonGroup.Option<T>): IRtToggleButtonGroup.Rendered<T> => ({
+                option,
+                active: multiple ? chosen.includes(option.value) : single === option.value,
+                disabled: groupDisabled || !!option.disabled,
+            }));
+        }
+    );
+
     public readonly options: InputSignal<ReadonlyArray<IRtToggleButtonGroup.Option<T>>> =
         input.required<ReadonlyArray<IRtToggleButtonGroup.Option<T>>>();
 
     public readonly value: InputSignal<T | undefined> = input<T | undefined>(undefined);
+
+    /**
+     * Множественный выбор: нажатие добавляет сегмент или снимает его, а не переносит выбор.
+     *
+     * Своим входом, а не расширением типа `value`: вход, у которого тип значения меняется от
+     * значения другого входа, не проверяет ни сборка, ни линтер — потребитель узнаёт о своей
+     * ошибке, когда группа перестаёт подсвечивать выбранное.
+     */
+    public readonly multiple: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /** Набор выбранного. Читается только при множественном выборе, одиночный берёт `value`. */
+    public readonly values: InputSignal<ReadonlyArray<T>> = input<ReadonlyArray<T>>([]);
 
     public readonly ariaLabel: InputSignal<string | null> = input<string | null>(null);
 
@@ -93,10 +129,30 @@ export class RtToggleButtonGroupComponent<T = string> {
 
     public readonly valueChange: OutputEmitterRef<T> = output<T>();
 
-    protected onOptionClick(option: IRtToggleButtonGroup.Option<T>): void {
-        if (this.disabled()) {
+    /**
+     * Весь набор выбранного после нажатия, а не разница с прежним: разницу вызывающий сводит со
+     * своим состоянием сам, и каждый сводит по-своему.
+     */
+    public readonly valuesChange: OutputEmitterRef<ReadonlyArray<T>> = output<ReadonlyArray<T>>();
+
+    protected onOptionClick(item: IRtToggleButtonGroup.Rendered<T>): void {
+        if (item.disabled) {
             return;
         }
-        this.valueChange.emit(option.value);
+
+        const option: IRtToggleButtonGroup.Option<T> = item.option;
+
+        if (!this.multiple()) {
+            this.valueChange.emit(option.value);
+
+            return;
+        }
+
+        const chosen: ReadonlyArray<T> = this.values();
+        const next: T[] = chosen.includes(option.value)
+            ? chosen.filter((one: T): boolean => one !== option.value)
+            : [...chosen, option.value];
+
+        this.valuesChange.emit(next);
     }
 }
