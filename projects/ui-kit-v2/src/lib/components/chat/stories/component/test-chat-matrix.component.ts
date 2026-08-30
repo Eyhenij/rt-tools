@@ -79,9 +79,10 @@ const MESSAGES: readonly IRtChat.Message[] = [
             @case ('messageActions') {
                 <app-story-row caption="Действия у реплики" slotWidth="24rem" [items]="actionCases" [itemLabel]="caseLabel">
                     <ng-template let-item>
-                        <!-- Кнопки у реплики проявляются наведением: без признака состояния кадр
-                             показал бы пустое место, зарезервированное под них. -->
-                        <div style="height: 22rem" [attr.data-story-state]="'hover'">
+                        <!-- Ширина названа явно: слот ряда — flex-контейнер, и переписка без
+                             собственной ширины сжимается в нём до нуля. Кнопки у реплики
+                             проявляются наведением, поэтому на ячейке стоит признак состояния. -->
+                        <div style="height: 22rem; width: 100%" [attr.data-story-state]="'hover'">
                             <rt-chat
                                 hasThread
                                 title="Договор №2024-118"
