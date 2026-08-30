@@ -125,7 +125,13 @@ export class RtuiDynamicSelectorSelectedListComponent<ENTITY extends Record<stri
     public isItemsEditable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
-    /** Material elements appearance */
+    /**
+     * Material elements appearance.
+     *
+     * Значение приходит уже разрешённым — от того, кто список рисует: вложенный компонент,
+     * разрешающий вид заново, заводит свою цепочку, и вид поля внутри списка отличается от вида
+     * поля под ним. Прежнее умолчание оставлено на случай одиночного употребления списка.
+     */
     public appearance: InputSignal<MatFormFieldAppearance> = input('fill' as MatFormFieldAppearance);
 
     public readonly deleteFromSelectedAction: OutputEmitterRef<ENTITY[KEY]> = output<ENTITY[KEY]>();
