@@ -81,7 +81,7 @@ describe('RtAsideService', () => {
     function open(config?: IAsideConfig): { closed: boolean; ref: AsideRef<null, null> | null } {
         const state: { closed: boolean; ref: AsideRef<null, null> | null } = { closed: false, ref: null };
 
-        service.Open<TestContentComponent, null, null>(TestContentComponent, 'right', null, config).subscribe({
+        service.open<TestContentComponent, null, null>(TestContentComponent, 'right', null, config).subscribe({
             complete: (): void => {
                 state.closed = true;
             },

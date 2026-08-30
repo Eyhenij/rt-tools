@@ -287,7 +287,7 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     public onOpenConfigAside(): void {
         // eslint-disable-next-line @nx/workspace-no-subscribe-in-methods -- подписка переезжает в объявленный поток задачей RT-845
         this.#asideService
-            .Open<RtTableConfigAsideComponent<ENTITY_TYPE>, ITable.Config.Data<ENTITY_TYPE>, ITable.Config.Data<ENTITY_TYPE>>(
+            .open<RtTableConfigAsideComponent<ENTITY_TYPE>, ITable.Config.Data<ENTITY_TYPE>, ITable.Config.Data<ENTITY_TYPE>>(
                 RtTableConfigAsideComponent,
                 'right',
                 this.tableConfig()

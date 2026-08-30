@@ -17,7 +17,7 @@
 - **Прежнее поведение остаётся доступным настройкой открытия.** — `projects/ui-kit/src/lib/ui-kit/aside/aside.types.ts:IAsideConfig`
 - **Клик по подложке и уход по маршруту закрывают шторку по-прежнему.** — `projects/ui-kit/src/lib/ui-kit/aside/aside.service.ts:closesOf`
 - **Запрещённый источник не подписывается вовсе.** — `projects/ui-kit/src/lib/ui-kit/aside/aside.service.ts:closesOf`
-- **Программное закрытие настройкой не гасится.** — `projects/ui-kit/src/lib/ui-kit/aside/aside.service.ts:Open`
+- **Программное закрытие настройкой не гасится.** — `projects/ui-kit/src/lib/ui-kit/aside/aside.service.ts:open`
 - **Таблица отдаёт сортировку только по той колонке, которую сама рисует.** — `projects/ui-kit/src/lib/ui-kit/table/components/table/rtui-table.component.ts:onSortChange`
 - **Имя сверяется с тем же набором колонок, который таблица рисует.** — `projects/ui-kit/src/lib/ui-kit/table/components/table/rtui-table.component.ts:sortOfKnownColumn`
 - **Несовпавшее имя не уходит наружу вовсе.** — `projects/ui-kit/src/lib/ui-kit/table/components/table/rtui-table.component.ts:sortOfKnownColumn`

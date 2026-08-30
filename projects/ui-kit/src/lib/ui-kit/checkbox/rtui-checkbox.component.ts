@@ -31,7 +31,8 @@ const BEM_BLOCK: string = 'rtui-checkbox';
 export class RtuiCheckboxComponent implements ControlValueAccessor {
     private onChangeCallback: (_: boolean) => void = noop;
     private onTouchedCallback: () => void = noop;
-    private value: boolean = false;
+    /** Отмечен ли флажок. Своё имя у поля потому, что публичное `value` — аксессор над ним. */
+    #checked: boolean = false;
 
     public disabled: boolean = false;
 
@@ -45,26 +46,24 @@ export class RtuiCheckboxComponent implements ControlValueAccessor {
         transform: transformStringInput,
     });
 
-    // eslint-disable-next-line sonarjs/function-name -- имя публичное, переименование ломает разметку потребителя; идёт задачей RT-846
-    public get Value(): boolean {
-        return this.value;
+    public get value(): boolean {
+        return this.#checked;
     }
 
-    // eslint-disable-next-line sonarjs/function-name -- имя публичное, переименование ломает разметку потребителя; идёт задачей RT-846
-    public set Value(v: boolean) {
+    public set value(v: boolean) {
         if (this.disabled) {
             return;
         }
 
-        if (v !== this.value) {
-            this.value = v;
+        if (v !== this.#checked) {
+            this.#checked = v;
             this.onTouchedCallback();
             this.onChangeCallback(v);
         }
     }
 
     public writeValue(value: boolean): void {
-        this.value = !!value;
+        this.#checked = !!value;
     }
 
     public registerOnChange(fn: (value: boolean) => void): void {
