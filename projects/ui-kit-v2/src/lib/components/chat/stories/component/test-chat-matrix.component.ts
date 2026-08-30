@@ -2,21 +2,26 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
+import { RtMenuItemComponent } from '../../../menu/rt-menu-item.component';
+import { RtChatMessageActionsDirective } from '../../rt-chat-message-actions.directive';
 import { RtChatComponent } from '../../rt-chat.component';
 import { ERtChatMessageStatus, IRtChat } from '../../rt-chat.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TChatMatrixPart = 'thread' | 'messageKind' | 'status' | 'reply' | 'header' | 'loading' | 'themes';
+export type TChatMatrixPart = 'thread' | 'messageKind' | 'status' | 'messageActions' | 'reply' | 'header' | 'loading' | 'themes';
 
 const NOW: string = '2026-03-14T16:02:00.000Z';
 
+/** Автор чужих реплик: имя одно на все матрицы — разные читались бы как разные собеседники. */
+const PEER: string = 'Петрова А. С.';
+
 const MESSAGES: readonly IRtChat.Message[] = [
     { id: 1, author: 'Система', own: false, system: true, text: 'Переписка создана', createdAt: NOW },
-    { id: 2, author: 'Петрова А. С.', own: false, text: 'Добрый день! Договор на согласовании.', createdAt: NOW },
+    { id: 2, author: PEER, own: false, text: 'Добрый день! Договор на согласовании.', createdAt: NOW },
     { id: 3, author: 'Вы', own: true, status: ERtChatMessageStatus.Read, text: 'Спасибо, ждём.', createdAt: NOW },
     {
         id: 4,
-        author: 'Петрова А. С.',
+        author: PEER,
         own: false,
         text: 'Приложила подписанный экземпляр.',
         createdAt: NOW,
@@ -69,6 +74,29 @@ const MESSAGES: readonly IRtChat.Message[] = [
                 <div style="width: 26rem; height: 24rem">
                     <rt-chat hasThread canReply title="Свои сообщения" placeholder="Написать сообщение" [messages]="statusMessages" />
                 </div>
+            }
+
+            @case ('messageActions') {
+                <app-story-row caption="Действия у реплики" slotWidth="24rem" [items]="actionCases" [itemLabel]="caseLabel">
+                    <ng-template let-item>
+                        <!-- Кнопки у реплики проявляются наведением: без признака состояния кадр
+                             показал бы пустое место, зарезервированное под них. -->
+                        <div style="height: 22rem" [attr.data-story-state]="'hover'">
+                            <rt-chat
+                                hasThread
+                                title="Договор №2024-118"
+                                placeholder="Написать сообщение"
+                                [messages]="actionMessages"
+                                [messageHasActions]="item.predicate">
+                                @if (item.declared) {
+                                    <ng-template rtChatMessageActions let-message>
+                                        <rt-menu-item icon="link" [label]="'Ссылка на ' + message.text" />
+                                    </ng-template>
+                                }
+                            </rt-chat>
+                        </div>
+                    </ng-template>
+                </app-story-row>
             }
 
             @case ('reply') {
@@ -137,6 +165,8 @@ const MESSAGES: readonly IRtChat.Message[] = [
     imports: [
         // components
         RtChatComponent,
+        RtChatMessageActionsDirective,
+        RtMenuItemComponent,
 
         // showcase
         StoryRowComponent,
@@ -161,6 +191,22 @@ export class TestRtChatMatrixComponent {
         { name: 'переписка не выбрана', hasThread: false, messages: [] },
         { name: 'выбрана и пуста', hasThread: true, messages: [] },
         { name: 'выбрана с сообщениями', hasThread: true, messages: MESSAGES },
+    ];
+
+    /** Две реплики: своя и чужая — на них видно, как признак гасит точку действий у одной. */
+    public readonly actionMessages: readonly IRtChat.Message[] = [
+        { id: 21, author: PEER, own: false, text: 'Договор на согласовании', createdAt: NOW },
+        { id: 22, author: 'Вы', own: true, status: ERtChatMessageStatus.Read, text: 'Спасибо, ждём', createdAt: NOW },
+    ];
+
+    public readonly actionCases: readonly {
+        name: string;
+        declared: boolean;
+        predicate: IRtChat.MessageActionsPredicate | null;
+    }[] = [
+        { name: 'шаблон не объявлен', declared: false, predicate: null },
+        { name: 'объявлен, признака нет', declared: true, predicate: null },
+        { name: 'признак гасит свою реплику', declared: true, predicate: (message: IRtChat.Message): boolean => !message.own },
     ];
 
     public readonly replyCases: readonly { name: string; canReply: boolean; reason: string | null; sending: boolean }[] = [

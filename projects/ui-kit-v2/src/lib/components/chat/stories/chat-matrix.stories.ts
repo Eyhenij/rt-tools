@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
-import { storyWidthAtLeast } from '../../../../showcase';
+import { storyPseudoParameters, storyWidthAtLeast } from '../../../../showcase';
 import { TestRtChatMatrixComponent } from './component/test-chat-matrix.component';
 
 /**
@@ -29,6 +29,15 @@ export const MessageKind: TStory = { args: { part: 'messageKind' }, parameters: 
 
 /** Все четыре состояния доставки своего сообщения. */
 export const Status: TStory = { args: { part: 'status' }, parameters: { snapshot: { fullPage: true } } };
+
+/**
+ * Точка действий потребителя у реплики: без шаблона её нет вовсе, с шаблоном — у каждой реплики,
+ * а признак гасит её там, где действий у потребителя нет.
+ */
+export const MessageActions: TStory = {
+    args: { part: 'messageActions' },
+    parameters: { pseudo: storyPseudoParameters('.rt-chat__message-row') },
+};
 
 export const Reply: TStory = { args: { part: 'reply' } };
 

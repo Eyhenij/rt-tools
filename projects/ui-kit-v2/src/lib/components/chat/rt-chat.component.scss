@@ -147,7 +147,9 @@
 
             // Кнопка проявляется по наведению/фокусу в пределах всей строки.
             &:hover .rt-chat__message-delete,
-            &:focus-within .rt-chat__message-delete {
+            &:focus-within .rt-chat__message-delete,
+            &:hover .rt-chat__message-actions,
+            &:focus-within .rt-chat__message-actions {
                 opacity: 1;
                 pointer-events: auto;
             }
@@ -213,6 +215,15 @@
         // под неё зарезервировано всегда (opacity, не display) — тред не «прыгает»
         // при наведении. Проявляется по ховеру строки (см. `&__message-row`).
         &__message-delete {
+            flex: 0 0 auto;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--rt-chat-transition-duration) ease;
+        }
+
+        // Точка действий потребителя: тот же flex-сосед пузыря, что и кнопка удаления, и то же
+        // зарезервированное место — тред не «прыгает» при наведении.
+        &__message-actions {
             flex: 0 0 auto;
             opacity: 0;
             pointer-events: none;

@@ -21,6 +21,14 @@ export namespace IRtChat {
     /** Алиас enum'а для доменных мапперов, работающих через неймспейс. */
     export type MessageStatus = ERtChatMessageStatus;
 
+    /**
+     * Есть ли у реплики доступные действия потребителя — гейт кнопки «…» у неё.
+     *
+     * Признак приходит предикатом, а не полем модели: действие, которого кит не знает,
+     * его моделью и не описывается.
+     */
+    export type MessageActionsPredicate = (message: Message) => boolean;
+
     /** Вложение сообщения — домен маппит свой ресурс, скачивание по `public_id`. */
     export interface Attachment {
         id: number;
