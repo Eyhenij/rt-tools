@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.22.0 · checks/check-schema-drift.mjs · 1d0a528afb11 · правится надстройкой, не здесь
+// rt-kit v0.22.0 · checks/check-schema-drift.mjs · 380eff42ceb4 · правится надстройкой, не здесь
 /**
  * Проверка того, что миграции и `prisma/schema.prisma` описывают одну и ту же базу.
  *
@@ -84,6 +84,43 @@ function shadowAddresses(url) {
 // которой нечего смотреть, поломкой не является.
 const SKIP = Number(process.env.RT_SKIP_CODE ?? 7);
 
+/**
+ * Тронула ли ветка хранилище — схему либо каталог миграций.
+ *
+ * Пропуск проверки законен ровно до этой черты. База на машине разработчика бывает погашена
+ * буднично, и отбивать за это пуш документации не за что; но ветка, правившая миграции, без
+ * прогона цепочки уезжает в главную вслепую — и падает не у неё, а на выкатке. Так и упал прод:
+ * пять полей появились в схеме без миграций, часть страниц стала отвечать «не найдено», полчаса
+ * недоступности, чинили откатом. Гейт при этом был зелёным: проверка вернула код пропуска.
+ *
+ * Смотрятся обе стороны — незакоммиченное в рабочем дереве и вклад ветки от главной. Одного
+ * вклада мало: правка, ещё не попавшая в коммит, уходит тем же пушем следом.
+ *
+ * ОТКАЗ В ПОЛЬЗУ РАБОТЫ: нет git, нет главной ветки, вызов упал — считается, что не тронула.
+ * Проверка, отбивающая пуш по своей слепоте, хуже пропуска: чинить в ней нечего.
+ */
+function touchedStorage() {
+    const paths = [CONFIG.schemaFile, CONFIG.migrationsDir].filter(Boolean);
+    if (!paths.length) {
+        return false;
+    }
+
+    const git = (args) => {
+        const out = spawnSync('git', args, { cwd: ROOT, encoding: 'utf8' });
+
+        return out.status === 0 ? (out.stdout ?? '') : '';
+    };
+
+    // Главная ветка берётся удалённой ссылкой: локальная — снимок последнего подтягивания, и
+    // вклад, посчитанный от неё, врёт ровно в ту сторону, где проверка молчит.
+    const main = CONFIG.mainBranch ?? 'main';
+    const base = [`origin/${main}`, main].find((ref) => git(['rev-parse', '--verify', '--quiet', ref]).trim()) ?? '';
+
+    const changed = [git(['status', '--porcelain']), base ? git(['diff', '--name-only', `${base}...HEAD`]) : ''].join('\n');
+
+    return paths.some((one) => changed.split('\n').some((line) => line.includes(one)));
+}
+
 function prisma(args, url) {
     return spawnSync('npx', ['prisma', ...args], {
         cwd: ROOT,
@@ -104,9 +141,7 @@ async function withServiceClient(serviceUrl, run) {
         // Погашенный докер — обычное состояние машины, а не повод не дать запушить
         // документацию.
         if (SERVER_DOWN_CODES.includes(error?.code)) {
-            console.log('check-schema-drift: база недоступна — сверять негде');
-
-            return SKIP;
+            return unavailable('база недоступна');
         }
         throw error;
     }
@@ -116,6 +151,32 @@ async function withServiceClient(serviceUrl, run) {
     } finally {
         await client.end();
     }
+}
+
+/**
+ * Ответ на «проверять негде»: пропуск либо отказ — смотря тронула ли ветка хранилище.
+ *
+ * Отказ называет, чем поднять базу. Сказанное только «негде» исполнитель читает как разрешение:
+ * поднимать её он не обязан, а гейт зелёный.
+ */
+function unavailable(why) {
+    if (!touchedStorage()) {
+        console.log(`check-schema-drift: ${why} — сверять негде`);
+
+        return SKIP;
+    }
+
+    console.error(`check-schema-drift: ${why}, а ветка правила схему или миграции — сверять негде, но было чем\n`);
+    console.error(
+        'Цепочка миграций на пустом хранилище — единственное место, где виден их настоящий порядок:\n' +
+            'метку времени ставит момент создания, и миграция из ветки, начатой раньше, встаёт перед той,\n' +
+            'от которой зависит. На развёрнутом хранилище разработчика она ложится, на чистом падает — и\n' +
+            'видно это в первый раз на выкатке.\n\n' +
+            'Подними базу и повтори; когда её под рукой нет, цепочка гоняется на одноразовом контейнере —\n' +
+            'готовые команды в паттерне `git-workflow-migration`.'
+    );
+
+    return 1;
 }
 
 async function main() {
@@ -136,9 +197,7 @@ async function main() {
 
     const url = databaseUrl();
     if (!url) {
-        console.log('check-schema-drift: адрес базы не задан — сверять негде');
-
-        return SKIP;
+        return unavailable('адрес базы не задан');
     }
 
     if (PRODUCTION_MARKS.some((mark) => url.includes(mark))) {
