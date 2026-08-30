@@ -327,6 +327,19 @@ export function planSync(config: IConfig, root: string, version: string, assetsD
 }
 
 /** Раскладка. Отказ хотя бы по одному файлу не пишет ничего: половина разложенного хуже целого. */
+/**
+ * Род, у которого право на исполнение решается родом, а не правами файла в пакете.
+ *
+ * Признак остальных родов читается с диска источника, а бит на диске теряется молча: архив без
+ * прав, файловая система без бита, репозиторий с выключенным учётом режима. Потеряв его,
+ * раскладка положила бы гард с правами 644 — и он не запустился бы вовсе, выглядя установленным:
+ * файл на месте, раскладка отчиталась, а гарды по устройству отказывают в пользу работы, то есть
+ * молчат. Хук существует затем, чтобы его запускала оболочка, и права здесь не выбор.
+ *
+ * Проверкам этого не делается: часть из них зовётся исполнителем, и бит им не нужен.
+ */
+const HOOKS_KIND: string = 'hooks';
+
 export function runSync(config: IConfig, root: string, version: string, assetsDir: string): ISyncResult {
     const result: ISyncResult = planSync(config, root, version, assetsDir);
     if (result.missing.size || result.gaps.length || result.planned.some((entry: IPlanned): boolean => isRefusal(entry.outcome))) {
@@ -350,7 +363,7 @@ export function runSync(config: IConfig, root: string, version: string, assetsDi
         const path: string = join(root, entry.path);
         mkdirSync(dirname(path), { recursive: true });
         writeFileSync(path, entry.content, 'utf8');
-        if (executable.has(entry.asset)) {
+        if (executable.has(entry.asset) || entry.asset.startsWith(`${HOOKS_KIND}/`)) {
             chmodSync(path, 0o755);
         }
         written.push(entry.path);
