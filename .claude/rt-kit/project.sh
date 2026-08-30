@@ -130,6 +130,7 @@ node tools/check-tokens-theme.mjs
 node tools/check-tokens-styles.mjs
 node tools/check-cascade-layer.mjs
 node tools/check-format-ignore.mjs
+node tools/check-publish-lockfile.mjs
 EOF
 
     rt_push_checks_default "$1" \

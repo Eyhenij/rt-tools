@@ -50,6 +50,11 @@ jobs:
               run: |
                   node update-version.cjs ${{ github.event.inputs.version }}
                   pnpm run changelog:ui-kit
+                  # Замок зависимостей пересобирается тем же шагом, что поднял версию: заявку
+                  # кладёт следующий, и он берёт всё изменившееся. Оставленный прежним, замок
+                  # расходится с поднятыми версиями, и следующая публикация падает на установке
+                  # из замороженного замка — так встала целая череда выпусков.
+                  pnpm install --lockfile-only
                   VERSION=$(jq -r .version projects/ui-kit/package.json)
                   echo "VERSION=$VERSION" >> $GITHUB_ENV
 
