@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.22.0 · hooks/grill-gate.sh · b38af9f76163 · правится надстройкой, не здесь
+# rt-kit v0.22.0 · hooks/grill-gate.sh · da6401ca6ac8 · правится надстройкой, не здесь
 # Требует: hooks/deny-tail.sh
 # rt-hook: Stop
 # Гард разговора: вопрос владельцу не задаётся, пока за этот же ход не читались законы и
@@ -165,6 +165,68 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg re "$read_re" 
     | ($tool != "") as $asking_now
     | if ($asked_prose or $asking_now) and ($read | not) then "ask" else "pass" end
 ' 2>/dev/null)"
+
+# Второй признак того же гарда: на этот вопрос владелец уже отвечал.
+#
+# Первый признак судит, читались ли правила, и на разрешённой работе молчит. А промах бывает
+# другой: владелец дал указание прямой репликой, исполнитель нашёл факт, который меняет цену
+# указания, но не его смысл, — и вместо строки о цене задал меню, где два варианта из трёх
+# предлагали отменить решение владельца. Работа встала до ответа, разрешённая минутой раньше.
+#
+# Судится пересечение слов: вопрос, который сейчас уходит, против последней реплики владельца —
+# и только там, где в записи уже был вызов инструмента вопроса, то есть владелец на вопрос
+# отвечал. Понимания текста здесь нет и не нужно: три общих значимых слова означают тот же
+# предмет, а разбор из шести вопросов идёт по разным предметам и порога не набирает.
+#
+# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: нет вопроса в вызове, нет реплики владельца, нет прошлого вопроса —
+# признак молчит.
+if [ -n "$tool" ]; then
+    asked_json="$(printf '%s' "$input" | jq -r '(.tool_input.questions // []) | tostring' 2>/dev/null)"
+    seen="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg now "$asked_json" '
+        def is_input:
+            .type == "user"
+            and ((.isCompactSummary // false) | not)
+            and (((.message.content // []) | if type == "array"
+                    then ([.[] | select(.type == "tool_result")] | length)
+                    else 0 end) == 0);
+
+        def words: [splits("[^\\p{L}\\p{N}]+")] | map(select(length >= 5)) | unique;
+
+        (map(is_input) | rindex(true)) as $i
+        | if $i == null then "нет" else
+            (.[$i] | (.message.content // []) | if type == "array"
+                then ([.[] | select(.type == "text") | .text] | join(" "))
+                else (. // "") end) as $said
+            | ([.[:$i][] | select(.type == "assistant") | (.message.content // [])[]
+                 | select(.type == "tool_use") | select(.name == "AskUserQuestion")] | length) as $before
+            | if $before == 0 or ($said | length) == 0 then "нет" else
+                (($now | words) - (($now | words) - ($said | words))) as $common
+                | if ($common | length) >= 3 then "было" else "нет" end
+              end
+          end
+    ' 2>/dev/null)"
+
+    if [ "$seen" = "было" ]; then
+        reason="BLOCKED by grill-gate: на этот вопрос владелец уже отвечал в этом разговоре — продолжай работу, а не переспрашивай.
+
+Указание владельца действует до его отмены. Новый факт против действующего указания — это строка в ответе о цене, а не новый вопрос: переспрашивают только то, чего указание не покрывает. Промах здесь не в форме вопроса, а в остановке работы, которая уже разрешена.
+
+Вопрос всё-таки о другом предмете — назови в нём то, чего в прежнем ответе владельца нет: признак судит общие слова вопроса и последней реплики владельца, а не смысл."
+
+        # Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
+        # shellcheck disable=SC1090
+        [ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
+        command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+        deny_tail_text="$(rt_deny_tail "")"
+        [ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
+
+        jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
+            || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"grill-gate: на этот вопрос уже отвечали."}}\n'
+        exit 0
+    fi
+fi
 
 [ "$verdict" = "ask" ] || exit 0
 
