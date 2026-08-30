@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.20.0 · hooks/rule-article.sh · 035ed00bd29b · правится надстройкой, не здесь
+# rt-kit v0.20.0 · hooks/rule-article.sh · fe9f4559b79c · правится надстройкой, не здесь
 # Разбор признака применимости у статьи правила. Помощник: своего события не объявляет, его
 # подключает тот, кому нужен текст статьи, — гейт правил в своём отказе.
 #
@@ -89,7 +89,7 @@ rt_rule_article_heads() {
 }
 
 rt_rule_article_at() {
-    awk -v mark="$2" '
+    LC_ALL=C awk -v mark="$2" '
         NR <= mark && /^- / { start = NR }
         { line[NR] = $0 }
         END {
