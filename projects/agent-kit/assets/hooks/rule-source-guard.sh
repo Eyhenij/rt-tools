@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/write-targets.sh
+# Требует: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/write-targets.sh, hooks/guard-note.sh
 # Гард места правки: слой правил чинится там, где сломано, а не там, где виден.
 #
 # Слой правил правит тот же исполнитель, которым слой правил управляет, и разницы между
@@ -44,8 +44,8 @@ command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { printf ''; }
 
 deny() {
     # shellcheck disable=SC1090
-    [ -f "$rt_hooks_dir/observe.sh" ] && . "$rt_hooks_dir/observe.sh" 2>/dev/null
-    command -v rt_note >/dev/null 2>&1 && rt_note guard-deny res=rule-source-guard
+    [ -f "$rt_hooks_dir/guard-note.sh" ] && . "$rt_hooks_dir/guard-note.sh" 2>/dev/null
+    command -v rt_guard_note >/dev/null 2>&1 && rt_guard_note rule-source-guard "$input"
 
     reason="$1 $(rt_deny_tail "$2")"
     jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \

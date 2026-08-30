@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.20.0 · hooks/git-guard-main.sh · bc1bb8535795 · правится надстройкой, не здесь
+# rt-kit v0.20.0 · hooks/git-guard-main.sh · ced1e2e578c9 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/deny-tail.sh
+# Требует: hooks/deny-tail.sh, hooks/guard-note.sh
 # Гард главной ветки. PreToolUse на вызове коммита.
 #
 # Коммит в главную ветку минует ветку, PR и разбор, а поставка построена на них целиком —
@@ -77,9 +77,8 @@ reason="Отбито: коммит прямо в «${default}». Работа е
 # одинаков везде.
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck disable=SC1090
-[ -f "$rt_hooks_dir/observe.sh" ] && . "$rt_hooks_dir/observe.sh" 2>/dev/null
-command -v rt_note >/dev/null 2>&1 \
-    && rt_note guard-deny res=git-guard-main "sid=$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
+[ -f "$rt_hooks_dir/guard-note.sh" ] && . "$rt_hooks_dir/guard-note.sh" 2>/dev/null
+command -v rt_guard_note >/dev/null 2>&1 && rt_guard_note git-guard-main "$input"
 
 # Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
 # Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.

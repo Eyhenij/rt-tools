@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.20.0 · hooks/git-guard-delivery.sh · cd234666bc32 · правится надстройкой, не здесь
+# rt-kit v0.20.0 · hooks/git-guard-delivery.sh · 4f0116ecb1fb · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh
+# Требует: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Гард поставки. PreToolUse на заведении ветки, пуше и открытии заявки на слияние.
 #
 # Закон о поставке требует трёх вещей, которых обычно не проверяет ничто: правка начинается с
@@ -133,8 +133,8 @@ deny() {
     # Отказ гарда — наблюдение: гард, отбивающий чаще прочих, говорит, какое место поставки раз
     # за разом делают не так. Текст отказа туда не идёт: в нём номера задач и имена веток дерева.
     # shellcheck disable=SC1090
-    [ -f "$rt_hooks_dir/observe.sh" ] && . "$rt_hooks_dir/observe.sh" 2>/dev/null
-    command -v rt_note >/dev/null 2>&1 && rt_note guard-deny res=git-guard-delivery "sid=$sid"
+    [ -f "$rt_hooks_dir/guard-note.sh" ] && . "$rt_hooks_dir/guard-note.sh" 2>/dev/null
+    command -v rt_guard_note >/dev/null 2>&1 && rt_guard_note git-guard-delivery "$sid"
 
     # Хвост отказа: два законных хода и форма обхода вторым параметром.
     # shellcheck disable=SC1090

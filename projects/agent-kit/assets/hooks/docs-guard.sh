@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|NotebookEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/profile-check.sh, hooks/deny-tail.sh
+# Требует: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Гард пары «правка и её документ». PreToolUse.
 #
 # Расхождение кода с текстом беззвучно. Ни линтер, ни сборка, ни тесты не читают правила,
@@ -41,10 +41,9 @@ decide() {
     # счёт, в котором они смешаны, не значит ничего.
     if [ "$1" = "deny" ]; then
         # shellcheck disable=SC1090
-        [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/observe.sh" ] \
-            && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/observe.sh" 2>/dev/null
-        command -v rt_note >/dev/null 2>&1 \
-            && rt_note guard-deny res=docs-guard "sid=$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
+        [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/guard-note.sh" ] \
+            && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/guard-note.sh" 2>/dev/null
+        command -v rt_guard_note >/dev/null 2>&1 && rt_guard_note docs-guard "$input"
     fi
 
     reason="$2"
