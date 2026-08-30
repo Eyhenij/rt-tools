@@ -74,6 +74,10 @@ $aside: (
     tab-badge-incorrect: (
         color: var(--rt-text-accent-danger),
     ),
+    slide: (
+        duration: 200ms,
+        timing: ease-in,
+    ),
 );
 
 // NOTE: emitted at :root on purpose (ViewEncapsulation.None): consumers override
@@ -89,6 +93,26 @@ $aside: (
 
     // @deprecated — typo kept as alias for backward compatibility; use *-between-* instead.
     --rt-aside-footer-margin-left-betwen-buttons: var(--rt-aside-footer-margin-left-between-buttons);
+}
+
+// SLIDE
+// Шторка выезжает из-за своей кромки и уходит туда же. Начальное положение задаёт сторона,
+// конечное — модификатор открытия: он объявлен ниже и потому перебивает сторону.
+.rtui-aside-panel {
+    display: block;
+    transition: transform var(--rt-aside-slide-duration) var(--rt-aside-slide-timing);
+}
+
+.rtui-aside-panel--left {
+    transform: translateX(-100%);
+}
+
+.rtui-aside-panel--right {
+    transform: translateX(100%);
+}
+
+.rtui-aside-panel--open {
+    transform: translateX(0);
 }
 
 // BADGE

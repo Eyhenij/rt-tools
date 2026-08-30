@@ -1,3 +1,5 @@
-@if (config()?.selected) {
-    <rtui-action-bar [@barState]="'opened'" [config]="config()" (closeAction)="closeBar()" />
-}
+<ng-container rtBlock="rtui-action-bar-container">
+    @if (shown()) {
+        <rtui-action-bar rtElem="bar" [rtMod]="{ leaving: leaving() }" [config]="config()" (closeAction)="closeBar()" />
+    }
+</ng-container>

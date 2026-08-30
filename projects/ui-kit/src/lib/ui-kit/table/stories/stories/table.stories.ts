@@ -1,7 +1,4 @@
-// eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
-import { provideAnimations } from '@angular/platform-browser/animations';
-
-import { Meta, StoryObj, applicationConfig } from '@storybook/angular';
+import { Meta, StoryObj } from '@storybook/angular';
 
 import { EListSortOrder } from '@rt-tools/utils';
 import { createPersonList } from '../mocks';
@@ -14,12 +11,6 @@ const fewItems: TPerson[] = createPersonList(11);
 export default {
     title: 'Components/Table',
     component: TestTableComponent,
-    decorators: [
-        applicationConfig({
-            // eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
-            providers: [provideAnimations()],
-        }),
-    ],
 } as Meta<TestTableComponent>;
 
 type TStory = StoryObj<TestTableComponent>;

@@ -1,6 +1,4 @@
-// eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
+import { Meta, StoryObj } from '@storybook/angular';
 import { fn } from 'storybook/test';
 
 import { TestModalComponent } from './test-modal.component';
@@ -11,12 +9,6 @@ const LOREM_TITLE: string = 'The standard Lorem Ipsum passage, used since the 15
 const meta: Meta<TestModalComponent> = {
     title: 'Components/Modal',
     component: TestModalComponent,
-    decorators: [
-        applicationConfig({
-            // eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
-            providers: [provideAnimations()],
-        }),
-    ],
     argTypes: {},
     args: { onOpenInfo: fn(), onOpenWithInput: fn(), onOpenWithConfirmedInput: fn() },
 };

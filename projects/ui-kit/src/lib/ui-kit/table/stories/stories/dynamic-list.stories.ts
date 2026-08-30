@@ -1,7 +1,4 @@
-// eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
-import { provideAnimations } from '@angular/platform-browser/animations';
-
-import { Meta, StoryObj, applicationConfig } from '@storybook/angular';
+import { Meta, StoryObj } from '@storybook/angular';
 
 import { EListSortOrder } from '@rt-tools/utils';
 import TestDynamicListComponent from '../dynamic-list/test-dynamic-list.component';
@@ -14,12 +11,6 @@ const fewItems: TPerson[] = createPersonList(11);
 export default {
     title: 'Components/DynamicList',
     component: TestDynamicListComponent,
-    decorators: [
-        applicationConfig({
-            // eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
-            providers: [provideAnimations()],
-        }),
-    ],
 } as Meta<TestDynamicListComponent>;
 
 type TStory = StoryObj<TestDynamicListComponent>;

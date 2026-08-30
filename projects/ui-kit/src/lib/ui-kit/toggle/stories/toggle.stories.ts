@@ -1,7 +1,4 @@
-// eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
-import { provideAnimations } from '@angular/platform-browser/animations';
-
-import { Meta, StoryObj, applicationConfig } from '@storybook/angular';
+import { Meta, StoryObj } from '@storybook/angular';
 
 import { EToggleSizeType } from '../toggle-size.type.enum';
 import { TestToggleComponent } from './component/test-toggle.component';
@@ -9,12 +6,6 @@ import { TestToggleComponent } from './component/test-toggle.component';
 export default {
     title: 'Components/Toggle',
     component: TestToggleComponent,
-    decorators: [
-        applicationConfig({
-            // eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
-            providers: [provideAnimations()],
-        }),
-    ],
     argTypes: {
         size: {
             type: 'string',
