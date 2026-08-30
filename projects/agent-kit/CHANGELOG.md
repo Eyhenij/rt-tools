@@ -1,3 +1,21 @@
+# [0.21.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.20.0...rt-agent-kit@0.21.0) (2026-08-30)
+
+### Bug Fixes
+
+- **rt:agent-kit:** взятием следующей задачи считается то, чем оно бывает ([6a97350](https://github.com/Eyhenij/rt-tools/commit/6a973500904ef1d6879c2583a0042ccf56303785))
+- **rt:agent-kit:** гард места правки видит запись интерпретатором ([0db0d8f](https://github.com/Eyhenij/rt-tools/commit/0db0d8f18a16faca961755bb2ce5414e586887c6))
+- **rt:agent-kit:** признак гарда в сводке — заявка имени, а мусор прогона не едет в историю ([bc6e77b](https://github.com/Eyhenij/rt-tools/commit/bc6e77b6176419b1a691ac4859194429fffbb133))
+- **rt:agent-kit:** пустой набор признаков отбивает прогон, а признак глобали судит положение имени ([68f7380](https://github.com/Eyhenij/rt-tools/commit/68f738021460a627fe38160e54dea588002172ca))
+- **rt:agent-kit:** хуки сравнивают строки байтами, а не по правилам локали ([9661330](https://github.com/Eyhenij/rt-tools/commit/9661330cdf6a839ffaa55a657d5b5ce384e1ab64))
+- **rt:agent-kit:** целью записи считается тело интерпретатора, а не вся команда ([a93a3a0](https://github.com/Eyhenij/rt-tools/commit/a93a3a0ba6c04379df179aa0bc4f03ca1c965f9c))
+
+### Features
+
+- **rt:agent-kit:** гард, не отбивший за отрезок ни разу, назван в сводке отдельной строкой ([761e738](https://github.com/Eyhenij/rt-tools/commit/761e738fabd5881f1d1d09f5885a1cb02a673eea))
+- **rt:agent-kit:** договорённость, ждущая вливания дольше месяца, названа отдельной строкой ([f1f7671](https://github.com/Eyhenij/rt-tools/commit/f1f76719cc33a127300c1029a3d052a27644ce83))
+- **rt:agent-kit:** отбой пишет каждый гард, а не пятеро из тридцати ([bee61fc](https://github.com/Eyhenij/rt-tools/commit/bee61fcd1f4c6cd9af196f6661835b32eb549517))
+- **rt:agent-kit:** передача захода лежит разделом хода работы ([97e91ed](https://github.com/Eyhenij/rt-tools/commit/97e91eda51ed37ba03ee09ab407f2c1647ce199a))
+
 # [0.20.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.19.0...rt-agent-kit@0.20.0) (2026-08-29)
 
 ### Features

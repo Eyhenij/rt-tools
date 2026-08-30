@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.20.0 · hooks/git-guard-main.sh · 6c3b0c3b72f5 · правится надстройкой, не здесь
+# rt-kit v0.21.0 · hooks/git-guard-main.sh · 6c3b0c3b72f5 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/deny-tail.sh, hooks/guard-note.sh
 # Гард главной ветки. PreToolUse на вызове коммита.

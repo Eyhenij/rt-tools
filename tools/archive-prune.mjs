@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.20.0 · checks/archive-prune.mjs · 118e9c58581b · правится надстройкой, не здесь
+// rt-kit v0.21.0 · checks/archive-prune.mjs · 118e9c58581b · правится надстройкой, не здесь
 /**
  * Чистка описания прошлого по сроку.
  *
