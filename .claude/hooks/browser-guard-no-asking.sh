@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.22.0 · hooks/browser-guard-no-asking.sh · 294834d01a4e · правится надстройкой, не здесь
+# rt-kit v0.22.0 · hooks/browser-guard-no-asking.sh · 97e6ca8dd6ab · правится надстройкой, не здесь
 # rt-hook: PreToolUse AskUserQuestion
 # Требует: hooks/deny-tail.sh
 # PreToolUse guard for AskUserQuestion.
@@ -12,6 +12,10 @@
 # client-side code, user agents, cross-browser bugs etc. legitimately use the word without
 # being about which Chrome profile to automate. Anchor on selection phrasing instead
 # (deviceId, "which/what browser", "какой браузер").
+#
+# The Russian pronoun is spelled out case by case on purpose: an optional ending would leave a
+# bare "как" in the pattern, and "какие браузеры поддерживаем" — a support question, not a
+# selection one — got denied by exactly that.
 #
 # FAIL-OPEN when browser-device-id.sh prints nothing.
 
@@ -30,7 +34,7 @@ device_id="$("${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/browser-device-id.sh" 2>/de
 questions="$(printf '%s' "$input" | jq -r '[.tool_input.questions[]? | .question, .header, (.options[]?.label)] | join(" ")' 2>/dev/null)"
 [ -z "$questions" ] && exit 0
 
-printf '%s' "$questions" | grep -qiE 'deviceid|device id|(which|what|pick|choose|select)[^.]{0,25}\bbrowser\b|\bbrowser\b[^.]{0,25}(profile|to use)|как(ой|ую)?[^.]{0,15}браузер|брауз[а-я]*[^.]{0,20}(использовать|выбрать|выбор|нужен|запустить)' || exit 0
+printf '%s' "$questions" | grep -qiE 'deviceid|device id|(which|what|pick|choose|select)[^.]{0,25}\bbrowser\b|\bbrowser\b[^.]{0,25}(profile|to use)|как(ой|ую|им|ого)[^.]{0,15}браузер|брауз[а-я]*[^.]{0,20}(использовать|выбрать|выбор|нужен|запустить)' || exit 0
 
 # Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть. Файл
 # может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
