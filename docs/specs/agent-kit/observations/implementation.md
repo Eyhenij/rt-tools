@@ -67,6 +67,7 @@
 - **Настоящий прогон называет перечень груза до его результатов.** — `projects/agent-kit/src/lib/shipment.ts:manifest`
 - **Сухой прогон объявляется первой строкой, а не окончанием глагола.** — `projects/agent-kit/src/lib/shipment.ts:propose`
 - **Гард, не отбивший за отрезок ни разу, стоит в сводке отдельной строкой.** — `projects/agent-kit/src/lib/observations.ts:summarize` — поле `silentGuards`; сценарий `SC-AK-809`
-- **Гардом сводка считает того, кто умеет записать свой отбой.** — `projects/agent-kit/src/lib/commands.ts:guardsOfTree` — имя берётся из самой записи отбоя; сценарий `SC-AK-809`
+- **Гардом сводка считает того, кто заявил своё имя для наблюдений.** — `projects/agent-kit/src/lib/commands.ts:guardsOfTree` — имя берётся из заявки в шапке гарда; сценарий `SC-AK-809`
+- **Отбой гарда записывает общий хвост отказа, а не сам гард.** — `projects/agent-kit/assets/hooks/deny-tail.sh:rt_deny_tail` — зовёт запись перед сборкой хвоста; сценарий `SC-AK-811`
 - **Перечень гардов сводка спрашивает у дерева, а не у пакета.** — `projects/agent-kit/src/lib/commands.ts:stats` — каталог хуков берётся из раскладки дерева; сценарий `SC-AK-809`
 - **Молчание гарда отказом не делается.** — `projects/agent-kit/src/lib/commands.ts:statsLines` — раздел печатается наравне с прочими и кода возврата не меняет; сценарий `SC-AK-810`
