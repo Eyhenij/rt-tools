@@ -19,7 +19,7 @@ import { OBSERVATIONS_DIR } from './observations.js';
 
 const VERSION: string = '0.1.0';
 const LAW: string = 'docs/constitution/delivery.md';
-const OTHER_LAW: string = 'docs/constitution/application/access.md';
+const OTHER_LAW: string = 'docs/constitution/lists.md';
 const TEMPLATE: string = '.claude/rt-kit/templates/rule.md';
 const GLOSSARY: string = 'docs/GLOSSARY.md';
 /** Закон с правилами при нём: им проверяется каскад — отказ от него уносит и правила, и паттерны. */
@@ -104,8 +104,8 @@ describe('init', () => {
     });
 
     it('выбор уезжает в конфиг и называется числом', () => {
-        expect(said(start(['laws/delivery.md', 'laws/application/access.md']))).toContain('выбрано ресурсов: 2');
-        expect(JSON.parse(get(CONFIG_PATH)).only).toEqual(['laws/delivery.md', 'laws/application/access.md']);
+        expect(said(start(['laws/delivery.md', 'laws/lists.md']))).toContain('выбрано ресурсов: 2');
+        expect(JSON.parse(get(CONFIG_PATH)).only).toEqual(['laws/delivery.md', 'laws/lists.md']);
     });
 
     it('заведённый конфиг не переписывает', () => {
@@ -676,8 +676,8 @@ describe('list', () => {
             CONFIG_PATH,
             JSON.stringify({
                 variants: HOST,
-                only: ['laws/delivery.md', 'laws/application/access.md'],
-                skip: ['laws/application/access.md'],
+                only: ['laws/delivery.md', 'laws/lists.md'],
+                skip: ['laws/lists.md'],
             })
         );
         const lines: readonly string[] = list(env).lines;
@@ -685,9 +685,7 @@ describe('list', () => {
             lines.find((line: string): boolean => line.trim().startsWith(name)) ?? '';
 
         expect(lineOf('delivery')).toContain('нет в дереве');
-        // Закон приложения зовётся со слоем: путь внутри рода едет в имя, и перечень показывает
-        // его целиком — иначе два закона с одинаковым коротким именем читались бы как один.
-        expect(lineOf('application/access')).toContain('пропущен');
+        expect(lineOf('lists')).toContain('пропущен');
         expect(lineOf('verifiability')).toContain('не выбран');
     });
 

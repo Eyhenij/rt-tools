@@ -22,8 +22,6 @@
     "hooks/sql-guard-parse.sh",
     "hooks/sql-guard-target.sh",
     "hooks/sql-guard-write.sh",
-    "laws/application/locales.md",
-    "laws/application/search-visibility.md",
     "laws/shared-code.md",
     "patterns/browser-verification-stand.md",
     "patterns/testing-e2e.md",
