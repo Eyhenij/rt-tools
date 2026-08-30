@@ -8,3 +8,4 @@
 - **Набор признаков режется по пакетам rt-tools.** — `projects/agent-kit/assets/checks/signals.mjs:BUNDLES_DIR`
 - **Дерево получает признаки тех пакетов, которые назвало.** — `projects/agent-kit/assets/checks/signals.mjs:readBundle`
 - **Дерево дописывает признаки, а не правит чужие.** — `projects/agent-kit/assets/checks/signals.mjs:byKey`
+- **Директивы своей дизайн-системы дерева вырезаются из признаков нативных тегов.** — `projects/agent-kit/assets/checks/signals.mjs:withKitDirectives` — список приходит ключом `reuse.kitDirectives`, вырезание дописывается к полю `strip` признака; сценарий SC-AK-817
