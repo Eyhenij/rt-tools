@@ -69,6 +69,7 @@ rt_needs rt_is_app_code work-start-guard || exit 0
 asked="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
     def is_input:
         .type == "user"
+        and ((.isCompactSummary // false) | not)
         and (((.message.content // []) | if type == "array"
                 then ([.[] | select(.type == "tool_result")] | length)
                 else 0 end) == 0);
@@ -91,6 +92,7 @@ asked="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
 edited="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
     def is_input:
         .type == "user"
+        and ((.isCompactSummary // false) | not)
         and (((.message.content // []) | if type == "array"
                 then ([.[] | select(.type == "tool_result")] | length)
                 else 0 end) == 0);

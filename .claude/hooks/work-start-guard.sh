@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.21.0 · hooks/work-start-guard.sh · 977415ff0b52 · правится надстройкой, не здесь
+# rt-kit v0.21.0 · hooks/work-start-guard.sh · d6a3c7891e90 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: hooks/deny-tail.sh, hooks/profile-check.sh
 # Гард начала работы: ход, правивший код приложения, не заканчивается, пока владелец в этом же
@@ -70,6 +70,7 @@ rt_needs rt_is_app_code work-start-guard || exit 0
 asked="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
     def is_input:
         .type == "user"
+        and ((.isCompactSummary // false) | not)
         and (((.message.content // []) | if type == "array"
                 then ([.[] | select(.type == "tool_result")] | length)
                 else 0 end) == 0);
@@ -92,6 +93,7 @@ asked="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
 edited="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
     def is_input:
         .type == "user"
+        and ((.isCompactSummary // false) | not)
         and (((.message.content // []) | if type == "array"
                 then ([.[] | select(.type == "tool_result")] | length)
                 else 0 end) == 0);

@@ -102,6 +102,7 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r \
     --arg read "$read_re" --arg red "$red_re" --arg ready "$ready_re" --arg vow "$vow_re" '
     def is_input:
         .type == "user"
+        and ((.isCompactSummary // false) | not)
         and (((.message.content // []) | if type == "array"
                 then ([.[] | select(.type == "tool_result")] | length)
                 else 0 end) == 0);

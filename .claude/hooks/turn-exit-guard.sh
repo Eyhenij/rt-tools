@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.21.0 · hooks/turn-exit-guard.sh · 2f374ff7b752 · правится надстройкой, не здесь
+# rt-kit v0.21.0 · hooks/turn-exit-guard.sh · 5ca1a4cbccfe · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: hooks/deny-tail.sh
 # Страж выходов хода: ход, в котором по работе не сделано ничего, не заканчивается, пока работа
@@ -198,6 +198,7 @@ started_re='task:new|task:move|board\.mjs[[:space:]]+move|git[[:space:]]+checkou
 verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re" --arg read "$read_re" --arg part "$part_re" --arg wait "$wait_re" --arg handover "$handover_re" --arg started "$started_re" '
     def is_input:
         .type == "user"
+        and ((.isCompactSummary // false) | not)
         and (((.message.content // []) | if type == "array"
                 then ([.[] | select(.type == "tool_result")] | length)
                 else 0 end) == 0);
