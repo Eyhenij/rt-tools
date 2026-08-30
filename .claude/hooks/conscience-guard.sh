@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.21.0 · hooks/conscience-guard.sh · 689fb9b56957 · правится надстройкой, не здесь
+# rt-kit v0.21.0 · hooks/conscience-guard.sh · abdfafa69e79 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: agents/conscience.md, hooks/roles.sh, hooks/deny-tail.sh
 # Гард совести: ход, в котором роль совести нашла повтор разобранного промаха, не заканчивается,
@@ -51,6 +51,7 @@ transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/nu
 verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
     def is_input:
         .type == "user"
+        and ((.isCompactSummary // false) | not)
         and (((.message.content // []) | if type == "array"
                 then ([.[] | select(.type == "tool_result")] | length)
                 else 0 end) == 0);

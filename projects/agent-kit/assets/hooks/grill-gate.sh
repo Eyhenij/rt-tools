@@ -101,6 +101,7 @@ if command -v skill_for >/dev/null 2>&1 && [ -n "$rules_dir" ]; then
     edited="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
         def is_input:
             .type == "user"
+            and ((.isCompactSummary // false) | not)
             and (((.message.content // []) | if type == "array"
                     then ([.[] | select(.type == "tool_result")] | length)
                     else 0 end) == 0);
@@ -133,6 +134,7 @@ fi
 verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg re "$read_re" --arg tool "$tool" --arg need "$need_re" --arg rules "$rules_dir" '
     def is_input:
         .type == "user"
+        and ((.isCompactSummary // false) | not)
         and (((.message.content // []) | if type == "array"
                 then ([.[] | select(.type == "tool_result")] | length)
                 else 0 end) == 0);

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.21.0 · hooks/waiting-turn-guard.sh · b56242bc0917 · правится надстройкой, не здесь
+# rt-kit v0.21.0 · hooks/waiting-turn-guard.sh · b7bd6bb39311 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: hooks/deny-tail.sh
 # Гард ожидания: ход, сообщающий владельцу о чужом шаге, не заканчивается, пока в нём не было ни
@@ -103,6 +103,7 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r \
     --arg read "$read_re" --arg red "$red_re" --arg ready "$ready_re" --arg vow "$vow_re" '
     def is_input:
         .type == "user"
+        and ((.isCompactSummary // false) | not)
         and (((.message.content // []) | if type == "array"
                 then ([.[] | select(.type == "tool_result")] | length)
                 else 0 end) == 0);

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.21.0 · hooks/claim-guard.sh · d8e77928d29f · правится надстройкой, не здесь
+# rt-kit v0.21.0 · hooks/claim-guard.sh · 5d5f45e37255 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Гард утверждения: сказанное владельцу о состоянии дерева несёт команду, показавшую это. Stop.
 #
@@ -86,6 +86,7 @@ fi
 turn="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
     def is_input:
         .type == "user"
+        and ((.isCompactSummary // false) | not)
         and (((.message.content // []) | if type == "array"
                 then ([.[] | select(.type == "tool_result")] | length)
                 else 0 end) == 0);

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.21.0 · hooks/postmortem-guard.sh · ce4f9b99c6c9 · правится надстройкой, не здесь
+# rt-kit v0.21.0 · hooks/postmortem-guard.sh · aa648f1a1a52 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: hooks/deny-tail.sh
 # Гард происшествия: ход, в котором исполнитель признал промах, не заканчивается, пока записи о
@@ -70,6 +70,7 @@ admitted_re='был неправ|был не прав|ошибс|моя ошиб
 verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg re "$admitted_re" '
     def is_input:
         .type == "user"
+        and ((.isCompactSummary // false) | not)
         and (((.message.content // []) | if type == "array"
                 then ([.[] | select(.type == "tool_result")] | length)
                 else 0 end) == 0);
