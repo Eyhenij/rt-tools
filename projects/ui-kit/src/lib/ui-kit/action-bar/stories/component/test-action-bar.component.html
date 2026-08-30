@@ -1,0 +1,11 @@
+<div rtBlock="stand">
+    <rtui-action-bar [config]="config" (closeAction)="onClose()" />
+
+    <div rtElem="log" qa-dataid="action-bar-log">
+        @if (events().length) {
+            Случилось: {{ events().join(' → ') }}
+        } @else {
+            Случилось: пока ничего
+        }
+    </div>
+</div>
