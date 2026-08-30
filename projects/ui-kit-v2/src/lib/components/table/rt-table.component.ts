@@ -1,4 +1,3 @@
-/* eslint-disable max-lines -- файл делится задачей RT-849: набор токенов собирается сборщиком, а таблица и переписка режутся по смыслу */
 import { BooleanInput, NumberInput } from '@angular/cdk/coercion';
 import {
     CDK_TABLE,
@@ -42,57 +41,34 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { mergeMap, Observable, Subject } from 'rxjs';
-
 import { BlockDirective, ElemDirective, IDBStorageService, ModDirective } from '@rt-tools/core';
 import { ISortModel } from '@rt-tools/utils';
 
 import { TRtKitLabelKey, rtKitLabel } from '../../i18n';
 import { BreakpointsService } from '../../platform';
-import { ERtStorageKeys } from '../../platform';
 
 import { RtEmptyStateComponent } from '../empty-state/rt-empty-state.component';
 import { IRtIcon } from '../icon/rt-icon.model';
 import { RtMenuComponent } from '../menu/rt-menu.component';
 import { RtSkeletonComponent } from '../skeleton/rt-skeleton.component';
 import { RtSpinnerComponent } from '../spinner/rt-spinner.component';
-import { RtTableCardDirective, IRtTableCardContext } from './rt-table-card.directive';
+import { RtTableCardDirective } from './rt-table-card.directive';
+import { cardColumnsOf, cardRowsOf, IRtTableCardColumn } from './rt-table-cards.logic';
 import { RtTableRowActionsDirective } from './rt-table-row-actions.directive';
 import { RtRowHasActionsPipe } from './rt-table-row-actions.pipe';
+import { RtTableSettingsPersistence } from './rt-table-settings.persistence';
 import { RtTableSettingsRegistry, type IRtTableSettingsRegistration } from './rt-table-settings.registry';
+import { defaultColumnItems, displayedColumnKeys, resolveColumns, withoutLockedHidden } from './rt-table-columns.logic';
 import { nextSort } from './rt-table-sort.logic';
 import { IRtTable } from './rt-table.model';
 
 const BEM_BLOCK: string = 'rt-table';
 
-/** Ключ настроек одной таблицы в IndexedDB. */
-function settingsKey(tableId: string): string {
-    return `${ERtStorageKeys.TableColumnsPrefix}${tableId}`;
-}
-
 const DEFAULT_SKELETON_ROWS: number = 5;
 /** Ключ подписи пустой таблицы: язык известен только после старта приложения */
 const DEFAULT_EMPTY_KEY: TRtKitLabelKey = 'uiNoRows';
 
-/** Имя внутренней «…»-колонки действий, добавляемой при `[showRowActions]`. */
-export const RT_TABLE_ROW_ACTIONS_COLUMN: string = 'rtRowActions';
-
-/**
- * Описатель поля авто-карточки мобильного режима: лейбл колонки (из `columnsConfig`)
- * + её cell-шаблон (`cdkColumnDef`.cell), который рендерится в значение через
- * `ngTemplateOutlet` с контекстом `{ $implicit: row }`.
- */
-interface IRtTableCardColumn<TRow> {
-    key: string;
-    label: string;
-    cell: TemplateRef<IRtTableCardContext<TRow>>;
-}
-
-/** Запрос на персист настроек колонок — payload конструкторного стрима записи через порт. */
-interface IRtTablePersistRequest {
-    tableId: string;
-    settings: IRtTable.ColumnSettings;
-}
+export { RT_TABLE_ROW_ACTIONS_COLUMN } from './rt-table-columns.logic';
 
 /**
  * Таблица — стилизованная обёртка над `cdk-table` (`@angular/cdk/table`).
@@ -176,7 +152,10 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
     readonly #t_uiNoRows: Signal<string> = rtKitLabel(DEFAULT_EMPTY_KEY);
 
     readonly #registry: RtTableSettingsRegistry = inject(RtTableSettingsRegistry);
-    readonly #settingsStorage: IDBStorageService<IRtTable.ColumnSettings> = inject(IDBStorageService);
+    readonly #settings: RtTableSettingsPersistence = new RtTableSettingsPersistence(
+        inject<IDBStorageService<IRtTable.ColumnSettings>>(IDBStorageService),
+        inject(DestroyRef)
+    );
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #breakpoints: BreakpointsService = inject(BreakpointsService);
 
@@ -190,24 +169,12 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
         this.sort()
     );
 
-    readonly #persistSettingsSource: Subject<IRtTablePersistRequest> = new Subject<IRtTablePersistRequest>();
-
-    /**
-     * Пользовательские настройки колонок (порядок + скрытые), применённые поверх
-     * `[columnsConfig]`. `null` — используются дефолты из конфига. Мутируется из
-     * панели настроек через `applyColumnSettings()`.
-     */
+    /** Настройки колонок, применённые поверх `[columnsConfig]`; `null` — умолчания конфига. */
     readonly #columnSettings: WritableSignal<IRtTable.ColumnSettings | null> = signal<IRtTable.ColumnSettings | null>(null);
 
-    /**
-     * Дефолтные колонки из конфига (порядок массива + `config.hidden`), без применённых
-     * пользовательских настроек — источник для кнопки «Сбросить» в панели.
-     */
+    /** Колонки конфига без настроек пользователя — с них панель начинает после сброса. */
     readonly #defaultColumns: Signal<ReadonlyArray<IRtTable.ColumnSettingItem>> = computed((): ReadonlyArray<IRtTable.ColumnSettingItem> =>
-        this.columnsConfig().map((c: IRtTable.ColumnConfig): IRtTable.ColumnSettingItem => ({
-            ...c,
-            hidden: c.locked === true ? false : c.hidden === true,
-        }))
+        defaultColumnItems(this.columnsConfig())
     );
 
     /** tableId для персиста настроек (ключ порта). `null` — таблица не настраиваемая (нет tableId/config). */
@@ -281,42 +248,18 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
     protected readonly showCards: Signal<boolean> = computed((): boolean => this.cards() && this.isNarrow());
 
     /**
-     * Строки для card-рендера. CdkTable хранит `dataSource` как array | Observable |
-     * DataSource — карточки строим только для массива (client-side pattern);
-     * для остальных типов пусто (карточки не поддерживаются). `#dataSourceVersion`
-     * инвалидирует computed при смене источника.
+     * Строки для карточек узкого экрана. Признак `#dataSourceVersion` пересчитывает список
+     * при смене источника: CDK хранит его полем, а не сигналом.
      */
     protected readonly cardRows: Signal<ReadonlyArray<TRow>> = computed((): ReadonlyArray<TRow> => {
         this.#dataSourceVersion();
-        const ds: unknown = this.dataSource;
-        return Array.isArray(ds) ? (ds as ReadonlyArray<TRow>) : [];
+
+        return cardRowsOf<TRow>(this.dataSource);
     });
 
-    /**
-     * Поля авто-карточки: видимые колонки (кроме «…»-действий) с лейблом из
-     * `columnsConfig` (fallback — ключ колонки) и cell-шаблоном из `cdkColumnDef`.
-     * Колонки без cell-шаблона пропускаются.
-     */
+    /** Поля авто-карточки узкого экрана: видимые колонки с подписью и шаблоном ячейки. */
     protected readonly cardColumns: Signal<ReadonlyArray<IRtTableCardColumn<TRow>>> = computed(
-        (): ReadonlyArray<IRtTableCardColumn<TRow>> => {
-            const defsByName: Map<string, CdkColumnDef> = new Map(
-                this.columnDefs().map((d: CdkColumnDef): [string, CdkColumnDef] => [d.name, d])
-            );
-            const labelByKey: Map<string, string> = new Map(
-                this.columnsConfig().map((c: IRtTable.ColumnConfig): [string, string] => [c.key, c.label])
-            );
-
-            return this.displayedColumns()
-                .filter((key: string): boolean => key !== RT_TABLE_ROW_ACTIONS_COLUMN)
-                .map((key: string): IRtTableCardColumn<TRow> | null => {
-                    const cell: TemplateRef<IRtTableCardContext<TRow>> | undefined = defsByName.get(key)?.cell?.template;
-                    if (cell === undefined) {
-                        return null;
-                    }
-                    return { key, cell, label: labelByKey.get(key) ?? key };
-                })
-                .filter((c: IRtTableCardColumn<TRow> | null): c is IRtTableCardColumn<TRow> => c !== null);
-        }
+        (): ReadonlyArray<IRtTableCardColumn<TRow>> => cardColumnsOf<TRow>(this.displayedColumns(), this.columnDefs(), this.columnsConfig())
     );
 
     /** ContentChild template для кастом empty-placeholder'а. Опционален; fallback — emptyMessage. */
@@ -407,44 +350,7 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
      * Пустой при отсутствии `[columnsConfig]` (legacy-режим).
      */
     public readonly resolvedColumns: Signal<ReadonlyArray<IRtTable.ColumnSettingItem>> = computed(
-        (): ReadonlyArray<IRtTable.ColumnSettingItem> => {
-            const config: ReadonlyArray<IRtTable.ColumnConfig> = this.columnsConfig();
-            if (config.length === 0) {
-                return [];
-            }
-
-            const settings: IRtTable.ColumnSettings | null = this.#columnSettings();
-            const byKey: Map<string, IRtTable.ColumnConfig> = new Map(
-                config.map((c: IRtTable.ColumnConfig): [string, IRtTable.ColumnConfig] => [c.key, c])
-            );
-
-            // Порядок: сохранённый из настроек, затем новые колонки (появившиеся в
-            // конфиге после сохранения) — в конец.
-            const orderedKeys: ReadonlyArray<string> = settings
-                ? [
-                      ...settings.order.filter((k: string): boolean => byKey.has(k)),
-                      ...config
-                          .filter((c: IRtTable.ColumnConfig): boolean => !settings.order.includes(c.key))
-                          .map((c: IRtTable.ColumnConfig): string => c.key),
-                  ]
-                : config.map((c: IRtTable.ColumnConfig): string => c.key);
-
-            const hiddenKeys: ReadonlySet<string> = new Set(
-                settings
-                    ? settings.hidden
-                    : config
-                          .filter((c: IRtTable.ColumnConfig): boolean => c.hidden === true)
-                          .map((c: IRtTable.ColumnConfig): string => c.key)
-            );
-
-            return orderedKeys
-                .map((key: string): IRtTable.ColumnConfig | undefined => byKey.get(key))
-                .filter((c: IRtTable.ColumnConfig | undefined): c is IRtTable.ColumnConfig => c !== undefined)
-                .map((c: IRtTable.ColumnConfig): IRtTable.ColumnSettingItem => ({
-                    ...c,
-                    hidden: c.locked === true ? false : hiddenKeys.has(c.key),
-                }));
-        }
+        (): ReadonlyArray<IRtTable.ColumnSettingItem> => resolveColumns(this.columnsConfig(), this.#columnSettings())
     );
 
     /**
@@ -454,15 +360,9 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
      * template-ref: `<rt-table #t="rtTable" ...>` →
      * `*cdkRowDef="let row; columns: t.displayedColumns()"`.
      */
-    public readonly displayedColumns: Signal<ReadonlyArray<string>> = computed((): ReadonlyArray<string> => {
-        const base: ReadonlyArray<string> =
-            this.columnsConfig().length > 0
-                ? this.resolvedColumns()
-                      .filter((c: IRtTable.ColumnSettingItem): boolean => !c.hidden)
-                      .map((c: IRtTable.ColumnSettingItem): string => c.key)
-                : [...this.columns()];
-        return this.showRowActions() ? [...base, RT_TABLE_ROW_ACTIONS_COLUMN] : [...base];
-    });
+    public readonly displayedColumns: Signal<ReadonlyArray<string>> = computed((): ReadonlyArray<string> =>
+        displayedColumnKeys(this.resolvedColumns(), this.columns(), this.columnsConfig().length > 0, this.showRowActions())
+    );
 
     /** `true` когда таблица настраиваемая: есть и `[columnsConfig]`, и `[tableId]`. */
     public readonly canConfigure: Signal<boolean> = computed((): boolean => this.columnsConfig().length > 0 && this.tableId() !== null);
@@ -472,8 +372,7 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
         transform: numberAttribute,
     });
 
-    /** Текст empty-placeholder'а если `rtTableEmpty` ContentChild template не задан. */
-    /** Пусто — берётся переведённая подпись по умолчанию */
+    /** Подпись пустой таблицы; пусто — берётся переведённое умолчание. */
     public readonly emptyMessage: InputSignal<string> = input<string>('');
 
     /** Своя подпись пустой таблицы важнее умолчания */
@@ -484,21 +383,6 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
 
     /** Описание под заголовком дефолтного empty-placeholder'а. Опционально. */
     public readonly emptyDescription: InputSignal<string | null> = input<string | null>(null);
-
-    constructor() {
-        super();
-        // Персист настроек колонок объявлен одним конструкторным стримом:
-        // #persistSettings эмитит запрос, mergeMap подписывает store.set
-        // (fire-and-forget, каждый запрос — независимая запись, как раньше).
-        this.#persistSettingsSource
-            .pipe(
-                mergeMap((request: IRtTablePersistRequest): Observable<void> =>
-                    this.#settingsStorage.set(settingsKey(request.tableId), request.settings)
-                ),
-                takeUntilDestroyed(this.#destroyRef)
-            )
-            .subscribe();
-    }
 
     public override ngOnInit(): void {
         super.ngOnInit();
@@ -517,8 +401,8 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
         // IndexedDB отдаёт в этом случае undefined, применять нечего.
         const persistedTableId: string | null = this.#persistableTableId();
         if (persistedTableId !== null) {
-            this.#settingsStorage
-                .get(settingsKey(persistedTableId))
+            this.#settings
+                .load(persistedTableId)
                 .pipe(takeUntilDestroyed(this.#destroyRef))
                 .subscribe((settings: IRtTable.ColumnSettings | undefined): void => {
                     if (settings !== undefined) {
@@ -540,10 +424,6 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
     }
 
     /**
-     * Применяет новые настройки колонок (из панели настроек): порядок + скрытые.
-     * Locked-колонки принудительно остаются видимыми (их ключи вычищаются из hidden).
-     */
-    /**
      * Переключает порядок по колонке: по возрастанию → по убыванию → без сортировки.
      * Выбранное состояние уходит наружу — выборку делает потребитель.
      */
@@ -554,22 +434,12 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
     }
 
     public applyColumnSettings(settings: IRtTable.ColumnSettings): void {
-        const lockedKeys: ReadonlySet<string> = new Set(
-            this.columnsConfig()
-                .filter((c: IRtTable.ColumnConfig): boolean => c.locked === true)
-                .map((c: IRtTable.ColumnConfig): string => c.key)
-        );
-        this.#columnSettings.set({
-            order: [...settings.order],
-            hidden: settings.hidden.filter((k: string): boolean => !lockedKeys.has(k)),
-        });
+        this.#columnSettings.set(withoutLockedHidden(this.columnsConfig(), settings));
     }
 
     /**
-     * Регистрирует настраиваемую таблицу в реестре: её колонки/дефолты (сигналы) +
-     * apply-callback (применяет настройки к таблице и персистит их в IndexedDB).
-     * Реестр — мост к route-асайду настроек, который
-     * открывается потребителем через навигацию.
+     * Объявляет таблицу реестру: её колонки, умолчания и приём применения настроек. Реестр —
+     * мост к панели настроек, которую потребитель открывает переходом по адресу.
      */
     #registerSettings(): void {
         const tableId: string | null = this.tableId();
@@ -587,13 +457,12 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
         this.#registry.register(tableId, registration);
     }
 
-    /** Сохраняет настройки колонок через порт по `tableId` (запись — в конструкторном стриме). */
+    /** Сохраняет настройки колонок у настраиваемой таблицы; у прочих сохранять нечего. */
     #persistSettings(settings: IRtTable.ColumnSettings): void {
         const tableId: string | null = this.#persistableTableId();
-        if (tableId === null) {
-            return;
+        if (tableId !== null) {
+            this.#settings.save(tableId, settings);
         }
-        this.#persistSettingsSource.next({ tableId, settings });
     }
 
     /**

@@ -1,4 +1,3 @@
-/* eslint-disable max-lines -- файл делится задачей RT-849 */
 import {
     computed,
     DestroyRef,
@@ -6,33 +5,17 @@ import {
     effect,
     inject,
     Injector,
-    isSignal,
     OnInit,
     Signal,
     signal,
     viewChild,
     WritableSignal,
 } from '@angular/core';
-import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { AbstractControl, PristineChangeEvent } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AbstractControl } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Params, Router, UrlTree } from '@angular/router';
 
-import {
-    catchError,
-    exhaustMap,
-    filter,
-    finalize,
-    map,
-    mergeMap,
-    Observable,
-    of,
-    shareReplay,
-    startWith,
-    Subject,
-    switchMap,
-    take,
-    tap,
-} from 'rxjs';
+import { exhaustMap, mergeMap, Observable, of, Subject, switchMap, tap } from 'rxjs';
 
 import { NotificationBus } from '../../platform';
 
@@ -45,18 +28,11 @@ import {
 } from '../aside/unsaved-dialog/rt-aside-unsaved.logic';
 import { RtDialogService } from '../dialog/rt-dialog.service';
 import { RtContainerRightSidenavPanelDirective } from './rt-container.directives';
-import { rootSegmentsOf } from './rt-route-aside.logic';
+import { RtRouteAsideMutations } from './rt-route-aside.mutations';
+import { RtRouteAsideNavigation } from './rt-route-aside.navigation';
+import { RtRouteAsideUnsavedPrompt } from './rt-route-aside.unsaved';
+import { pristineOf } from './rt-route-aside.pristine';
 import { RtRouteAsideRegistry } from './rt-route-aside.registry';
-
-/**
- * Одна мутация, запущенная через `runMutation()`: сам поток операции + готовые
- * success/error-handler'ы (замыкают `opts` вызова) — payload конструкторного стрима.
- */
-interface IRtRouteAsideMutation {
-    op$: Observable<unknown>;
-    handleSuccess: () => void;
-    handleError: (error: unknown) => void;
-}
 
 /**
  * Открытие ждёт `panel.ready()`, а не `ngAfterViewInit`: на F5 rt-container
@@ -78,7 +54,7 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
     readonly #resolving: WritableSignal<boolean> = signal(false);
     readonly #submitting: WritableSignal<boolean> = signal(false);
 
-    readonly #mutationSource: Subject<IRtRouteAsideMutation> = new Subject<IRtRouteAsideMutation>();
+    readonly #mutations: RtRouteAsideMutations = new RtRouteAsideMutations(inject(DestroyRef));
     readonly #refreshSource: Subject<string> = new Subject<string>();
     readonly #closeIntentSource: Subject<void> = new Subject<void>();
 
@@ -95,23 +71,17 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
     readonly #injector: Injector = inject(Injector);
     readonly #registry: RtRouteAsideRegistry = inject(RtRouteAsideRegistry);
 
+    /** Вопрос о правках, заданный уходу по маршруту: у кнопок панели свой путь. */
+    readonly #unsavedPrompt: RtRouteAsideUnsavedPrompt = new RtRouteAsideUnsavedPrompt(this.#dialog, this.#injector, {
+        save: (): void => this.#unsavedGuard()?.save(),
+        submitting: this.#submitting,
+        submitError: computed((): string | null => this.submitError()),
+    });
+
     #opened: boolean = false;
 
-    /**
-     * Уход санкционирован самой панелью, и о правках спрашивать не надо: они либо
-     * записаны, либо пользователь уже решил их судьбу. Признак живёт до первого
-     * же вопроса о правках и снимается вместе с ответом на него.
-     */
-    #leaveAllowed: boolean = false;
-
-    /**
-     * Вопрос о правках, заданный роутерному уходу и ещё не отвеченный. Второй
-     * уход, пришедший пока окно открыто, ждёт того же ответа: своё окно он
-     * поставил бы поверх первого, и убрать его было бы некому.
-     */
-    #pendingAsk$: Observable<boolean> | null = null;
-
     protected readonly router: Router = inject(Router);
+    readonly #navigation: RtRouteAsideNavigation = new RtRouteAsideNavigation(this.router);
     protected readonly route: ActivatedRoute = inject(ActivatedRoute);
     protected readonly destroyRef: DestroyRef = inject(DestroyRef);
 
@@ -171,22 +141,6 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
         // не состояться — роутер отклоняет навигацию молча, — и панель, снятая с
         // учёта раньше времени, осталась бы на экране, не отвечая о своих правках.
         this.destroyRef.onDestroy((): void => this.#registry.unregister(this.route.snapshot, this));
-
-        // Мутации из runMutation(): mergeMap подписывает каждый op$ независимо
-        // (как раньше — по подписке на вызов, без отмены предыдущей in-flight
-        // мутации); handler'ы замыкают opts вызова, catchError гасит ошибку
-        // конкретной мутации, не убивая общий стрим.
-        this.#mutationSource
-            .pipe(
-                mergeMap((mutation: IRtRouteAsideMutation): Observable<() => void> =>
-                    mutation.op$.pipe(
-                        map((): (() => void) => mutation.handleSuccess),
-                        catchError((error: unknown): Observable<() => void> => of((): void => mutation.handleError(error)))
-                    )
-                ),
-                takeUntilDestroyed(this.destroyRef)
-            )
-            .subscribe((handleResult: () => void): void => handleResult());
 
         // Рефетч сущности из #refreshEntity(): mergeMap — каждый запуск resolve
         // живёт независимо (как раньше — отдельная подписка на вызов).
@@ -274,7 +228,7 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
 
         // Уход начала сама панель: правки либо записаны секунду назад, либо их
         // судьбу пользователь уже решил. Вопрос был бы задан про то, чего нет.
-        if (this.#consumeLeaveAllowance()) {
+        if (this.#navigation.consumeLeaveAllowance()) {
             return of(true);
         }
 
@@ -282,40 +236,16 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
             return of(true);
         }
 
-        return this.#askUnsaved();
+        return this.#unsavedPrompt.ask();
     }
 
     protected setEntity(entity: T | null): void {
         this.#entity.set(entity);
     }
 
-    /**
-     * Признак нетронутой формы. Контрол принимается и сигналом: форма панели
-     * собрана директивой `ngForm` и до отрисовки шаблона её ещё нет, поэтому
-     * `viewChild(NgForm)` отдаёт её только сигналом.
-     */
+    /** Признак нетронутой формы — тот же, что гейтит кнопку записи. */
     protected pristineSignal(control: AbstractControl | Signal<AbstractControl | undefined>): Signal<boolean> {
-        const control$: Observable<AbstractControl | undefined> = isSignal(control) ? toObservable(control) : of(control);
-
-        return toSignal(
-            control$.pipe(
-                switchMap((current: AbstractControl | undefined): Observable<boolean> => {
-                    if (current === undefined) {
-                        return of(true);
-                    }
-
-                    return current.events.pipe(
-                        filter((event: unknown): event is PristineChangeEvent => event instanceof PristineChangeEvent),
-                        map((event: PristineChangeEvent): boolean => event.pristine),
-                        // Форма могла испачкаться до того, как сигнал отдал её: события
-                        // прошлого подписка не получит, и без нынешнего состояния
-                        // кнопка записи осталась бы недоступной
-                        startWith(current.pristine)
-                    );
-                })
-            ),
-            { initialValue: true }
-        );
+        return pristineOf(control);
     }
 
     /**
@@ -404,9 +334,7 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
         this.#submitting.set(true);
         this.submitError.set(null);
         this.submitSuccess.set(null);
-        // Подписка объявлена один раз в конструкторе (см. #mutationSource-стрим) —
-        // здесь только эмит операции с handler'ами, замыкающими opts.
-        this.#mutationSource.next({
+        this.#mutations.run({
             op$,
             handleSuccess: (): void => {
                 this.#submitting.set(false);
@@ -427,16 +355,11 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
                     opts.onSuccess();
                     return;
                 }
-                // Закрытие после успеха идёт мимо обоих гардов — и кнопочного, и
-                // роутерного. Форма к этому моменту ещё тронута, и вопрос о
-                // несохранённых правках был бы задан ровно про то, что только что
-                // сохранилось; роутерный гард закрывает разрешение на уход,
-                // которое панель выдаёт себе перед вызовом роутера.
-                // Названный довод решает в обе стороны: панель создания остаётся
-                // открытой, панель правки закрывается. Не названный — умолчание
-                // считается по режиму: создавать в закрытой панели нечего.
-                // Прежде признак выводился из адреса и не управлялся ничем, и
-                // `closeOnSuccess: false` панель создания не удерживал.
+                // Закрытие после удачи идёт мимо обоих вопросов о правках: форма ещё
+                // тронута, а спрашивать про только что записанное не о чем — уходу по
+                // маршруту это закрывает разрешение на уход. Названный довод решает в обе
+                // стороны, а не названный считается по режиму: создавать в закрытой панели
+                // нечего.
                 if (opts?.closeOnSuccess ?? this.#isCreateMode()) {
                     this.#closePanel();
                     return;
@@ -450,7 +373,7 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
                 // Отказ снимает прежнюю удачу: иначе «сохранено» осталось бы на
                 // панели рядом со свежим отказом.
                 this.submitSuccess.set(null);
-                // Отказ оставляет пользователю� в панели с его правками, поэтому
+                // Отказ оставляет человека в панели с его правками, поэтому
                 // намерение уйти на связанную запись снимается.
                 this.#relatedCommands = null;
                 const text: string | undefined = typeof opts?.errorText === 'function' ? opts.errorText(error) : opts?.errorText;
@@ -512,94 +435,6 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
         });
     }
 
-    /**
-     * Что делать с уходом панели после ответа пользователю�. «Закрыть с сохранением»
-     * ждёт конца записи: панель уступает место только удачной — иначе правки
-     * пропали бы вместе с отказом, о котором пользователь ещё не знает.
-     */
-    #deactivateAfter(outcome: ERtAsideUnsavedOutcome | undefined): Observable<boolean> {
-        if (outcome === ERtAsideUnsavedOutcome.Discard) {
-            return of(true);
-        }
-
-        if (outcome !== ERtAsideUnsavedOutcome.Save) {
-            return of(false);
-        }
-
-        this.#unsavedGuard()?.save();
-        // Запись могла и не начаться — например, черновик не годится
-        if (!this.#submitting()) {
-            return of(false);
-        }
-
-        return toObservable(this.#submitting, { injector: this.#injector }).pipe(
-            filter((submitting: boolean): boolean => !submitting),
-            take(1),
-            map((): boolean => this.submitError() === null)
-        );
-    }
-
-    /**
-     * Вопрос о правках роутерному уходу. Окно открывается одно на все уходы,
-     * пришедшие пока оно висит: второе поставило бы поверх первого оверлей,
-     * убрать который было бы некому — от того же и `exhaustMap` на пути кнопок.
-     */
-    #askUnsaved(): Observable<boolean> {
-        const pending: Observable<boolean> | null = this.#pendingAsk$;
-
-        if (pending !== null) {
-            return pending;
-        }
-
-        const ask$: Observable<boolean> = this.#dialog
-            .open<RtAsideUnsavedDialogComponent, undefined, ERtAsideUnsavedOutcome>(RtAsideUnsavedDialogComponent)
-            .afterClosed()
-            .pipe(
-                switchMap((outcome: ERtAsideUnsavedOutcome | undefined): Observable<boolean> => this.#deactivateAfter(outcome)),
-                finalize((): void => {
-                    this.#pendingAsk$ = null;
-                }),
-                shareReplay({ bufferSize: 1, refCount: false })
-            );
-
-        this.#pendingAsk$ = ask$;
-
-        return ask$;
-    }
-
-    /**
-     * Разрешение на уход читается один раз: иначе первое же закрытие после записи
-     * сняло бы вопрос о правках со всех следующих уходов, и тронутая форма
-     * уезжала бы молча.
-     */
-    #consumeLeaveAllowance(): boolean {
-        const allowed: boolean = this.#leaveAllowed;
-
-        this.#leaveAllowed = false;
-
-        return allowed;
-    }
-
-    /**
-     * Уход, начатый самой панелью. Разрешение выдаётся здесь, вплотную к вызову
-     * роутера, а не при закрытии панели: между закрытием и навигацией оверлей
-     * доигрывает уход, и разрешение, выданное раньше, достаётся чужому уходу,
-     * пришедшему в это окно, — тронутая форма уехала бы без вопроса.
-     *
-     * Невостребованное разрешение снимается итогом навигации: роутер отклоняет
-     * навигацию молча, её может отменить другой гард, и оставшееся разрешение
-     * сняло бы вопрос о правках со следующего ухода, которого панель не начинала.
-     */
-    #navigateAllowed(navigate: () => Promise<boolean>): void {
-        this.#leaveAllowed = true;
-
-        void navigate()
-            .catch((): boolean => false)
-            .then((): void => {
-                this.#leaveAllowed = false;
-            });
-    }
-
     #closePanel(): void {
         this.panel()?.close();
     }
@@ -609,20 +444,11 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
 
         this.#relatedCommands = null;
         this.#relatedQueryParams = null;
-        this.#navigateAllowed((): Promise<boolean> => this.router.navigateByUrl(this.#relatedTree(commands, params)));
+        this.#navigation.allowed((): Promise<boolean> => this.router.navigateByUrl(this.#relatedTree(commands, params)));
     }
 
-    /**
-     * Адрес, на который уходит панель. Свой аутлет она снимает здесь же, тем же
-     * деревом: абсолютные команды меняют только первичную ветку, поэтому панель,
-     * открытая в корне приложения, переход переживает. Маршрута под неё в корне
-     * нет, и роутер отклоняет такую навигацию молча — адрес остаётся прежним, а
-     * приложение застревает на панели, которой на экране уже нет.
-     */
     #relatedTree(commands: readonly unknown[], queryParams: Params | null = null): UrlTree {
-        const outlets: Record<string, unknown[] | null> = { ...this.closeOutlets(), primary: rootSegmentsOf(commands) };
-
-        return this.router.createUrlTree([{ outlets }], { queryParams });
+        return this.#navigation.relatedTree(this.closeOutlets(), commands, queryParams);
     }
 
     #applyUnsavedOutcome(outcome: ERtAsideUnsavedOutcome | undefined): void {
@@ -638,7 +464,7 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
         }
 
         // Запись закрывает панель сама на успехе — иначе панель ушла бы с экрана
-        // раньше ответа, и отказ пользователю� было бы негде показать. Уход на
+        // раньше ответа, и отказ негде было бы показать. Уход на
         // связанную запись ждёт того же успеха.
         if (outcome === ERtAsideUnsavedOutcome.Save) {
             this.#unsavedGuard()?.save();
@@ -664,7 +490,7 @@ export abstract class RtRouteAsideComponent<T> implements OnInit {
      * `openRelated` явно, и на них перенос не действует.
      */
     #navigateAway(): void {
-        this.#navigateAllowed((): Promise<boolean> =>
+        this.#navigation.allowed((): Promise<boolean> =>
             this.router.navigate([{ outlets: this.closeOutlets() }], {
                 relativeTo: this.route.parent,
                 queryParamsHandling: 'preserve',
