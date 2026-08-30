@@ -1,0 +1,17 @@
+:host {
+    display: block;
+
+    .stand {
+        height: 24rem;
+        border: 1px solid var(--rt-border-neutral-default);
+    }
+
+    .title {
+        font-weight: 500;
+    }
+
+    .row {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--rt-border-neutral-default);
+    }
+}
