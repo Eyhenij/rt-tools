@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.20.0 · checks/check-specs.mjs · 003a7d756a11 · правится надстройкой, не здесь
+// rt-kit v0.20.0 · checks/check-specs.mjs · 8922eb9e7939 · правится надстройкой, не здесь
 /**
  * Проверка того, что спек домена не разошёлся с кодом.
  *
@@ -53,6 +53,7 @@ import { ROOT } from './rt-kit-checks.config.mjs';
 import { checkRuleImplementation, checkSpecLaws, checkTracedAnchors } from './spec-anchors.mjs';
 import { CONSTITUTION_DIR, REQUIRED_HEADINGS, SPECS_DIR, collectDomains, exists, problems, read, report, walk } from './spec-common.mjs';
 import { checkContract, checkRefusalCodes, procedureRootsOf } from './spec-contract.mjs';
+import { proposedGroups, staleProposed } from './spec-proposed.mjs';
 import { collectReferences, parseScenarios, promisesScreen } from './spec-scenarios.mjs';
 
 // ── прогон ────────────────────────────────────────────────────────────────────
@@ -405,32 +406,16 @@ if (debts.length > 0) {
     uncovered.forEach((scenario) => console.log(`  нет теста ${scenario.id} — ${scenario.title} (${scenario.file}:${scenario.line})`));
 }
 
-/**
- * Договорённость, по которой код уже написан, вливается в спек домена, а её директория
- * удаляется. Оставленная в главной ветке, она читается как предложенное и не выкаченное —
- * то есть как ложь о работающем месяц приложении.
- *
- * Признак — все сценарии директории покрыты тестами: пока хоть один помечен «Не покрыто»,
- * фича не дописана. Падением это не делается: на середине работы часть тестов уже есть, и
- * такая проверка краснела бы всю дорогу.
- */
-const proposed = new Map();
-for (const scenario of byId.values()) {
-    const at = scenario.file.indexOf('/proposed/');
-    if (at === -1) {
-        continue;
-    }
-    const dir = scenario.file.slice(0, scenario.file.indexOf('/', at + '/proposed/'.length));
-    const group = proposed.get(dir) ?? { total: 0, ready: 0 };
-    group.total += 1;
-    if (references.has(scenario.id) && !scenario.uncovered && !scenario.partial) {
-        group.ready += 1;
-    }
-    proposed.set(dir, group);
-}
+const proposed = proposedGroups(byId.values(), references);
 
 const ripe = [...proposed].filter(([, group]) => group.total > 0 && group.total === group.ready);
 if (ripe.length > 0) {
     console.log('\nПора вливать — сценарии закрыты тестами, договорённость ждёт переезда в спек домена:');
     ripe.forEach(([dir, group]) => console.log(`  ${dir} — сценариев ${group.total}`));
+}
+
+const stale = staleProposed([...proposed.keys()]);
+if (stale.length > 0) {
+    console.log('\nЖдёт дольше месяца — привязка в договорённости стареет вместе с кодом, на который показывает:');
+    stale.forEach((record) => console.log(`  ${record.dir} — ${Math.floor(record.ageDays)} суток без правок`));
 }

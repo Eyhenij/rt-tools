@@ -15,7 +15,7 @@ echo "проверки: спеки"
 SPEC_TREE="$(mktemp -d)"
 mkdir -p "$SPEC_TREE/tools" "$SPEC_TREE/docs/constitution" "$SPEC_TREE/.claude/skills"
 cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/check-specs.mjs" \
-    "$CHECKS/spec-common.mjs" "$CHECKS/spec-anchors.mjs" "$CHECKS/spec-contract.mjs" "$CHECKS/spec-scenarios.mjs" \
+    "$CHECKS/spec-common.mjs" "$CHECKS/spec-anchors.mjs" "$CHECKS/spec-contract.mjs" "$CHECKS/spec-scenarios.mjs" "$CHECKS/spec-proposed.mjs" \
     "$SPEC_TREE/tools/"
 
 # Заготовка спека: все обязательные разделы на месте, чтобы в выводе оставалось только то,
@@ -269,6 +269,79 @@ printf '%s\n' \
 
 report "SC-AK-688 — строка с кодом отказа процедурой не считается" \
     "$(specs_says 'токена нет')" 0
+
+# --- SC-AK-807, SC-AK-808 — договорённость, ждущая своего домена дольше месяца ---------------
+#
+# Привязка в договорённости стареет молча: объявление, на которое она показывает, переезжает
+# вместе с соседней работой, а сверять договорённость с кодом никто не станет, пока она не
+# вольётся. Возраст читается из истории — время файла на диске не годится, свежий чекаут делает
+# все каталоги одновременными, — поэтому фикстуре нужен репозиторий с назначенной датой коммита.
+AGE_TREE="$(mktemp -d)"
+mkdir -p "$AGE_TREE/tools"
+cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/check-specs.mjs" \
+    "$CHECKS/spec-common.mjs" "$CHECKS/spec-anchors.mjs" "$CHECKS/spec-contract.mjs" "$CHECKS/spec-scenarios.mjs" "$CHECKS/spec-proposed.mjs" \
+    "$AGE_TREE/tools/"
+
+git init -q "$AGE_TREE" 2>/dev/null
+
+age_says() {
+    (cd "$AGE_TREE" && node tools/check-specs.mjs 2>&1) | grep -cE "$1"
+}
+
+# Фикстура здесь нужна чистая: раздел про возраст печатается после перечня расхождений, а на
+# расхождении сверка выходит раньше него. Поэтому у спека есть правило, а у правила — привязка
+# в живой символ.
+printf 'export function probe() {\n    return 1;\n}\n\nprobe();\n' > "$AGE_TREE/tools/probe.mjs"
+
+age_spec_body() {
+    printf '# %s\n\n**Статус:** действует · **Префикс сценариев:** `SC-%s`\n**Законы:** нет\n**Процедуры:** нет\n\n' "$1" "$2"
+    printf '## Правила\n\n- **Раз.** Два.\n\n'
+    for heading in '## Зачем' '## Терминология' '### Как это называется в интерфейсе' \
+        '## Что не входит' '## Контракт' '### Коды отказов' '## Данные' '## Экраны и состояния' \
+        '## Сквозные требования' '### Локали' '### SEO' '### Мобильная раскладка' '### Мультиобъектность' \
+        '## Решения' '## Открытые вопросы' '## История изменений'; do
+        printf '%s\n\nНе применимо.\n\n' "$heading"
+    done
+}
+
+age_proposed() {
+    mkdir -p "$AGE_TREE/docs/specs/$1/proposed/$2"
+    age_spec_body 'Договорённость' "$3" > "$AGE_TREE/docs/specs/$1/proposed/$2/spec.md"
+    printf '# Сценарии\n\n### SC-%s-09 — предложенный\n\nДано раз\nКогда два\nТогда три\n\nНе покрыто: проба.\n' "$3" \
+        > "$AGE_TREE/docs/specs/$1/proposed/$2/scenarios.md"
+    printf '# Привязка\n\n- **Раз.** — `tools/probe.mjs:probe` — проба\n' \
+        > "$AGE_TREE/docs/specs/$1/proposed/$2/implementation.md"
+}
+
+age_commit() {
+    git -C "$AGE_TREE" add -A 2>/dev/null
+    GIT_AUTHOR_DATE="$1" GIT_COMMITTER_DATE="$1" \
+        git -C "$AGE_TREE" -c user.email=p@p -c user.name=p -c commit.gpgsign=false \
+        commit -q -m "$2" 2>/dev/null
+}
+
+spec_dir_at() {
+    mkdir -p "$AGE_TREE/$1"
+    age_spec_body "$2" "$3" > "$AGE_TREE/$1/spec.md"
+    printf '# Сценарии\n\n### SC-%s-01 — первый\n\nДано раз\nКогда два\nТогда три\n\nНе покрыто: проба.\n' "$3" > "$AGE_TREE/$1/scenarios.md"
+    printf '# Привязка\n\n- **Раз.** — `tools/probe.mjs:probe` — проба\n' > "$AGE_TREE/$1/implementation.md"
+}
+
+spec_dir_at docs/specs/old 'Старый' OL
+age_proposed old ancient OL
+age_commit '2026-01-01T12:00:00 +0000' 'договорённость лежит с зимы'
+
+report "SC-AK-807 — договорённость старше месяца названа" "$(age_says 'Ждёт дольше месяца')" 1
+report "SC-AK-807 — назван её каталог" "$(age_says 'docs/specs/old/proposed/ancient — [0-9]+ суток')" 1
+
+spec_dir_at docs/specs/fresh 'Свежий' FR
+age_proposed fresh recent FR
+age_commit "$(date -u '+%Y-%m-%dT%H:%M:%S +0000')" 'свежая договорённость'
+
+report "SC-AK-808 — свежая договорённость в раздел не попадает" "$(age_says 'docs/specs/fresh/proposed/recent — [0-9]+ суток')" 0
+report "SC-AK-808 — старая по-прежнему названа" "$(age_says 'docs/specs/old/proposed/ancient — [0-9]+ суток')" 1
+
+rm -rf "$AGE_TREE"
 
 rm -rf "$SPEC_TREE"
 
