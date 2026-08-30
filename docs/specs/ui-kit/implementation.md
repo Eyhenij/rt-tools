@@ -21,6 +21,9 @@
 - **Таблица отдаёт сортировку только по той колонке, которую сама рисует.** — `projects/ui-kit/src/lib/ui-kit/table/components/table/rtui-table.component.ts:onSortChange`
 - **Имя сверяется с тем же набором колонок, который таблица рисует.** — `projects/ui-kit/src/lib/ui-kit/table/components/table/rtui-table.component.ts:sortOfKnownColumn`
 - **Несовпавшее имя не уходит наружу вовсе.** — `projects/ui-kit/src/lib/ui-kit/table/components/table/rtui-table.component.ts:sortOfKnownColumn`
+- **Настройку таблицы показывает последнее чтение, а не то, что ответило последним.** — `projects/ui-kit/src/lib/ui-kit/table/util/table-config.service.ts:readSource`
+- **Запись и снятие настройки доходят до хранилища в порядке вызовов.** — `projects/ui-kit/src/lib/ui-kit/table/util/table-config.service.ts:writeSource`
+- **Панель настройки столбцов открывается одна.** — `projects/ui-kit/src/lib/ui-kit/table/components/table-container/table-container.component.ts:openConfigAsideSource`
 
 Сценарии домена связаны с тестами номером в заголовке теста, а не таблицей здесь: связь сверяется
 в обе стороны сверкой спеков.

@@ -32,7 +32,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
-import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, exhaustMap, filter, map } from 'rxjs/operators';
 
 import { BlockDirective, ConcatClassesPipe, ElemDirective, ModDirective, PlatformService, WINDOW } from '@rt-tools/core';
 import { TNullable } from '@rt-tools/utils';
@@ -231,6 +232,9 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     /** Control for search */
     public readonly searchControl: FormControl<TNullable<string>> = new FormControl(null);
 
+    /** Нажатия на «настроить столбцы»: сама панель открывается объявленным потоком в `ngOnInit`. */
+    readonly #openConfigAsideSource: Subject<void> = new Subject<void>();
+
     public ngOnInit(): void {
         /** Set scrollbar initial styles by config */
         effect(
@@ -243,6 +247,30 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
         );
 
         this.searchControl.patchValue(this.searchTerm(), { emitEvent: false });
+
+        /**
+         * Открытие панели настройки столбцов.
+         *
+         * `exhaustMap`: пока панель открыта, второе нажатие открывать нечего — прежде каждое
+         * заводило свою подписку, и настройку сохраняла та панель, что закрылась последней.
+         */
+        this.#openConfigAsideSource
+            .pipe(
+                exhaustMap((): Observable<TNullable<ITable.Config.Data<ENTITY_TYPE>>> =>
+                    this.#asideService.open<
+                        RtTableConfigAsideComponent<ENTITY_TYPE>,
+                        ITable.Config.Data<ENTITY_TYPE>,
+                        ITable.Config.Data<ENTITY_TYPE>
+                    >(RtTableConfigAsideComponent, 'right', this.tableConfig())
+                ),
+                filter(Boolean),
+                takeUntilDestroyed(this.#destroyRef)
+            )
+            .subscribe((value: ITable.Config.Data<ENTITY_TYPE>) => {
+                /** Save updated table config */
+                this.#tableConfigService.updateConfig(this.tableConfigStorageKey(), value);
+                this.#setScrollbarsVisibility();
+            });
 
         this.searchControl.valueChanges
             .pipe(
@@ -285,19 +313,7 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
 
     /** Open table config aside */
     public onOpenConfigAside(): void {
-        // eslint-disable-next-line @nx/workspace-no-subscribe-in-methods -- подписка переезжает в объявленный поток задачей RT-845
-        this.#asideService
-            .open<RtTableConfigAsideComponent<ENTITY_TYPE>, ITable.Config.Data<ENTITY_TYPE>, ITable.Config.Data<ENTITY_TYPE>>(
-                RtTableConfigAsideComponent,
-                'right',
-                this.tableConfig()
-            )
-            .pipe(filter(Boolean), takeUntilDestroyed(this.#destroyRef))
-            .subscribe((value: ITable.Config.Data<ENTITY_TYPE>) => {
-                /** Save updated table config */
-                this.#tableConfigService.updateConfig(this.tableConfigStorageKey(), value);
-                this.#setScrollbarsVisibility();
-            });
+        this.#openConfigAsideSource.next();
     }
 
     /** Empty method, set in selectors directive */
