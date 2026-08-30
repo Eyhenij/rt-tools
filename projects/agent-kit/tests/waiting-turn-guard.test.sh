@@ -149,4 +149,43 @@ expect_stop "SC-AK-750 — объявление при сделанной раб
 expect_stop "SC-AK-750 — ход разговора без объявления проходит" \
     "$(input_stop "$(transcript "$(say 'что там по задаче?')" "$(reply 'Задача закрыта вчера, заявка влита.')")")" PASS
 
+# --- SC-AK-812 — шаг закрытия работы за взятие следующей задачи не считается ------------------
+#
+# Перевод закрываемой задачи в колонку разбора и снятие её папки — обязательные шаги закрытия, и
+# оба стоят в том же ходе, которым открыт PR. Пока признак перечислял их наравне со взятием, он
+# совпадал всегда, и ход отпускался — гард выглядел работающим и молчал ровно там, ради чего
+# заведён.
+expect_stop "SC-AK-812 — перевод закрываемой задачи в разбор" \
+    "$(input_stop "$(transcript "$(say 'открывай PR')" \
+        "$(ran 'gh pr create --title x')" \
+        "$(ran 'npm run task:move -- 990 in-review')")")" BLOCK
+# Снятие папки закрываемой задачи — второй шаг того же закрытия.
+expect_stop "SC-AK-812 — снятая папка закрываемой задачи взятием не считается" \
+    "$(input_stop "$(transcript "$(say 'открывай PR')" \
+        "$(ran 'gh pr create --title x')" \
+        "$(ran 'gh run list --limit 1')" \
+        "$(ran 'git rm -r docs/tasks/RT-990-done')")")" BLOCK
+# Перевод в колонку работы — по-прежнему взятие: закрытие туда не переводит ничего.
+expect_stop "SC-AK-812 — перевод в колонку работы требование снимает" \
+    "$(input_stop "$(transcript "$(say 'открывай PR')" \
+        "$(ran 'gh pr create --title x')" \
+        "$(ran 'gh run list --limit 1')" \
+        "$(ran 'npm run task:move -- 991 in-progress')")")" PASS
+# Папка следующей задачи заводится и не оболочкой: инструмент письма пишет её первым файлом.
+wrote() {
+    jq -c -n --arg n "$1" --arg f "$2" \
+        '{type:"assistant",message:{content:[{type:"tool_use",name:$n,input:{file_path:$f}}]}}'
+}
+expect_stop "SC-AK-812 — папка следующей задачи написана инструментом письма" \
+    "$(input_stop "$(transcript "$(say 'открывай PR')" \
+        "$(ran 'gh pr create --title x')" \
+        "$(ran 'gh run list --limit 1')" \
+        "$(wrote Write 'docs/tasks/RT-991-next/plan.md')")")" PASS
+# Чтение того же файла работой не является: судятся только инструменты письма.
+expect_stop "SC-AK-812 — чтение папки задачи взятием не считается" \
+    "$(input_stop "$(transcript "$(say 'открывай PR')" \
+        "$(ran 'gh pr create --title x')" \
+        "$(ran 'gh run list --limit 1')" \
+        "$(wrote Read 'docs/tasks/RT-991-next/plan.md')")")" BLOCK
+
 suite_result "гард ожидания"
