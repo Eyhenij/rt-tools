@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.20.0 · checks/check-reuse.mjs · 8661cb551209 · правится надстройкой, не здесь
+// rt-kit v0.20.0 · checks/check-reuse.mjs · 12fc727e48a5 · правится надстройкой, не здесь
 /**
  * Сплошная проверка того, что готовое не обошли.
  *
@@ -34,7 +34,17 @@ const SOURCE_ROOTS = CONFIG.sourceRoots;
 const SKIPPED_DIRS = CONFIG.skippedDirs;
 const BACKEND_ROOTS = CONFIG.backendRoots;
 
-const SIGNALS = loadSignals(CONFIG.reuse ?? {}, ROOT);
+// Нехватка признаков — отказ, а не пустая работа: проверка стоит в гейте пуша, и зелёный ответ
+// без единого прочитанного файла неотличим от честного нуля. Отказ печатается строкой, а не
+// стеком вызовов: читает его тот, кто настраивает дерево, а не тот, кто правит эту проверку.
+let SIGNALS;
+try {
+    SIGNALS = loadSignals(CONFIG.reuse ?? {}, ROOT);
+} catch (failure) {
+    console.error(`check-reuse: ${failure.message}`);
+    console.error('\nПравило единообразия — скил `reuse-first`.');
+    process.exit(1);
+}
 
 function count(text, expression) {
     return [...text.matchAll(expression)].length;

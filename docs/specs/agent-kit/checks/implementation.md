@@ -23,14 +23,6 @@
 - **Описание прошлого и папка задачи из счёта выведены.** — `projects/agent-kit/assets/checks/check-file-size.mjs:SKIPPED_PREFIXES`
 - **Сгенерированное выведено каталогом, а не именами.** — `projects/agent-kit/assets/checks/check-file-size.mjs:SKIPPED_PREFIXES`
 - **Длина считается тем же способом, каким её считает линтер.** — `projects/agent-kit/assets/checks/check-file-size.mjs:lineCount`
-- **Признак единообразия живёт данными, а не кодом проверки.** — `projects/agent-kit/assets/checks/signals.mjs:loadSignals`
-- **Набор признаков режется по пакетам rt-tools.** — `projects/agent-kit/assets/checks/signals.mjs:BUNDLES_DIR`
-- **Дерево получает признаки тех пакетов, которые назвало.** — `projects/agent-kit/assets/checks/signals.mjs:readBundle`
-- **Дерево дописывает признаки, а не правит чужие.** — `projects/agent-kit/assets/checks/signals.mjs:byKey`
-- **Признак называет свою область.** — `projects/agent-kit/assets/hooks/reuse-first-guard.sh:scope`
-- **Пустое поле признака не съезжает в соседнее.** — `projects/agent-kit/assets/hooks/reuse-first-guard.sh:cancel`
-- **Гард, не получивший ни одного признака, говорит об этом.** — `projects/agent-kit/assets/hooks/reuse-first-guard.sh:signals_seen`
-- **Гард на правке и сплошная проверка читают у признака одни и те же поля.** — `projects/agent-kit/assets/hooks/reuse-first-guard.sh:rt_backend_roots`
 - **Объявление, приехавшее подключённым пакетом, читается наравне со своим.** — `projects/agent-kit/assets/checks/check-styles.mjs:declarationsFromPackages`
 - **Читается то, что приложение подключило само, и не глубже.** — `projects/agent-kit/assets/checks/check-styles.mjs:USE_RE`
 - **Расхождение опознаётся по имени класса, а не по перечню файлов при нём.** — `projects/agent-kit/assets/checks/check-styles.mjs:knownByName`
@@ -47,3 +39,7 @@
 - **Пустое имя в настройке спрашивается отдельно от несуществующего файла.** — `projects/agent-kit/assets/checks/check-schema-drift.mjs:main` — незаданное имя схемы отвечает своей строкой и нулём; сценарий `SC-AK-549`
 - **Дешёвая проверка предметом не делится и зовётся при любом составе правки.** — `.claude/rt-kit/project.sh:rt_push_checks` — проверки слоя оформления стоят в общем списке, а не среди тяжёлых шагов; сценарий `SC-AK-673`
 - **Тяжёлый шаг набора зовётся по своему предмету, а не по признаку «ветка тронула код».** — `.claude/rt-kit/project.sh:rt_push_touched` — предметы объявлены путями, незнакомое и общее поднимают весь набор; сценарий `SC-AK-569`
+- **Признак называет свою область.** — `projects/agent-kit/assets/hooks/reuse-first-guard.sh:scope`
+- **Пустое поле признака не съезжает в соседнее.** — `projects/agent-kit/assets/hooks/reuse-first-guard.sh:cancel`
+- **Гард, не получивший ни одного признака, говорит об этом.** — `projects/agent-kit/assets/hooks/reuse-first-guard.sh:signals_seen`
+- **Гард на правке и сплошная проверка читают у признака одни и те же поля.** — `projects/agent-kit/assets/hooks/reuse-first-guard.sh:rt_backend_roots`
