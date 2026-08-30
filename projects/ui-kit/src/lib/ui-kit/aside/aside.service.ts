@@ -1,9 +1,10 @@
 import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal, ComponentType } from '@angular/cdk/portal';
-import { ComponentRef, inject, Injectable, Injector } from '@angular/core';
+import { ComponentRef, DestroyRef, inject, Injectable, Injector } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Event, NavigationEnd, Router } from '@angular/router';
 import { EMPTY, merge, Observable, of, Subject } from 'rxjs';
-import { delay, filter, take, tap } from 'rxjs/operators';
+import { delay, filter, mergeAll, take, tap } from 'rxjs/operators';
 
 import { ASIDE_REF, IAsideConfig, TAsidePositions, AsideRef } from './aside.types';
 import { RtuiAsidePanelComponent } from './components/panel/aside-panel.component';
@@ -12,6 +13,20 @@ import { RtuiAsidePanelComponent } from './components/panel/aside-panel.componen
 export class RtAsideService {
     readonly #overlay: Overlay = inject(Overlay);
     readonly #router: Router = inject(Router);
+    readonly #destroyRef: DestroyRef = inject(DestroyRef);
+
+    /** Источник открытий: метод толкает сюда поток закрытия новой панели, и больше ничего. */
+    readonly #closesSource: Subject<Observable<unknown>> = new Subject<Observable<unknown>>();
+
+    /**
+     * Закрытие каждой открытой панели объявлено один раз, а не заводится вызовом открытия.
+     *
+     * Потоки сливаются, а не сменяют друг друга: панели живут порознь, и оборванный поток
+     * предыдущей оставил бы её на экране — снять её после этого нечем.
+     */
+    constructor() {
+        this.#closesSource.pipe(mergeAll(), takeUntilDestroyed(this.#destroyRef)).subscribe();
+    }
 
     /**
      * Opens an aside panel with a specified component, position, and data.
@@ -38,28 +53,39 @@ export class RtAsideService {
         const portal: ComponentPortal<RtuiAsidePanelComponent> = this.#createPortal(asideRef);
         const componentRef: ComponentRef<RtuiAsidePanelComponent> = overlayRef.attach(portal);
 
-        // eslint-disable-next-line @nx/workspace-no-subscribe-in-methods -- подписка переезжает в объявленный поток задачей RT-845
-        merge(
+        this.#closesSource.next(this.#closeOnFirstEvent(overlayRef, componentRef, answer, config));
+
+        return answer ? answer.asObservable() : of(null);
+    }
+
+    /**
+     * Закрытие одной панели по первому же из её событий.
+     *
+     * `take(1)` обрывает поток: слитые в него горячие источники — маршрутизатор, подложка,
+     * нажатия — иначе держали бы подписку живой и после того, как панель снята.
+     */
+    #closeOnFirstEvent<ANSWER>(
+        overlayRef: OverlayRef,
+        componentRef: ComponentRef<RtuiAsidePanelComponent>,
+        answer: Subject<ANSWER | null>,
+        config: IAsideConfig
+    ): Observable<unknown> {
+        return merge(
             this.#closesOf(overlayRef, config),
             this.#router.events.pipe(filter((e: Event): boolean => e instanceof NavigationEnd)),
             answer.pipe(delay(10))
-        )
-            .pipe(
-                // The aside closes on the first of these events — terminate so the merged
-                // hot sources (router/backdrop/keydown) don't keep the subscription alive.
-                take(1),
-                tap((): void => {
-                    componentRef.instance.startExitAnimation();
-                    overlayRef.detach();
-                    answer.complete();
-                }),
-                delay(300)
-            )
-            .subscribe(() => {
+        ).pipe(
+            take(1),
+            tap((): void => {
+                componentRef.instance.startExitAnimation();
+                overlayRef.detach();
+                answer.complete();
+            }),
+            delay(300),
+            tap((): void => {
                 overlayRef.dispose();
-            });
-
-        return answer ? answer.asObservable() : of(null);
+            })
+        );
     }
 
     /**
