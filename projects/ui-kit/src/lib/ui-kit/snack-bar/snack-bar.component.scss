@@ -1,5 +1,19 @@
 @use '../../../styles/base/mixin' as mixins;
 
+// Полоса срока: она стягивается слева направо и обрезается тем же путём, каким шла прежде.
+// Обрезка нужна вместе с шириной — у полосы прижаты обе кромки, и одна ширина её не двигает.
+@keyframes rt-snack-bar-progress {
+    from {
+        width: 100%;
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    }
+
+    to {
+        width: 0;
+        clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+    }
+}
+
 $snack-bar: (
     content: (
         gap: 1rem,
@@ -92,9 +106,15 @@ $snack-bar: (
             left: 0;
             width: 100%;
             height: var(--rt-snack-bar-progress-height);
+            animation: rt-snack-bar-progress var(--rt-snack-bar-progress-duration) linear forwards;
             background-color: var(--mat-button-filled-container-color);
             border-bottom-left-radius: var(--mat-snack-bar-container-shape);
             border-bottom-right-radius: var(--mat-snack-bar-container-shape);
         }
     }
+}
+
+// Под указателем срок стоит: сообщение, которое читают, не уходит само.
+:host:hover .rt-snack-bar__progress {
+    animation-play-state: paused;
 }

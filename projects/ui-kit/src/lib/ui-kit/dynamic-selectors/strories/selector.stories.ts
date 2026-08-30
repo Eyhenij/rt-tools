@@ -1,5 +1,3 @@
-// eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
-import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, Routes } from '@angular/router';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 import { expect, userEvent, waitFor } from 'storybook/test';
@@ -19,8 +17,7 @@ export default {
     component: TestSelectorComponent,
     decorators: [
         applicationConfig({
-            // eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
-            providers: [provideAnimations(), provideRouter(routes), PlatformService],
+            providers: [provideRouter(routes), PlatformService],
         }),
     ],
     argTypes: {},

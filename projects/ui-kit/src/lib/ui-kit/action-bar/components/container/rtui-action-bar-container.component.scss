@@ -8,3 +8,50 @@
     inset: var(--rt-action-bar-container-top) var(--rt-action-bar-container-right) var(--rt-action-bar-container-bottom)
         var(--rt-action-bar-container-left);
 }
+
+// Выезд панели: снизу, с проскоком выше места и возвратом — тем же порядком долей, каким он шёл
+// прежде. Проскок и делает движение живым, а не равномерным.
+@keyframes rtui-action-bar-enter {
+    0% {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+
+    30% {
+        opacity: 1;
+        transform: translateY(-15px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Уход панели: тот же путь в обратную сторону, и проскок стоит ближе к концу.
+@keyframes rtui-action-bar-leave {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    70% {
+        opacity: 1;
+        transform: translateY(-15px);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+}
+
+.rtui-action-bar-container__bar {
+    animation: rtui-action-bar-enter 300ms;
+}
+
+.rtui-action-bar-container__bar--leaving {
+    // `forwards`: панель держится за нижней кромкой до того мига, когда её снимет разметка.
+    // Без него она возвращается на место в конце ухода и успевает мигнуть на своём месте.
+    animation: rtui-action-bar-leave 300ms forwards;
+}

@@ -1,6 +1,4 @@
-// eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
+import { Meta, StoryObj } from '@storybook/angular';
 import { expect, fn, userEvent, waitFor } from 'storybook/test';
 
 import { OpenAsideButtonComponent } from './open-aside-button.component';
@@ -8,12 +6,6 @@ import { OpenAsideButtonComponent } from './open-aside-button.component';
 const meta: Meta<OpenAsideButtonComponent> = {
     title: 'Components/Aside',
     component: OpenAsideButtonComponent,
-    decorators: [
-        applicationConfig({
-            // eslint-disable-next-line sonarjs/deprecation -- @angular/animations объявлен устаревшим целиком; переезд на переходы средствами стилей идёт задачей RT-843
-            providers: [provideAnimations()],
-        }),
-    ],
     argTypes: {},
     args: { onClick: fn() },
 };
