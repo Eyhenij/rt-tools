@@ -25,6 +25,7 @@
 #
 # Что здесь чем зовётся, знает профиль дерева:
 #   rt_task_branch_ok    — форма имени ветки под задачу;
+#   rt_task_branch_number — номер задачи из этого имени: приставкой бывает и род правки;
 #   RT_TASK_TITLE_RE     — форма номера в заголовке заявки;
 #   rt_task_state        — состояние задачи одним объектом (existsize, open, onBoard, assigned,
 #                          numbered); молчание значит «спросить некого»;
@@ -95,6 +96,7 @@ done
 [ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
 command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
 rt_needs rt_task_branch_ok git-guard-delivery || exit 0
+rt_needs rt_task_branch_number git-guard-delivery || exit 0
 
 title_re="${RT_TASK_TITLE_RE:-^\[[A-Za-z]+-[0-9]+\][[:space:]]+[^[:space:]]}"
 task_new="${RT_TASK_NEW_CMD:-npm run task:new}"
@@ -225,10 +227,14 @@ fi
 if [ -n "$branch_arg" ]; then
     # Имя, притворяющееся веткой под задачу, но не совпадающее с формой, — это промах в имени,
     # а не осознанная беззадачная ветка. Ловится до первого коммита.
-    if printf '%s' "$branch_arg" | grep -qiE '^[A-Za-z]+-[0-9]+'; then
+    # Номер вынимает профиль: своя регулярка знала одну приставку — ключ задач, — и ветка вида
+    # `feat/88-slug`, законная по форме того же профиля, номера не давала вовсе. Проверка формы
+    # при заведении не срабатывала на ней ни разу, а сверка номеров пропускалась молча.
+    number_arg="$(rt_task_branch_number "$branch_arg")"
+    if [ -n "$number_arg" ]; then
         rt_task_branch_ok "$branch_arg" \
             || deny "BLOCKED: имя ветки «${branch_arg}» не той формы, что принята здесь. Номер у ветки тот же, что у задачи и у заголовка заявки на слияние."
-        check_task "$(printf '%s' "$branch_arg" | sed -nE 's/^[A-Za-z]+-([0-9]+).*/\1/p')" "ветка «${branch_arg}»"
+        check_task "$number_arg" "ветка «${branch_arg}»"
 
         # Условия поставки, известные уже здесь, спрашиваются здесь. Прежде их спрашивали на
         # пуше и на открытии PR — то есть после того, как работа сделана: основание чинится
@@ -374,7 +380,7 @@ branch="$(git branch --show-current 2>/dev/null)"
 rt_task_branch_ok "$branch" \
     || deny "BLOCKED: заявка с ветки «${branch}», за которой не стоит задачи. Правка начинается с задачи, видимой в очереди работ: заведи её — ${task_new} — и перенеси работу в ветку с её номером."
 
-number="$(printf '%s' "$branch" | sed -nE 's/^[A-Za-z]+-([0-9]+).*/\1/p')"
+number="$(rt_task_branch_number "$branch")"
 
 title=''
 if command -v perl >/dev/null 2>&1; then
