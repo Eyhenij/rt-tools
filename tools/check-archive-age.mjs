@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.20.0 · checks/check-archive-age.mjs · 9bc5536e7909 · правится надстройкой, не здесь
+// rt-kit v0.21.0 · checks/check-archive-age.mjs · 9bc5536e7909 · правится надстройкой, не здесь
 /**
  * Сверка срока хранения описания прошлого.
  *

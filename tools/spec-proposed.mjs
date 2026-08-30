@@ -1,4 +1,4 @@
-// rt-kit v0.20.0 · checks/spec-proposed.mjs · dcb83f20e6ab · правится надстройкой, не здесь
+// rt-kit v0.21.0 · checks/spec-proposed.mjs · dcb83f20e6ab · правится надстройкой, не здесь
 /**
  * Договорённости, ждущие переезда в спек домена.
  *

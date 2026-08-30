@@ -1,4 +1,4 @@
-// rt-kit v0.20.0 · checks/board-titles.github.mjs · 10156d9cad8e · правится надстройкой, не здесь
+// rt-kit v0.21.0 · checks/board-titles.github.mjs · 10156d9cad8e · правится надстройкой, не здесь
 /**
  * Открытые задачи, чьи заголовки сильно совпали.
  *

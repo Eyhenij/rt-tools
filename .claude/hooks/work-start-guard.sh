@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.20.0 · hooks/work-start-guard.sh · 977415ff0b52 · правится надстройкой, не здесь
+# rt-kit v0.21.0 · hooks/work-start-guard.sh · 977415ff0b52 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: hooks/deny-tail.sh, hooks/profile-check.sh
 # Гард начала работы: ход, правивший код приложения, не заканчивается, пока владелец в этом же
