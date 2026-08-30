@@ -71,6 +71,7 @@
             "Profile drift": "node tools/check-profile-drift.mjs",
             "Hook scope": "node tools/check-hook-scope.mjs",
             "Package boundary": "node tools/check-boundary.mjs",
+            "Laid-out files hidden from the formatter": "node tools/check-format-ignore.mjs",
             "Rule descriptions": "node tools/check-descriptions.mjs",
             "Circular imports": "node tools/check-cycles.mjs",
             "Archive retention": "node tools/check-archive-age.mjs",
