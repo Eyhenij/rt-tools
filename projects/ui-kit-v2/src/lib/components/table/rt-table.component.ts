@@ -68,8 +68,6 @@ const DEFAULT_SKELETON_ROWS: number = 5;
 /** Ключ подписи пустой таблицы: язык известен только после старта приложения */
 const DEFAULT_EMPTY_KEY: TRtKitLabelKey = 'uiNoRows';
 
-export { RT_TABLE_ROW_ACTIONS_COLUMN } from './rt-table-columns.logic';
-
 /**
  * Таблица — стилизованная обёртка над `cdk-table` (`@angular/cdk/table`).
  *
