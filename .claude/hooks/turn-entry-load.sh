@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.20.0 · hooks/turn-entry-load.sh · a16cfaeab302 · правится надстройкой, не здесь
+# rt-kit v0.20.0 · hooks/turn-entry-load.sh · 0fffef7e9129 · правится надстройкой, не здесь
 # rt-hook: SessionStart startup|resume|compact|clear
 # Требует: hooks/handoff-write.sh
 # SessionStart: передача прошлого захода и карта хода уезжают в контекст на каждом запуске.
@@ -52,7 +52,9 @@ progress=''
 
 section=''
 if [ -n "$progress" ] && [ -r "$progress" ]; then
-    section="$(awk '
+    # Сравнение байтами: под локалью с национальными настройками `awk` этой системы считает
+    # разные кириллические заголовки равными, и вход читал бы разделом передачи первый попавшийся.
+    section="$(LC_ALL=C awk '
         $0 == "## Передача захода" { skip = 1; next }
         skip && /^## / { skip = 0 }
         skip { print }

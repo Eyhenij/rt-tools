@@ -1,4 +1,3 @@
-/* eslint-disable max-lines -- файл делится задачей RT-849: набор токенов собирается сборщиком, а таблица и переписка режутся по смыслу */
 import { BooleanInput } from '@angular/cdk/coercion';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { DatePipe } from '@angular/common';
@@ -43,23 +42,14 @@ import { TRtRichEditorToolbar } from '../rich-editor/rt-rich-editor.component';
 import { RtSkeletonWrapperComponent } from '../skeleton-wrapper/rt-skeleton-wrapper.component';
 import { RtSpinnerComponent } from '../spinner/rt-spinner.component';
 import { RtToolbarComponent, RtToolbarLeftDirective, RtToolbarRightDirective } from '../toolbar/rt-toolbar.component';
+import { pickedFiles, withAppendedFiles, withoutFileAt } from './rt-chat-files.logic';
+import { nextAtBottom, RT_CHAT_PIN_RETRY_DELAYS_MS } from './rt-chat-thread.logic';
 import { ERtChatMessageStatus, IRtChat } from './rt-chat.model';
 
 const BEM_BLOCK: string = 'rt-chat';
 
 /** Ключ заглушки имени вложения, когда домен не отдал `fileName` (только URL). */
 const ATTACHMENT_FALLBACK_KEY: TRtKitLabelKey = 'chatAttachmentFallback';
-
-/** Зазор от низа треда, в пределах которого считаем пользователя «у нижнего края». */
-const NEAR_BOTTOM_THRESHOLD_PX: number = 64;
-
-/**
- * Задержки (мс) серии повторных пинов к низу после первичной прокрутки. Rich-контент
- * (`rt-delta-view`, код-блоки) дорисовывается несколькими render-пассами уже после
- * того, как afterRenderEffect выставил scrollTop по промежуточной высоте, — набор
- * тиков покрывает окно, за которое высота устаканивается.
- */
-const PIN_RETRY_DELAYS_MS: readonly number[] = [50, 150, 300, 500, 800];
 
 /**
  * Общий презентационный чат: тред сообщений + композер. Никакого data-access/api —
@@ -421,7 +411,7 @@ export class RtChatComponent {
             this.droppedFiles.set([...files]);
             return;
         }
-        this.replyForm.controls.files.setValue([...this.replyForm.controls.files.value, ...files]);
+        this.replyForm.controls.files.setValue(withAppendedFiles(this.replyForm.controls.files.value, files));
     }
 
     protected openFilePicker(): void {
@@ -430,52 +420,36 @@ export class RtChatComponent {
 
     protected onFilesPicked(event: Event): void {
         const inputEl: HTMLInputElement = event.target as HTMLInputElement;
-        const picked: File[] = Array.from(inputEl.files ?? []);
+        const picked: File[] = pickedFiles(inputEl.files);
         if (picked.length > 0) {
-            this.replyForm.controls.files.setValue([...this.replyForm.controls.files.value, ...picked]);
+            this.replyForm.controls.files.setValue(withAppendedFiles(this.replyForm.controls.files.value, picked));
         }
         // Сброс значения: без него повторный выбор того же файла не даёт `change`.
         inputEl.value = '';
     }
 
     protected removeFile(index: number): void {
-        const next: File[] = this.replyForm.controls.files.value.filter((_: File, position: number): boolean => position !== index);
-        this.replyForm.controls.files.setValue(next);
+        this.replyForm.controls.files.setValue(withoutFileAt(this.replyForm.controls.files.value, index));
     }
 
-    /**
-     * Обновляем «у нижнего ли края» по скроллу — основа решения об автоскролле.
-     * Прилипание к низу снимаем ТОЛЬКО когда пользователь прокрутил ВВЕРХ (scrollTop
-     * уменьшился). Событие от программной прокрутки и рост контента идут при том же
-     * или большем scrollTop — тогда прилипание лишь усиливаем, но не снимаем. Иначе
-     * async-событие от нашего же `scrollTop = scrollHeight`, долетающее уже после
-     * поздней дорисовки rich-контента (высота выросла, scrollTop прежний → мнимый
-     * «отрыв от низа»), сбрасывало бы `#atBottom` и ломало до-прокрутку.
-     */
+    /** Признак «читатель у нижнего края» обновляется по прокрутке: на нём стоит автопрокрутка. */
     protected onThreadScroll(): void {
         const el: HTMLElement | undefined = this.thread()?.nativeElement;
         if (el === undefined) {
             return;
         }
-        const scrollTop: number = el.scrollTop;
-        const nearBottom: boolean = el.scrollHeight - el.clientHeight - scrollTop <= NEAR_BOTTOM_THRESHOLD_PX;
-        if (scrollTop < this.#lastScrollTop - 1) {
-            this.#atBottom = nearBottom;
-        } else {
-            this.#atBottom = this.#atBottom || nearBottom;
-        }
-        this.#lastScrollTop = scrollTop;
+
+        this.#atBottom = nextAtBottom(this.#atBottom, this.#lastScrollTop, el);
+        this.#lastScrollTop = el.scrollTop;
     }
 
     /**
-     * Серия отложенных пинов к низу: rich-контент дорисовывается несколькими
-     * render-пассами (иногда с пересозданием `#thread`), поэтому одного скролла в
-     * afterRenderEffect мало — финальная высота устанавливается позже. Каждый тик
-     * заново берёт актуальный элемент треда и его текущий scrollHeight и, пока
-     * пользователь у нижнего края, дотягивает ленту до конца.
+     * Серия отложенных подтягиваний ленты к низу: присланное содержимое дорисовывается
+     * несколькими проходами, и одной прокрутки мало. Каждый тик берёт тред заново — он
+     * бывает пересоздан — и дотягивает ленту, пока читатель стоит у нижнего края.
      */
     #pinToBottomDeferred(): void {
-        for (const delay of PIN_RETRY_DELAYS_MS) {
+        for (const delay of RT_CHAT_PIN_RETRY_DELAYS_MS) {
             setTimeout((): void => {
                 const el: HTMLElement | undefined = this.thread()?.nativeElement;
                 if (el !== undefined && this.#atBottom) {

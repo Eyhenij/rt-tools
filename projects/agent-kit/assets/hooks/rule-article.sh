@@ -88,7 +88,7 @@ rt_rule_article_heads() {
 }
 
 rt_rule_article_at() {
-    awk -v mark="$2" '
+    LC_ALL=C awk -v mark="$2" '
         NR <= mark && /^- / { start = NR }
         { line[NR] = $0 }
         END {
