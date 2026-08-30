@@ -66,6 +66,40 @@ export function deployLag(workflow, mainBranch, options) {
 }
 
 /**
+ * Чем кончилась последняя выкатка: `success`, `failure`, `running` либо `none`, если её не
+ * запускали ни разу.
+ *
+ * Спрашивается отдельно от отставания прода. Отставание считается по последней УСПЕШНОЙ выкатке,
+ * и две разные беды выглядят через него одинаково: выкатку не запускали и выкатка упала. Ведут
+ * они к разному — первую запускают, вторую читают журналом и чинят, — а четыре слияния подряд
+ * уехали поверх поломки, которую принёс первый, и прод простоял почти два часа.
+ *
+ * Идущая выкатка расхождением не считается: она ещё может кончиться успехом.
+ */
+export function lastDeploy(workflow, options) {
+    const runs = gh(
+        [
+            'api',
+            `repos/${OWNER}/${REPO}/actions/workflows/${encodeURIComponent(workflow)}/runs?per_page=1`,
+            '--jq',
+            '[.workflow_runs[] | {status, conclusion, sha: .head_sha, at: .created_at, url: .html_url}] | first // empty',
+        ],
+        options
+    );
+    const last = String(runs).trim();
+    if (!last) {
+        return { verdict: 'none' };
+    }
+
+    const run = JSON.parse(last);
+    if (run.status !== 'completed') {
+        return { verdict: 'running', ...run };
+    }
+
+    return { verdict: run.conclusion === 'success' ? 'success' : 'failure', ...run };
+}
+
+/**
  * Чем кончились прогоны на этой вершине: `success`, если все завершились успехом, `running`,
  * если хоть один ещё идёт, `failure` — если хоть один упал. Прогонов нет вовсе — `none`.
  *

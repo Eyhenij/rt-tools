@@ -50,7 +50,8 @@ import {
     taskDirs,
 } from './board.mjs';
 import { onlyIgnoredPaths } from './board-paths.mjs';
-import { HAS_PIPELINE, deployLag, evictedOnHead, headCommittedAt, runsOnHead, verdictOnHead } from './board-runs.mjs';
+import { checkLongWork } from './board-long-work.mjs';
+import { HAS_PIPELINE, deployLag, evictedOnHead, headCommittedAt, lastDeploy, runsOnHead, verdictOnHead } from './board-runs.mjs';
 import { checkEpicLinks } from './board-epics.mjs';
 import { similarTitles } from './board-titles.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
@@ -317,6 +318,7 @@ try {
 
     similarTitles(open);
     checkEpicLinks(open, report);
+    checkLongWork(open, report);
 
     const openNumbers = new Set(open.map((issue) => issue.number));
     const claimed = new Map();
@@ -415,12 +417,24 @@ try {
 // сколько угодно коммитов, и заметить это неоткуда.
 if (!offline && DEPLOY_WORKFLOW) {
     try {
-        const lag = deployLag(DEPLOY_WORKFLOW, MAIN_BRANCH, { token: botToken() ?? undefined });
+        const token = botToken() ?? undefined;
+        const lag = deployLag(DEPLOY_WORKFLOW, MAIN_BRANCH, { token });
         if (lag === null) {
             report(`выкаток по «${DEPLOY_WORKFLOW}» не было ни одной — сравнить прод не с чем`);
         } else if (lag.behind > 0) {
             report(
                 `прод отстал от «${MAIN_BRANCH}» на ${lag.behind} коммитов: последняя выкатка — ${lag.sha.slice(0, 8)} от ${String(lag.at).slice(0, 10)}`
+            );
+        }
+
+        // Отчего прод отстал, отставание не говорит: оно считается по последней УСПЕШНОЙ
+        // выкатке, и «не запускали» с «упала» выглядят через него одинаково. Ведут они к
+        // разному — первую запускают, вторую читают журналом и чинят.
+        const deploy = lastDeploy(DEPLOY_WORKFLOW, { token });
+        if (deploy.verdict === 'failure') {
+            report(
+                `выкатка «${DEPLOY_WORKFLOW}» упала на ${String(deploy.sha).slice(0, 8)} от ${String(deploy.at).slice(0, 10)}: ` +
+                    `главная ветка впереди прода, и слияния поверх уедут туда же — ${deploy.url}`
             );
         }
     } catch (error) {

@@ -17,6 +17,7 @@ cp "$CHECKS/board-runs.github.mjs" "$CARGO_TREE/tools/board-runs.mjs"
 cp "$CHECKS/board-paths.github.mjs" "$CARGO_TREE/tools/board-paths.mjs"
 cp "$CHECKS/board-titles.github.mjs" "$CARGO_TREE/tools/board-titles.mjs"
 cp "$CHECKS/board-epics.github.mjs" "$CARGO_TREE/tools/board-epics.mjs"
+cp "$CHECKS/board-long-work.github.mjs" "${CARGO_TREE}/tools/board-long-work.mjs"
 cp "$CHECKS/check-board.github.mjs" "$CARGO_TREE/tools/check-board.mjs"
 
 # Двойник хостинга: списки приходят из окружения сценария, всё прочее отвечает пустотой.

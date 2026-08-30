@@ -54,3 +54,8 @@
 - **Число заданий спрашивается только у отменённых прогонов вершины.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:jobCount`
 - **Строка вытеснения называет обе команды и в том порядке, в каком их зовут** — `projects/agent-kit/assets/checks/check-board.github.mjs:checkEvicted`
 - **Вытеснение судится раньше цвета и раньше отсутствия прогона.** — `projects/agent-kit/assets/checks/check-board.github.mjs:checkHeadRun`
+- **Метка многозаходной работы сверяется с записью в линии работ в обе стороны.** — `projects/agent-kit/assets/checks/board-long-work.github.mjs:checkLongWork` — сценарий SC-AK-823
+- **Записью в линии считается строка, где стоят и слово метки, и номер задачи.** — `projects/agent-kit/assets/checks/board-long-work.github.mjs:markedRows`
+- **Упавшая выкатка называется отдельно от отставшего прода.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:lastDeploy` — сценарий SC-AK-824
+- **Идущая выкатка расхождением не считается.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:lastDeploy` — незавершённый прогон отдаёт вердикт «running», и строки о нём нет
+- **Дерево, не назвавшее метки или каталога линий, получает молчание, а не отказ.** — `projects/agent-kit/assets/checks/board-long-work.github.mjs:LONG_LABEL`

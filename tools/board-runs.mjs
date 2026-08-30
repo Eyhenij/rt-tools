@@ -1,4 +1,4 @@
-// rt-kit v0.22.0 · checks/board-runs.github.mjs · 12fa19b8169a · правится надстройкой, не здесь
+// rt-kit v0.22.0 · checks/board-runs.github.mjs · e2bff95ff156 · правится надстройкой, не здесь
 /**
  * Состояние прогонов и выкатки у хостинга: что встало на вершине, чем кончилось и на сколько
  * прод отстал от главной ветки.
@@ -64,6 +64,40 @@ export function deployLag(workflow, mainBranch, options) {
         options
     );
     return { sha: run.sha, at: run.at, behind: Number(String(behind).trim()) };
+}
+
+/**
+ * Чем кончилась последняя выкатка: `success`, `failure`, `running` либо `none`, если её не
+ * запускали ни разу.
+ *
+ * Спрашивается отдельно от отставания прода. Отставание считается по последней УСПЕШНОЙ выкатке,
+ * и две разные беды выглядят через него одинаково: выкатку не запускали и выкатка упала. Ведут
+ * они к разному — первую запускают, вторую читают журналом и чинят, — а четыре слияния подряд
+ * уехали поверх поломки, которую принёс первый, и прод простоял почти два часа.
+ *
+ * Идущая выкатка расхождением не считается: она ещё может кончиться успехом.
+ */
+export function lastDeploy(workflow, options) {
+    const runs = gh(
+        [
+            'api',
+            `repos/${OWNER}/${REPO}/actions/workflows/${encodeURIComponent(workflow)}/runs?per_page=1`,
+            '--jq',
+            '[.workflow_runs[] | {status, conclusion, sha: .head_sha, at: .created_at, url: .html_url}] | first // empty',
+        ],
+        options
+    );
+    const last = String(runs).trim();
+    if (!last) {
+        return { verdict: 'none' };
+    }
+
+    const run = JSON.parse(last);
+    if (run.status !== 'completed') {
+        return { verdict: 'running', ...run };
+    }
+
+    return { verdict: run.conclusion === 'success' ? 'success' : 'failure', ...run };
 }
 
 /**
