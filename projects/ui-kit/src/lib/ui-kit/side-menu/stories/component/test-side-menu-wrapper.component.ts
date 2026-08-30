@@ -150,7 +150,6 @@ export const MENU_ITEMS: Readonly<ISideMenu.Item[]> = Object.freeze([
 export class TestSideMenuWrapperComponent {
     public menuItems: typeof MENU_ITEMS = [...MENU_ITEMS];
     public activeMenuIds: Array<number | string> = [];
-    public isMobile: boolean = false;
     public isSubMenuXScrollEnabled: boolean = true;
     public isMainMenuIconsOutlined: boolean = false;
     public isSubMenuIconsOutlined: boolean = false;

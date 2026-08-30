@@ -18,7 +18,6 @@ import { MatListItem, MatListItemIcon, MatListItemTitle, MatNavList } from '@ang
 import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '@rt-tools/core';
-import { TNullable } from '@rt-tools/utils';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtHideTooltipDirective } from '../../tooltip';
 import { IRtuiSideMenuHost, ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
@@ -61,19 +60,11 @@ const BEM_BLOCK: string = 'rtui-side-menu-sub-item';
 export class RtuiSideMenuSubItemComponent {
     readonly #breakpoints: BreakpointService = inject(BreakpointService);
 
-    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
-    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
-    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
+    /** Экран узкий: замер кита, и другого источника у этого признака нет. */
+    protected readonly narrow: Signal<boolean> = computed(() => !!this.#breakpoints.isMobile());
     public readonly menuRef: IRtuiSideMenuHost = inject(RTUI_SIDE_MENU);
 
     public item: InputSignal<ISideMenu.Item> = input.required<ISideMenu.Item>();
-    /**
-     * Признак узкого экрана.
-     *
-     * @deprecated Кит определяет его сам — `BreakpointService` из `@rt-tools/core`. Вход
-     * оставлен ради приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
-     */
-    public isMobile: InputSignal<TNullable<boolean>> = input<TNullable<boolean>>(null);
     public isSubMenuXScrollEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });

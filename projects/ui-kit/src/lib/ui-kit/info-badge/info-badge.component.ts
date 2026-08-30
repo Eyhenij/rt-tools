@@ -1,7 +1,6 @@
 import { NgStyle } from '@angular/common';
 import {
     AfterContentChecked,
-    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
@@ -9,7 +8,6 @@ import {
     inject,
     input,
     InputSignal,
-    InputSignalWithTransform,
     signal,
     Signal,
     viewChild,
@@ -19,7 +17,6 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '@rt-tools/core';
-import { TNullable } from '@rt-tools/utils';
 import { EPosition } from '@rt-tools/core';
 import { TInfoBadgeSizeType, EInfoBadgeSize } from './badge-info-enum';
 import { TIconSideType } from './icon-side.type';
@@ -38,26 +35,13 @@ const BEM_BLOCK: string = 'rtui-info-badge';
 export class RtuiInfoBadgeComponent implements AfterContentChecked {
     readonly #breakpoints: BreakpointService = inject(BreakpointService);
 
-    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
-    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
-    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
+    /** Экран узкий: замер кита, и другого источника у этого признака нет. */
+    protected readonly narrow: Signal<boolean> = computed(() => !!this.#breakpoints.isMobile());
     public size: InputSignal<TInfoBadgeSizeType> = input.required();
     public text: InputSignal<string> = input.required();
     public glyph: InputSignal<string> = input('');
     public iconSide: InputSignal<TIconSideType> = input<TIconSideType>(EPosition.RIGHT);
     public isFontBold: InputSignal<boolean> = input(false);
-    /**
-     * Признак узкого экрана.
-     *
-     * @deprecated Кит определяет его сам — `RtuiBreakpointsService`. Вход оставлен ради
-     * приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
-     */
-    public isMobile: InputSignalWithTransform<TNullable<boolean>, TNullable<boolean> | string> = input<
-        TNullable<boolean>,
-        TNullable<boolean> | string
-    >(null, {
-        transform: (value: TNullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
-    });
     public isTitleCollapsed: WritableSignal<boolean> = signal(false);
     public readonly contentRef: Signal<ElementRef<HTMLElement> | undefined> = viewChild('content');
 

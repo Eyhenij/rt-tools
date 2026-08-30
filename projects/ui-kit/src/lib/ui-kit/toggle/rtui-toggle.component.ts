@@ -58,6 +58,9 @@ export class RtuiToggleComponent implements OnInit, ControlValueAccessor {
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #breakpointService: BreakpointService = inject(BreakpointService);
 
+    /** Экран узкий: замер кита, и другого источника у этого признака нет. */
+    protected readonly narrow: Signal<TNullable<boolean>> = this.#breakpointService.isMobile;
+
     public formControl: FormControl<boolean> = new FormControl<boolean>(false, { nonNullable: true });
 
     public label: InputSignal<TNullable<string>> = input();
@@ -70,8 +73,6 @@ export class RtuiToggleComponent implements OnInit, ControlValueAccessor {
     public tooltipDisabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
-
-    public readonly isMobile: Signal<TNullable<boolean>> = this.#breakpointService.isMobile;
 
     #onTouched: () => void = noop;
     #onChanged: (value: boolean) => void = noop;

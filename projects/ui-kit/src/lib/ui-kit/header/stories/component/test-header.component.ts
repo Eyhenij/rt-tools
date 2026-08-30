@@ -32,7 +32,6 @@ import { RtuiHeaderCenterDirective, RtuiHeaderComponent, RtuiHeaderRightDirectiv
     providers: [],
 })
 export class TestHeaderComponent {
-    public isMobile: boolean = false;
     public isTabs: boolean = false;
     public title: string = '';
     public content: string = '';
