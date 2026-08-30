@@ -62,4 +62,32 @@ report "SC-AK-727 — каталог записи не разворачивае�
 # гонял бы линтер на каждый греп по дереву.
 report "SC-AK-726 — чтение линтера не зовёт" "$(after 'grep -n x src/a.ts')" ''
 
+# SC-AK-831. Команда линтера, не назвавшая правленый файл, названа в потоке ошибок один раз за
+# заход: обход всего дерева и пустой прогон от чистого линтера неотличимы, поэтому слово, а не
+# отбой. Дерево-фикстура объявляет ровно такую команду — путь в неё не подставляется.
+export TMPDIR="$TREE/tmp"
+mkdir -p "$TMPDIR"
+
+gap() {
+    jq -n --arg c "$1" --arg d "$TREE" --arg s "$2" \
+        '{session_id:$s,tool_name:"Bash",tool_input:{command:$c},cwd:$d}' \
+        | bash "$HOOKS/lint-after-edit.sh" 2>&1 >/dev/null
+}
+
+case "$(gap 'printf "x" > src/a.ts' заход-1)" in
+    *"не назвала правленый файл"*) report "SC-AK-831 — команда без пути названа" да да ;;
+    *) report "SC-AK-831 — команда без пути названа" нет да ;;
+esac
+
+report "SC-AK-831 — за тот же заход второй раз молчит" "$(gap 'printf "x" > src/a.ts' заход-1)" ''
+
+# Тот же файл, но команда линтера путь называет: слова нет вовсе.
+cat > "$TREE/.claude/rt-kit/project.sh" <<'PROFILE'
+rt_lint_for() { printf 'sh -c "echo замечание-линтера про %s; exit 1"' "$1"; }
+rt_is_app_code() { case "$1" in *.ts) return 0 ;; *) return 1 ;; esac; }
+rt_push_checks() { printf ''; }
+PROFILE
+
+report "SC-AK-831 — команда с путём молчит" "$(gap 'printf "x" > src/a.ts' заход-2)" ''
+
 suite_result "линтер по следам правки"
