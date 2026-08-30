@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.20.0 · hooks/browser-guard-no-other-drivers.sh · 7fee1c240c7f · правится надстройкой, не здесь
+# rt-kit v0.20.0 · hooks/browser-guard-no-other-drivers.sh · f81c066cd0a9 · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__playwright__.*|mcp__chrome-devtools__.*|Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/deny-tail.sh
 # Гард обходных путей к браузеру. PreToolUse.
@@ -19,6 +19,9 @@
 # интерактивный браузер. Отбиваются только глаголы вождения.
 #
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: помощник не назвал профиль — пропуск.
+
+# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+RT_GUARD_NAME=browser-guard-no-other-drivers
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

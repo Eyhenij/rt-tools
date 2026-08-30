@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.20.0 · hooks/handoff-entry-guard.sh · 2dd9e84cd2d6 · правится надстройкой, не здесь
+# rt-kit v0.20.0 · hooks/handoff-entry-guard.sh · e47552bdc09a · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit
 # Требует: rules/task-flow.md, hooks/deny-tail.sh
 # Гард входа из передачи: заход, начатый с передачи, не правит файлов, пока не загружено правило
@@ -14,6 +14,9 @@
 # Загрузка правила — по вызову инструмента правил за тот же заход.
 #
 # FAIL-OPEN: нет `jq`, нет записи хода, передачи в реплике нет → пропуск.
+
+# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+RT_GUARD_NAME=handoff-entry-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

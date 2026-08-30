@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.20.0 · hooks/git-guard-main.sh · bc1bb8535795 · правится надстройкой, не здесь
+# rt-kit v0.20.0 · hooks/git-guard-main.sh · 6c3b0c3b72f5 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/deny-tail.sh
+# Требует: hooks/deny-tail.sh, hooks/guard-note.sh
 # Гард главной ветки. PreToolUse на вызове коммита.
 #
 # Коммит в главную ветку минует ветку, PR и разбор, а поставка построена на них целиком —
@@ -13,6 +13,9 @@
 #
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: не репозиторий, нет гита, открепившийся HEAD, битый ввод — пропуск.
 # Сломанный гард не должен мешать работать.
+
+# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+RT_GUARD_NAME=git-guard-main
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
@@ -72,14 +75,6 @@ fi
 [ "$branch" = "$default" ] || exit 0
 
 reason="Отбито: коммит прямо в «${default}». Работа едет через ветку и PR — правило git-workflow. Заведи ветку отдельным вызовом и коммить в неё: подготовленные изменения при этом сохранятся. Если коммит в ${default} действительно нужен — спроси владельца, сам не обходи."
-
-# Отказ — наблюдение. Имя главной ветки в него не идёт: у деревьев оно своё, а счёт отказов
-# одинаков везде.
-rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# shellcheck disable=SC1090
-[ -f "$rt_hooks_dir/observe.sh" ] && . "$rt_hooks_dir/observe.sh" 2>/dev/null
-command -v rt_note >/dev/null 2>&1 \
-    && rt_note guard-deny res=git-guard-main "sid=$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
 
 # Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
 # Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.

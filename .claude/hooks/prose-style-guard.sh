@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.20.0 · hooks/prose-style-guard.sh · d4d00509d4a9 · правится надстройкой, не здесь
+# rt-kit v0.20.0 · hooks/prose-style-guard.sh · 27ccbf045513 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit
 # Требует: checks/check-prose-style.mjs, hooks/deny-tail.sh
 # Гард слога: канцелярит и слова, которых в этом дереве не пишут, не уезжают в файл.
@@ -12,6 +12,9 @@
 # отбивать за него правку соседней строки — значит сделать гард обходимым по необходимости.
 #
 # FAIL-OPEN: нет узла, нет проверки, чужой инструмент, не `.md` → пропуск.
+
+# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+RT_GUARD_NAME=prose-style-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

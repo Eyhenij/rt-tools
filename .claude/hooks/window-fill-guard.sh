@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.20.0 · hooks/window-fill-guard.sh · cc006181ca27 · правится надстройкой, не здесь
+# rt-kit v0.20.0 · hooks/window-fill-guard.sh · ad1098bf9dda · правится надстройкой, не здесь
 # rt-hook: PostToolUse .*
 # Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # rt-hook: PreToolUse .*
@@ -29,6 +29,9 @@
 #
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: нет размера окна, нет записи захода, нет разборщика, битый разбор —
 # работа РАЗРЕШАЕТСЯ (exit 0). Сломанный гард не имеет права заклинить работу.
+
+# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+RT_GUARD_NAME=window-fill-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

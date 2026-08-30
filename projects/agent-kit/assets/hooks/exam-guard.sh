@@ -33,6 +33,9 @@
 # FAIL-OPEN: нет jq, нет записи хода, чужой инструмент → пропуск. Сломанный гард не должен
 # мешать работать.
 
+# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+RT_GUARD_NAME=exam-guard
+
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 

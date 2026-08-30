@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.20.0 · hooks/git-guard-push-tests.sh · 8908ea1832be · правится надстройкой, не здесь
+# rt-kit v0.20.0 · hooks/git-guard-push-tests.sh · 89f83328ce72 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # Гард проверок перед пушем. PreToolUse на вызове пуша.
@@ -25,6 +25,9 @@
 # откатывается на полный прогон: гейт может оказаться строже нужного, но НИКОГДА не слабее.
 #
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: не репозиторий, битый ввод, нет профиля — пропуск.
+
+# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+RT_GUARD_NAME=git-guard-push-tests
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

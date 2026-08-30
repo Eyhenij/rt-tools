@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-kit v0.20.0 · hooks/docs-guard.sh · e65956d05b16 · правится надстройкой, не здесь
+# rt-kit v0.20.0 · hooks/docs-guard.sh · d9a2a17f6bd2 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|NotebookEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Требует: hooks/profile-check.sh, hooks/deny-tail.sh
+# Требует: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Гард пары «правка и её документ». PreToolUse.
 #
 # Расхождение кода с текстом беззвучно. Ни линтер, ни сборка, ни тесты не читают правила,
@@ -27,6 +27,9 @@
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: не репозиторий, нет разборщика, битый ввод, пустой список файлов —
 # пропуск.
 
+# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+RT_GUARD_NAME=docs-guard
+
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
@@ -38,16 +41,6 @@ command -v jq >/dev/null 2>&1 || exit 0
 tool="$(rt_hook_tool)"
 
 decide() {
-    # Наблюдение пишется только на отказе: подсказку гард раздаёт и там, где всё в порядке, и
-    # счёт, в котором они смешаны, не значит ничего.
-    if [ "$1" = "deny" ]; then
-        # shellcheck disable=SC1090
-        [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/observe.sh" ] \
-            && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/observe.sh" 2>/dev/null
-        command -v rt_note >/dev/null 2>&1 \
-            && rt_note guard-deny res=docs-guard "sid=$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
-    fi
-
     reason="$2"
     if [ "$1" = "deny" ]; then
         # shellcheck disable=SC1090

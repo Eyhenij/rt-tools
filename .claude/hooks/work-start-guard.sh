@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.20.0 · hooks/work-start-guard.sh · 31e6a853cdd6 · правится надстройкой, не здесь
+# rt-kit v0.20.0 · hooks/work-start-guard.sh · 977415ff0b52 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: hooks/deny-tail.sh, hooks/profile-check.sh
 # Гард начала работы: ход, правивший код приложения, не заканчивается, пока владелец в этом же
@@ -28,6 +28,9 @@
 #
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: нет `jq`, нет записи хода, нет признака дерева, повторный заход, любая
 # своя ошибка — ход РАЗРЕШАЕТСЯ (exit 0). Сломанный гард не имеет права заклинить работу.
+
+# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+RT_GUARD_NAME=work-start-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

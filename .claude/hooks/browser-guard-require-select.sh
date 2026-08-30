@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.20.0 · hooks/browser-guard-require-select.sh · 4f2b04673d46 · правится надстройкой, не здесь
+# rt-kit v0.20.0 · hooks/browser-guard-require-select.sh · f4a0d5432983 · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__claude-in-chrome__.*
 # Требует: hooks/deny-tail.sh
 # Гард свежести выбора браузера. PreToolUse на всех остальных вызовах расширения.
@@ -20,6 +20,9 @@
 # не в тот браузер.
 #
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: помощник не назвал профиль — пропуск.
+
+# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+RT_GUARD_NAME=browser-guard-require-select
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
