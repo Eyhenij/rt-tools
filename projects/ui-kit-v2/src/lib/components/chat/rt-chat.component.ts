@@ -5,6 +5,7 @@ import {
     afterRenderEffect,
     booleanAttribute,
     computed,
+    contentChild,
     effect,
     inject,
     input,
@@ -24,11 +25,16 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
+import { NgTemplateOutlet } from '@angular/common';
+
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, RT_KIT_LOCALE, TRtKitLabelKey, TRtKitLabelMap, rtKitLabel } from '../../i18n';
+import { RtChatMessageActionsDirective } from './rt-chat-message-actions.directive';
+import { RtChatMessageHasActionsPipe } from './rt-chat-message-actions.pipe';
 import { RtChatStatusLabelPipe } from '../../pipes/rt-chat-status-label.pipe';
 import { RtButtonDirective } from '../button/rt-button.directive';
+import { RtMenuComponent } from '../menu/rt-menu.component';
 import { RtConfirmDirective } from '../confirm-popover/rt-confirm.directive';
 import { RtDeltaViewComponent } from '../delta-view/rt-delta-view.component';
 import { RtFileCardComponent } from '../file-card/rt-file-card.component';
@@ -75,6 +81,7 @@ const ATTACHMENT_FALLBACK_KEY: TRtKitLabelKey = 'chatAttachmentFallback';
         // Angular
         CdkTextareaAutosize,
         DatePipe,
+        NgTemplateOutlet,
         ReactiveFormsModule,
 
         // standalone components / directives
@@ -86,6 +93,8 @@ const ATTACHMENT_FALLBACK_KEY: TRtKitLabelKey = 'chatAttachmentFallback';
         RtFileDropComponent,
         RtIconButtonComponent,
         RtIconComponent,
+        RtChatMessageHasActionsPipe,
+        RtMenuComponent,
         RtMessageComposerComponent,
         RtNoteComponent,
         RtSkeletonWrapperComponent,
@@ -214,6 +223,13 @@ export class RtChatComponent {
      */
     protected readonly droppedFiles: WritableSignal<File[] | null> = signal<File[] | null>(null);
 
+    /**
+     * Шаблон действий у реплики: `<ng-template rtChatMessageActions let-message>`.
+     *
+     * Не объявлен — разметка реплики прежняя, и лишней кнопки у неё не появляется.
+     */
+    protected readonly messageActions: Signal<RtChatMessageActionsDirective | undefined> = contentChild(RtChatMessageActionsDirective);
+
     /** История сообщений (consumer уже смаппил из доменной модели). */
     public readonly messages: InputSignal<readonly IRtChat.Message[]> = input<readonly IRtChat.Message[]>([]);
 
@@ -310,7 +326,8 @@ export class RtChatComponent {
     /** Клик refresh — consumer перетягивает тред. */
     public readonly refresh: OutputEmitterRef<void> = output<void>();
 
-    /** Клик по вложению — consumer качает blob своим api. */
+    /** Клик по вложению — consumer качает blob своим api. Шаблон зовёт выход прямо: релей-метод,
+     * который только повторял `emit`, ничего не добавлял, а файл при этом рос. */
     public readonly downloadFile: OutputEmitterRef<IRtChat.Message> = output<IRtChat.Message>();
 
     /** Клик по карточке вложения из `attachments[]` — консюмер качает по `publicId`. */
@@ -323,6 +340,16 @@ export class RtChatComponent {
 
     /** Повторная отправка своего сообщения со статусом `failed`. */
     public readonly retryMessage: OutputEmitterRef<IRtChat.Message> = output<IRtChat.Message>();
+
+    /**
+     * Есть ли у реплики действия потребителя — гейт кнопки «…» у неё.
+     *
+     * Не задан — точка действий показывается у каждой реплики: экран, который ничего не
+     * гейтит, показывает её так же, как это делает строка таблицы.
+     */
+    public readonly messageHasActions: InputSignal<IRtChat.MessageActionsPredicate | null> = input<IRtChat.MessageActionsPredicate | null>(
+        null
+    );
 
     constructor() {
         this.#formValue = toSignal(this.replyForm.valueChanges, {
@@ -457,29 +484,6 @@ export class RtChatComponent {
                 }
             }, delay);
         }
-    }
-
-    protected onRefresh(): void {
-        this.refresh.emit();
-    }
-
-    protected onDownload(message: IRtChat.Message): void {
-        this.downloadFile.emit(message);
-    }
-
-    /** Релей клика по вложению наружу — сам компонент файлов не качает. */
-    protected onDownloadAttachment(attachment: IRtChat.Attachment): void {
-        this.downloadAttachment.emit(attachment);
-    }
-
-    /** Релей запроса на удаление сообщения — удаляет домен, компонент только рисует. */
-    protected onDeleteMessage(message: IRtChat.Message): void {
-        this.deleteMessage.emit(message);
-    }
-
-    /** Релей повтора отправки упавшего сообщения — переотправляет домен. */
-    protected onRetryMessage(message: IRtChat.Message): void {
-        this.retryMessage.emit(message);
     }
 
     protected toggleExpand(): void {

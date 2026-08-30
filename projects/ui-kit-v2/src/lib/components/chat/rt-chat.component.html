@@ -19,7 +19,7 @@
                             [tooltip]="t().chatRefreshTooltip"
                             [loading]="fetching()"
                             [disabled]="!hasThread()"
-                            (clicked)="onRefresh()" />
+                            (clicked)="refresh.emit()" />
                     }
                     @if (showExpand()) {
                         <rt-icon-button
@@ -78,7 +78,7 @@
                                             [ariaLabel]="t().chatDeleteAria"
                                             [tooltip]="t().chatDeleteTooltip"
                                             [rtConfirm]="m.deleteConfirm"
-                                            (confirmed)="onDeleteMessage(m)" />
+                                            (confirmed)="deleteMessage.emit(m)" />
                                     } @else {
                                         <rt-icon-button
                                             rtElem="message-delete"
@@ -87,7 +87,18 @@
                                             variant="ghost"
                                             [ariaLabel]="t().chatDeleteAria"
                                             [tooltip]="t().chatDeleteTooltip"
-                                            (clicked)="onDeleteMessage(m)" />
+                                            (clicked)="deleteMessage.emit(m)" />
+                                    }
+                                }
+                                @if (messageActions()?.template; as actionsTpl) {
+                                    @if (m | rtChatMessageHasActions: messageHasActions()) {
+                                        <div rtElem="message-actions" qa-dataid="chat-message-actions">
+                                            <rt-menu>
+                                                <ng-container
+                                                    [ngTemplateOutlet]="actionsTpl"
+                                                    [ngTemplateOutletContext]="{ $implicit: m }" />
+                                            </rt-menu>
+                                        </div>
                                     }
                                 }
                                 <div rtElem="message" [rtMod]="{ own: m.own, deleted: m.deleted }">
@@ -109,7 +120,7 @@
                                                         showDownload
                                                         size="sm"
                                                         [name]="att.name || attachmentFallbackName()"
-                                                        (download)="onDownloadAttachment(att)" />
+                                                        (download)="downloadAttachment.emit(att)" />
                                                 </span>
                                             }
                                         } @else if (m.fileUrl) {
@@ -118,7 +129,7 @@
                                                     showDownload
                                                     size="sm"
                                                     [name]="m.fileName || attachmentFallbackName()"
-                                                    (download)="onDownload(m)" />
+                                                    (download)="downloadFile.emit(m)" />
                                             </span>
                                         }
                                         @if (m.deepLink) {
@@ -155,7 +166,7 @@
                                                         variant="ghost"
                                                         [ariaLabel]="t().chatRetryAria"
                                                         [tooltip]="t().chatRetryTooltip"
-                                                        (clicked)="onRetryMessage(m)" />
+                                                        (clicked)="retryMessage.emit(m)" />
                                                 } @else {
                                                     <!-- Часы, пока сообщение в пути; дальше двойной чек, цвет которого
                                                          (серый/синий) различает доставлено и прочитано. -->
