@@ -8,11 +8,21 @@
       "find": "(window\\.)?(local|session)Storage\\.",
       "instead": "службы хранилища @rt-tools/core"
     },
-    { "key": "raw-media-query", "ext": ".ts", "find": "matchMedia\\(", "instead": "BreakpointsService" },
+    {
+      "key": "raw-media-query",
+      "ext": ".ts",
+      "find": "(^|[^.\\w#$])matchMedia\\(",
+      "strip": "'[^'\\n]*'|\"[^\"\\n]*\"|`[^`]*`",
+      "skipBackendRoots": true,
+      "instead": "BreakpointsService"
+    },
     {
       "key": "raw-window",
       "ext": ".ts",
-      "find": "(^|[^.\\w])(window|document)\\.",
+      "find": "(^|[^.\\w#$])(window|document)\\.",
+      "strip": "'[^'\\n]*'|\"[^\"\\n]*\"|`[^`]*`",
+      "cancel": "(const|let|var)\\s+(window|document)\\b|\\b(window|document)\\s*:\\s*[A-Za-z{(]|\\((window|document)\\s*:",
+      "skipBackendRoots": true,
       "instead": "PlatformService и токены среды @rt-tools/core"
     }
   ]
