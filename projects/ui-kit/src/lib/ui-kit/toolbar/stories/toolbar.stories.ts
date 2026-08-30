@@ -81,7 +81,7 @@ export const StickyOff: TStory = {
  * Узкий экран: высота панели объявлена медиа-запросом по ширине окна показа, и переключает его
  * рамка кадра. Входа узкого экрана у панели нет вовсе.
  */
-export const Narrow: TStory = {
+export const NarrowViewport: TStory = {
     globals: { viewport: { value: 'narrow' } },
     args: {
         hasLeft: true,
