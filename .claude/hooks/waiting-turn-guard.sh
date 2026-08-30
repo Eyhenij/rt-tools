@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.20.0 · hooks/waiting-turn-guard.sh · e419d22688d3 · правится надстройкой, не здесь
+# rt-kit v0.20.0 · hooks/waiting-turn-guard.sh · c6bd3809bc02 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: hooks/deny-tail.sh
 # Гард ожидания: ход, сообщающий владельцу о чужом шаге, не заканчивается, пока в нём не было ни
@@ -30,6 +30,9 @@
 #
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: при любой ошибке, нехватке `jq`, отсутствии записи хода и повторном
 # заходе ход РАЗРЕШАЕТСЯ (exit 0). Сломанный гард не имеет права заклинить разговор.
+
+# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+RT_GUARD_NAME=waiting-turn-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

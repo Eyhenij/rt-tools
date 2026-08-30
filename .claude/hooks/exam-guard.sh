@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.20.0 · hooks/exam-guard.sh · 40b744065402 · правится надстройкой, не здесь
+# rt-kit v0.20.0 · hooks/exam-guard.sh · e49b65074405 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file|Bash|mcp__webstorm__execute_terminal_command
 # Требует: agents/strict-teacher.md, hooks/roles.sh, hooks/deny-tail.sh, hooks/write-targets.sh
 # Гард экзамена: правка не идёт, пока за сессию не сдан экзамен по загруженным правилам.
@@ -33,6 +33,9 @@
 #
 # FAIL-OPEN: нет jq, нет записи хода, чужой инструмент → пропуск. Сломанный гард не должен
 # мешать работать.
+
+# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+RT_GUARD_NAME=exam-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.20.0 · hooks/postmortem-guard.sh · 241cdbd23e33 · правится надстройкой, не здесь
+# rt-kit v0.20.0 · hooks/postmortem-guard.sh · ce4f9b99c6c9 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: hooks/deny-tail.sh
 # Гард происшествия: ход, в котором исполнитель признал промах, не заканчивается, пока записи о
@@ -21,6 +21,9 @@
 #
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: при любой ошибке, отсутствии записи хода и повторном заходе ход
 # РАЗРЕШАЕТСЯ (exit 0). Сломанный гард не имеет права заклинить разговор.
+
+# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+RT_GUARD_NAME=postmortem-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

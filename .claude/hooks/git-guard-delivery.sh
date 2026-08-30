@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.20.0 · hooks/git-guard-delivery.sh · 4f0116ecb1fb · правится надстройкой, не здесь
+# rt-kit v0.20.0 · hooks/git-guard-delivery.sh · 692d298ab150 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Гард поставки. PreToolUse на заведении ветки, пуше и открытии заявки на слияние.
@@ -39,6 +39,9 @@
 # Отказ называет и то, что не так, и чем это чинится: отказ без действия обходят, а не исполняют.
 #
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: не репозиторий, нет разборщика, битый ввод, нет профиля — пропуск.
+
+# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+RT_GUARD_NAME=git-guard-delivery
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
@@ -132,9 +135,6 @@ folder_skip_re='(^|#)[[:space:]]*Task-folder-skip:[[:space:]]*[^[:space:]<"'"'"'
 deny() {
     # Отказ гарда — наблюдение: гард, отбивающий чаще прочих, говорит, какое место поставки раз
     # за разом делают не так. Текст отказа туда не идёт: в нём номера задач и имена веток дерева.
-    # shellcheck disable=SC1090
-    [ -f "$rt_hooks_dir/guard-note.sh" ] && . "$rt_hooks_dir/guard-note.sh" 2>/dev/null
-    command -v rt_guard_note >/dev/null 2>&1 && rt_guard_note git-guard-delivery "$sid"
 
     # Хвост отказа: два законных хода и форма обхода вторым параметром.
     # shellcheck disable=SC1090

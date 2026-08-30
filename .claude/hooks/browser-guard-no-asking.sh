@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.20.0 · hooks/browser-guard-no-asking.sh · 9eceade2efb3 · правится надстройкой, не здесь
+# rt-kit v0.20.0 · hooks/browser-guard-no-asking.sh · 294834d01a4e · правится надстройкой, не здесь
 # rt-hook: PreToolUse AskUserQuestion
 # Требует: hooks/deny-tail.sh
 # PreToolUse guard for AskUserQuestion.
@@ -14,6 +14,9 @@
 # (deviceId, "which/what browser", "какой браузер").
 #
 # FAIL-OPEN when browser-device-id.sh prints nothing.
+
+# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+RT_GUARD_NAME=browser-guard-no-asking
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

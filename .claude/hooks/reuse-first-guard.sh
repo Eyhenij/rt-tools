@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.20.0 · hooks/reuse-first-guard.sh · 4e9ba617c1ca · правится надстройкой, не здесь
+# rt-kit v0.20.0 · hooks/reuse-first-guard.sh · 1e3381930ff6 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # Гард «ничего не пишется с нуля». PreToolUse на правке кода и разметки.
@@ -32,6 +32,9 @@
 # «эти строки были здесь раньше» причиной не считается, и оттого проверяется только НОВЫЙ текст.
 #
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: нет разборщика, битый ввод, чужой инструмент — пропуск.
+
+# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+RT_GUARD_NAME=reuse-first-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

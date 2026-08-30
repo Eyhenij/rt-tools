@@ -26,6 +26,9 @@
 # ОТКАЗ В ПОЛЬЗУ РАБОТЫ: не репозиторий, нет разборщика, битый ввод, пустой список файлов —
 # пропуск.
 
+# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+RT_GUARD_NAME=docs-guard
+
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
@@ -37,15 +40,6 @@ command -v jq >/dev/null 2>&1 || exit 0
 tool="$(rt_hook_tool)"
 
 decide() {
-    # Наблюдение пишется только на отказе: подсказку гард раздаёт и там, где всё в порядке, и
-    # счёт, в котором они смешаны, не значит ничего.
-    if [ "$1" = "deny" ]; then
-        # shellcheck disable=SC1090
-        [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/guard-note.sh" ] \
-            && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/guard-note.sh" 2>/dev/null
-        command -v rt_guard_note >/dev/null 2>&1 && rt_guard_note docs-guard "$input"
-    fi
-
     reason="$2"
     if [ "$1" = "deny" ]; then
         # shellcheck disable=SC1090

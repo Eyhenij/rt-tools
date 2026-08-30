@@ -14,6 +14,9 @@
 # Где именно подняты приложения, знает профиль проекта: .claude/rt-kit/project.sh, переменная
 # RT_STANDS. Нет профиля — текст отказа остаётся общим, сам гард работает.
 
+# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+RT_GUARD_NAME=dev-server-guard
+
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
