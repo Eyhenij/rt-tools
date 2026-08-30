@@ -1,4 +1,4 @@
-// rt-kit v0.22.0 · checks/signals.mjs · e71a09297730 · правится надстройкой, не здесь
+// rt-kit v0.22.0 · checks/signals.mjs · 5e3ae19b2266 · правится надстройкой, не здесь
 /**
  * Наборы признаков единообразия: что дерево объявило своим и что при этом читается.
  *
@@ -49,6 +49,46 @@ function readBundle(name) {
     return parseSignals(readFileSync(path, 'utf8'));
 }
 
+/** Признак, ищущий нативный тег: `<input\\b`, `<textarea\\b`, `<select\\b`. */
+const NATIVE_TAG = /^<([a-z]+)\\b$/;
+
+/** Спецзнаки выражения в имени директивы: имя приходит из настройки дерева, а не из кода. */
+function escaped(name) {
+    return name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Директивы своей дизайн-системы вычёркиваются из признаков нативных тегов.
+ *
+ * Источник вида в дереве бывает не один: панель владельца собирается набором кита, публичный
+ * сайт — своей системой, и закон о единообразии разводит их по приложениям. Директива такой
+ * системы стоит на нативном теге ровно так же, как директива кнопки кита, — и признак кнопки её
+ * уже вырезает своим `strip`, а признаки поля, области текста и списка не вырезают ничего: форма,
+ * собранная из готового своего, числится расхождением целиком, пять полей из пяти.
+ *
+ * Список директив называет дерево — ключом `reuse.kitDirectives`. Не назвало — не вырезается
+ * ничего, и дерево с одним источником вида ведёт себя как прежде.
+ */
+export function withKitDirectives(signals, directives) {
+    const names = (directives ?? []).filter(Boolean).map(escaped);
+    if (names.length === 0) {
+        return signals;
+    }
+
+    const alternatives = names.join('|');
+
+    return signals.map((signal) => {
+        const tag = NATIVE_TAG.exec(signal.find ?? '')?.[1];
+        if (!tag || signal.ext !== '.html') {
+            return signal;
+        }
+
+        const own = `<${tag}\\b[^>]*(?:${alternatives})[^>]*>`;
+
+        return { ...signal, strip: signal.strip ? `${signal.strip}|${own}` : own };
+    });
+}
+
 /**
  * Признаки объявленных наборов, а поверх них — свои признаки дерева.
  *
@@ -85,5 +125,5 @@ export function loadSignals(config, root) {
         );
     }
 
-    return [...byKey.values()];
+    return withKitDirectives([...byKey.values()], config.kitDirectives);
 }
