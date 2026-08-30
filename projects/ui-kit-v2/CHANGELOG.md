@@ -1,3 +1,14 @@
+# [0.8.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.7.0...rt-ui-kit-v2@0.8.0) (2026-08-30)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** поле берёт состояние формы обоих родов ([59afc06](https://github.com/Eyhenij/rt-tools/commit/59afc06284d28341b7dff47cc96c4d1ea6b83b28))
+
+### Features
+
+- **rt:ui-kit-v2:** исход мутации панель показывает внутри себя ([1129d1e](https://github.com/Eyhenij/rt-tools/commit/1129d1e0c3268c1bfe750c04c3394fb49af9a3b6))
+- **rt:ui-kit-v2:** своё действие у реплики переписки объявляется шаблоном потребителя ([8614459](https://github.com/Eyhenij/rt-tools/commit/86144591f5db8c174e1f371dd4dc73a17f962f66))
+
 # [0.7.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.6.0...rt-ui-kit-v2@0.7.0) (2026-08-26)
 
 ### Bug Fixes
