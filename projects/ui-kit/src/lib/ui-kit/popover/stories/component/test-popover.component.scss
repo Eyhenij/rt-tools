@@ -1,0 +1,32 @@
+:host {
+    position: relative;
+    display: block;
+    min-height: 12rem;
+
+    .body {
+        max-width: 20rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--rt-border-neutral-default);
+        border-radius: 0.5rem;
+        background-color: var(--rt-bg-base-base);
+
+        &__title {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        &__list {
+            margin: 0 0 0.5rem;
+            padding-left: 1rem;
+        }
+    }
+
+    /*
+     * Класс от потребителя садится на хост слоя привязкой — правило целит в сам хост, а не
+     * внутрь него: инкапсуляция дальше хоста дочернего компонента не пускает.
+     */
+    rtui-popover-container.popover-accent {
+        outline: 2px solid var(--rt-border-accent-primary);
+        outline-offset: 0.25rem;
+    }
+}
