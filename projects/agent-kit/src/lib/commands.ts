@@ -905,6 +905,37 @@ function weightsOfSkills(root: string, dir: string, names: readonly string[]): T
     return found;
 }
 
+/**
+ * Имена гардов, разложенных в это дерево.
+ *
+ * Гардом считается тот, кто умеет записать свой отбой: хук без такой записи в наблюдениях не
+ * появится ни при каком отрезке, и молчащим он назывался бы неверно — он молчит не потому, что не
+ * понадобился. Имя берётся из самой записи, а не из имени файла: записывается в наблюдение
+ * именно оно, и разойтись им нельзя.
+ *
+ * Каталог спрашивается у дерева, а не у пакета: свои гарды дерева лежат в нём же и пишут
+ * наблюдения наравне с пакетными — перечень от пакета не назвал бы ни одного из них.
+ */
+function guardsOfTree(root: string, dir: string): readonly string[] {
+    const at: string = join(root, dir);
+
+    if (!existsSync(at)) {
+        return [];
+    }
+
+    const found: Set<string> = new Set();
+
+    for (const file of readdirSync(at)) {
+        const named: RegExpExecArray | null = /rt_note\s+guard-deny\s+res=([A-Za-z0-9._-]+)/.exec(readFileSync(join(at, file), 'utf8'));
+
+        if (named) {
+            found.add(named[1]);
+        }
+    }
+
+    return [...found].sort(byText);
+}
+
 /** Байты человеку: килобайтами, потому что счёт идёт на сотни тысяч и читается по одному. */
 function kbOf(bytes: number): string {
     return `${Math.round(bytes / 1024)} КБ`;
@@ -978,6 +1009,14 @@ function statsLines(summary: ISummary, swept: readonly string[], days: number, v
                   ...countLines(summary.guards),
               ]
             : []),
+        ...(summary.silentGuards.length
+            ? [
+                  '',
+                  `гарды не отбивали ни разу: ${summary.silentGuards.length}`,
+                  ...summary.silentGuards.map((name: string): string => `  ${name}`),
+                  '  — стоял и не понадобился или стоял и не работал, по сводке это одно и то же',
+              ]
+            : []),
         ...(swept.length ? ['', `снято по сроку хранения (${KEEP_DAYS} дн.): ${swept.length}`] : []),
         '',
         `пакет v${version}`,
@@ -1015,7 +1054,13 @@ export function stats(env: IEnvironment, options: IStatsOptions): IOutcomeOfComm
     const known: readonly string[] = laidOutSkills(config, assetsDir);
     // Вес спрашивается у дерева, а не у пакета: правило дерево могло переписать надстройкой, и
     // заход читал то, что лежит здесь, а не то, что уехало бы из пакета.
-    const summary: ISummary = summarize(result.observations, known, days, weightsOfSkills(root, config.layout.rules, known));
+    const summary: ISummary = summarize(
+        result.observations,
+        known,
+        days,
+        weightsOfSkills(root, config.layout.rules, known),
+        guardsOfTree(root, config.layout.hooks)
+    );
 
     if (options.json) {
         return { code: 0, lines: [JSON.stringify({ ...summary, swept: result.swept })] };

@@ -733,6 +733,20 @@ describe('stats', () => {
         expect(JSON.parse(stats(env, { days: 3, today: TODAY, json: true }).lines[0]).unused).toContain('git-workflow');
     });
 
+    it('SC-AK-809 — гард, не отбивший за отрезок ни разу, назван отдельной строкой', () => {
+        start();
+        sync(env, false);
+        observed([{ ev: 'guard-deny', res: 'docs-guard', sid: '1' }]);
+
+        const lines: string = said(summed());
+
+        expect(lines).toContain('гарды не отбивали ни разу');
+        // Отбивавший стоит в счётчиках отказов и в молчащие не попадает: иначе раздел говорил бы
+        // о всех гардах дерева разом и не отвечал бы ни на один вопрос.
+        expect(JSON.parse(stats(env, { days: 3, today: TODAY, json: true }).lines[0]).silentGuards).not.toContain('docs-guard');
+        expect(JSON.parse(stats(env, { days: 3, today: TODAY, json: true }).lines[0]).silentGuards).toContain('git-guard-main');
+    });
+
     it('длинный список незагруженного обрывается вслух', () => {
         start();
         sync(env, false);

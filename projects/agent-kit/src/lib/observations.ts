@@ -84,6 +84,14 @@ export interface ISummary {
     readonly denialsOffFile: number;
     readonly guards: readonly ICount[];
     /**
+     * Гарды, разложенные в дерево и не отбившие за отрезок ни разу.
+     *
+     * Считается той же разностью, что и незагруженные правила, и по той же причине: в самих
+     * наблюдениях молчащего гарда нет по определению, а из перечня защит его никто не вычеркнет
+     * — молчащий гард и ненужный выглядят одинаково ровно до разбора.
+     */
+    readonly silentGuards: readonly string[];
+    /**
      * Правила, разложенные в дерево и не загруженные за отрезок ни разу. Мёртвый ресурс иначе
      * неотличим от работающего — и это единственная строка сводки, которую нельзя получить из
      * самих наблюдений.
@@ -225,17 +233,28 @@ const OFF_FILE_KINDS: readonly string[] = ['command', 'browser'];
  * «чем пользовались», а самое ценное — чем не пользовались ни разу — сказать нечем: в самих
  * наблюдениях незагруженного правила нет по определению.
  *
+ * `guards` — имена гардов, разложенных в это дерево. Гардом здесь считается тот, кто умеет
+ * записать свой отбой: хук без такой записи в наблюдениях не появится ни при каком отрезке, и
+ * молчащим он назывался бы неверно — он молчит не потому, что не понадобился.
+ *
  * `weights` — вес этих правил на диске. Без них сводка говорит, сколько раз правило открывали, и
  * молчит о том, во что это обошлось: тридцать загрузок паттерна и тридцать загрузок правила на
  * пятьсот строк стоят разного, а в счёте выглядят одинаково. Не назван — вес считается нулём, и
  * строки о нём в выводе не будет вовсе.
  */
-export function summarize(observations: readonly IObservation[], known: readonly string[], days: number, weights: TWeights = {}): ISummary {
+export function summarize(
+    observations: readonly IObservation[],
+    known: readonly string[],
+    days: number,
+    weights: TWeights = {},
+    guards: readonly string[] = []
+): ISummary {
     const loads: readonly IObservation[] = of(observations, 'skill-load');
     const denials: readonly IObservation[] = of(observations, 'gate-deny');
     const loaded: Set<string> = new Set(loads.map((entry: IObservation): string => entry.resource));
     const sessions: number = new Set(observations.map((entry: IObservation): string => entry.session).filter(Boolean)).size;
     const bytes: number = loads.reduce((found: number, entry: IObservation): number => found + (weights[entry.resource] ?? 0), 0);
+    const denied: Set<string> = new Set(of(observations, 'guard-deny').map((entry: IObservation): string => entry.resource));
 
     return {
         days,
@@ -247,6 +266,7 @@ export function summarize(observations: readonly IObservation[], known: readonly
         kinds: countBy(denials.map((entry: IObservation): string => entry.kind)),
         denialsOffFile: denials.filter((entry: IObservation): boolean => OFF_FILE_KINDS.includes(entry.kind)).length,
         guards: countBy(of(observations, 'guard-deny').map((entry: IObservation): string => entry.resource)),
+        silentGuards: guards.filter((name: string): boolean => !denied.has(name)).sort(byText),
         unused: known.filter((name: string): boolean => !loaded.has(name)).sort(byText),
         versions: [...new Set(observations.map((entry: IObservation): string => entry.version).filter(Boolean))].sort(byText),
         total: observations.length,
