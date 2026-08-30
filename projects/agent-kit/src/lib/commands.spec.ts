@@ -545,6 +545,43 @@ describe('doctor', () => {
         expect((): string => get(LAW)).toThrow();
     });
 
+    it('SC-AK-821 — разбор состояния печатает итоговый набор перед пушем', () => {
+        start();
+        // Набор собирается из двух файлов, и прочитать сборку было нечем: дерево, пишущее
+        // надстройку, не видело умолчания и дописывало в него повтор.
+        put(
+            '.claude/rt-kit/defaults/project.sh',
+            'rt_push_checks_default() { printf "%s\\n" "npm run lint"; }\nrt_push_checks() { rt_push_checks_default "$@"; }\n'
+        );
+
+        const said_: string = said(doctor(env));
+
+        expect(said_).toContain('набор перед пушем: 1');
+        expect(said_).toContain('  npm run lint');
+    });
+
+    it('SC-AK-821 — что умолчание печатало, а в набор не попало, названо отдельно', () => {
+        start();
+        // Строка выглядела настройкой, а была снятием охраны — и со стороны это неотличимо от
+        // проверки, которой в умолчании нет вовсе.
+        put(
+            '.claude/rt-kit/defaults/project.sh',
+            'rt_push_checks_default() { printf "%s\\n" "npm run lint" "node tools/check-reuse.mjs"; }\nrt_push_checks() { rt_push_checks_default "$@"; }\n'
+        );
+        put('.claude/rt-kit/project.sh', 'rt_push_checks() { rt_push_checks_default "$@" | grep -v check-reuse; }\n');
+
+        const said_: string = said(doctor(env));
+
+        expect(said_).toContain('умолчание печатало, а в наборе нет: 1');
+        expect(said_).toContain('  node tools/check-reuse.mjs');
+    });
+
+    it('SC-AK-821 — без профиля дерева раздел называет причину, а не молчит', () => {
+        start();
+
+        expect(said(doctor(env))).toContain('набор перед пушем: собрать не удалось');
+    });
+
     it('о неразложенном говорит в настоящем времени: он ничего не писал', () => {
         start();
         const outcome: IOutcomeOfCommand = doctor(env);

@@ -94,4 +94,27 @@ CLAUDE_PROJECT_DIR="$SWITCH_GATE" expect_reason "SC-AK-405 — отказ наз
     'Раздели вызовы'
 rm -rf "$SWITCH_GATE"
 
+# --- SC-AK-820 — чем набор гейта уже набора конвейера --------------------------------------
+# Правило требует, чтобы гейт не был уже конвейера, а собрать это требование нечем: файл
+# конвейера у каждого дерева свой. Молчание при этом читается как «проверено всё», и расхождение
+# узнаётся из красного конвейера после заявки. Говорится оно один раз за сессию — на каждый пуш
+# та же строка повторялась бы за заход десятки раз.
+GAP_GATE="$(fixture_repo RT-76-gap)"
+mkdir -p "$GAP_GATE/.claude/rt-kit"
+printf 'rt_push_checks() { printf "%%s\\n" true; }\n' > "$GAP_GATE/.claude/rt-kit/project.sh"
+
+gap_says() {
+    CLAUDE_PROJECT_DIR="$GAP_GATE" jq -n --arg c 'git push origin RT-76-gap' --arg d "$GAP_GATE" --arg s "$1" \
+        '{session_id:$s,cwd:$d,tool_name:"Bash",tool_input:{command:$c}}' \
+        | CLAUDE_PROJECT_DIR="$GAP_GATE" "$HOOKS/git-guard-push-tests.sh" 2>&1 >/dev/null \
+        | grep -c 'не набор конвейера'
+}
+
+GAP_SESSION="gap-$$-$RANDOM"
+rm -f "${TMPDIR:-/tmp}/rt-kit-push-gate-gap-$GAP_SESSION"
+report "SC-AK-820 — первый пуш сессии называет разницу с конвейером" "$(gap_says "$GAP_SESSION")" 1
+report "SC-AK-820 — второй пуш той же сессии молчит" "$(gap_says "$GAP_SESSION")" 0
+rm -f "${TMPDIR:-/tmp}/rt-kit-push-gate-gap-$GAP_SESSION"
+rm -rf "$GAP_GATE"
+
 suite_result "гард проверок перед пушем"
