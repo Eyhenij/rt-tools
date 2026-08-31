@@ -33,7 +33,8 @@
 - **Ярус, которому нужен ответ очереди работ, без ответа молчит.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:rt_pull_state`
 - **Заход закрывается одной командой.** — `projects/agent-kit/assets/commands/next-session.md:ARGUMENTS`
 - **Команда закрытия захода сперва узнаёт, ведётся ли работа по правилу.** — `projects/agent-kit/assets/commands/next-session.md:rt_task_branch_ok`
-- **У работы по правилу с влитым PR дерево переходит на главную ветку и подтягивает удалённую.** — `projects/agent-kit/assets/commands/next-session.md:switch`
+- **У работы по правилу с влитым PR локальная главная двигается до удалённой без перехода на неё.** — `projects/agent-kit/assets/commands/next-session.md:fetch`
+- **Влитость ветки судится от удалённой ссылки, а не от локальной главной.** — `projects/agent-kit/assets/commands/next-session.md:merged` — оба вызова счёта, влитых и невлитых, берут `origin/<главная>`
 - **Во всех прочих случаях главная ветка вливается в текущую.** — `projects/agent-kit/assets/commands/next-session.md:merge`
 - **Незакоммиченная правка останавливает закрытие захода до первого действия.** — `projects/agent-kit/assets/commands/next-session.md:status`
 - **Снимаются только влитые локальные ветки.** — `projects/agent-kit/assets/commands/next-session.md:merged`
