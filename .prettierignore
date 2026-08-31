@@ -68,6 +68,7 @@ tools/check-*.mjs
 tools/spec-*.mjs
 tools/rt-kit-checks.config.mjs
 tools/task-new.mjs
+tools/board-long-work.mjs
 tools/signals.mjs
 # Наборы признаков разложены пакетом, и первой строкой у них шапка раскладки: в JSON
 # комментария нет, и форматтер на ней спотыкается. Правятся они в пакете, а не здесь.
