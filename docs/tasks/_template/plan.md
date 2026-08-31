@@ -1,4 +1,4 @@
-<!-- rt-kit v0.22.0 · samples/tasks/_template/plan.md · 8efa6d5c3c3d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.23.0 · samples/tasks/_template/plan.md · 8efa6d5c3c3d · правится надстройкой, не здесь -->
 # Замысел
 
 **Задача:** <КЛЮЧ>-<номер> · **Ветка:** <ветка>

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.22.0 · checks/check-turn-map.mjs · 35316b8bb267 · правится надстройкой, не здесь
+// rt-kit v0.23.0 · checks/check-turn-map.mjs · 35316b8bb267 · правится надстройкой, не здесь
 /**
  * Сверка карты хода: её размер и её полнота.
  *

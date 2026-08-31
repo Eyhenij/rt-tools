@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.22.0 · hooks/conscience-guard.sh · abdfafa69e79 · правится надстройкой, не здесь
+# rt-kit v0.23.0 · hooks/conscience-guard.sh · abdfafa69e79 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: agents/conscience.md, hooks/roles.sh, hooks/deny-tail.sh
 # Гард совести: ход, в котором роль совести нашла повтор разобранного промаха, не заканчивается,

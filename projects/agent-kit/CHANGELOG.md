@@ -1,3 +1,25 @@
+# [0.23.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.22.0...rt-agent-kit@0.23.0) (2026-08-31)
+
+### Bug Fixes
+
+- **rt:agent-kit:** вопрос о поддержке браузеров не судится как выбор профиля ([66da38e](https://github.com/Eyhenij/rt-tools/commit/66da38ea1317ce5766e384573661a210fac74e84))
+- **rt:agent-kit:** номер задачи из имени ветки вынимает профиль ([d50192d](https://github.com/Eyhenij/rt-tools/commit/d50192ddaf79c3fde3e8eebb126ab1cb0e44d1f2))
+- **rt:agent-kit:** проверка единообразия читается измерителем, а не заданием ([fe95e66](https://github.com/Eyhenij/rt-tools/commit/fe95e66f9fd98f1cbfa943a299317f0f57513cd0))
+
+### Features
+
+- **rt:agent-kit:** гард разговора видит, что на этот вопрос уже отвечали ([61c2498](https://github.com/Eyhenij/rt-tools/commit/61c2498caeef37347d0f836510d48a22add19f7c))
+- **rt:agent-kit:** главная ветка берётся удалённой ссылкой и в действиях ([7302e02](https://github.com/Eyhenij/rt-tools/commit/7302e0234da3341031850d3b21dc931f483c9779))
+- **rt:agent-kit:** закон об автономном заходе, правило и паттерн под него ([ae60552](https://github.com/Eyhenij/rt-tools/commit/ae60552e4f1cf12ac045e2b724844420a8c1d664))
+- **rt:agent-kit:** набор перед пушем виден целиком, а снятое из умолчания названо ([9426373](https://github.com/Eyhenij/rt-tools/commit/9426373ef1213e021a4c2f11101a4beee85be03f))
+- **rt:agent-kit:** отданная заявка доводится до готовности, а не бросается черновиком ([81a9478](https://github.com/Eyhenij/rt-tools/commit/81a94780c5e94b1bd7cd5d17529f0e4e7d895a85)), closes [#1646](https://github.com/Eyhenij/rt-tools/issues/1646)
+- **rt:agent-kit:** правка числа элементов в контейнере — правка раскладки ([7358733](https://github.com/Eyhenij/rt-tools/commit/73587336c2ad7946baea41b4561d48622185f352))
+- **rt:agent-kit:** признаки нативных тегов знают о второй дизайн-системе ([ff69acc](https://github.com/Eyhenij/rt-tools/commit/ff69acc7f9b7dbbdc914dc73cedceb69257bf239))
+- **rt:agent-kit:** пропуск сверки схемы кончается там, где ветка тронула хранилище ([135119c](https://github.com/Eyhenij/rt-tools/commit/135119cd82384c0ca20932dcd2494a18eea9b996))
+- **rt:agent-kit:** разведка образца и форма ответа владельцу ([3c387d8](https://github.com/Eyhenij/rt-tools/commit/3c387d86ef70ec55bea1e2c3aed811a3b5de2732))
+- **rt:agent-kit:** сверка очереди видит многозаходную работу и упавшую выкатку ([1c22403](https://github.com/Eyhenij/rt-tools/commit/1c2240379469c2e823a40104dd7ad27d511ed52b))
+- **rt:agent-kit:** словарь называет источник своей правки сам ([d650228](https://github.com/Eyhenij/rt-tools/commit/d65022837d086ee398875c874653dc256f1ce553))
+
 # [0.22.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.21.0...rt-agent-kit@0.22.0) (2026-08-30)
 
 ### Bug Fixes

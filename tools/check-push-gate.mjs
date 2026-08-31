@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.22.0 · checks/check-push-gate.mjs · 2e342aaeee82 · правится надстройкой, не здесь
+// rt-kit v0.23.0 · checks/check-push-gate.mjs · 2e342aaeee82 · правится надстройкой, не здесь
 /**
  * Проверка того, что набор гейта пуша не уже набора конвейера.
  *
