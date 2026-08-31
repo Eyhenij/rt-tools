@@ -1,6 +1,5 @@
 import {
     AfterViewInit,
-    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
@@ -12,7 +11,6 @@ import {
     Injector,
     input,
     InputSignal,
-    InputSignalWithTransform,
     OnInit,
     output,
     OutputEmitterRef,
@@ -47,24 +45,11 @@ export class RtuiPaginationComponent implements OnInit, AfterViewInit {
     readonly #fb: FormBuilder = inject(FormBuilder);
     readonly #windowRef: Window = inject(WINDOW);
 
-    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
-    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
-    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
+    /** Экран узкий: замер кита, и другого источника у этого признака нет. */
+    protected readonly narrow: Signal<boolean> = computed(() => !!this.#breakpoints.isMobile());
 
     /** Current Page Model */
     public currentPageModel: InputSignal<IPageModel> = input.required();
-    /**
-     * Признак узкого экрана.
-     *
-     * @deprecated Кит определяет его сам — `RtuiBreakpointsService`. Вход оставлен ради
-     * приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
-     */
-    public isMobile: InputSignalWithTransform<TNullable<boolean>, TNullable<boolean> | string> = input<
-        TNullable<boolean>,
-        TNullable<boolean> | string
-    >(null, {
-        transform: (value: TNullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
-    });
 
     /** Output action when Page Model changed */
     public readonly pageModelChange: OutputEmitterRef<Partial<IPageModel>> = output<Partial<IPageModel>>();

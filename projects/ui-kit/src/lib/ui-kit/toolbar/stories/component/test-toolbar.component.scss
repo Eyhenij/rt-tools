@@ -1,0 +1,22 @@
+:host {
+    display: block;
+    width: 100%;
+    margin: -1rem;
+
+    .title {
+        overflow: hidden;
+        padding: 0 1rem;
+        font-weight: 500;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .page {
+        padding: 0 1rem;
+
+        &__row {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--rt-border-neutral-default);
+        }
+    }
+}

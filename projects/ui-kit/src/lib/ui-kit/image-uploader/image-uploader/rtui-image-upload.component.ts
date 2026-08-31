@@ -71,27 +71,14 @@ export class RtuiImageUploadComponent {
     };
     readonly #originalMimeType: WritableSignal<string | null> = signal(null);
 
-    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
-    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
-    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
+    /** Экран узкий: замер кита, и другого источника у этого признака нет. */
+    protected readonly narrow: Signal<boolean> = computed(() => !!this.#breakpoints.isMobile());
     protected readonly imageFormat: Signal<TImageUploadFormat> = computed((): TImageUploadFormat => {
         const type: TNullable<string> = this.#originalMimeType();
         return this.#formats[type?.toLowerCase() || ''] || 'png';
     });
 
     public imageUrl: ModelSignal<TNullable<string>> = model.required<TNullable<string>>();
-    /**
-     * Признак узкого экрана.
-     *
-     * @deprecated Кит определяет его сам — `RtuiBreakpointsService`. Вход оставлен ради
-     * приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
-     */
-    public isMobile: InputSignalWithTransform<TNullable<boolean>, TNullable<boolean> | string> = input<
-        TNullable<boolean>,
-        TNullable<boolean> | string
-    >(null, {
-        transform: (value: TNullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
-    });
     public fileName: InputSignalWithTransform<string, string> = input<string, string>('image', {
         transform: transformStringInput,
     });

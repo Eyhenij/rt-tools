@@ -43,18 +43,10 @@ const BEM_BLOCK: string = 'rtui-clear-button';
 export class RtuiClearButtonComponent {
     readonly #breakpoints: BreakpointService = inject(BreakpointService);
 
-    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
-    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
-    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
+    /** Экран узкий: замер кита, и другого источника у этого признака нет. */
+    protected readonly narrow: Signal<boolean> = computed(() => !!this.#breakpoints.isMobile());
     readonly #defaultTooltipPosition: TooltipPosition = 'above';
 
-    /**
-     * Признак узкого экрана.
-     *
-     * @deprecated Кит определяет его сам — `BreakpointService` из `@rt-tools/core`. Вход
-     * оставлен ради приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
-     */
-    public isMobile: InputSignal<TNullable<boolean>> = input<TNullable<boolean>>(null);
     public isButtonShown: InputSignalWithTransform<TNullable<boolean>, boolean> = input<TNullable<boolean>, boolean>(true, {
         transform: booleanAttribute,
     });

@@ -8,7 +8,6 @@ import {
     Directive,
     inject,
     input,
-    InputSignal,
     InputSignalWithTransform,
     output,
     OutputEmitterRef,
@@ -70,16 +69,8 @@ const BEM_BLOCK: string = 'rtui-header';
 export class RtuiHeaderComponent {
     readonly #breakpoints: BreakpointService = inject(BreakpointService);
 
-    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
-    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
-    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
-    /**
-     * Признак узкого экрана.
-     *
-     * @deprecated Кит определяет его сам — `BreakpointService` из `@rt-tools/core`. Вход
-     * оставлен ради приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
-     */
-    public isMobile: InputSignal<TNullable<boolean>> = input<TNullable<boolean>>(null);
+    /** Экран узкий: замер кита, и другого источника у этого признака нет. */
+    protected readonly narrow: Signal<boolean> = computed(() => !!this.#breakpoints.isMobile());
     public isMobileMenuButtonShown: InputSignalWithTransform<TNullable<boolean>, TNullable<boolean>> = input<
         TNullable<boolean>,
         TNullable<boolean>
@@ -100,8 +91,7 @@ export class RtuiHeaderComponent {
     public readonly openMobileMenuAction: OutputEmitterRef<void> = output<void>();
 
     public openSideMenu(): void {
-        // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
-        if (this.isMobile() && this.isMobileMenuButtonShown()) {
+        if (this.narrow() && this.isMobileMenuButtonShown()) {
             this.openMobileMenuAction.emit();
         }
     }
