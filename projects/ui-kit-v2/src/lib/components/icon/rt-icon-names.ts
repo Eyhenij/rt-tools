@@ -288,6 +288,8 @@ export const iconsName = [
     'percentage',
     'phone',
     'pie-chart',
+    'pin',
+    'pin-off',
     'plus-circle',
     'power-off',
     'print',

@@ -2,10 +2,12 @@ import {
     activeSectionIds,
     entryKindOf,
     ERtPageHeaderEntry,
+    filterSection,
     IRtPageHeaderView,
     panelGroupsOf,
     panelItemsOf,
     pathOf,
+    pinnedSectionOf,
     toEntry,
     toSections,
     unreadOf,
@@ -212,5 +214,45 @@ describe('activeSectionIds', () => {
 
     it('раздел без панели в подсветке по адресу не участвует — за него отвечает routerLinkActive', () => {
         expect(activeSectionIds(sections, '/bookings').has('bookings')).toBe(false);
+    });
+});
+
+describe('pinnedSectionOf', () => {
+    const sections: ReadonlyArray<IRtPageHeaderView.Section> = toSections([SETTINGS, item('bookings', { route: '/bookings' })]);
+
+    it('отдаёт раздел, чей адрес открыт', () => {
+        expect(pinnedSectionOf(sections, activeSectionIds(sections, '/settings/mail'))?.id).toBe('settings');
+    });
+
+    it('без активного раздела отдаёт пустоту — закреплять нечего', () => {
+        expect(pinnedSectionOf(sections, activeSectionIds(sections, '/nowhere'))).toBeNull();
+    });
+});
+
+describe('filterSection', () => {
+    const section: IRtPageHeaderView.Section = toSections([SETTINGS])[0];
+
+    it('SC-UKV-101 — запрос отбирает пункты по подстроке подписи', () => {
+        // Регистр запроса значения не имеет: подпись ищут глазами, а не побайтово.
+        expect(filterSection(section, 'TAGS').panelItems.map((entry: IRtPageHeaderView.Entry): string => entry.id)).toEqual(['tags']);
+    });
+
+    it('SC-UKV-102 — группа без совпадений не рисуется', () => {
+        const groups: ReadonlyArray<IRtPageHeaderView.Group> = filterSection(section, 'mail').panelGroups;
+
+        expect(groups.map((group: IRtPageHeaderView.Group): string => group.id)).toEqual(['mail']);
+    });
+
+    it('SC-UKV-103 — колонка без совпадений уходит, и ширина панели пересчитывается', () => {
+        const filtered: IRtPageHeaderView.Section = filterSection(section, 'tags');
+
+        expect(filtered.columns.map((column: IRtPageHeaderView.Column): string => column.id)).toEqual(['references']);
+        expect(filtered.columnCount).toBe(1);
+    });
+
+    it('SC-UKV-105 — пустой запрос возвращает набор целиком', () => {
+        // Не «столько же пунктов», а тот же раздел: пересобранный, он дал бы
+        // новую ссылку на каждый пересчёт и перерисовывал бы панель впустую.
+        expect(filterSection(section, '   ')).toBe(section);
     });
 });

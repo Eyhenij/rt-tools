@@ -18,7 +18,7 @@
         display: flex;
         width: calc(var(--rt-nav-panel-columns-width) + var(--rt-nav-panel-gaps-width) + var(--rt-nav-panel-padding-width));
         box-sizing: border-box;
-        align-items: flex-start;
+        flex-direction: column;
         padding: var(--rt-nav-panel-padding-y) var(--rt-nav-panel-padding);
         border: var(--rt-nav-panel-border-width) solid var(--rt-nav-panel-color-border);
         border-radius: var(--rt-nav-panel-radius);
@@ -27,7 +27,32 @@
         color: var(--rt-nav-panel-item-color);
         font-size: var(--rt-nav-panel-item-font-size);
         font-weight: var(--rt-nav-panel-item-font-weight);
-        gap: var(--rt-nav-panel-column-gap);
+        gap: var(--rt-nav-panel-group-gap);
+
+        /* Поле поиска и переключатель стоят одной строкой над колонками. */
+        &__head {
+            display: flex;
+            align-items: center;
+            gap: var(--rt-nav-panel-item-gap);
+        }
+
+        &__search {
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+
+        /* Ряд колонок: раскладку панели держит он, а не сам блок — над ним
+           стоит шапка, и колонки в ней не участвуют. */
+        &__body {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--rt-nav-panel-column-gap);
+        }
+
+        &__empty {
+            padding: var(--rt-nav-panel-item-padding);
+            color: var(--rt-nav-panel-group-color);
+        }
 
         &__column {
             display: flex;
@@ -149,6 +174,40 @@
 
         &__icon {
             flex-shrink: 0;
+        }
+
+        /* Переключатель моды стоит в шапке панели, рядом с полем поиска. */
+        &__pin {
+            display: inline-flex;
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: center;
+            padding: var(--rt-nav-panel-item-padding);
+            border: none;
+            border-radius: var(--rt-nav-panel-item-radius);
+            background-color: transparent;
+            color: var(--rt-nav-panel-group-color);
+            cursor: pointer;
+            transition: color var(--rt-nav-panel-item-transition-duration);
+
+            &:hover {
+                color: var(--rt-nav-panel-item-color);
+            }
+
+            &:focus {
+                outline: none;
+            }
+
+            &:focus-visible {
+                outline: 2px dashed var(--rt-nav-color-focus);
+                outline-offset: 2px;
+            }
+        }
+
+        /* Закреплённая панель стоит в потоке: тень принадлежит всплывающей и
+           здесь только спорила бы с полосой разделов над ней. */
+        &--pinned {
+            box-shadow: none;
         }
     }
 }

@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
     computed,
     effect,
@@ -16,6 +17,7 @@ import {
     WritableSignal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Event as RouterEvent, NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { filter, map } from 'rxjs';
@@ -26,9 +28,17 @@ import { RT_KIT_LABELS, RT_KIT_TRANSLATOR, RtKitLabelPipe, TRtKitLabelMap, TRtKi
 import { BreakpointsService } from '../../platform';
 
 import { RtIconComponent } from '../icon';
+import { RtInputComponent } from '../input';
 import { RtPopoverDirective } from '../popover';
 import { RtTooltipDirective } from '../tooltip';
-import { activeSectionIds, ERtPageHeaderEntry, IRtPageHeaderView, toSections } from './rt-page-header.logic';
+import {
+    activeSectionIds,
+    ERtPageHeaderEntry,
+    IRtPageHeaderView,
+    filterSection,
+    pinnedSectionOf,
+    toSections,
+} from './rt-page-header.logic';
 import { IRtPageHeader } from './rt-page-header.model';
 
 const BEM_BLOCK: string = 'rt-page-header';
@@ -59,11 +69,14 @@ const BEM_BLOCK: string = 'rt-page-header';
     imports: [
         RtKitLabelPipe,
         // Angular
+        NgTemplateOutlet,
+        ReactiveFormsModule,
         RouterLink,
         RouterLinkActive,
 
         // standalone components / directives
         RtIconComponent,
+        RtInputComponent,
         RtPopoverDirective,
         RtTooltipDirective,
         BlockDirective,
@@ -91,6 +104,13 @@ export class RtPageHeaderComponent {
 
     readonly #breakpoints: BreakpointsService = inject(BreakpointsService);
 
+    /** Панель закреплённого раздела с уже применённым отбором. */
+    readonly #pinnedPanel: Signal<IRtPageHeaderView.Section | null> = computed((): IRtPageHeaderView.Section | null => {
+        const section: IRtPageHeaderView.Section | null = pinnedSectionOf(this.sections(), this.activeSectionIds());
+
+        return section === null ? null : filterSection(section, this.panelQuery());
+    });
+
     readonly #translate: Signal<TRtKitTranslator> = inject(RT_KIT_TRANSLATOR);
 
     /** Переводчик для чистого пайпа подписи: шаблон отдаёт его вторым доводом. */
@@ -113,6 +133,40 @@ export class RtPageHeaderComponent {
      */
     protected readonly activeSectionIds: Signal<ReadonlySet<string>> = computed((): ReadonlySet<string> =>
         activeSectionIds(this.sections(), this.#currentUrl())
+    );
+
+    /**
+     * Запрос поиска по пунктам открытой панели. Живёт, пока панель открыта, и
+     * предпочтением не является: закрытие всплывающей его стирает.
+     */
+    protected readonly panelSearch: FormControl<string> = new FormControl<string>('', { nonNullable: true });
+
+    protected readonly panelQuery: Signal<string> = toSignal(this.panelSearch.valueChanges, { initialValue: '' });
+
+    /**
+     * Раздел верхнего ряда и его панель после отбора. Пара, а не два списка:
+     * подпись раздела и подсветка считаются по исходному набору, а рисуется
+     * панель отобранным.
+     */
+    protected readonly panelViews: Signal<ReadonlyArray<{ section: IRtPageHeaderView.Section; panel: IRtPageHeaderView.Section }>> =
+        computed((): ReadonlyArray<{ section: IRtPageHeaderView.Section; panel: IRtPageHeaderView.Section }> =>
+            this.sections().map(
+                (section: IRtPageHeaderView.Section): { section: IRtPageHeaderView.Section; panel: IRtPageHeaderView.Section } => ({
+                    section,
+                    panel: filterSection(section, this.panelQuery()),
+                })
+            )
+        );
+
+    /** Закреплённая мода: панель стоит в потоке, а попап у триггера выключен. */
+    protected readonly isPinned: Signal<boolean> = computed((): boolean => this.panelMode() === 'pinned');
+
+    /**
+     * Панель, которая стоит в потоке. Пусто во всплывающей моде и на узком
+     * экране: там панели нет вовсе, и переключателю её моды взяться неоткуда.
+     */
+    protected readonly pinnedSection: Signal<IRtPageHeaderView.Section | null> = computed((): IRtPageHeaderView.Section | null =>
+        this.isPinned() && !this.isNarrow() ? this.#pinnedPanel() : null
     );
 
     protected readonly userAvatar: Signal<string> = computed((): string => {
@@ -146,6 +200,9 @@ export class RtPageHeaderComponent {
 
     public readonly userMenu: InputSignal<TemplateRef<unknown> | null> = input<TemplateRef<unknown> | null>(null);
 
+    /** Чем панель второго уровня держится открытой. Умолчание — сегодняшнее поведение. */
+    public readonly panelMode: InputSignal<IRtPageHeader.PanelMode> = input<IRtPageHeader.PanelMode>('hover');
+
     /** Пусто — берётся переведённая подпись по умолчанию */
     public readonly ariaLabel: InputSignal<string> = input<string>('');
 
@@ -155,6 +212,9 @@ export class RtPageHeaderComponent {
     public readonly itemClick: OutputEmitterRef<string> = output<string>();
 
     public readonly userClick: OutputEmitterRef<void> = output<void>();
+
+    /** Мода, которую человек попросил переключателем. Сменить вход — дело потребителя. */
+    public readonly panelModeChange: OutputEmitterRef<IRtPageHeader.PanelMode> = output<IRtPageHeader.PanelMode>();
 
     constructor() {
         // Ресайз обратно в десктоп — гамбургер скрывается CSS'ом; открытую
@@ -172,6 +232,21 @@ export class RtPageHeaderComponent {
 
     protected onUserClick(): void {
         this.userClick.emit();
+    }
+
+    /** Нажатие переключателя: моду компонент не меняет, а просит её у потребителя. */
+    protected onPanelModeToggle(): void {
+        this.panelModeChange.emit(this.isPinned() ? 'hover' : 'pinned');
+    }
+
+    /** Переход по пункту панели: всплывающую закрываем, закреплённой закрывать нечего. */
+    protected onPanelLinkClick(popover: RtPopoverDirective | null): void {
+        popover?.close();
+    }
+
+    /** Всплывающая панель закрылась: запрос уходит вместе с ней. */
+    protected onPanelClosed(): void {
+        this.panelSearch.setValue('');
     }
 
     /** Аккордеон мобильной панели: тумблер раскрытия раздела по его id. */

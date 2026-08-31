@@ -1,7 +1,8 @@
 import { DebugElement } from '@angular/core';
-import { ComponentFixture } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Router, Routes, provideRouter } from '@angular/router';
 
+import { BreakpointsService } from '../../platform';
 import { createRtFixture, el, hostClasses, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
 import { IRtPageHeader } from './rt-page-header.model';
 import { RtPageHeaderComponent } from './rt-page-header.component';
@@ -21,12 +22,61 @@ const ITEMS: ReadonlyArray<IRtPageHeader.Item> = [
     },
 ];
 
+/** Адреса под навигацию: один лежит в панели раздела, второй — нигде. */
+const ROUTES: Routes = [
+    { path: 'sales', children: [] },
+    { path: 'nowhere', children: [] },
+];
+
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtPageHeaderComponent> {
     return createRtFixture(RtPageHeaderComponent, { items: ITEMS, ...inputs }, { providers: [provideRouter([])] });
 }
 
 function navItems(fixture: ComponentFixture<RtPageHeaderComponent>): HTMLElement[] {
     return qaAll(fixture, 'header-nav-item').map((node: DebugElement): HTMLElement => node.nativeElement as HTMLElement);
+}
+
+/** Подмена наблюдателя ширины: в тестовой среде он ничего не измеряет. */
+class NarrowBreakpointsService {
+    public readonly narrow: () => boolean = (): boolean => true;
+}
+
+/**
+ * Шапка на заданном адресе. Закреплённая панель показывает раздел открытого
+ * адреса, поэтому без настоящей навигации ей нечего показывать.
+ */
+async function setupAt(
+    url: string,
+    inputs: Readonly<Record<string, unknown>> = {},
+    narrow: boolean = false
+): Promise<ComponentFixture<RtPageHeaderComponent>> {
+    const fixture: ComponentFixture<RtPageHeaderComponent> = createRtFixture(
+        RtPageHeaderComponent,
+        { items: ITEMS, ...inputs },
+        {
+            providers: narrow
+                ? [provideRouter(ROUTES), { provide: BreakpointsService, useClass: NarrowBreakpointsService }]
+                : [provideRouter(ROUTES)],
+        }
+    );
+    await TestBed.inject(Router).navigateByUrl(url);
+    fixture.detectChanges();
+
+    return fixture;
+}
+
+/** Панель, стоящая в потоке разметки: всплывающая живёт в оверлее, вне хоста. */
+function panelInFlow(fixture: ComponentFixture<RtPageHeaderComponent>): DebugElement | null {
+    return el(fixture, '.rt-page-header-submenu');
+}
+
+/** Набор запроса в поле панели: значение уходит в контрол через событие ввода. */
+function typeInPanelSearch(fixture: ComponentFixture<RtPageHeaderComponent>, query: string): void {
+    const field: HTMLInputElement = qa(fixture, 'input-control')?.nativeElement as HTMLInputElement;
+    expect(field).toBeDefined();
+    field.value = query;
+    field.dispatchEvent(new Event('input', { bubbles: true }));
+    fixture.detectChanges();
 }
 
 describe('RtPageHeaderComponent', (): void => {
@@ -125,5 +175,83 @@ describe('RtPageHeaderComponent', (): void => {
 
     it('пустой набор разделов рисует шапку без пунктов', (): void => {
         expect(navItems(setup({ items: [] })).length).toBe(0);
+    });
+
+    describe('мода панели второго уровня', (): void => {
+        it('SC-UKV-96 — потребитель, не назвавший моду, получает всплывающую панель', (): void => {
+            // Уход указателя закрывает панель не сразу: у попапа своя отсрочка,
+            // и время в спеке двигается вручную — среда прогона zoneless.
+            jest.useFakeTimers();
+            try {
+                const fixture: ComponentFixture<RtPageHeaderComponent> = setup();
+
+                expect(panelInFlow(fixture)).toBeNull();
+
+                qa(fixture, 'header-nav-trigger')?.nativeElement.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+                fixture.detectChanges();
+
+                expect(document.querySelector('[qa-dataid="header-nav-column"]')).not.toBeNull();
+
+                qa(fixture, 'header-nav-trigger')?.nativeElement.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
+                jest.advanceTimersByTime(200);
+                fixture.detectChanges();
+
+                expect(document.querySelector('[qa-dataid="header-nav-column"]')).toBeNull();
+            } finally {
+                jest.useRealTimers();
+            }
+        });
+
+        it('SC-UKV-97 — закреплённая панель не закрывается уходом указателя', async (): Promise<void> => {
+            const fixture: ComponentFixture<RtPageHeaderComponent> = await setupAt('/sales', { panelMode: 'pinned' });
+
+            expect(panelInFlow(fixture)).not.toBeNull();
+
+            panelInFlow(fixture)?.nativeElement.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
+            fixture.detectChanges();
+
+            expect(panelInFlow(fixture)).not.toBeNull();
+        });
+
+        it('SC-UKV-98 — нажатие переключателя моду не меняет, а просит её', async (): Promise<void> => {
+            // Предпочтение хранит потребитель: кит только сообщает о нажатии.
+            const fixture: ComponentFixture<RtPageHeaderComponent> = await setupAt('/sales', { panelMode: 'pinned' });
+            const asked: jest.Mock = jest.fn();
+            fixture.componentInstance.panelModeChange.subscribe(asked);
+
+            (qa(fixture, 'header-nav-pin')?.nativeElement as HTMLElement).click();
+            fixture.detectChanges();
+
+            expect(asked).toHaveBeenCalledTimes(1);
+            expect(asked).toHaveBeenCalledWith('hover');
+            expect(fixture.componentInstance.panelMode()).toBe('pinned');
+        });
+
+        it('SC-UKV-99 — закреплённая панель показывает раздел открытого адреса', async (): Promise<void> => {
+            const fixture: ComponentFixture<RtPageHeaderComponent> = await setupAt('/sales', { panelMode: 'pinned' });
+
+            expect(textOf(panelInFlow(fixture))).toContain('Продажи');
+        });
+
+        it('SC-UKV-100 — активного раздела нет — закреплённой панели нет', async (): Promise<void> => {
+            const fixture: ComponentFixture<RtPageHeaderComponent> = await setupAt('/nowhere', { panelMode: 'pinned' });
+
+            expect(panelInFlow(fixture)).toBeNull();
+        });
+
+        it('SC-UKV-104 — совпадений нет — панель говорит об этом строкой', async (): Promise<void> => {
+            const fixture: ComponentFixture<RtPageHeaderComponent> = await setupAt('/sales', { panelMode: 'pinned' });
+
+            typeInPanelSearch(fixture, 'такого пункта нет');
+
+            expect(qa(fixture, 'header-nav-column')).toBeNull();
+            expect(textOf(qa(fixture, 'header-nav-empty'))).toBe('Nothing found');
+        });
+
+        it('SC-UKV-106 — на узком экране переключателя нет', async (): Promise<void> => {
+            const fixture: ComponentFixture<RtPageHeaderComponent> = await setupAt('/sales', { panelMode: 'pinned' }, true);
+
+            expect(qa(fixture, 'header-nav-pin')).toBeNull();
+        });
     });
 });

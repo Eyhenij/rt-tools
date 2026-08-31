@@ -119,6 +119,55 @@ export function toSections(items: ReadonlyArray<IRtPageHeader.Item>): ReadonlyAr
     });
 }
 
+/**
+ * Раздел, чья панель стоит закреплённой: тот, в чьей панели открыт адрес.
+ * Своего входа под закреплённый раздел нет — второй источник того же разошёлся
+ * бы с подсветкой кнопки молча.
+ */
+export function pinnedSectionOf(
+    sections: ReadonlyArray<IRtPageHeaderView.Section>,
+    activeIds: ReadonlySet<string>
+): IRtPageHeaderView.Section | null {
+    return sections.find((section: IRtPageHeaderView.Section): boolean => activeIds.has(section.id)) ?? null;
+}
+
+/**
+ * Раздел с пунктами, отобранными по подстроке подписи. Пустые группы и пустые
+ * колонки выброшены, ширина панели пересчитана по оставшимся колонкам.
+ * Пустой запрос возвращает раздел как есть.
+ *
+ * Отбор живёт здесь, а не в шаблоне: порог сложности разметки шапки снят
+ * точечно, и это записанный долг, а не разрешение ветвиться в ней дальше.
+ */
+export function filterSection(section: IRtPageHeaderView.Section, query: string): IRtPageHeaderView.Section {
+    const needle: string = query.trim().toLowerCase();
+    if (needle === '') {
+        return section;
+    }
+
+    const columns: ReadonlyArray<IRtPageHeaderView.Column> = section.columns
+        .map((column: IRtPageHeaderView.Column): IRtPageHeaderView.Column => ({
+            ...column,
+            groups: column.groups
+                .map((group: IRtPageHeaderView.Group): IRtPageHeaderView.Group => ({
+                    ...group,
+                    items: group.items.filter((entry: IRtPageHeaderView.Entry): boolean => entry.label.toLowerCase().includes(needle)),
+                }))
+                .filter((group: IRtPageHeaderView.Group): boolean => group.items.length > 0),
+        }))
+        .filter((column: IRtPageHeaderView.Column): boolean => column.groups.length > 0);
+
+    return {
+        ...section,
+        columns,
+        columnCount: columns.length,
+        panelItems: columns.flatMap((column: IRtPageHeaderView.Column): ReadonlyArray<IRtPageHeaderView.Entry> =>
+            column.groups.flatMap((group: IRtPageHeaderView.Group): ReadonlyArray<IRtPageHeaderView.Entry> => group.items)
+        ),
+        panelGroups: panelGroupsOf(columns),
+    };
+}
+
 /** Адрес без строки запроса и якоря — подсветка считается по пути. */
 export function pathOf(url: string): string {
     return url.split(/[?#]/)[0] ?? '';

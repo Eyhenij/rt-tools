@@ -1,7 +1,9 @@
 <ng-container rtBlock="rt-page-header">
     <nav rtElem="nav" [attr.aria-label]="navAriaLabel()">
         <ul rtElem="list" role="list">
-            @for (section of sections(); track section.id) {
+            @for (view of panelViews(); track view.section.id) {
+                @let section = view.section;
+
                 <li rtElem="item" qa-dataid="header-nav-item" [attr.data-id]="section.id">
                     @switch (section.kind) {
                         @case (EntryKind.Panel) {
@@ -19,8 +21,11 @@
                                 }"
                                 [attr.aria-haspopup]="true"
                                 [attr.aria-expanded]="groupPopover.isOpen()"
-                                [rtPopover]="submenuTpl"
-                                (click)="groupPopover.open()">
+                                [rtPopover]="panelTpl"
+                                [rtPopoverContext]="{ section: view.panel, popover: groupPopover }"
+                                [rtPopoverDisabled]="isPinned()"
+                                (click)="groupPopover.open()"
+                                (rtPopoverClosed)="onPanelClosed()">
                                 @if (section.icon) {
                                     <rt-icon rtElem="icon" size="sm" [name]="section.icon" />
                                 }
@@ -37,85 +42,6 @@
                                     <rt-icon name="chevron-up-down" size="xs" />
                                 </span>
                             </button>
-                            <ng-template #submenuTpl>
-                                <div rtBlock="rt-page-header-submenu" role="menu" [style.--rt-nav-panel-columns]="section.columnCount">
-                                    @for (column of section.columns; track column.id) {
-                                        <div rtElem="column" qa-dataid="header-nav-column" [attr.data-id]="column.id">
-                                            @for (group of column.groups; track group.id) {
-                                                <div rtElem="group" role="group" [attr.aria-label]="group.label || null">
-                                                    @if (group.label) {
-                                                        <div rtElem="group-title" qa-dataid="header-nav-group" [attr.data-id]="group.id">
-                                                            @if (group.icon) {
-                                                                <rt-icon rtElem="group-icon" size="xs" [name]="group.icon" />
-                                                            }
-                                                            <span rtElem="group-label">{{ group.label }}</span>
-                                                        </div>
-                                                    }
-                                                    @for (entry of group.items; track entry.id) {
-                                                        @if (entry.kind === EntryKind.Link) {
-                                                            <a
-                                                                rtElem="link"
-                                                                role="menuitem"
-                                                                qa-dataid="header-nav-subitem"
-                                                                routerLinkActive="rt-page-header-submenu__link--is-active"
-                                                                [attr.data-id]="entry.id"
-                                                                [routerLink]="entry.route"
-                                                                [routerLinkActiveOptions]="{ exact: entry.routerLinkActiveExact }"
-                                                                (click)="groupPopover.close()">
-                                                                <span rtElem="label">{{ entry.label }}</span>
-                                                                @if (entry.unread) {
-                                                                    <span
-                                                                        rtElem="marker"
-                                                                        role="img"
-                                                                        qa-dataid="header-nav-marker"
-                                                                        [attr.data-id]="entry.id"
-                                                                        [attr.aria-label]="t().uiNavUnread"></span>
-                                                                }
-                                                            </a>
-                                                        } @else if (entry.disabled) {
-                                                            <span
-                                                                rtElem="disabled-slot"
-                                                                role="none"
-                                                                [rtTooltip]="
-                                                                    'uiSectionInProgress' | rtKitLabel: translate() : { label: entry.label }
-                                                                ">
-                                                                <button
-                                                                    rtElem="link"
-                                                                    role="menuitem"
-                                                                    type="button"
-                                                                    qa-dataid="header-nav-subitem"
-                                                                    [rtMod]="{ disabled: true }"
-                                                                    [attr.data-id]="entry.id"
-                                                                    [attr.aria-disabled]="true">
-                                                                    <span rtElem="label">{{ entry.label }}</span>
-                                                                </button>
-                                                            </span>
-                                                        } @else {
-                                                            <button
-                                                                rtElem="link"
-                                                                role="menuitem"
-                                                                type="button"
-                                                                qa-dataid="header-nav-subitem"
-                                                                [attr.data-id]="entry.id"
-                                                                (click)="onItemClick(entry.id)">
-                                                                <span rtElem="label">{{ entry.label }}</span>
-                                                                @if (entry.unread) {
-                                                                    <span
-                                                                        rtElem="marker"
-                                                                        role="img"
-                                                                        qa-dataid="header-nav-marker"
-                                                                        [attr.data-id]="entry.id"
-                                                                        [attr.aria-label]="t().uiNavUnread"></span>
-                                                                }
-                                                            </button>
-                                                        }
-                                                    }
-                                                </div>
-                                            }
-                                        </div>
-                                    }
-                                </div>
-                            </ng-template>
                         }
                         @case (EntryKind.Link) {
                             <a
@@ -172,6 +98,120 @@
             }
         </ul>
     </nav>
+
+    @if (pinnedSection(); as pinned) {
+        <ng-container *ngTemplateOutlet="panelTpl; context: { $implicit: { section: pinned, popover: null } }" />
+    }
+
+    <ng-template #panelTpl let-panel>
+        @let section = panel.section;
+        @let popover = panel.popover;
+
+        <div
+            rtBlock="rt-page-header-submenu"
+            role="menu"
+            [style.--rt-nav-panel-columns]="section.columnCount"
+            [rtMod]="{ pinned: isPinned() }">
+            <div rtElem="head" role="none">
+                <rt-input
+                    rtElem="search"
+                    iconLeft="search"
+                    qa-dataid="header-nav-search"
+                    [formControl]="panelSearch"
+                    [placeholder]="t().uiSearch"
+                    [ariaLabel]="t().uiSearch" />
+                <button
+                    rtElem="pin"
+                    role="menuitemcheckbox"
+                    type="button"
+                    qa-dataid="header-nav-pin"
+                    [attr.aria-checked]="isPinned()"
+                    [attr.aria-label]="isPinned() ? t().uiUnpinPanel : t().uiPinPanel"
+                    [attr.title]="isPinned() ? t().uiUnpinPanel : t().uiPinPanel"
+                    (click)="onPanelModeToggle()">
+                    <rt-icon size="xs" [name]="isPinned() ? 'pin-off' : 'pin'" />
+                </button>
+            </div>
+            @if (panelQuery() !== '' && section.columnCount === 0) {
+                <div rtElem="empty" qa-dataid="header-nav-empty">{{ t().uiNothingFound }}</div>
+            }
+            <div rtElem="body" role="none">
+                @for (column of section.columns; track column.id) {
+                    <div rtElem="column" qa-dataid="header-nav-column" [attr.data-id]="column.id">
+                        @for (group of column.groups; track group.id) {
+                            <div rtElem="group" role="group" [attr.aria-label]="group.label || null">
+                                @if (group.label) {
+                                    <div rtElem="group-title" qa-dataid="header-nav-group" [attr.data-id]="group.id">
+                                        @if (group.icon) {
+                                            <rt-icon rtElem="group-icon" size="xs" [name]="group.icon" />
+                                        }
+                                        <span rtElem="group-label">{{ group.label }}</span>
+                                    </div>
+                                }
+                                @for (entry of group.items; track entry.id) {
+                                    @if (entry.kind === EntryKind.Link) {
+                                        <a
+                                            rtElem="link"
+                                            role="menuitem"
+                                            qa-dataid="header-nav-subitem"
+                                            routerLinkActive="rt-page-header-submenu__link--is-active"
+                                            [attr.data-id]="entry.id"
+                                            [routerLink]="entry.route"
+                                            [routerLinkActiveOptions]="{ exact: entry.routerLinkActiveExact }"
+                                            (click)="onPanelLinkClick(popover)">
+                                            <span rtElem="label">{{ entry.label }}</span>
+                                            @if (entry.unread) {
+                                                <span
+                                                    rtElem="marker"
+                                                    role="img"
+                                                    qa-dataid="header-nav-marker"
+                                                    [attr.data-id]="entry.id"
+                                                    [attr.aria-label]="t().uiNavUnread"></span>
+                                            }
+                                        </a>
+                                    } @else if (entry.disabled) {
+                                        <span
+                                            rtElem="disabled-slot"
+                                            role="none"
+                                            [rtTooltip]="'uiSectionInProgress' | rtKitLabel: translate() : { label: entry.label }">
+                                            <button
+                                                rtElem="link"
+                                                role="menuitem"
+                                                type="button"
+                                                qa-dataid="header-nav-subitem"
+                                                [rtMod]="{ disabled: true }"
+                                                [attr.data-id]="entry.id"
+                                                [attr.aria-disabled]="true">
+                                                <span rtElem="label">{{ entry.label }}</span>
+                                            </button>
+                                        </span>
+                                    } @else {
+                                        <button
+                                            rtElem="link"
+                                            role="menuitem"
+                                            type="button"
+                                            qa-dataid="header-nav-subitem"
+                                            [attr.data-id]="entry.id"
+                                            (click)="onItemClick(entry.id)">
+                                            <span rtElem="label">{{ entry.label }}</span>
+                                            @if (entry.unread) {
+                                                <span
+                                                    rtElem="marker"
+                                                    role="img"
+                                                    qa-dataid="header-nav-marker"
+                                                    [attr.data-id]="entry.id"
+                                                    [attr.aria-label]="t().uiNavUnread"></span>
+                                            }
+                                        </button>
+                                    }
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </ng-template>
 
     <button
         rtElem="burger"
