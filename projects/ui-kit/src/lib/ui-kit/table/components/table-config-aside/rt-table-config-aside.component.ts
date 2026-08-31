@@ -52,6 +52,9 @@ export class RtTableConfigAsideComponent<ENTITY_TYPE> implements OnInit {
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #fb: FormBuilder = inject(FormBuilder);
 
+    /** Экран узкий: замер кита, и другого источника у этого признака нет. */
+    protected readonly narrow: Signal<boolean> = computed(() => !!this.#breakpointService.isMobile());
+
     public form: FormGroup<ITable.Config.Form<ENTITY_TYPE>> = this.#fb.group({
         isVerticalScrollbarShown: this.#fb.nonNullable.control<boolean>(false),
         isHorizontalScrollbarShown: this.#fb.nonNullable.control<boolean>(false),
@@ -64,7 +67,6 @@ export class RtTableConfigAsideComponent<ENTITY_TYPE> implements OnInit {
     >;
 
     public readonly selectedColumns: WritableSignal<ITable.Column<ENTITY_TYPE>[]> = signal(this.asideRef.data.columns);
-    public readonly isMobile: Signal<boolean> = computed(() => !!this.#breakpointService.isMobile());
     public readonly isVisibilityChanged: Signal<boolean> = computed(() => {
         const initValues: (keyof ENTITY_TYPE)[] = this.asideRef.data.columns
             .filter((el: ITable.Column<ENTITY_TYPE>) => el.hidden)

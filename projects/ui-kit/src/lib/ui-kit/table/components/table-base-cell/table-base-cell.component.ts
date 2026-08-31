@@ -55,9 +55,8 @@ export class TableBaseCellComponent<T = { [key: string]: unknown }> {
     readonly #clipboard: Clipboard = inject(Clipboard);
     readonly #sanitizer: DomSanitizer = inject(DomSanitizer);
 
-    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
-    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
-    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
+    /** Экран узкий: замер кита, и другого источника у этого признака нет. */
+    protected readonly narrow: Signal<boolean> = computed(() => !!this.#breakpoints.isMobile());
 
     protected readonly cellValue: Signal<T[keyof T] | string | number> = computed(() => {
         const transformFn: TNullable<(value: T[keyof T]) => string | number> = this.column()?.transform;
@@ -79,13 +78,6 @@ export class TableBaseCellComponent<T = { [key: string]: unknown }> {
 
     public row: InputSignal<T> = input.required();
     public column: InputSignal<ITable.Column<T>> = input.required();
-    /**
-     * Признак узкого экрана.
-     *
-     * @deprecated Кит определяет его сам — `BreakpointService` из `@rt-tools/core`. Вход
-     * оставлен ради приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
-     */
-    public isMobile: InputSignal<TNullable<boolean>> = input<TNullable<boolean>>(null);
 
     @HostBinding('style')
     public get style(): SafeStyle | undefined {

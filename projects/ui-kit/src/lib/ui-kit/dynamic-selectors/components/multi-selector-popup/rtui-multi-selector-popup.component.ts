@@ -97,25 +97,12 @@ export class RtuiMultiSelectorPopupComponent<ENTITY extends Record<string, unkno
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #injector: Injector = inject(Injector);
 
-    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
-    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
-    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
+    /** Экран узкий: замер кита, и другого источника у этого признака нет. */
+    protected readonly narrow: Signal<boolean> = computed(() => !!this.#breakpoints.isMobile());
     readonly #deviceService: DeviceDetectorService = inject(DeviceDetectorService);
 
     protected readonly oSTypes: typeof OSTypes = OSTypes;
 
-    /**
-     * Признак узкого экрана.
-     *
-     * @deprecated Кит определяет его сам — `RtuiBreakpointsService`. Вход оставлен ради
-     * приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
-     */
-    public isMobile: InputSignalWithTransform<TNullable<boolean>, TNullable<boolean> | string> = input<
-        TNullable<boolean>,
-        TNullable<boolean> | string
-    >(null, {
-        transform: (value: TNullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
-    });
     public entitiesToSelect: InputSignalWithTransform<ENTITY[], ENTITY[]> = input.required<ENTITY[], ENTITY[]>({
         transform: (value: unknown) => transformArrayInput(value),
     });

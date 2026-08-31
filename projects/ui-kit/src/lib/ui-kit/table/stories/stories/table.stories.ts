@@ -20,7 +20,6 @@ export const ManyItems: TStory = {
         isMultiSelect: true,
         isSelectorsColumnShown: true,
         isSelectorsColumnDisabled: false,
-        isMobile: false,
         data: manyItems,
         selectedEntitiesIds: [manyItems[0].id, manyItems[3].id],
         sortModel: {
@@ -39,7 +38,6 @@ export const CopyButtonOnHover: TStory = {
         isMultiSelect: false,
         isSelectorsColumnShown: true,
         isSelectorsColumnDisabled: false,
-        isMobile: false,
         data: fewItems,
         sortModel: {
             propertyName: 'id',
@@ -54,7 +52,6 @@ export const FewItems: TStory = {
         isMultiSelect: false,
         isSelectorsColumnShown: true,
         isSelectorsColumnDisabled: false,
-        isMobile: false,
         data: fewItems,
         selectedEntitiesIds: [fewItems[1].id],
         sortModel: {

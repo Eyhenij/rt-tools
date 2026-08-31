@@ -19,7 +19,6 @@ import { IPageModel } from '@rt-tools/utils';
     providers: [],
 })
 export default class TestPaginationComponent {
-    public isMobile: boolean = false;
     public pageModel: IPageModel = {
         pageNumber: 1,
         pageSize: 10,

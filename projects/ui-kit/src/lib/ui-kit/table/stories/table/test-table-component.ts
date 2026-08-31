@@ -28,7 +28,6 @@ export default class TestTableComponent implements OnInit {
     public isMultiSelect: boolean = true;
     public isSelectorsColumnShown: boolean = true;
     public isSelectorsColumnDisabled: boolean = false;
-    public isMobile: boolean = false;
     public data: TPerson[] = [];
     public selectedEntitiesIds: number[] = [];
     public sortModel: ISortModel<keyof TPerson> = {

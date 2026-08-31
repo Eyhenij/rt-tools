@@ -11,7 +11,6 @@ type TStory = StoryObj<TestSideMenuWrapperComponent>;
 
 export const Default: TStory = {
     args: {
-        isMobile: false,
         isSubMenuXScrollEnabled: true,
         isMainMenuIconsOutlined: false,
         isSubMenuIconsOutlined: false,
@@ -21,8 +20,8 @@ export const Default: TStory = {
 };
 
 export const Mobile: TStory = {
+    globals: { viewport: { value: 'narrow' } },
     args: {
-        isMobile: true,
         isSubMenuXScrollEnabled: true,
         isMainMenuIconsOutlined: false,
         isSubMenuIconsOutlined: false,
@@ -33,7 +32,6 @@ export const Mobile: TStory = {
 
 export const DefaultActiveMenu: TStory = {
     args: {
-        isMobile: false,
         activeMenuIds: [24, 26, 29, 33, 35],
         isSubMenuXScrollEnabled: true,
         isMainMenuIconsOutlined: false,
@@ -44,8 +42,8 @@ export const DefaultActiveMenu: TStory = {
 };
 
 export const MobileActiveMenu: TStory = {
+    globals: { viewport: { value: 'narrow' } },
     args: {
-        isMobile: true,
         activeMenuIds: [24, 26, 29, 33, 35],
         isSubMenuXScrollEnabled: true,
         isMainMenuIconsOutlined: false,

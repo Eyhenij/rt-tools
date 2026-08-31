@@ -7,8 +7,8 @@ import { RtuiPaginationComponent } from './rtui-pagination.component';
 /**
  * Двойник службы точек перелома: сценарий сам решает, узкий экран или нет.
  *
- * Проверяется договор, общий для всего кита: признак узкого экрана компонент берёт у службы,
- * а вход остаётся только ради приложений, которые его ещё передают.
+ * Проверяется договор, общий для всего кита: признак узкого экрана компонент берёт у службы, и
+ * второго источника у него нет — вход, которым его когда-то передавало приложение, снят.
  */
 class BreakpointServiceStub {
     public readonly narrow: WritableSignal<boolean> = signal(false);
@@ -19,16 +19,11 @@ class BreakpointServiceStub {
 }
 
 @Component({
-    template: '<rtui-pagination [currentPageModel]="pageModel" [isMobile]="mobileInput()" />',
+    template: '<rtui-pagination [currentPageModel]="pageModel" />',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RtuiPaginationComponent],
 })
 class HostComponent {
-    /**
-     * Так признак передаёт приложение — привязкой. Реактивное значение, а не поле: у хоста
-     * перерисовка по требованию, и правка обычного поля привязку не обновила бы.
-     */
-    public readonly mobileInput: WritableSignal<boolean | null> = signal<boolean | null>(null);
     public pageModel: { pageNumber: number; pageSize: number; totalCount: number; hasPrev: boolean; hasNext: boolean } = {
         pageNumber: 1,
         pageSize: 10,
@@ -61,7 +56,7 @@ describe('RtuiPaginationComponent — признак узкого экрана',
         return (pagination as unknown as { narrow: Signal<boolean> }).narrow();
     }
 
-    it('без входа берёт признак у службы', () => {
+    it('признак берётся у службы', () => {
         const { fixture, breakpoints } = setup();
 
         expect(narrowOf(fixture)).toBe(false);
@@ -71,13 +66,15 @@ describe('RtuiPaginationComponent — признак узкого экрана',
         expect(narrowOf(fixture)).toBe(true);
     });
 
-    it('переданное приложением значение главнее замера службы', () => {
+    it('замер службы читается и обратно, без второго источника', () => {
         const { fixture, breakpoints } = setup();
 
         breakpoints.narrow.set(true);
-        fixture.componentInstance.mobileInput.set(false);
         fixture.detectChanges();
+        expect(narrowOf(fixture)).toBe(true);
 
+        breakpoints.narrow.set(false);
+        fixture.detectChanges();
         expect(narrowOf(fixture)).toBe(false);
     });
 });

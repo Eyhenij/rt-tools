@@ -45,7 +45,7 @@
                                     rtElem="item-control-button"
                                     matTooltip="{{ entity.hidden ? 'Hidden, click to show' : 'Shown, click to hide' }}"
                                     matTooltipPosition="left"
-                                    [matTooltipDisabled]="isMobile()"
+                                    [matTooltipDisabled]="narrow()"
                                     (click)="visibilityChange(entity)">
                                     <mat-icon [rtIconOutlined]="true">
                                         {{ entity.hidden ? 'visibility_off' : 'visibility' }}
