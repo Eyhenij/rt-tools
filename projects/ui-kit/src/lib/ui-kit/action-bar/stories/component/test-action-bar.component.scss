@@ -1,0 +1,15 @@
+:host {
+    display: block;
+
+    .stand {
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+        gap: 1rem;
+
+        &__log {
+            color: var(--rt-text-neutral-secondary);
+            font-size: 0.875rem;
+        }
+    }
+}

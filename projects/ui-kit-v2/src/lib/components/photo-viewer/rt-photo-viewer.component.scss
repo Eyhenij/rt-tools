@@ -3,7 +3,12 @@
        `.rt-photo-viewer` — сам хост (шаблон начинается с ng-container, класс ставит host). */
 
     .rt-photo-viewer {
+        // Вид управляющего элемента поверх кадра — своими свойствами: их делят кнопки панели и
+        // обе стрелки, и потребитель перекрывает их правилом той же цели.
         --rt-photo-viewer-control-radius: var(--rt-radius-md);
+        --rt-photo-viewer-control-color: var(--rt-color-text-inverse);
+        --rt-photo-viewer-control-bg: color-mix(in srgb, var(--rt-color-bg-inverse) 55%, transparent);
+        --rt-photo-viewer-control-bg-hover: color-mix(in srgb, var(--rt-color-text-inverse) 24%, transparent);
 
         display: block;
         width: 100vw;
@@ -87,15 +92,17 @@
             color: var(--rt-color-text-primary);
         }
 
-        /* TODO: отрефакторить это дерьмо */
+        // Общий вид управляющего элемента поверх кадра: кнопки панели и обе стрелки лежат на
+        // самом снимке, а не на подложке, и читаются только инверсным цветом на своей заливке.
+        // Перечень един намеренно — разойдясь, три места дадут три разных вида поверх одного кадра.
         &__bar rt-icon-button,
         &__arrow-prev,
         &__arrow-next {
-            --rt-icon-button-color: var(--rt-color-text-inverse);
-            --rt-icon-button-color-bg-hover: color-mix(in srgb, var(--rt-color-text-inverse) 24%, transparent);
+            --rt-icon-button-color: var(--rt-photo-viewer-control-color);
+            --rt-icon-button-color-bg-hover: var(--rt-photo-viewer-control-bg-hover);
 
             border-radius: var(--rt-photo-viewer-control-radius);
-            background: color-mix(in srgb, var(--rt-color-bg-inverse) 55%, transparent);
+            background: var(--rt-photo-viewer-control-bg);
         }
 
         &__arrow-prev,

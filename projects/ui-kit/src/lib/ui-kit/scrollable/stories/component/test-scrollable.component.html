@@ -1,0 +1,23 @@
+<div rtBlock="stand">
+    <rtui-scrollable>
+        @if (hasHeader) {
+            <ng-container *rtuiScrollableHeader>
+                <div rtBlock="title" qa-dataid="scrollable-title">{{ title }}</div>
+            </ng-container>
+        }
+
+        @if (hasContent) {
+            <ng-container *rtuiScrollableContent>
+                @for (row of rows; track row) {
+                    <div rtBlock="row" qa-dataid="scrollable-row">Строка {{ row }}</div>
+                }
+            </ng-container>
+        }
+
+        @if (hasFooter) {
+            <ng-container *rtuiScrollableFooter>
+                <button mat-flat-button qa-dataid="scrollable-submit">Сохранить</button>
+            </ng-container>
+        }
+    </rtui-scrollable>
+</div>

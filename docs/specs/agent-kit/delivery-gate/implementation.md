@@ -15,6 +15,7 @@
 - **Условие, известное в начале работы, спрашивается в начале.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:branch_arg`
 - **Судится то основание, которое названо командой, а не вершина рабочей копии.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:base_ref`
 - **Свежесть локальной ссылки на главную ветку спрашивается и при заведении ветки.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:remote_head`
+- **Номер задачи из имени ветки вынимает профиль, а не гард.** — `projects/agent-kit/assets/defaults/project.sh:rt_task_branch_number_default`
 - **Ветка без номера задачи условий поставки не получает.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:branch_arg`
 - **Гейт пуша зовёт то, что дерево разложило.** — `projects/agent-kit/assets/defaults/project.sh:rt_push_checks_default`
 - **Подпись машинного коммита судится до того, как коммит уедет.** — `projects/agent-kit/assets/hooks/git-guard-delivery-signature.sh:strangers`

@@ -1,0 +1,40 @@
+<ng-template #shortTpl>
+    <div rtBlock="body" qa-dataid="popover-body">Готово</div>
+</ng-template>
+
+<ng-template #longTpl>
+    <div rtBlock="body" qa-dataid="popover-body">
+        Слой показывает столько текста, сколько ему подали: своей ширины у него нет, она берётся по содержимому, и длинный текст растягивает
+        слой до предела, объявленного оформлением.
+    </div>
+</ng-template>
+
+<ng-template #markupTpl>
+    <div rtBlock="body" qa-dataid="popover-body">
+        <div rtElem="title">Запись</div>
+        <ul rtElem="list">
+            <li>первая строка</li>
+            <li>вторая строка</li>
+        </ul>
+        <button mat-flat-button qa-dataid="popover-action">Открыть</button>
+    </div>
+</ng-template>
+
+@if (inline) {
+    @switch (content) {
+        @case ('short') {
+            <rtui-popover-container qa-dataid="popover-inline" [popoverClass]="popoverClass" [popoverTemplate]="shortTpl" />
+        }
+        @case ('long') {
+            <rtui-popover-container qa-dataid="popover-inline" [popoverClass]="popoverClass" [popoverTemplate]="longTpl" />
+        }
+        @case ('markup') {
+            <rtui-popover-container qa-dataid="popover-inline" [popoverClass]="popoverClass" [popoverTemplate]="markupTpl" />
+        }
+        @default {
+            <rtui-popover-container qa-dataid="popover-inline" [popoverClass]="popoverClass" [popoverTemplate]="null" />
+        }
+    }
+} @else {
+    <button mat-flat-button qa-dataid="popover-source" rtPopover trigger="click" [template]="shortTpl">Показать слой</button>
+}
