@@ -13,7 +13,13 @@ import { IRtPageHeader } from '../../rt-page-header.model';
 @Component({
     selector: 'app-page-header',
     template: `
-        <rt-page-header [items]="items" [user]="user" [userTitle]="userTitle" [userMenu]="userMenu" [ariaLabel]="ariaLabel" />
+        <rt-page-header
+            [items]="items"
+            [user]="user"
+            [userTitle]="userTitle"
+            [userMenu]="userMenu"
+            [ariaLabel]="ariaLabel"
+            [panelMode]="panelMode" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -51,4 +57,5 @@ export class TestRtPageHeaderComponent {
     public userTitle: string = '';
     public userMenu: TemplateRef<unknown> | null = null;
     public ariaLabel: string = '';
+    public panelMode: IRtPageHeader.PanelMode = 'hover';
 }

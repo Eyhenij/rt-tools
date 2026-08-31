@@ -99,10 +99,6 @@
         </ul>
     </nav>
 
-    @if (pinnedSection(); as pinned) {
-        <ng-container *ngTemplateOutlet="panelTpl; context: { $implicit: { section: pinned, popover: null } }" />
-    }
-
     <ng-template #panelTpl let-panel>
         @let section = panel.section;
         @let popover = panel.popover;
@@ -111,7 +107,7 @@
             rtBlock="rt-page-header-submenu"
             role="menu"
             [style.--rt-nav-panel-columns]="section.columnCount"
-            [rtMod]="{ pinned: isPinned() }">
+            [rtMod]="{ pinned: isPinned(), floating: !isPinned() }">
             <div rtElem="head" role="none">
                 <rt-input
                     rtElem="search"
@@ -446,5 +442,11 @@
                 </span>
             </button>
         }
+    }
+
+    <!-- Закреплённая панель идёт последней строкой: раньше блока пользователя она увела бы его
+         на третью строку — перенос флексом считается по порядку в разметке. -->
+    @if (pinnedSection(); as pinned) {
+        <ng-container *ngTemplateOutlet="panelTpl; context: { $implicit: { section: pinned, popover: null } }" />
     }
 </ng-container>

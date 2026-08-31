@@ -7,7 +7,7 @@ import { IRtPageHeader } from '../../rt-page-header.model';
 import { RtPageHeaderComponent } from '../../rt-page-header.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TPageHeaderMatrixPart = 'items' | 'user' | 'themes' | 'panel';
+export type TPageHeaderMatrixPart = 'items' | 'user' | 'themes' | 'panel' | 'pinned';
 
 /** Набор пунктов: вид пункта решают его собственные поля, а не входы шапки. */
 interface IPageHeaderItemsCase {
@@ -61,6 +61,12 @@ interface IPageHeaderUserCase {
                         <rt-page-header ariaLabel="Разделы" [items]="mixedItems" [user]="user" />
                     </ng-template>
                 </app-story-themes>
+            }
+
+            @case ('pinned') {
+                <!-- Признака перекрытия здесь нет намеренно: закреплённая панель стоит в
+                     потоке, оверлея у неё не бывает, и обвязка снимков ждала бы его напрасно. -->
+                <rt-page-header ariaLabel="Разделы" panelMode="pinned" [items]="pinnedItems" [user]="user" />
             }
 
             @case ('panel') {
@@ -121,6 +127,49 @@ export class TestRtPageHeaderMatrixComponent {
                             label: 'География',
                             items: [
                                 { id: 'countries', label: 'Страны', route: '/countries' },
+                                { id: 'cities', label: 'Города', route: '/cities', unread: true },
+                            ],
+                        },
+                    ],
+                },
+                {
+                    id: 'right',
+                    groups: [
+                        {
+                            id: 'money',
+                            label: 'Финансы',
+                            items: [
+                                { id: 'rates', label: 'Курсы валют', route: '/rates' },
+                                { id: 'taxes', label: 'Налоги', disabled: true },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+        { id: 'reports', label: 'Отчёты', route: '/reports' },
+    ];
+
+    /**
+     * Набор для закреплённой моды. Она показывает раздел, чей адрес открыт, а в витрине адрес
+     * всегда корневой — поэтому один пункт панели ведёт как раз на него: иначе закреплять было
+     * бы нечего.
+     */
+    public readonly pinnedItems: ReadonlyArray<IRtPageHeader.Item> = [
+        { id: 'tours', label: 'Туры', route: '/tours' },
+        {
+            id: 'catalog',
+            label: 'Справочники',
+            icon: 'book',
+            columns: [
+                {
+                    id: 'left',
+                    groups: [
+                        {
+                            id: 'geo',
+                            label: 'География',
+                            items: [
+                                { id: 'countries', label: 'Страны', route: '/' },
                                 { id: 'cities', label: 'Города', route: '/cities', unread: true },
                             ],
                         },

@@ -16,6 +16,9 @@
         width: auto;
         min-height: 48px;
         box-sizing: border-box;
+        /* Закреплённая панель встаёт второй строкой под полосой разделов: она
+           стоит в потоке, а не поверх страницы. */
+        flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
         padding: var(--rt-nav-header-padding);

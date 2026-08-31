@@ -12,6 +12,7 @@ export default {
         userTitle: { control: { type: 'text' } },
         userMenu: { control: false },
         ariaLabel: { control: { type: 'text' } },
+        panelMode: { control: { type: 'inline-radio' }, options: ['hover', 'pinned'] },
     },
 } as Meta<TestRtPageHeaderComponent>;
 
@@ -23,5 +24,6 @@ export const Playground: TStory = {
         userTitle: '',
         userMenu: null,
         ariaLabel: '',
+        panelMode: 'hover',
     },
 };

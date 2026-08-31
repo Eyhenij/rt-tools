@@ -23,7 +23,6 @@
         border: var(--rt-nav-panel-border-width) solid var(--rt-nav-panel-color-border);
         border-radius: var(--rt-nav-panel-radius);
         background-color: var(--rt-nav-panel-color-bg);
-        box-shadow: var(--rt-nav-panel-shadow);
         color: var(--rt-nav-panel-item-color);
         font-size: var(--rt-nav-panel-item-font-size);
         font-weight: var(--rt-nav-panel-item-font-weight);
@@ -204,10 +203,17 @@
             }
         }
 
-        /* Закреплённая панель стоит в потоке: тень принадлежит всплывающей и
-           здесь только спорила бы с полосой разделов над ней. */
+        /* Тень принадлежит всплывающей панели: она лежит поверх страницы, и
+           только ей нужно отделяться от того, что под ней. */
+        &--floating {
+            box-shadow: var(--rt-nav-panel-shadow);
+        }
+
+        /* Закреплённая панель занимает целую строку под полосой разделов: ширина
+           по числу колонок оставила бы её висеть у края, откуда её открыли. */
         &--pinned {
-            box-shadow: none;
+            width: 100%;
+            flex: 0 0 100%;
         }
     }
 }
