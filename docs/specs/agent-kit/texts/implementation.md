@@ -14,6 +14,8 @@
 - **Влитая договорённость ветку не запирает.** — `projects/agent-kit/assets/hooks/task-flow-draft-guard.sh:draft_path`
 - **Префикс сценариев занят одним спеком по всему дереву.** — `projects/agent-kit/assets/checks/check-specs.mjs:prefixOwners`
 - **Пакет везёт словарь как ресурс, а не только хук, который его читает.** — `projects/agent-kit/src/lib/config.ts:DEFAULT_LAYOUT`
+- **Вводная перед словарём называет место, где слово заводят, а не файл, который она печатает.** — `projects/agent-kit/assets/hooks/glossary-load.sh:where` — строка собирается до печати и встаёт между вводной и телом словаря; сценарий SC-AK-819
+- **Адрес надстройки вводная выводит из шапки словаря, а не зашивает.** — `projects/agent-kit/assets/hooks/glossary-load.sh:resource` — идентификатор ресурса вынимается из первой строки файла
 - **Пакет везёт общую часть словаря, дерево дописывает предметную.** — `projects/agent-kit/src/lib/sections.ts:mergeDocuments`
 - **Правило и паттерн судятся как спек, а не как файл агента.** — `projects/agent-kit/assets/defaults/gate-map.sh:skill_for_default`
 - **Голое имя и каталог судятся наравне с полным путём.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:existsInTree`
