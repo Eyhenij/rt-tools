@@ -76,6 +76,12 @@ expect_ask() {
     report "$label" "$got" "$want"
 }
 
+# Вход события вопроса с текстом: второй признак судит слова темы, и пустой набор ему нечем судить.
+input_ask_text() {
+    jq -n --arg p "$1" --arg q "$2" \
+        '{session_id:"tests",transcript_path:$p,tool_name:"AskUserQuestion",tool_input:{questions:[{question:$q}]}}'
+}
+
 READ_RULES='{"pattern":"панель","path":".claude/skills"}'
 READ_ELSE='{"pattern":"панель","path":"projects/ui-kit/src"}'
 READ_PLANS='{"pattern":"панель","path":"docs/plans/эпик.md"}'
@@ -221,3 +227,45 @@ expect_stop "SC-AK-756 — без правок в ходу прежний при
         "$(reply 'Как быть с этим?')")")" PASS
 
 suite_result "гард разговора"
+
+# --- SC-AK-818 — на этот вопрос владелец уже отвечал --------------------------------------
+# Указание владельца действует до его отмены, и новый факт против него — строка в ответе о цене,
+# а не новый вопрос. Признак судит общие слова темы вопроса и последней реплики владельца, и
+# только там, где вызов меню в записи хода уже был: иначе отбивался бы первый же вопрос захода.
+SAID_RULE='сплошная проверка единообразия гоняется каждый раз, исключений не делаем'
+LOADED='{"skill":"task-flow"}'
+
+expect_ask "SC-AK-818 — повторный вопрос о том же предмете отбит" \
+    "$(input_ask_text "$(transcript \
+        "$(say "$SAID_RULE")" \
+        "$(uses AskUserQuestion '{"questions":[]}')" \
+        "$(say "$SAID_RULE")" \
+        "$(uses Skill "$LOADED")")" \
+        'Сплошная проверка единообразия дорога — исключений не делаем?')" DENY
+
+expect_ask "SC-AK-818 — вопрос о другом предмете проходит" \
+    "$(input_ask_text "$(transcript \
+        "$(say "$SAID_RULE")" \
+        "$(uses AskUserQuestion '{"questions":[]}')" \
+        "$(say "$SAID_RULE")" \
+        "$(uses Skill "$LOADED")")" \
+        'Заголовок панели переносим строкой или обрезаем многоточием?')" PASS
+
+# Разбор просьбы идёт несколькими вопросами подряд по разным предметам: отбивать второй вызов
+# только за то, что он второй, значило бы отбивать сам разбор.
+expect_ask "SC-AK-818 — первый вопрос захода не судится вторым признаком" \
+    "$(input_ask_text "$(transcript \
+        "$(say "$SAID_RULE")" \
+        "$(uses Skill "$LOADED")")" \
+        'Сплошная проверка единообразия гоняется каждый раз?')" PASS
+
+# Отказ называет, что делать, а не как переспросить: промах здесь — остановка разрешённой работы.
+out="$(input_ask_text "$(transcript \
+    "$(say "$SAID_RULE")" \
+    "$(uses AskUserQuestion '{"questions":[]}')" \
+    "$(say "$SAID_RULE")" \
+    "$(uses Skill "$LOADED")")" \
+    'Сплошная проверка единообразия дорога — исключений не делаем?')"
+out="$(printf '%s' "$out" | "$HOOKS/grill-gate.sh" 2>/dev/null | jq -r '.hookSpecificOutput.permissionDecisionReason // ""')"
+if printf '%s' "$out" | grep -q 'продолжай работу'; then got="есть"; else got="нет"; fi
+report "SC-AK-818 — отказ велит продолжать работу" "$got" "есть"

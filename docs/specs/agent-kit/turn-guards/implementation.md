@@ -6,6 +6,8 @@
 - **Ход, в котором владельцу задан вопрос, не заканчивается, пока за этот же ход не читались законы и правила.** — `projects/agent-kit/assets/hooks/grill-gate.sh:verdict`
 - **Чтением считается любой из трёх путей, а не только загрузка правила.** — `projects/agent-kit/assets/hooks/grill-gate.sh:read_re`
 - **Повторный заход по тому же ходу не судится.** — `projects/agent-kit/assets/hooks/grill-gate.sh:active`
+- **На вопрос, ответ на который уже дала реплика владельца, гард разговора отвечает отказом.** — `projects/agent-kit/assets/hooks/grill-gate.sh:seen`
+- **Отказ по второму признаку велит продолжать работу, а не переспрашивать иначе.** — `projects/agent-kit/assets/hooks/grill-gate.sh:seen`
 - **Гард разговора пропускает работу при любой поломке.** — `projects/agent-kit/assets/hooks/grill-gate.sh:transcript`
 - **Гард окна напоминает раньше, чем отбивает.** — `projects/agent-kit/assets/hooks/window-fill-guard.sh:warn_pct`
 - **Напоминание повторяется по ступеням, а не на каждом действии.** — `projects/agent-kit/assets/hooks/window-fill-guard.sh:step`
