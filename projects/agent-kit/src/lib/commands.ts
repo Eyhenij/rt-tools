@@ -27,6 +27,7 @@ import {
     TWeights,
 } from './observations.js';
 import { IPlanned, isRefusal, TOutcome } from './plan.js';
+import { pushGateLines } from './push-gate.js';
 import { laidOutSkills, treeSnapshot } from './snapshot.js';
 import { ICutFound, IRetiredFound, ISyncResult, mergedBody, pendingOf, planSync, runSync } from './sync.js';
 import { thresholdLines } from './thresholds.js';
@@ -1182,6 +1183,11 @@ export function doctor(env: IEnvironment): IOutcomeOfCommand {
             return `  снят каскадом: ${one.id} — вслед за ${one.parent}${root}`;
         }),
         ...profileLines(root, assetsDir, config),
+        // Набор перед пушем — итоговый, а не пересказ умолчания: собирается он из двух файлов, и
+        // прочитать сборку было нечем. Дерево, пишущее надстройку, видит здесь умолчание и не
+        // дописывает повтор, а снятое надстройкой видно на разборе ветки, а не только тому, кто
+        // его снял.
+        ...pushGateLines(root, config.layout.defaults ?? DEFAULT_LAYOUT.defaults),
         ...localValueLines(root, assetsDir, config),
         ...replacedLines(config, assetsDir, root),
         ...thresholdLines(root),
