@@ -86,22 +86,9 @@ const BEM_BLOCK: string = 'c-aside';
 export class RtuiAsideContainerComponent {
     readonly #breakpoints: BreakpointService = inject(BreakpointService);
 
-    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
-    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
-    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
+    /** Экран узкий: замер кита, и другого источника у этого признака нет. */
+    protected readonly narrow: Signal<boolean> = computed(() => !!this.#breakpoints.isMobile());
     public title: InputSignal<TNullable<string>> = input<TNullable<string>>(null);
-    /**
-     * Признак узкого экрана.
-     *
-     * @deprecated Кит определяет его сам — `RtuiBreakpointsService`. Вход оставлен ради
-     * приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
-     */
-    public isMobile: InputSignalWithTransform<TNullable<boolean>, TNullable<boolean> | string> = input<
-        TNullable<boolean>,
-        TNullable<boolean> | string
-    >(null, {
-        transform: (value: TNullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
-    });
     public isSubmitButtonDisabled: InputSignalWithTransform<boolean, boolean> = input.required<boolean, boolean>({
         transform: booleanAttribute,
     });

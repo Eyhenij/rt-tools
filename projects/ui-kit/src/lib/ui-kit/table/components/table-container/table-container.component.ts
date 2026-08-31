@@ -123,9 +123,8 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
 
     readonly #style: TNullable<CSSStyleDeclaration> = this.#documentRef?.documentElement?.style;
 
-    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
-    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
-    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
+    /** Экран узкий: замер кита, и другого источника у этого признака нет. */
+    protected readonly narrow: Signal<boolean> = computed(() => !!this.#breakpoints.isMobile());
 
     public appearance: InputSignal<MatFormFieldAppearance> = input.required();
     /** Table config storage key */
@@ -134,18 +133,6 @@ export class RtuiTableContainerComponent<ENTITY_TYPE> implements OnInit {
     });
     /** Current page model from store */
     public pageModel: InputSignal<IPageModel> = input.required();
-    /**
-     * Признак узкого экрана.
-     *
-     * @deprecated Кит определяет его сам — `RtuiBreakpointsService`. Вход оставлен ради
-     * приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
-     */
-    public isMobile: InputSignalWithTransform<TNullable<boolean>, TNullable<boolean> | string> = input<
-        TNullable<boolean>,
-        TNullable<boolean> | string
-    >(null, {
-        transform: (value: TNullable<boolean> | string) => (value === null || value === undefined ? null : booleanAttribute(value)),
-    });
     /** Indicates is loading in progress */
     public loading: InputSignalWithTransform<boolean, BooleanInput> = input.required<boolean, BooleanInput>({
         transform: booleanAttribute,

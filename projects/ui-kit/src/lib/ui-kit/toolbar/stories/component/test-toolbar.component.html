@@ -1,0 +1,29 @@
+<rtui-toolbar [sticky]="sticky">
+    @if (hasLeft) {
+        <ng-container *rtuiToolbarLeft>
+            <button mat-icon-button rtBlock="action" qa-dataid="toolbar-back">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+        </ng-container>
+    }
+
+    @if (hasCenter) {
+        <ng-container *rtuiToolbarCenter>
+            <div rtBlock="title" qa-dataid="toolbar-title" [title]="title">{{ title }}</div>
+        </ng-container>
+    }
+
+    @if (hasRight) {
+        <ng-container *rtuiToolbarRight>
+            <button mat-button rtBlock="action" qa-dataid="toolbar-create">Создать</button>
+        </ng-container>
+    }
+</rtui-toolbar>
+
+@if (longPage) {
+    <div rtBlock="page" qa-dataid="toolbar-page">
+        @for (row of rows; track row) {
+            <div rtElem="row">Строка {{ row }}</div>
+        }
+    </div>
+}

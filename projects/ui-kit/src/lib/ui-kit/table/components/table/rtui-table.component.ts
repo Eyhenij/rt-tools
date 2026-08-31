@@ -129,16 +129,8 @@ export class RtuiTableComponent<
     protected readonly filterOperators: typeof EFilterOperatorType = EFilterOperatorType;
 
     /** Indicates is mobile view */
-    /**
-     * Признак узкого экрана.
-     *
-     * @deprecated Кит определяет его сам — `BreakpointService` из `@rt-tools/core`. Вход
-     * оставлен ради приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
-     */
-    public isMobile: InputSignal<TNullable<boolean>> = input<TNullable<boolean>>(null);
-    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
-    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
-    public readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
+    /** Экран узкий: замер кита, и другого источника у этого признака нет. */
+    public readonly narrow: Signal<boolean> = computed(() => !!this.#breakpoints.isMobile());
     /** Indicates are table rows clickable */
     public isTableRowsClickable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,

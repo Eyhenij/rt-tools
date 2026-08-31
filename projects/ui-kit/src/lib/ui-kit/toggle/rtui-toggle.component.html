@@ -3,7 +3,7 @@
     [rtMod]="{ disabled: isDisabled() }"
     [matTooltipPosition]="tooltipPosition()"
     [matTooltip]="tooltip()"
-    [matTooltipDisabled]="!tooltip() || isMobile() || tooltipDisabled()">
+    [matTooltipDisabled]="!tooltip() || narrow() || tooltipDisabled()">
     <div rtBlock="rtui-toggle" rtMod="{{ size() }}">
         <input type="checkbox" rtElem="check" [formControl]="formControl" />
 

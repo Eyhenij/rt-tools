@@ -20,15 +20,7 @@ import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDatepicker, MatDatepickerInput, MatDatepickerModule, MatDatepickerToggle } from '@angular/material/datepicker';
 
-import {
-    EFilterOperatorType,
-    FILTER_OPERATORS,
-    TFilterOperatorType,
-    IFilterModel,
-    TNullable,
-    isString,
-    transformArrayInput,
-} from '@rt-tools/utils';
+import { EFilterOperatorType, FILTER_OPERATORS, TFilterOperatorType, IFilterModel, isString, transformArrayInput } from '@rt-tools/utils';
 import { BreakpointService, ConcatClassesPipe, RtIconOutlinedDirective } from '@rt-tools/core';
 import { ITable, ETableColumnFilterTypes } from '../../util/table-column.interface';
 import { MatFormField, MatFormFieldAppearance, MatSuffix } from '@angular/material/form-field';
@@ -92,9 +84,8 @@ export class RtuiTableHeaderFilterCellComponent<
     readonly #injector: Injector = inject(Injector);
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
 
-    /** Экран узкий: значение входа, если приложение его дало, иначе замер кита. */
-    // eslint-disable-next-line sonarjs/deprecation -- вход оставлен ради приложений, которые его уже передают, — кит определяет узкий экран сам и читает вход только как запасной ответ
-    protected readonly narrow: Signal<boolean> = computed(() => this.isMobile() ?? !!this.#breakpoints.isMobile());
+    /** Экран узкий: замер кита, и другого источника у этого признака нет. */
+    protected readonly narrow: Signal<boolean> = computed(() => !!this.#breakpoints.isMobile());
 
     protected readonly filterTypes: typeof ETableColumnFilterTypes = ETableColumnFilterTypes;
     protected readonly filterOperatorTypes: typeof EFilterOperatorType = EFilterOperatorType;
@@ -133,13 +124,6 @@ export class RtuiTableHeaderFilterCellComponent<
     public filterSelectOptions: InputSignalWithTransform<string[], string[]> = input<string[], string[]>([], {
         transform: (value: string[]) => transformArrayInput(value),
     });
-    /**
-     * Признак узкого экрана.
-     *
-     * @deprecated Кит определяет его сам — `BreakpointService` из `@rt-tools/core`. Вход
-     * оставлен ради приложений, которые уже его передают, и уйдёт в следующем крупном выпуске.
-     */
-    public isMobile: InputSignal<TNullable<boolean>> = input<TNullable<boolean>>(null);
 
     /** Filter change output action */
     public readonly filterChange: OutputEmitterRef<IFilterModel<KEY>[]> = output<IFilterModel<KEY>[]>();
