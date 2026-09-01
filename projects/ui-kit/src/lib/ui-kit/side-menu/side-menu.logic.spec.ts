@@ -1,4 +1,15 @@
-import { filterSubMenuItems, readSubMenuMode, SUB_MENU_MODE_KEY, writeSubMenuMode } from './side-menu.logic';
+import {
+    clampSubMenuWidth,
+    filterSubMenuItems,
+    readSubMenuMode,
+    readSubMenuWidth,
+    SUB_MENU_MODE_KEY,
+    SUB_MENU_WIDTH_KEY,
+    SUB_MENU_WIDTH_MAX,
+    SUB_MENU_WIDTH_MIN,
+    writeSubMenuMode,
+    writeSubMenuWidth,
+} from './side-menu.logic';
 import { ISideMenu } from './side-menu.types';
 
 const ITEMS: ReadonlyArray<ISideMenu.Item> = [
@@ -90,5 +101,78 @@ describe('чтение и запись моды подменю', () => {
 
         expect(readSubMenuMode(broken)).toBe('hover');
         expect(() => writeSubMenuMode(broken, 'pinned')).not.toThrow();
+    });
+});
+
+describe('ширина закреплённого подменю', () => {
+    function widthStorage(initial: Record<string, string> = {}): Storage {
+        const data: Record<string, string> = { ...initial };
+
+        return {
+            getItem: (key: string): string | null => data[key] ?? null,
+            setItem: (key: string, value: string): void => {
+                data[key] = value;
+            },
+            removeItem: (key: string): void => {
+                delete data[key];
+            },
+            clear: (): void => undefined,
+            key: (): string | null => null,
+            length: 0,
+        };
+    }
+
+    it('SC-UK-33 — ширина уже предела приводится к нижнему пределу', () => {
+        expect(clampSubMenuWidth(10)).toBe(SUB_MENU_WIDTH_MIN);
+    });
+
+    it('SC-UK-33 — ширина шире предела приводится к верхнему пределу', () => {
+        expect(clampSubMenuWidth(5000)).toBe(SUB_MENU_WIDTH_MAX);
+    });
+
+    it('SC-UK-33 — ширина внутри пределов остаётся своей', () => {
+        expect(clampSubMenuWidth(SUB_MENU_WIDTH_MIN + 40)).toBe(SUB_MENU_WIDTH_MIN + 40);
+    });
+
+    it('SC-UK-34 — хранилища нет — ширины нет, ставит её оформление', () => {
+        expect(readSubMenuWidth(null)).toBeNull();
+    });
+
+    it('SC-UK-34 — хранилище пусто — ширины нет', () => {
+        expect(readSubMenuWidth(widthStorage())).toBeNull();
+    });
+
+    it('SC-UK-34 — записанная ширина читается обратно', () => {
+        const storage: Storage = widthStorage();
+
+        writeSubMenuWidth(storage, SUB_MENU_WIDTH_MIN + 40);
+
+        expect(readSubMenuWidth(storage)).toBe(SUB_MENU_WIDTH_MIN + 40);
+    });
+
+    it('SC-UK-34 — записанная ширина приводится к пределам, а не пишется как есть', () => {
+        const storage: Storage = widthStorage();
+
+        writeSubMenuWidth(storage, 5000);
+
+        expect(readSubMenuWidth(storage)).toBe(SUB_MENU_WIDTH_MAX);
+    });
+
+    it('SC-UK-34 — нечисловое значение в ключе шириной не считается', () => {
+        expect(readSubMenuWidth(widthStorage({ [SUB_MENU_WIDTH_KEY]: 'пошире' }))).toBeNull();
+    });
+
+    it('SC-UK-34 — отказ хранилища работу не останавливает', () => {
+        const broken: Storage = {
+            getItem: (): string | null => {
+                throw new Error('хранилище закрыто настройками браузера');
+            },
+            setItem: (): void => {
+                throw new Error('хранилище закрыто настройками браузера');
+            },
+        } as unknown as Storage;
+
+        expect(readSubMenuWidth(broken)).toBeNull();
+        expect(() => writeSubMenuWidth(broken, 300)).not.toThrow();
     });
 });
