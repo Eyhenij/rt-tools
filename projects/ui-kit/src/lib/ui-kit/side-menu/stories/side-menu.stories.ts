@@ -40,6 +40,39 @@ async function typeInSubMenuSearch(canvasElement: HTMLElement, query: string): P
     field.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
+/**
+ * Открытие подменю нажатием пункта. Ждётся сам пункт, а не отсчёт времени, и ждётся потом шапка
+ * подменю: без неё кадр уходит с закрытым ящиком и о переключателе не говорит ничего.
+ */
+async function openSubMenuByClick(canvasElement: HTMLElement, attempts: number = 50): Promise<void> {
+    for (let attempt: number = 0; attempt < attempts; attempt += 1) {
+        const item: HTMLElement | null = canvasElement.querySelector('a.rtui-side-menu-item');
+
+        if (item !== null) {
+            item.click();
+            break;
+        }
+
+        await new Promise<void>((resolve: () => void): void => {
+            requestAnimationFrame(() => resolve());
+        });
+    }
+
+    for (let attempt: number = 0; attempt < attempts; attempt += 1) {
+        const head: HTMLElement | null = canvasElement.querySelector('.rtui-sub-side-menu-head');
+
+        if (head !== null && head.getBoundingClientRect().x >= 0) {
+            return;
+        }
+
+        await new Promise<void>((resolve: () => void): void => {
+            requestAnimationFrame(() => resolve());
+        });
+    }
+
+    throw new Error('Подменю не открылось: кадр показал бы закрытый ящик вместо переключателя');
+}
+
 export const Default: TStory = {
     args: {
         isSubMenuXScrollEnabled: true,
@@ -129,5 +162,23 @@ export const SubMenuSearchEmpty: TStory = {
     },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await typeInSubMenuSearch(canvasElement, 'no such item');
+    },
+};
+
+/**
+ * Незакреплённое подменю, открытое нажатием. Заведена ради переключателя: закреплённое помечено
+ * залитой булавкой, а эта история — единственное место, где в кадре видно контурную. Без неё обе
+ * моды показывались бы только закреплённой, и подмена значка не проверялась бы ничем.
+ */
+export const SubMenuHovered: TStory = {
+    args: {
+        isSubMenuXScrollEnabled: true,
+        isMainMenuIconsOutlined: false,
+        isSubMenuIconsOutlined: false,
+        isSubMenuButtonIconsOutlined: false,
+        isSubMenuTooltipsShown: true,
+    },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openSubMenuByClick(canvasElement);
     },
 };

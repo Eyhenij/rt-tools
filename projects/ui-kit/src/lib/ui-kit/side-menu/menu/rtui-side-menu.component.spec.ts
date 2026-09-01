@@ -101,6 +101,10 @@ function typeInSearch(fixture: ComponentFixture<HostComponent>, query: string): 
     fixture.detectChanges();
 }
 
+function pinIcon(fixture: ComponentFixture<HostComponent>): HTMLElement {
+    return fixture.nativeElement.querySelector('[qa-dataid="side-menu-pin"] mat-icon') as HTMLElement;
+}
+
 describe('RtuiSideMenuComponent — мода подменю', () => {
     it('SC-UK-17 — потребитель, не назвавший моду, получает подменю на наведении', () => {
         const { fixture }: ISetup = setup();
@@ -230,5 +234,25 @@ describe('RtuiSideMenuComponent — поиск по подменю', () => {
         hoverFirstItem(fixture);
 
         expect(subItems(fixture).length).toBe(2);
+    });
+    it('SC-UK-31 — закреплённое и незакреплённое подменю помечены разными значками', () => {
+        // Промах, найденный владельцем в витрине: пара значков держалась на оси переменного
+        // шрифта, а показ грузит статический набор — ось он не читает вовсе, и оба состояния
+        // рисовались одним залитым глифом. Признак берётся тот, который виден в кадре:
+        // семейство значка, а не записанный ему стиль.
+        const { fixture, host }: ISetup = setup();
+
+        hoverFirstItem(fixture);
+
+        const contour: string = pinIcon(fixture).className;
+
+        host.mode.set('pinned');
+        fixture.detectChanges();
+
+        const filled: string = pinIcon(fixture).className;
+
+        expect(contour).not.toBe(filled);
+        expect(contour).toContain('material-icons-outlined');
+        expect(filled).not.toContain('material-icons-outlined');
     });
 });
