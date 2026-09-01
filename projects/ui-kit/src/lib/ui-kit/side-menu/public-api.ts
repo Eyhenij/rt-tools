@@ -3,6 +3,7 @@ export {
     clampSubMenuWidth,
     readSubMenuMode,
     readSubMenuWidth,
+    splitSubMenuTitle,
     SUB_MENU_MODE_KEY,
     SUB_MENU_WIDTH_KEY,
     SUB_MENU_WIDTH_MAX,
@@ -10,4 +11,5 @@ export {
     writeSubMenuMode,
     writeSubMenuWidth,
 } from './side-menu.logic';
+export type { ISubMenuTitlePart } from './side-menu.logic';
 export { RtuiSideMenuComponent, RtuiSideMenuFooterDirective, RtuiSideMenuHeaderDirective } from './menu/rtui-side-menu.component';

@@ -322,3 +322,36 @@ describe('SC-UK-35 — край закреплённого подменю тян
         expect(resizer(fixture)).toBeNull();
     });
 });
+
+/** Отмеченные куски подписей: подсветка помечена своим элементом, а не разметкой браузера. */
+function highlights(fixture: ComponentFixture<HostComponent>): string[] {
+    return Array.from(fixture.nativeElement.querySelectorAll('.rtui-side-menu-sub-item-title__match')).map(
+        (node: unknown): string => (node as HTMLElement).textContent?.trim() ?? ''
+    );
+}
+
+describe('SC-UK-36 — в отобранной подписи отмечено то, чем она совпала', () => {
+    it('отмечено ровно набранное', () => {
+        const { fixture }: ISetup = setup('pinned', ['refs']);
+
+        typeInSearch(fixture, 'курс');
+
+        expect(highlights(fixture)).toEqual(['Курс']);
+    });
+
+    it('пустой запрос ничего не отмечает', () => {
+        const { fixture }: ISetup = setup('pinned', ['refs']);
+
+        expect(highlights(fixture)).toEqual([]);
+    });
+
+    it('подпись остаётся целой: отмечен кусок, а не подменён текст', () => {
+        const { fixture }: ISetup = setup('pinned', ['refs']);
+
+        typeInSearch(fixture, 'курс');
+
+        const title: HTMLElement = fixture.nativeElement.querySelector('.rtui-side-menu-sub-item-title__text') as HTMLElement;
+
+        expect(title.textContent?.replace(/\s+/g, ' ').trim()).toBe('Курсы валют');
+    });
+});

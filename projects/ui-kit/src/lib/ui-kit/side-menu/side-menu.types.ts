@@ -4,10 +4,12 @@ import { InjectionToken, Signal } from '@angular/core';
  * Меню, в котором стоит подпункт. Токен вместо самого компонента: подпункт брал его классом, а
  * меню объявляет подпункт в своих импортах — получался круг «меню → подпункт → меню».
  *
- * Подпункту нужно от меню одно: какие пункты сейчас раскрыты.
+ * Подпункту нужно от меню два значения: какие пункты сейчас раскрыты и что набрано в поиске —
+ * второе затем, чтобы отметить в подписи то, чем она совпала.
  */
 export interface IRtuiSideMenuHost {
     readonly activeMenuIds: Signal<Array<string | number>>;
+    readonly subMenuQuery: Signal<string>;
 }
 
 export const RTUI_SIDE_MENU: InjectionToken<IRtuiSideMenuHost> = new InjectionToken<IRtuiSideMenuHost>('RTUI_SIDE_MENU');

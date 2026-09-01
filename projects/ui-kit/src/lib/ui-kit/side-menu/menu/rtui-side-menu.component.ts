@@ -143,7 +143,6 @@ export class RtuiSideMenuComponent {
     protected readonly nothingFoundLabel: string = 'Nothing found';
     protected readonly resizeLabel: string = 'Resize submenu';
 
-    protected readonly subMenuQuery: WritableSignal<string> = signal('');
     /**
      * Закрепление действует. На узком экране подменю занимает экран целиком, закреплять там
      * нечего — и переключателя в узкой разметке нет.
@@ -165,6 +164,8 @@ export class RtuiSideMenuComponent {
     public readonly footerTpl: Signal<TNullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiSideMenuFooterDirective, {
         read: TemplateRef,
     });
+    /** Что набрано в поиске. Публично: подпункт берёт запрос отсюда, чтобы отметить совпавшее. */
+    public readonly subMenuQuery: WritableSignal<string> = signal('');
     public readonly subMenuRef: Signal<TNullable<MatDrawer>> = viewChild(MatDrawer);
     public readonly subMenuPanelRef: Signal<TNullable<ElementRef<HTMLElement>>> = viewChild('subMenuPanel', { read: ElementRef });
 
