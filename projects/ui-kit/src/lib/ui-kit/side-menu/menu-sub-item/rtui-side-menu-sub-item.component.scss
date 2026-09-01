@@ -40,7 +40,8 @@
             // разметки выделения браузера: то жёлтое и в тёмной теме читается как чужое.
             &__match {
                 border-radius: var(--rt-radius-xs);
-                background-color: var(--rt-bg-accent-primary-subtle);
+                background-color: var(--rt-bg-accent-highlight);
+                color: var(--rt-text-accent-highlight);
                 font-weight: var(--rt-font-weight-semibold);
             }
 
@@ -100,7 +101,8 @@
             // бы как разный смысл.
             &__match {
                 border-radius: var(--rt-radius-xs);
-                background-color: var(--rt-bg-accent-primary-subtle);
+                background-color: var(--rt-bg-accent-highlight);
+                color: var(--rt-text-accent-highlight);
                 font-weight: var(--rt-font-weight-semibold);
             }
 
