@@ -24,7 +24,23 @@
                         [matTooltipDisabled]="!isSubMenuTooltipsShown() || narrow()"
                         [rtHideTooltipDirective]="titleTpl"
                         [isTooltipShown]="isSubMenuTooltipsShown() && !narrow()">
-                        {{ item.name }}
+                        <!--
+                            Подпись рисуется кусками: отмечено ровно то, чем она совпала с
+                            запросом. Отмеченное помечено своим элементом, а не разметкой
+                            выделения браузера — та красит мимо набора токенов.
+                        -->
+                        @for (part of item.name | rtuiSubMenuTitleParts: menuRef.subMenuQuery(); track $index) {
+                            @if (part.matched) {
+                                <span rtElem="match">{{ part.text }}</span>
+                            } @else {
+                                <!--
+                                    Кусок без отметки тоже узел: интерполяция, стоящая в разметке
+                                    сама по себе, приезжает вместе с переносами строк вокруг неё
+                                    и разрывает подпись пробелами.
+                                -->
+                                <span>{{ part.text }}</span>
+                            }
+                        }
                     </div>
 
                     @if (item?.iconButton?.icon) {
@@ -63,7 +79,13 @@
                         [matTooltipDisabled]="!isSubMenuTooltipsShown() || narrow()"
                         [rtHideTooltipDirective]="headerTitleTpl"
                         [isTooltipShown]="isSubMenuTooltipsShown() && !narrow()">
-                        {{ item.name }}
+                        @for (part of item.name | rtuiSubMenuTitleParts: menuRef.subMenuQuery(); track $index) {
+                            @if (part.matched) {
+                                <span rtElem="match">{{ part.text }}</span>
+                            } @else {
+                                <span>{{ part.text }}</span>
+                            }
+                        }
                     </div>
                 }
             </mat-expansion-panel-header>

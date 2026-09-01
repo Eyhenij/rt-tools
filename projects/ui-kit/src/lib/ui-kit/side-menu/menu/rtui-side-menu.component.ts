@@ -6,12 +6,14 @@ import {
     computed,
     contentChild,
     Directive,
+    ElementRef,
     inject,
     input,
     InputSignal,
     InputSignalWithTransform,
     output,
     OutputEmitterRef,
+    Renderer2,
     Signal,
     signal,
     TemplateRef,
@@ -27,6 +29,7 @@ import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '
 import { TNullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective, RtNavigationDirective, RtScrollToElementDirective } from '@rt-tools/core';
+import { clampSubMenuWidth, SUB_MENU_WIDTH_MIN } from '../side-menu.logic';
 import { filterSubMenuItems } from '../side-menu.logic';
 import { ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
 import {
@@ -56,6 +59,9 @@ const BEM_BLOCK: string = 'rtui-side-menu';
         // Раскладка хоста меняется только у закреплённой моды: у всех, кто ставит меню
         // по-старому, она обязана остаться прежней до пикселя.
         '[class.rtui-side-menu--pinned]': 'isPinned()',
+        // Ширина подменю приходит переменной оформления: правило стилей стоит на ней в трёх
+        // местах разом, и правка одной переменной двигает их все.
+        '[style.--rt-side-menu-sub-menu-width]': 'subMenuWidthStyle()',
     },
     templateUrl: './rtui-side-menu.component.html',
     styleUrls: ['./rtui-side-menu.component.scss'],
@@ -87,6 +93,15 @@ const BEM_BLOCK: string = 'rtui-side-menu';
 })
 export class RtuiSideMenuComponent {
     readonly #breakpoints: BreakpointService = inject(BreakpointService);
+    readonly #renderer: Renderer2 = inject(Renderer2);
+
+    /**
+     * Ширина, пока край держат указателем. Наружу она уходит одной просьбой на отпускании: вход
+     * потребителя за каждым движением мыши не угнаться, а хранилище незачем писать сотней раз.
+     */
+    readonly #draggedWidth: WritableSignal<number | null> = signal(null);
+    /** Снятие слушателей документа. Ведут и отпускают за пределами самой ручки. */
+    #stopDrag: (() => void) | null = null;
 
     /** Подменю открыл указатель. У закреплённой моды открытость считается не так. */
     readonly #hoverOpened: WritableSignal<boolean> = signal(false);
@@ -108,6 +123,16 @@ export class RtuiSideMenuComponent {
         return activeItem?.submenu ?? this.selectedSubMenu() ?? [];
     });
 
+    /**
+     * Ширина подменю в оформлении. Своего выбора нет — переменная не ставится вовсе, и ширину
+     * берёт набор токенов: своё число здесь подменило бы его молча.
+     */
+    protected readonly subMenuWidthStyle: Signal<string | null> = computed((): string | null => {
+        const width: number | null = this.#draggedWidth() ?? this.subMenuWidth();
+
+        return width === null ? null : `${clampSubMenuWidth(width)}px`;
+    });
+
     /** Экран узкий: замер кита, и другого источника у этого признака нет. */
     protected readonly narrow: Signal<boolean> = computed(() => !!this.#breakpoints.isMobile());
 
@@ -116,8 +141,8 @@ export class RtuiSideMenuComponent {
     protected readonly pinLabel: string = 'Pin submenu';
     protected readonly unpinLabel: string = 'Unpin submenu';
     protected readonly nothingFoundLabel: string = 'Nothing found';
+    protected readonly resizeLabel: string = 'Resize submenu';
 
-    protected readonly subMenuQuery: WritableSignal<string> = signal('');
     /**
      * Закрепление действует. На узком экране подменю занимает экран целиком, закреплять там
      * нечего — и переключателя в узкой разметке нет.
@@ -139,7 +164,10 @@ export class RtuiSideMenuComponent {
     public readonly footerTpl: Signal<TNullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiSideMenuFooterDirective, {
         read: TemplateRef,
     });
+    /** Что набрано в поиске. Публично: подпункт берёт запрос отсюда, чтобы отметить совпавшее. */
+    public readonly subMenuQuery: WritableSignal<string> = signal('');
     public readonly subMenuRef: Signal<TNullable<MatDrawer>> = viewChild(MatDrawer);
+    public readonly subMenuPanelRef: Signal<TNullable<ElementRef<HTMLElement>>> = viewChild('subMenuPanel', { read: ElementRef });
 
     public readonly backToMainMenuButton: Signal<ISideMenu.Item> = signal({ id: 0, icon: 'arrow_back', name: 'Main Menu', link: ' ' });
     public readonly selectedItem: WritableSignal<TNullable<ISideMenu.Item>> = signal(null);
@@ -151,6 +179,11 @@ export class RtuiSideMenuComponent {
     });
     /** Мода подменю. Умолчание — сегодняшнее поведение: открывается наведением. */
     public subMenuMode: InputSignal<ISideMenu.SubMenuMode> = input<ISideMenu.SubMenuMode>('hover');
+    /**
+     * Ширина закреплённого подменю в пикселях. Пустая — ширину ставит оформление; хранит выбор
+     * потребитель, как и моду.
+     */
+    public subMenuWidth: InputSignal<number | null> = input<number | null>(null);
     public isSubMenuXScrollEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
@@ -176,6 +209,8 @@ export class RtuiSideMenuComponent {
      * входом. Своего состояния о нём меню не заводит.
      */
     public readonly subMenuModeChange: OutputEmitterRef<ISideMenu.SubMenuMode> = output<ISideMenu.SubMenuMode>();
+    /** Просьба о ширине — по той же причине, что и просьба о моде: своего состояния меню не держит. */
+    public readonly subMenuWidthChange: OutputEmitterRef<number> = output<number>();
     public readonly closeMobileMenuAction: OutputEmitterRef<void> = output<void>();
     public readonly clickSubMenuAction: OutputEmitterRef<{ item: ISideMenu.Item; event: MouseEvent }> = output<{
         item: ISideMenu.Item;
@@ -257,6 +292,33 @@ export class RtuiSideMenuComponent {
         this.subMenuModeChange.emit(this.isPinned() ? 'hover' : 'pinned');
     }
 
+    /**
+     * Взята ручка правого края. Слушатели вешаются на документ: рука уходит с узкой полоски
+     * ручки в первое же движение, и слушатель на ней самой терял бы тягу сразу.
+     */
+    public onResizeStart(event: MouseEvent): void {
+        if (!this.isPinned() || this.#stopDrag !== null) {
+            return;
+        }
+
+        // Иначе указатель выделяет подписи пунктов, и тяга выглядит выделением текста.
+        event.preventDefault();
+
+        const startX: number = event.clientX;
+        const startWidth: number = this.subMenuWidth() ?? this.#measureSubMenuWidth();
+
+        const stopMove: () => void = this.#renderer.listen('document', 'mousemove', (moveEvent: MouseEvent): void => {
+            this.#draggedWidth.set(clampSubMenuWidth(startWidth + moveEvent.clientX - startX));
+        });
+        const stopUp: () => void = this.#renderer.listen('document', 'mouseup', (): void => this.#finishResize());
+
+        this.#stopDrag = (): void => {
+            stopMove();
+            stopUp();
+            this.#stopDrag = null;
+        };
+    }
+
     public onSubMenuSearch(query: string): void {
         this.subMenuQuery.set(query);
     }
@@ -273,5 +335,25 @@ export class RtuiSideMenuComponent {
 
     #openSubMenu(): void {
         this.#hoverOpened.set(true);
+    }
+
+    /** Отпускание: слушатели снимаются, а ширина уходит просьбой наружу. */
+    #finishResize(): void {
+        const width: number | null = this.#draggedWidth();
+
+        this.#stopDrag?.();
+        this.#draggedWidth.set(null);
+
+        if (width !== null) {
+            this.subMenuWidthChange.emit(width);
+        }
+    }
+
+    /** Ширина, от которой отсчитывается тяга, когда своего выбора ещё нет: та, что нарисована. */
+    #measureSubMenuWidth(): number {
+        const panel: ElementRef<HTMLElement> | null = this.subMenuPanelRef() ?? null;
+        const width: number = panel?.nativeElement.getBoundingClientRect().width ?? 0;
+
+        return width > 0 ? width : SUB_MENU_WIDTH_MIN;
     }
 }

@@ -134,11 +134,25 @@
         [hasBackdrop]="!isPinned()"
         (backdropClick)="closeSubMenu()">
         <mat-drawer
+            #subMenuPanel
             rtBlock="rtui-sub-side-menu-content"
             mode="side"
             position="start"
             [opened]="subMenuOpened()"
             (mouseleave)="toggleSubMenu()">
+            @if (isPinned()) {
+                <!--
+                    Ручка есть только у закреплённого подменю: незакреплённое живёт наведением
+                    и уходит с экрана раньше, чем до её края доедет рука.
+                -->
+                <div
+                    rtElem="resizer"
+                    qa-dataid="side-menu-resize"
+                    role="separator"
+                    aria-orientation="vertical"
+                    [attr.aria-label]="resizeLabel"
+                    (mousedown)="onResizeStart($event)"></div>
+            }
             <rtui-scrollable>
                 <ng-container *rtuiScrollableHeader>
                     @if (subMenuOpened()) {

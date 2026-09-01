@@ -6,7 +6,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { ISideMenu } from '../../side-menu.types';
-import { readSubMenuMode, writeSubMenuMode } from '../../side-menu.logic';
+import { readSubMenuMode, readSubMenuWidth, writeSubMenuMode, writeSubMenuWidth } from '../../side-menu.logic';
 import { RtuiSideMenuComponent, RtuiSideMenuFooterDirective, RtuiSideMenuHeaderDirective } from '../../menu/rtui-side-menu.component';
 
 /** Длинное имя пункта: им показывают, как меню переносит текст. */
@@ -164,6 +164,8 @@ export class TestSideMenuWrapperComponent {
      * не расходились.
      */
     public subMenuMode: ISideMenu.SubMenuMode = readSubMenuMode(this.#storage);
+    /** Ширина второго уровня — такая же настройка человека, и хранится она тем же приёмом. */
+    public subMenuWidth: number | null = readSubMenuWidth(this.#storage);
     public isSubMenuXScrollEnabled: boolean = true;
     public isMainMenuIconsOutlined: boolean = false;
     public isSubMenuIconsOutlined: boolean = false;
@@ -173,6 +175,11 @@ export class TestSideMenuWrapperComponent {
     public onSubMenuModeChange(mode: ISideMenu.SubMenuMode): void {
         this.subMenuMode = mode;
         writeSubMenuMode(this.#storage, mode);
+    }
+
+    public onSubMenuWidthChange(width: number): void {
+        this.subMenuWidth = width;
+        writeSubMenuWidth(this.#storage, width);
     }
 
     public closeMobileMenu(): void {

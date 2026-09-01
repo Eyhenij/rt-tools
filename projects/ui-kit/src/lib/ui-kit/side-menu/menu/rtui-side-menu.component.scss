@@ -168,10 +168,26 @@ $side-menu: (
             // Component-local elevation token for the slide-out sub-menu drawer.
             --rt-side-menu-sub-content-shadow: 14px 0 28px rgb(0 0 0 / 25%), 10px 0 10px rgb(0 0 0 / 22%);
 
+            // Ручка тяги стоит по правому краю панели и потому отсчитывается от неё.
+            position: relative;
             width: var(--rt-side-menu-sub-menu-width);
             height: 100%;
             border-left: 1px solid var(--rt-border-neutral-default);
             box-shadow: var(--rt-side-menu-sub-content-shadow);
+
+            &__resizer {
+                position: absolute;
+                z-index: 1;
+                top: 0;
+                right: 0;
+                width: 0.25rem;
+                height: 100%;
+                cursor: col-resize;
+
+                &:hover {
+                    background-color: var(--rt-border-neutral-default);
+                }
+            }
 
             &__list {
                 width: 100%;

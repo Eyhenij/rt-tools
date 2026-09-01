@@ -20,6 +20,7 @@ import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltip } from '@angular/material/toolt
 import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '@rt-tools/core';
 import { RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtHideTooltipDirective } from '../../tooltip';
+import { RtuiSubMenuTitlePartsPipe } from './sub-menu-title-parts.pipe';
 import { IRtuiSideMenuHost, ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
 
 const BEM_BLOCK: string = 'rtui-side-menu-sub-item';
@@ -46,6 +47,9 @@ const BEM_BLOCK: string = 'rtui-side-menu-sub-item';
         ModDirective,
         RtIconOutlinedDirective,
         RtHideTooltipDirective,
+
+        // pipes
+        RtuiSubMenuTitlePartsPipe,
     ],
     providers: [
         BreakpointService,
