@@ -119,3 +119,50 @@ export function writeSubMenuWidth(storage: Storage | null, width: number): void 
         // хранилище закрыто настройками браузера — ширина просто не переживёт перезагрузку
     }
 }
+
+/** Кусок подписи: отмеченный — тот, которым она совпала с запросом. */
+export interface ISubMenuTitlePart {
+    text: string;
+    matched: boolean;
+}
+
+/**
+ * Резка подписи на совпавшие и несовпавшие куски.
+ *
+ * Отмечается найденное, а не вся подпись: подсвеченная целиком, она говорит ровно то же, что и её
+ * присутствие в списке. Отмечаются все вхождения — подпись раздела повторяет слово в себе чаще,
+ * чем кажется, и отмеченное одно первое читается как «второго нет».
+ *
+ * Сравнение регистронезависимое, как и отбор, а куски режутся из оригинала: приведение к нижнему
+ * регистру переписало бы чужие названия разделов.
+ */
+export function splitSubMenuTitle(name: string, query: string): ISubMenuTitlePart[] {
+    if (name === '') {
+        return [];
+    }
+
+    const needle: string = query.trim().toLowerCase();
+
+    if (needle === '') {
+        return [{ text: name, matched: false }];
+    }
+
+    const haystack: string = name.toLowerCase();
+    const parts: ISubMenuTitlePart[] = [];
+    let from: number = 0;
+
+    for (let at: number = haystack.indexOf(needle, from); at !== -1; at = haystack.indexOf(needle, from)) {
+        if (at > from) {
+            parts.push({ text: name.slice(from, at), matched: false });
+        }
+
+        parts.push({ text: name.slice(at, at + needle.length), matched: true });
+        from = at + needle.length;
+    }
+
+    if (from < name.length) {
+        parts.push({ text: name.slice(from), matched: false });
+    }
+
+    return parts;
+}

@@ -36,6 +36,14 @@
                 white-space: nowrap;
             }
 
+            // Совпавший с запросом кусок подписи. Красится набором токенов, а не умолчанием
+            // разметки выделения браузера: то жёлтое и в тёмной теме читается как чужое.
+            &__match {
+                border-radius: var(--rt-radius-xs);
+                background-color: var(--rt-bg-accent-primary-subtle);
+                font-weight: var(--rt-font-weight-semibold);
+            }
+
             .rtui-side-menu-sub-item-title-button {
                 display: flex;
                 align-items: center;
@@ -85,6 +93,15 @@
 
             &__title {
                 font-size: var(--rt-side-menu-sub-menu-item-title-font-size);
+            }
+
+            // Отметка совпавшего — та же, что у пункта со ссылкой: заголовок раздела попадает
+            // в отобранный список наравне с ним, и разное оформление одного и того же читалось
+            // бы как разный смысл.
+            &__match {
+                border-radius: var(--rt-radius-xs);
+                background-color: var(--rt-bg-accent-primary-subtle);
+                font-weight: var(--rt-font-weight-semibold);
             }
 
             &:hover {
