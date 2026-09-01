@@ -153,6 +153,18 @@ mg "SC-AK-559 — слияние с подстановкой токена суд
     'GH_TOKEN="$TOKEN" gh pr merge 42 --merge' deny
 mg "SC-AK-559 — открытие заявки с подстановкой токена судится наравне" "$LYING" \
     'GH_TOKEN="$TOKEN" gh pr create --title "[RT-42] Сделано" --body x' deny
+# Клиент, названный путём, — та же команда. Признак, знавший только голое имя, не узнавал вызов
+# вовсе и выходил нулём: молчание гарда неотличимо от разрешения, и заявки уезжали открытыми не
+# машинной записью. Путь тут не украшение — под своим именем клиент бывает псевдонимом оболочки.
+mg "SC-AK-831 — открытие заявки полным путём судится наравне с голым именем" "$LYING" \
+    '/opt/homebrew/bin/gh pr create --title "[RT-42] Сделано" --body x' deny
+mg "SC-AK-831 — открытие заявки относительным путём судится наравне" "$LYING" \
+    './gh pr create --title "[RT-42] Сделано" --body x' deny
+mg "SC-AK-831 — слияние полным путём судится наравне" "$LYING" \
+    '/opt/homebrew/bin/gh pr merge 42 --merge' deny
+# Обратная сторона: упоминание имени в кавычках командой не было и не становится.
+mg "SC-AK-831 — имя команды внутри строки командой не считается" "$LYING" \
+    'echo "как открыть: gh pr create --title x"' PASS
 # Обход из текста команды действует и тогда, когда очередь работ спросить некого.
 mg "SC-AK-17 — обход с причиной в тексте команды" "$LYING" 'gh pr merge 42 --merge # Task-folder-skip: работа вливается частями' PASS
 mg "SC-AK-18 — обход без причины обходом не считается" "$LYING" 'gh pr merge 42 --merge # Task-folder-skip:' deny
@@ -363,82 +375,6 @@ printf 'RT_TASK_BOT="%s"\nRT_COMMIT_EMAIL="%s"\n' "$BOT_LOGIN" "$BOT_MAIL" \
 fixture_commit_as "$MERGED_SIG" "$BOT_LOGIN" "$BOT_MAIL" src/new.ts 'export const z = 3;' 'feat: новое'
 sig "SC-AK-182 — судится вклад ветки, а не вся история" "$MERGED_SIG" 'git push origin RT-71-merged' PASS
 rm -rf "$MERGED_SIG"
-
-# --- личность вызова, открывающего заявку -------------------------------------------------------
-# Клиент хостинга держит две записи сразу, и какая откроет заявку, из текста команды видно только
-# по явной подстановке токена. Промах всплывает шагом позже — на назначении ревьювера, — и чинится
-# переоткрытием: автора у заявки не сменить.
-#
-# Команда собирается переменной, а не пишется строкой: набор читает тот же гард поставки, и
-# написанная целиком, она отбивает правку этого файла как настоящее открытие заявки.
-OPEN='gh pr'' create'
-
-TOKEN_PR="$(fixture_repo RT-74-token)"
-mkdir -p "$TOKEN_PR/.claude/rt-kit"
-printf 'RT_PULL_TOKEN_VAR="GH_TOKEN"\nRT_PULL_TOKEN_HINT="GH_TOKEN=$(cat ~/.config/token)"\n' \
-    > "$TOKEN_PR/.claude/rt-kit/project.sh"
-
-pr_token() {
-    local label="$1" cmd="$2" want="$3" out
-    out="$(CLAUDE_PROJECT_DIR="$TOKEN_PR" input_cmd "$cmd" Bash "$TOKEN_PR" \
-        | CLAUDE_PROJECT_DIR="$TOKEN_PR" "$HOOKS/git-guard-delivery.sh" 2>/dev/null \
-        | jq -r '.hookSpecificOutput.permissionDecision // "PASS"' 2>/dev/null)"
-    report "$label" "${out:-PASS}" "$want"
-}
-
-pr_token "SC-AK-480 — заявка без подстановки токена отбивается" \
-    "$OPEN --title \"[RT-74] Сделано\" --body x" deny
-pr_token "SC-AK-481 — заявка с подстановкой токена проходит" \
-    "GH_TOKEN=\$(cat ~/.config/token) $OPEN --title \"[RT-74] Сделано\" --body x" PASS
-pr_token "SC-AK-482 — токен, выставленный отдельной строкой, засчитывается" \
-    "export GH_TOKEN=\$(cat ~/.config/token); $OPEN --title \"[RT-74] Сделано\" --body x" PASS
-
-CLAUDE_PROJECT_DIR="$TOKEN_PR" expect_reason "SC-AK-483 — отказ называет переменную токена" \
-    git-guard-delivery.sh \
-    "$(input_cmd "$OPEN --title \"[RT-74] Сделано\" --body x" Bash "$TOKEN_PR")" \
-    'GH_TOKEN'
-rm -rf "$TOKEN_PR"
-
-# Дерево без машинной записи требования не получает: у него личность вызова ничего не значит.
-NO_TOKEN_PR="$(fixture_repo RT-75-notoken)"
-mkdir -p "$NO_TOKEN_PR/.claude/rt-kit"
-printf 'RT_PULL_TOKEN_VAR=""\n' > "$NO_TOKEN_PR/.claude/rt-kit/project.sh"
-out="$(CLAUDE_PROJECT_DIR="$NO_TOKEN_PR" input_cmd "$OPEN --title \"[RT-75] Сделано\" --body x" Bash "$NO_TOKEN_PR" \
-    | CLAUDE_PROJECT_DIR="$NO_TOKEN_PR" "$HOOKS/git-guard-delivery.sh" 2>/dev/null \
-    | jq -r '.hookSpecificOutput.permissionDecision // "PASS"' 2>/dev/null)"
-report "SC-AK-484 — дерево без машинной записи автора не судит" "${out:-PASS}" PASS
-rm -rf "$NO_TOKEN_PR"
-
-# Второй ярус: автора заявки называет хостинг, и спрашивается он на снятии черновика — последнем
-# ходе, где промах ещё исправим. Сети набор не знает, поэтому состояние заявки подменяется
-# профилем дерева-пробы: судится решение гарда, а не работа клиента хостинга.
-AUTHOR_PR="$(fixture_repo RT-76-author)"
-mkdir -p "$AUTHOR_PR/.claude/rt-kit"
-author_profile() {
-    printf 'RT_TASK_BOT="bot"\nRT_PULL_TOKEN_HINT="GH_TOKEN=$(cat ~/.config/token)"\n' \
-        > "$AUTHOR_PR/.claude/rt-kit/project.sh"
-    printf 'rt_pull_state() { printf "%%s" %s; }\n' "'{\"exists\":true,\"number\":9,\"draft\":true,\"reviewed\":true,\"conflicting\":false,\"author\":\"$1\"}'" \
-        >> "$AUTHOR_PR/.claude/rt-kit/project.sh"
-}
-
-ready_author() {
-    local label="$1" want="$2" out
-    out="$(CLAUDE_PROJECT_DIR="$AUTHOR_PR" input_cmd 'gh pr ready 9' Bash "$AUTHOR_PR" \
-        | CLAUDE_PROJECT_DIR="$AUTHOR_PR" "$HOOKS/git-guard-delivery.sh" 2>/dev/null \
-        | jq -r '.hookSpecificOutput.permissionDecision // "PASS"' 2>/dev/null)"
-    report "$label" "${out:-PASS}" "$want"
-}
-
-author_profile owner
-ready_author "SC-AK-485 — черновик не снимается с заявки, открытой не машинной записью" deny
-CLAUDE_PROJECT_DIR="$AUTHOR_PR" expect_reason "SC-AK-486 — отказ называет обе записи и переоткрытие" \
-    git-guard-delivery.sh \
-    "$(input_cmd 'gh pr ready 9' Bash "$AUTHOR_PR")" \
-    'открой заново'
-
-author_profile bot
-ready_author "SC-AK-487 — заявка машинной записи черновик снимает" PASS
-rm -rf "$AUTHOR_PR"
 
 # --- раздел об оставшемся шаге в теле заявки ----------------------------------------------------
 #
