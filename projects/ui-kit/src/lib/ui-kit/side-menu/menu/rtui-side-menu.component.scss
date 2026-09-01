@@ -175,14 +175,16 @@ $side-menu: (
             border-left: 1px solid var(--rt-border-neutral-default);
             box-shadow: var(--rt-side-menu-sub-content-shadow);
 
+            // Панель скруглена по правому краю, и её углы срезают всё, что стоит в них вплотную:
+            // полоса, растянутая на всю высоту, теряла концы сверху и снизу. Отступ равен радиусу
+            // панели — тогда полоса кончается там, где угол начинается.
             &__resizer {
                 position: absolute;
                 z-index: 1;
-                top: 0;
                 right: 0;
                 width: 0.25rem;
-                height: 100%;
                 cursor: col-resize;
+                inset-block: var(--rt-radius-lg);
 
                 &:hover {
                     background-color: var(--rt-border-neutral-default);
