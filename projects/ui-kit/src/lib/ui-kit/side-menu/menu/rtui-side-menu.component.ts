@@ -27,6 +27,7 @@ import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '
 import { TNullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective, RtNavigationDirective, RtScrollToElementDirective } from '@rt-tools/core';
+import { filterSubMenuItems } from '../side-menu.logic';
 import { ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
 import {
     RtuiScrollableContainerComponent,
@@ -82,8 +83,48 @@ const BEM_BLOCK: string = 'rtui-side-menu';
 export class RtuiSideMenuComponent {
     readonly #breakpoints: BreakpointService = inject(BreakpointService);
 
+    /** Подменю открыл указатель. У закреплённой моды открытость считается не так. */
+    readonly #hoverOpened: WritableSignal<boolean> = signal(false);
+
+    /**
+     * Пункт, подменю которого стоит закреплённым: активный по входу активности. Своего
+     * вычисления по адресу у меню нет — активность приходит снаружи.
+     */
+    readonly #pinnedItem: Signal<TNullable<ISideMenu.Item>> = computed((): TNullable<ISideMenu.Item> => {
+        if (!this.isPinned()) {
+            return null;
+        }
+
+        const active: Array<string | number> = this.activeMenuIds();
+
+        return this.menuItems().find((item: ISideMenu.Item): boolean => active.includes(item.id) && !!item.submenu?.length) ?? null;
+    });
+
     /** Экран узкий: замер кита, и другого источника у этого признака нет. */
     protected readonly narrow: Signal<boolean> = computed(() => !!this.#breakpoints.isMobile());
+
+    /** Подписи зашиты: словаря у кита нет, и кнопка возврата рядом названа тем же способом. */
+    protected readonly searchLabel: string = 'Search';
+    protected readonly pinLabel: string = 'Pin submenu';
+    protected readonly unpinLabel: string = 'Unpin submenu';
+    protected readonly nothingFoundLabel: string = 'Nothing found';
+
+    protected readonly subMenuQuery: WritableSignal<string> = signal('');
+    /**
+     * Закрепление действует. На узком экране подменю занимает экран целиком, закреплять там
+     * нечего — и переключателя в узкой разметке нет.
+     */
+    protected readonly isPinned: Signal<boolean> = computed((): boolean => this.subMenuMode() === 'pinned' && !this.narrow());
+
+    /** Закреплённое подменю открыто, пока есть активный пункт: указатель на это не влияет. */
+    protected readonly subMenuOpened: Signal<boolean> = computed((): boolean =>
+        this.isPinned() ? this.#pinnedItem() !== null : this.#hoverOpened()
+    );
+
+    /** Что видно в подменю: отобранные пункты того набора, который его сейчас наполняет. */
+    protected readonly visibleSubMenuItems: Signal<ISideMenu.Item[]> = computed((): ISideMenu.Item[] =>
+        filterSubMenuItems((this.isPinned() ? this.#pinnedItem()?.submenu : this.selectedSubMenu()) ?? [], this.subMenuQuery())
+    );
     public readonly headerTpl: Signal<TNullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiSideMenuHeaderDirective, {
         read: TemplateRef,
     });
@@ -100,6 +141,8 @@ export class RtuiSideMenuComponent {
     public menuItems: InputSignalWithTransform<ISideMenu.Item[], ISideMenu.Item[]> = input<ISideMenu.Item[], ISideMenu.Item[]>([], {
         transform: (value: ISideMenu.Item[]) => transformArrayInput(value),
     });
+    /** Мода подменю. Умолчание — сегодняшнее поведение: открывается наведением. */
+    public subMenuMode: InputSignal<ISideMenu.SubMenuMode> = input<ISideMenu.SubMenuMode>('hover');
     public isSubMenuXScrollEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
@@ -120,6 +163,11 @@ export class RtuiSideMenuComponent {
         this.activeMenuIds()?.length ? this.activeMenuIds()[this.activeMenuIds()?.length - 1] : ''
     );
 
+    /**
+     * Просьба о моде, а не смена моды: предпочтение хранит потребитель кита и возвращает его
+     * входом. Своего состояния о нём меню не заводит.
+     */
+    public readonly subMenuModeChange: OutputEmitterRef<ISideMenu.SubMenuMode> = output<ISideMenu.SubMenuMode>();
     public readonly closeMobileMenuAction: OutputEmitterRef<void> = output<void>();
     public readonly clickSubMenuAction: OutputEmitterRef<{ item: ISideMenu.Item; event: MouseEvent }> = output<{
         item: ISideMenu.Item;
@@ -131,6 +179,13 @@ export class RtuiSideMenuComponent {
     }>();
 
     public onClickMenu(item: ISideMenu.Item): void {
+        if (this.isPinned()) {
+            // Закреплённое подменю ведёт вход активности: нажатие пункта его не переставляет.
+            this.closeMobileMenu();
+
+            return;
+        }
+
         this.selectedItem.set(item);
 
         if (item?.submenu) {
@@ -148,11 +203,17 @@ export class RtuiSideMenuComponent {
     }
 
     public onClickSubMenu({ item, event }: { item: ISideMenu.Item; event: MouseEvent }): void {
-        if (item?.link) {
-            this.clickSubMenuAction.emit({ item, event });
-            this.closeSubMenu();
-            this.closeMobileMenu();
+        if (!item?.link) {
+            return;
         }
+
+        this.clickSubMenuAction.emit({ item, event });
+
+        if (!this.isPinned()) {
+            this.closeSubMenu();
+        }
+
+        this.closeMobileMenu();
     }
 
     public onBackToMainMenu(): void {
@@ -161,6 +222,11 @@ export class RtuiSideMenuComponent {
     }
 
     public toggleSubMenu(item?: ISideMenu.Item): void {
+        if (this.isPinned()) {
+            // Закреплённое подменю не открывается и не закрывается указателем.
+            return;
+        }
+
         if (item?.submenu) {
             this.selectedSubMenu.set(item.submenu);
             this.#openSubMenu();
@@ -174,7 +240,17 @@ export class RtuiSideMenuComponent {
     public closeSubMenu(): void {
         this.selectedItem.set(null);
         this.selectedSubMenu.set(null);
-        this.subMenuRef()?.close().then();
+        this.subMenuQuery.set('');
+        this.#hoverOpened.set(false);
+    }
+
+    /** Нажат переключатель моды: наружу уходит просьба, вход остаётся прежним. */
+    public onSubMenuModeToggle(): void {
+        this.subMenuModeChange.emit(this.isPinned() ? 'hover' : 'pinned');
+    }
+
+    public onSubMenuSearch(query: string): void {
+        this.subMenuQuery.set(query);
     }
 
     public closeMobileMenu(): void {
@@ -188,6 +264,6 @@ export class RtuiSideMenuComponent {
     }
 
     #openSubMenu(): void {
-        this.subMenuRef()?.open().then();
+        this.#hoverOpened.set(true);
     }
 }

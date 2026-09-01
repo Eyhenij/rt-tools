@@ -15,6 +15,12 @@ export const RTUI_SIDE_MENU: InjectionToken<IRtuiSideMenuHost> = new InjectionTo
 export namespace ISideMenu {
     export type ItemData = string | number | object;
 
+    /**
+     * Чем подменю держится открытым: наведением, как было всегда, или закреплением — тогда оно
+     * стоит открытым, пока человек сам его не свернёт.
+     */
+    export type SubMenuMode = 'hover' | 'pinned';
+
     export interface Item {
         id: string | number;
 
