@@ -15,19 +15,21 @@
                         <div rtElem="sub" [rtScrollToElement]="activeMenuId()" [elements]="visibleSubMenuItems()">
                             <rtui-side-menu-sub-item [item]="backToMainMenuButton()" (clickSubMenuAction)="onBackToMainMenu()" />
 
-                            <label rtBlock="rtui-side-menu-search">
-                                <mat-icon rtElem="icon">search</mat-icon>
-
+                            <mat-form-field rtBlock="rtui-side-menu-search" subscriptSizing="dynamic" appearance="outline">
                                 <input
                                     #mobileSubMenuSearch
-                                    rtElem="field"
+                                    matInput
                                     type="search"
                                     qa-dataid="side-menu-search"
                                     [attr.aria-label]="searchLabel"
                                     [placeholder]="searchLabel"
                                     [value]="subMenuQuery()"
                                     (input)="onSubMenuSearch(mobileSubMenuSearch.value)" />
-                            </label>
+
+                                <mat-icon matPrefix [rtIconOutlined]="true">search</mat-icon>
+
+                                <rtui-clear-button matSuffix [isButtonShown]="subMenuQuery() !== ''" (clickAction)="onSubMenuSearch('')" />
+                            </mat-form-field>
 
                             @if (subMenuQuery() !== '' && !visibleSubMenuItems().length) {
                                 <div rtBlock="rtui-side-menu-empty" qa-dataid="side-menu-empty">{{ nothingFoundLabel }}</div>
@@ -157,44 +159,44 @@
                 <ng-container *rtuiScrollableHeader>
                     @if (subMenuOpened()) {
                         <div rtBlock="rtui-sub-side-menu-head">
-                            <label rtElem="search">
-                                <mat-icon rtElem="search-icon">search</mat-icon>
-
+                            <!--
+                                Поле берётся готовым кита — тем же, каким рисует поиск тулбар
+                                таблицы: своя разметка расходится с ним при первой же правке
+                                кита, и заметить это некому. Форма пилюли задана ручкой
+                                оформления поля, а не рамкой поверх готового.
+                            -->
+                            <mat-form-field rtElem="search" subscriptSizing="dynamic" appearance="outline">
                                 <input
                                     #subMenuSearch
-                                    rtElem="search-field"
+                                    matInput
                                     type="search"
                                     qa-dataid="side-menu-search"
                                     [attr.aria-label]="searchLabel"
                                     [placeholder]="searchLabel"
                                     [value]="subMenuQuery()"
                                     (input)="onSubMenuSearch(subMenuSearch.value)" />
-                            </label>
 
-                            <button
+                                <mat-icon matPrefix [rtIconOutlined]="true">search</mat-icon>
+
+                                <rtui-clear-button matSuffix [isButtonShown]="subMenuQuery() !== ''" (clickAction)="onSubMenuSearch('')" />
+                            </mat-form-field>
+
+                            <!--
+                                Кнопка берётся готовой кита. Закреплённое подменю помечено
+                                цветным значком, незакреплённое — спокойным: вид ведёт вход
+                                `variant`. Заливкой самого значка это не показать — её ведёт ось
+                                переменного шрифта, а потребитель волен зарегистрировать
+                                статический набор, и тогда оба состояния рисуются одним глифом.
+                            -->
+                            <rtui-button
                                 rtElem="pin"
-                                type="button"
+                                type="icon"
+                                icon="push_pin"
                                 qa-dataid="side-menu-pin"
+                                [variant]="isPinned() ? 'primary' : 'default'"
                                 [attr.aria-label]="isPinned() ? unpinLabel : pinLabel"
                                 [attr.aria-pressed]="isPinned()"
-                                (click)="onSubMenuModeToggle()">
-                                <!--
-                                    Пара значков одна: закреплённое подменю помечено залитой
-                                    булавкой, незакреплённое — контурной. Отдельной лигатуры
-                                    «открепить» в наборе Material Icons нет — замер показал, что
-                                    keep_off рисуется текстом, а не глифом.
-
-                                    Залитое и контурное берутся сменой семейства, а не осью
-                                    переменного шрифта: ось читает только Material Symbols, а
-                                    потребитель волен зарегистрировать статический набор — и
-                                    тогда записанный стиль не действует вовсе, оба состояния
-                                    рисуются одним глифом, и разница остаётся только в подписи
-                                    для чтеца экрана. Семейство читает любой набор.
-                                -->
-                                <mat-icon rtElem="pin-icon" [fontSet]="isPinned() ? 'material-icons' : 'material-icons-outlined'">
-                                    push_pin
-                                </mat-icon>
-                            </button>
+                                (clicked)="onSubMenuModeToggle()" />
                         </div>
                     }
                 </ng-container>

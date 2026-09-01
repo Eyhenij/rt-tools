@@ -8,6 +8,19 @@ import { SUB_MENU_WIDTH_MAX } from '../side-menu.logic';
 import { ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
 import { RtuiSideMenuComponent } from './rtui-side-menu.component';
 
+/**
+ * Двойник набора шрифтов документа. Значок кита спрашивает у него, доехал ли шрифт значков, а в
+ * среде спек `document.fonts` нет вовсе: без подмены падает всё, что рисует готовую кнопку.
+ */
+beforeAll((): void => {
+    if (!('fonts' in document)) {
+        Object.defineProperty(document, 'fonts', {
+            configurable: true,
+            value: { check: (): boolean => true, ready: Promise.resolve() },
+        });
+    }
+});
+
 /** Двойник службы точек перелома: сценарий сам решает, узкий экран или нет. */
 class BreakpointServiceStub {
     public readonly narrow: WritableSignal<boolean> = signal(false);
@@ -108,8 +121,12 @@ function typeInSearch(fixture: ComponentFixture<HostComponent>, query: string): 
     fixture.detectChanges();
 }
 
-function pinIcon(fixture: ComponentFixture<HostComponent>): HTMLElement {
-    return fixture.nativeElement.querySelector('[qa-dataid="side-menu-pin"] mat-icon') as HTMLElement;
+function pin(fixture: ComponentFixture<HostComponent>): HTMLElement {
+    return fixture.nativeElement.querySelector('[qa-dataid="side-menu-pin"]') as HTMLElement;
+}
+
+function pinButton(fixture: ComponentFixture<HostComponent>): HTMLElement {
+    return fixture.nativeElement.querySelector('[qa-dataid="side-menu-pin"] button') as HTMLElement;
 }
 
 describe('RtuiSideMenuComponent — мода подменю', () => {
@@ -154,7 +171,7 @@ describe('RtuiSideMenuComponent — мода подменю', () => {
         const asked: jest.Mock = jest.fn();
 
         menu(fixture).subMenuModeChange.subscribe(asked);
-        (fixture.nativeElement.querySelector('[qa-dataid="side-menu-pin"]') as HTMLElement).click();
+        pinButton(fixture).click();
         fixture.detectChanges();
 
         expect(asked).toHaveBeenCalledTimes(1);
@@ -171,7 +188,7 @@ describe('RtuiSideMenuComponent — мода подменю', () => {
 
         expect(subItems(fixture).length).toBe(2);
 
-        (fixture.nativeElement.querySelector('[qa-dataid="side-menu-pin"]') as HTMLElement).click();
+        pinButton(fixture).click();
         host.mode.set('pinned');
         fixture.detectChanges();
 
@@ -242,25 +259,25 @@ describe('RtuiSideMenuComponent — поиск по подменю', () => {
 
         expect(subItems(fixture).length).toBe(2);
     });
-    it('SC-UK-31 — закреплённое и незакреплённое подменю помечены разными значками', () => {
+    it('SC-UK-31 — закреплённое и незакреплённое подменю помечены разным видом кнопки', () => {
         // Промах, найденный владельцем в витрине: пара значков держалась на оси переменного
         // шрифта, а показ грузит статический набор — ось он не читает вовсе, и оба состояния
-        // рисовались одним залитым глифом. Признак берётся тот, который виден в кадре:
-        // семейство значка, а не записанный ему стиль.
+        // рисовались одним залитым глифом. Состояние поэтому показывает цвет значка кнопки,
+        // который ведёт вход готового кита, а не заливка глифа.
         const { fixture, host }: ISetup = setup();
 
         hoverFirstItem(fixture);
 
-        const contour: string = pinIcon(fixture).className;
+        const loose: string = pin(fixture).className;
 
         host.mode.set('pinned');
         fixture.detectChanges();
 
-        const filled: string = pinIcon(fixture).className;
+        const held: string = pin(fixture).className;
 
-        expect(contour).not.toBe(filled);
-        expect(contour).toContain('material-icons-outlined');
-        expect(filled).not.toContain('material-icons-outlined');
+        expect(loose).not.toBe(held);
+        expect(loose).toContain('rtui-button--variant-default');
+        expect(held).toContain('rtui-button--variant-primary');
     });
 });
 
@@ -353,5 +370,41 @@ describe('SC-UK-36 — в отобранной подписи отмечено �
         const title: HTMLElement = fixture.nativeElement.querySelector('.rtui-side-menu-sub-item-title__text') as HTMLElement;
 
         expect(title.textContent?.replace(/\s+/g, ' ').trim()).toBe('Курсы валют');
+    });
+});
+
+describe('SC-UK-37 — поле поиска подменю рисуется готовым кита', () => {
+    it('поле стоит в оболочке поля кита, а не голым вводом', () => {
+        const { fixture }: ISetup = setup('pinned', ['refs']);
+
+        const field: HTMLElement | null = fixture.nativeElement.querySelector('[qa-dataid="side-menu-search"]');
+
+        expect(field?.closest('mat-form-field')).not.toBeNull();
+    });
+
+    it('при пустом запросе кнопка очистки не видна', () => {
+        const { fixture }: ISetup = setup('pinned', ['refs']);
+
+        // Готовое прячет кнопку модификатором, а не снятием узла: проверяется то, что оно делает.
+        const clear: HTMLElement | null = fixture.nativeElement.querySelector('rtui-clear-button button');
+
+        expect(clear).not.toBeNull();
+        expect(clear?.classList.contains('rtui-clear-button--invisible')).toBe(true);
+    });
+
+    it('кнопка очистки возвращает полный список', () => {
+        const { fixture }: ISetup = setup('pinned', ['refs']);
+
+        typeInSearch(fixture, 'курс');
+        expect(subItems(fixture).length).toBe(1);
+
+        const clear: HTMLElement = fixture.nativeElement.querySelector('rtui-clear-button button') as HTMLElement;
+
+        expect(clear.classList.contains('rtui-clear-button--invisible')).toBe(false);
+
+        clear.click();
+        fixture.detectChanges();
+
+        expect(subItems(fixture).length).toBe(2);
     });
 });

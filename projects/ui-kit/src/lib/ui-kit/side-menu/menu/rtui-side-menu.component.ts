@@ -21,7 +21,9 @@ import {
     viewChild,
     WritableSignal,
 } from '@angular/core';
+import { MatFormField, MatPrefix, MatSuffix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
 import { MatListItem, MatListItemIcon, MatNavList } from '@angular/material/list';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 
@@ -38,6 +40,8 @@ import {
     RtuiScrollableContainerFooterDirective,
     RtuiScrollableContainerHeaderDirective,
 } from '../../scrollable';
+import { RtuiButtonComponent } from '../../buttons/unified-button/rtui-button.component';
+import { RtuiClearButtonComponent } from '../../table/components/clear-search-button/rtui-clear-button.component';
 import { RtuiSideMenuSubItemComponent } from '../menu-sub-item/rtui-side-menu-sub-item.component';
 
 @Directive({
@@ -70,7 +74,11 @@ const BEM_BLOCK: string = 'rtui-side-menu';
     imports: [
         NgTemplateOutlet,
         MatSidenavModule,
+        MatFormField,
+        MatPrefix,
+        MatSuffix,
         MatIcon,
+        MatInput,
         MatListItem,
         MatNavList,
         MatListItemIcon,
@@ -88,6 +96,8 @@ const BEM_BLOCK: string = 'rtui-side-menu';
 
         // components
         RtuiScrollableContainerComponent,
+        RtuiButtonComponent,
+        RtuiClearButtonComponent,
         RtuiSideMenuSubItemComponent,
     ],
 })
