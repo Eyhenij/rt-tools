@@ -87,17 +87,20 @@ export class RtuiSideMenuComponent {
     readonly #hoverOpened: WritableSignal<boolean> = signal(false);
 
     /**
-     * Пункт, подменю которого стоит закреплённым: активный по входу активности. Своего
-     * вычисления по адресу у меню нет — активность приходит снаружи.
+     * Что показывает закреплённое подменю: пункт активного адреса, а если активного нет — то,
+     * что открыто сейчас. Закрепление содержимого не меняет: человек закрепляет то подменю,
+     * которое перед ним, и потерять его нажатием он не должен.
      */
-    readonly #pinnedItem: Signal<TNullable<ISideMenu.Item>> = computed((): TNullable<ISideMenu.Item> => {
+    readonly #pinnedSubMenu: Signal<ISideMenu.Item[]> = computed((): ISideMenu.Item[] => {
         if (!this.isPinned()) {
-            return null;
+            return [];
         }
 
         const active: Array<string | number> = this.activeMenuIds();
+        const activeItem: TNullable<ISideMenu.Item> =
+            this.menuItems().find((item: ISideMenu.Item): boolean => active.includes(item.id) && !!item.submenu?.length) ?? null;
 
-        return this.menuItems().find((item: ISideMenu.Item): boolean => active.includes(item.id) && !!item.submenu?.length) ?? null;
+        return activeItem?.submenu ?? this.selectedSubMenu() ?? [];
     });
 
     /** Экран узкий: замер кита, и другого источника у этого признака нет. */
@@ -116,14 +119,14 @@ export class RtuiSideMenuComponent {
      */
     protected readonly isPinned: Signal<boolean> = computed((): boolean => this.subMenuMode() === 'pinned' && !this.narrow());
 
-    /** Закреплённое подменю открыто, пока есть активный пункт: указатель на это не влияет. */
+    /** Закреплённое подменю открыто, пока ему есть что показать: указатель на это не влияет. */
     protected readonly subMenuOpened: Signal<boolean> = computed((): boolean =>
-        this.isPinned() ? this.#pinnedItem() !== null : this.#hoverOpened()
+        this.isPinned() ? this.#pinnedSubMenu().length > 0 : this.#hoverOpened()
     );
 
     /** Что видно в подменю: отобранные пункты того набора, который его сейчас наполняет. */
     protected readonly visibleSubMenuItems: Signal<ISideMenu.Item[]> = computed((): ISideMenu.Item[] =>
-        filterSubMenuItems((this.isPinned() ? this.#pinnedItem()?.submenu : this.selectedSubMenu()) ?? [], this.subMenuQuery())
+        filterSubMenuItems(this.isPinned() ? this.#pinnedSubMenu() : (this.selectedSubMenu() ?? []), this.subMenuQuery())
     );
     public readonly headerTpl: Signal<TNullable<TemplateRef<Type<unknown>>>> = contentChild(RtuiSideMenuHeaderDirective, {
         read: TemplateRef,

@@ -151,6 +151,28 @@ describe('RtuiSideMenuComponent — мода подменю', () => {
         expect(host.mode()).toBe('pinned');
     });
 
+    it('SC-UK-30 — закрепление не меняет того, что видно', () => {
+        // Промах, найденный владельцем в витрине: содержимое бралось только из входа
+        // активности, и нажатие переключателя схлопывало открытое наведением подменю.
+        const { fixture, host }: ISetup = setup();
+
+        hoverFirstItem(fixture);
+
+        expect(subItems(fixture).length).toBe(2);
+
+        (fixture.nativeElement.querySelector('[qa-dataid="side-menu-pin"]') as HTMLElement).click();
+        host.mode.set('pinned');
+        fixture.detectChanges();
+
+        expect(subItems(fixture).length).toBe(2);
+    });
+
+    it('SC-UK-22 — активного пункта нет и не открыто ничего — закреплённого подменю нет', () => {
+        const { fixture }: ISetup = setup('pinned', []);
+
+        expect(subItems(fixture).length).toBe(0);
+    });
+
     it('SC-UK-21 — закреплённое подменю показывает активный пункт', () => {
         const { fixture }: ISetup = setup('pinned', ['refs']);
         const text: string = subItems(fixture)
@@ -158,12 +180,6 @@ describe('RtuiSideMenuComponent — мода подменю', () => {
             .join(' ');
 
         expect(text).toContain('Курсы валют');
-    });
-
-    it('SC-UK-22 — активного пункта нет — закреплённого подменю нет', () => {
-        const { fixture }: ISetup = setup('pinned', []);
-
-        expect(subItems(fixture).length).toBe(0);
     });
 
     it('SC-UK-23 — под закреплённым подменю нет подложки', () => {

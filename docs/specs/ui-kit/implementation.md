@@ -26,7 +26,8 @@
 - **Панель настройки столбцов открывается одна.** — `projects/ui-kit/src/lib/ui-kit/table/components/table-container/table-container.component.ts:openConfigAsideSource`
 - **Мода подменю приходит входом, и умолчание — сегодняшнее поведение.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:subMenuMode`
 - **Нажатие переключателя моду не меняет, а просит её.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:onSubMenuModeToggle`
-- **Закреплённое подменю показывает активный пункт.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:#pinnedItem`
+- **Закреплённое подменю показывает активный пункт.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:#pinnedSubMenu`
+- **Закрепление не меняет того, что видно.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:#pinnedSubMenu`
 - **Закреплённое подменю не закрывается ни уходом указателя, ни переходом по своему пункту.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:toggleSubMenu`
 - **Под закреплённым подменю нет подложки.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:isPinned`
 - **Поле ищет по открытому подменю, а не по всем разделам.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:visibleSubMenuItems`
