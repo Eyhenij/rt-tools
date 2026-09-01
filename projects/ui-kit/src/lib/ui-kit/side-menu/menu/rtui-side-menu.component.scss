@@ -241,7 +241,7 @@ $side-menu: (
                 min-width: 0;
                 flex: 1 1 auto;
 
-                --mat-form-field-outlined-container-shape: var(--rt-radius-2xl);
+                --mat-form-field-outlined-container-shape: var(--rt-radius-xl);
             }
 
             // Кнопку рисует готовое кита; своего у неё остаётся место в ряду.
@@ -257,7 +257,7 @@ $side-menu: (
         width: 100%;
         margin: var(--rt-spacing-8) 0;
 
-        --mat-form-field-outlined-container-shape: var(--rt-radius-2xl);
+        --mat-form-field-outlined-container-shape: var(--rt-radius-xl);
     }
 
     .rtui-side-menu-empty {
