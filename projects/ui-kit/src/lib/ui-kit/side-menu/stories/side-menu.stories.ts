@@ -166,6 +166,24 @@ export const SubMenuSearchEmpty: TStory = {
 };
 
 /**
+ * Растянутое подменю: ширину человек тянет за правый край панели, и хранит её потребитель — так
+ * же, как моду. Здесь она задана доводом истории, иначе кадр показывал бы ширину из набора
+ * токенов и о тяге не говорил бы ничего.
+ */
+export const SubMenuWide: TStory = {
+    args: {
+        activeMenuIds: [1],
+        subMenuMode: 'pinned',
+        subMenuWidth: 360,
+        isSubMenuXScrollEnabled: true,
+        isMainMenuIconsOutlined: false,
+        isSubMenuIconsOutlined: false,
+        isSubMenuButtonIconsOutlined: false,
+        isSubMenuTooltipsShown: true,
+    },
+};
+
+/**
  * Незакреплённое подменю, открытое нажатием. Заведена ради переключателя: закреплённое помечено
  * залитой булавкой, а эта история — единственное место, где в кадре видно контурную. Без неё обе
  * моды показывались бы только закреплённой, и подмена значка не проверялась бы ничем.

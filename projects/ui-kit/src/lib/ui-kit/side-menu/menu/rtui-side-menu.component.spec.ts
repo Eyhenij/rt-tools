@@ -4,6 +4,7 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { BreakpointService } from '@rt-tools/core';
 
+import { SUB_MENU_WIDTH_MAX } from '../side-menu.logic';
 import { ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
 import { RtuiSideMenuComponent } from './rtui-side-menu.component';
 
@@ -31,7 +32,12 @@ const ITEMS: ISideMenu.Item[] = [
 
 @Component({
     template: `
-        <rtui-side-menu [menuItems]="items" [activeMenuIds]="active()" [subMenuMode]="mode()" />
+        <rtui-side-menu
+            [menuItems]="items"
+            [activeMenuIds]="active()"
+            [subMenuMode]="mode()"
+            [subMenuWidth]="width()"
+            (subMenuWidthChange)="width.set($event)" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RtuiSideMenuComponent],
@@ -40,6 +46,7 @@ class HostComponent {
     public readonly items: ISideMenu.Item[] = ITEMS;
     public readonly active: WritableSignal<Array<string | number>> = signal([]);
     public readonly mode: WritableSignal<ISideMenu.SubMenuMode> = signal('hover');
+    public readonly width: WritableSignal<number | null> = signal(null);
 }
 
 interface ISetup {
@@ -254,5 +261,64 @@ describe('RtuiSideMenuComponent — поиск по подменю', () => {
         expect(contour).not.toBe(filled);
         expect(contour).toContain('material-icons-outlined');
         expect(filled).not.toContain('material-icons-outlined');
+    });
+});
+
+function resizer(fixture: ComponentFixture<HostComponent>): HTMLElement | null {
+    return fixture.nativeElement.querySelector('[qa-dataid="side-menu-resize"]') as HTMLElement | null;
+}
+
+/** Тяга края: нажатие на ручке, ведение и отпускание идут документом, а не самой ручкой. */
+function drag(fixture: ComponentFixture<HostComponent>, from: number, to: number): void {
+    const handle: HTMLElement = resizer(fixture) as HTMLElement;
+
+    handle.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: from }));
+    document.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: to }));
+    document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: to }));
+    fixture.detectChanges();
+}
+
+describe('SC-UK-35 — край закреплённого подменю тянется указателем', () => {
+    it('тяга отдаёт наружу новую ширину', () => {
+        const { fixture, host }: ISetup = setup('pinned', ['refs']);
+
+        host.width.set(200);
+        fixture.detectChanges();
+
+        drag(fixture, 200, 260);
+
+        expect(host.width()).toBe(260);
+    });
+
+    it('панель становится той ширины, которую вернул потребитель', () => {
+        const { fixture, host }: ISetup = setup('pinned', ['refs']);
+
+        host.width.set(200);
+        fixture.detectChanges();
+
+        drag(fixture, 200, 260);
+
+        const menuElement: HTMLElement = fixture.nativeElement.querySelector('rtui-side-menu') as HTMLElement;
+
+        expect(menuElement.style.getPropertyValue('--rt-side-menu-sub-menu-width')).toBe('260px');
+    });
+
+    it('тяга за предел отдаёт предельную ширину', () => {
+        const { fixture, host }: ISetup = setup('pinned', ['refs']);
+
+        host.width.set(200);
+        fixture.detectChanges();
+
+        drag(fixture, 200, 5000);
+
+        expect(host.width()).toBe(SUB_MENU_WIDTH_MAX);
+    });
+
+    it('у незакреплённого подменю края не тянут', () => {
+        const { fixture }: ISetup = setup();
+
+        hoverFirstItem(fixture);
+
+        expect(resizer(fixture)).toBeNull();
     });
 });
