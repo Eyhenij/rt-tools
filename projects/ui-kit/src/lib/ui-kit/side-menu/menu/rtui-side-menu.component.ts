@@ -61,7 +61,7 @@ const BEM_BLOCK: string = 'rtui-side-menu';
         '[class.rtui-side-menu--pinned]': 'isPinned()',
         // Ширина подменю приходит переменной оформления: правило стилей стоит на ней в трёх
         // местах разом, и правка одной переменной двигает их все.
-        '[style.--rt-side-menu-sub-menu-width]': 'subMenuWidthStyle()',
+        '[style.--rt-side-menu-sub-menu-dragged-width]': 'subMenuWidthStyle()',
     },
     templateUrl: './rtui-side-menu.component.html',
     styleUrls: ['./rtui-side-menu.component.scss'],
@@ -126,6 +126,11 @@ export class RtuiSideMenuComponent {
     /**
      * Ширина подменю в оформлении. Своего выбора нет — переменная не ставится вовсе, и ширину
      * берёт набор токенов: своё число здесь подменило бы его молча.
+     */
+    /**
+     * Натянутая ширина панели. Кладётся своим свойством, а не тем, каким ширину задаёт
+     * потребитель: панель берёт наибольшее из двух, и заданная оформлением ширина остаётся нижним
+     * пределом сама по себе. Числом в ките этот предел назвать нечем — ширину знает потребитель.
      */
     protected readonly subMenuWidthStyle: Signal<string | null> = computed((): string | null => {
         const width: number | null = this.#draggedWidth() ?? this.subMenuWidth();
@@ -338,6 +343,12 @@ export class RtuiSideMenuComponent {
     }
 
     /** Отпускание: слушатели снимаются, а ширина уходит просьбой наружу. */
+    /**
+     * Конец тяги. Наружу уходит натянутая ширина, а не та, что получилась на экране: нижний
+     * предел держит оформление — панель не бывает уже той ширины, какую задал потребитель, — и
+     * замерить применённое можно только там, где раскладка уже посчитана. Хранит потребитель
+     * выбор человека; вид от этого не меняется, потому что предел стоит в самом оформлении.
+     */
     #finishResize(): void {
         const width: number | null = this.#draggedWidth();
 

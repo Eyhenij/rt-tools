@@ -290,6 +290,8 @@ describe('SC-UK-35 — край закреплённого подменю тян
         expect(host.width()).toBe(260);
     });
 
+    // Натянутая ширина кладётся своим свойством: панель берёт наибольшее из неё и той, что задало
+    // оформление, и заданная оформлением ширина остаётся нижним пределом сама по себе.
     it('панель становится той ширины, которую вернул потребитель', () => {
         const { fixture, host }: ISetup = setup('pinned', ['refs']);
 
@@ -300,7 +302,8 @@ describe('SC-UK-35 — край закреплённого подменю тян
 
         const menuElement: HTMLElement = fixture.nativeElement.querySelector('rtui-side-menu') as HTMLElement;
 
-        expect(menuElement.style.getPropertyValue('--rt-side-menu-sub-menu-width')).toBe('260px');
+        expect(menuElement.style.getPropertyValue('--rt-side-menu-sub-menu-dragged-width')).toBe('260px');
+        expect(menuElement.style.getPropertyValue('--rt-side-menu-sub-menu-width')).toBe('');
     });
 
     it('тяга за предел отдаёт предельную ширину', () => {
