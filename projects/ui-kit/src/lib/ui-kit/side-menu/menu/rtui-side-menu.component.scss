@@ -26,6 +26,14 @@ $side-menu: (
     ),
 );
 
+:host(.rtui-side-menu--pinned) {
+    // Полоса значков и закреплённое подменю стоят в ряд. Правило висит на модификаторе хоста, а
+    // не на самом хосте: поставленное безусловно, оно сдвинуло экраны каждого потребителя кита,
+    // где закрепления нет вовсе.
+    display: flex;
+    height: 100%;
+}
+
 :host {
     @each $element, $elements in $side-menu {
         @each $style-token, $value in $elements {
@@ -174,7 +182,121 @@ $side-menu: (
                     min-width: fit-content;
                 }
             }
+
+            &__empty {
+                padding: var(--rt-spacing-16);
+                color: var(--rt-text-base-secondary);
+                font-size: var(--rt-font-size-xs);
+            }
         }
+
+        // Закреплённая шторка стоит в потоке рядом с полосой значков, а не поверх страницы:
+        // тень и перекрытие у постоянно открытой панели читаются как залипший оверлей.
+        &--pinned {
+            position: relative;
+            left: 0;
+            width: var(--rt-side-menu-sub-menu-width);
+            height: 100%;
+            flex: 0 0 auto;
+
+            .rtui-sub-side-menu-content {
+                box-shadow: none;
+
+                // Появление списка рассчитано на выдвижение шторки. Закреплённая никуда не
+                // выезжает, и её список показан сразу — иначе он живёт под гашеной анимацией
+                // и не виден вовсе там, где движение выключено.
+                &__list {
+                    animation: none;
+                    opacity: 1;
+                }
+            }
+        }
+
+        .rtui-sub-side-menu-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--rt-spacing-8);
+            gap: var(--rt-spacing-8);
+
+            &__search {
+                display: flex;
+                min-width: 0;
+                flex: 1 1 auto;
+                align-items: center;
+                padding: 0 var(--rt-spacing-8);
+                border: 1px solid var(--rt-border-neutral-default);
+                border-radius: var(--rt-radius-full);
+                gap: var(--rt-spacing-4);
+            }
+
+            &__search-icon,
+            &__pin-icon {
+                width: var(--rt-side-menu-mobile-item-additional-icon-size);
+                height: var(--rt-side-menu-mobile-item-additional-icon-size);
+                color: var(--rt-text-base-secondary);
+                font-size: var(--rt-side-menu-mobile-item-additional-icon-size);
+            }
+
+            &__search-field {
+                width: 100%;
+                min-width: 0;
+                padding: var(--rt-spacing-4) 0;
+                border: none;
+                background-color: transparent;
+                color: var(--rt-text-base-strong);
+                font-size: var(--rt-side-menu-sub-menu-item-title-font-size);
+                outline: none;
+                text-overflow: ellipsis;
+            }
+
+            &__pin {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: var(--rt-spacing-4);
+                border: none;
+                border-radius: var(--rt-radius-full);
+                background-color: transparent;
+                cursor: pointer;
+            }
+        }
+    }
+
+    // Узкая раскладка: подменю занимает экран целиком, и поле поиска стоит над списком.
+    .rtui-side-menu-search {
+        display: flex;
+        align-items: center;
+        padding: 0 var(--rt-spacing-8);
+        border: 1px solid var(--rt-border-neutral-default);
+        border-radius: var(--rt-radius-full);
+        margin: var(--rt-spacing-8) 0;
+        gap: var(--rt-spacing-4);
+
+        &__icon {
+            width: var(--rt-side-menu-mobile-item-additional-icon-size);
+            height: var(--rt-side-menu-mobile-item-additional-icon-size);
+            color: var(--rt-text-base-secondary);
+            font-size: var(--rt-side-menu-mobile-item-additional-icon-size);
+        }
+
+        &__field {
+            width: 100%;
+            min-width: 0;
+            padding: var(--rt-spacing-4) 0;
+            border: none;
+            background-color: transparent;
+            color: var(--rt-text-base-strong);
+            font-size: var(--rt-side-menu-mobile-item-title-font-size);
+            outline: none;
+            text-overflow: ellipsis;
+        }
+    }
+
+    .rtui-side-menu-empty {
+        padding: var(--rt-spacing-16);
+        color: var(--rt-text-base-secondary);
+        font-size: var(--rt-font-size-xs);
     }
 }
 

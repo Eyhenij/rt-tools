@@ -6,6 +6,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { ISideMenu } from '../../side-menu.types';
+import { readSubMenuMode, writeSubMenuMode } from '../../side-menu.logic';
 import { RtuiSideMenuComponent, RtuiSideMenuFooterDirective, RtuiSideMenuHeaderDirective } from '../../menu/rtui-side-menu.component';
 
 /** Длинное имя пункта: им показывают, как меню переносит текст. */
@@ -148,13 +149,31 @@ export const MENU_ITEMS: Readonly<ISideMenu.Item[]> = Object.freeze([
     providers: [],
 })
 export class TestSideMenuWrapperComponent {
+    /**
+     * Хранилище берётся через окно документа и допускает отсутствие: в среде без браузера его нет
+     * вовсе, а в приватном окне обращение к нему падает. Обе беды разбирает кит.
+     */
+    readonly #storage: Storage | null = typeof window === 'undefined' ? null : window.localStorage;
+
     public menuItems: typeof MENU_ITEMS = [...MENU_ITEMS];
     public activeMenuIds: Array<number | string> = [];
+    /** Предпочтение человека хранит потребитель кита — здесь его роль играет обёртка. */
+    /**
+     * Выбор человека, а не состояние экрана: он переживает перезагрузку. Хранит его потребитель —
+     * здесь это показ, — а ключ и разбор значения берутся у кита, чтобы у каждого приложения они
+     * не расходились.
+     */
+    public subMenuMode: ISideMenu.SubMenuMode = readSubMenuMode(this.#storage);
     public isSubMenuXScrollEnabled: boolean = true;
     public isMainMenuIconsOutlined: boolean = false;
     public isSubMenuIconsOutlined: boolean = false;
     public isSubMenuButtonIconsOutlined: boolean = false;
     public isSubMenuTooltipsShown: boolean = false;
+
+    public onSubMenuModeChange(mode: ISideMenu.SubMenuMode): void {
+        this.subMenuMode = mode;
+        writeSubMenuMode(this.#storage, mode);
+    }
 
     public closeMobileMenu(): void {
         // eslint-disable-next-line no-console

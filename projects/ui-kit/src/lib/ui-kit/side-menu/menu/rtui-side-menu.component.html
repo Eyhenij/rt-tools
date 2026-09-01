@@ -12,10 +12,28 @@
                     rtBlock="rtui-mobile-side-menu-list"
                     [rtMod]="{ scrollable: selectedSubMenu()?.length && isSubMenuXScrollEnabled() }">
                     @if (selectedSubMenu()?.length) {
-                        <div rtElem="sub" [rtScrollToElement]="activeMenuId()" [elements]="selectedSubMenu() ?? []">
+                        <div rtElem="sub" [rtScrollToElement]="activeMenuId()" [elements]="visibleSubMenuItems()">
                             <rtui-side-menu-sub-item [item]="backToMainMenuButton()" (clickSubMenuAction)="onBackToMainMenu()" />
 
-                            @for (item of selectedSubMenu(); track i; let i = $index) {
+                            <label rtBlock="rtui-side-menu-search">
+                                <mat-icon rtElem="icon">search</mat-icon>
+
+                                <input
+                                    #mobileSubMenuSearch
+                                    rtElem="field"
+                                    type="search"
+                                    qa-dataid="side-menu-search"
+                                    [attr.aria-label]="searchLabel"
+                                    [placeholder]="searchLabel"
+                                    [value]="subMenuQuery()"
+                                    (input)="onSubMenuSearch(mobileSubMenuSearch.value)" />
+                            </label>
+
+                            @if (subMenuQuery() !== '' && !visibleSubMenuItems().length) {
+                                <div rtBlock="rtui-side-menu-empty" qa-dataid="side-menu-empty">{{ nothingFoundLabel }}</div>
+                            }
+
+                            @for (item of visibleSubMenuItems(); track i; let i = $index) {
                                 <rtui-side-menu-sub-item
                                     [item]="item"
                                     [isSubMenuXScrollEnabled]="isSubMenuXScrollEnabled()"
@@ -112,19 +130,73 @@
 
     <mat-drawer-container
         rtBlock="rtui-sub-side-menu"
-        [rtMod]="{ opened: subMenuRef()?.opened }"
-        [hasBackdrop]="true"
+        [rtMod]="{ opened: subMenuOpened(), pinned: isPinned() }"
+        [hasBackdrop]="!isPinned()"
         (backdropClick)="closeSubMenu()">
-        <mat-drawer rtBlock="rtui-sub-side-menu-content" mode="side" position="start" (mouseleave)="toggleSubMenu()">
+        <mat-drawer
+            rtBlock="rtui-sub-side-menu-content"
+            mode="side"
+            position="start"
+            [opened]="subMenuOpened()"
+            (mouseleave)="toggleSubMenu()">
             <rtui-scrollable>
+                <ng-container *rtuiScrollableHeader>
+                    @if (subMenuOpened()) {
+                        <div rtBlock="rtui-sub-side-menu-head">
+                            <label rtElem="search">
+                                <mat-icon rtElem="search-icon">search</mat-icon>
+
+                                <input
+                                    #subMenuSearch
+                                    rtElem="search-field"
+                                    type="search"
+                                    qa-dataid="side-menu-search"
+                                    [attr.aria-label]="searchLabel"
+                                    [placeholder]="searchLabel"
+                                    [value]="subMenuQuery()"
+                                    (input)="onSubMenuSearch(subMenuSearch.value)" />
+                            </label>
+
+                            <button
+                                rtElem="pin"
+                                type="button"
+                                qa-dataid="side-menu-pin"
+                                [attr.aria-label]="isPinned() ? unpinLabel : pinLabel"
+                                [attr.aria-pressed]="isPinned()"
+                                (click)="onSubMenuModeToggle()">
+                                <!--
+                                    Пара значков одна: закреплённое подменю помечено залитой
+                                    булавкой, незакреплённое — контурной. Отдельной лигатуры
+                                    «открепить» в наборе Material Icons нет — замер показал, что
+                                    keep_off рисуется текстом, а не глифом.
+
+                                    Залитое и контурное берутся сменой семейства, а не осью
+                                    переменного шрифта: ось читает только Material Symbols, а
+                                    потребитель волен зарегистрировать статический набор — и
+                                    тогда записанный стиль не действует вовсе, оба состояния
+                                    рисуются одним глифом, и разница остаётся только в подписи
+                                    для чтеца экрана. Семейство читает любой набор.
+                                -->
+                                <mat-icon rtElem="pin-icon" [fontSet]="isPinned() ? 'material-icons' : 'material-icons-outlined'">
+                                    push_pin
+                                </mat-icon>
+                            </button>
+                        </div>
+                    }
+                </ng-container>
+
                 <ng-container *rtuiScrollableContent>
-                    @if (subMenuRef()?.opened && selectedSubMenu()?.length) {
+                    @if (subMenuOpened() && subMenuQuery() !== '' && !visibleSubMenuItems().length) {
+                        <div rtElem="empty" qa-dataid="side-menu-empty">{{ nothingFoundLabel }}</div>
+                    }
+
+                    @if (subMenuOpened() && visibleSubMenuItems().length) {
                         <mat-nav-list
                             rtElem="list"
                             [rtMod]="{ scrollable: isSubMenuXScrollEnabled() }"
                             [rtScrollToElement]="activeMenuId()"
-                            [elements]="selectedSubMenu() ?? []">
-                            @for (item of selectedSubMenu(); track i; let i = $index) {
+                            [elements]="visibleSubMenuItems()">
+                            @for (item of visibleSubMenuItems(); track i; let i = $index) {
                                 <rtui-side-menu-sub-item
                                     [item]="item"
                                     [isSubMenuXScrollEnabled]="isSubMenuXScrollEnabled()"

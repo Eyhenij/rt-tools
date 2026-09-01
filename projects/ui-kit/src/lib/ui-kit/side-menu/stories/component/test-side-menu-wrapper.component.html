@@ -2,11 +2,13 @@
     rtBlock="side-menu-wrapper"
     [menuItems]="menuItems"
     [activeMenuIds]="activeMenuIds"
+    [subMenuMode]="subMenuMode"
     [isSubMenuXScrollEnabled]="isSubMenuXScrollEnabled"
     [isMainMenuIconsOutlined]="isMainMenuIconsOutlined"
     [isSubMenuIconsOutlined]="isSubMenuIconsOutlined"
     [isSubMenuButtonIconsOutlined]="isSubMenuButtonIconsOutlined"
     [isSubMenuTooltipsShown]="isSubMenuTooltipsShown"
+    (subMenuModeChange)="onSubMenuModeChange($event)"
     (clickSubMenuAction)="onClickSubMenu($event)"
     (clickSubMenuAdditionalAction)="onClickSubMenuAdditional($event)"
     (closeMobileMenuAction)="closeMobileMenu()">
