@@ -142,19 +142,6 @@
             position="start"
             [opened]="subMenuOpened()"
             (mouseleave)="toggleSubMenu()">
-            @if (isPinned()) {
-                <!--
-                    Ручка есть только у закреплённого подменю: незакреплённое живёт наведением
-                    и уходит с экрана раньше, чем до её края доедет рука.
-                -->
-                <div
-                    rtElem="resizer"
-                    qa-dataid="side-menu-resize"
-                    role="separator"
-                    aria-orientation="vertical"
-                    [attr.aria-label]="resizeLabel"
-                    (mousedown)="onResizeStart($event)"></div>
-            }
             <rtui-scrollable>
                 <ng-container *rtuiScrollableHeader>
                     @if (subMenuOpened()) {
@@ -228,4 +215,23 @@
             </rtui-scrollable>
         </mat-drawer>
     </mat-drawer-container>
+
+    @if (isPinned()) {
+        <!--
+            Ручка есть только у закреплённого подменю: незакреплённое живёт наведением и уходит с
+            экрана раньше, чем до её края доедет рука.
+
+            Лежит она вне ящика и вне его контейнера: панель скруглена по правому краю и режет по
+            этой дуге всё, что внутри неё, а всё, что кладут в контейнер рядом с панелью, Material
+            уносит в свою область содержимого — правее панели и ниже её. Снаружи ручка стоит там,
+            где её ставят, и идёт от края экрана до края.
+        -->
+        <div
+            rtBlock="rtui-side-menu-resizer"
+            qa-dataid="side-menu-resize"
+            role="separator"
+            aria-orientation="vertical"
+            [attr.aria-label]="resizeLabel"
+            (mousedown)="onResizeStart($event)"></div>
+    }
 }

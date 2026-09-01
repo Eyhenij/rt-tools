@@ -45,7 +45,7 @@ $side-menu: (
     --mat-sidenav-scrim-color: transparent;
 
     .rtui-mobile-side-menu {
-        width: var(--rt-side-menu-sub-menu-width);
+        width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
 
         .rtui-mobile-side-menu-list {
             display: flex;
@@ -152,6 +152,26 @@ $side-menu: (
         }
     }
 
+    // Ручка тяги лежит вне ящика подменю и вне его контейнера: панель скруглена по правому краю
+    // и режет по этой дуге всё, что внутри неё, а положенное в контейнер рядом с панелью Material
+    // уносит в свою область содержимого. Снаружи ручка идёт от края экрана до края, и стоит она
+    // там, где кончается панель: отступ полосы значков плюс ширина самой панели.
+    .rtui-side-menu-resizer {
+        position: fixed;
+        z-index: 3;
+
+        --rt-side-menu-sub-menu-shown-width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
+
+        left: calc(var(--rt-side-menu-base-width) + var(--rt-side-menu-sub-menu-shown-width) - 0.25rem);
+        width: 0.25rem;
+        cursor: col-resize;
+        inset-block: 0;
+
+        &:hover {
+            background-color: var(--rt-border-neutral-default);
+        }
+    }
+
     .rtui-sub-side-menu {
         position: fixed;
         top: 0;
@@ -168,26 +188,11 @@ $side-menu: (
             // Component-local elevation token for the slide-out sub-menu drawer.
             --rt-side-menu-sub-content-shadow: 14px 0 28px rgb(0 0 0 / 25%), 10px 0 10px rgb(0 0 0 / 22%);
 
-            // Ручка тяги стоит по правому краю панели и потому отсчитывается от неё.
             position: relative;
-            width: var(--rt-side-menu-sub-menu-width);
+            width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
             height: 100%;
             border-left: 1px solid var(--rt-border-neutral-default);
             box-shadow: var(--rt-side-menu-sub-content-shadow);
-
-            &__resizer {
-                position: absolute;
-                z-index: 1;
-                top: 0;
-                right: 0;
-                width: 0.25rem;
-                height: 100%;
-                cursor: col-resize;
-
-                &:hover {
-                    background-color: var(--rt-border-neutral-default);
-                }
-            }
 
             &__list {
                 width: 100%;
@@ -211,7 +216,7 @@ $side-menu: (
         &--pinned {
             position: relative;
             left: 0;
-            width: var(--rt-side-menu-sub-menu-width);
+            width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
             height: 100%;
             flex: 0 0 auto;
 
