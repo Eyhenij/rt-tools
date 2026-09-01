@@ -7,7 +7,18 @@
  * чего поштучные спеки увидеть не могли, — путь до собственных ресурсов, который в собранном
  * пакете иной, чем в исходниках.
  */
-import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import {
+    accessSync,
+    chmodSync,
+    constants,
+    existsSync,
+    mkdirSync,
+    mkdtempSync,
+    readdirSync,
+    readFileSync,
+    rmSync,
+    writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 
@@ -18,6 +29,8 @@ import { DISPATCH_PATH } from './hooks-map.js';
 import { OBSERVATIONS_DIR } from './observations.js';
 
 const VERSION: string = '0.1.0';
+/** Разложенный хук: право на запуск спрашивается у того, кого зовут командой. */
+const HOOK: string = ['.claude', 'hooks', 'browser-device-id.sh'].join('/');
 const LAW: string = 'docs/constitution/delivery.md';
 const OTHER_LAW: string = 'docs/constitution/lists.md';
 const TEMPLATE: string = '.claude/rt-kit/templates/rule.md';
@@ -38,6 +51,16 @@ const put: (path: string, text: string) => void = (path: string, text: string): 
 };
 const get: (path: string) => string = (path: string): string => readFileSync(join(root, path), 'utf8');
 const said: (outcome: IOutcomeOfCommand) => string = (outcome: IOutcomeOfCommand): string => outcome.lines.join('\n');
+/** Запускается ли файл. Спрашиваем систему, а не разбираем биты режима руками. */
+const runnable: (path: string) => boolean = (path: string): boolean => {
+    try {
+        accessSync(path, constants.X_OK);
+
+        return true;
+    } catch {
+        return false;
+    }
+};
 
 /** Вид, объявленный пакетом. Без ответа по оси раскладка не начнётся — про это отдельный набор. */
 const HOST: Readonly<Record<string, string>> = { host: 'github' };
@@ -138,6 +161,31 @@ describe('sync', () => {
         sync(env, false);
 
         expect(said(sync(env, false))).toContain('всё уже разложено');
+    });
+
+    // Хук без права на запуск лежит на месте и не зовётся вовсе, а снаружи выглядит
+    // установленным: раскладка отчиталась, файл цел, слой гардов молчит.
+    it('SC-AK-831 — снятое право на запуск раскладка возвращает', () => {
+        start(['hooks/browser-device-id.sh']);
+        sync(env, false);
+        const hook: string = join(root, HOOK);
+        const before: string = readFileSync(hook, 'utf8');
+        chmodSync(hook, 0o644);
+
+        expect(said(sync(env, false))).toContain(HOOK);
+        expect(runnable(hook)).toBe(true);
+        // Тело не переписано: чинилось право, а не текст.
+        expect(readFileSync(hook, 'utf8')).toBe(before);
+    });
+
+    it('SC-AK-832 — сверка о снятом праве не молчит', () => {
+        start(['hooks/browser-device-id.sh']);
+        sync(env, false);
+        chmodSync(join(root, HOOK), 0o644);
+        const outcome: IOutcomeOfCommand = sync(env, true);
+
+        expect(outcome.code).toBe(1);
+        expect(said(outcome)).toContain(HOOK);
     });
 
     it('дырка без значения отказывает и не пишет ни одного файла', () => {

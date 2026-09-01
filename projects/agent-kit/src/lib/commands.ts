@@ -65,6 +65,7 @@ const DONE_WORD: Readonly<Record<TOutcome, string>> = {
     update: 'переложен',
     drift: 'правлен руками',
     foreign: 'положен не пакетом',
+    permission: 'право на запуск возвращено',
     ok: 'без изменений',
 };
 
@@ -78,6 +79,7 @@ const STATE_WORD: Readonly<Record<TOutcome, string>> = {
     update: 'отстал от пакета',
     drift: 'правлен руками',
     foreign: 'положен не пакетом',
+    permission: 'лежит без права на запуск',
     ok: 'на месте',
 };
 

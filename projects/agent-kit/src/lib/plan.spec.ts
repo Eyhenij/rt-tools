@@ -4,6 +4,8 @@ import { applyStamp, digestOf, readStamped } from './stamp.js';
 const VERSION: string = '0.1.0';
 const ASSET: string = 'laws/delivery.md';
 const PATH: string = 'docs/constitution/delivery.md';
+/** Тело хука: право на запуск спрашивается только у того, что кладётся исполнимым. */
+const BODY_OF_HOOK: string = '#!/usr/bin/env bash\nexit 0\n';
 
 const laid: (body: string, version?: string, hash?: string) => string = (
     body: string,
@@ -67,6 +69,48 @@ describe('planFile', () => {
 
         expect(lines[0]).toBe('#!/usr/bin/env bash');
         expect(lines[1]).toContain('rt-kit v0.1.0');
+    });
+
+    it('SC-AK-831 — право на запуск снято рукой: тело сходится, а файл всё равно чинится', () => {
+        const planned: IPlanned = planFile({
+            path: '.claude/hooks/probe.sh',
+            asset: 'hooks/probe.sh',
+            version: VERSION,
+            rendered: BODY_OF_HOOK,
+            existing: applyStamp(
+                BODY_OF_HOOK,
+                { version: VERSION, asset: 'hooks/probe.sh', hash: digestOf(BODY_OF_HOOK) },
+                '.claude/hooks/probe.sh'
+            ),
+            executable: true,
+            existingExecutable: false,
+        });
+
+        // Тело не переписывается: правки в нём нет, чинить надо право, а не текст.
+        expect(planned.outcome).toBe('permission');
+        expect(planned.content).toBeNull();
+    });
+
+    it('право на месте — раскладке делать нечего', () => {
+        const planned: IPlanned = planFile({
+            path: '.claude/hooks/probe.sh',
+            asset: 'hooks/probe.sh',
+            version: VERSION,
+            rendered: BODY_OF_HOOK,
+            existing: applyStamp(
+                BODY_OF_HOOK,
+                { version: VERSION, asset: 'hooks/probe.sh', hash: digestOf(BODY_OF_HOOK) },
+                '.claude/hooks/probe.sh'
+            ),
+            executable: true,
+            existingExecutable: true,
+        });
+
+        expect(planned.outcome).toBe('ok');
+    });
+
+    it('неисполнимый ресурс права не требует', () => {
+        expect(plan('Тело.\n', laid('Тело.\n')).outcome).toBe('ok');
     });
 
     it('положенное пакетом читается обратно без потерь', () => {

@@ -10,7 +10,7 @@ import { dirname, join, relative } from 'node:path';
 
 import { collectAssets, IAsset, targetOf } from './assets.js';
 import { ICascadeCut, IIdleSkip, cascadeCuts, idleSkips, namedButCut } from './cascade.js';
-import { brokenLinks, IBrokenLink, IEntryOfCatalog, IGapOfVariant, readCatalog, variantGaps } from './catalog.js';
+import { brokenLinks, IBrokenLink, IEntryOfCatalog, IGapOfVariant, isExecutable, readCatalog, variantGaps } from './catalog.js';
 import { ICompanion, pathOf, planCompanion } from './companion.js';
 import { IConfig, KINDS, OVERRIDES_DIR, TKind } from './config.js';
 import {
@@ -297,8 +297,17 @@ export function planSync(config: IConfig, root: string, version: string, assetsD
             missing.set(asset.id, rendered.missing);
             continue;
         }
+        const target: string = join(root, asset.target);
         planned.push(
-            planFile({ version, path: asset.target, asset: asset.id, rendered: rendered.text, existing: read(join(root, asset.target)) })
+            planFile({
+                version,
+                path: asset.target,
+                asset: asset.id,
+                rendered: rendered.text,
+                existing: read(target),
+                executable: asset.executable,
+                existingExecutable: isExecutable(target),
+            })
         );
         if (asset.kind === 'rules' && template !== null) {
             companions.push(planCompanion(asset, read(join(root, pathOf(asset))), template));
@@ -344,16 +353,23 @@ export function runSync(config: IConfig, root: string, version: string, assetsDi
 
     const written: string[] = [];
     for (const entry of result.planned) {
-        if (entry.content === null) {
-            continue;
-        }
         const path: string = join(root, entry.path);
-        mkdirSync(dirname(path), { recursive: true });
-        writeFileSync(path, entry.content, 'utf8');
-        if (executable.has(entry.asset)) {
+
+        // Право возвращается и там, где тело переписывать нечего: у файла со снятым битом
+        // содержимое сходится, и без этой ветки раскладка чинила бы только то, что и так пишет.
+        if (entry.outcome === 'permission') {
             chmodSync(path, 0o755);
+            written.push(entry.path);
+        } else if (entry.content !== null) {
+            mkdirSync(dirname(path), { recursive: true });
+            writeFileSync(path, entry.content, 'utf8');
+            if (executable.has(entry.asset)) {
+                chmodSync(path, 0o755);
+            }
+            written.push(entry.path);
+        } else {
+            // Отказ и сошедшийся файл: писать нечего, и трогать его нельзя.
         }
-        written.push(entry.path);
     }
 
     // Черновик компаньона кладётся только там, где файла нет вовсе. Он без шапки и без суммы:
