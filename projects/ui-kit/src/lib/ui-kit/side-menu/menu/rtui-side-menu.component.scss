@@ -36,6 +36,11 @@ $side-menu: (
     // Hide drawer mask
     --mat-sidenav-scrim-color: transparent;
 
+    // Полоса значков и закреплённое подменю стоят в ряд: всплывающая шторка из потока выпадает
+    // сама — она позиционирована, — и на неё это не влияет.
+    display: flex;
+    height: 100%;
+
     .rtui-mobile-side-menu {
         width: var(--rt-side-menu-sub-menu-width);
 
@@ -156,18 +161,6 @@ $side-menu: (
             width: 100%;
         }
 
-        // Закреплённая шторка стоит в потоке рядом с полосой значков, а не поверх страницы:
-        // тень и перекрытие у постоянно открытой панели читаются как залипший оверлей.
-        &--pinned {
-            position: relative;
-            left: 0;
-            width: var(--rt-side-menu-sub-menu-width);
-
-            .rtui-sub-side-menu-content {
-                box-shadow: none;
-            }
-        }
-
         .rtui-sub-side-menu-content {
             // Component-local elevation token for the slide-out sub-menu drawer.
             --rt-side-menu-sub-content-shadow: 14px 0 28px rgb(0 0 0 / 25%), 10px 0 10px rgb(0 0 0 / 22%);
@@ -191,6 +184,28 @@ $side-menu: (
                 padding: var(--rt-spacing-16);
                 color: var(--rt-text-base-secondary);
                 font-size: var(--rt-font-size-xs);
+            }
+        }
+
+        // Закреплённая шторка стоит в потоке рядом с полосой значков, а не поверх страницы:
+        // тень и перекрытие у постоянно открытой панели читаются как залипший оверлей.
+        &--pinned {
+            position: relative;
+            left: 0;
+            width: var(--rt-side-menu-sub-menu-width);
+            height: 100%;
+            flex: 0 0 auto;
+
+            .rtui-sub-side-menu-content {
+                box-shadow: none;
+
+                // Появление списка рассчитано на выдвижение шторки. Закреплённая никуда не
+                // выезжает, и её список показан сразу — иначе он живёт под гашеной анимацией
+                // и не виден вовсе там, где движение выключено.
+                &__list {
+                    animation: none;
+                    opacity: 1;
+                }
             }
         }
 

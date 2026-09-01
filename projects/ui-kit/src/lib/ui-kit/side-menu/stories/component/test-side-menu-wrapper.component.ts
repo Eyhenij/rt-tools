@@ -150,11 +150,17 @@ export const MENU_ITEMS: Readonly<ISideMenu.Item[]> = Object.freeze([
 export class TestSideMenuWrapperComponent {
     public menuItems: typeof MENU_ITEMS = [...MENU_ITEMS];
     public activeMenuIds: Array<number | string> = [];
+    /** Предпочтение человека хранит потребитель кита — здесь его роль играет обёртка. */
+    public subMenuMode: ISideMenu.SubMenuMode = 'hover';
     public isSubMenuXScrollEnabled: boolean = true;
     public isMainMenuIconsOutlined: boolean = false;
     public isSubMenuIconsOutlined: boolean = false;
     public isSubMenuButtonIconsOutlined: boolean = false;
     public isSubMenuTooltipsShown: boolean = false;
+
+    public onSubMenuModeChange(mode: ISideMenu.SubMenuMode): void {
+        this.subMenuMode = mode;
+    }
 
     public closeMobileMenu(): void {
         // eslint-disable-next-line no-console

@@ -164,7 +164,13 @@
                                 [attr.aria-label]="isPinned() ? unpinLabel : pinLabel"
                                 [attr.aria-pressed]="isPinned()"
                                 (click)="onSubMenuModeToggle()">
-                                <mat-icon rtElem="pin-icon">{{ isPinned() ? 'keep_off' : 'push_pin' }}</mat-icon>
+                                <!--
+                                    Пара значков одна: закреплённое подменю помечено залитой
+                                    булавкой, незакреплённое — контурной. Отдельной лигатуры
+                                    «открепить» в наборе Material Icons нет — замер показал, что
+                                    keep_off рисуется текстом, а не глифом.
+                                -->
+                                <mat-icon rtElem="pin-icon" [rtIconOutlined]="!isPinned()">push_pin</mat-icon>
                             </button>
                         </div>
                     }
