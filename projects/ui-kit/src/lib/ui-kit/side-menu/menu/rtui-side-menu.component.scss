@@ -19,6 +19,9 @@ $side-menu: (
     ),
     sub-menu: (
         width: 15rem,
+        // Поле поиска ниже полного роста поля формы: в шапке подменю оно стоит рядом с кнопкой
+        // значка, и полная высота поднимала бы шапку выше двух строк списка.
+        search-height: 2.5rem,
     ),
     sub-menu-item: (
         width: 13.75rem,
@@ -240,77 +243,48 @@ $side-menu: (
             padding: var(--rt-spacing-8);
             gap: var(--rt-spacing-8);
 
+            // Поле рисует готовое кита. Своего у него остаётся место в ряду, форма пилюли и
+            // рост: в шапке подменю поле стоит рядом с кнопкой значка, и полная высота поля
+            // формы поднимала бы шапку выше строки списка. Скругление и высоту задают ручки
+            // самого поля, а не рамка поверх него.
             &__search {
-                display: flex;
                 min-width: 0;
                 flex: 1 1 auto;
-                align-items: center;
-                padding: 0 var(--rt-spacing-8);
-                border: 1px solid var(--rt-border-neutral-default);
-                border-radius: var(--rt-radius-full);
-                gap: var(--rt-spacing-4);
+
+                --mat-form-field-outlined-container-shape: var(--rt-radius-xl);
+                --mat-form-field-container-height: var(--rt-side-menu-sub-menu-search-height);
+                --mat-form-field-container-vertical-padding: var(--rt-spacing-8);
+
+                // Готовое поле разводит значок и текст на шестнадцать пикселей — двенадцать
+                // справа от значка и четыре у самого префикса. В узкой панели это половина
+                // строки запроса, поэтому зазор сведён к одной ступени. Ручки под него у поля
+                // формы нет: правится сам отступ значка.
+                &::ng-deep .mat-mdc-form-field-icon-prefix > .mat-icon {
+                    padding: 0 var(--rt-spacing-4) 0 var(--rt-spacing-12);
+                }
             }
 
-            &__search-icon,
-            &__pin-icon {
-                width: var(--rt-side-menu-mobile-item-additional-icon-size);
-                height: var(--rt-side-menu-mobile-item-additional-icon-size);
-                color: var(--rt-text-base-secondary);
-                font-size: var(--rt-side-menu-mobile-item-additional-icon-size);
-            }
-
-            &__search-field {
-                width: 100%;
-                min-width: 0;
-                padding: var(--rt-spacing-4) 0;
-                border: none;
-                background-color: transparent;
-                color: var(--rt-text-base-strong);
-                font-size: var(--rt-side-menu-sub-menu-item-title-font-size);
-                outline: none;
-                text-overflow: ellipsis;
-            }
-
+            // Кнопку рисует готовое кита; своего у неё остаётся место в ряду.
             &__pin {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: var(--rt-spacing-4);
-                border: none;
-                border-radius: var(--rt-radius-full);
-                background-color: transparent;
-                cursor: pointer;
+                flex: 0 0 auto;
             }
         }
     }
 
     // Узкая раскладка: подменю занимает экран целиком, и поле поиска стоит над списком.
+    // Рисует его то же готовое кита, что и на широком экране.
     .rtui-side-menu-search {
-        display: flex;
-        align-items: center;
-        padding: 0 var(--rt-spacing-8);
-        border: 1px solid var(--rt-border-neutral-default);
-        border-radius: var(--rt-radius-full);
+        width: 100%;
         margin: var(--rt-spacing-8) 0;
-        gap: var(--rt-spacing-4);
 
-        &__icon {
-            width: var(--rt-side-menu-mobile-item-additional-icon-size);
-            height: var(--rt-side-menu-mobile-item-additional-icon-size);
-            color: var(--rt-text-base-secondary);
-            font-size: var(--rt-side-menu-mobile-item-additional-icon-size);
-        }
+        --mat-form-field-outlined-container-shape: var(--rt-radius-xl);
+        --mat-form-field-container-height: var(--rt-side-menu-sub-menu-search-height);
+        --mat-form-field-container-vertical-padding: var(--rt-spacing-8);
 
-        &__field {
-            width: 100%;
-            min-width: 0;
-            padding: var(--rt-spacing-4) 0;
-            border: none;
-            background-color: transparent;
-            color: var(--rt-text-base-strong);
-            font-size: var(--rt-side-menu-mobile-item-title-font-size);
-            outline: none;
-            text-overflow: ellipsis;
+        // Зазор между значком и запросом сведён к ступени по той же причине, что и на широком
+        // экране: готовое поле разводит их на шестнадцать пикселей.
+        &::ng-deep .mat-mdc-form-field-icon-prefix > .mat-icon {
+            padding: 0 var(--rt-spacing-4) 0 var(--rt-spacing-12);
         }
     }
 

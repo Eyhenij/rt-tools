@@ -9,20 +9,39 @@ export default {
 
 type TStory = StoryObj<TestSideMenuWrapperComponent>;
 
-async function waitForField(canvasElement: HTMLElement, attempts: number = 50): Promise<HTMLInputElement | null> {
-    for (let attempt: number = 0; attempt < attempts; attempt += 1) {
-        const field: HTMLInputElement | null = canvasElement.querySelector('[qa-dataid="side-menu-search"]');
+/**
+ * Предел ожидания в миллисекундах, а не в кадрах анимации.
+ *
+ * Кадрами ожидание меряться не может: под нагрузкой браузер отдаёт их реже, и полсотни кадров
+ * укладываются в доли секунды реального времени — показ падает там, где приложение просто не
+ * успело нарисовать. Ловилось это на занятой машине, где рядом шли прогон и сборка.
+ */
+const WAIT_LIMIT_MS: number = 5000;
+const WAIT_STEP_MS: number = 50;
 
-        if (field !== null) {
-            return field;
+/** Ожидание того, что вернёт узел: по часам, шагом, до предела. */
+async function waitFor<T>(find: () => T | null): Promise<T | null> {
+    const until: number = Date.now() + WAIT_LIMIT_MS;
+
+    for (;;) {
+        const found: T | null = find();
+
+        if (found !== null) {
+            return found;
+        }
+
+        if (Date.now() >= until) {
+            return null;
         }
 
         await new Promise<void>((resolve: () => void): void => {
-            requestAnimationFrame(() => resolve());
+            setTimeout(resolve, WAIT_STEP_MS);
         });
     }
+}
 
-    return null;
+async function waitForField(canvasElement: HTMLElement): Promise<HTMLInputElement | null> {
+    return waitFor<HTMLInputElement>((): HTMLInputElement | null => canvasElement.querySelector('[qa-dataid="side-menu-search"]'));
 }
 
 /**
@@ -44,33 +63,26 @@ async function typeInSubMenuSearch(canvasElement: HTMLElement, query: string): P
  * Открытие подменю нажатием пункта. Ждётся сам пункт, а не отсчёт времени, и ждётся потом шапка
  * подменю: без неё кадр уходит с закрытым ящиком и о переключателе не говорит ничего.
  */
-async function openSubMenuByClick(canvasElement: HTMLElement, attempts: number = 50): Promise<void> {
-    for (let attempt: number = 0; attempt < attempts; attempt += 1) {
-        const item: HTMLElement | null = canvasElement.querySelector('a.rtui-side-menu-item');
+async function openSubMenuByClick(canvasElement: HTMLElement): Promise<void> {
+    const item: HTMLElement | null = await waitFor<HTMLElement>((): HTMLElement | null =>
+        canvasElement.querySelector('a.rtui-side-menu-item')
+    );
 
-        if (item !== null) {
-            item.click();
-            break;
-        }
-
-        await new Promise<void>((resolve: () => void): void => {
-            requestAnimationFrame(() => resolve());
-        });
+    if (item === null) {
+        throw new Error('Пункт меню не появился: нажимать нечего');
     }
 
-    for (let attempt: number = 0; attempt < attempts; attempt += 1) {
-        const head: HTMLElement | null = canvasElement.querySelector('.rtui-sub-side-menu-head');
+    item.click();
 
-        if (head !== null && head.getBoundingClientRect().x >= 0) {
-            return;
-        }
+    const head: HTMLElement | null = await waitFor<HTMLElement>((): HTMLElement | null => {
+        const node: HTMLElement | null = canvasElement.querySelector('.rtui-sub-side-menu-head');
 
-        await new Promise<void>((resolve: () => void): void => {
-            requestAnimationFrame(() => resolve());
-        });
+        return node !== null && node.getBoundingClientRect().x >= 0 ? node : null;
+    });
+
+    if (head === null) {
+        throw new Error('Подменю не открылось: кадр показал бы закрытый ящик вместо переключателя');
     }
-
-    throw new Error('Подменю не открылось: кадр показал бы закрытый ящик вместо переключателя');
 }
 
 export const Default: TStory = {
@@ -184,9 +196,9 @@ export const SubMenuWide: TStory = {
 };
 
 /**
- * Незакреплённое подменю, открытое нажатием. Заведена ради переключателя: закреплённое помечено
- * залитой булавкой, а эта история — единственное место, где в кадре видно контурную. Без неё обе
- * моды показывались бы только закреплённой, и подмена значка не проверялась бы ничем.
+ * Незакреплённое подменю, открытое нажатием. Заведена ради переключателя: у закреплённого значок
+ * кнопки окрашен цветом бренда, а эта история — единственное место, где в кадре видно спокойный.
+ * Без неё обе моды показывались бы только закреплённой, и смена цвета не проверялась бы ничем.
  */
 export const SubMenuHovered: TStory = {
     args: {
