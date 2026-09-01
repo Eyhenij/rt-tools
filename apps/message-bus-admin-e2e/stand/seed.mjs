@@ -15,6 +15,7 @@
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
+import { checkNothingDrifts } from './seed-self-check.mjs';
 import { ACCOUNT, API_ORIGIN, ENROLLED_SLUG, INVITES, SERVER_DATABASE_URL, STAND_DATABASE, STAND_DATABASE_URL, TREES } from './stand.mjs';
 
 const ROOT = fileURLToPath(new URL('../../..', import.meta.url));
@@ -468,61 +469,6 @@ async function states() {
     );
 }
 
-/**
- * Граница далёкого будущего: срок годности приглашения поставлен нарочно за ней, и самопроверка
- * отделяет его по ней от значения, приехавшего с часов машины.
- */
-const FAR_FUTURE = '2030-01-01';
-
-/**
- * Самопроверка засева: в хранилище не осталось значений, посчитанных от даты прогона.
- *
- * Приёмник считает от своих часов не только время, но и то, что из него выводит, — ключ месяца,
- * например. Засев правит времена уже после приёма, и выведенное такой правкой не двигается: оно
- * посчитано раньше и лежит в соседней колонке. Расхождения при этом не наступает месяцами, а
- * потом набор краснеет в день, когда в дерево не внесли ни строки.
- *
- * Признак взят один и работает в любой день прогона: все данные стенда — прошлое, поэтому
- * значение времени, попавшее на день прогона или позже, посчитано часами машины и никаким
- * засевом не закреплено. Далёкое будущее из счёта выведено: срок годности приглашения поставлен
- * таким нарочно.
- *
- * Выведенное значение судится отдельно и своим признаком — сходится ли оно с тем, из чего его
- * обязаны были вывести: постоянное время рядом с месяцем, посчитанным приёмом, выглядит целым,
- * пока эти два не сравнить между собой.
- *
- * Отказ приходит здесь, при подъёме стенда, и называет причину словами — вместо трёх кадров,
- * разошедшихся на одной цифре и не сказавших о вёрстке ничего.
- */
-async function checkNothingDrifts() {
-    await sql(
-        [
-            'DO $$',
-            'DECLARE drifted integer; broken integer;',
-            'BEGIN',
-            '    SELECT count(*) INTO drifted FROM (',
-            '        SELECT "createdAt" AS at FROM "tree"',
-            '        UNION ALL SELECT "arrivedAt" FROM "postmortem"',
-            '        UNION ALL SELECT "updatedAt" FROM "postmortem"',
-            '        UNION ALL SELECT "arrivedAt" FROM "proposal"',
-            '        UNION ALL SELECT "ranAt" FROM "month_record"',
-            '        UNION ALL SELECT "issuedAt" FROM "tree_invite"',
-            '        UNION ALL SELECT "expiresAt" FROM "tree_invite"',
-            '    ) AS shown',
-            `    WHERE shown.at >= CURRENT_DATE AND shown.at < TIMESTAMP '${FAR_FUTURE}';`,
-            '    IF drifted > 0 THEN',
-            "        RAISE EXCEPTION 'засев оставил % значений времени, посчитанных от часов машины: кадры сойдутся сегодня и разойдутся в другой день', drifted;",
-            '    END IF;',
-            '',
-            `    SELECT count(*) INTO broken FROM "month_record" WHERE "month" <> to_char("ranAt", 'YYYY-MM');`,
-            '    IF broken > 0 THEN',
-            "        RAISE EXCEPTION 'у % записей месяц разошёлся со своим временем прогона: месяц посчитан приёмом, а время проставлено засевом', broken;",
-            '    END IF;',
-            'END $$;',
-        ].join('\n')
-    );
-}
-
 /** Засев целиком. Зовётся подъёмом стенда после того, как приёмник поднят. */
 export async function seed() {
     await wipe();
@@ -535,7 +481,7 @@ export async function seed() {
     await keys();
     await moments();
     await states();
-    await checkNothingDrifts();
+    await checkNothingDrifts(sql);
 }
 
 /** Подготовка хранилища: база и схема. Идёт до подъёма приёмника — он ждёт готовой схемы. */
