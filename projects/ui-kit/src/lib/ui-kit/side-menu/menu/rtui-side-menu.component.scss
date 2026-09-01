@@ -45,7 +45,7 @@ $side-menu: (
     --mat-sidenav-scrim-color: transparent;
 
     .rtui-mobile-side-menu {
-        width: var(--rt-side-menu-sub-menu-width);
+        width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
 
         .rtui-mobile-side-menu-list {
             display: flex;
@@ -159,7 +159,10 @@ $side-menu: (
     .rtui-side-menu-resizer {
         position: fixed;
         z-index: 3;
-        left: calc(var(--rt-side-menu-base-width) + var(--rt-side-menu-sub-menu-width) - 0.25rem);
+
+        --rt-side-menu-sub-menu-shown-width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
+
+        left: calc(var(--rt-side-menu-base-width) + var(--rt-side-menu-sub-menu-shown-width) - 0.25rem);
         width: 0.25rem;
         cursor: col-resize;
         inset-block: 0;
@@ -186,7 +189,7 @@ $side-menu: (
             --rt-side-menu-sub-content-shadow: 14px 0 28px rgb(0 0 0 / 25%), 10px 0 10px rgb(0 0 0 / 22%);
 
             position: relative;
-            width: var(--rt-side-menu-sub-menu-width);
+            width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
             height: 100%;
             border-left: 1px solid var(--rt-border-neutral-default);
             box-shadow: var(--rt-side-menu-sub-content-shadow);
@@ -213,7 +216,7 @@ $side-menu: (
         &--pinned {
             position: relative;
             left: 0;
-            width: var(--rt-side-menu-sub-menu-width);
+            width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
             height: 100%;
             flex: 0 0 auto;
 
