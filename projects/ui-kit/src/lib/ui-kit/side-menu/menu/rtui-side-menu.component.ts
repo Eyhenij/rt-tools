@@ -51,7 +51,12 @@ const BEM_BLOCK: string = 'rtui-side-menu';
 
 @Component({
     selector: 'rtui-side-menu',
-    host: { class: BEM_BLOCK },
+    host: {
+        class: BEM_BLOCK,
+        // Раскладка хоста меняется только у закреплённой моды: у всех, кто ставит меню
+        // по-старому, она обязана остаться прежней до пикселя.
+        '[class.rtui-side-menu--pinned]': 'isPinned()',
+    },
     templateUrl: './rtui-side-menu.component.html',
     styleUrls: ['./rtui-side-menu.component.scss'],
     providers: [BreakpointService, { provide: RTUI_SIDE_MENU, useExisting: RtuiSideMenuComponent }],

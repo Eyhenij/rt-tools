@@ -26,6 +26,14 @@ $side-menu: (
     ),
 );
 
+:host(.rtui-side-menu--pinned) {
+    // Полоса значков и закреплённое подменю стоят в ряд. Правило висит на модификаторе хоста, а
+    // не на самом хосте: поставленное безусловно, оно сдвинуло экраны каждого потребителя кита,
+    // где закрепления нет вовсе.
+    display: flex;
+    height: 100%;
+}
+
 :host {
     @each $element, $elements in $side-menu {
         @each $style-token, $value in $elements {
@@ -35,11 +43,6 @@ $side-menu: (
 
     // Hide drawer mask
     --mat-sidenav-scrim-color: transparent;
-
-    // Полоса значков и закреплённое подменю стоят в ряд: всплывающая шторка из потока выпадает
-    // сама — она позиционирована, — и на неё это не влияет.
-    display: flex;
-    height: 100%;
 
     .rtui-mobile-side-menu {
         width: var(--rt-side-menu-sub-menu-width);
