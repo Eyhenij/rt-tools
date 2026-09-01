@@ -1,4 +1,4 @@
-import { filterSubMenuItems } from './side-menu.logic';
+import { filterSubMenuItems, readSubMenuMode, SUB_MENU_MODE_KEY, writeSubMenuMode } from './side-menu.logic';
 import { ISideMenu } from './side-menu.types';
 
 const ITEMS: ReadonlyArray<ISideMenu.Item> = [
@@ -37,5 +37,58 @@ describe('filterSubMenuItems', (): void => {
         filterSubMenuItems(ITEMS, 'курс');
 
         expect(ITEMS.length).toBe(3);
+    });
+});
+
+describe('чтение и запись моды подменю', () => {
+    function storageDouble(initial: Record<string, string> = {}): Storage {
+        const data: Record<string, string> = { ...initial };
+
+        return {
+            getItem: (key: string): string | null => data[key] ?? null,
+            setItem: (key: string, value: string): void => {
+                data[key] = value;
+            },
+            removeItem: (key: string): void => {
+                delete data[key];
+            },
+            clear: (): void => undefined,
+            key: (): string | null => null,
+            length: 0,
+        };
+    }
+
+    it('SC-UK-32 — хранилища нет — мода прежняя, наведение', () => {
+        expect(readSubMenuMode(null)).toBe('hover');
+    });
+
+    it('SC-UK-32 — хранилище пусто — мода прежняя, наведение', () => {
+        expect(readSubMenuMode(storageDouble())).toBe('hover');
+    });
+
+    it('SC-UK-32 — записанная мода читается обратно', () => {
+        const storage: Storage = storageDouble();
+
+        writeSubMenuMode(storage, 'pinned');
+
+        expect(readSubMenuMode(storage)).toBe('pinned');
+    });
+
+    it('SC-UK-32 — чужое значение в ключе модой не считается', () => {
+        expect(readSubMenuMode(storageDouble({ [SUB_MENU_MODE_KEY]: 'что-то своё' }))).toBe('hover');
+    });
+
+    it('SC-UK-32 — отказ хранилища работу не останавливает', () => {
+        const broken: Storage = {
+            getItem: (): string | null => {
+                throw new Error('хранилище закрыто настройками браузера');
+            },
+            setItem: (): void => {
+                throw new Error('хранилище закрыто настройками браузера');
+            },
+        } as unknown as Storage;
+
+        expect(readSubMenuMode(broken)).toBe('hover');
+        expect(() => writeSubMenuMode(broken, 'pinned')).not.toThrow();
     });
 });
