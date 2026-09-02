@@ -34,7 +34,7 @@ pr_token() {
 pr_token "SC-AK-480 — заявка без подстановки токена отбивается" \
     "$OPEN --title \"[RT-74] Сделано\" --body x" deny
 pr_token "SC-AK-481 — заявка с подстановкой токена проходит" \
-    "GH_TOKEN=\$(cat ~/.config/token) $OPEN --title \"[RT-74] Сделано\" --body x" PASS
+    "GH_TOKEN=\$TOKEN $OPEN --title \"[RT-74] Сделано\" --body x" PASS
 pr_token "SC-AK-482 — токен, выставленный отдельной строкой, засчитывается" \
     "export GH_TOKEN=\$(cat ~/.config/token); $OPEN --title \"[RT-74] Сделано\" --body x" PASS
 
@@ -43,6 +43,59 @@ CLAUDE_PROJECT_DIR="$TOKEN_PR" expect_reason "SC-AK-483 — отказ назы�
     "$(input_cmd "$OPEN --title \"[RT-74] Сделано\" --body x" Bash "$TOKEN_PR")" \
     'GH_TOKEN'
 rm -rf "$TOKEN_PR"
+
+# --- SC-AK-842. Второй ярус: кто придёт по токену на самом деле --------------------------------
+# Подстановка в команде говорит о намерении, а не об исходе: она читает файл, а файла на машине
+# может не быть — тогда клиент отвечает от залогиненной записи, и заявка выходит от владельца при
+# верной с виду команде. Дерево спрашивает это у хостинга само: пакет ни клиента, ни пути к
+# токену не знает.
+ASK_PR="$(fixture_repo RT-1695-ask)"
+mkdir -p "$ASK_PR/.claude/rt-kit"
+
+ask_profile() {
+    {
+        printf 'RT_TASK_BOT="машинная"\n'
+        printf 'RT_PULL_TOKEN_VAR="GH_TOKEN"\n'
+        printf 'RT_PULL_TOKEN_HINT="GH_TOKEN=$(cat ~/.config/token)"\n'
+        printf 'rt_pull_token_login() { printf "%%s" "%s"; }\n' "$1"
+    } > "$ASK_PR/.claude/rt-kit/project.sh"
+}
+ask_pr() {
+    local label="$1" want="$2" out
+    out="$(CLAUDE_PROJECT_DIR="$ASK_PR" input_cmd "GH_TOKEN=\$TOKEN $OPEN --title \"[RT-1695] Сделано\" --body x" Bash "$ASK_PR" \
+        | CLAUDE_PROJECT_DIR="$ASK_PR" "$HOOKS/git-guard-delivery.sh" 2>/dev/null \
+        | jq -r '.hookSpecificOutput.permissionDecision // "PASS"' 2>/dev/null)"
+    report "$label" "${out:-PASS}" "$want"
+}
+
+ask_profile "машинная"
+ask_pr "SC-AK-842 — логин машинной записи вызов пропускает" PASS
+
+ask_profile "владелец"
+ask_pr "SC-AK-842 — чужой логин вызов отбивает" deny
+CLAUDE_PROJECT_DIR="$ASK_PR" expect_reason "SC-AK-842 — отказ называет обе записи" \
+    git-guard-delivery.sh \
+    "$(input_cmd "GH_TOKEN=\$TOKEN $OPEN --title \"[RT-1695] Сделано\" --body x" Bash "$ASK_PR")" \
+    'владелец.*машинная'
+
+# Спросить не удалось — вызов проходит, и гард говорит об этом вслух: молчаливый пропуск здесь
+# неотличим от сошедшейся сверки.
+ask_profile ""
+ask_pr "SC-AK-843 — пустой ответ работу не заклинивает" PASS
+said="$(CLAUDE_PROJECT_DIR="$ASK_PR" input_cmd "GH_TOKEN=\$TOKEN $OPEN --title \"[RT-1695] Сделано\" --body x" Bash "$ASK_PR" \
+    | CLAUDE_PROJECT_DIR="$ASK_PR" "$HOOKS/git-guard-delivery.sh" 2>&1 >/dev/null)"
+case "$said" in
+    *'спросить не удалось'*) report "SC-AK-843 — пропуск назван вслух" да да ;;
+    *) report "SC-AK-843 — пропуск назван вслух" "$said" да ;;
+esac
+
+# Дерево без машинной записи второго яруса не получает: сверять ответ не с чем.
+{
+    printf 'RT_PULL_TOKEN_VAR="GH_TOKEN"\n'
+    printf 'rt_pull_token_login() { printf "%%s" "владелец"; }\n'
+} > "$ASK_PR/.claude/rt-kit/project.sh"
+ask_pr "SC-AK-843 — без машинной записи ярус молчит" PASS
+rm -rf "$ASK_PR"
 
 # Дерево без машинной записи требования не получает: у него личность вызова ничего не значит.
 NO_TOKEN_PR="$(fixture_repo RT-75-notoken)"
