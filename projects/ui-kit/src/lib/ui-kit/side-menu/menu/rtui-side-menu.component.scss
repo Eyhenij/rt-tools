@@ -29,6 +29,14 @@ $side-menu: (
         width: 13.75rem,
         title-font-size: 0.85rem,
     ),
+    // Полоса прокрутки списков меню. Системная занимает у узкой панели заметную долю ширины и
+    // выглядит в каждой системе по-своему; здесь она узкая, с плоской дорожкой и скруглённым
+    // ползунком. Цвета берутся токенами: они же разводят светлую и тёмную тему.
+    scrollbar: (
+            width: 0.375rem,
+            thumb-radius: var(--rt-radius-full),
+            track-color: var(--rt-bg-base-subtle),
+        ),
 );
 
 :host(.rtui-side-menu--pinned) {
@@ -53,6 +61,30 @@ $side-menu: (
     // раздвинутая тягой за край. Её знают трое — сама панель, ручка тяги и пункт внутри неё, —
     // и выражение, повторённое у каждого, разъезжается на первой же правке одного из них.
     --rt-side-menu-sub-menu-shown-width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
+
+    // Полоса прокрутки обоих списков меню — полосы значков и подменю. Оформляется здесь, а не у
+    // прокручиваемой области: вид остальных её экранов от этой правки не двигается. Правило
+    // пробивает инкапсуляцию, потому что прокручивается внутренний узел области, а полоса
+    // принадлежит ему; своего входа под вид полосы область не даёт.
+    ::ng-deep .rtui-scrollable__content {
+        &::-webkit-scrollbar {
+            width: var(--rt-side-menu-scrollbar-width);
+            height: var(--rt-side-menu-scrollbar-width);
+        }
+
+        &::-webkit-scrollbar-track {
+            background: var(--rt-side-menu-scrollbar-track-color);
+        }
+
+        &::-webkit-scrollbar-thumb {
+            border-radius: var(--rt-side-menu-scrollbar-thumb-radius);
+            background: var(--rt-scrollbar-thumb);
+        }
+
+        &::-webkit-scrollbar-thumb:hover {
+            background: var(--rt-scrollbar-thumb-hover);
+        }
+    }
 
     .rtui-mobile-side-menu {
         width: var(--rt-side-menu-sub-menu-shown-width);
