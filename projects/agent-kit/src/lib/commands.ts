@@ -252,6 +252,27 @@ const holes: (result: ISyncResult) => string[] = (result: ISyncResult): string[]
         return `  ${asset}: нет значений для ${written}`;
     });
 
+/**
+ * Незаполненная дырка — состояние дерева, а не расхождение с пакетом.
+ *
+ * Расхождение говорит, что разложенное разъехалось с редакцией; дырка без значения говорит, что
+ * дерево ещё не описало своего — порты стенда, префикс компонентов, имя главной ветки. Судить их
+ * одним кодом возврата значит ставить дерево перед выбором между красным гейтом пуша и
+ * выдуманными числами в настройке, после чего подстановки перестают значить что-либо вовсе.
+ *
+ * Раскладки это не касается: файл с дыркой на диск не кладётся, и `sync` отказывает по-прежнему —
+ * разложенное правило с `{{имя}}` посреди строки агент прочтёт как имя.
+ */
+const holeWarningLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] =>
+    result.missing.size
+        ? [
+              `дерево ещё не описало своего: ресурсов с незаполненными дырками ${result.missing.size}`,
+              ...holes(result),
+              '  — это описание дерева, а не расхождение с пакетом: значения идут ключом `vars` в `.claude/rt-kit.json`',
+              '  — до них ресурс не раскладывается вовсе, и на диске его нет',
+          ]
+        : [];
+
 const unfilled: (result: ISyncResult) => readonly ICompanion[] = (result: ISyncResult): readonly ICompanion[] =>
     result.companions.filter(isUnfilled);
 
@@ -492,6 +513,7 @@ const strayLines: (result: ISyncResult) => string[] = (result: ISyncResult): str
  * всплывали бы только там, где и без них уже красно.
  */
 const warnings: (result: ISyncResult) => string[] = (result: ISyncResult): string[] => [
+    ...holeWarningLines(result),
     ...brokenLines(result),
     ...idleLines(result),
     ...namedCutLines(result),
@@ -502,7 +524,6 @@ const warnings: (result: ISyncResult) => string[] = (result: ISyncResult): strin
 ];
 
 const describe: (result: ISyncResult) => string[] = (result: ISyncResult): string[] => [
-    ...holes(result),
     ...gapLines(result),
     ...unboundLines(result),
     ...driftedLines(result),
@@ -744,8 +765,10 @@ function syncCheck(config: IConfig, root: string, version: string, assetsDir: st
         // Гард, подписанный не на то, что объявляет, идёт в счёт по той же причине и с большим
         // основанием: неподключённый хотя бы не притворяется — этот выглядит работающим, и ветка
         // его тела, ради которой всё писалось, не исполняется ни разу.
-        const count: number =
-            result.missing.size + result.gaps.length + pending.length + empty.length + result.unbound.length + result.drifted.length;
+        // Незаполненная дырка в счёт не идёт: она говорит о том, чего дерево ещё не описало о
+        // себе, а не о расхождении разложенного с редакцией. Названа она предупреждением —
+        // печатается и на сошедшемся дереве, где расходиться больше нечему.
+        const count: number = result.gaps.length + pending.length + empty.length + result.unbound.length + result.drifted.length;
         if (!count) {
             return { code: 0, lines: [`sync --check: разложенное сходится с пакетом v${version}`, ...warnings(result)] };
         }

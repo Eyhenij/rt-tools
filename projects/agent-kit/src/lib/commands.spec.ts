@@ -382,6 +382,22 @@ describe('sync --check', () => {
         expect(sync(env, true).code).toBe(0);
     });
 
+    // Расхождение говорит, что разложенное разъехалось с редакцией; дырка без значения — что
+    // дерево ещё не описало своего. Судимые одним кодом возврата, они ставят дерево перед выбором
+    // между красным гейтом пуша и выдуманными числами в настройке.
+    it('SC-AK-854 — незаполненная дырка расхождением не считается и названа отдельно', () => {
+        start();
+        sync(env, false);
+        fillCompanions();
+        put(join(OVERRIDES_DIR, 'laws/delivery.md'), '## Статьи\n\nВетка {{mainBranch}}.\n');
+
+        const outcome: IOutcomeOfCommand = sync(env, true);
+
+        expect(outcome.code).toBe(0);
+        expect(said(outcome)).toContain('дерево ещё не описало своего');
+        expect(said(outcome)).toContain('{{mainBranch}}');
+    });
+
     it('SC-AK-05 — разложенный гард доезжает до настройки агента', () => {
         start();
         const laid: IOutcomeOfCommand = sync(env, false);

@@ -15,3 +15,5 @@
 - **Снимает раздел человек, а не команда.** — `projects/agent-kit/src/lib/override-marks.ts:staleOverrides` — функция только называет разделы и ничего не пишет; сценарий `SC-AK-847`
 - **Раздел без пометки считается постоянным.** — `projects/agent-kit/src/lib/override-marks.ts:marksOfOverride` — сценарий `SC-AK-846`
 - **Пометка на ресурс, которого в приехавшей редакции нет, молчит.** — `projects/agent-kit/src/lib/override-marks.ts:staleOverrides` — сценарий `SC-AK-848`
+- **Незаполненная дырка расхождением не считается и называется отдельным состоянием.** — `projects/agent-kit/src/lib/commands.ts:syncCheck` — счёт расхождений её не берёт; сценарий `SC-AK-854`
+- **Названа она на любом исходе сверки, вместе с ходом.** — `projects/agent-kit/src/lib/commands.ts:holeWarningLines` — блок стоит в предупреждениях, а они печатаются и на сошедшемся дереве; сценарий `SC-AK-854`
