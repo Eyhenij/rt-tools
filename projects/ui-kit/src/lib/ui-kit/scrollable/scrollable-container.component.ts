@@ -133,7 +133,7 @@ export class RtuiScrollableContainerComponent {
      * значком не уходит: под ним живой пункт, и человек, целившийся в подсказку, уехал бы на
      * чужой экран.
      */
-    public onScrollHintClick(event: MouseEvent): void {
+    public onScrollHintClick(event: Event): void {
         event.preventDefault();
         event.stopPropagation();
 
