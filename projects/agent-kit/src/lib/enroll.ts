@@ -193,7 +193,10 @@ function pathChosen(options: IEnrollOptions): IEnrollOutcome | null {
 /** Годен ли приём для обмена по коду. Пути с рук эти проверки не касаются: он в сеть не идёт. */
 function intakeReady(options: IEnrollOptions): IEnrollOutcome | null {
     if (!options.intake) {
-        return refusal('в настройке дерева не назван адрес приёма: заполните ключ `intake`');
+        return refusal(
+            'в настройке дерева не назван адрес приёма: заполните ключ `intake`',
+            'адрес берётся у того же человека, который выдал код приглашения: код и адрес идут парой'
+        );
     }
 
     if (!intakeAllowed(options.intake)) {

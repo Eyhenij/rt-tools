@@ -351,7 +351,10 @@ export async function propose(env: IEnvironment, options: IShipOptions): Promise
         };
     }
     if (!config.intake) {
-        return refusal('отправлять некуда: адреса приёма нет', `он объявляется ключом \`intake\` в ${CONFIG_PATH}`);
+        return refusal(
+            'отправлять некуда: адреса приёма нет',
+            `он объявляется ключом \`intake\` в ${CONFIG_PATH}, а само значение берётся у владельца приёма — вместе с кодом приглашения`
+        );
     }
 
     const tree: string = treeSlugOf(options.remote, config.tree);
