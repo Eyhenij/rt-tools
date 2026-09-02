@@ -47,6 +47,20 @@ g "контракт со спеком в том же коммите" 'git commit
 stage libs/site/x/ui/src/lib/a.component.ts
 g "код без объявленной пары" 'git commit -m "feat(site): x"' PASS
 
+# --- SC-AK-849. Файл, положенный раскладкой, пары не требует -----------------------------------
+# Автор у него в дереве-потребителе один — пакет, и документ о нём живёт там же. Прежде первая же
+# раскладка упиралась в обход на весь свой объём, а обход, объявленный однажды на сотню файлов,
+# снимал требование и со всех будущих правок этих файлов руками. Признак — шапка раскладки.
+stage libs/common/proto/proto/x/v1/laid.proto
+printf '// rt-kit v0.23.0 · proto/laid.proto · 0123456789ab · правится надстройкой, не здесь\n' \
+    > "$REPO/libs/common/proto/proto/x/v1/laid.proto"
+git -C "$REPO" add libs/common/proto/proto/x/v1/laid.proto >/dev/null 2>&1
+g "SC-AK-849 — разложенный файл пары не требует" 'git commit -m "chore: раскладка"' PASS
+
+# Тот же файл без шапки судится прежним порядком.
+stage libs/common/proto/proto/x/v1/own.proto
+g "SC-AK-849 — свой файл дерева пары требует" 'git commit -m "feat(proto): x"' deny
+
 # --- обход причиной --------------------------------------------------------------------------
 # «Docs-skip:» без причины — тот же молчаливый пропуск, только с двоеточием.
 stage libs/common/proto/proto/x/v1/x.proto
