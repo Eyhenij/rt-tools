@@ -170,6 +170,67 @@ async function assertItemsFillPanel(canvasElement: HTMLElement): Promise<void> {
     }
 }
 
+/** Полоса растушёвки над нижним краем списка — то, чей цвет спрашивает проверка схемы. */
+const HINT_SELECTOR: string = '[qa-dataid="scrollable-scroll-hint"]';
+
+/**
+ * Ряды роли, которыми цветовая схема перекрашивает акцентный слой. Ровно то, что кладёт на
+ * страницу блок `[data-rt-scheme]`: своей объявленной схемы у витрины нет, а проверке нужна не
+ * схема с именем, а её приём.
+ */
+const SCHEME_PROBE: Readonly<Record<string, string>> = {
+    '--rt-color-primary-20': '#b3e3e1',
+    '--rt-color-primary-40': '#5cb8b5',
+    '--rt-color-primary-60': '#1a9d99',
+    '--rt-color-primary-100': '#008582',
+};
+
+/**
+ * Проверка того, что растушёвка идёт за выбранной цветовой схемой и за темой.
+ *
+ * Цвет собирается из токенов, а токены разрешает браузер: в спеке `var()` остаётся строкой, и
+ * взятая там растушёвка совпадает сама с собой при любой схеме. Поэтому спрашивается здесь —
+ * вычисленным значением, снятым до и после перекраски.
+ *
+ * Схема и тема ставятся на корень страницы и снимаются в конце: снимок истории идёт после
+ * показа, и оставленная схема увела бы эталон вслед за проверкой.
+ */
+async function assertHintFollowsScheme(canvasElement: HTMLElement): Promise<void> {
+    const hint: HTMLElement | null = await waitFor<HTMLElement>((): HTMLElement | null => canvasElement.querySelector(HINT_SELECTOR));
+
+    if (hint === null) {
+        throw new Error('Признака непоказанного снизу нет: красить нечего');
+    }
+
+    const root: HTMLElement = document.documentElement;
+    const read: () => string = (): string => getComputedStyle(hint).backgroundImage;
+
+    try {
+        const plain: string = read();
+
+        Object.entries(SCHEME_PROBE).forEach(([name, value]: [string, string]): void => root.style.setProperty(name, value));
+
+        const scheme: string = read();
+
+        if (scheme === plain) {
+            throw new Error(`Растушёвка не пошла за схемой: цвет остался прежним — ${plain}`);
+        }
+
+        root.classList.add('rt-dark');
+
+        const dark: string = read();
+
+        if (dark === scheme) {
+            throw new Error(`Растушёвка не различает тёмную тему при той же схеме: ${dark}`);
+        }
+    } finally {
+        Object.keys(SCHEME_PROBE).forEach((name: string): void => {
+            root.style.removeProperty(name);
+        });
+        root.classList.remove('rt-dark');
+    }
+}
+
 export const Default: TStory = {
     args: {
         isSubMenuXScrollEnabled: true,
@@ -385,5 +446,8 @@ export const MenuScrollHint: TStory = {
         isSubMenuIconsOutlined: false,
         isSubMenuButtonIconsOutlined: false,
         isSubMenuTooltipsShown: true,
+    },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await assertHintFollowsScheme(canvasElement);
     },
 };
