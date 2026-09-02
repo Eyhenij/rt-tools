@@ -113,6 +113,28 @@ report "SC-AK-538 — дерево с источником посылается 
 report "SC-AK-538 — и надстройка названа законной формой" \
     "$(says "$(edit_in .claude/skills/probe/SKILL.md)" 'overrides/rules/probe\.md')" 1
 
+# --- SC-AK-858 — тело интерпретатора без записи путей не отдаёт ---------------------------------
+# Прежде из тела бралось всё путеподобное: команда, подключившая разложенный помощник и
+# напечатавшая его ответ, отбивалась как правка этого помощника — за один заход трижды подряд.
+READ_BODY='bash -c ". .claude/skills/probe/SKILL.md; printf ok"'
+report "SC-AK-858 — чтение разложенного из тела проходит" \
+    "$(decision "$(cmd_in "$READ_BODY")")" PASS
+
+WRITE_BODY='python3 - <<PY
+io.open(".claude/skills/probe/SKILL.md", "w").write("x")
+PY'
+report "SC-AK-858 — запись из тела по-прежнему отбита" \
+    "$(decision "$(cmd_in "$WRITE_BODY")")" deny
+
+# Путь и вызов записи стоят в теле разными строками — связать их нечем, поэтому тело, которое
+# пишет, отдаёт свои пути целиком.
+SPLIT_BODY='python3 - <<PY
+p = ".claude/skills/probe/SKILL.md"
+io.open(p, "w").write("x")
+PY'
+report "SC-AK-858 — путь строкой выше записи берётся" \
+    "$(decision "$(cmd_in "$SPLIT_BODY")")" deny
+
 # Отказ в пользу работы: сломанный гард не заклинивает работу.
 exit_code_of() {
     printf '%s' "$2" | "$HOOKS/rule-source-guard.sh" >/dev/null 2>&1
