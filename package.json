@@ -172,7 +172,7 @@
     "@schematics/angular": "22.0.5",
     "@storybook/addon-docs": "10.5.5",
     "@storybook/angular": "10.1.2",
-    "@storybook/test-runner": "0.24.4",
+    "@storybook/test-runner": "0.24.5",
     "@swc-node/register": "1.11.1",
     "@swc/core": "1.15.47",
     "@swc/helpers": "0.5.23",
