@@ -231,6 +231,35 @@ async function assertHintFollowsScheme(canvasElement: HTMLElement): Promise<void
     }
 }
 
+/**
+ * Проверка того, что растушёвка доходит до содержимого подвала, а не обрывается у края списка.
+ *
+ * Между низом списка и первой строкой подвала стоит верхний отступ подвала — его задаёт
+ * потребитель, и разделительную линию он рисует уже за ним. Полоса, кончающаяся у края списка,
+ * оставляет между собой и линией чистый фон, и стык читается кривой вёрсткой.
+ */
+async function assertHintReachesFooter(canvasElement: HTMLElement): Promise<void> {
+    const hint: HTMLElement | null = await waitFor<HTMLElement>((): HTMLElement | null => canvasElement.querySelector(HINT_SELECTOR));
+
+    if (hint === null) {
+        throw new Error('Признака непоказанного снизу нет: мерить нечего');
+    }
+
+    const footer: HTMLElement | null = canvasElement.querySelector('.rtui-scrollable__footer');
+
+    if (footer === null) {
+        throw new Error('Подвала области нет: стыка, о котором проверка, не существует');
+    }
+
+    const footerBox: DOMRect = footer.getBoundingClientRect();
+    const contentTop: number = footerBox.top + parseFloat(getComputedStyle(footer).paddingTop);
+    const gap: number = contentTop - hint.getBoundingClientRect().bottom;
+
+    if (Math.abs(gap) > 1) {
+        throw new Error(`Между растушёвкой и содержимым подвала полоса чистого фона: ${Math.round(gap)} пикселей`);
+    }
+}
+
 export const Default: TStory = {
     args: {
         isSubMenuXScrollEnabled: true,
@@ -449,5 +478,6 @@ export const MenuScrollHint: TStory = {
     },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await assertHintFollowsScheme(canvasElement);
+        await assertHintReachesFooter(canvasElement);
     },
 };
