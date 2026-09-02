@@ -8,7 +8,7 @@
     "templates": ".claude/rt-kit/templates"
   },
   "postmortems": ".claude/rt-kit/postmortems",
-  "rolesOff": [],
+  "rolesOff": ["strict-teacher"],
   "variants": {
     "host": "github"
   },
