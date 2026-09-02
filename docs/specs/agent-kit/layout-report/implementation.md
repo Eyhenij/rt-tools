@@ -10,3 +10,8 @@
 - **Файл вне рода ресурсов надстройкой не считается.** — `projects/agent-kit/src/lib/snapshot.ts:treeSnapshot`
 - **Долг привязок считается по разложенному телу правила, а не по пакетной редакции.** — `projects/agent-kit/src/lib/sync.ts:mergedBody`
 - **Незаданный порог сжатия разбор называет вместе с готовыми числами.** — `projects/agent-kit/src/lib/thresholds.ts:thresholdLines`
+- **Надстройка, заведённая ради отправленного предложения, помечается в самой надстройке.** — `projects/agent-kit/src/lib/override-marks.ts:MARK` — форма пометки; сценарий `SC-AK-846`
+- **Раскладка перечисляет помеченные разделы, чья статья в приехавшей редакции уже есть.** — `projects/agent-kit/src/lib/commands.ts:staleOverrideLines` — сценарий `SC-AK-847`
+- **Снимает раздел человек, а не команда.** — `projects/agent-kit/src/lib/override-marks.ts:staleOverrides` — функция только называет разделы и ничего не пишет; сценарий `SC-AK-847`
+- **Раздел без пометки считается постоянным.** — `projects/agent-kit/src/lib/override-marks.ts:marksOfOverride` — сценарий `SC-AK-846`
+- **Пометка на ресурс, которого в приехавшей редакции нет, молчит.** — `projects/agent-kit/src/lib/override-marks.ts:staleOverrides` — сценарий `SC-AK-848`
