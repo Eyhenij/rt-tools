@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.23.0 · checks/board.github.mjs · 27835e721622 · правится надстройкой, не здесь
+// rt-kit v0.23.0 · checks/board.github.mjs · 37f7f04b58f4 · правится надстройкой, не здесь
 /**
  * Общая работа с очередью работ: борда проекта, тикеты и их состояние.
  *
@@ -214,7 +214,7 @@ export function behindMain(branch, mainBranch, options) {
  * потом значило бы второй вызов на каждый PR. */
 export function fetchOpenPulls(options) {
     return ghJson(
-        ['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,title,headRefName,headRefOid,isDraft,body,mergeable'],
+        ['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,title,headRefName,headRefOid,isDraft,body,mergeable,baseRefName'],
         options
     );
 }

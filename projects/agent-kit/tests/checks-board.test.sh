@@ -257,6 +257,25 @@ report "SC-AK-671 — совета перезакрыть заявку при к
 export STUB_PULLS="$(conflicting_json MERGEABLE)"
 report "SC-AK-672 — у сливаемой заявки строка о событии прежняя" \
     "$(board_says 'конвейер события не получил')" 1
+
+# SC-AK-845 — заявка поверх соседней прогона не получает никогда: рабочий поток слушает заявки в
+# главную ветку и событий про другую базу не видит вовсе. Прежняя строка врала дважды — событие
+# не терялось, и перезакрытие его не вернёт.
+based_json() {
+    printf '[{"number":702,"title":"[RT-700] Правка","headRefName":"RT-700-probe","headRefOid":"%s","isDraft":false,"body":"Closes #700","mergeable":"MERGEABLE","baseRefName":"%s"}]' \
+        "$HEAD_SHA" "$1"
+}
+export STUB_PULLS="$(based_json RT-699-nizhnyaya)"
+report "SC-AK-845 — чужая база названа причиной" \
+    "$(board_says 'заявка открыта в ветку «RT-699-nizhnyaya»')" 1
+report "SC-AK-845 — совета перезакрыть заявку при чужой базе нет" \
+    "$(board_says 'gh pr close 702 && gh pr reopen 702')" 0
+report "SC-AK-845 — сказано, чем это лечится" "$(board_says 'перенеси базу')" 1
+
+# База — главная ветка: строка о событии прежняя.
+export STUB_PULLS="$(based_json main)"
+report "SC-AK-845 — заявка в главную судится как прежде" \
+    "$(board_says 'конвейер события не получил')" 1
 export STUB_RUNS=1
 export STUB_PULLS="$(pulls_json false)"
 
