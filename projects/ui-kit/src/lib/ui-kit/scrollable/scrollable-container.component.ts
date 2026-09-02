@@ -109,6 +109,24 @@ export class RtuiScrollableContainerComponent {
         });
     }
 
+    /**
+     * Нажатие на значок уводит список к самому низу. Нажатие останавливается здесь и в список под
+     * значком не уходит: под ним живой пункт, и человек, целившийся в подсказку, уехал бы на
+     * чужой экран.
+     */
+    public onScrollHintClick(event: MouseEvent): void {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const body: TNullable<ElementRef<HTMLElement>> = this.bodyRef();
+
+        if (!body) {
+            return;
+        }
+
+        body.nativeElement.scrollTo({ top: body.nativeElement.scrollHeight, behavior: 'smooth' });
+    }
+
     public onBodyScroll(): void {
         const body: TNullable<ElementRef<HTMLElement>> = this.bodyRef();
 

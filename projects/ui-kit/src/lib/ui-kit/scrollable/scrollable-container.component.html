@@ -18,7 +18,14 @@
             -->
             @if (isScrollHintShown() && hasMoreBelow()) {
                 <div rtElem="scroll-hint" qa-dataid="scrollable-scroll-hint" [attr.aria-label]="scrollHintLabel">
-                    <mat-icon rtElem="scroll-hint-icon" matTooltipPosition="above" [matTooltip]="scrollHintLabel">
+                    <mat-icon
+                        rtElem="scroll-hint-icon"
+                        role="button"
+                        tabindex="0"
+                        matTooltipPosition="above"
+                        [matTooltip]="scrollHintLabel"
+                        (click)="onScrollHintClick($event)"
+                        (keydown.enter)="onScrollHintClick($event)">
                         keyboard_arrow_down
                     </mat-icon>
                 </div>

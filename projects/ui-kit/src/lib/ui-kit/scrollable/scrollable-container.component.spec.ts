@@ -189,3 +189,56 @@ describe('RtuiScrollableContainerComponent — SC-UK-42 признак счит�
         expect((fixture.nativeElement as HTMLElement).querySelector('[qa-dataid="scrollable-scroll-hint"]')).not.toBeNull();
     });
 });
+
+describe('RtuiScrollableContainerComponent — SC-UK-44 нажатие на значок уводит список вниз', () => {
+    function setup(): { fixture: ComponentFixture<HintHostComponent>; body: HTMLElement } {
+        TestBed.configureTestingModule({ imports: [HintHostComponent] });
+
+        const fixture: ComponentFixture<HintHostComponent> = TestBed.createComponent(HintHostComponent);
+
+        fixture.detectChanges();
+
+        const body: HTMLElement = (fixture.nativeElement as HTMLElement).querySelector('.rtui-scrollable__content') as HTMLElement;
+
+        Object.defineProperty(body, 'scrollHeight', { value: 600, configurable: true });
+        Object.defineProperty(body, 'clientHeight', { value: 200, configurable: true });
+        body.dispatchEvent(new Event('scroll'));
+        fixture.detectChanges();
+
+        return { fixture, body };
+    }
+
+    it('нажатие уводит список к самому низу', () => {
+        const { fixture, body }: { fixture: ComponentFixture<HintHostComponent>; body: HTMLElement } = setup();
+        const asked: { top?: number; behavior?: string }[] = [];
+
+        body.scrollTo = ((options: { top?: number; behavior?: string }): void => {
+            asked.push(options);
+        }) as typeof body.scrollTo;
+
+        const icon: HTMLElement = (fixture.nativeElement as HTMLElement).querySelector(
+            '[qa-dataid="scrollable-scroll-hint"] mat-icon'
+        ) as HTMLElement;
+
+        icon.click();
+
+        expect(asked).toEqual([{ top: 600, behavior: 'smooth' }]);
+    });
+
+    it('нажатие на значок не уходит в список под ним', () => {
+        const { fixture, body }: { fixture: ComponentFixture<HintHostComponent>; body: HTMLElement } = setup();
+
+        // Прокрутки в среде спеки нет вовсе, а проверяется здесь не она: без подмены обработчик
+        // падает на первой же строке, и до сравнения дело не доходит.
+        body.scrollTo = (): void => {};
+
+        const icon: HTMLElement = (fixture.nativeElement as HTMLElement).querySelector(
+            '[qa-dataid="scrollable-scroll-hint"] mat-icon'
+        ) as HTMLElement;
+        const event: MouseEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
+
+        icon.dispatchEvent(event);
+
+        expect(event.defaultPrevented).toBe(true);
+    });
+});

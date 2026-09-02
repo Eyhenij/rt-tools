@@ -28,6 +28,9 @@ $scrollable: (
     scroll-hint: (
             height: 2.5rem,
             icon-size: 1.25rem,
+            // Цвет растушёвки — фон того места, где она стоит. Потребитель, перекрасивший
+            // область своим фоном, переназначает и его: иначе полоса тянется к чужому цвету.
+            color: var(--rt-bg-base-base),
         ),
 );
 
@@ -86,7 +89,16 @@ $scrollable: (
             justify-content: center;
             margin-top: calc(-1 * var(--rt-scrollable-scroll-hint-height));
             margin-bottom: calc(-1 * var(--rt-scrollable-content-padding));
-            background: linear-gradient(to bottom, transparent, var(--rt-scrollable-content-background-color));
+
+            // Растушёвка красится фоном темы, а не уходит в `transparent`: прозрачный — это
+            // чёрный с нулевой прозрачностью, и на тёмной теме такой градиент идёт через грязь.
+            // Начало берётся тем же цветом с нулевой прозрачностью — переход остаётся чистым в
+            // обеих темах, а потребитель, перекрасивший область, получает свой цвет даром.
+            background: linear-gradient(
+                to bottom,
+                rgb(from var(--rt-scrollable-scroll-hint-color) r g b / 0%),
+                var(--rt-scrollable-scroll-hint-color)
+            );
             margin-inline: calc(-1 * var(--rt-scrollable-content-padding));
             pointer-events: none;
         }
