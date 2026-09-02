@@ -50,6 +50,49 @@ report "SC-AK-523 — ветка без образца зовётся на лю�
 INPUT_OTHER='{"tool_name":"NotebookEdit","tool_input":{"file_path":"/tmp/a.ipynb"},"cwd":"/tmp"}'
 report "SC-AK-523 — образец сверяется с именем целиком" "$(dispatch_says PreToolUse "$INPUT_OTHER" | grep -c 'звали only_edit')" 0
 
+# --- SC-AK-860 — отказ, сказанный в поток ошибок, доходит до исполнителя -------------------------
+# Гард, печатающий отказ в поток ошибок, приходил строкой о сломанном файле — при целом файле и
+# внятном тексте, которого никто не видел. За один заход так пропало два отказа подряд.
+rm -f "$DISPATCH_DIR"/*.sh 2>/dev/null
+cp "$ASSETS/hooks/dispatch.sh" "$ASSETS/hooks/hook-input.sh" "$ASSETS/hooks/utf8.sh" "$DISPATCH_DIR/" 2>/dev/null
+{
+    printf '#!/usr/bin/env bash\n'
+    printf '# rt-hook: PreToolUse .*\n'
+    printf 'echo "отказ ветки словами" >&2\n'
+    printf 'exit 2\n'
+} > "$DISPATCH_DIR/talks_to_stderr.sh"
+chmod +x "$DISPATCH_DIR/talks_to_stderr.sh"
+report "SC-AK-860 — текст из потока ошибок отдан агенту" \
+    "$(dispatch_says PreToolUse "$INPUT_BASH" | grep -c 'отказ ветки словами')" 1
+report "SC-AK-860 — о сломанном файле при этом не говорится" \
+    "$(dispatch_says PreToolUse "$INPUT_BASH" | grep -c 'похоже, файл сломан')" 0
+report "SC-AK-860 — код возврата ветки сохранён" "$(dispatch_code PreToolUse "$INPUT_BASH")" 2
+
+# Молчание обоими потоками по-прежнему называет имя ветки: чинить тогда действительно нечего.
+rm -f "$DISPATCH_DIR/talks_to_stderr.sh"
+{
+    printf '#!/usr/bin/env bash\n'
+    printf '# rt-hook: PreToolUse .*\n'
+    printf 'exit 3\n'
+} > "$DISPATCH_DIR/silent_fail.sh"
+chmod +x "$DISPATCH_DIR/silent_fail.sh"
+report "SC-AK-860 — молчащая ветка названа по имени" \
+    "$(dispatch_says PreToolUse "$INPUT_BASH" | grep -c 'silent_fail.sh')" 1
+
+# Поток ошибок удачной ветки наружу не идёт: это шум, а не решение.
+rm -f "$DISPATCH_DIR/silent_fail.sh"
+{
+    printf '#!/usr/bin/env bash\n'
+    printf '# rt-hook: PreToolUse .*\n'
+    printf 'echo "шум ветки" >&2\n'
+    printf 'exit 0\n'
+} > "$DISPATCH_DIR/noisy_ok.sh"
+chmod +x "$DISPATCH_DIR/noisy_ok.sh"
+report "SC-AK-860 — шум удачной ветки наружу не идёт" \
+    "$(dispatch_says PreToolUse "$INPUT_BASH" | grep -c 'шум ветки')" 0
+
+rm -f "$DISPATCH_DIR/noisy_ok.sh"
+
 # --- SC-AK-856 — событие без имени инструмента сверяет род запуска ------------------------------
 # У входа в сессию имени инструмента нет вовсе, и образец там называет род запуска. Сверявшийся с
 # пустым именем, он не совпадал ни разу: через диспетчер не звался ни один хук входа — заход
