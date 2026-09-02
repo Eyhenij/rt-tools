@@ -17,8 +17,12 @@
         --mat-expansion-header-expanded-state-height: var(--mat-expansion-header-collapsed-state-height);
     }
 
+    // Пункт занимает ширину панели: она сама знает, насколько широка, — её двигают тяга за край и
+    // работа с полем поиска. Верхний предел числом отменял бы это движение, и панель, выросшая
+    // вдвое, держала бы подписи обрезанными при пустой полосе справа. Число остаётся нижним
+    // пределом там, где потребитель включил боковую прокрутку: сжатый пункт прокручивать нечем.
     .rtui-side-menu-sub-item {
-        max-width: var(--rt-side-menu-sub-menu-item-width);
+        max-width: 100%;
 
         &--fixed {
             min-width: var(--rt-side-menu-sub-menu-item-width);
@@ -80,7 +84,7 @@
         }
 
         .rtui-side-menu-expand-sub-item-header {
-            max-width: var(--rt-side-menu-sub-menu-item-width);
+            max-width: 100%;
             padding: 0;
 
             &--activated {
