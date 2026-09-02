@@ -6,8 +6,23 @@
     }
 
     @if (contentTpl()) {
-        <div rtElem="content">
+        <div #body rtElem="content" (scroll)="onBodyScroll()">
             <ng-container *ngTemplateOutlet="contentTpl() ?? null" />
+
+            <!--
+                Признак того, что снизу осталось непоказанное: край списка, ровно обрезанный
+                подвалом, читается как конец списка, и человек считает, что пункт пропал. Полоса
+                живёт внутри тела и липнет к его нижнему краю: узел рядом считал бы от хоста и
+                уезжал под подвал, а обёртка вокруг тела меняла бы раскладку всем потребителям.
+                Тень и значок берутся готовым кита.
+            -->
+            @if (isScrollHintShown() && hasMoreBelow()) {
+                <div rtElem="scroll-hint" qa-dataid="scrollable-scroll-hint" [attr.aria-label]="scrollHintLabel">
+                    <mat-icon rtElem="scroll-hint-icon" matTooltipPosition="above" [matTooltip]="scrollHintLabel">
+                        keyboard_arrow_down
+                    </mat-icon>
+                </div>
+            }
         </div>
     }
 

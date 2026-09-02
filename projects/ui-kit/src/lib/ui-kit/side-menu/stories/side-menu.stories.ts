@@ -367,3 +367,23 @@ export const SubMenuHeldBySearch: TStory = {
         await assertItemsFillPanel(canvasElement);
     },
 };
+
+/**
+ * SC-UK-43 — список, который не влез по высоте, говорит об этом.
+ *
+ * Окно кадра нарочно низкое: в полный рост полоса значков влезает целиком, и признаку неоткуда
+ * взяться. Прокрутка до конца его снимает — иначе он висел бы поверх последнего пункта.
+ */
+export const MenuScrollHint: TStory = {
+    // Кадру нужен низкий экран: в полный рост полоса значков влезает целиком, и признаку
+    // непоказанного снизу взяться неоткуда. Размер кадра задаёт история — глобальная рамка
+    // витрины на съёмку не влияет вовсе.
+    parameters: { snapshotViewport: { width: 1280, height: 360 } },
+    args: {
+        isSubMenuXScrollEnabled: true,
+        isMainMenuIconsOutlined: false,
+        isSubMenuIconsOutlined: false,
+        isSubMenuButtonIconsOutlined: false,
+        isSubMenuTooltipsShown: true,
+    },
+};

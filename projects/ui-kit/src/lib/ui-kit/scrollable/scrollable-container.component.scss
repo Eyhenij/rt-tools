@@ -24,6 +24,11 @@ $scrollable: (
         padding: 1rem,
         background-color: var(--rt-bg-base-base),
     ),
+    // Признак непоказанного снизу: полоса растушёвки у нижнего края и значок поверх неё.
+    scroll-hint: (
+            height: 2.5rem,
+            icon-size: 1.25rem,
+        ),
 );
 
 :host {
@@ -57,6 +62,43 @@ $scrollable: (
         &__footer {
             padding: var(--rt-scrollable-footer-padding);
             background-color: var(--rt-scrollable-footer-background-color);
+        }
+
+        // Полоса липнет к нижнему краю тела и не ловит указатель: под ней живой список, и
+        // перехваченное нажатие уводило бы человека мимо пункта. Значок ловит его сам — иначе
+        // подсказку не прочитать. Своей высоты полоса списку не добавляет: прибавленная,
+        // она отодвинула бы последний пункт от края у каждого потребителя области.
+        &__scroll-hint {
+            position: sticky;
+            z-index: 1;
+            bottom: 0;
+            display: flex;
+            height: var(--rt-scrollable-scroll-hint-height);
+
+            // Полоса стоит в колонке тела и сжимается вместе с ней: без запрета на сжатие её
+            // высота падает до высоты значка, и растушёвке не остаётся места вовсе.
+            flex: 0 0 auto;
+            align-items: flex-end;
+            justify-content: center;
+            margin-top: calc(-1 * var(--rt-scrollable-scroll-hint-height));
+            background: linear-gradient(to bottom, transparent, var(--rt-scrollable-content-background-color));
+            margin-inline: calc(-1 * var(--rt-scrollable-content-padding));
+            pointer-events: none;
+        }
+
+        // Значок сидит на своей подложке: без неё он ложится поверх растворяющегося содержимого
+        // и читается как его часть — на кадре его не отличить от полустёртого пункта.
+        &__scroll-hint-icon {
+            display: flex;
+            width: var(--rt-scrollable-scroll-hint-icon-size);
+            height: var(--rt-scrollable-scroll-hint-icon-size);
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--rt-radius-full);
+            background-color: var(--rt-bg-base-base);
+            color: var(--rt-text-base-secondary);
+            font-size: var(--rt-scrollable-scroll-hint-icon-size);
+            pointer-events: auto;
         }
     }
 }
