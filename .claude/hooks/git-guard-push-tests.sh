@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.23.0 · hooks/git-guard-push-tests.sh · 75e59490ad1d · правится надстройкой, не здесь
+# rt-kit v0.23.0 · hooks/git-guard-push-tests.sh · 670fc856694c · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # Гард проверок перед пушем. PreToolUse на вызове пуша.
@@ -115,7 +115,30 @@ done
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/profile-check.sh" ] && . "$rt_hooks_dir/profile-check.sh"
 command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
-rt_needs rt_push_checks git-guard-push-tests || exit 0
+
+# Строка наблюдения на каждый исход. Гард, пишущий только отбои, отвечает на один вопрос из
+# трёх: сколько пушей он остановил. «Набор прогнан и зелёный» и «набора не нашлось» выглядят в
+# записи одинаково — молчанием, — и гейт, не гонявший ни одной проверки за неделю, неотличим от
+# гейта, у которого всё зелено. Пишется это той же записью наблюдений, что и отбои гардов, и
+# гаснет тем же выключателем дерева.
+rt_push_gate_note() {
+    local outcome="$1" sid
+    # shellcheck disable=SC1090
+    [ -f "$rt_hooks_dir/observe.sh" ] && . "$rt_hooks_dir/observe.sh" 2>/dev/null
+    command -v rt_note >/dev/null 2>&1 || return 0
+    sid="$(printf '%s' "$input" | jq -r '.session_id // empty' 2>/dev/null)"
+    if [ -n "$sid" ]; then
+        rt_note push-gate "res=$outcome" "sid=$sid"
+    else
+        rt_note push-gate "res=$outcome"
+    fi
+    return 0
+}
+
+if ! rt_needs rt_push_checks git-guard-push-tests; then
+    rt_push_gate_note no-checks
+    exit 0
+fi
 
 main_branch="${RT_MAIN_BRANCH:-main}"
 base=''
@@ -132,8 +155,10 @@ rt_skip_code="${RT_SKIP_CODE:-7}"
 failed=""
 output=""
 skipped=""
+ran=0
 while IFS= read -r check; do
     [ -z "$check" ] && continue
+    ran=$((ran + 1))
     out="$(eval "$check" 2>&1)"
     status=$?
     [ "$status" -eq 0 ] && continue
@@ -151,6 +176,13 @@ EOF
 
 # Пропущенное называется вслух и тогда, когда набор прошёл: молчание о нём и есть та самая
 # неотличимость, ради которой код заведён. Пуш при этом идёт — отказа здесь нет.
+# Функция профиля есть, а печатать ей в этом дереве нечего: исход тот же, что и без неё, —
+# набора не нашлось, и молчание о нём читалось бы как зелёный прогон.
+if [ "$ran" -eq 0 ]; then
+    rt_push_gate_note no-checks
+    exit 0
+fi
+
 if [ -z "$failed" ] && [ -n "$skipped" ]; then
     printf 'гейт пуша: набор прошёл, но эти проверки смотреть было не на что:\n%s\n' "$skipped" >&2
 fi
@@ -177,7 +209,12 @@ if [ ! -f "$gap_mark" ]; then
     : >"$gap_mark" 2>/dev/null || true
 fi
 
-[ -z "$failed" ] && exit 0
+if [ -z "$failed" ]; then
+    rt_push_gate_note green
+    exit 0
+fi
+
+rt_push_gate_note red
 
 # Хвост вывода, а не весь: у прогонщика он длинный, а нужна причина отказа.
 tail_out="$(printf '%s' "$output" | tail -n 40 | tr -d '\000')"

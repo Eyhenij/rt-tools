@@ -88,6 +88,24 @@ text
 EOF
 node tools/probe.mjs')")" PASS
 
+# SC-AK-834. Файл в конфликте пропускается наравне со снятым: разрешение конфликта содержания
+# копии не меняет — раскладка кладёт её заново, — а отбитый здесь исполнитель остаётся с
+# наполовину слитой веткой и без законного хода.
+printf '%s\n' '---' 'name: probe' 'kind: rule' '---' \
+    '<!-- rt-kit v0.12.0 · rules/probe.md · abc123def456 · правится надстройкой, не здесь -->' \
+    '<<<<<<< HEAD' '# Правило своё' '=======' '# Правило чужое' '>>>>>>> origin/main' \
+    > "$TREE/.claude/skills/probe/SKILL.md"
+report "SC-AK-834 — правка копии с маркерами конфликта проходит" \
+    "$(decision "$(edit_in .claude/skills/probe/SKILL.md)")" PASS
+report "SC-AK-834 — и та же правка командой оболочки" \
+    "$(decision "$(cmd_in 'printf x > .claude/skills/probe/SKILL.md')")" PASS
+# Конфликт снят — гард судит копию прежним порядком.
+printf '%s\n' '---' 'name: probe' 'kind: rule' '---' \
+    '<!-- rt-kit v0.12.0 · rules/probe.md · abc123def456 · правится надстройкой, не здесь -->' \
+    '# Правило' > "$TREE/.claude/skills/probe/SKILL.md"
+report "SC-AK-834 — со снятым конфликтом отбой возвращается" \
+    "$(decision "$(edit_in .claude/skills/probe/SKILL.md)")" deny
+
 # Дерево пакета: источник есть, и отказ посылает в него, а не в надстройку.
 printf '%s\n' 'rt_kit_sources_dir() { printf "pkg/assets"; }' >> "$TREE/.claude/rt-kit/defaults/project.sh"
 report "SC-AK-538 — дерево с источником посылается в источник" \
