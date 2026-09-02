@@ -71,7 +71,7 @@ jobs:
 
             # Один коммит на подъём версии, журнал изменений и раскладку: два коммита оставили бы
             # главную ветку в промежуточном состоянии — том самом красном, ради которого шаг заведён.
-            - uses: EndBug/add-and-commit@v10
+            - uses: EndBug/add-and-commit@v11
               with:
                   default_author: github_actions
                   message: 'chore(rt:agent-kit): версия пакета поднята до ${{ env.VERSION }} [ci skip]'
