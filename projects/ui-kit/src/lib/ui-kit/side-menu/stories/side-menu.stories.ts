@@ -1,6 +1,8 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
 import { TestSideMenuWrapperComponent } from './component/test-side-menu-wrapper.component';
+import { assertMenuScrollbarSlim, assertSubMenuClearsCorner } from './side-menu.scrollbar-asserts';
+import { PANEL_SELECTOR, waitFor } from './side-menu.wait';
 
 export default {
     title: 'Components/SideMenu',
@@ -8,15 +10,6 @@ export default {
 } as Meta<TestSideMenuWrapperComponent>;
 
 type TStory = StoryObj<TestSideMenuWrapperComponent>;
-
-/**
- * Предел ожидания в миллисекундах, а не в кадрах анимации.
- *
- * Кадрами ожидание меряться не может: под нагрузкой браузер отдаёт их реже, и полсотни кадров
- * укладываются в доли секунды реального времени — показ падает там, где приложение просто не
- * успело нарисовать. Ловилось это на занятой машине, где рядом шли прогон и сборка.
- */
-const WAIT_LIMIT_MS: number = 5000;
 
 /**
  * Какую долю панели пункт обязан занять. Не единица: у пункта свои отступы в списке, и равенства
@@ -27,31 +20,6 @@ const FILL_SHARE: number = 0.85;
 
 /** Ширина, во всю которую встаёт подменю на время работы с полем поиска: 30rem набора значений. */
 const HELD_WIDTH: number = 480;
-
-/** Панель подменю — то, чью ширину меряют все проверки ниже. */
-const PANEL_SELECTOR: string = '.rtui-sub-side-menu-content';
-const WAIT_STEP_MS: number = 50;
-
-/** Ожидание того, что вернёт узел: по часам, шагом, до предела. */
-async function waitFor<T>(find: () => T | null): Promise<T | null> {
-    const until: number = Date.now() + WAIT_LIMIT_MS;
-
-    for (;;) {
-        const found: T | null = find();
-
-        if (found !== null) {
-            return found;
-        }
-
-        if (Date.now() >= until) {
-            return null;
-        }
-
-        await new Promise<void>((resolve: () => void): void => {
-            setTimeout(resolve, WAIT_STEP_MS);
-        });
-    }
-}
 
 async function waitForField(canvasElement: HTMLElement): Promise<HTMLInputElement | null> {
     return waitFor<HTMLInputElement>((): HTMLInputElement | null => canvasElement.querySelector('[qa-dataid="side-menu-search"]'));
@@ -167,85 +135,6 @@ async function assertItemsFillPanel(canvasElement: HTMLElement): Promise<void> {
 
     if (widest < panelWidth * FILL_SHARE) {
         throw new Error(`Пункт уже панели: пункт ${Math.round(widest)} при панели ${Math.round(panelWidth)}`);
-    }
-}
-
-/** Предел ширины полосы прокрутки. Системная в этом браузере вдвое с лишним шире. */
-const SLIM_SCROLLBAR_LIMIT: number = 8;
-
-/** Правило полосы ищется по этой строке: селекторы псевдоэлементов лежат в тексте правила. */
-const SCROLLBAR_RULE_MARK: string = '::-webkit-scrollbar';
-
-/** Собственное свойство меню, которым задана ширина полосы. */
-const SCROLLBAR_WIDTH_VAR: string = '--rt-side-menu-scrollbar-width';
-
-/** Ищет во всех листах правило полосы, взявшее ширину из свойства меню. */
-function scrollbarRuleFound(): boolean {
-    const texts: string[] = [];
-
-    for (const sheet of [...document.styleSheets]) {
-        try {
-            texts.push(...[...sheet.cssRules].map((rule: CSSRule): string => rule.cssText));
-        } catch {
-            texts.push('');
-        }
-    }
-
-    return texts.some((text: string): boolean => text.includes(SCROLLBAR_RULE_MARK) && text.includes(SCROLLBAR_WIDTH_VAR));
-}
-
-/** Переводит значение свойства в пиксели: узел с этой шириной меряется, а не считается вручную. */
-function widthInPixels(owner: HTMLElement, value: string): number {
-    const probe: HTMLElement = document.createElement('div');
-
-    probe.style.position = 'absolute';
-    probe.style.visibility = 'hidden';
-    probe.style.width = value;
-    owner.appendChild(probe);
-
-    const width: number = probe.getBoundingClientRect().width;
-
-    probe.remove();
-
-    return width;
-}
-
-/**
- * SC-UK-47 — проверка того, что списки меню прокручиваются своей узкой полосой, а не системной.
- *
- * Спрашивается объявление, а не занятое полосой место: браузер прогона рисует полосы поверх
- * содержимого, и разность полной и внутренней ширины у него нулевая при любом оформлении. В
- * обычном браузере то же правило даёт полосе её ширину — замер этого лежит в записи задачи.
- */
-async function assertMenuScrollbarSlim(canvasElement: HTMLElement): Promise<void> {
-    const body: HTMLElement | null = await waitFor<HTMLElement>((): HTMLElement | null =>
-        canvasElement.querySelector('.rtui-side-menu .rtui-scrollable__content')
-    );
-
-    if (body === null) {
-        throw new Error('Списка меню нет: спрашивать полосу не у чего');
-    }
-
-    if (!scrollbarRuleFound()) {
-        throw new Error('Полоса прокрутки меню не оформлена: правила, берущего её ширину из свойства меню, в листах нет');
-    }
-
-    const declared: string = getComputedStyle(body).getPropertyValue(SCROLLBAR_WIDTH_VAR).trim();
-
-    if (declared === '') {
-        throw new Error('Ширина полосы у списка меню не объявлена: свойство пустое');
-    }
-
-    const width: number = widthInPixels(body, declared);
-
-    if (width <= 0 || width > SLIM_SCROLLBAR_LIMIT) {
-        throw new Error(`Полоса прокрутки меню не узкая: ${width} пикселей при пределе ${SLIM_SCROLLBAR_LIMIT}`);
-    }
-
-    const track: string = getComputedStyle(body).getPropertyValue('--rt-side-menu-scrollbar-track-color').trim();
-
-    if (track === '') {
-        throw new Error('Цвет дорожки полосы не объявлен: дорожка осталась бы прозрачной');
     }
 }
 
@@ -465,5 +354,6 @@ export const MenuScrollbar: TStory = {
     },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await assertMenuScrollbarSlim(canvasElement);
+        await assertSubMenuClearsCorner(canvasElement);
     },
 };
