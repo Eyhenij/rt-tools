@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.23.0 · checks/check-doc-paths.mjs · 8971a897ffd3 · правится надстройкой, не здесь
+// rt-kit v0.23.0 · checks/check-doc-paths.mjs · 766c2c51e8ac · правится надстройкой, не здесь
 /**
  * Проверка того, что адреса, названные в документации, существуют.
  *
@@ -29,7 +29,7 @@
  */
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, posix } from 'node:path';
 
 import { allowlistOf, CONFIG, ROOT, parseAllowlist } from './rt-kit-checks.config.mjs';
 
@@ -164,7 +164,7 @@ const TREE = treeOfRepo();
  * каталог — оба ищутся по дереву, потому что адрес у них один, а написан он коротко.
  */
 function looksLikePath(candidate) {
-    if (/[*<>{}$|\s]|\.\.\.|…/.test(candidate)) {
+    if (/[*<>{}$|\s()[\]'",;=]|\.\.\.|…/.test(candidate)) {
         return false;
     }
     if (/^(https?:|@|~|\/|-)/.test(candidate) || candidate.includes(':')) {
@@ -188,8 +188,20 @@ function looksLikePath(candidate) {
  * среди каталогов: имя каталога в обзорном документе либы означает каталог рядом, а не
  * каталог в корне.
  */
-function existsInTree(candidate) {
+function existsInTree(candidate, fromDir = '') {
     const bare = candidate.replace(/\/$/, '');
+
+    /**
+     * Относительный адрес принадлежит каталогу документа, а не корню дерева: `../routes.ts` из
+     * `libs/x/shell/src/shell/README.md` — это `libs/x/shell/src/routes.ts`. Без разрешения от
+     * каталога такой адрес ищется по дереву строкой и не находится никогда, то есть проверка
+     * краснеет на каждой ссылке, написанной так, как её пишут в разметке.
+     */
+    if (/^\.{1,2}(\/|$)/.test(bare)) {
+        const resolved = posix.normalize(posix.join(fromDir, bare));
+
+        return resolved.startsWith('..') ? false : existsSync(join(ROOT, resolved));
+    }
 
     if (ROOTED_IN.has(bare.split('/')[0])) {
         return existsSync(join(ROOT, bare));
@@ -261,6 +273,7 @@ function checkIndex(dir) {
 
 function checkDoc(doc, allowed) {
     const lines = readFileSync(join(ROOT, doc), 'utf8').split('\n');
+    const fromDir = posix.dirname(doc);
     let insideFence = false;
 
     lines.forEach((line, index) => {
@@ -277,7 +290,7 @@ function checkDoc(doc, allowed) {
             if (!looksLikePath(candidate) || allowed.has(candidate)) {
                 continue;
             }
-            if (!existsInTree(candidate)) {
+            if (!existsInTree(candidate, fromDir)) {
                 report(doc, index + 1, candidate);
             }
         }
