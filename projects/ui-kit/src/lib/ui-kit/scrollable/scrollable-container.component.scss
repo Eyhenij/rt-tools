@@ -71,7 +71,11 @@ $scrollable: (
         &__scroll-hint {
             position: sticky;
             z-index: 1;
-            bottom: 0;
+
+            // Полоса доходит до самого низа тела — до разделителя над подвалом. Прижатая к
+            // отступу содержимого, она обрывалась на его высоту выше, и между растушёвкой и
+            // разделителем оставалась полоса чистого фона.
+            bottom: calc(-1 * var(--rt-scrollable-content-padding));
             display: flex;
             height: var(--rt-scrollable-scroll-hint-height);
 
@@ -81,6 +85,7 @@ $scrollable: (
             align-items: flex-end;
             justify-content: center;
             margin-top: calc(-1 * var(--rt-scrollable-scroll-hint-height));
+            margin-bottom: calc(-1 * var(--rt-scrollable-content-padding));
             background: linear-gradient(to bottom, transparent, var(--rt-scrollable-content-background-color));
             margin-inline: calc(-1 * var(--rt-scrollable-content-padding));
             pointer-events: none;
