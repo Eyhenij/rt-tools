@@ -47,8 +47,13 @@ $side-menu: (
     // Hide drawer mask
     --mat-sidenav-scrim-color: transparent;
 
+    // Ширина, которой панель подменю стоит на экране: заданная оформлением потребителя либо
+    // раздвинутая тягой за край. Её знают трое — сама панель, ручка тяги и пункт внутри неё, —
+    // и выражение, повторённое у каждого, разъезжается на первой же правке одного из них.
+    --rt-side-menu-sub-menu-shown-width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
+
     .rtui-mobile-side-menu {
-        width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
+        width: var(--rt-side-menu-sub-menu-shown-width);
 
         .rtui-mobile-side-menu-list {
             display: flex;
@@ -56,7 +61,7 @@ $side-menu: (
             flex-direction: column;
 
             &--scrollable {
-                width: fit-content;
+                min-width: min(var(--rt-side-menu-sub-menu-item-width), 100%);
             }
 
             &__sub {
@@ -162,9 +167,6 @@ $side-menu: (
     .rtui-side-menu-resizer {
         position: fixed;
         z-index: 3;
-
-        --rt-side-menu-sub-menu-shown-width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
-
         left: calc(var(--rt-side-menu-base-width) + var(--rt-side-menu-sub-menu-shown-width) - 0.25rem);
         width: 0.25rem;
         cursor: col-resize;
@@ -202,8 +204,12 @@ $side-menu: (
                 animation: fade-in-animation 0.15s ease-in-out 0.15s forwards;
                 opacity: 0;
 
+                // Список с боковой прокруткой не уже пункта — и не шире панели. Рост по
+                // содержимому раздувал бы его вместе с самой длинной подписью, и пункт уезжал
+                // бы за край панели вместо многоточия; прокрутка при этом остаётся при деле —
+                // она нужна там, где панель уже самого пункта.
                 &--scrollable {
-                    min-width: fit-content;
+                    min-width: min(var(--rt-side-menu-sub-menu-item-width), 100%);
                 }
             }
 
@@ -219,7 +225,7 @@ $side-menu: (
         &--pinned {
             position: relative;
             left: 0;
-            width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
+            width: var(--rt-side-menu-sub-menu-shown-width);
             height: 100%;
             flex: 0 0 auto;
 

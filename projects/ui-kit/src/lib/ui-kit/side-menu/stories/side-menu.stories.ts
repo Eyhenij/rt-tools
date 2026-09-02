@@ -85,6 +85,53 @@ async function openSubMenuByClick(canvasElement: HTMLElement): Promise<void> {
     }
 }
 
+/**
+ * Проверка того, что пункт подменю не вылезает за панель, а длинная подпись обрезана.
+ *
+ * Ширину держит оформление, а стили компонента в спеке не применяются — там ширина панели равна
+ * нулю. Поэтому утверждение живёт показом: он идёт настоящим браузером и меряет то же, что видит
+ * человек.
+ */
+async function assertItemsFitPanel(canvasElement: HTMLElement): Promise<void> {
+    const panel: HTMLElement | null = await waitFor<HTMLElement>((): HTMLElement | null =>
+        canvasElement.querySelector('.rtui-sub-side-menu-content')
+    );
+
+    if (panel === null) {
+        throw new Error('Панель подменю не появилась: мерить нечего');
+    }
+
+    const panelBox: DOMRect = panel.getBoundingClientRect();
+    const items: HTMLElement[] = [
+        ...canvasElement.querySelectorAll<HTMLElement>('.rtui-side-menu-sub-item, .rtui-side-menu-expand-sub-item-header'),
+    ];
+
+    if (items.length === 0) {
+        throw new Error('Пунктов в подменю нет: мерить нечего');
+    }
+
+    // Меряется правый край, а не ширина: вложенный пункт стоит с отступом уровня, и при ширине
+    // в панель его край уезжает за неё ровно на этот отступ. Ширина такой пункт оправдывает, а
+    // человек видит обрезанную строку под краем панели.
+    const past: HTMLElement | undefined = items.find((item: HTMLElement): boolean => item.getBoundingClientRect().right > panelBox.right);
+
+    if (past !== undefined) {
+        const box: DOMRect = past.getBoundingClientRect();
+
+        throw new Error(
+            `Пункт уходит за панель: ${past.tagName}.${past.className} — правый край ${Math.round(box.right)} ` +
+                `при крае панели ${Math.round(panelBox.right)}, ширина ${Math.round(box.width)}`
+        );
+    }
+
+    const titles: HTMLElement[] = [...canvasElement.querySelectorAll<HTMLElement>('.rtui-side-menu-sub-item-title__text')];
+    const clipped: HTMLElement | undefined = titles.find((title: HTMLElement): boolean => title.scrollWidth > title.clientWidth);
+
+    if (clipped === undefined) {
+        throw new Error('Ни одна подпись не обрезана: длинная подпись в этой истории должна уходить в многоточие');
+    }
+}
+
 export const Default: TStory = {
     args: {
         isSubMenuXScrollEnabled: true,
@@ -210,5 +257,28 @@ export const SubMenuHovered: TStory = {
     },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await openSubMenuByClick(canvasElement);
+    },
+};
+
+/**
+ * SC-UK-40 — пункт подменю занимает ширину панели и не выходит за неё.
+ *
+ * Длинная подпись в узкой панели. Заведена ради предела ширины: пункт занимает ширину панели и
+ * не шире её, а подпись, которая в неё не влезла, уходит в многоточие. Без этой истории вылезший
+ * пункт виден только человеку, открывшему меню у потребителя: панель обрезает его по своему краю,
+ * и кадр остаётся прежним.
+ */
+export const SubMenuLongTitle: TStory = {
+    args: {
+        activeMenuIds: [24, 26, 29, 33, 35],
+        subMenuMode: 'pinned',
+        isSubMenuXScrollEnabled: true,
+        isMainMenuIconsOutlined: false,
+        isSubMenuIconsOutlined: false,
+        isSubMenuButtonIconsOutlined: false,
+        isSubMenuTooltipsShown: true,
+    },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await assertItemsFitPanel(canvasElement);
     },
 };
