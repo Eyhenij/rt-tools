@@ -24,6 +24,7 @@
                                     [attr.aria-label]="searchLabel"
                                     [placeholder]="searchLabel"
                                     [value]="subMenuQuery()"
+                                    (focus)="onSearchHold()"
                                     (input)="onSubMenuSearch(mobileSubMenuSearch.value)" />
 
                                 <mat-icon matPrefix [rtIconOutlined]="true">search</mat-icon>
@@ -132,7 +133,7 @@
 
     <mat-drawer-container
         rtBlock="rtui-sub-side-menu"
-        [rtMod]="{ opened: subMenuOpened(), pinned: isPinned() }"
+        [rtMod]="{ opened: subMenuOpened(), pinned: isPinned(), held: isSearchHeld() }"
         [hasBackdrop]="!isPinned()"
         (backdropClick)="closeSubMenu()">
         <mat-drawer
@@ -161,6 +162,7 @@
                                     [attr.aria-label]="searchLabel"
                                     [placeholder]="searchLabel"
                                     [value]="subMenuQuery()"
+                                    (focus)="onSearchHold()"
                                     (input)="onSubMenuSearch(subMenuSearch.value)" />
 
                                 <mat-icon matPrefix [rtIconOutlined]="true">search</mat-icon>

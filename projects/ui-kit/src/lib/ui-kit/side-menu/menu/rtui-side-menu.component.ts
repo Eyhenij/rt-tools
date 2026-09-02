@@ -117,6 +117,16 @@ export class RtuiSideMenuComponent {
     readonly #hoverOpened: WritableSignal<boolean> = signal(false);
 
     /**
+     * Человек работает с полем поиска, и подменю держится открытым, пока он не уйдёт нажатием
+     * наружу.
+     *
+     * Заведено потому, что незакреплённое подменю живёт наведением: увести указатель к полю и
+     * набрать в нём запрос — движение той же руки, и на полпути список исчезал. Уход фокуса
+     * удержания не снимает: человек переходит от поля к пунктам того же подменю.
+     */
+    readonly #searchHeld: WritableSignal<boolean> = signal(false);
+
+    /**
      * Что показывает закреплённое подменю: пункт активного адреса, а если активного нет — то,
      * что открыто сейчас. Закрепление содержимого не меняет: человек закрепляет то подменю,
      * которое перед ним, и потерять его нажатием он не должен.
@@ -163,6 +173,12 @@ export class RtuiSideMenuComponent {
      * нечего — и переключателя в узкой разметке нет.
      */
     protected readonly isPinned: Signal<boolean> = computed((): boolean => this.subMenuMode() === 'pinned' && !this.narrow());
+
+    /**
+     * Подменю держится набором запроса: на это время оно шире и уходом указателя не закрывается.
+     * Читает это оформление — модификатор на контейнере, — и разметка меню.
+     */
+    protected readonly isSearchHeld: Signal<boolean> = computed((): boolean => this.#searchHeld() && !this.isPinned());
 
     /** Закреплённое подменю открыто, пока ему есть что показать: указатель на это не влияет. */
     protected readonly subMenuOpened: Signal<boolean> = computed((): boolean =>
@@ -285,6 +301,11 @@ export class RtuiSideMenuComponent {
             return;
         }
 
+        if (item === undefined && this.#searchHeld()) {
+            // Указатель ушёл с панели, а человек работает с полем: закрывать нечего.
+            return;
+        }
+
         if (item?.submenu) {
             this.selectedSubMenu.set(item.submenu);
             this.#openSubMenu();
@@ -300,6 +321,17 @@ export class RtuiSideMenuComponent {
         this.selectedSubMenu.set(null);
         this.subMenuQuery.set('');
         this.#hoverOpened.set(false);
+        this.#searchHeld.set(false);
+    }
+
+    /**
+     * Человек взялся за поле поиска. Дальше подменю держится открытым, и увести его уходом
+     * указателя нельзя — закрывает нажатие снаружи, то есть подложка под незакреплённой панелью.
+     */
+    public onSearchHold(): void {
+        if (!this.isPinned()) {
+            this.#searchHeld.set(true);
+        }
     }
 
     /** Нажат переключатель моды: наружу уходит просьба, вход остаётся прежним. */
@@ -336,6 +368,7 @@ export class RtuiSideMenuComponent {
 
     public onSubMenuSearch(query: string): void {
         this.subMenuQuery.set(query);
+        this.onSearchHold();
     }
 
     public closeMobileMenu(): void {

@@ -19,6 +19,8 @@ $side-menu: (
     ),
     sub-menu: (
         width: 15rem,
+        // Ширина подменю на время набора запроса: тот же предел, до которого его растягивает тяга.
+        held-width: 30rem,
         // Поле поиска ниже полного роста поля формы: в шапке подменю оно стоит рядом с кнопкой
         // значка, и полная высота поднимала бы шапку выше двух строк списка.
         search-height: 2.5rem,
@@ -193,6 +195,7 @@ $side-menu: (
 
             position: relative;
             width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
+            min-width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
             height: 100%;
             border-left: 1px solid var(--rt-border-neutral-default);
             box-shadow: var(--rt-side-menu-sub-content-shadow);
@@ -216,6 +219,13 @@ $side-menu: (
 
         // Закреплённая шторка стоит в потоке рядом с полосой значков, а не поверх страницы:
         // тень и перекрытие у постоянно открытой панели читаются как залипший оверлей.
+        // Пока человек работает с полем, подменю стоит во всю разрешённую ширину: отобранный
+        // список читают, а не разглядывают в узкой полосе. Раздвигает панель нижняя граница, а не
+        // ширина: ширину шторки Material держит своим кодом, и ни переход, ни кадры её не двигают.
+        &--held .rtui-sub-side-menu-content {
+            min-width: var(--rt-side-menu-sub-menu-held-width);
+        }
+
         &--pinned {
             position: relative;
             left: 0;
