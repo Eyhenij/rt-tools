@@ -121,6 +121,24 @@ function typeInSearch(fixture: ComponentFixture<HostComponent>, query: string): 
     fixture.detectChanges();
 }
 
+/** Уход указателя с панели: незакреплённое подменю живёт наведением и на этом закрывается. */
+function leavePanel(fixture: ComponentFixture<HostComponent>): void {
+    const panel: HTMLElement = fixture.nativeElement.querySelector('mat-drawer') as HTMLElement;
+
+    panel.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
+    fixture.detectChanges();
+}
+
+/** Нажатие в поле поиска — то самое, с которого человек начинает набор. */
+function focusSearch(fixture: ComponentFixture<HostComponent>): void {
+    const field: HTMLInputElement = fixture.nativeElement.querySelector('[qa-dataid="side-menu-search"]') as HTMLInputElement;
+
+    expect(field).not.toBeNull();
+
+    field.dispatchEvent(new Event('focus', { bubbles: true }));
+    fixture.detectChanges();
+}
+
 function pin(fixture: ComponentFixture<HostComponent>): HTMLElement {
     return fixture.nativeElement.querySelector('[qa-dataid="side-menu-pin"]') as HTMLElement;
 }
@@ -294,6 +312,66 @@ function drag(fixture: ComponentFixture<HostComponent>, from: number, to: number
     document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: to }));
     fixture.detectChanges();
 }
+
+describe('SC-UK-39 — набор запроса держит незакреплённое подменю открытым', () => {
+    it('уход указателя закрывает подменю, пока в поле не заходили', () => {
+        const { fixture }: ISetup = setup();
+
+        hoverFirstItem(fixture);
+        expect(subItems(fixture).length).toBeGreaterThan(0);
+
+        leavePanel(fixture);
+
+        expect(subItems(fixture).length).toBe(0);
+    });
+
+    it('после нажатия в поле уход указателя подменю не закрывает', () => {
+        const { fixture }: ISetup = setup();
+
+        hoverFirstItem(fixture);
+        focusSearch(fixture);
+        leavePanel(fixture);
+
+        expect(subItems(fixture).length).toBeGreaterThan(0);
+    });
+
+    it('набранный запрос держит подменю так же, как нажатие', () => {
+        const { fixture }: ISetup = setup();
+
+        hoverFirstItem(fixture);
+        typeInSearch(fixture, 'нал');
+        leavePanel(fixture);
+
+        expect(subItems(fixture).length).toBeGreaterThan(0);
+    });
+
+    // Закрывает удержанное подменю нажатие снаружи: подложка под незакреплённым подменю уже есть
+    // и уже зовёт закрытие, своего слушателя на документ здесь не заводится.
+    it('нажатие снаружи закрывает удержанное подменю', () => {
+        const { fixture }: ISetup = setup();
+
+        hoverFirstItem(fixture);
+        focusSearch(fixture);
+        menu(fixture).closeSubMenu();
+        fixture.detectChanges();
+
+        expect(subItems(fixture).length).toBe(0);
+    });
+
+    it('после закрытия удержание снято: следующее наведение ведёт себя как прежде', () => {
+        const { fixture }: ISetup = setup();
+
+        hoverFirstItem(fixture);
+        focusSearch(fixture);
+        menu(fixture).closeSubMenu();
+        fixture.detectChanges();
+
+        hoverFirstItem(fixture);
+        leavePanel(fixture);
+
+        expect(subItems(fixture).length).toBe(0);
+    });
+});
 
 describe('SC-UK-35 — край закреплённого подменю тянется указателем', () => {
     it('тяга отдаёт наружу новую ширину', () => {
