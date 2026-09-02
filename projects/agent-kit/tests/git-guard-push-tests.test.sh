@@ -37,6 +37,30 @@ printf 'rt_push_checks() { printf "%%s\\n" true; }\n' > "$RED_GATE/.claude/rt-ki
 gate "зелёный набор пуш не задерживает" "$RED_GATE" 'git push origin RT-72-gate' PASS
 rm -rf "$RED_GATE"
 
+# --- SC-AK-851. У красного по вине самой проверки есть свой ход --------------------------------
+# Гард судит код возврата и двух родов красного не различает. Когда падает сама проверка, текст
+# «почини и пушь снова» велит чинить код, которого никто не трогал: разобранный однажды отказ
+# целиком лежал в документах, не тронутых ни одним коммитом ветки.
+WAYS="$(fixture_repo RT-1701-ways)"
+mkdir -p "$WAYS/.claude/rt-kit"
+printf 'rt_push_checks() { printf "%%s\\n" false; }\n' > "$WAYS/.claude/rt-kit/project.sh"
+ways_says="$(CLAUDE_PROJECT_DIR="$WAYS" input_cmd 'git push origin RT-1701-ways' Bash "$WAYS" \
+    | CLAUDE_PROJECT_DIR="$WAYS" "$HOOKS/git-guard-push-tests.sh" 2>/dev/null \
+    | jq -r '.hookSpecificOutput.permissionDecisionReason // ""' 2>/dev/null)"
+case "$ways_says" in
+    *'Ходов отсюда три'*) report "SC-AK-851 — отказ называет три хода" да да ;;
+    *) report "SC-AK-851 — отказ называет три хода" "нет" да ;;
+esac
+case "$ways_says" in
+    *'починить саму проверку'*) report "SC-AK-851 — среди них починка самой проверки" да да ;;
+    *) report "SC-AK-851 — среди них починка самой проверки" "нет" да ;;
+esac
+case "$ways_says" in
+    *'Спорное в список известного не вносится'*) report "SC-AK-851 — список известного назван не тем ходом" да да ;;
+    *) report "SC-AK-851 — список известного назван не тем ходом" "нет" да ;;
+esac
+rm -rf "$WAYS"
+
 # --- SC-AK-835. Строка наблюдения на каждый исход ----------------------------------------------
 # Гард, пишущий только отбои, отвечает на один вопрос из трёх: сколько пушей он остановил.
 # «Набор прогнан и зелёный» и «набора не нашлось» выглядят в записи одинаково — молчанием, — и
