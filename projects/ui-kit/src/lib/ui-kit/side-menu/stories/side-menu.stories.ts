@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
 import { TestSideMenuWrapperComponent } from './component/test-side-menu-wrapper.component';
+import { assertResizerGrabWiderThanLine } from './side-menu.resizer-asserts';
 import { assertMenuScrollbarSlim, assertSubMenuClearsCorner } from './side-menu.scrollbar-asserts';
 import { PANEL_SELECTOR, waitFor } from './side-menu.wait';
 
@@ -457,6 +458,27 @@ export const MenuScrollHint: TStory = {
  * Окно кадра нарочно низкое: в полный рост списки влезают целиком, и полосы у них не бывает вовсе.
  * Подменю здесь закреплено и раскрыто до третьего уровня: полоса нужна обоим спискам сразу.
  */
+/**
+ * SC-UK-49 — ручка тяги ловится курсором шире, чем видна.
+ *
+ * Подменю закреплено: у незакреплённого ручки нет вовсе — тянуть нечего, пока панель не открыта.
+ */
+export const MenuResizerGrab: TStory = {
+    parameters: { snapshotViewport: { width: 1280, height: 360 } },
+    args: {
+        subMenuMode: 'pinned',
+        activeMenuIds: [24],
+        isSubMenuXScrollEnabled: true,
+        isMainMenuIconsOutlined: false,
+        isSubMenuIconsOutlined: false,
+        isSubMenuButtonIconsOutlined: false,
+        isSubMenuTooltipsShown: true,
+    },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await assertResizerGrabWiderThanLine(canvasElement);
+    },
+};
+
 export const MenuScrollbar: TStory = {
     parameters: { snapshotViewport: { width: 1280, height: 360 } },
     args: {
