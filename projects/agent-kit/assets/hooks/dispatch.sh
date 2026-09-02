@@ -33,10 +33,10 @@ input="$(cat 2>/dev/null)"
 # Разбор один на все ветки: четыре поля одним вызовом разборщика вместо шести на каждый гард.
 # Значения приходят уже закавыченными для оболочки — `@sh` в разборщике для того и сделан:
 # командная строка держит и кавычки, и переводы строк, и подставить её иначе нельзя.
-assignments="$(printf '%s' "$input" | jq -r '@sh "RT_HOOK_TOOL=\(.tool_name // "") RT_HOOK_CMD=\(.tool_input.command // "") RT_HOOK_FILE=\(.tool_input.file_path // "") RT_HOOK_CWD=\(.cwd // "")"' 2>/dev/null)"
+assignments="$(printf '%s' "$input" | jq -r '@sh "RT_HOOK_TOOL=\(.tool_name // "") RT_HOOK_CMD=\(.tool_input.command // "") RT_HOOK_FILE=\(.tool_input.file_path // "") RT_HOOK_CWD=\(.cwd // "") RT_HOOK_SOURCE=\(.source // "")"' 2>/dev/null)"
 if [ -n "$assignments" ]; then
     eval "$assignments" 2>/dev/null || true
-    export RT_HOOK_TOOL RT_HOOK_CMD RT_HOOK_FILE RT_HOOK_CWD
+    export RT_HOOK_TOOL RT_HOOK_CMD RT_HOOK_FILE RT_HOOK_CWD RT_HOOK_SOURCE
     # Признак разбора: по нему ветки отличают готовое поле от пустой переменной, случайно
     # оказавшейся в окружении прогона. Без него пустое значение читается как «поля нет».
     export RT_HOOK_PARSED=1
@@ -58,13 +58,20 @@ for branch in $branches; do
         branch_event="${declaration%% *}"
         [ "$branch_event" = "$event" ] || continue
 
-        # Образец вызова: его нет вовсе — гард зовётся на любом; есть — сверяется с именем
-        # инструмента целиком, а не куском. Звёздочка и точка со звёздочкой значат одно: любой
-        # вызов.
+        # Образец вызова: его нет вовсе — гард зовётся на любом; есть — сверяется целиком, а
+        # не куском. Звёздочка и точка со звёздочкой значат одно: любой вызов.
+        #
+        # Предмет сверки зависит от события. У вызова инструмента это имя инструмента; у входа в
+        # сессию имени инструмента нет вовсе, и образец там называет род запуска — `startup`,
+        # `resume`, `compact`, `clear`. Сверявшийся с пустым именем, он не совпадал ни разу, и
+        # через диспетчер не звался ни один хук входа: заход стартовал без свода законов, без
+        # словаря, без состояния работы и без передачи прошлого захода — молча и с нулевым кодом.
         matcher="${declaration#"$branch_event"}"
         matcher="${matcher#"${matcher%%[![:space:]]*}"}"
+        subject="${RT_HOOK_TOOL:-}"
+        [ -z "$subject" ] && subject="${RT_HOOK_SOURCE:-}"
         if [ -n "$matcher" ] && [ "$matcher" != '*' ] && [ "$matcher" != '.*' ]; then
-            [[ "${RT_HOOK_TOOL:-}" =~ ^(${matcher})$ ]] || continue
+            [[ "$subject" =~ ^(${matcher})$ ]] || continue
         fi
 
         matched=1
