@@ -6,14 +6,37 @@
     }
 
     @if (contentTpl()) {
-        <div rtElem="content">
+        <div #body rtElem="content" (scroll)="onBodyScroll()">
             <ng-container *ngTemplateOutlet="contentTpl() ?? null" />
         </div>
     }
 
     @if (footerTpl()) {
-        <div rtElem="footer">
+        <div #foot rtElem="footer">
             <ng-container *ngTemplateOutlet="footerTpl() ?? null" />
+        </div>
+    }
+
+    <!--
+        Признак того, что снизу осталось непоказанное: край списка, ровно обрезанный подвалом,
+        читается как конец списка, и человек считает, что пункт пропал. Полоса живёт на хосте, а
+        не внутри тела: тело обрезает всё по своему краю, и полоса обрывалась на верхнем отступе
+        подвала — между ней и разделителем, который потребитель рисует первой строкой подвала,
+        оставалась полоса чистого фона. Отступ этот берётся замером: потребитель пишет его как
+        хочет — одним значением, двумя, четырьмя, — и вычесть его в стилях не из чего.
+    -->
+    @if (isScrollHintShown() && hasMoreBelow()) {
+        <div rtElem="scroll-hint" qa-dataid="scrollable-scroll-hint" [attr.aria-label]="scrollHintLabel" [style.bottom.px]="hintBottom()">
+            <mat-icon
+                rtElem="scroll-hint-icon"
+                role="button"
+                tabindex="0"
+                matTooltipPosition="above"
+                [matTooltip]="scrollHintLabel"
+                (click)="onScrollHintClick($event)"
+                (keydown.enter)="onScrollHintClick($event)">
+                keyboard_arrow_down
+            </mat-icon>
         </div>
     }
 </ng-container>
