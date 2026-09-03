@@ -1,4 +1,12 @@
-## [Unreleased]
+# [0.4.0](https://github.com/nickmdf/rt-tools/compare/rt-utils@0.3.2...rt-utils@0.4.0) (2026-09-03)
+
+### Bug Fixes
+
+- **rt:agent-kit:** правило приставки типа говорит про T, а узловые глобали доходят до серверных проектов ([a0bd361](https://github.com/nickmdf/rt-tools/commit/a0bd361c1c6df5e8aeb3c5efc032b3dfc75fb1ce))
+
+### Features
+
+- **rt:message-bus:** админка заводится каркасом, входом и оболочкой с меню ([7736c6c](https://github.com/nickmdf/rt-tools/commit/7736c6cf9f79e335c550ca5e41764ba265c23c75))
 
 ### BREAKING CHANGES
 
