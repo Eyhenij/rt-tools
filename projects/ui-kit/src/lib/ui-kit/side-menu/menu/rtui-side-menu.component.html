@@ -1,5 +1,5 @@
 @if (narrow()) {
-    <rtui-scrollable rtBlock="rtui-mobile-side-menu">
+    <rtui-scrollable rtBlock="rtui-mobile-side-menu" [isScrollHintShown]="true">
         @if (headerTpl()) {
             <ng-container *rtuiScrollableHeader>
                 <ng-container *ngTemplateOutlet="headerTpl() ?? null" />
@@ -87,7 +87,7 @@
         }
     </rtui-scrollable>
 } @else {
-    <rtui-scrollable rtBlock="rtui-side-menu">
+    <rtui-scrollable rtBlock="rtui-side-menu" [isScrollHintShown]="true">
         @if (headerTpl()) {
             <ng-container *rtuiScrollableHeader>
                 <ng-container *ngTemplateOutlet="headerTpl() ?? null" />
@@ -143,7 +143,7 @@
             position="start"
             [opened]="subMenuOpened()"
             (mouseleave)="toggleSubMenu()">
-            <rtui-scrollable>
+            <rtui-scrollable [isScrollHintShown]="true">
                 <ng-container *rtuiScrollableHeader>
                     @if (subMenuOpened()) {
                         <div rtBlock="rtui-sub-side-menu-head">

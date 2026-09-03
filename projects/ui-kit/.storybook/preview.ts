@@ -17,6 +17,9 @@ const preview: Preview = {
         viewport: {
             options: {
                 narrow: { name: 'Узкий экран', styles: { width: '360px', height: '780px' } },
+                // Низкое окно нужно спискам меню: в полный рост они влезают целиком, и признак
+                // непоказанного снизу показать нечем.
+                shortScreen: { name: 'Низкий экран', styles: { width: '1280px', height: '320px' } },
             },
         },
         controls: {

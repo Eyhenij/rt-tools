@@ -19,6 +19,12 @@ $side-menu: (
     ),
     sub-menu: (
         width: 15rem,
+        // Скругление правых углов панели. Число здесь, а не в теме: тем же числом отступает от
+        // угла прокручиваемый список — иначе полоса прокрутки, идущая до самого низа, срезается
+        // скруглением, и её нижний конец выглядит обрубленным.
+        // Число, а не ступень скругления кита: то имя объявлено обоими китами, и стили, подключённые
+        // позже, перебивали бы его молча.
+        radius: 1rem,
         // Ширина подменю на время набора запроса: тот же предел, до которого его растягивает тяга.
         held-width: 30rem,
         // Поле поиска ниже полного роста поля формы: в шапке подменю оно стоит рядом с кнопкой
@@ -29,6 +35,17 @@ $side-menu: (
         width: 13.75rem,
         title-font-size: 0.85rem,
     ),
+    // Полоса прокрутки списков меню. Системная занимает у узкой панели заметную долю ширины и
+    // выглядит в каждой системе по-своему; здесь она узкая, с плоской дорожкой и скруглённым
+    // ползунком. Значения взяты с образца, показанного владельцем: полоса в два пикселя, дорожка
+    // светло-серая, ползунок серый со скруглением малой ступени. Цвета берутся токенами — они же
+    // разводят светлую и тёмную тему.
+    scrollbar: (
+            width: 0.125rem,
+            thumb-radius: var(--rt-radius-xs),
+            track-color: var(--rt-bg-base-strong),
+            thumb-color: var(--rt-bg-base-emphasis-soft),
+        ),
 );
 
 :host(.rtui-side-menu--pinned) {
@@ -49,8 +66,33 @@ $side-menu: (
     // Hide drawer mask
     --mat-sidenav-scrim-color: transparent;
 
+    // Ширина, которой панель подменю стоит на экране: заданная оформлением потребителя либо
+    // раздвинутая тягой за край. Её знают трое — сама панель, ручка тяги и пункт внутри неё, —
+    // и выражение, повторённое у каждого, разъезжается на первой же правке одного из них.
+    --rt-side-menu-sub-menu-shown-width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
+
+    // Полоса прокрутки обоих списков меню — полосы значков и подменю. Оформляется здесь, а не у
+    // прокручиваемой области: вид остальных её экранов от этой правки не двигается. Правило
+    // пробивает инкапсуляцию, потому что прокручивается внутренний узел области, а полоса
+    // принадлежит ему; своего входа под вид полосы область не даёт.
+    ::ng-deep .rtui-scrollable__content {
+        &::-webkit-scrollbar {
+            width: var(--rt-side-menu-scrollbar-width);
+            height: var(--rt-side-menu-scrollbar-width);
+        }
+
+        &::-webkit-scrollbar-track {
+            background: var(--rt-side-menu-scrollbar-track-color);
+        }
+
+        &::-webkit-scrollbar-thumb {
+            border-radius: var(--rt-side-menu-scrollbar-thumb-radius);
+            background: var(--rt-side-menu-scrollbar-thumb-color);
+        }
+    }
+
     .rtui-mobile-side-menu {
-        width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
+        width: var(--rt-side-menu-sub-menu-shown-width);
 
         .rtui-mobile-side-menu-list {
             display: flex;
@@ -58,7 +100,7 @@ $side-menu: (
             flex-direction: column;
 
             &--scrollable {
-                width: fit-content;
+                min-width: min(var(--rt-side-menu-sub-menu-item-width), 100%);
             }
 
             &__sub {
@@ -164,9 +206,6 @@ $side-menu: (
     .rtui-side-menu-resizer {
         position: fixed;
         z-index: 3;
-
-        --rt-side-menu-sub-menu-shown-width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
-
         left: calc(var(--rt-side-menu-base-width) + var(--rt-side-menu-sub-menu-shown-width) - 0.25rem);
         width: 0.25rem;
         cursor: col-resize;
@@ -197,16 +236,31 @@ $side-menu: (
             width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
             min-width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
             height: 100%;
+            border-radius: 0 var(--rt-side-menu-sub-menu-radius) var(--rt-side-menu-sub-menu-radius) 0;
             border-left: 1px solid var(--rt-border-neutral-default);
             box-shadow: var(--rt-side-menu-sub-content-shadow);
+
+            // Список отступает от скруглённого угла на его же радиус. Панель обрезает всё, что в
+            // угол заходит, и полоса прокрутки, идущая по правому краю до самого низа, теряла в
+            // нём свой конец — выглядело это обрубленной полосой, а не скруглением панели.
+            rtui-scrollable {
+                // Отступ съедает высоту, а не прибавляет её: у области задан рост во всю панель,
+                // и без этого правила она вылезала бы за её нижний край на тот же радиус.
+                box-sizing: border-box;
+                padding-bottom: var(--rt-side-menu-sub-menu-radius);
+            }
 
             &__list {
                 width: 100%;
                 animation: fade-in-animation 0.15s ease-in-out 0.15s forwards;
                 opacity: 0;
 
+                // Список с боковой прокруткой не уже пункта — и не шире панели. Рост по
+                // содержимому раздувал бы его вместе с самой длинной подписью, и пункт уезжал
+                // бы за край панели вместо многоточия; прокрутка при этом остаётся при деле —
+                // она нужна там, где панель уже самого пункта.
                 &--scrollable {
-                    min-width: fit-content;
+                    min-width: min(var(--rt-side-menu-sub-menu-item-width), 100%);
                 }
             }
 
@@ -229,7 +283,7 @@ $side-menu: (
         &--pinned {
             position: relative;
             left: 0;
-            width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
+            width: var(--rt-side-menu-sub-menu-shown-width);
             height: 100%;
             flex: 0 0 auto;
 
