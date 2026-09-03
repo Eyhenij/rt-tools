@@ -437,8 +437,8 @@ importers:
         specifier: ^22.0.0
         version: 22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2)
       '@rt-tools/core':
-        specifier: ^0.3.1
-        version: 0.3.1(8db710b6cb15a94fbe597ad63b943b3e)
+        specifier: ^0.4.0
+        version: 0.4.0(8db710b6cb15a94fbe597ad63b943b3e)
       '@rt-tools/utils':
         specifier: ^0.4.0
         version: 0.4.0
@@ -476,11 +476,11 @@ importers:
         specifier: ^22.0.0
         version: 22.0.5(@angular/common@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(@angular/platform-browser@22.0.5(@angular/animations@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2)))(@angular/common@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2)))(rxjs@7.8.2)
       '@rt-tools/core':
-        specifier: ^0.3.1
-        version: 0.3.1(8db710b6cb15a94fbe597ad63b943b3e)
+        specifier: ^0.4.0
+        version: 0.4.0(8db710b6cb15a94fbe597ad63b943b3e)
       '@rt-tools/store':
         specifier: ^0.3.1
-        version: 0.3.1(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(@rt-tools/core@0.3.1(8db710b6cb15a94fbe597ad63b943b3e))(@rt-tools/utils@0.4.0)(rxjs@7.8.2)
+        version: 0.3.1(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(@rt-tools/core@0.4.0(8db710b6cb15a94fbe597ad63b943b3e))(@rt-tools/utils@0.4.0)(rxjs@7.8.2)
       '@rt-tools/utils':
         specifier: ^0.4.0
         version: 0.4.0
@@ -518,8 +518,8 @@ importers:
         specifier: ^22.0.0
         version: 22.0.5(@angular/common@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(@angular/platform-browser@22.0.5(@angular/animations@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2)))(@angular/common@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2)))(rxjs@7.8.2)
       '@rt-tools/core':
-        specifier: ^0.3.1
-        version: 0.3.1(8db710b6cb15a94fbe597ad63b943b3e)
+        specifier: ^0.4.0
+        version: 0.4.0(8db710b6cb15a94fbe597ad63b943b3e)
       '@rt-tools/utils':
         specifier: ^0.4.0
         version: 0.4.0
@@ -4332,8 +4332,8 @@ packages:
   '@rspack/lite-tapable@1.1.5':
     resolution: {integrity: sha512-uzB782zJbFTM3ta+e2Glikx36dca/6Y+DXyvFN+wb0Tx5ItIW+g03A0t3amP3LGzPHSkb0k81VHCm4jxLQwfag==}
 
-  '@rt-tools/core@0.3.1':
-    resolution: {integrity: sha512-/fGTdRl7SqWvetC7sy7fNEluB6cSCY/UxOcDLLU1YOVOFoAE4zo+M6xq8mL1LNjXtwdKwCSBrR456QC9hyrcNQ==}
+  '@rt-tools/core@0.4.0':
+    resolution: {integrity: sha512-yz/1Ev0AC9OQomb28LJn2LhXqrAu7t/4FaiOFdwllNqkXcMyX1CBcOmwPtNt3EnZB9pqcaiwWvqumQMfK2AKNQ==}
     peerDependencies:
       '@angular/cdk': ^22.0.0
       '@angular/common': ^22.0.0
@@ -4341,7 +4341,7 @@ packages:
       '@angular/forms': ^22.0.0
       '@angular/platform-browser': ^22.0.0
       '@angular/router': ^22.0.0
-      '@rt-tools/utils': ^0.3.1
+      '@rt-tools/utils': ^0.4.0
       rxjs: ^7.8.0
 
   '@rt-tools/store@0.3.1':
@@ -17105,7 +17105,7 @@ snapshots:
 
   '@rspack/lite-tapable@1.1.5': {}
 
-  '@rt-tools/core@0.3.1(8db710b6cb15a94fbe597ad63b943b3e)':
+  '@rt-tools/core@0.4.0(8db710b6cb15a94fbe597ad63b943b3e)':
     dependencies:
       '@angular/cdk': 22.0.3(@angular/common@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(@angular/platform-browser@22.0.5(@angular/animations@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2)))(@angular/common@22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2)))(rxjs@7.8.2)
       '@angular/common': 22.0.5(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(rxjs@7.8.2)
@@ -17117,10 +17117,10 @@ snapshots:
       rxjs: 7.8.2
       tslib: 2.8.1
 
-  '@rt-tools/store@0.3.1(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(@rt-tools/core@0.3.1(8db710b6cb15a94fbe597ad63b943b3e))(@rt-tools/utils@0.4.0)(rxjs@7.8.2)':
+  '@rt-tools/store@0.3.1(@angular/core@22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2))(@rt-tools/core@0.4.0(8db710b6cb15a94fbe597ad63b943b3e))(@rt-tools/utils@0.4.0)(rxjs@7.8.2)':
     dependencies:
       '@angular/core': 22.0.5(@angular/compiler@22.0.5)(rxjs@7.8.2)
-      '@rt-tools/core': 0.3.1(8db710b6cb15a94fbe597ad63b943b3e)
+      '@rt-tools/core': 0.4.0(8db710b6cb15a94fbe597ad63b943b3e)
       '@rt-tools/utils': 0.4.0
       rxjs: 7.8.2
       tslib: 2.8.1
