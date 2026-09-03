@@ -1,4 +1,17 @@
 {
   "accepted": {},
-  "debt": {}
+  "debt": {
+    "docs/specs/agent-kit/observations/scenarios.md": {
+      "reason": "перечень наблюдений держит две темы — сами наблюдения и груз наружу; делится выделением поддомена",
+      "task": "RT-1724"
+    },
+    "docs/specs/agent-kit/texts/scenarios.md": {
+      "reason": "перечень текстов слоя правил делится по предметам сверки: адреса, словарь, привязки",
+      "task": "RT-1724"
+    },
+    "projects/agent-kit/tests/checks-board.test.sh": {
+      "reason": "набор сверки очереди делится по предметам сверки, как уже поделены наборы гардов поставки",
+      "task": "RT-1724"
+    }
+  }
 }
