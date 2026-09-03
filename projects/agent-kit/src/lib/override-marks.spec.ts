@@ -1,8 +1,8 @@
 /**
  * Пометки на надстройках: разбор формы и отбор тех, чья статья в редакции пакета уже есть.
  *
- * Диск здесь настоящий — предмет проверки в том и состоит, что надстройки лежат каталогом, а
- * ресурсы редакции рядом: подменять чтение значило бы проверять подмену.
+ * Диск настоящий: предмет проверки в том, что надстройки лежат каталогом, а ресурсы редакции
+ * рядом; подменять чтение значило бы проверять подмену.
  */
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -39,7 +39,7 @@ describe('пометка раздела надстройки', (): void => {
     });
 });
 
-describe('надстройки, чья статья уже приехала', (): void => {
+describe('надстройки, чья статья уже есть в пакете', (): void => {
     let root: string = '';
     let assets: string = '';
 
@@ -59,7 +59,7 @@ describe('надстройки, чья статья уже приехала', ()
         rmSync(assets, { recursive: true, force: true });
     });
 
-    it('SC-AK-847 — статья в приехавшей редакции есть: надстройка названа лишней', (): void => {
+    it('SC-AK-847 — статья в новой редакции есть: надстройка названа лишней', (): void => {
         override(`## Своё\n\n<!-- rt-proposed: rules/task-flow.md · «${ARTICLE}» · 2026-09-03 -->\n\nТекст.`);
         writeFileSync(join(assets, 'rules', 'task-flow.md'), `# Правило\n\n- **${ARTICLE}** Дальше.\n`, 'utf8');
 
@@ -70,14 +70,14 @@ describe('надстройки, чья статья уже приехала', ()
         expect(stale[0].day).toBe('2026-09-03');
     });
 
-    it('SC-AK-847 — статьи в редакции нет: надстройка молчит', (): void => {
+    it('SC-AK-847 — статьи в редакции нет: надстройка не называется', (): void => {
         override(`## Своё\n\n<!-- rt-proposed: rules/task-flow.md · «${ARTICLE}» · 2026-09-03 -->\n\nТекст.`);
         writeFileSync(join(assets, 'rules', 'task-flow.md'), '# Правило\n\nПро другое.\n', 'utf8');
 
         expect(staleOverrides(root, assets)).toEqual([]);
     });
 
-    it('SC-AK-847 — статья перенесена по своей ширине и всё равно находится', (): void => {
+    it('SC-AK-847 — статья перенесена по ширине строки и находится', (): void => {
         const wrapped: string = `<!-- rt-proposed: rules/task-flow.md · «Работа, заказанная словами,\n  становится задачей в очереди тем же ходом.» · 2026-09-03 -->`;
         override(`## Своё\n\n${wrapped}\n\nТекст.`);
         writeFileSync(join(assets, 'rules', 'task-flow.md'), `# Правило\n\n- **${ARTICLE}**\n`, 'utf8');
@@ -85,13 +85,13 @@ describe('надстройки, чья статья уже приехала', ()
         expect(staleOverrides(root, assets)).toHaveLength(1);
     });
 
-    it('SC-AK-848 — ресурса в редакции нет вовсе: пометка молчит', (): void => {
+    it('SC-AK-848 — ресурса в редакции нет: пометка молчит', (): void => {
         override(`## Своё\n\n<!-- rt-proposed: rules/уехало.md · «${ARTICLE}» · 2026-09-03 -->\n\nТекст.`);
 
         expect(staleOverrides(root, assets)).toEqual([]);
     });
 
-    it('SC-AK-848 — каталога надстроек нет: сверять нечего', (): void => {
+    it('SC-AK-848 — каталога надстроек нет: сравнивать нечего', (): void => {
         expect(staleOverrides(root, assets)).toEqual([]);
     });
 });

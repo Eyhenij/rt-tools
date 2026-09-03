@@ -1,3 +1,9 @@
+## [0.8.1](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.8.0...rt-ui-kit-v2@0.8.1) (2026-09-03)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** зависимость на utils поднята до версии с EListSortOrder ([f4db77f](https://github.com/Eyhenij/rt-tools/commit/f4db77f23f0e1029288783e9248ff1deac85ca7b))
+
 # [0.8.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.7.0...rt-ui-kit-v2@0.8.0) (2026-08-30)
 
 ### Bug Fixes
