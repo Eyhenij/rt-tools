@@ -965,6 +965,27 @@ function offFileLines(summary: ISummary): string[] {
     return [`  не на правке файла: ${summary.denialsOffFile} из ${total} — ${Math.round((summary.denialsOffFile / total) * 100)}%`];
 }
 
+/**
+ * Исходы гейта пуша. Молчит, когда гейт не отработал ни разу за отрезок.
+ *
+ * Вынесено из сводки отдельной функцией не ради имени: та собирает строки одним выражением, и
+ * каждая новая развилка в нём растит её сложность, за которой следит линтер.
+ */
+function pushGateOutcomeLines(summary: ISummary): string[] {
+    if (!summary.pushGate.length) {
+        return [];
+    }
+
+    const total: number = summary.pushGate.reduce((found: number, entry: ICount): number => found + entry.count, 0);
+
+    return [
+        '',
+        `гейт пуша прогонял набор: ${total}`,
+        ...countLines(summary.pushGate),
+        '  — green зелёный набор, red красный, no-checks проверок в дереве не нашлось',
+    ];
+}
+
 /** Сводка строками: загруженное, незагруженное, отбивки гейта и отказы гардов. */
 function statsLines(summary: ISummary, swept: readonly string[], days: number, version: string, laidOut: number): string[] {
     return [
@@ -1012,6 +1033,7 @@ function statsLines(summary: ISummary, swept: readonly string[], days: number, v
                   ...countLines(summary.guards),
               ]
             : []),
+        ...pushGateOutcomeLines(summary),
         ...(summary.silentGuards.length
             ? [
                   '',

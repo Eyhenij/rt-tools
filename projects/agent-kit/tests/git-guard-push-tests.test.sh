@@ -37,6 +37,29 @@ printf 'rt_push_checks() { printf "%%s\\n" true; }\n' > "$RED_GATE/.claude/rt-ki
 gate "зелёный набор пуш не задерживает" "$RED_GATE" 'git push origin RT-72-gate' PASS
 rm -rf "$RED_GATE"
 
+# --- SC-AK-835. Строка наблюдения на каждый исход ----------------------------------------------
+# Гард, пишущий только отбои, отвечает на один вопрос из трёх: сколько пушей он остановил.
+# «Набор прогнан и зелёный» и «набора не нашлось» выглядят в записи одинаково — молчанием, — и
+# гейт, не гонявший ни одной проверки за неделю, неотличим от гейта, у которого всё зелено.
+NOTED="$(fixture_repo RT-1690-noted)"
+mkdir -p "$NOTED/.claude/rt-kit"
+noted_says() {
+    cat "$NOTED/.claude/rt-kit/observations/"*.jsonl 2>/dev/null | grep -c "\"ev\":\"push-gate\".*\"res\":\"$1\""
+}
+
+printf 'rt_push_checks() { printf "%%s\\n" true; }\n' > "$NOTED/.claude/rt-kit/project.sh"
+gate "зелёный набор пуш не задерживает" "$NOTED" 'git push origin RT-1690-noted' PASS
+report "SC-AK-835 — зелёный набор записан" "$(noted_says green)" 1
+
+printf 'rt_push_checks() { printf "%%s\\n" false; }\n' > "$NOTED/.claude/rt-kit/project.sh"
+gate "красный набор пуш отбивает" "$NOTED" 'git push origin RT-1690-noted' deny
+report "SC-AK-835 — красный набор записан" "$(noted_says red)" 1
+
+printf 'rt_push_checks() { :; }\n' > "$NOTED/.claude/rt-kit/project.sh"
+gate "пустой набор пуш не задерживает" "$NOTED" 'git push origin RT-1690-noted' PASS
+report "SC-AK-835 — ненайденный набор записан" "$(noted_says no-checks)" 1
+rm -rf "$NOTED"
+
 # SC-AK-678, SC-AK-679. Проверка, которой нечего смотреть, выходит кодом пропуска. Прежде такой
 # исход был нулём: в наборе он стоял рядом с пройденными и ничем от них не отличался, и сводка
 # читалась как проверенная целиком. Пуш он не отбивает — поломкой пропуск не является, — но

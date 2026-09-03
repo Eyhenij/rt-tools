@@ -80,7 +80,15 @@ EOF
     branch_out="$(printf '%s' "$input" | bash "$branch" 2>/dev/null)"
     code=$?
     if [ "$code" -ne 0 ]; then
-        [ -n "$branch_out" ] && printf '%s\n' "$branch_out"
+        if [ -n "$branch_out" ]; then
+            printf '%s\n' "$branch_out"
+        else
+            # Ветка вышла ненулём и не сказала ничего. Снаружи это неотличимо от отказа по делу,
+            # а починить нечего: какой файл сломан, не знает никто — вывод ошибок веток диспетчер
+            # глушит. Имя он поэтому называет сам, иначе о сломанной ветке не говорит ничто.
+            printf 'Гард %s вышел с кодом %s и ничего не напечатал: похоже, файл сломан.\n' \
+                "$(basename "$branch")" "$code"
+        fi
         exit "$code"
     fi
 

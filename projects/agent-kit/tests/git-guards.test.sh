@@ -25,6 +25,17 @@ m "коммит на рабочей ветке" "$REPO_WORK" 'git commit -m "cho
 m "сборка гарду безразлична" "$REPO_MAIN" 'pnpm exec nx build site' Bash PASS
 m "чтение истории на главной" "$REPO_MAIN" 'git log --oneline -5' Bash PASS
 
+# --- SC-AK-832. Глагол ищется в позиции команды, а не подстрокой -----------------------------
+# Голый поиск «git commit» промахивался в обе стороны: мимо уходил вызов с ключом между `git` и
+# глаголом — им коммитят машинной учётной записью, — а чтение истории со словом `commit` в
+# доводе отбивалось зря.
+m "SC-AK-832 — ключ между командой и глаголом гарда не обходит" "$REPO_MAIN" \
+    'git -c user.name=bot -c user.email=bot@x commit -m "chore: x"' Bash deny
+m "SC-AK-832 — и указание чужого дерева тоже" "$REPO_MAIN" 'git -C . commit --amend --no-edit' Bash deny
+m "SC-AK-832 — слово commit в доводе чтения истории не отбивается" "$REPO_MAIN" \
+    "git log --grep 'git commit' --oneline" Bash PASS
+m "SC-AK-832 — поиск по дереву коммитом не считается" "$REPO_MAIN" 'grep -rn "git commit" docs/' Bash PASS
+
 # Составная команда отклоняется целиком: ветки в ней ещё нет на момент разбора, и «завести и
 # сразу коммитить» прошло бы мимо гарда, оставаясь коммитом в главную.
 m "составная команда с заведением ветки" "$REPO_MAIN" 'git checkout -b RT-8-x && git commit -m "x"' Bash deny

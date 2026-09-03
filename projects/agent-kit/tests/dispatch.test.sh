@@ -50,6 +50,22 @@ report "SC-AK-523 — ветка без образца зовётся на лю�
 INPUT_OTHER='{"tool_name":"NotebookEdit","tool_input":{"file_path":"/tmp/a.ipynb"},"cwd":"/tmp"}'
 report "SC-AK-523 — образец сверяется с именем целиком" "$(dispatch_says PreToolUse "$INPUT_OTHER" | grep -c 'звали only_edit')" 0
 
+# --- SC-AK-833 — сломанная ветка названа по имени ------------------------------------------------
+# Ветка, вышедшая ненулём и не сказавшая ничего, снаружи неотличима от отказа по делу, а
+# починить нечего: вывод ошибок веток диспетчер глушит, и какой файл сломан, не знает никто.
+rm -f "$DISPATCH_DIR"/*.sh 2>/dev/null
+cp "$ASSETS/hooks/dispatch.sh" "$ASSETS/hooks/hook-input.sh" "$ASSETS/hooks/utf8.sh" "$DISPATCH_DIR/" 2>/dev/null
+{
+    printf '#!/usr/bin/env bash\n'
+    printf '# rt-hook: PreToolUse .*\n'
+    printf 'exit 3\n'
+} > "$DISPATCH_DIR/broken_branch.sh"
+chmod +x "$DISPATCH_DIR/broken_branch.sh"
+report "SC-AK-833 — имя сломанной ветки названо" \
+    "$(dispatch_says PreToolUse "$INPUT_BASH" | grep -c 'broken_branch.sh')" 1
+report "SC-AK-833 — код возврата отдан как есть" "$(dispatch_code PreToolUse "$INPUT_BASH")" 3
+rm -f "$DISPATCH_DIR/broken_branch.sh"
+
 # --- SC-AK-524 — отказ ветки доходит до агента --------------------------------------------------
 rm -f "$DISPATCH_DIR"/only_edit.sh "$DISPATCH_DIR"/any_tool.sh
 branch aaa_denies PreToolUse '.*' 2
