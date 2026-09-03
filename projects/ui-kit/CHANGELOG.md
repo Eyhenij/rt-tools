@@ -1,6 +1,70 @@
-## [Unreleased]
+# [0.5.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.4.0...rt-tools@0.5.0) (2026-09-03)
+
+### Bug Fixes
+
+- **rt:agent-kit:** правило приставки типа говорит про T, а узловые глобали доходят до серверных проектов ([a0bd361](https://github.com/Eyhenij/rt-tools/commit/a0bd361c1c6df5e8aeb3c5efc032b3dfc75fb1ce))
+- **rt:agent-kit:** проверка классов вёрстки собирает имя из вложенности, а долг разобран до нуля ([95f28c8](https://github.com/Eyhenij/rt-tools/commit/95f28c83e4736061acfde8cc3a361a652513fff1))
+- **rt:agent-kit:** следы деления сняты по всему набору гейта ([16138fa](https://github.com/Eyhenij/rt-tools/commit/16138fa0f4607b1f97cb3bc03830844bc7123880))
+- **rt:ui-kit:** [RT-1678] пункт подменю не выходит за край панели ([0922b8e](https://github.com/Eyhenij/rt-tools/commit/0922b8eb4433d80364aef81294fddb2a34688b55))
+- **rt:ui-kit:** [RT-1682] нажатие на значок принимает событие любого рода ([d88183d](https://github.com/Eyhenij/rt-tools/commit/d88183d3c3613eb07ad78ddfb1dda4167a73adbc))
+- **rt:ui-kit:** [RT-1682] растушёвка доходит до разделителя подвала ([bc040d0](https://github.com/Eyhenij/rt-tools/commit/bc040d077bc7d30aab9ada1b0fa63ea74f802990))
+- **rt:ui-kit:** [RT-1682] растушёвка доходит до содержимого подвала ([a955d32](https://github.com/Eyhenij/rt-tools/commit/a955d3291cf2d8ec6e2153c5a673fdfba636c6f8))
+- **rt:ui-kit:** [RT-1684] полоса подменю не срезается углом панели, вид взят с образца ([2de2e9c](https://github.com/Eyhenij/rt-tools/commit/2de2e9cc070c06a06a609d3d52fd9d75d4fc8509)), closes [#e0e0e0](https://github.com/Eyhenij/rt-tools/issues/e0e0e0) [#3f3e43](https://github.com/Eyhenij/rt-tools/issues/3f3e43) [#a3a3a3](https://github.com/Eyhenij/rt-tools/issues/a3a3a3) [#747474](https://github.com/Eyhenij/rt-tools/issues/747474)
+- **rt:ui-kit:** [RT-1684] радиус панели подменю задан числом, а не общим именем ([45f866f](https://github.com/Eyhenij/rt-tools/commit/45f866fed93321232ee074ce79a8cef5229c150e))
+- **rt:ui-kit:** закрепление подменю не стирает того, что видно ([8647ce9](https://github.com/Eyhenij/rt-tools/commit/8647ce90e29f06adb2d13f455f01cdb940eb5b87))
+- **rt:ui-kit:** значок закрепления меняется сменой семейства, а не осью шрифта ([3b143b6](https://github.com/Eyhenij/rt-tools/commit/3b143b61b41f4012c0de677ab9c6651cddcd9402))
+- **rt:ui-kit:** кадр витрины снимается с нарисованной страницы, а не с вставшей ([65519e1](https://github.com/Eyhenij/rt-tools/commit/65519e1a442ee696edd504154eeff1b803bc084d))
+- **rt:ui-kit:** кадр снимка снимается до совпадения двух подряд ([0b18363](https://github.com/Eyhenij/rt-tools/commit/0b18363b6f8fd3d57da819cd8a47a5a8b0a734ae))
+- **rt:ui-kit:** кнопка копирования не показывается у пустой ячейки таблицы ([30ffa81](https://github.com/Eyhenij/rt-tools/commit/30ffa81b2f8fd57d559fb162ae06d55d74202856))
+- **rt:ui-kit:** найденное подсвечено жёлтым, как это делает браузер ([65a4ccd](https://github.com/Eyhenij/rt-tools/commit/65a4ccd10a481f1e8d3c81c7b0d4bc96071be42b))
+- **rt:ui-kit:** ожидание в показах меню идёт по часам, а не по кадрам ([0cb91e1](https://github.com/Eyhenij/rt-tools/commit/0cb91e1ca8006ee67694ee243a6c7aecc130e38e))
+- **rt:ui-kit:** ожидание шрифта значков в снимках витрины перестало гасить свой отказ ([dc0af97](https://github.com/Eyhenij/rt-tools/commit/dc0af97926249819f3522782b8e4bc46012be43d))
+- **rt:ui-kit:** поле поиска подменю ниже ростом, значок ближе к запросу ([4958267](https://github.com/Eyhenij/rt-tools/commit/495826714379688750cf5525b10f3050a24eb2f1))
+- **rt:ui-kit:** полоса тяги идёт во всю высоту и не срезается панелью ([01e4093](https://github.com/Eyhenij/rt-tools/commit/01e4093190e8b4744dc291f43cd9c72f600970b6))
+- **rt:ui-kit:** полоса тяги подменю не попадает в срезанные углы панели ([5477e55](https://github.com/Eyhenij/rt-tools/commit/5477e55b54c5b6ba1358941c50997fb2883e83fe))
+- **rt:ui-kit:** раскладка хоста меняется только у закреплённой моды ([f661dde](https://github.com/Eyhenij/rt-tools/commit/f661dde9869b1b9276f897ee0c69fc86c2eeea48))
+- **rt:ui-kit:** скругление поля поиска взято ступенью, общей с обоими китами ([26c0734](https://github.com/Eyhenij/rt-tools/commit/26c0734250d0d8dea6fc805d5bb42b5fbb8d9915))
+- **rt:ui-kit:** снимок ждёт не только шрифт значков, но и перерисовку по нему ([0d53770](https://github.com/Eyhenij/rt-tools/commit/0d537707432d838324452a3e4e616dc48687d94d))
+- **rt:ui-kit:** сортировка отдаётся только по объявленной колонке ([17513a3](https://github.com/Eyhenij/rt-tools/commit/17513a3795bb4a30a4700355aabf306df0459416))
+- **rt:ui-kit:** шрифт значков в снимках витрины уехал из чужой сети в дерево ([e1a41a7](https://github.com/Eyhenij/rt-tools/commit/e1a41a7e1166981f658295f975bbbaef61855258))
+
+### Code Refactoring
+
+- **rt:ui-kit:** публичные имена кита пишутся с малой буквы ([4296663](https://github.com/Eyhenij/rt-tools/commit/42966637f11d6db8f08757e02b0a024ceba832bf))
+
+### Features
+
+- **rt:message-bus:** админка заводится каркасом, входом и оболочкой с меню ([7736c6c](https://github.com/Eyhenij/rt-tools/commit/7736c6cf9f79e335c550ca5e41764ba265c23c75))
+- **rt:ui-kit:** [RT-1675] работа с полем держит подменю открытым ([93f63b9](https://github.com/Eyhenij/rt-tools/commit/93f63b911fbad271bec24839012a6e895d265cea))
+- **rt:ui-kit:** [RT-1678] пункт подменю занимает ширину панели ([5f817d0](https://github.com/Eyhenij/rt-tools/commit/5f817d07c2124d37bf822e0564124b9c8f36a2e8))
+- **rt:ui-kit:** [RT-1682] нажатие на значок уводит список вниз, тень красится темой ([103ad08](https://github.com/Eyhenij/rt-tools/commit/103ad088fdbe11762897f957cabbe33fa707b474))
+- **rt:ui-kit:** [RT-1682] растушёвка идёт за выбранной цветовой схемой ([f32bbdf](https://github.com/Eyhenij/rt-tools/commit/f32bbdfb51a82296dd090bfaafe4b0f0fd8c5d35))
+- **rt:ui-kit:** [RT-1682] список говорит, что снизу осталось непоказанное ([1a3b2f2](https://github.com/Eyhenij/rt-tools/commit/1a3b2f232e2a30303d3eb88503bf8e43e0c223ca))
+- **rt:ui-kit:** [RT-1684] списки меню прокручиваются своей узкой полосой ([0e8b653](https://github.com/Eyhenij/rt-tools/commit/0e8b65339096c1ddc0142da7a6c66634dce20a24)), closes [#f5f6f8](https://github.com/Eyhenij/rt-tools/issues/f5f6f8) [#232226](https://github.com/Eyhenij/rt-tools/issues/232226) [#ccc](https://github.com/Eyhenij/rt-tools/issues/ccc) [#4a494e](https://github.com/Eyhenij/rt-tools/issues/4a494e)
+- **rt:ui-kit:** в отобранной подписи отмечено то, чем она совпала ([9f1446d](https://github.com/Eyhenij/rt-tools/commit/9f1446d9ae113a922b1d7cd58520788acd6124b4))
+- **rt:ui-kit:** витрина показывает закреплённое подменю и поиск по нему ([42ae336](https://github.com/Eyhenij/rt-tools/commit/42ae336f92b0ba377ce0f8ab6dcc036934b0843d))
+- **rt:ui-kit:** выбор моды подменю хранится ключом кита ([00b42ca](https://github.com/Eyhenij/rt-tools/commit/00b42ca2caec2a218b07d58b0f384249dd9d18ee))
+- **rt:ui-kit:** подменю бокового меню закрепляется и ищет по своим пунктам ([30bdbee](https://github.com/Eyhenij/rt-tools/commit/30bdbeecdccd31af6c8515e51685a5314b204612))
+- **rt:ui-kit:** правый край закреплённого подменю тянется указателем ([5ddcf0d](https://github.com/Eyhenij/rt-tools/commit/5ddcf0d8ba7ca1a0cd5b674bda8382f98ce90cc6))
+- **rt:ui-kit:** пункты подменю отбираются по подстроке подписи ([c6a3900](https://github.com/Eyhenij/rt-tools/commit/c6a390054b10c1f6eb664d7d5e8bbd5403d6fbcb))
+- **rt:ui-kit:** спиннер ждёт названную задержку, прежде чем показаться ([b01dcf7](https://github.com/Eyhenij/rt-tools/commit/b01dcf771c1c6e50b965088e09eb5caf56a3128c))
+- **rt:ui-kit:** у всплывающего слоя есть показ и замер положения ([b1667e2](https://github.com/Eyhenij/rt-tools/commit/b1667e2a93ff569bc5436a82fba6a3d417a54cf2))
+- **rt:ui-kit:** у панели действий есть показ и замер вида кнопок ([2a449f6](https://github.com/Eyhenij/rt-tools/commit/2a449f60ff46e807e64974a6ba9751f38917c58a))
+- **rt:ui-kit:** у панели инструментов есть показ и замер раскладки ([47ebbc8](https://github.com/Eyhenij/rt-tools/commit/47ebbc817470d98a75f4e54b2fa0d6fce7e251e2))
+- **rt:ui-kit:** у прокручиваемого контейнера есть показ и замер прокрутки ([10a64d7](https://github.com/Eyhenij/rt-tools/commit/10a64d79bf9c9288f617a3fcba434fb08bb68348))
+- **rt:ui-kit:** узкий экран кит определяет сам, входа isMobile больше нет ([e0a88d4](https://github.com/Eyhenij/rt-tools/commit/e0a88d46a2d47b481deb1937eb9b8af7517284d1))
+- **rt:ui-kit:** ширина закреплённого подменю хранится ключом кита ([880c7a6](https://github.com/Eyhenij/rt-tools/commit/880c7a6478259ed77e096251c5b7124e98fe9470))
+- **rt:ui-kit:** шторка не закрывается по Esc, а источники закрытия называет потребитель ([6f82ce8](https://github.com/Eyhenij/rt-tools/commit/6f82ce8083c8c3143074ee15b031ebe580d5cf8d))
 
 ### BREAKING CHANGES
+
+- **rt:ui-kit:** снят вход `isMobile` у семнадцати компонентов первого кита. Переход
+  состоит в снятии привязки `[isMobile]="…"` из разметки; порог прежний — 599 пикселей, своё
+  число приложение задаёт через `BreakpointService.setBreakpoints()`.
+- **rt:ui-kit:** `RtAsideService.Open()` переименован в `open()`, вход флажка `Value` — в `value`.
+
+Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01EZAAnW4RMcCah7RZeXPsHs
 
 - **rt:ui-kit:** снят вход `isMobile` — узкий экран кит определяет сам, службой точек перелома.
   Вход был вторым источником одного признака и главнее замера: приложение, передавшее его
