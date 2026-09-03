@@ -1,6 +1,8 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
 import { TestSideMenuWrapperComponent } from './component/test-side-menu-wrapper.component';
+import { assertMenuScrollbarSlim, assertSubMenuClearsCorner } from './side-menu.scrollbar-asserts';
+import { PANEL_SELECTOR, waitFor } from './side-menu.wait';
 
 export default {
     title: 'Components/SideMenu',
@@ -8,15 +10,6 @@ export default {
 } as Meta<TestSideMenuWrapperComponent>;
 
 type TStory = StoryObj<TestSideMenuWrapperComponent>;
-
-/**
- * Предел ожидания в миллисекундах, а не в кадрах анимации.
- *
- * Кадрами ожидание меряться не может: под нагрузкой браузер отдаёт их реже, и полсотни кадров
- * укладываются в доли секунды реального времени — показ падает там, где приложение просто не
- * успело нарисовать. Ловилось это на занятой машине, где рядом шли прогон и сборка.
- */
-const WAIT_LIMIT_MS: number = 5000;
 
 /**
  * Какую долю панели пункт обязан занять. Не единица: у пункта свои отступы в списке, и равенства
@@ -27,31 +20,6 @@ const FILL_SHARE: number = 0.85;
 
 /** Ширина, во всю которую встаёт подменю на время работы с полем поиска: 30rem набора значений. */
 const HELD_WIDTH: number = 480;
-
-/** Панель подменю — то, чью ширину меряют все проверки ниже. */
-const PANEL_SELECTOR: string = '.rtui-sub-side-menu-content';
-const WAIT_STEP_MS: number = 50;
-
-/** Ожидание того, что вернёт узел: по часам, шагом, до предела. */
-async function waitFor<T>(find: () => T | null): Promise<T | null> {
-    const until: number = Date.now() + WAIT_LIMIT_MS;
-
-    for (;;) {
-        const found: T | null = find();
-
-        if (found !== null) {
-            return found;
-        }
-
-        if (Date.now() >= until) {
-            return null;
-        }
-
-        await new Promise<void>((resolve: () => void): void => {
-            setTimeout(resolve, WAIT_STEP_MS);
-        });
-    }
-}
 
 async function waitForField(canvasElement: HTMLElement): Promise<HTMLInputElement | null> {
     return waitFor<HTMLInputElement>((): HTMLInputElement | null => canvasElement.querySelector('[qa-dataid="side-menu-search"]'));
@@ -480,5 +448,28 @@ export const MenuScrollHint: TStory = {
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await assertHintFollowsScheme(canvasElement);
         await assertHintReachesFooter(canvasElement);
+    },
+};
+
+/**
+ * SC-UK-47 — списки меню прокручиваются узкой полосой.
+ *
+ * Окно кадра нарочно низкое: в полный рост списки влезают целиком, и полосы у них не бывает вовсе.
+ * Подменю здесь закреплено и раскрыто до третьего уровня: полоса нужна обоим спискам сразу.
+ */
+export const MenuScrollbar: TStory = {
+    parameters: { snapshotViewport: { width: 1280, height: 360 } },
+    args: {
+        subMenuMode: 'pinned',
+        activeMenuIds: [24, 26, 29, 33, 35],
+        isSubMenuXScrollEnabled: true,
+        isMainMenuIconsOutlined: false,
+        isSubMenuIconsOutlined: false,
+        isSubMenuButtonIconsOutlined: false,
+        isSubMenuTooltipsShown: true,
+    },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await assertMenuScrollbarSlim(canvasElement);
+        await assertSubMenuClearsCorner(canvasElement);
     },
 };
