@@ -66,10 +66,16 @@ $side-menu: (
     // Hide drawer mask
     --mat-sidenav-scrim-color: transparent;
 
-    // Ширина, которой панель подменю стоит на экране: заданная оформлением потребителя либо
-    // раздвинутая тягой за край. Её знают трое — сама панель, ручка тяги и пункт внутри неё, —
-    // и выражение, повторённое у каждого, разъезжается на первой же правке одного из них.
-    --rt-side-menu-sub-menu-shown-width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
+    // Ширина, которой панель подменю стоит на экране: выбранная человеком, а пока выбора нет —
+    // заданная оформлением потребителя. Её знают трое — сама панель, ручка тяги и пункт внутри
+    // неё, — и выражение, повторённое у каждого, разъезжается на первой же правке одного из них.
+    //
+    // Выбор заменяет оформление, а не спорит с ним. Наибольшее из двух держало ширину оформления
+    // нижним пределом, и у потребителя, чей токен шире нижнего предела тяги, весь промежуток между
+    // ними съедался молча: панель не становилась уже своего токена, сколько её ни тяни, а сама
+    // тяга при этом честно отдавала наружу новое число. Пределы держит `clampSubMenuWidth`, и они
+    // общие для всех потребителей; ширина токена — умолчание, а не пол.
+    --rt-side-menu-sub-menu-shown-width: var(--rt-side-menu-sub-menu-dragged-width, var(--rt-side-menu-sub-menu-width));
 
     // Полоса прокрутки обоих списков меню — полосы значков и подменю. Оформляется здесь, а не у
     // прокручиваемой области: вид остальных её экранов от этой правки не двигается. Правило
@@ -233,8 +239,8 @@ $side-menu: (
             --rt-side-menu-sub-content-shadow: 14px 0 28px rgb(0 0 0 / 25%), 10px 0 10px rgb(0 0 0 / 22%);
 
             position: relative;
-            width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
-            min-width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
+            width: var(--rt-side-menu-sub-menu-shown-width);
+            min-width: var(--rt-side-menu-sub-menu-shown-width);
             height: 100%;
             border-radius: 0 var(--rt-side-menu-sub-menu-radius) var(--rt-side-menu-sub-menu-radius) 0;
             border-left: 1px solid var(--rt-border-neutral-default);
