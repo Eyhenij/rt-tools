@@ -135,6 +135,12 @@ PY'
 report "SC-AK-858 — путь строкой выше записи берётся" \
     "$(decision "$(cmd_in "$SPLIT_BODY")")" deny
 
+# SC-AK-858. Заглушённый вывод признаком записи не бывает и внутри тела: команда с правкой
+# одного файла и запуском проверки рядом запрещалась по пути этой проверки.
+MUTED_BODY='perl -pi -e s/a/b/ docs/proba.md; node .claude/skills/probe/SKILL.md >/dev/null 2>&1'
+report "SC-AK-858 — заглушённый вывод записью не считается" \
+    "$(decision "$(cmd_in "$MUTED_BODY")")" PASS
+
 # Отказ в пользу работы: сломанный гард не заклинивает работу.
 exit_code_of() {
     printf '%s' "$2" | "$HOOKS/rule-source-guard.sh" >/dev/null 2>&1
