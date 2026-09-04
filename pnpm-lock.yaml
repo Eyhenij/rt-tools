@@ -207,8 +207,8 @@ importers:
         specifier: 10.1.2
         version: 10.1.2(2f3ca6c83b5baec00c70c6a3b6dfe712)
       '@storybook/test-runner':
-        specifier: 0.24.4
-        version: 0.24.4(@swc/helpers@0.5.23)(@types/node@24.13.3)(babel-plugin-macros@3.1.0)(storybook@10.5.6(@types/react@19.2.17)(prettier@3.9.6)(react@19.2.8))(ts-node@10.9.2(@swc/core@1.15.47(@swc/helpers@0.5.23))(@types/node@24.13.3)(typescript@6.0.3))
+        specifier: 0.24.5
+        version: 0.24.5(@swc/helpers@0.5.23)(@types/node@24.13.3)(babel-plugin-macros@3.1.0)(storybook@10.5.6(@types/react@19.2.17)(prettier@3.9.6)(react@19.2.8))(ts-node@10.9.2(@swc/core@1.15.47(@swc/helpers@0.5.23))(@types/node@24.13.3)(typescript@6.0.3))
       '@swc-node/register':
         specifier: 1.11.1
         version: 1.11.1(@swc/core@1.15.47(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3)
@@ -4511,12 +4511,12 @@ packages:
       '@types/react-dom':
         optional: true
 
-  '@storybook/test-runner@0.24.4':
-    resolution: {integrity: sha512-xm04bba5N7QyHHc+wD4xmPZx0vKK/PIpmTFypy445HrWOj0nFK4pYg5dE6H4ppqMt7qZAnb5GfHTvBwJtywJ4A==}
+  '@storybook/test-runner@0.24.5':
+    resolution: {integrity: sha512-U8ib6parBD+wA4z5ZW/JnsR3KkEXoP+sHP8WJdDZeh0GwfTlcWjhbeR6Ij/gxNFEA1bdpBa/P8qYTOs+LKIN1g==}
     engines: {node: '>=20.0.0'}
     hasBin: true
     peerDependencies:
-      storybook: ^0.0.0-0 || ^10.0.0 || ^10.0.0-0 || ^10.1.0-0 || ^10.2.0-0 || ^10.3.0-0 || ^10.4.0-0 || ^10.5.0-0 || ^10.6.0-0
+      storybook: ^0.0.0-0 || ^10.0.0 || ^10.0.0-0 || ^10.1.0-0 || ^10.2.0-0 || ^10.3.0-0 || ^10.4.0-0 || ^10.5.0-0 || ^10.6.0-0 || ^11.0.0-0
 
   '@swc-node/core@1.15.0':
     resolution: {integrity: sha512-WAerrrl087WgenB92XG4Th2t0NQFfMNLYSe0sW2cEMMqM/LQmP4rozsDJl0vuzTrbewjpKQryxFXI+aYig/dBg==}
@@ -17330,7 +17330,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.17
 
-  '@storybook/test-runner@0.24.4(@swc/helpers@0.5.23)(@types/node@24.13.3)(babel-plugin-macros@3.1.0)(storybook@10.5.6(@types/react@19.2.17)(prettier@3.9.6)(react@19.2.8))(ts-node@10.9.2(@swc/core@1.15.47(@swc/helpers@0.5.23))(@types/node@24.13.3)(typescript@6.0.3))':
+  '@storybook/test-runner@0.24.5(@swc/helpers@0.5.23)(@types/node@24.13.3)(babel-plugin-macros@3.1.0)(storybook@10.5.6(@types/react@19.2.17)(prettier@3.9.6)(react@19.2.8))(ts-node@10.9.2(@swc/core@1.15.47(@swc/helpers@0.5.23))(@types/node@24.13.3)(typescript@6.0.3))':
     dependencies:
       '@babel/core': 7.29.7
       '@babel/generator': 7.29.8
