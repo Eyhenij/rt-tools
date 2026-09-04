@@ -245,7 +245,14 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re
           | if type == "string" then . elif type == "array"
             then (map(if type == "object" then (.text // "") else "" end) | join("\n")) else "" end] | join("\n")) as $said
     | ($said | test("останов|стоп|хватит|подожди|не надо|прерв|отложи")) as $told_stop
-    | { worked: ($edited or $ran_work), released: ($asked or $denied or $handed or $told_stop), waited: $waited, handed_over: $handed_over, started_next: $started_next, ended_working: $ended_working, ran: $ran }
+    # Вопрос, отбитый гардом разговора, и вопрос, дописанный прозой в конце ответа. Гард
+    # разговора судит вызов инструмента вопроса и прозы не видит вовсе: отбитый вопрос
+    # возвращался той же формулировкой через один ход и проходил свободно.
+    | ($out | test("BLOCKED by grill-gate")) as $ask_denied
+    | ([$turn[] | select(.type == "assistant") | (.message.content // [])[]
+          | select(.type == "text") | (.text // "")] | last // "") as $last_say
+    | (($last_say | test("\\?[[:space:]]*$")) and $ask_denied) as $asked_in_prose
+    | { worked: ($edited or $ran_work), released: ($asked or $denied or $handed or $told_stop), waited: $waited, handed_over: $handed_over, started_next: $started_next, ended_working: $ended_working, asked_in_prose: $asked_in_prose, ran: $ran }
 ' 2>/dev/null)"
 
 [ -z "$verdict" ] && exit 0
@@ -257,6 +264,19 @@ started_next="$(printf '%s' "$verdict" | jq -r '.started_next // false' 2>/dev/n
 ended_working="$(printf '%s' "$verdict" | jq -r '.ended_working // false' 2>/dev/null)"
 released="$(printf '%s' "$verdict" | jq -r '.released // false' 2>/dev/null)"
 commands="$(printf '%s' "$verdict" | jq -r '.ran // ""' 2>/dev/null)"
+
+# Вопрос, отбитый гардом разговора и заданный тем же ходом прозой. Отказ гарда ход отпускает —
+# он и есть законный конец, — но здесь отпускать нечего: тот же вопрос вернулся через строку, и
+# работа встала на том, что дерево уже отвечало. Ярус стоит до законных выходов намеренно:
+# отказом гарда прикрыт как раз этот случай.
+asked_in_prose="$(printf '%s' "$verdict" | jq -r '.asked_in_prose // false' 2>/dev/null)"
+if [ "$asked_in_prose" = "true" ]; then
+    rt_te_deny "BLOCKED by turn-exit-guard: за этот ход гард разговора отбил вопрос владельцу, а ответ кончается вопросом прозой — это тот же вопрос, заданный другой формой.
+
+Отказ гарда назвал причину: ответ лежит в дереве либо владелец его уже давал. Прочитай названное им место и работай дальше; спрашивают то, чего в дереве нет.
+
+Страж судит один ход: следующий заход не отбивается." "вопрос вернулся прозой после отказа гарда разговора."
+fi
 
 [ "$released" = "true" ] && exit 0
 
