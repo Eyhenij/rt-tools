@@ -202,6 +202,15 @@ describe('enroll', () => {
         expect(sent).toHaveLength(0);
     });
 
+    // Ключ настройки отвечает на «куда вписать» и не говорит, откуда взять: адреса пакет не
+    // знает — приём поднимает владелец, и у каждой мастерской он свой.
+    it('SC-AK-855 — отказ по пустому адресу называет, у кого его спросить', async () => {
+        const said: string = (await enroll(options({ intake: '' }))).lines.join('\n');
+
+        expect(said).toContain('код приглашения');
+        expect(said).toContain('парой');
+    });
+
     it('отказ приёма пересказывается его словами, и токена на диске не появляется', async () => {
         const outcome: IEnrollOutcome = await enroll(options({ call: refusing }));
 

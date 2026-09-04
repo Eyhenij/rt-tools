@@ -72,3 +72,4 @@
 - **Перечень гардов сводка спрашивает у дерева, а не у пакета.** — `projects/agent-kit/src/lib/commands.ts:stats` — каталог хуков берётся из раскладки дерева; сценарий `SC-AK-809`
 - **Молчание гарда отказом не делается.** — `projects/agent-kit/src/lib/commands.ts:statsLines` — раздел печатается наравне с прочими и кода возврата не меняет; сценарий `SC-AK-810`
 - **Исходы гейта пуша сводка считает отдельно от отбоев гардов.** — `projects/agent-kit/src/lib/observations.ts:pushGate` — счёт идёт по роду события `push-gate`; сценарий `SC-AK-836`
+- **Отказ по ненайденному адресу приёма называет, у кого его спросить.** — `projects/agent-kit/src/lib/enroll.ts:intakeReady` и `projects/agent-kit/src/lib/shipment.ts:refusal` — оба отказа называют владельца приёма и пару «код и адрес»; сценарий `SC-AK-855`
