@@ -50,10 +50,20 @@ marker="${TMPDIR:-/tmp}/claude-browser-guard/${sid}"
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
 command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
 
+# Причина отказа идёт полем ответа, а не в поток ошибок.
+#
+# Сказанного в поток ошибок исполнитель не видит: до него доходит «No stderr output» без единого слова
+# о том, что случилось, и подряд падающие вызовы браузера читаются как поломка расширения. Получаса на
+# поиск того, что гард уже знает и говорит, — цена одного выбранного канала.
+deny() {
+    reason="$1 $(rt_deny_tail)"
+    jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
+        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}\n' "$1"
+    exit 0
+}
 
 if [ ! -f "$marker" ]; then
-    echo "В этой сессии браузер не выбран. Вызови выбор браузера с профилем ${device_id} до любого другого вызова. $(rt_deny_tail)" >&2
-    exit 2
+    deny "В этой сессии браузер не выбран. Вызови выбор браузера с профилем ${device_id} до любого другого вызова."
 fi
 
 now="$(date +%s)"
@@ -62,8 +72,7 @@ age=$(( now - stamped ))
 
 if [ "$age" -gt "$ttl" ]; then
     rm -f "$marker" 2>/dev/null
-    echo "Последний выбор браузера был ${age} с назад (предел ${ttl} с) — на таких перерывах активный браузер расширения уплывает, и это может быть уже не закреплённый профиль. Вызови выбор с профилем ${device_id} заново и повтори. $(rt_deny_tail)" >&2
-    exit 2
+    deny "Последний выбор браузера был ${age} с назад (предел ${ttl} с) — на таких перерывах активный браузер расширения уплывает, и это может быть уже не закреплённый профиль. Вызови выбор с профилем ${device_id} заново и повтори."
 fi
 
 : >"$marker" 2>/dev/null
