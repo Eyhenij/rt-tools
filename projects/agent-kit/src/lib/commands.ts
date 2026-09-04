@@ -27,6 +27,7 @@ import {
     TWeights,
 } from './observations.js';
 import { IPlanned, isRefusal, TOutcome } from './plan.js';
+import { IOverrideMark, staleOverrides } from './override-marks.js';
 import { pushGateLines } from './push-gate.js';
 import { laidOutSkills, treeSnapshot } from './snapshot.js';
 import { ICutFound, IRetiredFound, ISyncResult, mergedBody, pendingOf, planSync, runSync } from './sync.js';
@@ -705,6 +706,27 @@ function refusalBeforeSync(env: IEnvironment, config: IConfig): IOutcomeOfComman
     return null;
 }
 
+/**
+ * Надстройки, чья статья в новой редакции уже есть.
+ *
+ * Пометка без читателя ничего не меняет: тот, кто ставит новую версию, видит число разложенных
+ * файлов и не видит, что часть надстроек стала лишней. Раскладка их называет, снимает человек:
+ * пометка держит одну статью, а в раздел могли дописать и другое.
+ */
+function staleOverrideLines(root: string, assetsDir: string): string[] {
+    const stale: readonly IOverrideMark[] = staleOverrides(root, assetsDir);
+
+    if (!stale.length) {
+        return [];
+    }
+
+    return [
+        `надстройки, чья статья в пакете уже есть: ${stale.length}`,
+        ...stale.map((mark: IOverrideMark): string => `  ${mark.file} · раздел «${mark.heading}» · отправлено ${mark.day}`),
+        '  — раздел снимается, и дерево возвращается к пакетной формулировке',
+    ];
+}
+
 /** Ответ `sync --check`: расхождения считаются, на диск не пишется ничего. */
 function syncCheck(config: IConfig, root: string, version: string, assetsDir: string): IOutcomeOfCommand {
     {
@@ -790,6 +812,7 @@ export function sync(env: IEnvironment, check: boolean): IOutcomeOfCommand {
             ...boundLines(result),
             ...(result.bound?.unreadable === false ? [] : unboundLines(result)),
             ...driftedLines(result),
+            ...staleOverrideLines(root, assetsDir),
             ...debtLines(config, root, assetsDir),
             ...warnings(result),
         ],
