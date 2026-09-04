@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.23.0 · checks/check-hook-scope.mjs · 882cb7623e00 · правится надстройкой, не здесь
+// rt-kit v0.24.0 · checks/check-hook-scope.mjs · 882cb7623e00 · правится надстройкой, не здесь
 /**
  * Сверка объявления гарда с тем, что разбирает его тело.
  *

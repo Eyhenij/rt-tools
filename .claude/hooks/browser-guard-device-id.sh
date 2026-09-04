@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.23.0 · hooks/browser-guard-device-id.sh · f059b806c6c0 · правится надстройкой, не здесь
+# rt-kit v0.24.0 · hooks/browser-guard-device-id.sh · f059b806c6c0 · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__claude-in-chrome__select_browser
 # rt-hook: PostToolUse mcp__claude-in-chrome__select_browser
 # Требует: hooks/deny-tail.sh

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.23.0 · hooks/git-guard-delivery-draft.sh · e47eeab2a7ed · правится надстройкой, не здесь
+# rt-kit v0.24.0 · hooks/git-guard-delivery-draft.sh · e47eeab2a7ed · правится надстройкой, не здесь
 # Снятие черновика для гарда поставки: есть ли у заявки разбор, не конфликтует ли она и той ли
 # записью открыта.
 #

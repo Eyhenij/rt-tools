@@ -1,4 +1,4 @@
-// rt-kit v0.23.0 · workflows/feature.js · 6c5f37021aa7 · правится надстройкой, не здесь
+// rt-kit v0.24.0 · workflows/feature.js · 6c5f37021aa7 · правится надстройкой, не здесь
 export const meta = {
     name: 'feature',
     description: 'План от PM, реализация по шагам, веер проверок QA и приёмка по исходному запросу',

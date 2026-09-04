@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.23.0 · hooks/git-guard-delivery-conflict.sh · c49abea43403 · правится надстройкой, не здесь
+# rt-kit v0.24.0 · hooks/git-guard-delivery-conflict.sh · c49abea43403 · правится надстройкой, не здесь
 # Конфликтующая своя заявка для гарда поставки: пока хоть одна отданная работа помечена
 # конфликтующей, новая не берётся.
 #
