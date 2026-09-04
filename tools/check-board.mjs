@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.24.0 · checks/check-board.github.mjs · 5829ecea359f · правится надстройкой, не здесь
+// rt-kit v0.24.0 · checks/check-board.github.mjs · 10bf35c5a0ad · правится надстройкой, не здесь
 /**
  * Сверка очереди работ с тем, что закон о поставке требует от задачи и её PR.
  *
@@ -51,6 +51,7 @@ import {
     taskDirs,
 } from './board.mjs';
 import { onlyIgnoredPaths } from './board-paths.mjs';
+import { checkBranchFolders } from './board-folders.mjs';
 import { checkLongWork } from './board-long-work.mjs';
 import { HAS_PIPELINE, deployLag, evictedOnHead, headCommittedAt, lastDeploy, runsOnHead, verdictOnHead } from './board-runs.mjs';
 import { checkEpicLinks } from './board-epics.mjs';
@@ -299,6 +300,7 @@ let checked = { issues: 0, pulls: 0, cargo: 0 };
 
 // Черновики судятся по диску и потому проверяются всегда: связи для этого не нужно.
 checkDrafts();
+checkBranchFolders(report, MAIN_BRANCH);
 
 let offline = false;
 try {
