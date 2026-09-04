@@ -46,3 +46,4 @@
 - **Пустое поле признака не съезжает в соседнее.** — `projects/agent-kit/assets/hooks/reuse-first-guard.sh:cancel`
 - **Гард, не получивший ни одного признака, говорит об этом.** — `projects/agent-kit/assets/hooks/reuse-first-guard.sh:signals_seen`
 - **Гард на правке и сплошная проверка читают у признака одни и те же поля.** — `projects/agent-kit/assets/hooks/reuse-first-guard.sh:rt_backend_roots`
+- **Заявка, открытая не в главную ветку, называется своей строкой.** — `projects/agent-kit/assets/checks/check-board.github.mjs:baseRefName` — база приходит тем же запросом, что и остальные поля заявки; сценарий SC-AK-845
