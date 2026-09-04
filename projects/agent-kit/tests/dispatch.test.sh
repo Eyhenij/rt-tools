@@ -196,6 +196,31 @@ report "SC-AK-578 — вывод остаётся разбираемым" "$(pri
 report "SC-AK-578 — ветки за отбоем не зовутся" "$(printf '%s' "$STOP_OUT" | grep -c 'zzz тоже')" 0
 rm -f "$DISPATCH_DIR/aaa_blocks.sh" "$DISPATCH_DIR/zzz_blocks.sh"
 
+# --- SC-AK-874 — запрет вызова при нулевом коде опознаётся наравне с блокировкой ---------------
+#
+# Гарды правки отвечают решением о запрете вызова, а выходят нулём. Эта форма не опознавалась
+# вовсе: отказ уезжал в общий собранный вывод и склеивался с выводом соседней ветки — гард,
+# вызванный сам по себе, отвечал запретом, а через диспетчер отказ пропадал целиком.
+{
+    printf '#!/usr/bin/env bash\n'
+    printf '# rt-hook: PreToolUse Bash\n'
+    printf '%s\n' 'printf "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"aaa запрещает\"}}\n"'
+    printf 'exit 0\n'
+} > "$DISPATCH_DIR/aaa_denies.sh"
+{
+    printf '#!/usr/bin/env bash\n'
+    printf '# rt-hook: PreToolUse Bash\n'
+    printf '%s\n' 'printf "zzz сказал своё\n"'
+    printf 'exit 0\n'
+} > "$DISPATCH_DIR/zzz_says.sh"
+chmod +x "$DISPATCH_DIR/aaa_denies.sh" "$DISPATCH_DIR/zzz_says.sh"
+
+DENY_OUT="$(printf '%s' "$INPUT_BASH" | bash "$DISPATCH_DIR/dispatch.sh" PreToolUse 2>/dev/null)"
+report "SC-AK-874 — запрет остаётся разбираемым" \
+    "$(printf '%s' "$DENY_OUT" | jq -r '.hookSpecificOutput.permissionDecisionReason' 2>/dev/null)" 'aaa запрещает'
+report "SC-AK-874 — ветки за запретом не зовутся" "$(printf '%s' "$DENY_OUT" | grep -c 'zzz сказал своё')" 0
+rm -f "$DISPATCH_DIR/aaa_denies.sh" "$DISPATCH_DIR/zzz_says.sh"
+
 
 # --- SC-AK-700, SC-AK-701 — отбой настоящего стража доходит до вывода --------------------------
 #

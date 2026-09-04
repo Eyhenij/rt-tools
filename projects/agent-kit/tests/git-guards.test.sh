@@ -373,6 +373,32 @@ fixture_commit_as "$HUMAN_SIG" 'Хозяин дерева' 'owner@example.com' s
 sig "SC-AK-181 — коммит, назвавшийся человеком, не судится" "$HUMAN_SIG" 'git push origin RT-70-signature' PASS
 rm -rf "$HUMAN_SIG"
 
+# SC-AK-875 — коммит под записью, которой дерево не объявляло
+# Прежде помощник судил только коммит, назвавшийся машинной записью: пять коммитов подряд под
+# чужим логином в это условие не попадали вовсе. Вторая половина включается объявлением почт
+# людей — без него требовать известной подписи от каждого коммита значило бы отбивать работу,
+# сделанную человеком своими руками.
+UNKNOWN_SIG="$(sig_repo)"
+fixture_commit_as "$UNKNOWN_SIG" 'Кто-то ещё' 'someone@example.com' src/probe.ts 'export const x = 1;' 'feat: правка'
+sig "SC-AK-875 — без объявленных почт людей чужая запись проходит" "$UNKNOWN_SIG" \
+    'git push origin RT-70-signature' PASS
+printf 'RT_COMMIT_EMAIL="%s"\nRT_HUMAN_EMAILS="owner@example.com"\n' "$BOT_MAIL" \
+    > "$UNKNOWN_SIG/.claude/rt-kit/project.sh"
+sig "SC-AK-875 — с объявленными почтами неизвестная запись отбивается" "$UNKNOWN_SIG" \
+    'git push origin RT-70-signature' deny
+CLAUDE_PROJECT_DIR="$UNKNOWN_SIG" expect_reason "SC-AK-875 — отказ называет коммит и его почту" \
+    git-guard-delivery.sh "$(input_cmd 'git push origin RT-70-signature' Bash "$UNKNOWN_SIG")" \
+    'Расходятся: [0-9a-f]{7,} <someone@example.com>'
+rm -rf "$UNKNOWN_SIG"
+
+KNOWN_SIG="$(sig_repo)"
+fixture_commit_as "$KNOWN_SIG" 'Хозяин дерева' 'owner@example.com' src/probe.ts 'export const x = 1;' 'feat: правка'
+printf 'RT_COMMIT_EMAIL="%s"\nRT_HUMAN_EMAILS="owner@example.com"\n' "$BOT_MAIL" \
+    > "$KNOWN_SIG/.claude/rt-kit/project.sh"
+sig "SC-AK-875 — объявленная почта человека проходит" "$KNOWN_SIG" \
+    'git push origin RT-70-signature' PASS
+rm -rf "$KNOWN_SIG"
+
 # Влитое в главную этой веткой уже не чинится: судится вклад ветки.
 MERGED_SIG="$(fixture_repo_branched main RT-71-merged)"
 git -C "$MERGED_SIG" checkout -q main 2>/dev/null

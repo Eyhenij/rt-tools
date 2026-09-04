@@ -37,6 +37,11 @@ RT_COMMIT_EMAIL='317887029+rt-tools-dev@users.noreply.github.com'
 # Учётная запись машинной работы: исполнителем задач и автором заявок стоит она.
 RT_TASK_BOT='rt-tools-dev'
 
+# Почты людей, коммитящих в это дерево своими руками. Названные, они включают вторую половину
+# проверки подписи: известны машинная запись и эти люди, всё прочее отбивается — коммит под
+# записью, которой дерево не объявляло, прежде проходил молча.
+RT_HUMAN_EMAILS='72300075+Eyhenij@users.noreply.github.com 41898282+github-actions[bot]@users.noreply.github.com'
+
 RT_PULL_TOKEN_VAR='GH_TOKEN'
 RT_PULL_TOKEN_HINT='GH_TOKEN=$(cat ~/.config/rt-tools-bot-token)'
 
