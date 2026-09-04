@@ -49,17 +49,38 @@ rt_write_targets() {
                     if (parts[i] ~ /\// && parts[i] ~ /\.[A-Za-z0-9]+$/) { print parts[i] }
                 }
             }
+            # Пишет ли тело хоть что-нибудь. Тело, в котором нет ни одного вызова записи, своих
+            # путей не отдаёт: команда, подключившая разложенный помощник и напечатавшая его
+            # ответ, запрещалась как правка этого помощника — за один заход трижды подряд.
+            # Внутри тела, которое пишет, пути по-прежнему берутся все: путь и вызов записи
+            # стоят там разными строками, и связать их нечем.
+            function writes(s) {
+                return s ~ /open[ \t]*\([^)]*[\047\"](w|a|r\+|w\+|a\+)[\047\"]/ \
+                    || s ~ /writeFileSync|writeFile|appendFile|write_text|write_bytes|\.write\(|\.save\(|savefig|to_csv|json\.dump|\.dump\(/ \
+                    || s ~ /makedirs|mkdir|rename|replace[ \t]*\(|unlink|rmtree|copyfile|copy2|shutil\./ \
+                    || s ~ />[ \t]*[A-Za-z0-9_.~$\/-]/ \
+                    || s ~ /(^|[|;&(]|[ \t])(tee|cp|mv|rm|touch|install|truncate)([ \t]|$)/
+            }
             function trim(s) { sub(/^[ \t]+/, "", s); sub(/[ \t]+$/, "", s); return s }
+            function flush_body() {
+                if (wrote) { emit(body) }
+                body = ""
+                wrote = 0
+            }
             tag != "" {
-                if (trim($0) == tag) { tag = ""; next }
-                if (keep) { emit($0) }
+                if (trim($0) == tag) { flush_body(); tag = ""; next }
+                if (keep) {
+                    body = body " " $0
+                    if (writes($0)) { wrote = 1 }
+                }
                 next
             }
             {
                 # Код доводом: всё, что стоит за `-c` или `-e` у интерпретатора.
                 if ($0 ~ /(^|[|;&(]|[ \t])(python3?|node|ruby|perl|php|deno|bun)([ \t]|$)/ \
                     && match($0, /[ \t]-[ce][ \t]/)) {
-                    emit(substr($0, RSTART + RLENGTH))
+                    rest = substr($0, RSTART + RLENGTH)
+                    if (writes(rest)) { emit(rest) }
                 }
                 # Тело heredoc: путь записи интерпретатора стоит именно там.
                 if (match($0, /<<-?[ \t]*[\047\"]?[A-Za-z_][A-Za-z0-9_]*/)) {
@@ -67,7 +88,10 @@ rt_write_targets() {
                     sub(/^<<-?[ \t]*[\047\"]?/, "", t)
                     tag = t
                     keep = ($0 ~ /(^|[|;&(]|[ \t])(python3?|node|ruby|perl|php|deno|bun)([ \t]|$)/)
+                    body = ""
+                    wrote = 0
                 }
-            }'
+            }
+            END { if (tag != "") { flush_body() } }'
     } | sort -u
 }
