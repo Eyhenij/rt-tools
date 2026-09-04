@@ -50,6 +50,7 @@ import {
     taskDirs,
 } from './board.mjs';
 import { onlyIgnoredPaths } from './board-paths.mjs';
+import { checkBranchFolders } from './board-folders.mjs';
 import { checkLongWork } from './board-long-work.mjs';
 import { HAS_PIPELINE, deployLag, evictedOnHead, headCommittedAt, lastDeploy, runsOnHead, verdictOnHead } from './board-runs.mjs';
 import { checkEpicLinks } from './board-epics.mjs';
@@ -298,6 +299,7 @@ let checked = { issues: 0, pulls: 0, cargo: 0 };
 
 // Черновики судятся по диску и потому проверяются всегда: связи для этого не нужно.
 checkDrafts();
+checkBranchFolders(report, MAIN_BRANCH);
 
 let offline = false;
 try {
