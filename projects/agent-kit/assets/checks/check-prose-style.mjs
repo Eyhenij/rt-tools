@@ -91,16 +91,41 @@ function isExemptHeading(line) {
     return heading !== null && HEADING_EXCEPTIONS.has(heading[1]);
 }
 
-/** Строки вне блоков кода: в блоках лежат команды и вывод, и слог там не судится. */
+/**
+ * Цитата закона: блок цитаты, введённый строкой с адресом закона.
+ *
+ * Слова, которые проверка отбивает, стоят в самих законах десятками. Процитировав статью
+ * дословно, работа упирается в отказ: правь цитату — соврёшь, не правь — не запушишь. Судится
+ * поэтому только своё письмо, а чужой текст в цитате остаётся как есть.
+ *
+ * Признак узкий нарочно: не всякая цитата, а введённая адресом закона. Иначе блок цитаты стал бы
+ * местом, куда прячут своё письмо от проверки.
+ */
+const LAW_ADDRESS = /docs\/constitution\/[A-Za-z0-9_./-]+\.md/;
+const QUOTE = /^\s*>/;
+
+/** Строки вне блоков кода и вне цитат закона: там лежат чужие слова, и слог там не судится. */
 function proseLines(text) {
     const out = [];
     let inFence = false;
+    let introducesLaw = false;
+    let inLawQuote = false;
     text.split('\n').forEach((line, index) => {
         if (CODE_FENCE.test(line)) {
             inFence = !inFence;
             return;
         }
         if (inFence) return;
+
+        if (QUOTE.test(line)) {
+            if (!inLawQuote && (introducesLaw || LAW_ADDRESS.test(line))) inLawQuote = true;
+            if (inLawQuote) return;
+        } else {
+            inLawQuote = false;
+            // Вводит цитату та строка, что стоит перед ней и называет адрес закона.
+            if (line.trim() !== '') introducesLaw = LAW_ADDRESS.test(line);
+        }
+
         if (isExemptHeading(line)) return;
         out.push([index + 1, line]);
     });
