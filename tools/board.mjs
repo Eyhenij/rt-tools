@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.24.0 · checks/board.github.mjs · 37f7f04b58f4 · правится надстройкой, не здесь
+// rt-kit v0.24.0 · checks/board.github.mjs · 6589ca0dd900 · правится надстройкой, не здесь
 /**
  * Общая работа с очередью работ: борда проекта, тикеты и их состояние.
  *
@@ -410,9 +410,14 @@ export function describeTaskState(number, state) {
 }
 
 const isEntryPoint = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
+// Токен машинной записи подставляется и здесь, как в переводе колонки. Без него клиент идёт от
+// того, под кем залогинен, а в ходе гарда он не залогинен ни под кем: хостинг отвечает, что
+// репозитория нет вовсе, чтение задачи возвращает пустоту, и «спросить было нечем» становится
+// неотличимо от «задачи не существует». Гард поставки на таком ответе отбивал открытие заявки
+// пятью взаимоисключающими причинами разом — задачи нет, задача закрыта, задачи нет в очереди.
 if (isEntryPoint && process.argv[2] === 'task') {
     try {
-        process.stdout.write(`${JSON.stringify(taskState(Number(process.argv[3])))}\n`);
+        process.stdout.write(`${JSON.stringify(taskState(Number(process.argv[3]), { token: botToken() ?? undefined }))}\n`);
     } catch (error) {
         if (error instanceof OfflineError) {
             process.stdout.write('{"offline":true}\n');
@@ -425,6 +430,9 @@ if (isEntryPoint && process.argv[2] === 'task') {
 
 if (isEntryPoint && process.argv[2] === 'pr') {
     try {
+        // Токена здесь нет намеренно: полям разбора нужен доступ к учётным записям организации,
+        // которого машинной записи не давали, и запрос с ним отказывает по правам целиком.
+        // Клиент без токена идёт от того, под кем залогинен, и у человека отвечает.
         process.stdout.write(`${JSON.stringify(pullState(process.argv[3]))}\n`);
     } catch (error) {
         if (error instanceof OfflineError) {
@@ -441,7 +449,7 @@ if (isEntryPoint && process.argv[2] === 'pr') {
 // отвечает пустым списком: спрашивать не о ком.
 if (isEntryPoint && process.argv[2] === 'conflicts') {
     try {
-        process.stdout.write(`${JSON.stringify({ conflicting: conflictingPulls() ?? [] })}\n`);
+        process.stdout.write(`${JSON.stringify({ conflicting: conflictingPulls({ token: botToken() ?? undefined }) ?? [] })}\n`);
     } catch (error) {
         if (error instanceof OfflineError) {
             process.stdout.write('{"offline":true}\n');
