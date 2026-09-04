@@ -64,8 +64,8 @@ ok "SC-AK-677 — дозапись" rt_shell_writes_default 'echo x >> docs/note
 ok "SC-AK-677 — тело документа в файл" rt_shell_writes_default "cat > docs/plans/a.md <<EOF"
 
 # SC-AK-857. Интерпретатор пишет телом, а не именем файла, который запускает: путь у него первым
-# доводом — то, что он читает. Прежде судило само имя, и запуск проверки дерева ради диагностики
-# требовал правила общего кода, ничего в нём не правя.
+# доводом — то, что он читает. Раньше проверялось само имя, и запуск проверки дерева ради
+# диагностики требовал правила общего кода, ничего в нём не правя.
 no "SC-AK-857 — запуск проверки по её пути" rt_shell_writes_default 'node tools/probe-dupes.mjs'
 no "SC-AK-857 — запуск с доводом-файлом" rt_shell_writes_default 'node tools/probe-style.mjs docs/a.md'
 no "SC-AK-857 — запуск сценария другим интерпретатором" rt_shell_writes_default 'python3 tools/report.py --size 4'

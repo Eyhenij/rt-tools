@@ -3,7 +3,7 @@ import { PANEL_SELECTOR, waitFor } from './side-menu.wait';
 /** Ручка тяги: узел, которым панель подменю раздвигают за край. */
 const RESIZER_SELECTOR: string = '.rtui-side-menu-resizer';
 
-/** Собственные свойства меню: видимая полоса и зона, которой ручка ловится курсором. */
+/** Собственные свойства меню: видимая полоса и зона, которой ручка захватывается курсором. */
 const LINE_WIDTH_VAR: string = '--rt-side-menu-resizer-width';
 const GRAB_WIDTH_VAR: string = '--rt-side-menu-resizer-grab-width';
 
@@ -32,7 +32,7 @@ function widthInPixels(owner: HTMLElement, value: string): number {
     return width;
 }
 
-/** Значение своего свойства меню, объявленное на ручке. Пустое — правка до узла не доехала. */
+/** Значение своего свойства меню, объявленное на ручке. Пустое — правка до узла не дошла. */
 function declaredWidth(resizer: HTMLElement, name: string): string {
     const declared: string = getComputedStyle(resizer).getPropertyValue(name).trim();
 
@@ -44,7 +44,7 @@ function declaredWidth(resizer: HTMLElement, name: string): string {
 }
 
 /**
- * SC-UK-49 — проверка того, что ручка тяги ловится курсором шире, чем видна.
+ * SC-UK-49 — проверка того, что ручка тяги захватывается курсором шире, чем видна.
  *
  * Меряются три вещи: ширина самого узла — это и есть мишень для курсора; ширина видимой полосы —
  * она должна остаться прежней; место правого края полосы — он стоит на краю панели, как и до
