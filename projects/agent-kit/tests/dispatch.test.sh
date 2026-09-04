@@ -50,6 +50,29 @@ report "SC-AK-523 — ветка без образца зовётся на лю�
 INPUT_OTHER='{"tool_name":"NotebookEdit","tool_input":{"file_path":"/tmp/a.ipynb"},"cwd":"/tmp"}'
 report "SC-AK-523 — образец сверяется с именем целиком" "$(dispatch_says PreToolUse "$INPUT_OTHER" | grep -c 'звали only_edit')" 0
 
+# --- SC-AK-856 — событие без имени инструмента сверяет род запуска ------------------------------
+# У входа в сессию имени инструмента нет, и образец там называет род запуска. Сверка с пустым
+# именем не совпадала ни разу: через диспетчер не вызывался ни один хук входа — заход начинался
+# без свода законов, без словаря и без состояния работы, с нулевым кодом и пустым выводом.
+rm -f "$DISPATCH_DIR"/*.sh 2>/dev/null
+cp "$ASSETS/hooks/dispatch.sh" "$ASSETS/hooks/hook-input.sh" "$ASSETS/hooks/utf8.sh" "$DISPATCH_DIR/" 2>/dev/null
+branch on_start SessionStart 'startup|resume|compact|clear' 0
+branch on_clear SessionStart 'clear' 0
+INPUT_START='{"source":"startup","cwd":"/tmp"}'
+INPUT_COMPACT='{"source":"compact","cwd":"/tmp"}'
+report "SC-AK-856 — ветка входа вызвана на своём роде запуска" \
+    "$(dispatch_says SessionStart "$INPUT_START" | grep -c 'звали on_start')" 1
+report "SC-AK-856 — ветка с чужим родом запуска не вызвана" \
+    "$(dispatch_says SessionStart "$INPUT_START" | grep -c 'звали on_clear')" 0
+report "SC-AK-856 — второй род запуска ловится тем же образцом" \
+    "$(dispatch_says SessionStart "$INPUT_COMPACT" | grep -c 'звали on_start')" 1
+
+# Имя инструмента остаётся главным там, где оно есть: род запуска его не подменяет.
+rm -f "$DISPATCH_DIR/on_start.sh" "$DISPATCH_DIR/on_clear.sh"
+branch only_bash PreToolUse 'Bash' 0
+report "SC-AK-856 — имя инструмента проверяется прежде рода запуска" \
+    "$(dispatch_says PreToolUse '{"tool_name":"Edit","source":"Bash","tool_input":{},"cwd":"/tmp"}' | grep -c 'звали only_bash')" 0
+
 # --- SC-AK-833 — сломанная ветка названа по имени ------------------------------------------------
 # Ветка, вышедшая ненулём и не сказавшая ничего, снаружи неотличима от отказа по делу, а
 # починить нечего: вывод ошибок веток диспетчер глушит, и какой файл сломан, не знает никто.
