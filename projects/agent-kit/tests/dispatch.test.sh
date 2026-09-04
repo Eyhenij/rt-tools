@@ -52,7 +52,7 @@ report "SC-AK-523 — образец сверяется с именем цели
 
 # --- SC-AK-860 — отказ, сказанный в поток ошибок, доходит до исполнителя -------------------------
 # Гард, печатающий отказ в поток ошибок, приходил строкой о сломанном файле — при целом файле и
-# внятном тексте, которого никто не видел. За один заход так пропало два отказа подряд.
+# понятном тексте, которого никто не видел. За один заход так пропало два отказа подряд.
 rm -f "$DISPATCH_DIR"/*.sh 2>/dev/null
 cp "$ASSETS/hooks/dispatch.sh" "$ASSETS/hooks/hook-input.sh" "$ASSETS/hooks/utf8.sh" "$DISPATCH_DIR/" 2>/dev/null
 {
@@ -68,7 +68,7 @@ report "SC-AK-860 — о сломанном файле при этом не го
     "$(dispatch_says PreToolUse "$INPUT_BASH" | grep -c 'похоже, файл сломан')" 0
 report "SC-AK-860 — код возврата ветки сохранён" "$(dispatch_code PreToolUse "$INPUT_BASH")" 2
 
-# Молчание обоими потоками по-прежнему называет имя ветки: чинить тогда действительно нечего.
+# Пустые оба потока по-прежнему дают имя ветки: чинить тогда действительно нечего.
 rm -f "$DISPATCH_DIR/talks_to_stderr.sh"
 {
     printf '#!/usr/bin/env bash\n'
@@ -76,7 +76,7 @@ rm -f "$DISPATCH_DIR/talks_to_stderr.sh"
     printf 'exit 3\n'
 } > "$DISPATCH_DIR/silent_fail.sh"
 chmod +x "$DISPATCH_DIR/silent_fail.sh"
-report "SC-AK-860 — молчащая ветка названа по имени" \
+report "SC-AK-860 — ветка без вывода названа по имени" \
     "$(dispatch_says PreToolUse "$INPUT_BASH" | grep -c 'silent_fail.sh')" 1
 
 # Поток ошибок удачной ветки наружу не идёт: это шум, а не решение.
@@ -94,18 +94,18 @@ report "SC-AK-860 — шум удачной ветки наружу не идё�
 rm -f "$DISPATCH_DIR/noisy_ok.sh"
 
 # --- SC-AK-856 — событие без имени инструмента сверяет род запуска ------------------------------
-# У входа в сессию имени инструмента нет вовсе, и образец там называет род запуска. Сверявшийся с
-# пустым именем, он не совпадал ни разу: через диспетчер не звался ни один хук входа — заход
-# стартовал без свода законов, без словаря и без состояния работы, молча и нулевым кодом.
+# У входа в сессию имени инструмента нет, и образец там называет род запуска. Сверка с пустым
+# именем не совпадала ни разу: через диспетчер не вызывался ни один хук входа — заход начинался
+# без свода законов, без словаря и без состояния работы, с нулевым кодом и пустым выводом.
 rm -f "$DISPATCH_DIR"/*.sh 2>/dev/null
 cp "$ASSETS/hooks/dispatch.sh" "$ASSETS/hooks/hook-input.sh" "$ASSETS/hooks/utf8.sh" "$DISPATCH_DIR/" 2>/dev/null
 branch on_start SessionStart 'startup|resume|compact|clear' 0
 branch on_clear SessionStart 'clear' 0
 INPUT_START='{"source":"startup","cwd":"/tmp"}'
 INPUT_COMPACT='{"source":"compact","cwd":"/tmp"}'
-report "SC-AK-856 — ветка входа позвана на своём роде запуска" \
+report "SC-AK-856 — ветка входа вызвана на своём роде запуска" \
     "$(dispatch_says SessionStart "$INPUT_START" | grep -c 'звали on_start')" 1
-report "SC-AK-856 — ветка с чужим родом запуска не позвана" \
+report "SC-AK-856 — ветка с чужим родом запуска не вызвана" \
     "$(dispatch_says SessionStart "$INPUT_START" | grep -c 'звали on_clear')" 0
 report "SC-AK-856 — второй род запуска ловится тем же образцом" \
     "$(dispatch_says SessionStart "$INPUT_COMPACT" | grep -c 'звали on_start')" 1
@@ -113,7 +113,7 @@ report "SC-AK-856 — второй род запуска ловится тем �
 # Имя инструмента остаётся главным там, где оно есть: род запуска его не подменяет.
 rm -f "$DISPATCH_DIR/on_start.sh" "$DISPATCH_DIR/on_clear.sh"
 branch only_bash PreToolUse 'Bash' 0
-report "SC-AK-856 — имя инструмента судится прежде рода запуска" \
+report "SC-AK-856 — имя инструмента проверяется прежде рода запуска" \
     "$(dispatch_says PreToolUse '{"tool_name":"Edit","source":"Bash","tool_input":{},"cwd":"/tmp"}' | grep -c 'звали only_bash')" 0
 
 # --- SC-AK-833 — сломанная ветка названа по имени ------------------------------------------------
