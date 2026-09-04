@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.23.0 · hooks/docs-guard.sh · d9a2a17f6bd2 · правится надстройкой, не здесь
+# rt-kit v0.23.0 · hooks/docs-guard.sh · 30f35356b42f · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|NotebookEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Гард пары «правка и её документ». PreToolUse.
@@ -216,6 +216,16 @@ done
 if rt_needs rt_docs_pair_for docs-guard; then
     while IFS= read -r file; do
         [ -z "$file" ] && continue
+
+        # Файл, положенный раскладкой, пары не требует: автор у него в дереве-потребителе один —
+        # пакет, и документ о нём лежит там же. Иначе первая же раскладка требует обход на весь
+        # свой объём, а обход, объявленный на сотню файлов, снимает требование и с будущих правок
+        # этих файлов вручную. Признак — шапка раскладки: она стоит в каждом разложенном файле и
+        # отличает его надёжнее любого перечня путей.
+        if [ -f "$file" ] && head -12 "$file" 2>/dev/null | grep -qE 'rt-kit v[^ ]+ · [^ ]+ · [0-9a-f]+'; then
+            continue
+        fi
+
         want="$(rt_docs_pair_for "$file" 2>/dev/null)"
         [ -z "$want" ] && continue
         # Пара считается приехавшей, если хоть один файл коммита подходит под образец.
