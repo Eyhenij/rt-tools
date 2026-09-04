@@ -117,7 +117,7 @@ export function summaryCargo(
         sessions: summary.sessions,
         loads: knownCounts(summary.loads, known),
         denials: knownCounts(summary.denials, known),
-        // Род правки, на котором гейт отбивал, ресурсом не является: это `extension`, `command`
+        // Род правки, на котором гейт отбивал, ресурсом не бывает: это `extension`, `command`
         // или `browser` — слова пакета, одинаковые у всех деревьев.
         kinds: summary.kinds,
         guards: knownCounts(summary.guards, known),
@@ -142,7 +142,7 @@ export function readPostmortems(root: string, dir: string): IPostmortemItem[] {
 
     return (
         readdirSync(path)
-            // Описание каталога разбором не является: оно объясняет, что здесь лежит, а не механизм
+            // Описание каталога разбором не считается: оно объясняет, что здесь лежит, а не механизм
             // промаха, — и в приёме встало бы записью, которой нечего сказать.
             .filter((file: string): boolean => file.endsWith('.md') && file !== 'README.md')
             .sort(byText)
