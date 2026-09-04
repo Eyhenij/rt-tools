@@ -65,14 +65,5 @@
       "task": "RT-841"
     }
   },
-  "debt": {
-    "enum EFilterOperatorType @ projects/utils ~ FILTER_OPERATOR_TYPE_ENUM @ @rt-tools/utils/esm/lib/interfaces": {
-      "reason": "перечисление повторяет набор внешнего пакета: разведение идёт отдельной задачей",
-      "task": "RT-796"
-    },
-    "enum EListSortOrder @ projects/utils ~ LIST_SORT_ORDER_ENUM @ @rt-tools/utils/esm/lib/interfaces": {
-      "reason": "перечисление повторяет набор внешнего пакета: разведение идёт отдельной задачей",
-      "task": "RT-796"
-    }
-  }
+  "debt": {}
 }
