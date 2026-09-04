@@ -144,7 +144,7 @@ describe('propose', () => {
 
         expect(outcome.code).toBe(1);
         expect(said(outcome)).toContain('`intake`');
-        // SC-AK-855: ключ отвечает на «куда вписать» и молчит о том, откуда взять значение.
+        // SC-AK-855: ключ отвечает на «куда вписать» и не говорит, откуда взять значение.
         expect(said(outcome)).toContain('владельца приёма');
         expect(sent).toHaveLength(0);
     });
