@@ -46,6 +46,15 @@ $side-menu: (
             track-color: var(--rt-bg-base-strong),
             thumb-color: var(--rt-bg-base-emphasis-soft),
         ),
+    // Ручка тяги: видимая полоса и зона, которой она захватывается курсором, — два разных числа.
+    // Пока они были одним, попасть в четыре пикселя удавалось не с первого раза, а промах мимо
+    // ручки попадает в панель подменю — то есть вместо тяги человек нажимает пункт. Зона шире
+    // втрое и стоит по центру прежнего места: видимое от этого не двигается ни на пиксель.
+    resizer: (
+            width: 0.25rem,
+            grab-width: 0.75rem,
+            hover-color: var(--rt-border-neutral-default),
+        ),
 );
 
 :host(.rtui-side-menu--pinned) {
@@ -70,6 +79,10 @@ $side-menu: (
     // раздвинутая тягой за край. Её знают трое — сама панель, ручка тяги и пункт внутри неё, —
     // и выражение, повторённое у каждого, разъезжается на первой же правке одного из них.
     --rt-side-menu-sub-menu-shown-width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
+
+    // Правый край панели подменю на экране: отступ полосы значков плюс её показанная ширина.
+    // Тем же числом стоит ручка тяги, и повторённое у неё выражение разошлось бы с этим.
+    --rt-side-menu-panel-edge: calc(var(--rt-side-menu-base-width) + var(--rt-side-menu-sub-menu-shown-width));
 
     // Полоса прокрутки обоих списков меню — полосы значков и подменю. Оформляется здесь, а не у
     // прокручиваемой области: вид остальных её экранов от этой правки не двигается. Правило
@@ -204,15 +217,36 @@ $side-menu: (
     // уносит в свою область содержимого. Снаружи ручка идёт от края экрана до края, и стоит она
     // там, где кончается панель: отступ полосы значков плюс ширина самой панели.
     .rtui-side-menu-resizer {
+        // Свес — половина лишней ширины, на которую зона захвата шире видимой полосы. Его
+        // используют два места: сам узел, сдвинутый влево на эту величину, и полоса внутри него,
+        // отступающая на неё же. Выражение, повторённое у обоих, расходится на первой же правке
+        // одного.
+        --rt-side-menu-resizer-overhang: calc((var(--rt-side-menu-resizer-grab-width) - var(--rt-side-menu-resizer-width)) / 2);
+
+        // Отступ узла от правого края панели: своя ширина полосы плюс свес слева от неё.
+        --rt-side-menu-resizer-inset: calc(var(--rt-side-menu-resizer-width) + var(--rt-side-menu-resizer-overhang));
+
+        // Узел занимает зону захвата целиком и стоит так, чтобы прежняя полоса осталась на своём
+        // месте: лишняя ширина расходится поровну в обе стороны от неё.
         position: fixed;
         z-index: 3;
-        left: calc(var(--rt-side-menu-base-width) + var(--rt-side-menu-sub-menu-shown-width) - 0.25rem);
-        width: 0.25rem;
+        left: calc(var(--rt-side-menu-panel-edge) - var(--rt-side-menu-resizer-inset));
+        width: var(--rt-side-menu-resizer-grab-width);
         cursor: col-resize;
         inset-block: 0;
 
-        &:hover {
-            background-color: var(--rt-border-neutral-default);
+        // Красится не сам узел, а полоса внутри него: закрашенная зона захвата стала бы втрое
+        // толще прежней линии и читалась бы другим оформлением, а не тем же с большей мишенью.
+        &:before {
+            position: absolute;
+            left: var(--rt-side-menu-resizer-overhang);
+            width: var(--rt-side-menu-resizer-width);
+            content: '';
+            inset-block: 0;
+        }
+
+        &:hover:before {
+            background-color: var(--rt-side-menu-resizer-hover-color);
         }
     }
 
