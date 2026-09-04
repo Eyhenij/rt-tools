@@ -35,7 +35,7 @@
 - **Запрос живёт, пока подменю открыто.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:closeSubMenu`
 - **Подписи поля, переключателя и пустого отбора зашиты по-английски.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:searchLabel`
 - **На узком экране закрепления нет, а поиск есть.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:isPinned`
-- **Ручка тяги ловится шире, чем видна.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.scss:resizer` — зона захвата, видимая полоса и свес объявлены своими свойствами меню; красится псевдоэлемент внутри зоны
+- **Ручка тяги захватывается шире, чем видна.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.scss:resizer` — зона захвата, видимая полоса и свес объявлены своими свойствами меню; красится псевдоэлемент внутри зоны
 
 Сценарии домена связаны с тестами номером в заголовке теста, а не таблицей здесь: связь сверяется
 в обе стороны сверкой спеков.

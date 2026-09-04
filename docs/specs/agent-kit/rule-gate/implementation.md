@@ -19,4 +19,4 @@
 - **Пути берутся у пишущего куска команды, а не у строки целиком.** — `projects/agent-kit/assets/defaults/project.sh:rt_shell_paths_default`
 - **Команда, публикующая тело задачи или заявки, требует правило слога.** — `projects/agent-kit/assets/defaults/gate-map.sh:doc-style-human` — сценарий SC-AK-850
 - **Судятся два признака сразу: вызов клиента и тело в доводах.** — `projects/agent-kit/assets/defaults/gate-map.sh:rt_gate_invokes` — сценарий SC-AK-850
-- **Интерпретатор судится телом, а не именем.** — `projects/agent-kit/assets/defaults/shell.sh:interp` — документ на входе и код доводом; сценарий `SC-AK-857`
+- **Интерпретатор проверяется по телу, а не по имени.** — `projects/agent-kit/assets/defaults/shell.sh:interp` — документ на входе и код доводом; сценарий `SC-AK-857`
