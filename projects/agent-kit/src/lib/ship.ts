@@ -10,7 +10,7 @@
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { join } from 'node:path';
+import { isAbsolute, join } from 'node:path';
 
 import { IIntakeAccepted, TREE_TOKEN_HEADER } from './cargo.js';
 
@@ -66,12 +66,22 @@ export function intakeUrl(intake: string, operation: string): string {
  * конфиг коммитится, а токен переживать историю не должен. Файла нет — пустая строка, и отказ
  * об этом скажет словами.
  */
+function tokenFile(root: string, spoken: string): string {
+    if (spoken.startsWith('~/')) {
+        return join(homedir(), spoken.slice(2));
+    }
+
+    return isAbsolute(spoken) ? spoken : join(root, spoken);
+}
+
 export function readToken(root: string, spoken: string): string {
     if (!spoken) {
         return '';
     }
 
-    const path: string = spoken.startsWith('~/') ? join(homedir(), spoken.slice(2)) : join(root, spoken);
+    // Абсолютный путь берётся как есть: склеенный с корнем, он ищет токен внутри дерева, где
+    // его нет, и отправка отказывает с текстом о ненайденном файле.
+    const path: string = tokenFile(root, spoken);
 
     return existsSync(path) ? readFileSync(path, 'utf8').trim() : '';
 }

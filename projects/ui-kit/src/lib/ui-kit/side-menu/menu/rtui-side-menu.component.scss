@@ -19,12 +19,51 @@ $side-menu: (
     ),
     sub-menu: (
         width: 15rem,
+        // Скругление правых углов панели. Число здесь, а не в теме: тем же числом отступает от
+        // угла прокручиваемый список — иначе полоса прокрутки, идущая до самого низа, срезается
+        // скруглением, и её нижний конец выглядит обрубленным.
+        // Число, а не ступень скругления кита: то имя объявлено обоими китами, и стили, подключённые
+        // позже, перебивали бы его молча.
+        radius: 1rem,
+        // Ширина подменю на время набора запроса: тот же предел, до которого его растягивает тяга.
+        held-width: 30rem,
+        // Поле поиска ниже полного роста поля формы: в шапке подменю оно стоит рядом с кнопкой
+        // значка, и полная высота поднимала бы шапку выше двух строк списка.
+        search-height: 2.5rem,
     ),
     sub-menu-item: (
         width: 13.75rem,
         title-font-size: 0.85rem,
     ),
+    // Полоса прокрутки списков меню. Системная занимает у узкой панели заметную долю ширины и
+    // выглядит в каждой системе по-своему; здесь она узкая, с плоской дорожкой и скруглённым
+    // ползунком. Значения взяты с образца, показанного владельцем: полоса в два пикселя, дорожка
+    // светло-серая, ползунок серый со скруглением малой ступени. Цвета берутся токенами — они же
+    // разводят светлую и тёмную тему.
+    scrollbar: (
+            width: 0.125rem,
+            thumb-radius: var(--rt-radius-xs),
+            track-color: var(--rt-bg-base-strong),
+            thumb-color: var(--rt-bg-base-emphasis-soft),
+        ),
+    // Ручка тяги: видимая полоса и зона, которой она захватывается курсором, — два разных числа.
+    // Пока они были одним, попасть в четыре пикселя удавалось не с первого раза, а промах мимо
+    // ручки попадает в панель подменю — то есть вместо тяги человек нажимает пункт. Зона шире
+    // втрое и стоит по центру прежнего места: видимое от этого не двигается ни на пиксель.
+    resizer: (
+            width: 0.25rem,
+            grab-width: 0.75rem,
+            hover-color: var(--rt-border-neutral-default),
+        ),
 );
+
+:host(.rtui-side-menu--pinned) {
+    // Полоса значков и закреплённое подменю стоят в ряд. Правило висит на модификаторе хоста, а
+    // не на самом хосте: поставленное безусловно, оно сдвинуло экраны каждого потребителя кита,
+    // где закрепления нет вовсе.
+    display: flex;
+    height: 100%;
+}
 
 :host {
     @each $element, $elements in $side-menu {
@@ -36,8 +75,37 @@ $side-menu: (
     // Hide drawer mask
     --mat-sidenav-scrim-color: transparent;
 
+    // Ширина, которой панель подменю стоит на экране: заданная оформлением потребителя либо
+    // раздвинутая тягой за край. Её знают трое — сама панель, ручка тяги и пункт внутри неё, —
+    // и выражение, повторённое у каждого, разъезжается на первой же правке одного из них.
+    --rt-side-menu-sub-menu-shown-width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
+
+    // Правый край панели подменю на экране: отступ полосы значков плюс её показанная ширина.
+    // Тем же числом стоит ручка тяги, и повторённое у неё выражение разошлось бы с этим.
+    --rt-side-menu-panel-edge: calc(var(--rt-side-menu-base-width) + var(--rt-side-menu-sub-menu-shown-width));
+
+    // Полоса прокрутки обоих списков меню — полосы значков и подменю. Оформляется здесь, а не у
+    // прокручиваемой области: вид остальных её экранов от этой правки не двигается. Правило
+    // пробивает инкапсуляцию, потому что прокручивается внутренний узел области, а полоса
+    // принадлежит ему; своего входа под вид полосы область не даёт.
+    ::ng-deep .rtui-scrollable__content {
+        &::-webkit-scrollbar {
+            width: var(--rt-side-menu-scrollbar-width);
+            height: var(--rt-side-menu-scrollbar-width);
+        }
+
+        &::-webkit-scrollbar-track {
+            background: var(--rt-side-menu-scrollbar-track-color);
+        }
+
+        &::-webkit-scrollbar-thumb {
+            border-radius: var(--rt-side-menu-scrollbar-thumb-radius);
+            background: var(--rt-side-menu-scrollbar-thumb-color);
+        }
+    }
+
     .rtui-mobile-side-menu {
-        width: var(--rt-side-menu-sub-menu-width);
+        width: var(--rt-side-menu-sub-menu-shown-width);
 
         .rtui-mobile-side-menu-list {
             display: flex;
@@ -45,7 +113,7 @@ $side-menu: (
             flex-direction: column;
 
             &--scrollable {
-                width: fit-content;
+                min-width: min(var(--rt-side-menu-sub-menu-item-width), 100%);
             }
 
             &__sub {
@@ -144,6 +212,44 @@ $side-menu: (
         }
     }
 
+    // Ручка тяги лежит вне ящика подменю и вне его контейнера: панель скруглена по правому краю
+    // и режет по этой дуге всё, что внутри неё, а положенное в контейнер рядом с панелью Material
+    // уносит в свою область содержимого. Снаружи ручка идёт от края экрана до края, и стоит она
+    // там, где кончается панель: отступ полосы значков плюс ширина самой панели.
+    .rtui-side-menu-resizer {
+        // Свес — половина лишней ширины, на которую зона захвата шире видимой полосы. Его
+        // используют два места: сам узел, сдвинутый влево на эту величину, и полоса внутри него,
+        // отступающая на неё же. Выражение, повторённое у обоих, расходится на первой же правке
+        // одного.
+        --rt-side-menu-resizer-overhang: calc((var(--rt-side-menu-resizer-grab-width) - var(--rt-side-menu-resizer-width)) / 2);
+
+        // Отступ узла от правого края панели: своя ширина полосы плюс свес слева от неё.
+        --rt-side-menu-resizer-inset: calc(var(--rt-side-menu-resizer-width) + var(--rt-side-menu-resizer-overhang));
+
+        // Узел занимает зону захвата целиком и стоит так, чтобы прежняя полоса осталась на своём
+        // месте: лишняя ширина расходится поровну в обе стороны от неё.
+        position: fixed;
+        z-index: 3;
+        left: calc(var(--rt-side-menu-panel-edge) - var(--rt-side-menu-resizer-inset));
+        width: var(--rt-side-menu-resizer-grab-width);
+        cursor: col-resize;
+        inset-block: 0;
+
+        // Красится не сам узел, а полоса внутри него: закрашенная зона захвата стала бы втрое
+        // толще прежней линии и читалась бы другим оформлением, а не тем же с большей мишенью.
+        &:before {
+            position: absolute;
+            left: var(--rt-side-menu-resizer-overhang);
+            width: var(--rt-side-menu-resizer-width);
+            content: '';
+            inset-block: 0;
+        }
+
+        &:hover:before {
+            background-color: var(--rt-side-menu-resizer-hover-color);
+        }
+    }
+
     .rtui-sub-side-menu {
         position: fixed;
         top: 0;
@@ -160,21 +266,130 @@ $side-menu: (
             // Component-local elevation token for the slide-out sub-menu drawer.
             --rt-side-menu-sub-content-shadow: 14px 0 28px rgb(0 0 0 / 25%), 10px 0 10px rgb(0 0 0 / 22%);
 
-            width: var(--rt-side-menu-sub-menu-width);
+            position: relative;
+            width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
+            min-width: max(var(--rt-side-menu-sub-menu-width), var(--rt-side-menu-sub-menu-dragged-width, 0px));
             height: 100%;
+            border-radius: 0 var(--rt-side-menu-sub-menu-radius) var(--rt-side-menu-sub-menu-radius) 0;
             border-left: 1px solid var(--rt-border-neutral-default);
             box-shadow: var(--rt-side-menu-sub-content-shadow);
+
+            // Список отступает от скруглённого угла на его же радиус. Панель обрезает всё, что в
+            // угол заходит, и полоса прокрутки, идущая по правому краю до самого низа, теряла в
+            // нём свой конец — выглядело это обрубленной полосой, а не скруглением панели.
+            rtui-scrollable {
+                // Отступ съедает высоту, а не прибавляет её: у области задан рост во всю панель,
+                // и без этого правила она вылезала бы за её нижний край на тот же радиус.
+                box-sizing: border-box;
+                padding-bottom: var(--rt-side-menu-sub-menu-radius);
+            }
 
             &__list {
                 width: 100%;
                 animation: fade-in-animation 0.15s ease-in-out 0.15s forwards;
                 opacity: 0;
 
+                // Список с боковой прокруткой не уже пункта — и не шире панели. Рост по
+                // содержимому раздувал бы его вместе с самой длинной подписью, и пункт уезжал
+                // бы за край панели вместо многоточия; прокрутка при этом остаётся при деле —
+                // она нужна там, где панель уже самого пункта.
                 &--scrollable {
-                    min-width: fit-content;
+                    min-width: min(var(--rt-side-menu-sub-menu-item-width), 100%);
+                }
+            }
+
+            &__empty {
+                padding: var(--rt-spacing-16);
+                color: var(--rt-text-base-secondary);
+                font-size: var(--rt-font-size-xs);
+            }
+        }
+
+        // Закреплённая шторка стоит в потоке рядом с полосой значков, а не поверх страницы:
+        // тень и перекрытие у постоянно открытой панели читаются как залипший оверлей.
+        // Пока человек работает с полем, подменю стоит во всю разрешённую ширину: отобранный
+        // список читают, а не разглядывают в узкой полосе. Раздвигает панель нижняя граница, а не
+        // ширина: ширину шторки Material держит своим кодом, и ни переход, ни кадры её не двигают.
+        &--held .rtui-sub-side-menu-content {
+            min-width: var(--rt-side-menu-sub-menu-held-width);
+        }
+
+        &--pinned {
+            position: relative;
+            left: 0;
+            width: var(--rt-side-menu-sub-menu-shown-width);
+            height: 100%;
+            flex: 0 0 auto;
+
+            .rtui-sub-side-menu-content {
+                box-shadow: none;
+
+                // Появление списка рассчитано на выдвижение шторки. Закреплённая никуда не
+                // выезжает, и её список показан сразу — иначе он живёт под гашеной анимацией
+                // и не виден вовсе там, где движение выключено.
+                &__list {
+                    animation: none;
+                    opacity: 1;
                 }
             }
         }
+
+        .rtui-sub-side-menu-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--rt-spacing-8);
+            gap: var(--rt-spacing-8);
+
+            // Поле рисует готовое кита. Своего у него остаётся место в ряду, форма пилюли и
+            // рост: в шапке подменю поле стоит рядом с кнопкой значка, и полная высота поля
+            // формы поднимала бы шапку выше строки списка. Скругление и высоту задают ручки
+            // самого поля, а не рамка поверх него.
+            &__search {
+                min-width: 0;
+                flex: 1 1 auto;
+
+                --mat-form-field-outlined-container-shape: var(--rt-radius-xl);
+                --mat-form-field-container-height: var(--rt-side-menu-sub-menu-search-height);
+                --mat-form-field-container-vertical-padding: var(--rt-spacing-8);
+
+                // Готовое поле разводит значок и текст на шестнадцать пикселей — двенадцать
+                // справа от значка и четыре у самого префикса. В узкой панели это половина
+                // строки запроса, поэтому зазор сведён к одной ступени. Ручки под него у поля
+                // формы нет: правится сам отступ значка.
+                &::ng-deep .mat-mdc-form-field-icon-prefix > .mat-icon {
+                    padding: 0 var(--rt-spacing-4) 0 var(--rt-spacing-12);
+                }
+            }
+
+            // Кнопку рисует готовое кита; своего у неё остаётся место в ряду.
+            &__pin {
+                flex: 0 0 auto;
+            }
+        }
+    }
+
+    // Узкая раскладка: подменю занимает экран целиком, и поле поиска стоит над списком.
+    // Рисует его то же готовое кита, что и на широком экране.
+    .rtui-side-menu-search {
+        width: 100%;
+        margin: var(--rt-spacing-8) 0;
+
+        --mat-form-field-outlined-container-shape: var(--rt-radius-xl);
+        --mat-form-field-container-height: var(--rt-side-menu-sub-menu-search-height);
+        --mat-form-field-container-vertical-padding: var(--rt-spacing-8);
+
+        // Зазор между значком и запросом сведён к ступени по той же причине, что и на широком
+        // экране: готовое поле разводит их на шестнадцать пикселей.
+        &::ng-deep .mat-mdc-form-field-icon-prefix > .mat-icon {
+            padding: 0 var(--rt-spacing-4) 0 var(--rt-spacing-12);
+        }
+    }
+
+    .rtui-side-menu-empty {
+        padding: var(--rt-spacing-16);
+        color: var(--rt-text-base-secondary);
+        font-size: var(--rt-font-size-xs);
     }
 }
 
