@@ -96,8 +96,8 @@ describe('RtToggleButtonGroupComponent', (): void => {
         });
     });
 
-    describe('множественный выбор — SC-UKV-84, SC-UKV-85', (): void => {
-        it('SC-UKV-84 — нажатие по соседнему добавляет его к набору', (): void => {
+    describe('множественный выбор — SC-UKV-87, SC-UKV-88', (): void => {
+        it('SC-UKV-87 — нажатие по соседнему добавляет его к набору', (): void => {
             const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup({ multiple: true, values: ['day'] });
             const picked: ReadonlyArray<string>[] = [];
             fixture.componentInstance.valuesChange.subscribe((values: ReadonlyArray<string>): void => {
@@ -110,7 +110,7 @@ describe('RtToggleButtonGroupComponent', (): void => {
             expect(picked).toEqual([['day', 'week']]);
         });
 
-        it('SC-UKV-84 — выбранными помечены все, чьи значения в наборе', (): void => {
+        it('SC-UKV-87 — выбранными помечены все, чьи значения в наборе', (): void => {
             const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup({ multiple: true, values: ['day', 'month'] });
 
             expect(buttons(fixture).map((node: HTMLButtonElement): string | null => node.getAttribute('aria-pressed'))).toEqual([
@@ -120,7 +120,7 @@ describe('RtToggleButtonGroupComponent', (): void => {
             ]);
         });
 
-        it('SC-UKV-85 — повторное нажатие по выбранному снимает его с набора', (): void => {
+        it('SC-UKV-88 — повторное нажатие по выбранному снимает его с набора', (): void => {
             const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup({ multiple: true, values: ['day', 'week'] });
             const picked: ReadonlyArray<string>[] = [];
             fixture.componentInstance.valuesChange.subscribe((values: ReadonlyArray<string>): void => {
@@ -133,7 +133,7 @@ describe('RtToggleButtonGroupComponent', (): void => {
             expect(picked).toEqual([['week']]);
         });
 
-        it('SC-UKV-85 — наружу уходит весь набор, а не разница', (): void => {
+        it('SC-UKV-88 — наружу уходит весь набор, а не разница', (): void => {
             const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup({ multiple: true, values: [] });
             const picked: ReadonlyArray<string>[] = [];
             fixture.componentInstance.valuesChange.subscribe((values: ReadonlyArray<string>): void => {
@@ -158,14 +158,14 @@ describe('RtToggleButtonGroupComponent', (): void => {
         });
     });
 
-    describe('недоступный сегмент — SC-UKV-86, SC-UKV-87', (): void => {
+    describe('недоступный сегмент — SC-UKV-89, SC-UKV-90', (): void => {
         const WITH_DISABLED: ReadonlyArray<IRtToggleButtonGroup.Option> = [
             { value: 'day', label: 'День' },
             { value: 'week', label: 'Неделя', disabled: true },
             { value: 'month', label: 'Месяц' },
         ];
 
-        it('SC-UKV-86 — недоступный сегмент остаётся видимым', (): void => {
+        it('SC-UKV-89 — недоступный сегмент остаётся видимым', (): void => {
             const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup({ options: WITH_DISABLED });
 
             expect(buttons(fixture).map((node: HTMLButtonElement): string => (node.textContent ?? '').trim())).toEqual([
@@ -176,7 +176,7 @@ describe('RtToggleButtonGroupComponent', (): void => {
             expect(buttons(fixture).map((node: HTMLButtonElement): boolean => node.disabled)).toEqual([false, true, false]);
         });
 
-        it('SC-UKV-86 — нажатие по недоступному наружу не уходит', (): void => {
+        it('SC-UKV-89 — нажатие по недоступному наружу не уходит', (): void => {
             const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup({ options: WITH_DISABLED });
             const picked: jest.Mock = jest.fn();
             fixture.componentInstance.valueChange.subscribe(picked);
@@ -187,7 +187,7 @@ describe('RtToggleButtonGroupComponent', (): void => {
             expect(picked).not.toHaveBeenCalled();
         });
 
-        it('SC-UKV-87 — отключённая группа делает недоступными и те сегменты, что доступны сами', (): void => {
+        it('SC-UKV-90 — отключённая группа делает недоступными и те сегменты, что доступны сами', (): void => {
             const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup({ options: WITH_DISABLED, disabled: true });
 
             expect(buttons(fixture).every((node: HTMLButtonElement): boolean => node.disabled)).toBe(true);
