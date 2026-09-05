@@ -24,7 +24,7 @@ export const KEEP_DAYS: number = 30;
 export const DEFAULT_DAYS: number = 3;
 
 /** Роды событий, которые пишут гарды. */
-export type TEvent = 'skill-load' | 'gate-deny' | 'guard-deny';
+export type TEvent = 'skill-load' | 'gate-deny' | 'guard-deny' | 'push-gate';
 
 export interface IObservation {
     readonly event: string;
@@ -83,6 +83,15 @@ export interface ISummary {
      */
     readonly denialsOffFile: number;
     readonly guards: readonly ICount[];
+    /**
+     * Исходы гейта пуша: `green` — набор прогнан и зелёный, `red` — набор красный, `no-checks` —
+     * проверок в дереве не нашлось.
+     *
+     * Отбои гарда считаются строкой выше и отвечают на один вопрос из трёх. Гейт, у которого
+     * набор не нашёлся ни разу, в отбоях выглядит как гейт, у которого всё зелено: и тот и
+     * другой молчат. Разводит их только этот счёт.
+     */
+    readonly pushGate: readonly ICount[];
     /**
      * Гарды, разложенные в дерево и не отбившие за отрезок ни разу.
      *
@@ -266,6 +275,7 @@ export function summarize(
         kinds: countBy(denials.map((entry: IObservation): string => entry.kind)),
         denialsOffFile: denials.filter((entry: IObservation): boolean => OFF_FILE_KINDS.includes(entry.kind)).length,
         guards: countBy(of(observations, 'guard-deny').map((entry: IObservation): string => entry.resource)),
+        pushGate: countBy(of(observations, 'push-gate').map((entry: IObservation): string => entry.resource)),
         silentGuards: guards.filter((name: string): boolean => !denied.has(name)).sort(byText),
         unused: known.filter((name: string): boolean => !loaded.has(name)).sort(byText),
         versions: [...new Set(observations.map((entry: IObservation): string => entry.version).filter(Boolean))].sort(byText),

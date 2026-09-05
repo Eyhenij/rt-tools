@@ -1,3 +1,61 @@
+# [0.24.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.23.0...rt-agent-kit@0.24.0) (2026-09-04)
+
+### Bug Fixes
+
+- **rt:agent-kit:** вердикт фоновой роли виден гарду, у отказа появился второй выход ([9ea9c22](https://github.com/Eyhenij/rt-tools/commit/9ea9c226b44334bb63d905f304b14a519feb1b88))
+- **rt:agent-kit:** вход в сессию сверяется родом запуска, а не именем инструмента ([21e8288](https://github.com/Eyhenij/rt-tools/commit/21e8288e9bc2d6bffaf292a03729173aa78247ba))
+- **rt:agent-kit:** заглушённый вывод не делает чтение записью и внутри тела ([45ca2d0](https://github.com/Eyhenij/rt-tools/commit/45ca2d08b1bc35ff1f1d40eba065a3b6050af849))
+- **rt:agent-kit:** запись долга у тяжёлого по знакам файла не читается устаревшей ([e171d75](https://github.com/Eyhenij/rt-tools/commit/e171d75b552991f40fe3117e0c5706c1ab5d8505))
+- **rt:agent-kit:** интерпретатор судится телом, а не именем ([bbaff30](https://github.com/Eyhenij/rt-tools/commit/bbaff30cfe4320c98c48f7ec9ccc0d0851180b56))
+- **rt:agent-kit:** множественная форма судится по тому, что стоит следом ([d4a811c](https://github.com/Eyhenij/rt-tools/commit/d4a811ca5d279e0ef75e9f6a2ec4eee8cce4e51d))
+- **rt:agent-kit:** незаполненная дырка перестала быть расхождением раскладки ([e5d1c07](https://github.com/Eyhenij/rt-tools/commit/e5d1c0703de51ccd383c587a31782c48fe6eee9d))
+- **rt:agent-kit:** отказ, сказанный в поток ошибок, доходит до исполнителя ([a5fe576](https://github.com/Eyhenij/rt-tools/commit/a5fe576554582bc130d96f4fb3124102b6a6cb19))
+- **rt:agent-kit:** признак вызова видит команду за присваиванием с подстановкой ([20bfc5a](https://github.com/Eyhenij/rt-tools/commit/20bfc5a9dd9b14a55032f91fb4c42559ad98c690))
+- **rt:agent-kit:** признак команды узнаёт вызов, названный путём ([7456958](https://github.com/Eyhenij/rt-tools/commit/745695825247100561a9f36f50450983ebf189e5))
+- **rt:agent-kit:** сверка называет чужую базу заявки, а не потерянное событие ([1257416](https://github.com/Eyhenij/rt-tools/commit/1257416577b6b4a74665b29c88ab5b8dbb2607ff))
+- **rt:agent-kit:** тело интерпретатора без записи путей не отдаёт ([7686405](https://github.com/Eyhenij/rt-tools/commit/768640599c491cc0cd2bf18261967c862ab7c537))
+- **rt:agent-kit:** четыре гарда называют то, о чём молчали ([e05ca14](https://github.com/Eyhenij/rt-tools/commit/e05ca1458a4af048f1a27d6ccfd58f1b0543e3e4))
+
+### Features
+
+- **rt:agent-kit:** [RT-1686] три статьи правила тестов из приёма ([c271655](https://github.com/Eyhenij/rt-tools/commit/c2716554da50ffc72313daa7e39a6a6d76e82160))
+- **rt:agent-kit:** [RT-1687] три статьи о слиянии и заявках из приёма ([b4b983b](https://github.com/Eyhenij/rt-tools/commit/b4b983b11ccebd190b2babd41ecfe888dfecb79a))
+- **rt:agent-kit:** [RT-1688] две правки о работе через браузер из приёма ([f3240a2](https://github.com/Eyhenij/rt-tools/commit/f3240a247e58f50bf34a3ff9b38d9e9be2c518b2))
+- **rt:agent-kit:** [RT-1689] три правки о ходе работы из приёма ([cd5c401](https://github.com/Eyhenij/rt-tools/commit/cd5c4018be472ead268c011d6062b0d23b0f8f03))
+- **rt:agent-kit:** гард спрашивает хостинг, кто придёт по токену ([47a4dbb](https://github.com/Eyhenij/rt-tools/commit/47a4dbb80484714c49e879d9c0e3a9e648c991ac))
+- **rt:agent-kit:** гейт требует правило слога на задачах и заявках ([c2f2ae4](https://github.com/Eyhenij/rt-tools/commit/c2f2ae429a4e5efecb15c88d9ffa60294c322998))
+- **rt:agent-kit:** заказанная словами работа встаёт в очередь тем же ходом ([1cde39d](https://github.com/Eyhenij/rt-tools/commit/1cde39dce9dfb9515d3d84a296d7abf0830d45ac))
+- **rt:agent-kit:** закон о перечне работ вне эпика и о назначении эпика ([649da10](https://github.com/Eyhenij/rt-tools/commit/649da1078b98223f643657202b6534e87ad3421a))
+- **rt:agent-kit:** метка профиля по исходу вызова и гард просьбы войти ([997ba84](https://github.com/Eyhenij/rt-tools/commit/997ba84607fe8eae0f63ace75e77db657740bdaa))
+- **rt:agent-kit:** надстройка помечается предложением, раскладка называет лишние ([b285edb](https://github.com/Eyhenij/rt-tools/commit/b285edb5beb227655b6f031ccb9b661353263590))
+- **rt:agent-kit:** правило называет язык задач, заявок и ответов владельцу ([333d1b0](https://github.com/Eyhenij/rt-tools/commit/333d1b0da6b1a3618e4de8af511c285f3a0d90e9))
+- **rt:agent-kit:** тест пишется до кода и до правки падает ([74c70a4](https://github.com/Eyhenij/rt-tools/commit/74c70a43deda1ad3d77150b2317c18be17f67f74))
+- **rt:agent-kit:** у владельца просят режим работы, а не ввод пароля ([5866919](https://github.com/Eyhenij/rt-tools/commit/5866919457863603013d9bbe0bb3fbcc2a231d5b))
+- **rt:agent-kit:** у красного по вине самой проверки появился ход ([adf1b52](https://github.com/Eyhenij/rt-tools/commit/adf1b5200eff85d04c0cffa1ab2b619afedcd0c8))
+- **rt:ui-kit:** [RT-1682] список говорит, что снизу осталось непоказанное ([1a3b2f2](https://github.com/Eyhenij/rt-tools/commit/1a3b2f232e2a30303d3eb88503bf8e43e0c223ca))
+
+# [0.23.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.22.0...rt-agent-kit@0.23.0) (2026-08-31)
+
+### Bug Fixes
+
+- **rt:agent-kit:** вопрос о поддержке браузеров не судится как выбор профиля ([66da38e](https://github.com/Eyhenij/rt-tools/commit/66da38ea1317ce5766e384573661a210fac74e84))
+- **rt:agent-kit:** номер задачи из имени ветки вынимает профиль ([d50192d](https://github.com/Eyhenij/rt-tools/commit/d50192ddaf79c3fde3e8eebb126ab1cb0e44d1f2))
+- **rt:agent-kit:** проверка единообразия читается измерителем, а не заданием ([fe95e66](https://github.com/Eyhenij/rt-tools/commit/fe95e66f9fd98f1cbfa943a299317f0f57513cd0))
+
+### Features
+
+- **rt:agent-kit:** гард разговора видит, что на этот вопрос уже отвечали ([61c2498](https://github.com/Eyhenij/rt-tools/commit/61c2498caeef37347d0f836510d48a22add19f7c))
+- **rt:agent-kit:** главная ветка берётся удалённой ссылкой и в действиях ([7302e02](https://github.com/Eyhenij/rt-tools/commit/7302e0234da3341031850d3b21dc931f483c9779))
+- **rt:agent-kit:** закон об автономном заходе, правило и паттерн под него ([ae60552](https://github.com/Eyhenij/rt-tools/commit/ae60552e4f1cf12ac045e2b724844420a8c1d664))
+- **rt:agent-kit:** набор перед пушем виден целиком, а снятое из умолчания названо ([9426373](https://github.com/Eyhenij/rt-tools/commit/9426373ef1213e021a4c2f11101a4beee85be03f))
+- **rt:agent-kit:** отданная заявка доводится до готовности, а не бросается черновиком ([81a9478](https://github.com/Eyhenij/rt-tools/commit/81a94780c5e94b1bd7cd5d17529f0e4e7d895a85)), closes [#1646](https://github.com/Eyhenij/rt-tools/issues/1646)
+- **rt:agent-kit:** правка числа элементов в контейнере — правка раскладки ([7358733](https://github.com/Eyhenij/rt-tools/commit/73587336c2ad7946baea41b4561d48622185f352))
+- **rt:agent-kit:** признаки нативных тегов знают о второй дизайн-системе ([ff69acc](https://github.com/Eyhenij/rt-tools/commit/ff69acc7f9b7dbbdc914dc73cedceb69257bf239))
+- **rt:agent-kit:** пропуск сверки схемы кончается там, где ветка тронула хранилище ([135119c](https://github.com/Eyhenij/rt-tools/commit/135119cd82384c0ca20932dcd2494a18eea9b996))
+- **rt:agent-kit:** разведка образца и форма ответа владельцу ([3c387d8](https://github.com/Eyhenij/rt-tools/commit/3c387d86ef70ec55bea1e2c3aed811a3b5de2732))
+- **rt:agent-kit:** сверка очереди видит многозаходную работу и упавшую выкатку ([1c22403](https://github.com/Eyhenij/rt-tools/commit/1c2240379469c2e823a40104dd7ad27d511ed52b))
+- **rt:agent-kit:** словарь называет источник своей правки сам ([d650228](https://github.com/Eyhenij/rt-tools/commit/d65022837d086ee398875c874653dc256f1ce553))
+
 # [0.22.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.21.0...rt-agent-kit@0.22.0) (2026-08-30)
 
 ### Bug Fixes

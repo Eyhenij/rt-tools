@@ -211,6 +211,29 @@ describe('вес загруженного', (): void => {
     });
 });
 
+describe('исходы гейта пуша', (): void => {
+    const runs: readonly IObservation[] = [
+        { event: 'push-gate', resource: 'green', kind: '', session: '1', version: '0.5.1' },
+        { event: 'push-gate', resource: 'green', kind: '', session: '2', version: '0.5.1' },
+        { event: 'push-gate', resource: 'no-checks', kind: '', session: '2', version: '0.5.1' },
+        { event: 'guard-deny', resource: 'git-guard-push-tests', kind: '', session: '2', version: '0.5.1' },
+    ];
+
+    it('SC-AK-836 — исходы считаются порознь и с отбоями не смешиваются', (): void => {
+        const summary: ISummary = summarize(runs, [], 3);
+
+        expect(summary.pushGate).toEqual([
+            { name: 'green', count: 2 },
+            { name: 'no-checks', count: 1 },
+        ]);
+        expect(summary.guards).toEqual([{ name: 'git-guard-push-tests', count: 1 }]);
+    });
+
+    it('SC-AK-836 — гейт не отработавший ни разу счёта не заводит', (): void => {
+        expect(summarize([], [], 3).pushGate).toEqual([]);
+    });
+});
+
 describe('молчащий гард', (): void => {
     const denials: readonly IObservation[] = [
         { event: 'guard-deny', resource: 'task-flow-guard', kind: '', session: '1', version: '0.5.1' },
