@@ -252,6 +252,15 @@ while IFS= read -r signal; do
         printf '%s' "$rel_path" | grep -qE "$only_named" || continue
     fi
 
+    # Обратная сторона образца имени: дерево, которое готовое само и пишет, выводит из-под
+    # признака папки источника этого готового. Без неё выбор у такого дерева один — не брать
+    # набор вовсе, и тогда внутри самого набора готовых компонентов обход готового не ловит
+    # ничто. Поле читает и сплошная проверка: расходиться им нельзя.
+    except_named="$(field "$signal" '.exceptNamed')"
+    if [ -n "$except_named" ]; then
+        printf '%s' "$rel_path" | grep -qE "$except_named" && continue
+    fi
+
     case "$(field "$signal" '.scope')" in
         whole) text="$whole" ;;
         *) text="$added" ;;

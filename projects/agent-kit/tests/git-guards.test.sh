@@ -51,6 +51,11 @@ d "ветка с ключом и номером" 'git checkout -b RT-9-guest-tok
 d "то же через switch" 'git switch -c RT-9-guest-token' PASS
 d "заглавные буквы в хвосте" 'git checkout -b RT-9-GuestToken' deny
 d "пробел вместо дефиса после номера" 'git checkout -b RT-9_guest' deny
+# SC-AK-872. Флаг между глаголом и `-b` — та же форма заведения ветки: ветки в дереве заводят
+# и так, а гард судил только форму без флага.
+d "SC-AK-872 — флаг между checkout и -b форму имени не обходит" 'git checkout -q -b RT-9-GuestToken' deny
+d "SC-AK-872 — та же форма с верным именем проходит" 'git checkout -q -b RT-9-guest-token' PASS
+d "SC-AK-872 — то же через switch с флагом" 'git switch -q -c RT-9-GuestToken' deny
 # Имя без номера законно, пока ветка живёт локально: заявка с неё не откроется.
 d "ветка под пробу без номера" 'git checkout -b probe-idea' PASS
 

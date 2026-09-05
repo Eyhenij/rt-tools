@@ -52,7 +52,7 @@ rt_delivery_conflict() {
         esac
     fi
     if [ -z "$taking" ] \
-        && printf '%s' "$cmd" | grep -qE '(^|[;&|[:space:]])git[[:space:]]+(checkout[[:space:]]+-b|switch[[:space:]]+-c)[[:space:]]+[A-Za-z]+-[0-9]+'; then
+        && printf '%s' "$cmd" | grep -qE '(^|[;&|[:space:]])git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]+[A-Za-z]+-[0-9]+'; then
         taking='заведение ветки под задачу'
     fi
     if [ -z "$taking" ] \
