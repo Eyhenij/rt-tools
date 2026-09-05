@@ -455,3 +455,17 @@
 этом назван неверным вариантом: он хранит принятое, а не результаты сломанной проверки
 
 Покрыто: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+
+### SC-AK-872 — заведение ветки узнаётся и с флагом между глаголом и -b
+
+Дано ветка заводится строкой `git checkout -q -b` либо `git switch -q -c`
+Когда её разбирают гард поставки, гард спора заявок, гард набора пуша, гард ожидания и страж
+выходов хода
+Тогда каждый судит её так же, как форму без флага: имя ветки и основание проверены, спор с
+открытой заявкой отбит, пуш новой ветки пропущен, взятая работа замечена
+
+Покрыто: `projects/agent-kit/tests/git-guards.test.sh`,
+`projects/agent-kit/tests/git-guard-conflict.test.sh`,
+`projects/agent-kit/tests/git-guard-push-tests.test.sh`,
+`projects/agent-kit/tests/waiting-turn-guard.test.sh`,
+`projects/agent-kit/tests/turn-exit-guard.test.sh`.

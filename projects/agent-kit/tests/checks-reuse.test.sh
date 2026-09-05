@@ -90,7 +90,7 @@ rm -f "$REUSE_TREE/libs/alpha/src/"*.html
 html_in kit '<button rtButton>ок</button>'
 report "SC-AK-817 — своё вырезание набора остаётся в силе" "$(says 'button')" 0
 
-# --- SC-AK-869 — папка источника готового выведена из-под признака ---------------------------
+# --- SC-AK-874 — папка источника готового выведена из-под признака ---------------------------
 #
 # Дерево, которое готовое само и пишет, до этого выбирало между «шумит на каждом своём файле» и
 # «молчит везде»: набор о готовом кита обращён к потребителю, а внутри самого кита обход готового
@@ -107,11 +107,11 @@ cat > "$REUSE_TREE/tools/signals/source.json" <<'JSON'
 JSON
 config_with '["source"]'
 printf '%s\n' '<input name="login" />' > "$REUSE_TREE/libs/alpha/src/lib/ui-kit/table/t.html"
-report "SC-AK-869 — внутри набора признак судит по-прежнему" "$(says 'native-input')" 1
+report "SC-AK-874 — внутри набора признак судит по-прежнему" "$(says 'native-input')" 1
 
 rm -f "$REUSE_TREE/libs/alpha/src/lib/ui-kit/table/t.html"
 printf '%s\n' '<input name="login" />' > "$REUSE_TREE/libs/alpha/src/lib/ui-kit/dynamic-input/i.html"
-report "SC-AK-869 — папка источника готового признака не получает" "$(says 'native-input')" 0
+report "SC-AK-874 — папка источника готового признака не получает" "$(says 'native-input')" 0
 
 rm -rf "$REUSE_TREE"
 

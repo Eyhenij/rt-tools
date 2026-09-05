@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.24.0 · hooks/waiting-turn-guard.sh · b7bd6bb39311 · правится надстройкой, не здесь
+# rt-kit v0.24.0 · hooks/waiting-turn-guard.sh · e31d38c3e552 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: hooks/deny-tail.sh
 # Гард ожидания: ход, сообщающий владельцу о чужом шаге, не заканчивается, пока в нём не было ни
@@ -74,7 +74,7 @@ red_re='completed[[:space:]]+failure|"conclusion"[[:space:]]*:[[:space:]]*"failu
 #
 # Правка кода в ветке того же PR действием по следующей задаче не считается — она чинит
 # прежнюю, а не двигает работу дальше.
-taken_re='task:new|checkout[[:space:]]+-b|task:move[^|;&]*in-progress|(cp|mkdir)[^|;&]*/tasks/'
+taken_re='task:new|checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|task:move[^|;&]*in-progress|(cp|mkdir)[^|;&]*/tasks/'
 
 # Заведение папки задачи идёт и не оболочкой: инструмент правки файла пишет её первым файлом, и
 # командной строки за этим нет вовсе. Поэтому рядом с командами судится путь правки — у него

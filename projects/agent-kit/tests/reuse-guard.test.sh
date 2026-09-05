@@ -117,7 +117,7 @@ expect_decision "SC-AK-197 — образец имени сверяется с �
 expect_decision "SC-AK-197 — тот же файл в чужом корне признака не получает" reuse-first-guard.sh \
     "$(write_input 'libs/admin/x/b.ts' 'fetch("/api")')" PASS
 
-# SC-AK-869 — обратная сторона образца имени. Дерево, которое готовое само и пишет, выводит
+# SC-AK-874 — обратная сторона образца имени. Дерево, которое готовое само и пишет, выводит
 # из-под признака папки источника этого готового: иначе выбор у него один — не брать набор
 # вовсе, и внутри самого набора готовых компонентов обход готового не ловит ничто.
 cat > "$TREE/tools/signals/source.json" <<'JSON'
@@ -135,9 +135,9 @@ cat > "$TREE/tools/signals/source.json" <<'JSON'
 JSON
 declare_bundles '"source"' ''
 mkdir -p "$TREE/projects/kit/src/lib/ui-kit/dynamic-input" "$TREE/projects/kit/src/lib/ui-kit/table"
-expect_decision "SC-AK-869 — внутри набора признак отбивает, как и снаружи" reuse-first-guard.sh \
+expect_decision "SC-AK-874 — внутри набора признак отбивает, как и снаружи" reuse-first-guard.sh \
     "$(write_input 'projects/kit/src/lib/ui-kit/table/t.html' '<input>')" deny
-expect_decision "SC-AK-869 — папка источника готового выведена из-под признака" reuse-first-guard.sh \
+expect_decision "SC-AK-874 — папка источника готового выведена из-под признака" reuse-first-guard.sh \
     "$(write_input 'projects/kit/src/lib/ui-kit/dynamic-input/i.html' '<input>')" PASS
 
 # SC-AK-147 — область «файл целиком»: правка приносит строку без объявления класса, признак судит файл.
