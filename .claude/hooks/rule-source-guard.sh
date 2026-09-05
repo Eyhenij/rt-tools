@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.22.0 · hooks/rule-source-guard.sh · 8fe2f9a44ac9 · правится надстройкой, не здесь
+# rt-kit v0.24.0 · hooks/rule-source-guard.sh · e5e1d428589f · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/write-targets.sh, hooks/guard-note.sh
 # Гард места правки: слой правил чинится там, где сломано, а не там, где виден.
@@ -107,6 +107,17 @@ while IFS= read -r candidate; do
     # целиком нельзя: гард стоит на каждой правке.
     resource="$(head -12 "$candidate" 2>/dev/null | sed -nE 's/.*rt-kit v[^ ]+ · ([^ ]+) · [0-9a-f]+.*/\1/p' | head -1)"
     [ -z "$resource" ] && continue
+
+    # Файл в конфликте пропускается наравне со снятым. Разрешение конфликта содержания копии не
+    # меняет — раскладка кладёт её заново, — а отбитый здесь исполнитель остаётся с наполовину
+    # слитой веткой и без законного хода: источник править нечего, надстройка конфликта не
+    # снимает. Признаков два, и хватает любого: запись индекса о неслитом файле и маркеры
+    # слияния в самом файле — второй нужен там, где слияние ведёт не git, а сторонний
+    # инструмент, оставляющий маркеры без записи в индексе.
+    if [ -n "$(git -C "$root" ls-files -u -- "$candidate" 2>/dev/null)" ] \
+        || grep -qE '^(<<<<<<< |>>>>>>> )' "$candidate" 2>/dev/null; then
+        continue
+    fi
 
     if [ -n "$sources" ] && [ -f "$root/$sources/$resource" ]; then
         deny "BLOCKED by rule-source-guard: «${candidate#"$root"/}» разложен пакетом, и правка на его месте теряется на следующей раскладке — а до тех пор раскладка отказывает по этому файлу целиком, и цену платит тот, кто в этот день правит соседний ресурс. Ресурс — «${resource}». Правь источник: ${sources}/${resource} — потом собери пакет и разложи." \

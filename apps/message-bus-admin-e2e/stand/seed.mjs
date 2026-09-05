@@ -15,6 +15,7 @@
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
+import { checkNothingDrifts } from './seed-self-check.mjs';
 import { ACCOUNT, API_ORIGIN, ENROLLED_SLUG, INVITES, SERVER_DATABASE_URL, STAND_DATABASE, STAND_DATABASE_URL, TREES } from './stand.mjs';
 
 const ROOT = fileURLToPath(new URL('../../..', import.meta.url));
@@ -410,6 +411,16 @@ async function moments() {
             'FROM (SELECT record."id", row_number() OVER (ORDER BY tree."slug") AS pos',
             '      FROM "month_record" AS record JOIN "tree" AS tree ON tree."id" = record."treeId") AS ordered',
             'WHERE "month_record"."id" = ordered."id";',
+            // месяц записи приёмник вывел из своих часов в минуту приёма, а время прогона
+            // проставлено строкой выше — постоянным. Не пересчитанный от него, месяц показан
+            // колонкой и меняется с датой прогона: первого числа кадр списка сводок расходится
+            // с эталоном, ничего не сказав о вёрстке. Форма та же, что у приёмника, — год и
+            // месяц по всемирному времени, а колонка времени и хранится в нём
+            `UPDATE "month_record" SET "month" = to_char("ranAt", 'YYYY-MM');`,
+            // деревья: время заведения на экранах не показано, но лежит в тех же таблицах, что и
+            // показанное, и самопроверка ниже судит их целиком — чтобы столбец, добавленный на
+            // экран завтра, был постоянным уже сегодня
+            `UPDATE "tree" SET "createdAt" = TIMESTAMP '2026-08-01 05:00:00';`,
             // приглашения: времена выдачи разведены по часу, чтобы порядок «выданные позже
             // сверху» был виден и не зависел от того, за сколько прошёл засев
             `UPDATE "tree_invite" SET "issuedAt" = TIMESTAMP '2026-08-06 08:00:00' + (ordered.pos * INTERVAL '1 hour')`,
@@ -470,6 +481,7 @@ export async function seed() {
     await keys();
     await moments();
     await states();
+    await checkNothingDrifts(sql);
 }
 
 /** Подготовка хранилища: база и схема. Идёт до подъёма приёмника — он ждёт готовой схемы. */

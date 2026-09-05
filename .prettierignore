@@ -90,6 +90,7 @@ tools/board-gh.mjs
 tools/board-paths.mjs
 tools/board-runs.mjs
 tools/board-titles.mjs
+tools/board-folders.mjs
 tools/board.mjs
 tools/check-board.mjs
 tools/check-doc-paths.mjs

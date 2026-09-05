@@ -65,6 +65,13 @@ say "SC-AK-760 — обёртка менеджера пакетов не пря�
 printf '%s\n' "await puppeteer.connect({ browserWSEndpoint: url });" > "$TMP/attach.mjs"
 say "SC-AK-760 — присоединение к поднятому браузеру отбито" "node $TMP/attach.mjs" DENY
 
+# Глагол без имени движка перед точкой: имя вносят прямым ввозом, и судить остаётся сам глагол.
+printf '%s\n' \
+    "import { connectOverCDP } from 'playwright';" \
+    "const browser = await connectOverCDP('http://localhost:9222');" \
+    > "$TMP/cdp.mjs"
+say "SC-AK-760 — присоединение по отладочному порту без имени движка отбито" "node $TMP/cdp.mjs" DENY
+
 # Скрипт без вождения браузера проходит: судится содержимое, а не имя интерпретатора.
 printf '%s\n' "console.log('сводка');" > "$TMP/plain.mjs"
 say "SC-AK-760 — скрипт без вождения проходит" "node $TMP/plain.mjs" PASS

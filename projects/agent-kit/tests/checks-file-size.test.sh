@@ -132,6 +132,14 @@ git -C "$SIZE_TREE" add -A
 report "SC-AK-658 — тяжёлый текст назван по весу" "$(size_says 'prose/heavy\.md: [0-9]+ знаков, предел веса текста 200')" 1
 report "SC-AK-659 — лёгкий текст той же длины молчит" "$(size_says 'prose/light\.md')" 0
 report "SC-AK-660 — спутник из счёта веса выведен" "$(size_says 'prose/implementation\.md')" 0
+# Тяжёлый по знакам файл записан долгом: строк у него меньше предела, и без второй проверки
+# запись читалась бы устаревшей — долг нельзя было бы ни записать, ни оставить.
+printf '{"accepted":{},"debt":{"prose/heavy.md":{"reason":"фикстура набора","task":"RT-900"}}}\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
+git -C "$SIZE_TREE" add -A
+report "SC-AK-861 — долг тяжёлого по знакам файла не отбивает" "$(size_code)" 0
+report "SC-AK-861 — запись долга не названа устаревшей" "$(size_says 'prose/heavy\.md: значится .* короче предела')" 0
+printf '{"accepted":{},"debt":{}}\n' > "$SIZE_TREE/tools/file-size-allowlist.json"
+git -C "$SIZE_TREE" add -A
 # Дерево, числа не назвавшее, судится по-прежнему одними строками.
 printf '{"fileSizeLimit":400,"proseSizeLimit":300,"proseRoots":["prose/"],"allowlistDir":"tools","archiveDir":"docs/archive/","tasksDir":"docs/tasks","generatedDirs":["gen/","tools/"]}\n' \
     > "$SIZE_TREE/.claude/rt-kit/checks.json"
