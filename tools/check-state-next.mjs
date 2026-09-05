@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.22.0 · checks/check-state-next.mjs · 1526c981b7da · правится надстройкой, не здесь
+// rt-kit v0.24.0 · checks/check-state-next.mjs · 1526c981b7da · правится надстройкой, не здесь
 /**
  * Сверка того, что раздел состояния называет следующее движение.
  *

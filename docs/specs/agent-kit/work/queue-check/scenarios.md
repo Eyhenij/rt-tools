@@ -62,7 +62,7 @@
 Когда спрашивается состояние PR
 Тогда PR найден, разбор у него есть, и в списке стоят оба — и запрошенный, и оставивший отзыв
 
-Покрыто: `projects/agent-kit/tests/checks-board.test.sh`.
+Покрыто: `projects/agent-kit/tests/checks-board-pull.test.sh`.
 
 ### SC-AK-378 — разбор автора разбором не считается
 
@@ -71,7 +71,7 @@
 Тогда разбора у PR нет, хотя из списка названных автор не пропадает; неизвестный номер
 отвечает отсутствием
 
-Покрыто: `projects/agent-kit/tests/checks-board.test.sh`.
+Покрыто: `projects/agent-kit/tests/checks-board-pull.test.sh`.
 
 ### SC-AK-379 — молчание хостинга состоянием PR не считается
 
@@ -79,7 +79,7 @@
 Когда спрашивается состояние PR
 Тогда ответ назван молчанием сети, и приговора о разборе в нём нет
 
-Покрыто: `projects/agent-kit/tests/checks-board.test.sh`.
+Покрыто: `projects/agent-kit/tests/checks-board-pull.test.sh`.
 
 ### SC-AK-391 — номер PR берётся из ответа хостинга
 
@@ -88,7 +88,7 @@
 Тогда PR найден, и номер его приходит из ответа хостинга; вызов без ссылки идёт к клиенту
 вовсе без довода
 
-Покрыто: `projects/agent-kit/tests/checks-board.test.sh`.
+Покрыто: `projects/agent-kit/tests/checks-board-pull.test.sh`.
 
 ### SC-AK-392 — PR находится и по имени ветки
 
@@ -96,7 +96,7 @@
 Когда спрашивается состояние PR
 Тогда названное уходит клиенту хостинга доводом, и PR по нему находится
 
-Покрыто: `projects/agent-kit/tests/checks-board.test.sh`.
+Покрыто: `projects/agent-kit/tests/checks-board-pull.test.sh`.
 
 ### SC-AK-425 — конфликтующий открытый PR назван расхождением
 

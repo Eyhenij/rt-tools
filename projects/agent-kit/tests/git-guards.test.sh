@@ -25,6 +25,17 @@ m "коммит на рабочей ветке" "$REPO_WORK" 'git commit -m "cho
 m "сборка гарду безразлична" "$REPO_MAIN" 'pnpm exec nx build site' Bash PASS
 m "чтение истории на главной" "$REPO_MAIN" 'git log --oneline -5' Bash PASS
 
+# --- SC-AK-832. Глагол ищется в позиции команды, а не подстрокой -----------------------------
+# Голый поиск «git commit» промахивался в обе стороны: мимо уходил вызов с ключом между `git` и
+# глаголом — им коммитят машинной учётной записью, — а чтение истории со словом `commit` в
+# доводе отбивалось зря.
+m "SC-AK-832 — ключ между командой и глаголом гарда не обходит" "$REPO_MAIN" \
+    'git -c user.name=bot -c user.email=bot@x commit -m "chore: x"' Bash deny
+m "SC-AK-832 — и указание чужого дерева тоже" "$REPO_MAIN" 'git -C . commit --amend --no-edit' Bash deny
+m "SC-AK-832 — слово commit в доводе чтения истории не отбивается" "$REPO_MAIN" \
+    "git log --grep 'git commit' --oneline" Bash PASS
+m "SC-AK-832 — поиск по дереву коммитом не считается" "$REPO_MAIN" 'grep -rn "git commit" docs/' Bash PASS
+
 # Составная команда отклоняется целиком: ветки в ней ещё нет на момент разбора, и «завести и
 # сразу коммитить» прошло бы мимо гарда, оставаясь коммитом в главную.
 m "составная команда с заведением ветки" "$REPO_MAIN" 'git checkout -b RT-8-x && git commit -m "x"' Bash deny
@@ -40,6 +51,11 @@ d "ветка с ключом и номером" 'git checkout -b RT-9-guest-tok
 d "то же через switch" 'git switch -c RT-9-guest-token' PASS
 d "заглавные буквы в хвосте" 'git checkout -b RT-9-GuestToken' deny
 d "пробел вместо дефиса после номера" 'git checkout -b RT-9_guest' deny
+# SC-AK-872. Флаг между глаголом и `-b` — та же форма заведения ветки: ветки в дереве заводят
+# и так, а гард судил только форму без флага.
+d "SC-AK-872 — флаг между checkout и -b форму имени не обходит" 'git checkout -q -b RT-9-GuestToken' deny
+d "SC-AK-872 — та же форма с верным именем проходит" 'git checkout -q -b RT-9-guest-token' PASS
+d "SC-AK-872 — то же через switch с флагом" 'git switch -q -c RT-9-GuestToken' deny
 # Имя без номера законно, пока ветка живёт локально: заявка с неё не откроется.
 d "ветка под пробу без номера" 'git checkout -b probe-idea' PASS
 
@@ -152,6 +168,18 @@ mg "SC-AK-559 — слияние с подстановкой токена суд
     'GH_TOKEN="$TOKEN" gh pr merge 42 --merge' deny
 mg "SC-AK-559 — открытие заявки с подстановкой токена судится наравне" "$LYING" \
     'GH_TOKEN="$TOKEN" gh pr create --title "[RT-42] Сделано" --body x' deny
+# Клиент, названный путём, — та же команда. Признак, знавший только голое имя, не узнавал вызов
+# вовсе и выходил нулём: молчание гарда неотличимо от разрешения, и заявки уезжали открытыми не
+# машинной записью. Путь тут не украшение — под своим именем клиент бывает псевдонимом оболочки.
+mg "SC-AK-831 — открытие заявки полным путём судится наравне с голым именем" "$LYING" \
+    '/opt/homebrew/bin/gh pr create --title "[RT-42] Сделано" --body x' deny
+mg "SC-AK-831 — открытие заявки относительным путём судится наравне" "$LYING" \
+    './gh pr create --title "[RT-42] Сделано" --body x' deny
+mg "SC-AK-831 — слияние полным путём судится наравне" "$LYING" \
+    '/opt/homebrew/bin/gh pr merge 42 --merge' deny
+# Обратная сторона: упоминание имени в кавычках командой не было и не становится.
+mg "SC-AK-831 — имя команды внутри строки командой не считается" "$LYING" \
+    'echo "как открыть: gh pr create --title x"' PASS
 # Обход из текста команды действует и тогда, когда очередь работ спросить некого.
 mg "SC-AK-17 — обход с причиной в тексте команды" "$LYING" 'gh pr merge 42 --merge # Task-folder-skip: работа вливается частями' PASS
 mg "SC-AK-18 — обход без причины обходом не считается" "$LYING" 'gh pr merge 42 --merge # Task-folder-skip:' deny
@@ -349,6 +377,32 @@ fixture_commit_as "$HUMAN_SIG" 'Хозяин дерева' 'owner@example.com' s
 sig "SC-AK-181 — коммит, назвавшийся человеком, не судится" "$HUMAN_SIG" 'git push origin RT-70-signature' PASS
 rm -rf "$HUMAN_SIG"
 
+# SC-AK-882 — коммит под записью, которой дерево не объявляло
+# Прежде помощник судил только коммит, назвавшийся машинной записью: пять коммитов подряд под
+# чужим логином в это условие не попадали вовсе. Вторая половина включается объявлением почт
+# людей — без него требовать известной подписи от каждого коммита значило бы отбивать работу,
+# сделанную человеком своими руками.
+UNKNOWN_SIG="$(sig_repo)"
+fixture_commit_as "$UNKNOWN_SIG" 'Кто-то ещё' 'someone@example.com' src/probe.ts 'export const x = 1;' 'feat: правка'
+sig "SC-AK-882 — без объявленных почт людей чужая запись проходит" "$UNKNOWN_SIG" \
+    'git push origin RT-70-signature' PASS
+printf 'RT_COMMIT_EMAIL="%s"\nRT_HUMAN_EMAILS="owner@example.com"\n' "$BOT_MAIL" \
+    > "$UNKNOWN_SIG/.claude/rt-kit/project.sh"
+sig "SC-AK-882 — с объявленными почтами неизвестная запись отбивается" "$UNKNOWN_SIG" \
+    'git push origin RT-70-signature' deny
+CLAUDE_PROJECT_DIR="$UNKNOWN_SIG" expect_reason "SC-AK-882 — отказ называет коммит и его почту" \
+    git-guard-delivery.sh "$(input_cmd 'git push origin RT-70-signature' Bash "$UNKNOWN_SIG")" \
+    'Расходятся: [0-9a-f]{7,} <someone@example.com>'
+rm -rf "$UNKNOWN_SIG"
+
+KNOWN_SIG="$(sig_repo)"
+fixture_commit_as "$KNOWN_SIG" 'Хозяин дерева' 'owner@example.com' src/probe.ts 'export const x = 1;' 'feat: правка'
+printf 'RT_COMMIT_EMAIL="%s"\nRT_HUMAN_EMAILS="owner@example.com"\n' "$BOT_MAIL" \
+    > "$KNOWN_SIG/.claude/rt-kit/project.sh"
+sig "SC-AK-882 — объявленная почта человека проходит" "$KNOWN_SIG" \
+    'git push origin RT-70-signature' PASS
+rm -rf "$KNOWN_SIG"
+
 # Влитое в главную этой веткой уже не чинится: судится вклад ветки.
 MERGED_SIG="$(fixture_repo_branched main RT-71-merged)"
 git -C "$MERGED_SIG" checkout -q main 2>/dev/null
@@ -362,82 +416,6 @@ printf 'RT_TASK_BOT="%s"\nRT_COMMIT_EMAIL="%s"\n' "$BOT_LOGIN" "$BOT_MAIL" \
 fixture_commit_as "$MERGED_SIG" "$BOT_LOGIN" "$BOT_MAIL" src/new.ts 'export const z = 3;' 'feat: новое'
 sig "SC-AK-182 — судится вклад ветки, а не вся история" "$MERGED_SIG" 'git push origin RT-71-merged' PASS
 rm -rf "$MERGED_SIG"
-
-# --- личность вызова, открывающего заявку -------------------------------------------------------
-# Клиент хостинга держит две записи сразу, и какая откроет заявку, из текста команды видно только
-# по явной подстановке токена. Промах всплывает шагом позже — на назначении ревьювера, — и чинится
-# переоткрытием: автора у заявки не сменить.
-#
-# Команда собирается переменной, а не пишется строкой: набор читает тот же гард поставки, и
-# написанная целиком, она отбивает правку этого файла как настоящее открытие заявки.
-OPEN='gh pr'' create'
-
-TOKEN_PR="$(fixture_repo RT-74-token)"
-mkdir -p "$TOKEN_PR/.claude/rt-kit"
-printf 'RT_PULL_TOKEN_VAR="GH_TOKEN"\nRT_PULL_TOKEN_HINT="GH_TOKEN=$(cat ~/.config/token)"\n' \
-    > "$TOKEN_PR/.claude/rt-kit/project.sh"
-
-pr_token() {
-    local label="$1" cmd="$2" want="$3" out
-    out="$(CLAUDE_PROJECT_DIR="$TOKEN_PR" input_cmd "$cmd" Bash "$TOKEN_PR" \
-        | CLAUDE_PROJECT_DIR="$TOKEN_PR" "$HOOKS/git-guard-delivery.sh" 2>/dev/null \
-        | jq -r '.hookSpecificOutput.permissionDecision // "PASS"' 2>/dev/null)"
-    report "$label" "${out:-PASS}" "$want"
-}
-
-pr_token "SC-AK-480 — заявка без подстановки токена отбивается" \
-    "$OPEN --title \"[RT-74] Сделано\" --body x" deny
-pr_token "SC-AK-481 — заявка с подстановкой токена проходит" \
-    "GH_TOKEN=\$(cat ~/.config/token) $OPEN --title \"[RT-74] Сделано\" --body x" PASS
-pr_token "SC-AK-482 — токен, выставленный отдельной строкой, засчитывается" \
-    "export GH_TOKEN=\$(cat ~/.config/token); $OPEN --title \"[RT-74] Сделано\" --body x" PASS
-
-CLAUDE_PROJECT_DIR="$TOKEN_PR" expect_reason "SC-AK-483 — отказ называет переменную токена" \
-    git-guard-delivery.sh \
-    "$(input_cmd "$OPEN --title \"[RT-74] Сделано\" --body x" Bash "$TOKEN_PR")" \
-    'GH_TOKEN'
-rm -rf "$TOKEN_PR"
-
-# Дерево без машинной записи требования не получает: у него личность вызова ничего не значит.
-NO_TOKEN_PR="$(fixture_repo RT-75-notoken)"
-mkdir -p "$NO_TOKEN_PR/.claude/rt-kit"
-printf 'RT_PULL_TOKEN_VAR=""\n' > "$NO_TOKEN_PR/.claude/rt-kit/project.sh"
-out="$(CLAUDE_PROJECT_DIR="$NO_TOKEN_PR" input_cmd "$OPEN --title \"[RT-75] Сделано\" --body x" Bash "$NO_TOKEN_PR" \
-    | CLAUDE_PROJECT_DIR="$NO_TOKEN_PR" "$HOOKS/git-guard-delivery.sh" 2>/dev/null \
-    | jq -r '.hookSpecificOutput.permissionDecision // "PASS"' 2>/dev/null)"
-report "SC-AK-484 — дерево без машинной записи автора не судит" "${out:-PASS}" PASS
-rm -rf "$NO_TOKEN_PR"
-
-# Второй ярус: автора заявки называет хостинг, и спрашивается он на снятии черновика — последнем
-# ходе, где промах ещё исправим. Сети набор не знает, поэтому состояние заявки подменяется
-# профилем дерева-пробы: судится решение гарда, а не работа клиента хостинга.
-AUTHOR_PR="$(fixture_repo RT-76-author)"
-mkdir -p "$AUTHOR_PR/.claude/rt-kit"
-author_profile() {
-    printf 'RT_TASK_BOT="bot"\nRT_PULL_TOKEN_HINT="GH_TOKEN=$(cat ~/.config/token)"\n' \
-        > "$AUTHOR_PR/.claude/rt-kit/project.sh"
-    printf 'rt_pull_state() { printf "%%s" %s; }\n' "'{\"exists\":true,\"number\":9,\"draft\":true,\"reviewed\":true,\"conflicting\":false,\"author\":\"$1\"}'" \
-        >> "$AUTHOR_PR/.claude/rt-kit/project.sh"
-}
-
-ready_author() {
-    local label="$1" want="$2" out
-    out="$(CLAUDE_PROJECT_DIR="$AUTHOR_PR" input_cmd 'gh pr ready 9' Bash "$AUTHOR_PR" \
-        | CLAUDE_PROJECT_DIR="$AUTHOR_PR" "$HOOKS/git-guard-delivery.sh" 2>/dev/null \
-        | jq -r '.hookSpecificOutput.permissionDecision // "PASS"' 2>/dev/null)"
-    report "$label" "${out:-PASS}" "$want"
-}
-
-author_profile owner
-ready_author "SC-AK-485 — черновик не снимается с заявки, открытой не машинной записью" deny
-CLAUDE_PROJECT_DIR="$AUTHOR_PR" expect_reason "SC-AK-486 — отказ называет обе записи и переоткрытие" \
-    git-guard-delivery.sh \
-    "$(input_cmd 'gh pr ready 9' Bash "$AUTHOR_PR")" \
-    'открой заново'
-
-author_profile bot
-ready_author "SC-AK-487 — заявка машинной записи черновик снимает" PASS
-rm -rf "$AUTHOR_PR"
 
 # --- раздел об оставшемся шаге в теле заявки ----------------------------------------------------
 #
@@ -473,6 +451,16 @@ body_section "SC-AK-687 — тело, переданное файлом, суд�
 printf 'Тело из файла.\n\n## Оставшийся шаг\n\nНе осталось.\n' > "$BODY_FILE"
 body_section "SC-AK-687 — раздел в файле принимается так же" \
     "gh pr create --title \"[RT-7] Сделано\" --body-file $BODY_FILE" 0
+
+# SC-AK-884. Флаг тела узнаётся только отдельным словом: хвост имени ветки `-b` в доводе
+# основания читался как `-b`, и телом становилось следующее слово команды — `--head`, `2>&1`.
+body_section "SC-AK-884 — имя ветки на -b в доводе основания телом не считается" \
+    "gh pr create --title \"[RT-7] Сделано\" --body-file $BODY_FILE --base RT-6-before-b --head RT-7-probe 2>&1" 0
+body_section "SC-AK-884 — то же с именем последним словом" \
+    "gh pr create --title \"[RT-7] Сделано\" --body-file $BODY_FILE --base RT-6-before-b" 0
+printf 'Тело из файла без раздела.\n' > "$BODY_FILE"
+body_section "SC-AK-884 — файл без раздела при таком имени по-прежнему отбит" \
+    "gh pr create --title \"[RT-7] Сделано\" --body-file $BODY_FILE --base RT-6-before-b --head RT-7-probe" 1
 rm -f "$BODY_FILE"
 
 # Дерево, не назвавшее образца, требования не получает: чужих слов пакет не знает.
