@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.24.0 · checks/board.github.mjs · 6589ca0dd900 · правится надстройкой, не здесь
+// rt-kit v0.24.0 · checks/board.github.mjs · 1e2cc0db30f6 · правится надстройкой, не здесь
 /**
  * Общая работа с очередью работ: борда проекта, тикеты и их состояние.
  *
@@ -126,6 +126,17 @@ export function moveTask(number, status, options) {
     return { from: item.status, to: option.name };
 }
 
+/**
+ * Чьими глазами снято состояние: `machine` — вызов шёл с токеном машинной записи, `client` —
+ * от того, под кем залогинен клиент хостинга. Задачу читают токеном, заявку — без него, и по
+ * одному выводу это неразличимо: дерево, где машинная запись ограничена хостингом, получало
+ * картину человека и считало её проверенной. Логин здесь не печатается — за ним пришлось бы
+ * ходить в сеть вторым запросом, а гарды читают ответ и без неё.
+ */
+export function viewerOf(options) {
+    return options?.token ? 'machine' : 'client';
+}
+
 export function fetchIssues(state, options) {
     // Тело берётся вместе со списком, а не поштучным вызовом на задачу: связь с эпиком читается
     // как раз в нём, а четыреста вызовов вида «покажи одну задачу» стоили бы дороже всей сверки.
@@ -165,16 +176,17 @@ export function pullState(ref, options) {
         if (error instanceof OfflineError) {
             throw error;
         }
-        return { exists: false };
+        return { exists: false, viewer: viewerOf(options) };
     }
     if (!pull) {
-        return { exists: false };
+        return { exists: false, viewer: viewerOf(options) };
     }
     const requested = (pull.reviewRequests ?? []).map((entry) => entry.login ?? entry.name ?? '').filter(Boolean);
     const reviewed = (pull.latestReviews ?? []).map((entry) => entry.author?.login ?? '').filter(Boolean);
     const reviewers = [...new Set([...requested, ...reviewed])];
     return {
         exists: true,
+        viewer: viewerOf(options),
         number: pull.number ?? null,
         draft: pull.isDraft === true,
         author: pull.author?.login ?? null,
@@ -352,11 +364,12 @@ export function numberFromBranch(branch) {
 export function taskState(number, options) {
     const issue = fetchIssue(number, options);
     if (!issue) {
-        return { exists: false };
+        return { exists: false, viewer: viewerOf(options) };
     }
     const item = fetchBoard(options).items.get(issue.number);
     return {
         exists: true,
+        viewer: viewerOf(options),
         title: issue.title,
         open: issue.state === 'OPEN',
         onBoard: item !== undefined,
