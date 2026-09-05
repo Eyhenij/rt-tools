@@ -36,13 +36,19 @@
 - **Переключение ветки в той же команде отбивает пуш целиком.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:checkout`
 - **Тяжёлый шаг набора отбирается по составу правки.** — `projects/agent-kit/assets/defaults/project.sh:rt_push_docs_only_default`
 - **Отложенная правка пушем не считается.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:probe`
+- **Глагол команды ищется в его позиции, а не подстрокой во всей строке.** — `projects/agent-kit/assets/hooks/git-guard-main.sh:verbs` — сценарий SC-AK-832
+- **Заведение ветки узнаётся и с флагом между глаголом и `-b`.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:branch_arg` — тот же образец в гардах спора заявок, набора пуша, ожидания и стража выходов хода; сценарий SC-AK-872
+- **Гейт пуша пишет строку наблюдения на каждый свой исход.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:rt_push_gate_note` — сценарий SC-AK-835
 - **Упавшее задание не перезапускается, пока его журнал не прочитан.** — `projects/agent-kit/assets/hooks/rerun-guard.sh:seen`
 - **Прочитанным считается журнал того самого задания.** — `projects/agent-kit/assets/hooks/rerun-guard.sh:run_id`
 - **Перезапуск без названного номера задания не судится.** — `projects/agent-kit/assets/hooks/rerun-guard.sh:run_id`
 - **Тело заявки несёт раздел об оставшемся шаге с минуты открытия.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:pull_body_section` — сценарий SC-AK-685
 - **Образец обязательного раздела называет дерево, а не пакет.** — `projects/agent-kit/assets/defaults/project.sh:RT_PULL_BODY_SECTION` — умолчание молчит; сценарий SC-AK-686
 - **Тело, переданное файлом, судится наравне с телом в доводе команды.** — Не проверяется машиной: тело вынимается выражением в `projects/agent-kit/assets/hooks/git-guard-delivery.sh`, и якоря на символ у него нет. Держит это сценарий SC-AK-687.
+- **Флаг тела узнаётся только отдельным словом.** — Не проверяется машиной: граница перед флагом стоит в тех же выражениях в `projects/agent-kit/assets/hooks/git-guard-delivery.sh`, якоря на символ у них нет. Держит это сценарий SC-AK-884.
 - **Итоговый набор перед пушем печатает разбор состояния, а не только гард в минуту пуша.** — `projects/agent-kit/src/lib/push-gate.ts:pushGateLines` — сценарий SC-AK-821
 - **Набор в разборе состояния зовётся, а не пересказывается чтением.** — `projects/agent-kit/src/lib/push-gate.ts:callProfile` — профиль собирается из тех же файлов и в том же порядке, что читает сам гард
 - **Что умолчание печатало, а в набор не попало, называется отдельной строкой.** — `projects/agent-kit/src/lib/push-gate.ts:pushGateLines` — разница считается по двум вызовам, а не по признаку переопределения
 - **Гард один раз за сессию называет, чем его набор уже конвейерного.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:gap_mark` — отметка живёт в каталоге временных файлов и ключуется признаком сессии; сценарий SC-AK-820
+- **Отказ гейта пуша называет три хода, а не два.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:reason` — сценарий SC-AK-851
+- **Спорное в список известного не вносится.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:ALLOWLIST` — то же сказано в тексте отказа проверки адресов; сценарий SC-AK-851

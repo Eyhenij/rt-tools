@@ -24,9 +24,22 @@ $scrollable: (
         padding: 1rem,
         background-color: var(--rt-bg-base-base),
     ),
+    // Признак непоказанного снизу: полоса растушёвки у нижнего края и значок поверх неё.
+    scroll-hint: (
+            height: 2.5rem,
+            icon-size: 1.25rem,
+            // Цвет растушёвки ведёт выбранная цветовая схема: мягкая заливка акцента берётся
+            // из рядов роли, которые схема и переопределяет, а светлую и тёмную темы токен
+            // разводит сам. Взятый нейтральным фоном, цвет стоял бы одним и тем же во всех
+            // схемах. Потребитель, которому нужен свой, переназначает это свойство.
+            color: var(--rt-bg-accent-primary-subtle),
+        ),
 );
 
 :host {
+    // Полоса растушёвки считает своё место от хоста: тело обрезает всё по своему краю, а полоса
+    // обязана дойти до содержимого подвала.
+    position: relative;
     display: var(--rt-scrollable-host-display);
     width: var(--rt-scrollable-host-width);
     height: var(--rt-scrollable-host-height);
@@ -57,6 +70,50 @@ $scrollable: (
         &__footer {
             padding: var(--rt-scrollable-footer-padding);
             background-color: var(--rt-scrollable-footer-background-color);
+        }
+
+        // Полоса стоит поверх стыка списка и подвала и не ловит указатель: под ней живой список,
+        // и перехваченное нажатие уводило бы человека мимо пункта. Значок ловит его сам — иначе
+        // подсказку не прочитать. Места в колонке полоса не занимает: занятое, оно отодвинуло бы
+        // последний пункт от края у каждого потребителя области.
+        // Подъём над низом области приходит замером — это высота подвала без верхнего отступа:
+        // ровно там начинается его содержимое, и до него полоса и доходит. Оборванная у края
+        // списка, она оставляла до разделителя полосу чистого фона.
+        &__scroll-hint {
+            position: absolute;
+            z-index: 1;
+            right: 0;
+            left: 0;
+            display: flex;
+            height: var(--rt-scrollable-scroll-hint-height);
+            align-items: flex-end;
+            justify-content: center;
+
+            // Растушёвка красится фоном темы, а не уходит в `transparent`: прозрачный — это
+            // чёрный с нулевой прозрачностью, и на тёмной теме такой градиент идёт через грязь.
+            // Начало берётся тем же цветом с нулевой прозрачностью — переход остаётся чистым в
+            // обеих темах, а потребитель, перекрасивший область, получает свой цвет даром.
+            background: linear-gradient(
+                to bottom,
+                rgb(from var(--rt-scrollable-scroll-hint-color) r g b / 0%),
+                var(--rt-scrollable-scroll-hint-color)
+            );
+            pointer-events: none;
+        }
+
+        // Значок сидит на своей подложке: без неё он ложится поверх растворяющегося содержимого
+        // и читается как его часть — на кадре его не отличить от полустёртого пункта.
+        &__scroll-hint-icon {
+            display: flex;
+            width: var(--rt-scrollable-scroll-hint-icon-size);
+            height: var(--rt-scrollable-scroll-hint-icon-size);
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--rt-radius-full);
+            background-color: var(--rt-bg-base-base);
+            color: var(--rt-text-base-secondary);
+            font-size: var(--rt-scrollable-scroll-hint-icon-size);
+            pointer-events: auto;
         }
     }
 }

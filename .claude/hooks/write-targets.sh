@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.22.0 · hooks/write-targets.sh · 55c3116d8c7e · правится надстройкой, не здесь
+# rt-kit v0.24.0 · hooks/write-targets.sh · dda782e0c66b · правится надстройкой, не здесь
 # Цели записи, названные командой оболочки прямо: перенаправление, `tee`, правка на месте,
 # копирование поверх, а у интерпретатора — пути из его тела. Печатает по одной в строке.
 #
@@ -27,6 +27,15 @@
 rt_write_targets() {
     rt_wt_text="$(cat)"
 
+    # Перенаправление в пустое устройство и в поток ошибок снимается до разбора — тем же приёмом,
+    # каким его снимает признак записи оболочкой. Без этого заглушённый вывод внутри тела
+    # интерпретатора читается признаком записи, и тело, которое ничего не пишет, снова отдаёт все
+    # свои пути: команда с правкой одного файла и запуском проверки рядом запрещалась по пути
+    # этой проверки. Настоящая запись рядом с заглушённым потоком остаётся видной: снимается
+    # перенаправление, а не команда целиком.
+    rt_wt_text="$(printf '%s' "$rt_wt_text" \
+        | sed -E 's#(&|[0-9]*)>>?[[:space:]]*/dev/(null|stderr)##g; s#[0-9]*>&[0-9-]##g')"
+
     {
         printf '%s' "$rt_wt_text" \
             | tr "\"'\`" '   ' \
@@ -50,17 +59,86 @@ rt_write_targets() {
                     if (parts[i] ~ /\// && parts[i] ~ /\.[A-Za-z0-9]+$/) { print parts[i] }
                 }
             }
+            # Путь, присвоенный переменной. Он стоит отдельной строкой от вызова записи, и без
+            # этой пары запись через переменную не поймать вовсе.
+            function note_var(s,   name, path) {
+                if (match(s, /[A-Za-z_][A-Za-z0-9_]*[ \t]*=[ \t]*[\047\"][^\047\"]*\/[^\047\"]*[\047\"]/)) {
+                    path = substr(s, RSTART, RLENGTH)
+                    name = path
+                    sub(/[ \t]*=.*$/, "", name)
+                    sub(/^[^=]*=[ \t]*[\047\"]/, "", path)
+                    sub(/[\047\"].*$/, "", path)
+                    if (path ~ /\.[A-Za-z0-9]+$/) { varpath[name] = path }
+                }
+            }
+            # Цель записи — первый довод вызова записи. Он и есть адрес, который сценарий
+            # открывает; всё остальное на той же строке — образцы поиска, подстановки и данные.
+            function emit_calls(s,   rest, arg, name) {
+                rest = s
+                while (match(rest, /(open|writeFileSync|writeFile|appendFileSync|appendFile|write_text|write_bytes|copyfile|copy2|rename|symlink|mkdir|makedirs)[ \t]*\(/)) {
+                    rest = substr(rest, RSTART + RLENGTH)
+                    arg = rest
+                    sub(/[,)].*$/, "", arg)
+                    gsub(/^[ \t]+|[ \t]+$/, "", arg)
+                    if (arg ~ /^[\047\"]/) {
+                        gsub(/^[\047\"]|[\047\"]$/, "", arg)
+                        if (arg ~ /\// && arg ~ /\.[A-Za-z0-9]+$/) { print arg }
+                    } else {
+                        name = arg
+                        gsub(/[^A-Za-z0-9_].*$/, "", name)
+                        if (name in varpath) { print varpath[name] }
+                    }
+                }
+            }
+            # Пишет ли тело хоть что-нибудь. Тело, в котором нет ни одного вызова записи, своих
+            # путей не отдаёт: команда, подключившая разложенный помощник и напечатавшая его
+            # ответ, запрещалась как правка этого помощника — за один заход трижды подряд.
+            # Внутри тела, которое пишет, пути по-прежнему берутся все: путь и вызов записи
+            # стоят там разными строками, и связать их нечем.
+            function writes(s) {
+                return s ~ /open[ \t]*\([^)]*[\047\"](w|a|r\+|w\+|a\+)[\047\"]/ \
+                    || s ~ /writeFileSync|writeFile|appendFile|write_text|write_bytes|\.write\(|\.save\(|savefig|to_csv|json\.dump|\.dump\(/ \
+                    || s ~ /makedirs|mkdir|rename|replace[ \t]*\(|unlink|rmtree|copyfile|copy2|shutil\./ \
+                    || s ~ />[ \t]*[A-Za-z0-9_.~$\/-]/ \
+                    || s ~ /(^|[|;&(]|[ \t])(tee|cp|mv|rm|touch|install|truncate)([ \t]|$)/
+            }
             function trim(s) { sub(/^[ \t]+/, "", s); sub(/[ \t]+$/, "", s); return s }
+            # Пути берутся со строк записи, а не со всего тела.
+            #
+            # Прежде тело, которое хоть что-нибудь пишет, отдавало все свои путеподобные слова
+            # разом: адрес, названный в теле образцом поиска или строкой сравнения, читался целью
+            # записи, и правка одного файла запрещалась по имени другого, который сценарий даже
+            # не открывал. Обходился такой отказ сменой формы команды, а не сменой действия, —
+            # то есть требование он снимал, а не держал.
+            #
+            # Путь, присвоенный переменной, при этом не теряется: пара «присвоение — строка
+            # записи» разбирается отдельно.
+            function flush_body(   i) {
+                if (wrote) {
+                    for (i = 1; i <= lines; i++) { note_var(line[i]) }
+                    for (i = 1; i <= lines; i++) {
+                        if (writes(line[i])) { emit(line[i]); emit_calls(line[i]) }
+                    }
+                }
+                for (i = 1; i <= lines; i++) { delete line[i] }
+                delete varpath
+                lines = 0
+                wrote = 0
+            }
             tag != "" {
-                if (trim($0) == tag) { tag = ""; next }
-                if (keep) { emit($0) }
+                if (trim($0) == tag) { flush_body(); tag = ""; next }
+                if (keep) {
+                    line[++lines] = $0
+                    if (writes($0)) { wrote = 1 }
+                }
                 next
             }
             {
                 # Код доводом: всё, что стоит за `-c` или `-e` у интерпретатора.
                 if ($0 ~ /(^|[|;&(]|[ \t])(python3?|node|ruby|perl|php|deno|bun)([ \t]|$)/ \
                     && match($0, /[ \t]-[ce][ \t]/)) {
-                    emit(substr($0, RSTART + RLENGTH))
+                    rest = substr($0, RSTART + RLENGTH)
+                    if (writes(rest)) { note_var(rest); emit(rest); emit_calls(rest) }
                 }
                 # Тело heredoc: путь записи интерпретатора стоит именно там.
                 if (match($0, /<<-?[ \t]*[\047\"]?[A-Za-z_][A-Za-z0-9_]*/)) {
@@ -68,7 +146,9 @@ rt_write_targets() {
                     sub(/^<<-?[ \t]*[\047\"]?/, "", t)
                     tag = t
                     keep = ($0 ~ /(^|[|;&(]|[ \t])(python3?|node|ruby|perl|php|deno|bun)([ \t]|$)/)
+                    flush_body()
                 }
-            }'
+            }
+            END { if (tag != "") { flush_body() } }'
     } | sort -u
 }
