@@ -1,4 +1,13 @@
-## [Unreleased]
+## [0.3.2](https://github.com/Eyhenij/rt-tools/compare/rt-store@0.3.1...rt-store@0.3.2) (2026-09-03)
+
+### Bug Fixes
+
+- **rt:agent-kit:** правило приставки типа говорит про T, а узловые глобали доходят до серверных проектов ([a0bd361](https://github.com/Eyhenij/rt-tools/commit/a0bd361c1c6df5e8aeb3c5efc032b3dfc75fb1ce))
+- **rt:store:** стор не отдаёт пустоту там, где обещает значение ([48e35b5](https://github.com/Eyhenij/rt-tools/commit/48e35b5cc7d6ea1ab2457712c23cee2d8a2bb350))
+
+### Features
+
+- **rt:message-bus:** админка заводится каркасом, входом и оболочкой с меню ([7736c6c](https://github.com/Eyhenij/rt-tools/commit/7736c6cf9f79e335c550ca5e41764ba265c23c75))
 
 ### BREAKING CHANGES
 

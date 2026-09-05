@@ -27,6 +27,7 @@ import {
     TWeights,
 } from './observations.js';
 import { IPlanned, isRefusal, TOutcome } from './plan.js';
+import { IOverrideMark, staleOverrides } from './override-marks.js';
 import { pushGateLines } from './push-gate.js';
 import { laidOutSkills, treeSnapshot } from './snapshot.js';
 import { ICutFound, IRetiredFound, ISyncResult, mergedBody, pendingOf, planSync, runSync } from './sync.js';
@@ -250,6 +251,27 @@ const holes: (result: ISyncResult) => string[] = (result: ISyncResult): string[]
 
         return `  ${asset}: нет значений для ${written}`;
     });
+
+/**
+ * Незаполненная дырка — состояние дерева, а не расхождение с пакетом.
+ *
+ * Расхождение говорит, что разложенное разошлось с редакцией; дырка без значения — что дерево
+ * ещё не описало своего: порты стенда, префикс компонентов, имя главной ветки. Один код возврата
+ * на оба состояния ставит дерево перед выбором между красным гейтом пуша и выдуманными числами в
+ * настройке, после чего подстановки теряют смысл.
+ *
+ * Раскладки это не касается: файл с дыркой на диск не кладётся, и `sync` отказывает по-прежнему —
+ * разложенное правило с `{{имя}}` посреди строки агент прочтёт как имя.
+ */
+const holeWarningLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] =>
+    result.missing.size
+        ? [
+              `дерево ещё не описало своего: ресурсов с незаполненными дырками ${result.missing.size}`,
+              ...holes(result),
+              '  — это описание дерева, а не расхождение с пакетом: значения идут ключом `vars` в `.claude/rt-kit.json`',
+              '  — до них ресурс не раскладывается, и на диске его нет',
+          ]
+        : [];
 
 const unfilled: (result: ISyncResult) => readonly ICompanion[] = (result: ISyncResult): readonly ICompanion[] =>
     result.companions.filter(isUnfilled);
@@ -491,6 +513,7 @@ const strayLines: (result: ISyncResult) => string[] = (result: ISyncResult): str
  * всплывали бы только там, где и без них уже красно.
  */
 const warnings: (result: ISyncResult) => string[] = (result: ISyncResult): string[] => [
+    ...holeWarningLines(result),
     ...brokenLines(result),
     ...idleLines(result),
     ...namedCutLines(result),
@@ -501,7 +524,6 @@ const warnings: (result: ISyncResult) => string[] = (result: ISyncResult): strin
 ];
 
 const describe: (result: ISyncResult) => string[] = (result: ISyncResult): string[] => [
-    ...holes(result),
     ...gapLines(result),
     ...unboundLines(result),
     ...driftedLines(result),
@@ -705,6 +727,27 @@ function refusalBeforeSync(env: IEnvironment, config: IConfig): IOutcomeOfComman
     return null;
 }
 
+/**
+ * Надстройки, чья статья в новой редакции уже есть.
+ *
+ * Пометка без читателя ничего не меняет: тот, кто ставит новую версию, видит число разложенных
+ * файлов и не видит, что часть надстроек стала лишней. Раскладка их называет, снимает человек:
+ * пометка держит одну статью, а в раздел могли дописать и другое.
+ */
+function staleOverrideLines(root: string, assetsDir: string): string[] {
+    const stale: readonly IOverrideMark[] = staleOverrides(root, assetsDir);
+
+    if (!stale.length) {
+        return [];
+    }
+
+    return [
+        `надстройки, чья статья в пакете уже есть: ${stale.length}`,
+        ...stale.map((mark: IOverrideMark): string => `  ${mark.file} · раздел «${mark.heading}» · отправлено ${mark.day}`),
+        '  — раздел снимается, и дерево возвращается к пакетной формулировке',
+    ];
+}
+
 /** Ответ `sync --check`: расхождения считаются, на диск не пишется ничего. */
 function syncCheck(config: IConfig, root: string, version: string, assetsDir: string): IOutcomeOfCommand {
     {
@@ -722,8 +765,10 @@ function syncCheck(config: IConfig, root: string, version: string, assetsDir: st
         // Гард, подписанный не на то, что объявляет, идёт в счёт по той же причине и с большим
         // основанием: неподключённый хотя бы не притворяется — этот выглядит работающим, и ветка
         // его тела, ради которой всё писалось, не исполняется ни разу.
-        const count: number =
-            result.missing.size + result.gaps.length + pending.length + empty.length + result.unbound.length + result.drifted.length;
+        // Незаполненная дырка в счёт не входит: она говорит о том, чего дерево ещё не описало о
+        // себе, а не о расхождении разложенного с редакцией. Она печатается предупреждением —
+        // и на сошедшемся дереве тоже.
+        const count: number = result.gaps.length + pending.length + empty.length + result.unbound.length + result.drifted.length;
         if (!count) {
             return { code: 0, lines: [`sync --check: разложенное сходится с пакетом v${version}`, ...warnings(result)] };
         }
@@ -790,6 +835,7 @@ export function sync(env: IEnvironment, check: boolean): IOutcomeOfCommand {
             ...boundLines(result),
             ...(result.bound?.unreadable === false ? [] : unboundLines(result)),
             ...driftedLines(result),
+            ...staleOverrideLines(root, assetsDir),
             ...debtLines(config, root, assetsDir),
             ...warnings(result),
         ],
@@ -965,6 +1011,27 @@ function offFileLines(summary: ISummary): string[] {
     return [`  не на правке файла: ${summary.denialsOffFile} из ${total} — ${Math.round((summary.denialsOffFile / total) * 100)}%`];
 }
 
+/**
+ * Исходы гейта пуша. Молчит, когда гейт не отработал ни разу за отрезок.
+ *
+ * Вынесено из сводки отдельной функцией не ради имени: та собирает строки одним выражением, и
+ * каждая новая развилка в нём растит её сложность, за которой следит линтер.
+ */
+function pushGateOutcomeLines(summary: ISummary): string[] {
+    if (!summary.pushGate.length) {
+        return [];
+    }
+
+    const total: number = summary.pushGate.reduce((found: number, entry: ICount): number => found + entry.count, 0);
+
+    return [
+        '',
+        `гейт пуша прогонял набор: ${total}`,
+        ...countLines(summary.pushGate),
+        '  — green зелёный набор, red красный, no-checks проверок в дереве не нашлось',
+    ];
+}
+
 /** Сводка строками: загруженное, незагруженное, отбивки гейта и отказы гардов. */
 function statsLines(summary: ISummary, swept: readonly string[], days: number, version: string, laidOut: number): string[] {
     return [
@@ -1012,6 +1079,7 @@ function statsLines(summary: ISummary, swept: readonly string[], days: number, v
                   ...countLines(summary.guards),
               ]
             : []),
+        ...pushGateOutcomeLines(summary),
         ...(summary.silentGuards.length
             ? [
                   '',

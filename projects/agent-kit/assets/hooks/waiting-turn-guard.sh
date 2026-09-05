@@ -73,7 +73,7 @@ red_re='completed[[:space:]]+failure|"conclusion"[[:space:]]*:[[:space:]]*"failu
 #
 # Правка кода в ветке того же PR действием по следующей задаче не считается — она чинит
 # прежнюю, а не двигает работу дальше.
-taken_re='task:new|checkout[[:space:]]+-b|task:move[^|;&]*in-progress|(cp|mkdir)[^|;&]*/tasks/'
+taken_re='task:new|checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|task:move[^|;&]*in-progress|(cp|mkdir)[^|;&]*/tasks/'
 
 # Заведение папки задачи идёт и не оболочкой: инструмент правки файла пишет её первым файлом, и
 # командной строки за этим нет вовсе. Поэтому рядом с командами судится путь правки — у него
