@@ -81,4 +81,37 @@ clean "SC-AK-865 — блок цитаты без адреса закона св
 finds "SC-AK-865 — своё письмо в цитате без адреса закона ловится" \
     '> Правка является поводом.' 'является'
 
+# --- SC-AK-868 — слова дерева сверх пакетных ------------------------------------------------
+#
+# Левую колонку словаря дерево дописывает надстройкой, и не судило её ничто: набор образцов был
+# зашит в код проверки. Дерево заводило свою проверку рядом — второй набор на одно требование,
+# и разойтись они могли молча. Настройка читается от корня дерева, поэтому фикстуре нужен свой
+# корень с копией проверок.
+
+TREE="$(mktemp -d)"
+mkdir -p "$TREE/tools" "$TREE/.claude/rt-kit"
+cp "$CHECKS/check-prose-style.mjs" "$CHECKS/rt-kit-checks.config.mjs" "$TREE/tools/"
+
+tree_says() {
+    printf '%s\n' "$2" > "$TREE/proba.md"
+    (cd "$TREE" && node tools/check-prose-style.mjs proba.md 2>&1)
+}
+
+tree_bans() {
+    printf '%s\n' "$1" > "$TREE/.claude/rt-kit/checks.json"
+}
+
+tree_bans '{ "prose": { "glossaryBans": [{ "pattern": "деплой[а-яё]*", "fix": "выкатка" }] } }'
+if tree_says label 'Деплой прошёл ночью.' | grep -qiE 'Деплой.*выкатка'; then got="есть"; else got="нет"; fi
+report "SC-AK-868 — слово дерева ловится наравне с пакетными" "$got" "есть"
+
+if tree_says label 'Эта таска в бэклоге.' | grep -qiE 'таска.*задача'; then got="есть"; else got="нет"; fi
+report "SC-AK-868 — пакетные слова при этом остались" "$got" "есть"
+
+tree_bans '{ "prose": { "glossaryBans": [{ "pattern": "[", "fix": "ничего" }] } }'
+if tree_says label 'Эта таска в бэклоге.' | grep -qiE 'таска.*задача'; then got="есть"; else got="нет"; fi
+report "SC-AK-868 — негодный образец проверку не роняет" "$got" "есть"
+
+rm -rf "$TREE"
+
 suite_result "проверка слога"
