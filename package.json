@@ -35,6 +35,7 @@
     "check:tokens-graph": "node tools/check-tokens-graph.mjs",
     "check:tokens-theme": "node tools/check-tokens-theme.mjs",
     "check:cascade-layer": "node tools/check-cascade-layer.mjs",
+    "test:checks": "bash tools/tests/run.sh",
     "check:tokens-build": "node tools/build-tokens-v2.mjs --check",
     "check:reuse": "node tools/check-reuse.mjs",
     "check:layers": "node tools/check-lib-layers.mjs",
