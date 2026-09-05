@@ -213,8 +213,8 @@ check_task() {
 
 # --- заведение ветки ---------------------------------------------------------------------
 branch_arg=''
-if printf '%s' "$cmd" | grep -qE '(^|[;&|[:space:]])git[[:space:]]+(checkout[[:space:]]+-b|switch[[:space:]]+-c)[[:space:]]'; then
-    branch_arg="$(printf '%s' "$cmd" | sed -nE 's/.*git[[:space:]]+(checkout[[:space:]]+-b|switch[[:space:]]+-c)[[:space:]]+([^[:space:];&|]+).*/\2/p' | head -1)"
+if printf '%s' "$cmd" | grep -qE '(^|[;&|[:space:]])git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]'; then
+    branch_arg="$(printf '%s' "$cmd" | sed -nE 's/.*git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]+([^[:space:];&|]+).*/\4/p' | head -1)"
     branch_arg="${branch_arg%\'}"; branch_arg="${branch_arg#\'}"
     branch_arg="${branch_arg%\"}"; branch_arg="${branch_arg#\"}"
 fi
@@ -238,7 +238,7 @@ if [ -n "$branch_arg" ]; then
         # Основание: вершина главной ветки обязана лежать в том, от чего растёт новая ветка.
         # Проверяется названное основание, а не вершина рабочей копии: иначе команда, которой
         # основание берут свежим — `git checkout -b <ветка> origin/<главная>`, — запрещалась бы.
-        base_arg="$(printf '%s' "$cmd" | sed -nE 's/.*git[[:space:]]+(checkout[[:space:]]+-b|switch[[:space:]]+-c)[[:space:]]+[^[:space:];&|]+[[:space:]]+([^[:space:];&|-][^[:space:];&|]*).*/\2/p' | head -1)"
+        base_arg="$(printf '%s' "$cmd" | sed -nE 's/.*git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]+[^[:space:];&|]+[[:space:]]+([^[:space:];&|-][^[:space:];&|]*).*/\4/p' | head -1)"
         base_ref="${base_arg:-HEAD}"
         if git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \
             && git rev-parse --verify --quiet "$base_ref" >/dev/null 2>&1 \

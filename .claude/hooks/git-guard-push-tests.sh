@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.24.0 · hooks/git-guard-push-tests.sh · 377184e3cd8a · правится надстройкой, не здесь
+# rt-kit v0.24.0 · hooks/git-guard-push-tests.sh · 5330db861856 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # Гард проверок перед пушем. PreToolUse на вызове пуша.
@@ -76,7 +76,7 @@ esac
 # Судится переключение на существующую ветку. Заведение новой (`checkout -b`, `switch -c`)
 # сюда не попадает: у свежей ветки дерево то же самое, что и было.
 if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}git[[:space:]]+(checkout|switch)[[:space:]]+" &&
-    ! printf '%s' "$cmd" | grep -qE 'git[[:space:]]+(checkout[[:space:]]+-b|switch[[:space:]]+-c)([[:space:]]|$)'; then
+    ! printf '%s' "$cmd" | grep -qE 'git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)([[:space:]]|$)'; then
     reason="BLOCKED: переключение ветки и пуш одной командой. Набор гейта гоняется в том дереве, какое лежит на момент разбора команды, — то есть по ПРЕЖНЕЙ ветке, а не по той, что уходит на хостинг. Зелёный набор при этом читается как проверка ушедшего, хотя проверял он другое. Раздели вызовы: сперва переключись, затем отдельной командой пушь."
     # Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
     # Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
