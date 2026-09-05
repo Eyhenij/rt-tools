@@ -13,3 +13,5 @@
 - **Запуск браузера своим драйвером отбивается, и отказ называет файл.** — `projects/agent-kit/assets/hooks/browser-guard-no-other-drivers.sh:launch`
 - **Код, переданный интерпретатору доводом, судится тем же образцом, что и файл.** — `projects/agent-kit/assets/hooks/browser-guard-no-other-drivers.sh:launch`
 - **Без закреплённого профиля гарды пропускают и вопрос, и свой драйвер.** — `projects/agent-kit/assets/hooks/browser-guard-no-other-drivers.sh:device_id`
+- **Выбор браузера протухает, и вызов после перерыва требует выбрать заново.** — `projects/agent-kit/assets/hooks/browser-guard-require-select.sh:ttl`
+- **Причина отказа по выбору приходит полем ответа.** — `projects/agent-kit/assets/hooks/browser-guard-require-select.sh:deny`
