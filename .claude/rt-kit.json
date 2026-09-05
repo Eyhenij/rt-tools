@@ -23,8 +23,6 @@
     "hooks/sql-guard-target.sh",
     "hooks/sql-guard-write.sh",
     "laws/shared-code.md",
-    "patterns/browser-verification-stand.md",
-    "patterns/testing-e2e.md",
     "patterns/ts-procedure.md",
     "rules/api-layer.md"
   ],

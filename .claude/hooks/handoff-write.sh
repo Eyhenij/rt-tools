@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.22.0 · hooks/handoff-write.sh · 31d636e23a59 · правится надстройкой, не здесь
+# rt-kit v0.24.0 · hooks/handoff-write.sh · 31d636e23a59 · правится надстройкой, не здесь
 # rt-hook: PreCompact .*
 # Требует: hooks/profile-check.sh
 # Передача захода пишется перед сжатием контекста, а не рукой исполнителя.

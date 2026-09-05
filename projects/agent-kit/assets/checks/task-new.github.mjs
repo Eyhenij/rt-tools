@@ -218,12 +218,33 @@ console.log(`https://github.com/${OWNER}/${REPO}/issues/${number}`);
  * ней придёт. Шестнадцать заведений подряд так и напечатали номер со ссылкой, не попав в
  * очередь ни одно: учётная запись была ограничена хостингом, вызовы при этом отказа не дали.
  */
-let answer;
-try {
-    answer = describeTaskState(number, taskState(number, { token }));
-} catch (error) {
-    const reason = error instanceof OfflineError ? error.message : String(error.message ?? error);
-    answer = describeTaskState(number, { offline: reason });
+/**
+ * Читается это не один раз. Очередь отдаёт новую карточку не в ту же секунду, в какую её
+ * завели, а чтение идёт следующим вызовом за добавлением: два заведения подряд напечатали, что
+ * задачи в очереди нет, при карточке на месте. Ложный отказ здесь дороже задержки — он толкает
+ * завести карточку второй раз, а снять её с борды может только администратор.
+ */
+let unreachable = false;
+
+function askQueue() {
+    try {
+        return describeTaskState(number, taskState(number, { token }));
+    } catch (error) {
+        // Спросить было нечем — повторять нечего: ответ не запоздал, его не будет вовсе.
+        unreachable = true;
+        const reason = error instanceof OfflineError ? error.message : String(error.message ?? error);
+        return describeTaskState(number, { offline: reason });
+    }
+}
+
+/** Сколько ждать между чтениями и сколько раз перечитывать: задержка очереди — секунды. */
+const QUEUE_RETRIES = 3;
+const QUEUE_PAUSE_MS = 1500;
+
+let answer = askQueue();
+for (let attempt = 1; !answer.ok && !unreachable && attempt < QUEUE_RETRIES; attempt += 1) {
+    Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, QUEUE_PAUSE_MS);
+    answer = askQueue();
 }
 for (const line of answer.lines) {
     (answer.ok ? console.log : console.error)(`task-new: ${line}`);
