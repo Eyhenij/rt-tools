@@ -292,6 +292,8 @@ expect_stop "SC-AK-653 — ход, кончившийся правкой фай�
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git log --oneline -5')" "$(edited)")")" PASS
 expect_stop "SC-AK-654 — заведение ветки разведкой не считается" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git checkout -b RT-3-next origin/main')")")" PASS
+expect_stop "SC-AK-872 — заведение ветки с флагом перед -b — та же работа" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git checkout -q -b RT-3-next origin/main')")")" PASS
 expect_stop "SC-AK-655 — переключение на ветку разведкой остаётся" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git commit -q -m fix')" "$(ran 'git checkout main')")")" BLOCK
 

@@ -448,7 +448,7 @@ describe('propose', () => {
         expect(dry.lines[0]).not.toBe(real.lines[0]);
     });
 
-    it('SC-AK-870 — сухой прогон называет, что токена он не проверял', async () => {
+    it('SC-AK-877 — сухой прогон называет, что токена он не проверял', async () => {
         start();
         proposals([forPackage]);
 

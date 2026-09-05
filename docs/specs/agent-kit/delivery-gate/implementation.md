@@ -37,6 +37,7 @@
 - **Тяжёлый шаг набора отбирается по составу правки.** — `projects/agent-kit/assets/defaults/project.sh:rt_push_docs_only_default`
 - **Отложенная правка пушем не считается.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:probe`
 - **Глагол команды ищется в его позиции, а не подстрокой во всей строке.** — `projects/agent-kit/assets/hooks/git-guard-main.sh:verbs` — сценарий SC-AK-832
+- **Заведение ветки узнаётся и с флагом между глаголом и `-b`.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:branch_arg` — тот же образец в гардах спора заявок, набора пуша, ожидания и стража выходов хода; сценарий SC-AK-872
 - **Гейт пуша пишет строку наблюдения на каждый свой исход.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:rt_push_gate_note` — сценарий SC-AK-835
 - **Упавшее задание не перезапускается, пока его журнал не прочитан.** — `projects/agent-kit/assets/hooks/rerun-guard.sh:seen`
 - **Прочитанным считается журнал того самого задания.** — `projects/agent-kit/assets/hooks/rerun-guard.sh:run_id`

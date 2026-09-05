@@ -116,6 +116,8 @@ gate "SC-AK-406 — заведение новой ветки в той же ко
     'git checkout -b RT-74-fresh && git push -u origin RT-74-fresh' PASS
 gate "SC-AK-406 — то же через switch -c" "$SWITCH_GATE" \
     'git switch -c RT-74-fresh && git push -u origin RT-74-fresh' PASS
+gate "SC-AK-872 — заведение с флагом перед -b — новая ветка, а не переключение" "$SWITCH_GATE" \
+    'git checkout -q -b RT-74-fresh && git push -u origin RT-74-fresh' PASS
 gate "SC-AK-407 — пробный пуш формы команды не судит" "$SWITCH_GATE" \
     'git checkout RT-73-switch && git push --dry-run origin RT-73-switch' PASS
 

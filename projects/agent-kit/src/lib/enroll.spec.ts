@@ -59,13 +59,13 @@ describe('intakeAllowed', () => {
 });
 
 describe('tokenPath', () => {
-    it('SC-AK-871 — абсолютный путь берётся как есть, а не клеится с корнем дерева', () => {
+    it('SC-AK-878 — абсолютный путь берётся как есть, а не клеится с корнем дерева', () => {
         // Склеенный, он кладёт секрет внутрь репозитория: `<дерево>/Users/…/tree.token`. Оттуда
         // токен уезжает в историю первой же командой добавления, и владелец об этом не знает.
         expect(tokenPath('/work/tree', '/Users/owner/.config/rt-kit/tree.token')).toBe('/Users/owner/.config/rt-kit/tree.token');
     });
 
-    it('SC-AK-871 — путь от домашнего каталога и путь от корня дерева читаются по-прежнему', () => {
+    it('SC-AK-878 — путь от домашнего каталога и путь от корня дерева читаются по-прежнему', () => {
         expect(tokenPath('/work/tree', '~/.config/rt-kit/tree.token')).toBe(join(homedir(), '.config/rt-kit/tree.token'));
         expect(tokenPath('/work/tree', '.secrets/tree.token')).toBe('/work/tree/.secrets/tree.token');
     });

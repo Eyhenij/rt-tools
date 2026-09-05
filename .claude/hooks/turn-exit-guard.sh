@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.24.0 · hooks/turn-exit-guard.sh · 098059c9c840 · правится надстройкой, не здесь
+# rt-kit v0.24.0 · hooks/turn-exit-guard.sh · fbd274c2c9b4 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: hooks/deny-tail.sh
 # Страж выходов хода: ход, в котором по работе не сделано ничего, не заканчивается, пока работа
@@ -174,7 +174,7 @@ work_re='git (add|commit|push|checkout|merge|rm)|npm run|pnpm (run|exec)|nx (bui
 #
 # Разведка выглядит работой лучше всего остального: в ней команды, числа и точные ответы. Тем
 # она и опасна — ход, набитый ею, читается как полный и владельцем, и самим заходом.
-read_re='^[[:space:]]*(([^[:space:]]*/)?git[[:space:]]+(show|log|ls-tree|ls-files|ls-remote|diff|status|branch|tag|rev-parse|remote|describe|blame|fetch|pull|(checkout|switch)(?![[:space:]]+-[bc][[:space:]]))|([^[:space:]]*/)?gh[[:space:]]+(pr|issue|run|repo)[[:space:]]+(list|view|status|checks|diff|download|logs))([[:space:]]|$)'
+read_re='^[[:space:]]*(([^[:space:]]*/)?git[[:space:]]+(show|log|ls-tree|ls-files|ls-remote|diff|status|branch|tag|rev-parse|remote|describe|blame|fetch|pull|(checkout|switch)(?!([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-[bc][[:space:]]))|([^[:space:]]*/)?gh[[:space:]]+(pr|issue|run|repo)[[:space:]]+(list|view|status|checks|diff|download|logs))([[:space:]]|$)'
 
 # Части составной команды судятся по одной: ход собирает чтение и работу в одну строку через
 # `&&`, и суждение целиком отпускало бы разведку по первой же меняющей части.
@@ -193,7 +193,7 @@ wait_re='gh[[:space:]]+(run[[:space:]]+watch|pr[[:space:]]+checks[^|]*--watch)|u
 # Отдача работы и начало следующей. Правило зовёт законным концом хода отданную работу — но с
 # условием: следующая начата, и по ней сделано ДЕЙСТВИЕ, а не сказано.
 handover_re='gh[[:space:]]+pr[[:space:]]+create'
-started_re='task:new|task:move|board\.mjs[[:space:]]+move|git[[:space:]]+checkout[[:space:]]+-b|git[[:space:]]+switch[[:space:]]+-c'
+started_re='task:new|task:move|board\.mjs[[:space:]]+move|git[[:space:]]+checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|git[[:space:]]+switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c'
 
 verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re" --arg read "$read_re" --arg part "$part_re" --arg wait "$wait_re" --arg handover "$handover_re" --arg started "$started_re" '
     def is_input:
