@@ -368,7 +368,7 @@ for (const scenario of byId.values()) {
     }
     // Обещание, данное пользователю, закрывается тестом, идущим его путём. Юнит проверяет
     // тот же расчёт мимо экрана: он верен и покрытием сценария не является
-    if (promisesScreen(scenario.promise) && !places.some(({ screen, off }) => screen && !off)) {
+    if (promisesScreen(scenario.promise, scenario.body) && !places.some(({ screen, off }) => screen && !off)) {
         const off = places.some(({ screen }) => screen);
         report(
             `${scenario.file}:${scenario.line}`,

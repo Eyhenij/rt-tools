@@ -21,6 +21,8 @@
  */
 import { readFileSync } from 'node:fs';
 
+import { CONFIG } from './rt-kit-checks.config.mjs';
+
 /** Предел длины предложения в словах. Дальше читатель теряет начало. */
 const WORDS_LIMIT = 40;
 
@@ -70,6 +72,25 @@ const GLOSSARY_BANS = [
     [/(?<![а-яёА-ЯЁ])бэклог[а-яё]*(?![а-яёА-ЯЁ])/giu, 'очередь работ'],
     [/(?<![а-яёА-ЯЁ])скилл[а-яё]*(?![а-яёА-ЯЁ])/giu, 'правило, паттерн или скил без закона'],
 ];
+
+/**
+ * Слова дерева сверх пакетных: они читаются из настройки проверок и ложатся в тот же набор.
+ *
+ * Дерево дописывает свою половину таблицы «Так не пишем» надстройкой словаря, и без этого её не
+ * судило ничто: набор был зашит в код. Дерево заводило свою проверку рядом — второй набор
+ * образцов на одно требование, и разойтись они могли молча.
+ */
+const TREE_BANS = (CONFIG.prose?.glossaryBans ?? [])
+    .filter((one) => one && typeof one.pattern === 'string' && typeof one.fix === 'string')
+    .map((one) => {
+        try {
+            return [new RegExp(one.pattern, 'giu'), one.fix];
+        } catch {
+            // Негодный образец не роняет проверку целиком: остальные слова судятся по-прежнему.
+            return null;
+        }
+    })
+    .filter(Boolean);
 
 const CODE_FENCE = /^\s*```/;
 
@@ -135,7 +156,7 @@ function proseLines(text) {
 /** Находки одной строки: образец, что нашли, чем заменить. */
 function findingsIn(line) {
     const found = [];
-    [...MARKS, ...GLOSSARY_BANS].forEach(([re, fix]) => {
+    [...MARKS, ...GLOSSARY_BANS, ...TREE_BANS].forEach(([re, fix]) => {
         const hit = line.match(re);
         if (hit) found.push([hit[0], fix]);
     });
