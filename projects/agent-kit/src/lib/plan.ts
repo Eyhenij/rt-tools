@@ -16,6 +16,8 @@ export type TOutcome =
     | 'drift'
     /** Файл есть, шапки нет — положен не пакетом, трогать нельзя. */
     | 'foreign'
+    /** Тело сходится, а права на запуск нет: хук лежит и не зовётся. */
+    | 'permission'
     /** Сходится всё. */
     | 'ok';
 
@@ -27,6 +29,15 @@ export interface IPlanInput {
     readonly rendered: string;
     /** Что лежит на этом пути сейчас; `null` — файла нет. */
     readonly existing: string | null;
+    /**
+     * Ресурс кладётся исполнимым: право берётся с файла пакета, а не раздаётся по каталогу.
+     *
+     * Умолчание — «нет»: право спрашивается у того, кто его несёт, и ресурс, которому оно не
+     * нужно, о нём не думает вовсе.
+     */
+    readonly executable?: boolean;
+    /** Право на запуск у файла в дереве. Значение имеет смысл только при `existing`. */
+    readonly existingExecutable?: boolean;
 }
 
 export interface IPlanned {
@@ -62,7 +73,18 @@ export function planFile(input: IPlanInput): IPlanned {
         return planned('drift', false);
     }
 
-    return found.stamp.hash === stamp.hash && found.stamp.version === input.version ? planned('ok', false) : planned('update', true);
+    if (found.stamp.hash !== stamp.hash || found.stamp.version !== input.version) {
+        return planned('update', true);
+    }
+
+    // Тело сходится, а бит исполнения снят. Переписывать нечего — правки в теле нет, — но
+    // молчать нельзя: зарегистрированный командой хук без этого бита не запускается вовсе, а
+    // выглядит установленным. Раскладка вернёт право, сверка назовёт файл расхождением.
+    if (input.executable === true && input.existingExecutable === false) {
+        return planned('permission', false);
+    }
+
+    return planned('ok', false);
 }
 
 /** Раскладка не удалась, если хоть один файл её не принял. */
