@@ -49,25 +49,25 @@ describe('стили оверлея панели', (): void => {
     const css: string = sass.compile(SOURCE).css;
     const parts: { inLayer: string; outsideLayer: string } = split(css);
 
-    it('прозрачность и нажатия закрытой подложки объявлены вне слоя', (): void => {
+    it('SC-UKV-84 — прозрачность и нажатия закрытой подложки объявлены вне слоя', (): void => {
         const body: string = ruleBody(parts.outsideLayer, '.cdk-overlay-backdrop.rt-aside-backdrop');
 
         expect(body).toContain('opacity: 0');
         expect(body).toContain('pointer-events: none');
     });
 
-    it('открытая подложка возвращает себе видимость там же, вне слоя', (): void => {
+    it('SC-UKV-84 — открытая подложка возвращает себе видимость там же, вне слоя', (): void => {
         const body: string = ruleBody(parts.outsideLayer, '.cdk-overlay-backdrop.rt-aside-backdrop.rt-aside-backdrop--visible');
 
         expect(body).toContain('opacity: 1');
         expect(body).toContain('pointer-events: auto');
     });
 
-    it('закрытая панель нажатий не ловит, и это правило тоже вне слоя', (): void => {
+    it('SC-UKV-85 — закрытая панель нажатий не ловит, и это правило тоже вне слоя', (): void => {
         expect(ruleBody(parts.outsideLayer, '.rt-aside-overlay:not(.rt-aside-overlay--open)')).toContain('pointer-events: none');
     });
 
-    it('оформление подложки осталось в слое: приложение переопределяет его своими правилами', (): void => {
+    it('SC-UKV-86 — оформление подложки осталось в слое: приложение переопределяет его своими правилами', (): void => {
         const body: string = ruleBody(parts.inLayer, '.cdk-overlay-backdrop.rt-aside-backdrop');
 
         expect(body).toContain('background: var(--rt-aside-backdrop-bg)');
@@ -75,7 +75,7 @@ describe('стили оверлея панели', (): void => {
         expect(body).toContain('transition: opacity var(--rt-aside-animation-duration) ease');
     });
 
-    it('вне слоя стоят только правила видимости', (): void => {
+    it('SC-UKV-86 — вне слоя стоят только правила видимости', (): void => {
         expect(parts.outsideLayer).not.toContain('background:');
         expect(parts.outsideLayer).not.toContain('transition:');
     });
