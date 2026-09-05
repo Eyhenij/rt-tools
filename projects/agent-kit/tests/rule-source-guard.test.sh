@@ -67,6 +67,25 @@ report "SC-AK-537 — снятие разложенной копии прохо�
     "$(decision "$(cmd_in 'rm -f tools/probe.mjs')")" PASS
 
 # Правка тем же интерпретатором: путь стоит внутри кода, и снаружи команда выглядит запуском.
+# Адрес, названный в теле образцом поиска, целью записи не бывает: сценарий его не открывает.
+# Прежде тело, которое хоть что-нибудь пишет, отдавало все свои путеподобные слова разом, и
+# правка одного файла запрещалась по имени другого — отказ обходился сменой формы команды.
+report "SC-AK-864 — посторонний путь в теле целью записи не считается" \
+    "$(decision "$(cmd_in 'python3 - <<PY
+import io
+p = "docs/notes.md"
+anchor = "tools/probe.mjs"
+io.open(p, "w").write(anchor)
+PY')")" PASS
+
+# Путь, присвоенный переменной, при этом не теряется: пара «присвоение — вызов записи» видна.
+report "SC-AK-864 — путь записи через переменную отбивается" \
+    "$(decision "$(cmd_in 'python3 - <<PY
+import io
+p = "tools/probe.mjs"
+io.open(p, "w").write("x")
+PY')")" deny
+
 report "SC-AK-801 — правка разложенной копии телом интерпретатора отбивается" \
     "$(decision "$(cmd_in 'python3 - <<PY
 import pathlib
@@ -112,6 +131,34 @@ report "SC-AK-538 — дерево с источником посылается 
     "$(says "$(edit_in .claude/skills/probe/SKILL.md)" 'pkg/assets/rules/probe\.md')" 1
 report "SC-AK-538 — и надстройка названа законной формой" \
     "$(says "$(edit_in .claude/skills/probe/SKILL.md)" 'overrides/rules/probe\.md')" 1
+
+# --- SC-AK-858 — тело интерпретатора без записи путей не отдаёт ---------------------------------
+# Раньше из тела бралось всё похожее на путь: команда, подключившая разложенный помощник и
+# напечатавшая его ответ, запрещалась как правка этого помощника — за один заход трижды подряд.
+READ_BODY='bash -c ". .claude/skills/probe/SKILL.md; printf ok"'
+report "SC-AK-858 — чтение разложенного из тела проходит" \
+    "$(decision "$(cmd_in "$READ_BODY")")" PASS
+
+WRITE_BODY='python3 - <<PY
+io.open(".claude/skills/probe/SKILL.md", "w").write("x")
+PY'
+report "SC-AK-858 — запись из тела по-прежнему запрещена" \
+    "$(decision "$(cmd_in "$WRITE_BODY")")" deny
+
+# Путь и вызов записи стоят в теле разными строками — связать их нечем, поэтому тело, которое
+# пишет, отдаёт свои пути целиком.
+SPLIT_BODY='python3 - <<PY
+p = ".claude/skills/probe/SKILL.md"
+io.open(p, "w").write("x")
+PY'
+report "SC-AK-858 — путь строкой выше записи берётся" \
+    "$(decision "$(cmd_in "$SPLIT_BODY")")" deny
+
+# SC-AK-858. Заглушённый вывод признаком записи не бывает и внутри тела: команда с правкой
+# одного файла и запуском проверки рядом запрещалась по пути этой проверки.
+MUTED_BODY='perl -pi -e s/a/b/ docs/proba.md; node .claude/skills/probe/SKILL.md >/dev/null 2>&1'
+report "SC-AK-858 — заглушённый вывод записью не считается" \
+    "$(decision "$(cmd_in "$MUTED_BODY")")" PASS
 
 # Отказ в пользу работы: сломанный гард не заклинивает работу.
 exit_code_of() {

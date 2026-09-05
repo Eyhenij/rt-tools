@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.23.0 · hooks/browser-guard-no-other-drivers.sh · f81c066cd0a9 · правится надстройкой, не здесь
+# rt-kit v0.24.0 · hooks/browser-guard-no-other-drivers.sh · a874dcb9d0b6 · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__playwright__.*|mcp__chrome-devtools__.*|Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/deny-tail.sh
 # Гард обходных путей к браузеру. PreToolUse.
@@ -98,7 +98,9 @@ printf '%s' "$cmd" | grep -qF 'Google Chrome.app/Contents/MacOS' \
 
 # Точки входа браузерных библиотек — то, чем браузер поднимают из кода. Перечислены и глагол
 # запуска, и глагол присоединения к уже поднятому: второй обходит профиль ровно так же.
-launch='(chromium|firefox|webkit|browserType|puppeteer|chromeLauncher)[[:space:]]*\.[[:space:]]*(launch|connect)|launchPersistentContext|webdriver\.(Chrome|Firefox)|chrome-launcher'
+# Присоединение по отладочному порту и запуск со своим каталогом профиля стоят и без имени
+# движка перед точкой: их вносят прямым ввозом имени, и тогда судить нечего, кроме самого глагола.
+launch='(chromium|firefox|webkit|browserType|puppeteer|chromeLauncher)[[:space:]]*\.[[:space:]]*(launch|connect)|launchPersistentContext[[:space:]]*\(|connectOverCDP[[:space:]]*\(|webdriver\.(Chrome|Firefox)|chrome-launcher'
 
 # Код, переданный доводом вместо файла. Судится только вместе с именем интерпретатора и его
 # флагом кода: голый образец отбивал бы и поиск по дереву, в котором такое слово просто ищут.

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.23.0 · hooks/git-guard-delivery-signature.sh · a0baaab05626 · правится надстройкой, не здесь
+# rt-kit v0.24.0 · hooks/git-guard-delivery-signature.sh · 43a934c30b36 · правится надстройкой, не здесь
 # Подпись машинного коммита для гарда поставки: чей это коммит, той ли почтой он подписан и что
 # делать, если нет.
 #
@@ -81,6 +81,35 @@ if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}git([[:space:]]|\$)" \
         done <<EOF
 $(git log --format='%h%x09%an%x09%ae' "origin/${main_branch}..HEAD" 2>/dev/null)
 EOF
+
+        # Коммит под записью, которой дерево не объявляло, прежде проходил молча: помощник
+        # судил только коммит, назвавшийся машинной записью, а пять коммитов подряд под чужим
+        # логином в это условие не попадали вовсе. Дыра шире той, которую помощник закрывает.
+        #
+        # Включает эту половину дерево, назвав почты людей ключом профиля: без него требовать
+        # известной подписи от каждого коммита значило бы отбивать работу, сделанную человеком
+        # своими руками. Назвало — известны машинная запись и перечисленные люди, всё прочее
+        # отбивается.
+        unknown=''
+        if [ -n "${RT_HUMAN_EMAILS:-}" ]; then
+            while IFS="$(printf '\t')" read -r short author email; do
+                [ -z "$short" ] && continue
+                [ "$email" = "$commit_email" ] && continue
+                known=''
+                for one in $RT_HUMAN_EMAILS; do
+                    [ "$email" = "$one" ] && known=1 && break
+                done
+                [ -n "$known" ] && continue
+                unknown="${unknown}${unknown:+, }${short} <${email}>"
+            done <<EOF
+$(git log --format='%h%x09%an%x09%ae' "origin/${main_branch}..HEAD" 2>/dev/null)
+EOF
+        fi
+
+        [ -n "$unknown" ] \
+            && deny "BLOCKED: коммит вклада подписан записью, которой дерево не объявляло. Известны машинная запись ${commit_email} и почты людей, названные профилем; всё прочее хостинг припишет тому, чей это адрес, а изнутри истории промах не виден. Расходятся: ${unknown}. Перепиши подпись до пуша, после него это чинит только силовая отправка:
+    последний коммит — GIT_AUTHOR_EMAIL=\"${commit_email}\" GIT_COMMITTER_EMAIL=\"${commit_email}\" git commit --amend --no-edit --reset-author
+    весь вклад ветки — git filter-branch -f --env-filter 'GIT_AUTHOR_EMAIL=\"${commit_email}\"; GIT_COMMITTER_EMAIL=\"${commit_email}\"' origin/${main_branch}..HEAD"
 
         [ -n "$strangers" ] \
             && deny "BLOCKED: машинный коммит подписан не той почтой, что объявлена деревом. Хостинг сопоставляет служебный адрес по числу в нём, и коммит с чужим числом он припишет постороннему человеку — изнутри промах не виден, потому что имя учётной записи рядом верное. Расходятся: ${strangers}. Объявлено: ${commit_email} — почта берётся оттуда, а не набирается по памяти. Перепиши подпись до пуша, после него это чинит только силовая отправка:

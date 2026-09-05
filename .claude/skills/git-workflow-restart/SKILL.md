@@ -4,7 +4,7 @@ kind: pattern
 rule: deploy-flow
 description: Паттерн правила deploy-flow. Брать при ручном перезапуске прода — после правки .env.prod, при разборе выкатки, при подъёме контейнера на сервере. Готовые команды с меткой образа по sha и чем сверять результат. Накат миграций — паттерн git-workflow-migration.
 ---
-<!-- rt-kit v0.23.0 · patterns/git-workflow-restart.md · 1ca732b6874e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.24.0 · patterns/git-workflow-restart.md · 1ca732b6874e · правится надстройкой, не здесь -->
 
 # Ручной перезапуск прода
 

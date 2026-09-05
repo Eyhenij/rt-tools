@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.23.0 · hooks/turn-entry-load.sh · 0fffef7e9129 · правится надстройкой, не здесь
+# rt-kit v0.24.0 · hooks/turn-entry-load.sh · 0fffef7e9129 · правится надстройкой, не здесь
 # rt-hook: SessionStart startup|resume|compact|clear
 # Требует: hooks/handoff-write.sh
 # SessionStart: передача прошлого захода и карта хода уезжают в контекст на каждом запуске.

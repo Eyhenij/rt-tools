@@ -22,3 +22,6 @@
 Имена этого дерева: источник — `projects/agent-kit/assets/<ресурс>`, каталог надстроек —
 `.claude/rt-kit/overrides/`, профиль дерева — `.claude/rt-kit/project.sh`, настройка
 форматтера — `.prettierignore`.
+
+- **Тело интерпретатора без записи своих путей не отдаёт.** — `projects/agent-kit/assets/hooks/write-targets.sh:writes` — признак записи внутри тела; сценарий `SC-AK-858`
+- **Заглушённый вывод признаком записи не бывает и внутри тела.** — `projects/agent-kit/assets/hooks/write-targets.sh:rt_write_targets` — перенаправление снимается до разбора; сценарий `SC-AK-858`

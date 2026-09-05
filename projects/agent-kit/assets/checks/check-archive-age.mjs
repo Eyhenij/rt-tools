@@ -9,6 +9,10 @@
  * Сверка не чистит: снос — решение, а не следствие проверки. Она называет перестоявшие записи
  * и команду, которой их снимают.
  *
+ * Сверка требует позже, чем чистка снимает: у неё запас в сутки сверх срока. Чистка идёт в
+ * минуту пуша, сверка в конвейере — минутами или часами позже, и без запаса следующая запись
+ * пересекала порог между ними.
+ *
  * FAIL-OPEN: срок деревом не назначен — сверять нечего, нулевой код. Умолчания у срока нет
  * намеренно: пакет, назначивший его за дерево, начал бы сносить чужой архив в день установки.
  * Каталога нет — то же самое. Пустой каталог отказом не считается: он означает, что всё снято
@@ -16,7 +20,7 @@
  *
  * Ненулевой код возврата и перечень перестоявших записей.
  */
-import { ARCHIVE_DIR, RETENTION_DAYS, archiveRecords, staleRecords } from './archive-age.mjs';
+import { ARCHIVE_DIR, CHECK_GRACE_DAYS, RETENTION_DAYS, archiveRecords, staleRecords } from './archive-age.mjs';
 import { ROOT } from './rt-kit-checks.config.mjs';
 
 if (RETENTION_DAYS === null) {
@@ -25,13 +29,13 @@ if (RETENTION_DAYS === null) {
 }
 
 const total = archiveRecords(ROOT).length;
-const stale = staleRecords(ROOT);
+const stale = staleRecords(ROOT, new Date(), CHECK_GRACE_DAYS);
 
 if (stale.length > 0) {
     console.error(`check-archive-age: расхождений ${stale.length}`);
 
     for (const record of stale) {
-        console.error(`  ${record.path}: ${Math.floor(record.ageDays)} суток при сроке в ${RETENTION_DAYS}`);
+        console.error(`  ${record.path}: ${Math.floor(record.ageDays)} суток при сроке в ${RETENTION_DAYS} и запасе в ${CHECK_GRACE_DAYS}`);
     }
 
     console.error(`\nЗапись живёт ${RETENTION_DAYS} суток и снимается: \`node tools/archive-prune.mjs --apply\`.`);

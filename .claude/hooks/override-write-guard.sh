@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.23.0 · hooks/override-write-guard.sh · 916180fdcaaa · правится надстройкой, не здесь
+# rt-kit v0.24.0 · hooks/override-write-guard.sh · 916180fdcaaa · правится надстройкой, не здесь
 # rt-hook: PreToolUse Write|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/deny-tail.sh, hooks/guard-note.sh
 # Гард затирания надстройки: запись поверх — не то же самое, что правка.

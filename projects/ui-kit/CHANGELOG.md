@@ -1,3 +1,9 @@
+## [0.5.1](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.5.0...rt-tools@0.5.1) (2026-09-04)
+
+### Bug Fixes
+
+- **rt:ui-kit:** [RT-1672] ручка тяги подменю ловится шире, чем видна ([c8cc075](https://github.com/Eyhenij/rt-tools/commit/c8cc0758554b8b79af9294f7c991733d66e45365))
+
 # [0.5.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.4.0...rt-tools@0.5.0) (2026-09-03)
 
 ### Bug Fixes

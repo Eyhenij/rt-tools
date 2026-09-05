@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.23.0 · defaults/gate-map.sh · 7b805978b9cd · правится надстройкой, не здесь
+# rt-kit v0.24.0 · defaults/gate-map.sh · a0c2caba8615 · правится надстройкой, не здесь
 # Карта «что правится — какое правило». Умолчание пакета: настоящие пути, а не образцы.
 #
 # Деревья этой мастерской устроены одинаково — Nx, `apps/` и `libs/`, те же расширения и те же
@@ -174,6 +174,19 @@ skill_for_default() {
             elif rt_gate_invokes "$target" "docker[[:space:]]+(build|buildx|pull|push|run|compose|login|rm|rmi|stop|start|restart|image|volume|builder|network)" \
                 || rt_gate_invokes "$target" "docker[[:space:]]+system[[:space:]]+prune"; then
                 printf '%s\n' 'git-workflow'
+            fi
+
+            # Тело задачи и тело заявки публикуются вызовом клиента и файлом дерева не
+            # становятся: гейт проверял расширение правимого файла и на такой команде молчал.
+            # Читает этот текст человек, и чаще, чем любой файл дерева: владелец прочитал семь
+            # своих задач и две заявки и назвал язык в них нечитаемым, а ни одна проверка об этом
+            # не сообщила. Признака два сразу: вызов клиента и тело в доводах — одного слова о
+            # заявке мало, оно есть в строке любой команды, которая о ней пишет.
+            if { rt_gate_invokes "$target" "(gh|glab)[[:space:]]+(pr|mr|issue)[[:space:]]+(create|edit)" \
+                || rt_gate_invokes "$target" "[^[:space:]]*task:new"; } \
+                && printf '%s' "$target" | grep -qE '(--body|--body-file|--description|-F[[:space:]]*body)'; then
+                printf '%s\n' 'doc-style'
+                printf '%s\n' 'doc-style-human'
             fi
 
             # Слияние PR — последний момент, когда папку закрытой задачи ещё можно разобрать

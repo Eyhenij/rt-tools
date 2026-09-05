@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.23.0 · checks/check-board.github.mjs · 4fc7d960965e · правится надстройкой, не здесь
+// rt-kit v0.24.0 · checks/check-board.github.mjs · 10bf35c5a0ad · правится надстройкой, не здесь
 /**
  * Сверка очереди работ с тем, что закон о поставке требует от задачи и её PR.
  *
@@ -51,6 +51,7 @@ import {
     taskDirs,
 } from './board.mjs';
 import { onlyIgnoredPaths } from './board-paths.mjs';
+import { checkBranchFolders } from './board-folders.mjs';
 import { checkLongWork } from './board-long-work.mjs';
 import { HAS_PIPELINE, deployLag, evictedOnHead, headCommittedAt, lastDeploy, runsOnHead, verdictOnHead } from './board-runs.mjs';
 import { checkEpicLinks } from './board-epics.mjs';
@@ -197,6 +198,20 @@ function checkHeadRun(pull, options) {
         return;
     }
 
+    // Заявка поверх соседней прогона не получает: рабочий поток слушает заявки в главную ветку и
+    // событий с другой базой не видит. Строка о потерянном событии здесь неверна дважды: событие
+    // не терялось, и перезакрытие его не вернёт — совет исполняется буквально, прогон не
+    // запускается, и на второй попытке поломку начинают искать в хостинге.
+    if (pull.baseRefName && pull.baseRefName !== MAIN_BRANCH) {
+        report(
+            `PR #${pull.number}: на вершине ${pull.headRefOid.slice(0, 8)} прогона нет и не будет — ` +
+                `заявка открыта в ветку «${pull.baseRefName}», а рабочий поток слушает заявки в главную; ` +
+                `перенеси базу на «${MAIN_BRANCH}», когда нижняя заявка влита`
+        );
+
+        return;
+    }
+
     report(
         `PR #${pull.number}: на вершине ${pull.headRefOid.slice(0, 8)} прогона нет, а лежит она ${minutes} мин — ` +
             `конвейер события не получил; верни его новым коммитом либо перезакрытием PR ` +
@@ -285,6 +300,7 @@ let checked = { issues: 0, pulls: 0, cargo: 0 };
 
 // Черновики судятся по диску и потому проверяются всегда: связи для этого не нужно.
 checkDrafts();
+checkBranchFolders(report, MAIN_BRANCH);
 
 let offline = false;
 try {
