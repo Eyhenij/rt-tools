@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.24.0 · hooks/git-guard-delivery.sh · 8006eaa7cfef · правится надстройкой, не здесь
+# rt-kit v0.24.0 · hooks/git-guard-delivery.sh · 065beeb5cc02 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Гард поставки. PreToolUse на заведении ветки, пуше и открытии заявки на слияние.
@@ -214,8 +214,8 @@ check_task() {
 
 # --- заведение ветки ---------------------------------------------------------------------
 branch_arg=''
-if printf '%s' "$cmd" | grep -qE '(^|[;&|[:space:]])git[[:space:]]+(checkout[[:space:]]+-b|switch[[:space:]]+-c)[[:space:]]'; then
-    branch_arg="$(printf '%s' "$cmd" | sed -nE 's/.*git[[:space:]]+(checkout[[:space:]]+-b|switch[[:space:]]+-c)[[:space:]]+([^[:space:];&|]+).*/\2/p' | head -1)"
+if printf '%s' "$cmd" | grep -qE '(^|[;&|[:space:]])git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]'; then
+    branch_arg="$(printf '%s' "$cmd" | sed -nE 's/.*git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]+([^[:space:];&|]+).*/\4/p' | head -1)"
     branch_arg="${branch_arg%\'}"; branch_arg="${branch_arg#\'}"
     branch_arg="${branch_arg%\"}"; branch_arg="${branch_arg#\"}"
 fi
@@ -239,7 +239,7 @@ if [ -n "$branch_arg" ]; then
         # Основание: вершина главной ветки обязана лежать в том, от чего растёт новая ветка.
         # Проверяется названное основание, а не вершина рабочей копии: иначе команда, которой
         # основание берут свежим — `git checkout -b <ветка> origin/<главная>`, — запрещалась бы.
-        base_arg="$(printf '%s' "$cmd" | sed -nE 's/.*git[[:space:]]+(checkout[[:space:]]+-b|switch[[:space:]]+-c)[[:space:]]+[^[:space:];&|]+[[:space:]]+([^[:space:];&|-][^[:space:];&|]*).*/\2/p' | head -1)"
+        base_arg="$(printf '%s' "$cmd" | sed -nE 's/.*git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]+[^[:space:];&|]+[[:space:]]+([^[:space:];&|-][^[:space:];&|]*).*/\4/p' | head -1)"
         base_ref="${base_arg:-HEAD}"
         if git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \
             && git rev-parse --verify --quiet "$base_ref" >/dev/null 2>&1 \

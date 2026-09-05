@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.24.0 · hooks/git-guard-delivery-conflict.sh · c49abea43403 · правится надстройкой, не здесь
+# rt-kit v0.24.0 · hooks/git-guard-delivery-conflict.sh · 280ff17a4436 · правится надстройкой, не здесь
 # Конфликтующая своя заявка для гарда поставки: пока хоть одна отданная работа помечена
 # конфликтующей, новая не берётся.
 #
@@ -53,7 +53,7 @@ rt_delivery_conflict() {
         esac
     fi
     if [ -z "$taking" ] \
-        && printf '%s' "$cmd" | grep -qE '(^|[;&|[:space:]])git[[:space:]]+(checkout[[:space:]]+-b|switch[[:space:]]+-c)[[:space:]]+[A-Za-z]+-[0-9]+'; then
+        && printf '%s' "$cmd" | grep -qE '(^|[;&|[:space:]])git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]+[A-Za-z]+-[0-9]+'; then
         taking='заведение ветки под задачу'
     fi
     if [ -z "$taking" ] \

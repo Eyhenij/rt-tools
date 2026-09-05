@@ -116,6 +116,8 @@ expect_stop "SC-AK-262 — красный ответ в форме поля то
     "$(input_stop "$(transcript "$(say 'что там прогон')" "$(ran 'gh run view 42 --json conclusion')" "$(result '{"conclusion":"failure"}')" "$(reply 'Красный.')")")" BLOCK
 expect_stop "SC-AK-262 — действие по следующей задаче снимает требование и здесь" \
     "$(input_stop "$(transcript "$(say 'что там прогон')" "$(ran 'gh run list --limit 1')" "$(result "$RED_LIST")" "$(ran 'git checkout -b RT-11-next')")")" PASS
+expect_stop "SC-AK-872 — заведение ветки с флагом перед -b считается той же работой" \
+    "$(input_stop "$(transcript "$(say 'что там прогон')" "$(ran 'gh run list --limit 1')" "$(result "$RED_LIST")" "$(ran 'git checkout -q -b RT-11-next')")")" PASS
 
 # --- SC-AK-263 — зелёный прогон и чтение без красного ответа гард не судит ---------------------
 #
