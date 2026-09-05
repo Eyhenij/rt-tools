@@ -270,6 +270,59 @@ printf '%s\n' \
 report "SC-AK-688 — строка с кодом отказа процедурой не считается" \
     "$(specs_says 'токена нет')" 0
 
+# --- SC-AK-866 — человек, названный в обещании местоимением ---------------------------------
+#
+# Обещание пишут связной речью: человека называют в «Дано», а в «Тогда» о нём говорят
+# местоимением. Признак экрана человека тогда не видел, и сценарий уходил в покрытые юнитом
+# молча. Имя человека ищется по телу сценария целиком, а местоимение — подлежащим при самом
+# глаголе восприятия: свободная связка засчитала бы «он» о запросе и счётчике.
+
+spec_dir docs/specs/screen 'Экран' SR
+mkdir -p "$SPEC_TREE/libs/screen"
+
+screen_scenario() {
+    printf '# Сценарии\n\n### SC-%s-01 — первый\n\n%s\n' SR "$1" > "$SPEC_TREE/docs/specs/screen/scenarios.md"
+    printf "describe('экран', () => {\n    it('SC-%s-01 — первый', () => {});\n});\n" SR \
+        > "$SPEC_TREE/libs/screen/screen.spec.ts"
+}
+
+screen_promise="$(printf 'SC-%s-01 обещает то, что человек видит' SR)"
+
+screen_scenario 'Дано гость открыл список
+Когда приходит отказ
+Тогда он видит сообщение об отказе'
+report "SC-AK-866 — обещание местоимением судится наравне с именем" "$(specs_says "$screen_promise")" 1
+
+screen_scenario 'Дано домен решает, есть ли тревога
+Когда идёт разбор
+Тогда он смотрит на прошлый час'
+report "SC-AK-866 — местоимение без человека в теле экрана не обещает" "$(specs_says "$screen_promise")" 0
+
+screen_scenario 'Дано гость открыл список
+Когда приходит отказ
+Тогда он получает отказ записью в журнале'
+report "SC-AK-866 — человек без восприятия экрана не обещает" "$(specs_says "$screen_promise")" 0
+
+rm -rf "$SPEC_TREE/docs/specs/screen" "$SPEC_TREE/libs/screen"
+
+# --- SC-AK-867 — номер строки и имя класса в якоре ------------------------------------------
+#
+# В разметке и стилях привязываться больше не к чему: ни метода, ни поля у элемента нет. Прежде
+# такая привязка образцу не совпадала, и сверка говорила, что привязки нет вовсе, — заход уходил
+# на то, чтобы переписать верную таблицу.
+
+mkdir -p "$SPEC_TREE/.claude/skills/anchor-rule"
+printf -- '---\nname: anchor-rule\nkind: rule\nlaw: acting\n---\n\n# Правило\n\n## Как закон применяется здесь\n\n- **Раз.** Два.\n- **Три.** Четыре.\n' \
+    > "$SPEC_TREE/.claude/skills/anchor-rule/SKILL.md"
+printf '<div class="rt-badge">\n    <span>метка</span>\n</div>\n' > "$SPEC_TREE/.claude/skills/anchor-rule/view.html"
+printf '.rt-badge {\n    display: flex;\n}\n' > "$SPEC_TREE/.claude/skills/anchor-rule/view.scss"
+printf '# Компаньон\n\n## Где исполняются статьи\n\n| Статья | Где исполняется |\n| --- | --- |\n| Раз. | `.claude/skills/anchor-rule/view.scss:.rt-badge` |\n| Три. | `.claude/skills/anchor-rule/view.html:1` |\n' \
+    > "$SPEC_TREE/.claude/skills/anchor-rule/implementation.md"
+report "SC-AK-867 — якорь именем класса пустым не считается" "$(specs_says 'правило без привязки: «Раз')" 0
+report "SC-AK-867 — якорь номером строки пустым не считается" "$(specs_says 'правило без привязки: «Три')" 0
+report "SC-AK-867 — обе привязки сходятся" "$(specs_says 'привязка не сходится')" 0
+rm -rf "$SPEC_TREE/.claude/skills/anchor-rule"
+
 # --- SC-AK-807, SC-AK-808 — договорённость, ждущая своего домена дольше месяца ---------------
 #
 # Привязка в договорённости стареет молча: объявление, на которое она показывает, переезжает
