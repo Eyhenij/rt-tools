@@ -1,8 +1,8 @@
 import { mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { enroll, IEnrollAnswer, IEnrollBody, IEnrollOptions, IEnrollOutcome, intakeAllowed, TEnrollCall } from './enroll.js';
+import { enroll, IEnrollAnswer, IEnrollBody, IEnrollOptions, IEnrollOutcome, intakeAllowed, TEnrollCall, tokenPath } from './enroll.js';
 
 /** Код приглашения образца: он уезжает телом обращения и на диск не ложится. */
 const CODE: string = 'b'.repeat(64);
@@ -55,6 +55,19 @@ describe('intakeAllowed', () => {
 
     it('SC-MB-126 — адрес, начинающийся именем локальной машины, чужим не считается', () => {
         expect(intakeAllowed('http://localhost.чужой.дом')).toBe(false);
+    });
+});
+
+describe('tokenPath', () => {
+    it('SC-AK-878 — абсолютный путь берётся как есть, а не клеится с корнем дерева', () => {
+        // Склеенный, он кладёт секрет внутрь репозитория: `<дерево>/Users/…/tree.token`. Оттуда
+        // токен уезжает в историю первой же командой добавления, и владелец об этом не знает.
+        expect(tokenPath('/work/tree', '/Users/owner/.config/rt-kit/tree.token')).toBe('/Users/owner/.config/rt-kit/tree.token');
+    });
+
+    it('SC-AK-878 — путь от домашнего каталога и путь от корня дерева читаются по-прежнему', () => {
+        expect(tokenPath('/work/tree', '~/.config/rt-kit/tree.token')).toBe(join(homedir(), '.config/rt-kit/tree.token'));
+        expect(tokenPath('/work/tree', '.secrets/tree.token')).toBe('/work/tree/.secrets/tree.token');
     });
 });
 

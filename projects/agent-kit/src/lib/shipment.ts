@@ -117,7 +117,7 @@ export function summaryCargo(
         sessions: summary.sessions,
         loads: knownCounts(summary.loads, known),
         denials: knownCounts(summary.denials, known),
-        // Род правки, на котором гейт отбивал, ресурсом не является: это `extension`, `command`
+        // Род правки, на котором гейт отбивал, ресурсом не бывает: это `extension`, `command`
         // или `browser` — слова пакета, одинаковые у всех деревьев.
         kinds: summary.kinds,
         guards: knownCounts(summary.guards, known),
@@ -142,7 +142,7 @@ export function readPostmortems(root: string, dir: string): IPostmortemItem[] {
 
     return (
         readdirSync(path)
-            // Описание каталога разбором не является: оно объясняет, что здесь лежит, а не механизм
+            // Описание каталога разбором не считается: оно объясняет, что здесь лежит, а не механизм
             // промаха, — и в приёме встало бы записью, которой нечего сказать.
             .filter((file: string): boolean => file.endsWith('.md') && file !== 'README.md')
             .sort(byText)
@@ -431,6 +431,10 @@ export async function propose(env: IEnvironment, options: IShipOptions): Promise
                 ...listed,
                 ...refusedLines,
                 ...(read.silent ? ['наблюдений не велось ни разу — сводка уезжает снимком надстроек'] : []),
+                // Токен сухой прогон не проверяет: приём отвечает о нём только на настоящем
+                // вызове. Молчание об этом читалось как «отправка пройдёт», и заход узнавал об
+                // отказе приёма после того, как объявил груз уехавшим.
+                'токен приём здесь не проверял: годен ли он, отвечает только настоящая отправка',
                 'отправляет это тот же вызов без `--dry-run`',
             ],
         };

@@ -448,6 +448,17 @@ describe('propose', () => {
         expect(dry.lines[0]).not.toBe(real.lines[0]);
     });
 
+    it('SC-AK-877 — сухой прогон называет, что токена он не проверял', async () => {
+        start();
+        proposals([forPackage]);
+
+        const dry: IOutcomeOfCommand = await shipping(accepting(), true);
+
+        // Приём отвечает о токене только на настоящем вызове, и молчание об этом читалось как
+        // «отправка пройдёт»: заход объявлял груз уехавшим и узнавал об отказе позже.
+        expect(said(dry)).toContain('токен приём здесь не проверял');
+    });
+
     it('пробный прогон ничего не отправляет и называет, что уехало бы', async () => {
         start();
         proposals([forPackage]);

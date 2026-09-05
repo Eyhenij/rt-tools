@@ -19,7 +19,7 @@
  */
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { dirname, isAbsolute, join } from 'node:path';
 
 import { IEnrollGranted } from './cargo.js';
 import { intakeUrl, SHIP_TIMEOUT_MS } from './ship.js';
@@ -120,9 +120,19 @@ export function intakeAllowed(intake: string): boolean {
     return /^http:\/\/(localhost|127\.0\.0\.1|\[::1\])([:/]|$)/.test(address);
 }
 
-/** Куда ложится токен: путь от домашнего каталога или от корня дерева. */
+/**
+ * Куда ложится токен: путь от домашнего каталога, от корня дерева либо названный целиком.
+ *
+ * Абсолютный берётся как есть: склеенный с корнем, он кладёт секрет внутрь репозитория —
+ * `/Users/…/rt-kit/tree.token` становился `<дерево>/Users/…/rt-kit/tree.token`, и владелец
+ * получал токен там, откуда он уезжает в историю первой же командой добавления.
+ */
 export function tokenPath(root: string, spoken: string): string {
-    return spoken.startsWith('~/') ? join(homedir(), spoken.slice(2)) : join(root, spoken);
+    if (spoken.startsWith('~/')) {
+        return join(homedir(), spoken.slice(2));
+    }
+
+    return isAbsolute(spoken) ? spoken : join(root, spoken);
 }
 
 /** Запись токена на диск: у обоих путей она одна, и права файла у неё одни. */
