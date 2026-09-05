@@ -121,7 +121,7 @@ export function requiresOf(text: string): readonly string[] {
 }
 
 /** Запускается ли файл сам по себе. Спрашиваем систему, а не разбираем биты режима руками. */
-function isExecutable(path: string): boolean {
+export function isExecutable(path: string): boolean {
     try {
         accessSync(path, constants.X_OK);
 
