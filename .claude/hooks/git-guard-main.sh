@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.22.0 · hooks/git-guard-main.sh · 6c3b0c3b72f5 · правится надстройкой, не здесь
+# rt-kit v0.24.0 · hooks/git-guard-main.sh · 95e8194a0ab4 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/deny-tail.sh, hooks/guard-note.sh
 # Гард главной ветки. PreToolUse на вызове коммита.
@@ -45,10 +45,45 @@ if [ "$tool" = "mcp__webstorm__execute_tool" ] && command -v perl >/dev/null 2>&
     ' 2>/dev/null)"
     [ -n "$inner" ] && cmd="$inner"
 fi
-case "$cmd" in
-    *git\ commit*) ;;
-    *) exit 0 ;;
-esac
+# Глагол ищется в позиции команды, а не подстрокой в строке.
+#
+# Голый поиск «git commit» промахивается в обе стороны. Мимо него уходит вызов, у которого между
+# `git` и глаголом стоит ключ — `git -c user.name=… commit`, `git -C <дерево> commit`, — и ровно
+# так коммитят машинной учётной записью. В него же попадает строка, где эти два слова стоят
+# рядом по другому поводу: `git log --grep 'git commit'`, разбор чужого вывода, текст сообщения.
+# Отбой на чтении истории стоит дороже пропуска: гард, мешающий читать, выключают в первый день.
+#
+# Разбор простой: у каждого слова `git` в строке пропускаются ключи — сами по себе и вместе со
+# значением, если ключ его берёт, — и первое слово без дефиса и есть глагол. Слов `git` в строке
+# бывает несколько (`git add . && git commit`), поэтому печатаются глаголы всех, а судится
+# список целиком.
+if command -v awk >/dev/null 2>&1; then
+    verbs="$(printf '%s\n' "$cmd" | awk '
+        {
+            for (i = 1; i <= NF; i++) {
+                word = $i
+                sub(/^.*\//, "", word)
+                if (word != "git") continue
+                for (j = i + 1; j <= NF; j++) {
+                    arg = $j
+                    if (arg == "-c" || arg == "-C" || arg == "--git-dir" || arg == "--work-tree" \
+                        || arg == "--namespace" || arg == "--exec-path") { j++; continue }
+                    if (substr(arg, 1, 1) == "-") continue
+                    print arg
+                    break
+                }
+            }
+        }
+    ' 2>/dev/null)"
+    printf '%s\n' "$verbs" | grep -qx 'commit' || exit 0
+else
+    # Разборщика нет — остаётся прежний признак: он врёт в обе стороны, но гард без него не
+    # судит вовсе.
+    case "$cmd" in
+        *git\ commit*) ;;
+        *) exit 0 ;;
+    esac
+fi
 
 # Коммит выполнится в рабочем каталоге вызова, поэтому и ветку смотрим там же; корень проекта
 # — запасной вариант, и он важен для отдельного рабочего дерева, где ветка своя.

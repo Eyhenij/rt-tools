@@ -63,6 +63,16 @@ ok "SC-AK-677 — цель переменной" rt_shell_writes_default 'echo x
 ok "SC-AK-677 — дозапись" rt_shell_writes_default 'echo x >> docs/notes.md'
 ok "SC-AK-677 — тело документа в файл" rt_shell_writes_default "cat > docs/plans/a.md <<EOF"
 
+# SC-AK-857. Интерпретатор пишет телом, а не именем файла, который запускает: путь у него первым
+# доводом — то, что он читает. Раньше проверялось само имя, и запуск проверки дерева ради
+# диагностики требовал правила общего кода, ничего в нём не правя.
+no "SC-AK-857 — запуск проверки по её пути" rt_shell_writes_default 'node tools/probe-dupes.mjs'
+no "SC-AK-857 — запуск с доводом-файлом" rt_shell_writes_default 'node tools/probe-style.mjs docs/a.md'
+no "SC-AK-857 — запуск сценария другим интерпретатором" rt_shell_writes_default 'python3 tools/report.py --size 4'
+ok "SC-AK-857 — код доводом остаётся записью" rt_shell_writes_default "node -e \"require('fs').writeFileSync('a','b')\""
+ok "SC-AK-857 — документ на входе остаётся записью" rt_shell_writes_default 'python3 <<PY'
+ok "SC-AK-857 — правка по месту остаётся записью" rt_shell_writes_default 'perl -pi -e s/a/b/ docs/a.md'
+
 # --- форма имени ветки ------------------------------------------------------------------------
 ok "ветка: ключ, номер и хвост" rt_task_branch_ok RT-12-guest-token
 ok "ветка: голый номер" rt_task_branch_ok 12-guest-token

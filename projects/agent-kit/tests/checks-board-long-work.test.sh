@@ -16,6 +16,7 @@ cp "$CHECKS/board-runs.github.mjs" "$LW_TREE/tools/board-runs.mjs"
 cp "$CHECKS/board-paths.github.mjs" "$LW_TREE/tools/board-paths.mjs"
 cp "$CHECKS/board-titles.github.mjs" "$LW_TREE/tools/board-titles.mjs"
 cp "$CHECKS/board-epics.github.mjs" "$LW_TREE/tools/board-epics.mjs"
+cp "$CHECKS/board-folders.mjs" "$LW_TREE/tools/board-folders.mjs"
 cp "$CHECKS/board-long-work.github.mjs" "$LW_TREE/tools/board-long-work.mjs"
 cp "$CHECKS/check-board.github.mjs" "$LW_TREE/tools/check-board.mjs"
 
