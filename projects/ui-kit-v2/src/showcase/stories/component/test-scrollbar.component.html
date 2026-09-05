@@ -1,0 +1,12 @@
+<app-story-row caption="Зона прокрутки: наведение проявляет ползунок, места не двигая" [items]="cases" [itemLabel]="labelOf">
+    <ng-template let-item>
+        <div class="app-scroll-demo">
+            @if (item.withField) {
+                <input class="app-scroll-demo__field" aria-label="Поле внутри зоны прокрутки" />
+            }
+            @for (line of lines; track line) {
+                <p class="app-scroll-demo__line">{{ line }}</p>
+            }
+        </div>
+    </ng-template>
+</app-story-row>

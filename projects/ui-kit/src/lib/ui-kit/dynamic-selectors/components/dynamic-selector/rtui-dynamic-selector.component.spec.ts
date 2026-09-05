@@ -52,14 +52,14 @@ function setup(
     return fixture;
 }
 
-describe('RtuiDynamicSelectorComponent — SC-UK-17, SC-UK-18, SC-UK-19', () => {
-    describe('SC-UK-17 — без настройки поле остаётся прежним', () => {
+describe('RtuiDynamicSelectorComponent — SC-UK-53, SC-UK-54, SC-UK-55', () => {
+    describe('SC-UK-53 — без настройки поле остаётся прежним', () => {
         it('отдаёт вид с заливкой', () => {
             expect(setup().componentInstance.resolvedAppearance()).toBe('fill');
         });
     });
 
-    describe('SC-UK-18 — раздел настройки задаёт вид поля', () => {
+    describe('SC-UK-54 — раздел настройки задаёт вид поля', () => {
         it('отдаёт вид из настройки, когда вход не задан', () => {
             const fixture: ComponentFixture<RtuiDynamicSelectorComponent<IEntity, 'id'>> = setup({
                 components: { dynamicSelectors: { appearance: 'outline' } },
@@ -70,7 +70,7 @@ describe('RtuiDynamicSelectorComponent — SC-UK-17, SC-UK-18, SC-UK-19', () => 
         });
     });
 
-    describe('SC-UK-19 — вход на месте перебивает настройку', () => {
+    describe('SC-UK-55 — вход на месте перебивает настройку', () => {
         it('отдаёт вид из входа, а не из настройки', () => {
             const fixture: ComponentFixture<RtuiDynamicSelectorComponent<IEntity, 'id'>> = setup(
                 { components: { dynamicSelectors: { appearance: 'outline' } } },

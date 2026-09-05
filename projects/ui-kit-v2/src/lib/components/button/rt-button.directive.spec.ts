@@ -301,15 +301,15 @@ describe('RtButtonDirective', (): void => {
         });
     });
 
-    describe('положение — SC-UKV-92, SC-UKV-93, SC-UKV-94, SC-UKV-95', (): void => {
-        it('SC-UKV-92 — без признака положения кнопка о нём не говорит', (): void => {
+    describe('положение — SC-UKV-95, SC-UKV-96, SC-UKV-97, SC-UKV-98', (): void => {
+        it('SC-UKV-95 — без признака положения кнопка о нём не говорит', (): void => {
             const fixture: ComponentFixture<ButtonHostComponent> = setup();
 
             expect(button(fixture).getAttribute('aria-pressed')).toBeNull();
             expect(classesOf(button(fixture))).not.toContain('rt-button--pressed');
         });
 
-        it('SC-UKV-93 — отжатое положение объявлено наравне с нажатым', (): void => {
+        it('SC-UKV-96 — отжатое положение объявлено наравне с нажатым', (): void => {
             const fixture: ComponentFixture<ButtonHostComponent> = setup();
 
             fixture.componentInstance.pressed.set(false);
@@ -319,7 +319,7 @@ describe('RtButtonDirective', (): void => {
             expect(classesOf(button(fixture))).not.toContain('rt-button--pressed');
         });
 
-        it('SC-UKV-94 — нажатое положение видно и объявлено', (): void => {
+        it('SC-UKV-97 — нажатое положение видно и объявлено', (): void => {
             const fixture: ComponentFixture<ButtonHostComponent> = setup();
 
             fixture.componentInstance.pressed.set(true);
@@ -329,7 +329,7 @@ describe('RtButtonDirective', (): void => {
             expect(classesOf(button(fixture))).toContain('rt-button--pressed');
         });
 
-        it('SC-UKV-95 — отключённая кнопка сохраняет своё положение', (): void => {
+        it('SC-UKV-98 — отключённая кнопка сохраняет своё положение', (): void => {
             const fixture: ComponentFixture<ButtonHostComponent> = setup();
 
             fixture.componentInstance.pressed.set(true);
