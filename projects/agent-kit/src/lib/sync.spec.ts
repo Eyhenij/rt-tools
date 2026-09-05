@@ -39,7 +39,7 @@ function executable(path: string): boolean {
     }
 }
 
-describe('runSync — право на исполнение у разложенного (SC-AK-832)', () => {
+describe('runSync — право на исполнение у разложенного (SC-AK-886)', () => {
     let assetsDir: string;
     let root: string;
 
