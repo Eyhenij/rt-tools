@@ -91,6 +91,42 @@ r "SC-AK-319 — без открытого PR второй экзамен не �
 expect_decision "SC-AK-320 — прочие команды клиента не судятся" exam-guard.sh \
     "$(jq -n --arg p "$(transcript "$(say 'x')")" '{session_id:"tests",tool_name:"Bash",tool_input:{command:"gh pr view 917"},transcript_path:$p}')" PASS
 
+# --- SC-AK-852. Второй выход у отказа: обход, объявленный телом коммита ------------------------
+# Выход через список выключенных ролей требует снять защиту, а среда исполнения такую правку
+# может запрещать: работа стоит при зелёном наборе и сказанном слове владельца. Объявленный обход
+# защиты не требует и молчаливым не бывает — строка остаётся в истории.
+SKIP_REPO="$(fixture_repo RT-1702-skip)"
+skip_commit() {
+    printf 'x\n' >> "$SKIP_REPO/a.txt"
+    git -C "$SKIP_REPO" add a.txt >/dev/null 2>&1
+    git -C "$SKIP_REPO" -c user.email=t@t -c user.name=t commit -qm "$1" >/dev/null 2>&1
+}
+skip_decision() {
+    CLAUDE_PROJECT_DIR="$SKIP_REPO" expect_decision "$1" exam-guard.sh "$(edit_in "$2")" "$3"
+}
+NO_EXAM="$(transcript "$(say 'работа без экзамена')")"
+
+skip_commit "chore: без обхода"
+skip_decision "SC-AK-852 — без объявленного обхода правка запрещена" "$NO_EXAM" deny
+
+skip_commit "chore: с обходом
+
+Exam-skip: среда запрещает правку списка выключенных ролей"
+skip_decision "SC-AK-852 — объявленный обход правку пропускает" "$NO_EXAM" PASS
+
+skip_commit "chore: подстановка вместо причины
+
+Exam-skip: <причина>"
+skip_decision "SC-AK-852 — подстановка вместо причины обходом не считается" "$NO_EXAM" deny
+rm -rf "$SKIP_REPO"
+
+# --- SC-AK-853. Снятием черновика считается вызов клиента, а не слова о нём --------------------
+# Команда, которая только пишет о снятии, проверялась наравне с самим снятием: отказ приходил на
+# попытку описать этот дефект.
+about_ready="$(jq -n --arg p "$(transcript "$(said 'ЭКЗАМЕН: сдано 5 из 5')" "$(ran 'gh pr create --draft --title x')")" \
+    '{session_id:"tests",tool_name:"Bash",tool_input:{command:"grep -rn \"gh pr ready\" docs/"},transcript_path:$p}')"
+expect_decision "SC-AK-853 — поиск слов о снятии черновика не проверяется" exam-guard.sh "$about_ready" PASS
+
 # --- роль выключена деревом ----------------------------------------------------------------
 # Дерево называет выключенные роли списком в своей настройке. При выключенном экзаменаторе гард
 # молчит: та же правка, которую он отбивал бы, проходит. Выключение соседней роли, пустая

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.22.0 · hooks/turn-exit-guard.sh · 5ca1a4cbccfe · правится надстройкой, не здесь
+# rt-kit v0.24.0 · hooks/turn-exit-guard.sh · fbd274c2c9b4 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: hooks/deny-tail.sh
 # Страж выходов хода: ход, в котором по работе не сделано ничего, не заканчивается, пока работа
@@ -174,7 +174,7 @@ work_re='git (add|commit|push|checkout|merge|rm)|npm run|pnpm (run|exec)|nx (bui
 #
 # Разведка выглядит работой лучше всего остального: в ней команды, числа и точные ответы. Тем
 # она и опасна — ход, набитый ею, читается как полный и владельцем, и самим заходом.
-read_re='^[[:space:]]*(([^[:space:]]*/)?git[[:space:]]+(show|log|ls-tree|ls-files|ls-remote|diff|status|branch|tag|rev-parse|remote|describe|blame|fetch|pull|(checkout|switch)(?![[:space:]]+-[bc][[:space:]]))|([^[:space:]]*/)?gh[[:space:]]+(pr|issue|run|repo)[[:space:]]+(list|view|status|checks|diff|download|logs))([[:space:]]|$)'
+read_re='^[[:space:]]*(([^[:space:]]*/)?git[[:space:]]+(show|log|ls-tree|ls-files|ls-remote|diff|status|branch|tag|rev-parse|remote|describe|blame|fetch|pull|(checkout|switch)(?!([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-[bc][[:space:]]))|([^[:space:]]*/)?gh[[:space:]]+(pr|issue|run|repo)[[:space:]]+(list|view|status|checks|diff|download|logs))([[:space:]]|$)'
 
 # Части составной команды судятся по одной: ход собирает чтение и работу в одну строку через
 # `&&`, и суждение целиком отпускало бы разведку по первой же меняющей части.
@@ -193,7 +193,7 @@ wait_re='gh[[:space:]]+(run[[:space:]]+watch|pr[[:space:]]+checks[^|]*--watch)|u
 # Отдача работы и начало следующей. Правило зовёт законным концом хода отданную работу — но с
 # условием: следующая начата, и по ней сделано ДЕЙСТВИЕ, а не сказано.
 handover_re='gh[[:space:]]+pr[[:space:]]+create'
-started_re='task:new|task:move|board\.mjs[[:space:]]+move|git[[:space:]]+checkout[[:space:]]+-b|git[[:space:]]+switch[[:space:]]+-c'
+started_re='task:new|task:move|board\.mjs[[:space:]]+move|git[[:space:]]+checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|git[[:space:]]+switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c'
 
 verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re" --arg read "$read_re" --arg part "$part_re" --arg wait "$wait_re" --arg handover "$handover_re" --arg started "$started_re" '
     def is_input:
@@ -246,7 +246,14 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re
           | if type == "string" then . elif type == "array"
             then (map(if type == "object" then (.text // "") else "" end) | join("\n")) else "" end] | join("\n")) as $said
     | ($said | test("останов|стоп|хватит|подожди|не надо|прерв|отложи")) as $told_stop
-    | { worked: ($edited or $ran_work), released: ($asked or $denied or $handed or $told_stop), waited: $waited, handed_over: $handed_over, started_next: $started_next, ended_working: $ended_working, ran: $ran }
+    # Вопрос, отбитый гардом разговора, и вопрос, дописанный прозой в конце ответа. Гард
+    # разговора судит вызов инструмента вопроса и прозы не видит вовсе: отбитый вопрос
+    # возвращался той же формулировкой через один ход и проходил свободно.
+    | ($out | test("BLOCKED by grill-gate")) as $ask_denied
+    | ([$turn[] | select(.type == "assistant") | (.message.content // [])[]
+          | select(.type == "text") | (.text // "")] | last // "") as $last_say
+    | (($last_say | test("\\?[[:space:]]*$")) and $ask_denied) as $asked_in_prose
+    | { worked: ($edited or $ran_work), released: ($asked or $denied or $handed or $told_stop), waited: $waited, handed_over: $handed_over, started_next: $started_next, ended_working: $ended_working, asked_in_prose: $asked_in_prose, ran: $ran }
 ' 2>/dev/null)"
 
 [ -z "$verdict" ] && exit 0
@@ -259,7 +266,51 @@ ended_working="$(printf '%s' "$verdict" | jq -r '.ended_working // false' 2>/dev
 released="$(printf '%s' "$verdict" | jq -r '.released // false' 2>/dev/null)"
 commands="$(printf '%s' "$verdict" | jq -r '.ran // ""' 2>/dev/null)"
 
+# Вопрос, отбитый гардом разговора и заданный тем же ходом прозой. Отказ гарда ход отпускает —
+# он и есть законный конец, — но здесь отпускать нечего: тот же вопрос вернулся через строку, и
+# работа встала на том, что дерево уже отвечало. Ярус стоит до законных выходов намеренно:
+# отказом гарда прикрыт как раз этот случай.
+asked_in_prose="$(printf '%s' "$verdict" | jq -r '.asked_in_prose // false' 2>/dev/null)"
+if [ "$asked_in_prose" = "true" ]; then
+    rt_te_deny "BLOCKED by turn-exit-guard: за этот ход гард разговора отбил вопрос владельцу, а ответ кончается вопросом прозой — это тот же вопрос, заданный другой формой.
+
+Отказ гарда назвал причину: ответ лежит в дереве либо владелец его уже давал. Прочитай названное им место и работай дальше; спрашивают то, чего в дереве нет.
+
+Страж судит один ход: следующий заход не отбивается." "вопрос вернулся прозой после отказа гарда разговора."
+fi
+
 [ "$released" = "true" ] && exit 0
+
+# Работа, дошедшая до отдачи и не отданная. Состояния «этапы-кончились» и «разбор-кончился»
+# объявляют, что код написан и остаётся довести работу до заявки: прогнать набор, разобрать папку,
+# открыть заявку. Второй признак этого не спрашивает — правок и команд в таком ходе полно, и он
+# отпускает его целиком; между разбором папки и открытием заявки работу не видит никто, а
+# владелец читает прежнее состояние как «не сделано ничего».
+#
+# Ярус стоит после законных выходов: вопрос владельцу, отказ гарда, передача захода и слово
+# владельца об остановке кончают ход по правилу, и запирать их состоянием нельзя.
+case "$state" in
+    этапы-кончились | разбор-кончился)
+        if ! printf '%s' "$commands" | grep -qE 'gh[[:space:]]+pr[[:space:]]+create'; then
+            if [ "$state" = "этапы-кончились" ]; then
+                action="влить договорённость, привести тексты к сделанному и прогнать набор"
+            else
+                action="разобрать папку задачи последним коммитом"
+            fi
+            reason="BLOCKED by turn-exit-guard: работа стоит в состоянии '${state}', а заявки за ход не открыто.
+
+Обязательное действие этого состояния — ${action}, — и дальше работа доводится до заявки тем же ходом. Отчёт о сделанном концом хода не бывает: правка лежит в ветке, которой владелец не видит, и прежнее состояние он читает как «не сделано ничего».
+
+Следующий шаг из хода работы: ${next_step}
+
+Доведи работу до заявки этим же ходом и перепиши состояние. Владелец сказал остановиться — так и напиши: страж читает его слово, а не пересказ.
+
+Страж судит один ход: следующий заход не отбивается."
+
+            rt_te_deny "$reason" "работа дошла до отдачи, а заявки за ход нет."
+        fi
+        ;;
+esac
 
 # Взятая, но не начатая работа. Ветка по номеру задачи заведена, а каталога задачи при ней нет
 # вовсе — значит работа объявлена взятой и не начата ни одной строкой. Ход здесь не кончается, сколько бы
