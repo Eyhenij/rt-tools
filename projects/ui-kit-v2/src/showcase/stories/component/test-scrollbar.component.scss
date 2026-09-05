@@ -1,7 +1,7 @@
 .app-scroll-demo {
     width: 260px;
     height: 160px;
-    padding: var(--rt-spacing-md);
+    padding: var(--rt-space-md);
     border: var(--rt-border-width-thin) solid var(--rt-color-border-default);
     border-radius: var(--rt-radius-md);
     background: var(--rt-color-bg-surface);
@@ -9,11 +9,11 @@
 }
 
 .app-scroll-demo__line {
-    margin: 0 0 var(--rt-spacing-sm);
-    color: var(--rt-color-text-default);
+    margin: 0 0 var(--rt-space-sm);
+    color: var(--rt-color-text-primary);
 }
 
 .app-scroll-demo__field {
     width: 100%;
-    margin-bottom: var(--rt-spacing-sm);
+    margin-bottom: var(--rt-space-sm);
 }
