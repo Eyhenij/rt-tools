@@ -10,7 +10,7 @@ import { dirname, join, relative } from 'node:path';
 
 import { collectAssets, IAsset, targetOf } from './assets.js';
 import { ICascadeCut, IIdleSkip, cascadeCuts, idleSkips, namedButCut } from './cascade.js';
-import { brokenLinks, IBrokenLink, IEntryOfCatalog, IGapOfVariant, readCatalog, variantGaps } from './catalog.js';
+import { brokenLinks, IBrokenLink, IEntryOfCatalog, IGapOfVariant, isExecutable, readCatalog, variantGaps } from './catalog.js';
 import { ICompanion, pathOf, planCompanion } from './companion.js';
 import { IConfig, KINDS, OVERRIDES_DIR, TKind } from './config.js';
 import {
@@ -285,6 +285,19 @@ function strayOverrides(root: string, assetsDir: string): string[] {
     return found.sort(byText);
 }
 
+/**
+ * Род, у которого право на исполнение решается родом, а не правами файла в пакете.
+ *
+ * Признак остальных родов читается с диска источника, а бит на диске теряется молча: архив без
+ * прав, файловая система без бита, репозиторий с выключенным учётом режима. Потеряв его,
+ * раскладка положила бы гард с правами 644 — и он не запустился бы вовсе, выглядя установленным:
+ * файл на месте, раскладка отчиталась, а гарды по устройству отказывают в пользу работы, то есть
+ * молчат. Хук существует затем, чтобы его запускала оболочка, и права здесь не выбор.
+ *
+ * Проверкам этого не делается: часть из них зовётся исполнителем, и бит им не нужен.
+ */
+const HOOKS_KIND: string = 'hooks';
+
 export function planSync(config: IConfig, root: string, version: string, assetsDir: string): ISyncResult {
     const planned: IPlanned[] = [];
     const missing: Map<string, readonly string[]> = new Map();
@@ -297,8 +310,17 @@ export function planSync(config: IConfig, root: string, version: string, assetsD
             missing.set(asset.id, rendered.missing);
             continue;
         }
+        const target: string = join(root, asset.target);
         planned.push(
-            planFile({ version, path: asset.target, asset: asset.id, rendered: rendered.text, existing: read(join(root, asset.target)) })
+            planFile({
+                version,
+                path: asset.target,
+                asset: asset.id,
+                rendered: rendered.text,
+                existing: read(target),
+                executable: asset.executable || asset.kind === HOOKS_KIND,
+                existingExecutable: isExecutable(target),
+            })
         );
         if (asset.kind === 'rules' && template !== null) {
             companions.push(planCompanion(asset, read(join(root, pathOf(asset))), template));
@@ -326,20 +348,28 @@ export function planSync(config: IConfig, root: string, version: string, assetsD
     };
 }
 
-/** Раскладка. Отказ хотя бы по одному файлу не пишет ничего: половина разложенного хуже целого. */
-/**
- * Род, у которого право на исполнение решается родом, а не правами файла в пакете.
- *
- * Признак остальных родов читается с диска источника, а бит на диске теряется молча: архив без
- * прав, файловая система без бита, репозиторий с выключенным учётом режима. Потеряв его,
- * раскладка положила бы гард с правами 644 — и он не запустился бы вовсе, выглядя установленным:
- * файл на месте, раскладка отчиталась, а гарды по устройству отказывают в пользу работы, то есть
- * молчат. Хук существует затем, чтобы его запускала оболочка, и права здесь не выбор.
- *
- * Проверкам этого не делается: часть из них зовётся исполнителем, и бит им не нужен.
- */
-const HOOKS_KIND: string = 'hooks';
+/** Один запланированный файл: вернуть право без записи, записать с правом по роду либо не трогать. */
+function writePlanned(root: string, entry: IPlanned, executable: ReadonlySet<string>): boolean {
+    const path: string = join(root, entry.path);
+    // Право возвращается и там, где тело переписывать нечего: у файла со снятым битом
+    // содержимое сходится, и без этой ветки раскладка чинила бы только то, что и так пишет.
+    if (entry.outcome === 'permission') {
+        chmodSync(path, 0o755);
+        return true;
+    }
+    if (entry.content === null) {
+        // Отказ и сошедшийся файл: писать нечего, и трогать его нельзя.
+        return false;
+    }
+    mkdirSync(dirname(path), { recursive: true });
+    writeFileSync(path, entry.content, 'utf8');
+    if (executable.has(entry.asset) || entry.asset.startsWith(`${HOOKS_KIND}/`)) {
+        chmodSync(path, 0o755);
+    }
+    return true;
+}
 
+/** Раскладка. Отказ хотя бы по одному файлу не пишет ничего: половина разложенного хуже целого. */
 export function runSync(config: IConfig, root: string, version: string, assetsDir: string): ISyncResult {
     const result: ISyncResult = planSync(config, root, version, assetsDir);
     if (result.missing.size || result.gaps.length || result.planned.some((entry: IPlanned): boolean => isRefusal(entry.outcome))) {
@@ -357,16 +387,9 @@ export function runSync(config: IConfig, root: string, version: string, assetsDi
 
     const written: string[] = [];
     for (const entry of result.planned) {
-        if (entry.content === null) {
-            continue;
+        if (writePlanned(root, entry, executable)) {
+            written.push(entry.path);
         }
-        const path: string = join(root, entry.path);
-        mkdirSync(dirname(path), { recursive: true });
-        writeFileSync(path, entry.content, 'utf8');
-        if (executable.has(entry.asset) || entry.asset.startsWith(`${HOOKS_KIND}/`)) {
-            chmodSync(path, 0o755);
-        }
-        written.push(entry.path);
     }
 
     // Черновик компаньона кладётся только там, где файла нет вовсе. Он без шапки и без суммы:
