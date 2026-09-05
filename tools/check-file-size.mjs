@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.22.0 · checks/check-file-size.mjs · 2beed956a916 · правится надстройкой, не здесь
+// rt-kit v0.24.0 · checks/check-file-size.mjs · 1c7f995418d3 · правится надстройкой, не здесь
 /**
  * Проверка того, что файл не длиннее предела.
  *
@@ -145,8 +145,14 @@ if (process.argv.includes('--baseline')) {
 const fresh = [...tooLong].filter(([path]) => !known.has(path));
 /** Строка на файл, которого в дереве нет, — устаревшая: иначе список копит мёртвое. */
 const gone = [...known.keys()].filter((path) => !existsSync(join(ROOT, path)));
-/** Файл поделили, а строку оставили: список перестал бы отвечать за то, что в нём стоит. */
-const shrunk = [...known.keys()].filter((path) => !tooLong.has(path) && existsSync(join(ROOT, path)));
+/**
+ * Файл поделили, а строку оставили: список перестал бы отвечать за то, что в нём стоит.
+ * Тяжёлый по знакам файл под предел строк не подпадает, и без второй проверки его запись
+ * читалась бы устаревшей — долг нельзя было бы ни записать, ни оставить.
+ */
+const shrunk = [...known.keys()].filter(
+    (path) => !tooLong.has(path) && !overweight.has(path) && existsSync(join(ROOT, path))
+);
 
 /** Тяжёлое по знакам судится тем же списком известного: один долг на файл, а не два. */
 const heavy = [...overweight].filter(([path]) => !known.has(path) && !tooLong.has(path));

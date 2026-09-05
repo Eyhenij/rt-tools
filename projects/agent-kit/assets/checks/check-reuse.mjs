@@ -117,7 +117,10 @@ for (const root of SOURCE_ROOTS) {
         const text = withoutMarked(readFileSync(join(ROOT, path), 'utf8'));
         for (const signal of SIGNALS) {
             const skipped = signal.skipBackendRoots && BACKEND_ROOTS.some((root) => path.startsWith(root));
-            if (!path.endsWith(signal.ext) || skipped || (signal.onlyNamed && !new RegExp(signal.onlyNamed).test(path))) {
+            // `exceptNamed` — обратная сторона `onlyNamed`: дерево, которое готовое само и пишет,
+            // выводит из-под признака папки источника этого готового, а не набор целиком.
+            const excluded = signal.exceptNamed && new RegExp(signal.exceptNamed).test(path);
+            if (!path.endsWith(signal.ext) || skipped || excluded || (signal.onlyNamed && !new RegExp(signal.onlyNamed).test(path))) {
                 continue;
             }
             const times = found(signal, text);

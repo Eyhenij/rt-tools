@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.22.0 · checks/board.github.mjs · 27835e721622 · правится надстройкой, не здесь
+// rt-kit v0.24.0 · checks/board.github.mjs · 1e2cc0db30f6 · правится надстройкой, не здесь
 /**
  * Общая работа с очередью работ: борда проекта, тикеты и их состояние.
  *
@@ -126,6 +126,17 @@ export function moveTask(number, status, options) {
     return { from: item.status, to: option.name };
 }
 
+/**
+ * Чьими глазами снято состояние: `machine` — вызов шёл с токеном машинной записи, `client` —
+ * от того, под кем залогинен клиент хостинга. Задачу читают токеном, заявку — без него, и по
+ * одному выводу это неразличимо: дерево, где машинная запись ограничена хостингом, получало
+ * картину человека и считало её проверенной. Логин здесь не печатается — за ним пришлось бы
+ * ходить в сеть вторым запросом, а гарды читают ответ и без неё.
+ */
+export function viewerOf(options) {
+    return options?.token ? 'machine' : 'client';
+}
+
 export function fetchIssues(state, options) {
     // Тело берётся вместе со списком, а не поштучным вызовом на задачу: связь с эпиком читается
     // как раз в нём, а четыреста вызовов вида «покажи одну задачу» стоили бы дороже всей сверки.
@@ -165,16 +176,17 @@ export function pullState(ref, options) {
         if (error instanceof OfflineError) {
             throw error;
         }
-        return { exists: false };
+        return { exists: false, viewer: viewerOf(options) };
     }
     if (!pull) {
-        return { exists: false };
+        return { exists: false, viewer: viewerOf(options) };
     }
     const requested = (pull.reviewRequests ?? []).map((entry) => entry.login ?? entry.name ?? '').filter(Boolean);
     const reviewed = (pull.latestReviews ?? []).map((entry) => entry.author?.login ?? '').filter(Boolean);
     const reviewers = [...new Set([...requested, ...reviewed])];
     return {
         exists: true,
+        viewer: viewerOf(options),
         number: pull.number ?? null,
         draft: pull.isDraft === true,
         author: pull.author?.login ?? null,
@@ -214,7 +226,7 @@ export function behindMain(branch, mainBranch, options) {
  * потом значило бы второй вызов на каждый PR. */
 export function fetchOpenPulls(options) {
     return ghJson(
-        ['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,title,headRefName,headRefOid,isDraft,body,mergeable'],
+        ['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,title,headRefName,headRefOid,isDraft,body,mergeable,baseRefName'],
         options
     );
 }
@@ -352,11 +364,12 @@ export function numberFromBranch(branch) {
 export function taskState(number, options) {
     const issue = fetchIssue(number, options);
     if (!issue) {
-        return { exists: false };
+        return { exists: false, viewer: viewerOf(options) };
     }
     const item = fetchBoard(options).items.get(issue.number);
     return {
         exists: true,
+        viewer: viewerOf(options),
         title: issue.title,
         open: issue.state === 'OPEN',
         onBoard: item !== undefined,
@@ -410,9 +423,14 @@ export function describeTaskState(number, state) {
 }
 
 const isEntryPoint = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
+// Токен машинной записи подставляется и здесь, как в переводе колонки. Без него клиент идёт от
+// того, под кем залогинен, а в ходе гарда он не залогинен ни под кем: хостинг отвечает, что
+// репозитория нет вовсе, чтение задачи возвращает пустоту, и «спросить было нечем» становится
+// неотличимо от «задачи не существует». Гард поставки на таком ответе отбивал открытие заявки
+// пятью взаимоисключающими причинами разом — задачи нет, задача закрыта, задачи нет в очереди.
 if (isEntryPoint && process.argv[2] === 'task') {
     try {
-        process.stdout.write(`${JSON.stringify(taskState(Number(process.argv[3])))}\n`);
+        process.stdout.write(`${JSON.stringify(taskState(Number(process.argv[3]), { token: botToken() ?? undefined }))}\n`);
     } catch (error) {
         if (error instanceof OfflineError) {
             process.stdout.write('{"offline":true}\n');
@@ -425,6 +443,9 @@ if (isEntryPoint && process.argv[2] === 'task') {
 
 if (isEntryPoint && process.argv[2] === 'pr') {
     try {
+        // Токена здесь нет намеренно: полям разбора нужен доступ к учётным записям организации,
+        // которого машинной записи не давали, и запрос с ним отказывает по правам целиком.
+        // Клиент без токена идёт от того, под кем залогинен, и у человека отвечает.
         process.stdout.write(`${JSON.stringify(pullState(process.argv[3]))}\n`);
     } catch (error) {
         if (error instanceof OfflineError) {
@@ -441,7 +462,7 @@ if (isEntryPoint && process.argv[2] === 'pr') {
 // отвечает пустым списком: спрашивать не о ком.
 if (isEntryPoint && process.argv[2] === 'conflicts') {
     try {
-        process.stdout.write(`${JSON.stringify({ conflicting: conflictingPulls() ?? [] })}\n`);
+        process.stdout.write(`${JSON.stringify({ conflicting: conflictingPulls({ token: botToken() ?? undefined }) ?? [] })}\n`);
     } catch (error) {
         if (error instanceof OfflineError) {
             process.stdout.write('{"offline":true}\n');

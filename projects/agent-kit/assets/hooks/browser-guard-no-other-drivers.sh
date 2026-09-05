@@ -97,7 +97,9 @@ printf '%s' "$cmd" | grep -qF 'Google Chrome.app/Contents/MacOS' \
 
 # Точки входа браузерных библиотек — то, чем браузер поднимают из кода. Перечислены и глагол
 # запуска, и глагол присоединения к уже поднятому: второй обходит профиль ровно так же.
-launch='(chromium|firefox|webkit|browserType|puppeteer|chromeLauncher)[[:space:]]*\.[[:space:]]*(launch|connect)|launchPersistentContext|webdriver\.(Chrome|Firefox)|chrome-launcher'
+# Присоединение по отладочному порту и запуск со своим каталогом профиля стоят и без имени
+# движка перед точкой: их вносят прямым ввозом имени, и тогда судить нечего, кроме самого глагола.
+launch='(chromium|firefox|webkit|browserType|puppeteer|chromeLauncher)[[:space:]]*\.[[:space:]]*(launch|connect)|launchPersistentContext[[:space:]]*\(|connectOverCDP[[:space:]]*\(|webdriver\.(Chrome|Firefox)|chrome-launcher'
 
 # Код, переданный доводом вместо файла. Судится только вместе с именем интерпретатора и его
 # флагом кода: голый образец отбивал бы и поиск по дереву, в котором такое слово просто ищут.

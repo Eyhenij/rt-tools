@@ -21,16 +21,16 @@
 - **Задача, оставшаяся в первой колонке очереди работ, к поставке не готова.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:backlog_column`
 - **Колонка спрашивается там, где её уже должны были переставить.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:judge_column`
 - **Имя первой колонки называет дерево, и без него колонка не судится.** — `projects/agent-kit/assets/defaults/project.sh:RT_BOARD_BACKLOG`
-- **Черновик не снимается, пока у PR нет разбора.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:pull_ref`
-- **Черновик не снимается и с PR, который не сливается.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:conflicting`
+- **Черновик не снимается, пока у PR нет разбора.** — `projects/agent-kit/assets/hooks/git-guard-delivery-draft.sh:pull_ref`
+- **Черновик не снимается и с PR, который не сливается.** — `projects/agent-kit/assets/hooks/git-guard-delivery-draft.sh:conflicting`
 - **Молчание о сливаемости снятия не задерживает.** — `projects/agent-kit/assets/checks/board.github.mjs:conflicting`
 - **Ссылка на PR при снятии черновика необязательна.** — `projects/agent-kit/assets/checks/board.github.mjs:target`
-- **Возврат PR в черновик требования не получает.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:undo`
-- **Номер PR в отказе берётся из ответа очереди работ, а не из команды.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:pull_name`
+- **Возврат PR в черновик требования не получает.** — `projects/agent-kit/assets/hooks/git-guard-delivery-draft.sh:undo`
+- **Номер PR в отказе берётся из ответа очереди работ, а не из команды.** — `projects/agent-kit/assets/hooks/git-guard-delivery-draft.sh:pull_name`
 - **Автор в разборе своего PR не считается.** — `projects/agent-kit/assets/checks/board.github.mjs:reviewed`
 - **Состояние PR спрашивается тем же помощником очереди работ, что и состояние задачи.** — `projects/agent-kit/assets/defaults/project.sh:rt_pull_state_default`
 - **Ответ с меткой «сети не было» состоянием не является.** — `projects/agent-kit/assets/defaults/project.sh:offline`
-- **Ярус, которому нужен ответ очереди работ, без ответа молчит.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:rt_pull_state`
+- **Ярус, которому нужен ответ очереди работ, без ответа молчит.** — `projects/agent-kit/assets/hooks/git-guard-delivery-draft.sh:rt_pull_state`
 - **Заход закрывается одной командой.** — `projects/agent-kit/assets/commands/next-session.md:ARGUMENTS`
 - **Команда закрытия захода сперва узнаёт, ведётся ли работа по правилу.** — `projects/agent-kit/assets/commands/next-session.md:rt_task_branch_ok`
 - **У работы по правилу с влитым PR локальная главная двигается до удалённой без перехода на неё.** — `projects/agent-kit/assets/commands/next-session.md:fetch`

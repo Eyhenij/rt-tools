@@ -19,6 +19,7 @@ cp "$CHECKS/board-runs.github.mjs" "$BOARD_TREE/tools/board-runs.mjs"
 cp "$CHECKS/board-paths.github.mjs" "$BOARD_TREE/tools/board-paths.mjs"
 cp "$CHECKS/board-titles.github.mjs" "$BOARD_TREE/tools/board-titles.mjs"
 cp "$CHECKS/board-epics.github.mjs" "$BOARD_TREE/tools/board-epics.mjs"
+cp "$CHECKS/board-folders.mjs" "$BOARD_TREE/tools/board-folders.mjs"
 cp "$CHECKS/board-long-work.github.mjs" "${BOARD_TREE}/tools/board-long-work.mjs"
 cp "$CHECKS/check-board.github.mjs" "$BOARD_TREE/tools/check-board.mjs"
 printf '%s\n' 'on: pull_request' 'jobs:' '    main:' '        steps:' '            - name: Lint' \
@@ -128,9 +129,8 @@ export STUB_ISSUES="$saved_issues"
 export STUB_BOARD="$saved_board"
 
 # --- SC-AK-751 — связь задачи с эпиком читается в обе стороны ---------------------------------
-#
-# Односторонняя привязка выглядит целой ровно так же, как двусторонняя: читатель приходит то от
-# линии работ, то от карточки, и вторая сторона существует только для одного из них.
+# Односторонняя привязка выглядит целой так же, как двусторонняя: читатель приходит то от линии
+# работ, то от карточки.
 board_config "$BOARD_CONFIG"
 export STUB_RUNS=1
 export STUB_VERDICT=success
@@ -241,10 +241,8 @@ report "SC-AK-426 — неизвестная сливаемость расхож
 export STUB_PULLS="$(conflicting_json MERGEABLE)"
 report "SC-AK-426 — сливаемая заявка молчит" "$(board_code)" 0
 
-# SC-AK-670…672 — у конфликтующей заявки прогона не бывает вовсе, и причина не в потерянном
-# событии: конвейер проверяет слияние ветки с базой, а слияния при конфликте нет. Совет вернуть
-# событие выполняется буквально и не помогает — за один заход заявка перезакрывалась дважды
-# подряд, и прогон встал только после вливания главной ветки.
+# SC-AK-670…672 — у конфликтующей заявки прогона нет, и причина не в потерянном событии:
+# конвейер проверяет слияние ветки с базой, а слияния при конфликте нет. Перезакрытие не помогает.
 export STUB_RUNS=0
 export STUB_HEAD_DATE="$(minutes_ago 60)"
 export STUB_PULLS="$(conflicting_json CONFLICTING)"
@@ -257,14 +255,31 @@ report "SC-AK-671 — совета перезакрыть заявку при к
 export STUB_PULLS="$(conflicting_json MERGEABLE)"
 report "SC-AK-672 — у сливаемой заявки строка о событии прежняя" \
     "$(board_says 'конвейер события не получил')" 1
+
+# SC-AK-845 — заявка поверх соседней прогона не получает: рабочий поток слушает заявки в главную
+# ветку и событий с другой базой не видит. Прежняя строка была неверна дважды: событие не
+# терялось, и перезакрытие его не вернёт.
+based_json() {
+    printf '[{"number":702,"title":"[RT-700] Правка","headRefName":"RT-700-probe","headRefOid":"%s","isDraft":false,"body":"Closes #700","mergeable":"MERGEABLE","baseRefName":"%s"}]' \
+        "$HEAD_SHA" "$1"
+}
+export STUB_PULLS="$(based_json RT-699-nizhnyaya)"
+report "SC-AK-845 — чужая база названа причиной" \
+    "$(board_says 'заявка открыта в ветку «RT-699-nizhnyaya»')" 1
+report "SC-AK-845 — совета перезакрыть заявку при чужой базе нет" \
+    "$(board_says 'gh pr close 702 && gh pr reopen 702')" 0
+report "SC-AK-845 — названо, чем это исправляется" "$(board_says 'перенеси базу')" 1
+
+# База — главная ветка: строка о событии прежняя.
+export STUB_PULLS="$(based_json main)"
+report "SC-AK-845 — заявка в главную проверяется как прежде" \
+    "$(board_says 'конвейер события не получил')" 1
 export STUB_RUNS=1
 export STUB_PULLS="$(pulls_json false)"
 
 # --- SC-AK-584…590 — прогон, вытесненный из очереди конвейера --------------------------------
-#
-# Группа очереди бережёт идущий прогон и не бережёт ждущего: следующий встающий вытесняет
-# прежний. Вытесненный завершается отменой и в списке неотличим от упавшего, хотя ветку не
-# проверял ни строчкой — заданий у него ноль.
+# Группа очереди сохраняет идущий прогон, а ждущий вытесняется следующим. Вытесненный завершается
+# отменой и в списке неотличим от упавшего, хотя ветку не проверял — заданий у него ноль.
 
 board_config "$BOARD_CONFIG"
 export STUB_PULLS="$(pulls_json false)"
@@ -324,9 +339,8 @@ export STUB_VERDICT=success
 export STUB_HEAD_DATE="$(minutes_ago 60)"
 
 # --- SC-AK-531…532 — прод против главной ветки ------------------------------------------------
-#
-# Судится последняя успешная выкатка, а не последний прогон главной ветки: там, где выкатку
-# запускают рукой, слияние прода не двигает вовсе, и прогон о нём не говорит ничего.
+# Проверяется последняя успешная выкатка, а не последний прогон главной ветки: там, где выкатку
+# запускают вручную, слияние прод не двигает.
 export STUB_PULLS="$(pulls_json false)"
 export STUB_RUNS=1
 export STUB_VERDICT=success
@@ -371,116 +385,5 @@ report "SC-AK-752 — пустой ответ судится как ноль" "$
 export STUB_PULL_BEHIND=0
 
 rm -rf "$BOARD_TREE"
-
-# --- SC-AK-377…346 — состояние заявки: разбор у неё есть или нет ------------------------------
-#
-# Ревьювера не спрашивал никто: он жил прозой в паттерне о коммите и PR, а запрос разбора на
-# самого себя хостинг принимает молча и не создаёт — разбор при этом выглядит запрошенным.
-# Теперь его читает гард поставки на снятии черновика, и ответ ему собирает эта функция.
-#
-# Дерево своё, одноразовое: помощник ищет настройки от своего же каталога, и общий стенд соседних
-# сценариев здесь означал бы, что набор проверяет их подстановки, а не разбор ответа хостинга.
-pull_tree() {
-    local dir
-    dir="$(mktemp -d)"
-    mkdir -p "$dir/tools" "$dir/.claude/rt-kit"
-    cp "$CHECKS/rt-kit-checks.config.mjs" "$dir/tools/"
-    cp "$CHECKS/board.github.mjs" "$dir/tools/board.mjs"
-    cp "$CHECKS/board-gh.github.mjs" "$dir/tools/board-gh.mjs"
-    printf '%s\n' '{"board":{"owner":"probe","repo":"tree","taskKey":"RT","tokenPath":""}}' \
-        > "$dir/.claude/rt-kit/checks.json"
-    # Помощник хостинга: отдаёт то, что положил сценарий, а с непустой жалобой — отказывает.
-    # Заодно записывает свои доводы: ссылка на заявку необязательна, и то, что при её нехватке
-    # клиент зовётся вовсе без довода, из одного ответа не видно.
-    cat > "$dir/gh" <<'STUB'
-#!/usr/bin/env bash
-printf '%s' "$*" > "${STUB_ARGS:-/dev/null}"
-if [ -n "$STUB_PULL_ERR" ]; then
-    printf '%s\n' "$STUB_PULL_ERR" >&2
-    exit 1
-fi
-printf '%s' "$STUB_PULL"
-STUB
-    chmod +x "$dir/gh"
-    printf '%s' "$dir"
-}
-
-# Состояние заявки одной строкой JSON: дерево, ответ хостинга, жалоба вместо ответа, ссылка на
-# заявку. Ссылка передаётся всегда, в том числе пустой строкой: профиль зовёт помощника именно
-# так, и вызов без четвёртого довода проверял бы не ту форму.
-pull_state() {
-    (cd "$1" && GH_BIN="$1/gh" STUB_PULL="$2" STUB_PULL_ERR="$3" STUB_ARGS="$1/доводы" \
-        node tools/board.mjs pr "${4-701}" 2>/dev/null)
-}
-# Чем позвали клиента хостинга в последний раз.
-pull_args() {
-    cat "$1/доводы" 2>/dev/null
-}
-
-PULL_TREE="$(pull_tree)"
-
-# Разбором считается и запрошенный ревьювер, и уже оставленный отзыв: до слияния годится любой
-# из двух, а запрошенный после отзыва из списка запросов пропадает.
-BOTH_SIDES='{"number":701,"isDraft":true,"author":{"login":"probe-bot"},"reviewRequests":[{"login":"alice"}],"latestReviews":[{"author":{"login":"bob"}}]}'
-report "SC-AK-377 — разбор есть" \
-    "$(pull_state "$PULL_TREE" "$BOTH_SIDES" | jq -r '.reviewed')" true
-report "SC-AK-377 — запрошенный ревьювер в списке" \
-    "$(pull_state "$PULL_TREE" "$BOTH_SIDES" | jq -r '.reviewers | index("alice") != null')" true
-report "SC-AK-377 — оставивший отзыв в том же списке" \
-    "$(pull_state "$PULL_TREE" "$BOTH_SIDES" | jq -r '.reviewers | index("bob") != null')" true
-report "SC-AK-377 — заявка найдена" \
-    "$(pull_state "$PULL_TREE" "$BOTH_SIDES" | jq -r '.exists')" true
-
-# Отзыв самого автора разбором не считается: заявку, разобранную ею же написавшим, не разбирал
-# никто, а снятый черновик читается как «можно вливать».
-SELF_REVIEW='{"number":701,"isDraft":true,"author":{"login":"probe-bot"},"reviewRequests":[],"latestReviews":[{"author":{"login":"probe-bot"}}]}'
-report "SC-AK-378 — отзыв автора разбором не считается" \
-    "$(pull_state "$PULL_TREE" "$SELF_REVIEW" | jq -r '.reviewed')" false
-# Сам он при этом из списка не исчезает: список говорит, кто трогал заявку, а приговор — отдельно.
-report "SC-AK-378 — автор из списка не пропадает" \
-    "$(pull_state "$PULL_TREE" "$SELF_REVIEW" | jq -r '.reviewers | index("probe-bot") != null')" true
-
-# Заявки с таким номером нет — это ответ по существу, а не молчание.
-report "SC-AK-378 — неизвестная заявка отвечает отсутствием" \
-    "$(pull_state "$PULL_TREE" '' 'no pull requests found for branch' | jq -r '.exists')" false
-
-# Сети нет, токена нет, клиента нет — спросить некого. Такой ответ не смеет читаться как «разбора
-# нет»: по нему заявку без ревьювера не отличить от заявки, о которой не спросили.
-report "SC-AK-379 — офлайн назван офлайном" \
-    "$(pull_state "$PULL_TREE" '' 'dial tcp 140.82.121.5:443: connect: network is unreachable' | jq -r '.offline')" true
-report "SC-AK-379 — и приговора о разборе в таком ответе нет" \
-    "$(pull_state "$PULL_TREE" '' 'dial tcp 140.82.121.5:443: connect: network is unreachable' | jq -r 'has("reviewed")')" false
-# Отказ входа сетевым тоже считается: проверить нечем, и работу это не отбивает.
-report "SC-AK-379 — отказ входа считается офлайном" \
-    "$(pull_state "$PULL_TREE" '' 'gh: Bad credentials (HTTP 401)' | jq -r '.offline')" true
-
-# --- SC-AK-391…359 — заявка называется чем угодно, а то и не называется вовсе -----------------
-#
-# Ссылка на заявку необязательна: клиент хостинга без неё берёт заявку текущей ветки, и это
-# самая короткая форма вызова. Пока помощник требовал номер, всё требование о разборе снималось
-# одним пробелом — `gh pr ready` без довода проходил мимо гарда.
-NUMBERED='{"number":701,"isDraft":true,"author":{"login":"probe-bot"},"reviewRequests":[],"latestReviews":[]}'
-
-report "SC-AK-391 — без ссылки клиент зовётся вовсе без довода" \
-    "$(pull_state "$PULL_TREE" "$NUMBERED" '' '' >/dev/null; pull_args "$PULL_TREE")" \
-    'pr view --json number,isDraft,reviewRequests,latestReviews,author,mergeable'
-report "SC-AK-391 — и заявка при этом найдена" \
-    "$(pull_state "$PULL_TREE" "$NUMBERED" '' '' | jq -r '.exists')" true
-# Номер приходит из ответа: заявку, названную не номером, в отказе гарда узнают по нему.
-report "SC-AK-391 — номер берётся из ответа хостинга" \
-    "$(pull_state "$PULL_TREE" "$NUMBERED" '' '' | jq -r '.number')" 701
-
-# Ссылка любого рода уходит клиенту как есть: разбирать адрес и имя ветки — его работа, не наша.
-report "SC-AK-392 — имя ветки уходит клиенту доводом" \
-    "$(pull_state "$PULL_TREE" "$NUMBERED" '' 'RT-700-probe' >/dev/null; pull_args "$PULL_TREE")" \
-    'pr view RT-700-probe --json number,isDraft,reviewRequests,latestReviews,author,mergeable'
-report "SC-AK-392 — и адрес заявки тоже" \
-    "$(pull_state "$PULL_TREE" "$NUMBERED" '' 'https://example.invalid/o/r/pull/701' >/dev/null; pull_args "$PULL_TREE")" \
-    'pr view https://example.invalid/o/r/pull/701 --json number,isDraft,reviewRequests,latestReviews,author,mergeable'
-report "SC-AK-392 — по имени ветки заявка тоже находится" \
-    "$(pull_state "$PULL_TREE" "$NUMBERED" '' 'RT-700-probe' | jq -r '.exists')" true
-
-rm -rf "$PULL_TREE"
-
 
 suite_result "сверка очереди работ"

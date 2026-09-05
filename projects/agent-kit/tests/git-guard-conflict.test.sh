@@ -50,6 +50,8 @@ dlv_reason "SC-AK-786 — отказ называет, что именно бе�
     'git checkout -b RT-1531-next origin/main' 'заведение ветки под задачу'
 dlv_reason "SC-AK-786 — отказ называет конфликтующую заявку" "$STUCK" \
     'git checkout -b RT-1531-next origin/main' '#1529 RT-1527-probe'
+dlv "SC-AK-872 — заведение ветки с флагом перед -b отбито так же" "$STUCK" \
+    'git checkout -q -b RT-1531-next origin/main' deny
 
 # SC-AK-787 — заведение задачи
 dlv "SC-AK-787 — заведение задачи отбито" "$STUCK" 'npm run task:new -- --title x' deny
