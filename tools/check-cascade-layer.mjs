@@ -20,6 +20,11 @@
  *    инжектит отдельным блоком, и он способен опередить основу.
  * 5. Объявление свойств на корне страницы, уехавшее в слой оформления внутрь блока `@layer`:
  *     перекраска бренда потребителем держится порядком, а не слоем.
+ * 6. Правило, стоящее ПОСЛЕ закрывающей скобки обёртки. Такой файл выглядит обёрнутым и до
+ *    этой статьи проходил молча: проверка судила число обёрток и правила до первой. Вынос
+ *    бывает нужен по делу — правило кита, спорящее с неслоевым правилом чужой библиотеки, в
+ *    слое проигрывает независимо от специфичности, — поэтому нарочный вынос отличается от
+ *    промаха отметкой `rt-layer-outside` в пояснении рядом с вынесенными правилами.
  *
  * Накопленное лежит в списке принятого, отказом не считается и видно числом; падает проверка на
  * НОВОМ месте. Список только убывает: запись, которой больше ничего не отвечает, роняет прогон.
@@ -44,8 +49,59 @@ const LAYER_ORDER = /@layer\s+rt-kit\.vendor\s*,\s*rt-kit\.base\s*,\s*rt-kit\.co
 /** Снаружи обёртки законны только объявления sass: он требует их в начале файла. */
 const OUTSIDE_OK = /^@(use|forward|import)\b/;
 
+/**
+ * Отметка нарочного выноса из слоя. Стоит в пояснении рядом с вынесенными правилами и читается
+ * тем, кто правит файл, — список принятого прочитал бы только тот, кто его открыл.
+ */
+const OUTSIDE_MARK = 'rt-layer-outside';
+
 const findings = [];
 const add = (key, text) => findings.push({ key, text });
+
+/** Сколько файлов вынесли часть правил из слоя нарочно, с отметкой. */
+let marked = 0;
+
+/**
+ * Строки кода из набора строк: пустые и пояснения снимаются.
+ *
+ * Комментарий судится состоянием, а не началом строки: у блочного продолжение бывает и без
+ * ведущей звёздочки, и такая строка читалась бы как правило.
+ */
+function codeLines(lines) {
+    const code = [];
+    let inComment = false;
+
+    for (const line of lines) {
+        const bare = line.trim();
+        if (inComment) {
+            if (bare.includes('*/')) inComment = false;
+            continue;
+        }
+        if (bare === '' || bare.startsWith('//')) continue;
+        if (bare.startsWith('/*')) {
+            if (!bare.includes('*/')) inComment = true;
+            continue;
+        }
+        code.push(bare);
+    }
+
+    return code;
+}
+
+/** Позиция за закрывающей скобкой блока, открытого от места `at`. */
+function closingBrace(text, at) {
+    let depth = 0;
+    let index = text.indexOf('{', at);
+
+    while (index < text.length) {
+        if (text[index] === '{') depth += 1;
+        if (text[index] === '}') depth -= 1;
+        index += 1;
+        if (depth === 0) return index;
+    }
+
+    return text.length;
+}
 
 const scssIn = (dir) => {
     const out = [];
@@ -78,22 +134,7 @@ for (const file of files) {
     // Комментарий судится состоянием, а не началом строки: у блочного продолжение бывает и без
     // ведущей звёздочки, и такая строка читалась бы как правило вне слоя.
     const before = text.slice(0, text.indexOf(COMPONENT_LAYER)).split('\n');
-    const stray = [];
-    let inComment = false;
-
-    for (const line of before) {
-        const bare = line.trim();
-        if (inComment) {
-            if (bare.includes('*/')) inComment = false;
-            continue;
-        }
-        if (bare === '' || bare.startsWith('//')) continue;
-        if (bare.startsWith('/*')) {
-            if (!bare.includes('*/')) inComment = true;
-            continue;
-        }
-        if (!OUTSIDE_OK.test(bare)) stray.push(bare);
-    }
+    const stray = codeLines(before).filter((line) => !OUTSIDE_OK.test(line));
 
     if (stray.length > 0) {
         add(
@@ -101,6 +142,24 @@ for (const file of files) {
             `${file}: до обёртки стоит «${stray[0].slice(0, 60)}» — снаружи законны только @use, @forward и @import`
         );
     }
+
+    // Хвост за закрывающей скобкой обёртки. Пустой он у восьмидесяти семи файлов из восьмидесяти
+    // восьми; непустой означает либо нарочный вынос, либо уехавшую за скобку часть файла, и
+    // отличает их отметка.
+    const tail = text.slice(closingBrace(text, text.indexOf(COMPONENT_LAYER)));
+    const outside = codeLines(tail.split('\n'));
+
+    if (outside.length === 0) continue;
+
+    if (!tail.includes(OUTSIDE_MARK)) {
+        add(
+            `${file}: правило после обёртки`,
+            `${file}: после обёртки стоит «${outside[0].slice(0, 60)}» — часть файла осталась вне слоя, а файл выглядит обёрнутым. Нарочный вынос помечается «${OUTSIDE_MARK}» в пояснении рядом с вынесенными правилами`
+        );
+        continue;
+    }
+
+    marked += 1;
 }
 
 const layers = readFileSync(resolve(ROOT, LAYERS_FILE), 'utf8');
@@ -159,5 +218,5 @@ if (problems.length > 0) {
 }
 
 console.log(
-    `check-cascade-layer: файлов стилей ${files.length}, все в подслое rt-kit.components; порядок подслоёв объявлен, принято списком ${seen.size}`
+    `check-cascade-layer: файлов стилей ${files.length}, все в подслое rt-kit.components; вынесено из слоя с отметкой ${marked}; порядок подслоёв объявлен, принято списком ${seen.size}`
 );

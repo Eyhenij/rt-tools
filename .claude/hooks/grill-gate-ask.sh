@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.22.0 · hooks/grill-gate-ask.sh · 31b47772c38b · правится надстройкой, не здесь
+# rt-kit v0.24.0 · hooks/grill-gate-ask.sh · 31b47772c38b · правится надстройкой, не здесь
 # rt-hook: PreToolUse AskUserQuestion
 # Требует: hooks/grill-gate.sh
 # Половина гарда разговора, стоящая на инструменте вопроса: меню судится до отправки.

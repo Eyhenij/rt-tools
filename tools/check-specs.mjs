@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.22.0 · checks/check-specs.mjs · 8922eb9e7939 · правится надстройкой, не здесь
+// rt-kit v0.24.0 · checks/check-specs.mjs · b6013c883083 · правится надстройкой, не здесь
 /**
  * Проверка того, что спек домена не разошёлся с кодом.
  *
@@ -369,7 +369,7 @@ for (const scenario of byId.values()) {
     }
     // Обещание, данное пользователю, закрывается тестом, идущим его путём. Юнит проверяет
     // тот же расчёт мимо экрана: он верен и покрытием сценария не является
-    if (promisesScreen(scenario.promise) && !places.some(({ screen, off }) => screen && !off)) {
+    if (promisesScreen(scenario.promise, scenario.body) && !places.some(({ screen, off }) => screen && !off)) {
         const off = places.some(({ screen }) => screen);
         report(
             `${scenario.file}:${scenario.line}`,
