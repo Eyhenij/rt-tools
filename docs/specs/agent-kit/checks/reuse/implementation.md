@@ -8,4 +8,5 @@
 - **Набор признаков режется по пакетам rt-tools.** — `projects/agent-kit/assets/checks/signals.mjs:BUNDLES_DIR`
 - **Дерево получает признаки тех пакетов, которые назвало.** — `projects/agent-kit/assets/checks/signals.mjs:readBundle`
 - **Дерево дописывает признаки, а не правит чужие.** — `projects/agent-kit/assets/checks/signals.mjs:byKey`
+- **Папка источника готового выводится из-под признака отдельно от набора.** — `projects/agent-kit/assets/checks/check-reuse.mjs:exceptNamed` — обратный образец пути читают проверка и гард `projects/agent-kit/assets/hooks/reuse-first-guard.sh`; сценарий SC-AK-874
 - **Директивы своей дизайн-системы дерева вырезаются из признаков нативных тегов.** — `projects/agent-kit/assets/checks/signals.mjs:withKitDirectives` — список приходит ключом `reuse.kitDirectives`, вырезание дописывается к полю `strip` признака; сценарий SC-AK-817

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.24.0 · hooks/reuse-first-guard.sh · 1e3381930ff6 · правится надстройкой, не здесь
+# rt-kit v0.24.0 · hooks/reuse-first-guard.sh · fcd3bccd5686 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh, hooks/deny-tail.sh
 # Гард «ничего не пишется с нуля». PreToolUse на правке кода и разметки.
@@ -251,6 +251,15 @@ while IFS= read -r signal; do
     only_named="$(field "$signal" '.onlyNamed')"
     if [ -n "$only_named" ]; then
         printf '%s' "$rel_path" | grep -qE "$only_named" || continue
+    fi
+
+    # Обратная сторона образца имени: дерево, которое готовое само и пишет, выводит из-под
+    # признака папки источника этого готового. Без неё выбор у такого дерева один — не брать
+    # набор вовсе, и тогда внутри самого набора готовых компонентов обход готового не ловит
+    # ничто. Поле читает и сплошная проверка: расходиться им нельзя.
+    except_named="$(field "$signal" '.exceptNamed')"
+    if [ -n "$except_named" ]; then
+        printf '%s' "$rel_path" | grep -qE "$except_named" && continue
     fi
 
     case "$(field "$signal" '.scope')" in
