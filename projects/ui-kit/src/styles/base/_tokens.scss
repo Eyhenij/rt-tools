@@ -193,6 +193,11 @@ $semantic: (
             color-mix(in srgb, var(--rt-color-warning-80) 90%, #fff)
         ),
     bg-accent-warning-disabled: color-mix(in srgb, var(--rt-color-warning-80) 38%, transparent),
+    /* Подсветка найденного. Жёлтая в обеих темах — так подсвечивает найденное сам браузер,
+       и человек читает эту заливку без объяснений. Текст на ней тёмный всегда: жёлтый фон
+       светлый в любой теме, и светлая подпись на нём пропадает. */
+    bg-accent-highlight: t(#ffeb3b, #ffd54f),
+    text-accent-highlight: #181818,
     bg-accent-danger-subtle: t(var(--rt-color-danger-10), color-mix(in srgb, var(--rt-color-danger-100) 18%, #1c1b1e)),
     bg-accent-danger-solid: var(--rt-color-danger-100),
     bg-accent-danger-hover: t(

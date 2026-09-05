@@ -81,7 +81,14 @@ fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), 'utf8');
 console.log(`@rt-tools/core version updated successfully: ${currentVersion} → ${newVersion}`);
 
 // Update @rt-tools/core dependency in all dependent packages
-const dependentPackages = ['./projects/store/package.json', './projects/utils/package.json', './projects/ui-kit/package.json'];
+// ui-kit-v2 зависит от core кареткой так же, как ui-kit; без него в списке опубликованный кит
+// остаётся на прежнем миноре core, и у потребителя оказываются две копии пакета.
+const dependentPackages = [
+    './projects/store/package.json',
+    './projects/utils/package.json',
+    './projects/ui-kit/package.json',
+    './projects/ui-kit-v2/package.json',
+];
 
 function updateDependency(filePath, depName, newVer) {
     const fullPath = path.resolve(__dirname, filePath);
