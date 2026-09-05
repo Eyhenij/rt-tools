@@ -426,6 +426,16 @@ body_section "SC-AK-687 — тело, переданное файлом, суд�
 printf 'Тело из файла.\n\n## Оставшийся шаг\n\nНе осталось.\n' > "$BODY_FILE"
 body_section "SC-AK-687 — раздел в файле принимается так же" \
     "gh pr create --title \"[RT-7] Сделано\" --body-file $BODY_FILE" 0
+
+# SC-AK-884. Флаг тела узнаётся только отдельным словом: хвост имени ветки `-b` в доводе
+# основания читался как `-b`, и телом становилось следующее слово команды — `--head`, `2>&1`.
+body_section "SC-AK-884 — имя ветки на -b в доводе основания телом не считается" \
+    "gh pr create --title \"[RT-7] Сделано\" --body-file $BODY_FILE --base RT-6-before-b --head RT-7-probe 2>&1" 0
+body_section "SC-AK-884 — то же с именем последним словом" \
+    "gh pr create --title \"[RT-7] Сделано\" --body-file $BODY_FILE --base RT-6-before-b" 0
+printf 'Тело из файла без раздела.\n' > "$BODY_FILE"
+body_section "SC-AK-884 — файл без раздела при таком имени по-прежнему отбит" \
+    "gh pr create --title \"[RT-7] Сделано\" --body-file $BODY_FILE --base RT-6-before-b --head RT-7-probe" 1
 rm -f "$BODY_FILE"
 
 # Дерево, не назвавшее образца, требования не получает: чужих слов пакет не знает.

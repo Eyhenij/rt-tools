@@ -469,3 +469,11 @@
 `projects/agent-kit/tests/git-guard-push-tests.test.sh`,
 `projects/agent-kit/tests/waiting-turn-guard.test.sh`,
 `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-884 — имя ветки с хвостом -b в доводе основания телом заявки не считается
+
+Дано тело заявки лежит в файле, а основанием названа ветка, чьё имя кончается на `-b`
+Когда гард судит открытие заявки — с доводами после имени и с именем последним словом
+Тогда он читает тело из файла и про раздел молчит; файл без раздела при том же имени отбит
+
+Покрыто: `projects/agent-kit/tests/git-guards.test.sh`.

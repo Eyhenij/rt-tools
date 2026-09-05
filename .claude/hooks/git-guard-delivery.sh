@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.24.0 · hooks/git-guard-delivery.sh · 065beeb5cc02 · правится надстройкой, не здесь
+# rt-kit v0.24.0 · hooks/git-guard-delivery.sh · 3a3d4c8945fd · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Гард поставки. PreToolUse на заведении ветки, пуше и открытии заявки на слияние.
@@ -401,17 +401,18 @@ fi
 # Тело заявки несёт раздел об оставшемся шаге с минуты открытия: без него владелец вливает
 # заявку кнопкой, пока идёт прогон. Тело приходит доводом либо файлом, оба читаются здесь; файл
 # к моменту разбора уже написан. Нет ни того ни другого — требования нет: заявка без тела
-# проверяется строкой выше.
+# проверяется строкой выше. Флаг узнаётся только отдельным словом: хвост имени ветки `-b`
+# в доводе основания читался как флаг тела, и телом становилось следующее слово команды.
 if [ -n "$pull_body_section" ]; then
     body=''
     if command -v perl >/dev/null 2>&1; then
         body="$(printf '%s' "$cmd" | perl -0ne '
-            if (/(?:--body|-b)(?:=|\s+)(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(\S+))/s) {
+            if (/(?:^|\s)(?:--body|-b)(?:=|\s+)(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(\S+))/s) {
                 print defined $1 ? $1 : (defined $2 ? $2 : $3);
             }
         ' 2>/dev/null)"
         body_file="$(printf '%s' "$cmd" | perl -0ne '
-            if (/(?:--body-file|-F)(?:=|\s+)(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(\S+))/s) {
+            if (/(?:^|\s)(?:--body-file|-F)(?:=|\s+)(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(\S+))/s) {
                 print defined $1 ? $1 : (defined $2 ? $2 : $3);
             }
         ' 2>/dev/null)"
