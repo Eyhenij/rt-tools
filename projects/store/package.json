@@ -1,6 +1,6 @@
 {
   "name": "@rt-tools/store",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Signal-based state management for Angular with Redux DevTools support",
   "license": "Apache-2.0",
   "author": "Yauheni Krumin",
@@ -18,14 +18,14 @@
     "Redux DevTools"
   ],
   "dependencies": {
-    "@rt-tools/core": "^0.3.1",
-    "@rt-tools/utils": "^0.3.2"
+    "@rt-tools/core": "^0.4.0",
+    "@rt-tools/utils": "^0.4.0"
   },
   "peerDependencies": {
-    "@rt-tools/core": "^0.3.1",
+    "@rt-tools/core": "^0.4.0",
     "@angular/core": "^22.0.0",
     "rxjs": "^7.8.0",
-    "@rt-tools/utils": "^0.3.2"
+    "@rt-tools/utils": "^0.4.0"
   },
   "sideEffects": false,
   "main": "src/index.ts",

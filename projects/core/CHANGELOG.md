@@ -1,4 +1,8 @@
-## [Unreleased]
+# [0.4.0](https://github.com/Eyhenij/rt-tools/compare/rt-core@0.3.1...rt-core@0.4.0) (2026-09-03)
+
+### Features
+
+- **rt:message-bus:** админка заводится каркасом, входом и оболочкой с меню ([7736c6c](https://github.com/Eyhenij/rt-tools/commit/7736c6cf9f79e335c550ca5e41764ba265c23c75))
 
 ### BREAKING CHANGES
 
