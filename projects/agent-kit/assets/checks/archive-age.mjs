@@ -32,6 +32,17 @@ export const ARCHIVE_DIR = CONFIG.archiveDir.replace(/\/$/, '');
  */
 export const RETENTION_DAYS = CONFIG.archiveRetentionDays ?? null;
 
+/**
+ * Запас проверки в сутках сверх срока.
+ *
+ * Чистка снимает в минуту пуша, а проверка в конвейере считает возраст в минуту прогона —
+ * минутами позже, при очереди на раннере часами. Возраст меряется до минуты, и за это время
+ * следующая запись пересекает порог: три прогона одного захода покраснели так, ни один не по
+ * правке ветки. Проверка поэтому требует позже, чем чистка снимает; всё, что она называет,
+ * чистка по-прежнему снимает — отбор один, разница в запасе.
+ */
+export const CHECK_GRACE_DAYS = 1;
+
 /** Сутки в миллисекундах — считать возраст удобнее в них. */
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -97,11 +108,15 @@ export function archiveRecords(root, now = new Date()) {
         .sort((one, other) => other.ageDays - one.ageDays);
 }
 
-/** Записи, перестоявшие срок. Срок не назначен — перестоявших нет ни одной. */
-export function staleRecords(root, now = new Date()) {
+/**
+ * Записи, перестоявшие срок. Срок не назначен — перестоявших нет ни одной.
+ *
+ * @param graceDays Запас сверх срока в сутках: чистка зовёт без него, проверка — с ним.
+ */
+export function staleRecords(root, now = new Date(), graceDays = 0) {
     if (RETENTION_DAYS === null) {
         return [];
     }
 
-    return archiveRecords(root, now).filter((record) => record.ageDays > RETENTION_DAYS);
+    return archiveRecords(root, now).filter((record) => record.ageDays > RETENTION_DAYS + graceDays);
 }
