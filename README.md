@@ -197,7 +197,7 @@ pnpm exec nx test @rt-tools/ui-kit --testFile=<path-to-spec>
 ## Contributing
 
 Contributions are welcome. This repo uses [Conventional Commits](https://www.conventionalcommits.org/)
-(enforced by commitlint) and runs lint, tests, and build in CI. Before opening a pull request:
+(enforced by commitlint) and runs lint, tests, and build in CI. Before opening a PR:
 
 ```bash
 pnpm run check:all

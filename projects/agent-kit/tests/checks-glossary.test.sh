@@ -9,7 +9,7 @@ GL_TREE="$(mktemp -d)"
 mkdir -p "$GL_TREE/tools" "$GL_TREE/docs/archive" "$GL_TREE/docs/tasks/RT-1-x" "$GL_TREE/docs/specs"
 cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/check-glossary.mjs" "$GL_TREE/tools/"
 
-printf '# Словарь\n\n## Так не пишем\n\n- **таска, тикет** — задача\n- **спека (о тесте)** — тест\n' \
+printf '# Glossary\n\n## Not written here\n\n- **таска, тикет** — задача\n- **спека (о тесте)** — тест\n' \
     > "$GL_TREE/docs/GLOSSARY.md"
 
 git -C "$GL_TREE" init -q 2>/dev/null
@@ -65,6 +65,16 @@ printf '# Словарь\n\n## Термины\n\n- **Задача** — един
 git -C "$GL_TREE" add -A 2>/dev/null
 report "SC-AK-692 — без раздела запретных слов проверка объявляет пропуск" "$(glossary_code)" 7
 
+# SC-AK-904 — раздел находится и под русским именем: словарь дерева, ещё не переведённый,
+# новой редакцией пакета без сверки не остаётся.
+printf '# Словарь\n\n## Так не пишем\n\n- **таска** — задача\n' > "$GL_TREE/docs/GLOSSARY.md"
+printf '# Домен\n\nЗаведена таска на разбор.\n' > "$GL_TREE/docs/specs/domain.md"
+git -C "$GL_TREE" add -A 2>/dev/null
+report "SC-AK-904 — раздел под русским именем читается" "$(glossary_says 'docs/specs/domain.md.*таска')" 1
+report "SC-AK-904 — и код возврата ненулевой" "$(glossary_code)" 1
+printf '# Домен\n\nЗаведена задача на разбор.\n' > "$GL_TREE/docs/specs/domain.md"
+git -C "$GL_TREE" add -A 2>/dev/null
+
 # --- SC-AK-819 — вводная словаря ведёт в источник правки ----------------------------------
 # Словарь уезжает в контекст каждой сессии целиком и оттого читается обычным документом дерева, а
 # правится он надстройкой, как всякий разложенный ресурс. Вводная — единственный текст о словаре,
@@ -83,12 +93,12 @@ printf '<!-- rt-kit v0.22.0 · docs/GLOSSARY.md · 2fcd88176a0d · правит�
 report "SC-AK-819 — при шапке раскладки вводная называет надстройку" \
     "$(hook_says 'overrides/docs/GLOSSARY.md')" 1
 report "SC-AK-819 — и не зовёт править словарь на месте" \
-    "$(hook_says 'заводится здесь же')" 0
+    "$(hook_says 'added right here')" 0
 
 # Шапки нет — словарь принадлежит дереву целиком, и адрес надстройки был бы там ложью.
 printf '# Словарь\n' > "$GL_HOOK/docs/GLOSSARY.md"
 report "SC-AK-819 — без шапки вводная зовёт править словарь на месте" \
-    "$(hook_says 'принадлежит дереву целиком')" 1
+    "$(hook_says 'belongs to the tree as a whole')" 1
 report "SC-AK-819 — и надстройки не называет" "$(hook_says 'overrides/')" 0
 
 rm -rf "$GL_HOOK"

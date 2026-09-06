@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-glossary.mjs · b1b956a264a4 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-glossary.mjs · 06bbaaa4f3e0 · правится надстройкой, не здесь
 /**
  * Слова, которых здесь не пишут: раздел «Так не пишем» словаря против дерева.
  *
@@ -34,7 +34,11 @@ import process from 'node:process';
 import { CONFIG, ROOT, baselineOf, parseAllowlist } from './rt-kit-checks.config.mjs';
 
 const GLOSSARY = 'docs/GLOSSARY.md';
-const SECTION = '## Так не пишем';
+/**
+ * Раздел запретных слов. Имён два: английское везёт пакет, русское держит дерево, чей словарь
+ * свой и ещё не переведён. Новая редакция пакета не вправе оставить такое дерево без сверки.
+ */
+const SECTIONS = ['## Not written here', '## Так не пишем'];
 /** Пара словаря: `- **слева** — справа`. Слева бывает несколько слов через запятую. */
 const PAIR = /^-\s+\*\*(.+?)\*\*\s+—/;
 /** Скобочное уточнение при слове: запрещено одно значение из двух, и поиском их не развести. */
@@ -53,7 +57,7 @@ const GLOSSARY_NAME = /(^|\/)GLOSSARY\.md$/;
 /** Левая колонка раздела «Так не пишем»: слова, которых в дереве быть не должно. */
 function forbiddenWords(text) {
     const lines = text.split('\n');
-    const from = lines.findIndex((line) => line.trim() === SECTION);
+    const from = lines.findIndex((line) => SECTIONS.includes(line.trim()));
     if (from < 0) {
         return { words: [], byReader: [] };
     }
@@ -152,7 +156,7 @@ function main() {
     if (news.length) {
         console.error(`check-glossary: расхождений ${news.length}`);
         for (const one of news) {
-            console.error(`  ${one.file}:${one.line} — «${one.word}»: слово стоит в разделе «Так не пишем» словаря`);
+            console.error(`  ${one.file}:${one.line} — «${one.word}»: слово стоит в разделе запретных слов словаря`);
         }
         console.error('  либо слово меняется на принятое здесь, либо словарь перестаёт его запрещать');
 

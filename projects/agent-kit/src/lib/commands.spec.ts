@@ -266,7 +266,7 @@ describe('sync', () => {
         sync(env, false);
 
         expect(get(GLOSSARY)).toContain(`rt-kit v${VERSION}`);
-        expect(get(GLOSSARY)).toContain('## Слой правил');
+        expect(get(GLOSSARY)).toContain('## Rules layer');
     });
 
     it('SC-AK-34 — предметные разделы словаря дописываются надстройкой', () => {
@@ -274,7 +274,7 @@ describe('sync', () => {
         put(join(OVERRIDES_DIR, 'docs/GLOSSARY.md'), '## Своё слово\n\nЗначит вот это.\n');
         sync(env, false);
 
-        expect(get(GLOSSARY)).toContain('## Слой правил');
+        expect(get(GLOSSARY)).toContain('## Rules layer');
         expect(get(GLOSSARY)).toContain('## Своё слово');
     });
 
