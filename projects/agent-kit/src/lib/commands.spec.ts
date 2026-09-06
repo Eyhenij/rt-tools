@@ -658,12 +658,12 @@ describe('doctor', () => {
         start(['laws/delivery.md']);
         // Совпавший заголовок замещает раздел целиком: всё, что пакет допишет в него новой
         // версией, пропадёт молча, и других свидетелей у потери не бывает.
-        put(join(OVERRIDES_DIR, 'laws/delivery.md'), '## Статьи\n\nСвои статьи.\n');
+        put(join(OVERRIDES_DIR, 'laws/delivery.md'), '## Articles\n\nСвои статьи.\n');
 
         const said_: string = said(doctor(env));
 
         expect(said_).toContain('замещено надстройками разделов: 1');
-        expect(said_).toContain('laws/delivery.md · ## Статьи');
+        expect(said_).toContain('laws/delivery.md · ## Articles');
     });
 
     it('SC-AK-716 — дерево без надстроек о замещённом молчит', () => {
