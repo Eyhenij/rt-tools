@@ -1,5 +1,4 @@
 import { BooleanInput, NumberInput } from '@angular/cdk/coercion';
-import { DOCUMENT } from '@angular/common';
 import {
     afterNextRender,
     booleanAttribute,
@@ -23,12 +22,12 @@ import {
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Event as RouterEvent, NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 
-import { filter, fromEvent, map } from 'rxjs';
+import { filter, map } from 'rxjs';
 
-import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective, WINDOW } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, RT_KIT_TRANSLATOR, RtKitLabelPipe, TRtKitLabelMap, TRtKitTranslator, rtKitLabel } from '../../i18n';
 import { BreakpointsService } from '../../platform';
@@ -96,12 +95,13 @@ export class RtPageHeaderComponent {
 
     readonly #host: ElementRef<HTMLElement> = inject<ElementRef<HTMLElement>>(ElementRef);
 
-    readonly #document: Document = inject(DOCUMENT);
+    // Конструктор наблюдателя пересечения объявлен на globalThis, а не на интерфейсе Window —
+    // токен отдаёт тот же объект, тип лишь уточняется.
+    readonly #window: Window & typeof globalThis = inject(WINDOW) as Window & typeof globalThis;
 
     /**
-     * Прилипла ли шапка к верху окна. Считается на прокрутке по положению хоста, а не по
-     * смещению окна: страница у потребителя прокручивается и внутри контейнера, и окно об этом
-     * не знает.
+     * Прилипла ли шапка к краю прокрутки. Считается наблюдателем пересечения, а не смещением
+     * окна: страница у потребителя прокручивается и внутри контейнера, и окно об этом не знает.
      */
     readonly #stuck: WritableSignal<boolean> = signal<boolean>(false);
 
@@ -219,24 +219,26 @@ export class RtPageHeaderComponent {
             }
         });
 
-        // Прокрутка ловится на документе перехватом: событие не всплывает, а страница у
-        // потребителя прокручивается и внутри контейнера. Пока шапка не липкая, замер не идёт.
-        fromEvent(this.#document, 'scroll', { capture: true, passive: true })
-            .pipe(takeUntilDestroyed(this.#destroyRef))
-            .subscribe((): void => this.#measureStuck());
-
-        afterNextRender((): void => this.#measureStuck());
+        afterNextRender((): void => this.#observeStuck());
     }
 
-    /** Прилипание считается по положению хоста против его места в потоке. */
-    #measureStuck(): void {
-        if (!this.stickyCompact()) {
-            this.#stuck.set(false);
-            return;
-        }
-        const host: HTMLElement = this.#host.nativeElement;
-        const parentTop: number = host.offsetParent?.getBoundingClientRect().top ?? 0;
-        this.#stuck.set(isStuck(parentTop + host.offsetTop, host.getBoundingClientRect().top));
+    /**
+     * Липкая шапка стоит на пиксель выше края прокрутки и, прилипнув, теряет его из видимой
+     * области: наблюдатель пересечения с порогом в единицу ловит ровно этот момент — и в окне,
+     * и внутри прокручиваемого контейнера, о котором окно не знает.
+     */
+    #observeStuck(): void {
+        const observer: IntersectionObserver = new this.#window.IntersectionObserver(
+            (entries: IntersectionObserverEntry[]): void => {
+                const entry: IntersectionObserverEntry | undefined = entries.at(-1);
+                if (entry !== undefined) {
+                    this.#stuck.set(isStuck(entry.intersectionRatio, entry.isIntersecting));
+                }
+            },
+            { threshold: [0, 1] }
+        );
+        observer.observe(this.#host.nativeElement);
+        this.#destroyRef.onDestroy((): void => observer.disconnect());
     }
 
     /** Панель разделов открывают и бургер, и кнопка «ещё»: закрываются обе. */

@@ -13,10 +13,13 @@
         --rt-nav-compact-color-bg: var(--rt-color-bg-surface);
         --rt-nav-compact-stack-depth: 16; /* круг с индексом 0 лежит выше всех, следующие — ниже */
 
+        /* Верх на пиксель выше края: прилипнув, шапка теряет его из видимой области, и по
+           этому наблюдатель пересечения узнаёт о прилипании. Иначе сравнивать нечего — у края
+           прокручиваемого контейнера липкий узел стоит там же, где стоял в потоке. */
         &--sticky {
             position: sticky;
             z-index: var(--rt-z-sticky);
-            top: 0;
+            top: -1px;
         }
 
         &__compact {
@@ -25,7 +28,7 @@
             min-height: var(--rt-nav-compact-height);
             flex: 1 1 auto;
             align-items: center;
-            gap: var(--rt-space-3);
+            gap: var(--rt-space-4);
         }
 
         /* Сжатое состояние: широкий ряд, бургер и блок пользователя уходят, полоса встаёт на

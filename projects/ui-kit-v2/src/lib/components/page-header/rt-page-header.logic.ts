@@ -149,12 +149,12 @@ export function compactSectionsOf(
 }
 
 /**
- * Прилипла ли шапка к верху: липкий узел стоит выше того места, где лежал бы в потоке.
- * Положение в потоке приходит суммой смещения узла и верха его родителя, видимое — прямоугольником
- * узла. Допуск в пиксель гасит рамку родителя, которую смещение не считает.
+ * Прилипла ли шапка: липкий узел стоит на пиксель выше края прокрутки и, прилипнув, теряет этот
+ * пиксель из видимой области — наблюдатель пересечения отдаёт долю меньше единицы. Узел, ушедший
+ * из области целиком, прилипшим не считается: его не видно вовсе.
  */
-export function isStuck(flowTop: number, visualTop: number): boolean {
-    return flowTop < visualTop - 1;
+export function isStuck(intersectionRatio: number, isIntersecting: boolean): boolean {
+    return isIntersecting && intersectionRatio < 1;
 }
 
 export function activeSectionIds(sections: ReadonlyArray<IRtPageHeaderView.Section>, url: string): ReadonlySet<string> {

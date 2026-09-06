@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, DebugElement } from '@angular/core'
 import { ComponentFixture } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
+import { WINDOW } from '@rt-tools/core';
+
 import { createRtFixture, el, hostClasses, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
 import { IRtPageHeader } from './rt-page-header.model';
 import { RtPageHeaderComponent } from './rt-page-header.component';
@@ -21,8 +23,41 @@ const ITEMS: ReadonlyArray<IRtPageHeader.Item> = [
     },
 ];
 
+/**
+ * Двойник наблюдателя пересечения: в jsdom его нет. Запоминает обратный вызов, а прокрутка
+ * подаётся ему записью с долей видимости меньше единицы — так шапка узнаёт о прилипании.
+ */
+class ObserverDouble {
+    public static last: ObserverDouble | null = null;
+
+    constructor(public readonly callback: IntersectionObserverCallback) {
+        ObserverDouble.last = this;
+    }
+
+    public observe(): void {}
+
+    public disconnect(): void {}
+
+    /** Повторяет уход верхнего пикселя шапки за край прокрутки. */
+    public stick(): void {
+        this.callback(
+            [{ intersectionRatio: 0.97, isIntersecting: true } as IntersectionObserverEntry],
+            this as unknown as IntersectionObserver
+        );
+    }
+}
+
+/** Окно отдаётся токеном — двойник ставится провайдером, а не правкой глобального объекта. */
+function windowDouble(): Window & typeof globalThis {
+    return { IntersectionObserver: ObserverDouble } as unknown as Window & typeof globalThis;
+}
+
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtPageHeaderComponent> {
-    return createRtFixture(RtPageHeaderComponent, { items: ITEMS, ...inputs }, { providers: [provideRouter([])] });
+    return createRtFixture(
+        RtPageHeaderComponent,
+        { items: ITEMS, ...inputs },
+        { providers: [provideRouter([]), { provide: WINDOW, useFactory: windowDouble }] }
+    );
 }
 
 function navItems(fixture: ComponentFixture<RtPageHeaderComponent>): HTMLElement[] {
@@ -46,19 +81,8 @@ class PageHeaderHostComponent {
     public readonly items: ReadonlyArray<IRtPageHeader.Item> = ITEMS;
 }
 
-/**
- * Прокрутка страницы в jsdom: положение хоста подменяется прямоугольниками — родитель ушёл
- * вверх, а сам хост остался у верхнего края, — и документ получает событие прокрутки.
- */
 function scrollPastHeader(fixture: ComponentFixture<RtPageHeaderComponent>): void {
-    const host: HTMLElement = fixture.nativeElement as HTMLElement;
-    const parent: HTMLElement = document.createElement('div');
-    parent.getBoundingClientRect = (): DOMRect => ({ top: -400 }) as DOMRect;
-    Object.defineProperty(host, 'offsetParent', { configurable: true, get: (): HTMLElement => parent });
-    Object.defineProperty(host, 'offsetTop', { configurable: true, get: (): number => 100 });
-    host.getBoundingClientRect = (): DOMRect => ({ top: 0 }) as DOMRect;
-
-    document.dispatchEvent(new Event('scroll'));
+    ObserverDouble.last?.stick();
     fixture.detectChanges();
 }
 
@@ -219,7 +243,7 @@ describe('RtPageHeaderComponent', (): void => {
             const fixture: ComponentFixture<PageHeaderHostComponent> = createRtFixture(
                 PageHeaderHostComponent,
                 {},
-                { providers: [provideRouter([])] }
+                { providers: [provideRouter([]), { provide: WINDOW, useFactory: windowDouble }] }
             );
 
             expect(
