@@ -1,3 +1,32 @@
+# [0.25.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.24.0...rt-agent-kit@0.25.0) (2026-09-06)
+
+### Bug Fixes
+
+- **rt:agent-kit:** гард поставки узнаёт флаг тела заявки только отдельным словом ([4783cee](https://github.com/Eyhenij/rt-tools/commit/4783cee3d96059b2517f9794dc0b7b9d38803054))
+- **rt:agent-kit:** гарды узнают заведение ветки с флагом между глаголом и -b ([c053eeb](https://github.com/Eyhenij/rt-tools/commit/c053eebe85ab7ffd463c03244c92accf45d14242))
+- **rt:agent-kit:** конвейер публикации пересобирает замок вместе с версией ([bff9858](https://github.com/Eyhenij/rt-tools/commit/bff9858a564d422f26d7c444714d5bb653e26182)), closes [#203](https://github.com/Eyhenij/rt-tools/issues/203)
+- **rt:agent-kit:** ответ помощника очереди работ называет, чьими глазами снято состояние ([2f0f8ad](https://github.com/Eyhenij/rt-tools/commit/2f0f8ad21fc3c79664b1aab404b61473f1cda810))
+- **rt:agent-kit:** право на исполнение у разложенного хука решает род ([5192ed0](https://github.com/Eyhenij/rt-tools/commit/5192ed0ee4b67de14236861ceed50fdb0406d7cf))
+- **rt:agent-kit:** причина отказа по выбору браузера доходит до исполнителя ([0b820ea](https://github.com/Eyhenij/rt-tools/commit/0b820ea438f22c16d906af43fe8ffb615f9865a9))
+- **rt:agent-kit:** проверка срока архива требует на сутки позже, чем чистка снимает ([feee0e4](https://github.com/Eyhenij/rt-tools/commit/feee0e488690e32241c584bf8b8b1e1f8d1c3c93))
+- **rt:agent-kit:** проверки текстов видят местоимение, слова дерева и якорь строки ([5b1b084](https://github.com/Eyhenij/rt-tools/commit/5b1b0846b9b19c241a12a4aee91e82bb7eabe3db))
+- **rt:agent-kit:** снятие перестоявших записей проходит гард хода работы ([ebbbfb3](https://github.com/Eyhenij/rt-tools/commit/ebbbfb3b4c746ae6977df464109b1246498a0990))
+- **rt:agent-kit:** снятое право на запуск раскладка возвращает ([6ea5763](https://github.com/Eyhenij/rt-tools/commit/6ea5763a4c2f0e526930ccd65b089db22a7fde2d))
+- **rt:agent-kit:** токен ложится по названному пути, а сухой прогон не обещает лишнего ([02391c5](https://github.com/Eyhenij/rt-tools/commit/02391c573d1686cf1232f02da2a57372bbb1bcdc))
+- **rt:agent-kit:** цель записи — адрес вызова, а не всякое слово с чертой ([591be3b](https://github.com/Eyhenij/rt-tools/commit/591be3b57c4956fe3e66dde52773e3e2183d60dc))
+- **rt:agent-kit:** цитата закона не судится проверкой слога ([a557edd](https://github.com/Eyhenij/rt-tools/commit/a557eddc415ecd5393403d3a95c1d2e9e431cc9d))
+- **rt:agent-kit:** чтение задачи помощником очереди идёт с токеном ([493932d](https://github.com/Eyhenij/rt-tools/commit/493932d95cf26535db7f00790e908c0d4a2e3e39))
+
+### Features
+
+- **rt:agent-kit:** вопрос, вернувшийся прозой, ход не отпускает ([da815cb](https://github.com/Eyhenij/rt-tools/commit/da815cbd14d1c1cc827a72a07b1c637661db6f93))
+- **rt:agent-kit:** линтер по следам правки называет команду без пути к файлу ([cd0386f](https://github.com/Eyhenij/rt-tools/commit/cd0386f4892ed07bb1853bfdc544833b905b6a72))
+- **rt:agent-kit:** приём замера состояния ожидания ([05275ac](https://github.com/Eyhenij/rt-tools/commit/05275acc4d6bbddfe7716e8617985dc2bebf76b8))
+- **rt:agent-kit:** признак единообразия работает внутри дерева-источника ([6b323ae](https://github.com/Eyhenij/rt-tools/commit/6b323ae46effc3ae19bf71d2b42513e498758c70))
+- **rt:agent-kit:** стопка без заявок и ветка без папки перестали молчать ([0bf5d4a](https://github.com/Eyhenij/rt-tools/commit/0bf5d4a147e11581364ff542a3ebc468f4f68c4a))
+- **rt:agent-kit:** страж выхода, диспетчер и подпись перестали пропускать промахи ([25c9679](https://github.com/Eyhenij/rt-tools/commit/25c96792b0255a2caae207f26c7db40aad47a919))
+- **rt:utils:** импорты переехавшего переставляет инструмент дерева ([8d5beb0](https://github.com/Eyhenij/rt-tools/commit/8d5beb0ce4dddeeff431d17561e99296125f9b16)), closes [#220](https://github.com/Eyhenij/rt-tools/issues/220)
+
 # [0.24.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.23.0...rt-agent-kit@0.24.0) (2026-09-04)
 
 ### Bug Fixes

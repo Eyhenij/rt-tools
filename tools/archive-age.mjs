@@ -1,4 +1,4 @@
-// rt-kit v0.24.0 · checks/archive-age.mjs · addfebfb5a6f · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/archive-age.mjs · addfebfb5a6f · правится надстройкой, не здесь
 /**
  * Возраст записей описания прошлого.
  *
