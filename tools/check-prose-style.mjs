@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-prose-style.mjs · fbd7ef24c379 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-prose-style.mjs · 7736bde10166 · правится надстройкой, не здесь
 /**
  * Проверка слога: канцелярит и обороты, которых в этом дереве не пишут.
  *
@@ -60,6 +60,38 @@ const MARKS = [
     [/(?<![а-яёА-ЯЁ])таким образом(?![а-яёА-ЯЁ])/giu, 'убрать или сказать, что из чего следует'],
     [/(?<![а-яёА-ЯЁ])следует отметить(?![а-яёА-ЯЁ])/giu, 'убрать: если стоит отметить — отмечай'],
     [/(?<![а-яёА-ЯЁ])как уже было сказано(?![а-яёА-ЯЁ])/giu, 'убрать: сказанное дважды не становится вернее'],
+];
+
+/**
+ * Признаки канцелярита в английском тексте. Слой правил пишется по-английски, и русский набор
+ * на нём молчит: образец с кириллической границей не совпадает ни с одним латинским словом.
+ *
+ * Оба набора судят каждую строку, и язык файла не определяется: русский образец на английской
+ * строке не совпадает, английский на русской — тоже, а определение языка по каталогу или по
+ * буквам добавило бы ветвление ради ничего. Граница слова — латинская буква, по той же причине,
+ * что и кириллическая выше: `\b` с апострофом и дефисом ведёт себя по-своему.
+ */
+const MARKS_EN = [
+    [/(?<![A-Za-z])in order to(?![A-Za-z])/giu, '«to»'],
+    [/(?<![A-Za-z])for the purpose of(?![A-Za-z])/giu, '«to», «for»'],
+    [/(?<![A-Za-z])in the event that(?![A-Za-z])/giu, '«if»'],
+    [/(?<![A-Za-z])due to the fact that(?![A-Za-z])/giu, '«because»'],
+    [/(?<![A-Za-z])at this point in time(?![A-Za-z])/giu, '«now»'],
+    [/(?<![A-Za-z])prior to(?![A-Za-z])/giu, '«before»'],
+    [/(?<![A-Za-z])subsequent to(?![A-Za-z])/giu, '«after»'],
+    [/(?<![A-Za-z])with regard to(?![A-Za-z])/giu, '«about», «on»'],
+    [/(?<![A-Za-z])in terms of(?![A-Za-z])/giu, 'name the relation directly'],
+    [/(?<![A-Za-z])utili[sz](e|es|ed|ing|ation)(?![A-Za-z])/giu, '«use»'],
+    [/(?<![A-Za-z])leverag(e|es|ed|ing)(?![A-Za-z])/giu, '«use»'],
+    [/(?<![A-Za-z])facilitat(e|es|ed|ing)(?![A-Za-z])/giu, 'name the action itself: «helps», «lets», «runs»'],
+    [/(?<![A-Za-z])(is|are|was|were) able to(?![A-Za-z])/giu, '«can», «could»'],
+    [/(?<![A-Za-z])(has|have|had) the ability to(?![A-Za-z])/giu, '«can», «could»'],
+    [/(?<![A-Za-z])it should be noted that(?![A-Za-z])/giu, 'drop it: if it is worth noting, note it'],
+    [/(?<![A-Za-z])it is (important|worth) (to note|noting) that(?![A-Za-z])/giu, 'drop it: say the thing'],
+    [/(?<![A-Za-z])as (previously|already) (mentioned|stated|noted)(?![A-Za-z])/giu, 'drop it: said twice is not truer'],
+    [/(?<![A-Za-z])the aforementioned(?![A-Za-z])/giu, 'name it again'],
+    [/(?<![A-Za-z])in a timely manner(?![A-Za-z])/giu, '«on time», «promptly»'],
+    [/(?<![A-Za-z])a number of(?![A-Za-z])/giu, '«some», «several», or the number'],
 ];
 
 /** Слова левой колонки словаря: они не пишутся и не произносятся нигде. */
@@ -157,7 +189,7 @@ function proseLines(text) {
 /** Находки одной строки: образец, что нашли, чем заменить. */
 function findingsIn(line) {
     const found = [];
-    [...MARKS, ...GLOSSARY_BANS, ...TREE_BANS].forEach(([re, fix]) => {
+    [...MARKS, ...MARKS_EN, ...GLOSSARY_BANS, ...TREE_BANS].forEach(([re, fix]) => {
         const hit = line.match(re);
         if (hit) found.push([hit[0], fix]);
     });
