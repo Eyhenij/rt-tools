@@ -101,9 +101,18 @@ function rowsOfMap(specFile, mapFile, mapHeading) {
 }
 
 function checkRuleImplementation(specFile, text, mapFile, heading = '## Правила', mapHeading = '') {
-    const bullets = bulletsOf(sectionOf(text, heading));
+    const lines = sectionOf(text, heading);
+    const bullets = bulletsOf(lines);
     if (!bullets.length) {
-        report(specFile, `в разделе \`${heading}\` нет ни одного пункта`);
+        // Отказ называет, что стоит в разделе вместо пунктов: без этого автор переставляет
+        // разметку наугад — таблица перед списком и подзаголовки давали один и тот же отказ.
+        const first = lines.find((line) => line.trim());
+        const instead = bullets.stoppedAt
+            ? `, список кончился на строке \`${bullets.stoppedAt.trim().slice(0, 60)}\``
+            : first
+              ? `, первым стоит \`${first.trim().slice(0, 60)}\``
+              : '';
+        report(specFile, `в разделе \`${heading}\` нет ни одного пункта${instead}`);
 
         return;
     }
