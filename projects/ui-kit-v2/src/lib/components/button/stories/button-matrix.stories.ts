@@ -30,6 +30,13 @@ export const Loading: TStory = { args: { part: 'loading' } };
 
 export const Disabled: TStory = { args: { part: 'disabled' } };
 
+/**
+ * Положение двухпозиционной кнопки. Третий столбец — не отжатая кнопка, а кнопка без положения
+ * вовсе: она о нём не говорит ничего, тогда как отжатая объявляет, что второе положение у неё
+ * есть.
+ */
+export const Pressed: TStory = { args: { part: 'pressed' } };
+
 /** Наведение, нажатие и фокус проставляет аддон псевдосостояний по признаку `data-story-state`. */
 export const States: TStory = {
     args: { part: 'states' },

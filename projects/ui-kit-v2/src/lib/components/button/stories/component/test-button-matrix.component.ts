@@ -8,7 +8,7 @@ import { RtButtonDirective } from '../../rt-button.directive';
 import { IButton } from '../../rt-button.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TButtonMatrixPart = 'appearance' | 'disabled' | 'size' | 'icon' | 'rounded' | 'loading' | 'states' | 'themes';
+export type TButtonMatrixPart = 'appearance' | 'disabled' | 'pressed' | 'size' | 'icon' | 'rounded' | 'loading' | 'states' | 'themes';
 
 /** Случай иконки — не значение оси, а различимая комбинация подписи и стороны. */
 interface IButtonIconCase {
@@ -49,6 +49,19 @@ interface IButtonIconCase {
                             [label]="theme"
                             [theme]="theme"
                             [appearance]="appearance"></button>
+                    </ng-template>
+                </app-story-grid>
+            }
+
+            @case ('pressed') {
+                <app-story-grid caption="Оформление × положение" [rows]="appearances" [columns]="pressedCases" [columnLabel]="pressedLabel">
+                    <ng-template let-appearance let-pressedCase="col">
+                        <button
+                            rtButton
+                            [attr.aria-label]="appearance"
+                            [label]="appearance"
+                            [appearance]="appearance"
+                            [pressed]="pressedCase.value"></button>
                     </ng-template>
                 </app-story-grid>
             }
@@ -129,6 +142,17 @@ interface IButtonIconCase {
 export class TestRtButtonMatrixComponent {
     public part: TButtonMatrixPart = 'appearance';
 
+    /**
+     * Три положения кнопки: нажата, отжата и положения нет вовсе. Третье — не то же, что отжатое:
+     * обычная кнопка о положении не говорит вспомогательным средствам ничего, а отжатая говорит,
+     * что у неё есть второе положение.
+     */
+    public readonly pressedCases: ReadonlyArray<{ readonly label: string; readonly value: boolean | null }> = [
+        { label: 'положения нет', value: null },
+        { label: 'отжата', value: false },
+        { label: 'нажата', value: true },
+    ];
+
     public readonly themes: readonly IButton.Theme[] = ['primary', 'secondary', 'success', 'warning', 'danger', 'info'];
     public readonly appearances: readonly IButton.Appearance[] = ['filled', 'outlined', 'text'];
     public readonly sizes: readonly IButton.Size[] = ['sm', 'md', 'lg', 'xl', '2xl'];
@@ -147,4 +171,7 @@ export class TestRtButtonMatrixComponent {
     public readonly roundedLabel: (value: boolean) => string = (value: boolean): string => (value ? 'rounded' : 'по умолчанию');
 
     public readonly iconCaseLabel: (value: IButtonIconCase) => string = (value: IButtonIconCase): string => value.name;
+
+    public readonly pressedLabel: (value: { readonly label: string }) => string = (value: { readonly label: string }): string =>
+        value.label;
 }
