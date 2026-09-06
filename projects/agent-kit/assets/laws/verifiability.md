@@ -53,10 +53,10 @@ that "should work" and code that was checked look the same in the history.
   requests are carried out by half, and the reply says nothing about the rejected part: by the
   return code such a call cannot be told from a completed one. So the result is read by a separate
   request, and what goes into the PR is what was read, not what was ordered.
-- **A service counts as up when it has completed a job, not when it reported readiness.** A
-  readiness message says only that the service announced itself: one that got not a single job looks
+- **A service counts as up when it has completed a piece of work, not when it reported readiness.** A
+  readiness message says only that the service announced itself: one that got no work at all looks
   in it exactly like a working one. Both sides of the link are checked — that the client picks this
-  very service and that a job went through it.
+  very service and that a piece of work went through it.
 - **Both sides of an exchange are asked, and a side that does not exist is named plainly.** A
   one-sided exchange looks working from both sides: the sending side gets success on every call, and
   that there is nothing to read the result with is visible from nowhere. Silence about the missing
