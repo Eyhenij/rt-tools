@@ -29,6 +29,8 @@ import { outputToObservable, takeUntilDestroyed } from '@angular/core/rxjs-inter
 
 import { map, merge, Observable, Subject, switchMap } from 'rxjs';
 
+import { setRtComponentInputs } from '@rt-tools/core';
+
 import { RtConfirmPopoverComponent } from './rt-confirm-popover.component';
 import { IRtConfirmPopover } from './rt-confirm-popover.model';
 
@@ -172,11 +174,15 @@ export class RtConfirmDirective implements OnDestroy {
         const overlayRef: OverlayRef = this.#ensureOverlay();
         const portal: ComponentPortal<RtConfirmPopoverComponent> = new ComponentPortal(RtConfirmPopoverComponent);
         this.#panelRef = overlayRef.attach(portal);
-        this.#panelRef.setInput('message', this.message());
-        this.#panelRef.setInput('title', this.title());
-        this.#panelRef.setInput('confirmLabel', this.label());
-        this.#panelRef.setInput('cancelLabel', this.cancelLabel());
-        this.#panelRef.setInput('tone', this.tone());
+        // Одним набором, а не пятью строками с именами: имя, написанное строкой, не проверяет
+        // ничто — опечатка собирается и падает на подъёме сообщением о входе, которого нет.
+        setRtComponentInputs(this.#panelRef, {
+            message: this.message(),
+            title: this.title(),
+            confirmLabel: this.label(),
+            cancelLabel: this.cancelLabel(),
+            tone: this.tone(),
+        });
 
         // Подписки на accepted/cancelled объявлены один раз в конструкторе —
         // здесь только эмит свежего ComponentRef (см. #panelAttachedSource-стрим).

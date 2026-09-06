@@ -26,6 +26,14 @@ export const Value: TStory = { args: { part: 'value' } };
 
 export const FullWidth: TStory = { args: { part: 'fullWidth' } };
 
+export const Multiple: TStory = { args: { part: 'multiple' } };
+
+/**
+ * Недоступный сегмент остаётся на месте: спрятанный, он оставил бы группу без объяснения, почему
+ * сегментов стало меньше, — а причина всегда временная.
+ */
+export const DisabledOption: TStory = { args: { part: 'disabledOption' } };
+
 /**
  * Состояния принадлежат сегменту, а не группе, — аддону передан спуск до кнопки. Признак стоит
  * на хосте, поэтому подсвечиваются сразу все сегменты ячейки: так видно, что делает наведение,

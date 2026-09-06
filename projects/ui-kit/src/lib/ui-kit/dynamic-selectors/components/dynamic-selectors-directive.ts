@@ -4,9 +4,16 @@ import { MatFormFieldAppearance } from '@angular/material/form-field';
 import { transformStringInput } from '@rt-tools/utils';
 import { BreakpointService } from '@rt-tools/core';
 
+import { IRtUiConfig, RT_UI_CONFIG } from '../../config';
+
+/** Вид поля, с которым семейство рисовалось до того, как настройка появилась. */
+const DEFAULT_APPEARANCE: MatFormFieldAppearance = 'fill';
+
 @Directive()
 export abstract class RtuiDynamicSelectorsDirective {
     readonly #breakpoints: BreakpointService = inject(BreakpointService);
+    /** App-wide defaults; the resolution order is: instance input → `components.dynamicSelectors` → library default. */
+    readonly #config: IRtUiConfig.Config = inject(RT_UI_CONFIG);
 
     /** Экран узкий: замер кита, и другого источника у этого признака нет. */
     protected readonly narrow: Signal<boolean> = computed(() => !!this.#breakpoints.isMobile());
@@ -50,6 +57,23 @@ export abstract class RtuiDynamicSelectorsDirective {
     public placeholderDescription: InputSignalWithTransform<string, string> = input<string, string>('', {
         transform: transformStringInput,
     });
-    /** Material elements appearance */
-    public appearance: InputSignal<MatFormFieldAppearance> = input('fill' as MatFormFieldAppearance);
+    /**
+     * Material elements appearance.
+     *
+     * Пустота умолчанием, а не прежнее значение: значение, оставленное умолчанием входа, побеждает
+     * настройку всегда — вход задан, и цепочка разрешения на нём кончается, а настройка не
+     * срабатывает ни разу и выглядит сломанной.
+     */
+    public appearance: InputSignal<MatFormFieldAppearance | undefined> = input<MatFormFieldAppearance | undefined>(undefined);
+
+    /**
+     * Вид поля, с которым семейство рисуется: вход на месте, потом раздел настройки, потом
+     * умолчание кита.
+     *
+     * Считается один раз здесь, а шаблоны читают готовое: повторённая в каждом из пяти шаблонов
+     * семейства, эта цепочка разъехалась бы с настройкой в первом же месте, куда забыли заглянуть.
+     */
+    public readonly resolvedAppearance: Signal<MatFormFieldAppearance> = computed(
+        (): MatFormFieldAppearance => this.appearance() ?? this.#config.components?.dynamicSelectors?.appearance ?? DEFAULT_APPEARANCE
+    );
 }

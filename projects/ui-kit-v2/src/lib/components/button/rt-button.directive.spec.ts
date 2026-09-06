@@ -22,7 +22,9 @@ import { IButton } from './rt-button.model';
             [size]="size()"
             [rounded]="rounded()"
             [loading]="loading()"
-            [loadingIcon]="loadingIcon()"></button>
+            [loadingIcon]="loadingIcon()"
+            [pressed]="pressed()"
+            [disabled]="disabled()"></button>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RtButtonDirective],
@@ -37,6 +39,8 @@ class ButtonHostComponent {
     public readonly rounded: WritableSignal<boolean> = signal<boolean>(false);
     public readonly loading: WritableSignal<boolean> = signal<boolean>(false);
     public readonly loadingIcon: WritableSignal<string | null> = signal<string | null>(null);
+    public readonly pressed: WritableSignal<boolean | null> = signal<boolean | null>(null);
+    public readonly disabled: WritableSignal<boolean> = signal<boolean>(false);
 }
 
 /** Затухание кольца (300 мс) плюс запас страховочного таймаута. */
@@ -294,6 +298,47 @@ describe('RtButtonDirective', (): void => {
 
             expect(el(fixture, '.rt-button__spinner')).toBeNull();
             expect(childClasses(fixture)).toEqual(['rt-button__icon', 'rt-button__label']);
+        });
+    });
+
+    describe('положение — SC-UKV-95, SC-UKV-96, SC-UKV-97, SC-UKV-98', (): void => {
+        it('SC-UKV-95 — без признака положения кнопка о нём не говорит', (): void => {
+            const fixture: ComponentFixture<ButtonHostComponent> = setup();
+
+            expect(button(fixture).getAttribute('aria-pressed')).toBeNull();
+            expect(classesOf(button(fixture))).not.toContain('rt-button--pressed');
+        });
+
+        it('SC-UKV-96 — отжатое положение объявлено наравне с нажатым', (): void => {
+            const fixture: ComponentFixture<ButtonHostComponent> = setup();
+
+            fixture.componentInstance.pressed.set(false);
+            fixture.detectChanges();
+
+            expect(button(fixture).getAttribute('aria-pressed')).toBe('false');
+            expect(classesOf(button(fixture))).not.toContain('rt-button--pressed');
+        });
+
+        it('SC-UKV-97 — нажатое положение видно и объявлено', (): void => {
+            const fixture: ComponentFixture<ButtonHostComponent> = setup();
+
+            fixture.componentInstance.pressed.set(true);
+            fixture.detectChanges();
+
+            expect(button(fixture).getAttribute('aria-pressed')).toBe('true');
+            expect(classesOf(button(fixture))).toContain('rt-button--pressed');
+        });
+
+        it('SC-UKV-98 — отключённая кнопка сохраняет своё положение', (): void => {
+            const fixture: ComponentFixture<ButtonHostComponent> = setup();
+
+            fixture.componentInstance.pressed.set(true);
+            fixture.componentInstance.disabled.set(true);
+            fixture.detectChanges();
+
+            expect(button(fixture).getAttribute('aria-pressed')).toBe('true');
+            expect(classesOf(button(fixture))).toContain('rt-button--pressed');
+            expect(button(fixture).disabled).toBe(true);
         });
     });
 });

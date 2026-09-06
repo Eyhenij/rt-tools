@@ -1,4 +1,23 @@
 @layer rt-kit.base {
+    // Тихая полоса: место под неё занято всегда, а ползунка не видно, пока на зону не навели.
+    // Приёмы, которыми заменяют убранное из браузеров наложение полосы поверх содержимого,
+    // показывают её вместе с её местом — и содержимое дёргается вбок на каждом наведении. Здесь
+    // двигается только цвет, поэтому раскладка стоит на месте.
+    // Стандартные свойства объявлены рядом с псевдоэлементами: одни понимает одна ветка
+    // браузеров, другие — другая, и написанные порознь они расходятся видом.
+    * {
+        scrollbar-color: transparent transparent;
+        scrollbar-width: thin;
+    }
+
+    // Проявляется ползунок наведением на саму зону, а не на себя: навести на невидимое нечем.
+    // Фокус внутри зоны показывает его наравне — прокрутка с клавиатуры идёт без указателя, и
+    // человек иначе не видит ни того, где он в списке, ни того, что список прокручивается.
+    *:hover,
+    *:focus-within {
+        scrollbar-color: var(--rt-color-border-default) transparent;
+    }
+
     ::-webkit-scrollbar {
         width: 12px;
     }
@@ -10,6 +29,12 @@
     ::-webkit-scrollbar-thumb {
         border: var(--rt-border-width-thick) solid transparent;
         border-radius: var(--rt-radius-md);
+        background: transparent;
+        background-clip: content-box;
+    }
+
+    *:hover::-webkit-scrollbar-thumb,
+    *:focus-within::-webkit-scrollbar-thumb {
         background: var(--rt-color-border-default);
         background-clip: content-box;
     }
@@ -22,5 +47,19 @@
 
     ::-webkit-scrollbar-track:hover {
         border: var(--rt-border-width-thin) solid var(--rt-color-bg-subtle);
+    }
+
+    // Там, где наведения не бывает, тихая полоса осталась бы невидимой навсегда: на сенсорном
+    // экране указателя нет вовсе, а признак прокручиваемости зоны нужен ровно так же.
+    // Ветка hover-none: наведения на этом экране не бывает.
+    @media (hover: none) {
+        * {
+            scrollbar-color: var(--rt-color-border-default) transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--rt-color-border-default);
+            background-clip: content-box;
+        }
     }
 }

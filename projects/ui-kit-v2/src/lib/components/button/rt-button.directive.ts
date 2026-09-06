@@ -84,6 +84,22 @@ export class RtButtonDirective {
     /** Кастомный CSS-класс иконки в loading. Если null — встроенный CSS-спиннер. */
     public readonly loadingIcon: InputSignal<string | null> = input<string | null>(null);
 
+    /**
+     * Положение двухпозиционной кнопки: `true` — нажата, `false` — отжата, `null` — положения нет
+     * вовсе.
+     *
+     * Три значения, а не два, потому что обычная кнопка переключателем не является и объявлять
+     * себя двухпозиционной не должна: сказанное вспомогательным средствам «эта кнопка отжата» на
+     * кнопке, которая просто запускает действие, — ложь, а не умолчание. Отжатое положение при
+     * этом объявляется наравне с нажатым: молчащая в отжатом виде кнопка неотличима от обычной, и
+     * о втором положении узнают только нажав.
+     *
+     * Само по нажатию положение не меняется: кнопка говорит о нажатии наружу, а положение
+     * возвращает вызывающий — иначе вид кнопки и состояние приложения расходятся при первом же
+     * отказе сохранения.
+     */
+    public readonly pressed: InputSignal<boolean | null> = input<boolean | null>(null);
+
     constructor() {
         afterNextRender(() => untracked(() => this.#updateContent()));
 
@@ -96,6 +112,14 @@ export class RtButtonDirective {
 
             untracked(() => this.#updateContent());
         });
+    }
+
+    /** Положение наружу: атрибута нет вовсе там, где положения у кнопки не бывает. */
+    @HostBinding('attr.aria-pressed')
+    protected get ariaPressed(): string | null {
+        const pressed: boolean | null = this.pressed();
+
+        return pressed === null ? null : String(pressed);
     }
 
     @HostBinding('class')
@@ -113,6 +137,7 @@ export class RtButtonDirective {
             [`${BEM_BLOCK}--loading`]: this.loading(),
             [`${BEM_BLOCK}--icon-only`]: this.isIconOnly(),
             [`${BEM_BLOCK}--${size}`]: size !== 'md',
+            [`${BEM_BLOCK}--pressed`]: this.pressed() === true,
         };
     }
 
