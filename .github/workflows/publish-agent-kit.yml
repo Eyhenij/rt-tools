@@ -55,11 +55,6 @@ jobs:
                   # встал на 530 строках при пределе 500, и из дерева перестала пушиться любая
                   # ветка, причём у того, кто журнала не трогал.
                   node tools/changelog-split.mjs projects/agent-kit/CHANGELOG.md
-                  # Замок зависимостей пересобирается тем же шагом, что поднял версию: заявку
-                  # кладёт следующий, и он берёт всё изменившееся. Оставленный прежним, замок
-                  # расходится с поднятыми версиями, и следующая публикация падает на установке
-                  # из замороженного замка — так встала целая череда выпусков.
-                  pnpm install --lockfile-only
                   VERSION=$(jq -r .version projects/agent-kit/package.json)
                   echo "VERSION=$VERSION" >> $GITHUB_ENV
 
@@ -90,3 +85,20 @@ jobs:
               run: pnpm run packagr:agent-kit
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            # Замок пересобирается после публикации, а не вместе с версией: подъём вписал
+            # зависимым пакетам версию, которой в реестре ещё нет, и до публикации pnpm её не
+            # разрешает — так упал первый же выпуск ядра после переноса пересборки в шаг версии.
+            # Реестр отдаёт свежую версию с задержкой в секунды, поэтому попыток несколько.
+            - name: Rebuild lockfile
+              run: |
+                  for attempt in 1 2 3 4 5 6; do
+                      pnpm install --lockfile-only && break
+                      [ "$attempt" = 6 ] && exit 1
+                      sleep 20
+                  done
+
+            - uses: EndBug/add-and-commit@v11
+              with:
+                  default_author: github_actions
+                  message: 'chore(rt:agent-kit): замок зависимостей пересобран под ${{ env.VERSION }} [ci skip]'
