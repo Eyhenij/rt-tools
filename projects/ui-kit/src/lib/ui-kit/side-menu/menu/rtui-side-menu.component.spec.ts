@@ -1,151 +1,24 @@
-import { ChangeDetectionStrategy, Component, Signal, signal, WritableSignal } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { provideRouter } from '@angular/router';
-import { BreakpointService } from '@rt-tools/core';
+import { ComponentFixture } from '@angular/core/testing';
 
 import { SUB_MENU_WIDTH_MAX } from '../side-menu.logic';
-import { ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
-import { RtuiSideMenuComponent } from './rtui-side-menu.component';
+import {
+    clickRailItem,
+    focusSearch,
+    hoverFirstItem,
+    HostComponent,
+    installFontsStub,
+    ISetup,
+    ITEMS,
+    leavePanel,
+    menu,
+    pin,
+    pinButton,
+    setup,
+    subItems,
+    typeInSearch,
+} from './side-menu.harness';
 
-/**
- * Двойник набора шрифтов документа. Значок кита спрашивает у него, доехал ли шрифт значков, а в
- * среде спек `document.fonts` нет вовсе: без подмены падает всё, что рисует готовую кнопку.
- */
-beforeAll((): void => {
-    if (!('fonts' in document)) {
-        Object.defineProperty(document, 'fonts', {
-            configurable: true,
-            value: { check: (): boolean => true, ready: Promise.resolve() },
-        });
-    }
-});
-
-/** Двойник службы точек перелома: сценарий сам решает, узкий экран или нет. */
-class BreakpointServiceStub {
-    public readonly narrow: WritableSignal<boolean> = signal(false);
-
-    public get isMobile(): Signal<boolean> {
-        return this.narrow.asReadonly();
-    }
-}
-
-const ITEMS: ISideMenu.Item[] = [
-    {
-        id: 'refs',
-        name: 'Справочники',
-        icon: 'menu_book',
-        submenu: [
-            { id: 'rates', name: 'Курсы валют', link: '/rates' },
-            { id: 'taxes', name: 'Налоги', link: '/taxes' },
-        ],
-    },
-    { id: 'reports', name: 'Отчёты', icon: 'insights', link: '/reports' },
-];
-
-@Component({
-    template: `
-        <rtui-side-menu
-            [menuItems]="items"
-            [activeMenuIds]="active()"
-            [subMenuMode]="mode()"
-            [subMenuWidth]="width()"
-            (subMenuWidthChange)="width.set($event)" />
-    `,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtuiSideMenuComponent],
-})
-class HostComponent {
-    public readonly items: ISideMenu.Item[] = ITEMS;
-    public readonly active: WritableSignal<Array<string | number>> = signal([]);
-    public readonly mode: WritableSignal<ISideMenu.SubMenuMode> = signal('hover');
-    public readonly width: WritableSignal<number | null> = signal(null);
-}
-
-interface ISetup {
-    fixture: ComponentFixture<HostComponent>;
-    host: HostComponent;
-}
-
-function setup(mode: ISideMenu.SubMenuMode = 'hover', active: Array<string | number> = [], narrow: boolean = false): ISetup {
-    const breakpoints: BreakpointServiceStub = new BreakpointServiceStub();
-
-    breakpoints.narrow.set(narrow);
-
-    TestBed.configureTestingModule({
-        imports: [HostComponent],
-        providers: [provideRouter([]), provideNoopAnimations()],
-    });
-    // Замена набора провайдеров идёт целиком, поэтому токен меню объявляется здесь заново:
-    // без него подпункт не находит хозяина и падает на подъёме.
-    TestBed.overrideComponent(RtuiSideMenuComponent, {
-        set: {
-            providers: [
-                { provide: BreakpointService, useValue: breakpoints },
-                { provide: RTUI_SIDE_MENU, useExisting: RtuiSideMenuComponent },
-            ],
-        },
-    });
-
-    const fixture: ComponentFixture<HostComponent> = TestBed.createComponent(HostComponent);
-
-    fixture.componentInstance.mode.set(mode);
-    fixture.componentInstance.active.set(active);
-    fixture.detectChanges();
-
-    return { fixture, host: fixture.componentInstance };
-}
-
-function menu(fixture: ComponentFixture<HostComponent>): RtuiSideMenuComponent {
-    return fixture.debugElement.children[0].componentInstance as RtuiSideMenuComponent;
-}
-
-function subItems(fixture: ComponentFixture<HostComponent>): HTMLElement[] {
-    return Array.from(fixture.nativeElement.querySelectorAll('rtui-side-menu-sub-item'));
-}
-
-function hoverFirstItem(fixture: ComponentFixture<HostComponent>): void {
-    const trigger: HTMLElement = fixture.nativeElement.querySelector('.rtui-side-menu-item') as HTMLElement;
-
-    trigger.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-    fixture.detectChanges();
-}
-
-function typeInSearch(fixture: ComponentFixture<HostComponent>, query: string): void {
-    const field: HTMLInputElement = fixture.nativeElement.querySelector('[qa-dataid="side-menu-search"]') as HTMLInputElement;
-
-    expect(field).not.toBeNull();
-
-    field.value = query;
-    field.dispatchEvent(new Event('input', { bubbles: true }));
-    fixture.detectChanges();
-}
-
-/** Уход указателя с панели: незакреплённое подменю живёт наведением и на этом закрывается. */
-function leavePanel(fixture: ComponentFixture<HostComponent>): void {
-    const panel: HTMLElement = fixture.nativeElement.querySelector('mat-drawer') as HTMLElement;
-
-    panel.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
-    fixture.detectChanges();
-}
-
-/** Нажатие в поле поиска — то самое, с которого человек начинает набор. */
-function focusSearch(fixture: ComponentFixture<HostComponent>): void {
-    const field: HTMLInputElement = fixture.nativeElement.querySelector('[qa-dataid="side-menu-search"]') as HTMLInputElement;
-
-    expect(field).not.toBeNull();
-
-    field.dispatchEvent(new Event('focus', { bubbles: true }));
-    fixture.detectChanges();
-}
-
-function pin(fixture: ComponentFixture<HostComponent>): HTMLElement {
-    return fixture.nativeElement.querySelector('[qa-dataid="side-menu-pin"]') as HTMLElement;
-}
-
-function pinButton(fixture: ComponentFixture<HostComponent>): HTMLElement {
-    return fixture.nativeElement.querySelector('[qa-dataid="side-menu-pin"] button') as HTMLElement;
-}
+beforeAll(installFontsStub);
 
 describe('RtuiSideMenuComponent — мода подменю', () => {
     it('SC-UK-17 — потребитель, не назвавший моду, получает подменю на наведении', () => {
@@ -487,5 +360,77 @@ describe('SC-UK-37 — поле поиска подменю рисуется г�
         fixture.detectChanges();
 
         expect(subItems(fixture).length).toBe(2);
+    });
+});
+
+describe('SC-UK-50 — закреплённой панели нечего показать: места она не занимает', () => {
+    it('пустая закреплённая панель не помечена открытой', () => {
+        const { fixture }: ISetup = setup('pinned', []);
+
+        expect(fixture.nativeElement.querySelector('.rtui-sub-side-menu--pinned')).not.toBeNull();
+        expect(fixture.nativeElement.querySelector('.rtui-sub-side-menu--opened')).toBeNull();
+    });
+
+    it('ручки тяги у пустой закреплённой панели нет', () => {
+        const { fixture }: ISetup = setup('pinned', []);
+
+        expect(fixture.nativeElement.querySelector('[qa-dataid="side-menu-resize"]')).toBeNull();
+    });
+
+    it('панель с разделами и помечена открытой, и несёт ручку', () => {
+        const { fixture }: ISetup = setup('pinned', ['refs']);
+
+        expect(fixture.nativeElement.querySelector('.rtui-sub-side-menu--opened')).not.toBeNull();
+        expect(fixture.nativeElement.querySelector('[qa-dataid="side-menu-resize"]')).not.toBeNull();
+    });
+});
+
+describe('SC-UK-51 — нажатие пункта полосы переставляет закреплённое подменю', () => {
+    it('раздел без своего адреса открывается нажатием', () => {
+        const { fixture }: ISetup = setup('pinned', []);
+
+        expect(subItems(fixture).length).toBe(0);
+
+        clickRailItem(fixture, 0);
+
+        expect(subItems(fixture).length).toBe(2);
+        expect(fixture.nativeElement.querySelector('[qa-dataid="side-menu-pin"]')).not.toBeNull();
+    });
+
+    it('раздел открывается нажатием и тогда, когда активный пункт несёт свой', () => {
+        // Промах, ради которого выбор поставлен впереди активности: подменю активного адреса
+        // возвращалось на любое нажатие, и до соседнего раздела было не добраться.
+        const { fixture }: ISetup = setup('pinned', ['refs']);
+
+        clickRailItem(fixture, 1);
+
+        expect(menu(fixture).selectedSubMenu()).toBeNull();
+    });
+
+    it('набранный запрос от прежнего раздела на новый не переносится', () => {
+        const { fixture }: ISetup = setup('pinned', ['refs']);
+
+        typeInSearch(fixture, 'Курсы');
+        expect(subItems(fixture).length).toBe(1);
+
+        clickRailItem(fixture, 0);
+
+        expect(subItems(fixture).length).toBe(2);
+    });
+});
+
+describe('SC-UK-52 — переход на страницу без разделов снимает закреплённое подменю', () => {
+    it('панель закрывается, когда активным становится пункт без разделов', () => {
+        const { fixture, host }: ISetup = setup('pinned', ['refs']);
+
+        expect(subItems(fixture).length).toBe(2);
+
+        clickRailItem(fixture, 1);
+        // Вход активности ведёт потребитель: переход по адресу пункта отвечает ему новым значением.
+        host.active.set(['reports']);
+        fixture.detectChanges();
+
+        expect(subItems(fixture).length).toBe(0);
+        expect(fixture.nativeElement.querySelector('.rtui-sub-side-menu--opened')).toBeNull();
     });
 });

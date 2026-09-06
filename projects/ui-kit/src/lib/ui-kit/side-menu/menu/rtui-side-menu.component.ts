@@ -127,20 +127,31 @@ export class RtuiSideMenuComponent {
     readonly #searchHeld: WritableSignal<boolean> = signal(false);
 
     /**
-     * Что показывает закреплённое подменю: пункт активного адреса, а если активного нет — то,
-     * что открыто сейчас. Закрепление содержимого не меняет: человек закрепляет то подменю,
-     * которое перед ним, и потерять его нажатием он не должен.
+     * Что показывает закреплённое подменю: выбранный человеком раздел, а пока выбора нет —
+     * раздел активного адреса. Само закрепление содержимого не меняет: человек закрепляет то
+     * подменю, которое перед ним, и нажатие переключателя его не отнимает.
+     *
+     * Выбор стоит впереди активности, а не позади неё, потому что иначе до соседнего раздела не
+     * добраться вовсе: пока активный пункт несёт своё подменю, оно возвращалось на любое нажатие
+     * полосы, и закреплённый человек оставался запертым в том разделе, с которого начал. Ставит и
+     * снимает выбор `#pickPinnedSubMenu`.
      */
     readonly #pinnedSubMenu: Signal<ISideMenu.Item[]> = computed((): ISideMenu.Item[] => {
         if (!this.isPinned()) {
             return [];
         }
 
+        const picked: TNullable<ISideMenu.Item[]> = this.selectedSubMenu();
+
+        if (picked?.length) {
+            return picked;
+        }
+
         const active: Array<string | number> = this.activeMenuIds();
         const activeItem: TNullable<ISideMenu.Item> =
             this.menuItems().find((item: ISideMenu.Item): boolean => active.includes(item.id) && !!item.submenu?.length) ?? null;
 
-        return activeItem?.submenu ?? this.selectedSubMenu() ?? [];
+        return activeItem?.submenu ?? [];
     });
 
     /**
@@ -254,7 +265,7 @@ export class RtuiSideMenuComponent {
 
     public onClickMenu(item: ISideMenu.Item): void {
         if (this.isPinned()) {
-            // Закреплённое подменю ведёт вход активности: нажатие пункта его не переставляет.
+            this.#pickPinnedSubMenu(item);
             this.closeMobileMenu();
 
             return;
@@ -383,6 +394,29 @@ export class RtuiSideMenuComponent {
 
     #openSubMenu(): void {
         this.#hoverOpened.set(true);
+    }
+
+    /**
+     * Нажат пункт полосы, пока подменю закреплено. Наведение здесь по-прежнему не делает ничего:
+     * рука идёт вдоль полосы к подвалу и к самой панели, и переставленное наведением подменю
+     * мелькало бы разделами по дороге. Нажатие — выбор человека, и для раздела без своего адреса
+     * это единственный способ его открыть.
+     *
+     * Пункт со своим адресом и без разделов выбор снимает: человек ушёл на страницу, разделов у
+     * которой нет, и оставленная от прежнего раздела панель врала бы о том, где он стоит.
+     */
+    #pickPinnedSubMenu(item: ISideMenu.Item): void {
+        if (item?.submenu?.length) {
+            this.selectedItem.set(item);
+            this.selectedSubMenu.set(item.submenu);
+            this.subMenuQuery.set('');
+        } else if (item?.link) {
+            this.selectedItem.set(null);
+            this.selectedSubMenu.set(null);
+            this.subMenuQuery.set('');
+        } else {
+            // Пункт без разделов и без своего адреса: нажимать в нём нечего, и выбор остаётся прежним.
+        }
     }
 
     /** Отпускание: слушатели снимаются, а ширина уходит просьбой наружу. */

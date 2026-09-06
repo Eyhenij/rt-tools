@@ -317,9 +317,16 @@ $side-menu: (
         &--pinned {
             position: relative;
             left: 0;
-            width: var(--rt-side-menu-sub-menu-shown-width);
+            width: 0;
             height: 100%;
             flex: 0 0 auto;
+
+            // Ширину закреплённая панель занимает, только пока ей есть что показать. Ширина,
+            // поставленная одним лишь закреплением, оставляла пустую полосу слева от страницы на
+            // каждом адресе, у которого разделов нет: панели там не видно, а место она держала.
+            &.rtui-sub-side-menu--opened {
+                width: var(--rt-side-menu-sub-menu-shown-width);
+            }
 
             .rtui-sub-side-menu-content {
                 box-shadow: none;
