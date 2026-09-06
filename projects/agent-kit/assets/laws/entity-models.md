@@ -1,17 +1,18 @@
-# Закон о моделях сущностей
+# Law on entity models
 
-Сколько данных приложение запрашивает и отдаёт на каждом экране: строка списка, открытая
-запись, пункт выпадающего списка. Одна и та же сущность выглядит на них по-разному, и
-разница эта не украшение — от неё зависит, сколько пользователь ждёт список.
+How much data the application requests and returns on every screen: a list row, an opened
+record, a dropdown item. The same entity looks different on each of them, and that difference is
+no decoration — it decides how long the user waits for a list.
 
-Как список показывает записи и как ведёт себя форма правки — предмет других законов.
+How a list shows records and how an edit form behaves are the subject of other laws.
 
-## Статьи
+## Articles
 
-- **У сущности две стороны: то, что пришло из контракта, и то, чем пользуется экран.** Первая
-  повторяет контракт дословно, вторая нормализована и от смены контракта не зависит.
-- **Сторона контракта руками не пишется.** Она объявляется псевдонимом сгенерированного типа:
-  переписанное вручную расходится с контрактом молча.
-- **Между сторонами стоит перевод, и экраны читают только вторую.**
-- **Пустое значение выражается пустой строкой или нулём, а не отсутствием поля.** Необязательных
-  скаляров в контракте нет, и «не задано» у каждого поля значит своё.
+- **An entity has two sides: what came from the contract, and what the screen uses.** The first
+  repeats the contract word for word; the second is normalised and does not depend on a contract
+  change.
+- **The contract side is not written by hand.** It is declared as an alias of the generated type:
+  rewritten by hand, it drifts from the contract silently.
+- **Between the sides stands a mapper, and screens read only the second.**
+- **An empty value is expressed by an empty string or zero, not by a missing field.** There are
+  no optional scalars in the contract, and "not set" means something different for every field.

@@ -1,54 +1,56 @@
-# Закон о правке сущности
+# Law on entity editing
 
-Как ведёт себя приложение, когда пользователь создаёт или меняет запись. Ведёт оно себя
-одинаково везде, где правят записи: это общее поведение, а не особенность одной его части.
+How the application behaves when the user creates or changes a record. It behaves the same
+everywhere records are edited: this is shared behaviour, not a feature of one part of it.
 
-Попадание в запись из списка и объём запрашиваемых данных — предмет других законов.
+Getting into a record from a list and the amount of data requested are the subject of other laws.
 
-## Статьи
+## Articles
 
-- **Форма закрывается только после того, как запись сохранена.** Закрытие означает
-  «сохранено», поэтому закрывать её до ответа сервера нельзя.
-- **Пока идёт сохранение, отправить форму второй раз нельзя, и пользователь видит, что запрос
-  ещё не закончился.** Иначе повторное нажатие отправит те же данные ещё раз.
-- **Если сохранить не удалось, введённое остаётся на месте.** Ошибка показана рядом с полями,
-  форма открыта, и пользователь исправляет данные, а не набирает их заново.
-- **Новая попытка убирает сообщение о прошлой ошибке.** Иначе рядом с работающей формой висит
-  сообщение о неудаче, которой уже нет.
-- **После создания форма закрывается всегда, после изменения — по решению экрана.** Новой
-  записи на экране ещё нет, и держать форму открытой не над чем; при изменении экран может
-  оставить её открытой и перечитать запись.
-- **Об успехе говорит сообщение, а не то, что форма исчезла.** По одному закрытию непонятно,
-  сохранилось ли, — тем более что список за формой обновляется не сразу.
-- **Форму, в которой ничего не меняли, отправить нельзя.** Иначе пользователь шлёт запрос без
-  правок и получает подтверждение того, чего не делал.
-- **Если пользователь уходит с несохранёнными правками, приложение спрашивает, что с ними
-  делать.** Ответа три: уйти без сохранения, сохранить и уйти, остаться. Спрашивается это,
-  каким бы способом пользователь ни уходил.
-- **По подписи действия, которое уводит с формы, понятно, что станет с введённым.** Если на
-  форме с правками и на форме только для просмотра написано одно и то же слово, пользователь
-  не знает, потеряет он введённое или нет.
-- **Если запись по ссылке уже удалена, пользователь видит объяснение, а не пустой экран.**
-- **Какую запись показывать, форма берёт из адреса.** Иначе её не открыть по ссылке и не
-  восстановить после перезагрузки.
-- **При прокрутке длинной формы её название и её действия остаются на виду.**
-- **По названию формы понятно, что сейчас произойдёт, а не только с какой записью работает
-  пользователь.** По одному имени записи непонятно, создают её или меняют.
-- **Создание и изменение названы по-разному.**
-- **Сохранить введённое можно одним действием.** Оно стоит в стороне от того, которое уводит с
-  формы, чтобы их не перепутали.
-- **Уйти с формы можно несколькими способами:** мышью, с клавиатуры и нажатием вне формы.
-- **Закрытая форма нажатий не перехватывает.** Её не видно, а страница под ней перестала бы
-  отвечать без всякого объяснения.
-- **У всех полей формы одинаковые отступы от края и одинаковая ширина.** Содержимое
-  прокручивается целиком, поэтому рамка фокуса у крайнего поля не обрезается.
-- **Пока запись загружается, на месте полей показано, что идёт загрузка.**
-- **Запись, которую нельзя менять, показана текстом, а не полями ввода.** Поле, которое не
-  принимает ввод, пользователь сначала пробует заполнить.
-- **На связанную запись можно перейти прямо из формы.** Переход — такой же уход с формы, как
-  закрытие, поэтому о несохранённых правках спрашивается так же; выбравшему сохранить и уйти
-  связанная запись открывается после успешного сохранения.
-- **Пояснение стоит рядом с тем, что вызвало вопрос.**
-- **Отправляемость формы и вопрос при уходе решаются одним признаком.** Два разных ответа на
-  вопрос «изменилось ли что-нибудь» рано или поздно расходятся, и форма либо шлёт пустую
-  правку, либо молча теряет введённое.
+- **The form closes only after the record is saved.** Closing means "saved", so it must not close
+  before the server replies.
+- **While saving is in progress, the form cannot be submitted a second time, and the user sees that
+  the request has not finished yet.** Otherwise a repeated press sends the same data once more.
+- **If saving failed, what was entered stays in place.** The error is shown next to the fields, the
+  form is open, and the user corrects the data instead of typing it again.
+- **A new attempt removes the message about the previous error.** Otherwise a message about a
+  failure that no longer exists hangs next to a working form.
+- **After creation the form always closes; after a change, the screen decides.** The new record is
+  not on the screen yet, and there is nothing to keep the form open over; on a change the screen may
+  keep it open and reread the record.
+- **Success is announced by a message, not by the form disappearing.** Closing alone does not tell
+  whether it was saved — all the more so since the list behind the form does not refresh at once.
+- **A form in which nothing was changed cannot be submitted.** Otherwise the user sends a request
+  without edits and gets a confirmation of what they did not do.
+- **If the user leaves with unsaved edits, the application asks what to do with them.** There are
+  three answers: leave without saving, save and leave, stay. This is asked whatever way the user
+  leaves.
+- **The label of an action that leads away from the form makes clear what happens to what was
+  entered.** If a form with edits and a view-only form show the same word, the user does not know
+  whether they will lose what they entered.
+- **If the record behind a link is already deleted, the user sees an explanation, not an empty
+  screen.**
+- **The form takes which record to show from the address.** Otherwise it cannot be opened by a link
+  or restored after a reload.
+- **When a long form is scrolled, its title and its actions stay in view.**
+- **The title of the form makes clear what is about to happen, not only which record the user is
+  working with.** The name of a record alone does not tell whether it is being created or changed.
+- **Creation and change are named differently.**
+- **What was entered can be saved with one action.** It stands apart from the one that leads away
+  from the form, so the two are not confused.
+- **The form can be left in several ways:** with the mouse, from the keyboard and by a press outside
+  the form.
+- **A closed form does not intercept presses.** It is not visible, and the page under it would stop
+  responding without any explanation.
+- **All fields of the form have the same distance from the edge and the same width.** The content
+  scrolls as a whole, so the focus ring of the outermost field is not clipped.
+- **While the record is loading, the place of the fields shows that loading is in progress.**
+- **A record that cannot be changed is shown as text, not as input fields.** The user first tries to
+  fill in a field that does not accept input.
+- **A related record can be opened straight from the form.** The transition is the same leaving of
+  the form as closing, so the question about unsaved edits is asked the same way; for the one who
+  chose to save and leave, the related record opens after a successful save.
+- **An explanation stands next to what raised the question.**
+- **Whether the form can be submitted and whether to ask on leaving are decided by one sign.** Two
+  different answers to the question "has anything changed" drift apart sooner or later, and the form
+  either sends an empty edit or silently loses what was entered.

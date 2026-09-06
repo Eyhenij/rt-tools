@@ -1,41 +1,41 @@
-<!-- rt-kit v0.25.0 · laws/navigation.md · 2e2a9a92c13c · правится надстройкой, не здесь -->
-# Закон о навигации по разделам
+<!-- rt-kit v0.25.0 · laws/navigation.md · 03e5deb4df4a · правится надстройкой, не здесь -->
+# Law on section navigation
 
-Как пользователь находит раздел и попадает в него. Правила общие для всех разделов сразу:
-раздел, который ведёт себя иначе остальных, выглядит сломанным.
+How a user finds a section and gets into it. The rules are common to all sections at once: a
+section that behaves unlike the rest looks broken.
 
-## Статьи
+## Articles
 
-- **Пункт меню ведёт на отдельный экран со своим адресом,** а не на вкладку внутри чужого
-  экрана и не на что-то всплывающее поверх него. Такой адрес открывается по прямой ссылке,
-  работает после перезагрузки и его можно передать другому человеку.
-- **Раздел, ни один пункт которого пользователю не виден, в меню не показан.**
-- **Адрес открывается только тому, кто видит ведущий на него пункт.**
-- **Видимость пункта и доступ к его адресу считаются по одному и тому же объявлению.** Два
-  объявления рядом рано или поздно разойдутся, и получится, что пункта не видно, а страница
-  открывается.
-- **Чтобы раздел был виден, достаточно любого одного из перечисленных у него прав.** Части
-  экрана закрываются отдельно: экран бывает полезен и тому, кто видит одну его половину, и
-  тому, кто видит другую.
-- **Пункт, у которого экрана ещё нет, виден всем.** Права на него не выдаются: право открывает
-  экран, а экрана нет.
-- **Пункт раздела, которого ещё нет, остаётся видимым.** Исчезнувший пункт не отличить от
-  того, которого никогда и не было. Пункт, закрытый правом, — другое дело: раздел существует,
-  и решает право, поэтому такой пункт не показан вовсе.
-- **Подсказка есть только у пункта, который не нажимается, и объясняет почему.** У остальных
-  она дословно повторяет подпись рядом и ничего не добавляет.
-- **На такой пункт можно навести курсор и попасть с клавиатуры.** Иначе его подсказку не
-  прочитать.
-- **Адрес экрана начинается с адреса раздела, в котором стоит его пункт.**
-- **Активный раздел отмечен, даже когда открыт его вложенный экран.**
-- **Подписи разделов берутся из словаря и меняются вместе с языком без перезагрузки.**
-- **Вложенные пункты раскрываются и наведением, и нажатием.** На сенсорном экране наведения
-  нет, и без второго способа такой раздел не открыть.
-- **Вложенные пункты разбиты на группы с названиями.** Полтора десятка пунктов подряд одним
-  списком не читаются.
-- **Раскрытые пункты помещаются на экран целиком.** Иначе дальний край уходит за границу
-  экрана, и о том, что там что-то есть, пользователь не узнает.
-- **По пункту видно, раскроется ли он.** Иначе пользователь наводит наугад.
-- **На узком экране меню убирается, но раскрывается тем же составом и теми же группами.**
-  Деление на группы там нужно не меньше, чем на широком.
-- **Меню, которое не помещается по высоте, прокручивается.**
+- **A menu item leads to a separate screen with its own address,** not to a tab inside another
+  screen and not to something that pops up over it. Such an address opens by a direct link, works
+  after a reload, and can be handed to another person.
+- **A section none of whose items the user can see is not shown in the menu.**
+- **An address opens only for someone who sees the item leading to it.**
+- **Item visibility and access to its address are computed from one and the same declaration.**
+  Two declarations side by side drift apart sooner or later, and the item ends up hidden while
+  the page still opens.
+- **Any one of the rights listed for a section is enough for it to be visible.** Parts of the
+  screen are closed off separately: a screen is useful both to someone who sees one half of it
+  and to someone who sees the other.
+- **An item whose screen does not exist yet is visible to everyone.** No rights are issued for
+  it: a right opens a screen, and there is no screen.
+- **An item of a section that does not exist yet stays visible.** A vanished item cannot be told
+  from one that never existed. An item closed by a right is a different matter: the section
+  exists, and the right decides, so such an item is not shown at all.
+- **Only an item that cannot be clicked has a tooltip, and it explains why.** On the rest it
+  repeats the label next to it word for word and adds nothing.
+- **Such an item can be hovered and reached from the keyboard.** Otherwise its tooltip cannot be
+  read.
+- **A screen's address begins with the address of the section its item belongs to.**
+- **The active section is marked even when its nested screen is open.**
+- **Section labels come from the dictionary and change with the language without a reload.**
+- **Nested items unfold both on hover and on click.** A touch screen has no hover, and without
+  the second way such a section cannot be opened.
+- **Nested items are split into named groups.** Fifteen items in a row as one list cannot be
+  read.
+- **Unfolded items fit on the screen whole.** Otherwise the far edge goes past the screen border,
+  and the user never learns there is something there.
+- **An item shows whether it will unfold.** Otherwise the user hovers at random.
+- **On a narrow screen the menu is hidden, but it unfolds with the same items and the same
+  groups.** The split into groups is needed there no less than on a wide one.
+- **A menu that does not fit in height scrolls.**

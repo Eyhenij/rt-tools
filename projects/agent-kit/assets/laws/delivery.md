@@ -1,139 +1,150 @@
-# Закон о поставке
+# Law on delivery
 
-Как правка доезжает до работающего приложения. Закон держит и историю изменений, и то, что
-в этот момент видит пользователь: неудачная выкатка отличается от удачной только тем, что
-приложение перестаёт отвечать, а причина этого выясняется по истории.
+How a change reaches the running application. The law covers both the history of changes and what
+the user sees at that moment: a failed rollout differs from a successful one only in that the
+application stops responding, and the reason is found from the history.
 
-## Статьи
-- **Правка начинается с задачи, видимой в очереди работ.** Заведённой задачи мало: ту, что в
-  очередь не попала, никто не видит, и работа за ней не планировалась.
-- **Правка попадает в главную ветку только через отдельную ветку.** Прямая запись в главную лишает
-  правку и обсуждения, и возможности откатить её одним движением.
-- **В очереди работ стоят задачи, а не PR о них.** У задачи и её PR один номер и одна судьба,
-  поэтому вторая карточка о той же работе ничего не добавляет — она удваивает очередь и врёт о её
-  длине. Очередь читают затем, чтобы видеть сделанное и оставшееся; PR отвечает на другой вопрос и
-  открывается из карточки задачи, где связь с ним и так стоит. Карточка PR живёт своей жизнью:
-  висит в очереди после слияния навсегда, потому что колонки под неё нет.
-- **Проверка не гоняет того, что правка не может сломать.** Набор, одинаковый для любой правки,
-  выглядит строгим, а работает наоборот: прогон, который длится вдесятеро дольше нужного, учат не
-  ждать, а обходить. Состав набора выводится из состава правки — из того, что она задела, а не из
-  того, кем она названа; правка, не тронувшая ни строки кода, не собирает образов и не снимает
-  кадров. Пропущенное при этом называется пропущенным: молча выпавший шаг читается как пройденный.
-- **У задачи одна ветка, у ветки одна задача.** Откат снимает всё, что въехало этой веткой, разом:
-  две задачи в ней откатятся только вместе, а задача, въехавшая двумя ветками, после отката одной
-  останется наполовину сделанной — и в очереди работ этого не видно. Работа, которая в одну ветку
-  не влезает, делится на задачи до заведения ветки. Признак деления — раздельный откат, а не
-  объём: числа файлов, строк или коммитов, за которым работа становится двумя задачами, нет.
-  Правка одного рода остаётся одной задачей, сколько бы файлов она ни задела; объём захода
-  говорит, какого размера задачу заводить среди тех, что делятся законно, и делить неделимое не
-  даёт.
-- **Работы, идущие одна за другой, ветвятся одна от другой.** Ветка следующей отводится от
-  предыдущей, а не от главной: тогда правка предыдущей лежит в общем предке, и сводить два разных
-  изменения одного файла уже не нужно. Ветки, заведённые от главной подряд, друг о друге не знают,
-  и первое же слияние делает остальные расходящимися — тем вернее, чем ближе работы по предмету:
-  расходятся не сами правки, а строки, куда обе дописали. Цена не исчезает, а переносится: платит
-  её тот, кто ветвится, один раз — вместо того, кто вливает, столько раз, сколько заявок открыто.
-  От главной ветвится первая работа череды и всякая, не связанная с предыдущей.
-- **Череда веток отдаётся снизу вверх, и порядок называется владельцу.** Заявка каждой стоит на
-  предыдущей, а не на главной, поэтому влитая не по порядку тащит за собой всё, что под ней.
-  Порядок известен тому, кто ветвился, и не виден тому, кто вливает: несказанный, он читается как
-  его отсутствие.
-- **Ветка, стоящая под другой, историю не переписывает.** Силовая отправка нижней делает вершину
-  верхней достижимой из её основания, и хостинг закрывает заявку верхней как слитую — при том что
-  в главной ветке её правок нет. Расхождение чинится вливанием, а не переносом истории.
-- **Правка самой поставки проверяется её прогоном, а не рассуждением.** Проверить её иначе нечем:
-  она исполняется только там, где выкатывает, и в среде, которой на месте работы нет — с чужими
-  правами, чужим хранилищем ключей и чужой сетью. «Проверю после слияния» решением исполнителя не
-  бывает: за этими словами стоит выкатка, которой уже не будет, если правка окажется неверной.
-  Отложить проверку может только владелец, и он говорит это словами.
-- **Две задачи, которые чинятся одной правкой, — одна задача.** Вторая стирается вместе со своим
-  номером, а то, чего в первой не было, дописывается в неё до этого. Две строки об одной работе
-  хуже дыры в нумерации: по ним потом не понять, что сделано, а что нет. Слить их можно, пока
-  правка не въехала в главную ветку; после — обе остаются как есть.
-- **Задача, ветка под неё и PR о сделанном несут один и тот же номер в своих названиях.** Иначе
-  одну работу приходится узнавать по тексту названия, а в списке из полусотни строк это делается
-  по памяти и с ошибками.
-- **Номер пишется всюду одинаково: ключ задач, дефис, номер.** Заголовок задачи и PR начинается с
-  этой пары в квадратных скобках, имя ветки — с неё же. Одна форма, а не три похожих, потому что
-  номер читают не только глазами: из имени ветки его достаёт гард, из заголовка — сверка очереди.
-  Формы, выведенные порознь, расходятся молча и не отказывают, а перестают узнавать номер:
-  проверка, которая должна была найти работу без задачи, пропускает всё подряд.
-- **Ключ задач дерево называет само, но назвать обязано.** В форме имени это единственное, что у
-  каждого дерева своё, — и единственное, что настраивается. Не названный ключ не даёт ни поблажки,
-  ни умолчания: работа с очередью отказывает и говорит, где он задаётся. Пустой ключ хуже
-  отсутствующей проверки — от имени остаётся огрызок, которому ничто не отвечает, и правильно
-  названной не выглядит ни одна задача.
-- **Заведённое в очереди работ видно той стороне, для которой заводилось.** Учётная запись, чьи
-  объекты хостинг показывает не всем, оставляет за собой работу, которой для остальных не
-  существует, — и снаружи это неотличимо от сделанного: задача заведена, PR открыт, а владелец
-  видит пустую очередь. Видимость проверяется чужими глазами — чтением очереди тем, кому она
-  адресована, — а не успешным ответом команды заведения.
-- **У задачи есть исполнитель с момента её заведения.** Задача без исполнителя выглядит ничьей: по
-  очереди работ не видно, кто её взял, и заведённая по ходу правка теряется среди чужих.
-- **Состояние задачи в очереди работ отвечает тому, что с ней происходит.** Взятая в работу видна
-  взятой, ждущая разбора — ждущей. Иначе нетронутое, делаемое и сделанное выглядят одинаково:
-  работа берётся второй раз, а PR стоит неразобранным. Состояние переставляется в тот момент,
-  когда работа переходит на следующий шаг: очередь читают между этими моментами, а не после них.
-- **Попадание правки в главную ветку означает выкатку.** Всё, от чего правка зависит снаружи кода
-  — переменные окружения, секреты, записи имён, — ставится до этого момента, а не после.
-- **Признак режима исполнения объявлен в самом артефакте развёртывания, а не только в составе его
-  запуска.** Артефакт поднимают и мимо состава — руками, при разборе, на чужой машине, — и без
-  объявления он в этот момент считает себя отладочным, не сказав об этом ничего.
-- **Артефакт развёртывания несёт всё, чем настраивается запускаемое им.** Сборка проверяет, что
-  артефакт собрался, а не что его собственные шаги запуска исполнимы: недостающий файл настройки
-  не виден ни линтеру, ни сборке, ни шагу сборки образа в конвейере — он отказывает на первом
-  подъёме, то есть уже там, куда выкатили. Файл, лежащий рядом в репозитории, внутрь артефакта
-  сам не попадает.
-- **Выкатывается образ того коммита, который выкатывают.** Умолчание «последний» отстаёт от
-  главной ветки, и приложение молча возвращается к прежней версии, продолжая отвечать.
-- **Из одного и того же коммита всегда ставятся одни и те же зависимости.** Если версия задана
-  диапазоном, установка сегодня и установка через неделю дадут разный код: сборка сломается сама
-  собой, и откатывать будет нечего. Обновление зависимости — обычная правка: у неё есть автор,
-  описание и откат.
-- **Порядок изменений хранилища проверяется с пустого места.** На уже работающем хранилище
-  неверный порядок незаметен: он проявляется только при развёртывании с нуля.
-- **Проверка перед отправкой смотрит на содержимое репозитория, а не на состояние машины, где она
-  запущена.** На машине законно лежат недоделки, личные настройки и файлы вне истории. Проверка,
-  которая их читает, отбивает правку из-за того, чего в репозитории нет, и молчит о том, что в нём
-  есть. Проверка перед отправкой и конвейер выкатки судят по одному и тому же — иначе «сошлось»
-  значит в этих двух местах разное.
-- **Документ едет вместе с правкой, которую он описывает.** Ни сборка, ни проверки текстов не
-  читают, поэтому расхождение копится молча и потом выглядит действующей справкой.
-- **Работа, меняющая код, кончается открытым PR.** PR — единственное место, где человек видит
-  правку целиком, отвечает на неё и вливает; коммит и запушенная ветка его не заменяют. Пока PR не
-  открыт, работа сделанной не считается: разбора по ней нет, а человек о ней не знает. Открывается
-  PR тем же ходом, которым исполнитель говорит, что работу отдаёт, — а не следующим заходом и не
-  по напоминанию.
-- **PR, не готовый к слиянию, помечается черновиком.** Открытый PR читается как приглашение влить,
-  и человек нажимает слияние, не спрашивая, кончилась ли работа. Черновик разводит два состояния,
-  которые иначе выглядят одинаково: правка выложена на обозрение — и правка готова поехать в
-  главную ветку. Помечается им всё, что ждёт прогона, доработки или ответа на вопрос; вопрос при
-  этом задаётся в самом PR, а не остаётся в голове исполнителя.
-- **Снятие черновика — отдельный ход, и им исполнитель отвечает за готовность.** Черновик
-  снимается тогда, когда проверки пройдены, доработок не осталось и работа сходится с тем, ради
-  чего заводилась задача. Пока он стоит, молчание исполнителя значит «ещё не готово», и человек
-  ничего не должен переспрашивать; после снятия оно значит «можно вливать», и цена ошибки здесь —
-  правка в главной ветке.
-- **PR о сделанном остаётся верным до самого слияния.** Он описывает дерево на день, когда его
-  написали, а разбора ждёт днями: за это время главная ветка вливается в ветку, и утверждение PR о
-  соседних файлах становится неправдой молча — тел PR не читает ни одна проверка. Всё, что
-  вливается в ветку после публикации PR, — повод перечитать его.
-- **PR в главную ветку вливает человек.** Слияние — последний момент, когда разбор ещё возможен:
-  после него правка стоит в главной ветке, работа ушла к следующей задаче, и вернуться к ней уже
-  некому. Исполнитель работы вливает свой PR только по прямому слову человека и только про
-  названный PR; молчание разрешением не бывает, а слово, сказанное об одном PR, на следующий не
-  переносится. Иначе разбор проходит тот, кого разбирают, и очередь PR выглядит разобранной, не
-  будучи ею.
-- **Требование, стоящее перед необратимым шагом, стоит там, где этот шаг совершают.** Гард на
-  машине исполнителя судит его команды и молчит о том же действии, совершённом кнопкой у хостинга:
-  обход выходит не намеренным, а незамеченным — нажавший не знает, что чего-то не хватало.
-  Требование либо переносится туда, где нажимают, либо объявляется тому, кто нажимает, до нажатия.
-  Иначе оно держится не собой, а тем, что необратимый шаг каждый раз делает тот же человек.
-- **Слияние в главную ветку ещё не означает, что правка доехала.** Отказ выкатки не трогает ни
-  задачу, ни очередь работ, поэтому расхождение главной ветки с тем, что работает, обязано быть
-  видно там, где очередь читают. Иначе следующие работы вливаются поверх поломки, которую не
-  приносили, и каждая выглядит доехавшей.
-- **Состоявшаяся поломка разбирается записью, которая переживает задачу.** Починка уезжает веткой,
-  задача закрывается — и причина, по которой приложение встало, остаётся знанием одного
-  исполнителя. Запись называет, что сломалось, чем это стало видно и почему починка чинит причину,
-  а не признак; живёт она среди описаний состоявшегося, а не там, что умирает вместе с задачей.
+## Articles
+- **A change starts with a task visible in the work queue.** A created task is not enough: one that
+  did not reach the queue is seen by no one, and no work was planned behind it.
+- **A change reaches the main branch only through a separate branch.** A direct write to main takes
+  away both the discussion and the chance to roll the change back in one move.
+- **The work queue holds tasks, not PRs about them.** A task and its PR share one number and one
+  fate, so a second card about the same work adds nothing — it doubles the queue and lies about its
+  length. The queue is read to see what is done and what remains; a PR answers a different question
+  and opens from the task card, where the link to it already stands. A PR card lives a life of its
+  own: it hangs in the queue forever after the merge, because there is no column for it.
+- **A check does not run what the change cannot break.** A set that is the same for every change
+  looks strict and works the other way round: a run that takes ten times longer than needed teaches
+  people to bypass it, not to wait for it. The set is derived from the content of the change — from
+  what it touched, not from what it is named; a change that touched no line of code builds no images
+  and takes no snapshots. What is skipped is then called skipped: a step dropped silently reads as
+  passed.
+- **A task has one branch, and a branch has one task.** A rollback removes everything that came in
+  on that branch at once. Two tasks in it roll back only together, and a task that came in on two
+  branches stays half done after one is rolled back — and the work queue does not show it. Work that
+  does not fit one branch is split into tasks before the branch is created. The sign of a split is a
+  separate rollback, not volume: there is no number of files, lines or commits past which work
+  becomes two tasks. A change of one kind stays one task no matter how many files it touches; the
+  size of a session says which task to create among those that split lawfully, and does not split
+  what cannot be split.
+- **Work that goes one piece after another branches one from another.** The branch of the next is
+  taken from the previous, not from main: then the change of the previous lies in the common
+  ancestor, and two different edits of one file no longer need reconciling. Branches created from
+  main one after another know nothing of each other, and the first merge makes the rest diverge —
+  the more surely, the closer the work is by subject. It is not the changes that diverge but the
+  lines both wrote to. The cost does not vanish but moves: the one who branches pays it once,
+  instead of the one who merges paying it as many times as there are open PRs. The first work of a
+  series branches from main, and so does any work not connected to the previous one.
+- **A series of branches is handed over bottom up, and the order is named to the owner.** The PR of
+  each stands on the previous one, not on main, so one merged out of order drags along everything
+  beneath it. The order is known to the one who branched and invisible to the one who merges:
+  unsaid, it reads as absent.
+- **A branch that stands under another does not rewrite history.** A force push of the lower one
+  makes the tip of the upper reachable from its base, and the hosting closes the upper PR as merged
+  — while the main branch holds none of its changes. The divergence is fixed by merging, not by
+  moving history.
+- **A change to the delivery itself is checked by running it, not by reasoning.** There is nothing
+  else to check it with: it executes only where it rolls out, and in an environment the workplace
+  does not have — with someone else's permissions, someone else's secret store and someone else's
+  network. "I will check after the merge" is never the executor's decision: behind those words
+  stands a rollout that will not happen if the change turns out wrong. Only the owner may postpone
+  the check, and says so in words.
+- **Two tasks fixed by one change are one task.** The second is erased together with its number, and
+  whatever the first lacked is added to it before that. Two lines about one piece of work are worse
+  than a gap in the numbering: afterwards they do not tell what is done and what is not. They can be
+  merged while the change has not entered the main branch; after that, both stay as they are.
+- **A task, its branch and the PR about what was done carry the same number in their names.**
+  Otherwise one piece of work has to be recognised by the text of its name, and in a list of fifty
+  lines that is done from memory and with errors.
+- **The number is written the same way everywhere: task key, hyphen, number.** The title of a task
+  and of a PR starts with this pair in square brackets; the branch name starts with the same pair.
+  One form, not three similar ones, because the number is read not only by eye: a guard takes it
+  from the branch name, the queue audit takes it from the title. Forms derived separately drift
+  apart silently and do not fail — they stop recognising the number: the check that was to find work
+  without a task lets everything through.
+- **The tree names its task key itself, but must name it.** In the form of the name this is the only
+  thing each tree has of its own — and the only thing that is configured. An unnamed key gives
+  neither leniency nor a default: work with the queue fails and says where the key is set. An empty
+  key is worse than a missing check — what remains of the name is a stub that nothing answers to,
+  and not a single task looks correctly named.
+- **What is created in the work queue is visible to the side it was created for.** An account whose
+  objects the hosting shows not to everyone leaves behind work that does not exist for the rest.
+  From outside this is indistinguishable from done: the task is created, the PR is open, and the
+  owner sees an empty queue. Visibility is checked with someone else's eyes — by reading the queue
+  as those it is addressed to — not by a successful reply of the create command.
+- **A task has an executor from the moment it is created.** A task without an executor looks like
+  nobody's: the work queue does not show who took it, and a change created along the way is lost
+  among other people's.
+- **The state of a task in the work queue matches what is happening to it.** One taken into work is
+  shown as taken, one waiting for review as waiting. Otherwise untouched, in progress and done look
+  the same: the work is taken a second time, and the PR stands unreviewed. The state is moved at the
+  moment the work goes to the next step: the queue is read between those moments, not after them.
+- **A change entering the main branch means a rollout.** Everything the change depends on outside
+  the code — environment variables, secrets, name records — is put in place before that moment, not
+  after.
+- **The sign of the execution mode is declared in the deployment artifact itself, not only in its
+  launch composition.** The artifact is also brought up outside that composition — by hand, during
+  an analysis, on someone else's machine — and without the declaration it considers itself a debug
+  build at that moment, saying nothing about it.
+- **A deployment artifact carries everything that configures what it launches.** The build checks
+  that the artifact was built, not that its own launch steps can run. A missing configuration file
+  is seen by neither the linter, nor the build, nor the image build step in the pipeline: it fails
+  on the first start, that is, already where it was rolled out. A file lying next to it in the
+  repository does not get inside the artifact by itself.
+- **The image rolled out is the image of the commit being rolled out.** The default "latest" lags
+  behind the main branch, and the application silently returns to the previous version while
+  continuing to respond.
+- **The same commit always installs the same dependencies.** If a version is given as a range, an
+  install today and an install a week later give different code: the build breaks by itself, and
+  there is nothing to roll back. A dependency upgrade is an ordinary change: it has an author, a
+  description and a rollback.
+- **The order of storage changes is checked from an empty state.** On a storage that already works,
+  a wrong order is invisible: it shows only on a deployment from scratch.
+- **The check before the push looks at the content of the repository, not at the state of the
+  machine where it runs.** The machine lawfully holds unfinished work, personal settings and files
+  outside the history. A check that reads them rejects the change because of what is not in the
+  repository, and stays silent about what is. The check before the push and the rollout pipeline
+  judge by the same thing — otherwise "passed" means different things in those two places.
+- **A document travels with the change it describes.** Neither the build nor the checks read texts,
+  so the drift accumulates silently and later looks like a current reference.
+- **Work that changes code ends with an open PR.** The PR is the only place where a person sees the
+  change whole, answers it and merges it; a commit and a pushed branch do not replace it. Until the
+  PR is open, the work does not count as done: there is no review of it, and the person does not
+  know about it. The PR is opened in the same turn in which the executor says the work is handed
+  over — not in the next session and not on a reminder.
+- **A PR not ready to merge is marked as a draft.** An open PR reads as an invitation to merge, and
+  a person presses merge without asking whether the work is finished. The draft separates two states
+  that otherwise look the same: the change is put up for viewing — and the change is ready to go to
+  the main branch. Everything that waits for a run, for rework or for an answer to a question is
+  marked with it; the question is asked in the PR itself, not kept in the executor's head.
+- **Lifting the draft is a separate turn, and with it the executor answers for readiness.** The
+  draft is lifted when the checks have passed, no rework remains and the work matches what the task
+  was created for. While it stands, the executor's silence means "not ready yet", and the person has
+  to ask nothing; after it is lifted, silence means "can be merged", and the price of a mistake here
+  is a change in the main branch.
+- **A PR about what was done stays true until the merge itself.** It describes the tree on the day
+  it was written, and waits for review for days. In that time the main branch is merged into the
+  branch, and the PR's statement about neighbouring files becomes false silently — no check reads PR
+  bodies. Everything merged into the branch after the PR is published is a reason to reread it.
+- **A PR into the main branch is merged by a person.** The merge is the last moment when review is
+  still possible: after it the change stands in the main branch, the work has moved to the next
+  task, and there is nobody left to return to it. The executor of the work merges their own PR only
+  on the person's direct word and only about the named PR; silence is never permission, and a word
+  said about one PR does not carry over to the next. Otherwise the review is passed by the one being
+  reviewed, and the PR queue looks reviewed without being so.
+- **A requirement that stands before an irreversible step stands where that step is taken.** A guard
+  on the executor's machine judges their commands and stays silent about the same action done with a
+  button at the hosting. The bypass comes out not deliberate but unnoticed: the one who pressed does
+  not know anything was missing. The requirement is either moved to where the button is pressed, or
+  announced to the one who presses it, before the press. Otherwise it holds not by itself but by the
+  fact that the irreversible step is taken by the same person every time.
+- **A merge into the main branch does not yet mean the change has arrived.** A failed rollout
+  touches neither the task nor the work queue, so a divergence between the main branch and what runs
+  must be visible where the queue is read. Otherwise the next pieces of work merge on top of a
+  breakage they did not bring, and each looks as if it arrived.
+- **A breakage that has happened is analysed in a record that outlives the task.** The fix leaves on
+  a branch, the task is closed — and the reason the application stopped remains the knowledge of one
+  executor. The record names what broke, how it became visible and why the fix fixes the cause and
+  not the symptom; it lives in the archive, among the records of what has happened, not where things
+  die with the task.

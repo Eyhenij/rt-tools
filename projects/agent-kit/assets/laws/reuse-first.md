@@ -1,33 +1,35 @@
-# Закон о единообразии приложения
+# Law on application uniformity
 
-Одинаковые по смыслу вещи выглядят и ведут себя одинаково во всех частях приложения. Так
-получается потому, что части собраны из одного набора готовых элементов, а не написаны каждая
-по-своему.
+Things that mean the same look and behave the same in all parts of the application. That comes
+from the parts being assembled from one set of ready-made elements, not each written its own
+way.
 
-Закон говорит о том, что верно для пользователя. Как готовое устроено в коде — не его предмет.
+The law speaks of what is true for the user. How the ready-made is built in code is not its
+subject.
 
-## Статьи
+## Articles
 
-- **У каждого приложения один источник вида, и он у них разный.** Взять контрол из чужого
-  источника значит принести на экран форму, которой в этом приложении нет больше нигде.
-- **Готовое берут, а не пишут заново.** Своя копия расходится с оригиналом с первой же правки,
-  и одинаковые с виду места начинают вести себя по-разному.
-- **Отойти от общего вида может решить только владелец.** Сделать своё вместо готового
-  спрашивают у него до того, как написана первая строка.
-- **Одинаковые по смыслу элементы ведут себя одинаково везде.** Поле ввода отвечает на ошибку
-  так же, как соседнее; форма правки закрывается так же, как в другой части приложения; об
-  удаче и неудаче сообщают одинаково на любом экране. Когда одинаковое по смыслу выглядит
-  по-разному, пользователь думает, что приложение в разных состояниях.
-- **Раскладка страниц, форм и окон задана один раз и действует на всё приложение.** Отступы,
-  заголовок, полоса действий и место под содержимое у всех одинаковы и меняются разом.
-- **Оформление хранится там же, где сама часть приложения.** Заданное прямо в разметке, оно
-  меняет только свой экран, а соседний остаётся с прежним видом.
-- **Отступление от готового останавливается до того, как написан файл.** Замеченное на
-  чтении правки не ловится: своя разметка сама по себе исправна, и расхождение видно только
-  тому, кто помнит, что готовое для этого уже есть.
-- **Накопленное до запрета сосчитано и не растёт.** Запрет, поставленный на новое, о старом
-  не говорит ничего: без числа накопленное выглядит то ли исчезнувшим, то ли неисчислимым, и
-  сокращать нечего.
-- **Повторяющаяся механика держится в одном месте, а каждый случай объявляет только своё.**
-  Оставленная договорённостью, она пишется заново при каждом применении, и применения
-  незаметно расходятся между собой.
+- **Every application has one source of look, and it differs between them.** Taking a control
+  from another one's source means bringing to the screen a shape that exists nowhere else in this
+  application.
+- **The ready-made is taken, not written anew.** A copy of one's own drifts from the original at
+  the first edit, and places that look the same start behaving differently.
+- **Only the owner can decide to depart from the shared look.** Making one's own instead of the
+  ready-made is asked of them before the first line is written.
+- **Elements that mean the same behave the same everywhere.** An input field answers an error the
+  same way as the one next to it; an edit form closes the same way as in another part of the
+  application; success and failure are reported the same way on any screen. When things that
+  mean the same look different, the user thinks the application is in different states.
+- **The layout of pages, forms and windows is set once and applies to the whole application.**
+  Margins, the heading, the action bar and the place for content are the same for all and change
+  at once.
+- **Styling is kept where the part of the application itself is.** Set right in the markup, it
+  changes only its own screen, and the neighbouring one keeps the old look.
+- **A departure from the ready-made is stopped before the file is written.** Noticed while
+  reading the edit, it is not caught: markup of one's own is sound by itself, and the divergence
+  is visible only to someone who remembers that the ready-made for this already exists.
+- **What accumulated before the ban is counted and does not grow.** A ban set on the new says
+  nothing about the old: without a number, the accumulated looks either vanished or uncountable,
+  and there is nothing to reduce.
+- **Repeated mechanics are kept in one place, and each case declares only its own part.** Left as
+  an agreement, they are written anew at every use, and the uses drift apart unnoticed.

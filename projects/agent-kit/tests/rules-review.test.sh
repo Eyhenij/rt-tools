@@ -21,7 +21,7 @@ echo "полнота текстов"
 # Разделитель — перевод строки: в заголовках есть пробелы.
 sections_for() {
     case "$1" in
-        laws) printf '## Статьи\n' ;;
+        laws) printf '## (Articles|Статьи)\n' ;;
         rules)
             printf '## Как это называется здесь\n## Где это лежит\n## Ход\n'
             printf '## Как закон применяется здесь\n## Чего из закона здесь нет\n## Паттерны\n'
@@ -40,7 +40,8 @@ KINDS_WITH_SECTIONS='laws rules pitfalls patterns skills'
 KINDS_WITHOUT_SECTIONS='hooks defaults checks agents commands workflows templates samples docs'
 
 # Ресурсы рода, у которых нет объявленного раздела. Доводы: корень набора и род. Печатает строки
-# «имя ресурса :: недостающий заголовок» — по строке на пропуск.
+# «имя ресурса :: недостающий заголовок» — по строке на пропуск. Заголовок — образец строки
+# целиком: у раздела статей закона два имени, английское и русское, и оба законны.
 missing_sections() {
     local root="$1" kind="$2" file want
     [ -d "$root/$kind" ] || return 0
@@ -48,7 +49,7 @@ missing_sections() {
         [ -n "$want" ] || continue
         for file in "$root/$kind"/*.md; do
             [ -e "$file" ] || continue
-            grep -qxF "$want" "$file" || printf '%s :: %s\n' "${file##*/}" "$want"
+            grep -qxE "$want" "$file" || printf '%s :: %s\n' "${file##*/}" "$want"
         done
     done <<< "$(sections_for "$kind")"
 }
