@@ -58,6 +58,7 @@
     "archive:prune": "node tools/archive-prune.mjs",
     "task:new": "node tools/task-new.mjs",
     "task:move": "node tools/board.mjs move",
+    "migrate:utils-imports": "node tools/migrate-utils-imports.mjs",
     "prod:api": "node tools/prod-api.mjs",
     "agent-kit:sync": "npm run build:agent-kit && node dist/agent-kit/bin/agent-kit.js sync",
     "agent-kit:check": "npm run build:agent-kit && node dist/agent-kit/bin/agent-kit.js sync --check",
