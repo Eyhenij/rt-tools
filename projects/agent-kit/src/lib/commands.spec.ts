@@ -153,7 +153,7 @@ describe('sync', () => {
 
         expect(sync(env, false).code).toBe(0);
         expect(get(LAW)).toContain(`rt-kit v${VERSION}`);
-        expect(get(LAW)).toContain('## Статьи');
+        expect(get(LAW)).toContain('## Articles');
     });
 
     it('повторный прогон ничего не переписывает', () => {

@@ -1,35 +1,36 @@
-# Закон об устройстве кода
+# Law on code structure
 
-Что должно быть верно про сам код независимо от того, что он делает. Закон нужен потому, что
-код читают чаще, чем пишут: имя, по которому не видно рода объявления, и тип, объявленный
-подходящим вместо проверенного, стоят читателю отдельного похода в соседний файл.
+What must be true about the code itself regardless of what it does. The law is needed because
+code is read more often than written: a name that does not show the kind of the declaration, and
+a type declared as fitting instead of checked, cost the reader a separate trip to a neighbouring
+file.
 
-## Статьи
+## Articles
 
-- **Имя объявления говорит, какого оно рода.** Без этого род объявления выясняется переходом
-  к нему, и на каждом чтении заново.
-- **Имя файла, обещающее род объявления, это объявление в нём находит.** Списки, деревья
-  каталогов и сообщения об ошибках показывают имя вместо содержимого, и обещание, которого
-  файл не держит, обходится дороже отсутствующего.
-- **Источник значения, за которым следят, виден по его имени.** Иначе подписка на него
-  выглядит как обычное чтение, и её забывают снять.
-- **Тип берётся из того пакета, где объявлен.** Своя копия чужого типа расходится с
-  оригиналом молча, а компилируется из них только одна.
-- **Значение не объявляется подходящим в обход проверки типа.** Приведение через промежуточное
-  «неизвестно» отключает сверку намеренно и принимает что угодно; там, где иначе нельзя,
-  причина названа рядом.
-- **Отметка об устаревании — повод убрать, а не повод оставить.** Устаревшее объявление,
-  которое молча продолжает работать, переживает того, кто его пометил.
-- **Файл читается целиком.** Длина, при которой его читают по частям, объявлена одним числом на
-  все роды файлов, и накопленное до объявления перечислено поимённо: перечень отмечает долг, а
-  не выдаёт разрешение.
+- **The name of a declaration says what kind it is.** Without that, the kind of a declaration is
+  found out by going to it, and anew at every reading.
+- **A file name that promises a kind of declaration finds that declaration inside.** Listings,
+  directory trees and error messages show the name instead of the content, and a promise the file
+  does not keep costs more than no promise at all.
+- **The source of a watched value is visible from its name.** Otherwise a subscription to it
+  looks like an ordinary read, and people forget to remove it.
+- **A type is taken from the package where it is declared.** A copy of someone else's type drifts
+  from the original silently, and only one of them gets compiled.
+- **A value is not declared as fitting around the type check.** A cast through an intermediate
+  "unknown" switches the check off on purpose and accepts anything; where there is no other way,
+  the reason is named next to it.
+- **A deprecation mark is a reason to remove, not a reason to keep.** A deprecated declaration
+  that silently keeps working outlives whoever marked it.
+- **A file is read whole.** The length at which it is read in parts is declared as one number for
+  all kinds of files, and what accumulated before the declaration is listed one by one: the list
+  marks a debt, it does not grant permission.
 
-## Открытые вопросы
+## Open questions
 
-- **Q-CS-3 — имя файла без обещания рода не судится ничем.** Проверка спрашивает файл, чьё имя
-  род называет; имя из одних слов о содержимом не говорит вовсе, и назвать род обязанным можно
-  только решением о продукте.
-- **Q-CS-4 — одноступенчатое приведение остаётся непроверенным.** Запрещено обходить сверку
-  через промежуточное «неизвестно», а обычное приведение принято: часть его обязательна, и
-  запрет отбивал бы её вместе с остальным. Решение изменит, появится ли требование к причине у
-  каждого оставшегося.
+- **Q-CS-3 — a file name without a promise of kind is judged by nothing.** The check asks a file
+  whose name names a kind; a name made of words about content alone says nothing, and a kind can
+  be made mandatory only by a product decision.
+- **Q-CS-4 — a one-step cast stays unchecked.** Going around the check through an intermediate
+  "unknown" is banned, and an ordinary cast is accepted: part of it is mandatory, and the ban
+  would reject it along with the rest. The decision will change whether every remaining one
+  needs a reason.

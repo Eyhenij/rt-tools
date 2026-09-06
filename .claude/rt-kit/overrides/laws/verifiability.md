@@ -1,24 +1,25 @@
-## Демонстрация видимого состояния
+## Demonstration of a visible state
 
-Тест доказывает, что состояние наступило, и молчит о том, как оно выглядит. Класс в разметке
-сходится, а цвет на цвете не читается, отступ съеден и подпись обрезана — проверка при этом
-зелёная. Поэтому у видимого состояния своя форма подтверждения, и она не заменяется тестом.
+A test proves that a state has arrived and says nothing about how it looks. The class in the markup
+matches, while colour on colour is unreadable, the padding is eaten and the caption is cut — and
+the check is green. So a visible state has its own form of confirmation, and a test does not
+replace it.
 
-- **Видимое состояние — обещанное поведение, и оно показано там, где его видно глазами.**
-  Утверждение о внешнем виде, подтверждённое только проверкой класса, подтверждено не полностью.
-- **Набор состояний компонента объявлен заранее, и непоказанное состояние из набора — отказ.**
-  Иначе «показаны все состояния» значит «показаны те, о которых вспомнили», и отличить одно от
-  другого нечем.
-- **Состояние, которое показать нельзя, помечено непоказуемым с причиной.** Молчаливый пропуск
-  выглядит так же, как показанное состояние, и долг перестаёт быть заметным.
-- **Показ не требует действий от того, кто смотрит.** Состояние, до которого надо добираться
-  переключателями, при беглом просмотре неотличимо от отсутствующего — а именно бегло смотрят
-  чаще всего.
-- **Пустой показ покрытием не считается, и молчание об этом — отказ.** Показ, в котором ничего
-  не нарисовалось, в сводке выглядит ровно как показ; сравнение с образцом этого не различает
-  вовсе, потому что у нового показа образца ещё нет, а первым снятым образцом закрепляется то,
-  что нарисовалось, — в том числе ничего.
-- **Сочетание значений показывается тогда, когда значения влияют друг на друга.** Показ всех
-  сочетаний подряд нечитаем и прячет расхождение ровно так же, как его отсутствие.
-- **Показ живёт рядом с кодом состояния и правится тем же изменением.** Разошедшийся показ
-  убедителен: он выглядит действующим описанием, и тем сильнее, чем дольше не менялся.
+- **A visible state is promised behaviour, and it is shown where the eye can see it.** A claim
+  about appearance confirmed only by a class check is confirmed incompletely.
+- **The set of a component's states is declared up front, and an unshown state from the set is a
+  failure.** Otherwise "all states are shown" means "the ones somebody remembered are shown", and
+  nothing tells the two apart.
+- **A state that cannot be shown is marked unshowable, with a reason.** A silent omission looks
+  the same as a shown state, and the debt stops being visible.
+- **A demonstration demands no action from the viewer.** A state reached through toggles is
+  indistinguishable from a missing one at a glance — and a glance is how people look most often.
+- **An empty demonstration does not count as coverage, and silence about it is a failure.** A
+  demonstration where nothing was drawn looks exactly like a demonstration in the digest. A
+  comparison with a baseline does not tell them apart at all: a new demonstration has no baseline
+  yet, and the first captured baseline fixes whatever was drawn — including nothing.
+- **A combination of values is shown when the values affect each other.** Showing every
+  combination in a row is unreadable and hides a drift exactly as its absence does.
+- **A demonstration lives next to the code of the state and is edited by the same change.** A
+  drifted demonstration is convincing: it looks like a current description, and the longer it stays
+  unchanged, the more so.

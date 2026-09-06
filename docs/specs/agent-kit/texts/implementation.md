@@ -21,6 +21,7 @@
 - **Невыбранный вид судится наравне с выбранным.** — `projects/agent-kit/tests/rules-review.test.sh:KINDS_WITH_SECTIONS`
 - **Ресурс без обязательного раздела своего рода — расхождение.** — `projects/agent-kit/tests/rules-review.test.sh:missing_pitfalls`
 - **Набор разделов объявлен на род и назван поимённо, а не выведен из образца.** — `projects/agent-kit/tests/rules-review.test.sh:sections_for`
+- **Раздел статей закона читается под двумя именами, английским и русским.** — `projects/agent-kit/assets/checks/check-specs.mjs:LAW_HEADINGS` — набор пакета читает те же два имени в `rules-review.test.sh:sections_for`; сценарий SC-AK-906
 - **Образец рода судится объявленным набором наравне с корпусом.** — `projects/agent-kit/tests/rules-review.test.sh:template_gaps`
 - **Род, которому набор не объявлен, молчит, а не краснеет.** — `projects/agent-kit/tests/rules-review.test.sh:KINDS_WITHOUT_SECTIONS`
 - **Пустой список долга называется вслух и с числом.** — `projects/agent-kit/tests/rules-review.test.sh:rules_without_pattern`

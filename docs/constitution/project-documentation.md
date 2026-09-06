@@ -1,102 +1,109 @@
-<!-- rt-kit v0.25.0 · laws/project-documentation.md · bfa26df36daf · правится надстройкой, не здесь -->
-# Закон о документации проекта
+<!-- rt-kit v0.25.0 · laws/project-documentation.md · 6c6d07d256de · правится надстройкой, не здесь -->
+# Law on project documentation
 
-Что должно быть верно про тексты, которые проект о себе пишет. Расхождение документа с
-работающим приложением беззвучно: ни сборка, ни проверки текстов не читают, поэтому
-устаревшее описание живёт дальше и выглядит действующей справкой — тем убедительнее, чем оно
-старше.
+What must be true about the texts a project writes about itself. A document that drifts from
+the running application drifts silently: neither the build nor the checks read texts, so a stale
+description lives on and reads as a current reference — the older it is, the more convincing.
 
-## Статьи
-- **У документа заранее задан набор разделов, и отсутствие раздела — отказ.** Требования, для
-  которых не заведено места, вспоминаются уже после выкатки.
-- **Каждое утверждение документа привязано к месту, где оно исполняется.** Утверждение без такого
-  места — намерение, и называть его действующим нельзя.
-- **Предстоящая работа перечислена в одном месте — в очереди работ.** Документ второго списка не
-  заводит: два списка об одной работе расходятся молча, и по ним потом не понять, что сделано, а
-  что нет. Документу остаётся то, что задачей не бывает, — договорённость и решение, которое
-  решено не править.
-- **Привязка не ведёт в код, который никто не зовёт.** Объявленный и никем не используемый символ
-  ничего не исполняет, а проверка на нём остаётся зелёной.
-- **Путь, названный в документе, существует.** Ссылка на переехавший файл читается как действующее
-  указание, и следующий читатель заводит снятое заново.
-- **Указатель каталога перечисляет всё, что в каталоге лежит.** Записи, которой в указателе нет,
-  для читателя не существует: он ищет по указателю, а не обходом каталога, и заводит разбор
-  заново. Это обратная сторона предыдущей статьи — не только путь из текста ведёт в файл, но и
-  файл назван в тексте, по которому его ищут.
-- **Документ, разошедшийся с приложением, правится тогда же, когда замечено расхождение.**
-  Отложенная правка не случается: расхождение перестаёт быть заметным на следующий день.
-- **Расхождение чинится в той стороне, которая неправа, и это не всегда документ.** Состояние,
-  описанное как существующее, но недостижимое в приложении, — дефект приложения: строка читается
-  справкой о работающем, на неё ссылаются как на проверенное, и правка документа под код закрепила
-  бы дыру вместо того, чтобы её показать.
-- **Документ не утверждает о будущем, и следит за этим автор.** «Не планируется», «не будет» — это
-  намерение, а не свойство приложения: сверить его не с чем, и оно проходит любую проверку. Машине
-  это не поручить: открытый вопрос пишется теми же словами, что и обещание, и проверка отбивала бы
-  оба.
-- **Полнота текстов проверяется и со стороны работы, а не только со стороны текста.** Обход
-  написанного судит каждое утверждение, но утверждения, которого нет, в этом обходе нет тоже:
-  приём, применённый и нигде не описанный, так не находится никогда. Поэтому закрытая работа
-  спрашивается отдельно — оставила она след в текстах или явно его не требует.
-- **Документ утверждает о состоявшемся, а не о том, что должно сработать.** Лечение, записанное
-  готовым до того, как его прогнали, дороже отсутствия записи: следующий читатель берёт его за
-  проверенное — и берёт в тот день, когда лечение понадобилось, а времени на разбор нет.
-  Непрогнанное либо не пишется вовсе, либо названо непроверенным тем же предложением.
-- **Число в тексте пересчитывается тем же изменением, которым пишется, и за этим тоже следит
-  автор.** Устаревшее число выглядит так же, как свежее, а машине их не различить: дата, версия и
-  номер — такие же числа, и проверка, которая знает один способ записи, на другом ошибается молча.
-- **Слово, значащее в дереве что-то определённое, записано в словаре дерева.** Слова, которого
-  там нет, у читателя нет тоже: оно вводится в словарь тем же изменением, которым впервые
-  употреблено, либо заменяется тем, что уже есть. Словарь читается до того, как текст написан, а
-  не сверяется после: сверка после находит слово, вокруг которого уже построен абзац.
-- **Документ, собираемый из нескольких источников, правится в источнике.** Правка собранного вида
-  живёт до следующей сборки и пропадает молча — а выглядит она ровно так же, как правка, которая
-  осталась. Собранный документ обязан называть свой источник в себе самом: сказанное о нём где-то
-  ещё до читателя может не доехать, а собранный вид доезжает всегда.
-- **Отказ от слова распространяется на всё, что уже прочитано снаружи, а не только на файлы.**
-  Название работы, её описание и запись о правке живут вне дерева: поиск по файлам их не видит,
-  проверки текстов на них не смотрят, и отказ выглядит сделанным ровно до того, как читатель
-  наткнётся на снятое слово в заголовке. Читатель при этом заключает, что от слова не отказывались
-  вовсе.
-- **Текст, который переносится в чужое дерево, не описывает состояние этого дерева как факт.** О
-  соседней части он говорит условно и называет её по имени: что в дереве стоит, а чего нет, знает
-  само дерево, а не текст, приехавший в него. Утверждение, сказанное безусловно, врёт тем
-  увереннее, что печатает его сам инструмент, — и поправить его дерево не может, если правки на
-  месте у такого текста не предусмотрено.
-- **Принятое решение становится пунктом слоя правил, а не записью о прошлом.** Записанное
-  описанием прошлого перестаёт действовать в тот же день: описания прошлого не приходят в контекст
-  работы, читаются как история и ничего не требуют. Следующая работа принимает то же решение
-  заново — и принимает иначе, потому что доводов первого уже не видит.
-- **У решения есть слой, и он выбирается по тому, о чём решение говорит.** Что должно быть верно в
-  продукте — статья закона. Каким приёмом это делается здесь — пункт правила. Готовый код и
-  порядок действий — паттерн. Решение, положенное не в свой слой, находится только тем, кто уже
-  знает, что оно есть.
-- **Описание прошлого объясняет состоявшийся переезд, а не держит действующее требование.**
-  Разница видна вопросом: перестанет ли текст быть верным, если завтра всё переделать. Рассказ о
-  том, как и почему однажды перенесли, — прошлое; требование «делай так» — нет, и место ему в слое
-  правил.
-- **Признак, по которому решение относят к прошлому, записан заранее и один на все работы.**
-  Выводимый каждой работой заново, он назначается тем, кому мешает: под конец работы дешевле
-  назвать прошлым всё, что осталось разобрать.
-- **Раздел решений в описании домена — временное место, а не постоянное.** Пока решение там, оно
-  действует только для того, кто открыл этот файл. Разросшийся раздел — признак того, что правило
-  под него не заведено, а не того, что домен сложный.
-- **Работа, которая переносит решения, называет для каждого, куда оно ушло.** Иначе по описанию
-  прошлого не отличить решение, ставшее правилом, от решения, потерянного при переносе: оба
-  выглядят одинаково — записью, на которую никто не ссылается.
-- **Текст, раздаваемый наружу, судится не слабее своей копии у потребителя.** Требование, стоящее
-  к копии и не стоящее к источнику, находит промах у того, кто его не делал и починить не может:
-  до потребителя промах доезжает целым, а краснеет уже там.
-- **Редакция текста, которую это дерево не выбрало, судится наравне с выбранной.** Непрочитанная
-  редакция расходится с прочитанной молча, и узнаёт об этом первый, кто её выберет, — то есть тот,
-  у кого нет ни истории расхождения, ни повода его искать.
-- **Набор обязательных разделов объявлен отдельно, и образец ему не хозяин.** Образец — черновик
-  для того, кто заводит текст, и стареет он первым. Набор, выведенный из образца, либо объявляет
-  расхождением весь корпус разом, либо не замечает ничего.
-- **Требование, которого никто не формулировал, молчит, а не отказывает.** Отказ на предмете без
-  объявленного требования гасят списком исключений, а список исключений через месяц становится
-  рабочим путём — и гасит вместе с шумом то, ради чего проверка заводилась.
-- **Два текста об одном либо говорят одно, либо один из них неправ.** Согласие текстов между собой
-  не следует ни из целостности ссылок, ни из полноты разделов: оба проходят любую такую проверку,
-  а исполнитель берёт тот, который прочитал раньше. Ищется это чтением — считать здесь нечего.
-- **Изображение правится тем же изменением, что и текст, который оно изображает.** Разойдясь,
-  схема и проза остаются читаемыми обе, и первым это замечает тот, кто пошёл по схеме.
+## Articles
+
+- **A document has a fixed set of sections declared up front, and a missing section is a
+  failure.** Requirements that have no place reserved for them are remembered after the release.
+- **Every statement in a document is tied to the place where it is enforced.** A statement
+  without such a place is an intention, and it must not be called current.
+- **Upcoming work is listed in one place — the work queue.** A document does not keep a second
+  list: two lists about the same work drift apart silently, and afterwards nobody can tell what
+  is done and what is not. A document keeps what never becomes a task — an agreement, or a
+  decision that was decided not to change.
+- **A binding does not point to code nobody calls.** A symbol that is declared and used by no
+  one enforces nothing, and the check on it stays green.
+- **A path named in a document exists.** A link to a file that has moved reads as a current
+  instruction, and the next reader recreates what was removed.
+- **A directory index lists everything the directory holds.** An entry missing from the index
+  does not exist for the reader: they search by the index, not by walking the directory, and
+  start the analysis over. This is the reverse of the previous article — not only does a path in
+  the text lead to a file, the file is also named in the text people search by.
+- **A document that has drifted from the application is fixed the moment the drift is noticed.**
+  A postponed fix never happens: the drift stops being noticeable the next day.
+- **Drift is fixed on the side that is wrong, and that is not always the document.** A state
+  described as existing but unreachable in the application is a defect of the application: the
+  line reads as a reference to what works, people cite it as verified, and editing the document
+  to match the code would seal the hole instead of exposing it.
+- **A document makes no claims about the future, and the author is the one who watches this.**
+  "Not planned", "will not be" — that is an intention, not a property of the application: there
+  is nothing to check it against, and it passes every check. A machine cannot be given this: an
+  open question is written in the same words as a promise, and a check would reject both.
+- **Completeness of texts is checked from the side of the work too, not only from the side of
+  the text.** A pass over what is written judges every statement, but a statement that does not
+  exist is not in that pass: a technique applied and described nowhere is never found this way.
+  So every closed piece of work is asked separately — did it leave a trace in the texts, or does
+  it explicitly not need one.
+- **A document states what has happened, not what should work.** A remedy written down as ready
+  before it was run costs more than no record at all: the next reader takes it as verified — and
+  takes it on the day the remedy is needed, when there is no time to investigate. What has not
+  been run is either not written at all or called unverified in the same sentence.
+- **A number in a text is recomputed by the same change that writes it, and the author watches
+  this too.** A stale number looks exactly like a fresh one, and a machine cannot tell them
+  apart: a date, a version and an id are numbers as well, and a check that knows one way of
+  writing them fails silently on another.
+- **A word that means something specific in the tree is recorded in the tree's glossary.** A word
+  that is not there does not exist for the reader either: it is added to the glossary by the same
+  change that first uses it, or replaced with one that already exists. The glossary is read before
+  the text is written, not checked afterwards: a check afterwards finds a word a whole paragraph
+  has already been built around.
+- **A document assembled from several sources is edited in the source.** An edit to the
+  assembled view lives until the next assembly and vanishes silently — and it looks exactly like
+  an edit that stayed. An assembled document must name its source inside itself: whatever is said
+  about it elsewhere may not reach the reader, and the assembled view always does.
+- **Dropping a word extends to everything already read outside, not only to files.** The name of
+  a piece of work, its description and the record of a change live outside the tree: a search
+  over files does not see them, text checks do not look at them, and the drop looks done right
+  until a reader runs into the dropped word in a title. The reader then concludes the word was
+  never dropped at all.
+- **A text that travels into another tree does not describe that tree's state as fact.** About a
+  neighbouring part it speaks conditionally and names it: what the tree holds and what it lacks
+  is known to the tree itself, not to a text that arrived in it. A statement made unconditionally
+  lies all the more confidently because the tool itself prints it — and the tree cannot correct
+  it if the text has no place for an edit.
+- **An accepted decision becomes an item of the rules layer, not a record of the past.** What is
+  written down as a description of the past stops being in force the same day: descriptions of
+  the past do not enter the working context, are read as history and demand nothing. The next
+  piece of work makes the same decision again — and makes it differently, because it no longer
+  sees the arguments of the first.
+- **A decision has a layer, chosen by what the decision is about.** What must be true in the
+  product is an article of a law. By which technique it is done here is an item of a rule. Ready
+  code and an order of steps is a pattern. A decision put in the wrong layer is found only by
+  someone who already knows it exists.
+- **A description of the past explains a move that happened; it does not hold a current
+  requirement.** The difference shows in one question: would the text stop being true if
+  everything were redone tomorrow. The story of how and why something was once moved is the past;
+  the requirement "do it this way" is not, and its place is in the rules layer.
+- **The criterion by which a decision is assigned to the past is written down in advance and is
+  the same for all work.** Derived anew by every piece of work, it is set by whoever it gets in
+  the way of: at the end of the work it is cheaper to call everything left unsorted the past.
+- **The decisions section of a domain description is a temporary place, not a permanent one.**
+  While a decision is there, it is in force only for whoever opened that file. A grown section is
+  a sign that no rule has been set up for it, not that the domain is complex.
+- **Work that moves decisions names, for each one, where it went.** Otherwise the description of
+  the past cannot tell a decision that became a rule from a decision lost in the move: both look
+  the same — a record nobody references.
+- **A text distributed outward is judged no more leniently than its copy at the consumer.** A
+  requirement that applies to the copy and not to the source finds the fault in someone who did
+  not make it and cannot fix it: the fault reaches the consumer intact and turns red there.
+- **A text edition this tree did not choose is judged the same as the chosen one.** An unread
+  edition drifts from the read one silently, and the first to find out is the first to choose it —
+  that is, someone with neither the history of the drift nor a reason to look for it.
+- **The set of mandatory sections is declared separately, and the sample does not own it.** The
+  sample is a draft for whoever starts a text, and it ages first. A set derived from the sample
+  either declares the whole corpus divergent at once or notices nothing.
+- **A requirement nobody has formulated stays silent; it does not reject.** A rejection on a
+  subject with no declared requirement gets silenced with an exception list, and a month later
+  the exception list becomes the working path — silencing, along with the noise, the very thing
+  the check was set up for.
+- **Two texts about the same thing either say the same, or one of them is wrong.** Agreement
+  between texts follows neither from link integrity nor from section completeness: both pass any
+  such check, and the executor takes whichever was read first. This is found by reading — there
+  is nothing to count here.
+- **An image is edited by the same change as the text it depicts.** Once they diverge, the
+  diagram and the prose both remain readable, and the first to notice is whoever followed the
+  diagram.
