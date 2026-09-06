@@ -24,6 +24,7 @@
 - **Контейнеры поднимаются сами после перезапуска узла.** — `docker-compose.prod.yml:restart`
 - **Дамп снимается и загружается одной командой каждый.** — `deploy/dump.sh:DUMPS`
 - **Загруженный дамп возвращает и свод, и годность выданных токенов.** — `deploy/dump.sh:compose`
+- **Загрузка дампа проверяется на одноразовой базе рядом, а не на боевой.** — `deploy/dump.sh:probe` — отпечаток считает `fingerprint`, имя одноразовой базы — `PROBE_NAME`; сценарий SC-MB-95
 - **Адрес приёма в настройке дерева — имя, а не местная машина.** — `.claude/rt-kit.json:intake`
 - **Сборка приёмника отказывает, когда клиента хранилища нет.** — `apps/message-bus/src/build/storage-client.check.mjs:storageClientFailure`
 - **Отказ называет и причину, и починку.** — `apps/message-bus/src/build/storage-client.check.mjs:GENERATE_COMMAND`
