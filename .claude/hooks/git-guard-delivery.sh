@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.24.0 · hooks/git-guard-delivery.sh · 3a3d4c8945fd · правится надстройкой, не здесь
+# rt-kit v0.24.0 · hooks/git-guard-delivery.sh · c884ef569854 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Гард поставки. PreToolUse на заведении ветки, пуше и открытии заявки на слияние.
@@ -223,9 +223,7 @@ fi
 if [ -n "$branch_arg" ]; then
     # Имя, притворяющееся веткой под задачу, но не совпадающее с формой, — это промах в имени,
     # а не осознанная беззадачная ветка. Ловится до первого коммита.
-    # Номер вынимает профиль: своя регулярка знала одну приставку — ключ задач, — и ветка вида
-    # `feat/88-slug`, законная по форме того же профиля, номера не давала вовсе. Проверка формы
-    # при заведении не срабатывала на ней ни разу, а сверка номеров пропускалась молча.
+    # Номер вынимает профиль: со своей регуляркой ветка `feat/88-slug` номера не давала вовсе.
     number_arg="$(rt_task_branch_number "$branch_arg")"
     if [ -n "$number_arg" ]; then
         rt_task_branch_ok "$branch_arg" \
