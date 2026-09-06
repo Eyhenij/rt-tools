@@ -1,7 +1,8 @@
 import { IRtIcon } from './rt-icon.model';
 
 /**
- * Категории иконок rt-icon. 10 buckets: 8 prefix-based + Custom (префикс `ico-`) + Misc (fallback).
+ * Категории иконок rt-icon. 11 buckets: 8 prefix-based + Social (префикс `social-`) + Custom
+ * (префикс `ico-`) + Misc (fallback).
  * Порядок фиксирован — соответствует порядку отображения в Catalog story (rt-icon.stories.ts).
  *
  * Аннотация типа намеренно не указывается: явный `readonly string[]` потерял бы узкий
@@ -17,6 +18,7 @@ export const CATEGORY_ORDER = [
     'Documents',
     'People',
     'Commerce',
+    'Social',
     'Custom',
     'Misc',
 ] as const;
@@ -52,6 +54,9 @@ function matchPrefixOrExact(prefixes: readonly string[], exact: readonly string[
  * `Misc` — fallback в {@link categoryOf}, отдельным правилом не описывается.
  */
 export const ICON_CATEGORY_RULES: readonly IIconCategoryRule[] = [
+    // Знаки соцсетей — цветные, со своей заливкой в файле; в каталоге они стоят своим рядом,
+    // чтобы не смешиваться с одноцветными, которые красит тема.
+    { category: 'Social', match: (n: string): boolean => n.startsWith('social-') },
     { category: 'Custom', match: (n: string): boolean => n.startsWith('ico-') },
     {
         category: 'Navigation',

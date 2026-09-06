@@ -27,3 +27,6 @@ export const Color: TStory = { args: { part: 'color' } };
 export const Rotate: TStory = { args: { part: 'rotate' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };
+
+/** Знаки соцсетей: заливка в файле, ось цвета не действует — показываются парой тем. */
+export const Social: TStory = { args: { part: 'social' } };
