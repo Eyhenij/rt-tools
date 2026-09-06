@@ -2,7 +2,7 @@
 name: git-workflow-restart
 kind: pattern
 rule: deploy-flow
-description: Паттерн правила deploy-flow. Брать при ручном перезапуске прода — после правки .env.prod, при разборе выкатки, при подъёме контейнера на сервере. Готовые команды с меткой образа по sha и чем сверять результат. Накат миграций — паттерн git-workflow-migration.
+description: Pattern of rule deploy-flow. Load for a manual production restart — after editing .env.prod, when investigating a rollout, when starting a container on the server. Ready-made commands with the image tag by sha and what to check the result against. Migrations — pattern git-workflow-migration.
 ---
 
 # Ручной перезапуск прода

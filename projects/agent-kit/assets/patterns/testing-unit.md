@@ -2,7 +2,7 @@
 name: testing-unit
 kind: pattern
 rule: testing
-description: Паттерн правила testing. Брать при заведении или правке *.spec.ts под Vitest — готовая раскладка describe и it, сборщик фикстур, идентификатор сценария в заголовке, спека процедуры Connect с рукописным двойником базы. Не брать для сквозных спек — это паттерн testing-e2e.
+description: Pattern of rule testing. Load when creating or editing *.spec.ts under Vitest — the ready-made layout of describe and it, the fixture builder, the scenario id in the title, a Connect procedure test with a hand-written database double. Not for end-to-end tests — that is pattern testing-e2e.
 ---
 
 # Спека на чистую функцию и на процедуру

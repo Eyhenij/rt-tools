@@ -2,7 +2,7 @@
 name: status-report
 kind: rule
 law: work-conduct
-description: Правило под «Закон о ведении работы». Брать, когда владелец спросил, где стоит работа: «какой статус», «что за эпик», «что сейчас делаешь». Называет форму ответа — абзац об эпике и таблицу его задач — и чем клетка о дереве подпирается. Паттерн status-report-table.
+description: Rule under the work-conduct law. Load when the owner asked where the work stands — "what is the status", "which epic", "what are you doing now". Names the shape of the reply — a paragraph about the epic and a table of its tasks — and what backs a cell about the tree. Pattern status-report-table.
 ---
 
 # Ответ о состоянии работы

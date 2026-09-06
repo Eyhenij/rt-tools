@@ -2,7 +2,7 @@
 name: git-workflow-docker
 kind: pattern
 rule: deploy-flow
-description: Паттерн правила deploy-flow. Брать при работе с образами на своей машине: подъём и перезапуск демона, диагностика «висящей» команды, сборка под платформу прод-сервера, вход в реестр из службы. Команды прод-сервера — паттерн git-workflow-restart.
+description: Pattern of rule deploy-flow. Load when working with images on your own machine — starting and restarting the daemon, diagnosing a hanging command, building for the production server platform, registry login from a service. Production server commands — pattern git-workflow-restart.
 ---
 
 # Образы на своей машине

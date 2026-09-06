@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/constitution-index.sh · 29e848e1b540 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/constitution-index.sh · 94118348bc1a · правится надстройкой, не здесь
 # rt-hook: SessionStart startup|resume|compact|clear
 # Вход в слой законов. SessionStart.
 #
@@ -28,17 +28,17 @@ done
 [ -z "$index" ] && exit 0
 
 read -r -d '' context <<EOF
-ЗАКОНЫ ПРОЕКТА (слой @rt-tools/agent-kit, разложен в docs/constitution/).
+PROJECT LAWS (the @rt-tools/agent-kit layer, laid out in docs/constitution/).
 
-Закон говорит, ЧТО должно быть верно, и не знает ни путей, ни имён файлов. Правило — каким
-приёмом это делается — живёт в .claude/skills/, а имена этого дерева при нём — в
-implementation.md рядом. Закон не отменяет правила и не заменяется им: перед решением, которое
-закон задевает, читается закон целиком, правило — как обычно.
+A law says WHAT must be true and knows neither paths nor file names. A rule — by which
+technique it is done — lives in .claude/skills/, and the names of this tree next to it are in
+implementation.md alongside. A law does not cancel a rule and is not replaced by it: before a
+decision the law touches, the law is read in full, the rule as usual.
 
 ${index}
-Разложенные файлы правятся не руками, а надстройкой в .claude/rt-kit/overrides/<ресурс>:
-правка на месте теряется на следующем \`agent-kit sync\`, и он на неё отказывает. Сверить
-разложенное с пакетом: \`agent-kit sync --check\`.
+Laid-out files are edited not by hand but through the override in .claude/rt-kit/overrides/<resource>:
+an in-place edit is lost on the next \`agent-kit sync\`, and sync refuses it. Check the laid-out
+files against the package: \`agent-kit sync --check\`.
 EOF
 
 jq -n --arg c "$context" '{hookSpecificOutput:{hookEventName:"SessionStart",additionalContext:$c}}' 2>/dev/null || exit 0

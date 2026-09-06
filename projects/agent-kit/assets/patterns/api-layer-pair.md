@@ -2,7 +2,7 @@
 name: api-layer-pair
 kind: pattern
 rule: api-layer
-description: Паттерн правила api-layer. Брать при заведении или правке слоя api фронтового домена — готовые фасад и сервис, вход выборки, конвертер страницы, типы порядка и отбора в неймспейсе сущности. Не брать для модели и её маппера — это паттерн entity-models-new.
+description: Pattern of rule api-layer. Load when creating or editing the api layer of a frontend domain — ready-made facade and service, the query input, the page converter, order and filter types in the entity namespace. Not for the model and its mapper — that is pattern entity-models-new.
 ---
 
 # Фасад и сервис домена

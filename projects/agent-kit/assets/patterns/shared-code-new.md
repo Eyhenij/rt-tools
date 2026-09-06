@@ -2,7 +2,7 @@
 name: shared-code-new
 kind: pattern
 rule: shared-code
-description: Паттерн правила shared-code. Брать, когда заводится новое число-настройка, общая функция или общий тип, который должны одинаково понимать сайт, админка и бэкенд — куда класть, как объявить, как сверить строку с набором и как убедиться, что копия не осталась на старом месте.
+description: Pattern of rule shared-code. Load when a new setting number, shared function or shared type is added that the site, the admin and the backend must understand the same way. Where to put it, how to declare it, how to check a string against the set and how to make sure no copy stayed in the old place.
 ---
 
 # Новое общее заводится так

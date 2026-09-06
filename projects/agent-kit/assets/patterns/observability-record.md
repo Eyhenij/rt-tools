@@ -2,7 +2,7 @@
 name: observability-record
 kind: pattern
 rule: observability
-description: Паттерн правила observability. Брать, когда в коде заводится новая строка лога — готовый вызов логгера, выбор уровня, имя строки, поля объектом, отказ внешней службы и предел ожидания. Не брать для правки самого логгера и контекста запроса — это правило observability.
+description: Pattern of rule observability. Load when a new log line is added in code — the ready-made logger call, choosing the level, the line name, fields as an object, an external service failure and the wait limit. Not for editing the logger itself and the request context — that is rule observability.
 ---
 
 # Новая строка лога

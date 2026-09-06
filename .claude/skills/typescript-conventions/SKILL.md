@@ -2,9 +2,9 @@
 name: typescript-conventions
 kind: rule
 law: code-structure
-description: Правило под «Закон об устройстве кода». Брать при правке любого .ts, кроме компонента, сервиса, директивы, пайпа, гарда и интерцептора: строгая типизация, модификаторы доступа, имена файлов, префиксы, запрет приведения в маппере. Паттерн ts-procedure.
+description: Rule under the code-structure law. Load when editing any .ts except a component, service, directive, pipe, guard or interceptor — strict typing, access modifiers, file names, prefixes, no casting in a mapper. Pattern ts-procedure.
 ---
-<!-- rt-kit v0.25.0 · rules/typescript-conventions.md · 3f10ae7ca042 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/typescript-conventions.md · 36f82053c812 · правится надстройкой, не здесь -->
 
 # Устройство кода — как это устроено здесь
 

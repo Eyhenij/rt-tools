@@ -2,9 +2,9 @@
 name: platform-access
 kind: rule
 law: frontend-application
-description: Правило под «Закон о фронтовом приложении». Брать, когда правка задевает глобальный объект или среду исполнения — window, globalThis, PLATFORM_ID, localStorage. Называет токены DI и подводные камни отдачи страницы сервером. Под libs/api и apps/api не действует. Паттерн platform-access-di.
+description: Rule under the frontend-application law. Load when an edit touches the global object or the runtime — window, globalThis, PLATFORM_ID, localStorage. Names the DI tokens and the pitfalls of server-side page rendering. Does not apply under libs/api and apps/api. Pattern platform-access-di.
 ---
-<!-- rt-kit v0.25.0 · rules/platform-access.md · 043d00a452af · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/platform-access.md · 5e7cd989619b · правится надстройкой, не здесь -->
 
 # Окружение браузера — как это устроено здесь
 

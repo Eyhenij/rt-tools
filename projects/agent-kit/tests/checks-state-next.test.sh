@@ -165,7 +165,7 @@ rm -rf "$GATE_TREE"
 report "SC-AK-452 — правило пакета говорит о границе" \
     "$(grep -c 'Переход из состояния в состояние' "$ASSETS/rules/turn-conduct.md")" 1
 report "SC-AK-454 — карта пакета говорит о границе" \
-    "$(grep -c 'Переход из состояния в состояние' "$ASSETS/defaults/turn-map.md")" 1
+    "$(grep -c 'A transition from state to state' "$ASSETS/defaults/turn-map.md")" 1
 report "SC-AK-455 — закон пакета говорит о границе" \
     "$(grep -c 'Переход из состояния в состояние' "$ASSETS/laws/work-conduct.md")" 1
 

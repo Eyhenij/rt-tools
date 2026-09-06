@@ -64,22 +64,22 @@ handoff=''
 [ -n "$branch" ] && handoff="$ROOT/$handoff_dir/$branch.md"
 
 if [ -n "$section" ]; then
-    printf 'ПЕРЕДАЧА ПРОШЛОГО ЗАХОДА — раздел «Передача захода» в `%s/%s/progress.md`, ниже целиком.\n\n' "$tasks_dir" "$branch"
-    printf 'Она написана прошлым заходом и описывает минуту, когда её собрали. Всё, что в ней\n'
-    printf 'стоит о дереве, проверяется деревом: команда этого хода главнее записанной вчера.\n\n'
+    printf 'HANDOVER OF THE PREVIOUS SESSION — the "Передача захода" section of `%s/%s/progress.md`, in full below.\n\n' "$tasks_dir" "$branch"
+    printf 'It was written by the previous session and describes the minute it was put together. Everything\n'
+    printf 'it says about the tree is checked against the tree: a command of this turn outranks what was written yesterday.\n\n'
     printf '%s\n\n' "$section"
 elif [ -n "$handoff" ] && [ -r "$handoff" ]; then
-    printf 'ПЕРЕДАЧА ПРОШЛОГО ЗАХОДА — `%s/%s.md`, ниже целиком.\n\n' "$handoff_dir" "$branch"
-    printf 'Она написана прошлым заходом и описывает минуту, когда её собрали. Всё, что в ней\n'
-    printf 'стоит о дереве, проверяется деревом: команда этого хода главнее записанной вчера.\n\n'
+    printf 'HANDOVER OF THE PREVIOUS SESSION — `%s/%s.md`, in full below.\n\n' "$handoff_dir" "$branch"
+    printf 'It was written by the previous session and describes the minute it was put together. Everything\n'
+    printf 'it says about the tree is checked against the tree: a command of this turn outranks what was written yesterday.\n\n'
     cat "$handoff" 2>/dev/null
     printf '\n\n'
 fi
 
 if [ -r "$map" ]; then
-    printf 'КАРТА ХОДА — состояния работы и то, чем ход кончается. Ниже целиком.\n\n'
-    printf 'Это выжимка правила ведения работы, а не оно само: правило объясняет, карта\n'
-    printf 'называет. Своё состояние заход читает в разделе «Где стоим» хода работы.\n\n'
+    printf 'TURN MAP — the work states and what a turn ends with. In full below.\n\n'
+    printf 'It is a digest of the work-conduct rule, not the rule itself: the rule explains, the map\n'
+    printf 'names. A session reads its own state in the "Где стоим" section of the progress.\n\n'
     cat "$map" 2>/dev/null
     printf '\n'
 fi

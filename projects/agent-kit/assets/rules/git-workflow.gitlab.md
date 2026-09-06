@@ -2,7 +2,7 @@
 name: git-workflow
 kind: rule
 law: delivery
-description: Правило под «Закон о поставке» для дерева на GitLab. Брать на заведение задачи, ветки, коммит, пуш, открытие MR и слияние. Называет соответствие задачи и ветки один к одному, имена, машинную учётную запись и гарды поставки. Паттерны: git-workflow-commit, -pr, -merge. Выкатка — правило deploy-flow.
+description: Rule under the delivery law for a tree on GitLab. Load for creating a task and a branch, commit, push, opening an MR and merging. Names the one-to-one match of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge. Rollout — rule deploy-flow.
 ---
 
 # Поставка — как это устроено здесь

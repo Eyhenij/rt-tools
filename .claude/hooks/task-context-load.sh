@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/task-context-load.sh · 1846786c6807 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/task-context-load.sh · 83d28ea26683 · правится надстройкой, не здесь
 # rt-hook: SessionStart startup|resume|compact|clear
 # Требует: hooks/profile-check.sh
 # SessionStart: состояние незаконченной работы уезжает в контекст на каждом запуске сессии.
@@ -66,38 +66,38 @@ if [ ! -d "$DIR" ]; then
 
     if [ -n "$dropped" ]; then
         {
-            printf 'РАБОТА ЗАКРЫВАЕТСЯ — папка задачи разобрана этой веткой.\n\n'
-            printf 'Ход работы удалён вместе с папкой: состояние держат заявка и передача захода.\n'
-            printf 'Папка заново не собирается. Правка кода после разбора требует восстановить её\n'
-            printf 'на время правки и повторить разбор тем же коммитом. Порядок — скил `task-flow`,\n'
-            printf 'паттерны `task-flow-close` и `task-flow-archive`.\n'
+            printf 'WORK IS CLOSING — the task folder has been taken apart by this branch.\n\n'
+            printf 'The progress was removed with the folder: the state is held by the PR and the session handover.\n'
+            printf 'The folder is not rebuilt. A code edit after the folder was taken apart requires restoring it\n'
+            printf 'for the time of the edit and taking it apart again in the same commit. The order — skill `task-flow`,\n'
+            printf 'patterns `task-flow-close` and `task-flow-archive`.\n'
         } | emit
         exit 0
     fi
 
     if rt_needs rt_task_branch_ok task-context-load && rt_task_branch_ok "$branch"; then
         {
-            printf 'РАБОТА БЕЗ ПАПКИ ЗАДАЧИ.\n\n'
-            printf 'Ветка `%s` названа задачей, а `%s/` нет: ход работы записывать некуда,\n' "$branch" "$DIR"
-            printf 'и следующий заход начнёт с расспросов владельца.\n\n'
-            printf 'Собрать с образца:\n\n    cp -r %s/_template %s\n\n' "$TASKS_DIR" "$DIR"
+            printf 'WORK WITHOUT A TASK FOLDER.\n\n'
+            printf 'Branch `%s` is named after a task, and `%s/` is missing: there is nowhere to write the progress,\n' "$branch" "$DIR"
+            printf 'and the next session will start by questioning the owner.\n\n'
+            printf 'Build it from the template:\n\n    cp -r %s/_template %s\n\n' "$TASKS_DIR" "$DIR"
             # Папка бывает названа не именем ветки: этапы одной большой задачи идут отдельными
             # ветками при одной общей папке. Названная поимённо папка — единственное, по чему
             # заход её найдёт; иначе он читает отказ как «записей нет» и отвечает владельцу из
             # кода, минуя всё, что в этих записях решено.
             others="$(find "$TASKS_DIR" -mindepth 1 -maxdepth 1 -type d ! -name '_template' 2>/dev/null | sort)"
             if [ -n "$others" ]; then
-                printf 'В каталоге задач при этом лежит:\n\n%s\n\n' "$others"
-                printf 'Этапы одной задачи идут отдельными ветками при общей папке — прежде чем\n'
-                printf 'считать, что записей нет, смотрят в названные.\n\n'
+                printf 'The tasks directory meanwhile holds:\n\n%s\n\n' "$others"
+                printf 'Stages of one task go as separate branches with a shared folder: before\n'
+                printf 'concluding that there are no records, look into the folders named above.\n\n'
             fi
             # О соседнем ресурсе — условно и по имени: пакет не знает, разложен ли он здесь,
             # а сказанное безусловно приходит в контекст каждой сессии и врёт про дерево тем
             # увереннее, что печатает это сам инструмент.
             if [ -f "$rt_hooks_dir/task-flow-guard.sh" ]; then
-                printf 'Правку кода приложения до этого отбивает гард `task-flow-guard`. Правило — скил `task-flow`.\n'
+                printf 'Until then, an application code edit is refused by guard `task-flow-guard`. The rule — skill `task-flow`.\n'
             else
-                printf 'Правило — скил `task-flow`. Гарда `task-flow-guard` в дереве нет: правку кода до этого не отбивает ничто.\n'
+                printf 'The rule — skill `task-flow`. Guard `task-flow-guard` is not in this tree: nothing refuses a code edit until then.\n'
             fi
         } | emit
     fi
@@ -114,36 +114,36 @@ for file in "$PLAN" "$PROGRESS"; do
 done
 
 {
-    printf 'СОСТОЯНИЕ РАБОТЫ — ветка `%s`, папка `%s/`.\n\n' "$branch" "$DIR"
-    printf 'Это записано прошлыми заходами. Владельца о том, что здесь есть, не спрашивают.\n'
-    printf 'Отметка о сделанном — только в `progress.md`; `plan.md` по ходу не правится.\n'
-    printf 'Как ведётся работа — правило `task-flow`, возвращение к ней — паттерн `task-flow-resume`.\n\n'
+    printf 'WORK STATE — branch `%s`, folder `%s/`.\n\n' "$branch" "$DIR"
+    printf 'This was written by previous sessions. The owner is not asked about what is here.\n'
+    printf 'Done work is marked only in `progress.md`; `plan.md` is not edited along the way.\n'
+    printf 'How work is conducted — rule `task-flow`; returning to it — pattern `task-flow-resume`.\n\n'
 
     if [ -f "$GRILL" ]; then
-        printf 'Разбор просьбы владельца — `%s`, читается по надобности.\n\n' "$GRILL"
+        printf 'The grill of the owner'"'"'s request — `%s`, read when needed.\n\n' "$GRILL"
     fi
 
     if [ -f "$PLAN" ]; then
-        printf -- '--- ЗАМЫСЕЛ (`%s`) ---\n\n' "$PLAN"
+        printf -- '--- PLAN (`%s`) ---\n\n' "$PLAN"
         if [ "$size" -le "$LIMIT" ]; then
             cat "$PLAN"
         else
             sed -n '1,60p' "$PLAN"
-            printf '\n<обрезано по объёму — читается целиком: %s>\n' "$PLAN"
+            printf '\n<cut for size — read in full: %s>\n' "$PLAN"
         fi
         printf '\n'
     fi
 
     if [ -f "$PROGRESS" ]; then
-        printf -- '--- ХОД РАБОТЫ (`%s`) ---\n\n' "$PROGRESS"
+        printf -- '--- PROGRESS (`%s`) ---\n\n' "$PROGRESS"
         if [ "$size" -le "$LIMIT" ]; then
             cat "$PROGRESS"
         else
             # Раздел «Где стоим» перезаписывается каждым заходом и переживает любой объём.
             LC_ALL=C awk '/^## Где стоим/{f=1} f&&/^## /&&!/^## Где стоим/{exit} f' "$PROGRESS"
-            printf '\n<обрезано по объёму. Последние записи:>\n\n'
+            printf '\n<cut for size. The latest entries:>\n\n'
             tail -40 "$PROGRESS"
-            printf '\n<читается целиком: %s>\n' "$PROGRESS"
+            printf '\n<read in full: %s>\n' "$PROGRESS"
         fi
     fi
 } | emit

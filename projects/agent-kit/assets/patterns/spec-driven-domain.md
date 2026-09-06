@@ -2,7 +2,7 @@
 name: spec-driven-domain
 kind: pattern
 rule: spec-driven
-description: Паттерн правила spec-driven. Брать при заведении или правке спека домена в docs/specs — обязательные разделы, форма сценария, привязка правила к коду, порядок работы от спека к коду. Не брать для заведения закона, правила или паттерна — это паттерн spec-driven-rule.
+description: Pattern of rule spec-driven. Load when creating or editing a domain spec in docs/specs — the mandatory sections, the scenario form, binding a rule to code, the order of work from spec to code. Not for creating a law, a rule or a pattern — that is pattern spec-driven-rule.
 ---
 
 # Спек домена

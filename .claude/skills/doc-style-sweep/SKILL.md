@@ -2,9 +2,9 @@
 name: doc-style-sweep
 kind: pattern
 rule: doc-style
-description: Паттерн правила doc-style. Брать, когда документ накопил список работ и его надо разобрать на действующее и закрытое: признак отбора, обход по утверждениям, сверка с очередью работ, судьба самого файла. Новый текст — паттерн doc-style-write.
+description: Pattern of rule doc-style. Load when a document has accumulated a list of work and must be sorted into what still holds and what is closed. The selection sign, a pass over the statements, a check against the work queue, the fate of the file itself. New text — pattern doc-style-write.
 ---
-<!-- rt-kit v0.25.0 · patterns/doc-style-sweep.md · 91920028d1f4 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/doc-style-sweep.md · 5f7fe36a6b73 · правится надстройкой, не здесь -->
 
 # Разбор документа, накопившего список работ
 

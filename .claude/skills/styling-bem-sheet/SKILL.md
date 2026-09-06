@@ -2,9 +2,9 @@
 name: styling-bem-sheet
 kind: pattern
 rule: styling-bem
-description: Паттерн правила styling-bem. Брать при заведении или правке шторки, окна и полноэкранного просмотра поверх страницы — чем открывается, что передаётся внутрь, как приезжает снизу, чем проверяется. Не брать для панели правки записи в админке — это паттерн entity-aside.
+description: Pattern of rule styling-bem. Load when creating or editing a sheet, a dialog or a full-screen view over the page — what opens it, what is passed inside, how it slides in from below, what checks it. Not for the record edit panel in the admin — that is pattern entity-aside.
 ---
-<!-- rt-kit v0.25.0 · patterns/styling-bem-sheet.md · a23793ee6b49 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/styling-bem-sheet.md · 791f83e3e5db · правится надстройкой, не здесь -->
 
 # Шторка и окно поверх страницы
 

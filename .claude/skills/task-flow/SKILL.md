@@ -2,9 +2,9 @@
 name: task-flow
 kind: rule
 law: work-conduct
-description: Правило под «Закон о ведении работы» — ход работы от просьбы владельца до слияния. Брать в начале любой работы, при правке папок задач и договорённостей о продукте, при возвращении к незаконченной задаче. Паттерны: task-flow-start, -resume, -close, -archive. Конец хода — правило turn-conduct.
+description: Rule under the work-conduct law — the course of work from the owner's request to the merge. Load at the start of any work, when editing task folders and product agreements, and when returning to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. End of a turn — turn-conduct.
 ---
-<!-- rt-kit v0.25.0 · rules/task-flow.md · d3489b632ee8 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/task-flow.md · 3cc9ce61e642 · правится надстройкой, не здесь -->
 
 # Ведение работы — как это устроено здесь
 

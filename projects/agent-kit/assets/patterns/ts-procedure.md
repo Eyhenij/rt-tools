@@ -2,7 +2,7 @@
 name: ts-procedure
 kind: pattern
 rule: typescript-conventions
-description: Паттерн правила typescript-conventions. Брать при заведении или правке процедуры Connect на бэкенде: готовый класс с полем метода и обработчиком, зависимости конструктором, имена файла и класса. Доступ к процедуре описывает правило доступа того дерева, где оно есть.
+description: Pattern of rule typescript-conventions. Load when creating or editing a Connect procedure on the backend — the ready-made class with the method field and the handler, dependencies through the constructor, file and class names. Access to a procedure is described by the access rule of the tree.
 ---
 
 # Процедура Connect

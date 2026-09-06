@@ -2,9 +2,9 @@
 name: dependencies
 kind: rule
 law: delivery
-description: Правило под «Закон о поставке». Брать при правке package.json, снимка дерева зависимостей и настроек рабочей области, а также при обновлении любого пакета. Называет точный номер версии вместо диапазона и выдержку новой версии. Паттерн dependencies-upgrade.
+description: Rule under the delivery law. Load when editing package.json, the lockfile and the workspace settings, and when upgrading any package. Names the exact version number instead of a range and the waiting period for a new version. Pattern dependencies-upgrade.
 ---
-<!-- rt-kit v0.25.0 · rules/dependencies.md · 52a90eb6d988 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/dependencies.md · 6605b66cef25 · правится надстройкой, не здесь -->
 
 # Зависимости — как это устроено здесь
 

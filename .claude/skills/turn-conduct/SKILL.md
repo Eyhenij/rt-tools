@@ -2,9 +2,9 @@
 name: turn-conduct
 kind: rule
 law: work-conduct
-description: Правило под «Закон о ведении работы» — про один ход. Брать, когда ход заканчивают: чем он кончается, что говорится владельцу о чужом шаге, чем подтверждается утверждение о дереве, что стерегут стражи. Паттерн task-flow-handoff. Ход работы целиком — правило task-flow.
+description: Rule under the work-conduct law — about one turn. Load when a turn is being ended — what it ends with, what the owner is told about a step that is theirs, what backs a statement about the tree, what the guards watch. Pattern task-flow-handoff. The whole course of work — rule task-flow.
 ---
-<!-- rt-kit v0.25.0 · rules/turn-conduct.md · c7963e36c5ab · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/turn-conduct.md · f6b04817fd28 · правится надстройкой, не здесь -->
 
 # Ход захода — как это устроено здесь
 

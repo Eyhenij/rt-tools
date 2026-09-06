@@ -2,9 +2,9 @@
 name: browser-verification
 kind: rule
 law: verifiability
-description: Правило под «Закон о проверяемости». Брать при любой проверке через браузер и при запросах к дев-серверу. Называет, где подняты приложения дерева, чему на дев-сервере верить нельзя и чем измерять вместо взгляда. Паттерны: browser-verification-stand, -measure.
+description: Rule under the verifiability law. Load for any check through the browser and for requests to the dev server. Names where the tree's applications run, what on the dev server cannot be trusted and what to measure instead of looking. Patterns browser-verification-stand, -measure.
 ---
-<!-- rt-kit v0.25.0 · rules/browser-verification.md · 48dbff7d7349 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/browser-verification.md · 24f8970a8263 · правится надстройкой, не здесь -->
 
 # Проверка работающего приложения — как это устроено здесь
 

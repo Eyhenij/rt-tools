@@ -1,8 +1,8 @@
 ---
 name: agent-kit
-description: Переносимый слой правил агента — законы, правила, хуки и проверки, которые везёт пакет, а дерево настраивает надстройками. Брать, когда правится файл с шапкой rt-kit, обновляется пакет или отказывает сверка раскладки. Форма нового скила — write-a-skill.
+description: The portable rules layer of the agent — laws, rules, hooks and checks shipped by the package and adjusted by the tree through overrides. Load when a file with the rt-kit header is edited, the package is upgraded or the layout audit refuses. The shape of a new skill — write-a-skill.
 ---
-<!-- rt-kit v0.25.0 · skills/agent-kit.md · 822746fef718 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · skills/agent-kit.md · 2c95c81d8405 · правится надстройкой, не здесь -->
 
 # Переносимый слой правил
 

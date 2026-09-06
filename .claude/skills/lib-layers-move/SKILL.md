@@ -2,9 +2,9 @@
 name: lib-layers-move
 kind: pattern
 rule: lib-layers
-description: Паттерн правила lib-layers. Брать при переносе кода или символа между либами — с чего начинать, в каком порядке двигать домены, что делать с границами, импортами и README обеих либ, и чем проверять. Заведение и удаление самой либы — паттерн lib-layers-new.
+description: Pattern of rule lib-layers. Load when moving code or a symbol between libs — where to start, in which order to move domains, what to do with boundaries, imports and the README of both libs, and what to check with. Creating and removing a lib itself — pattern lib-layers-new.
 ---
-<!-- rt-kit v0.25.0 · patterns/lib-layers-move.md · 43d8ac2150ca · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/lib-layers-move.md · 7c4018fe21dd · правится надстройкой, не здесь -->
 
 # Перенести код между либами
 

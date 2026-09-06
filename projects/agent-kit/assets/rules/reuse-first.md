@@ -2,7 +2,7 @@
 name: reuse-first
 kind: rule
 law: reuse-first
-description: Правило под «Закон о единообразии приложения». Брать перед заведением любого нового экрана, компонента, поля, стора, сервиса, маппера или процедуры: на что опираться и по каким признакам видно, что готовое обошли. Паттерн reuse-first-extend.
+description: Rule under the reuse-first law. Load before creating any new screen, component, field, store, service, mapper or procedure — what to build on, and by which signs it is visible that something ready-made was bypassed. Pattern reuse-first-extend.
 ---
 
 # Единообразие — как это устроено здесь

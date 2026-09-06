@@ -2,7 +2,7 @@
 name: testing-e2e
 kind: pattern
 rule: testing
-description: Паттерн правила testing. Брать при правке и прогоне сквозных спек в apps/site-e2e и apps/admin-e2e — что закрывается сквозной спекой, готовые команды прогона, стенд из прод-сборки под настоящим nginx, выключатели спек. Не брать для юнитов — это паттерн testing-unit.
+description: Pattern of rule testing. Load when editing and running end-to-end tests in apps/site-e2e and apps/admin-e2e — what an end-to-end test closes, ready-made run commands, a stand from the production build behind real nginx, test switches. Not for unit tests — that is pattern testing-unit.
 ---
 
 # Сквозные спеки

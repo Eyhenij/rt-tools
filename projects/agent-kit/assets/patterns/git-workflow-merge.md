@@ -2,7 +2,7 @@
 name: git-workflow-merge
 kind: pattern
 rule: git-workflow
-description: Паттерн правила git-workflow. Брать, когда главная ветка вливается в ветку задачи и разрешается конфликт: порядок мержа, разбор по роду файла, сверка дописанного с очередью работ, перечитывание тела открытой заявки. Заведение ветки и коммит — паттерн git-workflow-commit.
+description: Pattern of rule git-workflow. Load when the main branch is merged into a task branch and a conflict is resolved — the merge order, handling by file kind, checking what was appended against the work queue, re-reading the body of the open PR. Branch and commit — pattern git-workflow-commit.
 ---
 
 # Мерж главной ветки в ветку задачи

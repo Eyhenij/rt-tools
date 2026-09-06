@@ -1,6 +1,6 @@
 ---
 name: write-a-skill
-description: Заведение нового скила — того, у которого нет закона над собой: витрина, генератор, чужой сервис, приём работы этого дерева. Брать, когда просят завести, написать или переписать скил. Форма правила и паттерна сюда не входит — это паттерн spec-driven-rule.
+description: Creating a new skill — one with no law above it — a showcase, a generator, a third-party service, a working technique of this tree. Load when asked to create, write or rewrite a skill. The shape of a rule and a pattern is not here — that is pattern spec-driven-rule.
 ---
 
 # Как заводится скил

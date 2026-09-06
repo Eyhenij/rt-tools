@@ -2,9 +2,9 @@
 name: doc-style-write
 kind: pattern
 rule: doc-style
-description: Паттерн правила doc-style. Брать при написании любой прозы проекта — правил, спеков, README, комментариев в коде, тел коммитов, описаний PR. Примеры «так» и «не так» на каждую договорённость о формулировке. Не брать для устройства спека — это правило spec-driven.
+description: Pattern of rule doc-style. Load when writing any project prose — rules, specs, README, code comments, commit bodies, PR descriptions. Samples of "so" and "not so" for each wording convention. Not for the structure of a spec — that is rule spec-driven.
 ---
-<!-- rt-kit v0.25.0 · patterns/doc-style-write.md · 1bfb3d30e53b · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/doc-style-write.md · 454af6bd0c20 · правится надстройкой, не здесь -->
 
 # Как формулировать
 

@@ -2,9 +2,9 @@
 name: platform-access-di
 kind: pattern
 rule: platform-access
-description: Паттерн правила platform-access. Брать, когда в код заходит окно, документ или проверка среды — готовые инжекты токенов, приведение к Window & typeof globalThis, окно параметром в чистой функции, инициализация DOM после первой отрисовки. Не брать под libs/api и apps/api.
+description: Pattern of rule platform-access. Load when the window, the document or an environment check enters the code — ready-made token injects, casting to Window & typeof globalThis, the window as a parameter of a pure function, DOM initialisation after the first render. Not under libs/api and apps/api.
 ---
-<!-- rt-kit v0.25.0 · patterns/platform-access-di.md · 7afb65b31d8a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/platform-access-di.md · 160330af89f4 · правится надстройкой, не здесь -->
 
 # Окно, документ и проверка среды
 

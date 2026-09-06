@@ -2,9 +2,9 @@
 name: admin-lists-screen
 kind: pattern
 rule: lists
-description: Паттерн правила lists. Брать при сборке или правке списочного экрана админки — готовый порядок блоков, разметка <префикс>-table, клик по строке, меню строки с колонкой действий и предикатом строки, сортируемый заголовок, слоты тулбара, тост отказа.
+description: Pattern of rule lists. Load when assembling or editing an admin list screen — the ready-made order of blocks, the <prefix>-table markup, row click, row menu with an actions column and a row predicate, sortable header, toolbar slots, failure toast.
 ---
-<!-- rt-kit v0.25.0 · patterns/admin-lists-screen.md · 5e60182faf52 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/admin-lists-screen.md · 530a83e26068 · правится надстройкой, не здесь -->
 
 # Собрать списочный экран
 
