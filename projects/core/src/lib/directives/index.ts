@@ -4,3 +4,4 @@ export * from './navigation.directive';
 export * from './tab-query-param.directive';
 export * from './scroll.directive';
 export * from './escape-key.directive';
+export * from './let.directive';
