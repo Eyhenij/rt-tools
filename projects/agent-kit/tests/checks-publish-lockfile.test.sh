@@ -90,5 +90,5 @@ printf 'name: CI\njobs:\n    build:\n        steps:\n            - run: pnpm tes
 probe 'конвейер, не поднимающий версии, не судится' '1' "$(code)"
 probe 'и сказано, что судить нечего' 'да' "$(said 'судить нечего')"
 
-printf '\nсошлось: %d, разошлось: %d\n' "$ok" "$bad"
+printf '\nпроверки: замок в конвейере публикации: %d ok, %d провалов\n' "$ok" "$bad"
 [ "$bad" -eq 0 ]

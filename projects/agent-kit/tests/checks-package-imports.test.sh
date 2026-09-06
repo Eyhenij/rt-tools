@@ -165,5 +165,5 @@ probe "SC-AK-901 — импорт в комментарии не судится"
 RT_PROJECTS_DIR="$projects" RT_PUBLISHED_DIR="$published" node "$check" --package @rt-tools/none > /dev/null 2>&1
 probe "SC-AK-901 — неизвестный пакет отбивается" "$?" 1
 
-printf 'проверка импортов из соседей: сошлось: %s, разошлось: %s\n' "$ok" "$bad"
+printf 'проверка импортов из соседей: %s ok, %s провалов\n' "$ok" "$bad"
 [ "$bad" -eq 0 ]
