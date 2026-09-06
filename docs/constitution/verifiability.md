@@ -1,153 +1,161 @@
-<!-- rt-kit v0.25.0 · laws/verifiability.md · 7c77088085b2 · правится надстройкой, не здесь -->
-# Закон о проверяемости
+<!-- rt-kit v0.25.0 · laws/verifiability.md · dbc48612e558 · правится надстройкой, не здесь -->
+# Law on verifiability
 
-Что считается подтверждением того, что работа сделана. Закон нужен потому, что пересказ
-выглядит так же уверенно, как проверенное утверждение, и отличить их потом нечем: код,
-который «должен работать», и код, который проверили, в истории выглядят одинаково.
+What counts as confirmation that work is done. The law is needed because a retelling looks as
+confident as a verified statement, and afterwards there is nothing to tell them apart with: code
+that "should work" and code that was checked look the same in the history.
 
-## Статьи
+## Articles
 
-- **Тест пишется до кода и до правки падает.** Написанный после, он проверяет не обещание, а то,
-  что получилось: автор читает свой же код и подгоняет ожидание под него, поэтому такой тест
-  зелен с первого прогона и не ловит ничего. Падение до правки — единственное доказательство, что
-  тест смотрит туда, куда надо; тест, ни разу не показанный красным, покрытием не считается.
-- **Правка, которую нечем показать красным, называет это словом и говорит, чем закрыта.** Так
-  бывает: оформление, которого не видит спека, конфигурация, чужая служба. Молчаливый пропуск шага
-  выглядит в истории так же, как пройденный, и отличить их потом нечем.
-- **Обещанное поведение названо сценарием, а сценарий назван в тесте, который его проверяет.**
-  Иначе связь между обещанием и проверкой держится только на памяти автора.
-- **Сценарий без теста помечен как непокрытый и виден в сводке.** Молчаливый пропуск выглядит так
-  же, как покрытый сценарий, и долг перестаёт быть заметным.
-- **Тест, проверяющий часть обещанного, считается долгом, а не покрытием.** Иначе сводка
-  показывает выполненным то, что выполнено наполовину.
-- **Обещание, данное пользователю, закрывается тестом, который идёт его путём.** Тот же расчёт,
-  проверенный мимо экрана, верен — и обещания не закрывает: между верным решением и тем, что
-  человек его видит, лежит всё, чего проверка не касалась.
-- **Тест, выключенный признаком окружения, покрытием не считается.** В обычном прогоне он не
-  исполняется ни разу, а в сводке выглядит так же, как исполненный.
-- **Тест, снимающий себя по тому, что застал на экране, покрытием не считается.** Набор, идущий
-  одной сессией, несёт состояние из теста в тест, и проверка, начинающаяся с «нужного на экране
-  нет — пропускаю», снимает себя от чужой правки, а не от своего окружения. В сводке это одна
-  строка про пропуск, а стоит за ней целая возможность.
-- **Тест приводит экран в нужное ему состояние сам и возвращает общее состояние таким, каким
-  застал.** Иначе снявшийся тест держится ровно до следующей правки соседа, а прогон называет
-  ноль падений и в тот день, когда проверка не исполнялась ни разу.
-- **Проговорённый список проверок проверкой не бывает.** Он называет замысел, а не то, что
-  ушло в команду, и оба текста пишутся одним ходом, не сверяясь друг с другом: список, названный
-  пункт за пунктом, от короткого «я проверил» отличается только длиной. Проверка — чтение
-  полученного: вывода команды, отданного текста, состояния после вызова.
-- **Упоминание в тесте сценария, которого нет, — отказ.** Так ловится переименованный или
-  выкинутый сценарий: без этого он пропадает молча.
-- **Работающее приложение проверяется там, где его видит пользователь.** Отладочный режим ведёт
-  себя иначе рабочего, и проверка в нём подтверждает не то, что будет у пользователя.
-- **Перед отправкой правка проверяется тем же набором, что и конвейер, и теми же командами.**
-  Набор, собранный по изменённым файлам, пропускает то, до чего правка дошла связями: проверка
-  зелёная, а конвейер красный. Что проверять, считает инструмент от той же базы, а не память
-  автора.
-- **Проверка признака окружения относится только к тому пути запуска, на котором она сделана.**
-  Пути, которыми одно и то же приложение поднимается, задают признаки по-разному, и подтверждённое
-  на одном из них на остальных неверно — а выглядит проверенным целиком.
-- **Разметка проверяется замером, а не взглядом.** На глаз не отличить отступ от поля и
-  выравнивание от совпадения, и расхождение находится уже после выкатки.
-- **Успешный ответ команды означает, что она отработала, а не что нужное состояние наступило.**
-  Часть запросов выполняется наполовину, и об отклонённой части в ответе ничего нет: по коду
-  возврата такой вызов не отличить от исполненного. Поэтому результат читают отдельным запросом, и
-  в PR идёт то, что прочитали, а не то, что заказывали.
-- **Служба считается поднятой, когда она выполнила задание, а не когда сообщила о готовности.**
-  Сообщение о готовности говорит лишь, что служба себя объявила: та, которой не досталось ни
-  одного задания, выглядит в нём точно так же, как работающая. Проверяются обе стороны связи — что
-  заказчик выбирает именно её и что задание через неё прошло.
-- **У обмена спрашивают обе стороны, и сторона, которой нет, называется прямо.** Односторонний
-  обмен выглядит рабочим с обеих сторон: отправляющая получает успех на каждый вызов, а того, что
-  прочитать результат нечем, не видно ниоткуда — молчание об отсутствующей стороне неотличимо от
-  работающего обмена. Поэтому у обмена спрашивают не «прошёл ли вызов», а «читает ли кто-нибудь
-  вторую сторону», и ответ «нечем» записывается словом, а не остаётся пробелом.
-- **Значение, объявленное одной стороной обмена, второй не пересчитывается, а берётся у первой.**
-  Две копии одного счёта расходятся молча, и обе стороны при этом отвечают успехом: одна шлёт под
-  одним значением, другая ищет под другим, и не находит ничего ни разу. Что именно объявлено —
-  признак, форма записи, способ счёта ключа — берётся у объявившей стороны целиком, а не
-  повторяется по её описанию.
-- **Причина отказа, на которой строится решение, подтверждается измерением, а не правдоподобием.**
-  Объяснение, пришедшее первым, объясняет наблюдаемое не хуже верного: свойство среды и
-  собственный промах выглядят в отказе одинаково, и разводит их только замер, поставленный так,
-  чтобы одно из двух не прошло. Решение, выведенное из неподтверждённой причины, лечит не то — и
-  стоит отката всей работы, а не одной правки.
-- **Если инструмент проверки запрещает приём, которым здесь пользуются постоянно, его правило
-  выключают в настройке инструмента, а не обходят в каждом месте.** Обход приходится повторять
-  столько раз, сколько таких мест, и ни в одном из них не написано, зачем он: со стороны это
-  выглядит ошибкой автора, а не решением.
-- **Красная проверка означает неверный код, а не неверную проверку.** Место, выведенное из-под
-  проверки затем, чтобы она замолчала, чинит показание, а не то, на что она указала: код остаётся
-  прежним, а сигнала о нём больше нет ни у кого. Список известного накоплен к дню заведения
-  проверки и только сокращается; несогласие с самой проверкой — вопрос к владельцу, а не строка в
-  списке.
-- **Польза правила подтверждается наблюдением за тем, как им пользуются, а не мнением о нём.**
-  Правило, которого не открыли ни разу, и правило, на котором держится половина работы, в тексте
-  выглядят одинаково — и правится первым обычно то, о чём вспомнили, а не то, что мешает.
-  Наблюдение ведётся там же, где идёт работа, и переживает отдельный заход: запись, которая
-  умирает вместе с сессией, отвечает только на вопрос «что было минуту назад».
-- **Наблюдение за работой не выносит наружу ничего, кроме того, что общее у всех.** Имя правила,
-  род события и версия одинаковы везде, где стоит слой правил; путь, домен и имя дерева
-  принадлежат одному дереву и в чужом месте не значат ничего, кроме утечки. Держится это проверкой
-  на выносящей стороне, а не памятью того, кто пишет.
-- **Проверка, которая сама сломалась, работу не останавливает.** Отказ инструмента не считается
-  найденным нарушением, и остановленная им работа стоит, пока его не починят. Выход один, и он
-  назван в самом отказе: исполнитель разбирает отказы поимённо, показывает владельцу разбор —
-  сколько строк, какого рода, чем доказана их ложность — и чинит саму проверку. Список известного
-  для этого не используется: он хранит принятое, а не результаты сломанной проверки.
-- **Решение, зависящее от текущего момента, получает момент снаружи.** Иначе проверить его можно
-  только подкруткой часов, а подкрученные часы действуют и на всё, что оказалось рядом: проверка
-  начинает зависеть от того, что к ней отношения не имеет.
-- **Признак проверки выбирается по вопросу, на который отвечают, а не по тому, что задела
-  правка.** Признак, снятый с предмета правки, отвечает про неё же: правка собирала адрес — и
-  наличие адреса в отданной странице подтверждает, что приложение его собрало, а не что по нему
-  что-то приедет. Спрашивают при этом «показывается ли», и разницы между двумя ответами не видно
-  ни в одном выводе: оба выглядят как «проверено». Признак поэтому называется вместе с вопросом,
-  и первым проверяется, что он на этот вопрос отвечает.
-- **Чужой отказ называет своё состояние, а не причину на своей стороне.** Ответ внешней службы
-  говорит, чем кончился запрос у неё; что лежит в настройке, которую она читала, он не говорит
-  никогда — и достроенное из него утверждение выглядит выводом из наблюдения, которого не было.
-  Значение, о котором идёт речь, читается там, где оно лежит, а решение, выведенное из
-  непроверенной причины, наружу не выносится вовсе: оно просит чинить не то.
-- **Про прошлое поведение отвечает код той версии, о которой спрашивают.** Тело правки говорит,
-  что она сменила, и молчит о том, что было верно до неё: условие, в которое дописано ещё одно
-  обязательное значение, гасит показанное раньше — и видно это только сравнением с версией до
-  правки, а не чтением самой правки. Слово того, кто видел прежнее поведение своими глазами, —
-  показание: расхождение между ним и текстом в истории разбирается чтением кода на его стороне
-  расхождения.
-- **Проверка, снятая с набора ради того, чтобы прогон прошёл, работу не подтверждает.** Набор
-  собирается умолчанием и надстройкой дерева, и выкушенная надстройкой проверка ничем не отличима
-  от той, которой в дереве нет вовсе: прогон зелен потому, что её никто не звал. Соседняя статья
-  судит место, выведенное из-под проверки, — здесь выведено не место, а вся она, и следа в коде
-  не остаётся никакого. Расхождение закрывается тем, на что проверка указала, а несогласие с ней
-  самой — вопрос к владельцу.
-- **Правка вида проверяется на каждом пороге раскладки, а не на одной ширине.** Пороги — это
-  места, где раскладка меняется, и промах живёт ровно там: по обе стороны от порога она
-  собирается по-разному, а посередине выглядит верной. Проверенная на двух крайних ширинах
-  правка отвечает только про эти две, и всё, что между ними, не видел никто. Пары вокруг порога
-  проверяются обе: одна ширина говорит лишь про ту сторону, на которую попала.
+- **A test is written before the code and fails before the change.** Written afterwards, it checks
+  not the promise but what came out: the author reads their own code and fits the expectation to it,
+  so such a test is green from the first run and catches nothing. A failure before the change is the
+  only proof that the test looks where it should; a test never once shown red does not count as
+  coverage.
+- **A change that has nothing to show red says so in words and says what closes it.** It happens:
+  styling no test sees, configuration, someone else's service. A step skipped silently looks in the
+  history the same as a step passed, and afterwards there is nothing to tell them apart with.
+- **Promised behaviour is named as a scenario, and the scenario is named in the test that checks
+  it.** Otherwise the link between the promise and the check holds only on the author's memory.
+- **A scenario without a test is marked as uncovered and is visible in the summary.** A silent skip
+  looks the same as a covered scenario, and the debt stops being noticeable.
+- **A test that checks part of what was promised counts as debt, not as coverage.** Otherwise the
+  summary shows as done what is done by half.
+- **A promise given to the user is closed by a test that follows the user's path.** The same
+  computation, checked past the screen, is correct — and does not close the promise: between a
+  correct decision and a person seeing it lies everything the check did not touch.
+- **A test switched off by an environment flag does not count as coverage.** In an ordinary run it
+  is never executed, and in the summary it looks the same as an executed one.
+- **A test that removes itself by what it found on the screen does not count as coverage.** A set
+  that runs in one session carries state from test to test. A check that begins with "what I need is
+  not on the screen — skipping" removes itself because of someone else's change, not because of its
+  own environment. In the summary this is one line about a skip, and a whole feature stands behind
+  it.
+- **A test brings the screen into the state it needs by itself, and returns the shared state as it
+  found it.** Otherwise a test that removed itself holds exactly until the neighbour's next change,
+  and the run reports zero failures on the day the check was not executed even once.
+- **A spoken list of checks is not a check.** It names the intent, not what went into the command,
+  and both texts are written in one turn without being compared to each other: a list named item by
+  item differs from a short "I checked" only in length. A check is reading what came back: the
+  output of the command, the text that was returned, the state after the call.
+- **A mention in a test of a scenario that does not exist is a failure.** This is how a renamed or
+  discarded scenario is caught: without it, it disappears silently.
+- **A running application is checked where the user sees it.** The debug mode behaves differently
+  from the production one, and a check in it confirms not what the user will get.
+- **Before the push, the change is checked with the same set as the pipeline, and with the same
+  commands.** A set assembled from the changed files skips what the change reached through
+  dependencies: the check is green and the pipeline is red. What to check is computed by the tool
+  from the same base, not by the author's memory.
+- **A check of an environment flag applies only to the launch path on which it was made.** The paths
+  by which the same application is brought up set the flags differently, and what is confirmed on
+  one of them is wrong on the rest — while it looks checked as a whole.
+- **Layout is checked by measurement, not by eye.** By eye, padding cannot be told from margin, nor
+  alignment from coincidence, and the discrepancy is found only after the rollout.
+- **A successful reply from a command means it ran, not that the needed state has arrived.** Some
+  requests are carried out by half, and the reply says nothing about the rejected part: by the
+  return code such a call cannot be told from a completed one. So the result is read by a separate
+  request, and what goes into the PR is what was read, not what was ordered.
+- **A service counts as up when it has completed a piece of work, not when it reported readiness.** A
+  readiness message says only that the service announced itself: one that got no work at all looks
+  in it exactly like a working one. Both sides of the link are checked — that the client picks this
+  very service and that a piece of work went through it.
+- **Both sides of an exchange are asked, and a side that does not exist is named plainly.** A
+  one-sided exchange looks working from both sides: the sending side gets success on every call, and
+  that there is nothing to read the result with is visible from nowhere. Silence about the missing
+  side is indistinguishable from a working exchange. So the exchange is asked not "did the call go
+  through" but "does anyone read the second side", and the answer "nothing does" is written in
+  words, not left as a blank.
+- **A value declared by one side of an exchange is not recomputed by the other but taken from the
+  first.** Two copies of one computation drift apart silently, and both sides reply with success
+  meanwhile: one sends under one value, the other looks under another and never finds anything.
+  Whatever is declared — a flag, a record format, a way of computing a key — is taken from the
+  declaring side whole, not repeated from its description.
+- **The cause of a failure on which a decision is built is confirmed by measurement, not by
+  plausibility.** The explanation that came first explains the observed no worse than the correct
+  one. A property of the environment and one's own slip look the same in a failure, and only a
+  measurement set up so that one of the two cannot pass tells them apart. A decision derived from an
+  unconfirmed cause treats the wrong thing — and costs a rollback of the whole work, not of one
+  change.
+- **If a checking tool forbids a technique used here all the time, its rule is switched off in the
+  tool's settings, not bypassed in every place.** The bypass has to be repeated as many times as
+  there are such places, and none of them says why: from outside it looks like the author's mistake,
+  not a decision.
+- **A red check means wrong code, not a wrong check.** A place taken out from under the check so
+  that it goes quiet fixes the reading, not what the check pointed at: the code stays the same, and
+  nobody has a signal about it any more. The known list is accumulated by the day the check is
+  created and only shrinks; disagreement with the check itself is a question to the owner, not a
+  line in the list.
+- **The usefulness of a rule is confirmed by observing how it is used, not by an opinion about it.**
+  A rule that was never opened and a rule half the work rests on look the same in the text — and
+  what gets edited first is usually what was remembered, not what gets in the way. Observation is
+  kept where the work goes on, and outlives a single session: a record that dies with the session
+  answers only the question "what happened a minute ago".
+- **Observation of the work takes nothing outside except what is common to all.** The name of a
+  rule, the kind of an event and the version are the same everywhere the rules layer stands. A path,
+  a domain and the name of a tree belong to one tree and mean nothing elsewhere except a leak. This
+  is held by a check on the exporting side, not by the memory of the one who writes.
+- **A check that broke itself does not stop the work.** A tool failure does not count as a found
+  violation, and work stopped by it stands until the tool is fixed. There is one way out, and it is
+  named in the failure itself. The executor goes through the failures one by one, shows the owner
+  the analysis — how many lines, of what kind, how their falsity is proven — and fixes the check
+  itself. The known list is not used for this: it holds what was accepted, not the results of a
+  broken check.
+- **A decision that depends on the current moment gets the moment from outside.** Otherwise it can
+  be checked only by turning the clock, and a turned clock acts on everything that happens to be
+  nearby: the check starts depending on what has no relation to it.
+- **The sign for a check is chosen by the question being answered, not by what the change touched.**
+  A sign taken from the subject of the change answers about that subject. The change assembled an
+  address — and the presence of the address in the returned page confirms that the application
+  assembled it, not that anything will arrive by it. The question asked meanwhile is "is it shown",
+  and the difference between the two answers is visible in no output: both look like "checked". So
+  the sign is named together with the question, and the first thing checked is that it answers that
+  question.
+- **Someone else's failure names its own state, not a cause on our side.** The reply of an external
+  service says how the request ended there; what lies in the setting it read, it never says. A
+  statement built up from it looks like a conclusion from an observation that did not happen. The
+  value in question is read where it lies, and a decision derived from an unchecked cause is not
+  taken outside at all: it asks to fix the wrong thing.
+- **Past behaviour is answered by the code of the version being asked about.** The body of a change
+  says what it changed, and is silent about what was true before it. A condition with one more
+  mandatory value added to it hides what was shown before — and this is visible only by comparing
+  with the version before the change, not by reading the change itself. The word of someone who saw
+  the previous behaviour with their own eyes is testimony: a discrepancy between it and the text in
+  the history is analysed by reading the code on their side of the discrepancy.
+- **A check removed from the set so that the run passes does not confirm the work.** The set is
+  assembled from the default and the tree's override, and a check bitten out by the override is
+  indistinguishable from one the tree never had at all: the run is green because nobody called it.
+  The neighbouring article judges a place taken out from under the check — here it is not a place
+  that is taken out but the whole check, and no trace remains in the code. The discrepancy is closed
+  by what the check pointed at, and disagreement with the check itself is a question to the owner.
+- **A change to the look is checked at every layout threshold, not at one width.** Thresholds are
+  the places where the layout changes, and a slip lives exactly there: on either side of the
+  threshold the layout is assembled differently, and in the middle it looks correct. A change
+  checked at the two extreme widths answers only about those two, and nobody has seen everything in
+  between. Both of the pair around a threshold are checked: one width speaks only for the side it
+  landed on.
 
-## Демонстрация видимого состояния
+## Demonstration of a visible state
 
-Тест доказывает, что состояние наступило, и молчит о том, как оно выглядит. Класс в разметке
-сходится, а цвет на цвете не читается, отступ съеден и подпись обрезана — проверка при этом
-зелёная. Поэтому у видимого состояния своя форма подтверждения, и она не заменяется тестом.
+A test proves that a state has arrived and says nothing about how it looks. The class in the markup
+matches, while colour on colour is unreadable, the padding is eaten and the caption is cut — and
+the check is green. So a visible state has its own form of confirmation, and a test does not
+replace it.
 
-- **Видимое состояние — обещанное поведение, и оно показано там, где его видно глазами.**
-  Утверждение о внешнем виде, подтверждённое только проверкой класса, подтверждено не полностью.
-- **Набор состояний компонента объявлен заранее, и непоказанное состояние из набора — отказ.**
-  Иначе «показаны все состояния» значит «показаны те, о которых вспомнили», и отличить одно от
-  другого нечем.
-- **Состояние, которое показать нельзя, помечено непоказуемым с причиной.** Молчаливый пропуск
-  выглядит так же, как показанное состояние, и долг перестаёт быть заметным.
-- **Показ не требует действий от того, кто смотрит.** Состояние, до которого надо добираться
-  переключателями, при беглом просмотре неотличимо от отсутствующего — а именно бегло смотрят
-  чаще всего.
-- **Пустой показ покрытием не считается, и молчание об этом — отказ.** Показ, в котором ничего
-  не нарисовалось, в сводке выглядит ровно как показ; сравнение с образцом этого не различает
-  вовсе, потому что у нового показа образца ещё нет, а первым снятым образцом закрепляется то,
-  что нарисовалось, — в том числе ничего.
-- **Сочетание значений показывается тогда, когда значения влияют друг на друга.** Показ всех
-  сочетаний подряд нечитаем и прячет расхождение ровно так же, как его отсутствие.
-- **Показ живёт рядом с кодом состояния и правится тем же изменением.** Разошедшийся показ
-  убедителен: он выглядит действующим описанием, и тем сильнее, чем дольше не менялся.
+- **A visible state is promised behaviour, and it is shown where the eye can see it.** A claim
+  about appearance confirmed only by a class check is confirmed incompletely.
+- **The set of a component's states is declared up front, and an unshown state from the set is a
+  failure.** Otherwise "all states are shown" means "the ones somebody remembered are shown", and
+  nothing tells the two apart.
+- **A state that cannot be shown is marked unshowable, with a reason.** A silent omission looks
+  the same as a shown state, and the debt stops being visible.
+- **A demonstration demands no action from the viewer.** A state reached through toggles is
+  indistinguishable from a missing one at a glance — and a glance is how people look most often.
+- **An empty demonstration does not count as coverage, and silence about it is a failure.** A
+  demonstration where nothing was drawn looks exactly like a demonstration in the digest. A
+  comparison with a baseline does not tell them apart at all: a new demonstration has no baseline
+  yet, and the first captured baseline fixes whatever was drawn — including nothing.
+- **A combination of values is shown when the values affect each other.** Showing every
+  combination in a row is unreadable and hides a drift exactly as its absence does.
+- **A demonstration lives next to the code of the state and is edited by the same change.** A
+  drifted demonstration is convincing: it looks like a current description, and the longer it stays
+  unchanged, the more so.

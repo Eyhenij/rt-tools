@@ -200,12 +200,16 @@ for (const domain of domains) {
 // «Открытые вопросы» отсюда сняты: проверка видела заголовок, а не вопросы под ним, и
 // пустой раздел проходил её так же, как заполненный. Закон, у которого всё решено, писал
 // эту строку ради самой строки.
-const LAW_HEADINGS = ['## Статьи'];
+//
+// У раздела два имени: английское у закона пакета, русское у закона, который дерево написало
+// раньше перевода слоя. Оба означают одно, и проверка принимает любое.
+const LAW_HEADINGS = [['## Articles', '## Статьи']];
 
 for (const file of walk(CONSTITUTION_DIR, (name) => name.endsWith('.md'))) {
     const text = read(file);
-    LAW_HEADINGS.filter((heading) => !text.split('\n').some((line) => line.trimEnd() === heading)).forEach((heading) =>
-        report(file, `нет раздела \`${heading}\``)
+    const lines = text.split('\n').map((line) => line.trimEnd());
+    LAW_HEADINGS.filter((names) => !names.some((heading) => lines.includes(heading))).forEach((names) =>
+        report(file, `нет раздела \`${names[0]}\` (либо \`${names[1]}\`)`)
     );
     if (/`[\w./-]+\.(ts|mjs|js|sh|scss|html|json|proto|conf|yml|md)[:`]/.test(text)) {
         report(file, 'закон называет файл проекта — путям и привязкам место в правиле, а не здесь');

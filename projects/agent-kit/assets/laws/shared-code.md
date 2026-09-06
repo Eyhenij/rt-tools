@@ -1,31 +1,31 @@
-# Закон об общем коде приложений
+# Law on shared code
 
-Что сайт, админка и бэкенд понимают одинаково: размер страницы, набор операторов условия,
-направление порядка, длину поля. Записанное дважды расходится по одному значению за раз, и
-каждая копия при этом сама по себе исправна — ни линт, ни сборка, ни тесты второй не видят.
+What the site, the admin panel and the backend understand the same way: page size, the set of
+condition operators, sort direction, field length. Written twice, it drifts one value at a time,
+and each copy is sound by itself — neither lint, nor the build, nor the tests see the second.
 
-Закон говорит о том, что общим быть обязано. Где такой символ лежит и кто его видит — не
-его предмет.
+The law speaks of what must be shared. Where such a symbol lies and who sees it is not its
+subject.
 
-## Статьи
+## Articles
 
-- **Число-настройка объявлено один раз на все приложения.** Размер страницы жил шестью
-  объявлениями, и одно из них успело стать `25` против `20` у остальных.
-- **Набор значений, уже объявленный в общем пакете, заново не объявляется.** Оператор условия
-  и направление порядка лежали на бэкенде рукописной копией того же набора.
-- **Одно и то же значение, записанное в двух местах, считается одним понятием, как бы оно ни
-  называлось.** Совпадение имён обманчиво в обе стороны: одно имя носят разные вещи, а одно и
-  то же понятие расходится по именам — и второе прячет копию надёжнее первого.
-- **Значение из конечного набора сверяется с набором, а не приводится к типу.** Приведение
-  принимает любую строку, и порядок молча становится нечитаемым.
-- **Номер страницы меньше единицы читается как первая.** Отрицательный номер доходил до
-  переключателя страниц как есть.
-- **Значение, у которого есть общее умолчание, доводом не принимается.** Пока его можно
-  передать, каждый случай вправе назвать своё число, — так размер страницы у одного списка и
-  стал отличаться от остальных.
-- **Клиент и сервер описывают одно и то же одними моделями.** Свои понятия про то же самое
-  расходятся молча: у сервера они успели разойтись с клиентом на отрицательном номере
-  страницы.
-- **Промах в значении выборки на клиенте берёт умолчание, а на сервере становится отказом.**
-  Общим чтением это не покрывается: сервер, принявший неизвестное значение молча, отдаёт не
-  то, что просили, и об этом никто не узнаёт.
+- **A setting number is declared once for all applications.** Page size lived as six
+  declarations, and one of them had become `25` against `20` in the rest.
+- **A set of values already declared in the shared package is not declared again.** The condition
+  operator and the sort direction lay on the backend as a handwritten copy of the same set.
+- **The same value written in two places counts as one notion, whatever it is called.** Matching
+  names deceive both ways: one name is worn by different things, and one notion drifts apart by
+  name — and the second hides a copy more reliably than the first.
+- **A value from a finite set is checked against the set, not cast to the type.** A cast accepts
+  any string, and the order silently becomes unreadable.
+- **A page number below one reads as the first.** A negative number reached the page switcher as
+  is.
+- **A value that has a shared default is not accepted as an argument.** As long as it can be
+  passed, every case may name its own number — that is how page size at one list came to differ
+  from the rest.
+- **Client and server describe the same thing with the same models.** Separate notions of the
+  same thing drift silently: the server's had drifted from the client's on a negative page
+  number.
+- **A miss in a query value takes the default on the client and becomes a failure on the
+  server.** Shared parsing does not cover this: a server that silently accepted an unknown value
+  returns not what was asked, and nobody learns of it.

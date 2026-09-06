@@ -1,247 +1,253 @@
-# Закон о ведении работы
+# Law on work conduct
 
-Закон устанавливает как ведётся работа от момента постановки задачи до её закрытия. Работа
-длится дольше одной сессии и должна сохранять весь контекст и состояние при переходах из одной сессии в другую.
+The law sets how work is conducted from the moment a task is set until it is closed. Work outlasts
+one session and keeps its whole context and state when it passes to the next.
 
-## Статьи
-- **Работа не начинается раньше, чем исполнитель понял, о чём его просят.** Пробел в понимании сам
-  не закрывается: он всплывает в готовой правке и стоит переделки там, где стоил бы вопроса.
-- **Пробел закрывается вопросом владельцу, а не догадкой.** Догадка неотличима от знания: она
-  попадает в работу молча и обнаруживается только при приёмке, когда переделывать дороже всего.
-- **Работа, которая требует изменений по образцу, начинается с чтения самого образца.** Пересказ
-  образцом не считается: расхождение всплывает на приёмке целой работой, а не строкой. Читается та
-  часть образца, которую работа повторяет, и читается целиком — об устройстве чужого дерева по
-  одному его файлу не судят.
-- **Образец, указанный в ходе работы должен быть доступен каждой сессии во время работы.** Ссылка
-  на образец нужно указывать непосредственно в файле с описанием прогресса работы.
-- **Вопрос, у которого есть очевидный ответ, работу не останавливает.** Исполнитель называет
-  допущение, идёт дальше и записывает его туда же, где идёт работа. Останавливает только тот
-  пробел, при котором любая догадка делает работу опасной или бесполезной.
-- **Остановка называется первой строкой.** Сообщение, которым исполнитель останавливается,
-  начинается с того, чего он ждёт и что будет, если ответа не будет. Замеры, находки и разбор к
-  этому моменту уже записаны в ход работы — в сообщении владельцу они лишние.
-- **Владельцу не задаётся вопрос, ответ на который уже записан.** Записанное читают до разговора,
-  а не вместо ответа: вопрос о том, что уже решено, обесценивает и остальные.
-- **Вопрос владельцу задаётся после того, как ответ искали в дереве.** Что лежит в дереве,
-  исполнитель узнаёт сам: имя, путь, наличие файла и устройство репозитория он берёт командой, а
-  не у владельца.
-- **Утверждение о дереве стоит ровно столько, сколько команда, его показавшая.** Отрицание —
-  «здесь нет», «этого не заводили», «такого файла не бывает» — произносится только как вывод
-  команды. Не проверенное отрицание опаснее вопроса: вопрос владелец поправит, а факт от
-  исполнителя примет на веру, потому что тот в дерево смотрит.
-- **Пустой вывод утверждением не бывает.** Он значит либо «ноль строк», либо «спрошено не то», и
-  различает эти два только повторный вызов — без конвейера и без глушения потока ошибок. Пока
-  такой вызов не сделан, о дереве не сказано ничего, а «ничего нет» отменяет работу, которую
-  владелец велел сделать.
-- **Отрицание, полученное одним источником, отрицанием не считается.** Ответ «не найдено», отказ в
-  доступе и пустой список говорят о правах спрашивающего, а не о предмете. Сказать «этого нет»
-  можно только после второго источника — иначе исполнитель называет владельцу собственные права,
-  приняв их за устройство мира.
-- **Решение, однажды записанное, действует, пока его не отменили, и читается до того, как
-  принимается заново.** Отменённое решение следа в работе не оставляет — по результату не видно ни
-  того, что его принимали, ни того, что от него отказались. Принятое заново оно расходится с
-  прежним молча и стоит той же работы второй раз.
-- **Решение, которое переживёт задачу, записывается там, где оно переживёт.** Ход работы умирает
-  вместе с папкой задачи, а имя, адрес и выбранный способ, названные владельцем посреди серии
-  работ, нужны следующим её задачам. Не переехавшее решение живёт только в переписке своего
-  захода: следующий делает разведку честно, не находит ничего — и спрашивает владельца о том, на
-  что тот уже отвечал.
-- **Инструмент, названный в просьбе, входит в просьбу.** Замена его на свой — отступление от
-  просьбы, даже когда свой даёт тот же ответ: равноценность инструментов решает тот, кто просит.
-- **Случившаяся подмена называется в том же докладе.** Чем сделано вместо названного и почему —
-  двумя словами, рядом с ответом на просьбу. Без этой строки владелец узнаёт о подмене, повторяя
-  указание, и платит за работу дважды.
-- **Понимание записано там, где идёт работа.** Оставленное в переписке живёт у одного участника и
-  до следующего дня; работу продолжает тот, у кого этой переписки нет.
-- **Сказанное владельцем записывается его словами и задним числом не переписывается.** Пересказ
-  незаметно подгоняется под уже сделанное, и сверять результат становится не с чем.
-- **Договорённость о том, как продукт себя ведёт, записана раньше кода, который её исполняет.**
-  Записанная после, она пишется по коду и повторяет его ошибки: разойтись ей уже не с чем, а
-  значит она ничего не проверяет.
-- **Описание приведено к сделанному прежде, чем работа закрыта.** Договорённость пишется до кода и
-  описывает замысел, а к концу работы приложение отличается и от замысла тоже. Расхождение,
-  отложенное на потом, не находится: назавтра оно уже незаметно, а описание продолжают читать как
-  верное.
-- **Состояние незаконченной работы восстанавливается без участия владельца.** Иначе каждый перерыв
-  стоит ему пересказа, а очередь работ показывает начатое и не говорит, что внутри него сделано.
-- **Заход исполнителя конечен, и его конец не совпадает с концом работы.** Место, где исполнитель
-  помнит ход работы, ограничено; заполнив его, он теряет не последнее, а всё сразу. Заход,
-  доведённый до логической точки заранее, стоит одной записи; оборванный на середине — целого
-  захода на восстановление.
-- **Прерванная работа передаётся следующему заходу готовым текстом, а не пересказом владельца.**
-  Владелец знает, что работа не кончена, но не знает, где именно она стоит; пересказ он даёт по
-  своей памяти, а не по ходу работы, и следующий заход начинает с чужой картины.
-- **Переданное прошлым заходом приходит в новый заход само, а не кладётся рукой.** Передача,
-  написанная и не прочитанная, равна ненаписанной: следующий заход начинает с пустого места — с
-  того же, ради чего её и писали. Поручённое машине не забывается ночью.
-- **Порядок ведения работы приходит в заход вместе с работой, а не разыскивается им.** Заход,
-  знающий задачу и не знающий, что с ней делают дальше, первым движением читает правило целиком —
-  и тратит место, ради которого его и начали заново. Приходит короткая выжимка: состояния,
-  обязательное действие каждого и чем ход кончается. Правило она не заменяет: отвечает на «что
-  делать», а не «почему».
-- **Замысел и ход работы — разные записи.** Замысел — то, с чем сверяют результат при приёмке;
-  правленный по ходу, он перестаёт отличаться от PR, и приёмке сверять нечего.
-- **Сделанное отмечается в одном месте.** Две записи об одном разъезжаются молча, и после этого ни
-  по одной не видно, что осталось.
-- **Решение, принятое по ходу работы, записывается вместе с причиной.** Без причины оно читается
-  как случайное и отменяется следующим заходом, а отменённое возвращается третьим.
-- **Граница работы названа до её начала.** Не названная вслух граница не существует: правка
-  расползается на соседнее, и снимать её приходится вручную.
-- **Действия, которые исполнитель не делает сам, названы списком.** Всё, что уходит за пределы
-  рабочего дерева или не откатывается — запись в общий репозиторий, публикация, PR, правка общего
-  документа, — делается по слову владельца, и слово это даётся на действие, а не на работу
-  целиком. Не названная списком граница выводится из общих слов: «делай, что нужно по плану»
-  прочитывается как разрешение на всё, что в плане подразумевалось.
-- **Признак закрытия работы назван до её начала и проверяем.** «Работает» признаком не считается:
-  под ним каждый заход понимает своё, и работа закрывается тогда, когда надоела.
-- **Начатая и брошенная работа видна.** Брошенное на середине выглядит так же, как нетронутое, и
-  второй заход начинает его заново.
-- **Записи о законченной работе не лежат среди записей о текущей.** Закрытое, лежащее рядом с
-  действующим, читается как действующее — тем убедительнее, чем оно старше.
-- **Законченная работа убирает за собой до того, как войдёт в общее дерево.** Потом за оставленным
-  уже никто не следит: работа перешла к следующей задаче, а правки, которой это убрали бы заодно,
-  больше нет.
-- **Достаточность понимания судит тот, кто просил.** Машине видно наличие записи, но не то, что в
-  ней закрыты все пробелы. Признак достаточности, выведенный из объёма или числа вопросов, сам
-  становится целью — исполнитель добирает его, не приближаясь к пониманию.
-- **Незаданный вопрос замечает только тот, кто знает, чего хотел.** Вопрос, которого не задали,
-  следа не оставляет: работа выглядит понятой ровно до приёмки, и вывести отсутствие вопроса не из
-  чего.
-- **Происшествие названо признаком, а не оценкой заднего числа.** Происшествие — заход, в котором
-  исполнитель сделал не то, а слой правил этого не отбил. Дефект в коде происшествием не считается:
-  его объясняет договорённость о продукте. Признак записан один раз, а не выводится каждым заходом
-  заново — иначе его назначает тот, кому он мешает.
-- **Происшествие кончается записью, и запись делается в тот же заход.** Через день механизм
-  промаха пересказывается уже приглаженно: остаются выводы, а из выводов правило не выводится.
-  Запись называет механизм промаха по шагам, что было доступно до него, чем ловилось и что из
-  этого ушло в слой правил.
-- **Запись без правки слоя правил закрытой не считается.** Разбор, из которого не вышло ни
-  предложения, ни правки закона, правила или паттерна, — жалоба: он объясняет случившееся и ничего
-  не меняет, а значит повторится.
-- **Закрытая работа оставляет то, что узнала о правилах, там, откуда это возьмёт машина.**
-  Понимание, добытое одной работой, всего дороже соседней — и живёт оно до конца захода, если
-  осталось в разговоре. Записанное свободным пересказом переносится руками, то есть до первой
-  занятой недели.
-- **У предложенной правки правил назван адрес: сам слой правил, имена этого дерева или его
-  надстройка.** Без адреса правку кладут туда, где она видна автору, — то есть в своё дерево, — и
-  общее оседает в одном месте, оставаясь неизвестным всем остальным.
-- **Предложение, о котором владелец сказал вслух, уходит наружу в тот же ход.** Написанное и не
-  отправленное лежит в дереве неотличимо от отправленного: своей записи в слое правил у него нет,
-  и владелец читает работу сделанной, пока не спросит прямо. Слово владельца о предложении —
-  «отправь», «заведи», «напиши» — распоряжение, а не тема разговора; показ того, что уехало бы,
-  отправкой не считается и следа наружу не оставляет.
-- **Неудобство отправки — повод сказать о нём, а не повод не отправить.** Довод исполнителя против
-  уже принятого решения владельца остаётся доводом: он называется вслух, работа при этом идёт.
-  Отложить исполненное решение может только владелец; отложенное собственным доводом выглядит для
-  него сделанным, и цену этого он узнаёт последним.
-- **Работа, из которой видно серию задач, объявляется эпиком до первой из них.** Объявляется
-  дважды: карточкой в очереди работ и замыслом рядом с ней. Не объявленная серия существует только
-  в голове того, кто её задумал: следующий заход видит разрозненные задачи, порядка между ними не
-  находит и берёт ту, что ближе лежит.
-- **Замысел эпика называет разрабатываемую возможность, состав задач и их порядок.** Состав без
-  порядка порядком не считается: две задачи, у которых порядок держался пониманием, ушли в работу
-  наоборот, и вторая переделывалась под первую. Возможность, названная одним словом, через неделю
-  читается каждым по-своему.
-- **Порядок задач эпика назначается на планировании и держится до его конца.** Пересмотр по ходу —
-  решение владельца, записанное там же, где идёт работа. Порядок, назначаемый заново перед каждой
-  задачей, назначает тот, кому ближе, и эпик кончается там, где надоел.
-- **Каждая задача объявленного эпика получает свою карточку в очереди работ сразу, а не в день,
-  когда за неё берутся.** Замысел эпика держит порядок для того, кто ведёт работу; очередь работ —
-  для того, кто на неё смотрит, и эпик с одной карточкой из десяти выглядит там работой на один
-  шаг. Номер карточки встаёт в замысел той же правкой: иначе на «взять следующую» замысел
-  отвечает названием, и карточку заводят заново с другим номером.
-- **Заход исполнителя не кончается вместе с задачей.** Конец задачи — не признак остановки:
-  остановиться позволяет только предел заполнения окна. Заход, закрытый на готовой задаче,
-  оставляет владельцу пустое место и стоит целого захода на возвращение к тому, что и так было под
-  рукой.
-- **Предел заполнения окна останавливает заход только там, где инструмент не сжимает контекст
-  сам.** Где сжатие объявлено и приходит раньше предела, окно — не конец захода, а его
-  продолжение: контекст сжимается, записанное состояние работы возвращается в него, и работа идёт
-  дальше тем же заходом. Останавливаться там незачем, а остановка стоит того же, что и всякая
-  другая: владелец возвращает исполнителя в работу руками.
-- **Порог, на котором заход останавливают, стоит позже порога, на котором его продолжают.** Два
-  порога на одном числе — это не согласие, а гонка, и выигрывает её тот, кто ближе к действию:
-  остановка приходит на вызове, а сжатие — между ходами. Расстояние между ними объявляется, а не
-  выводится разницей: сжатие идёт не мгновенно, и порог, отстоящий на волос, требование «раньше»
-  удовлетворяет, а работу не спасает.
-- **Переход из состояния в состояние исполнителя не останавливает.** Обязательное действие сделано
-  — следующее начинается тем же движением, без отчёта владельцу и без его слова. Граница между
-  состояниями выглядит законченным куском, и отчёт встаёт на место следующего действия: владелец
-  читает его как сделанную работу, а работа стоит.
-- **Текст, ведущий состояние работы, называет, что делается сразу за ним.** Дочитанный до
-  последнего приёма, он кончается ничем: следующего движения в нём нет, и исполнитель выводит его
-  из пустоты — то есть останавливается. Названное движение стоит там же, где приёмы, и своими
-  словами: одинаковая на все состояния строка перестаёт замечаться раньше, чем понадобится.
-- **Работа, отданная на разбор, освобождает исполнителя, а не останавливает его.** Отданное на
-  разбор ждёт владельца, а не машину: следующая задача эпика берётся тем же движением, которым
-  предыдущая ушла на разбор.
-- **Ожидание машины работой не занимают.** Проверка на стороне не идёт быстрее оттого, что на неё
-  смотрят. Пока она идёт, берётся следующая задача, а к проверке возвращаются тем ходом, которым
-  читают её конец. Заход, проведённый в ожидании, стоит столько же, сколько заход со сделанной
-  задачей, и не даёт ничего.
-- **Ожидание, которое всё-таки останавливает работу, называется владельцу отдельно и прямо.** Иногда
-  дальше не пройти: следующая задача стоит на неразобранной, или правка ждёт
-  решения, которого нет ни у кого, кроме владельца. Тогда исполнитель говорит три вещи — что
-  стоит, чего ждёт и что владелец может с этим сделать. Сказанное вперемешку с отчётом не
-  читается: остановка называется отдельно.
-- **Разбор закрытой работы идёт своим ходом и работу не задерживает.** Он видит то, что видно
-  только заходу, который работу вёл, — пропустить его нельзя; держать ради него следующую задачу
-  незачем. Находки записываются туда, где их найдут после слияния, и показываются владельцу
-  целиком: что станет правкой, решает он.
-- **Отдав работу на разбор, исполнитель называет, чего ждёт и что сделает следом.** Владелец видит
-  не голову исполнителя, а страницу работы: зелёная проверка и доступное действие читаются как
-  «всё кончено». Названное вслух ожидание — единственное, что отличает «жду проверок, потом уберу
-  за собой» от «готово, забирай». Не названное, оно не существует, и владелец действует по тому,
-  что видит.
-- **Работа не считается готовой, пока исполнитель не сказал этого прямо.** Готовность объявляет
-  тот, кто работу вёл, — отдельной просьбой и про эту работу. Зелёные проверки — не
-  готовность: они говорят, что не сломано, и молчат о том, осталось ли что-то сделать. Молчание
-  исполнителя владелец читает как готовность, и между двумя прочтениями теряется всё, что стояло
-  после разбора.
-- **Уборка за работой идёт до того, как о готовности сказано.** Всё, что работа обязана убрать за
-  собой, убирается раньше просьбы включить её в общее дерево, а не после согласия. После включения
-  убирать уже некому: работа перешла к следующей задаче.
-- **Постоянное указание среды исполнения слабее правила дерева.** Среда описывает своё
-  умолчание и о дереве не знает; дерево вправе его отменить и отменяет молча — тем, что говорит
-  иначе. Расхождение разрешается в пользу дерева, а не того из двух текстов, который строже
-  сформулирован или ближе стоит к делу. Опознаётся оно чтением обоих: сличить указание среды с
-  правилом машине нечем.
+## Articles
 
-- **Пока эпик не кончился, следующая работа не выбирается, а берётся.** Выбор, предложенный
-  владельцу при назначенном порядке, — это просьба назначить его заново: он уже назначен, и
-  предлагать его повторно значит отменять собственное планирование.
-- **Перечень работ, разрешённых вне эпика, повторяет слово владельца, а не заменяет его.** Номер
-  попадает туда после того, как владелец назвал эту работу, и только для того, чтобы гард её
-  пропускал. Исполнитель, вписавший номер сам, разрешил работу себе сам, и по записи это потом
-  не отличить от разрешения владельца.
-- **Назначение эпика принадлежит рабочему дереву, а не ветке, и объявляется в главной ветке
-  прежде, чем под новый эпик заводится первая задача.** Запись о назначении лежит в файле, а файл
-  принадлежит ветке, где его правили: записанная в ветку первой задачи, она действует только в
-  этой ветке. При первом переключении ветки исполнитель работает по новому порядку, а гард читает
-  прежний, и отказ приходит в конце хода, когда работа уже сделана и отдана.
-- **Берётся следующая задача из замысла эпика, а не из списка очереди работ.** Список отсортирован
-  номером и показывает свежие задачи сверху; порядок эпика он не держит и держать не может — там
-  лежат задачи всех эпиков сразу. Замысел эпика открывается перед взятием и отвечает за один
-  вызов: какая задача следующая и не ушла ли она в соседний эпик.
-- **Кончившийся эпик называется владельцу тем же ходом, которым берётся работа вне его.** Пока
-  эпик идёт, следующая работа берётся молча; кончился — и следующий шаг перестал быть очевидным
-  для обоих. Исполнитель, взявший работу вне кончившегося эпика и промолчавший, оставляет
-  владельца в уверенности, что эпик продолжается.
-- **Эпик не закрывается, пока хоть один признак его конца подтверждён только чтением.** Признак,
-  проверяемый глазами, закрывает работу после того, как его проверили командой или замером с их
-  выводом. Пометка «подтверждается живым замером» — обещание проверить, а не проверка. Закрытый по
-  двум признакам из трёх, эпик уносит третий в описание прошлого, где его никто не ищет.
-- **Замеченное по ходу и к эпику не относящееся становится задачей в очереди работ, а не работой
-  сейчас.** Отвлечение выглядит дешёвым ровно до того, как окажется, что вместе с ним уехала
-  правка соседнего домена: эпик при этом стоит, а откатывать приходится обе работы.
-- **Эпик кончается, когда кончились его задачи, а не когда стало непонятно, что дальше.**
-  Непонятно бывает от того, что замысел не открыли: он лежит и держит решения, которых в коде не
-  видно.
-- **Положение эпика показывается владельцу таблицей — в передаче и при остановке за его
-  решением.** В эти два момента владелец смотрит на работу снаружи: забирает её в новый заход или
-  решает, куда её вести. Замысел с порядком задач при этом не открывают, а по передаче и вопросу
-  не видно ни сделанного, ни оставшегося.
-- **Таблица показывает все задачи эпика разом — закрытые, текущую и назначенные.** Строка на
-  задачу: место по порядку, задача, состояние; текущая отличается от остальных на вид. Порядок у
-  закрытых фактический, у будущих назначенный, и расхождение между ними тоже утверждение. Перечень
-  одних оставшихся не показывает, чего работа стоила; одних закрытых — сколько ещё впереди.
+- **Work does not start before the executor has understood what is being asked.** A gap in
+  understanding does not close by itself: it surfaces in the finished change and costs a rework
+  where a question would have done.
+- **A gap is closed by a question to the owner, not by a guess.** A guess cannot be told from
+  knowledge: it enters the work silently and is found only at acceptance, where rework costs most.
+- **Work that requires changes modelled on a sample starts with reading the sample itself.** A
+  retelling is not the sample: the divergence surfaces at acceptance as a whole piece of work, not a
+  line. The part the work repeats is read in full — another tree's structure is not judged by one
+  file.
+- **A sample named in the progress must be reachable by every session while the work goes on.** The
+  link is written directly in the progress.
+- **A question with an obvious answer does not stop the work.** The executor names the assumption,
+  moves on and writes it where the work goes on. Only a gap where any guess makes the work dangerous
+  or useless stops it.
+- **A stop is named in the first line.** The stopping message begins with what is awaited and what
+  happens if no answer comes. Measurements, findings and analysis are already in the progress by
+  then and are surplus in the message.
+- **The owner is not asked a question whose answer is already written down.** The written is read
+  before the conversation, not instead of the answer: a question about what is decided devalues the
+  others too.
+- **A question to the owner is asked after the answer was searched for in the tree.** What the tree
+  holds, the executor finds out alone: a name, a path, whether a file exists, how the repository is
+  arranged — from a command, not from the owner.
+- **A statement about the tree is worth exactly as much as the command that showed it.** A negation
+  — "not here", "this was never set up", "no such file exists" — is spoken only as command output.
+  An unverified negation is more dangerous than a question: the owner corrects a question but takes
+  a fact on trust, because the executor is looking at the tree.
+- **Empty output is never a statement.** It means "zero lines" or "the wrong thing was asked", and
+  only a repeated call tells the two apart — without a pipe and without silencing the error stream.
+  Until then nothing has been said about the tree, and "there is nothing" cancels work the owner
+  ordered.
+- **A negation obtained from one source does not count as a negation.** A "not found" reply, an
+  access refusal and an empty list speak of the asker's rights, not of the subject. "It does not
+  exist" is said only after a second source — otherwise the executor reports their own rights to the
+  owner as the state of the world.
+- **A decision once written down is in force until it is revoked, and is read before it is made
+  anew.** A revoked decision leaves no trace — the result shows neither that it was made nor that it
+  was dropped. Made anew, it diverges from the earlier one silently and costs the same work twice.
+- **A decision that will outlive the task is written where it will outlive it.** The progress dies
+  with the task folder, while a name, an address and a method the owner named mid-series are needed
+  by the next tasks. A decision that did not move lives only in its session's conversation: the next
+  session scouts honestly, finds nothing — and asks the owner what was already answered.
+- **A tool named in the request is part of the request.** Replacing it with one's own departs from
+  the request, even when the answer is the same: whether tools are equivalent is decided by the
+  asker.
+- **A substitution that did happen is named in the same reply.** What was used instead and why — in
+  two words, next to the answer. Without it the owner learns of the substitution by repeating the
+  instruction, and pays for the work twice.
+- **Understanding is written down where the work goes on.** What stays in the conversation lives
+  with one participant until the next day; the work is continued by someone without that
+  conversation.
+- **What the owner said is written in the owner's words and is not rewritten afterwards.** A
+  retelling is quietly adjusted to what is already done, and nothing is left to check the result
+  against.
+- **The agreement on how the product behaves is written before the code that carries it out.**
+  Written after, it is written from the code and repeats its mistakes: it has nothing to diverge
+  from, so it checks nothing.
+- **The description is brought in line with what was done before the work is closed.** The agreement
+  describes the intent, and by the end of the work the application differs from it too. A divergence
+  put off is never found: the next day it is unnoticeable, and the description is still read as
+  correct.
+- **The state of unfinished work is restored without the owner's involvement.** Otherwise every
+  break costs the owner a retelling, and the work queue shows what was started without saying what
+  inside is done.
+- **An executor's session is finite, and its end does not coincide with the end of the work.** The
+  room where the executor remembers the progress is limited; once full, it loses not the last part
+  but everything at once. A session brought to a logical point in advance costs one entry; one cut
+  off midway costs a whole session of recovery.
+- **Interrupted work is handed to the next session as a ready text, not as the owner's retelling.**
+  The owner knows the work is unfinished but not where it stands; the retelling comes from memory,
+  not from the progress, and the next session starts from someone else's picture.
+- **What the previous session handed over arrives in the new session by itself, not placed by
+  hand.** A handover written and not read equals one not written: the next session starts from a
+  blank — the very thing it was to prevent. What is entrusted to the machine is not forgotten
+  overnight.
+- **The order of conducting work arrives in the session together with the work; the session does not
+  search for it.** A session that knows the task but not what comes next reads the whole rule first
+  — and spends the room it was started anew to gain. A short extract arrives: the states, the
+  mandatory action of each, how a turn ends. It does not replace the rule: it answers "what to do",
+  not "why".
+- **The plan and the progress are different records.** The plan is what acceptance checks the result
+  against; edited along the way, it stops differing from the PR, and acceptance has nothing to
+  check.
+- **Done work is marked in one place.** Two records of the same thing drift apart silently, and then
+  neither shows what remains.
+- **A decision made along the way is written down together with its reason.** Without a reason it
+  reads as accidental and is revoked by the next session, and brought back by the third.
+- **The boundary of the work is named before it starts.** A boundary not named aloud does not exist:
+  the change spreads to its neighbours and has to be removed by hand.
+- **Actions the executor does not take alone are named as a list.** Everything that leaves the
+  working tree or cannot be rolled back — a write to the shared repository, a publication, a PR, an
+  edit to a shared document — is done on the owner's word. That word covers an action, not the work
+  as a whole. A boundary not in the list is derived from general words: "do what the plan needs"
+  reads as permission for everything the plan implied.
+- **The sign that work is closed is named before it starts and is checkable.** "It works" is not a
+  sign: every session understands its own thing by it, and the work closes when it grows tiresome.
+- **Work started and abandoned is visible.** What is abandoned midway looks like what was never
+  touched, and the second session starts it over.
+- **Records of finished work do not lie among records of current work.** What is closed and lies
+  next to what is in force reads as in force — the more convincingly, the older it is.
+- **Finished work cleans up after itself before it enters the shared tree.** Afterwards nobody
+  watches what was left: the work has moved on, and the change that would have cleaned it up no
+  longer exists.
+- **Whether understanding is sufficient is judged by the one who asked.** A machine sees that a
+  record exists, not that every gap in it is closed. A sign of sufficiency derived from size or
+  question count becomes a goal in itself — the executor fills it without coming closer to
+  understanding.
+- **An unasked question is noticed only by the one who knows what they wanted.** It leaves no trace:
+  the work looks understood up to acceptance, and there is nothing to derive the missing question
+  from.
+- **An incident is defined by a sign, not by a judgement after the fact.** An incident is a session
+  where the executor did the wrong thing and the rules layer did not refuse it. A code defect is not
+  an incident: the product agreement explains it. The sign is written once, not derived anew by
+  every session — otherwise it is set by whoever it gets in the way of.
+- **An incident ends with a record, and the record is made in the same session.** A day later the
+  mechanism of the miss is retold smoothed over: conclusions remain, and no rule can be derived from
+  conclusions. The record names the mechanism step by step, what was available before it, what
+  caught it, and what went into the rules layer.
+- **A record without an edit to the rules layer does not count as closed.** An analysis that
+  produced neither a proposal nor an edit to a law, a rule or a pattern is a complaint: it explains
+  what happened and changes nothing, so it will repeat.
+- **Closed work leaves what it learned about the rules where the machine will pick it up.**
+  Understanding gained by one piece of work is worth most to its neighbour — and dies with the
+  session if it stayed in the conversation. A free retelling is carried over by hand, that is, until
+  the first busy week.
+- **A proposed rules edit has a named address: the rules layer itself, the names of this tree, or
+  its override.** Without an address the edit lands where the author can see it — their own tree —
+  and what is shared settles in one place, unknown to the rest.
+- **A proposal the owner spoke about aloud goes out in the same turn.** Written and not sent, it
+  looks in the tree like one that was sent: it has no record in the rules layer, and the owner reads
+  the work as done until asking directly. The owner's word — "send it", "file it", "write it" — is
+  an order, not a topic; showing what would have gone out is not sending and leaves no trace
+  outside.
+- **The inconvenience of sending is a reason to say so, not a reason not to send.** The executor's
+  argument against a decision the owner made remains an argument: it is spoken aloud, and the work
+  goes on meanwhile. Only the owner can postpone a decision; one postponed by the executor's
+  argument looks done to the owner, who learns its cost last.
+- **Work in which a series of tasks is visible is declared an epic before the first of them.** It is
+  declared twice: as a card in the work queue and as a plan next to it. An undeclared series exists
+  only in the head of whoever conceived it: the next session sees scattered tasks, finds no order
+  and takes the closest.
+- **The epic plan names the capability being built, the set of tasks and their order.** A set
+  without an order is not an order: two tasks whose order lived in understanding went in the other
+  way round, and the second was reworked to fit the first. A capability named in one word is read by
+  everyone their own way a week later.
+- **The order of an epic's tasks is assigned at planning and holds until the epic ends.** A revision
+  along the way is the owner's decision, written where the work goes on. An order assigned anew
+  before every task is set by whoever finds it closer, and the epic ends where it grew tiresome.
+- **Every task of a declared epic gets its card in the work queue at once, not on the day it is
+  taken up.** The epic plan holds the order for the executor; the work queue holds it for whoever
+  looks at it. An epic with one card out of ten looks there like one step of work. The card number
+  goes into the plan by the same edit: otherwise the plan answers "take the next one" with a title,
+  and the card is created again under a new number.
+- **An executor's session does not end together with the task.** The end of a task is not a sign to
+  stop: only the window fill limit allows stopping. A session closed on a finished task leaves the
+  owner a blank and costs a whole session to return to what was at hand.
+- **The window fill limit stops a session only where the tool does not compact the context itself.**
+  Where compaction is declared and comes before the limit, the window is not the end of the session
+  but its continuation: the context is compacted, the written state returns into it, and the work
+  goes on. A stop there costs the same as any other: the owner puts the executor back to work by
+  hand.
+- **The threshold at which a session is stopped stands later than the threshold at which it is
+  continued.** Two thresholds on one number are not agreement but a race, won by the one closer to
+  the action: the stop comes on a call, compaction between turns. The distance between them is
+  declared, not derived: compaction is not instant, and a threshold a hair away satisfies "earlier"
+  without saving the work.
+- **A transition from state to state does not stop the executor.** The mandatory action is done —
+  the next one begins in the same move, without a report to the owner and without the owner's word.
+  The boundary between states looks like a finished piece, and a report takes the place of the next
+  action: the owner reads it as done work while the work stands still.
+- **The text that leads a work state names what is done right after it.** Read to the last
+  technique, it ends in nothing: no next move is in it, and the executor derives one from emptiness
+  — that is, stops. The named move stands where the techniques stand, in its own words: a line
+  identical for all states stops being noticed before it is needed.
+- **Work handed over for review frees the executor rather than stopping them.** Work under review
+  waits for the owner, not for the machine: the next task of the epic is taken in the same move that
+  sent the previous one to review.
+- **Work is not spent waiting for the machine.** A check on the other side does not go faster for
+  being watched. While it runs, the next task is taken, and the check is returned to in the turn
+  that reads its end. A session spent waiting costs as much as one with a task done, and yields
+  nothing.
+- **A wait that does stop the work is named to the owner separately and directly.** Sometimes there
+  is no way forward: the next task stands on one not yet reviewed, or the change waits for a
+  decision only the owner has. Then the executor says three things — what stands still, what it
+  waits for, and what the owner can do. Mixed into a report, it is not read: the stop is named
+  separately.
+- **The analysis of closed work is done in a turn of its own and does not hold up the work.** It
+  sees what only the session that did the work can see, so it cannot be skipped; nor is the next
+  task held for it. Findings are written where they will be found after the merge and shown to the
+  owner in full: the owner decides what becomes an edit.
+- **Having handed work over for review, the executor names what they wait for and what they will do
+  next.** The owner sees not the executor's head but the work page: a green check and an available
+  action read as "all done". A wait named aloud is all that tells "waiting for the checks, then I
+  clean up" from "done, take it". Unnamed, it does not exist, and the owner acts on what they see.
+- **Work does not count as ready until the executor has said so directly.** Readiness is declared by
+  whoever did the work — as a separate request, about this work. Green checks are not readiness:
+  they say nothing is broken and are silent on whether anything is left. The owner reads silence as
+  readiness, and between the two readings everything that stood after the review is lost.
+- **Cleaning up after the work happens before readiness is declared.** The cleanup is done before
+  the request to include the work in the shared tree, not after consent. After inclusion nobody is
+  left to clean up: the work has moved on.
+- **A standing instruction of the execution environment is weaker than a rule of the tree.** The
+  environment describes its own default and knows nothing of the tree; the tree overrides it
+  silently — by saying otherwise. A discrepancy is resolved in favour of the tree, not of the text
+  worded more strictly or standing closer to the matter. It is recognised by reading both: a machine
+  cannot compare the instruction with the rule.
+
+- **Until the epic has ended, the next piece of work is not chosen but taken.** A choice offered to
+  the owner while an order stands is a request to assign it again: offering it a second time cancels
+  one's own planning.
+- **The list of work permitted outside the epic repeats the owner's word; it does not replace it.**
+  A number gets there after the owner has named that work, only so that the guard lets it through.
+  An executor who wrote the number in alone permitted the work to themselves, and the record cannot
+  tell this from the owner's permission.
+- **The assignment of an epic belongs to the working tree, not to a branch, and is declared in the
+  main branch before the first task under a new epic is created.** The record lies in a file, and
+  the file belongs to the branch where it was edited: written into the first task's branch, it is in
+  force only there. At the first branch switch the executor works by the new order while the guard
+  reads the old one, and the refusal comes at the end of the turn, with the work done and handed in.
+- **The next task is taken from the epic plan, not from the work queue list.** The list is sorted by
+  number, fresh tasks on top; it does not hold the epic's order and cannot — tasks of all epics lie
+  there at once. The epic plan is opened before a task is taken and answers in one call: which task
+  is next, and whether it moved to a neighbouring epic.
+- **An ended epic is named to the owner in the same turn in which work outside it is taken.** While
+  the epic goes on, the next piece of work is taken silently; once it has ended, the next step is no
+  longer obvious to both. Taking work outside an ended epic in silence leaves the owner sure the
+  epic continues.
+- **An epic is not closed while even one sign of its end is confirmed only by reading.** A sign
+  checked by eye closes the work only after a command or a measurement checks it, with their output.
+  The note "confirmed by a live measurement" is a promise to check, not a check. Closed on two signs
+  out of three, the epic carries the third into the archive, where nobody looks for it.
+- **What is noticed along the way and does not belong to the epic becomes a task in the work queue,
+  not work now.** A distraction looks cheap until a change to a neighbouring domain turns out to
+  have gone out with it: the epic stands still meanwhile, and both pieces of work are rolled back.
+- **An epic ends when its tasks have run out, not when it became unclear what comes next.** It
+  becomes unclear because the plan was not opened: it lies there and holds decisions not visible in
+  the code.
+- **The position of an epic is shown to the owner as a table — in the handover and at a stop for the
+  owner's decision.** At these two moments the owner looks at the work from outside, to take it into
+  a new session or decide where to lead it. The plan is not opened then, and neither the handover
+  nor the question shows what is done or what remains.
+- **The table shows all tasks of the epic at once — closed, current and assigned.** One row per
+  task: place in the order, the task, its state; the current one looks different. Closed tasks stand
+  in their actual order, future ones in the assigned one, and the divergence between them is a
+  statement too. A list of only the remaining tasks does not show what the work cost; of only the
+  closed ones, how much is still ahead.
