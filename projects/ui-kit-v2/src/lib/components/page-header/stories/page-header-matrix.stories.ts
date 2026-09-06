@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 
 import { storyWidthAtMost } from '../../../../showcase';
 import { openStoryOverlay } from '../../../../showcase/story-overlay';
-import { TestRtPageHeaderMatrixComponent } from './component/test-page-header-matrix.component';
+import { PAGE_HEADER_COMPACT_SCROLL_ATTRIBUTE, TestRtPageHeaderMatrixComponent } from './component/test-page-header-matrix.component';
 
 /**
  * Матрицы состояний — то, чего не показывает `Playground`: все значения оси сразу.
@@ -44,5 +44,31 @@ export const Panel: TStory = {
             within: '[qa-dataid="header-nav-trigger"]',
             wait: 200,
         });
+    },
+};
+
+/**
+ * Сжатая полоса. Шапка липнет к верху обёртки и сжимается, только когда её место в потоке ушло
+ * выше видимого положения, поэтому `play` прокручивает обёртку и ждёт, пока шапка это заметит.
+ */
+export const Compact: TStory = {
+    args: { part: 'compact' },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        const scroller: HTMLElement | null = canvasElement.querySelector(`[${PAGE_HEADER_COMPACT_SCROLL_ATTRIBUTE}]`);
+        if (scroller === null) {
+            throw new Error('история сжатой полосы: прокручиваемой обёртки в показе нет');
+        }
+        scroller.scrollTop = 240;
+        // Наблюдатель пересечения отвечает не в том же кадре: сжатие ждётся по классу хоста,
+        // а не отсчётом времени, и предел — на случай, если шапка так и не прилипла.
+        for (let frame: number = 0; frame < 30; frame += 1) {
+            if (canvasElement.querySelector('.rt-page-header--is-compact') !== null) {
+                return;
+            }
+            await new Promise<void>((resolve: () => void): void => {
+                requestAnimationFrame((): void => resolve());
+            });
+        }
+        throw new Error('история сжатой полосы: после прокрутки шапка не сжалась');
     },
 };
