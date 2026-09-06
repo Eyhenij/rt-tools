@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.24.0 · hooks/lint-after-edit.sh · 7a0dae044b61 · правится надстройкой, не здесь
+# rt-kit v0.24.0 · hooks/lint-after-edit.sh · 306731de5ff0 · правится надстройкой, не здесь
 # rt-hook: PostToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file
 # Требует: hooks/profile-check.sh
 # Линтер по следам правки. PostToolUse.
@@ -197,6 +197,7 @@ report=""
 linters=""
 covered=1
 checked=0
+path_gap=0
 
 while IFS= read -r file; do
     [ -z "$file" ] && continue
@@ -206,6 +207,15 @@ while IFS= read -r file; do
     lint="$(rt_lint_for "$file" 2>/dev/null)"
     [ -z "$lint" ] && continue
     checked=$((checked + 1))
+
+    # Команда, в которой нет пути правленого файла, читается как чистый линтер, а делает одно из
+    # двух: обходит всё дерево или не проверяет ничего. Отличить её от честного прогона по всему
+    # набору нечем, поэтому здесь слово, а не отбой; сказанное один раз за заход — как и слово о
+    # нехватке функции профиля.
+    case "$lint" in
+        *"$file"*) ;;
+        *) path_gap=1 ;;
+    esac
 
     out="$(eval "$lint" 2>&1)" && continue
 
@@ -226,6 +236,25 @@ $(printf '%s' "$out" | head -c 2500 | tr -d '\000')
 done <<EOF
 $candidates
 EOF
+
+# Отметка живёт в каталоге временных файлов: на каждую правку та же строка повторялась бы за
+# заход десятки раз и перестала бы читаться.
+if [ "$path_gap" = 1 ]; then
+    gap_key="$(printf '%s' "$input" | jq -r '.session_id // empty' 2>/dev/null)"
+    [ -z "$gap_key" ] && gap_key="$(date +%Y%m%d 2>/dev/null || printf 'nosession')"
+    gap_mark="${TMPDIR:-/tmp}/rt-kit-lint-path-gap-$gap_key"
+    if [ ! -f "$gap_mark" ]; then
+        printf 'линтер по следам правки: команда профиля не назвала правленый файл. Она либо
+' >&2
+        printf 'обходит всё дерево, либо не проверяет ничего, а выглядит и в том и в другом
+' >&2
+        printf 'случае как чистый линтер. Путь подставляется при печати команды — образец
+' >&2
+        printf 'стоит в умолчании профиля, функция rt_lint_for.
+' >&2
+        : >"$gap_mark" 2>/dev/null || true
+    fi
+fi
 
 [ -z "$report" ] && exit 0
 
