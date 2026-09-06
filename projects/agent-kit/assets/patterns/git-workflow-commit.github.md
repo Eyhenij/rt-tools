@@ -2,7 +2,7 @@
 name: git-workflow-commit
 kind: pattern
 rule: git-workflow
-description: Паттерн правила git-workflow. Брать на заведение задачи, ветки, коммит и пуш: команда заведения со всеми четырьмя шагами, перевод колонки, слияние двух задач в одну, работа от машинной записи, обход требования документа. Открытие PR — паттерн git-workflow-pr.
+description: Pattern of rule git-workflow. Load for creating a task and a branch, commit and push — the creation command with all four steps, moving the column, merging two tasks into one, working as the machine account, skipping the document requirement. Opening a PR — pattern git-workflow-pr.
 ---
 
 # Задача, ветка и коммит

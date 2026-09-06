@@ -2,7 +2,7 @@
 name: doc-style-human
 kind: pattern
 rule: doc-style
-description: Паттерн правила doc-style. Брать при написании задачи в очереди работ, описания заявки и ответа владельцу в чате. Образцы «так» и «не так» на каждый из трёх текстов и разбор слов, которые в них заменяются. Форму ответа о состоянии работы называет правило status-report.
+description: Pattern of rule doc-style. Load when writing a task in the work queue, a PR description and a chat reply to the owner. Samples of "so" and "not so" for each of the three texts and the words that get replaced in them. The shape of a status reply is named by rule status-report.
 ---
 
 # Задача, описание заявки и ответ владельцу

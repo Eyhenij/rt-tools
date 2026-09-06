@@ -2,9 +2,9 @@
 name: browser-verification-stand
 kind: pattern
 rule: browser-verification
-description: Паттерн правила browser-verification. Брать, когда нужен честный стенд — прод-сборка сайта, стенд админки, стенд под настоящим nginx, вход в админку, разбор того, что висит на порту. Не брать для замеров вёрстки — это паттерн browser-verification-measure.
+description: Pattern of rule browser-verification. Load when an honest stand is needed — the production build of the site, the admin stand, a stand behind real nginx, signing in to the admin, finding out what sits on a port. Not for layout measurements — that is pattern browser-verification-measure.
 ---
-<!-- rt-kit v0.25.0 · patterns/browser-verification-stand.md · 4e6757b6862d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/browser-verification-stand.md · b029d22dd826 · правится надстройкой, не здесь -->
 
 # Честный стенд
 

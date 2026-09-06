@@ -2,7 +2,7 @@
 name: deploy-flow
 kind: rule
 law: delivery
-description: Правило под «Закон о поставке» для дерева в Azure DevOps — та его часть, что про выкатку. Брать, когда правка едет на прод: слияние в главную ветку, конвейер, образы и метки, миграции хранилища. Паттерны: git-workflow-migration, -restart, -docker, -secrets.
+description: Rule under the delivery law for a tree in Azure DevOps — the part about the rollout. Load when an edit goes to production — merge into the main branch, the pipeline, images and tags, storage migrations. Patterns git-workflow-migration, -restart, -docker, -secrets.
 ---
 
 # Выкатка — как это устроено здесь

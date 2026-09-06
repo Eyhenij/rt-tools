@@ -2,7 +2,7 @@
 name: styling-bem-component
 kind: pattern
 rule: styling-bem
-description: Паттерн правила styling-bem. Брать при правке стилей компонента кита — готовый :host, модификаторы, токены оформления, язык оформления публичного сайта, обход умолчаний кита. Не брать для раскладки экрана — это паттерн styling-bem-layout.
+description: Pattern of rule styling-bem. Load when editing the styles of a kit component — the ready-made :host, modifiers, styling tokens, the styling language of the public site, overriding kit defaults. Not for screen layout — that is pattern styling-bem-layout.
 ---
 
 # Стили компонента

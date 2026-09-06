@@ -38,7 +38,7 @@ mkdir -p "$tree/docs/tasks/RT-1-own-folder"
 printf '# Замысел\n\nтело\n' > "$tree/docs/tasks/RT-1-own-folder/plan.md"
 printf '# Где стоим\n\n- **Состояние:** `этап-идёт`\n' > "$tree/docs/tasks/RT-1-own-folder/progress.md"
 case "$(said "$tree")" in
-    *СОСТОЯНИЕ\ РАБОТЫ*) report "SC-AK-721 — папка по имени ветки найдена" да да ;;
+    *WORK\ STATE*) report "SC-AK-721 — папка по имени ветки найдена" да да ;;
     *) report "SC-AK-721 — папка по имени ветки найдена" "$(said "$tree")" да ;;
 esac
 
@@ -51,7 +51,7 @@ case "$out" in
     *) report "SC-AK-722 — соседняя папка названа" "$out" да ;;
 esac
 case "$out" in
-    *РАБОТА\ БЕЗ\ ПАПКИ\ ЗАДАЧИ*) report "SC-AK-722 — отказ остался отказом" да да ;;
+    *WORK\ WITHOUT\ A\ TASK\ FOLDER*) report "SC-AK-722 — отказ остался отказом" да да ;;
     *) report "SC-AK-722 — отказ остался отказом" "$out" да ;;
 esac
 
@@ -85,11 +85,11 @@ git -C "$tree" rm -rq docs/tasks/RT-5-closing >/dev/null 2>&1
 git -C "$tree" -c user.name=probe -c user.email=probe@example commit -qm 'папка разобрана' >/dev/null 2>&1
 out="$(said "$tree")"
 case "$out" in
-    *'РАБОТА ЗАКРЫВАЕТСЯ'*) report "SC-AK-754 — разобранная папка названа закрытием работы" да да ;;
+    *'WORK IS CLOSING'*) report "SC-AK-754 — разобранная папка названа закрытием работы" да да ;;
     *) report "SC-AK-754 — разобранная папка названа закрытием работы" "$out" да ;;
 esac
 case "$out" in
-    *'РАБОТА БЕЗ ПАПКИ ЗАДАЧИ'*) report "SC-AK-754 — указания собрать папку заново нет" "$out" '' ;;
+    *'WORK WITHOUT A TASK FOLDER'*) report "SC-AK-754 — указания собрать папку заново нет" "$out" '' ;;
     *) report "SC-AK-754 — указания собрать папку заново нет" да да ;;
 esac
 
@@ -101,7 +101,7 @@ git -C "$tree" add -A >/dev/null 2>&1
 git -C "$tree" -c user.name=probe -c user.email=probe@example commit -qm 'чужая папка' >/dev/null 2>&1
 git -C "$tree" checkout -q -b RT-7-never-had 2>/dev/null
 case "$(said "$tree")" in
-    *'РАБОТА БЕЗ ПАПКИ ЗАДАЧИ'*) report "SC-AK-754 — ветка без своей папки судится прежним отказом" да да ;;
+    *'WORK WITHOUT A TASK FOLDER'*) report "SC-AK-754 — ветка без своей папки судится прежним отказом" да да ;;
     *) report "SC-AK-754 — ветка без своей папки судится прежним отказом" "$(said "$tree")" да ;;
 esac
 

@@ -1,6 +1,6 @@
 ---
 name: agent-kit-extend
-description: Готовые примеры того, как дерево дописывает своё поверх пакета правил. Брать, когда пакетный текст говорит не то, что верно здесь, гейт требует не то правило или гард судит не по тем путям. Раскладка и настройки — скил agent-kit; форма нового скила — write-a-skill.
+description: Ready-made examples of how a tree adds its own on top of the rules package. Load when the package text says something that is not true here, the gate demands the wrong rule or a guard judges by the wrong paths. Layout and settings — skill agent-kit; the shape of a new skill — write-a-skill.
 ---
 
 # Как дописать своё поверх пакета

@@ -1,45 +1,46 @@
-<!-- rt-kit v0.25.0 · defaults/turn-map.md · 7e172259e3a8 · правится надстройкой, не здесь -->
-# Карта хода
+<!-- rt-kit v0.25.0 · defaults/turn-map.md · 38453d0f57e3 · правится надстройкой, не здесь -->
+# Turn map
 
-Это не правило, а его короткая выжимка: правило объясняет, карта называет. Полный текст —
-скил `task-flow`; он же называет паттерн, который ведёт каждое состояние. Чем ход
-кончается — скил `turn-conduct` под тем же законом.
+This is not the rule but its short digest: the rule explains, the map names. The full text is
+skill `task-flow`; it also names the pattern that leads each state. What a turn ends with is
+skill `turn-conduct` under the same law.
 
-Состояние работы объявлено строкой в разделе «Где стоим» хода работы. Пока обязательное
-действие не сделано, работа стоит в том же состоянии.
+The work state is declared by a line in the "Где стоим" section of the progress. Until the
+mandatory action is done, the work stays in the same state.
 
-## Состояния и обязательные действия
+## States and mandatory actions
 
-- `просьба-не-разобрана` — разведка по дереву, затем вопросы; ведёт `task-flow-start`
-- `разбор-закрыт` — договорённость о продукте либо причина её отсутствия; ведёт `task-flow-start`
-- `договорённость-записана` — завести задачу, ветку и папку; ведёт `task-flow-start`
-- `задача-взята` — написать замысел; ведёт `task-flow-start`
-- `замысел-записан` — делать первый этап; ведёт `task-flow-start`
-- `этап-идёт` — доделать этап и отметить в ходе работы; ведёт `task-flow-resume`
-- `этапы-кончились` — прогнать набор и открыть PR черновиком; ведёт `task-flow-close`
-- `работа-отдана` — взять следующую задачу; ведёт `task-flow-resume`
-- `разбор-кончился` — влить договорённость, привести тексты, разобрать папку; ведёт `task-flow-close`
-- `папка-разобрана` — снять черновик и попросить влить; ведёт `task-flow-archive`
-- `влито` — разбор работы правилами и сверка очереди; ведёт `task-flow-archive`
+- `просьба-не-разобрана` — explore the tree, then ask; leads `task-flow-start`
+- `разбор-закрыт` — the product agreement or the reason there is none; leads `task-flow-start`
+- `договорённость-записана` — create the task, the branch and the folder; leads `task-flow-start`
+- `задача-взята` — write the plan; leads `task-flow-start`
+- `замысел-записан` — do the first stage; leads `task-flow-start`
+- `этап-идёт` — finish the stage and mark it in the progress; leads `task-flow-resume`
+- `этапы-кончились` — run the check set and open the PR as a draft; leads `task-flow-close`
+- `работа-отдана` — take the next task; leads `task-flow-resume`
+- `разбор-кончился` — merge the agreement, bring the texts up to date, take the folder apart; leads `task-flow-close`
+- `папка-разобрана` — leave draft and ask for the merge; leads `task-flow-archive`
+- `влито` — the rules review of the work and the queue audit; leads `task-flow-archive`
 
-Ни у одного состояния обязательное действие не звучит как «ждать». Прогон, разбор владельцем и
-слияние идут без исполнителя и от взгляда быстрее не становятся.
+No state has a mandatory action that sounds like "wait". The run, the owner's review and the
+merge go on without the executor and do not get faster from being watched.
 
-## Чем ход кончается
+## What a turn ends with
 
-Способов четыре, и других нет.
+There are four ways, and no others.
 
-- **вопрос владельцу, ответа на который в правилах нет** — вопрос задан, и за тот же ход правила читались
-- **отказ гарда** — отказ назван владельцу, обход не искался
-- **заполненное окно там, где сжатия нет** — ход работы дописан, передача написана
-- **работа отдана, и следующая начата** — PR открыт, и по следующей задаче сделано действие, а не сказано
+- **a question to the owner that the rules do not answer** — the question is asked, and the rules were read in the same turn
+- **a guard refusal** — the refusal is named to the owner, no workaround was looked for
+- **the window filled where there is no compaction** — the progress is written up, the handover is written
+- **work handed over, and the next one started** — the PR is open, and an action on the next task is done, not announced
 
-Там, где дерево объявило порог сжатия ниже порога остановки, заполненное окно ход не кончает:
-контекст сжимается, передача приходит входом, и работа идёт дальше тем же заходом. Порог
-остановки там — страховка на случай, когда сжатие не пришло.
+Where the tree has set the compaction threshold below the stop threshold, a filled window does
+not end the turn: the context is compacted, the handover arrives as the entry, and the work goes
+on in the same session. The stop threshold there is insurance for the case when compaction did
+not come.
 
-Всё остальное — продолжение хода. Ходом не кончаются: коммит, записанный замысел, закрытый
-разбор просьбы, прочитанная договорённость, зелёная проверка, сводка о чужом шаге, объявление
-намерения и названная, но не запущенная команда. Переход из состояния в состояние — тем более:
-обязательное действие сделано, и следующее делается тем же ходом. Названо может быть только
-сделанное.
+Everything else is the turn going on. A turn does not end with a commit, a written plan, a
+closed grill, a read agreement, a green check, a summary of someone else's step, an announced
+intention or a command named but not run. A transition from state to state even less so: the
+mandatory action is done, and the next one is done in the same turn. Only what is done may be
+named.

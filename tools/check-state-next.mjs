@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-state-next.mjs · 1526c981b7da · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-state-next.mjs · 6440674152bb · правится надстройкой, не здесь
 /**
  * Сверка того, что раздел состояния называет следующее движение.
  *
@@ -47,7 +47,13 @@ const LAW = join(ROOT, 'docs/constitution/work-conduct.md');
 const MARKER = '**Следующее движение:**';
 
 /** Утверждение о границе состояния. Стоит в правиле, в карте и в законе теми же словами. */
-const BOUNDARY = 'Переход из состояния в состояние';
+/**
+ * Строка о границе состояния. Имён два: английское везёт пакет, русское держат правило, карта и
+ * закон дерева, которые ещё не переведены. Хватает любого из двух.
+ */
+const BOUNDARIES = ['A transition from state to state', 'Переход из состояния в состояние'];
+const BOUNDARY = BOUNDARIES[0];
+const hasBoundary = (text) => BOUNDARIES.some((one) => text.includes(one));
 
 /** Короче этого хвост движения не называет: зачин без движения — та же пустота. */
 const MIN_TAIL = 20;
@@ -176,7 +182,7 @@ if (counted === 0) {
 }
 
 const turnText = existsSync(TURN_RULE) ? readFileSync(TURN_RULE, 'utf8') : '';
-if (!ruleText.includes(BOUNDARY) && !turnText.includes(BOUNDARY)) {
+if (!hasBoundary(ruleText) && !hasBoundary(turnText)) {
     problems.push(`правило хода захода о границе состояния молчит: строки «${BOUNDARY}» в нём нет`);
 }
 
@@ -184,7 +190,7 @@ for (const [file, what] of [
     [MAP, 'карта хода'],
     [LAW, 'закон о ведении работы'],
 ]) {
-    if (existsSync(file) && !readFileSync(file, 'utf8').includes(BOUNDARY)) {
+    if (existsSync(file) && !hasBoundary(readFileSync(file, 'utf8'))) {
         problems.push(`${what} о границе состояния молчит: строки «${BOUNDARY}» в ней нет`);
     }
 }

@@ -2,7 +2,7 @@
 name: git-workflow-migration
 kind: pattern
 rule: deploy-flow
-description: Паттерн правила deploy-flow. Брать при правке prisma/schema.prisma и prisma/migrations/** — готовые команды одноразового контейнера, написание файла миграции через migrate diff, накат локальной базы. Не брать для коммита — это паттерн git-workflow-commit, для PR — git-workflow-pr.
+description: Pattern of rule deploy-flow. Load when editing prisma/schema.prisma and prisma/migrations/** — ready-made commands for a one-off container, writing the migration file through migrate diff, applying to the local database. Not for the commit — pattern git-workflow-commit; for the PR — git-workflow-pr.
 ---
 
 # Миграция и прогон цепочки

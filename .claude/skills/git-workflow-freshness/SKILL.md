@@ -2,9 +2,9 @@
 name: git-workflow-freshness
 kind: pattern
 rule: git-workflow
-description: Паттерн правила git-workflow. Брать перед пушем, при взятии задачи и после каждого известного слияния: чтение всех своих открытых заявок разом, отделение отставания от спора в файлах, сверка локальной вершины с хостингом.
+description: Pattern of rule git-workflow. Load before a push, when taking a task and after every known merge — reading all your open PRs at once, telling lag apart from a conflict in files, checking the local head against the hosting.
 ---
-<!-- rt-kit v0.25.0 · patterns/git-workflow-freshness.md · 312a66b4b61a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/git-workflow-freshness.md · da7965990c0d · правится надстройкой, не здесь -->
 
 # Свежесть открытых заявок
 

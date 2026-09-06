@@ -2,7 +2,7 @@
 name: lib-layers
 kind: rule
 law: lib-imports
-description: Правило под «Закон об импортах между либами». Брать при правке манифестов проектов, путей сборки, границ линтера, любого барреля и проверок раскладки, а также когда решается, где живёт общий символ. Паттерны: lib-layers-new, lib-layers-move.
+description: Rule under the lib-imports law. Load when editing project manifests, build paths, linter boundaries, any barrel and the layout checks, and when deciding where a shared symbol lives. Patterns lib-layers-new, lib-layers-move.
 ---
 
 # Импорты между либами — как это устроено здесь

@@ -2,7 +2,7 @@
 name: git-workflow-pr-ready
 kind: pattern
 rule: git-workflow
-description: Паттерн правила git-workflow. Брать, когда заявки уже открыты: снятие черновика, разбор красного прогона, доведение череды до готовности, порядок «сначала довести отданное, потом брать новое». Открытие одной заявки — паттерн git-workflow-pr, порядок череды — git-workflow-stack.
+description: Pattern of rule git-workflow. Load when PRs are already open — leaving draft, handling a red run, bringing a chain to readiness, the order "finish what was handed over first, then take new work". Opening one PR — pattern git-workflow-pr; the chain order — git-workflow-stack.
 ---
 
 # Доведение заявки до готовности

@@ -2,9 +2,9 @@
 name: spec-driven-sweep
 kind: pattern
 rule: spec-driven
-description: Паттерн правила spec-driven. Брать при сплошном разборе привязки домена — пять проходов, три из которых делает машина, разбор срабатываний чтением и доля ложных по слоям. Не брать для заведения спека домена — это паттерн spec-driven-domain.
+description: Pattern of rule spec-driven. Load for a full sweep of a domain's binding — five passes, three of them done by the machine, reading through the hits and the share of false ones per layer. Not for creating a domain spec — that is pattern spec-driven-domain.
 ---
-<!-- rt-kit v0.25.0 · patterns/spec-driven-sweep.md · a83d870d4423 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/spec-driven-sweep.md · 4b2744fe131f · правится надстройкой, не здесь -->
 
 # Сплошной разбор привязки домена
 

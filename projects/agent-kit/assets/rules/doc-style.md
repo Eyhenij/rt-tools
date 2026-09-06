@@ -2,7 +2,7 @@
 name: doc-style
 kind: rule
 law: project-documentation
-description: Правило под «Закон о документации проекта». Брать при правке любого .md, включая спеки, а также комментариев в коде, тел коммитов и описаний PR. Называет проверку путей, пары «правка и её документ» и то, что в этом дереве не проверяет ничто. Готовые формулировки — в паттерне doc-style-write.
+description: Rule under the project-documentation law. Load when editing any .md including specs, and also code comments, commit bodies and PR descriptions. Names the path check, the pairs of an edit and its document, and what nothing checks in this tree. Ready-made wording is in pattern doc-style-write.
 ---
 
 # Тексты проекта — как это устроено здесь

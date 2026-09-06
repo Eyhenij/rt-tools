@@ -1,8 +1,8 @@
 ---
-description: Закрытие захода — главная ветка подтянута, влитые ветки сняты, передача написана
-argument-hint: '[пусто | <что дописать в передачу от себя>]'
+description: Closing the session — the main branch pulled, merged branches removed, the handover written
+argument-hint: '[empty | <what to add to the handover in your own words>]'
 ---
-<!-- rt-kit v0.25.0 · commands/next-session.md · 7c7042780df5 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · commands/next-session.md · f02b16d89014 · правится надстройкой, не здесь -->
 
 Закрой заход: приведи дерево к главной ветке, убери влитые ветки и напиши передачу для
 следующего захода. Дописка владельца к передаче: `$ARGUMENTS`

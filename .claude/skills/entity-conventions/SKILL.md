@@ -2,9 +2,9 @@
 name: entity-conventions
 kind: rule
 law: entity-editing
-description: Правило под «Закон о правке сущности». Брать при правке любого стора админки и любой панели создания или правки записи. Называет общую основу асайда и списочного стора и то, что асайд открывается своим маршрутом. Паттерны: entity-aside, entity-store.
+description: Rule under the entity-editing law. Load when editing any admin store and any panel that creates or edits a record. Names the shared base of the aside and of the list store, and that the aside opens by a route of its own. Patterns entity-aside, entity-store.
 ---
-<!-- rt-kit v0.25.0 · rules/entity-conventions.needs-admin.md · 2546884f3e12 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/entity-conventions.needs-admin.md · f28dd7934a29 · правится надстройкой, не здесь -->
 
 # Правка сущности — как это устроено здесь
 

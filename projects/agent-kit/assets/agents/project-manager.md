@@ -1,6 +1,6 @@
 ---
 name: project-manager
-description: Разбивает задачу на шаги с границами и рисками, принимает результат по исходному запросу, готовит задачи в очередь работ и сверяет работу с правилами дерева. Использовать перед крупной правкой и после неё, а не для однострочных изменений.
+description: Splits a task into steps with boundaries and risks, accepts the result against the original request, prepares tasks for the work queue and checks the work against the tree's rules. Use before a large edit and after it, not for one-line changes.
 tools: Read, Grep, Glob, Bash, Write, Edit
 ---
 

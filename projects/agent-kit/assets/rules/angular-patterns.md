@@ -2,7 +2,7 @@
 name: angular-patterns
 kind: rule
 law: frontend-application
-description: Правило под «Закон о фронтовом приложении». Брать при правке любого класса Angular — компонента, стора, сервиса, директивы, пайпа, гарда, интерцептора. Называет сигнальный API входов, OnPush, zoneless, inject и место подписки. Паттерн angular-patterns-state.
+description: Rule under the frontend-application law. Load when editing any Angular class — a component, store, service, directive, pipe, guard or interceptor. Names the signal input API, OnPush, zoneless, inject and where a subscription lives. Pattern angular-patterns-state.
 ---
 
 # Реактивность экрана — как это устроено здесь

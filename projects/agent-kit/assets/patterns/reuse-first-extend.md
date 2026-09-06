@@ -2,7 +2,7 @@
 name: reuse-first-extend
 kind: pattern
 rule: reuse-first
-description: Паттерн правила reuse-first. Брать, когда готового в ките или в базовом классе не хватило — что проверить перед тем, как писать своё, как расширить готовое, как объявить разовое отступление маркером native-ok и когда его снимать.
+description: Pattern of rule reuse-first. Load when what the kit or the base class offers was not enough. What to check before writing your own, how to extend the ready-made, how to declare a one-off deviation with the native-ok marker and when to remove it.
 ---
 
 # Готового не хватило

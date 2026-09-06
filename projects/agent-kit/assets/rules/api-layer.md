@@ -2,7 +2,7 @@
 name: api-layer
 kind: rule
 law: frontend-application
-description: Правило под «Закон о фронтовом приложении». Брать при правке слоя api фронтового домена — фасада, сервиса и мапперов при них. Называет пару «фасад и сервис», один вход выборки у списка и общий конвертер страницы. Паттерн api-layer-pair.
+description: Rule under the frontend-application law. Load when editing the api layer of a frontend domain — the facade, the service and the mappers next to them. Names the facade-and-service pair, the single query input of a list and the shared page converter. Pattern api-layer-pair.
 ---
 
 # Обращение к серверу — как это устроено здесь

@@ -1,6 +1,6 @@
 ---
-description: Слово о слое правил, сказанное посреди работы, ложится блоком в файл предложений
-argument-hint: '<что мешает, чего не хватило, что сработало не так>'
+description: A remark about the rules layer, made in the middle of work, lands as a block in the proposals file
+argument-hint: '<what gets in the way, what was missing, what went wrong>'
 ---
 
 Положи слово пользователя блоком в файл предложений. Слово: `$ARGUMENTS`

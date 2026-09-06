@@ -2,7 +2,7 @@
 name: shared-code
 kind: rule
 law: shared-code
-description: Правило под «Закон об общем коде приложений». Брать, когда значение должно одинаково пониматься сайтом, админкой и бэкендом: предел выборки, набор операторов условия, длина поля, форма запроса и ответа списка. Паттерн shared-code-new.
+description: Rule under the shared-code law. Load when a value must be understood the same way by the site, the admin and the backend — a query limit, the set of condition operators, a field length, the shape of a list request and response. Pattern shared-code-new.
 ---
 
 # Общий код — как это устроено здесь

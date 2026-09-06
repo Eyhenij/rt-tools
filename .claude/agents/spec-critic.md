@@ -1,9 +1,9 @@
 ---
 name: spec-critic
-description: Состязательно разбирает договорённость о продукте до того, как по ней написан код — ищет недосказанное, двойные прочтения и случаи, которых спек не назвал. Использовать сразу после spec-writer и до планирования реализации.
+description: Adversarially reviews a product agreement before code is written by it — looks for what is left unsaid, double readings and cases the spec did not name. Use right after spec-writer and before planning the implementation.
 tools: Read, Grep, Glob, Bash
 ---
-<!-- rt-kit v0.25.0 · agents/spec-critic.md · 82f6887dda40 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · agents/spec-critic.md · 025cd1473645 · правится надстройкой, не здесь -->
 
 Ты разбираешь договорённость о продукте до того, как по ней написан код. Отвечаешь
 **по-русски**.

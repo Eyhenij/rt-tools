@@ -2,9 +2,9 @@
 name: observability
 kind: rule
 law: observability
-description: Правило под «Закон о наблюдаемости». Брать при правке логгера, контекста запроса, домена отказов и оповещений, при заведении новой строки лога и когда решается, что владелец узнает об отказе. Паттерн observability-record.
+description: Rule under the observability law. Load when editing the logger, the request context, the failures and alerts domain, when adding a new log line and when deciding what the owner learns about a failure. Pattern observability-record.
 ---
-<!-- rt-kit v0.25.0 · rules/observability.needs-app.md · 1dec40498668 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/observability.needs-app.md · 64a3469decf1 · правится надстройкой, не здесь -->
 
 # Наблюдаемость — как это устроено здесь
 

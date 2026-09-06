@@ -1,6 +1,6 @@
 ---
-description: Разбор закрытой задачи глазами правил дерева — что грузилось, что помогло, чего не хватило
-argument-hint: '[пусто | <акцент, на что смотреть в первую очередь>]'
+description: Review of a closed task through the eyes of the tree's rules — what was loaded, what helped, what was missing
+argument-hint: '[empty | <what to look at first>]'
 ---
 
 Запусти агента `skill-curator` на разбор только что закрытой задачи. Акцент от пользователя:

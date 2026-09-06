@@ -2,9 +2,9 @@
 name: git-workflow-secrets
 kind: pattern
 rule: deploy-flow
-description: Паттерн правила deploy-flow. Брать при работе с ключами внешних служб: где они лежат, чем ключ владельца отличается от ключа окружения, что означает каждое состояние строки интеграции и почему зелёная проба не обещает работающей возможности.
+description: Pattern of rule deploy-flow. Load when working with keys of external services — where they live, how the owner's key differs from the environment key, what each state of an integration row means and why a green probe does not promise a working feature.
 ---
-<!-- rt-kit v0.25.0 · patterns/git-workflow-secrets.md · 6daceac878c3 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/git-workflow-secrets.md · 017deb5f857a · правится надстройкой, не здесь -->
 
 # Ключи внешних служб
 

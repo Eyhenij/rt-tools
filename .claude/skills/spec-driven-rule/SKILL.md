@@ -2,9 +2,9 @@
 name: spec-driven-rule
 kind: pattern
 rule: spec-driven
-description: Паттерн правила spec-driven. Брать при заведении или правке закона в docs/constitution, правила или паттерна в .claude/skills — готовые шапки, набор разделов каждого слоя, таблица привязки, признак того, что правило пора делить. Не брать для спека домена — это паттерн spec-driven-domain.
+description: Pattern of rule spec-driven. Load when creating or editing a law in docs/constitution, a rule or a pattern in .claude/skills — ready-made headers, the section set of each layer, the binding table, the sign that a rule is due for splitting. Not for a domain spec — that is pattern spec-driven-domain.
 ---
-<!-- rt-kit v0.25.0 · patterns/spec-driven-rule.md · d789ce0ac8f7 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/spec-driven-rule.md · 244c58d62271 · правится надстройкой, не здесь -->
 
 # Закон, правило и паттерн
 

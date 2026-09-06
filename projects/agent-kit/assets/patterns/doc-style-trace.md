@@ -2,7 +2,7 @@
 name: doc-style-trace
 kind: pattern
 rule: doc-style
-description: Паттерн правила doc-style. Брать, когда полнота текстов проверяется со стороны работы: обратный проход по закрытым задачам, признак отбора машиной, чего он не видит, три исхода по каждой задаче. Разбор одного документа — паттерн doc-style-sweep.
+description: Pattern of rule doc-style. Load when the completeness of texts is checked from the side of the work — a reverse pass over closed tasks, the machine selection sign, what it does not see, three outcomes per task. Sorting one document — pattern doc-style-sweep.
 ---
 
 # Обратный проход: закрытые задачи против текстов

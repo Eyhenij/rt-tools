@@ -2,9 +2,9 @@
 name: admin-nav-item
 kind: pattern
 rule: navigation
-description: Паттерн правила navigation. Брать при заведении пункта меню админки, раздела с панелью или нового адреса раздела — одна декларация на пункт и маршрут, флаг раздела без экрана, вложение адреса, подсказка у недоступного пункта. Не брать для панели правки записи — это паттерн entity-aside.
+description: Pattern of rule navigation. Load when creating an admin menu item, a section with a panel or a new section address — one declaration per item and route, the flag of a section without a screen, address nesting, a hint on an unavailable item. Not for the record edit panel — pattern entity-aside.
 ---
-<!-- rt-kit v0.25.0 · patterns/admin-nav-item.md · 721588bee49f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/admin-nav-item.md · aabadd7a0018 · правится надстройкой, не здесь -->
 
 # Пункт меню и адрес раздела
 

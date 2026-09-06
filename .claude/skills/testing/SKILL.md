@@ -2,9 +2,9 @@
 name: testing
 kind: rule
 law: verifiability
-description: Правило под «Закон о проверяемости». Брать при правке любой спеки и всего, что лежит в сквозных наборах дерева. Называет идентификатор сценария в заголовке, вынос решения в чистую функцию и то, что закрывается сквозной спекой. Паттерны: testing-unit, testing-e2e.
+description: Rule under the verifiability law. Load when editing any test file and anything in the tree's end-to-end suites. Names the scenario id in the title, moving a decision into a pure function and what an end-to-end test closes. Patterns testing-unit, testing-e2e.
 ---
-<!-- rt-kit v0.25.0 · rules/testing.md · 64a83910cf21 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/testing.md · 3f24120f8a1a · правится надстройкой, не здесь -->
 
 # Проверяемость — как это устроено здесь
 

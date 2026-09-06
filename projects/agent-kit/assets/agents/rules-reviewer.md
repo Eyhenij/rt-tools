@@ -1,6 +1,6 @@
 ---
 name: rules-reviewer
-description: Читает семью текстов слоя правил целиком — закон, все правила под ним и все паттерны при них — и ищет то, чего не считает машина: два текста, говорящих об одном разное, и случай, которого не назвал ни один. Файлов не правит. Использовать перед выпуском новой редакции пакета правил и после правки закона или правила.
+description: Reads a family of rules-layer texts in full — a law, all rules under it and all patterns next to them. Looks for what no machine counts, two texts saying different things about one matter and a case no text named. Edits no files. Use before a new package edition and after editing a law or a rule.
 tools: Read, Grep, Glob, Bash
 ---
 

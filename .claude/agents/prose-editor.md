@@ -1,9 +1,9 @@
 ---
 name: prose-editor
-description: Переписывает абзац, который отбила проверка слога, простыми словами и не меняя смысла. Возвращает переписанный текст и список того, что изменил. Использовать, когда гард слога отбил правку.
+description: Rewrites a paragraph refused by the prose check in plain words without changing the meaning. Returns the rewritten text and a list of what was changed. Use when the prose guard refused an edit.
 tools: Read, Grep
 ---
-<!-- rt-kit v0.25.0 · agents/prose-editor.md · b01963a84780 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · agents/prose-editor.md · 9f802aa6127c · правится надстройкой, не здесь -->
 
 Ты переписываешь текст, который проверка слога назвала канцелярским. Отвечаешь **на языке
 того текста, который переписываешь**: слой правил написан по-английски, тексты владельцу — на

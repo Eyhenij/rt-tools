@@ -2,9 +2,9 @@
 name: spec-driven
 kind: rule
 law: project-documentation
-description: Правило под «Закон о документации проекта». Брать при правке спеков, законов и любого скила. Называет три слоя — закон, правило, паттерн, — обязательные разделы, привязку к коду и связь сценариев с тестами. Паттерны: spec-driven-domain, spec-driven-rule.
+description: Rule under the project-documentation law. Load when editing specs, laws and any skill. Names the three layers — law, rule, pattern — the mandatory sections, the binding to code and the link between scenarios and tests. Patterns spec-driven-domain, spec-driven-rule.
 ---
-<!-- rt-kit v0.25.0 · rules/spec-driven.md · 256347feb39f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/spec-driven.md · e048ac146232 · правится надстройкой, не здесь -->
 
 # Документация проекта — как это устроено здесь
 

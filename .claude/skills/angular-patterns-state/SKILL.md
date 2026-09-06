@@ -2,9 +2,9 @@
 name: angular-patterns-state
 kind: pattern
 rule: angular-patterns
-description: Паттерн правила angular-patterns. Брать при объявлении состояния и потоков в классе Angular — готовые сигналы, производные значения, состояние сервиса, долгоживущая подписка с источником действия. Не брать для раскладки файла компонента — это правило component-structure.
+description: Pattern of rule angular-patterns. Load when declaring state and streams in an Angular class — ready-made signals, derived values, service state, a long-lived subscription with an action source. Not for the layout of a component file — that is rule component-structure.
 ---
-<!-- rt-kit v0.25.0 · patterns/angular-patterns-state.md · c46716347061 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/angular-patterns-state.md · b52df00fe3a2 · правится надстройкой, не здесь -->
 
 # Состояние и потоки
 

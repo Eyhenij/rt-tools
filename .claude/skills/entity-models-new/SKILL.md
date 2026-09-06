@@ -2,9 +2,9 @@
 name: entity-models-new
 kind: pattern
 rule: entity-models
-description: Паттерн правила entity-models. Брать при объявлении новой модели сущности и её маппера — готовый неймспейс I<Сущность> с Api, State и Draft, короткий и полный уровни, наследник BaseMapper с typeCast, что делать после правки .proto.
+description: Pattern of rule entity-models. Load when declaring a new entity model and its mapper — the ready-made I<Entity> namespace with Api, State and Draft, short and full levels, a BaseMapper heir with typeCast, what to do after editing .proto.
 ---
-<!-- rt-kit v0.25.0 · patterns/entity-models-new.md · b478222bbcf2 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/entity-models-new.md · 076222009e4d · правится надстройкой, не здесь -->
 
 # Объявить модель сущности и её перевод
 

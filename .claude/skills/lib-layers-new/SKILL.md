@@ -2,9 +2,9 @@
 name: lib-layers-new
 kind: pattern
 rule: lib-layers
-description: Паттерн правила lib-layers. Брать при заведении, переименовании или удалении либы — генератор вместо голого nx g, тег, алиас, барель, README, и чем добивать удаление. Перенос кода между уже существующими либами — паттерн lib-layers-move.
+description: Pattern of rule lib-layers. Load when creating, renaming or removing a lib — the generator instead of bare nx g, the tag, the alias, the barrel, the README, and how to finish a removal. Moving code between existing libs — pattern lib-layers-move.
 ---
-<!-- rt-kit v0.25.0 · patterns/lib-layers-new.md · cfa93beb475f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/lib-layers-new.md · 2983b4cd12af · правится надстройкой, не здесь -->
 
 # Завести или удалить либу
 
