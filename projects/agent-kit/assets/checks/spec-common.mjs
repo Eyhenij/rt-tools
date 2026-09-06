@@ -179,7 +179,14 @@ function sectionOf(text, heading) {
     return end < 0 ? rest : rest.slice(0, end);
 }
 
-/** Пункты списка верхнего уровня вместе с их продолжениями. */
+/**
+ * Пункты списка верхнего уровня вместе с их продолжениями.
+ *
+ * Заголовок внутри раздела список не кончает: раздел уже отрезан по уровню заголовка, и строка
+ * `#` в нём всегда глубже — подзаголовок, которым спек большого домена группирует правила.
+ * Таблица список кончает по-прежнему; строка, на которой он кончился, отдаётся свойством
+ * `stoppedAt`, чтобы отказ о пустом разделе назвал, что в нём стоит вместо пунктов.
+ */
 function bulletsOf(lines) {
     const bullets = [];
     for (const [index, line] of lines.entries()) {
@@ -187,10 +194,10 @@ function bulletsOf(lines) {
             bullets.push({ line: index, text: line });
         } else if (bullets.length && /^\s+\S/.test(line)) {
             bullets[bullets.length - 1].text += ` ${line.trim()}`;
-        } else if (!line.trim()) {
+        } else if (!line.trim() || /^#/.test(line)) {
             continue;
-        } else if (/^[#|]/.test(line)) {
-            // таблица или заголовок — список кончился
+        } else if (/^\|/.test(line)) {
+            bullets.stoppedAt = line;
             break;
         }
     }
