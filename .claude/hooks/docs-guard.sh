@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/docs-guard.sh · 30f35356b42f · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/docs-guard.sh · e5cb802a0546 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|NotebookEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Требует: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Гард пары «правка и её документ». PreToolUse.
@@ -194,7 +194,9 @@ add() { problems="${problems}
 #
 # Раздел с утверждениями — единственное, что связано со спутником; правка «Ловушек» или
 # таблицы «Где это лежит» его не трогает, поэтому сравнивается только этот раздел.
-STATEMENTS='/^## Как закон применяется здесь$/,/^## [^К]/'
+# Имя раздела двойное: английское у правила пакета, русское у правила, написанного деревом до
+# перевода слоя. Конец диапазона — любой заголовок, не начинающийся с их первой буквы.
+STATEMENTS='/^## (How the law applies here|Как закон применяется здесь)$/,/^## [^КH]/'
 statements_of() { content_of "$1" | awk "$STATEMENTS"; }
 
 for rule in $(printf '%s\n' "$paths" | grep -E '/SKILL\.md$'); do

@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub — the part about the rollout. Load when an edit goes to production — merge into the main branch, the pipeline, images and tags, storage migrations. Patterns git-workflow-migration, -restart, -docker, -secrets. Task and branch — rule git-workflow.
 ---
-<!-- rt-kit v0.25.0 · rules/deploy-flow.github.md · 47406aa26094 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/deploy-flow.github.md · adb588ff9e64 · правится надстройкой, не здесь -->
 
 # Выкатка — как это устроено здесь
 
@@ -142,6 +142,22 @@ flowchart TD
 
 ## Чего из закона здесь нет
 
+Состояние прода машине не видно: сверка очереди работ спрашивает последний прогон главной
+ветки и судит по нему, а отвечает ли прод той сборкой, которую он выкатил, не спрашивает
+никто. Держится это тем, кто выкатывал.
+
+Полноту чистки реестра не считает ничто: сценарий оставляет три последних sha, и промах в
+его отборе виден только тогда, когда диск сервера кончился.
+
+## Паттерны
+
+- `git-workflow-migration` — правка схемы хранилища и её миграций.
+- `git-workflow-restart` — ручной перезапуск прода.
+- `git-workflow-docker` — образы на своей машине: демон, реестр, сборка под платформу сервера.
+- `git-workflow-secrets` — ключи внешних служб: где лежат, как заводятся, что говорит их состояние.
+
+## What of the law is not here
+
 **Слияние в главную ветку прода не выкатывает.** У `.github/workflows/deploy.yml` один
 триггер — `workflow_dispatch`, — и выкатку запускают рукой. Всё, что правило говорит про мерж
 как про начало выкатки, к этому дереву не приложено: влитая правка доезжает до прода тогда,
@@ -169,10 +185,3 @@ git rev-list --count <sha выкатки>..origin/main
 
 Полноту чистки реестра не считает ничто: сценарий оставляет три последних sha, и промах в
 его отборе виден только тогда, когда диск сервера кончился.
-
-## Паттерны
-
-- `git-workflow-migration` — правка схемы хранилища и её миграций.
-- `git-workflow-restart` — ручной перезапуск прода.
-- `git-workflow-docker` — образы на своей машине: демон, реестр, сборка под платформу сервера.
-- `git-workflow-secrets` — ключи внешних служб: где лежат, как заводятся, что говорит их состояние.

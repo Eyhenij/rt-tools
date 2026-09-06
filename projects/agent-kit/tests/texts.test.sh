@@ -62,7 +62,7 @@ fi
 # с ним при первой же правке дерева.
 with_paths=0
 for rule in "$ASSETS"/rules/*.md; do
-    section="$(awk '/^## Где это лежит$/{take=1; next} /^## /{take=0} take' "$rule")"
+    section="$(awk '/^## (Where it lives|Где это лежит)$/{take=1; next} /^## /{take=0} take' "$rule")"
     # Ссылка на сам компаньон путём не считается: она и есть указание, куда пути переехали.
     printf '%s' "$section" | grep -vF 'implementation.md' | grep -qE '`[a-zA-Z0-9_./-]+\.(ts|mjs|json|scss|html|md|sh)`' && {
         report "без таблицы путей: ${rule##*/}" FAIL PASS
