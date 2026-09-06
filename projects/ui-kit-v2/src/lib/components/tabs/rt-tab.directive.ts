@@ -50,6 +50,18 @@ export class RtTabDirective {
     /** Значение бейджа справа от заголовка (число/строка). `null` — без бейджа. */
     public readonly badge: InputSignal<string | number | null> = input<string | number | null>(null);
 
+    /**
+     * Подсказка при наведении на бейдж. Подсказка самой кнопки занята неверной вкладкой,
+     * поэтому у бейджа своя. Пусто — подсказки нет.
+     */
+    public readonly badgeTitle: InputSignal<string> = input<string>('');
+
+    /**
+     * Подпись бейджа для чтения с экрана: точка или число сами по себе не говорят, что значат.
+     * Пусто — атрибут не ставится, и озвучивается значение бейджа как есть.
+     */
+    public readonly badgeAriaLabel: InputSignal<string> = input<string>('');
+
     /** Заблокированная вкладка: не выбирается и не получает фокус. */
     public readonly disabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,

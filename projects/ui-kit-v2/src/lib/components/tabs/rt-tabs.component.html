@@ -59,7 +59,9 @@
                         }
 
                         @if (tab.badge() !== null) {
-                            <span rtElem="badge">{{ tab.badge() }}</span>
+                            <!-- В одну строку: перенос внутри добавил бы пробел в текст кнопки. -->
+                            <!-- prettier-ignore -->
+                            <span rtElem="badge" [rtTooltip]="tab.badgeTitle()" [attr.aria-label]="tab.badgeAriaLabel() || null">{{ tab.badge() }}</span>
                         }
                     </button>
                 }

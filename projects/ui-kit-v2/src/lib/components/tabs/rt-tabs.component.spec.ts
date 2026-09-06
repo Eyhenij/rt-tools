@@ -12,7 +12,9 @@ import { IRtTabs } from './rt-tabs.model';
     template: `
         <rt-tabs [activeId]="activeId()" [direction]="direction()" [stretch]="stretch()" (activeIdChange)="picked = $event">
             <ng-template rtTab="main" label="Основное">Содержимое основного</ng-template>
-            <ng-template rtTab="extra" label="Дополнительно" [badge]="3">Содержимое дополнительного</ng-template>
+            <ng-template rtTab="extra" label="Дополнительно" [badge]="3" [badgeTitle]="badgeTitle()" [badgeAriaLabel]="badgeAriaLabel()">
+                Содержимое дополнительного
+            </ng-template>
             <ng-template rtTab="locked" label="Закрытое" [disabled]="lockedDisabled()">Закрытое содержимое</ng-template>
             <ng-template rtTab="hidden" label="Скрытое" [hidden]="true">Скрытое содержимое</ng-template>
         </rt-tabs>
@@ -25,6 +27,8 @@ class TabsHostComponent {
     public readonly direction: WritableSignal<IRtTabs.Direction> = signal<IRtTabs.Direction>('horizontal');
     public readonly stretch: WritableSignal<boolean> = signal<boolean>(false);
     public readonly lockedDisabled: WritableSignal<boolean> = signal<boolean>(true);
+    public readonly badgeTitle: WritableSignal<string> = signal<string>('');
+    public readonly badgeAriaLabel: WritableSignal<string> = signal<string>('');
     public picked: IRtTabs.Id | null = null;
 }
 
@@ -211,6 +215,55 @@ describe('RtTabsComponent', (): void => {
                 'Дополнительно',
                 'Закрытое',
             ]);
+        });
+
+        describe('подпись и подсказка счётчика', (): void => {
+            beforeEach((): void => {
+                jest.useFakeTimers();
+            });
+
+            afterEach((): void => {
+                document.querySelector('rt-tooltip')?.remove();
+                jest.useRealTimers();
+            });
+
+            function badge(fixture: ComponentFixture<TabsHostComponent>): HTMLElement {
+                return el(fixture, '.rt-tab-item__badge')?.nativeElement as HTMLElement;
+            }
+
+            it('без входов счётчик рисуется голым: ни подписи, ни подсказки', (): void => {
+                // Потребители без новых входов получают прежнюю разметку.
+                const fixture: ComponentFixture<TabsHostComponent> = setup();
+
+                expect(badge(fixture).getAttribute('aria-label')).toBeNull();
+
+                badge(fixture).dispatchEvent(new Event('mouseenter'));
+                jest.advanceTimersByTime(300);
+                fixture.detectChanges();
+
+                expect(document.querySelector('rt-tooltip')).toBeNull();
+            });
+
+            it('badgeAriaLabel становится подписью счётчика для чтения с экрана', (): void => {
+                const fixture: ComponentFixture<TabsHostComponent> = createRtFixture(TabsHostComponent, {}, { skipInitialDetect: true });
+                fixture.componentInstance.badgeAriaLabel.set('три несохранённых правки');
+                fixture.detectChanges();
+
+                expect(badge(fixture).getAttribute('aria-label')).toBe('три несохранённых правки');
+                expect(textOf(badge(fixture))).toBe('3');
+            });
+
+            it('badgeTitle показывается подсказкой при наведении на счётчик', (): void => {
+                const fixture: ComponentFixture<TabsHostComponent> = createRtFixture(TabsHostComponent, {}, { skipInitialDetect: true });
+                fixture.componentInstance.badgeTitle.set('Несохранённые правки');
+                fixture.detectChanges();
+
+                badge(fixture).dispatchEvent(new Event('mouseenter'));
+                jest.advanceTimersByTime(300);
+                fixture.detectChanges();
+
+                expect(document.querySelector('rt-tooltip')?.textContent).toBe('Несохранённые правки');
+            });
         });
 
         it('стрелки прокрутки есть всегда, но по умолчанию скрыты модификатором', (): void => {
