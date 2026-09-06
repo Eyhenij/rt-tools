@@ -127,7 +127,9 @@ jobs:
             # сценарий чистки. Кода там нет вовсе — он внутри образов.
             #
             # Окружение прода `.env.prod` живёт только на узле и защищено от удаления: пароль базы
-            # правится реже, чем выкатка, и каждая её правка иначе трогала бы секреты.
+            # правится реже, чем выкатка, и каждая её правка иначе трогала бы секреты. Той же
+            # защитой стоят каталог дампов и журнал выгрузки: `--delete` сносит на узле всё, чего
+            # нет в дереве, и без неё каждая выкатка уносила бы все точки возврата разом.
             - name: Sync deploy files
               env:
                   DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
@@ -135,9 +137,24 @@ jobs:
               run: |
                   rsync -az --delete \
                       --filter 'P .env.prod' \
+                      --filter 'P dumps/' \
+                      --filter 'P dump.log' \
                       -e "ssh -i ~/.ssh/deploy_key" \
                       docker-compose.prod.yml deploy/ \
                       "${DEPLOY_USER}@${DEPLOY_HOST}:/opt/message-bus/"
+
+            # Расписание выгрузки дампа едет на узел вместе с составом и ставится здесь, а не
+            # рукой: поставленное рукой снимается первым же переносом узла и не проверяется ничем.
+            # Своя строка узнаётся по имени сценария: чужие строки расписания остаются, своя
+            # стоит один раз, сколько бы выкаток ни прошло.
+            - name: Install dump schedule
+              env:
+                  DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+                  DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+              run: |
+                  ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" \
+                      "{ crontab -l 2>/dev/null | grep -v 'dump.sh save'; grep -v '^#' /opt/message-bus/dump.crontab; } | crontab - \
+                      && crontab -l | grep 'dump.sh save'"
 
             # Узел логинится в реестр разовым токеном прогона, тянет образы того самого коммита и
             # поднимает состав. `--no-build` здесь не украшение: без него compose попытался бы
