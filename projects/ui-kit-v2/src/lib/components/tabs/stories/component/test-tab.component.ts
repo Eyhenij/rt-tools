@@ -26,6 +26,8 @@ import { IRtIcon } from '../../../icon/rt-icon.model';
                 [icon]="icon"
                 [iconColor]="iconColor"
                 [badge]="badge"
+                [badgeTitle]="badgeTitle"
+                [badgeAriaLabel]="badgeAriaLabel"
                 [disabled]="disabled"
                 [hidden]="hidden"
                 [invalid]="invalid"
@@ -50,6 +52,8 @@ export class TestRtTabComponent {
     public icon: IRtIcon.Name | null = null;
     public iconColor: IRtTabs.TitleColor = 'current';
     public badge: string | number | null = null;
+    public badgeTitle: string = '';
+    public badgeAriaLabel: string = '';
     public disabled: boolean = false;
     public hidden: boolean = false;
     public invalid: boolean = false;

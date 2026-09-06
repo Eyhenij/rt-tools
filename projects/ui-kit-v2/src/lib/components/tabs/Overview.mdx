@@ -67,6 +67,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 - Стрелки — влево-вправо, а в вертикальной раскладке вверх-вниз — перешагивают отключённые
   вкладки и заворачиваются по кругу; `Home` и `End` ведут к первой и последней.
 - Ошибка передаётся текстом `invalidMessage`, а не только цветом подписи.
+- Значок объясняется словами: `badgeAriaLabel` — подпись для чтения с экрана, `badgeTitle` —
+  подсказка при наведении. Без них значок читается голым значением.
 
 ## Оформление
 
@@ -92,6 +94,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `icon`              | `IRtIcon.Name \| null`     | `null`         | иконка слева от подписи                         |
 | `iconColor`         | `IRtTabs.TitleColor`       | `'current'`    | цвет иконки                                     |
 | `badge`             | `string \| number \| null` | `null`         | значок справа от подписи                        |
+| `badgeTitle`        | `string`                   | `''`           | подсказка при наведении на значок               |
+| `badgeAriaLabel`    | `string`                   | `''`           | подпись значка для чтения с экрана              |
 | `disabled`          | `boolean`                  | `false`        | вкладка не выбирается и пропускается стрелками  |
 | `hidden`            | `boolean`                  | `false`        | вкладки нет в полосе вовсе                      |
 | `invalid`           | `boolean`                  | `false`        | вкладка помечена ошибкой                        |

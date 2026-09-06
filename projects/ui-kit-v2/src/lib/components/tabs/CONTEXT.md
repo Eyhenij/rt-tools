@@ -30,6 +30,8 @@
 | `titleTemplate`                   | `TemplateRef \| null`                         | `null`                |
 | `icon` / `iconColor`              | `IRtIcon.Name \| null` / `IRtTabs.TitleColor` | `null` / `'current'`  |
 | `badge`                           | `string \| number \| null`                    | `null`                |
+| `badgeTitle`                      | `string` — подсказка при наведении на метку   | `''`                  |
+| `badgeAriaLabel`                  | `string` — подпись метки для чтения с экрана  | `''`                  |
 | `disabled` / `hidden` / `invalid` | `boolean`                                     | `false`               |
 | `invalidMessage`                  | `string`                                      | `''` → `uiTabInvalid` |
 
@@ -57,5 +59,7 @@
 
 - `hidden` убирает вкладку из шапки целиком; `disabled` оставляет её видимой, но некликабельной.
 - У невалидной вкладки появляется подсказка с текстом `invalidMessage`.
+- Метка без `badgeTitle` и `badgeAriaLabel` рисуется как прежде: голое значение, без подсказки и
+  без подписи. Подсказка метки — своя, на самой метке: подсказка кнопки занята неверной вкладкой.
 - Стрелки прокрутки шапки есть в разметке всегда — показывает их модификатор `--visible`,
   который выставляется по замеру ширины после отрисовки.
