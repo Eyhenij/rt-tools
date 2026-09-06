@@ -66,6 +66,12 @@ jobs:
             - name: Build ui-kit
               run: pnpm run build:ui-kit
 
+            # Импорт из соседа, которого нет в опубликованной версии соседа, ломает сборку у
+            # потребителя, а в дереве зелёный: типы читают исходники. Судится строго — выпуск с
+            # таким импортом не выходит; сначала публикуется сосед.
+            - name: Imports against published neighbours
+              run: node tools/check-package-imports.mjs --strict --package @rt-tools/ui-kit
+
             - name: Publish
               run: pnpm run packagr:ui-kit
               env:

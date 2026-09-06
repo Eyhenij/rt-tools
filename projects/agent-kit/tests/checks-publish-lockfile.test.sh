@@ -63,7 +63,7 @@ rm -f "$dir"/*.yml
 workflow publish-core.yml core '' 'pnpm install --lockfile-only && break' да
 workflow publish-store.yml store '' 'pnpm install --lockfile-only' да
 
-probe 'пересборка после публикации с заявкой расхождением не считается' '0' "$(code)"
+probe 'SC-AK-902 — пересборка после публикации с заявкой расхождением не считается' '0' "$(code)"
 probe 'число проверенных конвейеров названо' 'да' "$(said 'конвейеров публикации 2')"
 
 workflow publish-utils.yml utils '' ''
