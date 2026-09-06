@@ -1,8 +1,10 @@
 import {
     activeSectionIds,
+    compactSectionsOf,
     entryKindOf,
     ERtPageHeaderEntry,
     IRtPageHeaderView,
+    isStuck,
     panelGroupsOf,
     panelItemsOf,
     pathOf,
@@ -212,5 +214,45 @@ describe('activeSectionIds', () => {
 
     it('раздел без панели в подсветке по адресу не участвует — за него отвечает routerLinkActive', () => {
         expect(activeSectionIds(sections, '/bookings').has('bookings')).toBe(false);
+    });
+});
+
+describe('compactSectionsOf', () => {
+    const sections: ReadonlyArray<IRtPageHeaderView.Section> = toSections([
+        item('tours', { icon: 'book' }),
+        item('clients'),
+        item('reports', { icon: 'bars' }),
+        SETTINGS,
+    ]);
+
+    it('в круги идут первые разделы с иконкой, число — по входу', () => {
+        expect(compactSectionsOf(sections, 2).map((each: IRtPageHeaderView.Section): string => each.id)).toEqual(['tours', 'reports']);
+    });
+
+    it('раздел без иконки в круг не попадает, даже когда место есть', () => {
+        expect(compactSectionsOf(sections, 10).map((each: IRtPageHeaderView.Section): string => each.id)).toEqual([
+            'tours',
+            'reports',
+            'settings',
+        ]);
+    });
+
+    it('ноль и отрицательное число кругов не дают', () => {
+        expect(compactSectionsOf(sections, 0)).toEqual([]);
+        expect(compactSectionsOf(sections, -3)).toEqual([]);
+    });
+});
+
+describe('isStuck', () => {
+    it('шапка прилипла, когда её место в потоке ушло выше видимого положения', () => {
+        expect(isStuck(-300, 0)).toBe(true);
+    });
+
+    it('до прокрутки положение в потоке и видимое совпадают', () => {
+        expect(isStuck(120, 120)).toBe(false);
+    });
+
+    it('рамка родителя в пиксель прилипанием не считается', () => {
+        expect(isStuck(119, 120)).toBe(false);
     });
 });

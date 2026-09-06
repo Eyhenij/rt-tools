@@ -137,6 +137,26 @@ export function isEntryActive(entry: IRtPageHeaderView.Entry, path: string): boo
  * списку пунктов: своего адреса у раздела с панелью нет, и подсветить его больше
  * нечем.
  */
+/**
+ * Разделы для кругов сжатой полосы: первые `count` из тех, у кого есть иконка. Раздел без
+ * иконки в круг не попадает — показать в нём нечего, и он остаётся под кнопкой «ещё».
+ */
+export function compactSectionsOf(
+    sections: ReadonlyArray<IRtPageHeaderView.Section>,
+    count: number
+): ReadonlyArray<IRtPageHeaderView.Section> {
+    return sections.filter((section: IRtPageHeaderView.Section): boolean => section.icon !== null).slice(0, Math.max(0, count));
+}
+
+/**
+ * Прилипла ли шапка к верху: липкий узел стоит выше того места, где лежал бы в потоке.
+ * Положение в потоке приходит суммой смещения узла и верха его родителя, видимое — прямоугольником
+ * узла. Допуск в пиксель гасит рамку родителя, которую смещение не считает.
+ */
+export function isStuck(flowTop: number, visualTop: number): boolean {
+    return flowTop < visualTop - 1;
+}
+
 export function activeSectionIds(sections: ReadonlyArray<IRtPageHeaderView.Section>, url: string): ReadonlySet<string> {
     const path: string = pathOf(url);
     const ids: Set<string> = new Set<string>();

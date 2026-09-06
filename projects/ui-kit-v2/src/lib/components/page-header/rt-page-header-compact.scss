@@ -1,0 +1,146 @@
+@layer rt-kit.components {
+    /* Сжатая полоса шапки: та же плашка, прилипшая к верху и сжатая по макету до 46px.
+       Слева стопка кругов с шагом в половину круга — «ещё» поверх остальных, — дальше три
+       слота потребителя. Своей ширины у полосы нет: она заполняет хост. */
+    .rt-page-header {
+        --rt-nav-compact-height: 46px;
+        --rt-nav-compact-circle-size: var(--rt-size-6);
+        --rt-nav-compact-circle-overlap: calc(var(--rt-nav-compact-circle-size) / 2);
+        --rt-nav-compact-circle-ring-width: var(--rt-border-width-thick);
+        --rt-nav-compact-circle-radius: var(--rt-radius-full);
+        --rt-nav-compact-circle-color-bg: var(--rt-neutral-100);
+        --rt-nav-compact-circle-color-bg-active: var(--rt-nav-item-color-bg-active);
+        --rt-nav-compact-color-bg: var(--rt-color-bg-surface);
+        --rt-nav-compact-stack-depth: 16; /* круг с индексом 0 лежит выше всех, следующие — ниже */
+
+        &--sticky {
+            position: sticky;
+            z-index: var(--rt-z-sticky);
+            top: 0;
+        }
+
+        &__compact {
+            display: none;
+            min-width: 0;
+            min-height: var(--rt-nav-compact-height);
+            flex: 1 1 auto;
+            align-items: center;
+            gap: var(--rt-space-3);
+        }
+
+        /* Сжатое состояние: широкий ряд, бургер и блок пользователя уходят, полоса встаёт на
+           их место. Скругление снимается — полоса лежит по краю окна, а не в теле страницы. */
+        &--is-compact {
+            min-height: var(--rt-nav-compact-height);
+            padding: 0 var(--rt-space-5);
+            border-radius: 0;
+            background-color: var(--rt-nav-compact-color-bg);
+
+            > :not(.rt-page-header__compact) {
+                display: none;
+            }
+
+            .rt-page-header__compact {
+                display: flex;
+            }
+        }
+
+        /* Стопка — свой контекст наложения: номера кругов сравниваются только между собой. */
+        &__compact-stack {
+            display: flex;
+            flex-shrink: 0;
+            align-items: center;
+            isolation: isolate;
+        }
+
+        /* Порядок в стопке: чем правее круг, тем ниже он лежит. Индекс приходит из разметки,
+           «ещё» стоит первым и без индекса — поверх всех. */
+        &__compact-circle {
+            --rt-nav-compact-index: 0;
+
+            position: relative;
+            z-index: calc(var(--rt-nav-compact-stack-depth) - var(--rt-nav-compact-index));
+            display: inline-flex;
+            width: var(--rt-nav-compact-circle-size);
+            height: var(--rt-nav-compact-circle-size);
+            box-sizing: border-box;
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: 0;
+            border-radius: var(--rt-nav-compact-circle-radius);
+            background-color: var(--rt-nav-compact-circle-color-bg);
+            box-shadow: 0 0 0 var(--rt-nav-compact-circle-ring-width) var(--rt-nav-compact-color-bg);
+            color: var(--rt-nav-item-color);
+            cursor: pointer;
+            text-decoration: none;
+            transition: color var(--rt-nav-header-transition-duration) linear;
+
+            & + & {
+                margin-left: calc(-1 * var(--rt-nav-compact-circle-overlap));
+            }
+
+            &:hover {
+                color: var(--rt-nav-item-color-hover);
+            }
+
+            &:active {
+                color: var(--rt-nav-item-color-pressed);
+            }
+
+            &:focus {
+                outline: none;
+            }
+
+            /* Круг с фокусом поднимается над соседями: иначе кольцо фокуса режется следующим. */
+            &:focus-visible {
+                z-index: calc(var(--rt-nav-compact-stack-depth) + 1);
+                outline: 2px dashed var(--rt-nav-color-focus);
+                outline-offset: 2px;
+            }
+
+            &--is-active,
+            &--is-open {
+                background-color: var(--rt-nav-compact-circle-color-bg-active);
+                color: var(--rt-nav-item-color-hover);
+            }
+
+            &--disabled,
+            &:disabled {
+                color: var(--rt-nav-color-disabled);
+                cursor: not-allowed;
+            }
+        }
+
+        &__compact-marker {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: var(--rt-nav-marker-size);
+            height: var(--rt-nav-marker-size);
+            border-radius: var(--rt-nav-marker-radius);
+            background-color: var(--rt-nav-marker-color);
+        }
+
+        &__compact-slot {
+            display: flex;
+            min-width: 0;
+            align-items: center;
+
+            &--left {
+                flex: 0 1 auto;
+            }
+
+            &--center {
+                flex: 1 1 auto;
+                justify-content: center;
+            }
+
+            &--right {
+                flex: 0 0 auto;
+                margin-left: auto;
+            }
+        }
+    }
+}
