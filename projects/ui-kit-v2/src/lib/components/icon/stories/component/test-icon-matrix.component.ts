@@ -8,7 +8,7 @@ import { RtIconComponent } from '../../rt-icon.component';
 import { IRtIcon } from '../../rt-icon.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TIconMatrixPart = 'catalog' | 'size' | 'color' | 'rotate' | 'themes';
+export type TIconMatrixPart = 'catalog' | 'size' | 'color' | 'rotate' | 'themes' | 'social';
 
 /** Категория набора со своими именами — строка каталога. */
 interface IIconCategoryGroup {
@@ -77,6 +77,16 @@ interface IIconCategoryGroup {
                     </ng-template>
                 </app-story-themes>
             }
+
+            @case ('social') {
+                <app-story-themes caption="Знаки соцсетей в обеих темах: цвет задан в файле, тема его не трогает">
+                    <ng-template>
+                        @for (name of socialNames; track name) {
+                            <rt-icon size="lg" [name]="name" />
+                        }
+                    </ng-template>
+                </app-story-themes>
+            }
         }
     `,
     styles: `
@@ -102,6 +112,9 @@ export class TestRtIconMatrixComponent {
 
     public readonly sizes: readonly IRtIcon.Size[] = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
     public readonly colors: readonly IRtIcon.Color[] = ['current', 'muted', 'info', 'success', 'warning', 'danger', 'inverse'];
+
+    /** Знаки соцсетей: цвет у каждого свой и в файле, поэтому пара тем показывает их без оси цвета. */
+    public readonly socialNames: readonly IRtIcon.Name[] = iconsName.filter((name: IRtIcon.Name): boolean => categoryOf(name) === 'Social');
     public readonly rotations: readonly (number | null)[] = [null, 90, 180, 270];
 
     /** Весь набор, разложенный по категориям в порядке `CATEGORY_ORDER`. */

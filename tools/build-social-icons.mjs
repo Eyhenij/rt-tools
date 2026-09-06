@@ -7,6 +7,7 @@
  * Файлы ложатся в `projects/ui-kit-v2/src/assets/icons/social-<сеть>.svg` и едут в репозиторий:
  * сборка пакета этот сценарий не зовёт и от `simple-icons` не зависит.
  */
+import { execFileSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -73,10 +74,16 @@ function svgOf({ name, icon, gradient, glyph = '#FFFFFF' }) {
 }
 
 mkdirSync(OUT_DIR, { recursive: true });
+const files = [];
 for (const network of NETWORKS) {
     if (!network.icon) {
         throw new Error(`build-social-icons: в simple-icons нет знака «${network.name}»`);
     }
-    writeFileSync(join(OUT_DIR, `social-${network.name}.svg`), svgOf(network));
+    const file = join(OUT_DIR, `social-${network.name}.svg`);
+    writeFileSync(file, svgOf(network));
+    files.push(file);
 }
+// Форматтер правит файлы на коммите; собранное приводится к тому же виду сразу, иначе
+// повторный запуск сценария даёт расхождение на неизменившихся знаках.
+execFileSync('pnpm', ['exec', 'prettier', '--write', '--log-level', 'silent', ...files], { cwd: ROOT, stdio: 'inherit' });
 console.log(`build-social-icons: собрано знаков ${NETWORKS.length} в ${OUT_DIR}`);
