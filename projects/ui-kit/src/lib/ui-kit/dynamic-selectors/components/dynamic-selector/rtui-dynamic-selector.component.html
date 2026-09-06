@@ -8,6 +8,7 @@
                 [isIconOutlined]="true" />
         } @else {
             <rtui-dynamic-selector-selected-list
+                [appearance]="resolvedAppearance()"
                 [keyExp]="keyExp()"
                 [displayExp]="displayExp()"
                 [selectedEntities]="selectedEntities()"
@@ -74,7 +75,7 @@
                             [navigateButtonTitle]="navigateButtonTitle()"
                             [navigateLink]="navigateLink()"
                             [entitiesToSelect]="entitiesToSelect()"
-                            [appearance]="appearance()"
+                            [appearance]="resolvedAppearance()"
                             [keyExp]="keyExp()"
                             [displayExp]="displayExp()"
                             [isSingleSelection]="isSingleSelection()"

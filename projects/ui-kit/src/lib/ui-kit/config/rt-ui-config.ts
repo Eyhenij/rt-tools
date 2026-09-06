@@ -1,4 +1,5 @@
 import { InjectionToken } from '@angular/core';
+import type { MatFormFieldAppearance } from '@angular/material/form-field';
 
 import type { IRtuiButton } from '../buttons/unified-button/rtui-button.types';
 import type { TRtThemeType } from '../theme/rtui-theme.types';
@@ -31,9 +32,22 @@ export namespace IRtUiConfig {
         appearance?: IRtuiButton.Appearance;
     }
 
+    /** Per-instance-overridable defaults for the dynamic selectors family. */
+    export interface DynamicSelectors {
+        /**
+         * Appearance every form field of the family renders with.
+         *
+         * The family nests: a selector holds an input, an input opens a popup, a popup holds a
+         * list. Set once here, the look reaches all of them; passed as an input, it has to be
+         * repeated at every use, and the one that was missed differs from the rest.
+         */
+        appearance?: MatFormFieldAppearance;
+    }
+
     /** Component-level settings. Each entry overrides `global` for that component only. */
     export interface Components {
         button?: Button;
+        dynamicSelectors?: DynamicSelectors;
     }
 
     export interface Config {

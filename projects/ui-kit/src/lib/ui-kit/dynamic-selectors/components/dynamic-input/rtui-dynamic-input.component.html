@@ -11,7 +11,7 @@
             <rtui-dynamic-selector-selected-list
                 keyExp="id"
                 displayExp="id"
-                [appearance]="appearance()"
+                [appearance]="resolvedAppearance()"
                 [selectedEntities]="selectedEntities()"
                 [readonlyEntitiesKeys]="readonlyEntitiesKeys()"
                 [isListDraggable]="isListDraggable()"
@@ -29,7 +29,7 @@
             </rtui-dynamic-selector-selected-list>
 
             @if (isInputControlShown()) {
-                <mat-form-field [appearance]="appearance()" [style.width.%]="100">
+                <mat-form-field [appearance]="resolvedAppearance()" [style.width.%]="100">
                     <mat-label>{{ inputLabel() }}</mat-label>
 
                     <input
