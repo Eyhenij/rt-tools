@@ -2,7 +2,7 @@
 name: task-flow-handoff
 kind: pattern
 rule: turn-conduct
-description: Паттерн правила turn-conduct. Брать, когда заход упирается в заполнение окна — выбор точки остановки, запись хода работы, форма передачи и что владелец с ней делает. Не брать для возвращения к работе новым заходом — это паттерн task-flow-resume.
+description: Pattern of rule turn-conduct. Load when the session runs into window fill — choosing the stopping point, writing the progress, the shape of the handover and what the owner does with it. Not for returning to work in a new session — that is pattern task-flow-resume.
 ---
 
 # Закрытие захода по заполнению окна
@@ -100,38 +100,39 @@ mkdir -p <каталог передачи>
 Внутри — готовый текст для вставки в новый заход, без обращения к владельцу за подробностями:
 
 ```markdown
-Работа: <КЛЮЧ>-<номер> «<название задачи>». Рабочее дерево — <полный путь>, ветка
-<КЛЮЧ>-<номер>-<slug> (заведена, в работе).
-Заявка: #<номер>, открыта, ждёт разбора владельцем. Свежесть её основания здесь не записана
-намеренно — она протухает; спрашивается она у хранилища первым делом нового захода.
+Work: <KEY>-<number> "<task name>". Working tree — <full path>, branch
+<KEY>-<number>-<slug> (created, in progress).
+PR: #<number>, open, waiting for the owner's review. The freshness of its base is left out on
+purpose — it goes stale; the new session asks the hosting about it first thing.
 
-Ход работы и замысел придут на запуске сессии хуком — перечитывать их файлами не надо. Разбор
-просьбы владельца лежит в папке задачи и читается, когда непонятна причина решения.
+The progress and the plan arrive at session start through the hook — no need to re-read them
+as files. The grill of the owner's request lies in the task folder and is read when the reason
+for a decision is unclear.
 
-Сделано: этапы 1–3 замысла закрыты и закоммичены.
-Следующий шаг: этап 4 — <что именно>.
+Done: stages 1–3 of the plan are closed and committed.
+Next step: stage 4 — <what exactly>.
 
-Что учесть в этом заходе:
+What to keep in mind in this session:
 
-- разбор работы правилами по <КЛЮЧ>-<номер> запущен фоном и не вернулся — находки писать в
-  `<имя замысла>-findings.md` рядом с замыслом эпика;
-- стенды уже подняты владельцем, свой не поднимать;
-- зависимости этого дерева отстают от главной ветки — при падении сборки на чужой ошибке
-  сперва установка зависимостей;
-- <прочее, чего нет ни в правилах, ни в ходе работы>.
+- the rules review of <KEY>-<number> was started in the background and has not returned —
+  write the findings to `<plan name>-findings.md` next to the epic plan;
+- the stands are already up, raised by the owner; do not raise your own;
+- the dependencies of this tree lag behind the main branch — when the build fails on a
+  foreign error, install dependencies first;
+- <anything else that is neither in the rules nor in the progress>.
 ```
 
 Третьим разделом идёт «Эпик» — таблица положения. Работа вне эпика этого раздела не несёт:
 таблица из одной строки повторяет раздел «Работа» и читается как эпик из одной задачи.
 
 ```markdown
-### Эпик <номер> — <возможность, названная замыслом>
+### Epic <number> — <the capability named by the plan>
 
-| №   | Задача                            | Состояние |
-| --- | --------------------------------- | --------- |
-| 1   | <КЛЮЧ>-<номер> — <что делает>     | закрыта   |
-| 2   | **<КЛЮЧ>-<номер> — <что делает>** | в работе  |
-| 3   | <КЛЮЧ>-<номер> — <что делает>     | впереди   |
+| #   | Task                              | State       |
+| --- | --------------------------------- | ----------- |
+| 1   | <KEY>-<number> — <what it does>   | closed      |
+| 2   | **<KEY>-<number> — <what it does>** | in progress |
+| 3   | <KEY>-<number> — <what it does>   | ahead       |
 ```
 
 Три колонки, строка на задачу. Заголовок называет номер эпика и возможность — ту, что записана в

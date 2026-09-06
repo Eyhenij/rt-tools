@@ -11,6 +11,7 @@
 - **Передача берётся по имени текущей ветки.** — `projects/agent-kit/assets/hooks/turn-entry-load.sh:branch`
 - **Передачи нет — вход об этом молчит.** — `projects/agent-kit/assets/hooks/turn-entry-load.sh:handoff_dir`
 - **Карта хода приходит в контекст на том же запуске, что и передача.** — `projects/agent-kit/assets/hooks/turn-entry-load.sh:map`
+- **Выходы хода и строка о границе состояния читаются под двумя именами: английским и русским.** — `projects/agent-kit/assets/checks/check-turn-map.mjs:EXITS` — пары имён, хватает любого; строка о границе — `projects/agent-kit/assets/checks/check-state-next.mjs:BOUNDARIES`; сценарий SC-AK-905
 - **Карта называет обязательное действие каждого состояния и четыре выхода хода.** — `projects/agent-kit/assets/checks/check-turn-map.mjs:EXITS`
 - **Карта живёт своим файлом ресурса пакета.** — `projects/agent-kit/assets/checks/check-turn-map.mjs:MAP`
 - **Карта короче правила и этим отличается от него.** — `projects/agent-kit/assets/checks/check-turn-map.mjs:LIMIT_BYTES`

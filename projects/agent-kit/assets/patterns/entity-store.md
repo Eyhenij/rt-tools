@@ -2,7 +2,7 @@
 name: entity-store
 kind: pattern
 rule: entity-conventions
-description: Паттерн правила entity-conventions. Брать при заведении или правке стора админки — готовый наследник общей основы списочного стора, обвязка mutate, имена методов от действия, действие со своей занятостью. Не брать для панели — это паттерн entity-aside.
+description: Pattern of rule entity-conventions. Load when creating or editing an admin store — the ready-made heir of the shared list store base, the mutate harness, method names from the action, an action with its own busy flag. Not for the panel — that is pattern entity-aside.
 ---
 
 # Стор сущности

@@ -2,9 +2,9 @@
 name: lists
 kind: rule
 law: lists
-description: Правило под «Закон о списке записей». Брать при правке списочного экрана (libs/admin/*/feature/list), таблицы и пагинации кита. Называет порядок блоков, чем собирается список, где живёт выборка и что уже есть в ките. Готовый код экрана — в паттерне admin-lists-screen.
+description: Rule under the lists law. Load when editing a list screen (libs/admin/*/feature/list), the kit table and pagination. Names the order of blocks, what the list is assembled from, where the query lives and what the kit already has. Ready-made screen code is in pattern admin-lists-screen.
 ---
-<!-- rt-kit v0.25.0 · rules/lists.md · e5480c1bc125 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/lists.md · 2842207e82ba · правится надстройкой, не здесь -->
 
 # Списочный экран — как это устроено здесь
 

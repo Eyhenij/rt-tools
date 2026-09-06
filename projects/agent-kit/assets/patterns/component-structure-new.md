@@ -2,7 +2,7 @@
 name: component-structure-new
 kind: pattern
 rule: component-structure
-description: Паттерн правила component-structure. Брать при заведении или правке *.component.ts — готовый декоратор с порядком свойств, группировка импортов, раскладка полей класса, договорённости шаблона и qa-dataid. Не брать для состояния и потоков — это паттерн angular-patterns-state.
+description: Pattern of rule component-structure. Load when creating or editing *.component.ts — the ready-made decorator with property order, import grouping, class field layout, template conventions and qa-dataid. Not for state and streams — that is pattern angular-patterns-state.
 ---
 
 # Файл компонента

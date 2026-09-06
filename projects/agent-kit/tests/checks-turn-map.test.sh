@@ -94,4 +94,28 @@ case "$out" in
     *) report 'SC-AK-646 — список паттернов правила состоянием не считается' 'не считается' 'не считается' ;;
 esac
 
+# SC-AK-905 — выходы хода читаются и под английскими именами: карта пакета переведена, а карта
+# дерева со своими русскими именами сходится по-прежнему (случаи выше).
+map_list_en() {
+    {
+        printf '# Turn map\n\n## States and mandatory actions\n\n'
+        for state in "$@"; do
+            printf -- '- `%s` — action; leads `task-flow-start`\n' "$state"
+        done
+        printf '\n## What a turn ends with\n\n'
+        printf -- '- **a question to the owner that the rules do not answer** — asked\n'
+        printf -- '- **a guard refusal** — named to the owner\n'
+        printf -- '- **the window filled where there is no compaction** — handover written\n'
+        printf -- '- **work handed over, and the next one started** — PR open\n'
+    } > "$TREE/.claude/rt-kit/defaults/turn-map.md"
+}
+
+rule этап-идёт влито
+map_list_en этап-идёт влито
+out="$(run)"
+case "$out" in
+    *'сошлось'*) report 'SC-AK-905 — выходы хода под английскими именами читаются' 'сошлось' 'сошлось' ;;
+    *) report 'SC-AK-905 — выходы хода под английскими именами читаются' 'расхождения' 'сошлось' ;;
+esac
+
 suite_result "проверки: карта хода"

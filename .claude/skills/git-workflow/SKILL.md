@@ -2,9 +2,9 @@
 name: git-workflow
 kind: rule
 law: delivery
-description: Правило под «Закон о поставке» для дерева на GitHub. Брать на заведение задачи, ветки, коммит, пуш, открытие PR и мерж. Называет пару «задача и ветка» один к одному, имена, машинную запись и гарды поставки. Паттерны: git-workflow-commit, -pr, -merge, -stack. Выкатка — правило deploy-flow.
+description: Rule under the delivery law for a tree on GitHub. Load for creating a task and a branch, commit, push, opening a PR and merging. Names the one-to-one pair of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack. Rollout — rule deploy-flow.
 ---
-<!-- rt-kit v0.25.0 · rules/git-workflow.github.md · ce736bfaef3b · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/git-workflow.github.md · 22246f7c726e · правится надстройкой, не здесь -->
 
 # Поставка — как это устроено здесь
 

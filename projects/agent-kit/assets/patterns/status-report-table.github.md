@@ -2,7 +2,7 @@
 name: status-report-table
 kind: pattern
 rule: status-report
-description: Паттерн правила status-report. Брать, когда владельцу отвечают, где работа стоит, — готовые вызовы для каждой клетки: ветка и её коммиты, состояние заявки, прогон конвейера и сверка его с вершиной, задача на борде, порядок задач из замысла эпика. Образец заполненной таблицы прилагается.
+description: Pattern of rule status-report. Load when answering the owner where the work stands. Ready-made calls for every cell: the branch and its commits, the PR state, the pipeline run checked against the head, the task on the board, the task order from the epic plan. A filled-in sample table is attached.
 ---
 
 # Чем спрашивается состояние и как оно ложится в таблицу

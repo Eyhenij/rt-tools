@@ -2,9 +2,9 @@
 name: entity-models
 kind: rule
 law: entity-models
-description: Правило под «Закон о моделях сущностей». Брать при объявлении или правке модели записи и её маппера, при правке общих моделей и при правке описания контракта. Называет неймспейс модели и её уровни. Паттерн entity-models-new.
+description: Rule under the entity-models law. Load when declaring or editing a record model and its mapper, when editing shared models and when editing the contract description. Names the model namespace and its levels. Pattern entity-models-new.
 ---
-<!-- rt-kit v0.25.0 · rules/entity-models.md · 6f1579e04d9e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/entity-models.md · 19da9653f3a0 · правится надстройкой, не здесь -->
 
 # Модели сущностей — как это устроено здесь
 

@@ -2,7 +2,7 @@
 name: git-workflow-pr
 kind: pattern
 rule: git-workflow
-description: Паттерн правила git-workflow. Брать на открытие PR и всё, что с ним связано: формат заголовка, черновик и его снятие, связь с задачей, ревьювер и метки, образец тела, чтение состояния PR, чеклист проверок. Заведение задачи и коммит — паттерн git-workflow-commit.
+description: Pattern of rule git-workflow. Load for opening a PR and everything around it — title format, draft and leaving it, the link to the task, reviewer and labels, a body sample, reading the PR state, the checklist. Creating the task and committing — pattern git-workflow-commit.
 ---
 
 # Заявка на слияние

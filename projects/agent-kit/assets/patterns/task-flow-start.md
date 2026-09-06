@@ -2,7 +2,7 @@
 name: task-flow-start
 kind: pattern
 rule: task-flow
-description: Паттерн правила task-flow. Брать в начале работы от владельца: разведка до первого вопроса, шесть обязательных вопросов, договорённость о продукте, заведение задачи, ветки и папки. Возвращение к работе — паттерн task-flow-resume.
+description: Pattern of rule task-flow. Load at the start of work from the owner — exploration before the first question, the six mandatory questions, the product agreement, creating the task, the branch and the folder. Returning to work — pattern task-flow-resume.
 ---
 
 # Начало работы

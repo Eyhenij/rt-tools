@@ -2,9 +2,9 @@
 name: autonomous-work-run
 kind: pattern
 rule: autonomous-work
-description: Паттерн правила autonomous-work. Брать, когда владелец ушёл и работа идёт ночь напролёт — готовый цикл одной работы, ветвление чередой, запись умолчания вместо вопроса, список к утру, разбор отказа стража. Не брать для обычного хода работы — это паттерны task-flow-start и task-flow-resume.
+description: Pattern of rule autonomous-work. Load when the owner has left and the work runs through the night — the cycle of one piece of work, chained branching, a written default instead of a question, the list by morning, handling a guard refusal. Not for ordinary work — patterns task-flow-start and -resume.
 ---
-<!-- rt-kit v0.25.0 · patterns/autonomous-work-run.md · 773ca8398d94 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/autonomous-work-run.md · 4006228e8bbf · правится надстройкой, не здесь -->
 
 # Ночь без владельца
 

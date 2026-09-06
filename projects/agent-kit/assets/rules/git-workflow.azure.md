@@ -2,7 +2,7 @@
 name: git-workflow
 kind: rule
 law: delivery
-description: Правило под «Закон о поставке» для дерева в Azure DevOps. Брать на заведение рабочего элемента, ветки, коммит, пуш, открытие PR и слияние. Называет соответствие элемента и ветки один к одному, имена, машинную учётную запись и гарды поставки. Паттерны: git-workflow-commit, -pr, -merge.
+description: Rule under the delivery law for a tree in Azure DevOps. Load for creating a work item and a branch, commit, push, opening a PR and merging. Names the one-to-one match of item and branch, the names, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge.
 ---
 
 # Поставка — как это устроено здесь

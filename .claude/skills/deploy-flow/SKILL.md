@@ -2,9 +2,9 @@
 name: deploy-flow
 kind: rule
 law: delivery
-description: Правило под «Закон о поставке» для дерева на GitHub — та его часть, что про выкатку. Брать, когда правка едет на прод: мерж в главную ветку, конвейер, образы и метки, миграции хранилища. Паттерны: git-workflow-migration, -restart, -docker, -secrets. Задача и ветка — правило git-workflow.
+description: Rule under the delivery law for a tree on GitHub — the part about the rollout. Load when an edit goes to production — merge into the main branch, the pipeline, images and tags, storage migrations. Patterns git-workflow-migration, -restart, -docker, -secrets. Task and branch — rule git-workflow.
 ---
-<!-- rt-kit v0.25.0 · rules/deploy-flow.github.md · f11063ae24aa · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/deploy-flow.github.md · 47406aa26094 · правится надстройкой, не здесь -->
 
 # Выкатка — как это устроено здесь
 

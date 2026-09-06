@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-turn-map.mjs · 35316b8bb267 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-turn-map.mjs · 0fdd1606994c · правится надстройкой, не здесь
 /**
  * Сверка карты хода: её размер и её полнота.
  *
@@ -87,8 +87,16 @@ function statesOf(text, { listed: readListed = false } = {}) {
     return states;
 }
 
-/** Выходы хода, названные законом. Ищутся по началу строки таблицы, а не по всему тексту. */
-const EXITS = ['вопрос владельцу', 'отказ гарда', 'заполненное окно', 'работа отдана'];
+/**
+ * Выходы хода, названные законом. У каждого два имени: английское везёт пакет, русское держит
+ * дерево, чья карта ещё своя. Хватает любого из двух.
+ */
+const EXITS = [
+    ['a question to the owner', 'вопрос владельцу'],
+    ['a guard refusal', 'отказ гарда'],
+    ['the window filled', 'заполненное окно'],
+    ['work handed over', 'работа отдана'],
+];
 
 function main() {
     if (!existsSync(MAP)) {
@@ -135,9 +143,9 @@ function main() {
         }
     }
 
-    for (const exit of EXITS) {
-        if (!text.includes(exit)) {
-            faults.push(`выход хода «${exit}» в карте не назван`);
+    for (const names of EXITS) {
+        if (!names.some((name) => text.includes(name))) {
+            faults.push(`выход хода «${names[0]}» в карте не назван`);
         }
     }
 

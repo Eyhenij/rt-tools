@@ -2,7 +2,7 @@
 name: turn-entry
 kind: rule
 law: work-conduct
-description: Правило под «Закон о ведении работы». Брать при правке хука входа в заход, карты хода и проверки над ней, а также когда решается, что заход получает в контекст до первой реплики. Сам ход работы — правило task-flow.
+description: Rule under the work-conduct law. Load when editing the session entry hook, the turn map and the check over it, and when deciding what a session gets into its context before the first reply. The course of work itself — rule task-flow.
 ---
 
 # Вход в заход — как это устроено здесь

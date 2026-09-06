@@ -2,9 +2,9 @@
 name: task-flow-archive
 kind: pattern
 rule: task-flow
-description: Паттерн правила task-flow. Брать, когда тексты приведены и папка задачи разбирается последним коммитом до открытия заявки: переезд в описание прошлого, сверка очереди работ, разбор закрытой работы правилами и что делать с находками.
+description: Pattern of rule task-flow. Load when the texts are up to date and the task folder is taken apart by the last commit before the PR opens. The move to the archive, the work queue audit, the rules review of the closed work and what to do with the findings.
 ---
-<!-- rt-kit v0.25.0 · patterns/task-flow-archive.md · 795b5cdc3c4a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/task-flow-archive.md · e6b10c12b9a6 · правится надстройкой, не здесь -->
 
 # Разбор папки задачи и разбор работы правилами
 

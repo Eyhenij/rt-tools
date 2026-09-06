@@ -1,8 +1,8 @@
 ---
-description: Слово о слое правил, сказанное посреди работы, ложится блоком в файл предложений
-argument-hint: '<что мешает, чего не хватило, что сработало не так>'
+description: A remark about the rules layer, made in the middle of work, lands as a block in the proposals file
+argument-hint: '<what gets in the way, what was missing, what went wrong>'
 ---
-<!-- rt-kit v0.25.0 · commands/feedback.md · 0485f39057e2 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · commands/feedback.md · 4f8d0e80e222 · правится надстройкой, не здесь -->
 
 Положи слово пользователя блоком в файл предложений. Слово: `$ARGUMENTS`
 

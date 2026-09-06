@@ -1,8 +1,8 @@
 ---
-description: Разбор закрытой задачи глазами правил дерева — что грузилось, что помогло, чего не хватило
-argument-hint: '[пусто | <акцент, на что смотреть в первую очередь>]'
+description: Review of a closed task through the eyes of the tree's rules — what was loaded, what helped, what was missing
+argument-hint: '[empty | <what to look at first>]'
 ---
-<!-- rt-kit v0.25.0 · commands/skill-curator.md · f6f1bd9ab70f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · commands/skill-curator.md · 93aed351c883 · правится надстройкой, не здесь -->
 
 Запусти агента `skill-curator` на разбор только что закрытой задачи. Акцент от пользователя:
 `$ARGUMENTS`

@@ -2,9 +2,9 @@
 name: navigation
 kind: rule
 law: navigation
-description: Правило под «Закон о навигации по разделам». Брать при правке декларации меню, libs/admin/common/container/**, apps/admin/src/app/app.routes.ts и любого libs/admin/**/*.routes.ts. Называет декларацию меню, колонки и группы панели, гейтинг и вложение адресов. Готовый код — в паттерне admin-nav-item.
+description: Rule under the navigation law. Load when editing the menu declaration, libs/admin/common/container/**, apps/admin/src/app/app.routes.ts and any libs/admin/**/*.routes.ts. Names the menu declaration, panel columns and groups, gating and address nesting. Ready-made code is in pattern admin-nav-item.
 ---
-<!-- rt-kit v0.25.0 · rules/navigation.md · bd4655500e65 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/navigation.md · 60792ada909c · правится надстройкой, не здесь -->
 
 # Навигация админки — как это устроено здесь
 

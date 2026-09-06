@@ -2,7 +2,7 @@
 name: styling-bem-layout
 kind: pattern
 rule: styling-bem
-description: Паттерн правила styling-bem. Брать при сборке экрана раздела, формы, панели или окна — готовые блоки общего слоя, разметка через rtBlock и rtElem, свой элемент в чужом поддереве, признак того, что правка идёт не туда. Не брать для стилей компонента кита — это паттерн styling-bem-component.
+description: Pattern of rule styling-bem. Load when assembling a section screen, a form, a panel or a dialog. Blocks of the shared layer, markup through rtBlock and rtElem, your own element in a foreign subtree, the sign that an edit goes to the wrong place. Kit component styles — pattern styling-bem-component.
 ---
 
 # Экран на общем слое раскладки

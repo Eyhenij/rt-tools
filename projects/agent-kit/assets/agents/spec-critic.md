@@ -1,6 +1,6 @@
 ---
 name: spec-critic
-description: Состязательно разбирает договорённость о продукте до того, как по ней написан код — ищет недосказанное, двойные прочтения и случаи, которых спек не назвал. Использовать сразу после spec-writer и до планирования реализации.
+description: Adversarially reviews a product agreement before code is written by it — looks for what is left unsaid, double readings and cases the spec did not name. Use right after spec-writer and before planning the implementation.
 tools: Read, Grep, Glob, Bash
 ---
 

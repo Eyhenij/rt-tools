@@ -1,6 +1,6 @@
 ---
-description: Закрытие захода — главная ветка подтянута, влитые ветки сняты, передача написана
-argument-hint: '[пусто | <что дописать в передачу от себя>]'
+description: Closing the session — the main branch pulled, merged branches removed, the handover written
+argument-hint: '[empty | <what to add to the handover in your own words>]'
 ---
 
 Закрой заход: приведи дерево к главной ветке, убери влитые ветки и напиши передачу для

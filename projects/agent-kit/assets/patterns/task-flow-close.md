@@ -2,7 +2,7 @@
 name: task-flow-close
 kind: pattern
 rule: task-flow
-description: Паттерн правила task-flow. Брать при доведении работы до готовности: вливание договорённости в спек домена, приведение текстов домена к сделанному, открытие заявки черновиком и снятие черновика. Разбор папки задачи — паттерн task-flow-archive.
+description: Pattern of rule task-flow. Load when bringing work to readiness — merging the product agreement into the domain spec, bringing the domain texts up to date with what was done, opening the PR as a draft and leaving draft. Taking the task folder apart — pattern task-flow-archive.
 ---
 
 # Закрытие работы

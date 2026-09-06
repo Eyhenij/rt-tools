@@ -2,7 +2,7 @@
 name: task-flow-resume
 kind: pattern
 rule: task-flow
-description: Паттерн правила task-flow. Брать при возвращении к незаконченной работе новым заходом — что уже пришло в контекст, чего не спрашивать у владельца, как править «Где стоим», как записывать решение по ходу и пересмотр этапа. Не брать для начала работы — это паттерн task-flow-start.
+description: Pattern of rule task-flow. Load when returning to unfinished work in a new session. What is already in the context, what not to ask the owner, how to edit "Where we stand", how to record a decision along the way and a stage revision. Not for starting work — that is pattern task-flow-start.
 ---
 
 # Возвращение к незаконченной работе

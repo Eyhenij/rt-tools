@@ -2,7 +2,7 @@
 name: component-structure
 kind: rule
 law: frontend-application
-description: Правило под «Закон о фронтовом приложении». Брать при правке любого *.component.ts и его шаблона. Называет порядок свойств декоратора, группировку импортов, договорённости шаблона и обязательный qa-dataid. Готовый код — в паттерне component-structure-new.
+description: Rule under the frontend-application law. Load when editing any *.component.ts and its template. Names the order of decorator properties, import grouping, template conventions and the mandatory qa-dataid. Ready-made code is in pattern component-structure-new.
 ---
 
 # Файл компонента — как это устроено здесь

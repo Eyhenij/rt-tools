@@ -2,9 +2,9 @@
 name: entity-aside
 kind: pattern
 rule: entity-conventions
-description: Паттерн правила entity-conventions. Брать при сборке или правке панели создания и правки записи — готовый маршрут в аутлете ro, наследование общей основы, runMutation, гард несохранённых правок, шапка и футер, уход на связанную запись. Не брать для стора — это паттерн entity-store.
+description: Pattern of rule entity-conventions. Load when assembling or editing the record create-and-edit panel — the ready-made route in the ro outlet, inheriting the shared base, runMutation, the unsaved edits guard, header and footer, leaving for a linked record. Not for the store — pattern entity-store.
 ---
-<!-- rt-kit v0.25.0 · patterns/entity-aside.md · 4133d84fe60b · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/entity-aside.md · 3c615f66ba41 · правится надстройкой, не здесь -->
 
 # Панель правки записи
 

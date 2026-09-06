@@ -1,6 +1,6 @@
 ---
 name: skill-curator
-description: Разбирает закрытую задачу с точки зрения законов, правил и паттернов — что грузилось, что помогло, чего не хватило — и приносит готовые формулировки правок. Файлы не меняет. Использовать после того, как задача сделана и проверена.
+description: Reviews a closed task from the side of the laws, rules and patterns — what was loaded, what helped, what was missing — and brings ready-made wording for edits. Changes no files. Use after the task is done and checked.
 tools: Read, Grep, Glob, Bash, Skill
 ---
 

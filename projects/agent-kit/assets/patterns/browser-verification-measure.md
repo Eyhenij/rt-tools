@@ -2,7 +2,7 @@
 name: browser-verification-measure
 kind: pattern
 rule: browser-verification
-description: Паттерн правила browser-verification. Брать, когда вывод о вёрстке надо подкрепить числом — готовые замеры, разбивка вычисленного значения по всем узлам, узкий экран через iframe, ловушки инструмента computer. Не брать для подъёма стенда — это паттерн browser-verification-stand.
+description: Pattern of rule browser-verification. Load when a conclusion about layout needs a number behind it — ready-made measurements, a computed value broken down over all nodes, a narrow screen through an iframe, pitfalls of the computer tool. Not for raising a stand — pattern browser-verification-stand.
 ---
 
 # Замер вместо взгляда

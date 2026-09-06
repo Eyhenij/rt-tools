@@ -1,6 +1,6 @@
 ---
 name: prose-editor
-description: Переписывает абзац, который отбила проверка слога, простыми словами и не меняя смысла. Возвращает переписанный текст и список того, что изменил. Использовать, когда гард слога отбил правку.
+description: Rewrites a paragraph refused by the prose check in plain words without changing the meaning. Returns the rewritten text and a list of what was changed. Use when the prose guard refused an edit.
 tools: Read, Grep
 ---
 

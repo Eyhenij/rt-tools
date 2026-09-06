@@ -2,7 +2,7 @@
 name: git-workflow-stack
 kind: pattern
 rule: git-workflow
-description: Паттерн правила git-workflow. Брать, когда работы идут одна за другой либо когда из одного основания уже заведено больше двух веток: ветвление чередой от предыдущей, основание заявки, порядок вливания снизу вверх, перевливание главной по факту конфликта. Один конфликт — паттерн git-workflow-merge.
+description: Pattern of rule git-workflow. Load when pieces of work follow one another or more than two branches already stand on one base — chained branching from the previous one, the PR base, merging bottom-up, re-merging main on an actual conflict. One conflict — pattern git-workflow-merge.
 ---
 
 # Стопка заявок из одного основания

@@ -2,9 +2,9 @@
 name: styling-bem
 kind: rule
 law: frontend-application
-description: Правило под «Закон о фронтовом приложении». Брать при правке любого *.scss и шаблона компонента. Называет директивы BEM, токены оформления, общий слой раскладки приложения и проверку класса без правила. Готовый код — в паттернах styling-bem-layout и styling-bem-component.
+description: Rule under the frontend-application law. Load when editing any *.scss and a component template. Names the BEM directives, the styling tokens, the shared layout layer of the application and the check for a class without a rule. Ready-made code in patterns styling-bem-layout and -component.
 ---
-<!-- rt-kit v0.25.0 · rules/styling-bem.md · d55d5b8a318c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/styling-bem.md · 5074e92baaf6 · правится надстройкой, не здесь -->
 
 # Оформление — как это устроено здесь
 
