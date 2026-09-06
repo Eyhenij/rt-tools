@@ -25,6 +25,8 @@
 - **Дамп снимается и загружается одной командой каждый.** — `deploy/dump.sh:DUMPS`
 - **Загруженный дамп возвращает и свод, и годность выданных токенов.** — `deploy/dump.sh:compose`
 - **Загрузка дампа проверяется на одноразовой базе рядом, а не на боевой.** — `deploy/dump.sh:probe` — отпечаток считает `fingerprint`, имя одноразовой базы — `PROBE_NAME`; сценарий SC-MB-95
+- **Дамп снимается по расписанию раз в сутки, и расписание ставит выкатка.** — `.github/workflows/deploy.yml:crontab` — строка задания лежит в `deploy/dump.crontab`; сценарий SC-MB-286
+- **На узле живут семь последних дампов, и выкатку они переживают.** — `deploy/dump.sh:KEEP_DUMPS` — защиту каталога дампов держит `.github/workflows/deploy.yml:dumps`; сценарий SC-MB-286
 - **Адрес приёма в настройке дерева — имя, а не местная машина.** — `.claude/rt-kit.json:intake`
 - **Сборка приёмника отказывает, когда клиента хранилища нет.** — `apps/message-bus/src/build/storage-client.check.mjs:storageClientFailure`
 - **Отказ называет и причину, и починку.** — `apps/message-bus/src/build/storage-client.check.mjs:GENERATE_COMMAND`
