@@ -1,14 +1,21 @@
+import { BooleanInput, NumberInput } from '@angular/cdk/coercion';
 import {
+    afterNextRender,
+    booleanAttribute,
     computed,
     effect,
     inject,
     input,
+    numberAttribute,
     output,
     signal,
     viewChild,
     ChangeDetectionStrategy,
     Component,
+    DestroyRef,
+    ElementRef,
     InputSignal,
+    InputSignalWithTransform,
     OutputEmitterRef,
     Signal,
     TemplateRef,
@@ -20,7 +27,7 @@ import { Event as RouterEvent, NavigationEnd, Router, RouterLink, RouterLinkActi
 
 import { filter, map } from 'rxjs';
 
-import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective, WINDOW } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, RT_KIT_TRANSLATOR, RtKitLabelPipe, TRtKitLabelMap, TRtKitTranslator, rtKitLabel } from '../../i18n';
 import { BreakpointsService } from '../../platform';
@@ -28,7 +35,7 @@ import { BreakpointsService } from '../../platform';
 import { RtIconComponent } from '../icon';
 import { RtPopoverDirective } from '../popover';
 import { RtTooltipDirective } from '../tooltip';
-import { activeSectionIds, ERtPageHeaderEntry, IRtPageHeaderView, toSections } from './rt-page-header.logic';
+import { activeSectionIds, compactSectionsOf, ERtPageHeaderEntry, IRtPageHeaderView, isStuck, toSections } from './rt-page-header.logic';
 import { IRtPageHeader } from './rt-page-header.model';
 
 const BEM_BLOCK: string = 'rt-page-header';
@@ -53,7 +60,12 @@ const BEM_BLOCK: string = 'rt-page-header';
     // Панель второго уровня и панель узкого экрана рисуются в CDK Overlay, вне
     // хоста, поэтому это отдельные корневые блоки — и отдельные файлы: бюджет
     // стилей компонента считается на каждый файл, и одним они его перебирают.
-    styleUrls: ['./rt-page-header.component.scss', './rt-page-header-submenu.scss', './rt-page-header-mobile.scss'],
+    styleUrls: [
+        './rt-page-header.component.scss',
+        './rt-page-header-submenu.scss',
+        './rt-page-header-mobile.scss',
+        './rt-page-header-compact.scss',
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
@@ -72,10 +84,26 @@ const BEM_BLOCK: string = 'rt-page-header';
     ],
     host: {
         class: BEM_BLOCK,
+        '[class.rt-page-header--sticky]': 'stickyCompact()',
+        '[class.rt-page-header--is-compact]': 'compact()',
     },
 })
 export class RtPageHeaderComponent {
     readonly #router: Router = inject(Router);
+
+    readonly #destroyRef: DestroyRef = inject(DestroyRef);
+
+    readonly #host: ElementRef<HTMLElement> = inject<ElementRef<HTMLElement>>(ElementRef);
+
+    // Конструктор наблюдателя пересечения объявлен на globalThis, а не на интерфейсе Window —
+    // токен отдаёт тот же объект, тип лишь уточняется.
+    readonly #window: Window & typeof globalThis = inject(WINDOW) as Window & typeof globalThis;
+
+    /**
+     * Прилипла ли шапка к краю прокрутки. Считается наблюдателем пересечения, а не смещением
+     * окна: страница у потребителя прокручивается и внутри контейнера, и окно об этом не знает.
+     */
+    readonly #stuck: WritableSignal<boolean> = signal<boolean>(false);
 
     readonly #t_uiMainNav: Signal<string> = rtKitLabel('uiMainNav');
 
@@ -101,6 +129,19 @@ export class RtPageHeaderComponent {
     protected readonly mobileNavPopoverRef: Signal<RtPopoverDirective | undefined> = viewChild('mobileNavPopover', {
         read: RtPopoverDirective,
     });
+
+    /** Кнопка «ещё» сжатой полосы открывает ту же панель, что и бургер, своим поповером. */
+    protected readonly compactNavPopoverRef: Signal<RtPopoverDirective | undefined> = viewChild('compactNavPopover', {
+        read: RtPopoverDirective,
+    });
+
+    /** Сжатое состояние: шапка липкая и прилипла к верху. */
+    protected readonly compact: Signal<boolean> = computed((): boolean => this.stickyCompact() && this.#stuck());
+
+    /** Разделы в кругах сжатой полосы: первые с иконкой, число — по входу. */
+    protected readonly compactSections: Signal<ReadonlyArray<IRtPageHeaderView.Section>> = computed(
+        (): ReadonlyArray<IRtPageHeaderView.Section> => compactSectionsOf(this.sections(), this.compactVisibleCount())
+    );
 
     /** Форма пункта решается один раз здесь, а не ветвлениями в шаблоне. */
     protected readonly sections: Signal<ReadonlyArray<IRtPageHeaderView.Section>> = computed((): ReadonlyArray<IRtPageHeaderView.Section> =>
@@ -149,6 +190,19 @@ export class RtPageHeaderComponent {
     /** Пусто — берётся переведённая подпись по умолчанию */
     public readonly ariaLabel: InputSignal<string> = input<string>('');
 
+    /**
+     * Шапка липнет к верху окна и, прилипнув, сжимается в полосу: круги первых разделов,
+     * кнопка «ещё» и три слота потребителя. Выключено — поведение прежнее.
+     */
+    public readonly stickyCompact: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /** Сколько разделов с иконкой показывать кругами в сжатой полосе; остальные — под «ещё». */
+    public readonly compactVisibleCount: InputSignalWithTransform<number, NumberInput> = input<number, NumberInput>(2, {
+        transform: numberAttribute,
+    });
+
     /** Своё имя навигации важнее умолчания */
     public readonly navAriaLabel: Signal<string> = computed((): string => this.ariaLabel() || this.#t_uiMainNav());
 
@@ -164,6 +218,42 @@ export class RtPageHeaderComponent {
                 this.mobileNavPopoverRef()?.close();
             }
         });
+
+        afterNextRender((): void => this.#observeStuck());
+    }
+
+    /**
+     * Липкая шапка стоит на пиксель выше края прокрутки и, прилипнув, теряет его из видимой
+     * области: наблюдатель пересечения с порогом в единицу ловит ровно этот момент — и в окне,
+     * и внутри прокручиваемого контейнера, о котором окно не знает.
+     */
+    #observeStuck(): void {
+        const observer: IntersectionObserver = new this.#window.IntersectionObserver(
+            (entries: IntersectionObserverEntry[]): void => {
+                const entry: IntersectionObserverEntry | undefined = entries.at(-1);
+                if (entry !== undefined) {
+                    this.#stuck.set(isStuck(entry.intersectionRatio, entry.isIntersecting));
+                }
+            },
+            { threshold: [0, 1] }
+        );
+        observer.observe(this.#host.nativeElement);
+        this.#destroyRef.onDestroy((): void => observer.disconnect());
+    }
+
+    /** Панель разделов открывают и бургер, и кнопка «ещё»: закрываются обе. */
+    protected closeNavPanels(): void {
+        this.mobileNavPopoverRef()?.close();
+        this.compactNavPopoverRef()?.close();
+    }
+
+    /** Круг раздела без адреса: раздел с панелью открывает общую панель, прочий — сообщает наружу. */
+    protected onCompactSectionClick(section: IRtPageHeaderView.Section): void {
+        if (section.kind === ERtPageHeaderEntry.Panel) {
+            this.compactNavPopoverRef()?.open();
+            return;
+        }
+        this.itemClick.emit(section.id);
     }
 
     protected onItemClick(id: string): void {
@@ -190,6 +280,6 @@ export class RtPageHeaderComponent {
     /** Клик по плоскому пункту мобильной панели: emit + закрыть панель. */
     protected onMobileItemClick(id: string): void {
         this.itemClick.emit(id);
-        this.mobileNavPopoverRef()?.close();
+        this.closeNavPanels();
     }
 }

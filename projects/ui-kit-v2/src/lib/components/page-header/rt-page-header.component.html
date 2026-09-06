@@ -188,6 +188,72 @@
         <rt-icon rtElem="burger-icon" name="bars" size="md" />
     </button>
 
+    <!--
+        Сжатая полоса стоит в разметке всегда, как и узкая: показывает её модификатор хоста.
+        Слева стопка кругов — «ещё» поверх остальных, — дальше три слота потребителя.
+    -->
+    <div rtElem="compact" qa-dataid="header-compact">
+        <div rtElem="compact-stack">
+            <button
+                rtElem="compact-circle"
+                type="button"
+                qa-dataid="header-compact-more"
+                #compactNavPopover="rtPopover"
+                rtPopoverFitViewport
+                rtPopoverOffsetY="10"
+                [rtMod]="{ more: true, isOpen: compactNavPopover.isOpen() }"
+                [attr.aria-label]="t().uiNavMenu"
+                [attr.aria-haspopup]="true"
+                [attr.aria-expanded]="compactNavPopover.isOpen()"
+                [rtPopover]="mobileNavTpl">
+                <rt-icon name="ellipsis-h" size="sm" />
+            </button>
+            @for (section of compactSections(); track section.id; let index = $index) {
+                @if (section.kind === EntryKind.Link) {
+                    <a
+                        rtElem="compact-circle"
+                        qa-dataid="header-compact-section"
+                        routerLinkActive="rt-page-header__compact-circle--is-active"
+                        [style.--rt-nav-compact-index]="index + 1"
+                        [attr.data-id]="section.id"
+                        [attr.aria-label]="section.label"
+                        [routerLink]="section.route"
+                        [routerLinkActiveOptions]="{ exact: section.routerLinkActiveExact }"
+                        [rtTooltip]="section.label">
+                        @if (section.icon; as icon) {
+                            <rt-icon size="sm" [name]="icon" />
+                        }
+                        @if (section.unread) {
+                            <span rtElem="compact-marker" role="img" [attr.aria-label]="t().uiNavUnread"></span>
+                        }
+                    </a>
+                } @else {
+                    <button
+                        rtElem="compact-circle"
+                        type="button"
+                        qa-dataid="header-compact-section"
+                        [rtMod]="{ isActive: activeSectionIds().has(section.id), disabled: section.disabled }"
+                        [style.--rt-nav-compact-index]="index + 1"
+                        [disabled]="section.disabled"
+                        [attr.data-id]="section.id"
+                        [attr.aria-label]="section.label"
+                        [rtTooltip]="section.label"
+                        (click)="onCompactSectionClick(section)">
+                        @if (section.icon; as icon) {
+                            <rt-icon size="sm" [name]="icon" />
+                        }
+                        @if (section.unread) {
+                            <span rtElem="compact-marker" role="img" [attr.aria-label]="t().uiNavUnread"></span>
+                        }
+                    </button>
+                }
+            }
+        </div>
+        <div rtElem="compact-slot" [rtMod]="{ left: true }"><ng-content select="[rtCompactLeft]" /></div>
+        <div rtElem="compact-slot" [rtMod]="{ center: true }"><ng-content select="[rtCompactCenter]" /></div>
+        <div rtElem="compact-slot" [rtMod]="{ right: true }"><ng-content select="[rtCompactRight]" /></div>
+    </div>
+
     <ng-template #mobileNavTpl>
         <div rtBlock="rt-page-header-mobile" role="menu">
             @for (section of sections(); track section.id) {
@@ -243,7 +309,7 @@
                                                     [attr.data-id]="entry.id"
                                                     [routerLink]="entry.route"
                                                     [routerLinkActiveOptions]="{ exact: entry.routerLinkActiveExact }"
-                                                    (click)="mobileNavPopover.close()">
+                                                    (click)="closeNavPanels()">
                                                     <span rtElem="label">{{ entry.label }}</span>
                                                     @if (entry.unread) {
                                                         <span
@@ -305,7 +371,7 @@
                             [attr.data-id]="section.id"
                             [routerLink]="section.route"
                             [routerLinkActiveOptions]="{ exact: section.routerLinkActiveExact }"
-                            (click)="mobileNavPopover.close()">
+                            (click)="closeNavPanels()">
                             @if (section.icon) {
                                 <rt-icon rtElem="icon" size="sm" [name]="section.icon" />
                             }

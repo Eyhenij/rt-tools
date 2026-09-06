@@ -3,11 +3,17 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { STORY_TRIGGER_ATTRIBUTE } from '../../../../../showcase/story-overlay';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
+import { RtIconButtonComponent } from '../../../icon-button/rt-icon-button.component';
+import { RtToggleButtonGroupComponent } from '../../../toggle-button-group/rt-toggle-button-group.component';
+import { IRtToggleButtonGroup } from '../../../toggle-button-group/rt-toggle-button-group.model';
 import { IRtPageHeader } from '../../rt-page-header.model';
 import { RtPageHeaderComponent } from '../../rt-page-header.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TPageHeaderMatrixPart = 'items' | 'user' | 'themes' | 'panel';
+export type TPageHeaderMatrixPart = 'items' | 'user' | 'themes' | 'panel' | 'compact';
+
+/** Признак прокручиваемой обёртки сжатой истории: по нему шаг `play` прокручивает страницу. */
+export const PAGE_HEADER_COMPACT_SCROLL_ATTRIBUTE: string = 'data-story-scroll';
 
 /** Набор пунктов: вид пункта решают его собственные поля, а не входы шапки. */
 interface IPageHeaderItemsCase {
@@ -68,6 +74,20 @@ interface IPageHeaderUserCase {
                     <rt-page-header ariaLabel="Разделы" [items]="mixedItems" [user]="user" [attr.data-story-trigger]="triggerAttribute" />
                 </div>
             }
+
+            @case ('compact') {
+                <div class="app-page-header-matrix__scroll" data-story-root [attr.data-story-scroll]="scrollAttribute">
+                    <rt-page-header ariaLabel="Разделы" stickyCompact [items]="compactItems" [user]="user">
+                        <span rtCompactLeft class="app-page-header-matrix__crumbs">Туры / Лето 2026 / Италия</span>
+                        <rt-toggle-button-group rtCompactCenter ariaLabel="Отбор" value="all" [options]="filterOptions" />
+                        <span rtCompactRight class="app-page-header-matrix__actions">
+                            <rt-icon-button icon="search" ariaLabel="Поиск" size="sm" />
+                            <rt-icon-button icon="filter" ariaLabel="Отбор" size="sm" />
+                        </span>
+                    </rt-page-header>
+                    <div class="app-page-header-matrix__page"></div>
+                </div>
+            }
         }
     `,
     styles: `
@@ -76,11 +96,37 @@ interface IPageHeaderUserCase {
         .app-page-header-matrix__panel-slot {
             padding-bottom: 20rem;
         }
+
+        /* Сжатие наступает на прокрутке, поэтому шапка стоит в прокручиваемой обёртке, а
+           под ней — высокая пустая страница, за которую и прокручивают. Обёртка низкая
+           нарочно: в кадре видна полоса и ровно столько страницы, чтобы прокрутка читалась. */
+        .app-page-header-matrix__scroll {
+            height: 12rem;
+            overflow-y: auto;
+            background-color: var(--rt-color-bg-surface-subtle);
+        }
+
+        .app-page-header-matrix__page {
+            height: 60rem;
+        }
+
+        .app-page-header-matrix__crumbs {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+            white-space: nowrap;
+        }
+
+        .app-page-header-matrix__actions {
+            display: inline-flex;
+            gap: var(--rt-space-1);
+        }
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
         RtPageHeaderComponent,
+        RtToggleButtonGroupComponent,
+        RtIconButtonComponent,
 
         // showcase
         StoryRowComponent,
@@ -91,6 +137,15 @@ export class TestRtPageHeaderMatrixComponent {
     public part: TPageHeaderMatrixPart = 'items';
 
     public readonly triggerAttribute: string = STORY_TRIGGER_ATTRIBUTE;
+
+    public readonly scrollAttribute: string = PAGE_HEADER_COMPACT_SCROLL_ATTRIBUTE;
+
+    /** Варианты отбора в центральном слоте сжатой полосы — содержимое слота рисует потребитель. */
+    public readonly filterOptions: ReadonlyArray<IRtToggleButtonGroup.Option<string>> = [
+        { value: 'all', label: 'Все' },
+        { value: 'active', label: 'Активные' },
+        { value: 'archive', label: 'Архив' },
+    ];
 
     /** Ширина ячейки: полоса тянется на всю ширину родителя и по содержимому схлопнулась бы. */
     public readonly headerWidth: string = '26rem';
@@ -142,6 +197,17 @@ export class TestRtPageHeaderMatrixComponent {
             ],
         },
         { id: 'reports', label: 'Отчёты', route: '/reports' },
+    ];
+
+    /**
+     * Разделы для сжатой полосы: у первых двух есть иконка — они станут кругами, — у третьего
+     * нет, и он остаётся только под кнопкой «ещё».
+     */
+    public readonly compactItems: ReadonlyArray<IRtPageHeader.Item> = [
+        { id: 'tours', label: 'Туры', route: '/tours', icon: 'chart-bar' },
+        { id: 'clients', label: 'Клиенты', route: '/clients', icon: 'users', unread: true },
+        { id: 'reports', label: 'Отчёты', route: '/reports' },
+        this.mixedItems[1],
     ];
 
     public readonly itemsCases: readonly IPageHeaderItemsCase[] = [

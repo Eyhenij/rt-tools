@@ -6,15 +6,19 @@
 <rt-page-header ariaLabel="Разделы" [items]="sections()" [user]="user()" (itemClick)="go($event)" (userClick)="openProfile()" />
 ```
 
-| вход        | тип                         | умолчание          |
-| ----------- | --------------------------- | ------------------ |
-| `items`     | `ReadonlyArray<Item>`       | `[]`               |
-| `user`      | `{ name, avatar? } \| null` | `null`             |
-| `userTitle` | `string`                    | `''`               |
-| `userMenu`  | `TemplateRef \| null`       | `null`             |
-| `ariaLabel` | `string`                    | `''` → `uiMainNav` |
+| вход                  | тип                         | умолчание          |
+| --------------------- | --------------------------- | ------------------ |
+| `items`               | `ReadonlyArray<Item>`       | `[]`               |
+| `user`                | `{ name, avatar? } \| null` | `null`             |
+| `userTitle`           | `string`                    | `''`               |
+| `userMenu`            | `TemplateRef \| null`       | `null`             |
+| `ariaLabel`           | `string`                    | `''` → `uiMainNav` |
+| `stickyCompact`       | `boolean`                   | `false`            |
+| `compactVisibleCount` | `number`                    | `2`                |
 
 Выходы: `itemClick`, `userClick`.
+
+Слоты сжатой полосы: `[rtCompactLeft]`, `[rtCompactCenter]`, `[rtCompactRight]`.
 
 ## Главное, что нужно знать
 
@@ -24,6 +28,14 @@
 
 **Узкая разметка отдельная**, а не свёрнутая стилями: те же разделы доступны через кнопку-бургер
 (`header-nav-burger`), и оба варианта живут в DOM одновременно.
+
+**С `stickyCompact` шапка липнет к верху окна и, прилипнув, сжимается в полосу** высотой 46:
+слева кнопка «ещё» (`header-compact-more`) и круги первых разделов с иконкой
+(`header-compact-section`), дальше три слота потребителя. Число кругов — `compactVisibleCount`;
+раздел без иконки в круг не попадает. «Ещё» открывает ту же панель, что и бургер. Прилипание
+ловит наблюдатель пересечения: верх шапки стоит на пиксель выше края, и, прилипнув, она теряет
+его из видимой области — так работает и внутри прокручиваемого контейнера. Без входа разметка и
+поведение прежние.
 
 ## Края
 
