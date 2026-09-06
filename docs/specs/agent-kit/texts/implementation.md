@@ -15,7 +15,7 @@
 - **Пакет везёт общую часть словаря, дерево дописывает предметную.** — `projects/agent-kit/src/lib/sections.ts:mergeDocuments`
 - **Правило и паттерн судятся как спек, а не как файл агента.** — `projects/agent-kit/assets/defaults/gate-map.sh:skill_for_default`
 - **Шаги работы пронумерованы сплошь, и весь их список лежит в правиле ведения работы.** — `projects/agent-kit/assets/rules/task-flow.md:task-flow`
-- **Правило об оформлении документов держит раздел под скилы дерева.** — `projects/agent-kit/assets/rules/doc-style.md:doc-style`
+- **Правило об оформлении документов держит раздел «Скил без закона».** — `projects/agent-kit/assets/rules/doc-style.md:doc-style`
 - **Ресурс пакета не описывает состояние дерева как факт.** — `projects/agent-kit/assets/rules/spec-driven.md:spec-driven`
 - **Тексты пакета судятся тем же набором требований, что и копии, разложенные в дерево.** — `projects/agent-kit/tests/rules-review.test.sh:missing_sections`
 - **Невыбранный вид судится наравне с выбранным.** — `projects/agent-kit/tests/rules-review.test.sh:KINDS_WITH_SECTIONS`
