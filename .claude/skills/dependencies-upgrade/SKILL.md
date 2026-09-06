@@ -4,7 +4,7 @@ kind: pattern
 rule: dependencies
 description: Паттерн правила dependencies. Брать при подъёме версий пакетов — выбор верхней границы по peer-диапазонам, порядок проверок, граница переформатирования после обновления форматтера, разбор новых правил линтера. Не брать для ветки и коммита — это паттерн git-workflow-commit, для PR — git-workflow-pr.
 ---
-<!-- rt-kit v0.24.0 · patterns/dependencies-upgrade.md · b93c6a0540f3 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · patterns/dependencies-upgrade.md · b93c6a0540f3 · правится надстройкой, не здесь -->
 
 # Подъём версий
 

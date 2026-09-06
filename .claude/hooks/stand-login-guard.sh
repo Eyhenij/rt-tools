@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.24.0 · hooks/stand-login-guard.sh · 680d426642ae · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/stand-login-guard.sh · 680d426642ae · правится надстройкой, не здесь
 # rt-hook: Stop
 # Требует: hooks/deny-tail.sh
 # Гард входа на стенд. Событие Stop. Не даёт завершить ход, в котором исполнитель просит
