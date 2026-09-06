@@ -18,8 +18,9 @@
 - **Просьба о предложении ловится глаголом рядом со словом о слое правил, а не словом самим по себе.** — `projects/agent-kit/assets/hooks/proposal-guard.sh:asked_re`
 - **Ход с вопросом владельцу проверяется на инструменте вопроса, а не на завершении хода.** — `projects/agent-kit/assets/hooks/grill-gate.sh:grill-gate`
 - **Ход, в котором по работе не сделано ничего, не заканчивается.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:verdict`
-- **Работой считаются правка файла и команда, меняющая дерево.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:work_re`
+- **Работой считаются правка файла и команда, меняющая дерево.** — `projects/agent-kit/assets/hooks/turn-exit-patterns.sh:work_re`
 - **Слово об остановке судится по реплике владельца, а не по словам исполнителя.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:told_stop`
+- **Ход, кончившийся словами об ожидании слова владельца, не отпускается без его слова или вопроса ему инструментом.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:awaits_word` — набор образцов фразы; ярус стоит до законных выходов; сценарий SC-AK-891
 - **Отданная и влитая работа стражем не судится.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:state`
 - **Ход, объявивший записанный замысел, не кончается вовсе.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:first_stage` — ветка отбивает ход до второго признака и берёт заголовок первого этапа из замысла; сценарии SC-AK-591…593
 - **Снятая папка задачи снимает требование состояния, а ход не кончает.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:archived` — признак уводит суд на второй, а ход не отпускает; сценарии SC-AK-574…576
