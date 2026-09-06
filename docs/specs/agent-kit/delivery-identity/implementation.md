@@ -13,3 +13,4 @@
 - **Кто придёт по токену, спрашивается у хостинга, а не выводится из текста команды.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:token_login` — сценарий SC-AK-842
 - **Спрашивает дерево, а не пакет.** — `projects/agent-kit/assets/defaults/project.sh:rt_pull_token_login` — умолчание молчит; реализация дерева в `.claude/rt-kit/project.sh`; сценарий SC-AK-842
 - **Пустой ответ работу не останавливает, и о нём сообщается.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:token_login` — сценарий SC-AK-843
+- **Правило поставки говорит, что активная запись клиента хостинга выбирается на машину, а не на дерево.** — `projects/agent-kit/assets/rules/git-workflow.github.md:git-workflow` — статья рядом со статьёй о личности вызова; сценарий SC-AK-892
