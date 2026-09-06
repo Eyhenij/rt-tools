@@ -35,6 +35,19 @@ printf '# Домен\n\nЗаведена задача на разбор.\n' > "$
 git -C "$GL_TREE" add -A 2>/dev/null
 report "SC-AK-690 — принятое слово молчит" "$(glossary_code)" 0
 
+# SC-AK-690 — английское слово раздела ловится теми же границами: граница слова — любая буква,
+# а не кириллическая, и словарь на английском читается той же проверкой.
+printf '# Словарь\n\n## Так не пишем\n\n- **таска, тикет** — задача\n- **ticket** — task\n- **спека (о тесте)** — тест\n' \
+    > "$GL_TREE/docs/GLOSSARY.md"
+printf '# Domain\n\nA ticket is filed for the review.\n' > "$GL_TREE/docs/specs/domain.md"
+git -C "$GL_TREE" add -A 2>/dev/null
+report "SC-AK-690 — английское слово раздела краснеет" "$(glossary_says 'docs/specs/domain.md.*ticket')" 1
+printf '# Domain\n\nThe ticketing desk is closed.\n' > "$GL_TREE/docs/specs/domain.md"
+git -C "$GL_TREE" add -A 2>/dev/null
+report "SC-AK-690 — английское слово внутри другого слова молчит" "$(glossary_code)" 0
+printf '# Словарь\n\n## Так не пишем\n\n- **таска, тикет** — задача\n- **спека (о тесте)** — тест\n' \
+    > "$GL_TREE/docs/GLOSSARY.md"
+
 # SC-AK-691 — слово со скобочным уточнением поиском не судится, и проверка говорит об этом.
 printf '# Домен\n\nСпека рядом с исходником.\n' > "$GL_TREE/docs/specs/domain.md"
 git -C "$GL_TREE" add -A 2>/dev/null

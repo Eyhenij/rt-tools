@@ -7,4 +7,5 @@
 - **Каждая находка названа вместе с заменой.** — `projects/agent-kit/assets/checks/check-prose-style.mjs:MARKS`
 - **Судится только новый текст правки.** — `projects/agent-kit/assets/hooks/prose-style-guard.sh:added`
 - **Границы слова считаются по буквам, а не классом `\w`.** — `projects/agent-kit/assets/checks/check-prose-style.mjs:GLOSSARY_BANS`
+- **Признаки канцелярита есть на каждом языке слоя, и оба набора судят каждую строку.** — `projects/agent-kit/assets/checks/check-prose-style.mjs:MARKS_EN` — английский набор с латинской границей слова, применяется вместе с русским в `findingsIn`; сценарий `SC-AK-903`
 - **Слово, которое бывает и существительным, проверяется по тому, что стоит следом.** — `projects/agent-kit/assets/checks/check-prose-style.mjs:MARKS` — образец множественной формы требует за собой слово из перечня корней; сценарий `SC-AK-859`
