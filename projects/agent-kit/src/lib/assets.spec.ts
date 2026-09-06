@@ -86,6 +86,14 @@ describe('исполняемые ресурсы пакета', (): void => {
         expectGreen('checks-push-gate.test.sh');
     }, 120_000);
 
+    it('SC-AK-893, SC-AK-894, SC-AK-900 — сверка импортов судит их против опубликованного соседа', (): void => {
+        expectGreen('checks-package-imports.test.sh');
+    }, 120_000);
+
+    it('SC-AK-902 — конвейер публикации пересобирает замок после публикации', (): void => {
+        expectGreen('checks-publish-lockfile.test.sh');
+    }, 120_000);
+
     it('SC-AK-264, SC-AK-267 — сверка раскладки берёт имена у дерева, а не у себя', (): void => {
         expectGreen('checks-lib-layers.test.sh');
     }, 120_000);

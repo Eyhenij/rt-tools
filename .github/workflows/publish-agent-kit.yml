@@ -81,6 +81,12 @@ jobs:
                   git tag "rt-agent-kit@${{ env.VERSION }}"
                   git push origin "rt-agent-kit@${{ env.VERSION }}"
 
+            # Импорт из соседа, которого нет в опубликованной версии соседа, ломает сборку у
+            # потребителя, а в дереве зелёный: типы читают исходники. Судится строго — выпуск с
+            # таким импортом не выходит; сначала публикуется сосед.
+            - name: Imports against published neighbours
+              run: node tools/check-package-imports.mjs --strict --package @rt-tools/agent-kit
+
             - name: Publish
               run: pnpm run packagr:agent-kit
               env:

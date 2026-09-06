@@ -63,7 +63,7 @@ rm -f "$dir"/*.yml
 workflow publish-core.yml core '' 'pnpm install --lockfile-only && break' да
 workflow publish-store.yml store '' 'pnpm install --lockfile-only' да
 
-probe 'пересборка после публикации с заявкой расхождением не считается' '0' "$(code)"
+probe 'SC-AK-902 — пересборка после публикации с заявкой расхождением не считается' '0' "$(code)"
 probe 'число проверенных конвейеров названо' 'да' "$(said 'конвейеров публикации 2')"
 
 workflow publish-utils.yml utils '' ''
@@ -90,5 +90,5 @@ printf 'name: CI\njobs:\n    build:\n        steps:\n            - run: pnpm tes
 probe 'конвейер, не поднимающий версии, не судится' '1' "$(code)"
 probe 'и сказано, что судить нечего' 'да' "$(said 'судить нечего')"
 
-printf '\nсошлось: %d, разошлось: %d\n' "$ok" "$bad"
+printf '\nпроверки: замок в конвейере публикации: %d ok, %d провалов\n' "$ok" "$bad"
 [ "$bad" -eq 0 ]
