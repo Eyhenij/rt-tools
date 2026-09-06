@@ -60,7 +60,9 @@ pnpm run agent-kit:check
 
 ## Laws and rules
 
-Two layers, and they do not replace one another.
+Two layers, and they do not replace one another. Two languages as well: laws, rules, patterns,
+skills, check refusals and tree documents are written in English; tasks, PR descriptions,
+commit bodies and chat replies are written in the owner's language.
 
 **Laws** live in `docs/constitution/` and say _what must be true_, without paths or file names.
 They are laid out from `@rt-tools/agent-kit` by `pnpm run agent-kit:sync` and listed at session
