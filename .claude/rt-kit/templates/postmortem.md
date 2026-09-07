@@ -1,37 +1,38 @@
-<!-- rt-kit v0.25.0 · templates/postmortem.md · d08041018436 · правится надстройкой, не здесь -->
-# <чем был промах, а не на какой задаче случился>
+<!-- rt-kit v0.25.0 · templates/postmortem.md · 63f388050c00 · правится надстройкой, не здесь -->
+# <what the miss was, not on which task it happened>
 
-<дата>. <Одна строка: где шла работа и до чего она дошла.>
+<date>. <One line: where the work was going and how far it got.>
 
-## Что произошло
+## What happened
 
-<Что исполнитель сделал и чем это было неверно. Без оценок: разбирается механизм, а не
-намерение.>
+<What the executor did and in what way it was wrong. Without appraisals: the mechanism is
+examined, not the intention.>
 
-## Механизм промаха
+## Mechanism of the miss
 
-1. <что принято за данность>
-2. <откуда взято>
-3. <чем подтверждено — и почему подтверждение оказалось ложным>
-4. <что сделано дальше>
+1. <what was taken for granted>
+2. <where it was taken from>
+3. <what confirmed it — and why the confirmation turned out false>
+4. <what was done next>
 
-## Что было доступно до промаха
+## What was available before the miss
 
-- <файл, команда или уже прочитанное, где лежал ответ>
+- <a file, a command or something already read, where the answer lay>
 
-Отсюда видно, промах это или нехватка данных.
+From here it is visible whether this is a miss or a lack of data.
 
-## Чем ловилось
+## What caught it
 
-- **Слоем правил —** <что отбило, что промолчало>.
-- **Гардом —** <сработал, не сработал, сработал поздно>.
-- **Владельцем —** <заметил сразу, заметил на приёмке, не заметил>.
+- **The rules layer —** <what refused, what stayed silent>.
+- **A guard —** <fired, did not fire, fired late>.
+- **The owner —** <noticed at once, noticed at acceptance, did not notice>.
 
-## Что ушло в слой правил
+## What went into the rules layer
 
-<Предложение с адресом либо правка закона, правила, паттерна — с именами. Запись без этого
-раздела закрытой не считается: разбор, из которого ничего не вышло, — жалоба.
+<A proposal with an address, or an edit of a law, a rule, a pattern — with names. A record
+without this section does not count as closed: an analysis that produced nothing is a complaint.
 
-Предложение называется адресом и предметом — «в пакет, о таком-то», — а не путём к файлу
-предложений: каталог предложений в историю не едет, и путь у любого другого читателя ведёт в
-пустоту. Ресурс, к которому предложение написано, называть можно: он в истории есть.>
+The proposal is named by address and subject — "to the package, about such-and-such" — not by a
+path to the proposals file: the proposals directory does not go into history, and for any other
+reader the path leads nowhere. The resource the proposal is written to may be named: it is in
+history.>

@@ -1,75 +1,77 @@
-# Предложения по слою правил
+# Proposals on the rules layer
 
 <!--
-Кладёт этот файл главный агент — шагом команды `/skill-curator`, из ответа роли разбора. Роль
-файлов не пишет: правила действуют на все будущие сессии, и менять их молча нельзя.
+This file is placed by the main agent — as a step of the `/skill-curator` command, from the reply
+of the review role. The role writes no files: rules act on all future sessions, and changing
+them silently is not allowed.
 
-Читает файл `agent-kit propose`. Форма заголовка — не украшение: по ней команда отбирает то,
-что уезжает в репозиторий пакета.
+The file is read by `agent-kit propose`. The heading form is not decoration: by it the command
+picks what goes out to the package repository.
 
     ## <адрес> · <ресурс>
 
-Адрес один из трёх, и ставит его роль:
+The address is one of three, and the role sets it:
 
-    пакет      — правка ресурса @rt-tools/agent-kit; уезжает наружу
-    компаньон  — implementation.md рядом с правилом: имена этого дерева
-    дерево     — надстройка этого дерева; наружу не уезжает никогда
+    пакет      — an edit of a @rt-tools/agent-kit resource; goes outside
+    компаньон  — implementation.md next to the rule: the names of this tree
+    дерево     — an override of this tree; never goes outside
 
-Ресурс называется идентификатором пакета — `rules/styling-bem.md`, `hooks/skill-gate.sh`, — а у
-адресов «компаньон» и «дерево» путём в дереве.
+The resource is named by the package identifier — `rules/styling-bem.md`, `hooks/skill-gate.sh`
+— and for the addresses "компаньон" and "дерево" by a path in the tree.
 
-В тексте предложения не бывает ни путей этого дерева, ни имён его доменов, ни его собственного
-имени: файл уезжает в чужой репозиторий целиком. Найденный адрес дерева отбивает отправку с
-номером строки — это проверка, а не напоминание.
+The proposal text never holds a path of this tree, a name of its domains or its own name: the
+file goes to a foreign repository in full. A found tree address refuses the send with the line
+number — that is a check, not a reminder.
 
-Строк при заголовке четыре, и все четыре обязательны:
+There are four lines under the heading, and all four are mandatory:
 
-    место          — куда правка встаёт в ресурсе
-    повод          — что пошло не так без неё
-    ближайшее      — точная цитата той строки ресурса, к которой это ближе всего, и чего она не
-                      покрывает; ближайшего нет вовсе — так и пишется: «нет»
-    чем закрывается — какие надстройки и добавки этого дерева снимаются, когда правка приедет
-                      редакцией пакета
+    место          — where the edit goes in the resource
+    повод          — what went wrong without it
+    ближайшее      — the exact quote of the resource line this is closest to, and what it does
+                      not cover; there is nothing close at all — write exactly that: «нет»
+    чем закрывается — which overrides and additions of this tree are lifted when the edit
+                      arrives as a package edition
 
-Третья строка — единственная, которую машина проверяет: цитата ищется в ресурсе, и ненайденная
-отбивает блок. Написана она затем, чтобы ресурс был прочитан. Разбор происшествия кончается
-предложением дописать статью в тот же ресурс, который промах уже описывал, — и снаружи такой
-разбор неотличим от разбора, кончившегося исправлением. Мерить похожесть текстов пробовали
-замером: законное соседство двух статей одного правила даёт 0.345 общих значимых слов, а
-законный перенос удачной статьи на соседнее место — 0.355, и порога между ними нет. Названная
-цитата судится фактом: она в ресурсе либо есть, либо её там нет.
+The third line is the only one the machine checks: the quote is searched for in the resource,
+and one not found refuses the block. It is written so that the resource gets read. An incident
+analysis ends with a proposal to add an article to the very resource that already described the
+miss — and from outside such an analysis is indistinguishable from one that ended in a fix.
+Measuring text similarity was tried: the lawful neighbourhood of two articles of one rule gives
+0.345 shared meaningful words, and the lawful move of a good article to a neighbouring place
+gives 0.355, and there is no threshold between them. A named quote is judged by fact: it is
+either in the resource or it is not.
 
-Отбитый блок не пропадает: он остаётся лежать с отметкой «отбито» и причиной. Видно, что разбор
-был, и видно, почему он не стал правкой.
+A refused block does not vanish: it stays lying with the mark «отбито» and the reason. It is
+visible that the review took place, and visible why it did not become an edit.
 
-Третья пишется затем, что предложение уезжает наружу, а надстройка, ради которой оно написано,
-остаётся лежать в дереве, и связи между ними нет никакой. Пакет выпускает исправленную редакцию
-— и сказать, какие надстройки она закрыла, дереву нечем: имя ресурса совпадает у десятка
-предложений, а раздел надстройки называется тем же заголовком, что и пакетный. Снять наугад
-страшно, оставить дёшево — и надстройка остаётся навсегда, молча замещая исправленный раздел
-пакета.
+The fourth is written because the proposal goes outside, while the override it was written for
+stays lying in the tree, and there is no link between them. The package releases a fixed edition
+— and the tree has nothing to say which overrides it closed: the resource name is the same for a
+dozen proposals, and the override section carries the same heading as the package one. Lifting
+at a guess is scary, leaving is cheap — and the override stays forever, silently replacing the
+fixed package section.
 
-Снимать нечего — так и пишется: «ничего, надстройки под это нет». Пустая строка третьей не
-считается; машине она не видна вовсе — ни одна проверка тела предложения не читает, и держится
-эта форма тем, кто пишет запись.
+There is nothing to lift — write exactly that: «ничего, надстройки под это нет». An empty fourth
+line does not count; the machine does not see it at all — no check reads the proposal body, and
+this form is held by whoever writes the record.
 -->
 
 ## пакет · rules/<правило>.md
 
-- **место:** раздел «<заголовок>», в конец
-- **повод:** что в этой задаче пошло не так без этого правила
-- **ближайшее:** «<точная строка правила, к которой это ближе всего>» — <чего она не покрывает>
-- **чем закрывается:** `.claude/rt-kit/overrides/rules/<правило>.md`, раздел «<заголовок>» —
-  снимается целиком, когда правка приедет редакцией пакета
+- **место:** section «<heading>», at the end
+- **повод:** what went wrong in this task without this rule
+- **ближайшее:** «<the exact line of the rule this is closest to>» — <what it does not cover>
+- **чем закрывается:** `.claude/rt-kit/overrides/rules/<правило>.md`, section «<heading>» —
+  lifted in full when the edit arrives as a package edition
 
-> Готовый текст правки — ровно то, что вставить, в стиле соседних правил: по-русски,
-> утверждением, без воды.
+> The ready-made text of the edit — exactly what to insert, in the style of the neighbouring
+> rules: in Russian, as a statement, without padding.
 
 ## дерево · .claude/rt-kit/gate-map.sh
 
-- **место:** ветка `edit`, рядом с соседним родом файлов
-- **повод:** свой род файлов, которого у других деревьев нет
-- **ближайшее:** нет — про этот род файлов карта не говорит вовсе
-- **чем закрывается:** ничего, надстройки под это нет — правка и есть надстройка
+- **место:** branch `edit`, next to the neighbouring kind of file
+- **повод:** a kind of file of our own that other trees do not have
+- **ближайшее:** нет — the map says nothing about this kind of file at all
+- **чем закрывается:** nothing, there is no override for this — the edit is the override
 
-> Готовый текст правки.
+> The ready-made text of the edit.

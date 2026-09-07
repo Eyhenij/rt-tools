@@ -1,84 +1,84 @@
-<!-- rt-kit v0.25.0 · samples/specs/_template/spec.md · f57689f1e185 · правится надстройкой, не здесь -->
-# <Домен>
+<!-- rt-kit v0.25.0 · samples/specs/_template/spec.md · d0422917132f · правится надстройкой, не здесь -->
+# <Domain>
 
-**Статус:** действует · **Ревизия:** <дата> · **Префикс сценариев:** `SC-<ПРЕФИКС>`
-**Зависимости:** <домены, без которых этот не работает, или «нет»>
-**Законы:** `<закон>`, `<закон>`
-**Процедуры:** <либы, чьи процедуры домен обслуживает, или «нет»>
+**Статус:** действует · **Ревизия:** <date> · **Префикс сценариев:** `SC-<PREFIX>`
+**Зависимости:** <domains without which this one does not work, or "none">
+**Законы:** `<law>`, `<law>`
+**Процедуры:** <libs whose procedures the domain serves, or "none">
 
-Разделы ниже обязательны все: отсутствие раздела — отказ, а «не применимо» — законный ответ.
-Договорённость о продукте, которая пишется до кода, лежит в `proposed/<фича>/` этого же домена
-и вливается сюда последним коммитом PR — с прежними номерами сценариев.
+The sections below are all mandatory: a missing section is a refusal, and "not applicable" is a
+lawful answer. The product agreement written before the code lies in `proposed/<feature>/` of this
+same domain and merges here by the last commit of the PR — with the scenario numbers unchanged.
 
 ## Зачем
 
-<Что домен решает и чего стоит его отсутствие. Не пересказ реализации.>
+<What the domain solves and what its absence costs. Not a retelling of the implementation.>
 
 ## Терминология
 
-| Термин   | Что это    |
-| -------- | ---------- |
-| <термин> | <значение> |
+| Term   | What it is |
+| ------ | ---------- |
+| <term> | <meaning>  |
 
 ### Как это называется в интерфейсе
 
-| В договорённости | На экране |
-| ---------------- | --------- |
-| <термин>         | <подпись> |
+| In the agreement | On the screen |
+| ---------------- | ------------- |
+| <term>           | <label>       |
 
 ## Правила
 
-- **<утверждение о продукте>.** <Довод: что случится, если этого не держать.> Каждое
-  утверждение получает строку привязки `файл:символ` в `implementation.md` рядом.
+- **<a statement about the product>.** <Reason: what happens if this is not kept.> Every
+  statement gets a `file:symbol` binding line in `implementation.md` next to it.
 
 ## Что не входит
 
-- <соседняя область и куда за ней идти>
+- <a neighbouring area and where to go for it>
 
 ## Контракт
 
-<Процедуры домена таблицей: имя, что принимает, что отдаёт. Нет процедур — «не применимо».>
+<The domain's procedures as a table: name, what it takes, what it returns. No procedures — "not applicable".>
 
 ### Коды отказов
 
-| Код   | Когда               |
-| ----- | ------------------- |
-| <код> | <при чём бросается> |
+| Code   | When                    |
+| ------ | ----------------------- |
+| <code> | <what it is thrown on>  |
 
 ## Данные
 
-<Записи хранилища, которыми домен владеет. Нет своих — «не применимо».>
+<Storage records the domain owns. None of its own — "not applicable".>
 
 ## Экраны и состояния
 
-<Экраны домена и состояния каждого: пусто, загрузка, отказ, готово. Нет экранов — «не применимо».>
+<The domain's screens and the states of each: empty, loading, failure, ready. No screens — "not applicable".>
 
 ## Сквозные требования
 
 ### Локали
 
-<Что переводится и где лежат ключи.>
+<What is translated and where the keys live.>
 
 ### SEO
 
-<Заголовки, адреса, разметка. Не применимо — так и пишется.>
+<Titles, addresses, markup. Not applicable — written just so.>
 
 ### Мобильная раскладка
 
-<Что меняется на узком экране.>
+<What changes on a narrow screen.>
 
 ### Мультиобъектность
 
-<Что у домена своё на каждый объект владения.>
+<What the domain has of its own for each owned object.>
 
 ## Решения
 
-- **<решение>** — <довод>. Отвергнуто: <альтернатива и почему>.
+- **<decision>** — <reason>. Rejected: <alternative and why>.
 
 ## Открытые вопросы
 
-- `Q-<номер>` — <вопрос и допущение, с которым идёт работа>.
+- `Q-<number>` — <the question and the assumption the work goes with>.
 
 ## История изменений
 
-- <дата> — <что изменилось>.
+- <date> — <what changed>.

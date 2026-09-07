@@ -9,7 +9,7 @@
 утверждение остаётся зелёным, когда сам текст роли переписан целиком.
 
 - **Предложение выгружается файлом с адресом в заголовке.** — `projects/agent-kit/src/lib/proposals.ts:parseProposals`
-- **Роль разбора закрытой задачи файлов не пишет.** — `projects/agent-kit/assets/commands/skill-curator.md:предложения`
+- **Роль разбора закрытой задачи файлов не пишет.** — `projects/agent-kit/assets/commands/skill-curator.md:proposals`
 - **Наружу уезжают только предложения с адресом «пакет».** — `projects/agent-kit/src/lib/shipment.ts:propose`
 - **Отправка отказывает, если в тексте предложения найден адрес дерева.** — `projects/agent-kit/src/lib/proposals.ts:leaksIn`
 - **Отправленное предложение помечается принявшим его месяцем и второй раз не уезжает.** — `projects/agent-kit/src/lib/proposals.ts:markSent`

@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · templates/gate-map.sh · 0537b1be895b · правится надстройкой, не здесь
-# Надстройка карты гейта: то, чего нет у других деревьев мастерской.
+# rt-kit v0.25.0 · templates/gate-map.sh · 2cfb6730a990 · правится надстройкой, не здесь
+# Gate map override: what the workshop's other trees do not have.
 #
-# Скопировать в `.claude/rt-kit/gate-map.sh` и дописать своё. Файл необязателен: без него
-# действует умолчание пакета — `.claude/rt-kit/defaults/gate-map.sh`, где уже разобраны тесты,
-# компоненты, стили, барели, манифесты, документы и команды поставки.
+# Copy to `.claude/rt-kit/gate-map.sh` and add your own. The file is optional: without it the
+# package default applies — `.claude/rt-kit/defaults/gate-map.sh`, where tests, components,
+# styles, barrels, manifests, documents and delivery commands are already handled.
 #
-# Заводить эту надстройку стоит ровно тогда, когда у дерева есть род файлов, которого нет у
-# остальных: витрина, свой генератор, чужая раскладка каталогов.
+# This override is worth starting exactly when the tree has a kind of file the others lack: a
+# showcase, its own generator, a foreign directory layout.
 #
-# Функция печатает ИМЯ ПРАВИЛА или молчит. Имён может быть несколько, по одному в строке.
-# Порядок веток решает: первое совпадение выигрывает, поэтому частное идёт раньше общего — и
-# своё частное обязано стоять ДО вызова умолчания, иначе общая ветка расширения его перехватит.
+# The function prints the RULE NAME or stays silent. There may be several names, one per line.
+# The order of branches decides: the first match wins, so the specific goes before the general —
+# and your own specific branch must stand BEFORE the call of the default, otherwise the general
+# branch of the extension intercepts it.
 
 skill_for() {
     kind="$1"
@@ -21,25 +22,26 @@ skill_for() {
     case "$kind" in
         edit)
             case "$target" in
-                # Пример: у витрины своё правило, пакет такого не везёт.
+                # Sample: the showcase has a rule of its own, the package ships none.
                 # *.stories.ts | *.mdx) printf '%s\n' '<правило витрины>' ; return 0 ;;
 
-                # Пример: домен, который правится по своему правилу.
+                # Sample: a domain edited under a rule of its own.
                 # */libs/<домен>/*) printf '%s\n' '<правило домена>' ; return 0 ;;
                 *) ;;
             esac
             ;;
         bash)
             case "$target" in
-                # Пример: своя команда развёртывания.
+                # Sample: a deployment command of your own.
                 # *<команда>*) printf '%s\n' '<правило>' ; return 0 ;;
                 *) ;;
             esac
             ;;
     esac
 
-    # Всё, что дерево не назвало своим, разбирает умолчание пакета. Проверка на объявленность
-    # нужна ровно в одном промежутке: пакет обновлён, а `sync` в этом дереве ещё не прогнан.
+    # Everything the tree did not name its own is handled by the package default. The check for
+    # the declaration is needed in exactly one gap: the package is updated, and `sync` has not
+    # yet been run in this tree.
     command -v skill_for_default >/dev/null 2>&1 && skill_for_default "$kind" "$target" "$written"
 
     return 0

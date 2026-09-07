@@ -2,54 +2,57 @@
 description: A remark about the rules layer, made in the middle of work, lands as a block in the proposals file
 argument-hint: '<what gets in the way, what was missing, what went wrong>'
 ---
-<!-- rt-kit v0.25.0 · commands/feedback.md · 4f8d0e80e222 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · commands/feedback.md · 1b5d29cf79bd · правится надстройкой, не здесь -->
 
-Положи слово пользователя блоком в файл предложений. Слово: `$ARGUMENTS`
+Put the user's remark as a block into the proposals file. The remark: `$ARGUMENTS`
 
-Зовётся **посреди работы**, а не после неё: то, обо что споткнулись час назад, к разбору закрытой
-задачи уже забыто, а сама реплика живёт до конца сессии и умирает вместе с ней. Разбор закрытой
-задачи смотрит на загруженное и на ход работы; реплик он не видит вовсе.
+Called **in the middle of work**, not after it: what we stumbled on an hour ago is forgotten by
+the review of the closed task, and the reply itself lives to the end of the session and dies
+with it. The review of a closed task looks at what was loaded and at the progress; replies it
+does not see at all.
 
-Команда ничего не отправляет. Она кладёт блок на диск, а увозит его обычная отправка, позванная
-отдельно. Скажи об этом пользователю последней строкой — иначе положенное читается как
-отправленное, и он ждёт ответа, которого никто не посылал.
+The command sends nothing. It puts a block on disk, and the ordinary send, called separately,
+carries it away. Tell the user this in the last line — otherwise what was put is read as sent,
+and they wait for a reply nobody sent.
 
-## 1. Пойми, о чём слово
+## 1. Understand what the remark is about
 
-Слово пользователя — проза: «вот это правило мешает», «гейт требует не то», «этого в правилах
-нет вовсе». Твоё дело — перевести её в три вещи:
+The user's remark is prose: "this rule gets in the way", "the gate demands the wrong thing",
+"this is not in the rules at all". Your part is to turn it into three things:
 
-- **адрес** — куда правка идёт;
-- **ресурс** — что именно правится;
-- **готовый текст** — ровно то, что вставить.
+- **the address** — where the edit goes;
+- **the resource** — what exactly is edited;
+- **the ready-made text** — exactly what to insert.
 
-Адрес один из трёх, и выбирается он не по удобству:
+The address is one of three, and it is not chosen for convenience:
 
-    пакет      — правка ресурса @rt-tools/agent-kit; верна любому дереву и уезжает наружу
-    компаньон  — implementation.md рядом с правилом: имена этого дерева и привязка статей
-    дерево     — надстройка этого дерева; наружу не уезжает никогда
+    пакет      — an edit of a @rt-tools/agent-kit resource; true for any tree and goes outside
+    компаньон  — implementation.md next to the rule: the names of this tree and the binding of articles
+    дерево     — an override of this tree; never goes outside
 
-Ресурс называется идентификатором пакета — `rules/styling-bem.md`, `hooks/skill-gate.sh`,
-`patterns/git-workflow-commit.md`, — а у адресов «компаньон» и «дерево» путём в дереве.
+The resource is named by the package identifier — `rules/styling-bem.md`, `hooks/skill-gate.sh`,
+`patterns/git-workflow-commit.md` — and for the addresses "компаньон" and "дерево" by a path in
+the tree.
 
-**Непонятный адрес спрашивается, а не назначается по догадке.** Неверный адрес уводит правку в
-чужой репозиторий: сказанное о своём дереве уезжает всем, а сказанное обо всех остаётся лежать
-дома. Пока пользователь не ответил, в файл не записывается ничего.
+**An unclear address is asked about, not assigned by guess.** A wrong address sends the edit to a
+foreign repository: what was said about our tree goes to everyone, and what was said about
+everyone stays lying at home. Until the user has answered, nothing is written to the file.
 
-Спрашивать не надо, когда адрес виден из самого слова: речь о правиле, которое ты только что
-грузил, — это `пакет`; речь об именах, путях и командах этого дерева — `компаньон` или `дерево`.
+No need to ask when the address is visible from the remark itself: it is about a rule you have
+just loaded — that is `пакет`; it is about the names, paths and commands of this tree —
+`компаньон` or `дерево`.
 
-## 2. Найди файл сегодняшнего дня
+## 2. Find today's file
 
-Блок ложится туда же, куда его кладёт разбор закрытой задачи: у них один адресат и один формат, а
-второй файл рядом означал бы, что отправка читает два места, а пользователь не помнит, в каком
-лежит его слово.
+The block goes to the same place where the review of a closed task puts it: they have one
+addressee and one format, and a second file next to it would mean that the send reads two
+places, and the user does not remember in which one their remark lies.
 
 ```bash
 ls .claude/rt-kit/proposals/$(date +%F)-*.md 2>/dev/null
 ```
 
-Нашёлся — дописывай в него. Не нашёлся — заведи с образца, назвав по ветке:
+Found — append to it. Not found — start one from the template, named by the branch:
 
 ```bash
 mkdir -p .claude/rt-kit/proposals
@@ -57,48 +60,51 @@ cp .claude/rt-kit/templates/proposal.md \
    ".claude/rt-kit/proposals/$(date +%F)-$(git branch --show-current).md"
 ```
 
-У свежего файла шапка образца остаётся, а незаполненный образец блока — `rules/<правило>.md` со
-скобками — заменяется твоим блоком: отправка такой образец пропускает, но лежит он молчаливым
-мусором.
+In a fresh file the template header stays, and the unfilled sample block — `rules/<правило>.md`
+with the brackets — is replaced by your block: the send skips such a sample, but it lies there as
+silent litter.
 
-## 3. Напиши блок
+## 3. Write the block
 
-Форма заголовка — не украшение: по ней отправка отбирает то, что уезжает наружу. Блок без адреса
-в заголовке не уедет никуда и останется лежать молча.
+The heading form is not decoration: by it the send picks what goes outside. A block without an
+address in the heading goes nowhere and stays lying silently.
 
 ```markdown
 ## <адрес> · <ресурс>
 
-- **место:** раздел «<заголовок>», в конец
-- **повод:** что в этой работе пошло не так без этого правила
-- **ближайшее:** «<точная строка ресурса, к которой это ближе всего>» — <чего она не покрывает>
+- **место:** section «<heading>», at the end
+- **повод:** what went wrong in this work without this rule
+- **ближайшее:** «<the exact resource line this is closest to>» — <what it does not cover>
 
-> Готовый текст правки — ровно то, что вставить, в стиле соседних правил: по-русски,
-> утверждением, без воды.
+> The ready-made text of the edit — exactly what to insert, in the style of the neighbouring
+> rules: in Russian, as a statement, without padding.
 ```
 
-**Строка «ближайшее» обязательна, и она единственная, которую проверяет машина.** Цитата ищется
-в ресурсе, и ненайденная отбивает блок: либо ресурс не читали, либо утверждение с тех пор
-переписано. Ближайшего нет вовсе — так и пишется: «нет». Написана она затем, чтобы ресурс был
-прочитан: разбор кончается предложением дописать статью в тот же ресурс, который промах уже
-описывал, и вторая статья о том же дороже, чем её отсутствие. Отбитый блок остаётся лежать с
-отметкой и причиной — видно, что разбор был, и видно, почему он не стал правкой.
+**The line «ближайшее» is mandatory, and it is the only one the machine checks.** The quote is
+searched for in the resource, and one not found refuses the block: either the resource was not
+read, or the statement has been rewritten since. There is nothing close at all — write exactly
+that: «нет». It exists so that the resource gets read: a review ends with a proposal to add an
+article to the very resource that already described the miss, and a second article about the
+same thing costs more than its absence. A refused block stays lying with a mark and a reason — it
+is visible that the review took place, and visible why it did not become an edit.
 
-Повод пишется от случая, а не от желания: «здесь было неудобно» правилом не становится. Слово
-пользователя пересказывается его смыслом, а не твоими выводами о том, как надо было бы.
+The reason is written from the case, not from a wish: "it was inconvenient here" does not become
+a rule. The user's remark is retold by its meaning, not by your conclusions about how it should
+have been.
 
-**Адреса этого дерева в тексте блока не бывает** — ни пути, ни имени корня, ни имени чужого
-репозитория: файл уезжает в чужой репозиторий целиком. Найденный адрес отбивает отправку с
-номером строки, и это проверка, а не напоминание. Правь текст, а не обходи её.
+**An address of this tree never appears in the block text** — no path, no root name, no name of a
+foreign repository: the file goes to a foreign repository in full. A found address refuses the
+send with the line number, and that is a check, not a reminder. Fix the text, do not bypass it.
 
-## 4. Скажи, что вышло
+## 4. Say what came out
 
-Одной строкой: в какой файл лёг блок, сколько блоков в нём теперь и чем он уедет.
+In one line: which file the block landed in, how many blocks it holds now and what will carry
+it away.
 
 ```bash
-npx agent-kit propose --dry-run     # что уехало бы
-npx agent-kit propose               # отправить груз в приём
+npx agent-kit propose --dry-run     # what would have gone
+npx agent-kit propose               # send the cargo to the intake
 ```
 
-Отправка увозит блоки с адресом «пакет» и метит их отправленными; блоки «компаньон» и «дерево»
-остаются лежать — их правит тот, кто работает в этом дереве.
+The send carries away the blocks with the address «пакет» and marks them sent; the blocks
+«компаньон» and «дерево» stay lying — they are edited by whoever works in this tree.

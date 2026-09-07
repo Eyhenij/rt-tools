@@ -1,47 +1,47 @@
 #!/usr/bin/env bash
-# Надстройка профиля дерева: команды, стенды и пары «правка — документ» этого репозитория.
+# Tree profile override: the commands, stands and "edit — document" pairs of this repository.
 #
-# Скопировать в `.claude/rt-kit/project.sh` и дописать своё. Файл необязателен: без него
-# действует умолчание пакета — `.claude/rt-kit/defaults/project.sh`, где запускатель выбирается
-# по локфайлу, а линтеры, форма имени ветки и образцы переизобретения уже названы.
+# Copy to `.claude/rt-kit/project.sh` and add your own. The file is optional: without it the
+# package default applies — `.claude/rt-kit/defaults/project.sh`, where the runner is chosen by
+# the lockfile, and the linters, the branch name form and the reinvention samples are already named.
 #
-# Каждая функция вправе промолчать. Молчание значит «правила на это нет», и хук пропускает.
-# Объявленная здесь функция замещает умолчание ЦЕЛИКОМ — чтобы дописать, а не заменить, зовите
-# из неё то же имя с суффиксом `_default`.
+# Every function may stay silent. Silence means "there is no rule for this", and the hook lets it
+# through. A function declared here replaces the default IN FULL — to add rather than replace,
+# call the same name with the `_default` suffix from inside it.
 
-# Где подняты приложения. Идёт в текст отказа, когда кто-то поднимает второй экземпляр.
-# Умолчание молчит: чужой порт назвать хуже, чем не назвать никакого.
+# Where the applications are up. Goes into the refusal text when someone raises a second instance.
+# The default is silent: naming a foreign port is worse than naming none.
 RT_STANDS='<приложение> http://localhost:<порт>, <приложение> http://localhost:<порт>'
 
-# Адрес боевого хранилища. Любая запись по нему отбивается совсем, и опт-аут не действует.
+# Address of the production storage. Any write to it is refused outright, and the opt-out does not apply.
 RT_PROD_DSN='<хост боевого хранилища>'
 
-# Пути, у которых якорь для сквозных тестов не требуется.
+# Paths where an anchor for end-to-end tests is not required.
 RT_QA_SKIP_RE='<выражение путей>'
 
-# Имя клиента хостинга в строке запуска: по нему гард перезапуска узнаёт вызов перезапуска
-# задания. Умолчание пакета — под самый распространённый вид хостинга.
+# Name of the hosting client in the launch line: by it the restart guard recognises a restart
+# call of the task. The package default is for the most widespread kind of hosting.
 RT_HOST_CLI='<имя клиента хостинга>'
 
-# Команды, которые обязаны пройти перед пушем. По одной на строку; первая упавшая отбивает пуш.
+# Commands that must pass before a push. One per line; the first that fails refuses the push.
 #
-# Тяжёлый шаг — стенд, снимки витрин, сборка образов — печатается только тогда, когда ветка
-# тронула не только тексты: иначе пуш коммита с одной правленой строкой markdown занимает
-# минуты, и владелец читает его как зависший. Признак даёт `rt_push_docs_only <база>`; при
-# пустой базе он молчит, и гоняется весь набор — той же пустой базой зовёт эту функцию сверка
-# полноты набора, и список она обязана видеть целиком.
+# A heavy step — a stand, showcase snapshots, image builds — is printed only when the branch
+# touched more than texts: otherwise pushing a commit with one edited markdown line takes minutes,
+# and the owner reads it as hung. The sign is given by `rt_push_docs_only <base>`; with an empty
+# base it stays silent, and the whole set is run — the suite completeness audit calls this
+# function with the same empty base, and it must see the list in full.
 rt_push_checks() {
     rt_push_checks_default
     # printf '%s\n' '<своя проверка>'
 
-    # Тяжёлые шаги — по составу правки, а не подряд.
+    # Heavy steps — by the content of the edit, not always.
     # if [ -n "$1" ] && rt_push_docs_only "$1"; then
     #     return 0
     # fi
     # printf '%s\n' '<шаг, поднимающий стенд или собирающий образ>'
 }
 
-# Какой документ обязан ехать тем же коммитом, что и этот файл. Печатает образец пути или молчит.
+# Which document must go in the same commit as this file. Prints a path sample or stays silent.
 rt_docs_pair_for() {
     case "$1" in
         # <свой путь>) printf '%s' '<образец пути документа>' ; return 0 ;;
@@ -51,17 +51,17 @@ rt_docs_pair_for() {
     rt_docs_pair_for_default "$1"
 }
 
-# Чем линтуется этот файл сразу после правки. Печатает команду или молчит.
+# What lints this file right after an edit. Prints a command or stays silent.
 rt_lint_for() {
     rt_lint_for_default "$1"
 }
 
-# Имя ветки, с которой разрешено открывать заявку на слияние. Успех — годится.
+# Name of a branch from which a PR may be opened. Success — it is fine.
 rt_task_branch_ok() {
     rt_task_branch_ok_default "$1"
 }
 
-# Что в этом дереве считается переизобретением. По строке «образец<таб>чем заменить».
+# What counts as reinvention in this tree. By line "sample<tab>what to replace it with".
 rt_reinvented_in() {
     rt_reinvented_in_default "$1"
     # case "$1" in

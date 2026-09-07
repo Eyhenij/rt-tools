@@ -3,16 +3,17 @@ description: Closing the session — the main branch pulled, merged branches rem
 argument-hint: '[empty | <what to add to the handover in your own words>]'
 ---
 
-Закрой заход: приведи дерево к главной ветке, убери влитые ветки и напиши передачу для
-следующего захода. Дописка владельца к передаче: `$ARGUMENTS`
+Close the session: bring the tree to the main branch, remove the merged branches and write the
+handover for the next session. The owner's addition to the handover: `$ARGUMENTS`
 
-Вызывается **последним действием захода** — после того, как работа закоммичена, а PR открыт
-или влит. Команда ничего не мержит, не пушит и не открывает: закрытие захода — уборка, а не
-поставка.
+Called as **the last action of the session** — after the work is committed and the PR is open or
+merged. The command merges nothing, pushes nothing and opens nothing: closing a session is
+cleanup, not delivery.
 
-## 1. Прочитай профиль дерева
+## 1. Read the tree profile
 
-Имя главной ветки, каталог папок задач и каталог передачи у каждого дерева свои:
+The main branch name, the task folders directory and the handover directory differ from tree to
+tree:
 
 ```bash
 for profile in .claude/rt-kit/defaults/project.sh .claude/rt-kit/project.sh; do
@@ -22,63 +23,66 @@ printf 'главная: %s · задачи: %s · передача: %s\n' \
     "${RT_MAIN_BRANCH:-main}" "${RT_TASKS_DIR:-docs/tasks}" "${RT_HANDOFF_DIR:-.claude/handoff}"
 ```
 
-Зашивать эти имена в команду нельзя: в первом же дереве, которое зовёт главную ветку иначе,
-уборка уедет не туда.
+Hard-coding these names into the command is not allowed: in the first tree that calls the main
+branch differently, the cleanup goes to the wrong place.
 
-## 2. Остановись, если в дереве есть незакоммиченное
+## 2. Stop if the tree holds uncommitted changes
 
 ```bash
 git status --short
 ```
 
-Непустой вывод — конец команды. Назови файлы владельцу и не трогай ни веток, ни главной: смена
-ветки уносит правку за собой или отбивается на полпути, а решает, что с ней делать, владелец.
+Non-empty output ends the command. Name the files to the owner and touch neither the branches
+nor main: a branch switch carries the edit along or is refused halfway, and the owner decides
+what to do with it.
 
-Неотслеживаемый файл — тоже незакоммиченное. Скажи о нём отдельной строкой: он мог остаться от
-работы, которую бросили.
+An untracked file is uncommitted too. Say it in a separate line: it may be left from work that
+was abandoned.
 
-## 3. Пойми, по правилу ли ведётся работа
+## 3. Find out whether the work goes by the rule
 
 ```bash
 git fetch --prune --quiet
 branch="$(git branch --show-current)"
 ```
 
-Работа идёт **по правилу**, если имя ветки несёт номер задачи — это `rt_task_branch_ok` из
-профиля — или если в каталоге папок задач лежит папка с именем ветки. PR **влит**, когда
-коммиты ветки уже есть в удалённой главной:
+The work goes **by the rule** if the branch name carries the task number — that is
+`rt_task_branch_ok` from the profile — or if the task folders directory holds a folder named after
+the branch. The PR is **merged** when the branch commits are already in the remote main:
 
 ```bash
 git merge-base --is-ancestor HEAD "origin/${RT_MAIN_BRANCH:-main}" && echo влит || echo 'не влит'
 ```
 
-## 4. Приведи дерево к главной ветке
+## 4. Bring the tree to the main branch
 
-- **Работа по правилу и PR влит** — задача закрыта, ветка больше не нужна. Локальная главная
-  двигается до удалённой без перехода на неё:
+- **Work by the rule and the PR is merged** — the task is closed, the branch is no longer
+  needed. The local main moves up to the remote one without switching to it:
 
     ```bash
     git fetch origin "${RT_MAIN_BRANCH:-main}:${RT_MAIN_BRANCH:-main}"
     ```
 
-    Рабочее дерево при этом не трогается вовсе, поэтому шаг исполним и тогда, когда в нём лежит
-    незакоммиченное — а лежит оно там по слову самой этой команды, велевшей шагом раньше его не
-    трогать. Переход на главную нужен, только чтобы там работать; уборке он не нужен, а
-    `git pull` на ветке задачи тянет не главную вовсе и отвечает «no such ref was fetched»:
-    ветку к этой минуте уже сняли с удалённого слиянием заявки.
+    The working tree is not touched at all, so the step runs even when uncommitted changes lie
+    in it — and they lie there by the word of this very command, which a step earlier told not
+    to touch them. Switching to main is needed only to work there; the cleanup does not need
+    it, and `git pull` on the task branch pulls something other than main and answers
+    "no such ref was fetched": by this minute the branch has already been removed from the
+    remote by the merge of the PR.
 
-- **Всё остальное** — работа не кончилась, и ветка остаётся местом, где она продолжится:
+- **Everything else** — the work is not over, and the branch stays the place where it goes on:
 
     ```bash
     git merge "origin/${RT_MAIN_BRANCH:-main}"
     ```
 
-    Конфликт разбирается сейчас, а не в начале следующего захода: назови его владельцу и
-    останови команду до его решения.
+    A conflict is resolved now, not at the start of the next session: name it to the owner and
+    stop the command until it is decided.
 
-## 5. Убери ветки
+## 5. Remove the branches
 
-Снимаются только влитые в главную: их коммиты есть в ней, и восстанавливать нечего.
+Only those merged into main are removed: their commits are in it, and there is nothing to
+restore.
 
 ```bash
 git branch --merged "origin/${RT_MAIN_BRANCH:-main}" \
@@ -86,12 +90,13 @@ git branch --merged "origin/${RT_MAIN_BRANCH:-main}" \
     | xargs -r git branch -d
 ```
 
-Влитость судится от удалённой ссылки, а не от локальной главной: локальная отстаёт молча, и
-влитая ветка при ней числится невлитой. Три ветки так показались несущими по два коммита мимо
-главной, а мимо удалённой у них было ноль — заход кончился бы списком невлитого, которого нет.
+Being merged is judged from the remote ref, not from the local main: the local one lags
+silently, and a merged branch counts as unmerged against it. Three branches so appeared to carry
+two commits past main each, while past the remote they had zero — the session would have ended
+with a list of unmerged work that does not exist.
 
-Невлитую ветку **не сноси**. Назови её владельцу вместе с числом коммитов, которых нет в
-главной, — по ним видно, что именно потеряется, если её снести:
+**Do not delete** an unmerged branch. Name it to the owner together with the number of commits
+missing from main — by them it is visible what exactly is lost if it is deleted:
 
 ```bash
 for b in $(git branch --no-merged "origin/${RT_MAIN_BRANCH:-main}" --format='%(refname:short)'); do
@@ -99,35 +104,37 @@ for b in $(git branch --no-merged "origin/${RT_MAIN_BRANCH:-main}" --format='%(r
 done
 ```
 
-Мёртвые ссылки на удалённые ветки снял `git fetch --prune` шагом 3.
+Dead refs to remote branches were removed by `git fetch --prune` in step 3.
 
-## 6. Напиши передачу
+## 6. Write the handover
 
-Что в ней стоит и в какой форме — паттерн `task-flow-handoff`; здесь только место и порядок.
-Файл один на ветку и лежит вне истории дерева:
+What stands in it and in which form — pattern `task-flow-handoff`; here only the place and the
+order. One file per branch, and it lies outside the tree history:
 
 ```bash
 mkdir -p "${RT_HANDOFF_DIR:-.claude/handoff}"
-# файл — ${RT_HANDOFF_DIR:-.claude/handoff}/<ветка>.md
+# the file — ${RT_HANDOFF_DIR:-.claude/handoff}/<branch>.md
 ```
 
-Имя берётся от той ветки, в которой шла работа, — не от той, куда команда перешла шагом 4.
+The name is taken from the branch the work went on — not from the one the command switched to in
+step 4.
 
-К тому, что требует паттерн, эта команда добавляет своё: что она убрала — снятые ветки,
-состояние главной, оставшееся невлитым. Следующий заход начинается ровно с этого.
+To what the pattern demands, this command adds its own: what it removed — the removed branches,
+the state of main, what stayed unmerged. The next session starts exactly from this.
 
-Заход, кончившийся ничем, передачу пишет тоже: «пробовали так — не вышло, потому что» стоит
-дороже пустого файла. Дописку владельца из `$ARGUMENTS` вставь своим разделом, не пересказывая.
+A session that ended in nothing writes a handover too: "we tried so — it did not work, because"
+is worth more than an empty file. Insert the owner's addition from `$ARGUMENTS` as a section of
+its own, without retelling.
 
-## 7. Отдай итог
+## 7. Hand over the result
 
-Последней строкой — путь к передаче: владелец вставляет её в новый заход одной вставкой. Перед
-ней: что стало с главной веткой, какие ветки сняты, какие остались невлитыми. Содержание
-передачи не пересказывай — владелец её и так прочитает.
+The last line — the path to the handover: the owner pastes it into a new session with one paste.
+Before it: what became of the main branch, which branches were removed, which stayed unmerged.
+Do not retell the handover content — the owner will read it anyway.
 
-## Чего команда не делает
+## What the command does not do
 
-- не мержит PR и не пушит: это поставка, и вслепую она не делается;
-- не сносит невлитую ветку и не трогает папку задачи;
-- не коммитит передачу — она лежит вне дерева намеренно, иначе рядом с ходом работы заводится
-  вторая запись об одном и том же.
+- does not merge the PR and does not push: that is delivery, and it is not done blind;
+- does not delete an unmerged branch and does not touch the task folder;
+- does not commit the handover — it lies outside the tree on purpose, otherwise a second record
+  of the same thing is started next to the progress.

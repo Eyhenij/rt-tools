@@ -1,8 +1,8 @@
 # Turn map
 
 This is not the rule but its short digest: the rule explains, the map names. The full text is
-skill `task-flow`; it also names the pattern that leads each state. What a turn ends with is
-skill `turn-conduct` under the same law.
+rule `task-flow`; it also names the pattern that leads each state. What a turn ends with is
+rule `turn-conduct` under the same law.
 
 The work state is declared by a line in the "Где стоим" section of the progress. Until the
 mandatory action is done, the work stays in the same state.

@@ -1,34 +1,34 @@
 ---
-name: <имя-правила>-<что>
+name: <rule-name>-<what>
 kind: pattern
-rule: <имя-правила>
-description: Паттерн правила <имя-правила>. Брать <когда> — <что даёт>. Не брать для <соседний случай> — это паттерн <имя соседа>.
+rule: <rule-name>
+description: Pattern of rule <rule-name>. Load <when> — <what it gives>. Not for <the neighbouring case> — that is pattern <neighbour name>.
 ---
-<!-- rt-kit v0.25.0 · templates/pattern.md · ae8a56de34af · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · templates/pattern.md · 66fefb44a103 · правится надстройкой, не здесь -->
 
-# <Что собирается>
+# <What is assembled>
 
-Паттерн правила `<имя-правила>`. Что при этом должно быть верно — закон
-`docs/constitution/<закон>.md`.
+Pattern of the rule `<rule-name>`. What must be true — the law
+`docs/constitution/<law>.md`.
 
-## Когда брать
+## When to use
 
-- <Случай, по которому паттерн узнаётся.>
+- <The case by which the pattern is recognised.>
 
-## <Приём>
+## <The technique>
 
-<Готовый код целиком, а не пересказ: паттерн берут, чтобы не писать заново.>
+<The ready-made code in full, not a retelling: a pattern is taken so as not to write anew.>
 
-Имена в примере безымянные — `libs/<домен>`, `<Feature>Component`, `<app>`. Настоящие имена
-этого дерева стоят в `implementation.md` при правиле: пример, написанный на чужих именах,
-читается как рабочий код и переносится в дерево вместе с ними.
+The names in the sample are nameless — `libs/<domain>`, `<Feature>Component`, `<app>`. The real
+names of this tree stand in `implementation.md` next to the rule: a sample written with foreign
+names reads as working code and is carried into the tree together with them.
 
 ```
-<код>
+<code>
 ```
 
-<Одно-два предложения о том, почему именно так, если из кода этого не видно.>
+<One or two sentences on why exactly so, if the code does not show it.>
 
-## Частые промахи
+## Common misses
 
-- <Что делают вместо этого и чем это кончается.>
+- <What is done instead and how it ends.>

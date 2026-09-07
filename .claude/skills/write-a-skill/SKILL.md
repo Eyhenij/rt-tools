@@ -2,108 +2,113 @@
 name: write-a-skill
 description: Creating a new skill — one with no law above it — a showcase, a generator, a third-party service, a working technique of this tree. Load when asked to create, write or rewrite a skill. The shape of a rule and a pattern is not here — that is pattern spec-driven-rule.
 ---
-<!-- rt-kit v0.25.0 · skills/write-a-skill.md · 04e497ca0b0f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · skills/write-a-skill.md · bc7d59ca03ee · правится надстройкой, не здесь -->
 
-# Как заводится скил
+# How a skill is created
 
-Скил — это то, что агент загружает перед работой и читает целиком. Отсюда всё остальное: он
-короткий, он объявляет, когда его брать, и он не пересказывает то, что уже написано в соседнем.
+A skill is what the agent loads before work and reads in full. Everything else follows: it is
+short, it declares when to load it, and it does not retell what is already written in the
+neighbouring one.
 
-## Когда брать
+## When to use
 
-- Заводится скил, у которого нет закона над собой: витрина, генератор, работа с чужим сервисом,
-  приём, принятый в этом дереве.
-- Скил разросся, и его пора делить.
-- Скил есть, но его никто не загружает — надо чинить объявление.
+- A skill with no law above it is being created: a showcase, a generator, work with a
+  third-party service, a technique adopted in this tree.
+- A skill has grown, and it is time to split it.
+- The skill exists, but nobody loads it — the declaration needs fixing.
 
-**Правило и паттерн сюда не идут.** Правило стоит под законом, паттерн — при правиле, и форму
-обоих держит паттерн `spec-driven-rule`. Скил без закона — третий случай, и только он здесь.
+**A rule and a pattern do not go here.** A rule stands under a law, a pattern next to a rule,
+and the shape of both is held by the pattern `spec-driven-rule`. A skill without a law is the
+third case, and only it is here.
 
-## Порядок
+## Order
 
-1. **Спроси, чего не хватает.** Какую работу скил закрывает, на чём спотыкались без него, нужны
-   ли готовые команды или хватает порядка действий. Скил, написанный без этого, пересказывает
-   документацию инструмента — а её агент и так знает.
-2. **Напиши черновик.** Один файл. Дополнительные — только когда первый перестаёт читаться
-   целиком.
-3. **Покажи владельцу.** Скил действует на все будущие сессии, и заводить его молча нельзя.
+1. **Ask what is missing.** What work the skill covers, where people stumbled without it,
+   whether ready-made commands are needed or an order of actions is enough. A skill written
+   without this retells the tool's documentation — and the agent knows that anyway.
+2. **Write a draft.** One file. Additional ones — only when the first stops being readable in
+   full.
+3. **Show the owner.** A skill acts on all future sessions, and creating it silently is not
+   allowed.
 
-## Что в файле
-
-```
-<имя-скила>/
-├── SKILL.md          # обязателен, и обычно единственный
-├── <ЧТО-ТО>.md       # отдельный файл — когда SKILL.md перестал читаться целиком
-└── scripts/          # готовые скрипты, если операция детерминированная
-```
-
-Вступление между `---` — `name` и `description`, дальше заголовок и разделы. Первым разделом —
-«Когда брать»: агент решает по нему, а не по названию.
-
-## Объявление решает всё
-
-`description` — **единственное, что агент видит**, когда решает, грузить скил или нет. Он стоит
-в системном приглашении рядом с описаниями всех остальных, и выбор идёт по ним.
-
-Оно отвечает на два вопроса: что скил даёт и когда его брать. Пиши третьим лицом, до 1024
-знаков: первая фраза — что делает, вторая — «Брать, когда…», третья — чего в нём нет и где это
-искать.
+## What is in the file
 
 ```
-✓ Заведение нового скила — того, у которого нет закона над собой. Брать, когда просят
-  завести, написать или переписать скил. Форма правила и паттерна сюда не входит — это
-  паттерн spec-driven-rule.
-
-✗ Помогает со скилами.
+<skill-name>/
+├── SKILL.md          # mandatory, and usually the only one
+├── <SOMETHING>.md    # a separate file — when SKILL.md stopped being readable in full
+└── scripts/          # ready-made scripts, if the operation is deterministic
 ```
 
-Второе объявление не даёт агенту ни одного способа отличить этот скил от соседнего — и он не
-загрузит ни один.
+The preamble between `---` is `name` and `description`, then the title and the sections. The
+first section is "When to use": the agent decides by it, not by the title.
 
-Строка «чего здесь нет» не украшение: скилов в дереве десятки, и половина ошибок выбора — это
-взятый соседний. Назови его по имени.
+## The declaration decides everything
 
-## Готовые команды вместо описания
+`description` is **the only thing the agent sees** when it decides whether to load the skill or
+not. It stands in the system prompt next to the descriptions of all the others, and the choice
+goes by them.
 
-Скрипт кладётся рядом со скилом, когда операция детерминированная — проверка, приведение к
-форме, разбор вывода. Такое дешевле позвать, чем породить заново, и ошибку в нём видно один раз,
-а не в каждом порождении.
+It answers two questions: what the skill gives and when to load it. Write in the third person,
+up to 1024 characters: the first sentence — what it does, the second — "Load when…", the third —
+what is not in it and where to look for that.
 
-Порядок действий, зависящий от того, что нашлось, скриптом не становится: он остаётся текстом.
+```
+✓ Creating a new skill — one with no law above it. Load when asked to create, write or
+  rewrite a skill. The shape of a rule and a pattern is not here — that is pattern
+  spec-driven-rule.
 
-## Когда делить
+✗ Helps with skills.
+```
 
-Делить, когда:
+The second declaration gives the agent no way to tell this skill from the neighbouring one —
+and it loads neither.
 
-- файл перестал читаться целиком — по опыту это около сотни строк;
-- в нём два разных предмета, и второй нужен раз в месяц;
-- готовый код занял больше места, чем объяснение, зачем он.
+The line "what is not here" is not decoration: there are dozens of skills in the tree, and half
+of the wrong choices are the neighbour taken instead. Name it by name.
 
-Не делить ради красоты: два файла вместо одного стоят одного лишнего перехода при каждом
-чтении, а ссылка глубже одного уровня не читается вовсе.
+## Ready-made commands instead of a description
 
-## Чем скил вредит
+A script is put next to the skill when the operation is deterministic — a check, bringing to a
+form, parsing output. Such a thing is cheaper to call than to generate anew, and an error in it
+is seen once, not in every generation.
 
-- **Пересказ документации инструмента.** Агент читает скил при каждой работе; строка, которую он
-  знает и без того, вытесняет ту, которой не знает.
-- **Дублирование соседа.** Два скила об одном начинают противоречить друг другу, и первым это
-  замечает тот, кто выполнил оба.
-- **То, что устареет вместе с кодом.** Скил, называющий версию, число или имя файла, которое
-  правится чаще раза в квартал, врёт молча.
-- **Длина.** Скил в три экрана перестают читать целиком, а читают до первого знакомого раздела.
+An order of actions that depends on what was found does not become a script: it stays text.
 
-## Перед тем как отдать
+## When to split
 
-- [ ] в объявлении есть «Брать, когда…» и назван сосед, которого брать не надо;
-- [ ] первый раздел — «Когда брать»;
-- [ ] файл читается целиком за один заход;
-- [ ] ни одной строки, которая повторяет соседний скил;
-- [ ] ничего, что устареет само собой: версий, чисел, сроков;
-- [ ] есть хотя бы один готовый пример, а не только объяснение;
-- [ ] ссылки уходят на один уровень, не глубже.
+Split when:
 
-## Чтобы скил загружали
+- the file stopped being readable in full — by experience, that is around a hundred lines;
+- it holds two different subjects, and the second is needed once a month;
+- ready-made code took more room than the explanation of what it is for.
 
-Написанного мало: скил, который никто не открывает, не действует. Новый скил либо называется в
-карте гейта этого дерева, либо его зовёт по имени другой скил или роль. Скил, не названный
-нигде, останется декорацией.
+Do not split for beauty: two files instead of one cost one extra hop at every reading, and a
+link deeper than one level is not followed at all.
+
+## How a skill does harm
+
+- **Retelling the tool's documentation.** The agent reads the skill at every piece of work; a
+  line it knows anyway pushes out the one it does not.
+- **Duplicating a neighbour.** Two skills about one thing start to contradict each other, and
+  the first to notice is whoever has carried out both.
+- **What goes stale together with the code.** A skill naming a version, a number or a file name
+  that is edited more often than once a quarter lies silently.
+- **Length.** A skill of three screens stops being read in full and is read up to the first
+  familiar section.
+
+## Before handing it over
+
+- [ ] the declaration has "Load when…" and names the neighbour not to load;
+- [ ] the first section is "When to use";
+- [ ] the file is readable in full in one sitting;
+- [ ] not one line repeats the neighbouring skill;
+- [ ] nothing that goes stale by itself: versions, numbers, dates;
+- [ ] at least one ready-made sample, not only an explanation;
+- [ ] links go one level deep, no deeper.
+
+## So that the skill gets loaded
+
+Writing it is not enough: a skill nobody opens does not act. A new skill is either named in the
+gate map of this tree, or called by name by another skill or a role. A skill named nowhere stays
+a decoration.

@@ -1,45 +1,47 @@
-# Замысел
+# Plan
 
-**Задача:** <КЛЮЧ>-<номер> · **Ветка:** <ветка>
-**Драфт:** `<путь к договорённости о продукте>`
+**Задача:** <KEY>-<number> · **Ветка:** <branch>
+**Драфт:** `<path to the product agreement>`
 **Поведение:** меняется
 
-Дерево, которое пишет договорённость прямо в спек домена, называет вместо драфта его:
-`**Спек:** `<путь к спеку>``.
+A tree that writes the agreement straight into the domain spec names it instead of the draft:
+`**Спек:** `<path to the spec>``.
 
-Работа, не задевающая код приложения, договорённости не требует — тогда вместо строки драфта
-стоит `**Поведение:** не меняется — <причина владельца>`; пустая причина не принимается.
+Work that does not touch application code needs no agreement — then instead of the draft line
+stands `**Поведение:** не меняется — <the owner's reason>`; an empty reason is not accepted.
 
-После написания этот файл не правится. Пересмотр этапа идёт в `progress.md` решением по ходу.
+After it is written this file is not edited. A stage revision goes to `progress.md` as a decision
+along the way.
 
-## След задачи
+## Task footprint
 
-<Что работа задевает. Заполняется разведкой до разбора и подтверждается владельцем. По этой же
-таблице на закрытии смотрят, что из спеков, правил и паттернов устарело: названное здесь
-читают дважды — до работы и после неё.>
+<What the work touches. Filled in by the exploration before the grill and confirmed by the owner.
+By this same table, at closing, one looks at which of the specs, rules and patterns went stale:
+what is named here is read twice — before the work and after it.>
 
-| Что     | Где                               |
-| ------- | --------------------------------- |
-| Спеки   | <домены, которых работа касается> |
-| Законы  | <законы по её следу>              |
-| Правила | <правила и их компаньоны>         |
-| Код     | <либы и приложения>               |
+| What  | Where                            |
+| ----- | -------------------------------- |
+| Specs | <domains the work touches>       |
+| Laws  | <laws along its footprint>       |
+| Rules | <rules and their companions>     |
+| Code  | <libs and applications>          |
 
-## Что считается сделанным
+## What counts as done
 
-- <утверждение, которое можно проверить>
+- <a statement that can be checked>
 
-## Этапы
+## Stages
 
-### 1. <название>
+### 1. <name>
 
-- **Что делается:** <одной фразой>
-- **Признак готовности:** <что должно стать верным>
-- **Чем проверяется:** `<команда>` — <что в её выводе означает «сошлось»>
+- **What is done:** <in one phrase>
+- **Readiness sign:** <what must become true>
+- **Чем проверяется:** `<command>` — <what in its output means "it matched">
 
-Команда пишется обратными кавычками: страж выходов хода читает её и не выпускает ход, в котором
-этап объявлен закрытым, а команда не запускалась. Приём, записанный прозой, подтвердить нечем.
+The command is written in backticks: the turn exit guard reads it and does not let out a turn in
+which the stage is declared closed and the command was not run. An acceptance written in prose
+cannot be confirmed by anything.
 
-## Чего эта работа не делает
+## What this work does not do
 
-- <соседняя работа, которую сюда не тащим, и куда она заведена>
+- <neighbouring work that is not dragged in here, and where it is created>

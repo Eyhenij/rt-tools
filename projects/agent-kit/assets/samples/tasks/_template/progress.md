@@ -1,24 +1,24 @@
-# Ход работы
+# Progress
 
 ## Где стоим
 
-Перезаписывается каждым заходом, а не дописывается.
+Rewritten by every session, not appended to.
 
-- **Состояние:** `<имя из перечня состояний правила task-flow>`
-- **Этап:** <номер> из <всего> — <название>
-- **Сделано:** <коротко>
-- **Следующий шаг:** <что делается первым в новом заходе>
-- **Незакоммиченное:** <что лежит в дереве вне индекса>
-- **Ждём владельца:** <чего именно, или «нет»>
-- **PR:** <номер и состояние, или «ещё не открыт»>
+- **Состояние:** `<name from the state list of rule task-flow>`
+- **Этап:** <number> of <total> — <name>
+- **Done:** <briefly>
+- **Следующий шаг:** <what is done first in the new session>
+- **Uncommitted:** <what lies in the tree outside the index>
+- **Waiting for the owner:** <what exactly, or "no">
+- **PR:** <number and state, or "not open yet">
 
-## Решения по ходу
+## Decisions along the way
 
-- **<решение>** — <довод>. Затронутый этап замысла: <номер>.
+- **<decision>** — <reason>. Affected stage of the plan: <number>.
 
-## Заходы
+## Sessions
 
-### <дата>
+### <date>
 
-- <что сделано, числами: файлов, коммитов, что зелёное>
-- <на чём споткнулись и чем поймали>
+- <what was done, in numbers: files, commits, what is green>
+- <what we stumbled on and what caught it>

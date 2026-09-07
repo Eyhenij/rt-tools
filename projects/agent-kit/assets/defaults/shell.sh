@@ -1,56 +1,59 @@
 #!/usr/bin/env bash
-# Разбор команды оболочки: пишет ли она и какие пути называет.
+# Parsing a shell command: whether it writes and which paths it names.
 #
-# Умолчание пакета, часть профиля дерева — грузится из `project.sh`, рядом с которым лежит.
-# Отдельным файлом потому, что вдвоём они перерастают предел длины, а читают их порознь: одному
-# нужен признак записи, другому — цель.
+# The package default, part of the tree profile — loaded from `project.sh`, next to which it lies. A
+# separate file because together they outgrow the length limit, and they are read apart: one reader
+# needs the write sign, the other the target.
 
-# Пишет ли команда оболочки файл. Успех — да, и тогда пути из неё судятся тем же признаком,
-# что и путь из вызова инструмента правки.
+# Whether a shell command writes a file. Success — yes, and then the paths from it are judged by the
+# same sign as the path from an edit tool call.
 #
-# Гарды подписаны на инструменты правки файла, и этого мало: ту же правку кладут командой —
-# перенаправлением, `tee`, `sed -i`, интерпретатором с heredoc. Отбитая правка дважды за один
-# заход легла именно так, и не увидел этого никто: в дереве она неотличима от положенной
-# инструментом. Разбор — `2026-08-15-guard-denied-shell-wrote-anyway.md`.
+# The guards are subscribed to the file edit tools, and that is not enough: the same edit is laid
+# down by a command — a redirect, `tee`, `sed -i`, an interpreter with a heredoc. An edit refused
+# twice in one session landed exactly so, and nobody saw it: in the tree it is indistinguishable
+# from one laid down by the tool. The analysis — `2026-08-15-guard-denied-shell-wrote-anyway.md`.
 #
-# Список намеренно широк, и цена этого названа: команда чтения, в которой стоит имя
-# интерпретатора, будет отбита наравне с командой правки. Узкий список стоил бы дороже —
-# пропущенная форма записи возвращает обход целиком, а найти её можно только промахом.
+# The list is wide on purpose, and the price of that is named: a read command that carries the name
+# of an interpreter will be refused on a par with an edit command. A narrow list would cost more — a
+# missed form of writing brings back the whole bypass, and it can be found only by a miss.
 #
-# Удаление и перенос стоят в списке нарочно, а не по недосмотру. Снятие файла — правка
-# разрушительнее любой записи: записанное видно в дереве и откатывается, а снятое без замысла не
-# оставляет следа вовсе, и восстанавливать его приходится из истории. Цена этого выбора известна
-# и платится не там, где её ждут: своё временное, положенное под корнем кода, снимается командой,
-# и гард судит это правкой приложения — требует замысла на диске за действие, к приложению не
-# относящееся. Отличить одно от другого признак не может: путь у обоих лежит под тем же корнем.
-# Лечится это местом, а не признаком, — и сказано об этом ловушкой правила ведения работы.
+# Deletion and moving stand in the list on purpose, not by oversight. Removing a file is an edit
+# more destructive than any write. What was written is visible in the tree and rolls back, while
+# what was removed without a plan leaves no trace at all and has to be restored from history. The
+# price of this choice is known and is paid not where it is expected. A temporary file of one's own,
+# put under the code root, is removed by a command, and the guard judges it as an application edit.
+# It demands a plan on disk for an action that has nothing to do with the application. The sign
+# cannot tell one from the other: the path of both lies under the same root. This is cured by the
+# place, not by the sign — and the pitfall of the work-conduct rule says so.
 #
-# Перенаправление в пустое устройство и в поток ошибок снимается до разбора: файла оно не
-# пишет, а выглядит как перенаправление в файл. Так глушат вывод команды чтения, и без этого
-# `grep -rn x libs/ 2>/dev/null` судится наравне с записью — правило требуется на чтение, а
-# отбитий, пришедшихся не на правку файла, набирается большинство. Настоящая запись рядом с
-# заглушённым потоком остаётся видной: снимается перенаправление, а не команда целиком.
+# A redirect to the null device and to the error stream is removed before parsing: it writes no
+# file, yet looks like a redirect to a file. That is how the output of a read command is silenced,
+# and without this `grep -rn x libs/ 2>/dev/null` is judged on a par with a write. A rule is
+# demanded for reading, and refusals that fell on no file edit become the majority. A real write
+# next to a silenced stream stays visible: the redirect is removed, not the whole command.
 #
-# Стрелка снимается там же и по той же причине. `->` и `=>` в оболочке не значат ничего, а знак
-# в них тот же: команда, печатавшая таблицу «путь -> правило», объявлялась пишущей и отдавала
-# все свои пути под суд. Туда же закрывающая скобка комментария разметки.
+# The arrow is removed there too, and for the same reason. `->` and `=>` mean nothing in the shell,
+# yet the sign in them is the same: a command that printed a "path -> rule" table declared itself
+# writing and gave all its paths up for judgement. The closing bracket of a markup comment goes
+# there too.
 #
-# Цель перенаправления сужена до знаков, из которых собирают пути. Строка цитаты разметки —
-# знак и слово через пробел — от записи в файл одним знаком неотличима, и различает их только
-# цель: за настоящим знаком стоит путь, а не слово словами. Цена названа прямо: путь, набранный
-# не латиницей, записью больше не считается — в дереве таких нет ни одного, а появятся, признак
-# придётся расширить.
+# The redirect target is narrowed to the characters paths are made of. A markup quote line — the
+# sign and a word separated by a space — is indistinguishable from a write into a file by one sign,
+# and only the target tells them apart. Behind a real sign stands a path, not a word in words. The
+# price is named directly: a path typed not in Latin letters no longer counts as a write — there is
+# not one such in the tree, and should they appear, the sign will have to be widened.
 rt_shell_writes_default() {
     cleaned="$(printf '%s' "$1" \
         | sed -E 's#(&|[0-9]*)>>?[[:space:]]*/dev/(null|stderr)##g; s#[0-9]*>&[0-9-]##g; s#[-=]+>##g')"
 
-    # Интерпретатор пишет телом, а не именем файла, который запускает. Путь, стоящий у него
-    # первым доводом, — это то, что он читает: запуск проверки дерева по её пути записью не
-    # считается. Раньше проверялось само имя, и заход, запускавший проверку ради диагностики,
-    # получал требование правила общего кода, ничего в нём не правя; за две задачи таких отказов
-    # набралось около пятнадцати, и часть пришлась на команды, не писавшие ничего.
+    # An interpreter writes by its body, not by the name of the file it runs. The path that stands
+    # as its first argument is what it reads: running a tree check by its path does not count as a
+    # write. Before, the name itself was checked, and a session that ran a check for diagnosis got a
+    # demand for the shared-code rule without editing anything in it. Over two tasks such refusals
+    # came to about fifteen, and part of them fell on commands that wrote nothing.
     #
-    # Тело у интерпретатора двух видов, и оба остаются записью: документ на входе и код доводом.
+    # An interpreter's body comes in two kinds, and both remain a write: a document on input and
+    # code as an argument.
     interp='(^|[|;&(]|[[:space:]])(python3?|node|ruby|deno|bun|php|perl)'
     if printf '%s' "$cleaned" | grep -Eq \
         "${interp}([[:space:]][^|]*)?<<|${interp}([[:space:]]+-[^[:space:]]*)*[[:space:]]+(-e|--eval|-c|-p|--print)([[:space:]]|\$)"; then
@@ -62,23 +65,25 @@ rt_shell_writes_default() {
             '>>?[[:space:]]*[A-Za-z0-9_./~$"'"'"'-]|\btee\b|\bsed\b[^|]*-i|\bperl\b[^|]*-i|\bdd\b[^|]*of=|\bcp\b|\bmv\b|\brm\b|\btouch\b|\btruncate\b|\binstall\b|\bpatch\b|\bgit[[:space:]]+(checkout|restore|apply|stash)\b'
 }
 
-# Пути, названные командой оболочки. Печатает по одному в строке; судит их зовущий.
+# The paths named by a shell command. Prints one per line; the caller judges them.
 #
-# Разбирать оболочку по-настоящему нечем — здесь и не разбирают: из текста вынимается всё, что
-# похоже на путь, и каждое отдаётся признаку. Лишнее он отсеет сам, а пропущенное вернуло бы
-# обход. Кавычки снимаются заменой на пробел: путь внутри них тот же самый.
+# There is nothing to parse the shell with for real — and nothing parses it here: everything that
+# looks like a path is pulled out of the text, and each one is handed to the sign. The sign will
+# sift out the excess itself, while a missed one would bring back the bypass. Quotes are removed by
+# replacing them with a space: the path inside them is the same.
 #
-# Тело документа на месте путей не даёт: там лежит текст, который команда кладёт в файл, а
-# чужой путь, названный в нём словами, требовал бы правила под запись, которой нет. Запись
-# замысла так отбивалась трижды подряд, пока пути под каталогом кода не были названы иначе.
-# Судится заголовок команды — именно в нём стоит тот путь, куда команда пишет.
+# The body of a document gives no paths: the text the command puts into the file lies there, and
+# someone else's path named in it in words would demand a rule for a write that does not exist.
+# Writing the plan was refused three times in a row this way, until the paths under the code
+# directory were named otherwise. What is judged is the command header — that is where the path the
+# command writes to stands.
 #
-# Исключение — интерпретатор: ему код приходит телом, и путь записи стоит именно там. Признак
-# читается у той строки, которая тело открыла, а не у всей команды: тело принадлежит команде
-# своего заголовка. Прежде он читался у всего текста разом, и слово из документа отключало
-# вырезание целиком — строка «**Чем проверяется:** `bash projects/…`» в замысле делала запись
-# `plan.md` правкой кода приложения. Гард отбивал тем самым запись того файла, отсутствием
-# которого он же и отказывает.
+# The exception is an interpreter: its code comes as the body, and the write path stands exactly
+# there. The sign is read from the line that opened the body, not from the whole command: the body
+# belongs to the command of its own header. Before, it was read from the whole text at once, and a
+# word from the document switched off the cutting entirely. The line "**Чем проверяется:** `bash
+# projects/…`" in the plan made the write of `plan.md` an edit of application code. The guard
+# thereby refused the write of the very file whose absence it refuses for.
 rt_shell_paths_default() {
     text="$(printf '%s' "$1" | tr "\"'\`" '   ')"
     text="$(printf '%s' "$text" | awk '
@@ -98,15 +103,15 @@ rt_shell_paths_default() {
             }
         }')"
 
-    # Пути берутся только у тех кусков команды, которые пишут. Прежде брались у всей строки
-    # целиком, и команда чтения, сцепленная с записью, отдавала свои пути как цели записи:
-    # `python3 <<PY … PY` рядом с `grep -n … projects/…` отбивался за правку кода, которой в нём
-    # не было. Отбитий, пришедшихся не на правку файла, набиралось большинство, и цену платил
-    # тот, кто просто читал соседний файл в той же строке.
+    # Paths are taken only from those pieces of the command that write. Before, they were taken from
+    # the whole line, and a read command chained with a write gave its paths up as write targets.
+    # `python3 <<PY … PY` next to `grep -n … projects/…` was refused for an edit of code that it did
+    # not contain. Refusals that fell on no file edit became the majority, and the price was paid by
+    # whoever merely read a neighbouring file on the same line.
     #
-    # Кусок — строка верхнего уровня, а внутри неё `;`, `&&` и `||`. Тело heredoc от своей
-    # команды не отрывается: оно едет вместе с ней одним куском, потому что путь записи
-    # интерпретатора стоит именно там.
+    # A piece is a top-level line, and inside it `;`, `&&` and `||`. A heredoc body is not torn from
+    # its command: it travels with it as one piece, because the interpreter's write path stands
+    # exactly there.
     printf '%s' "$text" | awk '
         function trim(s) { sub(/^[ \t]+/, "", s); sub(/[ \t]+$/, "", s); return s }
         function flush(  n, i, part) {
@@ -136,14 +141,14 @@ rt_shell_paths_default() {
         | while IFS= read -r piece; do
             [ -z "$piece" ] && continue
             rt_shell_writes "$piece" || continue
-            # Кусок, который пишет одним лишь перенаправлением, отдаёт цель записи, а не всякое
-            # похожее на путь слово из своего текста. Имя файла, названное в аргументе или в
-            # содержимом, правкой этого файла не является: команда чтения, сцепленная с записью
-            # в свой файл, требовала правила по чужому имени и кончала ход — цена такого отказа
-            # равна цене настоящего срабатывания, потому что обойти его нечем.
+            # A piece that writes by a redirect alone gives up the write target, not every path-like
+            # word from its text. A file name named in an argument or in the content is not an edit
+            # of that file. A read command chained with a write into its own file demanded a rule by
+            # someone else's name and ended the turn. The price of such a refusal equals the price
+            # of a real one, because there is nothing to bypass it with.
             #
-            # Прочие виды записи разбираются по-прежнему: у правки по месту, копирования,
-            # переноса и интерпретатора путь стоит в самой команде и не в одном месте.
+            # The other kinds of writing are parsed as before: for an in-place edit, a copy, a move
+            # and an interpreter the path stands in the command itself and not in one place.
             if ! printf '%s' "$piece" | grep -Eq '\bsed\b[^|]*-i|\bperl\b[^|]*-i|\bpython3?\b|\bnode\b|\bruby\b|\bdd\b[^|]*of=|\bcp\b|\bmv\b|\brm\b|\btouch\b|\btruncate\b|\binstall\b|\bpatch\b|\bgit[[:space:]]+(checkout|restore|apply|stash)\b'; then
                 printf '%s' "$piece" \
                     | grep -oE '(>>?[[:space:]]*|\btee\b([[:space:]]+-a)?[[:space:]]+)[A-Za-z0-9_@.~/-]+' \

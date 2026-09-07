@@ -1,10 +1,10 @@
-# <О чём правило> — холодная часть
+# <What the rule is about> — the cold part
 
-Ловушки: грабли, на которые уже наступали. Грузится не вместе с правилом, а по требованию —
-при обычном решении она не нужна, она нужна тому, кто уже наступил.
+Pitfalls: traps already stepped on. Loaded on demand, not together with the rule — an ordinary
+decision does not need it; it is needed by whoever has already stepped in.
 
-Правило — `<имя-правила>`; статьи, которыми держится закон, стоят там.
+The rule is `<rule-name>`; the articles that hold the law stand there.
 
-## Ловушки
+## Pitfalls
 
-- **<Грабли, на которые уже наступали.>** <Чем это кончилось.>
+- **<A trap already stepped on.>** <How it ended.>

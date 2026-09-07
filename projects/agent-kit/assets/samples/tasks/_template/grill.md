@@ -1,33 +1,33 @@
-# Разбор просьбы
+# Grill
 
-<Работа, начатая с приехавшего груза, называет здесь его записи — ключами полностью, как их
-печатает чтение приёма. Восьми знаков не хватает: отметка с коротким ключом отбивается строкой
-«такой записи у дерева нет». Этот файл уезжает в описание прошлого, и после разбора папки ключи
-живут только здесь.>
+<Work begun from cargo that arrived names its records here — by full keys, as the intake reading
+prints them. Eight characters are not enough: a mark with a short key is refused with the line
+«такой записи у дерева нет». This file leaves for the archive, and after the folder is taken apart
+the keys live only here.>
 
 ## Просьба владельца
 
-> <дословно, без пересказа>
+> <verbatim, in the owner's language, without retelling>
 
-## Что уже есть в дереве
+## What the tree already has
 
-<Находки разведки: спеки по теме, законы и правила, которые работа задевает, готовый образец
-рядом. Заполняется до первого вопроса владельцу.>
+<Findings of the exploration: specs on the subject, the laws and rules the work touches, a
+ready-made sample nearby. Filled in before the first question to the owner.>
 
-## Что уже сказано в правилах
+## What the rules already say
 
-<Что нашлось в законах и правилах по теме вопроса. Владельцу не задаётся то, ответ на что уже
-записан.>
+<What was found in the laws and rules on the subject of the question. The owner is not asked
+what already has a written answer.>
 
-## Вопросы и ответы
+## Questions and answers
 
-**<вопрос>**
-<ответ владельца его словами>
+**<question>**
+<the owner's answer in their words>
 
-## Решения
+## Decisions
 
-- **<решение>** — <довод>. Отвергнуто: <что и почему>.
+- **<decision>** — <reason>. Rejected: <what and why>.
 
-## Что осталось невыясненным
+## What is left unclear
 
-- <вопрос, который не задавали, и почему он не блокирует работу>
+- <a question that was not asked, and why it does not block the work>

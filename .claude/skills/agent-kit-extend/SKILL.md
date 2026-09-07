@@ -2,82 +2,86 @@
 name: agent-kit-extend
 description: Ready-made examples of how a tree adds its own on top of the rules package. Load when the package text says something that is not true here, the gate demands the wrong rule or a guard judges by the wrong paths. Layout and settings — skill agent-kit; the shape of a new skill — write-a-skill.
 ---
-<!-- rt-kit v0.25.0 · skills/agent-kit-extend.md · f4663b21f8ba · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · skills/agent-kit-extend.md · 9a289cb25603 · правится надстройкой, не здесь -->
 
-# Как дописать своё поверх пакета
+# How to add your own on top of the package
 
-Скил `agent-kit` называет, **где** настраивается каждый род правки. Здесь — **как** выглядит
-сама правка, на готовых примерах, и чем каждая проверяется.
+The skill `agent-kit` names **where** each kind of edit is set up. Here is **how** the edit
+itself looks, on ready-made samples, and what checks each of them.
 
-Одно правило общее для всех пяти: разложенный файл не правится на месте. Он несёт шапку
-`rt-kit v… · <ресурс> · <сумма>`, правка в нём теряется на следующей раскладке и до тех пор
-выглядит применённой, а `sync` на такой файл отказывает вместо того, чтобы переписать молча.
+One rule is shared by all five: a laid-out file is not edited in place. It carries the header
+`rt-kit v… · <resource> · <checksum>`, an edit in it is lost on the next layout and until then
+looks applied, and `sync` refuses such a file instead of overwriting it silently.
 
-## Когда брать
+## When to use
 
-- Пакетный текст говорит не то, что верно здесь: имена, пути, приёмы этого дерева.
-- Гейт требует под файл не то правило — или молчит там, где правило есть.
-- Гард судит не по тем путям: чужие корни, свой набор проверок, своя форма ветки.
-- Заводится своё — признак единообразия, проверка, закон с правилом, — чего пакет не везёт.
+- The package text says something that is not true here: the names, paths and techniques of
+  this tree.
+- The gate demands the wrong rule for a file — or stays silent where there is a rule.
+- A guard judges by the wrong paths: foreign roots, its own set of checks, its own branch form.
+- Something of your own is started — a uniformity sign, a check, a law with a rule — which the
+  package does not ship.
 
-## Текст: надстройка сливается по разделам
+## Text: an override merges by section
 
-Файл кладётся в `overrides/<идентификатор ресурса>` — путь повторяет ресурс один в один:
-`rules/testing.md` надстраивается файлом `rules/testing.md`.
+The file goes to `overrides/<resource identifier>` — the path repeats the resource one to one:
+`rules/testing.md` is overridden by the file `rules/testing.md`.
 
 ```markdown
-## Ловушки этого дерева
+## Pitfalls of this tree
 
-- **Снимок дерева правится тем же коммитом, что и объявление.** Иначе установка у соседа
-  ставит не то, что стоит здесь.
+- **The tree snapshot is edited by the same commit as the declaration.** Otherwise the
+  installation at a neighbour installs something other than what stands here.
 ```
 
-| Заголовок в надстройке | Что происходит            |
-| ---------------------- | ------------------------- |
-| есть у пакета          | раздел замещается целиком |
-| нет у пакета           | дописывается в конец      |
-| есть, но тело пустое   | раздел пакета снимается   |
+| Heading in the override | What happens                    |
+| ----------------------- | ------------------------------- |
+| the package has it      | the section is replaced in full |
+| the package lacks it    | appended at the end             |
+| has it, but the body is empty | the package section is lifted |
 
-**Замещение — целиком, и это главная ловушка.** Свой пункт, дописанный под пакетным заголовком
-`## Ловушки`, уносит все пакетные пункты этого раздела разом, и пропажу не видно ничем: файл
-выглядит собранным. Поэтому заголовок в примере выше свой. Пакетный заголовок берут только
-тогда, когда пакетный текст здесь неверен и его правда надо снять.
+**Replacement is in full, and that is the main pitfall.** Your own item, added under the package
+heading `## Pitfalls`, carries away all package items of this section at once, and the loss is
+visible by nothing: the file looks assembled. That is why the heading in the sample above is your
+own. The package heading is taken only when the package text is wrong here and really has to be
+lifted.
 
-**Заголовок, стоящий внутри примера, разделом не считается.** Разбор пропускает всё, что лежит
-в ограде блока кода: образец документа с собственными заголовками рвал бы ресурс на куски.
-Поэтому надстройка, названная таким заголовком, не замещает ничего — она попадает в строку «нет
-у пакета» и дописывается новым разделом в конец. Правка при этом выглядит сработавшей: файл
-собран, `sync --check` зелёный, а нужный абзац остался прежним.
+**A heading standing inside a sample does not count as a section.** The parser skips everything
+lying inside a code fence: a document sample with headings of its own would tear the resource
+into pieces. So an override named by such a heading replaces nothing — it falls into the line
+"the package lacks it" and is appended as a new section at the end. The edit looks as if it
+worked: the file is assembled, `sync --check` is green, and the needed paragraph stayed as it was.
 
-Дотягиваются до него заголовком того раздела, внутри которого он лежит, — и замещают этот
-раздел целиком, вместе с примером:
+It is reached by the heading of the section it lies inside — and that section is replaced in
+full, together with the sample:
 
 ````bash
-# какие заголовки у ресурса на самом деле — примеры в ограде сюда не попадают
-awk '/^```/ { fence = !fence } !fence && /^## / { print }' <файл ресурса>
+# which headings the resource really has — samples inside a fence do not get here
+awk '/^```/ { fence = !fence } !fence && /^## / { print }' <resource file>
 ````
 
-Проверяется раскладкой: `sync`, затем `sync --check` — и глазами по разложенному файлу, на
-месте ли пакетные разделы.
+Checked by the layout: `sync`, then `sync --check` — and by eye over the laid-out file, whether
+the package sections are in place.
 
-От ресурса целиком отказываются не здесь, а списком `skip` в конфиге: надстройка правит текст,
-`skip` отменяет файл.
+A resource is dropped in full not here but by the `skip` list in the config: an override edits
+the text, `skip` cancels the file.
 
-## Надстройку карты гейта не проверяет ничто
+## Nothing checks a gate map override
 
-Сценарии пакета гоняют его умолчание и веток дерева не касаются: своих проб у надстройки нет, и
-места для них тоже. Карта решает, какое правило грузится под каждую правку, то есть чем заход
-руководствуется в работе, а держится она прогоном руками и памятью того, кто её правил.
+The package scenarios run its default and do not touch the tree's branches: the override has no
+tests of its own, and no place for them either. The map decides which rule is loaded under each
+edit, that is, what the session is guided by in its work, and it is held by a run by hand and by
+the memory of whoever edited it.
 
-Промах в ней молчит: неверная ветка не отказывает, а тихо отдаёт не то правило — заметен он
-только по объёму загруженного и по тому, что в загруженном не нашлось ответа. Поэтому правка
-карты кончается вызовом гейта на трёх путях: на том, ради которого правили, на соседнем,
-который правка задеть не должна была, и на файле, у которого правила нет вовсе.
+A miss in it is silent: a wrong branch does not refuse but quietly returns the wrong rule — it
+is noticed only by the volume loaded and by the fact that the loaded text held no answer. So an
+edit of the map ends with a call of the gate on three paths: the one the edit was made for, a
+neighbouring one that the edit should not have touched, and a file that has no rule at all.
 
-## Гейт: своя ветка решает раньше умолчания
+## Gate: your own branch decides before the default
 
-Гейт спрашивает `skill_for` — она печатает имя правила или молчит. Молчание значит «правила на
-это нет», и правка проходит.
+The gate asks `skill_for` — it prints the rule name or stays silent. Silence means "there is no
+rule for this", and the edit passes.
 
 ```bash
 skill_for() {
@@ -86,33 +90,35 @@ skill_for() {
     case "$kind" in
         edit)
             case "$target" in
-                # Частное — всегда раньше общего: файл истории не файл компонента.
+                # The specific is always before the general: a story file is not a component file.
                 *.stories.ts) printf '%s\n' 'showcase'; return 0 ;;
             esac
             ;;
     esac
 
-    # Всё остальное разбирает умолчание пакета — иначе оно теряется целиком.
+    # Everything else is handled by the package default — otherwise it is lost in full.
     command -v skill_for_default >/dev/null 2>&1 && skill_for_default "$kind" "$target" "$written"
 
     return 0
 }
 ```
 
-Две вещи здесь обязательны. **Порядок веток:** первое совпадение выигрывает, и общая ветка,
-поставленная выше частной, съедает её молча. **Вызов умолчания:** объявив функцию заново и не
-позвав `_default`, дерево остаётся без всех пакетных веток сразу — а выглядит это как «гейт
-перестал требовать правила».
+Two things here are mandatory. **The order of branches:** the first match wins, and a general
+branch placed above a specific one eats it silently. **The call of the default:** having
+redeclared the function without calling `_default`, the tree is left without all package
+branches at once — and it looks like "the gate stopped demanding rules".
 
-Проверяется сценариями гейта из набора пакета: они гоняют карту, ничего не раскладывая.
+Checked by the gate scenarios from the package suite: they run the map without laying anything
+out.
 
-## Гард: профиль отвечает за имена и команды
+## Guard: the profile answers for names and commands
 
-Тем же приёмом объявляются функции профиля — что гонять перед пушем, какой документ едет парой,
-чем линтуется файл, что здесь считается кодом приложения, какая форма ветки законна.
+The profile functions are declared by the same technique — what to run before a push, which
+document goes as a pair, what lints a file, what counts as application code here, which branch
+form is lawful.
 
 ```bash
-# Какой документ обязан ехать тем же коммитом. Печатает образец пути или молчит.
+# Which document must go in the same commit. Prints a path sample or stays silent.
 rt_docs_pair_for() {
     case "$1" in
         *.spec.ts) return 0 ;;
@@ -121,17 +127,18 @@ rt_docs_pair_for() {
 }
 ```
 
-Печатается **образец**, а не путь: гард сверяет им состав коммита. Умолчание зовётся так же —
-`rt_docs_pair_for_default "$@"` — везде, где своё правило случай не закрыло.
+A **sample** is printed, not a path: the guard checks the commit content against it. The default
+is called the same way — `rt_docs_pair_for_default "$@"` — wherever your own rule did not cover
+the case.
 
-Путь приходит от корня дерева. Признак по подстроке вида `*/projects/*` совпадает и с чужим
-каталогом за пределами репозитория — так запись в домашний каталог была отбита требованием
-замысла, к ней не относящимся.
+The path comes from the tree root. A substring sign like `*/projects/*` also matches a foreign
+directory outside the repository — that is how a write to the home directory was refused by a
+plan requirement that did not apply to it.
 
-## Признаки и проверки: данные, а не код
+## Signs and checks: data, not code
 
-Признак единообразия — данные. Дерево называет наборы пакета, чьё готовое оно берёт, и
-дописывает свои файлом; совпавший ключ замещает пакетный.
+A uniformity sign is data. The tree names the package bundles whose ready-made it takes, and
+adds its own by a file; a matching key replaces the package one.
 
 ```json
 {
@@ -140,52 +147,55 @@ rt_docs_pair_for() {
 }
 ```
 
-Объект сливается ключ за ключом: назвав один ключ раздела, дерево не теряет соседних. **Список
-— наоборот, замещается целиком**, и это ловушка: назвав `sourceRoots`, дерево получает ровно
-названное, а не пакетные корни плюс свои. «Дописать в список» и «убрать из списка» в этой записи
-неразличимы, поэтому список всегда пишется полностью.
+An object merges key by key: having named one key of a section, the tree does not lose the
+neighbouring ones. **A list, on the contrary, is replaced in full**, and that is a pitfall:
+having named `sourceRoots`, the tree gets exactly what it named, not the package roots plus its
+own. "Add to the list" and "remove from the list" are indistinguishable in this notation, so a
+list is always written in full.
 
-Набор объявляется по тому, что дерево **потребляет**. Дерево, в котором кит написан, а не
-позван, объявив его набор, получит советы звать кит на файлах самого кита: признак верен, но
-обращён не туда.
+A bundle is declared by what the tree **consumes**. A tree in which the kit is written, not
+called, having declared its bundle, gets advice to call the kit on the files of the kit itself:
+the sign is right, but pointed the wrong way.
 
-Дереву, которое готовое и пишет, и зовёт, выбирать между шумом и молчанием не приходится: у
-признака есть обратный образец пути — `exceptNamed`, — и им выводятся папки источника готового, а
-не набор целиком. Внутри набора обход готового после этого ловится, как у потребителя, а папка,
-где это готовое написано, признака не получает. Образец читают одинаково сплошная проверка и гард
-на правке.
+A tree that both writes and calls the ready-made does not have to choose between noise and
+silence: the sign has a reverse path sample — `exceptNamed` — and by it the source folders of
+the ready-made are taken out, not the bundle as a whole. Inside the bundle, bypassing the
+ready-made is caught after that as at a consumer, and the folder where that ready-made is written
+gets no sign. The sample is read the same way by the sweeping check and by the guard on an edit.
 
-## Свой закон и правило
+## Your own law and rule
 
-Пакет везёт слой правил, но не запрещает свой. Закон дерева ложится рядом с пакетными, правило
-под него — среди скилов, и связь идёт через шапку: у правила `law:` с именем закона, у паттерна
-`rule:` с именем правила. Имя, которому ничего не отвечает, отбивает сверку связности.
+The package ships a rules layer but does not forbid your own. A law of the tree lies next to the
+package ones, the rule under it — in the skills directory, and the link goes through the
+frontmatter: a rule has `law:` with the law name, a pattern has `rule:` with the rule name. A
+name nothing answers to refuses the consistency audit.
 
-Утверждение правила получает строку в спутнике `implementation.md` — привязку к файлу и символу.
-Утверждение, которому места в коде не нашлось, в проверяемый раздел не ставится: ему место в
-«Ловушках» прозой.
+A statement of the rule gets a line in the companion `implementation.md` — a binding to a file
+and a symbol. A statement that found no place in the code is not put into the checked section:
+its place is in "Pitfalls" as prose.
 
-Проверяется сверкой спеков — до пуша.
+Checked by the spec audit — before the push.
 
-## Частые промахи
+## Common misses
 
-- **Правка на месте вместо надстройки.** Разложенный файл узнаётся по шапке, а не по каталогу:
-  раскладка ложится в те же `tools/` и `.claude/`, где лежит своё.
-- **Свой пункт дописан к пакетному заголовку** — пакетные пункты этого раздела ушли молча.
-- **Надстройка названа заголовком, который стоит в примере.** Заместить она ничего не может —
-  такого раздела у ресурса нет, — и уезжает новым разделом в конец. Видно это глазами по
-  разложенному файлу: два одинаковых заголовка, один в ограде примера, другой последним
-  разделом; раскладка при этом зелёная, потому что расхождения с пакетом нет.
-- **Функция объявлена заново без вызова `_default`** — вместе со своим случаем потеряны все
-  пакетные.
-- **Общая ветка карты стоит выше частной** — частная не выполняется никогда.
-- **Замена по шаблону в файле оболочки** — `case` теряет свою `esac`, и гард с ошибкой синтаксиса
-  отвечает ненулевым кодом, то есть «правка отбита». После правки — `bash -n`.
-- **Правка ресурса пакета без сборки.** Строка запуска читает собранное, а не исходники:
-  порядок всегда один — правка, сборка, `sync`.
-- **Форматтер правит ресурс на коммите, и раскладка отстаёт задним числом.** Разложенное
-  сходилось в ту минуту, когда его раскладывали, а ресурс изменился после: пример с оградой
-  внутри примера форматтер переписывает на ограду длиннее, сумма ресурса меняется, и
-  `sync --check` краснеет уже на следующем шаге. Порядок обхода: прогнать форматтер на
-  правленом ресурсе, потом `sync`, потом коммит — либо переразложить и добавить в тот же
-  коммит.
+- **An in-place edit instead of an override.** A laid-out file is recognised by the header, not
+  by the directory: the layout lands in the same `tools/` and `.claude/` where your own lies.
+- **Your own item added to a package heading** — the package items of this section left silently.
+- **The override is named by a heading that stands inside a sample.** It can replace nothing —
+  the resource has no such section — and goes as a new section to the end. It is visible by eye
+  in the laid-out file: two identical headings, one inside a sample fence, the other as the last
+  section; the layout is green at that, because there is no divergence from the package.
+- **The function is redeclared without a call of `_default`** — together with your own case all
+  package ones are lost.
+- **A general branch of the map stands above a specific one** — the specific one never runs.
+- **A pattern replacement in a shell file** — `case` loses its `esac`, and the guard with a
+  syntax error answers with a non-zero code, that is, "the edit is refused". After the edit —
+  `bash -n`.
+- **An edit of a package resource without a build.** The launch line reads the built output, not
+  the sources: the order is always one — edit, build, `sync`.
+- **The formatter edits the resource on commit, and the layout falls behind after the fact.**
+  The laid-out matched at the minute it was laid out, and the resource changed after: the
+  formatter rewrites a sample with a fence inside a sample to a longer fence, the resource
+  checksum changes, and `sync --check` turns red already on the next step. The way around: run
+  the formatter on the edited resource, then `sync`, then commit — or lay out again and add to
+  the same commit.
