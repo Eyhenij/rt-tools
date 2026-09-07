@@ -95,14 +95,14 @@ lw_config "{$BASE,\"deploy\":{\"workflow\":\"deploy.yml\",\"mainBranch\":\"main\
 export STUB_ISSUES='[]'
 export STUB_DEPLOY_OK='{"sha":"aaaaaaaabbbbbbbbccccccccdddddddd","at":"2026-08-30T10:00:00Z"}'
 export STUB_DEPLOY_LAST='{"status":"completed","conclusion":"failure","sha":"eeeeeeeeffffffff11111111222222","at":"2026-08-30T12:00:00Z","url":"https://host/run/9"}'
-report "SC-AK-824 — упавшая выкатка названа своей строкой" "$(lw_says 'выкатка «deploy.yml» упала')" 1
+report "SC-AK-824 — упавшая выкатка названа своей строкой" "$(lw_says 'the rollout «deploy.yml» failed')" 1
 report "SC-AK-824 — и названа ссылкой на прогон" "$(lw_says 'https://host/run/9')" 1
 
 export STUB_DEPLOY_LAST='{"status":"in_progress","conclusion":null,"sha":"eeeeeeeeffffffff11111111222222","at":"2026-08-30T12:00:00Z","url":"https://host/run/9"}'
-report "SC-AK-824 — идущая выкатка расхождением не считается" "$(lw_says 'упала')" 0
+report "SC-AK-824 — идущая выкатка расхождением не считается" "$(lw_says 'failed')" 0
 
 export STUB_DEPLOY_LAST=''
-report "SC-AK-824 — выкатки не было ни разу: об упавшей не говорится" "$(lw_says 'упала')" 0
+report "SC-AK-824 — выкатки не было ни разу: об упавшей не говорится" "$(lw_says 'failed')" 0
 
 rm -rf "$LW_TREE"
 

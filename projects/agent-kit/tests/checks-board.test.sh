@@ -92,8 +92,8 @@ report "SC-AK-279 — прогон на вершине есть: расхожд�
 # SC-AK-277 — вершина без прогона названа расхождением
 export STUB_RUNS=0
 report "SC-AK-277 — вершина без прогона отбита" "$(board_code)" 1
-report "SC-AK-277 — сказано, что прогона нет" "$(board_says 'на вершине 01234567 прогона нет')" 1
-report "SC-AK-277 — назван возраст вершины" "$(board_says 'лежит она 60 мин')" 1
+report "SC-AK-277 — сказано, что прогона нет" "$(board_says 'there is no run on the tip 01234567')" 1
+report "SC-AK-277 — назван возраст вершины" "$(board_says 'it has lain there 60 min')" 1
 report "SC-AK-277 — назван способ вернуть событие" "$(board_says 'gh pr close 701 && gh pr reopen 701')" 1
 
 # SC-AK-278 — свежая вершина без прогона не судится
@@ -104,7 +104,7 @@ report "SC-AK-278 — свежая вершина не судится" "$(board_
 export STUB_HEAD_DATE="$(minutes_ago 600)"
 board_config "${BOARD_CONFIG/.github\/workflows\/ci.yml/.github\/workflows\/nope.yml}"
 report "SC-AK-280 — конвейера нет: расхождений нет" "$(board_code)" 0
-report "SC-AK-280 — сказано, почему пропущено" "$(board_says 'файла конвейера в дереве нет')" 1
+report "SC-AK-280 — сказано, почему пропущено" "$(board_says 'the tree has no pipeline file')" 1
 
 # SC-AK-733 — открытые задачи с совпадающими заголовками перечисляются сводкой
 # Дубль по отдельности исправен: номер, исполнитель и колонка у обеих задач на месте, и сверка
@@ -213,7 +213,7 @@ export STUB_RUNS=1
 export STUB_VERDICT=success
 export STUB_PULLS="$(pulls_json true)"
 report "SC-AK-281 — зелёный прогон при черновике отбит" "$(board_code)" 1
-report "SC-AK-281 — сказано, что прогон зелёный, а PR черновик" "$(board_says 'прогон на вершине 01234567 зелёный, а PR черновик')" 1
+report "SC-AK-281 — сказано, что прогон зелёный, а PR черновик" "$(board_says 'the run on the tip 01234567 is green, and the PR is a draft')" 1
 report "SC-AK-281 — назван способ снять черновик" "$(board_says 'gh pr ready 701')" 1
 
 # SC-AK-282 — черновик при незелёном прогоне не судится
@@ -232,7 +232,7 @@ conflicting_json() {
 }
 export STUB_PULLS="$(conflicting_json CONFLICTING)"
 report "SC-AK-425 — конфликтующая заявка названа расхождением" "$(board_code)" 1
-report "SC-AK-425 — сказано, с чем конфликт" "$(board_says 'конфликтует с главной веткой')" 1
+report "SC-AK-425 — сказано, с чем конфликт" "$(board_says 'it conflicts with the main branch')" 1
 
 # SC-AK-426 — «ещё не посчитано» конфликтом не считается: хостинг считает сливаемость заново
 # после каждой правки главной ветки, и строка краснела бы на каждой свежей вершине.
@@ -247,14 +247,14 @@ export STUB_RUNS=0
 export STUB_HEAD_DATE="$(minutes_ago 60)"
 export STUB_PULLS="$(conflicting_json CONFLICTING)"
 report "SC-AK-670 — причиной названа не потеря события, а конфликт" \
-    "$(board_says 'прогона нет и не будет, пока она конфликтует')" 1
+    "$(board_says 'there will be none while it conflicts')" 1
 report "SC-AK-671 — совета перезакрыть заявку при конфликте нет" \
     "$(board_says 'gh pr close 701 && gh pr reopen 701')" 0
 
 # Заявка без конфликта судится как прежде: там причина и вправду в событии.
 export STUB_PULLS="$(conflicting_json MERGEABLE)"
 report "SC-AK-672 — у сливаемой заявки строка о событии прежняя" \
-    "$(board_says 'конвейер события не получил')" 1
+    "$(board_says 'the pipeline received no event')" 1
 
 # SC-AK-845 — заявка поверх соседней прогона не получает: рабочий поток слушает заявки в главную
 # ветку и событий с другой базой не видит. Прежняя строка была неверна дважды: событие не
@@ -265,15 +265,15 @@ based_json() {
 }
 export STUB_PULLS="$(based_json RT-699-nizhnyaya)"
 report "SC-AK-845 — чужая база названа причиной" \
-    "$(board_says 'заявка открыта в ветку «RT-699-nizhnyaya»')" 1
+    "$(board_says 'the request is opened into the branch «RT-699-nizhnyaya»')" 1
 report "SC-AK-845 — совета перезакрыть заявку при чужой базе нет" \
     "$(board_says 'gh pr close 702 && gh pr reopen 702')" 0
-report "SC-AK-845 — названо, чем это исправляется" "$(board_says 'перенеси базу')" 1
+report "SC-AK-845 — названо, чем это исправляется" "$(board_says 'move the base')" 1
 
 # База — главная ветка: строка о событии прежняя.
 export STUB_PULLS="$(based_json main)"
 report "SC-AK-845 — заявка в главную проверяется как прежде" \
-    "$(board_says 'конвейер события не получил')" 1
+    "$(board_says 'the pipeline received no event')" 1
 export STUB_RUNS=1
 export STUB_PULLS="$(pulls_json false)"
 
@@ -293,8 +293,8 @@ evicted_json='[{"id":32701785738,"status":"completed","conclusion":"cancelled"}]
 export STUB_EVICTED="$evicted_json"
 export STUB_JOBS=0
 report "SC-AK-584 — вытесненный прогон отбит" "$(board_code)" 1
-report "SC-AK-584 — назван номер прогона и вершина" "$(board_says 'прогон 32701785738 на вершине 01234567 вытеснен из очереди конвейера')" 1
-report "SC-AK-584 — сказано, что ветка не проверялась" "$(board_says 'ветка не проверялась')" 1
+report "SC-AK-584 — назван номер прогона и вершина" "$(board_says 'the run 32701785738 on the tip 01234567 was pushed out of the pipeline queue')" 1
+report "SC-AK-584 — сказано, что ветка не проверялась" "$(board_says 'the branch was not checked')" 1
 
 # SC-AK-585 — строка называет чтение прогона раньше его перезапуска
 report "SC-AK-585 — команды названы по порядку" "$(board_says 'gh run view 32701785738 && gh run rerun 32701785738')" 1
@@ -322,8 +322,8 @@ export STUB_EVICTED="$evicted_json"
 export STUB_RUNS=0
 export STUB_VERDICT=failure
 export STUB_HEAD_DATE="$(minutes_ago 600)"
-report "SC-AK-589 — строка одна, и она о вытеснении" "$(board_says 'вытеснен из очереди конвейера')" 1
-report "SC-AK-589 — об отсутствии прогона не сказано" "$(board_says 'прогона нет')" 0
+report "SC-AK-589 — строка одна, и она о вытеснении" "$(board_says 'was pushed out of the pipeline queue')" 1
+report "SC-AK-589 — об отсутствии прогона не сказано" "$(board_says 'there is no run')" 0
 
 # SC-AK-590 — дерево без файла конвейера о вытеснении не судит
 board_config "${BOARD_CONFIG/.github\/workflows\/ci.yml/.github\/workflows\/nope.yml}"
@@ -354,18 +354,18 @@ report "SC-AK-531 — сошедшийся прод расхождением н�
 
 export STUB_BEHIND=476
 report "SC-AK-531 — отставший прод отбит" "$(board_code)" 1
-report "SC-AK-531 — названо число коммитов" "$(board_says 'прод отстал от «main» на 476 коммитов')" 1
-report "SC-AK-531 — назван коммит последней выкатки" "$(board_says 'последняя выкатка — fedcba98 от 2026-08-20')" 1
+report "SC-AK-531 — названо число коммитов" "$(board_says 'production lags «main» by 476 commits')" 1
+report "SC-AK-531 — назван коммит последней выкатки" "$(board_says 'the last rollout is fedcba98 of 2026-08-20')" 1
 
 # Выкаток не было ни одной: сравнивать не с чем, и это тоже расхождение — прода нет вовсе.
 export STUB_DEPLOY=''
-report "SC-AK-531 — дерево без единой выкатки названо" "$(board_says 'выкаток по «deploy.yml» не было ни одной')" 1
+report "SC-AK-531 — дерево без единой выкатки названо" "$(board_says 'not a single rollout by «deploy.yml»')" 1
 
 # SC-AK-532 — поток выкатки не назван: сверка молчит вслух, а не тихо
 board_config "$BOARD_CONFIG"
 export STUB_BEHIND=476
 report "SC-AK-532 — без названного потока прод не сверяется" "$(board_code)" 0
-report "SC-AK-532 — и сказано, почему" "$(board_says 'рабочий поток выкатки в настройке дерева не назван')" 1
+report "SC-AK-532 — и сказано, почему" "$(board_says 'the rollout workflow is not named in the tree config')" 1
 
 # SC-AK-752 — отставание ветки открытой заявки от главной называется сверкой
 # Гард судит основание один раз, в минуту открытия, а заявка стоит днями: влитого за это время
@@ -375,13 +375,13 @@ export STUB_RUNS=1
 export STUB_VERDICT=success
 export STUB_HEAD_DATE="$(minutes_ago 60)"
 export STUB_PULL_BEHIND=4
-report "SC-AK-752 — отставание названо числом" "$(board_says 'отстала от «main» на 4 коммитов')" 1
+report "SC-AK-752 — отставание названо числом" "$(board_says 'lags «main» by 4 commits')" 1
 report "SC-AK-752 — расхождением это считается" "$(board_code)" 1
 export STUB_PULL_BEHIND=0
-report "SC-AK-752 — ветка вровень с главной молчит" "$(board_says 'отстала от «main»')" 0
+report "SC-AK-752 — ветка вровень с главной молчит" "$(board_says 'lags «main»')" 0
 # Сравнить нечем — молчание: сверка без доступа отбивала бы работу вместо промаха.
 export STUB_PULL_BEHIND=""
-report "SC-AK-752 — пустой ответ судится как ноль" "$(board_says 'отстала от «main»')" 0
+report "SC-AK-752 — пустой ответ судится как ноль" "$(board_says 'lags «main»')" 0
 export STUB_PULL_BEHIND=0
 
 rm -rf "$BOARD_TREE"

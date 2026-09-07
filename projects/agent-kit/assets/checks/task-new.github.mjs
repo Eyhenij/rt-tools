@@ -63,7 +63,7 @@ function parseArgs(argv) {
                 index += 1;
                 break;
             default:
-                fail(`неизвестный ключ ${argv[index]}`);
+                fail(`unknown flag ${argv[index]}`);
         }
     }
     return args;
@@ -87,13 +87,13 @@ function readBody() {
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.title) {
-    fail("нужен --title '<Что не так>'");
+    fail("--title '<Что не так>' is required");
 }
 if (numberFromTitle(args.title) !== null || args.title.startsWith(`[${TASK_KEY}-`)) {
-    fail('номер в заголовок не пишется руками: он известен только после заведения и дописывается сам');
+    fail('the number is not typed into the title by hand: it is known only after the creation and is appended by itself');
 }
 if (args.slug !== null && !/^[a-z0-9][a-z0-9-]*$/.test(args.slug)) {
-    fail('slug — строчные латинские буквы, цифры и дефисы: имя ветки читают в списке из полусотни строк');
+    fail('slug is lowercase latin letters, digits and dashes: the branch name is read in a list of fifty lines');
 }
 
 /**
@@ -125,7 +125,7 @@ try {
     ).trim();
     number = Number(created.split('/').pop());
     if (!Number.isInteger(number)) {
-        fail(`не разобрать номер заведённой задачи в ответе: ${created}`);
+        fail(`the number of the created task cannot be parsed in the answer: ${created}`);
     }
 
     // The number is known only now, so the title is appended by a second call.
@@ -143,18 +143,18 @@ try {
         { token }
     );
 } catch (error) {
-    const reason = error instanceof OfflineError ? `нет связи с GitHub: ${error.message}` : String(error.message ?? error);
+    const reason = error instanceof OfflineError ? `no connection to GitHub: ${error.message}` : String(error.message ?? error);
     if (number === null) {
         fail(reason);
     }
     // The task already exists, and it may not be on the board — exactly the state tasks were being
     // lost by. Staying silent here is not allowed: the number is printed to finish it by hand.
-    console.error(`task-new: задача #${number} заведена, но доведена не до конца — ${reason}`);
-    console.error(`task-new: проверь и доправь — npm run check:board`);
+    console.error(`task-new: the task #${number} is created but not finished — ${reason}`);
+    console.error(`task-new: check it and finish it — npm run check:board`);
     process.exit(1);
 }
 
-const branch = args.slug ? `${TASK_KEY}-${number}-${args.slug}` : `${TASK_KEY}-${number}-<короткий-slug>`;
+const branch = args.slug ? `${TASK_KEY}-${number}-${args.slug}` : `${TASK_KEY}-${number}-<short-slug>`;
 
 /**
  * The task folder is renamed here, because the number and the branch name are known at this moment
@@ -166,7 +166,7 @@ const branch = args.slug ? `${TASK_KEY}-${number}-${args.slug}` : `${TASK_KEY}-$
 
 function adoptDraft() {
     if (!args.slug) {
-        console.log(`\nПапка задачи: --slug не задан, переименовать черновик нечем.`);
+        console.log(`\nThe task folder: --slug is not set, there is nothing to rename the draft by.`);
         return;
     }
     const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -174,24 +174,24 @@ function adoptDraft() {
     const target = join(root, 'docs/tasks', branch);
 
     if (existsSync(target)) {
-        console.log(`\nПапка задачи уже на месте: docs/tasks/${branch}/`);
+        console.log(`\nThe task folder is already in place: docs/tasks/${branch}/`);
     } else if (existsSync(draft)) {
         renameSync(draft, target);
         // The draft too is assembled from the sample, and the header in it is the same: it is
         // taken off here as well.
         unstampFolder(target);
-        console.log(`\nПапка задачи: docs/tasks/_draft-${args.slug}/ → docs/tasks/${branch}/`);
+        console.log(`\nThe task folder: docs/tasks/_draft-${args.slug}/ → docs/tasks/${branch}/`);
     } else {
         const template = join(root, 'docs/tasks/_template');
 
         if (!existsSync(template)) {
-            console.log(`\nПапки задачи нет, и собрать её не с чего: образца ${'docs/tasks/_template'} в дереве не лежит`);
+            console.log(`\nThere is no task folder and nothing to assemble it from: the sample ${'docs/tasks/_template'} does not lie in the tree`);
             return;
         }
 
         cpSync(template, target, { recursive: true });
         unstampFolder(target);
-        console.log(`\nПапка задачи собрана с образца: docs/tasks/${branch}/`);
+        console.log(`\nThe task folder is assembled from the sample: docs/tasks/${branch}/`);
     }
 
     // The header of the plan is read by a guard: by it the guard finds the product agreement. The
@@ -204,7 +204,7 @@ function adoptDraft() {
     const after = before.replace(/^\*\*Задача:\*\*.*$/m, `**Задача:** ${TASK_KEY}-${number} · **Ветка:** ${branch}`);
     if (after !== before) {
         writeFileSync(plan, after);
-        console.log(`Шапка замысла проставлена: docs/tasks/${branch}/plan.md`);
+        console.log(`The header of the plan is filled in: docs/tasks/${branch}/plan.md`);
     }
 }
 
@@ -256,10 +256,10 @@ for (const line of answer.lines) {
     (answer.ok ? console.log : console.error)(`task-new: ${line}`);
 }
 
-console.log(`\nВетка заводится отдельным вызовом:\n  git checkout -b ${branch}`);
-console.log(`Взятая в работу задача переставляется на борде:\n  npm run task:move -- ${number} ${IN_PROGRESS_STATUS}`);
+console.log(`\nThe branch is created by a separate call:\n  git checkout -b ${branch}`);
+console.log(`A task taken into work is moved on the board:\n  npm run task:move -- ${number} ${IN_PROGRESS_STATUS}`);
 
 if (!answer.ok) {
-    console.error(`task-new: проверь очередь работ целиком — npm run check:board`);
+    console.error(`task-new: check the whole work queue — npm run check:board`);
     process.exit(1);
 }

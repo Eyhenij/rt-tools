@@ -103,19 +103,19 @@ companion() {
 }
 
 companion 'с разделом'
-report "SC-AK-56 — строка описательной таблицы привязкой не считается" "$(specs_says 'привязка без пункта: «механизм')" 0
+report "SC-AK-56 — строка описательной таблицы привязкой не считается" "$(specs_says 'a binding without an item: «механизм')" 0
 report "SC-AK-56 — привязка из таблицы привязок читается" "$(specs_says 'правило без привязки: «Раз')" 0
 
 # SC-AK-57 — компаньон правила без раздела привязок отбивается
 companion 'без раздела'
-report "SC-AK-57 — отсутствие раздела названо" "$(specs_says 'нет раздела .*Где исполняются статьи')" 1
-report "SC-AK-57 — строка описательной таблицы привязкой всё равно не стала" "$(specs_says 'привязка без пункта: «механизм')" 0
+report "SC-AK-57 — отсутствие раздела названо" "$(specs_says 'there is no section .*Где исполняются статьи')" 1
+report "SC-AK-57 — строка описательной таблицы привязкой всё равно не стала" "$(specs_says 'a binding without an item: «механизм')" 0
 
 # SC-AK-58 — у компаньона спека домена раздел не требуется: там таблица одна
 rm -rf "$SPEC_TREE/.claude/skills/acting-rule"
 printf '# Привязка\n\n| Правило | Где исполняется |\n| --- | --- |\n| Не применимо. | `tools/check-specs.mjs:checkSpecHeadings` |\n' \
     > "$SPEC_TREE/docs/specs/alpha/implementation.md"
-report "SC-AK-58 — компаньон спека без раздела читается" "$(specs_says 'нет раздела .*Где исполняются статьи')" 0
+report "SC-AK-58 — компаньон спека без раздела читается" "$(specs_says 'there is no section .*Где исполняются статьи')" 0
 report "SC-AK-58 — его привязка нашлась" "$(specs_says 'правило без привязки')" 0
 
 # --- SC-AK-662…664 — привязка списком ---------------------------------------------------------
@@ -143,7 +143,7 @@ report "SC-AK-663 — смешанный компаньон читается ц�
 # Строка списка без якоря судится как пустая клетка таблицы: связь есть, адреса нет.
 printf '# Компаньон\n\n## Где исполняются статьи\n\n- **Раз.** — просто слова\n- **Три.** — `tools/spec-common.mjs:REQUIRED_HEADINGS`\n' \
     > "$SPEC_TREE/.claude/skills/acting-rule/implementation.md"
-report "SC-AK-664 — строка списка без якоря названа пустой привязкой" "$(specs_says 'у правила «Раз.*пустая привязка')" 1
+report "SC-AK-664 — строка списка без якоря названа пустой привязкой" "$(specs_says 'the statement «Раз.*has an empty binding')" 1
 rm -rf "$SPEC_TREE/.claude/skills/acting-rule"
 
 # --- SC-AK-612 — приватное имя в якоре ------------------------------------------------------
@@ -176,10 +176,10 @@ verdict_row() {
 }
 
 verdict_row '**Не исполняется.** Службы, о которой говорит статья, дерево не держит вовсе.'
-report "SC-AK-242 — вердикт с причиной принят" "$(specs_says 'пустая привязка')" 0
+report "SC-AK-242 — вердикт с причиной принят" "$(specs_says 'has an empty binding')" 0
 
 verdict_row '**Не исполняется.**'
-report "SC-AK-243 — вердикт без причины не принят" "$(specs_says 'пустая привязка')" 1
+report "SC-AK-243 — вердикт без причины не принят" "$(specs_says 'has an empty binding')" 1
 
 rm -rf "$SPEC_TREE/.claude/skills/verdict-rule"
 
@@ -217,7 +217,7 @@ printf '# Роль\n\nНаходка называет два места досл
 printf '# Компаньон\n\n## Где исполняются статьи\n\n| Статья | Где исполняется |\n| --- | --- |\n| Три. | `.claude/skills/reading-rule/role.md:дословно` |\n' \
     > "$SPEC_TREE/.claude/skills/reading-rule/implementation.md"
 report "SC-AK-238, SC-AK-239 — якорь на русском слове читается как привязка" \
-    "$(specs_says 'у правила «Три')" 0
+    "$(specs_says 'the statement «Три')" 0
 report "SC-AK-238 — правило с таким якорем непривязанным не считается" \
     "$(specs_says 'правило без привязки: «Три')" 0
 # Слово в файле стоит первой же строкой: жалоба на его отсутствие означает, что искали
@@ -230,13 +230,13 @@ report "SC-AK-238 — слово якоря в файле находится" \
 printf '# Роль\n\nПравило task-flow ведёт ход работы.\n' > "$SPEC_TREE/.claude/skills/reading-rule/role.md"
 printf '# Компаньон\n\n## Где исполняются статьи\n\n| Статья | Где исполняется |\n| --- | --- |\n| Три. | `.claude/skills/reading-rule/role.md:task-flow` |\n' \
     > "$SPEC_TREE/.claude/skills/reading-rule/implementation.md"
-report "SC-AK-238 — символ с дефисом сверку не роняет" "$(specs_says 'у правила «Три')" 0
+report "SC-AK-238 — символ с дефисом сверку не роняет" "$(specs_says 'the statement «Три')" 0
 report "SC-AK-238 — символ с дефисом в файле находится" "$(specs_says 'привязка не сходится')" 0
 
 # SC-AK-240 — путь остаётся латинским: он адрес в дереве, а не слово текста.
 printf '# Компаньон\n\n## Где исполняются статьи\n\n| Статья | Где исполняется |\n| --- | --- |\n| Три. | `.claude/skills/reading-rule/роль.md:дословно` |\n' \
     > "$SPEC_TREE/.claude/skills/reading-rule/implementation.md"
-report "SC-AK-240 — путь не латиницей парой не считается" "$(specs_says 'у правила «Три')" 1
+report "SC-AK-240 — путь не латиницей парой не считается" "$(specs_says 'the statement «Три')" 1
 
 rm -rf "$SPEC_TREE/.claude/skills/reading-rule"
 
@@ -422,13 +422,13 @@ rules_of() {
 
 # SC-AK-889 — подзаголовок внутри раздела список правил не кончает
 rules_of gamma 'Гамма' GA '### Первая группа\n\n- **Раз.** Два.\n\n### Вторая группа\n\n- **Три.** Четыре.\n'
-report "SC-AK-889 — раздел с подзаголовками не назван пустым" "$(specs_says 'gamma/spec.md: в разделе .*Правила.* нет ни одного пункта')" 0
-report "SC-AK-889 — пункт после подзаголовка прочитан" "$(specs_says 'gamma/implementation.md: правило без привязки: «Три')" 1
+report "SC-AK-889 — раздел с подзаголовками не назван пустым" "$(specs_says 'gamma/spec.md: the section .*Правила.* carries no item at all')" 0
+report "SC-AK-889 — пункт после подзаголовка прочитан" "$(specs_says 'gamma/implementation.md: a statement without a binding: «Три')" 1
 
 # SC-AK-890 — таблица кончает список, и отказ называет, что стоит вместо пунктов
 rules_of delta 'Дельта' DE '| Поддомен | О чём |\n| --- | --- |\n| [Раз](raz/spec.md) | два |\n\n- **Раз.** Два.\n'
-report "SC-AK-890 — таблица перед списком названа в отказе" "$(specs_says 'delta/spec.md: в разделе .*Правила.* нет ни одного пункта, список кончился на строке .\| Поддомен')" 1
-report "SC-AK-890 — раздел без пунктов называет первую строку" "$(specs_says 'alpha/spec.md: в разделе .*Правила.* нет ни одного пункта, первым стоит .Не применимо')" 1
+report "SC-AK-890 — таблица перед списком названа в отказе" "$(specs_says 'delta/spec.md: the section .*Правила.* carries no item at all, the list ended at the line .\| Поддомен')" 1
+report "SC-AK-890 — раздел без пунктов называет первую строку" "$(specs_says 'alpha/spec.md: the section .*Правила.* carries no item at all, the first one is .Не применимо')" 1
 
 rm -rf "$SPEC_TREE"
 

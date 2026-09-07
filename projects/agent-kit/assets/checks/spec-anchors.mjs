@@ -96,7 +96,7 @@ function rowsOfMap(specFile, mapFile, mapHeading) {
     }
     const section = sectionOf(text, mapHeading);
     if (!section.length) {
-        report(mapFile, `нет раздела \`${mapHeading}\` — привязкам правила негде лежать`);
+        report(mapFile, `there is no section \`${mapHeading}\` — the bindings of the rule have nowhere to lie`);
     }
 
     return section;
@@ -111,17 +111,17 @@ function checkRuleImplementation(specFile, text, mapFile, heading = '## Прав
         // same refusal.
         const first = lines.find((line) => line.trim());
         const instead = bullets.stoppedAt
-            ? `, список кончился на строке \`${bullets.stoppedAt.trim().slice(0, 60)}\``
+            ? `, the list ended at the line \`${bullets.stoppedAt.trim().slice(0, 60)}\``
             : first
-              ? `, первым стоит \`${first.trim().slice(0, 60)}\``
+              ? `, the first one is \`${first.trim().slice(0, 60)}\``
               : '';
-        report(specFile, `в разделе \`${heading}\` нет ни одного пункта${instead}`);
+        report(specFile, `the section \`${heading}\` carries no item at all${instead}`);
 
         return;
     }
 
     if (!exists(mapFile)) {
-        report(specFile, `нет файла \`${mapFile.split('/').pop()}\` рядом — правилам не к чему привязаться`);
+        report(specFile, `there is no file \`${mapFile.split('/').pop()}\` next to it — the statements have nothing to bind to`);
 
         return;
     }
@@ -153,15 +153,15 @@ function checkRuleImplementation(specFile, text, mapFile, heading = '## Прав
     for (const bullet of bullets) {
         const head = ruleHeadOf(bullet.text);
         if (!head) {
-            report(specFile, `правило без жирного начала: «${bullet.text.replace(/^-\s+/, '').slice(0, 60)}…»`);
+            report(specFile, `a statement without a bold opening: «${bullet.text.replace(/^-\s+/, '').slice(0, 60)}…»`);
             continue;
         }
         const row = rows.get(head);
         if (!row) {
             report(
                 mapFile,
-                `правило без привязки: «${head.slice(0, 60)}…» — допиши строку с \`файл:символ\`, ` +
-                    'вердиктом «Не исполняется» с причиной либо перенеси правило в «Открытые вопросы» закона как Q-<буква>-<номер>'
+                `a statement without a binding: «${head.slice(0, 60)}…» — add a line with \`файл:символ\`, ` +
+                    'a verdict «Не исполняется» with a reason, or move the statement into «Открытые вопросы» of the law as Q-<буква>-<номер>'
             );
             continue;
         }
@@ -169,15 +169,15 @@ function checkRuleImplementation(specFile, text, mapFile, heading = '## Прав
         if (!row.anchors.length && !row.verdict) {
             report(
                 mapFile,
-                `у правила «${head.slice(0, 60)}…» пустая привязка — поставь \`файл:символ\` ` +
-                    'либо вердикт «Не исполняется», «Не применимо», «Не проверяется» с причиной'
+                `the statement «${head.slice(0, 60)}…» has an empty binding — put \`файл:символ\` ` +
+                    'or the verdict «Не исполняется», «Не применимо», «Не проверяется» with a reason'
             );
         }
         for (const [, path, symbol] of row.anchors) {
             if (!exists(path)) {
-                report(mapFile, `привязка ведёт в никуда: нет файла \`${path}\``);
+                report(mapFile, `the binding leads nowhere: there is no file \`${path}\``);
             } else if (!fileHasSymbol(path, symbol)) {
-                report(mapFile, `привязка не сходится: в \`${path}\` нет \`${symbol}\``);
+                report(mapFile, `the binding does not match: \`${path}\` carries no \`${symbol}\``);
             } else {
                 traced.push({ mapFile, path, symbol });
             }
@@ -188,7 +188,7 @@ function checkRuleImplementation(specFile, text, mapFile, heading = '## Прав
     // Without this the binding piles up and starts describing promises that do not exist
     for (const [head, row] of rows) {
         if (!row.used) {
-            report(mapFile, `привязка без пункта: «${head.slice(0, 60)}…» — в \`${specFile}\` такого пункта нет`);
+            report(mapFile, `a binding without an item: «${head.slice(0, 60)}…» — \`${specFile}\` carries no such item`);
         }
     }
 }
@@ -284,8 +284,8 @@ function checkTracedAnchors() {
         if (here + elsewhere < 2) {
             report(
                 mapFile,
-                `привязка ведёт в мёртвый код: \`${symbol}\` объявлен в \`${path}\` и больше нигде не встречается — ` +
-                    'либо правило исполняется в другом месте, либо ему место в «Открытых вопросах» закона как Q-<буква>-<номер>'
+                `the binding leads into dead code: \`${symbol}\` is declared in \`${path}\` and met nowhere else — ` +
+                    'either the statement is carried out elsewhere, or its place is in «Открытые вопросы» of the law as Q-<буква>-<номер>'
             );
         }
     }
@@ -313,7 +313,7 @@ const LAW_REFERENCE = new RegExp(`\`${CONSTITUTION_DIR}/(?:application/)?([a-z-]
 function checkSpecLaws(file, text, laws) {
     const line = text.split('\n').find((candidate) => SPEC_LAWS.test(candidate));
     if (!line) {
-        report(file, 'в шапке нет строки `**Законы:**` — не видно, какие законы домен применяет');
+        report(file, 'the header carries no line `**Законы:**` — there is no seeing which laws the domain applies');
 
         return;
     }
@@ -321,13 +321,13 @@ function checkSpecLaws(file, text, laws) {
     const declared = new Set([...line.match(SPEC_LAWS)[1].matchAll(BACKTICKED)].map(([, name]) => name));
     for (const name of declared) {
         if (!laws.has(name)) {
-            report(file, `в строке \`**Законы:**\` назван \`${name}\`, а закона с таким именем нет ни в одном слое`);
+            report(file, `the line \`**Законы:**\` names \`${name}\`, and there is no law of that name in any layer`);
         }
     }
 
     for (const [, name] of text.matchAll(LAW_REFERENCE)) {
         if (!declared.has(name)) {
-            report(file, `закон \`${name}\` назван в тексте, но не объявлен в строке \`**Законы:**\``);
+            report(file, `the law \`${name}\` is named in the text and is not declared in the line \`**Законы:**\``);
         }
     }
 }

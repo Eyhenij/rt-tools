@@ -63,8 +63,8 @@ export const BOT = BOARD.bot ?? '';
 export const TASK_KEY = BOARD.taskKey ?? '';
 if (PROJECT_ID && !TASK_KEY) {
     console.error(
-        'board: ключ задач не назван — задать его ключом `board.taskKey` в .claude/rt-kit/checks.json.\n' +
-            'Из него собираются заголовок задачи `[<КЛЮЧ>-<номер>]` и имя ветки `<КЛЮЧ>-<номер>-<краткое-имя>`.'
+        'board: the task key is not named — set it by the key `board.taskKey` in .claude/rt-kit/checks.json.\n' +
+            'The task title `[<КЛЮЧ>-<номер>]` and the branch name `<КЛЮЧ>-<номер>-<краткое-имя>` are assembled from it.'
     );
     process.exit(1);
 }
@@ -93,7 +93,7 @@ export function fetchBoard(options) {
             if (content.__typename === 'Issue') {
                 items.set(content.number, { itemId: node.id, status: node.status?.name ?? null });
             } else {
-                foreign.push(content.__typename === 'PullRequest' ? `PR #${content.number}` : `черновик «${content.title}»`);
+                foreign.push(content.__typename === 'PullRequest' ? `PR #${content.number}` : `a draft «${content.title}»`);
             }
         }
         if (!page.pageInfo.hasNextPage) {
@@ -110,11 +110,11 @@ export function fetchBoard(options) {
 export function moveTask(number, status, options) {
     const option = STATUS_OPTIONS[status];
     if (!option) {
-        throw new Error(`неизвестная колонка «${status}» — есть ${Object.keys(STATUS_OPTIONS).join(', ')}`);
+        throw new Error(`an unknown column «${status}» — there are ${Object.keys(STATUS_OPTIONS).join(', ')}`);
     }
     const item = fetchBoard(options).items.get(number);
     if (!item) {
-        throw new Error(`задачи #${number} нет на борде — заводится она командой npm run task:new`);
+        throw new Error(`the task #${number} is not on the board — it is created by the command npm run task:new`);
     }
     graphql(
         `mutation { updateProjectV2ItemFieldValue(input: {projectId: "${PROJECT_ID}", itemId: "${item.itemId}", fieldId: "${STATUS_FIELD_ID}", value: {singleSelectOptionId: "${option.id}"}}) { projectV2Item { id } } }`,
@@ -395,29 +395,29 @@ export function describeTaskState(number, state) {
         return {
             ok: false,
             lines: [
-                `в очереди работ: спросить не удалось — ${state.offline}`,
-                'состояние очереди неизвестно, и заведённым это не считается',
+                `in the work queue: could not be asked — ${state.offline}`,
+                'the state of the queue is unknown, and that does not count as created',
             ],
         };
     }
     if (!state?.exists) {
-        return { ok: false, lines: [`задачи #${number} у хостинга нет — заведение не состоялось`] };
+        return { ok: false, lines: [`the hosting has no task #${number} — the creation did not happen`] };
     }
     if (!state.onBoard) {
         return {
             ok: false,
-            lines: [`в очереди работ: НЕТ`, 'задача, которой нет в очереди, работой не обеспечена — по ней никто не придёт'],
+            lines: [`in the work queue: NO`, 'a task that is not in the queue is backed by no work — nobody will come for it'],
         };
     }
 
-    const column = state.status ? `колонка «${state.status}»` : 'колонки нет';
+    const column = state.status ? `the column «${state.status}»` : 'there is no column';
     if (!state.assigned) {
         return {
             ok: false,
-            lines: [`в очереди работ: ${column}, исполнителя нет`, 'ничья задача стоит в очереди невидимой для того, кто её делает'],
+            lines: [`in the work queue: ${column}, no assignee`, 'a task belonging to nobody stands in the queue invisible to whoever does it'],
         };
     }
-    return { ok: true, lines: [`в очереди работ: ${column}, исполнитель ${state.assignees.join(', ')}`] };
+    return { ok: true, lines: [`in the work queue: ${column}, assignee ${state.assignees.join(', ')}`] };
 }
 
 const isEntryPoint = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
@@ -483,16 +483,16 @@ if (isEntryPoint && process.argv[2] === 'move') {
     const number = Number(process.argv[3]);
     const status = process.argv[4];
     if (!Number.isInteger(number) || !status) {
-        console.error(`board: нужен номер задачи и колонка — node tools/board.mjs move 263 ${IN_PROGRESS_STATUS}`);
+        console.error(`board: a task number and a column are needed — node tools/board.mjs move 263 ${IN_PROGRESS_STATUS}`);
         process.exit(1);
     }
     const token = botToken() ?? undefined;
     try {
         const moved = moveTask(number, status, { token });
-        console.log(`#${number}: ${moved.from ?? 'вне колонок'} → ${moved.to}`);
+        console.log(`#${number}: ${moved.from ?? 'outside the columns'} → ${moved.to}`);
     } catch (error) {
-        const reason = error instanceof OfflineError ? `нет связи с GitHub: ${error.message}` : String(error.message ?? error);
-        console.error(`board: задача #${number} осталась на прежнем месте — ${reason}`);
+        const reason = error instanceof OfflineError ? `no connection to GitHub: ${error.message}` : String(error.message ?? error);
+        console.error(`board: the task #${number} stayed in its former place — ${reason}`);
         process.exit(1);
     }
 }

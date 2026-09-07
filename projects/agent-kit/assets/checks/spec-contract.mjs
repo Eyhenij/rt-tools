@@ -81,7 +81,7 @@ function contractRows(text) {
 
 function checkContract(file, text, roots) {
     if (roots === null) {
-        report(file, 'в шапке нет строки `**Процедуры:**` — нечем сверить таблицу «Контракта» с декораторами');
+        report(file, 'the header carries no line `**Процедуры:**` — there is nothing to check the table of «Контракт» against the decorators with');
 
         return;
     }
@@ -92,14 +92,14 @@ function checkContract(file, text, roots) {
     for (const row of rows) {
         const found = declared.get(row.short.toLowerCase());
         if (!found) {
-            report(file, `в «Контракте» есть \`${row.name}\`, но процедуры с таким методом в ${roots.join(', ')} нет`);
+            report(file, `«Контракт» carries \`${row.name}\`, and there is no procedure with such a method in ${roots.join(', ')}`);
             continue;
         }
         described.add(row.short.toLowerCase());
         if (found.permission && row.permission !== found.permission) {
             report(
                 file,
-                `право у \`${row.name}\` разошлось: в спеке «${row.permission}», ` + `в \`${found.file}\` объявлено «${found.permission}»`
+                `the permission of \`${row.name}\` diverged: in the spec «${row.permission}», ` + `in \`${found.file}\` it is declared «${found.permission}»`
             );
         }
     }
@@ -108,7 +108,7 @@ function checkContract(file, text, roots) {
         if (!described.has(key)) {
             report(
                 file,
-                `процедура \`${found.service}.${found.method}\` (${found.file}) домену принадлежит, ` + 'но в таблице «Контракта» её нет'
+                `the procedure \`${found.service}.${found.method}\` (${found.file}) belongs to the domain, ` + 'and the table of «Контракт» does not carry it'
             );
         }
     }
@@ -130,7 +130,7 @@ function checkRefusalCodes(file, text, roots) {
     const notApplicable = section.some((line) => /^Не применимо/.test(line.trim()));
     if (!bullets.length) {
         if (!notApplicable) {
-            report(file, 'в разделе `### Коды отказов` нет ни одного кода и нет ответа «Не применимо»');
+            report(file, 'the section `### Коды отказов` carries no code at all and no answer «Не применимо»');
         }
 
         return;
@@ -149,11 +149,11 @@ function checkRefusalCodes(file, text, roots) {
     for (const bullet of bullets) {
         const code = (bullet.text.match(/`([A-Za-z]\w*)`/) || [])[1];
         if (!code) {
-            report(file, `в «Кодах отказов» строка без кода в кавычках: «${bullet.text.slice(0, 60)}…»`);
+            report(file, `«Коды отказов» carries a line without a code in quotes: «${bullet.text.slice(0, 60)}…»`);
             continue;
         }
         if (!thrown.has(code)) {
-            report(file, `код отказа \`${code}\` в домене нигде не бросается — либо он не отсюда, либо путь его не даёт`);
+            report(file, `the refusal code \`${code}\` is thrown nowhere in the domain — either it is not from here, or the path does not give it`);
         }
     }
 }

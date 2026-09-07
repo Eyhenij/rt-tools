@@ -29,13 +29,13 @@ drift_says() {
 
 # --- SC-AK-822 — пропуск законен, пока ветка не трогала хранилища --------------------------
 report "SC-AK-822 — без правки хранилища проверка пропускает" "$(drift_code)" 7
-report "SC-AK-822 — и говорит, что сверять негде" "$(drift_says 'сверять негде')" 1
+report "SC-AK-822 — и говорит, что сверять негде" "$(drift_says 'there is nowhere to check')" 1
 
 # Правка схемы в рабочем дереве: она уйдёт тем же пушем следом, и вклада ветки для неё мало.
 printf 'model A {\n  id Int @id\n  name String\n}\n' > "$SD_TREE/prisma/schema.prisma"
 report "SC-AK-822 — незакоммиченная правка схемы делает пропуск отказом" "$(drift_code)" 1
 report "SC-AK-822 — отказ называет, чем поднять базу" "$(drift_says 'git-workflow-migration')" 1
-report "SC-AK-822 — и называет, почему порядок виден только на пустом" "$(drift_says 'метку времени ставит момент создания')" 1
+report "SC-AK-822 — и называет, почему порядок виден только на пустом" "$(drift_says 'the timestamp is set by the minute of creation')" 1
 git -C "$SD_TREE" checkout -q -- prisma/schema.prisma 2>/dev/null
 
 # Вклад ветки: правка миграций закоммичена, рабочее дерево чисто.

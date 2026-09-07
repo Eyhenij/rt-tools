@@ -142,7 +142,7 @@ async function withServiceClient(serviceUrl, run) {
         // Docker shut down is an ordinary state of the machine, not a reason to keep documentation
         // from being pushed.
         if (SERVER_DOWN_CODES.includes(error?.code)) {
-            return unavailable('база недоступна');
+            return unavailable('the database is unavailable');
         }
         throw error;
     }
@@ -163,19 +163,19 @@ async function withServiceClient(serviceUrl, run) {
  */
 function unavailable(why) {
     if (!touchedStorage()) {
-        console.log(`check-schema-drift: ${why} — сверять негде`);
+        console.log(`check-schema-drift: ${why} — there is nowhere to check`);
 
         return SKIP;
     }
 
-    console.error(`check-schema-drift: ${why}, а ветка правила схему или миграции — сверять негде, но было чем\n`);
+    console.error(`check-schema-drift: ${why}, and the branch edited the schema or the migrations — there is nowhere to check, though there was something to check\n`);
     console.error(
-        'Цепочка миграций на пустом хранилище — единственное место, где виден их настоящий порядок:\n' +
-            'метку времени ставит момент создания, и миграция из ветки, начатой раньше, встаёт перед той,\n' +
-            'от которой зависит. На развёрнутом хранилище разработчика она ложится, на чистом падает — и\n' +
-            'видно это в первый раз на выкатке.\n\n' +
-            'Подними базу и повтори; когда её под рукой нет, цепочка гоняется на одноразовом контейнере —\n' +
-            'готовые команды в паттерне `git-workflow-migration`.'
+        'The chain of migrations on an empty storage is the only place where their true order shows:\n' +
+            'the timestamp is set by the minute of creation, and a migration from a branch started earlier\n' +
+            'stands before the one it depends on. On the deployed storage of a developer it applies, on a\n' +
+            'clean one it fails — and that shows for the first time at the rollout.\n\n' +
+            'Raise the database and repeat; when it is not at hand, the chain runs on a one-off container —\n' +
+            'the ready-made commands are in the pattern `git-workflow-migration`.'
     );
 
     return 1;
@@ -187,24 +187,24 @@ async function main() {
     // went on as if the schema were in place. A tree without storage says just that: there is no
     // name, there is nothing to audit.
     if (!CONFIG.schemaFile) {
-        console.log('check-schema-drift: имя файла схемы не задано — сверять нечего');
+        console.log('check-schema-drift: the schema file name is not set — there is nothing to check');
 
         return SKIP;
     }
 
     if (!existsSync(join(ROOT, CONFIG.schemaFile))) {
-        console.log('check-schema-drift: схемы нет — сверять нечего');
+        console.log('check-schema-drift: there is no schema — there is nothing to check');
 
         return SKIP;
     }
 
     const url = databaseUrl();
     if (!url) {
-        return unavailable('адрес базы не задан');
+        return unavailable('the database address is not set');
     }
 
     if (PRODUCTION_MARKS.some((mark) => url.includes(mark))) {
-        console.log('check-schema-drift: адрес боевой — проверка туда не ходит');
+        console.log('check-schema-drift: the address is production — the check does not go there');
 
         return SKIP;
     }
@@ -220,7 +220,7 @@ async function main() {
             // `migrate deploy` starts the database itself: no creation command of our own is needed
             const deploy = prisma(['migrate', 'deploy'], shadowUrl);
             if (deploy.status !== 0) {
-                console.error('check-schema-drift: миграции не накатываются на чистую базу\n');
+                console.error('check-schema-drift: the migrations do not apply to a clean database\n');
                 console.error(`${deploy.stdout ?? ''}${deploy.stderr ?? ''}`);
 
                 return 1;
@@ -232,10 +232,10 @@ async function main() {
                 shadowUrl
             );
             if (diff.status === 2) {
-                console.error('check-schema-drift: миграции и схема описывают разные базы\n');
+                console.error('check-schema-drift: the migrations and the schema describe different databases\n');
                 console.error(`${diff.stdout ?? ''}${diff.stderr ?? ''}`);
                 console.error(
-                    '\nЛибо схема правлена без миграции, либо миграция создаёт то, чего схема не объявляет.\nКак писать миграцию — паттерн `git-workflow-migration`.'
+                    '\nEither the schema was edited without a migration, or the migration creates what the schema does not declare.\nHow a migration is written — the pattern `git-workflow-migration`.'
                 );
 
                 return 1;
@@ -245,13 +245,13 @@ async function main() {
                 // skip here is indistinguishable from migrations that agreed, and it was by exactly
                 // that the check stayed silent about an empty schema name: with it the check called
                 // the comparison without a required argument, and the refusal read as a green gate.
-                console.error('check-schema-drift: сравнение не отработало\n');
+                console.error('check-schema-drift: the comparison did not work out\n');
                 console.error(`${diff.stdout ?? ''}${diff.stderr ?? ''}`);
 
                 return 1;
             }
 
-            console.log('check-schema-drift: миграции и схема сошлись');
+            console.log('check-schema-drift: the migrations and the schema match');
 
             return 0;
         } finally {
@@ -269,10 +269,10 @@ main().then(
         // here is what the check did not foresee, and a silent zero here means "the gate is green
         // because the audit did not work out". There is nothing to tell it from "audited and
         // agreed": behind such a zero the check stood switched off until it was called by hand.
-        console.error(`check-schema-drift: проверка не отработала — ${error?.message ?? error}\n`);
+        console.error(`check-schema-drift: the check did not work out — ${error?.message ?? error}\n`);
         console.error(
-            'Это отказ самой проверки, а не расхождение схемы. Почини обвязку: недостающий пакет ставится в корень,\n' +
-                'пустое имя схемы или каталога миграций задаётся в настройке проверок дерева.'
+            'This is a refusal of the check itself, not a divergence of the schema. Fix the harness: a missing package is installed at the root,\n' +
+                'an empty name of the schema or of the migrations directory is set in the checks config of the tree.'
         );
         process.exit(1);
     }

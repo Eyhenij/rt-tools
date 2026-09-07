@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-state-next.mjs · 358c314ae92e · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-state-next.mjs · a7ea24371009 · правится надстройкой, не здесь
 /**
  * The check that the section of a state names the next move.
  *
@@ -124,7 +124,7 @@ function sectionsOf(pattern) {
 }
 
 if (!existsSync(RULE)) {
-    console.log('check-state-next: правила ведения работы в дереве нет — сверять нечего');
+    console.log('check-state-next: the tree has no rule of work conduct — there is nothing to check');
     process.exit(0);
 }
 
@@ -132,7 +132,7 @@ const ruleText = readFileSync(RULE, 'utf8');
 const states = statesFromRule(ruleText);
 
 if (states.length === 0) {
-    console.error('check-state-next: в правиле ведения работы не нашлось таблицы состояний');
+    console.error('check-state-next: the rule of work conduct carries no table of states');
     process.exit(1);
 }
 
@@ -155,63 +155,63 @@ for (const [pattern, sections] of patterns) {
     for (const section of sections) {
         counted += 1;
 
-        const where = `\`${section.name}\` в паттерне \`${pattern}\``;
+        const where = `\`${section.name}\` in the pattern \`${pattern}\``;
 
         if (section.moves.length === 0) {
-            problems.push(`${where}: в разделе «${section.heading}» нет строки «${MARKER}» — ни «${MARKERS[1]}»`);
+            problems.push(`${where}: the section «${section.heading}» carries neither the line «${MARKER}» nor «${MARKERS[1]}»`);
             continue;
         }
 
         if (section.moves.length > 1) {
-            problems.push(`${where}: в разделе «${section.heading}» таких строк ${section.moves.length}, а движение одно`);
+            problems.push(`${where}: the section «${section.heading}» carries ${section.moves.length} such lines, and the move is one`);
             continue;
         }
 
         const tail = section.moves[0];
 
         if (tail.length < MIN_TAIL) {
-            problems.push(`${where}: зачин есть, а движение за ним не названо`);
+            problems.push(`${where}: the opening is there, and no move is named after it`);
             continue;
         }
 
         const twin = tails.get(tail);
 
         if (twin) {
-            problems.push(`${where}: движение слово в слово то же, что у ${twin}`);
+            problems.push(`${where}: the move is word for word the same as at ${twin}`);
             continue;
         }
 
-        tails.set(tail, `\`${section.name}\` в паттерне \`${pattern}\``);
+        tails.set(tail, `\`${section.name}\` in the pattern \`${pattern}\``);
     }
 }
 
 if (counted === 0) {
-    problems.push('ни одного раздела состояния не нашлось: паттерны не разложены или заголовки в них другие');
+    problems.push('not a single state section was found: the patterns are not laid out or their headings are different');
 }
 
 const turnText = existsSync(TURN_RULE) ? readFileSync(TURN_RULE, 'utf8') : '';
 if (!hasBoundary(ruleText) && !hasBoundary(turnText)) {
-    problems.push(`правило хода захода о границе состояния молчит: строки «${BOUNDARY}» в нём нет`);
+    problems.push(`the rule of turn conduct says nothing about the boundary of a state: it carries no line «${BOUNDARY}»`);
 }
 
 for (const [file, what] of [
-    [MAP, 'карта хода'],
-    [LAW, 'закон о ведении работы'],
+    [MAP, 'the turn map'],
+    [LAW, 'the law on work conduct'],
 ]) {
     if (existsSync(file) && !hasBoundary(readFileSync(file, 'utf8'))) {
-        problems.push(`${what} о границе состояния молчит: строки «${BOUNDARY}» в ней нет`);
+        problems.push(`${what} says nothing about the boundary of a state: it carries no line «${BOUNDARY}»`);
     }
 }
 
 if (problems.length > 0) {
-    console.error(`check-state-next: расхождений ${problems.length}`);
+    console.error(`check-state-next: divergences ${problems.length}`);
 
     for (const problem of problems) {
         console.error(`  ${problem}`);
     }
 
-    console.error('\nСтрока следующего движения стоит в каждом разделе состояния: зачин общий, движение своё.');
+    console.error('\nThe line of the next move stands in every state section: the opening is shared, the move is its own.');
     process.exit(1);
 }
 
-console.log(`check-state-next: разделов состояния ${counted}, у каждого названо следующее движение`);
+console.log(`check-state-next: state sections ${counted}, each names its next move`);

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.25.0 · checks/check-board.github.mjs · 83f41a82f173 · правится надстройкой, не здесь
+// rt-kit v0.25.0 · checks/check-board.github.mjs · 6c6e01020637 · правится надстройкой, не здесь
 /**
  * Audit of the work queue against what the delivery law requires of a task and its PR.
  *
@@ -107,7 +107,7 @@ function checkDrafts() {
         }
         const age = Math.floor((now - statSync(join(TASKS_DIR, name)).mtimeMs) / 86400000);
         if (age >= DRAFT_DAYS) {
-            report(`${CONFIG.tasksDir}/${name}/: разбор брошен ${age} дн. назад — заведи задачу или удали папку`);
+            report(`${CONFIG.tasksDir}/${name}/: the grill was abandoned ${age} days ago — create the task or delete the folder`);
         }
     }
 }
@@ -191,9 +191,9 @@ function checkHeadRun(pull, options) {
 
     if (pull.mergeable === 'CONFLICTING') {
         report(
-            `PR #${pull.number}: на вершине ${pull.headRefOid.slice(0, 8)} прогона нет и не будет, пока она конфликтует — ` +
-                `конвейер проверяет слияние ветки с базой, а слияния при конфликте нет; влей главную ветку и запушь, ` +
-                `перезакрытие PR тут не помогает`
+            `PR #${pull.number}: there is no run on the tip ${pull.headRefOid.slice(0, 8)} and there will be none while it conflicts — ` +
+                `the pipeline checks the merge of the branch with the base, and there is no merge while it conflicts; merge the main branch in and push, ` +
+                `reopening the PR does not help here`
         );
 
         return;
@@ -206,17 +206,17 @@ function checkHeadRun(pull, options) {
     // for in the hosting.
     if (pull.baseRefName && pull.baseRefName !== MAIN_BRANCH) {
         report(
-            `PR #${pull.number}: на вершине ${pull.headRefOid.slice(0, 8)} прогона нет и не будет — ` +
-                `заявка открыта в ветку «${pull.baseRefName}», а рабочий поток слушает заявки в главную; ` +
-                `перенеси базу на «${MAIN_BRANCH}», когда нижняя заявка влита`
+            `PR #${pull.number}: there is no run on the tip ${pull.headRefOid.slice(0, 8)} and there will be none — ` +
+                `the request is opened into the branch «${pull.baseRefName}», and the workflow listens to requests into the main one; ` +
+                `move the base to «${MAIN_BRANCH}» once the lower request is merged`
         );
 
         return;
     }
 
     report(
-        `PR #${pull.number}: на вершине ${pull.headRefOid.slice(0, 8)} прогона нет, а лежит она ${minutes} мин — ` +
-            `конвейер события не получил; верни его новым коммитом либо перезакрытием PR ` +
+        `PR #${pull.number}: there is no run on the tip ${pull.headRefOid.slice(0, 8)}, and it has lain there ${minutes} min — ` +
+            `the pipeline received no event; bring it back by a new commit or by reopening the PR ` +
             `(gh pr close ${pull.number} && gh pr reopen ${pull.number})`
     );
 }
@@ -246,9 +246,9 @@ function checkEvicted(pull, options) {
 
     const run = evicted[0];
     report(
-        `PR #${pull.number}: прогон ${run} на вершине ${pull.headRefOid.slice(0, 8)} вытеснен из очереди конвейера — ` +
-            `заданий у него ноль, ветка не проверялась, а в списке он выглядит упавшим; ` +
-            `прочитай прогон и перезапусти его (gh run view ${run} && gh run rerun ${run})`
+        `PR #${pull.number}: the run ${run} on the tip ${pull.headRefOid.slice(0, 8)} was pushed out of the pipeline queue — ` +
+            `it has zero steps, the branch was not checked, and in the list it looks failed; ` +
+            `read the run and restart it (gh run view ${run} && gh run rerun ${run})`
     );
     return true;
 }
@@ -273,8 +273,8 @@ function checkReadyDraft(pull, options) {
     }
 
     report(
-        `PR #${pull.number}: прогон на вершине ${pull.headRefOid.slice(0, 8)} зелёный, а PR черновик — ` +
-            `разбери папку задачи и сними черновик (gh pr ready ${pull.number}) либо скажи владельцу, чего ждёшь`
+        `PR #${pull.number}: the run on the tip ${pull.headRefOid.slice(0, 8)} is green, and the PR is a draft — ` +
+            `take the task folder apart and lift the draft (gh pr ready ${pull.number}) or tell the owner what you are waiting for`
     );
 }
 
@@ -297,8 +297,8 @@ function checkConflicting(pull) {
     }
 
     report(
-        `PR #${pull.number}: конфликтует с главной веткой — влей её в ветку задачи, разбери конфликт и запушь; ` +
-            `слить эту заявку владелец не может, а по странице это видно только внутри неё`
+        `PR #${pull.number}: it conflicts with the main branch — merge it into the task branch, resolve the conflict and push; ` +
+            `the owner cannot merge this request, and on the page that shows only inside it`
     );
 }
 
@@ -322,20 +322,20 @@ try {
     checked = { issues: issues.length, pulls: pulls.length, cargo: allOpen.length - open.length };
 
     for (const item of board.foreign) {
-        report(`борда: ${item} — на борде стоят задачи, а не PR о них`);
+        report(`the board: ${item} — the board holds tasks, not PRs about them`);
     }
     // The board is checked only for open tasks. A closed one left the queue by a merge, and the
     // board has no column for it: a line about it has nothing to close it with. Six such lines
     // hung in every run and drowned out the real task that never made it to the board.
     for (const issue of open) {
         if (!board.issues.has(issue.number)) {
-            report(`#${issue.number}: задачи нет на борде — за ней никто не следит`);
+            report(`#${issue.number}: the task is not on the board — nobody watches it`);
         }
         if (numberFromTitle(issue.title) !== issue.number) {
-            report(`#${issue.number}: заголовок не начинается с [${TASK_KEY}-${issue.number}] — «${issue.title}»`);
+            report(`#${issue.number}: the title does not start with [${TASK_KEY}-${issue.number}] — «${issue.title}»`);
         }
         if (issue.assignees.length === 0) {
-            report(`#${issue.number}: у задачи нет исполнителя — по очереди работ не видно, кто её взял`);
+            report(`#${issue.number}: the task has no assignee — by the work queue there is no seeing who took it`);
         }
     }
 
@@ -348,17 +348,17 @@ try {
     for (const pull of pulls) {
         const titleNumber = numberFromTitle(pull.title);
         if (titleNumber === null) {
-            report(`PR #${pull.number}: заголовок не начинается с [${TASK_KEY}-<номер>] — «${pull.title}»`);
+            report(`PR #${pull.number}: the title does not start with [${TASK_KEY}-<номер>] — «${pull.title}»`);
             continue;
         }
         if (!closesNumbers(pull.body).includes(titleNumber)) {
-            report(`PR #${pull.number}: в теле нет строки «Closes #${titleNumber}» — на борде он не прикрепится к задаче`);
+            report(`PR #${pull.number}: the body carries no line «Closes #${titleNumber}» — on the board it will not attach to the task`);
         }
         if (!openNumbers.has(titleNumber)) {
-            report(`PR #${pull.number}: задачи #${titleNumber} нет среди открытых — у задачи одна ветка`);
+            report(`PR #${pull.number}: the task #${titleNumber} is not among the open ones — a task has one branch`);
         }
         if (claimed.has(titleNumber)) {
-            report(`PR #${pull.number}: задачу #${titleNumber} уже закрывает PR #${claimed.get(titleNumber)} — у задачи одна ветка`);
+            report(`PR #${pull.number}: the task #${titleNumber} is already closed by PR #${claimed.get(titleNumber)} — a task has one branch`);
         } else {
             claimed.set(titleNumber, pull.number);
         }
@@ -380,8 +380,8 @@ try {
         const behind = behindMain(pull.headRefName, MAIN_BRANCH, options);
         if (behind > 0) {
             report(
-                `PR #${pull.number}: ветка отстала от «${MAIN_BRANCH}» на ${behind} коммитов — прогон шёл от основания, ` +
-                    `которого в главной ветке уже нет. Влей главную, пересмотри набор проверок по тому, что ветка везёт теперь, и прогони заново`
+                `PR #${pull.number}: the branch lags «${MAIN_BRANCH}» by ${behind} commits — the run went from a base ` +
+                    `the main branch no longer carries. Merge the main branch in, revise the check set by what the branch carries now, and run again`
             );
         }
 
@@ -403,11 +403,11 @@ try {
         const pull = claimed.get(issue.number);
         if (pull !== undefined && status !== IN_REVIEW) {
             report(
-                `#${issue.number}: PR #${pull} открыт, а задача стоит «${status ?? 'вне колонок'}» — npm run task:move -- ${issue.number} ${IN_REVIEW_STATUS}`
+                `#${issue.number}: PR #${pull} is open, and the task stands at «${status ?? 'outside the columns'}» — npm run task:move -- ${issue.number} ${IN_REVIEW_STATUS}`
             );
         }
         if (pull === undefined && status === IN_REVIEW) {
-            report(`#${issue.number}: задача ждёт разбора, но открытого PR за ней нет — колонка отстала от работы`);
+            report(`#${issue.number}: the task awaits review, and there is no open PR behind it — the column lags the work`);
         }
     }
 
@@ -420,14 +420,14 @@ try {
             continue;
         }
         if (issues.some((issue) => issue.number === number)) {
-            report(`${CONFIG.tasksDir}/${name}/: задача #${number} закрыта, а папка лежит среди текущих — разбери её`);
+            report(`${CONFIG.tasksDir}/${name}/: the task #${number} is closed, and the folder lies among the current ones — take it apart`);
         }
     }
 } catch (error) {
     if (error instanceof OfflineError) {
         // The work queue cannot be checked without a connection, but the folders on disk can:
         // staying silent about them would mean losing the only thing that can still be said here.
-        console.log(`check-board: очередь работ пропущена, проверять нечем — ${error.message}`);
+        console.log(`check-board: the work queue is skipped, there is nothing to check with — ${error.message}`);
         offline = true;
     } else {
         console.error(`check-board: ${String(error.message ?? error)}`);
@@ -443,10 +443,10 @@ if (!offline && DEPLOY_WORKFLOW) {
         const token = botToken() ?? undefined;
         const lag = deployLag(DEPLOY_WORKFLOW, MAIN_BRANCH, { token });
         if (lag === null) {
-            report(`выкаток по «${DEPLOY_WORKFLOW}» не было ни одной — сравнить прод не с чем`);
+            report(`there was not a single rollout by «${DEPLOY_WORKFLOW}» — there is nothing to compare production against`);
         } else if (lag.behind > 0) {
             report(
-                `прод отстал от «${MAIN_BRANCH}» на ${lag.behind} коммитов: последняя выкатка — ${lag.sha.slice(0, 8)} от ${String(lag.at).slice(0, 10)}`
+                `production lags «${MAIN_BRANCH}» by ${lag.behind} commits: the last rollout is ${lag.sha.slice(0, 8)} of ${String(lag.at).slice(0, 10)}`
             );
         }
 
@@ -456,13 +456,13 @@ if (!offline && DEPLOY_WORKFLOW) {
         const deploy = lastDeploy(DEPLOY_WORKFLOW, { token });
         if (deploy.verdict === 'failure') {
             report(
-                `выкатка «${DEPLOY_WORKFLOW}» упала на ${String(deploy.sha).slice(0, 8)} от ${String(deploy.at).slice(0, 10)}: ` +
-                    `главная ветка впереди прода, и слияния поверх уедут туда же — ${deploy.url}`
+                `the rollout «${DEPLOY_WORKFLOW}» failed on ${String(deploy.sha).slice(0, 8)} of ${String(deploy.at).slice(0, 10)}: ` +
+                    `the main branch is ahead of production, and merges on top will travel the same way — ${deploy.url}`
             );
         }
     } catch (error) {
         if (error instanceof OfflineError) {
-            console.log(`check-board: прод не сверялся — ${error.message}`);
+            console.log(`check-board: production was not checked — ${error.message}`);
         } else {
             throw error;
         }
@@ -471,24 +471,24 @@ if (!offline && DEPLOY_WORKFLOW) {
 
 // What was not checked is named out loud: silence about runs would read as "the runs are there".
 if (!offline && !DEPLOY_WORKFLOW) {
-    console.log('check-board: прод с главной веткой не сверялся — рабочий поток выкатки в настройке дерева не назван');
+    console.log('check-board: production was not checked against the main branch — the rollout workflow is not named in the tree config');
 }
 
 // What was filtered out is named by number: silent filtering is indistinguishable from a broken
 // audit — a label named with a typo would switch the check off entirely and say nothing about it.
 if (!offline && checked.cargo > 0) {
-    console.log(`check-board: записей груза в очереди ${checked.cargo} — задачами они не судятся`);
+    console.log(`check-board: cargo records in the queue ${checked.cargo} — they are not judged as tasks`);
 }
 
 if (!offline && !HAS_PIPELINE) {
-    console.log('check-board: прогоны на вершинах не спрашивались — файла конвейера в дереве нет');
+    console.log('check-board: the runs on the tips were not asked — the tree has no pipeline file');
 }
 
 if (problems.length > 0) {
-    console.error(`check-board: расхождений ${problems.length}\n`);
+    console.error(`check-board: divergences ${problems.length}\n`);
     problems.forEach((problem) => console.error(`  ${problem}`));
-    console.error('\nЗадача заводится командой npm run task:new — она делает все четыре шага сразу.');
-    console.error('Папка задачи и её разбор — скил task-flow.');
+    console.error('\nA task is created by the command npm run task:new — it does all four steps at once.');
+    console.error('The task folder and taking it apart — the rule task-flow.');
     process.exit(1);
 }
 
@@ -496,4 +496,4 @@ if (offline) {
     process.exit(0);
 }
 
-console.log(`check-board: задач ${checked.issues}, открытых PR ${checked.pulls}, расхождений нет`);
+console.log(`check-board: tasks ${checked.issues}, open PRs ${checked.pulls}, no divergences`);
