@@ -2,7 +2,7 @@
 name: permissions-procedure
 kind: pattern
 rule: permissions
-description: A pattern of the rule permissions. Take it when creating a Connect procedure and when closing an admin panel section — ready-made access decorators, the refusal without a sign-in and without a right, a menu item declaration with a right and a flag. Do not take it for how the menu itself is arranged — that is the rule navigation.
+description: A pattern of the rule permissions. Take it when creating a Connect procedure and when closing an admin panel section: ready-made access decorators, the refusal without a sign-in and without a right, a menu item with a right and a flag. Not for how the menu is arranged — that is navigation.
 ---
 
 # Declaring access

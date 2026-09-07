@@ -2,7 +2,7 @@
 name: permissions
 kind: rule
 law: access
-description: A rule under the "Law on access". Take it when creating or editing a Connect procedure, a sign-in interceptor, an admin panel route guard and the menu declaration. It names the four kinds of access, the decorators, the preset plus the overrides and the gating of admin panel sections. Ready-made code is in the pattern permissions-procedure.
+description: A rule under the "Law on access". Take it when creating or editing a Connect procedure, a sign-in interceptor, an admin panel route guard and the menu declaration. It names the four kinds of access, the decorators and the gating of sections. Ready-made code — the pattern permissions-procedure.
 ---
 
 # Access — how it is arranged here
