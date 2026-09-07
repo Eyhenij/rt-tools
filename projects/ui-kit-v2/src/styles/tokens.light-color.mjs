@@ -367,11 +367,16 @@ export const lightColor = [
         name: `--rt-color-stepper-current`,
         value: `var(--rt-amber-400)`,
         note: `rt-theme-shared: янтарь текущего шага один в обеих темах`,
+        presetShared: `the amber of the current step is a progress mark rather than a role colour:
+       the material set has no step of it, and painting the mark with the set's accent would make
+       the current step indistinguishable from a finished one`,
     },
     {
         name: `--rt-color-stepper-current-subtle`,
         value: `var(--rt-overlay-amber-16)`,
         note: `rt-theme-shared: янтарь текущего шага один в обеих темах`,
+        presetShared: `the halo is counted from the amber above and follows it: given a colour of
+       its own here, the ring and its centre would diverge in the material set alone`,
     },
     {
         name: `--rt-color-stepper-track`,
