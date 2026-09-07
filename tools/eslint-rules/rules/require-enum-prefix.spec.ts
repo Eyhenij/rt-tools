@@ -1,10 +1,10 @@
 /**
- * Spec для `require-enum-prefix`.
+ * The spec of `require-enum-prefix`.
  *
- * Parser: `@typescript-eslint/parser`. Раннер: Vitest.
+ * Parser: `@typescript-eslint/parser`. The runner is Vitest.
  *
- * Coverage: имена enum'ов — префикс `E` ОБЯЗАТЕЛЕН везде, включая namespace
- * (без module-block skip).
+ * What is covered: the names of enums — the prefix `E` is MANDATORY everywhere, inside a
+ * namespace as well (there is no module-block skip).
  */
 import { RuleTester } from '@typescript-eslint/rule-tester';
 

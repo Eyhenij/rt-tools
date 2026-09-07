@@ -1,21 +1,21 @@
 import { ESLintUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 /**
- * Требует префикс `E` на КАЖДОМ `enum`-объявлении (`EUserRole`, `EActions`).
- * В отличие от `require-interface-prefix` и `require-type-prefix`, у этого правила
- * НЕТ namespace-skip — enum обязан нести префикс `E` даже внутри namespace
+ * It demands the prefix `E` on EVERY `enum` declaration (`EUserRole`, `EActions`).
+ * Unlike `require-interface-prefix` and `require-type-prefix`, this rule has NO namespace skip:
+ * an enum carries the prefix `E` inside a namespace too
  * (`ICustomerEvent.EActions`).
  *
- * Формат имени: строгий PascalCase без аббревиатур-капсом.
+ * The shape of the name: strict PascalCase, no all-caps abbreviations.
  *   ^E[A-Z][a-z]+([A-Z][a-z]+)*([0-9]+)?$
  *
  * - `EUserRole`, `EActions`, `EFooBar`  — valid
  * - `UserRole`, `Actions`               — invalid (`missingPrefix`)
  * - `Euser`, `EAPI`, `E`                — invalid (`invalidFormat`)
  *
- * Без autofix — переименование существующих нарушений делается вручную (Rename Symbol).
+ * There is no autofix — an existing violation is renamed by hand (Rename Symbol).
  *
- * Доступно в ESLint-конфигах как `@nx/workspace-require-enum-prefix`.
+ * In the ESLint configs it is available as `@nx/workspace-require-enum-prefix`.
  */
 export const RULE_NAME: string = 'require-enum-prefix';
 

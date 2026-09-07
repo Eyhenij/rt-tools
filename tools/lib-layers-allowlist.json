@@ -3,7 +3,7 @@
   "debt": {},
   "singleLayerDomains": {
     "libs/message-bus-api/observability": {
-      "reason": "Заполнены только утилиты: разбор ошибки в поля и вычистка полей строки журнала. Своих записей у домена нет — написанное живёт выводом контейнера; своих служб нет — разбор отказов и логгер стоят у самого приложения; наружу домен не ходит — приёмник принимает, а не рассылает. Слои наполнятся вместе с хранилищем отказов, а до него класть в них нечего.",
+      "reason": "Only the utilities are filled: parsing an error into fields and cleaning the fields of a log line. The domain has no records of its own — what is written lives as the container's output; it has no services of its own — the parsing of refusals and the logger stand at the application itself; the domain does not go outward — the intake receives rather than sends out. The layers will fill up together with the storage of refusals, and until it there is nothing to put into them.",
       "task": "RT-312"
     }
   }

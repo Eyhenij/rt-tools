@@ -1,22 +1,21 @@
 import { ESLintUtils, TSESLint, TSESTree } from '@typescript-eslint/utils';
 
 /**
- * Требует префикс `T` на top-level `type`-алиасах (`TExportFormat`, `TReadonlyState`) —
- * приставка рода из конвенции этого дерева: `I` у интерфейса, `E` у перечисления, `T` у типа.
- * Type-алиасы внутри любого `TSModuleBlock` пропускаются — это сохраняет
- * flat-two-level namespace-конвенцию (`namespace IRtuiButton { type Theme = ... }`
- * остаётся `Theme`).
+ * It demands the prefix `T` on top-level `type` aliases (`TExportFormat`, `TReadonlyState`) —
+ * the kind sign of this tree's convention: `I` on an interface, `E` on an enum, `T` on a type.
+ * Type aliases inside any `TSModuleBlock` are skipped — that keeps the flat two-level namespace
+ * convention (`namespace IRtuiButton { type Theme = ... }` stays `Theme`).
  *
- * Формат имени: строгий PascalCase без аббревиатур-капсом.
+ * The shape of the name: strict PascalCase, no all-caps abbreviations.
  *   ^T[A-Z][a-z]+([A-Z][a-z]+)*([0-9]+)?$
  *
  * - `TExportFormat`, `TFoo`, `TSizeFn`  — valid
  * - `IExportFormat`, `ReadonlyState`    — invalid (`missingPrefix`)
  * - `Tuser`, `TAPI`, `T`                — invalid (`invalidFormat`)
  *
- * Без autofix — переименование существующих нарушений делается вручную (Rename Symbol).
+ * There is no autofix — an existing violation is renamed by hand (Rename Symbol).
  *
- * Доступно в ESLint-конфигах как `@nx/workspace-require-type-prefix`.
+ * In the ESLint configs it is available as `@nx/workspace-require-type-prefix`.
  */
 export const RULE_NAME: string = 'require-type-prefix';
 
