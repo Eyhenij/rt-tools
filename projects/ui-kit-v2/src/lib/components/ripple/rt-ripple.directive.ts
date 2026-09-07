@@ -97,6 +97,13 @@ export class RtRippleDirective {
             return this.#area;
         }
 
+        /* Обрезающий слой стоит absolute, и ему нужен позиционированный предок. Позиция
+           ставится здесь, а не правилом блока: правило висело бы на каждой кнопке кита и
+           меняло растеризацию кадров витрины, ничего не двигая в раскладке. */
+        if (getComputedStyle(host).position === 'static') {
+            this.#renderer.setStyle(host, 'position', 'relative');
+        }
+
         const area: HTMLElement = this.#renderer.createElement('span');
         this.#renderer.addClass(area, `${BEM_BLOCK}__area`);
         this.#renderer.setAttribute(area, 'aria-hidden', 'true');

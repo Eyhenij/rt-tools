@@ -1,11 +1,13 @@
 @layer rt-kit.components {
+    /* Позиции здесь нет намеренно. Блок висит на каждой кнопке кита, и `position: relative`,
+       поставленный всем подряд, меняет растеризацию у восемнадцати кадров витрины, ничего не
+       двигая в раскладке. Позицию ставит сама директива — тому элементу, который нажали, и
+       только если он до сих пор `static`. */
     .rt-ripple {
         --rt-ripple-color: currentcolor;
         --rt-ripple-opacity: 0.24;
         --rt-ripple-duration: 550ms;
         --rt-ripple-radius: var(--rt-radius-full);
-
-        position: relative;
     }
 
     /* Обрезает волну по форме элемента. Отдельным слоем, а не overflow на самом

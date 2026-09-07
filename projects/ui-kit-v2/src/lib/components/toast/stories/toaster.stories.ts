@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtToasterComponent } from './component/test-toaster.component';
 
 export default {
-    title: 'Molecules/Toaster',
+    title: 'Molecules/Feedback/Toaster',
     component: TestRtToasterComponent,
     argTypes: {
         position: {
