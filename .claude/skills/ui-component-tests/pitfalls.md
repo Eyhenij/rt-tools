@@ -1,40 +1,42 @@
-# ui-component-tests — холодная часть
+# ui-component-tests — the cold part
 
-Грузится по требованию, а не вместе с правилом: здесь замеры, числа и случаи, нужные тому, кто
-разбирает красный снимок, а не тому, кто пишет спеку.
+Loaded on demand rather than together with the rule: here are the measurements, the numbers and the
+cases needed by whoever sorts out a red snapshot, not by whoever writes a spec.
 
-## Что стояло в статьях
+## What stood in the articles
 
-- **Ожидание, гасящее свой отказ.** Признак один: кадр снят, а обещанного узла в нём нет — и
-  разошёлся он одинаково при каждой встрече, потому что состояние «не дождались» устойчиво.
-  Читается это как расхождение вёрстки, и разбор уходит туда, где никто ничего не правил: одна
-  такая съёмка отбивала гейт пуша три раза подряд и три раза проходила со второго вызова той же
-  команды.
-- **Ресурс и заметивший его компонент.** Ловится не чтением кода, а серией: одиночный прогон
-  сходится и на непочиненной гонке.
-- **Вставшая раскладка против дорисованной страницы.** Замер поймал кадр, у которого сошлось
-  всё — размеры, шрифты, молчание сети, законченные анимации, — и который всё равно разошёлся с
-  эталоном подпиксельными ореолами по подписям при той же геометрии до сотых. Отличается там не
-  вёрстка, а растеризация, и события «страница дорисована» браузер не даёт вовсе. Пойманное так
-  расхождение видно только серией: одиночный прогон зелен в тридцати девяти случаях из сорока.
-- **Промежуток между раскладкой и отрисовкой — цена числом.** Ноль отрисованных кадров дают
-  ранний кадр пять раз из пяти; один и больше — эталонный, и так же на двух, трёх, четырёх,
-  шести и десяти. Ловится это не серией: расхождение выпадает раз на полсотни прогонов, и
-  двадцать зелёных подряд выпадают на непочиненной обвязке так же легко, как на починенной.
-- **Улика редкого расхождения.** Кадр различий библиотека сверки кладёт рядом с эталонами, и
-  следующий же зелёный прогон его стирает: за пятьдесят восемь прогонов один красный не оставил
-  после себя ничего.
-- **Съёмка за пределы окна.** Замер поймал это дважды в одной задаче — лента просмотрщика фото
-  теряла прокрутку, и в кадр попадал первый снимок набора вместо последнего; высота страницы
-  уезжала на два пикселя. Успевает ли сдвиг лечь в растр, решает гонка, поэтому одна и та же
-  история то краснеет, то нет, и виноватой всякий раз выглядит другая — читается это как
-  плавающая вёрстка, а вёрстки там нет вовсе.
-- **Показ, вставший на скелетонах.** Обвязка судит о кадре по молчанию сети и неподвижному
-  размеру узла, а у экрана со скелетонами размер такой же неподвижный, как у экрана со списком:
-  три эталона подряд закрепили скелетоны и вышли неотличимыми друг от друга.
-- **Перекрытие, гаснущее до кадра.** Панель, меню и попап кита, открытые наведением, гаснут с
-  отсрочкой после ухода указателя, а подготовка кадра указатель уводит: панель успевала закрыться
-  между шагом истории и снимком.
-- **Плывущее в кадре экрана.** Из трёх расхождений в наборе админки ни одно не было дефектом
-  экрана: цвет от профиля дисплея, ширина столбца от значения текущего момента, порядок строк от
-  засева.
+- **A wait that swallows its own refusal.** There is one sign: the frame is taken, and the promised
+  node is not in it — and it diverged alike at every meeting, because the state "did not wait" is
+  steady. That reads as a layout divergence, and the sorting out goes where nobody edited anything:
+  one such shot refused the push gate three times in a row and three times passed on the second call
+  of the same command.
+- **A resource and the component that noticed it.** It is caught not by reading the code but by a
+  series: a single run matches on an unfixed race too.
+- **A settled layout against a drawn page.** A measurement caught a frame in which everything
+  matched — the sizes, the fonts, the network's silence, the finished animations — and which still
+  diverged from the reference by sub-pixel halos on the labels at the same geometry to the
+  hundredth. What differs there is not the layout but the rasterisation, and the browser gives no
+  "the page is drawn" event at all. A divergence caught that way is visible only by a series: a
+  single run is green in thirty-nine cases out of forty.
+- **The gap between the layout and the drawing — the price as a number.** Zero drawn frames give an
+  early frame five times out of five; one and more give the reference one, and so on two, three,
+  four, six and ten. This is caught not by a series: the divergence falls out once in fifty runs, and
+  twenty green ones in a row fall out on an unfixed harness as easily as on a fixed one.
+- **The evidence of a rare divergence.** The difference frame the comparison library puts next to the
+  references, and the very next green run erases it: over fifty-eight runs one red left nothing
+  behind it.
+- **A shot beyond the window.** A measurement caught this twice in one task — the photo viewer's
+  strip lost its scrolling, and the first shot of the set got into the frame instead of the last; the
+  page height moved by two pixels. Whether the shift makes it into the raster is decided by a race,
+  so one and the same story turns red now and then, and every time a different one looks guilty —
+  that reads as drifting layout, while there is no layout there at all.
+- **A showing settled on skeletons.** The harness judges the frame by the network's silence and the
+  motionless size of the node, while a screen with skeletons has a size just as motionless as a
+  screen with a list: three references in a row pinned the skeletons and came out indistinguishable
+  from one another.
+- **An overlay going out before the frame.** The kit's panel, menu and popup, opened by hover, go out
+  with a delay after the pointer leaves, and preparing the frame takes the pointer away: the panel
+  managed to close between the story's step and the shot.
+- **What drifts in a screen frame.** Of the three divergences in the admin panel's suite not one was
+  a screen defect: the colour from the display profile, the column width from the value of the
+  current moment, the order of the rows from the seeding.

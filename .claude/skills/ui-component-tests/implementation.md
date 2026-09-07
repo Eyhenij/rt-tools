@@ -1,100 +1,104 @@
-# ui-component-tests — как это устроено здесь
+# ui-component-tests — how it is arranged here
 
-Имена этого дерева при правиле `SKILL.md` рядом. Правило своё, пакет такого не везёт: оно про
-проверку компонента кита, а кит — предмет этого репозитория.
+The names of this tree, next to the rule `SKILL.md`. The rule is this tree's own, the package
+carries no such thing: it is about checking a kit component, and the kit is this repository's
+subject.
 
-## Как это называется здесь
+## What it is called here
 
-- **В правиле** — Здесь
-- **спека компонента** — `*.spec.ts` рядом с компонентом, Jest с `jest-preset-angular`
-- **история ради проверки** — экспорт в `*.stories.ts` — матрица оси, `States`, `Themes`
-- **снимок истории** — PNG в `<пакет>/.storybook/__snapshots__`, снятый прогоном против уже поднятой витрины
-- **кадр экрана** — PNG в `apps/message-bus-admin-e2e/__snapshots__/<прогон>`, снятый сквозной спекой того экрана
-- **обвязка снимков** — `<пакет>/.storybook/test-runner.ts`; у второй витрины ещё и `tools/visual-snapshots-v2.mjs`
-- **обвязка кадров экрана** — `apps/message-bus-admin-e2e/src/support/shot.ts` и настройки прогонщика рядом
-- **замер вычисленных значений** — вычисленные свойства узла на странице витрины — отступ, кегль, скругление, цвет
-- **порог расхождения** — доля площади кадра: `0.0002` у обеих витрин, `0` у кадров экрана
+- **In the rule** — Here
+- **a component's spec** — a `*.spec.ts` next to the component, Jest with `jest-preset-angular`
+- **a story for the sake of a check** — an export in a `*.stories.ts` — an axis matrix, `States`, `Themes`
+- **a story snapshot** — a PNG in `<package>/.storybook/__snapshots__`, taken by a run against an already raised showcase
+- **a screen frame** — a PNG in `apps/message-bus-admin-e2e/__snapshots__/<run>`, taken by that screen's end-to-end spec
+- **the snapshot harness** — `<package>/.storybook/test-runner.ts`; the second showcase also has `tools/visual-snapshots-v2.mjs`
+- **the screen-frame harness** — `apps/message-bus-admin-e2e/src/support/shot.ts` and the runner's settings next to it
+- **a measurement of computed values** — the computed properties of a node on a showcase page: the padding, the font size, the rounding, the colour
+- **the divergence threshold** — a share of the frame's area: `0.0002` on both showcases, `0` on the screen frames
 
-## Где это лежит
+## Where it lives
 
-- **Спеки компонентов** — рядом с компонентом, `projects/<пакет>/src/**/…spec.ts`
-- **Обвязка снимков первого кита** — `projects/ui-kit/.storybook/test-runner.ts`
-- **Обвязка снимков второго кита** — `projects/ui-kit-v2/.storybook/test-runner.ts` + `tools/visual-snapshots-v2.mjs`
-- **Эталоны** — `projects/<пакет>/.storybook/__snapshots__`
-- **Параметры съёмки истории** — `projects/ui-kit-v2/src/showcase/story-snapshot.ts`
-- **Договорённость о снимках** — `docs/specs/ui-kit-v2/`
-- **Общая обвязка показа** — `projects/ui-kit-v2/src/showcase/`
-- **Обход историй второй витрины** — `tools/story-sweep-v2.mjs`
-- **Сквозной набор админки** — `apps/message-bus-admin-e2e/src`
-- **Стенд сквозного набора** — `apps/message-bus-admin-e2e/stand`
-- **Эталоны экранов** — `apps/message-bus-admin-e2e/__snapshots__`
-- **Настройки прогонщика экранов** — `apps/message-bus-admin-e2e/playwright.config.ts`
+- **The component specs** — next to the component, `projects/<package>/src/**/…spec.ts`
+- **The first kit's snapshot harness** — `projects/ui-kit/.storybook/test-runner.ts`
+- **The second kit's snapshot harness** — `projects/ui-kit-v2/.storybook/test-runner.ts` + `tools/visual-snapshots-v2.mjs`
+- **The references** — `projects/<package>/.storybook/__snapshots__`
+- **A story's shot parameters** — `projects/ui-kit-v2/src/showcase/story-snapshot.ts`
+- **The agreement about the snapshots** — `docs/specs/ui-kit-v2/`
+- **The shared showing harness** — `projects/ui-kit-v2/src/showcase/`
+- **The sweep over the second showcase's stories** — `tools/story-sweep-v2.mjs`
+- **The admin panel's end-to-end suite** — `apps/message-bus-admin-e2e/src`
+- **The end-to-end suite's stand** — `apps/message-bus-admin-e2e/stand`
+- **The screen references** — `apps/message-bus-admin-e2e/__snapshots__`
+- **The screen runner's settings** — `apps/message-bus-admin-e2e/playwright.config.ts`
 
-## Где исполняются статьи
+## Where the articles are carried out
 
-Первая колонка — статья дословно, как она написана в разделе «Как закон применяется здесь»
-правила. Статья без строки и строка без статьи — расхождение.
+The first column is the article verbatim, as it is written in the rule's section "How the law
+applies here". An article without a line and a line without an article are a divergence.
 
-- **Волна показов закрывается обходом всех историй, а не цветом прогона.** — `tools/story-sweep-v2.mjs:measureShownArea`, команда `pnpm run test:stories:v2`: открывает каждую историю поднятой витрины и отказывает на пустой площади показа и на ошибке в консоли. Что показанное показано **верно**, он не проверяет — это осмотр глазами.
-- **Состояние, которого не видно в кадре, снимком не проверено.** — **Не проверяется ничем.** Состояние, которого нет в кадре, машине неотличимо от отсутствующего; ближайшее — отказ обвязки на пропавшем эталоне.
-- **Признак состояния проверяется тем же, чем его видит человек: кадром или замером растра, а не значением записанного стиля.** — **Не исполняется.** Проверить это машине нечем: значение стиля она читает, а подействовал ли он, видно только в растре. Ближайшее — обход показов `tools/story-sweep-v2.mjs:measureShownArea`, и тот судит площадь, а не глиф.
-- **Если состояний пара, в кадре обязаны быть оба.** — **Не исполняется.** Пара состояний объявлена в историях, и машине неизвестно, сколько их у показанного элемента: недостающая сторона неотличима от несуществующей.
-- **Правка оформления, прошедшая снимки без расхождений, проверена наполовину.** — `projects/ui-kit-v2/.storybook/test-runner.ts:FAILURE_THRESHOLD` — порог сравнения задан обвязкой каждой витрины; доля расхождения печатается прогоном и читается вместо цвета.
-- **Вставший кадр ждётся событием, а не отсчётом времени, и приём повторяется в каждой обвязке.** — `projects/ui-kit/.storybook/test-runner.ts:settled` и `projects/ui-kit-v2/.storybook/snapshot-wait.ts:settled` — молчание сети и два одинаковых размера снимаемого узла подряд. Согласие двух копий не проверяет ничто: машине они два разных файла, и разойдутся они молча.
-- **Ожидание, гасящее свой отказ, снимает кадр раньше срока.** — `projects/ui-kit/.storybook/test-runner.ts:postVisit` — не поднявшийся шрифт роняет прогон с названием семейств вместо тихого кадра. Что ни одно ожидание обвязки не гасит своего отказа, не проверяет ничто: погашенный отказ машине неотличим от невозникшего.
-- **Ожидание ждёт того, чего ждут, а не следствия.** — `projects/ui-kit/.storybook/test-runner.ts:ICON_FONTS` — ожидание зовёт загрузку самих семейств и сверяет их, а не смотрит на класс ожидания у иконки: тот снимается готовностью шрифтов страницы, а она наступает и с пустым набором. Верность выбранного признака не проверяет ничто — её видно только замером. У второй витрины тот же приём в `projects/ui-kit-v2/.storybook/snapshot-wait.ts:ICON_USE_SELECTOR`: значок ищется по ссылке в набор, а не по хосту `rt-icon` — кит рисует его двумя разметками, и хост есть только у одной.
-- **Пришедший ресурс и заметивший его компонент — не одно и то же, и ждут обоих.** — `projects/ui-kit/.storybook/test-runner.ts:ICON_REPAINT_TIMEOUT_MS` — после сверки семейств ждётся снятый компонентом класс ожидания, со своим отказом. Что ожиданий два везде, где ресурс приходит в компонент, не проверяет ничто: недостающее второе видно только серией прогонов. У второй витрины оба ждёт `projects/ui-kit-v2/.storybook/snapshot-wait.ts:drawnIcons`: спрайт, дорастающий по мере прихода символов, и нарисованный `<use>` у каждого видимого значка, со своим отказом на каждую недостачу. Ждать спрайт целиком нечем — значок едет по запросу имени, и полного набора на странице не бывает вовсе.
-- **Вставшая раскладка — ещё не дорисованная страница, и кадр снимается до совпадения двух подряд.** — `projects/ui-kit/.storybook/test-runner.ts:stableShot` — кадры снимаются, пока два подряд не совпадут, сверяется последний. Свой такой же цикл есть у сквозного набора; у второй витрины его нет и не будет — замер показал, что её кадр расходится по другой причине, и цикл там закрепляет сдвиг вместо того, чтобы его снять.
-- **Вставшая страница и нарисованная страница — разное, и кадр ждёт второго.** — `projects/ui-kit/.storybook/test-runner.ts:painted` — вложенная пара вызовов кадра анимации, три кадра запасом; зовётся между ожиданием вставших размеров и съёмкой. Стережёт откат `tools/snapshot-paint-probe.mjs`: он читает порядок вызовов в обвязке и замеряет кадр до ожидания и после. Проба идёт по той же поднятой витрине, что и снимки, — `tools/visual-gate.mjs:KITS`, поле `probes`; команда `npm run check:paint`.
-- **Проба, судящая по одному замеру, наследует ту же редкость, от которой стережёт.** — `tools/snapshot-paint-probe.mjs:MAX_PAIRS` — пары снимаются подряд, пока не разойдутся, но не больше трёх; отказ приходит, только когда совпали все, и называет их число.
-- **Проба, читающая обвязку текстом, отделяет код от пояснений.** — `tools/snapshot-paint-probe.mjs:codeOnly` — блочные и строчные пояснения снимаются до поиска слов, поэтому закомментированный вызов ожидания живым не считается.
-- **Ожидание, снятое из обвязки, стережёт проба, а не прогон снимков.** — `tools/snapshot-icon-probe.mjs:harnessWaitsForIcons` — проба второй витрины читает модуль ожидания и обвязку съёмки, а потом придерживает набор на подходе и сверяет кадр до ожидания с кадром после. Идёт по той же поднятой витрине, что и снимки, — `tools/visual-gate.mjs:KITS`, поле `probes`; команда `npm run check:icons`.
-- **Проба судит ту разметку, ради которой заведена.** — `tools/snapshot-icon-probe.mjs:STORY` — история составной кнопки: ноль хостов `rt-icon` и семь значков, нарисованных директивой кнопки. Обзаведись она хостом, проба отказывает и называет это: судить она стала бы уже не тот промах.
-- **Расхождение, выпадающее редко, оставляет улику, иначе разбирать нечего.** — `projects/ui-kit/.storybook/test-runner.ts:keepEvidence` — кадр различий и условия прогона ложатся в `.rt-snapshot-evidence/<история>--<метка времени>/`; каталог вне репозитория и вне каталога эталонов. У второй витрины такого нет: её расхождение ловилось с первого прогона.
-- **Съёмка за пределы окна трогает страницу под затвором, и лечится это не циклом, а окном.** — `projects/ui-kit-v2/.storybook/test-runner.ts:fitViewportToPage` — окно раздвигается до страницы до кадра, и снимается обычный кадр. У первого кита такого шага нет: он снимает страницу целиком всегда, и своя задача на это заводится отдельно.
-- **Кадр складывается из того, что лежит в дереве, и обвязка отсекает съёмку от чужой сети.** — `projects/ui-kit/.storybook/test-runner.ts:cutOffNetwork` — запрос за пределы местной машины отбивается на месте, и вернувшийся внешний адрес роняет свою историю. У второй витрины такого отсечения нет: киты разведены, и её обвязка заводит своё отдельной задачей.
-- **Вставший показ и наступившее состояние — не одно и то же, и историю ждут по второму.** — `projects/ui-kit-v2/src/showcase/templates/stories/bookings-template.stories.ts:awaitScreen` — шаг `play` каждой из трёх историй ждёт свой узел: ячейку списка, вид пустоты, ушедший тост. Что признак назван верно, не проверяет ничто: история без шага снимается ровно так же, и разошедшийся кадр находит ревьюер.
-- **Перекрытие, открытое историей, доживает до кадра только там, где это объявлено.** — `projects/ui-kit-v2/.storybook/test-runner.ts:freezeHover` — глушение ухода указателя ставится до отрисовки истории, а `requireOpenedOverlay` там же отказывает, если названного узла к съёмке нет. У первой витрины такого параметра нет вовсе: её обвязка указателя не уводит.
-- **Эталон снимается после того, как на кадр посмотрели, а не до.** — Не исполняется ничем: `tools/visual-snapshots-v2.mjs` отказывает на отсутствующем эталоне и на осиротевшем, а пустой кадр записывает молча. Ближайшее машинное — обход `pnpm run test:stories:v2` до съёмки.
-- **Эталон пересъёмывается намеренно и по одному.** — `tools/visual-snapshots-v2.mjs:SNAPSHOT_DIR` — пересъёмка отбирает файлы историй по пути, а не истории по имени: отбор по имени ломает окружение прогона.
-- **Разовый сценарий проверки в репозиторий не едет.** — **Не проверяется ничем.** Разовый сценарий от постоянной проверки машине не отличить; картинки расхождений закрыты маской в настройке игнорирования.
-- **Ветка, до которой спека не доходит, называется в PR.** — **Не проверяется ничем.** Гарды судят файлы и команды, а не текст описания PR: молчаливый пропуск выглядит так же, как покрытие.
-- **Экран приложения закрывается кадром сквозного набора, а не историей витрины.** — `apps/message-bus-admin-e2e/src/support/shot.ts:expectScreen` — кадр целой страницы, сверяемый с эталоном; зовётся он в спеке того экрана. Что кадром закрыт каждый экран, не проверяет ничто: список экранов машине неоткуда взять.
-- **Своего ожидания вставшего кадра сквозной набор не пишет.** — **Не проверяется ничем.** Цикл ожидания живёт в прогонщике сквозных спек; его текст отказа — «Failed to take two consecutive stable screenshots». Написанный рядом второй такой же цикл машине неотличим от нужного кода.
-- **У кадров экрана нет своего шага ни в гейте, ни в конвейере.** — `.claude/rt-kit/project.sh:rt_push_checks` — сквозной набор админки назван в гейте одной строкой, и шаг «E2E admin» в `.github/workflows/ci.yml` зовёт ту же команду. Кадры снимаются внутри него; отдельного шага у них нет, и видно это списком шагов, а не проверкой.
-- **Плывущее в кадре экрана убирается поимённо, а не покрывается порогом.** — `apps/message-bus-admin-e2e/playwright.config.ts:toHaveScreenshot` — `threshold` и `maxDiffPixelRatio` держатся у нуля; там же названы цветовой профиль браузера и способ отрисовки. Причины расхождения закрыты в засеве стенда, а не порогом.
-- **Маска закрывает содержимое, но не ширину.** — **Не проверяется ничем.** Ширина столбца под маской машине не видна вовсе: кадр сходится или нет, а из-за чего — читается сравнением попиксельно.
-- **Постоянным делается не только время, но и всё, что приложение из него вывело.** — `apps/message-bus-admin-e2e/stand/seed-self-check.mjs:checkNothingDrifts` — второй признак самопроверки: месяц записи сверяется с её же временем прогона, и разошедшиеся кончают подъём стенда отказом. Прочее производное от часов приёмник пока не хранит; появится — встанет в тот же запрос.
-- **Засев проверяет себя сам, а не полагается на кадр.** — `apps/message-bus-admin-e2e/stand/seed.mjs:seed` — самопроверка стоит последним шагом засева, до первого кадра, и отказывает словами. Граница нарочно будущего названа рядом — `apps/message-bus-admin-e2e/stand/seed-self-check.mjs:FAR_FUTURE`.
-- **Самопроверка судит временные колонки всех таблиц, которые читают экраны, а не только показанные сегодня.** — `apps/message-bus-admin-e2e/stand/seed-self-check.mjs:checkNothingDrifts` — в запрос собраны все временные колонки деревьев, разборов, предложений, записей месяца и приглашений, показанные и нет. **Не проверяется ничем** то, что колонка, заведённая завтра, будет в него дописана: перечень набран руками.
+- **A wave of showings is closed by a sweep over all the stories, not by the colour of a run.** — `tools/story-sweep-v2.mjs:measureShownArea`, the command `pnpm run test:stories:v2`. It opens every story of the raised showcase and refuses on an empty showing area and on an error in the console. That what is shown is shown **rightly** it does not check — that is a look by eye.
+- **A state invisible in the frame is not checked by a snapshot.** — **Not checked by anything.** A state that is not in the frame is indistinguishable to a machine from one that does not exist. The closest is the harness's refusal on a missing reference.
+- **A state's sign is checked by the same thing a person sees it by: a frame or a measurement of the raster, not by the value of a written style.** — **Not carried out.** Nothing reads the raster here. A machine sees a style's value, while whether it applied shows only in the picture. The closest is the sweep `tools/story-sweep-v2.mjs:measureShownArea`, and it judges the area rather than the glyph.
+- **If there is a pair of states, both must be in the frame.** — **Not carried out.** A pair of states is declared in the stories. A machine does not know how many the shown element has: a missing side is indistinguishable from a non-existent one.
+- **A styling edit that passed the snapshots without divergences is half checked.** — `projects/ui-kit-v2/.storybook/test-runner.ts:FAILURE_THRESHOLD` — the comparison threshold is set by each showcase's harness. The share of the divergence is printed by the run and is read instead of the colour.
+- **A settled frame is waited for by an event, not by a countdown, and the technique is repeated in every harness.** — `projects/ui-kit/.storybook/test-runner.ts:settled` and `projects/ui-kit-v2/.storybook/snapshot-wait.ts:settled` — the network's silence and two identical sizes in a row. The agreement of the two copies nothing checks: to a machine they are two files, and they will diverge silently.
+- **A wait that swallows its own refusal takes the frame too early.** — `projects/ui-kit/.storybook/test-runner.ts:postVisit` — a font that did not come up fails the run naming the families instead of a quiet frame. That not one wait swallows its own refusal nothing checks: a swallowed refusal is indistinguishable from one that never arose.
+- **A wait waits for what is awaited, not for its consequence.** — `projects/ui-kit/.storybook/test-runner.ts:ICON_FONTS` — the wait calls the loading of the families themselves and matches them. It does not look at the icon's wait class: that one is removed by the page's font readiness, and that comes about with an empty set too. The rightness of the chosen sign nothing checks — it is visible only by a measurement. The second showcase has the same technique in `projects/ui-kit-v2/.storybook/snapshot-wait.ts:ICON_USE_SELECTOR`: an icon is looked for by its reference into the set rather than by the `rt-icon` host, because the kit draws it with two markups and only one has a host.
+- **An arrived resource and the component that noticed it are not the same, and both are waited for.** — `projects/ui-kit/.storybook/test-runner.ts:ICON_REPAINT_TIMEOUT_MS` — after matching the families the wait class removed by the component is awaited, with its own refusal. That there are two waits everywhere a resource arrives at a component nothing checks: a missing second one is visible only by a series of runs. In the second showcase both are awaited by `projects/ui-kit-v2/.storybook/snapshot-wait.ts:drawnIcons`: the sprite growing as the symbols arrive, and a drawn `<use>` on every visible icon. There is nothing to wait for the whole sprite with — an icon travels on a request by name, and a full set on a page never happens.
+- **A settled layout is not yet a drawn page, and the frame is taken after two in a row match.** — `projects/ui-kit/.storybook/test-runner.ts:stableShot` — frames are taken until two in a row match, and the last is compared. The end-to-end suite has a cycle of its own just like it. The second showcase has none and will have none: a measurement showed that its frame diverges for another reason, and a cycle there pins the shift down.
+- **A settled page and a drawn page are different, and the frame waits for the second.** — `projects/ui-kit/.storybook/test-runner.ts:painted` — a nested pair of animation-frame calls, three frames in reserve. It is called between the wait for the settled sizes and the shot. The rollback is guarded by `tools/snapshot-paint-probe.mjs`: it reads the order of the calls in the harness and measures the frame before the wait and after it. The probe goes over the same raised showcase as the snapshots — `tools/visual-gate.mjs:KITS`, the field `probes`; the command is `npm run check:paint`.
+- **A probe judging by one measurement inherits the very rarity it guards against.** — `tools/snapshot-paint-probe.mjs:MAX_PAIRS` — the pairs are taken one after another until they diverge, but no more than three. The refusal comes only when they all matched, and it names their number.
+- **A probe reading the harness as text separates the code from the explanations.** — `tools/snapshot-paint-probe.mjs:codeOnly` — block and line explanations are removed before the word search, so a commented-out wait call does not count as live.
+- **A wait removed from the harness is guarded by a probe, not by the snapshot run.** — `tools/snapshot-icon-probe.mjs:harnessWaitsForIcons` — the second showcase's probe reads the wait module and the shot harness. Then it holds the set back on its approach and matches the frame before the wait against the frame after it. It goes over the same raised showcase as the snapshots — `tools/visual-gate.mjs:KITS`, the field `probes`; the command is `npm run check:icons`.
+- **A probe judges the markup it was created for.** — `tools/snapshot-icon-probe.mjs:STORY` — the split button's story: zero `rt-icon` hosts and seven icons drawn by the button's directive. Should it get a host, the probe refuses and says so: it would be judging a different miss.
+- **A divergence that falls out rarely leaves evidence, otherwise there is nothing to sort out.** — `projects/ui-kit/.storybook/test-runner.ts:keepEvidence` — the difference frame and the run's conditions land in `.rt-snapshot-evidence/<story>--<timestamp>/`. The directory is outside the repository and outside the references directory. The second showcase has no such thing: its divergence was caught on the first run.
+- **A shot beyond the window touches the page under the shutter, and that is cured not by a cycle but by the window.** — `projects/ui-kit-v2/.storybook/test-runner.ts:fitViewportToPage` — the window is widened to the page before the shot. Then an ordinary frame is taken. The first kit has no such step: it always shoots the whole page, and a task of its own is created for that.
+- **A frame is assembled from what lies in the tree, and the harness cuts the shot off from a foreign network.** — `projects/ui-kit/.storybook/test-runner.ts:cutOffNetwork` — a request beyond the local machine is refused on the spot. A returned external address fails its own story. The second showcase has no such cutting off: the kits are kept apart, and its harness creates its own by a separate task.
+- **A settled showing and a state that came about are not the same, and a story is waited for by the second.** — `projects/ui-kit-v2/src/showcase/templates/stories/bookings-template.stories.ts:awaitScreen` — each story waits in its `play` step for its own node. Those are a list cell, the emptiness view and a toast that left. That the sign is named rightly nothing checks: a story without the step is shot the same way, and a diverged frame is found by the reviewer.
+- **An overlay opened by a story lives to the frame only where that is declared.** — `projects/ui-kit-v2/.storybook/test-runner.ts:freezeHover` — the muting of the pointer leaving is set before the story is drawn. `requireOpenedOverlay` there refuses if the named node is gone by the shot. The first showcase has no such parameter at all: its harness does not take the pointer away.
+- **A reference is taken after the frame has been looked at, not before.** — **Not checked by anything.** `tools/visual-snapshots-v2.mjs` refuses on a missing reference and on an orphaned one, and it writes an empty frame silently. The closest machine answer is the sweep `pnpm run test:stories:v2` before the shot.
+- **A reference is re-taken deliberately and one at a time.** — `tools/visual-snapshots-v2.mjs:SNAPSHOT_DIR` — the re-take selects story files by path rather than stories by name: a selection by name breaks the run's environment.
+- **A one-off check script does not travel into the repository.** — **Not checked by anything.** A one-off script is indistinguishable to a machine from a permanent check; the difference pictures are closed by a mask in the ignore settings.
+- **A branch the spec does not reach is named in the PR.** — **Not checked by anything.** The guards judge files and commands rather than the text of a PR description: a silent gap looks the same as coverage.
+- **An application screen is closed by an end-to-end suite frame, not by a showcase story.** — `apps/message-bus-admin-e2e/src/support/shot.ts:expectScreen` — a frame of a whole page matched against a reference; it is called in that screen's spec. That every screen is closed by a frame nothing checks: a machine has nowhere to take the list of screens from.
+- **The end-to-end suite writes no settled-frame wait of its own.** — **Not checked by anything.** The wait cycle lives in the end-to-end spec runner; its refusal text is "Failed to take two consecutive stable screenshots". A second such cycle written next to it is indistinguishable to a machine from the needed code.
+- **Screen frames have no step of their own in the gate or in the pipeline.** — `.claude/rt-kit/project.sh:rt_push_checks` — the admin panel's end-to-end suite is named in the gate by one line. The step "E2E admin" in `.github/workflows/ci.yml` calls that same command. The frames are taken inside it; they have no separate step, and that is visible by the list of steps.
+- **What drifts in a screen frame is removed by name, not covered by a threshold.** — `apps/message-bus-admin-e2e/playwright.config.ts:toHaveScreenshot` — `threshold` and `maxDiffPixelRatio` are held at zero; the browser's colour profile and the way of drawing are named there too. The causes of a divergence are closed in the stand's seeding rather than by a threshold.
+- **A mask covers the content but not the width.** — **Not checked by anything.** The width of a column under a mask is invisible to a machine. The frame matches or it does not, and why is read by comparing pixel by pixel.
+- **Not only time is made constant but everything the application derived from it.** — `apps/message-bus-admin-e2e/stand/seed-self-check.mjs:checkNothingDrifts` — the self-check's second sign. A record's month is matched against its own run time, and the diverged ones end the stand's startup with a refusal. The rest of what is derived from the clock the receiver does not yet store; once it appears, it will stand in that same query.
+- **The seeding checks itself instead of relying on the frame.** — `apps/message-bus-admin-e2e/stand/seed.mjs:seed` — the self-check stands as the seeding's last step, before the first frame, and it refuses in words. The boundary of the deliberate future is named next to it — `apps/message-bus-admin-e2e/stand/seed-self-check.mjs:FAR_FUTURE`.
+- **The self-check judges the time columns of every table the screens read, not only those shown today.** — `apps/message-bus-admin-e2e/stand/seed-self-check.mjs:checkNothingDrifts` — the query gathers every time column of the trees, the analyses, the proposals, the month records and the invitations. **Not checked by anything** is that a column created tomorrow will be appended to it: the list is assembled by hand.
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-Сквозной прогон в дереве один — набор админки со своим стендом; больше ни у чего в дереве
-стенда нет, потому что остальное здесь публикуется библиотеками. Всё, что закон проверяемости
-говорит про стенд и данные, прикладывается к нему одному.
+There is one end-to-end run in the tree — the admin panel's suite with its own stand; nothing else
+in the tree has a stand, because the rest is published here as libraries. Everything the law of
+verifiability says about a stand and data applies to that one alone.
 
-Полноту набора снимаемых историй не проверяет ничто. Обвязка второй витрины отказывает на
-пометке без причины и на осиротевшем эталоне, но «показана ли осями вся поверхность компонента»
-машине не видно — это разбор и правило `rt-tools-storybook`.
+The completeness of the set of shot stories nothing checks. The second showcase's harness refuses
+on a mark without a reason and on an orphaned reference, but whether the axes showed the whole
+surface of a component is invisible to a machine — that is reading and the rule
+`rt-tools-storybook`.
 
-## Что ещё стоит знать при чтении кода
+## What else is worth knowing when reading the code
 
-- Прогон снимков свою витрину не поднимает: адрес приходит переменной `STORYBOOK_URL`.
-- Обвязка второй витрины читает параметры истории из ветки `snapshot` и отказывается снимать
-  историю, у которой нет ни корня показа, ни объявленного кадра целой страницы.
-- Реестр снятых кадров живёт во временном каталоге и в репозиторий не едет; по нему сверяется,
-  не осиротел ли эталон.
-- Драйвер браузера приезжает зависимостью прогонщика снимков, а не манифестом дерева: строгая
-  раскладка pnpm не кладёт его в корневой `node_modules`, и обход берёт его из общего каталога
-  связей `node_modules/.pnpm/node_modules`.
+- The snapshot run raises no showcase of its own: the address arrives by the variable
+  `STORYBOOK_URL`.
+- The second showcase's harness reads a story's parameters from the `snapshot` branch and refuses to
+  shoot a story that has neither a showing root nor a declared whole-page frame.
+- The registry of taken frames lives in a temporary directory and does not travel into the
+  repository; by it one checks whether a reference has been orphaned.
+- The browser driver arrives as a dependency of the snapshot runner rather than by the tree's
+  manifest: pnpm's strict layout does not put it into the root `node_modules`, and the sweep takes
+  it from the shared links directory `node_modules/.pnpm/node_modules`.
 
-## Чем это проверяется
+## What this is checked by
 
-- `pnpm test` — спеки всех пакетов; `passWithNoTests` включён, поэтому читается число тестов.
-- `pnpm exec nx run @rt-tools/ui-kit-v2:typecheck` — типы спек и историй.
-- `pnpm run test:stories:v2` — обход всех историй второй витрины: пустой показ и ошибки отрисовки.
-- `pnpm run test:visual` и `pnpm run test:visual:v2` — снимки против эталонов.
-- `pnpm run build-storybook:ui-kit-v2` — единственное, что проверяет настройку витрины.
-- `pnpm exec nx run message-bus-admin-e2e:e2e` — сквозной набор админки вместе с кадрами
-  экранов; стенд он поднимает себе сам.
+- `pnpm test` — the specs of all packages; `passWithNoTests` is on, so the number of tests is read.
+- `pnpm exec nx run @rt-tools/ui-kit-v2:typecheck` — the types of the specs and the stories.
+- `pnpm run test:stories:v2` — the sweep over all the second showcase's stories: an empty showing
+  and drawing errors.
+- `pnpm run test:visual` and `pnpm run test:visual:v2` — the snapshots against the references.
+- `pnpm run build-storybook:ui-kit-v2` — the only thing that checks the showcase config.
+- `pnpm exec nx run message-bus-admin-e2e:e2e` — the admin panel's end-to-end suite together with
+  the screen frames; it raises the stand for itself.
