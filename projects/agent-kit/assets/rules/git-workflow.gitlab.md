@@ -5,234 +5,235 @@ law: delivery
 description: Rule under the delivery law for a tree on GitLab. Load for creating a task and a branch, commit, push, opening an MR and merging. Names the one-to-one match of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge. Rollout — rule deploy-flow.
 ---
 
-# Поставка — как это устроено здесь
+# Delivery — how it works here
 
-Правило под закон `docs/constitution/delivery.md`. Закон говорит, что должно быть верно;
-здесь — каким приёмом это держится в дереве, лежащем на GitLab. Ключ задач, адрес борды,
-учётная запись машинной работы и области коммита — при этом дереве, в `implementation.md`
-рядом: их не угадать, и общими они не бывают.
+Rule under the law `docs/constitution/delivery.md`. The law says what must be true; here — by which
+technique it is held in a tree that lives on GitLab. The task key, the board address, the machine
+account and the commit scopes are this tree's, in `implementation.md` next to it: they cannot be
+guessed and are never shared.
 
-**Холодная часть:** `pitfalls.md` рядом — ловушки, грабли, на которые уже наступали.
-Грузится по требованию, а не вместе с правилом.
+**Cold part:** `pitfalls.md` next to it — traps already stepped on. Loaded on demand, not together
+with the rule.
 
-## Как это называется здесь
+## What it is called here
 
-| В законе                         | Здесь                                                                                                                                                                                                 |
-| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| главная ветка                    | `main`                                                                                                                                                                                                |
-| отдельная ветка                  | `<КЛЮЧ>-<номер задачи>-<короткий-slug>`. Имя без номера (`feat/…`, `fix/…`) законно, пока ветка живёт локально: MR с неё не откроется                                                                 |
-| ключ задач                       | короткое слово, которым дерево зовёт свои задачи; задаётся ключом `board.taskKey` в `.claude/rt-kit/checks.json`, а в `implementation.md` называется для читателя                                     |
-| задача                           | issue проекта, заголовок `[<КЛЮЧ>-<номер>] <Что не так>`, исполнитель — учётная запись машинной работы; MR прикрепляется к нему строкой `Closes #<номер>` в описании                                  |
-| очередь работ                    | доска задач проекта — Issue Board. Задача попадает на неё меткой списка, а не самим фактом заведения: доска показывает те issue, чью метку знает                                                      |
-| состояние задачи в очереди работ | список доски, за которым стоит метка: заведённая, взятая в работу, ждущая разбора. Имена меток — в `implementation.md`; закрытая задача уходит из очереди слиянием, а не переносом в последний список |
-| PR о задаче                      | заголовок MR `[<КЛЮЧ>-<номер>] <Что сделано>` — тот же номер, что у задачи, и её название, переведённое в сделанное; тип и область коммита сюда не идут                                               |
-| обсуждение правки                | разбор MR: ревьювер — владелец проекта, исполнитель — учётная запись машинной работы, метки — те же, что у задачи                                                                                     |
-| запись о правке                  | коммит формата `type(scope): description` — типы `feat`, `fix`, `refactor`, `docs`, `style`, `test`, `chore`, `perf`; области — в `implementation.md`                                                 |
-| автор машинной работы            | отдельная учётная запись; её имя и место токена — в `implementation.md`. Токен лежит вне репозитория                                                                                                  |
+| In the law                   | Here                                                                                                                                                     |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| main branch                  | `main`                                                                                                                                                   |
+| separate branch              | `<КЛЮЧ>-<номер задачи>-<короткий-slug>`. A name without a number (`feat/…`, `fix/…`) is legitimate locally: no MR opens from it                          |
+| task key                     | the tree's word for its tasks: `board.taskKey` in `.claude/rt-kit/checks.json`, named in `implementation.md` for the reader                              |
+| task                         | a project issue `[<КЛЮЧ>-<номер>] <Что не так>`, assignee the machine account; attached MR: `Closes #<номер>` in its description                         |
+| work queue                   | the project's Issue Board. A task lands on it by a list label, not by being created: the board shows what carries a label it knows                       |
+| task state in the work queue | a board list backed by a label: created, in progress, in review. Label names in `implementation.md`; a closed task leaves by merge, not by the last list |
+| PR about a task              | MR title `[<КЛЮЧ>-<номер>] <Что сделано>` — the task's number and title turned into the done; commit type and scope stay out                             |
+| discussion of an edit        | MR review: reviewer — the project owner, assignee — the machine account, labels — the same as on the task                                                |
+| record of an edit            | `type(scope): description`, types `feat`, `fix`, `refactor`, `docs`, `style`, `test`, `chore`, `perf`; scopes: `implementation.md`                       |
+| author of machine work       | a separate account; its name and the token's place — in `implementation.md`. The token lies outside the repository                                       |
 
-## Где это лежит
+## Where it lives
 
-В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
-переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
-же дереве, которое держит код иначе.
+In this tree — the table in `implementation.md` next to it. Paths live there, not here: the rule
+travels between repositories, the layout does not, and a path named in the rule lies in the first
+tree that keeps its code differently.
 
-## Ход
+## Flow
 
-Ход работы от задачи до слияния: где стоит гард, что двигает колонку очереди работ и чем
-работа кончается.
+The flow from task to merge: where the guard stands, what moves the work queue column and how the
+work ends.
 
 ```mermaid
 flowchart TD
-    A[Работа начинается] --> B[Задача заводится командой и встаёт в очередь работ]
-    B --> C[Ветка называется номером задачи; колонка двигается тем же движением]
-    C --> D{Правка готова}
-    D -->|Нет| C
-    D -->|Да| E[Главная ветка влита, набор гейта прогнан целиком]
-    E --> F{Ветка несёт номер задачи}
-    F -->|Нет| G[Гард поставки отбивает открытие: за правкой ничего не стоит в очереди]
-    F -->|Да| H[PR открывается; не готовое к слиянию идёт черновиком]
-    H --> I[Колонка задачи переходит в разбор, исполнитель берёт следующую задачу]
-    I --> J{Прогон и разбор кончились}
-    J -->|Прогон красный| K[Чинится в той же ветке]
+    A[Work begins] --> B[A command creates the task and it enters the work queue]
+    B --> C[The branch is named by the task number; the column moves in the same motion]
+    C --> D{The edit is ready}
+    D -->|No| C
+    D -->|Yes| E[Main is merged in, the gate set is run whole]
+    E --> F{The branch carries a task number}
+    F -->|No| G[The delivery guard refuses the opening: nothing in the queue stands behind the edit]
+    F -->|Yes| H[The PR opens; what is not ready to merge goes as a draft]
+    H --> I[The task column moves to review, the executor takes the next task]
+    I --> J{The run and the review are over}
+    J -->|Run red| K[Fixed in the same branch]
     K --> J
-    J -->|Зелено| L[Папка задачи разбирается последним коммитом, черновик снимается]
-    L --> M[Слияние нажимает человек: исполнитель просит и называет номер]
+    J -->|Green| L[The last commit takes the task folder apart, the draft is lifted]
+    L --> M[A person presses the merge: the executor asks and names the number]
     G --> B
 ```
 
-## Как закон применяется здесь
+## How the law applies here
 
-- **Коммит в главную ветку отбивается гардом.** Гард ищет вызов коммита в любом месте команды
-  и смотрит текущую ветку на момент запуска, поэтому составная «создать ветку и сразу
-  коммитить» отклоняется целиком: ветки в момент разбора ещё нет.
-- **Ветка без номера задачи MR не открывает.** Гард поставки отбивает `glab mr create` с такой
-  ветки: локально она законна, но правка из неё — это выкатка, за которой в очереди работ
-  ничего не стоит. Заводится задача, и работа переносится в ветку с её номером.
-- **Главная ветка влита в ветку задачи до открытия MR.** Гард поставки отбивает открытие, пока
-  вершина главной ветки не стала предком текущей, и называет расхождение числом коммитов. MR с
-  разошедшейся ветки показывает ревьюверу свою правку вперемешку с чужой, а всё, что автор
-  проверил до публикации, он проверил от основания, которого в главной ветке уже нет.
-- **Несошедшиеся условия поставки называются одним отказом, а не по одному.** Гард копит их все
-  и печатает разом. Отбитый по первому промаху исполнитель правит основание, повторяет вызов,
-  упирается в заголовок, правит заголовок, упирается в задачу — и каждый круг стоит ещё одного
-  вызова, хотя всё несошедшееся было известно уже на первом.
-- **Условие, известное в начале работы, спрашивается в начале.** Заведение ветки отбивает
-  основание, в котором нет вершины главной ветки, и рабочую копию, подписывающую коммиты не той
-  почтой, что объявило дерево. На пуше и на открытии MR те же проверки остаются вторым рубежом,
-  но там они стоят дороже: основание чинится вливанием с разбором конфликта, подпись —
-  переписыванием всей ветки.
-- **Судится то основание, которое названо командой, а не вершина рабочей копии.** Ветку заводят
-  и от вершины главной ветки прямо — этой командой основание как раз и берут свежим, — и гард,
-  читающий только текущую вершину, отбивал бы её наравне с веткой от вчерашнего дерева.
-  Основание, о котором дерево ничего не знает, не судится вовсе.
-- **Ветка без номера задачи условий поставки не получает.** Локальная ветка под пробу законна, и
-  требовать от неё свежего основания значило бы отбивать работу, которая в главную не поедет:
-  MR с такой ветки не откроется.
-- **Правка кода отдаётся человеку открытым MR, а не запушенной веткой.** Ветка в списке ветвей
-  ему не показывается, в дела не приходит и обсуждения не имеет: до открытия MR правки для
-  человека нет. Открывается он тем же ходом, которым исполнитель говорит, что работу отдаёт, и
-  в ответе называется номером.
-- **Не готовое к слиянию открывается черновиком — `glab mr create --draft`.** Кнопка слияния у
-  черновика заблокирована самим хостингом, поэтому состояние «выложено на обозрение» и
-  состояние «можно вливать» перестают выглядеть одинаково. Черновиком идёт всё, что ждёт
-  прогона конвейера, доработки или ответа на вопрос; вопрос задаётся в самом MR. Признак
-  черновика здесь — приставка `Draft:` в заголовке, и правится он вместе с ним.
-- **Черновик снимается отдельным вызовом — `glab mr update <номер> --ready`.** Им исполнитель
-  отвечает за готовность: проверки пройдены, доработок не осталось, работа сходится с задачей.
-  Снятие черновика и просьба влить — один ход, а не два разных дня.
-- **Черновик не снимается, пока у MR нет разбора.** Гард поставки смотрит запрошенного ревьювера
-  и оставленный отзыв: снятый черновик читается как «можно вливать», а вливать некому. Раньше
-  этого хода спросить негде — до открытия MR ревьювера нет вовсе. В разборе считаются только
-  запрос и отзыв не от автора: разбор на самого себя разбором не бывает. Судится и вызов без
-  номера — без него клиент берёт MR текущей ветки, и требование снималось бы одним пробелом;
-  возврат MR в черновик требования не получает.
-- **Заведённая задача подтверждается ответом очереди работ, а не выводом команды заведения.**
-  Команда отвечает за свои вызовы: она может завести задачу и не довести её до доски, и её
-  собственный разбор ошибок этот случай называет. Напечатанный номер значит «вызов прошёл», а не
-  «задача видна тому, кто по ней работает». Спрашивается очередь — по номеру, одним вызовом, — и
-  ответ читается присутствием задачи на доске, её списком и исполнителем.
-- **Номер ветки и номер в заголовке MR сверяются на месте, а состояние задачи — по доске.**
-  Формат читается из текста команды и работает без сети; существование задачи, её метка
-  списка, исполнитель, то, что она ещё открыта, и разбор у MR — только когда есть чем спросить.
-  Нет сети или нет токена — второй ярус молча пропускается: проверка, падающая в самолёте,
-  перестаёт что-либо значить.
-- **Список задачи двигается тем же движением, что и работа.** Ветка заведена — задача
-  переставляется во взятые в работу, MR открыт — в ждущие разбора; делает это команда
-  перевода, а не набор вызовов по памяти. Перевод идёт сразу за шагом, который его вызвал:
-  очередь работ читают между шагами, а не после них.
-- **Задача, оставшаяся в первом списке, MR не открывает.** Гард поставки называет её список и
-  команду перевода: по очереди работ такая задача читается как невзятая, хотя работа по ней
-  сделана и выложена. На заведении ветки список не спрашивается — там его ещё не двигали, и
-  требование отбивало бы первую же команду работы вместе с той, которая его и снимает. Имя
-  первого списка дерево называет само; не названо — список не судится вовсе.
-- **На доске стоят задачи, а не MR о них.** Доска показывает, что сделано и что осталось; MR
-  отвечает на другой вопрос — как именно сделано, — и открывается из задачи, где связь с ним
-  стоит сама. Карточка MR живёт своей жизнью: метки списка у неё нет, из очереди она не уходит и
-  остаётся в ней после слияния навсегда. Здесь она заводится проще, чем где-либо: доска
-  собирается по меткам, и метка списка, поставленная на MR, тут же делает его карточкой.
-  Находит такие сверка очереди — строкой на каждую.
-- **Отставший список находится сверкой очереди, а не глазами.** Сверка судит список по PR
-  в обе стороны: открытый MR при задаче не в разборе и разбор без открытого MR — оба
-  расхождения. Момента, когда задачу берут в работу, ей не видно: ветки на доске нет.
-- **Ветка с открытой заявкой отстаёт от главной молча.** Гард судит основание один раз — в
-  минуту открытия; всё, что влилось в главную, пока шёл прогон, зелёный прогон не видит вовсе, и
-  влитая оттуда заявка приносит в главную ветку сочетание, которое не проверял никто. Отставание
-  находит сверка очереди работ: она спрашивает у хранилища, на сколько коммитов ветка каждой
-  открытой заявки позади главной, и называет число.
-- **Задачи, чинящиеся одной правкой, сливаются до слияния ветки.** Вторая закрывается как
-  дубликат со ссылкой на поглотившую, а недостающее из неё дописывается в первую. Закон велит
-  вторую стереть — здесь это объявленное отступление: стереть задачу хостинг не даёт вовсе, а её
-  номер остаётся в истории, и ссылка из чужого коммита ведёт в закрытую задачу, а не в пустоту.
-  После слияния слить уже нельзя: ветка въехала, и откатывается она целиком.
-- **Работа, которую одним заходом не закрыть, помечена в двух местах, и они сверяются.** Метка
-  на доске и строка о заходах с передачей в замысле эпика говорят одно и то же двум читателям:
-  исполнитель открывает карточку раньше, чем замысел эпика, а планирует по замыслу. Одна пометка без
-  другой лжёт молча, поэтому сверка очереди судит пару в обе стороны. Помечается только то, что
-  законно не делится: пометка объёма правом делить не становится.
-- **Документ едет в том же коммите, что и правка.** Обход — строка `Docs-skip: <причина>` в
-  теле коммита; пустая причина не принимается.
-- **Заголовок коммита сверяется с форматом на месте.** Разобранный по типу и области
-  заголовок читается списком, а свободный текст — только целиком.
-- **Перед пушем прогоняются все линтеры, а не один.** Линтер кода обычно не читает файлы
-  стилей вовсе, и правила оформления без второго прогона не проверяет ничто.
-- **Сборка входит в набор наравне с линтом и юнитами.** Линтер типов не читает, а юниты читают
-  только то, что импортировано тестом: ошибка типов в непокрытом коде доживает до сборки
-  образа, то есть до слияния. Четыре слияния подряд так и уехали в главную ветку, ломая
-  выкатку.
-- **На машине, где раннеров несколько, любой путь от домашнего каталога общий.** Умолчание
-  готового шага опасно именно тем, что оно общее: соседнее задание переписывает его под свою
-  версию, пока наше стоит между шагами. Каталог установки, имя контейнера и имя сборщика
-  называются поэтому по проекту и постоянно, а временный каталог решением не бывает — в нём
-  живёт хранилище пакетов.
-- **Набор гейта пуша не бывает уже набора конвейера.** Гейт — обещание, что пуш не приедет
-  красным; набор, из которого выкинуты сборка и снимки, обещает то, чего не проверяет. Шаг
-  конвейера, которому в наборе гейта нет ни строки, ни объявленного исключения с причиной,
-  отбивает пуш, а не печатается рядом с ним: напечатанное предупреждение исполнитель читает как
-  разрешение. Дважды подряд правка, прошедшая гейт целиком, была отбита конвейером — и оба раза
-  зелёный гейт был прочитан как «локально всё зелено».
-- **Итоговый набор перед пушем читается разбором состояния, а не сборкой в уме.** Он собирается
-  из умолчания пакета и надстройки дерева, и прочитать сборку было нечем: раздел «набор перед
-  пушем» печатает его целиком, по команде на строку, а рядом называет то, что умолчание печатало,
-  а в набор не попало. Дерево, писавшее надстройку вслепую, дописывало в неё повтор.
-- **Причина исключения, называющая задачу, судится на живость этой задачи.** Отсрочка со сроком
-  и отсрочка без срока выглядят одинаково, пока номер никто не спросил; мёртвый номер в причине
-  делает исключение бессрочным, не сказав об этом ни строкой. Спрашивается тем же ярусом, что
-  состояние задачи у гарда поставки: есть чем спросить — спрашивает, нет сети или доступа —
-  пропускает молча.
-- **Сверка раскладки стоит в наборе гейта пуша наравне с линтом и сборкой.** Правка, положенная
-  в разложенную копию мимо источника, в день, когда её делают, не ломает ничего: дерево
-  работает, проверки зелёные, а расхождение видно только тому, кто позовёт сверку сам. Копится
-  оно молча и всплывает на чужой работе — раскладка отказывает по правленому файлу целиком и не
-  кладёт ни одного другого, так что цену платит тот, кто правил соседний ресурс. Статьёй выше
-  эта строка не покрывается: сверки нет в конвейере, а значит нет и шага, который она бы
-  закрывала, — в набор она ставится прямо, а не выводится из его полноты.
-- **После вливания главной ветки набор проверок пересматривается по тому, что ветка везёт
-  теперь.** Вливание меняет состав правки: проверять по тому, что правил автор, — значит
-  проверять половину, а отвечает ветка целиком. Ветка, не тронувшая ни строки показа, прогоняет
-  снимки витрин с того момента, как вливание принесло чужую правку оформления.
-- **Утверждение о главной ветке делается по удалённой ссылке, а не по локальной.** Локальная
-  протухает в ту минуту, когда её подтянули в последний раз, и молчит об этом: она не пуста и не
-  сломана, она описывает вчерашний день. Сравнение веток пишется от `origin/main` целиком —
-  смешав в одной команде удалённую ссылку для одной стороны и локальную для другой, промах
-  изнутри выглядит правильным.
-- **Удалённую ссылку берут не только слова, но и действия.** Основание новой ветки, счёт влитого
-  и подтягивание главной судятся по ней же: локальная — снимок последнего подтягивания, и работа,
-  начатая от неё, стартует от основания, которого в главной уже нет. Влитая ветка при ней числится
-  невлитой, и уборка кончается списком невлитого, которого нет.
-- **Слияние по кнопке «Merge when pipeline succeeds» не заменяет проверок до пуша.** Конвейер
-  видит только то, что уже отправлено, а отправленная красная ветка занимает очередь работ и
-  выглядит готовой к разбору.
-- **Метки и исполнитель MR ставятся при создании, а не правкой после.** `glab mr create`
-  принимает их флагами; правка открытого MR второй командой обходится молча, когда токен
-  учётной записи машинной работы не видит проект целиком.
-- **Задача переводится по списку правкой её меток.** Списки доски — это метки: перевод, не
-  снявший прежнюю метку, оставляет задачу в двух списках сразу, и очередь читается неверно.
-- **Сценарии гардов задают настройки git сами, а не берут их с машины.** Коммит во временном
-  репозитории сценария наследует общий конфиг: если включена подпись, git идёт в агент ключей,
-  а заблокированный агент роняет весь набор — со стороны это выглядит сломанным гардом. Автор,
-  почта и подпись передаются флагами `-c` прямо в команду.
+- **A commit into the main branch is refused by the guard.** The guard looks for a commit call
+  anywhere in the command and reads the current branch at launch, so a compound "create a branch and
+  commit at once" is rejected whole: the branch does not exist yet at review.
+- **A branch without a task number opens no MR.** The delivery guard refuses `glab mr create` from
+  such a branch: locally it is legitimate, but an edit from it is a rollout with nothing behind it
+  in the work queue. A task is created, and the work moves to a branch with its number.
+- **The main branch is merged into the task branch before the MR opens.** The delivery guard refuses
+  the opening until main's tip is an ancestor of the current branch, and names the divergence as a
+  commit count. An MR from a diverged branch shows the reviewer the edit mixed with someone else's,
+  and everything the author checked before publishing was checked from a base that main no longer
+  has.
+- **Unmet delivery conditions are named in one refusal, not one by one.** The guard collects them
+  all and prints them at once. An executor refused on the first miss fixes the base, repeats the
+  call, hits the title, fixes the title, hits the task — and every round costs one more call, though
+  everything unmet was known on the first.
+- **A condition known at the start of work is asked at the start.** Creating a branch refuses a base
+  without main's tip, and a working copy that signs commits with an email other than the one the
+  tree declared. At push and at MR opening the same checks stay as a second line, but there they
+  cost more: the base is fixed by a merge with conflict resolution, the signature by rewriting the
+  whole branch.
+- **The base judged is the one named by the command, not the tip of the working copy.** A branch is
+  also created straight from main's tip — that very command takes the base fresh — and a guard
+  reading only the current tip would refuse it like a branch off yesterday's tree. A base the tree
+  knows nothing of is not judged at all.
+- **A branch without a task number gets no delivery conditions.** A local trial branch is
+  legitimate, and demanding a fresh base of it would refuse work that will not go to main: no MR
+  opens from such a branch.
+- **A code edit is handed to a person by an open MR, not by a pushed branch.** A branch is not shown
+  to them in the branch list, reaches no to-do list and has no discussion: before the MR opens there
+  is no edit for a person. It opens in the turn in which the executor says the work is handed over,
+  and the reply names it by number.
+- **What is not ready to merge opens as a draft — `glab mr create --draft`.** The host itself locks
+  a draft's merge button, so the state "put up for viewing" and the state "may be merged" stop
+  looking alike. Everything waiting for a pipeline run, a rework or an answer goes as a draft; the
+  question is asked in the MR itself. The draft sign here is the `Draft:` prefix in the title, and
+  it is edited together with it.
+- **The draft is lifted by a separate call — `glab mr update <номер> --ready`.** With it the
+  executor answers for readiness: checks passed, no rework left, the work matches the task. Lifting
+  the draft and asking to merge are one turn, not two days.
+- **The draft is not lifted while the MR has no review.** The delivery guard reads the requested
+  reviewer and the review left: a lifted draft reads as "may be merged", and there is nobody to
+  merge. Earlier than this turn there is nowhere to ask — before the MR opens there is no reviewer
+  at all. Only a request and a review not from the author count as review: a review of oneself is no
+  review. A call without a number is judged too — the client then takes the MR of the current
+  branch, and one space would lift the requirement; returning an MR to draft gets no requirement.
+- **A created task is confirmed by the work queue's answer, not by the creation command's output.**
+  The command answers for its calls: it can create a task and not bring it to the board, and its own
+  error handling names that case. A printed number means "the call went through", not "the task is
+  visible to whoever works by it". The queue is asked — by number, in one call — and the answer is
+  read from the task's presence on the board, its list and its assignee.
+- **The branch number and the MR title number are checked on the spot, the task state — by the
+  board.** The format is read from the command text and works offline; the task's existence, its
+  list label, assignee, that it is still open, and the MR review — only with something to ask with.
+  No network or no token — the second tier is skipped silently: a check that fails on a plane stops
+  meaning anything.
+- **The task's list moves in the same motion as the work.** Branch created — the task is moved to in
+  progress, MR opened — to in review; the move command does it, not a set of calls from memory. The
+  move follows the step that caused it at once: the work queue is read between steps, not after.
+- **A task left in the first list opens no MR.** The delivery guard names its list and the move
+  command: by the work queue such a task reads as not taken, though the work on it is done and
+  published. At branch creation the list is not asked — nothing has moved it yet, and the
+  requirement would refuse the first command of the work together with the one that lifts it. The
+  tree names the first list itself; unnamed — the list is not judged at all.
+- **The board holds tasks, not MRs about them.** The board shows what is done and what is left; an
+  MR answers another question — how exactly it was done — and opens from the task, where the link to
+  it stands by itself. An MR card lives its own life: it has no list label, never leaves the queue
+  and stays in it after the merge forever. Here it is created more easily than anywhere: the board
+  is assembled by labels, and a list label put on an MR makes it a card at once. The queue audit
+  finds such cards, a line each.
+- **A lagging list is found by the queue audit, not by eye.** The audit judges the list by the PR
+  both ways: an open MR with the task not in review, and review with no open MR — both
+  discrepancies. The moment a task is taken into work it cannot see: the branch is not on the board.
+- **A branch with an open PR lags behind main silently.** The guard judges the base once — at
+  opening; what merged into main during the run a green run never sees, and a PR merged from there
+  brings main a combination nobody checked. The lag is found by the work queue audit: it asks the
+  repository how many commits each open PR's branch is behind main, and names the number.
+- **Tasks fixed by one edit are merged before the branch merge.** The second is closed as a
+  duplicate with a link to the one that absorbed it, and the missing from it is added to the first.
+  The law orders the second erased — here that is a declared deviation: the host does not let a task
+  be erased at all, and its number stays in history, so a link from someone else's commit leads to a
+  closed task, not into a void. After the merge there is no merging them: the branch went in, and it
+  rolls back whole.
+- **Work that one session cannot close is marked in two places, and they are audited.** The label on
+  the board and the line about sessions with a handover in the epic plan say the same to two
+  readers: the executor opens the card before the epic plan, and plans by the plan. One mark without
+  the other lies silently, so the queue audit judges the pair both ways. Only what legitimately does
+  not split is marked: a mark of volume grants no right to split.
+- **A document goes in the same commit as the edit.** The bypass is the line `Docs-skip: <причина>`
+  in the commit body; an empty reason is not accepted.
+- **The commit subject is checked against the format on the spot.** A subject parsed by type and
+  scope is read as a list, free text — only whole.
+- **Before a push all linters are run, not one.** The code linter usually does not read style files
+  at all; without a second run nothing checks the styling rules.
+- **The build is in the set on a par with lint and unit tests.** The linter does not read types, and
+  unit tests read only what a test imports: a type error in uncovered code lives until the image
+  build — that is, the merge. Four merges in a row went into main that way, breaking the rollout.
+- **On a machine with several runners, any path from the home directory is shared.** A ready-made
+  step's default is dangerous precisely because it is shared: a neighbouring run rewrites it to its
+  own version while ours stands between steps. Install directory, container name and builder name
+  are therefore per project and fixed, and a temporary directory is never the answer — the package
+  store lives there.
+- **The push gate set is never narrower than the pipeline set.** The gate is a promise that the push
+  will not arrive red; a set with the build and the snapshots thrown out promises what it does not
+  check. A pipeline step with neither a line in the gate set nor a declared exclusion with a reason
+  refuses the push instead of printing next to it: a printed warning the executor reads as
+  permission. Twice in a row an edit that passed the gate whole was refused by the pipeline — and
+  both times the green gate was read as "all green locally".
+- **The final set before a push is read from the state review, not assembled in the head.** It is
+  assembled from the package default and the tree's override, and there was nothing to read the
+  assembly with: the "set before push" section prints it whole, one command per line, and names
+  beside it what the default printed and the set did not take. A tree writing its override blind
+  added a repeat to it.
+- **An exclusion reason naming a task is judged on whether that task is alive.** A deferral with a
+  term and one without look the same until someone asks the number; a dead number in the reason
+  makes the exclusion perpetual without saying a line about it. Asked by the same tier as the task
+  state at the delivery guard: something to ask with — it asks, no network or access — it skips
+  silently.
+- **The layout audit stands in the push gate set on a par with lint and the build.** An edit put
+  into the laid-out copy past the source breaks nothing on the day it is made: the tree works, the
+  checks are green, and the discrepancy is visible only to whoever calls the audit themselves. It
+  piles up silently and surfaces on someone else's work — the layout refuses the edited file whole
+  and lays out no other, so the price is paid by whoever edited a neighbouring resource. The article
+  above does not cover this line: the audit is not in the pipeline, so there is no step it would
+  close — it is put into the set directly, not derived from the set's completeness.
+- **After merging main in, the check set is revised by what the branch now carries.** The merge
+  changes the makeup of the edit: checking by what the author edited means checking half, and the
+  branch answers whole. A branch that touched no line of the showcase runs showcase snapshots from
+  the moment the merge brought someone else's styling edit.
+- **A statement about the main branch is made by the remote ref, not the local one.** The local one
+  goes stale the minute it was last pulled, and says nothing about it: it is not empty and not
+  broken, it describes yesterday. A branch comparison is written from `origin/main` whole — mixing
+  the remote ref for one side and the local one for the other in one command, the miss looks right
+  from inside.
+- **The remote ref is taken not only by words but by actions.** A new branch's base, the count of
+  the merged and pulling main are judged by it too: the local one is a snapshot of the last pull,
+  and work started from it starts from a base main no longer has. A merged branch counts as unmerged
+  by it, and cleanup ends with a list of unmerged that is not there.
+- **A merge by the "Merge when pipeline succeeds" button does not replace the checks before a
+  push.** The pipeline sees only what is already pushed, and a pushed red branch occupies the work
+  queue and looks ready for review.
+- **MR labels and assignee are set at creation, not by an edit after.** `glab mr create` takes them
+  as flags; editing an open MR with a second command is bypassed silently when the machine account's
+  token does not see the project whole.
+- **A task is moved across lists by editing its labels.** The board's lists are labels: a move that
+  did not remove the previous label leaves the task in two lists at once, and the queue reads wrong.
+- **Guard scenarios set the git settings themselves, not take them from the machine.** A commit in
+  the scenario's temporary repository inherits the shared config: with signing on, git goes to the
+  key agent, and a locked agent brings the whole set down — from outside it looks like a broken
+  guard. Author, email and signature are passed as `-c` flags straight into the command.
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-Гард поставки стоит на командах агента, поэтому ветку, заведённую руками в редакторе, он не
-видит: имя такой ветки держится памятью. Требование от этого не слабеет — просто отдельной
-проверки под него не заводится: работа опознаётся заголовком задачи и PR, а это сверяется
-у всех. Сверка очереди имя ветки не судит вовсе: у открытого MR его не переименовать.
+The delivery guard stands on the agent's commands, so it does not see a branch created by hand in
+the editor: its name is held by memory. The requirement is no weaker for that — only no separate
+check is made for it: work is recognised by the task title and the PR, and that is audited for
+everyone. The queue audit never judges the branch name: an open MR's branch cannot be renamed.
 
-Задачу в работу гард не переводит: доску он не правит — правка доски в разборе команды падала бы
-вместе со связью и отбивала бы работу вместо промаха. Перевод держится памятью и подсказкой,
-которую печатает команда заведения задачи. Задачу, оставшуюся в первом списке, гард называет на
-открытии MR — то есть после того, как её должны были переставить; прочие расхождения списка
-находит сверка очереди.
+The guard does not move a task to in progress: it does not edit the board — a board edit during
+command review would fall with the connection and refuse the work instead of the miss. The move is
+held by memory and by the hint the task creation command prints. A task left in the first list the
+guard names at MR opening — that is, after it should have been moved; other list discrepancies the
+queue audit finds.
 
-Свежесть самой вершины главной ветки гард спрашивает вторым ярусом — тем же приёмом, что и
-состояние задачи: есть чем спросить, спрашивает; нет сети или доступа — пропускает молча. Первый
-ярус при этом остаётся, и работает он без сети: локальная ссылка отвечает на вопрос «отстало ли
-основание от того, что уже лежит в дереве», удалённая — на вопрос «не протухла ли сама ссылка».
-Без второго яруса молчание гарда значило лишь первое, а читалось как второе.
+The freshness of main's tip itself the guard asks by the second tier — the same technique as the
+task state: something to ask with — it asks; no network or access — it skips silently. The first
+tier stays and works offline: the local ref answers the question "has the base lagged what already
+lies in the tree", the remote one — "has the ref itself gone stale". Without the second tier the
+guard's silence meant only the first and was read as the second.
 
-## Паттерны
+## Patterns
 
-- `git-workflow-commit` — задача, ветка, коммит и пуш от учётной записи машинной работы.
-- `git-workflow-pr` — открытие MR, черновик и его снятие, описание, ревьювер, метки, состояние.
-- `git-workflow-merge` — главная ветка влита в ветку задачи, конфликт разобран.
+- `git-workflow-commit` — task, branch, commit and push as the machine account.
+- `git-workflow-pr` — opening an MR, the draft and lifting it, the description, reviewer, labels,
+  state.
+- `git-workflow-merge` — main merged into the task branch, the conflict resolved.

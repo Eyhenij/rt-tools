@@ -1,249 +1,272 @@
-<!-- rt-kit v0.25.0 · pitfalls/git-workflow.github.md · c7e457406374 · правится надстройкой, не здесь -->
-# Поставка — холодная часть
+<!-- rt-kit v0.25.0 · pitfalls/git-workflow.github.md · 81d19deaf702 · правится надстройкой, не здесь -->
+# Delivery — cold part
 
-Ловушки: грабли, на которые уже наступали в дереве на GitHub. Грузится не вместе с
-правилом, а по требованию — при обычном решении она не нужна.
+Pitfalls: traps already stepped on in a tree on GitHub. Loaded not with the rule but on demand —
+an ordinary decision does not need it.
 
-Правило — `git-workflow`; статьи, которыми держится закон, стоят там.
+The rule is `git-workflow`; the articles that hold the law stand there.
 
-## Ловушки
+## Pitfalls
 
-- **Непосчитанная сливаемость конфликтом не бывает.** Хостинг считает её заново после каждой
-  правки главной ветки и до конца счёта отвечает неопределённостью. Прочитанная как конфликт,
-  она отбивает работу на каждой свежей вершине — то есть ровно там, где отбивать нечего.
-  Поэтому и гард, и сверка судят только прямое «конфликтует», а молчание опроса пропускают.
-- **Силовая отправка ветки, стоящей под другой в стопке, закрывает её заявку как слитую.**
-  Хостинг считает заявку слитой, когда вершина её ветки достижима из базы; состояние лживое — в
-  главной ветке правки нет, а задача остаётся открытой. Требование, из которого это следует, —
-  статья правила о том, что нижняя ветка череды историю не переписывает.
-- **Ветка, догнанная в рабочем дереве и не отправленная, работой не считается.** Человек видит
-  прежнее состояние и читает его как «не сделано ничего», а сделанное лежит там, где его не
-  видит никто. Про неотправленный разрешённый конфликт статья правила это говорит, но догнанная
-  ветка без единого спора под неё не подпадает вовсе.
-- **`UNKNOWN` в поле сливаемости означает «ещё не посчитано», а не «конфликтов нет».** Хостинг
-  считает её после каждого чужого слияния, и заявка, прочитанная в эту секунду, выглядит
-  здоровой.
-- **Одна работа — одна задача, сколько бы файлов она ни задела.** Числа, за которым правка
-  становится второй задачей, здесь нет: делится то, что придётся откатывать порознь. Сплошная
-  правка текстов дерева была заведена тремя задачами «по объёму» — пришлось стирать две,
-  закрывать два PR и переносить коммиты по одному с двумя конфликтами. Одна из трёх не дала
-  коммита вовсе: правка тел уже заведённых задач веткой не бывает и задачей под ветку тоже.
-- **Задача заводится командой, а не четырьмя вызовами подряд.** Борда к репозиторию не
-  привязана, и задача попадает на неё только явным добавлением: две задачи так и простояли вне
-  очереди работ, потому что шаг переписывали руками. Команда заведения делает все четыре — issue,
-  номер в его заголовке, добавление на борду, начальную колонку, — и печатает готовую строку
-  заведения ветки. Замеченный по ходу дефект проходит тот же путь.
-- **Ветка заводится вторым вызовом, а не тем же.** Гард главной ветки отклоняет составную
-  «создать ветку и сразу коммитить» целиком: ветки в момент разбора ещё нет.
-- **Сторона конфликта бывает удалением, и «сохранить обе стороны» заводит второе объявление.**
-  Главная ветка снимает объявление, потому что символ переехал, — в конфликте это выглядит как
-  сторона, которая ничего не дописала. Разбирается чтением версии главной ветки целиком, а не по
-  хунку, и сверяется проверкой повторов: обе копии сами по себе исправны, сборка и линт зелёные.
-- **Учётная запись для пуша и автор PR выбираются отдельно.** Если пушить пришлось из-под другой
-  записи, на следующий вызов это не переносится: PR открывают токеном учётной записи машинной
-  работы, и от того, чьей записью он открыт, зависит, кого можно назначить ревьювером. Однажды
-  смена записи ради пуша утекла в публикацию — PR вышел от владельца. Разница между читающим и
-  пишущим вызовом в самом тексте команды не видна: личность приходит окружением, поэтому у
-  вызова на запись токен называется явно, а открытая заявка проверяется ответом хостинга о её
-  авторе — напечатанная ссылка говорит, что заявка создана, и молчит о том, кем. Чинится это
-  только переоткрытием: автора у заявки не сменить.
-- **Невалидный файл конвейера виден прогоном нулевой длительности сразу после пуша.** GitHub
-  заводит такой прогон и на ветке, на которую ни один триггер не подписан: в списке он стоит
-  отказом, а внутри у него нет ни задания, ни лога — читается только длительность. Поэтому
-  список прогонов ветки смотрится тем же движением, что и пуш — `gh run list --branch <ветка>`.
-  Один такой отказ простоял в списке до мержа, и на него никто не посмотрел: выкатка после
-  мержа отказала ровно тем же.
-- **Прогон, не вставший на пуш, возвращается повтором события, а не разбором ветки.** Замером
-  проверены обе законные дороги: и открытие PR, и пуш в уже открытый PR прогон заводят —
-  текстовый коммит и учётная запись, которой пушат, тут ни при чём. Пропавшие события пришлись
-  на час, когда хостинг отвечал `429` на загрузке действия и `503` на API, а списком прогонов
-  «не завёлся» от «не создан» не отличить. Поэтому вершину без прогона называет сверка очереди
-  работ, а событие возвращается новым коммитом либо перезакрытием PR.
-- **Красное на шаге подготовки задания — отказ хостинга, а не дефект ветки.** Раннер не смог
-  скачать действие чекаута и получил `429 Too Many Requests`; до кода прогон при этом не дошёл
-  вовсе. Лечится перезапуском прогона, и от красного по существу отличается тем, на каком шаге
-  оно встало: три прогона одного дня упали именно так.
-- **Контекст `runner` в `env` задания отбивает весь файл конвейера.** Там доступны только
-  `github`, `needs`, `strategy`, `matrix`, `vars`, `secrets` и `inputs`; `runner` появляется на
-  уровне шага, где то же значение приходит переменной окружения. Такой файл не принимается
-  вовсе: прогон кончается за ноль секунд, не начав ни одного задания. Разбор YAML этого не
-  ловит — синтаксис верный, а доступность контекстов синтаксисом не является.
-- **`online` у раннера на своей машине означает запущенный процесс, а не работающий
-  конвейер.** Две стороны сходятся отдельно: `runs-on` у заданий и метки самого раннера. Пока
-  пересечения нет, раннер стоит `online` и не берёт ничего, а задания уходят в облако — по
-  состоянию это выглядит настроенным. Владельцу называют выполненное задание с его номером, а
-  не строку состояния.
-- **Раннер на своей машине делает прогон общим ресурсом, и стенд у прогонов один.** Порт,
-  имя базы и каталог сборки зашиты в дереве одним значением на всех: два прогона разом
-  поднимают два стенда на один порт, и второй падает целиком. Дороже всего не падение, а его
-  вид — в отчёте оно выглядит десятком красных спек про экраны, то есть дефектом правки,
-  которого нет; три прогона подряд так и упали на трёх ветках, не тронувших кода. Лечится с
-  двух сторон сразу: конвейеру объявляется группа очереди на всё дерево, а имена стенда
-  читаются из окружения с нынешними значениями в умолчании — иначе прогон и гейт пуша, зовущий
-  ту же команду, столкнутся и при очереди. Одной очереди мало, одних имён — тоже: прогоны делят
-  ещё диск, кэш сборщика и демон образов.
-- **Вход в реестр образов из раннера, запущенного службой, отказывает молча.** Служба идёт без
-  сеанса пользователя, а клиент реестра уходит в системный помощник хранения ключей и получает
-  отказ во взаимодействии — задание падает до сборки. Свой каталог настроек с пустым помощником
-  не спасает: клиент переписывает пустое значение обратно сам. Готовые команды — паттерн
-  `git-workflow-docker`.
-- **Новое рабочее дерево получает только то, что лежит в индексе.** `git worktree add`
-  разворачивает коммит, а настройки, ключи, локальные разрешения и зависимости в коммит не
-  входят: свежее дерево выглядит готовым и упирается в нехватку не сразу, а на первом гарде,
-  которому нужен ключ. Что именно переносится руками, названо списком в компаньоне правила, и
-  список пополняется тем же движением, которым заводится новый файл вне индекса.
-- **Вытесненный из очереди прогон и упавший в списке неразличимы.** Оба отвечают красным, и
-  слово отмены у них одно. Ветка за вытесненным не проверялась ни строчкой: заданий у него
-  ноль, потому что он не начинался. Перезапуск такого прогона отбивает гард, пока за тот же ход
-  не читался журнал задания, — поэтому строка сверки называет чтение прогона первым.
-- **Одно и то же вливание главной ветки, сделанное третий раз за заход, останавливает работу.**
-  Ветки, дописывающие строку в один и тот же список, роняют друг друга в конфликт при каждом
-  слиянии, и вливание главной по кругу — это починка проявления. На третьем круге называется
-  причина и спрашивается владелец, а не делается четвёртый круг.
-- **Пустой файл, отправленный телом заявки, стирает описание работы целиком.** Так уехала правка
-  тела, собранная связкой: переход в каталог временных файлов увёл вызов из дерева, выгрузка
-  тела отказала, а следующее звено отправило оставшийся пустым файл. Описание, собранное за три
-  захода, стало пустой строкой; восстановлено историей правок хостинга — и то пока она есть.
-- **`gh project` с `--owner` отвечает `unknown owner type`.** Так бывает, когда владелец борды —
-  не та учётная запись, под которой идёт вызов. Идентификатор берётся у самой борды, а не
-  собирается из имени владельца.
-- **«Запись и так активная, подставлять нечего» — довод, обращённый против прочитанной статьи.**
-  Токен машинной записи положили в клиент хостинга вызовом входа, и клиент сам сказал о смене
-  активной записи; изнутри дерева всё сходилось — вызовы отвечали, заявки открывались от нужной
-  записи. Соседняя сессия в другом дереве с этой минуты ходила к хостингу от записи с правами на
-  один репозиторий: гард поставки прочитал её задачу как несуществующую и не дал завести ветку.
-  Заметил владелец, по жалобе соседа, через несколько ходов. Активная запись клиента остаётся за
-  владельцем; спрашивается она выводом состояния клиента, а не памятью.
+- **Uncomputed mergeability is never a conflict.** The hosting recomputes it after every edit of
+  the main branch and answers with uncertainty until the count is done. Read as a conflict, it
+  refuses work on every fresh tip — that is, exactly where there is nothing to refuse. So both the
+  guard and the audit judge only an explicit "conflicting" and let a silent poll through.
+- **A force push of a branch that stands under another in a stack closes its PR as merged.** The
+  hosting counts a PR merged once the tip of its branch is reachable from the base; the state
+  lies — the main branch has no such edit, and the task stays open. The requirement this follows
+  from is the rule's article that the lower branch of a chain does not rewrite history.
+- **A branch caught up in the working tree and not pushed does not count as work.** A person sees
+  the previous state and reads it as "nothing done", while what was done lies where nobody sees
+  it. The rule's article says this about an unpushed resolved conflict, but a caught-up branch
+  without a single dispute does not fall under it at all.
+- **`UNKNOWN` in the mergeability field means "not computed yet", not "no conflicts".** The
+  hosting recomputes it after every merge by someone else, and a PR read in that second looks
+  healthy.
+- **One piece of work — one task, however many files it touches.** There is no number past which
+  an edit becomes a second task: what is split is what would have to be rolled back separately.
+  A blanket edit of the tree's texts was filed as three tasks "by volume" — two had to be
+  deleted, two PRs closed, and commits moved one by one with two conflicts. One of the three
+  yielded no commit at all: editing the bodies of already filed tasks is never a branch, nor a
+  task for a branch.
+- **A task is created by the command, not by four calls in a row.** The board is not bound to the
+  repository, and a task lands on it only by explicit addition: two tasks stood outside the work
+  queue exactly because the step was retyped by hand. The creation command does all four — the
+  issue on the hosting, the number in its title, the addition to the board, the starting column —
+  and prints the ready-made branch creation line. A defect noticed along the way goes the same
+  route.
+- **The branch is created by a second call, not the same one.** The main-branch guard rejects the
+  compound "create a branch and commit at once" whole: at the moment of parsing the branch does
+  not exist yet.
+- **A side of a conflict can be a deletion, and "keep both sides" creates a second declaration.**
+  The main branch removes the declaration because the symbol moved — in the conflict this looks
+  like a side that added nothing. It is sorted out by reading the main branch's version whole,
+  not by hunk, and verified by the duplicates check: each copy alone is sound, build and lint
+  green.
+- **The account for the push and the author of the PR are chosen separately.** If the push had to
+  go from another account, that does not carry over to the next call: the PR is opened with the
+  machine account's token, and which account opens it decides who can be assigned as reviewer.
+  Once a switch of account for the push leaked into publication — the PR came out from the
+  owner. The difference between a reading and a writing call is invisible in the command text
+  itself: identity arrives from the environment. So a writing call names the token explicitly,
+  and the opened PR is checked by the hosting's answer about its author — the printed link says
+  the PR was created and is silent about by whom. This is fixed only by reopening: a PR's author
+  cannot be changed.
+- **An invalid pipeline file shows as a zero-length run right after the push.** GitHub creates
+  such a run even on a branch no trigger is subscribed to: in the list it stands as a failure,
+  and inside it has neither a step nor output — only the duration is readable. So the branch's
+  run list is looked at with the same motion as the push — `gh run list --branch <branch>`. One
+  such failure stood in the list until the merge and nobody looked at it: the rollout after the
+  merge failed with exactly the same thing.
+- **A run that did not start on a push is brought back by repeating the event, not by
+  investigating the branch.** Measurement checked both lawful roads: opening a PR and pushing
+  into an already open PR both start a run — a text-only commit and the account that pushes have
+  nothing to do with it. The lost events fell on the hour when the hosting answered `429` on
+  downloading an action and `503` on the API, and the run list cannot tell "did not start" from
+  "was not created". So a tip without a run is named by the work queue audit, and the event is
+  brought back by a new commit or by closing and reopening the PR.
+- **Red on the setup step is a hosting failure, not a branch defect.** The runner could not
+  download the checkout action and got `429 Too Many Requests`; the run never reached the code at
+  all. It is cured by restarting the run, and it differs from a substantive red by the step it
+  stopped on: three runs in one day failed exactly this way.
+- **The `runner` context in a pipeline step's `env` refuses the whole pipeline file.** Only
+  `github`, `needs`, `strategy`, `matrix`, `vars`, `secrets` and `inputs` are available there;
+  `runner` appears at the level of a single command inside the step, where the same value arrives
+  as an environment variable. Such a file is not accepted at all: the run ends in zero seconds
+  without starting a single step. YAML parsing does not catch this — the syntax is valid, and
+  context availability is not syntax.
+- **`online` on a self-hosted runner means a running process, not a working pipeline.** Two sides
+  match separately: `runs-on` of the pipeline steps and the labels of the runner itself. Until
+  they intersect, the runner stands `online` and takes nothing, while the steps go to the cloud —
+  by its state this looks configured. The owner is told the executed step with its number, not
+  the state line.
+- **A self-hosted runner makes the run a shared resource, and the runs have one stand.** The port,
+  the database name and the build directory are hard-wired in the tree as one value for all: two
+  runs at once raise two stands on one port, and the second falls over whole. The costliest part
+  is not the fall but its look — in the summary it appears as a dozen red screen tests, that is,
+  as a defect of the edit that does not exist; three runs in a row fell this way on three
+  branches that touched no code. It is cured from both sides at once: the pipeline declares a
+  queue group for the whole tree, and the stand names are read from the environment with today's
+  values as the default — otherwise the run and the push gate, which calls the same command,
+  collide even with the queue. One queue is not enough, names alone are not either: runs also
+  share the disk, the builder cache and the image daemon.
+- **Registry login from a runner started as a service fails silently.** The service runs without
+  a user session, and the registry client goes to the system keychain helper and gets an
+  interaction refusal — the step fails before the build. Its own settings directory with an empty
+  helper does not save it: the client writes the empty value back itself. Ready-made commands —
+  pattern `git-workflow-docker`.
+- **A new working tree gets only what lies in the index.** `git worktree add` unpacks a commit,
+  and settings, keys, local permissions and dependencies are not part of a commit: the fresh tree
+  looks ready and hits the shortage not at once but on the first guard that needs a key. What
+  exactly is carried over by hand is named as a list in the rule's companion, and the list grows
+  with the same motion that creates a new file outside the index.
+- **A run pushed out of the queue and a failed one are indistinguishable in the list.** Both
+  answer red, and the word for cancellation is the same for both. The branch behind the pushed-out
+  one was not checked by a single line: it has zero steps because it never started. Restarting
+  such a run is refused by the guard until the step's output has been read in the same turn —
+  which is why the audit line names reading the run first.
+- **The same merge of the main branch done a third time in one session stops the work.**
+  Branches that append a line to the same list drop each other into a conflict at every merge,
+  and merging main round after round is a fix of the symptom. On the third round the cause is
+  named and the owner is asked, instead of a fourth round.
+- **An empty file sent as the PR body wipes the description of the work whole.** That is how an
+  edit of the body assembled by a chain went: a change into the temporary files directory took
+  the call out of the tree, the body download failed, and the next link sent the file left empty.
+  A description assembled over three sessions became an empty line; it was restored from the
+  hosting's edit history — and only while that exists.
+- **`gh project` with `--owner` answers `unknown owner type`.** That happens when the owner of the
+  board is not the account the call runs under. The identifier is taken from the board itself,
+  not assembled from the owner's name.
+- **"The account is active anyway, nothing to substitute" is an argument turned against an
+  article already read.** The machine account's token was placed into the hosting client by a
+  login call, and the client itself announced the switch of the active account; from inside the
+  tree everything matched — calls answered, PRs opened from the right account. From that minute a
+  neighbouring session in another tree went to the hosting from an account with rights to one
+  repository: the delivery guard read its task as nonexistent and did not let it create a branch.
+  The owner noticed, from the neighbour's complaint, several turns later. The client's active
+  account stays with the owner; it is asked by the client's state output, not from memory.
 
-## Что стояло в статьях
+## What stood in the articles
 
-Сюда уехали случаи, числа и отвергнутые лекарства, стоявшие прежде при статьях правила. Ни одно
-решение по правке на них не стоит: они нужны тому, кто разбирает промах или спорит с гардом.
+Here moved the cases, numbers and rejected remedies that used to stand next to the rule's
+articles. No edit decision rests on them: they are for whoever investigates a miss or argues with
+a guard.
 
-- **Отказ на слиянии остаётся вторым рубежом.** Человек вливает, как только видит зелёное, и до
-  второго рубежа дело просто не доходит.
+- **A refusal at the merge remains the second line.** A person merges as soon as they see green,
+  and the second line is simply never reached.
 
-- **Список, в котором всё серое, читается как «работа не сделана».** Черновик и недоделанное
-  выглядят одинаково; находит такие заявки сверка — ночью, в чужой сессии, после закрытого
-  разговора.
-- **Логин рядом со служебным числом не сверяет никто.** Промах в почте изнутри не виден вовсе:
-  коммит выглядит своим, а подписан посторонним.
+- **A list where everything is grey reads as "work not done".** A draft and unfinished work look
+  the same; such PRs are found by the audit — at night, in someone else's session, after the
+  conversation is closed.
+- **Nobody checks the login next to the service number.** A miss in the email is invisible from
+  inside: the commit looks one's own and is signed by a stranger.
 
-- **Ключ задач, разошедшийся с формой ветки в профиле.** Они не отказывают, а перестают узнавать
-  номер: проверка, искавшая работу без задачи, пропускает всё подряд.
-- **Сложение у указателя зовут не ради спора, а ради тишины.** Без объявления человека зовут при
-  каждом слиянии — по строке, которая нужна целиком с обеих сторон.
+- **A task key that diverged from the branch form in the profile.** They do not refuse; they stop
+  recognising the number: the check that looked for work without a task lets everything through.
+- **The union merge on the index file is declared not for the dispute but for silence.** Without
+  the declaration a person is called at every merge — over a line that is needed whole from both
+  sides.
 
-- **Гейт — обещание, что пуш не приедет красным.** Набор без сборки и снимков обещает то, чего не
-  проверяет.
-- **Борда показывает, что сделано и что осталось.** Заявка отвечает на другой вопрос и
-  связывается с карточкой сама — отдельной карточки ей не нужно.
+- **The gate is a promise that the push will not arrive red.** A set without the build and the
+  snapshots promises what it does not check.
+- **The board shows what is done and what remains.** A PR answers a different question and links
+  itself to the card — it needs no separate card.
 
-- **Сливаемость выводили из локального вливания.** Между ним и взглядом владельца главная уходит
-  вперёд, и «у меня слилось» о кнопке не говорит ничего. Дерево, чей помощник очереди о поле
-  `mergeable` не говорит вовсе, работает как прежде: поля нет — требования нет.
-- **Личность вызова, открывающего заявку.** Дерево, не назвавшее машинной записи, требования
-  подстановки токена не получает: сверять ответ хостинга не с чем.
+- **Mergeability used to be inferred from a local merge.** Between it and the owner's look main
+  moves ahead, and "it merged for me" says nothing about the button. A tree whose queue helper
+  says nothing about the `mergeable` field works as before: no field — no requirement.
+- **The identity of the call that opens the PR.** A tree that named no machine account gets no
+  token substitution requirement: there is nothing to check the hosting's answer against.
 
-- **Ветки, заведённые от главной подряд, роняют друг друга.** Замер по ста шести накопленным
-  веткам одного основания: вливание одной делает расходящимися до двадцати трёх, в среднем семь с
-  половиной; не расходятся ни с кем двенадцать. Считался он `git merge-tree` в памяти — рабочего
-  дерева замер не трогает и веток не двигает.
+- **Branches created from main one after another drop each other.** A measurement over one
+  hundred and six accumulated branches of one base: merging one makes up to twenty-three diverge,
+  seven and a half on average; twelve diverge with nobody. It was counted with `git merge-tree` in
+  memory — the measurement touches no working tree and moves no branch.
 
     ```bash
-    # проба слияния без единой правки в дереве: коммит-слияние заводится в объектной базе
-    tree="$(git merge-tree --write-tree origin/main <ветка> | head -1)"
-    probe="$(git commit-tree "$tree" -p origin/main -p <ветка> -m проба)"
-    git merge-tree --write-tree "$probe" <другая ветка> >/dev/null; echo $?   # 1 — разойдутся
+    # a merge probe without a single edit in the tree: the merge commit is created in the object database
+    tree="$(git merge-tree --write-tree origin/main <branch> | head -1)"
+    probe="$(git commit-tree "$tree" -p origin/main -p <branch> -m probe)"
+    git merge-tree --write-tree "$probe" <other branch> >/dev/null; echo $?   # 1 — they will diverge
     ```
 
-    Дерево аргументом сюда не годится: истории у него нет, общее основание не считается, и любая
-    проба отвечает «сойдётся».
+    A tree as the argument is no good here: it has no history, no common base is counted, and
+    every probe answers "will merge".
 
-- **Расходится не правка, а строка, куда дописали обе стороны.** В том же замере исходник
-  ресурса сливался чисто, а его разложенная копия расходилась первой строкой — той, где стоит
-  контрольная сумма ресурса. Две работы правили разные разделы разных файлов, и всё равно
-  требовали разбора. Отсюда и правило ветвиться чередой: снимать пришлось бы не расхождение, а
-  сам способ хранить копию рядом с исходником.
+- **What diverges is not the edit but the line both sides appended to.** In the same measurement
+  the resource's source merged cleanly while its laid-out copy diverged on the first line — the
+  one holding the resource's checksum. Two pieces of work edited different sections of different
+  files and still demanded resolution. Hence the rule to branch in a chain: what would have to be
+  removed is not the divergence but the very way of keeping a copy next to the source.
 
-- **Сборка входит в набор гейта.** Четыре мержа подряд уехали в главную ветку, ломая выкатку:
-  ошибка типов в непокрытом коде пережила линт и юниты и всплыла на сборке образа.
-- **Набор, переписанный строками, выглядит полным.** В одном дереве шесть проверок лежали рядом
-  с гоняемыми и не гонялись ни гейтом, ни конвейером: восемь строк из четырнадцати читались как
-  весь набор, и разница была видна только сличением с умолчанием пакета.
-- **Набор гейта не бывает уже набора конвейера.** Дважды подряд правка, прошедшая гейт целиком,
-  была отбита конвейером — и оба раза зелёный гейт был прочитан как «локально всё зелено». Отсюда
-  и требование отбивать пуш на шаге без строки в наборе, а не печатать предупреждение рядом.
-- **Черновик не снимается с ветки, которая не сливается.** За один заход так было снято три
-  черновика подряд, и все три заявки владелец увидел конфликтующими. Статья про сливаемость
-  стояла в правиле и до того — промах повторился в тот же день, поэтому требование держится
-  гардом, а не памятью.
-- **Сложение сторон у общего указателя.** До объявления одна и та же строка разрешалась шесть раз
-  в шести ветках за один заход. Обещать по объявлению «конфликтов больше не будет» нельзя: не
-  будет ручной работы, а вливать главную в открытые ветки после каждого слияния придётся
-  по-прежнему.
-- **Заведённое видно только заводящему.** Шестнадцать задач так были заведены дважды, а заявка
-  названа владельцу номером, которого для него не существовало: ограниченная запись видела своё,
-  а хостинг отвечал остальным «не найдено».
-- **Обойдённый отказ унёс признак ограничения.** Предел запросов у ограниченной записи стоял на
-  нуле — не исчерпан, а не положен вовсе. Отказ обошли вызовом другого рода, обход сработал, и
-  расхождение всплыло через двадцать минут и четыре следа, которые пришлось переписывать.
-- **Личность вызова, открывающего заявку.** Прежде обе стороны — подстановка токена и ответ
-  хостинга об авторе — держались статьёй и разбором происшествия, и промах повторился на третий
-  день.
-- **Незаданный ключ задач.** Собранный из пустого значения заголовок `[-317]` не совпадает ни с
-  чем, и сверка помечает неправильно названной каждую задачу: настоящее расхождение тонет среди
-  этих строк.
-- **Ветка, не тронувшая ни строки показа, прогоняет снимки витрин** с того момента, как вливание
-  главной принесло чужую правку оформления. Это и есть тот случай, ради которого набор проверок
-  пересматривается после вливания.
-- **Возврат PR в черновик — `gh pr ready --undo` — требования разбора не получает:** он делает то
-  же, чего гард и добивается.
-- **Свои черновики судятся все разом.** Уход в соседнюю ветку выключал гард целиком: за один
-  заход так разошлись с главной четыре заявки подряд, и заметил это владелец, а не проверка.
-  Разбор — запись «2026-08-25-run-left-unwatched» в приёме.
-- **Подпись машинной записи на каждом коммите вклада.** Пять коммитов одной стопки уехали
-  подписанными владельцем, который правки не делал: гард судит только коммит, назвавшийся
-  машинной записью, и ищет расхождение в числе служебного адреса.
-- **Состояние заявки перечитывается у хостинга.** Клиент отвечает от той записи, чей токен ему
-  дали, а запрос разбора на автора хостинг принимает молча и не создаёт.
-- **Ревьюверы спрашиваются вызовом REST.** Под токеном машинной записи выборка клиента падает
-  целиком, без токена проходит зелёной — отличить «сошлось» от «спросить было нечем» нечем.
+- **The build is part of the gate set.** Four merges in a row went into the main branch breaking
+  the rollout: a type error in uncovered code survived lint and unit tests and surfaced on the
+  image build.
+- **A set rewritten as lines looks complete.** In one tree six checks lay next to the ones being
+  run and were run by neither the gate nor the pipeline: eight lines out of fourteen read as the
+  whole set, and the difference showed only by comparison with the package default.
+- **The gate set is never narrower than the pipeline set.** Twice in a row an edit that passed the
+  gate whole was refused by the pipeline — and both times a green gate was read as "everything is
+  green locally". Hence the requirement to refuse the push on a step missing from the set, rather
+  than print a warning next to it.
+- **Draft is not lifted from a branch that does not merge.** In one session three drafts were
+  lifted in a row, and the owner saw all three PRs conflicting. The mergeability article stood in
+  the rule before that — the miss repeated the same day, so the requirement is held by a guard,
+  not by memory.
+- **Union of the sides on the shared index file.** Before the declaration the same line was
+  resolved six times in six branches in one session. One cannot promise "no more conflicts" by
+  the declaration: there will be no manual work, but merging main into open branches after every
+  merge will still be needed.
+- **What was created is visible only to its creator.** Sixteen tasks were created twice this way,
+  and a PR was named to the owner by a number that did not exist for him: the restricted account
+  saw its own, and the hosting answered "not found" to everyone else.
+- **A bypassed refusal carried away the sign of the restriction.** The request limit of the
+  restricted account stood at zero — not exhausted, simply not granted at all. The refusal was
+  bypassed by a call of another kind, the bypass worked, and the discrepancy surfaced twenty
+  minutes and four traces later, which had to be rewritten.
+- **The identity of the call that opens the PR.** Before, both sides — the token substitution and
+  the hosting's answer about the author — were held by an article and an incident analysis, and
+  the miss repeated on the third day.
+- **An unset task key.** A title `[-317]` assembled from an empty value matches nothing, and the
+  audit marks every task as misnamed: the real discrepancy drowns among these lines.
+- **A branch that touched no line of the display runs the showcase snapshots** from the moment a
+  merge of main brought in someone else's styling edit. That is exactly the case for which the
+  check set is revised after a merge.
+- **Returning a PR to draft — `gh pr ready --undo` — gets no review requirement:** it does what
+  the guard is after.
+- **One's own drafts are judged all at once.** Leaving for a neighbouring branch switched the
+  guard off entirely: in one session four PRs in a row diverged from main this way, and the owner
+  noticed, not a check. The analysis is the record "2026-08-25-run-left-unwatched" in the intake.
+- **The machine account's signature on every commit of the contribution.** Five commits of one
+  stack went signed by the owner, who made no edit: the guard judges only a commit that called
+  itself the machine account and looks for a mismatch in the number of the service address.
+- **The PR state is reread from the hosting.** The client answers from the account whose token it
+  was given, and a review request to the author the hosting accepts silently and does not create.
+- **Reviewers are asked through a REST call.** Under the machine account's token the client's
+  query fails whole, without the token it passes green — there is no way to tell "matched" from
+  "there was nothing to ask with".
 
-- **Полнота набора гейта судится по именам шагов конвейера.** Проверки, которой нет и в
-  конвейере, там нет тоже: набор, переписанный строками вместо вызова умолчания пакета, теряет
-  ровно те проверки, которые пакет заведёт следующей редакцией. Своя строка вместо умолчания
-  законна там, где она покрывает то же строже либо зовёт названный скрипт.
-- **Черновик, чья ветка везёт папку задачи, означает идущую работу, а не брошенную.** Оба
-  признака нужны вместе: зелёный прогон на вершине без разобранной папки говорит, что работа
-  ещё не отдана. Дерево, не назвавшее машинной записи, этой сверки не получает вовсе.
-- **Метку сливаемости не гасит и объявленное сложение обеих сторон.** Хостинг считает сложение
-  своим приёмом и настроек слияния не читает: пока ветка не вобрала главную и это не уехало на
-  хостинг, заявка стоит конфликтующей при разрешённом на месте расхождении.
-- **Сверки раскладки нет в конвейере, поэтому шага, который она бы закрывала, там тоже нет.**
-  Правка мимо источника в день, когда её делают, не ломает ничего.
-- **Рабочее дерево не опустошается ради прогона инструмента.** Вопрос «этот долг был до моих
-  правок или от них» решается второй копией дерева, а не прятаньем работы: спрятанного не видит
-  ни статус, ни сверка, а команда, прошедшая между прятаньем и возвратом, пишет в те же файлы —
-  и возврат встаёт конфликтом. Так ушли в прятанье восемь незакоммиченных файлов при живом
-  запрете на эту команду: запрет читался в начале захода, а команда набиралась через сорок ходов.
-- **Вывод команды, которой нужен репозиторий, собирается в каталоге репозитория.**
-  Перенаправление создаёт файл раньше, чем команда успевает отказать: клиент хостинга, позванный
-  из каталога временных файлов, падает строкой о том, что это не репозиторий, а пустой файл к
-  этой минуте уже записан. Уехав дальше — в тело заявки, в замысел, в правило, — он стирает
-  написанное, и восстанавливается это только историей правок на стороне хостинга. Файл вывода
-  поэтому кладётся в дереве, а записанное проверяется до того, как его куда-то отправят.
+- **The completeness of the gate set is judged by the names of the pipeline steps.** A check that
+  is not in the pipeline either is not there too: a set rewritten as lines instead of calling the
+  package default loses exactly the checks the package will add in its next edition. One's own
+  line instead of the default is lawful where it covers the same thing more strictly or calls the
+  named script.
+- **A draft whose branch carries the task folder means work in progress, not abandoned work.**
+  Both signs are needed together: a green run on the tip without the folder taken apart says the
+  work is not handed over yet. A tree that named no machine account does not get this audit at
+  all.
+- **The mergeability mark is not cleared even by a declared union of both sides.** The hosting
+  counts the union as its own device and reads no merge settings: until the branch has absorbed
+  main and that has reached the hosting, the PR stands conflicting with the divergence resolved
+  locally.
+- **The layout audit is not in the pipeline, so neither is the step it would close.** An edit past
+  the source breaks nothing on the day it is made.
+- **The working tree is not emptied for a tool run.** The question "was this debt there before my
+  edits or from them" is settled by a second copy of the tree, not by stashing the work: what is
+  stashed is seen by neither status nor audit, and a command that ran between the stash and the
+  pop writes to the same files — and the pop comes up as a conflict. Eight uncommitted files went
+  into the stash this way with a live ban on that command: the ban was read at the start of the
+  session, and the command was typed forty turns later.
+- **The output of a command that needs the repository is collected in the repository directory.**
+  Redirection creates the file before the command manages to fail: the hosting client called from
+  the temporary files directory falls with a line saying this is not a repository, and by that
+  minute the empty file is already written. Travelling further — into the PR body, into the plan,
+  into the rule — it wipes what was written, and that is recovered only from the edit history on
+  the hosting's side. So the output file is placed in the tree, and what was written is checked
+  before it is sent anywhere.
 
-- **Очередь конвейера, заведённая на всё дерево, снимает ждущего чужим пушем.** Группа
-  одновременности с отменой уже идущего экономит машину ровно до первого соседа: его пуш снимает
-  прогон чужой ветки, и та остаётся с вершиной без единого прогона — заявка при этом выглядит
-  непроверенной, а прогонять её заново некому. Группа поэтому заводится своя на ветку, и общей
-  остаётся только у шагов, которым нужен стенд: их и правда нельзя гнать вдвоём на одной машине.
+- **A pipeline queue declared for the whole tree cancels the waiting run with someone else's
+  push.** A concurrency group that cancels the run in progress saves the machine exactly until the
+  first neighbour: their push cancels another branch's run, and that branch is left with a tip
+  without a single run — the PR then looks unchecked, and nobody is there to rerun it. So the
+  group is declared per branch, and stays shared only for the steps that need the stand: those
+  really cannot be run two at a time on one machine.
 
-- **Команды дерева зовутся из его корня, а не из каталога пакета.** В подкаталоге со своим
-  манифестом запуск берёт его, а не корневой, и отвечает «такой команды нет» — при том что в
-  дереве она есть и написана верно. Читается это как поломка команды, а лечится каталогом: путь
-  до неё называется от корня, и звать её оттуда.
+- **The tree's commands are called from its root, not from the package directory.** In a
+  subdirectory with its own manifest the launcher takes that one, not the root one, and answers
+  "no such command" — even though the tree has it and it is written correctly. This reads as a
+  broken command and is cured by the directory: the path to it is named from the root, and it is
+  called from there.
 
 ## Ловушки этой машины
 

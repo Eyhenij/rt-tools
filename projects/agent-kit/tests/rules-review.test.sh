@@ -194,7 +194,7 @@ cp "$ASSETS/rules/doc-style.md" "$probe/rules/doc-style.md"
 cp "$ASSETS/pitfalls/doc-style.md" "$probe/pitfalls/doc-style.md"
 cp "$ASSETS/patterns/doc-style-write.md" "$probe/patterns/doc-style-write.md"
 
-grep -vxF '## Ловушки' "$ASSETS/pitfalls/doc-style.md" > "$probe/pitfalls/doc-style.md"
+grep -vxE '## (Pitfalls|Ловушки)' "$ASSETS/pitfalls/doc-style.md" > "$probe/pitfalls/doc-style.md"
 report "SC-AK-217 — снятый раздел холодной части найден" \
     "$(missing_sections "$probe" pitfalls | grep -c 'Ловушки')" 1
 

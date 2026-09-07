@@ -4,288 +4,295 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of work from the owner's request to the merge. Load at the start of any work, when editing task folders and product agreements, and when returning to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. End of a turn — turn-conduct.
 ---
-<!-- rt-kit v0.25.0 · rules/task-flow.md · 3cc9ce61e642 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/task-flow.md · ecdb32152ccf · правится надстройкой, не здесь -->
 
-# Ведение работы — как это устроено здесь
+# Work conduct — how it works here
 
-Правило под закон `docs/constitution/work-conduct.md`. Закон говорит, что должно быть верно
-про ход работы; здесь — чем это названо в этом дереве, где лежит и что из закона у нас не
-проверяется.
+Rule under the law `docs/constitution/work-conduct.md`. The law says what must be true about the
+course of work; here — what it is called in this tree, where it lives and what is not checked here.
 
-**Холодная часть:** `pitfalls.md` рядом — ловушки и поведение по разборам происшествий.
-Грузится по требованию, а не вместе с правилом: при обычном решении она не нужна — она нужна
-тому, кто разбирает промах или спорит с гардом.
+**Cold part:** `pitfalls.md` next to it — traps and conduct from incident analyses. Loaded on
+demand, not with the rule: an ordinary decision does not need it — whoever analyses a miss or argues
+with a guard does.
 
-**Требует:** `hooks/task-flow-guard.sh`, `hooks/task-flow-draft-guard.sh`, `hooks/task-context-load.sh`, `hooks/grill-gate.sh`, `hooks/window-fill-guard.sh`, `hooks/turn-exit-guard.sh`, `hooks/work-start-guard.sh`
+**Requires:** `hooks/task-flow-guard.sh`, `hooks/task-flow-draft-guard.sh`,
+`hooks/task-context-load.sh`, `hooks/grill-gate.sh`, `hooks/window-fill-guard.sh`,
+`hooks/turn-exit-guard.sh`, `hooks/work-start-guard.sh`
 
-## Как это называется здесь
+## What it is called here
 
-| В законе                                      | Здесь                                                                                                                         |
-| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| просьба владельца                             | то, с чего начинается работа; разбирается командой `/grill-me` до первой правки                                               |
-| понимание, записанное там, где идёт работа    | `docs/tasks/<ветка>/grill.md` — просьба дословно, ответы владельца его словами, решения с доводами                            |
-| замысел                                       | `docs/tasks/<ветка>/plan.md` — след задачи и этапы с признаками готовности; после написания не правится                       |
-| ход работы                                    | `docs/tasks/<ветка>/progress.md` — «Где стоим», решения по ходу, записи заходов; единственное место, где отмечается сделанное |
-| договорённость о продукте, записанная до кода | `docs/specs/<домен>/proposed/<фича>/` — спек фичи; переживает мерж и вливается в спек домена                                  |
-| эпик — работа шире одной ветки                | карточка в очереди работ с меткой эпика и замысел рядом с ней: возможность, состав задач и порядок                            |
-| замысел эпика                                 | запись вне папки задачи: та умирает с мержем, а эпик её переживает; каталог называет компаньон правила                        |
-| папка задачи до заведения задачи              | `docs/tasks/_draft-<slug>/` — вне истории, пока номера нет                                                                    |
-| разведка                                      | заход `Explore` или `general-purpose` до первого вопроса владельцу                                                            |
-| разбор замысла ролями                         | `.claude/workflows/plan.js` — нужность, договорённость, критика, замысел                                                      |
+| In the law | Here |
+| --- | --- |
+| the owner's request | what work begins with; grilled by the `/grill-me` command before the first edit |
+| understanding written where the work goes | `docs/tasks/<ветка>/grill.md` — the request verbatim, the owner's answers in their words, decisions with reasons |
+| the plan | `docs/tasks/<ветка>/plan.md` — the task footprint and stages with readiness signs; not edited after it is written |
+| the progress | `docs/tasks/<ветка>/progress.md` — "Where we stand", decisions along the way, session entries; the only place where done work is marked |
+| the product agreement written before the code | `docs/specs/<домен>/proposed/<фича>/` — the feature spec; survives the merge and merges into the domain spec |
+| an epic — work wider than one branch | a card in the work queue with the epic label and a plan next to it: the opportunity, the tasks, their order |
+| the epic plan | a record outside the task folder: the folder dies with the merge, the epic outlives it; the directory — in the rule's companion |
+| the task folder before the task is created | `docs/tasks/_draft-<slug>/` — outside history while there is no number |
+| exploration | an `Explore` or `general-purpose` session before the first question to the owner |
+| the plan review by roles | `.claude/workflows/plan.js` — need, agreement, critique, plan |
 
-## Где это лежит
+## Where it lives
 
-В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
-переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
-же дереве, которое держит код иначе.
+In this tree — the table in `implementation.md` next to it. Paths live there, not here: the rule
+travels between repositories, the layout does not, and a path named in the rule lies in the first
+tree that keeps its code differently.
 
-## Состояния работы
+## Work states
 
-Единица работы — состояние, а не шаг. У состояния есть вход, обязательное действие и выход, и
-пока действие не сделано, работа стоит в том же состоянии.
+The unit of work is a state, not a step. A state has an entry, a mandatory action and an exit, and
+until the action is done the work stays in the same state.
 
-Состояние объявляется в разделе «Где стоим» хода работы машиночитаемой строкой
-``- **Состояние:** `этап-идёт` `` и перезаписывается вместе с ним.
+The state is declared in the "Where we stand" section of the progress by the machine-readable line
+``- **Состояние:** `этап-идёт` `` and is rewritten with it.
 
-| Состояние                 | Вход в него                                     | Обязательное действие                                  | Ведёт паттерн      |
-| ------------------------- | ----------------------------------------------- | ------------------------------------------------------ | ------------------ |
-| `просьба-не-разобрана`    | реплика владельца о новой работе                | разведка по дереву, затем вопросы                      | `task-flow-start`  |
-| `разбор-закрыт`           | ответы владельца лежат на диске                 | договорённость о продукте либо причина её отсутствия   | `task-flow-start`  |
-| `договорённость-записана` | драфт лежит или причина названа                 | завести задачу, ветку и папку                          | `task-flow-start`  |
-| `задача-взята`            | задача в колонке работы, ветка по номеру, папка | написать замысел                                       | `task-flow-start`  |
-| `замысел-записан`         | замысел лежит и после записи не правится        | делать первый этап                                     | `task-flow-start`  |
-| `этап-идёт`               | этап начат                                      | доделать этап и отметить в ходе работы                 | `task-flow-resume` |
-| `этапы-кончились`         | все этапы отмечены                              | влить договорённость, привести тексты, прогнать набор  | `task-flow-close`  |
-| `разбор-кончился`         | набор зелёный, тексты приведены                 | разобрать папку последним коммитом                     | `task-flow-archive` |
-| `папка-разобрана`         | папки в ветке нет, запись в архиве есть         | открыть PR черновиком                                  | `task-flow-close`  |
-| `работа-отдана`           | PR открыт черновиком                            | взять следующую задачу                                 | `task-flow-resume` |
-| `влито`                   | PR слит человеком                               | разбор работы правилами и сверка очереди               | `task-flow-archive` |
+| State | Entry | Mandatory action | Pattern |
+| --- | --- | --- | --- |
+| `просьба-не-разобрана` | the owner's message about new work | exploration over the tree, then questions | `task-flow-start` |
+| `разбор-закрыт` | the owner's answers lie on disk | a product agreement, or the reason there is none | `task-flow-start` |
+| `договорённость-записана` | the draft lies, or the reason is named | create the task, the branch and the folder | `task-flow-start` |
+| `задача-взята` | task in the work column, branch by number, folder | write the plan | `task-flow-start` |
+| `замысел-записан` | the plan lies and is not edited after writing | do the first stage | `task-flow-start` |
+| `этап-идёт` | a stage is begun | finish the stage and mark it in the progress | `task-flow-resume` |
+| `этапы-кончились` | all stages are marked | merge the agreement, bring texts up to date, run the suite | `task-flow-close` |
+| `разбор-кончился` | the suite is green, texts are up to date | take the folder apart by the last commit | `task-flow-archive` |
+| `папка-разобрана` | no folder in the branch, a record in the archive | open the PR as a draft | `task-flow-close` |
+| `работа-отдана` | the PR is open as a draft | take the next task | `task-flow-resume` |
+| `влито` | the PR merged by a person | rules review of the work and the work queue audit | `task-flow-archive` |
 
-Ни у одного состояния обязательное действие не звучит как «ждать»: ожидание чужого шага
-состоянием работы не считается, поэтому в `работа-отдана` обязательное действие — следующая
-задача, а не открытый PR. Блокированная задача следующей не считается: это то же ожидание под
-именем работы. Следующая берётся из очереди работ, а очередь спрашивается командой: «задач нет» —
-утверждение о дереве, и подтверждается оно выводом, а не памятью исполнителя. Заполнение окна
-захода состоянием тоже не бывает: заход кончается передачей, а работа остаётся там, где стояла.
-**Открытая карточка о взятости работы не говорит.** Карточку закрывает слияние, и в заходе без
-открытия заявок список открытых не убывает. Невзятой задачу делает отсутствие следа в дереве:
-открытые номера сверяются с описанием прошлого — на закрытую работу там лежит запись с её номером.
-Сверка стоит одной команды и отвечает про обе стороны, список открытых — ни про одну.
+No state has a mandatory action that sounds like "wait": waiting for someone else's step is not a
+work state, so in `работа-отдана` the mandatory action is the next task, not the open PR. A blocked
+task does not count as next: the same waiting under the name of work. The next is taken from the
+work queue, and the queue is asked by a command: "no tasks" is a statement about the tree, backed by
+output, not by the executor's memory. A filled session window is no state either: the session ends
+with a handover, and the work stays where it stood. **An open card says nothing about whether the
+work is taken.** A card is closed by the merge, and in a session that opens no PRs the list of open
+ones does not shrink. A task is untaken when the tree holds no trace of it: open numbers are checked
+against the archive — closed work has a record there with its number. The audit costs one command
+and answers for both sides; the open list answers for neither.
 
-Чем ход кончается — правило `turn-conduct` под тем же законом.
+What a turn ends with — rule `turn-conduct` under the same law.
 
-Перечень показывается владельцу в начале работы, и на нём же отмечается, где стоим.
+The list is shown to the owner at the start of work, and where we stand is marked on it.
 
-Последние два состояния объявить на диске уже нечем: ход работы уезжает вместе с папкой, а папка
-разбирается раньше, чем открывается PR. Признак у них в истории ветки — коммит разбора папки, — и
-читает его гард, а не строка в файле.
+The last two states cannot be declared on disk: the progress leaves with the folder, and the folder
+is taken apart before the PR opens. Their sign is in the branch history — the commit that takes the
+folder apart — and a guard reads it, not a line in a file.
 
-## Ход
+## Flow
 
-Ход работы от просьбы владельца до закрытия: где стоит разбор, что требует гард и куда девается
-папка задачи.
+The course of work from the owner's request to closing: where the grill stands, what the guard
+demands and where the task folder goes.
 
 ```mermaid
 flowchart TD
-    A[Просьба владельца] --> B[Разведка по дереву — до первого вопроса]
-    B --> C[Разбор просьбы: шесть обязательных вопросов, ответы ложатся на диск]
-    C --> D{Правка задевает код приложения}
-    D -->|Да| E[Пишется договорённость о продукте — до кода]
-    D -->|Нет| F[В замысле стоит причина, по которой её нет]
-    E --> Z{Из разбора вышло несколько задач}
+    A[The owner's request] --> B[Exploration over the tree — before the first question]
+    B --> C[Grill: six mandatory questions, the answers land on disk]
+    C --> D{The edit touches application code}
+    D -->|Yes| E[A product agreement is written — before the code]
+    D -->|No| F[The plan states the reason there is none]
+    E --> Z{The grill produced several tasks}
     F --> Z
-    Z -->|Да| Y[Серия объявляется эпиком: карточкой и замыслом, до первой задачи]
-    Z -->|Нет| G[Задача, ветка, папка задачи по имени ветки]
+    Z -->|Yes| Y[The series is declared an epic: a card and a plan, before the first task]
+    Z -->|No| G[Task, branch, task folder by branch name]
     Y --> G
-    G --> H[Замысел с этапами; после записи он не правится]
-    H --> I{Этап сделан}
-    I -->|Да| J[Отметка в ходе работы — единственном месте, где отмечается сделанное]
+    G --> H[A plan with stages; not edited after it is written]
+    H --> I{Stage done}
+    I -->|Yes| J[A mark in the progress — the only place where done work is marked]
     J --> I
-    I -->|Этапы кончились| T[Договорённость вливается в спек домена, тексты приводятся к сделанному, следом прогоняется набор]
-    T --> N[Папка задачи разбирается последним коммитом: разбор просьбы — в описание прошлого, находки — к замыслу эпика, замысел — прочь]
-    N --> S[Сверка очереди работ]
-    S --> K[PR открывается черновиком; исполнитель называет номер, чего ждёт и что сделает следом]
-    K --> W[Разбор закрытой работы правилами уходит в фон, находки ложатся на диск]
-    W --> L[Пока PR ждёт разбора, берётся следующая задача]
-    L --> M{Разбор и прогон кончились}
-    M -->|Красный прогон или замечания| V[Чинится в той же ветке: замысла на диске уже нет, и признак работы гард берёт из истории ветки]
+    I -->|Stages are over| T[The agreement merges into the domain spec, texts are brought up to what was done, then the suite runs]
+    T --> N[The task folder is taken apart by the last commit: the grill — to the archive, findings — to the epic plan, the plan — away]
+    N --> S[Work queue audit]
+    S --> K[The PR opens as a draft; the executor names the number, what it waits for and what comes next]
+    K --> W[The rules review of the closed work goes to the background, findings land on disk]
+    W --> L[While the PR waits for review, the next task is taken]
+    L --> M{Review and run are over}
+    M -->|Red run or remarks| V[Fixed in the same branch: the plan is gone from disk, the guard takes the sign of work from the branch history]
     V --> M
-    M -->|Зелено и замечаний нет| O[Черновик снимается, слияние нажимает человек]
+    M -->|Green and no remarks| O[The draft is lifted, a person presses merge]
 ```
 
-## Как закон применяется здесь
-- **Правка кода приложения отбивается, пока работа не дошла до состояния, в котором код
-  правится.** Гард требует три вещи: папку задачи по имени ветки, замысел в ней и объявленное
-  состояние. У договорённости о продукте свой гард на те же события.
-- **Гард судит объявленный переход, а не наличие файлов.** Пустой замысел лежит так же, как
-  написанный, поэтому отказ снимает объявленное состояние — `этап-идёт`, `этапы-кончились`,
-  `разбор-кончился`. Четвёртый путь — история ветки: папка, разобранная её коммитом, означает
-  отданную работу.
-- **Строка состояния, переведённая вперёд, — то же объявление намерения, только машиночитаемое.**
-  Состояние объявляется тем ходом, в котором его обязательное действие начато делом.
-- **Отказ по состоянию называет обязательное действие объявленного состояния.** Услышав только
-  «не в том состоянии», исполнитель перепишет строку состояния вместо шага.
-- **Именем состояния считается только слово из перечня.** Своё слово не говорит ни о входе, ни о
-  выходе, ни о действии.
-- **Два требования — два гарда, и снять одно можно, не теряя второго.** Судят порознь: строка о
-  неизменном поведении снимает договорённость, а не требование дойти до правки кода.
-- **Влитая договорённость ветку не запирает.** После вливания директории «предложено» на диске
-  нет, а замысел ссылается на неё до конца работы: влитое от незаведённого гард отличает по
-  истории ветки.
-- **Договорённость требуется по путям правки, а не по оценке задачи.** `apps/**` и `libs/**` —
-  признак; правила, тексты, обвязка и зависимости под него не подпадают. Обход — строка
-  `**Поведение:** не меняется — <причина владельца>` в замысле; пустая причина не принимается.
-- **Что требует слова владельца, берётся списком, а не оценкой на месте.** Оценку «это безопасно»
-  назначает тот, кому она удобна.
-- **На команду владельца ответ начинается с результата, а не с намерения и не с его обоснования.**
-  Обоснование при принятом чужом решении читается как его оценка. Исключение одно: исполнение
-  остановлено препятствием — тогда называется препятствие.
-- **Заход работу не начинает сам.** Начало требует слова владельца в этом же заходе: передача,
-  состояние из хука запуска и назначенный эпик говорят, что делать, а не работать ли.
-  Судится форма реплики: пустая реплика, одно слово или один путь работу не заказывают.
-- **Отказ внешнего ограничителя снимает способ, а не задачу.** Он приходит не от гарда дерева, и
-  выхода не называет: прочитанный как конец пути, он останавливает работу целиком. Способ берётся
-  из текста того гарда, который эту починку уже описал, — обход с причиной в теле коммита,
-  отметка в наблюдениях, слово владельцу, — а задача остаётся прежней.
-- **Указание работать по ходу работы покрывает все его шаги, включая меняющие историю.**
-  Спрашивают о том, чего в ходе работы нет.
-- **Вопрос, записанный прошлым заходом, вопросом владельца не становится.** Он адресован автору
-  передачи, и часть таких вопросов закрыта шагом работы.
-- **Указание владельца действует до его отмены, и новый факт против него — строка в ответе о
-  цене, а не новый вопрос.** Переспрашивают то, чего указание не покрывает. Меню, где два
-  варианта из трёх предлагают отменить решение владельца, и есть такая отмена.
-- **Ответ репликой владельца записан наравне с ответом в документе.** Вопрос, на который
-  в разговоре уже отвечали, второй раз не задают.
-- **Слово владельца об устройстве — постановка, а не решение.** Названное им обычно уже есть в
-  дереве под этим словом — имя на экране, раздел спека, поле модели — и сверяется с ними до
-  правки. Разошлось — спрашивается владелец.
-- **Папка задачи заводится под любую работу, без исключений.** Исключение, у которого есть хоть
-  одна законная форма, исполняется как разрешение. Заводится она до первой правки.
-- **Папка задачи едет в ветку коммитом, а не живёт в одном рабочем дереве.** Незакоммиченная,
-  она проходит правки без отказа, и отказ приходит в конце, когда замысел уже снят. Вне истории
-  законен один черновик без номера.
-- **Папка задачи разбирается последним коммитом до открытия PR, а не после одобрения.** Человек
-  вливает, как только видит зелёное, и закрывающему коммиту места не остаётся.
-- **Открыв PR, исполнитель называет владельцу номер, чего ждёт и что сделает следом.** Ждёт он
-  прогона, следом снимает черновик: зелёный прогон говорит, что не сломано, и молчит о
-  заблокированной кнопке слияния.
-- **Просьба о слиянии — отдельный ход, и раньше зелёного прогона её не бывает.** Порядок один:
-  папка разобрана и запушена → PR открыт черновиком → прогон зелёный → черновик снят →
-  исполнитель просит влить, называя номер.
-- **PR открывается черновиком, а не в конце работы.** До открытия владелец правки не видит, а
-  открытый PR читается как приглашение влить. Черновик снимается тем ходом, которым исполнитель
-  говорит, что решение готово.
-- **Гард замысла — нижняя граница требования, а не его предел.** Он требует папку только под
-  правку кода приложения, а статья выше — под любую работу.
-- **Указание работать по правилу — это указание делать его шаги, включая меняющие историю.**
-  Отметка этапа, коммит, пуш и открытие заявки правилом предписаны.
-- **Взятая задача ходом не кончается.** Заведение задачи, ветки, колонки и папки — подготовка:
-  работа переходит в состояние записанного замысла, где действие другое. Гард завершения хода
-  называет в отказе первый этап.
-- **Ожидание одной части этапа остановкой этапа не бывает.** Независимые от ожидаемого части
-  делаются тем же ходом, а владельцу называется, что сделано и что осталось на его шаг. Отбитая
-  команда читается так же: сперва делается всё остальное.
-- **Находка, сделанная посреди этапа, сверяется с условиями выхода замысла до первой правки.**
-  Соседство по предмету принадлежности не доказывает: работа над слоем правил и работа над
-  командами, которые этот слой вызывает, откатываются порознь. Не названная ни одним условием
-  выхода, находка идёт в раздел о том, чего работа не делает, и заводится задачей.
-- **Сделанное отмечается только в ходе работы.** «Где стоим» перезаписывается каждым заходом, а
-  не дописывается: это первое, что читает следующий заход.
-- **Слово для нового понятия ищется в словаре дерева.** Общую часть везёт пакет, предметную
-  дописывает дерево надстройкой; словарь уезжает в контекст на запуске сессии целиком, поэтому
-  «не читал» основанием не бывает.
-- **Папка задачи заводится черновиком и получает номер командой.** До конца разбора неизвестно,
-  сколько задач из него выйдет, поэтому номер не бывает первым. Команда переименовывает черновик,
-  проставляет шапку замысла и снимает с копий шапку раскладки.
-- **Брошенный разбор виден.** Черновик старше недели перечисляет сверка очереди.
-- **Работа, заказанная словами, становится задачей в очереди тем же ходом.** Даже если делать её
-  будут не сейчас. Черновик папки очередью не считается: номера нет, знает о нём один заход.
-  Отложенная работа называет срок; отложенная молча читается как сделанная.
-- **Следующая задача берётся из замысла эпика, а список очереди работ спрашивается только там, где
-  эпика нет.** По списку номеров первая задача чужого эпика неотличима от своей. Кончившийся эпик
-  называется владельцу тем же ходом, которым берётся работа вне его.
-- **Эпик не закрывается по признаку, подтверждённому только чтением.** Проверяемое глазами
-  называется проверенным лишь вместе с командой и её выводом.
-- **Задачи эпика заводятся все разом, тем же ходом, что и сам эпик.** Заведение по одной прячет
-  объём. Номера возвращаются в раздел порядка той же правкой.
+## How the law applies here
+- **Editing application code is refused until the work has reached a state in which code is
+  edited.** The guard demands three things: a task folder by branch name, a plan in it and a
+  declared state. The product agreement has a guard of its own on the same events.
+- **The guard judges the declared transition, not the presence of files.** An empty plan lies the
+  same as a written one, so the refusal is lifted by the declared state — `этап-идёт`,
+  `этапы-кончились`, `разбор-кончился`. The fourth road is the branch history: a folder taken apart
+  by its commit means handed-in work.
+- **A state line moved forward is the same declaration of intent, only machine-readable.** A state
+  is declared by the turn in which its mandatory action is begun by deed.
+- **A refusal by state names the mandatory action of the declared state.** Hearing only "wrong
+  state", the executor rewrites the state line instead of the step.
+- **Only a word from the list counts as a state name.** A word of one's own says nothing about the
+  entry, the exit or the action.
+- **Two requirements — two guards, and one can be lifted without losing the other.** They judge
+  apart: a line about unchanged behaviour lifts the agreement, not the requirement to reach the
+  code-editing state.
+- **A merged agreement does not lock the branch.** After the merge the "proposed" directory is gone
+  from disk, while the plan refers to it to the end: the guard tells merged from never-created by
+  the branch history.
+- **The agreement is required by the edit paths, not by an appraisal of the task.** `apps/**` and
+  `libs/**` are the sign; rules, texts, tooling and dependencies fall outside it. The bypass is the
+  line `**Поведение:** не меняется — <причина владельца>` in the plan; an empty reason is not
+  accepted.
+- **What needs the owner's word is taken from a list, not appraised on the spot.** The appraisal
+  "this is safe" is assigned by whoever finds it convenient.
+- **A reply to the owner's order begins with the result, not with intent or its justification.** A
+  justification under someone else's accepted decision reads as its appraisal. One exception:
+  execution stopped by an obstacle — then the obstacle is named.
+- **A session does not start work by itself.** A start needs the owner's word in the same session:
+  the handover, the state from the startup hook and an assigned epic say what to do, not whether to
+  work. The form of the message is judged: an empty message, one word or one path order no work.
+- **A refusal by an external limiter removes the way, not the task.** It is not the tree's guard and
+  names no exit: read as the end of the road, it stops the work whole. The way is taken from the
+  guard that already described this fix — a bypass with the reason in the commit body, a mark in the
+  observations, a word to the owner — and the task stays the same.
+- **An instruction to work by the progress covers all its steps, including those that change
+  history.** Questions are asked about what the progress lacks.
+- **A question written by a past session does not become a question to the owner.** It is addressed
+  to the handover's author, and some such questions are closed by a work step.
+- **The owner's instruction holds until they cancel it, and a new fact against it is a line in the
+  reply about the cost, not a new question.** Re-asked is what the instruction does not cover. A
+  menu where two options of three offer to cancel the owner's decision is that very cancellation.
+- **An answer in the owner's message counts the same as an answer in a document.** A question
+  already answered in the conversation is not asked a second time.
+- **The owner's word about the design is a task setting, not a decision.** What they named is
+  usually already in the tree under that word — a name on a screen, a spec section, a model field —
+  and is checked against them before the edit. Diverged — the owner is asked.
+- **A task folder is created for any work, no exceptions.** An exception with even one lawful form
+  is executed as permission. It is created before the first edit.
+- **The task folder goes into the branch by a commit, not lives in one working tree.** Uncommitted,
+  it passes edits without refusal, and the refusal comes at the end, when the plan is already gone.
+  Outside history one draft without a number is lawful.
+- **The task folder is taken apart by the last commit before the PR opens, not after approval.** A
+  person merges as soon as they see green, and no room is left for a closing commit.
+- **After opening the PR, the executor tells the owner the number, what it waits for and what comes
+  next.** It waits for the run; next the draft is lifted: a green run says nothing is broken and
+  nothing about the locked merge button.
+- **A request to merge is a turn of its own, and it never comes before a green run.** One order:
+  folder taken apart and pushed → PR open as a draft → run green → draft lifted → the executor asks
+  to merge, naming the number.
+- **The PR opens as a draft, not at the end of the work.** Before it opens the owner sees no edits,
+  and an open PR reads as an invitation to merge. The draft is lifted by the turn in which the
+  executor says the solution is ready.
+- **The plan guard is the lower bound of the requirement, not its limit.** It demands a folder only
+  for an edit of application code; the article above — for any work.
+- **An instruction to work by a rule is an instruction to do its steps, including those that change
+  history.** Marking a stage, a commit, a push and opening a PR are prescribed by the rule.
+- **A taken task does not end a turn.** Creating the task, the branch, the column and the folder is
+  preparation: the work moves to the written-plan state, where the action is different. The
+  turn-exit guard names the first stage in its refusal.
+- **Waiting for one part of a stage is never a stop of the stage.** The parts independent of what is
+  awaited are done in the same turn; the owner is told what is done and what is left for their step.
+  A refused command reads the same: everything else is done first.
+- **A finding made mid-stage is checked against the plan's exit conditions before the first edit.**
+  Nearness of subject proves no belonging: work on the rules layer and work on the commands that
+  call it roll back apart. A finding named by no exit condition goes to the section on what the work
+  does not do, and is filed as a task.
+- **Done work is marked only in the progress.** "Where we stand" is rewritten by every session, not
+  appended: it is the first thing the next session reads.
+- **A word for a new notion is looked up in the tree's glossary.** The package carries the common
+  part, the tree appends the subject part by an override; the glossary goes into the context whole
+  at session start, so "did not read it" is never a ground.
+- **The task folder is created as a draft and gets its number by a command.** Until the grill ends,
+  how many tasks come out is unknown, so the number never comes first. The command renames the
+  draft, fills the plan header and strips the layout header from the copies.
+- **An abandoned grill is visible.** A draft older than a week is listed by the work queue audit.
+- **Work ordered in words becomes a task in the queue in the same turn.** Even if it will not be
+  done now. A draft folder is not the queue: it has no number, and one session knows of it.
+  Postponed work names a date; postponed silently, it reads as done.
+- **The next task is taken from the epic plan, and the work queue list is asked only where there is
+  no epic.** By a list of numbers the first task of someone else's epic cannot be told from one's
+  own. A finished epic is named to the owner by the same turn that takes work outside it.
+- **An epic is not closed by a sign confirmed by reading alone.** What is checkable by eye is called
+  checked only together with a command and its output.
+- **The tasks of an epic are created all at once, by the same turn as the epic itself.** Creating
+  them one at a time hides the volume. The numbers return to the order section by the same edit.
 
-- **Замысел эпика называет, как стоят ветки его задач, наравне с их порядком.** Расстановок две:
-  каждая ветка от главной либо стопкой — каждая от предыдущей. Порядок задач об этом не говорит.
-  Стопка стоит дороже, её цена перечислена в холодной части; записанная в замысле расстановка
-  становится решением эпика, а не того, кто заводит ветку.
-- **Замысел эпика лежит там, где его найдут без сети и после мержа.** Карточка порядка задач не
-  держит, а папка задачи держала бы его до слияния первой; каталог называет компаньон правила.
-  Названное владельцем по ходу дописывается туда же тем ходом, каким принято.
-- **Сборка по образцу начинается с чтения самого образца, а не пересказа о нём.** Пересказ в
-  разборе просьбы и в замысле эпика образцом не считается. Повторяемая часть открывается целиком,
-  обходом каталогов.
-- **Что действует на дерево, а не на правку, лежит вне индекса.** Путь к образцу и разрешение
-  работать вне эпика ветке не принадлежат и живут рядом с передачей захода. Номер в перечне
-  разрешённых повторяет слово владельца, а не заменяет его.
-- **Закрытая работа разбирается правилами, и это шаг закрытия, а не отдельная просьба.** Что
-  грузилось и чего не хватило, видно только заходу, который работу вёл. Разбор кончается правкой
-  слоя правил или предложением наружу.
-- **Разбор закрытой работы уходит в фон, а исполнитель берёт следующую задачу.** Роль работает
-  своим ходом; сводку собирают до запуска, находки принимают одним ходом.
-- **Находки разбора ждут владельца, а в пакет уезжает только сводка наблюдений.** Предложение —
-  заготовка правки чужого дерева; отправленное без разбора, оно становится работой того, кто его
-  не заказывал. Сводка отправляется всегда: она говорит, чем пользовались, и мнением не бывает.
-- **Дешёвый шаг закрытия идёт раньше дорогого, а прогон — после вливания.** Вливание
-  договорённости и приведение текстов стоят минуты, прогон — окно захода; прогон до вливания
-  проверяет то, что в главную не попадёт.
-- **Договорённость вливается в спек домена одним из последних коммитов ветки, до открытия PR.**
-  К этому моменту код написан, привязки известны, и в главной ветке директория `proposed/` не
-  появляется. Готовые к вливанию перечисляет `npm run check:specs`.
-- **Папка закрытой задачи разбирается, а не переносится целиком.** В `docs/archive/` уезжает то, что
-  объясняет решение; остальное удаляется. Неразобранную ловит сверка очереди.
-- **Открытие PR и снятие черновика отбиваются, пока ветка везёт папку своей задачи.** Слияние
-  нажимает человек на хостинге, где гардов нет: снятый черновик он читает как приглашение.
-  Судится содержимое ветки, а не рабочее дерево.
-- **Ветка, снёсшая папку, обязана прибавить запись в архив.** Снести дешевле, чем разобрать, а
-  первым уходит разбор просьбы — единственная запись слов владельца.
-- **Обход — строка `Task-folder-skip: <причина>` в PR или в самой команде.** Пустая причина обходом
-  не считается, а сам обход снимает отказ, но не гасит строку сверки очереди.
+- **The epic plan names how the branches of its tasks stand, on a par with their order.** Two
+  arrangements: each branch from main, or a stack — each from the previous. The task order says
+  nothing about this. The stack costs more, its price is listed in the cold part; the arrangement
+  written in the plan is the epic's decision, not that of whoever creates the branch.
+- **The epic plan lies where it is found without the network and after the merge.** The card does
+  not hold the task order, and the task folder would hold it only until the first merge; the
+  directory — in the rule's companion. What the owner names along the way is appended there by the
+  turn that accepted it.
+- **Building by a sample begins with reading the sample itself, not a retelling of it.** A retelling
+  in the grill and in the epic plan is not the sample. The repeated part is opened whole, by walking
+  the directories.
+- **What acts on the tree, not on the edit, lies outside the index.** The path to the sample and the
+  permission to work outside the epic do not belong to the branch and live next to the handover. A
+  number in the permitted list repeats the owner's word, not replaces it.
+- **Closed work is reviewed by the rules, and this is a closing step, not a separate request.** What
+  was loaded and what was missing is seen only by the session that led the work. The review ends
+  with an edit of the rules layer or a proposal outward.
+- **The review of closed work goes to the background, and the executor takes the next task.** The
+  role works in a turn of its own; the digest is gathered before the launch, the findings are
+  accepted in one turn.
+- **The review's findings wait for the owner, and only the digest of observations leaves for the
+  package.** A proposal is a draft of an edit to someone else's tree; sent unreviewed, it becomes
+  the work of someone who did not order it. The digest is always sent: it says what was used and is
+  never an opinion.
+- **The cheap closing step goes before the costly one, and the run — after the merge.** Merging the
+  agreement and bringing the texts up to date cost minutes, the run costs the session window; a run
+  before the merge checks what will not reach main.
+- **The agreement merges into the domain spec by one of the last commits of the branch, before the
+  PR opens.** By then the code is written, the bindings are known, and the `proposed/` directory
+  never appears in main. What is ready to merge is listed by `npm run check:specs`.
+- **The folder of a closed task is taken apart, not moved whole.** What explains a decision goes to
+  `docs/archive/`; the rest is deleted. One not taken apart is caught by the work queue audit.
+- **Opening the PR and lifting the draft are refused while the branch carries its task folder.** A
+  person presses merge on the host, where there are no guards: a lifted draft reads to them as an
+  invitation. The branch content is judged, not the working tree.
+- **A branch that removed the folder must add a record to the archive.** Removing is cheaper than
+  taking apart, and the grill leaves first — the only record of the owner's words.
+- **The bypass is the line `Task-folder-skip: <причина>` in the PR or in the command itself.** An
+  empty reason is no bypass, and the bypass lifts the refusal but does not silence the work queue
+  audit line.
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-Полноту записанного понимания не проверяет ничто: машине видно наличие записи, но не то, что в
-ней закрыты все пробелы. То же с вопросом, который стоило задать и не задали, — следа он не
-оставляет. Судит оба владелец.
+Nothing checks the completeness of the written understanding: the machine sees that a record exists,
+not that it closes every gap. The same for a question worth asking and not asked — it leaves no
+trace. The owner judges both.
 
-Гард судит по путям правки, а не по тому, меняет ли работа поведение на самом деле. Своего
-признака рефакторингу не заводится: оценку «поведение не меняется» назначал бы тот, кому она
-мешает.
+The guard judges by the edit paths, not by whether the work changes behaviour. A refactoring gets no
+sign of its own: the appraisal "behaviour does not change" would be assigned by whoever it hinders.
 
-Ничто из самого разбора не проверяется. Разговор с владельцем — не вызов инструмента: гард
-видит правку файла и не знает ни о разведке до первого вопроса, ни о шести обязательных, ни об
-ответах на них. Пустая таблица проходит так же, как заполненная.
+Nothing of the grill itself is checked. A conversation with the owner is not a tool call: the guard
+sees a file edit and knows nothing of the exploration, the six mandatory questions or the answers.
+An empty table passes the same as a filled one.
 
-Понимания текста у гарда разговора нет: второй его признак судит общие слова темы вопроса и
-последней реплики владельца, а не смысл. Отказ называет законный ход: назвать то, чего в прежнем
-ответе владельца нет.
+The conversation guard does not understand text: its second sign judges shared words between the
+question's topic and the owner's last message, not meaning. The refusal names the lawful move: name
+what the owner's earlier answer lacks.
 
-Неизменность замысла не стережёт ничто: правка по ходу отличима от первоначальной записи только
-по истории.
+Nothing watches the plan's immutability: an edit along the way is told from the original record only
+by history.
 
-Приведение текстов к сделанному не проверяет ничто: что устарело в правиле и в спеке, машине не
-видно. Держится это шагом закрытия и следом задачи в замысле. Правило и спек правятся в ветке,
-закон — нет: его статья приносится владельцу текстом, а работа идёт дальше без неё.
+Nothing checks that the texts match what was done: the machine cannot see what went stale in a rule
+or a spec. This is held by the closing step and the task footprint in the plan. A rule and a spec
+are edited in the branch, a law is not: its article goes to the owner as text, and the work goes on
+without it.
 
-Что именно перенесли в архив, не проверяется: гард видит, что папка уехала и что ветка что-то в
-архив добавила, а то ли это — судит владелец на ревью.
+What exactly went to the archive is not checked: the guard sees that the folder left and the branch
+added something to the archive; whether it is the right thing the owner judges at review.
 
-Гард папки задачи судит вызов исполнителя, а не кнопку хостинга: человек, вливающий работу со
-своей стороны, проходит мимо него молча. На этой половине случаев требование держится оставшимся
-шагом, который стоит разделом в теле заявки и произносится вслух.
+The task folder guard judges the executor's call, not the host's button: a person merging from their
+side passes it in silence. On that half of the cases the requirement is held by the remaining step:
+a section in the PR body, said aloud.
 
-Порядок отдачи работы дерево вправе перевернуть надстройкой, и тогда часть шагов пакета перестаёт
-исполняться. Какие именно — не считает ничто: шаг, чья механика сломалась тем же решением, в
-перечень отменяемого не попадает и продолжает читаться действующим. Держится это чтением обоих
-текстов подряд при каждой правке порядка отдачи.
+A tree may reverse the hand-in order by an override, and then some package steps stop being
+executed. Which ones — nothing counts: a step whose mechanics broke by the same decision does not
+enter the cancelled list and still reads as in force. This is held by reading both texts in a row on
+every edit of the hand-in order.
 
-## Паттерны
+## Patterns
 
-- `task-flow-start` — разведка, разбор, договорённость, замысел, задача и ветка.
-- `task-flow-resume` — возвращение к незаконченной работе новым заходом.
-- `task-flow-close` — снятие черновика, вливание договорённости, приведение текстов.
-- `task-flow-archive` — разбор папки задачи, переезд в описание прошлого, разбор правилами.
+- `task-flow-start` — exploration, grill, agreement, plan, task and branch.
+- `task-flow-resume` — returning to unfinished work in a new session.
+- `task-flow-close` — lifting the draft, merging the agreement, bringing the texts up to date.
+- `task-flow-archive` — taking the task folder apart, the move to the archive, review by the rules.

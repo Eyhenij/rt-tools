@@ -4,235 +4,226 @@ kind: rule
 law: verifiability
 description: Rule under the verifiability law. Load when editing any test file and anything in the tree's end-to-end suites. Names the scenario id in the title, moving a decision into a pure function and what an end-to-end test closes. Patterns testing-unit, testing-e2e.
 ---
-<!-- rt-kit v0.25.0 · rules/testing.md · a13ad1eb41dd · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/testing.md · 8aeaf3df24bb · правится надстройкой, не здесь -->
 
-# Проверяемость — как это устроено здесь
+# Verifiability — how it works here
 
-Правило под закон `docs/constitution/verifiability.md`. Закон говорит, что считается
-подтверждением; здесь — чем это названо в этом дереве, где лежит и что из закона у нас не
-применяется. Проверка работающего приложения глазами и замером — правило
-`browser-verification` под тем же законом.
+Rule under the law `docs/constitution/verifiability.md`. The law says what counts as
+confirmation; here — what it is called in this tree, where it lives and what of the law does not
+apply here. Checking the running application by eye and by measurement is the rule
+`browser-verification` under the same law.
 
-**Холодная часть:** `pitfalls.md` рядом — ловушки, грабли, на которые уже наступали.
-Грузится по требованию, а не вместе с правилом.
+**Cold part:** `pitfalls.md` next to it — traps already stepped on. Loaded on demand, not
+together with the rule.
 
-## Как это называется здесь
+## What it is called here
 
-| В законе                   | Здесь                                                                            |
-| -------------------------- | -------------------------------------------------------------------------------- |
-| сценарий                   | `SC-<ПРЕФИКС>-<НОМЕР>` в `docs/specs/<домен>/scenarios.md`                       |
-| тест                       | `it(...)` в `*.spec.ts` рядом с исходником — Vitest; сквозная спека — Playwright |
-| сводка покрытия            | вывод `npm run check:specs`: покрыто, частично, без тестов                       |
-| отметка непокрытого        | строка `Не покрыто: <причина>` внутри блока сценария                             |
-| отметка неполного покрытия | строка `Покрытие: частичное — <чего не хватает>`                                 |
+| In the law            | Here                                                                                    |
+| --------------------- | --------------------------------------------------------------------------------------- |
+| scenario              | `SC-<PREFIX>-<NUMBER>` in `docs/specs/<domain>/scenarios.md`                            |
+| test                  | `it(...)` in `*.spec.ts` next to the source — Vitest; an end-to-end test — Playwright   |
+| coverage digest       | the output of `npm run check:specs`: covered, partial, without tests                    |
+| uncovered mark        | the line `Не покрыто: <причина>` inside the scenario block                              |
+| partial-coverage mark | the line `Покрытие: частичное — <чего не хватает>`                                      |
 
-## Где это лежит
+## Where it lives
 
-В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
-переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
-же дереве, которое держит код иначе.
+In this tree — the table in `implementation.md` next to it. Paths live there, not here: the rule
+travels between repositories, the layout does not, and a path named in the rule lies in the
+first tree that keeps its code differently.
 
-## Ход
+## Flow
 
-Ход заведения проверки: что проверяется вызовом, что — сквозным путём и как сценарий связан со
-своим тестом.
+The flow of creating a check: what is checked by a call, what by the end-to-end path, and how a
+scenario is tied to its test.
 
 ```mermaid
 flowchart TD
-    A[Нужна проверка] --> B{Что обещает сценарий}
-    B -->|Человек видит и делает| C[Закрывается сквозным тестом тем же путём, что и пользователь]
-    B -->|Значение, состояние, отказ| D[Закрывается вызовом]
-    D --> E{Решение зашито в компонент или сервис}
-    E -->|Да| F[Выносится в чистую функцию и проверяется вызовом]
-    E -->|Нет| G[Проверяется как есть]
-    F --> H[Момент времени принимается параметром, а не читается с часов машины]
+    A[A check is needed] --> B{What the scenario promises}
+    B -->|A person sees and does| C[Closed by an end-to-end test on the same path as the user]
+    B -->|A value, a state, a refusal| D[Closed by a call]
+    D --> E{The decision is baked into a component or a service}
+    E -->|Yes| F[Moved into a pure function and checked by a call]
+    E -->|No| G[Checked as is]
+    F --> H[The moment in time is taken as a parameter, not read from the machine clock]
     G --> H
-    C --> I{Тест погашен переменной окружения}
-    I -->|Да| J[Покрытием не считается: это долг, а отметка при живом тесте — отказ]
-    I -->|Нет| K[В заголовке теста стоит номер сценария]
+    C --> I{The test is switched off by an environment variable}
+    I -->|Yes| J[Does not count as coverage: it is debt, and a mark next to a live test is a refusal]
+    I -->|No| K[The test title carries the scenario number]
     H --> K
-    K --> P{Сценарий с таким номером есть в спеках}
-    P -->|Нет| Q[Проверка краснеет: тест ссылается на несуществующий сценарий]
-    P -->|Да| R{Тест идёт тем же путём, что и пользователь}
-    R -->|Нет| S[Помечается частичным покрытием: в сводку идёт долгом]
-    R -->|Да| L{Сценарий остался без теста}
-    L -->|Да| M[Несёт отметку с причиной: пустая не принимается]
-    L -->|Нет| N[Готово]
+    K --> P{A scenario with that number exists in the specs}
+    P -->|No| Q[The check turns red: the test refers to a scenario that does not exist]
+    P -->|Yes| R{The test follows the same path as the user}
+    R -->|No| S[Marked as partial coverage: goes into the digest as debt]
+    R -->|Yes| L{The scenario is left without a test}
+    L -->|Yes| M[Carries a mark with a reason: an empty one is not accepted]
+    L -->|No| N[Done]
     S --> N
     M --> N
     J --> N
 ```
 
-## Как закон применяется здесь
+## How the law applies here
 
-- **Идентификатор сценария стоит в начале заголовка теста, через тире.** Один сценарий проверяется
-  несколькими тестами, один тест закрывает несколько сценариев.
-- **Сценарий без теста несёт отметку с причиной.** Пустая отметка не принимается, а отметка при
-  существующем тесте — отказ: она означает, что долг закрыли, а отметку не сняли.
-- **Тест, идущий не тем путём, что пользователь, помечается частичным покрытием.** В сводку он
-  попадает долгом, а не покрытием.
-- **Сценарий, чьё «Тогда» называет человека и то, что он видит, закрывается сквозным тестом.**
-  Юнит на тот же расчёт остаётся долгом: между верным решением и тем, что человек его видит, лежит
-  всё, чего юнит не касался.
-- **Сквозной тест, погашенный переменной окружения, покрытием не считается.** Выключатель по
-  состоянию стенда — пропуск случая, выключатель по переменной — невыполненный тест. Состоянием
-  стенда при этом считается то, чего на нём не бывает по устройству, а не то, что оставил на
-  экране соседний тест: снятие по чужому следу закон покрытием не считает, и от законного
-  пропуска оно отличается только причиной.
-- **Упоминание в тесте сценария, которого в спеках нет, роняет проверку.** Так ловится
-  переименованный или выкинутый сценарий: тесты при этом остаются зелёными.
-- **Решение выносится в чистую функцию и проверяется вызовом.** Компонент и сервис остаются тонкой
-  обёрткой и отдельно не проверяются, пока своего ветвления у них нет.
-- **Решение, зависящее от текущего момента, принимает момент параметром.** Часы машины оно не
-  читает: правило проверяется вызовом, а не подкруткой времени вокруг теста. Умолчание `= new
-  Date()` ставится на границе — там, где решение зовёт процедура или служба.
-- **Жёсткая дата в образце — это срок годности самой спеки.** Момент образца и момент, которым
-  зовут проверяемый код, берутся либо оба жёсткими, либо оба от часов: смешение двух видов даёт
-  спеку, зелёную в день, когда её пишут, и красную через сутки или неделю — на чужой правке, у
-  того, кто её не трогал. Ни линтер, ни сборка, ни сверка спеков времени не знают.
-- **Процедура Connect проверяется вызовом своего метода с рукописным двойником базы.** Контейнер и
-  роутер поднимать не надо: спека проверяет решение, а не раскладку полей.
-- **Процедуру зовёт и сквозной набор, а не только тест рядом с ней.** У сквозного набора есть
-  свой помощник прямого вызова, и спека берёт ответ сервера оттуда, а не поднимает экран ради
-  одного поля. Поэтому «тестов на процедуру нет» утверждается после поиска её имени по всему
-  дереву, каталоги сквозных наборов включая, а не после того, как рядом с её файлом не нашлось
-  файла проверки: шесть отметок покрытия подряд объявили непокрытым закрытое.
-- **Сид заводит то, без чего экран не открыть, и ничего, что гость примет за настоящее.**
-  Содержимое, у которого есть автор, — отзывы, вопросы, обсуждения — гость читает как написанное
-  людьми, а стенд собирается из той же базы, что и проверка глазами. Настройки владельца —
-  контакты, адрес отправителя, ключи внешних служб — сид не заводит тоже: их вписывают в
-  приложении. То, что нужно редко, включается признаком в окружении, а не сеется всем.
-- **Заведённая проверка встаёт в гейт пуша или в конвейер, а не только в сводную цель.** Сводная
-  цель запускается руками, и проверка, которая живёт только в ней, отвечает тому, кто её вспомнил:
-  молчание такой проверки читается как её зелёный ответ. Три проверки простояли вне гейта,
-  объявляя в собственных списках известного, что падают на новом.
-- **Проверка, приехавшая раскладкой, приезжает и со своим местом.** Место — это имя команды,
-  которой её зовут, и строка набора, в котором она стоит. Проверка без места узнаётся только по
-  тому, что раскладка положила новый файл, и статья выше на неё не действует: вставать ей некуда.
-  Так приехала проверка длины — той же редакцией, что и статья о её обязательном месте.
-- **Спека, необратимо меняющая данные стенда, выключена по умолчанию.** `BASE_URL` уводит прогон
-  одной переменной, и без выключателя такая спека правила бы данные чужого стенда.
-- **Спеки, которым нужен nginx перед приложением, просыпаются вместе с `BASE_URL`.** Голый сервер
-  отдачи страниц их не проходит: перенаправления живут в конфиге прокси.
-- **Правило линтера, которое запрещает принятый здесь приём, выключают в конфиге, а не обходят в
-  каждом тесте.** Выключатель теста — приём этого дерева, а `playwright/no-skipped-test` запретил
-  бы его сразу в шестидесяти пяти местах. Рядом со строкой отключения пишут причину, а точечный
-  `eslint-disable` остаётся для того, что запрещено по делу.
-- **Гард отпускает действие, когда сам сломался.** Нет разборщика входа, пустой ввод, не тот
-  каталог, любая своя ошибка — гард выходит нулём и пропускает: сломанная проверка не имеет права
-  заклинить работу. Объявляется это строкой `FAIL-OPEN` в шапке самого гарда, рядом с
-  перечислением случаев, и туда же дописывается новый случай, когда он находится.
-- **Гард, не узнавший вызов, молчит так же, как исправный.** Нулевой выход бывает двух родов: гард
-  сломался и отпустил намеренно — это объявлено в его шапке, — либо он не признал в команде своего
-  дела и до проверки не дошёл вовсе. Снаружи они неотличимы, а второй не объявлен нигде и не
-  оставляет следа. Отсюда два следствия. Признак вызова обязан ошибаться в сторону лишнего
-  срабатывания: сработавший на лишнем виден сразу и правится, не узнавший — не виден никогда. И
-  принятый в дереве способ звать команду — полным путём, через обёртку, с подстановкой переменных —
-  входит в признак наравне с голым именем: обход, которым команду зовут каждый день, ровно там гард
-  и слепнет.
-- **Список известного у проверки именной и объясняет себя сам.** Первым полем перечня стоит имя
-  проверки и слово о том, что перечисленное отказом не считается. Дальше либо два ключа — принятое
-  остаётся навсегда, долг накоплен к заведению проверки и только сокращается, — либо столько
-  ключей, сколько у записей родов. Причина обязательна: снятая проверка без причины через месяц
-  неотличима от недосмотра.
-- **Запись принятого отличается от долга тем, заведена ли на неё работа.** Принятое — то, что
-  дерево делить не собирается; долг — то, на что заведена задача, и он только сокращается. Один
-  список на оба означал бы, что разбирать нечего: запись без задачи через месяц читается как
-  вечная, а запись с задачей — как недосмотр.
-- **У каждой записи стоят своя причина и номер задачи, которой она внесена.** Причина прозой на
-  весь список объясняет любую его строку и потому не объясняет ни одной, а запись без номера не
-  спросишь ни у кого: тот, кто её внёс, к этому дню не помнит ни повода, ни своего решения. Запись
-  без причины или без номера отбивает проверку — и заводится она словом владельца, а не решением
-  исполнителя, которому она в эту минуту мешает.
-- **Запись списка, которую больше ничто не вызывает, снимается вместе с тем, что её вызывало.**
-  Такая строка молча разрешает то, чего в дереве нет, и следующий читатель принимает её за
-  действующее объяснение. Проверка на мёртвую запись бывает не у всякого списка, поэтому
-  снимается она тем же изменением, которым уходит вызвавшее её место.
-- **У красного есть назначенное действие, и второй перезапуск в него не входит.** Красное бывает
-  двух родов, и в списке прогонов они выглядят одинаково: отказ хостинга на шаге подготовки
-  лечится перезапуском, дефект ветки — не лечится им вовсе. Назначенное действие одно: сперва
-  журнал этого задания, потом решение. Перезапуск, повторённый до чтения журнала, чинит не
-  причину, а её проявление, и в истории выглядит работой.
-- **Строка в список известного не заводится под красную проверку.** Список набран к дню заведения
-  проверки и с тех пор только сокращается: дописанная строка гасит сигнал, а не причину, и в
-  истории выглядит так же, как починка. Место, где проверка права по букве и не права по существу,
-  разбирает владелец, а до его ответа верна проверка.
-- **Обмен принимается прочитанным с обеих сторон, а не по успеху вызовов.** Отправка и правка
-  состояния отвечают успехом и тогда, когда прочитать результат нечем: две с лишним сотни записей
-  простояли новыми, потому что забрать их было некому, а отметились только те, чей файл ещё лежал
-  на диске у отправителя. Заводя сторону обмена, называют вторую: чем читают, кто читает и что
-  будет, если её нет. Ответ «нечем» пишется словом — молчание о ней читается как рабочий обмен.
-- **Значение, общее двум сторонам обмена, берётся у объявившей стороны, а не считается заново.**
-  Признак записи, форма груза, способ счёта ключа — своя копия любого из них расходится с
-  оригиналом молча, и обе стороны при этом зелены: одна пишет под своим значением, другая ищет
-  под своим. Проверяется это сценарием, который считает значение обоими путями и сверяет их между
-  собой, а не по одному на каждой стороне.
-- **Тест, утверждающий отсутствие, зелен и тогда, когда ищет не то.** Совпадения нет ни у верного
-  текста, ни у опечатки в образце, ни у переименованного ключа — отличить их по цвету прогона
-  нечем. Отрицательное утверждение поэтому идёт в паре с положительным: сначала проверяется, что
-  искомое место вообще найдено, и только потом — что в нём нет того, чего быть не должно.
-- **Заголовок теста обещает больше, чем тело проверяет, и сверка этого не видит.** Номер сценария
-  в заголовке стоит — сценарий числится покрытым, а что именно утверждается, не спрашивает никто.
-  Тело читается вместе с заголовком: обещание в заголовке и утверждение в теле — два разных
-  текста, и расходятся они молча.
-- **Успешный ответ команды перечитывается отдельным запросом.** Код возврата говорит, что вызов
-  прошёл, и молчит о том, наступило ли нужное состояние: заведение задачи, отметка записи и
-  постановка ревьювера отвечают нулём и тогда, когда сделали не то. В отчёт идёт прочитанное, а
-  не заказанное.
-- **Служба считается поднятой по выполненному заданию, а не по открытому порту.** Ответ на порту
-  говорит, что кто-то там слушает, и неотличим от прошлой сборки, оставшейся с прежнего захода:
-  проверяются обе стороны связи — что заказчик выбирает именно её и что задание через неё прошло.
-- **Эталоны снимочного набора лежат рядом со спекой, а обновляются отдельным вызовом и читаются
-  глазами.** Обновление «на всякий случай» вместе с прогоном стирает разницу между починенным
-  видом и сломанным: обновлённый эталон делает зелёным любой кадр. Где эталоны и чем они
-  обновляются, называет компаньон правила.
-- **Растр браузера называется явно, иначе кадр не сходится сам с собой.** Профиль цвета, взятый у
-  дисплея машины, ускоритель, считающий растр, и дорисовка кусками — каждый из трёх двигает цвет
-  на единицу-другую по каналу, и видно это только там, где смешение стоит на границе округления:
-  на сглаженных уголках тёмной темы. Ожидание вставшего кадра тут не помогает — страница
-  нарисована, а нарисована она каждый раз чуть иначе; Все три называются доводами браузеру при
-  запуске и становятся частью эталона.
-- **Маска закрывает содержимое, но не ширину.** Узел под маской занимает своё место в раскладке
-  по-прежнему, и плывущее значение внутри него двигает соседей мимо маски. Там, где размер узла
-  считается по содержимому — ячейка таблицы, надпись, растягивающая кнопку, — плывущее лечится в
-  данных стенда постоянным значением, и тогда маска не нужна вовсе.
-- **Постоянным делается не только время, но и всё, что приложение из него вывело.** Приложение
-  считает от своих часов и производное — ключ месяца, срок, признак свежести, — и считает его в
-  минуту записи. Правка времён, идущая после записи, производного не двигает: оно посчитано раньше
-  и лежит в соседней колонке. Расхождения при этом не наступает месяцами, а потом набор краснеет в
-  день, когда в дерево не внесли ни строки. Признак у промаха свой и виден сравнением двух колонок:
-  производное перестало сходиться с тем, из чего его обязаны были вывести.
-- **Засев проверяет себя сам, а не полагается на кадр.** Кадр говорит «стало другим» и молчит о
-  том, почему; отказ засева называет причину словами и приходит до того, как снят хоть один кадр.
-  Признак берётся верный в любой день прогона: данные стенда — прошлое, поэтому значение времени,
-  попавшее на день прогона или позже, посчитано часами машины, а засевом не закреплено. Нарочно
-  будущее отделяется границей и называется отдельно. Судятся при этом временные колонки всех
-  таблиц, которые читают экраны, а не только показанные сегодня: столбец выводят на экран одной
-  строкой разметки, и вспомнить при этом про засев некому.
-
-## Чего из закона здесь нет
-
-Полнота теста не проверяется: сверка судит путь — сквозной он или юнит, — но не то, сколько
-из обещанного тест на этом пути закрыл. Признак пути читается из слов «Тогда» и нарочно
-молчалив: сценарий, чьё обещание человека не называет, под него не подпадает вовсе, и
-отметку неполноты там по-прежнему ставит рука.
-
-Отметка покрытия стареет молча. Сверка знает идентификатор сценария против заголовка теста, а
-текст отметки под ним для неё проза: он читается как действующее описание и через полгода после
-того, как долг закрыли. Перечитывается отметка вместе с той правкой, которая трогает её
-предмет, — иначе не перечитывает её никто. Договорённостей о подмене модулей тоже нет:
-`vi.mock` в дереве не встречается ни разу, и двойник пишется руками.
-
-Наблюдения за тем, как пользуются правилами, это правило не ведёт вовсе: род события, место
-записи и то, что уходит наружу, — предмет закона о наблюдаемости и правила под ним. Здесь оно
-названо затем, чтобы наблюдение не путали с покрытием: покрытие говорит, что проверено, а
-наблюдение — чем пользовались.
-
-## Паттерны
-
-- `testing-unit` — тест на чистую функцию, на процедуру Connect и разовый тест-доказательство,
-  который не коммитится.
-- `testing-e2e` — прогон сквозных тестов, стенд под настоящим nginx, выключатели.
+- **The scenario id stands at the start of the test title, followed by a dash.** One scenario is
+  checked by several tests, one test closes several scenarios.
+- **A scenario without a test carries a mark with a reason.** An empty mark is not accepted, and
+  a mark next to an existing test is a refusal: it means the debt was closed and the mark not
+  removed.
+- **A test that does not follow the user's path is marked as partial coverage.** It goes into the
+  digest as debt, not as coverage.
+- **A scenario whose "Then" names a person and what they see is closed by an end-to-end test.**
+  A unit test on the same computation stays debt: between a right decision and a person seeing
+  it lies everything the unit test did not touch.
+- **An end-to-end test switched off by an environment variable does not count as coverage.** A
+  switch by stand state is a skip of a case; a switch by variable is an unrun test. Stand state
+  means what the stand never has by design, not what a neighbouring test left on the screen:
+  skipping on someone else's trace the law does not count as coverage, and it differs from a
+  legitimate skip only by its reason.
+- **A test mentioning a scenario that is not in the specs takes the check down.** That is how a
+  renamed or discarded scenario is caught: the tests stay green meanwhile.
+- **A decision is moved into a pure function and checked by a call.** The component and the
+  service stay a thin wrapper and are not checked separately while they have no branching of
+  their own.
+- **A decision that depends on the current moment takes the moment as a parameter.** It does not
+  read the machine clock: the rule is checked by a call, not by winding time around the test. The
+  default `= new Date()` goes at the boundary — where a procedure or a service calls the decision.
+- **A hard-coded date in a fixture is the expiry date of the test itself.** The fixture's moment
+  and the moment the code under test is called with are taken either both hard-coded or both from
+  the clock: mixing the two kinds gives a test green on the day it is written and red a day or a
+  week later — on someone else's edit, for whoever did not touch it. Neither the linter, nor the
+  build, nor the spec audit knows time.
+- **A Connect procedure is checked by calling its method with a hand-written database double.**
+  No container or router needs raising: the test checks the decision, not the layout of fields.
+- **A procedure is also called by the end-to-end suite, not only by the test next to it.** The
+  end-to-end suite has its own direct-call helper, and the test takes the server's answer from
+  there instead of raising a screen for one field. So "there are no tests for the procedure" is
+  stated after a search for its name across the whole tree, end-to-end suite directories
+  included, not after no test file was found next to its file: six coverage marks in a row
+  declared closed work uncovered.
+- **The seed creates what a screen cannot open without, and nothing a guest would take for
+  real.** Content with an author — reviews, questions, discussions — a guest reads as written by
+  people, and the stand is assembled from the same database as the check by eye. The owner's
+  settings — contacts, sender address, keys of external services — the seed does not create
+  either: they are entered in the application. What is needed rarely is switched on by a sign in
+  the environment, not seeded for all.
+- **A created check goes into the push gate or the pipeline, not only into the umbrella target.**
+  The umbrella target is run by hand, and a check that lives only there answers whoever
+  remembered it: such a check's silence reads as its green answer. Three checks stood outside the
+  gate, declaring in their own known lists that they fail on new code.
+- **A check that arrives by layout arrives with its place too.** The place is the name of the
+  command that calls it and the line of the suite it stands in. A check without a place is
+  recognised only by the layout having put a new file, and the article above does not act on it:
+  it has nowhere to stand. That is how the length check arrived — by the same edition as the
+  article on its mandatory place.
+- **A test that irreversibly changes stand data is switched off by default.** `BASE_URL`
+  redirects the run with one variable, and without the switch such a test would edit the data of
+  someone else's stand.
+- **Tests that need nginx in front of the application wake together with `BASE_URL`.** A bare
+  page server does not pass them: the redirects live in the proxy config.
+- **A linter rule that forbids a technique accepted here is switched off in the config, not
+  bypassed in every test.** The test switch is this tree's technique, and
+  `playwright/no-skipped-test` would forbid it in sixty-five places at once. The reason is
+  written next to the disabling line, and a targeted `eslint-disable` stays for what is forbidden
+  for good reason.
+- **A guard lets the action through when it is itself broken.** No input parser, empty input,
+  wrong directory, any error of its own — the guard exits zero and lets through: a broken check
+  has no right to jam the work. This is declared by the `FAIL-OPEN` line in the guard's own
+  header, next to the list of cases, and a new case is added there when it is found.
+- **A guard that did not recognise the call is as silent as a working one.** A zero exit comes in
+  two kinds: the guard broke and let through on purpose — declared in its header — or it did not
+  recognise its business in the command and never reached the check. From outside they are
+  indistinguishable, and the second is declared nowhere and leaves no trace. Two consequences
+  follow. The call sign must err towards firing too often: one that fired needlessly is seen at
+  once and fixed, one that failed to recognise is never seen. And the tree's accepted way of
+  calling the command — by full path, through a wrapper, with variable substitution — goes into
+  the sign alongside the bare name: the bypass the command is called by every day is exactly
+  where the guard goes blind.
+- **A check's known list is named and explains itself.** The first field of the list is the
+  check's name and a word that what is listed does not count as a refusal. Then either two keys —
+  the accepted stays forever, the debt was gathered when the check was created and only shrinks —
+  or as many keys as the entries have kinds. The reason is mandatory: a lifted check without a
+  reason is indistinguishable from an oversight a month later.
+- **An accepted entry differs from debt by whether work is opened for it.** Accepted is what the
+  tree does not intend to split; debt is what a task is opened for, and it only shrinks. One list
+  for both would mean there is nothing to review: an entry without a task reads as eternal a
+  month later, and an entry with a task as an oversight.
+- **Every entry carries its own reason and the number of the task that added it.** A prose reason
+  for the whole list explains any of its lines and therefore explains none, and an entry without
+  a number cannot be asked of anyone: whoever added it remembers by that day neither the occasion
+  nor their decision. An entry without a reason or a number makes the check refuse — and it is
+  added by the owner's word, not by the decision of the executor it is in the way of at that
+  minute.
+- **A list entry nothing calls any more is removed together with what called it.** Such a line
+  silently allows what the tree does not have, and the next reader takes it for a current
+  explanation. Not every list has a dead-entry check, so it is removed by the same change that
+  removes the place that caused it.
+- **Red has an assigned action, and a second rerun is not part of it.** Red comes in two kinds,
+  and in the list of runs they look the same: a hosting refusal on the preparation step is cured
+  by a rerun, a defect of the branch is not cured by it at all. The assigned action is one: first
+  the output of that step, then the decision. A rerun repeated before reading the output fixes
+  not the cause but its symptom, and in history looks like work.
+- **A line is not added to the known list for a red check.** The list was gathered by the day the
+  check was created and has only shrunk since: an added line silences the signal, not the cause,
+  and in history looks the same as a fix. A place where the check is right by the letter and
+  wrong in substance is reviewed by the owner, and until their answer the check is right.
+- **An exchange counts as read on both sides, not by the success of calls.** Sending and editing
+  state answer with success even when there is nothing to read the result with: over two hundred
+  records stood as new because there was nobody to collect them, and only those whose file still
+  lay on the sender's disk got marked. When creating one side of an exchange, the other is named:
+  what reads, who reads and what happens if it is absent. The answer "nothing" is written as a
+  word — silence about it reads as a working exchange.
+- **A value shared by two sides of an exchange is taken from the declaring side, not computed
+  anew.** A record sign, the cargo shape, the way a key is computed — one's own copy of any of
+  them drifts from the original silently, and both sides stay green: one writes under its value,
+  the other looks under its own. This is checked by a scenario that computes the value both ways
+  and compares them, not by one scenario on each side.
+- **A test asserting absence is green even when it looks for the wrong thing.** There is no match
+  for the right text, nor for a typo in the sample, nor for a renamed key — nothing tells them
+  apart by the run's colour. So a negative assertion goes paired with a positive one: first it is
+  checked that the place sought is found at all, and only then that it lacks what must not be
+  there.
+- **A test title promises more than the body checks, and the audit does not see it.** The
+  scenario number stands in the title — the scenario counts as covered, and nobody asks what
+  exactly is asserted. The body is read together with the title: the promise in the title and the
+  assertion in the body are two different texts, and they drift apart silently.
+- **A command's successful answer is re-read by a separate request.** The exit code says the call
+  went through and is silent about whether the needed state arrived: creating a task, marking a
+  record and assigning a reviewer answer zero even when they did the wrong thing. What goes into
+  the reply is what was read, not what was ordered.
+- **A service counts as up by a request it carried through, not by an open port.** The answer on
+  the port says someone is listening there and is indistinguishable from a past build left from a
+  previous session: both sides of the link are checked — that the client picks that very service
+  and that the request went through it.
+- **The snapshot suite's references lie next to the test, are updated by a separate call and read
+  by eye.** Updating "just in case" together with the run erases the difference between a fixed
+  look and a broken one: an updated reference makes any frame green. Where the references are and
+  what updates them is named by the rule's companion.
+- **The browser raster is named explicitly, otherwise a frame does not match itself.** The colour
+  profile taken from the machine's display, the accelerator computing the raster and tiled
+  repainting — each of the three moves colour by a unit or two per channel, and it shows only
+  where blending sits on a rounding boundary: on the anti-aliased corners of the dark theme.
+  Waiting for the frame to settle does not help here — the page is drawn, and each time drawn
+  slightly differently; all three are named as arguments to the browser at launch and become part
+  of the reference.
+- **A mask covers the content but not the width.** A node under a mask still takes its place in
+  the layout, and a drifting value inside it moves its neighbours past the mask. Where a node's
+  size is computed from its content — a table cell, a label stretching a button — the drift is
+  cured in the stand data by a constant value, and then no mask is needed at all.
+- **Not only time is made constant but everything the application derived from it.** The
+  application counts from its clock and computes the derivative — month key, deadline, freshness
+  sign — at the minute of writing. An edit of times that comes after the write does not move the
+  derivative: it was computed earlier and lies in the next column. The divergence does not arrive
+  for months, and then the suite turns red on a day when not a line was added to the tree. The
+  miss has its own sign, visible by comparing two columns: the derivative stopped matching what
+  it had to be derived from.
+- **The seeding checks itself instead of relying on the frame.** The frame says "it became
+  different" and is silent about why; a seeding refusal names the reason in words and arrives
+  before a single frame is taken. The sign is taken so that it holds on any run day: stand data is
+  the past, so a time value that lands on the run day or later was computed by the machine clock
+  and not pinned by the seeding. A deliberate future is separated by a boundary and named apart.
+  Judged are the time columns of all the tables the screens read, not only those shown today: a
+  column is put on screen by one line of markup, and nobody remembers the seeding then.
 
 ## What of the law is not here
 
@@ -257,3 +248,9 @@ flowchart TD
 
 Полноту теста не проверяет ничто, и подмену модулей дерево не договаривалось делать никак:
 двойник пишется руками.
+
+## Patterns
+
+- `testing-unit` — a test on a pure function, on a Connect procedure and a one-off proof test
+  that is not committed.
+- `testing-e2e` — running end-to-end tests, a stand under real nginx, switches.

@@ -5,289 +5,287 @@ law: work-conduct
 description: Rule under the work-conduct law — about one turn. Load when a turn is being ended — what it ends with, what the owner is told about a step that is theirs, what backs a statement about the tree, what the guards watch. Pattern task-flow-handoff. The whole course of work — rule task-flow.
 ---
 
-# Ход захода — как это устроено здесь
+# Turn conduct — how it works here
 
-Правило под закон `docs/constitution/work-conduct.md` — та его часть, что про один ход.
-Закон говорит, что должно быть верно; здесь — чем это стережётся в этом дереве. Ход работы
-от просьбы владельца до слияния, состояния работы и папка задачи — правило `task-flow`
-под тем же законом.
+Rule under the law `docs/constitution/work-conduct.md` — the part about one turn. The law says what
+must be true; here — what keeps it in this tree. The course of work from request to merge, the
+states and the task folder — rule `task-flow` under the same law.
 
-**Холодная часть:** `pitfalls.md` рядом — случаи и числа по разборам происшествий. Грузится по
-требованию, а не вместе с правилом.
+**Cold part:** `pitfalls.md` next to it — cases and numbers from incident analyses. Loaded on
+demand, not with the rule.
 
-## Как это называется здесь
+## What it is called here
 
-| В законе                         | Здесь                                                                                          |
-| -------------------------------- | ----------------------------------------------------------------------------------------------- |
-| ход                              | один заход агента: от реплики владельца до ответа ему                                          |
-| выход хода                       | один из четырёх способов кончить ход; чем подтверждается каждый — карта хода                   |
-| страж выходов хода               | гард на завершении хода: читает объявленное состояние работы и то, что за ход сделано в дереве |
-| утверждение о состоянии дерева   | слово ответа владельцу, за которым обязана стоять команда того же хода и её вывод              |
-| передача захода                  | запись вне дерева: она пересказывает ход работы для вставки в новый заход                      |
-| порог сжатия и порог остановки   | два числа заполнения окна; дерево задаёт их само, и первый стоит ниже второго                  |
+| In the law | Here |
+| --- | --- |
+| turn | one pass of the agent: from the owner's message to the reply |
+| a turn exit | one of the four ways to end a turn; what confirms each — the turn map |
+| the guard of turn exits | a guard at the turn's end: reads the declared work state and what the turn did in the tree |
+| a statement about the state of the tree | a word in the reply to the owner backed by a command of the same turn and its output |
+| the session handover | a record outside the tree retelling the progress for a new session |
+| the compaction threshold and the stop threshold | two window-fill numbers the tree sets itself; the first stands below the second |
 
-## Выходы хода
+## Turn exits
 
-Ход кончается четырьмя способами, и других нет: вопрос владельцу, ответа на который в правилах
-нет; отказ гарда; заполненное окно там, где сжатия нет; отданная работа, за которой начата
-следующая. Чем подтверждается каждый из четырёх, перечисляет карта хода — там, где дерево её
-разложило.
+A turn ends in four ways and no others: a question to the owner the rules do not answer; a guard's
+refusal; a filled window where there is no compaction; work handed in, with the next begun. What
+confirms each, the turn map lists where the tree laid it out.
 
-Всё остальное — продолжение хода, а не его конец. Веха ходом не кончается: ни коммит, ни
-прочитанная договорённость, ни граница «прочитал — сейчас правлю», ни зелёная проверка.
-Переход из состояния в состояние — тем более: обязательное действие сделано, и следующее
-делается тем же ходом, а граница состояния выглядит законченным куском лучше всякой другой вехи,
-и отчёт встаёт ровно туда, где должно было стоять следующее действие.
+Everything else is the turn going on, not its end. A milestone does not end a turn: not a commit,
+not a read agreement, not the boundary "read — now editing", not a green check.
+A transition from state to state — least of all: the mandatory action is done, and the next is
+done in the same turn; a state boundary looks like a finished piece better than any milestone, and
+the report lands exactly
+where the next action should have stood.
 
-Четыре способа кончить ход выглядят работой и ею не являются: сводка о чужом шаге, меню при
-назначенном порядке, объявление намерения и названная, но не запущенная команда. Что при этом
-должно быть верно — ниже, в статьях о применении закона.
+Four ways to end a turn look like work and are not: a summary of someone else's step, a menu under
+an assigned order, a declaration of intent, and a command named but not run.
 
-Ход, кончающийся при идущем эпике, показывает владельцу его положение — той же таблицей, какой
-оно уходит в передаче: порядок задач лежит записанным, а тому, ради кого исполнитель по нему
-идёт, состояние очереди иначе не видно ни на одном ходу.
+A turn ending while an epic runs shows the owner their position by the table the handover carries:
+the order is written down, and the one it is followed for cannot otherwise see the queue's state.
 
-## Где это лежит
+## Where it lives
 
-В этом дереве — таблица в `implementation.md` рядом. Пути живут там, а не здесь: правило
-переносится между репозиториями, раскладка — нет, и путь, названный в правиле, врёт в первом
-же дереве, которое держит код иначе.
+In this tree — the table in `implementation.md` next to it. Paths live there, not here: the rule
+travels between repositories, the layout does not.
 
-## Ход
+## Flow
 
-Ход одного захода: чем он кончается, что проверяется до его конца и что при этом говорится
-владельцу.
+One turn: what it ends with, what is checked before its end and what the owner is told then.
 
 ```mermaid
 flowchart TD
-    A[Ход идёт] --> B{Что случилось}
-    B -->|Владельцу задан вопрос| C[За тот же ход читались законы и правила]
-    B -->|Гард отбил правку| D[Отказ назван владельцу, обход не искался]
-    B -->|Окно захода заполнено| E{Дерево объявило сжатие}
-    B -->|Работа отдана заявкой| F[По следующей задаче сделано действие, а не сказано]
-    B -->|Ничего из этого| G[Ход продолжается: веха его концом не бывает]
-    E -->|Да| G
-    E -->|Нет| H[Ход работы дописан, передача написана]
-    C --> I{Ответ владельцу говорит о дереве}
+    A[The turn is going] --> B{What happened}
+    B -->|A question to the owner| C[Laws and rules read in the same turn]
+    B -->|A guard refused an edit| D[The refusal named to the owner, no bypass sought]
+    B -->|The window is filled| E{The tree declared compaction}
+    B -->|Work handed in by a PR| F[An action done on the next task, not spoken]
+    B -->|None of these| G[The turn goes on: a milestone never ends it]
+    E -->|Yes| G
+    E -->|No| H[Progress written up, handover written]
+    C --> I{The reply speaks of the tree}
     D --> I
     F --> I
     H --> I
-    I -->|Да| J[Каждое слово несёт команду того же хода и её вывод]
-    I -->|Нет| K[Ход кончен]
+    I -->|Yes| J[Every word carries a command of the same turn and its output]
+    I -->|No| K[The turn is over]
     J --> K
     G --> A
 ```
 
-## Как закон применяется здесь
+## How the law applies here
 
-- **Сводка о чужом шаге.** Прогон, разбор владельцем и слияние идут без исполнителя и от взгляда
-  быстрее не становятся. Ход, кончившийся такой сводкой, владелец читает как работу: она полна, в
-  ней названы номера и состояния, и пустоты за ней не видно. О чужом шаге говорят вместе с начатым
-  своим, а не вместо него.
-- **Чужой шаг бывает двух родов, и второй не кончится сам.** Прогон и разбор идут без
-  исполнителя и кончатся без него; отбитое разрешение не кончится никогда — его ждут. Работа,
-  упершаяся в разрешение, доводится до конца без той части, которую разрешение открывает, а
-  непройденное называется в теле заявки, где его читает ревьювер: реплика живёт до следующего
-  сообщения, тело заявки — до слияния.
-- **Свой незакрытый шаг владельцу не передаётся.** Список остатков, названный аккуратно, читается
-  как рассказ о работе, и владелец разбирает то, что мог доделать сам исполнитель. Чужой шаг
-  сводкой называют, свой — делают. Формой вопроса это не чинится: вопрос законен там, где ответа
-  нет ни в правилах, ни в дереве. Список остатков пишется после того, как из него вычеркнуто всё,
-  что исполнитель мог закрыть сам.
-- **Меню при назначенном порядке.** Выбор, предложенный владельцу, пока эпик не кончился, — это
-  просьба назначить порядок заново. Работы в эпике не осталось — так и говорится: эпик кончился, —
-  а не «чем займёмся».
-- **Объявление намерения.** «Беру следующую задачу» — не то же самое, что взять её: фраза живёт до
-  конца хода, а работа не двигается. Названо может быть только сделанное: номер заведённой задачи,
-  имя заведённой ветки, переведённая колонка.
-- **Названная командой работа запускается в том же ходе, где названа.** Строка «сейчас запущу»
-  ходом не кончается: либо запуск уже был, либо ход не кончен. Названная поимённо команда выглядит
-  начатой работой лучше всякого другого обещания — она точна, её видно, и по ней не отличить
-  сделанного от собранного. Ответ владельцу пишется после вызова, а не вместо него: реплика
-  посреди хода отвечается вместе с начатым действием.
-- **Слово о своей же работе судится сделанным в том же ходе.** «Не стою — продолжаю» к концу
-  хода подтверждается работой, а не намерением: иначе владелец читает пару «обещал — не сделал»
-  как ложь. Это требование к слову о дереве, обращённое на себя.
-- **Вариант, поданный владельцу, назван ценой для человека.** Сколько шагов, где человек окажется
-  и что ему нужно — без этого варианты выглядят равными, и выбор идёт по доводам со стороны кода.
-  Знание, которое делает вариант негодным, пишется в сам вариант.
-- **Названное владельцем состояние дерева снимается вызовом раньше объяснения.** «Конфликты»,
-  «прогон красный», «ветка отстала» — указание на то, что надо снять, а не тема для разбора.
-  Причина называется после починки и только если её спрашивали: объяснение выглядит работой, не
-  трогая ни одной ветки. Вопрос «почему» в том же сообщении идёт вторым.
-- **Пересказ действующего порядка без оценки читается как одобрение.** На прямой вопрос владельца
-  «как это работает» ответ фактами верен и недостаточен: устройство, названное спокойно, звучит
-  принятым. Годность порядка для того, кто им пользуется, называется вместе с ним.
-- **Путь к файлу заданием не бывает.** Строка с адресом называет файл, а не действие: прочитанная
-  как поручение, она даёт заходу задание, которого владелец не давал. То же с любой репликой без
-  глагола — уточнить дешевле, чем написать полсотни файлов мимо просьбы.
-- **Прерывание работы владельцем называется вслух.** Пришло задание, останавливающее начатое, —
-  исполнитель говорит, что стоит, на чём остановлено и что будет с прежним, и только потом берётся
-  за новое. Молчание об этом владелец читает как «прежнее кончилось».
-- **Остановка называется отдельной репликой.** Не строкой в конце отчёта: там она тонет — владелец
-  читает отчёт как рассказ о сделанном. Называются три вещи: что стоит, чего оно ждёт и что
-  владелец может решить.
-- **Выходы хода стережёт страж, а не память исполнителя.** Он читает объявленное состояние работы
-  и то, что за ход по ней сделано: правку файла или команду, меняющую дерево. Ход, в котором не
-  было ни того ни другого, возвращается исполнителю вместе со следующим шагом из хода работы.
-  Отданную и влитую работу страж не судит: она уже дождалась чужого шага.
-- **Снятая папка задачи снимает требование состояния, а ход не кончает.** Ход работы уезжает вместе
-  с папкой, а папка разбирается до открытия заявки: с этой минуты и до слияния строки состояния нет
-  вовсе. Отпускать по этому признаку ход нельзя — снятая папка означает середину отдачи, а не её
-  конец. Дальше ход судится вторым признаком; ход, в котором заявку открыли, его пропускает сам.
-- **Работа без ветки и без папки задачи судится тем же стражем по второму признаку.** Состояния у
-  неё нет, и первый признак взять неоткуда, — но ход, в котором не было ни одной правки дерева, не
-  кончается и здесь.
-- **Взятая задача — ещё не начатая работа, и ход на ней не кончается.** Заведение ветки, перевод
-  колонки и названный владельцу номер — подготовка: обязательное действие состояния
-  «задача-взята» не сделано ни строкой, а работы в ходе много, и признак «была ли работа» его
-  отпускает. Судит это страж отдельным ярусом; ветка без номера задачи под него не подпадает, а
-  собранный шаблон папки его снимает.
-- **Разведка ходом не кончается, сколько бы её ни было.** Переключение ветки, подтягивание,
-  просмотр истории и чтение заявок — не работа, а подготовка к ней; ход, собранный из них одних,
-  оставляет работу там же, где она стояла. Выглядит она работой лучше всего остального — в ней
-  команды, точные числа и проверяемые ответы. Судятся части составной команды по одной: чтение,
-  соединённое с правкой, работой остаётся.
-- **Ответ владельцу действием не работает и последним в ходе не стоит.** Порядок внутри хода
-  один: работа, потом первый шаг следующей, и только потом текст. Обратный порядок — работа,
-  отчёт, конец — стоит за каждой остановкой, которую разбирали: отчёт есть форма завершённости, и
-  дописанная сводка читается как конец хода тем убедительнее, чем больше сделано. Сказать о
-  сделанном можно всегда; место у этих слов — после следующего действия, а не вместо него.
-- **Последним действием хода бывает только работа.** Признак один на все виды остановки: правка
-  файла или меняющая команда — последним из того, что за ход сделано. Частные ярусы стража —
-  разведка, ожидание, отдача без начала следующей — из него только выводят понятный отказ.
-- **Последним действием хода ожидание чужого шага не бывает.** Прогон, разбор владельцем и
-  слияние идут без исполнителя, и работа на время ожидания остаётся ровно там, где стояла.
-  Судится последнее действие: ожидание в середине законно, запуск
-  работы в фоне работой остаётся, а ход, кончившийся циклом до готовности прогона или слежением
-  за ним, страж не выпускает.
-- **Передача пишется и там, где имени у ветки нет.** Всё, что в неё едет, лежит в дереве и на
-  отсоединённой голове доступно целиком; имя нужно одному файлу, и он называется коротким снимком
-  головы. Молчание хука здесь стоит дороже прочего: сжатие приходит без передачи, и следующий
-  заход начинает с пустого места.
-- **Этап замысла объявляется закрытым только после того, как его команда проверки прошла.** Строка
-  «Чем проверяется» несёт команду обратными кавычками и то, что в её выводе означает «сошлось».
-  Страж читает прежний номер этапа из истории ветки и не выпускает ход, в котором номер вырос, а
-  команда не запускалась: через заход отмеченное по памяти неотличимо от проверенного.
-- **Слово об остановке страж читает у владельца, а не у исполнителя.** Иначе остановку объявляет
-  тот, кому она удобна, и запрет держится до первого неудобства.
-- **Фраза «жду твоего слова» — остановка, объявленная исполнителем, и страж отбивает её по
-  имени.** Без слова владельца об остановке за ход и без вопроса ему инструментом ожидание его
-  слова — отчёт вместо работы; указание владельца действует до его отмены.
-- **Утверждение о состоянии дерева стережёт гард утверждения, а не память исполнителя.** Всё, что
-  ответ владельцу говорит о дереве, несёт команду и её вывод: сказанное без команды утверждением
-  не считается — ни «проверено», ни «снято», ни «готово». Гард читает текст, сказанный владельцу
-  за ход, и ищет команду того же хода; у каждого слова назван свой род команды, потому что общий
-  признак «команда была» подтверждал бы одно другим. Прошлый ход не годится: состояние дерева
-  меняется, и вчерашний вывод о нынешнем молчит.
-- **Гард утверждения ждёт текст ответа, а не судит запись, какой застал.** Текст ложится в запись
-  хода не раньше, чем хост зовёт хук. Не дождавшись его, гард возвращает ход: пустая запись
-  означает не «сказать было нечего», а «прочитать нечего».
-- **Слово-утверждение гард ловит, неверный вывод — нет.** Об образце, судимом по одному его файлу,
-  и о пути, которым человек не пойдёт, судить нечем: там нет ни слова, ни команды, с которой
-  сверять. Это известная граница гарда, и держат её статьи ниже, а не он.
-- **Ход о чужом шаге стережёт гард ожидания, а не память исполнителя.** Он отбивает завершение
-  хода, в котором о чужом шаге сказано, а по следующей задаче не сделано ни одного действия — ни
-  заведения задачи, ни ветки, ни папки, ни перевода колонки. Чужой шаг он узнаёт по двум
-  признакам: в ходе открыт PR либо в ходе прочитан красный прогон. Слова «беру следующую задачу»
-  гард действием не считает — ровно потому, что их и произносят вместо неё.
-- **Ход, отдавший работу, доводит её до снятого черновика.** У черновика кнопка слияния
-  заблокирована хостингом, и по списку заявок готовое от недоделанного не отличить. Следующая
-  задача берётся сверх этого, а не вместо. Стережёт это гард ожидания: ход, открывший заявку, не
-  кончается, пока состояние отданной работы не спрошено командой того же хода.
-- **Отказ гарда ожидания снимается обоими действиями сразу.** Взятая следующая задача уносит
-  признак открытой заявки с собой, и требование спросить состояние отданной работы после неё не
-  прозвучит уже никогда.
-- **Работа, оставшаяся в рабочем дереве, ход не кончает.** Ветка впереди удалённой ссылки без
-  открытой заявки — сделанное, которого не видит никто; страж читает это без сети.
-- **«Жду прогона» — утверждение о чужом шаге, а не состояние работы.** Прогон бывает зелёным час,
-  а бывает не встав вовсе — и второе само не чинится. Слово это требует команды того же хода,
-  которая прогон показывает, и без неё не говорится: сказанное без команды владелец читает как
-  «работа ещё идёт» и ждёт напрасно. Держит это гард утверждения, а не память исполнителя.
-- **Конец прогона узнаётся возвратом фоновой команды, а не взглядом на страницу.** Ожидание в
-  фоне возвращает исполнителя к заявке само; взгляд на страницу повторяется вхолостую либо не
-  повторяется вовсе — работа не двигается.
-- **Ожидание своего же замера ведётся одним ожиданием, а не уведомлением на каждый шаг.**
-  Уведомление — там, где действуют на каждое событие; где значим итог — одно ожидание.
-- **Отказ гарда кончает ход.** Другого пути к отбитой правке не ищут: ни командой оболочки, ни
-  соседним инструментом, ни правкой самого гарда. Отбитая правка либо делается после того, как
-  условие отказа выполнено, либо не делается вовсе — и тогда владельцу называется отказ, а не
-  результат. Обход стоит дороже отказа: гард отбивает один файл, а обойдённый гард снимает
-  требование со всего дерева и молчит об этом. Держится это не только памятью — гарды судят и
-  команду оболочки, которая пишет файл.
-- **Отбитая гейтом команда повторяется целиком, а не хвостом.** Гейт отбивает вызов до исполнения,
-  поэтому не сработало ни одно её звено — включая те, что стояли до отбитого. Повторённый хвост
-  делает работу в том месте, где её не ждали:
-- **Пишущий вызов в строку разведки не дописывается.** Строка, собранная из вопросов, читается как
-  вопрос целиком — и своим автором тоже; правка идёт отдельным вызовом, где её видно. У вызова, у
-  которого есть читающий двойник, род выбирается по действию, а не по имени команды.
-- **Ход, в котором владельцу задан вопрос, не заканчивается, пока за этот же ход не читались
-  законы и правила.** Чтением считается любой из трёх путей: загрузка правила, чтение файла
-  законов или правил, поиск по ним. Отбивает гард разговора — на завершении хода, а не на
-  инструменте вопроса: спрашивают чаще прозой, чем меню. Найденное ложится в раздел «Что уже
-  сказано в правилах» разбора.
-- **Ответ владельца ищется в его же репликах прежде, чем в правилах.** Закон говорит: вопрос с уже
-  записанным ответом владельцу не задаётся, — и самая доступная запись лежит не в дереве, а в
-  самом разговоре: первая реплика владельца и его ответы на прошлые круги вопросов. Гард разговора
-  этого не видит: чтением он считает загрузку правила и поиск по нему, а реплика следа не
-  оставляет. Вопрос, отвечающий сам себе словами владельца, обесценивает и заданные рядом.
-- **Объём работы поводом урезать её границы не бывает.** Владелец, назвавший результат, объёма не
-  оспаривал: предложение выбросить часть — это просьба переназначить цель, поданная как уточнение.
-  Дорогое делают дорого либо говорят прямо, что оно дорого, и называют цену.
-- **Действия, которые исполнитель не делает без слова владельца, перечислены в компаньоне
-  правила.** Список у каждого дерева свой — пакет знает только требование, чтобы список был
-  назван. Не названный, он выводится из общих слов, и «делай, что нужно по плану» становится
-  разрешением на пуш и правку общих документов заодно с коммитом. Оценка «это безопасно» списка не
-  заменяет: её назначает тот, кому она в эту минуту удобна, и она плывёт.
-- **У отказа от необратимого действия есть безопасная часть, и она делается.** Требование спросить
-  владельца относится к действию, а не к ходу: работа, у которой отделима часть без последствий,
-  делится, а не откладывается целиком. Список вариантов вместо работы читается как работа — тем
-  полнее, чем аккуратнее составлен: пронумерован, с цифрами, и пустота хода за ним не видна.
-  Владельцу называется, что уже сделано и что осталось за его словом.
-- **Признак необратимости берётся из списка, а не выводится доводом.** Список составлен тем, кто
-  обратимость уже взвесил. Довод «уходит наружу и не откатывается» приходит всегда, а список —
-  только когда его прочитали, и довод поверх списка отменяет его молча: со стороны это выглядит
-  осторожностью, а не пропуском шага. Действия вне списка исполнитель не гейтит.
-- **Ход, в котором исполнитель признал промах, не заканчивается, пока записи о происшествии нет.**
-  Отбивает гард происшествия — на завершении хода: к моменту признания промах уже случился.
-  Каталог записей называет компаньон правила, имя файла — дата и чем был промах, форму держит
-  образец раскладки. Признание ловится набором образцов: промах, признанный словами вне набора,
-  гард пропускает.
-- **Заход, начатый с передачи, входит в работу тем же правилом, что и всякий другой.** Передача
-  лежит вне дерева, её не читает ни одна проверка, и написана она вчера: всё, что в ней стоит,
-  проверяется деревом. Порядок входа — четыре шага в паттерне возвращения; стережёт его гард, а не
-  память.
-- **Состояние незаконченной работы приходит в контекст на запуске сессии.** Замысел и ход работы
-  отдаются целиком, разбор просьбы — путём. Ветка вида `<КЛЮЧ>-*` без папки предупреждает готовой
-  командой, но сессию не рвёт.
-- **Заполненное окно кончает ход только там, где сжатия нет.** Где оно объявлено, окно —
-  продолжение хода: заход сжимается и работает дальше, а порог остановки срабатывает лишь тогда,
-  когда сжатие не пришло. Ход, закрытый ниже порога, теряет остаток окна, за который дерево
-  заплатило настройкой, и ловит это один владелец.
-- **Заполнение окна захода стережёт гард, а не память исполнителя.** На первом пороге он
-  напоминает выбирать точку остановки, на втором отбивает всё, кроме передачи, команд поставки и
-  папки задачи — папки целиком: на закрытии правят и решение по ходу, и пересмотр этапа. Размер окна и оба порога дерево задаёт само; не задавшее размера стража не получает.
-- **Порог сжатия контекста дерево задаёт само, и стоит он НИЖЕ порога остановки.** Совпавшие
-  пороги — гонка, и выигрывает её страж: он стоит на вызове, а сжатие приходит между ходами. Расстояние объявляется числом, а не выводится разницей; сведены
-  ли пороги, говорит разбор состояния раскладки.
-- **Заход закрывается передачей, и лежит она разделом хода работы.** Он коммитится и едет в
-  ветку — значит передача переживает переход на другую машину, а второй записи об одном и том
-  же не заводится. В ней дерево, ветка, сделанное, следующий шаг и особенности захода; у работы
-  без папки задачи она уезжает файлом вне дерева.
+- **A summary of someone else's step.** A run, the owner's review and a merge go on without the
+  executor and are not sped up by watching. Such a summary the owner reads as work: full, with
+  numbers and states, the emptiness behind it unseen. Someone else's step is named with one's own
+  begun step, not instead of it.
+- **Someone else's step is of two kinds, and the second never ends by itself.** A run and a review
+  end without the executor; a refused permission never ends — it is waited for. Work that hit a
+  permission is finished without the part it opens; what was not passed is named in the PR body,
+  where the reviewer reads it: a message lives until the next one, the PR body until the merge.
+- **One's own unclosed step is not handed to the owner.** A neat list of leftovers reads as an
+  account of work, and the owner sorts out what the executor could have finished. A question's form
+  does not fix this: a question is lawful only where neither the rules nor the tree answer it. The
+  list is written after everything the executor could close is struck out.
+- **A menu under an assigned order.** A choice offered to the owner before the epic is over asks to
+  assign the order anew. No work left in the epic — say so: the epic is over — not "what next".
+- **A declaration of intent.** "Taking the next task" is not taking it: the phrase lives to the end
+  of the turn, and the work does not move. Only the done is named: the created task's number, the
+  branch's name, the moved column.
+- **Work named as a command is run in the turn that names it.** The line "running it now" does not
+  end a turn: either the run happened, or the turn is not over. A named command looks like begun
+  work better than any promise — exact, visible, and done cannot be told from composed. The reply is
+  written after the call, not instead of it: a message mid-turn is answered along with the begun
+  action.
+- **A word about one's own work is judged by what the same turn did.** "Not stopping — going on" is
+  confirmed by the turn's end with work, not intent: otherwise the owner reads "promised — did not"
+  as a lie. It is the requirement on a word about the tree, turned on oneself.
+- **An option offered to the owner is named with its cost to a person.** How many steps, where the
+  person ends up and what they need — without that the options look equal, and the choice goes by
+  arguments from the code. What makes an option unfit is written into it.
+- **A tree state the owner named is cleared by a call before an explanation.** "Conflicts", "the run
+  is red", "the branch fell behind" point at what to clear, not a topic to discuss. The cause is
+  named after the fix, and only if asked: an explanation looks like work and touches no branch. A
+  "why" in the same message comes second.
+- **A retelling of the current order without an appraisal reads as approval.** To a direct "how does
+  this work" an answer in facts is true and not enough: a setup named calmly sounds accepted.
+  Whether the order is fit for whoever uses it is named along with it.
+- **A file path is never an assignment.** A line with an address names a file, not an action: read
+  as an instruction, it gives the session a task the owner did not give. The same for any message
+  without a verb — asking costs less than writing fifty files past the request.
+- **An interruption of work by the owner is named aloud.** A task arrives that stops what was begun
+  — the executor says they stop, where, and what happens to the old work, then takes up the new.
+  Silence here the owner reads as "the old is finished".
+- **A stop is named in a message of its own.** Not in a line at the end of a report: there it drowns
+  — the owner reads a report as an account of the done. Three things are named: what stands, what it
+  waits for and what the owner can decide.
+- **Turn exits are watched by a guard, not by the executor's memory.** It reads the declared work
+  state and what the turn did on it: a file edit or a tree-changing command. A turn with neither
+  returns to the executor with the next step from the progress. Handed-in and merged work the guard
+  does not judge: it has already waited out someone else's step.
+- **A removed task folder lifts the state requirement and does not end the turn.** The progress
+  leaves with the folder, taken apart before the PR opens: from then to the merge there is no state
+  line. A turn is not released by this sign — a removed folder means the middle of handing in, not
+  its end. From there the turn is judged by the second sign; a turn that opened the PR passes it by
+  itself.
+- **Work without a branch and without a task folder is judged by the same guard by the second
+  sign.** It has no state, and the first sign has nowhere to come from — but a turn with no edit of
+  the tree does not end here either.
+- **A taken task is not yet begun work, and the turn does not end on it.** Creating the branch,
+  moving the column and naming the number are preparation: the mandatory action of `задача-взята` is
+  not done by a single line, yet the turn holds much work, and the sign "was there work" releases
+  it. The guard has a tier for this; a branch without a task number is not under it, an assembled
+  folder template lifts it.
+- **Exploration does not end a turn, however much of it there is.** Switching branch, pulling,
+  browsing history and reading PRs are preparation, not work; a turn of these alone leaves the work
+  where it stood. It looks like work better than anything else: commands, exact numbers, checkable
+  answers. Parts of a compound command are judged one by one: a read joined to an edit remains work.
+- **A reply to the owner is not an action and does not stand last in a turn.** The order inside a
+  turn is one: work, the first step of the next, then text. The reverse — work, report, end — stands
+  behind every analysed stop: a report is a form of completeness, and an appended summary reads as
+  the turn's end the more convincingly the more was done. Saying what was done is always allowed;
+  its place is after the next action, not instead.
+- **The last action of a turn is only ever work.** One sign for every kind of stop: a file edit or a
+  changing command — last among what the turn did. The guard's tiers — exploration, waiting, handing
+  in without starting the next — only derive a readable refusal from it.
+- **Waiting for someone else's step is never the last action of a turn.** While they are waited for,
+  the work stays where it stood. The last action is judged: waiting mid-turn is lawful, background
+  work remains work, and a turn ended by a loop until the run is ready, or by watching it, is not
+  released.
+- **The handover is written even where the branch has no name.** All of it lies in the tree and is
+  reachable on a detached head; one file needs a name, and a short snapshot of the head gives it.
+  The hook's silence costs more here than elsewhere: compaction comes without a handover, and the
+  next session starts from a blank.
+- **A plan stage is declared closed only after its check command has passed.** The "Checked by"
+  (`Чем проверяется`) line carries the command in backticks and what in its output means "matches".
+  The guard reads the previous stage number from the branch history and holds a turn where the
+  number grew and the command did not run: a session later, marked from memory cannot be told from
+  checked.
+- **The word about a stop the guard reads from the owner, not from the executor.** Otherwise the
+  stop is declared by whoever finds it convenient, and the ban holds until the first inconvenience.
+- **The phrase "waiting for your word" is a stop declared by the executor, and the guard refuses it
+  by name.** Without the owner's word about a stop in the turn and without a question put to them by
+  the tool, waiting for their word is a report, not work; the instruction holds until they cancel
+  it.
+- **A statement about the tree's state is watched by the statement guard, not by the executor's
+  memory.** Everything the reply says about the tree carries a command and its output; said without
+  one, it is no statement — not "checked", not "cleared", not "done". The guard reads the turn's
+  text to the owner and looks for a command of the same turn; each word has its own kind of command,
+  since a general sign "there was a command" would confirm one thing by another. The previous turn
+  does not count: the tree's state changes, and yesterday's output says nothing of today's.
+- **The statement guard waits for the reply text rather than judging the record as it found it.**
+  The text lands in the turn record no earlier than the host calls the hook. Not having waited, the
+  guard returns the turn: an empty record means not "nothing to say" but "nothing to read".
+- **The guard catches a statement word, not a wrong conclusion.** About a sample judged by one file,
+  or a path a person will not take, there is nothing to judge by: no word and no command to compare
+  with. This is the guard's known boundary; the articles below hold it, not the guard.
+- **A turn about someone else's step is watched by the waiting guard, not by the executor's
+  memory.** It refuses a turn's end where someone else's step was spoken of and nothing was done on
+  the next task — no task created, no branch, no folder, no column moved. Someone else's step it
+  knows by two signs: a PR opened or a red run read in the turn. The words "taking the next task"
+  are not an action: they are said instead of one.
+- **A turn that handed work in carries it to a lifted draft.** A draft's merge button is locked by
+  the host, and in the PR list ready cannot be told from unfinished. The next task is taken on top
+  of that, not instead. The waiting guard watches this: a turn that opened a PR does not end until a
+  command of the same turn asked the state of the handed-in work.
+- **The waiting guard's refusal is lifted by both actions at once.** The taken next task carries the
+  open-PR sign away, and the demand to ask the handed-in work's state never sounds after it.
+- **Work left in the working tree does not end the turn.** A branch ahead of the remote ref with no
+  open PR is done work nobody sees; the guard reads this without the network.
+- **"Waiting for the run" is a statement about someone else's step, not a work state.** A run may be
+  green in an hour, or may never have started — and the second does not fix itself. The word demands
+  a command of the same turn that shows the run; said bare, the owner reads it as "the work is still
+  going" and waits in vain.
+- **The end of a run is learned from the return of a background command, not from a look at the
+  page.** A background wait brings the executor back to the PR by itself; a look at the page is
+  repeated idly or not at all — the work does not move.
+- **Waiting for one's own measurement is done with one wait, not a notification on every step.** A
+  notification is for where every event is acted on; where the outcome matters — one wait.
+- **A guard's refusal ends the turn.** No other road to the refused edit is sought: not a shell
+  command, not a neighbouring tool, not an edit of the guard itself. The edit is done once the
+  refusal's condition is met, or not at all — then the owner is told the refusal, not a result. A
+  bypass costs more than a refusal: a guard refuses one file, a bypassed guard lifts the requirement
+  from the whole tree and says nothing. Not memory alone holds this — the guards also judge the
+  shell command that writes the file.
+- **A command refused by a gate is repeated whole, not by its tail.** A gate refuses the call before
+  it runs, so none of its links worked — those before the refused one included. A repeated tail does
+  work where it was not expected:
+- **A writing call is not appended to an exploration line.** A line assembled from questions reads
+  as a question whole — by its author too; the edit goes in a call of its own, where it is visible.
+  For a call with a reading twin, the kind is chosen by the action, not the command's name.
+- **A turn in which a question was put to the owner does not end until laws and rules were read in
+  that same turn.** Reading is any of three roads: loading a rule, reading a file of laws or rules,
+  a search over them. The conversation guard refuses at the turn's end, not on the question tool:
+  questions are asked in prose more often than by menu. What was found lands in the grill section
+  "What the rules already say".
+- **The owner's answer is sought in their own messages before the rules.** The law says a question
+  with a written answer is not put to the owner, and the most reachable record lies not in the tree
+  but in the conversation: the owner's first message and their answers to past rounds. The
+  conversation guard does not see this: it counts loading a rule and searching it as reading, and a
+  message leaves no trace. A question that answers itself in the owner's words devalues those asked
+  next to it.
+- **The size of work is never a reason to cut its boundaries.** The owner who named the result did
+  not dispute the size: an offer to drop a part is a request to reassign the goal, served as a
+  clarification. What is costly is done at cost, or called costly outright, with the price named.
+- **The actions the executor does not do without the owner's word are listed in the rule's
+  companion.** Each tree has its own list; the package knows only the demand that it be named.
+  Unnamed, it is derived from general words, and "do what the plan needs" becomes permission to push
+  and edit shared documents along with the commit. The appraisal "this is safe" does not replace the
+  list: whoever finds it convenient this minute assigns it, and it drifts.
+- **A refusal of an irreversible action has a safe part, and it is done.** The demand to ask the
+  owner applies to the action, not the turn: work with a separable harmless part is split, not
+  postponed whole. A list of options instead of work reads as work — the more neatly drawn up, the
+  more fully: numbered, with figures, the emptiness of the turn behind it unseen. The owner is told
+  what is done and what remained for their word.
+- **The sign of irreversibility is taken from the list, not derived by argument.** The list was
+  drawn up by someone who already weighed reversibility. The argument "it goes outside and cannot be
+  rolled back" always comes, the list only when read, and an argument on top of the list cancels it
+  silently: from outside it looks like caution, not a skipped step. Actions outside the list the
+  executor does not gate.
+- **A turn in which the executor admitted a miss does not end until the incident record exists.**
+  The incident guard refuses at the turn's end: by the time of admission the miss has already
+  happened. The records directory is named by the rule's companion, the file name is the date and
+  the miss, the form — the layout template. The admission is caught by a set of samples: a miss
+  admitted in words outside the set the guard lets through.
+- **A session begun from a handover enters the work by the same rule as any other.** The handover
+  lies outside the tree, no check reads it, and it was written yesterday: everything in it is
+  checked against the tree. The entry order is four steps in the resume pattern; a guard watches it,
+  not memory.
+- **The state of unfinished work comes into the context at session start.** The plan and the
+  progress are given whole, the grill by path. A branch of the form `<KEY>-*` without a folder warns
+  with a ready command but does not break the session.
+- **A filled window ends a turn only where there is no compaction.** Where it is declared, the
+  window is the turn going on: the session compacts and works on, and the stop threshold fires only
+  when compaction did not come. A turn closed below the threshold loses the rest of the window the
+  tree paid for, and only the owner catches this.
+- **The session's window fill is watched by a guard, not by the executor's memory.** At the first
+  threshold it reminds to pick a stopping point, at the second it refuses everything but the
+  handover, delivery commands and the task folder — the folder whole: at closing, both the decision
+  along the way and the stage revision are edited. The window size and both thresholds the tree sets
+  itself; a tree that set no size gets no guard.
+- **The context compaction threshold the tree sets itself, and it stands BELOW the stop threshold.**
+  Equal thresholds are a race, and the guard wins it: it stands on the call, and compaction comes
+  between turns. The distance is declared as a number, not derived as a difference; whether the
+  thresholds stand apart the layout audit tells.
+- **A session closes with a handover, and it lies as a section of the progress.** It is committed
+  and goes into the branch, so the handover survives a move to another machine, and no second record
+  of the same is started. In it: the tree, the branch, what was done, the next step and what was
+  special about the session; for work without a task folder it leaves as a file outside the tree.
 
-- **Вариант, глушащий проверку, в меню не ставится вовсе.** Выключенное правило линтера, строка
-  в списке известного, выведенный из-под проверки файл — все они чинят показание, а не то, на что
-  она указала, и вариант этот в меню самый дешёвый. Меню собирается после того, как он вычеркнут.
+- **An option that silences a check is not put in the menu at all.** A disabled linter rule, a line
+  in the known list, a file taken out from under the check — all fix the reading, not what it
+  pointed at, and this option is the cheapest in the menu. The menu is assembled after it is struck
+  out.
 
-## Чего из закона здесь нет
+## What of the law is not here
 
-Полноту сказанного владельцу не проверяет ничто: гард утверждения ловит слово-утверждение и
-ищет команду того же хода, а неверный вывод из верной команды не судит ничем — об образце,
-судимом по одному его файлу, и о пути, которым человек не пойдёт, сверять нечего.
+Nothing checks the completeness of what is said to the owner: the statement guard catches a
+statement word and looks for a command of the same turn; a wrong conclusion from a right command it
+cannot judge — there is nothing to compare with.
 
-Признание промаха ловится набором образцов, а не пониманием смысла: промах, признанный
-словами вне набора, гард происшествия пропускает. Это его известная граница, а не обещание.
+An admission of a miss is caught by samples, not by understanding: words outside the set the
+incident guard lets through. That is its known boundary, not a promise.
 
-## Паттерны
+## Patterns
 
-- `task-flow-handoff` — закрытие захода по заполнению окна: точка остановки и передача.
+- `task-flow-handoff` — closing a session on window fill: the stopping point and the handover.
