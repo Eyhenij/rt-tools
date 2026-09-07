@@ -266,6 +266,49 @@ The whole layer after the task 10 is 1 450 197 bytes against 1 468 014 after the
 the work is 57 987 bytes: a refusal of a hook does not enter the entry and is paid only in the minute
 of the refusal.
 
+## The eighth measurement: the documents of the tree
+
+Taken on 7 September 2026 by the task RT-1858 over the two hundred and three specs of
+`docs/specs/`, the twenty-five plans of `docs/plans/` and the two decisions of `docs/adr/`, by the
+bytes of the files before and after the translation. It stands eighth, not ninth as the plan of the
+task said: the task 11 of the epic, RT-1857, is not merged and has laid no measurement of its own.
+
+| The documents of the tree | Files |  Bytes ru |  Bytes en | The difference |
+| ------------------------- | ----: | --------: | --------: | -------------: |
+| `docs/specs/`             |   203 | 2 248 047 | 1 599 300 |         −28.9% |
+| `docs/plans/`             |    25 |   316 822 |   239 196 |         −24.5% |
+| `docs/adr/`               |     2 |    21 781 |    19 919 |          −8.5% |
+| In all                    |   230 | 2 586 650 | 1 858 415 |         −28.2% |
+
+**The documents of the tree are lighter by 28% in bytes.** The decision about the primitives of the
+CDK was written in English from the very beginning, and its 11 000 bytes are counted in both columns
+— hence the small difference at `docs/adr/`. In the lines the English text is longer: the specs grew
+from 25 089 to 26 438, the plans from 2 918 to 3 108.
+
+The lines with the Cyrillic went from 20 392 to 62. What is left is listed by name:
+
+- **The Russian labels of the screens of the admin application** — the specs of the receiver: the
+  screen "Вход", the item "Выйти", the names of the sections, the names of the states of a record,
+  the labels of the rows of the panel "Чем исправлено" and "В какой версии", the items of the filter
+  "все версии" and "без версии", the labels of the section of the invitations.
+- **The data of the tests** — `Иван` next to `иван` in the scenario of the entry, the name "Дерево"
+  of an invitation, the label "Курсы валют" and the query "курс" in the scenario of the selection of a
+  submenu.
+- **The names of the states of the work** — `замысел-записан`, `этап-идёт`, `работа-отдана`,
+  `влито` in the scenarios of the guards: they are machine keys, and the guard reads them.
+- **The Russian names of the sections read under two names** — "Статьи", "Ловушки", "Когда брать",
+  "## Правила" in the specs of the checks of the texts, and the binding `путь/к/ресурсу.md:Семья` in
+  the scenario about a companion.
+- **The header of the layout in the sample of a domain** — `docs/specs/_template/spec.md` is laid out
+  by the package, and the line about the override is written by the layout itself.
+- **The Russian content of the showcase** — the quotations «Отклонить заявку» and «Отпустите, чтобы
+  приложить» in the plan about the moving of the labels of the second kit to the application.
+
+**What was found along the way.** `docs/specs/README.md` — the index of the domains, 83 lines — was
+not translated by the stages 2 to 4: they went by the directories of the domains, and the index lies
+above them. It is translated by the same task, and its 55 lines of the Cyrillic are counted in the
+numbers above.
+
 ## Open questions
 
 - **Q-1. Whether the layer is translated whole. Closed on 6 September 2026: it is translated, as

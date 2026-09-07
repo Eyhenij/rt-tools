@@ -1,83 +1,92 @@
-# Спеки доменов
+# The specs of the domains
 
-**Домен здесь — пакет в `projects/` или приложение в `apps/`.** По каталогу на каждый: `ui-kit`,
-`ui-kit-v2`, `core`, `store`, `utils`, `agent-kit`, `message-bus`.
+**A domain here is a package in `projects/` or an application in `apps/`.** A directory per each:
+`ui-kit`, `ui-kit-v2`, `core`, `store`, `utils`, `agent-kit`, `message-bus`.
 
-Спек пакета описывает публичную поверхность — что он обещает потребителю. Спек приложения
-описывает предметную область: что оно принимает, что хранит и чем отказывает. Оба пишутся до
-кода, который обещание исполняет. Написанный после, спек пишется по коду и повторяет его ошибки:
-разойтись ему уже не с чем.
+The spec of a package describes the public surface — what it promises the consumer. The spec of an
+application describes the subject area: what it takes in, what it keeps and what it refuses by. Both
+are written before the code that carries the promise out. Written after, a spec is written by the code
+and repeats its mistakes: there is nothing left for it to diverge with.
 
-## Раскладка
+## The layout
 
 ```
-docs/specs/<домен>/
-    spec.md          — что домен обещает: поверхность, договорённости, границы
-    scenarios.md     — сценарии с идентификаторами; на них ссылаются заголовки тестов
-    implementation.md — чем каждое обещание исполнено в коде
-    proposed/<фича>/ — договорённость по незакрытой работе; переживает мерж и вливается в spec.md
+docs/specs/<domain>/
+    spec.md          — what the domain promises: the surface, the agreements, the boundaries
+    scenarios.md     — the scenarios with identifiers; the titles of the tests refer to them
+    implementation.md — what every promise is carried out by in the code
+    proposed/<feature>/ — the agreement about an unclosed work; it outlives the merge and merges into spec.md
 ```
 
-Договорённость лежит в `proposed/<фича>/`, пока ветка не влита; последним коммитом работы она
-вливается в спек домена, а каталог снимается.
+An agreement lies in `proposed/<feature>/` while the branch is not merged; by the last commit of the
+work it merges into the spec of the domain, and the directory is removed.
 
-Правило — `.claude/skills/spec-driven/`, закон — `docs/constitution/project-documentation.md`.
-Ведение работы — `.claude/skills/task-flow/`.
+The rule is `.claude/skills/spec-driven/`, the law is `docs/constitution/project-documentation.md`.
+The conduct of the work is `.claude/skills/task-flow/`.
 
-## Что уже написано
+## What is already written
 
-`agent-kit` — что пакет обещает потребителю на установке с нуля, в каком месте он обязан
-отказать вместо молчания и что происходит с потомками отвергнутого закона. Рядом поддомен о
-разборе груза: чем читается приехавшее, что значит взять отчёт в работу, когда у записи
-появляется ответ на «чем исправлено» и когда — на «где искать фикс».
+`agent-kit` — what the package promises the consumer at an installation from nothing, in which place
+it is obliged to refuse instead of staying silent and what happens to the descendants of a rejected
+law. Next to it is a subdomain about the taking apart of the cargo: what the arrived is read by, what
+it means to take a report into work, when a record gets an answer to "what it is fixed by" and when —
+to "where to look for the fix".
 
-`message-bus` — приёмник груза и чтение принятого: что приёмник принимает тремя операциями, чем
-представляется дерево, что лежит в записи месяца, чем представляется человек и что он видит
-после входа — четыре раздела админки со списком, отбором по дереву и панелью подробностей. Рядом
-поддомен об оболочке: разделы верхним рядом, попап профиля, выбор темы и языка, экран входа и
-одна стопка тостов. Там же — где приёмник стоит: имя и защищённая дорога, подъём готового образа
-по sha, проба живости как признак удавшейся выкатки и дамп, которым узел переживают. Рядом
-поддомен о правке состояния: дерево одним запросом переводит свои записи груза из состояния в
-состояние, той же строкой кладёт приём починки — чем недочёт исправлен — и версию выпуска — где
-искать фикс, — а негодная строка отбивает себя, а не пакет, и уходит в журнал приёмника. Вход
-человека стоит своим поддоменом: имя и пароль, кука, недоступная скриптам, срок входа и команды
-узла, которыми заводится учётная запись. Рядом поддомен о версии выпуска в списках: столбец «В
-какой версии», третий отбор в полосе и порядок номерами частей, а не буквами строки.
+`message-bus` — the receiver of the cargo and the reading of what is taken in: what the receiver takes
+in by three operations, what a tree presents itself by, what lies in the record of the month, what a
+person presents themselves by and what they see after the entry — four sections of the admin
+application with a list, a selection by the tree and a panel of the details. Next to it is a subdomain
+about the shell: the sections in the top row, the popup of the profile, the choice of the theme and of
+the language, the screen of the entry and one stack of the toasts. There too is where the receiver
+stands: the name and the protected road, the raising of a ready image by a sha, the probe of the
+liveness as a sign of a rollout that succeeded and the dump the node is outlived by. Next to it is a
+subdomain about the edit of the state: a tree by one query moves its records of the cargo from state
+to state, by the same line lays the acceptance of a fixing — what the shortcoming is fixed by — and
+the version of the release — where to look for the fix — and an unfit line refuses itself, not the
+package, and leaves into the journal of the receiver. The entry of a person stands as a subdomain of
+its own: the name and the password, a cookie unavailable to the scripts, the term of the entry and the
+commands of the node an account is created by. Next to it is a subdomain about the version of the
+release in the lists: the column "В какой версии", a third filter in the strip and an order by the
+numbers of the parts, not by the letters of the string.
 
-`ui-kit` — пять предметов поверхности первого кита, сложенные из договорённостей, написанных до
-кода: кнопка копирования у пустой ячейки таблицы, задержка показа спиннера, то, чем закрывается
-шторка, колонка сортировки и исход быстрых повторных вызовов. Рядом два поддомена: второй уровень
-бокового меню — мода подменю, закреплённая панель и поиск по подменю; вид поля ввода в настройке
-кита — откуда компоненты берут вид поля и в каком порядке значения перебиваются. Поверхностей
-остальных компонентов и служб спек пока не описывает.
+`ui-kit` — five subjects of the surface of the first kit, put together from the agreements written
+before the code: the button of the copying at an empty cell of a table, the delay of the showing of a
+spinner, what a curtain is closed by, the column of the sorting and the outcome of fast repeated
+calls. Next to it are two subdomains: the second level of the side menu — the mode of the submenu, a
+pinned panel and the search over a submenu; the look of a field of input in the setting of the kit —
+where the components take the look of a field from and in which order the values are overridden. The
+surfaces of the other components and services the spec does not describe yet.
 
-`ui-kit-v2` — четыре поддомена. Снимки витрины: что снимается, чем кадр держится одинаковым между
-прогонами и где прогон обязан отказать вместо зелёного. Уход с route-панели: кого гард спрашивает
-о правках и где уход отменяется вместо потери. Оформление кита: бренд, граф токенов, полнота
-тёмной темы и контраст. Поле ввода: чем оно объявляет браузеру род значения. Поверхности
-остальных компонентов и служб спек пока не описывает.
+`ui-kit-v2` — four subdomains. The snapshots of the showcase: what is shot, what a frame is held the
+same between the runs by and where the run is obliged to refuse instead of being green. The leaving of
+a route panel: whom the guard asks about the edits and where the leaving is cancelled instead of a
+loss. The design of the kit: the brand, the graph of the tokens, the completeness of the dark theme
+and the contrast. The field of input: what it declares the kind of the value to the browser by. The
+surfaces of the other components and services the spec does not describe yet.
 
-## Префиксы сценариев
+## The prefixes of the scenarios
 
-| домен         | префикс  |
+| the domain | the prefix |
 | ------------- | -------- |
-| `agent-kit`   | `SC-AK`  |
-| `ui-kit-v2`   | `SC-UKV` |
-| `message-bus` | `SC-MB`  |
-| `store`       | `SC-ST`  |
-| `ui-kit`      | `SC-UK`  |
+| `agent-kit` | `SC-AK` |
+| `ui-kit-v2` | `SC-UKV` |
+| `message-bus` | `SC-MB` |
+| `store` | `SC-ST` |
+| `ui-kit` | `SC-UK` |
 
-Префикс на домен один и после вливания не меняется: на идентификаторы ссылаются заголовки тестов.
+The prefix is one per domain and does not change after the merging: the titles of the tests refer to
+the identifiers.
 
-## Что предложено, но ещё не выкачено
+## What is proposed but not rolled out yet
 
-`store` — договорённость о том, что стор не отдаёт пустоту: селекторы отвечают объявленным типом
-даже на состоянии без полей, а отказ, равный нулю, доходит до разбора. Домен заводится словом
-владельца: до тех пор она лежит в `proposed/` и держит сценарии `SC-ST`.
+`store` — the agreement that the store gives back no emptiness: the selectors answer by the declared
+type even at a state without fields, and a refusal equal to a zero reaches the taking apart. The
+domain is created by a word of the owner: until then it lies in `proposed/` and holds the scenarios
+`SC-ST`.
 
-## Чего здесь пока нет
+## What is not here yet
 
-Спеков остальных четырёх пакетов. Ближайшее, что уже есть и работает: `CONTEXT.md` рядом с
-семьёй компонентов второго кита и договор о покрытии состояний на витрине
-(`docs/adr/0002-ui-kit-v2-state-coverage.md`). Спек пакета их не отменяет — он собирает обещание
-целиком и связывает сценарии с тестами.
+The specs of the other four packages. The nearest thing that already is and works: the `CONTEXT.md`
+next to the family of the components of the second kit and the agreement about the coverage of the
+states on the showcase (`docs/adr/0002-ui-kit-v2-state-coverage.md`). The spec of a package does not
+cancel them — it gathers the promise whole and ties the scenarios to the tests.
