@@ -68,7 +68,6 @@ export const material = [
     { name: `--rt-color-action-on-primary`, value: `var(--rt-mat-neutral-0)` },
 
     {
-        space: true,
         name: `--rt-color-action-secondary`,
         value: `var(--rt-mat-neutral-60)`,
     },
@@ -78,7 +77,6 @@ export const material = [
     { name: `--rt-color-action-secondary-on-surface`, value: `var(--rt-mat-neutral-60)` },
 
     {
-        space: true,
         name: `--rt-color-action-success`,
         value: `var(--rt-mat-green-80)`,
     },
@@ -87,7 +85,6 @@ export const material = [
     { name: `--rt-color-action-on-success`, value: `var(--rt-mat-neutral-0)` },
 
     {
-        space: true,
         name: `--rt-color-action-warning`,
         value: `var(--rt-mat-orange-80)`,
     },
@@ -96,7 +93,6 @@ export const material = [
     { name: `--rt-color-action-on-warning`, value: `var(--rt-mat-neutral-0)` },
 
     {
-        space: true,
         name: `--rt-color-action-danger`,
         value: `var(--rt-mat-red-100)`,
     },
@@ -105,7 +101,6 @@ export const material = [
     { name: `--rt-color-action-on-danger`, value: `var(--rt-mat-neutral-0)` },
 
     {
-        space: true,
         name: `--rt-color-action-info`,
         value: `var(--rt-mat-blue-100)`,
     },
@@ -114,7 +109,6 @@ export const material = [
     { name: `--rt-color-action-on-info`, value: `var(--rt-mat-neutral-0)` },
 
     {
-        space: true,
         name: `--rt-color-action-disabled`,
         value: `var(--rt-mat-neutral-25)`,
     },
