@@ -1,23 +1,25 @@
 #!/usr/bin/env bash
-# Адресат запроса для гарда хранилища: боевая база, одноразовая база проверки или что-то
-# третье — и что на боевой разрешено.
+# The request's target for the storage guard: the production database, a throwaway check
+# database or something else — and what is allowed on production.
 #
-# Строки `# rt-hook:` здесь нет намеренно: событие и образец вызова объявляет сам гард, а
-# помощник рядом хуком не регистрируется и в одиночку ничего не решает.
+# There is no `# rt-hook:` line here on purpose: the event and the call sample are declared by the
+# guard itself, and the helper next to it is not registered as a hook and decides nothing alone.
 
-# --- прод: запись запрещена в любом виде ------------------------------------------------
-# Признак берётся из профиля: порт туннеля, хост, домен — у каждого дерева свои.
+# --- production: a write is forbidden in any form ------------------------------------------
+# The sign is taken from the profile: the tunnel port, the host, the domain — each tree has its
+# own.
 #
-# Ищем его в АДРЕСЕ, а не в данных: домен приложения живёт и в самих строках — в почте
-# владельца, в канонической ссылке объекта. Пока признак брался по всей команде, вставка
-# строки с таким адресом в локальную базу отклонялась как запись в бой, а опт-аута у этой
-# ветки нет по замыслу — команда становилась неисполнимой.
-# Поэтому текст запроса (то, что стоит после `-c`/`--command`) из проверки вырезается.
+# We look for it in the ADDRESS, not in the data: the application's domain also lives in the rows
+# themselves — in the owner's email, in the canonical link of an object. While the sign was taken
+# over the whole command, inserting a row with such an address into the local database was
+# refused as a write to production, and this branch has no opt-out by design — the command became
+# impossible to run.
+# So the request text (what stands after `-c`/`--command`) is cut out of the check.
 #
-# Запрос из редактора адресата в тексте не называет: база выбирается идентификатором
-# подключения, и по одному SQL отличить прод от локальной копии невозможно. Поэтому
-# подключения опознаются в лицо. Список сверяется вызовом list_database_connections;
-# добавили новое — допишите сюда, иначе оно попадёт в «неизвестные» ниже.
+# A request from the IDE does not name the target in its text: the database is chosen by a
+# connection identifier, and by the SQL alone production cannot be told from the local copy. So
+# connections are recognised by sight. The list is checked against list_database_connections;
+# added a new one — add it here, otherwise it lands in the "unknown" below.
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 
 sql_resolve_target() {
@@ -28,15 +30,15 @@ sql_resolve_target() {
     conn_known=""
     if [ -n "$conn" ]; then
         case " $PROD_CONNECTIONS " in *" $conn "*) is_prod="yes"; conn_known="prod" ;; esac
-        # Опознанное локальное подключение сильнее текстовой догадки: домен приложения живёт в
-        # самих данных — в почте владельца, в канонической ссылке объекта. Пока вывод не
-        # отменялся, обновление такой строки на локальной базе отклонялось как запись в бой, и
-        # обойти это было нечем.
+        # A recognised local connection outweighs a textual guess: the application's domain lives
+        # in the data itself — in the owner's email, in the canonical link of an object. While
+        # the verdict was not overridden, updating such a row on the local database was refused as
+        # a write to production, and there was nothing to bypass it with.
         case " $LOCAL_CONNECTIONS " in *" $conn "*) conn_known="local"; is_prod="" ;; esac
     fi
 
-    # Для запроса из редактора адрес в тексте не назван вовсе: там решает опознанное
-    # подключение, а если оно неизвестно — ветка ниже спросит пользователя.
+    # For a request from the IDE the address is not named in the text at all: there the
+    # recognised connection decides, and if it is unknown, the branch below asks the user.
     is_scratch=""
     addr_other=""
     if [ -z "$conn" ] && [ "$context" != "запрос через подключение редактора (обёртка исполнителя)" ]; then
@@ -47,23 +49,26 @@ sql_resolve_target() {
                 addr_other="yes"
                 continue
             fi
-            # Одноразовая база проверки: петлевой адрес и порт из отведённого под них диапазона.
-            # Диапазон занимают контейнеры, которые поднимают на время одной проверки —
-            # восстановление копии, репетиция миграции на непустой базе — и сносят следом. Данных,
-            # которые стоило бы стеречь, там нет по построению, а вопрос на каждую строку такой
-            # проверки приучает отвечать «да» не читая и обесценивает тот вопрос, который был важен.
+            # A throwaway check database: a loopback address and a port from the range set aside
+            # for them. The range is taken by containers raised for the time of one check —
+            # restoring a copy, rehearsing a migration on a non-empty database — and torn down
+            # right after. There is no data worth guarding there by construction, and a question
+            # on every line of such a check teaches answering "yes" without reading and devalues
+            # the question that mattered.
             #
-            # Диапазон узкий и петлевой намеренно: под него не должны попадать ни рабочая база
-            # дерева, ни туннель к бою, ни базы соседних деревьев на этой машине. Какой он здесь,
-            # знает профиль; не назван — исключения нет вовсе, и вопрос задаётся всегда.
+            # The range is narrow and loopback on purpose: neither the tree's working database,
+            # nor the tunnel to production, nor the databases of neighbouring trees on this
+            # machine must fall under it. What it is here is known by the profile; not named —
+            # there is no exception at all, and the question is always asked.
             if [ -n "${RT_SCRATCH_PORT_RE:-}" ] \
                 && printf '%s' "$seg" | grep -qE "$RT_SCRATCH_PORT_RE" \
                 && printf '%s' "$seg" | grep -qE '127\.0\.0\.1|localhost|host\.docker\.internal'; then
                 is_scratch="yes"
             else
-                # Любой другой адресованный вызов снимает исключение целиком: в цепочке
-                # `psql -p 19434 -f x.sql && psql -c "delete …"` ранний выход убрал бы проверку
-                # со второго звена, а это ровно тот обход, ради которого гард и написан.
+                # Any other addressed call lifts the exception entirely: in the chain
+                # `psql -p 19434 -f x.sql && psql -c "delete …"` an early exit would remove the
+                # check from the second link, and that is exactly the bypass the guard is written
+                # against.
                 addr_other="yes"
             fi
         done <<EOF
@@ -72,25 +77,26 @@ EOF
     fi
 }
 
-# Исключение стоит ПОСЛЕ разбора адреса и ПЕРЕД правилами записи, но строго после того, как
-# признак боевой базы уже выставлен: прод перекрывает исключение при любом совпадении, а не
-# наоборот. Условие тройное — одноразовый адрес найден, боевого нет, и других адресованных
-# вызовов в команде нет вовсе.
+# The exception stands AFTER the address parsing and BEFORE the write rules, but strictly after
+# the production sign has already been set: production overrides the exception on any match, not
+# the other way round. The condition is threefold — a throwaway address is found, there is no
+# production one, and there are no other addressed calls in the command at all.
 sql_pass_scratch() {
     if [ -n "$is_scratch" ] && [ -z "$is_prod" ] && [ -z "$addr_other" ]; then
         exit 0
     fi
 }
 
-# На боевой базе разрешено только то, что гард опознал как чтение — БЕЛЫМ списком, а не
-# перечислением запретов. Чёрный список здесь принципиально не работает: SQL доезжает до
-# сервера файлом, редиректом, `\copy`, `SELECT … INTO`, и каждая заделанная форма оставляет
-# соседнюю. Поэтому вопрос перевёрнут: не «есть ли здесь запись», а «доказано ли чтение».
+# On the production database only what the guard recognised as a read is allowed — by an ALLOW
+# list, not by enumerating prohibitions. A deny list fundamentally does not work here: SQL reaches
+# the server as a file, a redirect, `\copy`, `SELECT … INTO`, and every form sealed leaves the
+# neighbouring one open. So the question is turned around: not "is there a write here" but "is a
+# read proven".
 #
-# Чтением считаются три формы, и каждая проверяется в СЕГМЕНТЕ своего вызова:
-#   pg_dump без --clean/--create   — снятие дампа
-#   psql -c "<один SELECT>"        — запрос без второго стейтмента
-#   psql -l / --version / --help   — проверка соединения без запроса
+# Three forms count as a read, and each is checked in the SEGMENT of its own call:
+#   pg_dump without --clean/--create   — taking a dump
+#   psql -c "<one SELECT>"             — a query without a second statement
+#   psql -l / --version / --help       — a connection check without a query
 sql_check_prod() {
     if [ -n "$is_prod" ] && [ -n "$is_write" ]; then
         deny "BLOCKED: запись в БОЕВОЕ хранилище (${context}). Адрес ведёт на бой — оттуда данные не восстанавливаются ничем, кроме копии. Схема на бою меняется миграцией через выкатку, данные — через панель владельца. Если правка данных на бою действительно нужна, её делает владелец руками, предварительно сняв копию; гард обойти нельзя."
@@ -101,9 +107,9 @@ sql_check_prod() {
         while IFS= read -r seg; do
             [ -z "$seg" ] && continue
             seg_read=""
-            # Аргументы клиента — всё, что стоит ПОСЛЕ его имени. До имени в том же сегменте
-            # свободно живут чужие флаги: `docker compose -f docker-compose.prod.yml … psql`,
-            # и `-f` от compose однажды отменял доказательство чтения.
+            # The client's arguments are everything AFTER its name. Before the name in the same
+            # segment other flags live freely: `docker compose -f docker-compose.prod.yml … psql`,
+            # and compose's `-f` once cancelled the proof of a read.
             seg_tail="$(printf '%s' "$seg" | perl -0pe 's{^.*?(?<![[:alnum:]_./-])(psql|pg_restore|prisma)(?=\s|$)}{$1}s' 2>/dev/null)"
             [ -z "$seg_tail" ] && seg_tail="$seg"
 
@@ -114,7 +120,7 @@ sql_check_prod() {
                 esac
             fi
 
-            # Один SELECT и ничего кроме: второй стейтмент через `;` уже не чтение.
+            # One SELECT and nothing else: a second statement after `;` is no longer a read.
             if printf '%s' "$seg" | grep -qE '(^|[^[:alnum:]_])select([^[:alnum:]_]|$)' \
                 && ! printf '%s' "$seg" | grep -qE '(^|[^[:alnum:]_])(delete|update|insert|truncate|drop|alter|grant|revoke|copy)([^[:alnum:]_]|$)|\\copy|into[[:space:]]+[a-z_"]' \
                 && ! printf '%s' "$seg_tail" | grep -qE '(^|[[:space:]])(-f|--file)([[:space:]]|=)'; then

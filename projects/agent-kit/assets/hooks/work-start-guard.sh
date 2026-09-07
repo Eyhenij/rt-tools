@@ -1,34 +1,36 @@
 #!/usr/bin/env bash
 # rt-hook: Stop
-# Требует: hooks/deny-tail.sh, hooks/profile-check.sh
-# Гард начала работы: ход, правивший код приложения, не заканчивается, пока владелец в этом же
-# ходе о работе не просил. Stop.
+# Requires: hooks/deny-tail.sh, hooks/profile-check.sh
+# Work-start guard: a turn that edited application code does not end unless the owner asked for
+# the work in that same turn. Stop.
 #
-# Зачем именно так. Статья «заход работу не начинает сам» держится памятью исполнителя, и
-# держится плохо: заход, открывшийся после чистки контекста, получает от хука запуска состояние
-# незаконченной работы и замысел с этапами — и оба говорят, что делать, если работать. О том,
-# работать ли, не говорит ни один. Строка с путём к файлу, присланная владельцем, прочитана как
-# поручение, и заход правит полсотни файлов, которых у него никто не просил.
+# Why this way. The article "a session does not start work by itself" is held by the executor's
+# memory, and held badly: a session opened after a context compaction gets the state of unfinished
+# work and the plan with its stages from the startup hook — and both say what to do, if working.
+# Whether to work, neither says. A line with a file path sent by the owner is read as an
+# assignment, and the session edits fifty files nobody asked it for.
 #
-# Соседние гарды этого не ловят, и не по недосмотру: каждый судит своё. Гард замысла требует
-# замысел на диске — он лежит; гард эпика отбивает чужую задачу — задача своя; гард разговора
-# судит ход, в котором задан вопрос, — а вопроса не задали ровно потому, что решили не
-# спрашивать. Все три судят предмет правки и её порядок, и ни один не спрашивает, кто эту
-# правку заказал.
+# The neighbouring guards do not catch this, and not by oversight: each judges its own matter.
+# The plan guard demands a plan on disk — it lies there; the epic guard refuses someone else's
+# task — the task is its own; the conversation guard judges a turn in which a question was asked
+# — and no question was asked precisely because it was decided not to ask. All three judge the
+# subject of the edit and its order, and none asks who ordered this edit.
 #
-# Просьба ловится формой, а не смыслом. Смысл машине не виден, и гард, взявшийся его понимать,
-# отбивал бы работу по настроению; поэтому судится обратное — то, что просьбой не бывает ни при
-# каком прочтении: пустая реплика, одно слово и путь к файлу. Всё остальное считается просьбой,
-# и это выбрано намеренно: ложный отказ здесь стоит дороже пропуска — он останавливает работу,
-# которую владелец заказал.
+# The request is caught by form, not by meaning. Meaning is invisible to a machine, and a guard
+# that took to understanding it would refuse work by mood; so the opposite is judged — what is
+# never a request under any reading: an empty message, a single word and a file path. Everything
+# else counts as a request, and this is chosen on purpose: a false refusal here costs more than a
+# miss — it stops work the owner ordered.
 #
-# Код приложения узнаётся признаком дерева `rt_is_app_code` — тем же, которым его узнаёт гард
-# замысла. Дерево, признака не объявившее, этого гарда не получает: судить ему нечем.
+# Application code is recognised by the tree's sign `rt_is_app_code` — the same one the plan
+# guard recognises it by. A tree that declared no sign does not get this guard: it has nothing to
+# judge by.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: нет `jq`, нет записи хода, нет признака дерева, повторный заход, любая
-# своя ошибка — ход РАЗРЕШАЕТСЯ (exit 0). Сломанный гард не имеет права заклинить работу.
+# FAIL-OPEN: no `jq`, no turn transcript, no tree sign, a repeated pass, any error of its own —
+# the turn is ALLOWED (exit 0). A broken guard has no right to jam the work.
 
-# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+# Its own name in the observations: the refusal is written by the shared deny tail, not by the
+# guard itself.
 RT_GUARD_NAME=work-start-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -40,7 +42,7 @@ input="$RT_HOOK_INPUT"
 
 command -v jq >/dev/null 2>&1 || exit 0
 
-# Повторный заход по тому же ходу не судится: гард сказал своё один раз и отпускает.
+# A repeated pass over the same turn is not judged: the guard has said its word once and lets go.
 active="$(printf '%s' "$input" | jq -r '.stop_hook_active // false' 2>/dev/null)"
 [ "$active" = "true" ] && exit 0
 
@@ -50,7 +52,7 @@ transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/nu
 
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Профиль дерева: сперва умолчание пакета, поверх него — надстройка проекта, если она есть.
+# The tree profile: first the package default, over it the project override, if there is one.
 for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" \
     "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"; do
     # shellcheck disable=SC1090
@@ -62,10 +64,10 @@ done
 command -v rt_needs >/dev/null 2>&1 || rt_needs() { command -v "$1" >/dev/null 2>&1; }
 rt_needs rt_is_app_code work-start-guard || exit 0
 
-# Ход — это всё, что записано после последнего настоящего ввода владельца. Ответ инструмента
-# приходит той же ролью, поэтому строки с `tool_result` вводом не считаются.
+# A turn is everything recorded after the owner's last real input. A tool result arrives under
+# the same role, so lines with `tool_result` are not counted as input.
 #
-# Хвост в 400 строк: запись хода растёт всю сессию, а судится только последний ход.
+# A 400-line tail: the transcript grows all session long, and only the last turn is judged.
 asked="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
     def is_input:
         .type == "user"
@@ -83,12 +85,12 @@ asked="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
       end
 ' 2>/dev/null)"
 
-# Ввода в записи нет вовсе — судить нечего: ход разрешается.
+# No input in the transcript at all — nothing to judge: the turn is allowed.
 [ -z "$asked" ] && exit 0
 
-# Правленные за ход файлы: инструменты правки называют путь полем, а команда оболочки — своим
-# разбором, и его здесь нет намеренно. Гард судит явную правку файла: команда, пишущая в код
-# мимо инструмента правки, остаётся его известной границей.
+# Files edited during the turn: the edit tools name the path in a field, while a shell command
+# would need its own parsing, and there is none here on purpose. The guard judges an explicit file
+# edit: a command writing into code past the edit tool remains its known boundary.
 edited="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
     def is_input:
         .type == "user"
@@ -119,18 +121,19 @@ done <<EOF
 $edited
 EOF
 
-# Код приложения за ход не правился: гард молчит. Разбор, тексты и обвязка идут своим ходом —
-# требовать слова владельца на них значило бы запретить разведку до просьбы.
+# No application code was edited during the turn: the guard is silent. Exploration, texts and
+# harness go their own way — demanding the owner's word on them would forbid scouting before a
+# request.
 [ -z "$touched" ] && exit 0
 
-# Просьбой не бывает ни при каком прочтении: пустая реплика, одно слово, путь к файлу. Судится
-# первая непустая строка ввода: развёрнутая просьба своей первой строкой уже просьба, а путь,
-# присланный один, ею не станет и дальше.
+# Never a request under any reading: an empty message, a single word, a file path. The first
+# non-empty line of the input is judged: a detailed request is already a request by its first
+# line, and a path sent alone does not become one further down either.
 first="$(printf '%s' "$asked" | tr -d '\r' | sed -n '/[^[:space:]]/{p;q;}')"
 words="$(printf '%s' "$asked" | tr -s '[:space:]' '\n' | grep -c '[^[:space:]]' 2>/dev/null || echo 0)"
 
 case "$first" in
-    # Служебная отметка о прерывании: своей просьбы в ней нет.
+    # A service note about an interruption: there is no request of its own in it.
     '[Request interrupted'*) kind="прерывание" ;;
     *)
         if [ "$words" -le 1 ] 2>/dev/null; then
@@ -144,7 +147,7 @@ case "$first" in
         ;;
 esac
 
-# Просьба в ходе есть: работа заказана, и гард отпускает.
+# There is a request in the turn: the work was ordered, and the guard lets go.
 [ -z "$kind" ] && exit 0
 
 reason="BLOCKED by work-start-guard: за ход правился код приложения — «${touched}», — а последняя реплика владельца просьбой не была: ${kind}.
@@ -155,8 +158,8 @@ reason="BLOCKED by work-start-guard: за ход правился код при�
 
 Гард судит один ход: следующий заход не отбивается."
 
-# Общий хвост отказа: два законных хода. Файл может быть не разложен — тогда хвоста нет,
-# а причина отказа остаётся прежней.
+# The shared deny tail: the two lawful moves. The file may not be laid out — then there is no
+# tail, and the reason for the refusal stays the same.
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
 command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }

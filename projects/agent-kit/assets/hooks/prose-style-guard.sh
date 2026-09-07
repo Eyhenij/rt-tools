@@ -1,18 +1,20 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit
-# Требует: checks/check-prose-style.mjs, hooks/deny-tail.sh
-# Гард слога: канцелярит и слова, которых в этом дереве не пишут, не уезжают в файл.
+# Requires: checks/check-prose-style.mjs, hooks/deny-tail.sh
+# Prose guard: officialese and words that are not written in this tree do not reach the file.
 #
-# Правило о текстах требует простых слов, а держалось это памятью того, кто пишет: ни одна
-# формулировочная договорённость не проверялась. Владелец читает написанное и видит машинный
-# слог там, где договорённость требует человеческого.
+# The rule about texts demands plain words, and this was held only by the memory of whoever writes:
+# not one wording convention was checked. The owner reads what was written and sees machine prose
+# where the convention demands human prose.
 #
-# Судится только новый текст правки, а не файл целиком: накопленное чинится отдельной работой, и
-# отбивать за него правку соседней строки — значит сделать гард обходимым по необходимости.
+# Only the new text of the edit is judged, not the whole file: what has accumulated is fixed by a
+# separate piece of work, and refusing an edit of a neighbouring line because of it would make the
+# guard bypassed out of necessity.
 #
-# FAIL-OPEN: нет узла, нет проверки, чужой инструмент, не `.md` → пропуск.
+# FAIL-OPEN: no node, no check, a foreign tool, not `.md` → pass.
 
-# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+# Its own name in the observations: the refusal is recorded by the shared deny tail, not by the
+# guard itself.
 RT_GUARD_NAME=prose-style-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -36,8 +38,8 @@ case "$path" in
     *) exit 0 ;;
 esac
 
-# Описание прошлого и папки задач не судятся: архив не правится вовсе, а ход работы пишется
-# наспех и живёт до слияния.
+# The archive and the task folders are not judged: the archive is not edited at all, and the
+# progress is written in haste and lives until the merge.
 case "$path" in
     */docs/archive/* | */docs/tasks/*) exit 0 ;;
 esac
@@ -64,8 +66,8 @@ ${found}
 
 Правь текст, а не обходи находку: замена названа у каждой. Слог — правило о текстах, и проверка видит перечисленные признаки, а не стиль вообще: чистый по ней абзац может быть плохим, но грязный плохой точно."
 
-# Общий хвост отказа: два законных хода и законная форма обхода, если она у отказа есть.
-# Файл может быть не разложен — тогда хвоста нет, а причина отказа остаётся прежней.
+# The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
+# The file may not be laid out — then there is no tail, and the refusal reason stays as it is.
 # shellcheck disable=SC1090
 [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null

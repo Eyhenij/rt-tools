@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
-# Местное значение: .claude/rt-kit/browser-device-id — без него браузерные гарды пропускают любой профиль
-# Общий помощник: печатает идентификатор закреплённого профиля браузера.
+# Local value: .claude/rt-kit/browser-device-id — without it the browser guards let any profile through
+# Shared helper: prints the id of the pinned browser profile.
 #
-# Идентификатор локален для машины и в пакет не едет вовсе. Он берётся из переменной окружения,
-# а если её нет — из файла рядом с конфигом раскладки. Ни там ни там ничего нет — все браузерные
-# гарды пропускают: гард, который не может назвать нужный профиль, ничего не предлагает взамен,
-# и слепой отказ только заводил бы работу в тупик.
+# The id is local to the machine and does not go into the package at all. It is taken from an
+# environment variable, and if that is missing — from a file next to the layout config. Nothing in
+# either place — all browser guards pass: a guard that cannot name the wanted profile offers nothing
+# in return, and a blind refusal would only drive the work into a dead end.
 #
-# Пропуск при этом не молчит. Ненастроенное дерево получает строку в поток ошибок — один раз на
-# признак, чтобы она не тонула в каждом вызове: молчание тут неотличимо от «всё в порядке», и
-# читается оно как разрешение водить браузер каким угодно профилем. Признак приходит первым
-# доводом от того, кто зовёт; довода нет — метка дневная.
+# The pass is not silent, though. An unconfigured tree gets a line on the error stream — once per
+# id, so that it does not drown in every call: silence here cannot be told from "all is well", and
+# it reads as permission to drive the browser with any profile at all. The id comes as the first
+# argument from the caller; no argument — the mark is for the day.
 #
-# Файл с идентификатором в репозиторий не коммитится: у каждой машины он свой.
+# The file with the id is not committed to the repository: each machine has its own.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 

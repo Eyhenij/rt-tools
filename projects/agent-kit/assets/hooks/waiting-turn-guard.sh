@@ -1,37 +1,38 @@
 #!/usr/bin/env bash
 # rt-hook: Stop
-# Требует: hooks/deny-tail.sh
-# Гард ожидания: ход, сообщающий владельцу о чужом шаге, не заканчивается, пока в нём не было ни
-# одного действия по следующей задаче. Stop.
+# Requires: hooks/deny-tail.sh
+# Waiting guard: a turn that tells the owner about someone else's step does not end until it holds
+# at least one action on the next task. Stop.
 #
-# Зачем именно так. Статья «ожидание прогона работой не занимают» держится памятью исполнителя, и
-# держится плохо: образец сообщения владельцу кончается фразой о следующей задаче, а фраза
-# исполняется как обещание — заход произносит её и кончает ход. Ход, в котором не сделано ничего,
-# ничем себя не выдаёт: ни правкой файла, ни командой, — и промах виден только владельцу, только
-# по тому, что работа не двигается, и только когда он спросит прямо.
+# Why this way. The article "waiting for a run is not what work is spent on" is held by the
+# executor's memory, and held badly: the sample message to the owner ends with a phrase about the
+# next task, and the phrase is carried out as a promise — the session says it and ends the turn. A
+# turn in which nothing was done gives itself away by nothing: no file edit, no command — and the
+# miss is seen only by the owner, only by the work not moving, and only when they ask directly.
 #
-# Чужой шаг узнаётся по двум признакам, и оба берутся из хода, а не из сети. Первый — открытие
-# PR: работа отдана, и дальше её двигает владелец. Второй — прочитанный красный прогон: чинить
-# его надо, но ход, в котором его прочитали и не сделали ничего, — та же пустота. Само чтение
-# прогона признаком не является: конец прогона читают и затем, чтобы пойти чинить; значит
-# красный ответ, а он лежит в выводе команды — там же, в записи хода.
+# Someone else's step is known by two signs, and both are taken from the turn, not from the
+# network. The first is a PR opened: the work is handed in, and from there the owner moves it. The
+# second is a red run read: it has to be fixed, but a turn that read it and did nothing is the same
+# emptiness. Reading the run is not a sign by itself: the end of a run is also read to go and fix
+# it; the sign is a red answer, and it lies in the command output — in the same turn record.
 #
-# Спросить хостинг было бы точнее, но сетевой вызов на завершении хода падает вместе со связью и
-# отбивал бы работу вместо промаха.
+# Asking the hosting would be more precise, but a network call at the end of a turn fails together
+# with the connection and would refuse the work instead of the miss.
 #
-# Что считается действием: заведение задачи, заведение ветки, перевод задачи в колонку работы,
-# заведение папки задачи. Перевод в колонку разбора и снятие папки сюда не входят — это шаги
-# закрытия прежней работы, а не начало следующей. Набор открыт и пополняется правкой — полнота
-# его открытый вопрос, а не обещание.
+# What counts as an action: creating a task, creating a branch, moving the task to the work column,
+# creating the task folder. Moving to the review column and removing the folder are not in it —
+# those are steps of closing the previous work, not the start of the next. The set is open and
+# grows by edits — its completeness is an open question, not a promise.
 #
-# Чего гард не судит. Ход, в котором о чужом шаге не сказано ничего, — здесь он молчит: пустой
-# ход неотличим от хода, которому нечего было делать. Это известная его граница. Зелёный прогон
-# он тоже не судит: за ним идёт своя работа — уборка и снятие черновика, — а не чужой шаг.
+# What the guard does not judge. A turn that says nothing about someone else's step — here it stays
+# silent: an empty turn cannot be told from a turn that had nothing to do. This is its known
+# boundary. A green run it does not judge either: after it comes work of one's own — cleanup and
+# lifting the draft — not someone else's step.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: при любой ошибке, нехватке `jq`, отсутствии записи хода и повторном
-# заходе ход РАЗРЕШАЕТСЯ (exit 0). Сломанный гард не имеет права заклинить разговор.
+# FAIL-OPEN: on any error, missing `jq`, missing turn record or a repeated call on the same turn
+# the turn is ALLOWED (exit 0). A broken guard has no right to jam the conversation.
 
-# Своё имя в наблюдениях: отбой пишет общий хвост отказа, а не сам гард.
+# Its own name in observations: the refusal is written by the shared deny tail, not by the guard.
 RT_GUARD_NAME=waiting-turn-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -43,7 +44,7 @@ input="$RT_HOOK_INPUT"
 
 command -v jq >/dev/null 2>&1 || exit 0
 
-# Повторный заход по тому же ходу не судится: гард сказал своё один раз и отпускает.
+# A repeated call on the same turn is not judged: the guard said its word once and lets go.
 active="$(printf '%s' "$input" | jq -r '.stop_hook_active // false' 2>/dev/null)"
 [ "$active" = "true" ] && exit 0
 
@@ -51,52 +52,51 @@ transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/nu
 [ -z "$transcript" ] && exit 0
 [ -f "$transcript" ] || exit 0
 
-# Открытие PR у каждого хостинга своё, и гард переносится между ними целиком: набор называет все
-# три формы, а не ту, что стоит в этом дереве. Правка тела PR сюда не входит — она не открывает
-# ничего.
+# Opening a PR differs per hosting, and the guard moves between them whole: the set names all
+# three forms, not the one this tree uses. Editing the PR body is not in it — it opens nothing.
 opened_re='gh[^|;&]*pr[[:space:]]+create|api[^|;&]*-X[[:space:]]+POST[^|;&]*/pulls|glab[^|;&]*mr[[:space:]]+create|az[[:space:]]+repos[[:space:]]+pr[[:space:]]+create'
 
-# Чтение прогона — второй случай чужого шага. Сам по себе он ничего не значит: конец прогона
-# читают и затем, чтобы пойти чинить. Значит красный ответ, а он лежит не в команде, а в её
-# выводе — там же, в записи хода, и сети для этого не нужно.
+# Reading a run is the second case of someone else's step. By itself it means nothing: the end of
+# a run is also read to go and fix it. The sign is a red answer, and it lies not in the command
+# but in its output — in the same turn record, and no network is needed for that.
 read_re='run[[:space:]]+(list|view|watch)|pipelines[[:space:]]+runs'
 red_re='completed[[:space:]]+failure|"conclusion"[[:space:]]*:[[:space:]]*"failure"|conclusion:[[:space:]]*failure|completed with .failure.|run[[:space:]]+failed'
 
-# Первое действие по следующей задаче. Перечисляется то, чем взятие БЫВАЕТ, а не то, что
-# действием считается: список шагов закрытия работы открыт и растёт, а список действий по
-# следующей задаче закрыт — у перечня «что бывает» дыры закрывающего шага нет.
+# The first action on the next task. Listed is what taking a task CAN BE, not what counts as an
+# action: the list of work-closing steps is open and grows, while the list of actions on the next
+# task is closed — a list of "what it can be" has no hole for a closing step.
 #
-# Перевода закрываемой задачи в колонку разбора и снятия её папки здесь нет намеренно: оба —
-# обязательные шаги закрытия работы, и оба стоят в том же ходе, которым открыт PR. Пока признак
-# перечислял их наравне со взятием, он совпадал всегда, и гард отпускал ход, ради которого
-# заведён, — работа так вставала трижды за один заход.
+# Moving the closed task to the review column and removing its folder are left out on purpose:
+# both are mandatory steps of closing work, and both stand in the same turn that opened the PR.
+# While the sign listed them alongside taking a task, it always matched, and the guard let through
+# the very turn it was made for — work stopped three times in one session that way.
 #
-# Правка кода в ветке того же PR действием по следующей задаче не считается — она чинит
-# прежнюю, а не двигает работу дальше.
+# A code edit in the branch of the same PR does not count as an action on the next task — it fixes
+# the previous one and does not move the work on.
 taken_re='task:new|checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|task:move[^|;&]*in-progress|(cp|mkdir)[^|;&]*/tasks/'
 
-# Заведение папки задачи идёт и не оболочкой: инструмент правки файла пишет её первым файлом, и
-# командной строки за этим нет вовсе. Поэтому рядом с командами судится путь правки — у него
-# свой образец, потому что имени команды в нём нет.
+# The task folder is also created without the shell: the file-editing tool writes its first file,
+# and no command line stands behind that. So next to the commands the edit path is judged — with a
+# pattern of its own, since no command name is in it.
 taken_path_re='/tasks/'
 
-# Чем ход показывает, что отданную работу он довёл до конца, а не бросил черновиком. Снятие
-# черновика — очевидный случай; чтение прогона — тот, где снимать ещё нечего, но исполнитель
-# посмотрел, а не сказал «жду». Две готовые заявки простояли черновиками именно потому, что
-# следующая задача была взята вместо этого, а не сверх этого.
+# How the turn shows it carried the handed-in work to the end rather than leaving it a draft.
+# Lifting the draft is the obvious case; reading the run is the one where there is nothing to lift
+# yet, but the executor looked instead of saying "waiting". Two ready PRs stood as drafts precisely
+# because the next task was taken instead of this, not on top of it.
 ready_re='pr[[:space:]]+ready|run[[:space:]]+(list|view|watch)|pr[[:space:]]+checks|check-runs|check:board|board\.mjs'
 
-# Своё названное действие. Пустой ход, объявивший, что сделает дальше, ничем себя не выдаёт:
-# заявку он не открывал, прогона не читал, и оба прежних признака молчат. Ловится он формой —
-# набором образцов будущего времени о собственном шаге, — а не пониманием смысла; за словами
-# при этом не должно стоять ни одного вызова, иначе объявление сказано по ходу работы, а не
-# вместо неё.
+# One's own named action. An empty turn that declared what it will do next gives itself away by
+# nothing: it opened no PR, read no run, and both earlier signs are silent. It is caught by form —
+# a set of future-tense patterns about one's own step — not by understanding the meaning; and no
+# call may stand behind the words, otherwise the declaration was said along the work, not instead
+# of it.
 vow_re='дальше беру|дальше возьму|дальше иду|следующим шагом|следующий шаг:|затем сделаю|затем возьму|потом сделаю|после этого сделаю|далее беру'
 
-# Ход — это всё, что записано после последнего настоящего ввода владельца. Ответ инструмента
-# приходит той же ролью, поэтому строки с `tool_result` вводом не считаются.
+# The turn is everything recorded after the owner's last real input. A tool result arrives under
+# the same role, so lines with `tool_result` do not count as input.
 #
-# Хвост в 400 строк: запись хода растёт всю сессию, а судится только последний ход.
+# A 400-line tail: the turn record grows all session, and only the last turn is judged.
 verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r \
     --arg opened "$opened_re" --arg taken "$taken_re" --arg taken_path "$taken_path_re" \
     --arg read "$read_re" --arg red "$red_re" --arg ready "$ready_re" --arg vow "$vow_re" '
@@ -111,13 +111,13 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r \
     | (if $i == null then [] else .[$i:] end) as $turn
     | [$turn[] | select(.type == "assistant") | (.message.content // [])[] | select(.type == "tool_use")] as $uses
     | ($uses | map((.input.command // "")) | join("\n")) as $ran
-    # Путь правки — второй способ завести папку задачи. Судятся только инструменты письма: у
-    # чтения путь тот же, а работой оно не является.
+    # The edit path is the second way to create a task folder. Only the writing tools are judged:
+    # reading has the same path and is not work.
     | ($uses | map(select(.name == "Write" or .name == "Edit" or .name == "MultiEdit")
           | (.input.file_path // "")) | join("\n")) as $wrote
-    # Ответ инструмента берётся текстом, а не в записи JSON: у той таб и кавычка уезжают
-    # экранированными, и образец по ним не попадает вовсе. Приходит он и строкой, и списком
-    # блоков — обе формы сводятся к одному тексту.
+    # The tool result is taken as text, not as the JSON record: there a tab and a quote leave
+    # escaped, and the pattern misses them entirely. It arrives both as a string and as a list of
+    # blocks — both forms are brought to one text.
     | ([$turn[] | select(.type == "user") | .message.content // [] | select(type == "array") | .[]
           | select(.type == "tool_result") | .content
           | if type == "string" then .
@@ -140,9 +140,9 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r \
       else "pass" end
 ' 2>/dev/null)"
 
-# Ни одного из двух действий: отказ называет оба разом. Прежде он называл только первое, и
-# снимался тоже первым — исполнитель брал следующую задачу, признак открытой заявки уходил
-# вместе с ходом, и второе требование испарялось, ни разу не прозвучав.
+# Neither of the two actions: the refusal names both at once. Before, it named only the first and
+# was lifted by the first too — the executor took the next task, the open-PR sign left with the
+# turn, and the second demand evaporated without ever sounding.
 if [ "$verdict" = "owe:both" ]; then
     reason="BLOCKED by waiting-turn-guard: в этом ходе открыт PR, а по отданной работе не сделано ни одного из двух действий — ни состояние её не спрошено, ни следующая задача не взята.
 
@@ -167,8 +167,8 @@ ${deny_tail_text}"
     exit 0
 fi
 
-# Ход, объявивший своё следующее действие и не сделавший по нему ничего. Отказ называет само
-# объявление: исполнитель, которому сказано «ход пуст», перепишет слова, а не сделает шаг.
+# A turn that declared its next action and did nothing on it. The refusal names the declaration
+# itself: an executor told "the turn is empty" will rewrite the words rather than take the step.
 if [ "$verdict" = "owe:vow" ]; then
     reason="BLOCKED by waiting-turn-guard: за ход не сделано ни одной правки и не позвана ни одна команда, а следующее действие названо словами — «дальше беру», «следующим шагом», «затем сделаю».
 
@@ -190,8 +190,8 @@ ${deny_tail_text}"
     exit 0
 fi
 
-# Черновик, оставленный при взятой следующей задаче, — отдельный отказ: там требование не про
-# следующую задачу, а про доведение отданной.
+# A draft left while the next task is taken is a separate refusal: there the demand is not about
+# the next task but about carrying the handed-in one to the end.
 if [ "$verdict" = "owe:draft" ]; then
     reason="BLOCKED by waiting-turn-guard: в этом ходе открыт PR, следующая задача взята, а состояние отданной работы не спрошено ни одной командой.
 
@@ -236,8 +236,8 @@ reason="BLOCKED by waiting-turn-guard: ${said}, а действия по сле�
 
 Гард судит один ход: следующий заход не отбивается."
 
-# Общий хвост отказа: два законных хода. Файл может быть не разложен — тогда хвоста нет,
-# а причина отказа остаётся прежней.
+# The shared deny tail: two lawful moves. The file may not be laid out — then there is no tail,
+# and the reason for the refusal stays as it was.
 # shellcheck disable=SC1090
 [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null

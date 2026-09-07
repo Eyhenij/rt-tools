@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 # rt-hook: SessionStart startup|resume|compact|clear
-# Вход в слой законов. SessionStart.
+# Entry into the laws layer. SessionStart.
 #
-# Файл закона сам по себе не приносит в контекст ничего — его читают, только когда за ним
-# пошли. Хук печатает указатель (имя файла и его заголовок) один раз за сессию: слой известен,
-# что существует, и открывается, когда решение его задевает.
+# A law file by itself brings nothing into the context — it is read only when someone went for it.
+# The hook prints an index (file name and its title) once per session: the layer is known to exist,
+# and it is opened when a decision touches it.
 #
-# Указатель ЧИТАЕТСЯ ИЗ КАТАЛОГА, а не выписан руками: выписанный разошёлся бы с тем, что
-# разложено на самом деле, и сказать об этом было бы нечем.
+# The index is READ FROM THE DIRECTORY, not written out by hand: a hand-written one would drift from
+# what is actually laid out, and there would be nothing to say so with.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: любая ошибка начинает сессию без добавленного контекста (exit 0).
-# Сломанный вход не имеет права остановить сессию.
+# FAIL-OPEN: any error starts the session without the added context (exit 0). A broken entry has no
+# right to stop the session.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 

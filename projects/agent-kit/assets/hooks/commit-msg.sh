@@ -1,19 +1,20 @@
 #!/usr/bin/env bash
-# Проверка сообщения коммита. Хук самого гита, а не агента.
+# Commit message check. A hook of git itself, not of the agent.
 #
-# Версионируемый шаблон: рабочая копия хуков гита не версионируется, поэтому файл ставится в
-# неё отдельно — скриптом подготовки при установке зависимостей. Переустановка руками, если
-# подготовка почему-то не отработала:
+# A versioned template: the git hooks directory of the working copy is not versioned, so the file
+# is put there separately — by the prepare script when dependencies are installed. Reinstall by
+# hand if the prepare step did not run for some reason:
 #   cp .claude/hooks/commit-msg.sh .git/hooks/commit-msg && chmod +x .git/hooks/commit-msg
 #
-# Намеренно НЕ через обёртку, подменяющую путь хуков: подмена уводит гит в свой каталог и рвёт
-# остальные хуки, уже лежащие в рабочей копии. Родной путь оставляет их нетронутыми.
+# Deliberately NOT through a wrapper that replaces the hooks path: the replacement takes git into
+# its own directory and breaks the other hooks already lying in the working copy. The native path
+# leaves them untouched.
 #
-# Разобранный по типу и области заголовок читается списком, а свободный текст — только
-# целиком; поэтому формат и проверяется здесь, на месте, а не глазами на разборе.
+# A title parsed by type and scope reads as a list, while free text reads only as a whole; that is
+# why the format is checked here, on the spot, and not by eye at review.
 #
-# ОТКАЗ В ПОЛЬЗУ РАБОТЫ: проверяльщика нет (свежий клон без установленных зависимостей) —
-# пропуск. Формат тогда не проверяется, и это лучше, чем заклинивший коммит.
+# FAIL-OPEN: no checker (a fresh clone without installed dependencies) — pass. The format is not
+# checked then, and that is better than a jammed commit.
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 
