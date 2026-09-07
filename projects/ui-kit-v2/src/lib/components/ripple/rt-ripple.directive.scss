@@ -1,0 +1,44 @@
+@layer rt-kit.components {
+    .rt-ripple {
+        --rt-ripple-color: currentcolor;
+        --rt-ripple-opacity: 0.24;
+        --rt-ripple-duration: 550ms;
+        --rt-ripple-radius: var(--rt-radius-full);
+
+        position: relative;
+    }
+
+    /* Обрезает волну по форме элемента. Отдельным слоем, а не overflow на самом
+       элементе: у кнопки-значка метка вынесена за край, и она была бы срезана. */
+    .rt-ripple__area {
+        position: absolute;
+        overflow: hidden;
+        border-radius: inherit;
+        inset: 0;
+        pointer-events: none;
+    }
+
+    .rt-ripple__wave {
+        position: absolute;
+        border-radius: var(--rt-ripple-radius);
+        animation: rt-ripple-spread var(--rt-ripple-duration) ease-out forwards;
+        background-color: var(--rt-ripple-color);
+        opacity: var(--rt-ripple-opacity);
+        transform: scale(0);
+    }
+
+    /* Волна гаснет вместе с остальным движением: тот, кто попросил систему не
+       двигать интерфейс, получает подсветку без расхождения круга. */
+    @media (prefers-reduced-motion: reduce) {
+        .rt-ripple__wave {
+            animation-duration: 1ms;
+        }
+    }
+
+    @keyframes rt-ripple-spread {
+        to {
+            opacity: 0;
+            transform: scale(1);
+        }
+    }
+}

@@ -58,6 +58,7 @@ export * from './photo-viewer';
 export * from './pagination/rt-pagination.component';
 export * from './pagination/rt-pagination.model';
 export * from './popover';
+export * from './ripple';
 export * from './section-nav';
 export * from './select';
 export * from './skeleton';

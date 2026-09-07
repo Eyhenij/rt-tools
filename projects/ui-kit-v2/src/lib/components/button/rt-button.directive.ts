@@ -18,6 +18,7 @@ import {
 } from '@angular/core';
 
 import { RtIconRegistry, IRtIcon } from '../icon';
+import { RtRippleDirective } from '../ripple';
 import { IButton } from './rt-button.model';
 
 const BEM_BLOCK: string = 'rt-button';
@@ -47,6 +48,7 @@ const LOADING_FADE_OUT_BUFFER_MS: number = 50;
  */
 @Directive({
     selector: 'button[rtButton], a[rtButton]',
+    hostDirectives: [{ directive: RtRippleDirective, inputs: ['rippleDisabled'] }],
 })
 export class RtButtonDirective {
     readonly #el: ElementRef<HTMLButtonElement | HTMLAnchorElement> = inject<ElementRef<HTMLButtonElement | HTMLAnchorElement>>(ElementRef);

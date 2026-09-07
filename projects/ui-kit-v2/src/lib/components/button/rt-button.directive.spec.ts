@@ -5,6 +5,10 @@ import { classesOf, createRtFixture, el, textOf } from '../../../testing/rt-kit-
 import { RtButtonDirective } from './rt-button.directive';
 import { IButton } from './rt-button.model';
 
+/** Модификаторы блока кнопки: рядом с ними на хосте законно стоят классы директив-хозяев. */
+const modifiersOf: (node: HTMLElement) => string[] = (node: HTMLElement): string[] =>
+    classesOf(node).filter((name: string): boolean => name.startsWith('rt-button--'));
+
 /** Директива живёт на чужом элементе — без host-обёртки её не поднять. */
 @Component({
     selector: 'rt-button-host',
@@ -150,7 +154,9 @@ describe('RtButtonDirective', (): void => {
         it('умолчания не выводят классов — ни палитры, ни размера', (): void => {
             // Класс выводится только на отличие от умолчания: так разметка
             // остаётся короткой, а стиль по умолчанию живёт на самом блоке.
-            expect(classesOf(button(setup()))).toEqual(['rt-button']);
+            // Судятся модификаторы блока: рядом с ним законно стоят классы
+            // директив-хозяев, и они к оформлению кнопки отношения не имеют.
+            expect(modifiersOf(button(setup()))).toEqual([]);
         });
 
         it.each<IButton.Theme>(['secondary', 'success', 'warning', 'danger', 'info'])(
@@ -176,7 +182,7 @@ describe('RtButtonDirective', (): void => {
             fixture.detectChanges();
 
             if (expected === null) {
-                expect(classesOf(button(fixture))).toEqual(['rt-button']);
+                expect(modifiersOf(button(fixture))).toEqual([]);
             } else {
                 expect(classesOf(button(fixture))).toContain(expected);
             }
