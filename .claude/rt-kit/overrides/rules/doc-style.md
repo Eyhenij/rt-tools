@@ -1,25 +1,26 @@
-## Указателя у описания прошлого здесь нет
+## The description of the past has no index here
 
-Каталог описания прошлого в этом дереве набирает по записи на каждую закрытую работу, и
-указателя у него нет: `indexedDirs` в настройке проверок пуст, поэтому статья правила о сверке
-указателя обеими сторонами прикладывается здесь к одному каталогу спеков. Почему указателя тут
-нет вовсе, говорит само правило; здесь — что из этого вышло в дереве.
+The directory of the description of the past in this tree gains a record per closed piece of
+work, and it has no index: `indexedDirs` in the checks config is empty, so the rule's article
+about reconciling an index from both sides applies here to one specs directory. Why there is no
+index at all the rule itself says; here — what came of that in the tree.
 
-- **Перечень, в конец которого дописывает каждая ветка, здесь не заводится вовсе.** Две дописи
-  в одно место сводятся сложением сторон, и локально слияние проходит само, но метку конфликта
-  на странице заявки хостинг ставит всё равно: настроек слияния он не читает. Дальше эта метка
-  зовёт вливать главную ветку в каждую открытую заявку после каждого слияния — то самое, что
-  паттерн стопки веток из одного основания запрещает прямо. Пятнадцать открытых заявок разом
-  стояли конфликтующими из-за одной строки перечня в каждой.
-- **Сложение сторон объявляется только там, где перечень остался.** У снятого оно не нужно, а
-  оставленное объявление говорит читателю `.gitattributes`, что файл ещё дописывают.
+- **A list every branch appends to the end of is not started here at all.** Two appends into one
+  place are reconciled by a union of both sides, and locally the merge passes by itself, but the
+  host puts the conflict mark on the request page anyway: it does not read merge settings. That
+  mark then calls for merging the main branch into every open request after every merge — exactly
+  what the pattern of a stack of branches from one base forbids outright. Fifteen open requests
+  stood conflicting at once because of one list line in each.
+- **The union of both sides is declared only where the list remained.** For a removed one it is
+  not needed, and a declaration left behind tells the reader of `.gitattributes` that the file is
+  still being appended to.
 
-## Срок хранения описания прошлого здесь — неделя
+## The retention of the description of the past here is a week
 
-Число названо ключом `archiveRetentionDays` в настройке проверок. Пакет умолчания не даёт: он
-не вправе начать сносить записи у дерева, которое об этом не просило.
+The number is named by the key `archiveRetentionDays` in the checks config. The package gives no
+default: it has no right to start removing records in a tree that did not ask for it.
 
 ## Skills without a law
 
-- `archive-record` — запись о закрытой работе: что в неё пишется, чем она находится без
-  перечня и чего в ней не пишут.
+- `archive-record` — the record of closed work: what goes into it, how it is found without a
+  list, and what is not written in it.

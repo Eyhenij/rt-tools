@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub. Load for creating a task and a branch, commit, push, opening a PR and merging. Names the one-to-one pair of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack. Rollout — rule deploy-flow.
 ---
-<!-- rt-kit v0.25.0 · rules/git-workflow.github.md · 851c1a61c5ac · правится надстройкой, не здесь -->
+<!-- rt-kit v0.25.0 · rules/git-workflow.github.md · 6fd4d7f25872 · правится надстройкой, не здесь -->
 
 # Delivery — how it works here
 
@@ -281,10 +281,11 @@ tree, the remote one — whether the ref itself went stale.
 - `git-workflow-pr-ready` — finishing the handed-over: the lifted draft, the red run's analysis, a
   wave over the chain.
 
-## Язык записи о правке
+## The language of the record of an edit
 
-- **Описание коммита пишется на языке дерева.** История этого репозитория русская целиком, и
-  английская строка читается в ней как чужая. Судится присутствие русской буквы, а не
-  отсутствие латиницы: в заголовке законно стоят область правки, номер версии, имя команды и
-  служебная пометка пропуска конвейера. Проверка стоит на хуке гита, то есть судит руку; запись
-  конвейера идёт мимо хука, и язык там держат сами шаблоны выпуска.
+- **A commit description is written in the language of the tree.** The history of this repository
+  is Russian throughout, and an English line reads in it as foreign. What is judged is the
+  presence of a Russian letter, not the absence of Latin: the subject lawfully holds the edit
+  area, a version number, a command name and the service mark that skips the pipeline. The check
+  stands on a git hook, that is, it judges the hand; a pipeline record goes past the hook, and the
+  language there is held by the release templates themselves.
