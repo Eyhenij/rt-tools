@@ -53,7 +53,7 @@ plan="$RT_TF_PLAN"
 deny() { rt_task_flow_deny "$@"; }
 
 if rt_needs rt_task_branch_ok task-flow-guard && ! rt_task_branch_ok "$branch"; then
-    deny "BLOCKED by task-flow: правка кода идёт в ветке под задачу, а текущая ветка — '${branch}'. Заведи задачу (npm run task:new -- --title '…' --slug <slug>) и ветку под её номером, затем повтори. Правило — скил task-flow."
+    deny "BLOCKED by task-flow: an edit of code goes in a branch for a task, and the current branch is '${branch}'. Create a task (npm run task:new -- --title '…' --slug <slug>) and a branch under its number, then repeat. The rule is task-flow."
 fi
 
 # A folder taken apart by a commit of this branch is the sign that the work is handed over. The plan
@@ -74,7 +74,7 @@ folder_archived() {
 folder_archived && exit 0
 
 if [ ! -f "$plan" ]; then
-    deny "BLOCKED by task-flow: нет замысла — '${tasks_dir}/${branch}/plan.md'. Собери папку задачи с образца (cp -r ${tasks_dir}/_template ${tasks_dir}/${branch}) и заполни шапку, след задачи и этапы, затем повтори. Правило — скил task-flow."
+    deny "BLOCKED by task-flow: there is no plan — '${tasks_dir}/${branch}/plan.md'. Assemble the task folder from the sample (cp -r ${tasks_dir}/_template ${tasks_dir}/${branch}) and fill in the header, the task footprint and the stages, then repeat. The rule is task-flow."
 fi
 
 # The work state. An artefact on disk does not say whether the work has reached editing code: an
@@ -88,7 +88,7 @@ fi
 progress="$dir/progress.md"
 
 if [ ! -f "$progress" ]; then
-    deny "BLOCKED by task-flow: нет хода работы — '${tasks_dir}/${branch}/progress.md'. В нём объявляется состояние работы, и без него не видно, дошла ли она до правки кода. Собери папку задачи с образца (cp -r ${tasks_dir}/_template ${tasks_dir}/${branch}), затем повтори. Правило — скил task-flow."
+    deny "BLOCKED by task-flow: there is no progress — '${tasks_dir}/${branch}/progress.md'. The state of the work is declared in it, and without it there is no seeing whether the work reached editing code. Assemble the task folder from the sample (cp -r ${tasks_dir}/_template ${tasks_dir}/${branch}), then repeat. The rule is task-flow."
 fi
 
 state="$(sed -n 's/^[[:space:]]*[-*][[:space:]]*\*\*Состояние:\*\*[[:space:]]*`\([^`]*\)`.*/\1/p' "$progress" 2>/dev/null | head -1)"
@@ -97,19 +97,19 @@ state="$(sed -n 's/^[[:space:]]*[-*][[:space:]]*\*\*Состояние:\*\*[[:sp
 # state" rewrites the state line instead of taking the step.
 state_action() {
     case "$1" in
-        просьба-не-разобрана) printf '%s' 'разведка по дереву, затем вопросы владельцу' ;;
-        разбор-закрыт) printf '%s' 'договорённость о продукте либо названная причина её отсутствия' ;;
-        договорённость-записана) printf '%s' 'завести задачу, ветку и папку задачи' ;;
-        задача-взята) printf '%s' 'написать замысел' ;;
-        замысел-записан) printf '%s' 'делать первый этап' ;;
-        папка-разобрана) printf '%s' 'снять черновик и попросить владельца влить' ;;
-        влито) printf '%s' 'разбор работы правилами и сверка очереди работ' ;;
+        просьба-не-разобрана) printf '%s' 'exploration over the tree, then questions to the owner' ;;
+        разбор-закрыт) printf '%s' 'a product agreement or a named reason there is none' ;;
+        договорённость-записана) printf '%s' 'create the task, the branch and the task folder' ;;
+        задача-взята) printf '%s' 'write the plan' ;;
+        замысел-записан) printf '%s' 'do the first stage' ;;
+        папка-разобрана) printf '%s' 'lift the draft and ask the owner to merge' ;;
+        влито) printf '%s' 'a rules review of the work and an audit of the work queue' ;;
         *) printf '%s' '' ;;
     esac
 }
 
 if [ -z "$state" ]; then
-    deny "BLOCKED by task-flow: в '${tasks_dir}/${branch}/progress.md' не объявлено состояние работы. Впиши в раздел «Где стоим» строку '- **Состояние:** \`<имя>\`' — имя из перечня состояний правила, — затем повтори. Код правится в состояниях 'этап-идёт', 'этапы-кончились', 'работа-отдана' и 'разбор-кончился'. Правило — скил task-flow."
+    deny "BLOCKED by task-flow: no state of the work is declared in '${tasks_dir}/${branch}/progress.md'. Write into the section «Где стоим» the line '- **Состояние:** \`<имя>\`' — a name from the list of states of the rule — then repeat. Code is edited in the states 'этап-идёт', 'этапы-кончились', 'работа-отдана' and 'разбор-кончился'. The rule is task-flow."
 fi
 
 case "$state" in
@@ -117,10 +117,10 @@ case "$state" in
     # a run happens to be red and a review comes with remarks, and the fix goes into the same branch.
     этап-идёт | этапы-кончились | работа-отдана | разбор-кончился) ;;
     просьба-не-разобрана | разбор-закрыт | договорённость-записана | задача-взята | замысел-записан | папка-разобрана | влито)
-        deny "BLOCKED by task-flow: в ходе работы объявлено состояние '${state}', а код в нём не правится. Обязательное действие этого состояния — $(state_action "$state"). Дошла работа до правки кода — перепиши строку состояния в '${tasks_dir}/${branch}/progress.md' на '- **Состояние:** \`этап-идёт\`'. Правило — скил task-flow."
+        deny "BLOCKED by task-flow: the progress declares the state '${state}', and code is not edited in it. The mandatory action of this state is $(state_action "$state"). The work has reached editing code — rewrite the state line in '${tasks_dir}/${branch}/progress.md' to '- **Состояние:** \`этап-идёт\`'. The rule is task-flow."
         ;;
     *)
-        deny "BLOCKED by task-flow: в '${tasks_dir}/${branch}/progress.md' объявлено состояние '${state}', а такого в перечне нет. Имя берётся из перечня состояний правила — своё слово не говорит ни о входе, ни о выходе, ни об обязательном действии. Правило — скил task-flow."
+        deny "BLOCKED by task-flow: '${tasks_dir}/${branch}/progress.md' declares the state '${state}', and there is no such name in the list. The name is taken from the list of states of the rule — a word of one own says nothing about the entry, the exit or the mandatory action. The rule is task-flow."
         ;;
 esac
 
@@ -140,6 +140,6 @@ esac
 if [ -n "$(git -C "$root" rev-parse --verify HEAD 2>/dev/null)" ]; then
     in_tree="$(git -C "$root" ls-tree -d --name-only HEAD -- "$tasks_dir/$branch" 2>/dev/null | head -1)"
     if [ -z "$in_tree" ]; then
-        deny "BLOCKED by task-flow: папка задачи '${tasks_dir}/${branch}' лежит в рабочем дереве, а в историю ветки не заведена. Заведи её коммитом (git add ${tasks_dir}/${branch} && git commit), затем повтори: признак отданной работы гард берёт из истории, и с некоммиченной папкой отказ придёт на открытии заявки — когда папка уже разобрана и чинить нечего. Правило — скил task-flow."
+        deny "BLOCKED by task-flow: the task folder '${tasks_dir}/${branch}' lies in the working tree and is not put into the history of the branch. Put it there by a commit (git add ${tasks_dir}/${branch} && git commit), then repeat: the sign of handed-over work the guard takes from the history, and with an uncommitted folder the refusal arrives at the opening of the request — when the folder is already taken apart and there is nothing left to fix. The rule is task-flow."
     fi
 fi

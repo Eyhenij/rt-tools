@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/git-guard-delivery-signature.sh · 57f8e3573325 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/git-guard-delivery-signature.sh · fb6d7a7a5daa · правится надстройкой, не здесь
 # The signature of a machine commit for the delivery guard: whose commit it is, whether it is signed
 # with the right mail and what to do if it is not.
 #
@@ -114,14 +114,14 @@ EOF
         fi
 
         [ -n "$unknown" ] \
-            && deny "BLOCKED: коммит вклада подписан записью, которой дерево не объявляло. Известны машинная запись ${commit_email} и почты людей, названные профилем; всё прочее хостинг припишет тому, чей это адрес, а изнутри истории промах не виден. Расходятся: ${unknown}. Перепиши подпись до пуша, после него это чинит только силовая отправка:
-    последний коммит — GIT_AUTHOR_EMAIL=\"${commit_email}\" GIT_COMMITTER_EMAIL=\"${commit_email}\" git commit --amend --no-edit --reset-author
-    весь вклад ветки — git filter-branch -f --env-filter 'GIT_AUTHOR_EMAIL=\"${commit_email}\"; GIT_COMMITTER_EMAIL=\"${commit_email}\"' origin/${main_branch}..HEAD"
+            && deny "BLOCKED: a commit of the contribution is signed by an account the tree never declared. Known are the machine account ${commit_email} and the emails of people named by the profile; everything else the hosting attributes to whoever owns that address, and from inside the history the miss is invisible. Diverging: ${unknown}. Rewrite the signature before the push, after it only a force push fixes this:
+    the last commit — GIT_AUTHOR_EMAIL=\"${commit_email}\" GIT_COMMITTER_EMAIL=\"${commit_email}\" git commit --amend --no-edit --reset-author
+    the whole contribution of the branch — git filter-branch -f --env-filter 'GIT_AUTHOR_EMAIL=\"${commit_email}\"; GIT_COMMITTER_EMAIL=\"${commit_email}\"' origin/${main_branch}..HEAD"
 
         [ -n "$strangers" ] \
-            && deny "BLOCKED: машинный коммит подписан не той почтой, что объявлена деревом. Хостинг сопоставляет служебный адрес по числу в нём, и коммит с чужим числом он припишет постороннему человеку — изнутри промах не виден, потому что имя учётной записи рядом верное. Расходятся: ${strangers}. Объявлено: ${commit_email} — почта берётся оттуда, а не набирается по памяти. Перепиши подпись до пуша, после него это чинит только силовая отправка:
-    последний коммит — GIT_AUTHOR_NAME=\"${bot_login}\" GIT_AUTHOR_EMAIL=\"${commit_email}\" GIT_COMMITTER_NAME=\"${bot_login}\" GIT_COMMITTER_EMAIL=\"${commit_email}\" git commit --amend --no-edit --reset-author
-    весь вклад ветки — git filter-branch -f --env-filter 'GIT_AUTHOR_EMAIL=\"${commit_email}\"; GIT_COMMITTER_EMAIL=\"${commit_email}\"' origin/${main_branch}..HEAD"
+            && deny "BLOCKED: a machine commit is signed by an email other than the one the tree declared. The hosting matches a service address by the number in it, and a commit with a foreign number it attributes to an outside person — from inside the miss is invisible, because the name of the account next to it is right. Diverging: ${strangers}. Declared: ${commit_email} — the email is taken from there, not typed from memory. Rewrite the signature before the push, after it only a force push fixes this:
+    the last commit — GIT_AUTHOR_NAME=\"${bot_login}\" GIT_AUTHOR_EMAIL=\"${commit_email}\" GIT_COMMITTER_NAME=\"${bot_login}\" GIT_COMMITTER_EMAIL=\"${commit_email}\" git commit --amend --no-edit --reset-author
+    the whole contribution of the branch — git filter-branch -f --env-filter 'GIT_AUTHOR_EMAIL=\"${commit_email}\"; GIT_COMMITTER_EMAIL=\"${commit_email}\"' origin/${main_branch}..HEAD"
     fi
 fi
 # This point has no exit of its own: a push happens to be a compound command too, and its second

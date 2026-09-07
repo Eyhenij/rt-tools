@@ -78,7 +78,7 @@ rt_delivery_ready_folder() {
 
     _branch="$(git branch --show-current 2>/dev/null)"
     [ -z "$_branch" ] && return 0
-    rt_task_branch_ok "$_branch" || return 0   # за беззадачной веткой папки не стоит
+    rt_task_branch_ok "$_branch" || return 0   # no folder stands behind a branch without a task
 
     _lying="$(rt_folder_in_branch "$tasks_dir/$_branch")"
     [ -n "$_lying" ] \
@@ -89,11 +89,11 @@ rt_delivery_ready_folder() {
 # the one the guard does reach. From here we leave only by a refusal or by silence: the merge is
 # decided whole.
 rt_delivery_merge_folder() {
-    [ -n "$tasks_dir" ] || exit 0   # ведения работы папкой в дереве нет
+    [ -n "$tasks_dir" ] || exit 0   # the tree keeps no work by a folder
 
     _branch="$(git branch --show-current 2>/dev/null)"
     [ -z "$_branch" ] && exit 0
-    rt_task_branch_ok "$_branch" || exit 0   # за беззадачной веткой папки не стоит
+    rt_task_branch_ok "$_branch" || exit 0   # no folder stands behind a branch without a task
 
     _folder="$tasks_dir/$_branch"
 

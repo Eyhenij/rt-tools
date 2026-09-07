@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/waiting-turn-guard.sh · 4bced7d7ab18 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/waiting-turn-guard.sh · fbe0815367e0 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh
 # Waiting guard: a turn that tells the owner about someone else's step does not end until it holds
@@ -145,14 +145,14 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r \
 # was lifted by the first too — the executor took the next task, the open-PR sign left with the
 # turn, and the second demand evaporated without ever sounding.
 if [ "$verdict" = "owe:both" ]; then
-    reason="BLOCKED by waiting-turn-guard: в этом ходе открыт PR, а по отданной работе не сделано ни одного из двух действий — ни состояние её не спрошено, ни следующая задача не взята.
+    reason="BLOCKED by waiting-turn-guard: a PR was opened in this turn, and neither of the two actions was done about the handed-over work — its state was not asked, and the next task was not taken.
 
-Действий именно два, и снять отказ одним нельзя: отданное доводится до снятого черновика тем, кто его отдал, а следующая берётся сверх этого, а не вместо. Взятая следующая уносит признак открытой заявки с собой — второе требование после неё не прозвучит уже никогда.
+There are exactly two actions, and one of them does not lift the refusal: what was handed over is brought to a lifted draft by the one who handed it over, and the next task is taken on top of that, not instead. A taken next task carries the sign of the open request away with it — the second requirement will never sound after it.
 
     gh run list                                # состояние отданного
     npm run task:new -- <заголовок>            # следующая работа
 
-Гард судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next session is not refused."
 
     # shellcheck disable=SC1090
     [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
@@ -164,18 +164,18 @@ if [ "$verdict" = "owe:both" ]; then
 ${deny_tail_text}"
 
     jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-        || printf '{"decision":"block","reason":"waiting-turn-guard: по отданной работе не сделано ни одного из двух действий."}\n'
+        || printf '{"decision":"block","reason":"waiting-turn-guard: neither of the two actions was done about the handed-over work."}\n'
     exit 0
 fi
 
 # A turn that declared its next action and did nothing on it. The refusal names the declaration
 # itself: an executor told "the turn is empty" will rewrite the words rather than take the step.
 if [ "$verdict" = "owe:vow" ]; then
-    reason="BLOCKED by waiting-turn-guard: за ход не сделано ни одной правки и не позвана ни одна команда, а следующее действие названо словами — «дальше беру», «следующим шагом», «затем сделаю».
+    reason="BLOCKED by waiting-turn-guard: not a single edit was made in the turn and not a single command was called, while the next action is named in words — «дальше беру», «следующим шагом», «затем сделаю».
 
-Объявление своего же шага работой не бывает: оно точнее всякого обещания и пустоты за ним не видно никому. Сделай названное этим же ходом — либо скажи владельцу, что работу останавливает, и назови, чем именно.
+An announcement of your own step is never work: it is more precise than any promise, and the emptiness behind it is visible to nobody. Do what is named in this same turn — or tell the owner what stops the work, and name exactly what.
 
-Гард судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next session is not refused."
 
     # shellcheck disable=SC1090
     [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
@@ -187,22 +187,22 @@ if [ "$verdict" = "owe:vow" ]; then
 ${deny_tail_text}"
 
     jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-        || printf '{"decision":"block","reason":"waiting-turn-guard: следующее действие названо словами, а за ход не сделано ничего."}\n'
+        || printf '{"decision":"block","reason":"waiting-turn-guard: the next action is named in words, and nothing was done in the turn."}\n'
     exit 0
 fi
 
 # A draft left while the next task is taken is a separate refusal: there the demand is not about
 # the next task but about carrying the handed-in one to the end.
 if [ "$verdict" = "owe:draft" ]; then
-    reason="BLOCKED by waiting-turn-guard: в этом ходе открыт PR, следующая задача взята, а состояние отданной работы не спрошено ни одной командой.
+    reason="BLOCKED by waiting-turn-guard: a PR was opened in this turn, the next task is taken, and the state of the handed-over work was asked by no command.
 
-Черновик читается владельцем как «работа не кончена»: кнопка слияния у него заблокирована самим хостингом, и по списку заявок готовое от недоделанного не отличить — серое и там и там. Довести отданное до снятого черновика обязан тот, кто его отдал.
+A draft is read by the owner as «the work is not finished»: its merge button is locked by the hosting itself, and in the list of requests the ready cannot be told from the unfinished — grey in both. Bringing what was handed over to a lifted draft is owed by the one who handed it over.
 
-Спроси прогон на вершине этим же ходом — `gh run list`, `gh pr checks` или сверку очереди работ — и сними черновик, когда он зелёный, а ветка сливается. Прогон ещё идёт — так и скажи владельцу, назвав его вывод.
+Ask the run on the tip in this same turn — `gh run list`, `gh pr checks` or the audit of the work queue — and lift the draft when it is green and the branch merges. The run is still going — then say so to the owner, naming its output.
 
-Следующая задача берётся сверх этого, а не вместо: обе готовые заявки простояли черновиками ровно на такой подмене.
+The next task is taken on top of that, not instead: both ready requests stood as drafts on exactly this substitution.
 
-Гард судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next session is not refused."
 
     # shellcheck disable=SC1090
     [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
@@ -214,28 +214,28 @@ if [ "$verdict" = "owe:draft" ]; then
 ${deny_tail_text}"
 
     jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-        || printf '{"decision":"block","reason":"waiting-turn-guard: отданная работа осталась черновиком — спроси прогон и сними черновик."}\n'
+        || printf '{"decision":"block","reason":"waiting-turn-guard: the handed-over work stayed a draft — ask the run and lift the draft."}\n'
     exit 0
 fi
 
 case "$verdict" in
-    owe:pr) said="в этом ходе открыт PR" ;;
-    owe:run) said="в этом ходе прочитан красный прогон" ;;
+    owe:pr) said="a PR was opened in this turn" ;;
+    owe:run) said="a red run was read in this turn" ;;
     *) exit 0 ;;
 esac
 
-reason="BLOCKED by waiting-turn-guard: ${said}, а действия по следующей задаче в нём нет ни одного. Ожидание чужого шага заходом не занимают: прогон, разбор и слияние идут на стороне и быстрее от взгляда не становятся.
+reason="BLOCKED by waiting-turn-guard: ${said}, and there is not a single action about the next task in it. Waiting for someone else's step is not what a session is spent on: the run, the review and the merge go on elsewhere and do not get faster from being watched.
 
-Сказать «беру следующую задачу» — не то же самое, что взять её: фраза живёт до конца хода, а работа не двигается, и заметить это может только владелец.
+Saying «беру следующую задачу» is not the same as taking it: the phrase lives to the end of the turn while the work does not move, and only the owner can notice that.
 
-Тем же ходом делается первое действие по следующей задаче — заведение задачи, ветки или папки:
+The first action about the next task is done in this same turn — creating the task, the branch or the folder:
 
     npm run task:new -- --title '<Что не так>' --slug <slug>
     git checkout -b <КЛЮЧ>-<номер>-<slug>
 
-Конец прогона узнаётся возвратом фоновой команды, а не взглядом на страницу.
+The end of a run is learned from the return of a background command, not from a look at the page.
 
-Гард судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next session is not refused."
 
 # The shared deny tail: two lawful moves. The file may not be laid out — then there is no tail,
 # and the reason for the refusal stays as it was.
@@ -249,6 +249,6 @@ deny_tail_text="$(rt_deny_tail "")"
 ${deny_tail_text}"
 
 jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-    || printf '{"decision":"block","reason":"waiting-turn-guard: PR открыт — тем же ходом берётся следующая задача."}\n'
+    || printf '{"decision":"block","reason":"waiting-turn-guard: a PR is open — the next task is taken in the same turn."}\n'
 
 exit 0

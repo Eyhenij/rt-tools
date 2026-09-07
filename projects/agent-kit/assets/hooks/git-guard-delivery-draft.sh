@@ -51,7 +51,7 @@ rt_delivery_draft_ready() {
                     *) pull_name=" #${pull_name}" ;;
                 esac
                 printf '%s' "$pull" | jq -e '.reviewed' >/dev/null 2>&1 \
-                    || fault "у заявки${pull_name} нет разбора: ревьювер не запрошен и отзыва никто не оставлял. Снятый черновик читается как «можно вливать», а вливать некому — назначь ревьювера и повтори."
+                    || fault "the request${pull_name} has no review: no reviewer was requested and nobody left a review. A lifted draft reads as «ready to merge», and there is nobody to merge — set a reviewer and repeat."
 
                 # A conflict arrives into a handed-over PR through someone else's merge, without
                 # a single action by its author: the base checked at opening is yesterday's by the
@@ -60,7 +60,7 @@ rt_delivery_draft_ready() {
                 # unknown mergeability stays: the hosting recomputes it after every edit of the
                 # main branch, and "not computed yet" is not "conflicts".
                 printf '%s' "$pull" | jq -e '.conflicting' >/dev/null 2>&1 \
-                    && fault "заявка${pull_name} конфликтует с главной веткой. Влей её в свою ветку, разбери конфликт и повтори: снятый черновик читается как «можно вливать», а слить эту заявку нельзя."
+                    && fault "the request${pull_name} conflicts with the main branch. Merge it into your branch, resolve the conflict and repeat: a lifted draft reads as «ready to merge», and this request cannot be merged."
 
                 # The author of the PR. At opening there was nothing to judge by but the text of
                 # the command: the identity of the call comes from the environment. Here it is
@@ -70,7 +70,7 @@ rt_delivery_draft_ready() {
                 if [ -n "$task_bot" ]; then
                     pull_author="$(printf '%s' "$pull" | jq -r '.author // empty' 2>/dev/null)"
                     [ -n "$pull_author" ] && [ "$pull_author" != "$task_bot" ] \
-                        && fault "заявку${pull_name} открыла запись «${pull_author}», а не машинная «${task_bot}». Автор заявки её ревьювером не бывает, и разбор ей назначить нечем. Автора не сменить — закрой заявку и открой заново${pull_token_hint:+, подставив токен: ${pull_token_hint} …}."
+                        && fault "the request${pull_name} was opened by the account «${pull_author}», not the machine one «${task_bot}». The author of a request is never its reviewer, and there is nothing to assign the review to. The author cannot be changed — close the request and open it anew${pull_token_hint:+, substituting the token: ${pull_token_hint} …}."
                 fi
             fi
         fi

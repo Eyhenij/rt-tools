@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/git-guard-delivery-folder.sh · 8745631b868a · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/git-guard-delivery-folder.sh · c36b57897a1a · правится надстройкой, не здесь
 # Delivery conditions about the task folder. NOT a guard: it has no `rt-hook:` declaration and it
 # hooks into no agent event. The delivery guard sources it — the same way it sources the refusal
 # tail and the observation record.
@@ -79,7 +79,7 @@ rt_delivery_ready_folder() {
 
     _branch="$(git branch --show-current 2>/dev/null)"
     [ -z "$_branch" ] && return 0
-    rt_task_branch_ok "$_branch" || return 0   # за беззадачной веткой папки не стоит
+    rt_task_branch_ok "$_branch" || return 0   # no folder stands behind a branch without a task
 
     _lying="$(rt_folder_in_branch "$tasks_dir/$_branch")"
     [ -n "$_lying" ] \
@@ -90,11 +90,11 @@ rt_delivery_ready_folder() {
 # the one the guard does reach. From here we leave only by a refusal or by silence: the merge is
 # decided whole.
 rt_delivery_merge_folder() {
-    [ -n "$tasks_dir" ] || exit 0   # ведения работы папкой в дереве нет
+    [ -n "$tasks_dir" ] || exit 0   # the tree keeps no work by a folder
 
     _branch="$(git branch --show-current 2>/dev/null)"
     [ -z "$_branch" ] && exit 0
-    rt_task_branch_ok "$_branch" || exit 0   # за беззадачной веткой папки не стоит
+    rt_task_branch_ok "$_branch" || exit 0   # no folder stands behind a branch without a task
 
     _folder="$tasks_dir/$_branch"
 

@@ -112,18 +112,18 @@ esac
 if [ "$state" = "замысел-записан" ]; then
     plan="$root/$tasks_dir/$branch/plan.md"
     first_stage="$(grep -m1 '^### ' "$plan" 2>/dev/null | sed 's/^### //')"
-    [ -z "$first_stage" ] && first_stage="первый этап замысла"
-    reason="BLOCKED by turn-exit-guard: работа стоит в состоянии 'замысел-записан', а обязательное действие этого состояния — делать первый этап — за ход не начато.
+    [ -z "$first_stage" ] && first_stage="the first stage of the plan"
+    reason="BLOCKED by turn-exit-guard: the work stands in the state 'замысел-записан', and the mandatory action of this state — do the first stage — was not begun in the turn.
 
-Заведение задачи, ветки, колонки и папки этим шагом не считается: всё это подготовка к работе, а не работа. Владельцу отчёт о взятой задаче неотличим от остановки — он видит исполнителя стоящим.
+Creating the task, the branch, the column and the folder does not count as that step: all of it is preparation for work, not work. To the owner a report about a taken task is indistinguishable from a stop — they see the executor standing still.
 
-Первый этап замысла: ${first_stage}
+The first stage of the plan: ${first_stage}
 
-Начни его этим же ходом и перепиши состояние на '- **Состояние:** \`этап-идёт\`'. Владелец сказал остановиться — так и напиши: страж читает его слово, а не пересказ.
+Begin it in this same turn and rewrite the state to '- **Состояние:** \`этап-идёт\`'. The owner said to stop — then write so: the guard reads their word, not a retelling.
 
-Страж судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next session is not refused."
 
-    rt_te_deny "$reason" "замысел записан, а первый этап не начат."
+    rt_te_deny "$reason" "the plan is written and the first stage is not begun."
 fi
 
 # The same thing, but there is nothing left on disk to declare it with: the task folder is taken
@@ -154,7 +154,7 @@ archived=false
 # "the work is not finished" re-reads the same line himself.
 next_step=""
 [ -n "$progress" ] && next_step="$(sed -n 's/^[[:space:]]*[-*][[:space:]]*\*\*Следующий шаг:\*\*[[:space:]]*\(.*\)/\1/p' "$progress" 2>/dev/null | head -1)"
-[ -z "$next_step" ] && next_step="что стоит в разделе «Где стоим» хода работы"
+[ -z "$next_step" ] && next_step="what stands in the section «Где стоим» of the progress"
 
 # The patterns of work, of exploration, of waiting and of the handover lie in a neighbouring file:
 # the guard outgrew the length limit, and patterns with their reasons read apart from the tiers.
@@ -206,7 +206,7 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re
           | if type == "string" then .
             elif type == "array" then (map(if type == "object" then (.text // "") else tostring end) | join("\n"))
             else tostring end] | join("\n")) as $out
-    | (($out | test("BLOCKED by|Отбито гейтом")) or ($ran | test("BLOCKED by"))) as $denied
+    | (($out | test("BLOCKED by|Refused by the rules gate|Отбито гейтом")) or ($ran | test("BLOCKED by"))) as $denied
     | ($ran | test("handoff")) as $handed
     # The word of the owner about stopping: the reply itself is judged, not its retelling.
     | ([$turn[] | select(.type == "user") | .message.content
@@ -245,11 +245,11 @@ commands="$(printf '%s' "$verdict" | jq -r '.ran // ""' 2>/dev/null)"
 # tier stands before the lawful exits on purpose: a guard refusal covers exactly this case.
 asked_in_prose="$(printf '%s' "$verdict" | jq -r '.asked_in_prose // false' 2>/dev/null)"
 if [ "$asked_in_prose" = "true" ]; then
-    rt_te_deny "BLOCKED by turn-exit-guard: за этот ход гард разговора отбил вопрос владельцу, а ответ кончается вопросом прозой — это тот же вопрос, заданный другой формой.
+    rt_te_deny "BLOCKED by turn-exit-guard: in this turn the conversation guard refused a question to the owner, and the reply ends with a question in prose — the same question, asked in another form.
 
-Отказ гарда назвал причину: ответ лежит в дереве либо владелец его уже давал. Прочитай названное им место и работай дальше; спрашивают то, чего в дереве нет.
+The refusal of the guard named the reason: the answer lies in the tree or the owner has already given it. Read the place it named and work on; what is asked is what the tree does not hold.
 
-Страж судит один ход: следующий заход не отбивается." "вопрос вернулся прозой после отказа гарда разговора."
+The guard judges one turn: the next session is not refused." "the question returned in prose after the refusal of the conversation guard."
 fi
 
 # The turn ended with waiting for the owner's word. The guard reads the word about stopping from
@@ -262,13 +262,13 @@ fi
 # "2026-09-04-hod-konchalsya-ozhidaniem-pri-deystvuyushchem-ukazanii" in the intake.
 awaits_word="$(printf '%s' "$verdict" | jq -r '.awaits_word // false' 2>/dev/null)"
 if [ "$awaits_word" = "true" ]; then
-    rt_te_deny "BLOCKED by turn-exit-guard: ход кончился словами об ожидании слова владельца, а слово об остановке страж читает у владельца: за этот ход он остановки не объявлял, и вопроса ему инструментом не задано.
+    rt_te_deny "BLOCKED by turn-exit-guard: the turn ended with words about waiting for the word of the owner, and the word about stopping the guard reads from the owner: in this turn they announced no stop, and no question was put to them by the tool.
 
-Фраза «жду твоего слова» — остановка, объявленная исполнителем. Указание владельца работать действует до его отмены, и новый факт против него — строка о цене в ответе, а не ожидание. Нужно решение, которого нет в дереве, — задай вопрос инструментом; иначе сделай следующий шаг этим же ходом.
+The phrase «жду твоего слова» is a stop announced by the executor. The instruction of the owner to work holds until they cancel it, and a new fact against it is a line about the price in the reply, not waiting. A decision the tree does not hold is needed — then ask the question by the tool; otherwise do the next step in this same turn.
 
-Следующий шаг записан в ходе работы: ${next_step}
+The next step is written in the progress: ${next_step}
 
-Страж судит один ход: следующий заход не отбивается." "ход кончился ожиданием слова владельца."
+The guard judges one turn: the next session is not refused." "the turn ended with waiting for the word of the owner."
 fi
 
 [ "$released" = "true" ] && exit 0
@@ -286,21 +286,21 @@ case "$state" in
     этапы-кончились | разбор-кончился)
         if ! printf '%s' "$commands" | grep -qE 'gh[[:space:]]+pr[[:space:]]+create'; then
             if [ "$state" = "этапы-кончились" ]; then
-                action="влить договорённость, привести тексты к сделанному и прогнать набор"
+                action="merge the agreement, bring the texts up to what was done and run the suite"
             else
-                action="разобрать папку задачи последним коммитом"
+                action="take the task folder apart by the last commit"
             fi
-            reason="BLOCKED by turn-exit-guard: работа стоит в состоянии '${state}', а заявки за ход не открыто.
+            reason="BLOCKED by turn-exit-guard: the work stands in the state '${state}', and no request was opened in the turn.
 
-Обязательное действие этого состояния — ${action}, — и дальше работа доводится до заявки тем же ходом. Отчёт о сделанном концом хода не бывает: правка лежит в ветке, которой владелец не видит, и прежнее состояние он читает как «не сделано ничего».
+The mandatory action of this state is ${action}, and after it the work is brought to a request in the same turn. A report about what was done is never the end of a turn: the edit lies in a branch the owner does not see, and the former state they read as «nothing was done».
 
-Следующий шаг из хода работы: ${next_step}
+The next step from the progress: ${next_step}
 
-Доведи работу до заявки этим же ходом и перепиши состояние. Владелец сказал остановиться — так и напиши: страж читает его слово, а не пересказ.
+Bring the work to a request in this same turn and rewrite the state. The owner said to stop — then write so: the guard reads their word, not a retelling.
 
-Страж судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next session is not refused."
 
-            rt_te_deny "$reason" "работа дошла до отдачи, а заявки за ход нет."
+            rt_te_deny "$reason" "the work reached handing over and there is no request in the turn."
         fi
         ;;
 esac
@@ -327,17 +327,17 @@ if [ "$archived" != "true" ] && [ -z "$progress" ] && [ -n "$branch" ] && [ ! -d
     fi
     [ -z "$task_key" ] && task_key='[A-Za-z][A-Za-z0-9]*'
     if printf '%s' "$branch" | grep -qE "^${task_key}-[0-9]+-" 2>/dev/null; then
-        reason="BLOCKED by turn-exit-guard: работа взята и не начата — ветка \`$branch\` заведена, а папки задачи при ней нет.
+        reason="BLOCKED by turn-exit-guard: the work is taken and not begun — the branch \`$branch\` is created, and there is no task folder next to it.
 
-Заведённая ветка означает состояние «задача-взята», и обязательное действие у него одно — написать замысел. Ход, кончившийся здесь, оставляет работу объявленной и не начатой: номер назван, колонка сдвинута, а на диске нет ни разбора просьбы, ни этапов. Команды заведения ветки и перевода колонки этого не заменяют — ими такой ход и заполняется.
+A created branch means the state «задача-взята», and it has one mandatory action — write the plan. A turn ending here leaves the work announced and not begun: the number is named, the column is moved, and on disk there is neither the analysis of the request nor the stages. The commands creating the branch and moving the column do not replace it — such a turn is filled with exactly those.
 
     npm run task:new -- <номер>   # если папки нет вовсе
 
-Собери \`$tasks_dir/$branch/\` и напиши замысел этим же ходом.
+Assemble \`$tasks_dir/$branch/\` and write the plan in this same turn.
 
-Страж судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next session is not refused."
 
-        rt_te_deny "$reason" "работа взята и не начата — напиши замысел."
+        rt_te_deny "$reason" "the work is taken and not begun — write the plan."
     fi
 fi
 
@@ -370,14 +370,14 @@ if [ -n "$progress" ] && [ -n "$stage_now" ] && [ -n "$stage_was" ] && [ "$stage
 $(printf '%s' "$contract" | grep -o '`[^`]*`' | tr -d '`')
 EOF
     if [ -n "$missing" ]; then
-        reason="BLOCKED by turn-exit-guard: этап ${stage_was} объявлен закрытым, а команды, которыми он проверяется, за этот ход не запускались:$(printf '%b' "$missing")
+        reason="BLOCKED by turn-exit-guard: the stage ${stage_was} is declared closed, and the commands it is verified by were not run in this turn:$(printf '%b' "$missing")
 
-Отметка «этап сделан» — утверждение о дереве, и подтверждается оно выводом команды, а не словами: через заход отмеченное по памяти неотличимо от проверенного.
+The mark «этап сделан» is a statement about the tree, and it is backed by the output of a command, not by words: a session later what was marked from memory is indistinguishable from what was checked.
 
-Запусти их этим же ходом либо верни прежний номер этапа в ход работы.
+Run them in this same turn or return the former stage number to the progress.
 
-Страж судит один ход: следующий заход не отбивается."
-        rt_te_deny "$reason" "закрытый этап не подтверждён выводом команды."
+The guard judges one turn: the next session is not refused."
+        rt_te_deny "$reason" "a closed stage is not backed by the output of a command."
     fi
 fi
 
@@ -387,54 +387,54 @@ fi
 # action of the turn was a text to the owner: a report, a summary, an announcement of intent.
 # Incident analysis — the record "2026-08-25-handover-turn-ends-on-intent" in the intake.
 if [ "$handed_over" = "true" ] && [ "$started_next" != "true" ]; then
-    reason="BLOCKED by turn-exit-guard: заявка открыта, а по следующей работе за этот ход не сделано ничего.
+    reason="BLOCKED by turn-exit-guard: a request is open, and nothing was done about the next work in this turn.
 
-Отданная работа кончает ход только вместе с начатой следующей — по ней должно быть сделано действие, а не сказано. «Беру такую-то» выходом не является: правило зовёт это объявлением намерения.
+Handed-over work ends a turn only together with the next one begun — an action about it must be done, not said. «Беру такую-то» is not an exit: the rule calls that an announcement of intent.
 
-Всё, что было до открытия заявки, сделано по сданной задаче и о следующей не говорит ничего.
+Everything that happened before the request was opened was done on the handed-over task and says nothing about the next one.
 
     npm run task:new -- <заголовок>            # завести следующую
     git checkout -b <КЛЮЧ>-<номер>-<slug>      # взять её в работу
 
-Сделай первый шаг по следующей работе этим же ходом. Владелец сказал остановиться — так и напиши: страж читает его слово, а не пересказ.
+Do the first step of the next work in this same turn. The owner said to stop — then write so: the guard reads their word, not a retelling.
 
-Страж судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next session is not refused."
 
-    rt_te_deny "$reason" "работа отдана, а следующая не начата."
+    rt_te_deny "$reason" "the work is handed over and the next one is not begun."
 fi
 
 # The turn ended with waiting for someone else's step. There was work in it — that is what makes it
 # deceptive: it is full, and the emptiness behind it is invisible. The last action is judged, not
 # the presence of work.
 if [ "$waited" = "true" ]; then
-    reason="BLOCKED by turn-exit-guard: последним действием хода стало ожидание чужого шага, а оно состоянием работы не бывает.
+    reason="BLOCKED by turn-exit-guard: the last action of the turn was waiting for a step by someone else, and that is never a state of the work.
 
-Прогон, разбор владельцем и слияние идут без исполнителя и от взгляда быстрее не становятся. Работы за ход могло быть много — она остаётся ровно там, где стояла, и владелец видит исполнителя стоящим.
+The run, the review by the owner and the merge go on without the executor and do not get faster from being watched. There may have been much work in the turn — it stays exactly where it stood, and the owner sees the executor standing still.
 
-Следующий шаг записан в ходе работы: ${next_step}
+The next step is written in the progress: ${next_step}
 
-Сделай его этим же ходом либо возьми следующую задачу. Ожидание в середине хода законно — отбит именно конец.
+Do it in this same turn or take the next task. Waiting in the middle of a turn is lawful — what is refused is the end.
 
-Страж судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next session is not refused."
 
-    rt_te_deny "$reason" "ход кончился ожиданием чужого шага."
+    rt_te_deny "$reason" "the turn ended with waiting for a step by someone else."
 fi
 
 # The shared line. There was work in the turn — but the last action was not it, it was a text to the
 # owner. The particular tiers above name the kind of stop more precisely; what reaches here is what
 # they do not know by name.
 if [ "$worked" = "true" ] && [ "$ended_working" != "true" ]; then
-    reason="BLOCKED by turn-exit-guard: работа за ход была, но последним действием хода стала не она.
+    reason="BLOCKED by turn-exit-guard: there was work in the turn, but the last action of the turn was not it.
 
-Ход кончается работой, а не рассказом о ней. Отчёт, сводка и объявление намерения выходом не являются: они выглядят завершением тем убедительнее, чем больше сделано, — и ровно на это место встаёт следующее действие.
+A turn ends with work, not with an account of it. A report, a summary and an announcement of intent are not an exit: the more was done, the more convincingly they look like completion — and the next action takes exactly that place.
 
-Следующий шаг записан в ходе работы: ${next_step}
+The next step is written in the progress: ${next_step}
 
-Сделай его этим же ходом, а сказать о сделанном можно после. Владелец сказал остановиться — так и напиши: страж читает его слово, а не пересказ.
+Do it in this same turn, and telling about what was done can come after. The owner said to stop — then write so: the guard reads their word, not a retelling.
 
-Страж судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next session is not refused."
 
-    rt_te_deny "$reason" "последним действием хода стала не работа."
+    rt_te_deny "$reason" "the last action of the turn was not work."
 fi
 
 # Work left in the working tree. The branch has gone ahead of its remote reference, and no PR was
@@ -445,50 +445,50 @@ fi
 if [ "$worked" = "true" ] && [ "$handed_over" != "true" ]; then
     unpushed="$(git -C "$root" rev-list --count '@{u}..HEAD' 2>/dev/null)"
     if [ -n "$unpushed" ] && [ "$unpushed" -gt 0 ] 2>/dev/null; then
-        reason="BLOCKED by turn-exit-guard: за ход была работа, но она осталась в рабочем дереве — неотданных коммитов ${unpushed}.
+        reason="BLOCKED by turn-exit-guard: there was work in the turn, but it stayed in the working tree — commits not handed over: ${unpushed}.
 
-Владелец видит прежнее состояние и читает его как «не сделано ничего». Ходов отсюда два: довести работу до хостинга — запушить ветку и открыть заявку — либо снять сделанное, если оно не нужно.
+The owner sees the former state and reads it as «nothing was done». Two moves from here: bring the work to the hosting — push the branch and open a request — or remove what was done if it is not needed.
 
-Оставшееся в дереве называется причиной — словом владельца, а не списком остатков.
+What is left in the tree is named with a reason — in the words of the owner, not as a list of leftovers.
 
-Страж судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next session is not refused."
 
-        rt_te_deny "$reason" "работа осталась в рабочем дереве."
+        rt_te_deny "$reason" "the work stayed in the working tree."
     fi
 fi
 
 [ "$worked" = "true" ] && exit 0
 
 if [ "$archived" = "true" ]; then
-    reason="BLOCKED by turn-exit-guard: папка задачи снята коммитом ветки, а за этот ход не сделано ничего — ни правки, ни команды, меняющей дерево.
+    reason="BLOCKED by turn-exit-guard: the task folder was removed by a commit of the branch, and nothing was done in this turn — neither an edit nor a command changing the tree.
 
-Снятая папка означает середину отдачи, а не её конец: убирают её ДО того, как открыта заявка, и между этими двумя движениями работу не видит никто, кроме того, кто её сделал. Состояние работы с этой минуты объявить нечем, поэтому ход судится по второму признаку — была ли за него работа.
+A removed folder means the middle of handing over, not its end: it is taken away BEFORE the request is opened, and between these two motions nobody but the one who did the work sees it. From this minute there is nothing to declare the state of the work by, so the turn is judged by the second sign — whether there was work in it.
 
-Оставшийся шаг один: открыть заявку черновиком. Заявка уже открыта — возьми следующую задачу: ожидание чужого прогона работой не является и ходом не кончается.
+One step is left: open the request as a draft. The request is already open — then take the next task: waiting for a run by someone else is not work and does not end a turn.
 
-Страж судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next session is not refused."
 elif [ -z "$state" ]; then
-    reason="BLOCKED by turn-exit-guard: за этот ход не сделано ничего — ни правки, ни команды, меняющей дерево. Папки задачи у этой работы нет, и состояние взять неоткуда, но ход это не кончает.
+    reason="BLOCKED by turn-exit-guard: nothing was done in this turn — neither an edit nor a command changing the tree. This work has no task folder, and there is nowhere to take the state from, but that does not end the turn.
 
-Ход кончается четырьмя способами, и других нет: вопрос владельцу, ответа на который в правилах нет; отказ гарда; заполненное окно захода; отданная работа с начатой следующей. Названная и не запущенная команда выходом не является: строка «сейчас запущу» — объявление намерения, а оно прямо названо ложным концом хода.
+A turn ends in four ways and there are no others: a question to the owner the rules do not answer; a refusal of a guard; a filled session window; work handed over with the next one begun. A command named and not run is not an exit: the line «сейчас запущу» is an announcement of intent, and that is named outright as a false end of a turn.
 
-Работа по слову владельца — «разложи», «обнови», «посмотри» — идёт без задачи и без ветки, и остановить её нечем, кроме этого признака.
+Work by the word of the owner — «разложи», «обнови», «посмотри» — goes without a task and without a branch, and there is nothing to stop it by except this sign.
 
-Запусти названное этим же ходом. Владелец сказал остановиться — так и напиши: страж читает его слово, а не пересказ.
+Run what is named in this same turn. The owner said to stop — then write so: the guard reads their word, not a retelling.
 
-Страж судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next session is not refused."
 else
-    reason="BLOCKED by turn-exit-guard: работа в состоянии '${state}', а за этот ход по ней не сделано ничего — ни правки, ни команды, меняющей дерево.
+    reason="BLOCKED by turn-exit-guard: the work is in the state '${state}', and nothing was done about it in this turn — neither an edit nor a command changing the tree.
 
-Ход кончается четырьмя способами, и других нет: вопрос владельцу, ответа на который в правилах нет; отказ гарда; заполненное окно захода; отданная работа с начатой следующей. Отчёт о сделанном выходом не является — он выглядит работой лучше всякой другой, и пустоты за ним не видно.
+A turn ends in four ways and there are no others: a question to the owner the rules do not answer; a refusal of a guard; a filled session window; work handed over with the next one begun. A report about what was done is not an exit — it looks more like work than any other, and the emptiness behind it is invisible.
 
-Следующий шаг записан в ходе работы: ${next_step}
+The next step is written in the progress: ${next_step}
 
-Сделай его этим же ходом. Владелец сказал остановиться — так и напиши: страж читает его слово, а не пересказ.
+Do it in this same turn. The owner said to stop — then write so: the guard reads their word, not a retelling.
 
-Страж судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next session is not refused."
 fi
 
-rt_te_deny "$reason" "работа не кончена — следующий шаг стоит в ходе работы."
+rt_te_deny "$reason" "the work is not finished — the next step stands in the progress."
 
 exit 0

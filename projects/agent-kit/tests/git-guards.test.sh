@@ -79,7 +79,7 @@ d "заявка с номером, совпавшим с веткой" 'gh pr cr
 d "заявка с чужим номером в заголовке" 'gh pr create --title "[RT-8] Сделано" --body x' deny
 d "заявка без номера в заголовке" 'gh pr create --title "Сделано" --body x' deny
 expect_reason "и отказ называет расхождение номеров" git-guard-delivery.sh \
-    "$(input_cmd 'gh pr create --title "[RT-8] Сделано" --body x' Bash "$REPO_WORK")" 'номер 8.*у ветки'
+    "$(input_cmd 'gh pr create --title "[RT-8] Сделано" --body x' Bash "$REPO_WORK")" 'number 8.*the branch'
 
 # --- SC-AK-830. Та же сверка на ветке, где приставкой стоит род правки ----------------------
 # Прежде блок пропускался молча: номер ветки выходил пустым, а сверка выглядела сошедшейся.
@@ -94,7 +94,7 @@ kind() {
 kind "SC-AK-830 — заявка с совпавшим номером проходит" 'gh pr create --title "[RT-88] Готово" --body x' PASS
 kind "SC-AK-830 — заявка с чужим номером отбита" 'gh pr create --title "[RT-89] Готово" --body x' deny
 expect_reason "SC-AK-830 — отказ называет оба номера" git-guard-delivery.sh \
-    "$(input_cmd 'gh pr create --title "[RT-89] Готово" --body x' Bash "$REPO_KIND")" 'номер 89.*у ветки — 88'
+    "$(input_cmd 'gh pr create --title "[RT-89] Готово" --body x' Bash "$REPO_KIND")" 'number 89.*the branch — 88'
 rm -rf "$REPO_KIND"
 
 # SC-AK-763. Номер вынимается из той части заголовка, которую признала сама форма. Дерево,
@@ -109,7 +109,7 @@ RT_TASK_TITLE_RE="$OWN_FORM" \
     "$(input_cmd 'gh pr create --title "RT-8 fix: сделано" --body x' Bash "$REPO_WORK")" deny
 RT_TASK_TITLE_RE="$OWN_FORM" \
     expect_reason "SC-AK-763 — и отказ называет оба номера" git-guard-delivery.sh \
-    "$(input_cmd 'gh pr create --title "RT-8 fix: сделано" --body x' Bash "$REPO_WORK")" 'номер 8.*у ветки'
+    "$(input_cmd 'gh pr create --title "RT-8 fix: сделано" --body x' Bash "$REPO_WORK")" 'number 8.*the branch'
 
 # --- свежесть локальной ссылки на главную ветку ------------------------------------------------
 #
@@ -133,7 +133,7 @@ git -C "$STALE" update-ref refs/remotes/origin/main "$WAS" 2>/dev/null
 expect_decision "SC-AK-178 — отставшая локальная ссылка отбивает открытие PR" git-guard-delivery.sh \
     "$(input_cmd 'gh pr create --title "[RT-77] Сделано" --body x' Bash "$STALE")" deny
 expect_reason "SC-AK-178 — отказ называет обе стороны расхождения" git-guard-delivery.sh \
-    "$(input_cmd 'gh pr create --title "[RT-77] Сделано" --body x' Bash "$STALE")" 'отстала от удалённой'
+    "$(input_cmd 'gh pr create --title "[RT-77] Сделано" --body x' Bash "$STALE")" 'lags behind the remote one'
 
 # Удалённого нет вовсе — ярус молчит: проверка, падающая в самолёте, работу не отбивает.
 NO_REMOTE="$(fixture_repo_branched main RT-78-probe)"
@@ -277,7 +277,7 @@ git -C "$STALE" checkout -q RT-12-stale 2>/dev/null
 expect_decision "SC-AK-83 — заявка от разошедшейся ветки отбита" git-guard-delivery.sh \
     "$(input_cmd 'gh pr create --title "[RT-12] Сделано" --body x' Bash "$STALE")" deny
 expect_reason "SC-AK-83 — отказ называет расхождение числом" git-guard-delivery.sh \
-    "$(input_cmd 'gh pr create --title "[RT-12] Сделано" --body x' Bash "$STALE")" 'вперёд на 1 коммит'
+    "$(input_cmd 'gh pr create --title "[RT-12] Сделано" --body x' Bash "$STALE")" 'ahead by 1 commit'
 expect_reason "SC-AK-83 — отказ называет, чем снимается" git-guard-delivery.sh \
     "$(input_cmd 'gh pr create --title "[RT-12] Сделано" --body x' Bash "$STALE")" 'git merge origin/main'
 rm -rf "$STALE"
@@ -342,10 +342,10 @@ sig "SC-AK-559 — упоминание команды в кавычках вы�
 
 CLAUDE_PROJECT_DIR="$WRONG_SIG" expect_reason "SC-AK-179 — отказ называет коммит и найденную почту" \
     git-guard-delivery.sh "$(input_cmd 'git push origin RT-70-signature' Bash "$WRONG_SIG")" \
-    'Расходятся: [0-9a-f]{7,} <111111'
+    'Diverging: [0-9a-f]{7,} <111111'
 CLAUDE_PROJECT_DIR="$WRONG_SIG" expect_reason "SC-AK-179 — отказ называет объявленную почту" \
     git-guard-delivery.sh "$(input_cmd 'git push origin RT-70-signature' Bash "$WRONG_SIG")" \
-    'Объявлено: 424242'
+    'Declared: 424242'
 
 # Дерево, не назвавшее почты, требования не получает: тот же коммит, профиль без объявления.
 printf 'RT_COMMIT_EMAIL=""\n' > "$WRONG_SIG/.claude/rt-kit/project.sh"
@@ -392,7 +392,7 @@ sig "SC-AK-882 — с объявленными почтами неизвестн
     'git push origin RT-70-signature' deny
 CLAUDE_PROJECT_DIR="$UNKNOWN_SIG" expect_reason "SC-AK-882 — отказ называет коммит и его почту" \
     git-guard-delivery.sh "$(input_cmd 'git push origin RT-70-signature' Bash "$UNKNOWN_SIG")" \
-    'Расходятся: [0-9a-f]{7,} <someone@example.com>'
+    'Diverging: [0-9a-f]{7,} <someone@example.com>'
 rm -rf "$UNKNOWN_SIG"
 
 KNOWN_SIG="$(sig_repo)"
@@ -430,7 +430,7 @@ body_section() {
     out="$(input_cmd "$2" Bash "$REPO_WORK" \
         | RT_PULL_BODY_SECTION='^##[[:space:]]+Оставшийся шаг[[:space:]]*$' "$HOOKS/git-guard-delivery.sh" 2>/dev/null \
         | jq -r '.hookSpecificOutput.permissionDecisionReason // ""' 2>/dev/null \
-        | grep -c 'оставшемся шаге')"
+        | grep -c 'the remaining step')"
     report "$1" "упоминаний:${out:-0}" "упоминаний:$3"
 }
 
@@ -466,7 +466,7 @@ rm -f "$BODY_FILE"
 # Дерево, не назвавшее образца, требования не получает: чужих слов пакет не знает.
 out="$(input_cmd 'gh pr create --title "[RT-7] Сделано" --body "Тело без раздела."' Bash "$REPO_WORK" \
     | "$HOOKS/git-guard-delivery.sh" 2>/dev/null \
-    | jq -r '.hookSpecificOutput.permissionDecisionReason // ""' 2>/dev/null | grep -c 'оставшемся шаге')"
+    | jq -r '.hookSpecificOutput.permissionDecisionReason // ""' 2>/dev/null | grep -c 'the remaining step')"
 report "неназванный образец раздела не судится вовсе" "упоминаний:${out:-0}" "упоминаний:0"
 
 # --- отказ в пользу работы ---------------------------------------------------------------------

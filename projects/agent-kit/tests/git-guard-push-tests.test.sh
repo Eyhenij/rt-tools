@@ -140,7 +140,7 @@ rm -rf "$STASH_GATE"
 CLAUDE_PROJECT_DIR="$SWITCH_GATE" expect_reason "SC-AK-405 — отказ называет законный ход" \
     git-guard-push-tests.sh \
     "$(input_cmd 'git checkout RT-73-switch && git push origin RT-73-switch' Bash "$SWITCH_GATE")" \
-    'Раздели вызовы'
+    'Split the calls'
 rm -rf "$SWITCH_GATE"
 
 # --- SC-AK-820 — чем набор гейта уже набора конвейера --------------------------------------
@@ -156,7 +156,7 @@ gap_says() {
     CLAUDE_PROJECT_DIR="$GAP_GATE" jq -n --arg c 'git push origin RT-76-gap' --arg d "$GAP_GATE" --arg s "$1" \
         '{session_id:$s,cwd:$d,tool_name:"Bash",tool_input:{command:$c}}' \
         | CLAUDE_PROJECT_DIR="$GAP_GATE" "$HOOKS/git-guard-push-tests.sh" 2>&1 >/dev/null \
-        | grep -c 'не набор конвейера'
+        | grep -c 'not the pipeline set'
 }
 
 GAP_SESSION="gap-$$-$RANDOM"

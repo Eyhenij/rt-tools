@@ -62,13 +62,13 @@ transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/nu
 # print their objects one after another, the output would stop being parsed whole — that is, the
 # refusal would be lost entirely.
 if ! rt_turn_has_text "$transcript"; then
-    reason="BLOCKED by claim-guard: запись хода не отдала ни одного текста ответа, и судить сказанное владельцу нечем.
+    reason="BLOCKED by claim-guard: the record of the turn gave back no reply text at all, and there is nothing to judge what was said to the owner by.
 
-Текст ложится в запись не раньше, чем хост зовёт хук. Прочитанная слишком рано запись выглядит ходом, в котором владельцу ничего не сказано, — и все гарды, судящие сказанное, проходят мимо молча.
+The text lands in the record no earlier than the host calls the hook. A record read too early looks like a turn in which nothing was said to the owner — and every guard that judges what was said passes by in silence.
 
-Повтори завершение хода: к этой минуте текст в записи уже есть. Ход при этом ничего не теряет — сказанное владельцу остаётся тем же.
+Repeat the ending of the turn: by this minute the text is already in the record. The turn loses nothing by it — what was said to the owner stays the same.
 
-Гард судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next session is not refused."
 
     # shellcheck disable=SC1090
     [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
@@ -80,7 +80,7 @@ if ! rt_turn_has_text "$transcript"; then
 ${deny_tail_text}"
 
     jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-        || printf '{"decision":"block","reason":"claim-guard: запись хода не отдала текста ответа — повтори завершение хода."}\n'
+        || printf '{"decision":"block","reason":"claim-guard: the record of the turn gave back no reply text — repeat the ending of the turn."}\n'
     exit 0
 fi
 
@@ -153,15 +153,15 @@ for row in "${claims[@]}"; do
     [ -z "$found" ] && continue
     printf '%s' "$ran" | grep -qiE "$proof" 2>/dev/null && continue
 
-    reason="BLOCKED by claim-guard: владельцу сказано «${found}» — это утверждение о состоянии дерева, а команды, которая его показывает, за этот ход не было.
+    reason="BLOCKED by claim-guard: the owner was told «${found}» — that is a statement about the state of the tree, and there was no command showing it in this turn.
 
-Утверждение о дереве стоит ровно столько, сколько команда, его показавшая: сказанное без команды владелец читает как проверенный факт и узнаёт о расхождении последним.
+A statement about the tree is worth exactly as much as the command that showed it: what is said without a command the owner reads as a verified fact and learns of the divergence last.
 
-Первый выход — убрать утверждение из ответа и сказать о сделанном без него. Он же и верный там, где владелец команды не просил: запуск ради снятия отказа бывает опаснее того, что гард стережёт, — так ход, которому нечего было поставлять, дошёл до пуша.
+The first way out is to remove the statement from the reply and speak of what was done without it. It is the right one wherever the owner asked for no command: a run made to lift a refusal is sometimes more dangerous than what the guard watches — that is how a turn with nothing to deliver reached a push.
 
-Второй — запустить ${name} этим же ходом и назвать её вывод.
+The second is to run ${name} in this same turn and name its output.
 
-Гард судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next session is not refused."
 
     # The shared deny tail: the two lawful moves. The file may not be laid out — then there is no
     # tail, and the reason for the refusal stays as it was.
@@ -175,7 +175,7 @@ for row in "${claims[@]}"; do
 ${deny_tail_text}"
 
     jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-        || printf '{"decision":"block","reason":"claim-guard: утверждение о дереве не подтверждено командой."}\n'
+        || printf '{"decision":"block","reason":"claim-guard: a statement about the tree is not backed by a command."}\n'
     exit 0
 done
 

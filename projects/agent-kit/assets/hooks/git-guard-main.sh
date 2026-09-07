@@ -97,7 +97,7 @@ cd "$workdir" 2>/dev/null || exit 0
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 
 branch="$(git branch --show-current 2>/dev/null)"
-[ -z "$branch" ] && exit 0   # открепившийся HEAD — не про этот случай
+[ -z "$branch" ] && exit 0   # a detached HEAD is not about this case
 
 default="$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null | sed 's#^origin/##')"
 if [ -z "$default" ]; then

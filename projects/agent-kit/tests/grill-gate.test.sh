@@ -267,5 +267,5 @@ out="$(input_ask_text "$(transcript \
     "$(uses Skill "$LOADED")")" \
     'Сплошная проверка единообразия дорога — исключений не делаем?')"
 out="$(printf '%s' "$out" | "$HOOKS/grill-gate.sh" 2>/dev/null | jq -r '.hookSpecificOutput.permissionDecisionReason // ""')"
-if printf '%s' "$out" | grep -q 'продолжай работу'; then got="есть"; else got="нет"; fi
+if printf '%s' "$out" | grep -q 'go on with the work'; then got="есть"; else got="нет"; fi
 report "SC-AK-818 — отказ велит продолжать работу" "$got" "есть"

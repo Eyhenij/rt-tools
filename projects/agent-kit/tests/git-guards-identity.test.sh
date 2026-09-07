@@ -85,7 +85,7 @@ ask_pr "SC-AK-843 — пустой ответ работу не останавл
 said="$(CLAUDE_PROJECT_DIR="$ASK_PR" input_cmd "GH_TOKEN=\$TOKEN $OPEN --title \"[RT-1695] Сделано\" --body x" Bash "$ASK_PR" \
     | CLAUDE_PROJECT_DIR="$ASK_PR" "$HOOKS/git-guard-delivery.sh" 2>&1 >/dev/null)"
 case "$said" in
-    *'спросить не удалось'*) report "SC-AK-843 — о пропуске сообщается" да да ;;
+    *'could not be asked'*) report "SC-AK-843 — о пропуске сообщается" да да ;;
     *) report "SC-AK-843 — о пропуске сообщается" "$said" да ;;
 esac
 
@@ -132,7 +132,7 @@ ready_author "SC-AK-485 — черновик не снимается с заяв
 CLAUDE_PROJECT_DIR="$AUTHOR_PR" expect_reason "SC-AK-486 — отказ называет обе записи и переоткрытие" \
     git-guard-delivery.sh \
     "$(input_cmd 'gh pr ready 9' Bash "$AUTHOR_PR")" \
-    'открой заново'
+    'open it anew'
 
 author_profile bot
 ready_author "SC-AK-487 — заявка машинной записи черновик снимает" PASS

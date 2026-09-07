@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/exam-guard.sh · 94b142016409 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/exam-guard.sh · 07502fecef58 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file|Bash|mcp__webstorm__execute_terminal_command
 # Requires: agents/strict-teacher.md, hooks/roles.sh, hooks/deny-tail.sh, hooks/write-targets.sh
 # Exam guard: no edit goes through until the exam on the loaded rules has been passed this session.
@@ -71,7 +71,7 @@ rt_exam_free_paths() {
             *) free=0 ;;
         esac
     done
-    [ "$free" = "1" ] && printf 'да'
+    [ "$free" = "1" ] && printf 'yes'
 }
 
 tool="$(rt_hook_tool)"
@@ -81,7 +81,7 @@ ready=0
 case "$tool" in
     Edit | Write | MultiEdit | mcp__webstorm__create_new_file)
         target="$(printf '%s' "$input" | jq -r '.tool_input.file_path // .tool_input.pathInProject // empty' 2>/dev/null)"
-        [ -n "$target" ] && [ "$(printf '%s\n' "$target" | rt_exam_free_paths)" = "да" ] && exit 0
+        [ -n "$target" ] && [ "$(printf '%s\n' "$target" | rt_exam_free_paths)" = "yes" ] && exit 0
         ;;
     Bash | mcp__webstorm__execute_terminal_command)
         cmd="$(rt_hook_cmd)"
@@ -97,7 +97,7 @@ case "$tool" in
             # and lets through whoever bypasses them.
             targets="$(printf '%s' "$cmd" | rt_write_targets)"
             [ -z "$targets" ] && exit 0
-            [ "$(printf '%s\n' "$targets" | rt_exam_free_paths)" = "да" ] && exit 0
+            [ "$(printf '%s\n' "$targets" | rt_exam_free_paths)" = "yes" ] && exit 0
         fi
         ;;
     *) exit 0 ;;
@@ -131,7 +131,7 @@ rt_exam_declared_skip() {
 
 deny() {
     if rt_exam_declared_skip; then
-        printf 'гард экзамена: обход объявлен в теле последнего коммита строкой Exam-skip. Вызов пропущен, запись осталась в истории.\n' >&2
+        printf 'the exam guard: a bypass is declared in the body of the last commit by the line Exam-skip. The call is let through, the record stays in the history.\n' >&2
         exit 0
     fi
 
@@ -180,9 +180,9 @@ verdict="$(jq -s -r '
           # Host records — the role completion notice and the attachment: the host chooses their
           # form, and they count whole.
           else tostring end ] | join("\n")
-    | [scan("ЭКЗАМЕН:[[:space:]]*сдано[[:space:]]*([0-9]+)[[:space:]]*из[[:space:]]*([0-9]+)")]
-    | if length == 0 then "нет"
-      else (.[-1] | if .[0] == .[1] then "сдан" else "провален" end)
+    | [scan("(ЭКЗАМЕН:[[:space:]]*сдано|EXAM:[[:space:]]*passed)[[:space:]]*([0-9]+)[[:space:]]*(из|of)[[:space:]]*([0-9]+)")]
+    | if length == 0 then "none"
+      else (.[-1] | if .[1] == .[3] then "passed" else "failed" end)
       end
 ' "$transcript" 2>/dev/null)"
 
@@ -230,28 +230,28 @@ if [ "$ready" = "1" ]; then
                     else tostring end)
           } ] as $flow
         | ($flow | map(.cmd | test("pr[[:space:]]+create|mr[[:space:]]+create")) | index(true)) as $opened
-        | if $opened == null then "нет-pr"
+        | if $opened == null then "no-pr"
           else ($flow[($opened + 1):] | map(.say) | join("\n")
-                | [scan("ЭКЗАМЕН:[[:space:]]*сдано[[:space:]]*([0-9]+)[[:space:]]*из[[:space:]]*([0-9]+)")]
-                | if length == 0 then "нет"
-                  elif (.[-1] | .[0] == .[1]) then "сдан"
-                  else "провален" end)
+                | [scan("(ЭКЗАМЕН:[[:space:]]*сдано|EXAM:[[:space:]]*passed)[[:space:]]*([0-9]+)[[:space:]]*(из|of)[[:space:]]*([0-9]+)")]
+                | if length == 0 then "none"
+                  elif (.[-1] | .[1] == .[3]) then "passed"
+                  else "failed" end)
           end
     ' "$transcript" 2>/dev/null)"
     case "$after" in
-        сдан | нет-pr) exit 0 ;;
+        passed | no-pr) exit 0 ;;
         *)
-            deny "BLOCKED by exam-guard: черновик снимается после второго экзамена, а его за эту сессию не было. Позови роль strict-teacher с правилами поставки и с тем, чего требовала задача: между чтением этих правил и снятием черновика прошёл весь заход. Выход через список выключенных ролей требует снять защиту, и среда исполнения такую правку может запрещать; второй выход её не требует — объяви обход строкой «Exam-skip: причина» в теле последнего коммита ветки: она остаётся в истории и видна владельцу на странице заявки."
+            deny "BLOCKED by exam-guard: the draft is lifted after the second exam, and there was none in this session. Call the role strict-teacher with the rules of delivery and with what the task demanded: a whole session passed between reading those rules and lifting the draft. The way out through the list of switched-off roles requires removing the protection, and the runtime may forbid such an edit; the second way out does not require it — declare the bypass by the line «Exam-skip: причина» in the body of the last commit of the branch: it stays in the history and is visible to the owner on the page of the request."
             ;;
     esac
 fi
 
 case "$verdict" in
-    сдан) exit 0 ;;
-    провален)
-        deny "BLOCKED by exam-guard: экзамен по загруженным правилам провален. Перечитай правило целиком — не тот кусок, о котором спрашивали, — и позови роль strict-teacher снова. Показанный ответ даёт знание одной строки, а не правила. Выход через список выключенных ролей требует снять защиту, и среда исполнения такую правку может запрещать; второй выход её не требует — обход объявляется строкой «Exam-skip: причина» в теле последнего коммита ветки."
+    passed) exit 0 ;;
+    failed)
+        deny "BLOCKED by exam-guard: the exam on the loaded rules is failed. Read the rule whole again — not the piece that was asked about — and call the role strict-teacher anew. The answer shown gives knowledge of one line, not of the rule. The way out through the list of switched-off roles requires removing the protection, and the runtime may forbid such an edit; the second way out does not require it — the bypass is declared by the line «Exam-skip: причина» in the body of the last commit of the branch."
         ;;
     *)
-        deny "BLOCKED by exam-guard: за эту сессию экзамена по загруженным правилам не было. Позови роль strict-teacher, передай ей список загруженных правил, ответь на её вопросы по памяти и верни ей ответы — вердикт она отдаёт строкой «ЭКЗАМЕН: сдано N из 5». Засчитывается он из ответа роли в любой форме, какой его доставил хост, но не из вывода оболочки и не из твоего же текста: печать этой строки эхом гард не отпускает. Роль уже звали и вердикт получен — значит, он пришёл формой, которой гард не видит: это дефект гарда, и правка `.claude/rt-kit.json` из-под него выведена. Загруженное правило и прочитанное правило — разные вещи, и цену этой разницы платит владелец."
+        deny "BLOCKED by exam-guard: there was no exam on the loaded rules in this session. Call the role strict-teacher, hand it the list of loaded rules, answer its questions from memory and return the answers to it — the verdict it gives by the line «ЭКЗАМЕН: сдано N из 5». It counts from the answer of the role in whatever form the host delivered it, but not from the output of the shell and not from your own text: printing that line as an echo does not release the guard. The role was already called and the verdict received — then it arrived in a form the guard does not see: that is a defect of the guard, and an edit of `.claude/rt-kit.json` is taken out from under it. A loaded rule and a read rule are different things, and the price of that difference is paid by the owner."
         ;;
 esac

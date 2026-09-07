@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/git-guard-main.sh · 2184a5a63357 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/git-guard-main.sh · 0a7a758d1ff4 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh, hooks/guard-note.sh
 # Guard of the main branch. PreToolUse on a commit call.
@@ -98,7 +98,7 @@ cd "$workdir" 2>/dev/null || exit 0
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 
 branch="$(git branch --show-current 2>/dev/null)"
-[ -z "$branch" ] && exit 0   # открепившийся HEAD — не про этот случай
+[ -z "$branch" ] && exit 0   # a detached HEAD is not about this case
 
 default="$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null | sed 's#^origin/##')"
 if [ -z "$default" ]; then

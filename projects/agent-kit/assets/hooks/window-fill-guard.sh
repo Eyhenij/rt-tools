@@ -135,14 +135,14 @@ if [ "$event" = "PostToolUse" ]; then
 
     if [ "$pct" -ge "$stop_pct" ]; then
         if [ -n "$compact_pct" ]; then
-            text="ЗАПОЛНЕНИЕ ОКНА ${pct}% (${fill_k}k из ${window_k}k) — заход закрывается сейчас. Сжатие объявлено на ${compact_pct}% и не пришло: порог остановки ${stop_pct}% пройден, а контекст прежний. Всё, кроме записи хода работы, передачи и команд поставки, уже отбивается — закрывай заход и скажи владельцу, что сжатие не сработало."
+            text="WINDOW FILL ${pct}% (${fill_k}k of ${window_k}k) — the session closes now. The compaction was announced at ${compact_pct}% and did not come: the stop threshold ${stop_pct}% is passed and the context is the same. Everything but writing the progress, the handover and the commands of delivery is already refused — close the session and tell the owner the compaction did not work."
         else
-            text="ЗАПОЛНЕНИЕ ОКНА ${pct}% (${fill_k}k из ${window_k}k) — заход закрывается сейчас. Всё, кроме записи хода работы, передачи и команд поставки, уже отбивается."
+            text="WINDOW FILL ${pct}% (${fill_k}k of ${window_k}k) — the session closes now. Everything but writing the progress, the handover and the commands of delivery is already refused."
         fi
     elif [ -n "$compact_pct" ]; then
-        text="ЗАПОЛНЕНИЕ ОКНА ${pct}% (${fill_k}k из ${window_k}k). Точку остановки выбирать не надо: на ${compact_pct}% инструмент сожмёт контекст сам, передачу к тому времени напишет хук, и работа пойдёт дальше этим же заходом. Порог остановки ${stop_pct}% — страховка на случай, если сжатие не придёт. Работай дальше."
+        text="WINDOW FILL ${pct}% (${fill_k}k of ${window_k}k). There is no stopping point to choose: at ${compact_pct}% the tool compacts the context itself, the hook writes the handover by then, and the work goes on in this same session. The stop threshold ${stop_pct}% is the insurance in case the compaction does not come. Work on."
     else
-        text="ЗАПОЛНЕНИЕ ОКНА ${pct}% (${fill_k}k из ${window_k}k). Пора выбирать точку остановки: с ${stop_pct}% останется только закрыть заход. Доведи текущий шаг до состояния, с которого следующий заход продолжит, перепиши «Где стоим» в ходе работы, напиши передачу и отдай владельцу путь к ней — паттерн task-flow-handoff."
+        text="WINDOW FILL ${pct}% (${fill_k}k of ${window_k}k). It is time to choose the stopping point: from ${stop_pct}% only closing the session is left. Bring the current step to a state the next session continues from, rewrite «Где стоим» in the progress, write the handover and give the owner the path to it — the pattern task-flow-handoff."
     fi
 
     jq -n --arg t "$text" \
@@ -183,18 +183,18 @@ esac
 
 [ "$allowed" -eq 1 ] && exit 0
 
-reason="BLOCKED by window-fill-guard: заполнение окна ${pct}% (${fill_k}k из ${window_k}k), порог остановки ${stop_pct}%. Заход дальше не работает — он закрывается.
+reason="BLOCKED by window-fill-guard: window fill ${pct}% (${fill_k}k of ${window_k}k), the stop threshold is ${stop_pct}%. The session works no further — it closes.
 
-Что осталось сделать этим заходом:
-1. Перепиши раздел «Где стоим» в ходе работы и добавь запись захода — что сделано, чем подтверждено, что не вышло.
-2. Закоммить проверенное: незакоммиченное не переживёт перерыв.
-3. Напиши передачу в ${handoff_dir}/ и отдай владельцу путь к ней — что в неё входит, говорит паттерн task-flow-handoff.
+What is left to do in this session:
+1. Rewrite the section «Где стоим» in the progress and add a session entry — what was done, what confirms it, what did not work out.
+2. Commit what is checked: what is not committed does not survive the break.
+3. Write the handover into ${handoff_dir}/ and give the owner the path to it — what goes into it is said by the pattern task-flow-handoff.
 
-Что после порога проходит:
-- правка ${tasks_dir}/** и ${handoff_dir}/**, чтение любого файла, вопрос владельцу;
-- команда, начинающаяся со слова поставки или сверки: git, клиент хостинга, перевод колонки, npm run check:*.
+What passes after the threshold:
+- an edit of ${tasks_dir}/** and ${handoff_dir}/**, a read of any file, a question to the owner;
+- a command starting with a word of delivery or verification: git, the client of the hosting, moving a column, npm run check:*.
 
-Команда судится по началу строки: вход в каталог перед ней снимает совпадение, и отбит будет тот же коммит, который прошёл бы без него. Начинай команду с самого слова поставки."
+A command is judged by the start of the line: entering a directory before it removes the match, and the very commit that would have passed without it is refused. Start the command with the word of delivery itself."
 
 # The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
 # The file may not be laid out — then there is no tail, and the reason for the refusal stays as it
@@ -210,6 +210,6 @@ ${deny_tail_text}"
 
 jq -n --arg r "$reason" \
     '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"window-fill-guard: окно заполнено, заход закрывается передачей."}}\n'
+    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"window-fill-guard: the window is full, the session closes with a handover."}}\n'
 
 exit 0

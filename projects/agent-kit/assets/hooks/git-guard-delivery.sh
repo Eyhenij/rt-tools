@@ -146,7 +146,7 @@ deny() {
     command -v rt_deny_tail >/dev/null 2>&1 && reason="$1 $(rt_deny_tail "$2")"
 
     jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Гард поставки."}}\n'
+        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"The delivery guard."}}\n'
     exit 0
 }
 
@@ -179,8 +179,8 @@ command -v rt_delivery_conflict >/dev/null 2>&1 && rt_delivery_conflict
 # The refusal on what has piled up. Empty — the calling side goes on.
 deny_faults() {
     [ -z "$faults" ] && return 0
-    deny "BLOCKED: работа к поставке не готова. Несошедшееся названо целиком — чтобы чинить его
-одним заходом, а не по одному промаху на круг:
+    deny "BLOCKED: the work is not ready for delivery. Everything unmet is named whole — so that it
+is fixed in one session, not one miss per round:
 
 ${faults}"
 }
@@ -192,30 +192,30 @@ check_task() {
     # not been moved yet — the work pattern moves the column with the next command — and the
     # requirement here would refuse the very first command of the work together with the one that
     # lifts it.
-    judge_column="${3:-нет}"
+    judge_column="${3:-no}"
     rt_needs rt_task_state git-guard-delivery || return 0
     state="$(cd "$root" && rt_task_state "$number" 2>/dev/null)" || return 0
     [ -z "$state" ] && return 0
 
     printf '%s' "$state" | jq -e '.exists' >/dev/null 2>&1 \
-        || fault "${where} ссылается на задачу #${number}, которой нет. Проверь номер или заведи задачу — ${task_new}."
+        || fault "${where} refers to the task #${number}, which does not exist. Check the number or create the task — ${task_new}."
     printf '%s' "$state" | jq -e '.open' >/dev/null 2>&1 \
-        || fault "задача #${number} закрыта, а у задачи одна ветка. Работа за закрытой задачей заводится новой задачей — ${task_new}."
+        || fault "the task #${number} is closed, and a task has one branch. Work behind a closed task is created as a new task — ${task_new}."
     printf '%s' "$state" | jq -e '.onBoard' >/dev/null 2>&1 \
-        || fault "задачи #${number} нет в очереди работ — правка за ней не видна. Очередь к репозиторию не привязана и задачу сама не забирает; добавь её и сверь — ${board_check}."
+        || fault "the task #${number} is not in the work queue — the edit behind it is invisible. The queue is not bound to the repository and does not take a task by itself; add it and check — ${board_check}."
     printf '%s' "$state" | jq -e '.assigned' >/dev/null 2>&1 \
-        || fault "у задачи #${number} нет исполнителя — по очереди работ не видно, кто её взял. Поставь исполнителя${task_bot:+: }${task_bot}."
+        || fault "the task #${number} has no assignee — by the work queue there is no seeing who took it. Set the assignee${task_bot:+: }${task_bot}."
     printf '%s' "$state" | jq -e '.numbered' >/dev/null 2>&1 \
-        || fault "заголовок задачи #${number} не начинается с её номера — одну работу придётся узнавать по тексту названия. Поправь заголовок и сверь очередь — ${board_check}."
+        || fault "the title of the task #${number} does not start with its number — one work would have to be recognised by the text of the title. Fix the title and check the queue — ${board_check}."
 
     # The task column. The work queue answer has been giving it for a long time, and nobody read it:
     # the column was judged only by the queue audit, that is, already after the PR is opened. A task
     # left in the first column reads through the queue as not taken — while the work is done and put
     # out.
-    if [ -n "$backlog_column" ] && [ "$judge_column" = "да" ]; then
+    if [ -n "$backlog_column" ] && [ "$judge_column" = "yes" ]; then
         column="$(printf '%s' "$state" | jq -r '.status // empty' 2>/dev/null)"
         [ "$column" = "$backlog_column" ] \
-            && fault "задача #${number} стоит в колонке «${column}» — по очереди работ она не взята, хотя работа по ней идёт. Переставь её: ${task_move}."
+            && fault "the task #${number} stands in the column «${column}» — by the work queue it is not taken, though the work on it is going. Move it: ${task_move}."
     fi
 
     return 0
@@ -237,8 +237,8 @@ if [ -n "$branch_arg" ]; then
     number_arg="$(rt_task_branch_number "$branch_arg")"
     if [ -n "$number_arg" ]; then
         rt_task_branch_ok "$branch_arg" \
-            || deny "BLOCKED: имя ветки «${branch_arg}» не той формы, что принята здесь. Номер у ветки тот же, что у задачи и у заголовка заявки на слияние."
-        check_task "$number_arg" "ветка «${branch_arg}»"
+            || deny "BLOCKED: the branch name «${branch_arg}» is not of the form accepted here. The branch number is the same as the number of the task and of the title of the merge request."
+        check_task "$number_arg" "the branch «${branch_arg}»"
 
         # The delivery conditions already known here are checked here. After the work is done, the
         # base is fixed by a merge with conflict resolution, and the commit signature by rewriting
@@ -253,7 +253,7 @@ if [ -n "$branch_arg" ]; then
             && git rev-parse --verify --quiet "$base_ref" >/dev/null 2>&1 \
             && ! git merge-base --is-ancestor "origin/${main_branch}" "$base_ref" 2>/dev/null; then
             behind="$(git rev-list --count "${base_ref}..origin/${main_branch}" 2>/dev/null)"
-            fault "ветка вырастет из основания, в котором нет вершины «${main_branch}» — она ушла вперёд на ${behind:-несколько} коммитов. Возьми свежее основание: git fetch origin && git checkout -b ${branch_arg} origin/${main_branch}."
+            fault "the branch will grow from a base that does not carry the tip of «${main_branch}» — it has moved ahead by ${behind:-several} commits. Take a fresh base: git fetch origin && git checkout -b ${branch_arg} origin/${main_branch}."
         fi
 
         # The second tier: the local reference to the main branch could itself have gone stale, and
@@ -264,7 +264,7 @@ if [ -n "$branch_arg" ]; then
             git ls-remote origin "refs/heads/${main_branch}" 2>/dev/null | cut -f1)"
         local_head="$(git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" 2>/dev/null)"
         if [ -n "$remote_head" ] && [ -n "$local_head" ] && [ "$remote_head" != "$local_head" ]; then
-            fault "твоя ссылка origin/${main_branch} отстала от удалённой — ${local_head:0:8} против ${remote_head:0:8}. Ветка вырастет из вчерашнего дерева, и увидит это владелец на открытии заявки. Подтяни и повтори: git fetch origin."
+            fault "your ref origin/${main_branch} lags behind the remote one — ${local_head:0:8} against ${remote_head:0:8}. The branch will grow from yesterday tree, and the owner sees that at the opening of the request. Pull and repeat: git fetch origin."
         fi
 
         # The signature: the address of the machine account is declared by the tree, and the working
@@ -273,7 +273,7 @@ if [ -n "$branch_arg" ]; then
         if [ -n "$commit_email" ]; then
             tree_email="$(git config user.email 2>/dev/null)"
             [ -n "$tree_email" ] && [ "$tree_email" != "$commit_email" ] \
-                && fault "рабочая копия подписывает коммиты как «${tree_email}», а дерево объявило почтой машинной записи «${commit_email}». Первый же коммит уедет за чужой подписью: git config user.email \"${commit_email}\"."
+                && fault "the working copy signs commits as «${tree_email}», while the tree declared the email of the machine account «${commit_email}». The very first commit leaves under a foreign signature: git config user.email \"${commit_email}\"."
         fi
 
         deny_faults
@@ -318,12 +318,12 @@ printf '%s' "$cmd" \
     || exit 0
 
 branch="$(git branch --show-current 2>/dev/null)"
-[ -z "$branch" ] && exit 0   # открепившийся HEAD — не про этот случай
+[ -z "$branch" ] && exit 0   # a detached HEAD is not about this case
 
 # A local branch without a number is lawful, and a PR from it is not: an edit that travels to the
 # main branch starts from a task. This is the only place where a task-less branch runs into a wall.
 rt_task_branch_ok "$branch" \
-    || deny "BLOCKED: заявка с ветки «${branch}», за которой не стоит задачи. Правка начинается с задачи, видимой в очереди работ: заведи её — ${task_new} — и перенеси работу в ветку с её номером."
+    || deny "BLOCKED: a request from the branch «${branch}», with no task standing behind it. An edit begins with a task visible in the work queue: create it — ${task_new} — and move the work into a branch with its number."
 
 number="$(rt_task_branch_number "$branch")"
 
@@ -338,7 +338,7 @@ fi
 
 if [ -n "$title" ]; then
     printf '%s' "$title" | grep -qE "$title_re" \
-        || fault "заголовок заявки не начинается с номера задачи. В списке заявок тела не видно, а строка связи живёт именно там — без номера в заголовке PR с задачей не сопоставить."
+        || fault "the title of the request does not start with the number of the task. In the list of requests the body is invisible, and the line of the link lives exactly there — without the number in the title the PR cannot be matched to the task."
     # The number is extracted from the part of the title the form itself recognised, not by a second
     # regex next to it. The own regex knows only the package form: a tree that paved the form over
     # with its own got an empty number — and the check of the title number against the branch number
@@ -347,7 +347,7 @@ if [ -n "$title" ]; then
     title_number="$(printf '%s' "$title_matched" | grep -oE '[A-Za-z]+-[0-9]+' | head -1 | sed -E 's/^[A-Za-z]+-//')"
     if [ -n "$number" ] && [ -n "$title_number" ]; then
         [ "$title_number" = "$number" ] \
-            || fault "в заголовке заявки номер ${title_number}, у ветки — ${number}. Задача, ветка и PR несут один и тот же номер."
+            || fault "the title of the request carries the number ${title_number}, the branch — ${number}. The task, the branch and the PR carry one and the same number."
     fi
 fi
 
@@ -361,7 +361,7 @@ fi
 if git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \
     && ! git merge-base --is-ancestor "origin/${main_branch}" HEAD 2>/dev/null; then
     behind="$(git rev-list --count "HEAD..origin/${main_branch}" 2>/dev/null)"
-    fault "«${main_branch}» ушла вперёд на ${behind:-несколько} коммитов, а в ветку не влита. PR от разошедшейся ветки показывает ревьюверу правку вперемешку с чужой, а проверки на нём идут от устаревшего основания. Влей и повтори: git fetch origin && git merge origin/${main_branch} — порядок и разбор конфликта в паттерне git-workflow-merge."
+    fault "«${main_branch}» has moved ahead by ${behind:-several} commits and is not merged into the branch. A PR from a diverged branch shows the reviewer the edit mixed with someone else, and the checks on it run from a stale base. Merge it in and repeat: git fetch origin && git merge origin/${main_branch} — the order and the resolving of the conflict are in the pattern git-workflow-merge."
 fi
 
 # The second tier: the local reference could itself have gone stale. No answer — the tier stays
@@ -377,9 +377,9 @@ if [ -n "$remote_main" ] && [ -n "$local_main" ] && [ "$remote_main" != "$local_
     fetched_at="$(stat -f %m "$fetch_head" 2>/dev/null || stat -c %Y "$fetch_head" 2>/dev/null)"
     age=''
     if [ -n "$fetched_at" ]; then
-        age=" Последний git fetch — $(( ( $(date +%s) - fetched_at ) / 60 )) мин. назад."
+        age=" The last git fetch was $(( ( $(date +%s) - fetched_at ) / 60 )) min ago."
     fi
-    fault "твоя ссылка origin/${main_branch} отстала от удалённой — ${local_main:0:8} против ${remote_main:0:8}.${age} Гард сравнивает ветку с тем, что лежит в дереве, поэтому молчание первого яруса значит «ссылка не старше ветки», а не «главная ветка влита». Влей и повтори: git fetch origin && git merge origin/${main_branch}."
+    fault "your ref origin/${main_branch} lags behind the remote one — ${local_main:0:8} against ${remote_main:0:8}.${age} The guard compares the branch with what lies in the tree, so silence of the first tier means «the ref is not older than the branch», not «the main branch is merged in». Merge it in and repeat: git fetch origin && git merge origin/${main_branch}."
 fi
 
 # The identity of the call. The hosting client holds two accounts — the logged-in one and the one
@@ -390,7 +390,7 @@ fi
 # The command text is checked. A tree that named no token variable gets no requirement.
 if [ -n "$pull_token_var" ] \
     && ! printf '%s' "$cmd" | grep -qE "(^|[;&|(]|&&|\|\||[[:space:]])${pull_token_var}="; then
-    fault "заявка открывается без токена машинной записи: в команде нет подстановки «${pull_token_var}». Открытая залогиненной записью, она выйдет от владельца — ревьювером его тогда не назначить, и чинится это только переоткрытием.${pull_token_hint:+ Подставь токен: ${pull_token_hint} …}"
+    fault "the request is opened without the token of the machine account: the command carries no substitution of «${pull_token_var}». Opened by the logged-in account, it comes out from the owner — they cannot be set as the reviewer then, and this is fixed only by reopening.${pull_token_hint:+ Substitute the token: ${pull_token_hint} …}"
 fi
 
 # The second tier of the same identity: who actually arrives under this token. A substitution speaks
@@ -404,9 +404,9 @@ fi
 if [ -n "$task_bot" ] && command -v rt_pull_token_login >/dev/null 2>&1; then
     token_login="$(rt_pull_token_login 2>/dev/null)"
     if [ -z "$token_login" ]; then
-        printf 'гард поставки: кто придёт по токену, спросить не удалось — сверка по ответу хостинга пропущена.\n' >&2
+        printf 'the delivery guard: who arrives by the token could not be asked — the check against the answer of the hosting is skipped.\n' >&2
     elif [ "$token_login" != "$task_bot" ]; then
-        fault "по токену вызова хостинг отвечает записью «${token_login}», а не машинной «${task_bot}»: подстановка в команде есть, но значение пустое или чужое — так заявка выходит от владельца. Проверь, что файл токена на месте и читается${pull_token_hint:+: ${pull_token_hint}}."
+        fault "by the token of the call the hosting answers with the account «${token_login}», not the machine one «${task_bot}»: the substitution is in the command, but the value is empty or foreign — that is how a request comes out from the owner. Check that the token file is in place and readable${pull_token_hint:+: ${pull_token_hint}}."
     fi
 fi
 
@@ -433,11 +433,11 @@ if [ -n "$pull_body_section" ]; then
     fi
 
     if [ -n "$body" ] && ! printf '%s' "$body" | grep -qE "$pull_body_section"; then
-        fault "в теле заявки нет раздела об оставшемся шаге. Кнопку слияния нажимает человек на хостинге, где гардов нет, и вливает он, как только видит зелёное: всё, чем требование там держится, — то, что владелец прочитал на странице. Раздел стоит последним и говорит ровно одно — осталось ли что-то до слияния; переписывается он тем же вызовом, которым правится тело."
+        fault "the body of the request carries no section about the remaining step. The merge button is pressed by a person on the hosting, where there are no guards, and they merge as soon as they see green: all that holds the requirement there is what the owner read on the page. The section stands last and says exactly one thing — whether anything is left before the merge; it is rewritten by the same call that edits the body."
     fi
 fi
 
-check_task "$number" "заявка с ветки «${branch}»" да
+check_task "$number" "the request from the branch «${branch}»" yes
 
 # The task folder is taken apart before the PR opens, not after the approval: the owner merges as
 # soon as he sees green, and no room is left for a closing commit — three times in a row the folder

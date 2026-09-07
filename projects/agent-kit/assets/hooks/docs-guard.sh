@@ -304,7 +304,7 @@ EOF
 fi
 
 for root in $need_readme; do
-    [ -d "$root" ] || continue   # либу удалили целиком — править в ней нечего
+    [ -d "$root" ] || continue   # the lib was deleted whole — there is nothing to edit in it
     has_path "$root/README.md" || add "the content of the lib \`$root\` changed without an edit of \`$root/README.md\`"
 done
 

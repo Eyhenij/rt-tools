@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/grill-gate.sh · 5a70b5d798e0 · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/grill-gate.sh · 64b7bc808ee0 · правится надстройкой, не здесь
 # Requires: hooks/deny-tail.sh
 # rt-hook: Stop
 # The conversation guard: the owner is not asked a question until the laws and rules have been read
@@ -197,25 +197,25 @@ if [ -n "$tool" ]; then
         def words: [splits("[^\\p{L}\\p{N}]+")] | map(select(length >= 5)) | unique;
 
         (map(is_input) | rindex(true)) as $i
-        | if $i == null then "нет" else
+        | if $i == null then "no" else
             (.[$i] | (.message.content // []) | if type == "array"
                 then ([.[] | select(.type == "text") | .text] | join(" "))
                 else (. // "") end) as $said
             | ([.[:$i][] | select(.type == "assistant") | (.message.content // [])[]
                  | select(.type == "tool_use") | select(.name == "AskUserQuestion")] | length) as $before
-            | if $before == 0 or ($said | length) == 0 then "нет" else
+            | if $before == 0 or ($said | length) == 0 then "no" else
                 (($now | words) - (($now | words) - ($said | words))) as $common
-                | if ($common | length) >= 3 then "было" else "нет" end
+                | if ($common | length) >= 3 then "answered" else "no" end
               end
           end
     ' 2>/dev/null)"
 
-    if [ "$seen" = "было" ]; then
-        reason="BLOCKED by grill-gate: на этот вопрос владелец уже отвечал в этом разговоре — продолжай работу, а не переспрашивай.
+    if [ "$seen" = "answered" ]; then
+        reason="BLOCKED by grill-gate: the owner has already answered this question in this conversation — go on with the work instead of asking again.
 
-Указание владельца действует до его отмены. Новый факт против действующего указания — это строка в ответе о цене, а не новый вопрос: переспрашивают только то, чего указание не покрывает. Промах здесь не в форме вопроса, а в остановке работы, которая уже разрешена.
+An instruction of the owner holds until they cancel it. A new fact against a standing instruction is a line in the reply about the price, not a new question: what is asked again is only what the instruction does not cover. The miss here is not in the form of the question but in stopping work that is already allowed.
 
-Вопрос всё-таки о другом предмете — назови в нём то, чего в прежнем ответе владельца нет: признак судит общие слова вопроса и последней реплики владельца, а не смысл."
+The question really is about another matter — then name in it what the former answer of the owner lacks: the sign judges the shared words of the question and of the last message of the owner, not the meaning."
 
         # The shared deny tail: the two lawful moves and the lawful form of bypass, if the
         # refusal has one.
@@ -228,7 +228,7 @@ if [ -n "$tool" ]; then
 ${deny_tail_text}"
 
         jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-            || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"grill-gate: на этот вопрос уже отвечали."}}\n'
+            || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"grill-gate: this question has already been answered."}}\n'
         exit 0
     fi
 fi
@@ -236,16 +236,16 @@ fi
 [ "$verdict" = "ask" ] || exit 0
 
 if [ -n "$tool" ]; then
-    head="BLOCKED by grill-gate: вопрос владельцу ещё не ушёл, и это единственный момент, когда требование исполнимо."
+    head="BLOCKED by grill-gate: the question to the owner has not left yet, and this is the only moment when the requirement can be met."
 else
-    head="BLOCKED by grill-gate: в ответе есть вопрос владельцу, а законы и правила за этот ход не читались."
+    head="BLOCKED by grill-gate: the reply carries a question to the owner, and the laws and rules were not read in this turn."
 fi
 
-reason="$head Вопрос, ответ на который уже записан, владельцу не задаётся — правило ведения работы. Прогони поиск по словам темы и ответь по найденному; спрашивай только то, что документацией не покрыто:
+reason="$head A question whose answer is already written down is not asked of the owner — the rule of work conduct. Run a search by the words of the subject and answer from what is found; ask only what the documents do not cover:
 
     grep -rn -i \"<слово темы>\" $laws_dir $rules_dir $specs_dir $plans_dir $archive_dir
 
-Гард судит один ход: следующий заход не отбивается."
+The guard judges one turn: the next session is not refused."
 
 # The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
 # The file may not be laid out — then there is no tail, and the reason for the refusal stays as it
@@ -264,10 +264,10 @@ ${deny_tail_text}"
 # does not fire.
 if [ -n "$tool" ]; then
     jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"grill-gate: прочитай законы и правила по теме, прежде чем спрашивать владельца."}}\n'
+        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"grill-gate: read the laws and rules on the subject before asking the owner."}}\n'
 else
     jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-        || printf '{"decision":"block","reason":"grill-gate: прочитай законы и правила по теме, прежде чем спрашивать владельца."}\n'
+        || printf '{"decision":"block","reason":"grill-gate: read the laws and rules on the subject before asking the owner."}\n'
 fi
 
 exit 0

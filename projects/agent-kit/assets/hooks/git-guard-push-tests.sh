@@ -79,7 +79,7 @@ esac
 # does not fall here: a fresh branch has the same tree as it had.
 if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}git[[:space:]]+(checkout|switch)[[:space:]]+" &&
     ! printf '%s' "$cmd" | grep -qE 'git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)([[:space:]]|$)'; then
-    reason="BLOCKED: переключение ветки и пуш одной командой. Набор гейта гоняется в том дереве, какое лежит на момент разбора команды, — то есть по ПРЕЖНЕЙ ветке, а не по той, что уходит на хостинг. Зелёный набор при этом читается как проверка ушедшего, хотя проверял он другое. Раздели вызовы: сперва переключись, затем отдельной командой пушь."
+    reason="BLOCKED: switching the branch and pushing by one command. The gate set runs on the tree that lies there at the minute the command is parsed — that is, on the FORMER branch, not the one that leaves for the hosting. A green set then reads as a check of what left, though it checked something else. Split the calls: switch first, then push by a separate command."
     # The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has
     # one. The file may not be laid out — then there is no tail, and the reason for the refusal
     # stays as it was.
@@ -93,7 +93,7 @@ if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}git[[:space:]]+(checkout|switch
 ${deny_tail_text}"
 
     jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Переключение ветки и пуш одной командой."}}\n'
+        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Switching the branch and pushing by one command."}}\n'
     exit 0
 fi
 
@@ -189,7 +189,7 @@ if [ "$ran" -eq 0 ]; then
 fi
 
 if [ -z "$failed" ] && [ -n "$skipped" ]; then
-    printf 'гейт пуша: набор прошёл, но эти проверки смотреть было не на что:\n%s\n' "$skipped" >&2
+    printf 'the push gate: the set passed, but these checks had nothing to look at:\n%s\n' "$skipped" >&2
 fi
 
 # How the gate set is narrower than the pipeline set — said once per session.
@@ -207,11 +207,13 @@ gap_key="$(printf '%s' "$input" | jq -r '.session_id // empty' 2>/dev/null)"
 [ -z "$gap_key" ] && gap_key="$(date +%Y%m%d 2>/dev/null || printf 'nosession')"
 gap_mark="${TMPDIR:-/tmp}/rt-kit-push-gate-gap-$gap_key"
 if [ ! -f "$gap_mark" ]; then
-    printf 'гейт пуша: набор гейта — не набор конвейера. Сборка образов, снимки показа и проверка
+    printf 'the push gate: the gate set is not the pipeline set. Image builds, showcase snapshots and
 ' >&2
-    printf 'собранных пакетов в него не входят: что в нём стоит, показывает разбор состояния
+    printf 'the check of assembled packages are not part of it: what stands in it is shown by the
 ' >&2
-    printf '(agent-kit doctor, раздел «набор перед пушем»), — прогони недостающее до заявки.
+    printf 'state review (agent-kit doctor, the section on the set before a push) — run what is
+' >&2
+    printf 'missing before the request.
 ' >&2
     : >"$gap_mark" 2>/dev/null || true
 fi
@@ -252,6 +254,6 @@ deny_tail_text="$(rt_deny_tail "")"
 ${deny_tail_text}"
 
 jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Проверки перед пушем не прошли."}}\n'
+    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"The checks before the push did not pass."}}\n'
 
 exit 0

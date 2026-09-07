@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.25.0 · hooks/task-flow-context.sh · a92867fc942f · правится надстройкой, не здесь
+# rt-kit v0.25.0 · hooks/task-flow-context.sh · cd5931283b4b · правится надстройкой, не здесь
 # Shared parsing for the work-conduct guards. NOT a guard: it has no `rt-hook:` declaration and
 # is not attached to any agent event. The guards themselves source it — the same way they source
 # the shared refusal tail.
@@ -183,7 +183,7 @@ EOF
     git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return 1
 
     RT_TF_BRANCH="$(git branch --show-current 2>/dev/null)"
-    [ -z "$RT_TF_BRANCH" ] && return 1   # detached HEAD — не про наш случай
+    [ -z "$RT_TF_BRANCH" ] && return 1   # a detached HEAD is not about this case
 
     RT_TF_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
     [ -z "$RT_TF_ROOT" ] && return 1

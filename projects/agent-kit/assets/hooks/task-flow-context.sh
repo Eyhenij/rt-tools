@@ -182,7 +182,7 @@ EOF
     git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return 1
 
     RT_TF_BRANCH="$(git branch --show-current 2>/dev/null)"
-    [ -z "$RT_TF_BRANCH" ] && return 1   # detached HEAD — не про наш случай
+    [ -z "$RT_TF_BRANCH" ] && return 1   # a detached HEAD is not about this case
 
     RT_TF_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
     [ -z "$RT_TF_ROOT" ] && return 1

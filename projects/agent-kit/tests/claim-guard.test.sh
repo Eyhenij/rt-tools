@@ -162,7 +162,7 @@ expect_claim "SC-AK-764 — своё слово рядом с цитатой о�
 # того, что гард стережёт.
 out="$(input_stop "$(transcript "$(say 'продолжай')" "$(told 'Ветка запушена.')")")"
 if printf '%s' "$out" | "$HOOKS/claim-guard.sh" 2>/dev/null \
-    | jq -r '.reason // ""' 2>/dev/null | grep -q 'Первый выход — убрать утверждение'; then
+    | jq -r '.reason // ""' 2>/dev/null | grep -q 'The first way out is to remove the statement'; then
     got=есть
 else
     got=нет
