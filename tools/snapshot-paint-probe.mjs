@@ -1,27 +1,29 @@
 #!/usr/bin/env node
 /**
- * Проба обвязки снимков первой витрины: ждёт ли она отрисованный кадр перед съёмкой.
+ * A probe of the first showcase's snapshot harness: does it wait for a drawn frame before the shot.
  *
- * Зачем она есть. Кадр, снятый до первой отрисовки после глушения движения, устойчиво
- * отличается от эталона — надписи растеризованы иначе при той же геометрии. Расхождение это
- * выпадало примерно раз на полсотни прогонов, и снимками его не поймать: пятьдесят восемь
- * прогонов подряд дали один красный, а двадцать зелёных подряд выпадают и на непочиненной
- * обвязке. Значит откат правки прогон снимков не заметит, и стеречь его надо прямо.
+ * Why it exists. A frame taken before the first drawing after the motion is muted steadily differs
+ * from the reference — the labels are rasterised differently at the same geometry. That divergence
+ * fell out about once in fifty runs, and it is not caught by the snapshots: fifty-eight runs in a
+ * row gave one red, and twenty green ones in a row fall out on an unfixed harness too. So the
+ * snapshot run will not notice a rollback of the edit, and it has to be guarded directly.
  *
- * Как она судит. Одна и та же история снимается дважды одной и той же подготовкой: раз без
- * ожидания отрисовки, раз с ним. Кадры обязаны разойтись — это и значит, что ожидание работает.
- * Совпали — либо ожидание снято, либо снимать стало нечего, и оба случая одинаково плохи.
+ * How it judges. One and the same story is shot twice with one and the same preparation: once
+ * without the wait for the drawing, once with it. The frames must diverge — that is what it means
+ * that the wait works. They matched — either the wait is taken out or there is nothing left to
+ * shoot, and both cases are equally bad.
  *
- * Каждый кадр снимается в своей свежей странице, а не два подряд в одной: сама съёмка вызывает
- * отрисовку, и второй кадр в той же странице совпал бы с первым всегда — проба судила бы себя, а
- * не обвязку.
+ * Every frame is taken in a fresh page of its own rather than two in a row in one: the shot itself
+ * causes a drawing, and the second frame in the same page would always match the first — the probe
+ * would be judging itself rather than the harness.
  *
- * Судит она не по одной паре. Кадр без ожидания иногда успевает отрисоваться сам — тем же
- * случаем, который проба и ловит, только с другой стороны: раз на полсотни пар она совпадала на
- * целом дереве и отбивала пуш, которому нечего было предъявить. Пары поэтому снимаются подряд,
- * пока не разойдутся, и отказ приходит, только когда совпали все.
+ * It judges by more than one pair. A frame without the wait sometimes manages to draw itself — by
+ * that same chance the probe catches, only from the other side: once in fifty pairs it matched on a
+ * whole tree and refused a push that had nothing to answer for. So the pairs are taken one after
+ * another until they diverge, and the refusal comes only when they all matched.
  *
- * Витрину проба не поднимает: она идёт по уже поднятой, адрес берётся из STORYBOOK_URL.
+ * The probe raises no showcase: it goes over an already raised one, the address comes from
+ * STORYBOOK_URL.
  *
  *   STORYBOOK_URL=http://localhost:6006 node tools/snapshot-paint-probe.mjs
  */
@@ -29,41 +31,41 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-/** История, на которой ловилось расхождение: матрица кнопки — самая плотная надписями. */
+/** The story the divergence was caught on: the button matrix — the densest in labels. */
 const STORY = 'components-button--matrix';
 
-/** Тот же размер кадра, что у обвязки: от него считается высота страницы. */
+/** The same frame size as the harness's: the page height is counted from it. */
 const VIEWPORT = { width: 1280, height: 720 };
 
-/** Те же семейства значков, которых ждёт обвязка. */
+/** The same icon families the harness waits for. */
 const ICON_FONTS = ['Material Icons', 'Material Icons Outlined'];
 
-/** Та же пауза после глушения движения, что у обвязки. */
+/** The same pause after the motion is muted as the harness's. */
 const SETTLE_MS = 150;
 
 /**
- * Сколько пар снимать, прежде чем назвать совпадение отказом.
+ * How many pairs to take before calling a match a refusal.
  *
- * Одна пара совпадает примерно раз на полсотни: пятьдесят восемь прогонов подряд дали одно
- * совпадение. Совпадения независимы — каждая пара снимается в своих свежих страницах, — поэтому
- * три пары дают один ложный отказ на сто с лишним тысяч прогонов, а стоят они три секунды на
- * пару и только тогда, когда предыдущая совпала.
+ * One pair matches about once in fifty: fifty-eight runs in a row gave one match. The matches are
+ * independent — every pair is taken in fresh pages of its own — so three pairs give one false
+ * refusal per hundred-odd thousand runs, and they cost three seconds a pair and only when the
+ * previous one matched.
  */
 const MAX_PAIRS = 3;
 
 const URL = process.env.STORYBOOK_URL ?? 'http://localhost:6006';
 
-/** Обвязка, которую проба судит: ожидание обязано стоять в ней, а не только работать в браузере. */
+/** The harness the probe judges: the wait must stand in it, not only work in the browser. */
 const RUNNER = 'projects/ui-kit/.storybook/test-runner.ts';
 
 const digest = (buffer) => createHash('sha1').update(buffer).digest('hex').slice(0, 12);
 
 /**
- * Драйвер браузера приезжает зависимостью прогонщика снимков, а не манифестом дерева.
+ * The browser driver arrives as a dependency of the snapshot runner rather than by the tree's manifest.
  *
- * Строгая раскладка pnpm не кладёт его в корневой `node_modules`, поэтому импорт по имени здесь
- * не находит ничего. Второй путь — общий каталог связей pnpm, куда сложено транзитивное. Приём
- * повторён из обхода историй: общего модуля у проверок дерева нет.
+ * pnpm's strict layout does not put it into the root `node_modules`, so an import by name finds
+ * nothing here. The second road is pnpm's shared links directory, where the transitive is put. The
+ * technique is repeated from the story sweep: the tree's checks have no shared module.
  */
 async function loadChromium() {
     const candidates = ['playwright', join(process.cwd(), 'node_modules/.pnpm/node_modules/playwright/index.mjs')];
@@ -72,15 +74,17 @@ async function loadChromium() {
         try {
             return (await import(candidate)).chromium;
         } catch {
-            // Следующий путь.
+            // The next path.
         }
     }
 
-    console.error('\n  Драйвер браузера не найден ни по имени, ни в каталоге связей pnpm. Поставь зависимости: pnpm install\n');
+    console.error(
+        '\n  The browser driver is found neither by name nor in the pnpm links directory. Install the dependencies: pnpm install\n'
+    );
     process.exit(1);
 }
 
-/** Подготовка страницы ровно та же, что делает обвязка до съёмки. */
+/** The page is prepared exactly as the harness does before the shot. */
 async function prepare(page) {
     await page.goto(`${URL}/iframe.html?id=${STORY}&viewMode=story`, { waitUntil: 'load' });
     await page.waitForLoadState('networkidle');
@@ -99,7 +103,7 @@ async function prepare(page) {
     await page.waitForTimeout(SETTLE_MS);
 }
 
-/** Ожидание отрисованного кадра — то же, что в обвязке: второй вызов стоит уже за кадром. */
+/** The wait for a drawn frame — the same as in the harness: the second call stands already past the frame. */
 async function painted(page) {
     await page.evaluate(
         () =>
@@ -110,12 +114,12 @@ async function painted(page) {
 }
 
 /**
- * Снимает из исходника пояснения, оставляя один код.
+ * It removes the explanations from the source, leaving the code alone.
  *
- * Иначе вызов, закомментированный одной косой чертой, читается как живой: строка
- * `// await painted(page, …)` содержит искомые слова целиком, и поиск по тексту её находит.
- * Так и вышло — ожидание, снятое из обвязки комментарием, пробу не покраснило вовсе, а это ровно
- * тот откат, ради которого она стоит.
+ * Otherwise a call commented out by one slash reads as live: the line `// await painted(page, …)`
+ * holds the sought words whole, and a search by text finds it. That is what happened — a wait taken
+ * out of the harness by a comment did not turn the probe red at all, and that is exactly the
+ * rollback it stands for.
  */
 function codeOnly(source) {
     return source
@@ -126,11 +130,11 @@ function codeOnly(source) {
 }
 
 /**
- * Судит саму обвязку: зовёт ли она ожидание отрисовки перед съёмкой.
+ * It judges the harness itself: does it call the wait for the drawing before the shot.
  *
- * Замер в браузере говорит, что приём лечит расхождение, но молчит о том, применён ли он: снятый
- * из обвязки, он оставил бы пробу зелёной. Порядок вызовов читается текстом — способа спросить
- * обвязку изнутри нет, она исполняется прогонщиком витрины.
+ * A measurement in the browser says the technique cures the divergence but stays silent about
+ * whether it is applied: taken out of the harness, it would leave the probe green. The order of the
+ * calls is read as text — there is no way to ask the harness from inside, it is run by the showcase runner.
  */
 function runnerWaitsForPaint() {
     const source = codeOnly(readFileSync(join(process.cwd(), RUNNER), 'utf8'));
@@ -138,15 +142,15 @@ function runnerWaitsForPaint() {
     const shot = source.indexOf('await stableShot(page)');
 
     if (wait < 0) {
-        return `в обвязке «${RUNNER}» нет вызова ожидания отрисовки`;
+        return `the harness «${RUNNER}» has no call of the wait for the drawing`;
     }
 
     if (shot < 0) {
-        return `в обвязке «${RUNNER}» не нашлось съёмки кадра — проба больше не знает, что судить`;
+        return `the harness «${RUNNER}» has no frame shot in it — the probe no longer knows what to judge`;
     }
 
     if (wait > shot) {
-        return `в обвязке «${RUNNER}» ожидание отрисовки стоит после съёмки, то есть не делает ничего`;
+        return `in the harness «${RUNNER}» the wait for the drawing stands after the shot, that is, does nothing`;
     }
 
     return null;
@@ -156,9 +160,9 @@ const misplaced = runnerWaitsForPaint();
 
 if (misplaced !== null) {
     console.error(
-        `\n  Проба отрисовки: ${misplaced}.\n` +
-            `  Кадр, снятый до первой отрисовки, устойчиво расходится с эталоном — 1141 пиксель по надписям, —\n` +
-            `  а выпадает это раз на полсотни прогонов: снимками откат не поймать.\n`
+        `\n  The drawing probe: ${misplaced}.\n` +
+            `  A frame taken before the first drawing steadily diverges from the reference — 1141 pixels by the labels — \n` +
+            `  and it falls out once in fifty runs: the rollback is not caught by the snapshots.\n`
     );
     process.exit(1);
 }
@@ -200,17 +204,17 @@ try {
 
     if (diverged === null) {
         console.error(
-            `\n  Проба отрисовки: снято пар ${taken}, и в каждой кадр до ожидания совпал с кадром после — все ${sample}.\n` +
-                `  Это значит, что ожидание отрисованного кадра больше ничего не меняет: либо оно снято из\n` +
-                `  обвязки «projects/ui-kit/.storybook/test-runner.ts», либо история «${STORY}» перестала\n` +
-                `  показывать надписи. Одиночное совпадение отказом не считается — оно выпадает раз на\n` +
-                `  полсотни пар; совпавшие подряд ${taken} говорят о самой обвязке.\n`
+            `\n  The drawing probe: pairs taken ${taken}, and in each the frame before the wait matched the frame after — all ${sample}.\n` +
+                `  That means the wait for a drawn frame no longer changes anything: either it is taken out of\n` +
+                `  the harness «projects/ui-kit/.storybook/test-runner.ts», or the story «${STORY}» has stopped\n` +
+                `  showing labels. A single match does not count as a refusal — it falls out once in fifty\n` +
+                `  pairs; ${taken} matched in a row speak of the harness itself.\n`
         );
         process.exit(1);
     }
 
     console.log(
-        `Проба отрисовки: пар снято ${taken}, разошлась ${diverged.pair}-я — кадр до ожидания ${diverged.early}, после — ${diverged.late}. Ожидание работает.`
+        `The drawing probe: pairs taken ${taken}, the ${diverged.pair}-th diverged — the frame before the wait ${diverged.early}, after ${diverged.late}. The wait works.`
     );
 } finally {
     await browser.close();

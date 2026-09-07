@@ -1,54 +1,55 @@
 #!/usr/bin/env node
 /**
- * Снимки витрины кита одной командой: поднять витрину, сверить кадры, остановить витрину.
+ * The kit showcase's snapshots by one command: raise the showcase, match the frames, stop it.
  *
- * Прогонщики снимков свою витрину не поднимают намеренно — они сверяют кадры на **уже**
- * поднятой, и в задании конвейера её поднимает сам шаг. Гейту пуша шага нет: он зовёт по
- * команде на строку и стенда за собой не оставляет. Здесь и живёт то, что в задании написано
- * строками шага.
+ * The snapshot runners do not raise their showcase on purpose — they match the frames on an
+ * **already** raised one, and in the pipeline's task the step raises it itself. The push gate has no
+ * step: it calls a command per line and leaves no stand behind it. Here lives what the pipeline's
+ * task writes as the step's lines.
  *
- * Порт берётся свободный, а не постоянный: раннер конвейера — та же машина, что у
- * разработчика, и витрина, поднятая руками на 6006, ответила бы прогону вместо своей. Ровно за
- * этим у задания конвейера свои порты; постоянный порт у гейта столкнул бы гейт с прогоном.
+ * A free port is taken rather than a constant one: the pipeline's runner is the same machine as the
+ * developer's, and a showcase raised by hand on 6006 would answer the run instead of its own. That
+ * is exactly what the pipeline's task has its own ports for; a constant port at the gate would
+ * collide the gate with the run.
  *
- * Витрина останавливается вместе со своим деревом процессов: запускает её прогонщик задач, и
- * снятие одного родителя оставило бы работающий сервер держать порт до конца сеанса.
+ * The showcase is stopped together with its process tree: the task runner starts it, and killing one
+ * parent would leave a working server holding the port until the end of the session.
  *
- *   node tools/visual-gate.mjs ui-kit       # снимки первой витрины
- *   node tools/visual-gate.mjs ui-kit-v2    # снимки второй витрины
+ *   node tools/visual-gate.mjs ui-kit       # the first showcase's snapshots
+ *   node tools/visual-gate.mjs ui-kit-v2    # the second showcase's snapshots
  */
 import { spawn, spawnSync } from 'node:child_process';
 import { createServer } from 'node:net';
 
 /**
- * Киты разведены намеренно: у каждого своя витрина, свой прогонщик снимков и свой каталог
- * эталонов. Здесь они стоят рядом только как две строки набора — общего кода съёмки у них нет,
- * и правка ради одного не двигает кадров другого.
+ * The kits are kept apart on purpose: each has its own showcase, its own snapshot runner and its
+ * own references directory. Here they stand next to each other only as two lines of the set —
+ * they share no shooting code, and an edit for one does not move the other's frames.
  */
 const KITS = {
     'ui-kit': { target: '@rt-tools/ui-kit:storybook', snapshots: 'test:visual', probes: ['check:paint'] },
     'ui-kit-v2': { target: '@rt-tools/ui-kit-v2:storybook', snapshots: 'test:visual:v2', probes: ['check:icons'] },
 };
 
-/** Предел ожидания поднявшейся витрины. Не мерило готовности, а признак того, что она не встала. */
+/** The waiting limit for the showcase to come up. Not a measure of readiness but a sign that it did not. */
 const READY_TIMEOUT_MS = 240_000;
 
-/** Как часто спрашивать витрину. Опрос дешёвый: это один запрос к указателю историй. */
+/** How often to ask the showcase. The poll is cheap: it is one request to the story index. */
 const POLL_MS = 2_000;
 
 const kit = process.argv[2];
 
 if (!Object.hasOwn(KITS, kit)) {
-    console.error(`\n  Кит не назван или неизвестен: «${kit ?? ''}». Ожидается один из: ${Object.keys(KITS).join(', ')}\n`);
+    console.error(`\n  The kit is not named or is unknown: «${kit ?? ''}». Expected one of: ${Object.keys(KITS).join(', ')}\n`);
     process.exit(1);
 }
 
 /**
- * Свободный порт спрашивается у системы, а не берётся из головы.
+ * A free port is asked of the system rather than taken out of the head.
  *
- * Между ответом и подъёмом витрины остаётся щель, в которую успел бы влезть чужой слушатель, —
- * но постоянный порт хуже: он не щель, а гарантированное столкновение гейта с прогоном
- * конвейера на этой же машине.
+ * Between the answer and the raising of the showcase a gap is left that a foreign listener could
+ * squeeze into — but a constant port is worse: it is not a gap but a guaranteed collision of the
+ * gate with the pipeline's run on this same machine.
  */
 function freePort() {
     return new Promise((resolve, reject) => {
@@ -71,7 +72,7 @@ async function ready(url) {
                 return true;
             }
         } catch {
-            // Витрина ещё собирается — по адресу пока никого. Это ожидаемое состояние, а не отказ.
+            // The showcase is still building — nobody at the address yet. That is an expected state, not a refusal.
         }
         await new Promise((resolve) => setTimeout(resolve, POLL_MS));
     }
@@ -82,11 +83,11 @@ async function ready(url) {
 const port = await freePort();
 const url = `http://localhost:${port}`;
 
-console.log(`visual-gate: поднимаю витрину ${kit} на ${url}`);
+console.log(`visual-gate: raising the showcase ${kit} on ${url}`);
 
 const showcase = spawn('pnpm', ['exec', 'nx', 'run', KITS[kit].target, '--port', String(port), '--no-open'], {
     stdio: ['ignore', 'ignore', 'ignore'],
-    // Своя группа процессов: снятие одного родителя оставило бы сервер держать порт.
+    // A process group of its own: killing one parent would leave the server holding the port.
     detached: true,
 });
 
@@ -100,7 +101,7 @@ function stop() {
     try {
         process.kill(-showcase.pid, 'SIGTERM');
     } catch {
-        // Дерево процессов уже кончилось само — останавливать нечего.
+        // The process tree has already ended by itself — there is nothing to stop.
     }
 }
 
@@ -110,7 +111,7 @@ process.on('SIGTERM', () => process.exit(143));
 
 if (!(await ready(url))) {
     stop();
-    console.error(`\n  Витрина ${kit} не встала за ${READY_TIMEOUT_MS / 1000} с — снимать нечего.\n`);
+    console.error(`\n  The showcase ${kit} did not come up in ${READY_TIMEOUT_MS / 1000} s — there is nothing to shoot.\n`);
     process.exit(1);
 }
 
@@ -120,11 +121,11 @@ const run = spawnSync('pnpm', ['run', KITS[kit].snapshots], {
 });
 
 /**
- * Пробы обвязки идут по той же поднятой витрине, а не своим шагом.
+ * The harness probes go over the same raised showcase rather than by a step of their own.
  *
- * Своим шагом они поднимали бы витрину второй раз — самое долгое в этом наборе, — а стоят
- * секунды. Гоняются они и после красных снимков: проба говорит о самой обвязке, и её ответ
- * нужен как раз тогда, когда снимки разошлись.
+ * By a step of their own they would raise the showcase a second time — the longest thing in this
+ * set — while they cost seconds. They are run after red snapshots too: a probe speaks of the
+ * harness itself, and its answer is needed exactly when the snapshots diverged.
  */
 let probesFailed = 0;
 
