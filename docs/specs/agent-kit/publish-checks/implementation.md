@@ -1,16 +1,16 @@
-# Привязка — проверки публикации
+# The binding — the checks of publishing
 
-Утверждение спека и место, где оно исполняется. Связь идёт по тексту утверждения: снятое
-утверждение снимается вместе со своей строкой.
+A statement of the spec and the place where it is carried out. The link goes by the text of the
+statement: a removed statement is removed together with its line.
 
-- **Импорты пакета из соседа читаются из исходников, а не из сборки.** — `tools/check-package-imports.mjs:importsOf` — образец `IMPORT` берёт список имён, `namesOf` снимает `type` и псевдоним; сценарий SC-AK-895
-- **Пробы, истории витрины и импорты в комментариях не судятся.** — `tools/check-package-imports.mjs:NOT_SHIPPED` — комментарии снимает образец `COMMENTS`; сценарии SC-AK-897, SC-AK-901
-- **Экспорты соседа читаются из типов опубликованной версии, наибольшей в реестре под диапазон манифеста.** — `tools/check-package-imports.mjs:maxSatisfying` — точку входа типов выбирает `typesEntry`; сценарий SC-AK-894
-- **Цепочка `export *` читается до конца, и файл типов берётся раньше исходника рядом.** — `tools/check-package-imports.mjs:resolveChained` — сценарий SC-AK-896
-- **Сосед, из которого импортируют, назван в манифесте, и под его диапазон в реестре есть версия.** — `tools/check-package-imports.mjs:satisfies` — сценарий SC-AK-898
-- **Символ, которого у опубликованного соседа нет, а в исходниках соседа есть, ждёт публикации и в гейте пуша проверку не роняет.** — `tools/check-package-imports.mjs:exportedInTree` — строгий режим включает флаг `STRICT`; сценарий SC-AK-900
-- **Суд сужается до одного пакета флагом, и неизвестный пакет отбивается.** — `tools/check-package-imports.mjs:ONLY` — сценарий SC-AK-901
-- **Реестр не ответил — проверка проходит и говорит об этом.** — `tools/check-package-imports.mjs:publishedVersions` — сценарий SC-AK-899
-- **Опубликованные версии лежат в кэше под каталогом зависимостей.** — `tools/check-package-imports.mjs:unpacked` — каталог `CACHE`, проба подставляет фикстуру переменной
-- **Сверка импортов стоит в наборе гейта пуша, шагом конвейера и строгим шагом перед публикацией каждого пакета.** — `.claude/rt-kit/project.sh:rt_push_checks` — шаг конвейера в `.github/workflows/ci.yml`, строгий шаг в каждом `.github/workflows/publish*.yml` перед шагом публикации
-- **Конвейер, поднимающий версию, пересобирает замок после публикации и кладёт его своей заявкой.** — `tools/check-publish-lockfile.mjs:RESYNC` — шаг публикации — `PUBLISHES`, заявка — `COMMITS`; проба на фикстуре `projects/agent-kit/tests/checks-publish-lockfile.test.sh`
+- **The imports of a package from a neighbour are read from the sources, not from the build.** — `tools/check-package-imports.mjs:importsOf` — the sample `IMPORT` takes the list of names, `namesOf` removes `type` and the alias; scenario SC-AK-895
+- **Probes, showcase stories and imports inside comments are not judged.** — `tools/check-package-imports.mjs:NOT_SHIPPED` — the comments are removed by the sample `COMMENTS`; scenarios SC-AK-897, SC-AK-901
+- **The exports of a neighbour are read from the types of the published version, the greatest in the registry under the range of the manifest.** — `tools/check-package-imports.mjs:maxSatisfying` — the entry point of the types is picked by `typesEntry`; scenario SC-AK-894
+- **The chain of `export *` is read to the end, and the file of types is taken before the source next to it.** — `tools/check-package-imports.mjs:resolveChained` — scenario SC-AK-896
+- **The neighbour imported from is named in the manifest, and there is a version in the registry under its range.** — `tools/check-package-imports.mjs:satisfies` — scenario SC-AK-898
+- **A symbol the published neighbour does not have, while the sources of the neighbour do, waits for publishing and does not drop the check in the push gate.** — `tools/check-package-imports.mjs:exportedInTree` — the strict mode is switched on by the flag `STRICT`; scenario SC-AK-900
+- **The judging is narrowed down to one package by a flag, and an unknown package is refused.** — `tools/check-package-imports.mjs:ONLY` — scenario SC-AK-901
+- **The registry did not answer — the check passes and says so.** — `tools/check-package-imports.mjs:publishedVersions` — scenario SC-AK-899
+- **The published versions lie in a cache under the dependency directory.** — `tools/check-package-imports.mjs:unpacked` — the directory `CACHE`, a probe puts a fixture there by a variable
+- **The comparison of the imports stands in the suite of the push gate, as a step of the pipeline and as a strict step before the publishing of every package.** — `.claude/rt-kit/project.sh:rt_push_checks` — the step of the pipeline is in `.github/workflows/ci.yml`, the strict step in every `.github/workflows/publish*.yml` before the publishing step
+- **A pipeline that raises the version rebuilds the lock after the publishing and puts it by a request of its own.** — `tools/check-publish-lockfile.mjs:RESYNC` — the publishing step is `PUBLISHES`, the request is `COMMITS`; the probe on a fixture is `projects/agent-kit/tests/checks-publish-lockfile.test.sh`
