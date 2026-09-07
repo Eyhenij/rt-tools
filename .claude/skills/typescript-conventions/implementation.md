@@ -1,62 +1,63 @@
-# typescript-conventions — как это устроено здесь
+# typescript-conventions — how it is arranged here
 
-Имена этого дерева при правиле `SKILL.md` рядом. Отдельный файл потому, что правило говорит
-приёмом и переносится между репозиториями целиком, а всё, что ниже, верно только здесь и
-устаревает при каждом переименовании.
+The names of this tree, next to the rule `SKILL.md` beside it. A file of its own because the rule
+speaks by technique and travels between repositories whole, while everything below is true only
+here and goes stale at every rename.
 
-Правило берётся на любой `.ts`, у которого нет своего: у файла компонента есть
-`component-structure`, у класса каркаса — `angular-patterns`, у бареля — `lib-layers`, у спеки —
-`testing`.
+The rule is taken for any `.ts` that has none of its own: a component file has
+`component-structure`, a framework class has `angular-patterns`, a barrel has `lib-layers`, a spec
+has `testing`.
 
-## Как это называется здесь
+## What it is called here
 
-- **В правиле** — Здесь
-- **род объявления в имени** — `I` у интерфейса, `T` у псевдонима типа, `E` у перечисления
-- **приватное поле** — поле с решёткой (`#config`), а не ключевое слово доступа
-- **источник, за которым следят** — поле с суффиксом `Source`
-- **группа публичных типов фичи** — `export namespace IRtuiButton { … }` рядом с классом
-- **межпакетный импорт** — алиас `@rt-tools/core`, `@rt-tools/store`, `@rt-tools/utils`
+- **In the rule** — Here
+- **the kind of a declaration in the name** — `I` on an interface, `T` on a type alias, `E` on an enum
+- **a private field** — a field with a hash (`#config`), not an access keyword
+- **a watched source** — a field with the suffix `Source`
+- **a group of public types of a feature** — `export namespace IRtuiButton { … }` next to the class
+- **a cross-package import** — the alias `@rt-tools/core`, `@rt-tools/store`, `@rt-tools/utils`
 
-## Где это лежит
+## Where it lives
 
-- **набор правил кода** — `eslint.config.mjs` в корне, общая часть — `eslint/base.config.mjs`
-- **собственные правила этого дерева** — `tools/eslint-rules/rules/`, зовутся `@nx/workspace-<имя правила>`
-- **алиасы пакетов** — `tsconfig.base.json`, раздел `paths`
-- **форматирование** — `.prettierrc.json` — 140 колонок, отступ в четыре пробела, одинарные кавычки
+- **the code rule set** — `eslint.config.mjs` at the root, the shared part `eslint/base.config.mjs`
+- **the tree own rules** — `tools/eslint-rules/rules/`, called `@nx/workspace-<rule name>`
+- **the package aliases** — `tsconfig.base.json`, the `paths` section
+- **the formatting** — `.prettierrc.json` — 140 columns, a four-space indent, single quotes
 
-## Где исполняются статьи
+## Where the articles are carried out
 
-Первая колонка — статья дословно, как она написана в разделе «Как закон применяется здесь»
-(жирная часть пункта). Статья без строки и строка без статьи — расхождение: правило обещает
-то, чего в дереве нет, либо в дереве стоит то, о чём правило молчит.
+The first column is the article verbatim, as it is written in the section «How the law applies
+here» (the bold part of the item). An article without a line and a line without an article are a
+divergence: the rule promises what the tree does not have, or the tree holds what the rule is
+silent about.
 
-- **The kind of a declaration shows in the name prefix, and three linter rules hold that.** — `tools/eslint-rules/rules/require-interface-prefix.ts:RULE_NAME` — с ним заодно `require-type-prefix` и `require-enum-prefix`, отказ на всех `.ts`. Накопленное к дню включения ими и найдено: приставки нет у 341 псевдонима типа, у 17 перечислений и у 10 интерфейсов.
-- **A watched source is named by a suffix.** — `tools/eslint-rules/rules/require-source-suffix-for-subjects.ts:REQUIRED_SUFFIX` — отказ линтера; нарушений в дереве нет.
-- **The file name suffix finds the promised declaration inside.** — **Не проверяется ничем.** Имя файла с объявлением внутри не сверяет ни линтер, ни сборка: файл `*.service.ts` без службы законен для обоих.
-- **A file is no longer than 500 lines, and all lines count — blank ones and comments too.** — Для `.ts` — `max-lines` в `eslint.config.mjs`, считаются все строки; одноимённое правило набора sonarjs выключено — оно считает только код. Тексты и стили держит `tools/check-file-size.mjs:LIMIT` тем же числом.
-- **A type is taken from the package where it is declared.** — `tsconfig.base.json:paths` — алиасы пакетов; импорт мимо них отбивает `@nx/enforce-module-boundaries`, относительный путь через `projects/*` не проходит.
-- **A value declared by one side of an exchange is not recomputed by the other side but taken from the first.** — `tools/cargo-mark.mjs:treeSlug` — признак дерева берётся у пакета тем же вызовом, каким его считает отправка; своя копия счёта уже разошлась с пакетной молча.
-- **A value from a closed set arrives as an enum `E<Name>`, not as a string or a number at the place of use.** — **Не проверяется ничем.** Линтер судит имя перечисления, но не то, что набор объявлен перечислением, а не строками на местах
-- **A deprecation mark is set together with a walk over the consumers.** — **Не проверяется ничем.** Отметка — комментарий, и обход потребителей машине не виден. Образец — снятый набор `.c-button`: карта перехода на `.rtui-btn` осталась в `projects/ui-kit/src/styles/TOKENS.md`.
-- **The two-step cast `as unknown as` is forbidden by a linter rule.** — `eslint.config.mjs:no-restricted-syntax` — отбор по узлу разбора, спеки из-под запрета выведены тем же блоком.
+- **The kind of a declaration shows in the name prefix, and three linter rules hold that.** — `tools/eslint-rules/rules/require-interface-prefix.ts:RULE_NAME` — together with it `require-type-prefix` and `require-enum-prefix`, a refusal on all `.ts`. What had accumulated by the day of enabling was found by them: the prefix is missing on 341 type aliases, 17 enums and 10 interfaces.
+- **A watched source is named by a suffix.** — `tools/eslint-rules/rules/require-source-suffix-for-subjects.ts:REQUIRED_SUFFIX` — a linter refusal; there are no violations in the tree.
+- **The file name suffix finds the promised declaration inside.** — **Not checked.** Neither the linter nor the build reconciles a file name with the declaration inside it: a `*.service.ts` file without a service is lawful for both.
+- **A file is no longer than 500 lines, and all lines count — blank ones and comments too.** — For `.ts` it is `max-lines` in `eslint.config.mjs`, and all lines count; the rule of the same name from the sonarjs set is switched off — it counts only code. Texts and styles are held by `tools/check-file-size.mjs:LIMIT` with the same number.
+- **A type is taken from the package where it is declared.** — `tsconfig.base.json:paths` — the package aliases; an import past them is refused by `@nx/enforce-module-boundaries`, and a relative path through `projects/*` does not pass.
+- **A value declared by one side of an exchange is not recomputed by the other side but taken from the first.** — `tools/cargo-mark.mjs:treeSlug` — the tree sign is taken from the package by the same call the send computes it with; an own copy of the computation had already diverged from the package one silently.
+- **A value from a closed set arrives as an enum `E<Name>`, not as a string or a number at the place of use.** — **Not checked.** The linter judges the name of an enum but not that the set is declared as an enum rather than as strings in place
+- **A deprecation mark is set together with a walk over the consumers.** — **Not checked.** The mark is a comment, and the walk over the consumers is invisible to a machine. The sample is the removed set `.c-button`: the migration map to `.rtui-btn` stayed in `projects/ui-kit/src/styles/TOKENS.md`.
+- **The two-step cast `as unknown as` is forbidden by a linter rule.** — `eslint.config.mjs:no-restricted-syntax` — a selection by the parse node; the specs are taken out from under the ban by the same block.
 
-## Что ещё стоит знать при чтении кода
+## What else is worth knowing when reading the code
 
-- Ничто не выводится неявно: `@typescript-eslint/typedef` требует тип у параметра, поля,
-  объявления переменной и разбора массива, `explicit-function-return-type` — у возвращаемого
-  значения, `explicit-member-accessibility` — у членов класса. Да, локальные переменные в
-  спеках тоже аннотируются.
-- Порядок членов держит `@typescript-eslint/member-ordering`: приватные поля, защищённые,
-  публичные, конструктор, публичные методы, защищённые, приватные.
-- Зависимости берутся через `inject()`, а не через конструктор.
-- Пространства имён разрешены намеренно: `@typescript-eslint/no-namespace` выключен, это
-  принятый здесь способ сгруппировать публичные типы фичи.
-- Комментарии и блоки документации здесь пишут — короткое пояснение к неочевидному публичному
-  символу и к причине обхода это домашняя манера, а не шум.
-- `no-console`, `no-debugger`, `no-var`, `no-bitwise`, `no-eval` — отказы.
+- Nothing is inferred implicitly: `@typescript-eslint/typedef` demands a type on a parameter, a
+  field, a variable declaration and an array destructuring, `explicit-function-return-type` on the
+  returned value, `explicit-member-accessibility` on class members. Yes, local variables in specs
+  are annotated too.
+- The member order is held by `@typescript-eslint/member-ordering`: private fields, protected,
+  public, the constructor, public methods, protected, private.
+- Dependencies are taken through `inject()`, not through the constructor.
+- Namespaces are allowed on purpose: `@typescript-eslint/no-namespace` is switched off, and this is
+  the accepted way here to group the public types of a feature.
+- Comments and documentation blocks are written here — a short explanation of a non-obvious public
+  symbol and of the reason for a bypass is the manner of this house, not noise.
+- `no-console`, `no-debugger`, `no-var`, `no-bitwise`, `no-eval` — refusals.
 
-## Чем это проверяется
+## What this is checked by
 
-- `pnpm exec nx lint @rt-tools/<пакет>` или `pnpm run lint` — весь набор.
-- `pnpm run check:affected` — линт, типы, спеки и сборка по задетым пакетам.
-- На коммите `lint-staged` через husky гоняет исправляющий проход линтера и форматирование.
+- `pnpm exec nx lint @rt-tools/<package>` or `pnpm run lint` — the whole set.
+- `pnpm run check:affected` — lint, types, specs and build over the affected packages.
+- On a commit `lint-staged` through husky runs a fixing pass of the linter and the formatting.
