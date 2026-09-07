@@ -1,35 +1,36 @@
-# Сценарии — входы компонента, созданного в коде
+# Scenarios — the inputs of a component created in code
 
-Номера продолжают нумерацию домена ядра и после вливания не меняются.
+The numbers continue the numbering of the domain of the core and do not change after the merge.
 
-### SC-CR-08 — набор с чужим именем не собирается
+### SC-CR-08 — a set with a foreign name does not build
 
-Дано в наборе стоит имя, которого у компонента нет
-Когда код собирают
-Тогда сборка отказывает на этом имени
+Given a name the component does not have stands in the set
+When the code is built
+Then the build refuses at that name
 
-Покрыто: `projects/core/src/lib/types/component-inputs.spec.ts`.
+Covered: `projects/core/src/lib/types/component-inputs.spec.ts`.
 
-### SC-CR-09 — набор с обычным полем класса не собирается
+### SC-CR-09 — a set with an ordinary field of the class does not build
 
-Дано в наборе стоит имя поля, которое входом не объявлено
-Когда код собирают
-Тогда сборка отказывает на этом имени
+Given the name of a field that is not declared an input stands in the set
+When the code is built
+Then the build refuses at that name
 
-Покрыто: `projects/core/src/lib/types/component-inputs.spec.ts`.
+Covered: `projects/core/src/lib/types/component-inputs.spec.ts`.
 
-### SC-CR-10 — значение сверяется с тем, что вход принимает
+### SC-CR-10 — the value is checked against what the input accepts
 
-Дано у входа объявлено преобразование, принимающее одно, а отдающее другое
-Когда в набор кладут значение принимаемого типа
-Тогда код собирается, а значение получаемого типа сборка отбивает
+Given a transformation is declared at the input that accepts one thing and gives back another
+When a value of the accepted type is put into the set
+Then the code builds, and a value of the got type is refused by the build
 
-Покрыто: `projects/core/src/lib/types/component-inputs.spec.ts`.
+Covered: `projects/core/src/lib/types/component-inputs.spec.ts`.
 
-### SC-CR-11 — поставленные входы доезжают до компонента
+### SC-CR-11 — the inputs that were put reach the component
 
-Дано созданный в коде компонент и набор из двух входов
-Когда набор ставят своей функцией
-Тогда компонент отвечает поставленными значениями, а неназванные входы остаются с умолчаниями
+Given a component created in code and a set of two inputs
+When the set is put by its own function
+Then the component answers with the values that were put, and the inputs that were not named stay with
+their defaults
 
-Покрыто: `projects/core/src/lib/types/component-inputs.spec.ts`.
+Covered: `projects/core/src/lib/types/component-inputs.spec.ts`.

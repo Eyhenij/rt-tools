@@ -1,148 +1,148 @@
-# Сценарии — первый кит
+# Scenarios — the first kit
 
-Идентификатор ставится в начало заголовка теста через тире. Префикс общий на домен, и номера при
-вливании договорённостей и переезде в поддомен не пересчитывались: номер связывает сценарий с
-заголовком теста.
+The identifier goes at the start of the test title, followed by a dash. The prefix is shared across the
+domain, and the numbers were not recounted at the merges of the agreements and at the move into a
+subdomain: the number ties a scenario to the title of its test.
 
-| Поддомен                                                              | Сценарии              |
-| --------------------------------------------------------------------- | --------------------- |
-| [Второй уровень бокового меню](side-menu/scenarios.md)                | `SC-UK-17`…`SC-UK-52` |
-| [Вид поля ввода в настройке кита](form-field-appearance/scenarios.md) | `SC-UK-53`…`SC-UK-55` |
+| Subdomain                                                                                    | Scenarios             |
+| -------------------------------------------------------------------------------------------- | --------------------- |
+| [The second level of the side menu](side-menu/scenarios.md)                                  | `SC-UK-17`…`SC-UK-52` |
+| [The look of a field of input in the setting of the kit](form-field-appearance/scenarios.md) | `SC-UK-53`…`SC-UK-55` |
 
-## Кнопка копирования у пустой ячейки
+## The button of the copying at an empty cell
 
-### SC-UK-01 — у пустой ячейки копируемой колонки кнопки нет
+### SC-UK-01 — at an empty cell of a copyable column there is no button
 
-Дано колонка объявлена копируемой, а значение ячейки пусто
-Когда строка таблицы нарисована
-Тогда кнопки копирования в разметке ячейки нет
+Given the column is declared copyable, and the value of the cell is empty
+When the row of the table is drawn
+Then there is no button of the copying in the markup of the cell
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/table/components/table-base-cell/table-base-cell.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/table/components/table-base-cell/table-base-cell.component.spec.ts`.
 
-### SC-UK-02 — у ячейки со значением кнопка остаётся
+### SC-UK-02 — at a cell with a value the button stays
 
-Дано колонка объявлена копируемой, а значение ячейки непусто
-Когда строка таблицы нарисована
-Тогда кнопка копирования в разметке ячейки есть
+Given the column is declared copyable, and the value of the cell is not empty
+When the row of the table is drawn
+Then there is a button of the copying in the markup of the cell
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/table/components/table-base-cell/table-base-cell.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/table/components/table-base-cell/table-base-cell.component.spec.ts`.
 
-### SC-UK-03 — пустота считается той же утилитой, что рисует прочерк
+### SC-UK-03 — the emptiness is counted by the same utility that draws the dash
 
-Дано значение ячейки — пустая строка, пустой массив или пустой объект
-Когда строка таблицы нарисована
-Тогда кнопки копирования нет ни в одном из трёх случаев
+Given the value of the cell is an empty string, an empty array or an empty object
+When the row of the table is drawn
+Then there is no button of the copying in any of the three cases
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/table/components/table-base-cell/table-base-cell.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/table/components/table-base-cell/table-base-cell.component.spec.ts`.
 
-### SC-UK-04 — некопируемая колонка кнопки не получает
+### SC-UK-04 — a column that is not copyable gets no button
 
-Дано колонка копируемой не объявлена, а значение ячейки непусто
-Когда строка таблицы нарисована
-Тогда кнопки копирования в разметке ячейки нет
+Given the column is not declared copyable, and the value of the cell is not empty
+When the row of the table is drawn
+Then there is no button of the copying in the markup of the cell
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/table/components/table-base-cell/table-base-cell.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/table/components/table-base-cell/table-base-cell.component.spec.ts`.
 
-## Задержка показа спиннера
+## The delay of the showing of a spinner
 
-### SC-UK-05 — без задержки спиннер виден сразу
+### SC-UK-05 — without a delay the spinner is visible at once
 
-Дано задержка не названа
-Когда спиннер вставлен
-Тогда кружок ожидания нарисован тем же кадром
+Given the delay is not named
+When the spinner is inserted
+Then the circle of the waiting is drawn by the same frame
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/spinner/spinner.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/spinner/spinner.component.spec.ts`.
 
-### SC-UK-06 — до конца задержки спиннера не видно
+### SC-UK-06 — until the end of the delay the spinner is not visible
 
-Дано названа задержка в триста миллисекунд
-Когда спиннер вставлен и прошло двести девяносто девять миллисекунд
-Тогда кружка ожидания в разметке нет
+Given a delay of three hundred milliseconds is named
+When the spinner is inserted and two hundred and ninety-nine milliseconds have passed
+Then there is no circle of the waiting in the markup
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/spinner/spinner.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/spinner/spinner.component.spec.ts`.
 
-### SC-UK-07 — после конца задержки спиннер появляется
+### SC-UK-07 — after the end of the delay the spinner appears
 
-Дано названа задержка в триста миллисекунд
-Когда спиннер вставлен и прошло триста миллисекунд
-Тогда кружок ожидания нарисован
+Given a delay of three hundred milliseconds is named
+When the spinner is inserted and three hundred milliseconds have passed
+Then the circle of the waiting is drawn
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/spinner/spinner.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/spinner/spinner.component.spec.ts`.
 
-### SC-UK-08 — снятый до срока спиннер счётчик за собой убирает
+### SC-UK-08 — a spinner lifted before the term takes its counter away with it
 
-Дано названа задержка, а спиннер снят раньше её конца
-Когда время задержки истекло
-Тогда отложенного показа не случается и ожидающих счётчиков не осталось
+Given a delay is named, and the spinner is lifted earlier than its end
+When the time of the delay has run out
+Then no postponed showing happens and no waiting counters are left
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/spinner/spinner.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/spinner/spinner.component.spec.ts`.
 
-## Чем закрывается шторка
+## What a curtain is closed by
 
-### SC-UK-09 — Esc открытую шторку не закрывает
+### SC-UK-09 — Esc does not close an open curtain
 
-Дано шторка открыта без настройки закрытия
-Когда нажат Esc
-Тогда шторка остаётся открытой, а ответа о закрытии не приходит
+Given the curtain is open without a setting of the closing
+When Esc is pressed
+Then the curtain stays open, and no answer about the closing arrives
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/aside/aside.service.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/aside/aside.service.spec.ts`.
 
-### SC-UK-10 — разрешённое настройкой закрытие клавишей работает
+### SC-UK-10 — a closing by a key allowed by the setting works
 
-Дано шторка открыта с разрешением закрывать её клавишей
-Когда нажат Esc
-Тогда шторка закрывается
+Given the curtain is open with a permission to close it by a key
+When Esc is pressed
+Then the curtain closes
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/aside/aside.service.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/aside/aside.service.spec.ts`.
 
-### SC-UK-11 — клик по подложке закрывает шторку по-прежнему
+### SC-UK-11 — a click on the backing closes the curtain as before
 
-Дано шторка открыта без настройки закрытия
-Когда нажата подложка
-Тогда шторка закрывается
+Given the curtain is open without a setting of the closing
+When the backing is pressed
+Then the curtain closes
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/aside/aside.service.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/aside/aside.service.spec.ts`.
 
-### SC-UK-12 — программное закрытие настройкой не гасится
+### SC-UK-12 — a programmatic closing is not put out by the setting
 
-Дано шторка открыта без настройки закрытия
-Когда потребитель закрывает её своим кодом
-Тогда шторка закрывается и отдаёт ответ
+Given the curtain is open without a setting of the closing
+When the consumer closes it by their own code
+Then the curtain closes and gives back an answer
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/aside/aside.service.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/aside/aside.service.spec.ts`.
 
-## Сортировка по колонке, которой у таблицы нет
+## A sorting by a column the table does not have
 
-### SC-UK-13 — сортировка по объявленной колонке уходит потребителю
+### SC-UK-13 — a sorting by a declared column goes away to the consumer
 
-Дано у таблицы объявлена колонка, и заголовок её нажат
-Когда таблица отдаёт сортировку наружу
-Тогда потребитель получает ту же колонку и то же направление
+Given a column is declared at the table, and its heading is pressed
+When the table gives the sorting outward
+Then the consumer gets the same column and the same direction
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/table/components/table/rtui-table.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/table/components/table/rtui-table.component.spec.ts`.
 
-### SC-UK-14 — сортировка по колонке, которой у таблицы нет, наружу не уходит
+### SC-UK-14 — a sorting by a column the table does not have does not go outward
 
-Дано имя колонки не совпадает ни с одной объявленной
-Когда таблица собирается отдать сортировку
-Тогда наружу не уходит ничего
+Given the name of the column coincides with none of the declared ones
+When the table is about to give the sorting
+Then nothing goes outward
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/table/components/table/rtui-table.component.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/table/components/table/rtui-table.component.spec.ts`.
 
-## Выбор исхода при быстрых повторных вызовах
+## The choice of the outcome at fast repeated calls
 
-### SC-UK-15 — настройку показывает последнее чтение, а не ответивший последним
+### SC-UK-15 — the setting is shown by the last reading, not by the one that answered last
 
-Дано состав столбцов сменился, и чтение сохранённой настройки позвано дважды
-Когда первое чтение отвечает позже второго
-Тогда таблица показывает настройку под нынешний состав столбцов
+Given the composition of the columns changed, and the reading of the saved setting is called twice
+When the first reading answers later than the second
+Then the table shows the setting under the present composition of the columns
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/table/util/table-config.service.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/table/util/table-config.service.spec.ts`.
 
-### SC-UK-16 — запись и снятие доходят до хранилища в порядке вызовов
+### SC-UK-16 — a write and a lifting reach the storage in the order of the calls
 
-Дано настройка записывается, и следом её снимают
-Когда запись ещё не ответила
-Тогда снятие ждёт её и не обгоняет
+Given the setting is written, and right after it it is lifted
+When the write has not answered yet
+Then the lifting waits for it and does not outrun it
 
-Покрыто: `projects/ui-kit/src/lib/ui-kit/table/util/table-config.service.spec.ts`.
+Covered: `projects/ui-kit/src/lib/ui-kit/table/util/table-config.service.spec.ts`.

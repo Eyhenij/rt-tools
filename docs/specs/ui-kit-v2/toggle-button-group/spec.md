@@ -1,115 +1,120 @@
-# Сегментированный переключатель
+# The segmented switch
 
-**Статус:** действует · **Ревизия:** 31 августа 2026 · **Префикс сценариев:** `SC-UKV`
-**Зависимости:** нет
-**Законы:** `frontend-application`, `reuse-first`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 31 August 2026 · **Scenario prefix:** `SC-UKV`
+**Depends on:** none
+**Laws:** `frontend-application`, `reuse-first`
+**Procedures:** none
 
-Поддомен называет, что переключатель обещает о выборе: сколько сегментов бывает выбрано разом и
-что происходит с сегментом, недоступным сейчас.
+The subdomain names what the switch promises about the choice: how many segments are chosen at once
+and what happens to a segment that is unavailable now.
 
-## Зачем
+## Why
 
-Переключатель умел выбирать один сегмент из нескольких и отключаться целиком. Двух вещей у него не
-было: выбора нескольких сегментов сразу и отключения одного сегмента отдельно от группы.
+The switch could choose one segment out of several and switch itself off whole. Two things it did not
+have: the choice of several segments at once and the switching off of one segment apart from the group.
 
-Обе обходятся дорого. Множественный выбор потребитель собирает своим рядом кнопок — и тот
-расходится с китом видом, размером и разбором краёв группы. Недоступный сегмент потребитель
-убирает из списка — и человек видит группу, у которой сегментов стало меньше, без единого слова о
-том, почему.
+Both are gone around dearly. A multiple choice the consumer puts together by a row of buttons of their
+own — and that row diverges from the kit in look, in size and in the taking apart of the edges of the
+group. An unavailable segment the consumer removes from the list — and a person sees a group that came
+to have fewer segments, without a single word about why.
 
-## Терминология
+## Terminology
 
-| Термин              | Что это                                                                |
-| ------------------- | ---------------------------------------------------------------------- |
-| сегмент             | одна кнопка группы                                                     |
-| одиночный выбор     | выбран ровно один сегмент, и нажатие переносит выбор                   |
-| множественный выбор | выбрано сколько угодно сегментов, и нажатие добавляет или снимает один |
+| Term              | What it is                                                              |
+| ----------------- | ----------------------------------------------------------------------- |
+| a segment         | one button of the group                                                 |
+| a single choice   | exactly one segment is chosen, and a press carries the choice over      |
+| a multiple choice | any number of segments is chosen, and a press adds one or takes one off |
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-| В договорённости    | На экране                                          |
-| ------------------- | -------------------------------------------------- |
-| выбранный сегмент   | сегмент с заливкой выбранного                      |
-| недоступный сегмент | сегмент приглушённой подписью, нажатие не проходит |
+| In the agreement       | On the screen                                       |
+| ---------------------- | --------------------------------------------------- |
+| a chosen segment       | a segment with the filling of a chosen one          |
+| an unavailable segment | a segment with a muted label, a press does not pass |
 
-## Правила
+## Rules
 
-- **Одиночный и множественный выбор объявляются разными входами.** Один вход, у которого тип
-  значения меняется от другого входа, не проверяет ни сборка, ни линтер: потребитель узнаёт о
-  своей ошибке, когда группа перестаёт подсвечивать выбранное.
-- **В множественном выборе нажатие добавляет сегмент или снимает его.** Иначе снять выбранное
-  нечем: второго места, где выбор снимают, у группы нет.
-- **Множественный выбор отдаёт весь набор выбранного, а не разницу.** Разницу вызывающий сводит
-  со своим состоянием сам, и каждый сводит по-своему.
-- **Недоступный сегмент остаётся видимым и нажатие не пропускает.** Спрятанный, он оставляет
-  группу без объяснения, почему соседних сегментов стало меньше, — а причина всегда временная.
-- **Отключённая группа делает недоступными все свои сегменты.** Признак группы главнее признака
-  сегмента: доступный сегмент внутри отключённой группы читается как её единственное живое место.
-- **Недоступность сегмента объявлена рядом с его подписью, а не отдельным списком.** Отдельный
-  список значений расходится с самим списком сегментов молча — в нём остаётся значение, которого в
-  группе уже нет.
+- **The single and the multiple choice are declared by different inputs.** One input whose type of the
+  value changes by another input is checked neither by the build nor by the linter: the consumer learns
+  about their mistake when the group stops highlighting what is chosen.
+- **In the multiple choice a press adds a segment or takes it off.** Otherwise there is nothing to take
+  what is chosen off by: the group has no second place where the choice is taken off.
+- **The multiple choice gives back the whole set of what is chosen, not the difference.** The difference
+  the caller brings together with their own state themselves, and each brings it together in their own
+  way.
+- **An unavailable segment stays visible and does not let a press through.** Hidden, it leaves the group
+  without an explanation of why the neighbouring segments came to be fewer — and the reason is always
+  temporary.
+- **A switched-off group makes all its segments unavailable.** The sign of the group is above the sign of
+  a segment: an available segment inside a switched-off group reads as its only live place.
+- **The unavailability of a segment is declared next to its label, not by a separate list.** A separate
+  list of the values diverges from the list of the segments itself silently — a value that is not in the
+  group any more stays in it.
 
-## Что не входит
+## What is out of scope
 
-- Запрет на пустой выбор: множественный выбор без запрета честнее, а запрет добавляется входом,
-  когда о нём попросят.
-- Свой шаблон сегмента: сегмент — подпись и значок, и этого хватает всем разделам дерева.
+- A ban on an empty choice: a multiple choice without a ban is more honest, and a ban is added by an
+  input when it is asked for.
+- A template of a segment of one's own: a segment is a label and an icon, and that is enough for every
+  section of the tree.
 
-## Контракт
+## Contract
 
-Не применимо: поверхность — входы и выходы компонента кита, процедур поддомен не обслуживает.
-Множественность объявляется своим признаком, набор выбранного приходит своим входом и уходит своим
-выходом целиком, а недоступность одного сегмента лежит в самом сегменте — перечень с их именами
-живёт в описании компонента, где его читает потребитель.
+Not applicable: the surface is the inputs and the outputs of a component of the kit, the subdomain
+serves no procedures. The multiplicity is declared by a sign of its own, the set of what is chosen
+arrives by an input of its own and goes away by an output of its own whole, and the unavailability of
+one segment lies in the segment itself — the list with their names lives in the description of the
+component, where the consumer reads it.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: отказов у компонента нет.
+Not applicable: the component has no refusals.
 
-## Данные
+## Data
 
-Не применимо: своих записей хранилища у компонента нет.
+Not applicable: the component has no records of the storage of its own.
 
-## Экраны и состояния
+## Screens and states
 
-| Состояние           | Что видно                                               |
-| ------------------- | ------------------------------------------------------- |
-| одиночный выбор     | выбран один сегмент, остальные обычные                  |
-| множественный выбор | выбрано сколько угодно сегментов, в том числе ни одного |
-| недоступный сегмент | приглушённая подпись, нажатие не проходит               |
-| отключённая группа  | недоступны все сегменты, включая выбранные              |
+| State                  | What is visible                                            |
+| ---------------------- | ---------------------------------------------------------- |
+| a single choice        | one segment is chosen, the rest are ordinary               |
+| a multiple choice      | any number of segments is chosen, including none           |
+| an unavailable segment | a muted label, a press does not pass                       |
+| a switched-off group   | all the segments are unavailable, the chosen ones included |
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Подписи сегментов приходят от вызывающего: своих строк у компонента нет.
+The labels of the segments arrive from the caller: the component has no strings of its own.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Ничего своего: группа растягивается тем же входом, что и на широком экране.
+Nothing of its own: the group is stretched by the same input as on a wide screen.
 
-### Мультиобъектность
+### Several objects
 
-Не применимо.
+Not applicable.
 
-## Решения
+## Decisions
 
-- **Множественный выбор объявлен своими входами** — прежний одиночный договор остаётся рабочим, и
-  потребителей ломать не приходится. Отвергнуто: расширить тип прежнего входа до значения и набора
-  — тогда ошибка потребителя видна только на экране.
-- **Недоступность сегмента лежит в самом сегменте** — список сегментов и список запретов
-  расходятся молча. Отвергнуто: отдельный вход с набором недоступных значений.
+- **The multiple choice is declared by inputs of its own** — the former single agreement stays working,
+  and the consumers do not have to be broken. Rejected: widening the type of the former input to a value
+  and a set — then the mistake of the consumer is visible only on the screen.
+- **The unavailability of a segment lies in the segment itself** — the list of the segments and the list
+  of the bans diverge silently. Rejected: a separate input with a set of the unavailable values.
 
-## Открытые вопросы
+## Open questions
 
-- `Q-3` — нужен ли запрет на пустой выбор. Работа идёт с допущением, что пустой выбор законен.
+- `Q-3` — whether a ban on an empty choice is needed. The work goes with the assumption that an empty
+  choice is lawful.
 
-## История изменений
+## History of changes
 
-- 31 августа 2026 — заведён поддомен: множественный выбор и недоступный сегмент.
+- 31 August 2026 — the subdomain was created: the multiple choice and an unavailable segment.

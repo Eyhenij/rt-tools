@@ -1,15 +1,15 @@
-# Чем исполняется — действия у реплики переписки
+# What it is carried out by — the actions at a reply of a correspondence
 
-Первая колонка — правило спека рядом дословно. Вторая — где оно исполняется в дереве; там же
-назван сценарий, которым это проверяется, а чем именно покрыт каждый сценарий, сказано в
-`scenarios.md`.
+The first column is the rule of the spec next to it verbatim. The second is where it is carried out
+in the tree; the scenario it is checked by is named there too, and what exactly every scenario is
+covered by is said in `scenarios.md`.
 
-Правило без строки и строка без правила — расхождение: спек обещает то, чего в дереве нет, либо
-в дереве стоит то, о чём спек молчит.
+A rule without a line and a line without a rule is a divergence: the spec promises what is not in the
+tree, or the tree holds what the spec is silent about.
 
-- **Своё действие у реплики потребитель объявляет шаблоном, а не правкой кита.** — `projects/ui-kit-v2/src/lib/components/chat/rt-chat-message-actions.directive.ts:RtChatMessageActionsDirective`; сценарий `SC-UKV-73`
-- **Видимость точки действий держит предикат потребителя, а не подсчёт отрисованных пунктов.** — `projects/ui-kit-v2/src/lib/components/chat/rt-chat-message-actions.pipe.ts:RtChatMessageHasActionsPipe`; сценарий `SC-UKV-75`
-- **Предикат не задан — точка действий показывается.** — `projects/ui-kit-v2/src/lib/components/chat/rt-chat-message-actions.logic.ts:messageHasAvailableActions`; сценарий `SC-UKV-76`
-- **Шаблон не объявлен — разметка реплики прежняя.** — `projects/ui-kit-v2/src/lib/components/chat/rt-chat.component.ts:messageActions` — вывод точки действий стоит под условием захваченного шаблона; сценарий `SC-UKV-74`
-- **Точечные действия остаются на месте.** — `projects/ui-kit-v2/src/lib/components/chat/rt-chat.component.ts:deleteMessage` — удаление, повтор и скачивание остались своими выходами кита; сценарий `SC-UKV-74`
-- **Действие потребителя моделью реплики не описывается.** — `projects/ui-kit-v2/src/lib/components/chat/rt-chat.model.ts:MessageActionsPredicate` — в модели стоит признак, а не действие; сценарий `SC-UKV-73`
+- **The consumer declares its own action at a reply by a template, not by an edit of the kit.** — `projects/ui-kit-v2/src/lib/components/chat/rt-chat-message-actions.directive.ts:RtChatMessageActionsDirective`; scenario `SC-UKV-73`
+- **The visibility of the point of the actions is held by the predicate of the consumer, not by a count of the drawn items.** — `projects/ui-kit-v2/src/lib/components/chat/rt-chat-message-actions.pipe.ts:RtChatMessageHasActionsPipe`; scenario `SC-UKV-75`
+- **The predicate is not set — the point of the actions is shown.** — `projects/ui-kit-v2/src/lib/components/chat/rt-chat-message-actions.logic.ts:messageHasAvailableActions`; scenario `SC-UKV-76`
+- **The template is not declared — the markup of the reply is the former one.** — `projects/ui-kit-v2/src/lib/components/chat/rt-chat.component.ts:messageActions` — the output of the point of the actions stands under the condition of a caught template; scenario `SC-UKV-74`
+- **The pinpoint actions stay in place.** — `projects/ui-kit-v2/src/lib/components/chat/rt-chat.component.ts:deleteMessage` — the deleting, the repeat and the downloading stayed as outputs of the kit's own; scenario `SC-UKV-74`
+- **An action of the consumer is not described by the model of a reply.** — `projects/ui-kit-v2/src/lib/components/chat/rt-chat.model.ts:MessageActionsPredicate` — the model holds the sign, not the action; scenario `SC-UKV-73`

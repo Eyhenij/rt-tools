@@ -1,112 +1,114 @@
-# Кнопка с двумя положениями
+# A button with two positions
 
-**Статус:** действует · **Ревизия:** 31 августа 2026 · **Префикс сценариев:** `SC-UKV`
-**Зависимости:** нет
-**Законы:** `frontend-application`, `reuse-first`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 31 August 2026 · **Scenario prefix:** `SC-UKV`
+**Depends on:** none
+**Laws:** `frontend-application`, `reuse-first`
+**Procedures:** none
 
-Поддомен называет, чем кнопка объявляет себя двухпозиционной и как это видно человеку и
-вспомогательным средствам.
+The subdomain names what a button declares itself two-position by and how that is visible to a person
+and to the assistive means.
 
-## Зачем
+## Why
 
-Кнопка с подписью знала только нажатие мышью — то, что кончается вместе с отпусканием.
-Удерживаемого состояния у неё не было, и приложение, которому нужна кнопка «включено — выключено»
-с подписью, рисовало её сама: своей заливкой поверх кита и своим атрибутом для вспомогательных
-средств. Обе половины расходились с китом при первой же правке темы.
+A button with a label knew only a press by the mouse — the one that ends together with the release. It
+had no held state, and an application needing a button "on — off" with a label drew it itself: by a
+filling of its own over the kit and by an attribute of its own for the assistive means. Both halves
+diverged from the kit at the very first edit of the theme.
 
-При этом у кнопки со значком такое состояние есть, и у группы сегментов тоже. Одно понятие
-существовало у двух частей набора и отсутствовало у третьей.
+At that a button with an icon has such a state, and a group of segments has it too. One notion existed
+at two parts of the set and was absent at the third.
 
-## Терминология
+## Terminology
 
-| Термин               | Что это                                                               |
-| -------------------- | --------------------------------------------------------------------- |
-| двухпозиционная      | кнопка, которая остаётся нажатой после отпускания                     |
-| удерживаемое нажатие | вид нажатой кнопки, не пропадающий вместе с отпусканием               |
-| обычная кнопка       | кнопка, у которой положения нет вовсе — она только запускает действие |
+| Term               | What it is                                                                     |
+| ------------------ | ------------------------------------------------------------------------------ |
+| two-position       | a button that stays pressed after the release                                  |
+| a held press       | the look of a pressed button that does not disappear together with the release |
+| an ordinary button | a button that has no position at all — it only starts an action                |
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-| В договорённости  | На экране                                   |
-| ----------------- | ------------------------------------------- |
-| нажатое положение | заливка, как под пальцем, но не пропадающая |
-| отжатое положение | обычный вид кнопки                          |
+| In the agreement      | On the screen                                       |
+| --------------------- | --------------------------------------------------- |
+| the pressed position  | the filling as under a finger, but not disappearing |
+| the released position | the ordinary look of the button                     |
 
-## Правила
+## Rules
 
-- **Признак положения трёхзначен: нажата, отжата, положения нет вовсе.** Кнопка, которая
-  переключателем не является, не объявляет себя двухпозиционной: сказанное вспомогательным
-  средствам «эта кнопка отжата» на обычной кнопке — ложь, а не умолчание.
-- **Отжатое положение объявляется наравне с нажатым.** Двухпозиционная кнопка, молчащая в отжатом
-  виде, неотличима от обычной: человек, читающий экран не глазами, узнаёт о втором положении
-  только нажав.
-- **Вид нажатого положения берётся у удерживаемого нажатия самой кнопки.** Своя заливка означала
-  бы третье значение того же понятия рядом с двумя существующими и разошлась бы с ними при первой
-  правке темы.
-- **Положение не меняется само по нажатию.** Кнопка говорит о нажатии наружу, а положение
-  возвращает вызывающий: иначе вид кнопки и состояние приложения расходятся при первом же отказе
-  сохранения.
-- **Отключённая кнопка сохраняет своё положение.** Недоступность говорит о том, можно ли нажать,
-  и ничего не говорит о том, включено ли то, чем кнопка управляет.
+- **The sign of the position has three values: pressed, released, no position at all.** A button that
+  is not a switch does not declare itself two-position: what is said to the assistive means — "this
+  button is released" — is a lie at an ordinary button, not a default.
+- **The released position is declared on a par with the pressed one.** A two-position button staying
+  silent in the released look cannot be told from an ordinary one: a person reading the screen not by
+  the eyes learns about the second position only by pressing.
+- **The look of the pressed position is taken from the held press of the button itself.** A filling of
+  its own would mean a third value of the same notion next to the two existing ones and would diverge
+  from them at the first edit of the theme.
+- **The position does not change by itself at a press.** The button says about the press outward, and
+  the position is given back by the caller: otherwise the look of the button and the state of the
+  application diverge at the very first refusal of the saving.
+- **A switched-off button keeps its position.** The unavailability says whether it can be pressed and
+  says nothing about whether what the button governs is on.
 
-## Что не входит
+## What is out of scope
 
-- Тумблер: у него своя разметка и свой договор, и он остаётся отдельным компонентом.
-- Группа сегментов: там положение принадлежит сегменту, а не кнопке.
+- The toggle: it has a markup of its own and an agreement of its own, and it stays a separate component.
+- The group of segments: there the position belongs to a segment, not to a button.
 
-## Контракт
+## Contract
 
-Не применимо: поверхность — входы компонента кита, процедур поддомен не обслуживает.
+Not applicable: the surface is the inputs of a component of the kit, the subdomain serves no procedures.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо.
+Not applicable.
 
-## Данные
+## Data
 
-Не применимо.
+Not applicable.
 
-## Экраны и состояния
+## Screens and states
 
-| Состояние          | Что видно                                         |
-| ------------------ | ------------------------------------------------- |
-| положения нет      | обычная кнопка, о положении не сказано ничего     |
-| отжата             | обычный вид, положение объявлено отжатым          |
-| нажата             | удерживаемая заливка, положение объявлено нажатым |
-| нажата и отключена | та же заливка, приглушённая недоступностью        |
+| State                    | What is visible                                        |
+| ------------------------ | ------------------------------------------------------ |
+| there is no position     | an ordinary button, nothing is said about the position |
+| released                 | the ordinary look, the position is declared released   |
+| pressed                  | the held filling, the position is declared pressed     |
+| pressed and switched off | the same filling, muted by the unavailability          |
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо: подпись приходит от вызывающего.
+Not applicable: the label arrives from the caller.
 
 ### SEO
 
-Не применимо.
+Not applicable.
 
-### Мобильная раскладка
+### Mobile layout
 
-Ничего своего.
+Nothing of its own.
 
-### Мультиобъектность
+### Several objects
 
-Не применимо.
+Not applicable.
 
-## Решения
+## Decisions
 
-- **Признак трёхзначен** — двузначный заставил бы каждую обычную кнопку набора объявлять себя
-  двухпозиционной. Отвергнуто: признак «да или нет» с умолчанием «нет», как у кнопки со значком, —
-  там отжатое положение вовсе не объявляется, и о втором положении узнают только нажав.
-- **Вид берётся у удерживаемого нажатия** — оно уже объявлено у каждой темы и каждого оформления
-  кнопки. Отвергнуто: своя заливка нажатого положения.
+- **The sign has three values** — one with two would make every ordinary button of the set declare
+  itself two-position. Rejected: a sign "yes or no" with the default "no", as at a button with an icon —
+  there the released position is not declared at all, and about the second position one learns only by
+  pressing.
+- **The look is taken from the held press** — it is already declared at every theme and every design of
+  a button. Rejected: a filling of one's own for the pressed position.
 
-## Открытые вопросы
+## Open questions
 
-- `Q-5` — стоит ли выровнять по этому признаку кнопку со значком: она объявляет отжатое положение
-  отсутствием атрибута. Работа идёт с допущением, что её договор менять сейчас не нужно.
+- `Q-5` — whether it is worth aligning a button with an icon by this sign: it declares the released
+  position by an absence of the attribute. The work goes with the assumption that its agreement does not
+  need changing now.
 
-## История изменений
+## History of changes
 
-- 31 августа 2026 — заведён поддомен: положение у кнопки с подписью.
+- 31 August 2026 — the subdomain was created: the position at a button with a label.

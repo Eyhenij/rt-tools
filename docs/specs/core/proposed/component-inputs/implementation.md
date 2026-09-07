@@ -1,14 +1,14 @@
-# Привязка — входы компонента, созданного в коде
+# The binding — the inputs of a component created in code
 
-- **Именами набора могут быть только входы компонента** — `component-inputs.ts:TRtComponentInputs`
-- **Имена отбираются по типу поля, а не по имени** — `component-inputs.ts:TRtInputKeys`
-- **Значением каждого имени служит то, что вход принимает снаружи** — `component-inputs.ts:TRtInputValue`
-- **Набор неполон по устройству: входы, которых в нём нет, остаются со своими умолчаниями** — `component-inputs.ts:TRtComponentInputs`
-- **Входы ставятся своей функцией, а не строкой на месте** — `component-inputs.ts:setRtComponentInputs`
+- **The names of the set can be only the inputs of the component** — `component-inputs.ts:TRtComponentInputs`
+- **The names are picked by the type of the field, not by the name** — `component-inputs.ts:TRtInputKeys`
+- **As the value of every name serves what the input accepts from outside** — `component-inputs.ts:TRtInputValue`
+- **The set is incomplete by its arrangement: the inputs that are not in it stay with their defaults** — `component-inputs.ts:TRtComponentInputs`
+- **The inputs are put by a function of their own, not by a string at the place** — `component-inputs.ts:setRtComponentInputs`
 
-Пути от корня пакета: `projects/core/src/lib/types/`.
+The paths are from the root of the package: `projects/core/src/lib/types/`.
 
-- **Сценарий** — Тест
+- **Scenario** — Test
 - **`SC-CR-08`** — `component-inputs.spec.ts`
 - **`SC-CR-09`** — `component-inputs.spec.ts`
 - **`SC-CR-10`** — `component-inputs.spec.ts`

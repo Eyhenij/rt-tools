@@ -1,236 +1,243 @@
-# Первый кит
+# The first kit
 
-**Статус:** действует · **Ревизия:** 2026-09-06 · **Префикс сценариев:** `SC-UK`
-**Зависимости:** нет
-**Законы:** `frontend-application`, `reuse-first`
-**Процедуры:** нет
+**Status:** in force · **Revision:** 2026-09-06 · **Scenario prefix:** `SC-UK`
+**Depends on:** none
+**Laws:** `frontend-application`, `reuse-first`
+**Procedures:** none
 
-Домен держит пять предметов: кнопка копирования у пустой ячейки таблицы, задержка показа
-спиннера, то, чем закрывается шторка, колонка, по которой таблица отдаёт сортировку, и выбор
-исхода при быстрых повторных вызовах. Второй уровень бокового меню — чем он держится открытым и
-как в нём находят пункт — живёт поддоменом рядом. Каждый предмет отвечает на свой вопрос о
-поверхности компонента, а не о проверке показа.
+The domain holds five subjects: the button of the copying at an empty cell of a table, the delay of the
+showing of a spinner, what a curtain is closed by, the column the table gives the sorting by, and the
+choice of the outcome at fast repeated calls. The second level of the side menu — what it is held open by
+and how an item is found in it — lives as a subdomain next to it. Every subject answers a question of its
+own about the surface of a component, not about a check of the look.
 
-## Зачем
+## Why
 
-Первый кит стоит в приложениях, которые его ставят, и меняется он только вместе с ними: у
-компонента, вставленного в пяти местах, нет своего экрана, на котором промах был бы виден.
-Отсюда предмет домена — обещания входов и служб кита, а не то, как он нарисован.
+The first kit stands in the applications that install it, and it changes only together with them: a
+component inserted in five places has no screen of its own on which a miss would be visible. Hence the
+subject of the domain — the promises of the inputs and the services of the kit, not how it is drawn.
 
-Три обещания названы здесь потому, что каждое стоило человеку потерянного действия. Кнопка
-копирования висела у пустой ячейки и клала в буфер обмена слово «null». Спиннер появлялся в тот
-же миг, что и ожидание, и на быстром ответе давал вспышку, читаемую как рывок экрана. Шторка
-закрывалась по Esc, и заполненная форма уезжала вместе с ней.
+Three promises are named here because each of them cost a person a lost action. The button of the copying
+hung at an empty cell and put the word "null" into the clipboard. The spinner appeared at the same moment
+as the waiting and at a fast answer gave a flash read as a jerk of the screen. The curtain closed at Esc,
+and a filled form went away together with it.
 
-## Терминология
+## Terminology
 
-| Термин             | Что это                                                                           |
-| ------------------ | --------------------------------------------------------------------------------- |
-| Копируемая колонка | Колонка, объявленная копируемой настройкой таблицы; признак стоит на всей колонке |
-| Пустая ячейка      | Ячейка, значение которой после преобразования колонки пусто                       |
-| Задержка показа    | Время от вставки спиннера до того, как он становится виден                        |
-| Вспышка            | Показ спиннера на срок, который человек воспринимает как рывок экрана             |
-| Шторка             | Панель, выезжающая поверх страницы сбоку                                          |
-| Источник закрытия  | Событие, по которому шторка закрывается: подложка, клавиша, переход               |
-| Настройка открытия | Довод, которым потребитель называет, чем шторка закрывается                       |
+| Term                       | What it is                                                                                  |
+| -------------------------- | ------------------------------------------------------------------------------------------- |
+| A copyable column          | A column declared copyable by the setting of the table; the sign stands at the whole column |
+| An empty cell              | A cell whose value after the transformation of the column is empty                          |
+| The delay of the showing   | The time from the insertion of the spinner until it becomes visible                         |
+| A flash                    | A showing of the spinner for a time a person perceives as a jerk of the screen              |
+| A curtain                  | A panel driving out over the page from the side                                             |
+| A source of the closing    | The event the curtain closes by: the backing, a key, a transition                           |
+| The setting of the opening | The argument the consumer names what the curtain is closed by by                            |
 
-### Как это называется в интерфейсе
+### What it is called in the interface
 
-| В домене           | На экране                                                |
-| ------------------ | -------------------------------------------------------- |
-| Пустая ячейка      | прочерк вместо значения                                  |
-| Кнопка копирования | значок копирования, показывается при наведении на ячейку |
-| Задержка показа    | вход `delay` в миллисекундах                             |
-| Вспышка            | мигнувший и сразу пропавший кружок ожидания              |
-| Шторка             | панель, выезжающая справа или слева                      |
-| Подложка           | затемнение под шторкой                                   |
+| In the domain             | On the screen                                                |
+| ------------------------- | ------------------------------------------------------------ |
+| An empty cell             | a dash instead of the value                                  |
+| The button of the copying | the icon of the copying, shown at a hovering over the cell   |
+| The delay of the showing  | the input `delay` in milliseconds                            |
+| A flash                   | a circle of the waiting that blinked and disappeared at once |
+| A curtain                 | a panel driving out on the right or on the left              |
+| The backing               | the darkening under the curtain                              |
 
-## Правила
+## Rules
 
-Предметы домена идут подряд: сперва кнопка копирования у пустой ячейки таблицы, затем
-задержка показа спиннера, затем источники закрытия шторки, затем колонка сортировки, затем выбор
-исхода при быстрых повторных вызовах. Второй уровень бокового меню — чем он держится открытым и
-как в нём находят пункт — живёт своим поддоменом: домен перерос предел длины. Таблица
-поддоменов стоит после правил.
+The subjects of the domain go one after another: first the button of the copying at an empty cell of a
+table, then the delay of the showing of a spinner, then the sources of the closing of a curtain, then the
+column of the sorting, then the choice of the outcome at fast repeated calls. The second level of the side
+menu — what it is held open by and how an item is found in it — lives as a subdomain of its own: the domain
+outgrew the length limit. The table of the subdomains stands after the rules.
 
-- **Кнопка копирования не показывается у пустой ячейки.** Копировать нечего, а нажатие кладёт в
-  буфер обмена слово «null»: человек уносит его дальше, не заметив подмены.
-- **Пустым считается то же, что кит считает пустым везде.** Пустота берётся готовой утилитой
-  кита, а не своим условием в шаблоне: два ответа на вопрос «пусто ли» расходятся молча — в
-  таблице прочерк, а кнопка при этом есть.
-- **Признак копируемости колонки остаётся на колонке.** Ячейка судит только своё значение;
-  колонка по-прежнему объявляется копируемой целиком, и на непустых ячейках кнопка прежняя.
-- **Ячейка со значением ведёт себя как раньше.** Тот же показ при наведении, та же позиция, та
-  же подсказка и то же сообщение о состоявшемся копировании.
+- **The button of the copying is not shown at an empty cell.** There is nothing to copy, and a press puts
+  the word "null" into the clipboard: a person carries it on without noticing the substitution.
+- **Empty counts as the same as what the kit counts empty everywhere.** The emptiness is taken by a ready
+  utility of the kit, not by a condition of one's own in the template: two answers to the question "is it
+  empty" diverge silently — in the table there is a dash, and the button is there at that.
+- **The sign of the copyability of a column stays at the column.** A cell judges only its own value; the
+  column is still declared copyable whole, and at the non-empty cells the button is the former one.
+- **A cell with a value behaves as before.** The same showing at a hovering, the same position, the same
+  hint and the same message about the copying that took place.
 
-- **Спиннер ждёт задержку и только потом становится виден.** Ожидание, кончившееся раньше
-  задержки, спиннера не показывает вовсе: показывать нечего — ответ уже пришёл.
-- **Умолчание задержки — ноль.** Спиннер, вставленный без задержки, ведёт себя как прежде:
-  правка не меняет ни одного из мест, где он уже стоит.
-- **Задержка отсчитывается от вставки спиннера, а не от первой перерисовки.** Отсчёт, начатый
-  позже, растягивает ожидание на неизвестное человеку время.
-- **Снятый до срока спиннер счётчик за собой убирает.** Отложенный показ, доживший до уже
-  снятого компонента, рисовал бы кружок поверх готового экрана.
-- **Задержка живёт в самом спиннере.** Его вставляют пять мест кита и любое приложение; своя
-  задержка у каждого означала бы пять разных ответов на один вопрос.
+- **The spinner waits for the delay and only then becomes visible.** A waiting that ended earlier than the
+  delay shows no spinner at all: there is nothing to show — the answer has already arrived.
+- **The default of the delay is zero.** A spinner inserted without a delay behaves as before: the edit
+  changes not a single one of the places where it already stands.
+- **The delay is counted from the insertion of the spinner, not from the first redrawing.** A count begun
+  later stretches the waiting for a time unknown to the person.
+- **A spinner lifted before the term takes its counter away with it.** A postponed showing that lived to an
+  already lifted component would draw a circle over a ready screen.
+- **The delay lives in the spinner itself.** It is inserted by five places of the kit and by any
+  application; a delay of its own at each would mean five different answers to one question.
 
-- **Клавиша Esc шторку не закрывает.** Её жмут, чтобы снять подсказку или выйти из поля, а
-  закрывалась вся панель вместе с введённым.
-- **Прежнее поведение остаётся доступным настройкой открытия.** Экран, которому закрытие
-  клавишей нужно, называет его сам — умолчание за него не решает.
-- **Клик по подложке и уход по маршруту закрывают шторку по-прежнему.** Работа отвечает за одну
-  клавишу, а не за все источники закрытия сразу.
-- **Запрещённый источник не подписывается вовсе.** Подписка, которая приходит и ничего не
-  делает, читается работающей и оживает при первой правке рядом.
-- **Программное закрытие настройкой не гасится.** Потребитель, закрывающий шторку своим кодом,
-  говорит о своём намерении прямо, и запрет источников к нему не относится.
+- **The key Esc does not close the curtain.** It is pressed to lift a hint or to leave a field, and the
+  whole panel closed together with what was entered.
+- **The former behaviour stays available by the setting of the opening.** A screen that needs the closing by
+  a key names it itself — the default does not decide for it.
+- **A click on the backing and a leaving by a route close the curtain as before.** The work answers for one
+  key, not for all the sources of the closing at once.
+- **A forbidden source is not subscribed to at all.** A subscription that comes and does nothing reads as
+  working and comes alive at the first edit next to it.
+- **A programmatic closing is not put out by the setting.** A consumer closing the curtain by their own code
+  says about their intent openly, and the ban of the sources does not concern them.
 
-- **Таблица отдаёт сортировку только по той колонке, которую сама рисует.** Имя колонки приходит
-  ей строкой, а наружу уходит ключом записи: колонка, которой в наборе нет, уезжала потребителю
-  законным значением, и ни сборка, ни типы этого не видели.
-- **Имя сверяется с тем же набором колонок, который таблица рисует.** Второго списка имён у неё
-  нет, и разойтись ему не с чем.
-- **Несовпавшее имя не уходит наружу вовсе.** Отказа при этом не заводится: своих сообщений об
-  ошибке кит нигде не пишет, а потребитель не спрашивал сортировку по колонке, которой не
-  объявлял.
+- **The table gives the sorting only by the column it draws itself.** The name of the column arrives to it as
+  a string, and outward it goes as a key of a record: a column that is not in the set went away to the
+  consumer as a lawful value, and neither the build nor the types saw that.
+- **The name is checked against the same set of the columns the table draws.** It has no second list of the
+  names, and there is nothing for it to diverge with.
+- **A name that did not coincide does not go outward at all.** No refusal is created at that: the kit writes
+  no messages of an error of its own anywhere, and the consumer did not ask for a sorting by a column they
+  did not declare.
 
-- **Настройку таблицы показывает последнее чтение, а не то, что ответило последним.** Состав
-  столбцов меняется вместе с экраном, и прочитанное под прежний состав к нынешнему уже не
-  относится.
-- **Запись и снятие настройки доходят до хранилища в порядке вызовов.** Снятие, обогнавшее
-  запись, оставляет в хранилище снятое, и увидеть это можно только на следующем открытии
-  экрана.
-- **Панель настройки столбцов открывается одна.** Второе нажатие при открытой панели открывать
-  нечего, а прежде каждое заводило свою подписку — настройку сохраняла та панель, что закрылась
-  последней.
+- **The setting of the table is shown by the last reading, not by what answered last.** The composition of
+  the columns changes together with the screen, and what was read under the former composition does not
+  concern the present one any more.
+- **A write and a lifting of the setting reach the storage in the order of the calls.** A lifting that
+  outran a write leaves the lifted one in the storage, and that can be seen only at the next opening of the
+  screen.
+- **The panel of the setting of the columns opens as one.** A second press at an open panel has nothing to
+  open, while before every one created a subscription of its own — the setting was saved by the panel that
+  closed last.
 
-| Поддомен                                                         | О чём                                                                          |
-| ---------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| [Второй уровень бокового меню](side-menu/spec.md)                | мода подменю, закреплённая панель, поиск по подменю, ширина и тяга             |
-| [Вид поля ввода в настройке кита](form-field-appearance/spec.md) | откуда компоненты берут вид поля ввода и в каком порядке значения перебиваются |
+| Subdomain                                                                               | About what                                                                                               |
+| --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| [The second level of the side menu](side-menu/spec.md)                                  | the mode of the submenu, a pinned panel, the search over a submenu, the width and the pull               |
+| [The look of a field of input in the setting of the kit](form-field-appearance/spec.md) | where the components take the look of a field of input from and in which order the values are overridden |
 
-## Что не входит
+## What is out of scope
 
-- **Второй кит.** Его ячейка копирования, его спиннер и его шторка — свой пакет со своими
-  селекторами и своим доменом; тот же недосмотр там заводится своей задачей.
-- **Наименьшее время показа спиннера.** Спиннер, показавшийся на миг и пропавший, — своя
-  работа: задержка снимает вспышку сама, а второе время добавляет свой рывок в конце.
-- **Скелетоны и заглушки.** Они отвечают на другой вопрос — чем занять место, а не когда
-  показать ожидание.
-- **Приведение значения к строке при копировании.** Пустое перестаёт копироваться вместе с
-  кнопкой.
-- **Мобильный список таблицы.** Базовой ячейки он не рисует вовсе.
-- **Запрет закрытия шторки на лету.** Несохранённые правки стережёт своя работа.
-- **Окно и модальное окно первого кита.** У них своя служба и свой набор источников закрытия.
-- **Долг по спекам компонентов.** Домен описывает три предмета, а компонентов у кита больше;
-  остальные вливаются, когда их договорённости будут написаны.
-- **Второй уровень бокового меню.** Его границы названы в поддомене рядом.
+- **The second kit.** Its cell of the copying, its spinner and its curtain are a package of its own with
+  selectors of its own and a domain of its own; the same oversight there is created as a task of its own.
+- **The least time of the showing of a spinner.** A spinner that showed for a moment and disappeared is a
+  work of its own: the delay lifts the flash itself, and a second time adds a jerk of its own at the end.
+- **The skeletons and the stubs.** They answer another question — what to occupy a place by, not when to show
+  a waiting.
+- **The bringing of a value to a string at the copying.** The empty stops being copied together with the
+  button.
+- **The mobile list of the table.** It does not draw the base cell at all.
+- **A ban of the closing of a curtain on the fly.** The unsaved edits are guarded by a work of its own.
+- **The window and the modal window of the first kit.** They have a service of their own and a set of the
+  sources of the closing of their own.
+- **The debt on the specs of the components.** The domain describes three subjects, and the kit has more
+  components; the rest are merged when their agreements are written.
+- **The second level of the side menu.** Its boundaries are named in the subdomain next to it.
 
-## Контракт
+## Contract
 
-Не применимо: поверхность домена — входы компонентов и доводы служб кита, процедур он не
-обслуживает.
+Not applicable: the surface of the domain is the inputs of the components and the arguments of the services
+of the kit, it serves no procedures.
 
-### Коды отказов
+### Refusal codes
 
-Не применимо: своих отказов ни у показа, ни у открытия нет.
+Not applicable: neither the showing nor the opening has refusals of its own.
 
-## Данные
+## Data
 
-Своих записей хранилища у кита нет: значения приходят входами от приложения, которое его
-ставит.
+The kit has no records of the storage of its own: the values arrive by the inputs from the application that
+installs it.
 
-## Экраны и состояния
+## Screens and states
 
-| Состояние ячейки                   | Что видно                                   |
-| ---------------------------------- | ------------------------------------------- |
-| колонка копируемая, значение есть  | значение и кнопка копирования при наведении |
-| колонка копируемая, значение пусто | прочерк, кнопки нет                         |
-| колонка не копируемая              | значение либо прочерк, кнопки нет никогда   |
+| The state of a cell                        | What is visible                                       |
+| ------------------------------------------ | ----------------------------------------------------- |
+| the column is copyable, there is a value   | the value and the button of the copying at a hovering |
+| the column is copyable, the value is empty | a dash, there is no button                            |
+| the column is not copyable                 | the value or a dash, there is never a button          |
 
-| Состояние спиннера              | Что видно           |
-| ------------------------------- | ------------------- |
-| задержка не названа             | спиннер сразу       |
-| задержка названа, срок не вышел | ничего              |
-| задержка названа, срок вышел    | спиннер             |
-| ожидание кончилось раньше срока | ничего за всё время |
+| The state of a spinner                       | What is visible            |
+| -------------------------------------------- | -------------------------- |
+| the delay is not named                       | the spinner at once        |
+| the delay is named, the term has not run out | nothing                    |
+| the delay is named, the term has run out     | the spinner                |
+| the waiting ended earlier than the term      | nothing for the whole time |
 
-| Что нажали у шторки              | Что происходит           |
-| -------------------------------- | ------------------------ |
-| Esc, настройка не названа        | шторка остаётся открытой |
-| Esc, закрытие клавишей разрешено | шторка закрывается       |
-| клик по подложке                 | шторка закрывается       |
-| переход по маршруту              | шторка закрывается       |
+| What was pressed at the curtain      | What happens           |
+| ------------------------------------ | ---------------------- |
+| Esc, the setting is not named        | the curtain stays open |
+| Esc, the closing by a key is allowed | the curtain closes     |
+| a click on the backing               | the curtain closes     |
+| a transition by a route              | the curtain closes     |
 
-| Имя колонки в сортировке | Что уходит потребителю      |
-| ------------------------ | --------------------------- |
-| совпало с объявленной    | та же колонка и направление |
-| не совпало ни с одной    | ничего                      |
+| The name of a column in the sorting | What goes away to the consumer |
+| ----------------------------------- | ------------------------------ |
+| coincided with a declared one       | the same column and direction  |
+| coincided with none                 | nothing                        |
 
-## Сквозные требования
+## Cross-cutting requirements
 
-### Локали
+### Locales
 
-Не применимо: подписи кнопки копирования приходят от кита одной строкой, у спиннера и шторки
-своих подписей нет.
+Not applicable: the labels of the button of the copying arrive from the kit as one string, the spinner and the
+curtain have no labels of their own.
 
 ### SEO
 
-Не применимо: кит стоит в приложениях за входом, и его разметку не читает ни один сборщик
-поисковика.
+Not applicable: the kit stands in applications behind an entry, and its markup is read by not a single
+gatherer of a search engine.
 
-### Мобильная раскладка
+### Mobile layout
 
-На узком экране подсказка кнопки копирования не показывается — это прежнее поведение, и домен
-его не трогает. Задержка показа от ширины экрана не зависит; клавиши, закрывающей шторку, на
-узком экране нет.
+On a narrow screen the hint of the button of the copying is not shown — this is the former behaviour, and the
+domain does not touch it. The delay of the showing does not depend on the width of the screen; there is no
+key closing the curtain on a narrow screen.
 
-### Мультиобъектность
+### Several objects
 
-Не применимо: кит ничего не знает ни о владельце данных, ни о разделении по объектам.
+Not applicable: the kit knows nothing either about the owner of the data or about a division by objects.
 
-## Решения
+## Decisions
 
-- **Пустоту считает готовая утилита кита, а не своё условие ячейки.** Довод: прочерк вместо
-  значения рисует та же пустота, и два ответа на один вопрос разошлись бы молча. Отвергнуто:
-  своё условие в шаблоне — оно знает только `null` и пустую строку.
-- **Кнопка убирается из разметки, а не отключается.** Довод: снимок владельца показывает лишний
-  элемент, а не запрет нажатия. Отвергнуто: недоступная кнопка — она остаётся видимой и
-  по-прежнему обещает копирование.
-- **Задержка — вход спиннера, а не обёртка вокруг него.** Довод: обёртка требует правки каждого
-  места вставки, а спиннер уже стоит в пяти местах кита. Отвергнуто: директива отложенного
-  показа рядом.
-- **Умолчание задержки — ноль, а не «разумные триста».** Довод: правка не должна менять
-  поведение мест, где спиннер уже стоит; срок выбирает тот, кто знает, чего ждут. Отвергнуто:
-  умолчание в триста миллисекунд — оно молча растянуло бы каждое ожидание кита.
-- **Умолчание шторки — Esc не закрывает.** Довод: так стоит в просьбе владельца, и экраны с
-  формами — большинство. Отвергнуто: оставить умолчание прежним и завести выключатель — тогда
-  просьба исполнена только там, где кто-то её вспомнит.
-- **Приём закрытия взят у соседнего кита: настройка открытия и условный поток.** Довод: там
-  шторка уже принимает настройку и отдаёт пустой поток вместо подписки. Отвергнуто: своё третье
-  решение — оно разошлось бы с соседним китом молча.
+- **The emptiness is counted by a ready utility of the kit, not by a condition of the cell's own.** The
+  argument: the dash instead of a value is drawn by the same emptiness, and two answers to one question would
+  diverge silently. Rejected: a condition of one's own in the template — it knows only `null` and an empty
+  string.
+- **The button is removed from the markup, it is not switched off.** The argument: the snapshot of the owner
+  shows an extra element, not a ban of a press. Rejected: an unavailable button — it stays visible and still
+  promises the copying.
+- **The delay is an input of the spinner, not a wrapper around it.** The argument: a wrapper demands an edit
+  of every place of the insertion, and the spinner already stands in five places of the kit. Rejected: a
+  directive of a postponed showing next to it.
+- **The default of the delay is zero, not "a reasonable three hundred".** The argument: the edit must not
+  change the behaviour of the places where the spinner already stands; the term is chosen by whoever knows
+  what is being waited for. Rejected: a default of three hundred milliseconds — it would silently stretch
+  every waiting of the kit.
+- **The default of the curtain is that Esc does not close.** The argument: so it stands in the request of the
+  owner, and the screens with forms are the majority. Rejected: to leave the default the former one and create
+  a switch — then the request is carried out only where somebody remembers it.
+- **The technique of the closing is taken from the neighbouring kit: the setting of the opening and a
+  conditional stream.** The argument: there the curtain already accepts a setting and gives back an empty
+  stream instead of a subscription. Rejected: a third decision of one's own — it would diverge from the
+  neighbouring kit silently.
 
-## Открытые вопросы
+## Open questions
 
-- `Q-1` — считать ли пустой ячейку, значение которой состоит из одних пробелов. Домен стоит на
-  допущении, что нет: так отвечает утилита кита, и второй ответ рядом с ней разошёлся бы с
-  прочерком.
-- `Q-2` — нужно ли спиннеру наименьшее время показа вдобавок к задержке. Допущение: нет —
-  задержка снимает вспышку сама, а второе время добавляет свой рывок в конце.
-- `Q-3` — нужен ли шторке первого кита запрет закрытия на лету, как у соседнего. Допущение:
-  нет — гард несохранённых правок своя работа, и она его и потребует.
+- `Q-1` — whether to count as empty a cell whose value consists of spaces alone. The domain stands on the
+  assumption that no: so the utility of the kit answers, and a second answer next to it would diverge from the
+  dash.
+- `Q-2` — whether the spinner needs a least time of the showing in addition to the delay. The assumption: no
+  — the delay lifts the flash itself, and a second time adds a jerk of its own at the end.
+- `Q-3` — whether the curtain of the first kit needs a ban of the closing on the fly, as at the neighbouring
+  one. The assumption: no — the guard of the unsaved edits is a work of its own, and it is that work that will
+  demand it.
 
-## История изменений
+## History of changes
 
-- 2026-09-06 — второй уровень бокового меню выделен в поддомен: спек перерос предел длины.
-  Правила, сценарии и привязки переехали прежними, номера сценариев не пересчитывались.
+- 2026-09-06 — the second level of the side menu was split into a subdomain: the spec outgrew the length
+  limit. The rules, the scenarios and the bindings moved as they were, the scenario numbers were not
+  recounted.
 
-- 2026-08-30 — к домену добавлен пятый предмет: выбор исхода при быстрых повторных вызовах —
-  чтение и запись настройки таблицы, открытие панели настройки столбцов.
+- 2026-08-30 — a fifth subject was added to the domain: the choice of the outcome at fast repeated calls — the
+  reading and the write of the setting of the table, the opening of the panel of the setting of the columns.
 
-- 2026-08-29 — к домену добавлен четвёртый предмет: сортировка, которую таблица отдаёт
-  потребителю, сверяется с набором её колонок.
+- 2026-08-29 — a fourth subject was added to the domain: the sorting the table gives the consumer is checked
+  against the set of its columns.
 
-- 2026-08-24 — домен заведён словом владельца и сложен из трёх договорённостей, написанных до
-  кода и выкаченных своими ветками: кнопка копирования у пустой ячейки, задержка показа
-  спиннера и источники закрытия шторки. Номера сценариев переехали прежними.
+- 2026-08-24 — the domain was created by the word of the owner and put together from three agreements written
+  before the code and rolled out by branches of their own: the button of the copying at an empty cell, the
+  delay of the showing of a spinner and the sources of the closing of a curtain. The scenario numbers moved as
+  they were.

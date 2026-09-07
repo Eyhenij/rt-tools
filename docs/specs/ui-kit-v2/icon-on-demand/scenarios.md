@@ -1,59 +1,65 @@
-# Сценарии — значок по требованию
+# Scenarios — an icon on demand
 
-Префикс `SC-UKV`, общий на домен вместе с поддоменами. Номера выданы следующими свободными в
-домене и после вливания в спек не меняются: на них ссылаются заголовки тестов.
+The prefix `SC-UKV` is shared across the domain together with the subdomains. The numbers were issued
+as the next free ones in the domain and do not change after the merge into the spec: the titles of the
+tests refer to them.
 
-Чем покрыт сценарий, сказано под ним. Где прогон сценарий не покрывает, это сказано прямо.
+What a scenario is covered by is said under it. Where the run does not cover a scenario, that is said
+openly.
 
-### SC-UKV-58 — страница грузит только те значки, которые нарисовала
+### SC-UKV-58 — the page loads only the icons it drew
 
-Дано перечень имён кита держит сотни значков, а страница рисует три
-Когда страница открывается
-Тогда за файлами значков уходит три запроса, а не весь перечень
+Given the list of the names of the kit holds hundreds of icons, and the page draws three
+When the page opens
+Then three requests go away for the files of the icons, not the whole list
 
-### SC-UKV-59 — повторный запрос того же имени сети не трогает
+### SC-UKV-59 — a repeated request of the same name does not touch the network
 
-Дано значок с этим именем уже приехал и лежит в спрайте
-Когда то же имя просит вторая разметка на той же странице
-Тогда нового запроса не уходит, а значок рисуется сразу
+Given the icon with this name has already arrived and lies in the sprite
+When the same name is asked for by a second markup on the same page
+Then no new request goes away, and the icon is drawn at once
 
-### SC-UKV-60 — отказ одного имени гасит только его значок
+### SC-UKV-60 — a refusal of one name puts out only its icon
 
-Дано одно из спрошенных имён файла на сервере не имеет
-Когда страница рисует его вместе с двумя другими
-Тогда два других значка нарисованы, а третий остаётся пустым местом своего размера
+Given one of the names that were asked for has no file on the server
+When the page draws it together with two others
+Then the two other icons are drawn, and the third stays an empty place of its own size
 
-### SC-UKV-61 — значок, спрошенный двумя разметками сразу, едет одним запросом
+### SC-UKV-61 — an icon asked for by two markups at once goes by one request
 
-Дано на странице стоят компонент значка и кнопка, рисующая значок сама, с одним и тем же именем
-Когда страница открывается
-Тогда за этим именем уходит один запрос, и обе разметки рисуют значок
+Given the component of an icon and a button drawing an icon itself stand on the page with one and the
+same name
+When the page opens
+Then one request goes away for that name, and both markups draw the icon
 
-### SC-UKV-62 — смена имени тянет новое, а прежний символ остаётся
+### SC-UKV-62 — a change of the name pulls the new one, and the former symbol stays
 
-Дано значок нарисован по одному имени
-Когда разметке передают другое имя
-Тогда уходит запрос за новым именем, прежний символ остаётся в спрайте, и повторный возврат к
-нему запроса не даёт
+Given an icon is drawn by one name
+When another name is passed to the markup
+Then a request goes away for the new name, the former symbol stays in the sprite, and a repeated
+return to it gives no request
 
-### SC-UKV-63 — символ, уже лежащий в спрайте страницы, запроса не даёт
+### SC-UKV-63 — a symbol already lying in the sprite of the page gives no request
 
-Дано спрайт страницы уже держит символ с этим именем — его положила соседняя история витрины или
-сама страница до старта приложения
-Когда разметка просит это имя
-Тогда запроса не уходит вовсе
+Given the sprite of the page already holds a symbol with this name — it was put there by a neighbouring
+story of the showcase or by the page itself before the start of the application
+When the markup asks for that name
+Then no request goes away at all
 
-### SC-UKV-64 — на сервере набор не грузится
+### SC-UKV-64 — on the server the set is not loaded
 
-Дано страница рисуется на сервере
-Когда разметка просит имя
-Тогда запроса не уходит, а значок появляется после гидрации
+Given the page is drawn on the server
+When the markup asks for a name
+Then no request goes away, and the icon appears after the hydration
 
-### SC-UKV-65 — кадр витрины снимается после того, как приехали все значки страницы
+### SC-UKV-65 — a frame of the showcase is shot after all the icons of the page have arrived
 
-Дано спрайт дорастает по ходу, а не приходит готовым
-Когда идёт прогон снимков
-Тогда кадр берётся, когда каждый видимый значок нарисован, и две съёмки подряд без правок
-сходятся
+Given the sprite grows along the way, it does not arrive ready
+When the run of the snapshots goes
+Then the frame is taken when every visible icon is drawn, and two shootings in a row without edits
+agree
 
-Не покрыто: тестом с идентификатором это не закрыть — проверяет прогон снимков, а его тесты заводятся по историям витрины и идентификатора не несут. Проверено на месте: гейт снимков второго кита прошёл на дорастающем спрайте — 450 случаев, 458 эталонов сошлись, — а проба разметок разошлась с первой пары.
+Not covered: it cannot be closed by a test with an identifier — it is checked by the run of the
+snapshots, and its tests are created by the stories of the showcase and carry no identifier. Checked on
+the spot: the gate of the snapshots of the second kit passed on a growing sprite — 450 cases, 458
+references agreed — while the probe of the markups diverged from the first pair.
